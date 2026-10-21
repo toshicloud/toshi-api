@@ -102,6 +102,15 @@ const (
 	// WorkspaceServiceSetServiceModeProcedure is the fully-qualified name of the WorkspaceService's
 	// SetServiceMode RPC.
 	WorkspaceServiceSetServiceModeProcedure = "/toshi.workspace.v1.WorkspaceService/SetServiceMode"
+	// WorkspaceServiceWakeServiceProcedure is the fully-qualified name of the WorkspaceService's
+	// WakeService RPC.
+	WorkspaceServiceWakeServiceProcedure = "/toshi.workspace.v1.WorkspaceService/WakeService"
+	// WorkspaceServiceHoldServiceProcedure is the fully-qualified name of the WorkspaceService's
+	// HoldService RPC.
+	WorkspaceServiceHoldServiceProcedure = "/toshi.workspace.v1.WorkspaceService/HoldService"
+	// WorkspaceServiceReleaseServiceProcedure is the fully-qualified name of the WorkspaceService's
+	// ReleaseService RPC.
+	WorkspaceServiceReleaseServiceProcedure = "/toshi.workspace.v1.WorkspaceService/ReleaseService"
 	// WorkspaceServiceListServiceRunsProcedure is the fully-qualified name of the WorkspaceService's
 	// ListServiceRuns RPC.
 	WorkspaceServiceListServiceRunsProcedure = "/toshi.workspace.v1.WorkspaceService/ListServiceRuns"
@@ -229,21 +238,44 @@ type WorkspaceServiceClient interface {
 	// again, and its open connections end within seconds. Revoking a link
 	// that was revoked or has ended returns it as it is.
 	RevokePreviewShareLink(context.Context, *connect.Request[workspacev1.RevokePreviewShareLinkRequest]) (*connect.Response[workspacev1.RevokePreviewShareLinkResponse], error)
-	// StartService starts an always-on service: its workload
+	// StartService starts a service. An always-on service's workload
 	// moves from CREATED to QUEUED and its first run is queued as a job on
 	// a host, placed by the service's size; the run's start moves the
 	// workload to RUNNING. While the service is started, a run that ends is
-	// followed by another. Starting a started service returns it as it is.
-	// An on-demand service, a size that is not a Linux one and a start past
-	// the plan's shared services fail with FAILED_PRECONDITION.
+	// followed by another. An on-demand service is started asleep: it runs
+	// only once WakeService, a hold or a connect on one of its channels
+	// wakes it, and sleeps again when it has been idle for its recipe's
+	// idle period. Starting a started service returns it as it is. A size
+	// that is not a Linux one and a start past the plan's shared services
+	// fail with FAILED_PRECONDITION.
 	StartService(context.Context, *connect.Request[workspacev1.StartServiceRequest]) (*connect.Response[workspacev1.StartServiceResponse], error)
 	// StopService stops a service: its workload moves back to CREATED and
 	// its live run is stopped. Stopping a service that is not started
 	// returns it as it is.
 	StopService(context.Context, *connect.Request[workspacev1.StopServiceRequest]) (*connect.Response[workspacev1.StopServiceResponse], error)
-	// SetServiceMode sets a service's mode. Setting ON_DEMAND
-	// stops a started service, as StopService does.
+	// SetServiceMode sets a service's mode. A started service stays
+	// started: set to ON_DEMAND, it sleeps once it is idle; set to
+	// ALWAYS_ON while asleep, its next run is queued.
 	SetServiceMode(context.Context, *connect.Request[workspacev1.SetServiceModeRequest]) (*connect.Response[workspacev1.SetServiceModeResponse], error)
+	// WakeService wakes a started on-demand service that is asleep: its
+	// workload moves from CREATED to QUEUED and a run is queued, placed as a
+	// start is. A wake keeps the service awake for its recipe's idle period;
+	// waking an awake one extends that. The answer does not wait for the run
+	// to be ready: its ServiceRun's ready_at says when it is. Waking a
+	// started always-on service returns it as it is; a service that is not
+	// started fails with FAILED_PRECONDITION.
+	WakeService(context.Context, *connect.Request[workspacev1.WakeServiceRequest]) (*connect.Response[workspacev1.WakeServiceResponse], error)
+	// HoldService takes or renews the caller's hold on a started service:
+	// while any hold is live, an on-demand service does not sleep, and a
+	// hold on one that is asleep wakes it. Each caller has one hold per
+	// service, live until its time to live runs out or ReleaseService drops
+	// it. A hold gives no access to the service. A service that is not
+	// started fails with FAILED_PRECONDITION, and a time to live above an
+	// hour with INVALID_ARGUMENT.
+	HoldService(context.Context, *connect.Request[workspacev1.HoldServiceRequest]) (*connect.Response[workspacev1.HoldServiceResponse], error)
+	// ReleaseService drops the caller's hold on a service. Releasing a hold
+	// the caller does not have returns the service as it is.
+	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
 	// ListServiceRuns returns a service's runs, the newest first: each run
 	// is a job on a host, of the revision that was current when it was
 	// queued.
@@ -393,6 +425,24 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("SetServiceMode")),
 			connect.WithClientOptions(opts...),
 		),
+		wakeService: connect.NewClient[workspacev1.WakeServiceRequest, workspacev1.WakeServiceResponse](
+			httpClient,
+			baseURL+WorkspaceServiceWakeServiceProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("WakeService")),
+			connect.WithClientOptions(opts...),
+		),
+		holdService: connect.NewClient[workspacev1.HoldServiceRequest, workspacev1.HoldServiceResponse](
+			httpClient,
+			baseURL+WorkspaceServiceHoldServiceProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("HoldService")),
+			connect.WithClientOptions(opts...),
+		),
+		releaseService: connect.NewClient[workspacev1.ReleaseServiceRequest, workspacev1.ReleaseServiceResponse](
+			httpClient,
+			baseURL+WorkspaceServiceReleaseServiceProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("ReleaseService")),
+			connect.WithClientOptions(opts...),
+		),
 		listServiceRuns: connect.NewClient[workspacev1.ListServiceRunsRequest, workspacev1.ListServiceRunsResponse](
 			httpClient,
 			baseURL+WorkspaceServiceListServiceRunsProcedure,
@@ -426,6 +476,9 @@ type workspaceServiceClient struct {
 	startService           *connect.Client[workspacev1.StartServiceRequest, workspacev1.StartServiceResponse]
 	stopService            *connect.Client[workspacev1.StopServiceRequest, workspacev1.StopServiceResponse]
 	setServiceMode         *connect.Client[workspacev1.SetServiceModeRequest, workspacev1.SetServiceModeResponse]
+	wakeService            *connect.Client[workspacev1.WakeServiceRequest, workspacev1.WakeServiceResponse]
+	holdService            *connect.Client[workspacev1.HoldServiceRequest, workspacev1.HoldServiceResponse]
+	releaseService         *connect.Client[workspacev1.ReleaseServiceRequest, workspacev1.ReleaseServiceResponse]
 	listServiceRuns        *connect.Client[workspacev1.ListServiceRunsRequest, workspacev1.ListServiceRunsResponse]
 }
 
@@ -537,6 +590,21 @@ func (c *workspaceServiceClient) StopService(ctx context.Context, req *connect.R
 // SetServiceMode calls toshi.workspace.v1.WorkspaceService.SetServiceMode.
 func (c *workspaceServiceClient) SetServiceMode(ctx context.Context, req *connect.Request[workspacev1.SetServiceModeRequest]) (*connect.Response[workspacev1.SetServiceModeResponse], error) {
 	return c.setServiceMode.CallUnary(ctx, req)
+}
+
+// WakeService calls toshi.workspace.v1.WorkspaceService.WakeService.
+func (c *workspaceServiceClient) WakeService(ctx context.Context, req *connect.Request[workspacev1.WakeServiceRequest]) (*connect.Response[workspacev1.WakeServiceResponse], error) {
+	return c.wakeService.CallUnary(ctx, req)
+}
+
+// HoldService calls toshi.workspace.v1.WorkspaceService.HoldService.
+func (c *workspaceServiceClient) HoldService(ctx context.Context, req *connect.Request[workspacev1.HoldServiceRequest]) (*connect.Response[workspacev1.HoldServiceResponse], error) {
+	return c.holdService.CallUnary(ctx, req)
+}
+
+// ReleaseService calls toshi.workspace.v1.WorkspaceService.ReleaseService.
+func (c *workspaceServiceClient) ReleaseService(ctx context.Context, req *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error) {
+	return c.releaseService.CallUnary(ctx, req)
 }
 
 // ListServiceRuns calls toshi.workspace.v1.WorkspaceService.ListServiceRuns.
@@ -666,21 +734,44 @@ type WorkspaceServiceHandler interface {
 	// again, and its open connections end within seconds. Revoking a link
 	// that was revoked or has ended returns it as it is.
 	RevokePreviewShareLink(context.Context, *connect.Request[workspacev1.RevokePreviewShareLinkRequest]) (*connect.Response[workspacev1.RevokePreviewShareLinkResponse], error)
-	// StartService starts an always-on service: its workload
+	// StartService starts a service. An always-on service's workload
 	// moves from CREATED to QUEUED and its first run is queued as a job on
 	// a host, placed by the service's size; the run's start moves the
 	// workload to RUNNING. While the service is started, a run that ends is
-	// followed by another. Starting a started service returns it as it is.
-	// An on-demand service, a size that is not a Linux one and a start past
-	// the plan's shared services fail with FAILED_PRECONDITION.
+	// followed by another. An on-demand service is started asleep: it runs
+	// only once WakeService, a hold or a connect on one of its channels
+	// wakes it, and sleeps again when it has been idle for its recipe's
+	// idle period. Starting a started service returns it as it is. A size
+	// that is not a Linux one and a start past the plan's shared services
+	// fail with FAILED_PRECONDITION.
 	StartService(context.Context, *connect.Request[workspacev1.StartServiceRequest]) (*connect.Response[workspacev1.StartServiceResponse], error)
 	// StopService stops a service: its workload moves back to CREATED and
 	// its live run is stopped. Stopping a service that is not started
 	// returns it as it is.
 	StopService(context.Context, *connect.Request[workspacev1.StopServiceRequest]) (*connect.Response[workspacev1.StopServiceResponse], error)
-	// SetServiceMode sets a service's mode. Setting ON_DEMAND
-	// stops a started service, as StopService does.
+	// SetServiceMode sets a service's mode. A started service stays
+	// started: set to ON_DEMAND, it sleeps once it is idle; set to
+	// ALWAYS_ON while asleep, its next run is queued.
 	SetServiceMode(context.Context, *connect.Request[workspacev1.SetServiceModeRequest]) (*connect.Response[workspacev1.SetServiceModeResponse], error)
+	// WakeService wakes a started on-demand service that is asleep: its
+	// workload moves from CREATED to QUEUED and a run is queued, placed as a
+	// start is. A wake keeps the service awake for its recipe's idle period;
+	// waking an awake one extends that. The answer does not wait for the run
+	// to be ready: its ServiceRun's ready_at says when it is. Waking a
+	// started always-on service returns it as it is; a service that is not
+	// started fails with FAILED_PRECONDITION.
+	WakeService(context.Context, *connect.Request[workspacev1.WakeServiceRequest]) (*connect.Response[workspacev1.WakeServiceResponse], error)
+	// HoldService takes or renews the caller's hold on a started service:
+	// while any hold is live, an on-demand service does not sleep, and a
+	// hold on one that is asleep wakes it. Each caller has one hold per
+	// service, live until its time to live runs out or ReleaseService drops
+	// it. A hold gives no access to the service. A service that is not
+	// started fails with FAILED_PRECONDITION, and a time to live above an
+	// hour with INVALID_ARGUMENT.
+	HoldService(context.Context, *connect.Request[workspacev1.HoldServiceRequest]) (*connect.Response[workspacev1.HoldServiceResponse], error)
+	// ReleaseService drops the caller's hold on a service. Releasing a hold
+	// the caller does not have returns the service as it is.
+	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
 	// ListServiceRuns returns a service's runs, the newest first: each run
 	// is a job on a host, of the revision that was current when it was
 	// queued.
@@ -826,6 +917,24 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("SetServiceMode")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceWakeServiceHandler := connect.NewUnaryHandler(
+		WorkspaceServiceWakeServiceProcedure,
+		svc.WakeService,
+		connect.WithSchema(workspaceServiceMethods.ByName("WakeService")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceHoldServiceHandler := connect.NewUnaryHandler(
+		WorkspaceServiceHoldServiceProcedure,
+		svc.HoldService,
+		connect.WithSchema(workspaceServiceMethods.ByName("HoldService")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceReleaseServiceHandler := connect.NewUnaryHandler(
+		WorkspaceServiceReleaseServiceProcedure,
+		svc.ReleaseService,
+		connect.WithSchema(workspaceServiceMethods.ByName("ReleaseService")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceListServiceRunsHandler := connect.NewUnaryHandler(
 		WorkspaceServiceListServiceRunsProcedure,
 		svc.ListServiceRuns,
@@ -878,6 +987,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceStopServiceHandler.ServeHTTP(w, r)
 		case WorkspaceServiceSetServiceModeProcedure:
 			workspaceServiceSetServiceModeHandler.ServeHTTP(w, r)
+		case WorkspaceServiceWakeServiceProcedure:
+			workspaceServiceWakeServiceHandler.ServeHTTP(w, r)
+		case WorkspaceServiceHoldServiceProcedure:
+			workspaceServiceHoldServiceHandler.ServeHTTP(w, r)
+		case WorkspaceServiceReleaseServiceProcedure:
+			workspaceServiceReleaseServiceHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListServiceRunsProcedure:
 			workspaceServiceListServiceRunsHandler.ServeHTTP(w, r)
 		default:
@@ -975,6 +1090,18 @@ func (UnimplementedWorkspaceServiceHandler) StopService(context.Context, *connec
 
 func (UnimplementedWorkspaceServiceHandler) SetServiceMode(context.Context, *connect.Request[workspacev1.SetServiceModeRequest]) (*connect.Response[workspacev1.SetServiceModeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.SetServiceMode is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) WakeService(context.Context, *connect.Request[workspacev1.WakeServiceRequest]) (*connect.Response[workspacev1.WakeServiceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.WakeService is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) HoldService(context.Context, *connect.Request[workspacev1.HoldServiceRequest]) (*connect.Response[workspacev1.HoldServiceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.HoldService is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.ReleaseService is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) ListServiceRuns(context.Context, *connect.Request[workspacev1.ListServiceRunsRequest]) (*connect.Response[workspacev1.ListServiceRunsResponse], error) {

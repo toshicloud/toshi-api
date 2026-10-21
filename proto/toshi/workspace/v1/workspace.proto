@@ -171,13 +171,16 @@ service WorkspaceService {
   // that was revoked or has ended returns it as it is.
   rpc RevokePreviewShareLink(RevokePreviewShareLinkRequest) returns (RevokePreviewShareLinkResponse);
 
-  // StartService starts an always-on service: its workload
+  // StartService starts a service. An always-on service's workload
   // moves from CREATED to QUEUED and its first run is queued as a job on
   // a host, placed by the service's size; the run's start moves the
   // workload to RUNNING. While the service is started, a run that ends is
-  // followed by another. Starting a started service returns it as it is.
-  // An on-demand service, a size that is not a Linux one and a start past
-  // the plan's shared services fail with FAILED_PRECONDITION.
+  // followed by another. An on-demand service is started asleep: it runs
+  // only once WakeService, a hold or a connect on one of its channels
+  // wakes it, and sleeps again when it has been idle for its recipe's
+  // idle period. Starting a started service returns it as it is. A size
+  // that is not a Linux one and a start past the plan's shared services
+  // fail with FAILED_PRECONDITION.
   rpc StartService(StartServiceRequest) returns (StartServiceResponse);
 
   // StopService stops a service: its workload moves back to CREATED and
@@ -185,9 +188,32 @@ service WorkspaceService {
   // returns it as it is.
   rpc StopService(StopServiceRequest) returns (StopServiceResponse);
 
-  // SetServiceMode sets a service's mode. Setting ON_DEMAND
-  // stops a started service, as StopService does.
+  // SetServiceMode sets a service's mode. A started service stays
+  // started: set to ON_DEMAND, it sleeps once it is idle; set to
+  // ALWAYS_ON while asleep, its next run is queued.
   rpc SetServiceMode(SetServiceModeRequest) returns (SetServiceModeResponse);
+
+  // WakeService wakes a started on-demand service that is asleep: its
+  // workload moves from CREATED to QUEUED and a run is queued, placed as a
+  // start is. A wake keeps the service awake for its recipe's idle period;
+  // waking an awake one extends that. The answer does not wait for the run
+  // to be ready: its ServiceRun's ready_at says when it is. Waking a
+  // started always-on service returns it as it is; a service that is not
+  // started fails with FAILED_PRECONDITION.
+  rpc WakeService(WakeServiceRequest) returns (WakeServiceResponse);
+
+  // HoldService takes or renews the caller's hold on a started service:
+  // while any hold is live, an on-demand service does not sleep, and a
+  // hold on one that is asleep wakes it. Each caller has one hold per
+  // service, live until its time to live runs out or ReleaseService drops
+  // it. A hold gives no access to the service. A service that is not
+  // started fails with FAILED_PRECONDITION, and a time to live above an
+  // hour with INVALID_ARGUMENT.
+  rpc HoldService(HoldServiceRequest) returns (HoldServiceResponse);
+
+  // ReleaseService drops the caller's hold on a service. Releasing a hold
+  // the caller does not have returns the service as it is.
+  rpc ReleaseService(ReleaseServiceRequest) returns (ReleaseServiceResponse);
 
   // ListServiceRuns returns a service's runs, the newest first: each run
   // is a job on a host, of the revision that was current when it was
@@ -426,6 +452,13 @@ message ServiceSpec {
   // Create only: the service's bindings, secret sets only. Answers leave
   // them empty.
   repeated Binding bindings = 8;
+  // Whether a started on-demand service is asleep: no run is live, and
+  // nothing keeps it awake. Set by the server; ignored in a request.
+  bool sleeping = 9;
+  // Until when a started on-demand service stays awake with no hold;
+  // unset for an always-on service. Set by the server; ignored in a
+  // request.
+  google.protobuf.Timestamp awake_until = 10;
 }
 
 // StateVolumeSpec is the state volume a service is created with: it is
@@ -440,7 +473,9 @@ enum ServiceMode {
   SERVICE_MODE_UNSPECIFIED = 0;
   // Runs while it is started, and runs again after each run ends.
   SERVICE_MODE_ALWAYS_ON = 1;
-  // Woken by a request. Not built yet: such a service cannot be started.
+  // Runs while it is awake: woken by WakeService, a hold or a connect on
+  // one of its channels, and asleep again after its recipe's idle period
+  // with no hold.
   SERVICE_MODE_ON_DEMAND = 2;
 }
 
@@ -1100,6 +1135,50 @@ message SetServiceModeResponse {
   Workload workload = 1;
 }
 
+message WakeServiceRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  string request_key = 4;
+}
+
+message WakeServiceResponse {
+  Workload workload = 1;
+}
+
+message HoldServiceRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  // How long the hold stays live, at most an hour; unset is 10 minutes.
+  google.protobuf.Duration ttl = 4;
+  string request_key = 5;
+}
+
+message HoldServiceResponse {
+  Workload workload = 1;
+  ServiceHold hold = 2;
+}
+
+// ServiceHold is one caller's hold on a service.
+message ServiceHold {
+  // Who holds it: the calling principal.
+  string holder = 1;
+  // When it stops keeping the service awake, unless renewed.
+  google.protobuf.Timestamp expires_at = 2;
+}
+
+message ReleaseServiceRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  string request_key = 4;
+}
+
+message ReleaseServiceResponse {
+  Workload workload = 1;
+}
+
 message ListServiceRunsRequest {
   string project = 1;
   string environment = 2;
@@ -1154,4 +1233,6 @@ enum ServiceRunState {
   SERVICE_RUN_STATE_FAILED = 6;
   // Stopped by a stop of its service or by a new revision.
   SERVICE_RUN_STATE_STOPPED = 7;
+  // Stopped because its on-demand service went to sleep; not a failure.
+  SERVICE_RUN_STATE_SLEPT = 8;
 }
