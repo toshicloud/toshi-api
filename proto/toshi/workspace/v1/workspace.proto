@@ -49,7 +49,22 @@ service WorkspaceService {
   rpc ListWorkloads(ListWorkloadsRequest) returns (ListWorkloadsResponse);
 
   // PatchWorkload changes the fields the mask names and returns the workload.
-  // Only "labels" can be changed; another path fails with INVALID_ARGUMENT.
+  // "labels" can be changed on any workload. "sandbox.max_duration" raises a
+  // running sandbox's limit and must be the only path: the new limit, in
+  // whole minutes from the sandbox's start, above its current one and no
+  // longer than the plan's sandbox cap. The response then carries an
+  // operation, which completes successfully when the sandbox's host
+  // acknowledges the new limit in time and the sandbox still runs with no
+  // stop asked for; until then the workload shows the current one. The
+  // operation fails with UNAVAILABLE when the host does not acknowledge the
+  // limit in time, and with FAILED_PRECONDITION when the sandbox stops
+  // first; the limit the control plane records is then unchanged. A host
+  // that applied the new limit but whose acknowledgment was lost can keep
+  // it until it takes the old limit back or the sandbox stops. A sandbox
+  // that is not running, has a stop asked for, has no limit of its own or
+  // has a raise pending, or whose host's agent cannot take a new limit,
+  // fails with FAILED_PRECONDITION. Another path fails with
+  // INVALID_ARGUMENT.
   rpc PatchWorkload(PatchWorkloadRequest) returns (PatchWorkloadResponse);
 
   // DeleteWorkload ends a workload that has not ended and then removes it.
@@ -368,7 +383,8 @@ message SandboxSpec {
   string size = 1;
   // How long it may run, in whole minutes. Unset, it runs until the plan's
   // sandbox cap passes, or until it is stopped when the plan sets none. It
-  // cannot be longer than the plan's cap.
+  // cannot be longer than the plan's cap. Its owner can raise it while the
+  // sandbox runs (PatchWorkload).
   google.protobuf.Duration max_duration = 2;
   // What in its workspace the sandbox uses: only the secret set
   // of its environment. Checked at create and fixed when the sandbox
@@ -553,6 +569,9 @@ message PatchWorkloadRequest {
 
 message PatchWorkloadResponse {
   Workload workload = 1;
+  // Set when the mask names "sandbox.max_duration": completes successfully
+  // when the sandbox's host acknowledges the new limit in time.
+  Operation operation = 2;
 }
 
 message DeleteWorkloadRequest {

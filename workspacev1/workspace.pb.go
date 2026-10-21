@@ -1349,7 +1349,8 @@ type SandboxSpec struct {
 	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
 	// How long it may run, in whole minutes. Unset, it runs until the plan's
 	// sandbox cap passes, or until it is stopped when the plan sets none. It
-	// cannot be longer than the plan's cap.
+	// cannot be longer than the plan's cap. Its owner can raise it while the
+	// sandbox runs (PatchWorkload).
 	MaxDuration *durationpb.Duration `protobuf:"bytes,2,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
 	// What in its workspace the sandbox uses: only the secret set
 	// of its environment. Checked at create and fixed when the sandbox
@@ -2456,8 +2457,11 @@ func (x *PatchWorkloadRequest) GetRequestKey() string {
 }
 
 type PatchWorkloadResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Workload      *Workload              `protobuf:"bytes,1,opt,name=workload,proto3" json:"workload,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Workload *Workload              `protobuf:"bytes,1,opt,name=workload,proto3" json:"workload,omitempty"`
+	// Set when the mask names "sandbox.max_duration": completes successfully
+	// when the sandbox's host acknowledges the new limit in time.
+	Operation     *Operation `protobuf:"bytes,2,opt,name=operation,proto3" json:"operation,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2495,6 +2499,13 @@ func (*PatchWorkloadResponse) Descriptor() ([]byte, []int) {
 func (x *PatchWorkloadResponse) GetWorkload() *Workload {
 	if x != nil {
 		return x.Workload
+	}
+	return nil
+}
+
+func (x *PatchWorkloadResponse) GetOperation() *Operation {
+	if x != nil {
+		return x.Operation
 	}
 	return nil
 }
@@ -6519,9 +6530,10 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\vupdate_mask\x18\x05 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\x12\x1f\n" +
 	"\vrequest_key\x18\x06 \x01(\tR\n" +
-	"requestKey\"Q\n" +
+	"requestKey\"\x8e\x01\n" +
 	"\x15PatchWorkloadResponse\x128\n" +
-	"\bworkload\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.WorkloadR\bworkload\"\x84\x01\n" +
+	"\bworkload\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.WorkloadR\bworkload\x12;\n" +
+	"\toperation\x18\x02 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\x84\x01\n" +
 	"\x15DeleteWorkloadRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
@@ -7060,115 +7072,116 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	9,   // 44: toshi.workspace.v1.PatchWorkloadRequest.workload:type_name -> toshi.workspace.v1.Workload
 	93,  // 45: toshi.workspace.v1.PatchWorkloadRequest.update_mask:type_name -> google.protobuf.FieldMask
 	9,   // 46: toshi.workspace.v1.PatchWorkloadResponse.workload:type_name -> toshi.workspace.v1.Workload
-	57,  // 47: toshi.workspace.v1.DeleteWorkloadResponse.operation:type_name -> toshi.workspace.v1.Operation
-	1,   // 48: toshi.workspace.v1.WaitWorkloadRequest.states:type_name -> toshi.workspace.v1.WorkloadState
-	92,  // 49: toshi.workspace.v1.WaitWorkloadRequest.timeout:type_name -> google.protobuf.Duration
-	9,   // 50: toshi.workspace.v1.WaitWorkloadResponse.workload:type_name -> toshi.workspace.v1.Workload
-	0,   // 51: toshi.workspace.v1.WatchWorkloadsRequest.kinds:type_name -> toshi.workspace.v1.WorkloadKind
-	6,   // 52: toshi.workspace.v1.WatchWorkloadsResponse.type:type_name -> toshi.workspace.v1.EventType
-	9,   // 53: toshi.workspace.v1.WatchWorkloadsResponse.workload:type_name -> toshi.workspace.v1.Workload
-	70,  // 54: toshi.workspace.v1.WatchWorkloadsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	41,  // 55: toshi.workspace.v1.WatchOutputResponse.end:type_name -> toshi.workspace.v1.OutputEnd
-	44,  // 56: toshi.workspace.v1.WatchTelemetryResponse.sample:type_name -> toshi.workspace.v1.TelemetrySample
-	70,  // 57: toshi.workspace.v1.WatchTelemetryResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	45,  // 58: toshi.workspace.v1.WatchTelemetryResponse.end:type_name -> toshi.workspace.v1.TelemetryEnd
-	91,  // 59: toshi.workspace.v1.TelemetrySample.at:type_name -> google.protobuf.Timestamp
-	48,  // 60: toshi.workspace.v1.WatchGuestLogResponse.chunk:type_name -> toshi.workspace.v1.GuestLogChunk
-	70,  // 61: toshi.workspace.v1.WatchGuestLogResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	49,  // 62: toshi.workspace.v1.WatchGuestLogResponse.end:type_name -> toshi.workspace.v1.GuestLogEnd
-	51,  // 63: toshi.workspace.v1.ExecuteRequest.start:type_name -> toshi.workspace.v1.ExecuteStart
-	21,  // 64: toshi.workspace.v1.ExecuteStart.command:type_name -> toshi.workspace.v1.Command
-	53,  // 65: toshi.workspace.v1.ExecuteResponse.started:type_name -> toshi.workspace.v1.ExecutionStarted
-	54,  // 66: toshi.workspace.v1.ExecuteResponse.exit:type_name -> toshi.workspace.v1.ExecutionExit
-	23,  // 67: toshi.workspace.v1.Operation.error:type_name -> toshi.workspace.v1.Error
-	91,  // 68: toshi.workspace.v1.Operation.created_at:type_name -> google.protobuf.Timestamp
-	91,  // 69: toshi.workspace.v1.Operation.done_at:type_name -> google.protobuf.Timestamp
-	57,  // 70: toshi.workspace.v1.GetOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
-	92,  // 71: toshi.workspace.v1.WaitOperationRequest.timeout:type_name -> google.protobuf.Duration
-	57,  // 72: toshi.workspace.v1.WaitOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
-	6,   // 73: toshi.workspace.v1.Event.type:type_name -> toshi.workspace.v1.EventType
-	91,  // 74: toshi.workspace.v1.Event.time:type_name -> google.protobuf.Timestamp
-	9,   // 75: toshi.workspace.v1.Event.workload:type_name -> toshi.workspace.v1.Workload
-	63,  // 76: toshi.workspace.v1.Event.execution:type_name -> toshi.workspace.v1.ExecutionEvent
-	64,  // 77: toshi.workspace.v1.Event.emitted:type_name -> toshi.workspace.v1.EmittedEvent
-	65,  // 78: toshi.workspace.v1.Event.recording:type_name -> toshi.workspace.v1.RecordingEvent
-	54,  // 79: toshi.workspace.v1.ExecutionEvent.exit:type_name -> toshi.workspace.v1.ExecutionExit
-	94,  // 80: toshi.workspace.v1.RecordingEvent.kind:type_name -> toshi.workspace.v1.RecordingKind
-	62,  // 81: toshi.workspace.v1.ListEventsResponse.events:type_name -> toshi.workspace.v1.Event
-	62,  // 82: toshi.workspace.v1.WatchEventsResponse.event:type_name -> toshi.workspace.v1.Event
-	70,  // 83: toshi.workspace.v1.WatchEventsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	91,  // 84: toshi.workspace.v1.Keepalive.sent_at:type_name -> google.protobuf.Timestamp
-	7,   // 85: toshi.workspace.v1.PreviewShareLink.state:type_name -> toshi.workspace.v1.PreviewShareLinkState
-	91,  // 86: toshi.workspace.v1.PreviewShareLink.created_at:type_name -> google.protobuf.Timestamp
-	91,  // 87: toshi.workspace.v1.PreviewShareLink.expires_at:type_name -> google.protobuf.Timestamp
-	91,  // 88: toshi.workspace.v1.PreviewShareLink.opened_at:type_name -> google.protobuf.Timestamp
-	91,  // 89: toshi.workspace.v1.PreviewShareLink.revoked_at:type_name -> google.protobuf.Timestamp
-	91,  // 90: toshi.workspace.v1.PreviewShareLink.ended_at:type_name -> google.protobuf.Timestamp
-	92,  // 91: toshi.workspace.v1.CreatePreviewShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
-	71,  // 92: toshi.workspace.v1.CreatePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
-	71,  // 93: toshi.workspace.v1.ListPreviewShareLinksResponse.share_links:type_name -> toshi.workspace.v1.PreviewShareLink
-	71,  // 94: toshi.workspace.v1.RevokePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
-	9,   // 95: toshi.workspace.v1.StartServiceResponse.workload:type_name -> toshi.workspace.v1.Workload
-	9,   // 96: toshi.workspace.v1.StopServiceResponse.workload:type_name -> toshi.workspace.v1.Workload
-	5,   // 97: toshi.workspace.v1.SetServiceModeRequest.mode:type_name -> toshi.workspace.v1.ServiceMode
-	9,   // 98: toshi.workspace.v1.SetServiceModeResponse.workload:type_name -> toshi.workspace.v1.Workload
-	86,  // 99: toshi.workspace.v1.ListServiceRunsResponse.runs:type_name -> toshi.workspace.v1.ServiceRun
-	8,   // 100: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
-	91,  // 101: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
-	91,  // 102: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
-	91,  // 103: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
-	91,  // 104: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
-	25,  // 105: toshi.workspace.v1.WorkspaceService.CreateWorkload:input_type -> toshi.workspace.v1.CreateWorkloadRequest
-	27,  // 106: toshi.workspace.v1.WorkspaceService.GetWorkload:input_type -> toshi.workspace.v1.GetWorkloadRequest
-	29,  // 107: toshi.workspace.v1.WorkspaceService.ListWorkloads:input_type -> toshi.workspace.v1.ListWorkloadsRequest
-	31,  // 108: toshi.workspace.v1.WorkspaceService.PatchWorkload:input_type -> toshi.workspace.v1.PatchWorkloadRequest
-	33,  // 109: toshi.workspace.v1.WorkspaceService.DeleteWorkload:input_type -> toshi.workspace.v1.DeleteWorkloadRequest
-	35,  // 110: toshi.workspace.v1.WorkspaceService.WaitWorkload:input_type -> toshi.workspace.v1.WaitWorkloadRequest
-	37,  // 111: toshi.workspace.v1.WorkspaceService.WatchWorkloads:input_type -> toshi.workspace.v1.WatchWorkloadsRequest
-	39,  // 112: toshi.workspace.v1.WorkspaceService.WatchOutput:input_type -> toshi.workspace.v1.WatchOutputRequest
-	42,  // 113: toshi.workspace.v1.WorkspaceService.WatchTelemetry:input_type -> toshi.workspace.v1.WatchTelemetryRequest
-	46,  // 114: toshi.workspace.v1.WorkspaceService.WatchGuestLog:input_type -> toshi.workspace.v1.WatchGuestLogRequest
-	50,  // 115: toshi.workspace.v1.WorkspaceService.Execute:input_type -> toshi.workspace.v1.ExecuteRequest
-	55,  // 116: toshi.workspace.v1.WorkspaceService.CancelExecution:input_type -> toshi.workspace.v1.CancelExecutionRequest
-	58,  // 117: toshi.workspace.v1.WorkspaceService.GetOperation:input_type -> toshi.workspace.v1.GetOperationRequest
-	60,  // 118: toshi.workspace.v1.WorkspaceService.WaitOperation:input_type -> toshi.workspace.v1.WaitOperationRequest
-	66,  // 119: toshi.workspace.v1.WorkspaceService.ListEvents:input_type -> toshi.workspace.v1.ListEventsRequest
-	68,  // 120: toshi.workspace.v1.WorkspaceService.WatchEvents:input_type -> toshi.workspace.v1.WatchEventsRequest
-	72,  // 121: toshi.workspace.v1.WorkspaceService.CreatePreviewShareLink:input_type -> toshi.workspace.v1.CreatePreviewShareLinkRequest
-	74,  // 122: toshi.workspace.v1.WorkspaceService.ListPreviewShareLinks:input_type -> toshi.workspace.v1.ListPreviewShareLinksRequest
-	76,  // 123: toshi.workspace.v1.WorkspaceService.RevokePreviewShareLink:input_type -> toshi.workspace.v1.RevokePreviewShareLinkRequest
-	78,  // 124: toshi.workspace.v1.WorkspaceService.StartService:input_type -> toshi.workspace.v1.StartServiceRequest
-	80,  // 125: toshi.workspace.v1.WorkspaceService.StopService:input_type -> toshi.workspace.v1.StopServiceRequest
-	82,  // 126: toshi.workspace.v1.WorkspaceService.SetServiceMode:input_type -> toshi.workspace.v1.SetServiceModeRequest
-	84,  // 127: toshi.workspace.v1.WorkspaceService.ListServiceRuns:input_type -> toshi.workspace.v1.ListServiceRunsRequest
-	26,  // 128: toshi.workspace.v1.WorkspaceService.CreateWorkload:output_type -> toshi.workspace.v1.CreateWorkloadResponse
-	28,  // 129: toshi.workspace.v1.WorkspaceService.GetWorkload:output_type -> toshi.workspace.v1.GetWorkloadResponse
-	30,  // 130: toshi.workspace.v1.WorkspaceService.ListWorkloads:output_type -> toshi.workspace.v1.ListWorkloadsResponse
-	32,  // 131: toshi.workspace.v1.WorkspaceService.PatchWorkload:output_type -> toshi.workspace.v1.PatchWorkloadResponse
-	34,  // 132: toshi.workspace.v1.WorkspaceService.DeleteWorkload:output_type -> toshi.workspace.v1.DeleteWorkloadResponse
-	36,  // 133: toshi.workspace.v1.WorkspaceService.WaitWorkload:output_type -> toshi.workspace.v1.WaitWorkloadResponse
-	38,  // 134: toshi.workspace.v1.WorkspaceService.WatchWorkloads:output_type -> toshi.workspace.v1.WatchWorkloadsResponse
-	40,  // 135: toshi.workspace.v1.WorkspaceService.WatchOutput:output_type -> toshi.workspace.v1.WatchOutputResponse
-	43,  // 136: toshi.workspace.v1.WorkspaceService.WatchTelemetry:output_type -> toshi.workspace.v1.WatchTelemetryResponse
-	47,  // 137: toshi.workspace.v1.WorkspaceService.WatchGuestLog:output_type -> toshi.workspace.v1.WatchGuestLogResponse
-	52,  // 138: toshi.workspace.v1.WorkspaceService.Execute:output_type -> toshi.workspace.v1.ExecuteResponse
-	56,  // 139: toshi.workspace.v1.WorkspaceService.CancelExecution:output_type -> toshi.workspace.v1.CancelExecutionResponse
-	59,  // 140: toshi.workspace.v1.WorkspaceService.GetOperation:output_type -> toshi.workspace.v1.GetOperationResponse
-	61,  // 141: toshi.workspace.v1.WorkspaceService.WaitOperation:output_type -> toshi.workspace.v1.WaitOperationResponse
-	67,  // 142: toshi.workspace.v1.WorkspaceService.ListEvents:output_type -> toshi.workspace.v1.ListEventsResponse
-	69,  // 143: toshi.workspace.v1.WorkspaceService.WatchEvents:output_type -> toshi.workspace.v1.WatchEventsResponse
-	73,  // 144: toshi.workspace.v1.WorkspaceService.CreatePreviewShareLink:output_type -> toshi.workspace.v1.CreatePreviewShareLinkResponse
-	75,  // 145: toshi.workspace.v1.WorkspaceService.ListPreviewShareLinks:output_type -> toshi.workspace.v1.ListPreviewShareLinksResponse
-	77,  // 146: toshi.workspace.v1.WorkspaceService.RevokePreviewShareLink:output_type -> toshi.workspace.v1.RevokePreviewShareLinkResponse
-	79,  // 147: toshi.workspace.v1.WorkspaceService.StartService:output_type -> toshi.workspace.v1.StartServiceResponse
-	81,  // 148: toshi.workspace.v1.WorkspaceService.StopService:output_type -> toshi.workspace.v1.StopServiceResponse
-	83,  // 149: toshi.workspace.v1.WorkspaceService.SetServiceMode:output_type -> toshi.workspace.v1.SetServiceModeResponse
-	85,  // 150: toshi.workspace.v1.WorkspaceService.ListServiceRuns:output_type -> toshi.workspace.v1.ListServiceRunsResponse
-	128, // [128:151] is the sub-list for method output_type
-	105, // [105:128] is the sub-list for method input_type
-	105, // [105:105] is the sub-list for extension type_name
-	105, // [105:105] is the sub-list for extension extendee
-	0,   // [0:105] is the sub-list for field type_name
+	57,  // 47: toshi.workspace.v1.PatchWorkloadResponse.operation:type_name -> toshi.workspace.v1.Operation
+	57,  // 48: toshi.workspace.v1.DeleteWorkloadResponse.operation:type_name -> toshi.workspace.v1.Operation
+	1,   // 49: toshi.workspace.v1.WaitWorkloadRequest.states:type_name -> toshi.workspace.v1.WorkloadState
+	92,  // 50: toshi.workspace.v1.WaitWorkloadRequest.timeout:type_name -> google.protobuf.Duration
+	9,   // 51: toshi.workspace.v1.WaitWorkloadResponse.workload:type_name -> toshi.workspace.v1.Workload
+	0,   // 52: toshi.workspace.v1.WatchWorkloadsRequest.kinds:type_name -> toshi.workspace.v1.WorkloadKind
+	6,   // 53: toshi.workspace.v1.WatchWorkloadsResponse.type:type_name -> toshi.workspace.v1.EventType
+	9,   // 54: toshi.workspace.v1.WatchWorkloadsResponse.workload:type_name -> toshi.workspace.v1.Workload
+	70,  // 55: toshi.workspace.v1.WatchWorkloadsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	41,  // 56: toshi.workspace.v1.WatchOutputResponse.end:type_name -> toshi.workspace.v1.OutputEnd
+	44,  // 57: toshi.workspace.v1.WatchTelemetryResponse.sample:type_name -> toshi.workspace.v1.TelemetrySample
+	70,  // 58: toshi.workspace.v1.WatchTelemetryResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	45,  // 59: toshi.workspace.v1.WatchTelemetryResponse.end:type_name -> toshi.workspace.v1.TelemetryEnd
+	91,  // 60: toshi.workspace.v1.TelemetrySample.at:type_name -> google.protobuf.Timestamp
+	48,  // 61: toshi.workspace.v1.WatchGuestLogResponse.chunk:type_name -> toshi.workspace.v1.GuestLogChunk
+	70,  // 62: toshi.workspace.v1.WatchGuestLogResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	49,  // 63: toshi.workspace.v1.WatchGuestLogResponse.end:type_name -> toshi.workspace.v1.GuestLogEnd
+	51,  // 64: toshi.workspace.v1.ExecuteRequest.start:type_name -> toshi.workspace.v1.ExecuteStart
+	21,  // 65: toshi.workspace.v1.ExecuteStart.command:type_name -> toshi.workspace.v1.Command
+	53,  // 66: toshi.workspace.v1.ExecuteResponse.started:type_name -> toshi.workspace.v1.ExecutionStarted
+	54,  // 67: toshi.workspace.v1.ExecuteResponse.exit:type_name -> toshi.workspace.v1.ExecutionExit
+	23,  // 68: toshi.workspace.v1.Operation.error:type_name -> toshi.workspace.v1.Error
+	91,  // 69: toshi.workspace.v1.Operation.created_at:type_name -> google.protobuf.Timestamp
+	91,  // 70: toshi.workspace.v1.Operation.done_at:type_name -> google.protobuf.Timestamp
+	57,  // 71: toshi.workspace.v1.GetOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
+	92,  // 72: toshi.workspace.v1.WaitOperationRequest.timeout:type_name -> google.protobuf.Duration
+	57,  // 73: toshi.workspace.v1.WaitOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
+	6,   // 74: toshi.workspace.v1.Event.type:type_name -> toshi.workspace.v1.EventType
+	91,  // 75: toshi.workspace.v1.Event.time:type_name -> google.protobuf.Timestamp
+	9,   // 76: toshi.workspace.v1.Event.workload:type_name -> toshi.workspace.v1.Workload
+	63,  // 77: toshi.workspace.v1.Event.execution:type_name -> toshi.workspace.v1.ExecutionEvent
+	64,  // 78: toshi.workspace.v1.Event.emitted:type_name -> toshi.workspace.v1.EmittedEvent
+	65,  // 79: toshi.workspace.v1.Event.recording:type_name -> toshi.workspace.v1.RecordingEvent
+	54,  // 80: toshi.workspace.v1.ExecutionEvent.exit:type_name -> toshi.workspace.v1.ExecutionExit
+	94,  // 81: toshi.workspace.v1.RecordingEvent.kind:type_name -> toshi.workspace.v1.RecordingKind
+	62,  // 82: toshi.workspace.v1.ListEventsResponse.events:type_name -> toshi.workspace.v1.Event
+	62,  // 83: toshi.workspace.v1.WatchEventsResponse.event:type_name -> toshi.workspace.v1.Event
+	70,  // 84: toshi.workspace.v1.WatchEventsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	91,  // 85: toshi.workspace.v1.Keepalive.sent_at:type_name -> google.protobuf.Timestamp
+	7,   // 86: toshi.workspace.v1.PreviewShareLink.state:type_name -> toshi.workspace.v1.PreviewShareLinkState
+	91,  // 87: toshi.workspace.v1.PreviewShareLink.created_at:type_name -> google.protobuf.Timestamp
+	91,  // 88: toshi.workspace.v1.PreviewShareLink.expires_at:type_name -> google.protobuf.Timestamp
+	91,  // 89: toshi.workspace.v1.PreviewShareLink.opened_at:type_name -> google.protobuf.Timestamp
+	91,  // 90: toshi.workspace.v1.PreviewShareLink.revoked_at:type_name -> google.protobuf.Timestamp
+	91,  // 91: toshi.workspace.v1.PreviewShareLink.ended_at:type_name -> google.protobuf.Timestamp
+	92,  // 92: toshi.workspace.v1.CreatePreviewShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
+	71,  // 93: toshi.workspace.v1.CreatePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
+	71,  // 94: toshi.workspace.v1.ListPreviewShareLinksResponse.share_links:type_name -> toshi.workspace.v1.PreviewShareLink
+	71,  // 95: toshi.workspace.v1.RevokePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
+	9,   // 96: toshi.workspace.v1.StartServiceResponse.workload:type_name -> toshi.workspace.v1.Workload
+	9,   // 97: toshi.workspace.v1.StopServiceResponse.workload:type_name -> toshi.workspace.v1.Workload
+	5,   // 98: toshi.workspace.v1.SetServiceModeRequest.mode:type_name -> toshi.workspace.v1.ServiceMode
+	9,   // 99: toshi.workspace.v1.SetServiceModeResponse.workload:type_name -> toshi.workspace.v1.Workload
+	86,  // 100: toshi.workspace.v1.ListServiceRunsResponse.runs:type_name -> toshi.workspace.v1.ServiceRun
+	8,   // 101: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
+	91,  // 102: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
+	91,  // 103: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
+	91,  // 104: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
+	91,  // 105: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
+	25,  // 106: toshi.workspace.v1.WorkspaceService.CreateWorkload:input_type -> toshi.workspace.v1.CreateWorkloadRequest
+	27,  // 107: toshi.workspace.v1.WorkspaceService.GetWorkload:input_type -> toshi.workspace.v1.GetWorkloadRequest
+	29,  // 108: toshi.workspace.v1.WorkspaceService.ListWorkloads:input_type -> toshi.workspace.v1.ListWorkloadsRequest
+	31,  // 109: toshi.workspace.v1.WorkspaceService.PatchWorkload:input_type -> toshi.workspace.v1.PatchWorkloadRequest
+	33,  // 110: toshi.workspace.v1.WorkspaceService.DeleteWorkload:input_type -> toshi.workspace.v1.DeleteWorkloadRequest
+	35,  // 111: toshi.workspace.v1.WorkspaceService.WaitWorkload:input_type -> toshi.workspace.v1.WaitWorkloadRequest
+	37,  // 112: toshi.workspace.v1.WorkspaceService.WatchWorkloads:input_type -> toshi.workspace.v1.WatchWorkloadsRequest
+	39,  // 113: toshi.workspace.v1.WorkspaceService.WatchOutput:input_type -> toshi.workspace.v1.WatchOutputRequest
+	42,  // 114: toshi.workspace.v1.WorkspaceService.WatchTelemetry:input_type -> toshi.workspace.v1.WatchTelemetryRequest
+	46,  // 115: toshi.workspace.v1.WorkspaceService.WatchGuestLog:input_type -> toshi.workspace.v1.WatchGuestLogRequest
+	50,  // 116: toshi.workspace.v1.WorkspaceService.Execute:input_type -> toshi.workspace.v1.ExecuteRequest
+	55,  // 117: toshi.workspace.v1.WorkspaceService.CancelExecution:input_type -> toshi.workspace.v1.CancelExecutionRequest
+	58,  // 118: toshi.workspace.v1.WorkspaceService.GetOperation:input_type -> toshi.workspace.v1.GetOperationRequest
+	60,  // 119: toshi.workspace.v1.WorkspaceService.WaitOperation:input_type -> toshi.workspace.v1.WaitOperationRequest
+	66,  // 120: toshi.workspace.v1.WorkspaceService.ListEvents:input_type -> toshi.workspace.v1.ListEventsRequest
+	68,  // 121: toshi.workspace.v1.WorkspaceService.WatchEvents:input_type -> toshi.workspace.v1.WatchEventsRequest
+	72,  // 122: toshi.workspace.v1.WorkspaceService.CreatePreviewShareLink:input_type -> toshi.workspace.v1.CreatePreviewShareLinkRequest
+	74,  // 123: toshi.workspace.v1.WorkspaceService.ListPreviewShareLinks:input_type -> toshi.workspace.v1.ListPreviewShareLinksRequest
+	76,  // 124: toshi.workspace.v1.WorkspaceService.RevokePreviewShareLink:input_type -> toshi.workspace.v1.RevokePreviewShareLinkRequest
+	78,  // 125: toshi.workspace.v1.WorkspaceService.StartService:input_type -> toshi.workspace.v1.StartServiceRequest
+	80,  // 126: toshi.workspace.v1.WorkspaceService.StopService:input_type -> toshi.workspace.v1.StopServiceRequest
+	82,  // 127: toshi.workspace.v1.WorkspaceService.SetServiceMode:input_type -> toshi.workspace.v1.SetServiceModeRequest
+	84,  // 128: toshi.workspace.v1.WorkspaceService.ListServiceRuns:input_type -> toshi.workspace.v1.ListServiceRunsRequest
+	26,  // 129: toshi.workspace.v1.WorkspaceService.CreateWorkload:output_type -> toshi.workspace.v1.CreateWorkloadResponse
+	28,  // 130: toshi.workspace.v1.WorkspaceService.GetWorkload:output_type -> toshi.workspace.v1.GetWorkloadResponse
+	30,  // 131: toshi.workspace.v1.WorkspaceService.ListWorkloads:output_type -> toshi.workspace.v1.ListWorkloadsResponse
+	32,  // 132: toshi.workspace.v1.WorkspaceService.PatchWorkload:output_type -> toshi.workspace.v1.PatchWorkloadResponse
+	34,  // 133: toshi.workspace.v1.WorkspaceService.DeleteWorkload:output_type -> toshi.workspace.v1.DeleteWorkloadResponse
+	36,  // 134: toshi.workspace.v1.WorkspaceService.WaitWorkload:output_type -> toshi.workspace.v1.WaitWorkloadResponse
+	38,  // 135: toshi.workspace.v1.WorkspaceService.WatchWorkloads:output_type -> toshi.workspace.v1.WatchWorkloadsResponse
+	40,  // 136: toshi.workspace.v1.WorkspaceService.WatchOutput:output_type -> toshi.workspace.v1.WatchOutputResponse
+	43,  // 137: toshi.workspace.v1.WorkspaceService.WatchTelemetry:output_type -> toshi.workspace.v1.WatchTelemetryResponse
+	47,  // 138: toshi.workspace.v1.WorkspaceService.WatchGuestLog:output_type -> toshi.workspace.v1.WatchGuestLogResponse
+	52,  // 139: toshi.workspace.v1.WorkspaceService.Execute:output_type -> toshi.workspace.v1.ExecuteResponse
+	56,  // 140: toshi.workspace.v1.WorkspaceService.CancelExecution:output_type -> toshi.workspace.v1.CancelExecutionResponse
+	59,  // 141: toshi.workspace.v1.WorkspaceService.GetOperation:output_type -> toshi.workspace.v1.GetOperationResponse
+	61,  // 142: toshi.workspace.v1.WorkspaceService.WaitOperation:output_type -> toshi.workspace.v1.WaitOperationResponse
+	67,  // 143: toshi.workspace.v1.WorkspaceService.ListEvents:output_type -> toshi.workspace.v1.ListEventsResponse
+	69,  // 144: toshi.workspace.v1.WorkspaceService.WatchEvents:output_type -> toshi.workspace.v1.WatchEventsResponse
+	73,  // 145: toshi.workspace.v1.WorkspaceService.CreatePreviewShareLink:output_type -> toshi.workspace.v1.CreatePreviewShareLinkResponse
+	75,  // 146: toshi.workspace.v1.WorkspaceService.ListPreviewShareLinks:output_type -> toshi.workspace.v1.ListPreviewShareLinksResponse
+	77,  // 147: toshi.workspace.v1.WorkspaceService.RevokePreviewShareLink:output_type -> toshi.workspace.v1.RevokePreviewShareLinkResponse
+	79,  // 148: toshi.workspace.v1.WorkspaceService.StartService:output_type -> toshi.workspace.v1.StartServiceResponse
+	81,  // 149: toshi.workspace.v1.WorkspaceService.StopService:output_type -> toshi.workspace.v1.StopServiceResponse
+	83,  // 150: toshi.workspace.v1.WorkspaceService.SetServiceMode:output_type -> toshi.workspace.v1.SetServiceModeResponse
+	85,  // 151: toshi.workspace.v1.WorkspaceService.ListServiceRuns:output_type -> toshi.workspace.v1.ListServiceRunsResponse
+	129, // [129:152] is the sub-list for method output_type
+	106, // [106:129] is the sub-list for method input_type
+	106, // [106:106] is the sub-list for extension type_name
+	106, // [106:106] is the sub-list for extension extendee
+	0,   // [0:106] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_workspace_proto_init() }
