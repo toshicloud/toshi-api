@@ -903,7 +903,7 @@ export const SetBranchRulesResponseSchema: GenMessage<SetBranchRulesResponse, {j
 
 /**
  * ProjectService reads a workspace's projects and the repositories they
- * claim, creates a project or an environment of one, moves a
+ * claim, creates a project, creates or deletes an environment of one, moves a
  * repository's claim and sets the branch rules that choose a CI job's
  * environment. A workspace holds projects, and a project holds environments.
  *
