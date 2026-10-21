@@ -371,6 +371,13 @@ message ServiceSpec {
   ServiceMode mode = 2;
   // The number of its current revision: its next run runs that recipe.
   int64 revision = 3;
+  // Its name, unique among the workspace's services. Set by the server;
+  // ignored in a request.
+  string name = 4;
+  // The template its recipe starts from: "agent", "mcp-server",
+  // "model-server", "database", "browser", "dev-server", "media-server",
+  // "proxy" or "custom". Set by the server; ignored in a request.
+  string template = 5;
 }
 
 // ServiceMode is how a service runs.

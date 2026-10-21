@@ -1417,7 +1417,14 @@ type ServiceSpec struct {
 	// How it runs; set with SetServiceMode.
 	Mode ServiceMode `protobuf:"varint,2,opt,name=mode,proto3,enum=toshi.workspace.v1.ServiceMode" json:"mode,omitempty"`
 	// The number of its current revision: its next run runs that recipe.
-	Revision      int64 `protobuf:"varint,3,opt,name=revision,proto3" json:"revision,omitempty"`
+	Revision int64 `protobuf:"varint,3,opt,name=revision,proto3" json:"revision,omitempty"`
+	// Its name, unique among the workspace's services. Set by the server;
+	// ignored in a request.
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// The template its recipe starts from: "agent", "mcp-server",
+	// "model-server", "database", "browser", "dev-server", "media-server",
+	// "proxy" or "custom". Set by the server; ignored in a request.
+	Template      string `protobuf:"bytes,5,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1471,6 +1478,20 @@ func (x *ServiceSpec) GetRevision() int64 {
 		return x.Revision
 	}
 	return 0
+}
+
+func (x *ServiceSpec) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ServiceSpec) GetTemplate() string {
+	if x != nil {
+		return x.Template
+	}
+	return ""
 }
 
 // Command is a program to run in a workload's VM. argv is not passed
@@ -5977,11 +5998,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\vSandboxSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
 	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
-	"\bbindings\x18\x03 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\"r\n" +
+	"\bbindings\x18\x03 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\"\xa2\x01\n" +
 	"\vServiceSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x123\n" +
 	"\x04mode\x18\x02 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\x12\x1a\n" +
-	"\brevision\x18\x03 \x01(\x03R\brevision\"\x9f\x01\n" +
+	"\brevision\x18\x03 \x01(\x03R\brevision\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1a\n" +
+	"\btemplate\x18\x05 \x01(\tR\btemplate\"\x9f\x01\n" +
 	"\aCommand\x12\x12\n" +
 	"\x04argv\x18\x01 \x03(\tR\x04argv\x126\n" +
 	"\x03env\x18\x02 \x03(\v2$.toshi.workspace.v1.Command.EnvEntryR\x03env\x12\x10\n" +
