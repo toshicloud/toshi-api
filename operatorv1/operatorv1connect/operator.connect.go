@@ -353,10 +353,10 @@ type OperatorServiceClient interface {
 	// spending cap while billing is off fails with FAILED_PRECONDITION; an
 	// unknown ID fails with NOT_FOUND.
 	SetTenantSpendLimits(context.Context, *connect.Request[operatorv1.SetTenantSpendLimitsRequest]) (*connect.Response[operatorv1.SetTenantSpendLimitsResponse], error)
-	// GetUsage returns job counts and billable minutes per tenant, UTC day and
-	// conclusion, for the jobs whose queued_at is in the window. The window
-	// defaults to the last 7 days. A window whose from is not before its to
-	// fails with INVALID_ARGUMENT.
+	// GetUsage returns job counts and billable minutes per tenant, UTC day,
+	// conclusion, outcome and kind, for the jobs whose queued_at is in the
+	// window. The window defaults to the last 7 days. A window whose from is not before its
+	// to fails with INVALID_ARGUMENT.
 	GetUsage(context.Context, *connect.Request[operatorv1.GetUsageRequest]) (*connect.Response[operatorv1.GetUsageResponse], error)
 	// GetQueueTimes returns a queue-time summary (percentiles, maximum and warm
 	// share) for the jobs that reached running in the window, where a job is in
@@ -1501,10 +1501,10 @@ type OperatorServiceHandler interface {
 	// spending cap while billing is off fails with FAILED_PRECONDITION; an
 	// unknown ID fails with NOT_FOUND.
 	SetTenantSpendLimits(context.Context, *connect.Request[operatorv1.SetTenantSpendLimitsRequest]) (*connect.Response[operatorv1.SetTenantSpendLimitsResponse], error)
-	// GetUsage returns job counts and billable minutes per tenant, UTC day and
-	// conclusion, for the jobs whose queued_at is in the window. The window
-	// defaults to the last 7 days. A window whose from is not before its to
-	// fails with INVALID_ARGUMENT.
+	// GetUsage returns job counts and billable minutes per tenant, UTC day,
+	// conclusion, outcome and kind, for the jobs whose queued_at is in the
+	// window. The window defaults to the last 7 days. A window whose from is not before its
+	// to fails with INVALID_ARGUMENT.
 	GetUsage(context.Context, *connect.Request[operatorv1.GetUsageRequest]) (*connect.Response[operatorv1.GetUsageResponse], error)
 	// GetQueueTimes returns a queue-time summary (percentiles, maximum and warm
 	// share) for the jobs that reached running in the window, where a job is in

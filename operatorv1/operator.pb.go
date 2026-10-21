@@ -6086,8 +6086,8 @@ func (x *GetUsageRequest) GetTenant() string {
 
 type GetUsageResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Ordered by tenant, then day, then conclusion, then outcome. A window
-	// with no jobs has no rows.
+	// Ordered by tenant, then day, then conclusion, then outcome, then kind. A
+	// window with neither matching jobs nor reserved hours has no rows.
 	Rows []*UsageRow `protobuf:"bytes,1,rep,name=rows,proto3" json:"rows,omitempty"`
 	// The window used, with the defaults filled in.
 	From *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
@@ -6221,7 +6221,8 @@ func (x *FillerUsage) GetMinutes() int64 {
 	return 0
 }
 
-// UsageRow counts the jobs of one tenant, UTC day, conclusion and outcome.
+// UsageRow counts the jobs of one tenant, UTC day, conclusion, outcome and
+// kind.
 type UsageRow struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
@@ -6252,7 +6253,10 @@ type UsageRow struct {
 	ReservedSlotHours int64 `protobuf:"varint,9,opt,name=reserved_slot_hours,json=reservedSlotHours,proto3" json:"reserved_slot_hours,omitempty"`
 	// Toshi's own word for the jobs in this row when Toshi ended them itself
 	// (the values of Job.outcome); empty for every other row.
-	Outcome       string `protobuf:"bytes,10,opt,name=outcome,proto3" json:"outcome,omitempty"`
+	Outcome string `protobuf:"bytes,10,opt,name=outcome,proto3" json:"outcome,omitempty"`
+	// The kind of the row's jobs: "job", "sandbox" or "service". Empty on a
+	// reserved-hours row.
+	Kind          string `protobuf:"bytes,11,opt,name=kind,proto3" json:"kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6353,6 +6357,13 @@ func (x *UsageRow) GetReservedSlotHours() int64 {
 func (x *UsageRow) GetOutcome() string {
 	if x != nil {
 		return x.Outcome
+	}
+	return ""
+}
+
+func (x *UsageRow) GetKind() string {
+	if x != nil {
+		return x.Kind
 	}
 	return ""
 }
@@ -14579,7 +14590,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\vFillerUsage\x12\x16\n" +
 	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x12\n" +
 	"\x04jobs\x18\x02 \x01(\x03R\x04jobs\x12\x18\n" +
-	"\aminutes\x18\x03 \x01(\x03R\aminutes\"\xc6\x02\n" +
+	"\aminutes\x18\x03 \x01(\x03R\aminutes\"\xda\x02\n" +
 	"\bUsageRow\x12\x16\n" +
 	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x10\n" +
 	"\x03day\x18\x02 \x01(\tR\x03day\x12\x1e\n" +
@@ -14593,7 +14604,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x10overflow_minutes\x18\b \x01(\x03R\x0foverflowMinutes\x12.\n" +
 	"\x13reserved_slot_hours\x18\t \x01(\x03R\x11reservedSlotHours\x12\x18\n" +
 	"\aoutcome\x18\n" +
-	" \x01(\tR\aoutcome\"\x8a\x01\n" +
+	" \x01(\tR\aoutcome\x12\x12\n" +
+	"\x04kind\x18\v \x01(\tR\x04kind\"\x8a\x01\n" +
 	"\x14GetQueueTimesRequest\x12.\n" +
 	"\x04from\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
 	"\x02to\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x16\n" +

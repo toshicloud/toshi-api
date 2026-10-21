@@ -159,10 +159,10 @@ service OperatorService {
   // unknown ID fails with NOT_FOUND.
   rpc SetTenantSpendLimits(SetTenantSpendLimitsRequest) returns (SetTenantSpendLimitsResponse);
 
-  // GetUsage returns job counts and billable minutes per tenant, UTC day and
-  // conclusion, for the jobs whose queued_at is in the window. The window
-  // defaults to the last 7 days. A window whose from is not before its to
-  // fails with INVALID_ARGUMENT.
+  // GetUsage returns job counts and billable minutes per tenant, UTC day,
+  // conclusion, outcome and kind, for the jobs whose queued_at is in the
+  // window. The window defaults to the last 7 days. A window whose from is not before its
+  // to fails with INVALID_ARGUMENT.
   rpc GetUsage(GetUsageRequest) returns (GetUsageResponse);
 
   // GetQueueTimes returns a queue-time summary (percentiles, maximum and warm
@@ -1463,8 +1463,8 @@ message GetUsageRequest {
 }
 
 message GetUsageResponse {
-  // Ordered by tenant, then day, then conclusion, then outcome. A window
-  // with no jobs has no rows.
+  // Ordered by tenant, then day, then conclusion, then outcome, then kind. A
+  // window with neither matching jobs nor reserved hours has no rows.
   repeated UsageRow rows = 1;
   // The window used, with the defaults filled in.
   google.protobuf.Timestamp from = 2;
@@ -1484,7 +1484,8 @@ message FillerUsage {
   int64 minutes = 3;
 }
 
-// UsageRow counts the jobs of one tenant, UTC day, conclusion and outcome.
+// UsageRow counts the jobs of one tenant, UTC day, conclusion, outcome and
+// kind.
 message UsageRow {
   string tenant = 1;
   // The UTC date of the job's queued_at, as YYYY-MM-DD.
@@ -1515,6 +1516,9 @@ message UsageRow {
   // Toshi's own word for the jobs in this row when Toshi ended them itself
   // (the values of Job.outcome); empty for every other row.
   string outcome = 10;
+  // The kind of the row's jobs: "job", "sandbox" or "service". Empty on a
+  // reserved-hours row.
+  string kind = 11;
 }
 
 // GetQueueTimesRequest selects the jobs to summarize. A job is in the window
