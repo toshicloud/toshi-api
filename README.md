@@ -71,8 +71,7 @@ and are tagged `vMAJOR.MINOR.PATCH`, as Go modules expect.
 
 While the major version is 0:
 
-- an addition bumps the minor version;
-- a fix or a comment change bumps the patch version;
+- an addition, a fix or a comment change bumps the patch version;
 - a breaking change bumps the minor version, and its pull request title
   marks it with `!`, as in Conventional Commits (`feat!: ...`).
 
