@@ -84,6 +84,17 @@ service WorkspaceService {
   // holds at its own pace.
   rpc WatchOutput(WatchOutputRequest) returns (stream WatchOutputResponse);
 
+  // WatchTelemetry streams a sandbox's resource samples as its host reports
+  // them, in cursor order: the samples kept after a cursor, then each one as
+  // it is stored. Each sample stored takes the next cursor, also one timed
+  // before a sample already sent. Last comes an end, once the sandbox has
+  // ended and every sample still kept that was stored before it ended has
+  // been sent. A host can report a sample after the end: a watch resumed
+  // from the last cursor returns it, then ends again. A sandbox that has
+  // not started yet is waited for. A job or service fails with
+  // INVALID_ARGUMENT.
+  rpc WatchTelemetry(WatchTelemetryRequest) returns (stream WatchTelemetryResponse);
+
   // Execute starts a command in a running workload. The first request
   // carries the start message; later requests carry standard input. The
   // stream answers with the execution's ID, then its standard output and
@@ -586,6 +597,68 @@ message OutputEnd {
   // True when the server kept only the start of a stream.
   bool truncated = 3;
 }
+
+message WatchTelemetryRequest {
+  string project = 1;
+  string environment = 2;
+  // The sandbox's ID.
+  string id = 3;
+  // Samples stored after this position: a cursor from an earlier
+  // WatchTelemetry message for the same sandbox; empty starts at the oldest
+  // sample kept. A malformed cursor fails with INVALID_ARGUMENT.
+  string cursor = 4;
+  // Ask for keepalives: a message with only keepalive set whenever the
+  // stream has sent nothing for an interval the server sets (30 seconds by
+  // default). Without it the stream sends samples and the end only.
+  bool keepalive = 5;
+}
+
+// WatchTelemetryResponse is one message of a WatchTelemetry stream.
+message WatchTelemetryResponse {
+  oneof message {
+    TelemetrySample sample = 1;
+    // Its cursor is that of the last sample sent; before the first, the
+    // request's cursor (empty when the request had none).
+    Keepalive keepalive = 2;
+    // The last message.
+    TelemetryEnd end = 3;
+  }
+}
+
+// TelemetrySample is one window of a sandbox VM's resource use, as its host
+// measured it. Every field but cursor, at, window_ms and the memory fields
+// is the amount used within the window.
+message TelemetrySample {
+  // The position to resume after this sample.
+  string cursor = 1;
+  // The end of the window, on the host's clock.
+  google.protobuf.Timestamp at = 2;
+  // The window's length in milliseconds.
+  int32 window_ms = 3;
+  // CPU time the VM used in the window, in milliseconds.
+  int64 cpu_ms = 4;
+  // Time the VM's threads were ready to run but waited for a host CPU, in
+  // milliseconds.
+  int64 cpu_wait_ms = 5;
+  // Memory in use inside the guest at its highest in the window, in MiB.
+  // Unset when the guest does not report it.
+  optional int64 guest_memory_mib = 6;
+  // Host memory the VM held (resident) at its highest in the window, in MiB.
+  int64 host_memory_mib = 7;
+  // Bytes the VM read from and wrote to its disks.
+  int64 disk_read_bytes = 8;
+  int64 disk_write_bytes = 9;
+  // Bytes the guest received and sent on its network interfaces. Unset when
+  // the guest does not report them.
+  optional int64 net_rx_bytes = 10;
+  optional int64 net_tx_bytes = 11;
+  // Processes the guest kernel's out-of-memory killer killed. Unset when the
+  // guest does not report it.
+  optional int32 oom_kills = 12;
+}
+
+// TelemetryEnd ends a WatchTelemetry stream: the sandbox has ended.
+message TelemetryEnd {}
 
 message ExecuteRequest {
   oneof message {
