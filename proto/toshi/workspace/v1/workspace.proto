@@ -1050,6 +1050,7 @@ message StartServiceRequest {
   string environment = 2;
   // The service's workload id.
   string id = 3;
+  string request_key = 4;
 }
 
 message StartServiceResponse {
@@ -1060,6 +1061,7 @@ message StopServiceRequest {
   string project = 1;
   string environment = 2;
   string id = 3;
+  string request_key = 4;
 }
 
 message StopServiceResponse {
@@ -1072,6 +1074,7 @@ message SetServiceModeRequest {
   string id = 3;
   // Required.
   ServiceMode mode = 4;
+  string request_key = 5;
 }
 
 message SetServiceModeResponse {

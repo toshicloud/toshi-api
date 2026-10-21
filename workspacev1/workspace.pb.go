@@ -5779,6 +5779,7 @@ type StartServiceRequest struct {
 	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
 	Id            string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5834,6 +5835,13 @@ func (x *StartServiceRequest) GetId() string {
 	return ""
 }
 
+func (x *StartServiceRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
+}
+
 type StartServiceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Workload      *Workload              `protobuf:"bytes,1,opt,name=workload,proto3" json:"workload,omitempty"`
@@ -5883,6 +5891,7 @@ type StopServiceRequest struct {
 	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5938,6 +5947,13 @@ func (x *StopServiceRequest) GetId() string {
 	return ""
 }
 
+func (x *StopServiceRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
+}
+
 type StopServiceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Workload      *Workload              `protobuf:"bytes,1,opt,name=workload,proto3" json:"workload,omitempty"`
@@ -5989,6 +6005,7 @@ type SetServiceModeRequest struct {
 	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// Required.
 	Mode          ServiceMode `protobuf:"varint,4,opt,name=mode,proto3,enum=toshi.workspace.v1.ServiceMode" json:"mode,omitempty"`
+	RequestKey    string      `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6049,6 +6066,13 @@ func (x *SetServiceModeRequest) GetMode() ServiceMode {
 		return x.Mode
 	}
 	return ServiceMode_SERVICE_MODE_UNSPECIFIED
+}
+
+func (x *SetServiceModeRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type SetServiceModeResponse struct {
@@ -6742,24 +6766,30 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\rshare_link_id\x18\x04 \x01(\tR\vshareLinkId\"e\n" +
 	"\x1eRevokePreviewShareLinkResponse\x12C\n" +
 	"\n" +
-	"share_link\x18\x01 \x01(\v2$.toshi.workspace.v1.PreviewShareLinkR\tshareLink\"a\n" +
+	"share_link\x18\x01 \x01(\v2$.toshi.workspace.v1.PreviewShareLinkR\tshareLink\"\x82\x01\n" +
 	"\x13StartServiceRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
-	"\x02id\x18\x03 \x01(\tR\x02id\"P\n" +
+	"\x02id\x18\x03 \x01(\tR\x02id\x12\x1f\n" +
+	"\vrequest_key\x18\x04 \x01(\tR\n" +
+	"requestKey\"P\n" +
 	"\x14StartServiceResponse\x128\n" +
-	"\bworkload\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.WorkloadR\bworkload\"`\n" +
+	"\bworkload\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.WorkloadR\bworkload\"\x81\x01\n" +
 	"\x12StopServiceRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
-	"\x02id\x18\x03 \x01(\tR\x02id\"O\n" +
+	"\x02id\x18\x03 \x01(\tR\x02id\x12\x1f\n" +
+	"\vrequest_key\x18\x04 \x01(\tR\n" +
+	"requestKey\"O\n" +
 	"\x13StopServiceResponse\x128\n" +
-	"\bworkload\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.WorkloadR\bworkload\"\x98\x01\n" +
+	"\bworkload\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.WorkloadR\bworkload\"\xb9\x01\n" +
 	"\x15SetServiceModeRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
 	"\x02id\x18\x03 \x01(\tR\x02id\x123\n" +
-	"\x04mode\x18\x04 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\"R\n" +
+	"\x04mode\x18\x04 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\x12\x1f\n" +
+	"\vrequest_key\x18\x05 \x01(\tR\n" +
+	"requestKey\"R\n" +
 	"\x16SetServiceModeResponse\x128\n" +
 	"\bworkload\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.WorkloadR\bworkload\"\x81\x01\n" +
 	"\x16ListServiceRunsRequest\x12\x18\n" +
