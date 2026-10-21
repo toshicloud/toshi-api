@@ -12,6 +12,6 @@ for tool in buf protoc-gen-go protoc-gen-connect-go protoc-gen-es; do
 done
 
 # buf generate --clean would remove the output directory, and the Go output
-# goes to the repository root, so the three generated trees are removed here.
-rm -rf workspacev1 operatorv1 ts/gen
+# goes to the repository root, so the generated trees are removed here.
+rm -rf workspacev1 operatorv1 githubcorev1 ts/gen
 buf generate
