@@ -28,15 +28,17 @@ type RecordingState int32
 
 const (
 	RecordingState_RECORDING_STATE_UNSPECIFIED RecordingState = 0
-	// The run attempt may still finish it: its host captures, or uploads
-	// what it captured.
+	// The run attempt may still finish it: its host captures a strip or
+	// uploads what it captured, or the run's upload of a video or trace has
+	// not completed.
 	RecordingState_RECORDING_STATE_CAPTURING RecordingState = 1
-	// Its strip's upload completed. The strip is kept for its retention; the
-	// recording stays ready after that.
+	// Its object's upload completed. The object is kept for its retention;
+	// the recording stays ready after that.
 	RecordingState_RECORDING_STATE_READY RecordingState = 2
-	// It ended without a strip, and its host said why.
+	// A strip ended without its object, and its host said why.
 	RecordingState_RECORDING_STATE_UNAVAILABLE RecordingState = 3
-	// It ended without a strip and without its host's report.
+	// A strip ended without its object and without its host's report, or a
+	// video's or trace's upload did not complete before its deadline.
 	RecordingState_RECORDING_STATE_LOST RecordingState = 4
 )
 
@@ -85,8 +87,67 @@ func (RecordingState) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{0}
 }
 
-// Recording is one run attempt's screenshot strip: its record, never a key
-// or a URL.
+// RecordingKind is what a recording holds.
+type RecordingKind int32
+
+const (
+	RecordingKind_RECORDING_KIND_UNSPECIFIED RecordingKind = 0
+	// A screenshot strip of the run's screen, taken by its host.
+	RecordingKind_RECORDING_KIND_STRIP RecordingKind = 1
+	// A video the run's test framework wrote, such as Playwright's or
+	// Cypress's, uploaded with ArtifactUploadService.
+	RecordingKind_RECORDING_KIND_VIDEO RecordingKind = 2
+	// A trace the run's test framework wrote, such as a Playwright trace,
+	// uploaded with ArtifactUploadService.
+	RecordingKind_RECORDING_KIND_TRACE RecordingKind = 3
+)
+
+// Enum value maps for RecordingKind.
+var (
+	RecordingKind_name = map[int32]string{
+		0: "RECORDING_KIND_UNSPECIFIED",
+		1: "RECORDING_KIND_STRIP",
+		2: "RECORDING_KIND_VIDEO",
+		3: "RECORDING_KIND_TRACE",
+	}
+	RecordingKind_value = map[string]int32{
+		"RECORDING_KIND_UNSPECIFIED": 0,
+		"RECORDING_KIND_STRIP":       1,
+		"RECORDING_KIND_VIDEO":       2,
+		"RECORDING_KIND_TRACE":       3,
+	}
+)
+
+func (x RecordingKind) Enum() *RecordingKind {
+	p := new(RecordingKind)
+	*p = x
+	return p
+}
+
+func (x RecordingKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RecordingKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_recordings_proto_enumTypes[1].Descriptor()
+}
+
+func (RecordingKind) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_recordings_proto_enumTypes[1]
+}
+
+func (x RecordingKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RecordingKind.Descriptor instead.
+func (RecordingKind) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{1}
+}
+
+// Recording is one recording of a run attempt: its screenshot strip, or a
+// video or trace its test framework wrote. Its record, never a key or a
+// URL.
 type Recording struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -96,23 +157,25 @@ type Recording struct {
 	State         RecordingState         `protobuf:"varint,5,opt,name=state,proto3,enum=toshi.workspace.v1.RecordingState" json:"state,omitempty"`
 	// Why it is unavailable or lost.
 	Reason string `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
-	// The artifact that holds the strip: complete when the recording became
-	// ready, deleted once its retention has passed.
+	// The artifact that holds it: complete when the recording became ready,
+	// deleted once its retention has passed.
 	ArtifactId string `protobuf:"bytes,7,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
-	// The time between two screenshots.
+	// A strip's time between two screenshots; unset for a video or trace.
 	Interval *durationpb.Duration `protobuf:"bytes,8,opt,name=interval,proto3" json:"interval,omitempty"`
-	// The strip's ticks, and the screenshots left out for being larger than
-	// a frame may be.
+	// A strip's ticks, and the screenshots left out for being larger than a
+	// frame may be; 0 for a video or trace.
 	Frames  int32 `protobuf:"varint,9,opt,name=frames,proto3" json:"frames,omitempty"`
 	Dropped int32 `protobuf:"varint,10,opt,name=dropped,proto3" json:"dropped,omitempty"`
-	// Capture stopped at the strip's frame, pause or byte bound before the
+	// A strip's capture stopped at its frame, pause or byte bound before the
 	// run ended.
 	Truncated bool `protobuf:"varint,11,opt,name=truncated,proto3" json:"truncated,omitempty"`
-	// The spans the strip left out while an input session was open.
+	// The spans a strip left out while an input session was open.
 	Pauses    []*RecordingPause      `protobuf:"bytes,12,rep,name=pauses,proto3" json:"pauses,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Set once it is no longer capturing.
-	EndedAt       *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
+	EndedAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
+	// What it holds: never UNSPECIFIED.
+	Kind          RecordingKind `protobuf:"varint,15,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingKind" json:"kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -243,6 +306,13 @@ func (x *Recording) GetEndedAt() *timestamppb.Timestamp {
 		return x.EndedAt
 	}
 	return nil
+}
+
+func (x *Recording) GetKind() RecordingKind {
+	if x != nil {
+		return x.Kind
+	}
+	return RecordingKind_RECORDING_KIND_UNSPECIFIED
 }
 
 // RecordingPause is a span with no screenshot, while a display session
@@ -470,9 +540,9 @@ func (x *GetRecordingRequest) GetTtlSeconds() int64 {
 type GetRecordingResponse struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	Recording *Recording             `protobuf:"bytes,1,opt,name=recording,proto3" json:"recording,omitempty"`
-	// A signed GET for the strip, set only when the recording is ready. It
-	// honours a byte Range, so one frame can be fetched by its offset in
-	// the strip's index.
+	// A signed GET for its object, set only when the recording is ready. It
+	// honours a byte Range, so one frame of a strip can be fetched by its
+	// offset in the strip's index.
 	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
 	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -534,7 +604,7 @@ var File_toshi_workspace_v1_recordings_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\n" +
-	"#toshi/workspace/v1/recordings.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xaa\x04\n" +
+	"#toshi/workspace/v1/recordings.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe1\x04\n" +
 	"\tRecording\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -554,7 +624,8 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\x06pauses\x18\f \x03(\v2\".toshi.workspace.v1.RecordingPauseR\x06pauses\x129\n" +
 	"\n" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x125\n" +
-	"\bended_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\"\xb7\x01\n" +
+	"\bended_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x125\n" +
+	"\x04kind\x18\x0f \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\x04kind\"\xb7\x01\n" +
 	"\x0eRecordingPause\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x14\n" +
@@ -583,7 +654,12 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\x19RECORDING_STATE_CAPTURING\x10\x01\x12\x19\n" +
 	"\x15RECORDING_STATE_READY\x10\x02\x12\x1f\n" +
 	"\x1bRECORDING_STATE_UNAVAILABLE\x10\x03\x12\x18\n" +
-	"\x14RECORDING_STATE_LOST\x10\x042\xde\x01\n" +
+	"\x14RECORDING_STATE_LOST\x10\x04*}\n" +
+	"\rRecordingKind\x12\x1e\n" +
+	"\x1aRECORDING_KIND_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x14RECORDING_KIND_STRIP\x10\x01\x12\x18\n" +
+	"\x14RECORDING_KIND_VIDEO\x10\x02\x12\x18\n" +
+	"\x14RECORDING_KIND_TRACE\x10\x032\xde\x01\n" +
 	"\x10RecordingService\x12g\n" +
 	"\x0eListRecordings\x12).toshi.workspace.v1.ListRecordingsRequest\x1a*.toshi.workspace.v1.ListRecordingsResponse\x12a\n" +
 	"\fGetRecording\x12'.toshi.workspace.v1.GetRecordingRequest\x1a(.toshi.workspace.v1.GetRecordingResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
@@ -600,39 +676,41 @@ func file_toshi_workspace_v1_recordings_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_recordings_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_recordings_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_toshi_workspace_v1_recordings_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_toshi_workspace_v1_recordings_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_toshi_workspace_v1_recordings_proto_goTypes = []any{
 	(RecordingState)(0),            // 0: toshi.workspace.v1.RecordingState
-	(*Recording)(nil),              // 1: toshi.workspace.v1.Recording
-	(*RecordingPause)(nil),         // 2: toshi.workspace.v1.RecordingPause
-	(*ListRecordingsRequest)(nil),  // 3: toshi.workspace.v1.ListRecordingsRequest
-	(*ListRecordingsResponse)(nil), // 4: toshi.workspace.v1.ListRecordingsResponse
-	(*GetRecordingRequest)(nil),    // 5: toshi.workspace.v1.GetRecordingRequest
-	(*GetRecordingResponse)(nil),   // 6: toshi.workspace.v1.GetRecordingResponse
-	(*durationpb.Duration)(nil),    // 7: google.protobuf.Duration
-	(*timestamppb.Timestamp)(nil),  // 8: google.protobuf.Timestamp
+	(RecordingKind)(0),             // 1: toshi.workspace.v1.RecordingKind
+	(*Recording)(nil),              // 2: toshi.workspace.v1.Recording
+	(*RecordingPause)(nil),         // 3: toshi.workspace.v1.RecordingPause
+	(*ListRecordingsRequest)(nil),  // 4: toshi.workspace.v1.ListRecordingsRequest
+	(*ListRecordingsResponse)(nil), // 5: toshi.workspace.v1.ListRecordingsResponse
+	(*GetRecordingRequest)(nil),    // 6: toshi.workspace.v1.GetRecordingRequest
+	(*GetRecordingResponse)(nil),   // 7: toshi.workspace.v1.GetRecordingResponse
+	(*durationpb.Duration)(nil),    // 8: google.protobuf.Duration
+	(*timestamppb.Timestamp)(nil),  // 9: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_recordings_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Recording.state:type_name -> toshi.workspace.v1.RecordingState
-	7,  // 1: toshi.workspace.v1.Recording.interval:type_name -> google.protobuf.Duration
-	2,  // 2: toshi.workspace.v1.Recording.pauses:type_name -> toshi.workspace.v1.RecordingPause
-	8,  // 3: toshi.workspace.v1.Recording.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 4: toshi.workspace.v1.Recording.ended_at:type_name -> google.protobuf.Timestamp
-	8,  // 5: toshi.workspace.v1.RecordingPause.start:type_name -> google.protobuf.Timestamp
-	8,  // 6: toshi.workspace.v1.RecordingPause.end:type_name -> google.protobuf.Timestamp
-	1,  // 7: toshi.workspace.v1.ListRecordingsResponse.recordings:type_name -> toshi.workspace.v1.Recording
-	1,  // 8: toshi.workspace.v1.GetRecordingResponse.recording:type_name -> toshi.workspace.v1.Recording
-	8,  // 9: toshi.workspace.v1.GetRecordingResponse.expires_at:type_name -> google.protobuf.Timestamp
-	3,  // 10: toshi.workspace.v1.RecordingService.ListRecordings:input_type -> toshi.workspace.v1.ListRecordingsRequest
-	5,  // 11: toshi.workspace.v1.RecordingService.GetRecording:input_type -> toshi.workspace.v1.GetRecordingRequest
-	4,  // 12: toshi.workspace.v1.RecordingService.ListRecordings:output_type -> toshi.workspace.v1.ListRecordingsResponse
-	6,  // 13: toshi.workspace.v1.RecordingService.GetRecording:output_type -> toshi.workspace.v1.GetRecordingResponse
-	12, // [12:14] is the sub-list for method output_type
-	10, // [10:12] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	8,  // 1: toshi.workspace.v1.Recording.interval:type_name -> google.protobuf.Duration
+	3,  // 2: toshi.workspace.v1.Recording.pauses:type_name -> toshi.workspace.v1.RecordingPause
+	9,  // 3: toshi.workspace.v1.Recording.created_at:type_name -> google.protobuf.Timestamp
+	9,  // 4: toshi.workspace.v1.Recording.ended_at:type_name -> google.protobuf.Timestamp
+	1,  // 5: toshi.workspace.v1.Recording.kind:type_name -> toshi.workspace.v1.RecordingKind
+	9,  // 6: toshi.workspace.v1.RecordingPause.start:type_name -> google.protobuf.Timestamp
+	9,  // 7: toshi.workspace.v1.RecordingPause.end:type_name -> google.protobuf.Timestamp
+	2,  // 8: toshi.workspace.v1.ListRecordingsResponse.recordings:type_name -> toshi.workspace.v1.Recording
+	2,  // 9: toshi.workspace.v1.GetRecordingResponse.recording:type_name -> toshi.workspace.v1.Recording
+	9,  // 10: toshi.workspace.v1.GetRecordingResponse.expires_at:type_name -> google.protobuf.Timestamp
+	4,  // 11: toshi.workspace.v1.RecordingService.ListRecordings:input_type -> toshi.workspace.v1.ListRecordingsRequest
+	6,  // 12: toshi.workspace.v1.RecordingService.GetRecording:input_type -> toshi.workspace.v1.GetRecordingRequest
+	5,  // 13: toshi.workspace.v1.RecordingService.ListRecordings:output_type -> toshi.workspace.v1.ListRecordingsResponse
+	7,  // 14: toshi.workspace.v1.RecordingService.GetRecording:output_type -> toshi.workspace.v1.GetRecordingResponse
+	13, // [13:15] is the sub-list for method output_type
+	11, // [11:13] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_recordings_proto_init() }
@@ -645,7 +723,7 @@ func file_toshi_workspace_v1_recordings_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_recordings_proto_rawDesc), len(file_toshi_workspace_v1_recordings_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,

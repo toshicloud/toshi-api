@@ -43,12 +43,14 @@ const (
 
 // RecordingServiceClient is a client for the toshi.workspace.v1.RecordingService service.
 type RecordingServiceClient interface {
-	// ListRecordings returns one workload's recordings, oldest first: one
-	// per run attempt that recorded. Never a URL.
+	// ListRecordings returns one workload's recordings, oldest first: a
+	// run attempt's strip, and each video or trace a run attempt uploaded as
+	// its test framework's recording, so an attempt may have several. Never
+	// a URL.
 	ListRecordings(context.Context, *connect.Request[workspacev1.ListRecordingsRequest]) (*connect.Response[workspacev1.ListRecordingsResponse], error)
 	// GetRecording returns one recording and, when it is ready, a signed URL
-	// for its strip that expires. A ready recording whose strip's retention
-	// has deleted it is FAILED_PRECONDITION.
+	// for its object that expires. A ready recording whose object's
+	// retention has deleted it is FAILED_PRECONDITION.
 	GetRecording(context.Context, *connect.Request[workspacev1.GetRecordingRequest]) (*connect.Response[workspacev1.GetRecordingResponse], error)
 }
 
@@ -96,12 +98,14 @@ func (c *recordingServiceClient) GetRecording(ctx context.Context, req *connect.
 
 // RecordingServiceHandler is an implementation of the toshi.workspace.v1.RecordingService service.
 type RecordingServiceHandler interface {
-	// ListRecordings returns one workload's recordings, oldest first: one
-	// per run attempt that recorded. Never a URL.
+	// ListRecordings returns one workload's recordings, oldest first: a
+	// run attempt's strip, and each video or trace a run attempt uploaded as
+	// its test framework's recording, so an attempt may have several. Never
+	// a URL.
 	ListRecordings(context.Context, *connect.Request[workspacev1.ListRecordingsRequest]) (*connect.Response[workspacev1.ListRecordingsResponse], error)
 	// GetRecording returns one recording and, when it is ready, a signed URL
-	// for its strip that expires. A ready recording whose strip's retention
-	// has deleted it is FAILED_PRECONDITION.
+	// for its object that expires. A ready recording whose object's
+	// retention has deleted it is FAILED_PRECONDITION.
 	GetRecording(context.Context, *connect.Request[workspacev1.GetRecordingRequest]) (*connect.Response[workspacev1.GetRecordingResponse], error)
 }
 

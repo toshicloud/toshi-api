@@ -12,11 +12,12 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/recordings.proto.
  */
 export const file_toshi_workspace_v1_recordings: GenFile = /*@__PURE__*/
-  fileDesc("CiN0b3NoaS93b3Jrc3BhY2UvdjEvcmVjb3JkaW5ncy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIqMDCglSZWNvcmRpbmcSCgoCaWQYASABKAkSEgoKcHJvamVjdF9pZBgCIAEoCRIWCg5lbnZpcm9ubWVudF9pZBgDIAEoCRITCgt3b3JrbG9hZF9pZBgEIAEoCRIxCgVzdGF0ZRgFIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdTdGF0ZRIOCgZyZWFzb24YBiABKAkSEwoLYXJ0aWZhY3RfaWQYByABKAkSKwoIaW50ZXJ2YWwYCCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SDgoGZnJhbWVzGAkgASgFEg8KB2Ryb3BwZWQYCiABKAUSEQoJdHJ1bmNhdGVkGAsgASgIEjIKBnBhdXNlcxgMIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdQYXVzZRIuCgpjcmVhdGVkX2F0GA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghlbmRlZF9hdBgOIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAilAEKDlJlY29yZGluZ1BhdXNlEhIKCnNlc3Npb25faWQYASABKAkSDQoFYWN0b3IYAiABKAkSCwoDdmlhGAMgASgJEikKBXN0YXJ0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgNlbmQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIiwKFUxpc3RSZWNvcmRpbmdzUmVxdWVzdBITCgt3b3JrbG9hZF9pZBgBIAEoCSJLChZMaXN0UmVjb3JkaW5nc1Jlc3BvbnNlEjEKCnJlY29yZGluZ3MYASADKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuUmVjb3JkaW5nIkAKE0dldFJlY29yZGluZ1JlcXVlc3QSFAoMcmVjb3JkaW5nX2lkGAEgASgJEhMKC3R0bF9zZWNvbmRzGAIgASgDIoUBChRHZXRSZWNvcmRpbmdSZXNwb25zZRIwCglyZWNvcmRpbmcYASABKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuUmVjb3JkaW5nEgsKA3VybBgCIAEoCRIuCgpleHBpcmVzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCqmAQoOUmVjb3JkaW5nU3RhdGUSHwobUkVDT1JESU5HX1NUQVRFX1VOU1BFQ0lGSUVEEAASHQoZUkVDT1JESU5HX1NUQVRFX0NBUFRVUklORxABEhkKFVJFQ09SRElOR19TVEFURV9SRUFEWRACEh8KG1JFQ09SRElOR19TVEFURV9VTkFWQUlMQUJMRRADEhgKFFJFQ09SRElOR19TVEFURV9MT1NUEAQy3gEKEFJlY29yZGluZ1NlcnZpY2USZwoOTGlzdFJlY29yZGluZ3MSKS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFJlY29yZGluZ3NSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLkxpc3RSZWNvcmRpbmdzUmVzcG9uc2USYQoMR2V0UmVjb3JkaW5nEicudG9zaGkud29ya3NwYWNlLnYxLkdldFJlY29yZGluZ1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuR2V0UmVjb3JkaW5nUmVzcG9uc2VCLVorZ2l0aHViLmNvbS90b3NoaWNsb3VkL3Rvc2hpLWFwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_timestamp]);
+  fileDesc("CiN0b3NoaS93b3Jrc3BhY2UvdjEvcmVjb3JkaW5ncy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxItQDCglSZWNvcmRpbmcSCgoCaWQYASABKAkSEgoKcHJvamVjdF9pZBgCIAEoCRIWCg5lbnZpcm9ubWVudF9pZBgDIAEoCRITCgt3b3JrbG9hZF9pZBgEIAEoCRIxCgVzdGF0ZRgFIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdTdGF0ZRIOCgZyZWFzb24YBiABKAkSEwoLYXJ0aWZhY3RfaWQYByABKAkSKwoIaW50ZXJ2YWwYCCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SDgoGZnJhbWVzGAkgASgFEg8KB2Ryb3BwZWQYCiABKAUSEQoJdHJ1bmNhdGVkGAsgASgIEjIKBnBhdXNlcxgMIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdQYXVzZRIuCgpjcmVhdGVkX2F0GA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghlbmRlZF9hdBgOIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoEa2luZBgPIAEoDjIhLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdLaW5kIpQBCg5SZWNvcmRpbmdQYXVzZRISCgpzZXNzaW9uX2lkGAEgASgJEg0KBWFjdG9yGAIgASgJEgsKA3ZpYRgDIAEoCRIpCgVzdGFydBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCIsChVMaXN0UmVjb3JkaW5nc1JlcXVlc3QSEwoLd29ya2xvYWRfaWQYASABKAkiSwoWTGlzdFJlY29yZGluZ3NSZXNwb25zZRIxCgpyZWNvcmRpbmdzGAEgAygLMh0udG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZyJAChNHZXRSZWNvcmRpbmdSZXF1ZXN0EhQKDHJlY29yZGluZ19pZBgBIAEoCRITCgt0dGxfc2Vjb25kcxgCIAEoAyKFAQoUR2V0UmVjb3JkaW5nUmVzcG9uc2USMAoJcmVjb3JkaW5nGAEgASgLMh0udG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZxILCgN1cmwYAiABKAkSLgoKZXhwaXJlc19hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqpgEKDlJlY29yZGluZ1N0YXRlEh8KG1JFQ09SRElOR19TVEFURV9VTlNQRUNJRklFRBAAEh0KGVJFQ09SRElOR19TVEFURV9DQVBUVVJJTkcQARIZChVSRUNPUkRJTkdfU1RBVEVfUkVBRFkQAhIfChtSRUNPUkRJTkdfU1RBVEVfVU5BVkFJTEFCTEUQAxIYChRSRUNPUkRJTkdfU1RBVEVfTE9TVBAEKn0KDVJlY29yZGluZ0tpbmQSHgoaUkVDT1JESU5HX0tJTkRfVU5TUEVDSUZJRUQQABIYChRSRUNPUkRJTkdfS0lORF9TVFJJUBABEhgKFFJFQ09SRElOR19LSU5EX1ZJREVPEAISGAoUUkVDT1JESU5HX0tJTkRfVFJBQ0UQAzLeAQoQUmVjb3JkaW5nU2VydmljZRJnCg5MaXN0UmVjb3JkaW5ncxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UmVjb3JkaW5nc1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFJlY29yZGluZ3NSZXNwb25zZRJhCgxHZXRSZWNvcmRpbmcSJy50b3NoaS53b3Jrc3BhY2UudjEuR2V0UmVjb3JkaW5nUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5HZXRSZWNvcmRpbmdSZXNwb25zZUItWitnaXRodWIuY29tL3Rvc2hpY2xvdWQvdG9zaGktYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_timestamp]);
 
 /**
- * Recording is one run attempt's screenshot strip: its record, never a key
- * or a URL.
+ * Recording is one recording of a run attempt: its screenshot strip, or a
+ * video or trace its test framework wrote. Its record, never a key or a
+ * URL.
  *
  * @generated from message toshi.workspace.v1.Recording
  */
@@ -54,23 +55,23 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   reason: string;
 
   /**
-   * The artifact that holds the strip: complete when the recording became
-   * ready, deleted once its retention has passed.
+   * The artifact that holds it: complete when the recording became ready,
+   * deleted once its retention has passed.
    *
    * @generated from field: string artifact_id = 7;
    */
   artifactId: string;
 
   /**
-   * The time between two screenshots.
+   * A strip's time between two screenshots; unset for a video or trace.
    *
    * @generated from field: google.protobuf.Duration interval = 8;
    */
   interval?: Duration | undefined;
 
   /**
-   * The strip's ticks, and the screenshots left out for being larger than
-   * a frame may be.
+   * A strip's ticks, and the screenshots left out for being larger than a
+   * frame may be; 0 for a video or trace.
    *
    * @generated from field: int32 frames = 9;
    */
@@ -82,7 +83,7 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   dropped: number;
 
   /**
-   * Capture stopped at the strip's frame, pause or byte bound before the
+   * A strip's capture stopped at its frame, pause or byte bound before the
    * run ended.
    *
    * @generated from field: bool truncated = 11;
@@ -90,7 +91,7 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   truncated: boolean;
 
   /**
-   * The spans the strip left out while an input session was open.
+   * The spans a strip left out while an input session was open.
    *
    * @generated from field: repeated toshi.workspace.v1.RecordingPause pauses = 12;
    */
@@ -107,11 +108,19 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
    * @generated from field: google.protobuf.Timestamp ended_at = 14;
    */
   endedAt?: Timestamp | undefined;
+
+  /**
+   * What it holds: never UNSPECIFIED.
+   *
+   * @generated from field: toshi.workspace.v1.RecordingKind kind = 15;
+   */
+  kind: RecordingKind;
 };
 
 /**
- * Recording is one run attempt's screenshot strip: its record, never a key
- * or a URL.
+ * Recording is one recording of a run attempt: its screenshot strip, or a
+ * video or trace its test framework wrote. Its record, never a key or a
+ * URL.
  *
  * @generated from message toshi.workspace.v1.Recording
  */
@@ -149,23 +158,23 @@ export type RecordingJson = {
   reason?: string;
 
   /**
-   * The artifact that holds the strip: complete when the recording became
-   * ready, deleted once its retention has passed.
+   * The artifact that holds it: complete when the recording became ready,
+   * deleted once its retention has passed.
    *
    * @generated from field: string artifact_id = 7;
    */
   artifactId?: string;
 
   /**
-   * The time between two screenshots.
+   * A strip's time between two screenshots; unset for a video or trace.
    *
    * @generated from field: google.protobuf.Duration interval = 8;
    */
   interval?: DurationJson;
 
   /**
-   * The strip's ticks, and the screenshots left out for being larger than
-   * a frame may be.
+   * A strip's ticks, and the screenshots left out for being larger than a
+   * frame may be; 0 for a video or trace.
    *
    * @generated from field: int32 frames = 9;
    */
@@ -177,7 +186,7 @@ export type RecordingJson = {
   dropped?: number;
 
   /**
-   * Capture stopped at the strip's frame, pause or byte bound before the
+   * A strip's capture stopped at its frame, pause or byte bound before the
    * run ended.
    *
    * @generated from field: bool truncated = 11;
@@ -185,7 +194,7 @@ export type RecordingJson = {
   truncated?: boolean;
 
   /**
-   * The spans the strip left out while an input session was open.
+   * The spans a strip left out while an input session was open.
    *
    * @generated from field: repeated toshi.workspace.v1.RecordingPause pauses = 12;
    */
@@ -202,6 +211,13 @@ export type RecordingJson = {
    * @generated from field: google.protobuf.Timestamp ended_at = 14;
    */
   endedAt?: TimestampJson;
+
+  /**
+   * What it holds: never UNSPECIFIED.
+   *
+   * @generated from field: toshi.workspace.v1.RecordingKind kind = 15;
+   */
+  kind?: RecordingKindJson;
 };
 
 /**
@@ -399,9 +415,9 @@ export type GetRecordingResponse = Message<"toshi.workspace.v1.GetRecordingRespo
   recording?: Recording | undefined;
 
   /**
-   * A signed GET for the strip, set only when the recording is ready. It
-   * honours a byte Range, so one frame can be fetched by its offset in
-   * the strip's index.
+   * A signed GET for its object, set only when the recording is ready. It
+   * honours a byte Range, so one frame of a strip can be fetched by its
+   * offset in the strip's index.
    *
    * @generated from field: string url = 2;
    */
@@ -423,9 +439,9 @@ export type GetRecordingResponseJson = {
   recording?: RecordingJson;
 
   /**
-   * A signed GET for the strip, set only when the recording is ready. It
-   * honours a byte Range, so one frame can be fetched by its offset in
-   * the strip's index.
+   * A signed GET for its object, set only when the recording is ready. It
+   * honours a byte Range, so one frame of a strip can be fetched by its
+   * offset in the strip's index.
    *
    * @generated from field: string url = 2;
    */
@@ -456,30 +472,32 @@ export enum RecordingState {
   UNSPECIFIED = 0,
 
   /**
-   * The run attempt may still finish it: its host captures, or uploads
-   * what it captured.
+   * The run attempt may still finish it: its host captures a strip or
+   * uploads what it captured, or the run's upload of a video or trace has
+   * not completed.
    *
    * @generated from enum value: RECORDING_STATE_CAPTURING = 1;
    */
   CAPTURING = 1,
 
   /**
-   * Its strip's upload completed. The strip is kept for its retention; the
-   * recording stays ready after that.
+   * Its object's upload completed. The object is kept for its retention;
+   * the recording stays ready after that.
    *
    * @generated from enum value: RECORDING_STATE_READY = 2;
    */
   READY = 2,
 
   /**
-   * It ended without a strip, and its host said why.
+   * A strip ended without its object, and its host said why.
    *
    * @generated from enum value: RECORDING_STATE_UNAVAILABLE = 3;
    */
   UNAVAILABLE = 3,
 
   /**
-   * It ended without a strip and without its host's report.
+   * A strip ended without its object and without its host's report, or a
+   * video's or trace's upload did not complete before its deadline.
    *
    * @generated from enum value: RECORDING_STATE_LOST = 4;
    */
@@ -500,8 +518,56 @@ export const RecordingStateSchema: GenEnum<RecordingState, RecordingStateJson> =
   enumDesc(file_toshi_workspace_v1_recordings, 0);
 
 /**
+ * RecordingKind is what a recording holds.
+ *
+ * @generated from enum toshi.workspace.v1.RecordingKind
+ */
+export enum RecordingKind {
+  /**
+   * @generated from enum value: RECORDING_KIND_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * A screenshot strip of the run's screen, taken by its host.
+   *
+   * @generated from enum value: RECORDING_KIND_STRIP = 1;
+   */
+  STRIP = 1,
+
+  /**
+   * A video the run's test framework wrote, such as Playwright's or
+   * Cypress's, uploaded with ArtifactUploadService.
+   *
+   * @generated from enum value: RECORDING_KIND_VIDEO = 2;
+   */
+  VIDEO = 2,
+
+  /**
+   * A trace the run's test framework wrote, such as a Playwright trace,
+   * uploaded with ArtifactUploadService.
+   *
+   * @generated from enum value: RECORDING_KIND_TRACE = 3;
+   */
+  TRACE = 3,
+}
+
+/**
+ * RecordingKind is what a recording holds.
+ *
+ * @generated from enum toshi.workspace.v1.RecordingKind
+ */
+export type RecordingKindJson = "RECORDING_KIND_UNSPECIFIED" | "RECORDING_KIND_STRIP" | "RECORDING_KIND_VIDEO" | "RECORDING_KIND_TRACE";
+
+/**
+ * Describes the enum toshi.workspace.v1.RecordingKind.
+ */
+export const RecordingKindSchema: GenEnum<RecordingKind, RecordingKindJson> = /*@__PURE__*/
+  enumDesc(file_toshi_workspace_v1_recordings, 1);
+
+/**
  * RecordingService lists a workload's recordings and signs a URL for a
- * recording's strip. The caller is a workspace's API token or a dashboard
+ * recording's object. The caller is a workspace's API token or a dashboard
  * session, as for ArtifactService. A credential limited to a project or an
  * environment sees only its own.
  *
@@ -509,8 +575,10 @@ export const RecordingStateSchema: GenEnum<RecordingState, RecordingStateJson> =
  */
 export const RecordingService: GenService<{
   /**
-   * ListRecordings returns one workload's recordings, oldest first: one
-   * per run attempt that recorded. Never a URL.
+   * ListRecordings returns one workload's recordings, oldest first: a
+   * run attempt's strip, and each video or trace a run attempt uploaded as
+   * its test framework's recording, so an attempt may have several. Never
+   * a URL.
    *
    * @generated from rpc toshi.workspace.v1.RecordingService.ListRecordings
    */
@@ -521,8 +589,8 @@ export const RecordingService: GenService<{
   },
   /**
    * GetRecording returns one recording and, when it is ready, a signed URL
-   * for its strip that expires. A ready recording whose strip's retention
-   * has deleted it is FAILED_PRECONDITION.
+   * for its object that expires. A ready recording whose object's
+   * retention has deleted it is FAILED_PRECONDITION.
    *
    * @generated from rpc toshi.workspace.v1.RecordingService.GetRecording
    */

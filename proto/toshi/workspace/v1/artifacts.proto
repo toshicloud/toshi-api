@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/timestamp.proto";
+import "toshi/workspace/v1/recordings.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -99,6 +100,16 @@ message ReserveUploadRequest {
   repeated int64 part_sizes = 4;
   // 1 byte to 16 MiB when part_sizes has more than one part; 0 otherwise.
   int64 index_size = 5;
+  // VIDEO or TRACE when the file is the run's test framework's own
+  // recording; unset for any other file. The artifact then is also one of
+  // the run attempt's recordings (RecordingService), ready when its upload
+  // completes. VIDEO needs kind recording and TRACE kind trace, each in
+  // exactly one part; STRIP, another kind or more parts fail with
+  // INVALID_ARGUMENT. Only a job workload's run records one: the
+  // credential of a strip's own upload fails with PERMISSION_DENIED;
+  // another caller, or a run that has ended, fails with
+  // FAILED_PRECONDITION.
+  RecordingKind recording = 6;
 }
 
 message ReserveUploadResponse {

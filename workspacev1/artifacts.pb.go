@@ -287,7 +287,17 @@ type ReserveUploadRequest struct {
 	// 1 to 64 parts, each 1 byte to 5 GiB.
 	PartSizes []int64 `protobuf:"varint,4,rep,packed,name=part_sizes,json=partSizes,proto3" json:"part_sizes,omitempty"`
 	// 1 byte to 16 MiB when part_sizes has more than one part; 0 otherwise.
-	IndexSize     int64 `protobuf:"varint,5,opt,name=index_size,json=indexSize,proto3" json:"index_size,omitempty"`
+	IndexSize int64 `protobuf:"varint,5,opt,name=index_size,json=indexSize,proto3" json:"index_size,omitempty"`
+	// VIDEO or TRACE when the file is the run's test framework's own
+	// recording; unset for any other file. The artifact then is also one of
+	// the run attempt's recordings (RecordingService), ready when its upload
+	// completes. VIDEO needs kind recording and TRACE kind trace, each in
+	// exactly one part; STRIP, another kind or more parts fail with
+	// INVALID_ARGUMENT. Only a job workload's run records one: the
+	// credential of a strip's own upload fails with PERMISSION_DENIED;
+	// another caller, or a run that has ended, fails with
+	// FAILED_PRECONDITION.
+	Recording     RecordingKind `protobuf:"varint,6,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingKind" json:"recording,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -355,6 +365,13 @@ func (x *ReserveUploadRequest) GetIndexSize() int64 {
 		return x.IndexSize
 	}
 	return 0
+}
+
+func (x *ReserveUploadRequest) GetRecording() RecordingKind {
+	if x != nil {
+		return x.Recording
+	}
+	return RecordingKind_RECORDING_KIND_UNSPECIFIED
 }
 
 type ReserveUploadResponse struct {
@@ -901,7 +918,7 @@ var File_toshi_workspace_v1_artifacts_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/artifacts.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa1\x04\n" +
+	"\"toshi/workspace/v1/artifacts.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a#toshi/workspace/v1/recordings.proto\"\xa1\x04\n" +
 	"\bArtifact\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -937,7 +954,7 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"expires_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x1a:\n" +
 	"\fHeadersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x9f\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe0\x01\n" +
 	"\x14ReserveUploadRequest\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12!\n" +
@@ -945,7 +962,8 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
 	"part_sizes\x18\x04 \x03(\x03R\tpartSizes\x12\x1d\n" +
 	"\n" +
-	"index_size\x18\x05 \x01(\x03R\tindexSize\"\x91\x02\n" +
+	"index_size\x18\x05 \x01(\x03R\tindexSize\x12?\n" +
+	"\trecording\x18\x06 \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\trecording\"\x91\x02\n" +
 	"\x15ReserveUploadResponse\x12\x1f\n" +
 	"\vartifact_id\x18\x01 \x01(\tR\n" +
 	"artifactId\x124\n" +
@@ -1030,33 +1048,35 @@ var file_toshi_workspace_v1_artifacts_proto_goTypes = []any{
 	(*GetDownloadURLResponse)(nil), // 11: toshi.workspace.v1.GetDownloadURLResponse
 	nil,                            // 12: toshi.workspace.v1.Upload.HeadersEntry
 	(*timestamppb.Timestamp)(nil),  // 13: google.protobuf.Timestamp
+	(RecordingKind)(0),             // 14: toshi.workspace.v1.RecordingKind
 }
 var file_toshi_workspace_v1_artifacts_proto_depIdxs = []int32{
 	13, // 0: toshi.workspace.v1.Artifact.created_at:type_name -> google.protobuf.Timestamp
 	13, // 1: toshi.workspace.v1.Artifact.completed_at:type_name -> google.protobuf.Timestamp
 	12, // 2: toshi.workspace.v1.Upload.headers:type_name -> toshi.workspace.v1.Upload.HeadersEntry
 	13, // 3: toshi.workspace.v1.Upload.expires_at:type_name -> google.protobuf.Timestamp
-	1,  // 4: toshi.workspace.v1.ReserveUploadResponse.uploads:type_name -> toshi.workspace.v1.Upload
-	13, // 5: toshi.workspace.v1.ReserveUploadResponse.upload_deadline:type_name -> google.protobuf.Timestamp
-	0,  // 6: toshi.workspace.v1.CompleteUploadResponse.artifact:type_name -> toshi.workspace.v1.Artifact
-	0,  // 7: toshi.workspace.v1.ListArtifactsResponse.artifacts:type_name -> toshi.workspace.v1.Artifact
-	0,  // 8: toshi.workspace.v1.GetArtifactResponse.artifact:type_name -> toshi.workspace.v1.Artifact
-	13, // 9: toshi.workspace.v1.GetDownloadURLResponse.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 10: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:input_type -> toshi.workspace.v1.ReserveUploadRequest
-	4,  // 11: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:input_type -> toshi.workspace.v1.CompleteUploadRequest
-	6,  // 12: toshi.workspace.v1.ArtifactService.ListArtifacts:input_type -> toshi.workspace.v1.ListArtifactsRequest
-	8,  // 13: toshi.workspace.v1.ArtifactService.GetArtifact:input_type -> toshi.workspace.v1.GetArtifactRequest
-	10, // 14: toshi.workspace.v1.ArtifactService.GetDownloadURL:input_type -> toshi.workspace.v1.GetDownloadURLRequest
-	3,  // 15: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:output_type -> toshi.workspace.v1.ReserveUploadResponse
-	5,  // 16: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:output_type -> toshi.workspace.v1.CompleteUploadResponse
-	7,  // 17: toshi.workspace.v1.ArtifactService.ListArtifacts:output_type -> toshi.workspace.v1.ListArtifactsResponse
-	9,  // 18: toshi.workspace.v1.ArtifactService.GetArtifact:output_type -> toshi.workspace.v1.GetArtifactResponse
-	11, // 19: toshi.workspace.v1.ArtifactService.GetDownloadURL:output_type -> toshi.workspace.v1.GetDownloadURLResponse
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	14, // 4: toshi.workspace.v1.ReserveUploadRequest.recording:type_name -> toshi.workspace.v1.RecordingKind
+	1,  // 5: toshi.workspace.v1.ReserveUploadResponse.uploads:type_name -> toshi.workspace.v1.Upload
+	13, // 6: toshi.workspace.v1.ReserveUploadResponse.upload_deadline:type_name -> google.protobuf.Timestamp
+	0,  // 7: toshi.workspace.v1.CompleteUploadResponse.artifact:type_name -> toshi.workspace.v1.Artifact
+	0,  // 8: toshi.workspace.v1.ListArtifactsResponse.artifacts:type_name -> toshi.workspace.v1.Artifact
+	0,  // 9: toshi.workspace.v1.GetArtifactResponse.artifact:type_name -> toshi.workspace.v1.Artifact
+	13, // 10: toshi.workspace.v1.GetDownloadURLResponse.expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 11: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:input_type -> toshi.workspace.v1.ReserveUploadRequest
+	4,  // 12: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:input_type -> toshi.workspace.v1.CompleteUploadRequest
+	6,  // 13: toshi.workspace.v1.ArtifactService.ListArtifacts:input_type -> toshi.workspace.v1.ListArtifactsRequest
+	8,  // 14: toshi.workspace.v1.ArtifactService.GetArtifact:input_type -> toshi.workspace.v1.GetArtifactRequest
+	10, // 15: toshi.workspace.v1.ArtifactService.GetDownloadURL:input_type -> toshi.workspace.v1.GetDownloadURLRequest
+	3,  // 16: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:output_type -> toshi.workspace.v1.ReserveUploadResponse
+	5,  // 17: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:output_type -> toshi.workspace.v1.CompleteUploadResponse
+	7,  // 18: toshi.workspace.v1.ArtifactService.ListArtifacts:output_type -> toshi.workspace.v1.ListArtifactsResponse
+	9,  // 19: toshi.workspace.v1.ArtifactService.GetArtifact:output_type -> toshi.workspace.v1.GetArtifactResponse
+	11, // 20: toshi.workspace.v1.ArtifactService.GetDownloadURL:output_type -> toshi.workspace.v1.GetDownloadURLResponse
+	16, // [16:21] is the sub-list for method output_type
+	11, // [11:16] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_artifacts_proto_init() }
@@ -1064,6 +1084,7 @@ func file_toshi_workspace_v1_artifacts_proto_init() {
 	if File_toshi_workspace_v1_artifacts_proto != nil {
 		return
 	}
+	file_toshi_workspace_v1_recordings_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
