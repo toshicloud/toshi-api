@@ -745,9 +745,11 @@ export const SandboxSpecSchema: GenMessage<SandboxSpec, {jsonType: SandboxSpecJs
   messageDesc(file_toshi_workspace_v1_workspace, 9);
 
 /**
- * ServiceSpec is a service. Its fields are set in the answers
- * of GetWorkload, ListWorkloads and the service calls, and ignored in a
- * create.
+ * ServiceSpec is a service. Its fields are set wherever a service's
+ * workload is answered: every workload and service call's answer, the
+ * workload events and the webhook deliveries; they are ignored in a
+ * create. An event carries the spec as of its own write; an event written
+ * before events carried it has none.
  *
  * @generated from message toshi.workspace.v1.ServiceSpec
  */
@@ -792,9 +794,11 @@ export type ServiceSpec = Message<"toshi.workspace.v1.ServiceSpec"> & {
 };
 
 /**
- * ServiceSpec is a service. Its fields are set in the answers
- * of GetWorkload, ListWorkloads and the service calls, and ignored in a
- * create.
+ * ServiceSpec is a service. Its fields are set wherever a service's
+ * workload is answered: every workload and service call's answer, the
+ * workload events and the webhook deliveries; they are ignored in a
+ * create. An event carries the spec as of its own write; an event written
+ * before events carried it has none.
  *
  * @generated from message toshi.workspace.v1.ServiceSpec
  */

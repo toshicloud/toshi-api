@@ -377,9 +377,11 @@ message SandboxSpec {
   repeated Binding bindings = 3;
 }
 
-// ServiceSpec is a service. Its fields are set in the answers
-// of GetWorkload, ListWorkloads and the service calls, and ignored in a
-// create.
+// ServiceSpec is a service. Its fields are set wherever a service's
+// workload is answered: every workload and service call's answer, the
+// workload events and the webhook deliveries; they are ignored in a
+// create. An event carries the spec as of its own write; an event written
+// before events carried it has none.
 message ServiceSpec {
   // The runner size its runs are placed by, for example "toshi-linux-2x".
   string size = 1;
