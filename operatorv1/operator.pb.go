@@ -596,8 +596,8 @@ type Job struct {
 	RunnerRequestSince *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=runner_request_since,json=runnerRequestSince,proto3" json:"runner_request_since,omitempty"`
 	// Toshi's own word for a job Toshi ended itself: time_limit,
 	// cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
-	// cancelled or failed (docs/contracts/operator-usage.md). Empty for every
-	// other job. The conclusion stays GitHub's word.
+	// cancelled or failed. Empty for every other job. The conclusion stays
+	// GitHub's word.
 	Outcome string `protobuf:"bytes,32,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	// The kind of the job's host when it is not a host agent's machine: "cloud"
 	// for a cloud host or a cloud pool. Empty otherwise,
@@ -609,9 +609,9 @@ type Job struct {
 	PreviousPoolImage string `protobuf:"bytes,34,opt,name=previous_pool_image,json=previousPoolImage,proto3" json:"previous_pool_image,omitempty"`
 	// The whole minutes the job counts in the usage report: from started_at
 	// to stop_requested_at when the job was asked to stop, else to
-	// finished_at, rounded up (docs/contracts/operator-usage.md). 0 for a job
-	// that has not ended or never started, a job on its tenant's own host and
-	// a dispatch filler's job, which are not billed.
+	// finished_at, rounded up. 0 for a job that has not ended or never started,
+	// a job on its tenant's own host and a dispatch filler's job, which are not
+	// billed.
 	BillableMinutes int64 `protobuf:"varint,35,opt,name=billable_minutes,json=billableMinutes,proto3" json:"billable_minutes,omitempty"`
 	// The job's page on GitHub, on the configured GitHub web URL. Empty when
 	// the job has no repository, run or workflow job id.
@@ -637,9 +637,12 @@ type Job struct {
 	// host is removed; a requeue clears it.
 	Tier string `protobuf:"bytes,41,opt,name=tier,proto3" json:"tier,omitempty"`
 	// The memory limit the job's host gave it in MiB, when that is not its
-	// runner size's memory: on a container tier host, its share of the host
-	// (docs/contracts/container-tier.md). 0 means the size's memory, and for
-	// a tier job that its host has not reported the limit yet.
+	// runner size's memory: on a container tier host, its share of the host by
+	// CPUs: the host's memory less the agent's memory reserve, times the size's
+	// CPUs over the host's CPUs. A host that reports no CPUs, or no more memory
+	// than that reserve, keeps each size's configured memory. 0 means the
+	// size's memory, and for a tier job that its host has not reported the
+	// limit yet.
 	MemoryLimitMib int64 `protobuf:"varint,42,opt,name=memory_limit_mib,json=memoryLimitMib,proto3" json:"memory_limit_mib,omitempty"`
 	// The tier in one line, as the dashboard's job page, `toshi jobs explain`
 	// and `toshi tenant explain` show it, such as "ran on a container tier
@@ -1164,7 +1167,7 @@ type JobTelemetrySummary struct {
 	// Whether the runner size suited the job: "fits", "too big", "too small",
 	// "throttled" or "out of memory". Empty for a job that has not ended, and
 	// for a size this release does not know unless the job ran out of memory
-	// or was throttled (docs/contracts/telemetry.md, Verdict).
+	// or was throttled.
 	Verdict string `protobuf:"bytes,9,opt,name=verdict,proto3" json:"verdict,omitempty"`
 	// The verdict in one sentence with its numbers, such as "used 20 % of 4
 	// vCPUs and 4 GiB of 16 GiB: a size smaller, toshi-linux-2x, would fit".
@@ -2494,7 +2497,7 @@ type AuditEvent struct {
 	// A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...,
 	// tenant:... or installation:....
 	Target string `protobuf:"bytes,7,opt,name=target,proto3" json:"target,omitempty"`
-	// A JSON object whose keys depend on the action (docs/contracts/audit.md).
+	// A JSON object whose keys depend on the action.
 	DetailsJson   string `protobuf:"bytes,8,opt,name=details_json,json=detailsJson,proto3" json:"details_json,omitempty"`
 	RequestId     string `protobuf:"bytes,9,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3969,8 +3972,10 @@ type Tenant struct {
 	// The tenant's effective reservations on shared hosts, ordered
 	// by size: its own rows, and its plan's entries where it has none.
 	Reservations []*Reservation `protobuf:"bytes,16,rep,name=reservations,proto3" json:"reservations,omitempty"`
-	// Lifecycle state: "active", "suspended", "deleting" or "deleted"
-	// (docs/contracts/tenant-lifecycle.md).
+	// Lifecycle state: "active"; "suspended", where new and queued jobs are
+	// held, running jobs finish and the tenant is read-only; "deleting", once
+	// purge_after has passed and while the purge runs; or "deleted", when the
+	// purge is done, its sessions ended and its tokens revoked.
 	State string `protobuf:"bytes,17,opt,name=state,proto3" json:"state,omitempty"`
 	// Why the operator suspended or deleted the tenant; empty when active.
 	StateReason string `protobuf:"bytes,18,opt,name=state_reason,json=stateReason,proto3" json:"state_reason,omitempty"`
@@ -3979,7 +3984,7 @@ type Tenant struct {
 	// When a scheduled deletion purges the tenant; unset when none.
 	PurgeAfter *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=purge_after,json=purgeAfter,proto3" json:"purge_after,omitempty"`
 	// Days of finished job history the tenant keeps; unset when the plan's
-	// applies. 0 keeps forever (docs/contracts/history-retention.md).
+	// applies. 0 keeps forever.
 	HistoryDays *int32 `protobuf:"varint,21,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
 	// The period the retention pass uses: the tenant's value when set, else
 	// its plan's.
@@ -5283,7 +5288,7 @@ type Plan struct {
 	// unit; 0 means none.
 	StarterCreditCents int64 `protobuf:"varint,14,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
 	// Days of finished job history tenants on this plan keep; 0 keeps forever.
-	// Left out of configuration, 90 (docs/contracts/history-retention.md).
+	// Left out of configuration, 90.
 	HistoryDays int32 `protobuf:"varint,15,opt,name=history_days,json=historyDays,proto3" json:"history_days,omitempty"`
 	// Longest debug session, in minutes, a failed job on this plan may ask
 	// for with a toshi-debug-<n> label; 0 means the plan has no debug
@@ -11375,8 +11380,13 @@ type GetJobFailureResponse struct {
 	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	// Toshi's cause in one word, such as "out_of_memory", "time_limit",
 	// "vm_died" or "step_failed"; "none" for a job that succeeded and
-	// "not_ended" for one that has not ended. The full list is in
-	// docs/contracts/operator-usage.md.
+	// "not_ended" for one that has not ended. The full list: "none",
+	// "not_ended", "out_of_memory", "refused", "time_limit", "cancelled",
+	// "cancelled_by_tenant", "cancelled_by_operator", "cancelled_by_uninstall",
+	// "vm_died", "host_lost", "host_revoked", "stop_unconfirmed",
+	// "runner_not_started", "runner_exited", "failed", "too_small",
+	// "throttled", "step_failed", "timed_out", "cancelled_on_github" and
+	// "unknown".
 	Cause string `protobuf:"bytes,2,opt,name=cause,proto3" json:"cause,omitempty"`
 	// The cause in one sentence. Where the dashboard's Jobs table shows why
 	// the job ended, this is the same text. A job that ran out of time with a

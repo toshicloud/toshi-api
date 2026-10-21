@@ -4,8 +4,7 @@
 
 // Package toshi.workspace.v1 is the Workspace API: the one workload resource
 // of every kind (job, sandbox, service), the executions and operations under
-// it, and the event log every change is written to. The contract in prose:
-// docs/api/workspace-v1.md.
+// it, and the event log every change is written to.
 package workspacev1connect
 
 import (

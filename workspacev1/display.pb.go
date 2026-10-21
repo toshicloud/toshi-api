@@ -212,7 +212,17 @@ type DisplaySession struct {
 	// viewer sent what the relay does not accept), unavailable (the job's
 	// host did not open the screen) or shutdown (the control plane
 	// stopped). Empty while it is open.
-	CloseReason   string `protobuf:"bytes,12,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`
+	CloseReason string `protobuf:"bytes,12,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`
+	// Who opened it, as the audit log names the caller: the GitHub login of
+	// the signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
+	// DISPLAY_OPENER_PROGRAM.
+	OpenerId string `protobuf:"bytes,13,opt,name=opener_id,json=openerId,proto3" json:"opener_id,omitempty"`
+	// The web origin of the call that opened it, for example
+	// "https://toshi.example.com"; empty for a call that sent none.
+	Origin string `protobuf:"bytes,14,opt,name=origin,proto3" json:"origin,omitempty"`
+	// The id (jti) of the one token that attaches the session: an id, never
+	// the token.
+	AttachTokenId string `protobuf:"bytes,15,opt,name=attach_token_id,json=attachTokenId,proto3" json:"attach_token_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -327,6 +337,27 @@ func (x *DisplaySession) GetClosedAt() *timestamppb.Timestamp {
 func (x *DisplaySession) GetCloseReason() string {
 	if x != nil {
 		return x.CloseReason
+	}
+	return ""
+}
+
+func (x *DisplaySession) GetOpenerId() string {
+	if x != nil {
+		return x.OpenerId
+	}
+	return ""
+}
+
+func (x *DisplaySession) GetOrigin() string {
+	if x != nil {
+		return x.Origin
+	}
+	return ""
+}
+
+func (x *DisplaySession) GetAttachTokenId() string {
+	if x != nil {
+		return x.AttachTokenId
 	}
 	return ""
 }
@@ -1356,7 +1387,7 @@ var File_toshi_workspace_v1_display_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/display.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd7\x04\n" +
+	" toshi/workspace/v1/display.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb4\x05\n" +
 	"\x0eDisplaySession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06job_id\x18\x02 \x01(\tR\x05jobId\x123\n" +
@@ -1372,7 +1403,10 @@ const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"attachedAt\x127\n" +
 	"\tclosed_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\bclosedAt\x12!\n" +
-	"\fclose_reason\x18\f \x01(\tR\vcloseReason\"\x98\x02\n" +
+	"\fclose_reason\x18\f \x01(\tR\vcloseReason\x12\x1b\n" +
+	"\topener_id\x18\r \x01(\tR\bopenerId\x12\x16\n" +
+	"\x06origin\x18\x0e \x01(\tR\x06origin\x12&\n" +
+	"\x0fattach_token_id\x18\x0f \x01(\tR\rattachTokenId\"\x98\x02\n" +
 	"\x19OpenDisplaySessionRequest\x12\x17\n" +
 	"\x06job_id\x18\x01 \x01(\tH\x00R\x05jobId\x12!\n" +
 	"\vworkload_id\x18\x02 \x01(\tH\x00R\n" +

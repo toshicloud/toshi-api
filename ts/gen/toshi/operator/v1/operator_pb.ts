@@ -236,8 +236,8 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   /**
    * Toshi's own word for a job Toshi ended itself: time_limit,
    * cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
-   * cancelled or failed (docs/contracts/operator-usage.md). Empty for every
-   * other job. The conclusion stays GitHub's word.
+   * cancelled or failed. Empty for every other job. The conclusion stays
+   * GitHub's word.
    *
    * @generated from field: string outcome = 32;
    */
@@ -264,9 +264,9 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   /**
    * The whole minutes the job counts in the usage report: from started_at
    * to stop_requested_at when the job was asked to stop, else to
-   * finished_at, rounded up (docs/contracts/operator-usage.md). 0 for a job
-   * that has not ended or never started, a job on its tenant's own host and
-   * a dispatch filler's job, which are not billed.
+   * finished_at, rounded up. 0 for a job that has not ended or never started,
+   * a job on its tenant's own host and a dispatch filler's job, which are not
+   * billed.
    *
    * @generated from field: int64 billable_minutes = 35;
    */
@@ -327,9 +327,12 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
 
   /**
    * The memory limit the job's host gave it in MiB, when that is not its
-   * runner size's memory: on a container tier host, its share of the host
-   * (docs/contracts/container-tier.md). 0 means the size's memory, and for
-   * a tier job that its host has not reported the limit yet.
+   * runner size's memory: on a container tier host, its share of the host by
+   * CPUs: the host's memory less the agent's memory reserve, times the size's
+   * CPUs over the host's CPUs. A host that reports no CPUs, or no more memory
+   * than that reserve, keeps each size's configured memory. 0 means the
+   * size's memory, and for a tier job that its host has not reported the
+   * limit yet.
    *
    * @generated from field: int64 memory_limit_mib = 42;
    */
@@ -603,8 +606,8 @@ export type JobJson = {
   /**
    * Toshi's own word for a job Toshi ended itself: time_limit,
    * cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
-   * cancelled or failed (docs/contracts/operator-usage.md). Empty for every
-   * other job. The conclusion stays GitHub's word.
+   * cancelled or failed. Empty for every other job. The conclusion stays
+   * GitHub's word.
    *
    * @generated from field: string outcome = 32;
    */
@@ -631,9 +634,9 @@ export type JobJson = {
   /**
    * The whole minutes the job counts in the usage report: from started_at
    * to stop_requested_at when the job was asked to stop, else to
-   * finished_at, rounded up (docs/contracts/operator-usage.md). 0 for a job
-   * that has not ended or never started, a job on its tenant's own host and
-   * a dispatch filler's job, which are not billed.
+   * finished_at, rounded up. 0 for a job that has not ended or never started,
+   * a job on its tenant's own host and a dispatch filler's job, which are not
+   * billed.
    *
    * @generated from field: int64 billable_minutes = 35;
    */
@@ -694,9 +697,12 @@ export type JobJson = {
 
   /**
    * The memory limit the job's host gave it in MiB, when that is not its
-   * runner size's memory: on a container tier host, its share of the host
-   * (docs/contracts/container-tier.md). 0 means the size's memory, and for
-   * a tier job that its host has not reported the limit yet.
+   * runner size's memory: on a container tier host, its share of the host by
+   * CPUs: the host's memory less the agent's memory reserve, times the size's
+   * CPUs over the host's CPUs. A host that reports no CPUs, or no more memory
+   * than that reserve, keeps each size's configured memory. 0 means the
+   * size's memory, and for a tier job that its host has not reported the
+   * limit yet.
    *
    * @generated from field: int64 memory_limit_mib = 42;
    */
@@ -963,7 +969,7 @@ export type JobTelemetrySummary = Message<"toshi.operator.v1.JobTelemetrySummary
    * Whether the runner size suited the job: "fits", "too big", "too small",
    * "throttled" or "out of memory". Empty for a job that has not ended, and
    * for a size this release does not know unless the job ran out of memory
-   * or was throttled (docs/contracts/telemetry.md, Verdict).
+   * or was throttled.
    *
    * @generated from field: string verdict = 9;
    */
@@ -1053,7 +1059,7 @@ export type JobTelemetrySummaryJson = {
    * Whether the runner size suited the job: "fits", "too big", "too small",
    * "throttled" or "out of memory". Empty for a job that has not ended, and
    * for a size this release does not know unless the job ran out of memory
-   * or was throttled (docs/contracts/telemetry.md, Verdict).
+   * or was throttled.
    *
    * @generated from field: string verdict = 9;
    */
@@ -2404,7 +2410,7 @@ export type AuditEvent = Message<"toshi.operator.v1.AuditEvent"> & {
   target: string;
 
   /**
-   * A JSON object whose keys depend on the action (docs/contracts/audit.md).
+   * A JSON object whose keys depend on the action.
    *
    * @generated from field: string details_json = 8;
    */
@@ -2468,7 +2474,7 @@ export type AuditEventJson = {
   target?: string;
 
   /**
-   * A JSON object whose keys depend on the action (docs/contracts/audit.md).
+   * A JSON object whose keys depend on the action.
    *
    * @generated from field: string details_json = 8;
    */
@@ -3970,8 +3976,10 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   reservations: Reservation[];
 
   /**
-   * Lifecycle state: "active", "suspended", "deleting" or "deleted"
-   * (docs/contracts/tenant-lifecycle.md).
+   * Lifecycle state: "active"; "suspended", where new and queued jobs are
+   * held, running jobs finish and the tenant is read-only; "deleting", once
+   * purge_after has passed and while the purge runs; or "deleted", when the
+   * purge is done, its sessions ended and its tokens revoked.
    *
    * @generated from field: string state = 17;
    */
@@ -4000,7 +4008,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
 
   /**
    * Days of finished job history the tenant keeps; unset when the plan's
-   * applies. 0 keeps forever (docs/contracts/history-retention.md).
+   * applies. 0 keeps forever.
    *
    * @generated from field: optional int32 history_days = 21;
    */
@@ -4139,8 +4147,10 @@ export type TenantJson = {
   reservations?: ReservationJson[];
 
   /**
-   * Lifecycle state: "active", "suspended", "deleting" or "deleted"
-   * (docs/contracts/tenant-lifecycle.md).
+   * Lifecycle state: "active"; "suspended", where new and queued jobs are
+   * held, running jobs finish and the tenant is read-only; "deleting", once
+   * purge_after has passed and while the purge runs; or "deleted", when the
+   * purge is done, its sessions ended and its tokens revoked.
    *
    * @generated from field: string state = 17;
    */
@@ -4169,7 +4179,7 @@ export type TenantJson = {
 
   /**
    * Days of finished job history the tenant keeps; unset when the plan's
-   * applies. 0 keeps forever (docs/contracts/history-retention.md).
+   * applies. 0 keeps forever.
    *
    * @generated from field: optional int32 history_days = 21;
    */
@@ -5083,7 +5093,7 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
 
   /**
    * Days of finished job history tenants on this plan keep; 0 keeps forever.
-   * Left out of configuration, 90 (docs/contracts/history-retention.md).
+   * Left out of configuration, 90.
    *
    * @generated from field: int32 history_days = 15;
    */
@@ -5219,7 +5229,7 @@ export type PlanJson = {
 
   /**
    * Days of finished job history tenants on this plan keep; 0 keeps forever.
-   * Left out of configuration, 90 (docs/contracts/history-retention.md).
+   * Left out of configuration, 90.
    *
    * @generated from field: int32 history_days = 15;
    */
@@ -11047,8 +11057,13 @@ export type GetJobFailureResponse = Message<"toshi.operator.v1.GetJobFailureResp
   /**
    * Toshi's cause in one word, such as "out_of_memory", "time_limit",
    * "vm_died" or "step_failed"; "none" for a job that succeeded and
-   * "not_ended" for one that has not ended. The full list is in
-   * docs/contracts/operator-usage.md.
+   * "not_ended" for one that has not ended. The full list: "none",
+   * "not_ended", "out_of_memory", "refused", "time_limit", "cancelled",
+   * "cancelled_by_tenant", "cancelled_by_operator", "cancelled_by_uninstall",
+   * "vm_died", "host_lost", "host_revoked", "stop_unconfirmed",
+   * "runner_not_started", "runner_exited", "failed", "too_small",
+   * "throttled", "step_failed", "timed_out", "cancelled_on_github" and
+   * "unknown".
    *
    * @generated from field: string cause = 2;
    */
@@ -11141,8 +11156,13 @@ export type GetJobFailureResponseJson = {
   /**
    * Toshi's cause in one word, such as "out_of_memory", "time_limit",
    * "vm_died" or "step_failed"; "none" for a job that succeeded and
-   * "not_ended" for one that has not ended. The full list is in
-   * docs/contracts/operator-usage.md.
+   * "not_ended" for one that has not ended. The full list: "none",
+   * "not_ended", "out_of_memory", "refused", "time_limit", "cancelled",
+   * "cancelled_by_tenant", "cancelled_by_operator", "cancelled_by_uninstall",
+   * "vm_died", "host_lost", "host_revoked", "stop_unconfirmed",
+   * "runner_not_started", "runner_exited", "failed", "too_small",
+   * "throttled", "step_failed", "timed_out", "cancelled_on_github" and
+   * "unknown".
    *
    * @generated from field: string cause = 2;
    */
@@ -14179,8 +14199,7 @@ export const OperatorService: GenService<{
   },
   /**
    * ListAuditEvents returns the audit log, newest first. An operator may use
-   * every filter; a dashboard session may read only its own tenants. Design:
-   * docs/contracts/audit.md.
+   * every filter; a dashboard session may read only its own tenants.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.ListAuditEvents
    */
@@ -14345,7 +14364,7 @@ export const OperatorService: GenService<{
    * returns the tenant as stored; omitting history_days clears the override,
    * so the tenant's plan applies. 0 keeps history forever. An empty tenant
    * or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
-   * fails with NOT_FOUND. Design: docs/contracts/history-retention.md.
+   * fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantHistory
    */
@@ -14355,8 +14374,7 @@ export const OperatorService: GenService<{
     output: typeof SetTenantHistoryResponseSchema;
   },
   /**
-   * ListPlans returns configured plans sorted by name. Design:
-   * docs/contracts/plans.md.
+   * ListPlans returns configured plans sorted by name.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.ListPlans
    */
@@ -14376,8 +14394,9 @@ export const OperatorService: GenService<{
     output: typeof GetVersionResponseSchema;
   },
   /**
-   * SetTenantPlan sets a tenant's plan and returns the tenant. Design:
-   * docs/contracts/plans.md.
+   * SetTenantPlan sets a tenant's plan and returns the tenant. An empty ID or
+   * plan, or a plan the configuration does not define, fails with
+   * INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantPlan
    */
@@ -14414,10 +14433,10 @@ export const OperatorService: GenService<{
   /**
    * SuspendTenant suspends an active tenant: its new and queued jobs are
    * held with hold reason tenant_suspended, its running jobs finish, and its
-   * users keep read-only access (docs/contracts/tenant-lifecycle.md). A
-   * suspended tenant is returned unchanged. An empty ID or reason fails with
-   * INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a tenant that is
-   * deleting or deleted with FAILED_PRECONDITION. Operator only.
+   * users keep read-only access. A suspended tenant is returned unchanged. An
+   * empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
+   * NOT_FOUND, and a tenant that is deleting or deleted with
+   * FAILED_PRECONDITION. Operator only.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SuspendTenant
    */
@@ -14489,7 +14508,7 @@ export const OperatorService: GenService<{
    * left as it is. An empty ID, a negative value, or a
    * max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
    * spending cap while billing is off fails with FAILED_PRECONDITION; an
-   * unknown ID fails with NOT_FOUND. Design: docs/contracts/plans.md.
+   * unknown ID fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantSpendLimits
    */
@@ -14502,7 +14521,7 @@ export const OperatorService: GenService<{
    * GetUsage returns job counts and billable minutes per tenant, UTC day and
    * conclusion, for the jobs whose queued_at is in the window. The window
    * defaults to the last 7 days. A window whose from is not before its to
-   * fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+   * fails with INVALID_ARGUMENT.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.GetUsage
    */
@@ -14516,7 +14535,6 @@ export const OperatorService: GenService<{
    * share) for the jobs that reached running in the window, where a job is in
    * the window by its queued_at. The window defaults to the last 7 days. A
    * window whose from is not before its to fails with INVALID_ARGUMENT.
-   * Design: docs/contracts/operator-usage.md.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.GetQueueTimes
    */
@@ -14530,7 +14548,7 @@ export const OperatorService: GenService<{
    * jobs GetUsage counts: their billable minutes, failed jobs and run-time
    * percentiles. A job is in the window by its queued_at. The window
    * defaults to the last 7 days. A window whose from is not before its to
-   * fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+   * fails with INVALID_ARGUMENT.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.GetWorkflowUsage
    */
@@ -14542,9 +14560,9 @@ export const OperatorService: GenService<{
   /**
    * GetTenantBilling returns a tenant's billing customer, subscription and
    * its status, the usage reported to the billing provider per month and
-   * runner size, and the events that failed. An empty ID fails with
-   * INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-   * docs/contracts/billing.md.
+   * runner size, and the events that failed. An empty ID, or months outside 0
+   * to 12, fails with INVALID_ARGUMENT; an unknown tenant fails with
+   * NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.GetTenantBilling
    */
@@ -14559,8 +14577,9 @@ export const OperatorService: GenService<{
    * minutes metered to the billing provider by size with their estimated
    * cost at the plan's prices, the starter credit applied in it, and held
    * time by reason. An empty ID or a month not in YYYY-MM form fails with
-   * INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-   * docs/contracts/billing.md.
+   * INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. A dashboard
+   * session or tenant token may read only its own tenants' statements; any
+   * other fails with PERMISSION_DENIED.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.GetTenantStatement
    */
@@ -14574,8 +14593,7 @@ export const OperatorService: GenService<{
    * returns the tenant's billing state. An empty ID, or a customer_id longer
    * than 255 bytes or holding anything but printable ASCII without spaces,
    * fails with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; a
-   * customer id held by another tenant fails with ALREADY_EXISTS. Design:
-   * docs/contracts/billing.md.
+   * customer id held by another tenant fails with ALREADY_EXISTS.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantBillingCustomer
    */
@@ -14594,7 +14612,7 @@ export const OperatorService: GenService<{
    * tenant that already has a subscription fails with FAILED_PRECONDITION; a
    * billing provider failure fails with UNAVAILABLE. A dashboard session may
    * call this only for its own tenants; otherwise it fails with
-   * PERMISSION_DENIED. Design: docs/contracts/billing.md.
+   * PERMISSION_DENIED.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.CreateCheckoutSession
    */
@@ -14610,7 +14628,7 @@ export const OperatorService: GenService<{
    * billing not configured or a tenant with no billing customer fails with
    * FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
    * A dashboard session may call this only for its own tenants; otherwise it
-   * fails with PERMISSION_DENIED. Design: docs/contracts/billing.md.
+   * fails with PERMISSION_DENIED.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.CreateBillingPortalSession
    */
@@ -14741,9 +14759,9 @@ export const OperatorService: GenService<{
     output: typeof CreateProductTokenResponseSchema;
   },
   /**
-   * ListOperatorAlerts returns the operator alerts this control plane process
-   * has raised and not yet cleared (docs/contracts/operator-alerts.md).
-   * Operators only.
+   * ListOperatorAlerts returns the operator alerts raised and not yet
+   * cleared, one per kind. They are kept in the store, so a restarted control
+   * plane still returns them. Operators only.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.ListOperatorAlerts
    */
@@ -14768,8 +14786,7 @@ export const OperatorService: GenService<{
    * its own hosts and, unless it runs on its own hosts only, the shared hosts
    * its plan's operating systems run on. A dashboard session or
    * tenant token may ask for its own tenants only. An empty tenant fails
-   * with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-   * docs/contracts/egress.md.
+   * with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.ListEgressIPs
    */
@@ -14880,12 +14897,11 @@ export const OperatorService: GenService<{
     output: typeof SetTenantCancelRunOnVmDeathResponseSchema;
   },
   /**
-   * GetJobFailure says why a job ended the way it did and what to do next
-   * (docs/contracts/operator-usage.md, GetJobFailure), from what Toshi
-   * stored; GitHubService.GetJobFailure gives what GitHub says, which the
-   * CLI and the dashboard compose into it. A tenant caller sees only its
-   * own jobs. An empty ID fails with INVALID_ARGUMENT; an unknown ID fails
-   * with NOT_FOUND.
+   * GetJobFailure says why a job ended the way it did and what to do next,
+   * from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
+   * says, which the CLI and the dashboard compose into it. A tenant caller
+   * sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
+   * unknown ID fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.GetJobFailure
    */

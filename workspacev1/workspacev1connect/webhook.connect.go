@@ -75,7 +75,7 @@ type WebhookServiceClient interface {
 	// enabled. A disabled endpoint is owed no new event and no try starts;
 	// the events written before the disable stay owed, enabling it again
 	// owes none written while it was disabled, and a try already under way
-	// finishes within its claim (docs/webhooks.md).
+	// finishes within its claim, which holds a delivery for one minute.
 	UpdateWebhookEndpoint(context.Context, *connect.Request[workspacev1.UpdateWebhookEndpointRequest]) (*connect.Response[workspacev1.UpdateWebhookEndpointResponse], error)
 	// DeleteWebhookEndpoint deletes an endpoint and its deliveries.
 	DeleteWebhookEndpoint(context.Context, *connect.Request[workspacev1.DeleteWebhookEndpointRequest]) (*connect.Response[workspacev1.DeleteWebhookEndpointResponse], error)
@@ -234,7 +234,7 @@ type WebhookServiceHandler interface {
 	// enabled. A disabled endpoint is owed no new event and no try starts;
 	// the events written before the disable stay owed, enabling it again
 	// owes none written while it was disabled, and a try already under way
-	// finishes within its claim (docs/webhooks.md).
+	// finishes within its claim, which holds a delivery for one minute.
 	UpdateWebhookEndpoint(context.Context, *connect.Request[workspacev1.UpdateWebhookEndpointRequest]) (*connect.Response[workspacev1.UpdateWebhookEndpointResponse], error)
 	// DeleteWebhookEndpoint deletes an endpoint and its deliveries.
 	DeleteWebhookEndpoint(context.Context, *connect.Request[workspacev1.DeleteWebhookEndpointRequest]) (*connect.Response[workspacev1.DeleteWebhookEndpointResponse], error)

@@ -110,8 +110,9 @@ type ProjectServiceClient interface {
 	DeleteEnvironment(context.Context, *connect.Request[workspacev1.DeleteEnvironmentRequest]) (*connect.Response[workspacev1.DeleteEnvironmentResponse], error)
 	// ListBranchRules returns a project's branch rules in order, the
 	// fallback rule last: the first that matches a CI job's run chooses the
-	// job's environment (docs/projects.md). A project the workspace does not
-	// have is NOT_FOUND. A token limited to a project reads only that
+	// job's environment. The fallback rule takes every other run and never
+	// chooses an environment of kind production. A project the workspace does
+	// not have is NOT_FOUND. A token limited to a project reads only that
 	// project's rules, and a token limited to an environment is
 	// PERMISSION_DENIED.
 	ListBranchRules(context.Context, *connect.Request[workspacev1.ListBranchRulesRequest]) (*connect.Response[workspacev1.ListBranchRulesResponse], error)
@@ -303,8 +304,9 @@ type ProjectServiceHandler interface {
 	DeleteEnvironment(context.Context, *connect.Request[workspacev1.DeleteEnvironmentRequest]) (*connect.Response[workspacev1.DeleteEnvironmentResponse], error)
 	// ListBranchRules returns a project's branch rules in order, the
 	// fallback rule last: the first that matches a CI job's run chooses the
-	// job's environment (docs/projects.md). A project the workspace does not
-	// have is NOT_FOUND. A token limited to a project reads only that
+	// job's environment. The fallback rule takes every other run and never
+	// chooses an environment of kind production. A project the workspace does
+	// not have is NOT_FOUND. A token limited to a project reads only that
 	// project's rules, and a token limited to an environment is
 	// PERMISSION_DENIED.
 	ListBranchRules(context.Context, *connect.Request[workspacev1.ListBranchRulesRequest]) (*connect.Response[workspacev1.ListBranchRulesResponse], error)

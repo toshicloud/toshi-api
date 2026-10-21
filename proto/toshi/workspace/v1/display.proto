@@ -8,10 +8,9 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
 // DisplayService opens display sessions: one viewer's live view of the
-// screen of a VM that runs one of the workspace's CI jobs
-// (docs/api/workspace-v1.md, "Display sessions"). The caller's credential
-// names the workspace, as for
-// WorkspaceService; a session or a job of another workspace is NOT_FOUND.
+// screen of a VM that runs one of the workspace's CI jobs. The caller's
+// credential names the workspace, as for WorkspaceService; a session or a job
+// of another workspace is NOT_FOUND.
 //
 // A session carries the screen as the RFB protocol (RFC 6143) over a
 // WebSocket at the session's URL, the framing noVNC speaks. Its token,
@@ -142,6 +141,16 @@ message DisplaySession {
   // host did not open the screen) or shutdown (the control plane
   // stopped). Empty while it is open.
   string close_reason = 12;
+  // Who opened it, as the audit log names the caller: the GitHub login of
+  // the signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
+  // DISPLAY_OPENER_PROGRAM.
+  string opener_id = 13;
+  // The web origin of the call that opened it, for example
+  // "https://toshi.example.com"; empty for a call that sent none.
+  string origin = 14;
+  // The id (jti) of the one token that attaches the session: an id, never
+  // the token.
+  string attach_token_id = 15;
 }
 
 message OpenDisplaySessionRequest {

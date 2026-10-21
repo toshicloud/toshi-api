@@ -17,8 +17,7 @@ service OperatorService {
   rpc ListJobs(ListJobsRequest) returns (ListJobsResponse);
 
   // ListAuditEvents returns the audit log, newest first. An operator may use
-  // every filter; a dashboard session may read only its own tenants. Design:
-  // docs/contracts/audit.md.
+  // every filter; a dashboard session may read only its own tenants.
   rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse);
 
   // GetJob returns one job. An unknown ID fails with NOT_FOUND.
@@ -92,18 +91,18 @@ service OperatorService {
   // returns the tenant as stored; omitting history_days clears the override,
   // so the tenant's plan applies. 0 keeps history forever. An empty tenant
   // or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
-  // fails with NOT_FOUND. Design: docs/contracts/history-retention.md.
+  // fails with NOT_FOUND.
   rpc SetTenantHistory(SetTenantHistoryRequest) returns (SetTenantHistoryResponse);
 
-  // ListPlans returns configured plans sorted by name. Design:
-  // docs/contracts/plans.md.
+  // ListPlans returns configured plans sorted by name.
   rpc ListPlans(ListPlansRequest) returns (ListPlansResponse);
 
   // GetVersion returns the control plane's version, commit and commit date.
   rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
 
-  // SetTenantPlan sets a tenant's plan and returns the tenant. Design:
-  // docs/contracts/plans.md.
+  // SetTenantPlan sets a tenant's plan and returns the tenant. An empty ID or
+  // plan, or a plan the configuration does not define, fails with
+  // INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
   rpc SetTenantPlan(SetTenantPlanRequest) returns (SetTenantPlanResponse);
 
   // SetTenantOwnHostsOnly sets whether the tenant's jobs wait for its own
@@ -119,10 +118,10 @@ service OperatorService {
 
   // SuspendTenant suspends an active tenant: its new and queued jobs are
   // held with hold reason tenant_suspended, its running jobs finish, and its
-  // users keep read-only access (docs/contracts/tenant-lifecycle.md). A
-  // suspended tenant is returned unchanged. An empty ID or reason fails with
-  // INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a tenant that is
-  // deleting or deleted with FAILED_PRECONDITION. Operator only.
+  // users keep read-only access. A suspended tenant is returned unchanged. An
+  // empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
+  // NOT_FOUND, and a tenant that is deleting or deleted with
+  // FAILED_PRECONDITION. Operator only.
   rpc SuspendTenant(SuspendTenantRequest) returns (SuspendTenantResponse);
   // ResumeTenant returns a suspended tenant to active and cancels a
   // scheduled deletion; held jobs run at the next scheduler pass. An active
@@ -157,34 +156,33 @@ service OperatorService {
   // left as it is. An empty ID, a negative value, or a
   // max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
   // spending cap while billing is off fails with FAILED_PRECONDITION; an
-  // unknown ID fails with NOT_FOUND. Design: docs/contracts/plans.md.
+  // unknown ID fails with NOT_FOUND.
   rpc SetTenantSpendLimits(SetTenantSpendLimitsRequest) returns (SetTenantSpendLimitsResponse);
 
   // GetUsage returns job counts and billable minutes per tenant, UTC day and
   // conclusion, for the jobs whose queued_at is in the window. The window
   // defaults to the last 7 days. A window whose from is not before its to
-  // fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+  // fails with INVALID_ARGUMENT.
   rpc GetUsage(GetUsageRequest) returns (GetUsageResponse);
 
   // GetQueueTimes returns a queue-time summary (percentiles, maximum and warm
   // share) for the jobs that reached running in the window, where a job is in
   // the window by its queued_at. The window defaults to the last 7 days. A
   // window whose from is not before its to fails with INVALID_ARGUMENT.
-  // Design: docs/contracts/operator-usage.md.
   rpc GetQueueTimes(GetQueueTimesRequest) returns (GetQueueTimesResponse);
 
   // GetWorkflowUsage returns, per tenant, repository and workflow name, the
   // jobs GetUsage counts: their billable minutes, failed jobs and run-time
   // percentiles. A job is in the window by its queued_at. The window
   // defaults to the last 7 days. A window whose from is not before its to
-  // fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+  // fails with INVALID_ARGUMENT.
   rpc GetWorkflowUsage(GetWorkflowUsageRequest) returns (GetWorkflowUsageResponse);
 
   // GetTenantBilling returns a tenant's billing customer, subscription and
   // its status, the usage reported to the billing provider per month and
-  // runner size, and the events that failed. An empty ID fails with
-  // INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-  // docs/contracts/billing.md.
+  // runner size, and the events that failed. An empty ID, or months outside 0
+  // to 12, fails with INVALID_ARGUMENT; an unknown tenant fails with
+  // NOT_FOUND.
   rpc GetTenantBilling(GetTenantBillingRequest) returns (GetTenantBillingResponse);
 
   // GetTenantStatement returns a tenant's usage statement for one UTC month:
@@ -192,16 +190,16 @@ service OperatorService {
   // minutes metered to the billing provider by size with their estimated
   // cost at the plan's prices, the starter credit applied in it, and held
   // time by reason. An empty ID or a month not in YYYY-MM form fails with
-  // INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-  // docs/contracts/billing.md.
+  // INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. A dashboard
+  // session or tenant token may read only its own tenants' statements; any
+  // other fails with PERMISSION_DENIED.
   rpc GetTenantStatement(GetTenantStatementRequest) returns (GetTenantStatementResponse);
 
   // SetTenantBillingCustomer links or clears a tenant's billing customer id and
   // returns the tenant's billing state. An empty ID, or a customer_id longer
   // than 255 bytes or holding anything but printable ASCII without spaces,
   // fails with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; a
-  // customer id held by another tenant fails with ALREADY_EXISTS. Design:
-  // docs/contracts/billing.md.
+  // customer id held by another tenant fails with ALREADY_EXISTS.
   rpc SetTenantBillingCustomer(SetTenantBillingCustomerRequest) returns (SetTenantBillingCustomerResponse);
 
   // CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
@@ -213,7 +211,7 @@ service OperatorService {
   // tenant that already has a subscription fails with FAILED_PRECONDITION; a
   // billing provider failure fails with UNAVAILABLE. A dashboard session may
   // call this only for its own tenants; otherwise it fails with
-  // PERMISSION_DENIED. Design: docs/contracts/billing.md.
+  // PERMISSION_DENIED.
   rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse);
 
   // CreateBillingPortalSession returns a Stripe Customer Portal URL where the
@@ -222,7 +220,7 @@ service OperatorService {
   // billing not configured or a tenant with no billing customer fails with
   // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
   // A dashboard session may call this only for its own tenants; otherwise it
-  // fails with PERMISSION_DENIED. Design: docs/contracts/billing.md.
+  // fails with PERMISSION_DENIED.
   rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse);
 
   // CancelJob cancels a queued job at once. An assigned, starting or running
@@ -283,9 +281,9 @@ service OperatorService {
   // other.
   rpc CreateProductToken(CreateProductTokenRequest) returns (CreateProductTokenResponse);
 
-  // ListOperatorAlerts returns the operator alerts this control plane process
-  // has raised and not yet cleared (docs/contracts/operator-alerts.md).
-  // Operators only.
+  // ListOperatorAlerts returns the operator alerts raised and not yet
+  // cleared, one per kind. They are kept in the store, so a restarted control
+  // plane still returns them. Operators only.
   rpc ListOperatorAlerts(ListOperatorAlertsRequest) returns (ListOperatorAlertsResponse);
 
   // ListHostAlerts returns the active alerts of hosts that tenants own: memory_held, egress_changed and agent_version_skew. A tenant caller gets those of its own tenants; an operator gets every tenant's, or one tenant's with the filter.
@@ -296,8 +294,7 @@ service OperatorService {
   // its own hosts and, unless it runs on its own hosts only, the shared hosts
   // its plan's operating systems run on. A dashboard session or
   // tenant token may ask for its own tenants only. An empty tenant fails
-  // with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-  // docs/contracts/egress.md.
+  // with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
   rpc ListEgressIPs(ListEgressIPsRequest) returns (ListEgressIPsResponse);
 
   // CheckCloudHost checks a cloud host's AWS setup without launching
@@ -344,12 +341,11 @@ service OperatorService {
   // INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
   rpc SetTenantCancelRunOnVmDeath(SetTenantCancelRunOnVmDeathRequest) returns (SetTenantCancelRunOnVmDeathResponse);
 
-  // GetJobFailure says why a job ended the way it did and what to do next
-  // (docs/contracts/operator-usage.md, GetJobFailure), from what Toshi
-  // stored; GitHubService.GetJobFailure gives what GitHub says, which the
-  // CLI and the dashboard compose into it. A tenant caller sees only its
-  // own jobs. An empty ID fails with INVALID_ARGUMENT; an unknown ID fails
-  // with NOT_FOUND.
+  // GetJobFailure says why a job ended the way it did and what to do next,
+  // from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
+  // says, which the CLI and the dashboard compose into it. A tenant caller
+  // sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
+  // unknown ID fails with NOT_FOUND.
   rpc GetJobFailure(GetJobFailureRequest) returns (GetJobFailureResponse);
 
   // GetJobDelivery returns the switch for delivering secrets to CI jobs
@@ -573,8 +569,8 @@ message Job {
   google.protobuf.Timestamp runner_request_since = 31;
   // Toshi's own word for a job Toshi ended itself: time_limit,
   // cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
-  // cancelled or failed (docs/contracts/operator-usage.md). Empty for every
-  // other job. The conclusion stays GitHub's word.
+  // cancelled or failed. Empty for every other job. The conclusion stays
+  // GitHub's word.
   string outcome = 32;
   // The kind of the job's host when it is not a host agent's machine: "cloud"
   // for a cloud host or a cloud pool. Empty otherwise,
@@ -586,9 +582,9 @@ message Job {
   string previous_pool_image = 34;
   // The whole minutes the job counts in the usage report: from started_at
   // to stop_requested_at when the job was asked to stop, else to
-  // finished_at, rounded up (docs/contracts/operator-usage.md). 0 for a job
-  // that has not ended or never started, a job on its tenant's own host and
-  // a dispatch filler's job, which are not billed.
+  // finished_at, rounded up. 0 for a job that has not ended or never started,
+  // a job on its tenant's own host and a dispatch filler's job, which are not
+  // billed.
   int64 billable_minutes = 35;
   // The job's page on GitHub, on the configured GitHub web URL. Empty when
   // the job has no repository, run or workflow job id.
@@ -614,9 +610,12 @@ message Job {
   // host is removed; a requeue clears it.
   string tier = 41;
   // The memory limit the job's host gave it in MiB, when that is not its
-  // runner size's memory: on a container tier host, its share of the host
-  // (docs/contracts/container-tier.md). 0 means the size's memory, and for
-  // a tier job that its host has not reported the limit yet.
+  // runner size's memory: on a container tier host, its share of the host by
+  // CPUs: the host's memory less the agent's memory reserve, times the size's
+  // CPUs over the host's CPUs. A host that reports no CPUs, or no more memory
+  // than that reserve, keeps each size's configured memory. 0 means the
+  // size's memory, and for a tier job that its host has not reported the
+  // limit yet.
   int64 memory_limit_mib = 42;
   // The tier in one line, as the dashboard's job page, `toshi jobs explain`
   // and `toshi tenant explain` show it, such as "ran on a container tier
@@ -697,7 +696,7 @@ message JobTelemetrySummary {
   // Whether the runner size suited the job: "fits", "too big", "too small",
   // "throttled" or "out of memory". Empty for a job that has not ended, and
   // for a size this release does not know unless the job ran out of memory
-  // or was throttled (docs/contracts/telemetry.md, Verdict).
+  // or was throttled.
   string verdict = 9;
   // The verdict in one sentence with its numbers, such as "used 20 % of 4
   // vCPUs and 4 GiB of 16 GiB: a size smaller, toshi-linux-2x, would fit".
@@ -939,7 +938,7 @@ message AuditEvent {
   // A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...,
   // tenant:... or installation:....
   string target = 7;
-  // A JSON object whose keys depend on the action (docs/contracts/audit.md).
+  // A JSON object whose keys depend on the action.
   string details_json = 8;
   string request_id = 9;
 }
@@ -1209,8 +1208,10 @@ message Tenant {
   // The tenant's effective reservations on shared hosts, ordered
   // by size: its own rows, and its plan's entries where it has none.
   repeated Reservation reservations = 16;
-  // Lifecycle state: "active", "suspended", "deleting" or "deleted"
-  // (docs/contracts/tenant-lifecycle.md).
+  // Lifecycle state: "active"; "suspended", where new and queued jobs are
+  // held, running jobs finish and the tenant is read-only; "deleting", once
+  // purge_after has passed and while the purge runs; or "deleted", when the
+  // purge is done, its sessions ended and its tokens revoked.
   string state = 17;
   // Why the operator suspended or deleted the tenant; empty when active.
   string state_reason = 18;
@@ -1219,7 +1220,7 @@ message Tenant {
   // When a scheduled deletion purges the tenant; unset when none.
   google.protobuf.Timestamp purge_after = 20;
   // Days of finished job history the tenant keeps; unset when the plan's
-  // applies. 0 keeps forever (docs/contracts/history-retention.md).
+  // applies. 0 keeps forever.
   optional int32 history_days = 21;
   // The period the retention pass uses: the tenant's value when set, else
   // its plan's.
@@ -1376,7 +1377,7 @@ message Plan {
   // unit; 0 means none.
   int64 starter_credit_cents = 14;
   // Days of finished job history tenants on this plan keep; 0 keeps forever.
-  // Left out of configuration, 90 (docs/contracts/history-retention.md).
+  // Left out of configuration, 90.
   int32 history_days = 15;
   // Longest debug session, in minutes, a failed job on this plan may ask
   // for with a toshi-debug-<n> label; 0 means the plan has no debug
@@ -2339,8 +2340,13 @@ message GetJobFailureResponse {
   string job_id = 1;
   // Toshi's cause in one word, such as "out_of_memory", "time_limit",
   // "vm_died" or "step_failed"; "none" for a job that succeeded and
-  // "not_ended" for one that has not ended. The full list is in
-  // docs/contracts/operator-usage.md.
+  // "not_ended" for one that has not ended. The full list: "none",
+  // "not_ended", "out_of_memory", "refused", "time_limit", "cancelled",
+  // "cancelled_by_tenant", "cancelled_by_operator", "cancelled_by_uninstall",
+  // "vm_died", "host_lost", "host_revoked", "stop_unconfirmed",
+  // "runner_not_started", "runner_exited", "failed", "too_small",
+  // "throttled", "step_failed", "timed_out", "cancelled_on_github" and
+  // "unknown".
   string cause = 2;
   // The cause in one sentence. Where the dashboard's Jobs table shows why
   // the job ended, this is the same text. A job that ran out of time with a

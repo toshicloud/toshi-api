@@ -2,8 +2,7 @@ syntax = "proto3";
 
 // Package toshi.workspace.v1 is the Workspace API: the one workload resource
 // of every kind (job, sandbox, service), the executions and operations under
-// it, and the event log every change is written to. The contract in prose:
-// docs/api/workspace-v1.md.
+// it, and the event log every change is written to.
 package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
@@ -234,6 +233,20 @@ message Workload {
   string environment = 8;
   // Free-form labels, set at create and changed by PatchWorkload.
   map<string, string> labels = 9;
+  // What it records of its runs, fixed at create: never UNSPECIFIED.
+  RecordingPolicy recording = 10;
+}
+
+// RecordingPolicy is what a workload records of its runs.
+enum RecordingPolicy {
+  // At create: the workspace plan's default for a job, and OFF for another
+  // kind.
+  RECORDING_POLICY_UNSPECIFIED = 0;
+  // Nothing.
+  RECORDING_POLICY_OFF = 1;
+  // A screenshot strip of each run (RecordingService). A job only: set for
+  // another kind it fails with INVALID_ARGUMENT.
+  RECORDING_POLICY_STRIP = 2;
 }
 
 // JobSpec is a job: one command, run once.
@@ -419,6 +432,9 @@ message CreateWorkloadRequest {
   // For a job: block until it ends, at most this long. Zero returns at once.
   // Set for another kind it fails with INVALID_ARGUMENT.
   google.protobuf.Duration wait_for_end = 8;
+  // What the workload records of its runs. UNSPECIFIED takes the default
+  // RecordingPolicy names.
+  RecordingPolicy recording = 9;
 }
 
 message CreateWorkloadResponse {
@@ -679,6 +695,8 @@ enum EventType {
   EVENT_TYPE_EXECUTION_ENDED = 6;
   // An event a guest emitted under its own name, delivered as sent.
   EVENT_TYPE_EMITTED = 7;
+  // A run's recording is ready. Name: "recording.ready".
+  EVENT_TYPE_RECORDING_READY = 8;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -702,6 +720,8 @@ message Event {
     ExecutionEvent execution = 8;
     // For EMITTED.
     EmittedEvent emitted = 9;
+    // For RECORDING_READY.
+    RecordingEvent recording = 10;
   }
 }
 
@@ -716,6 +736,13 @@ message ExecutionEvent {
 // EmittedEvent is an event a guest emitted.
 message EmittedEvent {
   bytes data = 1;
+}
+
+// RecordingEvent names a recording and its strip's artifact, never a URL:
+// RecordingService.GetRecording signs one.
+message RecordingEvent {
+  string recording_id = 1;
+  string artifact_id = 2;
 }
 
 message ListEventsRequest {

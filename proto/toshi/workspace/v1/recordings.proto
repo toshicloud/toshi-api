@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// RecordingService lists a workload's recordings and signs a URL for a
+// recording's strip. The caller is a workspace's API token or a dashboard
+// session, as for ArtifactService. A credential limited to a project or an
+// environment sees only its own.
+service RecordingService {
+  // ListRecordings returns one workload's recordings, oldest first: one
+  // per run attempt that recorded. Never a URL.
+  rpc ListRecordings(ListRecordingsRequest) returns (ListRecordingsResponse);
+  // GetRecording returns one recording and, when it is ready, a signed URL
+  // for its strip that expires. A ready recording whose strip's retention
+  // has deleted it is FAILED_PRECONDITION.
+  rpc GetRecording(GetRecordingRequest) returns (GetRecordingResponse);
+}
+
+// RecordingState is where a recording is in its life.
+enum RecordingState {
+  RECORDING_STATE_UNSPECIFIED = 0;
+  // The run attempt may still finish it: its host captures, or uploads
+  // what it captured.
+  RECORDING_STATE_CAPTURING = 1;
+  // Its strip's upload completed. The strip is kept for its retention; the
+  // recording stays ready after that.
+  RECORDING_STATE_READY = 2;
+  // It ended without a strip, and its host said why.
+  RECORDING_STATE_UNAVAILABLE = 3;
+  // It ended without a strip and without its host's report.
+  RECORDING_STATE_LOST = 4;
+}
+
+// Recording is one run attempt's screenshot strip: its record, never a key
+// or a URL.
+message Recording {
+  string id = 1;
+  string project_id = 2;
+  string environment_id = 3;
+  string workload_id = 4;
+  RecordingState state = 5;
+  // Why it is unavailable or lost.
+  string reason = 6;
+  // The artifact that holds the strip: complete when the recording became
+  // ready, deleted once its retention has passed.
+  string artifact_id = 7;
+  // The time between two screenshots.
+  google.protobuf.Duration interval = 8;
+  // The strip's ticks, and the screenshots left out for being larger than
+  // a frame may be.
+  int32 frames = 9;
+  int32 dropped = 10;
+  // Capture stopped at the strip's frame, pause or byte bound before the
+  // run ended.
+  bool truncated = 11;
+  // The spans the strip left out while an input session was open.
+  repeated RecordingPause pauses = 12;
+  google.protobuf.Timestamp created_at = 13;
+  // Set once it is no longer capturing.
+  google.protobuf.Timestamp ended_at = 14;
+}
+
+// RecordingPause is a span with no screenshot, while a display session
+// with input was open.
+message RecordingPause {
+  string session_id = 1;
+  // person or program.
+  string actor = 2;
+  // websocket or api.
+  string via = 3;
+  google.protobuf.Timestamp start = 4;
+  google.protobuf.Timestamp end = 5;
+}
+
+message ListRecordingsRequest {
+  string workload_id = 1;
+}
+
+message ListRecordingsResponse {
+  repeated Recording recordings = 1;
+}
+
+message GetRecordingRequest {
+  string recording_id = 1;
+  // How long the strip's URL lives: 0 is the default (300 seconds), and
+  // above 3600 fails with INVALID_ARGUMENT.
+  int64 ttl_seconds = 2;
+}
+
+message GetRecordingResponse {
+  Recording recording = 1;
+  // A signed GET for the strip, set only when the recording is ready. It
+  // honours a byte Range, so one frame can be fetched by its offset in
+  // the strip's index.
+  string url = 2;
+  google.protobuf.Timestamp expires_at = 3;
+}

@@ -234,8 +234,7 @@ type OperatorServiceClient interface {
 	// oldest queued first.
 	ListJobs(context.Context, *connect.Request[operatorv1.ListJobsRequest]) (*connect.Response[operatorv1.ListJobsResponse], error)
 	// ListAuditEvents returns the audit log, newest first. An operator may use
-	// every filter; a dashboard session may read only its own tenants. Design:
-	// docs/contracts/audit.md.
+	// every filter; a dashboard session may read only its own tenants.
 	ListAuditEvents(context.Context, *connect.Request[operatorv1.ListAuditEventsRequest]) (*connect.Response[operatorv1.ListAuditEventsResponse], error)
 	// GetJob returns one job. An unknown ID fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[operatorv1.GetJobRequest]) (*connect.Response[operatorv1.GetJobResponse], error)
@@ -296,15 +295,15 @@ type OperatorServiceClient interface {
 	// returns the tenant as stored; omitting history_days clears the override,
 	// so the tenant's plan applies. 0 keeps history forever. An empty tenant
 	// or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
-	// fails with NOT_FOUND. Design: docs/contracts/history-retention.md.
+	// fails with NOT_FOUND.
 	SetTenantHistory(context.Context, *connect.Request[operatorv1.SetTenantHistoryRequest]) (*connect.Response[operatorv1.SetTenantHistoryResponse], error)
-	// ListPlans returns configured plans sorted by name. Design:
-	// docs/contracts/plans.md.
+	// ListPlans returns configured plans sorted by name.
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
 	GetVersion(context.Context, *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error)
-	// SetTenantPlan sets a tenant's plan and returns the tenant. Design:
-	// docs/contracts/plans.md.
+	// SetTenantPlan sets a tenant's plan and returns the tenant. An empty ID or
+	// plan, or a plan the configuration does not define, fails with
+	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
 	SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error)
 	// SetTenantOwnHostsOnly sets whether the tenant's jobs wait for its own
 	// hosts and never run on shared ones, and returns the tenant as stored. An
@@ -317,10 +316,10 @@ type OperatorServiceClient interface {
 	SetTenantAllowOverflow(context.Context, *connect.Request[operatorv1.SetTenantAllowOverflowRequest]) (*connect.Response[operatorv1.SetTenantAllowOverflowResponse], error)
 	// SuspendTenant suspends an active tenant: its new and queued jobs are
 	// held with hold reason tenant_suspended, its running jobs finish, and its
-	// users keep read-only access (docs/contracts/tenant-lifecycle.md). A
-	// suspended tenant is returned unchanged. An empty ID or reason fails with
-	// INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a tenant that is
-	// deleting or deleted with FAILED_PRECONDITION. Operator only.
+	// users keep read-only access. A suspended tenant is returned unchanged. An
+	// empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
+	// NOT_FOUND, and a tenant that is deleting or deleted with
+	// FAILED_PRECONDITION. Operator only.
 	SuspendTenant(context.Context, *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error)
 	// ResumeTenant returns a suspended tenant to active and cancels a
 	// scheduled deletion; held jobs run at the next scheduler pass. An active
@@ -352,45 +351,44 @@ type OperatorServiceClient interface {
 	// left as it is. An empty ID, a negative value, or a
 	// max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
 	// spending cap while billing is off fails with FAILED_PRECONDITION; an
-	// unknown ID fails with NOT_FOUND. Design: docs/contracts/plans.md.
+	// unknown ID fails with NOT_FOUND.
 	SetTenantSpendLimits(context.Context, *connect.Request[operatorv1.SetTenantSpendLimitsRequest]) (*connect.Response[operatorv1.SetTenantSpendLimitsResponse], error)
 	// GetUsage returns job counts and billable minutes per tenant, UTC day and
 	// conclusion, for the jobs whose queued_at is in the window. The window
 	// defaults to the last 7 days. A window whose from is not before its to
-	// fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+	// fails with INVALID_ARGUMENT.
 	GetUsage(context.Context, *connect.Request[operatorv1.GetUsageRequest]) (*connect.Response[operatorv1.GetUsageResponse], error)
 	// GetQueueTimes returns a queue-time summary (percentiles, maximum and warm
 	// share) for the jobs that reached running in the window, where a job is in
 	// the window by its queued_at. The window defaults to the last 7 days. A
 	// window whose from is not before its to fails with INVALID_ARGUMENT.
-	// Design: docs/contracts/operator-usage.md.
 	GetQueueTimes(context.Context, *connect.Request[operatorv1.GetQueueTimesRequest]) (*connect.Response[operatorv1.GetQueueTimesResponse], error)
 	// GetWorkflowUsage returns, per tenant, repository and workflow name, the
 	// jobs GetUsage counts: their billable minutes, failed jobs and run-time
 	// percentiles. A job is in the window by its queued_at. The window
 	// defaults to the last 7 days. A window whose from is not before its to
-	// fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+	// fails with INVALID_ARGUMENT.
 	GetWorkflowUsage(context.Context, *connect.Request[operatorv1.GetWorkflowUsageRequest]) (*connect.Response[operatorv1.GetWorkflowUsageResponse], error)
 	// GetTenantBilling returns a tenant's billing customer, subscription and
 	// its status, the usage reported to the billing provider per month and
-	// runner size, and the events that failed. An empty ID fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-	// docs/contracts/billing.md.
+	// runner size, and the events that failed. An empty ID, or months outside 0
+	// to 12, fails with INVALID_ARGUMENT; an unknown tenant fails with
+	// NOT_FOUND.
 	GetTenantBilling(context.Context, *connect.Request[operatorv1.GetTenantBillingRequest]) (*connect.Response[operatorv1.GetTenantBillingResponse], error)
 	// GetTenantStatement returns a tenant's usage statement for one UTC month:
 	// minutes by runner size and OS of the jobs that finished in it, the
 	// minutes metered to the billing provider by size with their estimated
 	// cost at the plan's prices, the starter credit applied in it, and held
 	// time by reason. An empty ID or a month not in YYYY-MM form fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-	// docs/contracts/billing.md.
+	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. A dashboard
+	// session or tenant token may read only its own tenants' statements; any
+	// other fails with PERMISSION_DENIED.
 	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
 	// SetTenantBillingCustomer links or clears a tenant's billing customer id and
 	// returns the tenant's billing state. An empty ID, or a customer_id longer
 	// than 255 bytes or holding anything but printable ASCII without spaces,
 	// fails with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; a
-	// customer id held by another tenant fails with ALREADY_EXISTS. Design:
-	// docs/contracts/billing.md.
+	// customer id held by another tenant fails with ALREADY_EXISTS.
 	SetTenantBillingCustomer(context.Context, *connect.Request[operatorv1.SetTenantBillingCustomerRequest]) (*connect.Response[operatorv1.SetTenantBillingCustomerResponse], error)
 	// CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
 	// tenant to plan, first creating and linking a billing customer for a
@@ -401,7 +399,7 @@ type OperatorServiceClient interface {
 	// tenant that already has a subscription fails with FAILED_PRECONDITION; a
 	// billing provider failure fails with UNAVAILABLE. A dashboard session may
 	// call this only for its own tenants; otherwise it fails with
-	// PERMISSION_DENIED. Design: docs/contracts/billing.md.
+	// PERMISSION_DENIED.
 	CreateCheckoutSession(context.Context, *connect.Request[operatorv1.CreateCheckoutSessionRequest]) (*connect.Response[operatorv1.CreateCheckoutSessionResponse], error)
 	// CreateBillingPortalSession returns a Stripe Customer Portal URL where the
 	// tenant manages its card and subscription. An empty ID fails with
@@ -409,7 +407,7 @@ type OperatorServiceClient interface {
 	// billing not configured or a tenant with no billing customer fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
 	// A dashboard session may call this only for its own tenants; otherwise it
-	// fails with PERMISSION_DENIED. Design: docs/contracts/billing.md.
+	// fails with PERMISSION_DENIED.
 	CreateBillingPortalSession(context.Context, *connect.Request[operatorv1.CreateBillingPortalSessionRequest]) (*connect.Response[operatorv1.CreateBillingPortalSessionResponse], error)
 	// CancelJob cancels a queued job at once. An assigned, starting or running
 	// job moves to JOB_STATE_STOPPING: its host stops the runner after a grace
@@ -460,9 +458,9 @@ type OperatorServiceClient interface {
 	// has at most two tokens that work at once, so that one can replace the
 	// other.
 	CreateProductToken(context.Context, *connect.Request[operatorv1.CreateProductTokenRequest]) (*connect.Response[operatorv1.CreateProductTokenResponse], error)
-	// ListOperatorAlerts returns the operator alerts this control plane process
-	// has raised and not yet cleared (docs/contracts/operator-alerts.md).
-	// Operators only.
+	// ListOperatorAlerts returns the operator alerts raised and not yet
+	// cleared, one per kind. They are kept in the store, so a restarted control
+	// plane still returns them. Operators only.
 	ListOperatorAlerts(context.Context, *connect.Request[operatorv1.ListOperatorAlertsRequest]) (*connect.Response[operatorv1.ListOperatorAlertsResponse], error)
 	// ListHostAlerts returns the active alerts of hosts that tenants own: memory_held, egress_changed and agent_version_skew. A tenant caller gets those of its own tenants; an operator gets every tenant's, or one tenant's with the filter.
 	ListHostAlerts(context.Context, *connect.Request[operatorv1.ListHostAlertsRequest]) (*connect.Response[operatorv1.ListHostAlertsResponse], error)
@@ -471,8 +469,7 @@ type OperatorServiceClient interface {
 	// its own hosts and, unless it runs on its own hosts only, the shared hosts
 	// its plan's operating systems run on. A dashboard session or
 	// tenant token may ask for its own tenants only. An empty tenant fails
-	// with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-	// docs/contracts/egress.md.
+	// with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
 	ListEgressIPs(context.Context, *connect.Request[operatorv1.ListEgressIPsRequest]) (*connect.Response[operatorv1.ListEgressIPsResponse], error)
 	// CheckCloudHost checks a cloud host's AWS setup without launching
 	// anything: the role can be assumed, the AMI is visible, the subnet routes
@@ -511,12 +508,11 @@ type OperatorServiceClient interface {
 	// tenant as stored. On by default. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantCancelRunOnVmDeath(context.Context, *connect.Request[operatorv1.SetTenantCancelRunOnVmDeathRequest]) (*connect.Response[operatorv1.SetTenantCancelRunOnVmDeathResponse], error)
-	// GetJobFailure says why a job ended the way it did and what to do next
-	// (docs/contracts/operator-usage.md, GetJobFailure), from what Toshi
-	// stored; GitHubService.GetJobFailure gives what GitHub says, which the
-	// CLI and the dashboard compose into it. A tenant caller sees only its
-	// own jobs. An empty ID fails with INVALID_ARGUMENT; an unknown ID fails
-	// with NOT_FOUND.
+	// GetJobFailure says why a job ended the way it did and what to do next,
+	// from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
+	// says, which the CLI and the dashboard compose into it. A tenant caller
+	// sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
+	// unknown ID fails with NOT_FOUND.
 	GetJobFailure(context.Context, *connect.Request[operatorv1.GetJobFailureRequest]) (*connect.Response[operatorv1.GetJobFailureResponse], error)
 	// GetJobDelivery returns the switch for delivering secrets to CI jobs
 	// and the hosts that keep it from turning on. The
@@ -1386,8 +1382,7 @@ type OperatorServiceHandler interface {
 	// oldest queued first.
 	ListJobs(context.Context, *connect.Request[operatorv1.ListJobsRequest]) (*connect.Response[operatorv1.ListJobsResponse], error)
 	// ListAuditEvents returns the audit log, newest first. An operator may use
-	// every filter; a dashboard session may read only its own tenants. Design:
-	// docs/contracts/audit.md.
+	// every filter; a dashboard session may read only its own tenants.
 	ListAuditEvents(context.Context, *connect.Request[operatorv1.ListAuditEventsRequest]) (*connect.Response[operatorv1.ListAuditEventsResponse], error)
 	// GetJob returns one job. An unknown ID fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[operatorv1.GetJobRequest]) (*connect.Response[operatorv1.GetJobResponse], error)
@@ -1448,15 +1443,15 @@ type OperatorServiceHandler interface {
 	// returns the tenant as stored; omitting history_days clears the override,
 	// so the tenant's plan applies. 0 keeps history forever. An empty tenant
 	// or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
-	// fails with NOT_FOUND. Design: docs/contracts/history-retention.md.
+	// fails with NOT_FOUND.
 	SetTenantHistory(context.Context, *connect.Request[operatorv1.SetTenantHistoryRequest]) (*connect.Response[operatorv1.SetTenantHistoryResponse], error)
-	// ListPlans returns configured plans sorted by name. Design:
-	// docs/contracts/plans.md.
+	// ListPlans returns configured plans sorted by name.
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
 	GetVersion(context.Context, *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error)
-	// SetTenantPlan sets a tenant's plan and returns the tenant. Design:
-	// docs/contracts/plans.md.
+	// SetTenantPlan sets a tenant's plan and returns the tenant. An empty ID or
+	// plan, or a plan the configuration does not define, fails with
+	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
 	SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error)
 	// SetTenantOwnHostsOnly sets whether the tenant's jobs wait for its own
 	// hosts and never run on shared ones, and returns the tenant as stored. An
@@ -1469,10 +1464,10 @@ type OperatorServiceHandler interface {
 	SetTenantAllowOverflow(context.Context, *connect.Request[operatorv1.SetTenantAllowOverflowRequest]) (*connect.Response[operatorv1.SetTenantAllowOverflowResponse], error)
 	// SuspendTenant suspends an active tenant: its new and queued jobs are
 	// held with hold reason tenant_suspended, its running jobs finish, and its
-	// users keep read-only access (docs/contracts/tenant-lifecycle.md). A
-	// suspended tenant is returned unchanged. An empty ID or reason fails with
-	// INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a tenant that is
-	// deleting or deleted with FAILED_PRECONDITION. Operator only.
+	// users keep read-only access. A suspended tenant is returned unchanged. An
+	// empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
+	// NOT_FOUND, and a tenant that is deleting or deleted with
+	// FAILED_PRECONDITION. Operator only.
 	SuspendTenant(context.Context, *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error)
 	// ResumeTenant returns a suspended tenant to active and cancels a
 	// scheduled deletion; held jobs run at the next scheduler pass. An active
@@ -1504,45 +1499,44 @@ type OperatorServiceHandler interface {
 	// left as it is. An empty ID, a negative value, or a
 	// max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
 	// spending cap while billing is off fails with FAILED_PRECONDITION; an
-	// unknown ID fails with NOT_FOUND. Design: docs/contracts/plans.md.
+	// unknown ID fails with NOT_FOUND.
 	SetTenantSpendLimits(context.Context, *connect.Request[operatorv1.SetTenantSpendLimitsRequest]) (*connect.Response[operatorv1.SetTenantSpendLimitsResponse], error)
 	// GetUsage returns job counts and billable minutes per tenant, UTC day and
 	// conclusion, for the jobs whose queued_at is in the window. The window
 	// defaults to the last 7 days. A window whose from is not before its to
-	// fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+	// fails with INVALID_ARGUMENT.
 	GetUsage(context.Context, *connect.Request[operatorv1.GetUsageRequest]) (*connect.Response[operatorv1.GetUsageResponse], error)
 	// GetQueueTimes returns a queue-time summary (percentiles, maximum and warm
 	// share) for the jobs that reached running in the window, where a job is in
 	// the window by its queued_at. The window defaults to the last 7 days. A
 	// window whose from is not before its to fails with INVALID_ARGUMENT.
-	// Design: docs/contracts/operator-usage.md.
 	GetQueueTimes(context.Context, *connect.Request[operatorv1.GetQueueTimesRequest]) (*connect.Response[operatorv1.GetQueueTimesResponse], error)
 	// GetWorkflowUsage returns, per tenant, repository and workflow name, the
 	// jobs GetUsage counts: their billable minutes, failed jobs and run-time
 	// percentiles. A job is in the window by its queued_at. The window
 	// defaults to the last 7 days. A window whose from is not before its to
-	// fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+	// fails with INVALID_ARGUMENT.
 	GetWorkflowUsage(context.Context, *connect.Request[operatorv1.GetWorkflowUsageRequest]) (*connect.Response[operatorv1.GetWorkflowUsageResponse], error)
 	// GetTenantBilling returns a tenant's billing customer, subscription and
 	// its status, the usage reported to the billing provider per month and
-	// runner size, and the events that failed. An empty ID fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-	// docs/contracts/billing.md.
+	// runner size, and the events that failed. An empty ID, or months outside 0
+	// to 12, fails with INVALID_ARGUMENT; an unknown tenant fails with
+	// NOT_FOUND.
 	GetTenantBilling(context.Context, *connect.Request[operatorv1.GetTenantBillingRequest]) (*connect.Response[operatorv1.GetTenantBillingResponse], error)
 	// GetTenantStatement returns a tenant's usage statement for one UTC month:
 	// minutes by runner size and OS of the jobs that finished in it, the
 	// minutes metered to the billing provider by size with their estimated
 	// cost at the plan's prices, the starter credit applied in it, and held
 	// time by reason. An empty ID or a month not in YYYY-MM form fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-	// docs/contracts/billing.md.
+	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. A dashboard
+	// session or tenant token may read only its own tenants' statements; any
+	// other fails with PERMISSION_DENIED.
 	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
 	// SetTenantBillingCustomer links or clears a tenant's billing customer id and
 	// returns the tenant's billing state. An empty ID, or a customer_id longer
 	// than 255 bytes or holding anything but printable ASCII without spaces,
 	// fails with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; a
-	// customer id held by another tenant fails with ALREADY_EXISTS. Design:
-	// docs/contracts/billing.md.
+	// customer id held by another tenant fails with ALREADY_EXISTS.
 	SetTenantBillingCustomer(context.Context, *connect.Request[operatorv1.SetTenantBillingCustomerRequest]) (*connect.Response[operatorv1.SetTenantBillingCustomerResponse], error)
 	// CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
 	// tenant to plan, first creating and linking a billing customer for a
@@ -1553,7 +1547,7 @@ type OperatorServiceHandler interface {
 	// tenant that already has a subscription fails with FAILED_PRECONDITION; a
 	// billing provider failure fails with UNAVAILABLE. A dashboard session may
 	// call this only for its own tenants; otherwise it fails with
-	// PERMISSION_DENIED. Design: docs/contracts/billing.md.
+	// PERMISSION_DENIED.
 	CreateCheckoutSession(context.Context, *connect.Request[operatorv1.CreateCheckoutSessionRequest]) (*connect.Response[operatorv1.CreateCheckoutSessionResponse], error)
 	// CreateBillingPortalSession returns a Stripe Customer Portal URL where the
 	// tenant manages its card and subscription. An empty ID fails with
@@ -1561,7 +1555,7 @@ type OperatorServiceHandler interface {
 	// billing not configured or a tenant with no billing customer fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
 	// A dashboard session may call this only for its own tenants; otherwise it
-	// fails with PERMISSION_DENIED. Design: docs/contracts/billing.md.
+	// fails with PERMISSION_DENIED.
 	CreateBillingPortalSession(context.Context, *connect.Request[operatorv1.CreateBillingPortalSessionRequest]) (*connect.Response[operatorv1.CreateBillingPortalSessionResponse], error)
 	// CancelJob cancels a queued job at once. An assigned, starting or running
 	// job moves to JOB_STATE_STOPPING: its host stops the runner after a grace
@@ -1612,9 +1606,9 @@ type OperatorServiceHandler interface {
 	// has at most two tokens that work at once, so that one can replace the
 	// other.
 	CreateProductToken(context.Context, *connect.Request[operatorv1.CreateProductTokenRequest]) (*connect.Response[operatorv1.CreateProductTokenResponse], error)
-	// ListOperatorAlerts returns the operator alerts this control plane process
-	// has raised and not yet cleared (docs/contracts/operator-alerts.md).
-	// Operators only.
+	// ListOperatorAlerts returns the operator alerts raised and not yet
+	// cleared, one per kind. They are kept in the store, so a restarted control
+	// plane still returns them. Operators only.
 	ListOperatorAlerts(context.Context, *connect.Request[operatorv1.ListOperatorAlertsRequest]) (*connect.Response[operatorv1.ListOperatorAlertsResponse], error)
 	// ListHostAlerts returns the active alerts of hosts that tenants own: memory_held, egress_changed and agent_version_skew. A tenant caller gets those of its own tenants; an operator gets every tenant's, or one tenant's with the filter.
 	ListHostAlerts(context.Context, *connect.Request[operatorv1.ListHostAlertsRequest]) (*connect.Response[operatorv1.ListHostAlertsResponse], error)
@@ -1623,8 +1617,7 @@ type OperatorServiceHandler interface {
 	// its own hosts and, unless it runs on its own hosts only, the shared hosts
 	// its plan's operating systems run on. A dashboard session or
 	// tenant token may ask for its own tenants only. An empty tenant fails
-	// with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
-	// docs/contracts/egress.md.
+	// with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
 	ListEgressIPs(context.Context, *connect.Request[operatorv1.ListEgressIPsRequest]) (*connect.Response[operatorv1.ListEgressIPsResponse], error)
 	// CheckCloudHost checks a cloud host's AWS setup without launching
 	// anything: the role can be assumed, the AMI is visible, the subnet routes
@@ -1663,12 +1656,11 @@ type OperatorServiceHandler interface {
 	// tenant as stored. On by default. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantCancelRunOnVmDeath(context.Context, *connect.Request[operatorv1.SetTenantCancelRunOnVmDeathRequest]) (*connect.Response[operatorv1.SetTenantCancelRunOnVmDeathResponse], error)
-	// GetJobFailure says why a job ended the way it did and what to do next
-	// (docs/contracts/operator-usage.md, GetJobFailure), from what Toshi
-	// stored; GitHubService.GetJobFailure gives what GitHub says, which the
-	// CLI and the dashboard compose into it. A tenant caller sees only its
-	// own jobs. An empty ID fails with INVALID_ARGUMENT; an unknown ID fails
-	// with NOT_FOUND.
+	// GetJobFailure says why a job ended the way it did and what to do next,
+	// from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
+	// says, which the CLI and the dashboard compose into it. A tenant caller
+	// sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
+	// unknown ID fails with NOT_FOUND.
 	GetJobFailure(context.Context, *connect.Request[operatorv1.GetJobFailureRequest]) (*connect.Response[operatorv1.GetJobFailureResponse], error)
 	// GetJobDelivery returns the switch for delivering secrets to CI jobs
 	// and the hosts that keep it from turning on. The

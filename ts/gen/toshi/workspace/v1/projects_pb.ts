@@ -905,9 +905,7 @@ export const SetBranchRulesResponseSchema: GenMessage<SetBranchRulesResponse, {j
  * ProjectService reads a workspace's projects and the repositories they
  * claim, creates a project or an environment of one, moves a
  * repository's claim and sets the branch rules that choose a CI job's
- * environment. The
- * contract in prose: docs/api/workspace-v1.md, "Projects"; the model:
- * docs/projects.md.
+ * environment. A workspace holds projects, and a project holds environments.
  *
  * The caller's credential names the workspace, as for WorkspaceService.
  * Nothing of another workspace is visible.
@@ -1018,8 +1016,9 @@ export const ProjectService: GenService<{
   /**
    * ListBranchRules returns a project's branch rules in order, the
    * fallback rule last: the first that matches a CI job's run chooses the
-   * job's environment (docs/projects.md). A project the workspace does not
-   * have is NOT_FOUND. A token limited to a project reads only that
+   * job's environment. The fallback rule takes every other run and never
+   * chooses an environment of kind production. A project the workspace does
+   * not have is NOT_FOUND. A token limited to a project reads only that
    * project's rules, and a token limited to an environment is
    * PERMISSION_DENIED.
    *
