@@ -22,11 +22,12 @@ Toshi control plane.
 
 ## Go
 
-The repository is the Go module `github.com/toshicloud/toshi-api`. No
-version is tagged yet, so depend on a commit:
+The repository is the Go module `github.com/toshicloud/toshi-api`.
+Depend on a tag; the newest one is on the
+[releases page](https://github.com/toshicloud/toshi-api/releases):
 
 ```sh
-go get github.com/toshicloud/toshi-api@<commit>
+go get github.com/toshicloud/toshi-api@<tag>
 ```
 
 ```go
@@ -63,17 +64,33 @@ with `buf generate`.
 
 For a client package, see [toshi-ts](https://github.com/toshicloud/toshi-ts).
 
+## Versioning
+
+Versions follow [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
+and are tagged `vMAJOR.MINOR.PATCH`, as Go modules expect.
+
+While the major version is 0:
+
+- an addition bumps the minor version;
+- a fix or a comment change bumps the patch version;
+- a breaking change bumps the minor version, and its pull request title
+  marks it with `!`, as in Conventional Commits (`feat!: ...`).
+
+From v1.0.0, a breaking change never goes into an existing package. It
+goes into a new one, `toshi.workspace.v2` or `toshi.operator.v2`, and a
+`!` in the title does not allow it.
+
 ## Compatibility
 
 Every pull request is checked with `buf breaking` against the branch it
-targets: `toshi.workspace.v1` with the `FILE` rules, `toshi.operator.v1`
-with the `WIRE_JSON` rules. A field or value that goes away keeps its
-number and name reserved. Before the first tag, a pull request whose
-title marks a breaking change with `!`, as in Conventional Commits, may
-break compatibility; no other failure is accepted. Once versions are
-tagged, each pull request is also compared with the newest tag, with no
-exception. A change that breaks `toshi.workspace.v1` after that goes
-into a new package, `toshi.workspace.v2`.
+targets and against the newest tag: `toshi.workspace.v1` with the `FILE`
+rules, `toshi.operator.v1` with the `WIRE_JSON` rules. A field or value
+that goes away keeps its number and name reserved. Before the first tag
+and while the newest tag's major version is 0, a pull request whose
+title marks a breaking change with `!` may break compatibility; no other
+failure is accepted. While the major version is 0, the comparison with
+the newest tag counts only what a pull request breaks beyond what its
+target branch already breaks. From v1.0.0 there is no exception.
 
 ## Changing the protos
 
