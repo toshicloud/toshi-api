@@ -95,6 +95,17 @@ service WorkspaceService {
   // INVALID_ARGUMENT.
   rpc WatchTelemetry(WatchTelemetryRequest) returns (stream WatchTelemetryResponse);
 
+  // WatchGuestLog streams what a sandbox's VM writes to its serial console:
+  // the bytes its host keeps from a cursor on, then each write as it
+  // happens, until the sandbox ends. The host keeps the newest part of the
+  // console; bytes it no longer keeps are skipped, and the next chunk's
+  // offset shows the gap. A slow reader does not block the VM's console
+  // writes; bytes rotated out before it reads them are skipped. A sandbox
+  // that has not started yet is waited for, and so is an empty console. A
+  // sandbox that has ended, or whose host keeps no console log, fails with
+  // FAILED_PRECONDITION. A job or service fails with INVALID_ARGUMENT.
+  rpc WatchGuestLog(WatchGuestLogRequest) returns (stream WatchGuestLogResponse);
+
   // Execute starts a command in a running workload. The first request
   // carries the start message; later requests carry standard input. The
   // stream answers with the execution's ID, then its standard output and
@@ -666,6 +677,56 @@ message TelemetrySample {
 
 // TelemetryEnd ends a WatchTelemetry stream: the sandbox has ended.
 message TelemetryEnd {}
+
+message WatchGuestLogRequest {
+  string project = 1;
+  string environment = 2;
+  // The sandbox's ID.
+  string id = 3;
+  // Where to start: a cursor from an earlier WatchGuestLog message for the
+  // same sandbox; empty starts at the oldest byte the host keeps. A
+  // malformed cursor fails with INVALID_ARGUMENT. A cursor from an earlier
+  // start of the sandbox's VM starts at the oldest byte of the current
+  // start, whatever its offset. A cursor of the current start past the
+  // bytes written when the watch reaches the console, after any wait for
+  // the sandbox to start, fails with OUT_OF_RANGE. Both errors come before
+  // any message.
+  string cursor = 4;
+  // Ask for keepalives: a message with only keepalive set whenever the
+  // stream has sent nothing for an interval the server sets (30 seconds by
+  // default). Without it the stream sends chunks and the end only.
+  bool keepalive = 5;
+}
+
+// WatchGuestLogResponse is one message of a WatchGuestLog stream.
+message WatchGuestLogResponse {
+  oneof message {
+    GuestLogChunk chunk = 1;
+    // Its cursor is where the stream would resume: after the last byte
+    // sent, or before the first chunk the position it started from, in the
+    // VM's current start.
+    Keepalive keepalive = 2;
+    // The last message.
+    GuestLogEnd end = 3;
+  }
+}
+
+// GuestLogChunk is a run of console bytes in the order the VM wrote them.
+message GuestLogChunk {
+  // The position of the first byte: the number of bytes the VM wrote to
+  // its console before it, in this start. An offset past the end of the
+  // previous chunk means the bytes between are no longer kept.
+  int64 offset = 1;
+  bytes data = 2;
+  // Names the VM start the offset counts in. A new start counts from zero
+  // again and has a different start.
+  string start = 3;
+  // The position to resume after this chunk.
+  string cursor = 4;
+}
+
+// GuestLogEnd ends a WatchGuestLog stream: the sandbox has ended.
+message GuestLogEnd {}
 
 message ExecuteRequest {
   oneof message {

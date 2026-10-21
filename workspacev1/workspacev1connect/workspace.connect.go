@@ -63,6 +63,9 @@ const (
 	// WorkspaceServiceWatchTelemetryProcedure is the fully-qualified name of the WorkspaceService's
 	// WatchTelemetry RPC.
 	WorkspaceServiceWatchTelemetryProcedure = "/toshi.workspace.v1.WorkspaceService/WatchTelemetry"
+	// WorkspaceServiceWatchGuestLogProcedure is the fully-qualified name of the WorkspaceService's
+	// WatchGuestLog RPC.
+	WorkspaceServiceWatchGuestLogProcedure = "/toshi.workspace.v1.WorkspaceService/WatchGuestLog"
 	// WorkspaceServiceExecuteProcedure is the fully-qualified name of the WorkspaceService's Execute
 	// RPC.
 	WorkspaceServiceExecuteProcedure = "/toshi.workspace.v1.WorkspaceService/Execute"
@@ -161,6 +164,16 @@ type WorkspaceServiceClient interface {
 	// not started yet is waited for. A job or service fails with
 	// INVALID_ARGUMENT.
 	WatchTelemetry(context.Context, *connect.Request[workspacev1.WatchTelemetryRequest]) (*connect.ServerStreamForClient[workspacev1.WatchTelemetryResponse], error)
+	// WatchGuestLog streams what a sandbox's VM writes to its serial console:
+	// the bytes its host keeps from a cursor on, then each write as it
+	// happens, until the sandbox ends. The host keeps the newest part of the
+	// console; bytes it no longer keeps are skipped, and the next chunk's
+	// offset shows the gap. A slow reader does not block the VM's console
+	// writes; bytes rotated out before it reads them are skipped. A sandbox
+	// that has not started yet is waited for, and so is an empty console. A
+	// sandbox that has ended, or whose host keeps no console log, fails with
+	// FAILED_PRECONDITION. A job or service fails with INVALID_ARGUMENT.
+	WatchGuestLog(context.Context, *connect.Request[workspacev1.WatchGuestLogRequest]) (*connect.ServerStreamForClient[workspacev1.WatchGuestLogResponse], error)
 	// Execute starts a command in a running workload. The first request
 	// carries the start message; later requests carry standard input. The
 	// stream answers with the execution's ID, then its standard output and
@@ -287,6 +300,12 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("WatchTelemetry")),
 			connect.WithClientOptions(opts...),
 		),
+		watchGuestLog: connect.NewClient[workspacev1.WatchGuestLogRequest, workspacev1.WatchGuestLogResponse](
+			httpClient,
+			baseURL+WorkspaceServiceWatchGuestLogProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("WatchGuestLog")),
+			connect.WithClientOptions(opts...),
+		),
 		execute: connect.NewClient[workspacev1.ExecuteRequest, workspacev1.ExecuteResponse](
 			httpClient,
 			baseURL+WorkspaceServiceExecuteProcedure,
@@ -379,6 +398,7 @@ type workspaceServiceClient struct {
 	watchWorkloads         *connect.Client[workspacev1.WatchWorkloadsRequest, workspacev1.WatchWorkloadsResponse]
 	watchOutput            *connect.Client[workspacev1.WatchOutputRequest, workspacev1.WatchOutputResponse]
 	watchTelemetry         *connect.Client[workspacev1.WatchTelemetryRequest, workspacev1.WatchTelemetryResponse]
+	watchGuestLog          *connect.Client[workspacev1.WatchGuestLogRequest, workspacev1.WatchGuestLogResponse]
 	execute                *connect.Client[workspacev1.ExecuteRequest, workspacev1.ExecuteResponse]
 	cancelExecution        *connect.Client[workspacev1.CancelExecutionRequest, workspacev1.CancelExecutionResponse]
 	getOperation           *connect.Client[workspacev1.GetOperationRequest, workspacev1.GetOperationResponse]
@@ -437,6 +457,11 @@ func (c *workspaceServiceClient) WatchOutput(ctx context.Context, req *connect.R
 // WatchTelemetry calls toshi.workspace.v1.WorkspaceService.WatchTelemetry.
 func (c *workspaceServiceClient) WatchTelemetry(ctx context.Context, req *connect.Request[workspacev1.WatchTelemetryRequest]) (*connect.ServerStreamForClient[workspacev1.WatchTelemetryResponse], error) {
 	return c.watchTelemetry.CallServerStream(ctx, req)
+}
+
+// WatchGuestLog calls toshi.workspace.v1.WorkspaceService.WatchGuestLog.
+func (c *workspaceServiceClient) WatchGuestLog(ctx context.Context, req *connect.Request[workspacev1.WatchGuestLogRequest]) (*connect.ServerStreamForClient[workspacev1.WatchGuestLogResponse], error) {
+	return c.watchGuestLog.CallServerStream(ctx, req)
 }
 
 // Execute calls toshi.workspace.v1.WorkspaceService.Execute.
@@ -561,6 +586,16 @@ type WorkspaceServiceHandler interface {
 	// not started yet is waited for. A job or service fails with
 	// INVALID_ARGUMENT.
 	WatchTelemetry(context.Context, *connect.Request[workspacev1.WatchTelemetryRequest], *connect.ServerStream[workspacev1.WatchTelemetryResponse]) error
+	// WatchGuestLog streams what a sandbox's VM writes to its serial console:
+	// the bytes its host keeps from a cursor on, then each write as it
+	// happens, until the sandbox ends. The host keeps the newest part of the
+	// console; bytes it no longer keeps are skipped, and the next chunk's
+	// offset shows the gap. A slow reader does not block the VM's console
+	// writes; bytes rotated out before it reads them are skipped. A sandbox
+	// that has not started yet is waited for, and so is an empty console. A
+	// sandbox that has ended, or whose host keeps no console log, fails with
+	// FAILED_PRECONDITION. A job or service fails with INVALID_ARGUMENT.
+	WatchGuestLog(context.Context, *connect.Request[workspacev1.WatchGuestLogRequest], *connect.ServerStream[workspacev1.WatchGuestLogResponse]) error
 	// Execute starts a command in a running workload. The first request
 	// carries the start message; later requests carry standard input. The
 	// stream answers with the execution's ID, then its standard output and
@@ -683,6 +718,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("WatchTelemetry")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceWatchGuestLogHandler := connect.NewServerStreamHandler(
+		WorkspaceServiceWatchGuestLogProcedure,
+		svc.WatchGuestLog,
+		connect.WithSchema(workspaceServiceMethods.ByName("WatchGuestLog")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceExecuteHandler := connect.NewBidiStreamHandler(
 		WorkspaceServiceExecuteProcedure,
 		svc.Execute,
@@ -781,6 +822,8 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceWatchOutputHandler.ServeHTTP(w, r)
 		case WorkspaceServiceWatchTelemetryProcedure:
 			workspaceServiceWatchTelemetryHandler.ServeHTTP(w, r)
+		case WorkspaceServiceWatchGuestLogProcedure:
+			workspaceServiceWatchGuestLogHandler.ServeHTTP(w, r)
 		case WorkspaceServiceExecuteProcedure:
 			workspaceServiceExecuteHandler.ServeHTTP(w, r)
 		case WorkspaceServiceCancelExecutionProcedure:
@@ -850,6 +893,10 @@ func (UnimplementedWorkspaceServiceHandler) WatchOutput(context.Context, *connec
 
 func (UnimplementedWorkspaceServiceHandler) WatchTelemetry(context.Context, *connect.Request[workspacev1.WatchTelemetryRequest], *connect.ServerStream[workspacev1.WatchTelemetryResponse]) error {
 	return connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.WatchTelemetry is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) WatchGuestLog(context.Context, *connect.Request[workspacev1.WatchGuestLogRequest], *connect.ServerStream[workspacev1.WatchGuestLogResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.WatchGuestLog is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) Execute(context.Context, *connect.BidiStream[workspacev1.ExecuteRequest, workspacev1.ExecuteResponse]) error {
