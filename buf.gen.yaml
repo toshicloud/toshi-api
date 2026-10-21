@@ -1,0 +1,11 @@
+version: v2
+plugins:
+  - local: protoc-gen-go
+    out: .
+    opt: module=github.com/toshicloud/toshi-api
+  - local: protoc-gen-connect-go
+    out: .
+    opt: module=github.com/toshicloud/toshi-api
+  - local: protoc-gen-es
+    out: ts/gen
+    opt: target=ts,json_types=true

@@ -1,0 +1,218 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// WebhookService manages a workspace's webhook endpoints: the URLs its
+// events are POSTed to, signed per Standard Webhooks (docs/webhooks.md).
+// The caller's credential names the workspace, as for
+// WorkspaceService. An endpoint belongs to the workspace, not to a project
+// or environment, and is owed the events of all of them; no request names
+// either. An endpoint of another workspace is NOT_FOUND.
+//
+// Every mutating call takes a request_key, with WorkspaceService's rule: a
+// retry with the same key and the same payload returns what the first
+// call returned and changes nothing; the same key with a different payload
+// fails with FAILED_PRECONDITION; an empty key means no retry protection.
+//
+// An endpoint's signing secret is in the answer to the call that made it,
+// CreateWebhookEndpoint or RotateWebhookEndpointSecret, and in no other
+// answer. A retry of that call returns the same secret while it is the
+// endpoint's newest; once the endpoint is rotated again or deleted, the
+// retry fails with FAILED_PRECONDITION and changes nothing.
+service WebhookService {
+  // CreateWebhookEndpoint makes an endpoint and its signing secret. The
+  // endpoint is owed the events written after it, from its cursor on. The
+  // control plane must hold a keyring to seal the secret; without one the
+  // call fails with FAILED_PRECONDITION.
+  rpc CreateWebhookEndpoint(CreateWebhookEndpointRequest) returns (CreateWebhookEndpointResponse);
+
+  // GetWebhookEndpoint returns one endpoint. An unknown ID fails with
+  // NOT_FOUND.
+  rpc GetWebhookEndpoint(GetWebhookEndpointRequest) returns (GetWebhookEndpointResponse);
+
+  // ListWebhookEndpoints returns the workspace's endpoints in ID order.
+  rpc ListWebhookEndpoints(ListWebhookEndpointsRequest) returns (ListWebhookEndpointsResponse);
+
+  // UpdateWebhookEndpoint sets the fields update_mask names: url, events,
+  // enabled. A disabled endpoint is owed no new event and no try starts;
+  // the events written before the disable stay owed, enabling it again
+  // owes none written while it was disabled, and a try already under way
+  // finishes within its claim (docs/webhooks.md).
+  rpc UpdateWebhookEndpoint(UpdateWebhookEndpointRequest) returns (UpdateWebhookEndpointResponse);
+
+  // DeleteWebhookEndpoint deletes an endpoint and its deliveries.
+  rpc DeleteWebhookEndpoint(DeleteWebhookEndpointRequest) returns (DeleteWebhookEndpointResponse);
+
+  // RotateWebhookEndpointSecret makes the endpoint a new signing secret and
+  // returns it. For the next 24 hours each try that starts after the
+  // rotation is signed with the new secret and the one it replaced, so a
+  // receiver can move to the new one in that window; after it, with the
+  // new one only. A try under way when the rotation is made is signed with
+  // the replaced secret alone. A rotation while the
+  // previous secret's window is still open fails with FAILED_PRECONDITION.
+  rpc RotateWebhookEndpointSecret(RotateWebhookEndpointSecretRequest) returns (RotateWebhookEndpointSecretResponse);
+
+  // ListWebhookDeliveries returns an endpoint's deliveries in event order,
+  // a page at a time.
+  rpc ListWebhookDeliveries(ListWebhookDeliveriesRequest) returns (ListWebhookDeliveriesResponse);
+
+  // ReplayWebhookEvents makes the endpoint owed again the events after
+  // cursor that its filter keeps now, up to its own cursor, at most 500 per
+  // call. That includes events delivered or given up before, events written
+  // while it was disabled and events written before it was made. Each is
+  // due now and tried on the retry schedule from its first try; an event
+  // still pending at the endpoint is left as it is. A workload's events stay
+  // one at a time at the endpoint: an older event sent again is not due
+  // before the latest next try among the newer ones that have been tried
+  // and are still pending, the end of that try under way or backoff, and
+  // then goes before it; it does not wait for the newer ones to be
+  // delivered. A disabled endpoint fails with FAILED_PRECONDITION.
+  rpc ReplayWebhookEvents(ReplayWebhookEventsRequest) returns (ReplayWebhookEventsResponse);
+}
+
+message WebhookEndpoint {
+  // Assigned by the server; unique within the workspace.
+  string id = 1;
+  // An https URL with a host and no user or password, at most 2048 bytes.
+  string url = 2;
+  // The event names the endpoint is owed, each a name (job.state_changed)
+  // or a prefix ending in ".*" (job.*); at most 64. Empty keeps every
+  // event.
+  repeated string events = 3;
+  bool enabled = 4;
+  // The position in the workspace's event log the endpoint has read up to,
+  // an Event's cursor.
+  string cursor = 5;
+  // When the secret the last rotation replaced stops signing; unset when
+  // no such secret signs.
+  google.protobuf.Timestamp previous_secret_expires_at = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+enum WebhookDeliveryState {
+  WEBHOOK_DELIVERY_STATE_UNSPECIFIED = 0;
+  // Owed: waiting for its next try, or being tried.
+  WEBHOOK_DELIVERY_STATE_PENDING = 1;
+  // A try had a 2xx answer.
+  WEBHOOK_DELIVERY_STATE_DELIVERED = 2;
+  // Every try failed until the sender gave up.
+  WEBHOOK_DELIVERY_STATE_DEAD = 3;
+}
+
+// WebhookDelivery is one event owed to one endpoint.
+message WebhookDelivery {
+  string event_id = 1;
+  // The event's cursor.
+  string cursor = 2;
+  string workload_id = 3;
+  WebhookDeliveryState state = 4;
+  // Tries since the delivery was last due.
+  int32 tries = 5;
+  // When it may next be tried; set while it is pending.
+  google.protobuf.Timestamp next_try_at = 6;
+  // The last try's HTTP status; 0 when no answer came or none was tried.
+  int32 last_status = 7;
+  // The last try's error, which never carries the URL.
+  string last_error = 8;
+  google.protobuf.Timestamp due_at = 9;
+  // When it was delivered or given up.
+  google.protobuf.Timestamp done_at = 10;
+}
+
+message CreateWebhookEndpointRequest {
+  string url = 1;
+  repeated string events = 2;
+  // Set to make the endpoint disabled.
+  bool disabled = 3;
+  string request_key = 4;
+}
+
+message CreateWebhookEndpointResponse {
+  WebhookEndpoint endpoint = 1;
+  // whsec_ and the base64 of 32 random bytes. No other answer carries it.
+  string secret = 2;
+}
+
+message GetWebhookEndpointRequest {
+  string id = 1;
+}
+
+message GetWebhookEndpointResponse {
+  WebhookEndpoint endpoint = 1;
+}
+
+message ListWebhookEndpointsRequest {}
+
+message ListWebhookEndpointsResponse {
+  repeated WebhookEndpoint endpoints = 1;
+}
+
+message UpdateWebhookEndpointRequest {
+  string id = 1;
+  // Carries the new values of the fields update_mask names.
+  WebhookEndpoint endpoint = 2;
+  // One or more of url, events and enabled.
+  google.protobuf.FieldMask update_mask = 3;
+  string request_key = 4;
+}
+
+message UpdateWebhookEndpointResponse {
+  WebhookEndpoint endpoint = 1;
+}
+
+message DeleteWebhookEndpointRequest {
+  string id = 1;
+  string request_key = 2;
+}
+
+message DeleteWebhookEndpointResponse {}
+
+message RotateWebhookEndpointSecretRequest {
+  string id = 1;
+  string request_key = 2;
+}
+
+message RotateWebhookEndpointSecretResponse {
+  WebhookEndpoint endpoint = 1;
+  // The new secret, as CreateWebhookEndpointResponse's.
+  string secret = 2;
+}
+
+message ListWebhookDeliveriesRequest {
+  string endpoint_id = 1;
+  // Deliveries of events after this cursor; empty starts at the oldest.
+  string cursor = 2;
+  // The most deliveries in one page; zero lets the server choose.
+  int32 page_size = 3;
+}
+
+message ListWebhookDeliveriesResponse {
+  repeated WebhookDelivery deliveries = 1;
+  // The cursor of the last delivery returned, or the cursor asked for when
+  // there were none: pass it to the next call.
+  string cursor = 2;
+}
+
+message ReplayWebhookEventsRequest {
+  string endpoint_id = 1;
+  // Events after this cursor; empty starts at the oldest event the log
+  // keeps. A cursor older than that event fails with OUT_OF_RANGE.
+  string cursor = 2;
+  string request_key = 3;
+}
+
+message ReplayWebhookEventsResponse {
+  // How many deliveries were made due again.
+  int32 replayed = 1;
+  // The cursor of the last event looked at, or the cursor asked for when
+  // there were none: pass it to the next call while more is set.
+  string cursor = 2;
+  // Set when events up to the endpoint's own cursor remain after cursor.
+  bool more = 3;
+}

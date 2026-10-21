@@ -1,0 +1,2752 @@
+syntax = "proto3";
+
+// Package toshi.operator.v1 is the API that people who run Toshi, and their
+// tools, use to inspect jobs and hosts and to drain hosts.
+package toshi.operator.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/operatorv1";
+
+// OperatorService is served by the control plane. Every call carries the
+// operator token in the HTTP Authorization header as "Bearer <token>".
+service OperatorService {
+  // ListJobs returns the jobs that match every filter field that is set,
+  // oldest queued first.
+  rpc ListJobs(ListJobsRequest) returns (ListJobsResponse);
+
+  // ListAuditEvents returns the audit log, newest first. An operator may use
+  // every filter; a dashboard session may read only its own tenants. Design:
+  // docs/contracts/audit.md.
+  rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse);
+
+  // GetJob returns one job. An unknown ID fails with NOT_FOUND.
+  rpc GetJob(GetJobRequest) returns (GetJobResponse);
+
+  // GetJobTelemetry returns the resource samples of one job's VM and their
+  // summary. A dashboard session or tenant token reads only its
+  // own tenants' jobs. An unknown ID fails with NOT_FOUND; a job without
+  // samples returns none.
+  rpc GetJobTelemetry(GetJobTelemetryRequest) returns (GetJobTelemetryResponse);
+
+  // SummariseJobTelemetry sums up the telemetry of the jobs queued in a
+  // range that started and finished, by OS and runner size: peak
+  // memory, CPU utilisation, CPU wait, out-of-memory kills and the jobs that
+  // came near their memory limit. Filler jobs are left out. Operator only.
+  rpc SummariseJobTelemetry(SummariseJobTelemetryRequest) returns (SummariseJobTelemetryResponse);
+
+  // ListHosts returns the hosts that match the filter, ordered by ID.
+  rpc ListHosts(ListHostsRequest) returns (ListHostsResponse);
+
+  // SetHostState drains a host or puts it back in service. Only
+  // HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
+  // fails with NOT_FOUND.
+  rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse);
+
+  // SetHostOverflow sets whether a host is an overflow host and returns it as
+  // stored: an overflow host takes a job only when no other host the job may
+  // use has room and the job has queued for its plan's overflow_after.
+  // Operators only. An unknown ID fails with NOT_FOUND.
+  rpc SetHostOverflow(SetHostOverflowRequest) returns (SetHostOverflowResponse);
+
+  // RetireHost removes a host that holds no assigned, starting or running
+  // job; otherwise it fails with FailedPrecondition (drain it first). Its
+  // agent, if still running, registers again with its enrollment token.
+  rpc RetireHost(RetireHostRequest) returns (RetireHostResponse);
+
+  // RevokeHost revokes a host at once: its
+  // host token and any Register under its ID fail with Unauthenticated
+  // "host revoked", its assignment streams end, and every job it has not
+  // finished fails with the error host_revoked and is not queued again.
+  // The host keeps its row, shown with revoked_at. Revoking a revoked host
+  // changes nothing and returns revoked false. Operators only. An unknown
+  // ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
+  rpc RevokeHost(RevokeHostRequest) returns (RevokeHostResponse);
+
+  // RetireOfflineHosts lists the hosts whose state is offline and whose last
+  // heartbeat is older than offline_longer_than, oldest first, and with apply
+  // set removes each one that holds no assigned, starting or running job.
+  // Without apply nothing changes: the response says what a call with apply
+  // would do. A host a tenant owns is skipped unless include_owned is set.
+  // Each removal records one host.retired audit event. Operators only.
+  rpc RetireOfflineHosts(RetireOfflineHostsRequest) returns (RetireOfflineHostsResponse);
+
+  // AddCloudHost registers a tenant-owned cloud host the control plane drives
+  // in the tenant's AWS account. A dashboard session and a tenant
+  // token may add hosts for their own tenant only; the operator for any. When
+  // cloud hosts are not configured on the control plane the call fails with
+  // FAILED_PRECONDITION.
+  rpc AddCloudHost(AddCloudHostRequest) returns (AddCloudHostResponse);
+
+  // ListTenants returns every tenant, ordered by ID.
+  rpc ListTenants(ListTenantsRequest) returns (ListTenantsResponse);
+
+  // SetTenantCap sets a tenant's concurrency cap override and returns the
+  // tenant as stored; a cap of 0 clears the override, so the tenant's plan
+  // applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
+  // unknown ID fails with NOT_FOUND.
+  rpc SetTenantCap(SetTenantCapRequest) returns (SetTenantCapResponse);
+
+  // SetTenantHistory sets a tenant's job history retention override and
+  // returns the tenant as stored; omitting history_days clears the override,
+  // so the tenant's plan applies. 0 keeps history forever. An empty tenant
+  // or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
+  // fails with NOT_FOUND. Design: docs/contracts/history-retention.md.
+  rpc SetTenantHistory(SetTenantHistoryRequest) returns (SetTenantHistoryResponse);
+
+  // ListPlans returns configured plans sorted by name. Design:
+  // docs/contracts/plans.md.
+  rpc ListPlans(ListPlansRequest) returns (ListPlansResponse);
+
+  // GetVersion returns the control plane's version, commit and commit date.
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
+
+  // SetTenantPlan sets a tenant's plan and returns the tenant. Design:
+  // docs/contracts/plans.md.
+  rpc SetTenantPlan(SetTenantPlanRequest) returns (SetTenantPlanResponse);
+
+  // SetTenantOwnHostsOnly sets whether the tenant's jobs wait for its own
+  // hosts and never run on shared ones, and returns the tenant as stored. An
+  // empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+  rpc SetTenantOwnHostsOnly(SetTenantOwnHostsOnlyRequest) returns (SetTenantOwnHostsOnlyResponse);
+
+  // SetTenantAllowOverflow sets whether shared overflow hosts may take the
+  // tenant's jobs and returns the tenant as stored; its own
+  // overflow hosts always may. An empty ID fails with INVALID_ARGUMENT; an
+  // unknown ID fails with NOT_FOUND.
+  rpc SetTenantAllowOverflow(SetTenantAllowOverflowRequest) returns (SetTenantAllowOverflowResponse);
+
+  // SuspendTenant suspends an active tenant: its new and queued jobs are
+  // held with hold reason tenant_suspended, its running jobs finish, and its
+  // users keep read-only access (docs/contracts/tenant-lifecycle.md). A
+  // suspended tenant is returned unchanged. An empty ID or reason fails with
+  // INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a tenant that is
+  // deleting or deleted with FAILED_PRECONDITION. Operator only.
+  rpc SuspendTenant(SuspendTenantRequest) returns (SuspendTenantResponse);
+  // ResumeTenant returns a suspended tenant to active and cancels a
+  // scheduled deletion; held jobs run at the next scheduler pass. An active
+  // tenant is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
+  // an unknown ID with NOT_FOUND, and a tenant that is deleting or deleted
+  // with FAILED_PRECONDITION. Operator only.
+  rpc ResumeTenant(ResumeTenantRequest) returns (ResumeTenantResponse);
+  // DeleteTenant suspends a tenant until purge_after, after which its data
+  // is purged from the control plane and every host. grace_seconds of 0
+  // means the default of 30 days; now purges as soon as the tenant has no
+  // running job. A negative grace_seconds, or now with grace_seconds, fails
+  // with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a tenant that is
+  // deleting or deleted with FAILED_PRECONDITION. Operator only.
+  rpc DeleteTenant(DeleteTenantRequest) returns (DeleteTenantResponse);
+
+  // SetTenantReservation sets or clears a tenant's reservation of N slots of
+  // one runner size for shared hosts, and returns the tenant's effective
+  // reservations. slots of 0 removes the tenant's own reservation
+  // for the size, so its plan's applies again. An empty ID, an unknown size,
+  // a negative slots, or a warm outside 0..slots fails with INVALID_ARGUMENT;
+  // an unknown tenant fails with NOT_FOUND. Operator only.
+  rpc SetTenantReservation(SetTenantReservationRequest) returns (SetTenantReservationResponse);
+
+  // GetCapacity returns the reserved-capacity view of the last scheduler
+  // pass: per runner size the slots free and reserved, and per reservation
+  // the slots in use, earmarked and short. Operator only. It
+  // fails with FAILED_PRECONDITION when no pass has run yet.
+  rpc GetCapacity(GetCapacityRequest) returns (GetCapacityResponse);
+
+  // SetTenantSpendLimits sets a tenant's monthly spending cap and its own
+  // jobs-per-hour limit, and returns the tenant as stored; an unset field is
+  // left as it is. An empty ID, a negative value, or a
+  // max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
+  // spending cap while billing is off fails with FAILED_PRECONDITION; an
+  // unknown ID fails with NOT_FOUND. Design: docs/contracts/plans.md.
+  rpc SetTenantSpendLimits(SetTenantSpendLimitsRequest) returns (SetTenantSpendLimitsResponse);
+
+  // GetUsage returns job counts and billable minutes per tenant, UTC day and
+  // conclusion, for the jobs whose queued_at is in the window. The window
+  // defaults to the last 7 days. A window whose from is not before its to
+  // fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+  rpc GetUsage(GetUsageRequest) returns (GetUsageResponse);
+
+  // GetQueueTimes returns a queue-time summary (percentiles, maximum and warm
+  // share) for the jobs that reached running in the window, where a job is in
+  // the window by its queued_at. The window defaults to the last 7 days. A
+  // window whose from is not before its to fails with INVALID_ARGUMENT.
+  // Design: docs/contracts/operator-usage.md.
+  rpc GetQueueTimes(GetQueueTimesRequest) returns (GetQueueTimesResponse);
+
+  // GetWorkflowUsage returns, per tenant, repository and workflow name, the
+  // jobs GetUsage counts: their billable minutes, failed jobs and run-time
+  // percentiles. A job is in the window by its queued_at. The window
+  // defaults to the last 7 days. A window whose from is not before its to
+  // fails with INVALID_ARGUMENT. Design: docs/contracts/operator-usage.md.
+  rpc GetWorkflowUsage(GetWorkflowUsageRequest) returns (GetWorkflowUsageResponse);
+
+  // GetTenantBilling returns a tenant's billing customer, subscription and
+  // its status, the usage reported to the billing provider per month and
+  // runner size, and the events that failed. An empty ID fails with
+  // INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
+  // docs/contracts/billing.md.
+  rpc GetTenantBilling(GetTenantBillingRequest) returns (GetTenantBillingResponse);
+
+  // GetTenantStatement returns a tenant's usage statement for one UTC month:
+  // minutes by runner size and OS of the jobs that finished in it, the
+  // minutes metered to the billing provider by size with their estimated
+  // cost at the plan's prices, the starter credit applied in it, and held
+  // time by reason. An empty ID or a month not in YYYY-MM form fails with
+  // INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
+  // docs/contracts/billing.md.
+  rpc GetTenantStatement(GetTenantStatementRequest) returns (GetTenantStatementResponse);
+
+  // SetTenantBillingCustomer links or clears a tenant's billing customer id and
+  // returns the tenant's billing state. An empty ID, or a customer_id longer
+  // than 255 bytes or holding anything but printable ASCII without spaces,
+  // fails with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; a
+  // customer id held by another tenant fails with ALREADY_EXISTS. Design:
+  // docs/contracts/billing.md.
+  rpc SetTenantBillingCustomer(SetTenantBillingCustomerRequest) returns (SetTenantBillingCustomerResponse);
+
+  // CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
+  // tenant to plan, first creating and linking a billing customer for a
+  // tenant without one. An empty ID, an empty plan, or a plan the
+  // configuration does not define fails with INVALID_ARGUMENT; an unknown
+  // tenant fails with NOT_FOUND; self-serve billing off, a plan that is not
+  // sold or maps to several lookup keys, a price missing in Stripe, or a
+  // tenant that already has a subscription fails with FAILED_PRECONDITION; a
+  // billing provider failure fails with UNAVAILABLE. A dashboard session may
+  // call this only for its own tenants; otherwise it fails with
+  // PERMISSION_DENIED. Design: docs/contracts/billing.md.
+  rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse);
+
+  // CreateBillingPortalSession returns a Stripe Customer Portal URL where the
+  // tenant manages its card and subscription. An empty ID fails with
+  // INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; self-serve
+  // billing not configured or a tenant with no billing customer fails with
+  // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
+  // A dashboard session may call this only for its own tenants; otherwise it
+  // fails with PERMISSION_DENIED. Design: docs/contracts/billing.md.
+  rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse);
+
+  // CancelJob cancels a queued job at once. An assigned, starting or running
+  // job moves to JOB_STATE_STOPPING: its host stops the runner after a grace
+  // period, destroys the VM and reports the job JOB_STATE_CANCELLED.
+  // A stopping job is returned unchanged; a finished job fails
+  // with FailedPrecondition.
+  rpc CancelJob(CancelJobRequest) returns (CancelJobResponse);
+
+  // StopJobDebug ends a job's debug session before its expiry:
+  // the job moves to JOB_STATE_STOPPING with stop_reason debug_ended, its
+  // host destroys the kept VM and the job finishes completed with its
+  // conclusion unchanged. A job that is not debugging fails with
+  // FailedPrecondition; one already stopping is returned unchanged.
+  rpc StopJobDebug(StopJobDebugRequest) returns (StopJobDebugResponse);
+
+  // GetJobDebugAccess returns the key that opens a debugging job's guest
+  // ssh through the control plane's relay. The job's host makes
+  // the key and gives it out once per session; the control plane does not
+  // keep it. A job that is not debugging fails with
+  // FAILED_PRECONDITION, a key already issued with ALREADY_EXISTS, and a
+  // host that does not answer with UNAVAILABLE.
+  rpc GetJobDebugAccess(GetJobDebugAccessRequest) returns (GetJobDebugAccessResponse);
+
+  // ListTokens returns the operator and enrollment tokens the control plane
+  // knows, oldest first, without their values.
+  rpc ListTokens(ListTokensRequest) returns (ListTokensResponse);
+
+  // RotateToken makes a new operator or enrollment token, accepted at once,
+  // and returns it; it is not stored and cannot be shown again. The kind's
+  // other active tokens keep working until the grace period ends.
+  rpc RotateToken(RotateTokenRequest) returns (RotateTokenResponse);
+
+  // RevokeToken stops a token working at once. Revoking an enrollment token
+  // also signs out the hosts that registered with it, and those whose
+  // enrollment token is not recorded: each registers again with the
+  // enrollment token it now holds and keeps its jobs. Revoking a tenant's
+  // enrollment token signs out only the hosts that registered with it.
+  // Revoking the only active operator token fails with FailedPrecondition.
+  rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse);
+
+  // CreateEnrollmentToken makes an enrollment token for one tenant and
+  // returns it with its value; a host that registers with it is owned by that
+  // tenant. The token does not expire and the other tokens are untouched. An
+  // unknown tenant fails with NOT_FOUND; a closed tenant fails with
+  // FailedPrecondition.
+  rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse);
+
+  // CreateTenantToken makes an API token for one tenant that authenticates
+  // the operator API as that tenant, with a dashboard session's scope, and
+  // returns it with its value. An unknown tenant fails with NOT_FOUND; a
+  // closed tenant fails with FailedPrecondition.
+  rpc CreateTenantToken(CreateTenantTokenRequest) returns (CreateTenantTokenResponse);
+
+  // CreateProductToken makes a token a product's adapter authenticates to
+  // the core with. Operator only. It expires within 90 days, and a product
+  // has at most two tokens that work at once, so that one can replace the
+  // other.
+  rpc CreateProductToken(CreateProductTokenRequest) returns (CreateProductTokenResponse);
+
+  // ListOperatorAlerts returns the operator alerts this control plane process
+  // has raised and not yet cleared (docs/contracts/operator-alerts.md).
+  // Operators only.
+  rpc ListOperatorAlerts(ListOperatorAlertsRequest) returns (ListOperatorAlertsResponse);
+
+  // ListHostAlerts returns the active alerts of hosts that tenants own: memory_held, egress_changed and agent_version_skew. A tenant caller gets those of its own tenants; an operator gets every tenant's, or one tenant's with the filter.
+  rpc ListHostAlerts(ListHostAlertsRequest) returns (ListHostAlertsResponse);
+
+  // ListEgressIPs returns the public addresses a tenant's jobs may reach the
+  // internet from: the egress addresses of the hosts its jobs can land on,
+  // its own hosts and, unless it runs on its own hosts only, the shared hosts
+  // its plan's operating systems run on. A dashboard session or
+  // tenant token may ask for its own tenants only. An empty tenant fails
+  // with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. Design:
+  // docs/contracts/egress.md.
+  rpc ListEgressIPs(ListEgressIPsRequest) returns (ListEgressIPsResponse);
+
+  // CheckCloudHost checks a cloud host's AWS setup without launching
+  // anything: the role can be assumed, the AMI is visible, the subnet routes
+  // to the internet, and the role's policy allows each action Toshi calls,
+  // through dry-run calls. A dashboard session or tenant token may
+  // check its own tenants' hosts only. A host that is not a cloud host fails
+  // with NOT_FOUND; cloud hosts not configured on the control plane fails
+  // with FAILED_PRECONDITION.
+  rpc CheckCloudHost(CheckCloudHostRequest) returns (CheckCloudHostResponse);
+  // ListFillers returns the fillers, each with its latest run, and the
+  // filler minutes per host over the last 24 hours. A tenant
+  // caller sees only its own dispatch fillers and no host minutes.
+  rpc ListFillers(ListFillersRequest) returns (ListFillersResponse);
+
+  // PutFiller adds a filler or replaces the one with the same name and
+  // returns it as stored. A filler from the control plane's [[filler]]
+  // configuration cannot be replaced (FailedPrecondition). A tenant caller
+  // may put only dispatch fillers for its own tenant and repositories.
+  // A bad field fails with INVALID_ARGUMENT.
+  rpc PutFiller(PutFillerRequest) returns (PutFillerResponse);
+
+  // DeleteFiller removes a filler and stops its running run. A configured
+  // filler cannot be removed (FailedPrecondition); an unknown name fails
+  // with NOT_FOUND. A tenant caller may remove only its own.
+  rpc DeleteFiller(DeleteFillerRequest) returns (DeleteFillerResponse);
+
+  // SetFillerEnabled turns a filler on or off and returns it. Turning it off
+  // stops its running run. An unknown name fails with NOT_FOUND.
+  rpc SetFillerEnabled(SetFillerEnabledRequest) returns (SetFillerEnabledResponse);
+
+  // ListFillerRuns returns filler runs, newest first. A tenant caller sees
+  // only its own dispatch fillers' runs.
+  rpc ListFillerRuns(ListFillerRunsRequest) returns (ListFillerRunsResponse);
+
+  // SetTenantAllowCacheWarm sets whether the tenant's dispatch fillers run
+  // and returns the tenant as stored. Off by default. An empty
+  // ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+  rpc SetTenantAllowCacheWarm(SetTenantAllowCacheWarmRequest) returns (SetTenantAllowCacheWarmResponse);
+
+  // SetTenantCancelRunOnVmDeath sets whether Toshi cancels the workflow run
+  // of the tenant's job when the job's VM is gone and returns the
+  // tenant as stored. On by default. An empty ID fails with
+  // INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+  rpc SetTenantCancelRunOnVmDeath(SetTenantCancelRunOnVmDeathRequest) returns (SetTenantCancelRunOnVmDeathResponse);
+
+  // GetJobFailure says why a job ended the way it did and what to do next
+  // (docs/contracts/operator-usage.md, GetJobFailure), from what Toshi
+  // stored; GitHubService.GetJobFailure gives what GitHub says, which the
+  // CLI and the dashboard compose into it. A tenant caller sees only its
+  // own jobs. An empty ID fails with INVALID_ARGUMENT; an unknown ID fails
+  // with NOT_FOUND.
+  rpc GetJobFailure(GetJobFailureRequest) returns (GetJobFailureResponse);
+
+  // GetJobDelivery returns the switch for delivering secrets to CI jobs
+  // and the hosts that keep it from turning on. The
+  // operator token only.
+  rpc GetJobDelivery(GetJobDeliveryRequest) returns (GetJobDeliveryResponse);
+
+  // SetJobDelivery turns delivery of secrets to CI jobs on or off and
+  // records the change with an audit event in the same transaction. On is
+  // refused with FAILED_PRECONDITION, naming the hosts, while a host that
+  // is not revoked is not ready for it; off does not depend on the hosts.
+  // Setting the value the switch has changes and records nothing. The
+  // operator token only.
+  rpc SetJobDelivery(SetJobDeliveryRequest) returns (SetJobDeliveryResponse);
+
+  // ListUtilisation returns the shared hosts' utilisation roll-ups in a
+  // range, summed by OS pool or by host and by hour, day or week, with the
+  // rows of the hour in progress read from memory. Operator
+  // only.
+  rpc ListUtilisation(ListUtilisationRequest) returns (ListUtilisationResponse);
+
+  // SuggestPools replays the store's finished jobs queued in the last days
+  // against the hosts as registered, with the warm targets their agents
+  // report, and suggests each size's warm target, as `toshi replay
+  // suggest-pools` does on an export. A run reads the
+  // newest max_jobs jobs of the window, stops after timeout, and runs in the
+  // background, one at a time in each control plane process, which keeps its
+  // own result. A call returns the last result for the window; it starts a
+  // run when no run is in progress and there is no result for the window
+  // from the current UTC day, or force is set. A result, failed or not, is
+  // kept in memory until the next run replaces it; a restart loses it.
+  // Operator only. A `days` value outside 0 to max_days fails with
+  // INVALID_ARGUMENT.
+  rpc SuggestPools(SuggestPoolsRequest) returns (SuggestPoolsResponse);
+
+  // CreateStorageProvider registers a bucket Toshi may keep recordings and
+  // artifacts in. An empty tenant_id registers the operator's
+  // own provider, shared by every tenant; it takes a credentials file
+  // reference. A request with a credential stores a tenant's own
+  // tenant_bucket provider instead: the control plane wraps the key, checks
+  // the bucket with it as CheckStorageProvider does and stores the row only
+  // when the check passes, else FAILED_PRECONDITION with the check's error.
+  // A tenant has one such provider; a second fails with ALREADY_EXISTS, and
+  // a suspended or deleting tenant with FAILED_PRECONDITION (a dashboard
+  // session that also has an active workspace is refused it with
+  // PERMISSION_DENIED, as for its other writes). A bad field
+  // fails with INVALID_ARGUMENT, a duplicate name for the same owner with
+  // ALREADY_EXISTS, and a second provider with the lifecycle capability on
+  // the same endpoint and bucket with ALREADY_EXISTS. The operator, or a
+  // dashboard session for its own workspace with a credential and no
+  // file, role or replication fields.
+  rpc CreateStorageProvider(CreateStorageProviderRequest) returns (CreateStorageProviderResponse);
+
+  // TestStorageProvider checks a provider that is not stored, with the
+  // credential in the request, as CreateStorageProvider would before it
+  // stores one. It stores and audits nothing. A check that fails is an
+  // answer, not an error: ok is false and error says why. A request
+  // CreateStorageProvider would refuse fails the same way before any
+  // connection. The operator, or a dashboard session for its own
+  // workspace.
+  rpc TestStorageProvider(TestStorageProviderRequest) returns (TestStorageProviderResponse);
+
+  // ListStorageProviders returns the operator's providers when tenant_id
+  // is empty and that tenant's otherwise, ordered by name. With
+  // include_default it also returns the operator's provider a tenant
+  // without one of its own uses, whether or not this tenant has one. The
+  // operator, or a dashboard session for its own workspace, which gets
+  // every row without its credential references (credentials_file,
+  // credentials_profile, role_arn and external_id empty).
+  rpc ListStorageProviders(ListStorageProvidersRequest) returns (ListStorageProvidersResponse);
+
+  // CheckStorageProvider checks the provider's bucket and records the
+  // result: it heads the bucket, refuses a versioned one, then uploads,
+  // heads and deletes a probe object. The error names the failing step.
+  // The operator, or a dashboard session for a row its workspace saved
+  // (one with a wrapped credential and no role), which gets
+  // last_check_error.
+  rpc CheckStorageProvider(CheckStorageProviderRequest) returns (CheckStorageProviderResponse);
+
+  // DeleteStorageProvider removes a provider. An unknown ID fails with
+  // NOT_FOUND. The operator, or a dashboard session for a row its
+  // workspace saved; a row the operator set for the workspace is
+  // PERMISSION_DENIED to a session.
+  rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse);
+}
+
+// JobState is where a job is in its life cycle.
+enum JobState {
+  JOB_STATE_UNSPECIFIED = 0;
+  // Waiting for a host.
+  JOB_STATE_QUEUED = 1;
+  // Assigned to a host that has not started its VM yet.
+  JOB_STATE_ASSIGNED = 2;
+  // The host is starting the VM.
+  JOB_STATE_STARTING = 3;
+  // The runner in the VM is running the job.
+  JOB_STATE_RUNNING = 4;
+  // The job finished; conclusion says how.
+  JOB_STATE_COMPLETED = 5;
+  // Toshi could not run the job; error says why.
+  JOB_STATE_FAILED = 6;
+  // The job was cancelled before it finished.
+  JOB_STATE_CANCELLED = 7;
+  // The job is being stopped: its host destroys the VM after a grace period.
+  JOB_STATE_STOPPING = 8;
+  // GitHub concluded the job failed and its host keeps the VM for a debug
+  // session until debug_until. It counts as running.
+  JOB_STATE_DEBUGGING = 9;
+}
+
+// JobKind is a job's workload kind.
+enum JobKind {
+  JOB_KIND_UNSPECIFIED = 0;
+  // A job: it ends when its runner exits or at its time limit.
+  JOB_KIND_JOB = 1;
+  // A Workspace API sandbox's job: it runs until its owner stops it or
+  // Toshi stops it. Its workload_id is the sandbox.
+  JOB_KIND_SANDBOX = 2;
+  // A run of a Workspace API service: it runs until it exits
+  // or its service stops it. Its workload_id is the service.
+  JOB_KIND_SERVICE = 3;
+}
+
+// HostState says whether a host takes new jobs.
+enum HostState {
+  HOST_STATE_UNSPECIFIED = 0;
+  // The host takes new jobs.
+  HOST_STATE_ONLINE = 1;
+  // The host finishes the jobs it has and takes no new ones.
+  HOST_STATE_DRAINING = 2;
+  // The host is not reachable.
+  HOST_STATE_OFFLINE = 3;
+}
+
+// AgentVersionStatus says whether a host's agent matches the control plane's
+// version promise.
+enum AgentVersionStatus {
+  AGENT_VERSION_STATUS_UNSPECIFIED = 0;
+  // Either side is not a release (snapshot, dev, or empty).
+  AGENT_VERSION_STATUS_UNKNOWN = 1;
+  // The agent version is inside the promise.
+  AGENT_VERSION_STATUS_OK = 2;
+  // The agent version is outside the promise.
+  AGENT_VERSION_STATUS_SKEW = 3;
+  // The agent version is below the minimum the control plane admits
+  // (agent_auth.minimum_agent_version), or is not a release while
+  // a minimum is set: the host is refused at its next Register. It outranks
+  // the other statuses. A revoked host never has it, nor does a cloud host,
+  // which has no agent: its driver runs in the control plane.
+  AGENT_VERSION_STATUS_BELOW_MINIMUM = 4;
+}
+
+// Job is one GitHub Actions workflow job that Toshi runs on a VM. A
+// timestamp the job has not reached yet is unset.
+message Job {
+  string id = 1;
+  string tenant = 2;
+  // The repository as "owner/name".
+  string repo = 3;
+  int64 workflow_job_id = 4;
+  int64 run_id = 5;
+  // The GitHub App installation that the job came from.
+  int64 installation_id = 6;
+  // The runs-on labels.
+  repeated string labels = 7;
+  string os = 8;
+  string size = 9;
+  JobState state = 10;
+  // The host the job is assigned to; empty while it is queued.
+  string host_id = 11;
+  // The VM the job runs in; empty until the host starts one.
+  string instance_id = 12;
+  google.protobuf.Timestamp queued_at = 13;
+  google.protobuf.Timestamp assigned_at = 14;
+  google.protobuf.Timestamp started_at = 15;
+  google.protobuf.Timestamp finished_at = 16;
+  // GitHub's conclusion for a completed job, such as "success".
+  string conclusion = 17;
+  // Why Toshi could not run the job, for a failed job.
+  string error = 18;
+  // Why the job was stopped: github_cancelled, max_duration, operator,
+  // github_completed, runner_not_started, runner_unconfirmed, debug_ended,
+  // ran_elsewhere, or for a sandbox spend_cap, tenant_suspended or
+  // tenant_deleted. Empty if it never was.
+  string stop_reason = 19;
+  // When the control plane asked the host to stop the job. Unset if it
+  // never did.
+  google.protobuf.Timestamp stop_requested_at = 20;
+  // Why the scheduler last held the job while it was queued:
+  // tenant_suspended, tenant_cap, tenant_vcpu, free_allowance, spend_cap,
+  // jobs_per_hour, burst_guard, plan_os, installation_suspended,
+  // overflow_wait, no_own_capacity or no_capacity. Empty when the job was
+  // never held. It is kept after the job starts.
+  string hold_reason = 21;
+  // Whether the job was placed on a host its tenant owns. Such a job sends no
+  // meter event.
+  bool own_host = 22;
+  // The debug session the job asked for with a toshi-debug-<minutes> label,
+  // in minutes; 0 when it asked for none.
+  int32 debug_requested_minutes = 23;
+  // The minutes the plan granted: the request clamped to the plan's
+  // debug_minutes; 0 when none.
+  int32 debug_minutes = 24;
+  // Why a request was ignored or clamped; empty otherwise.
+  string debug_note = 25;
+  // When the debug session started and when it expires; unset for a job
+  // that never had one.
+  google.protobuf.Timestamp debug_started_at = 26;
+  google.protobuf.Timestamp debug_until = 27;
+  // What the job's resource samples add up to; unset when it has none.
+  JobTelemetrySummary telemetry = 28;
+  // Why the latest runner started for the job exited without running it,
+  // as its listener's log says: "listener exit code 0: Acknowledge returned
+  // job-not-found ...". Empty when none did or its guest did not say.
+  string runner_exit_reason = 29;
+  // The job is assigned to, or ran on, an overflow host.
+  bool overflow = 30;
+  // Since when the control plane has been waiting for GitHub to answer the
+  // request for this job's runner. Unset when no request is in
+  // flight. Kept in memory: unset after a restart of the control plane.
+  google.protobuf.Timestamp runner_request_since = 31;
+  // Toshi's own word for a job Toshi ended itself: time_limit,
+  // cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
+  // cancelled or failed (docs/contracts/operator-usage.md). Empty for every
+  // other job. The conclusion stays GitHub's word.
+  string outcome = 32;
+  // The kind of the job's host when it is not a host agent's machine: "cloud"
+  // for a cloud host or a cloud pool. Empty otherwise,
+  // and for a job without a host.
+  string host_kind = 33;
+  // The cloud pool's name when the job started on a warm instance of the
+  // pool's previous image or runner, because the cloud refused a launch on
+  // the current one. Empty otherwise. Set by GetJob only.
+  string previous_pool_image = 34;
+  // The whole minutes the job counts in the usage report: from started_at
+  // to stop_requested_at when the job was asked to stop, else to
+  // finished_at, rounded up (docs/contracts/operator-usage.md). 0 for a job
+  // that has not ended or never started, a job on its tenant's own host and
+  // a dispatch filler's job, which are not billed.
+  int64 billable_minutes = 35;
+  // The job's page on GitHub, on the configured GitHub web URL. Empty when
+  // the job has no repository, run or workflow job id.
+  string github_url = 36;
+  // The name of the job's workflow, from the workflow_job webhook Toshi
+  // made the job from. Empty when the webhook did not carry it, for a job
+  // Toshi did not make from a webhook, and for one stored before the name
+  // was recorded.
+  string workflow_name = 37;
+  // What the job's cache disk did, as its host reported it.
+  // Unset when the host reported nothing, as for a job without a cache.
+  JobCache cache = 38;
+  // When the host reported that the job's runner exited before GitHub
+  // reported the job in progress; the job then waits for GitHub.
+  // Unset when the runner exited after that, or has not exited.
+  google.protobuf.Timestamp runner_exited_at = 39;
+  // The conclusion the host reported with that exit, such as "success".
+  // Set only with runner_exited_at. Kept in memory: empty after a restart
+  // of the control plane.
+  string runner_conclusion = 40;
+  // The tier of the host the job was assigned to: "container"
+  // for a container tier host, empty for a VM. The job keeps it after its
+  // host is removed; a requeue clears it.
+  string tier = 41;
+  // The memory limit the job's host gave it in MiB, when that is not its
+  // runner size's memory: on a container tier host, its share of the host
+  // (docs/contracts/container-tier.md). 0 means the size's memory, and for
+  // a tier job that its host has not reported the limit yet.
+  int64 memory_limit_mib = 42;
+  // The tier in one line, as the dashboard's job page, `toshi jobs explain`
+  // and `toshi tenant explain` show it, such as "ran on a container tier
+  // host, which isolates less than a VM (the job shares the host's
+  // kernel); memory limit 6971 MiB". Empty for a job that ran in a VM.
+  string tier_line = 43;
+  // The job's kind: JOB_KIND_SANDBOX for a Workspace API sandbox's job,
+  // JOB_KIND_SERVICE for a run of a Workspace API service, JOB_KIND_JOB
+  // for every other. Set when the job is made; it never changes.
+  JobKind kind = 44;
+  // The Workspace API workload the job runs: a sandbox's or a service's
+  // id, or the id of a job workload run on a host. Empty for a
+  // CI job.
+  string workload_id = 45;
+  // The project the job belongs to, by name: the project that
+  // claimed the job's repository when the job was stored, else the
+  // tenant's default project; a Workspace API job's is its workload's.
+  // Empty for a job stored before projects.
+  string project = 46;
+  // The job's environment, by name. A CI job's is empty until the job's
+  // assignment mints a workload token or receives secrets, and a new
+  // assignment re-resolves it; a Workspace API job's is its
+  // workload's.
+  string environment = 47;
+}
+
+// JobCache is what a job's cache disk did.
+message JobCache {
+  // "attached", or "not_attached" when the disk never reached the job's VM
+  // and the job ran without it.
+  string attach = 1;
+  // The generation the disk was attached from; 0 is the blank disk.
+  int64 base_generation = 2;
+  // "committed" or "skipped"; empty until the host reports the write-back,
+  // after the job's VM is gone, and when the disk was not attached.
+  string write_back = 3;
+  // Why the write-back was skipped: "untrusted", "failed", "job_failed",
+  // "no_result", "unclean", "stale", "size_cap", "host_disk" or "error",
+  // or a reason this control plane does not know, from a newer agent, as
+  // the agent sent it.
+  string skip_reason = 4;
+  // The size of the committed generation in bytes, and how long the
+  // write-back took in milliseconds.
+  int64 generation_bytes = 5;
+  int64 write_back_ms = 6;
+  // The fields above in one line, as the dashboard's job page,
+  // `toshi jobs explain` and `toshi tenant explain` show it, such as "warm
+  // from generation 3 on host h1; wrote generation 4 (1.2 GiB in 14 s)".
+  string line = 7;
+}
+
+// JobTelemetrySummary sums up a job VM's resource samples.
+message JobTelemetrySummary {
+  // Whether the guest kernel's out-of-memory killer killed a process
+  // during the job.
+  bool oom_killed = 1;
+  // How long the VM's threads waited for a host CPU, as a percentage of the
+  // CPU time they used plus that wait. 0 when they never waited.
+  double cpu_throttled_pct = 2;
+  // The most memory in use inside the guest, in MiB; the host's resident
+  // memory of the VM when the guest does not report it.
+  int64 peak_memory_mib = 3;
+  // CPU time used as a percentage of the VM's vCPUs over the sampled time.
+  double cpu_utilisation_pct = 4;
+  // How many samples the job has.
+  int32 samples = 5;
+  // The job's memory limit in MiB: the memory its runner size gives its VM,
+  // or on a container tier host the limit the host gave it, its share of
+  // the host; 0 when neither is known.
+  int64 memory_limit_mib = 6;
+  // The CPU time the VM used, in milliseconds: the sum of the job's stored
+  // samples.
+  int64 cpu_ms = 7;
+  // Why the job ran out of memory, when it ended without succeeding and its
+  // samples counted a kill: "out of memory (peak X MiB of limit Y MiB)",
+  // without the limit when the size is unknown. Empty otherwise.
+  string oom_reason = 8;
+  // Whether the runner size suited the job: "fits", "too big", "too small",
+  // "throttled" or "out of memory". Empty for a job that has not ended, and
+  // for a size this release does not know unless the job ran out of memory
+  // or was throttled (docs/contracts/telemetry.md, Verdict).
+  string verdict = 9;
+  // The verdict in one sentence with its numbers, such as "used 20 % of 4
+  // vCPUs and 4 GiB of 16 GiB: a size smaller, toshi-linux-2x, would fit".
+  // Empty when the verdict is.
+  string verdict_reason = 10;
+}
+
+message GetJobTelemetryRequest {
+  string job_id = 1;
+}
+
+message GetJobTelemetryResponse {
+  // The job's runner size and its VM's vCPUs and memory, to scale the
+  // samples by.
+  string size = 1;
+  int32 vcpus = 2;
+  int64 memory_mib = 3;
+  // Unset when the job has no samples.
+  JobTelemetrySummary summary = 4;
+  // Oldest first.
+  repeated JobTelemetrySample samples = 5;
+}
+
+// JobTelemetrySample is the same as toshi.agent.v1.TelemetrySample: one
+// window of a job VM's resource use.
+message JobTelemetrySample {
+  google.protobuf.Timestamp at = 1;
+  int32 window_ms = 2;
+  int64 cpu_ms = 3;
+  int64 cpu_wait_ms = 4;
+  optional int64 guest_memory_mib = 5;
+  int64 host_memory_mib = 6;
+  int64 disk_read_bytes = 7;
+  int64 disk_write_bytes = 8;
+  optional int64 net_rx_bytes = 9;
+  optional int64 net_tx_bytes = 10;
+  optional int32 oom_kills = 11;
+}
+
+message SummariseJobTelemetryRequest {
+  // The jobs queued at or after from and before to. To is the control
+  // plane's now when unset. The range may span at most 31 days.
+  google.protobuf.Timestamp from = 1;
+  google.protobuf.Timestamp to = 2;
+}
+
+message SummariseJobTelemetryResponse {
+  // One row per OS and runner size with a job in the range, ordered by OS
+  // and then size.
+  repeated JobTelemetrySizeRow rows = 1;
+  // The range summed.
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+}
+
+// JobTelemetrySizeRow sums up the telemetry of one OS and runner size's
+// jobs. Every figure but jobs_unsampled is over the jobs with samples.
+message JobTelemetrySizeRow {
+  string os = 1;
+  string size = 2;
+  // The size's vCPUs and memory; 0 when the size is unknown.
+  int32 vcpus = 3;
+  int64 memory_mib = 4;
+  // The jobs with samples.
+  int32 jobs = 5;
+  // The jobs without samples.
+  int32 jobs_unsampled = 6;
+  // Each job's peak memory: guest memory, or host memory when the guest
+  // gave none.
+  TelemetryPercentiles peak_memory_mib = 7;
+  // Each job's peak host memory: what its VM held on the host.
+  TelemetryPercentiles peak_host_memory_mib = 8;
+  // Each job's peak memory as a percentage of its memory limit (its host's
+  // limit on a container tier host, else the size's memory), over the jobs
+  // whose limit is known.
+  TelemetryPercentiles peak_memory_pct = 9;
+  // Each job's CPU time as a percentage of the size's vCPUs over its
+  // sampled time, over the jobs whose size is known.
+  TelemetryPercentiles cpu_utilisation_pct = 10;
+  // The CPU wait of these jobs together as a percentage of their CPU time
+  // plus that wait.
+  double cpu_throttled_pct = 11;
+  // The jobs that counted an out-of-memory kill.
+  int32 oom_killed = 12;
+  // The jobs whose peak memory reached 90 % of their memory limit or more.
+  int32 near_memory_limit = 13;
+}
+
+// TelemetryPercentiles is the median, 95th percentile and highest of a set
+// of values, each percentile the nearest rank; all 0 for an empty set.
+message TelemetryPercentiles {
+  double p50 = 1;
+  double p95 = 2;
+  double max = 3;
+}
+
+// HeldRefill is one warm pool whose refill a host holds.
+message HeldRefill {
+  string size = 1;
+  // "memory" or "cpus".
+  string reason = 2;
+}
+
+// Host is a machine that runs VMs for Toshi.
+message Host {
+  string id = 1;
+  string name = 2;
+  // The guest operating systems the host can run.
+  repeated string os = 3;
+  int32 cpus = 4;
+  int32 memory_mib = 5;
+  map<string, string> labels = 6;
+  HostState state = 7;
+  // When the host's agent last reported in; unset if it never did.
+  google.protobuf.Timestamp last_seen_at = 8;
+  // Memory not used by VMs, in MiB, from the host's last heartbeat.
+  int64 free_memory_mib = 9;
+  // Warm pools whose refill the host holds, from its last heartbeat.
+  repeated HeldRefill held_refills = 10;
+  // Tenant that owns the host and is the only one whose jobs it runs; empty
+  // for a shared host.
+  string owner_tenant = 11;
+  // The host's agent is draining before a stop: it takes no new jobs. On an
+  // offline host: the host was draining when it went offline.
+  bool stopping = 12;
+  // The cloud the host runs in when it is a cloud host ("aws"); empty
+  // otherwise.
+  string cloud = 13;
+  // An overflow host takes a job only when no other host the job may use has
+  // room and the job has queued for its plan's overflow_after.
+  bool overflow = 14;
+  // The host's public egress addresses.
+  HostEgress egress = 15;
+  // The version the host's agent reported when it last registered; empty when unknown.
+  string agent_version = 16;
+  // Whether agent_version is inside the promise between this control plane and its agents.
+  AgentVersionStatus agent_version_status = 17;
+  // Why agent_version is outside the promise; empty unless agent_version_status is SKEW.
+  string agent_version_skew = 18;
+  // True when the host is offline and its last heartbeat is older than the
+  // control plane's reaper.long_offline_after.
+  bool long_offline = 19;
+  // Why the control plane refused the host's last heartbeat: the field that
+  // was refused, with its size and the limit when it was over one, or that
+  // it holds a control character. Empty once a
+  // heartbeat of the host is taken. ListHosts sets it. The control plane
+  // keeps it in memory: after its restart the field is empty until the
+  // host's next heartbeat.
+  string heartbeat_refusal = 20;
+  // When that heartbeat was refused; unset when heartbeat_refusal is empty.
+  google.protobuf.Timestamp heartbeat_refused_at = 21;
+  // The host's tier: "container" for a container tier host,
+  // which runs its owner's jobs in Sysbox containers that share its kernel;
+  // empty for a host that runs each job in a VM.
+  string tier = 22;
+  // When the operator revoked the host; unset for a host that is
+  // not revoked. A revoked host is offline for good and never registers
+  // again under its ID.
+  google.protobuf.Timestamp revoked_at = 23;
+  // The memory limit, in MiB, the host's agent reported at its last answered
+  // heartbeat (toshi.agent.v1.MemoryLimit). 0 when it reports none or a
+  // limit of 0, as an agent without a limit, one whose cgroup stopped
+  // limiting, or one that predates the report does.
+  int64 memory_limit_mib = 24;
+  // Where that limit comes from: "memory_limit_mib" when the operator set it
+  // in the agent configuration, or "cgroup:<dir>" for the cgroup memory.max
+  // the agent discovered. Empty when memory_limit_mib is 0.
+  string memory_limit_source = 25;
+  // The minimum agent release the control plane admits when
+  // agent_version_status is BELOW_MINIMUM; empty otherwise.
+  string agent_version_minimum = 26;
+}
+
+// HostEgress is the public addresses a host's jobs reach the internet from.
+message HostEgress {
+  // IPv4 or IPv6 addresses or CIDR prefixes, sorted; empty unless source is
+  // EGRESS_SOURCE_CONFIGURED or EGRESS_SOURCE_DISCOVERED.
+  repeated string ips = 1;
+  EgressSource source = 2;
+  // When the addresses last changed; unset when they never did.
+  google.protobuf.Timestamp changed_at = 3;
+}
+
+// EgressSource says where a host's egress addresses come from.
+enum EgressSource {
+  // The host never reported them: its agent predates egress reporting.
+  EGRESS_SOURCE_UNSPECIFIED = 0;
+  // Set by the operator: network.egress_ips on the agent, or egress_ips on
+  // a cloud host.
+  EGRESS_SOURCE_CONFIGURED = 1;
+  // Found by the agent through an HTTPS echo service, re-checked hourly.
+  EGRESS_SOURCE_DISCOVERED = 2;
+  // The agent has neither addresses set nor an echo service that answered.
+  EGRESS_SOURCE_UNKNOWN = 3;
+  // A cloud host without egress_ips: each job's instance has its own public
+  // address.
+  EGRESS_SOURCE_PER_JOB = 4;
+}
+
+message ListJobsRequest {
+  // Jobs in any of these states; empty matches every state.
+  repeated JobState states = 1;
+  // Empty matches every tenant.
+  string tenant = 2;
+  // The repository as "owner/name"; empty matches every repository.
+  string repo = 3;
+  // The most jobs to return: 100 when zero, at most 1000.
+  int32 limit = 4;
+  // Only the job of this Workspace API workload. Within one tenant a workload
+  // has at most one job, and a service workload has none. The job is returned
+  // whatever its state, unless states excludes it.
+  string workload_id = 5;
+}
+
+message ListJobsResponse {
+  repeated Job jobs = 1;
+}
+
+message GetJobRequest {
+  string id = 1;
+}
+
+message GetJobResponse {
+  Job job = 1;
+}
+
+// AuditEvent is one append-only audit log entry.
+message AuditEvent {
+  int64 id = 1;
+  google.protobuf.Timestamp at = 2;
+  // operator, session, system or webhook.
+  string actor_kind = 3;
+  // The operator or enrollment token's id (never its value), the session's
+  // GitHub login, or a system or webhook source name.
+  string actor_id = 4;
+  // Empty when the event is not tied to a tenant.
+  string tenant = 5;
+  string action = 6;
+  // A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...,
+  // tenant:... or installation:....
+  string target = 7;
+  // A JSON object whose keys depend on the action (docs/contracts/audit.md).
+  string details_json = 8;
+  string request_id = 9;
+}
+
+// ListAuditEventsRequest selects the audit events to return.
+message ListAuditEventsRequest {
+  // Only this tenant's events; empty matches every tenant.
+  string tenant = 1;
+  // Only this action; empty matches every action.
+  string action = 2;
+  // Only events at or after this time; unset is unbounded.
+  google.protobuf.Timestamp since = 3;
+  // The most events to return: 100 when zero, at most 1000. A negative value
+  // fails with INVALID_ARGUMENT.
+  int32 limit = 4;
+  // Only events older than this id; pass the response's next_before_id to
+  // page. 0 means no bound.
+  int64 before_id = 5;
+  // Only events whose actor_id is exactly this: the id without the kind (a
+  // token id, a GitHub login or user id, a source name). Empty matches
+  // every actor.
+  string actor = 6;
+  // Only events whose action is one of these; empty matches every action.
+  // Setting both action and actions fails with INVALID_ARGUMENT, and so do
+  // an empty entry and more than 100 entries.
+  repeated string actions = 7;
+  // Only events whose target is exactly this, in full: "<kind>:<id>", for
+  // example "job:<id>". Empty matches every target.
+  string target = 8;
+}
+
+message ListAuditEventsResponse {
+  // Newest first.
+  repeated AuditEvent events = 1;
+  // The last event's id when the page is full, so it can be passed as the
+  // next request's before_id; 0 otherwise.
+  int64 next_before_id = 2;
+}
+
+message ListHostsRequest {
+  // Hosts in any of these states; empty matches every state.
+  repeated HostState states = 1;
+  // Leave out revoked hosts.
+  bool exclude_revoked = 2;
+}
+
+message ListHostsResponse {
+  repeated Host hosts = 1;
+  // The control plane's reaper.long_offline_after: a host whose last heartbeat
+  // is older, and that is offline, has long_offline set.
+  google.protobuf.Duration long_offline_after = 2;
+  // The minimum agent release (agent_auth.minimum_agent_version)
+  // of the control plane process that answered, which it compared the
+  // hosts' agent_version_status with; empty when unset. Operators only.
+  string minimum_agent_version = 3;
+}
+
+message SetHostStateRequest {
+  string id = 1;
+  // HOST_STATE_DRAINING or HOST_STATE_ONLINE.
+  HostState state = 2;
+}
+
+message SetHostStateResponse {
+  // The host as stored after the change.
+  Host host = 1;
+}
+
+message SetHostOverflowRequest {
+  string host_id = 1;
+  bool overflow = 2;
+}
+
+message SetHostOverflowResponse {
+  // The host as stored after the change.
+  Host host = 1;
+}
+
+message RetireHostRequest {
+  string id = 1;
+}
+
+message RetireHostResponse {}
+
+message RevokeHostRequest {
+  string id = 1;
+}
+
+message RevokeHostResponse {
+  // The host as stored after the call.
+  Host host = 1;
+  // False when the host was already revoked: the first revocation stands.
+  bool revoked = 2;
+  // The IDs of the jobs this call failed with host_revoked.
+  repeated string ended_job_ids = 3;
+}
+
+// OfflineHostOutcome says what RetireOfflineHosts did or would do for one host.
+enum OfflineHostOutcome {
+  OFFLINE_HOST_OUTCOME_UNSPECIFIED = 0;
+  // Removed when apply was set, otherwise would be removed.
+  OFFLINE_HOST_OUTCOME_RETIRE = 1;
+  // Kept: a job is still assigned to it, starting or running on it.
+  OFFLINE_HOST_OUTCOME_SKIPPED_JOB = 2;
+  // Kept: a tenant owns it and include_owned is not set.
+  OFFLINE_HOST_OUTCOME_SKIPPED_OWNED = 3;
+}
+
+message RetireOfflineHostsRequest {
+  // offline_longer_than is required and must be positive.
+  google.protobuf.Duration offline_longer_than = 1;
+  bool include_owned = 2;
+  bool apply = 3;
+}
+
+message RetireOfflineHostsResponse {
+  // The host with the oldest last heartbeat first.
+  repeated OfflineHostResult hosts = 1;
+}
+
+message OfflineHostResult {
+  Host host = 1;
+  OfflineHostOutcome outcome = 2;
+}
+
+// CloudHost is the AWS account behind a tenant-owned host the control plane
+// drives.
+message CloudHost {
+  // The host row this cloud host belongs to.
+  string host_id = 1;
+  // The tenant that owns the host.
+  string tenant = 2;
+  // The cloud provider: "aws" or "gcp".
+  string cloud = 3;
+  // The region the instances run in; on GCP the zone's region.
+  string region = 4;
+  // The role in the tenant's account the control plane assumes (AWS).
+  string role_arn = 5;
+  // The external ID the role's trust policy requires (AWS), or the project
+  // metadata must name (GCP); generated by Toshi.
+  string external_id = 6;
+  // The image the instances boot: an AMI, or a GCE image path.
+  string image = 7;
+  // The subnet (AWS) or subnetwork (GCP) to launch into; empty means a
+  // default subnet or the default network.
+  string subnet_id = 8;
+  // The security groups of the instances; empty means the VPC default.
+  repeated string security_group_ids = 9;
+  // Maps a runner size to an instance type, overriding the defaults.
+  map<string, string> instance_types = 10;
+  // The most vCPUs the host runs at once.
+  int32 max_vcpus = 11;
+  google.protobuf.Timestamp created_at = 12;
+  // Launches spot instances, moving an interrupted job onto on demand once.
+  bool spot = 13;
+  // The most instances the host runs at once; 0 means no limit.
+  int32 max_instances = 14;
+  // The most instance-minutes the host runs per UTC day; 0 means no limit.
+  int32 max_instance_minutes_per_day = 15;
+  // The GCP project and zone the instances run in.
+  string project = 16;
+  string zone = 17;
+  // The tenant's service account the control plane impersonates (GCP).
+  string service_account = 18;
+  // Where the instances reach the internet: "public" (each gets its own
+  // public address) or "nat" (none: the tenant's NAT carries the traffic).
+  string egress = 19;
+}
+
+// AddCloudHostRequest names the tenant and the cloud host to register.
+message AddCloudHostRequest {
+  // The tenant that owns the host.
+  string tenant = 1;
+  // The host name; it becomes the host id the same way enrollment does.
+  string name = 2;
+  // The cloud provider: "aws" (the default) or "gcp".
+  string cloud = 3;
+  // The AWS region the instances run in (AWS).
+  string region = 4;
+  // The role in the tenant's account the control plane assumes (AWS).
+  string role_arn = 5;
+  // The image the instances boot: an AMI (AWS), or a GCE image or family
+  // (an image name, family/NAME, or a projects/... path).
+  string image = 6;
+  // The subnet (AWS) or subnetwork (GCP, a name in the zone's region or
+  // regions/R/subnetworks/S) to launch into; empty means a default subnet
+  // or the default network.
+  string subnet_id = 7;
+  // The security groups of the instances; empty means the VPC default.
+  repeated string security_group_ids = 8;
+  // Maps a runner size to an instance type, overriding the defaults.
+  map<string, string> instance_types = 9;
+  // The most vCPUs the host runs at once; 0 means 64.
+  int32 max_vcpus = 10;
+  // Launches spot instances, moving an interrupted job onto on demand once.
+  bool spot = 11;
+  // The most instances the host runs at once; 0 means no limit.
+  int32 max_instances = 12;
+  // The most instance-minutes the host runs per UTC day; 0 means no limit.
+  int32 max_instance_minutes_per_day = 13;
+  // The public addresses the host's instances reach the internet from, when
+  // the subnet sends their traffic through fixed ones (a NAT gateway's
+  // Elastic IP); empty means each instance's own public address.
+  repeated string egress_ips = 14;
+  // Register the host as an ordinary own host instead of an overflow host:
+  // it then takes the tenant's jobs without waiting for the plan's
+  // overflow_after. False, the default, makes an overflow host.
+  bool no_overflow = 15;
+  // The GCP project and zone the instances run in (GCP).
+  string project = 16;
+  string zone = 17;
+  // The tenant's service account the control plane impersonates (GCP).
+  string service_account = 18;
+  // Where the instances reach the internet: "public" (the default: each
+  // instance gets its own public address) or "nat" (no public address; the
+  // subnet routes through the tenant's NAT gateway or Cloud NAT, whose
+  // addresses become the host's egress set).
+  string egress = 19;
+}
+
+// AddCloudHostResponse carries the host, the trust external id and the
+// principal the role must allow.
+message AddCloudHostResponse {
+  Host host = 1;
+  // The external ID the role's trust policy requires.
+  string external_id = 2;
+  // The AWS principal the tenant's role must trust (AWS).
+  string principal_arn = 3;
+  CloudHost cloud_host = 4;
+  // The Google principal the tenant's service account must let create
+  // tokens for it, with roles/iam.serviceAccountTokenCreator (GCP).
+  string gcp_principal = 5;
+}
+
+// Tenant owns a plan, an optional concurrency override, and one or more GitHub
+// App installations.
+message Tenant {
+  string id = 1;
+  string name = 2;
+  // The override; unset when none is set.
+  optional int32 concurrency_cap = 3;
+  google.protobuf.Timestamp created_at = 4;
+  string plan = 5;
+  // The cap the scheduler enforces; 0 means unlimited.
+  int32 effective_concurrency = 6;
+  // active or closed.
+  string status = 7;
+  // The tenant's jobs wait for its own hosts and never run on shared ones.
+  bool own_hosts_only = 8;
+  // Monthly spending cap in the smallest unit of the billing currency; 0
+  // means none.
+  int64 spend_cap_cents = 9;
+  // The tenant's own jobs-per-hour limit; 0 means the plan's applies.
+  int32 max_jobs_per_hour = 10;
+  // The limit the scheduler enforces: the lower of the tenant's and the
+  // plan's; 0 means none.
+  int32 effective_max_jobs_per_hour = 11;
+  // The starter credit granted when the tenant was created; 0 when none.
+  int64 starter_credit_cents = 12;
+  google.protobuf.Timestamp starter_credit_granted_at = 13;
+  // Shared overflow hosts may take the tenant's jobs; its own overflow hosts
+  // always may.
+  bool allow_overflow = 14;
+  // Whether the tenant's dispatch fillers, its cache-warming workflows,
+  // run on idle capacity.
+  bool allow_cache_warm = 15;
+  // The tenant's effective reservations on shared hosts, ordered
+  // by size: its own rows, and its plan's entries where it has none.
+  repeated Reservation reservations = 16;
+  // Lifecycle state: "active", "suspended", "deleting" or "deleted"
+  // (docs/contracts/tenant-lifecycle.md).
+  string state = 17;
+  // Why the operator suspended or deleted the tenant; empty when active.
+  string state_reason = 18;
+  // When the tenant entered its state; unset for a tenant always active.
+  google.protobuf.Timestamp state_since = 19;
+  // When a scheduled deletion purges the tenant; unset when none.
+  google.protobuf.Timestamp purge_after = 20;
+  // Days of finished job history the tenant keeps; unset when the plan's
+  // applies. 0 keeps forever (docs/contracts/history-retention.md).
+  optional int32 history_days = 21;
+  // The period the retention pass uses: the tenant's value when set, else
+  // its plan's.
+  int32 history_days_effective = 22;
+  // Whether Toshi cancels the workflow run of a job whose VM is gone, so
+  // GitHub shows it within seconds as cancelled; off keeps GitHub's own
+  // failure, about 10 minutes later.
+  bool cancel_run_on_vm_death = 23;
+}
+
+// Reservation is a tenant's floor of slots jobs of one runner size on shared
+// hosts, warm of them on warm VMs.
+message Reservation {
+  // A runner size, as a runs-on label.
+  string size = 1;
+  // How many slots are reserved; at least 1.
+  int32 slots = 2;
+  // How many of the slots are kept on warm VMs; 0 when none.
+  int32 warm = 3;
+  // "tenant" when the tenant's own row set it, "plan" when its plan did.
+  string source = 4;
+}
+
+message ListTenantsRequest {}
+
+message ListTenantsResponse {
+  repeated Tenant tenants = 1;
+}
+
+message SetTenantCapRequest {
+  string id = 1;
+  int32 concurrency_cap = 2;
+}
+
+message SetTenantCapResponse {
+  Tenant tenant = 1;
+}
+
+message SetTenantHistoryRequest {
+  string tenant = 1;
+  // Unset clears the tenant's override so its plan's history_days applies.
+  optional int32 history_days = 2;
+}
+
+message SetTenantHistoryResponse {
+  Tenant tenant = 1;
+}
+
+message SetTenantOwnHostsOnlyRequest {
+  string id = 1;
+  bool own_hosts_only = 2;
+}
+
+message SetTenantOwnHostsOnlyResponse {
+  Tenant tenant = 1;
+}
+
+message SetTenantAllowOverflowRequest {
+  string id = 1;
+  bool allow_overflow = 2;
+}
+
+message SetTenantAllowOverflowResponse {
+  Tenant tenant = 1;
+}
+
+message SuspendTenantRequest {
+  string id = 1;
+  string reason = 2;
+}
+
+message SuspendTenantResponse {
+  Tenant tenant = 1;
+}
+
+message ResumeTenantRequest {
+  string id = 1;
+  string reason = 2;
+}
+
+message ResumeTenantResponse {
+  Tenant tenant = 1;
+}
+
+message DeleteTenantRequest {
+  string id = 1;
+  string reason = 2;
+  int64 grace_seconds = 3;
+  bool now = 4;
+}
+
+message DeleteTenantResponse {
+  Tenant tenant = 1;
+}
+
+message SetTenantReservationRequest {
+  string id = 1;
+  // A runner size, as a runs-on label.
+  string size = 2;
+  // Slots to reserve; 0 removes the tenant's own reservation for the size.
+  int32 slots = 3;
+  // Slots kept on warm VMs; at most slots.
+  int32 warm = 4;
+}
+
+message SetTenantReservationResponse {
+  // The tenant's effective reservations after the change, ordered by size.
+  repeated Reservation reservations = 1;
+}
+
+message SetTenantSpendLimitsRequest {
+  string id = 1;
+  // Unset leaves the cap; 0 clears it.
+  optional int64 spend_cap_cents = 2;
+  // Unset leaves the limit; 0 clears the tenant's own limit.
+  optional int32 max_jobs_per_hour = 3;
+}
+
+message SetTenantSpendLimitsResponse {
+  Tenant tenant = 1;
+}
+
+message Plan {
+  string name = 1;
+  int32 concurrency = 2;
+  int32 max_job_minutes = 3;
+  bool is_default = 4;
+  // Whether a tenant can buy this plan through Checkout: self-serve billing
+  // is on and exactly one lookup key in billing.plan_map maps to the plan.
+  bool self_serve = 5;
+  // Operating systems the plan allows; empty means every OS.
+  repeated string allowed_os = 6;
+  // Largest runner size the plan allows, as a runs-on label; empty means any
+  // size.
+  string max_size = 7;
+  // vCPUs a tenant may have in assigned, starting or running jobs at once; 0
+  // means no cap.
+  int32 max_vcpu = 8;
+  // Minutes a tenant may run each UTC calendar month without a verified card;
+  // 0 means the plan has no allowance.
+  int32 free_minutes_per_month = 9;
+  // Runs-on labels the plan admits under allowed_os, max_size and max_vcpu.
+  // A size whose OS is in card_required_for also needs a verified card.
+  repeated string sizes = 10;
+  // OSes that require a verified payment card; empty when billing is off.
+  repeated string card_required_for = 11;
+  // Jobs on shared hosts a tenant may start per 60 minutes; 0 means no
+  // limit.
+  int32 max_jobs_per_hour = 12;
+  // Queued jobs of one workflow run that may wait for a host at once; the
+  // rest wait as burst_guard. 0 means off.
+  int32 burst_guard_jobs = 13;
+  // Credit a new tenant on this plan gets once, in the smallest currency
+  // unit; 0 means none.
+  int64 starter_credit_cents = 14;
+  // Days of finished job history tenants on this plan keep; 0 keeps forever.
+  // Left out of configuration, 90 (docs/contracts/history-retention.md).
+  int32 history_days = 15;
+  // Longest debug session, in minutes, a failed job on this plan may ask
+  // for with a toshi-debug-<n> label; 0 means the plan has no debug
+  // sessions.
+  int32 debug_minutes = 16;
+  // Hosts a tenant on this plan may own at once, cloud hosts included; 0
+  // means no limit. Left out of configuration, 20.
+  int32 max_own_hosts = 17;
+  // Whether the plan is the open-source tier: its tenants' jobs
+  // pass the open-source gate.
+  bool open_source = 18;
+}
+
+message ListOperatorAlertsRequest {}
+
+message ListOperatorAlertsResponse {
+  repeated OperatorAlert alerts = 1;
+}
+
+message ListHostAlertsRequest {
+  // Optional: only this tenant.
+  string tenant = 1;
+}
+
+message ListHostAlertsResponse {
+  repeated OperatorAlert alerts = 1;
+}
+
+// OperatorAlert is one raised operator alert.
+message OperatorAlert {
+  // kind is the alert, such as "runner_exits_without_job".
+  string kind = 1;
+  // raised_at is when it was raised; since is the first event it counts.
+  google.protobuf.Timestamp raised_at = 2;
+  google.protobuf.Timestamp since = 3;
+  // count is the events counted from since, and reasons the same events by
+  // reason; top_reason has the most.
+  int64 count = 4;
+  map<string, int64> reasons = 5;
+  string top_reason = 6;
+  // message says the same in one line.
+  string message = 7;
+  // The tenant whose own hosts raised the alert. Empty for an operator alert.
+  string tenant = 8;
+}
+
+message ListPlansRequest {}
+
+message ListPlansResponse {
+  repeated Plan plans = 1;
+}
+
+message GetVersionRequest {}
+
+message GetVersionResponse {
+  string version = 1;
+  string commit = 2;
+  string date = 3;
+  // The oldest agent release this control plane process admits at Register
+  // (agent_auth.minimum_agent_version); empty when unset, which
+  // admits every agent. Each process reads its own configuration.
+  string minimum_agent_version = 4;
+}
+
+message SetTenantPlanRequest {
+  string id = 1;
+  string plan = 2;
+}
+
+message SetTenantPlanResponse {
+  Tenant tenant = 1;
+}
+
+// GetUsageRequest selects the jobs to count. A job is in the window when its
+// queued_at is at or after from and before to.
+message GetUsageRequest {
+  // Start of the window, inclusive. Unset: to minus 7 days.
+  google.protobuf.Timestamp from = 1;
+  // End of the window, exclusive. Unset: now.
+  google.protobuf.Timestamp to = 2;
+  // Only this tenant's jobs. Empty matches every tenant.
+  string tenant = 3;
+}
+
+message GetUsageResponse {
+  // Ordered by tenant, then day, then conclusion, then outcome. A window
+  // with no jobs has no rows.
+  repeated UsageRow rows = 1;
+  // The window used, with the defaults filled in.
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  // Filler jobs that finished in the window, by tenant. They are
+  // not billed and not in rows.
+  repeated FillerUsage filler = 4;
+}
+
+// FillerUsage counts one tenant's filler jobs: runs its dispatch fillers
+// started on shared room. Not billed; a plan's filler_minutes_per_day bounds
+// them per UTC day.
+message FillerUsage {
+  string tenant = 1;
+  int64 jobs = 2;
+  // Each job's duration rounded up to whole minutes, on any host.
+  int64 minutes = 3;
+}
+
+// UsageRow counts the jobs of one tenant, UTC day, conclusion and outcome.
+message UsageRow {
+  string tenant = 1;
+  // The UTC date of the job's queued_at, as YYYY-MM-DD.
+  string day = 2;
+  // The job's conclusion as stored, such as "success". Empty for a job with
+  // no conclusion yet.
+  string conclusion = 3;
+  // Number of jobs in this row.
+  int64 jobs = 4;
+  // Billable minutes of those jobs that did not run on a host their tenant
+  // owns: each job that started and finished adds its duration rounded up to
+  // whole minutes; other jobs add 0.
+  int64 minutes = 5;
+  // Minutes of the row's jobs that ran on hosts their tenant owns, rounded as
+  // minutes.
+  int64 own_host_minutes = 6;
+  // The part of minutes and own_host_minutes spent in debug sessions: each
+  // job that had one adds its minutes less the minutes up to its session's
+  // start, both rounded up, so a job's run and debug parts add up
+  // to its minutes.
+  int64 debug_minutes = 7;
+  // The part of minutes that ran on overflow hosts.
+  int64 overflow_minutes = 8;
+  // Reserved slot-hours the tenant held in the row's window, on the rows
+  // with a conclusion: 0. The reserved hours themselves are in the row with
+  // an empty conclusion added for each UTC day that has them.
+  int64 reserved_slot_hours = 9;
+  // Toshi's own word for the jobs in this row when Toshi ended them itself
+  // (the values of Job.outcome); empty for every other row.
+  string outcome = 10;
+}
+
+// GetQueueTimesRequest selects the jobs to summarize. A job is in the window
+// when its queued_at is at or after from and before to.
+message GetQueueTimesRequest {
+  // Start of the window, inclusive. Unset: to minus 7 days.
+  google.protobuf.Timestamp from = 1;
+  // End of the window, exclusive. Unset: now.
+  google.protobuf.Timestamp to = 2;
+  // Only this tenant's jobs. Empty matches every tenant.
+  string tenant = 3;
+}
+
+message GetQueueTimesResponse {
+  // Jobs in the window that reached running (have a started_at).
+  int64 jobs = 1;
+  // Nearest-rank percentiles and maximum of started_at - queued_at, in whole
+  // milliseconds. All 0 when jobs is 0.
+  int64 p50_ms = 2;
+  int64 p90_ms = 3;
+  int64 max_ms = 4;
+  // Share of those jobs assigned to a warm instance, from 0 to 1.
+  double warm_share = 5;
+  // The window used, with the defaults filled in.
+  google.protobuf.Timestamp from = 6;
+  google.protobuf.Timestamp to = 7;
+  // Time held, from first held to assigned, of the jobs the scheduler held, by
+  // the latest reason it held each one. A job never held is in none of them.
+  // A reason with only jobs held now has jobs 0.
+  repeated HoldTimes held = 8;
+}
+
+message HoldTimes {
+  // One of the job hold reasons (see Job.hold_reason), as the
+  // toshi_jobs_held metric labels them.
+  string reason = 1;
+  // The jobs held for this reason whose hold ended (they were assigned and started), and their held time in milliseconds (nearest-rank).
+  int64 jobs = 2;
+  int64 p50_ms = 3;
+  int64 p90_ms = 4;
+  int64 max_ms = 5;
+  // The jobs held for this reason now, whenever they were queued. 0 when
+  // the window ends before now.
+  int64 open_jobs = 6;
+  // Since when the longest-held of them has been held; unset when
+  // open_jobs is 0.
+  google.protobuf.Timestamp open_since = 7;
+}
+
+// GetWorkflowUsageRequest selects the jobs to count. A job is in the window
+// when its queued_at is at or after from and before to.
+message GetWorkflowUsageRequest {
+  // Start of the window, inclusive. Unset: to minus 7 days.
+  google.protobuf.Timestamp from = 1;
+  // End of the window, exclusive. Unset: now.
+  google.protobuf.Timestamp to = 2;
+  // Only this tenant's jobs. Empty matches every tenant.
+  string tenant = 3;
+}
+
+message GetWorkflowUsageResponse {
+  // Ordered by minutes, then own_host_minutes, then jobs, each descending,
+  // then by tenant, repo and workflow, byte by byte. A window with no jobs
+  // has no rows.
+  repeated WorkflowUsageRow rows = 1;
+  // The window used, with the defaults filled in.
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+}
+
+// WorkflowUsageRow counts the jobs of one tenant, repository and workflow.
+// Its jobs are the ones GetUsage counts, and their minutes are counted as
+// in UsageRow.
+message WorkflowUsageRow {
+  string tenant = 1;
+  // The repository, as owner/name.
+  string repo = 2;
+  // The workflow's name from the job's workflow_job webhook. Empty for jobs
+  // stored without one.
+  string workflow = 3;
+  // Number of jobs in this row.
+  int64 jobs = 4;
+  // Billable minutes, as UsageRow.minutes.
+  int64 minutes = 5;
+  // Minutes on hosts the tenant owns, as UsageRow.own_host_minutes.
+  int64 own_host_minutes = 6;
+  // Jobs whose conclusion is "failure" or whose outcome is "failed".
+  int64 failed_jobs = 7;
+  // Jobs that started and finished: the ones the percentiles are over.
+  int64 timed_jobs = 8;
+  // Nearest-rank percentiles of those jobs' run times, from started_at to
+  // the stop request, or to finished_at when there was none, each rounded
+  // up to a whole second. Both 0 when timed_jobs is 0.
+  int64 p50_seconds = 9;
+  int64 p95_seconds = 10;
+}
+
+message GetCapacityRequest {}
+
+message GetCapacityResponse {
+  // One row per runner size that has a pool, free slots or a reservation,
+  // ordered by size. Slots free count shared regular hosts, reserved capacity
+  // excluded.
+  repeated CapacitySize sizes = 1;
+  // One row per reservation, ordered by tenant then size.
+  repeated CapacityReservation reservations = 2;
+  // When the scheduler pass that left this view ran.
+  google.protobuf.Timestamp observed_at = 3;
+}
+
+message CapacitySize {
+  string size = 1;
+  // Slots shared regular hosts could still start jobs of this size.
+  int32 free_slots = 2;
+  // Slots reserved for tenants of this size; free_slots excludes them.
+  int32 reserved_slots = 3;
+  // Reserved slots the tenants' own jobs of the size hold.
+  int32 in_use = 4;
+  // Reserved slots kept free at the end of the pass.
+  int32 earmarked = 5;
+  // Reserved slots the fleet had no room for.
+  int32 short = 6;
+  // Warm VMs of this size ready for a job on online hosts, as their last
+  // heartbeats reported; reserved ones included.
+  int32 warm = 7;
+}
+
+message CapacityReservation {
+  string tenant = 1;
+  string size = 2;
+  // The reservation.
+  int32 slots = 3;
+  int32 warm = 4;
+  // The tenant's jobs of the size on shared regular hosts.
+  int32 in_use = 5;
+  // Slots kept free at the end of the pass, warm_earmarked of them on warm
+  // VMs.
+  int32 earmarked = 6;
+  int32 warm_earmarked = 7;
+  // Slots the fleet had no room for.
+  int32 short = 8;
+}
+
+message GetTenantBillingRequest {
+  string id = 1;
+  // How many UTC months of usage to return, the current one included.
+  // 0 means 2; at most 12.
+  int32 months = 2;
+}
+
+message GetTenantBillingResponse {
+  TenantBilling billing = 1;
+}
+
+message GetTenantStatementRequest {
+  string id = 1;
+  // The UTC month as YYYY-MM. Empty: the current month.
+  string month = 2;
+  // Also return the statement as CSV, as `toshi tenant usage --csv` writes
+  // it.
+  bool csv = 3;
+}
+
+message GetTenantStatementResponse {
+  TenantStatement statement = 1;
+  // The statement as CSV with a header row, when the request asked for it.
+  string csv = 2;
+}
+
+message TenantStatement {
+  string tenant = 1;
+  // The month as YYYY-MM, and its bounds: from inclusive, to exclusive.
+  string month = 2;
+  google.protobuf.Timestamp from = 3;
+  google.protobuf.Timestamp to = 4;
+  // The plans the month's metered minutes were recorded at, comma-separated;
+  // the tenant's plan today when no minute has a recorded price.
+  string plan = 5;
+  // The jobs that finished in the month, by runner size and OS, counted as
+  // GetUsage counts them.
+  repeated StatementUsage usage = 6;
+  // The sum of usage; its size and os are empty.
+  StatementUsage total = 7;
+  // The minutes metered to the billing provider for the month, by the size
+  // they were recorded under, with their estimated cost.
+  repeated StatementCharge charges = 8;
+  // The estimated cost of every charge, rounded up once, in the smallest
+  // unit of currency: each job at the price recorded for it when it
+  // finished, and minutes with none at today's prices. Leaves out the
+  // plan's own price and any credit.
+  int64 estimated_cents = 9;
+  // Empty when the prices are unknown.
+  string currency = 10;
+  // False when some minutes have no recorded price and the billing
+  // provider's prices have not been read: those minutes' amounts are 0.
+  bool estimate_known = 11;
+  // The starter credit put on the customer's balance in the month; 0 and
+  // unset when it was not applied in it.
+  int64 starter_credit_applied_cents = 12;
+  google.protobuf.Timestamp starter_credit_applied_at = 13;
+  // Held time, from first held to assigned, of the jobs queued in the month
+  // that reached running, by the latest reason each was held.
+  repeated HoldTimes held = 14;
+  // The metered minutes with no recorded price, estimated at today's
+  // prices: finished jobs not yet in the usage outbox, and usage from
+  // before prices were recorded.
+  int64 current_price_minutes = 15;
+  // The tenant's filler jobs that finished in the month: not billed, not in
+  // usage or charges. Unset when there were none.
+  FillerUsage filler = 16;
+  // True when a billing provider is configured; false means nothing is metered or charged.
+  bool billing_enabled = 17;
+  // When the month's estimated spend first reached the tenant's spending
+  // cap; unset when it did not.
+  google.protobuf.Timestamp spend_cap_reached_at = 18;
+  // The cap that was reached, in the smallest unit of currency; 0 when it
+  // was not.
+  int64 spend_cap_reached_cents = 19;
+  // The tenant's spending cap when the statement was built; 0 when none.
+  int64 spend_cap_cents = 20;
+}
+
+message StatementUsage {
+  string size = 1;
+  string os = 2;
+  int64 jobs = 3;
+  // Billable minutes on shared hosts, rounded up per job.
+  int64 minutes = 4;
+  // Minutes on the tenant's own hosts, which are not billed.
+  int64 own_host_minutes = 5;
+  // The part of minutes and own_host_minutes spent in debug sessions.
+  int64 debug_minutes = 6;
+  // The part of minutes that ran on overflow hosts.
+  int64 overflow_minutes = 7;
+  // Reserved slot-hours the tenant held for this size in the statement's
+  // window. A size with reserved hours but no finished job still
+  // gets a row, with zero minutes.
+  int64 reserved_slot_hours = 8;
+  // Toshi's own word for the jobs in this entry when Toshi ended them
+  // itself (the values of Job.outcome); empty for every other entry.
+  string outcome = 9;
+}
+
+message StatementCharge {
+  // Empty for usage recorded without a size, priced at the plan's highest
+  // per-minute price.
+  string size = 1;
+  int64 minutes = 2;
+  // The minutes at their recorded prices, or today's for minutes with none,
+  // rounded up.
+  int64 estimated_cents = 3;
+}
+
+message SetTenantBillingCustomerRequest {
+  string id = 1;
+  // Empty clears the customer id and billing start.
+  string customer_id = 2;
+}
+
+message SetTenantBillingCustomerResponse {
+  TenantBilling billing = 1;
+}
+
+message CreateCheckoutSessionRequest {
+  string id = 1;
+  string plan = 2;
+}
+
+message CreateCheckoutSessionResponse {
+  // The provider's hosted Checkout URL to send the browser to.
+  string url = 1;
+}
+
+message CreateBillingPortalSessionRequest {
+  string id = 1;
+}
+
+message CreateBillingPortalSessionResponse {
+  // The provider's hosted Customer Portal URL to send the browser to.
+  string url = 1;
+}
+
+// CancelJobRequest names the job to cancel.
+message CancelJobRequest {
+  // Toshi's job id.
+  string job_id = 1;
+}
+
+// CancelJobResponse carries the job after the cancel.
+message CancelJobResponse {
+  Job job = 1;
+}
+
+// StopJobDebugRequest names the job whose debug session ends.
+message StopJobDebugRequest {
+  // Toshi's job id.
+  string job_id = 1;
+}
+
+// StopJobDebugResponse carries the job after the stop.
+message StopJobDebugResponse {
+  Job job = 1;
+}
+
+// GetJobDebugAccessRequest names the debugging job.
+message GetJobDebugAccessRequest {
+  // Toshi's job id.
+  string job_id = 1;
+}
+
+// GetJobDebugAccessResponse is the way into a debugging job's guest.
+message GetJobDebugAccessResponse {
+  // The guest's login user.
+  string user = 1;
+  // The session's ed25519 private key in OpenSSH format. It is returned
+  // only here, once per session.
+  bytes private_key = 2;
+  // The relay's path on the control plane, "/debug/<job id>/ssh". A GET
+  // with "Connection: Upgrade" and "Upgrade: toshi-debug-ssh", carrying
+  // the same credentials as this call, becomes a byte stream to the
+  // guest's ssh server.
+  string relay_path = 3;
+  // When the session ends.
+  google.protobuf.Timestamp expires_at = 4;
+}
+
+// TenantBilling is a tenant's billing link, its subscription's status and the
+// usage reported to the billing provider.
+message TenantBilling {
+  // Empty when the tenant is not linked to a customer.
+  string customer_id = 1;
+  // Empty when no subscription has set the plan.
+  string subscription_id = 2;
+  // When billable usage begins; unset when the tenant is not billed.
+  google.protobuf.Timestamp billing_started_at = 3;
+  // Always unset: the hourly export ledger is no longer read. Usage is in
+  // totals and failed_events.
+  BillingExport last_export = 4 [deprecated = true];
+  // The provider's status of the subscription from the last event applied,
+  // such as active or past_due; empty when no event has been applied.
+  string subscription_status = 5;
+  // When the subscription entered subscription_status.
+  google.protobuf.Timestamp subscription_status_since = 6;
+  // Meter events per UTC month and runner size, newest month first.
+  repeated BillingTotals totals = 7;
+  // The tenant's failed meter events, most recently failed first, at most 50.
+  repeated BillingEventFailure failed_events = 8;
+  // Minutes of the tenant's jobs that finished this UTC calendar month, as
+  // its statement counts them. The free allowance counts these, with or
+  // without a billing customer.
+  int64 minutes_this_month = 9;
+  // The free minutes per UTC calendar month of the tenant's plan; 0 when the
+  // plan has none.
+  int64 free_minutes_per_month = 10;
+  // Whether the billing customer has a payment method.
+  bool card_verified = 11;
+  // When Toshi first saw a payment method on the billing customer; unset
+  // without one.
+  google.protobuf.Timestamp card_verified_at = 12;
+  // The spending cap; 0 when none.
+  int64 spend_cap_cents = 13;
+  // Estimated metered spend this UTC month, rounded up: finished jobs plus
+  // what running ones have run so far, at the plan's current prices.
+  int64 spend_cents = 14;
+  // 0, 80 or 100: the share of the cap spend_cents has reached.
+  int32 spend_level = 15;
+  // The currency of the plan's prices, lower case; empty when unknown.
+  string currency = 16;
+  // False when the billing provider's prices are not known yet, so
+  // spend_cents means nothing.
+  bool spend_known = 17;
+  // Starter credit granted, and an estimate of what is left: the credit
+  // less the metered spend since billing started.
+  int64 starter_credit_cents = 18;
+  int64 starter_credit_left_cents = 19;
+  // When the credit reached the billing customer; unset before.
+  google.protobuf.Timestamp starter_credit_applied_at = 20;
+  // True when a billing provider is configured; false means nothing is metered or charged.
+  bool billing_enabled = 21;
+  // The tenant's jobs held now, by reason, in the order GetQueueTimes lists
+  // the reasons.
+  repeated HeldJobs held_now = 22;
+  // The tenant's jobs that count against its plan concurrency now: assigned,
+  // starting, running or debugging, on Toshi's hosts rather than its own, and
+  // neither a dispatch filler's job nor an open-source job. This is the count
+  // the scheduler checks against the tenant's limit,
+  // Tenant.effective_concurrency.
+  int64 concurrency_used = 23;
+  // HeldJobs counts the jobs held now for one reason.
+  message HeldJobs {
+    // One of the job hold reasons (see Job.hold_reason).
+    string reason = 1;
+    int64 jobs = 2;
+    // Since when the longest-held of them has been held.
+    google.protobuf.Timestamp since = 3;
+  }
+}
+
+// BillingTotals counts one month's meter events of one runner size by
+// delivery state. A month or size without events is left out.
+message BillingTotals {
+  // The UTC month the jobs finished in, as YYYY-MM.
+  string month = 1;
+  // The runner size; empty for events recorded before sizes were.
+  string size = 2;
+  int64 sent_events = 3;
+  int64 sent_minutes = 4;
+  int64 pending_events = 5;
+  int64 pending_minutes = 6;
+  int64 failed_events = 7;
+  int64 failed_minutes = 8;
+}
+
+// BillingEventFailure is a meter event the provider will not be sent again.
+message BillingEventFailure {
+  string job_id = 1;
+  string size = 2;
+  string event_name = 3;
+  int64 minutes = 4;
+  // When the job finished.
+  google.protobuf.Timestamp occurred_at = 5;
+  google.protobuf.Timestamp failed_at = 6;
+  int32 attempts = 7;
+  string last_error = 8;
+}
+
+// BillingExport is one exported billing period in the ledger.
+message BillingExport {
+  google.protobuf.Timestamp period_start = 1;
+  google.protobuf.Timestamp period_end = 2;
+  int64 minutes = 3;
+  // Empty when no meter event was sent for the period.
+  string provider_event_id = 4;
+  google.protobuf.Timestamp exported_at = 5;
+}
+
+// TokenKind says what a token grants.
+enum TokenKind {
+  TOKEN_KIND_UNSPECIFIED = 0;
+  // The operator token: the operator API and /metrics.
+  TOKEN_KIND_OPERATOR = 1;
+  // The enrollment token: registering a host.
+  TOKEN_KIND_ENROLLMENT = 2;
+  // A tenant API token: the operator API as one tenant.
+  TOKEN_KIND_TENANT = 3;
+  // A product token: a product's adapter calling the core.
+  TOKEN_KIND_PRODUCT = 4;
+}
+
+// Token is an operator, enrollment, tenant or product token, without its
+// value.
+message Token {
+  // Token id, such as "tok-1a2b3c4d5e6f".
+  string id = 1;
+  TokenKind kind = 2;
+  // "file" for a token read from the control plane's token file, "rotate"
+  // for one made by RotateToken, "tenant" for one made by
+  // CreateEnrollmentToken, "session" for a tenant token minted from a
+  // dashboard session.
+  string source = 3;
+  google.protobuf.Timestamp created_at = 4;
+  // Unset when the token does not expire.
+  google.protobuf.Timestamp expires_at = 5;
+  // Unset when the token is not revoked.
+  google.protobuf.Timestamp revoked_at = 6;
+  // Whether the token is accepted now.
+  bool active = 7;
+  // Tenant the token is scoped to; also set for tenant tokens.
+  string tenant = 8;
+  // The label the tenant chose; empty for other kinds.
+  string name = 9;
+  // The project the token is limited to, by name. Empty for a token that
+  // acts in the whole tenant.
+  string project = 10;
+  // The environment of project the token is limited to, by name. Empty
+  // when the token acts in every environment of its project.
+  string environment = 11;
+  // The product a product token is for; empty for other kinds.
+  string product = 12;
+}
+
+// ListTokensRequest optionally narrows the list to one kind and one tenant.
+message ListTokensRequest {
+  // TOKEN_KIND_UNSPECIFIED lists every kind.
+  TokenKind kind = 1;
+  // Only this tenant's tokens; empty lists every token.
+  string tenant = 2;
+}
+
+// ListTokensResponse carries the tokens, oldest first.
+message ListTokensResponse {
+  repeated Token tokens = 1;
+}
+
+// RotateTokenRequest names the kind to rotate and how long the old tokens
+// keep working.
+message RotateTokenRequest {
+  TokenKind kind = 1;
+  // Seconds the kind's other active tokens keep working, at most 30 days.
+  // Unset means 24 hours; 0 ends them at once.
+  optional int64 grace_seconds = 2;
+}
+
+// RotateTokenResponse carries the new token and its value.
+message RotateTokenResponse {
+  Token token = 1;
+  // The new token. It is returned only here.
+  string value = 2;
+}
+
+// RevokeTokenRequest names the token to revoke.
+message RevokeTokenRequest {
+  string id = 1;
+}
+
+// RevokeTokenResponse carries the revoked token.
+message RevokeTokenResponse {
+  Token token = 1;
+  // How many hosts were signed out and must register again.
+  int32 hosts_signed_out = 2;
+}
+
+// CreateEnrollmentTokenRequest names the tenant to enroll hosts for.
+message CreateEnrollmentTokenRequest {
+  string tenant = 1;
+  // Hosts that enroll with the token register as overflow hosts.
+  bool overflow = 2;
+}
+
+// CreateEnrollmentTokenResponse carries the new token and its value.
+message CreateEnrollmentTokenResponse {
+  Token token = 1;
+  // The new token. It is returned only here.
+  string value = 2;
+}
+
+message CreateTenantTokenRequest {
+  string tenant = 1;
+  string name = 2;
+  // Unset means the token never expires.
+  google.protobuf.Timestamp expires_at = 3;
+  // Limits the token to this project of the tenant, by name. Empty makes
+  // a token for the whole tenant.
+  string project = 4;
+  // Limits the token further to this environment of project, by name.
+  // Needs project.
+  string environment = 5;
+}
+
+message CreateTenantTokenResponse {
+  Token token = 1;
+  // The new token. It is returned only here.
+  string value = 2;
+}
+
+message CreateProductTokenRequest {
+  string product = 1;
+  // Unset means 90 days from now.
+  google.protobuf.Timestamp expires_at = 2;
+}
+
+message CreateProductTokenResponse {
+  Token token = 1; // The new token. It is returned only here.
+  string value = 2;
+}
+
+message ListEgressIPsRequest {
+  string tenant = 1;
+}
+
+// ListEgressIPsResponse lists the addresses to allowlist and the hosts they
+// come from.
+message ListEgressIPsResponse {
+  // Every address of the hosts below with known addresses, sorted and
+  // without repeats.
+  repeated string ips = 1;
+  // The hosts the tenant's jobs can land on, ordered by kind (own hosts
+  // first) and ID.
+  repeated EgressHost hosts = 2;
+  // False when some host's addresses are unknown or change per job, so ips
+  // may not cover every job.
+  bool complete = 3;
+}
+
+// EgressHost is one host a tenant's jobs can land on.
+message EgressHost {
+  // The host's id and name; empty for a shared host when a dashboard
+  // session or tenant token asks.
+  string host_id = 1;
+  string name = 2;
+  // The host is shared between tenants rather than the tenant's own.
+  bool shared = 3;
+  HostEgress egress = 4;
+  // For an EGRESS_SOURCE_PER_JOB host: the addresses its jobs ran from in
+  // the last 7 days, sorted.
+  repeated string recent_ips = 5;
+  // The host's cloud ("aws"), empty for a host with an agent.
+  string cloud = 6;
+  // For a cloud host: "public" or "nat".
+  string cloud_egress = 7;
+  // For a "nat" cloud host: a job echoed one of the host's addresses in the
+  // last 7 days. Until then the response is not complete, and recent_ips
+  // shows what jobs echoed.
+  bool confirmed = 8;
+}
+
+message CheckCloudHostRequest {
+  string host_id = 1;
+}
+
+message CheckCloudHostResponse {
+  // One row per check, in the order they ran.
+  repeated CloudHostCheck checks = 1;
+}
+
+// CloudHostCheck is the outcome of one cloud host check.
+message CloudHostCheck {
+  // What was checked, for example "assume role" or "ec2:RunInstances".
+  string name = 1;
+  CloudHostCheckStatus status = 2;
+  // What was found, or what to fix. It never holds credentials.
+  string detail = 3;
+}
+
+// CloudHostCheckStatus is how a cloud host check came out.
+enum CloudHostCheckStatus {
+  CLOUD_HOST_CHECK_STATUS_UNSPECIFIED = 0;
+  CLOUD_HOST_CHECK_STATUS_OK = 1;
+  // Works, but something deserves a look.
+  CLOUD_HOST_CHECK_STATUS_WARN = 2;
+  // Fails: jobs on the host would fail too.
+  CLOUD_HOST_CHECK_STATUS_FAIL = 3;
+  // Not run, because an earlier check failed or nothing could be tested.
+  CLOUD_HOST_CHECK_STATUS_SKIPPED = 4;
+}
+
+// Filler is low-priority work Toshi runs only on capacity above the warm
+// pool targets, and stops the moment a job needs the room.
+message Filler {
+  // Unique among the fillers with the same tenant; lowercase letters, digits
+  // and dashes, at most 40 characters, starting with a letter or digit.
+  string name = 1;
+  // "command": a command in a VM; "dispatch": a workflow_dispatch of a
+  // tenant's workflow, run as a filler job.
+  string kind = 2;
+  // The runner size of the VM.
+  string size = 3;
+  // Run only on hosts whose pool for the size has nested KVM.
+  bool nested_kvm = 4;
+  // command: the command the guest runs, as argv.
+  repeated string command = 5;
+  // command: the name of the agents' [filler] shares entry mounted in the
+  // guest at /mnt/toshi-share. Empty: none.
+  string share = 6;
+  // dispatch: the tenant whose installation dispatches the workflow. With
+  // the name it is the filler's key; a command filler has no tenant.
+  string tenant = 7;
+  // dispatch: the repository, as "owner/name".
+  string repo = 8;
+  // dispatch: the workflow's file name, for example "warm-cache.yml".
+  string workflow = 9;
+  // dispatch: the branch or tag to run it on. Empty: the repository's
+  // default branch.
+  string ref = 10;
+  // How long after a run completes or fails the next may start. Default
+  // 24 hours.
+  google.protobuf.Duration every = 11;
+  // The longest one run may take. Default 2 hours.
+  google.protobuf.Duration max_duration = 12;
+  bool enabled = 13;
+  // Where the filler comes from: "config", "operator" or "tenant".
+  string source = 14;
+  google.protobuf.Timestamp created_at = 15;
+  google.protobuf.Timestamp updated_at = 16;
+  // The filler's newest run. Not set before its first.
+  FillerRun last_run = 17;
+  // Why the scheduler dispatches nothing for this dispatch filler, as the
+  // last filler pass that read its states found it: tenant_suspended,
+  // tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
+  // installation_suspended, installation_ambiguous, budget_spent (the
+  // tenant's filler minutes for the UTC day are spent) or budget_off (its
+  // plan gives none). Empty: no pause found,
+  // or a filler the pass does not evaluate (a disabled one, for example).
+  // Set by ListFillers only.
+  // Kept in the control plane's memory: empty after a restart until a pass
+  // reads the states again.
+  string pause_reason = 18;
+  // When a filler pass first found the pause. Unset with an empty
+  // pause_reason.
+  google.protobuf.Timestamp paused_since = 19;
+  // When a filler pass last read the filler's states and found
+  // pause_reason; unset without one.
+  google.protobuf.Timestamp pause_as_of = 20;
+}
+
+// FillerRun is one run of a filler.
+message FillerRun {
+  string id = 1;
+  string filler = 2;
+  string kind = 3;
+  // dispatch: the filler's tenant.
+  string tenant = 4;
+  // The host the run went to. Empty while a dispatch run waits for its job.
+  string host_id = 5;
+  // "dispatched", "assigned", "running", "completed", "failed",
+  // "preempted", "rejected" or "lost".
+  string state = 6;
+  // dispatch: Toshi's job ID of the filler job, once its webhook arrived.
+  string job_id = 7;
+  // dispatch: GitHub's workflow run ID.
+  int64 run_id = 8;
+  // command: the command's exit code, once completed.
+  int32 exit_code = 9;
+  string error = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp started_at = 12;
+  google.protobuf.Timestamp finished_at = 13;
+}
+
+// FillerHostMinutes is one host's filler minutes.
+message FillerHostMinutes {
+  string host_id = 1;
+  double minutes = 2;
+}
+
+message ListFillersRequest {}
+
+message ListFillersResponse {
+  repeated Filler fillers = 1;
+  // Minutes of filler runs per host that finished in the last 24 hours.
+  repeated FillerHostMinutes host_minutes = 2;
+}
+
+message PutFillerRequest {
+  // source, created_at, updated_at, last_run, pause_reason, paused_since and
+  // pause_as_of are ignored.
+  Filler filler = 1;
+}
+
+message PutFillerResponse {
+  Filler filler = 1;
+}
+
+message DeleteFillerRequest {
+  string name = 1;
+  // The tenant of a dispatch filler. Empty: for the operator, a command
+  // filler; for a tenant token, its own tenant. A dashboard session with
+  // more than one tenant names one.
+  string tenant = 2;
+}
+
+message DeleteFillerResponse {}
+
+message SetFillerEnabledRequest {
+  string name = 1;
+  bool enabled = 2;
+  // The tenant of a dispatch filler. Empty: for the operator, a command
+  // filler; for a tenant token, its own tenant. A dashboard session with
+  // more than one tenant names one.
+  string tenant = 3;
+}
+
+message SetFillerEnabledResponse {
+  Filler filler = 1;
+}
+
+message ListFillerRunsRequest {
+  // Only this filler's runs. Empty: every filler's.
+  string filler = 1;
+  // Default 50, at most 500.
+  int32 limit = 2;
+  // With filler: the tenant of a dispatch filler. Empty: for the operator, a
+  // command filler; for a tenant token, its own tenant. A dashboard session
+  // with more than one tenant names one.
+  string tenant = 3;
+}
+
+message ListFillerRunsResponse {
+  repeated FillerRun runs = 1;
+  // The paused dispatch fillers among those the request covers; see
+  // Filler.pause_reason.
+  repeated FillerPause pauses = 2;
+}
+
+// FillerPause is one paused dispatch filler; see Filler.pause_reason.
+message FillerPause {
+  string filler = 1;
+  // The filler's tenant.
+  string tenant = 2;
+  // tenant_suspended, tenant_deleting, tenant_deleted, tenant_closed,
+  // installation_removed, installation_suspended, installation_ambiguous,
+  // budget_spent or budget_off.
+  string reason = 3;
+  // When a filler pass first found the pause.
+  google.protobuf.Timestamp since = 4;
+  // When a filler pass last read the states; see Filler.pause_as_of.
+  google.protobuf.Timestamp as_of = 5;
+}
+
+message SetTenantAllowCacheWarmRequest {
+  string id = 1;
+  bool allow_cache_warm = 2;
+}
+
+message SetTenantAllowCacheWarmResponse {
+  Tenant tenant = 1;
+}
+
+message SetTenantCancelRunOnVmDeathRequest {
+  string id = 1;
+  bool cancel_run_on_vm_death = 2;
+}
+
+message SetTenantCancelRunOnVmDeathResponse {
+  Tenant tenant = 1;
+}
+
+message GetJobFailureRequest {
+  string job_id = 1;
+}
+
+message GetJobFailureResponse {
+  string job_id = 1;
+  // Toshi's cause in one word, such as "out_of_memory", "time_limit",
+  // "vm_died" or "step_failed"; "none" for a job that succeeded and
+  // "not_ended" for one that has not ended. The full list is in
+  // docs/contracts/operator-usage.md.
+  string cause = 2;
+  // The cause in one sentence. Where the dashboard's Jobs table shows why
+  // the job ended, this is the same text. A job that ran out of time with a
+  // cold cache or without its cache disk gets a second sentence saying so.
+  string explanation = 3;
+  // GitHub's conclusion for the job, such as "success" or "failure". Empty
+  // when GitHub has not concluded it.
+  string conclusion = 4;
+  // The same as JobTelemetrySummary.verdict and verdict_reason.
+  string verdict = 5;
+  string verdict_reason = 6;
+  // GitHub's failing step, annotations and note are
+  // GitHubService.GetJobFailure's.
+  reserved 7, 8, 12;
+  reserved "failing_step", "annotations", "github_note";
+  // One line on what to do next.
+  string what_to_do = 9;
+  // The job's page on GitHub, and its page on the dashboard. Each is empty
+  // when Toshi does not know it.
+  string github_url = 10;
+  string dashboard_url = 11;
+  // How earlier failures of the same job went when they were re-run on
+  // GitHub. Unset for a job that succeeded, has not ended or
+  // was refused, and for a job without a name.
+  JobFailureHistory history = 13;
+  // The job's cache line, as Job.cache.line. Empty when the job's host
+  // reported nothing about a cache disk.
+  string cache = 14;
+  // The job's tier line, as Job.tier_line. Empty for a job that ran in a
+  // VM.
+  string tier_line = 15;
+}
+
+// JobFailureHistory counts the failures of the jobs with the same
+// repository and job name, in the last `days` days, whose re-run on
+// GitHub passed or failed again. A failure that passed on any re-run
+// counts as passed; one with a failed re-run and none passed counts as
+// failed again. Toshi re-runs and hides nothing for it.
+message JobFailureHistory {
+  int32 days = 1;
+  int32 passed_on_rerun = 2;
+  int32 failed_again = 3;
+  // The job's failing step, and the counts of the failures at a step of
+  // the same name. Empty and 0 when Toshi knows no failing step.
+  string step = 4;
+  int32 step_passed_on_rerun = 5;
+  int32 step_failed_again = 6;
+  // The counts in a sentence or two; it says the failure is likely a
+  // flake only when the job failed on its own and passed on re-run at
+  // least twice. Empty when every count is 0.
+  string sentence = 7;
+}
+
+message GetJobDeliveryRequest {}
+
+message GetJobDeliveryResponse {
+  JobDelivery delivery = 1;
+}
+
+message SetJobDeliveryRequest {
+  bool enabled = 1;
+}
+
+message SetJobDeliveryResponse {
+  JobDelivery delivery = 1;
+  // False when the switch already had the value asked for.
+  bool changed = 2;
+}
+
+// JobDelivery is the switch for delivering secrets to CI jobs. While it is
+// off no CI job is given secrets; while it is on every CI job goes only to
+// a ready host, whose agent asks for the job's secrets before its runner
+// starts. Grants to workloads work either way.
+message JobDelivery {
+  bool enabled = 1;
+  // Who last changed the switch, as an audit actor kind and id, and when;
+  // empty and unset when it was never changed.
+  string changed_by_kind = 2;
+  string changed_by_id = 3;
+  google.protobuf.Timestamp changed_at = 4;
+  // The hosts not revoked whose agent's last registration is not ready for
+  // delivery, by id and sorted: the agent did not send the job_start_hook
+  // feature, holds CI runners started without the hook, or did not say.
+  // On is refused while any is listed.
+  repeated string hosts_not_ready = 5;
+}
+
+message ListUtilisationRequest {
+  // The range's start, moved back to the start of its bucket; required.
+  google.protobuf.Timestamp from = 1;
+  // The range's end, not included; unset means now. A range of more than
+  // 31 days by hour, or 400 days by day or week, fails with
+  // INVALID_ARGUMENT.
+  google.protobuf.Timestamp to = 2;
+  // "pool" (the default) sums each OS pool's shared hosts, overflow hosts
+  // left out of the VM-seconds and their jobs counted; "host"
+  // gives one series per host and OS.
+  string group_by = 3;
+  // "hour" (the default), "day" or "week": UTC days, and weeks that start
+  // on Monday.
+  string bucket = 4;
+}
+
+message ListUtilisationResponse {
+  // One row per series and bucket that has a stored or counted hour,
+  // ordered by bucket start, then OS, then host id.
+  repeated UtilisationRow rows = 1;
+  // The operator's target band from [utilisation] in the control plane's
+  // configuration; unset when not configured.
+  UtilisationTarget target = 2;
+  // When the rows of the hour in progress were read.
+  google.protobuf.Timestamp as_of = 3;
+  // The warm VMs' host memory per series, size and bucket that has any,
+  // ordered by bucket start, then OS, then size, then host id.
+  // A control plane from before this field sends none.
+  repeated WarmMemoryRow warm_memory = 4;
+}
+
+// WarmMemoryRow is the host memory one size's warm VMs held in a bucket,
+// by warm path. Grouped by pool, overflow hosts' warm VMs are counted.
+message WarmMemoryRow {
+  // The bucket's start.
+  google.protobuf.Timestamp start = 1;
+  // The OS pool: linux, windows or macos.
+  string os = 2;
+  // The runner size.
+  string size = 3;
+  // The host, for group_by "host"; empty for "pool".
+  string host_id = 4;
+  // Whether the bucket holds the hour in progress.
+  bool partial = 5;
+  // The VMs booted to warm, and those restored from a snapshot.
+  WarmPathSummary booted = 6;
+  WarmPathSummary restored = 7;
+}
+
+// WarmPathSummary is one warm path's VMs in a bucket.
+message WarmPathSummary {
+  // Warm VM-seconds whose host memory was read; 0 when the path had none.
+  int64 vm_seconds = 1;
+  // Host memory times time, in MiB-seconds.
+  int64 mib_seconds = 2;
+  // mib_seconds over vm_seconds, rounded and at most max_mib: the host
+  // memory of an average warm VM; 0 without VM-seconds.
+  int64 average_mib = 3;
+  // The largest host memory one warm VM held in a heartbeat of the
+  // bucket.
+  int64 max_mib = 4;
+}
+
+message UtilisationRow {
+  // The bucket's start.
+  google.protobuf.Timestamp start = 1;
+  // The OS pool: linux, windows or macos.
+  string os = 2;
+  // The host, for group_by "host"; empty for "pool".
+  string host_id = 3;
+  // The host's name when its latest hour in the bucket was counted.
+  string host_name = 4;
+  // Whether the host was an overflow host in its latest hour in the
+  // bucket; false for "pool".
+  bool overflow = 5;
+  // VM-seconds in the bucket: running a job, warm or warming, neither,
+  // and the most VMs the hosts could run.
+  int64 busy_vm_seconds = 6;
+  int64 ready_vm_seconds = 7;
+  int64 idle_vm_seconds = 8;
+  int64 capacity_vm_seconds = 9;
+  // busy_vm_seconds over capacity_vm_seconds; 0 when there is no
+  // capacity.
+  double utilisation = 10;
+  // Jobs that started running, dispatch fillers left out, and those of
+  // them assigned as overflow jobs.
+  int64 jobs_started = 11;
+  int64 overflow_jobs = 12;
+  // Whether the bucket holds the hour in progress, so its figures will
+  // still grow.
+  bool partial = 13;
+}
+
+message UtilisationTarget {
+  // The band's ends, as fractions of capacity.
+  double low = 1;
+  double high = 2;
+}
+
+message SuggestPoolsRequest {
+  // The trace window in days up to now; 0 for 28.
+  int32 days = 1;
+  // Run again although the window has a result from the current UTC day.
+  bool force = 2;
+}
+
+message SuggestPoolsResponse {
+  // Whether a run is in progress, for which window and since when. A call
+  // made during a run starts none.
+  bool running = 1;
+  int32 running_days = 2;
+  google.protobuf.Timestamp running_since = 3;
+  // The last run for the window asked; unset when there is none.
+  PoolSuggestion last = 4;
+  // The bounds every run keeps.
+  int32 max_jobs = 5;
+  google.protobuf.Duration timeout = 6;
+  int32 max_days = 7;
+  // The operator's utilisation target band from [utilisation] in the
+  // control plane's configuration; unset when not configured.
+  UtilisationTarget target = 8;
+  // The suggestion kept in the store for the window asked, with its run's
+  // times. Set when last is unset, failed or older than it: after a restart,
+  // after a run that failed or timed out, or when another control plane
+  // process kept a newer one.
+  PoolSuggestion kept = 9;
+}
+
+// PoolSuggestion is one run's result.
+message PoolSuggestion {
+  int32 days = 1;
+  google.protobuf.Timestamp started_at = 2;
+  google.protobuf.Timestamp finished_at = 3;
+  // Why the run gave no suggestion: it timed out, the window has no
+  // finished job, or no host is registered. Empty when it gave one.
+  string error = 4;
+  // The trace: the finished jobs queued in [from, to). cut is set when the
+  // window held more than max_jobs jobs, so from is the oldest kept job's
+  // queue time.
+  google.protobuf.Timestamp from = 5;
+  google.protobuf.Timestamp to = 6;
+  int32 jobs = 7;
+  bool cut = 8;
+  // The registered hosts replayed, and those whose agent reports no warm
+  // target; the replay reads their pools as 0 warm VMs.
+  int32 hosts = 9;
+  int32 unreported_hosts = 10;
+  // False when no host reports a target: today is then replayed with
+  // baseline warm VMs on every pool.
+  bool baseline_from_hosts = 11;
+  int32 baseline = 12;
+  // The search's budget: the p99 start delay every size should meet.
+  google.protobuf.Duration budget = 13;
+  // Whether every size meets the budget with the suggestion; unmet says
+  // why not for each size that does not.
+  bool met = 14;
+  repeated PoolSuggestionUnmet unmet = 15;
+  // The boot and restore delays replayed, per OS.
+  repeated PoolSuggestionDelay boot_delays = 16;
+  repeated PoolSuggestionDelay restore_delays = 17;
+  // One row per size with a job in the trace.
+  repeated PoolSuggestionSize sizes = 18;
+  // The sizes a host reports a target for and no job in the trace used.
+  repeated PoolSuggestionTarget not_in_trace = 19;
+}
+
+message PoolSuggestionSize {
+  string size = 1;
+  int32 jobs = 2;
+  // The warm target the hosts that can run the size report, summed: each
+  // agent's configured target, not its pool's state. current_reported is
+  // false when none of them reports one; unreported_hosts counts those that
+  // do not.
+  int32 current = 3;
+  bool current_reported = 4;
+  int32 unreported_hosts = 5;
+  // The suggested target, summed over the hosts.
+  int32 suggested = 6;
+  // The replay's prediction with today's targets and with the suggested.
+  PoolSuggestionOutcome today = 7;
+  PoolSuggestionOutcome with_suggested = 8;
+}
+
+message PoolSuggestionOutcome {
+  // The jobs' start delay, queued to running.
+  double p50_seconds = 1;
+  double p95_seconds = 2;
+  // The size's VM time that ran jobs: run time over run time plus idle
+  // warm time, as a fraction. Boot and restore time are in neither.
+  double utilisation = 3;
+}
+
+message PoolSuggestionTarget {
+  string size = 1;
+  int32 current = 2;
+}
+
+message PoolSuggestionUnmet {
+  string size = 1;
+  string reason = 2;
+}
+
+message PoolSuggestionDelay {
+  string os = 1;
+  double seconds = 2;
+  // "measured from N jobs" or "default".
+  string source = 3;
+}
+
+// StorageProvider is one bucket Toshi keeps objects in. The
+// credentials are a reference: an operator row names a file and profile, and
+// a tenant row may hold a secret the control plane wrapped, which the API
+// reports only as its presence.
+message StorageProvider {
+  string id = 1;
+  // Empty for the operator's own provider.
+  string tenant_id = 2;
+  string name = 3;
+  // "operator", "tenant_bucket" or "local_disk".
+  string mode = 4;
+  string endpoint = 5;
+  string region = 6;
+  string bucket = 7;
+  string root_prefix = 8;
+  bool path_style = 9;
+  bool cap_lifecycle = 10;
+  bool cap_guest_presign = 11;
+  bool cap_global_replication = 12;
+  int64 egress_price_micros_per_gb = 13;
+  // The shared credentials file and its profile, when that is the
+  // reference.
+  string credentials_file = 14;
+  string credentials_profile = 15;
+  // Whether the row holds a wrapped credential; its value is never sent.
+  bool credentials_wrapped = 16;
+  string role_arn = 17;
+  string external_id = 18;
+  google.protobuf.Timestamp last_check_at = 19;
+  string last_check_error = 20;
+  google.protobuf.Timestamp created_at = 21;
+  google.protobuf.Timestamp updated_at = 22;
+}
+
+message CreateStorageProviderRequest {
+  // Empty registers the operator's own provider.
+  string tenant_id = 1;
+  string name = 2;
+  string mode = 3;
+  string endpoint = 4;
+  string region = 5;
+  string bucket = 6;
+  string root_prefix = 7;
+  bool path_style = 8;
+  bool cap_lifecycle = 9;
+  bool cap_guest_presign = 10;
+  bool cap_global_replication = 11;
+  int64 egress_price_micros_per_gb = 12;
+  string credentials_file = 13;
+  string credentials_profile = 14;
+  string role_arn = 15;
+  string external_id = 16;
+  // The key of a tenant's own bucket. The control plane wraps it before
+  // the row exists and never returns, logs or audits it. Set only with a
+  // tenant_id, mode "tenant_bucket" and no credentials_file.
+  StorageCredential credential = 17;
+}
+
+// StorageCredential is an S3 access key. It is write-only: no response
+// carries it.
+message StorageCredential {
+  string access_key_id = 1;
+  string secret_access_key = 2;
+  // Set for a temporary key.
+  string session_token = 3;
+}
+
+message TestStorageProviderRequest {
+  // The provider as CreateStorageProvider would take it, with its
+  // credential.
+  CreateStorageProviderRequest provider = 1;
+}
+
+message TestStorageProviderResponse {
+  // Whether every step of the check passed.
+  bool ok = 1;
+  // Why the check failed, naming the step; empty when ok.
+  string error = 2;
+  google.protobuf.Timestamp checked_at = 3;
+}
+
+message CreateStorageProviderResponse {
+  StorageProvider provider = 1;
+}
+
+message ListStorageProvidersRequest {
+  // Empty lists the operator's providers; otherwise this tenant's.
+  string tenant_id = 1;
+  // With tenant_id, also answer default_provider.
+  bool include_default = 2;
+}
+
+message ListStorageProvidersResponse {
+  repeated StorageProvider providers = 1;
+  // With include_default, the operator's provider that serves the tenant's
+  // uploads while it has no tenant_bucket provider (the control plane's
+  // storage.default_provider); unset when none is configured.
+  StorageProvider default_provider = 2;
+}
+
+message CheckStorageProviderRequest {
+  string id = 1;
+}
+
+message CheckStorageProviderResponse {
+  StorageProvider provider = 1;
+}
+
+message DeleteStorageProviderRequest {
+  string id = 1;
+}
+
+message DeleteStorageProviderResponse {}

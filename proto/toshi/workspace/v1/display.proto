@@ -1,0 +1,274 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// DisplayService opens display sessions: one viewer's live view of the
+// screen of a VM that runs one of the workspace's CI jobs
+// (docs/api/workspace-v1.md, "Display sessions"). The caller's credential
+// names the workspace, as for
+// WorkspaceService; a session or a job of another workspace is NOT_FOUND.
+//
+// A session carries the screen as the RFB protocol (RFC 6143) over a
+// WebSocket at the session's URL, the framing noVNC speaks. Its token,
+// in the answer to OpenDisplaySession and in no other, attaches it once:
+// the viewer presents it before the token expires, and a closed, attached
+// or expired session refuses it.
+//
+// The plan sets how many sessions one job may have at once, attached or
+// waiting for their viewer, and the longest idle close; a plan without
+// displays refuses every open with FAILED_PRECONDITION. A suspended
+// workspace opens none, and its open sessions close.
+service DisplayService {
+  // OpenDisplaySession opens a session on a running job and returns its
+  // URL and token. A job that is not running, or one beyond the plan's
+  // viewers, or a second session with input on a job, fails with
+  // FAILED_PRECONDITION. A session ends when it is closed, when no bytes
+  // of the screen's protocol go either way for its idle close, when its
+  // token expires before it attaches, when its job stops running on the
+  // VM it was opened on, or when the workspace is suspended.
+  //
+  // request_key works as WorkspaceService's, except that a retry never
+  // returns the token: it returns the session the first call opened, with
+  // replayed set and no token, and opens nothing. Open another session for
+  // a new token.
+  rpc OpenDisplaySession(OpenDisplaySessionRequest) returns (OpenDisplaySessionResponse);
+
+  // GetDisplaySession returns one session. An unknown ID fails with
+  // NOT_FOUND.
+  rpc GetDisplaySession(GetDisplaySessionRequest) returns (GetDisplaySessionResponse);
+
+  // ListDisplaySessions returns the workspace's sessions, the newest
+  // first.
+  rpc ListDisplaySessions(ListDisplaySessionsRequest) returns (ListDisplaySessionsResponse);
+
+  // CloseDisplaySession closes a session and ends its viewer's connection.
+  // Closing a closed session changes nothing.
+  rpc CloseDisplaySession(CloseDisplaySessionRequest) returns (CloseDisplaySessionResponse);
+
+  // The next four drive a session from the API, the input path of a
+  // program that works a desktop without a browser automation framework
+  // in the guest. The first of them on a waiting session attaches it, as
+  // its viewer: the session's token is spent, the control plane holds the
+  // session's one connection to the screen, and later calls reuse it
+  // until the session ends. A session whose viewer attached over its
+  // WebSocket refuses them with FAILED_PRECONDITION, as a closed session
+  // does; its keys, pointer and clipboard cross the same relay as a
+  // viewer's. Calls on one session run one at a time, in the order they
+  // arrive. Each is in the audit with its caller and its counts, never
+  // the text it typed or set.
+
+  // SendDisplayKeys presses and releases keys on the screen. A view-only
+  // session refuses it with FAILED_PRECONDITION.
+  rpc SendDisplayKeys(SendDisplayKeysRequest) returns (SendDisplayKeysResponse);
+
+  // SendDisplayPointer moves the pointer and presses or releases its
+  // buttons. A view-only session refuses it with FAILED_PRECONDITION.
+  rpc SendDisplayPointer(SendDisplayPointerRequest) returns (SendDisplayPointerResponse);
+
+  // SetDisplayClipboard sets the screen's clipboard. It reaches the
+  // guest's own clipboard only where the guest image runs a clipboard
+  // agent. A view-only session refuses it with FAILED_PRECONDITION.
+  rpc SetDisplayClipboard(SetDisplayClipboardRequest) returns (SetDisplayClipboardResponse);
+
+  // TakeDisplayScreenshot returns the whole screen as it is now, as a
+  // PNG, once every pixel of a new frame has arrived: within the call's
+  // deadline and at most 10 s, or DEADLINE_EXCEEDED. A screen larger
+  // than 3840 x 2160 fails with FAILED_PRECONDITION; the control plane's
+  // memory for frames, shared by its sessions, with RESOURCE_EXHAUSTED. A
+  // view-only session takes them too.
+  rpc TakeDisplayScreenshot(TakeDisplayScreenshotRequest) returns (TakeDisplayScreenshotResponse);
+}
+
+// DisplayMode is what a session's viewer may do.
+enum DisplayMode {
+  // View only.
+  DISPLAY_MODE_UNSPECIFIED = 0;
+  // The viewer sees the screen; the relay drops its keys, pointer and
+  // clipboard.
+  DISPLAY_MODE_VIEW_ONLY = 1;
+  // The viewer sees the screen and sends keys, pointer and clipboard. One
+  // open session of a job has input at a time.
+  DISPLAY_MODE_WITH_INPUT = 2;
+}
+
+enum DisplaySessionState {
+  DISPLAY_SESSION_STATE_UNSPECIFIED = 0;
+  // Opened; its viewer has not presented the token yet.
+  DISPLAY_SESSION_STATE_WAITING = 1;
+  // Its viewer is attached.
+  DISPLAY_SESSION_STATE_ATTACHED = 2;
+  DISPLAY_SESSION_STATE_CLOSED = 3;
+}
+
+// DisplayOpener is how a session was opened.
+enum DisplayOpener {
+  DISPLAY_OPENER_UNSPECIFIED = 0;
+  // A person, signed in to the dashboard.
+  DISPLAY_OPENER_PERSON = 1;
+  // A program, with an API token.
+  DISPLAY_OPENER_PROGRAM = 2;
+}
+
+message DisplaySession {
+  // Assigned by the server; unique within the workspace.
+  string id = 1;
+  // The job the session views: its ID as the jobs API and `toshi jobs`
+  // show it.
+  string job_id = 2;
+  DisplayMode mode = 3;
+  // For an agent's run: whether a person may take the input from the
+  // agent. Recorded; takeover itself is not served yet.
+  bool allow_takeover = 4;
+  // The session ends once no bytes of the screen's protocol have gone
+  // either way for this long.
+  google.protobuf.Duration idle_close = 5;
+  DisplaySessionState state = 6;
+  DisplayOpener opened_by = 7;
+  google.protobuf.Timestamp opened_at = 8;
+  // When the token expires: a session not attached by then closes.
+  google.protobuf.Timestamp attach_by = 9;
+  // Unset until the viewer attaches.
+  google.protobuf.Timestamp attached_at = 10;
+  // Unset while the session is open.
+  google.protobuf.Timestamp closed_at = 11;
+  // Why it closed: closed, idle, expired, suspended, ended (its job
+  // stopped running where the session was opened), protocol_error (the
+  // viewer sent what the relay does not accept), unavailable (the job's
+  // host did not open the screen) or shutdown (the control plane
+  // stopped). Empty while it is open.
+  string close_reason = 12;
+}
+
+message OpenDisplaySessionRequest {
+  // What to view. A job runs on a host and has a screen; a workload of
+  // WorkspaceService has none yet and fails with FAILED_PRECONDITION.
+  oneof target {
+    string job_id = 1;
+    string workload_id = 2;
+  }
+  DisplayMode mode = 3;
+  // The idle close, at most the plan's; unset is the plan's.
+  google.protobuf.Duration idle_close = 4;
+  bool allow_takeover = 5;
+  string request_key = 6;
+}
+
+message OpenDisplaySessionResponse {
+  DisplaySession session = 1;
+  // The session's WebSocket URL path, on the control plane's address:
+  // /display/<id>.
+  string url = 2;
+  // The token that attaches the session, once, before
+  // session.attach_by. The viewer sends it as a WebSocket subprotocol,
+  // toshi.display.<token>, beside the subprotocol binary. Empty on a
+  // retry.
+  string token = 3;
+  // Set when this answers a retry of the call that opened the session:
+  // nothing was opened and no token is returned.
+  bool replayed = 4;
+}
+
+message GetDisplaySessionRequest {
+  string session_id = 1;
+}
+
+message GetDisplaySessionResponse {
+  DisplaySession session = 1;
+}
+
+message ListDisplaySessionsRequest {
+  // Only this job's sessions; empty lists every job's.
+  string job_id = 1;
+  // Only the sessions that have not closed.
+  bool open_only = 2;
+  // The most sessions returned, the newest first; zero is 50, at most
+  // 200.
+  int32 page_size = 3;
+}
+
+message ListDisplaySessionsResponse {
+  repeated DisplaySession sessions = 1;
+}
+
+message CloseDisplaySessionRequest {
+  string session_id = 1;
+}
+
+message CloseDisplaySessionResponse {
+  DisplaySession session = 1;
+}
+
+message SendDisplayKeysRequest {
+  string session_id = 1;
+  oneof input {
+    // Text typed one character at a time, at most 4096 characters of
+    // printable ASCII, newlines ("\n") and tabs; any other character fails
+    // the call with INVALID_ARGUMENT before any key is sent. A character
+    // that needs Shift on a US keyboard is typed with it; a newline is
+    // Return.
+    string text = 2;
+    // Keys pressed in order, at most 256, each a key or a chord such as
+    // "Return", "ctrl+c", "ctrl+alt+t" or "shift+Tab": modifiers (ctrl,
+    // shift, alt, super) go down in order, then the key goes down and up,
+    // then the modifiers go up. A key is one character or an X11 keysym
+    // name: Return, Tab, Escape, BackSpace, Delete, Insert, Home, End,
+    // Page_Up, Page_Down, Left, Up, Right, Down, space, F1 to F12. An
+    // unknown key fails the call with INVALID_ARGUMENT before any key is
+    // sent.
+    DisplayKeys keys = 3;
+  }
+}
+
+// DisplayKeys is a list of keys and chords.
+message DisplayKeys {
+  repeated string keys = 1;
+}
+
+message SendDisplayKeysResponse {}
+
+message SendDisplayPointerRequest {
+  string session_id = 1;
+  // Pointer states sent in order, at most 256.
+  repeated DisplayPointerEvent events = 2;
+}
+
+// DisplayPointerEvent is where the pointer is and which buttons are down.
+message DisplayPointerEvent {
+  // Pixels from the screen's left and top edges, inside the screen as
+  // TakeDisplayScreenshot sees it; a point outside fails the call with
+  // INVALID_ARGUMENT before any event is sent.
+  int32 x = 1;
+  int32 y = 2;
+  // The buttons held down: 1 left, 2 middle, 4 right, 8 wheel up, 16
+  // wheel down. A click is an event with the button and one without; a
+  // wheel step is an event with 8 or 16 and one without.
+  uint32 buttons = 3;
+}
+
+message SendDisplayPointerResponse {}
+
+message SetDisplayClipboardRequest {
+  string session_id = 1;
+  // At most 256 KiB, in Latin-1 (the RFB protocol's clipboard); other
+  // text fails the call with INVALID_ARGUMENT.
+  string text = 2;
+}
+
+message SetDisplayClipboardResponse {}
+
+message TakeDisplayScreenshotRequest {
+  string session_id = 1;
+}
+
+message TakeDisplayScreenshotResponse {
+  // The screen as a PNG image.
+  bytes png = 1;
+  int32 width = 2;
+  int32 height = 3;
+  google.protobuf.Timestamp taken_at = 4;
+}

@@ -1,0 +1,228 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// ProjectService reads a workspace's projects and the repositories they
+// claim, creates a project or an environment of one, moves a
+// repository's claim and sets the branch rules that choose a CI job's
+// environment. The
+// contract in prose: docs/api/workspace-v1.md, "Projects"; the model:
+// docs/projects.md.
+//
+// The caller's credential names the workspace, as for WorkspaceService.
+// Nothing of another workspace is visible.
+service ProjectService {
+  // ListProjects returns the workspace's projects by name, each with its
+  // environments by name.
+  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
+  // GetProject returns one project with its environments by name. A
+  // project the workspace does not have is NOT_FOUND. A token limited to
+  // a project gets only that project, and PERMISSION_DENIED for any other
+  // name; a token limited to an environment gets the project with that
+  // environment only.
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse);
+  // ListRepositories returns the repositories the workspace's projects
+  // claim, by repository. A project the workspace does not have is
+  // NOT_FOUND.
+  rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
+  // CreateProject makes a project with its three environments,
+  // development, preview and production. A name the workspace's projects
+  // already have is ALREADY_EXISTS. A token limited to a project is
+  // PERMISSION_DENIED: the new project is not its own.
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse);
+  // ClaimRepository puts a repository in a project: it claims a repository
+  // no project claims, or moves the claim from another project. A CI job
+  // whose repository's claim was read before the move keeps its project,
+  // and its credentials are refused; a job whose claim is read after it
+  // lands in the new project. A project the workspace does not have is NOT_FOUND. A token
+  // limited to a project claims only for that project, and only a
+  // repository no other project claims.
+  rpc ClaimRepository(ClaimRepositoryRequest) returns (ClaimRepositoryResponse);
+  // CreateEnvironment adds the environment of a kind a project lacks,
+  // named after its kind, such as preview for a project made with
+  // production only. A kind the project has is ALREADY_EXISTS; a project
+  // the workspace does not have is NOT_FOUND. A token limited to a project
+  // creates only in that project, and a token limited to an environment
+  // is PERMISSION_DENIED.
+  rpc CreateEnvironment(CreateEnvironmentRequest) returns (CreateEnvironmentResponse);
+  // DeleteEnvironment deletes a project's environment by name. A project's
+  // production environment is FAILED_PRECONDITION, and so is an
+  // environment that anything live still refers to, with each kind and
+  // its count in the message: secret sets, API tokens that are neither
+  // revoked nor expired, unfinished jobs, workloads that are not deleted
+  // and artifacts still being uploaded. Finished jobs and complete
+  // artifacts keep the environment as history. A project or environment
+  // the workspace does not have is NOT_FOUND. A token limited to a
+  // project deletes only in that project, and a token limited to an
+  // environment is PERMISSION_DENIED.
+  rpc DeleteEnvironment(DeleteEnvironmentRequest) returns (DeleteEnvironmentResponse);
+  // ListBranchRules returns a project's branch rules in order, the
+  // fallback rule last: the first that matches a CI job's run chooses the
+  // job's environment (docs/projects.md). A project the workspace does not
+  // have is NOT_FOUND. A token limited to a project reads only that
+  // project's rules, and a token limited to an environment is
+  // PERMISSION_DENIED.
+  rpc ListBranchRules(ListBranchRulesRequest) returns (ListBranchRulesResponse);
+  // SetBranchRules replaces a project's branch rules with the list given,
+  // whole: it has at most 100 rules, a known match on each, a pattern on
+  // exactly the pattern rules, no two rules matching the same way, the
+  // fallback rule exactly once and last, each environment one of the
+  // project's or none, and the fallback rule's environment not a
+  // production one. Any other list is INVALID_ARGUMENT and changes
+  // nothing. A job already assigned keeps the environment it got; the new
+  // rules choose from its next assignment. A project the workspace does
+  // not have is NOT_FOUND. A token limited to a project sets only that
+  // project's rules, and a token limited to an environment is
+  // PERMISSION_DENIED.
+  rpc SetBranchRules(SetBranchRulesRequest) returns (SetBranchRulesResponse);
+}
+
+// Project is one of a workspace's projects.
+message Project {
+  string name = 1;
+  google.protobuf.Timestamp created_at = 2;
+  repeated ProjectEnvironment environments = 3;
+}
+
+// ProjectEnvironment is one of a project's environments.
+message ProjectEnvironment {
+  string name = 1;
+  // development, preview or production.
+  string kind = 2;
+}
+
+// Repository is a repository a project claims: a CI job of the repository
+// runs in that project.
+message Repository {
+  // "owner/name".
+  string repository = 1;
+  // The claiming project's name.
+  string project = 2;
+  google.protobuf.Timestamp claimed_at = 3;
+}
+
+message ListProjectsRequest {}
+
+message ListProjectsResponse {
+  repeated Project projects = 1;
+  // The limit of the token that made the call. A server that has this
+  // field always sets it; both its fields are empty for a caller that
+  // covers the whole workspace.
+  TokenLimit token_limit = 2;
+}
+
+// TokenLimit names the project and the environment an API token is
+// limited to.
+message TokenLimit {
+  // The project's name; empty when the token covers the whole workspace.
+  string project = 1;
+  // The environment's name; empty when the token covers every
+  // environment of its project, or the whole workspace.
+  string environment = 2;
+}
+
+message ListRepositoriesRequest {
+  // Only this project's repositories; empty lists every project's.
+  string project = 1;
+}
+
+message ListRepositoriesResponse {
+  repeated Repository repositories = 1;
+}
+
+message CreateProjectRequest {
+  string name = 1;
+}
+
+message CreateProjectResponse {
+  Project project = 1;
+}
+
+message ClaimRepositoryRequest {
+  // "owner/name".
+  string repository = 1;
+  // The name of the project that is to claim it.
+  string project = 2;
+}
+
+message ClaimRepositoryResponse {
+  Repository repository = 1;
+  // The name of the project that claimed the repository before the call;
+  // empty when no project did.
+  string previous_project = 2;
+}
+
+message GetProjectRequest {
+  // The project's name.
+  string name = 1;
+}
+
+message GetProjectResponse {
+  Project project = 1;
+}
+
+message CreateEnvironmentRequest {
+  // The name of the project that is to have the environment.
+  string project = 1;
+  // development, preview or production; the environment is named after
+  // it.
+  string kind = 2;
+}
+
+message CreateEnvironmentResponse {
+  ProjectEnvironment environment = 1;
+}
+
+message DeleteEnvironmentRequest {
+  // The name of the project that has the environment.
+  string project = 1;
+  // The environment's name.
+  string name = 2;
+}
+
+message DeleteEnvironmentResponse {}
+
+// BranchRule is one of a project's branch rules: it chooses the
+// environment of a CI job whose run it matches.
+message BranchRule {
+  // default_branch matches a run of its repository's default branch,
+  // pattern a run of a branch the pattern matches, and fallback every run
+  // no earlier rule matched. Only a push, schedule or workflow_dispatch
+  // run of a repository that is not a fork, at a commit on its branch,
+  // can match a rule other than fallback; every other run, a pull
+  // request's included, goes to the fallback rule.
+  string match = 1;
+  // A pattern rule's branch name or glob, and empty for the other
+  // matches. * matches any run of characters within one /-separated
+  // segment and ** any run across segments; every other character matches
+  // itself, case-sensitively.
+  string pattern = 2;
+  // The name of the project's environment the rule chooses; empty chooses
+  // none: a job the rule matches gets no workload token and no secrets.
+  string environment = 3;
+}
+
+message ListBranchRulesRequest {
+  // The project's name.
+  string project = 1;
+}
+
+message ListBranchRulesResponse {
+  repeated BranchRule rules = 1;
+}
+
+message SetBranchRulesRequest {
+  // The project's name.
+  string project = 1;
+  // The project's new branch rules in order, the fallback rule last.
+  repeated BranchRule rules = 2;
+}
+
+message SetBranchRulesResponse {
+  // The rules as stored.
+  repeated BranchRule rules = 1;
+}

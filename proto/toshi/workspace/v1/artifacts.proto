@@ -1,0 +1,163 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// ArtifactUploadService is how a job uploads what it recorded:
+// it reserves an artifact, uploads each part to a presigned URL, and
+// completes the upload. The caller is the workload itself: every call
+// carries a workload identity token for the audience
+// "toshi:artifacts", and the tenant, project, environment, workload and
+// execution of the artifact are the token's claims, never the request's.
+// A token of another audience, a display token, an expired token, or one
+// that names no workload is refused with UNAUTHENTICATED. A workspace that
+// is suspended or being deleted is refused with FAILED_PRECONDITION.
+//
+// The data key and the presigned URLs are the only values either call
+// hands out. Neither ever appears in a log line, an audit row or an error.
+service ArtifactUploadService {
+  // ReserveUpload stores a reservation and returns one presigned PUT per
+  // part. A part is a separate object; a multi-part artifact has an index
+  // object beside its parts. The kind must be one Toshi stores today:
+  // profile is refused with INVALID_ARGUMENT.
+  rpc ReserveUpload(ReserveUploadRequest) returns (ReserveUploadResponse);
+  // CompleteUpload checks every part's size, copies the parts to their
+  // final keys, and marks the artifact complete. A part of another size
+  // fails with FAILED_PRECONDITION and the reservation stays; so does a
+  // call at or after the upload deadline.
+  rpc CompleteUpload(CompleteUploadRequest) returns (CompleteUploadResponse);
+}
+
+// ArtifactService is how a workspace lists, reads and downloads what its
+// workloads uploaded. The caller is a workspace's API token or a dashboard
+// session, as for the Workspace API's other services. A credential limited
+// to a project or an environment sees only its own.
+service ArtifactService {
+  // ListArtifacts returns the workspace's artifacts, oldest first, by
+  // project, environment, workload, execution and kind.
+  rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse);
+  // GetArtifact returns one artifact's record, never a key or a URL.
+  rpc GetArtifact(GetArtifactRequest) returns (GetArtifactResponse);
+  // GetDownloadURL returns a signed URL that expires, and the artifact's
+  // data key when it is envelope encrypted. An artifact that is not
+  // complete fails with FAILED_PRECONDITION.
+  rpc GetDownloadURL(GetDownloadURLRequest) returns (GetDownloadURLResponse);
+}
+
+// Artifact is an uploaded file's record: what it is, who uploaded it, and
+// where its parts are kept, never a key, a URL or key material.
+message Artifact {
+  string id = 1;
+  string project_id = 2;
+  string environment_id = 3;
+  string workload_id = 4;
+  string execution_id = 5;
+  // recording, recording-signed-in, trace, report or image.
+  string kind = 6;
+  string name = 7;
+  string content_type = 8;
+  // 1 for an artifact stored as one object; N for N parts plus an index.
+  int64 part_count = 9;
+  // The reserved size of each part, in bytes.
+  repeated int64 part_sizes = 10;
+  // The index object's size; 0 when part_count is 1.
+  int64 index_size = 11;
+  // reserved, completing, complete, abandoned or deleted. A completion
+  // moves the row to completing while it copies the parts, so a second
+  // completion is refused before it copies anything.
+  string state = 12;
+  // none or envelope-v1.
+  string encryption = 13;
+  google.protobuf.Timestamp created_at = 14;
+  google.protobuf.Timestamp completed_at = 15;
+  // The kind of workload that uploaded it, as its token named: job or
+  // sandbox. workload_id and execution_id are that workload's.
+  string workload_kind = 16;
+}
+
+// Upload is one presigned PUT. Send method to url with every header and
+// exactly the part's reserved Content-Length.
+message Upload {
+  // part-00000 and on for a part; index for the index object.
+  string part = 1;
+  string method = 2;
+  string url = 3;
+  map<string, string> headers = 4;
+  google.protobuf.Timestamp expires_at = 5;
+}
+
+message ReserveUploadRequest {
+  // recording, recording-signed-in, trace, report or image.
+  string kind = 1;
+  // 1 to 128 of A-Z, a-z, 0-9, . _ and -, never . or ..
+  string name = 2;
+  string content_type = 3;
+  // 1 to 64 parts, each 1 byte to 5 GiB.
+  repeated int64 part_sizes = 4;
+  // 1 byte to 16 MiB when part_sizes has more than one part; 0 otherwise.
+  int64 index_size = 5;
+}
+
+message ReserveUploadResponse {
+  string artifact_id = 1;
+  repeated Upload uploads = 2;
+  google.protobuf.Timestamp upload_deadline = 3;
+  // none or envelope-v1.
+  string encryption = 4;
+  // The artifact's 32-byte AES-256 data key, set only for envelope-v1.
+  bytes data_key = 5;
+  // Whether the provider takes these PUTs from inside a VM. When false, a
+  // host agent uploading for its guest sends the bytes from the host.
+  bool guest_upload = 6;
+}
+
+message CompleteUploadRequest {
+  string artifact_id = 1;
+}
+
+message CompleteUploadResponse {
+  Artifact artifact = 1;
+}
+
+message ListArtifactsRequest {
+  string project_id = 1;
+  string environment_id = 2;
+  string workload_id = 3;
+  string execution_id = 4;
+  string kind = 5;
+  int32 page_size = 6;
+  string page_token = 7;
+}
+
+message ListArtifactsResponse {
+  repeated Artifact artifacts = 1;
+  string next_page_token = 2;
+}
+
+message GetArtifactRequest {
+  string artifact_id = 1;
+}
+
+message GetArtifactResponse {
+  Artifact artifact = 1;
+}
+
+message GetDownloadURLRequest {
+  string artifact_id = 1;
+  // Empty for a one-object artifact; part-00000 and on, or index, for a
+  // multi-part one.
+  string part = 2;
+  // 0 is 300 seconds; at most 3600.
+  int64 ttl_seconds = 3;
+}
+
+message GetDownloadURLResponse {
+  string url = 1;
+  google.protobuf.Timestamp expires_at = 2;
+  string encryption = 3;
+  // The artifact's 32-byte AES-256 data key, set only for envelope-v1.
+  bytes data_key = 4;
+}
