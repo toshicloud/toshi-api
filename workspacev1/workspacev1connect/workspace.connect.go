@@ -123,7 +123,18 @@ type WorkspaceServiceClient interface {
 	// workload of an earlier one.
 	ListWorkloads(context.Context, *connect.Request[workspacev1.ListWorkloadsRequest]) (*connect.Response[workspacev1.ListWorkloadsResponse], error)
 	// PatchWorkload changes the fields the mask names and returns the workload.
-	// Only "labels" can be changed; another path fails with INVALID_ARGUMENT.
+	// "labels" can be changed on any workload. "sandbox.max_duration" raises a
+	// running sandbox's limit and must be the only path: the new limit, in
+	// whole minutes from the sandbox's start, above its current one and no
+	// longer than the plan's sandbox cap. The response then carries an
+	// operation, done once the sandbox's host holds the new limit; until then
+	// the workload shows the current one. The operation fails with
+	// UNAVAILABLE when the host does not acknowledge the limit in time, and
+	// with FAILED_PRECONDITION when the sandbox stops first; the limit is then
+	// unchanged. A sandbox that is not running, has a stop asked for, has no
+	// limit of its own or has a raise pending, or whose host's agent cannot
+	// take a new limit, fails with FAILED_PRECONDITION. Another path fails
+	// with INVALID_ARGUMENT.
 	PatchWorkload(context.Context, *connect.Request[workspacev1.PatchWorkloadRequest]) (*connect.Response[workspacev1.PatchWorkloadResponse], error)
 	// DeleteWorkload ends a workload that has not ended and then removes it.
 	// A job is cancelled, a sandbox or service is stopped, and every execution
@@ -545,7 +556,18 @@ type WorkspaceServiceHandler interface {
 	// workload of an earlier one.
 	ListWorkloads(context.Context, *connect.Request[workspacev1.ListWorkloadsRequest]) (*connect.Response[workspacev1.ListWorkloadsResponse], error)
 	// PatchWorkload changes the fields the mask names and returns the workload.
-	// Only "labels" can be changed; another path fails with INVALID_ARGUMENT.
+	// "labels" can be changed on any workload. "sandbox.max_duration" raises a
+	// running sandbox's limit and must be the only path: the new limit, in
+	// whole minutes from the sandbox's start, above its current one and no
+	// longer than the plan's sandbox cap. The response then carries an
+	// operation, done once the sandbox's host holds the new limit; until then
+	// the workload shows the current one. The operation fails with
+	// UNAVAILABLE when the host does not acknowledge the limit in time, and
+	// with FAILED_PRECONDITION when the sandbox stops first; the limit is then
+	// unchanged. A sandbox that is not running, has a stop asked for, has no
+	// limit of its own or has a raise pending, or whose host's agent cannot
+	// take a new limit, fails with FAILED_PRECONDITION. Another path fails
+	// with INVALID_ARGUMENT.
 	PatchWorkload(context.Context, *connect.Request[workspacev1.PatchWorkloadRequest]) (*connect.Response[workspacev1.PatchWorkloadResponse], error)
 	// DeleteWorkload ends a workload that has not ended and then removes it.
 	// A job is cancelled, a sandbox or service is stopped, and every execution
