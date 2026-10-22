@@ -15,8 +15,8 @@ export const file_toshi_workspace_v1_recordings: GenFile = /*@__PURE__*/
   fileDesc("CiN0b3NoaS93b3Jrc3BhY2UvdjEvcmVjb3JkaW5ncy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxItQDCglSZWNvcmRpbmcSCgoCaWQYASABKAkSEgoKcHJvamVjdF9pZBgCIAEoCRIWCg5lbnZpcm9ubWVudF9pZBgDIAEoCRITCgt3b3JrbG9hZF9pZBgEIAEoCRIxCgVzdGF0ZRgFIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdTdGF0ZRIOCgZyZWFzb24YBiABKAkSEwoLYXJ0aWZhY3RfaWQYByABKAkSKwoIaW50ZXJ2YWwYCCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SDgoGZnJhbWVzGAkgASgFEg8KB2Ryb3BwZWQYCiABKAUSEQoJdHJ1bmNhdGVkGAsgASgIEjIKBnBhdXNlcxgMIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdQYXVzZRIuCgpjcmVhdGVkX2F0GA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghlbmRlZF9hdBgOIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoEa2luZBgPIAEoDjIhLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdLaW5kIpQBCg5SZWNvcmRpbmdQYXVzZRISCgpzZXNzaW9uX2lkGAEgASgJEg0KBWFjdG9yGAIgASgJEgsKA3ZpYRgDIAEoCRIpCgVzdGFydBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCIsChVMaXN0UmVjb3JkaW5nc1JlcXVlc3QSEwoLd29ya2xvYWRfaWQYASABKAkiSwoWTGlzdFJlY29yZGluZ3NSZXNwb25zZRIxCgpyZWNvcmRpbmdzGAEgAygLMh0udG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZyJAChNHZXRSZWNvcmRpbmdSZXF1ZXN0EhQKDHJlY29yZGluZ19pZBgBIAEoCRITCgt0dGxfc2Vjb25kcxgCIAEoAyKFAQoUR2V0UmVjb3JkaW5nUmVzcG9uc2USMAoJcmVjb3JkaW5nGAEgASgLMh0udG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZxILCgN1cmwYAiABKAkSLgoKZXhwaXJlc19hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqpgEKDlJlY29yZGluZ1N0YXRlEh8KG1JFQ09SRElOR19TVEFURV9VTlNQRUNJRklFRBAAEh0KGVJFQ09SRElOR19TVEFURV9DQVBUVVJJTkcQARIZChVSRUNPUkRJTkdfU1RBVEVfUkVBRFkQAhIfChtSRUNPUkRJTkdfU1RBVEVfVU5BVkFJTEFCTEUQAxIYChRSRUNPUkRJTkdfU1RBVEVfTE9TVBAEKn0KDVJlY29yZGluZ0tpbmQSHgoaUkVDT1JESU5HX0tJTkRfVU5TUEVDSUZJRUQQABIYChRSRUNPUkRJTkdfS0lORF9TVFJJUBABEhgKFFJFQ09SRElOR19LSU5EX1ZJREVPEAISGAoUUkVDT1JESU5HX0tJTkRfVFJBQ0UQAzLeAQoQUmVjb3JkaW5nU2VydmljZRJnCg5MaXN0UmVjb3JkaW5ncxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UmVjb3JkaW5nc1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFJlY29yZGluZ3NSZXNwb25zZRJhCgxHZXRSZWNvcmRpbmcSJy50b3NoaS53b3Jrc3BhY2UudjEuR2V0UmVjb3JkaW5nUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5HZXRSZWNvcmRpbmdSZXNwb25zZUItWitnaXRodWIuY29tL3Rvc2hpY2xvdWQvdG9zaGktYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_timestamp]);
 
 /**
- * Recording is one recording of a run attempt: its screenshot strip, or a
- * video or trace its test framework wrote. Its record, never a key or a
+ * Recording is one recording of a run attempt: its screenshot strip or
+ * video, or a video or trace its test framework wrote. Its record, never a key or a
  * URL.
  *
  * @generated from message toshi.workspace.v1.Recording
@@ -48,7 +48,8 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   state: RecordingState;
 
   /**
-   * Why it is unavailable or lost.
+   * Why it is unavailable or lost, or why a run whose policy asked for a
+   * video has a strip.
    *
    * @generated from field: string reason = 6;
    */
@@ -118,8 +119,8 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
 };
 
 /**
- * Recording is one recording of a run attempt: its screenshot strip, or a
- * video or trace its test framework wrote. Its record, never a key or a
+ * Recording is one recording of a run attempt: its screenshot strip or
+ * video, or a video or trace its test framework wrote. Its record, never a key or a
  * URL.
  *
  * @generated from message toshi.workspace.v1.Recording
@@ -151,7 +152,8 @@ export type RecordingJson = {
   state?: RecordingStateJson;
 
   /**
-   * Why it is unavailable or lost.
+   * Why it is unavailable or lost, or why a run whose policy asked for a
+   * video has a strip.
    *
    * @generated from field: string reason = 6;
    */
@@ -536,8 +538,9 @@ export enum RecordingKind {
   STRIP = 1,
 
   /**
-   * A video the run's test framework wrote, such as Playwright's or
-   * Cypress's, uploaded with ArtifactUploadService.
+   * A video of the run's screen, recorded by its host, or one the run's
+   * test framework wrote, such as Playwright's or Cypress's, uploaded with
+   * ArtifactUploadService.
    *
    * @generated from enum value: RECORDING_KIND_VIDEO = 2;
    */

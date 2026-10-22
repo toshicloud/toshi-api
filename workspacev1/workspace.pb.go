@@ -293,6 +293,12 @@ const (
 	// recording and no strip. A job only: set for another kind it fails with
 	// INVALID_ARGUMENT.
 	RecordingPolicy_RECORDING_POLICY_STRIP RecordingPolicy = 2
+	// A video of each run's screen, recorded by its host, on the same terms
+	// as STRIP. A host that cannot record a video, because it has no encoder
+	// or all its encoders are busy, takes a strip instead, and that
+	// recording's reason says why. A job only: set for another kind it
+	// fails with INVALID_ARGUMENT.
+	RecordingPolicy_RECORDING_POLICY_VIDEO RecordingPolicy = 3
 )
 
 // Enum value maps for RecordingPolicy.
@@ -301,11 +307,13 @@ var (
 		0: "RECORDING_POLICY_UNSPECIFIED",
 		1: "RECORDING_POLICY_OFF",
 		2: "RECORDING_POLICY_STRIP",
+		3: "RECORDING_POLICY_VIDEO",
 	}
 	RecordingPolicy_value = map[string]int32{
 		"RECORDING_POLICY_UNSPECIFIED": 0,
 		"RECORDING_POLICY_OFF":         1,
 		"RECORDING_POLICY_STRIP":       2,
+		"RECORDING_POLICY_VIDEO":       3,
 	}
 )
 
@@ -7477,11 +7485,12 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x15STOP_REASON_SPEND_CAP\x10\x03\x12 \n" +
 	"\x1cSTOP_REASON_TENANT_SUSPENDED\x10\x04\x12\x1e\n" +
 	"\x1aSTOP_REASON_TENANT_DELETED\x10\x05\x12\x18\n" +
-	"\x14STOP_REASON_OPERATOR\x10\x06*i\n" +
+	"\x14STOP_REASON_OPERATOR\x10\x06*\x85\x01\n" +
 	"\x0fRecordingPolicy\x12 \n" +
 	"\x1cRECORDING_POLICY_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14RECORDING_POLICY_OFF\x10\x01\x12\x1a\n" +
-	"\x16RECORDING_POLICY_STRIP\x10\x02*c\n" +
+	"\x16RECORDING_POLICY_STRIP\x10\x02\x12\x1a\n" +
+	"\x16RECORDING_POLICY_VIDEO\x10\x03*c\n" +
 	"\vServiceMode\x12\x1c\n" +
 	"\x18SERVICE_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16SERVICE_MODE_ALWAYS_ON\x10\x01\x12\x1a\n" +
