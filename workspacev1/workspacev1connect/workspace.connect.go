@@ -223,16 +223,20 @@ type WorkspaceServiceClient interface {
 	// WatchEvents streams the events after a cursor, then each new event as
 	// it is written, for a client that stays connected.
 	WatchEvents(context.Context, *connect.Request[workspacev1.WatchEventsRequest]) (*connect.ServerStreamForClient[workspacev1.WatchEventsResponse], error)
-	// CreatePreviewShareLink mints a share link for a running sandbox's
-	// preview: a signed link that admits one device, the first
-	// to open it, until it expires, carries its byte cap or is revoked. The
-	// link is in this answer only. The sandbox must be running with its
-	// preview open, or the call fails with FAILED_PRECONDITION, as it does
-	// when the workspace's plan turns share links off. An expiry or a byte
-	// cap above the plan's fails with INVALID_ARGUMENT.
+	// CreatePreviewShareLink mints a share link for one of a running
+	// sandbox's previews: the channel `preview`, served at the sandbox's own
+	// hostname, unless the request names another of its http channels. The
+	// link is a signed link that admits one device, the first to open it,
+	// until it expires, carries its byte cap or is revoked, and only at that
+	// channel's hostname. The link is in this answer only. The sandbox must
+	// be running with that preview open, or the call fails with
+	// FAILED_PRECONDITION, as it does when the workspace's plan turns share
+	// links off. A channel or port the sandbox has no http channel for fails
+	// with NOT_FOUND; a channel that is not http, a port outside 1 to 65535,
+	// or an expiry or a byte cap above the plan's, with INVALID_ARGUMENT.
 	CreatePreviewShareLink(context.Context, *connect.Request[workspacev1.CreatePreviewShareLinkRequest]) (*connect.Response[workspacev1.CreatePreviewShareLinkResponse], error)
-	// ListPreviewShareLinks returns a sandbox's share links, the oldest
-	// first, never with the link itself.
+	// ListPreviewShareLinks returns a sandbox's share links, for all of its
+	// previews, the oldest first, never with the link itself.
 	ListPreviewShareLinks(context.Context, *connect.Request[workspacev1.ListPreviewShareLinksRequest]) (*connect.Response[workspacev1.ListPreviewShareLinksResponse], error)
 	// RevokePreviewShareLink revokes a share link: it admits no device
 	// again, and its open connections end within seconds. Revoking a link
@@ -719,16 +723,20 @@ type WorkspaceServiceHandler interface {
 	// WatchEvents streams the events after a cursor, then each new event as
 	// it is written, for a client that stays connected.
 	WatchEvents(context.Context, *connect.Request[workspacev1.WatchEventsRequest], *connect.ServerStream[workspacev1.WatchEventsResponse]) error
-	// CreatePreviewShareLink mints a share link for a running sandbox's
-	// preview: a signed link that admits one device, the first
-	// to open it, until it expires, carries its byte cap or is revoked. The
-	// link is in this answer only. The sandbox must be running with its
-	// preview open, or the call fails with FAILED_PRECONDITION, as it does
-	// when the workspace's plan turns share links off. An expiry or a byte
-	// cap above the plan's fails with INVALID_ARGUMENT.
+	// CreatePreviewShareLink mints a share link for one of a running
+	// sandbox's previews: the channel `preview`, served at the sandbox's own
+	// hostname, unless the request names another of its http channels. The
+	// link is a signed link that admits one device, the first to open it,
+	// until it expires, carries its byte cap or is revoked, and only at that
+	// channel's hostname. The link is in this answer only. The sandbox must
+	// be running with that preview open, or the call fails with
+	// FAILED_PRECONDITION, as it does when the workspace's plan turns share
+	// links off. A channel or port the sandbox has no http channel for fails
+	// with NOT_FOUND; a channel that is not http, a port outside 1 to 65535,
+	// or an expiry or a byte cap above the plan's, with INVALID_ARGUMENT.
 	CreatePreviewShareLink(context.Context, *connect.Request[workspacev1.CreatePreviewShareLinkRequest]) (*connect.Response[workspacev1.CreatePreviewShareLinkResponse], error)
-	// ListPreviewShareLinks returns a sandbox's share links, the oldest
-	// first, never with the link itself.
+	// ListPreviewShareLinks returns a sandbox's share links, for all of its
+	// previews, the oldest first, never with the link itself.
 	ListPreviewShareLinks(context.Context, *connect.Request[workspacev1.ListPreviewShareLinksRequest]) (*connect.Response[workspacev1.ListPreviewShareLinksResponse], error)
 	// RevokePreviewShareLink revokes a share link: it admits no device
 	// again, and its open connections end within seconds. Revoking a link

@@ -153,17 +153,21 @@ service WorkspaceService {
   // it is written, for a client that stays connected.
   rpc WatchEvents(WatchEventsRequest) returns (stream WatchEventsResponse);
 
-  // CreatePreviewShareLink mints a share link for a running sandbox's
-  // preview: a signed link that admits one device, the first
-  // to open it, until it expires, carries its byte cap or is revoked. The
-  // link is in this answer only. The sandbox must be running with its
-  // preview open, or the call fails with FAILED_PRECONDITION, as it does
-  // when the workspace's plan turns share links off. An expiry or a byte
-  // cap above the plan's fails with INVALID_ARGUMENT.
+  // CreatePreviewShareLink mints a share link for one of a running
+  // sandbox's previews: the channel `preview`, served at the sandbox's own
+  // hostname, unless the request names another of its http channels. The
+  // link is a signed link that admits one device, the first to open it,
+  // until it expires, carries its byte cap or is revoked, and only at that
+  // channel's hostname. The link is in this answer only. The sandbox must
+  // be running with that preview open, or the call fails with
+  // FAILED_PRECONDITION, as it does when the workspace's plan turns share
+  // links off. A channel or port the sandbox has no http channel for fails
+  // with NOT_FOUND; a channel that is not http, a port outside 1 to 65535,
+  // or an expiry or a byte cap above the plan's, with INVALID_ARGUMENT.
   rpc CreatePreviewShareLink(CreatePreviewShareLinkRequest) returns (CreatePreviewShareLinkResponse);
 
-  // ListPreviewShareLinks returns a sandbox's share links, the oldest
-  // first, never with the link itself.
+  // ListPreviewShareLinks returns a sandbox's share links, for all of its
+  // previews, the oldest first, never with the link itself.
   rpc ListPreviewShareLinks(ListPreviewShareLinksRequest) returns (ListPreviewShareLinksResponse);
 
   // RevokePreviewShareLink revokes a share link: it admits no device
@@ -508,6 +512,23 @@ message WorkloadStatus {
   // Why a sandbox was stopped, set once it has ended: with STOPPED, and
   // with FAILED when it failed after a stop was asked.
   StopReason stop_reason = 10;
+  // A running sandbox's previews: one for each of its http channels served
+  // at a hostname of its own, the channel `preview` among them. Empty for
+  // a job, and while the control plane serves no previews. Making or
+  // deleting such a channel changes the workload, so WatchWorkloads sends
+  // it again.
+  repeated SandboxPreview previews = 11;
+}
+
+// SandboxPreview is where a browser opens one http channel of a sandbox.
+message SandboxPreview {
+  // The channel's name; `preview` for the port the sandbox's image
+  // declares.
+  string channel = 1;
+  // The guest port the channel reaches.
+  int32 port = 2;
+  // The preview's origin, a scheme and a hostname without a path.
+  string url = 3;
 }
 
 // Error is a failure carried in a resource rather than returned by a call.
@@ -1037,8 +1058,8 @@ enum PreviewShareLinkState {
   PREVIEW_SHARE_LINK_STATE_EXPIRED = 5;
 }
 
-// PreviewShareLink is one share link of a sandbox's preview, without the
-// link itself.
+// PreviewShareLink is one share link of one of a sandbox's previews,
+// without the link itself.
 message PreviewShareLink {
   // Assigned by the server.
   string id = 1;
@@ -1056,6 +1077,11 @@ message PreviewShareLink {
   google.protobuf.Timestamp revoked_at = 9;
   // Unset unless it ended.
   google.protobuf.Timestamp ended_at = 10;
+  // The channel whose preview the link opens: `preview` for the sandbox's
+  // own hostname, or another of its http channels.
+  string channel = 11;
+  // The guest port that channel reaches.
+  int32 port = 12;
 }
 
 message CreatePreviewShareLinkRequest {
@@ -1069,11 +1095,17 @@ message CreatePreviewShareLinkRequest {
   // The most bytes, both ways, its connections may carry, at most the
   // plan's; 0 is the plan's.
   int64 max_bytes = 5;
+  // The preview the link opens: one of the sandbox's http channels, by
+  // its name or by its guest port. Neither set is the channel `preview`.
+  oneof channel_ref {
+    string channel = 6;
+    int32 port = 7;
+  }
 }
 
 message CreatePreviewShareLinkResponse {
   PreviewShareLink share_link = 1;
-  // The URL to give the viewer: it opens the sandbox's preview and carries
+  // The URL to give the viewer: it opens the link's preview and carries
   // the link. It is in this answer only.
   string url = 2;
 }
