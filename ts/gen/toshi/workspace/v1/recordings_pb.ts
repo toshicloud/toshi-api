@@ -71,8 +71,8 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   interval?: Duration | undefined;
 
   /**
-   * A strip's ticks, and the screenshots left out for being larger than a
-   * frame may be; 0 for a video or trace.
+   * A strip's ticks or the frames of its host's video, and the screenshots
+   * left out; 0 for a video or trace the test framework wrote.
    *
    * @generated from field: int32 frames = 9;
    */
@@ -84,7 +84,7 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   dropped: number;
 
   /**
-   * A strip's capture stopped at its frame, pause or byte bound before the
+   * The host's capture of a strip or video stopped at a bound before the
    * run ended.
    *
    * @generated from field: bool truncated = 11;
@@ -92,7 +92,8 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   truncated: boolean;
 
   /**
-   * The spans a strip left out while an input session was open.
+   * The spans a strip or its host's video left out while an input session
+   * was open.
    *
    * @generated from field: repeated toshi.workspace.v1.RecordingPause pauses = 12;
    */
@@ -175,8 +176,8 @@ export type RecordingJson = {
   interval?: DurationJson;
 
   /**
-   * A strip's ticks, and the screenshots left out for being larger than a
-   * frame may be; 0 for a video or trace.
+   * A strip's ticks or the frames of its host's video, and the screenshots
+   * left out; 0 for a video or trace the test framework wrote.
    *
    * @generated from field: int32 frames = 9;
    */
@@ -188,7 +189,7 @@ export type RecordingJson = {
   dropped?: number;
 
   /**
-   * A strip's capture stopped at its frame, pause or byte bound before the
+   * The host's capture of a strip or video stopped at a bound before the
    * run ended.
    *
    * @generated from field: bool truncated = 11;
@@ -196,7 +197,8 @@ export type RecordingJson = {
   truncated?: boolean;
 
   /**
-   * The spans a strip left out while an input session was open.
+   * The spans a strip or its host's video left out while an input session
+   * was open.
    *
    * @generated from field: repeated toshi.workspace.v1.RecordingPause pauses = 12;
    */

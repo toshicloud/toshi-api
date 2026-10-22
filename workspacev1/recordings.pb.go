@@ -164,14 +164,15 @@ type Recording struct {
 	ArtifactId string `protobuf:"bytes,7,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
 	// A strip's time between two screenshots; unset for a video or trace.
 	Interval *durationpb.Duration `protobuf:"bytes,8,opt,name=interval,proto3" json:"interval,omitempty"`
-	// A strip's ticks, and the screenshots left out for being larger than a
-	// frame may be; 0 for a video or trace.
+	// A strip's ticks or the frames of its host's video, and the screenshots
+	// left out; 0 for a video or trace the test framework wrote.
 	Frames  int32 `protobuf:"varint,9,opt,name=frames,proto3" json:"frames,omitempty"`
 	Dropped int32 `protobuf:"varint,10,opt,name=dropped,proto3" json:"dropped,omitempty"`
-	// A strip's capture stopped at its frame, pause or byte bound before the
+	// The host's capture of a strip or video stopped at a bound before the
 	// run ended.
 	Truncated bool `protobuf:"varint,11,opt,name=truncated,proto3" json:"truncated,omitempty"`
-	// The spans a strip left out while an input session was open.
+	// The spans a strip or its host's video left out while an input session
+	// was open.
 	Pauses    []*RecordingPause      `protobuf:"bytes,12,rep,name=pauses,proto3" json:"pauses,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Set once it is no longer capturing.
