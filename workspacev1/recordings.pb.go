@@ -94,8 +94,9 @@ const (
 	RecordingKind_RECORDING_KIND_UNSPECIFIED RecordingKind = 0
 	// A screenshot strip of the run's screen, taken by its host.
 	RecordingKind_RECORDING_KIND_STRIP RecordingKind = 1
-	// A video the run's test framework wrote, such as Playwright's or
-	// Cypress's, uploaded with ArtifactUploadService.
+	// A video of the run's screen, recorded by its host, or one the run's
+	// test framework wrote, such as Playwright's or Cypress's, uploaded with
+	// ArtifactUploadService.
 	RecordingKind_RECORDING_KIND_VIDEO RecordingKind = 2
 	// A trace the run's test framework wrote, such as a Playwright trace,
 	// uploaded with ArtifactUploadService.
@@ -145,8 +146,8 @@ func (RecordingKind) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{1}
 }
 
-// Recording is one recording of a run attempt: its screenshot strip, or a
-// video or trace its test framework wrote. Its record, never a key or a
+// Recording is one recording of a run attempt: its screenshot strip or
+// video, or a video or trace its test framework wrote. Its record, never a key or a
 // URL.
 type Recording struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -155,7 +156,8 @@ type Recording struct {
 	EnvironmentId string                 `protobuf:"bytes,3,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
 	WorkloadId    string                 `protobuf:"bytes,4,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	State         RecordingState         `protobuf:"varint,5,opt,name=state,proto3,enum=toshi.workspace.v1.RecordingState" json:"state,omitempty"`
-	// Why it is unavailable or lost.
+	// Why it is unavailable or lost, or why a run whose policy asked for a
+	// video has a strip.
 	Reason string `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
 	// The artifact that holds it: complete when the recording became ready,
 	// deleted once its retention has passed.
