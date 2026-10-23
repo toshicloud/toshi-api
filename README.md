@@ -12,6 +12,12 @@ TypeScript code generated from them.
 The services are [Connect](https://connectrpc.com) services, served by the
 Toshi control plane.
 
+These files are authored in the Toshi core repository, beside the control
+plane that implements them, and published here. Each publish replaces
+this repository's tree in one commit, and a publish that raises
+`VERSION` is tagged with that version. This repository takes no pull
+requests.
+
 ## Layout
 
 | Path | Contents |
@@ -69,13 +75,15 @@ For a client package, see [toshi-ts](https://github.com/toshicloud/toshi-ts).
 ## Versioning
 
 Versions follow [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
-and are tagged `vMAJOR.MINOR.PATCH`, as Go modules expect.
+and are tagged `vMAJOR.MINOR.PATCH`, as Go modules expect. `VERSION`
+holds the version of this tree. A change to `proto/` raises it.
 
 While the major version is 0:
 
 - an addition, a fix or a comment change bumps the patch version;
-- a breaking change bumps the minor version, and its pull request title
-  marks it with `!`, as in Conventional Commits (`feat!: ...`).
+- a breaking change bumps the minor version, and the title of the pull
+  request that makes it marks it with `!`, as in Conventional Commits
+  (`feat!: ...`).
 
 From v1.0.0, a breaking change never goes into an existing package. It
 goes into a new one, `toshi.workspace.v2` or `toshi.operator.v2`, and a
@@ -83,19 +91,21 @@ goes into a new one, `toshi.workspace.v2` or `toshi.operator.v2`, and a
 
 ## Compatibility
 
-Every pull request is checked with `buf breaking` against the branch it
-targets and against the newest tag: `toshi.workspace.v1` with the `FILE`
-rules, `toshi.operator.v1` with the `WIRE_JSON` rules. A field or value
-that goes away keeps its number and name reserved. Before the first tag
-and while the newest tag's major version is 0, a pull request whose
-title marks a breaking change with `!` may break compatibility; no other
-failure is accepted. While the major version is 0, the comparison with
-the newest tag counts only what a pull request breaks beyond what its
-target branch already breaks. From v1.0.0 there is no exception.
+Every change is checked with `buf breaking` before it is published,
+against the branch it targets and against this repository's newest tag:
+`toshi.workspace.v1` with the `FILE` rules, `toshi.operator.v1` and
+`toshi.githubcore.v1` with the `WIRE_JSON` rules. A field or value that
+goes away keeps its number and name reserved. While the newest tag's
+major version is 0, a pull request whose title marks a breaking change
+with `!` may break compatibility; no other failure is accepted. While
+the major version is 0, the comparison with the newest tag counts only
+what a pull request breaks beyond what its target branch already breaks.
+From v1.0.0 there is no exception.
 
 ## Changing the protos
 
-The tools and their versions are pinned in `mise.toml`.
+Changes are made in the Toshi core repository. The tools and their
+versions are pinned in `mise.toml`.
 
 ```sh
 mise install

@@ -2,7 +2,6 @@ name: ci
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, edited]
   push:
     branches: [main]
 
@@ -15,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
           persist-credentials: false
 
       - uses: jdx/mise-action@8418fedb1110381a0d3ba51a7a415d7c1b884550 # v5.2.2
@@ -23,16 +21,6 @@ jobs:
           version: 2026.9.14
           install_args: --locked
           cache: false
-
-      - name: Lint the protos
-        run: buf lint
-
-      - name: Check for breaking changes
-        if: github.event_name == 'pull_request'
-        env:
-          BASE: origin/${{ github.base_ref }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-        run: scripts/breaking.sh
 
       - name: Generated code is up to date
         run: scripts/check-generated.sh
