@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/recordings.proto.
  */
 export const file_toshi_workspace_v1_recordings: GenFile = /*@__PURE__*/
-  fileDesc("CiN0b3NoaS93b3Jrc3BhY2UvdjEvcmVjb3JkaW5ncy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxItQDCglSZWNvcmRpbmcSCgoCaWQYASABKAkSEgoKcHJvamVjdF9pZBgCIAEoCRIWCg5lbnZpcm9ubWVudF9pZBgDIAEoCRITCgt3b3JrbG9hZF9pZBgEIAEoCRIxCgVzdGF0ZRgFIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdTdGF0ZRIOCgZyZWFzb24YBiABKAkSEwoLYXJ0aWZhY3RfaWQYByABKAkSKwoIaW50ZXJ2YWwYCCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SDgoGZnJhbWVzGAkgASgFEg8KB2Ryb3BwZWQYCiABKAUSEQoJdHJ1bmNhdGVkGAsgASgIEjIKBnBhdXNlcxgMIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdQYXVzZRIuCgpjcmVhdGVkX2F0GA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghlbmRlZF9hdBgOIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoEa2luZBgPIAEoDjIhLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdLaW5kIpQBCg5SZWNvcmRpbmdQYXVzZRISCgpzZXNzaW9uX2lkGAEgASgJEg0KBWFjdG9yGAIgASgJEgsKA3ZpYRgDIAEoCRIpCgVzdGFydBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCIsChVMaXN0UmVjb3JkaW5nc1JlcXVlc3QSEwoLd29ya2xvYWRfaWQYASABKAkiSwoWTGlzdFJlY29yZGluZ3NSZXNwb25zZRIxCgpyZWNvcmRpbmdzGAEgAygLMh0udG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZyJAChNHZXRSZWNvcmRpbmdSZXF1ZXN0EhQKDHJlY29yZGluZ19pZBgBIAEoCRITCgt0dGxfc2Vjb25kcxgCIAEoAyKFAQoUR2V0UmVjb3JkaW5nUmVzcG9uc2USMAoJcmVjb3JkaW5nGAEgASgLMh0udG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZxILCgN1cmwYAiABKAkSLgoKZXhwaXJlc19hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqpgEKDlJlY29yZGluZ1N0YXRlEh8KG1JFQ09SRElOR19TVEFURV9VTlNQRUNJRklFRBAAEh0KGVJFQ09SRElOR19TVEFURV9DQVBUVVJJTkcQARIZChVSRUNPUkRJTkdfU1RBVEVfUkVBRFkQAhIfChtSRUNPUkRJTkdfU1RBVEVfVU5BVkFJTEFCTEUQAxIYChRSRUNPUkRJTkdfU1RBVEVfTE9TVBAEKn0KDVJlY29yZGluZ0tpbmQSHgoaUkVDT1JESU5HX0tJTkRfVU5TUEVDSUZJRUQQABIYChRSRUNPUkRJTkdfS0lORF9TVFJJUBABEhgKFFJFQ09SRElOR19LSU5EX1ZJREVPEAISGAoUUkVDT1JESU5HX0tJTkRfVFJBQ0UQAzLeAQoQUmVjb3JkaW5nU2VydmljZRJnCg5MaXN0UmVjb3JkaW5ncxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UmVjb3JkaW5nc1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFJlY29yZGluZ3NSZXNwb25zZRJhCgxHZXRSZWNvcmRpbmcSJy50b3NoaS53b3Jrc3BhY2UudjEuR2V0UmVjb3JkaW5nUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5HZXRSZWNvcmRpbmdSZXNwb25zZUItWitnaXRodWIuY29tL3Rvc2hpY2xvdWQvdG9zaGktYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_timestamp]);
+  fileDesc("CiN0b3NoaS93b3Jrc3BhY2UvdjEvcmVjb3JkaW5ncy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxItQDCglSZWNvcmRpbmcSCgoCaWQYASABKAkSEgoKcHJvamVjdF9pZBgCIAEoCRIWCg5lbnZpcm9ubWVudF9pZBgDIAEoCRITCgt3b3JrbG9hZF9pZBgEIAEoCRIxCgVzdGF0ZRgFIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdTdGF0ZRIOCgZyZWFzb24YBiABKAkSEwoLYXJ0aWZhY3RfaWQYByABKAkSKwoIaW50ZXJ2YWwYCCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SDgoGZnJhbWVzGAkgASgFEg8KB2Ryb3BwZWQYCiABKAUSEQoJdHJ1bmNhdGVkGAsgASgIEjIKBnBhdXNlcxgMIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdQYXVzZRIuCgpjcmVhdGVkX2F0GA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghlbmRlZF9hdBgOIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoEa2luZBgPIAEoDjIhLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdLaW5kIpQBCg5SZWNvcmRpbmdQYXVzZRISCgpzZXNzaW9uX2lkGAEgASgJEg0KBWFjdG9yGAIgASgJEgsKA3ZpYRgDIAEoCRIpCgVzdGFydBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCIsChVMaXN0UmVjb3JkaW5nc1JlcXVlc3QSEwoLd29ya2xvYWRfaWQYASABKAkiSwoWTGlzdFJlY29yZGluZ3NSZXNwb25zZRIxCgpyZWNvcmRpbmdzGAEgAygLMh0udG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZyJAChNHZXRSZWNvcmRpbmdSZXF1ZXN0EhQKDHJlY29yZGluZ19pZBgBIAEoCRITCgt0dGxfc2Vjb25kcxgCIAEoAyKFAQoUR2V0UmVjb3JkaW5nUmVzcG9uc2USMAoJcmVjb3JkaW5nGAEgASgLMh0udG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZxILCgN1cmwYAiABKAkSLgoKZXhwaXJlc19hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi7gIKElJlY29yZGluZ1NoYXJlTGluaxIKCgJpZBgBIAEoCRIUCgxyZWNvcmRpbmdfaWQYAiABKAkSLwoEa2luZBgDIAEoDjIhLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdLaW5kEjoKBXN0YXRlGAQgASgOMisudG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZ1NoYXJlTGlua1N0YXRlEi4KCmNyZWF0ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmV4cGlyZXNfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCW1heF9ieXRlcxgHIAEoAxISCgp1c2VkX2J5dGVzGAggASgDEi4KCnJldm9rZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmNyZWF0ZWRfYnkYCiABKAkieQofQ3JlYXRlUmVjb3JkaW5nU2hhcmVMaW5rUmVxdWVzdBIUCgxyZWNvcmRpbmdfaWQYASABKAkSLQoKZXhwaXJlc19pbhgCIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbhIRCgltYXhfYnl0ZXMYAyABKAMiawogQ3JlYXRlUmVjb3JkaW5nU2hhcmVMaW5rUmVzcG9uc2USOgoKc2hhcmVfbGluaxgBIAEoCzImLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdTaGFyZUxpbmsSCwoDdXJsGAIgASgJIjYKHkxpc3RSZWNvcmRpbmdTaGFyZUxpbmtzUmVxdWVzdBIUCgxyZWNvcmRpbmdfaWQYASABKAkiXgofTGlzdFJlY29yZGluZ1NoYXJlTGlua3NSZXNwb25zZRI7CgtzaGFyZV9saW5rcxgBIAMoCzImLnRvc2hpLndvcmtzcGFjZS52MS5SZWNvcmRpbmdTaGFyZUxpbmsiOAofUmV2b2tlUmVjb3JkaW5nU2hhcmVMaW5rUmVxdWVzdBIVCg1zaGFyZV9saW5rX2lkGAEgASgJIl4KIFJldm9rZVJlY29yZGluZ1NoYXJlTGlua1Jlc3BvbnNlEjoKCnNoYXJlX2xpbmsYASABKAsyJi50b3NoaS53b3Jrc3BhY2UudjEuUmVjb3JkaW5nU2hhcmVMaW5rKqYBCg5SZWNvcmRpbmdTdGF0ZRIfChtSRUNPUkRJTkdfU1RBVEVfVU5TUEVDSUZJRUQQABIdChlSRUNPUkRJTkdfU1RBVEVfQ0FQVFVSSU5HEAESGQoVUkVDT1JESU5HX1NUQVRFX1JFQURZEAISHwobUkVDT1JESU5HX1NUQVRFX1VOQVZBSUxBQkxFEAMSGAoUUkVDT1JESU5HX1NUQVRFX0xPU1QQBCp9Cg1SZWNvcmRpbmdLaW5kEh4KGlJFQ09SRElOR19LSU5EX1VOU1BFQ0lGSUVEEAASGAoUUkVDT1JESU5HX0tJTkRfU1RSSVAQARIYChRSRUNPUkRJTkdfS0lORF9WSURFTxACEhgKFFJFQ09SRElOR19LSU5EX1RSQUNFEAMq4gEKF1JlY29yZGluZ1NoYXJlTGlua1N0YXRlEioKJlJFQ09SRElOR19TSEFSRV9MSU5LX1NUQVRFX1VOU1BFQ0lGSUVEEAASJQohUkVDT1JESU5HX1NIQVJFX0xJTktfU1RBVEVfQUNUSVZFEAESJgoiUkVDT1JESU5HX1NIQVJFX0xJTktfU1RBVEVfUkVWT0tFRBACEiYKIlJFQ09SRElOR19TSEFSRV9MSU5LX1NUQVRFX0VYUElSRUQQAxIkCiBSRUNPUkRJTkdfU0hBUkVfTElOS19TVEFURV9FTkRFRBAEMvMEChBSZWNvcmRpbmdTZXJ2aWNlEmcKDkxpc3RSZWNvcmRpbmdzEikudG9zaGkud29ya3NwYWNlLnYxLkxpc3RSZWNvcmRpbmdzUmVxdWVzdBoqLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UmVjb3JkaW5nc1Jlc3BvbnNlEmEKDEdldFJlY29yZGluZxInLnRvc2hpLndvcmtzcGFjZS52MS5HZXRSZWNvcmRpbmdSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkdldFJlY29yZGluZ1Jlc3BvbnNlEoUBChhDcmVhdGVSZWNvcmRpbmdTaGFyZUxpbmsSMy50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlUmVjb3JkaW5nU2hhcmVMaW5rUmVxdWVzdBo0LnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVSZWNvcmRpbmdTaGFyZUxpbmtSZXNwb25zZRKCAQoXTGlzdFJlY29yZGluZ1NoYXJlTGlua3MSMi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFJlY29yZGluZ1NoYXJlTGlua3NSZXF1ZXN0GjMudG9zaGkud29ya3NwYWNlLnYxLkxpc3RSZWNvcmRpbmdTaGFyZUxpbmtzUmVzcG9uc2UShQEKGFJldm9rZVJlY29yZGluZ1NoYXJlTGluaxIzLnRvc2hpLndvcmtzcGFjZS52MS5SZXZva2VSZWNvcmRpbmdTaGFyZUxpbmtSZXF1ZXN0GjQudG9zaGkud29ya3NwYWNlLnYxLlJldm9rZVJlY29yZGluZ1NoYXJlTGlua1Jlc3BvbnNlQi1aK2dpdGh1Yi5jb20vdG9zaGljbG91ZC90b3NoaS1hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_duration, file_google_protobuf_timestamp]);
 
 /**
  * Recording is one recording of a run attempt: its screenshot strip or
@@ -465,6 +465,367 @@ export const GetRecordingResponseSchema: GenMessage<GetRecordingResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_recordings, 5);
 
 /**
+ * RecordingShareLink is one share link of a recording, without the link
+ * itself.
+ *
+ * @generated from message toshi.workspace.v1.RecordingShareLink
+ */
+export type RecordingShareLink = Message<"toshi.workspace.v1.RecordingShareLink"> & {
+  /**
+   * Assigned by the server.
+   *
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string recording_id = 2;
+   */
+  recordingId: string;
+
+  /**
+   * The recording's kind.
+   *
+   * @generated from field: toshi.workspace.v1.RecordingKind kind = 3;
+   */
+  kind: RecordingKind;
+
+  /**
+   * @generated from field: toshi.workspace.v1.RecordingShareLinkState state = 4;
+   */
+  state: RecordingShareLinkState;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 5;
+   */
+  createdAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp expires_at = 6;
+   */
+  expiresAt?: Timestamp | undefined;
+
+  /**
+   * The most bytes its fetches may take.
+   *
+   * @generated from field: int64 max_bytes = 7;
+   */
+  maxBytes: bigint;
+
+  /**
+   * The bytes its fetches have taken so far: the object's size once per
+   * fetch.
+   *
+   * @generated from field: int64 used_bytes = 8;
+   */
+  usedBytes: bigint;
+
+  /**
+   * Unset unless it was revoked.
+   *
+   * @generated from field: google.protobuf.Timestamp revoked_at = 9;
+   */
+  revokedAt?: Timestamp | undefined;
+
+  /**
+   * Who minted it: a person's sign-in or an API token, as in the audit.
+   *
+   * @generated from field: string created_by = 10;
+   */
+  createdBy: string;
+};
+
+/**
+ * RecordingShareLink is one share link of a recording, without the link
+ * itself.
+ *
+ * @generated from message toshi.workspace.v1.RecordingShareLink
+ */
+export type RecordingShareLinkJson = {
+  /**
+   * Assigned by the server.
+   *
+   * @generated from field: string id = 1;
+   */
+  id?: string;
+
+  /**
+   * @generated from field: string recording_id = 2;
+   */
+  recordingId?: string;
+
+  /**
+   * The recording's kind.
+   *
+   * @generated from field: toshi.workspace.v1.RecordingKind kind = 3;
+   */
+  kind?: RecordingKindJson;
+
+  /**
+   * @generated from field: toshi.workspace.v1.RecordingShareLinkState state = 4;
+   */
+  state?: RecordingShareLinkStateJson;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 5;
+   */
+  createdAt?: TimestampJson;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp expires_at = 6;
+   */
+  expiresAt?: TimestampJson;
+
+  /**
+   * The most bytes its fetches may take.
+   *
+   * @generated from field: int64 max_bytes = 7;
+   */
+  maxBytes?: string;
+
+  /**
+   * The bytes its fetches have taken so far: the object's size once per
+   * fetch.
+   *
+   * @generated from field: int64 used_bytes = 8;
+   */
+  usedBytes?: string;
+
+  /**
+   * Unset unless it was revoked.
+   *
+   * @generated from field: google.protobuf.Timestamp revoked_at = 9;
+   */
+  revokedAt?: TimestampJson;
+
+  /**
+   * Who minted it: a person's sign-in or an API token, as in the audit.
+   *
+   * @generated from field: string created_by = 10;
+   */
+  createdBy?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.RecordingShareLink.
+ * Use `create(RecordingShareLinkSchema)` to create a new message.
+ */
+export const RecordingShareLinkSchema: GenMessage<RecordingShareLink, {jsonType: RecordingShareLinkJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_recordings, 6);
+
+/**
+ * @generated from message toshi.workspace.v1.CreateRecordingShareLinkRequest
+ */
+export type CreateRecordingShareLinkRequest = Message<"toshi.workspace.v1.CreateRecordingShareLinkRequest"> & {
+  /**
+   * @generated from field: string recording_id = 1;
+   */
+  recordingId: string;
+
+  /**
+   * How long the link stays valid; unset is the server's default, and
+   * more than its maximum is INVALID_ARGUMENT.
+   *
+   * @generated from field: google.protobuf.Duration expires_in = 2;
+   */
+  expiresIn?: Duration | undefined;
+
+  /**
+   * The most bytes its fetches may take; 0 is the server's default, and
+   * more than its maximum, or less than the recording's object, is
+   * INVALID_ARGUMENT.
+   *
+   * @generated from field: int64 max_bytes = 3;
+   */
+  maxBytes: bigint;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.CreateRecordingShareLinkRequest
+ */
+export type CreateRecordingShareLinkRequestJson = {
+  /**
+   * @generated from field: string recording_id = 1;
+   */
+  recordingId?: string;
+
+  /**
+   * How long the link stays valid; unset is the server's default, and
+   * more than its maximum is INVALID_ARGUMENT.
+   *
+   * @generated from field: google.protobuf.Duration expires_in = 2;
+   */
+  expiresIn?: DurationJson;
+
+  /**
+   * The most bytes its fetches may take; 0 is the server's default, and
+   * more than its maximum, or less than the recording's object, is
+   * INVALID_ARGUMENT.
+   *
+   * @generated from field: int64 max_bytes = 3;
+   */
+  maxBytes?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.CreateRecordingShareLinkRequest.
+ * Use `create(CreateRecordingShareLinkRequestSchema)` to create a new message.
+ */
+export const CreateRecordingShareLinkRequestSchema: GenMessage<CreateRecordingShareLinkRequest, {jsonType: CreateRecordingShareLinkRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_recordings, 7);
+
+/**
+ * @generated from message toshi.workspace.v1.CreateRecordingShareLinkResponse
+ */
+export type CreateRecordingShareLinkResponse = Message<"toshi.workspace.v1.CreateRecordingShareLinkResponse"> & {
+  /**
+   * @generated from field: toshi.workspace.v1.RecordingShareLink share_link = 1;
+   */
+  shareLink?: RecordingShareLink | undefined;
+
+  /**
+   * The URL to give the viewer: a GET of it redirects to a signed URL for
+   * the recording's object. It is in this answer only.
+   *
+   * @generated from field: string url = 2;
+   */
+  url: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.CreateRecordingShareLinkResponse
+ */
+export type CreateRecordingShareLinkResponseJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.RecordingShareLink share_link = 1;
+   */
+  shareLink?: RecordingShareLinkJson;
+
+  /**
+   * The URL to give the viewer: a GET of it redirects to a signed URL for
+   * the recording's object. It is in this answer only.
+   *
+   * @generated from field: string url = 2;
+   */
+  url?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.CreateRecordingShareLinkResponse.
+ * Use `create(CreateRecordingShareLinkResponseSchema)` to create a new message.
+ */
+export const CreateRecordingShareLinkResponseSchema: GenMessage<CreateRecordingShareLinkResponse, {jsonType: CreateRecordingShareLinkResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_recordings, 8);
+
+/**
+ * @generated from message toshi.workspace.v1.ListRecordingShareLinksRequest
+ */
+export type ListRecordingShareLinksRequest = Message<"toshi.workspace.v1.ListRecordingShareLinksRequest"> & {
+  /**
+   * @generated from field: string recording_id = 1;
+   */
+  recordingId: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.ListRecordingShareLinksRequest
+ */
+export type ListRecordingShareLinksRequestJson = {
+  /**
+   * @generated from field: string recording_id = 1;
+   */
+  recordingId?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ListRecordingShareLinksRequest.
+ * Use `create(ListRecordingShareLinksRequestSchema)` to create a new message.
+ */
+export const ListRecordingShareLinksRequestSchema: GenMessage<ListRecordingShareLinksRequest, {jsonType: ListRecordingShareLinksRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_recordings, 9);
+
+/**
+ * @generated from message toshi.workspace.v1.ListRecordingShareLinksResponse
+ */
+export type ListRecordingShareLinksResponse = Message<"toshi.workspace.v1.ListRecordingShareLinksResponse"> & {
+  /**
+   * @generated from field: repeated toshi.workspace.v1.RecordingShareLink share_links = 1;
+   */
+  shareLinks: RecordingShareLink[];
+};
+
+/**
+ * @generated from message toshi.workspace.v1.ListRecordingShareLinksResponse
+ */
+export type ListRecordingShareLinksResponseJson = {
+  /**
+   * @generated from field: repeated toshi.workspace.v1.RecordingShareLink share_links = 1;
+   */
+  shareLinks?: RecordingShareLinkJson[];
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ListRecordingShareLinksResponse.
+ * Use `create(ListRecordingShareLinksResponseSchema)` to create a new message.
+ */
+export const ListRecordingShareLinksResponseSchema: GenMessage<ListRecordingShareLinksResponse, {jsonType: ListRecordingShareLinksResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_recordings, 10);
+
+/**
+ * @generated from message toshi.workspace.v1.RevokeRecordingShareLinkRequest
+ */
+export type RevokeRecordingShareLinkRequest = Message<"toshi.workspace.v1.RevokeRecordingShareLinkRequest"> & {
+  /**
+   * @generated from field: string share_link_id = 1;
+   */
+  shareLinkId: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.RevokeRecordingShareLinkRequest
+ */
+export type RevokeRecordingShareLinkRequestJson = {
+  /**
+   * @generated from field: string share_link_id = 1;
+   */
+  shareLinkId?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.RevokeRecordingShareLinkRequest.
+ * Use `create(RevokeRecordingShareLinkRequestSchema)` to create a new message.
+ */
+export const RevokeRecordingShareLinkRequestSchema: GenMessage<RevokeRecordingShareLinkRequest, {jsonType: RevokeRecordingShareLinkRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_recordings, 11);
+
+/**
+ * @generated from message toshi.workspace.v1.RevokeRecordingShareLinkResponse
+ */
+export type RevokeRecordingShareLinkResponse = Message<"toshi.workspace.v1.RevokeRecordingShareLinkResponse"> & {
+  /**
+   * @generated from field: toshi.workspace.v1.RecordingShareLink share_link = 1;
+   */
+  shareLink?: RecordingShareLink | undefined;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.RevokeRecordingShareLinkResponse
+ */
+export type RevokeRecordingShareLinkResponseJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.RecordingShareLink share_link = 1;
+   */
+  shareLink?: RecordingShareLinkJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.RevokeRecordingShareLinkResponse.
+ * Use `create(RevokeRecordingShareLinkResponseSchema)` to create a new message.
+ */
+export const RevokeRecordingShareLinkResponseSchema: GenMessage<RevokeRecordingShareLinkResponse, {jsonType: RevokeRecordingShareLinkResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_recordings, 12);
+
+/**
  * RecordingState is where a recording is in its life.
  *
  * @generated from enum toshi.workspace.v1.RecordingState
@@ -571,6 +932,57 @@ export const RecordingKindSchema: GenEnum<RecordingKind, RecordingKindJson> = /*
   enumDesc(file_toshi_workspace_v1_recordings, 1);
 
 /**
+ * RecordingShareLinkState is where a recording's share link is in its
+ * life.
+ *
+ * @generated from enum toshi.workspace.v1.RecordingShareLinkState
+ */
+export enum RecordingShareLinkState {
+  /**
+   * @generated from enum value: RECORDING_SHARE_LINK_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * It fetches the recording's object.
+   *
+   * @generated from enum value: RECORDING_SHARE_LINK_STATE_ACTIVE = 1;
+   */
+  ACTIVE = 1,
+
+  /**
+   * @generated from enum value: RECORDING_SHARE_LINK_STATE_REVOKED = 2;
+   */
+  REVOKED = 2,
+
+  /**
+   * @generated from enum value: RECORDING_SHARE_LINK_STATE_EXPIRED = 3;
+   */
+  EXPIRED = 3,
+
+  /**
+   * What is left of its byte cap is less than the object's size.
+   *
+   * @generated from enum value: RECORDING_SHARE_LINK_STATE_ENDED = 4;
+   */
+  ENDED = 4,
+}
+
+/**
+ * RecordingShareLinkState is where a recording's share link is in its
+ * life.
+ *
+ * @generated from enum toshi.workspace.v1.RecordingShareLinkState
+ */
+export type RecordingShareLinkStateJson = "RECORDING_SHARE_LINK_STATE_UNSPECIFIED" | "RECORDING_SHARE_LINK_STATE_ACTIVE" | "RECORDING_SHARE_LINK_STATE_REVOKED" | "RECORDING_SHARE_LINK_STATE_EXPIRED" | "RECORDING_SHARE_LINK_STATE_ENDED";
+
+/**
+ * Describes the enum toshi.workspace.v1.RecordingShareLinkState.
+ */
+export const RecordingShareLinkStateSchema: GenEnum<RecordingShareLinkState, RecordingShareLinkStateJson> = /*@__PURE__*/
+  enumDesc(file_toshi_workspace_v1_recordings, 2);
+
+/**
  * RecordingService lists a workload's recordings and signs a URL for a
  * recording's object. The caller is a workspace's API token or a dashboard
  * session, as for ArtifactService. A credential limited to a project or an
@@ -603,6 +1015,43 @@ export const RecordingService: GenService<{
     methodKind: "unary";
     input: typeof GetRecordingRequestSchema;
     output: typeof GetRecordingResponseSchema;
+  },
+  /**
+   * CreateRecordingShareLink mints a share link for a ready recording: a
+   * URL that fetches its object without a Toshi sign-in until the link
+   * expires, is revoked or has used its byte cap. Each fetch through it
+   * counts the object's whole size against the cap, and each fetch and
+   * each refusal is in the audit. A recording that is not ready, or whose
+   * object's retention has deleted it, is FAILED_PRECONDITION.
+   *
+   * @generated from rpc toshi.workspace.v1.RecordingService.CreateRecordingShareLink
+   */
+  createRecordingShareLink: {
+    methodKind: "unary";
+    input: typeof CreateRecordingShareLinkRequestSchema;
+    output: typeof CreateRecordingShareLinkResponseSchema;
+  },
+  /**
+   * ListRecordingShareLinks returns a recording's share links, oldest
+   * first, without the links themselves.
+   *
+   * @generated from rpc toshi.workspace.v1.RecordingService.ListRecordingShareLinks
+   */
+  listRecordingShareLinks: {
+    methodKind: "unary";
+    input: typeof ListRecordingShareLinksRequestSchema;
+    output: typeof ListRecordingShareLinksResponseSchema;
+  },
+  /**
+   * RevokeRecordingShareLink ends a share link before it expires. A link
+   * already revoked is returned as it is.
+   *
+   * @generated from rpc toshi.workspace.v1.RecordingService.RevokeRecordingShareLink
+   */
+  revokeRecordingShareLink: {
+    methodKind: "unary";
+    input: typeof RevokeRecordingShareLinkRequestSchema;
+    output: typeof RevokeRecordingShareLinkResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_toshi_workspace_v1_recordings, 0);

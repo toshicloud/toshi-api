@@ -9,6 +9,7 @@ package workspacev1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -21,6 +22,64 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+// EmbedTokenState is where an embed token is in its life.
+type EmbedTokenState int32
+
+const (
+	EmbedTokenState_EMBED_TOKEN_STATE_UNSPECIFIED EmbedTokenState = 0
+	// Not yet spent: a page on one of its origins can spend it.
+	EmbedTokenState_EMBED_TOKEN_STATE_ACTIVE EmbedTokenState = 1
+	// A page spent it on a recording.
+	EmbedTokenState_EMBED_TOKEN_STATE_USED    EmbedTokenState = 2
+	EmbedTokenState_EMBED_TOKEN_STATE_REVOKED EmbedTokenState = 3
+	EmbedTokenState_EMBED_TOKEN_STATE_EXPIRED EmbedTokenState = 4
+)
+
+// Enum value maps for EmbedTokenState.
+var (
+	EmbedTokenState_name = map[int32]string{
+		0: "EMBED_TOKEN_STATE_UNSPECIFIED",
+		1: "EMBED_TOKEN_STATE_ACTIVE",
+		2: "EMBED_TOKEN_STATE_USED",
+		3: "EMBED_TOKEN_STATE_REVOKED",
+		4: "EMBED_TOKEN_STATE_EXPIRED",
+	}
+	EmbedTokenState_value = map[string]int32{
+		"EMBED_TOKEN_STATE_UNSPECIFIED": 0,
+		"EMBED_TOKEN_STATE_ACTIVE":      1,
+		"EMBED_TOKEN_STATE_USED":        2,
+		"EMBED_TOKEN_STATE_REVOKED":     3,
+		"EMBED_TOKEN_STATE_EXPIRED":     4,
+	}
+)
+
+func (x EmbedTokenState) Enum() *EmbedTokenState {
+	p := new(EmbedTokenState)
+	*p = x
+	return p
+}
+
+func (x EmbedTokenState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (EmbedTokenState) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_projects_proto_enumTypes[0].Descriptor()
+}
+
+func (EmbedTokenState) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_projects_proto_enumTypes[0]
+}
+
+func (x EmbedTokenState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use EmbedTokenState.Descriptor instead.
+func (EmbedTokenState) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{0}
+}
 
 // Project is one of a workspace's projects.
 type Project struct {
@@ -1174,11 +1233,441 @@ func (x *SetBranchRulesResponse) GetRules() []*BranchRule {
 	return nil
 }
 
+// EmbedToken is one of a project's embed tokens, without the token itself.
+type EmbedToken struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Assigned by the server.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The project's name.
+	Project string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	// The origins of the pages that may spend it, such as
+	// https://app.example.com.
+	Origins   []string               `protobuf:"bytes,3,rep,name=origins,proto3" json:"origins,omitempty"`
+	State     EmbedTokenState        `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.EmbedTokenState" json:"state,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// Unset until a page spends it.
+	UsedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=used_at,json=usedAt,proto3" json:"used_at,omitempty"`
+	// The recording it was spent on; empty until then.
+	RecordingId string `protobuf:"bytes,8,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	// Unset unless it was revoked.
+	RevokedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
+	// Who minted it: a person's sign-in or an API token, as in the audit.
+	CreatedBy     string `protobuf:"bytes,10,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EmbedToken) Reset() {
+	*x = EmbedToken{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmbedToken) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmbedToken) ProtoMessage() {}
+
+func (x *EmbedToken) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmbedToken.ProtoReflect.Descriptor instead.
+func (*EmbedToken) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *EmbedToken) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *EmbedToken) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *EmbedToken) GetOrigins() []string {
+	if x != nil {
+		return x.Origins
+	}
+	return nil
+}
+
+func (x *EmbedToken) GetState() EmbedTokenState {
+	if x != nil {
+		return x.State
+	}
+	return EmbedTokenState_EMBED_TOKEN_STATE_UNSPECIFIED
+}
+
+func (x *EmbedToken) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *EmbedToken) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
+func (x *EmbedToken) GetUsedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UsedAt
+	}
+	return nil
+}
+
+func (x *EmbedToken) GetRecordingId() string {
+	if x != nil {
+		return x.RecordingId
+	}
+	return ""
+}
+
+func (x *EmbedToken) GetRevokedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RevokedAt
+	}
+	return nil
+}
+
+func (x *EmbedToken) GetCreatedBy() string {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return ""
+}
+
+type CreateEmbedTokenRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The origins of the pages that may spend it, each a scheme and a host
+	// with an optional port: https, or http for localhost only. At least
+	// one, and more than the server's maximum is INVALID_ARGUMENT.
+	Origins []string `protobuf:"bytes,2,rep,name=origins,proto3" json:"origins,omitempty"`
+	// How long the token stays valid; unset is the server's default, and
+	// more than its maximum is INVALID_ARGUMENT.
+	ExpiresIn     *durationpb.Duration `protobuf:"bytes,3,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateEmbedTokenRequest) Reset() {
+	*x = CreateEmbedTokenRequest{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateEmbedTokenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateEmbedTokenRequest) ProtoMessage() {}
+
+func (x *CreateEmbedTokenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateEmbedTokenRequest.ProtoReflect.Descriptor instead.
+func (*CreateEmbedTokenRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *CreateEmbedTokenRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *CreateEmbedTokenRequest) GetOrigins() []string {
+	if x != nil {
+		return x.Origins
+	}
+	return nil
+}
+
+func (x *CreateEmbedTokenRequest) GetExpiresIn() *durationpb.Duration {
+	if x != nil {
+		return x.ExpiresIn
+	}
+	return nil
+}
+
+type CreateEmbedTokenResponse struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	EmbedToken *EmbedToken            `protobuf:"bytes,1,opt,name=embed_token,json=embedToken,proto3" json:"embed_token,omitempty"`
+	// The token to hand to the page. It is in this answer only.
+	Token         string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateEmbedTokenResponse) Reset() {
+	*x = CreateEmbedTokenResponse{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateEmbedTokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateEmbedTokenResponse) ProtoMessage() {}
+
+func (x *CreateEmbedTokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateEmbedTokenResponse.ProtoReflect.Descriptor instead.
+func (*CreateEmbedTokenResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *CreateEmbedTokenResponse) GetEmbedToken() *EmbedToken {
+	if x != nil {
+		return x.EmbedToken
+	}
+	return nil
+}
+
+func (x *CreateEmbedTokenResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+type ListEmbedTokensRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project       string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListEmbedTokensRequest) Reset() {
+	*x = ListEmbedTokensRequest{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListEmbedTokensRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListEmbedTokensRequest) ProtoMessage() {}
+
+func (x *ListEmbedTokensRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListEmbedTokensRequest.ProtoReflect.Descriptor instead.
+func (*ListEmbedTokensRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ListEmbedTokensRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+type ListEmbedTokensResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EmbedTokens   []*EmbedToken          `protobuf:"bytes,1,rep,name=embed_tokens,json=embedTokens,proto3" json:"embed_tokens,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListEmbedTokensResponse) Reset() {
+	*x = ListEmbedTokensResponse{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListEmbedTokensResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListEmbedTokensResponse) ProtoMessage() {}
+
+func (x *ListEmbedTokensResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListEmbedTokensResponse.ProtoReflect.Descriptor instead.
+func (*ListEmbedTokensResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ListEmbedTokensResponse) GetEmbedTokens() []*EmbedToken {
+	if x != nil {
+		return x.EmbedTokens
+	}
+	return nil
+}
+
+type RevokeEmbedTokenRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project       string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	EmbedTokenId  string `protobuf:"bytes,2,opt,name=embed_token_id,json=embedTokenId,proto3" json:"embed_token_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeEmbedTokenRequest) Reset() {
+	*x = RevokeEmbedTokenRequest{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeEmbedTokenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeEmbedTokenRequest) ProtoMessage() {}
+
+func (x *RevokeEmbedTokenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeEmbedTokenRequest.ProtoReflect.Descriptor instead.
+func (*RevokeEmbedTokenRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *RevokeEmbedTokenRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *RevokeEmbedTokenRequest) GetEmbedTokenId() string {
+	if x != nil {
+		return x.EmbedTokenId
+	}
+	return ""
+}
+
+type RevokeEmbedTokenResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EmbedToken    *EmbedToken            `protobuf:"bytes,1,opt,name=embed_token,json=embedToken,proto3" json:"embed_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeEmbedTokenResponse) Reset() {
+	*x = RevokeEmbedTokenResponse{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeEmbedTokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeEmbedTokenResponse) ProtoMessage() {}
+
+func (x *RevokeEmbedTokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeEmbedTokenResponse.ProtoReflect.Descriptor instead.
+func (*RevokeEmbedTokenResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *RevokeEmbedTokenResponse) GetEmbedToken() *EmbedToken {
+	if x != nil {
+		return x.EmbedToken
+	}
+	return nil
+}
+
 var File_toshi_workspace_v1_projects_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/projects.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa4\x01\n" +
+	"!toshi/workspace/v1/projects.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa4\x01\n" +
 	"\aProject\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\n" +
@@ -1248,7 +1737,50 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x124\n" +
 	"\x05rules\x18\x02 \x03(\v2\x1e.toshi.workspace.v1.BranchRuleR\x05rules\"N\n" +
 	"\x16SetBranchRulesResponse\x124\n" +
-	"\x05rules\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.BranchRuleR\x05rules2\xca\a\n" +
+	"\x05rules\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.BranchRuleR\x05rules\"\xb3\x03\n" +
+	"\n" +
+	"EmbedToken\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
+	"\aproject\x18\x02 \x01(\tR\aproject\x12\x18\n" +
+	"\aorigins\x18\x03 \x03(\tR\aorigins\x129\n" +
+	"\x05state\x18\x04 \x01(\x0e2#.toshi.workspace.v1.EmbedTokenStateR\x05state\x129\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x123\n" +
+	"\aused_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x06usedAt\x12!\n" +
+	"\frecording_id\x18\b \x01(\tR\vrecordingId\x129\n" +
+	"\n" +
+	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12\x1d\n" +
+	"\n" +
+	"created_by\x18\n" +
+	" \x01(\tR\tcreatedBy\"\x87\x01\n" +
+	"\x17CreateEmbedTokenRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12\x18\n" +
+	"\aorigins\x18\x02 \x03(\tR\aorigins\x128\n" +
+	"\n" +
+	"expires_in\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\"q\n" +
+	"\x18CreateEmbedTokenResponse\x12?\n" +
+	"\vembed_token\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.EmbedTokenR\n" +
+	"embedToken\x12\x14\n" +
+	"\x05token\x18\x02 \x01(\tR\x05token\"2\n" +
+	"\x16ListEmbedTokensRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\"\\\n" +
+	"\x17ListEmbedTokensResponse\x12A\n" +
+	"\fembed_tokens\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.EmbedTokenR\vembedTokens\"Y\n" +
+	"\x17RevokeEmbedTokenRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12$\n" +
+	"\x0eembed_token_id\x18\x02 \x01(\tR\fembedTokenId\"[\n" +
+	"\x18RevokeEmbedTokenResponse\x12?\n" +
+	"\vembed_token\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.EmbedTokenR\n" +
+	"embedToken*\xac\x01\n" +
+	"\x0fEmbedTokenState\x12!\n" +
+	"\x1dEMBED_TOKEN_STATE_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18EMBED_TOKEN_STATE_ACTIVE\x10\x01\x12\x1a\n" +
+	"\x16EMBED_TOKEN_STATE_USED\x10\x02\x12\x1d\n" +
+	"\x19EMBED_TOKEN_STATE_REVOKED\x10\x03\x12\x1d\n" +
+	"\x19EMBED_TOKEN_STATE_EXPIRED\x10\x042\x94\n" +
+	"\n" +
 	"\x0eProjectService\x12a\n" +
 	"\fListProjects\x12'.toshi.workspace.v1.ListProjectsRequest\x1a(.toshi.workspace.v1.ListProjectsResponse\x12[\n" +
 	"\n" +
@@ -1259,7 +1791,10 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x11CreateEnvironment\x12,.toshi.workspace.v1.CreateEnvironmentRequest\x1a-.toshi.workspace.v1.CreateEnvironmentResponse\x12p\n" +
 	"\x11DeleteEnvironment\x12,.toshi.workspace.v1.DeleteEnvironmentRequest\x1a-.toshi.workspace.v1.DeleteEnvironmentResponse\x12j\n" +
 	"\x0fListBranchRules\x12*.toshi.workspace.v1.ListBranchRulesRequest\x1a+.toshi.workspace.v1.ListBranchRulesResponse\x12g\n" +
-	"\x0eSetBranchRules\x12).toshi.workspace.v1.SetBranchRulesRequest\x1a*.toshi.workspace.v1.SetBranchRulesResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x0eSetBranchRules\x12).toshi.workspace.v1.SetBranchRulesRequest\x1a*.toshi.workspace.v1.SetBranchRulesResponse\x12m\n" +
+	"\x10CreateEmbedToken\x12+.toshi.workspace.v1.CreateEmbedTokenRequest\x1a,.toshi.workspace.v1.CreateEmbedTokenResponse\x12j\n" +
+	"\x0fListEmbedTokens\x12*.toshi.workspace.v1.ListEmbedTokensRequest\x1a+.toshi.workspace.v1.ListEmbedTokensResponse\x12m\n" +
+	"\x10RevokeEmbedToken\x12+.toshi.workspace.v1.RevokeEmbedTokenRequest\x1a,.toshi.workspace.v1.RevokeEmbedTokenResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_projects_proto_rawDescOnce sync.Once
@@ -1273,70 +1808,95 @@ func file_toshi_workspace_v1_projects_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_projects_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_projects_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_toshi_workspace_v1_projects_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_toshi_workspace_v1_projects_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
 var file_toshi_workspace_v1_projects_proto_goTypes = []any{
-	(*Project)(nil),                   // 0: toshi.workspace.v1.Project
-	(*ProjectEnvironment)(nil),        // 1: toshi.workspace.v1.ProjectEnvironment
-	(*Repository)(nil),                // 2: toshi.workspace.v1.Repository
-	(*ListProjectsRequest)(nil),       // 3: toshi.workspace.v1.ListProjectsRequest
-	(*ListProjectsResponse)(nil),      // 4: toshi.workspace.v1.ListProjectsResponse
-	(*TokenLimit)(nil),                // 5: toshi.workspace.v1.TokenLimit
-	(*ListRepositoriesRequest)(nil),   // 6: toshi.workspace.v1.ListRepositoriesRequest
-	(*ListRepositoriesResponse)(nil),  // 7: toshi.workspace.v1.ListRepositoriesResponse
-	(*CreateProjectRequest)(nil),      // 8: toshi.workspace.v1.CreateProjectRequest
-	(*CreateProjectResponse)(nil),     // 9: toshi.workspace.v1.CreateProjectResponse
-	(*ClaimRepositoryRequest)(nil),    // 10: toshi.workspace.v1.ClaimRepositoryRequest
-	(*ClaimRepositoryResponse)(nil),   // 11: toshi.workspace.v1.ClaimRepositoryResponse
-	(*GetProjectRequest)(nil),         // 12: toshi.workspace.v1.GetProjectRequest
-	(*GetProjectResponse)(nil),        // 13: toshi.workspace.v1.GetProjectResponse
-	(*CreateEnvironmentRequest)(nil),  // 14: toshi.workspace.v1.CreateEnvironmentRequest
-	(*CreateEnvironmentResponse)(nil), // 15: toshi.workspace.v1.CreateEnvironmentResponse
-	(*DeleteEnvironmentRequest)(nil),  // 16: toshi.workspace.v1.DeleteEnvironmentRequest
-	(*DeleteEnvironmentResponse)(nil), // 17: toshi.workspace.v1.DeleteEnvironmentResponse
-	(*BranchRule)(nil),                // 18: toshi.workspace.v1.BranchRule
-	(*ListBranchRulesRequest)(nil),    // 19: toshi.workspace.v1.ListBranchRulesRequest
-	(*ListBranchRulesResponse)(nil),   // 20: toshi.workspace.v1.ListBranchRulesResponse
-	(*SetBranchRulesRequest)(nil),     // 21: toshi.workspace.v1.SetBranchRulesRequest
-	(*SetBranchRulesResponse)(nil),    // 22: toshi.workspace.v1.SetBranchRulesResponse
-	(*timestamppb.Timestamp)(nil),     // 23: google.protobuf.Timestamp
+	(EmbedTokenState)(0),              // 0: toshi.workspace.v1.EmbedTokenState
+	(*Project)(nil),                   // 1: toshi.workspace.v1.Project
+	(*ProjectEnvironment)(nil),        // 2: toshi.workspace.v1.ProjectEnvironment
+	(*Repository)(nil),                // 3: toshi.workspace.v1.Repository
+	(*ListProjectsRequest)(nil),       // 4: toshi.workspace.v1.ListProjectsRequest
+	(*ListProjectsResponse)(nil),      // 5: toshi.workspace.v1.ListProjectsResponse
+	(*TokenLimit)(nil),                // 6: toshi.workspace.v1.TokenLimit
+	(*ListRepositoriesRequest)(nil),   // 7: toshi.workspace.v1.ListRepositoriesRequest
+	(*ListRepositoriesResponse)(nil),  // 8: toshi.workspace.v1.ListRepositoriesResponse
+	(*CreateProjectRequest)(nil),      // 9: toshi.workspace.v1.CreateProjectRequest
+	(*CreateProjectResponse)(nil),     // 10: toshi.workspace.v1.CreateProjectResponse
+	(*ClaimRepositoryRequest)(nil),    // 11: toshi.workspace.v1.ClaimRepositoryRequest
+	(*ClaimRepositoryResponse)(nil),   // 12: toshi.workspace.v1.ClaimRepositoryResponse
+	(*GetProjectRequest)(nil),         // 13: toshi.workspace.v1.GetProjectRequest
+	(*GetProjectResponse)(nil),        // 14: toshi.workspace.v1.GetProjectResponse
+	(*CreateEnvironmentRequest)(nil),  // 15: toshi.workspace.v1.CreateEnvironmentRequest
+	(*CreateEnvironmentResponse)(nil), // 16: toshi.workspace.v1.CreateEnvironmentResponse
+	(*DeleteEnvironmentRequest)(nil),  // 17: toshi.workspace.v1.DeleteEnvironmentRequest
+	(*DeleteEnvironmentResponse)(nil), // 18: toshi.workspace.v1.DeleteEnvironmentResponse
+	(*BranchRule)(nil),                // 19: toshi.workspace.v1.BranchRule
+	(*ListBranchRulesRequest)(nil),    // 20: toshi.workspace.v1.ListBranchRulesRequest
+	(*ListBranchRulesResponse)(nil),   // 21: toshi.workspace.v1.ListBranchRulesResponse
+	(*SetBranchRulesRequest)(nil),     // 22: toshi.workspace.v1.SetBranchRulesRequest
+	(*SetBranchRulesResponse)(nil),    // 23: toshi.workspace.v1.SetBranchRulesResponse
+	(*EmbedToken)(nil),                // 24: toshi.workspace.v1.EmbedToken
+	(*CreateEmbedTokenRequest)(nil),   // 25: toshi.workspace.v1.CreateEmbedTokenRequest
+	(*CreateEmbedTokenResponse)(nil),  // 26: toshi.workspace.v1.CreateEmbedTokenResponse
+	(*ListEmbedTokensRequest)(nil),    // 27: toshi.workspace.v1.ListEmbedTokensRequest
+	(*ListEmbedTokensResponse)(nil),   // 28: toshi.workspace.v1.ListEmbedTokensResponse
+	(*RevokeEmbedTokenRequest)(nil),   // 29: toshi.workspace.v1.RevokeEmbedTokenRequest
+	(*RevokeEmbedTokenResponse)(nil),  // 30: toshi.workspace.v1.RevokeEmbedTokenResponse
+	(*timestamppb.Timestamp)(nil),     // 31: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),       // 32: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_projects_proto_depIdxs = []int32{
-	23, // 0: toshi.workspace.v1.Project.created_at:type_name -> google.protobuf.Timestamp
-	1,  // 1: toshi.workspace.v1.Project.environments:type_name -> toshi.workspace.v1.ProjectEnvironment
-	23, // 2: toshi.workspace.v1.Repository.claimed_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: toshi.workspace.v1.ListProjectsResponse.projects:type_name -> toshi.workspace.v1.Project
-	5,  // 4: toshi.workspace.v1.ListProjectsResponse.token_limit:type_name -> toshi.workspace.v1.TokenLimit
-	2,  // 5: toshi.workspace.v1.ListRepositoriesResponse.repositories:type_name -> toshi.workspace.v1.Repository
-	0,  // 6: toshi.workspace.v1.CreateProjectResponse.project:type_name -> toshi.workspace.v1.Project
-	2,  // 7: toshi.workspace.v1.ClaimRepositoryResponse.repository:type_name -> toshi.workspace.v1.Repository
-	0,  // 8: toshi.workspace.v1.GetProjectResponse.project:type_name -> toshi.workspace.v1.Project
-	1,  // 9: toshi.workspace.v1.CreateEnvironmentResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
-	18, // 10: toshi.workspace.v1.ListBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
-	18, // 11: toshi.workspace.v1.SetBranchRulesRequest.rules:type_name -> toshi.workspace.v1.BranchRule
-	18, // 12: toshi.workspace.v1.SetBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
-	3,  // 13: toshi.workspace.v1.ProjectService.ListProjects:input_type -> toshi.workspace.v1.ListProjectsRequest
-	12, // 14: toshi.workspace.v1.ProjectService.GetProject:input_type -> toshi.workspace.v1.GetProjectRequest
-	6,  // 15: toshi.workspace.v1.ProjectService.ListRepositories:input_type -> toshi.workspace.v1.ListRepositoriesRequest
-	8,  // 16: toshi.workspace.v1.ProjectService.CreateProject:input_type -> toshi.workspace.v1.CreateProjectRequest
-	10, // 17: toshi.workspace.v1.ProjectService.ClaimRepository:input_type -> toshi.workspace.v1.ClaimRepositoryRequest
-	14, // 18: toshi.workspace.v1.ProjectService.CreateEnvironment:input_type -> toshi.workspace.v1.CreateEnvironmentRequest
-	16, // 19: toshi.workspace.v1.ProjectService.DeleteEnvironment:input_type -> toshi.workspace.v1.DeleteEnvironmentRequest
-	19, // 20: toshi.workspace.v1.ProjectService.ListBranchRules:input_type -> toshi.workspace.v1.ListBranchRulesRequest
-	21, // 21: toshi.workspace.v1.ProjectService.SetBranchRules:input_type -> toshi.workspace.v1.SetBranchRulesRequest
-	4,  // 22: toshi.workspace.v1.ProjectService.ListProjects:output_type -> toshi.workspace.v1.ListProjectsResponse
-	13, // 23: toshi.workspace.v1.ProjectService.GetProject:output_type -> toshi.workspace.v1.GetProjectResponse
-	7,  // 24: toshi.workspace.v1.ProjectService.ListRepositories:output_type -> toshi.workspace.v1.ListRepositoriesResponse
-	9,  // 25: toshi.workspace.v1.ProjectService.CreateProject:output_type -> toshi.workspace.v1.CreateProjectResponse
-	11, // 26: toshi.workspace.v1.ProjectService.ClaimRepository:output_type -> toshi.workspace.v1.ClaimRepositoryResponse
-	15, // 27: toshi.workspace.v1.ProjectService.CreateEnvironment:output_type -> toshi.workspace.v1.CreateEnvironmentResponse
-	17, // 28: toshi.workspace.v1.ProjectService.DeleteEnvironment:output_type -> toshi.workspace.v1.DeleteEnvironmentResponse
-	20, // 29: toshi.workspace.v1.ProjectService.ListBranchRules:output_type -> toshi.workspace.v1.ListBranchRulesResponse
-	22, // 30: toshi.workspace.v1.ProjectService.SetBranchRules:output_type -> toshi.workspace.v1.SetBranchRulesResponse
-	22, // [22:31] is the sub-list for method output_type
-	13, // [13:22] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	31, // 0: toshi.workspace.v1.Project.created_at:type_name -> google.protobuf.Timestamp
+	2,  // 1: toshi.workspace.v1.Project.environments:type_name -> toshi.workspace.v1.ProjectEnvironment
+	31, // 2: toshi.workspace.v1.Repository.claimed_at:type_name -> google.protobuf.Timestamp
+	1,  // 3: toshi.workspace.v1.ListProjectsResponse.projects:type_name -> toshi.workspace.v1.Project
+	6,  // 4: toshi.workspace.v1.ListProjectsResponse.token_limit:type_name -> toshi.workspace.v1.TokenLimit
+	3,  // 5: toshi.workspace.v1.ListRepositoriesResponse.repositories:type_name -> toshi.workspace.v1.Repository
+	1,  // 6: toshi.workspace.v1.CreateProjectResponse.project:type_name -> toshi.workspace.v1.Project
+	3,  // 7: toshi.workspace.v1.ClaimRepositoryResponse.repository:type_name -> toshi.workspace.v1.Repository
+	1,  // 8: toshi.workspace.v1.GetProjectResponse.project:type_name -> toshi.workspace.v1.Project
+	2,  // 9: toshi.workspace.v1.CreateEnvironmentResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
+	19, // 10: toshi.workspace.v1.ListBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
+	19, // 11: toshi.workspace.v1.SetBranchRulesRequest.rules:type_name -> toshi.workspace.v1.BranchRule
+	19, // 12: toshi.workspace.v1.SetBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
+	0,  // 13: toshi.workspace.v1.EmbedToken.state:type_name -> toshi.workspace.v1.EmbedTokenState
+	31, // 14: toshi.workspace.v1.EmbedToken.created_at:type_name -> google.protobuf.Timestamp
+	31, // 15: toshi.workspace.v1.EmbedToken.expires_at:type_name -> google.protobuf.Timestamp
+	31, // 16: toshi.workspace.v1.EmbedToken.used_at:type_name -> google.protobuf.Timestamp
+	31, // 17: toshi.workspace.v1.EmbedToken.revoked_at:type_name -> google.protobuf.Timestamp
+	32, // 18: toshi.workspace.v1.CreateEmbedTokenRequest.expires_in:type_name -> google.protobuf.Duration
+	24, // 19: toshi.workspace.v1.CreateEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
+	24, // 20: toshi.workspace.v1.ListEmbedTokensResponse.embed_tokens:type_name -> toshi.workspace.v1.EmbedToken
+	24, // 21: toshi.workspace.v1.RevokeEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
+	4,  // 22: toshi.workspace.v1.ProjectService.ListProjects:input_type -> toshi.workspace.v1.ListProjectsRequest
+	13, // 23: toshi.workspace.v1.ProjectService.GetProject:input_type -> toshi.workspace.v1.GetProjectRequest
+	7,  // 24: toshi.workspace.v1.ProjectService.ListRepositories:input_type -> toshi.workspace.v1.ListRepositoriesRequest
+	9,  // 25: toshi.workspace.v1.ProjectService.CreateProject:input_type -> toshi.workspace.v1.CreateProjectRequest
+	11, // 26: toshi.workspace.v1.ProjectService.ClaimRepository:input_type -> toshi.workspace.v1.ClaimRepositoryRequest
+	15, // 27: toshi.workspace.v1.ProjectService.CreateEnvironment:input_type -> toshi.workspace.v1.CreateEnvironmentRequest
+	17, // 28: toshi.workspace.v1.ProjectService.DeleteEnvironment:input_type -> toshi.workspace.v1.DeleteEnvironmentRequest
+	20, // 29: toshi.workspace.v1.ProjectService.ListBranchRules:input_type -> toshi.workspace.v1.ListBranchRulesRequest
+	22, // 30: toshi.workspace.v1.ProjectService.SetBranchRules:input_type -> toshi.workspace.v1.SetBranchRulesRequest
+	25, // 31: toshi.workspace.v1.ProjectService.CreateEmbedToken:input_type -> toshi.workspace.v1.CreateEmbedTokenRequest
+	27, // 32: toshi.workspace.v1.ProjectService.ListEmbedTokens:input_type -> toshi.workspace.v1.ListEmbedTokensRequest
+	29, // 33: toshi.workspace.v1.ProjectService.RevokeEmbedToken:input_type -> toshi.workspace.v1.RevokeEmbedTokenRequest
+	5,  // 34: toshi.workspace.v1.ProjectService.ListProjects:output_type -> toshi.workspace.v1.ListProjectsResponse
+	14, // 35: toshi.workspace.v1.ProjectService.GetProject:output_type -> toshi.workspace.v1.GetProjectResponse
+	8,  // 36: toshi.workspace.v1.ProjectService.ListRepositories:output_type -> toshi.workspace.v1.ListRepositoriesResponse
+	10, // 37: toshi.workspace.v1.ProjectService.CreateProject:output_type -> toshi.workspace.v1.CreateProjectResponse
+	12, // 38: toshi.workspace.v1.ProjectService.ClaimRepository:output_type -> toshi.workspace.v1.ClaimRepositoryResponse
+	16, // 39: toshi.workspace.v1.ProjectService.CreateEnvironment:output_type -> toshi.workspace.v1.CreateEnvironmentResponse
+	18, // 40: toshi.workspace.v1.ProjectService.DeleteEnvironment:output_type -> toshi.workspace.v1.DeleteEnvironmentResponse
+	21, // 41: toshi.workspace.v1.ProjectService.ListBranchRules:output_type -> toshi.workspace.v1.ListBranchRulesResponse
+	23, // 42: toshi.workspace.v1.ProjectService.SetBranchRules:output_type -> toshi.workspace.v1.SetBranchRulesResponse
+	26, // 43: toshi.workspace.v1.ProjectService.CreateEmbedToken:output_type -> toshi.workspace.v1.CreateEmbedTokenResponse
+	28, // 44: toshi.workspace.v1.ProjectService.ListEmbedTokens:output_type -> toshi.workspace.v1.ListEmbedTokensResponse
+	30, // 45: toshi.workspace.v1.ProjectService.RevokeEmbedToken:output_type -> toshi.workspace.v1.RevokeEmbedTokenResponse
+	34, // [34:46] is the sub-list for method output_type
+	22, // [22:34] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_projects_proto_init() }
@@ -1349,13 +1909,14 @@ func file_toshi_workspace_v1_projects_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_projects_proto_rawDesc), len(file_toshi_workspace_v1_projects_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   23,
+			NumEnums:      1,
+			NumMessages:   30,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_toshi_workspace_v1_projects_proto_goTypes,
 		DependencyIndexes: file_toshi_workspace_v1_projects_proto_depIdxs,
+		EnumInfos:         file_toshi_workspace_v1_projects_proto_enumTypes,
 		MessageInfos:      file_toshi_workspace_v1_projects_proto_msgTypes,
 	}.Build()
 	File_toshi_workspace_v1_projects_proto = out.File

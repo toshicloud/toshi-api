@@ -60,6 +60,15 @@ const (
 	// ProjectServiceSetBranchRulesProcedure is the fully-qualified name of the ProjectService's
 	// SetBranchRules RPC.
 	ProjectServiceSetBranchRulesProcedure = "/toshi.workspace.v1.ProjectService/SetBranchRules"
+	// ProjectServiceCreateEmbedTokenProcedure is the fully-qualified name of the ProjectService's
+	// CreateEmbedToken RPC.
+	ProjectServiceCreateEmbedTokenProcedure = "/toshi.workspace.v1.ProjectService/CreateEmbedToken"
+	// ProjectServiceListEmbedTokensProcedure is the fully-qualified name of the ProjectService's
+	// ListEmbedTokens RPC.
+	ProjectServiceListEmbedTokensProcedure = "/toshi.workspace.v1.ProjectService/ListEmbedTokens"
+	// ProjectServiceRevokeEmbedTokenProcedure is the fully-qualified name of the ProjectService's
+	// RevokeEmbedToken RPC.
+	ProjectServiceRevokeEmbedTokenProcedure = "/toshi.workspace.v1.ProjectService/RevokeEmbedToken"
 )
 
 // ProjectServiceClient is a client for the toshi.workspace.v1.ProjectService service.
@@ -128,6 +137,19 @@ type ProjectServiceClient interface {
 	// project's rules, and a token limited to an environment is
 	// PERMISSION_DENIED.
 	SetBranchRules(context.Context, *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error)
+	// CreateEmbedToken mints an embed token for a project: a credential for
+	// a web page on one of the token's origins, which spends it once to
+	// fetch one of the project's ready recordings. It expires in minutes. A
+	// project the workspace does not have is NOT_FOUND. A token limited to a
+	// project mints only for that project, and a token limited to an
+	// environment is PERMISSION_DENIED.
+	CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error)
+	// ListEmbedTokens returns a project's embed tokens, oldest first, without
+	// the tokens themselves.
+	ListEmbedTokens(context.Context, *connect.Request[workspacev1.ListEmbedTokensRequest]) (*connect.Response[workspacev1.ListEmbedTokensResponse], error)
+	// RevokeEmbedToken refuses an embed token before it expires. A token
+	// already revoked is returned as it is.
+	RevokeEmbedToken(context.Context, *connect.Request[workspacev1.RevokeEmbedTokenRequest]) (*connect.Response[workspacev1.RevokeEmbedTokenResponse], error)
 }
 
 // NewProjectServiceClient constructs a client for the toshi.workspace.v1.ProjectService service. By
@@ -195,6 +217,24 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("SetBranchRules")),
 			connect.WithClientOptions(opts...),
 		),
+		createEmbedToken: connect.NewClient[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse](
+			httpClient,
+			baseURL+ProjectServiceCreateEmbedTokenProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("CreateEmbedToken")),
+			connect.WithClientOptions(opts...),
+		),
+		listEmbedTokens: connect.NewClient[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse](
+			httpClient,
+			baseURL+ProjectServiceListEmbedTokensProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("ListEmbedTokens")),
+			connect.WithClientOptions(opts...),
+		),
+		revokeEmbedToken: connect.NewClient[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse](
+			httpClient,
+			baseURL+ProjectServiceRevokeEmbedTokenProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("RevokeEmbedToken")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -209,6 +249,9 @@ type projectServiceClient struct {
 	deleteEnvironment *connect.Client[workspacev1.DeleteEnvironmentRequest, workspacev1.DeleteEnvironmentResponse]
 	listBranchRules   *connect.Client[workspacev1.ListBranchRulesRequest, workspacev1.ListBranchRulesResponse]
 	setBranchRules    *connect.Client[workspacev1.SetBranchRulesRequest, workspacev1.SetBranchRulesResponse]
+	createEmbedToken  *connect.Client[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse]
+	listEmbedTokens   *connect.Client[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse]
+	revokeEmbedToken  *connect.Client[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse]
 }
 
 // ListProjects calls toshi.workspace.v1.ProjectService.ListProjects.
@@ -254,6 +297,21 @@ func (c *projectServiceClient) ListBranchRules(ctx context.Context, req *connect
 // SetBranchRules calls toshi.workspace.v1.ProjectService.SetBranchRules.
 func (c *projectServiceClient) SetBranchRules(ctx context.Context, req *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error) {
 	return c.setBranchRules.CallUnary(ctx, req)
+}
+
+// CreateEmbedToken calls toshi.workspace.v1.ProjectService.CreateEmbedToken.
+func (c *projectServiceClient) CreateEmbedToken(ctx context.Context, req *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error) {
+	return c.createEmbedToken.CallUnary(ctx, req)
+}
+
+// ListEmbedTokens calls toshi.workspace.v1.ProjectService.ListEmbedTokens.
+func (c *projectServiceClient) ListEmbedTokens(ctx context.Context, req *connect.Request[workspacev1.ListEmbedTokensRequest]) (*connect.Response[workspacev1.ListEmbedTokensResponse], error) {
+	return c.listEmbedTokens.CallUnary(ctx, req)
+}
+
+// RevokeEmbedToken calls toshi.workspace.v1.ProjectService.RevokeEmbedToken.
+func (c *projectServiceClient) RevokeEmbedToken(ctx context.Context, req *connect.Request[workspacev1.RevokeEmbedTokenRequest]) (*connect.Response[workspacev1.RevokeEmbedTokenResponse], error) {
+	return c.revokeEmbedToken.CallUnary(ctx, req)
 }
 
 // ProjectServiceHandler is an implementation of the toshi.workspace.v1.ProjectService service.
@@ -322,6 +380,19 @@ type ProjectServiceHandler interface {
 	// project's rules, and a token limited to an environment is
 	// PERMISSION_DENIED.
 	SetBranchRules(context.Context, *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error)
+	// CreateEmbedToken mints an embed token for a project: a credential for
+	// a web page on one of the token's origins, which spends it once to
+	// fetch one of the project's ready recordings. It expires in minutes. A
+	// project the workspace does not have is NOT_FOUND. A token limited to a
+	// project mints only for that project, and a token limited to an
+	// environment is PERMISSION_DENIED.
+	CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error)
+	// ListEmbedTokens returns a project's embed tokens, oldest first, without
+	// the tokens themselves.
+	ListEmbedTokens(context.Context, *connect.Request[workspacev1.ListEmbedTokensRequest]) (*connect.Response[workspacev1.ListEmbedTokensResponse], error)
+	// RevokeEmbedToken refuses an embed token before it expires. A token
+	// already revoked is returned as it is.
+	RevokeEmbedToken(context.Context, *connect.Request[workspacev1.RevokeEmbedTokenRequest]) (*connect.Response[workspacev1.RevokeEmbedTokenResponse], error)
 }
 
 // NewProjectServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -385,6 +456,24 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("SetBranchRules")),
 		connect.WithHandlerOptions(opts...),
 	)
+	projectServiceCreateEmbedTokenHandler := connect.NewUnaryHandler(
+		ProjectServiceCreateEmbedTokenProcedure,
+		svc.CreateEmbedToken,
+		connect.WithSchema(projectServiceMethods.ByName("CreateEmbedToken")),
+		connect.WithHandlerOptions(opts...),
+	)
+	projectServiceListEmbedTokensHandler := connect.NewUnaryHandler(
+		ProjectServiceListEmbedTokensProcedure,
+		svc.ListEmbedTokens,
+		connect.WithSchema(projectServiceMethods.ByName("ListEmbedTokens")),
+		connect.WithHandlerOptions(opts...),
+	)
+	projectServiceRevokeEmbedTokenHandler := connect.NewUnaryHandler(
+		ProjectServiceRevokeEmbedTokenProcedure,
+		svc.RevokeEmbedToken,
+		connect.WithSchema(projectServiceMethods.ByName("RevokeEmbedToken")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.ProjectService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ProjectServiceListProjectsProcedure:
@@ -405,6 +494,12 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 			projectServiceListBranchRulesHandler.ServeHTTP(w, r)
 		case ProjectServiceSetBranchRulesProcedure:
 			projectServiceSetBranchRulesHandler.ServeHTTP(w, r)
+		case ProjectServiceCreateEmbedTokenProcedure:
+			projectServiceCreateEmbedTokenHandler.ServeHTTP(w, r)
+		case ProjectServiceListEmbedTokensProcedure:
+			projectServiceListEmbedTokensHandler.ServeHTTP(w, r)
+		case ProjectServiceRevokeEmbedTokenProcedure:
+			projectServiceRevokeEmbedTokenHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -448,4 +543,16 @@ func (UnimplementedProjectServiceHandler) ListBranchRules(context.Context, *conn
 
 func (UnimplementedProjectServiceHandler) SetBranchRules(context.Context, *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetBranchRules is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.CreateEmbedToken is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) ListEmbedTokens(context.Context, *connect.Request[workspacev1.ListEmbedTokensRequest]) (*connect.Response[workspacev1.ListEmbedTokensResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.ListEmbedTokens is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) RevokeEmbedToken(context.Context, *connect.Request[workspacev1.RevokeEmbedTokenRequest]) (*connect.Response[workspacev1.RevokeEmbedTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.RevokeEmbedToken is not implemented"))
 }
