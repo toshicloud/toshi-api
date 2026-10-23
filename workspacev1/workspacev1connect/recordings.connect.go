@@ -39,6 +39,15 @@ const (
 	// RecordingServiceGetRecordingProcedure is the fully-qualified name of the RecordingService's
 	// GetRecording RPC.
 	RecordingServiceGetRecordingProcedure = "/toshi.workspace.v1.RecordingService/GetRecording"
+	// RecordingServiceCreateRecordingShareLinkProcedure is the fully-qualified name of the
+	// RecordingService's CreateRecordingShareLink RPC.
+	RecordingServiceCreateRecordingShareLinkProcedure = "/toshi.workspace.v1.RecordingService/CreateRecordingShareLink"
+	// RecordingServiceListRecordingShareLinksProcedure is the fully-qualified name of the
+	// RecordingService's ListRecordingShareLinks RPC.
+	RecordingServiceListRecordingShareLinksProcedure = "/toshi.workspace.v1.RecordingService/ListRecordingShareLinks"
+	// RecordingServiceRevokeRecordingShareLinkProcedure is the fully-qualified name of the
+	// RecordingService's RevokeRecordingShareLink RPC.
+	RecordingServiceRevokeRecordingShareLinkProcedure = "/toshi.workspace.v1.RecordingService/RevokeRecordingShareLink"
 )
 
 // RecordingServiceClient is a client for the toshi.workspace.v1.RecordingService service.
@@ -52,6 +61,19 @@ type RecordingServiceClient interface {
 	// for its object that expires. A ready recording whose object's
 	// retention has deleted it is FAILED_PRECONDITION.
 	GetRecording(context.Context, *connect.Request[workspacev1.GetRecordingRequest]) (*connect.Response[workspacev1.GetRecordingResponse], error)
+	// CreateRecordingShareLink mints a share link for a ready recording: a
+	// URL that fetches its object without a Toshi sign-in until the link
+	// expires, is revoked or has used its byte cap. Each fetch through it
+	// counts the object's whole size against the cap, and each fetch and
+	// each refusal is in the audit. A recording that is not ready, or whose
+	// object's retention has deleted it, is FAILED_PRECONDITION.
+	CreateRecordingShareLink(context.Context, *connect.Request[workspacev1.CreateRecordingShareLinkRequest]) (*connect.Response[workspacev1.CreateRecordingShareLinkResponse], error)
+	// ListRecordingShareLinks returns a recording's share links, oldest
+	// first, without the links themselves.
+	ListRecordingShareLinks(context.Context, *connect.Request[workspacev1.ListRecordingShareLinksRequest]) (*connect.Response[workspacev1.ListRecordingShareLinksResponse], error)
+	// RevokeRecordingShareLink ends a share link before it expires. A link
+	// already revoked is returned as it is.
+	RevokeRecordingShareLink(context.Context, *connect.Request[workspacev1.RevokeRecordingShareLinkRequest]) (*connect.Response[workspacev1.RevokeRecordingShareLinkResponse], error)
 }
 
 // NewRecordingServiceClient constructs a client for the toshi.workspace.v1.RecordingService
@@ -77,13 +99,34 @@ func NewRecordingServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(recordingServiceMethods.ByName("GetRecording")),
 			connect.WithClientOptions(opts...),
 		),
+		createRecordingShareLink: connect.NewClient[workspacev1.CreateRecordingShareLinkRequest, workspacev1.CreateRecordingShareLinkResponse](
+			httpClient,
+			baseURL+RecordingServiceCreateRecordingShareLinkProcedure,
+			connect.WithSchema(recordingServiceMethods.ByName("CreateRecordingShareLink")),
+			connect.WithClientOptions(opts...),
+		),
+		listRecordingShareLinks: connect.NewClient[workspacev1.ListRecordingShareLinksRequest, workspacev1.ListRecordingShareLinksResponse](
+			httpClient,
+			baseURL+RecordingServiceListRecordingShareLinksProcedure,
+			connect.WithSchema(recordingServiceMethods.ByName("ListRecordingShareLinks")),
+			connect.WithClientOptions(opts...),
+		),
+		revokeRecordingShareLink: connect.NewClient[workspacev1.RevokeRecordingShareLinkRequest, workspacev1.RevokeRecordingShareLinkResponse](
+			httpClient,
+			baseURL+RecordingServiceRevokeRecordingShareLinkProcedure,
+			connect.WithSchema(recordingServiceMethods.ByName("RevokeRecordingShareLink")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // recordingServiceClient implements RecordingServiceClient.
 type recordingServiceClient struct {
-	listRecordings *connect.Client[workspacev1.ListRecordingsRequest, workspacev1.ListRecordingsResponse]
-	getRecording   *connect.Client[workspacev1.GetRecordingRequest, workspacev1.GetRecordingResponse]
+	listRecordings           *connect.Client[workspacev1.ListRecordingsRequest, workspacev1.ListRecordingsResponse]
+	getRecording             *connect.Client[workspacev1.GetRecordingRequest, workspacev1.GetRecordingResponse]
+	createRecordingShareLink *connect.Client[workspacev1.CreateRecordingShareLinkRequest, workspacev1.CreateRecordingShareLinkResponse]
+	listRecordingShareLinks  *connect.Client[workspacev1.ListRecordingShareLinksRequest, workspacev1.ListRecordingShareLinksResponse]
+	revokeRecordingShareLink *connect.Client[workspacev1.RevokeRecordingShareLinkRequest, workspacev1.RevokeRecordingShareLinkResponse]
 }
 
 // ListRecordings calls toshi.workspace.v1.RecordingService.ListRecordings.
@@ -94,6 +137,21 @@ func (c *recordingServiceClient) ListRecordings(ctx context.Context, req *connec
 // GetRecording calls toshi.workspace.v1.RecordingService.GetRecording.
 func (c *recordingServiceClient) GetRecording(ctx context.Context, req *connect.Request[workspacev1.GetRecordingRequest]) (*connect.Response[workspacev1.GetRecordingResponse], error) {
 	return c.getRecording.CallUnary(ctx, req)
+}
+
+// CreateRecordingShareLink calls toshi.workspace.v1.RecordingService.CreateRecordingShareLink.
+func (c *recordingServiceClient) CreateRecordingShareLink(ctx context.Context, req *connect.Request[workspacev1.CreateRecordingShareLinkRequest]) (*connect.Response[workspacev1.CreateRecordingShareLinkResponse], error) {
+	return c.createRecordingShareLink.CallUnary(ctx, req)
+}
+
+// ListRecordingShareLinks calls toshi.workspace.v1.RecordingService.ListRecordingShareLinks.
+func (c *recordingServiceClient) ListRecordingShareLinks(ctx context.Context, req *connect.Request[workspacev1.ListRecordingShareLinksRequest]) (*connect.Response[workspacev1.ListRecordingShareLinksResponse], error) {
+	return c.listRecordingShareLinks.CallUnary(ctx, req)
+}
+
+// RevokeRecordingShareLink calls toshi.workspace.v1.RecordingService.RevokeRecordingShareLink.
+func (c *recordingServiceClient) RevokeRecordingShareLink(ctx context.Context, req *connect.Request[workspacev1.RevokeRecordingShareLinkRequest]) (*connect.Response[workspacev1.RevokeRecordingShareLinkResponse], error) {
+	return c.revokeRecordingShareLink.CallUnary(ctx, req)
 }
 
 // RecordingServiceHandler is an implementation of the toshi.workspace.v1.RecordingService service.
@@ -107,6 +165,19 @@ type RecordingServiceHandler interface {
 	// for its object that expires. A ready recording whose object's
 	// retention has deleted it is FAILED_PRECONDITION.
 	GetRecording(context.Context, *connect.Request[workspacev1.GetRecordingRequest]) (*connect.Response[workspacev1.GetRecordingResponse], error)
+	// CreateRecordingShareLink mints a share link for a ready recording: a
+	// URL that fetches its object without a Toshi sign-in until the link
+	// expires, is revoked or has used its byte cap. Each fetch through it
+	// counts the object's whole size against the cap, and each fetch and
+	// each refusal is in the audit. A recording that is not ready, or whose
+	// object's retention has deleted it, is FAILED_PRECONDITION.
+	CreateRecordingShareLink(context.Context, *connect.Request[workspacev1.CreateRecordingShareLinkRequest]) (*connect.Response[workspacev1.CreateRecordingShareLinkResponse], error)
+	// ListRecordingShareLinks returns a recording's share links, oldest
+	// first, without the links themselves.
+	ListRecordingShareLinks(context.Context, *connect.Request[workspacev1.ListRecordingShareLinksRequest]) (*connect.Response[workspacev1.ListRecordingShareLinksResponse], error)
+	// RevokeRecordingShareLink ends a share link before it expires. A link
+	// already revoked is returned as it is.
+	RevokeRecordingShareLink(context.Context, *connect.Request[workspacev1.RevokeRecordingShareLinkRequest]) (*connect.Response[workspacev1.RevokeRecordingShareLinkResponse], error)
 }
 
 // NewRecordingServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -128,12 +199,36 @@ func NewRecordingServiceHandler(svc RecordingServiceHandler, opts ...connect.Han
 		connect.WithSchema(recordingServiceMethods.ByName("GetRecording")),
 		connect.WithHandlerOptions(opts...),
 	)
+	recordingServiceCreateRecordingShareLinkHandler := connect.NewUnaryHandler(
+		RecordingServiceCreateRecordingShareLinkProcedure,
+		svc.CreateRecordingShareLink,
+		connect.WithSchema(recordingServiceMethods.ByName("CreateRecordingShareLink")),
+		connect.WithHandlerOptions(opts...),
+	)
+	recordingServiceListRecordingShareLinksHandler := connect.NewUnaryHandler(
+		RecordingServiceListRecordingShareLinksProcedure,
+		svc.ListRecordingShareLinks,
+		connect.WithSchema(recordingServiceMethods.ByName("ListRecordingShareLinks")),
+		connect.WithHandlerOptions(opts...),
+	)
+	recordingServiceRevokeRecordingShareLinkHandler := connect.NewUnaryHandler(
+		RecordingServiceRevokeRecordingShareLinkProcedure,
+		svc.RevokeRecordingShareLink,
+		connect.WithSchema(recordingServiceMethods.ByName("RevokeRecordingShareLink")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.RecordingService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case RecordingServiceListRecordingsProcedure:
 			recordingServiceListRecordingsHandler.ServeHTTP(w, r)
 		case RecordingServiceGetRecordingProcedure:
 			recordingServiceGetRecordingHandler.ServeHTTP(w, r)
+		case RecordingServiceCreateRecordingShareLinkProcedure:
+			recordingServiceCreateRecordingShareLinkHandler.ServeHTTP(w, r)
+		case RecordingServiceListRecordingShareLinksProcedure:
+			recordingServiceListRecordingShareLinksHandler.ServeHTTP(w, r)
+		case RecordingServiceRevokeRecordingShareLinkProcedure:
+			recordingServiceRevokeRecordingShareLinkHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -149,4 +244,16 @@ func (UnimplementedRecordingServiceHandler) ListRecordings(context.Context, *con
 
 func (UnimplementedRecordingServiceHandler) GetRecording(context.Context, *connect.Request[workspacev1.GetRecordingRequest]) (*connect.Response[workspacev1.GetRecordingResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.RecordingService.GetRecording is not implemented"))
+}
+
+func (UnimplementedRecordingServiceHandler) CreateRecordingShareLink(context.Context, *connect.Request[workspacev1.CreateRecordingShareLinkRequest]) (*connect.Response[workspacev1.CreateRecordingShareLinkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.RecordingService.CreateRecordingShareLink is not implemented"))
+}
+
+func (UnimplementedRecordingServiceHandler) ListRecordingShareLinks(context.Context, *connect.Request[workspacev1.ListRecordingShareLinksRequest]) (*connect.Response[workspacev1.ListRecordingShareLinksResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.RecordingService.ListRecordingShareLinks is not implemented"))
+}
+
+func (UnimplementedRecordingServiceHandler) RevokeRecordingShareLink(context.Context, *connect.Request[workspacev1.RevokeRecordingShareLinkRequest]) (*connect.Response[workspacev1.RevokeRecordingShareLinkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.RecordingService.RevokeRecordingShareLink is not implemented"))
 }

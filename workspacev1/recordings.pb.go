@@ -146,6 +146,65 @@ func (RecordingKind) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{1}
 }
 
+// RecordingShareLinkState is where a recording's share link is in its
+// life.
+type RecordingShareLinkState int32
+
+const (
+	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_UNSPECIFIED RecordingShareLinkState = 0
+	// It fetches the recording's object.
+	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_ACTIVE  RecordingShareLinkState = 1
+	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_REVOKED RecordingShareLinkState = 2
+	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_EXPIRED RecordingShareLinkState = 3
+	// What is left of its byte cap is less than the object's size.
+	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_ENDED RecordingShareLinkState = 4
+)
+
+// Enum value maps for RecordingShareLinkState.
+var (
+	RecordingShareLinkState_name = map[int32]string{
+		0: "RECORDING_SHARE_LINK_STATE_UNSPECIFIED",
+		1: "RECORDING_SHARE_LINK_STATE_ACTIVE",
+		2: "RECORDING_SHARE_LINK_STATE_REVOKED",
+		3: "RECORDING_SHARE_LINK_STATE_EXPIRED",
+		4: "RECORDING_SHARE_LINK_STATE_ENDED",
+	}
+	RecordingShareLinkState_value = map[string]int32{
+		"RECORDING_SHARE_LINK_STATE_UNSPECIFIED": 0,
+		"RECORDING_SHARE_LINK_STATE_ACTIVE":      1,
+		"RECORDING_SHARE_LINK_STATE_REVOKED":     2,
+		"RECORDING_SHARE_LINK_STATE_EXPIRED":     3,
+		"RECORDING_SHARE_LINK_STATE_ENDED":       4,
+	}
+)
+
+func (x RecordingShareLinkState) Enum() *RecordingShareLinkState {
+	p := new(RecordingShareLinkState)
+	*p = x
+	return p
+}
+
+func (x RecordingShareLinkState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RecordingShareLinkState) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_recordings_proto_enumTypes[2].Descriptor()
+}
+
+func (RecordingShareLinkState) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_recordings_proto_enumTypes[2]
+}
+
+func (x RecordingShareLinkState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RecordingShareLinkState.Descriptor instead.
+func (RecordingShareLinkState) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{2}
+}
+
 // Recording is one recording of a run attempt: its screenshot strip or
 // video, or a video or trace its test framework wrote. Its record, never a key or a
 // URL.
@@ -603,6 +662,426 @@ func (x *GetRecordingResponse) GetExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// RecordingShareLink is one share link of a recording, without the link
+// itself.
+type RecordingShareLink struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Assigned by the server.
+	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	RecordingId string `protobuf:"bytes,2,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	// The recording's kind.
+	Kind      RecordingKind           `protobuf:"varint,3,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingKind" json:"kind,omitempty"`
+	State     RecordingShareLinkState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.RecordingShareLinkState" json:"state,omitempty"`
+	CreatedAt *timestamppb.Timestamp  `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	ExpiresAt *timestamppb.Timestamp  `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// The most bytes its fetches may take.
+	MaxBytes int64 `protobuf:"varint,7,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
+	// The bytes its fetches have taken so far: the object's size once per
+	// fetch.
+	UsedBytes int64 `protobuf:"varint,8,opt,name=used_bytes,json=usedBytes,proto3" json:"used_bytes,omitempty"`
+	// Unset unless it was revoked.
+	RevokedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
+	// Who minted it: a person's sign-in or an API token, as in the audit.
+	CreatedBy     string `protobuf:"bytes,10,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordingShareLink) Reset() {
+	*x = RecordingShareLink{}
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordingShareLink) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordingShareLink) ProtoMessage() {}
+
+func (x *RecordingShareLink) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordingShareLink.ProtoReflect.Descriptor instead.
+func (*RecordingShareLink) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RecordingShareLink) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *RecordingShareLink) GetRecordingId() string {
+	if x != nil {
+		return x.RecordingId
+	}
+	return ""
+}
+
+func (x *RecordingShareLink) GetKind() RecordingKind {
+	if x != nil {
+		return x.Kind
+	}
+	return RecordingKind_RECORDING_KIND_UNSPECIFIED
+}
+
+func (x *RecordingShareLink) GetState() RecordingShareLinkState {
+	if x != nil {
+		return x.State
+	}
+	return RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_UNSPECIFIED
+}
+
+func (x *RecordingShareLink) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *RecordingShareLink) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
+func (x *RecordingShareLink) GetMaxBytes() int64 {
+	if x != nil {
+		return x.MaxBytes
+	}
+	return 0
+}
+
+func (x *RecordingShareLink) GetUsedBytes() int64 {
+	if x != nil {
+		return x.UsedBytes
+	}
+	return 0
+}
+
+func (x *RecordingShareLink) GetRevokedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RevokedAt
+	}
+	return nil
+}
+
+func (x *RecordingShareLink) GetCreatedBy() string {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return ""
+}
+
+type CreateRecordingShareLinkRequest struct {
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	RecordingId string                 `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	// How long the link stays valid; unset is the server's default, and
+	// more than its maximum is INVALID_ARGUMENT.
+	ExpiresIn *durationpb.Duration `protobuf:"bytes,2,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
+	// The most bytes its fetches may take; 0 is the server's default, and
+	// more than its maximum, or less than the recording's object, is
+	// INVALID_ARGUMENT.
+	MaxBytes      int64 `protobuf:"varint,3,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRecordingShareLinkRequest) Reset() {
+	*x = CreateRecordingShareLinkRequest{}
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRecordingShareLinkRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRecordingShareLinkRequest) ProtoMessage() {}
+
+func (x *CreateRecordingShareLinkRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRecordingShareLinkRequest.ProtoReflect.Descriptor instead.
+func (*CreateRecordingShareLinkRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CreateRecordingShareLinkRequest) GetRecordingId() string {
+	if x != nil {
+		return x.RecordingId
+	}
+	return ""
+}
+
+func (x *CreateRecordingShareLinkRequest) GetExpiresIn() *durationpb.Duration {
+	if x != nil {
+		return x.ExpiresIn
+	}
+	return nil
+}
+
+func (x *CreateRecordingShareLinkRequest) GetMaxBytes() int64 {
+	if x != nil {
+		return x.MaxBytes
+	}
+	return 0
+}
+
+type CreateRecordingShareLinkResponse struct {
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	ShareLink *RecordingShareLink    `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
+	// The URL to give the viewer: a GET of it redirects to a signed URL for
+	// the recording's object. It is in this answer only.
+	Url           string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRecordingShareLinkResponse) Reset() {
+	*x = CreateRecordingShareLinkResponse{}
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRecordingShareLinkResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRecordingShareLinkResponse) ProtoMessage() {}
+
+func (x *CreateRecordingShareLinkResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRecordingShareLinkResponse.ProtoReflect.Descriptor instead.
+func (*CreateRecordingShareLinkResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *CreateRecordingShareLinkResponse) GetShareLink() *RecordingShareLink {
+	if x != nil {
+		return x.ShareLink
+	}
+	return nil
+}
+
+func (x *CreateRecordingShareLinkResponse) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+type ListRecordingShareLinksRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RecordingId   string                 `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRecordingShareLinksRequest) Reset() {
+	*x = ListRecordingShareLinksRequest{}
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRecordingShareLinksRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRecordingShareLinksRequest) ProtoMessage() {}
+
+func (x *ListRecordingShareLinksRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRecordingShareLinksRequest.ProtoReflect.Descriptor instead.
+func (*ListRecordingShareLinksRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ListRecordingShareLinksRequest) GetRecordingId() string {
+	if x != nil {
+		return x.RecordingId
+	}
+	return ""
+}
+
+type ListRecordingShareLinksResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ShareLinks    []*RecordingShareLink  `protobuf:"bytes,1,rep,name=share_links,json=shareLinks,proto3" json:"share_links,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRecordingShareLinksResponse) Reset() {
+	*x = ListRecordingShareLinksResponse{}
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRecordingShareLinksResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRecordingShareLinksResponse) ProtoMessage() {}
+
+func (x *ListRecordingShareLinksResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRecordingShareLinksResponse.ProtoReflect.Descriptor instead.
+func (*ListRecordingShareLinksResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ListRecordingShareLinksResponse) GetShareLinks() []*RecordingShareLink {
+	if x != nil {
+		return x.ShareLinks
+	}
+	return nil
+}
+
+type RevokeRecordingShareLinkRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ShareLinkId   string                 `protobuf:"bytes,1,opt,name=share_link_id,json=shareLinkId,proto3" json:"share_link_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeRecordingShareLinkRequest) Reset() {
+	*x = RevokeRecordingShareLinkRequest{}
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeRecordingShareLinkRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeRecordingShareLinkRequest) ProtoMessage() {}
+
+func (x *RevokeRecordingShareLinkRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeRecordingShareLinkRequest.ProtoReflect.Descriptor instead.
+func (*RevokeRecordingShareLinkRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *RevokeRecordingShareLinkRequest) GetShareLinkId() string {
+	if x != nil {
+		return x.ShareLinkId
+	}
+	return ""
+}
+
+type RevokeRecordingShareLinkResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ShareLink     *RecordingShareLink    `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeRecordingShareLinkResponse) Reset() {
+	*x = RevokeRecordingShareLinkResponse{}
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeRecordingShareLinkResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeRecordingShareLinkResponse) ProtoMessage() {}
+
+func (x *RevokeRecordingShareLinkResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeRecordingShareLinkResponse.ProtoReflect.Descriptor instead.
+func (*RevokeRecordingShareLinkResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *RevokeRecordingShareLinkResponse) GetShareLink() *RecordingShareLink {
+	if x != nil {
+		return x.ShareLink
+	}
+	return nil
+}
+
 var File_toshi_workspace_v1_recordings_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
@@ -651,7 +1130,43 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\trecording\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.RecordingR\trecording\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x129\n" +
 	"\n" +
-	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt*\xa6\x01\n" +
+	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xcd\x03\n" +
+	"\x12RecordingShareLink\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
+	"\frecording_id\x18\x02 \x01(\tR\vrecordingId\x125\n" +
+	"\x04kind\x18\x03 \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\x04kind\x12A\n" +
+	"\x05state\x18\x04 \x01(\x0e2+.toshi.workspace.v1.RecordingShareLinkStateR\x05state\x129\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1b\n" +
+	"\tmax_bytes\x18\a \x01(\x03R\bmaxBytes\x12\x1d\n" +
+	"\n" +
+	"used_bytes\x18\b \x01(\x03R\tusedBytes\x129\n" +
+	"\n" +
+	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12\x1d\n" +
+	"\n" +
+	"created_by\x18\n" +
+	" \x01(\tR\tcreatedBy\"\x9b\x01\n" +
+	"\x1fCreateRecordingShareLinkRequest\x12!\n" +
+	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x128\n" +
+	"\n" +
+	"expires_in\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12\x1b\n" +
+	"\tmax_bytes\x18\x03 \x01(\x03R\bmaxBytes\"{\n" +
+	" CreateRecordingShareLinkResponse\x12E\n" +
+	"\n" +
+	"share_link\x18\x01 \x01(\v2&.toshi.workspace.v1.RecordingShareLinkR\tshareLink\x12\x10\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url\"C\n" +
+	"\x1eListRecordingShareLinksRequest\x12!\n" +
+	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\"j\n" +
+	"\x1fListRecordingShareLinksResponse\x12G\n" +
+	"\vshare_links\x18\x01 \x03(\v2&.toshi.workspace.v1.RecordingShareLinkR\n" +
+	"shareLinks\"E\n" +
+	"\x1fRevokeRecordingShareLinkRequest\x12\"\n" +
+	"\rshare_link_id\x18\x01 \x01(\tR\vshareLinkId\"i\n" +
+	" RevokeRecordingShareLinkResponse\x12E\n" +
+	"\n" +
+	"share_link\x18\x01 \x01(\v2&.toshi.workspace.v1.RecordingShareLinkR\tshareLink*\xa6\x01\n" +
 	"\x0eRecordingState\x12\x1f\n" +
 	"\x1bRECORDING_STATE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19RECORDING_STATE_CAPTURING\x10\x01\x12\x19\n" +
@@ -662,10 +1177,19 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\x1aRECORDING_KIND_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14RECORDING_KIND_STRIP\x10\x01\x12\x18\n" +
 	"\x14RECORDING_KIND_VIDEO\x10\x02\x12\x18\n" +
-	"\x14RECORDING_KIND_TRACE\x10\x032\xde\x01\n" +
+	"\x14RECORDING_KIND_TRACE\x10\x03*\xe2\x01\n" +
+	"\x17RecordingShareLinkState\x12*\n" +
+	"&RECORDING_SHARE_LINK_STATE_UNSPECIFIED\x10\x00\x12%\n" +
+	"!RECORDING_SHARE_LINK_STATE_ACTIVE\x10\x01\x12&\n" +
+	"\"RECORDING_SHARE_LINK_STATE_REVOKED\x10\x02\x12&\n" +
+	"\"RECORDING_SHARE_LINK_STATE_EXPIRED\x10\x03\x12$\n" +
+	" RECORDING_SHARE_LINK_STATE_ENDED\x10\x042\xf3\x04\n" +
 	"\x10RecordingService\x12g\n" +
 	"\x0eListRecordings\x12).toshi.workspace.v1.ListRecordingsRequest\x1a*.toshi.workspace.v1.ListRecordingsResponse\x12a\n" +
-	"\fGetRecording\x12'.toshi.workspace.v1.GetRecordingRequest\x1a(.toshi.workspace.v1.GetRecordingResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\fGetRecording\x12'.toshi.workspace.v1.GetRecordingRequest\x1a(.toshi.workspace.v1.GetRecordingResponse\x12\x85\x01\n" +
+	"\x18CreateRecordingShareLink\x123.toshi.workspace.v1.CreateRecordingShareLinkRequest\x1a4.toshi.workspace.v1.CreateRecordingShareLinkResponse\x12\x82\x01\n" +
+	"\x17ListRecordingShareLinks\x122.toshi.workspace.v1.ListRecordingShareLinksRequest\x1a3.toshi.workspace.v1.ListRecordingShareLinksResponse\x12\x85\x01\n" +
+	"\x18RevokeRecordingShareLink\x123.toshi.workspace.v1.RevokeRecordingShareLinkRequest\x1a4.toshi.workspace.v1.RevokeRecordingShareLinkResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_recordings_proto_rawDescOnce sync.Once
@@ -679,41 +1203,64 @@ func file_toshi_workspace_v1_recordings_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_recordings_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_recordings_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_toshi_workspace_v1_recordings_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_toshi_workspace_v1_recordings_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_toshi_workspace_v1_recordings_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_toshi_workspace_v1_recordings_proto_goTypes = []any{
-	(RecordingState)(0),            // 0: toshi.workspace.v1.RecordingState
-	(RecordingKind)(0),             // 1: toshi.workspace.v1.RecordingKind
-	(*Recording)(nil),              // 2: toshi.workspace.v1.Recording
-	(*RecordingPause)(nil),         // 3: toshi.workspace.v1.RecordingPause
-	(*ListRecordingsRequest)(nil),  // 4: toshi.workspace.v1.ListRecordingsRequest
-	(*ListRecordingsResponse)(nil), // 5: toshi.workspace.v1.ListRecordingsResponse
-	(*GetRecordingRequest)(nil),    // 6: toshi.workspace.v1.GetRecordingRequest
-	(*GetRecordingResponse)(nil),   // 7: toshi.workspace.v1.GetRecordingResponse
-	(*durationpb.Duration)(nil),    // 8: google.protobuf.Duration
-	(*timestamppb.Timestamp)(nil),  // 9: google.protobuf.Timestamp
+	(RecordingState)(0),                      // 0: toshi.workspace.v1.RecordingState
+	(RecordingKind)(0),                       // 1: toshi.workspace.v1.RecordingKind
+	(RecordingShareLinkState)(0),             // 2: toshi.workspace.v1.RecordingShareLinkState
+	(*Recording)(nil),                        // 3: toshi.workspace.v1.Recording
+	(*RecordingPause)(nil),                   // 4: toshi.workspace.v1.RecordingPause
+	(*ListRecordingsRequest)(nil),            // 5: toshi.workspace.v1.ListRecordingsRequest
+	(*ListRecordingsResponse)(nil),           // 6: toshi.workspace.v1.ListRecordingsResponse
+	(*GetRecordingRequest)(nil),              // 7: toshi.workspace.v1.GetRecordingRequest
+	(*GetRecordingResponse)(nil),             // 8: toshi.workspace.v1.GetRecordingResponse
+	(*RecordingShareLink)(nil),               // 9: toshi.workspace.v1.RecordingShareLink
+	(*CreateRecordingShareLinkRequest)(nil),  // 10: toshi.workspace.v1.CreateRecordingShareLinkRequest
+	(*CreateRecordingShareLinkResponse)(nil), // 11: toshi.workspace.v1.CreateRecordingShareLinkResponse
+	(*ListRecordingShareLinksRequest)(nil),   // 12: toshi.workspace.v1.ListRecordingShareLinksRequest
+	(*ListRecordingShareLinksResponse)(nil),  // 13: toshi.workspace.v1.ListRecordingShareLinksResponse
+	(*RevokeRecordingShareLinkRequest)(nil),  // 14: toshi.workspace.v1.RevokeRecordingShareLinkRequest
+	(*RevokeRecordingShareLinkResponse)(nil), // 15: toshi.workspace.v1.RevokeRecordingShareLinkResponse
+	(*durationpb.Duration)(nil),              // 16: google.protobuf.Duration
+	(*timestamppb.Timestamp)(nil),            // 17: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_recordings_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Recording.state:type_name -> toshi.workspace.v1.RecordingState
-	8,  // 1: toshi.workspace.v1.Recording.interval:type_name -> google.protobuf.Duration
-	3,  // 2: toshi.workspace.v1.Recording.pauses:type_name -> toshi.workspace.v1.RecordingPause
-	9,  // 3: toshi.workspace.v1.Recording.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 4: toshi.workspace.v1.Recording.ended_at:type_name -> google.protobuf.Timestamp
+	16, // 1: toshi.workspace.v1.Recording.interval:type_name -> google.protobuf.Duration
+	4,  // 2: toshi.workspace.v1.Recording.pauses:type_name -> toshi.workspace.v1.RecordingPause
+	17, // 3: toshi.workspace.v1.Recording.created_at:type_name -> google.protobuf.Timestamp
+	17, // 4: toshi.workspace.v1.Recording.ended_at:type_name -> google.protobuf.Timestamp
 	1,  // 5: toshi.workspace.v1.Recording.kind:type_name -> toshi.workspace.v1.RecordingKind
-	9,  // 6: toshi.workspace.v1.RecordingPause.start:type_name -> google.protobuf.Timestamp
-	9,  // 7: toshi.workspace.v1.RecordingPause.end:type_name -> google.protobuf.Timestamp
-	2,  // 8: toshi.workspace.v1.ListRecordingsResponse.recordings:type_name -> toshi.workspace.v1.Recording
-	2,  // 9: toshi.workspace.v1.GetRecordingResponse.recording:type_name -> toshi.workspace.v1.Recording
-	9,  // 10: toshi.workspace.v1.GetRecordingResponse.expires_at:type_name -> google.protobuf.Timestamp
-	4,  // 11: toshi.workspace.v1.RecordingService.ListRecordings:input_type -> toshi.workspace.v1.ListRecordingsRequest
-	6,  // 12: toshi.workspace.v1.RecordingService.GetRecording:input_type -> toshi.workspace.v1.GetRecordingRequest
-	5,  // 13: toshi.workspace.v1.RecordingService.ListRecordings:output_type -> toshi.workspace.v1.ListRecordingsResponse
-	7,  // 14: toshi.workspace.v1.RecordingService.GetRecording:output_type -> toshi.workspace.v1.GetRecordingResponse
-	13, // [13:15] is the sub-list for method output_type
-	11, // [11:13] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	17, // 6: toshi.workspace.v1.RecordingPause.start:type_name -> google.protobuf.Timestamp
+	17, // 7: toshi.workspace.v1.RecordingPause.end:type_name -> google.protobuf.Timestamp
+	3,  // 8: toshi.workspace.v1.ListRecordingsResponse.recordings:type_name -> toshi.workspace.v1.Recording
+	3,  // 9: toshi.workspace.v1.GetRecordingResponse.recording:type_name -> toshi.workspace.v1.Recording
+	17, // 10: toshi.workspace.v1.GetRecordingResponse.expires_at:type_name -> google.protobuf.Timestamp
+	1,  // 11: toshi.workspace.v1.RecordingShareLink.kind:type_name -> toshi.workspace.v1.RecordingKind
+	2,  // 12: toshi.workspace.v1.RecordingShareLink.state:type_name -> toshi.workspace.v1.RecordingShareLinkState
+	17, // 13: toshi.workspace.v1.RecordingShareLink.created_at:type_name -> google.protobuf.Timestamp
+	17, // 14: toshi.workspace.v1.RecordingShareLink.expires_at:type_name -> google.protobuf.Timestamp
+	17, // 15: toshi.workspace.v1.RecordingShareLink.revoked_at:type_name -> google.protobuf.Timestamp
+	16, // 16: toshi.workspace.v1.CreateRecordingShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
+	9,  // 17: toshi.workspace.v1.CreateRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
+	9,  // 18: toshi.workspace.v1.ListRecordingShareLinksResponse.share_links:type_name -> toshi.workspace.v1.RecordingShareLink
+	9,  // 19: toshi.workspace.v1.RevokeRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
+	5,  // 20: toshi.workspace.v1.RecordingService.ListRecordings:input_type -> toshi.workspace.v1.ListRecordingsRequest
+	7,  // 21: toshi.workspace.v1.RecordingService.GetRecording:input_type -> toshi.workspace.v1.GetRecordingRequest
+	10, // 22: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:input_type -> toshi.workspace.v1.CreateRecordingShareLinkRequest
+	12, // 23: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:input_type -> toshi.workspace.v1.ListRecordingShareLinksRequest
+	14, // 24: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:input_type -> toshi.workspace.v1.RevokeRecordingShareLinkRequest
+	6,  // 25: toshi.workspace.v1.RecordingService.ListRecordings:output_type -> toshi.workspace.v1.ListRecordingsResponse
+	8,  // 26: toshi.workspace.v1.RecordingService.GetRecording:output_type -> toshi.workspace.v1.GetRecordingResponse
+	11, // 27: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:output_type -> toshi.workspace.v1.CreateRecordingShareLinkResponse
+	13, // 28: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:output_type -> toshi.workspace.v1.ListRecordingShareLinksResponse
+	15, // 29: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:output_type -> toshi.workspace.v1.RevokeRecordingShareLinkResponse
+	25, // [25:30] is the sub-list for method output_type
+	20, // [20:25] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_recordings_proto_init() }
@@ -726,8 +1273,8 @@ func file_toshi_workspace_v1_recordings_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_recordings_proto_rawDesc), len(file_toshi_workspace_v1_recordings_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   6,
+			NumEnums:      3,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

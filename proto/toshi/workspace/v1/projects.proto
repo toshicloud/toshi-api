@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package toshi.workspace.v1;
 
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
@@ -78,6 +79,19 @@ service ProjectService {
   // project's rules, and a token limited to an environment is
   // PERMISSION_DENIED.
   rpc SetBranchRules(SetBranchRulesRequest) returns (SetBranchRulesResponse);
+  // CreateEmbedToken mints an embed token for a project: a credential for
+  // a web page on one of the token's origins, which spends it once to
+  // fetch one of the project's ready recordings. It expires in minutes. A
+  // project the workspace does not have is NOT_FOUND. A token limited to a
+  // project mints only for that project, and a token limited to an
+  // environment is PERMISSION_DENIED.
+  rpc CreateEmbedToken(CreateEmbedTokenRequest) returns (CreateEmbedTokenResponse);
+  // ListEmbedTokens returns a project's embed tokens, oldest first, without
+  // the tokens themselves.
+  rpc ListEmbedTokens(ListEmbedTokensRequest) returns (ListEmbedTokensResponse);
+  // RevokeEmbedToken refuses an embed token before it expires. A token
+  // already revoked is returned as it is.
+  rpc RevokeEmbedToken(RevokeEmbedTokenRequest) returns (RevokeEmbedTokenResponse);
 }
 
 // Project is one of a workspace's projects.
@@ -224,4 +238,74 @@ message SetBranchRulesRequest {
 message SetBranchRulesResponse {
   // The rules as stored.
   repeated BranchRule rules = 1;
+}
+
+// EmbedTokenState is where an embed token is in its life.
+enum EmbedTokenState {
+  EMBED_TOKEN_STATE_UNSPECIFIED = 0;
+  // Not yet spent: a page on one of its origins can spend it.
+  EMBED_TOKEN_STATE_ACTIVE = 1;
+  // A page spent it on a recording.
+  EMBED_TOKEN_STATE_USED = 2;
+  EMBED_TOKEN_STATE_REVOKED = 3;
+  EMBED_TOKEN_STATE_EXPIRED = 4;
+}
+
+// EmbedToken is one of a project's embed tokens, without the token itself.
+message EmbedToken {
+  // Assigned by the server.
+  string id = 1;
+  // The project's name.
+  string project = 2;
+  // The origins of the pages that may spend it, such as
+  // https://app.example.com.
+  repeated string origins = 3;
+  EmbedTokenState state = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp expires_at = 6;
+  // Unset until a page spends it.
+  google.protobuf.Timestamp used_at = 7;
+  // The recording it was spent on; empty until then.
+  string recording_id = 8;
+  // Unset unless it was revoked.
+  google.protobuf.Timestamp revoked_at = 9;
+  // Who minted it: a person's sign-in or an API token, as in the audit.
+  string created_by = 10;
+}
+
+message CreateEmbedTokenRequest {
+  // The project's name.
+  string project = 1;
+  // The origins of the pages that may spend it, each a scheme and a host
+  // with an optional port: https, or http for localhost only. At least
+  // one, and more than the server's maximum is INVALID_ARGUMENT.
+  repeated string origins = 2;
+  // How long the token stays valid; unset is the server's default, and
+  // more than its maximum is INVALID_ARGUMENT.
+  google.protobuf.Duration expires_in = 3;
+}
+
+message CreateEmbedTokenResponse {
+  EmbedToken embed_token = 1;
+  // The token to hand to the page. It is in this answer only.
+  string token = 2;
+}
+
+message ListEmbedTokensRequest {
+  // The project's name.
+  string project = 1;
+}
+
+message ListEmbedTokensResponse {
+  repeated EmbedToken embed_tokens = 1;
+}
+
+message RevokeEmbedTokenRequest {
+  // The project's name.
+  string project = 1;
+  string embed_token_id = 2;
+}
+
+message RevokeEmbedTokenResponse {
+  EmbedToken embed_token = 1;
 }

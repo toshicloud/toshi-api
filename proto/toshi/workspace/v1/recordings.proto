@@ -21,6 +21,19 @@ service RecordingService {
   // for its object that expires. A ready recording whose object's
   // retention has deleted it is FAILED_PRECONDITION.
   rpc GetRecording(GetRecordingRequest) returns (GetRecordingResponse);
+  // CreateRecordingShareLink mints a share link for a ready recording: a
+  // URL that fetches its object without a Toshi sign-in until the link
+  // expires, is revoked or has used its byte cap. Each fetch through it
+  // counts the object's whole size against the cap, and each fetch and
+  // each refusal is in the audit. A recording that is not ready, or whose
+  // object's retention has deleted it, is FAILED_PRECONDITION.
+  rpc CreateRecordingShareLink(CreateRecordingShareLinkRequest) returns (CreateRecordingShareLinkResponse);
+  // ListRecordingShareLinks returns a recording's share links, oldest
+  // first, without the links themselves.
+  rpc ListRecordingShareLinks(ListRecordingShareLinksRequest) returns (ListRecordingShareLinksResponse);
+  // RevokeRecordingShareLink ends a share link before it expires. A link
+  // already revoked is returned as it is.
+  rpc RevokeRecordingShareLink(RevokeRecordingShareLinkRequest) returns (RevokeRecordingShareLinkResponse);
 }
 
 // RecordingState is where a recording is in its life.
@@ -122,4 +135,72 @@ message GetRecordingResponse {
   // offset in the strip's index.
   string url = 2;
   google.protobuf.Timestamp expires_at = 3;
+}
+
+// RecordingShareLinkState is where a recording's share link is in its
+// life.
+enum RecordingShareLinkState {
+  RECORDING_SHARE_LINK_STATE_UNSPECIFIED = 0;
+  // It fetches the recording's object.
+  RECORDING_SHARE_LINK_STATE_ACTIVE = 1;
+  RECORDING_SHARE_LINK_STATE_REVOKED = 2;
+  RECORDING_SHARE_LINK_STATE_EXPIRED = 3;
+  // What is left of its byte cap is less than the object's size.
+  RECORDING_SHARE_LINK_STATE_ENDED = 4;
+}
+
+// RecordingShareLink is one share link of a recording, without the link
+// itself.
+message RecordingShareLink {
+  // Assigned by the server.
+  string id = 1;
+  string recording_id = 2;
+  // The recording's kind.
+  RecordingKind kind = 3;
+  RecordingShareLinkState state = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp expires_at = 6;
+  // The most bytes its fetches may take.
+  int64 max_bytes = 7;
+  // The bytes its fetches have taken so far: the object's size once per
+  // fetch.
+  int64 used_bytes = 8;
+  // Unset unless it was revoked.
+  google.protobuf.Timestamp revoked_at = 9;
+  // Who minted it: a person's sign-in or an API token, as in the audit.
+  string created_by = 10;
+}
+
+message CreateRecordingShareLinkRequest {
+  string recording_id = 1;
+  // How long the link stays valid; unset is the server's default, and
+  // more than its maximum is INVALID_ARGUMENT.
+  google.protobuf.Duration expires_in = 2;
+  // The most bytes its fetches may take; 0 is the server's default, and
+  // more than its maximum, or less than the recording's object, is
+  // INVALID_ARGUMENT.
+  int64 max_bytes = 3;
+}
+
+message CreateRecordingShareLinkResponse {
+  RecordingShareLink share_link = 1;
+  // The URL to give the viewer: a GET of it redirects to a signed URL for
+  // the recording's object. It is in this answer only.
+  string url = 2;
+}
+
+message ListRecordingShareLinksRequest {
+  string recording_id = 1;
+}
+
+message ListRecordingShareLinksResponse {
+  repeated RecordingShareLink share_links = 1;
+}
+
+message RevokeRecordingShareLinkRequest {
+  string share_link_id = 1;
+}
+
+message RevokeRecordingShareLinkResponse {
+  RecordingShareLink share_link = 1;
 }
