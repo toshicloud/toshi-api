@@ -48,3 +48,9 @@ jobs:
           cd ts
           npm ci
           npm run typecheck
+
+      - name: Committed lockfiles are up to date
+        run: |
+          mise lock
+          npm --prefix ts install --package-lock-only --ignore-scripts --no-audit --no-fund
+          git diff --exit-code
