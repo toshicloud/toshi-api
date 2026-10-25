@@ -38,6 +38,12 @@ service OperatorService {
   // ListHosts returns the hosts that match the filter, ordered by ID.
   rpc ListHosts(ListHostsRequest) returns (ListHostsResponse);
 
+  // ListHostStorage returns the volumes a host holds, ordered by volume ID:
+  // those it keeps the warm copy of, and those a job assigned to it has
+  // claimed. A tenant's caller sees only its own hosts and its own volumes.
+  // An unknown host fails with NOT_FOUND.
+  rpc ListHostStorage(ListHostStorageRequest) returns (ListHostStorageResponse);
+
   // SetHostState drains a host or puts it back in service. Only
   // HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
   // fails with NOT_FOUND.
@@ -93,6 +99,16 @@ service OperatorService {
   // or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
   // fails with NOT_FOUND.
   rpc SetTenantHistory(SetTenantHistoryRequest) returns (SetTenantHistoryResponse);
+
+  // SetTenantLimits sets or clears a tenant's own secret and preview limits,
+  // which replace its plan's values, higher or lower, and returns the tenant
+  // as stored. A limit set in the request becomes the tenant's value, 0 for
+  // no cap; a limit named in clear goes back to the plan's; any other keeps
+  // its current value. A negative limit, secret_max_kib above 1073741824, an
+  // unknown name in clear, a limit both set and cleared, or a request that
+  // sets and clears nothing fails with INVALID_ARGUMENT; an unknown tenant
+  // fails with NOT_FOUND. A workspace's own token cannot call it.
+  rpc SetTenantLimits(SetTenantLimitsRequest) returns (SetTenantLimitsResponse);
 
   // ListPlans returns configured plans sorted by name.
   rpc ListPlans(ListPlansRequest) returns (ListPlansResponse);
@@ -996,6 +1012,41 @@ message ListHostsResponse {
   string minimum_agent_version = 3;
 }
 
+message ListHostStorageRequest {
+  // The host whose volumes to list.
+  string host_id = 1;
+}
+
+message ListHostStorageResponse {
+  repeated HostVolume volumes = 1;
+}
+
+// HostVolume is one volume a host holds.
+message HostVolume {
+  // The volume's id.
+  string volume_id = 1;
+  // The volume's tenant.
+  string tenant = 2;
+  // The name of the project the volume belongs to.
+  string project = 3;
+  // The id of the project the volume belongs to.
+  string project_id = 4;
+  // The volume's name.
+  string name = 5;
+  // The volume's mode name: cache, seed, state or artifact.
+  string mode = 6;
+  // The most the volume holds, in bytes.
+  int64 size_cap_bytes = 7;
+  // The host keeps the volume's warm copy.
+  bool warm_copy = 8;
+  // The open claim of a job on this host; empty when none.
+  string claim_id = 9;
+  // The claiming job.
+  string job_id = 10;
+  // When the claim was taken.
+  google.protobuf.Timestamp claimed_at = 11;
+}
+
 message SetHostStateRequest {
   string id = 1;
   // HOST_STATE_DRAINING or HOST_STATE_ONLINE.
@@ -1229,6 +1280,17 @@ message Tenant {
   // GitHub shows it within seconds as cancelled; off keeps GitHub's own
   // failure, about 10 minutes later.
   bool cancel_run_on_vm_death = 23;
+  // The tenant's own limits; unset when its plan's applies. 0 is no cap.
+  optional int32 secret_max_sets = 24;
+  optional int32 secret_max_keys = 25;
+  optional int64 secret_max_kib = 26;
+  optional int32 preview_max_ports = 27;
+  // The limits Toshi enforces: the tenant's own value when set, else its
+  // plan's. 0 is no cap.
+  int32 secret_max_sets_effective = 28;
+  int32 secret_max_keys_effective = 29;
+  int64 secret_max_kib_effective = 30;
+  int32 preview_max_ports_effective = 31;
 }
 
 // Reservation is a tenant's floor of slots jobs of one runner size on shared
@@ -1266,6 +1328,21 @@ message SetTenantHistoryRequest {
 }
 
 message SetTenantHistoryResponse {
+  Tenant tenant = 1;
+}
+
+message SetTenantLimitsRequest {
+  string tenant = 1;
+  optional int32 secret_max_sets = 2;
+  optional int32 secret_max_keys = 3;
+  optional int64 secret_max_kib = 4;
+  optional int32 preview_max_ports = 5;
+  // Limits to clear, by name ("secret_max_sets", "secret_max_keys",
+  // "secret_max_kib", "preview_max_ports").
+  repeated string clear = 6;
+}
+
+message SetTenantLimitsResponse {
   Tenant tenant = 1;
 }
 

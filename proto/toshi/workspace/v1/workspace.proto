@@ -23,8 +23,10 @@ option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 // Every mutating call takes a request_key. A key is bound to the workspace,
 // the call and the request's payload: a retry with the same key and the same
 // payload returns what the first call returned and starts nothing new; the
-// same key with a different payload fails with FAILED_PRECONDITION. An empty
-// key means no retry protection.
+// same key with a different payload fails with FAILED_PRECONDITION.
+// CreateWorkload requires a key: a create without one fails with
+// INVALID_ARGUMENT. For the other calls an empty key means no retry
+// protection. CancelWorkload takes none: a repeat of it changes nothing.
 //
 // A caller over its rate limit gets RESOURCE_EXHAUSTED with a
 // google.rpc.RetryInfo detail: the delay before a retry, on every protocol.
@@ -73,6 +75,17 @@ service WorkspaceService {
   // workload is removed; GetWorkload then fails with NOT_FOUND, and the event
   // log keeps its events.
   rpc DeleteWorkload(DeleteWorkloadRequest) returns (DeleteWorkloadResponse);
+
+  // CancelWorkload cancels a job that has not ended and returns it. The job
+  // is kept: it ends with END_REASON_CANCELLED, and GetWorkload and
+  // ListWorkloads return it. A job whose command has not started ends at
+  // once, and the answer carries the end; a job whose command runs ends
+  // once its host has stopped it, and WaitWorkload waits for that end.
+  // Every execution in the job is cancelled. A call for a job that has
+  // ended changes nothing and returns the job as it is. An unknown ID fails
+  // with NOT_FOUND; a sandbox or service fails with INVALID_ARGUMENT, since
+  // DeleteWorkload stops one.
+  rpc CancelWorkload(CancelWorkloadRequest) returns (CancelWorkloadResponse);
 
   // WaitWorkload blocks until the workload is in one of the states asked for
   // or the bound passes, whichever is first, and returns the workload as it
@@ -427,6 +440,12 @@ message SandboxSpec {
   // starts; each Execute gets the fixed values in its command's
   // environment.
   repeated Binding bindings = 3;
+  // Create only: the id of a state volume of the sandbox's project to
+  // attach to it, which it mounts when it starts. A volume of another
+  // project, or one attached or held elsewhere, fails the create with
+  // FAILED_PRECONDITION. Answers carry the id the create named, even after
+  // a detach; VolumeService answers what a volume is attached to now.
+  string state_volume_id = 4;
 }
 
 // ServiceSpec is a service. Its fields are set wherever a service's
@@ -563,6 +582,7 @@ message CreateWorkloadRequest {
     ServiceSpec service = 5;
   }
   map<string, string> labels = 6;
+  // Required: the same key on every retry of this create.
   string request_key = 7;
   // For a job: block until it ends, at most this long. Zero returns at once.
   // Set for another kind it fails with INVALID_ARGUMENT.
@@ -645,6 +665,16 @@ message DeleteWorkloadRequest {
 
 message DeleteWorkloadResponse {
   Operation operation = 1;
+}
+
+message CancelWorkloadRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+}
+
+message CancelWorkloadResponse {
+  Workload workload = 1;
 }
 
 message WaitWorkloadRequest {

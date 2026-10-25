@@ -51,6 +51,9 @@ const (
 	// WorkspaceServiceDeleteWorkloadProcedure is the fully-qualified name of the WorkspaceService's
 	// DeleteWorkload RPC.
 	WorkspaceServiceDeleteWorkloadProcedure = "/toshi.workspace.v1.WorkspaceService/DeleteWorkload"
+	// WorkspaceServiceCancelWorkloadProcedure is the fully-qualified name of the WorkspaceService's
+	// CancelWorkload RPC.
+	WorkspaceServiceCancelWorkloadProcedure = "/toshi.workspace.v1.WorkspaceService/CancelWorkload"
 	// WorkspaceServiceWaitWorkloadProcedure is the fully-qualified name of the WorkspaceService's
 	// WaitWorkload RPC.
 	WorkspaceServiceWaitWorkloadProcedure = "/toshi.workspace.v1.WorkspaceService/WaitWorkload"
@@ -155,6 +158,16 @@ type WorkspaceServiceClient interface {
 	// workload is removed; GetWorkload then fails with NOT_FOUND, and the event
 	// log keeps its events.
 	DeleteWorkload(context.Context, *connect.Request[workspacev1.DeleteWorkloadRequest]) (*connect.Response[workspacev1.DeleteWorkloadResponse], error)
+	// CancelWorkload cancels a job that has not ended and returns it. The job
+	// is kept: it ends with END_REASON_CANCELLED, and GetWorkload and
+	// ListWorkloads return it. A job whose command has not started ends at
+	// once, and the answer carries the end; a job whose command runs ends
+	// once its host has stopped it, and WaitWorkload waits for that end.
+	// Every execution in the job is cancelled. A call for a job that has
+	// ended changes nothing and returns the job as it is. An unknown ID fails
+	// with NOT_FOUND; a sandbox or service fails with INVALID_ARGUMENT, since
+	// DeleteWorkload stops one.
+	CancelWorkload(context.Context, *connect.Request[workspacev1.CancelWorkloadRequest]) (*connect.Response[workspacev1.CancelWorkloadResponse], error)
 	// WaitWorkload blocks until the workload is in one of the states asked for
 	// or the bound passes, whichever is first, and returns the workload as it
 	// then is. Passing the bound is not an error: reached is false, and the
@@ -327,6 +340,12 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("DeleteWorkload")),
 			connect.WithClientOptions(opts...),
 		),
+		cancelWorkload: connect.NewClient[workspacev1.CancelWorkloadRequest, workspacev1.CancelWorkloadResponse](
+			httpClient,
+			baseURL+WorkspaceServiceCancelWorkloadProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("CancelWorkload")),
+			connect.WithClientOptions(opts...),
+		),
 		waitWorkload: connect.NewClient[workspacev1.WaitWorkloadRequest, workspacev1.WaitWorkloadResponse](
 			httpClient,
 			baseURL+WorkspaceServiceWaitWorkloadProcedure,
@@ -463,6 +482,7 @@ type workspaceServiceClient struct {
 	listWorkloads          *connect.Client[workspacev1.ListWorkloadsRequest, workspacev1.ListWorkloadsResponse]
 	patchWorkload          *connect.Client[workspacev1.PatchWorkloadRequest, workspacev1.PatchWorkloadResponse]
 	deleteWorkload         *connect.Client[workspacev1.DeleteWorkloadRequest, workspacev1.DeleteWorkloadResponse]
+	cancelWorkload         *connect.Client[workspacev1.CancelWorkloadRequest, workspacev1.CancelWorkloadResponse]
 	waitWorkload           *connect.Client[workspacev1.WaitWorkloadRequest, workspacev1.WaitWorkloadResponse]
 	watchWorkloads         *connect.Client[workspacev1.WatchWorkloadsRequest, workspacev1.WatchWorkloadsResponse]
 	watchOutput            *connect.Client[workspacev1.WatchOutputRequest, workspacev1.WatchOutputResponse]
@@ -509,6 +529,11 @@ func (c *workspaceServiceClient) PatchWorkload(ctx context.Context, req *connect
 // DeleteWorkload calls toshi.workspace.v1.WorkspaceService.DeleteWorkload.
 func (c *workspaceServiceClient) DeleteWorkload(ctx context.Context, req *connect.Request[workspacev1.DeleteWorkloadRequest]) (*connect.Response[workspacev1.DeleteWorkloadResponse], error) {
 	return c.deleteWorkload.CallUnary(ctx, req)
+}
+
+// CancelWorkload calls toshi.workspace.v1.WorkspaceService.CancelWorkload.
+func (c *workspaceServiceClient) CancelWorkload(ctx context.Context, req *connect.Request[workspacev1.CancelWorkloadRequest]) (*connect.Response[workspacev1.CancelWorkloadResponse], error) {
+	return c.cancelWorkload.CallUnary(ctx, req)
 }
 
 // WaitWorkload calls toshi.workspace.v1.WorkspaceService.WaitWorkload.
@@ -655,6 +680,16 @@ type WorkspaceServiceHandler interface {
 	// workload is removed; GetWorkload then fails with NOT_FOUND, and the event
 	// log keeps its events.
 	DeleteWorkload(context.Context, *connect.Request[workspacev1.DeleteWorkloadRequest]) (*connect.Response[workspacev1.DeleteWorkloadResponse], error)
+	// CancelWorkload cancels a job that has not ended and returns it. The job
+	// is kept: it ends with END_REASON_CANCELLED, and GetWorkload and
+	// ListWorkloads return it. A job whose command has not started ends at
+	// once, and the answer carries the end; a job whose command runs ends
+	// once its host has stopped it, and WaitWorkload waits for that end.
+	// Every execution in the job is cancelled. A call for a job that has
+	// ended changes nothing and returns the job as it is. An unknown ID fails
+	// with NOT_FOUND; a sandbox or service fails with INVALID_ARGUMENT, since
+	// DeleteWorkload stops one.
+	CancelWorkload(context.Context, *connect.Request[workspacev1.CancelWorkloadRequest]) (*connect.Response[workspacev1.CancelWorkloadResponse], error)
 	// WaitWorkload blocks until the workload is in one of the states asked for
 	// or the bound passes, whichever is first, and returns the workload as it
 	// then is. Passing the bound is not an error: reached is false, and the
@@ -823,6 +858,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("DeleteWorkload")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceCancelWorkloadHandler := connect.NewUnaryHandler(
+		WorkspaceServiceCancelWorkloadProcedure,
+		svc.CancelWorkload,
+		connect.WithSchema(workspaceServiceMethods.ByName("CancelWorkload")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceWaitWorkloadHandler := connect.NewUnaryHandler(
 		WorkspaceServiceWaitWorkloadProcedure,
 		svc.WaitWorkload,
@@ -961,6 +1002,8 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServicePatchWorkloadHandler.ServeHTTP(w, r)
 		case WorkspaceServiceDeleteWorkloadProcedure:
 			workspaceServiceDeleteWorkloadHandler.ServeHTTP(w, r)
+		case WorkspaceServiceCancelWorkloadProcedure:
+			workspaceServiceCancelWorkloadHandler.ServeHTTP(w, r)
 		case WorkspaceServiceWaitWorkloadProcedure:
 			workspaceServiceWaitWorkloadHandler.ServeHTTP(w, r)
 		case WorkspaceServiceWatchWorkloadsProcedure:
@@ -1030,6 +1073,10 @@ func (UnimplementedWorkspaceServiceHandler) PatchWorkload(context.Context, *conn
 
 func (UnimplementedWorkspaceServiceHandler) DeleteWorkload(context.Context, *connect.Request[workspacev1.DeleteWorkloadRequest]) (*connect.Response[workspacev1.DeleteWorkloadResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.DeleteWorkload is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) CancelWorkload(context.Context, *connect.Request[workspacev1.CancelWorkloadRequest]) (*connect.Response[workspacev1.CancelWorkloadResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.CancelWorkload is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) WaitWorkload(context.Context, *connect.Request[workspacev1.WaitWorkloadRequest]) (*connect.Response[workspacev1.WaitWorkloadResponse], error) {

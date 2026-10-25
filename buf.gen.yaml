@@ -6,6 +6,6 @@ plugins:
   - local: protoc-gen-connect-go
     out: .
     opt: module=github.com/toshicloud/toshi-api
-  - local: protoc-gen-es
+  - local: ts/node_modules/.bin/protoc-gen-es
     out: ts/gen
     opt: target=ts,json_types=true

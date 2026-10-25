@@ -2,6 +2,5 @@
 go = "1.27.3"
 node = "24.22.1"
 buf = "1.75.0"
-"go:google.golang.org/protobuf/cmd/protoc-gen-go" = "1.36.11"
-"go:connectrpc.com/connect/cmd/protoc-gen-connect-go" = "1.21.0"
-"npm:@bufbuild/protoc-gen-es" = "2.16.0"
+"go:google.golang.org/protobuf/cmd/protoc-gen-go" = "1.36.12"
+"go:connectrpc.com/connect/cmd/protoc-gen-connect-go" = "1.21.1"

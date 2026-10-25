@@ -52,6 +52,9 @@ const (
 	// OperatorServiceListHostsProcedure is the fully-qualified name of the OperatorService's ListHosts
 	// RPC.
 	OperatorServiceListHostsProcedure = "/toshi.operator.v1.OperatorService/ListHosts"
+	// OperatorServiceListHostStorageProcedure is the fully-qualified name of the OperatorService's
+	// ListHostStorage RPC.
+	OperatorServiceListHostStorageProcedure = "/toshi.operator.v1.OperatorService/ListHostStorage"
 	// OperatorServiceSetHostStateProcedure is the fully-qualified name of the OperatorService's
 	// SetHostState RPC.
 	OperatorServiceSetHostStateProcedure = "/toshi.operator.v1.OperatorService/SetHostState"
@@ -79,6 +82,9 @@ const (
 	// OperatorServiceSetTenantHistoryProcedure is the fully-qualified name of the OperatorService's
 	// SetTenantHistory RPC.
 	OperatorServiceSetTenantHistoryProcedure = "/toshi.operator.v1.OperatorService/SetTenantHistory"
+	// OperatorServiceSetTenantLimitsProcedure is the fully-qualified name of the OperatorService's
+	// SetTenantLimits RPC.
+	OperatorServiceSetTenantLimitsProcedure = "/toshi.operator.v1.OperatorService/SetTenantLimits"
 	// OperatorServiceListPlansProcedure is the fully-qualified name of the OperatorService's ListPlans
 	// RPC.
 	OperatorServiceListPlansProcedure = "/toshi.operator.v1.OperatorService/ListPlans"
@@ -250,6 +256,11 @@ type OperatorServiceClient interface {
 	SummariseJobTelemetry(context.Context, *connect.Request[operatorv1.SummariseJobTelemetryRequest]) (*connect.Response[operatorv1.SummariseJobTelemetryResponse], error)
 	// ListHosts returns the hosts that match the filter, ordered by ID.
 	ListHosts(context.Context, *connect.Request[operatorv1.ListHostsRequest]) (*connect.Response[operatorv1.ListHostsResponse], error)
+	// ListHostStorage returns the volumes a host holds, ordered by volume ID:
+	// those it keeps the warm copy of, and those a job assigned to it has
+	// claimed. A tenant's caller sees only its own hosts and its own volumes.
+	// An unknown host fails with NOT_FOUND.
+	ListHostStorage(context.Context, *connect.Request[operatorv1.ListHostStorageRequest]) (*connect.Response[operatorv1.ListHostStorageResponse], error)
 	// SetHostState drains a host or puts it back in service. Only
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
 	// fails with NOT_FOUND.
@@ -297,6 +308,15 @@ type OperatorServiceClient interface {
 	// or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
 	// fails with NOT_FOUND.
 	SetTenantHistory(context.Context, *connect.Request[operatorv1.SetTenantHistoryRequest]) (*connect.Response[operatorv1.SetTenantHistoryResponse], error)
+	// SetTenantLimits sets or clears a tenant's own secret and preview limits,
+	// which replace its plan's values, higher or lower, and returns the tenant
+	// as stored. A limit set in the request becomes the tenant's value, 0 for
+	// no cap; a limit named in clear goes back to the plan's; any other keeps
+	// its current value. A negative limit, secret_max_kib above 1073741824, an
+	// unknown name in clear, a limit both set and cleared, or a request that
+	// sets and clears nothing fails with INVALID_ARGUMENT; an unknown tenant
+	// fails with NOT_FOUND. A workspace's own token cannot call it.
+	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
 	// ListPlans returns configured plans sorted by name.
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
@@ -637,6 +657,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("ListHosts")),
 			connect.WithClientOptions(opts...),
 		),
+		listHostStorage: connect.NewClient[operatorv1.ListHostStorageRequest, operatorv1.ListHostStorageResponse](
+			httpClient,
+			baseURL+OperatorServiceListHostStorageProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("ListHostStorage")),
+			connect.WithClientOptions(opts...),
+		),
 		setHostState: connect.NewClient[operatorv1.SetHostStateRequest, operatorv1.SetHostStateResponse](
 			httpClient,
 			baseURL+OperatorServiceSetHostStateProcedure,
@@ -689,6 +715,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			httpClient,
 			baseURL+OperatorServiceSetTenantHistoryProcedure,
 			connect.WithSchema(operatorServiceMethods.ByName("SetTenantHistory")),
+			connect.WithClientOptions(opts...),
+		),
+		setTenantLimits: connect.NewClient[operatorv1.SetTenantLimitsRequest, operatorv1.SetTenantLimitsResponse](
+			httpClient,
+			baseURL+OperatorServiceSetTenantLimitsProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("SetTenantLimits")),
 			connect.WithClientOptions(opts...),
 		),
 		listPlans: connect.NewClient[operatorv1.ListPlansRequest, operatorv1.ListPlansResponse](
@@ -996,6 +1028,7 @@ type operatorServiceClient struct {
 	getJobTelemetry             *connect.Client[operatorv1.GetJobTelemetryRequest, operatorv1.GetJobTelemetryResponse]
 	summariseJobTelemetry       *connect.Client[operatorv1.SummariseJobTelemetryRequest, operatorv1.SummariseJobTelemetryResponse]
 	listHosts                   *connect.Client[operatorv1.ListHostsRequest, operatorv1.ListHostsResponse]
+	listHostStorage             *connect.Client[operatorv1.ListHostStorageRequest, operatorv1.ListHostStorageResponse]
 	setHostState                *connect.Client[operatorv1.SetHostStateRequest, operatorv1.SetHostStateResponse]
 	setHostOverflow             *connect.Client[operatorv1.SetHostOverflowRequest, operatorv1.SetHostOverflowResponse]
 	retireHost                  *connect.Client[operatorv1.RetireHostRequest, operatorv1.RetireHostResponse]
@@ -1005,6 +1038,7 @@ type operatorServiceClient struct {
 	listTenants                 *connect.Client[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse]
 	setTenantCap                *connect.Client[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse]
 	setTenantHistory            *connect.Client[operatorv1.SetTenantHistoryRequest, operatorv1.SetTenantHistoryResponse]
+	setTenantLimits             *connect.Client[operatorv1.SetTenantLimitsRequest, operatorv1.SetTenantLimitsResponse]
 	listPlans                   *connect.Client[operatorv1.ListPlansRequest, operatorv1.ListPlansResponse]
 	getVersion                  *connect.Client[operatorv1.GetVersionRequest, operatorv1.GetVersionResponse]
 	setTenantPlan               *connect.Client[operatorv1.SetTenantPlanRequest, operatorv1.SetTenantPlanResponse]
@@ -1086,6 +1120,11 @@ func (c *operatorServiceClient) ListHosts(ctx context.Context, req *connect.Requ
 	return c.listHosts.CallUnary(ctx, req)
 }
 
+// ListHostStorage calls toshi.operator.v1.OperatorService.ListHostStorage.
+func (c *operatorServiceClient) ListHostStorage(ctx context.Context, req *connect.Request[operatorv1.ListHostStorageRequest]) (*connect.Response[operatorv1.ListHostStorageResponse], error) {
+	return c.listHostStorage.CallUnary(ctx, req)
+}
+
 // SetHostState calls toshi.operator.v1.OperatorService.SetHostState.
 func (c *operatorServiceClient) SetHostState(ctx context.Context, req *connect.Request[operatorv1.SetHostStateRequest]) (*connect.Response[operatorv1.SetHostStateResponse], error) {
 	return c.setHostState.CallUnary(ctx, req)
@@ -1129,6 +1168,11 @@ func (c *operatorServiceClient) SetTenantCap(ctx context.Context, req *connect.R
 // SetTenantHistory calls toshi.operator.v1.OperatorService.SetTenantHistory.
 func (c *operatorServiceClient) SetTenantHistory(ctx context.Context, req *connect.Request[operatorv1.SetTenantHistoryRequest]) (*connect.Response[operatorv1.SetTenantHistoryResponse], error) {
 	return c.setTenantHistory.CallUnary(ctx, req)
+}
+
+// SetTenantLimits calls toshi.operator.v1.OperatorService.SetTenantLimits.
+func (c *operatorServiceClient) SetTenantLimits(ctx context.Context, req *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error) {
+	return c.setTenantLimits.CallUnary(ctx, req)
 }
 
 // ListPlans calls toshi.operator.v1.OperatorService.ListPlans.
@@ -1398,6 +1442,11 @@ type OperatorServiceHandler interface {
 	SummariseJobTelemetry(context.Context, *connect.Request[operatorv1.SummariseJobTelemetryRequest]) (*connect.Response[operatorv1.SummariseJobTelemetryResponse], error)
 	// ListHosts returns the hosts that match the filter, ordered by ID.
 	ListHosts(context.Context, *connect.Request[operatorv1.ListHostsRequest]) (*connect.Response[operatorv1.ListHostsResponse], error)
+	// ListHostStorage returns the volumes a host holds, ordered by volume ID:
+	// those it keeps the warm copy of, and those a job assigned to it has
+	// claimed. A tenant's caller sees only its own hosts and its own volumes.
+	// An unknown host fails with NOT_FOUND.
+	ListHostStorage(context.Context, *connect.Request[operatorv1.ListHostStorageRequest]) (*connect.Response[operatorv1.ListHostStorageResponse], error)
 	// SetHostState drains a host or puts it back in service. Only
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
 	// fails with NOT_FOUND.
@@ -1445,6 +1494,15 @@ type OperatorServiceHandler interface {
 	// or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
 	// fails with NOT_FOUND.
 	SetTenantHistory(context.Context, *connect.Request[operatorv1.SetTenantHistoryRequest]) (*connect.Response[operatorv1.SetTenantHistoryResponse], error)
+	// SetTenantLimits sets or clears a tenant's own secret and preview limits,
+	// which replace its plan's values, higher or lower, and returns the tenant
+	// as stored. A limit set in the request becomes the tenant's value, 0 for
+	// no cap; a limit named in clear goes back to the plan's; any other keeps
+	// its current value. A negative limit, secret_max_kib above 1073741824, an
+	// unknown name in clear, a limit both set and cleared, or a request that
+	// sets and clears nothing fails with INVALID_ARGUMENT; an unknown tenant
+	// fails with NOT_FOUND. A workspace's own token cannot call it.
+	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
 	// ListPlans returns configured plans sorted by name.
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
@@ -1781,6 +1839,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("ListHosts")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceListHostStorageHandler := connect.NewUnaryHandler(
+		OperatorServiceListHostStorageProcedure,
+		svc.ListHostStorage,
+		connect.WithSchema(operatorServiceMethods.ByName("ListHostStorage")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceSetHostStateHandler := connect.NewUnaryHandler(
 		OperatorServiceSetHostStateProcedure,
 		svc.SetHostState,
@@ -1833,6 +1897,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		OperatorServiceSetTenantHistoryProcedure,
 		svc.SetTenantHistory,
 		connect.WithSchema(operatorServiceMethods.ByName("SetTenantHistory")),
+		connect.WithHandlerOptions(opts...),
+	)
+	operatorServiceSetTenantLimitsHandler := connect.NewUnaryHandler(
+		OperatorServiceSetTenantLimitsProcedure,
+		svc.SetTenantLimits,
+		connect.WithSchema(operatorServiceMethods.ByName("SetTenantLimits")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceListPlansHandler := connect.NewUnaryHandler(
@@ -2143,6 +2213,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceSummariseJobTelemetryHandler.ServeHTTP(w, r)
 		case OperatorServiceListHostsProcedure:
 			operatorServiceListHostsHandler.ServeHTTP(w, r)
+		case OperatorServiceListHostStorageProcedure:
+			operatorServiceListHostStorageHandler.ServeHTTP(w, r)
 		case OperatorServiceSetHostStateProcedure:
 			operatorServiceSetHostStateHandler.ServeHTTP(w, r)
 		case OperatorServiceSetHostOverflowProcedure:
@@ -2161,6 +2233,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceSetTenantCapHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantHistoryProcedure:
 			operatorServiceSetTenantHistoryHandler.ServeHTTP(w, r)
+		case OperatorServiceSetTenantLimitsProcedure:
+			operatorServiceSetTenantLimitsHandler.ServeHTTP(w, r)
 		case OperatorServiceListPlansProcedure:
 			operatorServiceListPlansHandler.ServeHTTP(w, r)
 		case OperatorServiceGetVersionProcedure:
@@ -2292,6 +2366,10 @@ func (UnimplementedOperatorServiceHandler) ListHosts(context.Context, *connect.R
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ListHosts is not implemented"))
 }
 
+func (UnimplementedOperatorServiceHandler) ListHostStorage(context.Context, *connect.Request[operatorv1.ListHostStorageRequest]) (*connect.Response[operatorv1.ListHostStorageResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ListHostStorage is not implemented"))
+}
+
 func (UnimplementedOperatorServiceHandler) SetHostState(context.Context, *connect.Request[operatorv1.SetHostStateRequest]) (*connect.Response[operatorv1.SetHostStateResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetHostState is not implemented"))
 }
@@ -2326,6 +2404,10 @@ func (UnimplementedOperatorServiceHandler) SetTenantCap(context.Context, *connec
 
 func (UnimplementedOperatorServiceHandler) SetTenantHistory(context.Context, *connect.Request[operatorv1.SetTenantHistoryRequest]) (*connect.Response[operatorv1.SetTenantHistoryResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantHistory is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantLimits is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error) {

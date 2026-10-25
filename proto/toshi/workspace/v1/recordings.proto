@@ -187,6 +187,10 @@ message CreateRecordingShareLinkResponse {
   // The URL to give the viewer: a GET of it redirects to a signed URL for
   // the recording's object. It is in this answer only.
   string url = 2;
+  // The URL of the link's player page: a GET of it plays the recording in
+  // the page and is charged against the link as a GET of url is. It is in
+  // this answer only.
+  string player_url = 3;
 }
 
 message ListRecordingShareLinksRequest {
