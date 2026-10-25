@@ -73,6 +73,9 @@ const (
 	// OperatorServiceAddCloudHostProcedure is the fully-qualified name of the OperatorService's
 	// AddCloudHost RPC.
 	OperatorServiceAddCloudHostProcedure = "/toshi.operator.v1.OperatorService/AddCloudHost"
+	// OperatorServiceCreateWorkspaceProcedure is the fully-qualified name of the OperatorService's
+	// CreateWorkspace RPC.
+	OperatorServiceCreateWorkspaceProcedure = "/toshi.operator.v1.OperatorService/CreateWorkspace"
 	// OperatorServiceListTenantsProcedure is the fully-qualified name of the OperatorService's
 	// ListTenants RPC.
 	OperatorServiceListTenantsProcedure = "/toshi.operator.v1.OperatorService/ListTenants"
@@ -295,6 +298,13 @@ type OperatorServiceClient interface {
 	// cloud hosts are not configured on the control plane the call fails with
 	// FAILED_PRECONDITION.
 	AddCloudHost(context.Context, *connect.Request[operatorv1.AddCloudHostRequest]) (*connect.Response[operatorv1.AddCloudHostResponse], error)
+	// CreateWorkspace makes a workspace that has no GitHub installation and
+	// returns it with its new id. It is on plan when one is given and on the
+	// control plane's default_plan otherwise, as an installed workspace is,
+	// with that plan's starter credit. An empty name, or a plan the
+	// configuration does not define, fails with INVALID_ARGUMENT. Names are not
+	// unique: two workspaces may share one. Only the operator may call it.
+	CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error)
 	// ListTenants returns every tenant, ordered by ID.
 	ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error)
 	// SetTenantCap sets a tenant's concurrency cap override and returns the
@@ -699,6 +709,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("AddCloudHost")),
 			connect.WithClientOptions(opts...),
 		),
+		createWorkspace: connect.NewClient[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse](
+			httpClient,
+			baseURL+OperatorServiceCreateWorkspaceProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("CreateWorkspace")),
+			connect.WithClientOptions(opts...),
+		),
 		listTenants: connect.NewClient[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse](
 			httpClient,
 			baseURL+OperatorServiceListTenantsProcedure,
@@ -1035,6 +1051,7 @@ type operatorServiceClient struct {
 	revokeHost                  *connect.Client[operatorv1.RevokeHostRequest, operatorv1.RevokeHostResponse]
 	retireOfflineHosts          *connect.Client[operatorv1.RetireOfflineHostsRequest, operatorv1.RetireOfflineHostsResponse]
 	addCloudHost                *connect.Client[operatorv1.AddCloudHostRequest, operatorv1.AddCloudHostResponse]
+	createWorkspace             *connect.Client[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse]
 	listTenants                 *connect.Client[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse]
 	setTenantCap                *connect.Client[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse]
 	setTenantHistory            *connect.Client[operatorv1.SetTenantHistoryRequest, operatorv1.SetTenantHistoryResponse]
@@ -1153,6 +1170,11 @@ func (c *operatorServiceClient) RetireOfflineHosts(ctx context.Context, req *con
 // AddCloudHost calls toshi.operator.v1.OperatorService.AddCloudHost.
 func (c *operatorServiceClient) AddCloudHost(ctx context.Context, req *connect.Request[operatorv1.AddCloudHostRequest]) (*connect.Response[operatorv1.AddCloudHostResponse], error) {
 	return c.addCloudHost.CallUnary(ctx, req)
+}
+
+// CreateWorkspace calls toshi.operator.v1.OperatorService.CreateWorkspace.
+func (c *operatorServiceClient) CreateWorkspace(ctx context.Context, req *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error) {
+	return c.createWorkspace.CallUnary(ctx, req)
 }
 
 // ListTenants calls toshi.operator.v1.OperatorService.ListTenants.
@@ -1481,6 +1503,13 @@ type OperatorServiceHandler interface {
 	// cloud hosts are not configured on the control plane the call fails with
 	// FAILED_PRECONDITION.
 	AddCloudHost(context.Context, *connect.Request[operatorv1.AddCloudHostRequest]) (*connect.Response[operatorv1.AddCloudHostResponse], error)
+	// CreateWorkspace makes a workspace that has no GitHub installation and
+	// returns it with its new id. It is on plan when one is given and on the
+	// control plane's default_plan otherwise, as an installed workspace is,
+	// with that plan's starter credit. An empty name, or a plan the
+	// configuration does not define, fails with INVALID_ARGUMENT. Names are not
+	// unique: two workspaces may share one. Only the operator may call it.
+	CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error)
 	// ListTenants returns every tenant, ordered by ID.
 	ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error)
 	// SetTenantCap sets a tenant's concurrency cap override and returns the
@@ -1881,6 +1910,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("AddCloudHost")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceCreateWorkspaceHandler := connect.NewUnaryHandler(
+		OperatorServiceCreateWorkspaceProcedure,
+		svc.CreateWorkspace,
+		connect.WithSchema(operatorServiceMethods.ByName("CreateWorkspace")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceListTenantsHandler := connect.NewUnaryHandler(
 		OperatorServiceListTenantsProcedure,
 		svc.ListTenants,
@@ -2227,6 +2262,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceRetireOfflineHostsHandler.ServeHTTP(w, r)
 		case OperatorServiceAddCloudHostProcedure:
 			operatorServiceAddCloudHostHandler.ServeHTTP(w, r)
+		case OperatorServiceCreateWorkspaceProcedure:
+			operatorServiceCreateWorkspaceHandler.ServeHTTP(w, r)
 		case OperatorServiceListTenantsProcedure:
 			operatorServiceListTenantsHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantCapProcedure:
@@ -2392,6 +2429,10 @@ func (UnimplementedOperatorServiceHandler) RetireOfflineHosts(context.Context, *
 
 func (UnimplementedOperatorServiceHandler) AddCloudHost(context.Context, *connect.Request[operatorv1.AddCloudHostRequest]) (*connect.Response[operatorv1.AddCloudHostResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.AddCloudHost is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.CreateWorkspace is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error) {

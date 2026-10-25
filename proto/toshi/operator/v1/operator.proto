@@ -84,6 +84,14 @@ service OperatorService {
   // FAILED_PRECONDITION.
   rpc AddCloudHost(AddCloudHostRequest) returns (AddCloudHostResponse);
 
+  // CreateWorkspace makes a workspace that has no GitHub installation and
+  // returns it with its new id. It is on plan when one is given and on the
+  // control plane's default_plan otherwise, as an installed workspace is,
+  // with that plan's starter credit. An empty name, or a plan the
+  // configuration does not define, fails with INVALID_ARGUMENT. Names are not
+  // unique: two workspaces may share one. Only the operator may call it.
+  rpc CreateWorkspace(CreateWorkspaceRequest) returns (CreateWorkspaceResponse);
+
   // ListTenants returns every tenant, ordered by ID.
   rpc ListTenants(ListTenantsRequest) returns (ListTenantsResponse);
 
@@ -1304,6 +1312,18 @@ message Reservation {
   int32 warm = 3;
   // "tenant" when the tenant's own row set it, "plan" when its plan did.
   string source = 4;
+}
+
+message CreateWorkspaceRequest {
+  // The workspace's name, as ListTenants shows it; surrounding spaces are
+  // dropped.
+  string name = 1;
+  // The plan; empty for the control plane's default_plan.
+  string plan = 2;
+}
+
+message CreateWorkspaceResponse {
+  Tenant workspace = 1;
 }
 
 message ListTenantsRequest {}
