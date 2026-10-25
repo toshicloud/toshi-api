@@ -4887,7 +4887,11 @@ type Event struct {
 	//	*Event_Execution
 	//	*Event_Emitted
 	//	*Event_Recording
-	Payload       isEvent_Payload `protobuf_oneof:"payload"`
+	Payload isEvent_Payload `protobuf_oneof:"payload"`
+	// The project the workload belongs to; set on every event.
+	Project string `protobuf:"bytes,11,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment the workload belongs to; set on every event.
+	Environment   string `protobuf:"bytes,12,opt,name=environment,proto3" json:"environment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5005,6 +5009,20 @@ func (x *Event) GetRecording() *RecordingEvent {
 		}
 	}
 	return nil
+}
+
+func (x *Event) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *Event) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
 }
 
 type isEvent_Payload interface {
@@ -7407,7 +7425,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x02id\x18\x03 \x01(\tR\x02id\x123\n" +
 	"\atimeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\atimeout\"T\n" +
 	"\x15WaitOperationResponse\x12;\n" +
-	"\toperation\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\xd4\x03\n" +
+	"\toperation\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\x90\x04\n" +
 	"\x05Event\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x121\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1d.toshi.workspace.v1.EventTypeR\x04type\x12\x12\n" +
@@ -7420,7 +7438,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\texecution\x18\b \x01(\v2\".toshi.workspace.v1.ExecutionEventH\x00R\texecution\x12<\n" +
 	"\aemitted\x18\t \x01(\v2 .toshi.workspace.v1.EmittedEventH\x00R\aemitted\x12B\n" +
 	"\trecording\x18\n" +
-	" \x01(\v2\".toshi.workspace.v1.RecordingEventH\x00R\trecordingB\t\n" +
+	" \x01(\v2\".toshi.workspace.v1.RecordingEventH\x00R\trecording\x12\x18\n" +
+	"\aproject\x18\v \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\f \x01(\tR\venvironmentB\t\n" +
 	"\apayload\"~\n" +
 	"\x0eExecutionEvent\x12!\n" +
 	"\fexecution_id\x18\x01 \x01(\tR\vexecutionId\x12\x12\n" +

@@ -1003,6 +1003,10 @@ message Event {
     // For RECORDING_READY.
     RecordingEvent recording = 10;
   }
+  // The project the workload belongs to; set on every event.
+  string project = 11;
+  // The environment the workload belongs to; set on every event.
+  string environment = 12;
 }
 
 // ExecutionEvent is an execution starting or ending.
