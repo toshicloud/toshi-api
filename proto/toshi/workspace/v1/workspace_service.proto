@@ -15,8 +15,8 @@ option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 // needs no header. A token limited to a project or an environment is
 // refused with PERMISSION_DENIED. A suspended workspace keeps its reads,
 // and every other call is refused for it with FAILED_PRECONDITION. A closed
-// workspace keeps GetWorkspace, ListWorkspaces, GetUsage and
-// GetWorkspaceStatement during its read-only period.
+// workspace keeps GetWorkspace, ListWorkspaces, GetUsage,
+// GetWorkspaceStatement and GetVersion during its read-only period.
 service WorkspaceService {
   // GetWorkspace returns the caller's workspace.
   rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse);
@@ -99,7 +99,8 @@ service WorkspaceService {
   // configured, or a workspace with no billing customer, fails with
   // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
   rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse);
-  // GetVersion returns the control plane's version, commit and commit date.
+  // GetVersion returns the control plane's version, commit and commit
+  // date, and the oldest agent release it admits.
   rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
 }
 
@@ -314,6 +315,10 @@ message GetVersionResponse {
   string version = 1;
   string commit = 2;
   string date = 3;
+  // The oldest agent release this control plane process admits when the
+  // workspace's own hosts register; empty when unset, which admits every
+  // agent. Each process reads its own configuration.
+  string minimum_agent_version = 4;
 }
 
 // Workspace owns a plan, an optional concurrency override, and its GitHub

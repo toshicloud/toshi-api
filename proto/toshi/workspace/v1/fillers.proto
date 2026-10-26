@@ -90,13 +90,19 @@ message Filler {
   // When a filler pass last read the filler's states and found
   // pause_reason; unset without one.
   google.protobuf.Timestamp pause_as_of = 16;
+  // "dispatch": a workflow_dispatch of the workspace's workflow, the only
+  // kind a workspace's filler has. PutFiller takes "dispatch" or empty for
+  // it; another kind fails with INVALID_ARGUMENT.
+  string kind = 17;
 }
 
 // FillerRun is one run of a filler.
 message FillerRun {
   string id = 1;
   string filler = 2;
-  // The host the run went to. Empty while the run waits for its job.
+  // The host the run went to, when it is one of the workspace's own hosts.
+  // Empty while the run waits for its job, and for a host Toshi runs for
+  // many workspaces.
   string host_id = 3;
   // "dispatched", "assigned", "running", "completed", "failed",
   // "preempted", "rejected" or "lost".
@@ -109,6 +115,13 @@ message FillerRun {
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp started_at = 9;
   google.protobuf.Timestamp finished_at = 10;
+}
+
+// FillerHostMinutes is the filler minutes of one of the workspace's own
+// hosts.
+message FillerHostMinutes {
+  string host_id = 1;
+  double minutes = 2;
 }
 
 // FillerPause is one paused filler; see Filler.pause_reason.
@@ -135,6 +148,11 @@ message ListFillersResponse {
   repeated Filler fillers = 1;
   // Empty on the last page.
   string next_page_token = 2;
+  // Minutes of the workspace's filler runs that finished in the last 24
+  // hours, per host, on its own hosts only: no other workspace's run and
+  // no host Toshi runs for many workspaces is counted. Every page holds
+  // all of them.
+  repeated FillerHostMinutes host_minutes = 3;
 }
 
 message PutFillerRequest {

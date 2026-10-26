@@ -70,15 +70,18 @@ type StorageProviderServiceClient interface {
 	// error names the failing step.
 	//
 	// With id it checks a provider the workspace saved, records the result
-	// and returns the provider as stored. With provider it checks one that
-	// is not saved, with the key in the request, as CreateStorageProvider
-	// would before it stores one; it stores and audits nothing, and a
-	// request CreateStorageProvider would refuse fails the same way before
-	// any connection.
+	// and returns the provider as stored; an unknown ID, and another
+	// workspace's, fails with NOT_FOUND, and a row the operator set for the
+	// workspace, and the default provider, with PERMISSION_DENIED. With
+	// provider it checks one that is not saved, with the key in the request,
+	// as CreateStorageProvider would before it stores one; it stores and
+	// audits nothing, and a request CreateStorageProvider would refuse fails
+	// the same way before any connection.
 	CheckStorageProvider(context.Context, *connect.Request[workspacev1.CheckStorageProviderRequest]) (*connect.Response[workspacev1.CheckStorageProviderResponse], error)
 	// DeleteStorageProvider removes a provider the workspace saved. An
-	// unknown ID fails with NOT_FOUND, and a row the operator set for the
-	// workspace with PERMISSION_DENIED.
+	// unknown ID, and another workspace's, fails with NOT_FOUND; a row the
+	// operator set for the workspace, and the default provider, with
+	// PERMISSION_DENIED.
 	DeleteStorageProvider(context.Context, *connect.Request[workspacev1.DeleteStorageProviderRequest]) (*connect.Response[workspacev1.DeleteStorageProviderResponse], error)
 }
 
@@ -171,15 +174,18 @@ type StorageProviderServiceHandler interface {
 	// error names the failing step.
 	//
 	// With id it checks a provider the workspace saved, records the result
-	// and returns the provider as stored. With provider it checks one that
-	// is not saved, with the key in the request, as CreateStorageProvider
-	// would before it stores one; it stores and audits nothing, and a
-	// request CreateStorageProvider would refuse fails the same way before
-	// any connection.
+	// and returns the provider as stored; an unknown ID, and another
+	// workspace's, fails with NOT_FOUND, and a row the operator set for the
+	// workspace, and the default provider, with PERMISSION_DENIED. With
+	// provider it checks one that is not saved, with the key in the request,
+	// as CreateStorageProvider would before it stores one; it stores and
+	// audits nothing, and a request CreateStorageProvider would refuse fails
+	// the same way before any connection.
 	CheckStorageProvider(context.Context, *connect.Request[workspacev1.CheckStorageProviderRequest]) (*connect.Response[workspacev1.CheckStorageProviderResponse], error)
 	// DeleteStorageProvider removes a provider the workspace saved. An
-	// unknown ID fails with NOT_FOUND, and a row the operator set for the
-	// workspace with PERMISSION_DENIED.
+	// unknown ID, and another workspace's, fails with NOT_FOUND; a row the
+	// operator set for the workspace, and the default provider, with
+	// PERMISSION_DENIED.
 	DeleteStorageProvider(context.Context, *connect.Request[workspacev1.DeleteStorageProviderRequest]) (*connect.Response[workspacev1.DeleteStorageProviderResponse], error)
 }
 

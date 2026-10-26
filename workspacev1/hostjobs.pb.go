@@ -554,7 +554,9 @@ type GetHostJobFailureResponse struct {
 	Cache string `protobuf:"bytes,10,opt,name=cache,proto3" json:"cache,omitempty"`
 	// The host job's tier line, as HostJob.tier_line. Empty for one that ran
 	// in a VM.
-	TierLine      string `protobuf:"bytes,11,opt,name=tier_line,json=tierLine,proto3" json:"tier_line,omitempty"`
+	TierLine string `protobuf:"bytes,11,opt,name=tier_line,json=tierLine,proto3" json:"tier_line,omitempty"`
+	// The host job's id.
+	JobId         string `protobuf:"bytes,12,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -662,6 +664,13 @@ func (x *GetHostJobFailureResponse) GetCache() string {
 func (x *GetHostJobFailureResponse) GetTierLine() string {
 	if x != nil {
 		return x.TierLine
+	}
+	return ""
+}
+
+func (x *GetHostJobFailureResponse) GetJobId() string {
+	if x != nil {
+		return x.JobId
 	}
 	return ""
 }
@@ -1015,7 +1024,9 @@ type HostJob struct {
 	Os     string       `protobuf:"bytes,7,opt,name=os,proto3" json:"os,omitempty"`
 	Size   string       `protobuf:"bytes,8,opt,name=size,proto3" json:"size,omitempty"`
 	State  HostJobState `protobuf:"varint,9,opt,name=state,proto3,enum=toshi.workspace.v1.HostJobState" json:"state,omitempty"`
-	// The host the job is assigned to; empty while it is queued.
+	// The host the job is assigned to, when it is one of the workspace's own
+	// hosts. Empty while the job is queued, and for a host Toshi runs for
+	// many workspaces.
 	HostId string `protobuf:"bytes,10,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
 	// The VM the job runs in; empty until the host starts one.
 	InstanceId string                 `protobuf:"bytes,11,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
@@ -1999,7 +2010,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x15CancelHostJobResponse\x126\n" +
 	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"*\n" +
 	"\x18GetHostJobFailureRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x8e\x03\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xa5\x03\n" +
 	"\x19GetHostJobFailureResponse\x12\x14\n" +
 	"\x05cause\x18\x01 \x01(\tR\x05cause\x12 \n" +
 	"\vexplanation\x18\x02 \x01(\tR\vexplanation\x12\x1e\n" +
@@ -2016,7 +2027,8 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\ahistory\x18\t \x01(\v2).toshi.workspace.v1.HostJobFailureHistoryR\ahistory\x12\x14\n" +
 	"\x05cache\x18\n" +
 	" \x01(\tR\x05cache\x12\x1b\n" +
-	"\ttier_line\x18\v \x01(\tR\btierLine\",\n" +
+	"\ttier_line\x18\v \x01(\tR\btierLine\x12\x15\n" +
+	"\x06job_id\x18\f \x01(\tR\x05jobId\",\n" +
 	"\x1aGetHostJobTelemetryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\xf3\x01\n" +
 	"\x1bGetHostJobTelemetryResponse\x12\x12\n" +

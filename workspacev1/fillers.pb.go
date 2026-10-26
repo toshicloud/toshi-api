@@ -70,7 +70,11 @@ type Filler struct {
 	PausedSince *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=paused_since,json=pausedSince,proto3" json:"paused_since,omitempty"`
 	// When a filler pass last read the filler's states and found
 	// pause_reason; unset without one.
-	PauseAsOf     *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=pause_as_of,json=pauseAsOf,proto3" json:"pause_as_of,omitempty"`
+	PauseAsOf *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=pause_as_of,json=pauseAsOf,proto3" json:"pause_as_of,omitempty"`
+	// "dispatch": a workflow_dispatch of the workspace's workflow, the only
+	// kind a workspace's filler has. PutFiller takes "dispatch" or empty for
+	// it; another kind fails with INVALID_ARGUMENT.
+	Kind          string `protobuf:"bytes,17,opt,name=kind,proto3" json:"kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -217,12 +221,21 @@ func (x *Filler) GetPauseAsOf() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Filler) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
 // FillerRun is one run of a filler.
 type FillerRun struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Id     string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Filler string                 `protobuf:"bytes,2,opt,name=filler,proto3" json:"filler,omitempty"`
-	// The host the run went to. Empty while the run waits for its job.
+	// The host the run went to, when it is one of the workspace's own hosts.
+	// Empty while the run waits for its job, and for a host Toshi runs for
+	// many workspaces.
 	HostId string `protobuf:"bytes,3,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
 	// "dispatched", "assigned", "running", "completed", "failed",
 	// "preempted", "rejected" or "lost".
@@ -339,6 +352,60 @@ func (x *FillerRun) GetFinishedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// FillerHostMinutes is the filler minutes of one of the workspace's own
+// hosts.
+type FillerHostMinutes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	HostId        string                 `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
+	Minutes       float64                `protobuf:"fixed64,2,opt,name=minutes,proto3" json:"minutes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FillerHostMinutes) Reset() {
+	*x = FillerHostMinutes{}
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FillerHostMinutes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FillerHostMinutes) ProtoMessage() {}
+
+func (x *FillerHostMinutes) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FillerHostMinutes.ProtoReflect.Descriptor instead.
+func (*FillerHostMinutes) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *FillerHostMinutes) GetHostId() string {
+	if x != nil {
+		return x.HostId
+	}
+	return ""
+}
+
+func (x *FillerHostMinutes) GetMinutes() float64 {
+	if x != nil {
+		return x.Minutes
+	}
+	return 0
+}
+
 // FillerPause is one paused filler; see Filler.pause_reason.
 type FillerPause struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
@@ -357,7 +424,7 @@ type FillerPause struct {
 
 func (x *FillerPause) Reset() {
 	*x = FillerPause{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -369,7 +436,7 @@ func (x *FillerPause) String() string {
 func (*FillerPause) ProtoMessage() {}
 
 func (x *FillerPause) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -382,7 +449,7 @@ func (x *FillerPause) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FillerPause.ProtoReflect.Descriptor instead.
 func (*FillerPause) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *FillerPause) GetFiller() string {
@@ -425,7 +492,7 @@ type ListFillersRequest struct {
 
 func (x *ListFillersRequest) Reset() {
 	*x = ListFillersRequest{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -437,7 +504,7 @@ func (x *ListFillersRequest) String() string {
 func (*ListFillersRequest) ProtoMessage() {}
 
 func (x *ListFillersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -450,7 +517,7 @@ func (x *ListFillersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFillersRequest.ProtoReflect.Descriptor instead.
 func (*ListFillersRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListFillersRequest) GetPageSize() int32 {
@@ -472,13 +539,18 @@ type ListFillersResponse struct {
 	Fillers []*Filler              `protobuf:"bytes,1,rep,name=fillers,proto3" json:"fillers,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// Minutes of the workspace's filler runs that finished in the last 24
+	// hours, per host, on its own hosts only: no other workspace's run and
+	// no host Toshi runs for many workspaces is counted. Every page holds
+	// all of them.
+	HostMinutes   []*FillerHostMinutes `protobuf:"bytes,3,rep,name=host_minutes,json=hostMinutes,proto3" json:"host_minutes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListFillersResponse) Reset() {
 	*x = ListFillersResponse{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -490,7 +562,7 @@ func (x *ListFillersResponse) String() string {
 func (*ListFillersResponse) ProtoMessage() {}
 
 func (x *ListFillersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -503,7 +575,7 @@ func (x *ListFillersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFillersResponse.ProtoReflect.Descriptor instead.
 func (*ListFillersResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListFillersResponse) GetFillers() []*Filler {
@@ -520,6 +592,13 @@ func (x *ListFillersResponse) GetNextPageToken() string {
 	return ""
 }
 
+func (x *ListFillersResponse) GetHostMinutes() []*FillerHostMinutes {
+	if x != nil {
+		return x.HostMinutes
+	}
+	return nil
+}
+
 type PutFillerRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// source, created_at, updated_at, last_run, pause_reason, paused_since and
@@ -531,7 +610,7 @@ type PutFillerRequest struct {
 
 func (x *PutFillerRequest) Reset() {
 	*x = PutFillerRequest{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -543,7 +622,7 @@ func (x *PutFillerRequest) String() string {
 func (*PutFillerRequest) ProtoMessage() {}
 
 func (x *PutFillerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -556,7 +635,7 @@ func (x *PutFillerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutFillerRequest.ProtoReflect.Descriptor instead.
 func (*PutFillerRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *PutFillerRequest) GetFiller() *Filler {
@@ -575,7 +654,7 @@ type PutFillerResponse struct {
 
 func (x *PutFillerResponse) Reset() {
 	*x = PutFillerResponse{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -587,7 +666,7 @@ func (x *PutFillerResponse) String() string {
 func (*PutFillerResponse) ProtoMessage() {}
 
 func (x *PutFillerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -600,7 +679,7 @@ func (x *PutFillerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutFillerResponse.ProtoReflect.Descriptor instead.
 func (*PutFillerResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *PutFillerResponse) GetFiller() *Filler {
@@ -619,7 +698,7 @@ type DeleteFillerRequest struct {
 
 func (x *DeleteFillerRequest) Reset() {
 	*x = DeleteFillerRequest{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -631,7 +710,7 @@ func (x *DeleteFillerRequest) String() string {
 func (*DeleteFillerRequest) ProtoMessage() {}
 
 func (x *DeleteFillerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -644,7 +723,7 @@ func (x *DeleteFillerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFillerRequest.ProtoReflect.Descriptor instead.
 func (*DeleteFillerRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteFillerRequest) GetName() string {
@@ -662,7 +741,7 @@ type DeleteFillerResponse struct {
 
 func (x *DeleteFillerResponse) Reset() {
 	*x = DeleteFillerResponse{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -674,7 +753,7 @@ func (x *DeleteFillerResponse) String() string {
 func (*DeleteFillerResponse) ProtoMessage() {}
 
 func (x *DeleteFillerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -687,7 +766,7 @@ func (x *DeleteFillerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFillerResponse.ProtoReflect.Descriptor instead.
 func (*DeleteFillerResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{9}
 }
 
 type SetFillerEnabledRequest struct {
@@ -700,7 +779,7 @@ type SetFillerEnabledRequest struct {
 
 func (x *SetFillerEnabledRequest) Reset() {
 	*x = SetFillerEnabledRequest{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -712,7 +791,7 @@ func (x *SetFillerEnabledRequest) String() string {
 func (*SetFillerEnabledRequest) ProtoMessage() {}
 
 func (x *SetFillerEnabledRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -725,7 +804,7 @@ func (x *SetFillerEnabledRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetFillerEnabledRequest.ProtoReflect.Descriptor instead.
 func (*SetFillerEnabledRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *SetFillerEnabledRequest) GetName() string {
@@ -751,7 +830,7 @@ type SetFillerEnabledResponse struct {
 
 func (x *SetFillerEnabledResponse) Reset() {
 	*x = SetFillerEnabledResponse{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -763,7 +842,7 @@ func (x *SetFillerEnabledResponse) String() string {
 func (*SetFillerEnabledResponse) ProtoMessage() {}
 
 func (x *SetFillerEnabledResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -776,7 +855,7 @@ func (x *SetFillerEnabledResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetFillerEnabledResponse.ProtoReflect.Descriptor instead.
 func (*SetFillerEnabledResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *SetFillerEnabledResponse) GetFiller() *Filler {
@@ -800,7 +879,7 @@ type ListFillerRunsRequest struct {
 
 func (x *ListFillerRunsRequest) Reset() {
 	*x = ListFillerRunsRequest{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -812,7 +891,7 @@ func (x *ListFillerRunsRequest) String() string {
 func (*ListFillerRunsRequest) ProtoMessage() {}
 
 func (x *ListFillerRunsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -825,7 +904,7 @@ func (x *ListFillerRunsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFillerRunsRequest.ProtoReflect.Descriptor instead.
 func (*ListFillerRunsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ListFillerRunsRequest) GetFiller() string {
@@ -863,7 +942,7 @@ type ListFillerRunsResponse struct {
 
 func (x *ListFillerRunsResponse) Reset() {
 	*x = ListFillerRunsResponse{}
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -875,7 +954,7 @@ func (x *ListFillerRunsResponse) String() string {
 func (*ListFillerRunsResponse) ProtoMessage() {}
 
 func (x *ListFillerRunsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -888,7 +967,7 @@ func (x *ListFillerRunsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFillerRunsResponse.ProtoReflect.Descriptor instead.
 func (*ListFillerRunsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListFillerRunsResponse) GetRuns() []*FillerRun {
@@ -916,7 +995,7 @@ var File_toshi_workspace_v1_fillers_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/fillers.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8c\x05\n" +
+	" toshi/workspace/v1/fillers.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa0\x05\n" +
 	"\x06Filler\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\tR\x04size\x12\x1d\n" +
@@ -939,7 +1018,8 @@ const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"\blast_run\x18\r \x01(\v2\x1d.toshi.workspace.v1.FillerRunR\alastRun\x12!\n" +
 	"\fpause_reason\x18\x0e \x01(\tR\vpauseReason\x12=\n" +
 	"\fpaused_since\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\vpausedSince\x12:\n" +
-	"\vpause_as_of\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\tpauseAsOf\"\xd9\x02\n" +
+	"\vpause_as_of\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\tpauseAsOf\x12\x12\n" +
+	"\x04kind\x18\x11 \x01(\tR\x04kind\"\xd9\x02\n" +
 	"\tFillerRun\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06filler\x18\x02 \x01(\tR\x06filler\x12\x17\n" +
@@ -954,7 +1034,10 @@ const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"started_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12;\n" +
 	"\vfinished_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"finishedAt\"\xa0\x01\n" +
+	"finishedAt\"F\n" +
+	"\x11FillerHostMinutes\x12\x17\n" +
+	"\ahost_id\x18\x01 \x01(\tR\x06hostId\x12\x18\n" +
+	"\aminutes\x18\x02 \x01(\x01R\aminutes\"\xa0\x01\n" +
 	"\vFillerPause\x12\x16\n" +
 	"\x06filler\x18\x01 \x01(\tR\x06filler\x12\x16\n" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\x120\n" +
@@ -963,10 +1046,11 @@ const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"\x12ListFillersRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\x02 \x01(\tR\tpageToken\"s\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"\xbd\x01\n" +
 	"\x13ListFillersResponse\x124\n" +
 	"\afillers\x18\x01 \x03(\v2\x1a.toshi.workspace.v1.FillerR\afillers\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"F\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\x12H\n" +
+	"\fhost_minutes\x18\x03 \x03(\v2%.toshi.workspace.v1.FillerHostMinutesR\vhostMinutes\"F\n" +
 	"\x10PutFillerRequest\x122\n" +
 	"\x06filler\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.FillerR\x06filler\"G\n" +
 	"\x11PutFillerResponse\x122\n" +
@@ -1007,58 +1091,60 @@ func file_toshi_workspace_v1_fillers_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_fillers_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_fillers_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_toshi_workspace_v1_fillers_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_toshi_workspace_v1_fillers_proto_goTypes = []any{
 	(*Filler)(nil),                   // 0: toshi.workspace.v1.Filler
 	(*FillerRun)(nil),                // 1: toshi.workspace.v1.FillerRun
-	(*FillerPause)(nil),              // 2: toshi.workspace.v1.FillerPause
-	(*ListFillersRequest)(nil),       // 3: toshi.workspace.v1.ListFillersRequest
-	(*ListFillersResponse)(nil),      // 4: toshi.workspace.v1.ListFillersResponse
-	(*PutFillerRequest)(nil),         // 5: toshi.workspace.v1.PutFillerRequest
-	(*PutFillerResponse)(nil),        // 6: toshi.workspace.v1.PutFillerResponse
-	(*DeleteFillerRequest)(nil),      // 7: toshi.workspace.v1.DeleteFillerRequest
-	(*DeleteFillerResponse)(nil),     // 8: toshi.workspace.v1.DeleteFillerResponse
-	(*SetFillerEnabledRequest)(nil),  // 9: toshi.workspace.v1.SetFillerEnabledRequest
-	(*SetFillerEnabledResponse)(nil), // 10: toshi.workspace.v1.SetFillerEnabledResponse
-	(*ListFillerRunsRequest)(nil),    // 11: toshi.workspace.v1.ListFillerRunsRequest
-	(*ListFillerRunsResponse)(nil),   // 12: toshi.workspace.v1.ListFillerRunsResponse
-	(*durationpb.Duration)(nil),      // 13: google.protobuf.Duration
-	(*timestamppb.Timestamp)(nil),    // 14: google.protobuf.Timestamp
+	(*FillerHostMinutes)(nil),        // 2: toshi.workspace.v1.FillerHostMinutes
+	(*FillerPause)(nil),              // 3: toshi.workspace.v1.FillerPause
+	(*ListFillersRequest)(nil),       // 4: toshi.workspace.v1.ListFillersRequest
+	(*ListFillersResponse)(nil),      // 5: toshi.workspace.v1.ListFillersResponse
+	(*PutFillerRequest)(nil),         // 6: toshi.workspace.v1.PutFillerRequest
+	(*PutFillerResponse)(nil),        // 7: toshi.workspace.v1.PutFillerResponse
+	(*DeleteFillerRequest)(nil),      // 8: toshi.workspace.v1.DeleteFillerRequest
+	(*DeleteFillerResponse)(nil),     // 9: toshi.workspace.v1.DeleteFillerResponse
+	(*SetFillerEnabledRequest)(nil),  // 10: toshi.workspace.v1.SetFillerEnabledRequest
+	(*SetFillerEnabledResponse)(nil), // 11: toshi.workspace.v1.SetFillerEnabledResponse
+	(*ListFillerRunsRequest)(nil),    // 12: toshi.workspace.v1.ListFillerRunsRequest
+	(*ListFillerRunsResponse)(nil),   // 13: toshi.workspace.v1.ListFillerRunsResponse
+	(*durationpb.Duration)(nil),      // 14: google.protobuf.Duration
+	(*timestamppb.Timestamp)(nil),    // 15: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_fillers_proto_depIdxs = []int32{
-	13, // 0: toshi.workspace.v1.Filler.every:type_name -> google.protobuf.Duration
-	13, // 1: toshi.workspace.v1.Filler.max_duration:type_name -> google.protobuf.Duration
-	14, // 2: toshi.workspace.v1.Filler.created_at:type_name -> google.protobuf.Timestamp
-	14, // 3: toshi.workspace.v1.Filler.updated_at:type_name -> google.protobuf.Timestamp
+	14, // 0: toshi.workspace.v1.Filler.every:type_name -> google.protobuf.Duration
+	14, // 1: toshi.workspace.v1.Filler.max_duration:type_name -> google.protobuf.Duration
+	15, // 2: toshi.workspace.v1.Filler.created_at:type_name -> google.protobuf.Timestamp
+	15, // 3: toshi.workspace.v1.Filler.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: toshi.workspace.v1.Filler.last_run:type_name -> toshi.workspace.v1.FillerRun
-	14, // 5: toshi.workspace.v1.Filler.paused_since:type_name -> google.protobuf.Timestamp
-	14, // 6: toshi.workspace.v1.Filler.pause_as_of:type_name -> google.protobuf.Timestamp
-	14, // 7: toshi.workspace.v1.FillerRun.created_at:type_name -> google.protobuf.Timestamp
-	14, // 8: toshi.workspace.v1.FillerRun.started_at:type_name -> google.protobuf.Timestamp
-	14, // 9: toshi.workspace.v1.FillerRun.finished_at:type_name -> google.protobuf.Timestamp
-	14, // 10: toshi.workspace.v1.FillerPause.since:type_name -> google.protobuf.Timestamp
-	14, // 11: toshi.workspace.v1.FillerPause.as_of:type_name -> google.protobuf.Timestamp
+	15, // 5: toshi.workspace.v1.Filler.paused_since:type_name -> google.protobuf.Timestamp
+	15, // 6: toshi.workspace.v1.Filler.pause_as_of:type_name -> google.protobuf.Timestamp
+	15, // 7: toshi.workspace.v1.FillerRun.created_at:type_name -> google.protobuf.Timestamp
+	15, // 8: toshi.workspace.v1.FillerRun.started_at:type_name -> google.protobuf.Timestamp
+	15, // 9: toshi.workspace.v1.FillerRun.finished_at:type_name -> google.protobuf.Timestamp
+	15, // 10: toshi.workspace.v1.FillerPause.since:type_name -> google.protobuf.Timestamp
+	15, // 11: toshi.workspace.v1.FillerPause.as_of:type_name -> google.protobuf.Timestamp
 	0,  // 12: toshi.workspace.v1.ListFillersResponse.fillers:type_name -> toshi.workspace.v1.Filler
-	0,  // 13: toshi.workspace.v1.PutFillerRequest.filler:type_name -> toshi.workspace.v1.Filler
-	0,  // 14: toshi.workspace.v1.PutFillerResponse.filler:type_name -> toshi.workspace.v1.Filler
-	0,  // 15: toshi.workspace.v1.SetFillerEnabledResponse.filler:type_name -> toshi.workspace.v1.Filler
-	1,  // 16: toshi.workspace.v1.ListFillerRunsResponse.runs:type_name -> toshi.workspace.v1.FillerRun
-	2,  // 17: toshi.workspace.v1.ListFillerRunsResponse.pauses:type_name -> toshi.workspace.v1.FillerPause
-	3,  // 18: toshi.workspace.v1.FillerService.ListFillers:input_type -> toshi.workspace.v1.ListFillersRequest
-	5,  // 19: toshi.workspace.v1.FillerService.PutFiller:input_type -> toshi.workspace.v1.PutFillerRequest
-	7,  // 20: toshi.workspace.v1.FillerService.DeleteFiller:input_type -> toshi.workspace.v1.DeleteFillerRequest
-	9,  // 21: toshi.workspace.v1.FillerService.SetFillerEnabled:input_type -> toshi.workspace.v1.SetFillerEnabledRequest
-	11, // 22: toshi.workspace.v1.FillerService.ListFillerRuns:input_type -> toshi.workspace.v1.ListFillerRunsRequest
-	4,  // 23: toshi.workspace.v1.FillerService.ListFillers:output_type -> toshi.workspace.v1.ListFillersResponse
-	6,  // 24: toshi.workspace.v1.FillerService.PutFiller:output_type -> toshi.workspace.v1.PutFillerResponse
-	8,  // 25: toshi.workspace.v1.FillerService.DeleteFiller:output_type -> toshi.workspace.v1.DeleteFillerResponse
-	10, // 26: toshi.workspace.v1.FillerService.SetFillerEnabled:output_type -> toshi.workspace.v1.SetFillerEnabledResponse
-	12, // 27: toshi.workspace.v1.FillerService.ListFillerRuns:output_type -> toshi.workspace.v1.ListFillerRunsResponse
-	23, // [23:28] is the sub-list for method output_type
-	18, // [18:23] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	2,  // 13: toshi.workspace.v1.ListFillersResponse.host_minutes:type_name -> toshi.workspace.v1.FillerHostMinutes
+	0,  // 14: toshi.workspace.v1.PutFillerRequest.filler:type_name -> toshi.workspace.v1.Filler
+	0,  // 15: toshi.workspace.v1.PutFillerResponse.filler:type_name -> toshi.workspace.v1.Filler
+	0,  // 16: toshi.workspace.v1.SetFillerEnabledResponse.filler:type_name -> toshi.workspace.v1.Filler
+	1,  // 17: toshi.workspace.v1.ListFillerRunsResponse.runs:type_name -> toshi.workspace.v1.FillerRun
+	3,  // 18: toshi.workspace.v1.ListFillerRunsResponse.pauses:type_name -> toshi.workspace.v1.FillerPause
+	4,  // 19: toshi.workspace.v1.FillerService.ListFillers:input_type -> toshi.workspace.v1.ListFillersRequest
+	6,  // 20: toshi.workspace.v1.FillerService.PutFiller:input_type -> toshi.workspace.v1.PutFillerRequest
+	8,  // 21: toshi.workspace.v1.FillerService.DeleteFiller:input_type -> toshi.workspace.v1.DeleteFillerRequest
+	10, // 22: toshi.workspace.v1.FillerService.SetFillerEnabled:input_type -> toshi.workspace.v1.SetFillerEnabledRequest
+	12, // 23: toshi.workspace.v1.FillerService.ListFillerRuns:input_type -> toshi.workspace.v1.ListFillerRunsRequest
+	5,  // 24: toshi.workspace.v1.FillerService.ListFillers:output_type -> toshi.workspace.v1.ListFillersResponse
+	7,  // 25: toshi.workspace.v1.FillerService.PutFiller:output_type -> toshi.workspace.v1.PutFillerResponse
+	9,  // 26: toshi.workspace.v1.FillerService.DeleteFiller:output_type -> toshi.workspace.v1.DeleteFillerResponse
+	11, // 27: toshi.workspace.v1.FillerService.SetFillerEnabled:output_type -> toshi.workspace.v1.SetFillerEnabledResponse
+	13, // 28: toshi.workspace.v1.FillerService.ListFillerRuns:output_type -> toshi.workspace.v1.ListFillerRunsResponse
+	24, // [24:29] is the sub-list for method output_type
+	19, // [19:24] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_fillers_proto_init() }
@@ -1072,7 +1158,7 @@ func file_toshi_workspace_v1_fillers_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_fillers_proto_rawDesc), len(file_toshi_workspace_v1_fillers_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

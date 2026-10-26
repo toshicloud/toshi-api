@@ -1714,12 +1714,16 @@ func (*GetVersionRequest) Descriptor() ([]byte, []int) {
 }
 
 type GetVersionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	Commit        string                 `protobuf:"bytes,2,opt,name=commit,proto3" json:"commit,omitempty"`
-	Date          string                 `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Version string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	Commit  string                 `protobuf:"bytes,2,opt,name=commit,proto3" json:"commit,omitempty"`
+	Date    string                 `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty"`
+	// The oldest agent release this control plane process admits when the
+	// workspace's own hosts register; empty when unset, which admits every
+	// agent. Each process reads its own configuration.
+	MinimumAgentVersion string `protobuf:"bytes,4,opt,name=minimum_agent_version,json=minimumAgentVersion,proto3" json:"minimum_agent_version,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *GetVersionResponse) Reset() {
@@ -1769,6 +1773,13 @@ func (x *GetVersionResponse) GetCommit() string {
 func (x *GetVersionResponse) GetDate() string {
 	if x != nil {
 		return x.Date
+	}
+	return ""
+}
+
+func (x *GetVersionResponse) GetMinimumAgentVersion() string {
+	if x != nil {
+		return x.MinimumAgentVersion
 	}
 	return ""
 }
@@ -3916,11 +3927,12 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"!CreateBillingPortalSessionRequest\"6\n" +
 	"\"CreateBillingPortalSessionResponse\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\"\x13\n" +
-	"\x11GetVersionRequest\"Z\n" +
+	"\x11GetVersionRequest\"\x8e\x01\n" +
 	"\x12GetVersionResponse\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x16\n" +
 	"\x06commit\x18\x02 \x01(\tR\x06commit\x12\x12\n" +
-	"\x04date\x18\x03 \x01(\tR\x04date\"\xae\f\n" +
+	"\x04date\x18\x03 \x01(\tR\x04date\x122\n" +
+	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xae\f\n" +
 	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +

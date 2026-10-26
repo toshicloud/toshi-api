@@ -213,7 +213,10 @@ type CreateStorageProviderRequest struct {
 	CapGuestPresign bool   `protobuf:"varint,8,opt,name=cap_guest_presign,json=capGuestPresign,proto3" json:"cap_guest_presign,omitempty"`
 	// The bucket's key. The control plane wraps it before the row exists and
 	// never returns, logs or audits it. Required.
-	Credential    *StorageCredential `protobuf:"bytes,9,opt,name=credential,proto3" json:"credential,omitempty"`
+	Credential *StorageCredential `protobuf:"bytes,9,opt,name=credential,proto3" json:"credential,omitempty"`
+	// "tenant_bucket", the only mode a workspace stores; empty means it.
+	// Another mode fails with INVALID_ARGUMENT.
+	Mode          string `protobuf:"bytes,10,opt,name=mode,proto3" json:"mode,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -309,6 +312,13 @@ func (x *CreateStorageProviderRequest) GetCredential() *StorageCredential {
 		return x.Credential
 	}
 	return nil
+}
+
+func (x *CreateStorageProviderRequest) GetMode() string {
+	if x != nil {
+		return x.Mode
+	}
+	return ""
 }
 
 // StorageCredential is an S3 access key. It is write-only: no response
@@ -811,7 +821,7 @@ const file_toshi_workspace_v1_storage_providers_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xd6\x02\n" +
+	"updated_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xea\x02\n" +
 	"\x1cCreateStorageProviderRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
 	"\bendpoint\x18\x02 \x01(\tR\bendpoint\x12\x16\n" +
@@ -825,7 +835,9 @@ const file_toshi_workspace_v1_storage_providers_proto_rawDesc = "" +
 	"\x11cap_guest_presign\x18\b \x01(\bR\x0fcapGuestPresign\x12E\n" +
 	"\n" +
 	"credential\x18\t \x01(\v2%.toshi.workspace.v1.StorageCredentialR\n" +
-	"credential\"\x88\x01\n" +
+	"credential\x12\x12\n" +
+	"\x04mode\x18\n" +
+	" \x01(\tR\x04mode\"\x88\x01\n" +
 	"\x11StorageCredential\x12\"\n" +
 	"\raccess_key_id\x18\x01 \x01(\tR\vaccessKeyId\x12*\n" +
 	"\x11secret_access_key\x18\x02 \x01(\tR\x0fsecretAccessKey\x12#\n" +

@@ -128,6 +128,8 @@ message GetHostJobFailureResponse {
   // The host job's tier line, as HostJob.tier_line. Empty for one that ran
   // in a VM.
   string tier_line = 11;
+  // The host job's id.
+  string job_id = 12;
 }
 
 message GetHostJobTelemetryRequest {
@@ -186,7 +188,9 @@ message HostJob {
   string os = 7;
   string size = 8;
   HostJobState state = 9;
-  // The host the job is assigned to; empty while it is queued.
+  // The host the job is assigned to, when it is one of the workspace's own
+  // hosts. Empty while the job is queued, and for a host Toshi runs for
+  // many workspaces.
   string host_id = 10;
   // The VM the job runs in; empty until the host starts one.
   string instance_id = 11;

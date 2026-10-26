@@ -169,7 +169,8 @@ type WorkspaceServiceClient interface {
 	// configured, or a workspace with no billing customer, fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
 	CreateBillingPortalSession(context.Context, *connect.Request[workspacev1.CreateBillingPortalSessionRequest]) (*connect.Response[workspacev1.CreateBillingPortalSessionResponse], error)
-	// GetVersion returns the control plane's version, commit and commit date.
+	// GetVersion returns the control plane's version, commit and commit
+	// date, and the oldest agent release it admits.
 	GetVersion(context.Context, *connect.Request[workspacev1.GetVersionRequest]) (*connect.Response[workspacev1.GetVersionResponse], error)
 }
 
@@ -479,7 +480,8 @@ type WorkspaceServiceHandler interface {
 	// configured, or a workspace with no billing customer, fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
 	CreateBillingPortalSession(context.Context, *connect.Request[workspacev1.CreateBillingPortalSessionRequest]) (*connect.Response[workspacev1.CreateBillingPortalSessionResponse], error)
-	// GetVersion returns the control plane's version, commit and commit date.
+	// GetVersion returns the control plane's version, commit and commit
+	// date, and the oldest agent release it admits.
 	GetVersion(context.Context, *connect.Request[workspacev1.GetVersionRequest]) (*connect.Response[workspacev1.GetVersionResponse], error)
 }
 
