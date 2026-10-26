@@ -30,6 +30,7 @@ service VolumeService {
   // A page holds 100 volumes when page_size is zero, and 1000 at most.
   rpc ListVolumes(ListVolumesRequest) returns (ListVolumesResponse) {
     option (toshi.permission) = "volumes.read";
+    option (toshi.scope) = "project";
   }
 
   // AttachVolume attaches a state volume to a service or sandbox: the
@@ -44,6 +45,7 @@ service VolumeService {
   // create (SandboxSpec.state_volume_id).
   rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {
     option (toshi.permission) = "volumes.write";
+    option (toshi.scope) = "project";
   }
 
   // DetachVolume clears a volume's attachment and keeps the volume and its
@@ -54,6 +56,7 @@ service VolumeService {
   // volume; neither deletes the volume.
   rpc DetachVolume(DetachVolumeRequest) returns (DetachVolumeResponse) {
     option (toshi.permission) = "volumes.write";
+    option (toshi.scope) = "project";
   }
 }
 

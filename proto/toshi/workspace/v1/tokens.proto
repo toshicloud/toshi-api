@@ -33,6 +33,7 @@ service TokenService {
   // NOT_FOUND; a closed workspace fails with FAILED_PRECONDITION.
   rpc CreateWorkspaceToken(CreateWorkspaceTokenRequest) returns (CreateWorkspaceTokenResponse) {
     option (toshi.permission) = "tokens.write";
+    option (toshi.scope) = "workspace";
   }
   // RevokeToken stops one of the workspace's tokens working at once.
   // Revoking an enrollment token also signs out the hosts that registered

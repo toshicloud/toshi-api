@@ -21,12 +21,14 @@ service RecordingService {
   // A page holds 100 recordings when page_size is zero, and 1000 at most.
   rpc ListRecordings(ListRecordingsRequest) returns (ListRecordingsResponse) {
     option (toshi.permission) = "recordings.read";
+    option (toshi.scope) = "environment";
   }
   // GetRecording returns one recording and, when it is ready, a signed URL
   // for its object that expires. A ready recording whose object's
   // retention has deleted it is FAILED_PRECONDITION.
   rpc GetRecording(GetRecordingRequest) returns (GetRecordingResponse) {
     option (toshi.permission) = "recordings.read";
+    option (toshi.scope) = "environment";
   }
   // CreateRecordingShareLink mints a share link for a ready recording: a
   // URL that fetches its object without a Toshi sign-in until the link
@@ -36,6 +38,7 @@ service RecordingService {
   // object's retention has deleted it, is FAILED_PRECONDITION.
   rpc CreateRecordingShareLink(CreateRecordingShareLinkRequest) returns (CreateRecordingShareLinkResponse) {
     option (toshi.permission) = "recordings.write";
+    option (toshi.scope) = "environment";
   }
   // ListRecordingShareLinks returns a recording's share links, oldest
   // first, without the links themselves.
@@ -43,11 +46,13 @@ service RecordingService {
   // A page holds 100 share links when page_size is zero, and 1000 at most.
   rpc ListRecordingShareLinks(ListRecordingShareLinksRequest) returns (ListRecordingShareLinksResponse) {
     option (toshi.permission) = "recordings.read";
+    option (toshi.scope) = "environment";
   }
   // RevokeRecordingShareLink ends a share link before it expires. A link
   // already revoked is returned as it is.
   rpc RevokeRecordingShareLink(RevokeRecordingShareLinkRequest) returns (RevokeRecordingShareLinkResponse) {
     option (toshi.permission) = "recordings.write";
+    option (toshi.scope) = "environment";
   }
 }
 

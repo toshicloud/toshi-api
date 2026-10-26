@@ -68,13 +68,13 @@ service ChannelService {
   //
   // A page holds 50 records when page_size is zero, and 500 at most.
   rpc ListChannelRequests(ListChannelRequestsRequest) returns (ListChannelRequestsResponse) {
-    option (toshi.permission) = "channels.inspect";
+    option (toshi.permission) = "channels.read";
   }
 
   // GetChannelRequest returns one request record whole. A record the
   // channel no longer keeps fails with NOT_FOUND, naming the oldest kept.
   rpc GetChannelRequest(GetChannelRequestRequest) returns (GetChannelRequestResponse) {
-    option (toshi.permission) = "channels.inspect";
+    option (toshi.permission) = "channels.read";
   }
 
   // ExportChannelLog streams a file of a channel's log: a stream channel's
@@ -84,7 +84,7 @@ service ChannelService {
   // limit, 64 MiB unless set; the first response's next says where the
   // following export starts. Each export is recorded in the audit log.
   rpc ExportChannelLog(ExportChannelLogRequest) returns (stream ExportChannelLogResponse) {
-    option (toshi.permission) = "channels.inspect";
+    option (toshi.permission) = "channels.read";
   }
 
   // CreateChannelConnectToken mints a token that attaches one client to a

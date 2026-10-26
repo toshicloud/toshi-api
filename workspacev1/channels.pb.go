@@ -3284,17 +3284,17 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"ChannelLog\x12\x1b\n" +
 	"\x17CHANNEL_LOG_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12CHANNEL_LOG_OUTPUT\x10\x01\x12\x18\n" +
-	"\x14CHANNEL_LOG_REQUESTS\x10\x022\xac\r\n" +
+	"\x14CHANNEL_LOG_REQUESTS\x10\x022\xa3\r\n" +
 	"\x0eChannelService\x12x\n" +
 	"\rCreateChannel\x12(.toshi.workspace.v1.CreateChannelRequest\x1a).toshi.workspace.v1.CreateChannelResponse\"\x12\xc2\xf3\x18\x0echannels.write\x12t\n" +
 	"\fListChannels\x12'.toshi.workspace.v1.ListChannelsRequest\x1a(.toshi.workspace.v1.ListChannelsResponse\"\x11\xc2\xf3\x18\rchannels.read\x12n\n" +
 	"\n" +
 	"GetChannel\x12%.toshi.workspace.v1.GetChannelRequest\x1a&.toshi.workspace.v1.GetChannelResponse\"\x11\xc2\xf3\x18\rchannels.read\x12\x80\x01\n" +
 	"\x10GetChannelPolicy\x12+.toshi.workspace.v1.GetChannelPolicyRequest\x1a,.toshi.workspace.v1.GetChannelPolicyResponse\"\x11\xc2\xf3\x18\rchannels.read\x12\x81\x01\n" +
-	"\x10SetChannelPolicy\x12+.toshi.workspace.v1.SetChannelPolicyRequest\x1a,.toshi.workspace.v1.SetChannelPolicyResponse\"\x12\xc2\xf3\x18\x0echannels.write\x12\x8c\x01\n" +
-	"\x13ListChannelRequests\x12..toshi.workspace.v1.ListChannelRequestsRequest\x1a/.toshi.workspace.v1.ListChannelRequestsResponse\"\x14\xc2\xf3\x18\x10channels.inspect\x12\x86\x01\n" +
-	"\x11GetChannelRequest\x12,.toshi.workspace.v1.GetChannelRequestRequest\x1a-.toshi.workspace.v1.GetChannelRequestResponse\"\x14\xc2\xf3\x18\x10channels.inspect\x12\x85\x01\n" +
-	"\x10ExportChannelLog\x12+.toshi.workspace.v1.ExportChannelLogRequest\x1a,.toshi.workspace.v1.ExportChannelLogResponse\"\x14\xc2\xf3\x18\x10channels.inspect0\x01\x12\x9c\x01\n" +
+	"\x10SetChannelPolicy\x12+.toshi.workspace.v1.SetChannelPolicyRequest\x1a,.toshi.workspace.v1.SetChannelPolicyResponse\"\x12\xc2\xf3\x18\x0echannels.write\x12\x89\x01\n" +
+	"\x13ListChannelRequests\x12..toshi.workspace.v1.ListChannelRequestsRequest\x1a/.toshi.workspace.v1.ListChannelRequestsResponse\"\x11\xc2\xf3\x18\rchannels.read\x12\x83\x01\n" +
+	"\x11GetChannelRequest\x12,.toshi.workspace.v1.GetChannelRequestRequest\x1a-.toshi.workspace.v1.GetChannelRequestResponse\"\x11\xc2\xf3\x18\rchannels.read\x12\x82\x01\n" +
+	"\x10ExportChannelLog\x12+.toshi.workspace.v1.ExportChannelLogRequest\x1a,.toshi.workspace.v1.ExportChannelLogResponse\"\x11\xc2\xf3\x18\rchannels.read0\x01\x12\x9c\x01\n" +
 	"\x19CreateChannelConnectToken\x124.toshi.workspace.v1.CreateChannelConnectTokenRequest\x1a5.toshi.workspace.v1.CreateChannelConnectTokenResponse\"\x12\xc2\xf3\x18\x0echannels.write\x12\x9c\x01\n" +
 	"\x19RevokeChannelConnectToken\x124.toshi.workspace.v1.RevokeChannelConnectTokenRequest\x1a5.toshi.workspace.v1.RevokeChannelConnectTokenResponse\"\x12\xc2\xf3\x18\x0echannels.write\x12x\n" +
 	"\rDeleteChannel\x12(.toshi.workspace.v1.DeleteChannelRequest\x1a).toshi.workspace.v1.DeleteChannelResponse\"\x12\xc2\xf3\x18\x0echannels.write\x12t\n" +

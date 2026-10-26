@@ -63,6 +63,7 @@ service HostService {
   // a workspace at its plan's own-host limit fails with RESOURCE_EXHAUSTED.
   rpc CreateCloudHost(CreateCloudHostRequest) returns (CreateCloudHostResponse) {
     option (toshi.permission) = "hosts.write";
+    option (toshi.scope) = "workspace";
   }
   // CheckCloudHost checks a cloud host's setup without launching anything:
   // the role can be assumed, the image is visible, the subnet routes to the

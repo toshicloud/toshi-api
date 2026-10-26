@@ -550,11 +550,11 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x11VOLUME_MODE_CACHE\x10\x01\x12\x14\n" +
 	"\x10VOLUME_MODE_SEED\x10\x02\x12\x15\n" +
 	"\x11VOLUME_MODE_STATE\x10\x03\x12\x18\n" +
-	"\x14VOLUME_MODE_ARTIFACT\x10\x042\xed\x02\n" +
-	"\rVolumeService\x12p\n" +
-	"\vListVolumes\x12&.toshi.workspace.v1.ListVolumesRequest\x1a'.toshi.workspace.v1.ListVolumesResponse\"\x10\xc2\xf3\x18\fvolumes.read\x12t\n" +
-	"\fAttachVolume\x12'.toshi.workspace.v1.AttachVolumeRequest\x1a(.toshi.workspace.v1.AttachVolumeResponse\"\x11\xc2\xf3\x18\rvolumes.write\x12t\n" +
-	"\fDetachVolume\x12'.toshi.workspace.v1.DetachVolumeRequest\x1a(.toshi.workspace.v1.DetachVolumeResponse\"\x11\xc2\xf3\x18\rvolumes.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x14VOLUME_MODE_ARTIFACT\x10\x042\x8e\x03\n" +
+	"\rVolumeService\x12{\n" +
+	"\vListVolumes\x12&.toshi.workspace.v1.ListVolumesRequest\x1a'.toshi.workspace.v1.ListVolumesResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12\x7f\n" +
+	"\fAttachVolume\x12'.toshi.workspace.v1.AttachVolumeRequest\x1a(.toshi.workspace.v1.AttachVolumeResponse\"\x1c\xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\x12\x7f\n" +
+	"\fDetachVolume\x12'.toshi.workspace.v1.DetachVolumeRequest\x1a(.toshi.workspace.v1.DetachVolumeResponse\"\x1c\xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aprojectB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_volumes_proto_rawDescOnce sync.Once

@@ -22,6 +22,7 @@ service ProjectService {
   // A page holds 100 projects when page_size is zero, and 1000 at most.
   rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse) {
     option (toshi.permission) = "projects.read";
+    option (toshi.scope) = "project";
   }
   // GetProject returns one project with its environments by name. A
   // project the workspace does not have is NOT_FOUND. A token limited to
@@ -30,6 +31,7 @@ service ProjectService {
   // environment only.
   rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {
     option (toshi.permission) = "projects.read";
+    option (toshi.scope) = "project";
   }
   // ListRepositories returns the repositories the workspace's projects
   // claim, by repository. A project the workspace does not have is
@@ -38,6 +40,7 @@ service ProjectService {
   // A page holds 100 repositories when page_size is zero, and 1000 at most.
   rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse) {
     option (toshi.permission) = "projects.read";
+    option (toshi.scope) = "project";
   }
   // CreateProject makes a project with its three environments,
   // development, preview and production. A name the workspace's projects
@@ -55,6 +58,7 @@ service ProjectService {
   // repository no other project claims.
   rpc ClaimRepository(ClaimRepositoryRequest) returns (ClaimRepositoryResponse) {
     option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
   }
   // CreateEnvironment adds the environment of a kind a project lacks,
   // named after its kind, such as preview for a project made with
@@ -64,6 +68,7 @@ service ProjectService {
   // is PERMISSION_DENIED.
   rpc CreateEnvironment(CreateEnvironmentRequest) returns (CreateEnvironmentResponse) {
     option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
   }
   // DeleteEnvironment deletes a project's environment by name. A project's
   // production environment is FAILED_PRECONDITION, and so is an
@@ -77,6 +82,7 @@ service ProjectService {
   // environment is PERMISSION_DENIED.
   rpc DeleteEnvironment(DeleteEnvironmentRequest) returns (DeleteEnvironmentResponse) {
     option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
   }
   // ListBranchRules returns a project's branch rules in order, the
   // fallback rule last: the first that matches a CI job's run chooses the
@@ -89,6 +95,7 @@ service ProjectService {
   // A page holds 100 rules when page_size is zero, and 1000 at most.
   rpc ListBranchRules(ListBranchRulesRequest) returns (ListBranchRulesResponse) {
     option (toshi.permission) = "projects.read";
+    option (toshi.scope) = "project";
   }
   // SetBranchRules replaces a project's branch rules with the list given,
   // whole: it has at most 100 rules, a known match on each, a pattern on
@@ -103,6 +110,7 @@ service ProjectService {
   // PERMISSION_DENIED.
   rpc SetBranchRules(SetBranchRulesRequest) returns (SetBranchRulesResponse) {
     option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
   }
   // CreateEmbedToken mints an embed token for a project: a credential for
   // a web page on one of the token's origins, which spends it once to
@@ -112,6 +120,7 @@ service ProjectService {
   // environment is PERMISSION_DENIED.
   rpc CreateEmbedToken(CreateEmbedTokenRequest) returns (CreateEmbedTokenResponse) {
     option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
   }
   // ListEmbedTokens returns a project's embed tokens, oldest first, without
   // the tokens themselves.
@@ -119,11 +128,13 @@ service ProjectService {
   // A page holds 100 embed tokens when page_size is zero, and 1000 at most.
   rpc ListEmbedTokens(ListEmbedTokensRequest) returns (ListEmbedTokensResponse) {
     option (toshi.permission) = "projects.read";
+    option (toshi.scope) = "project";
   }
   // RevokeEmbedToken refuses an embed token before it expires. A token
   // already revoked is returned as it is.
   rpc RevokeEmbedToken(RevokeEmbedTokenRequest) returns (RevokeEmbedTokenResponse) {
     option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
   }
 }
 

@@ -30,6 +30,14 @@ var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 		Tag:           "bytes,51000,opt,name=permission",
 		Filename:      "toshi/permission.proto",
 	},
+	{
+		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
+		ExtensionType: (*string)(nil),
+		Field:         51001,
+		Name:          "toshi.scope",
+		Tag:           "bytes,51001,opt,name=scope",
+		Filename:      "toshi/permission.proto",
+	},
 }
 
 // Extension fields to descriptorpb.MethodOptions.
@@ -48,6 +56,21 @@ var (
 	//
 	// optional string permission = 51000;
 	E_Permission = &file_toshi_permission_proto_extTypes[0]
+	// scope names what a call acts in: "workspace", the default when the
+	// option is absent, or "project" or "environment" for a call that names a
+	// project or an environment of the workspace, or a resource that belongs
+	// to one. A token limited to a project, or to one of its environments,
+	// makes only the calls whose scope is "project" or "environment".
+	//
+	// A method whose request has a project or environment field (project,
+	// project_id, environment, environment_id) names its scope, and the build
+	// checks it against that field: "environment" when the request has an
+	// environment field, "project" when it has only a project field, or
+	// "workspace" when the field is not where the call acts, such as the
+	// project a new token is limited to.
+	//
+	// optional string scope = 51001;
+	E_Scope = &file_toshi_permission_proto_extTypes[1]
 )
 
 var File_toshi_permission_proto protoreflect.FileDescriptor
@@ -57,17 +80,19 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\x16toshi/permission.proto\x12\x05toshi\x1a google/protobuf/descriptor.proto:@\n" +
 	"\n" +
 	"permission\x12\x1e.google.protobuf.MethodOptions\x18\xb8\x8e\x03 \x01(\tR\n" +
-	"permissionB)Z'github.com/toshicloud/toshi-api/toshipbb\x06proto3"
+	"permission:6\n" +
+	"\x05scope\x12\x1e.google.protobuf.MethodOptions\x18\xb9\x8e\x03 \x01(\tR\x05scopeB)Z'github.com/toshicloud/toshi-api/toshipbb\x06proto3"
 
 var file_toshi_permission_proto_goTypes = []any{
 	(*descriptorpb.MethodOptions)(nil), // 0: google.protobuf.MethodOptions
 }
 var file_toshi_permission_proto_depIdxs = []int32{
 	0, // 0: toshi.permission:extendee -> google.protobuf.MethodOptions
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	0, // [0:1] is the sub-list for extension extendee
+	0, // 1: toshi.scope:extendee -> google.protobuf.MethodOptions
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	0, // [0:2] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
 }
 
@@ -83,7 +108,7 @@ func file_toshi_permission_proto_init() {
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_permission_proto_rawDesc), len(file_toshi_permission_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   0,
-			NumExtensions: 1,
+			NumExtensions: 2,
 			NumServices:   0,
 		},
 		GoTypes:           file_toshi_permission_proto_goTypes,

@@ -11,7 +11,7 @@ import { file_google_protobuf_descriptor } from "@bufbuild/protobuf/wkt";
  * Describes the file toshi/permission.proto.
  */
 export const file_toshi_permission: GenFile = /*@__PURE__*/
-  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaTpACgpwZXJtaXNzaW9uEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuI4DIAEoCVIKcGVybWlzc2lvbkIpWidnaXRodWIuY29tL3Rvc2hpY2xvdWQvdG9zaGktYXBpL3Rvc2hpcGJiBnByb3RvMw", [file_google_protobuf_descriptor]);
+  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaTpACgpwZXJtaXNzaW9uEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuI4DIAEoCVIKcGVybWlzc2lvbjo2CgVzY29wZRIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLmOAyABKAlSBXNjb3BlQilaJ2dpdGh1Yi5jb20vdG9zaGljbG91ZC90b3NoaS1hcGkvdG9zaGlwYmIGcHJvdG8z", [file_google_protobuf_descriptor]);
 
 /**
  * permission names what a caller needs to make the call: an area and a
@@ -30,4 +30,23 @@ export const file_toshi_permission: GenFile = /*@__PURE__*/
  */
 export const permission: GenExtension<MethodOptions, string> = /*@__PURE__*/
   extDesc(file_toshi_permission, 0);
+
+/**
+ * scope names what a call acts in: "workspace", the default when the
+ * option is absent, or "project" or "environment" for a call that names a
+ * project or an environment of the workspace, or a resource that belongs
+ * to one. A token limited to a project, or to one of its environments,
+ * makes only the calls whose scope is "project" or "environment".
+ *
+ * A method whose request has a project or environment field (project,
+ * project_id, environment, environment_id) names its scope, and the build
+ * checks it against that field: "environment" when the request has an
+ * environment field, "project" when it has only a project field, or
+ * "workspace" when the field is not where the call acts, such as the
+ * project a new token is limited to.
+ *
+ * @generated from extension: string scope = 51001;
+ */
+export const scope: GenExtension<MethodOptions, string> = /*@__PURE__*/
+  extDesc(file_toshi_permission, 1);
 

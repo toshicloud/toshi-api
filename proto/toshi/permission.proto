@@ -19,4 +19,18 @@ extend google.protobuf.MethodOptions {
   // generated from it. A workspace that is suspended keeps the calls whose
   // level is "read".
   string permission = 51000;
+
+  // scope names what a call acts in: "workspace", the default when the
+  // option is absent, or "project" or "environment" for a call that names a
+  // project or an environment of the workspace, or a resource that belongs
+  // to one. A token limited to a project, or to one of its environments,
+  // makes only the calls whose scope is "project" or "environment".
+  //
+  // A method whose request has a project or environment field (project,
+  // project_id, environment, environment_id) names its scope, and the build
+  // checks it against that field: "environment" when the request has an
+  // environment field, "project" when it has only a project field, or
+  // "workspace" when the field is not where the call acts, such as the
+  // project a new token is limited to.
+  string scope = 51001;
 }

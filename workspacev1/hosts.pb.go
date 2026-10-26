@@ -2365,7 +2365,7 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xd5\a\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xe3\a\n" +
 	"\vHostService\x12h\n" +
 	"\tListHosts\x12$.toshi.workspace.v1.ListHostsRequest\x1a%.toshi.workspace.v1.ListHostsResponse\"\x0e\xc2\xf3\x18\n" +
 	"hosts.read\x12z\n" +
@@ -2375,8 +2375,8 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"hosts.read\x12r\n" +
 	"\fSetHostState\x12'.toshi.workspace.v1.SetHostStateRequest\x1a(.toshi.workspace.v1.SetHostStateResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12l\n" +
 	"\n" +
-	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12{\n" +
-	"\x0fCreateCloudHost\x12*.toshi.workspace.v1.CreateCloudHostRequest\x1a+.toshi.workspace.v1.CreateCloudHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12x\n" +
+	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12\x88\x01\n" +
+	"\x0fCreateCloudHost\x12*.toshi.workspace.v1.CreateCloudHostRequest\x1a+.toshi.workspace.v1.CreateCloudHostResponse\"\x1c\xc2\xf3\x18\vhosts.write\xca\xf3\x18\tworkspace\x12x\n" +
 	"\x0eCheckCloudHost\x12).toshi.workspace.v1.CheckCloudHostRequest\x1a*.toshi.workspace.v1.CheckCloudHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12\x8d\x01\n" +
 	"\x15CreateEnrollmentToken\x120.toshi.workspace.v1.CreateEnrollmentTokenRequest\x1a1.toshi.workspace.v1.CreateEnrollmentTokenResponse\"\x0f\xc2\xf3\x18\vhosts.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 

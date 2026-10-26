@@ -48,16 +48,19 @@ service ArtifactService {
   // A page holds 50 artifacts when page_size is zero, and 200 at most.
   rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse) {
     option (toshi.permission) = "artifacts.read";
+    option (toshi.scope) = "environment";
   }
   // GetArtifact returns one artifact's record, never a key or a URL.
   rpc GetArtifact(GetArtifactRequest) returns (GetArtifactResponse) {
     option (toshi.permission) = "artifacts.read";
+    option (toshi.scope) = "environment";
   }
   // GetArtifactDownloadURL returns a signed URL that expires, and the
   // artifact's data key when it is envelope encrypted. An artifact that is
   // not complete fails with FAILED_PRECONDITION.
   rpc GetArtifactDownloadURL(GetArtifactDownloadURLRequest) returns (GetArtifactDownloadURLResponse) {
     option (toshi.permission) = "artifacts.read";
+    option (toshi.scope) = "environment";
   }
 }
 
