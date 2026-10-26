@@ -6,7 +6,7 @@ TypeScript code generated from them.
 | Package | What it is |
 | --- | --- |
 | `toshi.workspace.v1` | The Workspace API: workloads, executions, events, operations, projects, secrets, webhooks, artifacts and display sessions. This is the public contract for programs that drive Toshi. |
-| `toshi.operator.v1` | The operator API, used by the dashboard and the `toshi` command line to run an installation: tenants, hosts, runner jobs, tokens, usage, billing, alerts and storage providers. |
+| `toshi.operator.v1` | The operator API, used by the dashboard and the `toshi` command line to run an installation: workspaces, hosts, runner jobs, tokens, usage, billing, alerts and storage providers. |
 | `toshi.githubcore.v1` | The GitHub product's core API, for the product's adapter when it runs outside the control plane: the reads and writes it makes for a call the control plane passed to it, under that call's grant. |
 
 The services are [Connect](https://connectrpc.com) services, served by the

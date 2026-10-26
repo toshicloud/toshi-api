@@ -1382,7 +1382,7 @@ export type ServiceSpec = Message<"toshi.workspace.v1.ServiceSpec"> & {
   revision: bigint;
 
   /**
-   * Its name, a lower-case DNS label, unique among the tenant's services
+   * Its name, a lower-case DNS label, unique among the workspace's services
    * that are not deleted, whatever their project or environment. Set in
    * a create; answers carry it.
    *
@@ -1477,7 +1477,7 @@ export type ServiceSpecJson = {
   revision?: string;
 
   /**
-   * Its name, a lower-case DNS label, unique among the tenant's services
+   * Its name, a lower-case DNS label, unique among the workspace's services
    * that are not deleted, whatever their project or environment. Set in
    * a create; answers carry it.
    *

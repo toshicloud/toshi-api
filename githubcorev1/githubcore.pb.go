@@ -71,9 +71,9 @@ type AdmitGrantResponse struct {
 	// authenticated it: "operator", "session" or "token", and its id.
 	ActorKind string `protobuf:"bytes,2,opt,name=actor_kind,json=actorKind,proto3" json:"actor_kind,omitempty"`
 	ActorId   string `protobuf:"bytes,3,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
-	// tenants are the caller's tenants; empty for the operator.
+	// workspaces are the caller's workspaces; empty for the operator.
 	Tenants []string `protobuf:"bytes,4,rep,name=tenants,proto3" json:"tenants,omitempty"`
-	// job_id, tenant, repository, approved and installation_id are the call's
+	// job_id, workspace, repository, approved and installation_id are the call's
 	// arguments the grant binds.
 	JobId          string `protobuf:"bytes,5,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	Tenant         string `protobuf:"bytes,6,opt,name=tenant,proto3" json:"tenant,omitempty"`
@@ -489,7 +489,7 @@ func (*FillJobFailingStepResponse) Descriptor() ([]byte, []int) {
 
 type ListOpenSourceRepositoriesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// tenant is the tenant whose rows to list; empty for every tenant the
+	// workspace is the workspace whose rows to list; empty for every workspace the
 	// caller may see.
 	Tenant string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// The most repositories in one page; zero lets the server choose.
@@ -613,7 +613,7 @@ func (x *ListOpenSourceRepositoriesResponse) GetNextPageToken() string {
 	return ""
 }
 
-// OpenSourceRepository is one tenant's row of the open-source gate.
+// OpenSourceRepository is one workspace's row of the open-source gate.
 type OpenSourceRepository struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	Tenant            string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
@@ -754,7 +754,7 @@ func (x *OpenSourceRepository) GetForkPrApproval() string {
 	return ""
 }
 
-// OpenSourceKeptApproval is an approval of a repository no tenant has a
+// OpenSourceKeptApproval is an approval of a repository no workspace has a
 // row of yet.
 type OpenSourceKeptApproval struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -863,7 +863,7 @@ func (x *SetOpenSourceApprovalRequest) GetApproved() bool {
 type SetOpenSourceApprovalResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// repositories are the repository's rows after the change; kept is set
-	// instead when no tenant has a row and the decision was kept.
+	// instead when no workspace has a row and the decision was kept.
 	Repositories  []*OpenSourceRepository `protobuf:"bytes,1,rep,name=repositories,proto3" json:"repositories,omitempty"`
 	Kept          *OpenSourceKeptApproval `protobuf:"bytes,2,opt,name=kept,proto3" json:"kept,omitempty"`
 	unknownFields protoimpl.UnknownFields

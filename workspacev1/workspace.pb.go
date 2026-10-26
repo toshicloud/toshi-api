@@ -2003,7 +2003,7 @@ type ServiceSpec struct {
 	Mode ServiceMode `protobuf:"varint,2,opt,name=mode,proto3,enum=toshi.workspace.v1.ServiceMode" json:"mode,omitempty"`
 	// The number of its current revision: its next run runs that recipe.
 	Revision int64 `protobuf:"varint,3,opt,name=revision,proto3" json:"revision,omitempty"`
-	// Its name, a lower-case DNS label, unique among the tenant's services
+	// Its name, a lower-case DNS label, unique among the workspace's services
 	// that are not deleted, whatever their project or environment. Set in
 	// a create; answers carry it.
 	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`

@@ -158,7 +158,7 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   holdReason: string;
 
   /**
-   * Whether the job was placed on a host its tenant owns. Such a job sends no
+   * Whether the job was placed on a host its workspace owns. Such a job sends no
    * meter event.
    *
    * @generated from field: bool own_host = 22;
@@ -265,7 +265,7 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
    * The whole minutes the job counts in the usage report: from started_at
    * to stop_requested_at when the job was asked to stop, else to
    * finished_at, rounded up. 0 for a job that has not ended or never started,
-   * a job on its tenant's own host and a dispatch filler's job, which are not
+   * a job on its workspace's own host and a dispatch filler's job, which are not
    * billed.
    *
    * @generated from field: int64 billable_minutes = 35;
@@ -369,7 +369,7 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   /**
    * The project the job belongs to, by name: the project that
    * claimed the job's repository when the job was stored, else the
-   * tenant's default project; a Workspace API job's is its workload's.
+   * workspace's default project; a Workspace API job's is its workload's.
    * Empty for a job stored before projects.
    *
    * @generated from field: string project = 46;
@@ -528,7 +528,7 @@ export type JobJson = {
   holdReason?: string;
 
   /**
-   * Whether the job was placed on a host its tenant owns. Such a job sends no
+   * Whether the job was placed on a host its workspace owns. Such a job sends no
    * meter event.
    *
    * @generated from field: bool own_host = 22;
@@ -635,7 +635,7 @@ export type JobJson = {
    * The whole minutes the job counts in the usage report: from started_at
    * to stop_requested_at when the job was asked to stop, else to
    * finished_at, rounded up. 0 for a job that has not ended or never started,
-   * a job on its tenant's own host and a dispatch filler's job, which are not
+   * a job on its workspace's own host and a dispatch filler's job, which are not
    * billed.
    *
    * @generated from field: int64 billable_minutes = 35;
@@ -739,7 +739,7 @@ export type JobJson = {
   /**
    * The project the job belongs to, by name: the project that
    * claimed the job's repository when the job was stored, else the
-   * tenant's default project; a Workspace API job's is its workload's.
+   * workspace's default project; a Workspace API job's is its workload's.
    * Empty for a job stored before projects.
    *
    * @generated from field: string project = 46;
@@ -1791,7 +1791,7 @@ export type Host = Message<"toshi.operator.v1.Host"> & {
   heldRefills: HeldRefill[];
 
   /**
-   * Tenant that owns the host and is the only one whose jobs it runs; empty
+   * Workspace that owns the host and is the only one whose jobs it runs; empty
    * for a shared host.
    *
    * @generated from field: string owner_tenant = 11;
@@ -1988,7 +1988,7 @@ export type HostJson = {
   heldRefills?: HeldRefillJson[];
 
   /**
-   * Tenant that owns the host and is the only one whose jobs it runs; empty
+   * Workspace that owns the host and is the only one whose jobs it runs; empty
    * for a shared host.
    *
    * @generated from field: string owner_tenant = 11;
@@ -2200,7 +2200,7 @@ export type ListJobsRequest = Message<"toshi.operator.v1.ListJobsRequest"> & {
   states: JobState[];
 
   /**
-   * Empty matches every tenant.
+   * Empty matches every workspace.
    *
    * @generated from field: string tenant = 2;
    */
@@ -2221,7 +2221,7 @@ export type ListJobsRequest = Message<"toshi.operator.v1.ListJobsRequest"> & {
   pageSize: number;
 
   /**
-   * Only the job of this Workspace API workload. Within one tenant a workload
+   * Only the job of this Workspace API workload. Within one workspace a workload
    * has at most one job, and a service workload has none. The job is returned
    * whatever its state, unless states excludes it.
    *
@@ -2249,7 +2249,7 @@ export type ListJobsRequestJson = {
   states?: JobStateJson[];
 
   /**
-   * Empty matches every tenant.
+   * Empty matches every workspace.
    *
    * @generated from field: string tenant = 2;
    */
@@ -2270,7 +2270,7 @@ export type ListJobsRequestJson = {
   pageSize?: number;
 
   /**
-   * Only the job of this Workspace API workload. Within one tenant a workload
+   * Only the job of this Workspace API workload. Within one workspace a workload
    * has at most one job, and a service workload has none. The job is returned
    * whatever its state, unless states excludes it.
    *
@@ -2420,7 +2420,7 @@ export type AuditEvent = Message<"toshi.operator.v1.AuditEvent"> & {
   actorId: string;
 
   /**
-   * Empty when the event is not tied to a tenant.
+   * Empty when the event is not tied to a workspace.
    *
    * @generated from field: string tenant = 5;
    */
@@ -2433,7 +2433,7 @@ export type AuditEvent = Message<"toshi.operator.v1.AuditEvent"> & {
 
   /**
    * A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...,
-   * tenant:... or installation:....
+   * workspace:... or installation:....
    *
    * @generated from field: string target = 7;
    */
@@ -2484,7 +2484,7 @@ export type AuditEventJson = {
   actorId?: string;
 
   /**
-   * Empty when the event is not tied to a tenant.
+   * Empty when the event is not tied to a workspace.
    *
    * @generated from field: string tenant = 5;
    */
@@ -2497,7 +2497,7 @@ export type AuditEventJson = {
 
   /**
    * A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...,
-   * tenant:... or installation:....
+   * workspace:... or installation:....
    *
    * @generated from field: string target = 7;
    */
@@ -2530,7 +2530,7 @@ export const AuditEventSchema: GenMessage<AuditEvent, {jsonType: AuditEventJson}
  */
 export type ListAuditEventsRequest = Message<"toshi.operator.v1.ListAuditEventsRequest"> & {
   /**
-   * Only this tenant's events; empty matches every tenant.
+   * Only this workspace's events; empty matches every workspace.
    *
    * @generated from field: string tenant = 1;
    */
@@ -2598,7 +2598,7 @@ export type ListAuditEventsRequest = Message<"toshi.operator.v1.ListAuditEventsR
  */
 export type ListAuditEventsRequestJson = {
   /**
-   * Only this tenant's events; empty matches every tenant.
+   * Only this workspace's events; empty matches every workspace.
    *
    * @generated from field: string tenant = 1;
    */
@@ -2973,7 +2973,7 @@ export type HostVolume = Message<"toshi.operator.v1.HostVolume"> & {
   volumeId: string;
 
   /**
-   * The volume's tenant.
+   * The volume's workspace.
    *
    * @generated from field: string tenant = 2;
    */
@@ -3057,7 +3057,7 @@ export type HostVolumeJson = {
   volumeId?: string;
 
   /**
-   * The volume's tenant.
+   * The volume's workspace.
    *
    * @generated from field: string tenant = 2;
    */
@@ -3526,7 +3526,7 @@ export const OfflineHostResultSchema: GenMessage<OfflineHostResult, {jsonType: O
   messageDesc(file_toshi_operator_v1_operator, 35);
 
 /**
- * CloudHost is the AWS account behind a tenant-owned host the control plane
+ * CloudHost is the AWS account behind a workspace-owned host the control plane
  * drives.
  *
  * @generated from message toshi.operator.v1.CloudHost
@@ -3540,7 +3540,7 @@ export type CloudHost = Message<"toshi.operator.v1.CloudHost"> & {
   hostId: string;
 
   /**
-   * The tenant that owns the host.
+   * The workspace that owns the host.
    *
    * @generated from field: string tenant = 2;
    */
@@ -3561,7 +3561,7 @@ export type CloudHost = Message<"toshi.operator.v1.CloudHost"> & {
   region: string;
 
   /**
-   * The role in the tenant's account the control plane assumes (AWS).
+   * The role in the workspace's account the control plane assumes (AWS).
    *
    * @generated from field: string role_arn = 5;
    */
@@ -3650,7 +3650,7 @@ export type CloudHost = Message<"toshi.operator.v1.CloudHost"> & {
   zone: string;
 
   /**
-   * The tenant's service account the control plane impersonates (GCP).
+   * The workspace's service account the control plane impersonates (GCP).
    *
    * @generated from field: string service_account = 18;
    */
@@ -3658,7 +3658,7 @@ export type CloudHost = Message<"toshi.operator.v1.CloudHost"> & {
 
   /**
    * Where the instances reach the internet: "public" (each gets its own
-   * public address) or "nat" (none: the tenant's NAT carries the traffic).
+   * public address) or "nat" (none: the workspace's NAT carries the traffic).
    *
    * @generated from field: string egress = 19;
    */
@@ -3666,7 +3666,7 @@ export type CloudHost = Message<"toshi.operator.v1.CloudHost"> & {
 };
 
 /**
- * CloudHost is the AWS account behind a tenant-owned host the control plane
+ * CloudHost is the AWS account behind a workspace-owned host the control plane
  * drives.
  *
  * @generated from message toshi.operator.v1.CloudHost
@@ -3680,7 +3680,7 @@ export type CloudHostJson = {
   hostId?: string;
 
   /**
-   * The tenant that owns the host.
+   * The workspace that owns the host.
    *
    * @generated from field: string tenant = 2;
    */
@@ -3701,7 +3701,7 @@ export type CloudHostJson = {
   region?: string;
 
   /**
-   * The role in the tenant's account the control plane assumes (AWS).
+   * The role in the workspace's account the control plane assumes (AWS).
    *
    * @generated from field: string role_arn = 5;
    */
@@ -3790,7 +3790,7 @@ export type CloudHostJson = {
   zone?: string;
 
   /**
-   * The tenant's service account the control plane impersonates (GCP).
+   * The workspace's service account the control plane impersonates (GCP).
    *
    * @generated from field: string service_account = 18;
    */
@@ -3798,7 +3798,7 @@ export type CloudHostJson = {
 
   /**
    * Where the instances reach the internet: "public" (each gets its own
-   * public address) or "nat" (none: the tenant's NAT carries the traffic).
+   * public address) or "nat" (none: the workspace's NAT carries the traffic).
    *
    * @generated from field: string egress = 19;
    */
@@ -3813,13 +3813,13 @@ export const CloudHostSchema: GenMessage<CloudHost, {jsonType: CloudHostJson}> =
   messageDesc(file_toshi_operator_v1_operator, 36);
 
 /**
- * CreateCloudHostRequest names the tenant and the cloud host to register.
+ * CreateCloudHostRequest names the workspace and the cloud host to register.
  *
  * @generated from message toshi.operator.v1.CreateCloudHostRequest
  */
 export type CreateCloudHostRequest = Message<"toshi.operator.v1.CreateCloudHostRequest"> & {
   /**
-   * The tenant that owns the host.
+   * The workspace that owns the host.
    *
    * @generated from field: string tenant = 1;
    */
@@ -3847,7 +3847,7 @@ export type CreateCloudHostRequest = Message<"toshi.operator.v1.CreateCloudHostR
   region: string;
 
   /**
-   * The role in the tenant's account the control plane assumes (AWS).
+   * The role in the workspace's account the control plane assumes (AWS).
    *
    * @generated from field: string role_arn = 5;
    */
@@ -3923,7 +3923,7 @@ export type CreateCloudHostRequest = Message<"toshi.operator.v1.CreateCloudHostR
 
   /**
    * Register the host as an ordinary own host instead of an overflow host:
-   * it then takes the tenant's jobs without waiting for the plan's
+   * it then takes the workspace's jobs without waiting for the plan's
    * overflow_after. False, the default, makes an overflow host.
    *
    * @generated from field: bool no_overflow = 15;
@@ -3943,7 +3943,7 @@ export type CreateCloudHostRequest = Message<"toshi.operator.v1.CreateCloudHostR
   zone: string;
 
   /**
-   * The tenant's service account the control plane impersonates (GCP).
+   * The workspace's service account the control plane impersonates (GCP).
    *
    * @generated from field: string service_account = 18;
    */
@@ -3952,7 +3952,7 @@ export type CreateCloudHostRequest = Message<"toshi.operator.v1.CreateCloudHostR
   /**
    * Where the instances reach the internet: "public" (the default: each
    * instance gets its own public address) or "nat" (no public address; the
-   * subnet routes through the tenant's NAT gateway or Cloud NAT, whose
+   * subnet routes through the workspace's NAT gateway or Cloud NAT, whose
    * addresses become the host's egress set).
    *
    * @generated from field: string egress = 19;
@@ -3961,13 +3961,13 @@ export type CreateCloudHostRequest = Message<"toshi.operator.v1.CreateCloudHostR
 };
 
 /**
- * CreateCloudHostRequest names the tenant and the cloud host to register.
+ * CreateCloudHostRequest names the workspace and the cloud host to register.
  *
  * @generated from message toshi.operator.v1.CreateCloudHostRequest
  */
 export type CreateCloudHostRequestJson = {
   /**
-   * The tenant that owns the host.
+   * The workspace that owns the host.
    *
    * @generated from field: string tenant = 1;
    */
@@ -3995,7 +3995,7 @@ export type CreateCloudHostRequestJson = {
   region?: string;
 
   /**
-   * The role in the tenant's account the control plane assumes (AWS).
+   * The role in the workspace's account the control plane assumes (AWS).
    *
    * @generated from field: string role_arn = 5;
    */
@@ -4071,7 +4071,7 @@ export type CreateCloudHostRequestJson = {
 
   /**
    * Register the host as an ordinary own host instead of an overflow host:
-   * it then takes the tenant's jobs without waiting for the plan's
+   * it then takes the workspace's jobs without waiting for the plan's
    * overflow_after. False, the default, makes an overflow host.
    *
    * @generated from field: bool no_overflow = 15;
@@ -4091,7 +4091,7 @@ export type CreateCloudHostRequestJson = {
   zone?: string;
 
   /**
-   * The tenant's service account the control plane impersonates (GCP).
+   * The workspace's service account the control plane impersonates (GCP).
    *
    * @generated from field: string service_account = 18;
    */
@@ -4100,7 +4100,7 @@ export type CreateCloudHostRequestJson = {
   /**
    * Where the instances reach the internet: "public" (the default: each
    * instance gets its own public address) or "nat" (no public address; the
-   * subnet routes through the tenant's NAT gateway or Cloud NAT, whose
+   * subnet routes through the workspace's NAT gateway or Cloud NAT, whose
    * addresses become the host's egress set).
    *
    * @generated from field: string egress = 19;
@@ -4135,7 +4135,7 @@ export type CreateCloudHostResponse = Message<"toshi.operator.v1.CreateCloudHost
   externalId: string;
 
   /**
-   * The AWS principal the tenant's role must trust (AWS).
+   * The AWS principal the workspace's role must trust (AWS).
    *
    * @generated from field: string principal_arn = 3;
    */
@@ -4147,7 +4147,7 @@ export type CreateCloudHostResponse = Message<"toshi.operator.v1.CreateCloudHost
   cloudHost?: CloudHost | undefined;
 
   /**
-   * The Google principal the tenant's service account must let create
+   * The Google principal the workspace's service account must let create
    * tokens for it, with roles/iam.serviceAccountTokenCreator (GCP).
    *
    * @generated from field: string gcp_principal = 5;
@@ -4175,7 +4175,7 @@ export type CreateCloudHostResponseJson = {
   externalId?: string;
 
   /**
-   * The AWS principal the tenant's role must trust (AWS).
+   * The AWS principal the workspace's role must trust (AWS).
    *
    * @generated from field: string principal_arn = 3;
    */
@@ -4187,7 +4187,7 @@ export type CreateCloudHostResponseJson = {
   cloudHost?: CloudHostJson;
 
   /**
-   * The Google principal the tenant's service account must let create
+   * The Google principal the workspace's service account must let create
    * tokens for it, with roles/iam.serviceAccountTokenCreator (GCP).
    *
    * @generated from field: string gcp_principal = 5;
@@ -4203,7 +4203,7 @@ export const CreateCloudHostResponseSchema: GenMessage<CreateCloudHostResponse, 
   messageDesc(file_toshi_operator_v1_operator, 38);
 
 /**
- * Tenant owns a plan, an optional concurrency override, and one or more GitHub
+ * Workspace owns a plan, an optional concurrency override, and one or more GitHub
  * App installations.
  *
  * @generated from message toshi.operator.v1.Tenant
@@ -4251,7 +4251,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   status: string;
 
   /**
-   * The tenant's jobs wait for its own hosts and never run on shared ones.
+   * The workspace's jobs wait for its own hosts and never run on shared ones.
    *
    * @generated from field: bool own_hosts_only = 8;
    */
@@ -4266,14 +4266,14 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   spendCapCents: bigint;
 
   /**
-   * The tenant's own jobs-per-hour limit; 0 means the plan's applies.
+   * The workspace's own jobs-per-hour limit; 0 means the plan's applies.
    *
    * @generated from field: int32 max_jobs_per_hour = 10;
    */
   maxJobsPerHour: number;
 
   /**
-   * The limit the scheduler enforces: the lower of the tenant's and the
+   * The limit the scheduler enforces: the lower of the workspace's and the
    * plan's; 0 means none.
    *
    * @generated from field: int32 effective_max_jobs_per_hour = 11;
@@ -4281,7 +4281,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   effectiveMaxJobsPerHour: number;
 
   /**
-   * The starter credit granted when the tenant was created; 0 when none.
+   * The starter credit granted when the workspace was created; 0 when none.
    *
    * @generated from field: int64 starter_credit_cents = 12;
    */
@@ -4293,7 +4293,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   starterCreditGrantedAt?: Timestamp | undefined;
 
   /**
-   * Shared overflow hosts may take the tenant's jobs; its own overflow hosts
+   * Shared overflow hosts may take the workspace's jobs; its own overflow hosts
    * always may.
    *
    * @generated from field: bool allow_overflow = 14;
@@ -4301,7 +4301,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   allowOverflow: boolean;
 
   /**
-   * Whether the tenant's dispatch fillers, its cache-warming workflows,
+   * Whether the workspace's dispatch fillers, its cache-warming workflows,
    * run on idle capacity.
    *
    * @generated from field: bool allow_cache_warm = 15;
@@ -4309,7 +4309,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   allowCacheWarm: boolean;
 
   /**
-   * The tenant's effective reservations on shared hosts, ordered
+   * The workspace's effective reservations on shared hosts, ordered
    * by size: its own rows, and its plan's entries where it has none.
    *
    * @generated from field: repeated toshi.operator.v1.Reservation reservations = 16;
@@ -4318,7 +4318,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
 
   /**
    * Lifecycle state: "active"; "suspended", where new and queued jobs are
-   * held, running jobs finish and the tenant is read-only; "deleting", once
+   * held, running jobs finish and the workspace is read-only; "deleting", once
    * purge_after has passed and while the purge runs; or "deleted", when the
    * purge is done, its sessions ended and its tokens revoked.
    *
@@ -4327,28 +4327,28 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   state: string;
 
   /**
-   * Why the operator suspended or deleted the tenant; empty when active.
+   * Why the operator suspended or deleted the workspace; empty when active.
    *
    * @generated from field: string state_reason = 18;
    */
   stateReason: string;
 
   /**
-   * When the tenant entered its state; unset for a tenant always active.
+   * When the workspace entered its state; unset for a workspace always active.
    *
    * @generated from field: google.protobuf.Timestamp state_since = 19;
    */
   stateSince?: Timestamp | undefined;
 
   /**
-   * When a scheduled deletion purges the tenant; unset when none.
+   * When a scheduled deletion purges the workspace; unset when none.
    *
    * @generated from field: google.protobuf.Timestamp purge_after = 20;
    */
   purgeAfter?: Timestamp | undefined;
 
   /**
-   * Days of finished job history the tenant keeps; unset when the plan's
+   * Days of finished job history the workspace keeps; unset when the plan's
    * applies. 0 keeps forever.
    *
    * @generated from field: optional int32 history_days = 21;
@@ -4356,7 +4356,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   historyDays?: number | undefined;
 
   /**
-   * The period the retention pass uses: the tenant's value when set, else
+   * The period the retention pass uses: the workspace's value when set, else
    * its plan's.
    *
    * @generated from field: int32 history_days_effective = 22;
@@ -4373,7 +4373,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   cancelRunOnVmDeath: boolean;
 
   /**
-   * The tenant's own limits; unset when its plan's applies. 0 is no cap.
+   * The workspace's own limits; unset when its plan's applies. 0 is no cap.
    *
    * @generated from field: optional int32 secret_max_sets = 24;
    */
@@ -4395,7 +4395,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
   previewMaxPorts?: number | undefined;
 
   /**
-   * The limits Toshi enforces: the tenant's own value when set, else its
+   * The limits Toshi enforces: the workspace's own value when set, else its
    * plan's. 0 is no cap.
    *
    * @generated from field: int32 secret_max_sets_effective = 28;
@@ -4419,7 +4419,7 @@ export type Tenant = Message<"toshi.operator.v1.Tenant"> & {
 };
 
 /**
- * Tenant owns a plan, an optional concurrency override, and one or more GitHub
+ * Workspace owns a plan, an optional concurrency override, and one or more GitHub
  * App installations.
  *
  * @generated from message toshi.operator.v1.Tenant
@@ -4467,7 +4467,7 @@ export type TenantJson = {
   status?: string;
 
   /**
-   * The tenant's jobs wait for its own hosts and never run on shared ones.
+   * The workspace's jobs wait for its own hosts and never run on shared ones.
    *
    * @generated from field: bool own_hosts_only = 8;
    */
@@ -4482,14 +4482,14 @@ export type TenantJson = {
   spendCapCents?: string;
 
   /**
-   * The tenant's own jobs-per-hour limit; 0 means the plan's applies.
+   * The workspace's own jobs-per-hour limit; 0 means the plan's applies.
    *
    * @generated from field: int32 max_jobs_per_hour = 10;
    */
   maxJobsPerHour?: number;
 
   /**
-   * The limit the scheduler enforces: the lower of the tenant's and the
+   * The limit the scheduler enforces: the lower of the workspace's and the
    * plan's; 0 means none.
    *
    * @generated from field: int32 effective_max_jobs_per_hour = 11;
@@ -4497,7 +4497,7 @@ export type TenantJson = {
   effectiveMaxJobsPerHour?: number;
 
   /**
-   * The starter credit granted when the tenant was created; 0 when none.
+   * The starter credit granted when the workspace was created; 0 when none.
    *
    * @generated from field: int64 starter_credit_cents = 12;
    */
@@ -4509,7 +4509,7 @@ export type TenantJson = {
   starterCreditGrantedAt?: TimestampJson;
 
   /**
-   * Shared overflow hosts may take the tenant's jobs; its own overflow hosts
+   * Shared overflow hosts may take the workspace's jobs; its own overflow hosts
    * always may.
    *
    * @generated from field: bool allow_overflow = 14;
@@ -4517,7 +4517,7 @@ export type TenantJson = {
   allowOverflow?: boolean;
 
   /**
-   * Whether the tenant's dispatch fillers, its cache-warming workflows,
+   * Whether the workspace's dispatch fillers, its cache-warming workflows,
    * run on idle capacity.
    *
    * @generated from field: bool allow_cache_warm = 15;
@@ -4525,7 +4525,7 @@ export type TenantJson = {
   allowCacheWarm?: boolean;
 
   /**
-   * The tenant's effective reservations on shared hosts, ordered
+   * The workspace's effective reservations on shared hosts, ordered
    * by size: its own rows, and its plan's entries where it has none.
    *
    * @generated from field: repeated toshi.operator.v1.Reservation reservations = 16;
@@ -4534,7 +4534,7 @@ export type TenantJson = {
 
   /**
    * Lifecycle state: "active"; "suspended", where new and queued jobs are
-   * held, running jobs finish and the tenant is read-only; "deleting", once
+   * held, running jobs finish and the workspace is read-only; "deleting", once
    * purge_after has passed and while the purge runs; or "deleted", when the
    * purge is done, its sessions ended and its tokens revoked.
    *
@@ -4543,28 +4543,28 @@ export type TenantJson = {
   state?: string;
 
   /**
-   * Why the operator suspended or deleted the tenant; empty when active.
+   * Why the operator suspended or deleted the workspace; empty when active.
    *
    * @generated from field: string state_reason = 18;
    */
   stateReason?: string;
 
   /**
-   * When the tenant entered its state; unset for a tenant always active.
+   * When the workspace entered its state; unset for a workspace always active.
    *
    * @generated from field: google.protobuf.Timestamp state_since = 19;
    */
   stateSince?: TimestampJson;
 
   /**
-   * When a scheduled deletion purges the tenant; unset when none.
+   * When a scheduled deletion purges the workspace; unset when none.
    *
    * @generated from field: google.protobuf.Timestamp purge_after = 20;
    */
   purgeAfter?: TimestampJson;
 
   /**
-   * Days of finished job history the tenant keeps; unset when the plan's
+   * Days of finished job history the workspace keeps; unset when the plan's
    * applies. 0 keeps forever.
    *
    * @generated from field: optional int32 history_days = 21;
@@ -4572,7 +4572,7 @@ export type TenantJson = {
   historyDays?: number;
 
   /**
-   * The period the retention pass uses: the tenant's value when set, else
+   * The period the retention pass uses: the workspace's value when set, else
    * its plan's.
    *
    * @generated from field: int32 history_days_effective = 22;
@@ -4589,7 +4589,7 @@ export type TenantJson = {
   cancelRunOnVmDeath?: boolean;
 
   /**
-   * The tenant's own limits; unset when its plan's applies. 0 is no cap.
+   * The workspace's own limits; unset when its plan's applies. 0 is no cap.
    *
    * @generated from field: optional int32 secret_max_sets = 24;
    */
@@ -4611,7 +4611,7 @@ export type TenantJson = {
   previewMaxPorts?: number;
 
   /**
-   * The limits Toshi enforces: the tenant's own value when set, else its
+   * The limits Toshi enforces: the workspace's own value when set, else its
    * plan's. 0 is no cap.
    *
    * @generated from field: int32 secret_max_sets_effective = 28;
@@ -4642,7 +4642,7 @@ export const TenantSchema: GenMessage<Tenant, {jsonType: TenantJson}> = /*@__PUR
   messageDesc(file_toshi_operator_v1_operator, 39);
 
 /**
- * Reservation is a tenant's floor of slots jobs of one runner size on shared
+ * Reservation is a workspace's floor of slots jobs of one runner size on shared
  * hosts, warm of them on warm VMs.
  *
  * @generated from message toshi.operator.v1.Reservation
@@ -4670,7 +4670,7 @@ export type Reservation = Message<"toshi.operator.v1.Reservation"> & {
   warm: number;
 
   /**
-   * "tenant" when the tenant's own row set it, "plan" when its plan did.
+   * "tenant" when the workspace's own row set it, "plan" when its plan did.
    *
    * @generated from field: string source = 4;
    */
@@ -4678,7 +4678,7 @@ export type Reservation = Message<"toshi.operator.v1.Reservation"> & {
 };
 
 /**
- * Reservation is a tenant's floor of slots jobs of one runner size on shared
+ * Reservation is a workspace's floor of slots jobs of one runner size on shared
  * hosts, warm of them on warm VMs.
  *
  * @generated from message toshi.operator.v1.Reservation
@@ -4706,7 +4706,7 @@ export type ReservationJson = {
   warm?: number;
 
   /**
-   * "tenant" when the tenant's own row set it, "plan" when its plan did.
+   * "tenant" when the workspace's own row set it, "plan" when its plan did.
    *
    * @generated from field: string source = 4;
    */
@@ -4853,7 +4853,7 @@ export const GetWorkspaceResponseSchema: GenMessage<GetWorkspaceResponse, {jsonT
  */
 export type ListTenantsRequest = Message<"toshi.operator.v1.ListTenantsRequest"> & {
   /**
-   * The most tenants in one page; zero lets the server choose.
+   * The most workspaces in one page; zero lets the server choose.
    *
    * @generated from field: int32 page_size = 1;
    */
@@ -4872,7 +4872,7 @@ export type ListTenantsRequest = Message<"toshi.operator.v1.ListTenantsRequest">
  */
 export type ListTenantsRequestJson = {
   /**
-   * The most tenants in one page; zero lets the server choose.
+   * The most workspaces in one page; zero lets the server choose.
    *
    * @generated from field: int32 page_size = 1;
    */
@@ -5008,7 +5008,7 @@ export type SetTenantHistoryRequest = Message<"toshi.operator.v1.SetTenantHistor
   tenant: string;
 
   /**
-   * Unset clears the tenant's override so its plan's history_days applies.
+   * Unset clears the workspace's override so its plan's history_days applies.
    *
    * @generated from field: optional int32 history_days = 2;
    */
@@ -5025,7 +5025,7 @@ export type SetTenantHistoryRequestJson = {
   tenant?: string;
 
   /**
-   * Unset clears the tenant's override so its plan's history_days applies.
+   * Unset clears the workspace's override so its plan's history_days applies.
    *
    * @generated from field: optional int32 history_days = 2;
    */
@@ -5533,7 +5533,7 @@ export type SetTenantReservationRequest = Message<"toshi.operator.v1.SetTenantRe
   size: string;
 
   /**
-   * Slots to reserve; 0 removes the tenant's own reservation for the size.
+   * Slots to reserve; 0 removes the workspace's own reservation for the size.
    *
    * @generated from field: int32 slots = 3;
    */
@@ -5564,7 +5564,7 @@ export type SetTenantReservationRequestJson = {
   size?: string;
 
   /**
-   * Slots to reserve; 0 removes the tenant's own reservation for the size.
+   * Slots to reserve; 0 removes the workspace's own reservation for the size.
    *
    * @generated from field: int32 slots = 3;
    */
@@ -5590,7 +5590,7 @@ export const SetTenantReservationRequestSchema: GenMessage<SetTenantReservationR
  */
 export type SetTenantReservationResponse = Message<"toshi.operator.v1.SetTenantReservationResponse"> & {
   /**
-   * The tenant's effective reservations after the change, ordered by size.
+   * The workspace's effective reservations after the change, ordered by size.
    *
    * @generated from field: repeated toshi.operator.v1.Reservation reservations = 1;
    */
@@ -5602,7 +5602,7 @@ export type SetTenantReservationResponse = Message<"toshi.operator.v1.SetTenantR
  */
 export type SetTenantReservationResponseJson = {
   /**
-   * The tenant's effective reservations after the change, ordered by size.
+   * The workspace's effective reservations after the change, ordered by size.
    *
    * @generated from field: repeated toshi.operator.v1.Reservation reservations = 1;
    */
@@ -5633,7 +5633,7 @@ export type SetTenantSpendLimitsRequest = Message<"toshi.operator.v1.SetTenantSp
   spendCapCents?: bigint | undefined;
 
   /**
-   * Unset leaves the limit; 0 clears the tenant's own limit.
+   * Unset leaves the limit; 0 clears the workspace's own limit.
    *
    * @generated from field: optional int32 max_jobs_per_hour = 3;
    */
@@ -5657,7 +5657,7 @@ export type SetTenantSpendLimitsRequestJson = {
   spendCapCents?: string;
 
   /**
-   * Unset leaves the limit; 0 clears the tenant's own limit.
+   * Unset leaves the limit; 0 clears the workspace's own limit.
    *
    * @generated from field: optional int32 max_jobs_per_hour = 3;
    */
@@ -5723,7 +5723,7 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   isDefault: boolean;
 
   /**
-   * Whether a tenant can buy this plan through Checkout: self-serve billing
+   * Whether a workspace can buy this plan through Checkout: self-serve billing
    * is on and exactly one lookup key in billing.plan_map maps to the plan.
    *
    * @generated from field: bool self_serve = 5;
@@ -5746,7 +5746,7 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   maxSize: string;
 
   /**
-   * vCPUs a tenant may have in assigned, starting or running jobs at once; 0
+   * vCPUs a workspace may have in assigned, starting or running jobs at once; 0
    * means no cap.
    *
    * @generated from field: int32 max_vcpu = 8;
@@ -5754,7 +5754,7 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   maxVcpu: number;
 
   /**
-   * Minutes a tenant may run each UTC calendar month without a verified card;
+   * Minutes a workspace may run each UTC calendar month without a verified card;
    * 0 means the plan has no allowance.
    *
    * @generated from field: int32 free_minutes_per_month = 9;
@@ -5777,7 +5777,7 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   cardRequiredFor: string[];
 
   /**
-   * Jobs on shared hosts a tenant may start per 60 minutes; 0 means no
+   * Jobs on shared hosts a workspace may start per 60 minutes; 0 means no
    * limit.
    *
    * @generated from field: int32 max_jobs_per_hour = 12;
@@ -5793,7 +5793,7 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   burstGuardJobs: number;
 
   /**
-   * Credit a new tenant on this plan gets once, in the smallest currency
+   * Credit a new workspace on this plan gets once, in the smallest currency
    * unit; 0 means none.
    *
    * @generated from field: int64 starter_credit_cents = 14;
@@ -5801,7 +5801,7 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   starterCreditCents: bigint;
 
   /**
-   * Days of finished job history tenants on this plan keep; 0 keeps forever.
+   * Days of finished job history workspaces on this plan keep; 0 keeps forever.
    * Left out of configuration, 90.
    *
    * @generated from field: int32 history_days = 15;
@@ -5818,7 +5818,7 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   debugMinutes: number;
 
   /**
-   * Hosts a tenant on this plan may own at once, cloud hosts included; 0
+   * Hosts a workspace on this plan may own at once, cloud hosts included; 0
    * means no limit. Left out of configuration, 20.
    *
    * @generated from field: int32 max_own_hosts = 17;
@@ -5826,7 +5826,7 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   maxOwnHosts: number;
 
   /**
-   * Whether the plan is the open-source tier: its tenants' jobs
+   * Whether the plan is the open-source tier: its workspaces' jobs
    * pass the open-source gate.
    *
    * @generated from field: bool open_source = 18;
@@ -5859,7 +5859,7 @@ export type PlanJson = {
   isDefault?: boolean;
 
   /**
-   * Whether a tenant can buy this plan through Checkout: self-serve billing
+   * Whether a workspace can buy this plan through Checkout: self-serve billing
    * is on and exactly one lookup key in billing.plan_map maps to the plan.
    *
    * @generated from field: bool self_serve = 5;
@@ -5882,7 +5882,7 @@ export type PlanJson = {
   maxSize?: string;
 
   /**
-   * vCPUs a tenant may have in assigned, starting or running jobs at once; 0
+   * vCPUs a workspace may have in assigned, starting or running jobs at once; 0
    * means no cap.
    *
    * @generated from field: int32 max_vcpu = 8;
@@ -5890,7 +5890,7 @@ export type PlanJson = {
   maxVcpu?: number;
 
   /**
-   * Minutes a tenant may run each UTC calendar month without a verified card;
+   * Minutes a workspace may run each UTC calendar month without a verified card;
    * 0 means the plan has no allowance.
    *
    * @generated from field: int32 free_minutes_per_month = 9;
@@ -5913,7 +5913,7 @@ export type PlanJson = {
   cardRequiredFor?: string[];
 
   /**
-   * Jobs on shared hosts a tenant may start per 60 minutes; 0 means no
+   * Jobs on shared hosts a workspace may start per 60 minutes; 0 means no
    * limit.
    *
    * @generated from field: int32 max_jobs_per_hour = 12;
@@ -5929,7 +5929,7 @@ export type PlanJson = {
   burstGuardJobs?: number;
 
   /**
-   * Credit a new tenant on this plan gets once, in the smallest currency
+   * Credit a new workspace on this plan gets once, in the smallest currency
    * unit; 0 means none.
    *
    * @generated from field: int64 starter_credit_cents = 14;
@@ -5937,7 +5937,7 @@ export type PlanJson = {
   starterCreditCents?: string;
 
   /**
-   * Days of finished job history tenants on this plan keep; 0 keeps forever.
+   * Days of finished job history workspaces on this plan keep; 0 keeps forever.
    * Left out of configuration, 90.
    *
    * @generated from field: int32 history_days = 15;
@@ -5954,7 +5954,7 @@ export type PlanJson = {
   debugMinutes?: number;
 
   /**
-   * Hosts a tenant on this plan may own at once, cloud hosts included; 0
+   * Hosts a workspace on this plan may own at once, cloud hosts included; 0
    * means no limit. Left out of configuration, 20.
    *
    * @generated from field: int32 max_own_hosts = 17;
@@ -5962,7 +5962,7 @@ export type PlanJson = {
   maxOwnHosts?: number;
 
   /**
-   * Whether the plan is the open-source tier: its tenants' jobs
+   * Whether the plan is the open-source tier: its workspaces' jobs
    * pass the open-source gate.
    *
    * @generated from field: bool open_source = 18;
@@ -6068,7 +6068,7 @@ export const ListOperatorAlertsResponseSchema: GenMessage<ListOperatorAlertsResp
  */
 export type ListHostAlertsRequest = Message<"toshi.operator.v1.ListHostAlertsRequest"> & {
   /**
-   * Optional: only this tenant.
+   * Optional: only this workspace.
    *
    * @generated from field: string tenant = 1;
    */
@@ -6094,7 +6094,7 @@ export type ListHostAlertsRequest = Message<"toshi.operator.v1.ListHostAlertsReq
  */
 export type ListHostAlertsRequestJson = {
   /**
-   * Optional: only this tenant.
+   * Optional: only this workspace.
    *
    * @generated from field: string tenant = 1;
    */
@@ -6214,7 +6214,7 @@ export type OperatorAlert = Message<"toshi.operator.v1.OperatorAlert"> & {
   message: string;
 
   /**
-   * The tenant whose own hosts raised the alert. Empty for an operator alert.
+   * The workspace whose own hosts raised the alert. Empty for an operator alert.
    *
    * @generated from field: string tenant = 8;
    */
@@ -6272,7 +6272,7 @@ export type OperatorAlertJson = {
   message?: string;
 
   /**
-   * The tenant whose own hosts raised the alert. Empty for an operator alert.
+   * The workspace whose own hosts raised the alert. Empty for an operator alert.
    *
    * @generated from field: string tenant = 8;
    */
@@ -6542,7 +6542,7 @@ export type GetUsageRequest = Message<"toshi.operator.v1.GetUsageRequest"> & {
   to?: Timestamp | undefined;
 
   /**
-   * Only this tenant's jobs. Empty matches every tenant.
+   * Only this workspace's jobs. Empty matches every workspace.
    *
    * @generated from field: string tenant = 3;
    */
@@ -6571,7 +6571,7 @@ export type GetUsageRequestJson = {
   to?: TimestampJson;
 
   /**
-   * Only this tenant's jobs. Empty matches every tenant.
+   * Only this workspace's jobs. Empty matches every workspace.
    *
    * @generated from field: string tenant = 3;
    */
@@ -6590,7 +6590,7 @@ export const GetUsageRequestSchema: GenMessage<GetUsageRequest, {jsonType: GetUs
  */
 export type GetUsageResponse = Message<"toshi.operator.v1.GetUsageResponse"> & {
   /**
-   * Ordered by tenant, then day, then conclusion, then outcome, then kind. A
+   * Ordered by workspace, then day, then conclusion, then outcome, then kind. A
    * window with neither matching jobs nor reserved hours has no rows.
    *
    * @generated from field: repeated toshi.operator.v1.UsageRow rows = 1;
@@ -6610,7 +6610,7 @@ export type GetUsageResponse = Message<"toshi.operator.v1.GetUsageResponse"> & {
   to?: Timestamp | undefined;
 
   /**
-   * Filler jobs that finished in the window, by tenant. They are
+   * Filler jobs that finished in the window, by workspace. They are
    * not billed and not in rows.
    *
    * @generated from field: repeated toshi.operator.v1.FillerUsage filler = 4;
@@ -6623,7 +6623,7 @@ export type GetUsageResponse = Message<"toshi.operator.v1.GetUsageResponse"> & {
  */
 export type GetUsageResponseJson = {
   /**
-   * Ordered by tenant, then day, then conclusion, then outcome, then kind. A
+   * Ordered by workspace, then day, then conclusion, then outcome, then kind. A
    * window with neither matching jobs nor reserved hours has no rows.
    *
    * @generated from field: repeated toshi.operator.v1.UsageRow rows = 1;
@@ -6643,7 +6643,7 @@ export type GetUsageResponseJson = {
   to?: TimestampJson;
 
   /**
-   * Filler jobs that finished in the window, by tenant. They are
+   * Filler jobs that finished in the window, by workspace. They are
    * not billed and not in rows.
    *
    * @generated from field: repeated toshi.operator.v1.FillerUsage filler = 4;
@@ -6659,7 +6659,7 @@ export const GetUsageResponseSchema: GenMessage<GetUsageResponse, {jsonType: Get
   messageDesc(file_toshi_operator_v1_operator, 80);
 
 /**
- * FillerUsage counts one tenant's filler jobs: runs its dispatch fillers
+ * FillerUsage counts one workspace's filler jobs: runs its dispatch fillers
  * started on shared room. Not billed; a plan's filler_minutes_per_day bounds
  * them per UTC day.
  *
@@ -6685,7 +6685,7 @@ export type FillerUsage = Message<"toshi.operator.v1.FillerUsage"> & {
 };
 
 /**
- * FillerUsage counts one tenant's filler jobs: runs its dispatch fillers
+ * FillerUsage counts one workspace's filler jobs: runs its dispatch fillers
  * started on shared room. Not billed; a plan's filler_minutes_per_day bounds
  * them per UTC day.
  *
@@ -6718,7 +6718,7 @@ export const FillerUsageSchema: GenMessage<FillerUsage, {jsonType: FillerUsageJs
   messageDesc(file_toshi_operator_v1_operator, 81);
 
 /**
- * UsageRow counts the jobs of one tenant, UTC day, conclusion, outcome and
+ * UsageRow counts the jobs of one workspace, UTC day, conclusion, outcome and
  * kind.
  *
  * @generated from message toshi.operator.v1.UsageRow
@@ -6752,7 +6752,7 @@ export type UsageRow = Message<"toshi.operator.v1.UsageRow"> & {
   jobs: bigint;
 
   /**
-   * Billable minutes of those jobs that did not run on a host their tenant
+   * Billable minutes of those jobs that did not run on a host their workspace
    * owns: each job that started and finished adds its duration rounded up to
    * whole minutes; other jobs add 0.
    *
@@ -6761,7 +6761,7 @@ export type UsageRow = Message<"toshi.operator.v1.UsageRow"> & {
   minutes: bigint;
 
   /**
-   * Minutes of the row's jobs that ran on hosts their tenant owns, rounded as
+   * Minutes of the row's jobs that ran on hosts their workspace owns, rounded as
    * minutes.
    *
    * @generated from field: int64 own_host_minutes = 6;
@@ -6786,7 +6786,7 @@ export type UsageRow = Message<"toshi.operator.v1.UsageRow"> & {
   overflowMinutes: bigint;
 
   /**
-   * Reserved slot-hours the tenant held in the row's window, on the rows
+   * Reserved slot-hours the workspace held in the row's window, on the rows
    * with a conclusion: 0. The reserved hours themselves are in the row with
    * an empty conclusion added for each UTC day that has them.
    *
@@ -6812,7 +6812,7 @@ export type UsageRow = Message<"toshi.operator.v1.UsageRow"> & {
 };
 
 /**
- * UsageRow counts the jobs of one tenant, UTC day, conclusion, outcome and
+ * UsageRow counts the jobs of one workspace, UTC day, conclusion, outcome and
  * kind.
  *
  * @generated from message toshi.operator.v1.UsageRow
@@ -6846,7 +6846,7 @@ export type UsageRowJson = {
   jobs?: string;
 
   /**
-   * Billable minutes of those jobs that did not run on a host their tenant
+   * Billable minutes of those jobs that did not run on a host their workspace
    * owns: each job that started and finished adds its duration rounded up to
    * whole minutes; other jobs add 0.
    *
@@ -6855,7 +6855,7 @@ export type UsageRowJson = {
   minutes?: string;
 
   /**
-   * Minutes of the row's jobs that ran on hosts their tenant owns, rounded as
+   * Minutes of the row's jobs that ran on hosts their workspace owns, rounded as
    * minutes.
    *
    * @generated from field: int64 own_host_minutes = 6;
@@ -6880,7 +6880,7 @@ export type UsageRowJson = {
   overflowMinutes?: string;
 
   /**
-   * Reserved slot-hours the tenant held in the row's window, on the rows
+   * Reserved slot-hours the workspace held in the row's window, on the rows
    * with a conclusion: 0. The reserved hours themselves are in the row with
    * an empty conclusion added for each UTC day that has them.
    *
@@ -6934,7 +6934,7 @@ export type GetQueueTimesRequest = Message<"toshi.operator.v1.GetQueueTimesReque
   to?: Timestamp | undefined;
 
   /**
-   * Only this tenant's jobs. Empty matches every tenant.
+   * Only this workspace's jobs. Empty matches every workspace.
    *
    * @generated from field: string tenant = 3;
    */
@@ -6963,7 +6963,7 @@ export type GetQueueTimesRequestJson = {
   to?: TimestampJson;
 
   /**
-   * Only this tenant's jobs. Empty matches every tenant.
+   * Only this workspace's jobs. Empty matches every workspace.
    *
    * @generated from field: string tenant = 3;
    */
@@ -7231,7 +7231,7 @@ export type GetWorkflowUsageRequest = Message<"toshi.operator.v1.GetWorkflowUsag
   to?: Timestamp | undefined;
 
   /**
-   * Only this tenant's jobs. Empty matches every tenant.
+   * Only this workspace's jobs. Empty matches every workspace.
    *
    * @generated from field: string tenant = 3;
    */
@@ -7260,7 +7260,7 @@ export type GetWorkflowUsageRequestJson = {
   to?: TimestampJson;
 
   /**
-   * Only this tenant's jobs. Empty matches every tenant.
+   * Only this workspace's jobs. Empty matches every workspace.
    *
    * @generated from field: string tenant = 3;
    */
@@ -7280,7 +7280,7 @@ export const GetWorkflowUsageRequestSchema: GenMessage<GetWorkflowUsageRequest, 
 export type GetWorkflowUsageResponse = Message<"toshi.operator.v1.GetWorkflowUsageResponse"> & {
   /**
    * Ordered by minutes, then own_host_minutes, then jobs, each descending,
-   * then by tenant, repository and workflow, byte by byte. A window with no
+   * then by workspace, repository and workflow, byte by byte. A window with no
    * jobs has no rows.
    *
    * @generated from field: repeated toshi.operator.v1.WorkflowUsageRow rows = 1;
@@ -7306,7 +7306,7 @@ export type GetWorkflowUsageResponse = Message<"toshi.operator.v1.GetWorkflowUsa
 export type GetWorkflowUsageResponseJson = {
   /**
    * Ordered by minutes, then own_host_minutes, then jobs, each descending,
-   * then by tenant, repository and workflow, byte by byte. A window with no
+   * then by workspace, repository and workflow, byte by byte. A window with no
    * jobs has no rows.
    *
    * @generated from field: repeated toshi.operator.v1.WorkflowUsageRow rows = 1;
@@ -7334,7 +7334,7 @@ export const GetWorkflowUsageResponseSchema: GenMessage<GetWorkflowUsageResponse
   messageDesc(file_toshi_operator_v1_operator, 87);
 
 /**
- * WorkflowUsageRow counts the jobs of one tenant, repository and workflow.
+ * WorkflowUsageRow counts the jobs of one workspace, repository and workflow.
  * Its jobs are the ones GetUsage counts, and their minutes are counted as
  * in UsageRow.
  *
@@ -7376,7 +7376,7 @@ export type WorkflowUsageRow = Message<"toshi.operator.v1.WorkflowUsageRow"> & {
   minutes: bigint;
 
   /**
-   * Minutes on hosts the tenant owns, as UsageRow.own_host_minutes.
+   * Minutes on hosts the workspace owns, as UsageRow.own_host_minutes.
    *
    * @generated from field: int64 own_host_minutes = 6;
    */
@@ -7412,7 +7412,7 @@ export type WorkflowUsageRow = Message<"toshi.operator.v1.WorkflowUsageRow"> & {
 };
 
 /**
- * WorkflowUsageRow counts the jobs of one tenant, repository and workflow.
+ * WorkflowUsageRow counts the jobs of one workspace, repository and workflow.
  * Its jobs are the ones GetUsage counts, and their minutes are counted as
  * in UsageRow.
  *
@@ -7454,7 +7454,7 @@ export type WorkflowUsageRowJson = {
   minutes?: string;
 
   /**
-   * Minutes on hosts the tenant owns, as UsageRow.own_host_minutes.
+   * Minutes on hosts the workspace owns, as UsageRow.own_host_minutes.
    *
    * @generated from field: int64 own_host_minutes = 6;
    */
@@ -7529,7 +7529,7 @@ export type GetCapacityResponse = Message<"toshi.operator.v1.GetCapacityResponse
   sizes: CapacitySize[];
 
   /**
-   * One row per reservation, ordered by tenant then size.
+   * One row per reservation, ordered by workspace then size.
    *
    * @generated from field: repeated toshi.operator.v1.CapacityReservation reservations = 2;
    */
@@ -7557,7 +7557,7 @@ export type GetCapacityResponseJson = {
   sizes?: CapacitySizeJson[];
 
   /**
-   * One row per reservation, ordered by tenant then size.
+   * One row per reservation, ordered by workspace then size.
    *
    * @generated from field: repeated toshi.operator.v1.CapacityReservation reservations = 2;
    */
@@ -7595,14 +7595,14 @@ export type CapacitySize = Message<"toshi.operator.v1.CapacitySize"> & {
   freeSlots: number;
 
   /**
-   * Slots reserved for tenants of this size; free_slots excludes them.
+   * Slots reserved for workspaces of this size; free_slots excludes them.
    *
    * @generated from field: int32 reserved_slots = 3;
    */
   reservedSlots: number;
 
   /**
-   * Reserved slots the tenants' own jobs of the size hold.
+   * Reserved slots the workspaces' own jobs of the size hold.
    *
    * @generated from field: int32 in_use = 4;
    */
@@ -7648,14 +7648,14 @@ export type CapacitySizeJson = {
   freeSlots?: number;
 
   /**
-   * Slots reserved for tenants of this size; free_slots excludes them.
+   * Slots reserved for workspaces of this size; free_slots excludes them.
    *
    * @generated from field: int32 reserved_slots = 3;
    */
   reservedSlots?: number;
 
   /**
-   * Reserved slots the tenants' own jobs of the size hold.
+   * Reserved slots the workspaces' own jobs of the size hold.
    *
    * @generated from field: int32 in_use = 4;
    */
@@ -7718,7 +7718,7 @@ export type CapacityReservation = Message<"toshi.operator.v1.CapacityReservation
   warm: number;
 
   /**
-   * The tenant's jobs of the size on shared regular hosts.
+   * The workspace's jobs of the size on shared regular hosts.
    *
    * @generated from field: int32 in_use = 5;
    */
@@ -7772,7 +7772,7 @@ export type CapacityReservationJson = {
   warm?: number;
 
   /**
-   * The tenant's jobs of the size on shared regular hosts.
+   * The workspace's jobs of the size on shared regular hosts.
    *
    * @generated from field: int32 in_use = 5;
    */
@@ -8002,7 +8002,7 @@ export type TenantStatement = Message<"toshi.operator.v1.TenantStatement"> & {
 
   /**
    * The plans the month's metered minutes were recorded at, comma-separated;
-   * the tenant's plan today when no minute has a recorded price.
+   * the workspace's plan today when no minute has a recorded price.
    *
    * @generated from field: string plan = 5;
    */
@@ -8087,7 +8087,7 @@ export type TenantStatement = Message<"toshi.operator.v1.TenantStatement"> & {
   currentPriceMinutes: bigint;
 
   /**
-   * The tenant's filler jobs that finished in the month: not billed, not in
+   * The workspace's filler jobs that finished in the month: not billed, not in
    * usage or charges. Unset when there were none.
    *
    * @generated from field: toshi.operator.v1.FillerUsage filler = 16;
@@ -8102,7 +8102,7 @@ export type TenantStatement = Message<"toshi.operator.v1.TenantStatement"> & {
   billingEnabled: boolean;
 
   /**
-   * When the month's estimated spend first reached the tenant's spending
+   * When the month's estimated spend first reached the workspace's spending
    * cap; unset when it did not.
    *
    * @generated from field: google.protobuf.Timestamp spend_cap_reached_at = 18;
@@ -8118,7 +8118,7 @@ export type TenantStatement = Message<"toshi.operator.v1.TenantStatement"> & {
   spendCapReachedCents: bigint;
 
   /**
-   * The tenant's spending cap when the statement was built; 0 when none.
+   * The workspace's spending cap when the statement was built; 0 when none.
    *
    * @generated from field: int64 spend_cap_cents = 20;
    */
@@ -8153,7 +8153,7 @@ export type TenantStatementJson = {
 
   /**
    * The plans the month's metered minutes were recorded at, comma-separated;
-   * the tenant's plan today when no minute has a recorded price.
+   * the workspace's plan today when no minute has a recorded price.
    *
    * @generated from field: string plan = 5;
    */
@@ -8238,7 +8238,7 @@ export type TenantStatementJson = {
   currentPriceMinutes?: string;
 
   /**
-   * The tenant's filler jobs that finished in the month: not billed, not in
+   * The workspace's filler jobs that finished in the month: not billed, not in
    * usage or charges. Unset when there were none.
    *
    * @generated from field: toshi.operator.v1.FillerUsage filler = 16;
@@ -8253,7 +8253,7 @@ export type TenantStatementJson = {
   billingEnabled?: boolean;
 
   /**
-   * When the month's estimated spend first reached the tenant's spending
+   * When the month's estimated spend first reached the workspace's spending
    * cap; unset when it did not.
    *
    * @generated from field: google.protobuf.Timestamp spend_cap_reached_at = 18;
@@ -8269,7 +8269,7 @@ export type TenantStatementJson = {
   spendCapReachedCents?: string;
 
   /**
-   * The tenant's spending cap when the statement was built; 0 when none.
+   * The workspace's spending cap when the statement was built; 0 when none.
    *
    * @generated from field: int64 spend_cap_cents = 20;
    */
@@ -8310,7 +8310,7 @@ export type StatementUsage = Message<"toshi.operator.v1.StatementUsage"> & {
   minutes: bigint;
 
   /**
-   * Minutes on the tenant's own hosts, which are not billed.
+   * Minutes on the workspace's own hosts, which are not billed.
    *
    * @generated from field: int64 own_host_minutes = 5;
    */
@@ -8331,7 +8331,7 @@ export type StatementUsage = Message<"toshi.operator.v1.StatementUsage"> & {
   overflowMinutes: bigint;
 
   /**
-   * Reserved slot-hours the tenant held for this size in the statement's
+   * Reserved slot-hours the workspace held for this size in the statement's
    * window. A size with reserved hours but no finished job still
    * gets a row, with zero minutes.
    *
@@ -8375,7 +8375,7 @@ export type StatementUsageJson = {
   minutes?: string;
 
   /**
-   * Minutes on the tenant's own hosts, which are not billed.
+   * Minutes on the workspace's own hosts, which are not billed.
    *
    * @generated from field: int64 own_host_minutes = 5;
    */
@@ -8396,7 +8396,7 @@ export type StatementUsageJson = {
   overflowMinutes?: string;
 
   /**
-   * Reserved slot-hours the tenant held for this size in the statement's
+   * Reserved slot-hours the workspace held for this size in the statement's
    * window. A size with reserved hours but no finished job still
    * gets a row, with zero minutes.
    *
@@ -8926,14 +8926,14 @@ export const GetJobDebugAccessResponseSchema: GenMessage<GetJobDebugAccessRespon
   messageDesc(file_toshi_operator_v1_operator, 111);
 
 /**
- * TenantBilling is a tenant's billing link, its subscription's status and the
+ * TenantBilling is a workspace's billing link, its subscription's status and the
  * usage reported to the billing provider.
  *
  * @generated from message toshi.operator.v1.TenantBilling
  */
 export type TenantBilling = Message<"toshi.operator.v1.TenantBilling"> & {
   /**
-   * Empty when the tenant is not linked to a customer.
+   * Empty when the workspace is not linked to a customer.
    *
    * @generated from field: string customer_id = 1;
    */
@@ -8947,7 +8947,7 @@ export type TenantBilling = Message<"toshi.operator.v1.TenantBilling"> & {
   subscriptionId: string;
 
   /**
-   * When billable usage begins; unset when the tenant is not billed.
+   * When billable usage begins; unset when the workspace is not billed.
    *
    * @generated from field: google.protobuf.Timestamp billing_started_at = 3;
    */
@@ -8985,14 +8985,14 @@ export type TenantBilling = Message<"toshi.operator.v1.TenantBilling"> & {
   totals: BillingTotals[];
 
   /**
-   * The tenant's failed meter events, most recently failed first, at most 50.
+   * The workspace's failed meter events, most recently failed first, at most 50.
    *
    * @generated from field: repeated toshi.operator.v1.BillingEventFailure failed_events = 8;
    */
   failedEvents: BillingEventFailure[];
 
   /**
-   * Minutes of the tenant's jobs that finished this UTC calendar month, as
+   * Minutes of the workspace's jobs that finished this UTC calendar month, as
    * its statement counts them. The free allowance counts these, with or
    * without a billing customer.
    *
@@ -9001,7 +9001,7 @@ export type TenantBilling = Message<"toshi.operator.v1.TenantBilling"> & {
   minutesThisMonth: bigint;
 
   /**
-   * The free minutes per UTC calendar month of the tenant's plan; 0 when the
+   * The free minutes per UTC calendar month of the workspace's plan; 0 when the
    * plan has none.
    *
    * @generated from field: int64 free_minutes_per_month = 10;
@@ -9088,7 +9088,7 @@ export type TenantBilling = Message<"toshi.operator.v1.TenantBilling"> & {
   billingEnabled: boolean;
 
   /**
-   * The tenant's jobs held now, by reason, in the order GetQueueTimes lists
+   * The workspace's jobs held now, by reason, in the order GetQueueTimes lists
    * the reasons.
    *
    * @generated from field: repeated toshi.operator.v1.TenantBilling.HeldJobs held_now = 22;
@@ -9096,10 +9096,10 @@ export type TenantBilling = Message<"toshi.operator.v1.TenantBilling"> & {
   heldNow: TenantBilling_HeldJobs[];
 
   /**
-   * The tenant's jobs that count against its plan concurrency now: assigned,
+   * The workspace's jobs that count against its plan concurrency now: assigned,
    * starting, running or debugging, on Toshi's hosts rather than its own, and
    * neither a dispatch filler's job nor an open-source job. This is the count
-   * the scheduler checks against the tenant's limit,
+   * the scheduler checks against the workspace's limit,
    * Tenant.effective_concurrency.
    *
    * @generated from field: int64 concurrency_used = 23;
@@ -9108,14 +9108,14 @@ export type TenantBilling = Message<"toshi.operator.v1.TenantBilling"> & {
 };
 
 /**
- * TenantBilling is a tenant's billing link, its subscription's status and the
+ * TenantBilling is a workspace's billing link, its subscription's status and the
  * usage reported to the billing provider.
  *
  * @generated from message toshi.operator.v1.TenantBilling
  */
 export type TenantBillingJson = {
   /**
-   * Empty when the tenant is not linked to a customer.
+   * Empty when the workspace is not linked to a customer.
    *
    * @generated from field: string customer_id = 1;
    */
@@ -9129,7 +9129,7 @@ export type TenantBillingJson = {
   subscriptionId?: string;
 
   /**
-   * When billable usage begins; unset when the tenant is not billed.
+   * When billable usage begins; unset when the workspace is not billed.
    *
    * @generated from field: google.protobuf.Timestamp billing_started_at = 3;
    */
@@ -9167,14 +9167,14 @@ export type TenantBillingJson = {
   totals?: BillingTotalsJson[];
 
   /**
-   * The tenant's failed meter events, most recently failed first, at most 50.
+   * The workspace's failed meter events, most recently failed first, at most 50.
    *
    * @generated from field: repeated toshi.operator.v1.BillingEventFailure failed_events = 8;
    */
   failedEvents?: BillingEventFailureJson[];
 
   /**
-   * Minutes of the tenant's jobs that finished this UTC calendar month, as
+   * Minutes of the workspace's jobs that finished this UTC calendar month, as
    * its statement counts them. The free allowance counts these, with or
    * without a billing customer.
    *
@@ -9183,7 +9183,7 @@ export type TenantBillingJson = {
   minutesThisMonth?: string;
 
   /**
-   * The free minutes per UTC calendar month of the tenant's plan; 0 when the
+   * The free minutes per UTC calendar month of the workspace's plan; 0 when the
    * plan has none.
    *
    * @generated from field: int64 free_minutes_per_month = 10;
@@ -9270,7 +9270,7 @@ export type TenantBillingJson = {
   billingEnabled?: boolean;
 
   /**
-   * The tenant's jobs held now, by reason, in the order GetQueueTimes lists
+   * The workspace's jobs held now, by reason, in the order GetQueueTimes lists
    * the reasons.
    *
    * @generated from field: repeated toshi.operator.v1.TenantBilling.HeldJobs held_now = 22;
@@ -9278,10 +9278,10 @@ export type TenantBillingJson = {
   heldNow?: TenantBilling_HeldJobsJson[];
 
   /**
-   * The tenant's jobs that count against its plan concurrency now: assigned,
+   * The workspace's jobs that count against its plan concurrency now: assigned,
    * starting, running or debugging, on Toshi's hosts rather than its own, and
    * neither a dispatch filler's job nor an open-source job. This is the count
-   * the scheduler checks against the tenant's limit,
+   * the scheduler checks against the workspace's limit,
    * Tenant.effective_concurrency.
    *
    * @generated from field: int64 concurrency_used = 23;
@@ -9647,7 +9647,7 @@ export const BillingExportSchema: GenMessage<BillingExport, {jsonType: BillingEx
   messageDesc(file_toshi_operator_v1_operator, 115);
 
 /**
- * Token is an operator, enrollment, tenant or product token, without its
+ * Token is an operator, enrollment, workspace or product token, without its
  * value.
  *
  * @generated from message toshi.operator.v1.Token
@@ -9668,7 +9668,7 @@ export type Token = Message<"toshi.operator.v1.Token"> & {
   /**
    * "file" for a token read from the control plane's token file, "rotate"
    * for one made by RotateToken, "tenant" for one made by
-   * CreateEnrollmentToken, "session" for a tenant token minted from a
+   * CreateEnrollmentToken, "session" for a workspace token minted from a
    * dashboard session.
    *
    * @generated from field: string source = 3;
@@ -9702,14 +9702,14 @@ export type Token = Message<"toshi.operator.v1.Token"> & {
   active: boolean;
 
   /**
-   * Tenant the token is scoped to; also set for tenant tokens.
+   * Workspace the token is scoped to; also set for workspace tokens.
    *
    * @generated from field: string tenant = 8;
    */
   tenant: string;
 
   /**
-   * The label the tenant chose; empty for other kinds.
+   * The label the workspace chose; empty for other kinds.
    *
    * @generated from field: string name = 9;
    */
@@ -9717,7 +9717,7 @@ export type Token = Message<"toshi.operator.v1.Token"> & {
 
   /**
    * The project the token is limited to, by name. Empty for a token that
-   * acts in the whole tenant.
+   * acts in the whole workspace.
    *
    * @generated from field: string project = 10;
    */
@@ -9740,7 +9740,7 @@ export type Token = Message<"toshi.operator.v1.Token"> & {
 };
 
 /**
- * Token is an operator, enrollment, tenant or product token, without its
+ * Token is an operator, enrollment, workspace or product token, without its
  * value.
  *
  * @generated from message toshi.operator.v1.Token
@@ -9761,7 +9761,7 @@ export type TokenJson = {
   /**
    * "file" for a token read from the control plane's token file, "rotate"
    * for one made by RotateToken, "tenant" for one made by
-   * CreateEnrollmentToken, "session" for a tenant token minted from a
+   * CreateEnrollmentToken, "session" for a workspace token minted from a
    * dashboard session.
    *
    * @generated from field: string source = 3;
@@ -9795,14 +9795,14 @@ export type TokenJson = {
   active?: boolean;
 
   /**
-   * Tenant the token is scoped to; also set for tenant tokens.
+   * Workspace the token is scoped to; also set for workspace tokens.
    *
    * @generated from field: string tenant = 8;
    */
   tenant?: string;
 
   /**
-   * The label the tenant chose; empty for other kinds.
+   * The label the workspace chose; empty for other kinds.
    *
    * @generated from field: string name = 9;
    */
@@ -9810,7 +9810,7 @@ export type TokenJson = {
 
   /**
    * The project the token is limited to, by name. Empty for a token that
-   * acts in the whole tenant.
+   * acts in the whole workspace.
    *
    * @generated from field: string project = 10;
    */
@@ -9840,7 +9840,7 @@ export const TokenSchema: GenMessage<Token, {jsonType: TokenJson}> = /*@__PURE__
   messageDesc(file_toshi_operator_v1_operator, 116);
 
 /**
- * ListTokensRequest optionally narrows the list to one kind and one tenant.
+ * ListTokensRequest optionally narrows the list to one kind and one workspace.
  *
  * @generated from message toshi.operator.v1.ListTokensRequest
  */
@@ -9853,7 +9853,7 @@ export type ListTokensRequest = Message<"toshi.operator.v1.ListTokensRequest"> &
   kind: TokenKind;
 
   /**
-   * Only this tenant's tokens; empty lists every token.
+   * Only this workspace's tokens; empty lists every token.
    *
    * @generated from field: string tenant = 2;
    */
@@ -9875,7 +9875,7 @@ export type ListTokensRequest = Message<"toshi.operator.v1.ListTokensRequest"> &
 };
 
 /**
- * ListTokensRequest optionally narrows the list to one kind and one tenant.
+ * ListTokensRequest optionally narrows the list to one kind and one workspace.
  *
  * @generated from message toshi.operator.v1.ListTokensRequest
  */
@@ -9888,7 +9888,7 @@ export type ListTokensRequestJson = {
   kind?: TokenKindJson;
 
   /**
-   * Only this tenant's tokens; empty lists every token.
+   * Only this workspace's tokens; empty lists every token.
    *
    * @generated from field: string tenant = 2;
    */
@@ -10132,7 +10132,7 @@ export const RevokeTokenResponseSchema: GenMessage<RevokeTokenResponse, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 122);
 
 /**
- * CreateEnrollmentTokenRequest names the tenant to enroll hosts for.
+ * CreateEnrollmentTokenRequest names the workspace to enroll hosts for.
  *
  * @generated from message toshi.operator.v1.CreateEnrollmentTokenRequest
  */
@@ -10151,7 +10151,7 @@ export type CreateEnrollmentTokenRequest = Message<"toshi.operator.v1.CreateEnro
 };
 
 /**
- * CreateEnrollmentTokenRequest names the tenant to enroll hosts for.
+ * CreateEnrollmentTokenRequest names the workspace to enroll hosts for.
  *
  * @generated from message toshi.operator.v1.CreateEnrollmentTokenRequest
  */
@@ -10243,8 +10243,8 @@ export type CreateTenantTokenRequest = Message<"toshi.operator.v1.CreateTenantTo
   expiresAt?: Timestamp | undefined;
 
   /**
-   * Limits the token to this project of the tenant, by name. Empty makes
-   * a token for the whole tenant.
+   * Limits the token to this project of the workspace, by name. Empty makes
+   * a token for the whole workspace.
    *
    * @generated from field: string project = 4;
    */
@@ -10281,8 +10281,8 @@ export type CreateTenantTokenRequestJson = {
   expiresAt?: TimestampJson;
 
   /**
-   * Limits the token to this project of the tenant, by name. Empty makes
-   * a token for the whole tenant.
+   * Limits the token to this project of the workspace, by name. Empty makes
+   * a token for the whole workspace.
    *
    * @generated from field: string project = 4;
    */
@@ -10498,7 +10498,7 @@ export type ListEgressIPsResponse = Message<"toshi.operator.v1.ListEgressIPsResp
   ips: string[];
 
   /**
-   * The hosts the tenant's jobs can land on, ordered by kind (own hosts
+   * The hosts the workspace's jobs can land on, ordered by kind (own hosts
    * first) and ID.
    *
    * @generated from field: repeated toshi.operator.v1.EgressHost hosts = 2;
@@ -10537,7 +10537,7 @@ export type ListEgressIPsResponseJson = {
   ips?: string[];
 
   /**
-   * The hosts the tenant's jobs can land on, ordered by kind (own hosts
+   * The hosts the workspace's jobs can land on, ordered by kind (own hosts
    * first) and ID.
    *
    * @generated from field: repeated toshi.operator.v1.EgressHost hosts = 2;
@@ -10568,14 +10568,14 @@ export const ListEgressIPsResponseSchema: GenMessage<ListEgressIPsResponse, {jso
   messageDesc(file_toshi_operator_v1_operator, 130);
 
 /**
- * EgressHost is one host a tenant's jobs can land on.
+ * EgressHost is one host a workspace's jobs can land on.
  *
  * @generated from message toshi.operator.v1.EgressHost
  */
 export type EgressHost = Message<"toshi.operator.v1.EgressHost"> & {
   /**
    * The host's id and name; empty for a shared host when a dashboard
-   * session or tenant token asks.
+   * session or workspace token asks.
    *
    * @generated from field: string host_id = 1;
    */
@@ -10587,7 +10587,7 @@ export type EgressHost = Message<"toshi.operator.v1.EgressHost"> & {
   name: string;
 
   /**
-   * The host is shared between tenants rather than the tenant's own.
+   * The host is shared between workspaces rather than the workspace's own.
    *
    * @generated from field: bool shared = 3;
    */
@@ -10631,14 +10631,14 @@ export type EgressHost = Message<"toshi.operator.v1.EgressHost"> & {
 };
 
 /**
- * EgressHost is one host a tenant's jobs can land on.
+ * EgressHost is one host a workspace's jobs can land on.
  *
  * @generated from message toshi.operator.v1.EgressHost
  */
 export type EgressHostJson = {
   /**
    * The host's id and name; empty for a shared host when a dashboard
-   * session or tenant token asks.
+   * session or workspace token asks.
    *
    * @generated from field: string host_id = 1;
    */
@@ -10650,7 +10650,7 @@ export type EgressHostJson = {
   name?: string;
 
   /**
-   * The host is shared between tenants rather than the tenant's own.
+   * The host is shared between workspaces rather than the workspace's own.
    *
    * @generated from field: bool shared = 3;
    */
@@ -10825,7 +10825,7 @@ export const CloudHostCheckSchema: GenMessage<CloudHostCheck, {jsonType: CloudHo
  */
 export type Filler = Message<"toshi.operator.v1.Filler"> & {
   /**
-   * Unique among the fillers with the same tenant; lowercase letters, digits
+   * Unique among the fillers with the same workspace; lowercase letters, digits
    * and dashes, at most 40 characters, starting with a letter or digit.
    *
    * @generated from field: string name = 1;
@@ -10834,7 +10834,7 @@ export type Filler = Message<"toshi.operator.v1.Filler"> & {
 
   /**
    * "command": a command in a VM; "dispatch": a workflow_dispatch of a
-   * tenant's workflow, run as a filler job.
+   * workspace's workflow, run as a filler job.
    *
    * @generated from field: string kind = 2;
    */
@@ -10870,8 +10870,8 @@ export type Filler = Message<"toshi.operator.v1.Filler"> & {
   share: string;
 
   /**
-   * dispatch: the tenant whose installation dispatches the workflow. With
-   * the name it is the filler's key; a command filler has no tenant.
+   * dispatch: the workspace whose installation dispatches the workflow. With
+   * the name it is the filler's key; a command filler has no workspace.
    *
    * @generated from field: string tenant = 7;
    */
@@ -10948,7 +10948,7 @@ export type Filler = Message<"toshi.operator.v1.Filler"> & {
    * last filler pass that read its states found it: tenant_suspended,
    * tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
    * installation_suspended, installation_ambiguous, budget_spent (the
-   * tenant's filler minutes for the UTC day are spent) or budget_off (its
+   * workspace's filler minutes for the UTC day are spent) or budget_off (its
    * plan gives none). Empty: no pause found,
    * or a filler the pass does not evaluate (a disabled one, for example).
    * Set by ListFillers only.
@@ -10984,7 +10984,7 @@ export type Filler = Message<"toshi.operator.v1.Filler"> & {
  */
 export type FillerJson = {
   /**
-   * Unique among the fillers with the same tenant; lowercase letters, digits
+   * Unique among the fillers with the same workspace; lowercase letters, digits
    * and dashes, at most 40 characters, starting with a letter or digit.
    *
    * @generated from field: string name = 1;
@@ -10993,7 +10993,7 @@ export type FillerJson = {
 
   /**
    * "command": a command in a VM; "dispatch": a workflow_dispatch of a
-   * tenant's workflow, run as a filler job.
+   * workspace's workflow, run as a filler job.
    *
    * @generated from field: string kind = 2;
    */
@@ -11029,8 +11029,8 @@ export type FillerJson = {
   share?: string;
 
   /**
-   * dispatch: the tenant whose installation dispatches the workflow. With
-   * the name it is the filler's key; a command filler has no tenant.
+   * dispatch: the workspace whose installation dispatches the workflow. With
+   * the name it is the filler's key; a command filler has no workspace.
    *
    * @generated from field: string tenant = 7;
    */
@@ -11107,7 +11107,7 @@ export type FillerJson = {
    * last filler pass that read its states found it: tenant_suspended,
    * tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
    * installation_suspended, installation_ambiguous, budget_spent (the
-   * tenant's filler minutes for the UTC day are spent) or budget_off (its
+   * workspace's filler minutes for the UTC day are spent) or budget_off (its
    * plan gives none). Empty: no pause found,
    * or a filler the pass does not evaluate (a disabled one, for example).
    * Set by ListFillers only.
@@ -11164,7 +11164,7 @@ export type FillerRun = Message<"toshi.operator.v1.FillerRun"> & {
   kind: string;
 
   /**
-   * dispatch: the filler's tenant.
+   * dispatch: the filler's workspace.
    *
    * @generated from field: string tenant = 4;
    */
@@ -11249,7 +11249,7 @@ export type FillerRunJson = {
   kind?: string;
 
   /**
-   * dispatch: the filler's tenant.
+   * dispatch: the filler's workspace.
    *
    * @generated from field: string tenant = 4;
    */
@@ -11532,9 +11532,9 @@ export type DeleteFillerRequest = Message<"toshi.operator.v1.DeleteFillerRequest
   name: string;
 
   /**
-   * The tenant of a dispatch filler. Empty: for the operator, a command
-   * filler; for a tenant token, its own tenant. A dashboard session with
-   * more than one tenant names one.
+   * The workspace of a dispatch filler. Empty: for the operator, a command
+   * filler; for a workspace token, its own workspace. A dashboard session with
+   * more than one workspace names one.
    *
    * @generated from field: string tenant = 2;
    */
@@ -11551,9 +11551,9 @@ export type DeleteFillerRequestJson = {
   name?: string;
 
   /**
-   * The tenant of a dispatch filler. Empty: for the operator, a command
-   * filler; for a tenant token, its own tenant. A dashboard session with
-   * more than one tenant names one.
+   * The workspace of a dispatch filler. Empty: for the operator, a command
+   * filler; for a workspace token, its own workspace. A dashboard session with
+   * more than one workspace names one.
    *
    * @generated from field: string tenant = 2;
    */
@@ -11601,9 +11601,9 @@ export type SetFillerEnabledRequest = Message<"toshi.operator.v1.SetFillerEnable
   enabled: boolean;
 
   /**
-   * The tenant of a dispatch filler. Empty: for the operator, a command
-   * filler; for a tenant token, its own tenant. A dashboard session with
-   * more than one tenant names one.
+   * The workspace of a dispatch filler. Empty: for the operator, a command
+   * filler; for a workspace token, its own workspace. A dashboard session with
+   * more than one workspace names one.
    *
    * @generated from field: string tenant = 3;
    */
@@ -11625,9 +11625,9 @@ export type SetFillerEnabledRequestJson = {
   enabled?: boolean;
 
   /**
-   * The tenant of a dispatch filler. Empty: for the operator, a command
-   * filler; for a tenant token, its own tenant. A dashboard session with
-   * more than one tenant names one.
+   * The workspace of a dispatch filler. Empty: for the operator, a command
+   * filler; for a workspace token, its own workspace. A dashboard session with
+   * more than one workspace names one.
    *
    * @generated from field: string tenant = 3;
    */
@@ -11687,9 +11687,9 @@ export type ListFillerRunsRequest = Message<"toshi.operator.v1.ListFillerRunsReq
   pageSize: number;
 
   /**
-   * With filler: the tenant of a dispatch filler. Empty: for the operator, a
-   * command filler; for a tenant token, its own tenant. A dashboard session
-   * with more than one tenant names one.
+   * With filler: the workspace of a dispatch filler. Empty: for the operator, a
+   * command filler; for a workspace token, its own workspace. A dashboard session
+   * with more than one workspace names one.
    *
    * @generated from field: string tenant = 3;
    */
@@ -11722,9 +11722,9 @@ export type ListFillerRunsRequestJson = {
   pageSize?: number;
 
   /**
-   * With filler: the tenant of a dispatch filler. Empty: for the operator, a
-   * command filler; for a tenant token, its own tenant. A dashboard session
-   * with more than one tenant names one.
+   * With filler: the workspace of a dispatch filler. Empty: for the operator, a
+   * command filler; for a workspace token, its own workspace. A dashboard session
+   * with more than one workspace names one.
    *
    * @generated from field: string tenant = 3;
    */
@@ -11814,7 +11814,7 @@ export type FillerPause = Message<"toshi.operator.v1.FillerPause"> & {
   filler: string;
 
   /**
-   * The filler's tenant.
+   * The filler's workspace.
    *
    * @generated from field: string tenant = 2;
    */
@@ -11856,7 +11856,7 @@ export type FillerPauseJson = {
   filler?: string;
 
   /**
-   * The filler's tenant.
+   * The filler's workspace.
    *
    * @generated from field: string tenant = 2;
    */
@@ -13952,7 +13952,7 @@ export const PoolSuggestionDelaySchema: GenMessage<PoolSuggestionDelay, {jsonTyp
 /**
  * StorageProvider is one bucket Toshi keeps objects in. The
  * credentials are a reference: an operator row names a file and profile, and
- * a tenant row may hold a secret the control plane wrapped, which the API
+ * a workspace row may hold a secret the control plane wrapped, which the API
  * reports only as its presence.
  *
  * @generated from message toshi.operator.v1.StorageProvider
@@ -14081,7 +14081,7 @@ export type StorageProvider = Message<"toshi.operator.v1.StorageProvider"> & {
 /**
  * StorageProvider is one bucket Toshi keeps objects in. The
  * credentials are a reference: an operator row names a file and profile, and
- * a tenant row may hold a secret the control plane wrapped, which the API
+ * a workspace row may hold a secret the control plane wrapped, which the API
  * reports only as its presence.
  *
  * @generated from message toshi.operator.v1.StorageProvider
@@ -14301,7 +14301,7 @@ export type CreateStorageProviderRequest = Message<"toshi.operator.v1.CreateStor
   externalId: string;
 
   /**
-   * The key of a tenant's own bucket. The control plane wraps it before
+   * The key of a workspace's own bucket. The control plane wraps it before
    * the row exists and never returns, logs or audits it. Set only with a
    * tenant_id, mode "tenant_bucket" and no credentials_file.
    *
@@ -14397,7 +14397,7 @@ export type CreateStorageProviderRequestJson = {
   externalId?: string;
 
   /**
-   * The key of a tenant's own bucket. The control plane wraps it before
+   * The key of a workspace's own bucket. The control plane wraps it before
    * the row exists and never returns, logs or audits it. Set only with a
    * tenant_id, mode "tenant_bucket" and no credentials_file.
    *
@@ -14502,7 +14502,7 @@ export const CreateStorageProviderResponseSchema: GenMessage<CreateStorageProvid
  */
 export type ListStorageProvidersRequest = Message<"toshi.operator.v1.ListStorageProvidersRequest"> & {
   /**
-   * Empty lists the operator's providers; otherwise this tenant's.
+   * Empty lists the operator's providers; otherwise this workspace's.
    *
    * @generated from field: string tenant_id = 1;
    */
@@ -14535,7 +14535,7 @@ export type ListStorageProvidersRequest = Message<"toshi.operator.v1.ListStorage
  */
 export type ListStorageProvidersRequestJson = {
   /**
-   * Empty lists the operator's providers; otherwise this tenant's.
+   * Empty lists the operator's providers; otherwise this workspace's.
    *
    * @generated from field: string tenant_id = 1;
    */
@@ -14580,7 +14580,7 @@ export type ListStorageProvidersResponse = Message<"toshi.operator.v1.ListStorag
   providers: StorageProvider[];
 
   /**
-   * With include_default, the operator's provider that serves the tenant's
+   * With include_default, the operator's provider that serves the workspace's
    * uploads while it has no tenant_bucket provider (the control plane's
    * storage.default_provider); unset when none is configured. Every page
    * holds it.
@@ -14607,7 +14607,7 @@ export type ListStorageProvidersResponseJson = {
   providers?: StorageProviderJson[];
 
   /**
-   * With include_default, the operator's provider that serves the tenant's
+   * With include_default, the operator's provider that serves the workspace's
    * uploads while it has no tenant_bucket provider (the control plane's
    * storage.default_provider); unset when none is configured. Every page
    * holds it.
@@ -15129,7 +15129,7 @@ export enum OfflineHostOutcome {
   SKIPPED_JOB = 2,
 
   /**
-   * Kept: a tenant owns it and include_owned is not set.
+   * Kept: a workspace owns it and include_owned is not set.
    *
    * @generated from enum value: OFFLINE_HOST_OUTCOME_SKIPPED_OWNED = 3;
    */
@@ -15175,7 +15175,7 @@ export enum TokenKind {
   ENROLLMENT = 2,
 
   /**
-   * A tenant API token: the operator API as one tenant.
+   * A workspace API token: the operator API as one workspace.
    *
    * @generated from enum value: TOKEN_KIND_TENANT = 3;
    */
@@ -15275,7 +15275,7 @@ export const OperatorService: GenService<{
   },
   /**
    * ListAuditEvents returns the audit log, newest first. An operator may use
-   * every filter; a dashboard session may read only its own tenants.
+   * every filter; a dashboard session may read only its own workspaces.
    *
    * A page holds 100 events when page_size is zero, and 1000 at most.
    *
@@ -15298,8 +15298,8 @@ export const OperatorService: GenService<{
   },
   /**
    * GetJobTelemetry returns the resource samples of one job's VM and their
-   * summary. A dashboard session or tenant token reads only its
-   * own tenants' jobs. An unknown ID fails with NOT_FOUND; a job without
+   * summary. A dashboard session or workspace token reads only its
+   * own workspaces' jobs. An unknown ID fails with NOT_FOUND; a job without
    * samples returns none.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.GetJobTelemetry
@@ -15337,7 +15337,7 @@ export const OperatorService: GenService<{
   /**
    * ListHostStorage returns the volumes a host holds, ordered by volume ID:
    * those it keeps the warm copy of, and those a job assigned to it has
-   * claimed. A tenant's caller sees only its own hosts and its own volumes.
+   * claimed. A workspace's caller sees only its own hosts and its own volumes.
    * An unknown host fails with NOT_FOUND.
    *
    * A page holds 100 volumes when page_size is zero, and 1000 at most.
@@ -15407,7 +15407,7 @@ export const OperatorService: GenService<{
    * heartbeat is older than offline_longer_than, oldest first, and with apply
    * set removes each one that holds no assigned, starting or running job.
    * Without apply nothing changes: the response says what a call with apply
-   * would do. A host a tenant owns is skipped unless include_owned is set.
+   * would do. A host a workspace owns is skipped unless include_owned is set.
    * Each removal records one host.retired audit event. Operators only.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.RetireOfflineHosts
@@ -15418,9 +15418,9 @@ export const OperatorService: GenService<{
     output: typeof RetireOfflineHostsResponseSchema;
   },
   /**
-   * CreateCloudHost registers a tenant-owned cloud host the control plane
-   * drives in the tenant's AWS account. A dashboard session and a tenant
-   * token may add hosts for their own tenant only; the operator for any. When
+   * CreateCloudHost registers a workspace-owned cloud host the control plane
+   * drives in the workspace's AWS account. A dashboard session and a workspace
+   * token may add hosts for their own workspace only; the operator for any. When
    * cloud hosts are not configured on the control plane the call fails with
    * FAILED_PRECONDITION.
    *
@@ -15458,9 +15458,9 @@ export const OperatorService: GenService<{
     output: typeof GetWorkspaceResponseSchema;
   },
   /**
-   * ListTenants returns every tenant, ordered by ID.
+   * ListTenants returns every workspace, ordered by ID.
    *
-   * A page holds 100 tenants when page_size is zero, and 1000 at most.
+   * A page holds 100 workspaces when page_size is zero, and 1000 at most.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.ListTenants
    */
@@ -15470,8 +15470,8 @@ export const OperatorService: GenService<{
     output: typeof ListTenantsResponseSchema;
   },
   /**
-   * SetTenantCap sets a tenant's concurrency cap override and returns the
-   * tenant as stored; a cap of 0 clears the override, so the tenant's plan
+   * SetTenantCap sets a workspace's concurrency cap override and returns the
+   * workspace as stored; a cap of 0 clears the override, so the workspace's plan
    * applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
    * unknown ID fails with NOT_FOUND.
    *
@@ -15483,10 +15483,10 @@ export const OperatorService: GenService<{
     output: typeof SetTenantCapResponseSchema;
   },
   /**
-   * SetTenantHistory sets a tenant's job history retention override and
-   * returns the tenant as stored; omitting history_days clears the override,
-   * so the tenant's plan applies. 0 keeps history forever. An empty tenant
-   * or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
+   * SetTenantHistory sets a workspace's job history retention override and
+   * returns the workspace as stored; omitting history_days clears the override,
+   * so the workspace's plan applies. 0 keeps history forever. An empty workspace
+   * or a negative history_days fails with INVALID_ARGUMENT; an unknown workspace
    * fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantHistory
@@ -15497,13 +15497,13 @@ export const OperatorService: GenService<{
     output: typeof SetTenantHistoryResponseSchema;
   },
   /**
-   * SetTenantLimits sets or clears a tenant's own secret and preview limits,
-   * which replace its plan's values, higher or lower, and returns the tenant
-   * as stored. A limit set in the request becomes the tenant's value, 0 for
+   * SetTenantLimits sets or clears a workspace's own secret and preview limits,
+   * which replace its plan's values, higher or lower, and returns the workspace
+   * as stored. A limit set in the request becomes the workspace's value, 0 for
    * no cap; a limit named in clear goes back to the plan's; any other keeps
    * its current value. A negative limit, secret_max_kib above 1073741824, an
    * unknown name in clear, a limit both set and cleared, or a request that
-   * sets and clears nothing fails with INVALID_ARGUMENT; an unknown tenant
+   * sets and clears nothing fails with INVALID_ARGUMENT; an unknown workspace
    * fails with NOT_FOUND. A workspace's own token cannot call it.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantLimits
@@ -15536,9 +15536,9 @@ export const OperatorService: GenService<{
     output: typeof GetVersionResponseSchema;
   },
   /**
-   * SetTenantPlan sets a tenant's plan and returns the tenant. An empty ID or
+   * SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
    * plan, or a plan the configuration does not define, fails with
-   * INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
+   * INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantPlan
    */
@@ -15548,8 +15548,8 @@ export const OperatorService: GenService<{
     output: typeof SetTenantPlanResponseSchema;
   },
   /**
-   * SetTenantOwnHostsOnly sets whether the tenant's jobs wait for its own
-   * hosts and never run on shared ones, and returns the tenant as stored. An
+   * SetTenantOwnHostsOnly sets whether the workspace's jobs wait for its own
+   * hosts and never run on shared ones, and returns the workspace as stored. An
    * empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantOwnHostsOnly
@@ -15561,7 +15561,7 @@ export const OperatorService: GenService<{
   },
   /**
    * SetTenantAllowOverflow sets whether shared overflow hosts may take the
-   * tenant's jobs and returns the tenant as stored; its own
+   * workspace's jobs and returns the workspace as stored; its own
    * overflow hosts always may. An empty ID fails with INVALID_ARGUMENT; an
    * unknown ID fails with NOT_FOUND.
    *
@@ -15573,11 +15573,11 @@ export const OperatorService: GenService<{
     output: typeof SetTenantAllowOverflowResponseSchema;
   },
   /**
-   * SuspendTenant suspends an active tenant: its new and queued jobs are
+   * SuspendTenant suspends an active workspace: its new and queued jobs are
    * held with hold reason tenant_suspended, its running jobs finish, and its
-   * users keep read-only access. A suspended tenant is returned unchanged. An
+   * users keep read-only access. A suspended workspace is returned unchanged. An
    * empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
-   * NOT_FOUND, and a tenant that is deleting or deleted with
+   * NOT_FOUND, and a workspace that is deleting or deleted with
    * FAILED_PRECONDITION. Operator only.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SuspendTenant
@@ -15588,10 +15588,10 @@ export const OperatorService: GenService<{
     output: typeof SuspendTenantResponseSchema;
   },
   /**
-   * ResumeTenant returns a suspended tenant to active and cancels a
+   * ResumeTenant returns a suspended workspace to active and cancels a
    * scheduled deletion; held jobs run at the next scheduler pass. An active
-   * tenant is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
-   * an unknown ID with NOT_FOUND, and a tenant that is deleting or deleted
+   * workspace is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
+   * an unknown ID with NOT_FOUND, and a workspace that is deleting or deleted
    * with FAILED_PRECONDITION. Operator only.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.ResumeTenant
@@ -15602,11 +15602,11 @@ export const OperatorService: GenService<{
     output: typeof ResumeTenantResponseSchema;
   },
   /**
-   * DeleteTenant suspends a tenant until purge_after, after which its data
+   * DeleteTenant suspends a workspace until purge_after, after which its data
    * is purged from the control plane and every host. grace_seconds of 0
-   * means the default of 30 days; now purges as soon as the tenant has no
+   * means the default of 30 days; now purges as soon as the workspace has no
    * running job. A negative grace_seconds, or now with grace_seconds, fails
-   * with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a tenant that is
+   * with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
    * deleting or deleted with FAILED_PRECONDITION. Operator only.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.DeleteTenant
@@ -15617,12 +15617,12 @@ export const OperatorService: GenService<{
     output: typeof DeleteTenantResponseSchema;
   },
   /**
-   * SetTenantReservation sets or clears a tenant's reservation of N slots of
-   * one runner size for shared hosts, and returns the tenant's effective
-   * reservations. slots of 0 removes the tenant's own reservation
+   * SetTenantReservation sets or clears a workspace's reservation of N slots of
+   * one runner size for shared hosts, and returns the workspace's effective
+   * reservations. slots of 0 removes the workspace's own reservation
    * for the size, so its plan's applies again. An empty ID, an unknown size,
    * a negative slots, or a warm outside 0..slots fails with INVALID_ARGUMENT;
-   * an unknown tenant fails with NOT_FOUND. Operator only.
+   * an unknown workspace fails with NOT_FOUND. Operator only.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantReservation
    */
@@ -15645,8 +15645,8 @@ export const OperatorService: GenService<{
     output: typeof GetCapacityResponseSchema;
   },
   /**
-   * SetTenantSpendLimits sets a tenant's monthly spending cap and its own
-   * jobs-per-hour limit, and returns the tenant as stored; an unset field is
+   * SetTenantSpendLimits sets a workspace's monthly spending cap and its own
+   * jobs-per-hour limit, and returns the workspace as stored; an unset field is
    * left as it is. An empty ID, a negative value, or a
    * max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
    * spending cap while billing is off fails with FAILED_PRECONDITION; an
@@ -15660,7 +15660,7 @@ export const OperatorService: GenService<{
     output: typeof SetTenantSpendLimitsResponseSchema;
   },
   /**
-   * GetUsage returns job counts and billable minutes per tenant, UTC day,
+   * GetUsage returns job counts and billable minutes per workspace, UTC day,
    * conclusion, outcome and kind, for the jobs whose queued_at is in the
    * window. The window defaults to the last 7 days. A window whose from is not before its
    * to fails with INVALID_ARGUMENT.
@@ -15686,7 +15686,7 @@ export const OperatorService: GenService<{
     output: typeof GetQueueTimesResponseSchema;
   },
   /**
-   * GetWorkflowUsage returns, per tenant, repository and workflow name, the
+   * GetWorkflowUsage returns, per workspace, repository and workflow name, the
    * jobs GetUsage counts: their billable minutes, failed jobs and run-time
    * percentiles. A job is in the window by its queued_at. The window
    * defaults to the last 7 days. A window whose from is not before its to
@@ -15700,10 +15700,10 @@ export const OperatorService: GenService<{
     output: typeof GetWorkflowUsageResponseSchema;
   },
   /**
-   * GetTenantBilling returns a tenant's billing customer, subscription and
+   * GetTenantBilling returns a workspace's billing customer, subscription and
    * its status, the usage reported to the billing provider per month and
    * runner size, and the events that failed. An empty ID, or months outside 0
-   * to 12, fails with INVALID_ARGUMENT; an unknown tenant fails with
+   * to 12, fails with INVALID_ARGUMENT; an unknown workspace fails with
    * NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.GetTenantBilling
@@ -15714,13 +15714,13 @@ export const OperatorService: GenService<{
     output: typeof GetTenantBillingResponseSchema;
   },
   /**
-   * GetTenantStatement returns a tenant's usage statement for one UTC month:
+   * GetTenantStatement returns a workspace's usage statement for one UTC month:
    * minutes by runner size and OS of the jobs that finished in it, the
    * minutes metered to the billing provider by size with their estimated
    * cost at the plan's prices, the starter credit applied in it, and held
    * time by reason. An empty ID or a month not in YYYY-MM form fails with
-   * INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. A dashboard
-   * session or tenant token may read only its own tenants' statements; any
+   * INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND. A dashboard
+   * session or workspace token may read only its own workspaces' statements; any
    * other fails with PERMISSION_DENIED.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.GetTenantStatement
@@ -15731,11 +15731,11 @@ export const OperatorService: GenService<{
     output: typeof GetTenantStatementResponseSchema;
   },
   /**
-   * SetTenantBillingCustomer links or clears a tenant's billing customer id and
-   * returns the tenant's billing state. An empty ID, or a customer_id longer
+   * SetTenantBillingCustomer links or clears a workspace's billing customer id and
+   * returns the workspace's billing state. An empty ID, or a customer_id longer
    * than 255 bytes or holding anything but printable ASCII without spaces,
-   * fails with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; a
-   * customer id held by another tenant fails with ALREADY_EXISTS.
+   * fails with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; a
+   * customer id held by another workspace fails with ALREADY_EXISTS.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantBillingCustomer
    */
@@ -15746,14 +15746,14 @@ export const OperatorService: GenService<{
   },
   /**
    * CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
-   * tenant to plan, first creating and linking a billing customer for a
-   * tenant without one. An empty ID, an empty plan, or a plan the
+   * workspace to plan, first creating and linking a billing customer for a
+   * workspace without one. An empty ID, an empty plan, or a plan the
    * configuration does not define fails with INVALID_ARGUMENT; an unknown
-   * tenant fails with NOT_FOUND; self-serve billing off, a plan that is not
+   * workspace fails with NOT_FOUND; self-serve billing off, a plan that is not
    * sold or maps to several lookup keys, a price missing in Stripe, or a
-   * tenant that already has a subscription fails with FAILED_PRECONDITION; a
+   * workspace that already has a subscription fails with FAILED_PRECONDITION; a
    * billing provider failure fails with UNAVAILABLE. A dashboard session may
-   * call this only for its own tenants; otherwise it fails with
+   * call this only for its own workspaces; otherwise it fails with
    * PERMISSION_DENIED.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.CreateCheckoutSession
@@ -15765,11 +15765,11 @@ export const OperatorService: GenService<{
   },
   /**
    * CreateBillingPortalSession returns a Stripe Customer Portal URL where the
-   * tenant manages its card and subscription. An empty ID fails with
-   * INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; self-serve
-   * billing not configured or a tenant with no billing customer fails with
+   * workspace manages its card and subscription. An empty ID fails with
+   * INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; self-serve
+   * billing not configured or a workspace with no billing customer fails with
    * FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
-   * A dashboard session may call this only for its own tenants; otherwise it
+   * A dashboard session may call this only for its own workspaces; otherwise it
    * fails with PERMISSION_DENIED.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.CreateBillingPortalSession
@@ -15851,7 +15851,7 @@ export const OperatorService: GenService<{
    * RevokeToken stops a token working at once. Revoking an enrollment token
    * also signs out the hosts that registered with it, and those whose
    * enrollment token is not recorded: each registers again with the
-   * enrollment token it now holds and keeps its jobs. Revoking a tenant's
+   * enrollment token it now holds and keeps its jobs. Revoking a workspace's
    * enrollment token signs out only the hosts that registered with it.
    * Revoking the only active operator token fails with FailedPrecondition.
    *
@@ -15863,10 +15863,10 @@ export const OperatorService: GenService<{
     output: typeof RevokeTokenResponseSchema;
   },
   /**
-   * CreateEnrollmentToken makes an enrollment token for one tenant and
+   * CreateEnrollmentToken makes an enrollment token for one workspace and
    * returns it with its value; a host that registers with it is owned by that
-   * tenant. The token does not expire and the other tokens are untouched. An
-   * unknown tenant fails with NOT_FOUND; a closed tenant fails with
+   * workspace. The token does not expire and the other tokens are untouched. An
+   * unknown workspace fails with NOT_FOUND; a closed workspace fails with
    * FailedPrecondition.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.CreateEnrollmentToken
@@ -15877,10 +15877,10 @@ export const OperatorService: GenService<{
     output: typeof CreateEnrollmentTokenResponseSchema;
   },
   /**
-   * CreateTenantToken makes an API token for one tenant that authenticates
-   * the operator API as that tenant, with a dashboard session's scope, and
-   * returns it with its value. An unknown tenant fails with NOT_FOUND; a
-   * closed tenant fails with FailedPrecondition.
+   * CreateTenantToken makes an API token for one workspace that authenticates
+   * the operator API as that workspace, with a dashboard session's scope, and
+   * returns it with its value. An unknown workspace fails with NOT_FOUND; a
+   * closed workspace fails with FailedPrecondition.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.CreateTenantToken
    */
@@ -15917,10 +15917,10 @@ export const OperatorService: GenService<{
     output: typeof ListOperatorAlertsResponseSchema;
   },
   /**
-   * ListHostAlerts returns the active alerts of hosts that tenants own:
-   * memory_held, egress_changed and agent_version_skew, one per tenant and
-   * kind, ordered by tenant, then kind. A tenant caller gets those of its
-   * own tenants; an operator gets every tenant's, or one tenant's with the
+   * ListHostAlerts returns the active alerts of hosts that workspaces own:
+   * memory_held, egress_changed and agent_version_skew, one per workspace and
+   * kind, ordered by workspace, then kind. A workspace caller gets those of its
+   * own workspaces; an operator gets every workspace's, or one workspace's with the
    * filter.
    *
    * A page holds 100 alerts when page_size is zero, and 1000 at most.
@@ -15933,12 +15933,12 @@ export const OperatorService: GenService<{
     output: typeof ListHostAlertsResponseSchema;
   },
   /**
-   * ListEgressIPs returns the public addresses a tenant's jobs may reach the
+   * ListEgressIPs returns the public addresses a workspace's jobs may reach the
    * internet from: the egress addresses of the hosts its jobs can land on,
    * its own hosts and, unless it runs on its own hosts only, the shared hosts
    * its plan's operating systems run on. A dashboard session or
-   * tenant token may ask for its own tenants only. An empty tenant fails
-   * with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
+   * workspace token may ask for its own workspaces only. An empty workspace fails
+   * with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
    *
    * A page holds 100 hosts when page_size is zero, and 1000 at most.
    *
@@ -15953,8 +15953,8 @@ export const OperatorService: GenService<{
    * CheckCloudHost checks a cloud host's AWS setup without launching
    * anything: the role can be assumed, the AMI is visible, the subnet routes
    * to the internet, and the role's policy allows each action Toshi calls,
-   * through dry-run calls. A dashboard session or tenant token may
-   * check its own tenants' hosts only. A host that is not a cloud host fails
+   * through dry-run calls. A dashboard session or workspace token may
+   * check its own workspaces' hosts only. A host that is not a cloud host fails
    * with NOT_FOUND; cloud hosts not configured on the control plane fails
    * with FAILED_PRECONDITION.
    *
@@ -15966,9 +15966,9 @@ export const OperatorService: GenService<{
     output: typeof CheckCloudHostResponseSchema;
   },
   /**
-   * ListFillers returns the fillers, ordered by name, then tenant, each
+   * ListFillers returns the fillers, ordered by name, then workspace, each
    * with its latest run, and the filler minutes per host over the last 24
-   * hours. A tenant caller sees only its own dispatch fillers and no host
+   * hours. A workspace caller sees only its own dispatch fillers and no host
    * minutes.
    *
    * A page holds 100 fillers when page_size is zero, and 1000 at most.
@@ -15983,8 +15983,8 @@ export const OperatorService: GenService<{
   /**
    * PutFiller adds a filler or replaces the one with the same name and
    * returns it as stored. A filler from the control plane's [[filler]]
-   * configuration cannot be replaced (FailedPrecondition). A tenant caller
-   * may put only dispatch fillers for its own tenant and repositories.
+   * configuration cannot be replaced (FailedPrecondition). A workspace caller
+   * may put only dispatch fillers for its own workspace and repositories.
    * A bad field fails with INVALID_ARGUMENT.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.PutFiller
@@ -15997,7 +15997,7 @@ export const OperatorService: GenService<{
   /**
    * DeleteFiller removes a filler and stops its running run. A configured
    * filler cannot be removed (FailedPrecondition); an unknown name fails
-   * with NOT_FOUND. A tenant caller may remove only its own.
+   * with NOT_FOUND. A workspace caller may remove only its own.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.DeleteFiller
    */
@@ -16018,7 +16018,7 @@ export const OperatorService: GenService<{
     output: typeof SetFillerEnabledResponseSchema;
   },
   /**
-   * ListFillerRuns returns filler runs, newest first. A tenant caller sees
+   * ListFillerRuns returns filler runs, newest first. A workspace caller sees
    * only its own dispatch fillers' runs.
    *
    * A page holds 50 runs when page_size is zero, and 500 at most.
@@ -16031,8 +16031,8 @@ export const OperatorService: GenService<{
     output: typeof ListFillerRunsResponseSchema;
   },
   /**
-   * SetTenantAllowCacheWarm sets whether the tenant's dispatch fillers run
-   * and returns the tenant as stored. Off by default. An empty
+   * SetTenantAllowCacheWarm sets whether the workspace's dispatch fillers run
+   * and returns the workspace as stored. Off by default. An empty
    * ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantAllowCacheWarm
@@ -16044,8 +16044,8 @@ export const OperatorService: GenService<{
   },
   /**
    * SetTenantCancelRunOnVmDeath sets whether Toshi cancels the workflow run
-   * of the tenant's job when the job's VM is gone and returns the
-   * tenant as stored. On by default. An empty ID fails with
+   * of the workspace's job when the job's VM is gone and returns the
+   * workspace as stored. On by default. An empty ID fails with
    * INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantCancelRunOnVmDeath
@@ -16058,7 +16058,7 @@ export const OperatorService: GenService<{
   /**
    * GetJobFailure says why a job ended the way it did and what to do next,
    * from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
-   * says, which the CLI and the dashboard compose into it. A tenant caller
+   * says, which the CLI and the dashboard compose into it. A workspace caller
    * sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
    * unknown ID fails with NOT_FOUND.
    *
@@ -16135,13 +16135,13 @@ export const OperatorService: GenService<{
   /**
    * CreateStorageProvider registers a bucket Toshi may keep recordings and
    * artifacts in. An empty tenant_id registers the operator's
-   * own provider, shared by every tenant; it takes a credentials file
-   * reference. A request with a credential stores a tenant's own
+   * own provider, shared by every workspace; it takes a credentials file
+   * reference. A request with a credential stores a workspace's own
    * tenant_bucket provider instead: the control plane wraps the key, checks
    * the bucket with it as CheckStorageProvider does and stores the row only
    * when the check passes, else FAILED_PRECONDITION with the check's error.
-   * A tenant has one such provider; a second fails with ALREADY_EXISTS, and
-   * a suspended or deleting tenant with FAILED_PRECONDITION (a dashboard
+   * A workspace has one such provider; a second fails with ALREADY_EXISTS, and
+   * a suspended or deleting workspace with FAILED_PRECONDITION (a dashboard
    * session that also has an active workspace is refused it with
    * PERMISSION_DENIED, as for its other writes). A bad field
    * fails with INVALID_ARGUMENT, a duplicate name for the same owner with
@@ -16159,9 +16159,9 @@ export const OperatorService: GenService<{
   },
   /**
    * ListStorageProviders returns the operator's providers when tenant_id
-   * is empty and that tenant's otherwise, ordered by name. With
-   * include_default it also returns the operator's provider a tenant
-   * without one of its own uses, whether or not this tenant has one. The
+   * is empty and that workspace's otherwise, ordered by name. With
+   * include_default it also returns the operator's provider a workspace
+   * without one of its own uses, whether or not this workspace has one. The
    * operator, or a dashboard session for its own workspace, which gets
    * every row without its credential references (credentials_file,
    * credentials_profile, role_arn and external_id empty).

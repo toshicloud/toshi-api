@@ -245,15 +245,15 @@ type OperatorServiceClient interface {
 	// A page holds 100 jobs when page_size is zero, and 1000 at most.
 	ListJobs(context.Context, *connect.Request[operatorv1.ListJobsRequest]) (*connect.Response[operatorv1.ListJobsResponse], error)
 	// ListAuditEvents returns the audit log, newest first. An operator may use
-	// every filter; a dashboard session may read only its own tenants.
+	// every filter; a dashboard session may read only its own workspaces.
 	//
 	// A page holds 100 events when page_size is zero, and 1000 at most.
 	ListAuditEvents(context.Context, *connect.Request[operatorv1.ListAuditEventsRequest]) (*connect.Response[operatorv1.ListAuditEventsResponse], error)
 	// GetJob returns one job. An unknown ID fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[operatorv1.GetJobRequest]) (*connect.Response[operatorv1.GetJobResponse], error)
 	// GetJobTelemetry returns the resource samples of one job's VM and their
-	// summary. A dashboard session or tenant token reads only its
-	// own tenants' jobs. An unknown ID fails with NOT_FOUND; a job without
+	// summary. A dashboard session or workspace token reads only its
+	// own workspaces' jobs. An unknown ID fails with NOT_FOUND; a job without
 	// samples returns none.
 	GetJobTelemetry(context.Context, *connect.Request[operatorv1.GetJobTelemetryRequest]) (*connect.Response[operatorv1.GetJobTelemetryResponse], error)
 	// SummariseJobTelemetry sums up the telemetry of the jobs queued in a
@@ -267,7 +267,7 @@ type OperatorServiceClient interface {
 	ListHosts(context.Context, *connect.Request[operatorv1.ListHostsRequest]) (*connect.Response[operatorv1.ListHostsResponse], error)
 	// ListHostStorage returns the volumes a host holds, ordered by volume ID:
 	// those it keeps the warm copy of, and those a job assigned to it has
-	// claimed. A tenant's caller sees only its own hosts and its own volumes.
+	// claimed. A workspace's caller sees only its own hosts and its own volumes.
 	// An unknown host fails with NOT_FOUND.
 	//
 	// A page holds 100 volumes when page_size is zero, and 1000 at most.
@@ -297,12 +297,12 @@ type OperatorServiceClient interface {
 	// heartbeat is older than offline_longer_than, oldest first, and with apply
 	// set removes each one that holds no assigned, starting or running job.
 	// Without apply nothing changes: the response says what a call with apply
-	// would do. A host a tenant owns is skipped unless include_owned is set.
+	// would do. A host a workspace owns is skipped unless include_owned is set.
 	// Each removal records one host.retired audit event. Operators only.
 	RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error)
-	// CreateCloudHost registers a tenant-owned cloud host the control plane
-	// drives in the tenant's AWS account. A dashboard session and a tenant
-	// token may add hosts for their own tenant only; the operator for any. When
+	// CreateCloudHost registers a workspace-owned cloud host the control plane
+	// drives in the workspace's AWS account. A dashboard session and a workspace
+	// token may add hosts for their own workspace only; the operator for any. When
 	// cloud hosts are not configured on the control plane the call fails with
 	// FAILED_PRECONDITION.
 	CreateCloudHost(context.Context, *connect.Request[operatorv1.CreateCloudHostRequest]) (*connect.Response[operatorv1.CreateCloudHostResponse], error)
@@ -316,28 +316,28 @@ type OperatorServiceClient interface {
 	// GetWorkspace returns one workspace. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	GetWorkspace(context.Context, *connect.Request[operatorv1.GetWorkspaceRequest]) (*connect.Response[operatorv1.GetWorkspaceResponse], error)
-	// ListTenants returns every tenant, ordered by ID.
+	// ListTenants returns every workspace, ordered by ID.
 	//
-	// A page holds 100 tenants when page_size is zero, and 1000 at most.
+	// A page holds 100 workspaces when page_size is zero, and 1000 at most.
 	ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error)
-	// SetTenantCap sets a tenant's concurrency cap override and returns the
-	// tenant as stored; a cap of 0 clears the override, so the tenant's plan
+	// SetTenantCap sets a workspace's concurrency cap override and returns the
+	// workspace as stored; a cap of 0 clears the override, so the workspace's plan
 	// applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
 	// unknown ID fails with NOT_FOUND.
 	SetTenantCap(context.Context, *connect.Request[operatorv1.SetTenantCapRequest]) (*connect.Response[operatorv1.SetTenantCapResponse], error)
-	// SetTenantHistory sets a tenant's job history retention override and
-	// returns the tenant as stored; omitting history_days clears the override,
-	// so the tenant's plan applies. 0 keeps history forever. An empty tenant
-	// or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
+	// SetTenantHistory sets a workspace's job history retention override and
+	// returns the workspace as stored; omitting history_days clears the override,
+	// so the workspace's plan applies. 0 keeps history forever. An empty workspace
+	// or a negative history_days fails with INVALID_ARGUMENT; an unknown workspace
 	// fails with NOT_FOUND.
 	SetTenantHistory(context.Context, *connect.Request[operatorv1.SetTenantHistoryRequest]) (*connect.Response[operatorv1.SetTenantHistoryResponse], error)
-	// SetTenantLimits sets or clears a tenant's own secret and preview limits,
-	// which replace its plan's values, higher or lower, and returns the tenant
-	// as stored. A limit set in the request becomes the tenant's value, 0 for
+	// SetTenantLimits sets or clears a workspace's own secret and preview limits,
+	// which replace its plan's values, higher or lower, and returns the workspace
+	// as stored. A limit set in the request becomes the workspace's value, 0 for
 	// no cap; a limit named in clear goes back to the plan's; any other keeps
 	// its current value. A negative limit, secret_max_kib above 1073741824, an
 	// unknown name in clear, a limit both set and cleared, or a request that
-	// sets and clears nothing fails with INVALID_ARGUMENT; an unknown tenant
+	// sets and clears nothing fails with INVALID_ARGUMENT; an unknown workspace
 	// fails with NOT_FOUND. A workspace's own token cannot call it.
 	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
 	// ListPlans returns configured plans sorted by name.
@@ -346,59 +346,59 @@ type OperatorServiceClient interface {
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
 	GetVersion(context.Context, *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error)
-	// SetTenantPlan sets a tenant's plan and returns the tenant. An empty ID or
+	// SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
 	// plan, or a plan the configuration does not define, fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
+	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
 	SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error)
-	// SetTenantOwnHostsOnly sets whether the tenant's jobs wait for its own
-	// hosts and never run on shared ones, and returns the tenant as stored. An
+	// SetTenantOwnHostsOnly sets whether the workspace's jobs wait for its own
+	// hosts and never run on shared ones, and returns the workspace as stored. An
 	// empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantOwnHostsOnly(context.Context, *connect.Request[operatorv1.SetTenantOwnHostsOnlyRequest]) (*connect.Response[operatorv1.SetTenantOwnHostsOnlyResponse], error)
 	// SetTenantAllowOverflow sets whether shared overflow hosts may take the
-	// tenant's jobs and returns the tenant as stored; its own
+	// workspace's jobs and returns the workspace as stored; its own
 	// overflow hosts always may. An empty ID fails with INVALID_ARGUMENT; an
 	// unknown ID fails with NOT_FOUND.
 	SetTenantAllowOverflow(context.Context, *connect.Request[operatorv1.SetTenantAllowOverflowRequest]) (*connect.Response[operatorv1.SetTenantAllowOverflowResponse], error)
-	// SuspendTenant suspends an active tenant: its new and queued jobs are
+	// SuspendTenant suspends an active workspace: its new and queued jobs are
 	// held with hold reason tenant_suspended, its running jobs finish, and its
-	// users keep read-only access. A suspended tenant is returned unchanged. An
+	// users keep read-only access. A suspended workspace is returned unchanged. An
 	// empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
-	// NOT_FOUND, and a tenant that is deleting or deleted with
+	// NOT_FOUND, and a workspace that is deleting or deleted with
 	// FAILED_PRECONDITION. Operator only.
 	SuspendTenant(context.Context, *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error)
-	// ResumeTenant returns a suspended tenant to active and cancels a
+	// ResumeTenant returns a suspended workspace to active and cancels a
 	// scheduled deletion; held jobs run at the next scheduler pass. An active
-	// tenant is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
-	// an unknown ID with NOT_FOUND, and a tenant that is deleting or deleted
+	// workspace is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
+	// an unknown ID with NOT_FOUND, and a workspace that is deleting or deleted
 	// with FAILED_PRECONDITION. Operator only.
 	ResumeTenant(context.Context, *connect.Request[operatorv1.ResumeTenantRequest]) (*connect.Response[operatorv1.ResumeTenantResponse], error)
-	// DeleteTenant suspends a tenant until purge_after, after which its data
+	// DeleteTenant suspends a workspace until purge_after, after which its data
 	// is purged from the control plane and every host. grace_seconds of 0
-	// means the default of 30 days; now purges as soon as the tenant has no
+	// means the default of 30 days; now purges as soon as the workspace has no
 	// running job. A negative grace_seconds, or now with grace_seconds, fails
-	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a tenant that is
+	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
 	// deleting or deleted with FAILED_PRECONDITION. Operator only.
 	DeleteTenant(context.Context, *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error)
-	// SetTenantReservation sets or clears a tenant's reservation of N slots of
-	// one runner size for shared hosts, and returns the tenant's effective
-	// reservations. slots of 0 removes the tenant's own reservation
+	// SetTenantReservation sets or clears a workspace's reservation of N slots of
+	// one runner size for shared hosts, and returns the workspace's effective
+	// reservations. slots of 0 removes the workspace's own reservation
 	// for the size, so its plan's applies again. An empty ID, an unknown size,
 	// a negative slots, or a warm outside 0..slots fails with INVALID_ARGUMENT;
-	// an unknown tenant fails with NOT_FOUND. Operator only.
+	// an unknown workspace fails with NOT_FOUND. Operator only.
 	SetTenantReservation(context.Context, *connect.Request[operatorv1.SetTenantReservationRequest]) (*connect.Response[operatorv1.SetTenantReservationResponse], error)
 	// GetCapacity returns the reserved-capacity view of the last scheduler
 	// pass: per runner size the slots free and reserved, and per reservation
 	// the slots in use, earmarked and short. Operator only. It
 	// fails with FAILED_PRECONDITION when no pass has run yet.
 	GetCapacity(context.Context, *connect.Request[operatorv1.GetCapacityRequest]) (*connect.Response[operatorv1.GetCapacityResponse], error)
-	// SetTenantSpendLimits sets a tenant's monthly spending cap and its own
-	// jobs-per-hour limit, and returns the tenant as stored; an unset field is
+	// SetTenantSpendLimits sets a workspace's monthly spending cap and its own
+	// jobs-per-hour limit, and returns the workspace as stored; an unset field is
 	// left as it is. An empty ID, a negative value, or a
 	// max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
 	// spending cap while billing is off fails with FAILED_PRECONDITION; an
 	// unknown ID fails with NOT_FOUND.
 	SetTenantSpendLimits(context.Context, *connect.Request[operatorv1.SetTenantSpendLimitsRequest]) (*connect.Response[operatorv1.SetTenantSpendLimitsResponse], error)
-	// GetUsage returns job counts and billable minutes per tenant, UTC day,
+	// GetUsage returns job counts and billable minutes per workspace, UTC day,
 	// conclusion, outcome and kind, for the jobs whose queued_at is in the
 	// window. The window defaults to the last 7 days. A window whose from is not before its
 	// to fails with INVALID_ARGUMENT.
@@ -408,50 +408,50 @@ type OperatorServiceClient interface {
 	// the window by its queued_at. The window defaults to the last 7 days. A
 	// window whose from is not before its to fails with INVALID_ARGUMENT.
 	GetQueueTimes(context.Context, *connect.Request[operatorv1.GetQueueTimesRequest]) (*connect.Response[operatorv1.GetQueueTimesResponse], error)
-	// GetWorkflowUsage returns, per tenant, repository and workflow name, the
+	// GetWorkflowUsage returns, per workspace, repository and workflow name, the
 	// jobs GetUsage counts: their billable minutes, failed jobs and run-time
 	// percentiles. A job is in the window by its queued_at. The window
 	// defaults to the last 7 days. A window whose from is not before its to
 	// fails with INVALID_ARGUMENT.
 	GetWorkflowUsage(context.Context, *connect.Request[operatorv1.GetWorkflowUsageRequest]) (*connect.Response[operatorv1.GetWorkflowUsageResponse], error)
-	// GetTenantBilling returns a tenant's billing customer, subscription and
+	// GetTenantBilling returns a workspace's billing customer, subscription and
 	// its status, the usage reported to the billing provider per month and
 	// runner size, and the events that failed. An empty ID, or months outside 0
-	// to 12, fails with INVALID_ARGUMENT; an unknown tenant fails with
+	// to 12, fails with INVALID_ARGUMENT; an unknown workspace fails with
 	// NOT_FOUND.
 	GetTenantBilling(context.Context, *connect.Request[operatorv1.GetTenantBillingRequest]) (*connect.Response[operatorv1.GetTenantBillingResponse], error)
-	// GetTenantStatement returns a tenant's usage statement for one UTC month:
+	// GetTenantStatement returns a workspace's usage statement for one UTC month:
 	// minutes by runner size and OS of the jobs that finished in it, the
 	// minutes metered to the billing provider by size with their estimated
 	// cost at the plan's prices, the starter credit applied in it, and held
 	// time by reason. An empty ID or a month not in YYYY-MM form fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. A dashboard
-	// session or tenant token may read only its own tenants' statements; any
+	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND. A dashboard
+	// session or workspace token may read only its own workspaces' statements; any
 	// other fails with PERMISSION_DENIED.
 	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
-	// SetTenantBillingCustomer links or clears a tenant's billing customer id and
-	// returns the tenant's billing state. An empty ID, or a customer_id longer
+	// SetTenantBillingCustomer links or clears a workspace's billing customer id and
+	// returns the workspace's billing state. An empty ID, or a customer_id longer
 	// than 255 bytes or holding anything but printable ASCII without spaces,
-	// fails with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; a
-	// customer id held by another tenant fails with ALREADY_EXISTS.
+	// fails with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; a
+	// customer id held by another workspace fails with ALREADY_EXISTS.
 	SetTenantBillingCustomer(context.Context, *connect.Request[operatorv1.SetTenantBillingCustomerRequest]) (*connect.Response[operatorv1.SetTenantBillingCustomerResponse], error)
 	// CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
-	// tenant to plan, first creating and linking a billing customer for a
-	// tenant without one. An empty ID, an empty plan, or a plan the
+	// workspace to plan, first creating and linking a billing customer for a
+	// workspace without one. An empty ID, an empty plan, or a plan the
 	// configuration does not define fails with INVALID_ARGUMENT; an unknown
-	// tenant fails with NOT_FOUND; self-serve billing off, a plan that is not
+	// workspace fails with NOT_FOUND; self-serve billing off, a plan that is not
 	// sold or maps to several lookup keys, a price missing in Stripe, or a
-	// tenant that already has a subscription fails with FAILED_PRECONDITION; a
+	// workspace that already has a subscription fails with FAILED_PRECONDITION; a
 	// billing provider failure fails with UNAVAILABLE. A dashboard session may
-	// call this only for its own tenants; otherwise it fails with
+	// call this only for its own workspaces; otherwise it fails with
 	// PERMISSION_DENIED.
 	CreateCheckoutSession(context.Context, *connect.Request[operatorv1.CreateCheckoutSessionRequest]) (*connect.Response[operatorv1.CreateCheckoutSessionResponse], error)
 	// CreateBillingPortalSession returns a Stripe Customer Portal URL where the
-	// tenant manages its card and subscription. An empty ID fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; self-serve
-	// billing not configured or a tenant with no billing customer fails with
+	// workspace manages its card and subscription. An empty ID fails with
+	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; self-serve
+	// billing not configured or a workspace with no billing customer fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
-	// A dashboard session may call this only for its own tenants; otherwise it
+	// A dashboard session may call this only for its own workspaces; otherwise it
 	// fails with PERMISSION_DENIED.
 	CreateBillingPortalSession(context.Context, *connect.Request[operatorv1.CreateBillingPortalSessionRequest]) (*connect.Response[operatorv1.CreateBillingPortalSessionResponse], error)
 	// CancelJob cancels a queued job at once. An assigned, starting or running
@@ -485,20 +485,20 @@ type OperatorServiceClient interface {
 	// RevokeToken stops a token working at once. Revoking an enrollment token
 	// also signs out the hosts that registered with it, and those whose
 	// enrollment token is not recorded: each registers again with the
-	// enrollment token it now holds and keeps its jobs. Revoking a tenant's
+	// enrollment token it now holds and keeps its jobs. Revoking a workspace's
 	// enrollment token signs out only the hosts that registered with it.
 	// Revoking the only active operator token fails with FailedPrecondition.
 	RevokeToken(context.Context, *connect.Request[operatorv1.RevokeTokenRequest]) (*connect.Response[operatorv1.RevokeTokenResponse], error)
-	// CreateEnrollmentToken makes an enrollment token for one tenant and
+	// CreateEnrollmentToken makes an enrollment token for one workspace and
 	// returns it with its value; a host that registers with it is owned by that
-	// tenant. The token does not expire and the other tokens are untouched. An
-	// unknown tenant fails with NOT_FOUND; a closed tenant fails with
+	// workspace. The token does not expire and the other tokens are untouched. An
+	// unknown workspace fails with NOT_FOUND; a closed workspace fails with
 	// FailedPrecondition.
 	CreateEnrollmentToken(context.Context, *connect.Request[operatorv1.CreateEnrollmentTokenRequest]) (*connect.Response[operatorv1.CreateEnrollmentTokenResponse], error)
-	// CreateTenantToken makes an API token for one tenant that authenticates
-	// the operator API as that tenant, with a dashboard session's scope, and
-	// returns it with its value. An unknown tenant fails with NOT_FOUND; a
-	// closed tenant fails with FailedPrecondition.
+	// CreateTenantToken makes an API token for one workspace that authenticates
+	// the operator API as that workspace, with a dashboard session's scope, and
+	// returns it with its value. An unknown workspace fails with NOT_FOUND; a
+	// closed workspace fails with FailedPrecondition.
 	CreateTenantToken(context.Context, *connect.Request[operatorv1.CreateTenantTokenRequest]) (*connect.Response[operatorv1.CreateTenantTokenResponse], error)
 	// CreateProductToken makes a token a product's adapter authenticates to
 	// the core with. Operator only. It expires within 90 days, and a product
@@ -511,68 +511,68 @@ type OperatorServiceClient interface {
 	//
 	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListOperatorAlerts(context.Context, *connect.Request[operatorv1.ListOperatorAlertsRequest]) (*connect.Response[operatorv1.ListOperatorAlertsResponse], error)
-	// ListHostAlerts returns the active alerts of hosts that tenants own:
-	// memory_held, egress_changed and agent_version_skew, one per tenant and
-	// kind, ordered by tenant, then kind. A tenant caller gets those of its
-	// own tenants; an operator gets every tenant's, or one tenant's with the
+	// ListHostAlerts returns the active alerts of hosts that workspaces own:
+	// memory_held, egress_changed and agent_version_skew, one per workspace and
+	// kind, ordered by workspace, then kind. A workspace caller gets those of its
+	// own workspaces; an operator gets every workspace's, or one workspace's with the
 	// filter.
 	//
 	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListHostAlerts(context.Context, *connect.Request[operatorv1.ListHostAlertsRequest]) (*connect.Response[operatorv1.ListHostAlertsResponse], error)
-	// ListEgressIPs returns the public addresses a tenant's jobs may reach the
+	// ListEgressIPs returns the public addresses a workspace's jobs may reach the
 	// internet from: the egress addresses of the hosts its jobs can land on,
 	// its own hosts and, unless it runs on its own hosts only, the shared hosts
 	// its plan's operating systems run on. A dashboard session or
-	// tenant token may ask for its own tenants only. An empty tenant fails
-	// with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
+	// workspace token may ask for its own workspaces only. An empty workspace fails
+	// with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
 	//
 	// A page holds 100 hosts when page_size is zero, and 1000 at most.
 	ListEgressIPs(context.Context, *connect.Request[operatorv1.ListEgressIPsRequest]) (*connect.Response[operatorv1.ListEgressIPsResponse], error)
 	// CheckCloudHost checks a cloud host's AWS setup without launching
 	// anything: the role can be assumed, the AMI is visible, the subnet routes
 	// to the internet, and the role's policy allows each action Toshi calls,
-	// through dry-run calls. A dashboard session or tenant token may
-	// check its own tenants' hosts only. A host that is not a cloud host fails
+	// through dry-run calls. A dashboard session or workspace token may
+	// check its own workspaces' hosts only. A host that is not a cloud host fails
 	// with NOT_FOUND; cloud hosts not configured on the control plane fails
 	// with FAILED_PRECONDITION.
 	CheckCloudHost(context.Context, *connect.Request[operatorv1.CheckCloudHostRequest]) (*connect.Response[operatorv1.CheckCloudHostResponse], error)
-	// ListFillers returns the fillers, ordered by name, then tenant, each
+	// ListFillers returns the fillers, ordered by name, then workspace, each
 	// with its latest run, and the filler minutes per host over the last 24
-	// hours. A tenant caller sees only its own dispatch fillers and no host
+	// hours. A workspace caller sees only its own dispatch fillers and no host
 	// minutes.
 	//
 	// A page holds 100 fillers when page_size is zero, and 1000 at most.
 	ListFillers(context.Context, *connect.Request[operatorv1.ListFillersRequest]) (*connect.Response[operatorv1.ListFillersResponse], error)
 	// PutFiller adds a filler or replaces the one with the same name and
 	// returns it as stored. A filler from the control plane's [[filler]]
-	// configuration cannot be replaced (FailedPrecondition). A tenant caller
-	// may put only dispatch fillers for its own tenant and repositories.
+	// configuration cannot be replaced (FailedPrecondition). A workspace caller
+	// may put only dispatch fillers for its own workspace and repositories.
 	// A bad field fails with INVALID_ARGUMENT.
 	PutFiller(context.Context, *connect.Request[operatorv1.PutFillerRequest]) (*connect.Response[operatorv1.PutFillerResponse], error)
 	// DeleteFiller removes a filler and stops its running run. A configured
 	// filler cannot be removed (FailedPrecondition); an unknown name fails
-	// with NOT_FOUND. A tenant caller may remove only its own.
+	// with NOT_FOUND. A workspace caller may remove only its own.
 	DeleteFiller(context.Context, *connect.Request[operatorv1.DeleteFillerRequest]) (*connect.Response[operatorv1.DeleteFillerResponse], error)
 	// SetFillerEnabled turns a filler on or off and returns it. Turning it off
 	// stops its running run. An unknown name fails with NOT_FOUND.
 	SetFillerEnabled(context.Context, *connect.Request[operatorv1.SetFillerEnabledRequest]) (*connect.Response[operatorv1.SetFillerEnabledResponse], error)
-	// ListFillerRuns returns filler runs, newest first. A tenant caller sees
+	// ListFillerRuns returns filler runs, newest first. A workspace caller sees
 	// only its own dispatch fillers' runs.
 	//
 	// A page holds 50 runs when page_size is zero, and 500 at most.
 	ListFillerRuns(context.Context, *connect.Request[operatorv1.ListFillerRunsRequest]) (*connect.Response[operatorv1.ListFillerRunsResponse], error)
-	// SetTenantAllowCacheWarm sets whether the tenant's dispatch fillers run
-	// and returns the tenant as stored. Off by default. An empty
+	// SetTenantAllowCacheWarm sets whether the workspace's dispatch fillers run
+	// and returns the workspace as stored. Off by default. An empty
 	// ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantAllowCacheWarm(context.Context, *connect.Request[operatorv1.SetTenantAllowCacheWarmRequest]) (*connect.Response[operatorv1.SetTenantAllowCacheWarmResponse], error)
 	// SetTenantCancelRunOnVmDeath sets whether Toshi cancels the workflow run
-	// of the tenant's job when the job's VM is gone and returns the
-	// tenant as stored. On by default. An empty ID fails with
+	// of the workspace's job when the job's VM is gone and returns the
+	// workspace as stored. On by default. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantCancelRunOnVmDeath(context.Context, *connect.Request[operatorv1.SetTenantCancelRunOnVmDeathRequest]) (*connect.Response[operatorv1.SetTenantCancelRunOnVmDeathResponse], error)
 	// GetJobFailure says why a job ended the way it did and what to do next,
 	// from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
-	// says, which the CLI and the dashboard compose into it. A tenant caller
+	// says, which the CLI and the dashboard compose into it. A workspace caller
 	// sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
 	// unknown ID fails with NOT_FOUND.
 	GetJobFailure(context.Context, *connect.Request[operatorv1.GetJobFailureRequest]) (*connect.Response[operatorv1.GetJobFailureResponse], error)
@@ -609,13 +609,13 @@ type OperatorServiceClient interface {
 	SuggestPools(context.Context, *connect.Request[operatorv1.SuggestPoolsRequest]) (*connect.Response[operatorv1.SuggestPoolsResponse], error)
 	// CreateStorageProvider registers a bucket Toshi may keep recordings and
 	// artifacts in. An empty tenant_id registers the operator's
-	// own provider, shared by every tenant; it takes a credentials file
-	// reference. A request with a credential stores a tenant's own
+	// own provider, shared by every workspace; it takes a credentials file
+	// reference. A request with a credential stores a workspace's own
 	// tenant_bucket provider instead: the control plane wraps the key, checks
 	// the bucket with it as CheckStorageProvider does and stores the row only
 	// when the check passes, else FAILED_PRECONDITION with the check's error.
-	// A tenant has one such provider; a second fails with ALREADY_EXISTS, and
-	// a suspended or deleting tenant with FAILED_PRECONDITION (a dashboard
+	// A workspace has one such provider; a second fails with ALREADY_EXISTS, and
+	// a suspended or deleting workspace with FAILED_PRECONDITION (a dashboard
 	// session that also has an active workspace is refused it with
 	// PERMISSION_DENIED, as for its other writes). A bad field
 	// fails with INVALID_ARGUMENT, a duplicate name for the same owner with
@@ -625,9 +625,9 @@ type OperatorServiceClient interface {
 	// file, role or replication fields.
 	CreateStorageProvider(context.Context, *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error)
 	// ListStorageProviders returns the operator's providers when tenant_id
-	// is empty and that tenant's otherwise, ordered by name. With
-	// include_default it also returns the operator's provider a tenant
-	// without one of its own uses, whether or not this tenant has one. The
+	// is empty and that workspace's otherwise, ordered by name. With
+	// include_default it also returns the operator's provider a workspace
+	// without one of its own uses, whether or not this workspace has one. The
 	// operator, or a dashboard session for its own workspace, which gets
 	// every row without its credential references (credentials_file,
 	// credentials_profile, role_arn and external_id empty).
@@ -1486,15 +1486,15 @@ type OperatorServiceHandler interface {
 	// A page holds 100 jobs when page_size is zero, and 1000 at most.
 	ListJobs(context.Context, *connect.Request[operatorv1.ListJobsRequest]) (*connect.Response[operatorv1.ListJobsResponse], error)
 	// ListAuditEvents returns the audit log, newest first. An operator may use
-	// every filter; a dashboard session may read only its own tenants.
+	// every filter; a dashboard session may read only its own workspaces.
 	//
 	// A page holds 100 events when page_size is zero, and 1000 at most.
 	ListAuditEvents(context.Context, *connect.Request[operatorv1.ListAuditEventsRequest]) (*connect.Response[operatorv1.ListAuditEventsResponse], error)
 	// GetJob returns one job. An unknown ID fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[operatorv1.GetJobRequest]) (*connect.Response[operatorv1.GetJobResponse], error)
 	// GetJobTelemetry returns the resource samples of one job's VM and their
-	// summary. A dashboard session or tenant token reads only its
-	// own tenants' jobs. An unknown ID fails with NOT_FOUND; a job without
+	// summary. A dashboard session or workspace token reads only its
+	// own workspaces' jobs. An unknown ID fails with NOT_FOUND; a job without
 	// samples returns none.
 	GetJobTelemetry(context.Context, *connect.Request[operatorv1.GetJobTelemetryRequest]) (*connect.Response[operatorv1.GetJobTelemetryResponse], error)
 	// SummariseJobTelemetry sums up the telemetry of the jobs queued in a
@@ -1508,7 +1508,7 @@ type OperatorServiceHandler interface {
 	ListHosts(context.Context, *connect.Request[operatorv1.ListHostsRequest]) (*connect.Response[operatorv1.ListHostsResponse], error)
 	// ListHostStorage returns the volumes a host holds, ordered by volume ID:
 	// those it keeps the warm copy of, and those a job assigned to it has
-	// claimed. A tenant's caller sees only its own hosts and its own volumes.
+	// claimed. A workspace's caller sees only its own hosts and its own volumes.
 	// An unknown host fails with NOT_FOUND.
 	//
 	// A page holds 100 volumes when page_size is zero, and 1000 at most.
@@ -1538,12 +1538,12 @@ type OperatorServiceHandler interface {
 	// heartbeat is older than offline_longer_than, oldest first, and with apply
 	// set removes each one that holds no assigned, starting or running job.
 	// Without apply nothing changes: the response says what a call with apply
-	// would do. A host a tenant owns is skipped unless include_owned is set.
+	// would do. A host a workspace owns is skipped unless include_owned is set.
 	// Each removal records one host.retired audit event. Operators only.
 	RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error)
-	// CreateCloudHost registers a tenant-owned cloud host the control plane
-	// drives in the tenant's AWS account. A dashboard session and a tenant
-	// token may add hosts for their own tenant only; the operator for any. When
+	// CreateCloudHost registers a workspace-owned cloud host the control plane
+	// drives in the workspace's AWS account. A dashboard session and a workspace
+	// token may add hosts for their own workspace only; the operator for any. When
 	// cloud hosts are not configured on the control plane the call fails with
 	// FAILED_PRECONDITION.
 	CreateCloudHost(context.Context, *connect.Request[operatorv1.CreateCloudHostRequest]) (*connect.Response[operatorv1.CreateCloudHostResponse], error)
@@ -1557,28 +1557,28 @@ type OperatorServiceHandler interface {
 	// GetWorkspace returns one workspace. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	GetWorkspace(context.Context, *connect.Request[operatorv1.GetWorkspaceRequest]) (*connect.Response[operatorv1.GetWorkspaceResponse], error)
-	// ListTenants returns every tenant, ordered by ID.
+	// ListTenants returns every workspace, ordered by ID.
 	//
-	// A page holds 100 tenants when page_size is zero, and 1000 at most.
+	// A page holds 100 workspaces when page_size is zero, and 1000 at most.
 	ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error)
-	// SetTenantCap sets a tenant's concurrency cap override and returns the
-	// tenant as stored; a cap of 0 clears the override, so the tenant's plan
+	// SetTenantCap sets a workspace's concurrency cap override and returns the
+	// workspace as stored; a cap of 0 clears the override, so the workspace's plan
 	// applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
 	// unknown ID fails with NOT_FOUND.
 	SetTenantCap(context.Context, *connect.Request[operatorv1.SetTenantCapRequest]) (*connect.Response[operatorv1.SetTenantCapResponse], error)
-	// SetTenantHistory sets a tenant's job history retention override and
-	// returns the tenant as stored; omitting history_days clears the override,
-	// so the tenant's plan applies. 0 keeps history forever. An empty tenant
-	// or a negative history_days fails with INVALID_ARGUMENT; an unknown tenant
+	// SetTenantHistory sets a workspace's job history retention override and
+	// returns the workspace as stored; omitting history_days clears the override,
+	// so the workspace's plan applies. 0 keeps history forever. An empty workspace
+	// or a negative history_days fails with INVALID_ARGUMENT; an unknown workspace
 	// fails with NOT_FOUND.
 	SetTenantHistory(context.Context, *connect.Request[operatorv1.SetTenantHistoryRequest]) (*connect.Response[operatorv1.SetTenantHistoryResponse], error)
-	// SetTenantLimits sets or clears a tenant's own secret and preview limits,
-	// which replace its plan's values, higher or lower, and returns the tenant
-	// as stored. A limit set in the request becomes the tenant's value, 0 for
+	// SetTenantLimits sets or clears a workspace's own secret and preview limits,
+	// which replace its plan's values, higher or lower, and returns the workspace
+	// as stored. A limit set in the request becomes the workspace's value, 0 for
 	// no cap; a limit named in clear goes back to the plan's; any other keeps
 	// its current value. A negative limit, secret_max_kib above 1073741824, an
 	// unknown name in clear, a limit both set and cleared, or a request that
-	// sets and clears nothing fails with INVALID_ARGUMENT; an unknown tenant
+	// sets and clears nothing fails with INVALID_ARGUMENT; an unknown workspace
 	// fails with NOT_FOUND. A workspace's own token cannot call it.
 	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
 	// ListPlans returns configured plans sorted by name.
@@ -1587,59 +1587,59 @@ type OperatorServiceHandler interface {
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
 	GetVersion(context.Context, *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error)
-	// SetTenantPlan sets a tenant's plan and returns the tenant. An empty ID or
+	// SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
 	// plan, or a plan the configuration does not define, fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
+	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
 	SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error)
-	// SetTenantOwnHostsOnly sets whether the tenant's jobs wait for its own
-	// hosts and never run on shared ones, and returns the tenant as stored. An
+	// SetTenantOwnHostsOnly sets whether the workspace's jobs wait for its own
+	// hosts and never run on shared ones, and returns the workspace as stored. An
 	// empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantOwnHostsOnly(context.Context, *connect.Request[operatorv1.SetTenantOwnHostsOnlyRequest]) (*connect.Response[operatorv1.SetTenantOwnHostsOnlyResponse], error)
 	// SetTenantAllowOverflow sets whether shared overflow hosts may take the
-	// tenant's jobs and returns the tenant as stored; its own
+	// workspace's jobs and returns the workspace as stored; its own
 	// overflow hosts always may. An empty ID fails with INVALID_ARGUMENT; an
 	// unknown ID fails with NOT_FOUND.
 	SetTenantAllowOverflow(context.Context, *connect.Request[operatorv1.SetTenantAllowOverflowRequest]) (*connect.Response[operatorv1.SetTenantAllowOverflowResponse], error)
-	// SuspendTenant suspends an active tenant: its new and queued jobs are
+	// SuspendTenant suspends an active workspace: its new and queued jobs are
 	// held with hold reason tenant_suspended, its running jobs finish, and its
-	// users keep read-only access. A suspended tenant is returned unchanged. An
+	// users keep read-only access. A suspended workspace is returned unchanged. An
 	// empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
-	// NOT_FOUND, and a tenant that is deleting or deleted with
+	// NOT_FOUND, and a workspace that is deleting or deleted with
 	// FAILED_PRECONDITION. Operator only.
 	SuspendTenant(context.Context, *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error)
-	// ResumeTenant returns a suspended tenant to active and cancels a
+	// ResumeTenant returns a suspended workspace to active and cancels a
 	// scheduled deletion; held jobs run at the next scheduler pass. An active
-	// tenant is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
-	// an unknown ID with NOT_FOUND, and a tenant that is deleting or deleted
+	// workspace is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
+	// an unknown ID with NOT_FOUND, and a workspace that is deleting or deleted
 	// with FAILED_PRECONDITION. Operator only.
 	ResumeTenant(context.Context, *connect.Request[operatorv1.ResumeTenantRequest]) (*connect.Response[operatorv1.ResumeTenantResponse], error)
-	// DeleteTenant suspends a tenant until purge_after, after which its data
+	// DeleteTenant suspends a workspace until purge_after, after which its data
 	// is purged from the control plane and every host. grace_seconds of 0
-	// means the default of 30 days; now purges as soon as the tenant has no
+	// means the default of 30 days; now purges as soon as the workspace has no
 	// running job. A negative grace_seconds, or now with grace_seconds, fails
-	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a tenant that is
+	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
 	// deleting or deleted with FAILED_PRECONDITION. Operator only.
 	DeleteTenant(context.Context, *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error)
-	// SetTenantReservation sets or clears a tenant's reservation of N slots of
-	// one runner size for shared hosts, and returns the tenant's effective
-	// reservations. slots of 0 removes the tenant's own reservation
+	// SetTenantReservation sets or clears a workspace's reservation of N slots of
+	// one runner size for shared hosts, and returns the workspace's effective
+	// reservations. slots of 0 removes the workspace's own reservation
 	// for the size, so its plan's applies again. An empty ID, an unknown size,
 	// a negative slots, or a warm outside 0..slots fails with INVALID_ARGUMENT;
-	// an unknown tenant fails with NOT_FOUND. Operator only.
+	// an unknown workspace fails with NOT_FOUND. Operator only.
 	SetTenantReservation(context.Context, *connect.Request[operatorv1.SetTenantReservationRequest]) (*connect.Response[operatorv1.SetTenantReservationResponse], error)
 	// GetCapacity returns the reserved-capacity view of the last scheduler
 	// pass: per runner size the slots free and reserved, and per reservation
 	// the slots in use, earmarked and short. Operator only. It
 	// fails with FAILED_PRECONDITION when no pass has run yet.
 	GetCapacity(context.Context, *connect.Request[operatorv1.GetCapacityRequest]) (*connect.Response[operatorv1.GetCapacityResponse], error)
-	// SetTenantSpendLimits sets a tenant's monthly spending cap and its own
-	// jobs-per-hour limit, and returns the tenant as stored; an unset field is
+	// SetTenantSpendLimits sets a workspace's monthly spending cap and its own
+	// jobs-per-hour limit, and returns the workspace as stored; an unset field is
 	// left as it is. An empty ID, a negative value, or a
 	// max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
 	// spending cap while billing is off fails with FAILED_PRECONDITION; an
 	// unknown ID fails with NOT_FOUND.
 	SetTenantSpendLimits(context.Context, *connect.Request[operatorv1.SetTenantSpendLimitsRequest]) (*connect.Response[operatorv1.SetTenantSpendLimitsResponse], error)
-	// GetUsage returns job counts and billable minutes per tenant, UTC day,
+	// GetUsage returns job counts and billable minutes per workspace, UTC day,
 	// conclusion, outcome and kind, for the jobs whose queued_at is in the
 	// window. The window defaults to the last 7 days. A window whose from is not before its
 	// to fails with INVALID_ARGUMENT.
@@ -1649,50 +1649,50 @@ type OperatorServiceHandler interface {
 	// the window by its queued_at. The window defaults to the last 7 days. A
 	// window whose from is not before its to fails with INVALID_ARGUMENT.
 	GetQueueTimes(context.Context, *connect.Request[operatorv1.GetQueueTimesRequest]) (*connect.Response[operatorv1.GetQueueTimesResponse], error)
-	// GetWorkflowUsage returns, per tenant, repository and workflow name, the
+	// GetWorkflowUsage returns, per workspace, repository and workflow name, the
 	// jobs GetUsage counts: their billable minutes, failed jobs and run-time
 	// percentiles. A job is in the window by its queued_at. The window
 	// defaults to the last 7 days. A window whose from is not before its to
 	// fails with INVALID_ARGUMENT.
 	GetWorkflowUsage(context.Context, *connect.Request[operatorv1.GetWorkflowUsageRequest]) (*connect.Response[operatorv1.GetWorkflowUsageResponse], error)
-	// GetTenantBilling returns a tenant's billing customer, subscription and
+	// GetTenantBilling returns a workspace's billing customer, subscription and
 	// its status, the usage reported to the billing provider per month and
 	// runner size, and the events that failed. An empty ID, or months outside 0
-	// to 12, fails with INVALID_ARGUMENT; an unknown tenant fails with
+	// to 12, fails with INVALID_ARGUMENT; an unknown workspace fails with
 	// NOT_FOUND.
 	GetTenantBilling(context.Context, *connect.Request[operatorv1.GetTenantBillingRequest]) (*connect.Response[operatorv1.GetTenantBillingResponse], error)
-	// GetTenantStatement returns a tenant's usage statement for one UTC month:
+	// GetTenantStatement returns a workspace's usage statement for one UTC month:
 	// minutes by runner size and OS of the jobs that finished in it, the
 	// minutes metered to the billing provider by size with their estimated
 	// cost at the plan's prices, the starter credit applied in it, and held
 	// time by reason. An empty ID or a month not in YYYY-MM form fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND. A dashboard
-	// session or tenant token may read only its own tenants' statements; any
+	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND. A dashboard
+	// session or workspace token may read only its own workspaces' statements; any
 	// other fails with PERMISSION_DENIED.
 	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
-	// SetTenantBillingCustomer links or clears a tenant's billing customer id and
-	// returns the tenant's billing state. An empty ID, or a customer_id longer
+	// SetTenantBillingCustomer links or clears a workspace's billing customer id and
+	// returns the workspace's billing state. An empty ID, or a customer_id longer
 	// than 255 bytes or holding anything but printable ASCII without spaces,
-	// fails with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; a
-	// customer id held by another tenant fails with ALREADY_EXISTS.
+	// fails with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; a
+	// customer id held by another workspace fails with ALREADY_EXISTS.
 	SetTenantBillingCustomer(context.Context, *connect.Request[operatorv1.SetTenantBillingCustomerRequest]) (*connect.Response[operatorv1.SetTenantBillingCustomerResponse], error)
 	// CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
-	// tenant to plan, first creating and linking a billing customer for a
-	// tenant without one. An empty ID, an empty plan, or a plan the
+	// workspace to plan, first creating and linking a billing customer for a
+	// workspace without one. An empty ID, an empty plan, or a plan the
 	// configuration does not define fails with INVALID_ARGUMENT; an unknown
-	// tenant fails with NOT_FOUND; self-serve billing off, a plan that is not
+	// workspace fails with NOT_FOUND; self-serve billing off, a plan that is not
 	// sold or maps to several lookup keys, a price missing in Stripe, or a
-	// tenant that already has a subscription fails with FAILED_PRECONDITION; a
+	// workspace that already has a subscription fails with FAILED_PRECONDITION; a
 	// billing provider failure fails with UNAVAILABLE. A dashboard session may
-	// call this only for its own tenants; otherwise it fails with
+	// call this only for its own workspaces; otherwise it fails with
 	// PERMISSION_DENIED.
 	CreateCheckoutSession(context.Context, *connect.Request[operatorv1.CreateCheckoutSessionRequest]) (*connect.Response[operatorv1.CreateCheckoutSessionResponse], error)
 	// CreateBillingPortalSession returns a Stripe Customer Portal URL where the
-	// tenant manages its card and subscription. An empty ID fails with
-	// INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND; self-serve
-	// billing not configured or a tenant with no billing customer fails with
+	// workspace manages its card and subscription. An empty ID fails with
+	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; self-serve
+	// billing not configured or a workspace with no billing customer fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
-	// A dashboard session may call this only for its own tenants; otherwise it
+	// A dashboard session may call this only for its own workspaces; otherwise it
 	// fails with PERMISSION_DENIED.
 	CreateBillingPortalSession(context.Context, *connect.Request[operatorv1.CreateBillingPortalSessionRequest]) (*connect.Response[operatorv1.CreateBillingPortalSessionResponse], error)
 	// CancelJob cancels a queued job at once. An assigned, starting or running
@@ -1726,20 +1726,20 @@ type OperatorServiceHandler interface {
 	// RevokeToken stops a token working at once. Revoking an enrollment token
 	// also signs out the hosts that registered with it, and those whose
 	// enrollment token is not recorded: each registers again with the
-	// enrollment token it now holds and keeps its jobs. Revoking a tenant's
+	// enrollment token it now holds and keeps its jobs. Revoking a workspace's
 	// enrollment token signs out only the hosts that registered with it.
 	// Revoking the only active operator token fails with FailedPrecondition.
 	RevokeToken(context.Context, *connect.Request[operatorv1.RevokeTokenRequest]) (*connect.Response[operatorv1.RevokeTokenResponse], error)
-	// CreateEnrollmentToken makes an enrollment token for one tenant and
+	// CreateEnrollmentToken makes an enrollment token for one workspace and
 	// returns it with its value; a host that registers with it is owned by that
-	// tenant. The token does not expire and the other tokens are untouched. An
-	// unknown tenant fails with NOT_FOUND; a closed tenant fails with
+	// workspace. The token does not expire and the other tokens are untouched. An
+	// unknown workspace fails with NOT_FOUND; a closed workspace fails with
 	// FailedPrecondition.
 	CreateEnrollmentToken(context.Context, *connect.Request[operatorv1.CreateEnrollmentTokenRequest]) (*connect.Response[operatorv1.CreateEnrollmentTokenResponse], error)
-	// CreateTenantToken makes an API token for one tenant that authenticates
-	// the operator API as that tenant, with a dashboard session's scope, and
-	// returns it with its value. An unknown tenant fails with NOT_FOUND; a
-	// closed tenant fails with FailedPrecondition.
+	// CreateTenantToken makes an API token for one workspace that authenticates
+	// the operator API as that workspace, with a dashboard session's scope, and
+	// returns it with its value. An unknown workspace fails with NOT_FOUND; a
+	// closed workspace fails with FailedPrecondition.
 	CreateTenantToken(context.Context, *connect.Request[operatorv1.CreateTenantTokenRequest]) (*connect.Response[operatorv1.CreateTenantTokenResponse], error)
 	// CreateProductToken makes a token a product's adapter authenticates to
 	// the core with. Operator only. It expires within 90 days, and a product
@@ -1752,68 +1752,68 @@ type OperatorServiceHandler interface {
 	//
 	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListOperatorAlerts(context.Context, *connect.Request[operatorv1.ListOperatorAlertsRequest]) (*connect.Response[operatorv1.ListOperatorAlertsResponse], error)
-	// ListHostAlerts returns the active alerts of hosts that tenants own:
-	// memory_held, egress_changed and agent_version_skew, one per tenant and
-	// kind, ordered by tenant, then kind. A tenant caller gets those of its
-	// own tenants; an operator gets every tenant's, or one tenant's with the
+	// ListHostAlerts returns the active alerts of hosts that workspaces own:
+	// memory_held, egress_changed and agent_version_skew, one per workspace and
+	// kind, ordered by workspace, then kind. A workspace caller gets those of its
+	// own workspaces; an operator gets every workspace's, or one workspace's with the
 	// filter.
 	//
 	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListHostAlerts(context.Context, *connect.Request[operatorv1.ListHostAlertsRequest]) (*connect.Response[operatorv1.ListHostAlertsResponse], error)
-	// ListEgressIPs returns the public addresses a tenant's jobs may reach the
+	// ListEgressIPs returns the public addresses a workspace's jobs may reach the
 	// internet from: the egress addresses of the hosts its jobs can land on,
 	// its own hosts and, unless it runs on its own hosts only, the shared hosts
 	// its plan's operating systems run on. A dashboard session or
-	// tenant token may ask for its own tenants only. An empty tenant fails
-	// with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
+	// workspace token may ask for its own workspaces only. An empty workspace fails
+	// with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
 	//
 	// A page holds 100 hosts when page_size is zero, and 1000 at most.
 	ListEgressIPs(context.Context, *connect.Request[operatorv1.ListEgressIPsRequest]) (*connect.Response[operatorv1.ListEgressIPsResponse], error)
 	// CheckCloudHost checks a cloud host's AWS setup without launching
 	// anything: the role can be assumed, the AMI is visible, the subnet routes
 	// to the internet, and the role's policy allows each action Toshi calls,
-	// through dry-run calls. A dashboard session or tenant token may
-	// check its own tenants' hosts only. A host that is not a cloud host fails
+	// through dry-run calls. A dashboard session or workspace token may
+	// check its own workspaces' hosts only. A host that is not a cloud host fails
 	// with NOT_FOUND; cloud hosts not configured on the control plane fails
 	// with FAILED_PRECONDITION.
 	CheckCloudHost(context.Context, *connect.Request[operatorv1.CheckCloudHostRequest]) (*connect.Response[operatorv1.CheckCloudHostResponse], error)
-	// ListFillers returns the fillers, ordered by name, then tenant, each
+	// ListFillers returns the fillers, ordered by name, then workspace, each
 	// with its latest run, and the filler minutes per host over the last 24
-	// hours. A tenant caller sees only its own dispatch fillers and no host
+	// hours. A workspace caller sees only its own dispatch fillers and no host
 	// minutes.
 	//
 	// A page holds 100 fillers when page_size is zero, and 1000 at most.
 	ListFillers(context.Context, *connect.Request[operatorv1.ListFillersRequest]) (*connect.Response[operatorv1.ListFillersResponse], error)
 	// PutFiller adds a filler or replaces the one with the same name and
 	// returns it as stored. A filler from the control plane's [[filler]]
-	// configuration cannot be replaced (FailedPrecondition). A tenant caller
-	// may put only dispatch fillers for its own tenant and repositories.
+	// configuration cannot be replaced (FailedPrecondition). A workspace caller
+	// may put only dispatch fillers for its own workspace and repositories.
 	// A bad field fails with INVALID_ARGUMENT.
 	PutFiller(context.Context, *connect.Request[operatorv1.PutFillerRequest]) (*connect.Response[operatorv1.PutFillerResponse], error)
 	// DeleteFiller removes a filler and stops its running run. A configured
 	// filler cannot be removed (FailedPrecondition); an unknown name fails
-	// with NOT_FOUND. A tenant caller may remove only its own.
+	// with NOT_FOUND. A workspace caller may remove only its own.
 	DeleteFiller(context.Context, *connect.Request[operatorv1.DeleteFillerRequest]) (*connect.Response[operatorv1.DeleteFillerResponse], error)
 	// SetFillerEnabled turns a filler on or off and returns it. Turning it off
 	// stops its running run. An unknown name fails with NOT_FOUND.
 	SetFillerEnabled(context.Context, *connect.Request[operatorv1.SetFillerEnabledRequest]) (*connect.Response[operatorv1.SetFillerEnabledResponse], error)
-	// ListFillerRuns returns filler runs, newest first. A tenant caller sees
+	// ListFillerRuns returns filler runs, newest first. A workspace caller sees
 	// only its own dispatch fillers' runs.
 	//
 	// A page holds 50 runs when page_size is zero, and 500 at most.
 	ListFillerRuns(context.Context, *connect.Request[operatorv1.ListFillerRunsRequest]) (*connect.Response[operatorv1.ListFillerRunsResponse], error)
-	// SetTenantAllowCacheWarm sets whether the tenant's dispatch fillers run
-	// and returns the tenant as stored. Off by default. An empty
+	// SetTenantAllowCacheWarm sets whether the workspace's dispatch fillers run
+	// and returns the workspace as stored. Off by default. An empty
 	// ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantAllowCacheWarm(context.Context, *connect.Request[operatorv1.SetTenantAllowCacheWarmRequest]) (*connect.Response[operatorv1.SetTenantAllowCacheWarmResponse], error)
 	// SetTenantCancelRunOnVmDeath sets whether Toshi cancels the workflow run
-	// of the tenant's job when the job's VM is gone and returns the
-	// tenant as stored. On by default. An empty ID fails with
+	// of the workspace's job when the job's VM is gone and returns the
+	// workspace as stored. On by default. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantCancelRunOnVmDeath(context.Context, *connect.Request[operatorv1.SetTenantCancelRunOnVmDeathRequest]) (*connect.Response[operatorv1.SetTenantCancelRunOnVmDeathResponse], error)
 	// GetJobFailure says why a job ended the way it did and what to do next,
 	// from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
-	// says, which the CLI and the dashboard compose into it. A tenant caller
+	// says, which the CLI and the dashboard compose into it. A workspace caller
 	// sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
 	// unknown ID fails with NOT_FOUND.
 	GetJobFailure(context.Context, *connect.Request[operatorv1.GetJobFailureRequest]) (*connect.Response[operatorv1.GetJobFailureResponse], error)
@@ -1850,13 +1850,13 @@ type OperatorServiceHandler interface {
 	SuggestPools(context.Context, *connect.Request[operatorv1.SuggestPoolsRequest]) (*connect.Response[operatorv1.SuggestPoolsResponse], error)
 	// CreateStorageProvider registers a bucket Toshi may keep recordings and
 	// artifacts in. An empty tenant_id registers the operator's
-	// own provider, shared by every tenant; it takes a credentials file
-	// reference. A request with a credential stores a tenant's own
+	// own provider, shared by every workspace; it takes a credentials file
+	// reference. A request with a credential stores a workspace's own
 	// tenant_bucket provider instead: the control plane wraps the key, checks
 	// the bucket with it as CheckStorageProvider does and stores the row only
 	// when the check passes, else FAILED_PRECONDITION with the check's error.
-	// A tenant has one such provider; a second fails with ALREADY_EXISTS, and
-	// a suspended or deleting tenant with FAILED_PRECONDITION (a dashboard
+	// A workspace has one such provider; a second fails with ALREADY_EXISTS, and
+	// a suspended or deleting workspace with FAILED_PRECONDITION (a dashboard
 	// session that also has an active workspace is refused it with
 	// PERMISSION_DENIED, as for its other writes). A bad field
 	// fails with INVALID_ARGUMENT, a duplicate name for the same owner with
@@ -1866,9 +1866,9 @@ type OperatorServiceHandler interface {
 	// file, role or replication fields.
 	CreateStorageProvider(context.Context, *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error)
 	// ListStorageProviders returns the operator's providers when tenant_id
-	// is empty and that tenant's otherwise, ordered by name. With
-	// include_default it also returns the operator's provider a tenant
-	// without one of its own uses, whether or not this tenant has one. The
+	// is empty and that workspace's otherwise, ordered by name. With
+	// include_default it also returns the operator's provider a workspace
+	// without one of its own uses, whether or not this workspace has one. The
 	// operator, or a dashboard session for its own workspace, which gets
 	// every row without its credential references (credentials_file,
 	// credentials_profile, role_arn and external_id empty).

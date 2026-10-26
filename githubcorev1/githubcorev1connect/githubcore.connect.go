@@ -66,7 +66,7 @@ type GitHubCoreServiceClient interface {
 	// once: a second AdmitGrant is refused, whatever its nonce.
 	AdmitGrant(context.Context, *connect.Request[githubcorev1.AdmitGrantRequest]) (*connect.Response[githubcorev1.AdmitGrantResponse], error)
 	// GetJob returns the job the grant names when the grant's caller may
-	// see it. A tenant caller sees only its own tenants' jobs, of tenants
+	// see it. A workspace caller sees only its own workspaces' jobs, of workspaces
 	// with at least one GitHub App installation; the operator sees every
 	// job. Any other job, or one that does not exist, fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[githubcorev1.GetJobRequest]) (*connect.Response[githubcorev1.GetJobResponse], error)
@@ -74,20 +74,20 @@ type GitHubCoreServiceClient interface {
 	// GitHub for the grant's job, a job GetJob shows: only when the job has
 	// ended, did not succeed and has no step stored.
 	FillJobFailingStep(context.Context, *connect.Request[githubcorev1.FillJobFailingStepRequest]) (*connect.Response[githubcorev1.FillJobFailingStepResponse], error)
-	// ListOpenSourceRepositories lists the open-source gate's rows: for a tenant
-	// caller, only rows of its tenants that have at least one GitHub App
-	// installation, and of the named tenant when one is named; for the
-	// operator, every row, or the named tenant's, and the kept approvals
-	// when no tenant is named. Rows are ordered by tenant, then repository.
+	// ListOpenSourceRepositories lists the open-source gate's rows: for a workspace
+	// caller, only rows of its workspaces that have at least one GitHub App
+	// installation, and of the named workspace when one is named; for the
+	// operator, every row, or the named workspace's, and the kept approvals
+	// when no workspace is named. Rows are ordered by workspace, then repository.
 	//
 	// A page holds 100 repositories when page_size is zero, and 1000 at most.
 	ListOpenSourceRepositories(context.Context, *connect.Request[githubcorev1.ListOpenSourceRepositoriesRequest]) (*connect.Response[githubcorev1.ListOpenSourceRepositoriesResponse], error)
 	// SetOpenSourceApproval approves or revokes a repository on every
-	// tenant's row of it, or keeps the decision when no tenant has a row.
+	// workspace's row of it, or keeps the decision when no workspace has a row.
 	// The operator's only.
 	SetOpenSourceApproval(context.Context, *connect.Request[githubcorev1.SetOpenSourceApprovalRequest]) (*connect.Response[githubcorev1.SetOpenSourceApprovalResponse], error)
-	// MapInstallation maps a GitHub App installation to a tenant. An unknown
-	// tenant fails with NOT_FOUND and a deleted one with
+	// MapInstallation maps a GitHub App installation to a workspace. An unknown
+	// workspace fails with NOT_FOUND and a deleted one with
 	// FAILED_PRECONDITION. The operator's only.
 	MapInstallation(context.Context, *connect.Request[githubcorev1.MapInstallationRequest]) (*connect.Response[githubcorev1.MapInstallationResponse], error)
 	// PublishJobDeliveryCheck publishes the result of the delivery check
@@ -208,7 +208,7 @@ type GitHubCoreServiceHandler interface {
 	// once: a second AdmitGrant is refused, whatever its nonce.
 	AdmitGrant(context.Context, *connect.Request[githubcorev1.AdmitGrantRequest]) (*connect.Response[githubcorev1.AdmitGrantResponse], error)
 	// GetJob returns the job the grant names when the grant's caller may
-	// see it. A tenant caller sees only its own tenants' jobs, of tenants
+	// see it. A workspace caller sees only its own workspaces' jobs, of workspaces
 	// with at least one GitHub App installation; the operator sees every
 	// job. Any other job, or one that does not exist, fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[githubcorev1.GetJobRequest]) (*connect.Response[githubcorev1.GetJobResponse], error)
@@ -216,20 +216,20 @@ type GitHubCoreServiceHandler interface {
 	// GitHub for the grant's job, a job GetJob shows: only when the job has
 	// ended, did not succeed and has no step stored.
 	FillJobFailingStep(context.Context, *connect.Request[githubcorev1.FillJobFailingStepRequest]) (*connect.Response[githubcorev1.FillJobFailingStepResponse], error)
-	// ListOpenSourceRepositories lists the open-source gate's rows: for a tenant
-	// caller, only rows of its tenants that have at least one GitHub App
-	// installation, and of the named tenant when one is named; for the
-	// operator, every row, or the named tenant's, and the kept approvals
-	// when no tenant is named. Rows are ordered by tenant, then repository.
+	// ListOpenSourceRepositories lists the open-source gate's rows: for a workspace
+	// caller, only rows of its workspaces that have at least one GitHub App
+	// installation, and of the named workspace when one is named; for the
+	// operator, every row, or the named workspace's, and the kept approvals
+	// when no workspace is named. Rows are ordered by workspace, then repository.
 	//
 	// A page holds 100 repositories when page_size is zero, and 1000 at most.
 	ListOpenSourceRepositories(context.Context, *connect.Request[githubcorev1.ListOpenSourceRepositoriesRequest]) (*connect.Response[githubcorev1.ListOpenSourceRepositoriesResponse], error)
 	// SetOpenSourceApproval approves or revokes a repository on every
-	// tenant's row of it, or keeps the decision when no tenant has a row.
+	// workspace's row of it, or keeps the decision when no workspace has a row.
 	// The operator's only.
 	SetOpenSourceApproval(context.Context, *connect.Request[githubcorev1.SetOpenSourceApprovalRequest]) (*connect.Response[githubcorev1.SetOpenSourceApprovalResponse], error)
-	// MapInstallation maps a GitHub App installation to a tenant. An unknown
-	// tenant fails with NOT_FOUND and a deleted one with
+	// MapInstallation maps a GitHub App installation to a workspace. An unknown
+	// workspace fails with NOT_FOUND and a deleted one with
 	// FAILED_PRECONDITION. The operator's only.
 	MapInstallation(context.Context, *connect.Request[githubcorev1.MapInstallationRequest]) (*connect.Response[githubcorev1.MapInstallationResponse], error)
 	// PublishJobDeliveryCheck publishes the result of the delivery check

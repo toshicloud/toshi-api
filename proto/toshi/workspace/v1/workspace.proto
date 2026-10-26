@@ -342,7 +342,7 @@ message ServiceSpec {
   ServiceMode mode = 2;
   // The number of its current revision: its next run runs that recipe.
   int64 revision = 3;
-  // Its name, a lower-case DNS label, unique among the tenant's services
+  // Its name, a lower-case DNS label, unique among the workspace's services
   // that are not deleted, whatever their project or environment. Set in
   // a create; answers carry it.
   string name = 4;

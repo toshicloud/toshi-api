@@ -358,7 +358,7 @@ const (
 	OfflineHostOutcome_OFFLINE_HOST_OUTCOME_RETIRE OfflineHostOutcome = 1
 	// Kept: a job is still assigned to it, starting or running on it.
 	OfflineHostOutcome_OFFLINE_HOST_OUTCOME_SKIPPED_JOB OfflineHostOutcome = 2
-	// Kept: a tenant owns it and include_owned is not set.
+	// Kept: a workspace owns it and include_owned is not set.
 	OfflineHostOutcome_OFFLINE_HOST_OUTCOME_SKIPPED_OWNED OfflineHostOutcome = 3
 )
 
@@ -414,7 +414,7 @@ const (
 	TokenKind_TOKEN_KIND_OPERATOR TokenKind = 1
 	// The enrollment token: registering a host.
 	TokenKind_TOKEN_KIND_ENROLLMENT TokenKind = 2
-	// A tenant API token: the operator API as one tenant.
+	// A workspace API token: the operator API as one workspace.
 	TokenKind_TOKEN_KIND_TENANT TokenKind = 3
 	// A product token: a product's adapter calling the core.
 	TokenKind_TOKEN_KIND_PRODUCT TokenKind = 4
@@ -567,7 +567,7 @@ type Job struct {
 	// overflow_wait, no_own_capacity or no_capacity. Empty when the job was
 	// never held. It is kept after the job starts.
 	HoldReason string `protobuf:"bytes,21,opt,name=hold_reason,json=holdReason,proto3" json:"hold_reason,omitempty"`
-	// Whether the job was placed on a host its tenant owns. Such a job sends no
+	// Whether the job was placed on a host its workspace owns. Such a job sends no
 	// meter event.
 	OwnHost bool `protobuf:"varint,22,opt,name=own_host,json=ownHost,proto3" json:"own_host,omitempty"`
 	// The debug session the job asked for with a toshi-debug-<minutes> label,
@@ -610,7 +610,7 @@ type Job struct {
 	// The whole minutes the job counts in the usage report: from started_at
 	// to stop_requested_at when the job was asked to stop, else to
 	// finished_at, rounded up. 0 for a job that has not ended or never started,
-	// a job on its tenant's own host and a dispatch filler's job, which are not
+	// a job on its workspace's own host and a dispatch filler's job, which are not
 	// billed.
 	BillableMinutes int64 `protobuf:"varint,35,opt,name=billable_minutes,json=billableMinutes,proto3" json:"billable_minutes,omitempty"`
 	// The job's page on GitHub, on the configured GitHub web URL. Empty when
@@ -659,7 +659,7 @@ type Job struct {
 	WorkloadId string `protobuf:"bytes,45,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	// The project the job belongs to, by name: the project that
 	// claimed the job's repository when the job was stored, else the
-	// tenant's default project; a Workspace API job's is its workload's.
+	// workspace's default project; a Workspace API job's is its workload's.
 	// Empty for a job stored before projects.
 	Project string `protobuf:"bytes,46,opt,name=project,proto3" json:"project,omitempty"`
 	// The job's environment, by name. A CI job's is empty until the job's
@@ -1935,7 +1935,7 @@ type Host struct {
 	FreeMemoryMib int64 `protobuf:"varint,9,opt,name=free_memory_mib,json=freeMemoryMib,proto3" json:"free_memory_mib,omitempty"`
 	// Warm pools whose refill the host holds, from its last heartbeat.
 	HeldRefills []*HeldRefill `protobuf:"bytes,10,rep,name=held_refills,json=heldRefills,proto3" json:"held_refills,omitempty"`
-	// Tenant that owns the host and is the only one whose jobs it runs; empty
+	// Workspace that owns the host and is the only one whose jobs it runs; empty
 	// for a shared host.
 	OwnerTenant string `protobuf:"bytes,11,opt,name=owner_tenant,json=ownerTenant,proto3" json:"owner_tenant,omitempty"`
 	// The host's agent is draining before a stop: it takes no new jobs. On an
@@ -2271,13 +2271,13 @@ type ListJobsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Jobs in any of these states; empty matches every state.
 	States []JobState `protobuf:"varint,1,rep,packed,name=states,proto3,enum=toshi.operator.v1.JobState" json:"states,omitempty"`
-	// Empty matches every tenant.
+	// Empty matches every workspace.
 	Tenant string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// The repository as "owner/name"; empty matches every repository.
 	Repository string `protobuf:"bytes,3,opt,name=repository,proto3" json:"repository,omitempty"`
 	// The most jobs in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	// Only the job of this Workspace API workload. Within one tenant a workload
+	// Only the job of this Workspace API workload. Within one workspace a workload
 	// has at most one job, and a service workload has none. The job is returned
 	// whatever its state, unless states excludes it.
 	WorkloadId string `protobuf:"bytes,5,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
@@ -2510,11 +2510,11 @@ type AuditEvent struct {
 	// The operator or enrollment token's id (never its value), the session's
 	// GitHub login, or a system or webhook source name.
 	ActorId string `protobuf:"bytes,4,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
-	// Empty when the event is not tied to a tenant.
+	// Empty when the event is not tied to a workspace.
 	Tenant string `protobuf:"bytes,5,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	Action string `protobuf:"bytes,6,opt,name=action,proto3" json:"action,omitempty"`
 	// A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...,
-	// tenant:... or installation:....
+	// workspace:... or installation:....
 	Target string `protobuf:"bytes,7,opt,name=target,proto3" json:"target,omitempty"`
 	// A JSON object whose keys depend on the action.
 	DetailsJson   string `protobuf:"bytes,8,opt,name=details_json,json=detailsJson,proto3" json:"details_json,omitempty"`
@@ -2619,7 +2619,7 @@ func (x *AuditEvent) GetRequestId() string {
 // ListAuditEventsRequest selects the audit events to return.
 type ListAuditEventsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Only this tenant's events; empty matches every tenant.
+	// Only this workspace's events; empty matches every workspace.
 	Tenant string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// Only this action; empty matches every action.
 	Action string `protobuf:"bytes,2,opt,name=action,proto3" json:"action,omitempty"`
@@ -3051,7 +3051,7 @@ type HostVolume struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The volume's id.
 	VolumeId string `protobuf:"bytes,1,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
-	// The volume's tenant.
+	// The volume's workspace.
 	Tenant string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// The name of the project the volume belongs to.
 	Project string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
@@ -3722,19 +3722,19 @@ func (x *OfflineHostResult) GetOutcome() OfflineHostOutcome {
 	return OfflineHostOutcome_OFFLINE_HOST_OUTCOME_UNSPECIFIED
 }
 
-// CloudHost is the AWS account behind a tenant-owned host the control plane
+// CloudHost is the AWS account behind a workspace-owned host the control plane
 // drives.
 type CloudHost struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The host row this cloud host belongs to.
 	HostId string `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
-	// The tenant that owns the host.
+	// The workspace that owns the host.
 	Tenant string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// The cloud provider: "aws" or "gcp".
 	Cloud string `protobuf:"bytes,3,opt,name=cloud,proto3" json:"cloud,omitempty"`
 	// The region the instances run in; on GCP the zone's region.
 	Region string `protobuf:"bytes,4,opt,name=region,proto3" json:"region,omitempty"`
-	// The role in the tenant's account the control plane assumes (AWS).
+	// The role in the workspace's account the control plane assumes (AWS).
 	RoleArn string `protobuf:"bytes,5,opt,name=role_arn,json=roleArn,proto3" json:"role_arn,omitempty"`
 	// The external ID the role's trust policy requires (AWS), or the project
 	// metadata must name (GCP); generated by Toshi.
@@ -3760,10 +3760,10 @@ type CloudHost struct {
 	// The GCP project and zone the instances run in.
 	Project string `protobuf:"bytes,16,opt,name=project,proto3" json:"project,omitempty"`
 	Zone    string `protobuf:"bytes,17,opt,name=zone,proto3" json:"zone,omitempty"`
-	// The tenant's service account the control plane impersonates (GCP).
+	// The workspace's service account the control plane impersonates (GCP).
 	ServiceAccount string `protobuf:"bytes,18,opt,name=service_account,json=serviceAccount,proto3" json:"service_account,omitempty"`
 	// Where the instances reach the internet: "public" (each gets its own
-	// public address) or "nat" (none: the tenant's NAT carries the traffic).
+	// public address) or "nat" (none: the workspace's NAT carries the traffic).
 	Egress        string `protobuf:"bytes,19,opt,name=egress,proto3" json:"egress,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3932,10 +3932,10 @@ func (x *CloudHost) GetEgress() string {
 	return ""
 }
 
-// CreateCloudHostRequest names the tenant and the cloud host to register.
+// CreateCloudHostRequest names the workspace and the cloud host to register.
 type CreateCloudHostRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The tenant that owns the host.
+	// The workspace that owns the host.
 	Tenant string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// The host name; it becomes the host id the same way enrollment does.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -3943,7 +3943,7 @@ type CreateCloudHostRequest struct {
 	Cloud string `protobuf:"bytes,3,opt,name=cloud,proto3" json:"cloud,omitempty"`
 	// The AWS region the instances run in (AWS).
 	Region string `protobuf:"bytes,4,opt,name=region,proto3" json:"region,omitempty"`
-	// The role in the tenant's account the control plane assumes (AWS).
+	// The role in the workspace's account the control plane assumes (AWS).
 	RoleArn string `protobuf:"bytes,5,opt,name=role_arn,json=roleArn,proto3" json:"role_arn,omitempty"`
 	// The image the instances boot: an AMI (AWS), or a GCE image or family
 	// (an image name, family/NAME, or a projects/... path).
@@ -3969,17 +3969,17 @@ type CreateCloudHostRequest struct {
 	// Elastic IP); empty means each instance's own public address.
 	EgressIps []string `protobuf:"bytes,14,rep,name=egress_ips,json=egressIps,proto3" json:"egress_ips,omitempty"`
 	// Register the host as an ordinary own host instead of an overflow host:
-	// it then takes the tenant's jobs without waiting for the plan's
+	// it then takes the workspace's jobs without waiting for the plan's
 	// overflow_after. False, the default, makes an overflow host.
 	NoOverflow bool `protobuf:"varint,15,opt,name=no_overflow,json=noOverflow,proto3" json:"no_overflow,omitempty"`
 	// The GCP project and zone the instances run in (GCP).
 	Project string `protobuf:"bytes,16,opt,name=project,proto3" json:"project,omitempty"`
 	Zone    string `protobuf:"bytes,17,opt,name=zone,proto3" json:"zone,omitempty"`
-	// The tenant's service account the control plane impersonates (GCP).
+	// The workspace's service account the control plane impersonates (GCP).
 	ServiceAccount string `protobuf:"bytes,18,opt,name=service_account,json=serviceAccount,proto3" json:"service_account,omitempty"`
 	// Where the instances reach the internet: "public" (the default: each
 	// instance gets its own public address) or "nat" (no public address; the
-	// subnet routes through the tenant's NAT gateway or Cloud NAT, whose
+	// subnet routes through the workspace's NAT gateway or Cloud NAT, whose
 	// addresses become the host's egress set).
 	Egress        string `protobuf:"bytes,19,opt,name=egress,proto3" json:"egress,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -4156,10 +4156,10 @@ type CreateCloudHostResponse struct {
 	Host  *Host                  `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
 	// The external ID the role's trust policy requires.
 	ExternalId string `protobuf:"bytes,2,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
-	// The AWS principal the tenant's role must trust (AWS).
+	// The AWS principal the workspace's role must trust (AWS).
 	PrincipalArn string     `protobuf:"bytes,3,opt,name=principal_arn,json=principalArn,proto3" json:"principal_arn,omitempty"`
 	CloudHost    *CloudHost `protobuf:"bytes,4,opt,name=cloud_host,json=cloudHost,proto3" json:"cloud_host,omitempty"`
-	// The Google principal the tenant's service account must let create
+	// The Google principal the workspace's service account must let create
 	// tokens for it, with roles/iam.serviceAccountTokenCreator (GCP).
 	GcpPrincipal  string `protobuf:"bytes,5,opt,name=gcp_principal,json=gcpPrincipal,proto3" json:"gcp_principal,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -4231,7 +4231,7 @@ func (x *CreateCloudHostResponse) GetGcpPrincipal() string {
 	return ""
 }
 
-// Tenant owns a plan, an optional concurrency override, and one or more GitHub
+// Workspace owns a plan, an optional concurrency override, and one or more GitHub
 // App installations.
 type Tenant struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -4245,55 +4245,55 @@ type Tenant struct {
 	EffectiveConcurrency int32 `protobuf:"varint,6,opt,name=effective_concurrency,json=effectiveConcurrency,proto3" json:"effective_concurrency,omitempty"`
 	// active or closed.
 	Status string `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
-	// The tenant's jobs wait for its own hosts and never run on shared ones.
+	// The workspace's jobs wait for its own hosts and never run on shared ones.
 	OwnHostsOnly bool `protobuf:"varint,8,opt,name=own_hosts_only,json=ownHostsOnly,proto3" json:"own_hosts_only,omitempty"`
 	// Monthly spending cap in the smallest unit of the billing currency; 0
 	// means none.
 	SpendCapCents int64 `protobuf:"varint,9,opt,name=spend_cap_cents,json=spendCapCents,proto3" json:"spend_cap_cents,omitempty"`
-	// The tenant's own jobs-per-hour limit; 0 means the plan's applies.
+	// The workspace's own jobs-per-hour limit; 0 means the plan's applies.
 	MaxJobsPerHour int32 `protobuf:"varint,10,opt,name=max_jobs_per_hour,json=maxJobsPerHour,proto3" json:"max_jobs_per_hour,omitempty"`
-	// The limit the scheduler enforces: the lower of the tenant's and the
+	// The limit the scheduler enforces: the lower of the workspace's and the
 	// plan's; 0 means none.
 	EffectiveMaxJobsPerHour int32 `protobuf:"varint,11,opt,name=effective_max_jobs_per_hour,json=effectiveMaxJobsPerHour,proto3" json:"effective_max_jobs_per_hour,omitempty"`
-	// The starter credit granted when the tenant was created; 0 when none.
+	// The starter credit granted when the workspace was created; 0 when none.
 	StarterCreditCents     int64                  `protobuf:"varint,12,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
 	StarterCreditGrantedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=starter_credit_granted_at,json=starterCreditGrantedAt,proto3" json:"starter_credit_granted_at,omitempty"`
-	// Shared overflow hosts may take the tenant's jobs; its own overflow hosts
+	// Shared overflow hosts may take the workspace's jobs; its own overflow hosts
 	// always may.
 	AllowOverflow bool `protobuf:"varint,14,opt,name=allow_overflow,json=allowOverflow,proto3" json:"allow_overflow,omitempty"`
-	// Whether the tenant's dispatch fillers, its cache-warming workflows,
+	// Whether the workspace's dispatch fillers, its cache-warming workflows,
 	// run on idle capacity.
 	AllowCacheWarm bool `protobuf:"varint,15,opt,name=allow_cache_warm,json=allowCacheWarm,proto3" json:"allow_cache_warm,omitempty"`
-	// The tenant's effective reservations on shared hosts, ordered
+	// The workspace's effective reservations on shared hosts, ordered
 	// by size: its own rows, and its plan's entries where it has none.
 	Reservations []*Reservation `protobuf:"bytes,16,rep,name=reservations,proto3" json:"reservations,omitempty"`
 	// Lifecycle state: "active"; "suspended", where new and queued jobs are
-	// held, running jobs finish and the tenant is read-only; "deleting", once
+	// held, running jobs finish and the workspace is read-only; "deleting", once
 	// purge_after has passed and while the purge runs; or "deleted", when the
 	// purge is done, its sessions ended and its tokens revoked.
 	State string `protobuf:"bytes,17,opt,name=state,proto3" json:"state,omitempty"`
-	// Why the operator suspended or deleted the tenant; empty when active.
+	// Why the operator suspended or deleted the workspace; empty when active.
 	StateReason string `protobuf:"bytes,18,opt,name=state_reason,json=stateReason,proto3" json:"state_reason,omitempty"`
-	// When the tenant entered its state; unset for a tenant always active.
+	// When the workspace entered its state; unset for a workspace always active.
 	StateSince *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=state_since,json=stateSince,proto3" json:"state_since,omitempty"`
-	// When a scheduled deletion purges the tenant; unset when none.
+	// When a scheduled deletion purges the workspace; unset when none.
 	PurgeAfter *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=purge_after,json=purgeAfter,proto3" json:"purge_after,omitempty"`
-	// Days of finished job history the tenant keeps; unset when the plan's
+	// Days of finished job history the workspace keeps; unset when the plan's
 	// applies. 0 keeps forever.
 	HistoryDays *int32 `protobuf:"varint,21,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
-	// The period the retention pass uses: the tenant's value when set, else
+	// The period the retention pass uses: the workspace's value when set, else
 	// its plan's.
 	HistoryDaysEffective int32 `protobuf:"varint,22,opt,name=history_days_effective,json=historyDaysEffective,proto3" json:"history_days_effective,omitempty"`
 	// Whether Toshi cancels the workflow run of a job whose VM is gone, so
 	// GitHub shows it within seconds as cancelled; off keeps GitHub's own
 	// failure, about 10 minutes later.
 	CancelRunOnVmDeath bool `protobuf:"varint,23,opt,name=cancel_run_on_vm_death,json=cancelRunOnVmDeath,proto3" json:"cancel_run_on_vm_death,omitempty"`
-	// The tenant's own limits; unset when its plan's applies. 0 is no cap.
+	// The workspace's own limits; unset when its plan's applies. 0 is no cap.
 	SecretMaxSets   *int32 `protobuf:"varint,24,opt,name=secret_max_sets,json=secretMaxSets,proto3,oneof" json:"secret_max_sets,omitempty"`
 	SecretMaxKeys   *int32 `protobuf:"varint,25,opt,name=secret_max_keys,json=secretMaxKeys,proto3,oneof" json:"secret_max_keys,omitempty"`
 	SecretMaxKib    *int64 `protobuf:"varint,26,opt,name=secret_max_kib,json=secretMaxKib,proto3,oneof" json:"secret_max_kib,omitempty"`
 	PreviewMaxPorts *int32 `protobuf:"varint,27,opt,name=preview_max_ports,json=previewMaxPorts,proto3,oneof" json:"preview_max_ports,omitempty"`
-	// The limits Toshi enforces: the tenant's own value when set, else its
+	// The limits Toshi enforces: the workspace's own value when set, else its
 	// plan's. 0 is no cap.
 	SecretMaxSetsEffective   int32 `protobuf:"varint,28,opt,name=secret_max_sets_effective,json=secretMaxSetsEffective,proto3" json:"secret_max_sets_effective,omitempty"`
 	SecretMaxKeysEffective   int32 `protobuf:"varint,29,opt,name=secret_max_keys_effective,json=secretMaxKeysEffective,proto3" json:"secret_max_keys_effective,omitempty"`
@@ -4550,7 +4550,7 @@ func (x *Tenant) GetPreviewMaxPortsEffective() int32 {
 	return 0
 }
 
-// Reservation is a tenant's floor of slots jobs of one runner size on shared
+// Reservation is a workspace's floor of slots jobs of one runner size on shared
 // hosts, warm of them on warm VMs.
 type Reservation struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -4560,7 +4560,7 @@ type Reservation struct {
 	Slots int32 `protobuf:"varint,2,opt,name=slots,proto3" json:"slots,omitempty"`
 	// How many of the slots are kept on warm VMs; 0 when none.
 	Warm int32 `protobuf:"varint,3,opt,name=warm,proto3" json:"warm,omitempty"`
-	// "tenant" when the tenant's own row set it, "plan" when its plan did.
+	// "tenant" when the workspace's own row set it, "plan" when its plan did.
 	Source        string `protobuf:"bytes,4,opt,name=source,proto3" json:"source,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4813,7 +4813,7 @@ func (x *GetWorkspaceResponse) GetWorkspace() *Tenant {
 
 type ListTenantsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The most tenants in one page; zero lets the server choose.
+	// The most workspaces in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
 	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
@@ -5017,7 +5017,7 @@ func (x *SetTenantCapResponse) GetTenant() *Tenant {
 type SetTenantHistoryRequest struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	// Unset clears the tenant's override so its plan's history_days applies.
+	// Unset clears the workspace's override so its plan's history_days applies.
 	HistoryDays   *int32 `protobuf:"varint,2,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5742,7 +5742,7 @@ type SetTenantReservationRequest struct {
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// A runner size, as a runs-on label.
 	Size string `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
-	// Slots to reserve; 0 removes the tenant's own reservation for the size.
+	// Slots to reserve; 0 removes the workspace's own reservation for the size.
 	Slots int32 `protobuf:"varint,3,opt,name=slots,proto3" json:"slots,omitempty"`
 	// Slots kept on warm VMs; at most slots.
 	Warm          int32 `protobuf:"varint,4,opt,name=warm,proto3" json:"warm,omitempty"`
@@ -5810,7 +5810,7 @@ func (x *SetTenantReservationRequest) GetWarm() int32 {
 
 type SetTenantReservationResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The tenant's effective reservations after the change, ordered by size.
+	// The workspace's effective reservations after the change, ordered by size.
 	Reservations  []*Reservation `protobuf:"bytes,1,rep,name=reservations,proto3" json:"reservations,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5858,7 +5858,7 @@ type SetTenantSpendLimitsRequest struct {
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Unset leaves the cap; 0 clears it.
 	SpendCapCents *int64 `protobuf:"varint,2,opt,name=spend_cap_cents,json=spendCapCents,proto3,oneof" json:"spend_cap_cents,omitempty"`
-	// Unset leaves the limit; 0 clears the tenant's own limit.
+	// Unset leaves the limit; 0 clears the workspace's own limit.
 	MaxJobsPerHour *int32 `protobuf:"varint,3,opt,name=max_jobs_per_hour,json=maxJobsPerHour,proto3,oneof" json:"max_jobs_per_hour,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -5965,7 +5965,7 @@ type Plan struct {
 	Concurrency   int32                  `protobuf:"varint,2,opt,name=concurrency,proto3" json:"concurrency,omitempty"`
 	MaxJobMinutes int32                  `protobuf:"varint,3,opt,name=max_job_minutes,json=maxJobMinutes,proto3" json:"max_job_minutes,omitempty"`
 	IsDefault     bool                   `protobuf:"varint,4,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	// Whether a tenant can buy this plan through Checkout: self-serve billing
+	// Whether a workspace can buy this plan through Checkout: self-serve billing
 	// is on and exactly one lookup key in billing.plan_map maps to the plan.
 	SelfServe bool `protobuf:"varint,5,opt,name=self_serve,json=selfServe,proto3" json:"self_serve,omitempty"`
 	// Operating systems the plan allows; empty means every OS.
@@ -5973,10 +5973,10 @@ type Plan struct {
 	// Largest runner size the plan allows, as a runs-on label; empty means any
 	// size.
 	MaxSize string `protobuf:"bytes,7,opt,name=max_size,json=maxSize,proto3" json:"max_size,omitempty"`
-	// vCPUs a tenant may have in assigned, starting or running jobs at once; 0
+	// vCPUs a workspace may have in assigned, starting or running jobs at once; 0
 	// means no cap.
 	MaxVcpu int32 `protobuf:"varint,8,opt,name=max_vcpu,json=maxVcpu,proto3" json:"max_vcpu,omitempty"`
-	// Minutes a tenant may run each UTC calendar month without a verified card;
+	// Minutes a workspace may run each UTC calendar month without a verified card;
 	// 0 means the plan has no allowance.
 	FreeMinutesPerMonth int32 `protobuf:"varint,9,opt,name=free_minutes_per_month,json=freeMinutesPerMonth,proto3" json:"free_minutes_per_month,omitempty"`
 	// Runs-on labels the plan admits under allowed_os, max_size and max_vcpu.
@@ -5984,26 +5984,26 @@ type Plan struct {
 	Sizes []string `protobuf:"bytes,10,rep,name=sizes,proto3" json:"sizes,omitempty"`
 	// OSes that require a verified payment card; empty when billing is off.
 	CardRequiredFor []string `protobuf:"bytes,11,rep,name=card_required_for,json=cardRequiredFor,proto3" json:"card_required_for,omitempty"`
-	// Jobs on shared hosts a tenant may start per 60 minutes; 0 means no
+	// Jobs on shared hosts a workspace may start per 60 minutes; 0 means no
 	// limit.
 	MaxJobsPerHour int32 `protobuf:"varint,12,opt,name=max_jobs_per_hour,json=maxJobsPerHour,proto3" json:"max_jobs_per_hour,omitempty"`
 	// Queued jobs of one workflow run that may wait for a host at once; the
 	// rest wait as burst_guard. 0 means off.
 	BurstGuardJobs int32 `protobuf:"varint,13,opt,name=burst_guard_jobs,json=burstGuardJobs,proto3" json:"burst_guard_jobs,omitempty"`
-	// Credit a new tenant on this plan gets once, in the smallest currency
+	// Credit a new workspace on this plan gets once, in the smallest currency
 	// unit; 0 means none.
 	StarterCreditCents int64 `protobuf:"varint,14,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
-	// Days of finished job history tenants on this plan keep; 0 keeps forever.
+	// Days of finished job history workspaces on this plan keep; 0 keeps forever.
 	// Left out of configuration, 90.
 	HistoryDays int32 `protobuf:"varint,15,opt,name=history_days,json=historyDays,proto3" json:"history_days,omitempty"`
 	// Longest debug session, in minutes, a failed job on this plan may ask
 	// for with a toshi-debug-<n> label; 0 means the plan has no debug
 	// sessions.
 	DebugMinutes int32 `protobuf:"varint,16,opt,name=debug_minutes,json=debugMinutes,proto3" json:"debug_minutes,omitempty"`
-	// Hosts a tenant on this plan may own at once, cloud hosts included; 0
+	// Hosts a workspace on this plan may own at once, cloud hosts included; 0
 	// means no limit. Left out of configuration, 20.
 	MaxOwnHosts int32 `protobuf:"varint,17,opt,name=max_own_hosts,json=maxOwnHosts,proto3" json:"max_own_hosts,omitempty"`
-	// Whether the plan is the open-source tier: its tenants' jobs
+	// Whether the plan is the open-source tier: its workspaces' jobs
 	// pass the open-source gate.
 	OpenSource    bool `protobuf:"varint,18,opt,name=open_source,json=openSource,proto3" json:"open_source,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -6275,7 +6275,7 @@ func (x *ListOperatorAlertsResponse) GetNextPageToken() string {
 
 type ListHostAlertsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Optional: only this tenant.
+	// Optional: only this workspace.
 	Tenant string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// The most alerts in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
@@ -6404,7 +6404,7 @@ type OperatorAlert struct {
 	TopReason string           `protobuf:"bytes,6,opt,name=top_reason,json=topReason,proto3" json:"top_reason,omitempty"`
 	// message says the same in one line.
 	Message string `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
-	// The tenant whose own hosts raised the alert. Empty for an operator alert.
+	// The workspace whose own hosts raised the alert. Empty for an operator alert.
 	Tenant        string `protobuf:"bytes,8,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -6814,7 +6814,7 @@ type GetUsageRequest struct {
 	From *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
 	// End of the window, exclusive. Unset: now.
 	To *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
-	// Only this tenant's jobs. Empty matches every tenant.
+	// Only this workspace's jobs. Empty matches every workspace.
 	Tenant        string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -6873,13 +6873,13 @@ func (x *GetUsageRequest) GetTenant() string {
 
 type GetUsageResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Ordered by tenant, then day, then conclusion, then outcome, then kind. A
+	// Ordered by workspace, then day, then conclusion, then outcome, then kind. A
 	// window with neither matching jobs nor reserved hours has no rows.
 	Rows []*UsageRow `protobuf:"bytes,1,rep,name=rows,proto3" json:"rows,omitempty"`
 	// The window used, with the defaults filled in.
 	From *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
 	To   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=to,proto3" json:"to,omitempty"`
-	// Filler jobs that finished in the window, by tenant. They are
+	// Filler jobs that finished in the window, by workspace. They are
 	// not billed and not in rows.
 	Filler        []*FillerUsage `protobuf:"bytes,4,rep,name=filler,proto3" json:"filler,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -6944,7 +6944,7 @@ func (x *GetUsageResponse) GetFiller() []*FillerUsage {
 	return nil
 }
 
-// FillerUsage counts one tenant's filler jobs: runs its dispatch fillers
+// FillerUsage counts one workspace's filler jobs: runs its dispatch fillers
 // started on shared room. Not billed; a plan's filler_minutes_per_day bounds
 // them per UTC day.
 type FillerUsage struct {
@@ -7008,7 +7008,7 @@ func (x *FillerUsage) GetMinutes() int64 {
 	return 0
 }
 
-// UsageRow counts the jobs of one tenant, UTC day, conclusion, outcome and
+// UsageRow counts the jobs of one workspace, UTC day, conclusion, outcome and
 // kind.
 type UsageRow struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
@@ -7020,11 +7020,11 @@ type UsageRow struct {
 	Conclusion string `protobuf:"bytes,3,opt,name=conclusion,proto3" json:"conclusion,omitempty"`
 	// Number of jobs in this row.
 	Jobs int64 `protobuf:"varint,4,opt,name=jobs,proto3" json:"jobs,omitempty"`
-	// Billable minutes of those jobs that did not run on a host their tenant
+	// Billable minutes of those jobs that did not run on a host their workspace
 	// owns: each job that started and finished adds its duration rounded up to
 	// whole minutes; other jobs add 0.
 	Minutes int64 `protobuf:"varint,5,opt,name=minutes,proto3" json:"minutes,omitempty"`
-	// Minutes of the row's jobs that ran on hosts their tenant owns, rounded as
+	// Minutes of the row's jobs that ran on hosts their workspace owns, rounded as
 	// minutes.
 	OwnHostMinutes int64 `protobuf:"varint,6,opt,name=own_host_minutes,json=ownHostMinutes,proto3" json:"own_host_minutes,omitempty"`
 	// The part of minutes and own_host_minutes spent in debug sessions: each
@@ -7034,7 +7034,7 @@ type UsageRow struct {
 	DebugMinutes int64 `protobuf:"varint,7,opt,name=debug_minutes,json=debugMinutes,proto3" json:"debug_minutes,omitempty"`
 	// The part of minutes that ran on overflow hosts.
 	OverflowMinutes int64 `protobuf:"varint,8,opt,name=overflow_minutes,json=overflowMinutes,proto3" json:"overflow_minutes,omitempty"`
-	// Reserved slot-hours the tenant held in the row's window, on the rows
+	// Reserved slot-hours the workspace held in the row's window, on the rows
 	// with a conclusion: 0. The reserved hours themselves are in the row with
 	// an empty conclusion added for each UTC day that has them.
 	ReservedSlotHours int64 `protobuf:"varint,9,opt,name=reserved_slot_hours,json=reservedSlotHours,proto3" json:"reserved_slot_hours,omitempty"`
@@ -7163,7 +7163,7 @@ type GetQueueTimesRequest struct {
 	From *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
 	// End of the window, exclusive. Unset: now.
 	To *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
-	// Only this tenant's jobs. Empty matches every tenant.
+	// Only this workspace's jobs. Empty matches every workspace.
 	Tenant        string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -7435,7 +7435,7 @@ type GetWorkflowUsageRequest struct {
 	From *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
 	// End of the window, exclusive. Unset: now.
 	To *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
-	// Only this tenant's jobs. Empty matches every tenant.
+	// Only this workspace's jobs. Empty matches every workspace.
 	Tenant        string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -7495,7 +7495,7 @@ func (x *GetWorkflowUsageRequest) GetTenant() string {
 type GetWorkflowUsageResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Ordered by minutes, then own_host_minutes, then jobs, each descending,
-	// then by tenant, repository and workflow, byte by byte. A window with no
+	// then by workspace, repository and workflow, byte by byte. A window with no
 	// jobs has no rows.
 	Rows []*WorkflowUsageRow `protobuf:"bytes,1,rep,name=rows,proto3" json:"rows,omitempty"`
 	// The window used, with the defaults filled in.
@@ -7556,7 +7556,7 @@ func (x *GetWorkflowUsageResponse) GetTo() *timestamppb.Timestamp {
 	return nil
 }
 
-// WorkflowUsageRow counts the jobs of one tenant, repository and workflow.
+// WorkflowUsageRow counts the jobs of one workspace, repository and workflow.
 // Its jobs are the ones GetUsage counts, and their minutes are counted as
 // in UsageRow.
 type WorkflowUsageRow struct {
@@ -7571,7 +7571,7 @@ type WorkflowUsageRow struct {
 	Jobs int64 `protobuf:"varint,4,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	// Billable minutes, as UsageRow.minutes.
 	Minutes int64 `protobuf:"varint,5,opt,name=minutes,proto3" json:"minutes,omitempty"`
-	// Minutes on hosts the tenant owns, as UsageRow.own_host_minutes.
+	// Minutes on hosts the workspace owns, as UsageRow.own_host_minutes.
 	OwnHostMinutes int64 `protobuf:"varint,6,opt,name=own_host_minutes,json=ownHostMinutes,proto3" json:"own_host_minutes,omitempty"`
 	// Jobs whose conclusion is "failure" or whose outcome is "failed".
 	FailedJobs int64 `protobuf:"varint,7,opt,name=failed_jobs,json=failedJobs,proto3" json:"failed_jobs,omitempty"`
@@ -7728,7 +7728,7 @@ type GetCapacityResponse struct {
 	// ordered by size. Slots free count shared regular hosts, reserved capacity
 	// excluded.
 	Sizes []*CapacitySize `protobuf:"bytes,1,rep,name=sizes,proto3" json:"sizes,omitempty"`
-	// One row per reservation, ordered by tenant then size.
+	// One row per reservation, ordered by workspace then size.
 	Reservations []*CapacityReservation `protobuf:"bytes,2,rep,name=reservations,proto3" json:"reservations,omitempty"`
 	// When the scheduler pass that left this view ran.
 	ObservedAt    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=observed_at,json=observedAt,proto3" json:"observed_at,omitempty"`
@@ -7792,9 +7792,9 @@ type CapacitySize struct {
 	Size  string                 `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
 	// Slots shared regular hosts could still start jobs of this size.
 	FreeSlots int32 `protobuf:"varint,2,opt,name=free_slots,json=freeSlots,proto3" json:"free_slots,omitempty"`
-	// Slots reserved for tenants of this size; free_slots excludes them.
+	// Slots reserved for workspaces of this size; free_slots excludes them.
 	ReservedSlots int32 `protobuf:"varint,3,opt,name=reserved_slots,json=reservedSlots,proto3" json:"reserved_slots,omitempty"`
-	// Reserved slots the tenants' own jobs of the size hold.
+	// Reserved slots the workspaces' own jobs of the size hold.
 	InUse int32 `protobuf:"varint,4,opt,name=in_use,json=inUse,proto3" json:"in_use,omitempty"`
 	// Reserved slots kept free at the end of the pass.
 	Earmarked int32 `protobuf:"varint,5,opt,name=earmarked,proto3" json:"earmarked,omitempty"`
@@ -7893,7 +7893,7 @@ type CapacityReservation struct {
 	// The reservation.
 	Slots int32 `protobuf:"varint,3,opt,name=slots,proto3" json:"slots,omitempty"`
 	Warm  int32 `protobuf:"varint,4,opt,name=warm,proto3" json:"warm,omitempty"`
-	// The tenant's jobs of the size on shared regular hosts.
+	// The workspace's jobs of the size on shared regular hosts.
 	InUse int32 `protobuf:"varint,5,opt,name=in_use,json=inUse,proto3" json:"in_use,omitempty"`
 	// Slots kept free at the end of the pass, warm_earmarked of them on warm
 	// VMs.
@@ -8213,7 +8213,7 @@ type TenantStatement struct {
 	From  *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=from,proto3" json:"from,omitempty"`
 	To    *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=to,proto3" json:"to,omitempty"`
 	// The plans the month's metered minutes were recorded at, comma-separated;
-	// the tenant's plan today when no minute has a recorded price.
+	// the workspace's plan today when no minute has a recorded price.
 	Plan string `protobuf:"bytes,5,opt,name=plan,proto3" json:"plan,omitempty"`
 	// The jobs that finished in the month, by runner size and OS, counted as
 	// GetUsage counts them.
@@ -8244,18 +8244,18 @@ type TenantStatement struct {
 	// prices: finished jobs not yet in the usage outbox, and usage from
 	// before prices were recorded.
 	CurrentPriceMinutes int64 `protobuf:"varint,15,opt,name=current_price_minutes,json=currentPriceMinutes,proto3" json:"current_price_minutes,omitempty"`
-	// The tenant's filler jobs that finished in the month: not billed, not in
+	// The workspace's filler jobs that finished in the month: not billed, not in
 	// usage or charges. Unset when there were none.
 	Filler *FillerUsage `protobuf:"bytes,16,opt,name=filler,proto3" json:"filler,omitempty"`
 	// True when a billing provider is configured; false means nothing is metered or charged.
 	BillingEnabled bool `protobuf:"varint,17,opt,name=billing_enabled,json=billingEnabled,proto3" json:"billing_enabled,omitempty"`
-	// When the month's estimated spend first reached the tenant's spending
+	// When the month's estimated spend first reached the workspace's spending
 	// cap; unset when it did not.
 	SpendCapReachedAt *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=spend_cap_reached_at,json=spendCapReachedAt,proto3" json:"spend_cap_reached_at,omitempty"`
 	// The cap that was reached, in the smallest unit of currency; 0 when it
 	// was not.
 	SpendCapReachedCents int64 `protobuf:"varint,19,opt,name=spend_cap_reached_cents,json=spendCapReachedCents,proto3" json:"spend_cap_reached_cents,omitempty"`
-	// The tenant's spending cap when the statement was built; 0 when none.
+	// The workspace's spending cap when the statement was built; 0 when none.
 	SpendCapCents int64 `protobuf:"varint,20,opt,name=spend_cap_cents,json=spendCapCents,proto3" json:"spend_cap_cents,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -8438,13 +8438,13 @@ type StatementUsage struct {
 	Jobs  int64                  `protobuf:"varint,3,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	// Billable minutes on shared hosts, rounded up per job.
 	Minutes int64 `protobuf:"varint,4,opt,name=minutes,proto3" json:"minutes,omitempty"`
-	// Minutes on the tenant's own hosts, which are not billed.
+	// Minutes on the workspace's own hosts, which are not billed.
 	OwnHostMinutes int64 `protobuf:"varint,5,opt,name=own_host_minutes,json=ownHostMinutes,proto3" json:"own_host_minutes,omitempty"`
 	// The part of minutes and own_host_minutes spent in debug sessions.
 	DebugMinutes int64 `protobuf:"varint,6,opt,name=debug_minutes,json=debugMinutes,proto3" json:"debug_minutes,omitempty"`
 	// The part of minutes that ran on overflow hosts.
 	OverflowMinutes int64 `protobuf:"varint,7,opt,name=overflow_minutes,json=overflowMinutes,proto3" json:"overflow_minutes,omitempty"`
-	// Reserved slot-hours the tenant held for this size in the statement's
+	// Reserved slot-hours the workspace held for this size in the statement's
 	// window. A size with reserved hours but no finished job still
 	// gets a row, with zero minutes.
 	ReservedSlotHours int64 `protobuf:"varint,8,opt,name=reserved_slot_hours,json=reservedSlotHours,proto3" json:"reserved_slot_hours,omitempty"`
@@ -9200,15 +9200,15 @@ func (x *GetJobDebugAccessResponse) GetExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
-// TenantBilling is a tenant's billing link, its subscription's status and the
+// TenantBilling is a workspace's billing link, its subscription's status and the
 // usage reported to the billing provider.
 type TenantBilling struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Empty when the tenant is not linked to a customer.
+	// Empty when the workspace is not linked to a customer.
 	CustomerId string `protobuf:"bytes,1,opt,name=customer_id,json=customerId,proto3" json:"customer_id,omitempty"`
 	// Empty when no subscription has set the plan.
 	SubscriptionId string `protobuf:"bytes,2,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
-	// When billable usage begins; unset when the tenant is not billed.
+	// When billable usage begins; unset when the workspace is not billed.
 	BillingStartedAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=billing_started_at,json=billingStartedAt,proto3" json:"billing_started_at,omitempty"`
 	// Always unset: the hourly export ledger is no longer read. Usage is in
 	// totals and failed_events.
@@ -9222,13 +9222,13 @@ type TenantBilling struct {
 	SubscriptionStatusSince *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=subscription_status_since,json=subscriptionStatusSince,proto3" json:"subscription_status_since,omitempty"`
 	// Meter events per UTC month and runner size, newest month first.
 	Totals []*BillingTotals `protobuf:"bytes,7,rep,name=totals,proto3" json:"totals,omitempty"`
-	// The tenant's failed meter events, most recently failed first, at most 50.
+	// The workspace's failed meter events, most recently failed first, at most 50.
 	FailedEvents []*BillingEventFailure `protobuf:"bytes,8,rep,name=failed_events,json=failedEvents,proto3" json:"failed_events,omitempty"`
-	// Minutes of the tenant's jobs that finished this UTC calendar month, as
+	// Minutes of the workspace's jobs that finished this UTC calendar month, as
 	// its statement counts them. The free allowance counts these, with or
 	// without a billing customer.
 	MinutesThisMonth int64 `protobuf:"varint,9,opt,name=minutes_this_month,json=minutesThisMonth,proto3" json:"minutes_this_month,omitempty"`
-	// The free minutes per UTC calendar month of the tenant's plan; 0 when the
+	// The free minutes per UTC calendar month of the workspace's plan; 0 when the
 	// plan has none.
 	FreeMinutesPerMonth int64 `protobuf:"varint,10,opt,name=free_minutes_per_month,json=freeMinutesPerMonth,proto3" json:"free_minutes_per_month,omitempty"`
 	// Whether the billing customer has a payment method.
@@ -9256,13 +9256,13 @@ type TenantBilling struct {
 	StarterCreditAppliedAt *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=starter_credit_applied_at,json=starterCreditAppliedAt,proto3" json:"starter_credit_applied_at,omitempty"`
 	// True when a billing provider is configured; false means nothing is metered or charged.
 	BillingEnabled bool `protobuf:"varint,21,opt,name=billing_enabled,json=billingEnabled,proto3" json:"billing_enabled,omitempty"`
-	// The tenant's jobs held now, by reason, in the order GetQueueTimes lists
+	// The workspace's jobs held now, by reason, in the order GetQueueTimes lists
 	// the reasons.
 	HeldNow []*TenantBilling_HeldJobs `protobuf:"bytes,22,rep,name=held_now,json=heldNow,proto3" json:"held_now,omitempty"`
-	// The tenant's jobs that count against its plan concurrency now: assigned,
+	// The workspace's jobs that count against its plan concurrency now: assigned,
 	// starting, running or debugging, on Toshi's hosts rather than its own, and
 	// neither a dispatch filler's job nor an open-source job. This is the count
-	// the scheduler checks against the tenant's limit,
+	// the scheduler checks against the workspace's limit,
 	// Tenant.effective_concurrency.
 	ConcurrencyUsed int64 `protobuf:"varint,23,opt,name=concurrency_used,json=concurrencyUsed,proto3" json:"concurrency_used,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -9745,7 +9745,7 @@ func (x *BillingExport) GetExportedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-// Token is an operator, enrollment, tenant or product token, without its
+// Token is an operator, enrollment, workspace or product token, without its
 // value.
 type Token struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -9754,7 +9754,7 @@ type Token struct {
 	Kind TokenKind `protobuf:"varint,2,opt,name=kind,proto3,enum=toshi.operator.v1.TokenKind" json:"kind,omitempty"`
 	// "file" for a token read from the control plane's token file, "rotate"
 	// for one made by RotateToken, "tenant" for one made by
-	// CreateEnrollmentToken, "session" for a tenant token minted from a
+	// CreateEnrollmentToken, "session" for a workspace token minted from a
 	// dashboard session.
 	Source    string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -9764,12 +9764,12 @@ type Token struct {
 	RevokedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
 	// Whether the token is accepted now.
 	Active bool `protobuf:"varint,7,opt,name=active,proto3" json:"active,omitempty"`
-	// Tenant the token is scoped to; also set for tenant tokens.
+	// Workspace the token is scoped to; also set for workspace tokens.
 	Tenant string `protobuf:"bytes,8,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	// The label the tenant chose; empty for other kinds.
+	// The label the workspace chose; empty for other kinds.
 	Name string `protobuf:"bytes,9,opt,name=name,proto3" json:"name,omitempty"`
 	// The project the token is limited to, by name. Empty for a token that
-	// acts in the whole tenant.
+	// acts in the whole workspace.
 	Project string `protobuf:"bytes,10,opt,name=project,proto3" json:"project,omitempty"`
 	// The environment of project the token is limited to, by name. Empty
 	// when the token acts in every environment of its project.
@@ -9894,12 +9894,12 @@ func (x *Token) GetProduct() string {
 	return ""
 }
 
-// ListTokensRequest optionally narrows the list to one kind and one tenant.
+// ListTokensRequest optionally narrows the list to one kind and one workspace.
 type ListTokensRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// TOKEN_KIND_UNSPECIFIED lists every kind.
 	Kind TokenKind `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.operator.v1.TokenKind" json:"kind,omitempty"`
-	// Only this tenant's tokens; empty lists every token.
+	// Only this workspace's tokens; empty lists every token.
 	Tenant string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// The most tokens in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
@@ -10230,7 +10230,7 @@ func (x *RevokeTokenResponse) GetHostsSignedOut() int32 {
 	return 0
 }
 
-// CreateEnrollmentTokenRequest names the tenant to enroll hosts for.
+// CreateEnrollmentTokenRequest names the workspace to enroll hosts for.
 type CreateEnrollmentTokenRequest struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
@@ -10344,8 +10344,8 @@ type CreateTenantTokenRequest struct {
 	Name   string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Unset means the token never expires.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
-	// Limits the token to this project of the tenant, by name. Empty makes
-	// a token for the whole tenant.
+	// Limits the token to this project of the workspace, by name. Empty makes
+	// a token for the whole workspace.
 	Project string `protobuf:"bytes,4,opt,name=project,proto3" json:"project,omitempty"`
 	// Limits the token further to this environment of project, by name.
 	// Needs project.
@@ -10646,7 +10646,7 @@ type ListEgressIPsResponse struct {
 	// Every address of the hosts of every page with known addresses, sorted
 	// and without repeats. Every page holds all of them.
 	Ips []string `protobuf:"bytes,1,rep,name=ips,proto3" json:"ips,omitempty"`
-	// The hosts the tenant's jobs can land on, ordered by kind (own hosts
+	// The hosts the workspace's jobs can land on, ordered by kind (own hosts
 	// first) and ID.
 	Hosts []*EgressHost `protobuf:"bytes,2,rep,name=hosts,proto3" json:"hosts,omitempty"`
 	// False when some host of any page has addresses that are unknown or
@@ -10716,14 +10716,14 @@ func (x *ListEgressIPsResponse) GetNextPageToken() string {
 	return ""
 }
 
-// EgressHost is one host a tenant's jobs can land on.
+// EgressHost is one host a workspace's jobs can land on.
 type EgressHost struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The host's id and name; empty for a shared host when a dashboard
-	// session or tenant token asks.
+	// session or workspace token asks.
 	HostId string `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
 	Name   string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// The host is shared between tenants rather than the tenant's own.
+	// The host is shared between workspaces rather than the workspace's own.
 	Shared bool        `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
 	Egress *HostEgress `protobuf:"bytes,4,opt,name=egress,proto3" json:"egress,omitempty"`
 	// For an EGRESS_SOURCE_PER_JOB host: the addresses its jobs ran from in
@@ -10983,11 +10983,11 @@ func (x *CloudHostCheck) GetDetail() string {
 // pool targets, and stops the moment a job needs the room.
 type Filler struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Unique among the fillers with the same tenant; lowercase letters, digits
+	// Unique among the fillers with the same workspace; lowercase letters, digits
 	// and dashes, at most 40 characters, starting with a letter or digit.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// "command": a command in a VM; "dispatch": a workflow_dispatch of a
-	// tenant's workflow, run as a filler job.
+	// workspace's workflow, run as a filler job.
 	Kind string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
 	// The runner size of the VM.
 	Size string `protobuf:"bytes,3,opt,name=size,proto3" json:"size,omitempty"`
@@ -10998,8 +10998,8 @@ type Filler struct {
 	// command: the name of the agents' [filler] shares entry mounted in the
 	// guest at /mnt/toshi-share. Empty: none.
 	Share string `protobuf:"bytes,6,opt,name=share,proto3" json:"share,omitempty"`
-	// dispatch: the tenant whose installation dispatches the workflow. With
-	// the name it is the filler's key; a command filler has no tenant.
+	// dispatch: the workspace whose installation dispatches the workflow. With
+	// the name it is the filler's key; a command filler has no workspace.
 	Tenant string `protobuf:"bytes,7,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// dispatch: the repository, as "owner/name".
 	Repository string `protobuf:"bytes,8,opt,name=repository,proto3" json:"repository,omitempty"`
@@ -11024,7 +11024,7 @@ type Filler struct {
 	// last filler pass that read its states found it: tenant_suspended,
 	// tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
 	// installation_suspended, installation_ambiguous, budget_spent (the
-	// tenant's filler minutes for the UTC day are spent) or budget_off (its
+	// workspace's filler minutes for the UTC day are spent) or budget_off (its
 	// plan gives none). Empty: no pause found,
 	// or a filler the pass does not evaluate (a disabled one, for example).
 	// Set by ListFillers only.
@@ -11217,7 +11217,7 @@ type FillerRun struct {
 	Id     string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Filler string                 `protobuf:"bytes,2,opt,name=filler,proto3" json:"filler,omitempty"`
 	Kind   string                 `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty"`
-	// dispatch: the filler's tenant.
+	// dispatch: the filler's workspace.
 	Tenant string `protobuf:"bytes,4,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// The host the run went to. Empty while a dispatch run waits for its job.
 	HostId string `protobuf:"bytes,5,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
@@ -11622,9 +11622,9 @@ func (x *PutFillerResponse) GetFiller() *Filler {
 type DeleteFillerRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// The tenant of a dispatch filler. Empty: for the operator, a command
-	// filler; for a tenant token, its own tenant. A dashboard session with
-	// more than one tenant names one.
+	// The workspace of a dispatch filler. Empty: for the operator, a command
+	// filler; for a workspace token, its own workspace. A dashboard session with
+	// more than one workspace names one.
 	Tenant        string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -11714,9 +11714,9 @@ type SetFillerEnabledRequest struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Name    string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Enabled bool                   `protobuf:"varint,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	// The tenant of a dispatch filler. Empty: for the operator, a command
-	// filler; for a tenant token, its own tenant. A dashboard session with
-	// more than one tenant names one.
+	// The workspace of a dispatch filler. Empty: for the operator, a command
+	// filler; for a workspace token, its own workspace. A dashboard session with
+	// more than one workspace names one.
 	Tenant        string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -11823,9 +11823,9 @@ type ListFillerRunsRequest struct {
 	Filler string `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
 	// The most runs in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	// With filler: the tenant of a dispatch filler. Empty: for the operator, a
-	// command filler; for a tenant token, its own tenant. A dashboard session
-	// with more than one tenant names one.
+	// With filler: the workspace of a dispatch filler. Empty: for the operator, a
+	// command filler; for a workspace token, its own workspace. A dashboard session
+	// with more than one workspace names one.
 	Tenant string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
 	PageToken     string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
@@ -11958,7 +11958,7 @@ func (x *ListFillerRunsResponse) GetNextPageToken() string {
 type FillerPause struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Filler string                 `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
-	// The filler's tenant.
+	// The filler's workspace.
 	Tenant string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// tenant_suspended, tenant_deleting, tenant_deleted, tenant_closed,
 	// installation_removed, installation_suspended, installation_ambiguous,
@@ -14069,7 +14069,7 @@ func (x *PoolSuggestionDelay) GetSource() string {
 
 // StorageProvider is one bucket Toshi keeps objects in. The
 // credentials are a reference: an operator row names a file and profile, and
-// a tenant row may hold a secret the control plane wrapped, which the API
+// a workspace row may hold a secret the control plane wrapped, which the API
 // reports only as its presence.
 type StorageProvider struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -14307,7 +14307,7 @@ type CreateStorageProviderRequest struct {
 	CredentialsProfile     string `protobuf:"bytes,14,opt,name=credentials_profile,json=credentialsProfile,proto3" json:"credentials_profile,omitempty"`
 	RoleArn                string `protobuf:"bytes,15,opt,name=role_arn,json=roleArn,proto3" json:"role_arn,omitempty"`
 	ExternalId             string `protobuf:"bytes,16,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
-	// The key of a tenant's own bucket. The control plane wraps it before
+	// The key of a workspace's own bucket. The control plane wraps it before
 	// the row exists and never returns, logs or audits it. Set only with a
 	// tenant_id, mode "tenant_bucket" and no credentials_file.
 	Credential    *StorageCredential `protobuf:"bytes,17,opt,name=credential,proto3" json:"credential,omitempty"`
@@ -14573,7 +14573,7 @@ func (x *CreateStorageProviderResponse) GetProvider() *StorageProvider {
 
 type ListStorageProvidersRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Empty lists the operator's providers; otherwise this tenant's.
+	// Empty lists the operator's providers; otherwise this workspace's.
 	TenantId string `protobuf:"bytes,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	// With tenant_id, also answer default_provider.
 	IncludeDefault bool `protobuf:"varint,2,opt,name=include_default,json=includeDefault,proto3" json:"include_default,omitempty"`
@@ -14646,7 +14646,7 @@ func (x *ListStorageProvidersRequest) GetPageToken() string {
 type ListStorageProvidersResponse struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	Providers []*StorageProvider     `protobuf:"bytes,1,rep,name=providers,proto3" json:"providers,omitempty"`
-	// With include_default, the operator's provider that serves the tenant's
+	// With include_default, the operator's provider that serves the workspace's
 	// uploads while it has no tenant_bucket provider (the control plane's
 	// storage.default_provider); unset when none is configured. Every page
 	// holds it.

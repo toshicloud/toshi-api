@@ -869,7 +869,7 @@ export const GetArtifactDownloadURLResponseSchema: GenMessage<GetArtifactDownloa
  * it reserves an artifact, uploads each part to a presigned URL, and
  * completes the upload. The caller is the workload itself: every call
  * carries a workload identity token for the audience
- * "toshi:artifacts", and the tenant, project, environment, workload and
+ * "toshi:artifacts", and the workspace, project, environment, workload and
  * execution of the artifact are the token's claims, never the request's.
  * A token of another audience, a display token, an expired token, or one
  * that names no workload is refused with UNAUTHENTICATED. A workspace that

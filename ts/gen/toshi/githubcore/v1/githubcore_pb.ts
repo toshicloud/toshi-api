@@ -63,14 +63,14 @@ export type AdmitGrantResponse = Message<"toshi.githubcore.v1.AdmitGrantResponse
   actorId: string;
 
   /**
-   * tenants are the caller's tenants; empty for the operator.
+   * workspaces are the caller's workspaces; empty for the operator.
    *
    * @generated from field: repeated string tenants = 4;
    */
   tenants: string[];
 
   /**
-   * job_id, tenant, repository, approved and installation_id are the call's
+   * job_id, workspace, repository, approved and installation_id are the call's
    * arguments the grant binds.
    *
    * @generated from field: string job_id = 5;
@@ -141,14 +141,14 @@ export type AdmitGrantResponseJson = {
   actorId?: string;
 
   /**
-   * tenants are the caller's tenants; empty for the operator.
+   * workspaces are the caller's workspaces; empty for the operator.
    *
    * @generated from field: repeated string tenants = 4;
    */
   tenants?: string[];
 
   /**
-   * job_id, tenant, repository, approved and installation_id are the call's
+   * job_id, workspace, repository, approved and installation_id are the call's
    * arguments the grant binds.
    *
    * @generated from field: string job_id = 5;
@@ -426,7 +426,7 @@ export const FillJobFailingStepResponseSchema: GenMessage<FillJobFailingStepResp
  */
 export type ListOpenSourceRepositoriesRequest = Message<"toshi.githubcore.v1.ListOpenSourceRepositoriesRequest"> & {
   /**
-   * tenant is the tenant whose rows to list; empty for every tenant the
+   * workspace is the workspace whose rows to list; empty for every workspace the
    * caller may see.
    *
    * @generated from field: string tenant = 1;
@@ -453,7 +453,7 @@ export type ListOpenSourceRepositoriesRequest = Message<"toshi.githubcore.v1.Lis
  */
 export type ListOpenSourceRepositoriesRequestJson = {
   /**
-   * tenant is the tenant whose rows to list; empty for every tenant the
+   * workspace is the workspace whose rows to list; empty for every workspace the
    * caller may see.
    *
    * @generated from field: string tenant = 1;
@@ -538,7 +538,7 @@ export const ListOpenSourceRepositoriesResponseSchema: GenMessage<ListOpenSource
   messageDesc(file_toshi_githubcore_v1_githubcore, 8);
 
 /**
- * OpenSourceRepository is one tenant's row of the open-source gate.
+ * OpenSourceRepository is one workspace's row of the open-source gate.
  *
  * @generated from message toshi.githubcore.v1.OpenSourceRepository
  */
@@ -610,7 +610,7 @@ export type OpenSourceRepository = Message<"toshi.githubcore.v1.OpenSourceReposi
 };
 
 /**
- * OpenSourceRepository is one tenant's row of the open-source gate.
+ * OpenSourceRepository is one workspace's row of the open-source gate.
  *
  * @generated from message toshi.githubcore.v1.OpenSourceRepository
  */
@@ -689,7 +689,7 @@ export const OpenSourceRepositorySchema: GenMessage<OpenSourceRepository, {jsonT
   messageDesc(file_toshi_githubcore_v1_githubcore, 9);
 
 /**
- * OpenSourceKeptApproval is an approval of a repository no tenant has a
+ * OpenSourceKeptApproval is an approval of a repository no workspace has a
  * row of yet.
  *
  * @generated from message toshi.githubcore.v1.OpenSourceKeptApproval
@@ -707,7 +707,7 @@ export type OpenSourceKeptApproval = Message<"toshi.githubcore.v1.OpenSourceKept
 };
 
 /**
- * OpenSourceKeptApproval is an approval of a repository no tenant has a
+ * OpenSourceKeptApproval is an approval of a repository no workspace has a
  * row of yet.
  *
  * @generated from message toshi.githubcore.v1.OpenSourceKeptApproval
@@ -774,7 +774,7 @@ export const SetOpenSourceApprovalRequestSchema: GenMessage<SetOpenSourceApprova
 export type SetOpenSourceApprovalResponse = Message<"toshi.githubcore.v1.SetOpenSourceApprovalResponse"> & {
   /**
    * repositories are the repository's rows after the change; kept is set
-   * instead when no tenant has a row and the decision was kept.
+   * instead when no workspace has a row and the decision was kept.
    *
    * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepository repositories = 1;
    */
@@ -792,7 +792,7 @@ export type SetOpenSourceApprovalResponse = Message<"toshi.githubcore.v1.SetOpen
 export type SetOpenSourceApprovalResponseJson = {
   /**
    * repositories are the repository's rows after the change; kept is set
-   * instead when no tenant has a row and the decision was kept.
+   * instead when no workspace has a row and the decision was kept.
    *
    * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepository repositories = 1;
    */
@@ -979,11 +979,11 @@ export const PublishJobDeliveryCheckResponseSchema: GenMessage<PublishJobDeliver
  * Each product call allows AdmitGrant and:
  *   - GetJobFailure: GetJob and FillJobFailingStep, for the grant's job;
  *   - ListOpenSourceRepositories: ListOpenSourceRepositories, for the
- *     grant's tenant or none;
+ *     grant's workspace or none;
  *   - SetOpenSourceApproval: SetOpenSourceApproval, for the grant's
  *     repository and decision;
  *   - MapInstallation: MapInstallation, for the grant's installation and
- *     tenant;
+ *     workspace;
  *   - CheckSecretDelivery: PublishJobDeliveryCheck, for the grant's check
  *     generation.
  *
@@ -1011,7 +1011,7 @@ export const GitHubCoreService: GenService<{
   },
   /**
    * GetJob returns the job the grant names when the grant's caller may
-   * see it. A tenant caller sees only its own tenants' jobs, of tenants
+   * see it. A workspace caller sees only its own workspaces' jobs, of workspaces
    * with at least one GitHub App installation; the operator sees every
    * job. Any other job, or one that does not exist, fails with NOT_FOUND.
    *
@@ -1035,11 +1035,11 @@ export const GitHubCoreService: GenService<{
     output: typeof FillJobFailingStepResponseSchema;
   },
   /**
-   * ListOpenSourceRepositories lists the open-source gate's rows: for a tenant
-   * caller, only rows of its tenants that have at least one GitHub App
-   * installation, and of the named tenant when one is named; for the
-   * operator, every row, or the named tenant's, and the kept approvals
-   * when no tenant is named. Rows are ordered by tenant, then repository.
+   * ListOpenSourceRepositories lists the open-source gate's rows: for a workspace
+   * caller, only rows of its workspaces that have at least one GitHub App
+   * installation, and of the named workspace when one is named; for the
+   * operator, every row, or the named workspace's, and the kept approvals
+   * when no workspace is named. Rows are ordered by workspace, then repository.
    *
    * A page holds 100 repositories when page_size is zero, and 1000 at most.
    *
@@ -1052,7 +1052,7 @@ export const GitHubCoreService: GenService<{
   },
   /**
    * SetOpenSourceApproval approves or revokes a repository on every
-   * tenant's row of it, or keeps the decision when no tenant has a row.
+   * workspace's row of it, or keeps the decision when no workspace has a row.
    * The operator's only.
    *
    * @generated from rpc toshi.githubcore.v1.GitHubCoreService.SetOpenSourceApproval
@@ -1063,8 +1063,8 @@ export const GitHubCoreService: GenService<{
     output: typeof SetOpenSourceApprovalResponseSchema;
   },
   /**
-   * MapInstallation maps a GitHub App installation to a tenant. An unknown
-   * tenant fails with NOT_FOUND and a deleted one with
+   * MapInstallation maps a GitHub App installation to a workspace. An unknown
+   * workspace fails with NOT_FOUND and a deleted one with
    * FAILED_PRECONDITION. The operator's only.
    *
    * @generated from rpc toshi.githubcore.v1.GitHubCoreService.MapInstallation
