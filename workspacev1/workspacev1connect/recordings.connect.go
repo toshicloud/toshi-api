@@ -56,6 +56,8 @@ type RecordingServiceClient interface {
 	// run attempt's strip, and each video or trace a run attempt uploaded as
 	// its test framework's recording, so an attempt may have several. Never
 	// a URL.
+	//
+	// A page holds 100 recordings when page_size is zero, and 1000 at most.
 	ListRecordings(context.Context, *connect.Request[workspacev1.ListRecordingsRequest]) (*connect.Response[workspacev1.ListRecordingsResponse], error)
 	// GetRecording returns one recording and, when it is ready, a signed URL
 	// for its object that expires. A ready recording whose object's
@@ -70,6 +72,8 @@ type RecordingServiceClient interface {
 	CreateRecordingShareLink(context.Context, *connect.Request[workspacev1.CreateRecordingShareLinkRequest]) (*connect.Response[workspacev1.CreateRecordingShareLinkResponse], error)
 	// ListRecordingShareLinks returns a recording's share links, oldest
 	// first, without the links themselves.
+	//
+	// A page holds 100 share links when page_size is zero, and 1000 at most.
 	ListRecordingShareLinks(context.Context, *connect.Request[workspacev1.ListRecordingShareLinksRequest]) (*connect.Response[workspacev1.ListRecordingShareLinksResponse], error)
 	// RevokeRecordingShareLink ends a share link before it expires. A link
 	// already revoked is returned as it is.
@@ -160,6 +164,8 @@ type RecordingServiceHandler interface {
 	// run attempt's strip, and each video or trace a run attempt uploaded as
 	// its test framework's recording, so an attempt may have several. Never
 	// a URL.
+	//
+	// A page holds 100 recordings when page_size is zero, and 1000 at most.
 	ListRecordings(context.Context, *connect.Request[workspacev1.ListRecordingsRequest]) (*connect.Response[workspacev1.ListRecordingsResponse], error)
 	// GetRecording returns one recording and, when it is ready, a signed URL
 	// for its object that expires. A ready recording whose object's
@@ -174,6 +180,8 @@ type RecordingServiceHandler interface {
 	CreateRecordingShareLink(context.Context, *connect.Request[workspacev1.CreateRecordingShareLinkRequest]) (*connect.Response[workspacev1.CreateRecordingShareLinkResponse], error)
 	// ListRecordingShareLinks returns a recording's share links, oldest
 	// first, without the links themselves.
+	//
+	// A page holds 100 share links when page_size is zero, and 1000 at most.
 	ListRecordingShareLinks(context.Context, *connect.Request[workspacev1.ListRecordingShareLinksRequest]) (*connect.Response[workspacev1.ListRecordingShareLinksResponse], error)
 	// RevokeRecordingShareLink ends a share link before it expires. A link
 	// already revoked is returned as it is.

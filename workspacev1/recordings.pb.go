@@ -458,8 +458,12 @@ func (x *RecordingPause) GetEnd() *timestamppb.Timestamp {
 }
 
 type ListRecordingsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	WorkloadId    string                 `protobuf:"bytes,1,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	WorkloadId string                 `protobuf:"bytes,1,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	// The most recordings in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -501,9 +505,25 @@ func (x *ListRecordingsRequest) GetWorkloadId() string {
 	return ""
 }
 
+func (x *ListRecordingsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListRecordingsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListRecordingsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Recordings    []*Recording           `protobuf:"bytes,1,rep,name=recordings,proto3" json:"recordings,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Recordings []*Recording           `protobuf:"bytes,1,rep,name=recordings,proto3" json:"recordings,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -543,6 +563,13 @@ func (x *ListRecordingsResponse) GetRecordings() []*Recording {
 		return x.Recordings
 	}
 	return nil
+}
+
+func (x *ListRecordingsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 type GetRecordingRequest struct {
@@ -918,8 +945,12 @@ func (x *CreateRecordingShareLinkResponse) GetPlayerUrl() string {
 }
 
 type ListRecordingShareLinksRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RecordingId   string                 `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	RecordingId string                 `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	// The most share links in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -961,9 +992,25 @@ func (x *ListRecordingShareLinksRequest) GetRecordingId() string {
 	return ""
 }
 
+func (x *ListRecordingShareLinksRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListRecordingShareLinksRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListRecordingShareLinksResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ShareLinks    []*RecordingShareLink  `protobuf:"bytes,1,rep,name=share_links,json=shareLinks,proto3" json:"share_links,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	ShareLinks []*RecordingShareLink  `protobuf:"bytes,1,rep,name=share_links,json=shareLinks,proto3" json:"share_links,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1003,6 +1050,13 @@ func (x *ListRecordingShareLinksResponse) GetShareLinks() []*RecordingShareLink 
 		return x.ShareLinks
 	}
 	return nil
+}
+
+func (x *ListRecordingShareLinksResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 type RevokeRecordingShareLinkRequest struct {
@@ -1125,14 +1179,18 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\x05actor\x18\x02 \x01(\tR\x05actor\x12\x10\n" +
 	"\x03via\x18\x03 \x01(\tR\x03via\x120\n" +
 	"\x05start\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
-	"\x03end\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x03end\"8\n" +
+	"\x03end\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x03end\"t\n" +
 	"\x15ListRecordingsRequest\x12\x1f\n" +
 	"\vworkload_id\x18\x01 \x01(\tR\n" +
-	"workloadId\"W\n" +
+	"workloadId\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x03 \x01(\tR\tpageToken\"\x7f\n" +
 	"\x16ListRecordingsResponse\x12=\n" +
 	"\n" +
 	"recordings\x18\x01 \x03(\v2\x1d.toshi.workspace.v1.RecordingR\n" +
-	"recordings\"Y\n" +
+	"recordings\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"Y\n" +
 	"\x13GetRecordingRequest\x12!\n" +
 	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x12\x1f\n" +
 	"\vttl_seconds\x18\x02 \x01(\x03R\n" +
@@ -1169,12 +1227,16 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"share_link\x18\x01 \x01(\v2&.toshi.workspace.v1.RecordingShareLinkR\tshareLink\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12\x1d\n" +
 	"\n" +
-	"player_url\x18\x03 \x01(\tR\tplayerUrl\"C\n" +
+	"player_url\x18\x03 \x01(\tR\tplayerUrl\"\x7f\n" +
 	"\x1eListRecordingShareLinksRequest\x12!\n" +
-	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\"j\n" +
+	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x03 \x01(\tR\tpageToken\"\x92\x01\n" +
 	"\x1fListRecordingShareLinksResponse\x12G\n" +
 	"\vshare_links\x18\x01 \x03(\v2&.toshi.workspace.v1.RecordingShareLinkR\n" +
-	"shareLinks\"E\n" +
+	"shareLinks\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"E\n" +
 	"\x1fRevokeRecordingShareLinkRequest\x12\"\n" +
 	"\rshare_link_id\x18\x01 \x01(\tR\vshareLinkId\"i\n" +
 	" RevokeRecordingShareLinkResponse\x12E\n" +

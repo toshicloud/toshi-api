@@ -46,8 +46,8 @@ import (
 	"github.com/toshicloud/toshi-api/workspacev1/workspacev1connect"
 )
 
-client := workspacev1connect.NewWorkspaceServiceClient(httpClient, serverURL)
-res, err := client.ListWorkloads(ctx, connect.NewRequest(&workspacev1.ListWorkloadsRequest{
+client := workspacev1connect.NewWorkloadServiceClient(httpClient, serverURL)
+res, err := client.ListJobs(ctx, connect.NewRequest(&workspacev1.ListJobsRequest{
 	Project:     "default",
 	Environment: "production",
 }))

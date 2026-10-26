@@ -45,9 +45,9 @@ const (
 	// GitHubCoreServiceFillJobFailingStepProcedure is the fully-qualified name of the
 	// GitHubCoreService's FillJobFailingStep RPC.
 	GitHubCoreServiceFillJobFailingStepProcedure = "/toshi.githubcore.v1.GitHubCoreService/FillJobFailingStep"
-	// GitHubCoreServiceListOpenSourceReposProcedure is the fully-qualified name of the
-	// GitHubCoreService's ListOpenSourceRepos RPC.
-	GitHubCoreServiceListOpenSourceReposProcedure = "/toshi.githubcore.v1.GitHubCoreService/ListOpenSourceRepos"
+	// GitHubCoreServiceListOpenSourceRepositoriesProcedure is the fully-qualified name of the
+	// GitHubCoreService's ListOpenSourceRepositories RPC.
+	GitHubCoreServiceListOpenSourceRepositoriesProcedure = "/toshi.githubcore.v1.GitHubCoreService/ListOpenSourceRepositories"
 	// GitHubCoreServiceSetOpenSourceApprovalProcedure is the fully-qualified name of the
 	// GitHubCoreService's SetOpenSourceApproval RPC.
 	GitHubCoreServiceSetOpenSourceApprovalProcedure = "/toshi.githubcore.v1.GitHubCoreService/SetOpenSourceApproval"
@@ -74,12 +74,14 @@ type GitHubCoreServiceClient interface {
 	// GitHub for the grant's job, a job GetJob shows: only when the job has
 	// ended, did not succeed and has no step stored.
 	FillJobFailingStep(context.Context, *connect.Request[githubcorev1.FillJobFailingStepRequest]) (*connect.Response[githubcorev1.FillJobFailingStepResponse], error)
-	// ListOpenSourceRepos lists the open-source gate's rows: for a tenant
+	// ListOpenSourceRepositories lists the open-source gate's rows: for a tenant
 	// caller, only rows of its tenants that have at least one GitHub App
 	// installation, and of the named tenant when one is named; for the
 	// operator, every row, or the named tenant's, and the kept approvals
-	// when no tenant is named.
-	ListOpenSourceRepos(context.Context, *connect.Request[githubcorev1.ListOpenSourceReposRequest]) (*connect.Response[githubcorev1.ListOpenSourceReposResponse], error)
+	// when no tenant is named. Rows are ordered by tenant, then repository.
+	//
+	// A page holds 100 repositories when page_size is zero, and 1000 at most.
+	ListOpenSourceRepositories(context.Context, *connect.Request[githubcorev1.ListOpenSourceRepositoriesRequest]) (*connect.Response[githubcorev1.ListOpenSourceRepositoriesResponse], error)
 	// SetOpenSourceApproval approves or revokes a repository on every
 	// tenant's row of it, or keeps the decision when no tenant has a row.
 	// The operator's only.
@@ -124,10 +126,10 @@ func NewGitHubCoreServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(gitHubCoreServiceMethods.ByName("FillJobFailingStep")),
 			connect.WithClientOptions(opts...),
 		),
-		listOpenSourceRepos: connect.NewClient[githubcorev1.ListOpenSourceReposRequest, githubcorev1.ListOpenSourceReposResponse](
+		listOpenSourceRepositories: connect.NewClient[githubcorev1.ListOpenSourceRepositoriesRequest, githubcorev1.ListOpenSourceRepositoriesResponse](
 			httpClient,
-			baseURL+GitHubCoreServiceListOpenSourceReposProcedure,
-			connect.WithSchema(gitHubCoreServiceMethods.ByName("ListOpenSourceRepos")),
+			baseURL+GitHubCoreServiceListOpenSourceRepositoriesProcedure,
+			connect.WithSchema(gitHubCoreServiceMethods.ByName("ListOpenSourceRepositories")),
 			connect.WithClientOptions(opts...),
 		),
 		setOpenSourceApproval: connect.NewClient[githubcorev1.SetOpenSourceApprovalRequest, githubcorev1.SetOpenSourceApprovalResponse](
@@ -153,13 +155,13 @@ func NewGitHubCoreServiceClient(httpClient connect.HTTPClient, baseURL string, o
 
 // gitHubCoreServiceClient implements GitHubCoreServiceClient.
 type gitHubCoreServiceClient struct {
-	admitGrant              *connect.Client[githubcorev1.AdmitGrantRequest, githubcorev1.AdmitGrantResponse]
-	getJob                  *connect.Client[githubcorev1.GetJobRequest, githubcorev1.GetJobResponse]
-	fillJobFailingStep      *connect.Client[githubcorev1.FillJobFailingStepRequest, githubcorev1.FillJobFailingStepResponse]
-	listOpenSourceRepos     *connect.Client[githubcorev1.ListOpenSourceReposRequest, githubcorev1.ListOpenSourceReposResponse]
-	setOpenSourceApproval   *connect.Client[githubcorev1.SetOpenSourceApprovalRequest, githubcorev1.SetOpenSourceApprovalResponse]
-	mapInstallation         *connect.Client[githubcorev1.MapInstallationRequest, githubcorev1.MapInstallationResponse]
-	publishJobDeliveryCheck *connect.Client[githubcorev1.PublishJobDeliveryCheckRequest, githubcorev1.PublishJobDeliveryCheckResponse]
+	admitGrant                 *connect.Client[githubcorev1.AdmitGrantRequest, githubcorev1.AdmitGrantResponse]
+	getJob                     *connect.Client[githubcorev1.GetJobRequest, githubcorev1.GetJobResponse]
+	fillJobFailingStep         *connect.Client[githubcorev1.FillJobFailingStepRequest, githubcorev1.FillJobFailingStepResponse]
+	listOpenSourceRepositories *connect.Client[githubcorev1.ListOpenSourceRepositoriesRequest, githubcorev1.ListOpenSourceRepositoriesResponse]
+	setOpenSourceApproval      *connect.Client[githubcorev1.SetOpenSourceApprovalRequest, githubcorev1.SetOpenSourceApprovalResponse]
+	mapInstallation            *connect.Client[githubcorev1.MapInstallationRequest, githubcorev1.MapInstallationResponse]
+	publishJobDeliveryCheck    *connect.Client[githubcorev1.PublishJobDeliveryCheckRequest, githubcorev1.PublishJobDeliveryCheckResponse]
 }
 
 // AdmitGrant calls toshi.githubcore.v1.GitHubCoreService.AdmitGrant.
@@ -177,9 +179,10 @@ func (c *gitHubCoreServiceClient) FillJobFailingStep(ctx context.Context, req *c
 	return c.fillJobFailingStep.CallUnary(ctx, req)
 }
 
-// ListOpenSourceRepos calls toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepos.
-func (c *gitHubCoreServiceClient) ListOpenSourceRepos(ctx context.Context, req *connect.Request[githubcorev1.ListOpenSourceReposRequest]) (*connect.Response[githubcorev1.ListOpenSourceReposResponse], error) {
-	return c.listOpenSourceRepos.CallUnary(ctx, req)
+// ListOpenSourceRepositories calls
+// toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepositories.
+func (c *gitHubCoreServiceClient) ListOpenSourceRepositories(ctx context.Context, req *connect.Request[githubcorev1.ListOpenSourceRepositoriesRequest]) (*connect.Response[githubcorev1.ListOpenSourceRepositoriesResponse], error) {
+	return c.listOpenSourceRepositories.CallUnary(ctx, req)
 }
 
 // SetOpenSourceApproval calls toshi.githubcore.v1.GitHubCoreService.SetOpenSourceApproval.
@@ -213,12 +216,14 @@ type GitHubCoreServiceHandler interface {
 	// GitHub for the grant's job, a job GetJob shows: only when the job has
 	// ended, did not succeed and has no step stored.
 	FillJobFailingStep(context.Context, *connect.Request[githubcorev1.FillJobFailingStepRequest]) (*connect.Response[githubcorev1.FillJobFailingStepResponse], error)
-	// ListOpenSourceRepos lists the open-source gate's rows: for a tenant
+	// ListOpenSourceRepositories lists the open-source gate's rows: for a tenant
 	// caller, only rows of its tenants that have at least one GitHub App
 	// installation, and of the named tenant when one is named; for the
 	// operator, every row, or the named tenant's, and the kept approvals
-	// when no tenant is named.
-	ListOpenSourceRepos(context.Context, *connect.Request[githubcorev1.ListOpenSourceReposRequest]) (*connect.Response[githubcorev1.ListOpenSourceReposResponse], error)
+	// when no tenant is named. Rows are ordered by tenant, then repository.
+	//
+	// A page holds 100 repositories when page_size is zero, and 1000 at most.
+	ListOpenSourceRepositories(context.Context, *connect.Request[githubcorev1.ListOpenSourceRepositoriesRequest]) (*connect.Response[githubcorev1.ListOpenSourceRepositoriesResponse], error)
 	// SetOpenSourceApproval approves or revokes a repository on every
 	// tenant's row of it, or keeps the decision when no tenant has a row.
 	// The operator's only.
@@ -259,10 +264,10 @@ func NewGitHubCoreServiceHandler(svc GitHubCoreServiceHandler, opts ...connect.H
 		connect.WithSchema(gitHubCoreServiceMethods.ByName("FillJobFailingStep")),
 		connect.WithHandlerOptions(opts...),
 	)
-	gitHubCoreServiceListOpenSourceReposHandler := connect.NewUnaryHandler(
-		GitHubCoreServiceListOpenSourceReposProcedure,
-		svc.ListOpenSourceRepos,
-		connect.WithSchema(gitHubCoreServiceMethods.ByName("ListOpenSourceRepos")),
+	gitHubCoreServiceListOpenSourceRepositoriesHandler := connect.NewUnaryHandler(
+		GitHubCoreServiceListOpenSourceRepositoriesProcedure,
+		svc.ListOpenSourceRepositories,
+		connect.WithSchema(gitHubCoreServiceMethods.ByName("ListOpenSourceRepositories")),
 		connect.WithHandlerOptions(opts...),
 	)
 	gitHubCoreServiceSetOpenSourceApprovalHandler := connect.NewUnaryHandler(
@@ -291,8 +296,8 @@ func NewGitHubCoreServiceHandler(svc GitHubCoreServiceHandler, opts ...connect.H
 			gitHubCoreServiceGetJobHandler.ServeHTTP(w, r)
 		case GitHubCoreServiceFillJobFailingStepProcedure:
 			gitHubCoreServiceFillJobFailingStepHandler.ServeHTTP(w, r)
-		case GitHubCoreServiceListOpenSourceReposProcedure:
-			gitHubCoreServiceListOpenSourceReposHandler.ServeHTTP(w, r)
+		case GitHubCoreServiceListOpenSourceRepositoriesProcedure:
+			gitHubCoreServiceListOpenSourceRepositoriesHandler.ServeHTTP(w, r)
 		case GitHubCoreServiceSetOpenSourceApprovalProcedure:
 			gitHubCoreServiceSetOpenSourceApprovalHandler.ServeHTTP(w, r)
 		case GitHubCoreServiceMapInstallationProcedure:
@@ -320,8 +325,8 @@ func (UnimplementedGitHubCoreServiceHandler) FillJobFailingStep(context.Context,
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.githubcore.v1.GitHubCoreService.FillJobFailingStep is not implemented"))
 }
 
-func (UnimplementedGitHubCoreServiceHandler) ListOpenSourceRepos(context.Context, *connect.Request[githubcorev1.ListOpenSourceReposRequest]) (*connect.Response[githubcorev1.ListOpenSourceReposResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepos is not implemented"))
+func (UnimplementedGitHubCoreServiceHandler) ListOpenSourceRepositories(context.Context, *connect.Request[githubcorev1.ListOpenSourceRepositoriesRequest]) (*connect.Response[githubcorev1.ListOpenSourceRepositoriesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepositories is not implemented"))
 }
 
 func (UnimplementedGitHubCoreServiceHandler) SetOpenSourceApproval(context.Context, *connect.Request[githubcorev1.SetOpenSourceApprovalRequest]) (*connect.Response[githubcorev1.SetOpenSourceApprovalResponse], error) {

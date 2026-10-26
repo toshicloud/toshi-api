@@ -39,13 +39,15 @@ service ArtifactUploadService {
 service ArtifactService {
   // ListArtifacts returns the workspace's artifacts, oldest first, by
   // project, environment, workload, execution and kind.
+  //
+  // A page holds 50 artifacts when page_size is zero, and 200 at most.
   rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse);
   // GetArtifact returns one artifact's record, never a key or a URL.
   rpc GetArtifact(GetArtifactRequest) returns (GetArtifactResponse);
-  // GetDownloadURL returns a signed URL that expires, and the artifact's
-  // data key when it is envelope encrypted. An artifact that is not
-  // complete fails with FAILED_PRECONDITION.
-  rpc GetDownloadURL(GetDownloadURLRequest) returns (GetDownloadURLResponse);
+  // GetArtifactDownloadURL returns a signed URL that expires, and the
+  // artifact's data key when it is envelope encrypted. An artifact that is
+  // not complete fails with FAILED_PRECONDITION.
+  rpc GetArtifactDownloadURL(GetArtifactDownloadURLRequest) returns (GetArtifactDownloadURLResponse);
 }
 
 // Artifact is an uploaded file's record: what it is, who uploaded it, and
@@ -156,7 +158,7 @@ message GetArtifactResponse {
   Artifact artifact = 1;
 }
 
-message GetDownloadURLRequest {
+message GetArtifactDownloadURLRequest {
   string artifact_id = 1;
   // Empty for a one-object artifact; part-00000 and on, or index, for a
   // multi-part one.
@@ -165,7 +167,7 @@ message GetDownloadURLRequest {
   int64 ttl_seconds = 3;
 }
 
-message GetDownloadURLResponse {
+message GetArtifactDownloadURLResponse {
   string url = 1;
   google.protobuf.Timestamp expires_at = 2;
   string encryption = 3;

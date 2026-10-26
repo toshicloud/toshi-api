@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/githubcore/v1/githubcore.proto.
  */
 export const file_toshi_githubcore_v1_githubcore: GenFile = /*@__PURE__*/
-  fileDesc("CiR0b3NoaS9naXRodWJjb3JlL3YxL2dpdGh1YmNvcmUucHJvdG8SE3Rvc2hpLmdpdGh1YmNvcmUudjEiEwoRQWRtaXRHcmFudFJlcXVlc3QipgIKEkFkbWl0R3JhbnRSZXNwb25zZRIMCgRjYWxsGAEgASgJEhIKCmFjdG9yX2tpbmQYAiABKAkSEAoIYWN0b3JfaWQYAyABKAkSDwoHdGVuYW50cxgEIAMoCRIOCgZqb2JfaWQYBSABKAkSDgoGdGVuYW50GAYgASgJEgwKBHJlcG8YByABKAkSEAoIYXBwcm92ZWQYCCABKAgSFwoPaW5zdGFsbGF0aW9uX2lkGAkgASgDEhIKCmdlbmVyYXRpb24YCiABKAMSLgoKY3JlYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKZXhwaXJlc19hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiHwoNR2V0Sm9iUmVxdWVzdBIOCgZqb2JfaWQYASABKAkiNwoOR2V0Sm9iUmVzcG9uc2USJQoDam9iGAEgASgLMhgudG9zaGkuZ2l0aHViY29yZS52MS5Kb2IiqQEKA0pvYhIKCgJpZBgBIAEoCRIOCgZ0ZW5hbnQYAiABKAkSDAoEcmVwbxgDIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYBCABKAMSFwoPd29ya2Zsb3dfam9iX2lkGAUgASgDEg0KBXN0YXRlGAYgASgJEhIKCmNvbmNsdXNpb24YByABKAkSDQoFZXJyb3IYCCABKAkSFAoMZmFpbGluZ19zdGVwGAkgASgJIjkKGUZpbGxKb2JGYWlsaW5nU3RlcFJlcXVlc3QSDgoGam9iX2lkGAEgASgJEgwKBHN0ZXAYAiABKAkiHAoaRmlsbEpvYkZhaWxpbmdTdGVwUmVzcG9uc2UiLAoaTGlzdE9wZW5Tb3VyY2VSZXBvc1JlcXVlc3QSDgoGdGVuYW50GAEgASgJIowBChtMaXN0T3BlblNvdXJjZVJlcG9zUmVzcG9uc2USMgoFcmVwb3MYASADKAsyIy50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VSZXBvEjkKBGtlcHQYAiADKAsyKy50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VLZXB0QXBwcm92YWwigwMKDk9wZW5Tb3VyY2VSZXBvEg4KBnRlbmFudBgBIAEoCRIMCgRyZXBvGAIgASgJEhcKD2luc3RhbGxhdGlvbl9pZBgDIAEoAxINCgVmb3VuZBgEIAEoCBIPCgdwcml2YXRlGAUgASgIEg8KB3NwZHhfaWQYBiABKAkSMwoPcmVwb19jcmVhdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpjaGVja2VkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxhdHRlbXB0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBWVycm9yGAogASgJEhAKCGFwcHJvdmFsGAsgASgJEjcKE2FwcHJvdmFsX2NoYW5nZWRfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhgKEGZvcmtfcHJfYXBwcm92YWwYDSABKAkiVwoWT3BlblNvdXJjZUtlcHRBcHByb3ZhbBIMCgRyZXBvGAEgASgJEi8KC2FwcHJvdmVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI+ChxTZXRPcGVuU291cmNlQXBwcm92YWxSZXF1ZXN0EgwKBHJlcG8YASABKAkSEAoIYXBwcm92ZWQYAiABKAgijgEKHVNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlc3BvbnNlEjIKBXJlcG9zGAEgAygLMiMudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlUmVwbxI5CgRrZXB0GAIgASgLMisudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlS2VwdEFwcHJvdmFsIkEKFk1hcEluc3RhbGxhdGlvblJlcXVlc3QSFwoPaW5zdGFsbGF0aW9uX2lkGAEgASgDEg4KBnRlbmFudBgCIAEoCSIZChdNYXBJbnN0YWxsYXRpb25SZXNwb25zZSJVCh5QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1JlcXVlc3QSEgoKZ2VuZXJhdGlvbhgBIAEoAxIOCgZyZXN1bHQYAiABKAkSDwoHbGFja2luZxgDIAMoAyI0Ch9QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1Jlc3BvbnNlEhEKCXB1Ymxpc2hlZBgBIAEoCDKrBgoRR2l0SHViQ29yZVNlcnZpY2USXQoKQWRtaXRHcmFudBImLnRvc2hpLmdpdGh1YmNvcmUudjEuQWRtaXRHcmFudFJlcXVlc3QaJy50b3NoaS5naXRodWJjb3JlLnYxLkFkbWl0R3JhbnRSZXNwb25zZRJRCgZHZXRKb2ISIi50b3NoaS5naXRodWJjb3JlLnYxLkdldEpvYlJlcXVlc3QaIy50b3NoaS5naXRodWJjb3JlLnYxLkdldEpvYlJlc3BvbnNlEnUKEkZpbGxKb2JGYWlsaW5nU3RlcBIuLnRvc2hpLmdpdGh1YmNvcmUudjEuRmlsbEpvYkZhaWxpbmdTdGVwUmVxdWVzdBovLnRvc2hpLmdpdGh1YmNvcmUudjEuRmlsbEpvYkZhaWxpbmdTdGVwUmVzcG9uc2USeAoTTGlzdE9wZW5Tb3VyY2VSZXBvcxIvLnRvc2hpLmdpdGh1YmNvcmUudjEuTGlzdE9wZW5Tb3VyY2VSZXBvc1JlcXVlc3QaMC50b3NoaS5naXRodWJjb3JlLnYxLkxpc3RPcGVuU291cmNlUmVwb3NSZXNwb25zZRJ+ChVTZXRPcGVuU291cmNlQXBwcm92YWwSMS50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlcXVlc3QaMi50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlc3BvbnNlEmwKD01hcEluc3RhbGxhdGlvbhIrLnRvc2hpLmdpdGh1YmNvcmUudjEuTWFwSW5zdGFsbGF0aW9uUmVxdWVzdBosLnRvc2hpLmdpdGh1YmNvcmUudjEuTWFwSW5zdGFsbGF0aW9uUmVzcG9uc2UShAEKF1B1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrEjMudG9zaGkuZ2l0aHViY29yZS52MS5QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1JlcXVlc3QaNC50b3NoaS5naXRodWJjb3JlLnYxLlB1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrUmVzcG9uc2VCLlosZ2l0aHViLmNvbS90b3NoaWNsb3VkL3Rvc2hpLWFwaS9naXRodWJjb3JldjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("CiR0b3NoaS9naXRodWJjb3JlL3YxL2dpdGh1YmNvcmUucHJvdG8SE3Rvc2hpLmdpdGh1YmNvcmUudjEiEwoRQWRtaXRHcmFudFJlcXVlc3QirAIKEkFkbWl0R3JhbnRSZXNwb25zZRIMCgRjYWxsGAEgASgJEhIKCmFjdG9yX2tpbmQYAiABKAkSEAoIYWN0b3JfaWQYAyABKAkSDwoHdGVuYW50cxgEIAMoCRIOCgZqb2JfaWQYBSABKAkSDgoGdGVuYW50GAYgASgJEhIKCnJlcG9zaXRvcnkYByABKAkSEAoIYXBwcm92ZWQYCCABKAgSFwoPaW5zdGFsbGF0aW9uX2lkGAkgASgDEhIKCmdlbmVyYXRpb24YCiABKAMSLgoKY3JlYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKZXhwaXJlc19hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiHwoNR2V0Sm9iUmVxdWVzdBIOCgZqb2JfaWQYASABKAkiNwoOR2V0Sm9iUmVzcG9uc2USJQoDam9iGAEgASgLMhgudG9zaGkuZ2l0aHViY29yZS52MS5Kb2IirwEKA0pvYhIKCgJpZBgBIAEoCRIOCgZ0ZW5hbnQYAiABKAkSEgoKcmVwb3NpdG9yeRgDIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYBCABKAMSFwoPd29ya2Zsb3dfam9iX2lkGAUgASgDEg0KBXN0YXRlGAYgASgJEhIKCmNvbmNsdXNpb24YByABKAkSDQoFZXJyb3IYCCABKAkSFAoMZmFpbGluZ19zdGVwGAkgASgJIjkKGUZpbGxKb2JGYWlsaW5nU3RlcFJlcXVlc3QSDgoGam9iX2lkGAEgASgJEgwKBHN0ZXAYAiABKAkiHAoaRmlsbEpvYkZhaWxpbmdTdGVwUmVzcG9uc2UiWgohTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXNSZXF1ZXN0Eg4KBnRlbmFudBgBIAEoCRIRCglwYWdlX3NpemUYAiABKAUSEgoKcGFnZV90b2tlbhgDIAEoCSK5AQoiTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXNSZXNwb25zZRI/CgxyZXBvc2l0b3JpZXMYASADKAsyKS50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VSZXBvc2l0b3J5EjkKBGtlcHQYAiADKAsyKy50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VLZXB0QXBwcm92YWwSFwoPbmV4dF9wYWdlX3Rva2VuGAMgASgJIo8DChRPcGVuU291cmNlUmVwb3NpdG9yeRIOCgZ0ZW5hbnQYASABKAkSEgoKcmVwb3NpdG9yeRgCIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYAyABKAMSDQoFZm91bmQYBCABKAgSDwoHcHJpdmF0ZRgFIAEoCBIPCgdzcGR4X2lkGAYgASgJEjMKD3JlcG9fY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY2hlY2tlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMYXR0ZW1wdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgVlcnJvchgKIAEoCRIQCghhcHByb3ZhbBgLIAEoCRI3ChNhcHByb3ZhbF9jaGFuZ2VkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIYChBmb3JrX3ByX2FwcHJvdmFsGA0gASgJIl0KFk9wZW5Tb3VyY2VLZXB0QXBwcm92YWwSEgoKcmVwb3NpdG9yeRgBIAEoCRIvCgthcHByb3ZlZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiRAocU2V0T3BlblNvdXJjZUFwcHJvdmFsUmVxdWVzdBISCgpyZXBvc2l0b3J5GAEgASgJEhAKCGFwcHJvdmVkGAIgASgIIpsBCh1TZXRPcGVuU291cmNlQXBwcm92YWxSZXNwb25zZRI/CgxyZXBvc2l0b3JpZXMYASADKAsyKS50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VSZXBvc2l0b3J5EjkKBGtlcHQYAiABKAsyKy50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VLZXB0QXBwcm92YWwiQQoWTWFwSW5zdGFsbGF0aW9uUmVxdWVzdBIXCg9pbnN0YWxsYXRpb25faWQYASABKAMSDgoGdGVuYW50GAIgASgJIhkKF01hcEluc3RhbGxhdGlvblJlc3BvbnNlIlUKHlB1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrUmVxdWVzdBISCgpnZW5lcmF0aW9uGAEgASgDEg4KBnJlc3VsdBgCIAEoCRIPCgdsYWNraW5nGAMgAygDIjQKH1B1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrUmVzcG9uc2USEQoJcHVibGlzaGVkGAEgASgIMsEGChFHaXRIdWJDb3JlU2VydmljZRJdCgpBZG1pdEdyYW50EiYudG9zaGkuZ2l0aHViY29yZS52MS5BZG1pdEdyYW50UmVxdWVzdBonLnRvc2hpLmdpdGh1YmNvcmUudjEuQWRtaXRHcmFudFJlc3BvbnNlElEKBkdldEpvYhIiLnRvc2hpLmdpdGh1YmNvcmUudjEuR2V0Sm9iUmVxdWVzdBojLnRvc2hpLmdpdGh1YmNvcmUudjEuR2V0Sm9iUmVzcG9uc2USdQoSRmlsbEpvYkZhaWxpbmdTdGVwEi4udG9zaGkuZ2l0aHViY29yZS52MS5GaWxsSm9iRmFpbGluZ1N0ZXBSZXF1ZXN0Gi8udG9zaGkuZ2l0aHViY29yZS52MS5GaWxsSm9iRmFpbGluZ1N0ZXBSZXNwb25zZRKNAQoaTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXMSNi50b3NoaS5naXRodWJjb3JlLnYxLkxpc3RPcGVuU291cmNlUmVwb3NpdG9yaWVzUmVxdWVzdBo3LnRvc2hpLmdpdGh1YmNvcmUudjEuTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXNSZXNwb25zZRJ+ChVTZXRPcGVuU291cmNlQXBwcm92YWwSMS50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlcXVlc3QaMi50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlc3BvbnNlEmwKD01hcEluc3RhbGxhdGlvbhIrLnRvc2hpLmdpdGh1YmNvcmUudjEuTWFwSW5zdGFsbGF0aW9uUmVxdWVzdBosLnRvc2hpLmdpdGh1YmNvcmUudjEuTWFwSW5zdGFsbGF0aW9uUmVzcG9uc2UShAEKF1B1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrEjMudG9zaGkuZ2l0aHViY29yZS52MS5QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1JlcXVlc3QaNC50b3NoaS5naXRodWJjb3JlLnYxLlB1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrUmVzcG9uc2VCLlosZ2l0aHViLmNvbS90b3NoaWNsb3VkL3Rvc2hpLWFwaS9naXRodWJjb3JldjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message toshi.githubcore.v1.AdmitGrantRequest
@@ -70,7 +70,7 @@ export type AdmitGrantResponse = Message<"toshi.githubcore.v1.AdmitGrantResponse
   tenants: string[];
 
   /**
-   * job_id, tenant, repo, approved and installation_id are the call's
+   * job_id, tenant, repository, approved and installation_id are the call's
    * arguments the grant binds.
    *
    * @generated from field: string job_id = 5;
@@ -83,9 +83,9 @@ export type AdmitGrantResponse = Message<"toshi.githubcore.v1.AdmitGrantResponse
   tenant: string;
 
   /**
-   * @generated from field: string repo = 7;
+   * @generated from field: string repository = 7;
    */
-  repo: string;
+  repository: string;
 
   /**
    * @generated from field: bool approved = 8;
@@ -148,7 +148,7 @@ export type AdmitGrantResponseJson = {
   tenants?: string[];
 
   /**
-   * job_id, tenant, repo, approved and installation_id are the call's
+   * job_id, tenant, repository, approved and installation_id are the call's
    * arguments the grant binds.
    *
    * @generated from field: string job_id = 5;
@@ -161,9 +161,9 @@ export type AdmitGrantResponseJson = {
   tenant?: string;
 
   /**
-   * @generated from field: string repo = 7;
+   * @generated from field: string repository = 7;
    */
-  repo?: string;
+  repository?: string;
 
   /**
    * @generated from field: bool approved = 8;
@@ -271,9 +271,9 @@ export type Job = Message<"toshi.githubcore.v1.Job"> & {
   tenant: string;
 
   /**
-   * @generated from field: string repo = 3;
+   * @generated from field: string repository = 3;
    */
-  repo: string;
+  repository: string;
 
   /**
    * @generated from field: int64 installation_id = 4;
@@ -323,9 +323,9 @@ export type JobJson = {
   tenant?: string;
 
   /**
-   * @generated from field: string repo = 3;
+   * @generated from field: string repository = 3;
    */
-  repo?: string;
+  repository?: string;
 
   /**
    * @generated from field: int64 installation_id = 4;
@@ -422,9 +422,9 @@ export const FillJobFailingStepResponseSchema: GenMessage<FillJobFailingStepResp
   messageDesc(file_toshi_githubcore_v1_githubcore, 6);
 
 /**
- * @generated from message toshi.githubcore.v1.ListOpenSourceReposRequest
+ * @generated from message toshi.githubcore.v1.ListOpenSourceRepositoriesRequest
  */
-export type ListOpenSourceReposRequest = Message<"toshi.githubcore.v1.ListOpenSourceReposRequest"> & {
+export type ListOpenSourceRepositoriesRequest = Message<"toshi.githubcore.v1.ListOpenSourceRepositoriesRequest"> & {
   /**
    * tenant is the tenant whose rows to list; empty for every tenant the
    * caller may see.
@@ -432,12 +432,26 @@ export type ListOpenSourceReposRequest = Message<"toshi.githubcore.v1.ListOpenSo
    * @generated from field: string tenant = 1;
    */
   tenant: string;
+
+  /**
+   * The most repositories in one page; zero lets the server choose.
+   *
+   * @generated from field: int32 page_size = 2;
+   */
+  pageSize: number;
+
+  /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
+   * @generated from field: string page_token = 3;
+   */
+  pageToken: string;
 };
 
 /**
- * @generated from message toshi.githubcore.v1.ListOpenSourceReposRequest
+ * @generated from message toshi.githubcore.v1.ListOpenSourceRepositoriesRequest
  */
-export type ListOpenSourceReposRequestJson = {
+export type ListOpenSourceRepositoriesRequestJson = {
   /**
    * tenant is the tenant whose rows to list; empty for every tenant the
    * caller may see.
@@ -445,67 +459,99 @@ export type ListOpenSourceReposRequestJson = {
    * @generated from field: string tenant = 1;
    */
   tenant?: string;
+
+  /**
+   * The most repositories in one page; zero lets the server choose.
+   *
+   * @generated from field: int32 page_size = 2;
+   */
+  pageSize?: number;
+
+  /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
+   * @generated from field: string page_token = 3;
+   */
+  pageToken?: string;
 };
 
 /**
- * Describes the message toshi.githubcore.v1.ListOpenSourceReposRequest.
- * Use `create(ListOpenSourceReposRequestSchema)` to create a new message.
+ * Describes the message toshi.githubcore.v1.ListOpenSourceRepositoriesRequest.
+ * Use `create(ListOpenSourceRepositoriesRequestSchema)` to create a new message.
  */
-export const ListOpenSourceReposRequestSchema: GenMessage<ListOpenSourceReposRequest, {jsonType: ListOpenSourceReposRequestJson}> = /*@__PURE__*/
+export const ListOpenSourceRepositoriesRequestSchema: GenMessage<ListOpenSourceRepositoriesRequest, {jsonType: ListOpenSourceRepositoriesRequestJson}> = /*@__PURE__*/
   messageDesc(file_toshi_githubcore_v1_githubcore, 7);
 
 /**
- * @generated from message toshi.githubcore.v1.ListOpenSourceReposResponse
+ * @generated from message toshi.githubcore.v1.ListOpenSourceRepositoriesResponse
  */
-export type ListOpenSourceReposResponse = Message<"toshi.githubcore.v1.ListOpenSourceReposResponse"> & {
+export type ListOpenSourceRepositoriesResponse = Message<"toshi.githubcore.v1.ListOpenSourceRepositoriesResponse"> & {
   /**
-   * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepo repos = 1;
+   * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepository repositories = 1;
    */
-  repos: OpenSourceRepo[];
+  repositories: OpenSourceRepository[];
 
   /**
+   * Every page holds all of them.
+   *
    * @generated from field: repeated toshi.githubcore.v1.OpenSourceKeptApproval kept = 2;
    */
   kept: OpenSourceKeptApproval[];
+
+  /**
+   * Empty on the last page.
+   *
+   * @generated from field: string next_page_token = 3;
+   */
+  nextPageToken: string;
 };
 
 /**
- * @generated from message toshi.githubcore.v1.ListOpenSourceReposResponse
+ * @generated from message toshi.githubcore.v1.ListOpenSourceRepositoriesResponse
  */
-export type ListOpenSourceReposResponseJson = {
+export type ListOpenSourceRepositoriesResponseJson = {
   /**
-   * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepo repos = 1;
+   * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepository repositories = 1;
    */
-  repos?: OpenSourceRepoJson[];
+  repositories?: OpenSourceRepositoryJson[];
 
   /**
+   * Every page holds all of them.
+   *
    * @generated from field: repeated toshi.githubcore.v1.OpenSourceKeptApproval kept = 2;
    */
   kept?: OpenSourceKeptApprovalJson[];
+
+  /**
+   * Empty on the last page.
+   *
+   * @generated from field: string next_page_token = 3;
+   */
+  nextPageToken?: string;
 };
 
 /**
- * Describes the message toshi.githubcore.v1.ListOpenSourceReposResponse.
- * Use `create(ListOpenSourceReposResponseSchema)` to create a new message.
+ * Describes the message toshi.githubcore.v1.ListOpenSourceRepositoriesResponse.
+ * Use `create(ListOpenSourceRepositoriesResponseSchema)` to create a new message.
  */
-export const ListOpenSourceReposResponseSchema: GenMessage<ListOpenSourceReposResponse, {jsonType: ListOpenSourceReposResponseJson}> = /*@__PURE__*/
+export const ListOpenSourceRepositoriesResponseSchema: GenMessage<ListOpenSourceRepositoriesResponse, {jsonType: ListOpenSourceRepositoriesResponseJson}> = /*@__PURE__*/
   messageDesc(file_toshi_githubcore_v1_githubcore, 8);
 
 /**
- * OpenSourceRepo is one tenant's row of the open-source gate.
+ * OpenSourceRepository is one tenant's row of the open-source gate.
  *
- * @generated from message toshi.githubcore.v1.OpenSourceRepo
+ * @generated from message toshi.githubcore.v1.OpenSourceRepository
  */
-export type OpenSourceRepo = Message<"toshi.githubcore.v1.OpenSourceRepo"> & {
+export type OpenSourceRepository = Message<"toshi.githubcore.v1.OpenSourceRepository"> & {
   /**
    * @generated from field: string tenant = 1;
    */
   tenant: string;
 
   /**
-   * @generated from field: string repo = 2;
+   * @generated from field: string repository = 2;
    */
-  repo: string;
+  repository: string;
 
   /**
    * @generated from field: int64 installation_id = 3;
@@ -564,20 +610,20 @@ export type OpenSourceRepo = Message<"toshi.githubcore.v1.OpenSourceRepo"> & {
 };
 
 /**
- * OpenSourceRepo is one tenant's row of the open-source gate.
+ * OpenSourceRepository is one tenant's row of the open-source gate.
  *
- * @generated from message toshi.githubcore.v1.OpenSourceRepo
+ * @generated from message toshi.githubcore.v1.OpenSourceRepository
  */
-export type OpenSourceRepoJson = {
+export type OpenSourceRepositoryJson = {
   /**
    * @generated from field: string tenant = 1;
    */
   tenant?: string;
 
   /**
-   * @generated from field: string repo = 2;
+   * @generated from field: string repository = 2;
    */
-  repo?: string;
+  repository?: string;
 
   /**
    * @generated from field: int64 installation_id = 3;
@@ -636,10 +682,10 @@ export type OpenSourceRepoJson = {
 };
 
 /**
- * Describes the message toshi.githubcore.v1.OpenSourceRepo.
- * Use `create(OpenSourceRepoSchema)` to create a new message.
+ * Describes the message toshi.githubcore.v1.OpenSourceRepository.
+ * Use `create(OpenSourceRepositorySchema)` to create a new message.
  */
-export const OpenSourceRepoSchema: GenMessage<OpenSourceRepo, {jsonType: OpenSourceRepoJson}> = /*@__PURE__*/
+export const OpenSourceRepositorySchema: GenMessage<OpenSourceRepository, {jsonType: OpenSourceRepositoryJson}> = /*@__PURE__*/
   messageDesc(file_toshi_githubcore_v1_githubcore, 9);
 
 /**
@@ -650,9 +696,9 @@ export const OpenSourceRepoSchema: GenMessage<OpenSourceRepo, {jsonType: OpenSou
  */
 export type OpenSourceKeptApproval = Message<"toshi.githubcore.v1.OpenSourceKeptApproval"> & {
   /**
-   * @generated from field: string repo = 1;
+   * @generated from field: string repository = 1;
    */
-  repo: string;
+  repository: string;
 
   /**
    * @generated from field: google.protobuf.Timestamp approved_at = 2;
@@ -668,9 +714,9 @@ export type OpenSourceKeptApproval = Message<"toshi.githubcore.v1.OpenSourceKept
  */
 export type OpenSourceKeptApprovalJson = {
   /**
-   * @generated from field: string repo = 1;
+   * @generated from field: string repository = 1;
    */
-  repo?: string;
+  repository?: string;
 
   /**
    * @generated from field: google.protobuf.Timestamp approved_at = 2;
@@ -690,9 +736,9 @@ export const OpenSourceKeptApprovalSchema: GenMessage<OpenSourceKeptApproval, {j
  */
 export type SetOpenSourceApprovalRequest = Message<"toshi.githubcore.v1.SetOpenSourceApprovalRequest"> & {
   /**
-   * @generated from field: string repo = 1;
+   * @generated from field: string repository = 1;
    */
-  repo: string;
+  repository: string;
 
   /**
    * @generated from field: bool approved = 2;
@@ -705,9 +751,9 @@ export type SetOpenSourceApprovalRequest = Message<"toshi.githubcore.v1.SetOpenS
  */
 export type SetOpenSourceApprovalRequestJson = {
   /**
-   * @generated from field: string repo = 1;
+   * @generated from field: string repository = 1;
    */
-  repo?: string;
+  repository?: string;
 
   /**
    * @generated from field: bool approved = 2;
@@ -727,12 +773,12 @@ export const SetOpenSourceApprovalRequestSchema: GenMessage<SetOpenSourceApprova
  */
 export type SetOpenSourceApprovalResponse = Message<"toshi.githubcore.v1.SetOpenSourceApprovalResponse"> & {
   /**
-   * repos are the repository's rows after the change; kept is set instead
-   * when no tenant has a row and the decision was kept.
+   * repositories are the repository's rows after the change; kept is set
+   * instead when no tenant has a row and the decision was kept.
    *
-   * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepo repos = 1;
+   * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepository repositories = 1;
    */
-  repos: OpenSourceRepo[];
+  repositories: OpenSourceRepository[];
 
   /**
    * @generated from field: toshi.githubcore.v1.OpenSourceKeptApproval kept = 2;
@@ -745,12 +791,12 @@ export type SetOpenSourceApprovalResponse = Message<"toshi.githubcore.v1.SetOpen
  */
 export type SetOpenSourceApprovalResponseJson = {
   /**
-   * repos are the repository's rows after the change; kept is set instead
-   * when no tenant has a row and the decision was kept.
+   * repositories are the repository's rows after the change; kept is set
+   * instead when no tenant has a row and the decision was kept.
    *
-   * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepo repos = 1;
+   * @generated from field: repeated toshi.githubcore.v1.OpenSourceRepository repositories = 1;
    */
-  repos?: OpenSourceRepoJson[];
+  repositories?: OpenSourceRepositoryJson[];
 
   /**
    * @generated from field: toshi.githubcore.v1.OpenSourceKeptApproval kept = 2;
@@ -932,8 +978,8 @@ export const PublishJobDeliveryCheckResponseSchema: GenMessage<PublishJobDeliver
  *
  * Each product call allows AdmitGrant and:
  *   - GetJobFailure: GetJob and FillJobFailingStep, for the grant's job;
- *   - ListOpenSourceRepos: ListOpenSourceRepos, for the grant's tenant or
- *     none;
+ *   - ListOpenSourceRepositories: ListOpenSourceRepositories, for the
+ *     grant's tenant or none;
  *   - SetOpenSourceApproval: SetOpenSourceApproval, for the grant's
  *     repository and decision;
  *   - MapInstallation: MapInstallation, for the grant's installation and
@@ -989,18 +1035,20 @@ export const GitHubCoreService: GenService<{
     output: typeof FillJobFailingStepResponseSchema;
   },
   /**
-   * ListOpenSourceRepos lists the open-source gate's rows: for a tenant
+   * ListOpenSourceRepositories lists the open-source gate's rows: for a tenant
    * caller, only rows of its tenants that have at least one GitHub App
    * installation, and of the named tenant when one is named; for the
    * operator, every row, or the named tenant's, and the kept approvals
-   * when no tenant is named.
+   * when no tenant is named. Rows are ordered by tenant, then repository.
    *
-   * @generated from rpc toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepos
+   * A page holds 100 repositories when page_size is zero, and 1000 at most.
+   *
+   * @generated from rpc toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepositories
    */
-  listOpenSourceRepos: {
+  listOpenSourceRepositories: {
     methodKind: "unary";
-    input: typeof ListOpenSourceReposRequestSchema;
-    output: typeof ListOpenSourceReposResponseSchema;
+    input: typeof ListOpenSourceRepositoriesRequestSchema;
+    output: typeof ListOpenSourceRepositoriesResponseSchema;
   },
   /**
    * SetOpenSourceApproval approves or revokes a repository on every

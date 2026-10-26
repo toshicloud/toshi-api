@@ -1,270 +1,16 @@
 syntax = "proto3";
 
-// Package toshi.workspace.v1 is the Workspace API: the one workload resource
-// of every kind (job, sandbox, service), the executions and operations under
-// it, and the event log every change is written to.
+// Package toshi.workspace.v1 is the Workspace API: WorkloadService's jobs,
+// sandboxes and services, the executions and operations under them and the
+// event log every change is written to, and the services of the workspace's
+// other resources.
 package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
-import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/workspace/v1/recordings.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
-
-// WorkspaceService is the Workspace API. The caller's credential
-// names the workspace; every request names the project and the environment
-// in its project and environment fields, and a call that leaves either empty
-// fails with INVALID_ARGUMENT. The environment is one of the project's
-// environments; a project or environment the workspace does not
-// have is NOT_FOUND. A workload, execution, operation or event of another
-// project or environment is NOT_FOUND.
-//
-// Every mutating call takes a request_key. A key is bound to the workspace,
-// the call and the request's payload: a retry with the same key and the same
-// payload returns what the first call returned and starts nothing new; the
-// same key with a different payload fails with FAILED_PRECONDITION.
-// CreateWorkload requires a key: a create without one fails with
-// INVALID_ARGUMENT. For the other calls an empty key means no retry
-// protection. CancelWorkload takes none: a repeat of it changes nothing.
-//
-// A caller over its rate limit gets RESOURCE_EXHAUSTED with a
-// google.rpc.RetryInfo detail: the delay before a retry, on every protocol.
-// The same whole seconds are in a Retry-After response header on Connect and
-// gRPC-Web calls and on gRPC streams, and in the trailing metadata of a gRPC
-// unary call.
-service WorkspaceService {
-  // CreateWorkload creates a workload of the kind its spec names and returns
-  // it. With wait_for_end set, a job's call blocks until the job ends or the
-  // bound passes. If the job has ended when the call answers, the answer
-  // carries its exit status and output without a second read; otherwise it
-  // carries the job as it is and no output, and no later call returns it.
-  rpc CreateWorkload(CreateWorkloadRequest) returns (CreateWorkloadResponse);
-
-  // GetWorkload returns one workload. An unknown ID fails with NOT_FOUND.
-  rpc GetWorkload(GetWorkloadRequest) returns (GetWorkloadResponse);
-
-  // ListWorkloads returns the workloads that match every filter that is set,
-  // oldest first, a page at a time. A page token from one call stays valid
-  // while workloads are created: a later page never repeats or skips a
-  // workload of an earlier one.
-  rpc ListWorkloads(ListWorkloadsRequest) returns (ListWorkloadsResponse);
-
-  // PatchWorkload changes the fields the mask names and returns the workload.
-  // "labels" can be changed on any workload. "sandbox.max_duration" raises a
-  // running sandbox's limit and must be the only path: the new limit, in
-  // whole minutes from the sandbox's start, above its current one and no
-  // longer than the plan's sandbox cap. The response then carries an
-  // operation, which completes successfully when the sandbox's host
-  // acknowledges the new limit in time and the sandbox still runs with no
-  // stop asked for; until then the workload shows the current one. The
-  // operation fails with UNAVAILABLE when the host does not acknowledge the
-  // limit in time, and with FAILED_PRECONDITION when the sandbox stops
-  // first; the limit the control plane records is then unchanged. A host
-  // that applied the new limit but whose acknowledgment was lost can keep
-  // it until it takes the old limit back or the sandbox stops. A sandbox
-  // that is not running, has a stop asked for, has no limit of its own or
-  // has a raise pending, or whose host's agent cannot take a new limit,
-  // fails with FAILED_PRECONDITION. Another path fails with
-  // INVALID_ARGUMENT.
-  rpc PatchWorkload(PatchWorkloadRequest) returns (PatchWorkloadResponse);
-
-  // DeleteWorkload ends a workload that has not ended and then removes it.
-  // A job is cancelled, a sandbox or service is stopped, and every execution
-  // in it is cancelled. It returns an operation that is done once the
-  // workload is removed; GetWorkload then fails with NOT_FOUND, and the event
-  // log keeps its events.
-  rpc DeleteWorkload(DeleteWorkloadRequest) returns (DeleteWorkloadResponse);
-
-  // CancelWorkload cancels a job that has not ended and returns it. The job
-  // is kept: it ends with END_REASON_CANCELLED, and GetWorkload and
-  // ListWorkloads return it. A job whose command has not started ends at
-  // once, and the answer carries the end; a job whose command runs ends
-  // once its host has stopped it, and WaitWorkload waits for that end.
-  // Every execution in the job is cancelled. A call for a job that has
-  // ended changes nothing and returns the job as it is. An unknown ID fails
-  // with NOT_FOUND; a sandbox or service fails with INVALID_ARGUMENT, since
-  // DeleteWorkload stops one.
-  rpc CancelWorkload(CancelWorkloadRequest) returns (CancelWorkloadResponse);
-
-  // WaitWorkload blocks until the workload is in one of the states asked for
-  // or the bound passes, whichever is first, and returns the workload as it
-  // then is. Passing the bound is not an error: reached is false, and the
-  // caller asks again. The server may wait less than the bound asked for.
-  rpc WaitWorkload(WaitWorkloadRequest) returns (WaitWorkloadResponse);
-
-  // WatchWorkloads streams each change to a workload as the event log
-  // records it, from the position after a cursor, then as changes happen.
-  // A cursor from ListWorkloads, ListEvents or an earlier message resumes
-  // with no change missed and none repeated, while the log still keeps the
-  // events after it; an older cursor fails with OUT_OF_RANGE.
-  rpc WatchWorkloads(WatchWorkloadsRequest) returns (stream WatchWorkloadsResponse);
-
-  // WatchOutput streams a job's standard output and error while it runs:
-  // the bytes the server holds from the offsets asked for, then each write
-  // as it happens, and last how the job ended. A job that has not started
-  // yet is waited for. The server holds the first 1 MiB of each stream, as
-  // for CreateWorkload's output, and only while the job runs: a job whose
-  // output this server no longer holds (it has ended) or never held (its
-  // command runs on another server) fails with FAILED_PRECONDITION, and a
-  // job that ends while the call is answered is followed to its end. A
-  // sandbox or service fails with INVALID_ARGUMENT.
-  // A reader never slows or cancels the job: each reads what the server
-  // holds at its own pace.
-  rpc WatchOutput(WatchOutputRequest) returns (stream WatchOutputResponse);
-
-  // WatchTelemetry streams a sandbox's resource samples as its host reports
-  // them, in cursor order: the samples kept after a cursor, then each one as
-  // it is stored. Each sample stored takes the next cursor, also one timed
-  // before a sample already sent. Last comes an end, once the sandbox has
-  // ended and every sample still kept that was stored before it ended has
-  // been sent. A host can report a sample after the end: a watch resumed
-  // from the last cursor returns it, then ends again. A sandbox that has
-  // not started yet is waited for. A job or service fails with
-  // INVALID_ARGUMENT.
-  rpc WatchTelemetry(WatchTelemetryRequest) returns (stream WatchTelemetryResponse);
-
-  // WatchGuestLog streams what a sandbox's VM writes to its serial console:
-  // the bytes its host keeps from a cursor on, then each write as it
-  // happens, until the sandbox ends. The host keeps the newest part of the
-  // console; bytes it no longer keeps are skipped, and the next chunk's
-  // offset shows the gap. A slow reader does not block the VM's console
-  // writes; bytes rotated out before it reads them are skipped. A sandbox
-  // that has not started yet is waited for, and so is an empty console. A
-  // sandbox that has ended, or whose host keeps no console log, fails with
-  // FAILED_PRECONDITION. A job or service fails with INVALID_ARGUMENT.
-  rpc WatchGuestLog(WatchGuestLogRequest) returns (stream WatchGuestLogResponse);
-
-  // Execute starts a command in a running workload. The first request
-  // carries the start message; later requests carry standard input. The
-  // stream answers with the execution's ID, then its standard output and
-  // error as they are written, and ends with its exit status. A workload
-  // that is not running fails with FAILED_PRECONDITION. A server may cancel
-  // an execution whose client stops reading its output.
-  rpc Execute(stream ExecuteRequest) returns (stream ExecuteResponse);
-
-  // CancelExecution stops an execution. Its Execute stream ends with an exit
-  // that says it was cancelled. Cancelling an execution that has ended
-  // changes nothing. It returns once the execution has ended, whether or not
-  // the Execute stream's client still reads it.
-  rpc CancelExecution(CancelExecutionRequest) returns (CancelExecutionResponse);
-
-  // GetOperation returns one operation. An unknown ID fails with NOT_FOUND.
-  rpc GetOperation(GetOperationRequest) returns (GetOperationResponse);
-
-  // WaitOperation blocks until the operation is done or the bound passes,
-  // whichever is first, and returns it. Passing the bound is not an error:
-  // the operation comes back not done, and the caller asks again. The server
-  // may wait less than the bound asked for.
-  rpc WaitOperation(WaitOperationRequest) returns (WaitOperationResponse);
-
-  // ListEvents returns the events after a cursor, oldest first, a page at a
-  // time, for a client that polls or catches up after downtime.
-  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse);
-
-  // WatchEvents streams the events after a cursor, then each new event as
-  // it is written, for a client that stays connected.
-  rpc WatchEvents(WatchEventsRequest) returns (stream WatchEventsResponse);
-
-  // CreatePreviewShareLink mints a share link for one of a running
-  // sandbox's previews: the channel `preview`, served at the sandbox's own
-  // hostname, unless the request names another of its http channels. The
-  // link is a signed link that admits one device, the first to open it,
-  // until it expires, carries its byte cap or is revoked, and only at that
-  // channel's hostname. The link is in this answer only. The sandbox must
-  // be running with that preview open, or the call fails with
-  // FAILED_PRECONDITION, as it does when the workspace's plan turns share
-  // links off. A channel or port the sandbox has no http channel for fails
-  // with NOT_FOUND; a channel that is not http, a port outside 1 to 65535,
-  // or an expiry or a byte cap above the plan's, with INVALID_ARGUMENT.
-  rpc CreatePreviewShareLink(CreatePreviewShareLinkRequest) returns (CreatePreviewShareLinkResponse);
-
-  // ListPreviewShareLinks returns a sandbox's share links, for all of its
-  // previews, the oldest first, never with the link itself.
-  rpc ListPreviewShareLinks(ListPreviewShareLinksRequest) returns (ListPreviewShareLinksResponse);
-
-  // RevokePreviewShareLink revokes a share link: it admits no device
-  // again, and its open connections end within seconds. Revoking a link
-  // that was revoked or has ended returns it as it is.
-  rpc RevokePreviewShareLink(RevokePreviewShareLinkRequest) returns (RevokePreviewShareLinkResponse);
-
-  // StartService starts a service. An always-on service's workload
-  // moves from CREATED to QUEUED and its first run is queued as a job on
-  // a host, placed by the service's size; the run's start moves the
-  // workload to RUNNING. While the service is started, a run that ends is
-  // followed by another. An on-demand service is started asleep: it runs
-  // only once WakeService, a hold or a connect on one of its channels
-  // wakes it, and sleeps again when it has been idle for its recipe's
-  // idle period. Starting a started service returns it as it is. A size
-  // that is not a Linux one and a start past the plan's shared services
-  // fail with FAILED_PRECONDITION.
-  rpc StartService(StartServiceRequest) returns (StartServiceResponse);
-
-  // StopService stops a service: its workload moves back to CREATED and
-  // its live run is stopped. Stopping a service that is not started
-  // returns it as it is.
-  rpc StopService(StopServiceRequest) returns (StopServiceResponse);
-
-  // SetServiceMode sets a service's mode. A started service stays
-  // started: set to ON_DEMAND, it sleeps once it is idle; set to
-  // ALWAYS_ON while asleep, its next run is queued.
-  rpc SetServiceMode(SetServiceModeRequest) returns (SetServiceModeResponse);
-
-  // WakeService wakes a started on-demand service that is asleep: its
-  // workload moves from CREATED to QUEUED and a run is queued, placed as a
-  // start is. A wake keeps the service awake for its recipe's idle period;
-  // waking an awake one extends that. The answer does not wait for the run
-  // to be ready: its ServiceRun's ready_at says when it is. Waking a
-  // started always-on service returns it as it is; a service that is not
-  // started fails with FAILED_PRECONDITION.
-  rpc WakeService(WakeServiceRequest) returns (WakeServiceResponse);
-
-  // HoldService takes or renews the caller's hold on a started service:
-  // while any hold is live, an on-demand service does not sleep, and a
-  // hold on one that is asleep wakes it. Each caller has one hold per
-  // service, live until its time to live runs out or ReleaseService drops
-  // it. A hold gives no access to the service. A service that is not
-  // started fails with FAILED_PRECONDITION, and a time to live above an
-  // hour with INVALID_ARGUMENT.
-  rpc HoldService(HoldServiceRequest) returns (HoldServiceResponse);
-
-  // ReleaseService drops the caller's hold on a service. Releasing a hold
-  // the caller does not have returns the service as it is.
-  rpc ReleaseService(ReleaseServiceRequest) returns (ReleaseServiceResponse);
-
-  // ListServiceRuns returns a service's runs, the newest first: each run
-  // is a job on a host, of the revision that was current when it was
-  // queued.
-  rpc ListServiceRuns(ListServiceRunsRequest) returns (ListServiceRunsResponse);
-}
-
-// WorkloadKind says how a workload runs and ends.
-enum WorkloadKind {
-  WORKLOAD_KIND_UNSPECIFIED = 0;
-  // Starts, runs its command and ends on its own.
-  WORKLOAD_KIND_JOB = 1;
-  // Runs until its owner stops it.
-  WORKLOAD_KIND_SANDBOX = 2;
-  // A long-running service.
-  WORKLOAD_KIND_SERVICE = 3;
-}
-
-// WorkloadState is where a workload is in its life. Every kind shares it. A
-// workload can skip a state: a job cancelled while queued ends without
-// running.
-enum WorkloadState {
-  WORKLOAD_STATE_UNSPECIFIED = 0;
-  // Recorded, not yet waiting for capacity.
-  WORKLOAD_STATE_CREATED = 1;
-  // Waiting for capacity.
-  WORKLOAD_STATE_QUEUED = 2;
-  // Its VM is up: a job's command is running, a sandbox or service is
-  // serving.
-  WORKLOAD_STATE_RUNNING = 3;
-  // It ended; the status's end_reason says how. An ended workload does not
-  // run again.
-  WORKLOAD_STATE_ENDED = 4;
-}
 
 // EndReason says how a workload ended.
 enum EndReason {
@@ -297,25 +43,152 @@ enum StopReason {
   STOP_REASON_OPERATOR = 6;
 }
 
-// Workload is one unit of work of any kind.
-message Workload {
-  // Assigned by the server; unique within the workspace.
+// Job runs one command once and ends.
+message Job {
+  // Assigned by the server; unique within the workspace, among its jobs,
+  // sandboxes and services.
   string id = 1;
-  // Follows from which spec is set.
-  WorkloadKind kind = 2;
-  // The kind-specific spec, as created.
-  oneof spec {
-    JobSpec job = 3;
-    SandboxSpec sandbox = 4;
-    ServiceSpec service = 5;
-  }
-  WorkloadStatus status = 6;
-  string project = 7;
-  string environment = 8;
-  // Free-form labels, set at create and changed by PatchWorkload.
-  map<string, string> labels = 9;
+  string project = 2;
+  string environment = 3;
+  // Free-form labels, set at create and changed by UpdateJob.
+  map<string, string> labels = 4;
+  // The job as created.
+  JobSpec spec = 5;
+  JobStatus status = 6;
   // What it records of its runs, fixed at create: never UNSPECIFIED.
-  RecordingPolicy recording = 10;
+  RecordingPolicy recording = 7;
+}
+
+// JobStatus is a job's state and when it got there.
+message JobStatus {
+  JobState state = 1;
+  // Set once the state is ENDED: EXITED, CANCELLED or FAILED.
+  EndReason end_reason = 2;
+  // The most recent error Toshi met running the job.
+  Error last_error = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp queued_at = 5;
+  google.protobuf.Timestamp started_at = 6;
+  google.protobuf.Timestamp ended_at = 7;
+  // When anything in the job last changed.
+  google.protobuf.Timestamp updated_at = 8;
+  // The command's exit status, set when end_reason is EXITED.
+  optional int32 exit_code = 9;
+}
+
+// JobState is where a job is in its life. A job can skip a state: one
+// cancelled while queued ends without running.
+enum JobState {
+  JOB_STATE_UNSPECIFIED = 0;
+  // Recorded, not yet waiting for capacity.
+  JOB_STATE_CREATED = 1;
+  // Waiting for capacity.
+  JOB_STATE_QUEUED = 2;
+  // Its VM is up and its command is running.
+  JOB_STATE_RUNNING = 3;
+  // It ended; the status's end_reason says how. An ended job does not run
+  // again.
+  JOB_STATE_ENDED = 4;
+}
+
+// Sandbox runs until it is deleted or its time limit passes.
+message Sandbox {
+  // Assigned by the server; unique within the workspace, among its jobs,
+  // sandboxes and services.
+  string id = 1;
+  string project = 2;
+  string environment = 3;
+  // Free-form labels, set at create and changed by UpdateSandbox.
+  map<string, string> labels = 4;
+  // The sandbox as created, with max_duration as UpdateSandbox last raised
+  // it.
+  SandboxSpec spec = 5;
+  SandboxStatus status = 6;
+  // What it records of its runs, fixed at create: never UNSPECIFIED.
+  RecordingPolicy recording = 7;
+}
+
+// SandboxStatus is a sandbox's state and when it got there.
+message SandboxStatus {
+  SandboxState state = 1;
+  // Set once the state is ENDED: STOPPED or FAILED.
+  EndReason end_reason = 2;
+  // The most recent error Toshi met running the sandbox.
+  Error last_error = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp queued_at = 5;
+  google.protobuf.Timestamp started_at = 6;
+  google.protobuf.Timestamp ended_at = 7;
+  // When anything in the sandbox last changed.
+  google.protobuf.Timestamp updated_at = 8;
+  // Why it was stopped, set once it has ended: with STOPPED, and with
+  // FAILED when it failed after a stop was asked.
+  StopReason stop_reason = 9;
+  // While it runs, its previews: one for each of its http channels served
+  // at a hostname of its own, the channel `preview` among them. Empty
+  // while the control plane serves no previews. Making or deleting such a
+  // channel changes the sandbox, so WatchSandboxes sends it again.
+  repeated SandboxPreview previews = 10;
+}
+
+// SandboxState is where a sandbox is in its life. A sandbox can skip a
+// state: one deleted while queued ends without running.
+enum SandboxState {
+  SANDBOX_STATE_UNSPECIFIED = 0;
+  // Recorded, not yet waiting for capacity.
+  SANDBOX_STATE_CREATED = 1;
+  // Waiting for capacity.
+  SANDBOX_STATE_QUEUED = 2;
+  // Its VM is up and serving.
+  SANDBOX_STATE_RUNNING = 3;
+  // It ended; the status's end_reason says how. An ended sandbox does not
+  // run again.
+  SANDBOX_STATE_ENDED = 4;
+}
+
+// Service is a long-running service, started, stopped, woken and held.
+message Service {
+  // Assigned by the server; unique within the workspace, among its jobs,
+  // sandboxes and services.
+  string id = 1;
+  string project = 2;
+  string environment = 3;
+  // Free-form labels, set at create and changed by UpdateService.
+  map<string, string> labels = 4;
+  // The service as ServiceSpec describes its answers.
+  ServiceSpec spec = 5;
+  ServiceStatus status = 6;
+}
+
+// ServiceStatus is a service's state and when it got there.
+message ServiceStatus {
+  ServiceState state = 1;
+  // Set once the state is ENDED: STOPPED or FAILED.
+  EndReason end_reason = 2;
+  // The most recent error Toshi met running the service.
+  Error last_error = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp queued_at = 5;
+  google.protobuf.Timestamp started_at = 6;
+  google.protobuf.Timestamp ended_at = 7;
+  // When anything in the service last changed.
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// ServiceState is where a service is in its life. Unlike a job or a
+// sandbox, a service moves back: StopService returns it to CREATED, and an
+// on-demand service that sleeps returns to CREATED until it is woken.
+enum ServiceState {
+  SERVICE_STATE_UNSPECIFIED = 0;
+  // Recorded, and not started or asleep.
+  SERVICE_STATE_CREATED = 1;
+  // A run is waiting for capacity.
+  SERVICE_STATE_QUEUED = 2;
+  // A run's VM is up and serving.
+  SERVICE_STATE_RUNNING = 3;
+  // It ended; the status's end_reason says how. An ended service does not
+  // run again.
+  SERVICE_STATE_ENDED = 4;
 }
 
 // RecordingPolicy is what a workload records of its runs.
@@ -345,8 +218,13 @@ message JobSpec {
   Command command = 1;
   // What in its workspace the job uses. Checked at create
   // against the job's project and environment, and fixed when the job
-  // starts; GetWorkloadResponse.bound shows what each was fixed to.
+  // starts; GetJobResponse.bound shows what each was fixed to.
   repeated Binding bindings = 2;
+  // The runner size the job runs at, a Linux size such as
+  // "toshi-linux-2x": jobs run on Linux guests only. Empty in a create
+  // takes the configured default size. Another value fails the create with
+  // INVALID_ARGUMENT.
+  string size = 3;
 }
 
 // Binding is one binding a workload declares.
@@ -433,7 +311,7 @@ message SandboxSpec {
   // How long it may run, in whole minutes. Unset, it runs until the plan's
   // sandbox cap passes, or until it is stopped when the plan sets none. It
   // cannot be longer than the plan's cap. Its owner can raise it while the
-  // sandbox runs (PatchWorkload).
+  // sandbox runs (UpdateSandbox).
   google.protobuf.Duration max_duration = 2;
   // What in its workspace the sandbox uses: only the secret set
   // of its environment. Checked at create and fixed when the sandbox
@@ -519,32 +397,6 @@ message Command {
   string cwd = 3;
 }
 
-// WorkloadStatus is a workload's state and when it got there.
-message WorkloadStatus {
-  WorkloadState state = 1;
-  // Set once the state is ENDED.
-  EndReason end_reason = 2;
-  // A job's exit status, set when end_reason is EXITED.
-  optional int32 exit_code = 3;
-  // The most recent error Toshi met running the workload.
-  Error last_error = 4;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp queued_at = 6;
-  google.protobuf.Timestamp started_at = 7;
-  google.protobuf.Timestamp ended_at = 8;
-  // When anything in the workload last changed.
-  google.protobuf.Timestamp updated_at = 9;
-  // Why a sandbox was stopped, set once it has ended: with STOPPED, and
-  // with FAILED when it failed after a stop was asked.
-  StopReason stop_reason = 10;
-  // A running sandbox's previews: one for each of its http channels served
-  // at a hostname of its own, the channel `preview` among them. Empty for
-  // a job, and while the control plane serves no previews. Making or
-  // deleting such a channel changes the workload, so WatchWorkloads sends
-  // it again.
-  repeated SandboxPreview previews = 11;
-}
-
 // SandboxPreview is where a browser opens one http channel of a sandbox.
 message SandboxPreview {
   // The channel's name; `preview` for the port the sandbox's image
@@ -570,153 +422,6 @@ message Output {
   bytes stderr = 2;
   // True when the server kept only the start of a stream.
   bool truncated = 3;
-}
-
-message CreateWorkloadRequest {
-  string project = 1;
-  string environment = 2;
-  // Exactly one is set; it names the kind.
-  oneof spec {
-    JobSpec job = 3;
-    SandboxSpec sandbox = 4;
-    ServiceSpec service = 5;
-  }
-  map<string, string> labels = 6;
-  // Required: the same key on every retry of this create.
-  string request_key = 7;
-  // For a job: block until it ends, at most this long. Zero returns at once.
-  // Set for another kind it fails with INVALID_ARGUMENT.
-  google.protobuf.Duration wait_for_end = 8;
-  // What the workload records of its runs. UNSPECIFIED takes the default
-  // RecordingPolicy names.
-  RecordingPolicy recording = 9;
-}
-
-message CreateWorkloadResponse {
-  Workload workload = 1;
-  // Set when wait_for_end was set and the job had ended when the call
-  // answered.
-  Output output = 2;
-}
-
-message GetWorkloadRequest {
-  string project = 1;
-  string environment = 2;
-  string id = 3;
-}
-
-message GetWorkloadResponse {
-  Workload workload = 1;
-  // The workload's bindings as they were fixed when it started, in name
-  // order; empty before it started.
-  repeated BoundBinding bound = 2;
-}
-
-message ListWorkloadsRequest {
-  string project = 1;
-  string environment = 2;
-  // Empty matches every kind.
-  repeated WorkloadKind kinds = 3;
-  // Empty matches every state.
-  repeated WorkloadState states = 4;
-  // The most workloads in one page; zero lets the server choose.
-  int32 page_size = 5;
-  // From an earlier response's next_page_token; empty for the first page.
-  string page_token = 6;
-  // Only the workloads that carry every one of these labels, each with
-  // exactly this value. A workload without one of the keys never matches,
-  // even when the value given is empty. No labels matches every workload.
-  map<string, string> labels = 7;
-}
-
-message ListWorkloadsResponse {
-  repeated Workload workloads = 1;
-  // Empty on the last page.
-  string next_page_token = 2;
-  // The event log's position when the first page was read; every page of
-  // the list returns it. WatchWorkloads from this cursor shows every change
-  // after the list.
-  string cursor = 3;
-}
-
-message PatchWorkloadRequest {
-  string project = 1;
-  string environment = 2;
-  string id = 3;
-  // Carries the new values of the fields update_mask names.
-  Workload workload = 4;
-  google.protobuf.FieldMask update_mask = 5;
-  string request_key = 6;
-}
-
-message PatchWorkloadResponse {
-  Workload workload = 1;
-  // Set when the mask names "sandbox.max_duration": completes successfully
-  // when the sandbox's host acknowledges the new limit in time.
-  Operation operation = 2;
-}
-
-message DeleteWorkloadRequest {
-  string project = 1;
-  string environment = 2;
-  string id = 3;
-  string request_key = 4;
-}
-
-message DeleteWorkloadResponse {
-  Operation operation = 1;
-}
-
-message CancelWorkloadRequest {
-  string project = 1;
-  string environment = 2;
-  string id = 3;
-}
-
-message CancelWorkloadResponse {
-  Workload workload = 1;
-}
-
-message WaitWorkloadRequest {
-  string project = 1;
-  string environment = 2;
-  string id = 3;
-  // Return once the workload is in any of these states; empty means ENDED.
-  repeated WorkloadState states = 4;
-  // The longest to block.
-  google.protobuf.Duration timeout = 5;
-}
-
-message WaitWorkloadResponse {
-  Workload workload = 1;
-  // False when the bound passed first.
-  bool reached = 2;
-}
-
-message WatchWorkloadsRequest {
-  string project = 1;
-  string environment = 2;
-  // Empty matches every kind.
-  repeated WorkloadKind kinds = 3;
-  // Changes after this position; empty starts at the oldest event the log
-  // keeps. A cursor older than that event fails with OUT_OF_RANGE.
-  string cursor = 4;
-  // Ask for keepalives: a message with only keepalive set whenever the
-  // stream has sent nothing for an interval the server sets (30
-  // seconds by default). Without it the stream sends changes only.
-  bool keepalive = 5;
-}
-
-message WatchWorkloadsResponse {
-  // The event that recorded the change.
-  EventType type = 1;
-  // The workload after the change.
-  Workload workload = 2;
-  // Resume after this change.
-  string cursor = 3;
-  // Set on a keepalive, with every other field empty. Only a request
-  // with keepalive set gets one.
-  Keepalive keepalive = 4;
 }
 
 message WatchOutputRequest {
@@ -882,7 +587,8 @@ message ExecuteRequest {
 message ExecuteStart {
   string project = 1;
   string environment = 2;
-  string workload_id = 3;
+  // The sandbox the command runs in.
+  string sandbox_id = 3;
   Command command = 4;
   // A retry with the same key does not start a second command: its stream
   // carries the first execution's started message and, once it has ended,
@@ -993,9 +699,15 @@ message Event {
   google.protobuf.Timestamp time = 5;
   // Resume after this event.
   string cursor = 6;
+  reserved 7;
+  reserved "workload";
   oneof payload {
-    // The workload after the change, for the WORKLOAD_* types.
-    Workload workload = 7;
+    // The job after the change, for the WORKLOAD_* types of a job.
+    Job job = 13;
+    // The sandbox after the change, for the WORKLOAD_* types of a sandbox.
+    Sandbox sandbox = 14;
+    // The service after the change, for the WORKLOAD_* types of a service.
+    Service service = 15;
     // For the EXECUTION_* types.
     ExecutionEvent execution = 8;
     // For EMITTED.
@@ -1037,18 +749,23 @@ message ListEventsRequest {
   string environment = 2;
   // Empty matches every workload.
   string workload_id = 3;
-  // Events after this position; empty starts at the oldest event the log
-  // keeps. A cursor older than that event fails with OUT_OF_RANGE.
-  string cursor = 4;
+  // From an earlier response's next_page_token or cursor, or an event's
+  // cursor: the events after that position. Empty starts at the oldest
+  // event the log keeps; a position older than that event fails with
+  // OUT_OF_RANGE.
+  string page_token = 4;
   // The most events in one page; zero lets the server choose.
   int32 page_size = 5;
 }
 
 message ListEventsResponse {
   repeated Event events = 1;
-  // The position after the last event returned, or the cursor asked for
-  // when there were none: pass it to the next call.
+  // The position after the last event returned, or the page_token asked
+  // for when there were none. WatchEvents from this cursor shows every
+  // event after this page.
   string cursor = 2;
+  // Empty on the last page.
+  string next_page_token = 3;
 }
 
 message WatchEventsRequest {
@@ -1103,7 +820,8 @@ enum PreviewShareLinkState {
 message PreviewShareLink {
   // Assigned by the server.
   string id = 1;
-  string workload_id = 2;
+  // The sandbox whose preview the link opens.
+  string sandbox_id = 2;
   PreviewShareLinkState state = 3;
   google.protobuf.Timestamp created_at = 4;
   google.protobuf.Timestamp expires_at = 5;
@@ -1128,7 +846,7 @@ message CreatePreviewShareLinkRequest {
   string project = 1;
   string environment = 2;
   // The sandbox whose preview the link opens.
-  string workload_id = 3;
+  string sandbox_id = 3;
   // How long the link stays valid, at most the plan's maximum; unset is
   // 24 hours, or the plan's maximum when that is shorter.
   google.protobuf.Duration expires_in = 4;
@@ -1153,17 +871,23 @@ message CreatePreviewShareLinkResponse {
 message ListPreviewShareLinksRequest {
   string project = 1;
   string environment = 2;
-  string workload_id = 3;
+  string sandbox_id = 3;
+  // The most share links in one page; zero lets the server choose.
+  int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
 }
 
 message ListPreviewShareLinksResponse {
   repeated PreviewShareLink share_links = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message RevokePreviewShareLinkRequest {
   string project = 1;
   string environment = 2;
-  string workload_id = 3;
+  string sandbox_id = 3;
   string share_link_id = 4;
 }
 
@@ -1180,7 +904,10 @@ message StartServiceRequest {
 }
 
 message StartServiceResponse {
-  Workload workload = 1;
+  reserved 1;
+  reserved "workload";
+  // The service after the start.
+  Service service = 2;
 }
 
 message StopServiceRequest {
@@ -1191,7 +918,10 @@ message StopServiceRequest {
 }
 
 message StopServiceResponse {
-  Workload workload = 1;
+  reserved 1;
+  reserved "workload";
+  // The service after the stop.
+  Service service = 2;
 }
 
 message SetServiceModeRequest {
@@ -1204,7 +934,10 @@ message SetServiceModeRequest {
 }
 
 message SetServiceModeResponse {
-  Workload workload = 1;
+  reserved 1;
+  reserved "workload";
+  // The service after the change.
+  Service service = 2;
 }
 
 message WakeServiceRequest {
@@ -1215,7 +948,10 @@ message WakeServiceRequest {
 }
 
 message WakeServiceResponse {
-  Workload workload = 1;
+  reserved 1;
+  reserved "workload";
+  // The service after the wake.
+  Service service = 2;
 }
 
 message HoldServiceRequest {
@@ -1228,8 +964,11 @@ message HoldServiceRequest {
 }
 
 message HoldServiceResponse {
-  Workload workload = 1;
+  reserved 1;
+  reserved "workload";
   ServiceHold hold = 2;
+  // The service after the hold.
+  Service service = 3;
 }
 
 // ServiceHold is one caller's hold on a service.
@@ -1248,19 +987,26 @@ message ReleaseServiceRequest {
 }
 
 message ReleaseServiceResponse {
-  Workload workload = 1;
+  reserved 1;
+  reserved "workload";
+  // The service after the release.
+  Service service = 2;
 }
 
 message ListServiceRunsRequest {
   string project = 1;
   string environment = 2;
   string id = 3;
-  // How many of the newest runs to return, at most 100; 0 returns 20.
+  // The most runs in one page; zero lets the server choose.
   int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
 }
 
 message ListServiceRunsResponse {
   repeated ServiceRun runs = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 // ServiceRun is one run of a service: a job on a host.

@@ -9,12 +9,12 @@ option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
 // WebhookService manages a workspace's webhook endpoints: the URLs its
 // events are POSTed to, signed per Standard Webhooks. The caller's credential
-// names the workspace, as for WorkspaceService. An endpoint belongs to the
+// names the workspace, as for WorkloadService. An endpoint belongs to the
 // workspace, not to a project or environment, and is owed the events of all
 // of them; no request names either. An endpoint of another workspace is
 // NOT_FOUND.
 //
-// Every mutating call takes a request_key, with WorkspaceService's rule: a
+// Every mutating call takes a request_key, with WorkloadService's rule: a
 // retry with the same key and the same payload returns what the first
 // call returned and changes nothing; the same key with a different payload
 // fails with FAILED_PRECONDITION; an empty key means no retry protection.
@@ -36,6 +36,8 @@ service WebhookService {
   rpc GetWebhookEndpoint(GetWebhookEndpointRequest) returns (GetWebhookEndpointResponse);
 
   // ListWebhookEndpoints returns the workspace's endpoints in ID order.
+  //
+  // A page holds 100 endpoints when page_size is zero, and 1000 at most.
   rpc ListWebhookEndpoints(ListWebhookEndpointsRequest) returns (ListWebhookEndpointsResponse);
 
   // UpdateWebhookEndpoint sets the fields update_mask names: url, events,
@@ -59,6 +61,8 @@ service WebhookService {
 
   // ListWebhookDeliveries returns an endpoint's deliveries in event order,
   // a page at a time.
+  //
+  // A page holds 50 deliveries when page_size is zero, and 500 at most.
   rpc ListWebhookDeliveries(ListWebhookDeliveriesRequest) returns (ListWebhookDeliveriesResponse);
 
   // ReplayWebhookEvents makes the endpoint owed again the events after
@@ -147,10 +151,17 @@ message GetWebhookEndpointResponse {
   WebhookEndpoint endpoint = 1;
 }
 
-message ListWebhookEndpointsRequest {}
+message ListWebhookEndpointsRequest {
+  // The most endpoints in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
 
 message ListWebhookEndpointsResponse {
   repeated WebhookEndpoint endpoints = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message UpdateWebhookEndpointRequest {
@@ -186,17 +197,18 @@ message RotateWebhookEndpointSecretResponse {
 
 message ListWebhookDeliveriesRequest {
   string endpoint_id = 1;
-  // Deliveries of events after this cursor; empty starts at the oldest.
-  string cursor = 2;
+  // From an earlier response's next_page_token, or a delivery's cursor:
+  // the deliveries of the events after that position. Empty starts at the
+  // oldest.
+  string page_token = 2;
   // The most deliveries in one page; zero lets the server choose.
   int32 page_size = 3;
 }
 
 message ListWebhookDeliveriesResponse {
   repeated WebhookDelivery deliveries = 1;
-  // The cursor of the last delivery returned, or the cursor asked for when
-  // there were none: pass it to the next call.
-  string cursor = 2;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message ReplayWebhookEventsRequest {

@@ -782,7 +782,7 @@ func (x *GetArtifactResponse) GetArtifact() *Artifact {
 	return nil
 }
 
-type GetDownloadURLRequest struct {
+type GetArtifactDownloadURLRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	ArtifactId string                 `protobuf:"bytes,1,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
 	// Empty for a one-object artifact; part-00000 and on, or index, for a
@@ -794,20 +794,20 @@ type GetDownloadURLRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetDownloadURLRequest) Reset() {
-	*x = GetDownloadURLRequest{}
+func (x *GetArtifactDownloadURLRequest) Reset() {
+	*x = GetArtifactDownloadURLRequest{}
 	mi := &file_toshi_workspace_v1_artifacts_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetDownloadURLRequest) String() string {
+func (x *GetArtifactDownloadURLRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetDownloadURLRequest) ProtoMessage() {}
+func (*GetArtifactDownloadURLRequest) ProtoMessage() {}
 
-func (x *GetDownloadURLRequest) ProtoReflect() protoreflect.Message {
+func (x *GetArtifactDownloadURLRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_artifacts_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -819,33 +819,33 @@ func (x *GetDownloadURLRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDownloadURLRequest.ProtoReflect.Descriptor instead.
-func (*GetDownloadURLRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetArtifactDownloadURLRequest.ProtoReflect.Descriptor instead.
+func (*GetArtifactDownloadURLRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_artifacts_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *GetDownloadURLRequest) GetArtifactId() string {
+func (x *GetArtifactDownloadURLRequest) GetArtifactId() string {
 	if x != nil {
 		return x.ArtifactId
 	}
 	return ""
 }
 
-func (x *GetDownloadURLRequest) GetPart() string {
+func (x *GetArtifactDownloadURLRequest) GetPart() string {
 	if x != nil {
 		return x.Part
 	}
 	return ""
 }
 
-func (x *GetDownloadURLRequest) GetTtlSeconds() int64 {
+func (x *GetArtifactDownloadURLRequest) GetTtlSeconds() int64 {
 	if x != nil {
 		return x.TtlSeconds
 	}
 	return 0
 }
 
-type GetDownloadURLResponse struct {
+type GetArtifactDownloadURLResponse struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	Url        string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 	ExpiresAt  *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
@@ -856,20 +856,20 @@ type GetDownloadURLResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetDownloadURLResponse) Reset() {
-	*x = GetDownloadURLResponse{}
+func (x *GetArtifactDownloadURLResponse) Reset() {
+	*x = GetArtifactDownloadURLResponse{}
 	mi := &file_toshi_workspace_v1_artifacts_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetDownloadURLResponse) String() string {
+func (x *GetArtifactDownloadURLResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetDownloadURLResponse) ProtoMessage() {}
+func (*GetArtifactDownloadURLResponse) ProtoMessage() {}
 
-func (x *GetDownloadURLResponse) ProtoReflect() protoreflect.Message {
+func (x *GetArtifactDownloadURLResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_artifacts_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -881,33 +881,33 @@ func (x *GetDownloadURLResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDownloadURLResponse.ProtoReflect.Descriptor instead.
-func (*GetDownloadURLResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetArtifactDownloadURLResponse.ProtoReflect.Descriptor instead.
+func (*GetArtifactDownloadURLResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_artifacts_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *GetDownloadURLResponse) GetUrl() string {
+func (x *GetArtifactDownloadURLResponse) GetUrl() string {
 	if x != nil {
 		return x.Url
 	}
 	return ""
 }
 
-func (x *GetDownloadURLResponse) GetExpiresAt() *timestamppb.Timestamp {
+func (x *GetArtifactDownloadURLResponse) GetExpiresAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.ExpiresAt
 	}
 	return nil
 }
 
-func (x *GetDownloadURLResponse) GetEncryption() string {
+func (x *GetArtifactDownloadURLResponse) GetEncryption() string {
 	if x != nil {
 		return x.Encryption
 	}
 	return ""
 }
 
-func (x *GetDownloadURLResponse) GetDataKey() []byte {
+func (x *GetArtifactDownloadURLResponse) GetDataKey() []byte {
 	if x != nil {
 		return x.DataKey
 	}
@@ -997,14 +997,14 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\vartifact_id\x18\x01 \x01(\tR\n" +
 	"artifactId\"O\n" +
 	"\x13GetArtifactResponse\x128\n" +
-	"\bartifact\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.ArtifactR\bartifact\"m\n" +
-	"\x15GetDownloadURLRequest\x12\x1f\n" +
+	"\bartifact\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.ArtifactR\bartifact\"u\n" +
+	"\x1dGetArtifactDownloadURLRequest\x12\x1f\n" +
 	"\vartifact_id\x18\x01 \x01(\tR\n" +
 	"artifactId\x12\x12\n" +
 	"\x04part\x18\x02 \x01(\tR\x04part\x12\x1f\n" +
 	"\vttl_seconds\x18\x03 \x01(\x03R\n" +
-	"ttlSeconds\"\xa0\x01\n" +
-	"\x16GetDownloadURLResponse\x12\x10\n" +
+	"ttlSeconds\"\xa8\x01\n" +
+	"\x1eGetArtifactDownloadURLResponse\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x129\n" +
 	"\n" +
 	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1e\n" +
@@ -1014,11 +1014,11 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\bdata_key\x18\x04 \x01(\fR\adataKey2\xe6\x01\n" +
 	"\x15ArtifactUploadService\x12d\n" +
 	"\rReserveUpload\x12(.toshi.workspace.v1.ReserveUploadRequest\x1a).toshi.workspace.v1.ReserveUploadResponse\x12g\n" +
-	"\x0eCompleteUpload\x12).toshi.workspace.v1.CompleteUploadRequest\x1a*.toshi.workspace.v1.CompleteUploadResponse2\xc0\x02\n" +
+	"\x0eCompleteUpload\x12).toshi.workspace.v1.CompleteUploadRequest\x1a*.toshi.workspace.v1.CompleteUploadResponse2\xd8\x02\n" +
 	"\x0fArtifactService\x12d\n" +
 	"\rListArtifacts\x12(.toshi.workspace.v1.ListArtifactsRequest\x1a).toshi.workspace.v1.ListArtifactsResponse\x12^\n" +
-	"\vGetArtifact\x12&.toshi.workspace.v1.GetArtifactRequest\x1a'.toshi.workspace.v1.GetArtifactResponse\x12g\n" +
-	"\x0eGetDownloadURL\x12).toshi.workspace.v1.GetDownloadURLRequest\x1a*.toshi.workspace.v1.GetDownloadURLResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\vGetArtifact\x12&.toshi.workspace.v1.GetArtifactRequest\x1a'.toshi.workspace.v1.GetArtifactResponse\x12\x7f\n" +
+	"\x16GetArtifactDownloadURL\x121.toshi.workspace.v1.GetArtifactDownloadURLRequest\x1a2.toshi.workspace.v1.GetArtifactDownloadURLResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_artifacts_proto_rawDescOnce sync.Once
@@ -1034,21 +1034,21 @@ func file_toshi_workspace_v1_artifacts_proto_rawDescGZIP() []byte {
 
 var file_toshi_workspace_v1_artifacts_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_toshi_workspace_v1_artifacts_proto_goTypes = []any{
-	(*Artifact)(nil),               // 0: toshi.workspace.v1.Artifact
-	(*Upload)(nil),                 // 1: toshi.workspace.v1.Upload
-	(*ReserveUploadRequest)(nil),   // 2: toshi.workspace.v1.ReserveUploadRequest
-	(*ReserveUploadResponse)(nil),  // 3: toshi.workspace.v1.ReserveUploadResponse
-	(*CompleteUploadRequest)(nil),  // 4: toshi.workspace.v1.CompleteUploadRequest
-	(*CompleteUploadResponse)(nil), // 5: toshi.workspace.v1.CompleteUploadResponse
-	(*ListArtifactsRequest)(nil),   // 6: toshi.workspace.v1.ListArtifactsRequest
-	(*ListArtifactsResponse)(nil),  // 7: toshi.workspace.v1.ListArtifactsResponse
-	(*GetArtifactRequest)(nil),     // 8: toshi.workspace.v1.GetArtifactRequest
-	(*GetArtifactResponse)(nil),    // 9: toshi.workspace.v1.GetArtifactResponse
-	(*GetDownloadURLRequest)(nil),  // 10: toshi.workspace.v1.GetDownloadURLRequest
-	(*GetDownloadURLResponse)(nil), // 11: toshi.workspace.v1.GetDownloadURLResponse
-	nil,                            // 12: toshi.workspace.v1.Upload.HeadersEntry
-	(*timestamppb.Timestamp)(nil),  // 13: google.protobuf.Timestamp
-	(RecordingKind)(0),             // 14: toshi.workspace.v1.RecordingKind
+	(*Artifact)(nil),                       // 0: toshi.workspace.v1.Artifact
+	(*Upload)(nil),                         // 1: toshi.workspace.v1.Upload
+	(*ReserveUploadRequest)(nil),           // 2: toshi.workspace.v1.ReserveUploadRequest
+	(*ReserveUploadResponse)(nil),          // 3: toshi.workspace.v1.ReserveUploadResponse
+	(*CompleteUploadRequest)(nil),          // 4: toshi.workspace.v1.CompleteUploadRequest
+	(*CompleteUploadResponse)(nil),         // 5: toshi.workspace.v1.CompleteUploadResponse
+	(*ListArtifactsRequest)(nil),           // 6: toshi.workspace.v1.ListArtifactsRequest
+	(*ListArtifactsResponse)(nil),          // 7: toshi.workspace.v1.ListArtifactsResponse
+	(*GetArtifactRequest)(nil),             // 8: toshi.workspace.v1.GetArtifactRequest
+	(*GetArtifactResponse)(nil),            // 9: toshi.workspace.v1.GetArtifactResponse
+	(*GetArtifactDownloadURLRequest)(nil),  // 10: toshi.workspace.v1.GetArtifactDownloadURLRequest
+	(*GetArtifactDownloadURLResponse)(nil), // 11: toshi.workspace.v1.GetArtifactDownloadURLResponse
+	nil,                                    // 12: toshi.workspace.v1.Upload.HeadersEntry
+	(*timestamppb.Timestamp)(nil),          // 13: google.protobuf.Timestamp
+	(RecordingKind)(0),                     // 14: toshi.workspace.v1.RecordingKind
 }
 var file_toshi_workspace_v1_artifacts_proto_depIdxs = []int32{
 	13, // 0: toshi.workspace.v1.Artifact.created_at:type_name -> google.protobuf.Timestamp
@@ -1061,17 +1061,17 @@ var file_toshi_workspace_v1_artifacts_proto_depIdxs = []int32{
 	0,  // 7: toshi.workspace.v1.CompleteUploadResponse.artifact:type_name -> toshi.workspace.v1.Artifact
 	0,  // 8: toshi.workspace.v1.ListArtifactsResponse.artifacts:type_name -> toshi.workspace.v1.Artifact
 	0,  // 9: toshi.workspace.v1.GetArtifactResponse.artifact:type_name -> toshi.workspace.v1.Artifact
-	13, // 10: toshi.workspace.v1.GetDownloadURLResponse.expires_at:type_name -> google.protobuf.Timestamp
+	13, // 10: toshi.workspace.v1.GetArtifactDownloadURLResponse.expires_at:type_name -> google.protobuf.Timestamp
 	2,  // 11: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:input_type -> toshi.workspace.v1.ReserveUploadRequest
 	4,  // 12: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:input_type -> toshi.workspace.v1.CompleteUploadRequest
 	6,  // 13: toshi.workspace.v1.ArtifactService.ListArtifacts:input_type -> toshi.workspace.v1.ListArtifactsRequest
 	8,  // 14: toshi.workspace.v1.ArtifactService.GetArtifact:input_type -> toshi.workspace.v1.GetArtifactRequest
-	10, // 15: toshi.workspace.v1.ArtifactService.GetDownloadURL:input_type -> toshi.workspace.v1.GetDownloadURLRequest
+	10, // 15: toshi.workspace.v1.ArtifactService.GetArtifactDownloadURL:input_type -> toshi.workspace.v1.GetArtifactDownloadURLRequest
 	3,  // 16: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:output_type -> toshi.workspace.v1.ReserveUploadResponse
 	5,  // 17: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:output_type -> toshi.workspace.v1.CompleteUploadResponse
 	7,  // 18: toshi.workspace.v1.ArtifactService.ListArtifacts:output_type -> toshi.workspace.v1.ListArtifactsResponse
 	9,  // 19: toshi.workspace.v1.ArtifactService.GetArtifact:output_type -> toshi.workspace.v1.GetArtifactResponse
-	11, // 20: toshi.workspace.v1.ArtifactService.GetDownloadURL:output_type -> toshi.workspace.v1.GetDownloadURLResponse
+	11, // 20: toshi.workspace.v1.ArtifactService.GetArtifactDownloadURL:output_type -> toshi.workspace.v1.GetArtifactDownloadURLResponse
 	16, // [16:21] is the sub-list for method output_type
 	11, // [11:16] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name

@@ -29,8 +29,8 @@ option go_package = "github.com/toshicloud/toshi-api/githubcorev1";
 //
 // Each product call allows AdmitGrant and:
 //   - GetJobFailure: GetJob and FillJobFailingStep, for the grant's job;
-//   - ListOpenSourceRepos: ListOpenSourceRepos, for the grant's tenant or
-//     none;
+//   - ListOpenSourceRepositories: ListOpenSourceRepositories, for the
+//     grant's tenant or none;
 //   - SetOpenSourceApproval: SetOpenSourceApproval, for the grant's
 //     repository and decision;
 //   - MapInstallation: MapInstallation, for the grant's installation and
@@ -61,12 +61,14 @@ service GitHubCoreService {
   // ended, did not succeed and has no step stored.
   rpc FillJobFailingStep(FillJobFailingStepRequest) returns (FillJobFailingStepResponse);
 
-  // ListOpenSourceRepos lists the open-source gate's rows: for a tenant
+  // ListOpenSourceRepositories lists the open-source gate's rows: for a tenant
   // caller, only rows of its tenants that have at least one GitHub App
   // installation, and of the named tenant when one is named; for the
   // operator, every row, or the named tenant's, and the kept approvals
-  // when no tenant is named.
-  rpc ListOpenSourceRepos(ListOpenSourceReposRequest) returns (ListOpenSourceReposResponse);
+  // when no tenant is named. Rows are ordered by tenant, then repository.
+  //
+  // A page holds 100 repositories when page_size is zero, and 1000 at most.
+  rpc ListOpenSourceRepositories(ListOpenSourceRepositoriesRequest) returns (ListOpenSourceRepositoriesResponse);
 
   // SetOpenSourceApproval approves or revokes a repository on every
   // tenant's row of it, or keeps the decision when no tenant has a row.
@@ -97,11 +99,11 @@ message AdmitGrantResponse {
   string actor_id = 3;
   // tenants are the caller's tenants; empty for the operator.
   repeated string tenants = 4;
-  // job_id, tenant, repo, approved and installation_id are the call's
+  // job_id, tenant, repository, approved and installation_id are the call's
   // arguments the grant binds.
   string job_id = 5;
   string tenant = 6;
-  string repo = 7;
+  string repository = 7;
   bool approved = 8;
   int64 installation_id = 9;
   // generation is the delivery check the grant began; 0 for none.
@@ -122,7 +124,7 @@ message GetJobResponse {
 message Job {
   string id = 1;
   string tenant = 2;
-  string repo = 3;
+  string repository = 3;
   int64 installation_id = 4;
   int64 workflow_job_id = 5;
   string state = 6;
@@ -138,21 +140,28 @@ message FillJobFailingStepRequest {
 
 message FillJobFailingStepResponse {}
 
-message ListOpenSourceReposRequest {
+message ListOpenSourceRepositoriesRequest {
   // tenant is the tenant whose rows to list; empty for every tenant the
   // caller may see.
   string tenant = 1;
+  // The most repositories in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
 }
 
-message ListOpenSourceReposResponse {
-  repeated OpenSourceRepo repos = 1;
+message ListOpenSourceRepositoriesResponse {
+  repeated OpenSourceRepository repositories = 1;
+  // Every page holds all of them.
   repeated OpenSourceKeptApproval kept = 2;
+  // Empty on the last page.
+  string next_page_token = 3;
 }
 
-// OpenSourceRepo is one tenant's row of the open-source gate.
-message OpenSourceRepo {
+// OpenSourceRepository is one tenant's row of the open-source gate.
+message OpenSourceRepository {
   string tenant = 1;
-  string repo = 2;
+  string repository = 2;
   int64 installation_id = 3;
   bool found = 4;
   bool private = 5;
@@ -169,19 +178,19 @@ message OpenSourceRepo {
 // OpenSourceKeptApproval is an approval of a repository no tenant has a
 // row of yet.
 message OpenSourceKeptApproval {
-  string repo = 1;
+  string repository = 1;
   google.protobuf.Timestamp approved_at = 2;
 }
 
 message SetOpenSourceApprovalRequest {
-  string repo = 1;
+  string repository = 1;
   bool approved = 2;
 }
 
 message SetOpenSourceApprovalResponse {
-  // repos are the repository's rows after the change; kept is set instead
-  // when no tenant has a row and the decision was kept.
-  repeated OpenSourceRepo repos = 1;
+  // repositories are the repository's rows after the change; kept is set
+  // instead when no tenant has a row and the decision was kept.
+  repeated OpenSourceRepository repositories = 1;
   OpenSourceKeptApproval kept = 2;
 }
 

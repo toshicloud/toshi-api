@@ -1,0 +1,538 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// ChannelService manages the channels of the workspace's jobs, lists a
+// job's Forwards and reads its Link. A channel is a port in the job's
+// guest served as HTTP (an http channel), or a command whose input and
+// output clients attach to (a stream channel). The caller's credential
+// names the workspace, as for WorkloadService; a job of another workspace
+// is NOT_FOUND. Every call names the job by its ID as the jobs API and
+// `toshi host-job list` show it, and a channel by its name on that job.
+//
+// What carries a stream is not a call: a client attaches to a stream
+// channel, and a Forward opens, on an upgrade of the control plane's
+// connection, with a token from CreateChannelConnectToken. A control
+// plane that serves no channels answers every call with UNIMPLEMENTED.
+service ChannelService {
+  // CreateChannel opens a channel on a running job: a port makes an http
+  // channel, a command a stream channel, whose process the guest starts.
+  // A job that is not running fails with FAILED_PRECONDITION, a name the
+  // job already has with ALREADY_EXISTS, and a sandbox's port beyond its
+  // plan's preview ports with RESOURCE_EXHAUSTED.
+  rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse);
+
+  // ListChannels lists a job's channels, or every channel of the
+  // workspace, ended ones included, oldest first.
+  //
+  // A page holds 100 channels when page_size is zero, and 1000 at most.
+  rpc ListChannels(ListChannelsRequest) returns (ListChannelsResponse);
+
+  // GetChannel returns one channel, with a stream channel's clients. Its
+  // request is named in full: inside the service, GetChannelRequest is
+  // the call below.
+  rpc GetChannel(.toshi.workspace.v1.GetChannelRequest) returns (GetChannelResponse);
+
+  // GetChannelPolicy returns a channel's effective policy, with its
+  // version.
+  rpc GetChannelPolicy(GetChannelPolicyRequest) returns (GetChannelPolicyResponse);
+
+  // SetChannelPolicy replaces a channel's policy when the version it names
+  // is the one stored, and returns the policy at its new version. A policy
+  // changed since that version fails with ABORTED: read it again. A
+  // malformed policy fails with INVALID_ARGUMENT, and one the channel
+  // refuses, such as a list without a module that may not be removed,
+  // with FAILED_PRECONDITION.
+  rpc SetChannelPolicy(SetChannelPolicyRequest) returns (SetChannelPolicyResponse);
+
+  // ListChannelRequests lists an http channel's request records the
+  // filters select, newest first, or oldest first after after_seq,
+  // without their headers and bodies. A stream channel fails with
+  // FAILED_PRECONDITION.
+  //
+  // A page holds 50 records when page_size is zero, and 500 at most.
+  rpc ListChannelRequests(ListChannelRequestsRequest) returns (ListChannelRequestsResponse);
+
+  // GetChannelRequest returns one request record whole. A record the
+  // channel no longer keeps fails with NOT_FOUND, naming the oldest kept.
+  rpc GetChannelRequest(GetChannelRequestRequest) returns (GetChannelRequestResponse);
+
+  // ExportChannelLog streams a file of a channel's log: a stream channel's
+  // output between two offsets, as bytes, or an http channel's request
+  // records between two sequence numbers or times, one JSON line each,
+  // oldest first. One export holds at most the control plane's export
+  // limit, 64 MiB unless set; the first response's next says where the
+  // following export starts. Each export is recorded in the audit log.
+  rpc ExportChannelLog(ExportChannelLogRequest) returns (stream ExportChannelLogResponse);
+
+  // CreateChannelConnectToken mints a token that attaches one client to a
+  // channel, or opens a preview in a browser, once, before it expires. A
+  // channel the connect path would not serve fails as that path does.
+  rpc CreateChannelConnectToken(CreateChannelConnectTokenRequest) returns (CreateChannelConnectTokenResponse);
+
+  // RevokeChannelConnectToken refuses a connect token from then on, on
+  // every process of the control plane; a preview's token also ends what
+  // it opened. A token not minted for this channel is NOT_FOUND. A token
+  // that has expired is refused already, and its revoke writes nothing.
+  rpc RevokeChannelConnectToken(RevokeChannelConnectTokenRequest) returns (RevokeChannelConnectTokenResponse);
+
+  // DeleteChannel ends a channel and its connections. An open stream
+  // channel stays, closing, until the guest has closed its process or the
+  // job has ended; any other channel goes at once.
+  rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse);
+
+  // ListForwards lists a running job's open Forwards, oldest first; a job
+  // that is not running has none. When a process of the control plane
+  // that holds the job's Link does not answer, the call fails with
+  // UNAVAILABLE rather than answer short.
+  //
+  // A page holds 100 Forwards when page_size is zero, and 1000 at most.
+  rpc ListForwards(ListForwardsRequest) returns (ListForwardsResponse);
+
+  // GetLink returns the state of the Link of the runner the job holds.
+  rpc GetLink(GetLinkRequest) returns (GetLinkResponse);
+}
+
+// ChannelShape is how a channel carries its bytes.
+enum ChannelShape {
+  CHANNEL_SHAPE_UNSPECIFIED = 0;
+  // A port in the guest, served as HTTP.
+  CHANNEL_SHAPE_HTTP = 1;
+  // A command in the guest, whose input and output clients attach to.
+  CHANNEL_SHAPE_STREAM = 2;
+}
+
+// ChannelState is where a channel is in its life.
+enum ChannelState {
+  CHANNEL_STATE_UNSPECIFIED = 0;
+  CHANNEL_STATE_OPEN = 1;
+  // A stream channel's process has exited; its output is still kept.
+  CHANNEL_STATE_EXITED = 2;
+  // Deleted, waiting for the guest to close its process.
+  CHANNEL_STATE_CLOSING = 3;
+  CHANNEL_STATE_ENDED = 4;
+}
+
+// ChannelAttachMode is what an attached client may do.
+enum ChannelAttachMode {
+  CHANNEL_ATTACH_MODE_UNSPECIFIED = 0;
+  // The client may send input.
+  CHANNEL_ATTACH_MODE_INPUT = 1;
+  // The client reads the output only.
+  CHANNEL_ATTACH_MODE_READ_ONLY = 2;
+}
+
+// ChannelLog names the log of a channel an export carries.
+enum ChannelLog {
+  CHANNEL_LOG_UNSPECIFIED = 0;
+  // A stream channel's output.
+  CHANNEL_LOG_OUTPUT = 1;
+  // An http channel's request records.
+  CHANNEL_LOG_REQUESTS = 2;
+}
+
+message Channel {
+  // Assigned by the server.
+  string id = 1;
+  string job_id = 2;
+  string name = 3;
+  ChannelShape shape = 4;
+  // An http channel's port in the guest.
+  int32 port = 5;
+  // A stream channel's command.
+  repeated string command = 6;
+  ChannelState state = 7;
+  // Who created the channel, as the audit log names an actor.
+  string created_by = 8;
+  google.protobuf.Timestamp created_at = 9;
+  // Unset while the channel lasts.
+  google.protobuf.Timestamp ended_at = 10;
+  string end_reason = 11;
+  // A stream channel's process's exit code, once it has exited.
+  optional int32 exit_code = 12;
+  // The process of the control plane holding the channel, while it does.
+  string owner = 13;
+  // The offsets that bound the output kept; output_next is where the next
+  // byte goes.
+  int64 output_start = 14;
+  int64 output_next = 15;
+  // Whether the process's input is closed.
+  bool input_closed = 16;
+  // The sequence numbers that bound an http channel's request records
+  // kept; both zero when none is.
+  int64 requests_oldest = 17;
+  int64 requests_newest = 18;
+  // The effective policy, with its version.
+  ChannelPolicy policy = 19;
+  // A stream channel's clients, attached now or before; an http channel
+  // keeps none.
+  repeated ChannelClient clients = 20;
+}
+
+// ChannelClient is one client of a stream channel: its last attach, who
+// made it, and how far it has acknowledged the output, which it goes on
+// from when it attaches again.
+message ChannelClient {
+  string id = 1;
+  // The mode granted to its last attach.
+  ChannelAttachMode mode = 2;
+  // Who attached it, as created_by names an actor.
+  string attached_by = 3;
+  // The device and the credential of the connect token that admitted it,
+  // if one did.
+  string device = 4;
+  string credential = 5;
+  google.protobuf.Timestamp attached_since = 6;
+  // Its last attach or acknowledgement.
+  google.protobuf.Timestamp seen_at = 7;
+  // When its last connection ended, if recorded; unset while attached.
+  google.protobuf.Timestamp detached_at = 8;
+  int64 output_acked = 9;
+  bool attached = 10;
+}
+
+// ChannelPolicy is a channel's policy document, with the words a recipe's
+// channel policy uses.
+message ChannelPolicy {
+  // Rises at each change. SetChannelPolicy names the version it was read
+  // at; CreateChannel takes none.
+  int64 version = 1;
+  // Who may attach a client: workspace (the default) or creator.
+  string attach = 2;
+  // The most clients attached to a stream channel at once; unset sets no
+  // bound.
+  optional int32 max_clients = 3;
+  // Who may send input to a stream channel: any, creator or none.
+  string input = 4;
+  // How much output or how many records are kept: buffer, at least the
+  // newest 8 MiB, or channel, as long as the channel's record lasts.
+  string keep = 5;
+  // The ordered module list. Unset takes the shape's defaults; an empty
+  // list means no modules.
+  ChannelModuleList modules = 6;
+}
+
+message ChannelModuleList {
+  repeated ChannelModule modules = 1;
+}
+
+// ChannelModule is one entry of a policy's module list. Each kind takes
+// the settings it names and no others.
+message ChannelModule {
+  // identity_headers, sign_in_required, ip_allowlist or record_requests.
+  string kind = 1;
+  // The requests a request module acts on; unset means every request.
+  ChannelMatch match = 2;
+  // The address ranges an ip_allowlist admits.
+  repeated string ranges = 3;
+  // How much a record_requests record keeps: metadata, headers or
+  // bodies.
+  string level = 4;
+  // The most bytes of each body a record_requests record keeps at
+  // bodies; zero takes the default.
+  int64 body_cap = 5;
+}
+
+// ChannelMatch narrows the requests a module acts on. Every field empty
+// means every request.
+message ChannelMatch {
+  // Exact hosts.
+  repeated string hosts = 1;
+  // Path patterns, each starting with a slash.
+  repeated string paths = 2;
+  // HTTP methods, each in upper case.
+  repeated string methods = 3;
+  // Header names and the exact value each must have.
+  map<string, string> headers = 4;
+}
+
+// ChannelRequest is one request an http channel's relay served, as its
+// record keeps it.
+message ChannelRequest {
+  int64 seq = 1;
+  google.protobuf.Timestamp arrived_at = 2;
+  string host = 3;
+  string method = 4;
+  string path = 5;
+  int32 status = 6;
+  int64 request_bytes = 7;
+  int64 response_bytes = 8;
+  // To the end of the response, or to a WebSocket's close.
+  google.protobuf.Duration duration = 9;
+  // The caller, once the request path has identified one.
+  ChannelRequestCaller caller = 10;
+  string address = 11;
+  // The module that refused the request, if one did.
+  string refused_by = 12;
+  bool websocket = 13;
+  // The level the record was kept at: metadata, headers or bodies.
+  string level = 14;
+  // At headers and bodies.
+  string query = 15;
+  bool query_cut = 16;
+  repeated ChannelHeader request_headers = 17;
+  repeated ChannelHeader response_headers = 18;
+  // At bodies.
+  ChannelBody request_body = 19;
+  ChannelBody response_body = 20;
+}
+
+message ChannelRequestCaller {
+  // The caller as the audit log names an actor.
+  string user = 1;
+  string device = 2;
+  // The share link's ID, for a viewer a share link admitted.
+  string share_link = 3;
+}
+
+// ChannelHeader is one header line; a credential header keeps its name
+// only, with removed set.
+message ChannelHeader {
+  string name = 1;
+  string value = 2;
+  bool removed = 3;
+}
+
+message ChannelBody {
+  string content_type = 1;
+  bytes data = 2;
+  // Whether the body was longer than the policy's body cap.
+  bool cut = 3;
+}
+
+// Forward is one open Forward: what it reaches in the guest, named as the
+// audit log names it (a command by its first word only), who opened it,
+// with the device of the connect token that admitted them, and the http
+// channel whose connection carries it, if one does.
+message Forward {
+  string target = 1;
+  string by = 2;
+  string device = 3;
+  string channel = 4;
+  google.protobuf.Timestamp opened_at = 5;
+}
+
+// Link is the state of a runner's Link, the connection its guest holds to
+// the control plane.
+message Link {
+  bool connected = 1;
+  // Since when it has been connected; unset while it is not.
+  google.protobuf.Timestamp since = 2;
+  // How many times the guest has connected.
+  int32 connects = 3;
+  // The streams open on it now.
+  int32 streams = 4;
+  string last_error = 5;
+  // The runner's second Link, its replica: connected, or none.
+  string replica = 6;
+  // The Forwards open on it now.
+  int32 forwards = 7;
+  // The job's state, as the jobs API names it.
+  string job_state = 8;
+}
+
+message CreateChannelRequest {
+  string job_id = 1;
+  // The channel's name: lower-case letters, digits, '-' and '_', starting
+  // with a letter or digit, at most 63. An http channel's defaults to its
+  // port; a stream channel needs one.
+  string name = 2;
+  // A port in the guest, for an http channel; give a port or a command.
+  int32 port = 3;
+  // A command in the guest, for a stream channel.
+  repeated string command = 4;
+  // The policy the channel starts with, without a version; unset takes
+  // the defaults.
+  ChannelPolicy policy = 5;
+}
+
+message CreateChannelResponse {
+  Channel channel = 1;
+}
+
+message ListChannelsRequest {
+  // Only this job's channels; empty lists every job's.
+  string job_id = 1;
+  // The most channels in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
+}
+
+message ListChannelsResponse {
+  repeated Channel channels = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message GetChannelRequest {
+  string job_id = 1;
+  string name = 2;
+}
+
+message GetChannelResponse {
+  Channel channel = 1;
+}
+
+message GetChannelPolicyRequest {
+  string job_id = 1;
+  string name = 2;
+}
+
+message GetChannelPolicyResponse {
+  ChannelPolicy policy = 1;
+}
+
+message SetChannelPolicyRequest {
+  string job_id = 1;
+  string name = 2;
+  // The whole document, with the version it was read at.
+  ChannelPolicy policy = 3;
+}
+
+message SetChannelPolicyResponse {
+  // The document stored, at its new version.
+  ChannelPolicy policy = 1;
+}
+
+message ListChannelRequestsRequest {
+  string job_id = 1;
+  string name = 2;
+  // The most records in one page; zero lets the server choose.
+  int32 page_size = 3;
+  // From an earlier response's next_page_token; empty for the first page.
+  // The filters must be the ones the first page was asked with.
+  string page_token = 4;
+  // Only the records after this sequence number, oldest first; zero lists
+  // the newest first.
+  int64 after_seq = 5;
+  // Only the records that arrived at or after since, and before until.
+  google.protobuf.Timestamp since = 6;
+  google.protobuf.Timestamp until = 7;
+  // Only this status, such as 404, or this class, such as 4xx.
+  string status = 8;
+  // Only this exact host.
+  string host = 9;
+  // Only this method.
+  string method = 10;
+  // Only the paths that start with this prefix.
+  string path_prefix = 11;
+}
+
+message ListChannelRequestsResponse {
+  repeated ChannelRequest requests = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+  // The sequence numbers that bound the records kept; both zero when none
+  // is.
+  int64 oldest_seq = 3;
+  int64 newest_seq = 4;
+}
+
+message GetChannelRequestRequest {
+  string job_id = 1;
+  string name = 2;
+  int64 seq = 3;
+}
+
+message GetChannelRequestResponse {
+  ChannelRequest request = 1;
+}
+
+message ExportChannelLogRequest {
+  string job_id = 1;
+  string name = 2;
+  // The log to export: a stream channel's output or an http channel's
+  // request records.
+  ChannelLog log = 3;
+  // The output's offsets [from, to), or the records' sequence numbers
+  // [from, to]; unset runs from the oldest kept, or to the newest.
+  optional int64 from = 4;
+  optional int64 to = 5;
+  // For records only, in place of from and to: the records that arrived
+  // at or after since, and before until.
+  google.protobuf.Timestamp since = 6;
+  google.protobuf.Timestamp until = 7;
+}
+
+message ExportChannelLogResponse {
+  // The file's next bytes.
+  bytes data = 1;
+  // The rest is set on the first response only. The file's name, with
+  // the range it holds.
+  string file_name = 2;
+  // application/octet-stream for output, application/x-ndjson for
+  // records.
+  string content_type = 3;
+  // Where the file starts: an offset, or a record's sequence number.
+  int64 from = 4;
+  // Where the next export starts, when this one stopped at the export
+  // limit; zero when the file holds the whole range.
+  int64 next = 5;
+}
+
+message CreateChannelConnectTokenRequest {
+  string job_id = 1;
+  string name = 2;
+  // The caller's name for its device, which the token and its audit rows
+  // carry: at most 64 letters, digits, '.', '_' and '-'.
+  string device = 3;
+  // The mode the token grants the attach it admits; unset grants input.
+  ChannelAttachMode mode = 4;
+}
+
+message CreateChannelConnectTokenResponse {
+  // The ID RevokeChannelConnectToken takes.
+  string id = 1;
+  string token = 2;
+  // Where the token is used.
+  string url = 3;
+  google.protobuf.Timestamp expires_at = 4;
+  // What reaches url: toshi-channel, an upgrade of the control plane's
+  // connection, or https or http for a preview's host.
+  string transport = 5;
+  ChannelAttachMode mode = 6;
+}
+
+message RevokeChannelConnectTokenRequest {
+  string job_id = 1;
+  string name = 2;
+  // The ID the token's create returned.
+  string id = 3;
+}
+
+message RevokeChannelConnectTokenResponse {}
+
+message DeleteChannelRequest {
+  string job_id = 1;
+  string name = 2;
+}
+
+message DeleteChannelResponse {}
+
+message ListForwardsRequest {
+  string job_id = 1;
+  // The most Forwards in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
+}
+
+message ListForwardsResponse {
+  repeated Forward forwards = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message GetLinkRequest {
+  string job_id = 1;
+}
+
+message GetLinkResponse {
+  Link link = 1;
+}

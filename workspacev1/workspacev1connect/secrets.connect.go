@@ -42,8 +42,8 @@ const (
 	// SecretServiceDeleteSecretSetProcedure is the fully-qualified name of the SecretService's
 	// DeleteSecretSet RPC.
 	SecretServiceDeleteSecretSetProcedure = "/toshi.workspace.v1.SecretService/DeleteSecretSet"
-	// SecretServiceSetSecretProcedure is the fully-qualified name of the SecretService's SetSecret RPC.
-	SecretServiceSetSecretProcedure = "/toshi.workspace.v1.SecretService/SetSecret"
+	// SecretServicePutSecretProcedure is the fully-qualified name of the SecretService's PutSecret RPC.
+	SecretServicePutSecretProcedure = "/toshi.workspace.v1.SecretService/PutSecret"
 	// SecretServiceDeleteSecretProcedure is the fully-qualified name of the SecretService's
 	// DeleteSecret RPC.
 	SecretServiceDeleteSecretProcedure = "/toshi.workspace.v1.SecretService/DeleteSecret"
@@ -70,21 +70,27 @@ type SecretServiceClient interface {
 	// or a second shared set, fails with ALREADY_EXISTS.
 	CreateSecretSet(context.Context, *connect.Request[workspacev1.CreateSecretSetRequest]) (*connect.Response[workspacev1.CreateSecretSetResponse], error)
 	// ListSecretSets returns the project's sets, the shared set first.
+	//
+	// A page holds 100 sets when page_size is zero, and 1000 at most.
 	ListSecretSets(context.Context, *connect.Request[workspacev1.ListSecretSetsRequest]) (*connect.Response[workspacev1.ListSecretSetsResponse], error)
 	// DeleteSecretSet removes the set with its keys, versions and grants.
 	DeleteSecretSet(context.Context, *connect.Request[workspacev1.DeleteSecretSetRequest]) (*connect.Response[workspacev1.DeleteSecretSetResponse], error)
-	// SetSecret makes the key's next version, holding value, and returns the
+	// PutSecret makes the key's next version, holding value, and returns the
 	// key without it. A name is either shared or set per environment: a
 	// shared name set in an environment's set, or an environment's name set
 	// in the shared set, fails with FAILED_PRECONDITION. Two environments'
 	// sets may hold the same name.
-	SetSecret(context.Context, *connect.Request[workspacev1.SetSecretRequest]) (*connect.Response[workspacev1.SetSecretResponse], error)
+	PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error)
 	// DeleteSecret removes the key and every version of it.
 	DeleteSecret(context.Context, *connect.Request[workspacev1.DeleteSecretRequest]) (*connect.Response[workspacev1.DeleteSecretResponse], error)
 	// ListSecrets returns the set's keys by name, each with its newest
 	// version.
+	//
+	// A page holds 100 keys when page_size is zero, and 1000 at most.
 	ListSecrets(context.Context, *connect.Request[workspacev1.ListSecretsRequest]) (*connect.Response[workspacev1.ListSecretsResponse], error)
 	// ListSecretVersions returns the key's versions, oldest first.
+	//
+	// A page holds 100 versions when page_size is zero, and 1000 at most.
 	ListSecretVersions(context.Context, *connect.Request[workspacev1.ListSecretVersionsRequest]) (*connect.Response[workspacev1.ListSecretVersionsResponse], error)
 	// GrantSecretSet lets VMs of a kind, of an image or of one service use an
 	// environment's set. The shared set takes no grants, and a set granted to
@@ -93,6 +99,8 @@ type SecretServiceClient interface {
 	// RevokeSecretSet removes a grant.
 	RevokeSecretSet(context.Context, *connect.Request[workspacev1.RevokeSecretSetRequest]) (*connect.Response[workspacev1.RevokeSecretSetResponse], error)
 	// ListSecretSetGrants returns the set's grants by kind and grantee.
+	//
+	// A page holds 100 grants when page_size is zero, and 1000 at most.
 	ListSecretSetGrants(context.Context, *connect.Request[workspacev1.ListSecretSetGrantsRequest]) (*connect.Response[workspacev1.ListSecretSetGrantsResponse], error)
 }
 
@@ -125,10 +133,10 @@ func NewSecretServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(secretServiceMethods.ByName("DeleteSecretSet")),
 			connect.WithClientOptions(opts...),
 		),
-		setSecret: connect.NewClient[workspacev1.SetSecretRequest, workspacev1.SetSecretResponse](
+		putSecret: connect.NewClient[workspacev1.PutSecretRequest, workspacev1.PutSecretResponse](
 			httpClient,
-			baseURL+SecretServiceSetSecretProcedure,
-			connect.WithSchema(secretServiceMethods.ByName("SetSecret")),
+			baseURL+SecretServicePutSecretProcedure,
+			connect.WithSchema(secretServiceMethods.ByName("PutSecret")),
 			connect.WithClientOptions(opts...),
 		),
 		deleteSecret: connect.NewClient[workspacev1.DeleteSecretRequest, workspacev1.DeleteSecretResponse](
@@ -175,7 +183,7 @@ type secretServiceClient struct {
 	createSecretSet     *connect.Client[workspacev1.CreateSecretSetRequest, workspacev1.CreateSecretSetResponse]
 	listSecretSets      *connect.Client[workspacev1.ListSecretSetsRequest, workspacev1.ListSecretSetsResponse]
 	deleteSecretSet     *connect.Client[workspacev1.DeleteSecretSetRequest, workspacev1.DeleteSecretSetResponse]
-	setSecret           *connect.Client[workspacev1.SetSecretRequest, workspacev1.SetSecretResponse]
+	putSecret           *connect.Client[workspacev1.PutSecretRequest, workspacev1.PutSecretResponse]
 	deleteSecret        *connect.Client[workspacev1.DeleteSecretRequest, workspacev1.DeleteSecretResponse]
 	listSecrets         *connect.Client[workspacev1.ListSecretsRequest, workspacev1.ListSecretsResponse]
 	listSecretVersions  *connect.Client[workspacev1.ListSecretVersionsRequest, workspacev1.ListSecretVersionsResponse]
@@ -199,9 +207,9 @@ func (c *secretServiceClient) DeleteSecretSet(ctx context.Context, req *connect.
 	return c.deleteSecretSet.CallUnary(ctx, req)
 }
 
-// SetSecret calls toshi.workspace.v1.SecretService.SetSecret.
-func (c *secretServiceClient) SetSecret(ctx context.Context, req *connect.Request[workspacev1.SetSecretRequest]) (*connect.Response[workspacev1.SetSecretResponse], error) {
-	return c.setSecret.CallUnary(ctx, req)
+// PutSecret calls toshi.workspace.v1.SecretService.PutSecret.
+func (c *secretServiceClient) PutSecret(ctx context.Context, req *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error) {
+	return c.putSecret.CallUnary(ctx, req)
 }
 
 // DeleteSecret calls toshi.workspace.v1.SecretService.DeleteSecret.
@@ -240,21 +248,27 @@ type SecretServiceHandler interface {
 	// or a second shared set, fails with ALREADY_EXISTS.
 	CreateSecretSet(context.Context, *connect.Request[workspacev1.CreateSecretSetRequest]) (*connect.Response[workspacev1.CreateSecretSetResponse], error)
 	// ListSecretSets returns the project's sets, the shared set first.
+	//
+	// A page holds 100 sets when page_size is zero, and 1000 at most.
 	ListSecretSets(context.Context, *connect.Request[workspacev1.ListSecretSetsRequest]) (*connect.Response[workspacev1.ListSecretSetsResponse], error)
 	// DeleteSecretSet removes the set with its keys, versions and grants.
 	DeleteSecretSet(context.Context, *connect.Request[workspacev1.DeleteSecretSetRequest]) (*connect.Response[workspacev1.DeleteSecretSetResponse], error)
-	// SetSecret makes the key's next version, holding value, and returns the
+	// PutSecret makes the key's next version, holding value, and returns the
 	// key without it. A name is either shared or set per environment: a
 	// shared name set in an environment's set, or an environment's name set
 	// in the shared set, fails with FAILED_PRECONDITION. Two environments'
 	// sets may hold the same name.
-	SetSecret(context.Context, *connect.Request[workspacev1.SetSecretRequest]) (*connect.Response[workspacev1.SetSecretResponse], error)
+	PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error)
 	// DeleteSecret removes the key and every version of it.
 	DeleteSecret(context.Context, *connect.Request[workspacev1.DeleteSecretRequest]) (*connect.Response[workspacev1.DeleteSecretResponse], error)
 	// ListSecrets returns the set's keys by name, each with its newest
 	// version.
+	//
+	// A page holds 100 keys when page_size is zero, and 1000 at most.
 	ListSecrets(context.Context, *connect.Request[workspacev1.ListSecretsRequest]) (*connect.Response[workspacev1.ListSecretsResponse], error)
 	// ListSecretVersions returns the key's versions, oldest first.
+	//
+	// A page holds 100 versions when page_size is zero, and 1000 at most.
 	ListSecretVersions(context.Context, *connect.Request[workspacev1.ListSecretVersionsRequest]) (*connect.Response[workspacev1.ListSecretVersionsResponse], error)
 	// GrantSecretSet lets VMs of a kind, of an image or of one service use an
 	// environment's set. The shared set takes no grants, and a set granted to
@@ -263,6 +277,8 @@ type SecretServiceHandler interface {
 	// RevokeSecretSet removes a grant.
 	RevokeSecretSet(context.Context, *connect.Request[workspacev1.RevokeSecretSetRequest]) (*connect.Response[workspacev1.RevokeSecretSetResponse], error)
 	// ListSecretSetGrants returns the set's grants by kind and grantee.
+	//
+	// A page holds 100 grants when page_size is zero, and 1000 at most.
 	ListSecretSetGrants(context.Context, *connect.Request[workspacev1.ListSecretSetGrantsRequest]) (*connect.Response[workspacev1.ListSecretSetGrantsResponse], error)
 }
 
@@ -291,10 +307,10 @@ func NewSecretServiceHandler(svc SecretServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(secretServiceMethods.ByName("DeleteSecretSet")),
 		connect.WithHandlerOptions(opts...),
 	)
-	secretServiceSetSecretHandler := connect.NewUnaryHandler(
-		SecretServiceSetSecretProcedure,
-		svc.SetSecret,
-		connect.WithSchema(secretServiceMethods.ByName("SetSecret")),
+	secretServicePutSecretHandler := connect.NewUnaryHandler(
+		SecretServicePutSecretProcedure,
+		svc.PutSecret,
+		connect.WithSchema(secretServiceMethods.ByName("PutSecret")),
 		connect.WithHandlerOptions(opts...),
 	)
 	secretServiceDeleteSecretHandler := connect.NewUnaryHandler(
@@ -341,8 +357,8 @@ func NewSecretServiceHandler(svc SecretServiceHandler, opts ...connect.HandlerOp
 			secretServiceListSecretSetsHandler.ServeHTTP(w, r)
 		case SecretServiceDeleteSecretSetProcedure:
 			secretServiceDeleteSecretSetHandler.ServeHTTP(w, r)
-		case SecretServiceSetSecretProcedure:
-			secretServiceSetSecretHandler.ServeHTTP(w, r)
+		case SecretServicePutSecretProcedure:
+			secretServicePutSecretHandler.ServeHTTP(w, r)
 		case SecretServiceDeleteSecretProcedure:
 			secretServiceDeleteSecretHandler.ServeHTTP(w, r)
 		case SecretServiceListSecretsProcedure:
@@ -376,8 +392,8 @@ func (UnimplementedSecretServiceHandler) DeleteSecretSet(context.Context, *conne
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.SecretService.DeleteSecretSet is not implemented"))
 }
 
-func (UnimplementedSecretServiceHandler) SetSecret(context.Context, *connect.Request[workspacev1.SetSecretRequest]) (*connect.Response[workspacev1.SetSecretResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.SecretService.SetSecret is not implemented"))
+func (UnimplementedSecretServiceHandler) PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.SecretService.PutSecret is not implemented"))
 }
 
 func (UnimplementedSecretServiceHandler) DeleteSecret(context.Context, *connect.Request[workspacev1.DeleteSecretRequest]) (*connect.Response[workspacev1.DeleteSecretResponse], error) {

@@ -75,6 +75,8 @@ const (
 type ProjectServiceClient interface {
 	// ListProjects returns the workspace's projects by name, each with its
 	// environments by name.
+	//
+	// A page holds 100 projects when page_size is zero, and 1000 at most.
 	ListProjects(context.Context, *connect.Request[workspacev1.ListProjectsRequest]) (*connect.Response[workspacev1.ListProjectsResponse], error)
 	// GetProject returns one project with its environments by name. A
 	// project the workspace does not have is NOT_FOUND. A token limited to
@@ -85,6 +87,8 @@ type ProjectServiceClient interface {
 	// ListRepositories returns the repositories the workspace's projects
 	// claim, by repository. A project the workspace does not have is
 	// NOT_FOUND.
+	//
+	// A page holds 100 repositories when page_size is zero, and 1000 at most.
 	ListRepositories(context.Context, *connect.Request[workspacev1.ListRepositoriesRequest]) (*connect.Response[workspacev1.ListRepositoriesResponse], error)
 	// CreateProject makes a project with its three environments,
 	// development, preview and production. A name the workspace's projects
@@ -124,6 +128,8 @@ type ProjectServiceClient interface {
 	// not have is NOT_FOUND. A token limited to a project reads only that
 	// project's rules, and a token limited to an environment is
 	// PERMISSION_DENIED.
+	//
+	// A page holds 100 rules when page_size is zero, and 1000 at most.
 	ListBranchRules(context.Context, *connect.Request[workspacev1.ListBranchRulesRequest]) (*connect.Response[workspacev1.ListBranchRulesResponse], error)
 	// SetBranchRules replaces a project's branch rules with the list given,
 	// whole: it has at most 100 rules, a known match on each, a pattern on
@@ -146,6 +152,8 @@ type ProjectServiceClient interface {
 	CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error)
 	// ListEmbedTokens returns a project's embed tokens, oldest first, without
 	// the tokens themselves.
+	//
+	// A page holds 100 embed tokens when page_size is zero, and 1000 at most.
 	ListEmbedTokens(context.Context, *connect.Request[workspacev1.ListEmbedTokensRequest]) (*connect.Response[workspacev1.ListEmbedTokensResponse], error)
 	// RevokeEmbedToken refuses an embed token before it expires. A token
 	// already revoked is returned as it is.
@@ -318,6 +326,8 @@ func (c *projectServiceClient) RevokeEmbedToken(ctx context.Context, req *connec
 type ProjectServiceHandler interface {
 	// ListProjects returns the workspace's projects by name, each with its
 	// environments by name.
+	//
+	// A page holds 100 projects when page_size is zero, and 1000 at most.
 	ListProjects(context.Context, *connect.Request[workspacev1.ListProjectsRequest]) (*connect.Response[workspacev1.ListProjectsResponse], error)
 	// GetProject returns one project with its environments by name. A
 	// project the workspace does not have is NOT_FOUND. A token limited to
@@ -328,6 +338,8 @@ type ProjectServiceHandler interface {
 	// ListRepositories returns the repositories the workspace's projects
 	// claim, by repository. A project the workspace does not have is
 	// NOT_FOUND.
+	//
+	// A page holds 100 repositories when page_size is zero, and 1000 at most.
 	ListRepositories(context.Context, *connect.Request[workspacev1.ListRepositoriesRequest]) (*connect.Response[workspacev1.ListRepositoriesResponse], error)
 	// CreateProject makes a project with its three environments,
 	// development, preview and production. A name the workspace's projects
@@ -367,6 +379,8 @@ type ProjectServiceHandler interface {
 	// not have is NOT_FOUND. A token limited to a project reads only that
 	// project's rules, and a token limited to an environment is
 	// PERMISSION_DENIED.
+	//
+	// A page holds 100 rules when page_size is zero, and 1000 at most.
 	ListBranchRules(context.Context, *connect.Request[workspacev1.ListBranchRulesRequest]) (*connect.Response[workspacev1.ListBranchRulesResponse], error)
 	// SetBranchRules replaces a project's branch rules with the list given,
 	// whole: it has at most 100 rules, a known match on each, a pattern on
@@ -389,6 +403,8 @@ type ProjectServiceHandler interface {
 	CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error)
 	// ListEmbedTokens returns a project's embed tokens, oldest first, without
 	// the tokens themselves.
+	//
+	// A page holds 100 embed tokens when page_size is zero, and 1000 at most.
 	ListEmbedTokens(context.Context, *connect.Request[workspacev1.ListEmbedTokensRequest]) (*connect.Response[workspacev1.ListEmbedTokensResponse], error)
 	// RevokeEmbedToken refuses an embed token before it expires. A token
 	// already revoked is returned as it is.

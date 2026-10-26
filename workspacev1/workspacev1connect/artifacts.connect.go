@@ -47,9 +47,9 @@ const (
 	// ArtifactServiceGetArtifactProcedure is the fully-qualified name of the ArtifactService's
 	// GetArtifact RPC.
 	ArtifactServiceGetArtifactProcedure = "/toshi.workspace.v1.ArtifactService/GetArtifact"
-	// ArtifactServiceGetDownloadURLProcedure is the fully-qualified name of the ArtifactService's
-	// GetDownloadURL RPC.
-	ArtifactServiceGetDownloadURLProcedure = "/toshi.workspace.v1.ArtifactService/GetDownloadURL"
+	// ArtifactServiceGetArtifactDownloadURLProcedure is the fully-qualified name of the
+	// ArtifactService's GetArtifactDownloadURL RPC.
+	ArtifactServiceGetArtifactDownloadURLProcedure = "/toshi.workspace.v1.ArtifactService/GetArtifactDownloadURL"
 )
 
 // ArtifactUploadServiceClient is a client for the toshi.workspace.v1.ArtifactUploadService service.
@@ -169,13 +169,15 @@ func (UnimplementedArtifactUploadServiceHandler) CompleteUpload(context.Context,
 type ArtifactServiceClient interface {
 	// ListArtifacts returns the workspace's artifacts, oldest first, by
 	// project, environment, workload, execution and kind.
+	//
+	// A page holds 50 artifacts when page_size is zero, and 200 at most.
 	ListArtifacts(context.Context, *connect.Request[workspacev1.ListArtifactsRequest]) (*connect.Response[workspacev1.ListArtifactsResponse], error)
 	// GetArtifact returns one artifact's record, never a key or a URL.
 	GetArtifact(context.Context, *connect.Request[workspacev1.GetArtifactRequest]) (*connect.Response[workspacev1.GetArtifactResponse], error)
-	// GetDownloadURL returns a signed URL that expires, and the artifact's
-	// data key when it is envelope encrypted. An artifact that is not
-	// complete fails with FAILED_PRECONDITION.
-	GetDownloadURL(context.Context, *connect.Request[workspacev1.GetDownloadURLRequest]) (*connect.Response[workspacev1.GetDownloadURLResponse], error)
+	// GetArtifactDownloadURL returns a signed URL that expires, and the
+	// artifact's data key when it is envelope encrypted. An artifact that is
+	// not complete fails with FAILED_PRECONDITION.
+	GetArtifactDownloadURL(context.Context, *connect.Request[workspacev1.GetArtifactDownloadURLRequest]) (*connect.Response[workspacev1.GetArtifactDownloadURLResponse], error)
 }
 
 // NewArtifactServiceClient constructs a client for the toshi.workspace.v1.ArtifactService service.
@@ -201,10 +203,10 @@ func NewArtifactServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(artifactServiceMethods.ByName("GetArtifact")),
 			connect.WithClientOptions(opts...),
 		),
-		getDownloadURL: connect.NewClient[workspacev1.GetDownloadURLRequest, workspacev1.GetDownloadURLResponse](
+		getArtifactDownloadURL: connect.NewClient[workspacev1.GetArtifactDownloadURLRequest, workspacev1.GetArtifactDownloadURLResponse](
 			httpClient,
-			baseURL+ArtifactServiceGetDownloadURLProcedure,
-			connect.WithSchema(artifactServiceMethods.ByName("GetDownloadURL")),
+			baseURL+ArtifactServiceGetArtifactDownloadURLProcedure,
+			connect.WithSchema(artifactServiceMethods.ByName("GetArtifactDownloadURL")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -212,9 +214,9 @@ func NewArtifactServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // artifactServiceClient implements ArtifactServiceClient.
 type artifactServiceClient struct {
-	listArtifacts  *connect.Client[workspacev1.ListArtifactsRequest, workspacev1.ListArtifactsResponse]
-	getArtifact    *connect.Client[workspacev1.GetArtifactRequest, workspacev1.GetArtifactResponse]
-	getDownloadURL *connect.Client[workspacev1.GetDownloadURLRequest, workspacev1.GetDownloadURLResponse]
+	listArtifacts          *connect.Client[workspacev1.ListArtifactsRequest, workspacev1.ListArtifactsResponse]
+	getArtifact            *connect.Client[workspacev1.GetArtifactRequest, workspacev1.GetArtifactResponse]
+	getArtifactDownloadURL *connect.Client[workspacev1.GetArtifactDownloadURLRequest, workspacev1.GetArtifactDownloadURLResponse]
 }
 
 // ListArtifacts calls toshi.workspace.v1.ArtifactService.ListArtifacts.
@@ -227,22 +229,24 @@ func (c *artifactServiceClient) GetArtifact(ctx context.Context, req *connect.Re
 	return c.getArtifact.CallUnary(ctx, req)
 }
 
-// GetDownloadURL calls toshi.workspace.v1.ArtifactService.GetDownloadURL.
-func (c *artifactServiceClient) GetDownloadURL(ctx context.Context, req *connect.Request[workspacev1.GetDownloadURLRequest]) (*connect.Response[workspacev1.GetDownloadURLResponse], error) {
-	return c.getDownloadURL.CallUnary(ctx, req)
+// GetArtifactDownloadURL calls toshi.workspace.v1.ArtifactService.GetArtifactDownloadURL.
+func (c *artifactServiceClient) GetArtifactDownloadURL(ctx context.Context, req *connect.Request[workspacev1.GetArtifactDownloadURLRequest]) (*connect.Response[workspacev1.GetArtifactDownloadURLResponse], error) {
+	return c.getArtifactDownloadURL.CallUnary(ctx, req)
 }
 
 // ArtifactServiceHandler is an implementation of the toshi.workspace.v1.ArtifactService service.
 type ArtifactServiceHandler interface {
 	// ListArtifacts returns the workspace's artifacts, oldest first, by
 	// project, environment, workload, execution and kind.
+	//
+	// A page holds 50 artifacts when page_size is zero, and 200 at most.
 	ListArtifacts(context.Context, *connect.Request[workspacev1.ListArtifactsRequest]) (*connect.Response[workspacev1.ListArtifactsResponse], error)
 	// GetArtifact returns one artifact's record, never a key or a URL.
 	GetArtifact(context.Context, *connect.Request[workspacev1.GetArtifactRequest]) (*connect.Response[workspacev1.GetArtifactResponse], error)
-	// GetDownloadURL returns a signed URL that expires, and the artifact's
-	// data key when it is envelope encrypted. An artifact that is not
-	// complete fails with FAILED_PRECONDITION.
-	GetDownloadURL(context.Context, *connect.Request[workspacev1.GetDownloadURLRequest]) (*connect.Response[workspacev1.GetDownloadURLResponse], error)
+	// GetArtifactDownloadURL returns a signed URL that expires, and the
+	// artifact's data key when it is envelope encrypted. An artifact that is
+	// not complete fails with FAILED_PRECONDITION.
+	GetArtifactDownloadURL(context.Context, *connect.Request[workspacev1.GetArtifactDownloadURLRequest]) (*connect.Response[workspacev1.GetArtifactDownloadURLResponse], error)
 }
 
 // NewArtifactServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -264,10 +268,10 @@ func NewArtifactServiceHandler(svc ArtifactServiceHandler, opts ...connect.Handl
 		connect.WithSchema(artifactServiceMethods.ByName("GetArtifact")),
 		connect.WithHandlerOptions(opts...),
 	)
-	artifactServiceGetDownloadURLHandler := connect.NewUnaryHandler(
-		ArtifactServiceGetDownloadURLProcedure,
-		svc.GetDownloadURL,
-		connect.WithSchema(artifactServiceMethods.ByName("GetDownloadURL")),
+	artifactServiceGetArtifactDownloadURLHandler := connect.NewUnaryHandler(
+		ArtifactServiceGetArtifactDownloadURLProcedure,
+		svc.GetArtifactDownloadURL,
+		connect.WithSchema(artifactServiceMethods.ByName("GetArtifactDownloadURL")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/toshi.workspace.v1.ArtifactService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -276,8 +280,8 @@ func NewArtifactServiceHandler(svc ArtifactServiceHandler, opts ...connect.Handl
 			artifactServiceListArtifactsHandler.ServeHTTP(w, r)
 		case ArtifactServiceGetArtifactProcedure:
 			artifactServiceGetArtifactHandler.ServeHTTP(w, r)
-		case ArtifactServiceGetDownloadURLProcedure:
-			artifactServiceGetDownloadURLHandler.ServeHTTP(w, r)
+		case ArtifactServiceGetArtifactDownloadURLProcedure:
+			artifactServiceGetArtifactDownloadURLHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -295,6 +299,6 @@ func (UnimplementedArtifactServiceHandler) GetArtifact(context.Context, *connect
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ArtifactService.GetArtifact is not implemented"))
 }
 
-func (UnimplementedArtifactServiceHandler) GetDownloadURL(context.Context, *connect.Request[workspacev1.GetDownloadURLRequest]) (*connect.Response[workspacev1.GetDownloadURLResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ArtifactService.GetDownloadURL is not implemented"))
+func (UnimplementedArtifactServiceHandler) GetArtifactDownloadURL(context.Context, *connect.Request[workspacev1.GetArtifactDownloadURLRequest]) (*connect.Response[workspacev1.GetArtifactDownloadURLResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ArtifactService.GetArtifactDownloadURL is not implemented"))
 }

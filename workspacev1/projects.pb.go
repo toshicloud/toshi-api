@@ -261,7 +261,11 @@ func (x *Repository) GetClaimedAt() *timestamppb.Timestamp {
 }
 
 type ListProjectsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The most projects in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -296,13 +300,29 @@ func (*ListProjectsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{3}
 }
 
+func (x *ListProjectsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListProjectsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListProjectsResponse struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	Projects []*Project             `protobuf:"bytes,1,rep,name=projects,proto3" json:"projects,omitempty"`
 	// The limit of the token that made the call. A server that has this
 	// field always sets it; both its fields are empty for a caller that
 	// covers the whole workspace.
-	TokenLimit    *TokenLimit `protobuf:"bytes,2,opt,name=token_limit,json=tokenLimit,proto3" json:"token_limit,omitempty"`
+	TokenLimit *TokenLimit `protobuf:"bytes,2,opt,name=token_limit,json=tokenLimit,proto3" json:"token_limit,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,3,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -349,6 +369,13 @@ func (x *ListProjectsResponse) GetTokenLimit() *TokenLimit {
 		return x.TokenLimit
 	}
 	return nil
+}
+
+func (x *ListProjectsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 // TokenLimit names the project and the environment an API token is
@@ -411,7 +438,11 @@ func (x *TokenLimit) GetEnvironment() string {
 type ListRepositoriesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Only this project's repositories; empty lists every project's.
-	Project       string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The most repositories in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -453,9 +484,25 @@ func (x *ListRepositoriesRequest) GetProject() string {
 	return ""
 }
 
+func (x *ListRepositoriesRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListRepositoriesRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListRepositoriesResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Repositories  []*Repository          `protobuf:"bytes,1,rep,name=repositories,proto3" json:"repositories,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Repositories []*Repository          `protobuf:"bytes,1,rep,name=repositories,proto3" json:"repositories,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -495,6 +542,13 @@ func (x *ListRepositoriesResponse) GetRepositories() []*Repository {
 		return x.Repositories
 	}
 	return nil
+}
+
+func (x *ListRepositoriesResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 type CreateProjectRequest struct {
@@ -1048,7 +1102,11 @@ func (x *BranchRule) GetEnvironment() string {
 type ListBranchRulesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
-	Project       string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The most rules in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1090,9 +1148,25 @@ func (x *ListBranchRulesRequest) GetProject() string {
 	return ""
 }
 
+func (x *ListBranchRulesRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListBranchRulesRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListBranchRulesResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Rules         []*BranchRule          `protobuf:"bytes,1,rep,name=rules,proto3" json:"rules,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Rules []*BranchRule          `protobuf:"bytes,1,rep,name=rules,proto3" json:"rules,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1132,6 +1206,13 @@ func (x *ListBranchRulesResponse) GetRules() []*BranchRule {
 		return x.Rules
 	}
 	return nil
+}
+
+func (x *ListBranchRulesResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 type SetBranchRulesRequest struct {
@@ -1480,7 +1561,11 @@ func (x *CreateEmbedTokenResponse) GetToken() string {
 type ListEmbedTokensRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
-	Project       string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The most embed tokens in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1522,9 +1607,25 @@ func (x *ListEmbedTokensRequest) GetProject() string {
 	return ""
 }
 
+func (x *ListEmbedTokensRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListEmbedTokensRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListEmbedTokensResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmbedTokens   []*EmbedToken          `protobuf:"bytes,1,rep,name=embed_tokens,json=embedTokens,proto3" json:"embed_tokens,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	EmbedTokens []*EmbedToken          `protobuf:"bytes,1,rep,name=embed_tokens,json=embedTokens,proto3" json:"embed_tokens,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1564,6 +1665,13 @@ func (x *ListEmbedTokensResponse) GetEmbedTokens() []*EmbedToken {
 		return x.EmbedTokens
 	}
 	return nil
+}
+
+func (x *ListEmbedTokensResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 type RevokeEmbedTokenRequest struct {
@@ -1683,20 +1791,28 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"repository\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x129\n" +
 	"\n" +
-	"claimed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tclaimedAt\"\x15\n" +
-	"\x13ListProjectsRequest\"\x90\x01\n" +
+	"claimed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tclaimedAt\"Q\n" +
+	"\x13ListProjectsRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"\xb8\x01\n" +
 	"\x14ListProjectsResponse\x127\n" +
 	"\bprojects\x18\x01 \x03(\v2\x1b.toshi.workspace.v1.ProjectR\bprojects\x12?\n" +
 	"\vtoken_limit\x18\x02 \x01(\v2\x1e.toshi.workspace.v1.TokenLimitR\n" +
-	"tokenLimit\"H\n" +
+	"tokenLimit\x12&\n" +
+	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken\"H\n" +
 	"\n" +
 	"TokenLimit\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
-	"\venvironment\x18\x02 \x01(\tR\venvironment\"3\n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\"o\n" +
 	"\x17ListRepositoriesRequest\x12\x18\n" +
-	"\aproject\x18\x01 \x01(\tR\aproject\"^\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x03 \x01(\tR\tpageToken\"\x86\x01\n" +
 	"\x18ListRepositoriesResponse\x12B\n" +
-	"\frepositories\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.RepositoryR\frepositories\"*\n" +
+	"\frepositories\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.RepositoryR\frepositories\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"*\n" +
 	"\x14CreateProjectRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\"N\n" +
 	"\x15CreateProjectResponse\x125\n" +
@@ -1728,11 +1844,15 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"BranchRule\x12\x14\n" +
 	"\x05match\x18\x01 \x01(\tR\x05match\x12\x18\n" +
 	"\apattern\x18\x02 \x01(\tR\apattern\x12 \n" +
-	"\venvironment\x18\x03 \x01(\tR\venvironment\"2\n" +
+	"\venvironment\x18\x03 \x01(\tR\venvironment\"n\n" +
 	"\x16ListBranchRulesRequest\x12\x18\n" +
-	"\aproject\x18\x01 \x01(\tR\aproject\"O\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x03 \x01(\tR\tpageToken\"w\n" +
 	"\x17ListBranchRulesResponse\x124\n" +
-	"\x05rules\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.BranchRuleR\x05rules\"g\n" +
+	"\x05rules\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.BranchRuleR\x05rules\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"g\n" +
 	"\x15SetBranchRulesRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x124\n" +
 	"\x05rules\x18\x02 \x03(\v2\x1e.toshi.workspace.v1.BranchRuleR\x05rules\"N\n" +
@@ -1763,11 +1883,15 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x18CreateEmbedTokenResponse\x12?\n" +
 	"\vembed_token\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.EmbedTokenR\n" +
 	"embedToken\x12\x14\n" +
-	"\x05token\x18\x02 \x01(\tR\x05token\"2\n" +
+	"\x05token\x18\x02 \x01(\tR\x05token\"n\n" +
 	"\x16ListEmbedTokensRequest\x12\x18\n" +
-	"\aproject\x18\x01 \x01(\tR\aproject\"\\\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x03 \x01(\tR\tpageToken\"\x84\x01\n" +
 	"\x17ListEmbedTokensResponse\x12A\n" +
-	"\fembed_tokens\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.EmbedTokenR\vembedTokens\"Y\n" +
+	"\fembed_tokens\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.EmbedTokenR\vembedTokens\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"Y\n" +
 	"\x17RevokeEmbedTokenRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12$\n" +
 	"\x0eembed_token_id\x18\x02 \x01(\tR\fembedTokenId\"[\n" +

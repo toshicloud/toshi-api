@@ -69,7 +69,7 @@ type DisplayServiceClient interface {
 	// token expires before it attaches, when its job stops running on the
 	// VM it was opened on, or when the workspace is suspended.
 	//
-	// request_key works as WorkspaceService's, except that a retry never
+	// request_key works as WorkloadService's, except that a retry never
 	// returns the token: it returns the session the first call opened, with
 	// replayed set and no token, and opens nothing. Open another session for
 	// a new token.
@@ -79,6 +79,8 @@ type DisplayServiceClient interface {
 	GetDisplaySession(context.Context, *connect.Request[workspacev1.GetDisplaySessionRequest]) (*connect.Response[workspacev1.GetDisplaySessionResponse], error)
 	// ListDisplaySessions returns the workspace's sessions, the newest
 	// first.
+	//
+	// A page holds 50 sessions when page_size is zero, and 200 at most.
 	ListDisplaySessions(context.Context, *connect.Request[workspacev1.ListDisplaySessionsRequest]) (*connect.Response[workspacev1.ListDisplaySessionsResponse], error)
 	// CloseDisplaySession closes a session and ends its viewer's connection.
 	// Closing a closed session changes nothing.
@@ -226,7 +228,7 @@ type DisplayServiceHandler interface {
 	// token expires before it attaches, when its job stops running on the
 	// VM it was opened on, or when the workspace is suspended.
 	//
-	// request_key works as WorkspaceService's, except that a retry never
+	// request_key works as WorkloadService's, except that a retry never
 	// returns the token: it returns the session the first call opened, with
 	// replayed set and no token, and opens nothing. Open another session for
 	// a new token.
@@ -236,6 +238,8 @@ type DisplayServiceHandler interface {
 	GetDisplaySession(context.Context, *connect.Request[workspacev1.GetDisplaySessionRequest]) (*connect.Response[workspacev1.GetDisplaySessionResponse], error)
 	// ListDisplaySessions returns the workspace's sessions, the newest
 	// first.
+	//
+	// A page holds 50 sessions when page_size is zero, and 200 at most.
 	ListDisplaySessions(context.Context, *connect.Request[workspacev1.ListDisplaySessionsRequest]) (*connect.Response[workspacev1.ListDisplaySessionsResponse], error)
 	// CloseDisplaySession closes a session and ends its viewer's connection.
 	// Closing a closed session changes nothing.

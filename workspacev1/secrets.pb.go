@@ -445,8 +445,12 @@ func (x *CreateSecretSetResponse) GetSet() *SecretSet {
 }
 
 type ListSecretSetsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The most sets in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -488,9 +492,25 @@ func (x *ListSecretSetsRequest) GetProject() string {
 	return ""
 }
 
+func (x *ListSecretSetsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListSecretSetsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListSecretSetsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Sets          []*SecretSet           `protobuf:"bytes,1,rep,name=sets,proto3" json:"sets,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Sets  []*SecretSet           `protobuf:"bytes,1,rep,name=sets,proto3" json:"sets,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -530,6 +550,13 @@ func (x *ListSecretSetsResponse) GetSets() []*SecretSet {
 		return x.Sets
 	}
 	return nil
+}
+
+func (x *ListSecretSetsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 type DeleteSecretSetRequest struct {
@@ -628,7 +655,7 @@ func (*DeleteSecretSetResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{9}
 }
 
-type SetSecretRequest struct {
+type PutSecretRequest struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
@@ -641,20 +668,20 @@ type SetSecretRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetSecretRequest) Reset() {
-	*x = SetSecretRequest{}
+func (x *PutSecretRequest) Reset() {
+	*x = PutSecretRequest{}
 	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetSecretRequest) String() string {
+func (x *PutSecretRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetSecretRequest) ProtoMessage() {}
+func (*PutSecretRequest) ProtoMessage() {}
 
-func (x *SetSecretRequest) ProtoReflect() protoreflect.Message {
+func (x *PutSecretRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -666,67 +693,67 @@ func (x *SetSecretRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetSecretRequest.ProtoReflect.Descriptor instead.
-func (*SetSecretRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use PutSecretRequest.ProtoReflect.Descriptor instead.
+func (*PutSecretRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *SetSecretRequest) GetProject() string {
+func (x *PutSecretRequest) GetProject() string {
 	if x != nil {
 		return x.Project
 	}
 	return ""
 }
 
-func (x *SetSecretRequest) GetEnvironment() string {
+func (x *PutSecretRequest) GetEnvironment() string {
 	if x != nil {
 		return x.Environment
 	}
 	return ""
 }
 
-func (x *SetSecretRequest) GetShared() bool {
+func (x *PutSecretRequest) GetShared() bool {
 	if x != nil {
 		return x.Shared
 	}
 	return false
 }
 
-func (x *SetSecretRequest) GetName() string {
+func (x *PutSecretRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *SetSecretRequest) GetValue() []byte {
+func (x *PutSecretRequest) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-type SetSecretResponse struct {
+type PutSecretResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Secret        *Secret                `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetSecretResponse) Reset() {
-	*x = SetSecretResponse{}
+func (x *PutSecretResponse) Reset() {
+	*x = PutSecretResponse{}
 	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetSecretResponse) String() string {
+func (x *PutSecretResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetSecretResponse) ProtoMessage() {}
+func (*PutSecretResponse) ProtoMessage() {}
 
-func (x *SetSecretResponse) ProtoReflect() protoreflect.Message {
+func (x *PutSecretResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -738,12 +765,12 @@ func (x *SetSecretResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetSecretResponse.ProtoReflect.Descriptor instead.
-func (*SetSecretResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use PutSecretResponse.ProtoReflect.Descriptor instead.
+func (*PutSecretResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *SetSecretResponse) GetSecret() *Secret {
+func (x *PutSecretResponse) GetSecret() *Secret {
 	if x != nil {
 		return x.Secret
 	}
@@ -855,10 +882,14 @@ func (*DeleteSecretResponse) Descriptor() ([]byte, []int) {
 }
 
 type ListSecretsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared        bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The most keys in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -914,9 +945,25 @@ func (x *ListSecretsRequest) GetShared() bool {
 	return false
 }
 
+func (x *ListSecretsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListSecretsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListSecretsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Secrets       []*Secret              `protobuf:"bytes,1,rep,name=secrets,proto3" json:"secrets,omitempty"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Secrets []*Secret              `protobuf:"bytes,1,rep,name=secrets,proto3" json:"secrets,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -958,12 +1005,23 @@ func (x *ListSecretsResponse) GetSecrets() []*Secret {
 	return nil
 }
 
+func (x *ListSecretsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
 type ListSecretVersionsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared        bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
-	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	Name        string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// The most versions in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,5,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,6,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1026,9 +1084,25 @@ func (x *ListSecretVersionsRequest) GetName() string {
 	return ""
 }
 
+func (x *ListSecretVersionsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListSecretVersionsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListSecretVersionsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Versions      []*SecretVersion       `protobuf:"bytes,1,rep,name=versions,proto3" json:"versions,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Versions []*SecretVersion       `protobuf:"bytes,1,rep,name=versions,proto3" json:"versions,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1068,6 +1142,13 @@ func (x *ListSecretVersionsResponse) GetVersions() []*SecretVersion {
 		return x.Versions
 	}
 	return nil
+}
+
+func (x *ListSecretVersionsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 type GrantSecretSetRequest struct {
@@ -1303,10 +1384,14 @@ func (*RevokeSecretSetResponse) Descriptor() ([]byte, []int) {
 }
 
 type ListSecretSetGrantsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared        bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The most grants in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1362,9 +1447,25 @@ func (x *ListSecretSetGrantsRequest) GetShared() bool {
 	return false
 }
 
+func (x *ListSecretSetGrantsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListSecretSetGrantsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListSecretSetGrantsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grants        []*SecretGrant         `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants,omitempty"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	Grants []*SecretGrant         `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1406,6 +1507,13 @@ func (x *ListSecretSetGrantsResponse) GetGrants() []*SecretGrant {
 	return nil
 }
 
+func (x *ListSecretSetGrantsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
 var File_toshi_workspace_v1_secrets_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
@@ -1438,43 +1546,55 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\"J\n" +
 	"\x17CreateSecretSetResponse\x12/\n" +
-	"\x03set\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.SecretSetR\x03set\"1\n" +
+	"\x03set\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.SecretSetR\x03set\"m\n" +
 	"\x15ListSecretSetsRequest\x12\x18\n" +
-	"\aproject\x18\x01 \x01(\tR\aproject\"K\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x03 \x01(\tR\tpageToken\"s\n" +
 	"\x16ListSecretSetsResponse\x121\n" +
-	"\x04sets\x18\x01 \x03(\v2\x1d.toshi.workspace.v1.SecretSetR\x04sets\"l\n" +
+	"\x04sets\x18\x01 \x03(\v2\x1d.toshi.workspace.v1.SecretSetR\x04sets\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"l\n" +
 	"\x16DeleteSecretSetRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\"\x19\n" +
 	"\x17DeleteSecretSetResponse\"\x90\x01\n" +
-	"\x10SetSecretRequest\x12\x18\n" +
+	"\x10PutSecretRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
 	"\x05value\x18\x05 \x01(\fR\x05value\"G\n" +
-	"\x11SetSecretResponse\x122\n" +
+	"\x11PutSecretResponse\x122\n" +
 	"\x06secret\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.SecretR\x06secret\"}\n" +
 	"\x13DeleteSecretRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\"\x16\n" +
-	"\x14DeleteSecretResponse\"h\n" +
+	"\x14DeleteSecretResponse\"\xa4\x01\n" +
 	"\x12ListSecretsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
-	"\x06shared\x18\x03 \x01(\bR\x06shared\"K\n" +
+	"\x06shared\x18\x03 \x01(\bR\x06shared\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x05 \x01(\tR\tpageToken\"s\n" +
 	"\x13ListSecretsResponse\x124\n" +
-	"\asecrets\x18\x01 \x03(\v2\x1a.toshi.workspace.v1.SecretR\asecrets\"\x83\x01\n" +
+	"\asecrets\x18\x01 \x03(\v2\x1a.toshi.workspace.v1.SecretR\asecrets\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xbf\x01\n" +
 	"\x19ListSecretVersionsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\"[\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1b\n" +
+	"\tpage_size\x18\x05 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x06 \x01(\tR\tpageToken\"\x83\x01\n" +
 	"\x1aListSecretVersionsResponse\x12=\n" +
-	"\bversions\x18\x01 \x03(\v2!.toshi.workspace.v1.SecretVersionR\bversions\"\xc0\x01\n" +
+	"\bversions\x18\x01 \x03(\v2!.toshi.workspace.v1.SecretVersionR\bversions\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xc0\x01\n" +
 	"\x15GrantSecretSetRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
@@ -1489,13 +1609,17 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\x129\n" +
 	"\x04kind\x18\x04 \x01(\x0e2%.toshi.workspace.v1.SecretGranteeKindR\x04kind\x12\x18\n" +
 	"\agrantee\x18\x05 \x01(\tR\agrantee\"\x19\n" +
-	"\x17RevokeSecretSetResponse\"p\n" +
+	"\x17RevokeSecretSetResponse\"\xac\x01\n" +
 	"\x1aListSecretSetGrantsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
-	"\x06shared\x18\x03 \x01(\bR\x06shared\"V\n" +
+	"\x06shared\x18\x03 \x01(\bR\x06shared\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x05 \x01(\tR\tpageToken\"~\n" +
 	"\x1bListSecretSetGrantsResponse\x127\n" +
-	"\x06grants\x18\x01 \x03(\v2\x1f.toshi.workspace.v1.SecretGrantR\x06grants*\x96\x01\n" +
+	"\x06grants\x18\x01 \x03(\v2\x1f.toshi.workspace.v1.SecretGrantR\x06grants\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken*\x96\x01\n" +
 	"\x11SecretGranteeKind\x12#\n" +
 	"\x1fSECRET_GRANTEE_KIND_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18SECRET_GRANTEE_KIND_KIND\x10\x01\x12\x1d\n" +
@@ -1505,7 +1629,7 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x0fCreateSecretSet\x12*.toshi.workspace.v1.CreateSecretSetRequest\x1a+.toshi.workspace.v1.CreateSecretSetResponse\x12g\n" +
 	"\x0eListSecretSets\x12).toshi.workspace.v1.ListSecretSetsRequest\x1a*.toshi.workspace.v1.ListSecretSetsResponse\x12j\n" +
 	"\x0fDeleteSecretSet\x12*.toshi.workspace.v1.DeleteSecretSetRequest\x1a+.toshi.workspace.v1.DeleteSecretSetResponse\x12X\n" +
-	"\tSetSecret\x12$.toshi.workspace.v1.SetSecretRequest\x1a%.toshi.workspace.v1.SetSecretResponse\x12a\n" +
+	"\tPutSecret\x12$.toshi.workspace.v1.PutSecretRequest\x1a%.toshi.workspace.v1.PutSecretResponse\x12a\n" +
 	"\fDeleteSecret\x12'.toshi.workspace.v1.DeleteSecretRequest\x1a(.toshi.workspace.v1.DeleteSecretResponse\x12^\n" +
 	"\vListSecrets\x12&.toshi.workspace.v1.ListSecretsRequest\x1a'.toshi.workspace.v1.ListSecretsResponse\x12s\n" +
 	"\x12ListSecretVersions\x12-.toshi.workspace.v1.ListSecretVersionsRequest\x1a..toshi.workspace.v1.ListSecretVersionsResponse\x12g\n" +
@@ -1539,8 +1663,8 @@ var file_toshi_workspace_v1_secrets_proto_goTypes = []any{
 	(*ListSecretSetsResponse)(nil),      // 8: toshi.workspace.v1.ListSecretSetsResponse
 	(*DeleteSecretSetRequest)(nil),      // 9: toshi.workspace.v1.DeleteSecretSetRequest
 	(*DeleteSecretSetResponse)(nil),     // 10: toshi.workspace.v1.DeleteSecretSetResponse
-	(*SetSecretRequest)(nil),            // 11: toshi.workspace.v1.SetSecretRequest
-	(*SetSecretResponse)(nil),           // 12: toshi.workspace.v1.SetSecretResponse
+	(*PutSecretRequest)(nil),            // 11: toshi.workspace.v1.PutSecretRequest
+	(*PutSecretResponse)(nil),           // 12: toshi.workspace.v1.PutSecretResponse
 	(*DeleteSecretRequest)(nil),         // 13: toshi.workspace.v1.DeleteSecretRequest
 	(*DeleteSecretResponse)(nil),        // 14: toshi.workspace.v1.DeleteSecretResponse
 	(*ListSecretsRequest)(nil),          // 15: toshi.workspace.v1.ListSecretsRequest
@@ -1563,7 +1687,7 @@ var file_toshi_workspace_v1_secrets_proto_depIdxs = []int32{
 	25, // 4: toshi.workspace.v1.SecretGrant.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 5: toshi.workspace.v1.CreateSecretSetResponse.set:type_name -> toshi.workspace.v1.SecretSet
 	1,  // 6: toshi.workspace.v1.ListSecretSetsResponse.sets:type_name -> toshi.workspace.v1.SecretSet
-	2,  // 7: toshi.workspace.v1.SetSecretResponse.secret:type_name -> toshi.workspace.v1.Secret
+	2,  // 7: toshi.workspace.v1.PutSecretResponse.secret:type_name -> toshi.workspace.v1.Secret
 	2,  // 8: toshi.workspace.v1.ListSecretsResponse.secrets:type_name -> toshi.workspace.v1.Secret
 	3,  // 9: toshi.workspace.v1.ListSecretVersionsResponse.versions:type_name -> toshi.workspace.v1.SecretVersion
 	0,  // 10: toshi.workspace.v1.GrantSecretSetRequest.kind:type_name -> toshi.workspace.v1.SecretGranteeKind
@@ -1573,7 +1697,7 @@ var file_toshi_workspace_v1_secrets_proto_depIdxs = []int32{
 	5,  // 14: toshi.workspace.v1.SecretService.CreateSecretSet:input_type -> toshi.workspace.v1.CreateSecretSetRequest
 	7,  // 15: toshi.workspace.v1.SecretService.ListSecretSets:input_type -> toshi.workspace.v1.ListSecretSetsRequest
 	9,  // 16: toshi.workspace.v1.SecretService.DeleteSecretSet:input_type -> toshi.workspace.v1.DeleteSecretSetRequest
-	11, // 17: toshi.workspace.v1.SecretService.SetSecret:input_type -> toshi.workspace.v1.SetSecretRequest
+	11, // 17: toshi.workspace.v1.SecretService.PutSecret:input_type -> toshi.workspace.v1.PutSecretRequest
 	13, // 18: toshi.workspace.v1.SecretService.DeleteSecret:input_type -> toshi.workspace.v1.DeleteSecretRequest
 	15, // 19: toshi.workspace.v1.SecretService.ListSecrets:input_type -> toshi.workspace.v1.ListSecretsRequest
 	17, // 20: toshi.workspace.v1.SecretService.ListSecretVersions:input_type -> toshi.workspace.v1.ListSecretVersionsRequest
@@ -1583,7 +1707,7 @@ var file_toshi_workspace_v1_secrets_proto_depIdxs = []int32{
 	6,  // 24: toshi.workspace.v1.SecretService.CreateSecretSet:output_type -> toshi.workspace.v1.CreateSecretSetResponse
 	8,  // 25: toshi.workspace.v1.SecretService.ListSecretSets:output_type -> toshi.workspace.v1.ListSecretSetsResponse
 	10, // 26: toshi.workspace.v1.SecretService.DeleteSecretSet:output_type -> toshi.workspace.v1.DeleteSecretSetResponse
-	12, // 27: toshi.workspace.v1.SecretService.SetSecret:output_type -> toshi.workspace.v1.SetSecretResponse
+	12, // 27: toshi.workspace.v1.SecretService.PutSecret:output_type -> toshi.workspace.v1.PutSecretResponse
 	14, // 28: toshi.workspace.v1.SecretService.DeleteSecret:output_type -> toshi.workspace.v1.DeleteSecretResponse
 	16, // 29: toshi.workspace.v1.SecretService.ListSecrets:output_type -> toshi.workspace.v1.ListSecretsResponse
 	18, // 30: toshi.workspace.v1.SecretService.ListSecretVersions:output_type -> toshi.workspace.v1.ListSecretVersionsResponse

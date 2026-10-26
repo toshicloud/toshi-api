@@ -70,6 +70,8 @@ type WebhookServiceClient interface {
 	// NOT_FOUND.
 	GetWebhookEndpoint(context.Context, *connect.Request[workspacev1.GetWebhookEndpointRequest]) (*connect.Response[workspacev1.GetWebhookEndpointResponse], error)
 	// ListWebhookEndpoints returns the workspace's endpoints in ID order.
+	//
+	// A page holds 100 endpoints when page_size is zero, and 1000 at most.
 	ListWebhookEndpoints(context.Context, *connect.Request[workspacev1.ListWebhookEndpointsRequest]) (*connect.Response[workspacev1.ListWebhookEndpointsResponse], error)
 	// UpdateWebhookEndpoint sets the fields update_mask names: url, events,
 	// enabled. A disabled endpoint is owed no new event and no try starts;
@@ -89,6 +91,8 @@ type WebhookServiceClient interface {
 	RotateWebhookEndpointSecret(context.Context, *connect.Request[workspacev1.RotateWebhookEndpointSecretRequest]) (*connect.Response[workspacev1.RotateWebhookEndpointSecretResponse], error)
 	// ListWebhookDeliveries returns an endpoint's deliveries in event order,
 	// a page at a time.
+	//
+	// A page holds 50 deliveries when page_size is zero, and 500 at most.
 	ListWebhookDeliveries(context.Context, *connect.Request[workspacev1.ListWebhookDeliveriesRequest]) (*connect.Response[workspacev1.ListWebhookDeliveriesResponse], error)
 	// ReplayWebhookEvents makes the endpoint owed again the events after
 	// cursor that its filter keeps now, up to its own cursor, at most 500 per
@@ -229,6 +233,8 @@ type WebhookServiceHandler interface {
 	// NOT_FOUND.
 	GetWebhookEndpoint(context.Context, *connect.Request[workspacev1.GetWebhookEndpointRequest]) (*connect.Response[workspacev1.GetWebhookEndpointResponse], error)
 	// ListWebhookEndpoints returns the workspace's endpoints in ID order.
+	//
+	// A page holds 100 endpoints when page_size is zero, and 1000 at most.
 	ListWebhookEndpoints(context.Context, *connect.Request[workspacev1.ListWebhookEndpointsRequest]) (*connect.Response[workspacev1.ListWebhookEndpointsResponse], error)
 	// UpdateWebhookEndpoint sets the fields update_mask names: url, events,
 	// enabled. A disabled endpoint is owed no new event and no try starts;
@@ -248,6 +254,8 @@ type WebhookServiceHandler interface {
 	RotateWebhookEndpointSecret(context.Context, *connect.Request[workspacev1.RotateWebhookEndpointSecretRequest]) (*connect.Response[workspacev1.RotateWebhookEndpointSecretResponse], error)
 	// ListWebhookDeliveries returns an endpoint's deliveries in event order,
 	// a page at a time.
+	//
+	// A page holds 50 deliveries when page_size is zero, and 500 at most.
 	ListWebhookDeliveries(context.Context, *connect.Request[workspacev1.ListWebhookDeliveriesRequest]) (*connect.Response[workspacev1.ListWebhookDeliveriesResponse], error)
 	// ReplayWebhookEvents makes the endpoint owed again the events after
 	// cursor that its filter keeps now, up to its own cursor, at most 500 per

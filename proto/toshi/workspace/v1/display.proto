@@ -9,7 +9,7 @@ option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
 // DisplayService opens display sessions: one viewer's live view of the
 // screen of a VM that runs one of the workspace's CI jobs. The caller's
-// credential names the workspace, as for WorkspaceService; a session or a job
+// credential names the workspace, as for WorkloadService; a session or a job
 // of another workspace is NOT_FOUND.
 //
 // A session carries the screen as the RFB protocol (RFC 6143) over a
@@ -31,7 +31,7 @@ service DisplayService {
   // token expires before it attaches, when its job stops running on the
   // VM it was opened on, or when the workspace is suspended.
   //
-  // request_key works as WorkspaceService's, except that a retry never
+  // request_key works as WorkloadService's, except that a retry never
   // returns the token: it returns the session the first call opened, with
   // replayed set and no token, and opens nothing. Open another session for
   // a new token.
@@ -43,6 +43,8 @@ service DisplayService {
 
   // ListDisplaySessions returns the workspace's sessions, the newest
   // first.
+  //
+  // A page holds 50 sessions when page_size is zero, and 200 at most.
   rpc ListDisplaySessions(ListDisplaySessionsRequest) returns (ListDisplaySessionsResponse);
 
   // CloseDisplaySession closes a session and ends its viewer's connection.
@@ -116,8 +118,8 @@ enum DisplayOpener {
 message DisplaySession {
   // Assigned by the server; unique within the workspace.
   string id = 1;
-  // The job the session views: its ID as the jobs API and `toshi jobs`
-  // show it.
+  // The job the session views: its ID as the jobs API and `toshi host-job
+  // list` show it.
   string job_id = 2;
   DisplayMode mode = 3;
   // For an agent's run: whether a person may take the input from the
@@ -155,7 +157,7 @@ message DisplaySession {
 
 message OpenDisplaySessionRequest {
   // What to view. A job runs on a host and has a screen; a workload of
-  // WorkspaceService has none yet and fails with FAILED_PRECONDITION.
+  // WorkloadService has none yet and fails with FAILED_PRECONDITION.
   oneof target {
     string job_id = 1;
     string workload_id = 2;
@@ -195,13 +197,16 @@ message ListDisplaySessionsRequest {
   string job_id = 1;
   // Only the sessions that have not closed.
   bool open_only = 2;
-  // The most sessions returned, the newest first; zero is 50, at most
-  // 200.
+  // The most sessions in one page; zero lets the server choose.
   int32 page_size = 3;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 4;
 }
 
 message ListDisplaySessionsResponse {
   repeated DisplaySession sessions = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message CloseDisplaySessionRequest {

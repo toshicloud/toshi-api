@@ -70,9 +70,9 @@ const (
 	// OperatorServiceRetireOfflineHostsProcedure is the fully-qualified name of the OperatorService's
 	// RetireOfflineHosts RPC.
 	OperatorServiceRetireOfflineHostsProcedure = "/toshi.operator.v1.OperatorService/RetireOfflineHosts"
-	// OperatorServiceAddCloudHostProcedure is the fully-qualified name of the OperatorService's
-	// AddCloudHost RPC.
-	OperatorServiceAddCloudHostProcedure = "/toshi.operator.v1.OperatorService/AddCloudHost"
+	// OperatorServiceCreateCloudHostProcedure is the fully-qualified name of the OperatorService's
+	// CreateCloudHost RPC.
+	OperatorServiceCreateCloudHostProcedure = "/toshi.operator.v1.OperatorService/CreateCloudHost"
 	// OperatorServiceCreateWorkspaceProcedure is the fully-qualified name of the OperatorService's
 	// CreateWorkspace RPC.
 	OperatorServiceCreateWorkspaceProcedure = "/toshi.operator.v1.OperatorService/CreateWorkspace"
@@ -208,12 +208,12 @@ const (
 	// OperatorServiceGetJobFailureProcedure is the fully-qualified name of the OperatorService's
 	// GetJobFailure RPC.
 	OperatorServiceGetJobFailureProcedure = "/toshi.operator.v1.OperatorService/GetJobFailure"
-	// OperatorServiceGetJobDeliveryProcedure is the fully-qualified name of the OperatorService's
-	// GetJobDelivery RPC.
-	OperatorServiceGetJobDeliveryProcedure = "/toshi.operator.v1.OperatorService/GetJobDelivery"
-	// OperatorServiceSetJobDeliveryProcedure is the fully-qualified name of the OperatorService's
-	// SetJobDelivery RPC.
-	OperatorServiceSetJobDeliveryProcedure = "/toshi.operator.v1.OperatorService/SetJobDelivery"
+	// OperatorServiceGetSecretDeliveryProcedure is the fully-qualified name of the OperatorService's
+	// GetSecretDelivery RPC.
+	OperatorServiceGetSecretDeliveryProcedure = "/toshi.operator.v1.OperatorService/GetSecretDelivery"
+	// OperatorServiceSetSecretDeliveryProcedure is the fully-qualified name of the OperatorService's
+	// SetSecretDelivery RPC.
+	OperatorServiceSetSecretDeliveryProcedure = "/toshi.operator.v1.OperatorService/SetSecretDelivery"
 	// OperatorServiceListUtilisationProcedure is the fully-qualified name of the OperatorService's
 	// ListUtilisation RPC.
 	OperatorServiceListUtilisationProcedure = "/toshi.operator.v1.OperatorService/ListUtilisation"
@@ -223,9 +223,6 @@ const (
 	// OperatorServiceCreateStorageProviderProcedure is the fully-qualified name of the
 	// OperatorService's CreateStorageProvider RPC.
 	OperatorServiceCreateStorageProviderProcedure = "/toshi.operator.v1.OperatorService/CreateStorageProvider"
-	// OperatorServiceTestStorageProviderProcedure is the fully-qualified name of the OperatorService's
-	// TestStorageProvider RPC.
-	OperatorServiceTestStorageProviderProcedure = "/toshi.operator.v1.OperatorService/TestStorageProvider"
 	// OperatorServiceListStorageProvidersProcedure is the fully-qualified name of the OperatorService's
 	// ListStorageProviders RPC.
 	OperatorServiceListStorageProvidersProcedure = "/toshi.operator.v1.OperatorService/ListStorageProviders"
@@ -241,9 +238,13 @@ const (
 type OperatorServiceClient interface {
 	// ListJobs returns the jobs that match every filter field that is set,
 	// oldest queued first.
+	//
+	// A page holds 100 jobs when page_size is zero, and 1000 at most.
 	ListJobs(context.Context, *connect.Request[operatorv1.ListJobsRequest]) (*connect.Response[operatorv1.ListJobsResponse], error)
 	// ListAuditEvents returns the audit log, newest first. An operator may use
 	// every filter; a dashboard session may read only its own tenants.
+	//
+	// A page holds 100 events when page_size is zero, and 1000 at most.
 	ListAuditEvents(context.Context, *connect.Request[operatorv1.ListAuditEventsRequest]) (*connect.Response[operatorv1.ListAuditEventsResponse], error)
 	// GetJob returns one job. An unknown ID fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[operatorv1.GetJobRequest]) (*connect.Response[operatorv1.GetJobResponse], error)
@@ -258,11 +259,15 @@ type OperatorServiceClient interface {
 	// came near their memory limit. Filler jobs are left out. Operator only.
 	SummariseJobTelemetry(context.Context, *connect.Request[operatorv1.SummariseJobTelemetryRequest]) (*connect.Response[operatorv1.SummariseJobTelemetryResponse], error)
 	// ListHosts returns the hosts that match the filter, ordered by ID.
+	//
+	// A page holds 100 hosts when page_size is zero, and 1000 at most.
 	ListHosts(context.Context, *connect.Request[operatorv1.ListHostsRequest]) (*connect.Response[operatorv1.ListHostsResponse], error)
 	// ListHostStorage returns the volumes a host holds, ordered by volume ID:
 	// those it keeps the warm copy of, and those a job assigned to it has
 	// claimed. A tenant's caller sees only its own hosts and its own volumes.
 	// An unknown host fails with NOT_FOUND.
+	//
+	// A page holds 100 volumes when page_size is zero, and 1000 at most.
 	ListHostStorage(context.Context, *connect.Request[operatorv1.ListHostStorageRequest]) (*connect.Response[operatorv1.ListHostStorageResponse], error)
 	// SetHostState drains a host or puts it back in service. Only
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
@@ -292,12 +297,12 @@ type OperatorServiceClient interface {
 	// would do. A host a tenant owns is skipped unless include_owned is set.
 	// Each removal records one host.retired audit event. Operators only.
 	RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error)
-	// AddCloudHost registers a tenant-owned cloud host the control plane drives
-	// in the tenant's AWS account. A dashboard session and a tenant
+	// CreateCloudHost registers a tenant-owned cloud host the control plane
+	// drives in the tenant's AWS account. A dashboard session and a tenant
 	// token may add hosts for their own tenant only; the operator for any. When
 	// cloud hosts are not configured on the control plane the call fails with
 	// FAILED_PRECONDITION.
-	AddCloudHost(context.Context, *connect.Request[operatorv1.AddCloudHostRequest]) (*connect.Response[operatorv1.AddCloudHostResponse], error)
+	CreateCloudHost(context.Context, *connect.Request[operatorv1.CreateCloudHostRequest]) (*connect.Response[operatorv1.CreateCloudHostResponse], error)
 	// CreateWorkspace makes a workspace that has no GitHub installation and
 	// returns it with its new id. It is on plan when one is given and on the
 	// control plane's default_plan otherwise, as an installed workspace is,
@@ -306,6 +311,8 @@ type OperatorServiceClient interface {
 	// unique: two workspaces may share one. Only the operator may call it.
 	CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error)
 	// ListTenants returns every tenant, ordered by ID.
+	//
+	// A page holds 100 tenants when page_size is zero, and 1000 at most.
 	ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error)
 	// SetTenantCap sets a tenant's concurrency cap override and returns the
 	// tenant as stored; a cap of 0 clears the override, so the tenant's plan
@@ -328,6 +335,8 @@ type OperatorServiceClient interface {
 	// fails with NOT_FOUND. A workspace's own token cannot call it.
 	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
 	// ListPlans returns configured plans sorted by name.
+	//
+	// A page holds 100 plans when page_size is zero, and 1000 at most.
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
 	GetVersion(context.Context, *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error)
@@ -460,6 +469,8 @@ type OperatorServiceClient interface {
 	GetJobDebugAccess(context.Context, *connect.Request[operatorv1.GetJobDebugAccessRequest]) (*connect.Response[operatorv1.GetJobDebugAccessResponse], error)
 	// ListTokens returns the operator and enrollment tokens the control plane
 	// knows, oldest first, without their values.
+	//
+	// A page holds 100 tokens when page_size is zero, and 1000 at most.
 	ListTokens(context.Context, *connect.Request[operatorv1.ListTokensRequest]) (*connect.Response[operatorv1.ListTokensResponse], error)
 	// RotateToken makes a new operator or enrollment token, accepted at once,
 	// and returns it; it is not stored and cannot be shown again. The kind's
@@ -489,10 +500,18 @@ type OperatorServiceClient interface {
 	// other.
 	CreateProductToken(context.Context, *connect.Request[operatorv1.CreateProductTokenRequest]) (*connect.Response[operatorv1.CreateProductTokenResponse], error)
 	// ListOperatorAlerts returns the operator alerts raised and not yet
-	// cleared, one per kind. They are kept in the store, so a restarted control
-	// plane still returns them. Operators only.
+	// cleared, one per kind, ordered by kind. They are kept in the store, so a
+	// restarted control plane still returns them. Operators only.
+	//
+	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListOperatorAlerts(context.Context, *connect.Request[operatorv1.ListOperatorAlertsRequest]) (*connect.Response[operatorv1.ListOperatorAlertsResponse], error)
-	// ListHostAlerts returns the active alerts of hosts that tenants own: memory_held, egress_changed and agent_version_skew. A tenant caller gets those of its own tenants; an operator gets every tenant's, or one tenant's with the filter.
+	// ListHostAlerts returns the active alerts of hosts that tenants own:
+	// memory_held, egress_changed and agent_version_skew, one per tenant and
+	// kind, ordered by tenant, then kind. A tenant caller gets those of its
+	// own tenants; an operator gets every tenant's, or one tenant's with the
+	// filter.
+	//
+	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListHostAlerts(context.Context, *connect.Request[operatorv1.ListHostAlertsRequest]) (*connect.Response[operatorv1.ListHostAlertsResponse], error)
 	// ListEgressIPs returns the public addresses a tenant's jobs may reach the
 	// internet from: the egress addresses of the hosts its jobs can land on,
@@ -500,6 +519,8 @@ type OperatorServiceClient interface {
 	// its plan's operating systems run on. A dashboard session or
 	// tenant token may ask for its own tenants only. An empty tenant fails
 	// with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
+	//
+	// A page holds 100 hosts when page_size is zero, and 1000 at most.
 	ListEgressIPs(context.Context, *connect.Request[operatorv1.ListEgressIPsRequest]) (*connect.Response[operatorv1.ListEgressIPsResponse], error)
 	// CheckCloudHost checks a cloud host's AWS setup without launching
 	// anything: the role can be assumed, the AMI is visible, the subnet routes
@@ -509,9 +530,12 @@ type OperatorServiceClient interface {
 	// with NOT_FOUND; cloud hosts not configured on the control plane fails
 	// with FAILED_PRECONDITION.
 	CheckCloudHost(context.Context, *connect.Request[operatorv1.CheckCloudHostRequest]) (*connect.Response[operatorv1.CheckCloudHostResponse], error)
-	// ListFillers returns the fillers, each with its latest run, and the
-	// filler minutes per host over the last 24 hours. A tenant
-	// caller sees only its own dispatch fillers and no host minutes.
+	// ListFillers returns the fillers, ordered by name, then tenant, each
+	// with its latest run, and the filler minutes per host over the last 24
+	// hours. A tenant caller sees only its own dispatch fillers and no host
+	// minutes.
+	//
+	// A page holds 100 fillers when page_size is zero, and 1000 at most.
 	ListFillers(context.Context, *connect.Request[operatorv1.ListFillersRequest]) (*connect.Response[operatorv1.ListFillersResponse], error)
 	// PutFiller adds a filler or replaces the one with the same name and
 	// returns it as stored. A filler from the control plane's [[filler]]
@@ -528,6 +552,8 @@ type OperatorServiceClient interface {
 	SetFillerEnabled(context.Context, *connect.Request[operatorv1.SetFillerEnabledRequest]) (*connect.Response[operatorv1.SetFillerEnabledResponse], error)
 	// ListFillerRuns returns filler runs, newest first. A tenant caller sees
 	// only its own dispatch fillers' runs.
+	//
+	// A page holds 50 runs when page_size is zero, and 500 at most.
 	ListFillerRuns(context.Context, *connect.Request[operatorv1.ListFillerRunsRequest]) (*connect.Response[operatorv1.ListFillerRunsResponse], error)
 	// SetTenantAllowCacheWarm sets whether the tenant's dispatch fillers run
 	// and returns the tenant as stored. Off by default. An empty
@@ -544,21 +570,23 @@ type OperatorServiceClient interface {
 	// sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
 	// unknown ID fails with NOT_FOUND.
 	GetJobFailure(context.Context, *connect.Request[operatorv1.GetJobFailureRequest]) (*connect.Response[operatorv1.GetJobFailureResponse], error)
-	// GetJobDelivery returns the switch for delivering secrets to CI jobs
+	// GetSecretDelivery returns the switch for delivering secrets to CI jobs
 	// and the hosts that keep it from turning on. The
 	// operator token only.
-	GetJobDelivery(context.Context, *connect.Request[operatorv1.GetJobDeliveryRequest]) (*connect.Response[operatorv1.GetJobDeliveryResponse], error)
-	// SetJobDelivery turns delivery of secrets to CI jobs on or off and
+	GetSecretDelivery(context.Context, *connect.Request[operatorv1.GetSecretDeliveryRequest]) (*connect.Response[operatorv1.GetSecretDeliveryResponse], error)
+	// SetSecretDelivery turns delivery of secrets to CI jobs on or off and
 	// records the change with an audit event in the same transaction. On is
 	// refused with FAILED_PRECONDITION, naming the hosts, while a host that
 	// is not revoked is not ready for it; off does not depend on the hosts.
 	// Setting the value the switch has changes and records nothing. The
 	// operator token only.
-	SetJobDelivery(context.Context, *connect.Request[operatorv1.SetJobDeliveryRequest]) (*connect.Response[operatorv1.SetJobDeliveryResponse], error)
+	SetSecretDelivery(context.Context, *connect.Request[operatorv1.SetSecretDeliveryRequest]) (*connect.Response[operatorv1.SetSecretDeliveryResponse], error)
 	// ListUtilisation returns the shared hosts' utilisation roll-ups in a
 	// range, summed by OS pool or by host and by hour, day or week, with the
 	// rows of the hour in progress read from memory. Operator
 	// only.
+	//
+	// A page holds 1000 rows when page_size is zero, and 5000 at most.
 	ListUtilisation(context.Context, *connect.Request[operatorv1.ListUtilisationRequest]) (*connect.Response[operatorv1.ListUtilisationResponse], error)
 	// SuggestPools replays the store's finished jobs queued in the last days
 	// against the hosts as registered, with the warm targets their agents
@@ -590,14 +618,6 @@ type OperatorServiceClient interface {
 	// dashboard session for its own workspace with a credential and no
 	// file, role or replication fields.
 	CreateStorageProvider(context.Context, *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error)
-	// TestStorageProvider checks a provider that is not stored, with the
-	// credential in the request, as CreateStorageProvider would before it
-	// stores one. It stores and audits nothing. A check that fails is an
-	// answer, not an error: ok is false and error says why. A request
-	// CreateStorageProvider would refuse fails the same way before any
-	// connection. The operator, or a dashboard session for its own
-	// workspace.
-	TestStorageProvider(context.Context, *connect.Request[operatorv1.TestStorageProviderRequest]) (*connect.Response[operatorv1.TestStorageProviderResponse], error)
 	// ListStorageProviders returns the operator's providers when tenant_id
 	// is empty and that tenant's otherwise, ordered by name. With
 	// include_default it also returns the operator's provider a tenant
@@ -605,13 +625,23 @@ type OperatorServiceClient interface {
 	// operator, or a dashboard session for its own workspace, which gets
 	// every row without its credential references (credentials_file,
 	// credentials_profile, role_arn and external_id empty).
+	//
+	// A page holds 100 providers when page_size is zero, and 1000 at most.
 	ListStorageProviders(context.Context, *connect.Request[operatorv1.ListStorageProvidersRequest]) (*connect.Response[operatorv1.ListStorageProvidersResponse], error)
-	// CheckStorageProvider checks the provider's bucket and records the
-	// result: it heads the bucket, refuses a versioned one, then uploads,
-	// heads and deletes a probe object. The error names the failing step.
-	// The operator, or a dashboard session for a row its workspace saved
-	// (one with a wrapped credential and no role), which gets
-	// last_check_error.
+	// CheckStorageProvider checks a provider's bucket: it heads the bucket,
+	// refuses a versioned one, then uploads, heads and deletes a probe
+	// object. A check that fails is an answer, not an error: ok is false and
+	// error names the failing step.
+	//
+	// With id it checks a saved provider, records the result and returns
+	// the provider as stored: the operator, or a dashboard session for a row
+	// its workspace saved (one with a wrapped credential and no role), which
+	// gets last_check_error. With provider it checks one that is not saved,
+	// with the credential in the request, as CreateStorageProvider would
+	// before it stores one; it stores and audits nothing, and a request
+	// CreateStorageProvider would refuse fails the same way before any
+	// connection: the operator, or a dashboard session for its own
+	// workspace.
 	CheckStorageProvider(context.Context, *connect.Request[operatorv1.CheckStorageProviderRequest]) (*connect.Response[operatorv1.CheckStorageProviderResponse], error)
 	// DeleteStorageProvider removes a provider. An unknown ID fails with
 	// NOT_FOUND. The operator, or a dashboard session for a row its
@@ -703,10 +733,10 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("RetireOfflineHosts")),
 			connect.WithClientOptions(opts...),
 		),
-		addCloudHost: connect.NewClient[operatorv1.AddCloudHostRequest, operatorv1.AddCloudHostResponse](
+		createCloudHost: connect.NewClient[operatorv1.CreateCloudHostRequest, operatorv1.CreateCloudHostResponse](
 			httpClient,
-			baseURL+OperatorServiceAddCloudHostProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("AddCloudHost")),
+			baseURL+OperatorServiceCreateCloudHostProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("CreateCloudHost")),
 			connect.WithClientOptions(opts...),
 		),
 		createWorkspace: connect.NewClient[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse](
@@ -979,16 +1009,16 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("GetJobFailure")),
 			connect.WithClientOptions(opts...),
 		),
-		getJobDelivery: connect.NewClient[operatorv1.GetJobDeliveryRequest, operatorv1.GetJobDeliveryResponse](
+		getSecretDelivery: connect.NewClient[operatorv1.GetSecretDeliveryRequest, operatorv1.GetSecretDeliveryResponse](
 			httpClient,
-			baseURL+OperatorServiceGetJobDeliveryProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("GetJobDelivery")),
+			baseURL+OperatorServiceGetSecretDeliveryProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("GetSecretDelivery")),
 			connect.WithClientOptions(opts...),
 		),
-		setJobDelivery: connect.NewClient[operatorv1.SetJobDeliveryRequest, operatorv1.SetJobDeliveryResponse](
+		setSecretDelivery: connect.NewClient[operatorv1.SetSecretDeliveryRequest, operatorv1.SetSecretDeliveryResponse](
 			httpClient,
-			baseURL+OperatorServiceSetJobDeliveryProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetJobDelivery")),
+			baseURL+OperatorServiceSetSecretDeliveryProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("SetSecretDelivery")),
 			connect.WithClientOptions(opts...),
 		),
 		listUtilisation: connect.NewClient[operatorv1.ListUtilisationRequest, operatorv1.ListUtilisationResponse](
@@ -1007,12 +1037,6 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			httpClient,
 			baseURL+OperatorServiceCreateStorageProviderProcedure,
 			connect.WithSchema(operatorServiceMethods.ByName("CreateStorageProvider")),
-			connect.WithClientOptions(opts...),
-		),
-		testStorageProvider: connect.NewClient[operatorv1.TestStorageProviderRequest, operatorv1.TestStorageProviderResponse](
-			httpClient,
-			baseURL+OperatorServiceTestStorageProviderProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("TestStorageProvider")),
 			connect.WithClientOptions(opts...),
 		),
 		listStorageProviders: connect.NewClient[operatorv1.ListStorageProvidersRequest, operatorv1.ListStorageProvidersResponse](
@@ -1050,7 +1074,7 @@ type operatorServiceClient struct {
 	retireHost                  *connect.Client[operatorv1.RetireHostRequest, operatorv1.RetireHostResponse]
 	revokeHost                  *connect.Client[operatorv1.RevokeHostRequest, operatorv1.RevokeHostResponse]
 	retireOfflineHosts          *connect.Client[operatorv1.RetireOfflineHostsRequest, operatorv1.RetireOfflineHostsResponse]
-	addCloudHost                *connect.Client[operatorv1.AddCloudHostRequest, operatorv1.AddCloudHostResponse]
+	createCloudHost             *connect.Client[operatorv1.CreateCloudHostRequest, operatorv1.CreateCloudHostResponse]
 	createWorkspace             *connect.Client[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse]
 	listTenants                 *connect.Client[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse]
 	setTenantCap                *connect.Client[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse]
@@ -1096,12 +1120,11 @@ type operatorServiceClient struct {
 	setTenantAllowCacheWarm     *connect.Client[operatorv1.SetTenantAllowCacheWarmRequest, operatorv1.SetTenantAllowCacheWarmResponse]
 	setTenantCancelRunOnVmDeath *connect.Client[operatorv1.SetTenantCancelRunOnVmDeathRequest, operatorv1.SetTenantCancelRunOnVmDeathResponse]
 	getJobFailure               *connect.Client[operatorv1.GetJobFailureRequest, operatorv1.GetJobFailureResponse]
-	getJobDelivery              *connect.Client[operatorv1.GetJobDeliveryRequest, operatorv1.GetJobDeliveryResponse]
-	setJobDelivery              *connect.Client[operatorv1.SetJobDeliveryRequest, operatorv1.SetJobDeliveryResponse]
+	getSecretDelivery           *connect.Client[operatorv1.GetSecretDeliveryRequest, operatorv1.GetSecretDeliveryResponse]
+	setSecretDelivery           *connect.Client[operatorv1.SetSecretDeliveryRequest, operatorv1.SetSecretDeliveryResponse]
 	listUtilisation             *connect.Client[operatorv1.ListUtilisationRequest, operatorv1.ListUtilisationResponse]
 	suggestPools                *connect.Client[operatorv1.SuggestPoolsRequest, operatorv1.SuggestPoolsResponse]
 	createStorageProvider       *connect.Client[operatorv1.CreateStorageProviderRequest, operatorv1.CreateStorageProviderResponse]
-	testStorageProvider         *connect.Client[operatorv1.TestStorageProviderRequest, operatorv1.TestStorageProviderResponse]
 	listStorageProviders        *connect.Client[operatorv1.ListStorageProvidersRequest, operatorv1.ListStorageProvidersResponse]
 	checkStorageProvider        *connect.Client[operatorv1.CheckStorageProviderRequest, operatorv1.CheckStorageProviderResponse]
 	deleteStorageProvider       *connect.Client[operatorv1.DeleteStorageProviderRequest, operatorv1.DeleteStorageProviderResponse]
@@ -1167,9 +1190,9 @@ func (c *operatorServiceClient) RetireOfflineHosts(ctx context.Context, req *con
 	return c.retireOfflineHosts.CallUnary(ctx, req)
 }
 
-// AddCloudHost calls toshi.operator.v1.OperatorService.AddCloudHost.
-func (c *operatorServiceClient) AddCloudHost(ctx context.Context, req *connect.Request[operatorv1.AddCloudHostRequest]) (*connect.Response[operatorv1.AddCloudHostResponse], error) {
-	return c.addCloudHost.CallUnary(ctx, req)
+// CreateCloudHost calls toshi.operator.v1.OperatorService.CreateCloudHost.
+func (c *operatorServiceClient) CreateCloudHost(ctx context.Context, req *connect.Request[operatorv1.CreateCloudHostRequest]) (*connect.Response[operatorv1.CreateCloudHostResponse], error) {
+	return c.createCloudHost.CallUnary(ctx, req)
 }
 
 // CreateWorkspace calls toshi.operator.v1.OperatorService.CreateWorkspace.
@@ -1397,14 +1420,14 @@ func (c *operatorServiceClient) GetJobFailure(ctx context.Context, req *connect.
 	return c.getJobFailure.CallUnary(ctx, req)
 }
 
-// GetJobDelivery calls toshi.operator.v1.OperatorService.GetJobDelivery.
-func (c *operatorServiceClient) GetJobDelivery(ctx context.Context, req *connect.Request[operatorv1.GetJobDeliveryRequest]) (*connect.Response[operatorv1.GetJobDeliveryResponse], error) {
-	return c.getJobDelivery.CallUnary(ctx, req)
+// GetSecretDelivery calls toshi.operator.v1.OperatorService.GetSecretDelivery.
+func (c *operatorServiceClient) GetSecretDelivery(ctx context.Context, req *connect.Request[operatorv1.GetSecretDeliveryRequest]) (*connect.Response[operatorv1.GetSecretDeliveryResponse], error) {
+	return c.getSecretDelivery.CallUnary(ctx, req)
 }
 
-// SetJobDelivery calls toshi.operator.v1.OperatorService.SetJobDelivery.
-func (c *operatorServiceClient) SetJobDelivery(ctx context.Context, req *connect.Request[operatorv1.SetJobDeliveryRequest]) (*connect.Response[operatorv1.SetJobDeliveryResponse], error) {
-	return c.setJobDelivery.CallUnary(ctx, req)
+// SetSecretDelivery calls toshi.operator.v1.OperatorService.SetSecretDelivery.
+func (c *operatorServiceClient) SetSecretDelivery(ctx context.Context, req *connect.Request[operatorv1.SetSecretDeliveryRequest]) (*connect.Response[operatorv1.SetSecretDeliveryResponse], error) {
+	return c.setSecretDelivery.CallUnary(ctx, req)
 }
 
 // ListUtilisation calls toshi.operator.v1.OperatorService.ListUtilisation.
@@ -1420,11 +1443,6 @@ func (c *operatorServiceClient) SuggestPools(ctx context.Context, req *connect.R
 // CreateStorageProvider calls toshi.operator.v1.OperatorService.CreateStorageProvider.
 func (c *operatorServiceClient) CreateStorageProvider(ctx context.Context, req *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error) {
 	return c.createStorageProvider.CallUnary(ctx, req)
-}
-
-// TestStorageProvider calls toshi.operator.v1.OperatorService.TestStorageProvider.
-func (c *operatorServiceClient) TestStorageProvider(ctx context.Context, req *connect.Request[operatorv1.TestStorageProviderRequest]) (*connect.Response[operatorv1.TestStorageProviderResponse], error) {
-	return c.testStorageProvider.CallUnary(ctx, req)
 }
 
 // ListStorageProviders calls toshi.operator.v1.OperatorService.ListStorageProviders.
@@ -1446,9 +1464,13 @@ func (c *operatorServiceClient) DeleteStorageProvider(ctx context.Context, req *
 type OperatorServiceHandler interface {
 	// ListJobs returns the jobs that match every filter field that is set,
 	// oldest queued first.
+	//
+	// A page holds 100 jobs when page_size is zero, and 1000 at most.
 	ListJobs(context.Context, *connect.Request[operatorv1.ListJobsRequest]) (*connect.Response[operatorv1.ListJobsResponse], error)
 	// ListAuditEvents returns the audit log, newest first. An operator may use
 	// every filter; a dashboard session may read only its own tenants.
+	//
+	// A page holds 100 events when page_size is zero, and 1000 at most.
 	ListAuditEvents(context.Context, *connect.Request[operatorv1.ListAuditEventsRequest]) (*connect.Response[operatorv1.ListAuditEventsResponse], error)
 	// GetJob returns one job. An unknown ID fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[operatorv1.GetJobRequest]) (*connect.Response[operatorv1.GetJobResponse], error)
@@ -1463,11 +1485,15 @@ type OperatorServiceHandler interface {
 	// came near their memory limit. Filler jobs are left out. Operator only.
 	SummariseJobTelemetry(context.Context, *connect.Request[operatorv1.SummariseJobTelemetryRequest]) (*connect.Response[operatorv1.SummariseJobTelemetryResponse], error)
 	// ListHosts returns the hosts that match the filter, ordered by ID.
+	//
+	// A page holds 100 hosts when page_size is zero, and 1000 at most.
 	ListHosts(context.Context, *connect.Request[operatorv1.ListHostsRequest]) (*connect.Response[operatorv1.ListHostsResponse], error)
 	// ListHostStorage returns the volumes a host holds, ordered by volume ID:
 	// those it keeps the warm copy of, and those a job assigned to it has
 	// claimed. A tenant's caller sees only its own hosts and its own volumes.
 	// An unknown host fails with NOT_FOUND.
+	//
+	// A page holds 100 volumes when page_size is zero, and 1000 at most.
 	ListHostStorage(context.Context, *connect.Request[operatorv1.ListHostStorageRequest]) (*connect.Response[operatorv1.ListHostStorageResponse], error)
 	// SetHostState drains a host or puts it back in service. Only
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
@@ -1497,12 +1523,12 @@ type OperatorServiceHandler interface {
 	// would do. A host a tenant owns is skipped unless include_owned is set.
 	// Each removal records one host.retired audit event. Operators only.
 	RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error)
-	// AddCloudHost registers a tenant-owned cloud host the control plane drives
-	// in the tenant's AWS account. A dashboard session and a tenant
+	// CreateCloudHost registers a tenant-owned cloud host the control plane
+	// drives in the tenant's AWS account. A dashboard session and a tenant
 	// token may add hosts for their own tenant only; the operator for any. When
 	// cloud hosts are not configured on the control plane the call fails with
 	// FAILED_PRECONDITION.
-	AddCloudHost(context.Context, *connect.Request[operatorv1.AddCloudHostRequest]) (*connect.Response[operatorv1.AddCloudHostResponse], error)
+	CreateCloudHost(context.Context, *connect.Request[operatorv1.CreateCloudHostRequest]) (*connect.Response[operatorv1.CreateCloudHostResponse], error)
 	// CreateWorkspace makes a workspace that has no GitHub installation and
 	// returns it with its new id. It is on plan when one is given and on the
 	// control plane's default_plan otherwise, as an installed workspace is,
@@ -1511,6 +1537,8 @@ type OperatorServiceHandler interface {
 	// unique: two workspaces may share one. Only the operator may call it.
 	CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error)
 	// ListTenants returns every tenant, ordered by ID.
+	//
+	// A page holds 100 tenants when page_size is zero, and 1000 at most.
 	ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error)
 	// SetTenantCap sets a tenant's concurrency cap override and returns the
 	// tenant as stored; a cap of 0 clears the override, so the tenant's plan
@@ -1533,6 +1561,8 @@ type OperatorServiceHandler interface {
 	// fails with NOT_FOUND. A workspace's own token cannot call it.
 	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
 	// ListPlans returns configured plans sorted by name.
+	//
+	// A page holds 100 plans when page_size is zero, and 1000 at most.
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
 	GetVersion(context.Context, *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error)
@@ -1665,6 +1695,8 @@ type OperatorServiceHandler interface {
 	GetJobDebugAccess(context.Context, *connect.Request[operatorv1.GetJobDebugAccessRequest]) (*connect.Response[operatorv1.GetJobDebugAccessResponse], error)
 	// ListTokens returns the operator and enrollment tokens the control plane
 	// knows, oldest first, without their values.
+	//
+	// A page holds 100 tokens when page_size is zero, and 1000 at most.
 	ListTokens(context.Context, *connect.Request[operatorv1.ListTokensRequest]) (*connect.Response[operatorv1.ListTokensResponse], error)
 	// RotateToken makes a new operator or enrollment token, accepted at once,
 	// and returns it; it is not stored and cannot be shown again. The kind's
@@ -1694,10 +1726,18 @@ type OperatorServiceHandler interface {
 	// other.
 	CreateProductToken(context.Context, *connect.Request[operatorv1.CreateProductTokenRequest]) (*connect.Response[operatorv1.CreateProductTokenResponse], error)
 	// ListOperatorAlerts returns the operator alerts raised and not yet
-	// cleared, one per kind. They are kept in the store, so a restarted control
-	// plane still returns them. Operators only.
+	// cleared, one per kind, ordered by kind. They are kept in the store, so a
+	// restarted control plane still returns them. Operators only.
+	//
+	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListOperatorAlerts(context.Context, *connect.Request[operatorv1.ListOperatorAlertsRequest]) (*connect.Response[operatorv1.ListOperatorAlertsResponse], error)
-	// ListHostAlerts returns the active alerts of hosts that tenants own: memory_held, egress_changed and agent_version_skew. A tenant caller gets those of its own tenants; an operator gets every tenant's, or one tenant's with the filter.
+	// ListHostAlerts returns the active alerts of hosts that tenants own:
+	// memory_held, egress_changed and agent_version_skew, one per tenant and
+	// kind, ordered by tenant, then kind. A tenant caller gets those of its
+	// own tenants; an operator gets every tenant's, or one tenant's with the
+	// filter.
+	//
+	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListHostAlerts(context.Context, *connect.Request[operatorv1.ListHostAlertsRequest]) (*connect.Response[operatorv1.ListHostAlertsResponse], error)
 	// ListEgressIPs returns the public addresses a tenant's jobs may reach the
 	// internet from: the egress addresses of the hosts its jobs can land on,
@@ -1705,6 +1745,8 @@ type OperatorServiceHandler interface {
 	// its plan's operating systems run on. A dashboard session or
 	// tenant token may ask for its own tenants only. An empty tenant fails
 	// with INVALID_ARGUMENT; an unknown tenant fails with NOT_FOUND.
+	//
+	// A page holds 100 hosts when page_size is zero, and 1000 at most.
 	ListEgressIPs(context.Context, *connect.Request[operatorv1.ListEgressIPsRequest]) (*connect.Response[operatorv1.ListEgressIPsResponse], error)
 	// CheckCloudHost checks a cloud host's AWS setup without launching
 	// anything: the role can be assumed, the AMI is visible, the subnet routes
@@ -1714,9 +1756,12 @@ type OperatorServiceHandler interface {
 	// with NOT_FOUND; cloud hosts not configured on the control plane fails
 	// with FAILED_PRECONDITION.
 	CheckCloudHost(context.Context, *connect.Request[operatorv1.CheckCloudHostRequest]) (*connect.Response[operatorv1.CheckCloudHostResponse], error)
-	// ListFillers returns the fillers, each with its latest run, and the
-	// filler minutes per host over the last 24 hours. A tenant
-	// caller sees only its own dispatch fillers and no host minutes.
+	// ListFillers returns the fillers, ordered by name, then tenant, each
+	// with its latest run, and the filler minutes per host over the last 24
+	// hours. A tenant caller sees only its own dispatch fillers and no host
+	// minutes.
+	//
+	// A page holds 100 fillers when page_size is zero, and 1000 at most.
 	ListFillers(context.Context, *connect.Request[operatorv1.ListFillersRequest]) (*connect.Response[operatorv1.ListFillersResponse], error)
 	// PutFiller adds a filler or replaces the one with the same name and
 	// returns it as stored. A filler from the control plane's [[filler]]
@@ -1733,6 +1778,8 @@ type OperatorServiceHandler interface {
 	SetFillerEnabled(context.Context, *connect.Request[operatorv1.SetFillerEnabledRequest]) (*connect.Response[operatorv1.SetFillerEnabledResponse], error)
 	// ListFillerRuns returns filler runs, newest first. A tenant caller sees
 	// only its own dispatch fillers' runs.
+	//
+	// A page holds 50 runs when page_size is zero, and 500 at most.
 	ListFillerRuns(context.Context, *connect.Request[operatorv1.ListFillerRunsRequest]) (*connect.Response[operatorv1.ListFillerRunsResponse], error)
 	// SetTenantAllowCacheWarm sets whether the tenant's dispatch fillers run
 	// and returns the tenant as stored. Off by default. An empty
@@ -1749,21 +1796,23 @@ type OperatorServiceHandler interface {
 	// sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
 	// unknown ID fails with NOT_FOUND.
 	GetJobFailure(context.Context, *connect.Request[operatorv1.GetJobFailureRequest]) (*connect.Response[operatorv1.GetJobFailureResponse], error)
-	// GetJobDelivery returns the switch for delivering secrets to CI jobs
+	// GetSecretDelivery returns the switch for delivering secrets to CI jobs
 	// and the hosts that keep it from turning on. The
 	// operator token only.
-	GetJobDelivery(context.Context, *connect.Request[operatorv1.GetJobDeliveryRequest]) (*connect.Response[operatorv1.GetJobDeliveryResponse], error)
-	// SetJobDelivery turns delivery of secrets to CI jobs on or off and
+	GetSecretDelivery(context.Context, *connect.Request[operatorv1.GetSecretDeliveryRequest]) (*connect.Response[operatorv1.GetSecretDeliveryResponse], error)
+	// SetSecretDelivery turns delivery of secrets to CI jobs on or off and
 	// records the change with an audit event in the same transaction. On is
 	// refused with FAILED_PRECONDITION, naming the hosts, while a host that
 	// is not revoked is not ready for it; off does not depend on the hosts.
 	// Setting the value the switch has changes and records nothing. The
 	// operator token only.
-	SetJobDelivery(context.Context, *connect.Request[operatorv1.SetJobDeliveryRequest]) (*connect.Response[operatorv1.SetJobDeliveryResponse], error)
+	SetSecretDelivery(context.Context, *connect.Request[operatorv1.SetSecretDeliveryRequest]) (*connect.Response[operatorv1.SetSecretDeliveryResponse], error)
 	// ListUtilisation returns the shared hosts' utilisation roll-ups in a
 	// range, summed by OS pool or by host and by hour, day or week, with the
 	// rows of the hour in progress read from memory. Operator
 	// only.
+	//
+	// A page holds 1000 rows when page_size is zero, and 5000 at most.
 	ListUtilisation(context.Context, *connect.Request[operatorv1.ListUtilisationRequest]) (*connect.Response[operatorv1.ListUtilisationResponse], error)
 	// SuggestPools replays the store's finished jobs queued in the last days
 	// against the hosts as registered, with the warm targets their agents
@@ -1795,14 +1844,6 @@ type OperatorServiceHandler interface {
 	// dashboard session for its own workspace with a credential and no
 	// file, role or replication fields.
 	CreateStorageProvider(context.Context, *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error)
-	// TestStorageProvider checks a provider that is not stored, with the
-	// credential in the request, as CreateStorageProvider would before it
-	// stores one. It stores and audits nothing. A check that fails is an
-	// answer, not an error: ok is false and error says why. A request
-	// CreateStorageProvider would refuse fails the same way before any
-	// connection. The operator, or a dashboard session for its own
-	// workspace.
-	TestStorageProvider(context.Context, *connect.Request[operatorv1.TestStorageProviderRequest]) (*connect.Response[operatorv1.TestStorageProviderResponse], error)
 	// ListStorageProviders returns the operator's providers when tenant_id
 	// is empty and that tenant's otherwise, ordered by name. With
 	// include_default it also returns the operator's provider a tenant
@@ -1810,13 +1851,23 @@ type OperatorServiceHandler interface {
 	// operator, or a dashboard session for its own workspace, which gets
 	// every row without its credential references (credentials_file,
 	// credentials_profile, role_arn and external_id empty).
+	//
+	// A page holds 100 providers when page_size is zero, and 1000 at most.
 	ListStorageProviders(context.Context, *connect.Request[operatorv1.ListStorageProvidersRequest]) (*connect.Response[operatorv1.ListStorageProvidersResponse], error)
-	// CheckStorageProvider checks the provider's bucket and records the
-	// result: it heads the bucket, refuses a versioned one, then uploads,
-	// heads and deletes a probe object. The error names the failing step.
-	// The operator, or a dashboard session for a row its workspace saved
-	// (one with a wrapped credential and no role), which gets
-	// last_check_error.
+	// CheckStorageProvider checks a provider's bucket: it heads the bucket,
+	// refuses a versioned one, then uploads, heads and deletes a probe
+	// object. A check that fails is an answer, not an error: ok is false and
+	// error names the failing step.
+	//
+	// With id it checks a saved provider, records the result and returns
+	// the provider as stored: the operator, or a dashboard session for a row
+	// its workspace saved (one with a wrapped credential and no role), which
+	// gets last_check_error. With provider it checks one that is not saved,
+	// with the credential in the request, as CreateStorageProvider would
+	// before it stores one; it stores and audits nothing, and a request
+	// CreateStorageProvider would refuse fails the same way before any
+	// connection: the operator, or a dashboard session for its own
+	// workspace.
 	CheckStorageProvider(context.Context, *connect.Request[operatorv1.CheckStorageProviderRequest]) (*connect.Response[operatorv1.CheckStorageProviderResponse], error)
 	// DeleteStorageProvider removes a provider. An unknown ID fails with
 	// NOT_FOUND. The operator, or a dashboard session for a row its
@@ -1904,10 +1955,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("RetireOfflineHosts")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceAddCloudHostHandler := connect.NewUnaryHandler(
-		OperatorServiceAddCloudHostProcedure,
-		svc.AddCloudHost,
-		connect.WithSchema(operatorServiceMethods.ByName("AddCloudHost")),
+	operatorServiceCreateCloudHostHandler := connect.NewUnaryHandler(
+		OperatorServiceCreateCloudHostProcedure,
+		svc.CreateCloudHost,
+		connect.WithSchema(operatorServiceMethods.ByName("CreateCloudHost")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceCreateWorkspaceHandler := connect.NewUnaryHandler(
@@ -2180,16 +2231,16 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("GetJobFailure")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceGetJobDeliveryHandler := connect.NewUnaryHandler(
-		OperatorServiceGetJobDeliveryProcedure,
-		svc.GetJobDelivery,
-		connect.WithSchema(operatorServiceMethods.ByName("GetJobDelivery")),
+	operatorServiceGetSecretDeliveryHandler := connect.NewUnaryHandler(
+		OperatorServiceGetSecretDeliveryProcedure,
+		svc.GetSecretDelivery,
+		connect.WithSchema(operatorServiceMethods.ByName("GetSecretDelivery")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceSetJobDeliveryHandler := connect.NewUnaryHandler(
-		OperatorServiceSetJobDeliveryProcedure,
-		svc.SetJobDelivery,
-		connect.WithSchema(operatorServiceMethods.ByName("SetJobDelivery")),
+	operatorServiceSetSecretDeliveryHandler := connect.NewUnaryHandler(
+		OperatorServiceSetSecretDeliveryProcedure,
+		svc.SetSecretDelivery,
+		connect.WithSchema(operatorServiceMethods.ByName("SetSecretDelivery")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceListUtilisationHandler := connect.NewUnaryHandler(
@@ -2208,12 +2259,6 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		OperatorServiceCreateStorageProviderProcedure,
 		svc.CreateStorageProvider,
 		connect.WithSchema(operatorServiceMethods.ByName("CreateStorageProvider")),
-		connect.WithHandlerOptions(opts...),
-	)
-	operatorServiceTestStorageProviderHandler := connect.NewUnaryHandler(
-		OperatorServiceTestStorageProviderProcedure,
-		svc.TestStorageProvider,
-		connect.WithSchema(operatorServiceMethods.ByName("TestStorageProvider")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceListStorageProvidersHandler := connect.NewUnaryHandler(
@@ -2260,8 +2305,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceRevokeHostHandler.ServeHTTP(w, r)
 		case OperatorServiceRetireOfflineHostsProcedure:
 			operatorServiceRetireOfflineHostsHandler.ServeHTTP(w, r)
-		case OperatorServiceAddCloudHostProcedure:
-			operatorServiceAddCloudHostHandler.ServeHTTP(w, r)
+		case OperatorServiceCreateCloudHostProcedure:
+			operatorServiceCreateCloudHostHandler.ServeHTTP(w, r)
 		case OperatorServiceCreateWorkspaceProcedure:
 			operatorServiceCreateWorkspaceHandler.ServeHTTP(w, r)
 		case OperatorServiceListTenantsProcedure:
@@ -2352,18 +2397,16 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceSetTenantCancelRunOnVmDeathHandler.ServeHTTP(w, r)
 		case OperatorServiceGetJobFailureProcedure:
 			operatorServiceGetJobFailureHandler.ServeHTTP(w, r)
-		case OperatorServiceGetJobDeliveryProcedure:
-			operatorServiceGetJobDeliveryHandler.ServeHTTP(w, r)
-		case OperatorServiceSetJobDeliveryProcedure:
-			operatorServiceSetJobDeliveryHandler.ServeHTTP(w, r)
+		case OperatorServiceGetSecretDeliveryProcedure:
+			operatorServiceGetSecretDeliveryHandler.ServeHTTP(w, r)
+		case OperatorServiceSetSecretDeliveryProcedure:
+			operatorServiceSetSecretDeliveryHandler.ServeHTTP(w, r)
 		case OperatorServiceListUtilisationProcedure:
 			operatorServiceListUtilisationHandler.ServeHTTP(w, r)
 		case OperatorServiceSuggestPoolsProcedure:
 			operatorServiceSuggestPoolsHandler.ServeHTTP(w, r)
 		case OperatorServiceCreateStorageProviderProcedure:
 			operatorServiceCreateStorageProviderHandler.ServeHTTP(w, r)
-		case OperatorServiceTestStorageProviderProcedure:
-			operatorServiceTestStorageProviderHandler.ServeHTTP(w, r)
 		case OperatorServiceListStorageProvidersProcedure:
 			operatorServiceListStorageProvidersHandler.ServeHTTP(w, r)
 		case OperatorServiceCheckStorageProviderProcedure:
@@ -2427,8 +2470,8 @@ func (UnimplementedOperatorServiceHandler) RetireOfflineHosts(context.Context, *
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RetireOfflineHosts is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) AddCloudHost(context.Context, *connect.Request[operatorv1.AddCloudHostRequest]) (*connect.Response[operatorv1.AddCloudHostResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.AddCloudHost is not implemented"))
+func (UnimplementedOperatorServiceHandler) CreateCloudHost(context.Context, *connect.Request[operatorv1.CreateCloudHostRequest]) (*connect.Response[operatorv1.CreateCloudHostResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.CreateCloudHost is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error) {
@@ -2611,12 +2654,12 @@ func (UnimplementedOperatorServiceHandler) GetJobFailure(context.Context, *conne
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetJobFailure is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) GetJobDelivery(context.Context, *connect.Request[operatorv1.GetJobDeliveryRequest]) (*connect.Response[operatorv1.GetJobDeliveryResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetJobDelivery is not implemented"))
+func (UnimplementedOperatorServiceHandler) GetSecretDelivery(context.Context, *connect.Request[operatorv1.GetSecretDeliveryRequest]) (*connect.Response[operatorv1.GetSecretDeliveryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetSecretDelivery is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) SetJobDelivery(context.Context, *connect.Request[operatorv1.SetJobDeliveryRequest]) (*connect.Response[operatorv1.SetJobDeliveryResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetJobDelivery is not implemented"))
+func (UnimplementedOperatorServiceHandler) SetSecretDelivery(context.Context, *connect.Request[operatorv1.SetSecretDeliveryRequest]) (*connect.Response[operatorv1.SetSecretDeliveryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetSecretDelivery is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListUtilisation(context.Context, *connect.Request[operatorv1.ListUtilisationRequest]) (*connect.Response[operatorv1.ListUtilisationResponse], error) {
@@ -2629,10 +2672,6 @@ func (UnimplementedOperatorServiceHandler) SuggestPools(context.Context, *connec
 
 func (UnimplementedOperatorServiceHandler) CreateStorageProvider(context.Context, *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.CreateStorageProvider is not implemented"))
-}
-
-func (UnimplementedOperatorServiceHandler) TestStorageProvider(context.Context, *connect.Request[operatorv1.TestStorageProviderRequest]) (*connect.Response[operatorv1.TestStorageProviderResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.TestStorageProvider is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListStorageProviders(context.Context, *connect.Request[operatorv1.ListStorageProvidersRequest]) (*connect.Response[operatorv1.ListStorageProvidersResponse], error) {

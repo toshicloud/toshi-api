@@ -521,7 +521,11 @@ func (x *GetWebhookEndpointResponse) GetEndpoint() *WebhookEndpoint {
 }
 
 type ListWebhookEndpointsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The most endpoints in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -556,9 +560,25 @@ func (*ListWebhookEndpointsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{6}
 }
 
+func (x *ListWebhookEndpointsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListWebhookEndpointsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListWebhookEndpointsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Endpoints     []*WebhookEndpoint     `protobuf:"bytes,1,rep,name=endpoints,proto3" json:"endpoints,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Endpoints []*WebhookEndpoint     `protobuf:"bytes,1,rep,name=endpoints,proto3" json:"endpoints,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -598,6 +618,13 @@ func (x *ListWebhookEndpointsResponse) GetEndpoints() []*WebhookEndpoint {
 		return x.Endpoints
 	}
 	return nil
+}
+
+func (x *ListWebhookEndpointsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 type UpdateWebhookEndpointRequest struct {
@@ -910,8 +937,10 @@ func (x *RotateWebhookEndpointSecretResponse) GetSecret() string {
 type ListWebhookDeliveriesRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	EndpointId string                 `protobuf:"bytes,1,opt,name=endpoint_id,json=endpointId,proto3" json:"endpoint_id,omitempty"`
-	// Deliveries of events after this cursor; empty starts at the oldest.
-	Cursor string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	// From an earlier response's next_page_token, or a delivery's cursor:
+	// the deliveries of the events after that position. Empty starts at the
+	// oldest.
+	PageToken string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	// The most deliveries in one page; zero lets the server choose.
 	PageSize      int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -955,9 +984,9 @@ func (x *ListWebhookDeliveriesRequest) GetEndpointId() string {
 	return ""
 }
 
-func (x *ListWebhookDeliveriesRequest) GetCursor() string {
+func (x *ListWebhookDeliveriesRequest) GetPageToken() string {
 	if x != nil {
-		return x.Cursor
+		return x.PageToken
 	}
 	return ""
 }
@@ -972,9 +1001,8 @@ func (x *ListWebhookDeliveriesRequest) GetPageSize() int32 {
 type ListWebhookDeliveriesResponse struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	Deliveries []*WebhookDelivery     `protobuf:"bytes,1,rep,name=deliveries,proto3" json:"deliveries,omitempty"`
-	// The cursor of the last delivery returned, or the cursor asked for when
-	// there were none: pass it to the next call.
-	Cursor        string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1016,9 +1044,9 @@ func (x *ListWebhookDeliveriesResponse) GetDeliveries() []*WebhookDelivery {
 	return nil
 }
 
-func (x *ListWebhookDeliveriesResponse) GetCursor() string {
+func (x *ListWebhookDeliveriesResponse) GetNextPageToken() string {
 	if x != nil {
-		return x.Cursor
+		return x.NextPageToken
 	}
 	return ""
 }
@@ -1192,10 +1220,14 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\x19GetWebhookEndpointRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"]\n" +
 	"\x1aGetWebhookEndpointResponse\x12?\n" +
-	"\bendpoint\x18\x01 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\"\x1d\n" +
-	"\x1bListWebhookEndpointsRequest\"a\n" +
+	"\bendpoint\x18\x01 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\"Y\n" +
+	"\x1bListWebhookEndpointsRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"\x89\x01\n" +
 	"\x1cListWebhookEndpointsResponse\x12A\n" +
-	"\tendpoints\x18\x01 \x03(\v2#.toshi.workspace.v1.WebhookEndpointR\tendpoints\"\xcd\x01\n" +
+	"\tendpoints\x18\x01 \x03(\v2#.toshi.workspace.v1.WebhookEndpointR\tendpoints\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xcd\x01\n" +
 	"\x1cUpdateWebhookEndpointRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12?\n" +
 	"\bendpoint\x18\x02 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\x12;\n" +
@@ -1216,17 +1248,18 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"requestKey\"~\n" +
 	"#RotateWebhookEndpointSecretResponse\x12?\n" +
 	"\bendpoint\x18\x01 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\x12\x16\n" +
-	"\x06secret\x18\x02 \x01(\tR\x06secret\"t\n" +
+	"\x06secret\x18\x02 \x01(\tR\x06secret\"{\n" +
 	"\x1cListWebhookDeliveriesRequest\x12\x1f\n" +
 	"\vendpoint_id\x18\x01 \x01(\tR\n" +
-	"endpointId\x12\x16\n" +
-	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12\x1b\n" +
-	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\"|\n" +
+	"endpointId\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\x12\x1b\n" +
+	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\"\x8c\x01\n" +
 	"\x1dListWebhookDeliveriesResponse\x12C\n" +
 	"\n" +
 	"deliveries\x18\x01 \x03(\v2#.toshi.workspace.v1.WebhookDeliveryR\n" +
-	"deliveries\x12\x16\n" +
-	"\x06cursor\x18\x02 \x01(\tR\x06cursor\"v\n" +
+	"deliveries\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"v\n" +
 	"\x1aReplayWebhookEventsRequest\x12\x1f\n" +
 	"\vendpoint_id\x18\x01 \x01(\tR\n" +
 	"endpointId\x12\x16\n" +

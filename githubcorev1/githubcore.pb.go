@@ -73,11 +73,11 @@ type AdmitGrantResponse struct {
 	ActorId   string `protobuf:"bytes,3,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
 	// tenants are the caller's tenants; empty for the operator.
 	Tenants []string `protobuf:"bytes,4,rep,name=tenants,proto3" json:"tenants,omitempty"`
-	// job_id, tenant, repo, approved and installation_id are the call's
+	// job_id, tenant, repository, approved and installation_id are the call's
 	// arguments the grant binds.
 	JobId          string `protobuf:"bytes,5,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	Tenant         string `protobuf:"bytes,6,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	Repo           string `protobuf:"bytes,7,opt,name=repo,proto3" json:"repo,omitempty"`
+	Repository     string `protobuf:"bytes,7,opt,name=repository,proto3" json:"repository,omitempty"`
 	Approved       bool   `protobuf:"varint,8,opt,name=approved,proto3" json:"approved,omitempty"`
 	InstallationId int64  `protobuf:"varint,9,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
 	// generation is the delivery check the grant began; 0 for none.
@@ -160,9 +160,9 @@ func (x *AdmitGrantResponse) GetTenant() string {
 	return ""
 }
 
-func (x *AdmitGrantResponse) GetRepo() string {
+func (x *AdmitGrantResponse) GetRepository() string {
 	if x != nil {
-		return x.Repo
+		return x.Repository
 	}
 	return ""
 }
@@ -295,7 +295,7 @@ type Job struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Tenant         string                 `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	Repo           string                 `protobuf:"bytes,3,opt,name=repo,proto3" json:"repo,omitempty"`
+	Repository     string                 `protobuf:"bytes,3,opt,name=repository,proto3" json:"repository,omitempty"`
 	InstallationId int64                  `protobuf:"varint,4,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
 	WorkflowJobId  int64                  `protobuf:"varint,5,opt,name=workflow_job_id,json=workflowJobId,proto3" json:"workflow_job_id,omitempty"`
 	State          string                 `protobuf:"bytes,6,opt,name=state,proto3" json:"state,omitempty"`
@@ -350,9 +350,9 @@ func (x *Job) GetTenant() string {
 	return ""
 }
 
-func (x *Job) GetRepo() string {
+func (x *Job) GetRepository() string {
 	if x != nil {
-		return x.Repo
+		return x.Repository
 	}
 	return ""
 }
@@ -487,29 +487,33 @@ func (*FillJobFailingStepResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{6}
 }
 
-type ListOpenSourceReposRequest struct {
+type ListOpenSourceRepositoriesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// tenant is the tenant whose rows to list; empty for every tenant the
 	// caller may see.
-	Tenant        string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Tenant string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	// The most repositories in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListOpenSourceReposRequest) Reset() {
-	*x = ListOpenSourceReposRequest{}
+func (x *ListOpenSourceRepositoriesRequest) Reset() {
+	*x = ListOpenSourceRepositoriesRequest{}
 	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListOpenSourceReposRequest) String() string {
+func (x *ListOpenSourceRepositoriesRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListOpenSourceReposRequest) ProtoMessage() {}
+func (*ListOpenSourceRepositoriesRequest) ProtoMessage() {}
 
-func (x *ListOpenSourceReposRequest) ProtoReflect() protoreflect.Message {
+func (x *ListOpenSourceRepositoriesRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -521,40 +525,57 @@ func (x *ListOpenSourceReposRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListOpenSourceReposRequest.ProtoReflect.Descriptor instead.
-func (*ListOpenSourceReposRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListOpenSourceRepositoriesRequest.ProtoReflect.Descriptor instead.
+func (*ListOpenSourceRepositoriesRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ListOpenSourceReposRequest) GetTenant() string {
+func (x *ListOpenSourceRepositoriesRequest) GetTenant() string {
 	if x != nil {
 		return x.Tenant
 	}
 	return ""
 }
 
-type ListOpenSourceReposResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Repos         []*OpenSourceRepo         `protobuf:"bytes,1,rep,name=repos,proto3" json:"repos,omitempty"`
-	Kept          []*OpenSourceKeptApproval `protobuf:"bytes,2,rep,name=kept,proto3" json:"kept,omitempty"`
+func (x *ListOpenSourceRepositoriesRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListOpenSourceRepositoriesRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+type ListOpenSourceRepositoriesResponse struct {
+	state        protoimpl.MessageState  `protogen:"open.v1"`
+	Repositories []*OpenSourceRepository `protobuf:"bytes,1,rep,name=repositories,proto3" json:"repositories,omitempty"`
+	// Every page holds all of them.
+	Kept []*OpenSourceKeptApproval `protobuf:"bytes,2,rep,name=kept,proto3" json:"kept,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,3,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListOpenSourceReposResponse) Reset() {
-	*x = ListOpenSourceReposResponse{}
+func (x *ListOpenSourceRepositoriesResponse) Reset() {
+	*x = ListOpenSourceRepositoriesResponse{}
 	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListOpenSourceReposResponse) String() string {
+func (x *ListOpenSourceRepositoriesResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListOpenSourceReposResponse) ProtoMessage() {}
+func (*ListOpenSourceRepositoriesResponse) ProtoMessage() {}
 
-func (x *ListOpenSourceReposResponse) ProtoReflect() protoreflect.Message {
+func (x *ListOpenSourceRepositoriesResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -566,30 +587,37 @@ func (x *ListOpenSourceReposResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListOpenSourceReposResponse.ProtoReflect.Descriptor instead.
-func (*ListOpenSourceReposResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListOpenSourceRepositoriesResponse.ProtoReflect.Descriptor instead.
+func (*ListOpenSourceRepositoriesResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *ListOpenSourceReposResponse) GetRepos() []*OpenSourceRepo {
+func (x *ListOpenSourceRepositoriesResponse) GetRepositories() []*OpenSourceRepository {
 	if x != nil {
-		return x.Repos
+		return x.Repositories
 	}
 	return nil
 }
 
-func (x *ListOpenSourceReposResponse) GetKept() []*OpenSourceKeptApproval {
+func (x *ListOpenSourceRepositoriesResponse) GetKept() []*OpenSourceKeptApproval {
 	if x != nil {
 		return x.Kept
 	}
 	return nil
 }
 
-// OpenSourceRepo is one tenant's row of the open-source gate.
-type OpenSourceRepo struct {
+func (x *ListOpenSourceRepositoriesResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
+// OpenSourceRepository is one tenant's row of the open-source gate.
+type OpenSourceRepository struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	Tenant            string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	Repo              string                 `protobuf:"bytes,2,opt,name=repo,proto3" json:"repo,omitempty"`
+	Repository        string                 `protobuf:"bytes,2,opt,name=repository,proto3" json:"repository,omitempty"`
 	InstallationId    int64                  `protobuf:"varint,3,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
 	Found             bool                   `protobuf:"varint,4,opt,name=found,proto3" json:"found,omitempty"`
 	Private           bool                   `protobuf:"varint,5,opt,name=private,proto3" json:"private,omitempty"`
@@ -605,20 +633,20 @@ type OpenSourceRepo struct {
 	sizeCache         protoimpl.SizeCache
 }
 
-func (x *OpenSourceRepo) Reset() {
-	*x = OpenSourceRepo{}
+func (x *OpenSourceRepository) Reset() {
+	*x = OpenSourceRepository{}
 	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OpenSourceRepo) String() string {
+func (x *OpenSourceRepository) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OpenSourceRepo) ProtoMessage() {}
+func (*OpenSourceRepository) ProtoMessage() {}
 
-func (x *OpenSourceRepo) ProtoReflect() protoreflect.Message {
+func (x *OpenSourceRepository) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -630,96 +658,96 @@ func (x *OpenSourceRepo) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OpenSourceRepo.ProtoReflect.Descriptor instead.
-func (*OpenSourceRepo) Descriptor() ([]byte, []int) {
+// Deprecated: Use OpenSourceRepository.ProtoReflect.Descriptor instead.
+func (*OpenSourceRepository) Descriptor() ([]byte, []int) {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *OpenSourceRepo) GetTenant() string {
+func (x *OpenSourceRepository) GetTenant() string {
 	if x != nil {
 		return x.Tenant
 	}
 	return ""
 }
 
-func (x *OpenSourceRepo) GetRepo() string {
+func (x *OpenSourceRepository) GetRepository() string {
 	if x != nil {
-		return x.Repo
+		return x.Repository
 	}
 	return ""
 }
 
-func (x *OpenSourceRepo) GetInstallationId() int64 {
+func (x *OpenSourceRepository) GetInstallationId() int64 {
 	if x != nil {
 		return x.InstallationId
 	}
 	return 0
 }
 
-func (x *OpenSourceRepo) GetFound() bool {
+func (x *OpenSourceRepository) GetFound() bool {
 	if x != nil {
 		return x.Found
 	}
 	return false
 }
 
-func (x *OpenSourceRepo) GetPrivate() bool {
+func (x *OpenSourceRepository) GetPrivate() bool {
 	if x != nil {
 		return x.Private
 	}
 	return false
 }
 
-func (x *OpenSourceRepo) GetSpdxId() string {
+func (x *OpenSourceRepository) GetSpdxId() string {
 	if x != nil {
 		return x.SpdxId
 	}
 	return ""
 }
 
-func (x *OpenSourceRepo) GetRepoCreatedAt() *timestamppb.Timestamp {
+func (x *OpenSourceRepository) GetRepoCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.RepoCreatedAt
 	}
 	return nil
 }
 
-func (x *OpenSourceRepo) GetCheckedAt() *timestamppb.Timestamp {
+func (x *OpenSourceRepository) GetCheckedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CheckedAt
 	}
 	return nil
 }
 
-func (x *OpenSourceRepo) GetAttemptedAt() *timestamppb.Timestamp {
+func (x *OpenSourceRepository) GetAttemptedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.AttemptedAt
 	}
 	return nil
 }
 
-func (x *OpenSourceRepo) GetError() string {
+func (x *OpenSourceRepository) GetError() string {
 	if x != nil {
 		return x.Error
 	}
 	return ""
 }
 
-func (x *OpenSourceRepo) GetApproval() string {
+func (x *OpenSourceRepository) GetApproval() string {
 	if x != nil {
 		return x.Approval
 	}
 	return ""
 }
 
-func (x *OpenSourceRepo) GetApprovalChangedAt() *timestamppb.Timestamp {
+func (x *OpenSourceRepository) GetApprovalChangedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.ApprovalChangedAt
 	}
 	return nil
 }
 
-func (x *OpenSourceRepo) GetForkPrApproval() string {
+func (x *OpenSourceRepository) GetForkPrApproval() string {
 	if x != nil {
 		return x.ForkPrApproval
 	}
@@ -730,7 +758,7 @@ func (x *OpenSourceRepo) GetForkPrApproval() string {
 // row of yet.
 type OpenSourceKeptApproval struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Repo          string                 `protobuf:"bytes,1,opt,name=repo,proto3" json:"repo,omitempty"`
+	Repository    string                 `protobuf:"bytes,1,opt,name=repository,proto3" json:"repository,omitempty"`
 	ApprovedAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=approved_at,json=approvedAt,proto3" json:"approved_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -766,9 +794,9 @@ func (*OpenSourceKeptApproval) Descriptor() ([]byte, []int) {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *OpenSourceKeptApproval) GetRepo() string {
+func (x *OpenSourceKeptApproval) GetRepository() string {
 	if x != nil {
-		return x.Repo
+		return x.Repository
 	}
 	return ""
 }
@@ -782,7 +810,7 @@ func (x *OpenSourceKeptApproval) GetApprovedAt() *timestamppb.Timestamp {
 
 type SetOpenSourceApprovalRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Repo          string                 `protobuf:"bytes,1,opt,name=repo,proto3" json:"repo,omitempty"`
+	Repository    string                 `protobuf:"bytes,1,opt,name=repository,proto3" json:"repository,omitempty"`
 	Approved      bool                   `protobuf:"varint,2,opt,name=approved,proto3" json:"approved,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -818,9 +846,9 @@ func (*SetOpenSourceApprovalRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *SetOpenSourceApprovalRequest) GetRepo() string {
+func (x *SetOpenSourceApprovalRequest) GetRepository() string {
 	if x != nil {
-		return x.Repo
+		return x.Repository
 	}
 	return ""
 }
@@ -834,9 +862,9 @@ func (x *SetOpenSourceApprovalRequest) GetApproved() bool {
 
 type SetOpenSourceApprovalResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// repos are the repository's rows after the change; kept is set instead
-	// when no tenant has a row and the decision was kept.
-	Repos         []*OpenSourceRepo       `protobuf:"bytes,1,rep,name=repos,proto3" json:"repos,omitempty"`
+	// repositories are the repository's rows after the change; kept is set
+	// instead when no tenant has a row and the decision was kept.
+	Repositories  []*OpenSourceRepository `protobuf:"bytes,1,rep,name=repositories,proto3" json:"repositories,omitempty"`
 	Kept          *OpenSourceKeptApproval `protobuf:"bytes,2,opt,name=kept,proto3" json:"kept,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -872,9 +900,9 @@ func (*SetOpenSourceApprovalResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *SetOpenSourceApprovalResponse) GetRepos() []*OpenSourceRepo {
+func (x *SetOpenSourceApprovalResponse) GetRepositories() []*OpenSourceRepository {
 	if x != nil {
-		return x.Repos
+		return x.Repositories
 	}
 	return nil
 }
@@ -1088,7 +1116,7 @@ var File_toshi_githubcore_v1_githubcore_proto protoreflect.FileDescriptor
 const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\n" +
 	"$toshi/githubcore/v1/githubcore.proto\x12\x13toshi.githubcore.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
-	"\x11AdmitGrantRequest\"\x9a\x03\n" +
+	"\x11AdmitGrantRequest\"\xa6\x03\n" +
 	"\x12AdmitGrantResponse\x12\x12\n" +
 	"\x04call\x18\x01 \x01(\tR\x04call\x12\x1d\n" +
 	"\n" +
@@ -1096,8 +1124,10 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\bactor_id\x18\x03 \x01(\tR\aactorId\x12\x18\n" +
 	"\atenants\x18\x04 \x03(\tR\atenants\x12\x15\n" +
 	"\x06job_id\x18\x05 \x01(\tR\x05jobId\x12\x16\n" +
-	"\x06tenant\x18\x06 \x01(\tR\x06tenant\x12\x12\n" +
-	"\x04repo\x18\a \x01(\tR\x04repo\x12\x1a\n" +
+	"\x06tenant\x18\x06 \x01(\tR\x06tenant\x12\x1e\n" +
+	"\n" +
+	"repository\x18\a \x01(\tR\n" +
+	"repository\x12\x1a\n" +
 	"\bapproved\x18\b \x01(\bR\bapproved\x12'\n" +
 	"\x0finstallation_id\x18\t \x01(\x03R\x0einstallationId\x12\x1e\n" +
 	"\n" +
@@ -1111,11 +1141,13 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\rGetJobRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\"<\n" +
 	"\x0eGetJobResponse\x12*\n" +
-	"\x03job\x18\x01 \x01(\v2\x18.toshi.githubcore.v1.JobR\x03job\"\x81\x02\n" +
+	"\x03job\x18\x01 \x01(\v2\x18.toshi.githubcore.v1.JobR\x03job\"\x8d\x02\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
-	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x12\n" +
-	"\x04repo\x18\x03 \x01(\tR\x04repo\x12'\n" +
+	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
+	"\n" +
+	"repository\x18\x03 \x01(\tR\n" +
+	"repository\x12'\n" +
 	"\x0finstallation_id\x18\x04 \x01(\x03R\x0einstallationId\x12&\n" +
 	"\x0fworkflow_job_id\x18\x05 \x01(\x03R\rworkflowJobId\x12\x14\n" +
 	"\x05state\x18\x06 \x01(\tR\x05state\x12\x1e\n" +
@@ -1127,15 +1159,21 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\x19FillJobFailingStepRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04step\x18\x02 \x01(\tR\x04step\"\x1c\n" +
-	"\x1aFillJobFailingStepResponse\"4\n" +
-	"\x1aListOpenSourceReposRequest\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\"\x99\x01\n" +
-	"\x1bListOpenSourceReposResponse\x129\n" +
-	"\x05repos\x18\x01 \x03(\v2#.toshi.githubcore.v1.OpenSourceRepoR\x05repos\x12?\n" +
-	"\x04kept\x18\x02 \x03(\v2+.toshi.githubcore.v1.OpenSourceKeptApprovalR\x04kept\"\x94\x04\n" +
-	"\x0eOpenSourceRepo\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x12\n" +
-	"\x04repo\x18\x02 \x01(\tR\x04repo\x12'\n" +
+	"\x1aFillJobFailingStepResponse\"w\n" +
+	"!ListOpenSourceRepositoriesRequest\x12\x16\n" +
+	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x03 \x01(\tR\tpageToken\"\xdc\x01\n" +
+	"\"ListOpenSourceRepositoriesResponse\x12M\n" +
+	"\frepositories\x18\x01 \x03(\v2).toshi.githubcore.v1.OpenSourceRepositoryR\frepositories\x12?\n" +
+	"\x04kept\x18\x02 \x03(\v2+.toshi.githubcore.v1.OpenSourceKeptApprovalR\x04kept\x12&\n" +
+	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken\"\xa6\x04\n" +
+	"\x14OpenSourceRepository\x12\x16\n" +
+	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x1e\n" +
+	"\n" +
+	"repository\x18\x02 \x01(\tR\n" +
+	"repository\x12'\n" +
 	"\x0finstallation_id\x18\x03 \x01(\x03R\x0einstallationId\x12\x14\n" +
 	"\x05found\x18\x04 \x01(\bR\x05found\x12\x18\n" +
 	"\aprivate\x18\x05 \x01(\bR\aprivate\x12\x17\n" +
@@ -1148,16 +1186,20 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	" \x01(\tR\x05error\x12\x1a\n" +
 	"\bapproval\x18\v \x01(\tR\bapproval\x12J\n" +
 	"\x13approval_changed_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\x11approvalChangedAt\x12(\n" +
-	"\x10fork_pr_approval\x18\r \x01(\tR\x0eforkPrApproval\"i\n" +
-	"\x16OpenSourceKeptApproval\x12\x12\n" +
-	"\x04repo\x18\x01 \x01(\tR\x04repo\x12;\n" +
+	"\x10fork_pr_approval\x18\r \x01(\tR\x0eforkPrApproval\"u\n" +
+	"\x16OpenSourceKeptApproval\x12\x1e\n" +
+	"\n" +
+	"repository\x18\x01 \x01(\tR\n" +
+	"repository\x12;\n" +
 	"\vapproved_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"approvedAt\"N\n" +
-	"\x1cSetOpenSourceApprovalRequest\x12\x12\n" +
-	"\x04repo\x18\x01 \x01(\tR\x04repo\x12\x1a\n" +
-	"\bapproved\x18\x02 \x01(\bR\bapproved\"\x9b\x01\n" +
-	"\x1dSetOpenSourceApprovalResponse\x129\n" +
-	"\x05repos\x18\x01 \x03(\v2#.toshi.githubcore.v1.OpenSourceRepoR\x05repos\x12?\n" +
+	"approvedAt\"Z\n" +
+	"\x1cSetOpenSourceApprovalRequest\x12\x1e\n" +
+	"\n" +
+	"repository\x18\x01 \x01(\tR\n" +
+	"repository\x12\x1a\n" +
+	"\bapproved\x18\x02 \x01(\bR\bapproved\"\xaf\x01\n" +
+	"\x1dSetOpenSourceApprovalResponse\x12M\n" +
+	"\frepositories\x18\x01 \x03(\v2).toshi.githubcore.v1.OpenSourceRepositoryR\frepositories\x12?\n" +
 	"\x04kept\x18\x02 \x01(\v2+.toshi.githubcore.v1.OpenSourceKeptApprovalR\x04kept\"Y\n" +
 	"\x16MapInstallationRequest\x12'\n" +
 	"\x0finstallation_id\x18\x01 \x01(\x03R\x0einstallationId\x12\x16\n" +
@@ -1170,13 +1212,13 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\x06result\x18\x02 \x01(\tR\x06result\x12\x18\n" +
 	"\alacking\x18\x03 \x03(\x03R\alacking\"?\n" +
 	"\x1fPublishJobDeliveryCheckResponse\x12\x1c\n" +
-	"\tpublished\x18\x01 \x01(\bR\tpublished2\xab\x06\n" +
+	"\tpublished\x18\x01 \x01(\bR\tpublished2\xc1\x06\n" +
 	"\x11GitHubCoreService\x12]\n" +
 	"\n" +
 	"AdmitGrant\x12&.toshi.githubcore.v1.AdmitGrantRequest\x1a'.toshi.githubcore.v1.AdmitGrantResponse\x12Q\n" +
 	"\x06GetJob\x12\".toshi.githubcore.v1.GetJobRequest\x1a#.toshi.githubcore.v1.GetJobResponse\x12u\n" +
-	"\x12FillJobFailingStep\x12..toshi.githubcore.v1.FillJobFailingStepRequest\x1a/.toshi.githubcore.v1.FillJobFailingStepResponse\x12x\n" +
-	"\x13ListOpenSourceRepos\x12/.toshi.githubcore.v1.ListOpenSourceReposRequest\x1a0.toshi.githubcore.v1.ListOpenSourceReposResponse\x12~\n" +
+	"\x12FillJobFailingStep\x12..toshi.githubcore.v1.FillJobFailingStepRequest\x1a/.toshi.githubcore.v1.FillJobFailingStepResponse\x12\x8d\x01\n" +
+	"\x1aListOpenSourceRepositories\x126.toshi.githubcore.v1.ListOpenSourceRepositoriesRequest\x1a7.toshi.githubcore.v1.ListOpenSourceRepositoriesResponse\x12~\n" +
 	"\x15SetOpenSourceApproval\x121.toshi.githubcore.v1.SetOpenSourceApprovalRequest\x1a2.toshi.githubcore.v1.SetOpenSourceApprovalResponse\x12l\n" +
 	"\x0fMapInstallation\x12+.toshi.githubcore.v1.MapInstallationRequest\x1a,.toshi.githubcore.v1.MapInstallationResponse\x12\x84\x01\n" +
 	"\x17PublishJobDeliveryCheck\x123.toshi.githubcore.v1.PublishJobDeliveryCheckRequest\x1a4.toshi.githubcore.v1.PublishJobDeliveryCheckResponseB.Z,github.com/toshicloud/toshi-api/githubcorev1b\x06proto3"
@@ -1195,49 +1237,49 @@ func file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP() []byte {
 
 var file_toshi_githubcore_v1_githubcore_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_toshi_githubcore_v1_githubcore_proto_goTypes = []any{
-	(*AdmitGrantRequest)(nil),               // 0: toshi.githubcore.v1.AdmitGrantRequest
-	(*AdmitGrantResponse)(nil),              // 1: toshi.githubcore.v1.AdmitGrantResponse
-	(*GetJobRequest)(nil),                   // 2: toshi.githubcore.v1.GetJobRequest
-	(*GetJobResponse)(nil),                  // 3: toshi.githubcore.v1.GetJobResponse
-	(*Job)(nil),                             // 4: toshi.githubcore.v1.Job
-	(*FillJobFailingStepRequest)(nil),       // 5: toshi.githubcore.v1.FillJobFailingStepRequest
-	(*FillJobFailingStepResponse)(nil),      // 6: toshi.githubcore.v1.FillJobFailingStepResponse
-	(*ListOpenSourceReposRequest)(nil),      // 7: toshi.githubcore.v1.ListOpenSourceReposRequest
-	(*ListOpenSourceReposResponse)(nil),     // 8: toshi.githubcore.v1.ListOpenSourceReposResponse
-	(*OpenSourceRepo)(nil),                  // 9: toshi.githubcore.v1.OpenSourceRepo
-	(*OpenSourceKeptApproval)(nil),          // 10: toshi.githubcore.v1.OpenSourceKeptApproval
-	(*SetOpenSourceApprovalRequest)(nil),    // 11: toshi.githubcore.v1.SetOpenSourceApprovalRequest
-	(*SetOpenSourceApprovalResponse)(nil),   // 12: toshi.githubcore.v1.SetOpenSourceApprovalResponse
-	(*MapInstallationRequest)(nil),          // 13: toshi.githubcore.v1.MapInstallationRequest
-	(*MapInstallationResponse)(nil),         // 14: toshi.githubcore.v1.MapInstallationResponse
-	(*PublishJobDeliveryCheckRequest)(nil),  // 15: toshi.githubcore.v1.PublishJobDeliveryCheckRequest
-	(*PublishJobDeliveryCheckResponse)(nil), // 16: toshi.githubcore.v1.PublishJobDeliveryCheckResponse
-	(*timestamppb.Timestamp)(nil),           // 17: google.protobuf.Timestamp
+	(*AdmitGrantRequest)(nil),                  // 0: toshi.githubcore.v1.AdmitGrantRequest
+	(*AdmitGrantResponse)(nil),                 // 1: toshi.githubcore.v1.AdmitGrantResponse
+	(*GetJobRequest)(nil),                      // 2: toshi.githubcore.v1.GetJobRequest
+	(*GetJobResponse)(nil),                     // 3: toshi.githubcore.v1.GetJobResponse
+	(*Job)(nil),                                // 4: toshi.githubcore.v1.Job
+	(*FillJobFailingStepRequest)(nil),          // 5: toshi.githubcore.v1.FillJobFailingStepRequest
+	(*FillJobFailingStepResponse)(nil),         // 6: toshi.githubcore.v1.FillJobFailingStepResponse
+	(*ListOpenSourceRepositoriesRequest)(nil),  // 7: toshi.githubcore.v1.ListOpenSourceRepositoriesRequest
+	(*ListOpenSourceRepositoriesResponse)(nil), // 8: toshi.githubcore.v1.ListOpenSourceRepositoriesResponse
+	(*OpenSourceRepository)(nil),               // 9: toshi.githubcore.v1.OpenSourceRepository
+	(*OpenSourceKeptApproval)(nil),             // 10: toshi.githubcore.v1.OpenSourceKeptApproval
+	(*SetOpenSourceApprovalRequest)(nil),       // 11: toshi.githubcore.v1.SetOpenSourceApprovalRequest
+	(*SetOpenSourceApprovalResponse)(nil),      // 12: toshi.githubcore.v1.SetOpenSourceApprovalResponse
+	(*MapInstallationRequest)(nil),             // 13: toshi.githubcore.v1.MapInstallationRequest
+	(*MapInstallationResponse)(nil),            // 14: toshi.githubcore.v1.MapInstallationResponse
+	(*PublishJobDeliveryCheckRequest)(nil),     // 15: toshi.githubcore.v1.PublishJobDeliveryCheckRequest
+	(*PublishJobDeliveryCheckResponse)(nil),    // 16: toshi.githubcore.v1.PublishJobDeliveryCheckResponse
+	(*timestamppb.Timestamp)(nil),              // 17: google.protobuf.Timestamp
 }
 var file_toshi_githubcore_v1_githubcore_proto_depIdxs = []int32{
 	17, // 0: toshi.githubcore.v1.AdmitGrantResponse.created_at:type_name -> google.protobuf.Timestamp
 	17, // 1: toshi.githubcore.v1.AdmitGrantResponse.expires_at:type_name -> google.protobuf.Timestamp
 	4,  // 2: toshi.githubcore.v1.GetJobResponse.job:type_name -> toshi.githubcore.v1.Job
-	9,  // 3: toshi.githubcore.v1.ListOpenSourceReposResponse.repos:type_name -> toshi.githubcore.v1.OpenSourceRepo
-	10, // 4: toshi.githubcore.v1.ListOpenSourceReposResponse.kept:type_name -> toshi.githubcore.v1.OpenSourceKeptApproval
-	17, // 5: toshi.githubcore.v1.OpenSourceRepo.repo_created_at:type_name -> google.protobuf.Timestamp
-	17, // 6: toshi.githubcore.v1.OpenSourceRepo.checked_at:type_name -> google.protobuf.Timestamp
-	17, // 7: toshi.githubcore.v1.OpenSourceRepo.attempted_at:type_name -> google.protobuf.Timestamp
-	17, // 8: toshi.githubcore.v1.OpenSourceRepo.approval_changed_at:type_name -> google.protobuf.Timestamp
+	9,  // 3: toshi.githubcore.v1.ListOpenSourceRepositoriesResponse.repositories:type_name -> toshi.githubcore.v1.OpenSourceRepository
+	10, // 4: toshi.githubcore.v1.ListOpenSourceRepositoriesResponse.kept:type_name -> toshi.githubcore.v1.OpenSourceKeptApproval
+	17, // 5: toshi.githubcore.v1.OpenSourceRepository.repo_created_at:type_name -> google.protobuf.Timestamp
+	17, // 6: toshi.githubcore.v1.OpenSourceRepository.checked_at:type_name -> google.protobuf.Timestamp
+	17, // 7: toshi.githubcore.v1.OpenSourceRepository.attempted_at:type_name -> google.protobuf.Timestamp
+	17, // 8: toshi.githubcore.v1.OpenSourceRepository.approval_changed_at:type_name -> google.protobuf.Timestamp
 	17, // 9: toshi.githubcore.v1.OpenSourceKeptApproval.approved_at:type_name -> google.protobuf.Timestamp
-	9,  // 10: toshi.githubcore.v1.SetOpenSourceApprovalResponse.repos:type_name -> toshi.githubcore.v1.OpenSourceRepo
+	9,  // 10: toshi.githubcore.v1.SetOpenSourceApprovalResponse.repositories:type_name -> toshi.githubcore.v1.OpenSourceRepository
 	10, // 11: toshi.githubcore.v1.SetOpenSourceApprovalResponse.kept:type_name -> toshi.githubcore.v1.OpenSourceKeptApproval
 	0,  // 12: toshi.githubcore.v1.GitHubCoreService.AdmitGrant:input_type -> toshi.githubcore.v1.AdmitGrantRequest
 	2,  // 13: toshi.githubcore.v1.GitHubCoreService.GetJob:input_type -> toshi.githubcore.v1.GetJobRequest
 	5,  // 14: toshi.githubcore.v1.GitHubCoreService.FillJobFailingStep:input_type -> toshi.githubcore.v1.FillJobFailingStepRequest
-	7,  // 15: toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepos:input_type -> toshi.githubcore.v1.ListOpenSourceReposRequest
+	7,  // 15: toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepositories:input_type -> toshi.githubcore.v1.ListOpenSourceRepositoriesRequest
 	11, // 16: toshi.githubcore.v1.GitHubCoreService.SetOpenSourceApproval:input_type -> toshi.githubcore.v1.SetOpenSourceApprovalRequest
 	13, // 17: toshi.githubcore.v1.GitHubCoreService.MapInstallation:input_type -> toshi.githubcore.v1.MapInstallationRequest
 	15, // 18: toshi.githubcore.v1.GitHubCoreService.PublishJobDeliveryCheck:input_type -> toshi.githubcore.v1.PublishJobDeliveryCheckRequest
 	1,  // 19: toshi.githubcore.v1.GitHubCoreService.AdmitGrant:output_type -> toshi.githubcore.v1.AdmitGrantResponse
 	3,  // 20: toshi.githubcore.v1.GitHubCoreService.GetJob:output_type -> toshi.githubcore.v1.GetJobResponse
 	6,  // 21: toshi.githubcore.v1.GitHubCoreService.FillJobFailingStep:output_type -> toshi.githubcore.v1.FillJobFailingStepResponse
-	8,  // 22: toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepos:output_type -> toshi.githubcore.v1.ListOpenSourceReposResponse
+	8,  // 22: toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepositories:output_type -> toshi.githubcore.v1.ListOpenSourceRepositoriesResponse
 	12, // 23: toshi.githubcore.v1.GitHubCoreService.SetOpenSourceApproval:output_type -> toshi.githubcore.v1.SetOpenSourceApprovalResponse
 	14, // 24: toshi.githubcore.v1.GitHubCoreService.MapInstallation:output_type -> toshi.githubcore.v1.MapInstallationResponse
 	16, // 25: toshi.githubcore.v1.GitHubCoreService.PublishJobDeliveryCheck:output_type -> toshi.githubcore.v1.PublishJobDeliveryCheckResponse

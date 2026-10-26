@@ -48,6 +48,8 @@ const (
 type VolumeServiceClient interface {
 	// ListVolumes returns the project's volumes that are not deleted,
 	// ordered by name.
+	//
+	// A page holds 100 volumes when page_size is zero, and 1000 at most.
 	ListVolumes(context.Context, *connect.Request[workspacev1.ListVolumesRequest]) (*connect.Response[workspacev1.ListVolumesResponse], error)
 	// AttachVolume attaches a state volume to a service or sandbox: the
 	// service's next run mounts it, and a sandbox mounts it when it starts.
@@ -127,6 +129,8 @@ func (c *volumeServiceClient) DetachVolume(ctx context.Context, req *connect.Req
 type VolumeServiceHandler interface {
 	// ListVolumes returns the project's volumes that are not deleted,
 	// ordered by name.
+	//
+	// A page holds 100 volumes when page_size is zero, and 1000 at most.
 	ListVolumes(context.Context, *connect.Request[workspacev1.ListVolumesRequest]) (*connect.Response[workspacev1.ListVolumesResponse], error)
 	// AttachVolume attaches a state volume to a service or sandbox: the
 	// service's next run mounts it, and a sandbox mounts it when it starts.

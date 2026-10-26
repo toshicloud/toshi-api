@@ -12,11 +12,13 @@ option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 // repository's claim and sets the branch rules that choose a CI job's
 // environment. A workspace holds projects, and a project holds environments.
 //
-// The caller's credential names the workspace, as for WorkspaceService.
+// The caller's credential names the workspace, as for WorkloadService.
 // Nothing of another workspace is visible.
 service ProjectService {
   // ListProjects returns the workspace's projects by name, each with its
   // environments by name.
+  //
+  // A page holds 100 projects when page_size is zero, and 1000 at most.
   rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
   // GetProject returns one project with its environments by name. A
   // project the workspace does not have is NOT_FOUND. A token limited to
@@ -27,6 +29,8 @@ service ProjectService {
   // ListRepositories returns the repositories the workspace's projects
   // claim, by repository. A project the workspace does not have is
   // NOT_FOUND.
+  //
+  // A page holds 100 repositories when page_size is zero, and 1000 at most.
   rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
   // CreateProject makes a project with its three environments,
   // development, preview and production. A name the workspace's projects
@@ -66,6 +70,8 @@ service ProjectService {
   // not have is NOT_FOUND. A token limited to a project reads only that
   // project's rules, and a token limited to an environment is
   // PERMISSION_DENIED.
+  //
+  // A page holds 100 rules when page_size is zero, and 1000 at most.
   rpc ListBranchRules(ListBranchRulesRequest) returns (ListBranchRulesResponse);
   // SetBranchRules replaces a project's branch rules with the list given,
   // whole: it has at most 100 rules, a known match on each, a pattern on
@@ -88,6 +94,8 @@ service ProjectService {
   rpc CreateEmbedToken(CreateEmbedTokenRequest) returns (CreateEmbedTokenResponse);
   // ListEmbedTokens returns a project's embed tokens, oldest first, without
   // the tokens themselves.
+  //
+  // A page holds 100 embed tokens when page_size is zero, and 1000 at most.
   rpc ListEmbedTokens(ListEmbedTokensRequest) returns (ListEmbedTokensResponse);
   // RevokeEmbedToken refuses an embed token before it expires. A token
   // already revoked is returned as it is.
@@ -118,7 +126,12 @@ message Repository {
   google.protobuf.Timestamp claimed_at = 3;
 }
 
-message ListProjectsRequest {}
+message ListProjectsRequest {
+  // The most projects in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
 
 message ListProjectsResponse {
   repeated Project projects = 1;
@@ -126,6 +139,8 @@ message ListProjectsResponse {
   // field always sets it; both its fields are empty for a caller that
   // covers the whole workspace.
   TokenLimit token_limit = 2;
+  // Empty on the last page.
+  string next_page_token = 3;
 }
 
 // TokenLimit names the project and the environment an API token is
@@ -141,10 +156,16 @@ message TokenLimit {
 message ListRepositoriesRequest {
   // Only this project's repositories; empty lists every project's.
   string project = 1;
+  // The most repositories in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
 }
 
 message ListRepositoriesResponse {
   repeated Repository repositories = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message CreateProjectRequest {
@@ -222,10 +243,16 @@ message BranchRule {
 message ListBranchRulesRequest {
   // The project's name.
   string project = 1;
+  // The most rules in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
 }
 
 message ListBranchRulesResponse {
   repeated BranchRule rules = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message SetBranchRulesRequest {
@@ -294,10 +321,16 @@ message CreateEmbedTokenResponse {
 message ListEmbedTokensRequest {
   // The project's name.
   string project = 1;
+  // The most embed tokens in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
 }
 
 message ListEmbedTokensResponse {
   repeated EmbedToken embed_tokens = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message RevokeEmbedTokenRequest {

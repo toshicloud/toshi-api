@@ -11,7 +11,7 @@ option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 // a time. A state volume is mounted by one VM at a time, whichever run of
 // its workload holds it.
 //
-// The caller's credential names the workspace, as for WorkspaceService.
+// The caller's credential names the workspace, as for WorkloadService.
 // Every request names a project; an empty one is the default project. A
 // project the workspace does not have is NOT_FOUND, and so is a volume of
 // another project or workspace and a workload of another workspace. With a
@@ -25,6 +25,8 @@ option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 service VolumeService {
   // ListVolumes returns the project's volumes that are not deleted,
   // ordered by name.
+  //
+  // A page holds 100 volumes when page_size is zero, and 1000 at most.
   rpc ListVolumes(ListVolumesRequest) returns (ListVolumesResponse);
 
   // AttachVolume attaches a state volume to a service or sandbox: the
@@ -83,10 +85,16 @@ message Volume {
 
 message ListVolumesRequest {
   string project = 1;
+  // The most volumes in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
 }
 
 message ListVolumesResponse {
   repeated Volume volumes = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message AttachVolumeRequest {
