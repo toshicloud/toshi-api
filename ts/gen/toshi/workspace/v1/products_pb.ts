@@ -2,8 +2,8 @@
 // @generated from file toshi/workspace/v1/products.proto (package toshi.workspace.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import { file_toshi_permission } from "../../permission_pb";
@@ -15,7 +15,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/products.proto.
  */
 export const file_toshi_workspace_v1_products: GenFile = /*@__PURE__*/
-  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyLwAQoUVXBkYXRlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkSFAoHZW5hYmxlZBgCIAEoCEgAiAEBEkgKCHNldHRpbmdzGAMgAygLMjYudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0LlNldHRpbmdzRW50cnkSDQoFY2xlYXIYBCADKAkaUQoNU2V0dGluZ3NFbnRyeRILCgNrZXkYASABKAkSLwoFdmFsdWUYAiABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlOgI4AUIKCghfZW5hYmxlZCJNChVVcGRhdGVQcm9kdWN0UmVzcG9uc2USNAoHcHJvZHVjdBgBIAEoCzIjLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U2V0dGluZ3MitwEKD1Byb2R1Y3RTZXR0aW5ncxIKCgJpZBgBIAEoCRIxCgZzd2l0Y2gYAiABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN3aXRjaBI0CghmZWF0dXJlcxgDIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU2V0dGluZxIvCgVzdGF0ZRgEIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhdGUilAIKDkZlYXR1cmVTZXR0aW5nEgsKA2tleRgBIAEoCRISCgpuYXJyb3dhYmxlGAIgASgIEjUKC2VudGl0bGVtZW50GAMgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIxCgdzZXR0aW5nGAQgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIzCgllZmZlY3RpdmUYBSABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEhIKCmNoYW5nZWRfYnkYBiABKAkSLgoKY2hhbmdlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAygAIKDlByb2R1Y3RTZXJ2aWNlEnQKDExpc3RQcm9kdWN0cxInLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UHJvZHVjdHNSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkxpc3RQcm9kdWN0c1Jlc3BvbnNlIhHC8xgNc2V0dGluZ3MucmVhZBJ4Cg1VcGRhdGVQcm9kdWN0EigudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXNwb25zZSISwvMYDnNldHRpbmdzLndyaXRlQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
+  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyKJAgoUVXBkYXRlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkSFAoHZW5hYmxlZBgCIAEoCEgAiAEBEkgKCHNldHRpbmdzGAMgAygLMjYudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0LlNldHRpbmdzRW50cnkSDQoFY2xlYXIYBCADKAkSFwoPYWNjZXB0ZWRfYWNjZXNzGAUgAygJGlEKDVNldHRpbmdzRW50cnkSCwoDa2V5GAEgASgJEi8KBXZhbHVlGAIgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZToCOAFCCgoIX2VuYWJsZWQiaQoVVXBkYXRlUHJvZHVjdFJlc3BvbnNlEjQKB3Byb2R1Y3QYASABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFNldHRpbmdzEhoKEmluc3RhbGxhdGlvbl90b2tlbhgCIAEoCSIiChRSZW1vdmVQcm9kdWN0UmVxdWVzdBIKCgJpZBgBIAEoCSJNChVSZW1vdmVQcm9kdWN0UmVzcG9uc2USNAoHcHJvZHVjdBgBIAEoCzIjLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U2V0dGluZ3Mi9gEKD1Byb2R1Y3RTZXR0aW5ncxIKCgJpZBgBIAEoCRIxCgZzd2l0Y2gYAiABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN3aXRjaBI0CghmZWF0dXJlcxgDIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU2V0dGluZxIvCgVzdGF0ZRgEIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhdGUSPQoMaW5zdGFsbGF0aW9uGAUgASgLMicudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RJbnN0YWxsYXRpb24imgIKE1Byb2R1Y3RJbnN0YWxsYXRpb24SNAoFc3RhdGUYASABKA4yJS50b3NoaS53b3Jrc3BhY2UudjEuSW5zdGFsbGF0aW9uU3RhdGUSDwoHdmVyc2lvbhgCIAEoCRIRCglwdWJsaXNoZXIYAyABKAkSDgoGYWNjZXNzGAQgAygJEg8KB3JvbGVfaWQYBSABKAkSEAoIdG9rZW5faWQYBiABKAkSFAoMaW5zdGFsbGVkX2J5GAcgASgJEjAKDGluc3RhbGxlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAilAIKDkZlYXR1cmVTZXR0aW5nEgsKA2tleRgBIAEoCRISCgpuYXJyb3dhYmxlGAIgASgIEjUKC2VudGl0bGVtZW50GAMgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIxCgdzZXR0aW5nGAQgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIzCgllZmZlY3RpdmUYBSABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEhIKCmNoYW5nZWRfYnkYBiABKAkSLgoKY2hhbmdlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqmAEKEUluc3RhbGxhdGlvblN0YXRlEiIKHklOU1RBTExBVElPTl9TVEFURV9VTlNQRUNJRklFRBAAEh0KGUlOU1RBTExBVElPTl9TVEFURV9BQ1RJVkUQARIgChxJTlNUQUxMQVRJT05fU1RBVEVfU1VTUEVOREVEEAISHgoaSU5TVEFMTEFUSU9OX1NUQVRFX1JFTU9WRUQQAzL6AgoOUHJvZHVjdFNlcnZpY2USdAoMTGlzdFByb2R1Y3RzEicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RQcm9kdWN0c1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVzcG9uc2UiEcLzGA1zZXR0aW5ncy5yZWFkEngKDVVwZGF0ZVByb2R1Y3QSKC50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlUHJvZHVjdFJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlUHJvZHVjdFJlc3BvbnNlIhLC8xgOc2V0dGluZ3Mud3JpdGUSeAoNUmVtb3ZlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVzcG9uc2UiEsLzGA5zZXR0aW5ncy53cml0ZUIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
 
 /**
  * @generated from message toshi.workspace.v1.ListProductsRequest
@@ -104,6 +104,22 @@ export type UpdateProductRequest = Message<"toshi.workspace.v1.UpdateProductRequ
    * @generated from field: repeated string clear = 4;
    */
   clear: string[];
+
+  /**
+   * accepted_access is the access an outside product, one a catalog source
+   * offers, asks for, as its catalog entry lists it. Turning such a product
+   * on for the first time, or again after it was removed, installs it and
+   * grants it that access, and needs the same permissions here, in any
+   * order: any other list is FAILED_PRECONDITION with an ErrorInfo of reason
+   * ACCESS_NOT_ACCEPTED whose metadata "access" lists what the entry asks
+   * for. Only a caller who holds every permission it asks for may install
+   * it, a person or a workspace token; one who lacks one is
+   * PERMISSION_DENIED naming it. Ignored when the product is built in or
+   * already installed.
+   *
+   * @generated from field: repeated string accepted_access = 5;
+   */
+  acceptedAccess: string[];
 };
 
 /**
@@ -143,6 +159,22 @@ export type UpdateProductRequestJson = {
    * @generated from field: repeated string clear = 4;
    */
   clear?: string[];
+
+  /**
+   * accepted_access is the access an outside product, one a catalog source
+   * offers, asks for, as its catalog entry lists it. Turning such a product
+   * on for the first time, or again after it was removed, installs it and
+   * grants it that access, and needs the same permissions here, in any
+   * order: any other list is FAILED_PRECONDITION with an ErrorInfo of reason
+   * ACCESS_NOT_ACCEPTED whose metadata "access" lists what the entry asks
+   * for. Only a caller who holds every permission it asks for may install
+   * it, a person or a workspace token; one who lacks one is
+   * PERMISSION_DENIED naming it. Ignored when the product is built in or
+   * already installed.
+   *
+   * @generated from field: repeated string accepted_access = 5;
+   */
+  acceptedAccess?: string[];
 };
 
 /**
@@ -162,6 +194,15 @@ export type UpdateProductResponse = Message<"toshi.workspace.v1.UpdateProductRes
    * @generated from field: toshi.workspace.v1.ProductSettings product = 1;
    */
   product?: ProductSettings | undefined;
+
+  /**
+   * installation_token is the token an outside product's installation calls
+   * the Workspace API with, "toshi_in_" and 46 characters. Only the call
+   * that installs the product returns it.
+   *
+   * @generated from field: string installation_token = 2;
+   */
+  installationToken: string;
 };
 
 /**
@@ -174,6 +215,15 @@ export type UpdateProductResponseJson = {
    * @generated from field: toshi.workspace.v1.ProductSettings product = 1;
    */
   product?: ProductSettingsJson;
+
+  /**
+   * installation_token is the token an outside product's installation calls
+   * the Workspace API with, "toshi_in_" and 46 characters. Only the call
+   * that installs the product returns it.
+   *
+   * @generated from field: string installation_token = 2;
+   */
+  installationToken?: string;
 };
 
 /**
@@ -182,6 +232,68 @@ export type UpdateProductResponseJson = {
  */
 export const UpdateProductResponseSchema: GenMessage<UpdateProductResponse, {jsonType: UpdateProductResponseJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_products, 3);
+
+/**
+ * @generated from message toshi.workspace.v1.RemoveProductRequest
+ */
+export type RemoveProductRequest = Message<"toshi.workspace.v1.RemoveProductRequest"> & {
+  /**
+   * id names the outside product.
+   *
+   * @generated from field: string id = 1;
+   */
+  id: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.RemoveProductRequest
+ */
+export type RemoveProductRequestJson = {
+  /**
+   * id names the outside product.
+   *
+   * @generated from field: string id = 1;
+   */
+  id?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.RemoveProductRequest.
+ * Use `create(RemoveProductRequestSchema)` to create a new message.
+ */
+export const RemoveProductRequestSchema: GenMessage<RemoveProductRequest, {jsonType: RemoveProductRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_products, 4);
+
+/**
+ * @generated from message toshi.workspace.v1.RemoveProductResponse
+ */
+export type RemoveProductResponse = Message<"toshi.workspace.v1.RemoveProductResponse"> & {
+  /**
+   * product is the product as the workspace has it after the removal.
+   *
+   * @generated from field: toshi.workspace.v1.ProductSettings product = 1;
+   */
+  product?: ProductSettings | undefined;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.RemoveProductResponse
+ */
+export type RemoveProductResponseJson = {
+  /**
+   * product is the product as the workspace has it after the removal.
+   *
+   * @generated from field: toshi.workspace.v1.ProductSettings product = 1;
+   */
+  product?: ProductSettingsJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.RemoveProductResponse.
+ * Use `create(RemoveProductResponseSchema)` to create a new message.
+ */
+export const RemoveProductResponseSchema: GenMessage<RemoveProductResponse, {jsonType: RemoveProductResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_products, 5);
 
 /**
  * ProductSettings is one product as the workspace has it.
@@ -222,6 +334,16 @@ export type ProductSettings = Message<"toshi.workspace.v1.ProductSettings"> & {
    * @generated from field: toshi.workspace.v1.ProductState state = 4;
    */
   state: ProductState;
+
+  /**
+   * installation is the workspace's installation of an outside product, a
+   * removed one included; unset for a built-in product. Such a product
+   * declares no features, and its switch is ON while the installation is
+   * active and TURNED_OFF otherwise.
+   *
+   * @generated from field: toshi.workspace.v1.ProductInstallation installation = 5;
+   */
+  installation?: ProductInstallation | undefined;
 };
 
 /**
@@ -263,6 +385,16 @@ export type ProductSettingsJson = {
    * @generated from field: toshi.workspace.v1.ProductState state = 4;
    */
   state?: ProductStateJson;
+
+  /**
+   * installation is the workspace's installation of an outside product, a
+   * removed one included; unset for a built-in product. Such a product
+   * declares no features, and its switch is ON while the installation is
+   * active and TURNED_OFF otherwise.
+   *
+   * @generated from field: toshi.workspace.v1.ProductInstallation installation = 5;
+   */
+  installation?: ProductInstallationJson;
 };
 
 /**
@@ -270,7 +402,138 @@ export type ProductSettingsJson = {
  * Use `create(ProductSettingsSchema)` to create a new message.
  */
 export const ProductSettingsSchema: GenMessage<ProductSettings, {jsonType: ProductSettingsJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 4);
+  messageDesc(file_toshi_workspace_v1_products, 6);
+
+/**
+ * ProductInstallation is a workspace's installation of an outside product.
+ *
+ * @generated from message toshi.workspace.v1.ProductInstallation
+ */
+export type ProductInstallation = Message<"toshi.workspace.v1.ProductInstallation"> & {
+  /**
+   * @generated from field: toshi.workspace.v1.InstallationState state = 1;
+   */
+  state: InstallationState;
+
+  /**
+   * version and publisher are the catalog entry's when it was installed.
+   *
+   * @generated from field: string version = 2;
+   */
+  version: string;
+
+  /**
+   * @generated from field: string publisher = 3;
+   */
+  publisher: string;
+
+  /**
+   * access are the permissions the workspace granted it, sorted.
+   *
+   * @generated from field: repeated string access = 4;
+   */
+  access: string[];
+
+  /**
+   * role_id names the role that holds the access, "Product <id>", granted to
+   * token_id, the installation's token.
+   *
+   * @generated from field: string role_id = 5;
+   */
+  roleId: string;
+
+  /**
+   * @generated from field: string token_id = 6;
+   */
+  tokenId: string;
+
+  /**
+   * installed_by names who installed it: "person:" and their GitHub user
+   * id, or "token:" and the workspace token's id.
+   *
+   * @generated from field: string installed_by = 7;
+   */
+  installedBy: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp installed_at = 8;
+   */
+  installedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp updated_at = 9;
+   */
+  updatedAt?: Timestamp | undefined;
+};
+
+/**
+ * ProductInstallation is a workspace's installation of an outside product.
+ *
+ * @generated from message toshi.workspace.v1.ProductInstallation
+ */
+export type ProductInstallationJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.InstallationState state = 1;
+   */
+  state?: InstallationStateJson;
+
+  /**
+   * version and publisher are the catalog entry's when it was installed.
+   *
+   * @generated from field: string version = 2;
+   */
+  version?: string;
+
+  /**
+   * @generated from field: string publisher = 3;
+   */
+  publisher?: string;
+
+  /**
+   * access are the permissions the workspace granted it, sorted.
+   *
+   * @generated from field: repeated string access = 4;
+   */
+  access?: string[];
+
+  /**
+   * role_id names the role that holds the access, "Product <id>", granted to
+   * token_id, the installation's token.
+   *
+   * @generated from field: string role_id = 5;
+   */
+  roleId?: string;
+
+  /**
+   * @generated from field: string token_id = 6;
+   */
+  tokenId?: string;
+
+  /**
+   * installed_by names who installed it: "person:" and their GitHub user
+   * id, or "token:" and the workspace token's id.
+   *
+   * @generated from field: string installed_by = 7;
+   */
+  installedBy?: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp installed_at = 8;
+   */
+  installedAt?: TimestampJson;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp updated_at = 9;
+   */
+  updatedAt?: TimestampJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ProductInstallation.
+ * Use `create(ProductInstallationSchema)` to create a new message.
+ */
+export const ProductInstallationSchema: GenMessage<ProductInstallation, {jsonType: ProductInstallationJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_products, 7);
 
 /**
  * FeatureSetting is one feature of a product as the workspace has it.
@@ -401,7 +664,55 @@ export type FeatureSettingJson = {
  * Use `create(FeatureSettingSchema)` to create a new message.
  */
 export const FeatureSettingSchema: GenMessage<FeatureSetting, {jsonType: FeatureSettingJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 5);
+  messageDesc(file_toshi_workspace_v1_products, 8);
+
+/**
+ * InstallationState is where an installation stands.
+ *
+ * @generated from enum toshi.workspace.v1.InstallationState
+ */
+export enum InstallationState {
+  /**
+   * @generated from enum value: INSTALLATION_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The product is on and its token works.
+   *
+   * @generated from enum value: INSTALLATION_STATE_ACTIVE = 1;
+   */
+  ACTIVE = 1,
+
+  /**
+   * The product is turned off: its token is refused and its webhook
+   * endpoints are paused until it is turned on again.
+   *
+   * @generated from enum value: INSTALLATION_STATE_SUSPENDED = 2;
+   */
+  SUSPENDED = 2,
+
+  /**
+   * Its token is revoked and its role deleted; turning it on installs it
+   * again.
+   *
+   * @generated from enum value: INSTALLATION_STATE_REMOVED = 3;
+   */
+  REMOVED = 3,
+}
+
+/**
+ * InstallationState is where an installation stands.
+ *
+ * @generated from enum toshi.workspace.v1.InstallationState
+ */
+export type InstallationStateJson = "INSTALLATION_STATE_UNSPECIFIED" | "INSTALLATION_STATE_ACTIVE" | "INSTALLATION_STATE_SUSPENDED" | "INSTALLATION_STATE_REMOVED";
+
+/**
+ * Describes the enum toshi.workspace.v1.InstallationState.
+ */
+export const InstallationStateSchema: GenEnum<InstallationState, InstallationStateJson> = /*@__PURE__*/
+  enumDesc(file_toshi_workspace_v1_products, 0);
 
 /**
  * ProductService reads and changes the workspace's settings of its
@@ -421,7 +732,8 @@ export const ProductService: GenService<{
    * ListProducts returns the products the deployment includes, by id, each
    * with its switch and its features: the entitlement, the workspace's
    * setting if it has one, the effective value, and who changed the
-   * setting last and when.
+   * setting last and when; then the outside products the workspace has
+   * installed, by id, each with its installation.
    *
    * @generated from rpc toshi.workspace.v1.ProductService.ListProducts
    */
@@ -438,7 +750,12 @@ export const ProductService: GenService<{
    * than the entitlement, a key the product does not declare or that the
    * workspace cannot narrow, or a value of another type than the key's is
    * INVALID_ARGUMENT naming the key, and nothing is changed. A product the
-   * deployment does not include is NOT_FOUND.
+   * deployment does not include, built in or offered by a catalog source,
+   * is NOT_FOUND.
+   *
+   * An outside product, one a catalog source offers, has no settings but
+   * enabled: turning it on installs it (accepted_access) or resumes its
+   * installation, and turning it off suspends it.
    *
    * The product's calls follow the change from the next call on.
    *
@@ -448,6 +765,20 @@ export const ProductService: GenService<{
     methodKind: "unary";
     input: typeof UpdateProductRequestSchema;
     output: typeof UpdateProductResponseSchema;
+  },
+  /**
+   * RemoveProduct removes the workspace's installation of an outside
+   * product: it revokes the installation's token, deletes the role that
+   * held its access and stops its webhook endpoints. The data the product
+   * stored in the workspace stays. A product that is not installed, or not
+   * an outside product, is NOT_FOUND.
+   *
+   * @generated from rpc toshi.workspace.v1.ProductService.RemoveProduct
+   */
+  removeProduct: {
+    methodKind: "unary";
+    input: typeof RemoveProductRequestSchema;
+    output: typeof RemoveProductResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_toshi_workspace_v1_products, 0);

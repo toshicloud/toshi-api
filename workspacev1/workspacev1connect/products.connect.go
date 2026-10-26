@@ -39,6 +39,9 @@ const (
 	// ProductServiceUpdateProductProcedure is the fully-qualified name of the ProductService's
 	// UpdateProduct RPC.
 	ProductServiceUpdateProductProcedure = "/toshi.workspace.v1.ProductService/UpdateProduct"
+	// ProductServiceRemoveProductProcedure is the fully-qualified name of the ProductService's
+	// RemoveProduct RPC.
+	ProductServiceRemoveProductProcedure = "/toshi.workspace.v1.ProductService/RemoveProduct"
 )
 
 // ProductServiceClient is a client for the toshi.workspace.v1.ProductService service.
@@ -46,7 +49,8 @@ type ProductServiceClient interface {
 	// ListProducts returns the products the deployment includes, by id, each
 	// with its switch and its features: the entitlement, the workspace's
 	// setting if it has one, the effective value, and who changed the
-	// setting last and when.
+	// setting last and when; then the outside products the workspace has
+	// installed, by id, each with its installation.
 	ListProducts(context.Context, *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error)
 	// UpdateProduct changes the workspace's settings of one product in one
 	// call: it turns the product on or off, and sets or clears its features.
@@ -55,10 +59,21 @@ type ProductServiceClient interface {
 	// than the entitlement, a key the product does not declare or that the
 	// workspace cannot narrow, or a value of another type than the key's is
 	// INVALID_ARGUMENT naming the key, and nothing is changed. A product the
-	// deployment does not include is NOT_FOUND.
+	// deployment does not include, built in or offered by a catalog source,
+	// is NOT_FOUND.
+	//
+	// An outside product, one a catalog source offers, has no settings but
+	// enabled: turning it on installs it (accepted_access) or resumes its
+	// installation, and turning it off suspends it.
 	//
 	// The product's calls follow the change from the next call on.
 	UpdateProduct(context.Context, *connect.Request[workspacev1.UpdateProductRequest]) (*connect.Response[workspacev1.UpdateProductResponse], error)
+	// RemoveProduct removes the workspace's installation of an outside
+	// product: it revokes the installation's token, deletes the role that
+	// held its access and stops its webhook endpoints. The data the product
+	// stored in the workspace stays. A product that is not installed, or not
+	// an outside product, is NOT_FOUND.
+	RemoveProduct(context.Context, *connect.Request[workspacev1.RemoveProductRequest]) (*connect.Response[workspacev1.RemoveProductResponse], error)
 }
 
 // NewProductServiceClient constructs a client for the toshi.workspace.v1.ProductService service. By
@@ -84,6 +99,12 @@ func NewProductServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(productServiceMethods.ByName("UpdateProduct")),
 			connect.WithClientOptions(opts...),
 		),
+		removeProduct: connect.NewClient[workspacev1.RemoveProductRequest, workspacev1.RemoveProductResponse](
+			httpClient,
+			baseURL+ProductServiceRemoveProductProcedure,
+			connect.WithSchema(productServiceMethods.ByName("RemoveProduct")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -91,6 +112,7 @@ func NewProductServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 type productServiceClient struct {
 	listProducts  *connect.Client[workspacev1.ListProductsRequest, workspacev1.ListProductsResponse]
 	updateProduct *connect.Client[workspacev1.UpdateProductRequest, workspacev1.UpdateProductResponse]
+	removeProduct *connect.Client[workspacev1.RemoveProductRequest, workspacev1.RemoveProductResponse]
 }
 
 // ListProducts calls toshi.workspace.v1.ProductService.ListProducts.
@@ -103,12 +125,18 @@ func (c *productServiceClient) UpdateProduct(ctx context.Context, req *connect.R
 	return c.updateProduct.CallUnary(ctx, req)
 }
 
+// RemoveProduct calls toshi.workspace.v1.ProductService.RemoveProduct.
+func (c *productServiceClient) RemoveProduct(ctx context.Context, req *connect.Request[workspacev1.RemoveProductRequest]) (*connect.Response[workspacev1.RemoveProductResponse], error) {
+	return c.removeProduct.CallUnary(ctx, req)
+}
+
 // ProductServiceHandler is an implementation of the toshi.workspace.v1.ProductService service.
 type ProductServiceHandler interface {
 	// ListProducts returns the products the deployment includes, by id, each
 	// with its switch and its features: the entitlement, the workspace's
 	// setting if it has one, the effective value, and who changed the
-	// setting last and when.
+	// setting last and when; then the outside products the workspace has
+	// installed, by id, each with its installation.
 	ListProducts(context.Context, *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error)
 	// UpdateProduct changes the workspace's settings of one product in one
 	// call: it turns the product on or off, and sets or clears its features.
@@ -117,10 +145,21 @@ type ProductServiceHandler interface {
 	// than the entitlement, a key the product does not declare or that the
 	// workspace cannot narrow, or a value of another type than the key's is
 	// INVALID_ARGUMENT naming the key, and nothing is changed. A product the
-	// deployment does not include is NOT_FOUND.
+	// deployment does not include, built in or offered by a catalog source,
+	// is NOT_FOUND.
+	//
+	// An outside product, one a catalog source offers, has no settings but
+	// enabled: turning it on installs it (accepted_access) or resumes its
+	// installation, and turning it off suspends it.
 	//
 	// The product's calls follow the change from the next call on.
 	UpdateProduct(context.Context, *connect.Request[workspacev1.UpdateProductRequest]) (*connect.Response[workspacev1.UpdateProductResponse], error)
+	// RemoveProduct removes the workspace's installation of an outside
+	// product: it revokes the installation's token, deletes the role that
+	// held its access and stops its webhook endpoints. The data the product
+	// stored in the workspace stays. A product that is not installed, or not
+	// an outside product, is NOT_FOUND.
+	RemoveProduct(context.Context, *connect.Request[workspacev1.RemoveProductRequest]) (*connect.Response[workspacev1.RemoveProductResponse], error)
 }
 
 // NewProductServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -142,12 +181,20 @@ func NewProductServiceHandler(svc ProductServiceHandler, opts ...connect.Handler
 		connect.WithSchema(productServiceMethods.ByName("UpdateProduct")),
 		connect.WithHandlerOptions(opts...),
 	)
+	productServiceRemoveProductHandler := connect.NewUnaryHandler(
+		ProductServiceRemoveProductProcedure,
+		svc.RemoveProduct,
+		connect.WithSchema(productServiceMethods.ByName("RemoveProduct")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.ProductService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ProductServiceListProductsProcedure:
 			productServiceListProductsHandler.ServeHTTP(w, r)
 		case ProductServiceUpdateProductProcedure:
 			productServiceUpdateProductHandler.ServeHTTP(w, r)
+		case ProductServiceRemoveProductProcedure:
+			productServiceRemoveProductHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -163,4 +210,8 @@ func (UnimplementedProductServiceHandler) ListProducts(context.Context, *connect
 
 func (UnimplementedProductServiceHandler) UpdateProduct(context.Context, *connect.Request[workspacev1.UpdateProductRequest]) (*connect.Response[workspacev1.UpdateProductResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProductService.UpdateProduct is not implemented"))
+}
+
+func (UnimplementedProductServiceHandler) RemoveProduct(context.Context, *connect.Request[workspacev1.RemoveProductRequest]) (*connect.Response[workspacev1.RemoveProductResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProductService.RemoveProduct is not implemented"))
 }
