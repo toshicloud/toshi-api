@@ -1084,16 +1084,18 @@ export const PublishJobDeliveryCheckResponseSchema: GenMessage<PublishJobDeliver
  * call, and the grant decides what the adapter may do.
  *
  * A call fails with PERMISSION_DENIED unless: the token is a live product
- * token of the product github; the assertion verifies, was issued by this
+ * token of the product runners; the assertion verifies, was issued by this
  * control plane for the GitHub product's audience and names the product
- * github; the grant is of github, open, and of the assertion's call; the
+ * runners; the grant is of runners, open, and of the assertion's call; the
  * core call is one the grant's call allows; for every call but AdmitGrant,
  * the grant was admitted with the call's nonce; and every argument the
  * grant binds equals the grant's. The arguments a grant binds are the
- * product's: Runners encodes them, and the core reads them only
- * to compare them with the call's. The error does not say which rule
- * refused. A refusal with a valid product token is recorded in the audit
- * log as product.call_refused, with the call and the reason.
+ * product's: Runners encodes them, and the core reads them only to compare
+ * them with the call's. Until the first public release the core also takes
+ * github, the product's former name, wherever runners is required. The
+ * error does not say which rule refused. A refusal with a valid product
+ * token is recorded in the audit log as product.call_refused, with the
+ * call and the reason.
  *
  * Each product call allows AdmitGrant and:
  *   - GetJobFailure: GetJob and FillJobFailingStep, for the grant's job;
@@ -1111,7 +1113,7 @@ export const PublishJobDeliveryCheckResponseSchema: GenMessage<PublishJobDeliver
  * answers as the first did and changes nothing. A repeat that arrives
  * while the first is still running fails with ABORTED. The core records
  * the audit events of each write with the grant's caller as actor and
- * "product": "github" in the details.
+ * "product": "runners" in the details.
  *
  * @generated from service toshi.githubcore.v1.GitHubCoreService
  */
