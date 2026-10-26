@@ -244,17 +244,18 @@ type OperatorServiceClient interface {
 	//
 	// A page holds 100 jobs when page_size is zero, and 1000 at most.
 	ListJobs(context.Context, *connect.Request[operatorv1.ListJobsRequest]) (*connect.Response[operatorv1.ListJobsResponse], error)
-	// ListAuditEvents returns the audit log, newest first. An operator may use
-	// every filter; a dashboard session may read only its own workspaces.
+	// ListAuditEvents returns the audit log, newest first, with every filter.
+	// A member reads its own workspace's with the Workspace API's
+	// AuditEventService.ListAuditEvents.
 	//
 	// A page holds 100 events when page_size is zero, and 1000 at most.
 	ListAuditEvents(context.Context, *connect.Request[operatorv1.ListAuditEventsRequest]) (*connect.Response[operatorv1.ListAuditEventsResponse], error)
 	// GetJob returns one job. An unknown ID fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[operatorv1.GetJobRequest]) (*connect.Response[operatorv1.GetJobResponse], error)
 	// GetJobTelemetry returns the resource samples of one job's VM and their
-	// summary. A dashboard session or workspace token reads only its
-	// own workspaces' jobs. An unknown ID fails with NOT_FOUND; a job without
-	// samples returns none.
+	// summary. A member reads its own workspace's jobs with the Workspace
+	// API's HostJobService.GetHostJobTelemetry. An unknown ID fails with
+	// NOT_FOUND; a job without samples returns none.
 	GetJobTelemetry(context.Context, *connect.Request[operatorv1.GetJobTelemetryRequest]) (*connect.Response[operatorv1.GetJobTelemetryResponse], error)
 	// SummariseJobTelemetry sums up the telemetry of the jobs queued in a
 	// range that started and finished, by OS and runner size: peak
@@ -301,8 +302,8 @@ type OperatorServiceClient interface {
 	// Each removal records one host.retired audit event. Operators only.
 	RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error)
 	// CreateCloudHost registers a workspace-owned cloud host the control plane
-	// drives in the workspace's AWS account. A dashboard session and a workspace
-	// token may add hosts for their own workspace only; the operator for any. When
+	// drives in the workspace's AWS account, for any workspace; a member adds
+	// its own with the Workspace API's HostService.CreateCloudHost. When
 	// cloud hosts are not configured on the control plane the call fails with
 	// FAILED_PRECONDITION.
 	CreateCloudHost(context.Context, *connect.Request[operatorv1.CreateCloudHostRequest]) (*connect.Response[operatorv1.CreateCloudHostResponse], error)
@@ -425,9 +426,9 @@ type OperatorServiceClient interface {
 	// minutes metered to the billing provider by size with their estimated
 	// cost at the plan's prices, the starter credit applied in it, and held
 	// time by reason. An empty ID or a month not in YYYY-MM form fails with
-	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND. A dashboard
-	// session or workspace token may read only its own workspaces' statements; any
-	// other fails with PERMISSION_DENIED.
+	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND. A member
+	// reads its own workspace's with the Workspace API's
+	// WorkspaceService.GetWorkspaceStatement.
 	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
 	// SetTenantBillingCustomer links or clears a workspace's billing customer id and
 	// returns the workspace's billing state. An empty ID, or a customer_id longer
@@ -442,17 +443,17 @@ type OperatorServiceClient interface {
 	// workspace fails with NOT_FOUND; self-serve billing off, a plan that is not
 	// sold or maps to several lookup keys, a price missing in Stripe, or a
 	// workspace that already has a subscription fails with FAILED_PRECONDITION; a
-	// billing provider failure fails with UNAVAILABLE. A dashboard session may
-	// call this only for its own workspaces; otherwise it fails with
-	// PERMISSION_DENIED.
+	// billing provider failure fails with UNAVAILABLE. A member calls the
+	// Workspace API's WorkspaceService.CreateCheckoutSession for its own
+	// workspace.
 	CreateCheckoutSession(context.Context, *connect.Request[operatorv1.CreateCheckoutSessionRequest]) (*connect.Response[operatorv1.CreateCheckoutSessionResponse], error)
 	// CreateBillingPortalSession returns a Stripe Customer Portal URL where the
 	// workspace manages its card and subscription. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; self-serve
 	// billing not configured or a workspace with no billing customer fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
-	// A dashboard session may call this only for its own workspaces; otherwise it
-	// fails with PERMISSION_DENIED.
+	// A member calls the Workspace API's
+	// WorkspaceService.CreateBillingPortalSession for its own workspace.
 	CreateBillingPortalSession(context.Context, *connect.Request[operatorv1.CreateBillingPortalSessionRequest]) (*connect.Response[operatorv1.CreateBillingPortalSessionResponse], error)
 	// CancelJob cancels a queued job at once. An assigned, starting or running
 	// job moves to JOB_STATE_STOPPING: its host stops the runner after a grace
@@ -496,7 +497,7 @@ type OperatorServiceClient interface {
 	// FailedPrecondition.
 	CreateEnrollmentToken(context.Context, *connect.Request[operatorv1.CreateEnrollmentTokenRequest]) (*connect.Response[operatorv1.CreateEnrollmentTokenResponse], error)
 	// CreateTenantToken makes an API token for one workspace that authenticates
-	// the operator API as that workspace, with a dashboard session's scope, and
+	// the Workspace API as that workspace, with a dashboard session's scope, and
 	// returns it with its value. An unknown workspace fails with NOT_FOUND; a
 	// closed workspace fails with FailedPrecondition.
 	CreateTenantToken(context.Context, *connect.Request[operatorv1.CreateTenantTokenRequest]) (*connect.Response[operatorv1.CreateTenantTokenResponse], error)
@@ -522,19 +523,20 @@ type OperatorServiceClient interface {
 	// ListEgressIPs returns the public addresses a workspace's jobs may reach the
 	// internet from: the egress addresses of the hosts its jobs can land on,
 	// its own hosts and, unless it runs on its own hosts only, the shared hosts
-	// its plan's operating systems run on. A dashboard session or
-	// workspace token may ask for its own workspaces only. An empty workspace fails
-	// with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
+	// its plan's operating systems run on. A member asks for its own
+	// workspace with the Workspace API's WorkspaceService.ListEgressIPs. An
+	// empty workspace fails with INVALID_ARGUMENT; an unknown workspace fails
+	// with NOT_FOUND.
 	//
 	// A page holds 100 hosts when page_size is zero, and 1000 at most.
 	ListEgressIPs(context.Context, *connect.Request[operatorv1.ListEgressIPsRequest]) (*connect.Response[operatorv1.ListEgressIPsResponse], error)
 	// CheckCloudHost checks a cloud host's AWS setup without launching
 	// anything: the role can be assumed, the AMI is visible, the subnet routes
 	// to the internet, and the role's policy allows each action Toshi calls,
-	// through dry-run calls. A dashboard session or workspace token may
-	// check its own workspaces' hosts only. A host that is not a cloud host fails
-	// with NOT_FOUND; cloud hosts not configured on the control plane fails
-	// with FAILED_PRECONDITION.
+	// through dry-run calls. A member checks its own workspace's hosts with
+	// the Workspace API's HostService.CheckCloudHost. A host that is not a
+	// cloud host fails with NOT_FOUND; cloud hosts not configured on the
+	// control plane fails with FAILED_PRECONDITION.
 	CheckCloudHost(context.Context, *connect.Request[operatorv1.CheckCloudHostRequest]) (*connect.Response[operatorv1.CheckCloudHostResponse], error)
 	// ListFillers returns the fillers, ordered by name, then workspace, each
 	// with its latest run, and the filler minutes per host over the last 24
@@ -615,21 +617,21 @@ type OperatorServiceClient interface {
 	// the bucket with it as CheckStorageProvider does and stores the row only
 	// when the check passes, else FAILED_PRECONDITION with the check's error.
 	// A workspace has one such provider; a second fails with ALREADY_EXISTS, and
-	// a suspended or deleting workspace with FAILED_PRECONDITION (a dashboard
-	// session that also has an active workspace is refused it with
-	// PERMISSION_DENIED, as for its other writes). A bad field
+	// a suspended or deleting workspace with FAILED_PRECONDITION. A bad field
 	// fails with INVALID_ARGUMENT, a duplicate name for the same owner with
 	// ALREADY_EXISTS, and a second provider with the lifecycle capability on
-	// the same endpoint and bucket with ALREADY_EXISTS. The operator, or a
-	// dashboard session for its own workspace with a credential and no
-	// file, role or replication fields.
+	// the same endpoint and bucket with ALREADY_EXISTS. A member stores its
+	// own workspace's, with a credential and no file, role or replication
+	// fields, with the Workspace API's
+	// StorageProviderService.CreateStorageProvider.
 	CreateStorageProvider(context.Context, *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error)
 	// ListStorageProviders returns the operator's providers when tenant_id
 	// is empty and that workspace's otherwise, ordered by name. With
 	// include_default it also returns the operator's provider a workspace
-	// without one of its own uses, whether or not this workspace has one. The
-	// operator, or a dashboard session for its own workspace, which gets
-	// every row without its credential references (credentials_file,
+	// without one of its own uses, whether or not this workspace has one. A
+	// member lists its own workspace's with the Workspace API's
+	// StorageProviderService.ListStorageProviders, and gets every row
+	// without its credential references (credentials_file,
 	// credentials_profile, role_arn and external_id empty).
 	//
 	// A page holds 100 providers when page_size is zero, and 1000 at most.
@@ -640,19 +642,19 @@ type OperatorServiceClient interface {
 	// error names the failing step.
 	//
 	// With id it checks a saved provider, records the result and returns
-	// the provider as stored: the operator, or a dashboard session for a row
-	// its workspace saved (one with a wrapped credential and no role), which
-	// gets last_check_error. With provider it checks one that is not saved,
+	// the provider as stored. With provider it checks one that is not saved,
 	// with the credential in the request, as CreateStorageProvider would
 	// before it stores one; it stores and audits nothing, and a request
 	// CreateStorageProvider would refuse fails the same way before any
-	// connection: the operator, or a dashboard session for its own
-	// workspace.
+	// connection. A member checks a row its workspace saved (one with a
+	// wrapped credential and no role), and gets last_check_error, or one not
+	// saved for its own workspace, with the Workspace API's
+	// StorageProviderService.CheckStorageProvider.
 	CheckStorageProvider(context.Context, *connect.Request[operatorv1.CheckStorageProviderRequest]) (*connect.Response[operatorv1.CheckStorageProviderResponse], error)
 	// DeleteStorageProvider removes a provider. An unknown ID fails with
-	// NOT_FOUND. The operator, or a dashboard session for a row its
-	// workspace saved; a row the operator set for the workspace is
-	// PERMISSION_DENIED to a session.
+	// NOT_FOUND. A member deletes a row its workspace saved with the
+	// Workspace API's StorageProviderService.DeleteStorageProvider; a row the
+	// operator set for the workspace is PERMISSION_DENIED to it there.
 	DeleteStorageProvider(context.Context, *connect.Request[operatorv1.DeleteStorageProviderRequest]) (*connect.Response[operatorv1.DeleteStorageProviderResponse], error)
 }
 
@@ -1485,17 +1487,18 @@ type OperatorServiceHandler interface {
 	//
 	// A page holds 100 jobs when page_size is zero, and 1000 at most.
 	ListJobs(context.Context, *connect.Request[operatorv1.ListJobsRequest]) (*connect.Response[operatorv1.ListJobsResponse], error)
-	// ListAuditEvents returns the audit log, newest first. An operator may use
-	// every filter; a dashboard session may read only its own workspaces.
+	// ListAuditEvents returns the audit log, newest first, with every filter.
+	// A member reads its own workspace's with the Workspace API's
+	// AuditEventService.ListAuditEvents.
 	//
 	// A page holds 100 events when page_size is zero, and 1000 at most.
 	ListAuditEvents(context.Context, *connect.Request[operatorv1.ListAuditEventsRequest]) (*connect.Response[operatorv1.ListAuditEventsResponse], error)
 	// GetJob returns one job. An unknown ID fails with NOT_FOUND.
 	GetJob(context.Context, *connect.Request[operatorv1.GetJobRequest]) (*connect.Response[operatorv1.GetJobResponse], error)
 	// GetJobTelemetry returns the resource samples of one job's VM and their
-	// summary. A dashboard session or workspace token reads only its
-	// own workspaces' jobs. An unknown ID fails with NOT_FOUND; a job without
-	// samples returns none.
+	// summary. A member reads its own workspace's jobs with the Workspace
+	// API's HostJobService.GetHostJobTelemetry. An unknown ID fails with
+	// NOT_FOUND; a job without samples returns none.
 	GetJobTelemetry(context.Context, *connect.Request[operatorv1.GetJobTelemetryRequest]) (*connect.Response[operatorv1.GetJobTelemetryResponse], error)
 	// SummariseJobTelemetry sums up the telemetry of the jobs queued in a
 	// range that started and finished, by OS and runner size: peak
@@ -1542,8 +1545,8 @@ type OperatorServiceHandler interface {
 	// Each removal records one host.retired audit event. Operators only.
 	RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error)
 	// CreateCloudHost registers a workspace-owned cloud host the control plane
-	// drives in the workspace's AWS account. A dashboard session and a workspace
-	// token may add hosts for their own workspace only; the operator for any. When
+	// drives in the workspace's AWS account, for any workspace; a member adds
+	// its own with the Workspace API's HostService.CreateCloudHost. When
 	// cloud hosts are not configured on the control plane the call fails with
 	// FAILED_PRECONDITION.
 	CreateCloudHost(context.Context, *connect.Request[operatorv1.CreateCloudHostRequest]) (*connect.Response[operatorv1.CreateCloudHostResponse], error)
@@ -1666,9 +1669,9 @@ type OperatorServiceHandler interface {
 	// minutes metered to the billing provider by size with their estimated
 	// cost at the plan's prices, the starter credit applied in it, and held
 	// time by reason. An empty ID or a month not in YYYY-MM form fails with
-	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND. A dashboard
-	// session or workspace token may read only its own workspaces' statements; any
-	// other fails with PERMISSION_DENIED.
+	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND. A member
+	// reads its own workspace's with the Workspace API's
+	// WorkspaceService.GetWorkspaceStatement.
 	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
 	// SetTenantBillingCustomer links or clears a workspace's billing customer id and
 	// returns the workspace's billing state. An empty ID, or a customer_id longer
@@ -1683,17 +1686,17 @@ type OperatorServiceHandler interface {
 	// workspace fails with NOT_FOUND; self-serve billing off, a plan that is not
 	// sold or maps to several lookup keys, a price missing in Stripe, or a
 	// workspace that already has a subscription fails with FAILED_PRECONDITION; a
-	// billing provider failure fails with UNAVAILABLE. A dashboard session may
-	// call this only for its own workspaces; otherwise it fails with
-	// PERMISSION_DENIED.
+	// billing provider failure fails with UNAVAILABLE. A member calls the
+	// Workspace API's WorkspaceService.CreateCheckoutSession for its own
+	// workspace.
 	CreateCheckoutSession(context.Context, *connect.Request[operatorv1.CreateCheckoutSessionRequest]) (*connect.Response[operatorv1.CreateCheckoutSessionResponse], error)
 	// CreateBillingPortalSession returns a Stripe Customer Portal URL where the
 	// workspace manages its card and subscription. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; self-serve
 	// billing not configured or a workspace with no billing customer fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
-	// A dashboard session may call this only for its own workspaces; otherwise it
-	// fails with PERMISSION_DENIED.
+	// A member calls the Workspace API's
+	// WorkspaceService.CreateBillingPortalSession for its own workspace.
 	CreateBillingPortalSession(context.Context, *connect.Request[operatorv1.CreateBillingPortalSessionRequest]) (*connect.Response[operatorv1.CreateBillingPortalSessionResponse], error)
 	// CancelJob cancels a queued job at once. An assigned, starting or running
 	// job moves to JOB_STATE_STOPPING: its host stops the runner after a grace
@@ -1737,7 +1740,7 @@ type OperatorServiceHandler interface {
 	// FailedPrecondition.
 	CreateEnrollmentToken(context.Context, *connect.Request[operatorv1.CreateEnrollmentTokenRequest]) (*connect.Response[operatorv1.CreateEnrollmentTokenResponse], error)
 	// CreateTenantToken makes an API token for one workspace that authenticates
-	// the operator API as that workspace, with a dashboard session's scope, and
+	// the Workspace API as that workspace, with a dashboard session's scope, and
 	// returns it with its value. An unknown workspace fails with NOT_FOUND; a
 	// closed workspace fails with FailedPrecondition.
 	CreateTenantToken(context.Context, *connect.Request[operatorv1.CreateTenantTokenRequest]) (*connect.Response[operatorv1.CreateTenantTokenResponse], error)
@@ -1763,19 +1766,20 @@ type OperatorServiceHandler interface {
 	// ListEgressIPs returns the public addresses a workspace's jobs may reach the
 	// internet from: the egress addresses of the hosts its jobs can land on,
 	// its own hosts and, unless it runs on its own hosts only, the shared hosts
-	// its plan's operating systems run on. A dashboard session or
-	// workspace token may ask for its own workspaces only. An empty workspace fails
-	// with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
+	// its plan's operating systems run on. A member asks for its own
+	// workspace with the Workspace API's WorkspaceService.ListEgressIPs. An
+	// empty workspace fails with INVALID_ARGUMENT; an unknown workspace fails
+	// with NOT_FOUND.
 	//
 	// A page holds 100 hosts when page_size is zero, and 1000 at most.
 	ListEgressIPs(context.Context, *connect.Request[operatorv1.ListEgressIPsRequest]) (*connect.Response[operatorv1.ListEgressIPsResponse], error)
 	// CheckCloudHost checks a cloud host's AWS setup without launching
 	// anything: the role can be assumed, the AMI is visible, the subnet routes
 	// to the internet, and the role's policy allows each action Toshi calls,
-	// through dry-run calls. A dashboard session or workspace token may
-	// check its own workspaces' hosts only. A host that is not a cloud host fails
-	// with NOT_FOUND; cloud hosts not configured on the control plane fails
-	// with FAILED_PRECONDITION.
+	// through dry-run calls. A member checks its own workspace's hosts with
+	// the Workspace API's HostService.CheckCloudHost. A host that is not a
+	// cloud host fails with NOT_FOUND; cloud hosts not configured on the
+	// control plane fails with FAILED_PRECONDITION.
 	CheckCloudHost(context.Context, *connect.Request[operatorv1.CheckCloudHostRequest]) (*connect.Response[operatorv1.CheckCloudHostResponse], error)
 	// ListFillers returns the fillers, ordered by name, then workspace, each
 	// with its latest run, and the filler minutes per host over the last 24
@@ -1856,21 +1860,21 @@ type OperatorServiceHandler interface {
 	// the bucket with it as CheckStorageProvider does and stores the row only
 	// when the check passes, else FAILED_PRECONDITION with the check's error.
 	// A workspace has one such provider; a second fails with ALREADY_EXISTS, and
-	// a suspended or deleting workspace with FAILED_PRECONDITION (a dashboard
-	// session that also has an active workspace is refused it with
-	// PERMISSION_DENIED, as for its other writes). A bad field
+	// a suspended or deleting workspace with FAILED_PRECONDITION. A bad field
 	// fails with INVALID_ARGUMENT, a duplicate name for the same owner with
 	// ALREADY_EXISTS, and a second provider with the lifecycle capability on
-	// the same endpoint and bucket with ALREADY_EXISTS. The operator, or a
-	// dashboard session for its own workspace with a credential and no
-	// file, role or replication fields.
+	// the same endpoint and bucket with ALREADY_EXISTS. A member stores its
+	// own workspace's, with a credential and no file, role or replication
+	// fields, with the Workspace API's
+	// StorageProviderService.CreateStorageProvider.
 	CreateStorageProvider(context.Context, *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error)
 	// ListStorageProviders returns the operator's providers when tenant_id
 	// is empty and that workspace's otherwise, ordered by name. With
 	// include_default it also returns the operator's provider a workspace
-	// without one of its own uses, whether or not this workspace has one. The
-	// operator, or a dashboard session for its own workspace, which gets
-	// every row without its credential references (credentials_file,
+	// without one of its own uses, whether or not this workspace has one. A
+	// member lists its own workspace's with the Workspace API's
+	// StorageProviderService.ListStorageProviders, and gets every row
+	// without its credential references (credentials_file,
 	// credentials_profile, role_arn and external_id empty).
 	//
 	// A page holds 100 providers when page_size is zero, and 1000 at most.
@@ -1881,19 +1885,19 @@ type OperatorServiceHandler interface {
 	// error names the failing step.
 	//
 	// With id it checks a saved provider, records the result and returns
-	// the provider as stored: the operator, or a dashboard session for a row
-	// its workspace saved (one with a wrapped credential and no role), which
-	// gets last_check_error. With provider it checks one that is not saved,
+	// the provider as stored. With provider it checks one that is not saved,
 	// with the credential in the request, as CreateStorageProvider would
 	// before it stores one; it stores and audits nothing, and a request
 	// CreateStorageProvider would refuse fails the same way before any
-	// connection: the operator, or a dashboard session for its own
-	// workspace.
+	// connection. A member checks a row its workspace saved (one with a
+	// wrapped credential and no role), and gets last_check_error, or one not
+	// saved for its own workspace, with the Workspace API's
+	// StorageProviderService.CheckStorageProvider.
 	CheckStorageProvider(context.Context, *connect.Request[operatorv1.CheckStorageProviderRequest]) (*connect.Response[operatorv1.CheckStorageProviderResponse], error)
 	// DeleteStorageProvider removes a provider. An unknown ID fails with
-	// NOT_FOUND. The operator, or a dashboard session for a row its
-	// workspace saved; a row the operator set for the workspace is
-	// PERMISSION_DENIED to a session.
+	// NOT_FOUND. A member deletes a row its workspace saved with the
+	// Workspace API's StorageProviderService.DeleteStorageProvider; a row the
+	// operator set for the workspace is PERMISSION_DENIED to it there.
 	DeleteStorageProvider(context.Context, *connect.Request[operatorv1.DeleteStorageProviderRequest]) (*connect.Response[operatorv1.DeleteStorageProviderResponse], error)
 }
 

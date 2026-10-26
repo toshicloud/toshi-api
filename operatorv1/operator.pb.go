@@ -10719,8 +10719,8 @@ func (x *ListEgressIPsResponse) GetNextPageToken() string {
 // EgressHost is one host a workspace's jobs can land on.
 type EgressHost struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The host's id and name; empty for a shared host when a dashboard
-	// session or workspace token asks.
+	// The host's id and name. A member's answer, from the Workspace API,
+	// leaves them empty for a shared host.
 	HostId string `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
 	Name   string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The host is shared between workspaces rather than the workspace's own.
@@ -11622,9 +11622,7 @@ func (x *PutFillerResponse) GetFiller() *Filler {
 type DeleteFillerRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// The workspace of a dispatch filler. Empty: for the operator, a command
-	// filler; for a workspace token, its own workspace. A dashboard session with
-	// more than one workspace names one.
+	// The workspace of a dispatch filler. Empty: a command filler.
 	Tenant        string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -11714,9 +11712,7 @@ type SetFillerEnabledRequest struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Name    string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Enabled bool                   `protobuf:"varint,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	// The workspace of a dispatch filler. Empty: for the operator, a command
-	// filler; for a workspace token, its own workspace. A dashboard session with
-	// more than one workspace names one.
+	// The workspace of a dispatch filler. Empty: a command filler.
 	Tenant        string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -11823,9 +11819,7 @@ type ListFillerRunsRequest struct {
 	Filler string `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
 	// The most runs in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	// With filler: the workspace of a dispatch filler. Empty: for the operator, a
-	// command filler; for a workspace token, its own workspace. A dashboard session
-	// with more than one workspace names one.
+	// With filler: the workspace of a dispatch filler. Empty: a command filler.
 	Tenant string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
 	PageToken     string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
