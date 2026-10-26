@@ -16354,7 +16354,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x15CreateStorageProvider\x12/.toshi.operator.v1.CreateStorageProviderRequest\x1a0.toshi.operator.v1.CreateStorageProviderResponse\x12w\n" +
 	"\x14ListStorageProviders\x12..toshi.operator.v1.ListStorageProvidersRequest\x1a/.toshi.operator.v1.ListStorageProvidersResponse\x12w\n" +
 	"\x14CheckStorageProvider\x12..toshi.operator.v1.CheckStorageProviderRequest\x1a/.toshi.operator.v1.CheckStorageProviderResponse\x12z\n" +
-	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponseB,Z*github.com/toshicloud/toshi-api/operatorv1b\x06proto3"
+	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponseB!Z\x1fgo.toshicloud.io/api/operatorv1b\x06proto3"
 
 var (
 	file_toshi_operator_v1_operator_proto_rawDescOnce sync.Once

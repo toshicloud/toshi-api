@@ -11,7 +11,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	githubcorev1 "github.com/toshicloud/toshi-api/githubcorev1"
+	githubcorev1 "go.toshicloud.io/api/githubcorev1"
 	http "net/http"
 	strings "strings"
 )

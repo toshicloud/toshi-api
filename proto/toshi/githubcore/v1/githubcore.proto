@@ -7,7 +7,7 @@ package toshi.githubcore.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/githubcorev1";
+option go_package = "go.toshicloud.io/api/githubcorev1";
 
 // GitHubCoreService is served by the control plane to the GitHub product's
 // adapter. Every call carries three credentials: the adapter's product

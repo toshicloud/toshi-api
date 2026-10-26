@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -1918,7 +1918,7 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x0eSetBranchRules\x12).toshi.workspace.v1.SetBranchRulesRequest\x1a*.toshi.workspace.v1.SetBranchRulesResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x12\x8c\x01\n" +
 	"\x10CreateEmbedToken\x12+.toshi.workspace.v1.CreateEmbedTokenRequest\x1a,.toshi.workspace.v1.CreateEmbedTokenResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x12\x88\x01\n" +
 	"\x0fListEmbedTokens\x12*.toshi.workspace.v1.ListEmbedTokensRequest\x1a+.toshi.workspace.v1.ListEmbedTokensResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x8c\x01\n" +
-	"\x10RevokeEmbedToken\x12+.toshi.workspace.v1.RevokeEmbedTokenRequest\x1a,.toshi.workspace.v1.RevokeEmbedTokenResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aprojectB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x10RevokeEmbedToken\x12+.toshi.workspace.v1.RevokeEmbedTokenRequest\x1a,.toshi.workspace.v1.RevokeEmbedTokenResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aprojectB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_projects_proto_rawDescOnce sync.Once

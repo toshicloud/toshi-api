@@ -1325,7 +1325,7 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\x1aListOpenSourceRepositories\x126.toshi.githubcore.v1.ListOpenSourceRepositoriesRequest\x1a7.toshi.githubcore.v1.ListOpenSourceRepositoriesResponse\x12~\n" +
 	"\x15SetOpenSourceApproval\x121.toshi.githubcore.v1.SetOpenSourceApprovalRequest\x1a2.toshi.githubcore.v1.SetOpenSourceApprovalResponse\x12l\n" +
 	"\x0fMapInstallation\x12+.toshi.githubcore.v1.MapInstallationRequest\x1a,.toshi.githubcore.v1.MapInstallationResponse\x12\x84\x01\n" +
-	"\x17PublishJobDeliveryCheck\x123.toshi.githubcore.v1.PublishJobDeliveryCheckRequest\x1a4.toshi.githubcore.v1.PublishJobDeliveryCheckResponseB.Z,github.com/toshicloud/toshi-api/githubcorev1b\x06proto3"
+	"\x17PublishJobDeliveryCheck\x123.toshi.githubcore.v1.PublishJobDeliveryCheckRequest\x1a4.toshi.githubcore.v1.PublishJobDeliveryCheckResponseB#Z!go.toshicloud.io/api/githubcorev1b\x06proto3"
 
 var (
 	file_toshi_githubcore_v1_githubcore_proto_rawDescOnce sync.Once

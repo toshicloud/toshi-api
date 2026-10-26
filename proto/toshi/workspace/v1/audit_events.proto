@@ -5,7 +5,7 @@ package toshi.workspace.v1;
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+option go_package = "go.toshicloud.io/api/workspacev1";
 
 // AuditEventService reads the workspace's audit log: what its members, its
 // tokens, the operator and the control plane did in it.

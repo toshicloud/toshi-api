@@ -7,7 +7,7 @@ package toshi.operator.v1;
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/operatorv1";
+option go_package = "go.toshicloud.io/api/operatorv1";
 
 // OperatorService is served by the control plane. Every call carries the
 // operator token in the HTTP Authorization header as "Bearer <token>".

@@ -5,7 +5,7 @@ package toshi.workspace.v1;
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+option go_package = "go.toshicloud.io/api/workspacev1";
 
 // HostJobService reads and stops the workspace's host jobs: each run of a
 // runner or a workload on a host, as the scheduler placed it. A host job of

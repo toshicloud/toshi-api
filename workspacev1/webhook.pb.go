@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -1284,7 +1284,7 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\x15DeleteWebhookEndpoint\x120.toshi.workspace.v1.DeleteWebhookEndpointRequest\x1a1.toshi.workspace.v1.DeleteWebhookEndpointResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\xa2\x01\n" +
 	"\x1bRotateWebhookEndpointSecret\x126.toshi.workspace.v1.RotateWebhookEndpointSecretRequest\x1a7.toshi.workspace.v1.RotateWebhookEndpointSecretResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\x8f\x01\n" +
 	"\x15ListWebhookDeliveries\x120.toshi.workspace.v1.ListWebhookDeliveriesRequest\x1a1.toshi.workspace.v1.ListWebhookDeliveriesResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\x8a\x01\n" +
-	"\x13ReplayWebhookEvents\x12..toshi.workspace.v1.ReplayWebhookEventsRequest\x1a/.toshi.workspace.v1.ReplayWebhookEventsResponse\"\x12\xc2\xf3\x18\x0ewebhooks.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x13ReplayWebhookEvents\x12..toshi.workspace.v1.ReplayWebhookEventsRequest\x1a/.toshi.workspace.v1.ReplayWebhookEventsResponse\"\x12\xc2\xf3\x18\x0ewebhooks.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_webhook_proto_rawDescOnce sync.Once

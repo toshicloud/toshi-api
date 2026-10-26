@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -1078,7 +1078,7 @@ const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"\tPutFiller\x12$.toshi.workspace.v1.PutFillerRequest\x1a%.toshi.workspace.v1.PutFillerResponse\"\x11\xc2\xf3\x18\rfillers.write\x12t\n" +
 	"\fDeleteFiller\x12'.toshi.workspace.v1.DeleteFillerRequest\x1a(.toshi.workspace.v1.DeleteFillerResponse\"\x11\xc2\xf3\x18\rfillers.write\x12\x80\x01\n" +
 	"\x10SetFillerEnabled\x12+.toshi.workspace.v1.SetFillerEnabledRequest\x1a,.toshi.workspace.v1.SetFillerEnabledResponse\"\x11\xc2\xf3\x18\rfillers.write\x12y\n" +
-	"\x0eListFillerRuns\x12).toshi.workspace.v1.ListFillerRunsRequest\x1a*.toshi.workspace.v1.ListFillerRunsResponse\"\x10\xc2\xf3\x18\ffillers.readB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x0eListFillerRuns\x12).toshi.workspace.v1.ListFillerRunsRequest\x1a*.toshi.workspace.v1.ListFillerRunsResponse\"\x10\xc2\xf3\x18\ffillers.readB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_fillers_proto_rawDescOnce sync.Once

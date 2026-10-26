@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -871,7 +871,7 @@ const file_toshi_workspace_v1_storage_providers_proto_rawDesc = "" +
 	"\x14ListStorageProviders\x12/.toshi.workspace.v1.ListStorageProvidersRequest\x1a0.toshi.workspace.v1.ListStorageProvidersResponse\"\x10\xc2\xf3\x18\fstorage.read\x12\x8f\x01\n" +
 	"\x15CreateStorageProvider\x120.toshi.workspace.v1.CreateStorageProviderRequest\x1a1.toshi.workspace.v1.CreateStorageProviderResponse\"\x11\xc2\xf3\x18\rstorage.write\x12\x8c\x01\n" +
 	"\x14CheckStorageProvider\x12/.toshi.workspace.v1.CheckStorageProviderRequest\x1a0.toshi.workspace.v1.CheckStorageProviderResponse\"\x11\xc2\xf3\x18\rstorage.write\x12\x8f\x01\n" +
-	"\x15DeleteStorageProvider\x120.toshi.workspace.v1.DeleteStorageProviderRequest\x1a1.toshi.workspace.v1.DeleteStorageProviderResponse\"\x11\xc2\xf3\x18\rstorage.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x15DeleteStorageProvider\x120.toshi.workspace.v1.DeleteStorageProviderRequest\x1a1.toshi.workspace.v1.DeleteStorageProviderResponse\"\x11\xc2\xf3\x18\rstorage.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_storage_providers_proto_rawDescOnce sync.Once

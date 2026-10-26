@@ -6,7 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+option go_package = "go.toshicloud.io/api/workspacev1";
 
 // ChannelService manages the channels of the workspace's jobs, lists a
 // job's Forwards and reads its Link. A channel is a port in the job's

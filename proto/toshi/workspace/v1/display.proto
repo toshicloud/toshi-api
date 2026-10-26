@@ -6,7 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+option go_package = "go.toshicloud.io/api/workspacev1";
 
 // DisplayService opens display sessions: one viewer's live view of the
 // screen of a VM that runs one of the workspace's CI jobs. The caller's

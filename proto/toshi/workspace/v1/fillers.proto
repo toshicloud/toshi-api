@@ -6,7 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+option go_package = "go.toshicloud.io/api/workspacev1";
 
 // FillerService manages the workspace's fillers: workflows of its own
 // repositories that Toshi dispatches as low-priority filler jobs on room

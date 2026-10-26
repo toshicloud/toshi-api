@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -4165,7 +4165,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x15CreateCheckoutSession\x120.toshi.workspace.v1.CreateCheckoutSessionRequest\x1a1.toshi.workspace.v1.CreateCheckoutSessionResponse\"\x11\xc2\xf3\x18\rbilling.write\x12\x9e\x01\n" +
 	"\x1aCreateBillingPortalSession\x125.toshi.workspace.v1.CreateBillingPortalSessionRequest\x1a6.toshi.workspace.v1.CreateBillingPortalSessionResponse\"\x11\xc2\xf3\x18\rbilling.write\x12o\n" +
 	"\n" +
-	"GetVersion\x12%.toshi.workspace.v1.GetVersionRequest\x1a&.toshi.workspace.v1.GetVersionResponse\"\x12\xc2\xf3\x18\x0eworkspace.readB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"GetVersion\x12%.toshi.workspace.v1.GetVersionRequest\x1a&.toshi.workspace.v1.GetVersionResponse\"\x12\xc2\xf3\x18\x0eworkspace.readB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_workspace_service_proto_rawDescOnce sync.Once

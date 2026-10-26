@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -599,7 +599,7 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\n" +
 	"ListTokens\x12%.toshi.workspace.v1.ListTokensRequest\x1a&.toshi.workspace.v1.ListTokensResponse\"\x0f\xc2\xf3\x18\vtokens.read\x12\x98\x01\n" +
 	"\x14CreateWorkspaceToken\x12/.toshi.workspace.v1.CreateWorkspaceTokenRequest\x1a0.toshi.workspace.v1.CreateWorkspaceTokenResponse\"\x1d\xc2\xf3\x18\ftokens.write\xca\xf3\x18\tworkspace\x12p\n" +
-	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x10\xc2\xf3\x18\ftokens.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x10\xc2\xf3\x18\ftokens.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_tokens_proto_rawDescOnce sync.Once

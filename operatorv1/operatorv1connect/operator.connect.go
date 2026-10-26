@@ -10,7 +10,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	operatorv1 "github.com/toshicloud/toshi-api/operatorv1"
+	operatorv1 "go.toshicloud.io/api/operatorv1"
 	http "net/http"
 	strings "strings"
 )

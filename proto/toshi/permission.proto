@@ -4,7 +4,7 @@ package toshi;
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/toshipb";
+option go_package = "go.toshicloud.io/api/toshipb";
 
 extend google.protobuf.MethodOptions {
   // permission names what a caller needs to make the call: an area and a

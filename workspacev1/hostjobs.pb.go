@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -2195,7 +2195,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x13GetHostJobTelemetry\x12..toshi.workspace.v1.GetHostJobTelemetryRequest\x1a/.toshi.workspace.v1.GetHostJobTelemetryResponse\"\x0e\xc2\xf3\x18\n" +
 	"hosts.read\x12\x8f\x01\n" +
 	"\x15GetHostJobDebugAccess\x120.toshi.workspace.v1.GetHostJobDebugAccessRequest\x1a1.toshi.workspace.v1.GetHostJobDebugAccessResponse\"\x11\xc2\xf3\x18\rdebug.connect\x12~\n" +
-	"\x10StopHostJobDebug\x12+.toshi.workspace.v1.StopHostJobDebugRequest\x1a,.toshi.workspace.v1.StopHostJobDebugResponse\"\x0f\xc2\xf3\x18\vdebug.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x10StopHostJobDebug\x12+.toshi.workspace.v1.StopHostJobDebugRequest\x1a,.toshi.workspace.v1.StopHostJobDebugResponse\"\x0f\xc2\xf3\x18\vdebug.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_hostjobs_proto_rawDescOnce sync.Once

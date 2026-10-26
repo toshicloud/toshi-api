@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -2378,7 +2378,7 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12\x88\x01\n" +
 	"\x0fCreateCloudHost\x12*.toshi.workspace.v1.CreateCloudHostRequest\x1a+.toshi.workspace.v1.CreateCloudHostResponse\"\x1c\xc2\xf3\x18\vhosts.write\xca\xf3\x18\tworkspace\x12x\n" +
 	"\x0eCheckCloudHost\x12).toshi.workspace.v1.CheckCloudHostRequest\x1a*.toshi.workspace.v1.CheckCloudHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12\x8d\x01\n" +
-	"\x15CreateEnrollmentToken\x120.toshi.workspace.v1.CreateEnrollmentTokenRequest\x1a1.toshi.workspace.v1.CreateEnrollmentTokenResponse\"\x0f\xc2\xf3\x18\vhosts.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x15CreateEnrollmentToken\x120.toshi.workspace.v1.CreateEnrollmentTokenRequest\x1a1.toshi.workspace.v1.CreateEnrollmentTokenResponse\"\x0f\xc2\xf3\x18\vhosts.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_hosts_proto_rawDescOnce sync.Once

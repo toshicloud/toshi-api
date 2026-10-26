@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -3173,7 +3173,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"ListEvents\x12%.toshi.workspace.v1.ListEventsRequest\x1a&.toshi.workspace.v1.ListEventsResponse\"!\xc2\xf3\x18\x0eworkloads.read\xca\xf3\x18\venvironment\x12\x83\x01\n" +
 	"\vWatchEvents\x12&.toshi.workspace.v1.WatchEventsRequest\x1a'.toshi.workspace.v1.WatchEventsResponse\"!\xc2\xf3\x18\x0eworkloads.read\xca\xf3\x18\venvironment0\x01\x12\x84\x01\n" +
 	"\fGetOperation\x12'.toshi.workspace.v1.GetOperationRequest\x1a(.toshi.workspace.v1.GetOperationResponse\"!\xc2\xf3\x18\x0eworkloads.read\xca\xf3\x18\venvironment\x12\x87\x01\n" +
-	"\rWaitOperation\x12(.toshi.workspace.v1.WaitOperationRequest\x1a).toshi.workspace.v1.WaitOperationResponse\"!\xc2\xf3\x18\x0eworkloads.read\xca\xf3\x18\venvironmentB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\rWaitOperation\x12(.toshi.workspace.v1.WaitOperationRequest\x1a).toshi.workspace.v1.WaitOperationResponse\"!\xc2\xf3\x18\x0eworkloads.read\xca\xf3\x18\venvironmentB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_workloads_proto_rawDescOnce sync.Once

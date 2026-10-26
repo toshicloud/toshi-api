@@ -5,7 +5,7 @@ package toshi.workspace.v1;
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+option go_package = "go.toshicloud.io/api/workspacev1";
 
 // StorageProviderService manages the buckets the workspace keeps its
 // objects in: its own bucket, with a key the control plane wraps, and the

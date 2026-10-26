@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -3299,7 +3299,7 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\x19RevokeChannelConnectToken\x124.toshi.workspace.v1.RevokeChannelConnectTokenRequest\x1a5.toshi.workspace.v1.RevokeChannelConnectTokenResponse\"\x12\xc2\xf3\x18\x0echannels.write\x12x\n" +
 	"\rDeleteChannel\x12(.toshi.workspace.v1.DeleteChannelRequest\x1a).toshi.workspace.v1.DeleteChannelResponse\"\x12\xc2\xf3\x18\x0echannels.write\x12t\n" +
 	"\fListForwards\x12'.toshi.workspace.v1.ListForwardsRequest\x1a(.toshi.workspace.v1.ListForwardsResponse\"\x11\xc2\xf3\x18\rchannels.read\x12e\n" +
-	"\aGetLink\x12\".toshi.workspace.v1.GetLinkRequest\x1a#.toshi.workspace.v1.GetLinkResponse\"\x11\xc2\xf3\x18\rchannels.readB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\aGetLink\x12\".toshi.workspace.v1.GetLinkRequest\x1a#.toshi.workspace.v1.GetLinkResponse\"\x11\xc2\xf3\x18\rchannels.readB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_channels_proto_rawDescOnce sync.Once

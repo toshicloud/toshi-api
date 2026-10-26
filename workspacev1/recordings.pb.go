@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -1265,7 +1265,7 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\fGetRecording\x12'.toshi.workspace.v1.GetRecordingRequest\x1a(.toshi.workspace.v1.GetRecordingResponse\"\"\xc2\xf3\x18\x0frecordings.read\xca\xf3\x18\venvironment\x12\xaa\x01\n" +
 	"\x18CreateRecordingShareLink\x123.toshi.workspace.v1.CreateRecordingShareLinkRequest\x1a4.toshi.workspace.v1.CreateRecordingShareLinkResponse\"#\xc2\xf3\x18\x10recordings.write\xca\xf3\x18\venvironment\x12\xa6\x01\n" +
 	"\x17ListRecordingShareLinks\x122.toshi.workspace.v1.ListRecordingShareLinksRequest\x1a3.toshi.workspace.v1.ListRecordingShareLinksResponse\"\"\xc2\xf3\x18\x0frecordings.read\xca\xf3\x18\venvironment\x12\xaa\x01\n" +
-	"\x18RevokeRecordingShareLink\x123.toshi.workspace.v1.RevokeRecordingShareLinkRequest\x1a4.toshi.workspace.v1.RevokeRecordingShareLinkResponse\"#\xc2\xf3\x18\x10recordings.write\xca\xf3\x18\venvironmentB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x18RevokeRecordingShareLink\x123.toshi.workspace.v1.RevokeRecordingShareLinkRequest\x1a4.toshi.workspace.v1.RevokeRecordingShareLinkResponse\"#\xc2\xf3\x18\x10recordings.write\xca\xf3\x18\venvironmentB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_recordings_proto_rawDescOnce sync.Once

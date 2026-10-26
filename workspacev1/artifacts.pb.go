@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1019,7 +1019,7 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\x0fArtifactService\x12\x87\x01\n" +
 	"\rListArtifacts\x12(.toshi.workspace.v1.ListArtifactsRequest\x1a).toshi.workspace.v1.ListArtifactsResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironment\x12\x81\x01\n" +
 	"\vGetArtifact\x12&.toshi.workspace.v1.GetArtifactRequest\x1a'.toshi.workspace.v1.GetArtifactResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironment\x12\xa2\x01\n" +
-	"\x16GetArtifactDownloadURL\x121.toshi.workspace.v1.GetArtifactDownloadURLRequest\x1a2.toshi.workspace.v1.GetArtifactDownloadURLResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironmentB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x16GetArtifactDownloadURL\x121.toshi.workspace.v1.GetArtifactDownloadURLRequest\x1a2.toshi.workspace.v1.GetArtifactDownloadURLResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironmentB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_artifacts_proto_rawDescOnce sync.Once

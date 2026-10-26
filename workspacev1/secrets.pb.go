@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1636,7 +1636,7 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x12ListSecretVersions\x12-.toshi.workspace.v1.ListSecretVersionsRequest\x1a..toshi.workspace.v1.ListSecretVersionsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironment\x12\x89\x01\n" +
 	"\x0eGrantSecretSet\x12).toshi.workspace.v1.GrantSecretSetRequest\x1a*.toshi.workspace.v1.GrantSecretSetResponse\" \xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\x12\x8c\x01\n" +
 	"\x0fRevokeSecretSet\x12*.toshi.workspace.v1.RevokeSecretSetRequest\x1a+.toshi.workspace.v1.RevokeSecretSetResponse\" \xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\x12\x97\x01\n" +
-	"\x13ListSecretSetGrants\x12..toshi.workspace.v1.ListSecretSetGrantsRequest\x1a/.toshi.workspace.v1.ListSecretSetGrantsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironmentB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x13ListSecretSetGrants\x12..toshi.workspace.v1.ListSecretSetGrantsRequest\x1a/.toshi.workspace.v1.ListSecretSetGrantsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironmentB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_secrets_proto_rawDescOnce sync.Once

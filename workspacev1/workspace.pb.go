@@ -7026,7 +7026,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x1bSERVICE_RUN_STATE_COMPLETED\x10\x05\x12\x1c\n" +
 	"\x18SERVICE_RUN_STATE_FAILED\x10\x06\x12\x1d\n" +
 	"\x19SERVICE_RUN_STATE_STOPPED\x10\a\x12\x1b\n" +
-	"\x17SERVICE_RUN_STATE_SLEPT\x10\bB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x17SERVICE_RUN_STATE_SLEPT\x10\bB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_workspace_proto_rawDescOnce sync.Once

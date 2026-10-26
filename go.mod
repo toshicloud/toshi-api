@@ -1,4 +1,4 @@
-module github.com/toshicloud/toshi-api
+module go.toshicloud.io/api
 
 go 1.26.0
 

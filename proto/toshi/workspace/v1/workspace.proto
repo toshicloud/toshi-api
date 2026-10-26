@@ -10,7 +10,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/workspace/v1/recordings.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+option go_package = "go.toshicloud.io/api/workspacev1";
 
 // EndReason says how a workload ended.
 enum EndReason {

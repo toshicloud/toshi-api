@@ -81,7 +81,7 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\n" +
 	"permission\x12\x1e.google.protobuf.MethodOptions\x18\xb8\x8e\x03 \x01(\tR\n" +
 	"permission:6\n" +
-	"\x05scope\x12\x1e.google.protobuf.MethodOptions\x18\xb9\x8e\x03 \x01(\tR\x05scopeB)Z'github.com/toshicloud/toshi-api/toshipbb\x06proto3"
+	"\x05scope\x12\x1e.google.protobuf.MethodOptions\x18\xb9\x8e\x03 \x01(\tR\x05scopeB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
 
 var file_toshi_permission_proto_goTypes = []any{
 	(*descriptorpb.MethodOptions)(nil), // 0: google.protobuf.MethodOptions

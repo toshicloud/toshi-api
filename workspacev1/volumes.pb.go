@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -554,7 +554,7 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\rVolumeService\x12{\n" +
 	"\vListVolumes\x12&.toshi.workspace.v1.ListVolumesRequest\x1a'.toshi.workspace.v1.ListVolumesResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12\x7f\n" +
 	"\fAttachVolume\x12'.toshi.workspace.v1.AttachVolumeRequest\x1a(.toshi.workspace.v1.AttachVolumeResponse\"\x1c\xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\x12\x7f\n" +
-	"\fDetachVolume\x12'.toshi.workspace.v1.DetachVolumeRequest\x1a(.toshi.workspace.v1.DetachVolumeResponse\"\x1c\xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aprojectB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\fDetachVolume\x12'.toshi.workspace.v1.DetachVolumeRequest\x1a(.toshi.workspace.v1.DetachVolumeResponse\"\x1c\xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aprojectB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_volumes_proto_rawDescOnce sync.Once

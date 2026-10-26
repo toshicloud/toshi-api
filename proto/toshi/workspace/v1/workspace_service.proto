@@ -6,7 +6,7 @@ import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 import "toshi/workspace/v1/hosts.proto";
 
-option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+option go_package = "go.toshicloud.io/api/workspacev1";
 
 // WorkspaceService reads and sets the caller's workspace: its settings, its
 // billing and usage, and the plans it may buy.

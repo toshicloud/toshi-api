@@ -7,7 +7,7 @@
 package workspacev1
 
 import (
-	_ "github.com/toshicloud/toshi-api/toshipb"
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -1512,7 +1512,7 @@ const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	"\x0fSendDisplayKeys\x12*.toshi.workspace.v1.SendDisplayKeysRequest\x1a+.toshi.workspace.v1.SendDisplayKeysResponse\"\x12\xc2\xf3\x18\x0edisplays.write\x12\x87\x01\n" +
 	"\x12SendDisplayPointer\x12-.toshi.workspace.v1.SendDisplayPointerRequest\x1a..toshi.workspace.v1.SendDisplayPointerResponse\"\x12\xc2\xf3\x18\x0edisplays.write\x12\x8a\x01\n" +
 	"\x13SetDisplayClipboard\x12..toshi.workspace.v1.SetDisplayClipboardRequest\x1a/.toshi.workspace.v1.SetDisplayClipboardResponse\"\x12\xc2\xf3\x18\x0edisplays.write\x12\x90\x01\n" +
-	"\x15TakeDisplayScreenshot\x120.toshi.workspace.v1.TakeDisplayScreenshotRequest\x1a1.toshi.workspace.v1.TakeDisplayScreenshotResponse\"\x12\xc2\xf3\x18\x0edisplays.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x15TakeDisplayScreenshot\x120.toshi.workspace.v1.TakeDisplayScreenshotRequest\x1a1.toshi.workspace.v1.TakeDisplayScreenshotResponse\"\x12\xc2\xf3\x18\x0edisplays.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_display_proto_rawDescOnce sync.Once

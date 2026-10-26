@@ -11,7 +11,7 @@ import { file_google_protobuf_descriptor } from "@bufbuild/protobuf/wkt";
  * Describes the file toshi/permission.proto.
  */
 export const file_toshi_permission: GenFile = /*@__PURE__*/
-  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaTpACgpwZXJtaXNzaW9uEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuI4DIAEoCVIKcGVybWlzc2lvbjo2CgVzY29wZRIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLmOAyABKAlSBXNjb3BlQilaJ2dpdGh1Yi5jb20vdG9zaGljbG91ZC90b3NoaS1hcGkvdG9zaGlwYmIGcHJvdG8z", [file_google_protobuf_descriptor]);
+  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaTpACgpwZXJtaXNzaW9uEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuI4DIAEoCVIKcGVybWlzc2lvbjo2CgVzY29wZRIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLmOAyABKAlSBXNjb3BlQh5aHGdvLnRvc2hpY2xvdWQuaW8vYXBpL3Rvc2hpcGJiBnByb3RvMw", [file_google_protobuf_descriptor]);
 
 /**
  * permission names what a caller needs to make the call: an area and a

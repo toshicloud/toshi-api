@@ -30,20 +30,20 @@ requests.
 
 ## Go
 
-The repository is the Go module `github.com/toshicloud/toshi-api`.
+The repository is the Go module `go.toshicloud.io/api`.
 Depend on a tag; the newest one is on the
 [releases page](https://github.com/toshicloud/toshi-api/releases):
 
 ```sh
-go get github.com/toshicloud/toshi-api@<tag>
+go get go.toshicloud.io/api@<tag>
 ```
 
 ```go
 import (
 	"connectrpc.com/connect"
 
-	workspacev1 "github.com/toshicloud/toshi-api/workspacev1"
-	"github.com/toshicloud/toshi-api/workspacev1/workspacev1connect"
+	workspacev1 "go.toshicloud.io/api/workspacev1"
+	"go.toshicloud.io/api/workspacev1/workspacev1connect"
 )
 
 client := workspacev1connect.NewWorkloadServiceClient(httpClient, serverURL)
