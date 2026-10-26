@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// AuditEventService reads the workspace's audit log: what its members, its
+// tokens, the operator and the control plane did in it.
+//
+// A workspace's API token acts on its own workspace; a dashboard session
+// names one of its workspaces in the Toshi-Workspace header. A
+// token limited to a project or an environment is refused with
+// PERMISSION_DENIED. A suspended workspace reads its audit log, and so does
+// a closed one during its read-only period.
+service AuditEventService {
+  // ListAuditEvents returns the workspace's audit events that match every
+  // filter field that is set, newest first.
+  //
+  // A page holds 100 events when page_size is zero, and 1000 at most.
+  rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse);
+}
+
+// AuditEvent is one append-only audit log entry.
+message AuditEvent {
+  int64 id = 1;
+  google.protobuf.Timestamp at = 2;
+  // operator, session, token, workload, product, system or webhook.
+  string actor_kind = 3;
+  // The session's GitHub login; the API or product token's id (never its
+  // value); the workload as "<kind>:<id>"; or a system or webhook source
+  // name.
+  string actor_id = 4;
+  string action = 5;
+  // A "<kind>:<id>" string such as job:..., host:..., token:... or
+  // filler:....
+  string target = 6;
+  // A JSON object whose keys depend on the action.
+  string details_json = 7;
+  string request_id = 8;
+}
+
+// ListAuditEventsRequest selects the audit events to return.
+message ListAuditEventsRequest {
+  // Only this action; empty matches every action.
+  string action = 1;
+  // Only events at or after this time; unset is unbounded.
+  google.protobuf.Timestamp since = 2;
+  // The most events in one page; zero lets the server choose.
+  int32 page_size = 3;
+  // Only events whose actor_id is exactly this: the id without the kind (a
+  // token id, a GitHub login or user id, a source name). Empty matches
+  // every actor.
+  string actor = 4;
+  // Only events whose action is one of these; empty matches every action.
+  // Setting both action and actions fails with INVALID_ARGUMENT, and so do
+  // an empty entry and more than 100 entries.
+  repeated string actions = 5;
+  // Only events whose target is exactly this, in full: "<kind>:<id>", for
+  // example "job:<id>". Empty matches every target.
+  string target = 6;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 7;
+}
+
+message ListAuditEventsResponse {
+  // Newest first.
+  repeated AuditEvent events = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}

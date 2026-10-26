@@ -76,6 +76,9 @@ const (
 	// OperatorServiceCreateWorkspaceProcedure is the fully-qualified name of the OperatorService's
 	// CreateWorkspace RPC.
 	OperatorServiceCreateWorkspaceProcedure = "/toshi.operator.v1.OperatorService/CreateWorkspace"
+	// OperatorServiceGetWorkspaceProcedure is the fully-qualified name of the OperatorService's
+	// GetWorkspace RPC.
+	OperatorServiceGetWorkspaceProcedure = "/toshi.operator.v1.OperatorService/GetWorkspace"
 	// OperatorServiceListTenantsProcedure is the fully-qualified name of the OperatorService's
 	// ListTenants RPC.
 	OperatorServiceListTenantsProcedure = "/toshi.operator.v1.OperatorService/ListTenants"
@@ -310,6 +313,9 @@ type OperatorServiceClient interface {
 	// configuration does not define, fails with INVALID_ARGUMENT. Names are not
 	// unique: two workspaces may share one. Only the operator may call it.
 	CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error)
+	// GetWorkspace returns one workspace. An empty ID fails with
+	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+	GetWorkspace(context.Context, *connect.Request[operatorv1.GetWorkspaceRequest]) (*connect.Response[operatorv1.GetWorkspaceResponse], error)
 	// ListTenants returns every tenant, ordered by ID.
 	//
 	// A page holds 100 tenants when page_size is zero, and 1000 at most.
@@ -745,6 +751,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("CreateWorkspace")),
 			connect.WithClientOptions(opts...),
 		),
+		getWorkspace: connect.NewClient[operatorv1.GetWorkspaceRequest, operatorv1.GetWorkspaceResponse](
+			httpClient,
+			baseURL+OperatorServiceGetWorkspaceProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("GetWorkspace")),
+			connect.WithClientOptions(opts...),
+		),
 		listTenants: connect.NewClient[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse](
 			httpClient,
 			baseURL+OperatorServiceListTenantsProcedure,
@@ -1076,6 +1088,7 @@ type operatorServiceClient struct {
 	retireOfflineHosts          *connect.Client[operatorv1.RetireOfflineHostsRequest, operatorv1.RetireOfflineHostsResponse]
 	createCloudHost             *connect.Client[operatorv1.CreateCloudHostRequest, operatorv1.CreateCloudHostResponse]
 	createWorkspace             *connect.Client[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse]
+	getWorkspace                *connect.Client[operatorv1.GetWorkspaceRequest, operatorv1.GetWorkspaceResponse]
 	listTenants                 *connect.Client[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse]
 	setTenantCap                *connect.Client[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse]
 	setTenantHistory            *connect.Client[operatorv1.SetTenantHistoryRequest, operatorv1.SetTenantHistoryResponse]
@@ -1198,6 +1211,11 @@ func (c *operatorServiceClient) CreateCloudHost(ctx context.Context, req *connec
 // CreateWorkspace calls toshi.operator.v1.OperatorService.CreateWorkspace.
 func (c *operatorServiceClient) CreateWorkspace(ctx context.Context, req *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error) {
 	return c.createWorkspace.CallUnary(ctx, req)
+}
+
+// GetWorkspace calls toshi.operator.v1.OperatorService.GetWorkspace.
+func (c *operatorServiceClient) GetWorkspace(ctx context.Context, req *connect.Request[operatorv1.GetWorkspaceRequest]) (*connect.Response[operatorv1.GetWorkspaceResponse], error) {
+	return c.getWorkspace.CallUnary(ctx, req)
 }
 
 // ListTenants calls toshi.operator.v1.OperatorService.ListTenants.
@@ -1536,6 +1554,9 @@ type OperatorServiceHandler interface {
 	// configuration does not define, fails with INVALID_ARGUMENT. Names are not
 	// unique: two workspaces may share one. Only the operator may call it.
 	CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error)
+	// GetWorkspace returns one workspace. An empty ID fails with
+	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+	GetWorkspace(context.Context, *connect.Request[operatorv1.GetWorkspaceRequest]) (*connect.Response[operatorv1.GetWorkspaceResponse], error)
 	// ListTenants returns every tenant, ordered by ID.
 	//
 	// A page holds 100 tenants when page_size is zero, and 1000 at most.
@@ -1967,6 +1988,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("CreateWorkspace")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceGetWorkspaceHandler := connect.NewUnaryHandler(
+		OperatorServiceGetWorkspaceProcedure,
+		svc.GetWorkspace,
+		connect.WithSchema(operatorServiceMethods.ByName("GetWorkspace")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceListTenantsHandler := connect.NewUnaryHandler(
 		OperatorServiceListTenantsProcedure,
 		svc.ListTenants,
@@ -2309,6 +2336,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceCreateCloudHostHandler.ServeHTTP(w, r)
 		case OperatorServiceCreateWorkspaceProcedure:
 			operatorServiceCreateWorkspaceHandler.ServeHTTP(w, r)
+		case OperatorServiceGetWorkspaceProcedure:
+			operatorServiceGetWorkspaceHandler.ServeHTTP(w, r)
 		case OperatorServiceListTenantsProcedure:
 			operatorServiceListTenantsHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantCapProcedure:
@@ -2476,6 +2505,10 @@ func (UnimplementedOperatorServiceHandler) CreateCloudHost(context.Context, *con
 
 func (UnimplementedOperatorServiceHandler) CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.CreateWorkspace is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) GetWorkspace(context.Context, *connect.Request[operatorv1.GetWorkspaceRequest]) (*connect.Response[operatorv1.GetWorkspaceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetWorkspace is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error) {

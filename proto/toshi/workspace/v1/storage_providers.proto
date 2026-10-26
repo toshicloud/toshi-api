@@ -1,0 +1,151 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// StorageProviderService manages the buckets the workspace keeps its
+// objects in: its own bucket, with a key the control plane wraps, and the
+// rows the operator set for it. No call returns a credential or the
+// operator's reference to one.
+//
+// Only a signed-in session may call these: a token is refused with
+// PERMISSION_DENIED. The session names one of its workspaces in the
+// Toshi-Workspace header. A suspended workspace lists its providers, and so does a
+// closed one during its read-only period; every other call is refused for
+// a suspended workspace with FAILED_PRECONDITION.
+service StorageProviderService {
+  // ListStorageProviders returns the workspace's providers, ordered by
+  // name. With include_default it also returns the operator's provider the
+  // workspace uses while it has none of its own.
+  //
+  // A page holds 100 providers when page_size is zero, and 1000 at most.
+  rpc ListStorageProviders(ListStorageProvidersRequest) returns (ListStorageProvidersResponse);
+  // CreateStorageProvider stores the workspace's own bucket: the control
+  // plane wraps the key, checks the bucket with it as CheckStorageProvider
+  // does and stores the row only when the check passes, else
+  // FAILED_PRECONDITION with the check's error. A workspace has one such
+  // provider; a second fails with ALREADY_EXISTS, as does a second provider
+  // with the lifecycle capability on the same endpoint and bucket. A bad
+  // field fails with INVALID_ARGUMENT.
+  rpc CreateStorageProvider(CreateStorageProviderRequest) returns (CreateStorageProviderResponse);
+  // CheckStorageProvider checks a provider's bucket: it heads the bucket,
+  // refuses a versioned one, then uploads, heads and deletes a probe
+  // object. A check that fails is an answer, not an error: ok is false and
+  // error names the failing step.
+  //
+  // With id it checks a provider the workspace saved, records the result
+  // and returns the provider as stored. With provider it checks one that
+  // is not saved, with the key in the request, as CreateStorageProvider
+  // would before it stores one; it stores and audits nothing, and a
+  // request CreateStorageProvider would refuse fails the same way before
+  // any connection.
+  rpc CheckStorageProvider(CheckStorageProviderRequest) returns (CheckStorageProviderResponse);
+  // DeleteStorageProvider removes a provider the workspace saved. An
+  // unknown ID fails with NOT_FOUND, and a row the operator set for the
+  // workspace with PERMISSION_DENIED.
+  rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse);
+}
+
+// StorageProvider is one bucket Toshi keeps the workspace's objects in.
+message StorageProvider {
+  string id = 1;
+  string name = 2;
+  // "operator", "tenant_bucket" or "local_disk".
+  string mode = 3;
+  string endpoint = 4;
+  string region = 5;
+  string bucket = 6;
+  string root_prefix = 7;
+  bool path_style = 8;
+  bool cap_lifecycle = 9;
+  bool cap_guest_presign = 10;
+  bool cap_global_replication = 11;
+  int64 egress_price_micros_per_gb = 12;
+  // Whether the row holds a wrapped key; its value is never sent.
+  bool credentials_wrapped = 13;
+  google.protobuf.Timestamp last_check_at = 14;
+  // Why the last check failed. For a row the operator set, which may name
+  // the operator's own references, only that it failed.
+  string last_check_error = 15;
+  google.protobuf.Timestamp created_at = 16;
+  google.protobuf.Timestamp updated_at = 17;
+}
+
+// CreateStorageProviderRequest describes the workspace's own bucket.
+message CreateStorageProviderRequest {
+  string name = 1;
+  // An https URL.
+  string endpoint = 2;
+  string region = 3;
+  string bucket = 4;
+  string root_prefix = 5;
+  bool path_style = 6;
+  bool cap_lifecycle = 7;
+  bool cap_guest_presign = 8;
+  // The bucket's key. The control plane wraps it before the row exists and
+  // never returns, logs or audits it. Required.
+  StorageCredential credential = 9;
+}
+
+// StorageCredential is an S3 access key. It is write-only: no response
+// carries it.
+message StorageCredential {
+  string access_key_id = 1;
+  string secret_access_key = 2;
+  // Set for a temporary key.
+  string session_token = 3;
+}
+
+message CreateStorageProviderResponse {
+  StorageProvider provider = 1;
+}
+
+message ListStorageProvidersRequest {
+  // Also answer default_provider.
+  bool include_default = 1;
+  // The most providers in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
+}
+
+message ListStorageProvidersResponse {
+  repeated StorageProvider providers = 1;
+  // With include_default, the operator's provider that serves the
+  // workspace's uploads while it has no tenant_bucket provider; unset when
+  // none is configured. Every page holds it.
+  StorageProvider default_provider = 2;
+  // Empty on the last page.
+  string next_page_token = 3;
+}
+
+message CheckStorageProviderRequest {
+  // The provider to check: one is required.
+  oneof target {
+    // A saved provider's id.
+    string id = 1;
+    // A provider that is not saved, as CreateStorageProvider would take
+    // it, with its key.
+    CreateStorageProviderRequest provider = 2;
+  }
+}
+
+message CheckStorageProviderResponse {
+  // The saved provider as stored after the check; unset for one that is
+  // not saved.
+  StorageProvider provider = 1;
+  // Whether every step of the check passed.
+  bool ok = 2;
+  // Why the check failed, naming the step; empty when ok.
+  string error = 3;
+  google.protobuf.Timestamp checked_at = 4;
+}
+
+message DeleteStorageProviderRequest {
+  string id = 1;
+}
+
+message DeleteStorageProviderResponse {}

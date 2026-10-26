@@ -1,0 +1,448 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "toshi/workspace/v1/tokens.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// HostService manages the workspace's own hosts: the machines it enrolled
+// and the cloud hosts the control plane drives in its cloud account. A host
+// of another workspace, and a shared host, is NOT_FOUND.
+//
+// A workspace's API token acts on its own workspace; a dashboard session
+// names one of its workspaces in the Toshi-Workspace header. A
+// token limited to a project or an environment is refused with
+// PERMISSION_DENIED: these calls act in the whole workspace. A suspended
+// workspace reads its hosts, and every other call is refused for it with
+// FAILED_PRECONDITION.
+service HostService {
+  // ListHosts returns the workspace's hosts that match the filter, ordered
+  // by ID.
+  //
+  // A page holds 100 hosts when page_size is zero, and 1000 at most.
+  rpc ListHosts(ListHostsRequest) returns (ListHostsResponse);
+  // ListHostStorage returns the workspace's volumes a host holds, ordered by
+  // volume ID: those it keeps the warm copy of, and those a host job
+  // assigned to it has claimed. An unknown host fails with NOT_FOUND.
+  //
+  // A page holds 100 volumes when page_size is zero, and 1000 at most.
+  rpc ListHostStorage(ListHostStorageRequest) returns (ListHostStorageResponse);
+  // ListHostAlerts returns the active alerts of the workspace's hosts:
+  // memory_held, egress_changed and agent_version_skew, one per kind,
+  // ordered by kind.
+  //
+  // A page holds 100 alerts when page_size is zero, and 1000 at most.
+  rpc ListHostAlerts(ListHostAlertsRequest) returns (ListHostAlertsResponse);
+  // SetHostState drains a host or puts it back in service. Only
+  // HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
+  // fails with NOT_FOUND.
+  rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse);
+  // RetireHost removes a host that holds no assigned, starting or running
+  // host job; otherwise it fails with FAILED_PRECONDITION (drain it first).
+  // Its agent, if still running, registers again with its enrollment
+  // token.
+  rpc RetireHost(RetireHostRequest) returns (RetireHostResponse);
+  // CreateCloudHost registers a cloud host the control plane drives in the
+  // workspace's AWS or Google Cloud account. When cloud hosts are not
+  // configured on the control plane the call fails with
+  // FAILED_PRECONDITION, as it does for a workspace that is not active, and
+  // a workspace at its plan's own-host limit fails with RESOURCE_EXHAUSTED.
+  rpc CreateCloudHost(CreateCloudHostRequest) returns (CreateCloudHostResponse);
+  // CheckCloudHost checks a cloud host's setup without launching anything:
+  // the role can be assumed, the image is visible, the subnet routes to the
+  // internet, and the role's policy allows each action Toshi calls, through
+  // dry-run calls. A host that is not a cloud host fails with NOT_FOUND;
+  // cloud hosts not configured on the control plane fails with
+  // FAILED_PRECONDITION.
+  rpc CheckCloudHost(CheckCloudHostRequest) returns (CheckCloudHostResponse);
+  // CreateEnrollmentToken makes an enrollment token for the workspace and
+  // returns it with its value; a host that registers with it is owned by
+  // the workspace. The token does not expire and the other tokens are
+  // untouched. A closed workspace fails with FAILED_PRECONDITION.
+  rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse);
+}
+
+message ListHostsRequest {
+  // Hosts in any of these states; empty matches every state.
+  repeated HostState states = 1;
+  // Leave out revoked hosts.
+  bool exclude_revoked = 2;
+  // The most hosts in one page; zero lets the server choose.
+  int32 page_size = 3;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 4;
+}
+
+message ListHostsResponse {
+  repeated Host hosts = 1;
+  // The control plane's reaper.long_offline_after: a host whose last heartbeat
+  // is older, and that is offline, has long_offline set.
+  google.protobuf.Duration long_offline_after = 2;
+  // Empty on the last page.
+  string next_page_token = 3;
+}
+
+message ListHostStorageRequest {
+  // The host whose volumes to list.
+  string host_id = 1;
+  // The most volumes in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
+}
+
+message ListHostStorageResponse {
+  repeated HostVolume volumes = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message ListHostAlertsRequest {
+  // The most alerts in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+message ListHostAlertsResponse {
+  repeated HostAlert alerts = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message SetHostStateRequest {
+  string id = 1;
+  // HOST_STATE_DRAINING or HOST_STATE_ONLINE.
+  HostState state = 2;
+}
+
+message SetHostStateResponse {
+  // The host as stored after the change.
+  Host host = 1;
+}
+
+message RetireHostRequest {
+  string id = 1;
+}
+
+message RetireHostResponse {}
+
+// CreateCloudHostRequest names the cloud host to register.
+message CreateCloudHostRequest {
+  // The host name; it becomes the host id the same way enrollment does.
+  string name = 1;
+  // The cloud provider: "aws" (the default) or "gcp".
+  string cloud = 2;
+  // The AWS region the instances run in (AWS).
+  string region = 3;
+  // The role in the workspace's account the control plane assumes (AWS).
+  string role_arn = 4;
+  // The image the instances boot: an AMI (AWS), or a GCE image or family
+  // (an image name, family/NAME, or a projects/... path).
+  string image = 5;
+  // The subnet (AWS) or subnetwork (GCP, a name in the zone's region or
+  // regions/R/subnetworks/S) to launch into; empty means a default subnet
+  // or the default network.
+  string subnet_id = 6;
+  // The security groups of the instances; empty means the VPC default.
+  repeated string security_group_ids = 7;
+  // Maps a runner size to an instance type, overriding the defaults.
+  map<string, string> instance_types = 8;
+  // The most vCPUs the host runs at once; 0 means 64.
+  int32 max_vcpus = 9;
+  // Launches spot instances, moving an interrupted job onto on demand once.
+  bool spot = 10;
+  // The most instances the host runs at once; 0 means no limit.
+  int32 max_instances = 11;
+  // The most instance-minutes the host runs per UTC day; 0 means no limit.
+  int32 max_instance_minutes_per_day = 12;
+  // The public addresses the host's instances reach the internet from, when
+  // the subnet sends their traffic through fixed ones (a NAT gateway's
+  // Elastic IP); empty means each instance's own public address.
+  repeated string egress_ips = 13;
+  // Register the host as an ordinary own host instead of an overflow host:
+  // it then takes the workspace's jobs without waiting for the plan's
+  // overflow_after. False, the default, makes an overflow host.
+  bool no_overflow = 14;
+  // The GCP project and zone the instances run in (GCP).
+  string project = 15;
+  string zone = 16;
+  // The workspace's service account the control plane impersonates (GCP).
+  string service_account = 17;
+  // Where the instances reach the internet: "public" (the default: each
+  // instance gets its own public address) or "nat" (no public address; the
+  // subnet routes through the workspace's NAT gateway or Cloud NAT, whose
+  // addresses become the host's egress set).
+  string egress = 18;
+}
+
+// CreateCloudHostResponse carries the host, the trust external id and the
+// principal the role must allow.
+message CreateCloudHostResponse {
+  Host host = 1;
+  // The external ID the role's trust policy requires.
+  string external_id = 2;
+  // The AWS principal the workspace's role must trust (AWS).
+  string principal_arn = 3;
+  CloudHost cloud_host = 4;
+  // The Google principal the workspace's service account must let create
+  // tokens for it, with roles/iam.serviceAccountTokenCreator (GCP).
+  string gcp_principal = 5;
+}
+
+message CheckCloudHostRequest {
+  string host_id = 1;
+}
+
+message CheckCloudHostResponse {
+  // One row per check, in the order they ran.
+  repeated CloudHostCheck checks = 1;
+}
+
+// CreateEnrollmentTokenRequest says how the token's hosts register.
+message CreateEnrollmentTokenRequest {
+  // Hosts that enroll with the token register as overflow hosts.
+  bool overflow = 1;
+}
+
+// CreateEnrollmentTokenResponse carries the new token and its value.
+message CreateEnrollmentTokenResponse {
+  Token token = 1;
+  // The new token. It is returned only here.
+  string value = 2;
+}
+
+// Host is a machine that runs VMs for Toshi.
+message Host {
+  string id = 1;
+  string name = 2;
+  // The guest operating systems the host can run.
+  repeated string os = 3;
+  int32 cpus = 4;
+  int32 memory_mib = 5;
+  map<string, string> labels = 6;
+  HostState state = 7;
+  // When the host's agent last reported in; unset if it never did.
+  google.protobuf.Timestamp last_seen_at = 8;
+  // Memory not used by VMs, in MiB, from the host's last heartbeat.
+  int64 free_memory_mib = 9;
+  // Warm pools whose refill the host holds, from its last heartbeat.
+  repeated HeldRefill held_refills = 10;
+  // The host's agent is draining before a stop: it takes no new jobs. On an
+  // offline host: the host was draining when it went offline.
+  bool stopping = 11;
+  // The cloud the host runs in when it is a cloud host ("aws"); empty
+  // otherwise.
+  string cloud = 12;
+  // An overflow host takes a job only when no other host the job may use has
+  // room and the job has queued for its plan's overflow_after.
+  bool overflow = 13;
+  // The host's public egress addresses.
+  HostEgress egress = 14;
+  // The version the host's agent reported when it last registered; empty when unknown.
+  string agent_version = 15;
+  // Whether agent_version is inside the promise between this control plane and its agents.
+  AgentVersionStatus agent_version_status = 16;
+  // Why agent_version is outside the promise; empty unless agent_version_status is SKEW.
+  string agent_version_skew = 17;
+  // True when the host is offline and its last heartbeat is older than the
+  // control plane's reaper.long_offline_after.
+  bool long_offline = 18;
+  // Why the control plane refused the host's last heartbeat: the field that
+  // was refused, with its size and the limit when it was over one, or that
+  // it holds a control character. Empty once a
+  // heartbeat of the host is taken. ListHosts sets it. The control plane
+  // keeps it in memory: after its restart the field is empty until the
+  // host's next heartbeat.
+  string heartbeat_refusal = 19;
+  // When that heartbeat was refused; unset when heartbeat_refusal is empty.
+  google.protobuf.Timestamp heartbeat_refused_at = 20;
+  // The host's tier: "container" for a container tier host,
+  // which runs its owner's jobs in Sysbox containers that share its kernel;
+  // empty for a host that runs each job in a VM.
+  string tier = 21;
+  // When the operator revoked the host; unset for a host that is
+  // not revoked. A revoked host is offline for good and never registers
+  // again under its ID.
+  google.protobuf.Timestamp revoked_at = 22;
+  // The memory limit, in MiB, the host's agent reported at its last answered
+  // heartbeat (toshi.agent.v1.MemoryLimit). 0 when it reports none or a
+  // limit of 0, as an agent without a limit, one whose cgroup stopped
+  // limiting, or one that predates the report does.
+  int64 memory_limit_mib = 23;
+  // Where that limit comes from: "memory_limit_mib" when the operator set it
+  // in the agent configuration, or "cgroup:<dir>" for the cgroup memory.max
+  // the agent discovered. Empty when memory_limit_mib is 0.
+  string memory_limit_source = 24;
+  // The minimum agent release the control plane admits when
+  // agent_version_status is BELOW_MINIMUM; empty otherwise.
+  string agent_version_minimum = 25;
+}
+
+// HostState says whether a host takes new jobs.
+enum HostState {
+  HOST_STATE_UNSPECIFIED = 0;
+  // The host takes new jobs.
+  HOST_STATE_ONLINE = 1;
+  // The host finishes the jobs it has and takes no new ones.
+  HOST_STATE_DRAINING = 2;
+  // The host is not reachable.
+  HOST_STATE_OFFLINE = 3;
+}
+
+// HeldRefill is one warm pool whose refill a host holds.
+message HeldRefill {
+  string size = 1;
+  // "memory" or "cpus".
+  string reason = 2;
+}
+
+// HostEgress is the public addresses a host's jobs reach the internet from.
+message HostEgress {
+  // IPv4 or IPv6 addresses or CIDR prefixes, sorted; empty unless source is
+  // EGRESS_SOURCE_CONFIGURED or EGRESS_SOURCE_DISCOVERED.
+  repeated string ips = 1;
+  EgressSource source = 2;
+  // When the addresses last changed; unset when they never did.
+  google.protobuf.Timestamp changed_at = 3;
+}
+
+// EgressSource says where a host's egress addresses come from.
+enum EgressSource {
+  // The host never reported them: its agent predates egress reporting.
+  EGRESS_SOURCE_UNSPECIFIED = 0;
+  // Set by the operator: network.egress_ips on the agent, or egress_ips on
+  // a cloud host.
+  EGRESS_SOURCE_CONFIGURED = 1;
+  // Found by the agent through an HTTPS echo service, re-checked hourly.
+  EGRESS_SOURCE_DISCOVERED = 2;
+  // The agent has neither addresses set nor an echo service that answered.
+  EGRESS_SOURCE_UNKNOWN = 3;
+  // A cloud host without egress_ips: each job's instance has its own public
+  // address.
+  EGRESS_SOURCE_PER_JOB = 4;
+}
+
+// AgentVersionStatus says whether a host's agent matches the control plane's
+// version promise.
+enum AgentVersionStatus {
+  AGENT_VERSION_STATUS_UNSPECIFIED = 0;
+  // Either side is not a release (snapshot, dev, or empty).
+  AGENT_VERSION_STATUS_UNKNOWN = 1;
+  // The agent version is inside the promise.
+  AGENT_VERSION_STATUS_OK = 2;
+  // The agent version is outside the promise.
+  AGENT_VERSION_STATUS_SKEW = 3;
+  // The agent version is below the minimum the control plane admits
+  // (agent_auth.minimum_agent_version), or is not a release while
+  // a minimum is set: the host is refused at its next Register. It outranks
+  // the other statuses. A revoked host never has it, nor does a cloud host,
+  // which has no agent: its driver runs in the control plane.
+  AGENT_VERSION_STATUS_BELOW_MINIMUM = 4;
+}
+
+// HostVolume is one volume a host holds.
+message HostVolume {
+  // The volume's id.
+  string volume_id = 1;
+  // The name of the project the volume belongs to.
+  string project = 2;
+  // The id of the project the volume belongs to.
+  string project_id = 3;
+  // The volume's name.
+  string name = 4;
+  // The volume's mode name: cache, seed, state or artifact.
+  string mode = 5;
+  // The most the volume holds, in bytes.
+  int64 size_cap_bytes = 6;
+  // The host keeps the volume's warm copy.
+  bool warm_copy = 7;
+  // The open claim of a job on this host; empty when none.
+  string claim_id = 8;
+  // The claiming job.
+  string job_id = 9;
+  // When the claim was taken.
+  google.protobuf.Timestamp claimed_at = 10;
+}
+
+// HostAlert is one active alert of the workspace's hosts.
+message HostAlert {
+  // kind is the alert, such as "runner_exits_without_job".
+  string kind = 1;
+  // raised_at is when it was raised; since is the first event it counts.
+  google.protobuf.Timestamp raised_at = 2;
+  google.protobuf.Timestamp since = 3;
+  // count is the events counted from since, and reasons the same events by
+  // reason; top_reason has the most.
+  int64 count = 4;
+  map<string, int64> reasons = 5;
+  string top_reason = 6;
+  // message says the same in one line.
+  string message = 7;
+}
+
+// CloudHost is the AWS account behind a workspace-owned host the control plane
+// drives.
+message CloudHost {
+  // The host row this cloud host belongs to.
+  string host_id = 1;
+  // The cloud provider: "aws" or "gcp".
+  string cloud = 2;
+  // The region the instances run in; on GCP the zone's region.
+  string region = 3;
+  // The role in the workspace's account the control plane assumes (AWS).
+  string role_arn = 4;
+  // The external ID the role's trust policy requires (AWS), or the project
+  // metadata must name (GCP); generated by Toshi.
+  string external_id = 5;
+  // The image the instances boot: an AMI, or a GCE image path.
+  string image = 6;
+  // The subnet (AWS) or subnetwork (GCP) to launch into; empty means a
+  // default subnet or the default network.
+  string subnet_id = 7;
+  // The security groups of the instances; empty means the VPC default.
+  repeated string security_group_ids = 8;
+  // Maps a runner size to an instance type, overriding the defaults.
+  map<string, string> instance_types = 9;
+  // The most vCPUs the host runs at once.
+  int32 max_vcpus = 10;
+  google.protobuf.Timestamp created_at = 11;
+  // Launches spot instances, moving an interrupted job onto on demand once.
+  bool spot = 12;
+  // The most instances the host runs at once; 0 means no limit.
+  int32 max_instances = 13;
+  // The most instance-minutes the host runs per UTC day; 0 means no limit.
+  int32 max_instance_minutes_per_day = 14;
+  // The GCP project and zone the instances run in.
+  string project = 15;
+  string zone = 16;
+  // The workspace's service account the control plane impersonates (GCP).
+  string service_account = 17;
+  // Where the instances reach the internet: "public" (each gets its own
+  // public address) or "nat" (none: the workspace's NAT carries the traffic).
+  string egress = 18;
+}
+
+// CloudHostCheck is the outcome of one cloud host check.
+message CloudHostCheck {
+  // What was checked, for example "assume role" or "ec2:RunInstances".
+  string name = 1;
+  CloudHostCheckStatus status = 2;
+  // What was found, or what to fix. It never holds credentials.
+  string detail = 3;
+}
+
+// CloudHostCheckStatus is how a cloud host check came out.
+enum CloudHostCheckStatus {
+  CLOUD_HOST_CHECK_STATUS_UNSPECIFIED = 0;
+  CLOUD_HOST_CHECK_STATUS_OK = 1;
+  // Works, but something deserves a look.
+  CLOUD_HOST_CHECK_STATUS_WARN = 2;
+  // Fails: jobs on the host would fail too.
+  CLOUD_HOST_CHECK_STATUS_FAIL = 3;
+  // Not run, because an earlier check failed or nothing could be tested.
+  CLOUD_HOST_CHECK_STATUS_SKIPPED = 4;
+}

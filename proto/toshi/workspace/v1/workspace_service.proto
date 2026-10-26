@@ -1,0 +1,736 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+import "toshi/workspace/v1/hosts.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// WorkspaceService reads and sets the caller's workspace: its settings, its
+// billing and usage, and the plans it may buy.
+//
+// A workspace's API token acts on its own workspace; a dashboard session
+// names one of its workspaces in the Toshi-Workspace header. ListWorkspaces
+// needs no header. A token limited to a project or an environment is
+// refused with PERMISSION_DENIED. A suspended workspace keeps its reads,
+// and every other call is refused for it with FAILED_PRECONDITION. A closed
+// workspace keeps GetWorkspace, ListWorkspaces, GetUsage and
+// GetWorkspaceStatement during its read-only period.
+service WorkspaceService {
+  // GetWorkspace returns the caller's workspace.
+  rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse);
+  // ListWorkspaces returns the workspaces of the caller, ordered by ID: a
+  // session's workspaces, or a token's one.
+  //
+  // A page holds 100 workspaces when page_size is zero, and 1000 at most.
+  rpc ListWorkspaces(ListWorkspacesRequest) returns (ListWorkspacesResponse);
+  // GetWorkspaceBilling returns the workspace's billing customer,
+  // subscription and its status, the usage reported to the billing provider
+  // per month and runner size, and the events that failed. months outside
+  // 0 to 12 fails with INVALID_ARGUMENT.
+  rpc GetWorkspaceBilling(GetWorkspaceBillingRequest) returns (GetWorkspaceBillingResponse);
+  // GetWorkspaceStatement returns the workspace's usage statement for one
+  // UTC month: minutes by runner size and OS of the jobs that finished in
+  // it, the minutes metered to the billing provider by size with their
+  // estimated cost at the plan's prices, the starter credit applied in it,
+  // and held time by reason. A month not in YYYY-MM form fails with
+  // INVALID_ARGUMENT.
+  rpc GetWorkspaceStatement(GetWorkspaceStatementRequest) returns (GetWorkspaceStatementResponse);
+  // SetWorkspaceOwnHostsOnly sets whether the workspace's jobs wait for its
+  // own hosts and never run on shared ones, and returns the workspace as
+  // stored.
+  rpc SetWorkspaceOwnHostsOnly(SetWorkspaceOwnHostsOnlyRequest) returns (SetWorkspaceOwnHostsOnlyResponse);
+  // SetWorkspaceAllowOverflow sets whether shared overflow hosts may take
+  // the workspace's jobs and returns the workspace as stored; its own
+  // overflow hosts always may.
+  rpc SetWorkspaceAllowOverflow(SetWorkspaceAllowOverflowRequest) returns (SetWorkspaceAllowOverflowResponse);
+  // SetWorkspaceAllowCacheWarm sets whether the workspace's fillers run and
+  // returns the workspace as stored. Off by default.
+  rpc SetWorkspaceAllowCacheWarm(SetWorkspaceAllowCacheWarmRequest) returns (SetWorkspaceAllowCacheWarmResponse);
+  // SetWorkspaceCancelRunOnVmDeath sets whether Toshi cancels the workflow
+  // run of the workspace's job when the job's VM is gone and returns the
+  // workspace as stored. On by default.
+  rpc SetWorkspaceCancelRunOnVmDeath(SetWorkspaceCancelRunOnVmDeathRequest) returns (SetWorkspaceCancelRunOnVmDeathResponse);
+  // SetWorkspaceSpendLimits sets the workspace's monthly spending cap and its
+  // own jobs-per-hour limit, and returns the workspace as stored; an unset
+  // field is left as it is. A negative value, or a max_jobs_per_hour above
+  // the plan's, fails with INVALID_ARGUMENT; a spending cap while billing is
+  // off fails with FAILED_PRECONDITION.
+  rpc SetWorkspaceSpendLimits(SetWorkspaceSpendLimitsRequest) returns (SetWorkspaceSpendLimitsResponse);
+  // ListEgressIPs returns the public addresses the workspace's jobs may
+  // reach the internet from: the egress addresses of the hosts its jobs can
+  // land on, its own hosts and, unless it runs on its own hosts only, the
+  // shared hosts its plan's operating systems run on.
+  //
+  // A page holds 100 hosts when page_size is zero, and 1000 at most.
+  rpc ListEgressIPs(ListEgressIPsRequest) returns (ListEgressIPsResponse);
+  // GetUsage returns the workspace's job counts and billable minutes per UTC
+  // day, conclusion, outcome and kind, for the jobs whose queued_at is in
+  // the window. The window defaults to the last 7 days. A window whose from
+  // is not before its to fails with INVALID_ARGUMENT.
+  rpc GetUsage(GetUsageRequest) returns (GetUsageResponse);
+  // GetQueueTimes returns a queue-time summary (percentiles, maximum and
+  // warm share) for the workspace's jobs that reached running in the
+  // window, where a job is in the window by its queued_at. The window
+  // defaults to the last 7 days. A window whose from is not before its to
+  // fails with INVALID_ARGUMENT.
+  rpc GetQueueTimes(GetQueueTimesRequest) returns (GetQueueTimesResponse);
+  // GetWorkflowUsage returns, per repository and workflow name, the jobs
+  // GetUsage counts: their billable minutes, failed jobs and run-time
+  // percentiles. A job is in the window by its queued_at. The window
+  // defaults to the last 7 days. A window whose from is not before its to
+  // fails with INVALID_ARGUMENT.
+  rpc GetWorkflowUsage(GetWorkflowUsageRequest) returns (GetWorkflowUsageResponse);
+  // ListPlans returns the configured plans sorted by name.
+  //
+  // A page holds 100 plans when page_size is zero, and 1000 at most.
+  rpc ListPlans(ListPlansRequest) returns (ListPlansResponse);
+  // CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
+  // workspace to plan, first creating and linking a billing customer for a
+  // workspace without one. An empty plan, or a plan the configuration does
+  // not define, fails with INVALID_ARGUMENT; self-serve billing off, a plan
+  // that is not sold or maps to several lookup keys, a price missing in
+  // Stripe, or a workspace that already has a subscription fails with
+  // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
+  rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse);
+  // CreateBillingPortalSession returns a Stripe Customer Portal URL where
+  // the workspace manages its card and subscription. Self-serve billing not
+  // configured, or a workspace with no billing customer, fails with
+  // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
+  rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse);
+  // GetVersion returns the control plane's version, commit and commit date.
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
+}
+
+message GetWorkspaceRequest {}
+
+message GetWorkspaceResponse {
+  Workspace workspace = 1;
+}
+
+message ListWorkspacesRequest {
+  // The most workspaces in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+message ListWorkspacesResponse {
+  repeated Workspace workspaces = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message SetWorkspaceOwnHostsOnlyResponse {
+  Workspace workspace = 1;
+}
+
+message SetWorkspaceAllowOverflowResponse {
+  Workspace workspace = 1;
+}
+
+message SetWorkspaceAllowCacheWarmResponse {
+  Workspace workspace = 1;
+}
+
+message SetWorkspaceCancelRunOnVmDeathResponse {
+  Workspace workspace = 1;
+}
+
+message SetWorkspaceSpendLimitsResponse {
+  Workspace workspace = 1;
+}
+
+message GetWorkspaceBillingRequest {
+  // How many UTC months of usage to return, the current one included.
+  // 0 means 2; at most 12.
+  int32 months = 1;
+}
+
+message GetWorkspaceBillingResponse {
+  WorkspaceBilling billing = 1;
+}
+
+message GetWorkspaceStatementRequest {
+  // The UTC month as YYYY-MM. Empty: the current month.
+  string month = 1;
+  // Also return the statement as CSV.
+  bool csv = 2;
+}
+
+message GetWorkspaceStatementResponse {
+  WorkspaceStatement statement = 1;
+  // The statement as CSV with a header row, when the request asked for it.
+  string csv = 2;
+}
+
+message SetWorkspaceOwnHostsOnlyRequest {
+  bool own_hosts_only = 1;
+}
+
+message SetWorkspaceAllowOverflowRequest {
+  bool allow_overflow = 1;
+}
+
+message SetWorkspaceAllowCacheWarmRequest {
+  bool allow_cache_warm = 1;
+}
+
+message SetWorkspaceCancelRunOnVmDeathRequest {
+  bool cancel_run_on_vm_death = 1;
+}
+
+message SetWorkspaceSpendLimitsRequest {
+  // Unset leaves the cap; 0 clears it.
+  optional int64 spend_cap_cents = 1;
+  // Unset leaves the limit; 0 clears the workspace's own limit.
+  optional int32 max_jobs_per_hour = 2;
+}
+
+message ListEgressIPsRequest {
+  // The most hosts in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+// ListEgressIPsResponse lists the addresses to allowlist and the hosts they
+// come from.
+message ListEgressIPsResponse {
+  // Every address of the hosts of every page with known addresses, sorted
+  // and without repeats. Every page holds all of them.
+  repeated string ips = 1;
+  // The hosts the workspace's jobs can land on, ordered by kind (own hosts
+  // first) and ID.
+  repeated EgressHost hosts = 2;
+  // False when some host of any page has addresses that are unknown or
+  // change per job, so ips may not cover every job.
+  bool complete = 3;
+  // Empty on the last page.
+  string next_page_token = 4;
+}
+
+// GetUsageRequest selects the jobs to count. A job is in the window when its
+// queued_at is at or after from and before to.
+message GetUsageRequest {
+  // Start of the window, inclusive. Unset: to minus 7 days.
+  google.protobuf.Timestamp from = 1;
+  // End of the window, exclusive. Unset: now.
+  google.protobuf.Timestamp to = 2;
+}
+
+message GetUsageResponse {
+  // Ordered by day, then conclusion, then outcome, then kind. A
+  // window with neither matching jobs nor reserved hours has no rows.
+  repeated UsageRow rows = 1;
+  // The window used, with the defaults filled in.
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  // The filler jobs that finished in the window. They are not billed and
+  // not in rows. Unset when there were none.
+  FillerUsage filler = 4;
+}
+
+// GetQueueTimesRequest selects the jobs to summarize. A job is in the window
+// when its queued_at is at or after from and before to.
+message GetQueueTimesRequest {
+  // Start of the window, inclusive. Unset: to minus 7 days.
+  google.protobuf.Timestamp from = 1;
+  // End of the window, exclusive. Unset: now.
+  google.protobuf.Timestamp to = 2;
+}
+
+message GetQueueTimesResponse {
+  // Jobs in the window that reached running (have a started_at).
+  int64 jobs = 1;
+  // Nearest-rank percentiles and maximum of started_at - queued_at, in whole
+  // milliseconds. All 0 when jobs is 0.
+  int64 p50_ms = 2;
+  int64 p90_ms = 3;
+  int64 max_ms = 4;
+  // Share of those jobs assigned to a warm instance, from 0 to 1.
+  double warm_share = 5;
+  // The window used, with the defaults filled in.
+  google.protobuf.Timestamp from = 6;
+  google.protobuf.Timestamp to = 7;
+  // Time held, from first held to assigned, of the jobs the scheduler held, by
+  // the latest reason it held each one. A job never held is in none of them.
+  // A reason with only jobs held now has jobs 0.
+  repeated HoldTimes held = 8;
+}
+
+// GetWorkflowUsageRequest selects the jobs to count. A job is in the window
+// when its queued_at is at or after from and before to.
+message GetWorkflowUsageRequest {
+  // Start of the window, inclusive. Unset: to minus 7 days.
+  google.protobuf.Timestamp from = 1;
+  // End of the window, exclusive. Unset: now.
+  google.protobuf.Timestamp to = 2;
+}
+
+message GetWorkflowUsageResponse {
+  // Ordered by minutes, then own_host_minutes, then jobs, each descending,
+  // then by repository and workflow, byte by byte. A window with no
+  // jobs has no rows.
+  repeated WorkflowUsageRow rows = 1;
+  // The window used, with the defaults filled in.
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+}
+
+message ListPlansRequest {
+  // The most plans in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+message ListPlansResponse {
+  repeated Plan plans = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message CreateCheckoutSessionRequest {
+  string plan = 1;
+}
+
+message CreateCheckoutSessionResponse {
+  // The provider's hosted Checkout URL to send the browser to.
+  string url = 1;
+}
+
+message CreateBillingPortalSessionRequest {}
+
+message CreateBillingPortalSessionResponse {
+  // The provider's hosted Customer Portal URL to send the browser to.
+  string url = 1;
+}
+
+message GetVersionRequest {}
+
+message GetVersionResponse {
+  string version = 1;
+  string commit = 2;
+  string date = 3;
+}
+
+// Workspace owns a plan, an optional concurrency override, and its GitHub
+// App installations.
+message Workspace {
+  string id = 1;
+  string name = 2;
+  // The override; unset when none is set.
+  optional int32 concurrency_cap = 3;
+  google.protobuf.Timestamp created_at = 4;
+  string plan = 5;
+  // The cap the scheduler enforces; 0 means unlimited.
+  int32 effective_concurrency = 6;
+  // active or closed.
+  string status = 7;
+  // The workspace's jobs wait for its own hosts and never run on shared ones.
+  bool own_hosts_only = 8;
+  // Monthly spending cap in the smallest unit of the billing currency; 0
+  // means none.
+  int64 spend_cap_cents = 9;
+  // The workspace's own jobs-per-hour limit; 0 means the plan's applies.
+  int32 max_jobs_per_hour = 10;
+  // The limit the scheduler enforces: the lower of the workspace's and the
+  // plan's; 0 means none.
+  int32 effective_max_jobs_per_hour = 11;
+  // The starter credit granted when the workspace was created; 0 when none.
+  int64 starter_credit_cents = 12;
+  google.protobuf.Timestamp starter_credit_granted_at = 13;
+  // Shared overflow hosts may take the workspace's jobs; its own overflow hosts
+  // always may.
+  bool allow_overflow = 14;
+  // Whether the workspace's dispatch fillers, its cache-warming workflows,
+  // run on idle capacity.
+  bool allow_cache_warm = 15;
+  // The workspace's effective reservations on shared hosts, ordered
+  // by size: its own rows, and its plan's entries where it has none.
+  repeated Reservation reservations = 16;
+  // Lifecycle state: "active"; "suspended", where new and queued jobs are
+  // held, running jobs finish and the workspace is read-only; "deleting", once
+  // purge_after has passed and while the purge runs; or "deleted", when the
+  // purge is done, its sessions ended and its tokens revoked.
+  string state = 17;
+  // Why the operator suspended or deleted the workspace; empty when active.
+  string state_reason = 18;
+  // When the workspace entered its state; unset for a workspace always active.
+  google.protobuf.Timestamp state_since = 19;
+  // When a scheduled deletion purges the workspace; unset when none.
+  google.protobuf.Timestamp purge_after = 20;
+  // Days of finished job history the workspace keeps; unset when the plan's
+  // applies. 0 keeps forever.
+  optional int32 history_days = 21;
+  // The period the retention pass uses: the workspace's value when set, else
+  // its plan's.
+  int32 history_days_effective = 22;
+  // Whether Toshi cancels the workflow run of a job whose VM is gone, so
+  // GitHub shows it within seconds as cancelled; off keeps GitHub's own
+  // failure, about 10 minutes later.
+  bool cancel_run_on_vm_death = 23;
+  // The workspace's own limits; unset when its plan's applies. 0 is no cap.
+  optional int32 secret_max_sets = 24;
+  optional int32 secret_max_keys = 25;
+  optional int64 secret_max_kib = 26;
+  optional int32 preview_max_ports = 27;
+  // The limits Toshi enforces: the workspace's own value when set, else its
+  // plan's. 0 is no cap.
+  int32 secret_max_sets_effective = 28;
+  int32 secret_max_keys_effective = 29;
+  int64 secret_max_kib_effective = 30;
+  int32 preview_max_ports_effective = 31;
+}
+
+// Reservation is a workspace's floor of slots jobs of one runner size on shared
+// hosts, warm of them on warm VMs.
+message Reservation {
+  // A runner size, as a runs-on label.
+  string size = 1;
+  // How many slots are reserved; at least 1.
+  int32 slots = 2;
+  // How many of the slots are kept on warm VMs; 0 when none.
+  int32 warm = 3;
+  // "tenant" when the workspace's own row set it, "plan" when its plan did.
+  string source = 4;
+}
+
+// WorkspaceBilling is the workspace's billing link, its subscription's
+// status and the usage reported to the billing provider.
+message WorkspaceBilling {
+  // Empty when the workspace is not linked to a customer.
+  string customer_id = 1;
+  // Empty when no subscription has set the plan.
+  string subscription_id = 2;
+  // When billable usage begins; unset when the workspace is not billed.
+  google.protobuf.Timestamp billing_started_at = 3;
+  // The provider's status of the subscription from the last event applied,
+  // such as active or past_due; empty when no event has been applied.
+  string subscription_status = 4;
+  // When the subscription entered subscription_status.
+  google.protobuf.Timestamp subscription_status_since = 5;
+  // Meter events per UTC month and runner size, newest month first.
+  repeated BillingTotals totals = 6;
+  // The workspace's failed meter events, most recently failed first, at
+  // most 50.
+  repeated BillingEventFailure failed_events = 7;
+  // Minutes of the workspace's jobs that finished this UTC calendar month, as
+  // its statement counts them. The free allowance counts these, with or
+  // without a billing customer.
+  int64 minutes_this_month = 8;
+  // The free minutes per UTC calendar month of the workspace's plan; 0 when the
+  // plan has none.
+  int64 free_minutes_per_month = 9;
+  // Whether the billing customer has a payment method.
+  bool card_verified = 10;
+  // When Toshi first saw a payment method on the billing customer; unset
+  // without one.
+  google.protobuf.Timestamp card_verified_at = 11;
+  // The spending cap; 0 when none.
+  int64 spend_cap_cents = 12;
+  // Estimated metered spend this UTC month, rounded up: finished jobs plus
+  // what running ones have run so far, at the plan's current prices.
+  int64 spend_cents = 13;
+  // 0, 80 or 100: the share of the cap spend_cents has reached.
+  int32 spend_level = 14;
+  // The currency of the plan's prices, lower case; empty when unknown.
+  string currency = 15;
+  // False when the billing provider's prices are not known yet, so
+  // spend_cents means nothing.
+  bool spend_known = 16;
+  // Starter credit granted, and an estimate of what is left: the credit
+  // less the metered spend since billing started.
+  int64 starter_credit_cents = 17;
+  int64 starter_credit_left_cents = 18;
+  // When the credit reached the billing customer; unset before.
+  google.protobuf.Timestamp starter_credit_applied_at = 19;
+  // True when a billing provider is configured; false means nothing is metered or charged.
+  bool billing_enabled = 20;
+  // The workspace's jobs held now, by reason, in the order GetQueueTimes lists
+  // the reasons.
+  repeated HeldJobs held_now = 21;
+  // The workspace's jobs that count against its plan concurrency now: assigned,
+  // starting, running or debugging, on Toshi's hosts rather than its own, and
+  // neither a dispatch filler's job nor an open-source job. This is the count
+  // the scheduler checks against the workspace's limit,
+  // Workspace.effective_concurrency.
+  int64 concurrency_used = 22;
+  // HeldJobs counts the jobs held now for one reason.
+  message HeldJobs {
+    // One of the job hold reasons (see Job.hold_reason).
+    string reason = 23;
+    int64 jobs = 24;
+    // Since when the longest-held of them has been held.
+    google.protobuf.Timestamp since = 25;
+  }
+}
+
+// BillingTotals counts one month's meter events of one runner size by
+// delivery state. A month or size without events is left out.
+message BillingTotals {
+  // The UTC month the jobs finished in, as YYYY-MM.
+  string month = 1;
+  // The runner size; empty for events recorded before sizes were.
+  string size = 2;
+  int64 sent_events = 3;
+  int64 sent_minutes = 4;
+  int64 pending_events = 5;
+  int64 pending_minutes = 6;
+  int64 failed_events = 7;
+  int64 failed_minutes = 8;
+}
+
+// BillingEventFailure is a meter event the provider will not be sent again.
+message BillingEventFailure {
+  string job_id = 1;
+  string size = 2;
+  string event_name = 3;
+  int64 minutes = 4;
+  // When the job finished.
+  google.protobuf.Timestamp occurred_at = 5;
+  google.protobuf.Timestamp failed_at = 6;
+  int32 attempts = 7;
+  string last_error = 8;
+}
+
+message WorkspaceStatement {
+  // The month as YYYY-MM, and its bounds: from inclusive, to exclusive.
+  string month = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  // The plans the month's metered minutes were recorded at, comma-separated;
+  // the workspace's plan today when no minute has a recorded price.
+  string plan = 4;
+  // The jobs that finished in the month, by runner size and OS, counted as
+  // GetUsage counts them.
+  repeated StatementUsage usage = 5;
+  // The sum of usage; its size and os are empty.
+  StatementUsage total = 6;
+  // The minutes metered to the billing provider for the month, by the size
+  // they were recorded under, with their estimated cost.
+  repeated StatementCharge charges = 7;
+  // The estimated cost of every charge, rounded up once, in the smallest
+  // unit of currency: each job at the price recorded for it when it
+  // finished, and minutes with none at today's prices. Leaves out the
+  // plan's own price and any credit.
+  int64 estimated_cents = 8;
+  // Empty when the prices are unknown.
+  string currency = 9;
+  // False when some minutes have no recorded price and the billing
+  // provider's prices have not been read: those minutes' amounts are 0.
+  bool estimate_known = 10;
+  // The starter credit put on the customer's balance in the month; 0 and
+  // unset when it was not applied in it.
+  int64 starter_credit_applied_cents = 11;
+  google.protobuf.Timestamp starter_credit_applied_at = 12;
+  // Held time, from first held to assigned, of the jobs queued in the month
+  // that reached running, by the latest reason each was held.
+  repeated HoldTimes held = 13;
+  // The metered minutes with no recorded price, estimated at today's
+  // prices: finished jobs not yet in the usage outbox, and usage from
+  // before prices were recorded.
+  int64 current_price_minutes = 14;
+  // The workspace's filler jobs that finished in the month: not billed, not in
+  // usage or charges. Unset when there were none.
+  FillerUsage filler = 15;
+  // True when a billing provider is configured; false means nothing is metered or charged.
+  bool billing_enabled = 16;
+  // When the month's estimated spend first reached the workspace's spending
+  // cap; unset when it did not.
+  google.protobuf.Timestamp spend_cap_reached_at = 17;
+  // The cap that was reached, in the smallest unit of currency; 0 when it
+  // was not.
+  int64 spend_cap_reached_cents = 18;
+  // The workspace's spending cap when the statement was built; 0 when none.
+  int64 spend_cap_cents = 19;
+}
+
+message StatementUsage {
+  string size = 1;
+  string os = 2;
+  int64 jobs = 3;
+  // Billable minutes on shared hosts, rounded up per job.
+  int64 minutes = 4;
+  // Minutes on the workspace's own hosts, which are not billed.
+  int64 own_host_minutes = 5;
+  // The part of minutes and own_host_minutes spent in debug sessions.
+  int64 debug_minutes = 6;
+  // The part of minutes that ran on overflow hosts.
+  int64 overflow_minutes = 7;
+  // Reserved slot-hours the workspace held for this size in the statement's
+  // window. A size with reserved hours but no finished job still
+  // gets a row, with zero minutes.
+  int64 reserved_slot_hours = 8;
+  // Toshi's own word for the jobs in this entry when Toshi ended them
+  // itself (the values of Job.outcome); empty for every other entry.
+  string outcome = 9;
+}
+
+message StatementCharge {
+  // Empty for usage recorded without a size, priced at the plan's highest
+  // per-minute price.
+  string size = 1;
+  int64 minutes = 2;
+  // The minutes at their recorded prices, or today's for minutes with none,
+  // rounded up.
+  int64 estimated_cents = 3;
+}
+
+message HoldTimes {
+  // One of the job hold reasons (see Job.hold_reason), as the
+  // toshi_jobs_held metric labels them.
+  string reason = 1;
+  // The jobs held for this reason whose hold ended (they were assigned and started), and their held time in milliseconds (nearest-rank).
+  int64 jobs = 2;
+  int64 p50_ms = 3;
+  int64 p90_ms = 4;
+  int64 max_ms = 5;
+  // The jobs held for this reason now, whenever they were queued. 0 when
+  // the window ends before now.
+  int64 open_jobs = 6;
+  // Since when the longest-held of them has been held; unset when
+  // open_jobs is 0.
+  google.protobuf.Timestamp open_since = 7;
+}
+
+// FillerUsage counts one workspace's filler jobs: runs its dispatch fillers
+// started on shared room. Not billed; a plan's filler_minutes_per_day bounds
+// them per UTC day.
+message FillerUsage {
+  int64 jobs = 1;
+  // Each job's duration rounded up to whole minutes, on any host.
+  int64 minutes = 2;
+}
+
+// UsageRow counts the jobs of one UTC day, conclusion, outcome and kind.
+message UsageRow {
+  // The UTC date of the job's queued_at, as YYYY-MM-DD.
+  string day = 1;
+  // The job's conclusion as stored, such as "success". Empty for a job with
+  // no conclusion yet.
+  string conclusion = 2;
+  // Number of jobs in this row.
+  int64 jobs = 3;
+  // Billable minutes of those jobs that did not run on a host their workspace
+  // owns: each job that started and finished adds its duration rounded up to
+  // whole minutes; other jobs add 0.
+  int64 minutes = 4;
+  // Minutes of the row's jobs that ran on hosts their workspace owns,
+  // rounded as minutes.
+  int64 own_host_minutes = 5;
+  // The part of minutes and own_host_minutes spent in debug sessions: each
+  // job that had one adds its minutes less the minutes up to its session's
+  // start, both rounded up, so a job's run and debug parts add up
+  // to its minutes.
+  int64 debug_minutes = 6;
+  // The part of minutes that ran on overflow hosts.
+  int64 overflow_minutes = 7;
+  // Reserved slot-hours the workspace held in the row's window, on the rows
+  // with a conclusion: 0. The reserved hours themselves are in the row with
+  // an empty conclusion added for each UTC day that has them.
+  int64 reserved_slot_hours = 8;
+  // Toshi's own word for the jobs in this row when Toshi ended them itself
+  // (the values of Job.outcome); empty for every other row.
+  string outcome = 9;
+  // The kind of the row's jobs: "job", "sandbox" or "service". Empty on a
+  // reserved-hours row.
+  string kind = 10;
+}
+
+// WorkflowUsageRow counts the jobs of one repository and workflow.
+// Its jobs are the ones GetUsage counts, and their minutes are counted as
+// in UsageRow.
+message WorkflowUsageRow {
+  // The repository, as owner/name.
+  string repository = 1;
+  // The workflow's name from the job's workflow_job webhook. Empty for jobs
+  // stored without one.
+  string workflow = 2;
+  // Number of jobs in this row.
+  int64 jobs = 3;
+  // Billable minutes, as UsageRow.minutes.
+  int64 minutes = 4;
+  // Minutes on hosts the workspace owns, as UsageRow.own_host_minutes.
+  int64 own_host_minutes = 5;
+  // Jobs whose conclusion is "failure" or whose outcome is "failed".
+  int64 failed_jobs = 6;
+  // Jobs that started and finished: the ones the percentiles are over.
+  int64 timed_jobs = 7;
+  // Nearest-rank percentiles of those jobs' run times, from started_at to
+  // the stop request, or to finished_at when there was none, each rounded
+  // up to a whole second. Both 0 when timed_jobs is 0.
+  int64 p50_seconds = 8;
+  int64 p95_seconds = 9;
+}
+
+message Plan {
+  string name = 1;
+  int32 concurrency = 2;
+  int32 max_job_minutes = 3;
+  bool is_default = 4;
+  // Whether a workspace can buy this plan through Checkout: self-serve billing
+  // is on and exactly one lookup key in billing.plan_map maps to the plan.
+  bool self_serve = 5;
+  // Operating systems the plan allows; empty means every OS.
+  repeated string allowed_os = 6;
+  // Largest runner size the plan allows, as a runs-on label; empty means any
+  // size.
+  string max_size = 7;
+  // vCPUs a workspace may have in assigned, starting or running jobs at once; 0
+  // means no cap.
+  int32 max_vcpu = 8;
+  // Minutes a workspace may run each UTC calendar month without a verified
+  // card; 0 means the plan has no allowance.
+  int32 free_minutes_per_month = 9;
+  // Runs-on labels the plan admits under allowed_os, max_size and max_vcpu.
+  // A size whose OS is in card_required_for also needs a verified card.
+  repeated string sizes = 10;
+  // OSes that require a verified payment card; empty when billing is off.
+  repeated string card_required_for = 11;
+  // Jobs on shared hosts a workspace may start per 60 minutes; 0 means no
+  // limit.
+  int32 max_jobs_per_hour = 12;
+  // Queued jobs of one workflow run that may wait for a host at once; the
+  // rest wait as burst_guard. 0 means off.
+  int32 burst_guard_jobs = 13;
+  // Credit a new workspace on this plan gets once, in the smallest currency
+  // unit; 0 means none.
+  int64 starter_credit_cents = 14;
+  // Days of finished job history workspaces on this plan keep; 0 keeps forever.
+  // Left out of configuration, 90.
+  int32 history_days = 15;
+  // Longest debug session, in minutes, a failed job on this plan may ask
+  // for with a toshi-debug-<n> label; 0 means the plan has no debug
+  // sessions.
+  int32 debug_minutes = 16;
+  // Hosts a workspace on this plan may own at once, cloud hosts included; 0
+  // means no limit. Left out of configuration, 20.
+  int32 max_own_hosts = 17;
+  // Whether the plan is the open-source tier: its workspaces' jobs
+  // pass the open-source gate.
+  bool open_source = 18;
+}
+
+// EgressHost is one host a workspace's jobs can land on.
+message EgressHost {
+  // The host's id and name; empty for a shared host.
+  string host_id = 1;
+  string name = 2;
+  // The host is shared between workspaces rather than the workspace's own.
+  bool shared = 3;
+  HostEgress egress = 4;
+  // For an EGRESS_SOURCE_PER_JOB host: the addresses its jobs ran from in
+  // the last 7 days, sorted.
+  repeated string recent_ips = 5;
+  // The host's cloud ("aws"), empty for a host with an agent.
+  string cloud = 6;
+  // For a cloud host: "public" or "nat".
+  string cloud_egress = 7;
+  // For a "nat" cloud host: a job echoed one of the host's addresses in the
+  // last 7 days. Until then the response is not complete, and recent_ips
+  // shows what jobs echoed.
+  bool confirmed = 8;
+}

@@ -100,6 +100,10 @@ service OperatorService {
   // unique: two workspaces may share one. Only the operator may call it.
   rpc CreateWorkspace(CreateWorkspaceRequest) returns (CreateWorkspaceResponse);
 
+  // GetWorkspace returns one workspace. An empty ID fails with
+  // INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+  rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse);
+
   // ListTenants returns every tenant, ordered by ID.
   //
   // A page holds 100 tenants when page_size is zero, and 1000 at most.
@@ -1373,6 +1377,14 @@ message CreateWorkspaceRequest {
 }
 
 message CreateWorkspaceResponse {
+  Tenant workspace = 1;
+}
+
+message GetWorkspaceRequest {
+  string id = 1;
+}
+
+message GetWorkspaceResponse {
   Tenant workspace = 1;
 }
 

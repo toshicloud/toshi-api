@@ -1,0 +1,181 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// FillerService manages the workspace's fillers: workflows of its own
+// repositories that Toshi dispatches as low-priority filler jobs on room
+// above the warm pool targets, and stops the moment a job needs the room.
+// A filler of another workspace is NOT_FOUND.
+//
+// A workspace's API token acts on its own workspace; a dashboard session
+// names one of its workspaces in the Toshi-Workspace header. A
+// token limited to a project or an environment is refused with
+// PERMISSION_DENIED. A suspended workspace reads its fillers and their
+// runs, and every other call is refused for it with FAILED_PRECONDITION.
+service FillerService {
+  // ListFillers returns the workspace's fillers, ordered by name, each with
+  // its latest run.
+  //
+  // A page holds 100 fillers when page_size is zero, and 1000 at most.
+  rpc ListFillers(ListFillersRequest) returns (ListFillersResponse);
+  // PutFiller adds a filler or replaces the one with the same name and
+  // returns it as stored. The repository must have run a job of the
+  // workspace. A filler from the control plane's configuration cannot be
+  // replaced (FAILED_PRECONDITION). A bad field fails with
+  // INVALID_ARGUMENT.
+  rpc PutFiller(PutFillerRequest) returns (PutFillerResponse);
+  // DeleteFiller removes a filler and stops its running run. A configured
+  // filler cannot be removed (FAILED_PRECONDITION); an unknown name fails
+  // with NOT_FOUND.
+  rpc DeleteFiller(DeleteFillerRequest) returns (DeleteFillerResponse);
+  // SetFillerEnabled turns a filler on or off and returns it. Turning it off
+  // stops its running run. An unknown name fails with NOT_FOUND.
+  rpc SetFillerEnabled(SetFillerEnabledRequest) returns (SetFillerEnabledResponse);
+  // ListFillerRuns returns the runs of the workspace's fillers, newest
+  // first.
+  //
+  // A page holds 50 runs when page_size is zero, and 500 at most.
+  rpc ListFillerRuns(ListFillerRunsRequest) returns (ListFillerRunsResponse);
+}
+
+// Filler is a workflow of the workspace that Toshi dispatches with
+// workflow_dispatch as a filler job, only on capacity above the warm pool
+// targets.
+message Filler {
+  // Unique among the workspace's fillers; lowercase letters, digits and
+  // dashes, at most 40 characters, starting with a letter or digit.
+  string name = 1;
+  // The runner size of the VM.
+  string size = 2;
+  // Run only on hosts whose pool for the size has nested KVM.
+  bool nested_kvm = 3;
+  // The repository, as "owner/name".
+  string repository = 4;
+  // The workflow's file name, for example "warm-cache.yml".
+  string workflow = 5;
+  // The branch or tag to run it on. Empty: the repository's default
+  // branch.
+  string ref = 6;
+  // How long after a run completes or fails the next may start. Default
+  // 24 hours.
+  google.protobuf.Duration every = 7;
+  // The longest one run may take. Default 2 hours.
+  google.protobuf.Duration max_duration = 8;
+  bool enabled = 9;
+  // Where the filler comes from: "config", "operator" or "tenant" (the
+  // workspace put it).
+  string source = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  // The filler's newest run. Not set before its first.
+  FillerRun last_run = 13;
+  // Why the scheduler dispatches nothing for this filler, as the last
+  // filler pass that read its states found it: tenant_suspended,
+  // tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
+  // installation_suspended, installation_ambiguous, budget_spent (the
+  // workspace's filler minutes for the UTC day are spent) or budget_off
+  // (its plan gives none). Empty: no pause found, or a filler the pass does
+  // not evaluate (a disabled one, for example). Set by ListFillers only.
+  // Kept in the control plane's memory: empty after a restart until a pass
+  // reads the states again.
+  string pause_reason = 14;
+  // When a filler pass first found the pause. Unset with an empty
+  // pause_reason.
+  google.protobuf.Timestamp paused_since = 15;
+  // When a filler pass last read the filler's states and found
+  // pause_reason; unset without one.
+  google.protobuf.Timestamp pause_as_of = 16;
+}
+
+// FillerRun is one run of a filler.
+message FillerRun {
+  string id = 1;
+  string filler = 2;
+  // The host the run went to. Empty while the run waits for its job.
+  string host_id = 3;
+  // "dispatched", "assigned", "running", "completed", "failed",
+  // "preempted", "rejected" or "lost".
+  string state = 4;
+  // Toshi's job ID of the filler job, once its webhook arrived.
+  string job_id = 5;
+  // GitHub's workflow run ID.
+  int64 run_id = 6;
+  string error = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp started_at = 9;
+  google.protobuf.Timestamp finished_at = 10;
+}
+
+// FillerPause is one paused filler; see Filler.pause_reason.
+message FillerPause {
+  string filler = 1;
+  // tenant_suspended, tenant_deleting, tenant_deleted, tenant_closed,
+  // installation_removed, installation_suspended, installation_ambiguous,
+  // budget_spent or budget_off.
+  string reason = 2;
+  // When a filler pass first found the pause.
+  google.protobuf.Timestamp since = 3;
+  // When a filler pass last read the states; see Filler.pause_as_of.
+  google.protobuf.Timestamp as_of = 4;
+}
+
+message ListFillersRequest {
+  // The most fillers in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+message ListFillersResponse {
+  repeated Filler fillers = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message PutFillerRequest {
+  // source, created_at, updated_at, last_run, pause_reason, paused_since and
+  // pause_as_of are ignored.
+  Filler filler = 1;
+}
+
+message PutFillerResponse {
+  Filler filler = 1;
+}
+
+message DeleteFillerRequest {
+  string name = 1;
+}
+
+message DeleteFillerResponse {}
+
+message SetFillerEnabledRequest {
+  string name = 1;
+  bool enabled = 2;
+}
+
+message SetFillerEnabledResponse {
+  Filler filler = 1;
+}
+
+message ListFillerRunsRequest {
+  // Only this filler's runs. Empty: every filler's.
+  string filler = 1;
+  // The most runs in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
+}
+
+message ListFillerRunsResponse {
+  repeated FillerRun runs = 1;
+  // The paused fillers among those the request covers; see
+  // Filler.pause_reason. Every page holds all of them.
+  repeated FillerPause pauses = 2;
+  // Empty on the last page.
+  string next_page_token = 3;
+}

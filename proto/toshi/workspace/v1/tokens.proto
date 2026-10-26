@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/workspacev1";
+
+// TokenService manages the workspace's tokens: its API tokens, which call
+// the Workspace API as the workspace, and its enrollment tokens, with which
+// its own hosts register. No call returns a token's value except the one
+// that makes it.
+//
+// A workspace's API token acts on its own workspace; a dashboard session
+// names one of its workspaces in the Toshi-Workspace header. A
+// token limited to a project or an environment is refused with
+// PERMISSION_DENIED: these calls act in the whole workspace. A suspended
+// workspace lists its tokens, and every other call is refused for it with
+// FAILED_PRECONDITION.
+service TokenService {
+  // ListTokens returns the workspace's API and enrollment tokens, oldest
+  // first, without their values.
+  //
+  // A page holds 100 tokens when page_size is zero, and 1000 at most.
+  rpc ListTokens(ListTokensRequest) returns (ListTokensResponse);
+  // CreateWorkspaceToken makes an API token for the workspace and returns
+  // it with its value. Only a signed-in session may call it: a token never
+  // makes another token, and the call is refused for one with
+  // PERMISSION_DENIED. An unknown project or environment fails with
+  // NOT_FOUND; a closed workspace fails with FAILED_PRECONDITION.
+  rpc CreateWorkspaceToken(CreateWorkspaceTokenRequest) returns (CreateWorkspaceTokenResponse);
+  // RevokeToken stops one of the workspace's tokens working at once.
+  // Revoking an enrollment token also signs out the hosts that registered
+  // with it. A token of another workspace, and an unknown ID, fail with
+  // NOT_FOUND.
+  rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse);
+}
+
+// TokenKind says what a token grants.
+enum TokenKind {
+  TOKEN_KIND_UNSPECIFIED = 0;
+  // An enrollment token: registering a host the workspace owns.
+  TOKEN_KIND_ENROLLMENT = 2;
+  // An API token: the Workspace API as the workspace.
+  TOKEN_KIND_WORKSPACE = 3;
+}
+
+// Token is one of the workspace's tokens, without its value.
+message Token {
+  // Token id, such as "tok-1a2b3c4d5e6f".
+  string id = 1;
+  TokenKind kind = 2;
+  // "tenant" for an enrollment token, "session" for an API token.
+  string source = 3;
+  google.protobuf.Timestamp created_at = 4;
+  // Unset when the token does not expire.
+  google.protobuf.Timestamp expires_at = 5;
+  // Unset when the token is not revoked.
+  google.protobuf.Timestamp revoked_at = 6;
+  // Whether the token is accepted now.
+  bool active = 7;
+  // The label the workspace chose for an API token; empty for an
+  // enrollment token.
+  string name = 8;
+  // The project the token is limited to, by name. Empty for a token that
+  // acts in the whole workspace.
+  string project = 9;
+  // The environment of project the token is limited to, by name. Empty
+  // when the token acts in every environment of its project.
+  string environment = 10;
+}
+
+// ListTokensRequest optionally narrows the list to one kind.
+message ListTokensRequest {
+  // TOKEN_KIND_UNSPECIFIED lists every kind.
+  TokenKind kind = 1;
+  // The most tokens in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
+}
+
+// ListTokensResponse carries the tokens, oldest first.
+message ListTokensResponse {
+  repeated Token tokens = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+// CreateWorkspaceTokenRequest names the token and what it may reach.
+message CreateWorkspaceTokenRequest {
+  // A label for the token.
+  string name = 1;
+  // Unset means the token never expires.
+  google.protobuf.Timestamp expires_at = 2;
+  // Limits the token to this project of the workspace, by name. Empty
+  // makes a token for the whole workspace.
+  string project = 3;
+  // Limits the token further to this environment of project, by name.
+  // Needs project.
+  string environment = 4;
+}
+
+// CreateWorkspaceTokenResponse carries the new token and its value.
+message CreateWorkspaceTokenResponse {
+  Token token = 1;
+  // The new token. It is returned only here.
+  string value = 2;
+}
+
+// RevokeTokenRequest names the token to revoke.
+message RevokeTokenRequest {
+  string id = 1;
+}
+
+// RevokeTokenResponse carries the revoked token.
+message RevokeTokenResponse {
+  Token token = 1;
+  // How many hosts were signed out and must register again.
+  int32 hosts_signed_out = 2;
+}
