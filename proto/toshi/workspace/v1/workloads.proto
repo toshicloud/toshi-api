@@ -4,6 +4,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/field_mask.proto";
+import "toshi/permission.proto";
 import "toshi/workspace/v1/workspace.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
@@ -40,10 +41,14 @@ service WorkloadService {
   // the call answers, the answer carries its exit status and output without
   // a second read; otherwise it carries the job as it is and no output, and
   // no later call returns it.
-  rpc CreateJob(CreateJobRequest) returns (CreateJobResponse);
+  rpc CreateJob(CreateJobRequest) returns (CreateJobResponse) {
+    option (toshi.permission) = "jobs.write";
+  }
 
   // GetJob returns one job. An unknown ID fails with NOT_FOUND.
-  rpc GetJob(GetJobRequest) returns (GetJobResponse);
+  rpc GetJob(GetJobRequest) returns (GetJobResponse) {
+    option (toshi.permission) = "jobs.read";
+  }
 
   // ListJobs returns the jobs that match every filter that is set, oldest
   // first, a page at a time. A page token from one call stays valid while
@@ -51,17 +56,23 @@ service WorkloadService {
   // earlier one.
   //
   // A page holds 50 jobs when page_size is zero, and 500 at most.
-  rpc ListJobs(ListJobsRequest) returns (ListJobsResponse);
+  rpc ListJobs(ListJobsRequest) returns (ListJobsResponse) {
+    option (toshi.permission) = "jobs.read";
+  }
 
   // UpdateJob changes the fields the mask names and returns the job. Only
   // "labels" can be changed; another path fails with INVALID_ARGUMENT.
-  rpc UpdateJob(UpdateJobRequest) returns (UpdateJobResponse);
+  rpc UpdateJob(UpdateJobRequest) returns (UpdateJobResponse) {
+    option (toshi.permission) = "jobs.write";
+  }
 
   // DeleteJob cancels a job that has not ended and then removes it; every
   // execution in it is cancelled. It returns an operation that is done once
   // the job is removed; GetJob then fails with NOT_FOUND, and the event log
   // keeps its events.
-  rpc DeleteJob(DeleteJobRequest) returns (DeleteJobResponse);
+  rpc DeleteJob(DeleteJobRequest) returns (DeleteJobResponse) {
+    option (toshi.permission) = "jobs.write";
+  }
 
   // CancelJob cancels a job that has not ended and returns it. The job is
   // kept: it ends with END_REASON_CANCELLED, and GetJob and ListJobs return
@@ -70,20 +81,26 @@ service WorkloadService {
   // it, and WaitJob waits for that end. Every execution in the job is
   // cancelled. A call for a job that has ended changes nothing and returns
   // the job as it is. An unknown ID fails with NOT_FOUND.
-  rpc CancelJob(CancelJobRequest) returns (CancelJobResponse);
+  rpc CancelJob(CancelJobRequest) returns (CancelJobResponse) {
+    option (toshi.permission) = "jobs.write";
+  }
 
   // WaitJob blocks until the job is in one of the states asked for or the
   // bound passes, whichever is first, and returns the job as it then is.
   // Passing the bound is not an error: reached is false, and the caller asks
   // again. The server may wait less than the bound asked for.
-  rpc WaitJob(WaitJobRequest) returns (WaitJobResponse);
+  rpc WaitJob(WaitJobRequest) returns (WaitJobResponse) {
+    option (toshi.permission) = "jobs.read";
+  }
 
   // WatchJobs streams each change to a job as the event log records it,
   // from the position after a cursor, then as changes happen. A cursor from
   // a list call, ListEvents or an earlier message resumes with no change
   // missed and none repeated, while the log still keeps the events after it;
   // an older cursor fails with OUT_OF_RANGE.
-  rpc WatchJobs(WatchJobsRequest) returns (stream WatchJobsResponse);
+  rpc WatchJobs(WatchJobsRequest) returns (stream WatchJobsResponse) {
+    option (toshi.permission) = "jobs.read";
+  }
 
   // WatchOutput streams a job's standard output and error while it runs:
   // the bytes the server holds from the offsets asked for, then each write
@@ -96,20 +113,28 @@ service WorkloadService {
   // service fails with INVALID_ARGUMENT.
   // A reader never slows or cancels the job: each reads what the server
   // holds at its own pace.
-  rpc WatchOutput(WatchOutputRequest) returns (stream WatchOutputResponse);
+  rpc WatchOutput(WatchOutputRequest) returns (stream WatchOutputResponse) {
+    option (toshi.permission) = "jobs.read";
+  }
 
   // CreateSandbox creates a sandbox and returns it, queued: it runs once a
   // host takes it, and until it is deleted or its time limit passes.
-  rpc CreateSandbox(CreateSandboxRequest) returns (CreateSandboxResponse);
+  rpc CreateSandbox(CreateSandboxRequest) returns (CreateSandboxResponse) {
+    option (toshi.permission) = "sandboxes.write";
+  }
 
   // GetSandbox returns one sandbox. An unknown ID fails with NOT_FOUND.
-  rpc GetSandbox(GetSandboxRequest) returns (GetSandboxResponse);
+  rpc GetSandbox(GetSandboxRequest) returns (GetSandboxResponse) {
+    option (toshi.permission) = "sandboxes.read";
+  }
 
   // ListSandboxes returns the sandboxes that match every filter that is
   // set, oldest first, a page at a time, with the page tokens of ListJobs.
   //
   // A page holds 50 sandboxes when page_size is zero, and 500 at most.
-  rpc ListSandboxes(ListSandboxesRequest) returns (ListSandboxesResponse);
+  rpc ListSandboxes(ListSandboxesRequest) returns (ListSandboxesResponse) {
+    option (toshi.permission) = "sandboxes.read";
+  }
 
   // UpdateSandbox changes the fields the mask names and returns the sandbox.
   // "labels" can be changed on any sandbox. "spec.max_duration" raises a
@@ -128,22 +153,30 @@ service WorkloadService {
   // has a raise pending, or whose host's agent cannot take a new limit,
   // fails with FAILED_PRECONDITION. Another path fails with
   // INVALID_ARGUMENT.
-  rpc UpdateSandbox(UpdateSandboxRequest) returns (UpdateSandboxResponse);
+  rpc UpdateSandbox(UpdateSandboxRequest) returns (UpdateSandboxResponse) {
+    option (toshi.permission) = "sandboxes.write";
+  }
 
   // DeleteSandbox stops a sandbox that has not ended and then removes it;
   // every execution in it is cancelled. It returns an operation that is
   // done once the sandbox is removed; GetSandbox then fails with NOT_FOUND,
   // and the event log keeps its events.
-  rpc DeleteSandbox(DeleteSandboxRequest) returns (DeleteSandboxResponse);
+  rpc DeleteSandbox(DeleteSandboxRequest) returns (DeleteSandboxResponse) {
+    option (toshi.permission) = "sandboxes.write";
+  }
 
   // WaitSandbox blocks until the sandbox is in one of the states asked for
   // or the bound passes, as WaitJob does for a job.
-  rpc WaitSandbox(WaitSandboxRequest) returns (WaitSandboxResponse);
+  rpc WaitSandbox(WaitSandboxRequest) returns (WaitSandboxResponse) {
+    option (toshi.permission) = "sandboxes.read";
+  }
 
   // WatchSandboxes streams each change to a sandbox as the event log
   // records it, from the position after a cursor, as WatchJobs does for
   // jobs.
-  rpc WatchSandboxes(WatchSandboxesRequest) returns (stream WatchSandboxesResponse);
+  rpc WatchSandboxes(WatchSandboxesRequest) returns (stream WatchSandboxesResponse) {
+    option (toshi.permission) = "sandboxes.read";
+  }
 
   // Execute starts a command in a running workload. The first request
   // carries the start message; later requests carry standard input. The
@@ -151,13 +184,17 @@ service WorkloadService {
   // error as they are written, and ends with its exit status. A workload
   // that is not running fails with FAILED_PRECONDITION. A server may cancel
   // an execution whose client stops reading its output.
-  rpc Execute(stream ExecuteRequest) returns (stream ExecuteResponse);
+  rpc Execute(stream ExecuteRequest) returns (stream ExecuteResponse) {
+    option (toshi.permission) = "sandboxes.write";
+  }
 
   // CancelExecution stops an execution. Its Execute stream ends with an exit
   // that says it was cancelled. Cancelling an execution that has ended
   // changes nothing. It returns once the execution has ended, whether or not
   // the Execute stream's client still reads it.
-  rpc CancelExecution(CancelExecutionRequest) returns (CancelExecutionResponse);
+  rpc CancelExecution(CancelExecutionRequest) returns (CancelExecutionResponse) {
+    option (toshi.permission) = "sandboxes.write";
+  }
 
   // WatchTelemetry streams a sandbox's resource samples as its host reports
   // them, in cursor order: the samples kept after a cursor, then each one as
@@ -168,7 +205,9 @@ service WorkloadService {
   // from the last cursor returns it, then ends again. A sandbox that has
   // not started yet is waited for. A job or service fails with
   // INVALID_ARGUMENT.
-  rpc WatchTelemetry(WatchTelemetryRequest) returns (stream WatchTelemetryResponse);
+  rpc WatchTelemetry(WatchTelemetryRequest) returns (stream WatchTelemetryResponse) {
+    option (toshi.permission) = "sandboxes.read";
+  }
 
   // WatchGuestLog streams what a sandbox's VM writes to its serial console:
   // the bytes its host keeps from a cursor on, then each write as it
@@ -179,7 +218,9 @@ service WorkloadService {
   // that has not started yet is waited for, and so is an empty console. A
   // sandbox that has ended, or whose host keeps no console log, fails with
   // FAILED_PRECONDITION. A job or service fails with INVALID_ARGUMENT.
-  rpc WatchGuestLog(WatchGuestLogRequest) returns (stream WatchGuestLogResponse);
+  rpc WatchGuestLog(WatchGuestLogRequest) returns (stream WatchGuestLogResponse) {
+    option (toshi.permission) = "sandboxes.read";
+  }
 
   // CreatePreviewShareLink mints a share link for one of a running
   // sandbox's previews: the channel `preview`, served at the sandbox's own
@@ -192,51 +233,71 @@ service WorkloadService {
   // links off. A channel or port the sandbox has no http channel for fails
   // with NOT_FOUND; a channel that is not http, a port outside 1 to 65535,
   // or an expiry or a byte cap above the plan's, with INVALID_ARGUMENT.
-  rpc CreatePreviewShareLink(CreatePreviewShareLinkRequest) returns (CreatePreviewShareLinkResponse);
+  rpc CreatePreviewShareLink(CreatePreviewShareLinkRequest) returns (CreatePreviewShareLinkResponse) {
+    option (toshi.permission) = "previews.write";
+  }
 
   // ListPreviewShareLinks returns a sandbox's share links, for all of its
   // previews, the oldest first, never with the link itself.
   //
   // A page holds 100 share links when page_size is zero, and 1000 at most.
-  rpc ListPreviewShareLinks(ListPreviewShareLinksRequest) returns (ListPreviewShareLinksResponse);
+  rpc ListPreviewShareLinks(ListPreviewShareLinksRequest) returns (ListPreviewShareLinksResponse) {
+    option (toshi.permission) = "previews.read";
+  }
 
   // RevokePreviewShareLink revokes a share link: it admits no device
   // again, and its open connections end within seconds. Revoking a link
   // that was revoked or has ended returns it as it is.
-  rpc RevokePreviewShareLink(RevokePreviewShareLinkRequest) returns (RevokePreviewShareLinkResponse);
+  rpc RevokePreviewShareLink(RevokePreviewShareLinkRequest) returns (RevokePreviewShareLinkResponse) {
+    option (toshi.permission) = "previews.write";
+  }
 
   // CreateService creates a service with its recipe as revision 1 and
   // returns it, created and not started: StartService starts it.
-  rpc CreateService(CreateServiceRequest) returns (CreateServiceResponse);
+  rpc CreateService(CreateServiceRequest) returns (CreateServiceResponse) {
+    option (toshi.permission) = "services.write";
+  }
 
   // GetService returns one service. An unknown ID fails with NOT_FOUND.
-  rpc GetService(GetServiceRequest) returns (GetServiceResponse);
+  rpc GetService(GetServiceRequest) returns (GetServiceResponse) {
+    option (toshi.permission) = "services.read";
+  }
 
   // ListServices returns the services that match every filter that is set,
   // oldest first, a page at a time, with the page tokens of ListJobs.
   //
   // A page holds 50 services when page_size is zero, and 500 at most.
-  rpc ListServices(ListServicesRequest) returns (ListServicesResponse);
+  rpc ListServices(ListServicesRequest) returns (ListServicesResponse) {
+    option (toshi.permission) = "services.read";
+  }
 
   // UpdateService changes the fields the mask names and returns the
   // service. Only "labels" can be changed; another path fails with
   // INVALID_ARGUMENT.
-  rpc UpdateService(UpdateServiceRequest) returns (UpdateServiceResponse);
+  rpc UpdateService(UpdateServiceRequest) returns (UpdateServiceResponse) {
+    option (toshi.permission) = "services.write";
+  }
 
   // DeleteService stops a service that has not ended and then removes it.
   // It returns an operation that is done once the service is removed;
   // GetService then fails with NOT_FOUND, and the event log keeps its
   // events.
-  rpc DeleteService(DeleteServiceRequest) returns (DeleteServiceResponse);
+  rpc DeleteService(DeleteServiceRequest) returns (DeleteServiceResponse) {
+    option (toshi.permission) = "services.write";
+  }
 
   // WaitService blocks until the service is in one of the states asked for
   // or the bound passes, as WaitJob does for a job.
-  rpc WaitService(WaitServiceRequest) returns (WaitServiceResponse);
+  rpc WaitService(WaitServiceRequest) returns (WaitServiceResponse) {
+    option (toshi.permission) = "services.read";
+  }
 
   // WatchServices streams each change to a service as the event log
   // records it, from the position after a cursor, as WatchJobs does for
   // jobs.
-  rpc WatchServices(WatchServicesRequest) returns (stream WatchServicesResponse);
+  rpc WatchServices(WatchServicesRequest) returns (stream WatchServicesResponse) {
+    option (toshi.permission) = "services.read";
+  }
 
   // StartService starts a service. An always-on service's workload
   // moves from CREATED to QUEUED and its first run is queued as a job on
@@ -248,17 +309,23 @@ service WorkloadService {
   // idle period. Starting a started service returns it as it is. A size
   // that is not a Linux one and a start past the plan's shared services
   // fail with FAILED_PRECONDITION.
-  rpc StartService(StartServiceRequest) returns (StartServiceResponse);
+  rpc StartService(StartServiceRequest) returns (StartServiceResponse) {
+    option (toshi.permission) = "services.write";
+  }
 
   // StopService stops a service: its workload moves back to CREATED and
   // its live run is stopped. Stopping a service that is not started
   // returns it as it is.
-  rpc StopService(StopServiceRequest) returns (StopServiceResponse);
+  rpc StopService(StopServiceRequest) returns (StopServiceResponse) {
+    option (toshi.permission) = "services.write";
+  }
 
   // SetServiceMode sets a service's mode. A started service stays
   // started: set to ON_DEMAND, it sleeps once it is idle; set to
   // ALWAYS_ON while asleep, its next run is queued.
-  rpc SetServiceMode(SetServiceModeRequest) returns (SetServiceModeResponse);
+  rpc SetServiceMode(SetServiceModeRequest) returns (SetServiceModeResponse) {
+    option (toshi.permission) = "services.write";
+  }
 
   // WakeService wakes a started on-demand service that is asleep: its
   // workload moves from CREATED to QUEUED and a run is queued, placed as a
@@ -267,7 +334,9 @@ service WorkloadService {
   // to be ready: its ServiceRun's ready_at says when it is. Waking a
   // started always-on service returns it as it is; a service that is not
   // started fails with FAILED_PRECONDITION.
-  rpc WakeService(WakeServiceRequest) returns (WakeServiceResponse);
+  rpc WakeService(WakeServiceRequest) returns (WakeServiceResponse) {
+    option (toshi.permission) = "services.write";
+  }
 
   // HoldService takes or renews the caller's hold on a started service:
   // while any hold is live, an on-demand service does not sleep, and a
@@ -276,37 +345,51 @@ service WorkloadService {
   // it. A hold gives no access to the service. A service that is not
   // started fails with FAILED_PRECONDITION, and a time to live above an
   // hour with INVALID_ARGUMENT.
-  rpc HoldService(HoldServiceRequest) returns (HoldServiceResponse);
+  rpc HoldService(HoldServiceRequest) returns (HoldServiceResponse) {
+    option (toshi.permission) = "services.write";
+  }
 
   // ReleaseService drops the caller's hold on a service. Releasing a hold
   // the caller does not have returns the service as it is.
-  rpc ReleaseService(ReleaseServiceRequest) returns (ReleaseServiceResponse);
+  rpc ReleaseService(ReleaseServiceRequest) returns (ReleaseServiceResponse) {
+    option (toshi.permission) = "services.write";
+  }
 
   // ListServiceRuns returns a service's runs, the newest first: each run
   // is a job on a host, of the revision that was current when it was
   // queued.
   //
   // A page holds 20 runs when page_size is zero, and 100 at most.
-  rpc ListServiceRuns(ListServiceRunsRequest) returns (ListServiceRunsResponse);
+  rpc ListServiceRuns(ListServiceRunsRequest) returns (ListServiceRunsResponse) {
+    option (toshi.permission) = "services.read";
+  }
 
   // ListEvents returns the events after a cursor, oldest first, a page at a
   // time, for a client that polls or catches up after downtime.
   //
   // A page holds 50 events when page_size is zero, and 500 at most.
-  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse);
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse) {
+    option (toshi.permission) = "workloads.read";
+  }
 
   // WatchEvents streams the events after a cursor, then each new event as
   // it is written, for a client that stays connected.
-  rpc WatchEvents(WatchEventsRequest) returns (stream WatchEventsResponse);
+  rpc WatchEvents(WatchEventsRequest) returns (stream WatchEventsResponse) {
+    option (toshi.permission) = "workloads.read";
+  }
 
   // GetOperation returns one operation. An unknown ID fails with NOT_FOUND.
-  rpc GetOperation(GetOperationRequest) returns (GetOperationResponse);
+  rpc GetOperation(GetOperationRequest) returns (GetOperationResponse) {
+    option (toshi.permission) = "workloads.read";
+  }
 
   // WaitOperation blocks until the operation is done or the bound passes,
   // whichever is first, and returns it. Passing the bound is not an error:
   // the operation comes back not done, and the caller asks again. The server
   // may wait less than the bound asked for.
-  rpc WaitOperation(WaitOperationRequest) returns (WaitOperationResponse);
+  rpc WaitOperation(WaitOperationRequest) returns (WaitOperationResponse) {
+    option (toshi.permission) = "workloads.read";
+  }
 }
 
 message CreateJobRequest {

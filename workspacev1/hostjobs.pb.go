@@ -7,6 +7,7 @@
 package workspacev1
 
 import (
+	_ "github.com/toshicloud/toshi-api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1987,7 +1988,7 @@ var File_toshi_workspace_v1_hostjobs_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/hostjobs.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcc\x01\n" +
+	"!toshi/workspace/v1/hostjobs.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xcc\x01\n" +
 	"\x13ListHostJobsRequest\x128\n" +
 	"\x06states\x18\x01 \x03(\x0e2 .toshi.workspace.v1.HostJobStateR\x06states\x12\x1e\n" +
 	"\n" +
@@ -2181,16 +2182,20 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x19HOST_JOB_KIND_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11HOST_JOB_KIND_JOB\x10\x01\x12\x19\n" +
 	"\x15HOST_JOB_KIND_SANDBOX\x10\x02\x12\x19\n" +
-	"\x15HOST_JOB_KIND_SERVICE\x10\x032\x8d\x06\n" +
-	"\x0eHostJobService\x12a\n" +
-	"\fListHostJobs\x12'.toshi.workspace.v1.ListHostJobsRequest\x1a(.toshi.workspace.v1.ListHostJobsResponse\x12[\n" +
+	"\x15HOST_JOB_KIND_SERVICE\x10\x032\x85\a\n" +
+	"\x0eHostJobService\x12q\n" +
+	"\fListHostJobs\x12'.toshi.workspace.v1.ListHostJobsRequest\x1a(.toshi.workspace.v1.ListHostJobsResponse\"\x0e\xc2\xf3\x18\n" +
+	"hosts.read\x12k\n" +
 	"\n" +
-	"GetHostJob\x12%.toshi.workspace.v1.GetHostJobRequest\x1a&.toshi.workspace.v1.GetHostJobResponse\x12d\n" +
-	"\rCancelHostJob\x12(.toshi.workspace.v1.CancelHostJobRequest\x1a).toshi.workspace.v1.CancelHostJobResponse\x12p\n" +
-	"\x11GetHostJobFailure\x12,.toshi.workspace.v1.GetHostJobFailureRequest\x1a-.toshi.workspace.v1.GetHostJobFailureResponse\x12v\n" +
-	"\x13GetHostJobTelemetry\x12..toshi.workspace.v1.GetHostJobTelemetryRequest\x1a/.toshi.workspace.v1.GetHostJobTelemetryResponse\x12|\n" +
-	"\x15GetHostJobDebugAccess\x120.toshi.workspace.v1.GetHostJobDebugAccessRequest\x1a1.toshi.workspace.v1.GetHostJobDebugAccessResponse\x12m\n" +
-	"\x10StopHostJobDebug\x12+.toshi.workspace.v1.StopHostJobDebugRequest\x1a,.toshi.workspace.v1.StopHostJobDebugResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"GetHostJob\x12%.toshi.workspace.v1.GetHostJobRequest\x1a&.toshi.workspace.v1.GetHostJobResponse\"\x0e\xc2\xf3\x18\n" +
+	"hosts.read\x12u\n" +
+	"\rCancelHostJob\x12(.toshi.workspace.v1.CancelHostJobRequest\x1a).toshi.workspace.v1.CancelHostJobResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12\x80\x01\n" +
+	"\x11GetHostJobFailure\x12,.toshi.workspace.v1.GetHostJobFailureRequest\x1a-.toshi.workspace.v1.GetHostJobFailureResponse\"\x0e\xc2\xf3\x18\n" +
+	"hosts.read\x12\x86\x01\n" +
+	"\x13GetHostJobTelemetry\x12..toshi.workspace.v1.GetHostJobTelemetryRequest\x1a/.toshi.workspace.v1.GetHostJobTelemetryResponse\"\x0e\xc2\xf3\x18\n" +
+	"hosts.read\x12\x8f\x01\n" +
+	"\x15GetHostJobDebugAccess\x120.toshi.workspace.v1.GetHostJobDebugAccessRequest\x1a1.toshi.workspace.v1.GetHostJobDebugAccessResponse\"\x11\xc2\xf3\x18\rdebug.connect\x12~\n" +
+	"\x10StopHostJobDebug\x12+.toshi.workspace.v1.StopHostJobDebugRequest\x1a,.toshi.workspace.v1.StopHostJobDebugResponse\"\x0f\xc2\xf3\x18\vdebug.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_hostjobs_proto_rawDescOnce sync.Once

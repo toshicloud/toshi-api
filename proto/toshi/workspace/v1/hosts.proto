@@ -4,6 +4,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 import "toshi/workspace/v1/tokens.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
@@ -23,46 +24,62 @@ service HostService {
   // by ID.
   //
   // A page holds 100 hosts when page_size is zero, and 1000 at most.
-  rpc ListHosts(ListHostsRequest) returns (ListHostsResponse);
+  rpc ListHosts(ListHostsRequest) returns (ListHostsResponse) {
+    option (toshi.permission) = "hosts.read";
+  }
   // ListHostStorage returns the workspace's volumes a host holds, ordered by
   // volume ID: those it keeps the warm copy of, and those a host job
   // assigned to it has claimed. An unknown host fails with NOT_FOUND.
   //
   // A page holds 100 volumes when page_size is zero, and 1000 at most.
-  rpc ListHostStorage(ListHostStorageRequest) returns (ListHostStorageResponse);
+  rpc ListHostStorage(ListHostStorageRequest) returns (ListHostStorageResponse) {
+    option (toshi.permission) = "hosts.read";
+  }
   // ListHostAlerts returns the active alerts of the workspace's hosts:
   // memory_held, egress_changed and agent_version_skew, one per kind,
   // ordered by kind.
   //
   // A page holds 100 alerts when page_size is zero, and 1000 at most.
-  rpc ListHostAlerts(ListHostAlertsRequest) returns (ListHostAlertsResponse);
+  rpc ListHostAlerts(ListHostAlertsRequest) returns (ListHostAlertsResponse) {
+    option (toshi.permission) = "hosts.read";
+  }
   // SetHostState drains a host or puts it back in service. Only
   // HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
   // fails with NOT_FOUND.
-  rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse);
+  rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse) {
+    option (toshi.permission) = "hosts.write";
+  }
   // RetireHost removes a host that holds no assigned, starting or running
   // host job; otherwise it fails with FAILED_PRECONDITION (drain it first).
   // Its agent, if still running, registers again with its enrollment
   // token.
-  rpc RetireHost(RetireHostRequest) returns (RetireHostResponse);
+  rpc RetireHost(RetireHostRequest) returns (RetireHostResponse) {
+    option (toshi.permission) = "hosts.write";
+  }
   // CreateCloudHost registers a cloud host the control plane drives in the
   // workspace's AWS or Google Cloud account. When cloud hosts are not
   // configured on the control plane the call fails with
   // FAILED_PRECONDITION, as it does for a workspace that is not active, and
   // a workspace at its plan's own-host limit fails with RESOURCE_EXHAUSTED.
-  rpc CreateCloudHost(CreateCloudHostRequest) returns (CreateCloudHostResponse);
+  rpc CreateCloudHost(CreateCloudHostRequest) returns (CreateCloudHostResponse) {
+    option (toshi.permission) = "hosts.write";
+  }
   // CheckCloudHost checks a cloud host's setup without launching anything:
   // the role can be assumed, the image is visible, the subnet routes to the
   // internet, and the role's policy allows each action Toshi calls, through
   // dry-run calls. A host that is not a cloud host fails with NOT_FOUND;
   // cloud hosts not configured on the control plane fails with
   // FAILED_PRECONDITION.
-  rpc CheckCloudHost(CheckCloudHostRequest) returns (CheckCloudHostResponse);
+  rpc CheckCloudHost(CheckCloudHostRequest) returns (CheckCloudHostResponse) {
+    option (toshi.permission) = "hosts.write";
+  }
   // CreateEnrollmentToken makes an enrollment token for the workspace and
   // returns it with its value; a host that registers with it is owned by
   // the workspace. The token does not expire and the other tokens are
   // untouched. A closed workspace fails with FAILED_PRECONDITION.
-  rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse);
+  rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse) {
+    option (toshi.permission) = "hosts.write";
+  }
 }
 
 message ListHostsRequest {

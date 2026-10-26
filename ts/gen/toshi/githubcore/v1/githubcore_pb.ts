@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/githubcore/v1/githubcore.proto.
  */
 export const file_toshi_githubcore_v1_githubcore: GenFile = /*@__PURE__*/
-  fileDesc("CiR0b3NoaS9naXRodWJjb3JlL3YxL2dpdGh1YmNvcmUucHJvdG8SE3Rvc2hpLmdpdGh1YmNvcmUudjEiEwoRQWRtaXRHcmFudFJlcXVlc3QirAIKEkFkbWl0R3JhbnRSZXNwb25zZRIMCgRjYWxsGAEgASgJEhIKCmFjdG9yX2tpbmQYAiABKAkSEAoIYWN0b3JfaWQYAyABKAkSDwoHdGVuYW50cxgEIAMoCRIOCgZqb2JfaWQYBSABKAkSDgoGdGVuYW50GAYgASgJEhIKCnJlcG9zaXRvcnkYByABKAkSEAoIYXBwcm92ZWQYCCABKAgSFwoPaW5zdGFsbGF0aW9uX2lkGAkgASgDEhIKCmdlbmVyYXRpb24YCiABKAMSLgoKY3JlYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKZXhwaXJlc19hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiHwoNR2V0Sm9iUmVxdWVzdBIOCgZqb2JfaWQYASABKAkiNwoOR2V0Sm9iUmVzcG9uc2USJQoDam9iGAEgASgLMhgudG9zaGkuZ2l0aHViY29yZS52MS5Kb2IirwEKA0pvYhIKCgJpZBgBIAEoCRIOCgZ0ZW5hbnQYAiABKAkSEgoKcmVwb3NpdG9yeRgDIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYBCABKAMSFwoPd29ya2Zsb3dfam9iX2lkGAUgASgDEg0KBXN0YXRlGAYgASgJEhIKCmNvbmNsdXNpb24YByABKAkSDQoFZXJyb3IYCCABKAkSFAoMZmFpbGluZ19zdGVwGAkgASgJIjkKGUZpbGxKb2JGYWlsaW5nU3RlcFJlcXVlc3QSDgoGam9iX2lkGAEgASgJEgwKBHN0ZXAYAiABKAkiHAoaRmlsbEpvYkZhaWxpbmdTdGVwUmVzcG9uc2UiWgohTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXNSZXF1ZXN0Eg4KBnRlbmFudBgBIAEoCRIRCglwYWdlX3NpemUYAiABKAUSEgoKcGFnZV90b2tlbhgDIAEoCSK5AQoiTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXNSZXNwb25zZRI/CgxyZXBvc2l0b3JpZXMYASADKAsyKS50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VSZXBvc2l0b3J5EjkKBGtlcHQYAiADKAsyKy50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VLZXB0QXBwcm92YWwSFwoPbmV4dF9wYWdlX3Rva2VuGAMgASgJIo8DChRPcGVuU291cmNlUmVwb3NpdG9yeRIOCgZ0ZW5hbnQYASABKAkSEgoKcmVwb3NpdG9yeRgCIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYAyABKAMSDQoFZm91bmQYBCABKAgSDwoHcHJpdmF0ZRgFIAEoCBIPCgdzcGR4X2lkGAYgASgJEjMKD3JlcG9fY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY2hlY2tlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMYXR0ZW1wdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgVlcnJvchgKIAEoCRIQCghhcHByb3ZhbBgLIAEoCRI3ChNhcHByb3ZhbF9jaGFuZ2VkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIYChBmb3JrX3ByX2FwcHJvdmFsGA0gASgJIl0KFk9wZW5Tb3VyY2VLZXB0QXBwcm92YWwSEgoKcmVwb3NpdG9yeRgBIAEoCRIvCgthcHByb3ZlZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiRAocU2V0T3BlblNvdXJjZUFwcHJvdmFsUmVxdWVzdBISCgpyZXBvc2l0b3J5GAEgASgJEhAKCGFwcHJvdmVkGAIgASgIIpsBCh1TZXRPcGVuU291cmNlQXBwcm92YWxSZXNwb25zZRI/CgxyZXBvc2l0b3JpZXMYASADKAsyKS50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VSZXBvc2l0b3J5EjkKBGtlcHQYAiABKAsyKy50b3NoaS5naXRodWJjb3JlLnYxLk9wZW5Tb3VyY2VLZXB0QXBwcm92YWwiQQoWTWFwSW5zdGFsbGF0aW9uUmVxdWVzdBIXCg9pbnN0YWxsYXRpb25faWQYASABKAMSDgoGdGVuYW50GAIgASgJIhkKF01hcEluc3RhbGxhdGlvblJlc3BvbnNlIlUKHlB1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrUmVxdWVzdBISCgpnZW5lcmF0aW9uGAEgASgDEg4KBnJlc3VsdBgCIAEoCRIPCgdsYWNraW5nGAMgAygDIjQKH1B1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrUmVzcG9uc2USEQoJcHVibGlzaGVkGAEgASgIMsEGChFHaXRIdWJDb3JlU2VydmljZRJdCgpBZG1pdEdyYW50EiYudG9zaGkuZ2l0aHViY29yZS52MS5BZG1pdEdyYW50UmVxdWVzdBonLnRvc2hpLmdpdGh1YmNvcmUudjEuQWRtaXRHcmFudFJlc3BvbnNlElEKBkdldEpvYhIiLnRvc2hpLmdpdGh1YmNvcmUudjEuR2V0Sm9iUmVxdWVzdBojLnRvc2hpLmdpdGh1YmNvcmUudjEuR2V0Sm9iUmVzcG9uc2USdQoSRmlsbEpvYkZhaWxpbmdTdGVwEi4udG9zaGkuZ2l0aHViY29yZS52MS5GaWxsSm9iRmFpbGluZ1N0ZXBSZXF1ZXN0Gi8udG9zaGkuZ2l0aHViY29yZS52MS5GaWxsSm9iRmFpbGluZ1N0ZXBSZXNwb25zZRKNAQoaTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXMSNi50b3NoaS5naXRodWJjb3JlLnYxLkxpc3RPcGVuU291cmNlUmVwb3NpdG9yaWVzUmVxdWVzdBo3LnRvc2hpLmdpdGh1YmNvcmUudjEuTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXNSZXNwb25zZRJ+ChVTZXRPcGVuU291cmNlQXBwcm92YWwSMS50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlcXVlc3QaMi50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlc3BvbnNlEmwKD01hcEluc3RhbGxhdGlvbhIrLnRvc2hpLmdpdGh1YmNvcmUudjEuTWFwSW5zdGFsbGF0aW9uUmVxdWVzdBosLnRvc2hpLmdpdGh1YmNvcmUudjEuTWFwSW5zdGFsbGF0aW9uUmVzcG9uc2UShAEKF1B1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrEjMudG9zaGkuZ2l0aHViY29yZS52MS5QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1JlcXVlc3QaNC50b3NoaS5naXRodWJjb3JlLnYxLlB1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrUmVzcG9uc2VCLlosZ2l0aHViLmNvbS90b3NoaWNsb3VkL3Rvc2hpLWFwaS9naXRodWJjb3JldjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("CiR0b3NoaS9naXRodWJjb3JlL3YxL2dpdGh1YmNvcmUucHJvdG8SE3Rvc2hpLmdpdGh1YmNvcmUudjEiEwoRQWRtaXRHcmFudFJlcXVlc3QiugIKEkFkbWl0R3JhbnRSZXNwb25zZRIMCgRjYWxsGAEgASgJEhIKCmFjdG9yX2tpbmQYAiABKAkSEAoIYWN0b3JfaWQYAyABKAkSDwoHdGVuYW50cxgEIAMoCRIOCgZqb2JfaWQYBSABKAkSDgoGdGVuYW50GAYgASgJEhIKCnJlcG9zaXRvcnkYByABKAkSEAoIYXBwcm92ZWQYCCABKAgSFwoPaW5zdGFsbGF0aW9uX2lkGAkgASgDEhIKCmdlbmVyYXRpb24YCiABKAMSLgoKY3JlYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKZXhwaXJlc19hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDAoEYXJncxgNIAEoDCJnCglHcmFudEFyZ3MSDgoGam9iX2lkGAEgASgJEhEKCXdvcmtzcGFjZRgCIAEoCRIMCgRyZXBvGAMgASgJEhAKCGFwcHJvdmVkGAQgASgIEhcKD2luc3RhbGxhdGlvbl9pZBgFIAEoAyIfCg1HZXRKb2JSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCSI3Cg5HZXRKb2JSZXNwb25zZRIlCgNqb2IYASABKAsyGC50b3NoaS5naXRodWJjb3JlLnYxLkpvYiKvAQoDSm9iEgoKAmlkGAEgASgJEg4KBnRlbmFudBgCIAEoCRISCgpyZXBvc2l0b3J5GAMgASgJEhcKD2luc3RhbGxhdGlvbl9pZBgEIAEoAxIXCg93b3JrZmxvd19qb2JfaWQYBSABKAMSDQoFc3RhdGUYBiABKAkSEgoKY29uY2x1c2lvbhgHIAEoCRINCgVlcnJvchgIIAEoCRIUCgxmYWlsaW5nX3N0ZXAYCSABKAkiOQoZRmlsbEpvYkZhaWxpbmdTdGVwUmVxdWVzdBIOCgZqb2JfaWQYASABKAkSDAoEc3RlcBgCIAEoCSIcChpGaWxsSm9iRmFpbGluZ1N0ZXBSZXNwb25zZSJaCiFMaXN0T3BlblNvdXJjZVJlcG9zaXRvcmllc1JlcXVlc3QSDgoGdGVuYW50GAEgASgJEhEKCXBhZ2Vfc2l6ZRgCIAEoBRISCgpwYWdlX3Rva2VuGAMgASgJIrkBCiJMaXN0T3BlblNvdXJjZVJlcG9zaXRvcmllc1Jlc3BvbnNlEj8KDHJlcG9zaXRvcmllcxgBIAMoCzIpLnRvc2hpLmdpdGh1YmNvcmUudjEuT3BlblNvdXJjZVJlcG9zaXRvcnkSOQoEa2VwdBgCIAMoCzIrLnRvc2hpLmdpdGh1YmNvcmUudjEuT3BlblNvdXJjZUtlcHRBcHByb3ZhbBIXCg9uZXh0X3BhZ2VfdG9rZW4YAyABKAkijwMKFE9wZW5Tb3VyY2VSZXBvc2l0b3J5Eg4KBnRlbmFudBgBIAEoCRISCgpyZXBvc2l0b3J5GAIgASgJEhcKD2luc3RhbGxhdGlvbl9pZBgDIAEoAxINCgVmb3VuZBgEIAEoCBIPCgdwcml2YXRlGAUgASgIEg8KB3NwZHhfaWQYBiABKAkSMwoPcmVwb19jcmVhdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpjaGVja2VkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxhdHRlbXB0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBWVycm9yGAogASgJEhAKCGFwcHJvdmFsGAsgASgJEjcKE2FwcHJvdmFsX2NoYW5nZWRfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhgKEGZvcmtfcHJfYXBwcm92YWwYDSABKAkiXQoWT3BlblNvdXJjZUtlcHRBcHByb3ZhbBISCgpyZXBvc2l0b3J5GAEgASgJEi8KC2FwcHJvdmVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJEChxTZXRPcGVuU291cmNlQXBwcm92YWxSZXF1ZXN0EhIKCnJlcG9zaXRvcnkYASABKAkSEAoIYXBwcm92ZWQYAiABKAgimwEKHVNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlc3BvbnNlEj8KDHJlcG9zaXRvcmllcxgBIAMoCzIpLnRvc2hpLmdpdGh1YmNvcmUudjEuT3BlblNvdXJjZVJlcG9zaXRvcnkSOQoEa2VwdBgCIAEoCzIrLnRvc2hpLmdpdGh1YmNvcmUudjEuT3BlblNvdXJjZUtlcHRBcHByb3ZhbCJBChZNYXBJbnN0YWxsYXRpb25SZXF1ZXN0EhcKD2luc3RhbGxhdGlvbl9pZBgBIAEoAxIOCgZ0ZW5hbnQYAiABKAkiGQoXTWFwSW5zdGFsbGF0aW9uUmVzcG9uc2UiVQoeUHVibGlzaEpvYkRlbGl2ZXJ5Q2hlY2tSZXF1ZXN0EhIKCmdlbmVyYXRpb24YASABKAMSDgoGcmVzdWx0GAIgASgJEg8KB2xhY2tpbmcYAyADKAMiNAofUHVibGlzaEpvYkRlbGl2ZXJ5Q2hlY2tSZXNwb25zZRIRCglwdWJsaXNoZWQYASABKAgywQYKEUdpdEh1YkNvcmVTZXJ2aWNlEl0KCkFkbWl0R3JhbnQSJi50b3NoaS5naXRodWJjb3JlLnYxLkFkbWl0R3JhbnRSZXF1ZXN0GicudG9zaGkuZ2l0aHViY29yZS52MS5BZG1pdEdyYW50UmVzcG9uc2USUQoGR2V0Sm9iEiIudG9zaGkuZ2l0aHViY29yZS52MS5HZXRKb2JSZXF1ZXN0GiMudG9zaGkuZ2l0aHViY29yZS52MS5HZXRKb2JSZXNwb25zZRJ1ChJGaWxsSm9iRmFpbGluZ1N0ZXASLi50b3NoaS5naXRodWJjb3JlLnYxLkZpbGxKb2JGYWlsaW5nU3RlcFJlcXVlc3QaLy50b3NoaS5naXRodWJjb3JlLnYxLkZpbGxKb2JGYWlsaW5nU3RlcFJlc3BvbnNlEo0BChpMaXN0T3BlblNvdXJjZVJlcG9zaXRvcmllcxI2LnRvc2hpLmdpdGh1YmNvcmUudjEuTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXNSZXF1ZXN0GjcudG9zaGkuZ2l0aHViY29yZS52MS5MaXN0T3BlblNvdXJjZVJlcG9zaXRvcmllc1Jlc3BvbnNlEn4KFVNldE9wZW5Tb3VyY2VBcHByb3ZhbBIxLnRvc2hpLmdpdGh1YmNvcmUudjEuU2V0T3BlblNvdXJjZUFwcHJvdmFsUmVxdWVzdBoyLnRvc2hpLmdpdGh1YmNvcmUudjEuU2V0T3BlblNvdXJjZUFwcHJvdmFsUmVzcG9uc2USbAoPTWFwSW5zdGFsbGF0aW9uEisudG9zaGkuZ2l0aHViY29yZS52MS5NYXBJbnN0YWxsYXRpb25SZXF1ZXN0GiwudG9zaGkuZ2l0aHViY29yZS52MS5NYXBJbnN0YWxsYXRpb25SZXNwb25zZRKEAQoXUHVibGlzaEpvYkRlbGl2ZXJ5Q2hlY2sSMy50b3NoaS5naXRodWJjb3JlLnYxLlB1Ymxpc2hKb2JEZWxpdmVyeUNoZWNrUmVxdWVzdBo0LnRvc2hpLmdpdGh1YmNvcmUudjEuUHVibGlzaEpvYkRlbGl2ZXJ5Q2hlY2tSZXNwb25zZUIuWixnaXRodWIuY29tL3Rvc2hpY2xvdWQvdG9zaGktYXBpL2dpdGh1YmNvcmV2MWIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message toshi.githubcore.v1.AdmitGrantRequest
@@ -70,8 +70,8 @@ export type AdmitGrantResponse = Message<"toshi.githubcore.v1.AdmitGrantResponse
   tenants: string[];
 
   /**
-   * job_id, workspace, repository, approved and installation_id are the call's
-   * arguments the grant binds.
+   * Deprecated: job_id, tenant, repository, approved and installation_id
+   * are no longer set; args carries the arguments the grant binds.
    *
    * @generated from field: string job_id = 5;
    */
@@ -113,6 +113,15 @@ export type AdmitGrantResponse = Message<"toshi.githubcore.v1.AdmitGrantResponse
    * @generated from field: google.protobuf.Timestamp expires_at = 12;
    */
   expiresAt?: Timestamp | undefined;
+
+  /**
+   * args are the call's arguments the grant binds, as the product encoded
+   * them: for the GitHub product a GrantArgs in its JSON form, with the
+   * proto field names as keys.
+   *
+   * @generated from field: bytes args = 13;
+   */
+  args: Uint8Array;
 };
 
 /**
@@ -148,8 +157,8 @@ export type AdmitGrantResponseJson = {
   tenants?: string[];
 
   /**
-   * job_id, workspace, repository, approved and installation_id are the call's
-   * arguments the grant binds.
+   * Deprecated: job_id, tenant, repository, approved and installation_id
+   * are no longer set; args carries the arguments the grant binds.
    *
    * @generated from field: string job_id = 5;
    */
@@ -191,6 +200,15 @@ export type AdmitGrantResponseJson = {
    * @generated from field: google.protobuf.Timestamp expires_at = 12;
    */
   expiresAt?: TimestampJson;
+
+  /**
+   * args are the call's arguments the grant binds, as the product encoded
+   * them: for the GitHub product a GrantArgs in its JSON form, with the
+   * proto field names as keys.
+   *
+   * @generated from field: bytes args = 13;
+   */
+  args?: string;
 };
 
 /**
@@ -199,6 +217,105 @@ export type AdmitGrantResponseJson = {
  */
 export const AdmitGrantResponseSchema: GenMessage<AdmitGrantResponse, {jsonType: AdmitGrantResponseJson}> = /*@__PURE__*/
   messageDesc(file_toshi_githubcore_v1_githubcore, 1);
+
+/**
+ * GrantArgs are the arguments a GitHub product grant binds. The product
+ * encodes them in a grant's args as JSON with the proto field names as keys,
+ * and the core decodes them to compare each with the call's; a field the
+ * call does not bind is left at its zero value.
+ *
+ * @generated from message toshi.githubcore.v1.GrantArgs
+ */
+export type GrantArgs = Message<"toshi.githubcore.v1.GrantArgs"> & {
+  /**
+   * job_id is the job GetJob reads and FillJobFailingStep fills.
+   *
+   * @generated from field: string job_id = 1;
+   */
+  jobId: string;
+
+  /**
+   * workspace is the workspace ListOpenSourceRepositories lists and
+   * MapInstallation maps to.
+   *
+   * @generated from field: string workspace = 2;
+   */
+  workspace: string;
+
+  /**
+   * repo is the repository SetOpenSourceApproval sets, as owner/name.
+   *
+   * @generated from field: string repo = 3;
+   */
+  repo: string;
+
+  /**
+   * approved is the approval SetOpenSourceApproval sets.
+   *
+   * @generated from field: bool approved = 4;
+   */
+  approved: boolean;
+
+  /**
+   * installation_id is the installation MapInstallation maps.
+   *
+   * @generated from field: int64 installation_id = 5;
+   */
+  installationId: bigint;
+};
+
+/**
+ * GrantArgs are the arguments a GitHub product grant binds. The product
+ * encodes them in a grant's args as JSON with the proto field names as keys,
+ * and the core decodes them to compare each with the call's; a field the
+ * call does not bind is left at its zero value.
+ *
+ * @generated from message toshi.githubcore.v1.GrantArgs
+ */
+export type GrantArgsJson = {
+  /**
+   * job_id is the job GetJob reads and FillJobFailingStep fills.
+   *
+   * @generated from field: string job_id = 1;
+   */
+  jobId?: string;
+
+  /**
+   * workspace is the workspace ListOpenSourceRepositories lists and
+   * MapInstallation maps to.
+   *
+   * @generated from field: string workspace = 2;
+   */
+  workspace?: string;
+
+  /**
+   * repo is the repository SetOpenSourceApproval sets, as owner/name.
+   *
+   * @generated from field: string repo = 3;
+   */
+  repo?: string;
+
+  /**
+   * approved is the approval SetOpenSourceApproval sets.
+   *
+   * @generated from field: bool approved = 4;
+   */
+  approved?: boolean;
+
+  /**
+   * installation_id is the installation MapInstallation maps.
+   *
+   * @generated from field: int64 installation_id = 5;
+   */
+  installationId?: string;
+};
+
+/**
+ * Describes the message toshi.githubcore.v1.GrantArgs.
+ * Use `create(GrantArgsSchema)` to create a new message.
+ */
+export const GrantArgsSchema: GenMessage<GrantArgs, {jsonType: GrantArgsJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_githubcore_v1_githubcore, 2);
 
 /**
  * @generated from message toshi.githubcore.v1.GetJobRequest
@@ -225,7 +342,7 @@ export type GetJobRequestJson = {
  * Use `create(GetJobRequestSchema)` to create a new message.
  */
 export const GetJobRequestSchema: GenMessage<GetJobRequest, {jsonType: GetJobRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 2);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 3);
 
 /**
  * @generated from message toshi.githubcore.v1.GetJobResponse
@@ -252,7 +369,7 @@ export type GetJobResponseJson = {
  * Use `create(GetJobResponseSchema)` to create a new message.
  */
 export const GetJobResponseSchema: GenMessage<GetJobResponse, {jsonType: GetJobResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 3);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 4);
 
 /**
  * Job is what the adapter reads of a job.
@@ -363,7 +480,7 @@ export type JobJson = {
  * Use `create(JobSchema)` to create a new message.
  */
 export const JobSchema: GenMessage<Job, {jsonType: JobJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 4);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 5);
 
 /**
  * @generated from message toshi.githubcore.v1.FillJobFailingStepRequest
@@ -400,7 +517,7 @@ export type FillJobFailingStepRequestJson = {
  * Use `create(FillJobFailingStepRequestSchema)` to create a new message.
  */
 export const FillJobFailingStepRequestSchema: GenMessage<FillJobFailingStepRequest, {jsonType: FillJobFailingStepRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 5);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 6);
 
 /**
  * @generated from message toshi.githubcore.v1.FillJobFailingStepResponse
@@ -419,7 +536,7 @@ export type FillJobFailingStepResponseJson = {
  * Use `create(FillJobFailingStepResponseSchema)` to create a new message.
  */
 export const FillJobFailingStepResponseSchema: GenMessage<FillJobFailingStepResponse, {jsonType: FillJobFailingStepResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 6);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 7);
 
 /**
  * @generated from message toshi.githubcore.v1.ListOpenSourceRepositoriesRequest
@@ -480,7 +597,7 @@ export type ListOpenSourceRepositoriesRequestJson = {
  * Use `create(ListOpenSourceRepositoriesRequestSchema)` to create a new message.
  */
 export const ListOpenSourceRepositoriesRequestSchema: GenMessage<ListOpenSourceRepositoriesRequest, {jsonType: ListOpenSourceRepositoriesRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 7);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 8);
 
 /**
  * @generated from message toshi.githubcore.v1.ListOpenSourceRepositoriesResponse
@@ -535,7 +652,7 @@ export type ListOpenSourceRepositoriesResponseJson = {
  * Use `create(ListOpenSourceRepositoriesResponseSchema)` to create a new message.
  */
 export const ListOpenSourceRepositoriesResponseSchema: GenMessage<ListOpenSourceRepositoriesResponse, {jsonType: ListOpenSourceRepositoriesResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 8);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 9);
 
 /**
  * OpenSourceRepository is one workspace's row of the open-source gate.
@@ -686,7 +803,7 @@ export type OpenSourceRepositoryJson = {
  * Use `create(OpenSourceRepositorySchema)` to create a new message.
  */
 export const OpenSourceRepositorySchema: GenMessage<OpenSourceRepository, {jsonType: OpenSourceRepositoryJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 9);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 10);
 
 /**
  * OpenSourceKeptApproval is an approval of a repository no workspace has a
@@ -729,7 +846,7 @@ export type OpenSourceKeptApprovalJson = {
  * Use `create(OpenSourceKeptApprovalSchema)` to create a new message.
  */
 export const OpenSourceKeptApprovalSchema: GenMessage<OpenSourceKeptApproval, {jsonType: OpenSourceKeptApprovalJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 10);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 11);
 
 /**
  * @generated from message toshi.githubcore.v1.SetOpenSourceApprovalRequest
@@ -766,7 +883,7 @@ export type SetOpenSourceApprovalRequestJson = {
  * Use `create(SetOpenSourceApprovalRequestSchema)` to create a new message.
  */
 export const SetOpenSourceApprovalRequestSchema: GenMessage<SetOpenSourceApprovalRequest, {jsonType: SetOpenSourceApprovalRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 11);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 12);
 
 /**
  * @generated from message toshi.githubcore.v1.SetOpenSourceApprovalResponse
@@ -809,7 +926,7 @@ export type SetOpenSourceApprovalResponseJson = {
  * Use `create(SetOpenSourceApprovalResponseSchema)` to create a new message.
  */
 export const SetOpenSourceApprovalResponseSchema: GenMessage<SetOpenSourceApprovalResponse, {jsonType: SetOpenSourceApprovalResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 12);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 13);
 
 /**
  * @generated from message toshi.githubcore.v1.MapInstallationRequest
@@ -846,7 +963,7 @@ export type MapInstallationRequestJson = {
  * Use `create(MapInstallationRequestSchema)` to create a new message.
  */
 export const MapInstallationRequestSchema: GenMessage<MapInstallationRequest, {jsonType: MapInstallationRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 13);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 14);
 
 /**
  * @generated from message toshi.githubcore.v1.MapInstallationResponse
@@ -865,7 +982,7 @@ export type MapInstallationResponseJson = {
  * Use `create(MapInstallationResponseSchema)` to create a new message.
  */
 export const MapInstallationResponseSchema: GenMessage<MapInstallationResponse, {jsonType: MapInstallationResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 14);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 15);
 
 /**
  * @generated from message toshi.githubcore.v1.PublishJobDeliveryCheckRequest
@@ -922,7 +1039,7 @@ export type PublishJobDeliveryCheckRequestJson = {
  * Use `create(PublishJobDeliveryCheckRequestSchema)` to create a new message.
  */
 export const PublishJobDeliveryCheckRequestSchema: GenMessage<PublishJobDeliveryCheckRequest, {jsonType: PublishJobDeliveryCheckRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 15);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 16);
 
 /**
  * @generated from message toshi.githubcore.v1.PublishJobDeliveryCheckResponse
@@ -955,7 +1072,7 @@ export type PublishJobDeliveryCheckResponseJson = {
  * Use `create(PublishJobDeliveryCheckResponseSchema)` to create a new message.
  */
 export const PublishJobDeliveryCheckResponseSchema: GenMessage<PublishJobDeliveryCheckResponse, {jsonType: PublishJobDeliveryCheckResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_githubcore_v1_githubcore, 16);
+  messageDesc(file_toshi_githubcore_v1_githubcore, 17);
 
 /**
  * GitHubCoreService is served by the control plane to the GitHub product's
@@ -972,7 +1089,9 @@ export const PublishJobDeliveryCheckResponseSchema: GenMessage<PublishJobDeliver
  * github; the grant is of github, open, and of the assertion's call; the
  * core call is one the grant's call allows; for every call but AdmitGrant,
  * the grant was admitted with the call's nonce; and every argument the
- * grant binds equals the grant's. The error does not say which rule
+ * grant binds equals the grant's. The arguments a grant binds are the
+ * product's: the GitHub product encodes them, and the core reads them only
+ * to compare them with the call's. The error does not say which rule
  * refused. A refusal with a valid product token is recorded in the audit
  * log as product.call_refused, with the call and the reason.
  *

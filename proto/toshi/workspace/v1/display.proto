@@ -4,6 +4,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -35,21 +36,29 @@ service DisplayService {
   // returns the token: it returns the session the first call opened, with
   // replayed set and no token, and opens nothing. Open another session for
   // a new token.
-  rpc OpenDisplaySession(OpenDisplaySessionRequest) returns (OpenDisplaySessionResponse);
+  rpc OpenDisplaySession(OpenDisplaySessionRequest) returns (OpenDisplaySessionResponse) {
+    option (toshi.permission) = "displays.write";
+  }
 
   // GetDisplaySession returns one session. An unknown ID fails with
   // NOT_FOUND.
-  rpc GetDisplaySession(GetDisplaySessionRequest) returns (GetDisplaySessionResponse);
+  rpc GetDisplaySession(GetDisplaySessionRequest) returns (GetDisplaySessionResponse) {
+    option (toshi.permission) = "displays.read";
+  }
 
   // ListDisplaySessions returns the workspace's sessions, the newest
   // first.
   //
   // A page holds 50 sessions when page_size is zero, and 200 at most.
-  rpc ListDisplaySessions(ListDisplaySessionsRequest) returns (ListDisplaySessionsResponse);
+  rpc ListDisplaySessions(ListDisplaySessionsRequest) returns (ListDisplaySessionsResponse) {
+    option (toshi.permission) = "displays.read";
+  }
 
   // CloseDisplaySession closes a session and ends its viewer's connection.
   // Closing a closed session changes nothing.
-  rpc CloseDisplaySession(CloseDisplaySessionRequest) returns (CloseDisplaySessionResponse);
+  rpc CloseDisplaySession(CloseDisplaySessionRequest) returns (CloseDisplaySessionResponse) {
+    option (toshi.permission) = "displays.write";
+  }
 
   // The next four drive a session from the API, the input path of a
   // program that works a desktop without a browser automation framework
@@ -65,16 +74,22 @@ service DisplayService {
 
   // SendDisplayKeys presses and releases keys on the screen. A view-only
   // session refuses it with FAILED_PRECONDITION.
-  rpc SendDisplayKeys(SendDisplayKeysRequest) returns (SendDisplayKeysResponse);
+  rpc SendDisplayKeys(SendDisplayKeysRequest) returns (SendDisplayKeysResponse) {
+    option (toshi.permission) = "displays.write";
+  }
 
   // SendDisplayPointer moves the pointer and presses or releases its
   // buttons. A view-only session refuses it with FAILED_PRECONDITION.
-  rpc SendDisplayPointer(SendDisplayPointerRequest) returns (SendDisplayPointerResponse);
+  rpc SendDisplayPointer(SendDisplayPointerRequest) returns (SendDisplayPointerResponse) {
+    option (toshi.permission) = "displays.write";
+  }
 
   // SetDisplayClipboard sets the screen's clipboard. It reaches the
   // guest's own clipboard only where the guest image runs a clipboard
   // agent. A view-only session refuses it with FAILED_PRECONDITION.
-  rpc SetDisplayClipboard(SetDisplayClipboardRequest) returns (SetDisplayClipboardResponse);
+  rpc SetDisplayClipboard(SetDisplayClipboardRequest) returns (SetDisplayClipboardResponse) {
+    option (toshi.permission) = "displays.write";
+  }
 
   // TakeDisplayScreenshot returns the whole screen as it is now, as a
   // PNG, once every pixel of a new frame has arrived: within the call's
@@ -82,7 +97,9 @@ service DisplayService {
   // than 3840 x 2160 fails with FAILED_PRECONDITION; the control plane's
   // memory for frames, shared by its sessions, with RESOURCE_EXHAUSTED. A
   // view-only session takes them too.
-  rpc TakeDisplayScreenshot(TakeDisplayScreenshotRequest) returns (TakeDisplayScreenshotResponse);
+  rpc TakeDisplayScreenshot(TakeDisplayScreenshotRequest) returns (TakeDisplayScreenshotResponse) {
+    option (toshi.permission) = "displays.write";
+  }
 }
 
 // DisplayMode is what a session's viewer may do.

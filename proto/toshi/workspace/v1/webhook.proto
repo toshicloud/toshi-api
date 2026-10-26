@@ -4,6 +4,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -29,26 +30,36 @@ service WebhookService {
   // endpoint is owed the events written after it, from its cursor on. The
   // control plane must hold a keyring to seal the secret; without one the
   // call fails with FAILED_PRECONDITION.
-  rpc CreateWebhookEndpoint(CreateWebhookEndpointRequest) returns (CreateWebhookEndpointResponse);
+  rpc CreateWebhookEndpoint(CreateWebhookEndpointRequest) returns (CreateWebhookEndpointResponse) {
+    option (toshi.permission) = "webhooks.write";
+  }
 
   // GetWebhookEndpoint returns one endpoint. An unknown ID fails with
   // NOT_FOUND.
-  rpc GetWebhookEndpoint(GetWebhookEndpointRequest) returns (GetWebhookEndpointResponse);
+  rpc GetWebhookEndpoint(GetWebhookEndpointRequest) returns (GetWebhookEndpointResponse) {
+    option (toshi.permission) = "webhooks.read";
+  }
 
   // ListWebhookEndpoints returns the workspace's endpoints in ID order.
   //
   // A page holds 100 endpoints when page_size is zero, and 1000 at most.
-  rpc ListWebhookEndpoints(ListWebhookEndpointsRequest) returns (ListWebhookEndpointsResponse);
+  rpc ListWebhookEndpoints(ListWebhookEndpointsRequest) returns (ListWebhookEndpointsResponse) {
+    option (toshi.permission) = "webhooks.read";
+  }
 
   // UpdateWebhookEndpoint sets the fields update_mask names: url, events,
   // enabled. A disabled endpoint is owed no new event and no try starts;
   // the events written before the disable stay owed, enabling it again
   // owes none written while it was disabled, and a try already under way
   // finishes within its claim, which holds a delivery for one minute.
-  rpc UpdateWebhookEndpoint(UpdateWebhookEndpointRequest) returns (UpdateWebhookEndpointResponse);
+  rpc UpdateWebhookEndpoint(UpdateWebhookEndpointRequest) returns (UpdateWebhookEndpointResponse) {
+    option (toshi.permission) = "webhooks.write";
+  }
 
   // DeleteWebhookEndpoint deletes an endpoint and its deliveries.
-  rpc DeleteWebhookEndpoint(DeleteWebhookEndpointRequest) returns (DeleteWebhookEndpointResponse);
+  rpc DeleteWebhookEndpoint(DeleteWebhookEndpointRequest) returns (DeleteWebhookEndpointResponse) {
+    option (toshi.permission) = "webhooks.write";
+  }
 
   // RotateWebhookEndpointSecret makes the endpoint a new signing secret and
   // returns it. For the next 24 hours each try that starts after the
@@ -57,13 +68,17 @@ service WebhookService {
   // new one only. A try under way when the rotation is made is signed with
   // the replaced secret alone. A rotation while the
   // previous secret's window is still open fails with FAILED_PRECONDITION.
-  rpc RotateWebhookEndpointSecret(RotateWebhookEndpointSecretRequest) returns (RotateWebhookEndpointSecretResponse);
+  rpc RotateWebhookEndpointSecret(RotateWebhookEndpointSecretRequest) returns (RotateWebhookEndpointSecretResponse) {
+    option (toshi.permission) = "webhooks.write";
+  }
 
   // ListWebhookDeliveries returns an endpoint's deliveries in event order,
   // a page at a time.
   //
   // A page holds 50 deliveries when page_size is zero, and 500 at most.
-  rpc ListWebhookDeliveries(ListWebhookDeliveriesRequest) returns (ListWebhookDeliveriesResponse);
+  rpc ListWebhookDeliveries(ListWebhookDeliveriesRequest) returns (ListWebhookDeliveriesResponse) {
+    option (toshi.permission) = "webhooks.read";
+  }
 
   // ReplayWebhookEvents makes the endpoint owed again the events after
   // cursor that its filter keeps now, up to its own cursor, at most 500 per
@@ -76,7 +91,9 @@ service WebhookService {
   // and are still pending, the end of that try under way or backoff, and
   // then goes before it; it does not wait for the newer ones to be
   // delivered. A disabled endpoint fails with FAILED_PRECONDITION.
-  rpc ReplayWebhookEvents(ReplayWebhookEventsRequest) returns (ReplayWebhookEventsResponse);
+  rpc ReplayWebhookEvents(ReplayWebhookEventsRequest) returns (ReplayWebhookEventsResponse) {
+    option (toshi.permission) = "webhooks.write";
+  }
 }
 
 message WebhookEndpoint {

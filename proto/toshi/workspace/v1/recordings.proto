@@ -4,6 +4,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -18,26 +19,36 @@ service RecordingService {
   // a URL.
   //
   // A page holds 100 recordings when page_size is zero, and 1000 at most.
-  rpc ListRecordings(ListRecordingsRequest) returns (ListRecordingsResponse);
+  rpc ListRecordings(ListRecordingsRequest) returns (ListRecordingsResponse) {
+    option (toshi.permission) = "recordings.read";
+  }
   // GetRecording returns one recording and, when it is ready, a signed URL
   // for its object that expires. A ready recording whose object's
   // retention has deleted it is FAILED_PRECONDITION.
-  rpc GetRecording(GetRecordingRequest) returns (GetRecordingResponse);
+  rpc GetRecording(GetRecordingRequest) returns (GetRecordingResponse) {
+    option (toshi.permission) = "recordings.read";
+  }
   // CreateRecordingShareLink mints a share link for a ready recording: a
   // URL that fetches its object without a Toshi sign-in until the link
   // expires, is revoked or has used its byte cap. Each fetch through it
   // counts the object's whole size against the cap, and each fetch and
   // each refusal is in the audit. A recording that is not ready, or whose
   // object's retention has deleted it, is FAILED_PRECONDITION.
-  rpc CreateRecordingShareLink(CreateRecordingShareLinkRequest) returns (CreateRecordingShareLinkResponse);
+  rpc CreateRecordingShareLink(CreateRecordingShareLinkRequest) returns (CreateRecordingShareLinkResponse) {
+    option (toshi.permission) = "recordings.write";
+  }
   // ListRecordingShareLinks returns a recording's share links, oldest
   // first, without the links themselves.
   //
   // A page holds 100 share links when page_size is zero, and 1000 at most.
-  rpc ListRecordingShareLinks(ListRecordingShareLinksRequest) returns (ListRecordingShareLinksResponse);
+  rpc ListRecordingShareLinks(ListRecordingShareLinksRequest) returns (ListRecordingShareLinksResponse) {
+    option (toshi.permission) = "recordings.read";
+  }
   // RevokeRecordingShareLink ends a share link before it expires. A link
   // already revoked is returned as it is.
-  rpc RevokeRecordingShareLink(RevokeRecordingShareLinkRequest) returns (RevokeRecordingShareLinkResponse);
+  rpc RevokeRecordingShareLink(RevokeRecordingShareLinkRequest) returns (RevokeRecordingShareLinkResponse) {
+    option (toshi.permission) = "recordings.write";
+  }
 }
 
 // RecordingState is where a recording is in its life.

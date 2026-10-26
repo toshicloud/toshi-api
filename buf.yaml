@@ -4,6 +4,9 @@ modules:
 lint:
   use:
     - STANDARD
+  ignore_only:
+    PACKAGE_VERSION_SUFFIX:
+      - proto/toshi/permission.proto
 breaking:
   use:
     - FILE

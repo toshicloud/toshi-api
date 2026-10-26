@@ -4,6 +4,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -22,25 +23,35 @@ service FillerService {
   // its latest run.
   //
   // A page holds 100 fillers when page_size is zero, and 1000 at most.
-  rpc ListFillers(ListFillersRequest) returns (ListFillersResponse);
+  rpc ListFillers(ListFillersRequest) returns (ListFillersResponse) {
+    option (toshi.permission) = "fillers.read";
+  }
   // PutFiller adds a filler or replaces the one with the same name and
   // returns it as stored. The repository must have run a job of the
   // workspace. A filler from the control plane's configuration cannot be
   // replaced (FAILED_PRECONDITION). A bad field fails with
   // INVALID_ARGUMENT.
-  rpc PutFiller(PutFillerRequest) returns (PutFillerResponse);
+  rpc PutFiller(PutFillerRequest) returns (PutFillerResponse) {
+    option (toshi.permission) = "fillers.write";
+  }
   // DeleteFiller removes a filler and stops its running run. A configured
   // filler cannot be removed (FAILED_PRECONDITION); an unknown name fails
   // with NOT_FOUND.
-  rpc DeleteFiller(DeleteFillerRequest) returns (DeleteFillerResponse);
+  rpc DeleteFiller(DeleteFillerRequest) returns (DeleteFillerResponse) {
+    option (toshi.permission) = "fillers.write";
+  }
   // SetFillerEnabled turns a filler on or off and returns it. Turning it off
   // stops its running run. An unknown name fails with NOT_FOUND.
-  rpc SetFillerEnabled(SetFillerEnabledRequest) returns (SetFillerEnabledResponse);
+  rpc SetFillerEnabled(SetFillerEnabledRequest) returns (SetFillerEnabledResponse) {
+    option (toshi.permission) = "fillers.write";
+  }
   // ListFillerRuns returns the runs of the workspace's fillers, newest
   // first.
   //
   // A page holds 50 runs when page_size is zero, and 500 at most.
-  rpc ListFillerRuns(ListFillerRunsRequest) returns (ListFillerRunsResponse);
+  rpc ListFillerRuns(ListFillerRunsRequest) returns (ListFillerRunsResponse) {
+    option (toshi.permission) = "fillers.read";
+  }
 }
 
 // Filler is a workflow of the workspace that Toshi dispatches with

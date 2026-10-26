@@ -7,6 +7,7 @@
 package workspacev1
 
 import (
+	_ "github.com/toshicloud/toshi-api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -918,7 +919,7 @@ var File_toshi_workspace_v1_artifacts_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/artifacts.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a#toshi/workspace/v1/recordings.proto\"\xa1\x04\n" +
+	"\"toshi/workspace/v1/artifacts.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a#toshi/workspace/v1/recordings.proto\"\xa1\x04\n" +
 	"\bArtifact\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -1011,14 +1012,14 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
 	"encryption\x18\x03 \x01(\tR\n" +
 	"encryption\x12\x19\n" +
-	"\bdata_key\x18\x04 \x01(\fR\adataKey2\xe6\x01\n" +
-	"\x15ArtifactUploadService\x12d\n" +
-	"\rReserveUpload\x12(.toshi.workspace.v1.ReserveUploadRequest\x1a).toshi.workspace.v1.ReserveUploadResponse\x12g\n" +
-	"\x0eCompleteUpload\x12).toshi.workspace.v1.CompleteUploadRequest\x1a*.toshi.workspace.v1.CompleteUploadResponse2\xd8\x02\n" +
-	"\x0fArtifactService\x12d\n" +
-	"\rListArtifacts\x12(.toshi.workspace.v1.ListArtifactsRequest\x1a).toshi.workspace.v1.ListArtifactsResponse\x12^\n" +
-	"\vGetArtifact\x12&.toshi.workspace.v1.GetArtifactRequest\x1a'.toshi.workspace.v1.GetArtifactResponse\x12\x7f\n" +
-	"\x16GetArtifactDownloadURL\x121.toshi.workspace.v1.GetArtifactDownloadURLRequest\x1a2.toshi.workspace.v1.GetArtifactDownloadURLResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\bdata_key\x18\x04 \x01(\fR\adataKey2\x90\x02\n" +
+	"\x15ArtifactUploadService\x12y\n" +
+	"\rReserveUpload\x12(.toshi.workspace.v1.ReserveUploadRequest\x1a).toshi.workspace.v1.ReserveUploadResponse\"\x13\xc2\xf3\x18\x0fartifacts.write\x12|\n" +
+	"\x0eCompleteUpload\x12).toshi.workspace.v1.CompleteUploadRequest\x1a*.toshi.workspace.v1.CompleteUploadResponse\"\x13\xc2\xf3\x18\x0fartifacts.write2\x95\x03\n" +
+	"\x0fArtifactService\x12x\n" +
+	"\rListArtifacts\x12(.toshi.workspace.v1.ListArtifactsRequest\x1a).toshi.workspace.v1.ListArtifactsResponse\"\x12\xc2\xf3\x18\x0eartifacts.read\x12r\n" +
+	"\vGetArtifact\x12&.toshi.workspace.v1.GetArtifactRequest\x1a'.toshi.workspace.v1.GetArtifactResponse\"\x12\xc2\xf3\x18\x0eartifacts.read\x12\x93\x01\n" +
+	"\x16GetArtifactDownloadURL\x121.toshi.workspace.v1.GetArtifactDownloadURLRequest\x1a2.toshi.workspace.v1.GetArtifactDownloadURLResponse\"\x12\xc2\xf3\x18\x0eartifacts.readB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_artifacts_proto_rawDescOnce sync.Once

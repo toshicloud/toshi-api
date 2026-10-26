@@ -73,17 +73,21 @@ type AdmitGrantResponse struct {
 	ActorId   string `protobuf:"bytes,3,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
 	// workspaces are the caller's workspaces; empty for the operator.
 	Tenants []string `protobuf:"bytes,4,rep,name=tenants,proto3" json:"tenants,omitempty"`
-	// job_id, workspace, repository, approved and installation_id are the call's
-	// arguments the grant binds.
+	// Deprecated: job_id, tenant, repository, approved and installation_id
+	// are no longer set; args carries the arguments the grant binds.
 	JobId          string `protobuf:"bytes,5,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	Tenant         string `protobuf:"bytes,6,opt,name=tenant,proto3" json:"tenant,omitempty"`
 	Repository     string `protobuf:"bytes,7,opt,name=repository,proto3" json:"repository,omitempty"`
 	Approved       bool   `protobuf:"varint,8,opt,name=approved,proto3" json:"approved,omitempty"`
 	InstallationId int64  `protobuf:"varint,9,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
 	// generation is the delivery check the grant began; 0 for none.
-	Generation    int64                  `protobuf:"varint,10,opt,name=generation,proto3" json:"generation,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	Generation int64                  `protobuf:"varint,10,opt,name=generation,proto3" json:"generation,omitempty"`
+	CreatedAt  *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	ExpiresAt  *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// args are the call's arguments the grant binds, as the product encoded
+	// them: for the GitHub product a GrantArgs in its JSON form, with the
+	// proto field names as keys.
+	Args          []byte `protobuf:"bytes,13,opt,name=args,proto3" json:"args,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -202,6 +206,99 @@ func (x *AdmitGrantResponse) GetExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *AdmitGrantResponse) GetArgs() []byte {
+	if x != nil {
+		return x.Args
+	}
+	return nil
+}
+
+// GrantArgs are the arguments a GitHub product grant binds. The product
+// encodes them in a grant's args as JSON with the proto field names as keys,
+// and the core decodes them to compare each with the call's; a field the
+// call does not bind is left at its zero value.
+type GrantArgs struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// job_id is the job GetJob reads and FillJobFailingStep fills.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// workspace is the workspace ListOpenSourceRepositories lists and
+	// MapInstallation maps to.
+	Workspace string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	// repo is the repository SetOpenSourceApproval sets, as owner/name.
+	Repo string `protobuf:"bytes,3,opt,name=repo,proto3" json:"repo,omitempty"`
+	// approved is the approval SetOpenSourceApproval sets.
+	Approved bool `protobuf:"varint,4,opt,name=approved,proto3" json:"approved,omitempty"`
+	// installation_id is the installation MapInstallation maps.
+	InstallationId int64 `protobuf:"varint,5,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *GrantArgs) Reset() {
+	*x = GrantArgs{}
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GrantArgs) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantArgs) ProtoMessage() {}
+
+func (x *GrantArgs) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantArgs.ProtoReflect.Descriptor instead.
+func (*GrantArgs) Descriptor() ([]byte, []int) {
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GrantArgs) GetJobId() string {
+	if x != nil {
+		return x.JobId
+	}
+	return ""
+}
+
+func (x *GrantArgs) GetWorkspace() string {
+	if x != nil {
+		return x.Workspace
+	}
+	return ""
+}
+
+func (x *GrantArgs) GetRepo() string {
+	if x != nil {
+		return x.Repo
+	}
+	return ""
+}
+
+func (x *GrantArgs) GetApproved() bool {
+	if x != nil {
+		return x.Approved
+	}
+	return false
+}
+
+func (x *GrantArgs) GetInstallationId() int64 {
+	if x != nil {
+		return x.InstallationId
+	}
+	return 0
+}
+
 type GetJobRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	JobId         string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
@@ -211,7 +308,7 @@ type GetJobRequest struct {
 
 func (x *GetJobRequest) Reset() {
 	*x = GetJobRequest{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[2]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -223,7 +320,7 @@ func (x *GetJobRequest) String() string {
 func (*GetJobRequest) ProtoMessage() {}
 
 func (x *GetJobRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[2]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -236,7 +333,7 @@ func (x *GetJobRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetJobRequest.ProtoReflect.Descriptor instead.
 func (*GetJobRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{2}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetJobRequest) GetJobId() string {
@@ -255,7 +352,7 @@ type GetJobResponse struct {
 
 func (x *GetJobResponse) Reset() {
 	*x = GetJobResponse{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[3]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -267,7 +364,7 @@ func (x *GetJobResponse) String() string {
 func (*GetJobResponse) ProtoMessage() {}
 
 func (x *GetJobResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[3]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -280,7 +377,7 @@ func (x *GetJobResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetJobResponse.ProtoReflect.Descriptor instead.
 func (*GetJobResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{3}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetJobResponse) GetJob() *Job {
@@ -308,7 +405,7 @@ type Job struct {
 
 func (x *Job) Reset() {
 	*x = Job{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[4]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -320,7 +417,7 @@ func (x *Job) String() string {
 func (*Job) ProtoMessage() {}
 
 func (x *Job) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[4]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -333,7 +430,7 @@ func (x *Job) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Job.ProtoReflect.Descriptor instead.
 func (*Job) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{4}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Job) GetId() string {
@@ -409,7 +506,7 @@ type FillJobFailingStepRequest struct {
 
 func (x *FillJobFailingStepRequest) Reset() {
 	*x = FillJobFailingStepRequest{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[5]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -421,7 +518,7 @@ func (x *FillJobFailingStepRequest) String() string {
 func (*FillJobFailingStepRequest) ProtoMessage() {}
 
 func (x *FillJobFailingStepRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[5]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -434,7 +531,7 @@ func (x *FillJobFailingStepRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FillJobFailingStepRequest.ProtoReflect.Descriptor instead.
 func (*FillJobFailingStepRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{5}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *FillJobFailingStepRequest) GetJobId() string {
@@ -459,7 +556,7 @@ type FillJobFailingStepResponse struct {
 
 func (x *FillJobFailingStepResponse) Reset() {
 	*x = FillJobFailingStepResponse{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[6]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -471,7 +568,7 @@ func (x *FillJobFailingStepResponse) String() string {
 func (*FillJobFailingStepResponse) ProtoMessage() {}
 
 func (x *FillJobFailingStepResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[6]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -484,7 +581,7 @@ func (x *FillJobFailingStepResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FillJobFailingStepResponse.ProtoReflect.Descriptor instead.
 func (*FillJobFailingStepResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{6}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{7}
 }
 
 type ListOpenSourceRepositoriesRequest struct {
@@ -502,7 +599,7 @@ type ListOpenSourceRepositoriesRequest struct {
 
 func (x *ListOpenSourceRepositoriesRequest) Reset() {
 	*x = ListOpenSourceRepositoriesRequest{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[7]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -514,7 +611,7 @@ func (x *ListOpenSourceRepositoriesRequest) String() string {
 func (*ListOpenSourceRepositoriesRequest) ProtoMessage() {}
 
 func (x *ListOpenSourceRepositoriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[7]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -527,7 +624,7 @@ func (x *ListOpenSourceRepositoriesRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListOpenSourceRepositoriesRequest.ProtoReflect.Descriptor instead.
 func (*ListOpenSourceRepositoriesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{7}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListOpenSourceRepositoriesRequest) GetTenant() string {
@@ -564,7 +661,7 @@ type ListOpenSourceRepositoriesResponse struct {
 
 func (x *ListOpenSourceRepositoriesResponse) Reset() {
 	*x = ListOpenSourceRepositoriesResponse{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[8]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -576,7 +673,7 @@ func (x *ListOpenSourceRepositoriesResponse) String() string {
 func (*ListOpenSourceRepositoriesResponse) ProtoMessage() {}
 
 func (x *ListOpenSourceRepositoriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[8]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -589,7 +686,7 @@ func (x *ListOpenSourceRepositoriesResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ListOpenSourceRepositoriesResponse.ProtoReflect.Descriptor instead.
 func (*ListOpenSourceRepositoriesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{8}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListOpenSourceRepositoriesResponse) GetRepositories() []*OpenSourceRepository {
@@ -635,7 +732,7 @@ type OpenSourceRepository struct {
 
 func (x *OpenSourceRepository) Reset() {
 	*x = OpenSourceRepository{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[9]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -647,7 +744,7 @@ func (x *OpenSourceRepository) String() string {
 func (*OpenSourceRepository) ProtoMessage() {}
 
 func (x *OpenSourceRepository) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[9]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -660,7 +757,7 @@ func (x *OpenSourceRepository) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OpenSourceRepository.ProtoReflect.Descriptor instead.
 func (*OpenSourceRepository) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{9}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *OpenSourceRepository) GetTenant() string {
@@ -766,7 +863,7 @@ type OpenSourceKeptApproval struct {
 
 func (x *OpenSourceKeptApproval) Reset() {
 	*x = OpenSourceKeptApproval{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[10]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -778,7 +875,7 @@ func (x *OpenSourceKeptApproval) String() string {
 func (*OpenSourceKeptApproval) ProtoMessage() {}
 
 func (x *OpenSourceKeptApproval) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[10]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -791,7 +888,7 @@ func (x *OpenSourceKeptApproval) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OpenSourceKeptApproval.ProtoReflect.Descriptor instead.
 func (*OpenSourceKeptApproval) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{10}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *OpenSourceKeptApproval) GetRepository() string {
@@ -818,7 +915,7 @@ type SetOpenSourceApprovalRequest struct {
 
 func (x *SetOpenSourceApprovalRequest) Reset() {
 	*x = SetOpenSourceApprovalRequest{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[11]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -830,7 +927,7 @@ func (x *SetOpenSourceApprovalRequest) String() string {
 func (*SetOpenSourceApprovalRequest) ProtoMessage() {}
 
 func (x *SetOpenSourceApprovalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[11]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -843,7 +940,7 @@ func (x *SetOpenSourceApprovalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetOpenSourceApprovalRequest.ProtoReflect.Descriptor instead.
 func (*SetOpenSourceApprovalRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{11}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *SetOpenSourceApprovalRequest) GetRepository() string {
@@ -872,7 +969,7 @@ type SetOpenSourceApprovalResponse struct {
 
 func (x *SetOpenSourceApprovalResponse) Reset() {
 	*x = SetOpenSourceApprovalResponse{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[12]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -884,7 +981,7 @@ func (x *SetOpenSourceApprovalResponse) String() string {
 func (*SetOpenSourceApprovalResponse) ProtoMessage() {}
 
 func (x *SetOpenSourceApprovalResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[12]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -897,7 +994,7 @@ func (x *SetOpenSourceApprovalResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetOpenSourceApprovalResponse.ProtoReflect.Descriptor instead.
 func (*SetOpenSourceApprovalResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{12}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *SetOpenSourceApprovalResponse) GetRepositories() []*OpenSourceRepository {
@@ -924,7 +1021,7 @@ type MapInstallationRequest struct {
 
 func (x *MapInstallationRequest) Reset() {
 	*x = MapInstallationRequest{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[13]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -936,7 +1033,7 @@ func (x *MapInstallationRequest) String() string {
 func (*MapInstallationRequest) ProtoMessage() {}
 
 func (x *MapInstallationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[13]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -949,7 +1046,7 @@ func (x *MapInstallationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapInstallationRequest.ProtoReflect.Descriptor instead.
 func (*MapInstallationRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{13}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *MapInstallationRequest) GetInstallationId() int64 {
@@ -974,7 +1071,7 @@ type MapInstallationResponse struct {
 
 func (x *MapInstallationResponse) Reset() {
 	*x = MapInstallationResponse{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[14]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -986,7 +1083,7 @@ func (x *MapInstallationResponse) String() string {
 func (*MapInstallationResponse) ProtoMessage() {}
 
 func (x *MapInstallationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[14]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -999,7 +1096,7 @@ func (x *MapInstallationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapInstallationResponse.ProtoReflect.Descriptor instead.
 func (*MapInstallationResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{14}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{15}
 }
 
 type PublishJobDeliveryCheckRequest struct {
@@ -1016,7 +1113,7 @@ type PublishJobDeliveryCheckRequest struct {
 
 func (x *PublishJobDeliveryCheckRequest) Reset() {
 	*x = PublishJobDeliveryCheckRequest{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[15]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1028,7 +1125,7 @@ func (x *PublishJobDeliveryCheckRequest) String() string {
 func (*PublishJobDeliveryCheckRequest) ProtoMessage() {}
 
 func (x *PublishJobDeliveryCheckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[15]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1041,7 +1138,7 @@ func (x *PublishJobDeliveryCheckRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishJobDeliveryCheckRequest.ProtoReflect.Descriptor instead.
 func (*PublishJobDeliveryCheckRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{15}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *PublishJobDeliveryCheckRequest) GetGeneration() int64 {
@@ -1076,7 +1173,7 @@ type PublishJobDeliveryCheckResponse struct {
 
 func (x *PublishJobDeliveryCheckResponse) Reset() {
 	*x = PublishJobDeliveryCheckResponse{}
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[16]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1088,7 +1185,7 @@ func (x *PublishJobDeliveryCheckResponse) String() string {
 func (*PublishJobDeliveryCheckResponse) ProtoMessage() {}
 
 func (x *PublishJobDeliveryCheckResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[16]
+	mi := &file_toshi_githubcore_v1_githubcore_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1101,7 +1198,7 @@ func (x *PublishJobDeliveryCheckResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishJobDeliveryCheckResponse.ProtoReflect.Descriptor instead.
 func (*PublishJobDeliveryCheckResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{16}
+	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *PublishJobDeliveryCheckResponse) GetPublished() bool {
@@ -1116,7 +1213,7 @@ var File_toshi_githubcore_v1_githubcore_proto protoreflect.FileDescriptor
 const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\n" +
 	"$toshi/githubcore/v1/githubcore.proto\x12\x13toshi.githubcore.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
-	"\x11AdmitGrantRequest\"\xa6\x03\n" +
+	"\x11AdmitGrantRequest\"\xba\x03\n" +
 	"\x12AdmitGrantResponse\x12\x12\n" +
 	"\x04call\x18\x01 \x01(\tR\x04call\x12\x1d\n" +
 	"\n" +
@@ -1137,7 +1234,14 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"expires_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"&\n" +
+	"expires_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x12\n" +
+	"\x04args\x18\r \x01(\fR\x04args\"\x99\x01\n" +
+	"\tGrantArgs\x12\x15\n" +
+	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x12\n" +
+	"\x04repo\x18\x03 \x01(\tR\x04repo\x12\x1a\n" +
+	"\bapproved\x18\x04 \x01(\bR\bapproved\x12'\n" +
+	"\x0finstallation_id\x18\x05 \x01(\x03R\x0einstallationId\"&\n" +
 	"\rGetJobRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\"<\n" +
 	"\x0eGetJobResponse\x12*\n" +
@@ -1235,54 +1339,55 @@ func file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP() []byte {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescData
 }
 
-var file_toshi_githubcore_v1_githubcore_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_toshi_githubcore_v1_githubcore_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_toshi_githubcore_v1_githubcore_proto_goTypes = []any{
 	(*AdmitGrantRequest)(nil),                  // 0: toshi.githubcore.v1.AdmitGrantRequest
 	(*AdmitGrantResponse)(nil),                 // 1: toshi.githubcore.v1.AdmitGrantResponse
-	(*GetJobRequest)(nil),                      // 2: toshi.githubcore.v1.GetJobRequest
-	(*GetJobResponse)(nil),                     // 3: toshi.githubcore.v1.GetJobResponse
-	(*Job)(nil),                                // 4: toshi.githubcore.v1.Job
-	(*FillJobFailingStepRequest)(nil),          // 5: toshi.githubcore.v1.FillJobFailingStepRequest
-	(*FillJobFailingStepResponse)(nil),         // 6: toshi.githubcore.v1.FillJobFailingStepResponse
-	(*ListOpenSourceRepositoriesRequest)(nil),  // 7: toshi.githubcore.v1.ListOpenSourceRepositoriesRequest
-	(*ListOpenSourceRepositoriesResponse)(nil), // 8: toshi.githubcore.v1.ListOpenSourceRepositoriesResponse
-	(*OpenSourceRepository)(nil),               // 9: toshi.githubcore.v1.OpenSourceRepository
-	(*OpenSourceKeptApproval)(nil),             // 10: toshi.githubcore.v1.OpenSourceKeptApproval
-	(*SetOpenSourceApprovalRequest)(nil),       // 11: toshi.githubcore.v1.SetOpenSourceApprovalRequest
-	(*SetOpenSourceApprovalResponse)(nil),      // 12: toshi.githubcore.v1.SetOpenSourceApprovalResponse
-	(*MapInstallationRequest)(nil),             // 13: toshi.githubcore.v1.MapInstallationRequest
-	(*MapInstallationResponse)(nil),            // 14: toshi.githubcore.v1.MapInstallationResponse
-	(*PublishJobDeliveryCheckRequest)(nil),     // 15: toshi.githubcore.v1.PublishJobDeliveryCheckRequest
-	(*PublishJobDeliveryCheckResponse)(nil),    // 16: toshi.githubcore.v1.PublishJobDeliveryCheckResponse
-	(*timestamppb.Timestamp)(nil),              // 17: google.protobuf.Timestamp
+	(*GrantArgs)(nil),                          // 2: toshi.githubcore.v1.GrantArgs
+	(*GetJobRequest)(nil),                      // 3: toshi.githubcore.v1.GetJobRequest
+	(*GetJobResponse)(nil),                     // 4: toshi.githubcore.v1.GetJobResponse
+	(*Job)(nil),                                // 5: toshi.githubcore.v1.Job
+	(*FillJobFailingStepRequest)(nil),          // 6: toshi.githubcore.v1.FillJobFailingStepRequest
+	(*FillJobFailingStepResponse)(nil),         // 7: toshi.githubcore.v1.FillJobFailingStepResponse
+	(*ListOpenSourceRepositoriesRequest)(nil),  // 8: toshi.githubcore.v1.ListOpenSourceRepositoriesRequest
+	(*ListOpenSourceRepositoriesResponse)(nil), // 9: toshi.githubcore.v1.ListOpenSourceRepositoriesResponse
+	(*OpenSourceRepository)(nil),               // 10: toshi.githubcore.v1.OpenSourceRepository
+	(*OpenSourceKeptApproval)(nil),             // 11: toshi.githubcore.v1.OpenSourceKeptApproval
+	(*SetOpenSourceApprovalRequest)(nil),       // 12: toshi.githubcore.v1.SetOpenSourceApprovalRequest
+	(*SetOpenSourceApprovalResponse)(nil),      // 13: toshi.githubcore.v1.SetOpenSourceApprovalResponse
+	(*MapInstallationRequest)(nil),             // 14: toshi.githubcore.v1.MapInstallationRequest
+	(*MapInstallationResponse)(nil),            // 15: toshi.githubcore.v1.MapInstallationResponse
+	(*PublishJobDeliveryCheckRequest)(nil),     // 16: toshi.githubcore.v1.PublishJobDeliveryCheckRequest
+	(*PublishJobDeliveryCheckResponse)(nil),    // 17: toshi.githubcore.v1.PublishJobDeliveryCheckResponse
+	(*timestamppb.Timestamp)(nil),              // 18: google.protobuf.Timestamp
 }
 var file_toshi_githubcore_v1_githubcore_proto_depIdxs = []int32{
-	17, // 0: toshi.githubcore.v1.AdmitGrantResponse.created_at:type_name -> google.protobuf.Timestamp
-	17, // 1: toshi.githubcore.v1.AdmitGrantResponse.expires_at:type_name -> google.protobuf.Timestamp
-	4,  // 2: toshi.githubcore.v1.GetJobResponse.job:type_name -> toshi.githubcore.v1.Job
-	9,  // 3: toshi.githubcore.v1.ListOpenSourceRepositoriesResponse.repositories:type_name -> toshi.githubcore.v1.OpenSourceRepository
-	10, // 4: toshi.githubcore.v1.ListOpenSourceRepositoriesResponse.kept:type_name -> toshi.githubcore.v1.OpenSourceKeptApproval
-	17, // 5: toshi.githubcore.v1.OpenSourceRepository.repo_created_at:type_name -> google.protobuf.Timestamp
-	17, // 6: toshi.githubcore.v1.OpenSourceRepository.checked_at:type_name -> google.protobuf.Timestamp
-	17, // 7: toshi.githubcore.v1.OpenSourceRepository.attempted_at:type_name -> google.protobuf.Timestamp
-	17, // 8: toshi.githubcore.v1.OpenSourceRepository.approval_changed_at:type_name -> google.protobuf.Timestamp
-	17, // 9: toshi.githubcore.v1.OpenSourceKeptApproval.approved_at:type_name -> google.protobuf.Timestamp
-	9,  // 10: toshi.githubcore.v1.SetOpenSourceApprovalResponse.repositories:type_name -> toshi.githubcore.v1.OpenSourceRepository
-	10, // 11: toshi.githubcore.v1.SetOpenSourceApprovalResponse.kept:type_name -> toshi.githubcore.v1.OpenSourceKeptApproval
+	18, // 0: toshi.githubcore.v1.AdmitGrantResponse.created_at:type_name -> google.protobuf.Timestamp
+	18, // 1: toshi.githubcore.v1.AdmitGrantResponse.expires_at:type_name -> google.protobuf.Timestamp
+	5,  // 2: toshi.githubcore.v1.GetJobResponse.job:type_name -> toshi.githubcore.v1.Job
+	10, // 3: toshi.githubcore.v1.ListOpenSourceRepositoriesResponse.repositories:type_name -> toshi.githubcore.v1.OpenSourceRepository
+	11, // 4: toshi.githubcore.v1.ListOpenSourceRepositoriesResponse.kept:type_name -> toshi.githubcore.v1.OpenSourceKeptApproval
+	18, // 5: toshi.githubcore.v1.OpenSourceRepository.repo_created_at:type_name -> google.protobuf.Timestamp
+	18, // 6: toshi.githubcore.v1.OpenSourceRepository.checked_at:type_name -> google.protobuf.Timestamp
+	18, // 7: toshi.githubcore.v1.OpenSourceRepository.attempted_at:type_name -> google.protobuf.Timestamp
+	18, // 8: toshi.githubcore.v1.OpenSourceRepository.approval_changed_at:type_name -> google.protobuf.Timestamp
+	18, // 9: toshi.githubcore.v1.OpenSourceKeptApproval.approved_at:type_name -> google.protobuf.Timestamp
+	10, // 10: toshi.githubcore.v1.SetOpenSourceApprovalResponse.repositories:type_name -> toshi.githubcore.v1.OpenSourceRepository
+	11, // 11: toshi.githubcore.v1.SetOpenSourceApprovalResponse.kept:type_name -> toshi.githubcore.v1.OpenSourceKeptApproval
 	0,  // 12: toshi.githubcore.v1.GitHubCoreService.AdmitGrant:input_type -> toshi.githubcore.v1.AdmitGrantRequest
-	2,  // 13: toshi.githubcore.v1.GitHubCoreService.GetJob:input_type -> toshi.githubcore.v1.GetJobRequest
-	5,  // 14: toshi.githubcore.v1.GitHubCoreService.FillJobFailingStep:input_type -> toshi.githubcore.v1.FillJobFailingStepRequest
-	7,  // 15: toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepositories:input_type -> toshi.githubcore.v1.ListOpenSourceRepositoriesRequest
-	11, // 16: toshi.githubcore.v1.GitHubCoreService.SetOpenSourceApproval:input_type -> toshi.githubcore.v1.SetOpenSourceApprovalRequest
-	13, // 17: toshi.githubcore.v1.GitHubCoreService.MapInstallation:input_type -> toshi.githubcore.v1.MapInstallationRequest
-	15, // 18: toshi.githubcore.v1.GitHubCoreService.PublishJobDeliveryCheck:input_type -> toshi.githubcore.v1.PublishJobDeliveryCheckRequest
+	3,  // 13: toshi.githubcore.v1.GitHubCoreService.GetJob:input_type -> toshi.githubcore.v1.GetJobRequest
+	6,  // 14: toshi.githubcore.v1.GitHubCoreService.FillJobFailingStep:input_type -> toshi.githubcore.v1.FillJobFailingStepRequest
+	8,  // 15: toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepositories:input_type -> toshi.githubcore.v1.ListOpenSourceRepositoriesRequest
+	12, // 16: toshi.githubcore.v1.GitHubCoreService.SetOpenSourceApproval:input_type -> toshi.githubcore.v1.SetOpenSourceApprovalRequest
+	14, // 17: toshi.githubcore.v1.GitHubCoreService.MapInstallation:input_type -> toshi.githubcore.v1.MapInstallationRequest
+	16, // 18: toshi.githubcore.v1.GitHubCoreService.PublishJobDeliveryCheck:input_type -> toshi.githubcore.v1.PublishJobDeliveryCheckRequest
 	1,  // 19: toshi.githubcore.v1.GitHubCoreService.AdmitGrant:output_type -> toshi.githubcore.v1.AdmitGrantResponse
-	3,  // 20: toshi.githubcore.v1.GitHubCoreService.GetJob:output_type -> toshi.githubcore.v1.GetJobResponse
-	6,  // 21: toshi.githubcore.v1.GitHubCoreService.FillJobFailingStep:output_type -> toshi.githubcore.v1.FillJobFailingStepResponse
-	8,  // 22: toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepositories:output_type -> toshi.githubcore.v1.ListOpenSourceRepositoriesResponse
-	12, // 23: toshi.githubcore.v1.GitHubCoreService.SetOpenSourceApproval:output_type -> toshi.githubcore.v1.SetOpenSourceApprovalResponse
-	14, // 24: toshi.githubcore.v1.GitHubCoreService.MapInstallation:output_type -> toshi.githubcore.v1.MapInstallationResponse
-	16, // 25: toshi.githubcore.v1.GitHubCoreService.PublishJobDeliveryCheck:output_type -> toshi.githubcore.v1.PublishJobDeliveryCheckResponse
+	4,  // 20: toshi.githubcore.v1.GitHubCoreService.GetJob:output_type -> toshi.githubcore.v1.GetJobResponse
+	7,  // 21: toshi.githubcore.v1.GitHubCoreService.FillJobFailingStep:output_type -> toshi.githubcore.v1.FillJobFailingStepResponse
+	9,  // 22: toshi.githubcore.v1.GitHubCoreService.ListOpenSourceRepositories:output_type -> toshi.githubcore.v1.ListOpenSourceRepositoriesResponse
+	13, // 23: toshi.githubcore.v1.GitHubCoreService.SetOpenSourceApproval:output_type -> toshi.githubcore.v1.SetOpenSourceApprovalResponse
+	15, // 24: toshi.githubcore.v1.GitHubCoreService.MapInstallation:output_type -> toshi.githubcore.v1.MapInstallationResponse
+	17, // 25: toshi.githubcore.v1.GitHubCoreService.PublishJobDeliveryCheck:output_type -> toshi.githubcore.v1.PublishJobDeliveryCheckResponse
 	19, // [19:26] is the sub-list for method output_type
 	12, // [12:19] is the sub-list for method input_type
 	12, // [12:12] is the sub-list for extension type_name
@@ -1301,7 +1406,7 @@ func file_toshi_githubcore_v1_githubcore_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_githubcore_v1_githubcore_proto_rawDesc), len(file_toshi_githubcore_v1_githubcore_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

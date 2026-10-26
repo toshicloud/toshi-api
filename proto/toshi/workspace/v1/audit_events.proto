@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -19,7 +20,9 @@ service AuditEventService {
   // filter field that is set, newest first.
   //
   // A page holds 100 events when page_size is zero, and 1000 at most.
-  rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse);
+  rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse) {
+    option (toshi.permission) = "audit.read";
+  }
 }
 
 // AuditEvent is one append-only audit log entry.

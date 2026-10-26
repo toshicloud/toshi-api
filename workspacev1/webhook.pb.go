@@ -7,6 +7,7 @@
 package workspacev1
 
 import (
+	_ "github.com/toshicloud/toshi-api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -1181,7 +1182,7 @@ var File_toshi_workspace_v1_webhook_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcc\x02\n" +
+	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xcc\x02\n" +
 	"\x0fWebhookEndpoint\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12\x16\n" +
@@ -1274,16 +1275,16 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\"WEBHOOK_DELIVERY_STATE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eWEBHOOK_DELIVERY_STATE_PENDING\x10\x01\x12$\n" +
 	" WEBHOOK_DELIVERY_STATE_DELIVERED\x10\x02\x12\x1f\n" +
-	"\x1bWEBHOOK_DELIVERY_STATE_DEAD\x10\x032\x81\b\n" +
-	"\x0eWebhookService\x12|\n" +
-	"\x15CreateWebhookEndpoint\x120.toshi.workspace.v1.CreateWebhookEndpointRequest\x1a1.toshi.workspace.v1.CreateWebhookEndpointResponse\x12s\n" +
-	"\x12GetWebhookEndpoint\x12-.toshi.workspace.v1.GetWebhookEndpointRequest\x1a..toshi.workspace.v1.GetWebhookEndpointResponse\x12y\n" +
-	"\x14ListWebhookEndpoints\x12/.toshi.workspace.v1.ListWebhookEndpointsRequest\x1a0.toshi.workspace.v1.ListWebhookEndpointsResponse\x12|\n" +
-	"\x15UpdateWebhookEndpoint\x120.toshi.workspace.v1.UpdateWebhookEndpointRequest\x1a1.toshi.workspace.v1.UpdateWebhookEndpointResponse\x12|\n" +
-	"\x15DeleteWebhookEndpoint\x120.toshi.workspace.v1.DeleteWebhookEndpointRequest\x1a1.toshi.workspace.v1.DeleteWebhookEndpointResponse\x12\x8e\x01\n" +
-	"\x1bRotateWebhookEndpointSecret\x126.toshi.workspace.v1.RotateWebhookEndpointSecretRequest\x1a7.toshi.workspace.v1.RotateWebhookEndpointSecretResponse\x12|\n" +
-	"\x15ListWebhookDeliveries\x120.toshi.workspace.v1.ListWebhookDeliveriesRequest\x1a1.toshi.workspace.v1.ListWebhookDeliveriesResponse\x12v\n" +
-	"\x13ReplayWebhookEvents\x12..toshi.workspace.v1.ReplayWebhookEventsRequest\x1a/.toshi.workspace.v1.ReplayWebhookEventsResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x1bWEBHOOK_DELIVERY_STATE_DEAD\x10\x032\xa5\t\n" +
+	"\x0eWebhookService\x12\x90\x01\n" +
+	"\x15CreateWebhookEndpoint\x120.toshi.workspace.v1.CreateWebhookEndpointRequest\x1a1.toshi.workspace.v1.CreateWebhookEndpointResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\x86\x01\n" +
+	"\x12GetWebhookEndpoint\x12-.toshi.workspace.v1.GetWebhookEndpointRequest\x1a..toshi.workspace.v1.GetWebhookEndpointResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\x8c\x01\n" +
+	"\x14ListWebhookEndpoints\x12/.toshi.workspace.v1.ListWebhookEndpointsRequest\x1a0.toshi.workspace.v1.ListWebhookEndpointsResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\x90\x01\n" +
+	"\x15UpdateWebhookEndpoint\x120.toshi.workspace.v1.UpdateWebhookEndpointRequest\x1a1.toshi.workspace.v1.UpdateWebhookEndpointResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\x90\x01\n" +
+	"\x15DeleteWebhookEndpoint\x120.toshi.workspace.v1.DeleteWebhookEndpointRequest\x1a1.toshi.workspace.v1.DeleteWebhookEndpointResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\xa2\x01\n" +
+	"\x1bRotateWebhookEndpointSecret\x126.toshi.workspace.v1.RotateWebhookEndpointSecretRequest\x1a7.toshi.workspace.v1.RotateWebhookEndpointSecretResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\x8f\x01\n" +
+	"\x15ListWebhookDeliveries\x120.toshi.workspace.v1.ListWebhookDeliveriesRequest\x1a1.toshi.workspace.v1.ListWebhookDeliveriesResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\x8a\x01\n" +
+	"\x13ReplayWebhookEvents\x12..toshi.workspace.v1.ReplayWebhookEventsRequest\x1a/.toshi.workspace.v1.ReplayWebhookEventsResponse\"\x12\xc2\xf3\x18\x0ewebhooks.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_webhook_proto_rawDescOnce sync.Once

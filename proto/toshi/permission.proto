@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package toshi;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/toshicloud/toshi-api/toshipb";
+
+extend google.protobuf.MethodOptions {
+  // permission names what a caller needs to make the call: an area and a
+  // level. "<area>.read" sees what the area holds and "<area>.write" changes
+  // it, where the area is a product, such as "sandboxes", or a part of the
+  // workspace, such as "secrets". A call that needs more than its area's
+  // level names a permission of its own, such as "debug.connect" for the key
+  // into a host job's debug session.
+  //
+  // Every Workspace API method carries it, and a method without it fails the
+  // build: the control plane's check table and the permissions page are
+  // generated from it. A workspace that is suspended keeps the calls whose
+  // level is "read".
+  string permission = 51000;
+}

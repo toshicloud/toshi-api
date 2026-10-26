@@ -7,6 +7,7 @@
 package workspacev1
 
 import (
+	_ "github.com/toshicloud/toshi-api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1518,7 +1519,7 @@ var File_toshi_workspace_v1_secrets_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/secrets.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9a\x01\n" +
+	" toshi/workspace/v1/secrets.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x9a\x01\n" +
 	"\tSecretSet\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
@@ -1624,18 +1625,18 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x1fSECRET_GRANTEE_KIND_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18SECRET_GRANTEE_KIND_KIND\x10\x01\x12\x1d\n" +
 	"\x19SECRET_GRANTEE_KIND_IMAGE\x10\x02\x12\x1f\n" +
-	"\x1bSECRET_GRANTEE_KIND_SERVICE\x10\x032\xaf\b\n" +
-	"\rSecretService\x12j\n" +
-	"\x0fCreateSecretSet\x12*.toshi.workspace.v1.CreateSecretSetRequest\x1a+.toshi.workspace.v1.CreateSecretSetResponse\x12g\n" +
-	"\x0eListSecretSets\x12).toshi.workspace.v1.ListSecretSetsRequest\x1a*.toshi.workspace.v1.ListSecretSetsResponse\x12j\n" +
-	"\x0fDeleteSecretSet\x12*.toshi.workspace.v1.DeleteSecretSetRequest\x1a+.toshi.workspace.v1.DeleteSecretSetResponse\x12X\n" +
-	"\tPutSecret\x12$.toshi.workspace.v1.PutSecretRequest\x1a%.toshi.workspace.v1.PutSecretResponse\x12a\n" +
-	"\fDeleteSecret\x12'.toshi.workspace.v1.DeleteSecretRequest\x1a(.toshi.workspace.v1.DeleteSecretResponse\x12^\n" +
-	"\vListSecrets\x12&.toshi.workspace.v1.ListSecretsRequest\x1a'.toshi.workspace.v1.ListSecretsResponse\x12s\n" +
-	"\x12ListSecretVersions\x12-.toshi.workspace.v1.ListSecretVersionsRequest\x1a..toshi.workspace.v1.ListSecretVersionsResponse\x12g\n" +
-	"\x0eGrantSecretSet\x12).toshi.workspace.v1.GrantSecretSetRequest\x1a*.toshi.workspace.v1.GrantSecretSetResponse\x12j\n" +
-	"\x0fRevokeSecretSet\x12*.toshi.workspace.v1.RevokeSecretSetRequest\x1a+.toshi.workspace.v1.RevokeSecretSetResponse\x12v\n" +
-	"\x13ListSecretSetGrants\x12..toshi.workspace.v1.ListSecretSetGrantsRequest\x1a/.toshi.workspace.v1.ListSecretSetGrantsResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x1bSECRET_GRANTEE_KIND_SERVICE\x10\x032\xeb\t\n" +
+	"\rSecretService\x12}\n" +
+	"\x0fCreateSecretSet\x12*.toshi.workspace.v1.CreateSecretSetRequest\x1a+.toshi.workspace.v1.CreateSecretSetResponse\"\x11\xc2\xf3\x18\rsecrets.write\x12y\n" +
+	"\x0eListSecretSets\x12).toshi.workspace.v1.ListSecretSetsRequest\x1a*.toshi.workspace.v1.ListSecretSetsResponse\"\x10\xc2\xf3\x18\fsecrets.read\x12}\n" +
+	"\x0fDeleteSecretSet\x12*.toshi.workspace.v1.DeleteSecretSetRequest\x1a+.toshi.workspace.v1.DeleteSecretSetResponse\"\x11\xc2\xf3\x18\rsecrets.write\x12k\n" +
+	"\tPutSecret\x12$.toshi.workspace.v1.PutSecretRequest\x1a%.toshi.workspace.v1.PutSecretResponse\"\x11\xc2\xf3\x18\rsecrets.write\x12t\n" +
+	"\fDeleteSecret\x12'.toshi.workspace.v1.DeleteSecretRequest\x1a(.toshi.workspace.v1.DeleteSecretResponse\"\x11\xc2\xf3\x18\rsecrets.write\x12p\n" +
+	"\vListSecrets\x12&.toshi.workspace.v1.ListSecretsRequest\x1a'.toshi.workspace.v1.ListSecretsResponse\"\x10\xc2\xf3\x18\fsecrets.read\x12\x85\x01\n" +
+	"\x12ListSecretVersions\x12-.toshi.workspace.v1.ListSecretVersionsRequest\x1a..toshi.workspace.v1.ListSecretVersionsResponse\"\x10\xc2\xf3\x18\fsecrets.read\x12z\n" +
+	"\x0eGrantSecretSet\x12).toshi.workspace.v1.GrantSecretSetRequest\x1a*.toshi.workspace.v1.GrantSecretSetResponse\"\x11\xc2\xf3\x18\rsecrets.write\x12}\n" +
+	"\x0fRevokeSecretSet\x12*.toshi.workspace.v1.RevokeSecretSetRequest\x1a+.toshi.workspace.v1.RevokeSecretSetResponse\"\x11\xc2\xf3\x18\rsecrets.write\x12\x88\x01\n" +
+	"\x13ListSecretSetGrants\x12..toshi.workspace.v1.ListSecretSetGrantsRequest\x1a/.toshi.workspace.v1.ListSecretSetGrantsResponse\"\x10\xc2\xf3\x18\fsecrets.readB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_secrets_proto_rawDescOnce sync.Once

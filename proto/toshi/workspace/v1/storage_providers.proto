@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -22,7 +23,9 @@ service StorageProviderService {
   // workspace uses while it has none of its own.
   //
   // A page holds 100 providers when page_size is zero, and 1000 at most.
-  rpc ListStorageProviders(ListStorageProvidersRequest) returns (ListStorageProvidersResponse);
+  rpc ListStorageProviders(ListStorageProvidersRequest) returns (ListStorageProvidersResponse) {
+    option (toshi.permission) = "storage.read";
+  }
   // CreateStorageProvider stores the workspace's own bucket: the control
   // plane wraps the key, checks the bucket with it as CheckStorageProvider
   // does and stores the row only when the check passes, else
@@ -30,7 +33,9 @@ service StorageProviderService {
   // provider; a second fails with ALREADY_EXISTS, as does a second provider
   // with the lifecycle capability on the same endpoint and bucket. A bad
   // field fails with INVALID_ARGUMENT.
-  rpc CreateStorageProvider(CreateStorageProviderRequest) returns (CreateStorageProviderResponse);
+  rpc CreateStorageProvider(CreateStorageProviderRequest) returns (CreateStorageProviderResponse) {
+    option (toshi.permission) = "storage.write";
+  }
   // CheckStorageProvider checks a provider's bucket: it heads the bucket,
   // refuses a versioned one, then uploads, heads and deletes a probe
   // object. A check that fails is an answer, not an error: ok is false and
@@ -44,12 +49,16 @@ service StorageProviderService {
   // as CreateStorageProvider would before it stores one; it stores and
   // audits nothing, and a request CreateStorageProvider would refuse fails
   // the same way before any connection.
-  rpc CheckStorageProvider(CheckStorageProviderRequest) returns (CheckStorageProviderResponse);
+  rpc CheckStorageProvider(CheckStorageProviderRequest) returns (CheckStorageProviderResponse) {
+    option (toshi.permission) = "storage.write";
+  }
   // DeleteStorageProvider removes a provider the workspace saved. An
   // unknown ID, and another workspace's, fails with NOT_FOUND; a row the
   // operator set for the workspace, and the default provider, with
   // PERMISSION_DENIED.
-  rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse);
+  rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse) {
+    option (toshi.permission) = "storage.write";
+  }
 }
 
 // StorageProvider is one bucket Toshi keeps the workspace's objects in.

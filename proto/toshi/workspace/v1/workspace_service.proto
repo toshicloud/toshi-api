@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 import "toshi/workspace/v1/hosts.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
@@ -19,73 +20,101 @@ option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 // GetWorkspaceStatement and GetVersion during its read-only period.
 service WorkspaceService {
   // GetWorkspace returns the caller's workspace.
-  rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse);
+  rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
   // ListWorkspaces returns the workspaces of the caller, ordered by ID: a
   // session's workspaces, or a token's one.
   //
   // A page holds 100 workspaces when page_size is zero, and 1000 at most.
-  rpc ListWorkspaces(ListWorkspacesRequest) returns (ListWorkspacesResponse);
+  rpc ListWorkspaces(ListWorkspacesRequest) returns (ListWorkspacesResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
   // GetWorkspaceBilling returns the workspace's billing customer,
   // subscription and its status, the usage reported to the billing provider
   // per month and runner size, and the events that failed. months outside
   // 0 to 12 fails with INVALID_ARGUMENT.
-  rpc GetWorkspaceBilling(GetWorkspaceBillingRequest) returns (GetWorkspaceBillingResponse);
+  rpc GetWorkspaceBilling(GetWorkspaceBillingRequest) returns (GetWorkspaceBillingResponse) {
+    option (toshi.permission) = "billing.read";
+  }
   // GetWorkspaceStatement returns the workspace's usage statement for one
   // UTC month: minutes by runner size and OS of the jobs that finished in
   // it, the minutes metered to the billing provider by size with their
   // estimated cost at the plan's prices, the starter credit applied in it,
   // and held time by reason. A month not in YYYY-MM form fails with
   // INVALID_ARGUMENT.
-  rpc GetWorkspaceStatement(GetWorkspaceStatementRequest) returns (GetWorkspaceStatementResponse);
+  rpc GetWorkspaceStatement(GetWorkspaceStatementRequest) returns (GetWorkspaceStatementResponse) {
+    option (toshi.permission) = "billing.read";
+  }
   // SetWorkspaceOwnHostsOnly sets whether the workspace's jobs wait for its
   // own hosts and never run on shared ones, and returns the workspace as
   // stored.
-  rpc SetWorkspaceOwnHostsOnly(SetWorkspaceOwnHostsOnlyRequest) returns (SetWorkspaceOwnHostsOnlyResponse);
+  rpc SetWorkspaceOwnHostsOnly(SetWorkspaceOwnHostsOnlyRequest) returns (SetWorkspaceOwnHostsOnlyResponse) {
+    option (toshi.permission) = "workspace.write";
+  }
   // SetWorkspaceAllowOverflow sets whether shared overflow hosts may take
   // the workspace's jobs and returns the workspace as stored; its own
   // overflow hosts always may.
-  rpc SetWorkspaceAllowOverflow(SetWorkspaceAllowOverflowRequest) returns (SetWorkspaceAllowOverflowResponse);
+  rpc SetWorkspaceAllowOverflow(SetWorkspaceAllowOverflowRequest) returns (SetWorkspaceAllowOverflowResponse) {
+    option (toshi.permission) = "workspace.write";
+  }
   // SetWorkspaceAllowCacheWarm sets whether the workspace's fillers run and
   // returns the workspace as stored. Off by default.
-  rpc SetWorkspaceAllowCacheWarm(SetWorkspaceAllowCacheWarmRequest) returns (SetWorkspaceAllowCacheWarmResponse);
+  rpc SetWorkspaceAllowCacheWarm(SetWorkspaceAllowCacheWarmRequest) returns (SetWorkspaceAllowCacheWarmResponse) {
+    option (toshi.permission) = "workspace.write";
+  }
   // SetWorkspaceCancelRunOnVmDeath sets whether Toshi cancels the workflow
   // run of the workspace's job when the job's VM is gone and returns the
   // workspace as stored. On by default.
-  rpc SetWorkspaceCancelRunOnVmDeath(SetWorkspaceCancelRunOnVmDeathRequest) returns (SetWorkspaceCancelRunOnVmDeathResponse);
+  rpc SetWorkspaceCancelRunOnVmDeath(SetWorkspaceCancelRunOnVmDeathRequest) returns (SetWorkspaceCancelRunOnVmDeathResponse) {
+    option (toshi.permission) = "workspace.write";
+  }
   // SetWorkspaceSpendLimits sets the workspace's monthly spending cap and its
   // own jobs-per-hour limit, and returns the workspace as stored; an unset
   // field is left as it is. A negative value, or a max_jobs_per_hour above
   // the plan's, fails with INVALID_ARGUMENT; a spending cap while billing is
   // off fails with FAILED_PRECONDITION.
-  rpc SetWorkspaceSpendLimits(SetWorkspaceSpendLimitsRequest) returns (SetWorkspaceSpendLimitsResponse);
+  rpc SetWorkspaceSpendLimits(SetWorkspaceSpendLimitsRequest) returns (SetWorkspaceSpendLimitsResponse) {
+    option (toshi.permission) = "billing.write";
+  }
   // ListEgressIPs returns the public addresses the workspace's jobs may
   // reach the internet from: the egress addresses of the hosts its jobs can
   // land on, its own hosts and, unless it runs on its own hosts only, the
   // shared hosts its plan's operating systems run on.
   //
   // A page holds 100 hosts when page_size is zero, and 1000 at most.
-  rpc ListEgressIPs(ListEgressIPsRequest) returns (ListEgressIPsResponse);
+  rpc ListEgressIPs(ListEgressIPsRequest) returns (ListEgressIPsResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
   // GetUsage returns the workspace's job counts and billable minutes per UTC
   // day, conclusion, outcome and kind, for the jobs whose queued_at is in
   // the window. The window defaults to the last 7 days. A window whose from
   // is not before its to fails with INVALID_ARGUMENT.
-  rpc GetUsage(GetUsageRequest) returns (GetUsageResponse);
+  rpc GetUsage(GetUsageRequest) returns (GetUsageResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
   // GetQueueTimes returns a queue-time summary (percentiles, maximum and
   // warm share) for the workspace's jobs that reached running in the
   // window, where a job is in the window by its queued_at. The window
   // defaults to the last 7 days. A window whose from is not before its to
   // fails with INVALID_ARGUMENT.
-  rpc GetQueueTimes(GetQueueTimesRequest) returns (GetQueueTimesResponse);
+  rpc GetQueueTimes(GetQueueTimesRequest) returns (GetQueueTimesResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
   // GetWorkflowUsage returns, per repository and workflow name, the jobs
   // GetUsage counts: their billable minutes, failed jobs and run-time
   // percentiles. A job is in the window by its queued_at. The window
   // defaults to the last 7 days. A window whose from is not before its to
   // fails with INVALID_ARGUMENT.
-  rpc GetWorkflowUsage(GetWorkflowUsageRequest) returns (GetWorkflowUsageResponse);
+  rpc GetWorkflowUsage(GetWorkflowUsageRequest) returns (GetWorkflowUsageResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
   // ListPlans returns the configured plans sorted by name.
   //
   // A page holds 100 plans when page_size is zero, and 1000 at most.
-  rpc ListPlans(ListPlansRequest) returns (ListPlansResponse);
+  rpc ListPlans(ListPlansRequest) returns (ListPlansResponse) {
+    option (toshi.permission) = "billing.read";
+  }
   // CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
   // workspace to plan, first creating and linking a billing customer for a
   // workspace without one. An empty plan, or a plan the configuration does
@@ -93,15 +122,21 @@ service WorkspaceService {
   // that is not sold or maps to several lookup keys, a price missing in
   // Stripe, or a workspace that already has a subscription fails with
   // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
-  rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse);
+  rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse) {
+    option (toshi.permission) = "billing.write";
+  }
   // CreateBillingPortalSession returns a Stripe Customer Portal URL where
   // the workspace manages its card and subscription. Self-serve billing not
   // configured, or a workspace with no billing customer, fails with
   // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
-  rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse);
+  rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse) {
+    option (toshi.permission) = "billing.write";
+  }
   // GetVersion returns the control plane's version, commit and commit
   // date, and the oldest agent release it admits.
-  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
 }
 
 message GetWorkspaceRequest {}

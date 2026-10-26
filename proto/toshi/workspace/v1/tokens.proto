@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -22,18 +23,24 @@ service TokenService {
   // first, without their values.
   //
   // A page holds 100 tokens when page_size is zero, and 1000 at most.
-  rpc ListTokens(ListTokensRequest) returns (ListTokensResponse);
+  rpc ListTokens(ListTokensRequest) returns (ListTokensResponse) {
+    option (toshi.permission) = "tokens.read";
+  }
   // CreateWorkspaceToken makes an API token for the workspace and returns
   // it with its value. Only a signed-in session may call it: a token never
   // makes another token, and the call is refused for one with
   // PERMISSION_DENIED. An unknown project or environment fails with
   // NOT_FOUND; a closed workspace fails with FAILED_PRECONDITION.
-  rpc CreateWorkspaceToken(CreateWorkspaceTokenRequest) returns (CreateWorkspaceTokenResponse);
+  rpc CreateWorkspaceToken(CreateWorkspaceTokenRequest) returns (CreateWorkspaceTokenResponse) {
+    option (toshi.permission) = "tokens.write";
+  }
   // RevokeToken stops one of the workspace's tokens working at once.
   // Revoking an enrollment token also signs out the hosts that registered
   // with it. A token of another workspace, and an unknown ID, fail with
   // NOT_FOUND.
-  rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse);
+  rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse) {
+    option (toshi.permission) = "tokens.write";
+  }
 }
 
 // TokenKind says what a token grants.

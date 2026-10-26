@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -27,7 +28,9 @@ service VolumeService {
   // ordered by name.
   //
   // A page holds 100 volumes when page_size is zero, and 1000 at most.
-  rpc ListVolumes(ListVolumesRequest) returns (ListVolumesResponse);
+  rpc ListVolumes(ListVolumesRequest) returns (ListVolumesResponse) {
+    option (toshi.permission) = "volumes.read";
+  }
 
   // AttachVolume attaches a state volume to a service or sandbox: the
   // service's next run mounts it, and a sandbox mounts it when it starts.
@@ -39,7 +42,9 @@ service VolumeService {
   // with a live run and a sandbox whose job is no longer queued. A sandbox
   // leaves the queue within moments, so name its volume in the sandbox's
   // create (SandboxSpec.state_volume_id).
-  rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse);
+  rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {
+    option (toshi.permission) = "volumes.write";
+  }
 
   // DetachVolume clears a volume's attachment and keeps the volume and its
   // data. A volume a run still holds, one of a service with a live run and
@@ -47,7 +52,9 @@ service VolumeService {
   // with FAILED_PRECONDITION. Deleting a sandbox detaches its volume, and
   // so does deleting a service, which is refused while a run holds the
   // volume; neither deletes the volume.
-  rpc DetachVolume(DetachVolumeRequest) returns (DetachVolumeResponse);
+  rpc DetachVolume(DetachVolumeRequest) returns (DetachVolumeResponse) {
+    option (toshi.permission) = "volumes.write";
+  }
 }
 
 // VolumeMode is what a volume holds and how runs use it.

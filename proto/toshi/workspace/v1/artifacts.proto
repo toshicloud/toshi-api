@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 import "toshi/workspace/v1/recordings.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
@@ -24,12 +25,16 @@ service ArtifactUploadService {
   // part. A part is a separate object; a multi-part artifact has an index
   // object beside its parts. The kind must be one Toshi stores today:
   // profile is refused with INVALID_ARGUMENT.
-  rpc ReserveUpload(ReserveUploadRequest) returns (ReserveUploadResponse);
+  rpc ReserveUpload(ReserveUploadRequest) returns (ReserveUploadResponse) {
+    option (toshi.permission) = "artifacts.write";
+  }
   // CompleteUpload checks every part's size, copies the parts to their
   // final keys, and marks the artifact complete. A part of another size
   // fails with FAILED_PRECONDITION and the reservation stays; so does a
   // call at or after the upload deadline.
-  rpc CompleteUpload(CompleteUploadRequest) returns (CompleteUploadResponse);
+  rpc CompleteUpload(CompleteUploadRequest) returns (CompleteUploadResponse) {
+    option (toshi.permission) = "artifacts.write";
+  }
 }
 
 // ArtifactService is how a workspace lists, reads and downloads what its
@@ -41,13 +46,19 @@ service ArtifactService {
   // project, environment, workload, execution and kind.
   //
   // A page holds 50 artifacts when page_size is zero, and 200 at most.
-  rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse);
+  rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse) {
+    option (toshi.permission) = "artifacts.read";
+  }
   // GetArtifact returns one artifact's record, never a key or a URL.
-  rpc GetArtifact(GetArtifactRequest) returns (GetArtifactResponse);
+  rpc GetArtifact(GetArtifactRequest) returns (GetArtifactResponse) {
+    option (toshi.permission) = "artifacts.read";
+  }
   // GetArtifactDownloadURL returns a signed URL that expires, and the
   // artifact's data key when it is envelope encrypted. An artifact that is
   // not complete fails with FAILED_PRECONDITION.
-  rpc GetArtifactDownloadURL(GetArtifactDownloadURLRequest) returns (GetArtifactDownloadURLResponse);
+  rpc GetArtifactDownloadURL(GetArtifactDownloadURLRequest) returns (GetArtifactDownloadURLResponse) {
+    option (toshi.permission) = "artifacts.read";
+  }
 }
 
 // Artifact is an uploaded file's record: what it is, who uploaded it, and

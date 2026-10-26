@@ -7,6 +7,7 @@
 package workspacev1
 
 import (
+	_ "github.com/toshicloud/toshi-api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -511,7 +512,7 @@ var File_toshi_workspace_v1_volumes_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xae\x02\n" +
+	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xae\x02\n" +
 	"\x06Volume\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -549,11 +550,11 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x11VOLUME_MODE_CACHE\x10\x01\x12\x14\n" +
 	"\x10VOLUME_MODE_SEED\x10\x02\x12\x15\n" +
 	"\x11VOLUME_MODE_STATE\x10\x03\x12\x18\n" +
-	"\x14VOLUME_MODE_ARTIFACT\x10\x042\xb5\x02\n" +
-	"\rVolumeService\x12^\n" +
-	"\vListVolumes\x12&.toshi.workspace.v1.ListVolumesRequest\x1a'.toshi.workspace.v1.ListVolumesResponse\x12a\n" +
-	"\fAttachVolume\x12'.toshi.workspace.v1.AttachVolumeRequest\x1a(.toshi.workspace.v1.AttachVolumeResponse\x12a\n" +
-	"\fDetachVolume\x12'.toshi.workspace.v1.DetachVolumeRequest\x1a(.toshi.workspace.v1.DetachVolumeResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"\x14VOLUME_MODE_ARTIFACT\x10\x042\xed\x02\n" +
+	"\rVolumeService\x12p\n" +
+	"\vListVolumes\x12&.toshi.workspace.v1.ListVolumesRequest\x1a'.toshi.workspace.v1.ListVolumesResponse\"\x10\xc2\xf3\x18\fvolumes.read\x12t\n" +
+	"\fAttachVolume\x12'.toshi.workspace.v1.AttachVolumeRequest\x1a(.toshi.workspace.v1.AttachVolumeResponse\"\x11\xc2\xf3\x18\rvolumes.write\x12t\n" +
+	"\fDetachVolume\x12'.toshi.workspace.v1.DetachVolumeRequest\x1a(.toshi.workspace.v1.DetachVolumeResponse\"\x11\xc2\xf3\x18\rvolumes.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_volumes_proto_rawDescOnce sync.Once

@@ -4,6 +4,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -19,24 +20,32 @@ service ProjectService {
   // environments by name.
   //
   // A page holds 100 projects when page_size is zero, and 1000 at most.
-  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
+  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse) {
+    option (toshi.permission) = "projects.read";
+  }
   // GetProject returns one project with its environments by name. A
   // project the workspace does not have is NOT_FOUND. A token limited to
   // a project gets only that project, and PERMISSION_DENIED for any other
   // name; a token limited to an environment gets the project with that
   // environment only.
-  rpc GetProject(GetProjectRequest) returns (GetProjectResponse);
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {
+    option (toshi.permission) = "projects.read";
+  }
   // ListRepositories returns the repositories the workspace's projects
   // claim, by repository. A project the workspace does not have is
   // NOT_FOUND.
   //
   // A page holds 100 repositories when page_size is zero, and 1000 at most.
-  rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse);
+  rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse) {
+    option (toshi.permission) = "projects.read";
+  }
   // CreateProject makes a project with its three environments,
   // development, preview and production. A name the workspace's projects
   // already have is ALREADY_EXISTS. A token limited to a project is
   // PERMISSION_DENIED: the new project is not its own.
-  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse);
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {
+    option (toshi.permission) = "projects.write";
+  }
   // ClaimRepository puts a repository in a project: it claims a repository
   // no project claims, or moves the claim from another project. A CI job
   // whose repository's claim was read before the move keeps its project,
@@ -44,14 +53,18 @@ service ProjectService {
   // lands in the new project. A project the workspace does not have is NOT_FOUND. A token
   // limited to a project claims only for that project, and only a
   // repository no other project claims.
-  rpc ClaimRepository(ClaimRepositoryRequest) returns (ClaimRepositoryResponse);
+  rpc ClaimRepository(ClaimRepositoryRequest) returns (ClaimRepositoryResponse) {
+    option (toshi.permission) = "projects.write";
+  }
   // CreateEnvironment adds the environment of a kind a project lacks,
   // named after its kind, such as preview for a project made with
   // production only. A kind the project has is ALREADY_EXISTS; a project
   // the workspace does not have is NOT_FOUND. A token limited to a project
   // creates only in that project, and a token limited to an environment
   // is PERMISSION_DENIED.
-  rpc CreateEnvironment(CreateEnvironmentRequest) returns (CreateEnvironmentResponse);
+  rpc CreateEnvironment(CreateEnvironmentRequest) returns (CreateEnvironmentResponse) {
+    option (toshi.permission) = "projects.write";
+  }
   // DeleteEnvironment deletes a project's environment by name. A project's
   // production environment is FAILED_PRECONDITION, and so is an
   // environment that anything live still refers to, with each kind and
@@ -62,7 +75,9 @@ service ProjectService {
   // the workspace does not have is NOT_FOUND. A token limited to a
   // project deletes only in that project, and a token limited to an
   // environment is PERMISSION_DENIED.
-  rpc DeleteEnvironment(DeleteEnvironmentRequest) returns (DeleteEnvironmentResponse);
+  rpc DeleteEnvironment(DeleteEnvironmentRequest) returns (DeleteEnvironmentResponse) {
+    option (toshi.permission) = "projects.write";
+  }
   // ListBranchRules returns a project's branch rules in order, the
   // fallback rule last: the first that matches a CI job's run chooses the
   // job's environment. The fallback rule takes every other run and never
@@ -72,7 +87,9 @@ service ProjectService {
   // PERMISSION_DENIED.
   //
   // A page holds 100 rules when page_size is zero, and 1000 at most.
-  rpc ListBranchRules(ListBranchRulesRequest) returns (ListBranchRulesResponse);
+  rpc ListBranchRules(ListBranchRulesRequest) returns (ListBranchRulesResponse) {
+    option (toshi.permission) = "projects.read";
+  }
   // SetBranchRules replaces a project's branch rules with the list given,
   // whole: it has at most 100 rules, a known match on each, a pattern on
   // exactly the pattern rules, no two rules matching the same way, the
@@ -84,22 +101,30 @@ service ProjectService {
   // not have is NOT_FOUND. A token limited to a project sets only that
   // project's rules, and a token limited to an environment is
   // PERMISSION_DENIED.
-  rpc SetBranchRules(SetBranchRulesRequest) returns (SetBranchRulesResponse);
+  rpc SetBranchRules(SetBranchRulesRequest) returns (SetBranchRulesResponse) {
+    option (toshi.permission) = "projects.write";
+  }
   // CreateEmbedToken mints an embed token for a project: a credential for
   // a web page on one of the token's origins, which spends it once to
   // fetch one of the project's ready recordings. It expires in minutes. A
   // project the workspace does not have is NOT_FOUND. A token limited to a
   // project mints only for that project, and a token limited to an
   // environment is PERMISSION_DENIED.
-  rpc CreateEmbedToken(CreateEmbedTokenRequest) returns (CreateEmbedTokenResponse);
+  rpc CreateEmbedToken(CreateEmbedTokenRequest) returns (CreateEmbedTokenResponse) {
+    option (toshi.permission) = "projects.write";
+  }
   // ListEmbedTokens returns a project's embed tokens, oldest first, without
   // the tokens themselves.
   //
   // A page holds 100 embed tokens when page_size is zero, and 1000 at most.
-  rpc ListEmbedTokens(ListEmbedTokensRequest) returns (ListEmbedTokensResponse);
+  rpc ListEmbedTokens(ListEmbedTokensRequest) returns (ListEmbedTokensResponse) {
+    option (toshi.permission) = "projects.read";
+  }
   // RevokeEmbedToken refuses an embed token before it expires. A token
   // already revoked is returned as it is.
-  rpc RevokeEmbedToken(RevokeEmbedTokenRequest) returns (RevokeEmbedTokenResponse);
+  rpc RevokeEmbedToken(RevokeEmbedTokenRequest) returns (RevokeEmbedTokenResponse) {
+    option (toshi.permission) = "projects.write";
+  }
 }
 
 // Project is one of a workspace's projects.

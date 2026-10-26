@@ -7,6 +7,7 @@
 package workspacev1
 
 import (
+	_ "github.com/toshicloud/toshi-api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -552,7 +553,7 @@ var File_toshi_workspace_v1_tokens_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\n" +
-	"\x1ftoshi/workspace/v1/tokens.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfb\x02\n" +
+	"\x1ftoshi/workspace/v1/tokens.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xfb\x02\n" +
 	"\x05Token\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x121\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x1d.toshi.workspace.v1.TokenKindR\x04kind\x12\x16\n" +
@@ -593,12 +594,12 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\tTokenKind\x12\x1a\n" +
 	"\x16TOKEN_KIND_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15TOKEN_KIND_ENROLLMENT\x10\x02\x12\x18\n" +
-	"\x14TOKEN_KIND_WORKSPACE\x10\x032\xc6\x02\n" +
-	"\fTokenService\x12[\n" +
+	"\x14TOKEN_KIND_WORKSPACE\x10\x032\xfc\x02\n" +
+	"\fTokenService\x12l\n" +
 	"\n" +
-	"ListTokens\x12%.toshi.workspace.v1.ListTokensRequest\x1a&.toshi.workspace.v1.ListTokensResponse\x12y\n" +
-	"\x14CreateWorkspaceToken\x12/.toshi.workspace.v1.CreateWorkspaceTokenRequest\x1a0.toshi.workspace.v1.CreateWorkspaceTokenResponse\x12^\n" +
-	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"ListTokens\x12%.toshi.workspace.v1.ListTokensRequest\x1a&.toshi.workspace.v1.ListTokensResponse\"\x0f\xc2\xf3\x18\vtokens.read\x12\x8b\x01\n" +
+	"\x14CreateWorkspaceToken\x12/.toshi.workspace.v1.CreateWorkspaceTokenRequest\x1a0.toshi.workspace.v1.CreateWorkspaceTokenResponse\"\x10\xc2\xf3\x18\ftokens.write\x12p\n" +
+	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x10\xc2\xf3\x18\ftokens.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_tokens_proto_rawDescOnce sync.Once

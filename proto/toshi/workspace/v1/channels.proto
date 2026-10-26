@@ -4,6 +4,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -25,22 +26,30 @@ service ChannelService {
   // A job that is not running fails with FAILED_PRECONDITION, a name the
   // job already has with ALREADY_EXISTS, and a sandbox's port beyond its
   // plan's preview ports with RESOURCE_EXHAUSTED.
-  rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse);
+  rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {
+    option (toshi.permission) = "channels.write";
+  }
 
   // ListChannels lists a job's channels, or every channel of the
   // workspace, ended ones included, oldest first.
   //
   // A page holds 100 channels when page_size is zero, and 1000 at most.
-  rpc ListChannels(ListChannelsRequest) returns (ListChannelsResponse);
+  rpc ListChannels(ListChannelsRequest) returns (ListChannelsResponse) {
+    option (toshi.permission) = "channels.read";
+  }
 
   // GetChannel returns one channel, with a stream channel's clients. Its
   // request is named in full: inside the service, GetChannelRequest is
   // the call below.
-  rpc GetChannel(.toshi.workspace.v1.GetChannelRequest) returns (GetChannelResponse);
+  rpc GetChannel(.toshi.workspace.v1.GetChannelRequest) returns (GetChannelResponse) {
+    option (toshi.permission) = "channels.read";
+  }
 
   // GetChannelPolicy returns a channel's effective policy, with its
   // version.
-  rpc GetChannelPolicy(GetChannelPolicyRequest) returns (GetChannelPolicyResponse);
+  rpc GetChannelPolicy(GetChannelPolicyRequest) returns (GetChannelPolicyResponse) {
+    option (toshi.permission) = "channels.read";
+  }
 
   // SetChannelPolicy replaces a channel's policy when the version it names
   // is the one stored, and returns the policy at its new version. A policy
@@ -48,7 +57,9 @@ service ChannelService {
   // malformed policy fails with INVALID_ARGUMENT, and one the channel
   // refuses, such as a list without a module that may not be removed,
   // with FAILED_PRECONDITION.
-  rpc SetChannelPolicy(SetChannelPolicyRequest) returns (SetChannelPolicyResponse);
+  rpc SetChannelPolicy(SetChannelPolicyRequest) returns (SetChannelPolicyResponse) {
+    option (toshi.permission) = "channels.write";
+  }
 
   // ListChannelRequests lists an http channel's request records the
   // filters select, newest first, or oldest first after after_seq,
@@ -56,11 +67,15 @@ service ChannelService {
   // FAILED_PRECONDITION.
   //
   // A page holds 50 records when page_size is zero, and 500 at most.
-  rpc ListChannelRequests(ListChannelRequestsRequest) returns (ListChannelRequestsResponse);
+  rpc ListChannelRequests(ListChannelRequestsRequest) returns (ListChannelRequestsResponse) {
+    option (toshi.permission) = "channels.inspect";
+  }
 
   // GetChannelRequest returns one request record whole. A record the
   // channel no longer keeps fails with NOT_FOUND, naming the oldest kept.
-  rpc GetChannelRequest(GetChannelRequestRequest) returns (GetChannelRequestResponse);
+  rpc GetChannelRequest(GetChannelRequestRequest) returns (GetChannelRequestResponse) {
+    option (toshi.permission) = "channels.inspect";
+  }
 
   // ExportChannelLog streams a file of a channel's log: a stream channel's
   // output between two offsets, as bytes, or an http channel's request
@@ -68,23 +83,31 @@ service ChannelService {
   // oldest first. One export holds at most the control plane's export
   // limit, 64 MiB unless set; the first response's next says where the
   // following export starts. Each export is recorded in the audit log.
-  rpc ExportChannelLog(ExportChannelLogRequest) returns (stream ExportChannelLogResponse);
+  rpc ExportChannelLog(ExportChannelLogRequest) returns (stream ExportChannelLogResponse) {
+    option (toshi.permission) = "channels.inspect";
+  }
 
   // CreateChannelConnectToken mints a token that attaches one client to a
   // channel, or opens a preview in a browser, once, before it expires. A
   // channel the connect path would not serve fails as that path does.
-  rpc CreateChannelConnectToken(CreateChannelConnectTokenRequest) returns (CreateChannelConnectTokenResponse);
+  rpc CreateChannelConnectToken(CreateChannelConnectTokenRequest) returns (CreateChannelConnectTokenResponse) {
+    option (toshi.permission) = "channels.write";
+  }
 
   // RevokeChannelConnectToken refuses a connect token from then on, on
   // every process of the control plane; a preview's token also ends what
   // it opened. A token not minted for this channel is NOT_FOUND. A token
   // that has expired is refused already, and its revoke writes nothing.
-  rpc RevokeChannelConnectToken(RevokeChannelConnectTokenRequest) returns (RevokeChannelConnectTokenResponse);
+  rpc RevokeChannelConnectToken(RevokeChannelConnectTokenRequest) returns (RevokeChannelConnectTokenResponse) {
+    option (toshi.permission) = "channels.write";
+  }
 
   // DeleteChannel ends a channel and its connections. An open stream
   // channel stays, closing, until the guest has closed its process or the
   // job has ended; any other channel goes at once.
-  rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse);
+  rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {
+    option (toshi.permission) = "channels.write";
+  }
 
   // ListForwards lists a running job's open Forwards, oldest first; a job
   // that is not running has none. When a process of the control plane
@@ -92,10 +115,14 @@ service ChannelService {
   // UNAVAILABLE rather than answer short.
   //
   // A page holds 100 Forwards when page_size is zero, and 1000 at most.
-  rpc ListForwards(ListForwardsRequest) returns (ListForwardsResponse);
+  rpc ListForwards(ListForwardsRequest) returns (ListForwardsResponse) {
+    option (toshi.permission) = "channels.read";
+  }
 
   // GetLink returns the state of the Link of the runner the job holds.
-  rpc GetLink(GetLinkRequest) returns (GetLinkResponse);
+  rpc GetLink(GetLinkRequest) returns (GetLinkResponse) {
+    option (toshi.permission) = "channels.read";
+  }
 }
 
 // ChannelShape is how a channel carries its bytes.

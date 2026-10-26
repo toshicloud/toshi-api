@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "github.com/toshicloud/toshi-api/workspacev1";
 
@@ -21,23 +22,33 @@ service HostJobService {
   // is set, oldest queued first.
   //
   // A page holds 100 host jobs when page_size is zero, and 1000 at most.
-  rpc ListHostJobs(ListHostJobsRequest) returns (ListHostJobsResponse);
+  rpc ListHostJobs(ListHostJobsRequest) returns (ListHostJobsResponse) {
+    option (toshi.permission) = "hosts.read";
+  }
   // GetHostJob returns one host job. An unknown ID fails with NOT_FOUND.
-  rpc GetHostJob(GetHostJobRequest) returns (GetHostJobResponse);
+  rpc GetHostJob(GetHostJobRequest) returns (GetHostJobResponse) {
+    option (toshi.permission) = "hosts.read";
+  }
   // CancelHostJob cancels a queued host job at once. An assigned, starting
   // or running host job moves to HOST_JOB_STATE_STOPPING: its host stops
   // the runner after a grace period, destroys the VM and reports the host
   // job HOST_JOB_STATE_CANCELLED. A stopping host job is returned
   // unchanged; a finished one fails with FAILED_PRECONDITION.
-  rpc CancelHostJob(CancelHostJobRequest) returns (CancelHostJobResponse);
+  rpc CancelHostJob(CancelHostJobRequest) returns (CancelHostJobResponse) {
+    option (toshi.permission) = "hosts.write";
+  }
   // GetHostJobFailure says why a host job ended the way it did and what to
   // do next, from what Toshi stored. An empty ID fails with
   // INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc GetHostJobFailure(GetHostJobFailureRequest) returns (GetHostJobFailureResponse);
+  rpc GetHostJobFailure(GetHostJobFailureRequest) returns (GetHostJobFailureResponse) {
+    option (toshi.permission) = "hosts.read";
+  }
   // GetHostJobTelemetry returns the resource samples of one host job's VM
   // and their summary. An unknown ID fails with NOT_FOUND; a host job
   // without samples returns none.
-  rpc GetHostJobTelemetry(GetHostJobTelemetryRequest) returns (GetHostJobTelemetryResponse);
+  rpc GetHostJobTelemetry(GetHostJobTelemetryRequest) returns (GetHostJobTelemetryResponse) {
+    option (toshi.permission) = "hosts.read";
+  }
   // GetHostJobDebugAccess returns the key that opens a debugging host job's
   // guest ssh through the control plane's relay. The host job's host makes
   // the key and gives it out once per session; the control plane does not
@@ -45,13 +56,17 @@ service HostJobService {
   // FAILED_PRECONDITION, a key already issued with ALREADY_EXISTS, and a
   // host that does not answer with UNAVAILABLE. It is not a read: a
   // suspended workspace is refused it.
-  rpc GetHostJobDebugAccess(GetHostJobDebugAccessRequest) returns (GetHostJobDebugAccessResponse);
+  rpc GetHostJobDebugAccess(GetHostJobDebugAccessRequest) returns (GetHostJobDebugAccessResponse) {
+    option (toshi.permission) = "debug.connect";
+  }
   // StopHostJobDebug ends a host job's debug session before its expiry: the
   // host job moves to HOST_JOB_STATE_STOPPING with stop_reason debug_ended,
   // its host destroys the kept VM and the host job finishes completed with
   // its conclusion unchanged. A host job that is not debugging fails with
   // FAILED_PRECONDITION; one already stopping is returned unchanged.
-  rpc StopHostJobDebug(StopHostJobDebugRequest) returns (StopHostJobDebugResponse);
+  rpc StopHostJobDebug(StopHostJobDebugRequest) returns (StopHostJobDebugResponse) {
+    option (toshi.permission) = "debug.write";
+  }
 }
 
 message ListHostJobsRequest {

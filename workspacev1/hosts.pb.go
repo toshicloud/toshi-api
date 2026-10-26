@@ -7,6 +7,7 @@
 package workspacev1
 
 import (
+	_ "github.com/toshicloud/toshi-api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -2167,7 +2168,7 @@ var File_toshi_workspace_v1_hosts_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\n" +
-	"\x1etoshi/workspace/v1/hosts.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1ftoshi/workspace/v1/tokens.proto\"\xae\x01\n" +
+	"\x1etoshi/workspace/v1/hosts.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1ftoshi/workspace/v1/tokens.proto\"\xae\x01\n" +
 	"\x10ListHostsRequest\x125\n" +
 	"\x06states\x18\x01 \x03(\x0e2\x1d.toshi.workspace.v1.HostStateR\x06states\x12'\n" +
 	"\x0fexclude_revoked\x18\x02 \x01(\bR\x0eexcludeRevoked\x12\x1b\n" +
@@ -2364,17 +2365,20 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xcf\x06\n" +
-	"\vHostService\x12X\n" +
-	"\tListHosts\x12$.toshi.workspace.v1.ListHostsRequest\x1a%.toshi.workspace.v1.ListHostsResponse\x12j\n" +
-	"\x0fListHostStorage\x12*.toshi.workspace.v1.ListHostStorageRequest\x1a+.toshi.workspace.v1.ListHostStorageResponse\x12g\n" +
-	"\x0eListHostAlerts\x12).toshi.workspace.v1.ListHostAlertsRequest\x1a*.toshi.workspace.v1.ListHostAlertsResponse\x12a\n" +
-	"\fSetHostState\x12'.toshi.workspace.v1.SetHostStateRequest\x1a(.toshi.workspace.v1.SetHostStateResponse\x12[\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xd5\a\n" +
+	"\vHostService\x12h\n" +
+	"\tListHosts\x12$.toshi.workspace.v1.ListHostsRequest\x1a%.toshi.workspace.v1.ListHostsResponse\"\x0e\xc2\xf3\x18\n" +
+	"hosts.read\x12z\n" +
+	"\x0fListHostStorage\x12*.toshi.workspace.v1.ListHostStorageRequest\x1a+.toshi.workspace.v1.ListHostStorageResponse\"\x0e\xc2\xf3\x18\n" +
+	"hosts.read\x12w\n" +
+	"\x0eListHostAlerts\x12).toshi.workspace.v1.ListHostAlertsRequest\x1a*.toshi.workspace.v1.ListHostAlertsResponse\"\x0e\xc2\xf3\x18\n" +
+	"hosts.read\x12r\n" +
+	"\fSetHostState\x12'.toshi.workspace.v1.SetHostStateRequest\x1a(.toshi.workspace.v1.SetHostStateResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12l\n" +
 	"\n" +
-	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\x12j\n" +
-	"\x0fCreateCloudHost\x12*.toshi.workspace.v1.CreateCloudHostRequest\x1a+.toshi.workspace.v1.CreateCloudHostResponse\x12g\n" +
-	"\x0eCheckCloudHost\x12).toshi.workspace.v1.CheckCloudHostRequest\x1a*.toshi.workspace.v1.CheckCloudHostResponse\x12|\n" +
-	"\x15CreateEnrollmentToken\x120.toshi.workspace.v1.CreateEnrollmentTokenRequest\x1a1.toshi.workspace.v1.CreateEnrollmentTokenResponseB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
+	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12{\n" +
+	"\x0fCreateCloudHost\x12*.toshi.workspace.v1.CreateCloudHostRequest\x1a+.toshi.workspace.v1.CreateCloudHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12x\n" +
+	"\x0eCheckCloudHost\x12).toshi.workspace.v1.CheckCloudHostRequest\x1a*.toshi.workspace.v1.CheckCloudHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12\x8d\x01\n" +
+	"\x15CreateEnrollmentToken\x120.toshi.workspace.v1.CreateEnrollmentTokenRequest\x1a1.toshi.workspace.v1.CreateEnrollmentTokenResponse\"\x0f\xc2\xf3\x18\vhosts.writeB-Z+github.com/toshicloud/toshi-api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_hosts_proto_rawDescOnce sync.Once
