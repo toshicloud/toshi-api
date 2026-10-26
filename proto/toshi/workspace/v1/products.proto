@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
+import "toshi/workspace/v1/discovery.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// ProductService reads and changes the workspace's settings of its
+// products. A product, such as Runners, declares features: typed keys such
+// as "runners.enabled", the product's own switch, or a limit such as
+// "previews.max_count". The workspace's entitlement to each feature comes
+// from its plan and the operator's overrides, and it cannot change it. Its
+// settings are its own choices within the entitlement: they only narrow it,
+// turning a product or a feature off or setting a lower limit.
+//
+// The caller's credential names the workspace, as for WorkloadService.
+service ProductService {
+  // ListProducts returns the products the deployment includes, by id, each
+  // with its switch and its features: the entitlement, the workspace's
+  // setting if it has one, the effective value, and who changed the
+  // setting last and when.
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {
+    option (toshi.permission) = "settings.read";
+  }
+  // UpdateProduct changes the workspace's settings of one product in one
+  // call: it turns the product on or off, and sets or clears its features.
+  // The caller and the time of the call are recorded with each setting it
+  // sets. A setting only narrows the workspace's entitlement: a value wider
+  // than the entitlement, a key the product does not declare or that the
+  // workspace cannot narrow, or a value of another type than the key's is
+  // INVALID_ARGUMENT naming the key, and nothing is changed. A product the
+  // deployment does not include is NOT_FOUND.
+  //
+  // The product's calls follow the change from the next call on.
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse) {
+    option (toshi.permission) = "settings.write";
+  }
+}
+
+message ListProductsRequest {}
+
+message ListProductsResponse {
+  // products are the products the deployment includes, by id.
+  repeated ProductSettings products = 1;
+}
+
+message UpdateProductRequest {
+  // id names the product, such as "runners".
+  string id = 1;
+  // enabled turns the product on or off for the workspace: it sets the
+  // product's own switch, the feature "<id>.enabled". Unset leaves it.
+  // Turning on a product the workspace's entitlements leave off is
+  // INVALID_ARGUMENT.
+  optional bool enabled = 2;
+  // settings are the features to set, by key ("<id>.<name>"), each to a
+  // value of the feature's type.
+  map<string, FeatureValue> settings = 3;
+  // clear are the keys of the features whose settings to remove: the
+  // entitlement applies again. A key that is also in settings, or that
+  // enabled sets, is INVALID_ARGUMENT.
+  repeated string clear = 4;
+}
+
+message UpdateProductResponse {
+  // product is the product as the workspace has it after the change.
+  ProductSettings product = 1;
+}
+
+// ProductSettings is one product as the workspace has it.
+message ProductSettings {
+  // id names the product, such as "runners": its config section, the
+  // prefix of its features and its permissions.
+  string id = 1;
+  // switch says whether the product is on for the workspace and, when it
+  // is off, which switch turned it off.
+  ProductSwitch switch = 2;
+  // features are the product's features, in the order the product
+  // declares them.
+  repeated FeatureSetting features = 3;
+  // state is where the product is in the deployment's lifecycle, as
+  // DiscoveryService.Discover reports it: a product the deployment's config
+  // turns off is winding down (no new work, draining) until its work ends,
+  // then stopped.
+  ProductState state = 4;
+}
+
+// FeatureSetting is one feature of a product as the workspace has it.
+message FeatureSetting {
+  // key is "<product id>.<name>".
+  string key = 1;
+  // narrowable reports whether the workspace's settings may narrow the
+  // feature. UpdateProduct refuses a setting of a feature that is not.
+  bool narrowable = 2;
+  // entitlement is the most the workspace may choose: the operator's
+  // override for the workspace, else its plan's value, else the feature's
+  // default.
+  FeatureValue entitlement = 3;
+  // setting is the workspace's own choice; unset when it has none. A
+  // setting its entitlement no longer contains, after the plan or an
+  // override lowered it, is kept and not applied.
+  FeatureValue setting = 4;
+  // effective is the value the product uses while it is on: the setting
+  // when the entitlement contains it, else the entitlement.
+  FeatureValue effective = 5;
+  // changed_by names who made the setting, as the audit log names an
+  // actor, and changed_at when; both unset when the workspace has no
+  // setting.
+  string changed_by = 6;
+  google.protobuf.Timestamp changed_at = 7;
+}
