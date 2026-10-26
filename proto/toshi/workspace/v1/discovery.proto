@@ -1,0 +1,167 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "toshi/permission.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// DiscoveryService tells a client what this deployment serves and what the
+// caller may do in the workspace, in one call: the products the build
+// includes, where each is in the deployment's lifecycle and whether the
+// workspace has it on, each feature's entitlement, setting and effective
+// value, the caller's permissions and the versions of the API and the
+// control plane. A client
+// reads it to decide what to show and what to call.
+//
+// The caller's credential names the workspace, as for WorkloadService.
+service DiscoveryService {
+  // Discover returns the products, the caller's permissions in the
+  // workspace, or in one of its projects or environments, and the
+  // versions. A suspended workspace answers it.
+  rpc Discover(DiscoverRequest) returns (DiscoverResponse) {
+    option (toshi.permission) = "workspace.read";
+    option (toshi.scope) = "environment";
+  }
+}
+
+message DiscoverRequest {
+  // project names one of the workspace's projects: the permissions are the
+  // caller's in it. Empty is the whole workspace, or for a token limited to
+  // a project or environment, that part of it. A token limited to a project
+  // names no other.
+  string project = 1;
+  // environment names an environment of project, and needs project.
+  string environment = 2;
+}
+
+message DiscoverResponse {
+  // products are the products the build includes, by id.
+  repeated DiscoveredProduct products = 1;
+  // permissions are the caller's, sorted: what its roles in the workspace
+  // give it at the request's project and environment. Each is
+  // "<area>.<level>", as docs/api/permissions.md lists them, or a
+  // product's own, "<product id>.<level>".
+  repeated string permissions = 2;
+  APIVersions versions = 3;
+}
+
+// DiscoveredProduct is one product the build includes.
+message DiscoveredProduct {
+  // id names the product, such as "runners": its config section and the
+  // prefix of its features and permissions.
+  string id = 1;
+  string version = 2;
+  // docs is where the product's documentation lives: a path in the Toshi
+  // repository, or a URL.
+  string docs = 3;
+  // enabled reports whether the deployment's config turns the product on.
+  // A product that is off serves no calls.
+  bool enabled = 4;
+  // features are the product's typed keys, by key.
+  repeated ProductFeature features = 5;
+  // state is where the product is in the deployment's lifecycle.
+  ProductState state = 6;
+  // switch says whether the product is on for the workspace and, when it is
+  // off, which switch turned it off: the switch a refused call to the
+  // product names in its ErrorInfo detail.
+  ProductSwitch switch = 7;
+}
+
+// ProductState is where a product is in the deployment's lifecycle. A
+// product the config turns off goes from no new work through draining to
+// stopped as its work ends, and back to enabled when the config turns it on
+// again. None of the states deletes the product's data.
+enum ProductState {
+  PRODUCT_STATE_UNSPECIFIED = 0;
+  // The config turns the product on: it takes new work.
+  PRODUCT_STATE_ENABLED = 1;
+  // Turned off, with work it accepted that has not started: it takes no new
+  // work, and that work still runs.
+  PRODUCT_STATE_NO_NEW_WORK = 2;
+  // Turned off, with its last work running: that work ends as it would
+  // have.
+  PRODUCT_STATE_DRAINING = 3;
+  // Turned off, with nothing left to finish.
+  PRODUCT_STATE_STOPPED = 4;
+}
+
+// ProductSwitch is the switch that decides whether a product is on for a
+// workspace. The deployment's config decides first, then the workspace's
+// entitlements, then its settings; the first that turns the product off is
+// the one named.
+enum ProductSwitch {
+  PRODUCT_SWITCH_UNSPECIFIED = 0;
+  // No switch turns the product off: it is on for the workspace.
+  PRODUCT_SWITCH_ON = 1;
+  // The deployment's config turns the product off ("disabled").
+  PRODUCT_SWITCH_DISABLED = 2;
+  // The workspace's entitlements leave the product out ("not_entitled").
+  PRODUCT_SWITCH_NOT_ENTITLED = 3;
+  // The workspace's settings turn the product off ("turned_off").
+  PRODUCT_SWITCH_TURNED_OFF = 4;
+}
+
+// ProductFeature is a typed key a product declares.
+message ProductFeature {
+  // key is "<product id>.<name>".
+  string key = 1;
+  ProductFeatureType type = 2;
+  // values are an enum's values; empty for the other types.
+  repeated string values = 3;
+  // narrowable reports whether a workspace's settings may narrow the
+  // feature within its entitlement: turn it off, or set a lower limit.
+  bool narrowable = 4;
+  // entitlement is the most the workspace may have of the feature: the
+  // operator's override for the workspace, else its plan's value, else the
+  // feature's default. Unset when the config turns the product off.
+  FeatureValue entitlement = 5;
+  // setting is the workspace's own value of the feature, unset when it has
+  // none or when its entitlements leave the product, or this bool feature,
+  // out. A setting the entitlement no longer contains, after the plan or
+  // an override lowered it, is kept and not applied.
+  FeatureValue setting = 6;
+  // effective is the value that applies: the setting when the feature is
+  // narrowable and the entitlement contains it, else the entitlement.
+  // Unset when the config turns the product off.
+  FeatureValue effective = 7;
+}
+
+// FeatureValue is a value of a feature, of the feature's type.
+message FeatureValue {
+  oneof value {
+    // A bool feature's value.
+    bool bool = 1;
+    // A count feature's value, never negative.
+    int64 count = 2;
+    // A range feature's value.
+    FeatureRange range = 3;
+    // An enum feature's value, one of its values, or a string feature's.
+    string text = 4;
+  }
+}
+
+// FeatureRange is a range feature's value: from min to max, both included.
+message FeatureRange {
+  int64 min = 1;
+  int64 max = 2;
+}
+
+// ProductFeatureType is the type of a feature's value.
+enum ProductFeatureType {
+  PRODUCT_FEATURE_TYPE_UNSPECIFIED = 0;
+  PRODUCT_FEATURE_TYPE_BOOL = 1;
+  PRODUCT_FEATURE_TYPE_COUNT = 2;
+  PRODUCT_FEATURE_TYPE_RANGE = 3;
+  PRODUCT_FEATURE_TYPE_ENUM = 4;
+  PRODUCT_FEATURE_TYPE_STRING = 5;
+}
+
+// APIVersions are the versions a client checks itself against.
+message APIVersions {
+  // api is the Toshi API's version, MAJOR.MINOR.PATCH: the version of the
+  // toshi-api module the SDKs are built from.
+  string api = 1;
+  // control_plane is the control plane's release, as GetVersion returns it.
+  string control_plane = 2;
+}
