@@ -116,7 +116,7 @@ export type AdmitGrantResponse = Message<"toshi.githubcore.v1.AdmitGrantResponse
 
   /**
    * args are the call's arguments the grant binds, as the product encoded
-   * them: for the GitHub product a GrantArgs in its JSON form, with the
+   * them: for Runners a GrantArgs in its JSON form, with the
    * proto field names as keys.
    *
    * @generated from field: bytes args = 13;
@@ -203,7 +203,7 @@ export type AdmitGrantResponseJson = {
 
   /**
    * args are the call's arguments the grant binds, as the product encoded
-   * them: for the GitHub product a GrantArgs in its JSON form, with the
+   * them: for Runners a GrantArgs in its JSON form, with the
    * proto field names as keys.
    *
    * @generated from field: bytes args = 13;
@@ -219,7 +219,7 @@ export const AdmitGrantResponseSchema: GenMessage<AdmitGrantResponse, {jsonType:
   messageDesc(file_toshi_githubcore_v1_githubcore, 1);
 
 /**
- * GrantArgs are the arguments a GitHub product grant binds. The product
+ * GrantArgs are the arguments a Runners grant binds. The product
  * encodes them in a grant's args as JSON with the proto field names as keys,
  * and the core decodes them to compare each with the call's; a field the
  * call does not bind is left at its zero value.
@@ -265,7 +265,7 @@ export type GrantArgs = Message<"toshi.githubcore.v1.GrantArgs"> & {
 };
 
 /**
- * GrantArgs are the arguments a GitHub product grant binds. The product
+ * GrantArgs are the arguments a Runners grant binds. The product
  * encodes them in a grant's args as JSON with the proto field names as keys,
  * and the core decodes them to compare each with the call's; a field the
  * call does not bind is left at its zero value.
@@ -1090,7 +1090,7 @@ export const PublishJobDeliveryCheckResponseSchema: GenMessage<PublishJobDeliver
  * core call is one the grant's call allows; for every call but AdmitGrant,
  * the grant was admitted with the call's nonce; and every argument the
  * grant binds equals the grant's. The arguments a grant binds are the
- * product's: the GitHub product encodes them, and the core reads them only
+ * product's: Runners encodes them, and the core reads them only
  * to compare them with the call's. The error does not say which rule
  * refused. A refusal with a valid product token is recorded in the audit
  * log as product.call_refused, with the call and the reason.

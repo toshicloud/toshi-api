@@ -85,7 +85,7 @@ type AdmitGrantResponse struct {
 	CreatedAt  *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	ExpiresAt  *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// args are the call's arguments the grant binds, as the product encoded
-	// them: for the GitHub product a GrantArgs in its JSON form, with the
+	// them: for Runners a GrantArgs in its JSON form, with the
 	// proto field names as keys.
 	Args          []byte `protobuf:"bytes,13,opt,name=args,proto3" json:"args,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -213,7 +213,7 @@ func (x *AdmitGrantResponse) GetArgs() []byte {
 	return nil
 }
 
-// GrantArgs are the arguments a GitHub product grant binds. The product
+// GrantArgs are the arguments a Runners grant binds. The product
 // encodes them in a grant's args as JSON with the proto field names as keys,
 // and the core decodes them to compare each with the call's; a field the
 // call does not bind is left at its zero value.
