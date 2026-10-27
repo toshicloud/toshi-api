@@ -285,7 +285,7 @@ message ConnectionDeliveryRun {
   int32 receipt_version = 3;
   // event, drop, transform_error, transform_timeout,
   // transform_invalid_output, connection_deleted, body_not_json,
-  // invalid_event or failed.
+  // invalid_event, unnamed or failed.
   string outcome = 4;
   // The event the run wrote or found; empty when it wrote none.
   string event_id = 5;

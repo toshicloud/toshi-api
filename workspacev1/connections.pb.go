@@ -1074,7 +1074,7 @@ type ConnectionDeliveryRun struct {
 	ReceiptVersion int32 `protobuf:"varint,3,opt,name=receipt_version,json=receiptVersion,proto3" json:"receipt_version,omitempty"`
 	// event, drop, transform_error, transform_timeout,
 	// transform_invalid_output, connection_deleted, body_not_json,
-	// invalid_event or failed.
+	// invalid_event, unnamed or failed.
 	Outcome string `protobuf:"bytes,4,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	// The event the run wrote or found; empty when it wrote none.
 	EventId string `protobuf:"bytes,5,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`

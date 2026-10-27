@@ -899,7 +899,7 @@ export type ConnectionDeliveryRun = Message<"toshi.workspace.v1.ConnectionDelive
   /**
    * event, drop, transform_error, transform_timeout,
    * transform_invalid_output, connection_deleted, body_not_json,
-   * invalid_event or failed.
+   * invalid_event, unnamed or failed.
    *
    * @generated from field: string outcome = 4;
    */
@@ -974,7 +974,7 @@ export type ConnectionDeliveryRunJson = {
   /**
    * event, drop, transform_error, transform_timeout,
    * transform_invalid_output, connection_deleted, body_not_json,
-   * invalid_event or failed.
+   * invalid_event, unnamed or failed.
    *
    * @generated from field: string outcome = 4;
    */
