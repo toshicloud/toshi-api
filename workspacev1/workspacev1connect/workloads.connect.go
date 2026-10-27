@@ -144,6 +144,12 @@ const (
 	// WorkloadServiceGetServiceRevisionProcedure is the fully-qualified name of the WorkloadService's
 	// GetServiceRevision RPC.
 	WorkloadServiceGetServiceRevisionProcedure = "/toshi.workspace.v1.WorkloadService/GetServiceRevision"
+	// WorkloadServiceRollbackServiceProcedure is the fully-qualified name of the WorkloadService's
+	// RollbackService RPC.
+	WorkloadServiceRollbackServiceProcedure = "/toshi.workspace.v1.WorkloadService/RollbackService"
+	// WorkloadServiceListServiceActivationsProcedure is the fully-qualified name of the
+	// WorkloadService's ListServiceActivations RPC.
+	WorkloadServiceListServiceActivationsProcedure = "/toshi.workspace.v1.WorkloadService/ListServiceActivations"
 	// WorkloadServiceListServiceRunsProcedure is the fully-qualified name of the WorkloadService's
 	// ListServiceRuns RPC.
 	WorkloadServiceListServiceRunsProcedure = "/toshi.workspace.v1.WorkloadService/ListServiceRuns"
@@ -384,6 +390,19 @@ type WorkloadServiceClient interface {
 	// GetServiceRevision returns one revision of a service. An unknown ID or
 	// number fails with NOT_FOUND.
 	GetServiceRevision(context.Context, *connect.Request[workspacev1.GetServiceRevisionRequest]) (*connect.Response[workspacev1.GetServiceRevisionResponse], error)
+	// RollbackService selects revision, a revision the service already has,
+	// as its current one, and stops its live run, so the next run starts on
+	// it: the recipe comes back, and the mode, size, state volume and secret
+	// values do not change. No revision is made. expected_revision, when
+	// set, must be the selected revision, else FAILED_PRECONDITION naming
+	// the selected one; so is a revision already selected. An unknown
+	// revision is NOT_FOUND. The answer carries the activation, whose
+	// outcome follows the revision's next run (ListServiceActivations).
+	RollbackService(context.Context, *connect.Request[workspacev1.RollbackServiceRequest]) (*connect.Response[workspacev1.RollbackServiceResponse], error)
+	// ListServiceActivations returns each time a revision of the service was
+	// selected, by its create, a deploy or a rollback, oldest first, with
+	// what came of it.
+	ListServiceActivations(context.Context, *connect.Request[workspacev1.ListServiceActivationsRequest]) (*connect.Response[workspacev1.ListServiceActivationsResponse], error)
 	// ListServiceRuns returns a service's runs, the newest first: each run
 	// is a job on a host, of the revision that was current when it was
 	// queued.
@@ -646,6 +665,18 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("GetServiceRevision")),
 			connect.WithClientOptions(opts...),
 		),
+		rollbackService: connect.NewClient[workspacev1.RollbackServiceRequest, workspacev1.RollbackServiceResponse](
+			httpClient,
+			baseURL+WorkloadServiceRollbackServiceProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("RollbackService")),
+			connect.WithClientOptions(opts...),
+		),
+		listServiceActivations: connect.NewClient[workspacev1.ListServiceActivationsRequest, workspacev1.ListServiceActivationsResponse](
+			httpClient,
+			baseURL+WorkloadServiceListServiceActivationsProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ListServiceActivations")),
+			connect.WithClientOptions(opts...),
+		),
 		listServiceRuns: connect.NewClient[workspacev1.ListServiceRunsRequest, workspacev1.ListServiceRunsResponse](
 			httpClient,
 			baseURL+WorkloadServiceListServiceRunsProcedure,
@@ -719,6 +750,8 @@ type workloadServiceClient struct {
 	releaseService         *connect.Client[workspacev1.ReleaseServiceRequest, workspacev1.ReleaseServiceResponse]
 	listServiceRevisions   *connect.Client[workspacev1.ListServiceRevisionsRequest, workspacev1.ListServiceRevisionsResponse]
 	getServiceRevision     *connect.Client[workspacev1.GetServiceRevisionRequest, workspacev1.GetServiceRevisionResponse]
+	rollbackService        *connect.Client[workspacev1.RollbackServiceRequest, workspacev1.RollbackServiceResponse]
+	listServiceActivations *connect.Client[workspacev1.ListServiceActivationsRequest, workspacev1.ListServiceActivationsResponse]
 	listServiceRuns        *connect.Client[workspacev1.ListServiceRunsRequest, workspacev1.ListServiceRunsResponse]
 	listEvents             *connect.Client[workspacev1.ListEventsRequest, workspacev1.ListEventsResponse]
 	watchEvents            *connect.Client[workspacev1.WatchEventsRequest, workspacev1.WatchEventsResponse]
@@ -914,6 +947,16 @@ func (c *workloadServiceClient) ListServiceRevisions(ctx context.Context, req *c
 // GetServiceRevision calls toshi.workspace.v1.WorkloadService.GetServiceRevision.
 func (c *workloadServiceClient) GetServiceRevision(ctx context.Context, req *connect.Request[workspacev1.GetServiceRevisionRequest]) (*connect.Response[workspacev1.GetServiceRevisionResponse], error) {
 	return c.getServiceRevision.CallUnary(ctx, req)
+}
+
+// RollbackService calls toshi.workspace.v1.WorkloadService.RollbackService.
+func (c *workloadServiceClient) RollbackService(ctx context.Context, req *connect.Request[workspacev1.RollbackServiceRequest]) (*connect.Response[workspacev1.RollbackServiceResponse], error) {
+	return c.rollbackService.CallUnary(ctx, req)
+}
+
+// ListServiceActivations calls toshi.workspace.v1.WorkloadService.ListServiceActivations.
+func (c *workloadServiceClient) ListServiceActivations(ctx context.Context, req *connect.Request[workspacev1.ListServiceActivationsRequest]) (*connect.Response[workspacev1.ListServiceActivationsResponse], error) {
+	return c.listServiceActivations.CallUnary(ctx, req)
 }
 
 // ListServiceRuns calls toshi.workspace.v1.WorkloadService.ListServiceRuns.
@@ -1164,6 +1207,19 @@ type WorkloadServiceHandler interface {
 	// GetServiceRevision returns one revision of a service. An unknown ID or
 	// number fails with NOT_FOUND.
 	GetServiceRevision(context.Context, *connect.Request[workspacev1.GetServiceRevisionRequest]) (*connect.Response[workspacev1.GetServiceRevisionResponse], error)
+	// RollbackService selects revision, a revision the service already has,
+	// as its current one, and stops its live run, so the next run starts on
+	// it: the recipe comes back, and the mode, size, state volume and secret
+	// values do not change. No revision is made. expected_revision, when
+	// set, must be the selected revision, else FAILED_PRECONDITION naming
+	// the selected one; so is a revision already selected. An unknown
+	// revision is NOT_FOUND. The answer carries the activation, whose
+	// outcome follows the revision's next run (ListServiceActivations).
+	RollbackService(context.Context, *connect.Request[workspacev1.RollbackServiceRequest]) (*connect.Response[workspacev1.RollbackServiceResponse], error)
+	// ListServiceActivations returns each time a revision of the service was
+	// selected, by its create, a deploy or a rollback, oldest first, with
+	// what came of it.
+	ListServiceActivations(context.Context, *connect.Request[workspacev1.ListServiceActivationsRequest]) (*connect.Response[workspacev1.ListServiceActivationsResponse], error)
 	// ListServiceRuns returns a service's runs, the newest first: each run
 	// is a job on a host, of the revision that was current when it was
 	// queued.
@@ -1422,6 +1478,18 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("GetServiceRevision")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceRollbackServiceHandler := connect.NewUnaryHandler(
+		WorkloadServiceRollbackServiceProcedure,
+		svc.RollbackService,
+		connect.WithSchema(workloadServiceMethods.ByName("RollbackService")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceListServiceActivationsHandler := connect.NewUnaryHandler(
+		WorkloadServiceListServiceActivationsProcedure,
+		svc.ListServiceActivations,
+		connect.WithSchema(workloadServiceMethods.ByName("ListServiceActivations")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceListServiceRunsHandler := connect.NewUnaryHandler(
 		WorkloadServiceListServiceRunsProcedure,
 		svc.ListServiceRuns,
@@ -1530,6 +1598,10 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceListServiceRevisionsHandler.ServeHTTP(w, r)
 		case WorkloadServiceGetServiceRevisionProcedure:
 			workloadServiceGetServiceRevisionHandler.ServeHTTP(w, r)
+		case WorkloadServiceRollbackServiceProcedure:
+			workloadServiceRollbackServiceHandler.ServeHTTP(w, r)
+		case WorkloadServiceListServiceActivationsProcedure:
+			workloadServiceListServiceActivationsHandler.ServeHTTP(w, r)
 		case WorkloadServiceListServiceRunsProcedure:
 			workloadServiceListServiceRunsHandler.ServeHTTP(w, r)
 		case WorkloadServiceListEventsProcedure:
@@ -1699,6 +1771,14 @@ func (UnimplementedWorkloadServiceHandler) ListServiceRevisions(context.Context,
 
 func (UnimplementedWorkloadServiceHandler) GetServiceRevision(context.Context, *connect.Request[workspacev1.GetServiceRevisionRequest]) (*connect.Response[workspacev1.GetServiceRevisionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.GetServiceRevision is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) RollbackService(context.Context, *connect.Request[workspacev1.RollbackServiceRequest]) (*connect.Response[workspacev1.RollbackServiceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.RollbackService is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ListServiceActivations(context.Context, *connect.Request[workspacev1.ListServiceActivationsRequest]) (*connect.Response[workspacev1.ListServiceActivationsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ListServiceActivations is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) ListServiceRuns(context.Context, *connect.Request[workspacev1.ListServiceRunsRequest]) (*connect.Response[workspacev1.ListServiceRunsResponse], error) {

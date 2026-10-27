@@ -422,6 +422,30 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
+  // RollbackService selects revision, a revision the service already has,
+  // as its current one, and stops its live run, so the next run starts on
+  // it: the recipe comes back, and the mode, size, state volume and secret
+  // values do not change. No revision is made. expected_revision, when
+  // set, must be the selected revision, else FAILED_PRECONDITION naming
+  // the selected one; so is a revision already selected. An unknown
+  // revision is NOT_FOUND. The answer carries the activation, whose
+  // outcome follows the revision's next run (ListServiceActivations).
+  rpc RollbackService(RollbackServiceRequest) returns (RollbackServiceResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "service.activation_requested"
+    };
+  }
+
+  // ListServiceActivations returns each time a revision of the service was
+  // selected, by its create, a deploy or a rollback, oldest first, with
+  // what came of it.
+  rpc ListServiceActivations(ListServiceActivationsRequest) returns (ListServiceActivationsResponse) {
+    option (toshi.permission) = "services.read";
+    option (toshi.scope) = "environment";
+  }
+
   // ListServiceRuns returns a service's runs, the newest first: each run
   // is a job on a host, of the revision that was current when it was
   // queued.

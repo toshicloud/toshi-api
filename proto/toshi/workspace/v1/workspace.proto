@@ -1201,6 +1201,92 @@ enum ServiceRevisionReason {
   SERVICE_REVISION_REASON_SECRET = 2;
 }
 
+message RollbackServiceRequest {
+  string project = 1;
+  string environment = 2;
+  // The service's workload id.
+  string id = 3;
+  // The revision to select.
+  int64 revision = 4;
+  // The revision the caller saw selected; 0 checks nothing.
+  int64 expected_revision = 5;
+  string request_key = 6;
+}
+
+message RollbackServiceResponse {
+  // The service after the rollback.
+  Service service = 1;
+  // The rollback's activation.
+  ServiceActivation activation = 2;
+}
+
+message ListServiceActivationsRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+}
+
+message ListServiceActivationsResponse {
+  // The service's activations, oldest first.
+  repeated ServiceActivation activations = 1;
+}
+
+// ServiceActivation is one selection of a service's revision and what came
+// of it: the outcome follows the first run of the revision.
+message ServiceActivation {
+  // Counts from 1 in the order the service's activations were made.
+  int64 sequence = 1;
+  ServiceActivationKind kind = 2;
+  // Who asked for it.
+  string actor = 3;
+  // The request key of the call that asked for it, if it had one.
+  string request_key = 4;
+  // The revision selected before; 0 for the create.
+  int64 from_revision = 5;
+  // The revision selected.
+  int64 to_revision = 6;
+  google.protobuf.Timestamp requested_at = 7;
+  // The run the outcome follows; empty until the revision's run is
+  // queued.
+  string run_id = 8;
+  ServiceActivationOutcome outcome = 9;
+  // A FAILED outcome's error: the run's.
+  string error = 10;
+  // The secrets' names and versions the run's start fixed; never a value.
+  repeated ServiceSecretVersion secret_versions = 11;
+}
+
+// ServiceActivationKind is what selected a revision.
+enum ServiceActivationKind {
+  SERVICE_ACTIVATION_KIND_UNSPECIFIED = 0;
+  SERVICE_ACTIVATION_KIND_CREATE = 1;
+  // An UpdateService of spec.recipe.
+  SERVICE_ACTIVATION_KIND_DEPLOY = 2;
+  // A RollbackService.
+  SERVICE_ACTIVATION_KIND_ROLLBACK = 3;
+}
+
+// ServiceActivationOutcome is what came of an activation. READY and FAILED
+// are final.
+enum ServiceActivationOutcome {
+  SERVICE_ACTIVATION_OUTCOME_UNSPECIFIED = 0;
+  // Selected; its run has not been ready yet, or the service is not
+  // running.
+  SERVICE_ACTIVATION_OUTCOME_SELECTED = 1;
+  // Its run was ready.
+  SERVICE_ACTIVATION_OUTCOME_READY = 2;
+  // Its run ended with an error before it was ready.
+  SERVICE_ACTIVATION_OUTCOME_FAILED = 3;
+  // Its run is queued, held for capacity.
+  SERVICE_ACTIVATION_OUTCOME_HELD = 4;
+}
+
+// ServiceSecretVersion is a secret's name and the version a run used.
+message ServiceSecretVersion {
+  string name = 1;
+  int64 version = 2;
+}
+
 // ServiceRun is one run of a service: a job on a host.
 message ServiceRun {
   // The run's job id.
