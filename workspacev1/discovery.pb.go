@@ -22,6 +22,67 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// DiscoveredInstallationState is where a workspace's installation of an
+// outside product stands. It mirrors products.proto's InstallationState,
+// value for value, because discovery.proto cannot import products.proto,
+// which imports it.
+type DiscoveredInstallationState int32
+
+const (
+	DiscoveredInstallationState_DISCOVERED_INSTALLATION_STATE_UNSPECIFIED DiscoveredInstallationState = 0
+	// The product is on and its token works.
+	DiscoveredInstallationState_DISCOVERED_INSTALLATION_STATE_ACTIVE DiscoveredInstallationState = 1
+	// The product is turned off: its token is refused and its webhook
+	// endpoints are paused until it is turned on again.
+	DiscoveredInstallationState_DISCOVERED_INSTALLATION_STATE_SUSPENDED DiscoveredInstallationState = 2
+	// Its token is revoked and its role deleted; turning it on installs it
+	// again.
+	DiscoveredInstallationState_DISCOVERED_INSTALLATION_STATE_REMOVED DiscoveredInstallationState = 3
+)
+
+// Enum value maps for DiscoveredInstallationState.
+var (
+	DiscoveredInstallationState_name = map[int32]string{
+		0: "DISCOVERED_INSTALLATION_STATE_UNSPECIFIED",
+		1: "DISCOVERED_INSTALLATION_STATE_ACTIVE",
+		2: "DISCOVERED_INSTALLATION_STATE_SUSPENDED",
+		3: "DISCOVERED_INSTALLATION_STATE_REMOVED",
+	}
+	DiscoveredInstallationState_value = map[string]int32{
+		"DISCOVERED_INSTALLATION_STATE_UNSPECIFIED": 0,
+		"DISCOVERED_INSTALLATION_STATE_ACTIVE":      1,
+		"DISCOVERED_INSTALLATION_STATE_SUSPENDED":   2,
+		"DISCOVERED_INSTALLATION_STATE_REMOVED":     3,
+	}
+)
+
+func (x DiscoveredInstallationState) Enum() *DiscoveredInstallationState {
+	p := new(DiscoveredInstallationState)
+	*p = x
+	return p
+}
+
+func (x DiscoveredInstallationState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DiscoveredInstallationState) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_discovery_proto_enumTypes[0].Descriptor()
+}
+
+func (DiscoveredInstallationState) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_discovery_proto_enumTypes[0]
+}
+
+func (x DiscoveredInstallationState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DiscoveredInstallationState.Descriptor instead.
+func (DiscoveredInstallationState) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{0}
+}
+
 // ProductState is where a product is in the deployment's lifecycle. A
 // product the config turns off goes from no new work through draining to
 // stopped as its work ends, and back to enabled when the config turns it on
@@ -71,11 +132,11 @@ func (x ProductState) String() string {
 }
 
 func (ProductState) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_discovery_proto_enumTypes[0].Descriptor()
+	return file_toshi_workspace_v1_discovery_proto_enumTypes[1].Descriptor()
 }
 
 func (ProductState) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_discovery_proto_enumTypes[0]
+	return &file_toshi_workspace_v1_discovery_proto_enumTypes[1]
 }
 
 func (x ProductState) Number() protoreflect.EnumNumber {
@@ -84,7 +145,7 @@ func (x ProductState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ProductState.Descriptor instead.
 func (ProductState) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{0}
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{1}
 }
 
 // ProductSwitch is the switch that decides whether a product is on for a
@@ -134,11 +195,11 @@ func (x ProductSwitch) String() string {
 }
 
 func (ProductSwitch) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_discovery_proto_enumTypes[1].Descriptor()
+	return file_toshi_workspace_v1_discovery_proto_enumTypes[2].Descriptor()
 }
 
 func (ProductSwitch) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_discovery_proto_enumTypes[1]
+	return &file_toshi_workspace_v1_discovery_proto_enumTypes[2]
 }
 
 func (x ProductSwitch) Number() protoreflect.EnumNumber {
@@ -147,7 +208,7 @@ func (x ProductSwitch) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ProductSwitch.Descriptor instead.
 func (ProductSwitch) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{2}
 }
 
 // FeatureSource is where a workspace's entitlement to a feature comes from,
@@ -198,11 +259,11 @@ func (x FeatureSource) String() string {
 }
 
 func (FeatureSource) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_discovery_proto_enumTypes[2].Descriptor()
+	return file_toshi_workspace_v1_discovery_proto_enumTypes[3].Descriptor()
 }
 
 func (FeatureSource) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_discovery_proto_enumTypes[2]
+	return &file_toshi_workspace_v1_discovery_proto_enumTypes[3]
 }
 
 func (x FeatureSource) Number() protoreflect.EnumNumber {
@@ -211,7 +272,7 @@ func (x FeatureSource) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use FeatureSource.Descriptor instead.
 func (FeatureSource) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{3}
 }
 
 // ProductFeatureType is the type of a feature's value.
@@ -257,11 +318,11 @@ func (x ProductFeatureType) String() string {
 }
 
 func (ProductFeatureType) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_discovery_proto_enumTypes[3].Descriptor()
+	return file_toshi_workspace_v1_discovery_proto_enumTypes[4].Descriptor()
 }
 
 func (ProductFeatureType) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_discovery_proto_enumTypes[3]
+	return &file_toshi_workspace_v1_discovery_proto_enumTypes[4]
 }
 
 func (x ProductFeatureType) Number() protoreflect.EnumNumber {
@@ -270,7 +331,7 @@ func (x ProductFeatureType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ProductFeatureType.Descriptor instead.
 func (ProductFeatureType) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{4}
 }
 
 type DiscoverRequest struct {
@@ -415,9 +476,19 @@ type DiscoveredProduct struct {
 	// switch says whether the product is on for the workspace and, when it is
 	// off, which switch turned it off: the switch a refused call to the
 	// product names in its ErrorInfo detail.
-	Switch        ProductSwitch `protobuf:"varint,7,opt,name=switch,proto3,enum=toshi.workspace.v1.ProductSwitch" json:"switch,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Switch ProductSwitch `protobuf:"varint,7,opt,name=switch,proto3,enum=toshi.workspace.v1.ProductSwitch" json:"switch,omitempty"`
+	// surfaces are what the product adds to Toshi, from its catalog entry.
+	// Unset for a product the catalog has no entry for.
+	Surfaces *DiscoveredSurfaces `protobuf:"bytes,8,opt,name=surfaces,proto3" json:"surfaces,omitempty"`
+	// installation_state is the state of the workspace's installation of an
+	// outside product, a removed one included; unspecified for a built-in
+	// product. Such a product declares no features; it is enabled, its state
+	// enabled and its switch ON while the installation is active, and
+	// otherwise it is not enabled, its state stopped and its switch
+	// TURNED_OFF.
+	InstallationState DiscoveredInstallationState `protobuf:"varint,9,opt,name=installation_state,json=installationState,proto3,enum=toshi.workspace.v1.DiscoveredInstallationState" json:"installation_state,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *DiscoveredProduct) Reset() {
@@ -499,6 +570,98 @@ func (x *DiscoveredProduct) GetSwitch() ProductSwitch {
 	return ProductSwitch_PRODUCT_SWITCH_UNSPECIFIED
 }
 
+func (x *DiscoveredProduct) GetSurfaces() *DiscoveredSurfaces {
+	if x != nil {
+		return x.Surfaces
+	}
+	return nil
+}
+
+func (x *DiscoveredProduct) GetInstallationState() DiscoveredInstallationState {
+	if x != nil {
+		return x.InstallationState
+	}
+	return DiscoveredInstallationState_DISCOVERED_INSTALLATION_STATE_UNSPECIFIED
+}
+
+// DiscoveredSurfaces are what a product adds to Toshi, each empty when it
+// adds none. It mirrors products.proto's ProductSurfaces, field for field,
+// because discovery.proto cannot import products.proto, which imports it.
+type DiscoveredSurfaces struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// api is the product's API endpoint: an https URL, or for a built-in
+	// product the path the control plane serves it at, such as "/runners/".
+	Api string `protobuf:"bytes,1,opt,name=api,proto3" json:"api,omitempty"`
+	// cli is the https URL its CLI plugin is downloaded from.
+	Cli string `protobuf:"bytes,2,opt,name=cli,proto3" json:"cli,omitempty"`
+	// dashboard is the https URL of the product's own UI. A client opens it
+	// as its own page, never inside its own.
+	Dashboard string `protobuf:"bytes,3,opt,name=dashboard,proto3" json:"dashboard,omitempty"`
+	// sdk is the package of its SDK, such as a Go module path or an npm
+	// package name.
+	Sdk           string `protobuf:"bytes,4,opt,name=sdk,proto3" json:"sdk,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DiscoveredSurfaces) Reset() {
+	*x = DiscoveredSurfaces{}
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DiscoveredSurfaces) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DiscoveredSurfaces) ProtoMessage() {}
+
+func (x *DiscoveredSurfaces) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DiscoveredSurfaces.ProtoReflect.Descriptor instead.
+func (*DiscoveredSurfaces) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *DiscoveredSurfaces) GetApi() string {
+	if x != nil {
+		return x.Api
+	}
+	return ""
+}
+
+func (x *DiscoveredSurfaces) GetCli() string {
+	if x != nil {
+		return x.Cli
+	}
+	return ""
+}
+
+func (x *DiscoveredSurfaces) GetDashboard() string {
+	if x != nil {
+		return x.Dashboard
+	}
+	return ""
+}
+
+func (x *DiscoveredSurfaces) GetSdk() string {
+	if x != nil {
+		return x.Sdk
+	}
+	return ""
+}
+
 // ProductFeature is a typed key a product declares.
 type ProductFeature struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -544,7 +707,7 @@ type ProductFeature struct {
 
 func (x *ProductFeature) Reset() {
 	*x = ProductFeature{}
-	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -556,7 +719,7 @@ func (x *ProductFeature) String() string {
 func (*ProductFeature) ProtoMessage() {}
 
 func (x *ProductFeature) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -569,7 +732,7 @@ func (x *ProductFeature) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProductFeature.ProtoReflect.Descriptor instead.
 func (*ProductFeature) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ProductFeature) GetKey() string {
@@ -665,7 +828,7 @@ type FeatureValue struct {
 
 func (x *FeatureValue) Reset() {
 	*x = FeatureValue{}
-	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -677,7 +840,7 @@ func (x *FeatureValue) String() string {
 func (*FeatureValue) ProtoMessage() {}
 
 func (x *FeatureValue) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -690,7 +853,7 @@ func (x *FeatureValue) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FeatureValue.ProtoReflect.Descriptor instead.
 func (*FeatureValue) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *FeatureValue) GetValue() isFeatureValue_Value {
@@ -779,7 +942,7 @@ type FeatureRange struct {
 
 func (x *FeatureRange) Reset() {
 	*x = FeatureRange{}
-	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -791,7 +954,7 @@ func (x *FeatureRange) String() string {
 func (*FeatureRange) ProtoMessage() {}
 
 func (x *FeatureRange) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -804,7 +967,7 @@ func (x *FeatureRange) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FeatureRange.ProtoReflect.Descriptor instead.
 func (*FeatureRange) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *FeatureRange) GetMin() int64 {
@@ -835,7 +998,7 @@ type APIVersions struct {
 
 func (x *APIVersions) Reset() {
 	*x = APIVersions{}
-	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -847,7 +1010,7 @@ func (x *APIVersions) String() string {
 func (*APIVersions) ProtoMessage() {}
 
 func (x *APIVersions) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_discovery_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -860,7 +1023,7 @@ func (x *APIVersions) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use APIVersions.ProtoReflect.Descriptor instead.
 func (*APIVersions) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *APIVersions) GetApi() string {
@@ -888,7 +1051,7 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"\x10DiscoverResponse\x12A\n" +
 	"\bproducts\x18\x01 \x03(\v2%.toshi.workspace.v1.DiscoveredProductR\bproducts\x12 \n" +
 	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12;\n" +
-	"\bversions\x18\x03 \x01(\v2\x1f.toshi.workspace.v1.APIVersionsR\bversions\"\x9e\x02\n" +
+	"\bversions\x18\x03 \x01(\v2\x1f.toshi.workspace.v1.APIVersionsR\bversions\"\xc2\x03\n" +
 	"\x11DiscoveredProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\tR\aversion\x12\x12\n" +
@@ -896,7 +1059,14 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"\aenabled\x18\x04 \x01(\bR\aenabled\x12>\n" +
 	"\bfeatures\x18\x05 \x03(\v2\".toshi.workspace.v1.ProductFeatureR\bfeatures\x126\n" +
 	"\x05state\x18\x06 \x01(\x0e2 .toshi.workspace.v1.ProductStateR\x05state\x129\n" +
-	"\x06switch\x18\a \x01(\x0e2!.toshi.workspace.v1.ProductSwitchR\x06switch\"\x85\x04\n" +
+	"\x06switch\x18\a \x01(\x0e2!.toshi.workspace.v1.ProductSwitchR\x06switch\x12B\n" +
+	"\bsurfaces\x18\b \x01(\v2&.toshi.workspace.v1.DiscoveredSurfacesR\bsurfaces\x12^\n" +
+	"\x12installation_state\x18\t \x01(\x0e2/.toshi.workspace.v1.DiscoveredInstallationStateR\x11installationState\"h\n" +
+	"\x12DiscoveredSurfaces\x12\x10\n" +
+	"\x03api\x18\x01 \x01(\tR\x03api\x12\x10\n" +
+	"\x03cli\x18\x02 \x01(\tR\x03cli\x12\x1c\n" +
+	"\tdashboard\x18\x03 \x01(\tR\tdashboard\x12\x10\n" +
+	"\x03sdk\x18\x04 \x01(\tR\x03sdk\"\x85\x04\n" +
 	"\x0eProductFeature\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12:\n" +
 	"\x04type\x18\x02 \x01(\x0e2&.toshi.workspace.v1.ProductFeatureTypeR\x04type\x12\x16\n" +
@@ -923,7 +1093,12 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"\x03max\x18\x02 \x01(\x03R\x03max\"D\n" +
 	"\vAPIVersions\x12\x10\n" +
 	"\x03api\x18\x01 \x01(\tR\x03api\x12#\n" +
-	"\rcontrol_plane\x18\x02 \x01(\tR\fcontrolPlane*\x9e\x01\n" +
+	"\rcontrol_plane\x18\x02 \x01(\tR\fcontrolPlane*\xce\x01\n" +
+	"\x1bDiscoveredInstallationState\x12-\n" +
+	")DISCOVERED_INSTALLATION_STATE_UNSPECIFIED\x10\x00\x12(\n" +
+	"$DISCOVERED_INSTALLATION_STATE_ACTIVE\x10\x01\x12+\n" +
+	"'DISCOVERED_INSTALLATION_STATE_SUSPENDED\x10\x02\x12)\n" +
+	"%DISCOVERED_INSTALLATION_STATE_REMOVED\x10\x03*\x9e\x01\n" +
 	"\fProductState\x12\x1d\n" +
 	"\x19PRODUCT_STATE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15PRODUCT_STATE_ENABLED\x10\x01\x12\x1d\n" +
@@ -964,41 +1139,45 @@ func file_toshi_workspace_v1_discovery_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_discovery_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_discovery_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_toshi_workspace_v1_discovery_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_toshi_workspace_v1_discovery_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+var file_toshi_workspace_v1_discovery_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_toshi_workspace_v1_discovery_proto_goTypes = []any{
-	(ProductState)(0),         // 0: toshi.workspace.v1.ProductState
-	(ProductSwitch)(0),        // 1: toshi.workspace.v1.ProductSwitch
-	(FeatureSource)(0),        // 2: toshi.workspace.v1.FeatureSource
-	(ProductFeatureType)(0),   // 3: toshi.workspace.v1.ProductFeatureType
-	(*DiscoverRequest)(nil),   // 4: toshi.workspace.v1.DiscoverRequest
-	(*DiscoverResponse)(nil),  // 5: toshi.workspace.v1.DiscoverResponse
-	(*DiscoveredProduct)(nil), // 6: toshi.workspace.v1.DiscoveredProduct
-	(*ProductFeature)(nil),    // 7: toshi.workspace.v1.ProductFeature
-	(*FeatureValue)(nil),      // 8: toshi.workspace.v1.FeatureValue
-	(*FeatureRange)(nil),      // 9: toshi.workspace.v1.FeatureRange
-	(*APIVersions)(nil),       // 10: toshi.workspace.v1.APIVersions
+	(DiscoveredInstallationState)(0), // 0: toshi.workspace.v1.DiscoveredInstallationState
+	(ProductState)(0),                // 1: toshi.workspace.v1.ProductState
+	(ProductSwitch)(0),               // 2: toshi.workspace.v1.ProductSwitch
+	(FeatureSource)(0),               // 3: toshi.workspace.v1.FeatureSource
+	(ProductFeatureType)(0),          // 4: toshi.workspace.v1.ProductFeatureType
+	(*DiscoverRequest)(nil),          // 5: toshi.workspace.v1.DiscoverRequest
+	(*DiscoverResponse)(nil),         // 6: toshi.workspace.v1.DiscoverResponse
+	(*DiscoveredProduct)(nil),        // 7: toshi.workspace.v1.DiscoveredProduct
+	(*DiscoveredSurfaces)(nil),       // 8: toshi.workspace.v1.DiscoveredSurfaces
+	(*ProductFeature)(nil),           // 9: toshi.workspace.v1.ProductFeature
+	(*FeatureValue)(nil),             // 10: toshi.workspace.v1.FeatureValue
+	(*FeatureRange)(nil),             // 11: toshi.workspace.v1.FeatureRange
+	(*APIVersions)(nil),              // 12: toshi.workspace.v1.APIVersions
 }
 var file_toshi_workspace_v1_discovery_proto_depIdxs = []int32{
-	6,  // 0: toshi.workspace.v1.DiscoverResponse.products:type_name -> toshi.workspace.v1.DiscoveredProduct
-	10, // 1: toshi.workspace.v1.DiscoverResponse.versions:type_name -> toshi.workspace.v1.APIVersions
-	7,  // 2: toshi.workspace.v1.DiscoveredProduct.features:type_name -> toshi.workspace.v1.ProductFeature
-	0,  // 3: toshi.workspace.v1.DiscoveredProduct.state:type_name -> toshi.workspace.v1.ProductState
-	1,  // 4: toshi.workspace.v1.DiscoveredProduct.switch:type_name -> toshi.workspace.v1.ProductSwitch
-	3,  // 5: toshi.workspace.v1.ProductFeature.type:type_name -> toshi.workspace.v1.ProductFeatureType
-	8,  // 6: toshi.workspace.v1.ProductFeature.entitlement:type_name -> toshi.workspace.v1.FeatureValue
-	8,  // 7: toshi.workspace.v1.ProductFeature.setting:type_name -> toshi.workspace.v1.FeatureValue
-	8,  // 8: toshi.workspace.v1.ProductFeature.effective:type_name -> toshi.workspace.v1.FeatureValue
-	8,  // 9: toshi.workspace.v1.ProductFeature.default_value:type_name -> toshi.workspace.v1.FeatureValue
-	2,  // 10: toshi.workspace.v1.ProductFeature.source:type_name -> toshi.workspace.v1.FeatureSource
-	9,  // 11: toshi.workspace.v1.FeatureValue.range:type_name -> toshi.workspace.v1.FeatureRange
-	4,  // 12: toshi.workspace.v1.DiscoveryService.Discover:input_type -> toshi.workspace.v1.DiscoverRequest
-	5,  // 13: toshi.workspace.v1.DiscoveryService.Discover:output_type -> toshi.workspace.v1.DiscoverResponse
-	13, // [13:14] is the sub-list for method output_type
-	12, // [12:13] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	7,  // 0: toshi.workspace.v1.DiscoverResponse.products:type_name -> toshi.workspace.v1.DiscoveredProduct
+	12, // 1: toshi.workspace.v1.DiscoverResponse.versions:type_name -> toshi.workspace.v1.APIVersions
+	9,  // 2: toshi.workspace.v1.DiscoveredProduct.features:type_name -> toshi.workspace.v1.ProductFeature
+	1,  // 3: toshi.workspace.v1.DiscoveredProduct.state:type_name -> toshi.workspace.v1.ProductState
+	2,  // 4: toshi.workspace.v1.DiscoveredProduct.switch:type_name -> toshi.workspace.v1.ProductSwitch
+	8,  // 5: toshi.workspace.v1.DiscoveredProduct.surfaces:type_name -> toshi.workspace.v1.DiscoveredSurfaces
+	0,  // 6: toshi.workspace.v1.DiscoveredProduct.installation_state:type_name -> toshi.workspace.v1.DiscoveredInstallationState
+	4,  // 7: toshi.workspace.v1.ProductFeature.type:type_name -> toshi.workspace.v1.ProductFeatureType
+	10, // 8: toshi.workspace.v1.ProductFeature.entitlement:type_name -> toshi.workspace.v1.FeatureValue
+	10, // 9: toshi.workspace.v1.ProductFeature.setting:type_name -> toshi.workspace.v1.FeatureValue
+	10, // 10: toshi.workspace.v1.ProductFeature.effective:type_name -> toshi.workspace.v1.FeatureValue
+	10, // 11: toshi.workspace.v1.ProductFeature.default_value:type_name -> toshi.workspace.v1.FeatureValue
+	3,  // 12: toshi.workspace.v1.ProductFeature.source:type_name -> toshi.workspace.v1.FeatureSource
+	11, // 13: toshi.workspace.v1.FeatureValue.range:type_name -> toshi.workspace.v1.FeatureRange
+	5,  // 14: toshi.workspace.v1.DiscoveryService.Discover:input_type -> toshi.workspace.v1.DiscoverRequest
+	6,  // 15: toshi.workspace.v1.DiscoveryService.Discover:output_type -> toshi.workspace.v1.DiscoverResponse
+	15, // [15:16] is the sub-list for method output_type
+	14, // [14:15] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_discovery_proto_init() }
@@ -1006,7 +1185,7 @@ func file_toshi_workspace_v1_discovery_proto_init() {
 	if File_toshi_workspace_v1_discovery_proto != nil {
 		return
 	}
-	file_toshi_workspace_v1_discovery_proto_msgTypes[4].OneofWrappers = []any{
+	file_toshi_workspace_v1_discovery_proto_msgTypes[5].OneofWrappers = []any{
 		(*FeatureValue_Bool)(nil),
 		(*FeatureValue_Count)(nil),
 		(*FeatureValue_Range)(nil),
@@ -1017,8 +1196,8 @@ func file_toshi_workspace_v1_discovery_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_discovery_proto_rawDesc), len(file_toshi_workspace_v1_discovery_proto_rawDesc)),
-			NumEnums:      4,
-			NumMessages:   7,
+			NumEnums:      5,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -66,6 +66,49 @@ message DiscoveredProduct {
   // off, which switch turned it off: the switch a refused call to the
   // product names in its ErrorInfo detail.
   ProductSwitch switch = 7;
+  // surfaces are what the product adds to Toshi, from its catalog entry.
+  // Unset for a product the catalog has no entry for.
+  DiscoveredSurfaces surfaces = 8;
+  // installation_state is the state of the workspace's installation of an
+  // outside product, a removed one included; unspecified for a built-in
+  // product. Such a product declares no features; it is enabled, its state
+  // enabled and its switch ON while the installation is active, and
+  // otherwise it is not enabled, its state stopped and its switch
+  // TURNED_OFF.
+  DiscoveredInstallationState installation_state = 9;
+}
+
+// DiscoveredSurfaces are what a product adds to Toshi, each empty when it
+// adds none. It mirrors products.proto's ProductSurfaces, field for field,
+// because discovery.proto cannot import products.proto, which imports it.
+message DiscoveredSurfaces {
+  // api is the product's API endpoint: an https URL, or for a built-in
+  // product the path the control plane serves it at, such as "/runners/".
+  string api = 1;
+  // cli is the https URL its CLI plugin is downloaded from.
+  string cli = 2;
+  // dashboard is the https URL of the product's own UI. A client opens it
+  // as its own page, never inside its own.
+  string dashboard = 3;
+  // sdk is the package of its SDK, such as a Go module path or an npm
+  // package name.
+  string sdk = 4;
+}
+
+// DiscoveredInstallationState is where a workspace's installation of an
+// outside product stands. It mirrors products.proto's InstallationState,
+// value for value, because discovery.proto cannot import products.proto,
+// which imports it.
+enum DiscoveredInstallationState {
+  DISCOVERED_INSTALLATION_STATE_UNSPECIFIED = 0;
+  // The product is on and its token works.
+  DISCOVERED_INSTALLATION_STATE_ACTIVE = 1;
+  // The product is turned off: its token is refused and its webhook
+  // endpoints are paused until it is turned on again.
+  DISCOVERED_INSTALLATION_STATE_SUSPENDED = 2;
+  // Its token is revoked and its role deleted; turning it on installs it
+  // again.
+  DISCOVERED_INSTALLATION_STATE_REMOVED = 3;
 }
 
 // ProductState is where a product is in the deployment's lifecycle. A
