@@ -30,9 +30,9 @@ type AuditEvent struct {
 	At    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=at,proto3" json:"at,omitempty"`
 	// operator, session, token, workload, product, system or webhook.
 	ActorKind string `protobuf:"bytes,3,opt,name=actor_kind,json=actorKind,proto3" json:"actor_kind,omitempty"`
-	// The session's GitHub login; the API or product token's id (never its
-	// value); the workload as "<kind>:<id>"; or a system or webhook source
-	// name.
+	// The session's user id, which stays the same across renames and identity
+	// providers; the API or product token's id (never its value); the workload
+	// as "<kind>:<id>"; or a system or webhook source name.
 	ActorId string `protobuf:"bytes,4,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
 	Action  string `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
 	// A "<kind>:<id>" string such as job:..., host:..., token:... or
@@ -54,7 +54,10 @@ type AuditEvent struct {
 	Outcome string `protobuf:"bytes,11,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	// The id of the token the call was made with (never its value); empty for
 	// a session and for an event no call records.
-	TokenId       string `protobuf:"bytes,12,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
+	TokenId string `protobuf:"bytes,12,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
+	// A session actor's login or name as it was when the event was recorded;
+	// empty for the other actors, and once the workspace is purged.
+	ActorName     string `protobuf:"bytes,13,opt,name=actor_name,json=actorName,proto3" json:"actor_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -169,6 +172,13 @@ func (x *AuditEvent) GetOutcome() string {
 func (x *AuditEvent) GetTokenId() string {
 	if x != nil {
 		return x.TokenId
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetActorName() string {
+	if x != nil {
+		return x.ActorName
 	}
 	return ""
 }
@@ -347,7 +357,7 @@ var File_toshi_workspace_v1_audit_events_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\n" +
-	"%toshi/workspace/v1/audit_events.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xdf\x02\n" +
+	"%toshi/workspace/v1/audit_events.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xfe\x02\n" +
 	"\n" +
 	"AuditEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
@@ -366,7 +376,9 @@ const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\x05scope\x18\n" +
 	" \x01(\tR\x05scope\x12\x18\n" +
 	"\aoutcome\x18\v \x01(\tR\aoutcome\x12\x19\n" +
-	"\btoken_id\x18\f \x01(\tR\atokenId\"\x80\x02\n" +
+	"\btoken_id\x18\f \x01(\tR\atokenId\x12\x1d\n" +
+	"\n" +
+	"actor_name\x18\r \x01(\tR\tactorName\"\x80\x02\n" +
 	"\x16ListAuditEventsRequest\x12\x16\n" +
 	"\x06action\x18\x01 \x01(\tR\x06action\x120\n" +
 	"\x05since\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x1b\n" +

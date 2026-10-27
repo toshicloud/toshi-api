@@ -2796,7 +2796,7 @@ type AuditEvent struct {
 	// operator, session, system or webhook.
 	ActorKind string `protobuf:"bytes,3,opt,name=actor_kind,json=actorKind,proto3" json:"actor_kind,omitempty"`
 	// The operator or enrollment token's id (never its value), the session's
-	// GitHub login, or a system or webhook source name.
+	// user id, or a system or webhook source name.
 	ActorId string `protobuf:"bytes,4,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
 	// Empty when the event is not tied to a workspace.
 	Tenant string `protobuf:"bytes,5,opt,name=tenant,proto3" json:"tenant,omitempty"`
@@ -2820,7 +2820,10 @@ type AuditEvent struct {
 	Outcome string `protobuf:"bytes,12,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	// The id of the token the call was made with (never its value); empty for
 	// a session and for an event no call records.
-	TokenId       string `protobuf:"bytes,13,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
+	TokenId string `protobuf:"bytes,13,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
+	// A session actor's login or name as it was when the event was recorded;
+	// empty for the other actors, and once the workspace is purged.
+	ActorName     string `protobuf:"bytes,14,opt,name=actor_name,json=actorName,proto3" json:"actor_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2942,6 +2945,13 @@ func (x *AuditEvent) GetOutcome() string {
 func (x *AuditEvent) GetTokenId() string {
 	if x != nil {
 		return x.TokenId
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetActorName() string {
+	if x != nil {
+		return x.ActorName
 	}
 	return ""
 }
@@ -16383,7 +16393,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"u\n" +
 	"\x0eGetJobResponse\x12(\n" +
 	"\x03job\x18\x01 \x01(\v2\x16.toshi.operator.v1.JobR\x03job\x129\n" +
-	"\battempts\x18\x02 \x03(\v2\x1d.toshi.operator.v1.JobAttemptR\battempts\"\xf7\x02\n" +
+	"\battempts\x18\x02 \x03(\v2\x1d.toshi.operator.v1.JobAttemptR\battempts\"\x96\x03\n" +
 	"\n" +
 	"AuditEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
@@ -16403,7 +16413,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"permission\x12\x14\n" +
 	"\x05scope\x18\v \x01(\tR\x05scope\x12\x18\n" +
 	"\aoutcome\x18\f \x01(\tR\aoutcome\x12\x19\n" +
-	"\btoken_id\x18\r \x01(\tR\atokenId\"\xa9\x02\n" +
+	"\btoken_id\x18\r \x01(\tR\atokenId\x12\x1d\n" +
+	"\n" +
+	"actor_name\x18\x0e \x01(\tR\tactorName\"\xa9\x02\n" +
 	"\x16ListAuditEventsRequest\x12\x16\n" +
 	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x16\n" +
 	"\x06action\x18\x02 \x01(\tR\x06action\x120\n" +

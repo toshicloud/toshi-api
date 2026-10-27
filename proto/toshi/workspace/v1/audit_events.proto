@@ -31,9 +31,9 @@ message AuditEvent {
   google.protobuf.Timestamp at = 2;
   // operator, session, token, workload, product, system or webhook.
   string actor_kind = 3;
-  // The session's GitHub login; the API or product token's id (never its
-  // value); the workload as "<kind>:<id>"; or a system or webhook source
-  // name.
+  // The session's user id, which stays the same across renames and identity
+  // providers; the API or product token's id (never its value); the workload
+  // as "<kind>:<id>"; or a system or webhook source name.
   string actor_id = 4;
   string action = 5;
   // A "<kind>:<id>" string such as job:..., host:..., token:... or
@@ -56,6 +56,9 @@ message AuditEvent {
   // The id of the token the call was made with (never its value); empty for
   // a session and for an event no call records.
   string token_id = 12;
+  // A session actor's login or name as it was when the event was recorded;
+  // empty for the other actors, and once the workspace is purged.
+  string actor_name = 13;
 }
 
 // ListAuditEventsRequest selects the audit events to return.

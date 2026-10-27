@@ -1195,7 +1195,7 @@ message AuditEvent {
   // operator, session, system or webhook.
   string actor_kind = 3;
   // The operator or enrollment token's id (never its value), the session's
-  // GitHub login, or a system or webhook source name.
+  // user id, or a system or webhook source name.
   string actor_id = 4;
   // Empty when the event is not tied to a workspace.
   string tenant = 5;
@@ -1220,6 +1220,9 @@ message AuditEvent {
   // The id of the token the call was made with (never its value); empty for
   // a session and for an event no call records.
   string token_id = 13;
+  // A session actor's login or name as it was when the event was recorded;
+  // empty for the other actors, and once the workspace is purged.
+  string actor_name = 14;
 }
 
 // ListAuditEventsRequest selects the audit events to return.
