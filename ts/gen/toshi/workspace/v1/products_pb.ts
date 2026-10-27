@@ -770,8 +770,9 @@ export const ProductService: GenService<{
    * RemoveProduct removes the workspace's installation of an outside
    * product: it revokes the installation's token, deletes the role that
    * held its access and stops its webhook endpoints. The data the product
-   * stored in the workspace stays. A product that is not installed, or not
-   * an outside product, is NOT_FOUND.
+   * stored in the workspace stays. An installation already removed is
+   * answered as it is. A product never installed, or not an outside
+   * product, is NOT_FOUND.
    *
    * @generated from rpc toshi.workspace.v1.ProductService.RemoveProduct
    */
