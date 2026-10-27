@@ -71,6 +71,12 @@ const (
 	ChannelServiceListForwardsProcedure = "/toshi.workspace.v1.ChannelService/ListForwards"
 	// ChannelServiceGetLinkProcedure is the fully-qualified name of the ChannelService's GetLink RPC.
 	ChannelServiceGetLinkProcedure = "/toshi.workspace.v1.ChannelService/GetLink"
+	// ChannelServiceSendChannelMessageProcedure is the fully-qualified name of the ChannelService's
+	// SendChannelMessage RPC.
+	ChannelServiceSendChannelMessageProcedure = "/toshi.workspace.v1.ChannelService/SendChannelMessage"
+	// ChannelServiceTailChannelMessagesProcedure is the fully-qualified name of the ChannelService's
+	// TailChannelMessages RPC.
+	ChannelServiceTailChannelMessagesProcedure = "/toshi.workspace.v1.ChannelService/TailChannelMessages"
 )
 
 // ChannelServiceClient is a client for the toshi.workspace.v1.ChannelService service.
@@ -139,6 +145,20 @@ type ChannelServiceClient interface {
 	ListForwards(context.Context, *connect.Request[workspacev1.ListForwardsRequest]) (*connect.Response[workspacev1.ListForwardsResponse], error)
 	// GetLink returns the state of the Link of the runner the job holds.
 	GetLink(context.Context, *connect.Request[workspacev1.GetLinkRequest]) (*connect.Response[workspacev1.GetLinkResponse], error)
+	// SendChannelMessage adds a message to the end of an event channel's
+	// queue and returns its ID at once; the message waits there until it is
+	// delivered, parked failed, or kept past the channel's keep. A sleeping
+	// on-demand service is woken. A message sent again with the same
+	// request_key is not stored again: its ID is returned, with duplicate
+	// set. A caller the channel's input rule does not admit fails with
+	// PERMISSION_DENIED; a name under a segment Toshi keeps for its own
+	// events, data that is not JSON or past 256 KiB with INVALID_ARGUMENT.
+	SendChannelMessage(context.Context, *connect.Request[workspacev1.SendChannelMessageRequest]) (*connect.Response[workspacev1.SendChannelMessageResponse], error)
+	// TailChannelMessages streams an event channel's messages after the
+	// cursor, oldest first, then each message added after them as it is
+	// added, until the caller ends the call. States narrows the stream to
+	// messages in those states when it is read.
+	TailChannelMessages(context.Context, *connect.Request[workspacev1.TailChannelMessagesRequest]) (*connect.ServerStreamForClient[workspacev1.TailChannelMessagesResponse], error)
 }
 
 // NewChannelServiceClient constructs a client for the toshi.workspace.v1.ChannelService service. By
@@ -230,6 +250,18 @@ func NewChannelServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(channelServiceMethods.ByName("GetLink")),
 			connect.WithClientOptions(opts...),
 		),
+		sendChannelMessage: connect.NewClient[workspacev1.SendChannelMessageRequest, workspacev1.SendChannelMessageResponse](
+			httpClient,
+			baseURL+ChannelServiceSendChannelMessageProcedure,
+			connect.WithSchema(channelServiceMethods.ByName("SendChannelMessage")),
+			connect.WithClientOptions(opts...),
+		),
+		tailChannelMessages: connect.NewClient[workspacev1.TailChannelMessagesRequest, workspacev1.TailChannelMessagesResponse](
+			httpClient,
+			baseURL+ChannelServiceTailChannelMessagesProcedure,
+			connect.WithSchema(channelServiceMethods.ByName("TailChannelMessages")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -248,6 +280,8 @@ type channelServiceClient struct {
 	deleteChannel             *connect.Client[workspacev1.DeleteChannelRequest, workspacev1.DeleteChannelResponse]
 	listForwards              *connect.Client[workspacev1.ListForwardsRequest, workspacev1.ListForwardsResponse]
 	getLink                   *connect.Client[workspacev1.GetLinkRequest, workspacev1.GetLinkResponse]
+	sendChannelMessage        *connect.Client[workspacev1.SendChannelMessageRequest, workspacev1.SendChannelMessageResponse]
+	tailChannelMessages       *connect.Client[workspacev1.TailChannelMessagesRequest, workspacev1.TailChannelMessagesResponse]
 }
 
 // CreateChannel calls toshi.workspace.v1.ChannelService.CreateChannel.
@@ -313,6 +347,16 @@ func (c *channelServiceClient) ListForwards(ctx context.Context, req *connect.Re
 // GetLink calls toshi.workspace.v1.ChannelService.GetLink.
 func (c *channelServiceClient) GetLink(ctx context.Context, req *connect.Request[workspacev1.GetLinkRequest]) (*connect.Response[workspacev1.GetLinkResponse], error) {
 	return c.getLink.CallUnary(ctx, req)
+}
+
+// SendChannelMessage calls toshi.workspace.v1.ChannelService.SendChannelMessage.
+func (c *channelServiceClient) SendChannelMessage(ctx context.Context, req *connect.Request[workspacev1.SendChannelMessageRequest]) (*connect.Response[workspacev1.SendChannelMessageResponse], error) {
+	return c.sendChannelMessage.CallUnary(ctx, req)
+}
+
+// TailChannelMessages calls toshi.workspace.v1.ChannelService.TailChannelMessages.
+func (c *channelServiceClient) TailChannelMessages(ctx context.Context, req *connect.Request[workspacev1.TailChannelMessagesRequest]) (*connect.ServerStreamForClient[workspacev1.TailChannelMessagesResponse], error) {
+	return c.tailChannelMessages.CallServerStream(ctx, req)
 }
 
 // ChannelServiceHandler is an implementation of the toshi.workspace.v1.ChannelService service.
@@ -381,6 +425,20 @@ type ChannelServiceHandler interface {
 	ListForwards(context.Context, *connect.Request[workspacev1.ListForwardsRequest]) (*connect.Response[workspacev1.ListForwardsResponse], error)
 	// GetLink returns the state of the Link of the runner the job holds.
 	GetLink(context.Context, *connect.Request[workspacev1.GetLinkRequest]) (*connect.Response[workspacev1.GetLinkResponse], error)
+	// SendChannelMessage adds a message to the end of an event channel's
+	// queue and returns its ID at once; the message waits there until it is
+	// delivered, parked failed, or kept past the channel's keep. A sleeping
+	// on-demand service is woken. A message sent again with the same
+	// request_key is not stored again: its ID is returned, with duplicate
+	// set. A caller the channel's input rule does not admit fails with
+	// PERMISSION_DENIED; a name under a segment Toshi keeps for its own
+	// events, data that is not JSON or past 256 KiB with INVALID_ARGUMENT.
+	SendChannelMessage(context.Context, *connect.Request[workspacev1.SendChannelMessageRequest]) (*connect.Response[workspacev1.SendChannelMessageResponse], error)
+	// TailChannelMessages streams an event channel's messages after the
+	// cursor, oldest first, then each message added after them as it is
+	// added, until the caller ends the call. States narrows the stream to
+	// messages in those states when it is read.
+	TailChannelMessages(context.Context, *connect.Request[workspacev1.TailChannelMessagesRequest], *connect.ServerStream[workspacev1.TailChannelMessagesResponse]) error
 }
 
 // NewChannelServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -468,6 +526,18 @@ func NewChannelServiceHandler(svc ChannelServiceHandler, opts ...connect.Handler
 		connect.WithSchema(channelServiceMethods.ByName("GetLink")),
 		connect.WithHandlerOptions(opts...),
 	)
+	channelServiceSendChannelMessageHandler := connect.NewUnaryHandler(
+		ChannelServiceSendChannelMessageProcedure,
+		svc.SendChannelMessage,
+		connect.WithSchema(channelServiceMethods.ByName("SendChannelMessage")),
+		connect.WithHandlerOptions(opts...),
+	)
+	channelServiceTailChannelMessagesHandler := connect.NewServerStreamHandler(
+		ChannelServiceTailChannelMessagesProcedure,
+		svc.TailChannelMessages,
+		connect.WithSchema(channelServiceMethods.ByName("TailChannelMessages")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.ChannelService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ChannelServiceCreateChannelProcedure:
@@ -496,6 +566,10 @@ func NewChannelServiceHandler(svc ChannelServiceHandler, opts ...connect.Handler
 			channelServiceListForwardsHandler.ServeHTTP(w, r)
 		case ChannelServiceGetLinkProcedure:
 			channelServiceGetLinkHandler.ServeHTTP(w, r)
+		case ChannelServiceSendChannelMessageProcedure:
+			channelServiceSendChannelMessageHandler.ServeHTTP(w, r)
+		case ChannelServiceTailChannelMessagesProcedure:
+			channelServiceTailChannelMessagesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -555,4 +629,12 @@ func (UnimplementedChannelServiceHandler) ListForwards(context.Context, *connect
 
 func (UnimplementedChannelServiceHandler) GetLink(context.Context, *connect.Request[workspacev1.GetLinkRequest]) (*connect.Response[workspacev1.GetLinkResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ChannelService.GetLink is not implemented"))
+}
+
+func (UnimplementedChannelServiceHandler) SendChannelMessage(context.Context, *connect.Request[workspacev1.SendChannelMessageRequest]) (*connect.Response[workspacev1.SendChannelMessageResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ChannelService.SendChannelMessage is not implemented"))
+}
+
+func (UnimplementedChannelServiceHandler) TailChannelMessages(context.Context, *connect.Request[workspacev1.TailChannelMessagesRequest], *connect.ServerStream[workspacev1.TailChannelMessagesResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ChannelService.TailChannelMessages is not implemented"))
 }

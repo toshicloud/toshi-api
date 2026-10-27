@@ -16,6 +16,12 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // is NOT_FOUND. Every call names the job by its ID as the jobs API and
 // `toshi host-job list` show it, and a channel by its name on that job.
 //
+// An event channel is a service's queue of messages, which Toshi posts to
+// a port and path in the service's guest, in order and at least once: the
+// service's recipe declares it, and it lasts while the service does,
+// across its runs. A call names it by its service's ID and its name, in
+// service, never by a job.
+//
 // What carries a stream is not a call: a client attaches to a stream
 // channel, and a Forward opens, on an upgrade of the control plane's
 // connection, with a token from CreateChannelConnectToken. A control
@@ -147,6 +153,27 @@ service ChannelService {
   rpc GetLink(GetLinkRequest) returns (GetLinkResponse) {
     option (toshi.permission) = "channels.read";
   }
+
+  // SendChannelMessage adds a message to the end of an event channel's
+  // queue and returns its ID at once; the message waits there until it is
+  // delivered, parked failed, or kept past the channel's keep. A sleeping
+  // on-demand service is woken. A message sent again with the same
+  // request_key is not stored again: its ID is returned, with duplicate
+  // set. A caller the channel's input rule does not admit fails with
+  // PERMISSION_DENIED; a name under a segment Toshi keeps for its own
+  // events, data that is not JSON or past 256 KiB with INVALID_ARGUMENT.
+  rpc SendChannelMessage(SendChannelMessageRequest) returns (SendChannelMessageResponse) {
+    option (toshi.permission) = "channels.write";
+    option (toshi.audit) = {action: "none"};
+  }
+
+  // TailChannelMessages streams an event channel's messages after the
+  // cursor, oldest first, then each message added after them as it is
+  // added, until the caller ends the call. States narrows the stream to
+  // messages in those states when it is read.
+  rpc TailChannelMessages(TailChannelMessagesRequest) returns (stream TailChannelMessagesResponse) {
+    option (toshi.permission) = "channels.read";
+  }
 }
 
 // ChannelShape is how a channel carries its bytes.
@@ -156,6 +183,9 @@ enum ChannelShape {
   CHANNEL_SHAPE_HTTP = 1;
   // A command in the guest, whose input and output clients attach to.
   CHANNEL_SHAPE_STREAM = 2;
+  // A service's queue of messages, posted to a port and path in its
+  // guest.
+  CHANNEL_SHAPE_EVENT = 3;
 }
 
 // ChannelState is where a channel is in its life.
@@ -190,10 +220,12 @@ enum ChannelLog {
 message Channel {
   // Assigned by the server.
   string id = 1;
+  // The job whose guest holds the channel; an event channel's is its
+  // service's live run, empty while the service has none.
   string job_id = 2;
   string name = 3;
   ChannelShape shape = 4;
-  // An http channel's port in the guest.
+  // An http or event channel's port in the guest.
   int32 port = 5;
   // A stream channel's command.
   repeated string command = 6;
@@ -223,6 +255,69 @@ message Channel {
   // A stream channel's clients, attached now or before; an http channel
   // keeps none.
   repeated ChannelClient clients = 20;
+  // An event channel's service, by its ID.
+  string service = 21;
+  // Where an event channel posts in the guest.
+  string path = 22;
+  // An event channel's messages counted by state.
+  ChannelEventCounts events = 23;
+}
+
+// ChannelEventCounts counts an event channel's messages by state.
+message ChannelEventCounts {
+  int64 pending = 1;
+  int64 in_flight = 2;
+  int64 delivered = 3;
+  int64 failed = 4;
+  int64 expired = 5;
+  // The last delivery's time; unset before the first.
+  google.protobuf.Timestamp last_delivery_at = 6;
+  // Why the last failed attempt failed; empty when none has.
+  string last_failure = 7;
+}
+
+// ChannelMessageState is where an event channel's message is in its
+// delivery.
+enum ChannelMessageState {
+  CHANNEL_MESSAGE_STATE_UNSPECIFIED = 0;
+  // Waiting for its next attempt.
+  CHANNEL_MESSAGE_STATE_PENDING = 1;
+  // Posted, and not yet answered.
+  CHANNEL_MESSAGE_STATE_IN_FLIGHT = 2;
+  // Answered 2xx.
+  CHANNEL_MESSAGE_STATE_DELIVERED = 3;
+  // Parked after its last attempt failed.
+  CHANNEL_MESSAGE_STATE_FAILED = 4;
+  // Its channel's keep passed before it was delivered.
+  CHANNEL_MESSAGE_STATE_EXPIRED = 5;
+}
+
+// ChannelMessageSource is who sent a message; Toshi stamps it.
+message ChannelMessageSource {
+  // principal (a person or token), workload, trigger, mail or alarm.
+  string kind = 1;
+  // A principal as the audit log names an actor, or the workload's or
+  // trigger's ID.
+  string id = 2;
+}
+
+// ChannelMessage is one message of an event channel.
+message ChannelMessage {
+  string id = 1;
+  // Its place in the channel's queue, from 1.
+  int64 seq = 2;
+  string name = 3;
+  google.protobuf.Timestamp time = 4;
+  ChannelMessageSource source = 5;
+  // The message's JSON.
+  bytes data = 6;
+  ChannelMessageState state = 7;
+  int32 attempts = 8;
+  // When a pending message is next posted.
+  google.protobuf.Timestamp next_attempt_at = 9;
+  // Why its last attempt failed; empty when none has.
+  string last_error = 10;
+  google.protobuf.Timestamp delivered_at = 11;
 }
 
 // ChannelClient is one client of a stream channel: its last attach, who
@@ -258,14 +353,25 @@ message ChannelPolicy {
   // The most clients attached to a stream channel at once; unset sets no
   // bound.
   optional int32 max_clients = 3;
-  // Who may send input to a stream channel: any, creator or none.
+  // Who may send input to a stream channel, or messages to an event
+  // channel: any, creator or none.
   string input = 4;
   // How much output or how many records are kept: buffer, at least the
-  // newest 8 MiB, or channel, as long as the channel's record lasts.
+  // newest 8 MiB, or channel, as long as the channel's record lasts. An
+  // event channel's is a duration, how long a message waits to be
+  // delivered before it expires: 24h unless set, and at most the
+  // workspace's plan allows.
   string keep = 5;
   // The ordered module list. Unset takes the shape's defaults; an empty
-  // list means no modules.
+  // list means no modules. An event channel takes none.
   ChannelModuleList modules = 6;
+  // How long an event channel's post may take to be answered 2xx, a
+  // duration from 1s to 10m: 30s unless set.
+  string ack_deadline = 7;
+  // How many of an event channel's posts may be in flight at once, from 1
+  // to 64: 1 unless set. Above 1, messages are no longer delivered in
+  // order.
+  optional int32 concurrency = 8;
 }
 
 message ChannelModuleList {
@@ -407,12 +513,15 @@ message CreateChannelResponse {
 }
 
 message ListChannelsRequest {
-  // Only this job's channels; empty lists every job's.
+  // Only this job's channels; empty lists every job's, and every
+  // service's event channels.
   string job_id = 1;
   // The most channels in one page; zero lets the server choose.
   int32 page_size = 2;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 3;
+  // Only this service's event channels, by its ID; not with job_id.
+  string service = 4;
 }
 
 message ListChannelsResponse {
@@ -424,6 +533,8 @@ message ListChannelsResponse {
 message GetChannelRequest {
   string job_id = 1;
   string name = 2;
+  // An event channel's service, by its ID, in place of job_id.
+  string service = 3;
 }
 
 message GetChannelResponse {
@@ -433,6 +544,8 @@ message GetChannelResponse {
 message GetChannelPolicyRequest {
   string job_id = 1;
   string name = 2;
+  // An event channel's service, by its ID, in place of job_id.
+  string service = 3;
 }
 
 message GetChannelPolicyResponse {
@@ -586,4 +699,40 @@ message GetLinkRequest {
 
 message GetLinkResponse {
   Link link = 1;
+}
+
+message SendChannelMessageRequest {
+  // The event channel's service, by its ID, and the channel's name.
+  string service = 1;
+  string channel = 2;
+  // The message's name, such as order.paid: up to 200 bytes with no space.
+  string name = 3;
+  // The message's JSON, at most 256 KiB.
+  bytes data = 4;
+  // Makes the send safe to repeat: a key the channel holds returns that
+  // message.
+  string request_key = 5;
+}
+
+message SendChannelMessageResponse {
+  string message_id = 1;
+  // Set when request_key named a message sent before.
+  bool duplicate = 2;
+}
+
+message TailChannelMessagesRequest {
+  // The event channel's service, by its ID, and the channel's name.
+  string service = 1;
+  string channel = 2;
+  // Only messages in these states; empty is every state.
+  repeated ChannelMessageState states = 3;
+  // A next_cursor from an earlier response; empty starts at the first
+  // message kept.
+  string cursor = 4;
+}
+
+message TailChannelMessagesResponse {
+  ChannelMessage message = 1;
+  // Where a later call goes on from, after this message.
+  string next_cursor = 2;
 }
