@@ -688,6 +688,10 @@ enum EventType {
   // "<kind>.<event>.<action>", the connection's kind and what the sender
   // said happened, such as "github.pull_request.opened".
   EVENT_TYPE_CONNECTION = 9;
+  // A release of a workload's secrets withheld keys: its starter's own,
+  // while the starter holds no role in the workspace. Name:
+  // "<kind>.secret_withheld".
+  EVENT_TYPE_SECRET_WITHHELD = 10;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -722,6 +726,8 @@ message Event {
     RecordingEvent recording = 10;
     // For CONNECTION.
     ConnectionEvent connection = 17;
+    // For SECRET_WITHHELD.
+    SecretWithheldEvent secret_withheld = 18;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -731,6 +737,29 @@ message Event {
   string environment = 12;
   // The connection that received a CONNECTION event; empty for the others.
   string connection_id = 16;
+}
+
+// SecretWithheldEvent names the keys one release of a workload's secrets
+// withheld, never a value. A start writes it once; a release a later answer
+// or an execution makes writes one each time it withholds a key.
+message SecretWithheldEvent {
+  // The run the release was for: a service's run at its start, or the run
+  // a later answer released; empty for a job's or a sandbox's start.
+  string run_id = 1;
+  // The execution the release was for, for a sandbox's execution.
+  string execution_id = 2;
+  repeated WithheldSecret keys = 3;
+}
+
+// WithheldSecret is one key a release withheld.
+message WithheldSecret {
+  // The key's name.
+  string name = 1;
+  // The person whose own key it is: their GitHub user id.
+  string owner = 2;
+  // Why it was withheld: "owner_has_no_role", the owner holds no role in
+  // the workspace.
+  string reason = 3;
 }
 
 // ExecutionEvent is an execution starting or ending.
