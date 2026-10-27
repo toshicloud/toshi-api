@@ -1043,6 +1043,11 @@ message Host {
   // The minimum agent release the control plane admits when
   // agent_version_status is BELOW_MINIMUM; empty otherwise.
   string agent_version_minimum = 26;
+  // The kind of provider the host's agent reported when it last registered:
+  // "container", "fake", "qemu" or "vz". Empty when unknown: a host whose
+  // agent has not registered since the control plane began to store it,
+  // whose agent sent none, or a cloud host.
+  string provider = 27;
 }
 
 // HostEgress is the public addresses a host's jobs reach the internet from.

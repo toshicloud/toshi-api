@@ -2045,8 +2045,13 @@ type Host struct {
 	// The minimum agent release the control plane admits when
 	// agent_version_status is BELOW_MINIMUM; empty otherwise.
 	AgentVersionMinimum string `protobuf:"bytes,26,opt,name=agent_version_minimum,json=agentVersionMinimum,proto3" json:"agent_version_minimum,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	// The kind of provider the host's agent reported when it last registered:
+	// "container", "fake", "qemu" or "vz". Empty when unknown: a host whose
+	// agent has not registered since the control plane began to store it,
+	// whose agent sent none, or a cloud host.
+	Provider      string `protobuf:"bytes,27,opt,name=provider,proto3" json:"provider,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Host) Reset() {
@@ -2257,6 +2262,13 @@ func (x *Host) GetMemoryLimitSource() string {
 func (x *Host) GetAgentVersionMinimum() string {
 	if x != nil {
 		return x.AgentVersionMinimum
+	}
+	return ""
+}
+
+func (x *Host) GetProvider() string {
+	if x != nil {
+		return x.Provider
 	}
 	return ""
 }
@@ -15660,7 +15672,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"HeldRefill\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x16\n" +
-	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x90\t\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"\xac\t\n" +
 	"\x04Host\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x0e\n" +
@@ -15691,7 +15703,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"revoked_at\x18\x17 \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12(\n" +
 	"\x10memory_limit_mib\x18\x18 \x01(\x03R\x0ememoryLimitMib\x12.\n" +
 	"\x13memory_limit_source\x18\x19 \x01(\tR\x11memoryLimitSource\x122\n" +
-	"\x15agent_version_minimum\x18\x1a \x01(\tR\x13agentVersionMinimum\x1a9\n" +
+	"\x15agent_version_minimum\x18\x1a \x01(\tR\x13agentVersionMinimum\x12\x1a\n" +
+	"\bprovider\x18\x1b \x01(\tR\bprovider\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x92\x01\n" +
