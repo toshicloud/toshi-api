@@ -283,8 +283,9 @@ message JobSpec {
   //
   // A tag is resolved to a digest at create, and every run of the job pulls
   // that digest (container_image_digest); a digest is kept as given and
-  // checked by the pull. The registry must be public and the pull is
-  // anonymous. A create whose image cannot be resolved records nothing: it
+  // checked by the pull. The registry must be public. The resolve and the
+  // pull are anonymous unless container_registry_secret names a login. A
+  // create whose image cannot be resolved records nothing: it
   // fails with UNAVAILABLE when the registry cannot be reached in time,
   // FAILED_PRECONDITION when the registry refuses the image or holds no
   // such repository or tag, and INVALID_ARGUMENT for a reference that is
@@ -294,6 +295,18 @@ message JobSpec {
   // The digest container_image named at create, "sha256:<hex>": an index's
   // when the tag names one. Set by the server; ignored in a request.
   string container_image_digest = 5;
+  // The key of the job's environment's secret set, its own or the
+  // project's shared, whose value is the registry login for
+  // container_image: a Docker config.json with an "auths" entry for the
+  // image's registry (a config that names a credential store or helper
+  // is refused). The create resolves the tag with it and each pull reads
+  // the key's value as it is then, while the digest stays the one the
+  // create resolved; each read is recorded as a read of the set. It needs
+  // container_image and a secrets binding, else the create fails with
+  // INVALID_ARGUMENT; a key the set does not hold, or a set not granted to
+  // jobs, fails it with FAILED_PRECONDITION. A config with no entry for
+  // the registry leaves the pull anonymous. Empty: no login.
+  string container_registry_secret = 6;
 }
 
 // Binding is one binding a workload declares.
@@ -401,6 +414,8 @@ message SandboxSpec {
   // As JobSpec.container_image_digest. Set by the server; ignored in a
   // request.
   string container_image_digest = 6;
+  // As JobSpec.container_registry_secret, for the sandbox's image.
+  string container_registry_secret = 7;
 }
 
 // ServiceSpec is a service. Its fields are set wherever a service's

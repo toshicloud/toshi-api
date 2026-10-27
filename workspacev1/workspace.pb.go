@@ -1530,8 +1530,9 @@ type JobSpec struct {
 	//
 	// A tag is resolved to a digest at create, and every run of the job pulls
 	// that digest (container_image_digest); a digest is kept as given and
-	// checked by the pull. The registry must be public and the pull is
-	// anonymous. A create whose image cannot be resolved records nothing: it
+	// checked by the pull. The registry must be public. The resolve and the
+	// pull are anonymous unless container_registry_secret names a login. A
+	// create whose image cannot be resolved records nothing: it
 	// fails with UNAVAILABLE when the registry cannot be reached in time,
 	// FAILED_PRECONDITION when the registry refuses the image or holds no
 	// such repository or tag, and INVALID_ARGUMENT for a reference that is
@@ -1541,8 +1542,20 @@ type JobSpec struct {
 	// The digest container_image named at create, "sha256:<hex>": an index's
 	// when the tag names one. Set by the server; ignored in a request.
 	ContainerImageDigest string `protobuf:"bytes,5,opt,name=container_image_digest,json=containerImageDigest,proto3" json:"container_image_digest,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// The key of the job's environment's secret set, its own or the
+	// project's shared, whose value is the registry login for
+	// container_image: a Docker config.json with an "auths" entry for the
+	// image's registry (a config that names a credential store or helper
+	// is refused). The create resolves the tag with it and each pull reads
+	// the key's value as it is then, while the digest stays the one the
+	// create resolved; each read is recorded as a read of the set. It needs
+	// container_image and a secrets binding, else the create fails with
+	// INVALID_ARGUMENT; a key the set does not hold, or a set not granted to
+	// jobs, fails it with FAILED_PRECONDITION. A config with no entry for
+	// the registry leaves the pull anonymous. Empty: no login.
+	ContainerRegistrySecret string `protobuf:"bytes,6,opt,name=container_registry_secret,json=containerRegistrySecret,proto3" json:"container_registry_secret,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *JobSpec) Reset() {
@@ -1606,6 +1619,13 @@ func (x *JobSpec) GetContainerImage() string {
 func (x *JobSpec) GetContainerImageDigest() string {
 	if x != nil {
 		return x.ContainerImageDigest
+	}
+	return ""
+}
+
+func (x *JobSpec) GetContainerRegistrySecret() string {
+	if x != nil {
+		return x.ContainerRegistrySecret
 	}
 	return ""
 }
@@ -2166,8 +2186,10 @@ type SandboxSpec struct {
 	// As JobSpec.container_image_digest. Set by the server; ignored in a
 	// request.
 	ContainerImageDigest string `protobuf:"bytes,6,opt,name=container_image_digest,json=containerImageDigest,proto3" json:"container_image_digest,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// As JobSpec.container_registry_secret, for the sandbox's image.
+	ContainerRegistrySecret string `protobuf:"bytes,7,opt,name=container_registry_secret,json=containerRegistrySecret,proto3" json:"container_registry_secret,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *SandboxSpec) Reset() {
@@ -2238,6 +2260,13 @@ func (x *SandboxSpec) GetContainerImage() string {
 func (x *SandboxSpec) GetContainerImageDigest() string {
 	if x != nil {
 		return x.ContainerImageDigest
+	}
+	return ""
+}
+
+func (x *SandboxSpec) GetContainerRegistrySecret() string {
+	if x != nil {
+		return x.ContainerRegistrySecret
 	}
 	return ""
 }
@@ -7076,13 +7105,14 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"started_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x125\n" +
 	"\bended_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xec\x01\n" +
+	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xa8\x02\n" +
 	"\aJobSpec\x125\n" +
 	"\acommand\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.CommandR\acommand\x127\n" +
 	"\bbindings\x18\x02 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\tR\x04size\x12'\n" +
 	"\x0fcontainer_image\x18\x04 \x01(\tR\x0econtainerImage\x124\n" +
-	"\x16container_image_digest\x18\x05 \x01(\tR\x14containerImageDigest\"\xab\x01\n" +
+	"\x16container_image_digest\x18\x05 \x01(\tR\x14containerImageDigest\x12:\n" +
+	"\x19container_registry_secret\x18\x06 \x01(\tR\x17containerRegistrySecret\"\xab\x01\n" +
 	"\aBinding\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12>\n" +
 	"\aservice\x18\x02 \x01(\v2\".toshi.workspace.v1.ServiceChannelH\x00R\aservice\x12B\n" +
@@ -7117,14 +7147,15 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bBoundKey\x12\x15\n" +
 	"\x06set_id\x18\x01 \x01(\tR\x05setId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\x03R\aversion\"\x9f\x02\n" +
+	"\aversion\x18\x03 \x01(\x03R\aversion\"\xdb\x02\n" +
 	"\vSandboxSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
 	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
 	"\bbindings\x18\x03 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x12&\n" +
 	"\x0fstate_volume_id\x18\x04 \x01(\tR\rstateVolumeId\x12'\n" +
 	"\x0fcontainer_image\x18\x05 \x01(\tR\x0econtainerImage\x124\n" +
-	"\x16container_image_digest\x18\x06 \x01(\tR\x14containerImageDigest\"\x94\x03\n" +
+	"\x16container_image_digest\x18\x06 \x01(\tR\x14containerImageDigest\x12:\n" +
+	"\x19container_registry_secret\x18\a \x01(\tR\x17containerRegistrySecret\"\x94\x03\n" +
 	"\vServiceSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x123\n" +
 	"\x04mode\x18\x02 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\x12\x1a\n" +
