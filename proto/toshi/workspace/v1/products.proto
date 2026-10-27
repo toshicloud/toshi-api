@@ -131,6 +131,30 @@ message ProductSettings {
   // declares no features, and its switch is ON while the installation is
   // active and TURNED_OFF otherwise.
   ProductInstallation installation = 5;
+  // surfaces are what the product adds to Toshi, from its catalog entry:
+  // for a built-in product the path its API is served at, for an outside
+  // product the locations its entry lists. Unset for an outside product
+  // whose entry the catalog no longer offers.
+  ProductSurfaces surfaces = 6;
+  // name is the product's name as people read it, from its catalog entry,
+  // such as "Acme Deploys". Empty when the catalog has no entry for it.
+  string name = 7;
+}
+
+// ProductSurfaces are what a product adds to Toshi, each empty when it adds
+// none.
+message ProductSurfaces {
+  // api is the product's API endpoint: an https URL, or for a built-in
+  // product the path the control plane serves it at, such as "/runners/".
+  string api = 1;
+  // cli is the https URL its CLI plugin is downloaded from.
+  string cli = 2;
+  // dashboard is the https URL of the product's own UI. A client opens it
+  // as its own page, never inside its own.
+  string dashboard = 3;
+  // sdk is the package of its SDK, such as a Go module path or an npm
+  // package name.
+  string sdk = 4;
 }
 
 // ProductInstallation is a workspace's installation of an outside product.
