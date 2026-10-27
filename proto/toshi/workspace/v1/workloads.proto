@@ -309,9 +309,13 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
-  // UpdateService changes the fields the mask names and returns the
-  // service. Only "labels" can be changed; another path fails with
-  // INVALID_ARGUMENT.
+  // UpdateService changes the field the mask names and returns the
+  // service. The mask names one path: "labels", or "spec.recipe", which
+  // deploys service.spec.recipe as the service's next revision and selects
+  // it. A deploy stops a live run of another revision, so a started
+  // service's next run runs the new recipe; a stopped service runs it once
+  // started. A recipe that does not parse, or of another template, fails
+  // with INVALID_ARGUMENT, as does another path.
   rpc UpdateService(UpdateServiceRequest) returns (UpdateServiceResponse) {
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
@@ -401,6 +405,20 @@ service WorkloadService {
   // the caller does not have returns the service as it is.
   rpc ReleaseService(ReleaseServiceRequest) returns (ReleaseServiceResponse) {
     option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+  }
+
+  // ListServiceRevisions returns a service's revisions, oldest first. An
+  // unknown ID fails with NOT_FOUND.
+  rpc ListServiceRevisions(ListServiceRevisionsRequest) returns (ListServiceRevisionsResponse) {
+    option (toshi.permission) = "services.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // GetServiceRevision returns one revision of a service. An unknown ID or
+  // number fails with NOT_FOUND.
+  rpc GetServiceRevision(GetServiceRevisionRequest) returns (GetServiceRevisionResponse) {
+    option (toshi.permission) = "services.read";
     option (toshi.scope) = "environment";
   }
 

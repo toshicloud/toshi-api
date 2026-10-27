@@ -138,6 +138,12 @@ const (
 	// WorkloadServiceReleaseServiceProcedure is the fully-qualified name of the WorkloadService's
 	// ReleaseService RPC.
 	WorkloadServiceReleaseServiceProcedure = "/toshi.workspace.v1.WorkloadService/ReleaseService"
+	// WorkloadServiceListServiceRevisionsProcedure is the fully-qualified name of the WorkloadService's
+	// ListServiceRevisions RPC.
+	WorkloadServiceListServiceRevisionsProcedure = "/toshi.workspace.v1.WorkloadService/ListServiceRevisions"
+	// WorkloadServiceGetServiceRevisionProcedure is the fully-qualified name of the WorkloadService's
+	// GetServiceRevision RPC.
+	WorkloadServiceGetServiceRevisionProcedure = "/toshi.workspace.v1.WorkloadService/GetServiceRevision"
 	// WorkloadServiceListServiceRunsProcedure is the fully-qualified name of the WorkloadService's
 	// ListServiceRuns RPC.
 	WorkloadServiceListServiceRunsProcedure = "/toshi.workspace.v1.WorkloadService/ListServiceRuns"
@@ -314,9 +320,13 @@ type WorkloadServiceClient interface {
 	//
 	// A page holds 50 services when page_size is zero, and 500 at most.
 	ListServices(context.Context, *connect.Request[workspacev1.ListServicesRequest]) (*connect.Response[workspacev1.ListServicesResponse], error)
-	// UpdateService changes the fields the mask names and returns the
-	// service. Only "labels" can be changed; another path fails with
-	// INVALID_ARGUMENT.
+	// UpdateService changes the field the mask names and returns the
+	// service. The mask names one path: "labels", or "spec.recipe", which
+	// deploys service.spec.recipe as the service's next revision and selects
+	// it. A deploy stops a live run of another revision, so a started
+	// service's next run runs the new recipe; a stopped service runs it once
+	// started. A recipe that does not parse, or of another template, fails
+	// with INVALID_ARGUMENT, as does another path.
 	UpdateService(context.Context, *connect.Request[workspacev1.UpdateServiceRequest]) (*connect.Response[workspacev1.UpdateServiceResponse], error)
 	// DeleteService stops a service that has not ended and then removes it.
 	// It returns an operation that is done once the service is removed;
@@ -368,6 +378,12 @@ type WorkloadServiceClient interface {
 	// ReleaseService drops the caller's hold on a service. Releasing a hold
 	// the caller does not have returns the service as it is.
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
+	// ListServiceRevisions returns a service's revisions, oldest first. An
+	// unknown ID fails with NOT_FOUND.
+	ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error)
+	// GetServiceRevision returns one revision of a service. An unknown ID or
+	// number fails with NOT_FOUND.
+	GetServiceRevision(context.Context, *connect.Request[workspacev1.GetServiceRevisionRequest]) (*connect.Response[workspacev1.GetServiceRevisionResponse], error)
 	// ListServiceRuns returns a service's runs, the newest first: each run
 	// is a job on a host, of the revision that was current when it was
 	// queued.
@@ -618,6 +634,18 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("ReleaseService")),
 			connect.WithClientOptions(opts...),
 		),
+		listServiceRevisions: connect.NewClient[workspacev1.ListServiceRevisionsRequest, workspacev1.ListServiceRevisionsResponse](
+			httpClient,
+			baseURL+WorkloadServiceListServiceRevisionsProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ListServiceRevisions")),
+			connect.WithClientOptions(opts...),
+		),
+		getServiceRevision: connect.NewClient[workspacev1.GetServiceRevisionRequest, workspacev1.GetServiceRevisionResponse](
+			httpClient,
+			baseURL+WorkloadServiceGetServiceRevisionProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("GetServiceRevision")),
+			connect.WithClientOptions(opts...),
+		),
 		listServiceRuns: connect.NewClient[workspacev1.ListServiceRunsRequest, workspacev1.ListServiceRunsResponse](
 			httpClient,
 			baseURL+WorkloadServiceListServiceRunsProcedure,
@@ -689,6 +717,8 @@ type workloadServiceClient struct {
 	wakeService            *connect.Client[workspacev1.WakeServiceRequest, workspacev1.WakeServiceResponse]
 	holdService            *connect.Client[workspacev1.HoldServiceRequest, workspacev1.HoldServiceResponse]
 	releaseService         *connect.Client[workspacev1.ReleaseServiceRequest, workspacev1.ReleaseServiceResponse]
+	listServiceRevisions   *connect.Client[workspacev1.ListServiceRevisionsRequest, workspacev1.ListServiceRevisionsResponse]
+	getServiceRevision     *connect.Client[workspacev1.GetServiceRevisionRequest, workspacev1.GetServiceRevisionResponse]
 	listServiceRuns        *connect.Client[workspacev1.ListServiceRunsRequest, workspacev1.ListServiceRunsResponse]
 	listEvents             *connect.Client[workspacev1.ListEventsRequest, workspacev1.ListEventsResponse]
 	watchEvents            *connect.Client[workspacev1.WatchEventsRequest, workspacev1.WatchEventsResponse]
@@ -876,6 +906,16 @@ func (c *workloadServiceClient) ReleaseService(ctx context.Context, req *connect
 	return c.releaseService.CallUnary(ctx, req)
 }
 
+// ListServiceRevisions calls toshi.workspace.v1.WorkloadService.ListServiceRevisions.
+func (c *workloadServiceClient) ListServiceRevisions(ctx context.Context, req *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error) {
+	return c.listServiceRevisions.CallUnary(ctx, req)
+}
+
+// GetServiceRevision calls toshi.workspace.v1.WorkloadService.GetServiceRevision.
+func (c *workloadServiceClient) GetServiceRevision(ctx context.Context, req *connect.Request[workspacev1.GetServiceRevisionRequest]) (*connect.Response[workspacev1.GetServiceRevisionResponse], error) {
+	return c.getServiceRevision.CallUnary(ctx, req)
+}
+
 // ListServiceRuns calls toshi.workspace.v1.WorkloadService.ListServiceRuns.
 func (c *workloadServiceClient) ListServiceRuns(ctx context.Context, req *connect.Request[workspacev1.ListServiceRunsRequest]) (*connect.Response[workspacev1.ListServiceRunsResponse], error) {
 	return c.listServiceRuns.CallUnary(ctx, req)
@@ -1060,9 +1100,13 @@ type WorkloadServiceHandler interface {
 	//
 	// A page holds 50 services when page_size is zero, and 500 at most.
 	ListServices(context.Context, *connect.Request[workspacev1.ListServicesRequest]) (*connect.Response[workspacev1.ListServicesResponse], error)
-	// UpdateService changes the fields the mask names and returns the
-	// service. Only "labels" can be changed; another path fails with
-	// INVALID_ARGUMENT.
+	// UpdateService changes the field the mask names and returns the
+	// service. The mask names one path: "labels", or "spec.recipe", which
+	// deploys service.spec.recipe as the service's next revision and selects
+	// it. A deploy stops a live run of another revision, so a started
+	// service's next run runs the new recipe; a stopped service runs it once
+	// started. A recipe that does not parse, or of another template, fails
+	// with INVALID_ARGUMENT, as does another path.
 	UpdateService(context.Context, *connect.Request[workspacev1.UpdateServiceRequest]) (*connect.Response[workspacev1.UpdateServiceResponse], error)
 	// DeleteService stops a service that has not ended and then removes it.
 	// It returns an operation that is done once the service is removed;
@@ -1114,6 +1158,12 @@ type WorkloadServiceHandler interface {
 	// ReleaseService drops the caller's hold on a service. Releasing a hold
 	// the caller does not have returns the service as it is.
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
+	// ListServiceRevisions returns a service's revisions, oldest first. An
+	// unknown ID fails with NOT_FOUND.
+	ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error)
+	// GetServiceRevision returns one revision of a service. An unknown ID or
+	// number fails with NOT_FOUND.
+	GetServiceRevision(context.Context, *connect.Request[workspacev1.GetServiceRevisionRequest]) (*connect.Response[workspacev1.GetServiceRevisionResponse], error)
 	// ListServiceRuns returns a service's runs, the newest first: each run
 	// is a job on a host, of the revision that was current when it was
 	// queued.
@@ -1360,6 +1410,18 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("ReleaseService")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceListServiceRevisionsHandler := connect.NewUnaryHandler(
+		WorkloadServiceListServiceRevisionsProcedure,
+		svc.ListServiceRevisions,
+		connect.WithSchema(workloadServiceMethods.ByName("ListServiceRevisions")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceGetServiceRevisionHandler := connect.NewUnaryHandler(
+		WorkloadServiceGetServiceRevisionProcedure,
+		svc.GetServiceRevision,
+		connect.WithSchema(workloadServiceMethods.ByName("GetServiceRevision")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceListServiceRunsHandler := connect.NewUnaryHandler(
 		WorkloadServiceListServiceRunsProcedure,
 		svc.ListServiceRuns,
@@ -1464,6 +1526,10 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceHoldServiceHandler.ServeHTTP(w, r)
 		case WorkloadServiceReleaseServiceProcedure:
 			workloadServiceReleaseServiceHandler.ServeHTTP(w, r)
+		case WorkloadServiceListServiceRevisionsProcedure:
+			workloadServiceListServiceRevisionsHandler.ServeHTTP(w, r)
+		case WorkloadServiceGetServiceRevisionProcedure:
+			workloadServiceGetServiceRevisionHandler.ServeHTTP(w, r)
 		case WorkloadServiceListServiceRunsProcedure:
 			workloadServiceListServiceRunsHandler.ServeHTTP(w, r)
 		case WorkloadServiceListEventsProcedure:
@@ -1625,6 +1691,14 @@ func (UnimplementedWorkloadServiceHandler) HoldService(context.Context, *connect
 
 func (UnimplementedWorkloadServiceHandler) ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ReleaseService is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ListServiceRevisions is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) GetServiceRevision(context.Context, *connect.Request[workspacev1.GetServiceRevisionRequest]) (*connect.Response[workspacev1.GetServiceRevisionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.GetServiceRevision is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) ListServiceRuns(context.Context, *connect.Request[workspacev1.ListServiceRunsRequest]) (*connect.Response[workspacev1.ListServiceRunsResponse], error) {

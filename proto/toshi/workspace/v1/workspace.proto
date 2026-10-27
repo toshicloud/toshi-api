@@ -220,6 +220,10 @@ message ServiceStatus {
   google.protobuf.Timestamp ended_at = 7;
   // When anything in the service last changed.
   google.protobuf.Timestamp updated_at = 8;
+  // The service's live run: its revision, which is spec.revision once a
+  // run of the selected revision is opened, and whether it is ready.
+  // Unset while no run is live.
+  ServiceRun live_run = 9;
 }
 
 // ServiceState is where a service is in its life. Unlike a job or a
@@ -442,8 +446,8 @@ message ServiceSpec {
   // "model-server", "database", "browser", "dev-server", "media-server",
   // "proxy" or "custom". Set by the server; ignored in a request.
   string template = 5;
-  // Create only: the recipe of revision 1, in TOML. Answers leave it
-  // empty.
+  // The recipe of revision 1 in a create, and the recipe to deploy in an
+  // UpdateService of spec.recipe, in TOML. Answers leave it empty.
   string recipe = 6;
   // Create only: a state volume made with the service. Answers leave it
   // unset.
@@ -1149,6 +1153,52 @@ message ListServiceRunsResponse {
   repeated ServiceRun runs = 1;
   // Empty on the last page.
   string next_page_token = 2;
+}
+
+message ListServiceRevisionsRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+}
+
+message ListServiceRevisionsResponse {
+  // The service's revisions, oldest first.
+  repeated ServiceRevision revisions = 1;
+}
+
+message GetServiceRevisionRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  // The revision's number.
+  int64 number = 4;
+}
+
+message GetServiceRevisionResponse {
+  ServiceRevision revision = 1;
+}
+
+// ServiceRevision is one recipe of a service. A revision never changes
+// once made; selecting one runs its recipe from the service's next run.
+message ServiceRevision {
+  // Counts from 1 in the order the service's revisions were made.
+  int64 number = 1;
+  ServiceRevisionReason reason = 2;
+  // The revision's recipe, resolved, in TOML.
+  string recipe = 3;
+  // The secret a SECRET revision was made for; never its value.
+  string secret = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+// ServiceRevisionReason is why a revision was made.
+enum ServiceRevisionReason {
+  SERVICE_REVISION_REASON_UNSPECIFIED = 0;
+  // A deploy of a recipe: the service's create, or an UpdateService of
+  // spec.recipe.
+  SERVICE_REVISION_REASON_DEPLOY = 1;
+  // A secret set on the service: the recipe of the revision before.
+  SERVICE_REVISION_REASON_SECRET = 2;
 }
 
 // ServiceRun is one run of a service: a job on a host.
