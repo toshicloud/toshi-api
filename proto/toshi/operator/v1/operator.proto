@@ -5,6 +5,7 @@ syntax = "proto3";
 package toshi.operator.v1;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -374,6 +375,21 @@ service OperatorService {
   // enrollment token signs out only the hosts that registered with it.
   // Revoking the only active operator token fails with FailedPrecondition.
   rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse);
+
+  // RollToken gives a token a new value and returns it; it is not stored
+  // and cannot be shown again. The old value stops working at once. The
+  // token keeps its id, kind, name, roles, limit, restrictions, expiry and
+  // creator, so what was granted to it stays granted and an installation
+  // stays linked to it. An unknown id fails with NOT_FOUND; a revoked or
+  // expired token with FailedPrecondition. A token file that still holds
+  // the old value is refused at the next start, as a revoked token's is.
+  rpc RollToken(RollTokenRequest) returns (RollTokenResponse);
+
+  // UpdateToken changes a workspace token's name, expiry, start and client
+  // address ranges: the fields update_mask names. Other kinds take none of
+  // them and fail with InvalidArgument; an unknown id fails with NOT_FOUND,
+  // a revoked token with FailedPrecondition.
+  rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse);
 
   // CreateEnrollmentToken makes an enrollment token for one workspace and
   // returns it with its value; a host that registers with it is owned by that
@@ -2300,6 +2316,46 @@ message Token {
   string environment = 11;
   // The product a product token is for; empty for other kinds.
   string product = 12;
+  // When a workspace token starts working; unset when it works from its
+  // creation.
+  google.protobuf.Timestamp not_before = 13;
+  // The client addresses a workspace token is accepted from; unset when
+  // every address is.
+  ClientRanges client_ranges = 14;
+  // Who made the token: a person, a token, or the system for one the
+  // control plane made. Unset when that was not recorded.
+  Subject created_by = 15;
+}
+
+// SubjectKind is what a Subject is; its numbers are the Workspace API's.
+enum SubjectKind {
+  SUBJECT_KIND_UNSPECIFIED = 0;
+  // A person, by GitHub user id.
+  SUBJECT_KIND_PERSON = 1;
+  // An API token, by token id.
+  SUBJECT_KIND_TOKEN = 2;
+  // The control plane itself.
+  SUBJECT_KIND_SYSTEM = 3;
+}
+
+// Subject is who made something.
+message Subject {
+  SubjectKind kind = 1;
+  // The GitHub user id of a person, in decimal, such as "583231"; the token
+  // id of a token, such as "tok-1a2b3c4d5e6f"; empty for the system.
+  string id = 2;
+}
+
+// ClientRanges are the client addresses a workspace token is accepted from,
+// each an IP address or a CIDR range, such as "203.0.113.0/24" or
+// "2001:db8::/32". The client address is the connection's, or the one a
+// trusted proxy names (trusted_proxies).
+message ClientRanges {
+  // The token is accepted only from an address in one of these; empty
+  // accepts every address.
+  repeated string in = 1;
+  // The token is refused from an address in any of these, one in in too.
+  repeated string not_in = 2;
 }
 
 // ListTokensRequest optionally narrows the list to one kind and one workspace.
@@ -2349,6 +2405,33 @@ message RevokeTokenResponse {
   int32 hosts_signed_out = 2;
 }
 
+// RollTokenRequest names the token to roll.
+message RollTokenRequest {
+  string id = 1;
+}
+
+// RollTokenResponse carries the token and its new value.
+message RollTokenResponse {
+  Token token = 1;
+  // The new value. It is returned only here.
+  string value = 2;
+}
+
+// UpdateTokenRequest names a workspace token and the fields to change.
+message UpdateTokenRequest {
+  string id = 1;
+  // Carries the new values of the fields update_mask names. An unset
+  // not_before or client_ranges clears it; expires_at must be set.
+  Token token = 2;
+  // One or more of name, expires_at, not_before and client_ranges.
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+// UpdateTokenResponse carries the token as it now is.
+message UpdateTokenResponse {
+  Token token = 1;
+}
+
 // CreateEnrollmentTokenRequest names the workspace to enroll hosts for.
 message CreateEnrollmentTokenRequest {
   string tenant = 1;
@@ -2366,7 +2449,7 @@ message CreateEnrollmentTokenResponse {
 message CreateTenantTokenRequest {
   string tenant = 1;
   string name = 2;
-  // Unset means the token never expires.
+  // Unset means the longest lifetime allowed, 90 days by default.
   google.protobuf.Timestamp expires_at = 3;
   // Limits the token to this project of the workspace, by name. Empty makes
   // a token for the whole workspace.
@@ -2374,6 +2457,16 @@ message CreateTenantTokenRequest {
   // Limits the token further to this environment of project, by name.
   // Needs project.
   string environment = 5;
+  // When the token starts working; unset means at once.
+  google.protobuf.Timestamp not_before = 6;
+  // The client addresses the token is accepted from; unset means every
+  // address.
+  ClientRanges client_ranges = 7;
+  // The token's role, by id: a built-in role or one of the workspace's
+  // own, which the creator must hold everything of where the token acts.
+  // Empty gives Admin to a whole-workspace token and Member to a limited
+  // one.
+  string role = 8;
 }
 
 message CreateTenantTokenResponse {

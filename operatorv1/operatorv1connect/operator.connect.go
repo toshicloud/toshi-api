@@ -166,6 +166,12 @@ const (
 	// OperatorServiceRevokeTokenProcedure is the fully-qualified name of the OperatorService's
 	// RevokeToken RPC.
 	OperatorServiceRevokeTokenProcedure = "/toshi.operator.v1.OperatorService/RevokeToken"
+	// OperatorServiceRollTokenProcedure is the fully-qualified name of the OperatorService's RollToken
+	// RPC.
+	OperatorServiceRollTokenProcedure = "/toshi.operator.v1.OperatorService/RollToken"
+	// OperatorServiceUpdateTokenProcedure is the fully-qualified name of the OperatorService's
+	// UpdateToken RPC.
+	OperatorServiceUpdateTokenProcedure = "/toshi.operator.v1.OperatorService/UpdateToken"
 	// OperatorServiceCreateEnrollmentTokenProcedure is the fully-qualified name of the
 	// OperatorService's CreateEnrollmentToken RPC.
 	OperatorServiceCreateEnrollmentTokenProcedure = "/toshi.operator.v1.OperatorService/CreateEnrollmentToken"
@@ -490,6 +496,19 @@ type OperatorServiceClient interface {
 	// enrollment token signs out only the hosts that registered with it.
 	// Revoking the only active operator token fails with FailedPrecondition.
 	RevokeToken(context.Context, *connect.Request[operatorv1.RevokeTokenRequest]) (*connect.Response[operatorv1.RevokeTokenResponse], error)
+	// RollToken gives a token a new value and returns it; it is not stored
+	// and cannot be shown again. The old value stops working at once. The
+	// token keeps its id, kind, name, roles, limit, restrictions, expiry and
+	// creator, so what was granted to it stays granted and an installation
+	// stays linked to it. An unknown id fails with NOT_FOUND; a revoked or
+	// expired token with FailedPrecondition. A token file that still holds
+	// the old value is refused at the next start, as a revoked token's is.
+	RollToken(context.Context, *connect.Request[operatorv1.RollTokenRequest]) (*connect.Response[operatorv1.RollTokenResponse], error)
+	// UpdateToken changes a workspace token's name, expiry, start and client
+	// address ranges: the fields update_mask names. Other kinds take none of
+	// them and fail with InvalidArgument; an unknown id fails with NOT_FOUND,
+	// a revoked token with FailedPrecondition.
+	UpdateToken(context.Context, *connect.Request[operatorv1.UpdateTokenRequest]) (*connect.Response[operatorv1.UpdateTokenResponse], error)
 	// CreateEnrollmentToken makes an enrollment token for one workspace and
 	// returns it with its value; a host that registers with it is owned by that
 	// workspace. The token does not expire and the other tokens are untouched. An
@@ -933,6 +952,18 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("RevokeToken")),
 			connect.WithClientOptions(opts...),
 		),
+		rollToken: connect.NewClient[operatorv1.RollTokenRequest, operatorv1.RollTokenResponse](
+			httpClient,
+			baseURL+OperatorServiceRollTokenProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("RollToken")),
+			connect.WithClientOptions(opts...),
+		),
+		updateToken: connect.NewClient[operatorv1.UpdateTokenRequest, operatorv1.UpdateTokenResponse](
+			httpClient,
+			baseURL+OperatorServiceUpdateTokenProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("UpdateToken")),
+			connect.WithClientOptions(opts...),
+		),
 		createEnrollmentToken: connect.NewClient[operatorv1.CreateEnrollmentTokenRequest, operatorv1.CreateEnrollmentTokenResponse](
 			httpClient,
 			baseURL+OperatorServiceCreateEnrollmentTokenProcedure,
@@ -1120,6 +1151,8 @@ type operatorServiceClient struct {
 	listTokens                  *connect.Client[operatorv1.ListTokensRequest, operatorv1.ListTokensResponse]
 	rotateToken                 *connect.Client[operatorv1.RotateTokenRequest, operatorv1.RotateTokenResponse]
 	revokeToken                 *connect.Client[operatorv1.RevokeTokenRequest, operatorv1.RevokeTokenResponse]
+	rollToken                   *connect.Client[operatorv1.RollTokenRequest, operatorv1.RollTokenResponse]
+	updateToken                 *connect.Client[operatorv1.UpdateTokenRequest, operatorv1.UpdateTokenResponse]
 	createEnrollmentToken       *connect.Client[operatorv1.CreateEnrollmentTokenRequest, operatorv1.CreateEnrollmentTokenResponse]
 	createTenantToken           *connect.Client[operatorv1.CreateTenantTokenRequest, operatorv1.CreateTenantTokenResponse]
 	createProductToken          *connect.Client[operatorv1.CreateProductTokenRequest, operatorv1.CreateProductTokenResponse]
@@ -1363,6 +1396,16 @@ func (c *operatorServiceClient) RotateToken(ctx context.Context, req *connect.Re
 // RevokeToken calls toshi.operator.v1.OperatorService.RevokeToken.
 func (c *operatorServiceClient) RevokeToken(ctx context.Context, req *connect.Request[operatorv1.RevokeTokenRequest]) (*connect.Response[operatorv1.RevokeTokenResponse], error) {
 	return c.revokeToken.CallUnary(ctx, req)
+}
+
+// RollToken calls toshi.operator.v1.OperatorService.RollToken.
+func (c *operatorServiceClient) RollToken(ctx context.Context, req *connect.Request[operatorv1.RollTokenRequest]) (*connect.Response[operatorv1.RollTokenResponse], error) {
+	return c.rollToken.CallUnary(ctx, req)
+}
+
+// UpdateToken calls toshi.operator.v1.OperatorService.UpdateToken.
+func (c *operatorServiceClient) UpdateToken(ctx context.Context, req *connect.Request[operatorv1.UpdateTokenRequest]) (*connect.Response[operatorv1.UpdateTokenResponse], error) {
+	return c.updateToken.CallUnary(ctx, req)
 }
 
 // CreateEnrollmentToken calls toshi.operator.v1.OperatorService.CreateEnrollmentToken.
@@ -1733,6 +1776,19 @@ type OperatorServiceHandler interface {
 	// enrollment token signs out only the hosts that registered with it.
 	// Revoking the only active operator token fails with FailedPrecondition.
 	RevokeToken(context.Context, *connect.Request[operatorv1.RevokeTokenRequest]) (*connect.Response[operatorv1.RevokeTokenResponse], error)
+	// RollToken gives a token a new value and returns it; it is not stored
+	// and cannot be shown again. The old value stops working at once. The
+	// token keeps its id, kind, name, roles, limit, restrictions, expiry and
+	// creator, so what was granted to it stays granted and an installation
+	// stays linked to it. An unknown id fails with NOT_FOUND; a revoked or
+	// expired token with FailedPrecondition. A token file that still holds
+	// the old value is refused at the next start, as a revoked token's is.
+	RollToken(context.Context, *connect.Request[operatorv1.RollTokenRequest]) (*connect.Response[operatorv1.RollTokenResponse], error)
+	// UpdateToken changes a workspace token's name, expiry, start and client
+	// address ranges: the fields update_mask names. Other kinds take none of
+	// them and fail with InvalidArgument; an unknown id fails with NOT_FOUND,
+	// a revoked token with FailedPrecondition.
+	UpdateToken(context.Context, *connect.Request[operatorv1.UpdateTokenRequest]) (*connect.Response[operatorv1.UpdateTokenResponse], error)
 	// CreateEnrollmentToken makes an enrollment token for one workspace and
 	// returns it with its value; a host that registers with it is owned by that
 	// workspace. The token does not expire and the other tokens are untouched. An
@@ -2172,6 +2228,18 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("RevokeToken")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceRollTokenHandler := connect.NewUnaryHandler(
+		OperatorServiceRollTokenProcedure,
+		svc.RollToken,
+		connect.WithSchema(operatorServiceMethods.ByName("RollToken")),
+		connect.WithHandlerOptions(opts...),
+	)
+	operatorServiceUpdateTokenHandler := connect.NewUnaryHandler(
+		OperatorServiceUpdateTokenProcedure,
+		svc.UpdateToken,
+		connect.WithSchema(operatorServiceMethods.ByName("UpdateToken")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceCreateEnrollmentTokenHandler := connect.NewUnaryHandler(
 		OperatorServiceCreateEnrollmentTokenProcedure,
 		svc.CreateEnrollmentToken,
@@ -2400,6 +2468,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceRotateTokenHandler.ServeHTTP(w, r)
 		case OperatorServiceRevokeTokenProcedure:
 			operatorServiceRevokeTokenHandler.ServeHTTP(w, r)
+		case OperatorServiceRollTokenProcedure:
+			operatorServiceRollTokenHandler.ServeHTTP(w, r)
+		case OperatorServiceUpdateTokenProcedure:
+			operatorServiceUpdateTokenHandler.ServeHTTP(w, r)
 		case OperatorServiceCreateEnrollmentTokenProcedure:
 			operatorServiceCreateEnrollmentTokenHandler.ServeHTTP(w, r)
 		case OperatorServiceCreateTenantTokenProcedure:
@@ -2629,6 +2701,14 @@ func (UnimplementedOperatorServiceHandler) RotateToken(context.Context, *connect
 
 func (UnimplementedOperatorServiceHandler) RevokeToken(context.Context, *connect.Request[operatorv1.RevokeTokenRequest]) (*connect.Response[operatorv1.RevokeTokenResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RevokeToken is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) RollToken(context.Context, *connect.Request[operatorv1.RollTokenRequest]) (*connect.Response[operatorv1.RollTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RollToken is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) UpdateToken(context.Context, *connect.Request[operatorv1.UpdateTokenRequest]) (*connect.Response[operatorv1.UpdateTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.UpdateToken is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) CreateEnrollmentToken(context.Context, *connect.Request[operatorv1.CreateEnrollmentTokenRequest]) (*connect.Response[operatorv1.CreateEnrollmentTokenResponse], error) {

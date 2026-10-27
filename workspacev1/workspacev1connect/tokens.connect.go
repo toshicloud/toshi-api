@@ -41,6 +41,12 @@ const (
 	// TokenServiceRevokeTokenProcedure is the fully-qualified name of the TokenService's RevokeToken
 	// RPC.
 	TokenServiceRevokeTokenProcedure = "/toshi.workspace.v1.TokenService/RevokeToken"
+	// TokenServiceRollWorkspaceTokenProcedure is the fully-qualified name of the TokenService's
+	// RollWorkspaceToken RPC.
+	TokenServiceRollWorkspaceTokenProcedure = "/toshi.workspace.v1.TokenService/RollWorkspaceToken"
+	// TokenServiceUpdateTokenProcedure is the fully-qualified name of the TokenService's UpdateToken
+	// RPC.
+	TokenServiceUpdateTokenProcedure = "/toshi.workspace.v1.TokenService/UpdateToken"
 )
 
 // TokenServiceClient is a client for the toshi.workspace.v1.TokenService service.
@@ -61,6 +67,27 @@ type TokenServiceClient interface {
 	// with it. A token of another workspace, and an unknown ID, fail with
 	// NOT_FOUND.
 	RevokeToken(context.Context, *connect.Request[workspacev1.RevokeTokenRequest]) (*connect.Response[workspacev1.RevokeTokenResponse], error)
+	// RollWorkspaceToken gives one of the workspace's tokens a new value and
+	// returns it; the old value stops working at once. The token keeps its
+	// ID, name, roles, limit, client address ranges, start, expiry and
+	// creator, so what was granted to it stays granted. An API, enrollment or
+	// installation token rolls; the new value of an installation token goes
+	// to its product's settings.
+	//
+	// Only a signed-in session may call it, as for CreateWorkspaceToken. A
+	// token someone else made needs members.write as well, and is refused
+	// without it with PERMISSION_DENIED. A token of another workspace, and an
+	// unknown ID, fail with NOT_FOUND; a revoked or expired token with
+	// FAILED_PRECONDITION.
+	RollWorkspaceToken(context.Context, *connect.Request[workspacev1.RollWorkspaceTokenRequest]) (*connect.Response[workspacev1.RollWorkspaceTokenResponse], error)
+	// UpdateToken changes an API token's name, expiry, start and client
+	// address ranges: the fields update_mask names. The expiry stays within
+	// the longest lifetime allowed from now. Only a signed-in session may
+	// call it, and a token someone else made needs members.write as well,
+	// as for RollWorkspaceToken. An enrollment or installation token fails
+	// with INVALID_ARGUMENT; a token of another workspace, and an unknown ID,
+	// with NOT_FOUND; a revoked token with FAILED_PRECONDITION.
+	UpdateToken(context.Context, *connect.Request[workspacev1.UpdateTokenRequest]) (*connect.Response[workspacev1.UpdateTokenResponse], error)
 }
 
 // NewTokenServiceClient constructs a client for the toshi.workspace.v1.TokenService service. By
@@ -92,6 +119,18 @@ func NewTokenServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(tokenServiceMethods.ByName("RevokeToken")),
 			connect.WithClientOptions(opts...),
 		),
+		rollWorkspaceToken: connect.NewClient[workspacev1.RollWorkspaceTokenRequest, workspacev1.RollWorkspaceTokenResponse](
+			httpClient,
+			baseURL+TokenServiceRollWorkspaceTokenProcedure,
+			connect.WithSchema(tokenServiceMethods.ByName("RollWorkspaceToken")),
+			connect.WithClientOptions(opts...),
+		),
+		updateToken: connect.NewClient[workspacev1.UpdateTokenRequest, workspacev1.UpdateTokenResponse](
+			httpClient,
+			baseURL+TokenServiceUpdateTokenProcedure,
+			connect.WithSchema(tokenServiceMethods.ByName("UpdateToken")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -100,6 +139,8 @@ type tokenServiceClient struct {
 	listTokens           *connect.Client[workspacev1.ListTokensRequest, workspacev1.ListTokensResponse]
 	createWorkspaceToken *connect.Client[workspacev1.CreateWorkspaceTokenRequest, workspacev1.CreateWorkspaceTokenResponse]
 	revokeToken          *connect.Client[workspacev1.RevokeTokenRequest, workspacev1.RevokeTokenResponse]
+	rollWorkspaceToken   *connect.Client[workspacev1.RollWorkspaceTokenRequest, workspacev1.RollWorkspaceTokenResponse]
+	updateToken          *connect.Client[workspacev1.UpdateTokenRequest, workspacev1.UpdateTokenResponse]
 }
 
 // ListTokens calls toshi.workspace.v1.TokenService.ListTokens.
@@ -115,6 +156,16 @@ func (c *tokenServiceClient) CreateWorkspaceToken(ctx context.Context, req *conn
 // RevokeToken calls toshi.workspace.v1.TokenService.RevokeToken.
 func (c *tokenServiceClient) RevokeToken(ctx context.Context, req *connect.Request[workspacev1.RevokeTokenRequest]) (*connect.Response[workspacev1.RevokeTokenResponse], error) {
 	return c.revokeToken.CallUnary(ctx, req)
+}
+
+// RollWorkspaceToken calls toshi.workspace.v1.TokenService.RollWorkspaceToken.
+func (c *tokenServiceClient) RollWorkspaceToken(ctx context.Context, req *connect.Request[workspacev1.RollWorkspaceTokenRequest]) (*connect.Response[workspacev1.RollWorkspaceTokenResponse], error) {
+	return c.rollWorkspaceToken.CallUnary(ctx, req)
+}
+
+// UpdateToken calls toshi.workspace.v1.TokenService.UpdateToken.
+func (c *tokenServiceClient) UpdateToken(ctx context.Context, req *connect.Request[workspacev1.UpdateTokenRequest]) (*connect.Response[workspacev1.UpdateTokenResponse], error) {
+	return c.updateToken.CallUnary(ctx, req)
 }
 
 // TokenServiceHandler is an implementation of the toshi.workspace.v1.TokenService service.
@@ -135,6 +186,27 @@ type TokenServiceHandler interface {
 	// with it. A token of another workspace, and an unknown ID, fail with
 	// NOT_FOUND.
 	RevokeToken(context.Context, *connect.Request[workspacev1.RevokeTokenRequest]) (*connect.Response[workspacev1.RevokeTokenResponse], error)
+	// RollWorkspaceToken gives one of the workspace's tokens a new value and
+	// returns it; the old value stops working at once. The token keeps its
+	// ID, name, roles, limit, client address ranges, start, expiry and
+	// creator, so what was granted to it stays granted. An API, enrollment or
+	// installation token rolls; the new value of an installation token goes
+	// to its product's settings.
+	//
+	// Only a signed-in session may call it, as for CreateWorkspaceToken. A
+	// token someone else made needs members.write as well, and is refused
+	// without it with PERMISSION_DENIED. A token of another workspace, and an
+	// unknown ID, fail with NOT_FOUND; a revoked or expired token with
+	// FAILED_PRECONDITION.
+	RollWorkspaceToken(context.Context, *connect.Request[workspacev1.RollWorkspaceTokenRequest]) (*connect.Response[workspacev1.RollWorkspaceTokenResponse], error)
+	// UpdateToken changes an API token's name, expiry, start and client
+	// address ranges: the fields update_mask names. The expiry stays within
+	// the longest lifetime allowed from now. Only a signed-in session may
+	// call it, and a token someone else made needs members.write as well,
+	// as for RollWorkspaceToken. An enrollment or installation token fails
+	// with INVALID_ARGUMENT; a token of another workspace, and an unknown ID,
+	// with NOT_FOUND; a revoked token with FAILED_PRECONDITION.
+	UpdateToken(context.Context, *connect.Request[workspacev1.UpdateTokenRequest]) (*connect.Response[workspacev1.UpdateTokenResponse], error)
 }
 
 // NewTokenServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -162,6 +234,18 @@ func NewTokenServiceHandler(svc TokenServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(tokenServiceMethods.ByName("RevokeToken")),
 		connect.WithHandlerOptions(opts...),
 	)
+	tokenServiceRollWorkspaceTokenHandler := connect.NewUnaryHandler(
+		TokenServiceRollWorkspaceTokenProcedure,
+		svc.RollWorkspaceToken,
+		connect.WithSchema(tokenServiceMethods.ByName("RollWorkspaceToken")),
+		connect.WithHandlerOptions(opts...),
+	)
+	tokenServiceUpdateTokenHandler := connect.NewUnaryHandler(
+		TokenServiceUpdateTokenProcedure,
+		svc.UpdateToken,
+		connect.WithSchema(tokenServiceMethods.ByName("UpdateToken")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.TokenService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case TokenServiceListTokensProcedure:
@@ -170,6 +254,10 @@ func NewTokenServiceHandler(svc TokenServiceHandler, opts ...connect.HandlerOpti
 			tokenServiceCreateWorkspaceTokenHandler.ServeHTTP(w, r)
 		case TokenServiceRevokeTokenProcedure:
 			tokenServiceRevokeTokenHandler.ServeHTTP(w, r)
+		case TokenServiceRollWorkspaceTokenProcedure:
+			tokenServiceRollWorkspaceTokenHandler.ServeHTTP(w, r)
+		case TokenServiceUpdateTokenProcedure:
+			tokenServiceUpdateTokenHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -189,4 +277,12 @@ func (UnimplementedTokenServiceHandler) CreateWorkspaceToken(context.Context, *c
 
 func (UnimplementedTokenServiceHandler) RevokeToken(context.Context, *connect.Request[workspacev1.RevokeTokenRequest]) (*connect.Response[workspacev1.RevokeTokenResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.TokenService.RevokeToken is not implemented"))
+}
+
+func (UnimplementedTokenServiceHandler) RollWorkspaceToken(context.Context, *connect.Request[workspacev1.RollWorkspaceTokenRequest]) (*connect.Response[workspacev1.RollWorkspaceTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.TokenService.RollWorkspaceToken is not implemented"))
+}
+
+func (UnimplementedTokenServiceHandler) UpdateToken(context.Context, *connect.Request[workspacev1.UpdateTokenRequest]) (*connect.Response[workspacev1.UpdateTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.TokenService.UpdateToken is not implemented"))
 }

@@ -2,8 +2,10 @@ syntax = "proto3";
 
 package toshi.workspace.v1;
 
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
+import "toshi/workspace/v1/roles.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
@@ -43,6 +45,32 @@ service TokenService {
   rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse) {
     option (toshi.permission) = "tokens.write";
   }
+  // RollWorkspaceToken gives one of the workspace's tokens a new value and
+  // returns it; the old value stops working at once. The token keeps its
+  // ID, name, roles, limit, client address ranges, start, expiry and
+  // creator, so what was granted to it stays granted. An API, enrollment or
+  // installation token rolls; the new value of an installation token goes
+  // to its product's settings.
+  //
+  // Only a signed-in session may call it, as for CreateWorkspaceToken. A
+  // token someone else made needs members.write as well, and is refused
+  // without it with PERMISSION_DENIED. A token of another workspace, and an
+  // unknown ID, fail with NOT_FOUND; a revoked or expired token with
+  // FAILED_PRECONDITION.
+  rpc RollWorkspaceToken(RollWorkspaceTokenRequest) returns (RollWorkspaceTokenResponse) {
+    option (toshi.permission) = "tokens.write";
+    option (toshi.audit) = {action: "token.rolled"};
+  }
+  // UpdateToken changes an API token's name, expiry, start and client
+  // address ranges: the fields update_mask names. The expiry stays within
+  // the longest lifetime allowed from now. Only a signed-in session may
+  // call it, and a token someone else made needs members.write as well,
+  // as for RollWorkspaceToken. An enrollment or installation token fails
+  // with INVALID_ARGUMENT; a token of another workspace, and an unknown ID,
+  // with NOT_FOUND; a revoked token with FAILED_PRECONDITION.
+  rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse) {
+    option (toshi.permission) = "tokens.write";
+  }
 }
 
 // TokenKind says what a token grants.
@@ -77,6 +105,30 @@ message Token {
   // The environment of project the token is limited to, by name. Empty
   // when the token acts in every environment of its project.
   string environment = 10;
+  // When an API token starts working; unset when it works from its
+  // creation.
+  google.protobuf.Timestamp not_before = 11;
+  // The client addresses an API token is accepted from; unset when every
+  // address is.
+  ClientRanges client_ranges = 12;
+  // Who made the token: a person, a token, or the system for one the
+  // control plane made. Unset when that was not recorded.
+  Subject created_by = 13;
+}
+
+// ClientRanges are the client addresses an API token is accepted from,
+// each an IP address or a CIDR range, such as "203.0.113.0/24" or
+// "2001:db8::/32". A call from another address, or before the token's
+// not_before, is refused with UNAUTHENTICATED, as an expired token's is,
+// with a google.rpc.ErrorInfo of domain "toshi.run" and reason
+// TOKEN_OUTSIDE_RANGES or TOKEN_OUTSIDE_WINDOW, and the refusal is
+// recorded in the audit log.
+message ClientRanges {
+  // The token is accepted only from an address in one of these; empty
+  // accepts every address.
+  repeated string in = 1;
+  // The token is refused from an address in any of these, one in in too.
+  repeated string not_in = 2;
 }
 
 // ListTokensRequest optionally narrows the list to one kind.
@@ -100,7 +152,7 @@ message ListTokensResponse {
 message CreateWorkspaceTokenRequest {
   // A label for the token.
   string name = 1;
-  // Unset means the token never expires.
+  // Unset means the longest lifetime allowed, 90 days by default.
   google.protobuf.Timestamp expires_at = 2;
   // Limits the token to this project of the workspace, by name. Empty
   // makes a token for the whole workspace.
@@ -108,6 +160,16 @@ message CreateWorkspaceTokenRequest {
   // Limits the token further to this environment of project, by name.
   // Needs project.
   string environment = 4;
+  // When the token starts working; unset means at once.
+  google.protobuf.Timestamp not_before = 5;
+  // The client addresses the token is accepted from; unset means every
+  // address.
+  ClientRanges client_ranges = 6;
+  // The token's role, by id: a built-in role or one of the workspace's
+  // own, which the caller must hold everything of where the token acts.
+  // Empty gives Admin to a whole-workspace token and Member to a limited
+  // one.
+  string role = 7;
 }
 
 // CreateWorkspaceTokenResponse carries the new token and its value.
@@ -127,4 +189,31 @@ message RevokeTokenResponse {
   Token token = 1;
   // How many hosts were signed out and must register again.
   int32 hosts_signed_out = 2;
+}
+
+// RollWorkspaceTokenRequest names the token to roll.
+message RollWorkspaceTokenRequest {
+  string id = 1;
+}
+
+// RollWorkspaceTokenResponse carries the token and its new value.
+message RollWorkspaceTokenResponse {
+  Token token = 1;
+  // The new value. It is returned only here.
+  string value = 2;
+}
+
+// UpdateTokenRequest names an API token and the fields to change.
+message UpdateTokenRequest {
+  string id = 1;
+  // Carries the new values of the fields update_mask names. An unset
+  // not_before or client_ranges clears it; expires_at must be set.
+  Token token = 2;
+  // One or more of name, expires_at, not_before and client_ranges.
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+// UpdateTokenResponse carries the token as it now is.
+message UpdateTokenResponse {
+  Token token = 1;
 }

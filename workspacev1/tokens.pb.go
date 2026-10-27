@@ -10,6 +10,7 @@ import (
 	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -98,7 +99,16 @@ type Token struct {
 	Project string `protobuf:"bytes,9,opt,name=project,proto3" json:"project,omitempty"`
 	// The environment of project the token is limited to, by name. Empty
 	// when the token acts in every environment of its project.
-	Environment   string `protobuf:"bytes,10,opt,name=environment,proto3" json:"environment,omitempty"`
+	Environment string `protobuf:"bytes,10,opt,name=environment,proto3" json:"environment,omitempty"`
+	// When an API token starts working; unset when it works from its
+	// creation.
+	NotBefore *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=not_before,json=notBefore,proto3" json:"not_before,omitempty"`
+	// The client addresses an API token is accepted from; unset when every
+	// address is.
+	ClientRanges *ClientRanges `protobuf:"bytes,12,opt,name=client_ranges,json=clientRanges,proto3" json:"client_ranges,omitempty"`
+	// Who made the token: a person, a token, or the system for one the
+	// control plane made. Unset when that was not recorded.
+	CreatedBy     *Subject `protobuf:"bytes,13,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -203,6 +213,89 @@ func (x *Token) GetEnvironment() string {
 	return ""
 }
 
+func (x *Token) GetNotBefore() *timestamppb.Timestamp {
+	if x != nil {
+		return x.NotBefore
+	}
+	return nil
+}
+
+func (x *Token) GetClientRanges() *ClientRanges {
+	if x != nil {
+		return x.ClientRanges
+	}
+	return nil
+}
+
+func (x *Token) GetCreatedBy() *Subject {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return nil
+}
+
+// ClientRanges are the client addresses an API token is accepted from,
+// each an IP address or a CIDR range, such as "203.0.113.0/24" or
+// "2001:db8::/32". A call from another address, or before the token's
+// not_before, is refused with UNAUTHENTICATED, as an expired token's is,
+// with a google.rpc.ErrorInfo of domain "toshi.run" and reason
+// TOKEN_OUTSIDE_RANGES or TOKEN_OUTSIDE_WINDOW, and the refusal is
+// recorded in the audit log.
+type ClientRanges struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The token is accepted only from an address in one of these; empty
+	// accepts every address.
+	In []string `protobuf:"bytes,1,rep,name=in,proto3" json:"in,omitempty"`
+	// The token is refused from an address in any of these, one in in too.
+	NotIn         []string `protobuf:"bytes,2,rep,name=not_in,json=notIn,proto3" json:"not_in,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientRanges) Reset() {
+	*x = ClientRanges{}
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientRanges) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientRanges) ProtoMessage() {}
+
+func (x *ClientRanges) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientRanges.ProtoReflect.Descriptor instead.
+func (*ClientRanges) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ClientRanges) GetIn() []string {
+	if x != nil {
+		return x.In
+	}
+	return nil
+}
+
+func (x *ClientRanges) GetNotIn() []string {
+	if x != nil {
+		return x.NotIn
+	}
+	return nil
+}
+
 // ListTokensRequest optionally narrows the list to one kind.
 type ListTokensRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -218,7 +311,7 @@ type ListTokensRequest struct {
 
 func (x *ListTokensRequest) Reset() {
 	*x = ListTokensRequest{}
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -230,7 +323,7 @@ func (x *ListTokensRequest) String() string {
 func (*ListTokensRequest) ProtoMessage() {}
 
 func (x *ListTokensRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -243,7 +336,7 @@ func (x *ListTokensRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTokensRequest.ProtoReflect.Descriptor instead.
 func (*ListTokensRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ListTokensRequest) GetKind() TokenKind {
@@ -279,7 +372,7 @@ type ListTokensResponse struct {
 
 func (x *ListTokensResponse) Reset() {
 	*x = ListTokensResponse{}
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -291,7 +384,7 @@ func (x *ListTokensResponse) String() string {
 func (*ListTokensResponse) ProtoMessage() {}
 
 func (x *ListTokensResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -304,7 +397,7 @@ func (x *ListTokensResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTokensResponse.ProtoReflect.Descriptor instead.
 func (*ListTokensResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ListTokensResponse) GetTokens() []*Token {
@@ -326,21 +419,31 @@ type CreateWorkspaceTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// A label for the token.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// Unset means the token never expires.
+	// Unset means the longest lifetime allowed, 90 days by default.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// Limits the token to this project of the workspace, by name. Empty
 	// makes a token for the whole workspace.
 	Project string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
 	// Limits the token further to this environment of project, by name.
 	// Needs project.
-	Environment   string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
+	Environment string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
+	// When the token starts working; unset means at once.
+	NotBefore *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=not_before,json=notBefore,proto3" json:"not_before,omitempty"`
+	// The client addresses the token is accepted from; unset means every
+	// address.
+	ClientRanges *ClientRanges `protobuf:"bytes,6,opt,name=client_ranges,json=clientRanges,proto3" json:"client_ranges,omitempty"`
+	// The token's role, by id: a built-in role or one of the workspace's
+	// own, which the caller must hold everything of where the token acts.
+	// Empty gives Admin to a whole-workspace token and Member to a limited
+	// one.
+	Role          string `protobuf:"bytes,7,opt,name=role,proto3" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateWorkspaceTokenRequest) Reset() {
 	*x = CreateWorkspaceTokenRequest{}
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -352,7 +455,7 @@ func (x *CreateWorkspaceTokenRequest) String() string {
 func (*CreateWorkspaceTokenRequest) ProtoMessage() {}
 
 func (x *CreateWorkspaceTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -365,7 +468,7 @@ func (x *CreateWorkspaceTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateWorkspaceTokenRequest.ProtoReflect.Descriptor instead.
 func (*CreateWorkspaceTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateWorkspaceTokenRequest) GetName() string {
@@ -396,6 +499,27 @@ func (x *CreateWorkspaceTokenRequest) GetEnvironment() string {
 	return ""
 }
 
+func (x *CreateWorkspaceTokenRequest) GetNotBefore() *timestamppb.Timestamp {
+	if x != nil {
+		return x.NotBefore
+	}
+	return nil
+}
+
+func (x *CreateWorkspaceTokenRequest) GetClientRanges() *ClientRanges {
+	if x != nil {
+		return x.ClientRanges
+	}
+	return nil
+}
+
+func (x *CreateWorkspaceTokenRequest) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
 // CreateWorkspaceTokenResponse carries the new token and its value.
 type CreateWorkspaceTokenResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -408,7 +532,7 @@ type CreateWorkspaceTokenResponse struct {
 
 func (x *CreateWorkspaceTokenResponse) Reset() {
 	*x = CreateWorkspaceTokenResponse{}
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -420,7 +544,7 @@ func (x *CreateWorkspaceTokenResponse) String() string {
 func (*CreateWorkspaceTokenResponse) ProtoMessage() {}
 
 func (x *CreateWorkspaceTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -433,7 +557,7 @@ func (x *CreateWorkspaceTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateWorkspaceTokenResponse.ProtoReflect.Descriptor instead.
 func (*CreateWorkspaceTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateWorkspaceTokenResponse) GetToken() *Token {
@@ -460,7 +584,7 @@ type RevokeTokenRequest struct {
 
 func (x *RevokeTokenRequest) Reset() {
 	*x = RevokeTokenRequest{}
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -472,7 +596,7 @@ func (x *RevokeTokenRequest) String() string {
 func (*RevokeTokenRequest) ProtoMessage() {}
 
 func (x *RevokeTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -485,7 +609,7 @@ func (x *RevokeTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeTokenRequest.ProtoReflect.Descriptor instead.
 func (*RevokeTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *RevokeTokenRequest) GetId() string {
@@ -507,7 +631,7 @@ type RevokeTokenResponse struct {
 
 func (x *RevokeTokenResponse) Reset() {
 	*x = RevokeTokenResponse{}
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -519,7 +643,7 @@ func (x *RevokeTokenResponse) String() string {
 func (*RevokeTokenResponse) ProtoMessage() {}
 
 func (x *RevokeTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -532,7 +656,7 @@ func (x *RevokeTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeTokenResponse.ProtoReflect.Descriptor instead.
 func (*RevokeTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *RevokeTokenResponse) GetToken() *Token {
@@ -549,11 +673,219 @@ func (x *RevokeTokenResponse) GetHostsSignedOut() int32 {
 	return 0
 }
 
+// RollWorkspaceTokenRequest names the token to roll.
+type RollWorkspaceTokenRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RollWorkspaceTokenRequest) Reset() {
+	*x = RollWorkspaceTokenRequest{}
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RollWorkspaceTokenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RollWorkspaceTokenRequest) ProtoMessage() {}
+
+func (x *RollWorkspaceTokenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RollWorkspaceTokenRequest.ProtoReflect.Descriptor instead.
+func (*RollWorkspaceTokenRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *RollWorkspaceTokenRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+// RollWorkspaceTokenResponse carries the token and its new value.
+type RollWorkspaceTokenResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Token *Token                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	// The new value. It is returned only here.
+	Value         string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RollWorkspaceTokenResponse) Reset() {
+	*x = RollWorkspaceTokenResponse{}
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RollWorkspaceTokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RollWorkspaceTokenResponse) ProtoMessage() {}
+
+func (x *RollWorkspaceTokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RollWorkspaceTokenResponse.ProtoReflect.Descriptor instead.
+func (*RollWorkspaceTokenResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *RollWorkspaceTokenResponse) GetToken() *Token {
+	if x != nil {
+		return x.Token
+	}
+	return nil
+}
+
+func (x *RollWorkspaceTokenResponse) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+// UpdateTokenRequest names an API token and the fields to change.
+type UpdateTokenRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Carries the new values of the fields update_mask names. An unset
+	// not_before or client_ranges clears it; expires_at must be set.
+	Token *Token `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	// One or more of name, expires_at, not_before and client_ranges.
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateTokenRequest) Reset() {
+	*x = UpdateTokenRequest{}
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateTokenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateTokenRequest) ProtoMessage() {}
+
+func (x *UpdateTokenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateTokenRequest.ProtoReflect.Descriptor instead.
+func (*UpdateTokenRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *UpdateTokenRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UpdateTokenRequest) GetToken() *Token {
+	if x != nil {
+		return x.Token
+	}
+	return nil
+}
+
+func (x *UpdateTokenRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.UpdateMask
+	}
+	return nil
+}
+
+// UpdateTokenResponse carries the token as it now is.
+type UpdateTokenResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         *Token                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateTokenResponse) Reset() {
+	*x = UpdateTokenResponse{}
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateTokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateTokenResponse) ProtoMessage() {}
+
+func (x *UpdateTokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_tokens_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateTokenResponse.ProtoReflect.Descriptor instead.
+func (*UpdateTokenResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *UpdateTokenResponse) GetToken() *Token {
+	if x != nil {
+		return x.Token
+	}
+	return nil
+}
+
 var File_toshi_workspace_v1_tokens_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\n" +
-	"\x1ftoshi/workspace/v1/tokens.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xfb\x02\n" +
+	"\x1ftoshi/workspace/v1/tokens.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1etoshi/workspace/v1/roles.proto\"\xb9\x04\n" +
 	"\x05Token\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x121\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x1d.toshi.workspace.v1.TokenKindR\x04kind\x12\x16\n" +
@@ -568,7 +900,15 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\x04name\x18\b \x01(\tR\x04name\x12\x18\n" +
 	"\aproject\x18\t \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\n" +
-	" \x01(\tR\venvironment\"\x82\x01\n" +
+	" \x01(\tR\venvironment\x129\n" +
+	"\n" +
+	"not_before\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tnotBefore\x12E\n" +
+	"\rclient_ranges\x18\f \x01(\v2 .toshi.workspace.v1.ClientRangesR\fclientRanges\x12:\n" +
+	"\n" +
+	"created_by\x18\r \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedBy\"5\n" +
+	"\fClientRanges\x12\x0e\n" +
+	"\x02in\x18\x01 \x03(\tR\x02in\x12\x15\n" +
+	"\x06not_in\x18\x02 \x03(\tR\x05notIn\"\x82\x01\n" +
 	"\x11ListTokensRequest\x121\n" +
 	"\x04kind\x18\x01 \x01(\x0e2\x1d.toshi.workspace.v1.TokenKindR\x04kind\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
@@ -576,13 +916,17 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"o\n" +
 	"\x12ListTokensResponse\x121\n" +
 	"\x06tokens\x18\x01 \x03(\v2\x19.toshi.workspace.v1.TokenR\x06tokens\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xa8\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xbe\x02\n" +
 	"\x1bCreateWorkspaceTokenRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\n" +
 	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
-	"\venvironment\x18\x04 \x01(\tR\venvironment\"e\n" +
+	"\venvironment\x18\x04 \x01(\tR\venvironment\x129\n" +
+	"\n" +
+	"not_before\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tnotBefore\x12E\n" +
+	"\rclient_ranges\x18\x06 \x01(\v2 .toshi.workspace.v1.ClientRangesR\fclientRanges\x12\x12\n" +
+	"\x04role\x18\a \x01(\tR\x04role\"e\n" +
 	"\x1cCreateWorkspaceTokenResponse\x12/\n" +
 	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\"$\n" +
@@ -590,17 +934,32 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"p\n" +
 	"\x13RevokeTokenResponse\x12/\n" +
 	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12(\n" +
-	"\x10hosts_signed_out\x18\x02 \x01(\x05R\x0ehostsSignedOut*\\\n" +
+	"\x10hosts_signed_out\x18\x02 \x01(\x05R\x0ehostsSignedOut\"+\n" +
+	"\x19RollWorkspaceTokenRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"c\n" +
+	"\x1aRollWorkspaceTokenResponse\x12/\n" +
+	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"\x92\x01\n" +
+	"\x12UpdateTokenRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12/\n" +
+	"\x05token\x18\x02 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12;\n" +
+	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\"F\n" +
+	"\x13UpdateTokenResponse\x12/\n" +
+	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token*\\\n" +
 	"\tTokenKind\x12\x1a\n" +
 	"\x16TOKEN_KIND_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15TOKEN_KIND_ENROLLMENT\x10\x02\x12\x18\n" +
-	"\x14TOKEN_KIND_WORKSPACE\x10\x032\x9c\x03\n" +
+	"\x14TOKEN_KIND_WORKSPACE\x10\x032\xa8\x05\n" +
 	"\fTokenService\x12l\n" +
 	"\n" +
 	"ListTokens\x12%.toshi.workspace.v1.ListTokensRequest\x1a&.toshi.workspace.v1.ListTokensResponse\"\x0f\xc2\xf3\x18\vtokens.read\x12\xab\x01\n" +
 	"\x14CreateWorkspaceToken\x12/.toshi.workspace.v1.CreateWorkspaceTokenRequest\x1a0.toshi.workspace.v1.CreateWorkspaceTokenResponse\"0\xc2\xf3\x18\ftokens.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
 	"\rtoken.created\x12p\n" +
-	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x10\xc2\xf3\x18\ftokens.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x10\xc2\xf3\x18\ftokens.write\x12\x97\x01\n" +
+	"\x12RollWorkspaceToken\x12-.toshi.workspace.v1.RollWorkspaceTokenRequest\x1a..toshi.workspace.v1.RollWorkspaceTokenResponse\"\"\xc2\xf3\x18\ftokens.write\xd2\xf3\x18\x0e\n" +
+	"\ftoken.rolled\x12p\n" +
+	"\vUpdateToken\x12&.toshi.workspace.v1.UpdateTokenRequest\x1a'.toshi.workspace.v1.UpdateTokenResponse\"\x10\xc2\xf3\x18\ftokens.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_tokens_proto_rawDescOnce sync.Once
@@ -615,39 +974,59 @@ func file_toshi_workspace_v1_tokens_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_tokens_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_tokens_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_toshi_workspace_v1_tokens_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_toshi_workspace_v1_tokens_proto_goTypes = []any{
 	(TokenKind)(0),                       // 0: toshi.workspace.v1.TokenKind
 	(*Token)(nil),                        // 1: toshi.workspace.v1.Token
-	(*ListTokensRequest)(nil),            // 2: toshi.workspace.v1.ListTokensRequest
-	(*ListTokensResponse)(nil),           // 3: toshi.workspace.v1.ListTokensResponse
-	(*CreateWorkspaceTokenRequest)(nil),  // 4: toshi.workspace.v1.CreateWorkspaceTokenRequest
-	(*CreateWorkspaceTokenResponse)(nil), // 5: toshi.workspace.v1.CreateWorkspaceTokenResponse
-	(*RevokeTokenRequest)(nil),           // 6: toshi.workspace.v1.RevokeTokenRequest
-	(*RevokeTokenResponse)(nil),          // 7: toshi.workspace.v1.RevokeTokenResponse
-	(*timestamppb.Timestamp)(nil),        // 8: google.protobuf.Timestamp
+	(*ClientRanges)(nil),                 // 2: toshi.workspace.v1.ClientRanges
+	(*ListTokensRequest)(nil),            // 3: toshi.workspace.v1.ListTokensRequest
+	(*ListTokensResponse)(nil),           // 4: toshi.workspace.v1.ListTokensResponse
+	(*CreateWorkspaceTokenRequest)(nil),  // 5: toshi.workspace.v1.CreateWorkspaceTokenRequest
+	(*CreateWorkspaceTokenResponse)(nil), // 6: toshi.workspace.v1.CreateWorkspaceTokenResponse
+	(*RevokeTokenRequest)(nil),           // 7: toshi.workspace.v1.RevokeTokenRequest
+	(*RevokeTokenResponse)(nil),          // 8: toshi.workspace.v1.RevokeTokenResponse
+	(*RollWorkspaceTokenRequest)(nil),    // 9: toshi.workspace.v1.RollWorkspaceTokenRequest
+	(*RollWorkspaceTokenResponse)(nil),   // 10: toshi.workspace.v1.RollWorkspaceTokenResponse
+	(*UpdateTokenRequest)(nil),           // 11: toshi.workspace.v1.UpdateTokenRequest
+	(*UpdateTokenResponse)(nil),          // 12: toshi.workspace.v1.UpdateTokenResponse
+	(*timestamppb.Timestamp)(nil),        // 13: google.protobuf.Timestamp
+	(*Subject)(nil),                      // 14: toshi.workspace.v1.Subject
+	(*fieldmaskpb.FieldMask)(nil),        // 15: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_tokens_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Token.kind:type_name -> toshi.workspace.v1.TokenKind
-	8,  // 1: toshi.workspace.v1.Token.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 2: toshi.workspace.v1.Token.expires_at:type_name -> google.protobuf.Timestamp
-	8,  // 3: toshi.workspace.v1.Token.revoked_at:type_name -> google.protobuf.Timestamp
-	0,  // 4: toshi.workspace.v1.ListTokensRequest.kind:type_name -> toshi.workspace.v1.TokenKind
-	1,  // 5: toshi.workspace.v1.ListTokensResponse.tokens:type_name -> toshi.workspace.v1.Token
-	8,  // 6: toshi.workspace.v1.CreateWorkspaceTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
-	1,  // 7: toshi.workspace.v1.CreateWorkspaceTokenResponse.token:type_name -> toshi.workspace.v1.Token
-	1,  // 8: toshi.workspace.v1.RevokeTokenResponse.token:type_name -> toshi.workspace.v1.Token
-	2,  // 9: toshi.workspace.v1.TokenService.ListTokens:input_type -> toshi.workspace.v1.ListTokensRequest
-	4,  // 10: toshi.workspace.v1.TokenService.CreateWorkspaceToken:input_type -> toshi.workspace.v1.CreateWorkspaceTokenRequest
-	6,  // 11: toshi.workspace.v1.TokenService.RevokeToken:input_type -> toshi.workspace.v1.RevokeTokenRequest
-	3,  // 12: toshi.workspace.v1.TokenService.ListTokens:output_type -> toshi.workspace.v1.ListTokensResponse
-	5,  // 13: toshi.workspace.v1.TokenService.CreateWorkspaceToken:output_type -> toshi.workspace.v1.CreateWorkspaceTokenResponse
-	7,  // 14: toshi.workspace.v1.TokenService.RevokeToken:output_type -> toshi.workspace.v1.RevokeTokenResponse
-	12, // [12:15] is the sub-list for method output_type
-	9,  // [9:12] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	13, // 1: toshi.workspace.v1.Token.created_at:type_name -> google.protobuf.Timestamp
+	13, // 2: toshi.workspace.v1.Token.expires_at:type_name -> google.protobuf.Timestamp
+	13, // 3: toshi.workspace.v1.Token.revoked_at:type_name -> google.protobuf.Timestamp
+	13, // 4: toshi.workspace.v1.Token.not_before:type_name -> google.protobuf.Timestamp
+	2,  // 5: toshi.workspace.v1.Token.client_ranges:type_name -> toshi.workspace.v1.ClientRanges
+	14, // 6: toshi.workspace.v1.Token.created_by:type_name -> toshi.workspace.v1.Subject
+	0,  // 7: toshi.workspace.v1.ListTokensRequest.kind:type_name -> toshi.workspace.v1.TokenKind
+	1,  // 8: toshi.workspace.v1.ListTokensResponse.tokens:type_name -> toshi.workspace.v1.Token
+	13, // 9: toshi.workspace.v1.CreateWorkspaceTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	13, // 10: toshi.workspace.v1.CreateWorkspaceTokenRequest.not_before:type_name -> google.protobuf.Timestamp
+	2,  // 11: toshi.workspace.v1.CreateWorkspaceTokenRequest.client_ranges:type_name -> toshi.workspace.v1.ClientRanges
+	1,  // 12: toshi.workspace.v1.CreateWorkspaceTokenResponse.token:type_name -> toshi.workspace.v1.Token
+	1,  // 13: toshi.workspace.v1.RevokeTokenResponse.token:type_name -> toshi.workspace.v1.Token
+	1,  // 14: toshi.workspace.v1.RollWorkspaceTokenResponse.token:type_name -> toshi.workspace.v1.Token
+	1,  // 15: toshi.workspace.v1.UpdateTokenRequest.token:type_name -> toshi.workspace.v1.Token
+	15, // 16: toshi.workspace.v1.UpdateTokenRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 17: toshi.workspace.v1.UpdateTokenResponse.token:type_name -> toshi.workspace.v1.Token
+	3,  // 18: toshi.workspace.v1.TokenService.ListTokens:input_type -> toshi.workspace.v1.ListTokensRequest
+	5,  // 19: toshi.workspace.v1.TokenService.CreateWorkspaceToken:input_type -> toshi.workspace.v1.CreateWorkspaceTokenRequest
+	7,  // 20: toshi.workspace.v1.TokenService.RevokeToken:input_type -> toshi.workspace.v1.RevokeTokenRequest
+	9,  // 21: toshi.workspace.v1.TokenService.RollWorkspaceToken:input_type -> toshi.workspace.v1.RollWorkspaceTokenRequest
+	11, // 22: toshi.workspace.v1.TokenService.UpdateToken:input_type -> toshi.workspace.v1.UpdateTokenRequest
+	4,  // 23: toshi.workspace.v1.TokenService.ListTokens:output_type -> toshi.workspace.v1.ListTokensResponse
+	6,  // 24: toshi.workspace.v1.TokenService.CreateWorkspaceToken:output_type -> toshi.workspace.v1.CreateWorkspaceTokenResponse
+	8,  // 25: toshi.workspace.v1.TokenService.RevokeToken:output_type -> toshi.workspace.v1.RevokeTokenResponse
+	10, // 26: toshi.workspace.v1.TokenService.RollWorkspaceToken:output_type -> toshi.workspace.v1.RollWorkspaceTokenResponse
+	12, // 27: toshi.workspace.v1.TokenService.UpdateToken:output_type -> toshi.workspace.v1.UpdateTokenResponse
+	23, // [23:28] is the sub-list for method output_type
+	18, // [18:23] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_tokens_proto_init() }
@@ -655,13 +1034,14 @@ func file_toshi_workspace_v1_tokens_proto_init() {
 	if File_toshi_workspace_v1_tokens_proto != nil {
 		return
 	}
+	file_toshi_workspace_v1_roles_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_tokens_proto_rawDesc), len(file_toshi_workspace_v1_tokens_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   7,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
