@@ -38,6 +38,10 @@ service DisplayService {
   // a new token.
   rpc OpenDisplaySession(OpenDisplaySessionRequest) returns (OpenDisplaySessionResponse) {
     option (toshi.permission) = "displays.write";
+    option (toshi.audit) = {
+      action: "display.session_opened"
+      target: "display_session:response.session.id"
+    };
   }
 
   // GetDisplaySession returns one session. An unknown ID fails with
@@ -58,6 +62,10 @@ service DisplayService {
   // Closing a closed session changes nothing.
   rpc CloseDisplaySession(CloseDisplaySessionRequest) returns (CloseDisplaySessionResponse) {
     option (toshi.permission) = "displays.write";
+    option (toshi.audit) = {
+      action: "display.session_closed"
+      target: "display_session:session_id"
+    };
   }
 
   // The next four drive a session from the API, the input path of a
@@ -76,12 +84,20 @@ service DisplayService {
   // session refuses it with FAILED_PRECONDITION.
   rpc SendDisplayKeys(SendDisplayKeysRequest) returns (SendDisplayKeysResponse) {
     option (toshi.permission) = "displays.write";
+    option (toshi.audit) = {
+      action: "display.keys_sent"
+      target: "display_session:session_id"
+    };
   }
 
   // SendDisplayPointer moves the pointer and presses or releases its
   // buttons. A view-only session refuses it with FAILED_PRECONDITION.
   rpc SendDisplayPointer(SendDisplayPointerRequest) returns (SendDisplayPointerResponse) {
     option (toshi.permission) = "displays.write";
+    option (toshi.audit) = {
+      action: "display.pointer_sent"
+      target: "display_session:session_id"
+    };
   }
 
   // SetDisplayClipboard sets the screen's clipboard. It reaches the
@@ -89,6 +105,10 @@ service DisplayService {
   // agent. A view-only session refuses it with FAILED_PRECONDITION.
   rpc SetDisplayClipboard(SetDisplayClipboardRequest) returns (SetDisplayClipboardResponse) {
     option (toshi.permission) = "displays.write";
+    option (toshi.audit) = {
+      action: "display.clipboard_set"
+      target: "display_session:session_id"
+    };
   }
 
   // TakeDisplayScreenshot returns the whole screen as it is now, as a
@@ -99,6 +119,10 @@ service DisplayService {
   // view-only session takes them too.
   rpc TakeDisplayScreenshot(TakeDisplayScreenshotRequest) returns (TakeDisplayScreenshotResponse) {
     option (toshi.permission) = "displays.write";
+    option (toshi.audit) = {
+      action: "display.screenshot_taken"
+      target: "display_session:session_id"
+    };
   }
 }
 

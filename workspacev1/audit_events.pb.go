@@ -39,8 +39,22 @@ type AuditEvent struct {
 	// filler:....
 	Target string `protobuf:"bytes,6,opt,name=target,proto3" json:"target,omitempty"`
 	// A JSON object whose keys depend on the action.
-	DetailsJson   string `protobuf:"bytes,7,opt,name=details_json,json=detailsJson,proto3" json:"details_json,omitempty"`
-	RequestId     string `protobuf:"bytes,8,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	DetailsJson string `protobuf:"bytes,7,opt,name=details_json,json=detailsJson,proto3" json:"details_json,omitempty"`
+	RequestId   string `protobuf:"bytes,8,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// The permission the call needed, for an event a Workspace API call
+	// records; empty otherwise.
+	Permission string `protobuf:"bytes,9,opt,name=permission,proto3" json:"permission,omitempty"`
+	// Where the call acted, as "project:<id>" or
+	// "project:<id>/environment:<id>"; empty for the whole workspace and for
+	// an event no call records.
+	Scope string `protobuf:"bytes,10,opt,name=scope,proto3" json:"scope,omitempty"`
+	// "ok", or the reason the call was refused: PERMISSION_MISSING,
+	// OUTSIDE_LIMIT, or a product switch reason such as PRODUCT_DISABLED.
+	// Empty for an event no call records.
+	Outcome string `protobuf:"bytes,11,opt,name=outcome,proto3" json:"outcome,omitempty"`
+	// The id of the token the call was made with (never its value); empty for
+	// a session and for an event no call records.
+	TokenId       string `protobuf:"bytes,12,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -127,6 +141,34 @@ func (x *AuditEvent) GetDetailsJson() string {
 func (x *AuditEvent) GetRequestId() string {
 	if x != nil {
 		return x.RequestId
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetPermission() string {
+	if x != nil {
+		return x.Permission
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetScope() string {
+	if x != nil {
+		return x.Scope
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetOutcome() string {
+	if x != nil {
+		return x.Outcome
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetTokenId() string {
+	if x != nil {
+		return x.TokenId
 	}
 	return ""
 }
@@ -294,7 +336,7 @@ var File_toshi_workspace_v1_audit_events_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\n" +
-	"%toshi/workspace/v1/audit_events.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf4\x01\n" +
+	"%toshi/workspace/v1/audit_events.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xdf\x02\n" +
 	"\n" +
 	"AuditEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
@@ -306,7 +348,14 @@ const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\x06target\x18\x06 \x01(\tR\x06target\x12!\n" +
 	"\fdetails_json\x18\a \x01(\tR\vdetailsJson\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\b \x01(\tR\trequestId\"\xe6\x01\n" +
+	"request_id\x18\b \x01(\tR\trequestId\x12\x1e\n" +
+	"\n" +
+	"permission\x18\t \x01(\tR\n" +
+	"permission\x12\x14\n" +
+	"\x05scope\x18\n" +
+	" \x01(\tR\x05scope\x12\x18\n" +
+	"\aoutcome\x18\v \x01(\tR\aoutcome\x12\x19\n" +
+	"\btoken_id\x18\f \x01(\tR\atokenId\"\xe6\x01\n" +
 	"\x16ListAuditEventsRequest\x12\x16\n" +
 	"\x06action\x18\x01 \x01(\tR\x06action\x120\n" +
 	"\x05since\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x1b\n" +

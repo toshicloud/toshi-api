@@ -34,6 +34,7 @@ service TokenService {
   rpc CreateWorkspaceToken(CreateWorkspaceTokenRequest) returns (CreateWorkspaceTokenResponse) {
     option (toshi.permission) = "tokens.write";
     option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "token.created"};
   }
   // RevokeToken stops one of the workspace's tokens working at once.
   // Revoking an enrollment token also signs out the hosts that registered

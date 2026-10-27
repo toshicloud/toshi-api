@@ -6,6 +6,7 @@ package toshi.operator.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "go.toshicloud.io/api/operatorv1";
 
@@ -60,13 +61,17 @@ service OperatorService {
   // SetHostState drains a host or puts it back in service. Only
   // HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
   // fails with NOT_FOUND.
-  rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse);
+  rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse) {
+    option (toshi.audit) = {action: "host.state_set"};
+  }
 
   // SetHostOverflow sets whether a host is an overflow host and returns it as
   // stored: an overflow host takes a job only when no other host the job may
   // use has room and the job has queued for its plan's overflow_after.
   // Operators only. An unknown ID fails with NOT_FOUND.
-  rpc SetHostOverflow(SetHostOverflowRequest) returns (SetHostOverflowResponse);
+  rpc SetHostOverflow(SetHostOverflowRequest) returns (SetHostOverflowResponse) {
+    option (toshi.audit) = {action: "host.overflow_set"};
+  }
 
   // RetireHost removes a host that holds no assigned, starting or running
   // job; otherwise it fails with FailedPrecondition (drain it first). Its
@@ -88,14 +93,24 @@ service OperatorService {
   // Without apply nothing changes: the response says what a call with apply
   // would do. A host a workspace owns is skipped unless include_owned is set.
   // Each removal records one host.retired audit event. Operators only.
-  rpc RetireOfflineHosts(RetireOfflineHostsRequest) returns (RetireOfflineHostsResponse);
+  rpc RetireOfflineHosts(RetireOfflineHostsRequest) returns (RetireOfflineHostsResponse) {
+    option (toshi.audit) = {
+      action: "host.offline_retired"
+      target: "none"
+    };
+  }
 
   // CreateCloudHost registers a workspace-owned cloud host the control plane
   // drives in the workspace's AWS account, for any workspace; a member adds
   // its own with the Workspace API's HostService.CreateCloudHost. When
   // cloud hosts are not configured on the control plane the call fails with
   // FAILED_PRECONDITION.
-  rpc CreateCloudHost(CreateCloudHostRequest) returns (CreateCloudHostResponse);
+  rpc CreateCloudHost(CreateCloudHostRequest) returns (CreateCloudHostResponse) {
+    option (toshi.audit) = {
+      action: "cloud_host.added"
+      target: "host:response.host.id"
+    };
+  }
 
   // CreateWorkspace makes a workspace that has no GitHub installation and
   // returns it with its new id. It is on plan when one is given and on the
@@ -118,14 +133,18 @@ service OperatorService {
   // workspace as stored; a cap of 0 clears the override, so the workspace's plan
   // applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
   // unknown ID fails with NOT_FOUND.
-  rpc SetTenantCap(SetTenantCapRequest) returns (SetTenantCapResponse);
+  rpc SetTenantCap(SetTenantCapRequest) returns (SetTenantCapResponse) {
+    option (toshi.audit) = {action: "workspace.cap_set"};
+  }
 
   // SetTenantHistory sets a workspace's job history retention override and
   // returns the workspace as stored; omitting history_days clears the override,
   // so the workspace's plan applies. 0 keeps history forever. An empty workspace
   // or a negative history_days fails with INVALID_ARGUMENT; an unknown workspace
   // fails with NOT_FOUND.
-  rpc SetTenantHistory(SetTenantHistoryRequest) returns (SetTenantHistoryResponse);
+  rpc SetTenantHistory(SetTenantHistoryRequest) returns (SetTenantHistoryResponse) {
+    option (toshi.audit) = {action: "workspace.history_set"};
+  }
 
   // SetTenantLimits sets or clears a workspace's own secret and preview limits,
   // which replace its plan's values, higher or lower, and returns the workspace
@@ -135,7 +154,9 @@ service OperatorService {
   // unknown name in clear, a limit both set and cleared, or a request that
   // sets and clears nothing fails with INVALID_ARGUMENT; an unknown workspace
   // fails with NOT_FOUND. A workspace's own token cannot call it.
-  rpc SetTenantLimits(SetTenantLimitsRequest) returns (SetTenantLimitsResponse);
+  rpc SetTenantLimits(SetTenantLimitsRequest) returns (SetTenantLimitsResponse) {
+    option (toshi.audit) = {action: "workspace.limits_set"};
+  }
 
   // ListPlans returns configured plans sorted by name.
   //
@@ -148,18 +169,24 @@ service OperatorService {
   // SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
   // plan, or a plan the configuration does not define, fails with
   // INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
-  rpc SetTenantPlan(SetTenantPlanRequest) returns (SetTenantPlanResponse);
+  rpc SetTenantPlan(SetTenantPlanRequest) returns (SetTenantPlanResponse) {
+    option (toshi.audit) = {action: "workspace.plan_set"};
+  }
 
   // SetTenantOwnHostsOnly sets whether the workspace's jobs wait for its own
   // hosts and never run on shared ones, and returns the workspace as stored. An
   // empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc SetTenantOwnHostsOnly(SetTenantOwnHostsOnlyRequest) returns (SetTenantOwnHostsOnlyResponse);
+  rpc SetTenantOwnHostsOnly(SetTenantOwnHostsOnlyRequest) returns (SetTenantOwnHostsOnlyResponse) {
+    option (toshi.audit) = {action: "workspace.own_hosts_only_set"};
+  }
 
   // SetTenantAllowOverflow sets whether shared overflow hosts may take the
   // workspace's jobs and returns the workspace as stored; its own
   // overflow hosts always may. An empty ID fails with INVALID_ARGUMENT; an
   // unknown ID fails with NOT_FOUND.
-  rpc SetTenantAllowOverflow(SetTenantAllowOverflowRequest) returns (SetTenantAllowOverflowResponse);
+  rpc SetTenantAllowOverflow(SetTenantAllowOverflowRequest) returns (SetTenantAllowOverflowResponse) {
+    option (toshi.audit) = {action: "workspace.allow_overflow_set"};
+  }
 
   // SuspendTenant suspends an active workspace: its new and queued jobs are
   // held with hold reason tenant_suspended, its running jobs finish, and its
@@ -167,20 +194,26 @@ service OperatorService {
   // empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
   // NOT_FOUND, and a workspace that is deleting or deleted with
   // FAILED_PRECONDITION. Operator only.
-  rpc SuspendTenant(SuspendTenantRequest) returns (SuspendTenantResponse);
+  rpc SuspendTenant(SuspendTenantRequest) returns (SuspendTenantResponse) {
+    option (toshi.audit) = {action: "workspace.suspended"};
+  }
   // ResumeTenant returns a suspended workspace to active and cancels a
   // scheduled deletion; held jobs run at the next scheduler pass. An active
   // workspace is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
   // an unknown ID with NOT_FOUND, and a workspace that is deleting or deleted
   // with FAILED_PRECONDITION. Operator only.
-  rpc ResumeTenant(ResumeTenantRequest) returns (ResumeTenantResponse);
+  rpc ResumeTenant(ResumeTenantRequest) returns (ResumeTenantResponse) {
+    option (toshi.audit) = {action: "workspace.resumed"};
+  }
   // DeleteTenant suspends a workspace until purge_after, after which its data
   // is purged from the control plane and every host. grace_seconds of 0
   // means the default of 30 days; now purges as soon as the workspace has no
   // running job. A negative grace_seconds, or now with grace_seconds, fails
   // with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
   // deleting or deleted with FAILED_PRECONDITION. Operator only.
-  rpc DeleteTenant(DeleteTenantRequest) returns (DeleteTenantResponse);
+  rpc DeleteTenant(DeleteTenantRequest) returns (DeleteTenantResponse) {
+    option (toshi.audit) = {action: "workspace.deletion_scheduled"};
+  }
 
   // SetTenantReservation sets or clears a workspace's reservation of N slots of
   // one runner size for shared hosts, and returns the workspace's effective
@@ -188,7 +221,9 @@ service OperatorService {
   // for the size, so its plan's applies again. An empty ID, an unknown size,
   // a negative slots, or a warm outside 0..slots fails with INVALID_ARGUMENT;
   // an unknown workspace fails with NOT_FOUND. Operator only.
-  rpc SetTenantReservation(SetTenantReservationRequest) returns (SetTenantReservationResponse);
+  rpc SetTenantReservation(SetTenantReservationRequest) returns (SetTenantReservationResponse) {
+    option (toshi.audit) = {action: "workspace.reservation_set"};
+  }
 
   // GetCapacity returns the reserved-capacity view of the last scheduler
   // pass: per runner size the slots free and reserved, and per reservation
@@ -202,7 +237,9 @@ service OperatorService {
   // max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
   // spending cap while billing is off fails with FAILED_PRECONDITION; an
   // unknown ID fails with NOT_FOUND.
-  rpc SetTenantSpendLimits(SetTenantSpendLimitsRequest) returns (SetTenantSpendLimitsResponse);
+  rpc SetTenantSpendLimits(SetTenantSpendLimitsRequest) returns (SetTenantSpendLimitsResponse) {
+    option (toshi.audit) = {action: "workspace.spend_limits_set"};
+  }
 
   // GetUsage returns job counts and billable minutes per workspace, UTC day,
   // conclusion, outcome and kind, for the jobs whose queued_at is in the
@@ -245,7 +282,9 @@ service OperatorService {
   // than 255 bytes or holding anything but printable ASCII without spaces,
   // fails with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; a
   // customer id held by another workspace fails with ALREADY_EXISTS.
-  rpc SetTenantBillingCustomer(SetTenantBillingCustomerRequest) returns (SetTenantBillingCustomerResponse);
+  rpc SetTenantBillingCustomer(SetTenantBillingCustomerRequest) returns (SetTenantBillingCustomerResponse) {
+    option (toshi.audit) = {action: "workspace.billing_customer_set"};
+  }
 
   // CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
   // workspace to plan, first creating and linking a billing customer for a
@@ -257,7 +296,12 @@ service OperatorService {
   // billing provider failure fails with UNAVAILABLE. A member calls the
   // Workspace API's WorkspaceService.CreateCheckoutSession for its own
   // workspace.
-  rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse);
+  rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse) {
+    option (toshi.audit) = {
+      action: "billing.checkout_opened"
+      target: "workspace:id"
+    };
+  }
 
   // CreateBillingPortalSession returns a Stripe Customer Portal URL where the
   // workspace manages its card and subscription. An empty ID fails with
@@ -266,21 +310,36 @@ service OperatorService {
   // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
   // A member calls the Workspace API's
   // WorkspaceService.CreateBillingPortalSession for its own workspace.
-  rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse);
+  rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse) {
+    option (toshi.audit) = {
+      action: "billing.portal_opened"
+      target: "workspace:id"
+    };
+  }
 
   // CancelJob cancels a queued job at once. An assigned, starting or running
   // job moves to JOB_STATE_STOPPING: its host stops the runner after a grace
   // period, destroys the VM and reports the job JOB_STATE_CANCELLED.
   // A stopping job is returned unchanged; a finished job fails
   // with FailedPrecondition.
-  rpc CancelJob(CancelJobRequest) returns (CancelJobResponse);
+  rpc CancelJob(CancelJobRequest) returns (CancelJobResponse) {
+    option (toshi.audit) = {
+      action: "host_job.cancelled"
+      target: "host_job:job_id"
+    };
+  }
 
   // StopJobDebug ends a job's debug session before its expiry:
   // the job moves to JOB_STATE_STOPPING with stop_reason debug_ended, its
   // host destroys the kept VM and the job finishes completed with its
   // conclusion unchanged. A job that is not debugging fails with
   // FailedPrecondition; one already stopping is returned unchanged.
-  rpc StopJobDebug(StopJobDebugRequest) returns (StopJobDebugResponse);
+  rpc StopJobDebug(StopJobDebugRequest) returns (StopJobDebugResponse) {
+    option (toshi.audit) = {
+      action: "host_job.debug_stopped"
+      target: "host_job:job_id"
+    };
+  }
 
   // GetJobDebugAccess returns the key that opens a debugging job's guest
   // ssh through the control plane's relay. The job's host makes
@@ -288,7 +347,12 @@ service OperatorService {
   // keep it. A job that is not debugging fails with
   // FAILED_PRECONDITION, a key already issued with ALREADY_EXISTS, and a
   // host that does not answer with UNAVAILABLE.
-  rpc GetJobDebugAccess(GetJobDebugAccessRequest) returns (GetJobDebugAccessResponse);
+  rpc GetJobDebugAccess(GetJobDebugAccessRequest) returns (GetJobDebugAccessResponse) {
+    option (toshi.audit) = {
+      action: "host_job.debug_access_issued"
+      target: "host_job:job_id"
+    };
+  }
 
   // ListTokens returns the operator and enrollment tokens the control plane
   // knows, oldest first, without their values.
@@ -299,7 +363,9 @@ service OperatorService {
   // RotateToken makes a new operator or enrollment token, accepted at once,
   // and returns it; it is not stored and cannot be shown again. The kind's
   // other active tokens keep working until the grace period ends.
-  rpc RotateToken(RotateTokenRequest) returns (RotateTokenResponse);
+  rpc RotateToken(RotateTokenRequest) returns (RotateTokenResponse) {
+    option (toshi.audit) = {target: "token:response.token.id"};
+  }
 
   // RevokeToken stops a token working at once. Revoking an enrollment token
   // also signs out the hosts that registered with it, and those whose
@@ -314,19 +380,25 @@ service OperatorService {
   // workspace. The token does not expire and the other tokens are untouched. An
   // unknown workspace fails with NOT_FOUND; a closed workspace fails with
   // FailedPrecondition.
-  rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse);
+  rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse) {
+    option (toshi.audit) = {action: "token.created"};
+  }
 
   // CreateTenantToken makes an API token for one workspace that authenticates
   // the Workspace API as that workspace, with a dashboard session's scope, and
   // returns it with its value. An unknown workspace fails with NOT_FOUND; a
   // closed workspace fails with FailedPrecondition.
-  rpc CreateTenantToken(CreateTenantTokenRequest) returns (CreateTenantTokenResponse);
+  rpc CreateTenantToken(CreateTenantTokenRequest) returns (CreateTenantTokenResponse) {
+    option (toshi.audit) = {action: "token.created"};
+  }
 
   // CreateProductToken makes a token a product's adapter authenticates to
   // the core with. Operator only. It expires within 90 days, and a product
   // has at most two tokens that work at once, so that one can replace the
   // other.
-  rpc CreateProductToken(CreateProductTokenRequest) returns (CreateProductTokenResponse);
+  rpc CreateProductToken(CreateProductTokenRequest) returns (CreateProductTokenResponse) {
+    option (toshi.audit) = {action: "token.created"};
+  }
 
   // ListOperatorAlerts returns the operator alerts raised and not yet
   // cleared, one per kind, ordered by kind. They are kept in the store, so a
@@ -362,7 +434,9 @@ service OperatorService {
   // the Workspace API's HostService.CheckCloudHost. A host that is not a
   // cloud host fails with NOT_FOUND; cloud hosts not configured on the
   // control plane fails with FAILED_PRECONDITION.
-  rpc CheckCloudHost(CheckCloudHostRequest) returns (CheckCloudHostResponse);
+  rpc CheckCloudHost(CheckCloudHostRequest) returns (CheckCloudHostResponse) {
+    option (toshi.audit) = {target: "host:host_id"};
+  }
   // ListFillers returns the fillers, ordered by name, then workspace, each
   // with its latest run, and the filler minutes per host over the last 24
   // hours. A workspace caller sees only its own dispatch fillers and no host
@@ -376,16 +450,28 @@ service OperatorService {
   // configuration cannot be replaced (FailedPrecondition). A workspace caller
   // may put only dispatch fillers for its own workspace and repositories.
   // A bad field fails with INVALID_ARGUMENT.
-  rpc PutFiller(PutFillerRequest) returns (PutFillerResponse);
+  rpc PutFiller(PutFillerRequest) returns (PutFillerResponse) {
+    option (toshi.audit) = {target: "filler:filler.name"};
+  }
 
   // DeleteFiller removes a filler and stops its running run. A configured
   // filler cannot be removed (FailedPrecondition); an unknown name fails
   // with NOT_FOUND. A workspace caller may remove only its own.
-  rpc DeleteFiller(DeleteFillerRequest) returns (DeleteFillerResponse);
+  rpc DeleteFiller(DeleteFillerRequest) returns (DeleteFillerResponse) {
+    option (toshi.audit) = {
+      action: "filler.removed"
+      target: "filler:name"
+    };
+  }
 
   // SetFillerEnabled turns a filler on or off and returns it. Turning it off
   // stops its running run. An unknown name fails with NOT_FOUND.
-  rpc SetFillerEnabled(SetFillerEnabledRequest) returns (SetFillerEnabledResponse);
+  rpc SetFillerEnabled(SetFillerEnabledRequest) returns (SetFillerEnabledResponse) {
+    option (toshi.audit) = {
+      action: "filler.enabled_set"
+      target: "filler:name"
+    };
+  }
 
   // ListFillerRuns returns filler runs, newest first. A workspace caller sees
   // only its own dispatch fillers' runs.
@@ -396,13 +482,17 @@ service OperatorService {
   // SetTenantAllowCacheWarm sets whether the workspace's dispatch fillers run
   // and returns the workspace as stored. Off by default. An empty
   // ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc SetTenantAllowCacheWarm(SetTenantAllowCacheWarmRequest) returns (SetTenantAllowCacheWarmResponse);
+  rpc SetTenantAllowCacheWarm(SetTenantAllowCacheWarmRequest) returns (SetTenantAllowCacheWarmResponse) {
+    option (toshi.audit) = {action: "workspace.allow_cache_warm_set"};
+  }
 
   // SetTenantCancelRunOnVmDeath sets whether Toshi cancels the workflow run
   // of the workspace's job when the job's VM is gone and returns the
   // workspace as stored. On by default. An empty ID fails with
   // INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc SetTenantCancelRunOnVmDeath(SetTenantCancelRunOnVmDeathRequest) returns (SetTenantCancelRunOnVmDeathResponse);
+  rpc SetTenantCancelRunOnVmDeath(SetTenantCancelRunOnVmDeathRequest) returns (SetTenantCancelRunOnVmDeathResponse) {
+    option (toshi.audit) = {action: "workspace.cancel_run_on_vm_death_set"};
+  }
 
   // GetJobFailure says why a job ended the way it did and what to do next,
   // from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
@@ -422,7 +512,9 @@ service OperatorService {
   // is not revoked is not ready for it; off does not depend on the hosts.
   // Setting the value the switch has changes and records nothing. The
   // operator token only.
-  rpc SetSecretDelivery(SetSecretDeliveryRequest) returns (SetSecretDeliveryResponse);
+  rpc SetSecretDelivery(SetSecretDeliveryRequest) returns (SetSecretDeliveryResponse) {
+    option (toshi.audit) = {target: "none"};
+  }
 
   // ListUtilisation returns the shared hosts' utilisation roll-ups in a
   // range, summed by OS pool or by host and by hour, day or week, with the
@@ -1012,6 +1104,20 @@ message AuditEvent {
   // A JSON object whose keys depend on the action.
   string details_json = 8;
   string request_id = 9;
+  // The permission the call needed, for an event a Workspace API call
+  // records; empty otherwise.
+  string permission = 10;
+  // Where the call acted, as "project:<id>" or
+  // "project:<id>/environment:<id>"; empty for the whole workspace and for
+  // an event no call records.
+  string scope = 11;
+  // "ok", or the reason the call was refused: PERMISSION_MISSING,
+  // OUTSIDE_LIMIT, or a product switch reason such as PRODUCT_DISABLED.
+  // Empty for an event no call records.
+  string outcome = 12;
+  // The id of the token the call was made with (never its value); empty for
+  // a session and for an event no call records.
+  string token_id = 13;
 }
 
 // ListAuditEventsRequest selects the audit events to return.

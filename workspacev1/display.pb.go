@@ -1503,16 +1503,22 @@ const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	"\rDisplayOpener\x12\x1e\n" +
 	"\x1aDISPLAY_OPENER_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15DISPLAY_OPENER_PERSON\x10\x01\x12\x1a\n" +
-	"\x16DISPLAY_OPENER_PROGRAM\x10\x022\xe3\b\n" +
-	"\x0eDisplayService\x12\x87\x01\n" +
-	"\x12OpenDisplaySession\x12-.toshi.workspace.v1.OpenDisplaySessionRequest\x1a..toshi.workspace.v1.OpenDisplaySessionResponse\"\x12\xc2\xf3\x18\x0edisplays.write\x12\x83\x01\n" +
+	"\x16DISPLAY_OPENER_PROGRAM\x10\x022\xb7\v\n" +
+	"\x0eDisplayService\x12\xc8\x01\n" +
+	"\x12OpenDisplaySession\x12-.toshi.workspace.v1.OpenDisplaySessionRequest\x1a..toshi.workspace.v1.OpenDisplaySessionResponse\"S\xc2\xf3\x18\x0edisplays.write\xd2\xf3\x18=\n" +
+	"\x16display.session_opened\x12#display_session:response.session.id\x12\x83\x01\n" +
 	"\x11GetDisplaySession\x12,.toshi.workspace.v1.GetDisplaySessionRequest\x1a-.toshi.workspace.v1.GetDisplaySessionResponse\"\x11\xc2\xf3\x18\rdisplays.read\x12\x89\x01\n" +
-	"\x13ListDisplaySessions\x12..toshi.workspace.v1.ListDisplaySessionsRequest\x1a/.toshi.workspace.v1.ListDisplaySessionsResponse\"\x11\xc2\xf3\x18\rdisplays.read\x12\x8a\x01\n" +
-	"\x13CloseDisplaySession\x12..toshi.workspace.v1.CloseDisplaySessionRequest\x1a/.toshi.workspace.v1.CloseDisplaySessionResponse\"\x12\xc2\xf3\x18\x0edisplays.write\x12~\n" +
-	"\x0fSendDisplayKeys\x12*.toshi.workspace.v1.SendDisplayKeysRequest\x1a+.toshi.workspace.v1.SendDisplayKeysResponse\"\x12\xc2\xf3\x18\x0edisplays.write\x12\x87\x01\n" +
-	"\x12SendDisplayPointer\x12-.toshi.workspace.v1.SendDisplayPointerRequest\x1a..toshi.workspace.v1.SendDisplayPointerResponse\"\x12\xc2\xf3\x18\x0edisplays.write\x12\x8a\x01\n" +
-	"\x13SetDisplayClipboard\x12..toshi.workspace.v1.SetDisplayClipboardRequest\x1a/.toshi.workspace.v1.SetDisplayClipboardResponse\"\x12\xc2\xf3\x18\x0edisplays.write\x12\x90\x01\n" +
-	"\x15TakeDisplayScreenshot\x120.toshi.workspace.v1.TakeDisplayScreenshotRequest\x1a1.toshi.workspace.v1.TakeDisplayScreenshotResponse\"\x12\xc2\xf3\x18\x0edisplays.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x13ListDisplaySessions\x12..toshi.workspace.v1.ListDisplaySessionsRequest\x1a/.toshi.workspace.v1.ListDisplaySessionsResponse\"\x11\xc2\xf3\x18\rdisplays.read\x12\xc2\x01\n" +
+	"\x13CloseDisplaySession\x12..toshi.workspace.v1.CloseDisplaySessionRequest\x1a/.toshi.workspace.v1.CloseDisplaySessionResponse\"J\xc2\xf3\x18\x0edisplays.write\xd2\xf3\x184\n" +
+	"\x16display.session_closed\x12\x1adisplay_session:session_id\x12\xb1\x01\n" +
+	"\x0fSendDisplayKeys\x12*.toshi.workspace.v1.SendDisplayKeysRequest\x1a+.toshi.workspace.v1.SendDisplayKeysResponse\"E\xc2\xf3\x18\x0edisplays.write\xd2\xf3\x18/\n" +
+	"\x11display.keys_sent\x12\x1adisplay_session:session_id\x12\xbd\x01\n" +
+	"\x12SendDisplayPointer\x12-.toshi.workspace.v1.SendDisplayPointerRequest\x1a..toshi.workspace.v1.SendDisplayPointerResponse\"H\xc2\xf3\x18\x0edisplays.write\xd2\xf3\x182\n" +
+	"\x14display.pointer_sent\x12\x1adisplay_session:session_id\x12\xc1\x01\n" +
+	"\x13SetDisplayClipboard\x12..toshi.workspace.v1.SetDisplayClipboardRequest\x1a/.toshi.workspace.v1.SetDisplayClipboardResponse\"I\xc2\xf3\x18\x0edisplays.write\xd2\xf3\x183\n" +
+	"\x15display.clipboard_set\x12\x1adisplay_session:session_id\x12\xca\x01\n" +
+	"\x15TakeDisplayScreenshot\x120.toshi.workspace.v1.TakeDisplayScreenshotRequest\x1a1.toshi.workspace.v1.TakeDisplayScreenshotResponse\"L\xc2\xf3\x18\x0edisplays.write\xd2\xf3\x186\n" +
+	"\x18display.screenshot_taken\x12\x1adisplay_session:session_idB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_display_proto_rawDescOnce sync.Once

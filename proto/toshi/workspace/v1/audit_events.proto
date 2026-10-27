@@ -42,6 +42,20 @@ message AuditEvent {
   // A JSON object whose keys depend on the action.
   string details_json = 7;
   string request_id = 8;
+  // The permission the call needed, for an event a Workspace API call
+  // records; empty otherwise.
+  string permission = 9;
+  // Where the call acted, as "project:<id>" or
+  // "project:<id>/environment:<id>"; empty for the whole workspace and for
+  // an event no call records.
+  string scope = 10;
+  // "ok", or the reason the call was refused: PERMISSION_MISSING,
+  // OUTSIDE_LIMIT, or a product switch reason such as PRODUCT_DISABLED.
+  // Empty for an event no call records.
+  string outcome = 11;
+  // The id of the token the call was made with (never its value); empty for
+  // a session and for an event no call records.
+  string token_id = 12;
 }
 
 // ListAuditEventsRequest selects the audit events to return.

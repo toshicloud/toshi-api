@@ -58,6 +58,7 @@ service HostJobService {
   // suspended workspace is refused it.
   rpc GetHostJobDebugAccess(GetHostJobDebugAccessRequest) returns (GetHostJobDebugAccessResponse) {
     option (toshi.permission) = "debug.connect";
+    option (toshi.audit) = {action: "host_job.debug_access_issued"};
   }
   // StopHostJobDebug ends a host job's debug session before its expiry: the
   // host job moves to HOST_JOB_STATE_STOPPING with stop_reason debug_ended,
@@ -66,6 +67,7 @@ service HostJobService {
   // FAILED_PRECONDITION; one already stopping is returned unchanged.
   rpc StopHostJobDebug(StopHostJobDebugRequest) returns (StopHostJobDebugResponse) {
     option (toshi.permission) = "debug.write";
+    option (toshi.audit) = {action: "host_job.debug_stopped"};
   }
 }
 

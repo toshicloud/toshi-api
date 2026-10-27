@@ -29,6 +29,10 @@ service RecordingService {
   rpc GetRecording(GetRecordingRequest) returns (GetRecordingResponse) {
     option (toshi.permission) = "recordings.read";
     option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "artifact.viewed"
+      target: "artifact:response.recording.artifact_id"
+    };
   }
   // CreateRecordingShareLink mints a share link for a ready recording: a
   // URL that fetches its object without a Toshi sign-in until the link
@@ -39,6 +43,10 @@ service RecordingService {
   rpc CreateRecordingShareLink(CreateRecordingShareLinkRequest) returns (CreateRecordingShareLinkResponse) {
     option (toshi.permission) = "recordings.write";
     option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "recording.share_link_issued"
+      target: "recording_share_link:response.share_link.id"
+    };
   }
   // ListRecordingShareLinks returns a recording's share links, oldest
   // first, without the links themselves.
@@ -53,6 +61,10 @@ service RecordingService {
   rpc RevokeRecordingShareLink(RevokeRecordingShareLinkRequest) returns (RevokeRecordingShareLinkResponse) {
     option (toshi.permission) = "recordings.write";
     option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "recording.share_link_revoked"
+      target: "recording_share_link:share_link_id"
+    };
   }
 }
 

@@ -1904,19 +1904,20 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x18EMBED_TOKEN_STATE_ACTIVE\x10\x01\x12\x1a\n" +
 	"\x16EMBED_TOKEN_STATE_USED\x10\x02\x12\x1d\n" +
 	"\x19EMBED_TOKEN_STATE_REVOKED\x10\x03\x12\x1d\n" +
-	"\x19EMBED_TOKEN_STATE_EXPIRED\x10\x042\x81\r\n" +
+	"\x19EMBED_TOKEN_STATE_EXPIRED\x10\x042\x83\x0e\n" +
 	"\x0eProjectService\x12\x7f\n" +
 	"\fListProjects\x12'.toshi.workspace.v1.ListProjectsRequest\x1a(.toshi.workspace.v1.ListProjectsResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12y\n" +
 	"\n" +
 	"GetProject\x12%.toshi.workspace.v1.GetProjectRequest\x1a&.toshi.workspace.v1.GetProjectResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x8b\x01\n" +
-	"\x10ListRepositories\x12+.toshi.workspace.v1.ListRepositoriesRequest\x1a,.toshi.workspace.v1.ListRepositoriesResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12x\n" +
-	"\rCreateProject\x12(.toshi.workspace.v1.CreateProjectRequest\x1a).toshi.workspace.v1.CreateProjectResponse\"\x12\xc2\xf3\x18\x0eprojects.write\x12\x89\x01\n" +
-	"\x0fClaimRepository\x12*.toshi.workspace.v1.ClaimRepositoryRequest\x1a+.toshi.workspace.v1.ClaimRepositoryResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x12\x8f\x01\n" +
-	"\x11CreateEnvironment\x12,.toshi.workspace.v1.CreateEnvironmentRequest\x1a-.toshi.workspace.v1.CreateEnvironmentResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x12\x8f\x01\n" +
-	"\x11DeleteEnvironment\x12,.toshi.workspace.v1.DeleteEnvironmentRequest\x1a-.toshi.workspace.v1.DeleteEnvironmentResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x12\x88\x01\n" +
-	"\x0fListBranchRules\x12*.toshi.workspace.v1.ListBranchRulesRequest\x1a+.toshi.workspace.v1.ListBranchRulesResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x86\x01\n" +
-	"\x0eSetBranchRules\x12).toshi.workspace.v1.SetBranchRulesRequest\x1a*.toshi.workspace.v1.SetBranchRulesResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x12\x8c\x01\n" +
-	"\x10CreateEmbedToken\x12+.toshi.workspace.v1.CreateEmbedTokenRequest\x1a,.toshi.workspace.v1.CreateEmbedTokenResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x12\x88\x01\n" +
+	"\x10ListRepositories\x12+.toshi.workspace.v1.ListRepositoriesRequest\x1a,.toshi.workspace.v1.ListRepositoriesResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x8d\x01\n" +
+	"\rCreateProject\x12(.toshi.workspace.v1.CreateProjectRequest\x1a).toshi.workspace.v1.CreateProjectResponse\"'\xc2\xf3\x18\x0eprojects.write\xd2\xf3\x18\x11\x12\x0fproject:project\x12\x9e\x01\n" +
+	"\x0fClaimRepository\x12*.toshi.workspace.v1.ClaimRepositoryRequest\x1a+.toshi.workspace.v1.ClaimRepositoryResponse\"2\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x12\xa4\x01\n" +
+	"\x11CreateEnvironment\x12,.toshi.workspace.v1.CreateEnvironmentRequest\x1a-.toshi.workspace.v1.CreateEnvironmentResponse\"2\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x12\xa4\x01\n" +
+	"\x11DeleteEnvironment\x12,.toshi.workspace.v1.DeleteEnvironmentRequest\x1a-.toshi.workspace.v1.DeleteEnvironmentResponse\"2\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x12\x88\x01\n" +
+	"\x0fListBranchRules\x12*.toshi.workspace.v1.ListBranchRulesRequest\x1a+.toshi.workspace.v1.ListBranchRulesResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x9b\x01\n" +
+	"\x0eSetBranchRules\x12).toshi.workspace.v1.SetBranchRulesRequest\x1a*.toshi.workspace.v1.SetBranchRulesResponse\"2\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x12\xa4\x01\n" +
+	"\x10CreateEmbedToken\x12+.toshi.workspace.v1.CreateEmbedTokenRequest\x1a,.toshi.workspace.v1.CreateEmbedTokenResponse\"5\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x14\n" +
+	"\x12embed_token.issued\x12\x88\x01\n" +
 	"\x0fListEmbedTokens\x12*.toshi.workspace.v1.ListEmbedTokensRequest\x1a+.toshi.workspace.v1.ListEmbedTokensResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x8c\x01\n" +
 	"\x10RevokeEmbedToken\x12+.toshi.workspace.v1.RevokeEmbedTokenRequest\x1a,.toshi.workspace.v1.RevokeEmbedTokenResponse\"\x1d\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aprojectB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 

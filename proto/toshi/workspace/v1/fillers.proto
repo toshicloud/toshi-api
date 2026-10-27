@@ -33,17 +33,26 @@ service FillerService {
   // INVALID_ARGUMENT.
   rpc PutFiller(PutFillerRequest) returns (PutFillerResponse) {
     option (toshi.permission) = "fillers.write";
+    option (toshi.audit) = {target: "filler:filler.name"};
   }
   // DeleteFiller removes a filler and stops its running run. A configured
   // filler cannot be removed (FAILED_PRECONDITION); an unknown name fails
   // with NOT_FOUND.
   rpc DeleteFiller(DeleteFillerRequest) returns (DeleteFillerResponse) {
     option (toshi.permission) = "fillers.write";
+    option (toshi.audit) = {
+      action: "filler.removed"
+      target: "filler:name"
+    };
   }
   // SetFillerEnabled turns a filler on or off and returns it. Turning it off
   // stops its running run. An unknown name fails with NOT_FOUND.
   rpc SetFillerEnabled(SetFillerEnabledRequest) returns (SetFillerEnabledResponse) {
     option (toshi.permission) = "fillers.write";
+    option (toshi.audit) = {
+      action: "filler.enabled_set"
+      target: "filler:name"
+    };
   }
   // ListFillerRuns returns the runs of the workspace's fillers, newest
   // first.

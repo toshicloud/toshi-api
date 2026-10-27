@@ -203,6 +203,10 @@ service WorkloadService {
   rpc Execute(stream ExecuteRequest) returns (stream ExecuteResponse) {
     option (toshi.permission) = "sandboxes.write";
     option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "sandbox.executed"
+      target: "sandbox:start.sandbox_id"
+    };
   }
 
   // CancelExecution stops an execution. Its Execute stream ends with an exit
@@ -256,6 +260,10 @@ service WorkloadService {
   rpc CreatePreviewShareLink(CreatePreviewShareLinkRequest) returns (CreatePreviewShareLinkResponse) {
     option (toshi.permission) = "previews.write";
     option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "host_job.preview_share_link_issued"
+      target: "none"
+    };
   }
 
   // ListPreviewShareLinks returns a sandbox's share links, for all of its
@@ -273,6 +281,10 @@ service WorkloadService {
   rpc RevokePreviewShareLink(RevokePreviewShareLinkRequest) returns (RevokePreviewShareLinkResponse) {
     option (toshi.permission) = "previews.write";
     option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "host_job.preview_share_link_revoked"
+      target: "none"
+    };
   }
 
   // CreateService creates a service with its recipe as revision 1 and
@@ -358,6 +370,7 @@ service WorkloadService {
   rpc SetServiceMode(SetServiceModeRequest) returns (SetServiceModeResponse) {
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
+    option (toshi.audit) = {action: "service.mode_set"};
   }
 
   // WakeService wakes a started on-demand service that is asleep: its

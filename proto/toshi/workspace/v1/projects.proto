@@ -48,6 +48,7 @@ service ProjectService {
   // PERMISSION_DENIED: the new project is not its own.
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {
     option (toshi.permission) = "projects.write";
+    option (toshi.audit) = {target: "project:project"};
   }
   // ClaimRepository puts a repository in a project: it claims a repository
   // no project claims, or moves the claim from another project. A CI job
@@ -59,6 +60,7 @@ service ProjectService {
   rpc ClaimRepository(ClaimRepositoryRequest) returns (ClaimRepositoryResponse) {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
+    option (toshi.audit) = {target: "project:project"};
   }
   // CreateEnvironment adds the environment of a kind a project lacks,
   // named after its kind, such as preview for a project made with
@@ -69,6 +71,7 @@ service ProjectService {
   rpc CreateEnvironment(CreateEnvironmentRequest) returns (CreateEnvironmentResponse) {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
+    option (toshi.audit) = {target: "project:project"};
   }
   // DeleteEnvironment deletes a project's environment by name. A project's
   // production environment is FAILED_PRECONDITION, and so is an
@@ -83,6 +86,7 @@ service ProjectService {
   rpc DeleteEnvironment(DeleteEnvironmentRequest) returns (DeleteEnvironmentResponse) {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
+    option (toshi.audit) = {target: "project:project"};
   }
   // ListBranchRules returns a project's branch rules in order, the
   // fallback rule last: the first that matches a CI job's run chooses the
@@ -111,6 +115,7 @@ service ProjectService {
   rpc SetBranchRules(SetBranchRulesRequest) returns (SetBranchRulesResponse) {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
+    option (toshi.audit) = {target: "project:project"};
   }
   // CreateEmbedToken mints an embed token for a project: a credential for
   // a web page on one of the token's origins, which spends it once to
@@ -121,6 +126,7 @@ service ProjectService {
   rpc CreateEmbedToken(CreateEmbedTokenRequest) returns (CreateEmbedTokenResponse) {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
+    option (toshi.audit) = {action: "embed_token.issued"};
   }
   // ListEmbedTokens returns a project's embed tokens, oldest first, without
   // the tokens themselves.

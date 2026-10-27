@@ -32,6 +32,10 @@ service WebhookService {
   // call fails with FAILED_PRECONDITION.
   rpc CreateWebhookEndpoint(CreateWebhookEndpointRequest) returns (CreateWebhookEndpointResponse) {
     option (toshi.permission) = "webhooks.write";
+    option (toshi.audit) = {
+      action: "webhook.endpoint_created"
+      target: "webhook_endpoint:response.endpoint.id"
+    };
   }
 
   // GetWebhookEndpoint returns one endpoint. An unknown ID fails with
@@ -54,11 +58,19 @@ service WebhookService {
   // finishes within its claim, which holds a delivery for one minute.
   rpc UpdateWebhookEndpoint(UpdateWebhookEndpointRequest) returns (UpdateWebhookEndpointResponse) {
     option (toshi.permission) = "webhooks.write";
+    option (toshi.audit) = {
+      action: "webhook.endpoint_updated"
+      target: "webhook_endpoint:id"
+    };
   }
 
   // DeleteWebhookEndpoint deletes an endpoint and its deliveries.
   rpc DeleteWebhookEndpoint(DeleteWebhookEndpointRequest) returns (DeleteWebhookEndpointResponse) {
     option (toshi.permission) = "webhooks.write";
+    option (toshi.audit) = {
+      action: "webhook.endpoint_deleted"
+      target: "webhook_endpoint:id"
+    };
   }
 
   // RotateWebhookEndpointSecret makes the endpoint a new signing secret and
@@ -70,6 +82,10 @@ service WebhookService {
   // previous secret's window is still open fails with FAILED_PRECONDITION.
   rpc RotateWebhookEndpointSecret(RotateWebhookEndpointSecretRequest) returns (RotateWebhookEndpointSecretResponse) {
     option (toshi.permission) = "webhooks.write";
+    option (toshi.audit) = {
+      action: "webhook.secret_rotated"
+      target: "webhook_endpoint:id"
+    };
   }
 
   // ListWebhookDeliveries returns an endpoint's deliveries in event order,
@@ -93,6 +109,10 @@ service WebhookService {
   // delivered. A disabled endpoint fails with FAILED_PRECONDITION.
   rpc ReplayWebhookEvents(ReplayWebhookEventsRequest) returns (ReplayWebhookEventsResponse) {
     option (toshi.permission) = "webhooks.write";
+    option (toshi.audit) = {
+      action: "webhook.events_replayed"
+      target: "webhook_endpoint:endpoint_id"
+    };
   }
 }
 

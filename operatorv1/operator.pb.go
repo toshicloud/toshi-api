@@ -10,6 +10,7 @@
 package operatorv1
 
 import (
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -2517,8 +2518,22 @@ type AuditEvent struct {
 	// workspace:... or installation:....
 	Target string `protobuf:"bytes,7,opt,name=target,proto3" json:"target,omitempty"`
 	// A JSON object whose keys depend on the action.
-	DetailsJson   string `protobuf:"bytes,8,opt,name=details_json,json=detailsJson,proto3" json:"details_json,omitempty"`
-	RequestId     string `protobuf:"bytes,9,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	DetailsJson string `protobuf:"bytes,8,opt,name=details_json,json=detailsJson,proto3" json:"details_json,omitempty"`
+	RequestId   string `protobuf:"bytes,9,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// The permission the call needed, for an event a Workspace API call
+	// records; empty otherwise.
+	Permission string `protobuf:"bytes,10,opt,name=permission,proto3" json:"permission,omitempty"`
+	// Where the call acted, as "project:<id>" or
+	// "project:<id>/environment:<id>"; empty for the whole workspace and for
+	// an event no call records.
+	Scope string `protobuf:"bytes,11,opt,name=scope,proto3" json:"scope,omitempty"`
+	// "ok", or the reason the call was refused: PERMISSION_MISSING,
+	// OUTSIDE_LIMIT, or a product switch reason such as PRODUCT_DISABLED.
+	// Empty for an event no call records.
+	Outcome string `protobuf:"bytes,12,opt,name=outcome,proto3" json:"outcome,omitempty"`
+	// The id of the token the call was made with (never its value); empty for
+	// a session and for an event no call records.
+	TokenId       string `protobuf:"bytes,13,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2612,6 +2627,34 @@ func (x *AuditEvent) GetDetailsJson() string {
 func (x *AuditEvent) GetRequestId() string {
 	if x != nil {
 		return x.RequestId
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetPermission() string {
+	if x != nil {
+		return x.Permission
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetScope() string {
+	if x != nil {
+		return x.Scope
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetOutcome() string {
+	if x != nil {
+		return x.Outcome
+	}
+	return ""
+}
+
+func (x *AuditEvent) GetTokenId() string {
+	if x != nil {
+		return x.TokenId
 	}
 	return ""
 }
@@ -15008,7 +15051,7 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe8\x0e\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xe8\x0e\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
@@ -15214,7 +15257,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\rGetJobRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\":\n" +
 	"\x0eGetJobResponse\x12(\n" +
-	"\x03job\x18\x01 \x01(\v2\x16.toshi.operator.v1.JobR\x03job\"\x8c\x02\n" +
+	"\x03job\x18\x01 \x01(\v2\x16.toshi.operator.v1.JobR\x03job\"\xf7\x02\n" +
 	"\n" +
 	"AuditEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
@@ -15227,7 +15270,14 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x06target\x18\a \x01(\tR\x06target\x12!\n" +
 	"\fdetails_json\x18\b \x01(\tR\vdetailsJson\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\t \x01(\tR\trequestId\"\x8f\x02\n" +
+	"request_id\x18\t \x01(\tR\trequestId\x12\x1e\n" +
+	"\n" +
+	"permission\x18\n" +
+	" \x01(\tR\n" +
+	"permission\x12\x14\n" +
+	"\x05scope\x18\v \x01(\tR\x05scope\x12\x18\n" +
+	"\aoutcome\x18\f \x01(\tR\aoutcome\x12\x19\n" +
+	"\btoken_id\x18\r \x01(\tR\atokenId\"\x8f\x02\n" +
 	"\x16ListAuditEventsRequest\x12\x16\n" +
 	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x16\n" +
 	"\x06action\x18\x02 \x01(\tR\x06action\x120\n" +
@@ -16282,7 +16332,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xdc7\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xff?\n" +
 	"\x0fOperatorService\x12S\n" +
 	"\bListJobs\x12\".toshi.operator.v1.ListJobsRequest\x1a#.toshi.operator.v1.ListJobsResponse\x12h\n" +
 	"\x0fListAuditEvents\x12).toshi.operator.v1.ListAuditEventsRequest\x1a*.toshi.operator.v1.ListAuditEventsResponse\x12M\n" +
@@ -16290,65 +16340,94 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x0fGetJobTelemetry\x12).toshi.operator.v1.GetJobTelemetryRequest\x1a*.toshi.operator.v1.GetJobTelemetryResponse\x12z\n" +
 	"\x15SummariseJobTelemetry\x12/.toshi.operator.v1.SummariseJobTelemetryRequest\x1a0.toshi.operator.v1.SummariseJobTelemetryResponse\x12V\n" +
 	"\tListHosts\x12#.toshi.operator.v1.ListHostsRequest\x1a$.toshi.operator.v1.ListHostsResponse\x12h\n" +
-	"\x0fListHostStorage\x12).toshi.operator.v1.ListHostStorageRequest\x1a*.toshi.operator.v1.ListHostStorageResponse\x12_\n" +
-	"\fSetHostState\x12&.toshi.operator.v1.SetHostStateRequest\x1a'.toshi.operator.v1.SetHostStateResponse\x12h\n" +
-	"\x0fSetHostOverflow\x12).toshi.operator.v1.SetHostOverflowRequest\x1a*.toshi.operator.v1.SetHostOverflowResponse\x12Y\n" +
+	"\x0fListHostStorage\x12).toshi.operator.v1.ListHostStorageRequest\x1a*.toshi.operator.v1.ListHostStorageResponse\x12u\n" +
+	"\fSetHostState\x12&.toshi.operator.v1.SetHostStateRequest\x1a'.toshi.operator.v1.SetHostStateResponse\"\x14\xd2\xf3\x18\x10\n" +
+	"\x0ehost.state_set\x12\x81\x01\n" +
+	"\x0fSetHostOverflow\x12).toshi.operator.v1.SetHostOverflowRequest\x1a*.toshi.operator.v1.SetHostOverflowResponse\"\x17\xd2\xf3\x18\x13\n" +
+	"\x11host.overflow_set\x12Y\n" +
 	"\n" +
 	"RetireHost\x12$.toshi.operator.v1.RetireHostRequest\x1a%.toshi.operator.v1.RetireHostResponse\x12Y\n" +
 	"\n" +
-	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\x12q\n" +
-	"\x12RetireOfflineHosts\x12,.toshi.operator.v1.RetireOfflineHostsRequest\x1a-.toshi.operator.v1.RetireOfflineHostsResponse\x12h\n" +
-	"\x0fCreateCloudHost\x12).toshi.operator.v1.CreateCloudHostRequest\x1a*.toshi.operator.v1.CreateCloudHostResponse\x12h\n" +
+	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\x12\x93\x01\n" +
+	"\x12RetireOfflineHosts\x12,.toshi.operator.v1.RetireOfflineHostsRequest\x1a-.toshi.operator.v1.RetireOfflineHostsResponse\" \xd2\xf3\x18\x1c\n" +
+	"\x14host.offline_retired\x12\x04none\x12\x97\x01\n" +
+	"\x0fCreateCloudHost\x12).toshi.operator.v1.CreateCloudHostRequest\x1a*.toshi.operator.v1.CreateCloudHostResponse\"-\xd2\xf3\x18)\n" +
+	"\x10cloud_host.added\x12\x15host:response.host.id\x12h\n" +
 	"\x0fCreateWorkspace\x12).toshi.operator.v1.CreateWorkspaceRequest\x1a*.toshi.operator.v1.CreateWorkspaceResponse\x12_\n" +
 	"\fGetWorkspace\x12&.toshi.operator.v1.GetWorkspaceRequest\x1a'.toshi.operator.v1.GetWorkspaceResponse\x12\\\n" +
-	"\vListTenants\x12%.toshi.operator.v1.ListTenantsRequest\x1a&.toshi.operator.v1.ListTenantsResponse\x12_\n" +
-	"\fSetTenantCap\x12&.toshi.operator.v1.SetTenantCapRequest\x1a'.toshi.operator.v1.SetTenantCapResponse\x12k\n" +
-	"\x10SetTenantHistory\x12*.toshi.operator.v1.SetTenantHistoryRequest\x1a+.toshi.operator.v1.SetTenantHistoryResponse\x12h\n" +
-	"\x0fSetTenantLimits\x12).toshi.operator.v1.SetTenantLimitsRequest\x1a*.toshi.operator.v1.SetTenantLimitsResponse\x12V\n" +
+	"\vListTenants\x12%.toshi.operator.v1.ListTenantsRequest\x1a&.toshi.operator.v1.ListTenantsResponse\x12x\n" +
+	"\fSetTenantCap\x12&.toshi.operator.v1.SetTenantCapRequest\x1a'.toshi.operator.v1.SetTenantCapResponse\"\x17\xd2\xf3\x18\x13\n" +
+	"\x11workspace.cap_set\x12\x88\x01\n" +
+	"\x10SetTenantHistory\x12*.toshi.operator.v1.SetTenantHistoryRequest\x1a+.toshi.operator.v1.SetTenantHistoryResponse\"\x1b\xd2\xf3\x18\x17\n" +
+	"\x15workspace.history_set\x12\x84\x01\n" +
+	"\x0fSetTenantLimits\x12).toshi.operator.v1.SetTenantLimitsRequest\x1a*.toshi.operator.v1.SetTenantLimitsResponse\"\x1a\xd2\xf3\x18\x16\n" +
+	"\x14workspace.limits_set\x12V\n" +
 	"\tListPlans\x12#.toshi.operator.v1.ListPlansRequest\x1a$.toshi.operator.v1.ListPlansResponse\x12Y\n" +
 	"\n" +
-	"GetVersion\x12$.toshi.operator.v1.GetVersionRequest\x1a%.toshi.operator.v1.GetVersionResponse\x12b\n" +
-	"\rSetTenantPlan\x12'.toshi.operator.v1.SetTenantPlanRequest\x1a(.toshi.operator.v1.SetTenantPlanResponse\x12z\n" +
-	"\x15SetTenantOwnHostsOnly\x12/.toshi.operator.v1.SetTenantOwnHostsOnlyRequest\x1a0.toshi.operator.v1.SetTenantOwnHostsOnlyResponse\x12}\n" +
-	"\x16SetTenantAllowOverflow\x120.toshi.operator.v1.SetTenantAllowOverflowRequest\x1a1.toshi.operator.v1.SetTenantAllowOverflowResponse\x12b\n" +
-	"\rSuspendTenant\x12'.toshi.operator.v1.SuspendTenantRequest\x1a(.toshi.operator.v1.SuspendTenantResponse\x12_\n" +
-	"\fResumeTenant\x12&.toshi.operator.v1.ResumeTenantRequest\x1a'.toshi.operator.v1.ResumeTenantResponse\x12_\n" +
-	"\fDeleteTenant\x12&.toshi.operator.v1.DeleteTenantRequest\x1a'.toshi.operator.v1.DeleteTenantResponse\x12w\n" +
-	"\x14SetTenantReservation\x12..toshi.operator.v1.SetTenantReservationRequest\x1a/.toshi.operator.v1.SetTenantReservationResponse\x12\\\n" +
-	"\vGetCapacity\x12%.toshi.operator.v1.GetCapacityRequest\x1a&.toshi.operator.v1.GetCapacityResponse\x12w\n" +
-	"\x14SetTenantSpendLimits\x12..toshi.operator.v1.SetTenantSpendLimitsRequest\x1a/.toshi.operator.v1.SetTenantSpendLimitsResponse\x12S\n" +
+	"GetVersion\x12$.toshi.operator.v1.GetVersionRequest\x1a%.toshi.operator.v1.GetVersionResponse\x12|\n" +
+	"\rSetTenantPlan\x12'.toshi.operator.v1.SetTenantPlanRequest\x1a(.toshi.operator.v1.SetTenantPlanResponse\"\x18\xd2\xf3\x18\x14\n" +
+	"\x12workspace.plan_set\x12\x9e\x01\n" +
+	"\x15SetTenantOwnHostsOnly\x12/.toshi.operator.v1.SetTenantOwnHostsOnlyRequest\x1a0.toshi.operator.v1.SetTenantOwnHostsOnlyResponse\"\"\xd2\xf3\x18\x1e\n" +
+	"\x1cworkspace.own_hosts_only_set\x12\xa1\x01\n" +
+	"\x16SetTenantAllowOverflow\x120.toshi.operator.v1.SetTenantAllowOverflowRequest\x1a1.toshi.operator.v1.SetTenantAllowOverflowResponse\"\"\xd2\xf3\x18\x1e\n" +
+	"\x1cworkspace.allow_overflow_set\x12}\n" +
+	"\rSuspendTenant\x12'.toshi.operator.v1.SuspendTenantRequest\x1a(.toshi.operator.v1.SuspendTenantResponse\"\x19\xd2\xf3\x18\x15\n" +
+	"\x13workspace.suspended\x12x\n" +
+	"\fResumeTenant\x12&.toshi.operator.v1.ResumeTenantRequest\x1a'.toshi.operator.v1.ResumeTenantResponse\"\x17\xd2\xf3\x18\x13\n" +
+	"\x11workspace.resumed\x12\x83\x01\n" +
+	"\fDeleteTenant\x12&.toshi.operator.v1.DeleteTenantRequest\x1a'.toshi.operator.v1.DeleteTenantResponse\"\"\xd2\xf3\x18\x1e\n" +
+	"\x1cworkspace.deletion_scheduled\x12\x98\x01\n" +
+	"\x14SetTenantReservation\x12..toshi.operator.v1.SetTenantReservationRequest\x1a/.toshi.operator.v1.SetTenantReservationResponse\"\x1f\xd2\xf3\x18\x1b\n" +
+	"\x19workspace.reservation_set\x12\\\n" +
+	"\vGetCapacity\x12%.toshi.operator.v1.GetCapacityRequest\x1a&.toshi.operator.v1.GetCapacityResponse\x12\x99\x01\n" +
+	"\x14SetTenantSpendLimits\x12..toshi.operator.v1.SetTenantSpendLimitsRequest\x1a/.toshi.operator.v1.SetTenantSpendLimitsResponse\" \xd2\xf3\x18\x1c\n" +
+	"\x1aworkspace.spend_limits_set\x12S\n" +
 	"\bGetUsage\x12\".toshi.operator.v1.GetUsageRequest\x1a#.toshi.operator.v1.GetUsageResponse\x12b\n" +
 	"\rGetQueueTimes\x12'.toshi.operator.v1.GetQueueTimesRequest\x1a(.toshi.operator.v1.GetQueueTimesResponse\x12k\n" +
 	"\x10GetWorkflowUsage\x12*.toshi.operator.v1.GetWorkflowUsageRequest\x1a+.toshi.operator.v1.GetWorkflowUsageResponse\x12k\n" +
 	"\x10GetTenantBilling\x12*.toshi.operator.v1.GetTenantBillingRequest\x1a+.toshi.operator.v1.GetTenantBillingResponse\x12q\n" +
-	"\x12GetTenantStatement\x12,.toshi.operator.v1.GetTenantStatementRequest\x1a-.toshi.operator.v1.GetTenantStatementResponse\x12\x83\x01\n" +
-	"\x18SetTenantBillingCustomer\x122.toshi.operator.v1.SetTenantBillingCustomerRequest\x1a3.toshi.operator.v1.SetTenantBillingCustomerResponse\x12z\n" +
-	"\x15CreateCheckoutSession\x12/.toshi.operator.v1.CreateCheckoutSessionRequest\x1a0.toshi.operator.v1.CreateCheckoutSessionResponse\x12\x89\x01\n" +
-	"\x1aCreateBillingPortalSession\x124.toshi.operator.v1.CreateBillingPortalSessionRequest\x1a5.toshi.operator.v1.CreateBillingPortalSessionResponse\x12V\n" +
-	"\tCancelJob\x12#.toshi.operator.v1.CancelJobRequest\x1a$.toshi.operator.v1.CancelJobResponse\x12_\n" +
-	"\fStopJobDebug\x12&.toshi.operator.v1.StopJobDebugRequest\x1a'.toshi.operator.v1.StopJobDebugResponse\x12n\n" +
-	"\x11GetJobDebugAccess\x12+.toshi.operator.v1.GetJobDebugAccessRequest\x1a,.toshi.operator.v1.GetJobDebugAccessResponse\x12Y\n" +
+	"\x12GetTenantStatement\x12,.toshi.operator.v1.GetTenantStatementRequest\x1a-.toshi.operator.v1.GetTenantStatementResponse\x12\xa9\x01\n" +
+	"\x18SetTenantBillingCustomer\x122.toshi.operator.v1.SetTenantBillingCustomerRequest\x1a3.toshi.operator.v1.SetTenantBillingCustomerResponse\"$\xd2\xf3\x18 \n" +
+	"\x1eworkspace.billing_customer_set\x12\xa7\x01\n" +
+	"\x15CreateCheckoutSession\x12/.toshi.operator.v1.CreateCheckoutSessionRequest\x1a0.toshi.operator.v1.CreateCheckoutSessionResponse\"+\xd2\xf3\x18'\n" +
+	"\x17billing.checkout_opened\x12\fworkspace:id\x12\xb4\x01\n" +
+	"\x1aCreateBillingPortalSession\x124.toshi.operator.v1.CreateBillingPortalSessionRequest\x1a5.toshi.operator.v1.CreateBillingPortalSessionResponse\")\xd2\xf3\x18%\n" +
+	"\x15billing.portal_opened\x12\fworkspace:id\x12\x81\x01\n" +
+	"\tCancelJob\x12#.toshi.operator.v1.CancelJobRequest\x1a$.toshi.operator.v1.CancelJobResponse\")\xd2\xf3\x18%\n" +
+	"\x12host_job.cancelled\x12\x0fhost_job:job_id\x12\x8e\x01\n" +
+	"\fStopJobDebug\x12&.toshi.operator.v1.StopJobDebugRequest\x1a'.toshi.operator.v1.StopJobDebugResponse\"-\xd2\xf3\x18)\n" +
+	"\x16host_job.debug_stopped\x12\x0fhost_job:job_id\x12\xa3\x01\n" +
+	"\x11GetJobDebugAccess\x12+.toshi.operator.v1.GetJobDebugAccessRequest\x1a,.toshi.operator.v1.GetJobDebugAccessResponse\"3\xd2\xf3\x18/\n" +
+	"\x1chost_job.debug_access_issued\x12\x0fhost_job:job_id\x12Y\n" +
 	"\n" +
-	"ListTokens\x12$.toshi.operator.v1.ListTokensRequest\x1a%.toshi.operator.v1.ListTokensResponse\x12\\\n" +
-	"\vRotateToken\x12%.toshi.operator.v1.RotateTokenRequest\x1a&.toshi.operator.v1.RotateTokenResponse\x12\\\n" +
-	"\vRevokeToken\x12%.toshi.operator.v1.RevokeTokenRequest\x1a&.toshi.operator.v1.RevokeTokenResponse\x12z\n" +
-	"\x15CreateEnrollmentToken\x12/.toshi.operator.v1.CreateEnrollmentTokenRequest\x1a0.toshi.operator.v1.CreateEnrollmentTokenResponse\x12n\n" +
-	"\x11CreateTenantToken\x12+.toshi.operator.v1.CreateTenantTokenRequest\x1a,.toshi.operator.v1.CreateTenantTokenResponse\x12q\n" +
-	"\x12CreateProductToken\x12,.toshi.operator.v1.CreateProductTokenRequest\x1a-.toshi.operator.v1.CreateProductTokenResponse\x12q\n" +
+	"ListTokens\x12$.toshi.operator.v1.ListTokensRequest\x1a%.toshi.operator.v1.ListTokensResponse\x12{\n" +
+	"\vRotateToken\x12%.toshi.operator.v1.RotateTokenRequest\x1a&.toshi.operator.v1.RotateTokenResponse\"\x1d\xd2\xf3\x18\x19\x12\x17token:response.token.id\x12\\\n" +
+	"\vRevokeToken\x12%.toshi.operator.v1.RevokeTokenRequest\x1a&.toshi.operator.v1.RevokeTokenResponse\x12\x8f\x01\n" +
+	"\x15CreateEnrollmentToken\x12/.toshi.operator.v1.CreateEnrollmentTokenRequest\x1a0.toshi.operator.v1.CreateEnrollmentTokenResponse\"\x13\xd2\xf3\x18\x0f\n" +
+	"\rtoken.created\x12\x83\x01\n" +
+	"\x11CreateTenantToken\x12+.toshi.operator.v1.CreateTenantTokenRequest\x1a,.toshi.operator.v1.CreateTenantTokenResponse\"\x13\xd2\xf3\x18\x0f\n" +
+	"\rtoken.created\x12\x86\x01\n" +
+	"\x12CreateProductToken\x12,.toshi.operator.v1.CreateProductTokenRequest\x1a-.toshi.operator.v1.CreateProductTokenResponse\"\x13\xd2\xf3\x18\x0f\n" +
+	"\rtoken.created\x12q\n" +
 	"\x12ListOperatorAlerts\x12,.toshi.operator.v1.ListOperatorAlertsRequest\x1a-.toshi.operator.v1.ListOperatorAlertsResponse\x12e\n" +
 	"\x0eListHostAlerts\x12(.toshi.operator.v1.ListHostAlertsRequest\x1a).toshi.operator.v1.ListHostAlertsResponse\x12b\n" +
-	"\rListEgressIPs\x12'.toshi.operator.v1.ListEgressIPsRequest\x1a(.toshi.operator.v1.ListEgressIPsResponse\x12e\n" +
-	"\x0eCheckCloudHost\x12(.toshi.operator.v1.CheckCloudHostRequest\x1a).toshi.operator.v1.CheckCloudHostResponse\x12\\\n" +
-	"\vListFillers\x12%.toshi.operator.v1.ListFillersRequest\x1a&.toshi.operator.v1.ListFillersResponse\x12V\n" +
-	"\tPutFiller\x12#.toshi.operator.v1.PutFillerRequest\x1a$.toshi.operator.v1.PutFillerResponse\x12_\n" +
-	"\fDeleteFiller\x12&.toshi.operator.v1.DeleteFillerRequest\x1a'.toshi.operator.v1.DeleteFillerResponse\x12k\n" +
-	"\x10SetFillerEnabled\x12*.toshi.operator.v1.SetFillerEnabledRequest\x1a+.toshi.operator.v1.SetFillerEnabledResponse\x12e\n" +
-	"\x0eListFillerRuns\x12(.toshi.operator.v1.ListFillerRunsRequest\x1a).toshi.operator.v1.ListFillerRunsResponse\x12\x80\x01\n" +
-	"\x17SetTenantAllowCacheWarm\x121.toshi.operator.v1.SetTenantAllowCacheWarmRequest\x1a2.toshi.operator.v1.SetTenantAllowCacheWarmResponse\x12\x8c\x01\n" +
-	"\x1bSetTenantCancelRunOnVmDeath\x125.toshi.operator.v1.SetTenantCancelRunOnVmDeathRequest\x1a6.toshi.operator.v1.SetTenantCancelRunOnVmDeathResponse\x12b\n" +
+	"\rListEgressIPs\x12'.toshi.operator.v1.ListEgressIPsRequest\x1a(.toshi.operator.v1.ListEgressIPsResponse\x12y\n" +
+	"\x0eCheckCloudHost\x12(.toshi.operator.v1.CheckCloudHostRequest\x1a).toshi.operator.v1.CheckCloudHostResponse\"\x12\xd2\xf3\x18\x0e\x12\fhost:host_id\x12\\\n" +
+	"\vListFillers\x12%.toshi.operator.v1.ListFillersRequest\x1a&.toshi.operator.v1.ListFillersResponse\x12p\n" +
+	"\tPutFiller\x12#.toshi.operator.v1.PutFillerRequest\x1a$.toshi.operator.v1.PutFillerResponse\"\x18\xd2\xf3\x18\x14\x12\x12filler:filler.name\x12\x82\x01\n" +
+	"\fDeleteFiller\x12&.toshi.operator.v1.DeleteFillerRequest\x1a'.toshi.operator.v1.DeleteFillerResponse\"!\xd2\xf3\x18\x1d\n" +
+	"\x0efiller.removed\x12\vfiller:name\x12\x92\x01\n" +
+	"\x10SetFillerEnabled\x12*.toshi.operator.v1.SetFillerEnabledRequest\x1a+.toshi.operator.v1.SetFillerEnabledResponse\"%\xd2\xf3\x18!\n" +
+	"\x12filler.enabled_set\x12\vfiller:name\x12e\n" +
+	"\x0eListFillerRuns\x12(.toshi.operator.v1.ListFillerRunsRequest\x1a).toshi.operator.v1.ListFillerRunsResponse\x12\xa6\x01\n" +
+	"\x17SetTenantAllowCacheWarm\x121.toshi.operator.v1.SetTenantAllowCacheWarmRequest\x1a2.toshi.operator.v1.SetTenantAllowCacheWarmResponse\"$\xd2\xf3\x18 \n" +
+	"\x1eworkspace.allow_cache_warm_set\x12\xb8\x01\n" +
+	"\x1bSetTenantCancelRunOnVmDeath\x125.toshi.operator.v1.SetTenantCancelRunOnVmDeathRequest\x1a6.toshi.operator.v1.SetTenantCancelRunOnVmDeathResponse\"*\xd2\xf3\x18&\n" +
+	"$workspace.cancel_run_on_vm_death_set\x12b\n" +
 	"\rGetJobFailure\x12'.toshi.operator.v1.GetJobFailureRequest\x1a(.toshi.operator.v1.GetJobFailureResponse\x12n\n" +
-	"\x11GetSecretDelivery\x12+.toshi.operator.v1.GetSecretDeliveryRequest\x1a,.toshi.operator.v1.GetSecretDeliveryResponse\x12n\n" +
-	"\x11SetSecretDelivery\x12+.toshi.operator.v1.SetSecretDeliveryRequest\x1a,.toshi.operator.v1.SetSecretDeliveryResponse\x12h\n" +
+	"\x11GetSecretDelivery\x12+.toshi.operator.v1.GetSecretDeliveryRequest\x1a,.toshi.operator.v1.GetSecretDeliveryResponse\x12z\n" +
+	"\x11SetSecretDelivery\x12+.toshi.operator.v1.SetSecretDeliveryRequest\x1a,.toshi.operator.v1.SetSecretDeliveryResponse\"\n" +
+	"\xd2\xf3\x18\x06\x12\x04none\x12h\n" +
 	"\x0fListUtilisation\x12).toshi.operator.v1.ListUtilisationRequest\x1a*.toshi.operator.v1.ListUtilisationResponse\x12_\n" +
 	"\fSuggestPools\x12&.toshi.operator.v1.SuggestPoolsRequest\x1a'.toshi.operator.v1.SuggestPoolsResponse\x12z\n" +
 	"\x15CreateStorageProvider\x12/.toshi.operator.v1.CreateStorageProviderRequest\x1a0.toshi.operator.v1.CreateStorageProviderResponse\x12w\n" +

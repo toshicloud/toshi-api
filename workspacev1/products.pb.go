@@ -776,11 +776,12 @@ const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\x1eINSTALLATION_STATE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19INSTALLATION_STATE_ACTIVE\x10\x01\x12 \n" +
 	"\x1cINSTALLATION_STATE_SUSPENDED\x10\x02\x12\x1e\n" +
-	"\x1aINSTALLATION_STATE_REMOVED\x10\x032\xfa\x02\n" +
+	"\x1aINSTALLATION_STATE_REMOVED\x10\x032\x90\x03\n" +
 	"\x0eProductService\x12t\n" +
 	"\fListProducts\x12'.toshi.workspace.v1.ListProductsRequest\x1a(.toshi.workspace.v1.ListProductsResponse\"\x11\xc2\xf3\x18\rsettings.read\x12x\n" +
-	"\rUpdateProduct\x12(.toshi.workspace.v1.UpdateProductRequest\x1a).toshi.workspace.v1.UpdateProductResponse\"\x12\xc2\xf3\x18\x0esettings.write\x12x\n" +
-	"\rRemoveProduct\x12(.toshi.workspace.v1.RemoveProductRequest\x1a).toshi.workspace.v1.RemoveProductResponse\"\x12\xc2\xf3\x18\x0esettings.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\rUpdateProduct\x12(.toshi.workspace.v1.UpdateProductRequest\x1a).toshi.workspace.v1.UpdateProductResponse\"\x12\xc2\xf3\x18\x0esettings.write\x12\x8d\x01\n" +
+	"\rRemoveProduct\x12(.toshi.workspace.v1.RemoveProductRequest\x1a).toshi.workspace.v1.RemoveProductResponse\"'\xc2\xf3\x18\x0esettings.write\xd2\xf3\x18\x11\n" +
+	"\x0fproduct.removedB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_products_proto_rawDescOnce sync.Once

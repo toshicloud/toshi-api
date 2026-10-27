@@ -11,6 +11,7 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	descriptorpb "google.golang.org/protobuf/types/descriptorpb"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -20,6 +21,72 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+// Audit is the audit event a call records.
+type Audit struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// action is "<noun>.<verb>" with the verb in the past tense. Unset, it is
+	// the method's name: CreateSandbox records "sandbox.created". The build
+	// fails a method whose verb it cannot put in the past tense, or whose name
+	// gives the action this field names. "none" records nothing, for a call
+	// no Workspace API caller makes, such as a workload's upload.
+	Action string `protobuf:"bytes,1,opt,name=action,proto3" json:"action,omitempty"`
+	// target is what the call acts on, as "<kind>:<source>", or "none". Unset,
+	// the kind is the action's noun and the source the response's id for a
+	// call that creates (Create, Reserve, Open) and the request's id
+	// otherwise: "id" or "<kind>_id", or for a create "<kind>.id" of the
+	// response. A source is a request field path, such as "job_id" or
+	// "start.sandbox_id", a response field path after "response.", such as
+	// "response.endpoint.id", "workspace" for the call's workspace, or
+	// "project" for the project the call resolved.
+	Target        string `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Audit) Reset() {
+	*x = Audit{}
+	mi := &file_toshi_permission_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Audit) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Audit) ProtoMessage() {}
+
+func (x *Audit) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_permission_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Audit.ProtoReflect.Descriptor instead.
+func (*Audit) Descriptor() ([]byte, []int) {
+	return file_toshi_permission_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Audit) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+func (x *Audit) GetTarget() string {
+	if x != nil {
+		return x.Target
+	}
+	return ""
+}
 
 var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 	{
@@ -36,6 +103,14 @@ var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 		Field:         51001,
 		Name:          "toshi.scope",
 		Tag:           "bytes,51001,opt,name=scope",
+		Filename:      "toshi/permission.proto",
+	},
+	{
+		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
+		ExtensionType: (*Audit)(nil),
+		Field:         51002,
+		Name:          "toshi.audit",
+		Tag:           "bytes,51002,opt,name=audit",
 		Filename:      "toshi/permission.proto",
 	},
 }
@@ -71,28 +146,57 @@ var (
 	//
 	// optional string scope = 51001;
 	E_Scope = &file_toshi_permission_proto_extTypes[1]
+	// audit names the audit event a call records when its action or target
+	// is not the one its name gives. Every call that changes something
+	// records one event: on the Workspace API a call whose permission's level
+	// is not "read", on the operator API a call whose verb is not a read
+	// (Get, List, Watch, Wait, Summarise, Suggest, Export, Discover). A read
+	// whose option names an action records one too.
+	//
+	// optional toshi.Audit audit = 51002;
+	E_Audit = &file_toshi_permission_proto_extTypes[2]
 )
 
 var File_toshi_permission_proto protoreflect.FileDescriptor
 
 const file_toshi_permission_proto_rawDesc = "" +
 	"\n" +
-	"\x16toshi/permission.proto\x12\x05toshi\x1a google/protobuf/descriptor.proto:@\n" +
+	"\x16toshi/permission.proto\x12\x05toshi\x1a google/protobuf/descriptor.proto\"7\n" +
+	"\x05Audit\x12\x16\n" +
+	"\x06action\x18\x01 \x01(\tR\x06action\x12\x16\n" +
+	"\x06target\x18\x02 \x01(\tR\x06target:@\n" +
 	"\n" +
 	"permission\x12\x1e.google.protobuf.MethodOptions\x18\xb8\x8e\x03 \x01(\tR\n" +
 	"permission:6\n" +
-	"\x05scope\x12\x1e.google.protobuf.MethodOptions\x18\xb9\x8e\x03 \x01(\tR\x05scopeB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
+	"\x05scope\x12\x1e.google.protobuf.MethodOptions\x18\xb9\x8e\x03 \x01(\tR\x05scope:D\n" +
+	"\x05audit\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\f.toshi.AuditR\x05auditB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
 
+var (
+	file_toshi_permission_proto_rawDescOnce sync.Once
+	file_toshi_permission_proto_rawDescData []byte
+)
+
+func file_toshi_permission_proto_rawDescGZIP() []byte {
+	file_toshi_permission_proto_rawDescOnce.Do(func() {
+		file_toshi_permission_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_toshi_permission_proto_rawDesc), len(file_toshi_permission_proto_rawDesc)))
+	})
+	return file_toshi_permission_proto_rawDescData
+}
+
+var file_toshi_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_toshi_permission_proto_goTypes = []any{
-	(*descriptorpb.MethodOptions)(nil), // 0: google.protobuf.MethodOptions
+	(*Audit)(nil),                      // 0: toshi.Audit
+	(*descriptorpb.MethodOptions)(nil), // 1: google.protobuf.MethodOptions
 }
 var file_toshi_permission_proto_depIdxs = []int32{
-	0, // 0: toshi.permission:extendee -> google.protobuf.MethodOptions
-	0, // 1: toshi.scope:extendee -> google.protobuf.MethodOptions
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	0, // [0:2] is the sub-list for extension extendee
+	1, // 0: toshi.permission:extendee -> google.protobuf.MethodOptions
+	1, // 1: toshi.scope:extendee -> google.protobuf.MethodOptions
+	1, // 2: toshi.audit:extendee -> google.protobuf.MethodOptions
+	0, // 3: toshi.audit:type_name -> toshi.Audit
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	3, // [3:4] is the sub-list for extension type_name
+	0, // [0:3] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
 }
 
@@ -107,12 +211,13 @@ func file_toshi_permission_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_permission_proto_rawDesc), len(file_toshi_permission_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
-			NumExtensions: 2,
+			NumMessages:   1,
+			NumExtensions: 3,
 			NumServices:   0,
 		},
 		GoTypes:           file_toshi_permission_proto_goTypes,
 		DependencyIndexes: file_toshi_permission_proto_depIdxs,
+		MessageInfos:      file_toshi_permission_proto_msgTypes,
 		ExtensionInfos:    file_toshi_permission_proto_extTypes,
 	}.Build()
 	File_toshi_permission_proto = out.File

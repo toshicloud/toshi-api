@@ -48,6 +48,7 @@ service HostService {
   // fails with NOT_FOUND.
   rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse) {
     option (toshi.permission) = "hosts.write";
+    option (toshi.audit) = {action: "host.state_set"};
   }
   // RetireHost removes a host that holds no assigned, starting or running
   // host job; otherwise it fails with FAILED_PRECONDITION (drain it first).
@@ -64,6 +65,10 @@ service HostService {
   rpc CreateCloudHost(CreateCloudHostRequest) returns (CreateCloudHostResponse) {
     option (toshi.permission) = "hosts.write";
     option (toshi.scope) = "workspace";
+    option (toshi.audit) = {
+      action: "cloud_host.added"
+      target: "host:response.host.id"
+    };
   }
   // CheckCloudHost checks a cloud host's setup without launching anything:
   // the role can be assumed, the image is visible, the subnet routes to the
@@ -73,6 +78,7 @@ service HostService {
   // FAILED_PRECONDITION.
   rpc CheckCloudHost(CheckCloudHostRequest) returns (CheckCloudHostResponse) {
     option (toshi.permission) = "hosts.write";
+    option (toshi.audit) = {target: "host:host_id"};
   }
   // CreateEnrollmentToken makes an enrollment token for the workspace and
   // returns it with its value; a host that registers with it is owned by
@@ -80,6 +86,7 @@ service HostService {
   // untouched. A closed workspace fails with FAILED_PRECONDITION.
   rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse) {
     option (toshi.permission) = "hosts.write";
+    option (toshi.audit) = {action: "token.created"};
   }
 }
 

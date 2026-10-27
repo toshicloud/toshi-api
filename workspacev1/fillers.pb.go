@@ -1072,12 +1072,14 @@ const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"\x16ListFillerRunsResponse\x121\n" +
 	"\x04runs\x18\x01 \x03(\v2\x1d.toshi.workspace.v1.FillerRunR\x04runs\x127\n" +
 	"\x06pauses\x18\x02 \x03(\v2\x1f.toshi.workspace.v1.FillerPauseR\x06pauses\x12&\n" +
-	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken2\xe2\x04\n" +
+	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken2\xc2\x05\n" +
 	"\rFillerService\x12p\n" +
-	"\vListFillers\x12&.toshi.workspace.v1.ListFillersRequest\x1a'.toshi.workspace.v1.ListFillersResponse\"\x10\xc2\xf3\x18\ffillers.read\x12k\n" +
-	"\tPutFiller\x12$.toshi.workspace.v1.PutFillerRequest\x1a%.toshi.workspace.v1.PutFillerResponse\"\x11\xc2\xf3\x18\rfillers.write\x12t\n" +
-	"\fDeleteFiller\x12'.toshi.workspace.v1.DeleteFillerRequest\x1a(.toshi.workspace.v1.DeleteFillerResponse\"\x11\xc2\xf3\x18\rfillers.write\x12\x80\x01\n" +
-	"\x10SetFillerEnabled\x12+.toshi.workspace.v1.SetFillerEnabledRequest\x1a,.toshi.workspace.v1.SetFillerEnabledResponse\"\x11\xc2\xf3\x18\rfillers.write\x12y\n" +
+	"\vListFillers\x12&.toshi.workspace.v1.ListFillersRequest\x1a'.toshi.workspace.v1.ListFillersResponse\"\x10\xc2\xf3\x18\ffillers.read\x12\x83\x01\n" +
+	"\tPutFiller\x12$.toshi.workspace.v1.PutFillerRequest\x1a%.toshi.workspace.v1.PutFillerResponse\")\xc2\xf3\x18\rfillers.write\xd2\xf3\x18\x14\x12\x12filler:filler.name\x12\x95\x01\n" +
+	"\fDeleteFiller\x12'.toshi.workspace.v1.DeleteFillerRequest\x1a(.toshi.workspace.v1.DeleteFillerResponse\"2\xc2\xf3\x18\rfillers.write\xd2\xf3\x18\x1d\n" +
+	"\x0efiller.removed\x12\vfiller:name\x12\xa5\x01\n" +
+	"\x10SetFillerEnabled\x12+.toshi.workspace.v1.SetFillerEnabledRequest\x1a,.toshi.workspace.v1.SetFillerEnabledResponse\"6\xc2\xf3\x18\rfillers.write\xd2\xf3\x18!\n" +
+	"\x12filler.enabled_set\x12\vfiller:name\x12y\n" +
 	"\x0eListFillerRuns\x12).toshi.workspace.v1.ListFillerRunsRequest\x1a*.toshi.workspace.v1.ListFillerRunsResponse\"\x10\xc2\xf3\x18\ffillers.readB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (

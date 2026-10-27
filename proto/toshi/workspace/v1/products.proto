@@ -52,6 +52,7 @@ service ProductService {
   // product, is NOT_FOUND.
   rpc RemoveProduct(RemoveProductRequest) returns (RemoveProductResponse) {
     option (toshi.permission) = "settings.write";
+    option (toshi.audit) = {action: "product.removed"};
   }
 }
 

@@ -1012,14 +1012,17 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
 	"encryption\x18\x03 \x01(\tR\n" +
 	"encryption\x12\x19\n" +
-	"\bdata_key\x18\x04 \x01(\fR\adataKey2\x90\x02\n" +
-	"\x15ArtifactUploadService\x12y\n" +
-	"\rReserveUpload\x12(.toshi.workspace.v1.ReserveUploadRequest\x1a).toshi.workspace.v1.ReserveUploadResponse\"\x13\xc2\xf3\x18\x0fartifacts.write\x12|\n" +
-	"\x0eCompleteUpload\x12).toshi.workspace.v1.CompleteUploadRequest\x1a*.toshi.workspace.v1.CompleteUploadResponse\"\x13\xc2\xf3\x18\x0fartifacts.write2\xc4\x03\n" +
+	"\bdata_key\x18\x04 \x01(\fR\adataKey2\xb3\x02\n" +
+	"\x15ArtifactUploadService\x12\x83\x01\n" +
+	"\rReserveUpload\x12(.toshi.workspace.v1.ReserveUploadRequest\x1a).toshi.workspace.v1.ReserveUploadResponse\"\x1d\xc2\xf3\x18\x0fartifacts.write\xd2\xf3\x18\x06\n" +
+	"\x04none\x12\x93\x01\n" +
+	"\x0eCompleteUpload\x12).toshi.workspace.v1.CompleteUploadRequest\x1a*.toshi.workspace.v1.CompleteUploadResponse\"*\xc2\xf3\x18\x0fartifacts.write\xd2\xf3\x18\x13\n" +
+	"\x11artifact.uploaded2\xd9\x03\n" +
 	"\x0fArtifactService\x12\x87\x01\n" +
 	"\rListArtifacts\x12(.toshi.workspace.v1.ListArtifactsRequest\x1a).toshi.workspace.v1.ListArtifactsResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironment\x12\x81\x01\n" +
-	"\vGetArtifact\x12&.toshi.workspace.v1.GetArtifactRequest\x1a'.toshi.workspace.v1.GetArtifactResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironment\x12\xa2\x01\n" +
-	"\x16GetArtifactDownloadURL\x121.toshi.workspace.v1.GetArtifactDownloadURLRequest\x1a2.toshi.workspace.v1.GetArtifactDownloadURLResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironmentB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\vGetArtifact\x12&.toshi.workspace.v1.GetArtifactRequest\x1a'.toshi.workspace.v1.GetArtifactResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironment\x12\xb7\x01\n" +
+	"\x16GetArtifactDownloadURL\x121.toshi.workspace.v1.GetArtifactDownloadURLRequest\x1a2.toshi.workspace.v1.GetArtifactDownloadURLResponse\"6\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironment\xd2\xf3\x18\x11\n" +
+	"\x0fartifact.viewedB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_artifacts_proto_rawDescOnce sync.Once

@@ -1625,17 +1625,19 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x1fSECRET_GRANTEE_KIND_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18SECRET_GRANTEE_KIND_KIND\x10\x01\x12\x1d\n" +
 	"\x19SECRET_GRANTEE_KIND_IMAGE\x10\x02\x12\x1f\n" +
-	"\x1bSECRET_GRANTEE_KIND_SERVICE\x10\x032\x83\v\n" +
-	"\rSecretService\x12\x8c\x01\n" +
-	"\x0fCreateSecretSet\x12*.toshi.workspace.v1.CreateSecretSetRequest\x1a+.toshi.workspace.v1.CreateSecretSetResponse\" \xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\x12\x84\x01\n" +
-	"\x0eListSecretSets\x12).toshi.workspace.v1.ListSecretSetsRequest\x1a*.toshi.workspace.v1.ListSecretSetsResponse\"\x1b\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\aproject\x12\x8c\x01\n" +
-	"\x0fDeleteSecretSet\x12*.toshi.workspace.v1.DeleteSecretSetRequest\x1a+.toshi.workspace.v1.DeleteSecretSetResponse\" \xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\x12z\n" +
-	"\tPutSecret\x12$.toshi.workspace.v1.PutSecretRequest\x1a%.toshi.workspace.v1.PutSecretResponse\" \xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\x12\x83\x01\n" +
-	"\fDeleteSecret\x12'.toshi.workspace.v1.DeleteSecretRequest\x1a(.toshi.workspace.v1.DeleteSecretResponse\" \xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\x12\x7f\n" +
+	"\x1bSECRET_GRANTEE_KIND_SERVICE\x10\x032\xcc\v\n" +
+	"\rSecretService\x12\x96\x01\n" +
+	"\x0fCreateSecretSet\x12*.toshi.workspace.v1.CreateSecretSetRequest\x1a+.toshi.workspace.v1.CreateSecretSetResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x84\x01\n" +
+	"\x0eListSecretSets\x12).toshi.workspace.v1.ListSecretSetsRequest\x1a*.toshi.workspace.v1.ListSecretSetsResponse\"\x1b\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\aproject\x12\x96\x01\n" +
+	"\x0fDeleteSecretSet\x12*.toshi.workspace.v1.DeleteSecretSetRequest\x1a+.toshi.workspace.v1.DeleteSecretSetResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x90\x01\n" +
+	"\tPutSecret\x12$.toshi.workspace.v1.PutSecretRequest\x1a%.toshi.workspace.v1.PutSecretResponse\"6\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
+	"\n" +
+	"secret.set\x12\x04none\x12\x8d\x01\n" +
+	"\fDeleteSecret\x12'.toshi.workspace.v1.DeleteSecretRequest\x1a(.toshi.workspace.v1.DeleteSecretResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x7f\n" +
 	"\vListSecrets\x12&.toshi.workspace.v1.ListSecretsRequest\x1a'.toshi.workspace.v1.ListSecretsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironment\x12\x94\x01\n" +
-	"\x12ListSecretVersions\x12-.toshi.workspace.v1.ListSecretVersionsRequest\x1a..toshi.workspace.v1.ListSecretVersionsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironment\x12\x89\x01\n" +
-	"\x0eGrantSecretSet\x12).toshi.workspace.v1.GrantSecretSetRequest\x1a*.toshi.workspace.v1.GrantSecretSetResponse\" \xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\x12\x8c\x01\n" +
-	"\x0fRevokeSecretSet\x12*.toshi.workspace.v1.RevokeSecretSetRequest\x1a+.toshi.workspace.v1.RevokeSecretSetResponse\" \xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\x12\x97\x01\n" +
+	"\x12ListSecretVersions\x12-.toshi.workspace.v1.ListSecretVersionsRequest\x1a..toshi.workspace.v1.ListSecretVersionsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironment\x12\x93\x01\n" +
+	"\x0eGrantSecretSet\x12).toshi.workspace.v1.GrantSecretSetRequest\x1a*.toshi.workspace.v1.GrantSecretSetResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x96\x01\n" +
+	"\x0fRevokeSecretSet\x12*.toshi.workspace.v1.RevokeSecretSetRequest\x1a+.toshi.workspace.v1.RevokeSecretSetResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x97\x01\n" +
 	"\x13ListSecretSetGrants\x12..toshi.workspace.v1.ListSecretSetGrantsRequest\x1a/.toshi.workspace.v1.ListSecretSetGrantsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironmentB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (

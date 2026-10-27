@@ -4146,24 +4146,31 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"recent_ips\x18\x05 \x03(\tR\trecentIps\x12\x14\n" +
 	"\x05cloud\x18\x06 \x01(\tR\x05cloud\x12!\n" +
 	"\fcloud_egress\x18\a \x01(\tR\vcloudEgress\x12\x1c\n" +
-	"\tconfirmed\x18\b \x01(\bR\tconfirmed2\xbc\x12\n" +
+	"\tconfirmed\x18\b \x01(\bR\tconfirmed2\xd0\x14\n" +
 	"\x10WorkspaceService\x12u\n" +
 	"\fGetWorkspace\x12'.toshi.workspace.v1.GetWorkspaceRequest\x1a(.toshi.workspace.v1.GetWorkspaceResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12{\n" +
 	"\x0eListWorkspaces\x12).toshi.workspace.v1.ListWorkspacesRequest\x1a*.toshi.workspace.v1.ListWorkspacesResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\x88\x01\n" +
 	"\x13GetWorkspaceBilling\x12..toshi.workspace.v1.GetWorkspaceBillingRequest\x1a/.toshi.workspace.v1.GetWorkspaceBillingResponse\"\x10\xc2\xf3\x18\fbilling.read\x12\x8e\x01\n" +
-	"\x15GetWorkspaceStatement\x120.toshi.workspace.v1.GetWorkspaceStatementRequest\x1a1.toshi.workspace.v1.GetWorkspaceStatementResponse\"\x10\xc2\xf3\x18\fbilling.read\x12\x9a\x01\n" +
-	"\x18SetWorkspaceOwnHostsOnly\x123.toshi.workspace.v1.SetWorkspaceOwnHostsOnlyRequest\x1a4.toshi.workspace.v1.SetWorkspaceOwnHostsOnlyResponse\"\x13\xc2\xf3\x18\x0fworkspace.write\x12\x9d\x01\n" +
-	"\x19SetWorkspaceAllowOverflow\x124.toshi.workspace.v1.SetWorkspaceAllowOverflowRequest\x1a5.toshi.workspace.v1.SetWorkspaceAllowOverflowResponse\"\x13\xc2\xf3\x18\x0fworkspace.write\x12\xa0\x01\n" +
-	"\x1aSetWorkspaceAllowCacheWarm\x125.toshi.workspace.v1.SetWorkspaceAllowCacheWarmRequest\x1a6.toshi.workspace.v1.SetWorkspaceAllowCacheWarmResponse\"\x13\xc2\xf3\x18\x0fworkspace.write\x12\xac\x01\n" +
-	"\x1eSetWorkspaceCancelRunOnVmDeath\x129.toshi.workspace.v1.SetWorkspaceCancelRunOnVmDeathRequest\x1a:.toshi.workspace.v1.SetWorkspaceCancelRunOnVmDeathResponse\"\x13\xc2\xf3\x18\x0fworkspace.write\x12\x95\x01\n" +
-	"\x17SetWorkspaceSpendLimits\x122.toshi.workspace.v1.SetWorkspaceSpendLimitsRequest\x1a3.toshi.workspace.v1.SetWorkspaceSpendLimitsResponse\"\x11\xc2\xf3\x18\rbilling.write\x12x\n" +
+	"\x15GetWorkspaceStatement\x120.toshi.workspace.v1.GetWorkspaceStatementRequest\x1a1.toshi.workspace.v1.GetWorkspaceStatementResponse\"\x10\xc2\xf3\x18\fbilling.read\x12\xbc\x01\n" +
+	"\x18SetWorkspaceOwnHostsOnly\x123.toshi.workspace.v1.SetWorkspaceOwnHostsOnlyRequest\x1a4.toshi.workspace.v1.SetWorkspaceOwnHostsOnlyResponse\"5\xc2\xf3\x18\x0fworkspace.write\xd2\xf3\x18\x1e\n" +
+	"\x1cworkspace.own_hosts_only_set\x12\xbf\x01\n" +
+	"\x19SetWorkspaceAllowOverflow\x124.toshi.workspace.v1.SetWorkspaceAllowOverflowRequest\x1a5.toshi.workspace.v1.SetWorkspaceAllowOverflowResponse\"5\xc2\xf3\x18\x0fworkspace.write\xd2\xf3\x18\x1e\n" +
+	"\x1cworkspace.allow_overflow_set\x12\xc4\x01\n" +
+	"\x1aSetWorkspaceAllowCacheWarm\x125.toshi.workspace.v1.SetWorkspaceAllowCacheWarmRequest\x1a6.toshi.workspace.v1.SetWorkspaceAllowCacheWarmResponse\"7\xc2\xf3\x18\x0fworkspace.write\xd2\xf3\x18 \n" +
+	"\x1eworkspace.allow_cache_warm_set\x12\xd6\x01\n" +
+	"\x1eSetWorkspaceCancelRunOnVmDeath\x129.toshi.workspace.v1.SetWorkspaceCancelRunOnVmDeathRequest\x1a:.toshi.workspace.v1.SetWorkspaceCancelRunOnVmDeathResponse\"=\xc2\xf3\x18\x0fworkspace.write\xd2\xf3\x18&\n" +
+	"$workspace.cancel_run_on_vm_death_set\x12\xb5\x01\n" +
+	"\x17SetWorkspaceSpendLimits\x122.toshi.workspace.v1.SetWorkspaceSpendLimitsRequest\x1a3.toshi.workspace.v1.SetWorkspaceSpendLimitsResponse\"1\xc2\xf3\x18\rbilling.write\xd2\xf3\x18\x1c\n" +
+	"\x1aworkspace.spend_limits_set\x12x\n" +
 	"\rListEgressIPs\x12(.toshi.workspace.v1.ListEgressIPsRequest\x1a).toshi.workspace.v1.ListEgressIPsResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12i\n" +
 	"\bGetUsage\x12#.toshi.workspace.v1.GetUsageRequest\x1a$.toshi.workspace.v1.GetUsageResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12x\n" +
 	"\rGetQueueTimes\x12(.toshi.workspace.v1.GetQueueTimesRequest\x1a).toshi.workspace.v1.GetQueueTimesResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\x81\x01\n" +
 	"\x10GetWorkflowUsage\x12+.toshi.workspace.v1.GetWorkflowUsageRequest\x1a,.toshi.workspace.v1.GetWorkflowUsageResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12j\n" +
-	"\tListPlans\x12$.toshi.workspace.v1.ListPlansRequest\x1a%.toshi.workspace.v1.ListPlansResponse\"\x10\xc2\xf3\x18\fbilling.read\x12\x8f\x01\n" +
-	"\x15CreateCheckoutSession\x120.toshi.workspace.v1.CreateCheckoutSessionRequest\x1a1.toshi.workspace.v1.CreateCheckoutSessionResponse\"\x11\xc2\xf3\x18\rbilling.write\x12\x9e\x01\n" +
-	"\x1aCreateBillingPortalSession\x125.toshi.workspace.v1.CreateBillingPortalSessionRequest\x1a6.toshi.workspace.v1.CreateBillingPortalSessionResponse\"\x11\xc2\xf3\x18\rbilling.write\x12o\n" +
+	"\tListPlans\x12$.toshi.workspace.v1.ListPlansRequest\x1a%.toshi.workspace.v1.ListPlansResponse\"\x10\xc2\xf3\x18\fbilling.read\x12\xc1\x01\n" +
+	"\x15CreateCheckoutSession\x120.toshi.workspace.v1.CreateCheckoutSessionRequest\x1a1.toshi.workspace.v1.CreateCheckoutSessionResponse\"C\xc2\xf3\x18\rbilling.write\xd2\xf3\x18.\n" +
+	"\x17billing.checkout_opened\x12\x13workspace:workspace\x12\xce\x01\n" +
+	"\x1aCreateBillingPortalSession\x125.toshi.workspace.v1.CreateBillingPortalSessionRequest\x1a6.toshi.workspace.v1.CreateBillingPortalSessionResponse\"A\xc2\xf3\x18\rbilling.write\xd2\xf3\x18,\n" +
+	"\x15billing.portal_opened\x12\x13workspace:workspace\x12o\n" +
 	"\n" +
 	"GetVersion\x12%.toshi.workspace.v1.GetVersionRequest\x1a&.toshi.workspace.v1.GetVersionResponse\"\x12\xc2\xf3\x18\x0eworkspace.readB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 

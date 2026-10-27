@@ -33,4 +33,32 @@ extend google.protobuf.MethodOptions {
   // "workspace" when the field is not where the call acts, such as the
   // project a new token is limited to.
   string scope = 51001;
+
+  // audit names the audit event a call records when its action or target
+  // is not the one its name gives. Every call that changes something
+  // records one event: on the Workspace API a call whose permission's level
+  // is not "read", on the operator API a call whose verb is not a read
+  // (Get, List, Watch, Wait, Summarise, Suggest, Export, Discover). A read
+  // whose option names an action records one too.
+  Audit audit = 51002;
+}
+
+// Audit is the audit event a call records.
+message Audit {
+  // action is "<noun>.<verb>" with the verb in the past tense. Unset, it is
+  // the method's name: CreateSandbox records "sandbox.created". The build
+  // fails a method whose verb it cannot put in the past tense, or whose name
+  // gives the action this field names. "none" records nothing, for a call
+  // no Workspace API caller makes, such as a workload's upload.
+  string action = 1;
+
+  // target is what the call acts on, as "<kind>:<source>", or "none". Unset,
+  // the kind is the action's noun and the source the response's id for a
+  // call that creates (Create, Reserve, Open) and the request's id
+  // otherwise: "id" or "<kind>_id", or for a create "<kind>.id" of the
+  // response. A source is a request field path, such as "job_id" or
+  // "start.sandbox_id", a response field path after "response.", such as
+  // "response.endpoint.id", "workspace" for the call's workspace, or
+  // "project" for the project the call resolved.
+  string target = 2;
 }

@@ -1275,16 +1275,21 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\"WEBHOOK_DELIVERY_STATE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eWEBHOOK_DELIVERY_STATE_PENDING\x10\x01\x12$\n" +
 	" WEBHOOK_DELIVERY_STATE_DELIVERED\x10\x02\x12\x1f\n" +
-	"\x1bWEBHOOK_DELIVERY_STATE_DEAD\x10\x032\xa5\t\n" +
-	"\x0eWebhookService\x12\x90\x01\n" +
-	"\x15CreateWebhookEndpoint\x120.toshi.workspace.v1.CreateWebhookEndpointRequest\x1a1.toshi.workspace.v1.CreateWebhookEndpointResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\x86\x01\n" +
+	"\x1bWEBHOOK_DELIVERY_STATE_DEAD\x10\x032\xbc\v\n" +
+	"\x0eWebhookService\x12\xd5\x01\n" +
+	"\x15CreateWebhookEndpoint\x120.toshi.workspace.v1.CreateWebhookEndpointRequest\x1a1.toshi.workspace.v1.CreateWebhookEndpointResponse\"W\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18A\n" +
+	"\x18webhook.endpoint_created\x12%webhook_endpoint:response.endpoint.id\x12\x86\x01\n" +
 	"\x12GetWebhookEndpoint\x12-.toshi.workspace.v1.GetWebhookEndpointRequest\x1a..toshi.workspace.v1.GetWebhookEndpointResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\x8c\x01\n" +
-	"\x14ListWebhookEndpoints\x12/.toshi.workspace.v1.ListWebhookEndpointsRequest\x1a0.toshi.workspace.v1.ListWebhookEndpointsResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\x90\x01\n" +
-	"\x15UpdateWebhookEndpoint\x120.toshi.workspace.v1.UpdateWebhookEndpointRequest\x1a1.toshi.workspace.v1.UpdateWebhookEndpointResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\x90\x01\n" +
-	"\x15DeleteWebhookEndpoint\x120.toshi.workspace.v1.DeleteWebhookEndpointRequest\x1a1.toshi.workspace.v1.DeleteWebhookEndpointResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\xa2\x01\n" +
-	"\x1bRotateWebhookEndpointSecret\x126.toshi.workspace.v1.RotateWebhookEndpointSecretRequest\x1a7.toshi.workspace.v1.RotateWebhookEndpointSecretResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\x8f\x01\n" +
-	"\x15ListWebhookDeliveries\x120.toshi.workspace.v1.ListWebhookDeliveriesRequest\x1a1.toshi.workspace.v1.ListWebhookDeliveriesResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\x8a\x01\n" +
-	"\x13ReplayWebhookEvents\x12..toshi.workspace.v1.ReplayWebhookEventsRequest\x1a/.toshi.workspace.v1.ReplayWebhookEventsResponse\"\x12\xc2\xf3\x18\x0ewebhooks.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x14ListWebhookEndpoints\x12/.toshi.workspace.v1.ListWebhookEndpointsRequest\x1a0.toshi.workspace.v1.ListWebhookEndpointsResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\xc3\x01\n" +
+	"\x15UpdateWebhookEndpoint\x120.toshi.workspace.v1.UpdateWebhookEndpointRequest\x1a1.toshi.workspace.v1.UpdateWebhookEndpointResponse\"E\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18/\n" +
+	"\x18webhook.endpoint_updated\x12\x13webhook_endpoint:id\x12\xc3\x01\n" +
+	"\x15DeleteWebhookEndpoint\x120.toshi.workspace.v1.DeleteWebhookEndpointRequest\x1a1.toshi.workspace.v1.DeleteWebhookEndpointResponse\"E\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18/\n" +
+	"\x18webhook.endpoint_deleted\x12\x13webhook_endpoint:id\x12\xd3\x01\n" +
+	"\x1bRotateWebhookEndpointSecret\x126.toshi.workspace.v1.RotateWebhookEndpointSecretRequest\x1a7.toshi.workspace.v1.RotateWebhookEndpointSecretResponse\"C\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18-\n" +
+	"\x16webhook.secret_rotated\x12\x13webhook_endpoint:id\x12\x8f\x01\n" +
+	"\x15ListWebhookDeliveries\x120.toshi.workspace.v1.ListWebhookDeliveriesRequest\x1a1.toshi.workspace.v1.ListWebhookDeliveriesResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\xc5\x01\n" +
+	"\x13ReplayWebhookEvents\x12..toshi.workspace.v1.ReplayWebhookEventsRequest\x1a/.toshi.workspace.v1.ReplayWebhookEventsResponse\"M\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x187\n" +
+	"\x17webhook.events_replayed\x12\x1cwebhook_endpoint:endpoint_idB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_webhook_proto_rawDescOnce sync.Once

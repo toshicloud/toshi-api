@@ -28,6 +28,10 @@ service ChannelService {
   // plan's preview ports with RESOURCE_EXHAUSTED.
   rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {
     option (toshi.permission) = "channels.write";
+    option (toshi.audit) = {
+      action: "host_job.channel_exposed"
+      target: "host_job:job_id"
+    };
   }
 
   // ListChannels lists a job's channels, or every channel of the
@@ -59,6 +63,10 @@ service ChannelService {
   // with FAILED_PRECONDITION.
   rpc SetChannelPolicy(SetChannelPolicyRequest) returns (SetChannelPolicyResponse) {
     option (toshi.permission) = "channels.write";
+    option (toshi.audit) = {
+      action: "host_job.channel_policy_set"
+      target: "host_job:job_id"
+    };
   }
 
   // ListChannelRequests lists an http channel's request records the
@@ -85,6 +93,10 @@ service ChannelService {
   // following export starts. Each export is recorded in the audit log.
   rpc ExportChannelLog(ExportChannelLogRequest) returns (stream ExportChannelLogResponse) {
     option (toshi.permission) = "channels.read";
+    option (toshi.audit) = {
+      action: "host_job.channel_log_exported"
+      target: "host_job:job_id"
+    };
   }
 
   // CreateChannelConnectToken mints a token that attaches one client to a
@@ -92,6 +104,10 @@ service ChannelService {
   // channel the connect path would not serve fails as that path does.
   rpc CreateChannelConnectToken(CreateChannelConnectTokenRequest) returns (CreateChannelConnectTokenResponse) {
     option (toshi.permission) = "channels.write";
+    option (toshi.audit) = {
+      action: "host_job.channel_connect_token_issued"
+      target: "host_job:job_id"
+    };
   }
 
   // RevokeChannelConnectToken refuses a connect token from then on, on
@@ -100,6 +116,10 @@ service ChannelService {
   // that has expired is refused already, and its revoke writes nothing.
   rpc RevokeChannelConnectToken(RevokeChannelConnectTokenRequest) returns (RevokeChannelConnectTokenResponse) {
     option (toshi.permission) = "channels.write";
+    option (toshi.audit) = {
+      action: "host_job.channel_connect_token_revoked"
+      target: "host_job:job_id"
+    };
   }
 
   // DeleteChannel ends a channel and its connections. An open stream
@@ -107,6 +127,10 @@ service ChannelService {
   // job has ended; any other channel goes at once.
   rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {
     option (toshi.permission) = "channels.write";
+    option (toshi.audit) = {
+      action: "host_job.channel_deleted"
+      target: "host_job:job_id"
+    };
   }
 
   // ListForwards lists a running job's open Forwards, oldest first; a job

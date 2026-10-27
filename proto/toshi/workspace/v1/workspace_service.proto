@@ -51,23 +51,27 @@ service WorkspaceService {
   // stored.
   rpc SetWorkspaceOwnHostsOnly(SetWorkspaceOwnHostsOnlyRequest) returns (SetWorkspaceOwnHostsOnlyResponse) {
     option (toshi.permission) = "workspace.write";
+    option (toshi.audit) = {action: "workspace.own_hosts_only_set"};
   }
   // SetWorkspaceAllowOverflow sets whether shared overflow hosts may take
   // the workspace's jobs and returns the workspace as stored; its own
   // overflow hosts always may.
   rpc SetWorkspaceAllowOverflow(SetWorkspaceAllowOverflowRequest) returns (SetWorkspaceAllowOverflowResponse) {
     option (toshi.permission) = "workspace.write";
+    option (toshi.audit) = {action: "workspace.allow_overflow_set"};
   }
   // SetWorkspaceAllowCacheWarm sets whether the workspace's fillers run and
   // returns the workspace as stored. Off by default.
   rpc SetWorkspaceAllowCacheWarm(SetWorkspaceAllowCacheWarmRequest) returns (SetWorkspaceAllowCacheWarmResponse) {
     option (toshi.permission) = "workspace.write";
+    option (toshi.audit) = {action: "workspace.allow_cache_warm_set"};
   }
   // SetWorkspaceCancelRunOnVmDeath sets whether Toshi cancels the workflow
   // run of the workspace's job when the job's VM is gone and returns the
   // workspace as stored. On by default.
   rpc SetWorkspaceCancelRunOnVmDeath(SetWorkspaceCancelRunOnVmDeathRequest) returns (SetWorkspaceCancelRunOnVmDeathResponse) {
     option (toshi.permission) = "workspace.write";
+    option (toshi.audit) = {action: "workspace.cancel_run_on_vm_death_set"};
   }
   // SetWorkspaceSpendLimits sets the workspace's monthly spending cap and its
   // own jobs-per-hour limit, and returns the workspace as stored; an unset
@@ -76,6 +80,7 @@ service WorkspaceService {
   // off fails with FAILED_PRECONDITION.
   rpc SetWorkspaceSpendLimits(SetWorkspaceSpendLimitsRequest) returns (SetWorkspaceSpendLimitsResponse) {
     option (toshi.permission) = "billing.write";
+    option (toshi.audit) = {action: "workspace.spend_limits_set"};
   }
   // ListEgressIPs returns the public addresses the workspace's jobs may
   // reach the internet from: the egress addresses of the hosts its jobs can
@@ -124,6 +129,10 @@ service WorkspaceService {
   // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
   rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse) {
     option (toshi.permission) = "billing.write";
+    option (toshi.audit) = {
+      action: "billing.checkout_opened"
+      target: "workspace:workspace"
+    };
   }
   // CreateBillingPortalSession returns a Stripe Customer Portal URL where
   // the workspace manages its card and subscription. Self-serve billing not
@@ -131,6 +140,10 @@ service WorkspaceService {
   // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
   rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse) {
     option (toshi.permission) = "billing.write";
+    option (toshi.audit) = {
+      action: "billing.portal_opened"
+      target: "workspace:workspace"
+    };
   }
   // GetVersion returns the control plane's version, commit and commit
   // date, and the oldest agent release it admits.
