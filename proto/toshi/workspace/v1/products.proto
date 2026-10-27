@@ -197,8 +197,8 @@ message FeatureSetting {
   // feature. UpdateProduct refuses a setting of a feature that is not.
   bool narrowable = 2;
   // entitlement is the most the workspace may choose: the operator's
-  // override for the workspace, else its plan's value, else the feature's
-  // default.
+  // override for the workspace, else its plan's value, else the value of
+  // the plan key it falls back to, else the feature's default (source).
   FeatureValue entitlement = 3;
   // setting is the workspace's own choice; unset when it has none. A
   // setting its entitlement no longer contains, after the plan or an
@@ -212,4 +212,8 @@ message FeatureSetting {
   // setting.
   string changed_by = 6;
   google.protobuf.Timestamp changed_at = 7;
+  // source says where the entitlement comes from.
+  FeatureSource source = 8;
+  // plan_key names the plan key the feature falls back to, empty for none.
+  string plan_key = 9;
 }

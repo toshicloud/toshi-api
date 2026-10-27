@@ -150,6 +150,70 @@ func (ProductSwitch) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{1}
 }
 
+// FeatureSource is where a workspace's entitlement to a feature comes from,
+// the first that applies in this order: the operator's override, the
+// value its plan gives the feature, the plan key the feature falls back
+// to, and the feature's default.
+type FeatureSource int32
+
+const (
+	FeatureSource_FEATURE_SOURCE_UNSPECIFIED FeatureSource = 0
+	// The operator's override for the workspace.
+	FeatureSource_FEATURE_SOURCE_OVERRIDE FeatureSource = 1
+	// The value the workspace's plan gives the feature.
+	FeatureSource_FEATURE_SOURCE_PLAN FeatureSource = 2
+	// The value of the plan key the feature falls back to, which the
+	// workspace's plan sets.
+	FeatureSource_FEATURE_SOURCE_PLAN_KEY FeatureSource = 3
+	// The feature's default in its product's manifest.
+	FeatureSource_FEATURE_SOURCE_DEFAULT FeatureSource = 4
+)
+
+// Enum value maps for FeatureSource.
+var (
+	FeatureSource_name = map[int32]string{
+		0: "FEATURE_SOURCE_UNSPECIFIED",
+		1: "FEATURE_SOURCE_OVERRIDE",
+		2: "FEATURE_SOURCE_PLAN",
+		3: "FEATURE_SOURCE_PLAN_KEY",
+		4: "FEATURE_SOURCE_DEFAULT",
+	}
+	FeatureSource_value = map[string]int32{
+		"FEATURE_SOURCE_UNSPECIFIED": 0,
+		"FEATURE_SOURCE_OVERRIDE":    1,
+		"FEATURE_SOURCE_PLAN":        2,
+		"FEATURE_SOURCE_PLAN_KEY":    3,
+		"FEATURE_SOURCE_DEFAULT":     4,
+	}
+)
+
+func (x FeatureSource) Enum() *FeatureSource {
+	p := new(FeatureSource)
+	*p = x
+	return p
+}
+
+func (x FeatureSource) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (FeatureSource) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_discovery_proto_enumTypes[2].Descriptor()
+}
+
+func (FeatureSource) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_discovery_proto_enumTypes[2]
+}
+
+func (x FeatureSource) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use FeatureSource.Descriptor instead.
+func (FeatureSource) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{2}
+}
+
 // ProductFeatureType is the type of a feature's value.
 type ProductFeatureType int32
 
@@ -193,11 +257,11 @@ func (x ProductFeatureType) String() string {
 }
 
 func (ProductFeatureType) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_discovery_proto_enumTypes[2].Descriptor()
+	return file_toshi_workspace_v1_discovery_proto_enumTypes[3].Descriptor()
 }
 
 func (ProductFeatureType) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_discovery_proto_enumTypes[2]
+	return &file_toshi_workspace_v1_discovery_proto_enumTypes[3]
 }
 
 func (x ProductFeatureType) Number() protoreflect.EnumNumber {
@@ -206,7 +270,7 @@ func (x ProductFeatureType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ProductFeatureType.Descriptor instead.
 func (ProductFeatureType) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{3}
 }
 
 type DiscoverRequest struct {
@@ -448,7 +512,8 @@ type ProductFeature struct {
 	Narrowable bool `protobuf:"varint,4,opt,name=narrowable,proto3" json:"narrowable,omitempty"`
 	// entitlement is the most the workspace may have of the feature: the
 	// operator's override for the workspace, else its plan's value, else the
-	// feature's default. Unset when the config turns the product off.
+	// value of the plan key it falls back to, else the feature's default
+	// (source). Unset when the config turns the product off.
 	Entitlement *FeatureValue `protobuf:"bytes,5,opt,name=entitlement,proto3" json:"entitlement,omitempty"`
 	// setting is the workspace's own value of the feature, unset when it has
 	// none or when its entitlements leave the product, or this bool feature,
@@ -458,7 +523,21 @@ type ProductFeature struct {
 	// effective is the value that applies: the setting when the feature is
 	// narrowable and the entitlement contains it, else the entitlement.
 	// Unset when the config turns the product off.
-	Effective     *FeatureValue `protobuf:"bytes,7,opt,name=effective,proto3" json:"effective,omitempty"`
+	Effective *FeatureValue `protobuf:"bytes,7,opt,name=effective,proto3" json:"effective,omitempty"`
+	// default_value is the feature's default in its product's manifest: the
+	// entitlement when no override, plan value or plan key gives one.
+	DefaultValue *FeatureValue `protobuf:"bytes,8,opt,name=default_value,json=defaultValue,proto3" json:"default_value,omitempty"`
+	// max bounds a count, or both ends of a range: no value of the feature
+	// is higher. 0 bounds nothing.
+	Max int64 `protobuf:"varint,9,opt,name=max,proto3" json:"max,omitempty"`
+	// plan_key names the plan key a count falls back to, such as
+	// "preview_max_connections": a plan that sets the key and gives the
+	// feature no value of its own entitles the workspace to the key's value.
+	// Empty for a feature that falls back to none.
+	PlanKey string `protobuf:"bytes,10,opt,name=plan_key,json=planKey,proto3" json:"plan_key,omitempty"`
+	// source says where the entitlement comes from. Unspecified when the
+	// config turns the product off.
+	Source        FeatureSource `protobuf:"varint,11,opt,name=source,proto3,enum=toshi.workspace.v1.FeatureSource" json:"source,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -540,6 +619,34 @@ func (x *ProductFeature) GetEffective() *FeatureValue {
 		return x.Effective
 	}
 	return nil
+}
+
+func (x *ProductFeature) GetDefaultValue() *FeatureValue {
+	if x != nil {
+		return x.DefaultValue
+	}
+	return nil
+}
+
+func (x *ProductFeature) GetMax() int64 {
+	if x != nil {
+		return x.Max
+	}
+	return 0
+}
+
+func (x *ProductFeature) GetPlanKey() string {
+	if x != nil {
+		return x.PlanKey
+	}
+	return ""
+}
+
+func (x *ProductFeature) GetSource() FeatureSource {
+	if x != nil {
+		return x.Source
+	}
+	return FeatureSource_FEATURE_SOURCE_UNSPECIFIED
 }
 
 // FeatureValue is a value of a feature, of the feature's type.
@@ -789,7 +896,7 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"\aenabled\x18\x04 \x01(\bR\aenabled\x12>\n" +
 	"\bfeatures\x18\x05 \x03(\v2\".toshi.workspace.v1.ProductFeatureR\bfeatures\x126\n" +
 	"\x05state\x18\x06 \x01(\x0e2 .toshi.workspace.v1.ProductStateR\x05state\x129\n" +
-	"\x06switch\x18\a \x01(\x0e2!.toshi.workspace.v1.ProductSwitchR\x06switch\"\xd6\x02\n" +
+	"\x06switch\x18\a \x01(\x0e2!.toshi.workspace.v1.ProductSwitchR\x06switch\"\x85\x04\n" +
 	"\x0eProductFeature\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12:\n" +
 	"\x04type\x18\x02 \x01(\x0e2&.toshi.workspace.v1.ProductFeatureTypeR\x04type\x12\x16\n" +
@@ -799,7 +906,12 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"narrowable\x12B\n" +
 	"\ventitlement\x18\x05 \x01(\v2 .toshi.workspace.v1.FeatureValueR\ventitlement\x12:\n" +
 	"\asetting\x18\x06 \x01(\v2 .toshi.workspace.v1.FeatureValueR\asetting\x12>\n" +
-	"\teffective\x18\a \x01(\v2 .toshi.workspace.v1.FeatureValueR\teffective\"\x95\x01\n" +
+	"\teffective\x18\a \x01(\v2 .toshi.workspace.v1.FeatureValueR\teffective\x12E\n" +
+	"\rdefault_value\x18\b \x01(\v2 .toshi.workspace.v1.FeatureValueR\fdefaultValue\x12\x10\n" +
+	"\x03max\x18\t \x01(\x03R\x03max\x12\x19\n" +
+	"\bplan_key\x18\n" +
+	" \x01(\tR\aplanKey\x129\n" +
+	"\x06source\x18\v \x01(\x0e2!.toshi.workspace.v1.FeatureSourceR\x06source\"\x95\x01\n" +
 	"\fFeatureValue\x12\x14\n" +
 	"\x04bool\x18\x01 \x01(\bH\x00R\x04bool\x12\x16\n" +
 	"\x05count\x18\x02 \x01(\x03H\x00R\x05count\x128\n" +
@@ -823,7 +935,13 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"\x11PRODUCT_SWITCH_ON\x10\x01\x12\x1b\n" +
 	"\x17PRODUCT_SWITCH_DISABLED\x10\x02\x12\x1f\n" +
 	"\x1bPRODUCT_SWITCH_NOT_ENTITLED\x10\x03\x12\x1d\n" +
-	"\x19PRODUCT_SWITCH_TURNED_OFF\x10\x04*\xd9\x01\n" +
+	"\x19PRODUCT_SWITCH_TURNED_OFF\x10\x04*\x9e\x01\n" +
+	"\rFeatureSource\x12\x1e\n" +
+	"\x1aFEATURE_SOURCE_UNSPECIFIED\x10\x00\x12\x1b\n" +
+	"\x17FEATURE_SOURCE_OVERRIDE\x10\x01\x12\x17\n" +
+	"\x13FEATURE_SOURCE_PLAN\x10\x02\x12\x1b\n" +
+	"\x17FEATURE_SOURCE_PLAN_KEY\x10\x03\x12\x1a\n" +
+	"\x16FEATURE_SOURCE_DEFAULT\x10\x04*\xd9\x01\n" +
 	"\x12ProductFeatureType\x12$\n" +
 	" PRODUCT_FEATURE_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19PRODUCT_FEATURE_TYPE_BOOL\x10\x01\x12\x1e\n" +
@@ -846,38 +964,41 @@ func file_toshi_workspace_v1_discovery_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_discovery_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_discovery_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_toshi_workspace_v1_discovery_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_toshi_workspace_v1_discovery_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_toshi_workspace_v1_discovery_proto_goTypes = []any{
 	(ProductState)(0),         // 0: toshi.workspace.v1.ProductState
 	(ProductSwitch)(0),        // 1: toshi.workspace.v1.ProductSwitch
-	(ProductFeatureType)(0),   // 2: toshi.workspace.v1.ProductFeatureType
-	(*DiscoverRequest)(nil),   // 3: toshi.workspace.v1.DiscoverRequest
-	(*DiscoverResponse)(nil),  // 4: toshi.workspace.v1.DiscoverResponse
-	(*DiscoveredProduct)(nil), // 5: toshi.workspace.v1.DiscoveredProduct
-	(*ProductFeature)(nil),    // 6: toshi.workspace.v1.ProductFeature
-	(*FeatureValue)(nil),      // 7: toshi.workspace.v1.FeatureValue
-	(*FeatureRange)(nil),      // 8: toshi.workspace.v1.FeatureRange
-	(*APIVersions)(nil),       // 9: toshi.workspace.v1.APIVersions
+	(FeatureSource)(0),        // 2: toshi.workspace.v1.FeatureSource
+	(ProductFeatureType)(0),   // 3: toshi.workspace.v1.ProductFeatureType
+	(*DiscoverRequest)(nil),   // 4: toshi.workspace.v1.DiscoverRequest
+	(*DiscoverResponse)(nil),  // 5: toshi.workspace.v1.DiscoverResponse
+	(*DiscoveredProduct)(nil), // 6: toshi.workspace.v1.DiscoveredProduct
+	(*ProductFeature)(nil),    // 7: toshi.workspace.v1.ProductFeature
+	(*FeatureValue)(nil),      // 8: toshi.workspace.v1.FeatureValue
+	(*FeatureRange)(nil),      // 9: toshi.workspace.v1.FeatureRange
+	(*APIVersions)(nil),       // 10: toshi.workspace.v1.APIVersions
 }
 var file_toshi_workspace_v1_discovery_proto_depIdxs = []int32{
-	5,  // 0: toshi.workspace.v1.DiscoverResponse.products:type_name -> toshi.workspace.v1.DiscoveredProduct
-	9,  // 1: toshi.workspace.v1.DiscoverResponse.versions:type_name -> toshi.workspace.v1.APIVersions
-	6,  // 2: toshi.workspace.v1.DiscoveredProduct.features:type_name -> toshi.workspace.v1.ProductFeature
+	6,  // 0: toshi.workspace.v1.DiscoverResponse.products:type_name -> toshi.workspace.v1.DiscoveredProduct
+	10, // 1: toshi.workspace.v1.DiscoverResponse.versions:type_name -> toshi.workspace.v1.APIVersions
+	7,  // 2: toshi.workspace.v1.DiscoveredProduct.features:type_name -> toshi.workspace.v1.ProductFeature
 	0,  // 3: toshi.workspace.v1.DiscoveredProduct.state:type_name -> toshi.workspace.v1.ProductState
 	1,  // 4: toshi.workspace.v1.DiscoveredProduct.switch:type_name -> toshi.workspace.v1.ProductSwitch
-	2,  // 5: toshi.workspace.v1.ProductFeature.type:type_name -> toshi.workspace.v1.ProductFeatureType
-	7,  // 6: toshi.workspace.v1.ProductFeature.entitlement:type_name -> toshi.workspace.v1.FeatureValue
-	7,  // 7: toshi.workspace.v1.ProductFeature.setting:type_name -> toshi.workspace.v1.FeatureValue
-	7,  // 8: toshi.workspace.v1.ProductFeature.effective:type_name -> toshi.workspace.v1.FeatureValue
-	8,  // 9: toshi.workspace.v1.FeatureValue.range:type_name -> toshi.workspace.v1.FeatureRange
-	3,  // 10: toshi.workspace.v1.DiscoveryService.Discover:input_type -> toshi.workspace.v1.DiscoverRequest
-	4,  // 11: toshi.workspace.v1.DiscoveryService.Discover:output_type -> toshi.workspace.v1.DiscoverResponse
-	11, // [11:12] is the sub-list for method output_type
-	10, // [10:11] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	3,  // 5: toshi.workspace.v1.ProductFeature.type:type_name -> toshi.workspace.v1.ProductFeatureType
+	8,  // 6: toshi.workspace.v1.ProductFeature.entitlement:type_name -> toshi.workspace.v1.FeatureValue
+	8,  // 7: toshi.workspace.v1.ProductFeature.setting:type_name -> toshi.workspace.v1.FeatureValue
+	8,  // 8: toshi.workspace.v1.ProductFeature.effective:type_name -> toshi.workspace.v1.FeatureValue
+	8,  // 9: toshi.workspace.v1.ProductFeature.default_value:type_name -> toshi.workspace.v1.FeatureValue
+	2,  // 10: toshi.workspace.v1.ProductFeature.source:type_name -> toshi.workspace.v1.FeatureSource
+	9,  // 11: toshi.workspace.v1.FeatureValue.range:type_name -> toshi.workspace.v1.FeatureRange
+	4,  // 12: toshi.workspace.v1.DiscoveryService.Discover:input_type -> toshi.workspace.v1.DiscoverRequest
+	5,  // 13: toshi.workspace.v1.DiscoveryService.Discover:output_type -> toshi.workspace.v1.DiscoverResponse
+	13, // [13:14] is the sub-list for method output_type
+	12, // [12:13] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_discovery_proto_init() }
@@ -896,7 +1017,7 @@ func file_toshi_workspace_v1_discovery_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_discovery_proto_rawDesc), len(file_toshi_workspace_v1_discovery_proto_rawDesc)),
-			NumEnums:      3,
+			NumEnums:      4,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,

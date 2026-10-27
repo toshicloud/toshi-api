@@ -114,7 +114,8 @@ message ProductFeature {
   bool narrowable = 4;
   // entitlement is the most the workspace may have of the feature: the
   // operator's override for the workspace, else its plan's value, else the
-  // feature's default. Unset when the config turns the product off.
+  // value of the plan key it falls back to, else the feature's default
+  // (source). Unset when the config turns the product off.
   FeatureValue entitlement = 5;
   // setting is the workspace's own value of the feature, unset when it has
   // none or when its entitlements leave the product, or this bool feature,
@@ -125,6 +126,37 @@ message ProductFeature {
   // narrowable and the entitlement contains it, else the entitlement.
   // Unset when the config turns the product off.
   FeatureValue effective = 7;
+  // default_value is the feature's default in its product's manifest: the
+  // entitlement when no override, plan value or plan key gives one.
+  FeatureValue default_value = 8;
+  // max bounds a count, or both ends of a range: no value of the feature
+  // is higher. 0 bounds nothing.
+  int64 max = 9;
+  // plan_key names the plan key a count falls back to, such as
+  // "preview_max_connections": a plan that sets the key and gives the
+  // feature no value of its own entitles the workspace to the key's value.
+  // Empty for a feature that falls back to none.
+  string plan_key = 10;
+  // source says where the entitlement comes from. Unspecified when the
+  // config turns the product off.
+  FeatureSource source = 11;
+}
+
+// FeatureSource is where a workspace's entitlement to a feature comes from,
+// the first that applies in this order: the operator's override, the
+// value its plan gives the feature, the plan key the feature falls back
+// to, and the feature's default.
+enum FeatureSource {
+  FEATURE_SOURCE_UNSPECIFIED = 0;
+  // The operator's override for the workspace.
+  FEATURE_SOURCE_OVERRIDE = 1;
+  // The value the workspace's plan gives the feature.
+  FEATURE_SOURCE_PLAN = 2;
+  // The value of the plan key the feature falls back to, which the
+  // workspace's plan sets.
+  FEATURE_SOURCE_PLAN_KEY = 3;
+  // The feature's default in its product's manifest.
+  FEATURE_SOURCE_DEFAULT = 4;
 }
 
 // FeatureValue is a value of a feature, of the feature's type.

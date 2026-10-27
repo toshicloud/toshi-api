@@ -11,7 +11,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/discovery.proto.
  */
 export const file_toshi_workspace_v1_discovery: GenFile = /*@__PURE__*/
-  fileDesc("CiJ0b3NoaS93b3Jrc3BhY2UvdjEvZGlzY292ZXJ5LnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEiNwoPRGlzY292ZXJSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkikwEKEERpc2NvdmVyUmVzcG9uc2USNwoIcHJvZHVjdHMYASADKAsyJS50b3NoaS53b3Jrc3BhY2UudjEuRGlzY292ZXJlZFByb2R1Y3QSEwoLcGVybWlzc2lvbnMYAiADKAkSMQoIdmVyc2lvbnMYAyABKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuQVBJVmVyc2lvbnMi6QEKEURpc2NvdmVyZWRQcm9kdWN0EgoKAmlkGAEgASgJEg8KB3ZlcnNpb24YAiABKAkSDAoEZG9jcxgDIAEoCRIPCgdlbmFibGVkGAQgASgIEjQKCGZlYXR1cmVzGAUgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RGZWF0dXJlEi8KBXN0YXRlGAYgASgOMiAudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTdGF0ZRIxCgZzd2l0Y2gYByABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN3aXRjaCKWAgoOUHJvZHVjdEZlYXR1cmUSCwoDa2V5GAEgASgJEjQKBHR5cGUYAiABKA4yJi50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdEZlYXR1cmVUeXBlEg4KBnZhbHVlcxgDIAMoCRISCgpuYXJyb3dhYmxlGAQgASgIEjUKC2VudGl0bGVtZW50GAUgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIxCgdzZXR0aW5nGAYgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIzCgllZmZlY3RpdmUYByABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlInsKDEZlYXR1cmVWYWx1ZRIOCgRib29sGAEgASgISAASDwoFY291bnQYAiABKANIABIxCgVyYW5nZRgDIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlUmFuZ2VIABIOCgR0ZXh0GAQgASgJSABCBwoFdmFsdWUiKAoMRmVhdHVyZVJhbmdlEgsKA21pbhgBIAEoAxILCgNtYXgYAiABKAMiMQoLQVBJVmVyc2lvbnMSCwoDYXBpGAEgASgJEhUKDWNvbnRyb2xfcGxhbmUYAiABKAkqngEKDFByb2R1Y3RTdGF0ZRIdChlQUk9EVUNUX1NUQVRFX1VOU1BFQ0lGSUVEEAASGQoVUFJPRFVDVF9TVEFURV9FTkFCTEVEEAESHQoZUFJPRFVDVF9TVEFURV9OT19ORVdfV09SSxACEhoKFlBST0RVQ1RfU1RBVEVfRFJBSU5JTkcQAxIZChVQUk9EVUNUX1NUQVRFX1NUT1BQRUQQBCqjAQoNUHJvZHVjdFN3aXRjaBIeChpQUk9EVUNUX1NXSVRDSF9VTlNQRUNJRklFRBAAEhUKEVBST0RVQ1RfU1dJVENIX09OEAESGwoXUFJPRFVDVF9TV0lUQ0hfRElTQUJMRUQQAhIfChtQUk9EVUNUX1NXSVRDSF9OT1RfRU5USVRMRUQQAxIdChlQUk9EVUNUX1NXSVRDSF9UVVJORURfT0ZGEAQq2QEKElByb2R1Y3RGZWF0dXJlVHlwZRIkCiBQUk9EVUNUX0ZFQVRVUkVfVFlQRV9VTlNQRUNJRklFRBAAEh0KGVBST0RVQ1RfRkVBVFVSRV9UWVBFX0JPT0wQARIeChpQUk9EVUNUX0ZFQVRVUkVfVFlQRV9DT1VOVBACEh4KGlBST0RVQ1RfRkVBVFVSRV9UWVBFX1JBTkdFEAMSHQoZUFJPRFVDVF9GRUFUVVJFX1RZUEVfRU5VTRAEEh8KG1BST0RVQ1RfRkVBVFVSRV9UWVBFX1NUUklORxAFMowBChBEaXNjb3ZlcnlTZXJ2aWNlEngKCERpc2NvdmVyEiMudG9zaGkud29ya3NwYWNlLnYxLkRpc2NvdmVyUmVxdWVzdBokLnRvc2hpLndvcmtzcGFjZS52MS5EaXNjb3ZlclJlc3BvbnNlIiHC8xgOd29ya3NwYWNlLnJlYWTK8xgLZW52aXJvbm1lbnRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_toshi_permission]);
+  fileDesc("CiJ0b3NoaS93b3Jrc3BhY2UvdjEvZGlzY292ZXJ5LnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEiNwoPRGlzY292ZXJSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkikwEKEERpc2NvdmVyUmVzcG9uc2USNwoIcHJvZHVjdHMYASADKAsyJS50b3NoaS53b3Jrc3BhY2UudjEuRGlzY292ZXJlZFByb2R1Y3QSEwoLcGVybWlzc2lvbnMYAiADKAkSMQoIdmVyc2lvbnMYAyABKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuQVBJVmVyc2lvbnMi6QEKEURpc2NvdmVyZWRQcm9kdWN0EgoKAmlkGAEgASgJEg8KB3ZlcnNpb24YAiABKAkSDAoEZG9jcxgDIAEoCRIPCgdlbmFibGVkGAQgASgIEjQKCGZlYXR1cmVzGAUgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RGZWF0dXJlEi8KBXN0YXRlGAYgASgOMiAudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTdGF0ZRIxCgZzd2l0Y2gYByABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN3aXRjaCKhAwoOUHJvZHVjdEZlYXR1cmUSCwoDa2V5GAEgASgJEjQKBHR5cGUYAiABKA4yJi50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdEZlYXR1cmVUeXBlEg4KBnZhbHVlcxgDIAMoCRISCgpuYXJyb3dhYmxlGAQgASgIEjUKC2VudGl0bGVtZW50GAUgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIxCgdzZXR0aW5nGAYgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIzCgllZmZlY3RpdmUYByABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjcKDWRlZmF1bHRfdmFsdWUYCCABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEgsKA21heBgJIAEoAxIQCghwbGFuX2tleRgKIAEoCRIxCgZzb3VyY2UYCyABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNvdXJjZSJ7CgxGZWF0dXJlVmFsdWUSDgoEYm9vbBgBIAEoCEgAEg8KBWNvdW50GAIgASgDSAASMQoFcmFuZ2UYAyABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVJhbmdlSAASDgoEdGV4dBgEIAEoCUgAQgcKBXZhbHVlIigKDEZlYXR1cmVSYW5nZRILCgNtaW4YASABKAMSCwoDbWF4GAIgASgDIjEKC0FQSVZlcnNpb25zEgsKA2FwaRgBIAEoCRIVCg1jb250cm9sX3BsYW5lGAIgASgJKp4BCgxQcm9kdWN0U3RhdGUSHQoZUFJPRFVDVF9TVEFURV9VTlNQRUNJRklFRBAAEhkKFVBST0RVQ1RfU1RBVEVfRU5BQkxFRBABEh0KGVBST0RVQ1RfU1RBVEVfTk9fTkVXX1dPUksQAhIaChZQUk9EVUNUX1NUQVRFX0RSQUlOSU5HEAMSGQoVUFJPRFVDVF9TVEFURV9TVE9QUEVEEAQqowEKDVByb2R1Y3RTd2l0Y2gSHgoaUFJPRFVDVF9TV0lUQ0hfVU5TUEVDSUZJRUQQABIVChFQUk9EVUNUX1NXSVRDSF9PThABEhsKF1BST0RVQ1RfU1dJVENIX0RJU0FCTEVEEAISHwobUFJPRFVDVF9TV0lUQ0hfTk9UX0VOVElUTEVEEAMSHQoZUFJPRFVDVF9TV0lUQ0hfVFVSTkVEX09GRhAEKp4BCg1GZWF0dXJlU291cmNlEh4KGkZFQVRVUkVfU09VUkNFX1VOU1BFQ0lGSUVEEAASGwoXRkVBVFVSRV9TT1VSQ0VfT1ZFUlJJREUQARIXChNGRUFUVVJFX1NPVVJDRV9QTEFOEAISGwoXRkVBVFVSRV9TT1VSQ0VfUExBTl9LRVkQAxIaChZGRUFUVVJFX1NPVVJDRV9ERUZBVUxUEAQq2QEKElByb2R1Y3RGZWF0dXJlVHlwZRIkCiBQUk9EVUNUX0ZFQVRVUkVfVFlQRV9VTlNQRUNJRklFRBAAEh0KGVBST0RVQ1RfRkVBVFVSRV9UWVBFX0JPT0wQARIeChpQUk9EVUNUX0ZFQVRVUkVfVFlQRV9DT1VOVBACEh4KGlBST0RVQ1RfRkVBVFVSRV9UWVBFX1JBTkdFEAMSHQoZUFJPRFVDVF9GRUFUVVJFX1RZUEVfRU5VTRAEEh8KG1BST0RVQ1RfRkVBVFVSRV9UWVBFX1NUUklORxAFMowBChBEaXNjb3ZlcnlTZXJ2aWNlEngKCERpc2NvdmVyEiMudG9zaGkud29ya3NwYWNlLnYxLkRpc2NvdmVyUmVxdWVzdBokLnRvc2hpLndvcmtzcGFjZS52MS5EaXNjb3ZlclJlc3BvbnNlIiHC8xgOd29ya3NwYWNlLnJlYWTK8xgLZW52aXJvbm1lbnRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_toshi_permission]);
 
 /**
  * @generated from message toshi.workspace.v1.DiscoverRequest
@@ -286,7 +286,8 @@ export type ProductFeature = Message<"toshi.workspace.v1.ProductFeature"> & {
   /**
    * entitlement is the most the workspace may have of the feature: the
    * operator's override for the workspace, else its plan's value, else the
-   * feature's default. Unset when the config turns the product off.
+   * value of the plan key it falls back to, else the feature's default
+   * (source). Unset when the config turns the product off.
    *
    * @generated from field: toshi.workspace.v1.FeatureValue entitlement = 5;
    */
@@ -310,6 +311,40 @@ export type ProductFeature = Message<"toshi.workspace.v1.ProductFeature"> & {
    * @generated from field: toshi.workspace.v1.FeatureValue effective = 7;
    */
   effective?: FeatureValue | undefined;
+
+  /**
+   * default_value is the feature's default in its product's manifest: the
+   * entitlement when no override, plan value or plan key gives one.
+   *
+   * @generated from field: toshi.workspace.v1.FeatureValue default_value = 8;
+   */
+  defaultValue?: FeatureValue | undefined;
+
+  /**
+   * max bounds a count, or both ends of a range: no value of the feature
+   * is higher. 0 bounds nothing.
+   *
+   * @generated from field: int64 max = 9;
+   */
+  max: bigint;
+
+  /**
+   * plan_key names the plan key a count falls back to, such as
+   * "preview_max_connections": a plan that sets the key and gives the
+   * feature no value of its own entitles the workspace to the key's value.
+   * Empty for a feature that falls back to none.
+   *
+   * @generated from field: string plan_key = 10;
+   */
+  planKey: string;
+
+  /**
+   * source says where the entitlement comes from. Unspecified when the
+   * config turns the product off.
+   *
+   * @generated from field: toshi.workspace.v1.FeatureSource source = 11;
+   */
+  source: FeatureSource;
 };
 
 /**
@@ -348,7 +383,8 @@ export type ProductFeatureJson = {
   /**
    * entitlement is the most the workspace may have of the feature: the
    * operator's override for the workspace, else its plan's value, else the
-   * feature's default. Unset when the config turns the product off.
+   * value of the plan key it falls back to, else the feature's default
+   * (source). Unset when the config turns the product off.
    *
    * @generated from field: toshi.workspace.v1.FeatureValue entitlement = 5;
    */
@@ -372,6 +408,40 @@ export type ProductFeatureJson = {
    * @generated from field: toshi.workspace.v1.FeatureValue effective = 7;
    */
   effective?: FeatureValueJson;
+
+  /**
+   * default_value is the feature's default in its product's manifest: the
+   * entitlement when no override, plan value or plan key gives one.
+   *
+   * @generated from field: toshi.workspace.v1.FeatureValue default_value = 8;
+   */
+  defaultValue?: FeatureValueJson;
+
+  /**
+   * max bounds a count, or both ends of a range: no value of the feature
+   * is higher. 0 bounds nothing.
+   *
+   * @generated from field: int64 max = 9;
+   */
+  max?: string;
+
+  /**
+   * plan_key names the plan key a count falls back to, such as
+   * "preview_max_connections": a plan that sets the key and gives the
+   * feature no value of its own entitles the workspace to the key's value.
+   * Empty for a feature that falls back to none.
+   *
+   * @generated from field: string plan_key = 10;
+   */
+  planKey?: string;
+
+  /**
+   * source says where the entitlement comes from. Unspecified when the
+   * config turns the product off.
+   *
+   * @generated from field: toshi.workspace.v1.FeatureSource source = 11;
+   */
+  source?: FeatureSourceJson;
 };
 
 /**
@@ -680,6 +750,66 @@ export const ProductSwitchSchema: GenEnum<ProductSwitch, ProductSwitchJson> = /*
   enumDesc(file_toshi_workspace_v1_discovery, 1);
 
 /**
+ * FeatureSource is where a workspace's entitlement to a feature comes from,
+ * the first that applies in this order: the operator's override, the
+ * value its plan gives the feature, the plan key the feature falls back
+ * to, and the feature's default.
+ *
+ * @generated from enum toshi.workspace.v1.FeatureSource
+ */
+export enum FeatureSource {
+  /**
+   * @generated from enum value: FEATURE_SOURCE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The operator's override for the workspace.
+   *
+   * @generated from enum value: FEATURE_SOURCE_OVERRIDE = 1;
+   */
+  OVERRIDE = 1,
+
+  /**
+   * The value the workspace's plan gives the feature.
+   *
+   * @generated from enum value: FEATURE_SOURCE_PLAN = 2;
+   */
+  PLAN = 2,
+
+  /**
+   * The value of the plan key the feature falls back to, which the
+   * workspace's plan sets.
+   *
+   * @generated from enum value: FEATURE_SOURCE_PLAN_KEY = 3;
+   */
+  PLAN_KEY = 3,
+
+  /**
+   * The feature's default in its product's manifest.
+   *
+   * @generated from enum value: FEATURE_SOURCE_DEFAULT = 4;
+   */
+  DEFAULT = 4,
+}
+
+/**
+ * FeatureSource is where a workspace's entitlement to a feature comes from,
+ * the first that applies in this order: the operator's override, the
+ * value its plan gives the feature, the plan key the feature falls back
+ * to, and the feature's default.
+ *
+ * @generated from enum toshi.workspace.v1.FeatureSource
+ */
+export type FeatureSourceJson = "FEATURE_SOURCE_UNSPECIFIED" | "FEATURE_SOURCE_OVERRIDE" | "FEATURE_SOURCE_PLAN" | "FEATURE_SOURCE_PLAN_KEY" | "FEATURE_SOURCE_DEFAULT";
+
+/**
+ * Describes the enum toshi.workspace.v1.FeatureSource.
+ */
+export const FeatureSourceSchema: GenEnum<FeatureSource, FeatureSourceJson> = /*@__PURE__*/
+  enumDesc(file_toshi_workspace_v1_discovery, 2);
+
+/**
  * ProductFeatureType is the type of a feature's value.
  *
  * @generated from enum toshi.workspace.v1.ProductFeatureType
@@ -727,7 +857,7 @@ export type ProductFeatureTypeJson = "PRODUCT_FEATURE_TYPE_UNSPECIFIED" | "PRODU
  * Describes the enum toshi.workspace.v1.ProductFeatureType.
  */
 export const ProductFeatureTypeSchema: GenEnum<ProductFeatureType, ProductFeatureTypeJson> = /*@__PURE__*/
-  enumDesc(file_toshi_workspace_v1_discovery, 2);
+  enumDesc(file_toshi_workspace_v1_discovery, 3);
 
 /**
  * DiscoveryService tells a client what this deployment serves and what the

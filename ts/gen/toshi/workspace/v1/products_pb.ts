@@ -7,7 +7,7 @@ import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf
 import type { Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import { file_toshi_permission } from "../../permission_pb";
-import type { FeatureValue, FeatureValueJson, ProductState, ProductStateJson, ProductSwitch, ProductSwitchJson } from "./discovery_pb";
+import type { FeatureSource, FeatureSourceJson, FeatureValue, FeatureValueJson, ProductState, ProductStateJson, ProductSwitch, ProductSwitchJson } from "./discovery_pb";
 import { file_toshi_workspace_v1_discovery } from "./discovery_pb";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -15,7 +15,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/products.proto.
  */
 export const file_toshi_workspace_v1_products: GenFile = /*@__PURE__*/
-  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyKJAgoUVXBkYXRlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkSFAoHZW5hYmxlZBgCIAEoCEgAiAEBEkgKCHNldHRpbmdzGAMgAygLMjYudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0LlNldHRpbmdzRW50cnkSDQoFY2xlYXIYBCADKAkSFwoPYWNjZXB0ZWRfYWNjZXNzGAUgAygJGlEKDVNldHRpbmdzRW50cnkSCwoDa2V5GAEgASgJEi8KBXZhbHVlGAIgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZToCOAFCCgoIX2VuYWJsZWQiaQoVVXBkYXRlUHJvZHVjdFJlc3BvbnNlEjQKB3Byb2R1Y3QYASABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFNldHRpbmdzEhoKEmluc3RhbGxhdGlvbl90b2tlbhgCIAEoCSIiChRSZW1vdmVQcm9kdWN0UmVxdWVzdBIKCgJpZBgBIAEoCSJNChVSZW1vdmVQcm9kdWN0UmVzcG9uc2USNAoHcHJvZHVjdBgBIAEoCzIjLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U2V0dGluZ3MiuwIKD1Byb2R1Y3RTZXR0aW5ncxIKCgJpZBgBIAEoCRIxCgZzd2l0Y2gYAiABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN3aXRjaBI0CghmZWF0dXJlcxgDIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU2V0dGluZxIvCgVzdGF0ZRgEIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhdGUSPQoMaW5zdGFsbGF0aW9uGAUgASgLMicudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RJbnN0YWxsYXRpb24SNQoIc3VyZmFjZXMYBiABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN1cmZhY2VzEgwKBG5hbWUYByABKAkiSwoPUHJvZHVjdFN1cmZhY2VzEgsKA2FwaRgBIAEoCRILCgNjbGkYAiABKAkSEQoJZGFzaGJvYXJkGAMgASgJEgsKA3NkaxgEIAEoCSKaAgoTUHJvZHVjdEluc3RhbGxhdGlvbhI0CgVzdGF0ZRgBIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5JbnN0YWxsYXRpb25TdGF0ZRIPCgd2ZXJzaW9uGAIgASgJEhEKCXB1Ymxpc2hlchgDIAEoCRIOCgZhY2Nlc3MYBCADKAkSDwoHcm9sZV9pZBgFIAEoCRIQCgh0b2tlbl9pZBgGIAEoCRIUCgxpbnN0YWxsZWRfYnkYByABKAkSMAoMaW5zdGFsbGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKUAgoORmVhdHVyZVNldHRpbmcSCwoDa2V5GAEgASgJEhIKCm5hcnJvd2FibGUYAiABKAgSNQoLZW50aXRsZW1lbnQYAyABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjEKB3NldHRpbmcYBCABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjMKCWVmZmVjdGl2ZRgFIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSEgoKY2hhbmdlZF9ieRgGIAEoCRIuCgpjaGFuZ2VkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCqYAQoRSW5zdGFsbGF0aW9uU3RhdGUSIgoeSU5TVEFMTEFUSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASHQoZSU5TVEFMTEFUSU9OX1NUQVRFX0FDVElWRRABEiAKHElOU1RBTExBVElPTl9TVEFURV9TVVNQRU5ERUQQAhIeChpJTlNUQUxMQVRJT05fU1RBVEVfUkVNT1ZFRBADMpADCg5Qcm9kdWN0U2VydmljZRJ0CgxMaXN0UHJvZHVjdHMSJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UHJvZHVjdHNSZXNwb25zZSIRwvMYDXNldHRpbmdzLnJlYWQSeAoNVXBkYXRlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVzcG9uc2UiEsLzGA5zZXR0aW5ncy53cml0ZRKNAQoNUmVtb3ZlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVzcG9uc2UiJ8LzGA5zZXR0aW5ncy53cml0ZdLzGBEKD3Byb2R1Y3QucmVtb3ZlZEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
+  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyKJAgoUVXBkYXRlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkSFAoHZW5hYmxlZBgCIAEoCEgAiAEBEkgKCHNldHRpbmdzGAMgAygLMjYudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0LlNldHRpbmdzRW50cnkSDQoFY2xlYXIYBCADKAkSFwoPYWNjZXB0ZWRfYWNjZXNzGAUgAygJGlEKDVNldHRpbmdzRW50cnkSCwoDa2V5GAEgASgJEi8KBXZhbHVlGAIgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZToCOAFCCgoIX2VuYWJsZWQiaQoVVXBkYXRlUHJvZHVjdFJlc3BvbnNlEjQKB3Byb2R1Y3QYASABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFNldHRpbmdzEhoKEmluc3RhbGxhdGlvbl90b2tlbhgCIAEoCSIiChRSZW1vdmVQcm9kdWN0UmVxdWVzdBIKCgJpZBgBIAEoCSJNChVSZW1vdmVQcm9kdWN0UmVzcG9uc2USNAoHcHJvZHVjdBgBIAEoCzIjLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U2V0dGluZ3MiuwIKD1Byb2R1Y3RTZXR0aW5ncxIKCgJpZBgBIAEoCRIxCgZzd2l0Y2gYAiABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN3aXRjaBI0CghmZWF0dXJlcxgDIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU2V0dGluZxIvCgVzdGF0ZRgEIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhdGUSPQoMaW5zdGFsbGF0aW9uGAUgASgLMicudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RJbnN0YWxsYXRpb24SNQoIc3VyZmFjZXMYBiABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN1cmZhY2VzEgwKBG5hbWUYByABKAkiSwoPUHJvZHVjdFN1cmZhY2VzEgsKA2FwaRgBIAEoCRILCgNjbGkYAiABKAkSEQoJZGFzaGJvYXJkGAMgASgJEgsKA3NkaxgEIAEoCSKaAgoTUHJvZHVjdEluc3RhbGxhdGlvbhI0CgVzdGF0ZRgBIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5JbnN0YWxsYXRpb25TdGF0ZRIPCgd2ZXJzaW9uGAIgASgJEhEKCXB1Ymxpc2hlchgDIAEoCRIOCgZhY2Nlc3MYBCADKAkSDwoHcm9sZV9pZBgFIAEoCRIQCgh0b2tlbl9pZBgGIAEoCRIUCgxpbnN0YWxsZWRfYnkYByABKAkSMAoMaW5zdGFsbGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLZAgoORmVhdHVyZVNldHRpbmcSCwoDa2V5GAEgASgJEhIKCm5hcnJvd2FibGUYAiABKAgSNQoLZW50aXRsZW1lbnQYAyABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjEKB3NldHRpbmcYBCABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjMKCWVmZmVjdGl2ZRgFIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSEgoKY2hhbmdlZF9ieRgGIAEoCRIuCgpjaGFuZ2VkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCgZzb3VyY2UYCCABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNvdXJjZRIQCghwbGFuX2tleRgJIAEoCSqYAQoRSW5zdGFsbGF0aW9uU3RhdGUSIgoeSU5TVEFMTEFUSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASHQoZSU5TVEFMTEFUSU9OX1NUQVRFX0FDVElWRRABEiAKHElOU1RBTExBVElPTl9TVEFURV9TVVNQRU5ERUQQAhIeChpJTlNUQUxMQVRJT05fU1RBVEVfUkVNT1ZFRBADMpADCg5Qcm9kdWN0U2VydmljZRJ0CgxMaXN0UHJvZHVjdHMSJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UHJvZHVjdHNSZXNwb25zZSIRwvMYDXNldHRpbmdzLnJlYWQSeAoNVXBkYXRlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVzcG9uc2UiEsLzGA5zZXR0aW5ncy53cml0ZRKNAQoNUmVtb3ZlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVzcG9uc2UiJ8LzGA5zZXR0aW5ncy53cml0ZdLzGBEKD3Byb2R1Y3QucmVtb3ZlZEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
 
 /**
  * @generated from message toshi.workspace.v1.ListProductsRequest
@@ -679,8 +679,8 @@ export type FeatureSetting = Message<"toshi.workspace.v1.FeatureSetting"> & {
 
   /**
    * entitlement is the most the workspace may choose: the operator's
-   * override for the workspace, else its plan's value, else the feature's
-   * default.
+   * override for the workspace, else its plan's value, else the value of
+   * the plan key it falls back to, else the feature's default (source).
    *
    * @generated from field: toshi.workspace.v1.FeatureValue entitlement = 3;
    */
@@ -716,6 +716,20 @@ export type FeatureSetting = Message<"toshi.workspace.v1.FeatureSetting"> & {
    * @generated from field: google.protobuf.Timestamp changed_at = 7;
    */
   changedAt?: Timestamp | undefined;
+
+  /**
+   * source says where the entitlement comes from.
+   *
+   * @generated from field: toshi.workspace.v1.FeatureSource source = 8;
+   */
+  source: FeatureSource;
+
+  /**
+   * plan_key names the plan key the feature falls back to, empty for none.
+   *
+   * @generated from field: string plan_key = 9;
+   */
+  planKey: string;
 };
 
 /**
@@ -741,8 +755,8 @@ export type FeatureSettingJson = {
 
   /**
    * entitlement is the most the workspace may choose: the operator's
-   * override for the workspace, else its plan's value, else the feature's
-   * default.
+   * override for the workspace, else its plan's value, else the value of
+   * the plan key it falls back to, else the feature's default (source).
    *
    * @generated from field: toshi.workspace.v1.FeatureValue entitlement = 3;
    */
@@ -778,6 +792,20 @@ export type FeatureSettingJson = {
    * @generated from field: google.protobuf.Timestamp changed_at = 7;
    */
   changedAt?: TimestampJson;
+
+  /**
+   * source says where the entitlement comes from.
+   *
+   * @generated from field: toshi.workspace.v1.FeatureSource source = 8;
+   */
+  source?: FeatureSourceJson;
+
+  /**
+   * plan_key names the plan key the feature falls back to, empty for none.
+   *
+   * @generated from field: string plan_key = 9;
+   */
+  planKey?: string;
 };
 
 /**

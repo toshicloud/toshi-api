@@ -718,8 +718,8 @@ type FeatureSetting struct {
 	// feature. UpdateProduct refuses a setting of a feature that is not.
 	Narrowable bool `protobuf:"varint,2,opt,name=narrowable,proto3" json:"narrowable,omitempty"`
 	// entitlement is the most the workspace may choose: the operator's
-	// override for the workspace, else its plan's value, else the feature's
-	// default.
+	// override for the workspace, else its plan's value, else the value of
+	// the plan key it falls back to, else the feature's default (source).
 	Entitlement *FeatureValue `protobuf:"bytes,3,opt,name=entitlement,proto3" json:"entitlement,omitempty"`
 	// setting is the workspace's own choice; unset when it has none. A
 	// setting its entitlement no longer contains, after the plan or an
@@ -731,8 +731,12 @@ type FeatureSetting struct {
 	// changed_by names who made the setting, as the audit log names an
 	// actor, and changed_at when; both unset when the workspace has no
 	// setting.
-	ChangedBy     string                 `protobuf:"bytes,6,opt,name=changed_by,json=changedBy,proto3" json:"changed_by,omitempty"`
-	ChangedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
+	ChangedBy string                 `protobuf:"bytes,6,opt,name=changed_by,json=changedBy,proto3" json:"changed_by,omitempty"`
+	ChangedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
+	// source says where the entitlement comes from.
+	Source FeatureSource `protobuf:"varint,8,opt,name=source,proto3,enum=toshi.workspace.v1.FeatureSource" json:"source,omitempty"`
+	// plan_key names the plan key the feature falls back to, empty for none.
+	PlanKey       string `protobuf:"bytes,9,opt,name=plan_key,json=planKey,proto3" json:"plan_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -816,6 +820,20 @@ func (x *FeatureSetting) GetChangedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *FeatureSetting) GetSource() FeatureSource {
+	if x != nil {
+		return x.Source
+	}
+	return FeatureSource_FEATURE_SOURCE_UNSPECIFIED
+}
+
+func (x *FeatureSetting) GetPlanKey() string {
+	if x != nil {
+		return x.PlanKey
+	}
+	return ""
+}
+
 var File_toshi_workspace_v1_products_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_products_proto_rawDesc = "" +
@@ -865,7 +883,7 @@ const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\finstalled_by\x18\a \x01(\tR\vinstalledBy\x12=\n" +
 	"\finstalled_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\vinstalledAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xdc\x02\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xb2\x03\n" +
 	"\x0eFeatureSetting\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x1e\n" +
 	"\n" +
@@ -877,7 +895,9 @@ const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\n" +
 	"changed_by\x18\x06 \x01(\tR\tchangedBy\x129\n" +
 	"\n" +
-	"changed_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt*\x98\x01\n" +
+	"changed_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\x129\n" +
+	"\x06source\x18\b \x01(\x0e2!.toshi.workspace.v1.FeatureSourceR\x06source\x12\x19\n" +
+	"\bplan_key\x18\t \x01(\tR\aplanKey*\x98\x01\n" +
 	"\x11InstallationState\x12\"\n" +
 	"\x1eINSTALLATION_STATE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19INSTALLATION_STATE_ACTIVE\x10\x01\x12 \n" +
@@ -920,6 +940,7 @@ var file_toshi_workspace_v1_products_proto_goTypes = []any{
 	(ProductState)(0),             // 13: toshi.workspace.v1.ProductState
 	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
 	(*FeatureValue)(nil),          // 15: toshi.workspace.v1.FeatureValue
+	(FeatureSource)(0),            // 16: toshi.workspace.v1.FeatureSource
 }
 var file_toshi_workspace_v1_products_proto_depIdxs = []int32{
 	7,  // 0: toshi.workspace.v1.ListProductsResponse.products:type_name -> toshi.workspace.v1.ProductSettings
@@ -938,18 +959,19 @@ var file_toshi_workspace_v1_products_proto_depIdxs = []int32{
 	15, // 13: toshi.workspace.v1.FeatureSetting.setting:type_name -> toshi.workspace.v1.FeatureValue
 	15, // 14: toshi.workspace.v1.FeatureSetting.effective:type_name -> toshi.workspace.v1.FeatureValue
 	14, // 15: toshi.workspace.v1.FeatureSetting.changed_at:type_name -> google.protobuf.Timestamp
-	15, // 16: toshi.workspace.v1.UpdateProductRequest.SettingsEntry.value:type_name -> toshi.workspace.v1.FeatureValue
-	1,  // 17: toshi.workspace.v1.ProductService.ListProducts:input_type -> toshi.workspace.v1.ListProductsRequest
-	3,  // 18: toshi.workspace.v1.ProductService.UpdateProduct:input_type -> toshi.workspace.v1.UpdateProductRequest
-	5,  // 19: toshi.workspace.v1.ProductService.RemoveProduct:input_type -> toshi.workspace.v1.RemoveProductRequest
-	2,  // 20: toshi.workspace.v1.ProductService.ListProducts:output_type -> toshi.workspace.v1.ListProductsResponse
-	4,  // 21: toshi.workspace.v1.ProductService.UpdateProduct:output_type -> toshi.workspace.v1.UpdateProductResponse
-	6,  // 22: toshi.workspace.v1.ProductService.RemoveProduct:output_type -> toshi.workspace.v1.RemoveProductResponse
-	20, // [20:23] is the sub-list for method output_type
-	17, // [17:20] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	16, // 16: toshi.workspace.v1.FeatureSetting.source:type_name -> toshi.workspace.v1.FeatureSource
+	15, // 17: toshi.workspace.v1.UpdateProductRequest.SettingsEntry.value:type_name -> toshi.workspace.v1.FeatureValue
+	1,  // 18: toshi.workspace.v1.ProductService.ListProducts:input_type -> toshi.workspace.v1.ListProductsRequest
+	3,  // 19: toshi.workspace.v1.ProductService.UpdateProduct:input_type -> toshi.workspace.v1.UpdateProductRequest
+	5,  // 20: toshi.workspace.v1.ProductService.RemoveProduct:input_type -> toshi.workspace.v1.RemoveProductRequest
+	2,  // 21: toshi.workspace.v1.ProductService.ListProducts:output_type -> toshi.workspace.v1.ListProductsResponse
+	4,  // 22: toshi.workspace.v1.ProductService.UpdateProduct:output_type -> toshi.workspace.v1.UpdateProductResponse
+	6,  // 23: toshi.workspace.v1.ProductService.RemoveProduct:output_type -> toshi.workspace.v1.RemoveProductResponse
+	21, // [21:24] is the sub-list for method output_type
+	18, // [18:21] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_products_proto_init() }
