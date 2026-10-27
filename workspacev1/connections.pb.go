@@ -923,7 +923,11 @@ type ConnectionDelivery struct {
 	// How many times it was replayed.
 	Replays int32 `protobuf:"varint,14,opt,name=replays,proto3" json:"replays,omitempty"`
 	// Who asked for the latest replay; empty before one.
-	ReplayedBy    string `protobuf:"bytes,15,opt,name=replayed_by,json=replayedBy,proto3" json:"replayed_by,omitempty"`
+	ReplayedBy string `protobuf:"bytes,15,opt,name=replayed_by,json=replayedBy,proto3" json:"replayed_by,omitempty"`
+	// The name of the event the delivery carries, such as
+	// github.pull_request.opened for a GitHub connection's; empty when the
+	// sender named none, as for a webhook connection's.
+	EventName     string `protobuf:"bytes,16,opt,name=event_name,json=eventName,proto3" json:"event_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1059,6 +1063,13 @@ func (x *ConnectionDelivery) GetReplays() int32 {
 func (x *ConnectionDelivery) GetReplayedBy() string {
 	if x != nil {
 		return x.ReplayedBy
+	}
+	return ""
+}
+
+func (x *ConnectionDelivery) GetEventName() string {
+	if x != nil {
+		return x.EventName
 	}
 	return ""
 }
@@ -1571,7 +1582,7 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\n" +
 	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +
 	"connection\x12)\n" +
-	"\x10previous_version\x18\x02 \x01(\x05R\x0fpreviousVersion\"\x80\x05\n" +
+	"\x10previous_version\x18\x02 \x01(\x05R\x0fpreviousVersion\"\x9f\x05\n" +
 	"\x12ConnectionDelivery\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
 	"\rconnection_id\x18\x02 \x01(\tR\fconnectionId\x12\x1d\n" +
@@ -1592,7 +1603,9 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x11transform_version\x18\r \x01(\x05R\x10transformVersion\x12\x18\n" +
 	"\areplays\x18\x0e \x01(\x05R\areplays\x12\x1f\n" +
 	"\vreplayed_by\x18\x0f \x01(\tR\n" +
-	"replayedBy\"\xec\x02\n" +
+	"replayedBy\x12\x1d\n" +
+	"\n" +
+	"event_name\x18\x10 \x01(\tR\teventName\"\xec\x02\n" +
 	"\x15ConnectionDeliveryRun\x12\x10\n" +
 	"\x03run\x18\x01 \x01(\x05R\x03run\x12+\n" +
 	"\x11transform_version\x18\x02 \x01(\x05R\x10transformVersion\x12'\n" +

@@ -273,6 +273,10 @@ message ConnectionDelivery {
   int32 replays = 14;
   // Who asked for the latest replay; empty before one.
   string replayed_by = 15;
+  // The name of the event the delivery carries, such as
+  // github.pull_request.opened for a GitHub connection's; empty when the
+  // sender named none, as for a webhook connection's.
+  string event_name = 16;
 }
 
 // ConnectionDeliveryRun is one time a worker ran a delivery to its end.
