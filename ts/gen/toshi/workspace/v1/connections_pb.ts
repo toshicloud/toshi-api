@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/connections.proto.
  */
 export const file_toshi_workspace_v1_connections: GenFile = /*@__PURE__*/
-  fileDesc("CiR0b3NoaS93b3Jrc3BhY2UvdjEvY29ubmVjdGlvbnMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSKHAgoKQ29ubmVjdGlvbhIKCgJpZBgBIAEoCRIwCgRraW5kGAIgASgOMiIudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25LaW5kEgwKBG5hbWUYAyABKAkSDwoHcHJvamVjdBgEIAEoCRITCgtlbnZpcm9ubWVudBgFIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYBiABKAMSLgoKY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPgoacHJldmlvdXNfc2VjcmV0X2V4cGlyZXNfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIj8KFkxpc3RDb25uZWN0aW9uc1JlcXVlc3QSEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkiZwoXTGlzdENvbm5lY3Rpb25zUmVzcG9uc2USMwoLY29ubmVjdGlvbnMYASADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiIgoUR2V0Q29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkiSwoVR2V0Q29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbiKUAQoXQ3JlYXRlQ29ubmVjdGlvblJlcXVlc3QSMAoEa2luZBgBIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uS2luZBIMCgRuYW1lGAIgASgJEg8KB3Byb2plY3QYAyABKAkSEwoLZW52aXJvbm1lbnQYBCABKAkSEwoLcmVxdWVzdF9rZXkYBSABKAkiXgoYQ3JlYXRlQ29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkiOgoXRGVsZXRlQ29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkSEwoLcmVxdWVzdF9rZXkYAiABKAkiGgoYRGVsZXRlQ29ubmVjdGlvblJlc3BvbnNlImwKHVJvdGF0ZUNvbm5lY3Rpb25TZWNyZXRSZXF1ZXN0EgoKAmlkGAEgASgJEioKB292ZXJsYXAYAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SEwoLcmVxdWVzdF9rZXkYAyABKAkiZAoeUm90YXRlQ29ubmVjdGlvblNlY3JldFJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkqagoOQ29ubmVjdGlvbktpbmQSHwobQ09OTkVDVElPTl9LSU5EX1VOU1BFQ0lGSUVEEAASGgoWQ09OTkVDVElPTl9LSU5EX0dJVEhVQhABEhsKF0NPTk5FQ1RJT05fS0lORF9XRUJIT09LEAIymgYKEUNvbm5lY3Rpb25TZXJ2aWNlEo0BCg9MaXN0Q29ubmVjdGlvbnMSKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdENvbm5lY3Rpb25zUmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Q29ubmVjdGlvbnNSZXNwb25zZSIhwvMYEGNvbm5lY3Rpb25zLnJlYWTK8xgJd29ya3NwYWNlEocBCg1HZXRDb25uZWN0aW9uEigudG9zaGkud29ya3NwYWNlLnYxLkdldENvbm5lY3Rpb25SZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkdldENvbm5lY3Rpb25SZXNwb25zZSIhwvMYEGNvbm5lY3Rpb25zLnJlYWTK8xgJd29ya3NwYWNlEpEBChBDcmVhdGVDb25uZWN0aW9uEisudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNvbm5lY3Rpb25SZXF1ZXN0GiwudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNvbm5lY3Rpb25SZXNwb25zZSIiwvMYEWNvbm5lY3Rpb25zLndyaXRlyvMYCXdvcmtzcGFjZRKRAQoQRGVsZXRlQ29ubmVjdGlvbhIrLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVDb25uZWN0aW9uUmVxdWVzdBosLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVDb25uZWN0aW9uUmVzcG9uc2UiIsLzGBFjb25uZWN0aW9ucy53cml0ZcrzGAl3b3Jrc3BhY2USwgEKFlJvdGF0ZUNvbm5lY3Rpb25TZWNyZXQSMS50b3NoaS53b3Jrc3BhY2UudjEuUm90YXRlQ29ubmVjdGlvblNlY3JldFJlcXVlc3QaMi50b3NoaS53b3Jrc3BhY2UudjEuUm90YXRlQ29ubmVjdGlvblNlY3JldFJlc3BvbnNlIkHC8xgRY29ubmVjdGlvbnMud3JpdGXK8xgJd29ya3NwYWNl0vMYGwoZY29ubmVjdGlvbi5zZWNyZXRfcm90YXRlZEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiR0b3NoaS93b3Jrc3BhY2UvdjEvY29ubmVjdGlvbnMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSKiAgoKQ29ubmVjdGlvbhIKCgJpZBgBIAEoCRIwCgRraW5kGAIgASgOMiIudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25LaW5kEgwKBG5hbWUYAyABKAkSDwoHcHJvamVjdBgEIAEoCRITCgtlbnZpcm9ubWVudBgFIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYBiABKAMSLgoKY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPgoacHJldmlvdXNfc2VjcmV0X2V4cGlyZXNfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhkKEXRyYW5zZm9ybV92ZXJzaW9uGAkgASgFIj8KFkxpc3RDb25uZWN0aW9uc1JlcXVlc3QSEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkiZwoXTGlzdENvbm5lY3Rpb25zUmVzcG9uc2USMwoLY29ubmVjdGlvbnMYASADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiIgoUR2V0Q29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkiSwoVR2V0Q29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbiKUAQoXQ3JlYXRlQ29ubmVjdGlvblJlcXVlc3QSMAoEa2luZBgBIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uS2luZBIMCgRuYW1lGAIgASgJEg8KB3Byb2plY3QYAyABKAkSEwoLZW52aXJvbm1lbnQYBCABKAkSEwoLcmVxdWVzdF9rZXkYBSABKAkiXgoYQ3JlYXRlQ29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkiOgoXRGVsZXRlQ29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkSEwoLcmVxdWVzdF9rZXkYAiABKAkiGgoYRGVsZXRlQ29ubmVjdGlvblJlc3BvbnNlImwKHVJvdGF0ZUNvbm5lY3Rpb25TZWNyZXRSZXF1ZXN0EgoKAmlkGAEgASgJEioKB292ZXJsYXAYAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SEwoLcmVxdWVzdF9rZXkYAyABKAkiZAoeUm90YXRlQ29ubmVjdGlvblNlY3JldFJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkiRwodU2V0Q29ubmVjdGlvblRyYW5zZm9ybVJlcXVlc3QSFQoNY29ubmVjdGlvbl9pZBgBIAEoCRIPCgd2ZXJzaW9uGAIgASgFIm4KHlNldENvbm5lY3Rpb25UcmFuc2Zvcm1SZXNwb25zZRIyCgpjb25uZWN0aW9uGAEgASgLMh4udG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb24SGAoQcHJldmlvdXNfdmVyc2lvbhgCIAEoBSpqCg5Db25uZWN0aW9uS2luZBIfChtDT05ORUNUSU9OX0tJTkRfVU5TUEVDSUZJRUQQABIaChZDT05ORUNUSU9OX0tJTkRfR0lUSFVCEAESGwoXQ09OTkVDVElPTl9LSU5EX1dFQkhPT0sQAjLeBwoRQ29ubmVjdGlvblNlcnZpY2USjQEKD0xpc3RDb25uZWN0aW9ucxIqLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Q29ubmVjdGlvbnNSZXF1ZXN0GisudG9zaGkud29ya3NwYWNlLnYxLkxpc3RDb25uZWN0aW9uc1Jlc3BvbnNlIiHC8xgQY29ubmVjdGlvbnMucmVhZMrzGAl3b3Jrc3BhY2UShwEKDUdldENvbm5lY3Rpb24SKC50b3NoaS53b3Jrc3BhY2UudjEuR2V0Q29ubmVjdGlvblJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuR2V0Q29ubmVjdGlvblJlc3BvbnNlIiHC8xgQY29ubmVjdGlvbnMucmVhZMrzGAl3b3Jrc3BhY2USkQEKEENyZWF0ZUNvbm5lY3Rpb24SKy50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQ29ubmVjdGlvblJlcXVlc3QaLC50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQ29ubmVjdGlvblJlc3BvbnNlIiLC8xgRY29ubmVjdGlvbnMud3JpdGXK8xgJd29ya3NwYWNlEpEBChBEZWxldGVDb25uZWN0aW9uEisudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUNvbm5lY3Rpb25SZXF1ZXN0GiwudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUNvbm5lY3Rpb25SZXNwb25zZSIiwvMYEWNvbm5lY3Rpb25zLndyaXRlyvMYCXdvcmtzcGFjZRLCAQoWUm90YXRlQ29ubmVjdGlvblNlY3JldBIxLnRvc2hpLndvcmtzcGFjZS52MS5Sb3RhdGVDb25uZWN0aW9uU2VjcmV0UmVxdWVzdBoyLnRvc2hpLndvcmtzcGFjZS52MS5Sb3RhdGVDb25uZWN0aW9uU2VjcmV0UmVzcG9uc2UiQcLzGBFjb25uZWN0aW9ucy53cml0ZcrzGAl3b3Jrc3BhY2XS8xgbChljb25uZWN0aW9uLnNlY3JldF9yb3RhdGVkEsEBChZTZXRDb25uZWN0aW9uVHJhbnNmb3JtEjEudG9zaGkud29ya3NwYWNlLnYxLlNldENvbm5lY3Rpb25UcmFuc2Zvcm1SZXF1ZXN0GjIudG9zaGkud29ya3NwYWNlLnYxLlNldENvbm5lY3Rpb25UcmFuc2Zvcm1SZXNwb25zZSJAwvMYEWNvbm5lY3Rpb25zLndyaXRlyvMYCXdvcmtzcGFjZdLzGBoKGGNvbm5lY3Rpb24udHJhbnNmb3JtX3NldEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Connection is one source of a workspace's events.
@@ -71,6 +71,14 @@ export type Connection = Message<"toshi.workspace.v1.Connection"> & {
    * @generated from field: google.protobuf.Timestamp previous_secret_expires_at = 8;
    */
   previousSecretExpiresAt?: Timestamp | undefined;
+
+  /**
+   * The version of the workspace's transform hook a WEBHOOK connection runs
+   * on each delivery; zero runs none.
+   *
+   * @generated from field: int32 transform_version = 9;
+   */
+  transformVersion: number;
 };
 
 /**
@@ -129,6 +137,14 @@ export type ConnectionJson = {
    * @generated from field: google.protobuf.Timestamp previous_secret_expires_at = 8;
    */
   previousSecretExpiresAt?: TimestampJson;
+
+  /**
+   * The version of the workspace's transform hook a WEBHOOK connection runs
+   * on each delivery; zero runs none.
+   *
+   * @generated from field: int32 transform_version = 9;
+   */
+  transformVersion?: number;
 };
 
 /**
@@ -549,6 +565,88 @@ export const RotateConnectionSecretResponseSchema: GenMessage<RotateConnectionSe
   messageDesc(file_toshi_workspace_v1_connections, 10);
 
 /**
+ * @generated from message toshi.workspace.v1.SetConnectionTransformRequest
+ */
+export type SetConnectionTransformRequest = Message<"toshi.workspace.v1.SetConnectionTransformRequest"> & {
+  /**
+   * @generated from field: string connection_id = 1;
+   */
+  connectionId: string;
+
+  /**
+   * The transform hook version the connection runs; zero runs none.
+   *
+   * @generated from field: int32 version = 2;
+   */
+  version: number;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.SetConnectionTransformRequest
+ */
+export type SetConnectionTransformRequestJson = {
+  /**
+   * @generated from field: string connection_id = 1;
+   */
+  connectionId?: string;
+
+  /**
+   * The transform hook version the connection runs; zero runs none.
+   *
+   * @generated from field: int32 version = 2;
+   */
+  version?: number;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.SetConnectionTransformRequest.
+ * Use `create(SetConnectionTransformRequestSchema)` to create a new message.
+ */
+export const SetConnectionTransformRequestSchema: GenMessage<SetConnectionTransformRequest, {jsonType: SetConnectionTransformRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 11);
+
+/**
+ * @generated from message toshi.workspace.v1.SetConnectionTransformResponse
+ */
+export type SetConnectionTransformResponse = Message<"toshi.workspace.v1.SetConnectionTransformResponse"> & {
+  /**
+   * @generated from field: toshi.workspace.v1.Connection connection = 1;
+   */
+  connection?: Connection | undefined;
+
+  /**
+   * The version the connection ran before; zero for none.
+   *
+   * @generated from field: int32 previous_version = 2;
+   */
+  previousVersion: number;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.SetConnectionTransformResponse
+ */
+export type SetConnectionTransformResponseJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.Connection connection = 1;
+   */
+  connection?: ConnectionJson;
+
+  /**
+   * The version the connection ran before; zero for none.
+   *
+   * @generated from field: int32 previous_version = 2;
+   */
+  previousVersion?: number;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.SetConnectionTransformResponse.
+ * Use `create(SetConnectionTransformResponseSchema)` to create a new message.
+ */
+export const SetConnectionTransformResponseSchema: GenMessage<SetConnectionTransformResponse, {jsonType: SetConnectionTransformResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 12);
+
+/**
  * ConnectionKind is the kind of source a connection receives events from.
  *
  * @generated from enum toshi.workspace.v1.ConnectionKind
@@ -672,6 +770,20 @@ export const ConnectionService: GenService<{
     methodKind: "unary";
     input: typeof RotateConnectionSecretRequestSchema;
     output: typeof RotateConnectionSecretResponseSchema;
+  },
+  /**
+   * SetConnectionTransform makes version the version of the workspace's
+   * transform hook a WEBHOOK connection runs on each delivery, and zero
+   * makes it run none. A version of that type the workspace does not have is
+   * NOT_FOUND, one below zero INVALID_ARGUMENT, and a GITHUB connection
+   * FAILED_PRECONDITION, as only a WEBHOOK connection runs one.
+   *
+   * @generated from rpc toshi.workspace.v1.ConnectionService.SetConnectionTransform
+   */
+  setConnectionTransform: {
+    methodKind: "unary";
+    input: typeof SetConnectionTransformRequestSchema;
+    output: typeof SetConnectionTransformResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_toshi_workspace_v1_connections, 0);

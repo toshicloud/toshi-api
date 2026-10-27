@@ -89,6 +89,11 @@ enum HookType {
   HOOK_TYPE_UNSPECIFIED = 0;
   // Whether a workload may be created.
   HOOK_TYPE_ADMISSION = 1;
+  // What a webhook connection's received request becomes: it reshapes the
+  // request into the event the connection delivers, or drops it. A
+  // connection names the version it runs (SetConnectionTransform); no
+  // project activates one.
+  HOOK_TYPE_TRANSFORM = 2;
 }
 
 // HookVersion is one version of a workspace's hook of a type.

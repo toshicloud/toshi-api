@@ -48,6 +48,9 @@ const (
 	// ConnectionServiceRotateConnectionSecretProcedure is the fully-qualified name of the
 	// ConnectionService's RotateConnectionSecret RPC.
 	ConnectionServiceRotateConnectionSecretProcedure = "/toshi.workspace.v1.ConnectionService/RotateConnectionSecret"
+	// ConnectionServiceSetConnectionTransformProcedure is the fully-qualified name of the
+	// ConnectionService's SetConnectionTransform RPC.
+	ConnectionServiceSetConnectionTransformProcedure = "/toshi.workspace.v1.ConnectionService/SetConnectionTransform"
 )
 
 // ConnectionServiceClient is a client for the toshi.workspace.v1.ConnectionService service.
@@ -79,6 +82,12 @@ type ConnectionServiceClient interface {
 	// with INVALID_ARGUMENT, a GITHUB connection with FAILED_PRECONDITION,
 	// and one the workspace does not have with NOT_FOUND.
 	RotateConnectionSecret(context.Context, *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error)
+	// SetConnectionTransform makes version the version of the workspace's
+	// transform hook a WEBHOOK connection runs on each delivery, and zero
+	// makes it run none. A version of that type the workspace does not have is
+	// NOT_FOUND, one below zero INVALID_ARGUMENT, and a GITHUB connection
+	// FAILED_PRECONDITION, as only a WEBHOOK connection runs one.
+	SetConnectionTransform(context.Context, *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error)
 }
 
 // NewConnectionServiceClient constructs a client for the toshi.workspace.v1.ConnectionService
@@ -122,6 +131,12 @@ func NewConnectionServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(connectionServiceMethods.ByName("RotateConnectionSecret")),
 			connect.WithClientOptions(opts...),
 		),
+		setConnectionTransform: connect.NewClient[workspacev1.SetConnectionTransformRequest, workspacev1.SetConnectionTransformResponse](
+			httpClient,
+			baseURL+ConnectionServiceSetConnectionTransformProcedure,
+			connect.WithSchema(connectionServiceMethods.ByName("SetConnectionTransform")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -132,6 +147,7 @@ type connectionServiceClient struct {
 	createConnection       *connect.Client[workspacev1.CreateConnectionRequest, workspacev1.CreateConnectionResponse]
 	deleteConnection       *connect.Client[workspacev1.DeleteConnectionRequest, workspacev1.DeleteConnectionResponse]
 	rotateConnectionSecret *connect.Client[workspacev1.RotateConnectionSecretRequest, workspacev1.RotateConnectionSecretResponse]
+	setConnectionTransform *connect.Client[workspacev1.SetConnectionTransformRequest, workspacev1.SetConnectionTransformResponse]
 }
 
 // ListConnections calls toshi.workspace.v1.ConnectionService.ListConnections.
@@ -157,6 +173,11 @@ func (c *connectionServiceClient) DeleteConnection(ctx context.Context, req *con
 // RotateConnectionSecret calls toshi.workspace.v1.ConnectionService.RotateConnectionSecret.
 func (c *connectionServiceClient) RotateConnectionSecret(ctx context.Context, req *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error) {
 	return c.rotateConnectionSecret.CallUnary(ctx, req)
+}
+
+// SetConnectionTransform calls toshi.workspace.v1.ConnectionService.SetConnectionTransform.
+func (c *connectionServiceClient) SetConnectionTransform(ctx context.Context, req *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error) {
+	return c.setConnectionTransform.CallUnary(ctx, req)
 }
 
 // ConnectionServiceHandler is an implementation of the toshi.workspace.v1.ConnectionService
@@ -189,6 +210,12 @@ type ConnectionServiceHandler interface {
 	// with INVALID_ARGUMENT, a GITHUB connection with FAILED_PRECONDITION,
 	// and one the workspace does not have with NOT_FOUND.
 	RotateConnectionSecret(context.Context, *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error)
+	// SetConnectionTransform makes version the version of the workspace's
+	// transform hook a WEBHOOK connection runs on each delivery, and zero
+	// makes it run none. A version of that type the workspace does not have is
+	// NOT_FOUND, one below zero INVALID_ARGUMENT, and a GITHUB connection
+	// FAILED_PRECONDITION, as only a WEBHOOK connection runs one.
+	SetConnectionTransform(context.Context, *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error)
 }
 
 // NewConnectionServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -228,6 +255,12 @@ func NewConnectionServiceHandler(svc ConnectionServiceHandler, opts ...connect.H
 		connect.WithSchema(connectionServiceMethods.ByName("RotateConnectionSecret")),
 		connect.WithHandlerOptions(opts...),
 	)
+	connectionServiceSetConnectionTransformHandler := connect.NewUnaryHandler(
+		ConnectionServiceSetConnectionTransformProcedure,
+		svc.SetConnectionTransform,
+		connect.WithSchema(connectionServiceMethods.ByName("SetConnectionTransform")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.ConnectionService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ConnectionServiceListConnectionsProcedure:
@@ -240,6 +273,8 @@ func NewConnectionServiceHandler(svc ConnectionServiceHandler, opts ...connect.H
 			connectionServiceDeleteConnectionHandler.ServeHTTP(w, r)
 		case ConnectionServiceRotateConnectionSecretProcedure:
 			connectionServiceRotateConnectionSecretHandler.ServeHTTP(w, r)
+		case ConnectionServiceSetConnectionTransformProcedure:
+			connectionServiceSetConnectionTransformHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -267,4 +302,8 @@ func (UnimplementedConnectionServiceHandler) DeleteConnection(context.Context, *
 
 func (UnimplementedConnectionServiceHandler) RotateConnectionSecret(context.Context, *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.RotateConnectionSecret is not implemented"))
+}
+
+func (UnimplementedConnectionServiceHandler) SetConnectionTransform(context.Context, *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.SetConnectionTransform is not implemented"))
 }

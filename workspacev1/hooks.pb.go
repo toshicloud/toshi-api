@@ -31,6 +31,11 @@ const (
 	HookType_HOOK_TYPE_UNSPECIFIED HookType = 0
 	// Whether a workload may be created.
 	HookType_HOOK_TYPE_ADMISSION HookType = 1
+	// What a webhook connection's received request becomes: it reshapes the
+	// request into the event the connection delivers, or drops it. A
+	// connection names the version it runs (SetConnectionTransform); no
+	// project activates one.
+	HookType_HOOK_TYPE_TRANSFORM HookType = 2
 )
 
 // Enum value maps for HookType.
@@ -38,10 +43,12 @@ var (
 	HookType_name = map[int32]string{
 		0: "HOOK_TYPE_UNSPECIFIED",
 		1: "HOOK_TYPE_ADMISSION",
+		2: "HOOK_TYPE_TRANSFORM",
 	}
 	HookType_value = map[string]int32{
 		"HOOK_TYPE_UNSPECIFIED": 0,
 		"HOOK_TYPE_ADMISSION":   1,
+		"HOOK_TYPE_TRANSFORM":   2,
 	}
 )
 
@@ -907,10 +914,11 @@ const file_toshi_workspace_v1_hooks_proto_rawDesc = "" +
 	"\x06result\"?\n" +
 	"\vHookRefusal\x12\x16\n" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage*>\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage*W\n" +
 	"\bHookType\x12\x19\n" +
 	"\x15HOOK_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
-	"\x13HOOK_TYPE_ADMISSION\x10\x012\xce\x06\n" +
+	"\x13HOOK_TYPE_ADMISSION\x10\x01\x12\x17\n" +
+	"\x13HOOK_TYPE_TRANSFORM\x10\x022\xce\x06\n" +
 	"\vHookService\x12\xc6\x01\n" +
 	"\x11UploadHookVersion\x12,.toshi.workspace.v1.UploadHookVersionRequest\x1a-.toshi.workspace.v1.UploadHookVersionResponse\"T\xc2\xf3\x18\vhooks.write\xca\xf3\x18\tworkspace\xd2\xf3\x184\n" +
 	"\x14hook.version_created\x12\x1chook:response.version.sha256\x12\xaa\x01\n" +

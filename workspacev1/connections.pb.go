@@ -94,8 +94,11 @@ type Connection struct {
 	// Until when a rotated WEBHOOK connection's previous secret still
 	// verifies; unset when there is none.
 	PreviousSecretExpiresAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=previous_secret_expires_at,json=previousSecretExpiresAt,proto3" json:"previous_secret_expires_at,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// The version of the workspace's transform hook a WEBHOOK connection runs
+	// on each delivery; zero runs none.
+	TransformVersion int32 `protobuf:"varint,9,opt,name=transform_version,json=transformVersion,proto3" json:"transform_version,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Connection) Reset() {
@@ -182,6 +185,13 @@ func (x *Connection) GetPreviousSecretExpiresAt() *timestamppb.Timestamp {
 		return x.PreviousSecretExpiresAt
 	}
 	return nil
+}
+
+func (x *Connection) GetTransformVersion() int32 {
+	if x != nil {
+		return x.TransformVersion
+	}
+	return 0
 }
 
 type ListConnectionsRequest struct {
@@ -715,11 +725,117 @@ func (x *RotateConnectionSecretResponse) GetSecret() string {
 	return ""
 }
 
+type SetConnectionTransformRequest struct {
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	ConnectionId string                 `protobuf:"bytes,1,opt,name=connection_id,json=connectionId,proto3" json:"connection_id,omitempty"`
+	// The transform hook version the connection runs; zero runs none.
+	Version       int32 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetConnectionTransformRequest) Reset() {
+	*x = SetConnectionTransformRequest{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetConnectionTransformRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetConnectionTransformRequest) ProtoMessage() {}
+
+func (x *SetConnectionTransformRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetConnectionTransformRequest.ProtoReflect.Descriptor instead.
+func (*SetConnectionTransformRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *SetConnectionTransformRequest) GetConnectionId() string {
+	if x != nil {
+		return x.ConnectionId
+	}
+	return ""
+}
+
+func (x *SetConnectionTransformRequest) GetVersion() int32 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+type SetConnectionTransformResponse struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Connection *Connection            `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
+	// The version the connection ran before; zero for none.
+	PreviousVersion int32 `protobuf:"varint,2,opt,name=previous_version,json=previousVersion,proto3" json:"previous_version,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *SetConnectionTransformResponse) Reset() {
+	*x = SetConnectionTransformResponse{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetConnectionTransformResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetConnectionTransformResponse) ProtoMessage() {}
+
+func (x *SetConnectionTransformResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetConnectionTransformResponse.ProtoReflect.Descriptor instead.
+func (*SetConnectionTransformResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *SetConnectionTransformResponse) GetConnection() *Connection {
+	if x != nil {
+		return x.Connection
+	}
+	return nil
+}
+
+func (x *SetConnectionTransformResponse) GetPreviousVersion() int32 {
+	if x != nil {
+		return x.PreviousVersion
+	}
+	return 0
+}
+
 var File_toshi_workspace_v1_connections_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\n" +
-	"$toshi/workspace/v1/connections.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xe1\x02\n" +
+	"$toshi/workspace/v1/connections.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x8e\x03\n" +
 	"\n" +
 	"Connection\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
@@ -730,7 +846,8 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x0finstallation_id\x18\x06 \x01(\x03R\x0einstallationId\x129\n" +
 	"\n" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12W\n" +
-	"\x1aprevious_secret_expires_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\x17previousSecretExpiresAt\"T\n" +
+	"\x1aprevious_secret_expires_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\x17previousSecretExpiresAt\x12+\n" +
+	"\x11transform_version\x18\t \x01(\x05R\x10transformVersion\"T\n" +
 	"\x16ListConnectionsRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
@@ -770,18 +887,28 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\n" +
 	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +
 	"connection\x12\x16\n" +
-	"\x06secret\x18\x02 \x01(\tR\x06secret*j\n" +
+	"\x06secret\x18\x02 \x01(\tR\x06secret\"^\n" +
+	"\x1dSetConnectionTransformRequest\x12#\n" +
+	"\rconnection_id\x18\x01 \x01(\tR\fconnectionId\x12\x18\n" +
+	"\aversion\x18\x02 \x01(\x05R\aversion\"\x8b\x01\n" +
+	"\x1eSetConnectionTransformResponse\x12>\n" +
+	"\n" +
+	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +
+	"connection\x12)\n" +
+	"\x10previous_version\x18\x02 \x01(\x05R\x0fpreviousVersion*j\n" +
 	"\x0eConnectionKind\x12\x1f\n" +
 	"\x1bCONNECTION_KIND_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16CONNECTION_KIND_GITHUB\x10\x01\x12\x1b\n" +
-	"\x17CONNECTION_KIND_WEBHOOK\x10\x022\x9a\x06\n" +
+	"\x17CONNECTION_KIND_WEBHOOK\x10\x022\xde\a\n" +
 	"\x11ConnectionService\x12\x8d\x01\n" +
 	"\x0fListConnections\x12*.toshi.workspace.v1.ListConnectionsRequest\x1a+.toshi.workspace.v1.ListConnectionsResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x87\x01\n" +
 	"\rGetConnection\x12(.toshi.workspace.v1.GetConnectionRequest\x1a).toshi.workspace.v1.GetConnectionResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x91\x01\n" +
 	"\x10CreateConnection\x12+.toshi.workspace.v1.CreateConnectionRequest\x1a,.toshi.workspace.v1.CreateConnectionResponse\"\"\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\x12\x91\x01\n" +
 	"\x10DeleteConnection\x12+.toshi.workspace.v1.DeleteConnectionRequest\x1a,.toshi.workspace.v1.DeleteConnectionResponse\"\"\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\x12\xc2\x01\n" +
 	"\x16RotateConnectionSecret\x121.toshi.workspace.v1.RotateConnectionSecretRequest\x1a2.toshi.workspace.v1.RotateConnectionSecretResponse\"A\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1b\n" +
-	"\x19connection.secret_rotatedB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x19connection.secret_rotated\x12\xc1\x01\n" +
+	"\x16SetConnectionTransform\x121.toshi.workspace.v1.SetConnectionTransformRequest\x1a2.toshi.workspace.v1.SetConnectionTransformResponse\"@\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1a\n" +
+	"\x18connection.transform_setB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_connections_proto_rawDescOnce sync.Once
@@ -796,7 +923,7 @@ func file_toshi_workspace_v1_connections_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_connections_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_connections_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_toshi_workspace_v1_connections_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_toshi_workspace_v1_connections_proto_goTypes = []any{
 	(ConnectionKind)(0),                    // 0: toshi.workspace.v1.ConnectionKind
 	(*Connection)(nil),                     // 1: toshi.workspace.v1.Connection
@@ -810,34 +937,39 @@ var file_toshi_workspace_v1_connections_proto_goTypes = []any{
 	(*DeleteConnectionResponse)(nil),       // 9: toshi.workspace.v1.DeleteConnectionResponse
 	(*RotateConnectionSecretRequest)(nil),  // 10: toshi.workspace.v1.RotateConnectionSecretRequest
 	(*RotateConnectionSecretResponse)(nil), // 11: toshi.workspace.v1.RotateConnectionSecretResponse
-	(*timestamppb.Timestamp)(nil),          // 12: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),            // 13: google.protobuf.Duration
+	(*SetConnectionTransformRequest)(nil),  // 12: toshi.workspace.v1.SetConnectionTransformRequest
+	(*SetConnectionTransformResponse)(nil), // 13: toshi.workspace.v1.SetConnectionTransformResponse
+	(*timestamppb.Timestamp)(nil),          // 14: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),            // 15: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_connections_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Connection.kind:type_name -> toshi.workspace.v1.ConnectionKind
-	12, // 1: toshi.workspace.v1.Connection.created_at:type_name -> google.protobuf.Timestamp
-	12, // 2: toshi.workspace.v1.Connection.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
+	14, // 1: toshi.workspace.v1.Connection.created_at:type_name -> google.protobuf.Timestamp
+	14, // 2: toshi.workspace.v1.Connection.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
 	1,  // 3: toshi.workspace.v1.ListConnectionsResponse.connections:type_name -> toshi.workspace.v1.Connection
 	1,  // 4: toshi.workspace.v1.GetConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
 	0,  // 5: toshi.workspace.v1.CreateConnectionRequest.kind:type_name -> toshi.workspace.v1.ConnectionKind
 	1,  // 6: toshi.workspace.v1.CreateConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
-	13, // 7: toshi.workspace.v1.RotateConnectionSecretRequest.overlap:type_name -> google.protobuf.Duration
+	15, // 7: toshi.workspace.v1.RotateConnectionSecretRequest.overlap:type_name -> google.protobuf.Duration
 	1,  // 8: toshi.workspace.v1.RotateConnectionSecretResponse.connection:type_name -> toshi.workspace.v1.Connection
-	2,  // 9: toshi.workspace.v1.ConnectionService.ListConnections:input_type -> toshi.workspace.v1.ListConnectionsRequest
-	4,  // 10: toshi.workspace.v1.ConnectionService.GetConnection:input_type -> toshi.workspace.v1.GetConnectionRequest
-	6,  // 11: toshi.workspace.v1.ConnectionService.CreateConnection:input_type -> toshi.workspace.v1.CreateConnectionRequest
-	8,  // 12: toshi.workspace.v1.ConnectionService.DeleteConnection:input_type -> toshi.workspace.v1.DeleteConnectionRequest
-	10, // 13: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:input_type -> toshi.workspace.v1.RotateConnectionSecretRequest
-	3,  // 14: toshi.workspace.v1.ConnectionService.ListConnections:output_type -> toshi.workspace.v1.ListConnectionsResponse
-	5,  // 15: toshi.workspace.v1.ConnectionService.GetConnection:output_type -> toshi.workspace.v1.GetConnectionResponse
-	7,  // 16: toshi.workspace.v1.ConnectionService.CreateConnection:output_type -> toshi.workspace.v1.CreateConnectionResponse
-	9,  // 17: toshi.workspace.v1.ConnectionService.DeleteConnection:output_type -> toshi.workspace.v1.DeleteConnectionResponse
-	11, // 18: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:output_type -> toshi.workspace.v1.RotateConnectionSecretResponse
-	14, // [14:19] is the sub-list for method output_type
-	9,  // [9:14] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	1,  // 9: toshi.workspace.v1.SetConnectionTransformResponse.connection:type_name -> toshi.workspace.v1.Connection
+	2,  // 10: toshi.workspace.v1.ConnectionService.ListConnections:input_type -> toshi.workspace.v1.ListConnectionsRequest
+	4,  // 11: toshi.workspace.v1.ConnectionService.GetConnection:input_type -> toshi.workspace.v1.GetConnectionRequest
+	6,  // 12: toshi.workspace.v1.ConnectionService.CreateConnection:input_type -> toshi.workspace.v1.CreateConnectionRequest
+	8,  // 13: toshi.workspace.v1.ConnectionService.DeleteConnection:input_type -> toshi.workspace.v1.DeleteConnectionRequest
+	10, // 14: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:input_type -> toshi.workspace.v1.RotateConnectionSecretRequest
+	12, // 15: toshi.workspace.v1.ConnectionService.SetConnectionTransform:input_type -> toshi.workspace.v1.SetConnectionTransformRequest
+	3,  // 16: toshi.workspace.v1.ConnectionService.ListConnections:output_type -> toshi.workspace.v1.ListConnectionsResponse
+	5,  // 17: toshi.workspace.v1.ConnectionService.GetConnection:output_type -> toshi.workspace.v1.GetConnectionResponse
+	7,  // 18: toshi.workspace.v1.ConnectionService.CreateConnection:output_type -> toshi.workspace.v1.CreateConnectionResponse
+	9,  // 19: toshi.workspace.v1.ConnectionService.DeleteConnection:output_type -> toshi.workspace.v1.DeleteConnectionResponse
+	11, // 20: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:output_type -> toshi.workspace.v1.RotateConnectionSecretResponse
+	13, // 21: toshi.workspace.v1.ConnectionService.SetConnectionTransform:output_type -> toshi.workspace.v1.SetConnectionTransformResponse
+	16, // [16:22] is the sub-list for method output_type
+	10, // [10:16] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_connections_proto_init() }
@@ -851,7 +983,7 @@ func file_toshi_workspace_v1_connections_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_connections_proto_rawDesc), len(file_toshi_workspace_v1_connections_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   11,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -72,6 +72,19 @@ service ConnectionService {
       action: "connection.secret_rotated"
     };
   }
+
+  // SetConnectionTransform makes version the version of the workspace's
+  // transform hook a WEBHOOK connection runs on each delivery, and zero
+  // makes it run none. A version of that type the workspace does not have is
+  // NOT_FOUND, one below zero INVALID_ARGUMENT, and a GITHUB connection
+  // FAILED_PRECONDITION, as only a WEBHOOK connection runs one.
+  rpc SetConnectionTransform(SetConnectionTransformRequest) returns (SetConnectionTransformResponse) {
+    option (toshi.permission) = "connections.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {
+      action: "connection.transform_set"
+    };
+  }
 }
 
 // ConnectionKind is the kind of source a connection receives events from.
@@ -100,6 +113,9 @@ message Connection {
   // Until when a rotated WEBHOOK connection's previous secret still
   // verifies; unset when there is none.
   google.protobuf.Timestamp previous_secret_expires_at = 8;
+  // The version of the workspace's transform hook a WEBHOOK connection runs
+  // on each delivery; zero runs none.
+  int32 transform_version = 9;
 }
 
 message ListConnectionsRequest {
@@ -160,4 +176,16 @@ message RotateConnectionSecretResponse {
   // The new signing secret in its whsec_ form. Shown only in this answer
   // and an identical retry's.
   string secret = 2;
+}
+
+message SetConnectionTransformRequest {
+  string connection_id = 1;
+  // The transform hook version the connection runs; zero runs none.
+  int32 version = 2;
+}
+
+message SetConnectionTransformResponse {
+  Connection connection = 1;
+  // The version the connection ran before; zero for none.
+  int32 previous_version = 2;
 }
