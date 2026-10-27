@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// ConnectionService keeps a workspace's connections: the sources of the
+// events it owns. A GitHub App installation is a connection of the kind
+// GITHUB, which installing the App creates and removing it deletes; the
+// calls here list it and cannot create or delete it. A WEBHOOK connection
+// receives events from a sender that signs its requests as Standard
+// Webhooks does, with a secret the connection keeps.
+//
+// The caller's credential names the workspace, as for WorkloadService.
+// CreateConnection requires a request_key, which works as WorkloadService's
+// do: a retry with the same key and the same request returns what the
+// first call returned and creates nothing. The signing secret is shown once,
+// in the create's answer and an identical retry's; no read returns it. A
+// retry after the connection is deleted fails with FAILED_PRECONDITION.
+service ConnectionService {
+  // ListConnections returns the workspace's connections, ordered by id.
+  //
+  // A page holds 100 connections when page_size is zero, and 1000 at most.
+  rpc ListConnections(ListConnectionsRequest) returns (ListConnectionsResponse) {
+    option (toshi.permission) = "connections.read";
+    option (toshi.scope) = "workspace";
+  }
+
+  // GetConnection returns one connection. One the workspace does not have,
+  // or one deleted, is NOT_FOUND.
+  rpc GetConnection(GetConnectionRequest) returns (GetConnectionResponse) {
+    option (toshi.permission) = "connections.read";
+    option (toshi.scope) = "workspace";
+  }
+
+  // CreateConnection creates a WEBHOOK connection whose events belong to a
+  // project's environment, and returns it with its signing secret. A kind
+  // other than WEBHOOK fails with INVALID_ARGUMENT, a name a live
+  // connection of the workspace has with ALREADY_EXISTS, and an
+  // environment the project does not have with NOT_FOUND.
+  rpc CreateConnection(CreateConnectionRequest) returns (CreateConnectionResponse) {
+    option (toshi.permission) = "connections.write";
+    option (toshi.scope) = "workspace";
+  }
+
+  // DeleteConnection deletes a WEBHOOK connection: its events are no longer
+  // received. A GITHUB connection fails with FAILED_PRECONDITION, as only
+  // removing the GitHub App deletes it, and one the workspace does not have
+  // with NOT_FOUND.
+  rpc DeleteConnection(DeleteConnectionRequest) returns (DeleteConnectionResponse) {
+    option (toshi.permission) = "connections.write";
+    option (toshi.scope) = "workspace";
+  }
+}
+
+// ConnectionKind is the kind of source a connection receives events from.
+enum ConnectionKind {
+  CONNECTION_KIND_UNSPECIFIED = 0;
+  // A GitHub App installation.
+  CONNECTION_KIND_GITHUB = 1;
+  // A sender that signs its requests as Standard Webhooks does.
+  CONNECTION_KIND_WEBHOOK = 2;
+}
+
+// Connection is one source of a workspace's events.
+message Connection {
+  string id = 1;
+  ConnectionKind kind = 2;
+  // Unique among the workspace's WEBHOOK connections; for GITHUB, the
+  // login of the account the App is installed on.
+  string name = 3;
+  // The project and environment a WEBHOOK connection's events belong to;
+  // empty for GITHUB, whose events belong to their repository's project.
+  string project = 4;
+  string environment = 5;
+  // The GitHub App installation of a GITHUB connection; zero otherwise.
+  int64 installation_id = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message ListConnectionsRequest {
+  // The most connections in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+message ListConnectionsResponse {
+  repeated Connection connections = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message GetConnectionRequest {
+  string id = 1;
+}
+
+message GetConnectionResponse {
+  Connection connection = 1;
+}
+
+message CreateConnectionRequest {
+  // WEBHOOK; no other kind is created here.
+  ConnectionKind kind = 1;
+  // A lowercase DNS label of at most 63 characters.
+  string name = 2;
+  string project = 3;
+  string environment = 4;
+  string request_key = 5;
+}
+
+message CreateConnectionResponse {
+  Connection connection = 1;
+  // The signing secret in its whsec_ form, for the sender to sign its
+  // requests with. Shown only in this answer and an identical retry's.
+  string secret = 2;
+}
+
+message DeleteConnectionRequest {
+  string id = 1;
+  string request_key = 2;
+}
+
+message DeleteConnectionResponse {}
