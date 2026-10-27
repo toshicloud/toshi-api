@@ -87,7 +87,8 @@ type WebhookEndpoint struct {
 	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
 	// The event names the endpoint is owed, each a name (job.state_changed)
 	// or a prefix ending in ".*" (job.*); at most 64. Empty keeps every
-	// event.
+	// event but those a connection received, which only a name or prefix
+	// that matches them keeps.
 	Events  []string `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
 	Enabled bool     `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	// The position in the workspace's event log the endpoint has read up to,

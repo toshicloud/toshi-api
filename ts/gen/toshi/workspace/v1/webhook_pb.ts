@@ -36,7 +36,8 @@ export type WebhookEndpoint = Message<"toshi.workspace.v1.WebhookEndpoint"> & {
   /**
    * The event names the endpoint is owed, each a name (job.state_changed)
    * or a prefix ending in ".*" (job.*); at most 64. Empty keeps every
-   * event.
+   * event but those a connection received, which only a name or prefix
+   * that matches them keeps.
    *
    * @generated from field: repeated string events = 3;
    */
@@ -95,7 +96,8 @@ export type WebhookEndpointJson = {
   /**
    * The event names the endpoint is owed, each a name (job.state_changed)
    * or a prefix ending in ".*" (job.*); at most 64. Empty keeps every
-   * event.
+   * event but those a connection received, which only a name or prefix
+   * that matches them keeps.
    *
    * @generated from field: repeated string events = 3;
    */

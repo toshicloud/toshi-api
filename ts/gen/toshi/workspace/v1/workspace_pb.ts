@@ -3791,7 +3791,10 @@ export const EmittedEventSchema: GenMessage<EmittedEvent, {jsonType: EmittedEven
  */
 export type ConnectionEvent = Message<"toshi.workspace.v1.ConnectionEvent"> & {
   /**
-   * The body as the sender sent it.
+   * What the connection received. A webhook connection's event, named
+   * webhook.received, is a JSON object of the sender's type (the body's
+   * top-level "type" string), content_type, webhook_id, sent_at and the
+   * body as the sender sent it.
    *
    * @generated from field: bytes data = 1;
    */
@@ -3805,7 +3808,10 @@ export type ConnectionEvent = Message<"toshi.workspace.v1.ConnectionEvent"> & {
  */
 export type ConnectionEventJson = {
   /**
-   * The body as the sender sent it.
+   * What the connection received. A webhook connection's event, named
+   * webhook.received, is a JSON object of the sender's type (the body's
+   * top-level "type" string), content_type, webhook_id, sent_at and the
+   * body as the sender sent it.
    *
    * @generated from field: bytes data = 1;
    */

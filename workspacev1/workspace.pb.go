@@ -4678,7 +4678,10 @@ func (x *EmittedEvent) GetData() []byte {
 // ConnectionEvent is an event a connection received.
 type ConnectionEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The body as the sender sent it.
+	// What the connection received. A webhook connection's event, named
+	// webhook.received, is a JSON object of the sender's type (the body's
+	// top-level "type" string), content_type, webhook_id, sent_at and the
+	// body as the sender sent it.
 	Data          []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

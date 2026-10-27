@@ -416,6 +416,28 @@ service OperatorService {
     option (toshi.audit) = {action: "token.created"};
   }
 
+  // RegisterClient registers a client that obtains a person's tokens
+  // through the authorization endpoints, and returns it. A confidential
+  // client's secret is returned only here: only its hash is stored, and it
+  // cannot be shown again. An ID in use, by a registered client, a deleted
+  // one or one the config file declares, fails with ALREADY_EXISTS; a
+  // missing name or redirect URI, or a redirect URI that is not https
+  // (but for a loopback address), fails with INVALID_ARGUMENT.
+  rpc RegisterClient(RegisterClientRequest) returns (RegisterClientResponse) {
+    option (toshi.audit) = {action: "client.registered"};
+  }
+
+  // ListClients returns the clients the config file declares, then the
+  // registered ones by ID, without their secrets.
+  //
+  // A page holds 100 clients when page_size is zero, and 1000 at most.
+  rpc ListClients(ListClientsRequest) returns (ListClientsResponse);
+
+  // DeleteClient deletes a registered client and revokes every token
+  // issued to it. A client the config file declares fails with
+  // FAILED_PRECONDITION; an unknown or deleted one with NOT_FOUND.
+  rpc DeleteClient(DeleteClientRequest) returns (DeleteClientResponse);
+
   // ListOperatorAlerts returns the operator alerts raised and not yet
   // cleared, one per kind, ordered by kind. They are kept in the store, so a
   // restarted control plane still returns them. Operators only.
@@ -2500,6 +2522,59 @@ message CreateProductTokenResponse {
   Token token = 1; // The new token. It is returned only here.
   string value = 2;
 }
+
+// Client is a client of the authorization endpoints.
+message Client {
+  // id is the client_id it presents.
+  string id = 1;
+  string name = 2;
+  // redirect_uris are where the authorization endpoint may send the
+  // browser back; a request names one exactly.
+  repeated string redirect_uris = 3;
+  // confidential clients authenticate at the token endpoint with their
+  // secret; public ones, such as a browser app or the CLI, by PKCE alone.
+  bool confidential = 4;
+  // declared is set for a client the control plane's config file
+  // declares: it cannot be deleted through the API.
+  bool declared = 5;
+  // Unset for a declared client.
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message RegisterClientRequest {
+  // id is the client_id the client will present: letters, digits, '-',
+  // '_' and '.', at most 64.
+  string id = 1;
+  string name = 2;
+  repeated string redirect_uris = 3;
+  bool confidential = 4;
+}
+
+message RegisterClientResponse {
+  Client client = 1;
+  // A confidential client's secret, returned only here; empty for a
+  // public client.
+  string secret = 2;
+}
+
+message ListClientsRequest {
+  // The most clients in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+message ListClientsResponse {
+  repeated Client clients = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message DeleteClientRequest {
+  string id = 1;
+}
+
+message DeleteClientResponse {}
 
 message ListEgressIPsRequest {
   string tenant = 1;

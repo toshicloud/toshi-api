@@ -123,7 +123,8 @@ message WebhookEndpoint {
   string url = 2;
   // The event names the endpoint is owed, each a name (job.state_changed)
   // or a prefix ending in ".*" (job.*); at most 64. Empty keeps every
-  // event.
+  // event but those a connection received, which only a name or prefix
+  // that matches them keeps.
   repeated string events = 3;
   bool enabled = 4;
   // The position in the workspace's event log the endpoint has read up to,

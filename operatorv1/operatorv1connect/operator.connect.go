@@ -181,6 +181,15 @@ const (
 	// OperatorServiceCreateProductTokenProcedure is the fully-qualified name of the OperatorService's
 	// CreateProductToken RPC.
 	OperatorServiceCreateProductTokenProcedure = "/toshi.operator.v1.OperatorService/CreateProductToken"
+	// OperatorServiceRegisterClientProcedure is the fully-qualified name of the OperatorService's
+	// RegisterClient RPC.
+	OperatorServiceRegisterClientProcedure = "/toshi.operator.v1.OperatorService/RegisterClient"
+	// OperatorServiceListClientsProcedure is the fully-qualified name of the OperatorService's
+	// ListClients RPC.
+	OperatorServiceListClientsProcedure = "/toshi.operator.v1.OperatorService/ListClients"
+	// OperatorServiceDeleteClientProcedure is the fully-qualified name of the OperatorService's
+	// DeleteClient RPC.
+	OperatorServiceDeleteClientProcedure = "/toshi.operator.v1.OperatorService/DeleteClient"
 	// OperatorServiceListOperatorAlertsProcedure is the fully-qualified name of the OperatorService's
 	// ListOperatorAlerts RPC.
 	OperatorServiceListOperatorAlertsProcedure = "/toshi.operator.v1.OperatorService/ListOperatorAlerts"
@@ -525,6 +534,23 @@ type OperatorServiceClient interface {
 	// has at most two tokens that work at once, so that one can replace the
 	// other.
 	CreateProductToken(context.Context, *connect.Request[operatorv1.CreateProductTokenRequest]) (*connect.Response[operatorv1.CreateProductTokenResponse], error)
+	// RegisterClient registers a client that obtains a person's tokens
+	// through the authorization endpoints, and returns it. A confidential
+	// client's secret is returned only here: only its hash is stored, and it
+	// cannot be shown again. An ID in use, by a registered client, a deleted
+	// one or one the config file declares, fails with ALREADY_EXISTS; a
+	// missing name or redirect URI, or a redirect URI that is not https
+	// (but for a loopback address), fails with INVALID_ARGUMENT.
+	RegisterClient(context.Context, *connect.Request[operatorv1.RegisterClientRequest]) (*connect.Response[operatorv1.RegisterClientResponse], error)
+	// ListClients returns the clients the config file declares, then the
+	// registered ones by ID, without their secrets.
+	//
+	// A page holds 100 clients when page_size is zero, and 1000 at most.
+	ListClients(context.Context, *connect.Request[operatorv1.ListClientsRequest]) (*connect.Response[operatorv1.ListClientsResponse], error)
+	// DeleteClient deletes a registered client and revokes every token
+	// issued to it. A client the config file declares fails with
+	// FAILED_PRECONDITION; an unknown or deleted one with NOT_FOUND.
+	DeleteClient(context.Context, *connect.Request[operatorv1.DeleteClientRequest]) (*connect.Response[operatorv1.DeleteClientResponse], error)
 	// ListOperatorAlerts returns the operator alerts raised and not yet
 	// cleared, one per kind, ordered by kind. They are kept in the store, so a
 	// restarted control plane still returns them. Operators only.
@@ -982,6 +1008,24 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("CreateProductToken")),
 			connect.WithClientOptions(opts...),
 		),
+		registerClient: connect.NewClient[operatorv1.RegisterClientRequest, operatorv1.RegisterClientResponse](
+			httpClient,
+			baseURL+OperatorServiceRegisterClientProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("RegisterClient")),
+			connect.WithClientOptions(opts...),
+		),
+		listClients: connect.NewClient[operatorv1.ListClientsRequest, operatorv1.ListClientsResponse](
+			httpClient,
+			baseURL+OperatorServiceListClientsProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("ListClients")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteClient: connect.NewClient[operatorv1.DeleteClientRequest, operatorv1.DeleteClientResponse](
+			httpClient,
+			baseURL+OperatorServiceDeleteClientProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("DeleteClient")),
+			connect.WithClientOptions(opts...),
+		),
 		listOperatorAlerts: connect.NewClient[operatorv1.ListOperatorAlertsRequest, operatorv1.ListOperatorAlertsResponse](
 			httpClient,
 			baseURL+OperatorServiceListOperatorAlertsProcedure,
@@ -1156,6 +1200,9 @@ type operatorServiceClient struct {
 	createEnrollmentToken       *connect.Client[operatorv1.CreateEnrollmentTokenRequest, operatorv1.CreateEnrollmentTokenResponse]
 	createTenantToken           *connect.Client[operatorv1.CreateTenantTokenRequest, operatorv1.CreateTenantTokenResponse]
 	createProductToken          *connect.Client[operatorv1.CreateProductTokenRequest, operatorv1.CreateProductTokenResponse]
+	registerClient              *connect.Client[operatorv1.RegisterClientRequest, operatorv1.RegisterClientResponse]
+	listClients                 *connect.Client[operatorv1.ListClientsRequest, operatorv1.ListClientsResponse]
+	deleteClient                *connect.Client[operatorv1.DeleteClientRequest, operatorv1.DeleteClientResponse]
 	listOperatorAlerts          *connect.Client[operatorv1.ListOperatorAlertsRequest, operatorv1.ListOperatorAlertsResponse]
 	listHostAlerts              *connect.Client[operatorv1.ListHostAlertsRequest, operatorv1.ListHostAlertsResponse]
 	listEgressIPs               *connect.Client[operatorv1.ListEgressIPsRequest, operatorv1.ListEgressIPsResponse]
@@ -1421,6 +1468,21 @@ func (c *operatorServiceClient) CreateTenantToken(ctx context.Context, req *conn
 // CreateProductToken calls toshi.operator.v1.OperatorService.CreateProductToken.
 func (c *operatorServiceClient) CreateProductToken(ctx context.Context, req *connect.Request[operatorv1.CreateProductTokenRequest]) (*connect.Response[operatorv1.CreateProductTokenResponse], error) {
 	return c.createProductToken.CallUnary(ctx, req)
+}
+
+// RegisterClient calls toshi.operator.v1.OperatorService.RegisterClient.
+func (c *operatorServiceClient) RegisterClient(ctx context.Context, req *connect.Request[operatorv1.RegisterClientRequest]) (*connect.Response[operatorv1.RegisterClientResponse], error) {
+	return c.registerClient.CallUnary(ctx, req)
+}
+
+// ListClients calls toshi.operator.v1.OperatorService.ListClients.
+func (c *operatorServiceClient) ListClients(ctx context.Context, req *connect.Request[operatorv1.ListClientsRequest]) (*connect.Response[operatorv1.ListClientsResponse], error) {
+	return c.listClients.CallUnary(ctx, req)
+}
+
+// DeleteClient calls toshi.operator.v1.OperatorService.DeleteClient.
+func (c *operatorServiceClient) DeleteClient(ctx context.Context, req *connect.Request[operatorv1.DeleteClientRequest]) (*connect.Response[operatorv1.DeleteClientResponse], error) {
+	return c.deleteClient.CallUnary(ctx, req)
 }
 
 // ListOperatorAlerts calls toshi.operator.v1.OperatorService.ListOperatorAlerts.
@@ -1805,6 +1867,23 @@ type OperatorServiceHandler interface {
 	// has at most two tokens that work at once, so that one can replace the
 	// other.
 	CreateProductToken(context.Context, *connect.Request[operatorv1.CreateProductTokenRequest]) (*connect.Response[operatorv1.CreateProductTokenResponse], error)
+	// RegisterClient registers a client that obtains a person's tokens
+	// through the authorization endpoints, and returns it. A confidential
+	// client's secret is returned only here: only its hash is stored, and it
+	// cannot be shown again. An ID in use, by a registered client, a deleted
+	// one or one the config file declares, fails with ALREADY_EXISTS; a
+	// missing name or redirect URI, or a redirect URI that is not https
+	// (but for a loopback address), fails with INVALID_ARGUMENT.
+	RegisterClient(context.Context, *connect.Request[operatorv1.RegisterClientRequest]) (*connect.Response[operatorv1.RegisterClientResponse], error)
+	// ListClients returns the clients the config file declares, then the
+	// registered ones by ID, without their secrets.
+	//
+	// A page holds 100 clients when page_size is zero, and 1000 at most.
+	ListClients(context.Context, *connect.Request[operatorv1.ListClientsRequest]) (*connect.Response[operatorv1.ListClientsResponse], error)
+	// DeleteClient deletes a registered client and revokes every token
+	// issued to it. A client the config file declares fails with
+	// FAILED_PRECONDITION; an unknown or deleted one with NOT_FOUND.
+	DeleteClient(context.Context, *connect.Request[operatorv1.DeleteClientRequest]) (*connect.Response[operatorv1.DeleteClientResponse], error)
 	// ListOperatorAlerts returns the operator alerts raised and not yet
 	// cleared, one per kind, ordered by kind. They are kept in the store, so a
 	// restarted control plane still returns them. Operators only.
@@ -2258,6 +2337,24 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("CreateProductToken")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceRegisterClientHandler := connect.NewUnaryHandler(
+		OperatorServiceRegisterClientProcedure,
+		svc.RegisterClient,
+		connect.WithSchema(operatorServiceMethods.ByName("RegisterClient")),
+		connect.WithHandlerOptions(opts...),
+	)
+	operatorServiceListClientsHandler := connect.NewUnaryHandler(
+		OperatorServiceListClientsProcedure,
+		svc.ListClients,
+		connect.WithSchema(operatorServiceMethods.ByName("ListClients")),
+		connect.WithHandlerOptions(opts...),
+	)
+	operatorServiceDeleteClientHandler := connect.NewUnaryHandler(
+		OperatorServiceDeleteClientProcedure,
+		svc.DeleteClient,
+		connect.WithSchema(operatorServiceMethods.ByName("DeleteClient")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceListOperatorAlertsHandler := connect.NewUnaryHandler(
 		OperatorServiceListOperatorAlertsProcedure,
 		svc.ListOperatorAlerts,
@@ -2478,6 +2575,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceCreateTenantTokenHandler.ServeHTTP(w, r)
 		case OperatorServiceCreateProductTokenProcedure:
 			operatorServiceCreateProductTokenHandler.ServeHTTP(w, r)
+		case OperatorServiceRegisterClientProcedure:
+			operatorServiceRegisterClientHandler.ServeHTTP(w, r)
+		case OperatorServiceListClientsProcedure:
+			operatorServiceListClientsHandler.ServeHTTP(w, r)
+		case OperatorServiceDeleteClientProcedure:
+			operatorServiceDeleteClientHandler.ServeHTTP(w, r)
 		case OperatorServiceListOperatorAlertsProcedure:
 			operatorServiceListOperatorAlertsHandler.ServeHTTP(w, r)
 		case OperatorServiceListHostAlertsProcedure:
@@ -2721,6 +2824,18 @@ func (UnimplementedOperatorServiceHandler) CreateTenantToken(context.Context, *c
 
 func (UnimplementedOperatorServiceHandler) CreateProductToken(context.Context, *connect.Request[operatorv1.CreateProductTokenRequest]) (*connect.Response[operatorv1.CreateProductTokenResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.CreateProductToken is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) RegisterClient(context.Context, *connect.Request[operatorv1.RegisterClientRequest]) (*connect.Response[operatorv1.RegisterClientResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RegisterClient is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) ListClients(context.Context, *connect.Request[operatorv1.ListClientsRequest]) (*connect.Response[operatorv1.ListClientsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ListClients is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) DeleteClient(context.Context, *connect.Request[operatorv1.DeleteClientRequest]) (*connect.Response[operatorv1.DeleteClientResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.DeleteClient is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListOperatorAlerts(context.Context, *connect.Request[operatorv1.ListOperatorAlertsRequest]) (*connect.Response[operatorv1.ListOperatorAlertsResponse], error) {

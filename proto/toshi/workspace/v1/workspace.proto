@@ -777,7 +777,10 @@ message EmittedEvent {
 
 // ConnectionEvent is an event a connection received.
 message ConnectionEvent {
-  // The body as the sender sent it.
+  // What the connection received. A webhook connection's event, named
+  // webhook.received, is a JSON object of the sender's type (the body's
+  // top-level "type" string), content_type, webhook_id, sent_at and the
+  // body as the sender sent it.
   bytes data = 1;
 }
 
