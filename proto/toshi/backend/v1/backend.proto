@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+// Package toshi.backend.v1 is what every backend program serves beside its
+// own protocol: the handshake that says which backend it is, which versions
+// of that backend's protocol it speaks and what it can do.
+//
+// A backend is a program Toshi reaches over gRPC (HTTP/2 without TLS) on a
+// local Unix socket, one socket per program, such as a key provider. Each
+// kind of backend has its own protocol, a package
+// toshi.backend.<type>.v<N>; N is that protocol's version. On the same socket
+// a backend serves BackendService, its own protocol's service, and the
+// standard grpc.health.v1.Health service, which answers for its protocol's
+// service name.
+//
+// Toshi calls Handshake before it uses a backend. It refuses a backend of
+// another type, and a backend that speaks none of the versions it speaks,
+// naming both lists.
+package toshi.backend.v1;
+
+option go_package = "go.toshicloud.io/api/backendv1";
+
+// BackendService is served by every backend program.
+service BackendService {
+  // Handshake tells a backend which type and versions the caller expects,
+  // and returns what the backend is. It does not fail for a version the
+  // backend does not speak: the caller compares the lists and refuses.
+  rpc Handshake(HandshakeRequest) returns (HandshakeResponse);
+}
+
+message HandshakeRequest {
+  // The type of backend the caller expects, such as "key_provider".
+  string backend_type = 1;
+  // The versions of that type's protocol the caller speaks.
+  repeated uint32 protocol_versions = 2;
+}
+
+message HandshakeResponse {
+  // The type of backend this program is, such as "key_provider".
+  string backend_type = 1;
+  // The versions of its type's protocol this program serves, each as the
+  // package toshi.backend.<type>.v<N> on the same socket.
+  repeated uint32 protocol_versions = 2;
+  // The program's own name for itself, for the caller's log. It is not an
+  // identity and no call depends on it.
+  string name = 3;
+  // What the program can do beyond its protocol's required calls, in the
+  // words its type's protocol defines. A type that defines none leaves it
+  // empty.
+  repeated string capabilities = 4;
+}

@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+// Package toshi.backend.keyprovider.v1 is version 1 of the key provider
+// protocol: between the Toshi control plane and a key provider program
+// beside it. The backend type in the handshake (toshi.backend.v1) is
+// "key_provider"; version 1 defines no capabilities.
+package toshi.backend.keyprovider.v1;
+
+option go_package = "go.toshicloud.io/api/keyproviderv1";
+
+// KeyProviderService is served by a key provider program and called by the
+// control plane, on the program's Unix socket beside toshi.backend.v1's
+// BackendService. A provider's process runs as root, as the control plane's
+// own user, or as the user the control plane's configuration names for its
+// socket; the control plane refuses a socket any other user serves.
+//
+// A key provider holds keys the control plane does not have. It wraps small
+// values, such as a workspace's data key, under a key that stays with it, and
+// it opens only the values it wrapped. The control plane stores the wrapped
+// value and the key's id, never a key itself, so a program in any language
+// can be a provider: it needs a key it keeps and an authenticated encryption
+// scheme that binds associated_data to the wrap.
+service KeyProviderService {
+  // Wrap wraps plaintext under a key the provider chooses and returns that
+  // key's id with the wrapped value. plaintext is 1 to 4096 bytes;
+  // associated_data of any length is bound to the wrap, and Unwrap with other
+  // associated data does not open it. A plaintext outside those lengths fails
+  // with INVALID_ARGUMENT. The provider picks the key, and it must later
+  // accept that key id in Unwrap.
+  rpc Wrap(WrapRequest) returns (WrapResponse);
+
+  // Unwrap opens a value Wrap returned. It fails with FAILED_PRECONDITION and
+  // exactly "wrapped value does not open" when the value does not open:
+  // associated_data differs from the wrap's, key_id names no key of the
+  // provider or a key that did not wrap this value, or ciphertext is altered.
+  // It returns no plaintext in that case. An empty key_id, or one longer than
+  // 255 bytes, fails with INVALID_ARGUMENT.
+  rpc Unwrap(UnwrapRequest) returns (UnwrapResponse);
+}
+
+message WrapRequest {
+  // Data bound to the wrap, such as the workspace the value belongs to. It
+  // is not stored with the value; Unwrap is given it again.
+  bytes associated_data = 1;
+  // The value to wrap, 1 to 4096 bytes.
+  bytes plaintext = 2;
+}
+
+message WrapResponse {
+  // The provider's id for the key that wrapped the value, at most 255 bytes.
+  string key_id = 1;
+  // The wrapped value, which only this provider's key opens.
+  bytes ciphertext = 2;
+}
+
+message UnwrapRequest {
+  // Data bound to the wrap, exactly as Wrap was given it.
+  bytes associated_data = 1;
+  // The key_id of the WrapResponse that gave ciphertext.
+  string key_id = 2;
+  // The wrapped value to open.
+  bytes ciphertext = 3;
+}
+
+message UnwrapResponse {
+  // The value the provider wrapped, 1 to 4096 bytes.
+  bytes plaintext = 1;
+}
