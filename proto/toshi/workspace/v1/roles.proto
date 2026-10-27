@@ -1,0 +1,238 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// RoleService manages who may do what in the workspace: its roles, each a
+// named set of permissions, and the grants that give a role to a person or
+// a token on the whole workspace, one project or one environment. A
+// caller's permissions are the union of the roles granted to it; there are
+// no deny rules.
+//
+// Four roles are built in: owner (every permission), admin (every
+// permission but billing.write and workspace.delete), member (reads and
+// writes of every product and of projects, secrets and tokens, and reads of
+// the rest) and viewer (every read). They cannot be changed. A workspace
+// adds its own from the permissions docs/api/permissions.md lists.
+//
+// Nobody makes, changes, deletes, gives or revokes a role with a
+// permission they do not hold where the role applies: such a call is
+// refused with PERMISSION_DENIED, and a google.rpc.ErrorInfo detail with
+// the reason PERMISSION_MISSING names the permission under the key
+// "permission". So only an owner gives or revokes owner. A workspace
+// always keeps a person who is an owner of the whole workspace.
+//
+// A token limited to a project or an environment is refused with
+// PERMISSION_DENIED: these calls act in the whole workspace. A suspended
+// workspace lists its roles and grants, and every other call is refused
+// for it with FAILED_PRECONDITION.
+service RoleService {
+  // ListRoles returns the built-in roles, highest first, then the
+  // workspace's own, by name, each with its permissions.
+  //
+  // A page holds 100 roles when page_size is zero, and 1000 at most.
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {
+    option (toshi.permission) = "members.read";
+  }
+  // CreateRole adds a role of the workspace's own. A name that a role of
+  // the workspace has fails with ALREADY_EXISTS; a built-in role's name,
+  // compared without regard to case, an empty name, no permissions, or a
+  // permission docs/api/permissions.md does not list, with
+  // INVALID_ARGUMENT.
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+    option (toshi.permission) = "members.write";
+  }
+  // UpdateRole sets the name and the permissions of one of the
+  // workspace's roles, checked as CreateRole checks them. Its grants keep
+  // it, and give the new permissions from then on. A built-in role fails
+  // with INVALID_ARGUMENT; an unknown ID with NOT_FOUND.
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse) {
+    option (toshi.permission) = "members.write";
+  }
+  // DeleteRole deletes one of the workspace's roles and every grant of
+  // it. A built-in role fails with INVALID_ARGUMENT; an unknown ID with
+  // NOT_FOUND.
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
+    option (toshi.permission) = "members.write";
+  }
+  // ListRoleGrants returns the workspace's grants, ordered by subject,
+  // then role, then scope, optionally only those of one subject, or only
+  // those on one project or environment.
+  //
+  // A page holds 100 grants when page_size is zero, and 1000 at most. An
+  // unknown project or environment fails with NOT_FOUND.
+  rpc ListRoleGrants(ListRoleGrantsRequest) returns (ListRoleGrantsResponse) {
+    option (toshi.permission) = "members.read";
+    option (toshi.scope) = "workspace";
+  }
+  // GrantRole gives a role to a person or a token, on the whole workspace
+  // or on one project or environment. The role is a built-in role's ID or
+  // one of the workspace's. A grant the subject already has fails with
+  // ALREADY_EXISTS; an unknown role, project or environment, or a token
+  // that is not the workspace's or is revoked, with NOT_FOUND.
+  rpc GrantRole(GrantRoleRequest) returns (GrantRoleResponse) {
+    option (toshi.permission) = "members.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {target: "role:role"};
+  }
+  // RevokeRole deletes a grant. Revoking the last grant of owner on the
+  // whole workspace to a person fails with FAILED_PRECONDITION, and a
+  // google.rpc.ErrorInfo detail with the reason LAST_OWNER names that
+  // person under the key "person". An unknown ID fails with NOT_FOUND.
+  rpc RevokeRole(RevokeRoleRequest) returns (RevokeRoleResponse) {
+    option (toshi.permission) = "members.write";
+    option (toshi.audit) = {target: "role:response.grant.role"};
+  }
+}
+
+// Role is a named set of permissions.
+message Role {
+  // Role id: "owner", "admin", "member" or "viewer" for a built-in role,
+  // such as "role-1a2b3c4d5e6f" for one of the workspace's.
+  string id = 1;
+  string name = 2;
+  // The permissions the role gives, sorted, as docs/api/permissions.md
+  // names them.
+  repeated string permissions = 3;
+  // Whether the role is built in, and cannot be changed.
+  bool built_in = 4;
+}
+
+// SubjectKind says who a grant is given to, or who made it.
+enum SubjectKind {
+  SUBJECT_KIND_UNSPECIFIED = 0;
+  // A person, by GitHub user id.
+  SUBJECT_KIND_PERSON = 1;
+  // One of the workspace's API tokens, by token id.
+  SUBJECT_KIND_TOKEN = 2;
+  // The control plane itself, as the maker of the grants it writes, such
+  // as a workspace's first owner. It is never given a role.
+  SUBJECT_KIND_SYSTEM = 3;
+}
+
+// Subject is who a grant is given to, or who made it.
+message Subject {
+  SubjectKind kind = 1;
+  // The GitHub user id of a person, in decimal, such as "583231", which a
+  // change of login keeps; the token id of a token, such as
+  // "tok-1a2b3c4d5e6f"; empty for the system.
+  string id = 2;
+}
+
+// RoleGrant gives a role to a subject on part of the workspace.
+message RoleGrant {
+  // Grant id.
+  string id = 1;
+  Subject subject = 2;
+  // The role's id.
+  string role = 3;
+  // The project the grant applies to, by name. Empty for a grant on the
+  // whole workspace.
+  string project = 4;
+  // The environment of project the grant applies to, by name. Empty for a
+  // grant on every environment of project.
+  string environment = 5;
+  google.protobuf.Timestamp created_at = 6;
+  Subject created_by = 7;
+}
+
+message ListRolesRequest {
+  // The most roles in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+message ListRolesResponse {
+  repeated Role roles = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+// CreateRoleRequest names the role and what it gives.
+message CreateRoleRequest {
+  string name = 1;
+  // At least one permission, as docs/api/permissions.md names it.
+  repeated string permissions = 2;
+}
+
+message CreateRoleResponse {
+  Role role = 1;
+}
+
+// UpdateRoleRequest names the role and its new name and permissions.
+message UpdateRoleRequest {
+  string id = 1;
+  string name = 2;
+  // At least one permission; they replace the role's.
+  repeated string permissions = 3;
+}
+
+message UpdateRoleResponse {
+  Role role = 1;
+}
+
+message DeleteRoleRequest {
+  string id = 1;
+}
+
+// DeleteRoleResponse carries the deleted role.
+message DeleteRoleResponse {
+  Role role = 1;
+  // How many grants of the role were deleted with it.
+  int32 grants_deleted = 2;
+}
+
+// ListRoleGrantsRequest optionally narrows the list.
+message ListRoleGrantsRequest {
+  // Only this subject's grants, when set.
+  Subject subject = 1;
+  // Only the grants on this project, by name, when set: on the project as
+  // a whole, and on each of its environments unless environment is set.
+  string project = 2;
+  // Only the grants on this environment of project, by name, when set.
+  // Needs project.
+  string environment = 3;
+  // The most grants in one page; zero lets the server choose.
+  int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
+}
+
+message ListRoleGrantsResponse {
+  repeated RoleGrant grants = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+// GrantRoleRequest names the subject, the role and where it applies.
+message GrantRoleRequest {
+  // A person or a token.
+  Subject subject = 1;
+  // The role's id.
+  string role = 2;
+  // Limits the grant to this project of the workspace, by name. Empty
+  // gives the role on the whole workspace.
+  string project = 3;
+  // Limits the grant further to this environment of project, by name.
+  // Needs project.
+  string environment = 4;
+}
+
+message GrantRoleResponse {
+  RoleGrant grant = 1;
+}
+
+message RevokeRoleRequest {
+  // The grant's id.
+  string id = 1;
+}
+
+// RevokeRoleResponse carries the deleted grant.
+message RevokeRoleResponse {
+  RoleGrant grant = 1;
+}
