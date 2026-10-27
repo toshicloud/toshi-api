@@ -194,7 +194,11 @@ type ListAuditEventsRequest struct {
 	// example "job:<id>". Empty matches every target.
 	Target string `protobuf:"bytes,6,opt,name=target,proto3" json:"target,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
-	PageToken     string `protobuf:"bytes,7,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageToken string `protobuf:"bytes,7,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// Only the events of calls with this outcome: "ok", or the reason a call
+	// was refused, such as PERMISSION_MISSING. Empty matches every event, a
+	// call's or not.
+	Outcome       string `protobuf:"bytes,8,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -278,6 +282,13 @@ func (x *ListAuditEventsRequest) GetPageToken() string {
 	return ""
 }
 
+func (x *ListAuditEventsRequest) GetOutcome() string {
+	if x != nil {
+		return x.Outcome
+	}
+	return ""
+}
+
 type ListAuditEventsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Newest first.
@@ -355,7 +366,7 @@ const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\x05scope\x18\n" +
 	" \x01(\tR\x05scope\x12\x18\n" +
 	"\aoutcome\x18\v \x01(\tR\aoutcome\x12\x19\n" +
-	"\btoken_id\x18\f \x01(\tR\atokenId\"\xe6\x01\n" +
+	"\btoken_id\x18\f \x01(\tR\atokenId\"\x80\x02\n" +
 	"\x16ListAuditEventsRequest\x12\x16\n" +
 	"\x06action\x18\x01 \x01(\tR\x06action\x120\n" +
 	"\x05since\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x1b\n" +
@@ -364,7 +375,8 @@ const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\aactions\x18\x05 \x03(\tR\aactions\x12\x16\n" +
 	"\x06target\x18\x06 \x01(\tR\x06target\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\a \x01(\tR\tpageToken\"y\n" +
+	"page_token\x18\a \x01(\tR\tpageToken\x12\x18\n" +
+	"\aoutcome\x18\b \x01(\tR\aoutcome\"y\n" +
 	"\x17ListAuditEventsResponse\x126\n" +
 	"\x06events\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.AuditEventR\x06events\x12&\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken2\x8f\x01\n" +

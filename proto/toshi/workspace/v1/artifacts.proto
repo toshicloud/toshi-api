@@ -27,7 +27,7 @@ service ArtifactUploadService {
   // profile is refused with INVALID_ARGUMENT.
   rpc ReserveUpload(ReserveUploadRequest) returns (ReserveUploadResponse) {
     option (toshi.permission) = "artifacts.write";
-    option (toshi.audit) = {action: "none"};
+    option (toshi.audit) = {action: "artifact_upload.reserved", target: "artifact:response.artifact_id"};
   }
   // CompleteUpload checks every part's size, copies the parts to their
   // final keys, and marks the artifact complete. A part of another size

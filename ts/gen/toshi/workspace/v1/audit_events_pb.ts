@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/audit_events.proto.
  */
 export const file_toshi_workspace_v1_audit_events: GenFile = /*@__PURE__*/
-  fileDesc("CiV0b3NoaS93b3Jrc3BhY2UvdjEvYXVkaXRfZXZlbnRzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEi9gEKCkF1ZGl0RXZlbnQSCgoCaWQYASABKAMSJgoCYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmFjdG9yX2tpbmQYAyABKAkSEAoIYWN0b3JfaWQYBCABKAkSDgoGYWN0aW9uGAUgASgJEg4KBnRhcmdldBgGIAEoCRIUCgxkZXRhaWxzX2pzb24YByABKAkSEgoKcmVxdWVzdF9pZBgIIAEoCRISCgpwZXJtaXNzaW9uGAkgASgJEg0KBXNjb3BlGAogASgJEg8KB291dGNvbWUYCyABKAkSEAoIdG9rZW5faWQYDCABKAkiqgEKFkxpc3RBdWRpdEV2ZW50c1JlcXVlc3QSDgoGYWN0aW9uGAEgASgJEikKBXNpbmNlGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIRCglwYWdlX3NpemUYAyABKAUSDQoFYWN0b3IYBCABKAkSDwoHYWN0aW9ucxgFIAMoCRIOCgZ0YXJnZXQYBiABKAkSEgoKcGFnZV90b2tlbhgHIAEoCSJiChdMaXN0QXVkaXRFdmVudHNSZXNwb25zZRIuCgZldmVudHMYASADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQXVkaXRFdmVudBIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkyjwEKEUF1ZGl0RXZlbnRTZXJ2aWNlEnoKD0xpc3RBdWRpdEV2ZW50cxIqLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0QXVkaXRFdmVudHNSZXF1ZXN0GisudG9zaGkud29ya3NwYWNlLnYxLkxpc3RBdWRpdEV2ZW50c1Jlc3BvbnNlIg7C8xgKYXVkaXQucmVhZEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiV0b3NoaS93b3Jrc3BhY2UvdjEvYXVkaXRfZXZlbnRzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEi9gEKCkF1ZGl0RXZlbnQSCgoCaWQYASABKAMSJgoCYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmFjdG9yX2tpbmQYAyABKAkSEAoIYWN0b3JfaWQYBCABKAkSDgoGYWN0aW9uGAUgASgJEg4KBnRhcmdldBgGIAEoCRIUCgxkZXRhaWxzX2pzb24YByABKAkSEgoKcmVxdWVzdF9pZBgIIAEoCRISCgpwZXJtaXNzaW9uGAkgASgJEg0KBXNjb3BlGAogASgJEg8KB291dGNvbWUYCyABKAkSEAoIdG9rZW5faWQYDCABKAkiuwEKFkxpc3RBdWRpdEV2ZW50c1JlcXVlc3QSDgoGYWN0aW9uGAEgASgJEikKBXNpbmNlGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIRCglwYWdlX3NpemUYAyABKAUSDQoFYWN0b3IYBCABKAkSDwoHYWN0aW9ucxgFIAMoCRIOCgZ0YXJnZXQYBiABKAkSEgoKcGFnZV90b2tlbhgHIAEoCRIPCgdvdXRjb21lGAggASgJImIKF0xpc3RBdWRpdEV2ZW50c1Jlc3BvbnNlEi4KBmV2ZW50cxgBIAMoCzIeLnRvc2hpLndvcmtzcGFjZS52MS5BdWRpdEV2ZW50EhcKD25leHRfcGFnZV90b2tlbhgCIAEoCTKPAQoRQXVkaXRFdmVudFNlcnZpY2USegoPTGlzdEF1ZGl0RXZlbnRzEioudG9zaGkud29ya3NwYWNlLnYxLkxpc3RBdWRpdEV2ZW50c1JlcXVlc3QaKy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2UiDsLzGAphdWRpdC5yZWFkQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * AuditEvent is one append-only audit log entry.
@@ -265,6 +265,15 @@ export type ListAuditEventsRequest = Message<"toshi.workspace.v1.ListAuditEvents
    * @generated from field: string page_token = 7;
    */
   pageToken: string;
+
+  /**
+   * Only the events of calls with this outcome: "ok", or the reason a call
+   * was refused, such as PERMISSION_MISSING. Empty matches every event, a
+   * call's or not.
+   *
+   * @generated from field: string outcome = 8;
+   */
+  outcome: string;
 };
 
 /**
@@ -326,6 +335,15 @@ export type ListAuditEventsRequestJson = {
    * @generated from field: string page_token = 7;
    */
   pageToken?: string;
+
+  /**
+   * Only the events of calls with this outcome: "ok", or the reason a call
+   * was refused, such as PERMISSION_MISSING. Empty matches every event, a
+   * call's or not.
+   *
+   * @generated from field: string outcome = 8;
+   */
+  outcome?: string;
 };
 
 /**

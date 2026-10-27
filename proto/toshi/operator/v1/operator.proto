@@ -1145,6 +1145,10 @@ message ListAuditEventsRequest {
   string target = 8;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 9;
+  // Only the events of calls with this outcome: "ok", or the reason a call
+  // was refused, such as PERMISSION_MISSING. Empty matches every event, a
+  // call's or not.
+  string outcome = 10;
 }
 
 message ListAuditEventsResponse {

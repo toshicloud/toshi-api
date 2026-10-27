@@ -2682,7 +2682,11 @@ type ListAuditEventsRequest struct {
 	// example "job:<id>". Empty matches every target.
 	Target string `protobuf:"bytes,8,opt,name=target,proto3" json:"target,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
-	PageToken     string `protobuf:"bytes,9,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageToken string `protobuf:"bytes,9,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// Only the events of calls with this outcome: "ok", or the reason a call
+	// was refused, such as PERMISSION_MISSING. Empty matches every event, a
+	// call's or not.
+	Outcome       string `protobuf:"bytes,10,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2769,6 +2773,13 @@ func (x *ListAuditEventsRequest) GetTarget() string {
 func (x *ListAuditEventsRequest) GetPageToken() string {
 	if x != nil {
 		return x.PageToken
+	}
+	return ""
+}
+
+func (x *ListAuditEventsRequest) GetOutcome() string {
+	if x != nil {
+		return x.Outcome
 	}
 	return ""
 }
@@ -15277,7 +15288,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"permission\x12\x14\n" +
 	"\x05scope\x18\v \x01(\tR\x05scope\x12\x18\n" +
 	"\aoutcome\x18\f \x01(\tR\aoutcome\x12\x19\n" +
-	"\btoken_id\x18\r \x01(\tR\atokenId\"\x8f\x02\n" +
+	"\btoken_id\x18\r \x01(\tR\atokenId\"\xa9\x02\n" +
 	"\x16ListAuditEventsRequest\x12\x16\n" +
 	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x16\n" +
 	"\x06action\x18\x02 \x01(\tR\x06action\x120\n" +
@@ -15287,7 +15298,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\aactions\x18\a \x03(\tR\aactions\x12\x16\n" +
 	"\x06target\x18\b \x01(\tR\x06target\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\t \x01(\tR\tpageTokenJ\x04\b\x05\x10\x06R\tbefore_id\"\x8e\x01\n" +
+	"page_token\x18\t \x01(\tR\tpageToken\x12\x18\n" +
+	"\aoutcome\x18\n" +
+	" \x01(\tR\aoutcomeJ\x04\b\x05\x10\x06R\tbefore_id\"\x8e\x01\n" +
 	"\x17ListAuditEventsResponse\x125\n" +
 	"\x06events\x18\x01 \x03(\v2\x1d.toshi.operator.v1.AuditEventR\x06events\x12&\n" +
 	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageTokenJ\x04\b\x02\x10\x03R\x0enext_before_id\"\xad\x01\n" +
