@@ -272,6 +272,28 @@ message JobSpec {
   // takes the configured default size. Another value fails the create with
   // INVALID_ARGUMENT.
   string size = 3;
+  // The image the job runs in, as a registry reference such as
+  // "ghcr.io/example/app:1.4" or "ghcr.io/example/app@sha256:<hex>"; a
+  // name without a registry is on docker.io. The job's command, its
+  // executions and its file calls then run in a container of it, as the
+  // image's user, with the VM's network, and with the run's home, its
+  // working directory and its cache at their own paths; a command without
+  // cwd starts in the home, not in the image's working directory. The pull
+  // is part of the job's start. Empty: the job runs in its VM itself.
+  //
+  // A tag is resolved to a digest at create, and every run of the job pulls
+  // that digest (container_image_digest); a digest is kept as given and
+  // checked by the pull. The registry must be public and the pull is
+  // anonymous. A create whose image cannot be resolved records nothing: it
+  // fails with UNAVAILABLE when the registry cannot be reached in time,
+  // FAILED_PRECONDITION when the registry refuses the image or holds no
+  // such repository or tag, and INVALID_ARGUMENT for a reference that is
+  // not one, a registry at an address that is not public, or an image
+  // without the platform of the job's size (linux/amd64).
+  string container_image = 4;
+  // The digest container_image named at create, "sha256:<hex>": an index's
+  // when the tag names one. Set by the server; ignored in a request.
+  string container_image_digest = 5;
 }
 
 // Binding is one binding a workload declares.
@@ -371,6 +393,14 @@ message SandboxSpec {
   // FAILED_PRECONDITION. Answers carry the id the create named, even after
   // a detach; VolumeService answers what a volume is attached to now.
   string state_volume_id = 4;
+  // The image the sandbox's executions and file calls run in, as
+  // JobSpec.container_image says for a job's, resolved at create the same
+  // way. A sandbox of a size that is not Linux fails the create
+  // with INVALID_ARGUMENT.
+  string container_image = 5;
+  // As JobSpec.container_image_digest. Set by the server; ignored in a
+  // request.
+  string container_image_digest = 6;
 }
 
 // ServiceSpec is a service. Its fields are set wherever a service's

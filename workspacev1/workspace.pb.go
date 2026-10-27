@@ -1518,9 +1518,31 @@ type JobSpec struct {
 	// "toshi-linux-2x": jobs run on Linux guests only. Empty in a create
 	// takes the configured default size. Another value fails the create with
 	// INVALID_ARGUMENT.
-	Size          string `protobuf:"bytes,3,opt,name=size,proto3" json:"size,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Size string `protobuf:"bytes,3,opt,name=size,proto3" json:"size,omitempty"`
+	// The image the job runs in, as a registry reference such as
+	// "ghcr.io/example/app:1.4" or "ghcr.io/example/app@sha256:<hex>"; a
+	// name without a registry is on docker.io. The job's command, its
+	// executions and its file calls then run in a container of it, as the
+	// image's user, with the VM's network, and with the run's home, its
+	// working directory and its cache at their own paths; a command without
+	// cwd starts in the home, not in the image's working directory. The pull
+	// is part of the job's start. Empty: the job runs in its VM itself.
+	//
+	// A tag is resolved to a digest at create, and every run of the job pulls
+	// that digest (container_image_digest); a digest is kept as given and
+	// checked by the pull. The registry must be public and the pull is
+	// anonymous. A create whose image cannot be resolved records nothing: it
+	// fails with UNAVAILABLE when the registry cannot be reached in time,
+	// FAILED_PRECONDITION when the registry refuses the image or holds no
+	// such repository or tag, and INVALID_ARGUMENT for a reference that is
+	// not one, a registry at an address that is not public, or an image
+	// without the platform of the job's size (linux/amd64).
+	ContainerImage string `protobuf:"bytes,4,opt,name=container_image,json=containerImage,proto3" json:"container_image,omitempty"`
+	// The digest container_image named at create, "sha256:<hex>": an index's
+	// when the tag names one. Set by the server; ignored in a request.
+	ContainerImageDigest string `protobuf:"bytes,5,opt,name=container_image_digest,json=containerImageDigest,proto3" json:"container_image_digest,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *JobSpec) Reset() {
@@ -1570,6 +1592,20 @@ func (x *JobSpec) GetBindings() []*Binding {
 func (x *JobSpec) GetSize() string {
 	if x != nil {
 		return x.Size
+	}
+	return ""
+}
+
+func (x *JobSpec) GetContainerImage() string {
+	if x != nil {
+		return x.ContainerImage
+	}
+	return ""
+}
+
+func (x *JobSpec) GetContainerImageDigest() string {
+	if x != nil {
+		return x.ContainerImageDigest
 	}
 	return ""
 }
@@ -2122,8 +2158,16 @@ type SandboxSpec struct {
 	// FAILED_PRECONDITION. Answers carry the id the create named, even after
 	// a detach; VolumeService answers what a volume is attached to now.
 	StateVolumeId string `protobuf:"bytes,4,opt,name=state_volume_id,json=stateVolumeId,proto3" json:"state_volume_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// The image the sandbox's executions and file calls run in, as
+	// JobSpec.container_image says for a job's, resolved at create the same
+	// way. A sandbox of a size that is not Linux fails the create
+	// with INVALID_ARGUMENT.
+	ContainerImage string `protobuf:"bytes,5,opt,name=container_image,json=containerImage,proto3" json:"container_image,omitempty"`
+	// As JobSpec.container_image_digest. Set by the server; ignored in a
+	// request.
+	ContainerImageDigest string `protobuf:"bytes,6,opt,name=container_image_digest,json=containerImageDigest,proto3" json:"container_image_digest,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *SandboxSpec) Reset() {
@@ -2180,6 +2224,20 @@ func (x *SandboxSpec) GetBindings() []*Binding {
 func (x *SandboxSpec) GetStateVolumeId() string {
 	if x != nil {
 		return x.StateVolumeId
+	}
+	return ""
+}
+
+func (x *SandboxSpec) GetContainerImage() string {
+	if x != nil {
+		return x.ContainerImage
+	}
+	return ""
+}
+
+func (x *SandboxSpec) GetContainerImageDigest() string {
+	if x != nil {
+		return x.ContainerImageDigest
 	}
 	return ""
 }
@@ -7018,11 +7076,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"started_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x125\n" +
 	"\bended_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x8d\x01\n" +
+	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xec\x01\n" +
 	"\aJobSpec\x125\n" +
 	"\acommand\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.CommandR\acommand\x127\n" +
 	"\bbindings\x18\x02 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x12\x12\n" +
-	"\x04size\x18\x03 \x01(\tR\x04size\"\xab\x01\n" +
+	"\x04size\x18\x03 \x01(\tR\x04size\x12'\n" +
+	"\x0fcontainer_image\x18\x04 \x01(\tR\x0econtainerImage\x124\n" +
+	"\x16container_image_digest\x18\x05 \x01(\tR\x14containerImageDigest\"\xab\x01\n" +
 	"\aBinding\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12>\n" +
 	"\aservice\x18\x02 \x01(\v2\".toshi.workspace.v1.ServiceChannelH\x00R\aservice\x12B\n" +
@@ -7057,12 +7117,14 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bBoundKey\x12\x15\n" +
 	"\x06set_id\x18\x01 \x01(\tR\x05setId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\x03R\aversion\"\xc0\x01\n" +
+	"\aversion\x18\x03 \x01(\x03R\aversion\"\x9f\x02\n" +
 	"\vSandboxSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
 	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
 	"\bbindings\x18\x03 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x12&\n" +
-	"\x0fstate_volume_id\x18\x04 \x01(\tR\rstateVolumeId\"\x94\x03\n" +
+	"\x0fstate_volume_id\x18\x04 \x01(\tR\rstateVolumeId\x12'\n" +
+	"\x0fcontainer_image\x18\x05 \x01(\tR\x0econtainerImage\x124\n" +
+	"\x16container_image_digest\x18\x06 \x01(\tR\x14containerImageDigest\"\x94\x03\n" +
 	"\vServiceSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x123\n" +
 	"\x04mode\x18\x02 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\x12\x1a\n" +
