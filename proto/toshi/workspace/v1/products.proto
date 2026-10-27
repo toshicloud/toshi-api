@@ -26,6 +26,14 @@ service ProductService {
   rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {
     option (toshi.permission) = "settings.read";
   }
+  // ListCatalogEntries returns the outside products the deployment's
+  // catalog sources offer, by id, as `toshi product catalog` lists them,
+  // each with the state of the workspace's installation of it. The products
+  // the deployment includes are ListProducts'. With no catalog source the
+  // list is empty.
+  rpc ListCatalogEntries(ListCatalogEntriesRequest) returns (ListCatalogEntriesResponse) {
+    option (toshi.permission) = "settings.read";
+  }
   // UpdateProduct changes the workspace's settings of one product in one
   // call: it turns the product on or off, and sets or clears its features.
   // The caller and the time of the call are recorded with each setting it
@@ -61,6 +69,37 @@ message ListProductsRequest {}
 message ListProductsResponse {
   // products are the products the deployment includes, by id.
   repeated ProductSettings products = 1;
+}
+
+message ListCatalogEntriesRequest {}
+
+message ListCatalogEntriesResponse {
+  // entries are the outside products the catalog sources offer, by id.
+  repeated CatalogEntry entries = 1;
+}
+
+// CatalogEntry is an outside product a catalog source offers, as its entry
+// lists it, with the state of the workspace's installation of it.
+message CatalogEntry {
+  // id names the product.
+  string id = 1;
+  // name is the product's name as people read it, such as "Acme Deploys".
+  string name = 2;
+  // publisher names who publishes it.
+  string publisher = 3;
+  // version is the version the entry offers.
+  string version = 4;
+  // access are the permissions the product asks for: the list
+  // UpdateProduct's accepted_access installs it with.
+  repeated string access = 5;
+  // surfaces are what the product adds to Toshi.
+  ProductSurfaces surfaces = 6;
+  // source names the catalog source that offers it, as the deployment's
+  // configuration names it.
+  string source = 7;
+  // installation_state is the state of the workspace's installation of it;
+  // UNSPECIFIED when the workspace never installed it.
+  InstallationState installation_state = 8;
 }
 
 message UpdateProductRequest {

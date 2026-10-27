@@ -36,6 +36,9 @@ const (
 	// ProductServiceListProductsProcedure is the fully-qualified name of the ProductService's
 	// ListProducts RPC.
 	ProductServiceListProductsProcedure = "/toshi.workspace.v1.ProductService/ListProducts"
+	// ProductServiceListCatalogEntriesProcedure is the fully-qualified name of the ProductService's
+	// ListCatalogEntries RPC.
+	ProductServiceListCatalogEntriesProcedure = "/toshi.workspace.v1.ProductService/ListCatalogEntries"
 	// ProductServiceUpdateProductProcedure is the fully-qualified name of the ProductService's
 	// UpdateProduct RPC.
 	ProductServiceUpdateProductProcedure = "/toshi.workspace.v1.ProductService/UpdateProduct"
@@ -52,6 +55,12 @@ type ProductServiceClient interface {
 	// setting last and when; then the outside products the workspace has
 	// installed, by id, each with its installation.
 	ListProducts(context.Context, *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error)
+	// ListCatalogEntries returns the outside products the deployment's
+	// catalog sources offer, by id, as `toshi product catalog` lists them,
+	// each with the state of the workspace's installation of it. The products
+	// the deployment includes are ListProducts'. With no catalog source the
+	// list is empty.
+	ListCatalogEntries(context.Context, *connect.Request[workspacev1.ListCatalogEntriesRequest]) (*connect.Response[workspacev1.ListCatalogEntriesResponse], error)
 	// UpdateProduct changes the workspace's settings of one product in one
 	// call: it turns the product on or off, and sets or clears its features.
 	// The caller and the time of the call are recorded with each setting it
@@ -94,6 +103,12 @@ func NewProductServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(productServiceMethods.ByName("ListProducts")),
 			connect.WithClientOptions(opts...),
 		),
+		listCatalogEntries: connect.NewClient[workspacev1.ListCatalogEntriesRequest, workspacev1.ListCatalogEntriesResponse](
+			httpClient,
+			baseURL+ProductServiceListCatalogEntriesProcedure,
+			connect.WithSchema(productServiceMethods.ByName("ListCatalogEntries")),
+			connect.WithClientOptions(opts...),
+		),
 		updateProduct: connect.NewClient[workspacev1.UpdateProductRequest, workspacev1.UpdateProductResponse](
 			httpClient,
 			baseURL+ProductServiceUpdateProductProcedure,
@@ -111,14 +126,20 @@ func NewProductServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // productServiceClient implements ProductServiceClient.
 type productServiceClient struct {
-	listProducts  *connect.Client[workspacev1.ListProductsRequest, workspacev1.ListProductsResponse]
-	updateProduct *connect.Client[workspacev1.UpdateProductRequest, workspacev1.UpdateProductResponse]
-	removeProduct *connect.Client[workspacev1.RemoveProductRequest, workspacev1.RemoveProductResponse]
+	listProducts       *connect.Client[workspacev1.ListProductsRequest, workspacev1.ListProductsResponse]
+	listCatalogEntries *connect.Client[workspacev1.ListCatalogEntriesRequest, workspacev1.ListCatalogEntriesResponse]
+	updateProduct      *connect.Client[workspacev1.UpdateProductRequest, workspacev1.UpdateProductResponse]
+	removeProduct      *connect.Client[workspacev1.RemoveProductRequest, workspacev1.RemoveProductResponse]
 }
 
 // ListProducts calls toshi.workspace.v1.ProductService.ListProducts.
 func (c *productServiceClient) ListProducts(ctx context.Context, req *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error) {
 	return c.listProducts.CallUnary(ctx, req)
+}
+
+// ListCatalogEntries calls toshi.workspace.v1.ProductService.ListCatalogEntries.
+func (c *productServiceClient) ListCatalogEntries(ctx context.Context, req *connect.Request[workspacev1.ListCatalogEntriesRequest]) (*connect.Response[workspacev1.ListCatalogEntriesResponse], error) {
+	return c.listCatalogEntries.CallUnary(ctx, req)
 }
 
 // UpdateProduct calls toshi.workspace.v1.ProductService.UpdateProduct.
@@ -139,6 +160,12 @@ type ProductServiceHandler interface {
 	// setting last and when; then the outside products the workspace has
 	// installed, by id, each with its installation.
 	ListProducts(context.Context, *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error)
+	// ListCatalogEntries returns the outside products the deployment's
+	// catalog sources offer, by id, as `toshi product catalog` lists them,
+	// each with the state of the workspace's installation of it. The products
+	// the deployment includes are ListProducts'. With no catalog source the
+	// list is empty.
+	ListCatalogEntries(context.Context, *connect.Request[workspacev1.ListCatalogEntriesRequest]) (*connect.Response[workspacev1.ListCatalogEntriesResponse], error)
 	// UpdateProduct changes the workspace's settings of one product in one
 	// call: it turns the product on or off, and sets or clears its features.
 	// The caller and the time of the call are recorded with each setting it
@@ -177,6 +204,12 @@ func NewProductServiceHandler(svc ProductServiceHandler, opts ...connect.Handler
 		connect.WithSchema(productServiceMethods.ByName("ListProducts")),
 		connect.WithHandlerOptions(opts...),
 	)
+	productServiceListCatalogEntriesHandler := connect.NewUnaryHandler(
+		ProductServiceListCatalogEntriesProcedure,
+		svc.ListCatalogEntries,
+		connect.WithSchema(productServiceMethods.ByName("ListCatalogEntries")),
+		connect.WithHandlerOptions(opts...),
+	)
 	productServiceUpdateProductHandler := connect.NewUnaryHandler(
 		ProductServiceUpdateProductProcedure,
 		svc.UpdateProduct,
@@ -193,6 +226,8 @@ func NewProductServiceHandler(svc ProductServiceHandler, opts ...connect.Handler
 		switch r.URL.Path {
 		case ProductServiceListProductsProcedure:
 			productServiceListProductsHandler.ServeHTTP(w, r)
+		case ProductServiceListCatalogEntriesProcedure:
+			productServiceListCatalogEntriesHandler.ServeHTTP(w, r)
 		case ProductServiceUpdateProductProcedure:
 			productServiceUpdateProductHandler.ServeHTTP(w, r)
 		case ProductServiceRemoveProductProcedure:
@@ -208,6 +243,10 @@ type UnimplementedProductServiceHandler struct{}
 
 func (UnimplementedProductServiceHandler) ListProducts(context.Context, *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProductService.ListProducts is not implemented"))
+}
+
+func (UnimplementedProductServiceHandler) ListCatalogEntries(context.Context, *connect.Request[workspacev1.ListCatalogEntriesRequest]) (*connect.Response[workspacev1.ListCatalogEntriesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProductService.ListCatalogEntries is not implemented"))
 }
 
 func (UnimplementedProductServiceHandler) UpdateProduct(context.Context, *connect.Request[workspacev1.UpdateProductRequest]) (*connect.Response[workspacev1.UpdateProductResponse], error) {

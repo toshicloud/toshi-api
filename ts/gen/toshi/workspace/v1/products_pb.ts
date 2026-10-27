@@ -15,7 +15,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/products.proto.
  */
 export const file_toshi_workspace_v1_products: GenFile = /*@__PURE__*/
-  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyKJAgoUVXBkYXRlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkSFAoHZW5hYmxlZBgCIAEoCEgAiAEBEkgKCHNldHRpbmdzGAMgAygLMjYudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0LlNldHRpbmdzRW50cnkSDQoFY2xlYXIYBCADKAkSFwoPYWNjZXB0ZWRfYWNjZXNzGAUgAygJGlEKDVNldHRpbmdzRW50cnkSCwoDa2V5GAEgASgJEi8KBXZhbHVlGAIgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZToCOAFCCgoIX2VuYWJsZWQiaQoVVXBkYXRlUHJvZHVjdFJlc3BvbnNlEjQKB3Byb2R1Y3QYASABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFNldHRpbmdzEhoKEmluc3RhbGxhdGlvbl90b2tlbhgCIAEoCSIiChRSZW1vdmVQcm9kdWN0UmVxdWVzdBIKCgJpZBgBIAEoCSJNChVSZW1vdmVQcm9kdWN0UmVzcG9uc2USNAoHcHJvZHVjdBgBIAEoCzIjLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U2V0dGluZ3MiuwIKD1Byb2R1Y3RTZXR0aW5ncxIKCgJpZBgBIAEoCRIxCgZzd2l0Y2gYAiABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN3aXRjaBI0CghmZWF0dXJlcxgDIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU2V0dGluZxIvCgVzdGF0ZRgEIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhdGUSPQoMaW5zdGFsbGF0aW9uGAUgASgLMicudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RJbnN0YWxsYXRpb24SNQoIc3VyZmFjZXMYBiABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN1cmZhY2VzEgwKBG5hbWUYByABKAkiSwoPUHJvZHVjdFN1cmZhY2VzEgsKA2FwaRgBIAEoCRILCgNjbGkYAiABKAkSEQoJZGFzaGJvYXJkGAMgASgJEgsKA3NkaxgEIAEoCSKaAgoTUHJvZHVjdEluc3RhbGxhdGlvbhI0CgVzdGF0ZRgBIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5JbnN0YWxsYXRpb25TdGF0ZRIPCgd2ZXJzaW9uGAIgASgJEhEKCXB1Ymxpc2hlchgDIAEoCRIOCgZhY2Nlc3MYBCADKAkSDwoHcm9sZV9pZBgFIAEoCRIQCgh0b2tlbl9pZBgGIAEoCRIUCgxpbnN0YWxsZWRfYnkYByABKAkSMAoMaW5zdGFsbGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLZAgoORmVhdHVyZVNldHRpbmcSCwoDa2V5GAEgASgJEhIKCm5hcnJvd2FibGUYAiABKAgSNQoLZW50aXRsZW1lbnQYAyABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjEKB3NldHRpbmcYBCABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjMKCWVmZmVjdGl2ZRgFIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSEgoKY2hhbmdlZF9ieRgGIAEoCRIuCgpjaGFuZ2VkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCgZzb3VyY2UYCCABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNvdXJjZRIQCghwbGFuX2tleRgJIAEoCSqYAQoRSW5zdGFsbGF0aW9uU3RhdGUSIgoeSU5TVEFMTEFUSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASHQoZSU5TVEFMTEFUSU9OX1NUQVRFX0FDVElWRRABEiAKHElOU1RBTExBVElPTl9TVEFURV9TVVNQRU5ERUQQAhIeChpJTlNUQUxMQVRJT05fU1RBVEVfUkVNT1ZFRBADMpADCg5Qcm9kdWN0U2VydmljZRJ0CgxMaXN0UHJvZHVjdHMSJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UHJvZHVjdHNSZXNwb25zZSIRwvMYDXNldHRpbmdzLnJlYWQSeAoNVXBkYXRlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVzcG9uc2UiEsLzGA5zZXR0aW5ncy53cml0ZRKNAQoNUmVtb3ZlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVzcG9uc2UiJ8LzGA5zZXR0aW5ncy53cml0ZdLzGBEKD3Byb2R1Y3QucmVtb3ZlZEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
+  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyIbChlMaXN0Q2F0YWxvZ0VudHJpZXNSZXF1ZXN0Ik8KGkxpc3RDYXRhbG9nRW50cmllc1Jlc3BvbnNlEjEKB2VudHJpZXMYASADKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuQ2F0YWxvZ0VudHJ5IuYBCgxDYXRhbG9nRW50cnkSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIRCglwdWJsaXNoZXIYAyABKAkSDwoHdmVyc2lvbhgEIAEoCRIOCgZhY2Nlc3MYBSADKAkSNQoIc3VyZmFjZXMYBiABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN1cmZhY2VzEg4KBnNvdXJjZRgHIAEoCRJBChJpbnN0YWxsYXRpb25fc3RhdGUYCCABKA4yJS50b3NoaS53b3Jrc3BhY2UudjEuSW5zdGFsbGF0aW9uU3RhdGUiiQIKFFVwZGF0ZVByb2R1Y3RSZXF1ZXN0EgoKAmlkGAEgASgJEhQKB2VuYWJsZWQYAiABKAhIAIgBARJICghzZXR0aW5ncxgDIAMoCzI2LnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVxdWVzdC5TZXR0aW5nc0VudHJ5Eg0KBWNsZWFyGAQgAygJEhcKD2FjY2VwdGVkX2FjY2VzcxgFIAMoCRpRCg1TZXR0aW5nc0VudHJ5EgsKA2tleRgBIAEoCRIvCgV2YWx1ZRgCIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWU6AjgBQgoKCF9lbmFibGVkImkKFVVwZGF0ZVByb2R1Y3RSZXNwb25zZRI0Cgdwcm9kdWN0GAEgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncxIaChJpbnN0YWxsYXRpb25fdG9rZW4YAiABKAkiIgoUUmVtb3ZlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkiTQoVUmVtb3ZlUHJvZHVjdFJlc3BvbnNlEjQKB3Byb2R1Y3QYASABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFNldHRpbmdzIrsCCg9Qcm9kdWN0U2V0dGluZ3MSCgoCaWQYASABKAkSMQoGc3dpdGNoGAIgASgOMiEudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTd2l0Y2gSNAoIZmVhdHVyZXMYAyADKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNldHRpbmcSLwoFc3RhdGUYBCABKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN0YXRlEj0KDGluc3RhbGxhdGlvbhgFIAEoCzInLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0SW5zdGFsbGF0aW9uEjUKCHN1cmZhY2VzGAYgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTdXJmYWNlcxIMCgRuYW1lGAcgASgJIksKD1Byb2R1Y3RTdXJmYWNlcxILCgNhcGkYASABKAkSCwoDY2xpGAIgASgJEhEKCWRhc2hib2FyZBgDIAEoCRILCgNzZGsYBCABKAkimgIKE1Byb2R1Y3RJbnN0YWxsYXRpb24SNAoFc3RhdGUYASABKA4yJS50b3NoaS53b3Jrc3BhY2UudjEuSW5zdGFsbGF0aW9uU3RhdGUSDwoHdmVyc2lvbhgCIAEoCRIRCglwdWJsaXNoZXIYAyABKAkSDgoGYWNjZXNzGAQgAygJEg8KB3JvbGVfaWQYBSABKAkSEAoIdG9rZW5faWQYBiABKAkSFAoMaW5zdGFsbGVkX2J5GAcgASgJEjAKDGluc3RhbGxlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi2QIKDkZlYXR1cmVTZXR0aW5nEgsKA2tleRgBIAEoCRISCgpuYXJyb3dhYmxlGAIgASgIEjUKC2VudGl0bGVtZW50GAMgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIxCgdzZXR0aW5nGAQgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRIzCgllZmZlY3RpdmUYBSABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEhIKCmNoYW5nZWRfYnkYBiABKAkSLgoKY2hhbmdlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMQoGc291cmNlGAggASgOMiEudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVTb3VyY2USEAoIcGxhbl9rZXkYCSABKAkqmAEKEUluc3RhbGxhdGlvblN0YXRlEiIKHklOU1RBTExBVElPTl9TVEFURV9VTlNQRUNJRklFRBAAEh0KGUlOU1RBTExBVElPTl9TVEFURV9BQ1RJVkUQARIgChxJTlNUQUxMQVRJT05fU1RBVEVfU1VTUEVOREVEEAISHgoaSU5TVEFMTEFUSU9OX1NUQVRFX1JFTU9WRUQQAzKZBAoOUHJvZHVjdFNlcnZpY2USdAoMTGlzdFByb2R1Y3RzEicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RQcm9kdWN0c1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVzcG9uc2UiEcLzGA1zZXR0aW5ncy5yZWFkEoYBChJMaXN0Q2F0YWxvZ0VudHJpZXMSLS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdENhdGFsb2dFbnRyaWVzUmVxdWVzdBouLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Q2F0YWxvZ0VudHJpZXNSZXNwb25zZSIRwvMYDXNldHRpbmdzLnJlYWQSeAoNVXBkYXRlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVzcG9uc2UiEsLzGA5zZXR0aW5ncy53cml0ZRKNAQoNUmVtb3ZlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5SZW1vdmVQcm9kdWN0UmVzcG9uc2UiJ8LzGA5zZXR0aW5ncy53cml0ZdLzGBEKD3Byb2R1Y3QucmVtb3ZlZEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
 
 /**
  * @generated from message toshi.workspace.v1.ListProductsRequest
@@ -66,6 +66,197 @@ export type ListProductsResponseJson = {
  */
 export const ListProductsResponseSchema: GenMessage<ListProductsResponse, {jsonType: ListProductsResponseJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_products, 1);
+
+/**
+ * @generated from message toshi.workspace.v1.ListCatalogEntriesRequest
+ */
+export type ListCatalogEntriesRequest = Message<"toshi.workspace.v1.ListCatalogEntriesRequest"> & {
+};
+
+/**
+ * @generated from message toshi.workspace.v1.ListCatalogEntriesRequest
+ */
+export type ListCatalogEntriesRequestJson = {
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ListCatalogEntriesRequest.
+ * Use `create(ListCatalogEntriesRequestSchema)` to create a new message.
+ */
+export const ListCatalogEntriesRequestSchema: GenMessage<ListCatalogEntriesRequest, {jsonType: ListCatalogEntriesRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_products, 2);
+
+/**
+ * @generated from message toshi.workspace.v1.ListCatalogEntriesResponse
+ */
+export type ListCatalogEntriesResponse = Message<"toshi.workspace.v1.ListCatalogEntriesResponse"> & {
+  /**
+   * entries are the outside products the catalog sources offer, by id.
+   *
+   * @generated from field: repeated toshi.workspace.v1.CatalogEntry entries = 1;
+   */
+  entries: CatalogEntry[];
+};
+
+/**
+ * @generated from message toshi.workspace.v1.ListCatalogEntriesResponse
+ */
+export type ListCatalogEntriesResponseJson = {
+  /**
+   * entries are the outside products the catalog sources offer, by id.
+   *
+   * @generated from field: repeated toshi.workspace.v1.CatalogEntry entries = 1;
+   */
+  entries?: CatalogEntryJson[];
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ListCatalogEntriesResponse.
+ * Use `create(ListCatalogEntriesResponseSchema)` to create a new message.
+ */
+export const ListCatalogEntriesResponseSchema: GenMessage<ListCatalogEntriesResponse, {jsonType: ListCatalogEntriesResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_products, 3);
+
+/**
+ * CatalogEntry is an outside product a catalog source offers, as its entry
+ * lists it, with the state of the workspace's installation of it.
+ *
+ * @generated from message toshi.workspace.v1.CatalogEntry
+ */
+export type CatalogEntry = Message<"toshi.workspace.v1.CatalogEntry"> & {
+  /**
+   * id names the product.
+   *
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * name is the product's name as people read it, such as "Acme Deploys".
+   *
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * publisher names who publishes it.
+   *
+   * @generated from field: string publisher = 3;
+   */
+  publisher: string;
+
+  /**
+   * version is the version the entry offers.
+   *
+   * @generated from field: string version = 4;
+   */
+  version: string;
+
+  /**
+   * access are the permissions the product asks for: the list
+   * UpdateProduct's accepted_access installs it with.
+   *
+   * @generated from field: repeated string access = 5;
+   */
+  access: string[];
+
+  /**
+   * surfaces are what the product adds to Toshi.
+   *
+   * @generated from field: toshi.workspace.v1.ProductSurfaces surfaces = 6;
+   */
+  surfaces?: ProductSurfaces | undefined;
+
+  /**
+   * source names the catalog source that offers it, as the deployment's
+   * configuration names it.
+   *
+   * @generated from field: string source = 7;
+   */
+  source: string;
+
+  /**
+   * installation_state is the state of the workspace's installation of it;
+   * UNSPECIFIED when the workspace never installed it.
+   *
+   * @generated from field: toshi.workspace.v1.InstallationState installation_state = 8;
+   */
+  installationState: InstallationState;
+};
+
+/**
+ * CatalogEntry is an outside product a catalog source offers, as its entry
+ * lists it, with the state of the workspace's installation of it.
+ *
+ * @generated from message toshi.workspace.v1.CatalogEntry
+ */
+export type CatalogEntryJson = {
+  /**
+   * id names the product.
+   *
+   * @generated from field: string id = 1;
+   */
+  id?: string;
+
+  /**
+   * name is the product's name as people read it, such as "Acme Deploys".
+   *
+   * @generated from field: string name = 2;
+   */
+  name?: string;
+
+  /**
+   * publisher names who publishes it.
+   *
+   * @generated from field: string publisher = 3;
+   */
+  publisher?: string;
+
+  /**
+   * version is the version the entry offers.
+   *
+   * @generated from field: string version = 4;
+   */
+  version?: string;
+
+  /**
+   * access are the permissions the product asks for: the list
+   * UpdateProduct's accepted_access installs it with.
+   *
+   * @generated from field: repeated string access = 5;
+   */
+  access?: string[];
+
+  /**
+   * surfaces are what the product adds to Toshi.
+   *
+   * @generated from field: toshi.workspace.v1.ProductSurfaces surfaces = 6;
+   */
+  surfaces?: ProductSurfacesJson;
+
+  /**
+   * source names the catalog source that offers it, as the deployment's
+   * configuration names it.
+   *
+   * @generated from field: string source = 7;
+   */
+  source?: string;
+
+  /**
+   * installation_state is the state of the workspace's installation of it;
+   * UNSPECIFIED when the workspace never installed it.
+   *
+   * @generated from field: toshi.workspace.v1.InstallationState installation_state = 8;
+   */
+  installationState?: InstallationStateJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.CatalogEntry.
+ * Use `create(CatalogEntrySchema)` to create a new message.
+ */
+export const CatalogEntrySchema: GenMessage<CatalogEntry, {jsonType: CatalogEntryJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_products, 4);
 
 /**
  * @generated from message toshi.workspace.v1.UpdateProductRequest
@@ -182,7 +373,7 @@ export type UpdateProductRequestJson = {
  * Use `create(UpdateProductRequestSchema)` to create a new message.
  */
 export const UpdateProductRequestSchema: GenMessage<UpdateProductRequest, {jsonType: UpdateProductRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 2);
+  messageDesc(file_toshi_workspace_v1_products, 5);
 
 /**
  * @generated from message toshi.workspace.v1.UpdateProductResponse
@@ -231,7 +422,7 @@ export type UpdateProductResponseJson = {
  * Use `create(UpdateProductResponseSchema)` to create a new message.
  */
 export const UpdateProductResponseSchema: GenMessage<UpdateProductResponse, {jsonType: UpdateProductResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 3);
+  messageDesc(file_toshi_workspace_v1_products, 6);
 
 /**
  * @generated from message toshi.workspace.v1.RemoveProductRequest
@@ -262,7 +453,7 @@ export type RemoveProductRequestJson = {
  * Use `create(RemoveProductRequestSchema)` to create a new message.
  */
 export const RemoveProductRequestSchema: GenMessage<RemoveProductRequest, {jsonType: RemoveProductRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 4);
+  messageDesc(file_toshi_workspace_v1_products, 7);
 
 /**
  * @generated from message toshi.workspace.v1.RemoveProductResponse
@@ -293,7 +484,7 @@ export type RemoveProductResponseJson = {
  * Use `create(RemoveProductResponseSchema)` to create a new message.
  */
 export const RemoveProductResponseSchema: GenMessage<RemoveProductResponse, {jsonType: RemoveProductResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 5);
+  messageDesc(file_toshi_workspace_v1_products, 8);
 
 /**
  * ProductSettings is one product as the workspace has it.
@@ -438,7 +629,7 @@ export type ProductSettingsJson = {
  * Use `create(ProductSettingsSchema)` to create a new message.
  */
 export const ProductSettingsSchema: GenMessage<ProductSettings, {jsonType: ProductSettingsJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 6);
+  messageDesc(file_toshi_workspace_v1_products, 9);
 
 /**
  * ProductSurfaces are what a product adds to Toshi, each empty when it adds
@@ -523,7 +714,7 @@ export type ProductSurfacesJson = {
  * Use `create(ProductSurfacesSchema)` to create a new message.
  */
 export const ProductSurfacesSchema: GenMessage<ProductSurfaces, {jsonType: ProductSurfacesJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 7);
+  messageDesc(file_toshi_workspace_v1_products, 10);
 
 /**
  * ProductInstallation is a workspace's installation of an outside product.
@@ -654,7 +845,7 @@ export type ProductInstallationJson = {
  * Use `create(ProductInstallationSchema)` to create a new message.
  */
 export const ProductInstallationSchema: GenMessage<ProductInstallation, {jsonType: ProductInstallationJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 8);
+  messageDesc(file_toshi_workspace_v1_products, 11);
 
 /**
  * FeatureSetting is one feature of a product as the workspace has it.
@@ -813,7 +1004,7 @@ export type FeatureSettingJson = {
  * Use `create(FeatureSettingSchema)` to create a new message.
  */
 export const FeatureSettingSchema: GenMessage<FeatureSetting, {jsonType: FeatureSettingJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_products, 9);
+  messageDesc(file_toshi_workspace_v1_products, 12);
 
 /**
  * InstallationState is where an installation stands.
@@ -890,6 +1081,20 @@ export const ProductService: GenService<{
     methodKind: "unary";
     input: typeof ListProductsRequestSchema;
     output: typeof ListProductsResponseSchema;
+  },
+  /**
+   * ListCatalogEntries returns the outside products the deployment's
+   * catalog sources offer, by id, as `toshi product catalog` lists them,
+   * each with the state of the workspace's installation of it. The products
+   * the deployment includes are ListProducts'. With no catalog source the
+   * list is empty.
+   *
+   * @generated from rpc toshi.workspace.v1.ProductService.ListCatalogEntries
+   */
+  listCatalogEntries: {
+    methodKind: "unary";
+    input: typeof ListCatalogEntriesRequestSchema;
+    output: typeof ListCatalogEntriesResponseSchema;
   },
   /**
    * UpdateProduct changes the workspace's settings of one product in one
