@@ -620,7 +620,7 @@ type TestHookRequest struct {
 	//	*TestHookRequest_Version
 	//	*TestHookRequest_Module
 	Hook isTestHookRequest_Hook `protobuf_oneof:"hook"`
-	// The sample document, JSON, at most 1 MiB.
+	// The sample document, JSON, at most 1 MiB and 64 KiB.
 	Document      string `protobuf:"bytes,4,opt,name=document,proto3" json:"document,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -719,7 +719,10 @@ type TestHookResponse struct {
 	//	*TestHookResponse_Refusal
 	Result isTestHookResponse_Result `protobuf_oneof:"result"`
 	// How long the call took, compiling the module excluded.
-	Duration      *durationpb.Duration `protobuf:"bytes,3,opt,name=duration,proto3" json:"duration,omitempty"`
+	Duration *durationpb.Duration `protobuf:"bytes,3,opt,name=duration,proto3" json:"duration,omitempty"`
+	// What the output means for the hook's type, read as the platform reads
+	// it; set with output.
+	Answer        *HookAnswer `protobuf:"bytes,4,opt,name=answer,proto3" json:"answer,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -786,6 +789,13 @@ func (x *TestHookResponse) GetDuration() *durationpb.Duration {
 	return nil
 }
 
+func (x *TestHookResponse) GetAnswer() *HookAnswer {
+	if x != nil {
+		return x.Answer
+	}
+	return nil
+}
+
 type isTestHookResponse_Result interface {
 	isTestHookResponse_Result()
 }
@@ -804,6 +814,344 @@ func (*TestHookResponse_Output) isTestHookResponse_Result() {}
 
 func (*TestHookResponse_Refusal) isTestHookResponse_Result() {}
 
+// HookAnswer is a hook's output read as an answer of its type.
+type HookAnswer struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Answer:
+	//
+	//	*HookAnswer_Admission
+	//	*HookAnswer_Transform
+	//	*HookAnswer_Problem
+	Answer        isHookAnswer_Answer `protobuf_oneof:"answer"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HookAnswer) Reset() {
+	*x = HookAnswer{}
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HookAnswer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HookAnswer) ProtoMessage() {}
+
+func (x *HookAnswer) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HookAnswer.ProtoReflect.Descriptor instead.
+func (*HookAnswer) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_hooks_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *HookAnswer) GetAnswer() isHookAnswer_Answer {
+	if x != nil {
+		return x.Answer
+	}
+	return nil
+}
+
+func (x *HookAnswer) GetAdmission() *AdmissionAnswer {
+	if x != nil {
+		if x, ok := x.Answer.(*HookAnswer_Admission); ok {
+			return x.Admission
+		}
+	}
+	return nil
+}
+
+func (x *HookAnswer) GetTransform() *TransformAnswer {
+	if x != nil {
+		if x, ok := x.Answer.(*HookAnswer_Transform); ok {
+			return x.Transform
+		}
+	}
+	return nil
+}
+
+func (x *HookAnswer) GetProblem() string {
+	if x != nil {
+		if x, ok := x.Answer.(*HookAnswer_Problem); ok {
+			return x.Problem
+		}
+	}
+	return ""
+}
+
+type isHookAnswer_Answer interface {
+	isHookAnswer_Answer()
+}
+
+type HookAnswer_Admission struct {
+	Admission *AdmissionAnswer `protobuf:"bytes,1,opt,name=admission,proto3,oneof"`
+}
+
+type HookAnswer_Transform struct {
+	Transform *TransformAnswer `protobuf:"bytes,2,opt,name=transform,proto3,oneof"`
+}
+
+type HookAnswer_Problem struct {
+	// Why the output is no answer of the type, which the platform treats
+	// as a failure: an admission hook's workload is refused, and a
+	// transform's delivery dropped as transform_invalid_output.
+	Problem string `protobuf:"bytes,3,opt,name=problem,proto3,oneof"`
+}
+
+func (*HookAnswer_Admission) isHookAnswer_Answer() {}
+
+func (*HookAnswer_Transform) isHookAnswer_Answer() {}
+
+func (*HookAnswer_Problem) isHookAnswer_Answer() {}
+
+// AdmissionAnswer is an admission hook's answer.
+type AdmissionAnswer struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Allow bool                   `protobuf:"varint,1,opt,name=allow,proto3" json:"allow,omitempty"`
+	// The deny's message, at most 1 KiB.
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdmissionAnswer) Reset() {
+	*x = AdmissionAnswer{}
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdmissionAnswer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdmissionAnswer) ProtoMessage() {}
+
+func (x *AdmissionAnswer) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdmissionAnswer.ProtoReflect.Descriptor instead.
+func (*AdmissionAnswer) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_hooks_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *AdmissionAnswer) GetAllow() bool {
+	if x != nil {
+		return x.Allow
+	}
+	return false
+}
+
+func (x *AdmissionAnswer) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// TransformAnswer is a transform hook's answer: the event the delivery
+// becomes, or why it is dropped.
+type TransformAnswer struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Answer:
+	//
+	//	*TransformAnswer_Event
+	//	*TransformAnswer_Drop
+	Answer        isTransformAnswer_Answer `protobuf_oneof:"answer"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TransformAnswer) Reset() {
+	*x = TransformAnswer{}
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TransformAnswer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransformAnswer) ProtoMessage() {}
+
+func (x *TransformAnswer) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransformAnswer.ProtoReflect.Descriptor instead.
+func (*TransformAnswer) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_hooks_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *TransformAnswer) GetAnswer() isTransformAnswer_Answer {
+	if x != nil {
+		return x.Answer
+	}
+	return nil
+}
+
+func (x *TransformAnswer) GetEvent() *TransformEvent {
+	if x != nil {
+		if x, ok := x.Answer.(*TransformAnswer_Event); ok {
+			return x.Event
+		}
+	}
+	return nil
+}
+
+func (x *TransformAnswer) GetDrop() *TransformDrop {
+	if x != nil {
+		if x, ok := x.Answer.(*TransformAnswer_Drop); ok {
+			return x.Drop
+		}
+	}
+	return nil
+}
+
+type isTransformAnswer_Answer interface {
+	isTransformAnswer_Answer()
+}
+
+type TransformAnswer_Event struct {
+	Event *TransformEvent `protobuf:"bytes,1,opt,name=event,proto3,oneof"`
+}
+
+type TransformAnswer_Drop struct {
+	Drop *TransformDrop `protobuf:"bytes,2,opt,name=drop,proto3,oneof"`
+}
+
+func (*TransformAnswer_Event) isTransformAnswer_Answer() {}
+
+func (*TransformAnswer_Drop) isTransformAnswer_Answer() {}
+
+type TransformEvent struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The event's type, such as order.paid.
+	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	// The event's data, a JSON object.
+	Data          string `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TransformEvent) Reset() {
+	*x = TransformEvent{}
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TransformEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransformEvent) ProtoMessage() {}
+
+func (x *TransformEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransformEvent.ProtoReflect.Descriptor instead.
+func (*TransformEvent) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_hooks_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *TransformEvent) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *TransformEvent) GetData() string {
+	if x != nil {
+		return x.Data
+	}
+	return ""
+}
+
+type TransformDrop struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Reason        string                 `protobuf:"bytes,1,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TransformDrop) Reset() {
+	*x = TransformDrop{}
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TransformDrop) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransformDrop) ProtoMessage() {}
+
+func (x *TransformDrop) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransformDrop.ProtoReflect.Descriptor instead.
+func (*TransformDrop) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_hooks_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *TransformDrop) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
 // HookRefusal is why a hook gave no answer.
 type HookRefusal struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -817,7 +1165,7 @@ type HookRefusal struct {
 
 func (x *HookRefusal) Reset() {
 	*x = HookRefusal{}
-	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -829,7 +1177,7 @@ func (x *HookRefusal) String() string {
 func (*HookRefusal) ProtoMessage() {}
 
 func (x *HookRefusal) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_hooks_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -842,7 +1190,7 @@ func (x *HookRefusal) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HookRefusal.ProtoReflect.Descriptor instead.
 func (*HookRefusal) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hooks_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_hooks_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *HookRefusal) GetReason() string {
@@ -906,12 +1254,31 @@ const file_toshi_workspace_v1_hooks_proto_rawDesc = "" +
 	"\aversion\x18\x02 \x01(\x05H\x00R\aversion\x12\x18\n" +
 	"\x06module\x18\x03 \x01(\fH\x00R\x06module\x12\x1a\n" +
 	"\bdocument\x18\x04 \x01(\tR\bdocumentB\x06\n" +
-	"\x04hook\"\xaa\x01\n" +
+	"\x04hook\"\xe2\x01\n" +
 	"\x10TestHookResponse\x12\x18\n" +
 	"\x06output\x18\x01 \x01(\tH\x00R\x06output\x12;\n" +
 	"\arefusal\x18\x02 \x01(\v2\x1f.toshi.workspace.v1.HookRefusalH\x00R\arefusal\x125\n" +
-	"\bduration\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\bdurationB\b\n" +
-	"\x06result\"?\n" +
+	"\bduration\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\bduration\x126\n" +
+	"\x06answer\x18\x04 \x01(\v2\x1e.toshi.workspace.v1.HookAnswerR\x06answerB\b\n" +
+	"\x06result\"\xbc\x01\n" +
+	"\n" +
+	"HookAnswer\x12C\n" +
+	"\tadmission\x18\x01 \x01(\v2#.toshi.workspace.v1.AdmissionAnswerH\x00R\tadmission\x12C\n" +
+	"\ttransform\x18\x02 \x01(\v2#.toshi.workspace.v1.TransformAnswerH\x00R\ttransform\x12\x1a\n" +
+	"\aproblem\x18\x03 \x01(\tH\x00R\aproblemB\b\n" +
+	"\x06answer\"A\n" +
+	"\x0fAdmissionAnswer\x12\x14\n" +
+	"\x05allow\x18\x01 \x01(\bR\x05allow\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x90\x01\n" +
+	"\x0fTransformAnswer\x12:\n" +
+	"\x05event\x18\x01 \x01(\v2\".toshi.workspace.v1.TransformEventH\x00R\x05event\x127\n" +
+	"\x04drop\x18\x02 \x01(\v2!.toshi.workspace.v1.TransformDropH\x00R\x04dropB\b\n" +
+	"\x06answer\"8\n" +
+	"\x0eTransformEvent\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12\x12\n" +
+	"\x04data\x18\x02 \x01(\tR\x04data\"'\n" +
+	"\rTransformDrop\x12\x16\n" +
+	"\x06reason\x18\x01 \x01(\tR\x06reason\"?\n" +
 	"\vHookRefusal\x12\x16\n" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage*W\n" +
@@ -944,7 +1311,7 @@ func file_toshi_workspace_v1_hooks_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_hooks_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_hooks_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_toshi_workspace_v1_hooks_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_toshi_workspace_v1_hooks_proto_goTypes = []any{
 	(HookType)(0),                     // 0: toshi.workspace.v1.HookType
 	(*HookVersion)(nil),               // 1: toshi.workspace.v1.HookVersion
@@ -958,15 +1325,20 @@ var file_toshi_workspace_v1_hooks_proto_goTypes = []any{
 	(*DeleteHookVersionResponse)(nil), // 9: toshi.workspace.v1.DeleteHookVersionResponse
 	(*TestHookRequest)(nil),           // 10: toshi.workspace.v1.TestHookRequest
 	(*TestHookResponse)(nil),          // 11: toshi.workspace.v1.TestHookResponse
-	(*HookRefusal)(nil),               // 12: toshi.workspace.v1.HookRefusal
-	(*Subject)(nil),                   // 13: toshi.workspace.v1.Subject
-	(*timestamppb.Timestamp)(nil),     // 14: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),       // 15: google.protobuf.Duration
+	(*HookAnswer)(nil),                // 12: toshi.workspace.v1.HookAnswer
+	(*AdmissionAnswer)(nil),           // 13: toshi.workspace.v1.AdmissionAnswer
+	(*TransformAnswer)(nil),           // 14: toshi.workspace.v1.TransformAnswer
+	(*TransformEvent)(nil),            // 15: toshi.workspace.v1.TransformEvent
+	(*TransformDrop)(nil),             // 16: toshi.workspace.v1.TransformDrop
+	(*HookRefusal)(nil),               // 17: toshi.workspace.v1.HookRefusal
+	(*Subject)(nil),                   // 18: toshi.workspace.v1.Subject
+	(*timestamppb.Timestamp)(nil),     // 19: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),       // 20: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_hooks_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.HookVersion.type:type_name -> toshi.workspace.v1.HookType
-	13, // 1: toshi.workspace.v1.HookVersion.created_by:type_name -> toshi.workspace.v1.Subject
-	14, // 2: toshi.workspace.v1.HookVersion.create_time:type_name -> google.protobuf.Timestamp
+	18, // 1: toshi.workspace.v1.HookVersion.created_by:type_name -> toshi.workspace.v1.Subject
+	19, // 2: toshi.workspace.v1.HookVersion.create_time:type_name -> google.protobuf.Timestamp
 	0,  // 3: toshi.workspace.v1.UploadHookVersionRequest.type:type_name -> toshi.workspace.v1.HookType
 	1,  // 4: toshi.workspace.v1.UploadHookVersionResponse.version:type_name -> toshi.workspace.v1.HookVersion
 	0,  // 5: toshi.workspace.v1.ActivateHookRequest.type:type_name -> toshi.workspace.v1.HookType
@@ -976,23 +1348,28 @@ var file_toshi_workspace_v1_hooks_proto_depIdxs = []int32{
 	0,  // 9: toshi.workspace.v1.DeleteHookVersionRequest.type:type_name -> toshi.workspace.v1.HookType
 	1,  // 10: toshi.workspace.v1.DeleteHookVersionResponse.deleted:type_name -> toshi.workspace.v1.HookVersion
 	0,  // 11: toshi.workspace.v1.TestHookRequest.type:type_name -> toshi.workspace.v1.HookType
-	12, // 12: toshi.workspace.v1.TestHookResponse.refusal:type_name -> toshi.workspace.v1.HookRefusal
-	15, // 13: toshi.workspace.v1.TestHookResponse.duration:type_name -> google.protobuf.Duration
-	2,  // 14: toshi.workspace.v1.HookService.UploadHookVersion:input_type -> toshi.workspace.v1.UploadHookVersionRequest
-	4,  // 15: toshi.workspace.v1.HookService.ActivateHook:input_type -> toshi.workspace.v1.ActivateHookRequest
-	6,  // 16: toshi.workspace.v1.HookService.ListHooks:input_type -> toshi.workspace.v1.ListHooksRequest
-	8,  // 17: toshi.workspace.v1.HookService.DeleteHookVersion:input_type -> toshi.workspace.v1.DeleteHookVersionRequest
-	10, // 18: toshi.workspace.v1.HookService.TestHook:input_type -> toshi.workspace.v1.TestHookRequest
-	3,  // 19: toshi.workspace.v1.HookService.UploadHookVersion:output_type -> toshi.workspace.v1.UploadHookVersionResponse
-	5,  // 20: toshi.workspace.v1.HookService.ActivateHook:output_type -> toshi.workspace.v1.ActivateHookResponse
-	7,  // 21: toshi.workspace.v1.HookService.ListHooks:output_type -> toshi.workspace.v1.ListHooksResponse
-	9,  // 22: toshi.workspace.v1.HookService.DeleteHookVersion:output_type -> toshi.workspace.v1.DeleteHookVersionResponse
-	11, // 23: toshi.workspace.v1.HookService.TestHook:output_type -> toshi.workspace.v1.TestHookResponse
-	19, // [19:24] is the sub-list for method output_type
-	14, // [14:19] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	17, // 12: toshi.workspace.v1.TestHookResponse.refusal:type_name -> toshi.workspace.v1.HookRefusal
+	20, // 13: toshi.workspace.v1.TestHookResponse.duration:type_name -> google.protobuf.Duration
+	12, // 14: toshi.workspace.v1.TestHookResponse.answer:type_name -> toshi.workspace.v1.HookAnswer
+	13, // 15: toshi.workspace.v1.HookAnswer.admission:type_name -> toshi.workspace.v1.AdmissionAnswer
+	14, // 16: toshi.workspace.v1.HookAnswer.transform:type_name -> toshi.workspace.v1.TransformAnswer
+	15, // 17: toshi.workspace.v1.TransformAnswer.event:type_name -> toshi.workspace.v1.TransformEvent
+	16, // 18: toshi.workspace.v1.TransformAnswer.drop:type_name -> toshi.workspace.v1.TransformDrop
+	2,  // 19: toshi.workspace.v1.HookService.UploadHookVersion:input_type -> toshi.workspace.v1.UploadHookVersionRequest
+	4,  // 20: toshi.workspace.v1.HookService.ActivateHook:input_type -> toshi.workspace.v1.ActivateHookRequest
+	6,  // 21: toshi.workspace.v1.HookService.ListHooks:input_type -> toshi.workspace.v1.ListHooksRequest
+	8,  // 22: toshi.workspace.v1.HookService.DeleteHookVersion:input_type -> toshi.workspace.v1.DeleteHookVersionRequest
+	10, // 23: toshi.workspace.v1.HookService.TestHook:input_type -> toshi.workspace.v1.TestHookRequest
+	3,  // 24: toshi.workspace.v1.HookService.UploadHookVersion:output_type -> toshi.workspace.v1.UploadHookVersionResponse
+	5,  // 25: toshi.workspace.v1.HookService.ActivateHook:output_type -> toshi.workspace.v1.ActivateHookResponse
+	7,  // 26: toshi.workspace.v1.HookService.ListHooks:output_type -> toshi.workspace.v1.ListHooksResponse
+	9,  // 27: toshi.workspace.v1.HookService.DeleteHookVersion:output_type -> toshi.workspace.v1.DeleteHookVersionResponse
+	11, // 28: toshi.workspace.v1.HookService.TestHook:output_type -> toshi.workspace.v1.TestHookResponse
+	24, // [24:29] is the sub-list for method output_type
+	19, // [19:24] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_hooks_proto_init() }
@@ -1009,13 +1386,22 @@ func file_toshi_workspace_v1_hooks_proto_init() {
 		(*TestHookResponse_Output)(nil),
 		(*TestHookResponse_Refusal)(nil),
 	}
+	file_toshi_workspace_v1_hooks_proto_msgTypes[11].OneofWrappers = []any{
+		(*HookAnswer_Admission)(nil),
+		(*HookAnswer_Transform)(nil),
+		(*HookAnswer_Problem)(nil),
+	}
+	file_toshi_workspace_v1_hooks_proto_msgTypes[13].OneofWrappers = []any{
+		(*TransformAnswer_Event)(nil),
+		(*TransformAnswer_Drop)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_hooks_proto_rawDesc), len(file_toshi_workspace_v1_hooks_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   12,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

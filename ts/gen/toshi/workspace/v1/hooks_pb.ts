@@ -15,7 +15,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/hooks.proto.
  */
 export const file_toshi_workspace_v1_hooks: GenFile = /*@__PURE__*/
-  fileDesc("Ch50b3NoaS93b3Jrc3BhY2UvdjEvaG9va3MucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSLgAQoLSG9va1ZlcnNpb24SKgoEdHlwZRgBIAEoDjIcLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVHlwZRIPCgd2ZXJzaW9uGAIgASgFEg4KBnNoYTI1NhgDIAEoCRISCgpzaXplX2J5dGVzGAQgASgDEi8KCmNyZWF0ZWRfYnkYBSABKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuU3ViamVjdBIvCgtjcmVhdGVfdGltZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDgoGYWN0aXZlGAcgASgIIlYKGFVwbG9hZEhvb2tWZXJzaW9uUmVxdWVzdBIqCgR0eXBlGAEgASgOMhwudG9zaGkud29ya3NwYWNlLnYxLkhvb2tUeXBlEg4KBm1vZHVsZRgCIAEoDCJeChlVcGxvYWRIb29rVmVyc2lvblJlc3BvbnNlEjAKB3ZlcnNpb24YASABKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuSG9va1ZlcnNpb24SDwoHY3JlYXRlZBgCIAEoCCJjChNBY3RpdmF0ZUhvb2tSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSKgoEdHlwZRgCIAEoDjIcLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVHlwZRIPCgd2ZXJzaW9uGAMgASgFIkcKFEFjdGl2YXRlSG9va1Jlc3BvbnNlEi8KBmFjdGl2ZRgBIAEoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVmVyc2lvbiJ2ChBMaXN0SG9va3NSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSKgoEdHlwZRgCIAEoDjIcLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVHlwZRIRCglwYWdlX3NpemUYAyABKAUSEgoKcGFnZV90b2tlbhgEIAEoCSJfChFMaXN0SG9va3NSZXNwb25zZRIxCgh2ZXJzaW9ucxgBIAMoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVmVyc2lvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiVwoYRGVsZXRlSG9va1ZlcnNpb25SZXF1ZXN0EioKBHR5cGUYASABKA4yHC50b3NoaS53b3Jrc3BhY2UudjEuSG9va1R5cGUSDwoHdmVyc2lvbhgCIAEoBSJNChlEZWxldGVIb29rVmVyc2lvblJlc3BvbnNlEjAKB2RlbGV0ZWQYASABKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuSG9va1ZlcnNpb24ifAoPVGVzdEhvb2tSZXF1ZXN0EioKBHR5cGUYASABKA4yHC50b3NoaS53b3Jrc3BhY2UudjEuSG9va1R5cGUSEQoHdmVyc2lvbhgCIAEoBUgAEhAKBm1vZHVsZRgDIAEoDEgAEhAKCGRvY3VtZW50GAQgASgJQgYKBGhvb2sijwEKEFRlc3RIb29rUmVzcG9uc2USEAoGb3V0cHV0GAEgASgJSAASMgoHcmVmdXNhbBgCIAEoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rUmVmdXNhbEgAEisKCGR1cmF0aW9uGAMgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uQggKBnJlc3VsdCIuCgtIb29rUmVmdXNhbBIOCgZyZWFzb24YASABKAkSDwoHbWVzc2FnZRgCIAEoCSpXCghIb29rVHlwZRIZChVIT09LX1RZUEVfVU5TUEVDSUZJRUQQABIXChNIT09LX1RZUEVfQURNSVNTSU9OEAESFwoTSE9PS19UWVBFX1RSQU5TRk9STRACMs4GCgtIb29rU2VydmljZRLGAQoRVXBsb2FkSG9va1ZlcnNpb24SLC50b3NoaS53b3Jrc3BhY2UudjEuVXBsb2FkSG9va1ZlcnNpb25SZXF1ZXN0Gi0udG9zaGkud29ya3NwYWNlLnYxLlVwbG9hZEhvb2tWZXJzaW9uUmVzcG9uc2UiVMLzGAtob29rcy53cml0ZcrzGAl3b3Jrc3BhY2XS8xg0ChRob29rLnZlcnNpb25fY3JlYXRlZBIcaG9vazpyZXNwb25zZS52ZXJzaW9uLnNoYTI1NhKqAQoMQWN0aXZhdGVIb29rEicudG9zaGkud29ya3NwYWNlLnYxLkFjdGl2YXRlSG9va1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuQWN0aXZhdGVIb29rUmVzcG9uc2UiR8LzGAtob29rcy53cml0ZcrzGAdwcm9qZWN00vMYKQoWaG9vay52ZXJzaW9uX2FjdGl2YXRlZBIPcHJvamVjdDpwcm9qZWN0EnMKCUxpc3RIb29rcxIkLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SG9va3NSZXF1ZXN0GiUudG9zaGkud29ya3NwYWNlLnYxLkxpc3RIb29rc1Jlc3BvbnNlIhnC8xgKaG9va3MucmVhZMrzGAdwcm9qZWN0EsYBChFEZWxldGVIb29rVmVyc2lvbhIsLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVIb29rVmVyc2lvblJlcXVlc3QaLS50b3NoaS53b3Jrc3BhY2UudjEuRGVsZXRlSG9va1ZlcnNpb25SZXNwb25zZSJUwvMYC2hvb2tzLndyaXRlyvMYCXdvcmtzcGFjZdLzGDQKFGhvb2sudmVyc2lvbl9kZWxldGVkEhxob29rOnJlc3BvbnNlLmRlbGV0ZWQuc2hhMjU2EooBCghUZXN0SG9vaxIjLnRvc2hpLndvcmtzcGFjZS52MS5UZXN0SG9va1JlcXVlc3QaJC50b3NoaS53b3Jrc3BhY2UudjEuVGVzdEhvb2tSZXNwb25zZSIzwvMYC2hvb2tzLndyaXRlyvMYCXdvcmtzcGFjZdLzGBMKC2hvb2sudGVzdGVkEgRub25lQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_roles]);
+  fileDesc("Ch50b3NoaS93b3Jrc3BhY2UvdjEvaG9va3MucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSLgAQoLSG9va1ZlcnNpb24SKgoEdHlwZRgBIAEoDjIcLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVHlwZRIPCgd2ZXJzaW9uGAIgASgFEg4KBnNoYTI1NhgDIAEoCRISCgpzaXplX2J5dGVzGAQgASgDEi8KCmNyZWF0ZWRfYnkYBSABKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuU3ViamVjdBIvCgtjcmVhdGVfdGltZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDgoGYWN0aXZlGAcgASgIIlYKGFVwbG9hZEhvb2tWZXJzaW9uUmVxdWVzdBIqCgR0eXBlGAEgASgOMhwudG9zaGkud29ya3NwYWNlLnYxLkhvb2tUeXBlEg4KBm1vZHVsZRgCIAEoDCJeChlVcGxvYWRIb29rVmVyc2lvblJlc3BvbnNlEjAKB3ZlcnNpb24YASABKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuSG9va1ZlcnNpb24SDwoHY3JlYXRlZBgCIAEoCCJjChNBY3RpdmF0ZUhvb2tSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSKgoEdHlwZRgCIAEoDjIcLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVHlwZRIPCgd2ZXJzaW9uGAMgASgFIkcKFEFjdGl2YXRlSG9va1Jlc3BvbnNlEi8KBmFjdGl2ZRgBIAEoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVmVyc2lvbiJ2ChBMaXN0SG9va3NSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSKgoEdHlwZRgCIAEoDjIcLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVHlwZRIRCglwYWdlX3NpemUYAyABKAUSEgoKcGFnZV90b2tlbhgEIAEoCSJfChFMaXN0SG9va3NSZXNwb25zZRIxCgh2ZXJzaW9ucxgBIAMoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rVmVyc2lvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiVwoYRGVsZXRlSG9va1ZlcnNpb25SZXF1ZXN0EioKBHR5cGUYASABKA4yHC50b3NoaS53b3Jrc3BhY2UudjEuSG9va1R5cGUSDwoHdmVyc2lvbhgCIAEoBSJNChlEZWxldGVIb29rVmVyc2lvblJlc3BvbnNlEjAKB2RlbGV0ZWQYASABKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuSG9va1ZlcnNpb24ifAoPVGVzdEhvb2tSZXF1ZXN0EioKBHR5cGUYASABKA4yHC50b3NoaS53b3Jrc3BhY2UudjEuSG9va1R5cGUSEQoHdmVyc2lvbhgCIAEoBUgAEhAKBm1vZHVsZRgDIAEoDEgAEhAKCGRvY3VtZW50GAQgASgJQgYKBGhvb2sivwEKEFRlc3RIb29rUmVzcG9uc2USEAoGb3V0cHV0GAEgASgJSAASMgoHcmVmdXNhbBgCIAEoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rUmVmdXNhbEgAEisKCGR1cmF0aW9uGAMgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEi4KBmFuc3dlchgEIAEoCzIeLnRvc2hpLndvcmtzcGFjZS52MS5Ib29rQW5zd2VyQggKBnJlc3VsdCKdAQoKSG9va0Fuc3dlchI4CglhZG1pc3Npb24YASABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuQWRtaXNzaW9uQW5zd2VySAASOAoJdHJhbnNmb3JtGAIgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlRyYW5zZm9ybUFuc3dlckgAEhEKB3Byb2JsZW0YAyABKAlIAEIICgZhbnN3ZXIiMQoPQWRtaXNzaW9uQW5zd2VyEg0KBWFsbG93GAEgASgIEg8KB21lc3NhZ2UYAiABKAkigwEKD1RyYW5zZm9ybUFuc3dlchIzCgVldmVudBgBIAEoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5UcmFuc2Zvcm1FdmVudEgAEjEKBGRyb3AYAiABKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVHJhbnNmb3JtRHJvcEgAQggKBmFuc3dlciIsCg5UcmFuc2Zvcm1FdmVudBIMCgR0eXBlGAEgASgJEgwKBGRhdGEYAiABKAkiHwoNVHJhbnNmb3JtRHJvcBIOCgZyZWFzb24YASABKAkiLgoLSG9va1JlZnVzYWwSDgoGcmVhc29uGAEgASgJEg8KB21lc3NhZ2UYAiABKAkqVwoISG9va1R5cGUSGQoVSE9PS19UWVBFX1VOU1BFQ0lGSUVEEAASFwoTSE9PS19UWVBFX0FETUlTU0lPThABEhcKE0hPT0tfVFlQRV9UUkFOU0ZPUk0QAjLOBgoLSG9va1NlcnZpY2USxgEKEVVwbG9hZEhvb2tWZXJzaW9uEiwudG9zaGkud29ya3NwYWNlLnYxLlVwbG9hZEhvb2tWZXJzaW9uUmVxdWVzdBotLnRvc2hpLndvcmtzcGFjZS52MS5VcGxvYWRIb29rVmVyc2lvblJlc3BvbnNlIlTC8xgLaG9va3Mud3JpdGXK8xgJd29ya3NwYWNl0vMYNAoUaG9vay52ZXJzaW9uX2NyZWF0ZWQSHGhvb2s6cmVzcG9uc2UudmVyc2lvbi5zaGEyNTYSqgEKDEFjdGl2YXRlSG9vaxInLnRvc2hpLndvcmtzcGFjZS52MS5BY3RpdmF0ZUhvb2tSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkFjdGl2YXRlSG9va1Jlc3BvbnNlIkfC8xgLaG9va3Mud3JpdGXK8xgHcHJvamVjdNLzGCkKFmhvb2sudmVyc2lvbl9hY3RpdmF0ZWQSD3Byb2plY3Q6cHJvamVjdBJzCglMaXN0SG9va3MSJC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEhvb2tzUmVxdWVzdBolLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SG9va3NSZXNwb25zZSIZwvMYCmhvb2tzLnJlYWTK8xgHcHJvamVjdBLGAQoRRGVsZXRlSG9va1ZlcnNpb24SLC50b3NoaS53b3Jrc3BhY2UudjEuRGVsZXRlSG9va1ZlcnNpb25SZXF1ZXN0Gi0udG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUhvb2tWZXJzaW9uUmVzcG9uc2UiVMLzGAtob29rcy53cml0ZcrzGAl3b3Jrc3BhY2XS8xg0ChRob29rLnZlcnNpb25fZGVsZXRlZBIcaG9vazpyZXNwb25zZS5kZWxldGVkLnNoYTI1NhKKAQoIVGVzdEhvb2sSIy50b3NoaS53b3Jrc3BhY2UudjEuVGVzdEhvb2tSZXF1ZXN0GiQudG9zaGkud29ya3NwYWNlLnYxLlRlc3RIb29rUmVzcG9uc2UiM8LzGAtob29rcy53cml0ZcrzGAl3b3Jrc3BhY2XS8xgTCgtob29rLnRlc3RlZBIEbm9uZUIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_roles]);
 
 /**
  * HookVersion is one version of a workspace's hook of a type.
@@ -495,7 +495,7 @@ export type TestHookRequest = Message<"toshi.workspace.v1.TestHookRequest"> & {
   } | { case: undefined; value?: undefined };
 
   /**
-   * The sample document, JSON, at most 1 MiB.
+   * The sample document, JSON, at most 1 MiB and 64 KiB.
    *
    * @generated from field: string document = 4;
    */
@@ -522,7 +522,7 @@ export type TestHookRequestJson = {
   module?: string;
 
   /**
-   * The sample document, JSON, at most 1 MiB.
+   * The sample document, JSON, at most 1 MiB and 64 KiB.
    *
    * @generated from field: string document = 4;
    */
@@ -567,6 +567,14 @@ export type TestHookResponse = Message<"toshi.workspace.v1.TestHookResponse"> & 
    * @generated from field: google.protobuf.Duration duration = 3;
    */
   duration?: Duration | undefined;
+
+  /**
+   * What the output means for the hook's type, read as the platform reads
+   * it; set with output.
+   *
+   * @generated from field: toshi.workspace.v1.HookAnswer answer = 4;
+   */
+  answer?: HookAnswer | undefined;
 };
 
 /**
@@ -593,6 +601,14 @@ export type TestHookResponseJson = {
    * @generated from field: google.protobuf.Duration duration = 3;
    */
   duration?: DurationJson;
+
+  /**
+   * What the output means for the hook's type, read as the platform reads
+   * it; set with output.
+   *
+   * @generated from field: toshi.workspace.v1.HookAnswer answer = 4;
+   */
+  answer?: HookAnswerJson;
 };
 
 /**
@@ -601,6 +617,240 @@ export type TestHookResponseJson = {
  */
 export const TestHookResponseSchema: GenMessage<TestHookResponse, {jsonType: TestHookResponseJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_hooks, 10);
+
+/**
+ * HookAnswer is a hook's output read as an answer of its type.
+ *
+ * @generated from message toshi.workspace.v1.HookAnswer
+ */
+export type HookAnswer = Message<"toshi.workspace.v1.HookAnswer"> & {
+  /**
+   * @generated from oneof toshi.workspace.v1.HookAnswer.answer
+   */
+  answer: {
+    /**
+     * @generated from field: toshi.workspace.v1.AdmissionAnswer admission = 1;
+     */
+    value: AdmissionAnswer;
+    case: "admission";
+  } | {
+    /**
+     * @generated from field: toshi.workspace.v1.TransformAnswer transform = 2;
+     */
+    value: TransformAnswer;
+    case: "transform";
+  } | {
+    /**
+     * Why the output is no answer of the type, which the platform treats
+     * as a failure: an admission hook's workload is refused, and a
+     * transform's delivery dropped as transform_invalid_output.
+     *
+     * @generated from field: string problem = 3;
+     */
+    value: string;
+    case: "problem";
+  } | { case: undefined; value?: undefined };
+};
+
+/**
+ * HookAnswer is a hook's output read as an answer of its type.
+ *
+ * @generated from message toshi.workspace.v1.HookAnswer
+ */
+export type HookAnswerJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.AdmissionAnswer admission = 1;
+   */
+  admission?: AdmissionAnswerJson;
+
+  /**
+   * @generated from field: toshi.workspace.v1.TransformAnswer transform = 2;
+   */
+  transform?: TransformAnswerJson;
+
+  /**
+   * Why the output is no answer of the type, which the platform treats
+   * as a failure: an admission hook's workload is refused, and a
+   * transform's delivery dropped as transform_invalid_output.
+   *
+   * @generated from field: string problem = 3;
+   */
+  problem?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.HookAnswer.
+ * Use `create(HookAnswerSchema)` to create a new message.
+ */
+export const HookAnswerSchema: GenMessage<HookAnswer, {jsonType: HookAnswerJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_hooks, 11);
+
+/**
+ * AdmissionAnswer is an admission hook's answer.
+ *
+ * @generated from message toshi.workspace.v1.AdmissionAnswer
+ */
+export type AdmissionAnswer = Message<"toshi.workspace.v1.AdmissionAnswer"> & {
+  /**
+   * @generated from field: bool allow = 1;
+   */
+  allow: boolean;
+
+  /**
+   * The deny's message, at most 1 KiB.
+   *
+   * @generated from field: string message = 2;
+   */
+  message: string;
+};
+
+/**
+ * AdmissionAnswer is an admission hook's answer.
+ *
+ * @generated from message toshi.workspace.v1.AdmissionAnswer
+ */
+export type AdmissionAnswerJson = {
+  /**
+   * @generated from field: bool allow = 1;
+   */
+  allow?: boolean;
+
+  /**
+   * The deny's message, at most 1 KiB.
+   *
+   * @generated from field: string message = 2;
+   */
+  message?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.AdmissionAnswer.
+ * Use `create(AdmissionAnswerSchema)` to create a new message.
+ */
+export const AdmissionAnswerSchema: GenMessage<AdmissionAnswer, {jsonType: AdmissionAnswerJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_hooks, 12);
+
+/**
+ * TransformAnswer is a transform hook's answer: the event the delivery
+ * becomes, or why it is dropped.
+ *
+ * @generated from message toshi.workspace.v1.TransformAnswer
+ */
+export type TransformAnswer = Message<"toshi.workspace.v1.TransformAnswer"> & {
+  /**
+   * @generated from oneof toshi.workspace.v1.TransformAnswer.answer
+   */
+  answer: {
+    /**
+     * @generated from field: toshi.workspace.v1.TransformEvent event = 1;
+     */
+    value: TransformEvent;
+    case: "event";
+  } | {
+    /**
+     * @generated from field: toshi.workspace.v1.TransformDrop drop = 2;
+     */
+    value: TransformDrop;
+    case: "drop";
+  } | { case: undefined; value?: undefined };
+};
+
+/**
+ * TransformAnswer is a transform hook's answer: the event the delivery
+ * becomes, or why it is dropped.
+ *
+ * @generated from message toshi.workspace.v1.TransformAnswer
+ */
+export type TransformAnswerJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.TransformEvent event = 1;
+   */
+  event?: TransformEventJson;
+
+  /**
+   * @generated from field: toshi.workspace.v1.TransformDrop drop = 2;
+   */
+  drop?: TransformDropJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.TransformAnswer.
+ * Use `create(TransformAnswerSchema)` to create a new message.
+ */
+export const TransformAnswerSchema: GenMessage<TransformAnswer, {jsonType: TransformAnswerJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_hooks, 13);
+
+/**
+ * @generated from message toshi.workspace.v1.TransformEvent
+ */
+export type TransformEvent = Message<"toshi.workspace.v1.TransformEvent"> & {
+  /**
+   * The event's type, such as order.paid.
+   *
+   * @generated from field: string type = 1;
+   */
+  type: string;
+
+  /**
+   * The event's data, a JSON object.
+   *
+   * @generated from field: string data = 2;
+   */
+  data: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.TransformEvent
+ */
+export type TransformEventJson = {
+  /**
+   * The event's type, such as order.paid.
+   *
+   * @generated from field: string type = 1;
+   */
+  type?: string;
+
+  /**
+   * The event's data, a JSON object.
+   *
+   * @generated from field: string data = 2;
+   */
+  data?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.TransformEvent.
+ * Use `create(TransformEventSchema)` to create a new message.
+ */
+export const TransformEventSchema: GenMessage<TransformEvent, {jsonType: TransformEventJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_hooks, 14);
+
+/**
+ * @generated from message toshi.workspace.v1.TransformDrop
+ */
+export type TransformDrop = Message<"toshi.workspace.v1.TransformDrop"> & {
+  /**
+   * @generated from field: string reason = 1;
+   */
+  reason: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.TransformDrop
+ */
+export type TransformDropJson = {
+  /**
+   * @generated from field: string reason = 1;
+   */
+  reason?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.TransformDrop.
+ * Use `create(TransformDropSchema)` to create a new message.
+ */
+export const TransformDropSchema: GenMessage<TransformDrop, {jsonType: TransformDropJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_hooks, 15);
 
 /**
  * HookRefusal is why a hook gave no answer.
@@ -647,7 +897,7 @@ export type HookRefusalJson = {
  * Use `create(HookRefusalSchema)` to create a new message.
  */
 export const HookRefusalSchema: GenMessage<HookRefusal, {jsonType: HookRefusalJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_hooks, 11);
+  messageDesc(file_toshi_workspace_v1_hooks, 16);
 
 /**
  * HookType is the question a hook answers.
@@ -697,15 +947,17 @@ export const HookTypeSchema: GenEnum<HookType, HookTypeJson> = /*@__PURE__*/
  * hook is a WASI preview 1 command that reads one JSON document on stdin
  * and writes one JSON object on stdout, with no host functions beyond WASI,
  * within 16 MiB of memory and 100 ms per call. A module is at most 8 MiB
- * and an input document at most 1 MiB. A hook that fails in any way gives
- * no answer, and the question is answered as a refusal.
+ * and an input document at most 1 MiB and 64 KiB. A hook that fails in any
+ * way gives no answer, and the question is answered as a refusal: an
+ * admission hook's workload is refused, a transform's delivery dropped.
  *
  * The caller's credential names the workspace, as for WorkloadService.
  * Each upload of a module is a version of its type, numbered from 1, and
  * never changes. A workspace keeps 20 versions of a type, and an upload
  * past that fails with RESOURCE_EXHAUSTED until DeleteHookVersion frees a
- * place. Each project runs at most one version of each type, which
- * ActivateHook sets.
+ * place. Each project runs at most one admission version, which
+ * ActivateHook sets; each webhook connection at most one transform
+ * version, which ConnectionService.SetConnectionTransform sets.
  *
  * @generated from service toshi.workspace.v1.HookService
  */
@@ -764,7 +1016,8 @@ export const HookService: GenService<{
   /**
    * TestHook runs a stored version, or a module that is not uploaded, on a
    * sample document under the same limits, and activates nothing. A hook
-   * that gives no answer is a refusal in the response, not an error.
+   * that gives no answer is a refusal in the response, not an error; one
+   * whose output is no answer of its type has the problem in the answer.
    *
    * @generated from rpc toshi.workspace.v1.HookService.TestHook
    */

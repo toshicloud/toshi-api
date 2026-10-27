@@ -71,7 +71,8 @@ type HookServiceClient interface {
 	DeleteHookVersion(context.Context, *connect.Request[workspacev1.DeleteHookVersionRequest]) (*connect.Response[workspacev1.DeleteHookVersionResponse], error)
 	// TestHook runs a stored version, or a module that is not uploaded, on a
 	// sample document under the same limits, and activates nothing. A hook
-	// that gives no answer is a refusal in the response, not an error.
+	// that gives no answer is a refusal in the response, not an error; one
+	// whose output is no answer of its type has the problem in the answer.
 	TestHook(context.Context, *connect.Request[workspacev1.TestHookRequest]) (*connect.Response[workspacev1.TestHookResponse], error)
 }
 
@@ -176,7 +177,8 @@ type HookServiceHandler interface {
 	DeleteHookVersion(context.Context, *connect.Request[workspacev1.DeleteHookVersionRequest]) (*connect.Response[workspacev1.DeleteHookVersionResponse], error)
 	// TestHook runs a stored version, or a module that is not uploaded, on a
 	// sample document under the same limits, and activates nothing. A hook
-	// that gives no answer is a refusal in the response, not an error.
+	// that gives no answer is a refusal in the response, not an error; one
+	// whose output is no answer of its type has the problem in the answer.
 	TestHook(context.Context, *connect.Request[workspacev1.TestHookRequest]) (*connect.Response[workspacev1.TestHookResponse], error)
 }
 

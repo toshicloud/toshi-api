@@ -14,15 +14,17 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // hook is a WASI preview 1 command that reads one JSON document on stdin
 // and writes one JSON object on stdout, with no host functions beyond WASI,
 // within 16 MiB of memory and 100 ms per call. A module is at most 8 MiB
-// and an input document at most 1 MiB. A hook that fails in any way gives
-// no answer, and the question is answered as a refusal.
+// and an input document at most 1 MiB and 64 KiB. A hook that fails in any
+// way gives no answer, and the question is answered as a refusal: an
+// admission hook's workload is refused, a transform's delivery dropped.
 //
 // The caller's credential names the workspace, as for WorkloadService.
 // Each upload of a module is a version of its type, numbered from 1, and
 // never changes. A workspace keeps 20 versions of a type, and an upload
 // past that fails with RESOURCE_EXHAUSTED until DeleteHookVersion frees a
-// place. Each project runs at most one version of each type, which
-// ActivateHook sets.
+// place. Each project runs at most one admission version, which
+// ActivateHook sets; each webhook connection at most one transform
+// version, which ConnectionService.SetConnectionTransform sets.
 service HookService {
   // UploadHookVersion stores a module as the type's next version. A module
   // that does not compile, imports anything beyond WASI or is not a WASI
@@ -73,7 +75,8 @@ service HookService {
 
   // TestHook runs a stored version, or a module that is not uploaded, on a
   // sample document under the same limits, and activates nothing. A hook
-  // that gives no answer is a refusal in the response, not an error.
+  // that gives no answer is a refusal in the response, not an error; one
+  // whose output is no answer of its type has the problem in the answer.
   rpc TestHook(TestHookRequest) returns (TestHookResponse) {
     option (toshi.permission) = "hooks.write";
     option (toshi.scope) = "workspace";
@@ -169,7 +172,7 @@ message TestHookRequest {
     int32 version = 2;
     bytes module = 3;
   }
-  // The sample document, JSON, at most 1 MiB.
+  // The sample document, JSON, at most 1 MiB and 64 KiB.
   string document = 4;
 }
 
@@ -182,6 +185,48 @@ message TestHookResponse {
   }
   // How long the call took, compiling the module excluded.
   google.protobuf.Duration duration = 3;
+  // What the output means for the hook's type, read as the platform reads
+  // it; set with output.
+  HookAnswer answer = 4;
+}
+
+// HookAnswer is a hook's output read as an answer of its type.
+message HookAnswer {
+  oneof answer {
+    AdmissionAnswer admission = 1;
+    TransformAnswer transform = 2;
+    // Why the output is no answer of the type, which the platform treats
+    // as a failure: an admission hook's workload is refused, and a
+    // transform's delivery dropped as transform_invalid_output.
+    string problem = 3;
+  }
+}
+
+// AdmissionAnswer is an admission hook's answer.
+message AdmissionAnswer {
+  bool allow = 1;
+  // The deny's message, at most 1 KiB.
+  string message = 2;
+}
+
+// TransformAnswer is a transform hook's answer: the event the delivery
+// becomes, or why it is dropped.
+message TransformAnswer {
+  oneof answer {
+    TransformEvent event = 1;
+    TransformDrop drop = 2;
+  }
+}
+
+message TransformEvent {
+  // The event's type, such as order.paid.
+  string type = 1;
+  // The event's data, a JSON object.
+  string data = 2;
+}
+
+message TransformDrop {
+  string reason = 1;
 }
 
 // HookRefusal is why a hook gave no answer.
