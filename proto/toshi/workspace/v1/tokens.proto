@@ -114,6 +114,9 @@ message Token {
   // Who made the token: a person, a token, or the system for one the
   // control plane made. Unset when that was not recorded.
   Subject created_by = 13;
+  // When the token was last accepted for a call, at most a minute out of
+  // date; unset when it never was.
+  google.protobuf.Timestamp last_used = 14;
 }
 
 // ClientRanges are the client addresses an API token is accepted from,

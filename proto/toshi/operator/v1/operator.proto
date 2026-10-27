@@ -2325,6 +2325,9 @@ message Token {
   // Who made the token: a person, a token, or the system for one the
   // control plane made. Unset when that was not recorded.
   Subject created_by = 15;
+  // When the token was last accepted for a call, at most a minute out of
+  // date; unset when it never was.
+  google.protobuf.Timestamp last_used = 16;
 }
 
 // SubjectKind is what a Subject is; its numbers are the Workspace API's.
