@@ -342,8 +342,11 @@ func (x *GetHostJobRequest) GetId() string {
 }
 
 type GetHostJobResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	HostJob       *HostJob               `protobuf:"bytes,1,opt,name=host_job,json=hostJob,proto3" json:"host_job,omitempty"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	HostJob *HostJob               `protobuf:"bytes,1,opt,name=host_job,json=hostJob,proto3" json:"host_job,omitempty"`
+	// The job's attempts, oldest first: one for each assignment to a host,
+	// the current one last while the job holds it.
+	Attempts      []*HostJobAttempt `protobuf:"bytes,2,rep,name=attempts,proto3" json:"attempts,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -381,6 +384,13 @@ func (*GetHostJobResponse) Descriptor() ([]byte, []int) {
 func (x *GetHostJobResponse) GetHostJob() *HostJob {
 	if x != nil {
 		return x.HostJob
+	}
+	return nil
+}
+
+func (x *GetHostJobResponse) GetAttempts() []*HostJobAttempt {
+	if x != nil {
+		return x.Attempts
 	}
 	return nil
 }
@@ -1158,7 +1168,30 @@ type HostJob struct {
 	// It stays with the attempt when the host's agent later reports another
 	// kind. Empty while the job has no instance, for a job whose agent sent
 	// none or recorded before the field, and for a cloud host's job.
-	Provider      string `protobuf:"bytes,47,opt,name=provider,proto3" json:"provider,omitempty"`
+	Provider string `protobuf:"bytes,47,opt,name=provider,proto3" json:"provider,omitempty"`
+	// The state in GitHub's words: "queued" while queued, assigned or
+	// starting, "in_progress" while running, debugging or stopping once its
+	// attempt started, "completed" once completed, failed or cancelled. A
+	// Workspace API job's attempt starts when its host's start of the
+	// command is admitted: until then it is queued.
+	Status string `protobuf:"bytes,48,opt,name=status,proto3" json:"status,omitempty"`
+	// The runner that runs, or ran, the job's current attempt: for a GitHub
+	// job GitHub's runner id in decimal and the name it was registered
+	// with, for a Workspace API job its attempt's name as both. Unset until
+	// the attempt started, and for a job that ended before any did; the
+	// host it was assigned to is host_id.
+	RunnerId   string `protobuf:"bytes,49,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
+	RunnerName string `protobuf:"bytes,50,opt,name=runner_name,json=runnerName,proto3" json:"runner_name,omitempty"`
+	// The current attempt once it started, counting from 1: each assignment
+	// of the job is one, and a requeue makes the next. 0 until it started,
+	// and for a job that ended before any attempt did; attempts on the get
+	// answer list every assignment.
+	Attempt int32 `protobuf:"varint,51,opt,name=attempt,proto3" json:"attempt,omitempty"`
+	// GitHub's attempt of the workflow run the job is part of, as the
+	// workflow_job webhook Toshi made the job from said: 1 for a run's first
+	// attempt, 2 for its first re-run. 0 when it was not recorded, as for a
+	// job that is not a GitHub job or one stored before the field.
+	RunAttempt    int32 `protobuf:"varint,52,opt,name=run_attempt,json=runAttempt,proto3" json:"run_attempt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1522,6 +1555,177 @@ func (x *HostJob) GetProvider() string {
 	return ""
 }
 
+func (x *HostJob) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *HostJob) GetRunnerId() string {
+	if x != nil {
+		return x.RunnerId
+	}
+	return ""
+}
+
+func (x *HostJob) GetRunnerName() string {
+	if x != nil {
+		return x.RunnerName
+	}
+	return ""
+}
+
+func (x *HostJob) GetAttempt() int32 {
+	if x != nil {
+		return x.Attempt
+	}
+	return 0
+}
+
+func (x *HostJob) GetRunAttempt() int32 {
+	if x != nil {
+		return x.RunAttempt
+	}
+	return 0
+}
+
+// HostJobAttempt is one attempt of a host job: one assignment to a host
+// and its runner, and why it ended.
+type HostJobAttempt struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Counting from 1.
+	Attempt int32 `protobuf:"varint,1,opt,name=attempt,proto3" json:"attempt,omitempty"`
+	// As HostJob.runner_id and HostJob.runner_name; empty when no runner was
+	// named for the assignment.
+	RunnerId   string                 `protobuf:"bytes,2,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
+	RunnerName string                 `protobuf:"bytes,3,opt,name=runner_name,json=runnerName,proto3" json:"runner_name,omitempty"`
+	HostId     string                 `protobuf:"bytes,4,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
+	InstanceId string                 `protobuf:"bytes,5,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	Provider   string                 `protobuf:"bytes,6,opt,name=provider,proto3" json:"provider,omitempty"`
+	AssignedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
+	// Unset when the attempt was assigned and never started.
+	StartedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	// When the attempt ended; unset for the current attempt until the job
+	// finished.
+	FinishedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
+	// The job's conclusion as GitHub or its runner reported it in the
+	// attempt, such as "success"; empty when none was.
+	Conclusion string `protobuf:"bytes,10,opt,name=conclusion,proto3" json:"conclusion,omitempty"`
+	// Why an attempt that was queued again ended, such as "requeued: its
+	// assignment timed out"; empty for the current attempt.
+	End           string `protobuf:"bytes,11,opt,name=end,proto3" json:"end,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HostJobAttempt) Reset() {
+	*x = HostJobAttempt{}
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HostJobAttempt) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HostJobAttempt) ProtoMessage() {}
+
+func (x *HostJobAttempt) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HostJobAttempt.ProtoReflect.Descriptor instead.
+func (*HostJobAttempt) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *HostJobAttempt) GetAttempt() int32 {
+	if x != nil {
+		return x.Attempt
+	}
+	return 0
+}
+
+func (x *HostJobAttempt) GetRunnerId() string {
+	if x != nil {
+		return x.RunnerId
+	}
+	return ""
+}
+
+func (x *HostJobAttempt) GetRunnerName() string {
+	if x != nil {
+		return x.RunnerName
+	}
+	return ""
+}
+
+func (x *HostJobAttempt) GetHostId() string {
+	if x != nil {
+		return x.HostId
+	}
+	return ""
+}
+
+func (x *HostJobAttempt) GetInstanceId() string {
+	if x != nil {
+		return x.InstanceId
+	}
+	return ""
+}
+
+func (x *HostJobAttempt) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *HostJobAttempt) GetAssignedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.AssignedAt
+	}
+	return nil
+}
+
+func (x *HostJobAttempt) GetStartedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StartedAt
+	}
+	return nil
+}
+
+func (x *HostJobAttempt) GetFinishedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FinishedAt
+	}
+	return nil
+}
+
+func (x *HostJobAttempt) GetConclusion() string {
+	if x != nil {
+		return x.Conclusion
+	}
+	return ""
+}
+
+func (x *HostJobAttempt) GetEnd() string {
+	if x != nil {
+		return x.End
+	}
+	return ""
+}
+
 // HostJobTelemetrySummary sums up a job VM's resource samples.
 type HostJobTelemetrySummary struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1564,7 +1768,7 @@ type HostJobTelemetrySummary struct {
 
 func (x *HostJobTelemetrySummary) Reset() {
 	*x = HostJobTelemetrySummary{}
-	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1576,7 +1780,7 @@ func (x *HostJobTelemetrySummary) String() string {
 func (*HostJobTelemetrySummary) ProtoMessage() {}
 
 func (x *HostJobTelemetrySummary) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1589,7 +1793,7 @@ func (x *HostJobTelemetrySummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostJobTelemetrySummary.ProtoReflect.Descriptor instead.
 func (*HostJobTelemetrySummary) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{15}
+	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *HostJobTelemetrySummary) GetOomKilled() bool {
@@ -1692,7 +1896,7 @@ type HostJobCache struct {
 
 func (x *HostJobCache) Reset() {
 	*x = HostJobCache{}
-	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1704,7 +1908,7 @@ func (x *HostJobCache) String() string {
 func (*HostJobCache) ProtoMessage() {}
 
 func (x *HostJobCache) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1717,7 +1921,7 @@ func (x *HostJobCache) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostJobCache.ProtoReflect.Descriptor instead.
 func (*HostJobCache) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{16}
+	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *HostJobCache) GetAttach() string {
@@ -1790,7 +1994,7 @@ type HostJobTelemetrySample struct {
 
 func (x *HostJobTelemetrySample) Reset() {
 	*x = HostJobTelemetrySample{}
-	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1802,7 +2006,7 @@ func (x *HostJobTelemetrySample) String() string {
 func (*HostJobTelemetrySample) ProtoMessage() {}
 
 func (x *HostJobTelemetrySample) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1815,7 +2019,7 @@ func (x *HostJobTelemetrySample) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostJobTelemetrySample.ProtoReflect.Descriptor instead.
 func (*HostJobTelemetrySample) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *HostJobTelemetrySample) GetAt() *timestamppb.Timestamp {
@@ -1920,7 +2124,7 @@ type HostJobFailureHistory struct {
 
 func (x *HostJobFailureHistory) Reset() {
 	*x = HostJobFailureHistory{}
-	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1932,7 +2136,7 @@ func (x *HostJobFailureHistory) String() string {
 func (*HostJobFailureHistory) ProtoMessage() {}
 
 func (x *HostJobFailureHistory) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_hostjobs_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1945,7 +2149,7 @@ func (x *HostJobFailureHistory) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostJobFailureHistory.ProtoReflect.Descriptor instead.
 func (*HostJobFailureHistory) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *HostJobFailureHistory) GetDays() int32 {
@@ -2016,9 +2220,10 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\thost_jobs\x18\x01 \x03(\v2\x1b.toshi.workspace.v1.HostJobR\bhostJobs\x12&\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"#\n" +
 	"\x11GetHostJobRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"L\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x8c\x01\n" +
 	"\x12GetHostJobResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"&\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\x12>\n" +
+	"\battempts\x18\x02 \x03(\v2\".toshi.workspace.v1.HostJobAttemptR\battempts\"&\n" +
 	"\x14CancelHostJobRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"O\n" +
 	"\x15CancelHostJobResponse\x126\n" +
@@ -2065,7 +2270,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x17StopHostJobDebugRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
 	"\x18StopHostJobDebugResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\x84\x0f\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\x95\x10\n" +
 	"\aHostJob\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1e\n" +
 	"\n" +
@@ -2128,7 +2333,34 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"workloadId\x12\x18\n" +
 	"\aproject\x18- \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18. \x01(\tR\venvironment\x12\x1a\n" +
-	"\bprovider\x18/ \x01(\tR\bprovider\"\xf7\x02\n" +
+	"\bprovider\x18/ \x01(\tR\bprovider\x12\x16\n" +
+	"\x06status\x180 \x01(\tR\x06status\x12\x1b\n" +
+	"\trunner_id\x181 \x01(\tR\brunnerId\x12\x1f\n" +
+	"\vrunner_name\x182 \x01(\tR\n" +
+	"runnerName\x12\x18\n" +
+	"\aattempt\x183 \x01(\x05R\aattempt\x12\x1f\n" +
+	"\vrun_attempt\x184 \x01(\x05R\n" +
+	"runAttempt\"\xa5\x03\n" +
+	"\x0eHostJobAttempt\x12\x18\n" +
+	"\aattempt\x18\x01 \x01(\x05R\aattempt\x12\x1b\n" +
+	"\trunner_id\x18\x02 \x01(\tR\brunnerId\x12\x1f\n" +
+	"\vrunner_name\x18\x03 \x01(\tR\n" +
+	"runnerName\x12\x17\n" +
+	"\ahost_id\x18\x04 \x01(\tR\x06hostId\x12\x1f\n" +
+	"\vinstance_id\x18\x05 \x01(\tR\n" +
+	"instanceId\x12\x1a\n" +
+	"\bprovider\x18\x06 \x01(\tR\bprovider\x12;\n" +
+	"\vassigned_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"assignedAt\x129\n" +
+	"\n" +
+	"started_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12;\n" +
+	"\vfinished_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"finishedAt\x12\x1e\n" +
+	"\n" +
+	"conclusion\x18\n" +
+	" \x01(\tR\n" +
+	"conclusion\x12\x10\n" +
+	"\x03end\x18\v \x01(\tR\x03end\"\xf7\x02\n" +
 	"\x17HostJobTelemetrySummary\x12\x1d\n" +
 	"\n" +
 	"oom_killed\x18\x01 \x01(\bR\toomKilled\x12*\n" +
@@ -2226,7 +2458,7 @@ func file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_hostjobs_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_toshi_workspace_v1_hostjobs_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_toshi_workspace_v1_hostjobs_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_toshi_workspace_v1_hostjobs_proto_goTypes = []any{
 	(HostJobState)(0),                     // 0: toshi.workspace.v1.HostJobState
 	(HostJobKind)(0),                      // 1: toshi.workspace.v1.HostJobKind
@@ -2245,55 +2477,60 @@ var file_toshi_workspace_v1_hostjobs_proto_goTypes = []any{
 	(*StopHostJobDebugRequest)(nil),       // 14: toshi.workspace.v1.StopHostJobDebugRequest
 	(*StopHostJobDebugResponse)(nil),      // 15: toshi.workspace.v1.StopHostJobDebugResponse
 	(*HostJob)(nil),                       // 16: toshi.workspace.v1.HostJob
-	(*HostJobTelemetrySummary)(nil),       // 17: toshi.workspace.v1.HostJobTelemetrySummary
-	(*HostJobCache)(nil),                  // 18: toshi.workspace.v1.HostJobCache
-	(*HostJobTelemetrySample)(nil),        // 19: toshi.workspace.v1.HostJobTelemetrySample
-	(*HostJobFailureHistory)(nil),         // 20: toshi.workspace.v1.HostJobFailureHistory
-	(*timestamppb.Timestamp)(nil),         // 21: google.protobuf.Timestamp
+	(*HostJobAttempt)(nil),                // 17: toshi.workspace.v1.HostJobAttempt
+	(*HostJobTelemetrySummary)(nil),       // 18: toshi.workspace.v1.HostJobTelemetrySummary
+	(*HostJobCache)(nil),                  // 19: toshi.workspace.v1.HostJobCache
+	(*HostJobTelemetrySample)(nil),        // 20: toshi.workspace.v1.HostJobTelemetrySample
+	(*HostJobFailureHistory)(nil),         // 21: toshi.workspace.v1.HostJobFailureHistory
+	(*timestamppb.Timestamp)(nil),         // 22: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_hostjobs_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.ListHostJobsRequest.states:type_name -> toshi.workspace.v1.HostJobState
 	16, // 1: toshi.workspace.v1.ListHostJobsResponse.host_jobs:type_name -> toshi.workspace.v1.HostJob
 	16, // 2: toshi.workspace.v1.GetHostJobResponse.host_job:type_name -> toshi.workspace.v1.HostJob
-	16, // 3: toshi.workspace.v1.CancelHostJobResponse.host_job:type_name -> toshi.workspace.v1.HostJob
-	20, // 4: toshi.workspace.v1.GetHostJobFailureResponse.history:type_name -> toshi.workspace.v1.HostJobFailureHistory
-	17, // 5: toshi.workspace.v1.GetHostJobTelemetryResponse.summary:type_name -> toshi.workspace.v1.HostJobTelemetrySummary
-	19, // 6: toshi.workspace.v1.GetHostJobTelemetryResponse.samples:type_name -> toshi.workspace.v1.HostJobTelemetrySample
-	21, // 7: toshi.workspace.v1.GetHostJobDebugAccessResponse.expires_at:type_name -> google.protobuf.Timestamp
-	16, // 8: toshi.workspace.v1.StopHostJobDebugResponse.host_job:type_name -> toshi.workspace.v1.HostJob
-	0,  // 9: toshi.workspace.v1.HostJob.state:type_name -> toshi.workspace.v1.HostJobState
-	21, // 10: toshi.workspace.v1.HostJob.queued_at:type_name -> google.protobuf.Timestamp
-	21, // 11: toshi.workspace.v1.HostJob.assigned_at:type_name -> google.protobuf.Timestamp
-	21, // 12: toshi.workspace.v1.HostJob.started_at:type_name -> google.protobuf.Timestamp
-	21, // 13: toshi.workspace.v1.HostJob.finished_at:type_name -> google.protobuf.Timestamp
-	21, // 14: toshi.workspace.v1.HostJob.stop_requested_at:type_name -> google.protobuf.Timestamp
-	21, // 15: toshi.workspace.v1.HostJob.debug_started_at:type_name -> google.protobuf.Timestamp
-	21, // 16: toshi.workspace.v1.HostJob.debug_until:type_name -> google.protobuf.Timestamp
-	17, // 17: toshi.workspace.v1.HostJob.telemetry:type_name -> toshi.workspace.v1.HostJobTelemetrySummary
-	21, // 18: toshi.workspace.v1.HostJob.runner_request_since:type_name -> google.protobuf.Timestamp
-	18, // 19: toshi.workspace.v1.HostJob.cache:type_name -> toshi.workspace.v1.HostJobCache
-	21, // 20: toshi.workspace.v1.HostJob.runner_exited_at:type_name -> google.protobuf.Timestamp
-	1,  // 21: toshi.workspace.v1.HostJob.kind:type_name -> toshi.workspace.v1.HostJobKind
-	21, // 22: toshi.workspace.v1.HostJobTelemetrySample.at:type_name -> google.protobuf.Timestamp
-	2,  // 23: toshi.workspace.v1.HostJobService.ListHostJobs:input_type -> toshi.workspace.v1.ListHostJobsRequest
-	4,  // 24: toshi.workspace.v1.HostJobService.GetHostJob:input_type -> toshi.workspace.v1.GetHostJobRequest
-	6,  // 25: toshi.workspace.v1.HostJobService.CancelHostJob:input_type -> toshi.workspace.v1.CancelHostJobRequest
-	8,  // 26: toshi.workspace.v1.HostJobService.GetHostJobFailure:input_type -> toshi.workspace.v1.GetHostJobFailureRequest
-	10, // 27: toshi.workspace.v1.HostJobService.GetHostJobTelemetry:input_type -> toshi.workspace.v1.GetHostJobTelemetryRequest
-	12, // 28: toshi.workspace.v1.HostJobService.GetHostJobDebugAccess:input_type -> toshi.workspace.v1.GetHostJobDebugAccessRequest
-	14, // 29: toshi.workspace.v1.HostJobService.StopHostJobDebug:input_type -> toshi.workspace.v1.StopHostJobDebugRequest
-	3,  // 30: toshi.workspace.v1.HostJobService.ListHostJobs:output_type -> toshi.workspace.v1.ListHostJobsResponse
-	5,  // 31: toshi.workspace.v1.HostJobService.GetHostJob:output_type -> toshi.workspace.v1.GetHostJobResponse
-	7,  // 32: toshi.workspace.v1.HostJobService.CancelHostJob:output_type -> toshi.workspace.v1.CancelHostJobResponse
-	9,  // 33: toshi.workspace.v1.HostJobService.GetHostJobFailure:output_type -> toshi.workspace.v1.GetHostJobFailureResponse
-	11, // 34: toshi.workspace.v1.HostJobService.GetHostJobTelemetry:output_type -> toshi.workspace.v1.GetHostJobTelemetryResponse
-	13, // 35: toshi.workspace.v1.HostJobService.GetHostJobDebugAccess:output_type -> toshi.workspace.v1.GetHostJobDebugAccessResponse
-	15, // 36: toshi.workspace.v1.HostJobService.StopHostJobDebug:output_type -> toshi.workspace.v1.StopHostJobDebugResponse
-	30, // [30:37] is the sub-list for method output_type
-	23, // [23:30] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	17, // 3: toshi.workspace.v1.GetHostJobResponse.attempts:type_name -> toshi.workspace.v1.HostJobAttempt
+	16, // 4: toshi.workspace.v1.CancelHostJobResponse.host_job:type_name -> toshi.workspace.v1.HostJob
+	21, // 5: toshi.workspace.v1.GetHostJobFailureResponse.history:type_name -> toshi.workspace.v1.HostJobFailureHistory
+	18, // 6: toshi.workspace.v1.GetHostJobTelemetryResponse.summary:type_name -> toshi.workspace.v1.HostJobTelemetrySummary
+	20, // 7: toshi.workspace.v1.GetHostJobTelemetryResponse.samples:type_name -> toshi.workspace.v1.HostJobTelemetrySample
+	22, // 8: toshi.workspace.v1.GetHostJobDebugAccessResponse.expires_at:type_name -> google.protobuf.Timestamp
+	16, // 9: toshi.workspace.v1.StopHostJobDebugResponse.host_job:type_name -> toshi.workspace.v1.HostJob
+	0,  // 10: toshi.workspace.v1.HostJob.state:type_name -> toshi.workspace.v1.HostJobState
+	22, // 11: toshi.workspace.v1.HostJob.queued_at:type_name -> google.protobuf.Timestamp
+	22, // 12: toshi.workspace.v1.HostJob.assigned_at:type_name -> google.protobuf.Timestamp
+	22, // 13: toshi.workspace.v1.HostJob.started_at:type_name -> google.protobuf.Timestamp
+	22, // 14: toshi.workspace.v1.HostJob.finished_at:type_name -> google.protobuf.Timestamp
+	22, // 15: toshi.workspace.v1.HostJob.stop_requested_at:type_name -> google.protobuf.Timestamp
+	22, // 16: toshi.workspace.v1.HostJob.debug_started_at:type_name -> google.protobuf.Timestamp
+	22, // 17: toshi.workspace.v1.HostJob.debug_until:type_name -> google.protobuf.Timestamp
+	18, // 18: toshi.workspace.v1.HostJob.telemetry:type_name -> toshi.workspace.v1.HostJobTelemetrySummary
+	22, // 19: toshi.workspace.v1.HostJob.runner_request_since:type_name -> google.protobuf.Timestamp
+	19, // 20: toshi.workspace.v1.HostJob.cache:type_name -> toshi.workspace.v1.HostJobCache
+	22, // 21: toshi.workspace.v1.HostJob.runner_exited_at:type_name -> google.protobuf.Timestamp
+	1,  // 22: toshi.workspace.v1.HostJob.kind:type_name -> toshi.workspace.v1.HostJobKind
+	22, // 23: toshi.workspace.v1.HostJobAttempt.assigned_at:type_name -> google.protobuf.Timestamp
+	22, // 24: toshi.workspace.v1.HostJobAttempt.started_at:type_name -> google.protobuf.Timestamp
+	22, // 25: toshi.workspace.v1.HostJobAttempt.finished_at:type_name -> google.protobuf.Timestamp
+	22, // 26: toshi.workspace.v1.HostJobTelemetrySample.at:type_name -> google.protobuf.Timestamp
+	2,  // 27: toshi.workspace.v1.HostJobService.ListHostJobs:input_type -> toshi.workspace.v1.ListHostJobsRequest
+	4,  // 28: toshi.workspace.v1.HostJobService.GetHostJob:input_type -> toshi.workspace.v1.GetHostJobRequest
+	6,  // 29: toshi.workspace.v1.HostJobService.CancelHostJob:input_type -> toshi.workspace.v1.CancelHostJobRequest
+	8,  // 30: toshi.workspace.v1.HostJobService.GetHostJobFailure:input_type -> toshi.workspace.v1.GetHostJobFailureRequest
+	10, // 31: toshi.workspace.v1.HostJobService.GetHostJobTelemetry:input_type -> toshi.workspace.v1.GetHostJobTelemetryRequest
+	12, // 32: toshi.workspace.v1.HostJobService.GetHostJobDebugAccess:input_type -> toshi.workspace.v1.GetHostJobDebugAccessRequest
+	14, // 33: toshi.workspace.v1.HostJobService.StopHostJobDebug:input_type -> toshi.workspace.v1.StopHostJobDebugRequest
+	3,  // 34: toshi.workspace.v1.HostJobService.ListHostJobs:output_type -> toshi.workspace.v1.ListHostJobsResponse
+	5,  // 35: toshi.workspace.v1.HostJobService.GetHostJob:output_type -> toshi.workspace.v1.GetHostJobResponse
+	7,  // 36: toshi.workspace.v1.HostJobService.CancelHostJob:output_type -> toshi.workspace.v1.CancelHostJobResponse
+	9,  // 37: toshi.workspace.v1.HostJobService.GetHostJobFailure:output_type -> toshi.workspace.v1.GetHostJobFailureResponse
+	11, // 38: toshi.workspace.v1.HostJobService.GetHostJobTelemetry:output_type -> toshi.workspace.v1.GetHostJobTelemetryResponse
+	13, // 39: toshi.workspace.v1.HostJobService.GetHostJobDebugAccess:output_type -> toshi.workspace.v1.GetHostJobDebugAccessResponse
+	15, // 40: toshi.workspace.v1.HostJobService.StopHostJobDebug:output_type -> toshi.workspace.v1.StopHostJobDebugResponse
+	34, // [34:41] is the sub-list for method output_type
+	27, // [27:34] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_hostjobs_proto_init() }
@@ -2301,14 +2538,14 @@ func file_toshi_workspace_v1_hostjobs_proto_init() {
 	if File_toshi_workspace_v1_hostjobs_proto != nil {
 		return
 	}
-	file_toshi_workspace_v1_hostjobs_proto_msgTypes[17].OneofWrappers = []any{}
+	file_toshi_workspace_v1_hostjobs_proto_msgTypes[18].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_hostjobs_proto_rawDesc), len(file_toshi_workspace_v1_hostjobs_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   19,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -74,6 +74,53 @@ message JobStatus {
   google.protobuf.Timestamp updated_at = 8;
   // The command's exit status, set when end_reason is EXITED.
   optional int32 exit_code = 9;
+  // The state in GitHub's words: "queued" while CREATED or QUEUED,
+  // "in_progress" while RUNNING, "completed" once ENDED. A job being
+  // prepared or placed is queued.
+  string status = 10;
+  // How the job completed in GitHub's words, empty until the status is
+  // completed: "success" when its command exited 0, "failure" when it
+  // exited with another status or Toshi could not run it (last_error says
+  // why), "cancelled" when it was cancelled. "timed_out" is kept for a
+  // job a time limit ends.
+  string conclusion = 11;
+  // When the job completed: the same instant as ended_at, under the name
+  // GitHub gives it.
+  google.protobuf.Timestamp completed_at = 12;
+  // When the current attempt was assigned its runner, once the attempt
+  // started. Unset while the job waits for a runner, and for a job that
+  // ended before any attempt started.
+  google.protobuf.Timestamp assigned_at = 13;
+  // The runner that runs, or ran, the current attempt: its id and its
+  // name, which for a job are the same. Unset until the attempt started:
+  // a runner that was only assigned is in GetJobResponse.attempts.
+  string runner_id = 14;
+  string runner_name = 15;
+  // The attempt that last started, counting from 1: each assignment to a
+  // runner is one. 0 until an attempt started, and for a job that ended
+  // before any did.
+  int32 attempt = 16;
+}
+
+// JobAttempt is one attempt of a job: one assignment to a runner, and how
+// it ended.
+message JobAttempt {
+  // Counting from 1.
+  int32 attempt = 1;
+  string runner_id = 2;
+  string runner_name = 3;
+  google.protobuf.Timestamp assigned_at = 4;
+  // Unset when the attempt was assigned and never started.
+  google.protobuf.Timestamp started_at = 5;
+  // When the attempt ended; unset for the current attempt until the job
+  // completed.
+  google.protobuf.Timestamp completed_at = 6;
+  // The attempt's conclusion in GitHub's words once the job completed in
+  // it; empty for an attempt that was queued again.
+  string conclusion = 7;
+  // Why an attempt that was queued again ended, such as "requeued: its
+  // assignment timed out"; empty for the current attempt.
+  string end = 8;
 }
 
 // JobState is where a job is in its life. A job can skip a state: one

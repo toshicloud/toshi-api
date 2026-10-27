@@ -478,6 +478,9 @@ message GetJobResponse {
   // The job's bindings as they were fixed when it started, in name order;
   // empty before it started.
   repeated BoundBinding bound = 2;
+  // The job's attempts, oldest first: one for each assignment to a
+  // runner, the current one last while the job holds it.
+  repeated JobAttempt attempts = 3;
 }
 
 message ListJobsRequest {

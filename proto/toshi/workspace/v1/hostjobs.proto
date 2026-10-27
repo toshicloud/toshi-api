@@ -95,6 +95,9 @@ message GetHostJobRequest {
 }
 message GetHostJobResponse {
   HostJob host_job = 1;
+  // The job's attempts, oldest first: one for each assignment to a host,
+  // the current one last while the job holds it.
+  repeated HostJobAttempt attempts = 2;
 }
 
 message CancelHostJobRequest {
@@ -339,6 +342,55 @@ message HostJob {
   // kind. Empty while the job has no instance, for a job whose agent sent
   // none or recorded before the field, and for a cloud host's job.
   string provider = 47;
+  // The state in GitHub's words: "queued" while queued, assigned or
+  // starting, "in_progress" while running, debugging or stopping once its
+  // attempt started, "completed" once completed, failed or cancelled. A
+  // Workspace API job's attempt starts when its host's start of the
+  // command is admitted: until then it is queued.
+  string status = 48;
+  // The runner that runs, or ran, the job's current attempt: for a GitHub
+  // job GitHub's runner id in decimal and the name it was registered
+  // with, for a Workspace API job its attempt's name as both. Unset until
+  // the attempt started, and for a job that ended before any did; the
+  // host it was assigned to is host_id.
+  string runner_id = 49;
+  string runner_name = 50;
+  // The current attempt once it started, counting from 1: each assignment
+  // of the job is one, and a requeue makes the next. 0 until it started,
+  // and for a job that ended before any attempt did; attempts on the get
+  // answer list every assignment.
+  int32 attempt = 51;
+  // GitHub's attempt of the workflow run the job is part of, as the
+  // workflow_job webhook Toshi made the job from said: 1 for a run's first
+  // attempt, 2 for its first re-run. 0 when it was not recorded, as for a
+  // job that is not a GitHub job or one stored before the field.
+  int32 run_attempt = 52;
+}
+
+// HostJobAttempt is one attempt of a host job: one assignment to a host
+// and its runner, and why it ended.
+message HostJobAttempt {
+  // Counting from 1.
+  int32 attempt = 1;
+  // As HostJob.runner_id and HostJob.runner_name; empty when no runner was
+  // named for the assignment.
+  string runner_id = 2;
+  string runner_name = 3;
+  string host_id = 4;
+  string instance_id = 5;
+  string provider = 6;
+  google.protobuf.Timestamp assigned_at = 7;
+  // Unset when the attempt was assigned and never started.
+  google.protobuf.Timestamp started_at = 8;
+  // When the attempt ended; unset for the current attempt until the job
+  // finished.
+  google.protobuf.Timestamp finished_at = 9;
+  // The job's conclusion as GitHub or its runner reported it in the
+  // attempt, such as "success"; empty when none was.
+  string conclusion = 10;
+  // Why an attempt that was queued again ended, such as "requeued: its
+  // assignment timed out"; empty for the current attempt.
+  string end = 11;
 }
 
 // HostJobState is where a host job is in its life cycle.
