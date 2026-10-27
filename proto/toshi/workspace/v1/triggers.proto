@@ -1,0 +1,235 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
+import "toshi/workspace/v1/workspace.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// TriggerService keeps a project's triggers: each binds the events one
+// connection brings to an action on the project's workloads. A trigger
+// matches an event on the events it names, the exact names, and on its
+// filter; nothing else of the event is read, and no code of the
+// workspace's runs in the control plane.
+//
+// A trigger belongs to a project and an environment, the environment its
+// workloads run in, and every call names both, as WorkloadService's do.
+// A trigger is owed the events written after it is created, from then
+// on; it never acts on an event written before it.
+//
+// CreateTrigger, UpdateTrigger and DeleteTrigger take a request_key, with
+// WorkloadService's rule: a retry with the same key and the same payload
+// returns what the first call returned and changes nothing; the same key
+// with a different payload fails with FAILED_PRECONDITION; an empty key
+// means no retry protection.
+service TriggerService {
+  // CreateTrigger makes a trigger. A source that is not a connection of
+  // the workspace fails with NOT_FOUND, and so does a WEBHOOK connection of
+  // another project or environment. No events, an event name with the
+  // reserved prefix `trigger.`, no target for the action CREATE, a key
+  // that is not a template of the event data, or a production environment
+  // for pull request events fails with INVALID_ARGUMENT, and a name another
+  // trigger of the project has with ALREADY_EXISTS.
+  rpc CreateTrigger(CreateTriggerRequest) returns (CreateTriggerResponse) {
+    option (toshi.permission) = "triggers.write";
+    option (toshi.scope) = "environment";
+  }
+
+  // GetTrigger returns one trigger. One the project does not have, or one
+  // deleted, is NOT_FOUND.
+  rpc GetTrigger(GetTriggerRequest) returns (GetTriggerResponse) {
+    option (toshi.permission) = "triggers.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // ListTriggers returns the triggers of the project's environment, in name
+  // order.
+  //
+  // A page holds 100 triggers when page_size is zero, and 1000 at most.
+  rpc ListTriggers(ListTriggersRequest) returns (ListTriggersResponse) {
+    option (toshi.permission) = "triggers.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // UpdateTrigger sets the fields update_mask names: name, events, filter,
+  // action, target, key, idle_timeout and forks. A trigger's source, project
+  // and environment are fixed; a mask that names one fails with
+  // INVALID_ARGUMENT, and the new values are checked as CreateTrigger's are.
+  // The change applies to the events written after it.
+  rpc UpdateTrigger(UpdateTriggerRequest) returns (UpdateTriggerResponse) {
+    option (toshi.permission) = "triggers.write";
+    option (toshi.scope) = "environment";
+  }
+
+  // DeleteTrigger deletes a trigger: it acts on no further event, and the
+  // hourly check removes the workloads it made.
+  rpc DeleteTrigger(DeleteTriggerRequest) returns (DeleteTriggerResponse) {
+    option (toshi.permission) = "triggers.write";
+    option (toshi.scope) = "environment";
+  }
+}
+
+// Trigger binds the events of one connection to an action.
+message Trigger {
+  // Set by the server; ignored in a request. The workloads it makes carry it
+  // as the label toshi.trigger.
+  string id = 1;
+  // Set by the server from the request; ignored in the trigger a request
+  // carries.
+  string project = 2;
+  // As project.
+  string environment = 3;
+  // A lower-case DNS label, unique among the project's triggers that are not
+  // deleted.
+  string name = 4;
+  // The id of the connection whose events it matches.
+  string source = 5;
+  // The event names it matches, exactly; at least one.
+  repeated string events = 6;
+  // Further limits on a pull request event; unset matches every one.
+  TriggerFilter filter = 7;
+  TriggerAction action = 8;
+  // What CREATE makes; unset for DELETE.
+  TriggerTarget target = 9;
+  // A template over the event's data that names the workload an event is
+  // about: `{path}` is the value at that dot-separated path of the data, a
+  // string or an integer, and every other character is itself. The
+  // workloads it makes carry the result as the label toshi.trigger.key.
+  // Unset for pull request events, it is `{repository.full_name}#{number}`;
+  // unset for any other event, a create fails with INVALID_ARGUMENT.
+  string key = 10;
+  // How long a workload it made may go without a request before it is
+  // removed; unset is 2 hours.
+  google.protobuf.Duration idle_timeout = 11;
+  // What it does with a pull request whose head repository is not its base
+  // repository.
+  TriggerForks forks = 12;
+  // Set by the server; ignored in a request.
+  google.protobuf.Timestamp created_at = 13;
+  // Set by the server; ignored in a request.
+  google.protobuf.Timestamp updated_at = 14;
+}
+
+// TriggerFilter limits the pull request events a trigger matches. Each
+// list, when set, must hold the event's value; an empty list holds every
+// value. An event that is not a pull request's matches only an empty
+// filter.
+message TriggerFilter {
+  // Base repositories, as owner/name.
+  repeated string repositories = 1;
+  // Base branches, by name.
+  repeated string base_branches = 2;
+}
+
+// TriggerAction is what a trigger does with an event it matches.
+enum TriggerAction {
+  TRIGGER_ACTION_UNSPECIFIED = 0;
+  // Makes the target workload for the event's key, replacing the one the
+  // key had: the new one first, and the older ones are deleted once it runs
+  // or has failed. An event older than the newest one the key has seen
+  // changes nothing.
+  TRIGGER_ACTION_CREATE = 1;
+  // Deletes every workload the trigger made with the event's key.
+  TRIGGER_ACTION_DELETE = 2;
+}
+
+// TriggerTarget is the workload a trigger's CREATE makes.
+message TriggerTarget {
+  oneof target {
+    TriggerSandbox sandbox = 1;
+  }
+}
+
+// TriggerSandbox is a sandbox a trigger makes.
+message TriggerSandbox {
+  // The runner size of its VM, which picks its image, for example
+  // "toshi-linux-2x". Required.
+  string size = 1;
+  // How long it may run; unset is 24 hours. It cannot be longer than the
+  // plan's sandbox cap.
+  google.protobuf.Duration max_duration = 2;
+  // What in its workspace it uses, as SandboxSpec's bindings.
+  repeated Binding bindings = 3;
+  // Runs first, to exit 0.
+  Command setup = 4;
+  // Runs after setup and is kept running for the sandbox's life.
+  Command process = 5;
+  // The http channel whose link the trigger reports; empty is `preview`.
+  string channel = 6;
+}
+
+// TriggerForks is what a trigger does with a pull request from a fork.
+enum TriggerForks {
+  // As LABEL.
+  TRIGGER_FORKS_UNSPECIFIED = 0;
+  // Nothing runs until a person with write access to the base repository
+  // adds the label toshi:preview to the pull request. What runs then has no
+  // bindings, and a new commit to the pull request removes it.
+  TRIGGER_FORKS_LABEL = 1;
+  // Nothing runs for a fork.
+  TRIGGER_FORKS_NEVER = 2;
+}
+
+message CreateTriggerRequest {
+  string project = 1;
+  string environment = 2;
+  // The trigger; its id, project, environment and times are ignored.
+  Trigger trigger = 3;
+  string request_key = 4;
+}
+
+message CreateTriggerResponse {
+  Trigger trigger = 1;
+}
+
+message GetTriggerRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+}
+
+message GetTriggerResponse {
+  Trigger trigger = 1;
+}
+
+message ListTriggersRequest {
+  string project = 1;
+  string environment = 2;
+  // The most triggers in one page; zero lets the server choose.
+  int32 page_size = 3;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 4;
+}
+
+message ListTriggersResponse {
+  repeated Trigger triggers = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message UpdateTriggerRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  // Carries the new values of the fields update_mask names.
+  Trigger trigger = 4;
+  google.protobuf.FieldMask update_mask = 5;
+  string request_key = 6;
+}
+
+message UpdateTriggerResponse {
+  Trigger trigger = 1;
+}
+
+message DeleteTriggerRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  string request_key = 4;
+}
+
+message DeleteTriggerResponse {}
