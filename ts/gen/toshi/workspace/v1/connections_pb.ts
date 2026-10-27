@@ -4,8 +4,8 @@
 
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
-import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
+import type { Duration, DurationJson, Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_duration, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import { file_toshi_permission } from "../../permission_pb";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/connections.proto.
  */
 export const file_toshi_workspace_v1_connections: GenFile = /*@__PURE__*/
-  fileDesc("CiR0b3NoaS93b3Jrc3BhY2UvdjEvY29ubmVjdGlvbnMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSLHAQoKQ29ubmVjdGlvbhIKCgJpZBgBIAEoCRIwCgRraW5kGAIgASgOMiIudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25LaW5kEgwKBG5hbWUYAyABKAkSDwoHcHJvamVjdBgEIAEoCRITCgtlbnZpcm9ubWVudBgFIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYBiABKAMSLgoKY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiPwoWTGlzdENvbm5lY3Rpb25zUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJnChdMaXN0Q29ubmVjdGlvbnNSZXNwb25zZRIzCgtjb25uZWN0aW9ucxgBIAMoCzIeLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSIiChRHZXRDb25uZWN0aW9uUmVxdWVzdBIKCgJpZBgBIAEoCSJLChVHZXRDb25uZWN0aW9uUmVzcG9uc2USMgoKY29ubmVjdGlvbhgBIAEoCzIeLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uIpQBChdDcmVhdGVDb25uZWN0aW9uUmVxdWVzdBIwCgRraW5kGAEgASgOMiIudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25LaW5kEgwKBG5hbWUYAiABKAkSDwoHcHJvamVjdBgDIAEoCRITCgtlbnZpcm9ubWVudBgEIAEoCRITCgtyZXF1ZXN0X2tleRgFIAEoCSJeChhDcmVhdGVDb25uZWN0aW9uUmVzcG9uc2USMgoKY29ubmVjdGlvbhgBIAEoCzIeLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uEg4KBnNlY3JldBgCIAEoCSI6ChdEZWxldGVDb25uZWN0aW9uUmVxdWVzdBIKCgJpZBgBIAEoCRITCgtyZXF1ZXN0X2tleRgCIAEoCSIaChhEZWxldGVDb25uZWN0aW9uUmVzcG9uc2UqagoOQ29ubmVjdGlvbktpbmQSHwobQ09OTkVDVElPTl9LSU5EX1VOU1BFQ0lGSUVEEAASGgoWQ09OTkVDVElPTl9LSU5EX0dJVEhVQhABEhsKF0NPTk5FQ1RJT05fS0lORF9XRUJIT09LEAIy1QQKEUNvbm5lY3Rpb25TZXJ2aWNlEo0BCg9MaXN0Q29ubmVjdGlvbnMSKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdENvbm5lY3Rpb25zUmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Q29ubmVjdGlvbnNSZXNwb25zZSIhwvMYEGNvbm5lY3Rpb25zLnJlYWTK8xgJd29ya3NwYWNlEocBCg1HZXRDb25uZWN0aW9uEigudG9zaGkud29ya3NwYWNlLnYxLkdldENvbm5lY3Rpb25SZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkdldENvbm5lY3Rpb25SZXNwb25zZSIhwvMYEGNvbm5lY3Rpb25zLnJlYWTK8xgJd29ya3NwYWNlEpEBChBDcmVhdGVDb25uZWN0aW9uEisudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNvbm5lY3Rpb25SZXF1ZXN0GiwudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNvbm5lY3Rpb25SZXNwb25zZSIiwvMYEWNvbm5lY3Rpb25zLndyaXRlyvMYCXdvcmtzcGFjZRKRAQoQRGVsZXRlQ29ubmVjdGlvbhIrLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVDb25uZWN0aW9uUmVxdWVzdBosLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVDb25uZWN0aW9uUmVzcG9uc2UiIsLzGBFjb25uZWN0aW9ucy53cml0ZcrzGAl3b3Jrc3BhY2VCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiR0b3NoaS93b3Jrc3BhY2UvdjEvY29ubmVjdGlvbnMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSKHAgoKQ29ubmVjdGlvbhIKCgJpZBgBIAEoCRIwCgRraW5kGAIgASgOMiIudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25LaW5kEgwKBG5hbWUYAyABKAkSDwoHcHJvamVjdBgEIAEoCRITCgtlbnZpcm9ubWVudBgFIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYBiABKAMSLgoKY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPgoacHJldmlvdXNfc2VjcmV0X2V4cGlyZXNfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIj8KFkxpc3RDb25uZWN0aW9uc1JlcXVlc3QSEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkiZwoXTGlzdENvbm5lY3Rpb25zUmVzcG9uc2USMwoLY29ubmVjdGlvbnMYASADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiIgoUR2V0Q29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkiSwoVR2V0Q29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbiKUAQoXQ3JlYXRlQ29ubmVjdGlvblJlcXVlc3QSMAoEa2luZBgBIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uS2luZBIMCgRuYW1lGAIgASgJEg8KB3Byb2plY3QYAyABKAkSEwoLZW52aXJvbm1lbnQYBCABKAkSEwoLcmVxdWVzdF9rZXkYBSABKAkiXgoYQ3JlYXRlQ29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkiOgoXRGVsZXRlQ29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkSEwoLcmVxdWVzdF9rZXkYAiABKAkiGgoYRGVsZXRlQ29ubmVjdGlvblJlc3BvbnNlImwKHVJvdGF0ZUNvbm5lY3Rpb25TZWNyZXRSZXF1ZXN0EgoKAmlkGAEgASgJEioKB292ZXJsYXAYAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SEwoLcmVxdWVzdF9rZXkYAyABKAkiZAoeUm90YXRlQ29ubmVjdGlvblNlY3JldFJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkqagoOQ29ubmVjdGlvbktpbmQSHwobQ09OTkVDVElPTl9LSU5EX1VOU1BFQ0lGSUVEEAASGgoWQ09OTkVDVElPTl9LSU5EX0dJVEhVQhABEhsKF0NPTk5FQ1RJT05fS0lORF9XRUJIT09LEAIymgYKEUNvbm5lY3Rpb25TZXJ2aWNlEo0BCg9MaXN0Q29ubmVjdGlvbnMSKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdENvbm5lY3Rpb25zUmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Q29ubmVjdGlvbnNSZXNwb25zZSIhwvMYEGNvbm5lY3Rpb25zLnJlYWTK8xgJd29ya3NwYWNlEocBCg1HZXRDb25uZWN0aW9uEigudG9zaGkud29ya3NwYWNlLnYxLkdldENvbm5lY3Rpb25SZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkdldENvbm5lY3Rpb25SZXNwb25zZSIhwvMYEGNvbm5lY3Rpb25zLnJlYWTK8xgJd29ya3NwYWNlEpEBChBDcmVhdGVDb25uZWN0aW9uEisudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNvbm5lY3Rpb25SZXF1ZXN0GiwudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNvbm5lY3Rpb25SZXNwb25zZSIiwvMYEWNvbm5lY3Rpb25zLndyaXRlyvMYCXdvcmtzcGFjZRKRAQoQRGVsZXRlQ29ubmVjdGlvbhIrLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVDb25uZWN0aW9uUmVxdWVzdBosLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVDb25uZWN0aW9uUmVzcG9uc2UiIsLzGBFjb25uZWN0aW9ucy53cml0ZcrzGAl3b3Jrc3BhY2USwgEKFlJvdGF0ZUNvbm5lY3Rpb25TZWNyZXQSMS50b3NoaS53b3Jrc3BhY2UudjEuUm90YXRlQ29ubmVjdGlvblNlY3JldFJlcXVlc3QaMi50b3NoaS53b3Jrc3BhY2UudjEuUm90YXRlQ29ubmVjdGlvblNlY3JldFJlc3BvbnNlIkHC8xgRY29ubmVjdGlvbnMud3JpdGXK8xgJd29ya3NwYWNl0vMYGwoZY29ubmVjdGlvbi5zZWNyZXRfcm90YXRlZEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Connection is one source of a workspace's events.
@@ -63,6 +63,14 @@ export type Connection = Message<"toshi.workspace.v1.Connection"> & {
    * @generated from field: google.protobuf.Timestamp created_at = 7;
    */
   createdAt?: Timestamp | undefined;
+
+  /**
+   * Until when a rotated WEBHOOK connection's previous secret still
+   * verifies; unset when there is none.
+   *
+   * @generated from field: google.protobuf.Timestamp previous_secret_expires_at = 8;
+   */
+  previousSecretExpiresAt?: Timestamp | undefined;
 };
 
 /**
@@ -113,6 +121,14 @@ export type ConnectionJson = {
    * @generated from field: google.protobuf.Timestamp created_at = 7;
    */
   createdAt?: TimestampJson;
+
+  /**
+   * Until when a rotated WEBHOOK connection's previous secret still
+   * verifies; unset when there is none.
+   *
+   * @generated from field: google.protobuf.Timestamp previous_secret_expires_at = 8;
+   */
+  previousSecretExpiresAt?: TimestampJson;
 };
 
 /**
@@ -437,6 +453,102 @@ export const DeleteConnectionResponseSchema: GenMessage<DeleteConnectionResponse
   messageDesc(file_toshi_workspace_v1_connections, 8);
 
 /**
+ * @generated from message toshi.workspace.v1.RotateConnectionSecretRequest
+ */
+export type RotateConnectionSecretRequest = Message<"toshi.workspace.v1.RotateConnectionSecretRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * How long the previous secret still verifies; unset is 24 hours, zero
+   * stops it at once, and 7 days is the most.
+   *
+   * @generated from field: google.protobuf.Duration overlap = 2;
+   */
+  overlap?: Duration | undefined;
+
+  /**
+   * @generated from field: string request_key = 3;
+   */
+  requestKey: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.RotateConnectionSecretRequest
+ */
+export type RotateConnectionSecretRequestJson = {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id?: string;
+
+  /**
+   * How long the previous secret still verifies; unset is 24 hours, zero
+   * stops it at once, and 7 days is the most.
+   *
+   * @generated from field: google.protobuf.Duration overlap = 2;
+   */
+  overlap?: DurationJson;
+
+  /**
+   * @generated from field: string request_key = 3;
+   */
+  requestKey?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.RotateConnectionSecretRequest.
+ * Use `create(RotateConnectionSecretRequestSchema)` to create a new message.
+ */
+export const RotateConnectionSecretRequestSchema: GenMessage<RotateConnectionSecretRequest, {jsonType: RotateConnectionSecretRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 9);
+
+/**
+ * @generated from message toshi.workspace.v1.RotateConnectionSecretResponse
+ */
+export type RotateConnectionSecretResponse = Message<"toshi.workspace.v1.RotateConnectionSecretResponse"> & {
+  /**
+   * @generated from field: toshi.workspace.v1.Connection connection = 1;
+   */
+  connection?: Connection | undefined;
+
+  /**
+   * The new signing secret in its whsec_ form. Shown only in this answer
+   * and an identical retry's.
+   *
+   * @generated from field: string secret = 2;
+   */
+  secret: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.RotateConnectionSecretResponse
+ */
+export type RotateConnectionSecretResponseJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.Connection connection = 1;
+   */
+  connection?: ConnectionJson;
+
+  /**
+   * The new signing secret in its whsec_ form. Shown only in this answer
+   * and an identical retry's.
+   *
+   * @generated from field: string secret = 2;
+   */
+  secret?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.RotateConnectionSecretResponse.
+ * Use `create(RotateConnectionSecretResponseSchema)` to create a new message.
+ */
+export const RotateConnectionSecretResponseSchema: GenMessage<RotateConnectionSecretResponse, {jsonType: RotateConnectionSecretResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 10);
+
+/**
  * ConnectionKind is the kind of source a connection receives events from.
  *
  * @generated from enum toshi.workspace.v1.ConnectionKind
@@ -484,11 +596,12 @@ export const ConnectionKindSchema: GenEnum<ConnectionKind, ConnectionKindJson> =
  * Webhooks does, with a secret the connection keeps.
  *
  * The caller's credential names the workspace, as for WorkloadService.
- * CreateConnection requires a request_key, which works as WorkloadService's
- * do: a retry with the same key and the same request returns what the
- * first call returned and creates nothing. The signing secret is shown once,
- * in the create's answer and an identical retry's; no read returns it. A
- * retry after the connection is deleted fails with FAILED_PRECONDITION.
+ * CreateConnection and RotateConnectionSecret require a request_key, which
+ * works as WorkloadService's do: a retry with the same key and the same
+ * request returns what the first call returned and changes nothing. A
+ * signing secret is shown once, in the answer that made it and an identical
+ * retry's; no read returns it. A retry after the connection is deleted, or
+ * after its secret was rotated again, fails with FAILED_PRECONDITION.
  *
  * @generated from service toshi.workspace.v1.ConnectionService
  */
@@ -542,6 +655,23 @@ export const ConnectionService: GenService<{
     methodKind: "unary";
     input: typeof DeleteConnectionRequestSchema;
     output: typeof DeleteConnectionResponseSchema;
+  },
+  /**
+   * RotateConnectionSecret gives a WEBHOOK connection a new signing secret
+   * and returns it. For the overlap after the rotation, the previous secret
+   * still verifies, so the sender can switch over; with an overlap of zero
+   * it stops verifying at once. While a previous secret still verifies, a
+   * rotation with an overlap fails with FAILED_PRECONDITION; one with an
+   * overlap of zero always runs. An overlap above 7 days or below zero fails
+   * with INVALID_ARGUMENT, a GITHUB connection with FAILED_PRECONDITION,
+   * and one the workspace does not have with NOT_FOUND.
+   *
+   * @generated from rpc toshi.workspace.v1.ConnectionService.RotateConnectionSecret
+   */
+  rotateConnectionSecret: {
+    methodKind: "unary";
+    input: typeof RotateConnectionSecretRequestSchema;
+    output: typeof RotateConnectionSecretResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_toshi_workspace_v1_connections, 0);

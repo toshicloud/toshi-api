@@ -45,6 +45,9 @@ const (
 	// ConnectionServiceDeleteConnectionProcedure is the fully-qualified name of the ConnectionService's
 	// DeleteConnection RPC.
 	ConnectionServiceDeleteConnectionProcedure = "/toshi.workspace.v1.ConnectionService/DeleteConnection"
+	// ConnectionServiceRotateConnectionSecretProcedure is the fully-qualified name of the
+	// ConnectionService's RotateConnectionSecret RPC.
+	ConnectionServiceRotateConnectionSecretProcedure = "/toshi.workspace.v1.ConnectionService/RotateConnectionSecret"
 )
 
 // ConnectionServiceClient is a client for the toshi.workspace.v1.ConnectionService service.
@@ -67,6 +70,15 @@ type ConnectionServiceClient interface {
 	// removing the GitHub App deletes it, and one the workspace does not have
 	// with NOT_FOUND.
 	DeleteConnection(context.Context, *connect.Request[workspacev1.DeleteConnectionRequest]) (*connect.Response[workspacev1.DeleteConnectionResponse], error)
+	// RotateConnectionSecret gives a WEBHOOK connection a new signing secret
+	// and returns it. For the overlap after the rotation, the previous secret
+	// still verifies, so the sender can switch over; with an overlap of zero
+	// it stops verifying at once. While a previous secret still verifies, a
+	// rotation with an overlap fails with FAILED_PRECONDITION; one with an
+	// overlap of zero always runs. An overlap above 7 days or below zero fails
+	// with INVALID_ARGUMENT, a GITHUB connection with FAILED_PRECONDITION,
+	// and one the workspace does not have with NOT_FOUND.
+	RotateConnectionSecret(context.Context, *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error)
 }
 
 // NewConnectionServiceClient constructs a client for the toshi.workspace.v1.ConnectionService
@@ -104,15 +116,22 @@ func NewConnectionServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(connectionServiceMethods.ByName("DeleteConnection")),
 			connect.WithClientOptions(opts...),
 		),
+		rotateConnectionSecret: connect.NewClient[workspacev1.RotateConnectionSecretRequest, workspacev1.RotateConnectionSecretResponse](
+			httpClient,
+			baseURL+ConnectionServiceRotateConnectionSecretProcedure,
+			connect.WithSchema(connectionServiceMethods.ByName("RotateConnectionSecret")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // connectionServiceClient implements ConnectionServiceClient.
 type connectionServiceClient struct {
-	listConnections  *connect.Client[workspacev1.ListConnectionsRequest, workspacev1.ListConnectionsResponse]
-	getConnection    *connect.Client[workspacev1.GetConnectionRequest, workspacev1.GetConnectionResponse]
-	createConnection *connect.Client[workspacev1.CreateConnectionRequest, workspacev1.CreateConnectionResponse]
-	deleteConnection *connect.Client[workspacev1.DeleteConnectionRequest, workspacev1.DeleteConnectionResponse]
+	listConnections        *connect.Client[workspacev1.ListConnectionsRequest, workspacev1.ListConnectionsResponse]
+	getConnection          *connect.Client[workspacev1.GetConnectionRequest, workspacev1.GetConnectionResponse]
+	createConnection       *connect.Client[workspacev1.CreateConnectionRequest, workspacev1.CreateConnectionResponse]
+	deleteConnection       *connect.Client[workspacev1.DeleteConnectionRequest, workspacev1.DeleteConnectionResponse]
+	rotateConnectionSecret *connect.Client[workspacev1.RotateConnectionSecretRequest, workspacev1.RotateConnectionSecretResponse]
 }
 
 // ListConnections calls toshi.workspace.v1.ConnectionService.ListConnections.
@@ -133,6 +152,11 @@ func (c *connectionServiceClient) CreateConnection(ctx context.Context, req *con
 // DeleteConnection calls toshi.workspace.v1.ConnectionService.DeleteConnection.
 func (c *connectionServiceClient) DeleteConnection(ctx context.Context, req *connect.Request[workspacev1.DeleteConnectionRequest]) (*connect.Response[workspacev1.DeleteConnectionResponse], error) {
 	return c.deleteConnection.CallUnary(ctx, req)
+}
+
+// RotateConnectionSecret calls toshi.workspace.v1.ConnectionService.RotateConnectionSecret.
+func (c *connectionServiceClient) RotateConnectionSecret(ctx context.Context, req *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error) {
+	return c.rotateConnectionSecret.CallUnary(ctx, req)
 }
 
 // ConnectionServiceHandler is an implementation of the toshi.workspace.v1.ConnectionService
@@ -156,6 +180,15 @@ type ConnectionServiceHandler interface {
 	// removing the GitHub App deletes it, and one the workspace does not have
 	// with NOT_FOUND.
 	DeleteConnection(context.Context, *connect.Request[workspacev1.DeleteConnectionRequest]) (*connect.Response[workspacev1.DeleteConnectionResponse], error)
+	// RotateConnectionSecret gives a WEBHOOK connection a new signing secret
+	// and returns it. For the overlap after the rotation, the previous secret
+	// still verifies, so the sender can switch over; with an overlap of zero
+	// it stops verifying at once. While a previous secret still verifies, a
+	// rotation with an overlap fails with FAILED_PRECONDITION; one with an
+	// overlap of zero always runs. An overlap above 7 days or below zero fails
+	// with INVALID_ARGUMENT, a GITHUB connection with FAILED_PRECONDITION,
+	// and one the workspace does not have with NOT_FOUND.
+	RotateConnectionSecret(context.Context, *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error)
 }
 
 // NewConnectionServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -189,6 +222,12 @@ func NewConnectionServiceHandler(svc ConnectionServiceHandler, opts ...connect.H
 		connect.WithSchema(connectionServiceMethods.ByName("DeleteConnection")),
 		connect.WithHandlerOptions(opts...),
 	)
+	connectionServiceRotateConnectionSecretHandler := connect.NewUnaryHandler(
+		ConnectionServiceRotateConnectionSecretProcedure,
+		svc.RotateConnectionSecret,
+		connect.WithSchema(connectionServiceMethods.ByName("RotateConnectionSecret")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.ConnectionService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ConnectionServiceListConnectionsProcedure:
@@ -199,6 +238,8 @@ func NewConnectionServiceHandler(svc ConnectionServiceHandler, opts ...connect.H
 			connectionServiceCreateConnectionHandler.ServeHTTP(w, r)
 		case ConnectionServiceDeleteConnectionProcedure:
 			connectionServiceDeleteConnectionHandler.ServeHTTP(w, r)
+		case ConnectionServiceRotateConnectionSecretProcedure:
+			connectionServiceRotateConnectionSecretHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -222,4 +263,8 @@ func (UnimplementedConnectionServiceHandler) CreateConnection(context.Context, *
 
 func (UnimplementedConnectionServiceHandler) DeleteConnection(context.Context, *connect.Request[workspacev1.DeleteConnectionRequest]) (*connect.Response[workspacev1.DeleteConnectionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.DeleteConnection is not implemented"))
+}
+
+func (UnimplementedConnectionServiceHandler) RotateConnectionSecret(context.Context, *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.RotateConnectionSecret is not implemented"))
 }

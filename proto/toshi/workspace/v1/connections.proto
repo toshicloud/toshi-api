@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package toshi.workspace.v1;
 
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -15,11 +16,12 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // Webhooks does, with a secret the connection keeps.
 //
 // The caller's credential names the workspace, as for WorkloadService.
-// CreateConnection requires a request_key, which works as WorkloadService's
-// do: a retry with the same key and the same request returns what the
-// first call returned and creates nothing. The signing secret is shown once,
-// in the create's answer and an identical retry's; no read returns it. A
-// retry after the connection is deleted fails with FAILED_PRECONDITION.
+// CreateConnection and RotateConnectionSecret require a request_key, which
+// works as WorkloadService's do: a retry with the same key and the same
+// request returns what the first call returned and changes nothing. A
+// signing secret is shown once, in the answer that made it and an identical
+// retry's; no read returns it. A retry after the connection is deleted, or
+// after its secret was rotated again, fails with FAILED_PRECONDITION.
 service ConnectionService {
   // ListConnections returns the workspace's connections, ordered by id.
   //
@@ -54,6 +56,22 @@ service ConnectionService {
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
   }
+
+  // RotateConnectionSecret gives a WEBHOOK connection a new signing secret
+  // and returns it. For the overlap after the rotation, the previous secret
+  // still verifies, so the sender can switch over; with an overlap of zero
+  // it stops verifying at once. While a previous secret still verifies, a
+  // rotation with an overlap fails with FAILED_PRECONDITION; one with an
+  // overlap of zero always runs. An overlap above 7 days or below zero fails
+  // with INVALID_ARGUMENT, a GITHUB connection with FAILED_PRECONDITION,
+  // and one the workspace does not have with NOT_FOUND.
+  rpc RotateConnectionSecret(RotateConnectionSecretRequest) returns (RotateConnectionSecretResponse) {
+    option (toshi.permission) = "connections.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {
+      action: "connection.secret_rotated"
+    };
+  }
 }
 
 // ConnectionKind is the kind of source a connection receives events from.
@@ -79,6 +97,9 @@ message Connection {
   // The GitHub App installation of a GITHUB connection; zero otherwise.
   int64 installation_id = 6;
   google.protobuf.Timestamp created_at = 7;
+  // Until when a rotated WEBHOOK connection's previous secret still
+  // verifies; unset when there is none.
+  google.protobuf.Timestamp previous_secret_expires_at = 8;
 }
 
 message ListConnectionsRequest {
@@ -125,3 +146,18 @@ message DeleteConnectionRequest {
 }
 
 message DeleteConnectionResponse {}
+
+message RotateConnectionSecretRequest {
+  string id = 1;
+  // How long the previous secret still verifies; unset is 24 hours, zero
+  // stops it at once, and 7 days is the most.
+  google.protobuf.Duration overlap = 2;
+  string request_key = 3;
+}
+
+message RotateConnectionSecretResponse {
+  Connection connection = 1;
+  // The new signing secret in its whsec_ form. Shown only in this answer
+  // and an identical retry's.
+  string secret = 2;
+}
