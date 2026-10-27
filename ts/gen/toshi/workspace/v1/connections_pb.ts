@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/connections.proto.
  */
 export const file_toshi_workspace_v1_connections: GenFile = /*@__PURE__*/
-  fileDesc("CiR0b3NoaS93b3Jrc3BhY2UvdjEvY29ubmVjdGlvbnMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSKiAgoKQ29ubmVjdGlvbhIKCgJpZBgBIAEoCRIwCgRraW5kGAIgASgOMiIudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25LaW5kEgwKBG5hbWUYAyABKAkSDwoHcHJvamVjdBgEIAEoCRITCgtlbnZpcm9ubWVudBgFIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYBiABKAMSLgoKY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPgoacHJldmlvdXNfc2VjcmV0X2V4cGlyZXNfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhkKEXRyYW5zZm9ybV92ZXJzaW9uGAkgASgFIj8KFkxpc3RDb25uZWN0aW9uc1JlcXVlc3QSEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkiZwoXTGlzdENvbm5lY3Rpb25zUmVzcG9uc2USMwoLY29ubmVjdGlvbnMYASADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiIgoUR2V0Q29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkiSwoVR2V0Q29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbiKUAQoXQ3JlYXRlQ29ubmVjdGlvblJlcXVlc3QSMAoEa2luZBgBIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uS2luZBIMCgRuYW1lGAIgASgJEg8KB3Byb2plY3QYAyABKAkSEwoLZW52aXJvbm1lbnQYBCABKAkSEwoLcmVxdWVzdF9rZXkYBSABKAkiXgoYQ3JlYXRlQ29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkiOgoXRGVsZXRlQ29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkSEwoLcmVxdWVzdF9rZXkYAiABKAkiGgoYRGVsZXRlQ29ubmVjdGlvblJlc3BvbnNlImwKHVJvdGF0ZUNvbm5lY3Rpb25TZWNyZXRSZXF1ZXN0EgoKAmlkGAEgASgJEioKB292ZXJsYXAYAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SEwoLcmVxdWVzdF9rZXkYAyABKAkiZAoeUm90YXRlQ29ubmVjdGlvblNlY3JldFJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkiRwodU2V0Q29ubmVjdGlvblRyYW5zZm9ybVJlcXVlc3QSFQoNY29ubmVjdGlvbl9pZBgBIAEoCRIPCgd2ZXJzaW9uGAIgASgFIm4KHlNldENvbm5lY3Rpb25UcmFuc2Zvcm1SZXNwb25zZRIyCgpjb25uZWN0aW9uGAEgASgLMh4udG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb24SGAoQcHJldmlvdXNfdmVyc2lvbhgCIAEoBSpqCg5Db25uZWN0aW9uS2luZBIfChtDT05ORUNUSU9OX0tJTkRfVU5TUEVDSUZJRUQQABIaChZDT05ORUNUSU9OX0tJTkRfR0lUSFVCEAESGwoXQ09OTkVDVElPTl9LSU5EX1dFQkhPT0sQAjLeBwoRQ29ubmVjdGlvblNlcnZpY2USjQEKD0xpc3RDb25uZWN0aW9ucxIqLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Q29ubmVjdGlvbnNSZXF1ZXN0GisudG9zaGkud29ya3NwYWNlLnYxLkxpc3RDb25uZWN0aW9uc1Jlc3BvbnNlIiHC8xgQY29ubmVjdGlvbnMucmVhZMrzGAl3b3Jrc3BhY2UShwEKDUdldENvbm5lY3Rpb24SKC50b3NoaS53b3Jrc3BhY2UudjEuR2V0Q29ubmVjdGlvblJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuR2V0Q29ubmVjdGlvblJlc3BvbnNlIiHC8xgQY29ubmVjdGlvbnMucmVhZMrzGAl3b3Jrc3BhY2USkQEKEENyZWF0ZUNvbm5lY3Rpb24SKy50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQ29ubmVjdGlvblJlcXVlc3QaLC50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQ29ubmVjdGlvblJlc3BvbnNlIiLC8xgRY29ubmVjdGlvbnMud3JpdGXK8xgJd29ya3NwYWNlEpEBChBEZWxldGVDb25uZWN0aW9uEisudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUNvbm5lY3Rpb25SZXF1ZXN0GiwudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUNvbm5lY3Rpb25SZXNwb25zZSIiwvMYEWNvbm5lY3Rpb25zLndyaXRlyvMYCXdvcmtzcGFjZRLCAQoWUm90YXRlQ29ubmVjdGlvblNlY3JldBIxLnRvc2hpLndvcmtzcGFjZS52MS5Sb3RhdGVDb25uZWN0aW9uU2VjcmV0UmVxdWVzdBoyLnRvc2hpLndvcmtzcGFjZS52MS5Sb3RhdGVDb25uZWN0aW9uU2VjcmV0UmVzcG9uc2UiQcLzGBFjb25uZWN0aW9ucy53cml0ZcrzGAl3b3Jrc3BhY2XS8xgbChljb25uZWN0aW9uLnNlY3JldF9yb3RhdGVkEsEBChZTZXRDb25uZWN0aW9uVHJhbnNmb3JtEjEudG9zaGkud29ya3NwYWNlLnYxLlNldENvbm5lY3Rpb25UcmFuc2Zvcm1SZXF1ZXN0GjIudG9zaGkud29ya3NwYWNlLnYxLlNldENvbm5lY3Rpb25UcmFuc2Zvcm1SZXNwb25zZSJAwvMYEWNvbm5lY3Rpb25zLndyaXRlyvMYCXdvcmtzcGFjZdLzGBoKGGNvbm5lY3Rpb24udHJhbnNmb3JtX3NldEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiR0b3NoaS93b3Jrc3BhY2UvdjEvY29ubmVjdGlvbnMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSKiAgoKQ29ubmVjdGlvbhIKCgJpZBgBIAEoCRIwCgRraW5kGAIgASgOMiIudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25LaW5kEgwKBG5hbWUYAyABKAkSDwoHcHJvamVjdBgEIAEoCRITCgtlbnZpcm9ubWVudBgFIAEoCRIXCg9pbnN0YWxsYXRpb25faWQYBiABKAMSLgoKY3JlYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPgoacHJldmlvdXNfc2VjcmV0X2V4cGlyZXNfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhkKEXRyYW5zZm9ybV92ZXJzaW9uGAkgASgFIj8KFkxpc3RDb25uZWN0aW9uc1JlcXVlc3QSEQoJcGFnZV9zaXplGAEgASgFEhIKCnBhZ2VfdG9rZW4YAiABKAkiZwoXTGlzdENvbm5lY3Rpb25zUmVzcG9uc2USMwoLY29ubmVjdGlvbnMYASADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiIgoUR2V0Q29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkiSwoVR2V0Q29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbiKUAQoXQ3JlYXRlQ29ubmVjdGlvblJlcXVlc3QSMAoEa2luZBgBIAEoDjIiLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uS2luZBIMCgRuYW1lGAIgASgJEg8KB3Byb2plY3QYAyABKAkSEwoLZW52aXJvbm1lbnQYBCABKAkSEwoLcmVxdWVzdF9rZXkYBSABKAkiXgoYQ3JlYXRlQ29ubmVjdGlvblJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkiOgoXRGVsZXRlQ29ubmVjdGlvblJlcXVlc3QSCgoCaWQYASABKAkSEwoLcmVxdWVzdF9rZXkYAiABKAkiGgoYRGVsZXRlQ29ubmVjdGlvblJlc3BvbnNlImwKHVJvdGF0ZUNvbm5lY3Rpb25TZWNyZXRSZXF1ZXN0EgoKAmlkGAEgASgJEioKB292ZXJsYXAYAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SEwoLcmVxdWVzdF9rZXkYAyABKAkiZAoeUm90YXRlQ29ubmVjdGlvblNlY3JldFJlc3BvbnNlEjIKCmNvbm5lY3Rpb24YASABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbhIOCgZzZWNyZXQYAiABKAkiRwodU2V0Q29ubmVjdGlvblRyYW5zZm9ybVJlcXVlc3QSFQoNY29ubmVjdGlvbl9pZBgBIAEoCRIPCgd2ZXJzaW9uGAIgASgFIm4KHlNldENvbm5lY3Rpb25UcmFuc2Zvcm1SZXNwb25zZRIyCgpjb25uZWN0aW9uGAEgASgLMh4udG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb24SGAoQcHJldmlvdXNfdmVyc2lvbhgCIAEoBSLaAwoSQ29ubmVjdGlvbkRlbGl2ZXJ5EgoKAmlkGAEgASgJEhUKDWNvbm5lY3Rpb25faWQYAiABKAkSEgoKd2ViaG9va19pZBgDIAEoCRI6CgVzdGF0ZRgEIAEoDjIrLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uRGVsaXZlcnlTdGF0ZRIOCgZyZWFzb24YBSABKAkSKwoHc2VudF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLcmVjZWl2ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKDHByb2Nlc3NlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIYXR0ZW1wdHMYCSABKAUSFAoMY29udGVudF90eXBlGAogASgJEhMKC2JvZHlfZGlnZXN0GAsgASgJEjMKD2JvZHlfZXhwaXJlZF9hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGQoRdHJhbnNmb3JtX3ZlcnNpb24YDSABKAUSDwoHcmVwbGF5cxgOIAEoBRITCgtyZXBsYXllZF9ieRgPIAEoCSKHAgoVQ29ubmVjdGlvbkRlbGl2ZXJ5UnVuEgsKA3J1bhgBIAEoBRIZChF0cmFuc2Zvcm1fdmVyc2lvbhgCIAEoBRIXCg9yZWNlaXB0X3ZlcnNpb24YAyABKAUSDwoHb3V0Y29tZRgEIAEoCRIQCghldmVudF9pZBgFIAEoCRIOCgZyZWFzb24YBiABKAkSDQoFZXJyb3IYByABKAkSKwoIZHVyYXRpb24YCCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SLwoLZmluaXNoZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBWFjdG9yGAogASgJIpsBCh9MaXN0Q29ubmVjdGlvbkRlbGl2ZXJpZXNSZXF1ZXN0EhUKDWNvbm5lY3Rpb25faWQYASABKAkSOgoFc3RhdGUYAiABKA4yKy50b3NoaS53b3Jrc3BhY2UudjEuQ29ubmVjdGlvbkRlbGl2ZXJ5U3RhdGUSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkidwogTGlzdENvbm5lY3Rpb25EZWxpdmVyaWVzUmVzcG9uc2USOgoKZGVsaXZlcmllcxgBIAMoCzImLnRvc2hpLndvcmtzcGFjZS52MS5Db25uZWN0aW9uRGVsaXZlcnkSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIioKHEdldENvbm5lY3Rpb25EZWxpdmVyeVJlcXVlc3QSCgoCaWQYASABKAkikgEKHUdldENvbm5lY3Rpb25EZWxpdmVyeVJlc3BvbnNlEjgKCGRlbGl2ZXJ5GAEgASgLMiYudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25EZWxpdmVyeRI3CgRydW5zGAIgAygLMikudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25EZWxpdmVyeVJ1biJCCh9SZXBsYXlDb25uZWN0aW9uRGVsaXZlcnlSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC3JlcXVlc3Rfa2V5GAIgASgJIlwKIFJlcGxheUNvbm5lY3Rpb25EZWxpdmVyeVJlc3BvbnNlEjgKCGRlbGl2ZXJ5GAEgASgLMiYudG9zaGkud29ya3NwYWNlLnYxLkNvbm5lY3Rpb25EZWxpdmVyeSpqCg5Db25uZWN0aW9uS2luZBIfChtDT05ORUNUSU9OX0tJTkRfVU5TUEVDSUZJRUQQABIaChZDT05ORUNUSU9OX0tJTkRfR0lUSFVCEAESGwoXQ09OTkVDVElPTl9LSU5EX1dFQkhPT0sQAiriAQoXQ29ubmVjdGlvbkRlbGl2ZXJ5U3RhdGUSKQolQ09OTkVDVElPTl9ERUxJVkVSWV9TVEFURV9VTlNQRUNJRklFRBAAEiYKIkNPTk5FQ1RJT05fREVMSVZFUllfU1RBVEVfUkVDRUlWRUQQARInCiNDT05ORUNUSU9OX0RFTElWRVJZX1NUQVRFX1BST0NFU1NFRBACEiUKIUNPTk5FQ1RJT05fREVMSVZFUllfU1RBVEVfRFJPUFBFRBADEiQKIENPTk5FQ1RJT05fREVMSVZFUllfU1RBVEVfRkFJTEVEEAQyrQwKEUNvbm5lY3Rpb25TZXJ2aWNlEo0BCg9MaXN0Q29ubmVjdGlvbnMSKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdENvbm5lY3Rpb25zUmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Q29ubmVjdGlvbnNSZXNwb25zZSIhwvMYEGNvbm5lY3Rpb25zLnJlYWTK8xgJd29ya3NwYWNlEocBCg1HZXRDb25uZWN0aW9uEigudG9zaGkud29ya3NwYWNlLnYxLkdldENvbm5lY3Rpb25SZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkdldENvbm5lY3Rpb25SZXNwb25zZSIhwvMYEGNvbm5lY3Rpb25zLnJlYWTK8xgJd29ya3NwYWNlEpEBChBDcmVhdGVDb25uZWN0aW9uEisudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNvbm5lY3Rpb25SZXF1ZXN0GiwudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNvbm5lY3Rpb25SZXNwb25zZSIiwvMYEWNvbm5lY3Rpb25zLndyaXRlyvMYCXdvcmtzcGFjZRKRAQoQRGVsZXRlQ29ubmVjdGlvbhIrLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVDb25uZWN0aW9uUmVxdWVzdBosLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVDb25uZWN0aW9uUmVzcG9uc2UiIsLzGBFjb25uZWN0aW9ucy53cml0ZcrzGAl3b3Jrc3BhY2USwgEKFlJvdGF0ZUNvbm5lY3Rpb25TZWNyZXQSMS50b3NoaS53b3Jrc3BhY2UudjEuUm90YXRlQ29ubmVjdGlvblNlY3JldFJlcXVlc3QaMi50b3NoaS53b3Jrc3BhY2UudjEuUm90YXRlQ29ubmVjdGlvblNlY3JldFJlc3BvbnNlIkHC8xgRY29ubmVjdGlvbnMud3JpdGXK8xgJd29ya3NwYWNl0vMYGwoZY29ubmVjdGlvbi5zZWNyZXRfcm90YXRlZBLBAQoWU2V0Q29ubmVjdGlvblRyYW5zZm9ybRIxLnRvc2hpLndvcmtzcGFjZS52MS5TZXRDb25uZWN0aW9uVHJhbnNmb3JtUmVxdWVzdBoyLnRvc2hpLndvcmtzcGFjZS52MS5TZXRDb25uZWN0aW9uVHJhbnNmb3JtUmVzcG9uc2UiQMLzGBFjb25uZWN0aW9ucy53cml0ZcrzGAl3b3Jrc3BhY2XS8xgaChhjb25uZWN0aW9uLnRyYW5zZm9ybV9zZXQSqAEKGExpc3RDb25uZWN0aW9uRGVsaXZlcmllcxIzLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Q29ubmVjdGlvbkRlbGl2ZXJpZXNSZXF1ZXN0GjQudG9zaGkud29ya3NwYWNlLnYxLkxpc3RDb25uZWN0aW9uRGVsaXZlcmllc1Jlc3BvbnNlIiHC8xgQY29ubmVjdGlvbnMucmVhZMrzGAl3b3Jrc3BhY2USnwEKFUdldENvbm5lY3Rpb25EZWxpdmVyeRIwLnRvc2hpLndvcmtzcGFjZS52MS5HZXRDb25uZWN0aW9uRGVsaXZlcnlSZXF1ZXN0GjEudG9zaGkud29ya3NwYWNlLnYxLkdldENvbm5lY3Rpb25EZWxpdmVyeVJlc3BvbnNlIiHC8xgQY29ubmVjdGlvbnMucmVhZMrzGAl3b3Jrc3BhY2US/wEKGFJlcGxheUNvbm5lY3Rpb25EZWxpdmVyeRIzLnRvc2hpLndvcmtzcGFjZS52MS5SZXBsYXlDb25uZWN0aW9uRGVsaXZlcnlSZXF1ZXN0GjQudG9zaGkud29ya3NwYWNlLnYxLlJlcGxheUNvbm5lY3Rpb25EZWxpdmVyeVJlc3BvbnNlInjC8xgRY29ubmVjdGlvbnMud3JpdGXK8xgJd29ya3NwYWNl0vMYUgokY29ubmVjdGlvbi5kZWxpdmVyeV9yZXBsYXlfcmVxdWVzdGVkEipjb25uZWN0aW9uOnJlc3BvbnNlLmRlbGl2ZXJ5LmNvbm5lY3Rpb25faWRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Connection is one source of a workspace's events.
@@ -647,6 +647,628 @@ export const SetConnectionTransformResponseSchema: GenMessage<SetConnectionTrans
   messageDesc(file_toshi_workspace_v1_connections, 12);
 
 /**
+ * ConnectionDelivery is one message a WEBHOOK connection's sender sent:
+ * the tries that carried one webhook id.
+ *
+ * @generated from message toshi.workspace.v1.ConnectionDelivery
+ */
+export type ConnectionDelivery = Message<"toshi.workspace.v1.ConnectionDelivery"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string connection_id = 2;
+   */
+  connectionId: string;
+
+  /**
+   * The sender's webhook-id header.
+   *
+   * @generated from field: string webhook_id = 3;
+   */
+  webhookId: string;
+
+  /**
+   * @generated from field: toshi.workspace.v1.ConnectionDeliveryState state = 4;
+   */
+  state: ConnectionDeliveryState;
+
+  /**
+   * Why it was dropped or failed, such as transform_error or store_error;
+   * empty otherwise.
+   *
+   * @generated from field: string reason = 5;
+   */
+  reason: string;
+
+  /**
+   * The time the sender signed; when the ingress stored it.
+   *
+   * @generated from field: google.protobuf.Timestamp sent_at = 6;
+   */
+  sentAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp received_at = 7;
+   */
+  receivedAt?: Timestamp | undefined;
+
+  /**
+   * When it was processed, dropped or failed; unset while received.
+   *
+   * @generated from field: google.protobuf.Timestamp processed_at = 8;
+   */
+  processedAt?: Timestamp | undefined;
+
+  /**
+   * Tries a worker made since it was last received or replayed.
+   *
+   * @generated from field: int32 attempts = 9;
+   */
+  attempts: number;
+
+  /**
+   * The request's Content-Type header.
+   *
+   * @generated from field: string content_type = 10;
+   */
+  contentType: string;
+
+  /**
+   * The hex SHA-256 of the body.
+   *
+   * @generated from field: string body_digest = 11;
+   */
+  bodyDigest: string;
+
+  /**
+   * When the workspace's retention removed the body; unset while it is
+   * kept. A delivery without its body is not replayed.
+   *
+   * @generated from field: google.protobuf.Timestamp body_expired_at = 12;
+   */
+  bodyExpiredAt?: Timestamp | undefined;
+
+  /**
+   * The transform version the connection ran when the delivery arrived;
+   * zero for none.
+   *
+   * @generated from field: int32 transform_version = 13;
+   */
+  transformVersion: number;
+
+  /**
+   * How many times it was replayed.
+   *
+   * @generated from field: int32 replays = 14;
+   */
+  replays: number;
+
+  /**
+   * Who asked for the latest replay; empty before one.
+   *
+   * @generated from field: string replayed_by = 15;
+   */
+  replayedBy: string;
+};
+
+/**
+ * ConnectionDelivery is one message a WEBHOOK connection's sender sent:
+ * the tries that carried one webhook id.
+ *
+ * @generated from message toshi.workspace.v1.ConnectionDelivery
+ */
+export type ConnectionDeliveryJson = {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id?: string;
+
+  /**
+   * @generated from field: string connection_id = 2;
+   */
+  connectionId?: string;
+
+  /**
+   * The sender's webhook-id header.
+   *
+   * @generated from field: string webhook_id = 3;
+   */
+  webhookId?: string;
+
+  /**
+   * @generated from field: toshi.workspace.v1.ConnectionDeliveryState state = 4;
+   */
+  state?: ConnectionDeliveryStateJson;
+
+  /**
+   * Why it was dropped or failed, such as transform_error or store_error;
+   * empty otherwise.
+   *
+   * @generated from field: string reason = 5;
+   */
+  reason?: string;
+
+  /**
+   * The time the sender signed; when the ingress stored it.
+   *
+   * @generated from field: google.protobuf.Timestamp sent_at = 6;
+   */
+  sentAt?: TimestampJson;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp received_at = 7;
+   */
+  receivedAt?: TimestampJson;
+
+  /**
+   * When it was processed, dropped or failed; unset while received.
+   *
+   * @generated from field: google.protobuf.Timestamp processed_at = 8;
+   */
+  processedAt?: TimestampJson;
+
+  /**
+   * Tries a worker made since it was last received or replayed.
+   *
+   * @generated from field: int32 attempts = 9;
+   */
+  attempts?: number;
+
+  /**
+   * The request's Content-Type header.
+   *
+   * @generated from field: string content_type = 10;
+   */
+  contentType?: string;
+
+  /**
+   * The hex SHA-256 of the body.
+   *
+   * @generated from field: string body_digest = 11;
+   */
+  bodyDigest?: string;
+
+  /**
+   * When the workspace's retention removed the body; unset while it is
+   * kept. A delivery without its body is not replayed.
+   *
+   * @generated from field: google.protobuf.Timestamp body_expired_at = 12;
+   */
+  bodyExpiredAt?: TimestampJson;
+
+  /**
+   * The transform version the connection ran when the delivery arrived;
+   * zero for none.
+   *
+   * @generated from field: int32 transform_version = 13;
+   */
+  transformVersion?: number;
+
+  /**
+   * How many times it was replayed.
+   *
+   * @generated from field: int32 replays = 14;
+   */
+  replays?: number;
+
+  /**
+   * Who asked for the latest replay; empty before one.
+   *
+   * @generated from field: string replayed_by = 15;
+   */
+  replayedBy?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ConnectionDelivery.
+ * Use `create(ConnectionDeliverySchema)` to create a new message.
+ */
+export const ConnectionDeliverySchema: GenMessage<ConnectionDelivery, {jsonType: ConnectionDeliveryJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 13);
+
+/**
+ * ConnectionDeliveryRun is one time a worker ran a delivery to its end.
+ *
+ * @generated from message toshi.workspace.v1.ConnectionDeliveryRun
+ */
+export type ConnectionDeliveryRun = Message<"toshi.workspace.v1.ConnectionDeliveryRun"> & {
+  /**
+   * 1 for the first run, counting up.
+   *
+   * @generated from field: int32 run = 1;
+   */
+  run: number;
+
+  /**
+   * The transform version the run ran; zero for none.
+   *
+   * @generated from field: int32 transform_version = 2;
+   */
+  transformVersion: number;
+
+  /**
+   * The transform version the connection ran when the delivery arrived.
+   *
+   * @generated from field: int32 receipt_version = 3;
+   */
+  receiptVersion: number;
+
+  /**
+   * event, drop, transform_error, transform_timeout,
+   * transform_invalid_output, connection_deleted, body_not_json,
+   * invalid_event or failed.
+   *
+   * @generated from field: string outcome = 4;
+   */
+  outcome: string;
+
+  /**
+   * The event the run wrote or found; empty when it wrote none.
+   *
+   * @generated from field: string event_id = 5;
+   */
+  eventId: string;
+
+  /**
+   * The transform's own reason for a drop.
+   *
+   * @generated from field: string reason = 6;
+   */
+  reason: string;
+
+  /**
+   * What failed, for a transform that failed or a store that did.
+   *
+   * @generated from field: string error = 7;
+   */
+  error: string;
+
+  /**
+   * @generated from field: google.protobuf.Duration duration = 8;
+   */
+  duration?: Duration | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp finished_at = 9;
+   */
+  finishedAt?: Timestamp | undefined;
+
+  /**
+   * Who asked for the replay the run ran; empty for the sender's message.
+   *
+   * @generated from field: string actor = 10;
+   */
+  actor: string;
+};
+
+/**
+ * ConnectionDeliveryRun is one time a worker ran a delivery to its end.
+ *
+ * @generated from message toshi.workspace.v1.ConnectionDeliveryRun
+ */
+export type ConnectionDeliveryRunJson = {
+  /**
+   * 1 for the first run, counting up.
+   *
+   * @generated from field: int32 run = 1;
+   */
+  run?: number;
+
+  /**
+   * The transform version the run ran; zero for none.
+   *
+   * @generated from field: int32 transform_version = 2;
+   */
+  transformVersion?: number;
+
+  /**
+   * The transform version the connection ran when the delivery arrived.
+   *
+   * @generated from field: int32 receipt_version = 3;
+   */
+  receiptVersion?: number;
+
+  /**
+   * event, drop, transform_error, transform_timeout,
+   * transform_invalid_output, connection_deleted, body_not_json,
+   * invalid_event or failed.
+   *
+   * @generated from field: string outcome = 4;
+   */
+  outcome?: string;
+
+  /**
+   * The event the run wrote or found; empty when it wrote none.
+   *
+   * @generated from field: string event_id = 5;
+   */
+  eventId?: string;
+
+  /**
+   * The transform's own reason for a drop.
+   *
+   * @generated from field: string reason = 6;
+   */
+  reason?: string;
+
+  /**
+   * What failed, for a transform that failed or a store that did.
+   *
+   * @generated from field: string error = 7;
+   */
+  error?: string;
+
+  /**
+   * @generated from field: google.protobuf.Duration duration = 8;
+   */
+  duration?: DurationJson;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp finished_at = 9;
+   */
+  finishedAt?: TimestampJson;
+
+  /**
+   * Who asked for the replay the run ran; empty for the sender's message.
+   *
+   * @generated from field: string actor = 10;
+   */
+  actor?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ConnectionDeliveryRun.
+ * Use `create(ConnectionDeliveryRunSchema)` to create a new message.
+ */
+export const ConnectionDeliveryRunSchema: GenMessage<ConnectionDeliveryRun, {jsonType: ConnectionDeliveryRunJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 14);
+
+/**
+ * @generated from message toshi.workspace.v1.ListConnectionDeliveriesRequest
+ */
+export type ListConnectionDeliveriesRequest = Message<"toshi.workspace.v1.ListConnectionDeliveriesRequest"> & {
+  /**
+   * @generated from field: string connection_id = 1;
+   */
+  connectionId: string;
+
+  /**
+   * Only the deliveries in this state; unspecified lists every state.
+   *
+   * @generated from field: toshi.workspace.v1.ConnectionDeliveryState state = 2;
+   */
+  state: ConnectionDeliveryState;
+
+  /**
+   * The most deliveries in one page; zero lets the server choose.
+   *
+   * @generated from field: int32 page_size = 3;
+   */
+  pageSize: number;
+
+  /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
+   * @generated from field: string page_token = 4;
+   */
+  pageToken: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.ListConnectionDeliveriesRequest
+ */
+export type ListConnectionDeliveriesRequestJson = {
+  /**
+   * @generated from field: string connection_id = 1;
+   */
+  connectionId?: string;
+
+  /**
+   * Only the deliveries in this state; unspecified lists every state.
+   *
+   * @generated from field: toshi.workspace.v1.ConnectionDeliveryState state = 2;
+   */
+  state?: ConnectionDeliveryStateJson;
+
+  /**
+   * The most deliveries in one page; zero lets the server choose.
+   *
+   * @generated from field: int32 page_size = 3;
+   */
+  pageSize?: number;
+
+  /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
+   * @generated from field: string page_token = 4;
+   */
+  pageToken?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ListConnectionDeliveriesRequest.
+ * Use `create(ListConnectionDeliveriesRequestSchema)` to create a new message.
+ */
+export const ListConnectionDeliveriesRequestSchema: GenMessage<ListConnectionDeliveriesRequest, {jsonType: ListConnectionDeliveriesRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 15);
+
+/**
+ * @generated from message toshi.workspace.v1.ListConnectionDeliveriesResponse
+ */
+export type ListConnectionDeliveriesResponse = Message<"toshi.workspace.v1.ListConnectionDeliveriesResponse"> & {
+  /**
+   * @generated from field: repeated toshi.workspace.v1.ConnectionDelivery deliveries = 1;
+   */
+  deliveries: ConnectionDelivery[];
+
+  /**
+   * Empty on the last page.
+   *
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.ListConnectionDeliveriesResponse
+ */
+export type ListConnectionDeliveriesResponseJson = {
+  /**
+   * @generated from field: repeated toshi.workspace.v1.ConnectionDelivery deliveries = 1;
+   */
+  deliveries?: ConnectionDeliveryJson[];
+
+  /**
+   * Empty on the last page.
+   *
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ListConnectionDeliveriesResponse.
+ * Use `create(ListConnectionDeliveriesResponseSchema)` to create a new message.
+ */
+export const ListConnectionDeliveriesResponseSchema: GenMessage<ListConnectionDeliveriesResponse, {jsonType: ListConnectionDeliveriesResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 16);
+
+/**
+ * @generated from message toshi.workspace.v1.GetConnectionDeliveryRequest
+ */
+export type GetConnectionDeliveryRequest = Message<"toshi.workspace.v1.GetConnectionDeliveryRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.GetConnectionDeliveryRequest
+ */
+export type GetConnectionDeliveryRequestJson = {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.GetConnectionDeliveryRequest.
+ * Use `create(GetConnectionDeliveryRequestSchema)` to create a new message.
+ */
+export const GetConnectionDeliveryRequestSchema: GenMessage<GetConnectionDeliveryRequest, {jsonType: GetConnectionDeliveryRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 17);
+
+/**
+ * @generated from message toshi.workspace.v1.GetConnectionDeliveryResponse
+ */
+export type GetConnectionDeliveryResponse = Message<"toshi.workspace.v1.GetConnectionDeliveryResponse"> & {
+  /**
+   * @generated from field: toshi.workspace.v1.ConnectionDelivery delivery = 1;
+   */
+  delivery?: ConnectionDelivery | undefined;
+
+  /**
+   * @generated from field: repeated toshi.workspace.v1.ConnectionDeliveryRun runs = 2;
+   */
+  runs: ConnectionDeliveryRun[];
+};
+
+/**
+ * @generated from message toshi.workspace.v1.GetConnectionDeliveryResponse
+ */
+export type GetConnectionDeliveryResponseJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.ConnectionDelivery delivery = 1;
+   */
+  delivery?: ConnectionDeliveryJson;
+
+  /**
+   * @generated from field: repeated toshi.workspace.v1.ConnectionDeliveryRun runs = 2;
+   */
+  runs?: ConnectionDeliveryRunJson[];
+};
+
+/**
+ * Describes the message toshi.workspace.v1.GetConnectionDeliveryResponse.
+ * Use `create(GetConnectionDeliveryResponseSchema)` to create a new message.
+ */
+export const GetConnectionDeliveryResponseSchema: GenMessage<GetConnectionDeliveryResponse, {jsonType: GetConnectionDeliveryResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 18);
+
+/**
+ * @generated from message toshi.workspace.v1.ReplayConnectionDeliveryRequest
+ */
+export type ReplayConnectionDeliveryRequest = Message<"toshi.workspace.v1.ReplayConnectionDeliveryRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string request_key = 2;
+   */
+  requestKey: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.ReplayConnectionDeliveryRequest
+ */
+export type ReplayConnectionDeliveryRequestJson = {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id?: string;
+
+  /**
+   * @generated from field: string request_key = 2;
+   */
+  requestKey?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ReplayConnectionDeliveryRequest.
+ * Use `create(ReplayConnectionDeliveryRequestSchema)` to create a new message.
+ */
+export const ReplayConnectionDeliveryRequestSchema: GenMessage<ReplayConnectionDeliveryRequest, {jsonType: ReplayConnectionDeliveryRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 19);
+
+/**
+ * @generated from message toshi.workspace.v1.ReplayConnectionDeliveryResponse
+ */
+export type ReplayConnectionDeliveryResponse = Message<"toshi.workspace.v1.ReplayConnectionDeliveryResponse"> & {
+  /**
+   * The delivery as the replay left it: received, its replays counted.
+   *
+   * @generated from field: toshi.workspace.v1.ConnectionDelivery delivery = 1;
+   */
+  delivery?: ConnectionDelivery | undefined;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.ReplayConnectionDeliveryResponse
+ */
+export type ReplayConnectionDeliveryResponseJson = {
+  /**
+   * The delivery as the replay left it: received, its replays counted.
+   *
+   * @generated from field: toshi.workspace.v1.ConnectionDelivery delivery = 1;
+   */
+  delivery?: ConnectionDeliveryJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.ReplayConnectionDeliveryResponse.
+ * Use `create(ReplayConnectionDeliveryResponseSchema)` to create a new message.
+ */
+export const ReplayConnectionDeliveryResponseSchema: GenMessage<ReplayConnectionDeliveryResponse, {jsonType: ReplayConnectionDeliveryResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_connections, 20);
+
+/**
  * ConnectionKind is the kind of source a connection receives events from.
  *
  * @generated from enum toshi.workspace.v1.ConnectionKind
@@ -684,6 +1306,59 @@ export type ConnectionKindJson = "CONNECTION_KIND_UNSPECIFIED" | "CONNECTION_KIN
  */
 export const ConnectionKindSchema: GenEnum<ConnectionKind, ConnectionKindJson> = /*@__PURE__*/
   enumDesc(file_toshi_workspace_v1_connections, 0);
+
+/**
+ * ConnectionDeliveryState is where a WEBHOOK connection's delivery stands.
+ *
+ * @generated from enum toshi.workspace.v1.ConnectionDeliveryState
+ */
+export enum ConnectionDeliveryState {
+  /**
+   * @generated from enum value: CONNECTION_DELIVERY_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Stored and waiting for a worker, or being run.
+   *
+   * @generated from enum value: CONNECTION_DELIVERY_STATE_RECEIVED = 1;
+   */
+  RECEIVED = 1,
+
+  /**
+   * It became an event.
+   *
+   * @generated from enum value: CONNECTION_DELIVERY_STATE_PROCESSED = 2;
+   */
+  PROCESSED = 2,
+
+  /**
+   * It became no event, for the reason the delivery names.
+   *
+   * @generated from enum value: CONNECTION_DELIVERY_STATE_DROPPED = 3;
+   */
+  DROPPED = 3,
+
+  /**
+   * The store failed on every try to write its event.
+   *
+   * @generated from enum value: CONNECTION_DELIVERY_STATE_FAILED = 4;
+   */
+  FAILED = 4,
+}
+
+/**
+ * ConnectionDeliveryState is where a WEBHOOK connection's delivery stands.
+ *
+ * @generated from enum toshi.workspace.v1.ConnectionDeliveryState
+ */
+export type ConnectionDeliveryStateJson = "CONNECTION_DELIVERY_STATE_UNSPECIFIED" | "CONNECTION_DELIVERY_STATE_RECEIVED" | "CONNECTION_DELIVERY_STATE_PROCESSED" | "CONNECTION_DELIVERY_STATE_DROPPED" | "CONNECTION_DELIVERY_STATE_FAILED";
+
+/**
+ * Describes the enum toshi.workspace.v1.ConnectionDeliveryState.
+ */
+export const ConnectionDeliveryStateSchema: GenEnum<ConnectionDeliveryState, ConnectionDeliveryStateJson> = /*@__PURE__*/
+  enumDesc(file_toshi_workspace_v1_connections, 1);
 
 /**
  * ConnectionService keeps a workspace's connections: the sources of the
@@ -784,6 +1459,52 @@ export const ConnectionService: GenService<{
     methodKind: "unary";
     input: typeof SetConnectionTransformRequestSchema;
     output: typeof SetConnectionTransformResponseSchema;
+  },
+  /**
+   * ListConnectionDeliveries returns a WEBHOOK connection's deliveries: the
+   * messages its sender sent, one for each webhook id, newest received
+   * first. A delivery never carries its body. A connection the workspace
+   * does not have is NOT_FOUND; a deleted one's deliveries are still
+   * listed.
+   *
+   * A page holds 100 deliveries when page_size is zero, and 1000 at most.
+   *
+   * @generated from rpc toshi.workspace.v1.ConnectionService.ListConnectionDeliveries
+   */
+  listConnectionDeliveries: {
+    methodKind: "unary";
+    input: typeof ListConnectionDeliveriesRequestSchema;
+    output: typeof ListConnectionDeliveriesResponseSchema;
+  },
+  /**
+   * GetConnectionDelivery returns one delivery, without its body, and its
+   * runs: each time a worker made it an event, dropped it or failed it,
+   * oldest first. A delivery the workspace does not have is NOT_FOUND.
+   *
+   * @generated from rpc toshi.workspace.v1.ConnectionService.GetConnectionDelivery
+   */
+  getConnectionDelivery: {
+    methodKind: "unary";
+    input: typeof GetConnectionDeliveryRequestSchema;
+    output: typeof GetConnectionDeliveryResponseSchema;
+  },
+  /**
+   * ReplayConnectionDelivery sends a processed, dropped or failed delivery
+   * through its connection again, as a new message under the same webhook
+   * id: it runs the transform the connection runs then, and its run
+   * records the caller. A delivery still received, whose body expired, or
+   * whose connection is deleted is FAILED_PRECONDITION, as is one another
+   * replay counted since this call read it.
+   *
+   * request_key is required: a retry with the same key and the same
+   * request returns what the first call returned and replays nothing.
+   *
+   * @generated from rpc toshi.workspace.v1.ConnectionService.ReplayConnectionDelivery
+   */
+  replayConnectionDelivery: {
+    methodKind: "unary";
+    input: typeof ReplayConnectionDeliveryRequestSchema;
+    output: typeof ReplayConnectionDeliveryResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_toshi_workspace_v1_connections, 0);

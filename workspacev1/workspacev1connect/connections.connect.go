@@ -51,6 +51,15 @@ const (
 	// ConnectionServiceSetConnectionTransformProcedure is the fully-qualified name of the
 	// ConnectionService's SetConnectionTransform RPC.
 	ConnectionServiceSetConnectionTransformProcedure = "/toshi.workspace.v1.ConnectionService/SetConnectionTransform"
+	// ConnectionServiceListConnectionDeliveriesProcedure is the fully-qualified name of the
+	// ConnectionService's ListConnectionDeliveries RPC.
+	ConnectionServiceListConnectionDeliveriesProcedure = "/toshi.workspace.v1.ConnectionService/ListConnectionDeliveries"
+	// ConnectionServiceGetConnectionDeliveryProcedure is the fully-qualified name of the
+	// ConnectionService's GetConnectionDelivery RPC.
+	ConnectionServiceGetConnectionDeliveryProcedure = "/toshi.workspace.v1.ConnectionService/GetConnectionDelivery"
+	// ConnectionServiceReplayConnectionDeliveryProcedure is the fully-qualified name of the
+	// ConnectionService's ReplayConnectionDelivery RPC.
+	ConnectionServiceReplayConnectionDeliveryProcedure = "/toshi.workspace.v1.ConnectionService/ReplayConnectionDelivery"
 )
 
 // ConnectionServiceClient is a client for the toshi.workspace.v1.ConnectionService service.
@@ -88,6 +97,28 @@ type ConnectionServiceClient interface {
 	// NOT_FOUND, one below zero INVALID_ARGUMENT, and a GITHUB connection
 	// FAILED_PRECONDITION, as only a WEBHOOK connection runs one.
 	SetConnectionTransform(context.Context, *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error)
+	// ListConnectionDeliveries returns a WEBHOOK connection's deliveries: the
+	// messages its sender sent, one for each webhook id, newest received
+	// first. A delivery never carries its body. A connection the workspace
+	// does not have is NOT_FOUND; a deleted one's deliveries are still
+	// listed.
+	//
+	// A page holds 100 deliveries when page_size is zero, and 1000 at most.
+	ListConnectionDeliveries(context.Context, *connect.Request[workspacev1.ListConnectionDeliveriesRequest]) (*connect.Response[workspacev1.ListConnectionDeliveriesResponse], error)
+	// GetConnectionDelivery returns one delivery, without its body, and its
+	// runs: each time a worker made it an event, dropped it or failed it,
+	// oldest first. A delivery the workspace does not have is NOT_FOUND.
+	GetConnectionDelivery(context.Context, *connect.Request[workspacev1.GetConnectionDeliveryRequest]) (*connect.Response[workspacev1.GetConnectionDeliveryResponse], error)
+	// ReplayConnectionDelivery sends a processed, dropped or failed delivery
+	// through its connection again, as a new message under the same webhook
+	// id: it runs the transform the connection runs then, and its run
+	// records the caller. A delivery still received, whose body expired, or
+	// whose connection is deleted is FAILED_PRECONDITION, as is one another
+	// replay counted since this call read it.
+	//
+	// request_key is required: a retry with the same key and the same
+	// request returns what the first call returned and replays nothing.
+	ReplayConnectionDelivery(context.Context, *connect.Request[workspacev1.ReplayConnectionDeliveryRequest]) (*connect.Response[workspacev1.ReplayConnectionDeliveryResponse], error)
 }
 
 // NewConnectionServiceClient constructs a client for the toshi.workspace.v1.ConnectionService
@@ -137,17 +168,38 @@ func NewConnectionServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(connectionServiceMethods.ByName("SetConnectionTransform")),
 			connect.WithClientOptions(opts...),
 		),
+		listConnectionDeliveries: connect.NewClient[workspacev1.ListConnectionDeliveriesRequest, workspacev1.ListConnectionDeliveriesResponse](
+			httpClient,
+			baseURL+ConnectionServiceListConnectionDeliveriesProcedure,
+			connect.WithSchema(connectionServiceMethods.ByName("ListConnectionDeliveries")),
+			connect.WithClientOptions(opts...),
+		),
+		getConnectionDelivery: connect.NewClient[workspacev1.GetConnectionDeliveryRequest, workspacev1.GetConnectionDeliveryResponse](
+			httpClient,
+			baseURL+ConnectionServiceGetConnectionDeliveryProcedure,
+			connect.WithSchema(connectionServiceMethods.ByName("GetConnectionDelivery")),
+			connect.WithClientOptions(opts...),
+		),
+		replayConnectionDelivery: connect.NewClient[workspacev1.ReplayConnectionDeliveryRequest, workspacev1.ReplayConnectionDeliveryResponse](
+			httpClient,
+			baseURL+ConnectionServiceReplayConnectionDeliveryProcedure,
+			connect.WithSchema(connectionServiceMethods.ByName("ReplayConnectionDelivery")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // connectionServiceClient implements ConnectionServiceClient.
 type connectionServiceClient struct {
-	listConnections        *connect.Client[workspacev1.ListConnectionsRequest, workspacev1.ListConnectionsResponse]
-	getConnection          *connect.Client[workspacev1.GetConnectionRequest, workspacev1.GetConnectionResponse]
-	createConnection       *connect.Client[workspacev1.CreateConnectionRequest, workspacev1.CreateConnectionResponse]
-	deleteConnection       *connect.Client[workspacev1.DeleteConnectionRequest, workspacev1.DeleteConnectionResponse]
-	rotateConnectionSecret *connect.Client[workspacev1.RotateConnectionSecretRequest, workspacev1.RotateConnectionSecretResponse]
-	setConnectionTransform *connect.Client[workspacev1.SetConnectionTransformRequest, workspacev1.SetConnectionTransformResponse]
+	listConnections          *connect.Client[workspacev1.ListConnectionsRequest, workspacev1.ListConnectionsResponse]
+	getConnection            *connect.Client[workspacev1.GetConnectionRequest, workspacev1.GetConnectionResponse]
+	createConnection         *connect.Client[workspacev1.CreateConnectionRequest, workspacev1.CreateConnectionResponse]
+	deleteConnection         *connect.Client[workspacev1.DeleteConnectionRequest, workspacev1.DeleteConnectionResponse]
+	rotateConnectionSecret   *connect.Client[workspacev1.RotateConnectionSecretRequest, workspacev1.RotateConnectionSecretResponse]
+	setConnectionTransform   *connect.Client[workspacev1.SetConnectionTransformRequest, workspacev1.SetConnectionTransformResponse]
+	listConnectionDeliveries *connect.Client[workspacev1.ListConnectionDeliveriesRequest, workspacev1.ListConnectionDeliveriesResponse]
+	getConnectionDelivery    *connect.Client[workspacev1.GetConnectionDeliveryRequest, workspacev1.GetConnectionDeliveryResponse]
+	replayConnectionDelivery *connect.Client[workspacev1.ReplayConnectionDeliveryRequest, workspacev1.ReplayConnectionDeliveryResponse]
 }
 
 // ListConnections calls toshi.workspace.v1.ConnectionService.ListConnections.
@@ -178,6 +230,21 @@ func (c *connectionServiceClient) RotateConnectionSecret(ctx context.Context, re
 // SetConnectionTransform calls toshi.workspace.v1.ConnectionService.SetConnectionTransform.
 func (c *connectionServiceClient) SetConnectionTransform(ctx context.Context, req *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error) {
 	return c.setConnectionTransform.CallUnary(ctx, req)
+}
+
+// ListConnectionDeliveries calls toshi.workspace.v1.ConnectionService.ListConnectionDeliveries.
+func (c *connectionServiceClient) ListConnectionDeliveries(ctx context.Context, req *connect.Request[workspacev1.ListConnectionDeliveriesRequest]) (*connect.Response[workspacev1.ListConnectionDeliveriesResponse], error) {
+	return c.listConnectionDeliveries.CallUnary(ctx, req)
+}
+
+// GetConnectionDelivery calls toshi.workspace.v1.ConnectionService.GetConnectionDelivery.
+func (c *connectionServiceClient) GetConnectionDelivery(ctx context.Context, req *connect.Request[workspacev1.GetConnectionDeliveryRequest]) (*connect.Response[workspacev1.GetConnectionDeliveryResponse], error) {
+	return c.getConnectionDelivery.CallUnary(ctx, req)
+}
+
+// ReplayConnectionDelivery calls toshi.workspace.v1.ConnectionService.ReplayConnectionDelivery.
+func (c *connectionServiceClient) ReplayConnectionDelivery(ctx context.Context, req *connect.Request[workspacev1.ReplayConnectionDeliveryRequest]) (*connect.Response[workspacev1.ReplayConnectionDeliveryResponse], error) {
+	return c.replayConnectionDelivery.CallUnary(ctx, req)
 }
 
 // ConnectionServiceHandler is an implementation of the toshi.workspace.v1.ConnectionService
@@ -216,6 +283,28 @@ type ConnectionServiceHandler interface {
 	// NOT_FOUND, one below zero INVALID_ARGUMENT, and a GITHUB connection
 	// FAILED_PRECONDITION, as only a WEBHOOK connection runs one.
 	SetConnectionTransform(context.Context, *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error)
+	// ListConnectionDeliveries returns a WEBHOOK connection's deliveries: the
+	// messages its sender sent, one for each webhook id, newest received
+	// first. A delivery never carries its body. A connection the workspace
+	// does not have is NOT_FOUND; a deleted one's deliveries are still
+	// listed.
+	//
+	// A page holds 100 deliveries when page_size is zero, and 1000 at most.
+	ListConnectionDeliveries(context.Context, *connect.Request[workspacev1.ListConnectionDeliveriesRequest]) (*connect.Response[workspacev1.ListConnectionDeliveriesResponse], error)
+	// GetConnectionDelivery returns one delivery, without its body, and its
+	// runs: each time a worker made it an event, dropped it or failed it,
+	// oldest first. A delivery the workspace does not have is NOT_FOUND.
+	GetConnectionDelivery(context.Context, *connect.Request[workspacev1.GetConnectionDeliveryRequest]) (*connect.Response[workspacev1.GetConnectionDeliveryResponse], error)
+	// ReplayConnectionDelivery sends a processed, dropped or failed delivery
+	// through its connection again, as a new message under the same webhook
+	// id: it runs the transform the connection runs then, and its run
+	// records the caller. A delivery still received, whose body expired, or
+	// whose connection is deleted is FAILED_PRECONDITION, as is one another
+	// replay counted since this call read it.
+	//
+	// request_key is required: a retry with the same key and the same
+	// request returns what the first call returned and replays nothing.
+	ReplayConnectionDelivery(context.Context, *connect.Request[workspacev1.ReplayConnectionDeliveryRequest]) (*connect.Response[workspacev1.ReplayConnectionDeliveryResponse], error)
 }
 
 // NewConnectionServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -261,6 +350,24 @@ func NewConnectionServiceHandler(svc ConnectionServiceHandler, opts ...connect.H
 		connect.WithSchema(connectionServiceMethods.ByName("SetConnectionTransform")),
 		connect.WithHandlerOptions(opts...),
 	)
+	connectionServiceListConnectionDeliveriesHandler := connect.NewUnaryHandler(
+		ConnectionServiceListConnectionDeliveriesProcedure,
+		svc.ListConnectionDeliveries,
+		connect.WithSchema(connectionServiceMethods.ByName("ListConnectionDeliveries")),
+		connect.WithHandlerOptions(opts...),
+	)
+	connectionServiceGetConnectionDeliveryHandler := connect.NewUnaryHandler(
+		ConnectionServiceGetConnectionDeliveryProcedure,
+		svc.GetConnectionDelivery,
+		connect.WithSchema(connectionServiceMethods.ByName("GetConnectionDelivery")),
+		connect.WithHandlerOptions(opts...),
+	)
+	connectionServiceReplayConnectionDeliveryHandler := connect.NewUnaryHandler(
+		ConnectionServiceReplayConnectionDeliveryProcedure,
+		svc.ReplayConnectionDelivery,
+		connect.WithSchema(connectionServiceMethods.ByName("ReplayConnectionDelivery")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.ConnectionService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ConnectionServiceListConnectionsProcedure:
@@ -275,6 +382,12 @@ func NewConnectionServiceHandler(svc ConnectionServiceHandler, opts ...connect.H
 			connectionServiceRotateConnectionSecretHandler.ServeHTTP(w, r)
 		case ConnectionServiceSetConnectionTransformProcedure:
 			connectionServiceSetConnectionTransformHandler.ServeHTTP(w, r)
+		case ConnectionServiceListConnectionDeliveriesProcedure:
+			connectionServiceListConnectionDeliveriesHandler.ServeHTTP(w, r)
+		case ConnectionServiceGetConnectionDeliveryProcedure:
+			connectionServiceGetConnectionDeliveryHandler.ServeHTTP(w, r)
+		case ConnectionServiceReplayConnectionDeliveryProcedure:
+			connectionServiceReplayConnectionDeliveryHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -306,4 +419,16 @@ func (UnimplementedConnectionServiceHandler) RotateConnectionSecret(context.Cont
 
 func (UnimplementedConnectionServiceHandler) SetConnectionTransform(context.Context, *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.SetConnectionTransform is not implemented"))
+}
+
+func (UnimplementedConnectionServiceHandler) ListConnectionDeliveries(context.Context, *connect.Request[workspacev1.ListConnectionDeliveriesRequest]) (*connect.Response[workspacev1.ListConnectionDeliveriesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.ListConnectionDeliveries is not implemented"))
+}
+
+func (UnimplementedConnectionServiceHandler) GetConnectionDelivery(context.Context, *connect.Request[workspacev1.GetConnectionDeliveryRequest]) (*connect.Response[workspacev1.GetConnectionDeliveryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.GetConnectionDelivery is not implemented"))
+}
+
+func (UnimplementedConnectionServiceHandler) ReplayConnectionDelivery(context.Context, *connect.Request[workspacev1.ReplayConnectionDeliveryRequest]) (*connect.Response[workspacev1.ReplayConnectionDeliveryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.ReplayConnectionDelivery is not implemented"))
 }

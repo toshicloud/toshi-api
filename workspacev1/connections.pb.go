@@ -76,6 +76,66 @@ func (ConnectionKind) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{0}
 }
 
+// ConnectionDeliveryState is where a WEBHOOK connection's delivery stands.
+type ConnectionDeliveryState int32
+
+const (
+	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_UNSPECIFIED ConnectionDeliveryState = 0
+	// Stored and waiting for a worker, or being run.
+	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_RECEIVED ConnectionDeliveryState = 1
+	// It became an event.
+	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_PROCESSED ConnectionDeliveryState = 2
+	// It became no event, for the reason the delivery names.
+	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_DROPPED ConnectionDeliveryState = 3
+	// The store failed on every try to write its event.
+	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_FAILED ConnectionDeliveryState = 4
+)
+
+// Enum value maps for ConnectionDeliveryState.
+var (
+	ConnectionDeliveryState_name = map[int32]string{
+		0: "CONNECTION_DELIVERY_STATE_UNSPECIFIED",
+		1: "CONNECTION_DELIVERY_STATE_RECEIVED",
+		2: "CONNECTION_DELIVERY_STATE_PROCESSED",
+		3: "CONNECTION_DELIVERY_STATE_DROPPED",
+		4: "CONNECTION_DELIVERY_STATE_FAILED",
+	}
+	ConnectionDeliveryState_value = map[string]int32{
+		"CONNECTION_DELIVERY_STATE_UNSPECIFIED": 0,
+		"CONNECTION_DELIVERY_STATE_RECEIVED":    1,
+		"CONNECTION_DELIVERY_STATE_PROCESSED":   2,
+		"CONNECTION_DELIVERY_STATE_DROPPED":     3,
+		"CONNECTION_DELIVERY_STATE_FAILED":      4,
+	}
+)
+
+func (x ConnectionDeliveryState) Enum() *ConnectionDeliveryState {
+	p := new(ConnectionDeliveryState)
+	*p = x
+	return p
+}
+
+func (x ConnectionDeliveryState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ConnectionDeliveryState) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_connections_proto_enumTypes[1].Descriptor()
+}
+
+func (ConnectionDeliveryState) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_connections_proto_enumTypes[1]
+}
+
+func (x ConnectionDeliveryState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ConnectionDeliveryState.Descriptor instead.
+func (ConnectionDeliveryState) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{1}
+}
+
 // Connection is one source of a workspace's events.
 type Connection struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -831,6 +891,622 @@ func (x *SetConnectionTransformResponse) GetPreviousVersion() int32 {
 	return 0
 }
 
+// ConnectionDelivery is one message a WEBHOOK connection's sender sent:
+// the tries that carried one webhook id.
+type ConnectionDelivery struct {
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Id           string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ConnectionId string                 `protobuf:"bytes,2,opt,name=connection_id,json=connectionId,proto3" json:"connection_id,omitempty"`
+	// The sender's webhook-id header.
+	WebhookId string                  `protobuf:"bytes,3,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
+	State     ConnectionDeliveryState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.ConnectionDeliveryState" json:"state,omitempty"`
+	// Why it was dropped or failed, such as transform_error or store_error;
+	// empty otherwise.
+	Reason string `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`
+	// The time the sender signed; when the ingress stored it.
+	SentAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=sent_at,json=sentAt,proto3" json:"sent_at,omitempty"`
+	ReceivedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=received_at,json=receivedAt,proto3" json:"received_at,omitempty"`
+	// When it was processed, dropped or failed; unset while received.
+	ProcessedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=processed_at,json=processedAt,proto3" json:"processed_at,omitempty"`
+	// Tries a worker made since it was last received or replayed.
+	Attempts int32 `protobuf:"varint,9,opt,name=attempts,proto3" json:"attempts,omitempty"`
+	// The request's Content-Type header.
+	ContentType string `protobuf:"bytes,10,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	// The hex SHA-256 of the body.
+	BodyDigest string `protobuf:"bytes,11,opt,name=body_digest,json=bodyDigest,proto3" json:"body_digest,omitempty"`
+	// When the workspace's retention removed the body; unset while it is
+	// kept. A delivery without its body is not replayed.
+	BodyExpiredAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=body_expired_at,json=bodyExpiredAt,proto3" json:"body_expired_at,omitempty"`
+	// The transform version the connection ran when the delivery arrived;
+	// zero for none.
+	TransformVersion int32 `protobuf:"varint,13,opt,name=transform_version,json=transformVersion,proto3" json:"transform_version,omitempty"`
+	// How many times it was replayed.
+	Replays int32 `protobuf:"varint,14,opt,name=replays,proto3" json:"replays,omitempty"`
+	// Who asked for the latest replay; empty before one.
+	ReplayedBy    string `protobuf:"bytes,15,opt,name=replayed_by,json=replayedBy,proto3" json:"replayed_by,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConnectionDelivery) Reset() {
+	*x = ConnectionDelivery{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConnectionDelivery) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConnectionDelivery) ProtoMessage() {}
+
+func (x *ConnectionDelivery) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConnectionDelivery.ProtoReflect.Descriptor instead.
+func (*ConnectionDelivery) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ConnectionDelivery) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ConnectionDelivery) GetConnectionId() string {
+	if x != nil {
+		return x.ConnectionId
+	}
+	return ""
+}
+
+func (x *ConnectionDelivery) GetWebhookId() string {
+	if x != nil {
+		return x.WebhookId
+	}
+	return ""
+}
+
+func (x *ConnectionDelivery) GetState() ConnectionDeliveryState {
+	if x != nil {
+		return x.State
+	}
+	return ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_UNSPECIFIED
+}
+
+func (x *ConnectionDelivery) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *ConnectionDelivery) GetSentAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.SentAt
+	}
+	return nil
+}
+
+func (x *ConnectionDelivery) GetReceivedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ReceivedAt
+	}
+	return nil
+}
+
+func (x *ConnectionDelivery) GetProcessedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ProcessedAt
+	}
+	return nil
+}
+
+func (x *ConnectionDelivery) GetAttempts() int32 {
+	if x != nil {
+		return x.Attempts
+	}
+	return 0
+}
+
+func (x *ConnectionDelivery) GetContentType() string {
+	if x != nil {
+		return x.ContentType
+	}
+	return ""
+}
+
+func (x *ConnectionDelivery) GetBodyDigest() string {
+	if x != nil {
+		return x.BodyDigest
+	}
+	return ""
+}
+
+func (x *ConnectionDelivery) GetBodyExpiredAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.BodyExpiredAt
+	}
+	return nil
+}
+
+func (x *ConnectionDelivery) GetTransformVersion() int32 {
+	if x != nil {
+		return x.TransformVersion
+	}
+	return 0
+}
+
+func (x *ConnectionDelivery) GetReplays() int32 {
+	if x != nil {
+		return x.Replays
+	}
+	return 0
+}
+
+func (x *ConnectionDelivery) GetReplayedBy() string {
+	if x != nil {
+		return x.ReplayedBy
+	}
+	return ""
+}
+
+// ConnectionDeliveryRun is one time a worker ran a delivery to its end.
+type ConnectionDeliveryRun struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 1 for the first run, counting up.
+	Run int32 `protobuf:"varint,1,opt,name=run,proto3" json:"run,omitempty"`
+	// The transform version the run ran; zero for none.
+	TransformVersion int32 `protobuf:"varint,2,opt,name=transform_version,json=transformVersion,proto3" json:"transform_version,omitempty"`
+	// The transform version the connection ran when the delivery arrived.
+	ReceiptVersion int32 `protobuf:"varint,3,opt,name=receipt_version,json=receiptVersion,proto3" json:"receipt_version,omitempty"`
+	// event, drop, transform_error, transform_timeout,
+	// transform_invalid_output, connection_deleted, body_not_json,
+	// invalid_event or failed.
+	Outcome string `protobuf:"bytes,4,opt,name=outcome,proto3" json:"outcome,omitempty"`
+	// The event the run wrote or found; empty when it wrote none.
+	EventId string `protobuf:"bytes,5,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	// The transform's own reason for a drop.
+	Reason string `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
+	// What failed, for a transform that failed or a store that did.
+	Error      string                 `protobuf:"bytes,7,opt,name=error,proto3" json:"error,omitempty"`
+	Duration   *durationpb.Duration   `protobuf:"bytes,8,opt,name=duration,proto3" json:"duration,omitempty"`
+	FinishedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
+	// Who asked for the replay the run ran; empty for the sender's message.
+	Actor         string `protobuf:"bytes,10,opt,name=actor,proto3" json:"actor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConnectionDeliveryRun) Reset() {
+	*x = ConnectionDeliveryRun{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConnectionDeliveryRun) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConnectionDeliveryRun) ProtoMessage() {}
+
+func (x *ConnectionDeliveryRun) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConnectionDeliveryRun.ProtoReflect.Descriptor instead.
+func (*ConnectionDeliveryRun) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ConnectionDeliveryRun) GetRun() int32 {
+	if x != nil {
+		return x.Run
+	}
+	return 0
+}
+
+func (x *ConnectionDeliveryRun) GetTransformVersion() int32 {
+	if x != nil {
+		return x.TransformVersion
+	}
+	return 0
+}
+
+func (x *ConnectionDeliveryRun) GetReceiptVersion() int32 {
+	if x != nil {
+		return x.ReceiptVersion
+	}
+	return 0
+}
+
+func (x *ConnectionDeliveryRun) GetOutcome() string {
+	if x != nil {
+		return x.Outcome
+	}
+	return ""
+}
+
+func (x *ConnectionDeliveryRun) GetEventId() string {
+	if x != nil {
+		return x.EventId
+	}
+	return ""
+}
+
+func (x *ConnectionDeliveryRun) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *ConnectionDeliveryRun) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+func (x *ConnectionDeliveryRun) GetDuration() *durationpb.Duration {
+	if x != nil {
+		return x.Duration
+	}
+	return nil
+}
+
+func (x *ConnectionDeliveryRun) GetFinishedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FinishedAt
+	}
+	return nil
+}
+
+func (x *ConnectionDeliveryRun) GetActor() string {
+	if x != nil {
+		return x.Actor
+	}
+	return ""
+}
+
+type ListConnectionDeliveriesRequest struct {
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	ConnectionId string                 `protobuf:"bytes,1,opt,name=connection_id,json=connectionId,proto3" json:"connection_id,omitempty"`
+	// Only the deliveries in this state; unspecified lists every state.
+	State ConnectionDeliveryState `protobuf:"varint,2,opt,name=state,proto3,enum=toshi.workspace.v1.ConnectionDeliveryState" json:"state,omitempty"`
+	// The most deliveries in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListConnectionDeliveriesRequest) Reset() {
+	*x = ListConnectionDeliveriesRequest{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListConnectionDeliveriesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListConnectionDeliveriesRequest) ProtoMessage() {}
+
+func (x *ListConnectionDeliveriesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListConnectionDeliveriesRequest.ProtoReflect.Descriptor instead.
+func (*ListConnectionDeliveriesRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ListConnectionDeliveriesRequest) GetConnectionId() string {
+	if x != nil {
+		return x.ConnectionId
+	}
+	return ""
+}
+
+func (x *ListConnectionDeliveriesRequest) GetState() ConnectionDeliveryState {
+	if x != nil {
+		return x.State
+	}
+	return ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_UNSPECIFIED
+}
+
+func (x *ListConnectionDeliveriesRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListConnectionDeliveriesRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+type ListConnectionDeliveriesResponse struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Deliveries []*ConnectionDelivery  `protobuf:"bytes,1,rep,name=deliveries,proto3" json:"deliveries,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListConnectionDeliveriesResponse) Reset() {
+	*x = ListConnectionDeliveriesResponse{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListConnectionDeliveriesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListConnectionDeliveriesResponse) ProtoMessage() {}
+
+func (x *ListConnectionDeliveriesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListConnectionDeliveriesResponse.ProtoReflect.Descriptor instead.
+func (*ListConnectionDeliveriesResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ListConnectionDeliveriesResponse) GetDeliveries() []*ConnectionDelivery {
+	if x != nil {
+		return x.Deliveries
+	}
+	return nil
+}
+
+func (x *ListConnectionDeliveriesResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
+type GetConnectionDeliveryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetConnectionDeliveryRequest) Reset() {
+	*x = GetConnectionDeliveryRequest{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetConnectionDeliveryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetConnectionDeliveryRequest) ProtoMessage() {}
+
+func (x *GetConnectionDeliveryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetConnectionDeliveryRequest.ProtoReflect.Descriptor instead.
+func (*GetConnectionDeliveryRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetConnectionDeliveryRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetConnectionDeliveryResponse struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Delivery      *ConnectionDelivery      `protobuf:"bytes,1,opt,name=delivery,proto3" json:"delivery,omitempty"`
+	Runs          []*ConnectionDeliveryRun `protobuf:"bytes,2,rep,name=runs,proto3" json:"runs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetConnectionDeliveryResponse) Reset() {
+	*x = GetConnectionDeliveryResponse{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetConnectionDeliveryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetConnectionDeliveryResponse) ProtoMessage() {}
+
+func (x *GetConnectionDeliveryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetConnectionDeliveryResponse.ProtoReflect.Descriptor instead.
+func (*GetConnectionDeliveryResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetConnectionDeliveryResponse) GetDelivery() *ConnectionDelivery {
+	if x != nil {
+		return x.Delivery
+	}
+	return nil
+}
+
+func (x *GetConnectionDeliveryResponse) GetRuns() []*ConnectionDeliveryRun {
+	if x != nil {
+		return x.Runs
+	}
+	return nil
+}
+
+type ReplayConnectionDeliveryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	RequestKey    string                 `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReplayConnectionDeliveryRequest) Reset() {
+	*x = ReplayConnectionDeliveryRequest{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReplayConnectionDeliveryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplayConnectionDeliveryRequest) ProtoMessage() {}
+
+func (x *ReplayConnectionDeliveryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplayConnectionDeliveryRequest.ProtoReflect.Descriptor instead.
+func (*ReplayConnectionDeliveryRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ReplayConnectionDeliveryRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ReplayConnectionDeliveryRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
+}
+
+type ReplayConnectionDeliveryResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The delivery as the replay left it: received, its replays counted.
+	Delivery      *ConnectionDelivery `protobuf:"bytes,1,opt,name=delivery,proto3" json:"delivery,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReplayConnectionDeliveryResponse) Reset() {
+	*x = ReplayConnectionDeliveryResponse{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReplayConnectionDeliveryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplayConnectionDeliveryResponse) ProtoMessage() {}
+
+func (x *ReplayConnectionDeliveryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplayConnectionDeliveryResponse.ProtoReflect.Descriptor instead.
+func (*ReplayConnectionDeliveryResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ReplayConnectionDeliveryResponse) GetDelivery() *ConnectionDelivery {
+	if x != nil {
+		return x.Delivery
+	}
+	return nil
+}
+
 var File_toshi_workspace_v1_connections_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
@@ -895,11 +1571,73 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\n" +
 	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +
 	"connection\x12)\n" +
-	"\x10previous_version\x18\x02 \x01(\x05R\x0fpreviousVersion*j\n" +
+	"\x10previous_version\x18\x02 \x01(\x05R\x0fpreviousVersion\"\x80\x05\n" +
+	"\x12ConnectionDelivery\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
+	"\rconnection_id\x18\x02 \x01(\tR\fconnectionId\x12\x1d\n" +
+	"\n" +
+	"webhook_id\x18\x03 \x01(\tR\twebhookId\x12A\n" +
+	"\x05state\x18\x04 \x01(\x0e2+.toshi.workspace.v1.ConnectionDeliveryStateR\x05state\x12\x16\n" +
+	"\x06reason\x18\x05 \x01(\tR\x06reason\x123\n" +
+	"\asent_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x06sentAt\x12;\n" +
+	"\vreceived_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"receivedAt\x12=\n" +
+	"\fprocessed_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\vprocessedAt\x12\x1a\n" +
+	"\battempts\x18\t \x01(\x05R\battempts\x12!\n" +
+	"\fcontent_type\x18\n" +
+	" \x01(\tR\vcontentType\x12\x1f\n" +
+	"\vbody_digest\x18\v \x01(\tR\n" +
+	"bodyDigest\x12B\n" +
+	"\x0fbody_expired_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\rbodyExpiredAt\x12+\n" +
+	"\x11transform_version\x18\r \x01(\x05R\x10transformVersion\x12\x18\n" +
+	"\areplays\x18\x0e \x01(\x05R\areplays\x12\x1f\n" +
+	"\vreplayed_by\x18\x0f \x01(\tR\n" +
+	"replayedBy\"\xec\x02\n" +
+	"\x15ConnectionDeliveryRun\x12\x10\n" +
+	"\x03run\x18\x01 \x01(\x05R\x03run\x12+\n" +
+	"\x11transform_version\x18\x02 \x01(\x05R\x10transformVersion\x12'\n" +
+	"\x0freceipt_version\x18\x03 \x01(\x05R\x0ereceiptVersion\x12\x18\n" +
+	"\aoutcome\x18\x04 \x01(\tR\aoutcome\x12\x19\n" +
+	"\bevent_id\x18\x05 \x01(\tR\aeventId\x12\x16\n" +
+	"\x06reason\x18\x06 \x01(\tR\x06reason\x12\x14\n" +
+	"\x05error\x18\a \x01(\tR\x05error\x125\n" +
+	"\bduration\x18\b \x01(\v2\x19.google.protobuf.DurationR\bduration\x12;\n" +
+	"\vfinished_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"finishedAt\x12\x14\n" +
+	"\x05actor\x18\n" +
+	" \x01(\tR\x05actor\"\xc5\x01\n" +
+	"\x1fListConnectionDeliveriesRequest\x12#\n" +
+	"\rconnection_id\x18\x01 \x01(\tR\fconnectionId\x12A\n" +
+	"\x05state\x18\x02 \x01(\x0e2+.toshi.workspace.v1.ConnectionDeliveryStateR\x05state\x12\x1b\n" +
+	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x04 \x01(\tR\tpageToken\"\x92\x01\n" +
+	" ListConnectionDeliveriesResponse\x12F\n" +
+	"\n" +
+	"deliveries\x18\x01 \x03(\v2&.toshi.workspace.v1.ConnectionDeliveryR\n" +
+	"deliveries\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\".\n" +
+	"\x1cGetConnectionDeliveryRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xa2\x01\n" +
+	"\x1dGetConnectionDeliveryResponse\x12B\n" +
+	"\bdelivery\x18\x01 \x01(\v2&.toshi.workspace.v1.ConnectionDeliveryR\bdelivery\x12=\n" +
+	"\x04runs\x18\x02 \x03(\v2).toshi.workspace.v1.ConnectionDeliveryRunR\x04runs\"R\n" +
+	"\x1fReplayConnectionDeliveryRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vrequest_key\x18\x02 \x01(\tR\n" +
+	"requestKey\"f\n" +
+	" ReplayConnectionDeliveryResponse\x12B\n" +
+	"\bdelivery\x18\x01 \x01(\v2&.toshi.workspace.v1.ConnectionDeliveryR\bdelivery*j\n" +
 	"\x0eConnectionKind\x12\x1f\n" +
 	"\x1bCONNECTION_KIND_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16CONNECTION_KIND_GITHUB\x10\x01\x12\x1b\n" +
-	"\x17CONNECTION_KIND_WEBHOOK\x10\x022\xde\a\n" +
+	"\x17CONNECTION_KIND_WEBHOOK\x10\x02*\xe2\x01\n" +
+	"\x17ConnectionDeliveryState\x12)\n" +
+	"%CONNECTION_DELIVERY_STATE_UNSPECIFIED\x10\x00\x12&\n" +
+	"\"CONNECTION_DELIVERY_STATE_RECEIVED\x10\x01\x12'\n" +
+	"#CONNECTION_DELIVERY_STATE_PROCESSED\x10\x02\x12%\n" +
+	"!CONNECTION_DELIVERY_STATE_DROPPED\x10\x03\x12$\n" +
+	" CONNECTION_DELIVERY_STATE_FAILED\x10\x042\xad\f\n" +
 	"\x11ConnectionService\x12\x8d\x01\n" +
 	"\x0fListConnections\x12*.toshi.workspace.v1.ListConnectionsRequest\x1a+.toshi.workspace.v1.ListConnectionsResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x87\x01\n" +
 	"\rGetConnection\x12(.toshi.workspace.v1.GetConnectionRequest\x1a).toshi.workspace.v1.GetConnectionResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x91\x01\n" +
@@ -908,7 +1646,11 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x16RotateConnectionSecret\x121.toshi.workspace.v1.RotateConnectionSecretRequest\x1a2.toshi.workspace.v1.RotateConnectionSecretResponse\"A\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1b\n" +
 	"\x19connection.secret_rotated\x12\xc1\x01\n" +
 	"\x16SetConnectionTransform\x121.toshi.workspace.v1.SetConnectionTransformRequest\x1a2.toshi.workspace.v1.SetConnectionTransformResponse\"@\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1a\n" +
-	"\x18connection.transform_setB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x18connection.transform_set\x12\xa8\x01\n" +
+	"\x18ListConnectionDeliveries\x123.toshi.workspace.v1.ListConnectionDeliveriesRequest\x1a4.toshi.workspace.v1.ListConnectionDeliveriesResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x9f\x01\n" +
+	"\x15GetConnectionDelivery\x120.toshi.workspace.v1.GetConnectionDeliveryRequest\x1a1.toshi.workspace.v1.GetConnectionDeliveryResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\xff\x01\n" +
+	"\x18ReplayConnectionDelivery\x123.toshi.workspace.v1.ReplayConnectionDeliveryRequest\x1a4.toshi.workspace.v1.ReplayConnectionDeliveryResponse\"x\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18R\n" +
+	"$connection.delivery_replay_requested\x12*connection:response.delivery.connection_idB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_connections_proto_rawDescOnce sync.Once
@@ -922,54 +1664,81 @@ func file_toshi_workspace_v1_connections_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_connections_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_connections_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_connections_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_toshi_workspace_v1_connections_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_toshi_workspace_v1_connections_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_toshi_workspace_v1_connections_proto_goTypes = []any{
-	(ConnectionKind)(0),                    // 0: toshi.workspace.v1.ConnectionKind
-	(*Connection)(nil),                     // 1: toshi.workspace.v1.Connection
-	(*ListConnectionsRequest)(nil),         // 2: toshi.workspace.v1.ListConnectionsRequest
-	(*ListConnectionsResponse)(nil),        // 3: toshi.workspace.v1.ListConnectionsResponse
-	(*GetConnectionRequest)(nil),           // 4: toshi.workspace.v1.GetConnectionRequest
-	(*GetConnectionResponse)(nil),          // 5: toshi.workspace.v1.GetConnectionResponse
-	(*CreateConnectionRequest)(nil),        // 6: toshi.workspace.v1.CreateConnectionRequest
-	(*CreateConnectionResponse)(nil),       // 7: toshi.workspace.v1.CreateConnectionResponse
-	(*DeleteConnectionRequest)(nil),        // 8: toshi.workspace.v1.DeleteConnectionRequest
-	(*DeleteConnectionResponse)(nil),       // 9: toshi.workspace.v1.DeleteConnectionResponse
-	(*RotateConnectionSecretRequest)(nil),  // 10: toshi.workspace.v1.RotateConnectionSecretRequest
-	(*RotateConnectionSecretResponse)(nil), // 11: toshi.workspace.v1.RotateConnectionSecretResponse
-	(*SetConnectionTransformRequest)(nil),  // 12: toshi.workspace.v1.SetConnectionTransformRequest
-	(*SetConnectionTransformResponse)(nil), // 13: toshi.workspace.v1.SetConnectionTransformResponse
-	(*timestamppb.Timestamp)(nil),          // 14: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),            // 15: google.protobuf.Duration
+	(ConnectionKind)(0),                      // 0: toshi.workspace.v1.ConnectionKind
+	(ConnectionDeliveryState)(0),             // 1: toshi.workspace.v1.ConnectionDeliveryState
+	(*Connection)(nil),                       // 2: toshi.workspace.v1.Connection
+	(*ListConnectionsRequest)(nil),           // 3: toshi.workspace.v1.ListConnectionsRequest
+	(*ListConnectionsResponse)(nil),          // 4: toshi.workspace.v1.ListConnectionsResponse
+	(*GetConnectionRequest)(nil),             // 5: toshi.workspace.v1.GetConnectionRequest
+	(*GetConnectionResponse)(nil),            // 6: toshi.workspace.v1.GetConnectionResponse
+	(*CreateConnectionRequest)(nil),          // 7: toshi.workspace.v1.CreateConnectionRequest
+	(*CreateConnectionResponse)(nil),         // 8: toshi.workspace.v1.CreateConnectionResponse
+	(*DeleteConnectionRequest)(nil),          // 9: toshi.workspace.v1.DeleteConnectionRequest
+	(*DeleteConnectionResponse)(nil),         // 10: toshi.workspace.v1.DeleteConnectionResponse
+	(*RotateConnectionSecretRequest)(nil),    // 11: toshi.workspace.v1.RotateConnectionSecretRequest
+	(*RotateConnectionSecretResponse)(nil),   // 12: toshi.workspace.v1.RotateConnectionSecretResponse
+	(*SetConnectionTransformRequest)(nil),    // 13: toshi.workspace.v1.SetConnectionTransformRequest
+	(*SetConnectionTransformResponse)(nil),   // 14: toshi.workspace.v1.SetConnectionTransformResponse
+	(*ConnectionDelivery)(nil),               // 15: toshi.workspace.v1.ConnectionDelivery
+	(*ConnectionDeliveryRun)(nil),            // 16: toshi.workspace.v1.ConnectionDeliveryRun
+	(*ListConnectionDeliveriesRequest)(nil),  // 17: toshi.workspace.v1.ListConnectionDeliveriesRequest
+	(*ListConnectionDeliveriesResponse)(nil), // 18: toshi.workspace.v1.ListConnectionDeliveriesResponse
+	(*GetConnectionDeliveryRequest)(nil),     // 19: toshi.workspace.v1.GetConnectionDeliveryRequest
+	(*GetConnectionDeliveryResponse)(nil),    // 20: toshi.workspace.v1.GetConnectionDeliveryResponse
+	(*ReplayConnectionDeliveryRequest)(nil),  // 21: toshi.workspace.v1.ReplayConnectionDeliveryRequest
+	(*ReplayConnectionDeliveryResponse)(nil), // 22: toshi.workspace.v1.ReplayConnectionDeliveryResponse
+	(*timestamppb.Timestamp)(nil),            // 23: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),              // 24: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_connections_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Connection.kind:type_name -> toshi.workspace.v1.ConnectionKind
-	14, // 1: toshi.workspace.v1.Connection.created_at:type_name -> google.protobuf.Timestamp
-	14, // 2: toshi.workspace.v1.Connection.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
-	1,  // 3: toshi.workspace.v1.ListConnectionsResponse.connections:type_name -> toshi.workspace.v1.Connection
-	1,  // 4: toshi.workspace.v1.GetConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
+	23, // 1: toshi.workspace.v1.Connection.created_at:type_name -> google.protobuf.Timestamp
+	23, // 2: toshi.workspace.v1.Connection.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 3: toshi.workspace.v1.ListConnectionsResponse.connections:type_name -> toshi.workspace.v1.Connection
+	2,  // 4: toshi.workspace.v1.GetConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
 	0,  // 5: toshi.workspace.v1.CreateConnectionRequest.kind:type_name -> toshi.workspace.v1.ConnectionKind
-	1,  // 6: toshi.workspace.v1.CreateConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
-	15, // 7: toshi.workspace.v1.RotateConnectionSecretRequest.overlap:type_name -> google.protobuf.Duration
-	1,  // 8: toshi.workspace.v1.RotateConnectionSecretResponse.connection:type_name -> toshi.workspace.v1.Connection
-	1,  // 9: toshi.workspace.v1.SetConnectionTransformResponse.connection:type_name -> toshi.workspace.v1.Connection
-	2,  // 10: toshi.workspace.v1.ConnectionService.ListConnections:input_type -> toshi.workspace.v1.ListConnectionsRequest
-	4,  // 11: toshi.workspace.v1.ConnectionService.GetConnection:input_type -> toshi.workspace.v1.GetConnectionRequest
-	6,  // 12: toshi.workspace.v1.ConnectionService.CreateConnection:input_type -> toshi.workspace.v1.CreateConnectionRequest
-	8,  // 13: toshi.workspace.v1.ConnectionService.DeleteConnection:input_type -> toshi.workspace.v1.DeleteConnectionRequest
-	10, // 14: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:input_type -> toshi.workspace.v1.RotateConnectionSecretRequest
-	12, // 15: toshi.workspace.v1.ConnectionService.SetConnectionTransform:input_type -> toshi.workspace.v1.SetConnectionTransformRequest
-	3,  // 16: toshi.workspace.v1.ConnectionService.ListConnections:output_type -> toshi.workspace.v1.ListConnectionsResponse
-	5,  // 17: toshi.workspace.v1.ConnectionService.GetConnection:output_type -> toshi.workspace.v1.GetConnectionResponse
-	7,  // 18: toshi.workspace.v1.ConnectionService.CreateConnection:output_type -> toshi.workspace.v1.CreateConnectionResponse
-	9,  // 19: toshi.workspace.v1.ConnectionService.DeleteConnection:output_type -> toshi.workspace.v1.DeleteConnectionResponse
-	11, // 20: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:output_type -> toshi.workspace.v1.RotateConnectionSecretResponse
-	13, // 21: toshi.workspace.v1.ConnectionService.SetConnectionTransform:output_type -> toshi.workspace.v1.SetConnectionTransformResponse
-	16, // [16:22] is the sub-list for method output_type
-	10, // [10:16] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	2,  // 6: toshi.workspace.v1.CreateConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
+	24, // 7: toshi.workspace.v1.RotateConnectionSecretRequest.overlap:type_name -> google.protobuf.Duration
+	2,  // 8: toshi.workspace.v1.RotateConnectionSecretResponse.connection:type_name -> toshi.workspace.v1.Connection
+	2,  // 9: toshi.workspace.v1.SetConnectionTransformResponse.connection:type_name -> toshi.workspace.v1.Connection
+	1,  // 10: toshi.workspace.v1.ConnectionDelivery.state:type_name -> toshi.workspace.v1.ConnectionDeliveryState
+	23, // 11: toshi.workspace.v1.ConnectionDelivery.sent_at:type_name -> google.protobuf.Timestamp
+	23, // 12: toshi.workspace.v1.ConnectionDelivery.received_at:type_name -> google.protobuf.Timestamp
+	23, // 13: toshi.workspace.v1.ConnectionDelivery.processed_at:type_name -> google.protobuf.Timestamp
+	23, // 14: toshi.workspace.v1.ConnectionDelivery.body_expired_at:type_name -> google.protobuf.Timestamp
+	24, // 15: toshi.workspace.v1.ConnectionDeliveryRun.duration:type_name -> google.protobuf.Duration
+	23, // 16: toshi.workspace.v1.ConnectionDeliveryRun.finished_at:type_name -> google.protobuf.Timestamp
+	1,  // 17: toshi.workspace.v1.ListConnectionDeliveriesRequest.state:type_name -> toshi.workspace.v1.ConnectionDeliveryState
+	15, // 18: toshi.workspace.v1.ListConnectionDeliveriesResponse.deliveries:type_name -> toshi.workspace.v1.ConnectionDelivery
+	15, // 19: toshi.workspace.v1.GetConnectionDeliveryResponse.delivery:type_name -> toshi.workspace.v1.ConnectionDelivery
+	16, // 20: toshi.workspace.v1.GetConnectionDeliveryResponse.runs:type_name -> toshi.workspace.v1.ConnectionDeliveryRun
+	15, // 21: toshi.workspace.v1.ReplayConnectionDeliveryResponse.delivery:type_name -> toshi.workspace.v1.ConnectionDelivery
+	3,  // 22: toshi.workspace.v1.ConnectionService.ListConnections:input_type -> toshi.workspace.v1.ListConnectionsRequest
+	5,  // 23: toshi.workspace.v1.ConnectionService.GetConnection:input_type -> toshi.workspace.v1.GetConnectionRequest
+	7,  // 24: toshi.workspace.v1.ConnectionService.CreateConnection:input_type -> toshi.workspace.v1.CreateConnectionRequest
+	9,  // 25: toshi.workspace.v1.ConnectionService.DeleteConnection:input_type -> toshi.workspace.v1.DeleteConnectionRequest
+	11, // 26: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:input_type -> toshi.workspace.v1.RotateConnectionSecretRequest
+	13, // 27: toshi.workspace.v1.ConnectionService.SetConnectionTransform:input_type -> toshi.workspace.v1.SetConnectionTransformRequest
+	17, // 28: toshi.workspace.v1.ConnectionService.ListConnectionDeliveries:input_type -> toshi.workspace.v1.ListConnectionDeliveriesRequest
+	19, // 29: toshi.workspace.v1.ConnectionService.GetConnectionDelivery:input_type -> toshi.workspace.v1.GetConnectionDeliveryRequest
+	21, // 30: toshi.workspace.v1.ConnectionService.ReplayConnectionDelivery:input_type -> toshi.workspace.v1.ReplayConnectionDeliveryRequest
+	4,  // 31: toshi.workspace.v1.ConnectionService.ListConnections:output_type -> toshi.workspace.v1.ListConnectionsResponse
+	6,  // 32: toshi.workspace.v1.ConnectionService.GetConnection:output_type -> toshi.workspace.v1.GetConnectionResponse
+	8,  // 33: toshi.workspace.v1.ConnectionService.CreateConnection:output_type -> toshi.workspace.v1.CreateConnectionResponse
+	10, // 34: toshi.workspace.v1.ConnectionService.DeleteConnection:output_type -> toshi.workspace.v1.DeleteConnectionResponse
+	12, // 35: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:output_type -> toshi.workspace.v1.RotateConnectionSecretResponse
+	14, // 36: toshi.workspace.v1.ConnectionService.SetConnectionTransform:output_type -> toshi.workspace.v1.SetConnectionTransformResponse
+	18, // 37: toshi.workspace.v1.ConnectionService.ListConnectionDeliveries:output_type -> toshi.workspace.v1.ListConnectionDeliveriesResponse
+	20, // 38: toshi.workspace.v1.ConnectionService.GetConnectionDelivery:output_type -> toshi.workspace.v1.GetConnectionDeliveryResponse
+	22, // 39: toshi.workspace.v1.ConnectionService.ReplayConnectionDelivery:output_type -> toshi.workspace.v1.ReplayConnectionDeliveryResponse
+	31, // [31:40] is the sub-list for method output_type
+	22, // [22:31] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_connections_proto_init() }
@@ -982,8 +1751,8 @@ func file_toshi_workspace_v1_connections_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_connections_proto_rawDesc), len(file_toshi_workspace_v1_connections_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   13,
+			NumEnums:      2,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

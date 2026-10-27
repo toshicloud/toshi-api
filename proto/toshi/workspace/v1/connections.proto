@@ -85,6 +85,44 @@ service ConnectionService {
       action: "connection.transform_set"
     };
   }
+
+  // ListConnectionDeliveries returns a WEBHOOK connection's deliveries: the
+  // messages its sender sent, one for each webhook id, newest received
+  // first. A delivery never carries its body. A connection the workspace
+  // does not have is NOT_FOUND; a deleted one's deliveries are still
+  // listed.
+  //
+  // A page holds 100 deliveries when page_size is zero, and 1000 at most.
+  rpc ListConnectionDeliveries(ListConnectionDeliveriesRequest) returns (ListConnectionDeliveriesResponse) {
+    option (toshi.permission) = "connections.read";
+    option (toshi.scope) = "workspace";
+  }
+
+  // GetConnectionDelivery returns one delivery, without its body, and its
+  // runs: each time a worker made it an event, dropped it or failed it,
+  // oldest first. A delivery the workspace does not have is NOT_FOUND.
+  rpc GetConnectionDelivery(GetConnectionDeliveryRequest) returns (GetConnectionDeliveryResponse) {
+    option (toshi.permission) = "connections.read";
+    option (toshi.scope) = "workspace";
+  }
+
+  // ReplayConnectionDelivery sends a processed, dropped or failed delivery
+  // through its connection again, as a new message under the same webhook
+  // id: it runs the transform the connection runs then, and its run
+  // records the caller. A delivery still received, whose body expired, or
+  // whose connection is deleted is FAILED_PRECONDITION, as is one another
+  // replay counted since this call read it.
+  //
+  // request_key is required: a retry with the same key and the same
+  // request returns what the first call returned and replays nothing.
+  rpc ReplayConnectionDelivery(ReplayConnectionDeliveryRequest) returns (ReplayConnectionDeliveryResponse) {
+    option (toshi.permission) = "connections.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {
+      action: "connection.delivery_replay_requested"
+      target: "connection:response.delivery.connection_id"
+    };
+  }
 }
 
 // ConnectionKind is the kind of source a connection receives events from.
@@ -188,4 +226,110 @@ message SetConnectionTransformResponse {
   Connection connection = 1;
   // The version the connection ran before; zero for none.
   int32 previous_version = 2;
+}
+
+// ConnectionDeliveryState is where a WEBHOOK connection's delivery stands.
+enum ConnectionDeliveryState {
+  CONNECTION_DELIVERY_STATE_UNSPECIFIED = 0;
+  // Stored and waiting for a worker, or being run.
+  CONNECTION_DELIVERY_STATE_RECEIVED = 1;
+  // It became an event.
+  CONNECTION_DELIVERY_STATE_PROCESSED = 2;
+  // It became no event, for the reason the delivery names.
+  CONNECTION_DELIVERY_STATE_DROPPED = 3;
+  // The store failed on every try to write its event.
+  CONNECTION_DELIVERY_STATE_FAILED = 4;
+}
+
+// ConnectionDelivery is one message a WEBHOOK connection's sender sent:
+// the tries that carried one webhook id.
+message ConnectionDelivery {
+  string id = 1;
+  string connection_id = 2;
+  // The sender's webhook-id header.
+  string webhook_id = 3;
+  ConnectionDeliveryState state = 4;
+  // Why it was dropped or failed, such as transform_error or store_error;
+  // empty otherwise.
+  string reason = 5;
+  // The time the sender signed; when the ingress stored it.
+  google.protobuf.Timestamp sent_at = 6;
+  google.protobuf.Timestamp received_at = 7;
+  // When it was processed, dropped or failed; unset while received.
+  google.protobuf.Timestamp processed_at = 8;
+  // Tries a worker made since it was last received or replayed.
+  int32 attempts = 9;
+  // The request's Content-Type header.
+  string content_type = 10;
+  // The hex SHA-256 of the body.
+  string body_digest = 11;
+  // When the workspace's retention removed the body; unset while it is
+  // kept. A delivery without its body is not replayed.
+  google.protobuf.Timestamp body_expired_at = 12;
+  // The transform version the connection ran when the delivery arrived;
+  // zero for none.
+  int32 transform_version = 13;
+  // How many times it was replayed.
+  int32 replays = 14;
+  // Who asked for the latest replay; empty before one.
+  string replayed_by = 15;
+}
+
+// ConnectionDeliveryRun is one time a worker ran a delivery to its end.
+message ConnectionDeliveryRun {
+  // 1 for the first run, counting up.
+  int32 run = 1;
+  // The transform version the run ran; zero for none.
+  int32 transform_version = 2;
+  // The transform version the connection ran when the delivery arrived.
+  int32 receipt_version = 3;
+  // event, drop, transform_error, transform_timeout,
+  // transform_invalid_output, connection_deleted, body_not_json,
+  // invalid_event or failed.
+  string outcome = 4;
+  // The event the run wrote or found; empty when it wrote none.
+  string event_id = 5;
+  // The transform's own reason for a drop.
+  string reason = 6;
+  // What failed, for a transform that failed or a store that did.
+  string error = 7;
+  google.protobuf.Duration duration = 8;
+  google.protobuf.Timestamp finished_at = 9;
+  // Who asked for the replay the run ran; empty for the sender's message.
+  string actor = 10;
+}
+
+message ListConnectionDeliveriesRequest {
+  string connection_id = 1;
+  // Only the deliveries in this state; unspecified lists every state.
+  ConnectionDeliveryState state = 2;
+  // The most deliveries in one page; zero lets the server choose.
+  int32 page_size = 3;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 4;
+}
+
+message ListConnectionDeliveriesResponse {
+  repeated ConnectionDelivery deliveries = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message GetConnectionDeliveryRequest {
+  string id = 1;
+}
+
+message GetConnectionDeliveryResponse {
+  ConnectionDelivery delivery = 1;
+  repeated ConnectionDeliveryRun runs = 2;
+}
+
+message ReplayConnectionDeliveryRequest {
+  string id = 1;
+  string request_key = 2;
+}
+
+message ReplayConnectionDeliveryResponse {
+  // The delivery as the replay left it: received, its replays counted.
+  ConnectionDelivery delivery = 1;
 }
