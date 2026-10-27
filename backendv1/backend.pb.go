@@ -104,7 +104,13 @@ type HandshakeResponse struct {
 	// What the program can do beyond its protocol's required calls, in the
 	// words its type's protocol defines. A type that defines none leaves it
 	// empty.
-	Capabilities  []string `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty"`
+	Capabilities []string `protobuf:"bytes,4,rep,name=capabilities,proto3" json:"capabilities,omitempty"`
+	// An opaque id the program makes at random when it starts and keeps until
+	// it exits, the same on every connection. A caller that reconnects and
+	// gets the id it had before reached the same process, which kept its
+	// state; another id is a program that restarted. An empty id is unknown,
+	// and the caller treats it as a restart. Optional.
+	RunId         string `protobuf:"bytes,5,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -167,6 +173,13 @@ func (x *HandshakeResponse) GetCapabilities() []string {
 	return nil
 }
 
+func (x *HandshakeResponse) GetRunId() string {
+	if x != nil {
+		return x.RunId
+	}
+	return ""
+}
+
 var File_toshi_backend_v1_backend_proto protoreflect.FileDescriptor
 
 const file_toshi_backend_v1_backend_proto_rawDesc = "" +
@@ -174,12 +187,13 @@ const file_toshi_backend_v1_backend_proto_rawDesc = "" +
 	"\x1etoshi/backend/v1/backend.proto\x12\x10toshi.backend.v1\"b\n" +
 	"\x10HandshakeRequest\x12!\n" +
 	"\fbackend_type\x18\x01 \x01(\tR\vbackendType\x12+\n" +
-	"\x11protocol_versions\x18\x02 \x03(\rR\x10protocolVersions\"\x9b\x01\n" +
+	"\x11protocol_versions\x18\x02 \x03(\rR\x10protocolVersions\"\xb2\x01\n" +
 	"\x11HandshakeResponse\x12!\n" +
 	"\fbackend_type\x18\x01 \x01(\tR\vbackendType\x12+\n" +
 	"\x11protocol_versions\x18\x02 \x03(\rR\x10protocolVersions\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\"\n" +
-	"\fcapabilities\x18\x04 \x03(\tR\fcapabilities2f\n" +
+	"\fcapabilities\x18\x04 \x03(\tR\fcapabilities\x12\x15\n" +
+	"\x06run_id\x18\x05 \x01(\tR\x05runId2f\n" +
 	"\x0eBackendService\x12T\n" +
 	"\tHandshake\x12\".toshi.backend.v1.HandshakeRequest\x1a#.toshi.backend.v1.HandshakeResponseB Z\x1ego.toshicloud.io/api/backendv1b\x06proto3"
 

@@ -26,7 +26,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/backend/v1/backend.proto.
  */
 export const file_toshi_backend_v1_backend: GenFile = /*@__PURE__*/
-  fileDesc("Ch50b3NoaS9iYWNrZW5kL3YxL2JhY2tlbmQucHJvdG8SEHRvc2hpLmJhY2tlbmQudjEiQwoQSGFuZHNoYWtlUmVxdWVzdBIUCgxiYWNrZW5kX3R5cGUYASABKAkSGQoRcHJvdG9jb2xfdmVyc2lvbnMYAiADKA0iaAoRSGFuZHNoYWtlUmVzcG9uc2USFAoMYmFja2VuZF90eXBlGAEgASgJEhkKEXByb3RvY29sX3ZlcnNpb25zGAIgAygNEgwKBG5hbWUYAyABKAkSFAoMY2FwYWJpbGl0aWVzGAQgAygJMmYKDkJhY2tlbmRTZXJ2aWNlElQKCUhhbmRzaGFrZRIiLnRvc2hpLmJhY2tlbmQudjEuSGFuZHNoYWtlUmVxdWVzdBojLnRvc2hpLmJhY2tlbmQudjEuSGFuZHNoYWtlUmVzcG9uc2VCIFoeZ28udG9zaGljbG91ZC5pby9hcGkvYmFja2VuZHYxYgZwcm90bzM");
+  fileDesc("Ch50b3NoaS9iYWNrZW5kL3YxL2JhY2tlbmQucHJvdG8SEHRvc2hpLmJhY2tlbmQudjEiQwoQSGFuZHNoYWtlUmVxdWVzdBIUCgxiYWNrZW5kX3R5cGUYASABKAkSGQoRcHJvdG9jb2xfdmVyc2lvbnMYAiADKA0ieAoRSGFuZHNoYWtlUmVzcG9uc2USFAoMYmFja2VuZF90eXBlGAEgASgJEhkKEXByb3RvY29sX3ZlcnNpb25zGAIgAygNEgwKBG5hbWUYAyABKAkSFAoMY2FwYWJpbGl0aWVzGAQgAygJEg4KBnJ1bl9pZBgFIAEoCTJmCg5CYWNrZW5kU2VydmljZRJUCglIYW5kc2hha2USIi50b3NoaS5iYWNrZW5kLnYxLkhhbmRzaGFrZVJlcXVlc3QaIy50b3NoaS5iYWNrZW5kLnYxLkhhbmRzaGFrZVJlc3BvbnNlQiBaHmdvLnRvc2hpY2xvdWQuaW8vYXBpL2JhY2tlbmR2MWIGcHJvdG8z");
 
 /**
  * @generated from message toshi.backend.v1.HandshakeRequest
@@ -108,6 +108,17 @@ export type HandshakeResponse = Message<"toshi.backend.v1.HandshakeResponse"> & 
    * @generated from field: repeated string capabilities = 4;
    */
   capabilities: string[];
+
+  /**
+   * An opaque id the program makes at random when it starts and keeps until
+   * it exits, the same on every connection. A caller that reconnects and
+   * gets the id it had before reached the same process, which kept its
+   * state; another id is a program that restarted. An empty id is unknown,
+   * and the caller treats it as a restart. Optional.
+   *
+   * @generated from field: string run_id = 5;
+   */
+  runId: string;
 };
 
 /**
@@ -145,6 +156,17 @@ export type HandshakeResponseJson = {
    * @generated from field: repeated string capabilities = 4;
    */
   capabilities?: string[];
+
+  /**
+   * An opaque id the program makes at random when it starts and keeps until
+   * it exits, the same on every connection. A caller that reconnects and
+   * gets the id it had before reached the same process, which kept its
+   * state; another id is a program that restarted. An empty id is unknown,
+   * and the caller treats it as a restart. Optional.
+   *
+   * @generated from field: string run_id = 5;
+   */
+  runId?: string;
 };
 
 /**

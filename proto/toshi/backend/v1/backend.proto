@@ -47,4 +47,10 @@ message HandshakeResponse {
   // words its type's protocol defines. A type that defines none leaves it
   // empty.
   repeated string capabilities = 4;
+  // An opaque id the program makes at random when it starts and keeps until
+  // it exits, the same on every connection. A caller that reconnects and
+  // gets the id it had before reached the same process, which kept its
+  // state; another id is a program that restarted. An empty id is unknown,
+  // and the caller treats it as a restart. Optional.
+  string run_id = 5;
 }
