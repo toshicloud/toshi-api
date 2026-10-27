@@ -462,6 +462,11 @@ message ServiceSpec {
   // unset for an always-on service. Set by the server; ignored in a
   // request.
   google.protobuf.Timestamp awake_until = 10;
+  // The digest the current revision's container_image named when the
+  // revision was made, "sha256:<hex>", and empty for a recipe without one:
+  // every run of the revision pulls it, a retry, a wake and a new VM
+  // included. Set by the server; ignored in a request.
+  string container_image_digest = 11;
 }
 
 // StateVolumeSpec is the state volume a service is created with: it is

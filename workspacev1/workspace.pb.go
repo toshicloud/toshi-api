@@ -2492,9 +2492,14 @@ type ServiceSpec struct {
 	// Until when a started on-demand service stays awake with no hold;
 	// unset for an always-on service. Set by the server; ignored in a
 	// request.
-	AwakeUntil    *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=awake_until,json=awakeUntil,proto3" json:"awake_until,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	AwakeUntil *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=awake_until,json=awakeUntil,proto3" json:"awake_until,omitempty"`
+	// The digest the current revision's container_image named when the
+	// revision was made, "sha256:<hex>", and empty for a recipe without one:
+	// every run of the revision pulls it, a retry, a wake and a new VM
+	// included. Set by the server; ignored in a request.
+	ContainerImageDigest string `protobuf:"bytes,11,opt,name=container_image_digest,json=containerImageDigest,proto3" json:"container_image_digest,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *ServiceSpec) Reset() {
@@ -2595,6 +2600,13 @@ func (x *ServiceSpec) GetAwakeUntil() *timestamppb.Timestamp {
 		return x.AwakeUntil
 	}
 	return nil
+}
+
+func (x *ServiceSpec) GetContainerImageDigest() string {
+	if x != nil {
+		return x.ContainerImageDigest
+	}
+	return ""
 }
 
 // StateVolumeSpec is the state volume a service is created with: it is
@@ -8070,7 +8082,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x0fstate_volume_id\x18\x04 \x01(\tR\rstateVolumeId\x12'\n" +
 	"\x0fcontainer_image\x18\x05 \x01(\tR\x0econtainerImage\x124\n" +
 	"\x16container_image_digest\x18\x06 \x01(\tR\x14containerImageDigest\x12:\n" +
-	"\x19container_registry_secret\x18\a \x01(\tR\x17containerRegistrySecret\"\x94\x03\n" +
+	"\x19container_registry_secret\x18\a \x01(\tR\x17containerRegistrySecret\"\xca\x03\n" +
 	"\vServiceSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x123\n" +
 	"\x04mode\x18\x02 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\x12\x1a\n" +
@@ -8083,7 +8095,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bsleeping\x18\t \x01(\bR\bsleeping\x12;\n" +
 	"\vawake_until\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"awakeUntil\"7\n" +
+	"awakeUntil\x124\n" +
+	"\x16container_image_digest\x18\v \x01(\tR\x14containerImageDigest\"7\n" +
 	"\x0fStateVolumeSpec\x12$\n" +
 	"\x0esize_cap_bytes\x18\x01 \x01(\x03R\fsizeCapBytes\"\x9f\x01\n" +
 	"\aCommand\x12\x12\n" +
