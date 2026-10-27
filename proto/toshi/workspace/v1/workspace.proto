@@ -665,7 +665,7 @@ message WaitOperationResponse {
 
 // EventType is the closed set of event types. Built-in event names are
 // reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
-// github.* and webhook.*.
+// takeover.*, spend.*, egress.*, host.*, github.* and webhook.*.
 enum EventType {
   EVENT_TYPE_UNSPECIFIED = 0;
   // A workload was created. Name: "<kind>.created".

@@ -724,7 +724,14 @@ type Job struct {
 	// assignment mints a workload token or receives secrets, and a new
 	// assignment re-resolves it; a Workspace API job's is its
 	// workload's.
-	Environment   string `protobuf:"bytes,47,opt,name=environment,proto3" json:"environment,omitempty"`
+	Environment string `protobuf:"bytes,47,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The kind of provider that created instance_id, as the host's agent
+	// reported it with the instance: "container", "fake", "qemu" or "vz".
+	// It stays with the attempt when the host's agent later reports another
+	// kind (Host.provider). Empty while the job has no instance, for a job
+	// whose agent sent none or recorded before the field, and for a cloud
+	// host's job.
+	Provider      string `protobuf:"bytes,48,opt,name=provider,proto3" json:"provider,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1084,6 +1091,13 @@ func (x *Job) GetProject() string {
 func (x *Job) GetEnvironment() string {
 	if x != nil {
 		return x.Environment
+	}
+	return ""
+}
+
+func (x *Job) GetProvider() string {
+	if x != nil {
+		return x.Provider
 	}
 	return ""
 }
@@ -15524,7 +15538,7 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xe8\x0e\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x84\x0f\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
@@ -15587,7 +15601,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\vworkload_id\x18- \x01(\tR\n" +
 	"workloadId\x12\x18\n" +
 	"\aproject\x18. \x01(\tR\aproject\x12 \n" +
-	"\venvironment\x18/ \x01(\tR\venvironment\"\xee\x01\n" +
+	"\venvironment\x18/ \x01(\tR\venvironment\x12\x1a\n" +
+	"\bprovider\x180 \x01(\tR\bprovider\"\xee\x01\n" +
 	"\bJobCache\x12\x16\n" +
 	"\x06attach\x18\x01 \x01(\tR\x06attach\x12'\n" +
 	"\x0fbase_generation\x18\x02 \x01(\x03R\x0ebaseGeneration\x12\x1d\n" +

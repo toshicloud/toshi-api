@@ -333,6 +333,12 @@ message HostJob {
   // assignment re-resolves it; a Workspace API job's is its
   // workload's.
   string environment = 46;
+  // The kind of provider that created instance_id, as the host's agent
+  // reported it with the instance: "container", "fake", "qemu" or "vz".
+  // It stays with the attempt when the host's agent later reports another
+  // kind. Empty while the job has no instance, for a job whose agent sent
+  // none or recorded before the field, and for a cloud host's job.
+  string provider = 47;
 }
 
 // HostJobState is where a host job is in its life cycle.

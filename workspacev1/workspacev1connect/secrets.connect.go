@@ -80,15 +80,24 @@ type SecretServiceClient interface {
 	// shared name set in an environment's set, or an environment's name set
 	// in the shared set, fails with FAILED_PRECONDITION. Two environments'
 	// sets may hold the same name.
+	//
+	// With own the key is the caller's own, set apart from the environment's
+	// set, which need not exist; a call that acts for no person fails with
+	// FAILED_PRECONDITION. A person's own names follow the same rule among
+	// themselves, and a name may not be both someone's own and not: either
+	// fails with FAILED_PRECONDITION. Two people may own the same name.
 	PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error)
-	// DeleteSecret removes the key and every version of it.
+	// DeleteSecret removes the key and every version of it: with own the
+	// caller's own key, with owner that person's.
 	DeleteSecret(context.Context, *connect.Request[workspacev1.DeleteSecretRequest]) (*connect.Response[workspacev1.DeleteSecretResponse], error)
 	// ListSecrets returns the set's keys by name, each with its newest
-	// version.
+	// version, and every person's own keys of the same place beside them,
+	// each with its owner.
 	//
 	// A page holds 100 keys when page_size is zero, and 1000 at most.
 	ListSecrets(context.Context, *connect.Request[workspacev1.ListSecretsRequest]) (*connect.Response[workspacev1.ListSecretsResponse], error)
-	// ListSecretVersions returns the key's versions, oldest first.
+	// ListSecretVersions returns the key's versions, oldest first: with own
+	// the caller's own key's, with owner that person's.
 	//
 	// A page holds 100 versions when page_size is zero, and 1000 at most.
 	ListSecretVersions(context.Context, *connect.Request[workspacev1.ListSecretVersionsRequest]) (*connect.Response[workspacev1.ListSecretVersionsResponse], error)
@@ -258,15 +267,24 @@ type SecretServiceHandler interface {
 	// shared name set in an environment's set, or an environment's name set
 	// in the shared set, fails with FAILED_PRECONDITION. Two environments'
 	// sets may hold the same name.
+	//
+	// With own the key is the caller's own, set apart from the environment's
+	// set, which need not exist; a call that acts for no person fails with
+	// FAILED_PRECONDITION. A person's own names follow the same rule among
+	// themselves, and a name may not be both someone's own and not: either
+	// fails with FAILED_PRECONDITION. Two people may own the same name.
 	PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error)
-	// DeleteSecret removes the key and every version of it.
+	// DeleteSecret removes the key and every version of it: with own the
+	// caller's own key, with owner that person's.
 	DeleteSecret(context.Context, *connect.Request[workspacev1.DeleteSecretRequest]) (*connect.Response[workspacev1.DeleteSecretResponse], error)
 	// ListSecrets returns the set's keys by name, each with its newest
-	// version.
+	// version, and every person's own keys of the same place beside them,
+	// each with its owner.
 	//
 	// A page holds 100 keys when page_size is zero, and 1000 at most.
 	ListSecrets(context.Context, *connect.Request[workspacev1.ListSecretsRequest]) (*connect.Response[workspacev1.ListSecretsResponse], error)
-	// ListSecretVersions returns the key's versions, oldest first.
+	// ListSecretVersions returns the key's versions, oldest first: with own
+	// the caller's own key's, with owner that person's.
 	//
 	// A page holds 100 versions when page_size is zero, and 1000 at most.
 	ListSecretVersions(context.Context, *connect.Request[workspacev1.ListSecretVersionsRequest]) (*connect.Response[workspacev1.ListSecretVersionsResponse], error)

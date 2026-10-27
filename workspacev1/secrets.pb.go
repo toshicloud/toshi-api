@@ -156,8 +156,16 @@ type Secret struct {
 	// The newest version, from 1.
 	Version int64 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
 	// The newest version's size in bytes.
-	Size          int64                  `protobuf:"varint,3,opt,name=size,proto3" json:"size,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Size      int64                  `protobuf:"varint,3,opt,name=size,proto3" json:"size,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// The GitHub user id of the person whose own key it is; empty for a key
+	// of the set.
+	Owner string `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
+	// The key is the caller's own.
+	Mine bool `protobuf:"varint,6,opt,name=mine,proto3" json:"mine,omitempty"`
+	// The key's owner holds no role in the workspace any more: no workload
+	// receives it, and it stays until it is deleted.
+	OwnerLeft     bool `protobuf:"varint,7,opt,name=owner_left,json=ownerLeft,proto3" json:"owner_left,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -218,6 +226,27 @@ func (x *Secret) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *Secret) GetOwner() string {
+	if x != nil {
+		return x.Owner
+	}
+	return ""
+}
+
+func (x *Secret) GetMine() bool {
+	if x != nil {
+		return x.Mine
+	}
+	return false
+}
+
+func (x *Secret) GetOwnerLeft() bool {
+	if x != nil {
+		return x.OwnerLeft
+	}
+	return false
 }
 
 // SecretVersion is one stored version of a key, without its value.
@@ -663,8 +692,10 @@ type PutSecretRequest struct {
 	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
 	// An environment variable's name: a letter or _, then letters, digits or
 	// _, at most 128 characters.
-	Name          string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Value         []byte `protobuf:"bytes,5,opt,name=value,proto3" json:"value,omitempty"`
+	Name  string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Value []byte `protobuf:"bytes,5,opt,name=value,proto3" json:"value,omitempty"`
+	// The key is the caller's own.
+	Own           bool `protobuf:"varint,6,opt,name=own,proto3" json:"own,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -734,6 +765,13 @@ func (x *PutSecretRequest) GetValue() []byte {
 	return nil
 }
 
+func (x *PutSecretRequest) GetOwn() bool {
+	if x != nil {
+		return x.Own
+	}
+	return false
+}
+
 type PutSecretResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Secret        *Secret                `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
@@ -779,11 +817,15 @@ func (x *PutSecretResponse) GetSecret() *Secret {
 }
 
 type DeleteSecretRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared        bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
-	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	Name        string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// The caller's own key; not with owner.
+	Own bool `protobuf:"varint,5,opt,name=own,proto3" json:"own,omitempty"`
+	// The own key of the person with this GitHub user id; not with own.
+	Owner         string `protobuf:"bytes,6,opt,name=owner,proto3" json:"owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -842,6 +884,20 @@ func (x *DeleteSecretRequest) GetShared() bool {
 func (x *DeleteSecretRequest) GetName() string {
 	if x != nil {
 		return x.Name
+	}
+	return ""
+}
+
+func (x *DeleteSecretRequest) GetOwn() bool {
+	if x != nil {
+		return x.Own
+	}
+	return false
+}
+
+func (x *DeleteSecretRequest) GetOwner() string {
+	if x != nil {
+		return x.Owner
 	}
 	return ""
 }
@@ -1022,7 +1078,11 @@ type ListSecretVersionsRequest struct {
 	// The most versions in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,5,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
-	PageToken     string `protobuf:"bytes,6,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageToken string `protobuf:"bytes,6,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// The caller's own key; not with owner.
+	Own bool `protobuf:"varint,7,opt,name=own,proto3" json:"own,omitempty"`
+	// The own key of the person with this GitHub user id; not with own.
+	Owner         string `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1095,6 +1155,20 @@ func (x *ListSecretVersionsRequest) GetPageSize() int32 {
 func (x *ListSecretVersionsRequest) GetPageToken() string {
 	if x != nil {
 		return x.PageToken
+	}
+	return ""
+}
+
+func (x *ListSecretVersionsRequest) GetOwn() bool {
+	if x != nil {
+		return x.Own
+	}
+	return false
+}
+
+func (x *ListSecretVersionsRequest) GetOwner() string {
+	if x != nil {
+		return x.Owner
 	}
 	return ""
 }
@@ -1525,13 +1599,17 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\x129\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x85\x01\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xce\x01\n" +
 	"\x06Secret\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\x03R\aversion\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\x03R\x04size\x129\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"x\n" +
+	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x14\n" +
+	"\x05owner\x18\x05 \x01(\tR\x05owner\x12\x12\n" +
+	"\x04mine\x18\x06 \x01(\bR\x04mine\x12\x1d\n" +
+	"\n" +
+	"owner_left\x18\a \x01(\bR\townerLeft\"x\n" +
 	"\rSecretVersion\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\x03R\aversion\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\x03R\x04size\x129\n" +
@@ -1560,20 +1638,23 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\"\x19\n" +
-	"\x17DeleteSecretSetResponse\"\x90\x01\n" +
+	"\x17DeleteSecretSetResponse\"\xa2\x01\n" +
 	"\x10PutSecretRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
-	"\x05value\x18\x05 \x01(\fR\x05value\"G\n" +
+	"\x05value\x18\x05 \x01(\fR\x05value\x12\x10\n" +
+	"\x03own\x18\x06 \x01(\bR\x03own\"G\n" +
 	"\x11PutSecretResponse\x122\n" +
-	"\x06secret\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.SecretR\x06secret\"}\n" +
+	"\x06secret\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.SecretR\x06secret\"\xa5\x01\n" +
 	"\x13DeleteSecretRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\"\x16\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x10\n" +
+	"\x03own\x18\x05 \x01(\bR\x03own\x12\x14\n" +
+	"\x05owner\x18\x06 \x01(\tR\x05owner\"\x16\n" +
 	"\x14DeleteSecretResponse\"\xa4\x01\n" +
 	"\x12ListSecretsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
@@ -1584,7 +1665,7 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"page_token\x18\x05 \x01(\tR\tpageToken\"s\n" +
 	"\x13ListSecretsResponse\x124\n" +
 	"\asecrets\x18\x01 \x03(\v2\x1a.toshi.workspace.v1.SecretR\asecrets\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xbf\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xe7\x01\n" +
 	"\x19ListSecretVersionsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
@@ -1592,7 +1673,9 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1b\n" +
 	"\tpage_size\x18\x05 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\x06 \x01(\tR\tpageToken\"\x83\x01\n" +
+	"page_token\x18\x06 \x01(\tR\tpageToken\x12\x10\n" +
+	"\x03own\x18\a \x01(\bR\x03own\x12\x14\n" +
+	"\x05owner\x18\b \x01(\tR\x05owner\"\x83\x01\n" +
 	"\x1aListSecretVersionsResponse\x12=\n" +
 	"\bversions\x18\x01 \x03(\v2!.toshi.workspace.v1.SecretVersionR\bversions\x12&\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xc0\x01\n" +

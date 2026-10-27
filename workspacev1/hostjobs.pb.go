@@ -1152,7 +1152,13 @@ type HostJob struct {
 	// assignment mints a workload token or receives secrets, and a new
 	// assignment re-resolves it; a Workspace API job's is its
 	// workload's.
-	Environment   string `protobuf:"bytes,46,opt,name=environment,proto3" json:"environment,omitempty"`
+	Environment string `protobuf:"bytes,46,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The kind of provider that created instance_id, as the host's agent
+	// reported it with the instance: "container", "fake", "qemu" or "vz".
+	// It stays with the attempt when the host's agent later reports another
+	// kind. Empty while the job has no instance, for a job whose agent sent
+	// none or recorded before the field, and for a cloud host's job.
+	Provider      string `protobuf:"bytes,47,opt,name=provider,proto3" json:"provider,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1505,6 +1511,13 @@ func (x *HostJob) GetProject() string {
 func (x *HostJob) GetEnvironment() string {
 	if x != nil {
 		return x.Environment
+	}
+	return ""
+}
+
+func (x *HostJob) GetProvider() string {
+	if x != nil {
+		return x.Provider
 	}
 	return ""
 }
@@ -2052,7 +2065,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x17StopHostJobDebugRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
 	"\x18StopHostJobDebugResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xe8\x0e\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\x84\x0f\n" +
 	"\aHostJob\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1e\n" +
 	"\n" +
@@ -2114,7 +2127,8 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\vworkload_id\x18, \x01(\tR\n" +
 	"workloadId\x12\x18\n" +
 	"\aproject\x18- \x01(\tR\aproject\x12 \n" +
-	"\venvironment\x18. \x01(\tR\venvironment\"\xf7\x02\n" +
+	"\venvironment\x18. \x01(\tR\venvironment\x12\x1a\n" +
+	"\bprovider\x18/ \x01(\tR\bprovider\"\xf7\x02\n" +
 	"\x17HostJobTelemetrySummary\x12\x1d\n" +
 	"\n" +
 	"oom_killed\x18\x01 \x01(\bR\toomKilled\x12*\n" +

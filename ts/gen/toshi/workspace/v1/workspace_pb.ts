@@ -5890,7 +5890,7 @@ export const ServiceModeSchema: GenEnum<ServiceMode, ServiceModeJson> = /*@__PUR
 /**
  * EventType is the closed set of event types. Built-in event names are
  * reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
- * github.* and webhook.*.
+ * takeover.*, spend.*, egress.*, host.*, github.* and webhook.*.
  *
  * @generated from enum toshi.workspace.v1.EventType
  */
@@ -5969,7 +5969,7 @@ export enum EventType {
 /**
  * EventType is the closed set of event types. Built-in event names are
  * reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
- * github.* and webhook.*.
+ * takeover.*, spend.*, egress.*, host.*, github.* and webhook.*.
  *
  * @generated from enum toshi.workspace.v1.EventType
  */
