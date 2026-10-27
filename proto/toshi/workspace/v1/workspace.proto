@@ -664,7 +664,8 @@ message WaitOperationResponse {
 }
 
 // EventType is the closed set of event types. Built-in event names are
-// reserved: job.*, sandbox.*, run.*, service.*, recording.* and agent.*.
+// reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
+// github.* and webhook.*.
 enum EventType {
   EVENT_TYPE_UNSPECIFIED = 0;
   // A workload was created. Name: "<kind>.created".
@@ -683,6 +684,10 @@ enum EventType {
   EVENT_TYPE_EMITTED = 7;
   // A run's recording is ready. Name: "recording.ready".
   EVENT_TYPE_RECORDING_READY = 8;
+  // An event a connection received, about no workload. Name:
+  // "<kind>.<event>.<action>", the connection's kind and what the sender
+  // said happened, such as "github.pull_request.opened".
+  EVENT_TYPE_CONNECTION = 9;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -695,6 +700,7 @@ message Event {
   EventType type = 2;
   // A built-in name such as "job.state_changed", or the name a guest gave.
   string name = 3;
+  // The workload the event is about; empty for CONNECTION.
   string workload_id = 4;
   google.protobuf.Timestamp time = 5;
   // Resume after this event.
@@ -714,11 +720,17 @@ message Event {
     EmittedEvent emitted = 9;
     // For RECORDING_READY.
     RecordingEvent recording = 10;
+    // For CONNECTION.
+    ConnectionEvent connection = 17;
   }
-  // The project the workload belongs to; set on every event.
+  // The project the workload or the connection's event belongs to; set on
+  // every event.
   string project = 11;
-  // The environment the workload belongs to; set on every event.
+  // The environment the workload or the connection's event belongs to; set
+  // on every event.
   string environment = 12;
+  // The connection that received a CONNECTION event; empty for the others.
+  string connection_id = 16;
 }
 
 // ExecutionEvent is an execution starting or ending.
@@ -731,6 +743,12 @@ message ExecutionEvent {
 
 // EmittedEvent is an event a guest emitted.
 message EmittedEvent {
+  bytes data = 1;
+}
+
+// ConnectionEvent is an event a connection received.
+message ConnectionEvent {
+  // The body as the sender sent it.
   bytes data = 1;
 }
 
