@@ -22,7 +22,8 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 //
 // The calls take no request_key: attaching a volume to the workload it is
 // attached to, while no run holds it, and detaching a detached volume
-// return it as it is.
+// return it as it is. RestoreVolume sent twice records two versions, each
+// a copy of the one it names.
 service VolumeService {
   // ListVolumes returns the project's volumes that are not deleted,
   // ordered by name.
@@ -58,6 +59,28 @@ service VolumeService {
     option (toshi.permission) = "volumes.write";
     option (toshi.scope) = "project";
   }
+
+  // ListVolumeVersions returns a state volume's saved versions, newest
+  // first. A run that releases the volume saves its data as the next
+  // version when the workspace has object storage.
+  //
+  // A page holds 100 versions when page_size is zero, and 1000 at most.
+  rpc ListVolumeVersions(ListVolumeVersionsRequest) returns (ListVolumeVersionsResponse) {
+    option (toshi.permission) = "volumes.read";
+    option (toshi.scope) = "project";
+  }
+
+  // RestoreVolume copies one of a state volume's versions as its next
+  // version, so the next run that mounts the volume starts from that data.
+  // The earlier versions are kept, and the new one names the version it was
+  // copied from. A volume a run holds fails with FAILED_PRECONDITION, as
+  // does a volume that is not a state volume. A version the volume does
+  // not have is NOT_FOUND.
+  rpc RestoreVolume(RestoreVolumeRequest) returns (RestoreVolumeResponse) {
+    option (toshi.permission) = "volumes.write";
+    option (toshi.scope) = "project";
+    option (toshi.audit) = {action: "volume.restored"};
+  }
 }
 
 // VolumeMode is what a volume holds and how runs use it.
@@ -91,6 +114,24 @@ message Volume {
   // The service or sandbox it is attached to; empty when it is attached to
   // none.
   string attached_workload_id = 8;
+  // The number of its newest saved version; zero when it has none.
+  int64 latest_version = 9;
+  // When its newest version was saved; unset when it has none.
+  google.protobuf.Timestamp latest_version_time = 10;
+}
+
+// VolumeVersion is a saved copy of a state volume's data.
+message VolumeVersion {
+  // One higher than the volume's previous version; the first is 1.
+  int64 number = 1;
+  google.protobuf.Timestamp create_time = 2;
+  // The length of the saved disk image, in bytes.
+  int64 size_bytes = 3;
+  // The hex SHA-256 of the saved disk image.
+  string sha256 = 4;
+  // The version RestoreVolume copied this one from; zero for one a run
+  // saved.
+  int64 restored_from = 5;
 }
 
 message ListVolumesRequest {
@@ -125,4 +166,32 @@ message DetachVolumeRequest {
 
 message DetachVolumeResponse {
   Volume volume = 1;
+}
+
+message ListVolumeVersionsRequest {
+  string project = 1;
+  string volume_id = 2;
+  // The most versions in one page; zero lets the server choose.
+  int32 page_size = 3;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 4;
+}
+
+message ListVolumeVersionsResponse {
+  repeated VolumeVersion versions = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message RestoreVolumeRequest {
+  string project = 1;
+  string volume_id = 2;
+  // The number of the version to copy.
+  int64 version = 3;
+}
+
+message RestoreVolumeResponse {
+  // The version the restore recorded.
+  VolumeVersion version = 1;
+  Volume volume = 2;
 }

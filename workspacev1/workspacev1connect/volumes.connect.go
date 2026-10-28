@@ -42,6 +42,12 @@ const (
 	// VolumeServiceDetachVolumeProcedure is the fully-qualified name of the VolumeService's
 	// DetachVolume RPC.
 	VolumeServiceDetachVolumeProcedure = "/toshi.workspace.v1.VolumeService/DetachVolume"
+	// VolumeServiceListVolumeVersionsProcedure is the fully-qualified name of the VolumeService's
+	// ListVolumeVersions RPC.
+	VolumeServiceListVolumeVersionsProcedure = "/toshi.workspace.v1.VolumeService/ListVolumeVersions"
+	// VolumeServiceRestoreVolumeProcedure is the fully-qualified name of the VolumeService's
+	// RestoreVolume RPC.
+	VolumeServiceRestoreVolumeProcedure = "/toshi.workspace.v1.VolumeService/RestoreVolume"
 )
 
 // VolumeServiceClient is a client for the toshi.workspace.v1.VolumeService service.
@@ -69,6 +75,19 @@ type VolumeServiceClient interface {
 	// so does deleting a service, which is refused while a run holds the
 	// volume; neither deletes the volume.
 	DetachVolume(context.Context, *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error)
+	// ListVolumeVersions returns a state volume's saved versions, newest
+	// first. A run that releases the volume saves its data as the next
+	// version when the workspace has object storage.
+	//
+	// A page holds 100 versions when page_size is zero, and 1000 at most.
+	ListVolumeVersions(context.Context, *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error)
+	// RestoreVolume copies one of a state volume's versions as its next
+	// version, so the next run that mounts the volume starts from that data.
+	// The earlier versions are kept, and the new one names the version it was
+	// copied from. A volume a run holds fails with FAILED_PRECONDITION, as
+	// does a volume that is not a state volume. A version the volume does
+	// not have is NOT_FOUND.
+	RestoreVolume(context.Context, *connect.Request[workspacev1.RestoreVolumeRequest]) (*connect.Response[workspacev1.RestoreVolumeResponse], error)
 }
 
 // NewVolumeServiceClient constructs a client for the toshi.workspace.v1.VolumeService service. By
@@ -100,14 +119,28 @@ func NewVolumeServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(volumeServiceMethods.ByName("DetachVolume")),
 			connect.WithClientOptions(opts...),
 		),
+		listVolumeVersions: connect.NewClient[workspacev1.ListVolumeVersionsRequest, workspacev1.ListVolumeVersionsResponse](
+			httpClient,
+			baseURL+VolumeServiceListVolumeVersionsProcedure,
+			connect.WithSchema(volumeServiceMethods.ByName("ListVolumeVersions")),
+			connect.WithClientOptions(opts...),
+		),
+		restoreVolume: connect.NewClient[workspacev1.RestoreVolumeRequest, workspacev1.RestoreVolumeResponse](
+			httpClient,
+			baseURL+VolumeServiceRestoreVolumeProcedure,
+			connect.WithSchema(volumeServiceMethods.ByName("RestoreVolume")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // volumeServiceClient implements VolumeServiceClient.
 type volumeServiceClient struct {
-	listVolumes  *connect.Client[workspacev1.ListVolumesRequest, workspacev1.ListVolumesResponse]
-	attachVolume *connect.Client[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse]
-	detachVolume *connect.Client[workspacev1.DetachVolumeRequest, workspacev1.DetachVolumeResponse]
+	listVolumes        *connect.Client[workspacev1.ListVolumesRequest, workspacev1.ListVolumesResponse]
+	attachVolume       *connect.Client[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse]
+	detachVolume       *connect.Client[workspacev1.DetachVolumeRequest, workspacev1.DetachVolumeResponse]
+	listVolumeVersions *connect.Client[workspacev1.ListVolumeVersionsRequest, workspacev1.ListVolumeVersionsResponse]
+	restoreVolume      *connect.Client[workspacev1.RestoreVolumeRequest, workspacev1.RestoreVolumeResponse]
 }
 
 // ListVolumes calls toshi.workspace.v1.VolumeService.ListVolumes.
@@ -123,6 +156,16 @@ func (c *volumeServiceClient) AttachVolume(ctx context.Context, req *connect.Req
 // DetachVolume calls toshi.workspace.v1.VolumeService.DetachVolume.
 func (c *volumeServiceClient) DetachVolume(ctx context.Context, req *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error) {
 	return c.detachVolume.CallUnary(ctx, req)
+}
+
+// ListVolumeVersions calls toshi.workspace.v1.VolumeService.ListVolumeVersions.
+func (c *volumeServiceClient) ListVolumeVersions(ctx context.Context, req *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error) {
+	return c.listVolumeVersions.CallUnary(ctx, req)
+}
+
+// RestoreVolume calls toshi.workspace.v1.VolumeService.RestoreVolume.
+func (c *volumeServiceClient) RestoreVolume(ctx context.Context, req *connect.Request[workspacev1.RestoreVolumeRequest]) (*connect.Response[workspacev1.RestoreVolumeResponse], error) {
+	return c.restoreVolume.CallUnary(ctx, req)
 }
 
 // VolumeServiceHandler is an implementation of the toshi.workspace.v1.VolumeService service.
@@ -150,6 +193,19 @@ type VolumeServiceHandler interface {
 	// so does deleting a service, which is refused while a run holds the
 	// volume; neither deletes the volume.
 	DetachVolume(context.Context, *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error)
+	// ListVolumeVersions returns a state volume's saved versions, newest
+	// first. A run that releases the volume saves its data as the next
+	// version when the workspace has object storage.
+	//
+	// A page holds 100 versions when page_size is zero, and 1000 at most.
+	ListVolumeVersions(context.Context, *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error)
+	// RestoreVolume copies one of a state volume's versions as its next
+	// version, so the next run that mounts the volume starts from that data.
+	// The earlier versions are kept, and the new one names the version it was
+	// copied from. A volume a run holds fails with FAILED_PRECONDITION, as
+	// does a volume that is not a state volume. A version the volume does
+	// not have is NOT_FOUND.
+	RestoreVolume(context.Context, *connect.Request[workspacev1.RestoreVolumeRequest]) (*connect.Response[workspacev1.RestoreVolumeResponse], error)
 }
 
 // NewVolumeServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -177,6 +233,18 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(volumeServiceMethods.ByName("DetachVolume")),
 		connect.WithHandlerOptions(opts...),
 	)
+	volumeServiceListVolumeVersionsHandler := connect.NewUnaryHandler(
+		VolumeServiceListVolumeVersionsProcedure,
+		svc.ListVolumeVersions,
+		connect.WithSchema(volumeServiceMethods.ByName("ListVolumeVersions")),
+		connect.WithHandlerOptions(opts...),
+	)
+	volumeServiceRestoreVolumeHandler := connect.NewUnaryHandler(
+		VolumeServiceRestoreVolumeProcedure,
+		svc.RestoreVolume,
+		connect.WithSchema(volumeServiceMethods.ByName("RestoreVolume")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.VolumeService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case VolumeServiceListVolumesProcedure:
@@ -185,6 +253,10 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 			volumeServiceAttachVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceDetachVolumeProcedure:
 			volumeServiceDetachVolumeHandler.ServeHTTP(w, r)
+		case VolumeServiceListVolumeVersionsProcedure:
+			volumeServiceListVolumeVersionsHandler.ServeHTTP(w, r)
+		case VolumeServiceRestoreVolumeProcedure:
+			volumeServiceRestoreVolumeHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -204,4 +276,12 @@ func (UnimplementedVolumeServiceHandler) AttachVolume(context.Context, *connect.
 
 func (UnimplementedVolumeServiceHandler) DetachVolume(context.Context, *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.DetachVolume is not implemented"))
+}
+
+func (UnimplementedVolumeServiceHandler) ListVolumeVersions(context.Context, *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.ListVolumeVersions is not implemented"))
+}
+
+func (UnimplementedVolumeServiceHandler) RestoreVolume(context.Context, *connect.Request[workspacev1.RestoreVolumeRequest]) (*connect.Response[workspacev1.RestoreVolumeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.RestoreVolume is not implemented"))
 }
