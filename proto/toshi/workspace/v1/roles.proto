@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package toshi.workspace.v1;
 
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -86,6 +87,66 @@ service RoleService {
   rpc RevokeRole(RevokeRoleRequest) returns (RevokeRoleResponse) {
     option (toshi.permission) = "members.write";
     option (toshi.audit) = {target: "role:response.grant.role"};
+  }
+  // ListMembers returns the workspace's members, oldest first: the people
+  // a session opens the workspace for, with how and when each joined. A
+  // removed member is not listed.
+  //
+  // A page holds 100 members when page_size is zero, and 1000 at most.
+  rpc ListMembers(ListMembersRequest) returns (ListMembersResponse) {
+    option (toshi.permission) = "members.read";
+    option (toshi.scope) = "workspace";
+  }
+  // RemoveMember ends a person's membership and deletes every grant they
+  // hold in the workspace, at once; their sessions lose the workspace at
+  // their next call. Removing the workspace's last member fails with
+  // FAILED_PRECONDITION and a google.rpc.ErrorInfo detail with the reason
+  // LAST_MEMBER, and removing its last person who is an owner of the whole
+  // workspace with the reason LAST_OWNER; each names the person under the
+  // key "person". A person who is not a member fails with NOT_FOUND.
+  rpc RemoveMember(RemoveMemberRequest) returns (RemoveMemberResponse) {
+    option (toshi.permission) = "members.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "member.removed", target: "member:user_id"};
+  }
+  // CreateInvitation makes an invitation to join the workspace and returns
+  // its code, once: the control plane keeps only its hash. It is valid for
+  // ttl, seven days when unset, and 30 days at most. The note is free text,
+  // such as whom it is for, and is never matched against anyone.
+  rpc CreateInvitation(CreateInvitationRequest) returns (CreateInvitationResponse) {
+    option (toshi.permission) = "members.write";
+    option (toshi.scope) = "workspace";
+  }
+  // ListInvitations returns the workspace's invitations, newest first,
+  // accepted, revoked and expired ones included, never their codes.
+  //
+  // A page holds 100 invitations when page_size is zero, and 1000 at most.
+  rpc ListInvitations(ListInvitationsRequest) returns (ListInvitationsResponse) {
+    option (toshi.permission) = "members.read";
+    option (toshi.scope) = "workspace";
+  }
+  // RevokeInvitation ends an open invitation, so its code no longer works.
+  // An unknown id fails with NOT_FOUND, and one that is accepted, revoked
+  // or expired with FAILED_PRECONDITION.
+  rpc RevokeInvitation(RevokeInvitationRequest) returns (RevokeInvitationResponse) {
+    option (toshi.permission) = "members.write";
+    option (toshi.scope) = "workspace";
+  }
+
+  // AcceptInvitation makes the caller a member of the workspace whose
+  // invitation has the code, and an owner of it when the workspace has no
+  // person who owns the whole of it; it grants no other role. It is a
+  // person's call: a dashboard session or a person's access token makes it,
+  // without the Toshi-Workspace header and without any role, since the
+  // caller is not yet a member; a workspace token and the operator cannot.
+  // The permission named here is not checked. An unknown code fails with
+  // NOT_FOUND, one accepted, revoked or expired with FAILED_PRECONDITION,
+  // and a caller who is already a member with ALREADY_EXISTS, leaving the
+  // invitation open.
+  rpc AcceptInvitation(AcceptInvitationRequest) returns (AcceptInvitationResponse) {
+    option (toshi.permission) = "members.read";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "invitation.accepted", target: "invitation:response.invitation.id"};
   }
 }
 
@@ -235,4 +296,132 @@ message RevokeRoleRequest {
 // RevokeRoleResponse carries the deleted grant.
 message RevokeRoleResponse {
   RoleGrant grant = 1;
+}
+
+message ListMembersRequest {
+  // The most members in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+message ListMembersResponse {
+  repeated Member members = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+// MemberVia says how a person became a member.
+enum MemberVia {
+  MEMBER_VIA_UNSPECIFIED = 0;
+  // Signing in with GitHub as an administrator of one of the workspace's
+  // GitHub App installations.
+  MEMBER_VIA_GITHUB_ADMIN = 1;
+  // Accepting an invitation.
+  MEMBER_VIA_INVITATION = 2;
+  // Holding a role in the workspace when members came in.
+  MEMBER_VIA_MIGRATION = 3;
+}
+
+// Member is a person a session opens the workspace for.
+message Member {
+  // The person's user id, as grants name them.
+  string user_id = 1;
+  // The name and email address the person's latest sign-in reported;
+  // shown, never matched.
+  string name = 2;
+  string email = 3;
+  MemberVia via = 4;
+  google.protobuf.Timestamp added_at = 5;
+  // Who made the person a member: the inviter for an invitation, the
+  // system for a sign-in.
+  Subject added_by = 6;
+}
+
+message RemoveMemberRequest {
+  // The person's user id.
+  string user_id = 1;
+}
+
+// RemoveMemberResponse says how many grants went with the membership.
+message RemoveMemberResponse {
+  int32 grants_removed = 1;
+}
+
+message CreateInvitationRequest {
+  // Free text, such as whom the invitation is for; 200 characters at most.
+  string note = 1;
+  // How long the code is valid: seven days when unset, 30 days at most.
+  google.protobuf.Duration ttl = 2;
+}
+
+// CreateInvitationResponse carries the invitation and its code, shown
+// once.
+message CreateInvitationResponse {
+  Invitation invitation = 1;
+  // The code the invitee accepts; it is not shown again.
+  string code = 2;
+}
+
+// InvitationState says whether an invitation's code still works.
+enum InvitationState {
+  INVITATION_STATE_UNSPECIFIED = 0;
+  // Its code works until expires_at.
+  INVITATION_STATE_OPEN = 1;
+  INVITATION_STATE_ACCEPTED = 2;
+  INVITATION_STATE_REVOKED = 3;
+  INVITATION_STATE_EXPIRED = 4;
+}
+
+// Invitation is an invitation to join the workspace, never with its code.
+message Invitation {
+  // Invitation id, such as "inv-1a2b3c4d5e6f7a8b9c0d1e2f".
+  string id = 1;
+  string note = 2;
+  InvitationState state = 3;
+  google.protobuf.Timestamp created_at = 4;
+  Subject created_by = 5;
+  google.protobuf.Timestamp expires_at = 6;
+  // The user id of the person who accepted it, and when; empty until then.
+  string accepted_by = 7;
+  google.protobuf.Timestamp accepted_at = 8;
+  // When it was revoked, and by whom; empty unless revoked.
+  google.protobuf.Timestamp revoked_at = 9;
+  Subject revoked_by = 10;
+}
+
+message ListInvitationsRequest {
+  // The most invitations in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
+
+message ListInvitationsResponse {
+  repeated Invitation invitations = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message RevokeInvitationRequest {
+  // The invitation's id.
+  string id = 1;
+}
+
+// RevokeInvitationResponse carries the revoked invitation.
+message RevokeInvitationResponse {
+  Invitation invitation = 1;
+}
+
+message AcceptInvitationRequest {
+  // The code CreateInvitation returned.
+  string code = 1;
+}
+
+message AcceptInvitationResponse {
+  Invitation invitation = 1;
+  // The id of the workspace the caller is now a member of.
+  string workspace = 2;
+  // Whether the caller was made the workspace's owner.
+  bool owner = 3;
 }

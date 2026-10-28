@@ -10,6 +10,7 @@ import (
 	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -78,6 +79,120 @@ func (x SubjectKind) Number() protoreflect.EnumNumber {
 // Deprecated: Use SubjectKind.Descriptor instead.
 func (SubjectKind) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{0}
+}
+
+// MemberVia says how a person became a member.
+type MemberVia int32
+
+const (
+	MemberVia_MEMBER_VIA_UNSPECIFIED MemberVia = 0
+	// Signing in with GitHub as an administrator of one of the workspace's
+	// GitHub App installations.
+	MemberVia_MEMBER_VIA_GITHUB_ADMIN MemberVia = 1
+	// Accepting an invitation.
+	MemberVia_MEMBER_VIA_INVITATION MemberVia = 2
+	// Holding a role in the workspace when members came in.
+	MemberVia_MEMBER_VIA_MIGRATION MemberVia = 3
+)
+
+// Enum value maps for MemberVia.
+var (
+	MemberVia_name = map[int32]string{
+		0: "MEMBER_VIA_UNSPECIFIED",
+		1: "MEMBER_VIA_GITHUB_ADMIN",
+		2: "MEMBER_VIA_INVITATION",
+		3: "MEMBER_VIA_MIGRATION",
+	}
+	MemberVia_value = map[string]int32{
+		"MEMBER_VIA_UNSPECIFIED":  0,
+		"MEMBER_VIA_GITHUB_ADMIN": 1,
+		"MEMBER_VIA_INVITATION":   2,
+		"MEMBER_VIA_MIGRATION":    3,
+	}
+)
+
+func (x MemberVia) Enum() *MemberVia {
+	p := new(MemberVia)
+	*p = x
+	return p
+}
+
+func (x MemberVia) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (MemberVia) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_roles_proto_enumTypes[1].Descriptor()
+}
+
+func (MemberVia) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_roles_proto_enumTypes[1]
+}
+
+func (x MemberVia) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use MemberVia.Descriptor instead.
+func (MemberVia) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{1}
+}
+
+// InvitationState says whether an invitation's code still works.
+type InvitationState int32
+
+const (
+	InvitationState_INVITATION_STATE_UNSPECIFIED InvitationState = 0
+	// Its code works until expires_at.
+	InvitationState_INVITATION_STATE_OPEN     InvitationState = 1
+	InvitationState_INVITATION_STATE_ACCEPTED InvitationState = 2
+	InvitationState_INVITATION_STATE_REVOKED  InvitationState = 3
+	InvitationState_INVITATION_STATE_EXPIRED  InvitationState = 4
+)
+
+// Enum value maps for InvitationState.
+var (
+	InvitationState_name = map[int32]string{
+		0: "INVITATION_STATE_UNSPECIFIED",
+		1: "INVITATION_STATE_OPEN",
+		2: "INVITATION_STATE_ACCEPTED",
+		3: "INVITATION_STATE_REVOKED",
+		4: "INVITATION_STATE_EXPIRED",
+	}
+	InvitationState_value = map[string]int32{
+		"INVITATION_STATE_UNSPECIFIED": 0,
+		"INVITATION_STATE_OPEN":        1,
+		"INVITATION_STATE_ACCEPTED":    2,
+		"INVITATION_STATE_REVOKED":     3,
+		"INVITATION_STATE_EXPIRED":     4,
+	}
+)
+
+func (x InvitationState) Enum() *InvitationState {
+	p := new(InvitationState)
+	*p = x
+	return p
+}
+
+func (x InvitationState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InvitationState) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_roles_proto_enumTypes[2].Descriptor()
+}
+
+func (InvitationState) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_roles_proto_enumTypes[2]
+}
+
+func (x InvitationState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InvitationState.Descriptor instead.
+func (InvitationState) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{2}
 }
 
 // Role is a named set of permissions.
@@ -1064,11 +1179,831 @@ func (x *RevokeRoleResponse) GetGrant() *RoleGrant {
 	return nil
 }
 
+type ListMembersRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The most members in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMembersRequest) Reset() {
+	*x = ListMembersRequest{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMembersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMembersRequest) ProtoMessage() {}
+
+func (x *ListMembersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMembersRequest.ProtoReflect.Descriptor instead.
+func (*ListMembersRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ListMembersRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListMembersRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+type ListMembersResponse struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Members []*Member              `protobuf:"bytes,1,rep,name=members,proto3" json:"members,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMembersResponse) Reset() {
+	*x = ListMembersResponse{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMembersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMembersResponse) ProtoMessage() {}
+
+func (x *ListMembersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMembersResponse.ProtoReflect.Descriptor instead.
+func (*ListMembersResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *ListMembersResponse) GetMembers() []*Member {
+	if x != nil {
+		return x.Members
+	}
+	return nil
+}
+
+func (x *ListMembersResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
+// Member is a person a session opens the workspace for.
+type Member struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The person's user id, as grants name them.
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// The name and email address the person's latest sign-in reported;
+	// shown, never matched.
+	Name    string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Email   string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	Via     MemberVia              `protobuf:"varint,4,opt,name=via,proto3,enum=toshi.workspace.v1.MemberVia" json:"via,omitempty"`
+	AddedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=added_at,json=addedAt,proto3" json:"added_at,omitempty"`
+	// Who made the person a member: the inviter for an invitation, the
+	// system for a sign-in.
+	AddedBy       *Subject `protobuf:"bytes,6,opt,name=added_by,json=addedBy,proto3" json:"added_by,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Member) Reset() {
+	*x = Member{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Member) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Member) ProtoMessage() {}
+
+func (x *Member) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Member.ProtoReflect.Descriptor instead.
+func (*Member) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *Member) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *Member) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Member) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *Member) GetVia() MemberVia {
+	if x != nil {
+		return x.Via
+	}
+	return MemberVia_MEMBER_VIA_UNSPECIFIED
+}
+
+func (x *Member) GetAddedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.AddedAt
+	}
+	return nil
+}
+
+func (x *Member) GetAddedBy() *Subject {
+	if x != nil {
+		return x.AddedBy
+	}
+	return nil
+}
+
+type RemoveMemberRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The person's user id.
+	UserId        string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveMemberRequest) Reset() {
+	*x = RemoveMemberRequest{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveMemberRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveMemberRequest) ProtoMessage() {}
+
+func (x *RemoveMemberRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveMemberRequest.ProtoReflect.Descriptor instead.
+func (*RemoveMemberRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *RemoveMemberRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+// RemoveMemberResponse says how many grants went with the membership.
+type RemoveMemberResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	GrantsRemoved int32                  `protobuf:"varint,1,opt,name=grants_removed,json=grantsRemoved,proto3" json:"grants_removed,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveMemberResponse) Reset() {
+	*x = RemoveMemberResponse{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveMemberResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveMemberResponse) ProtoMessage() {}
+
+func (x *RemoveMemberResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveMemberResponse.ProtoReflect.Descriptor instead.
+func (*RemoveMemberResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *RemoveMemberResponse) GetGrantsRemoved() int32 {
+	if x != nil {
+		return x.GrantsRemoved
+	}
+	return 0
+}
+
+type CreateInvitationRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Free text, such as whom the invitation is for; 200 characters at most.
+	Note string `protobuf:"bytes,1,opt,name=note,proto3" json:"note,omitempty"`
+	// How long the code is valid: seven days when unset, 30 days at most.
+	Ttl           *durationpb.Duration `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateInvitationRequest) Reset() {
+	*x = CreateInvitationRequest{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateInvitationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateInvitationRequest) ProtoMessage() {}
+
+func (x *CreateInvitationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateInvitationRequest.ProtoReflect.Descriptor instead.
+func (*CreateInvitationRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *CreateInvitationRequest) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *CreateInvitationRequest) GetTtl() *durationpb.Duration {
+	if x != nil {
+		return x.Ttl
+	}
+	return nil
+}
+
+// CreateInvitationResponse carries the invitation and its code, shown
+// once.
+type CreateInvitationResponse struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Invitation *Invitation            `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
+	// The code the invitee accepts; it is not shown again.
+	Code          string `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateInvitationResponse) Reset() {
+	*x = CreateInvitationResponse{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateInvitationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateInvitationResponse) ProtoMessage() {}
+
+func (x *CreateInvitationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateInvitationResponse.ProtoReflect.Descriptor instead.
+func (*CreateInvitationResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *CreateInvitationResponse) GetInvitation() *Invitation {
+	if x != nil {
+		return x.Invitation
+	}
+	return nil
+}
+
+func (x *CreateInvitationResponse) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+// Invitation is an invitation to join the workspace, never with its code.
+type Invitation struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Invitation id, such as "inv-1a2b3c4d5e6f7a8b9c0d1e2f".
+	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Note      string                 `protobuf:"bytes,2,opt,name=note,proto3" json:"note,omitempty"`
+	State     InvitationState        `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.InvitationState" json:"state,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CreatedBy *Subject               `protobuf:"bytes,5,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// The user id of the person who accepted it, and when; empty until then.
+	AcceptedBy string                 `protobuf:"bytes,7,opt,name=accepted_by,json=acceptedBy,proto3" json:"accepted_by,omitempty"`
+	AcceptedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=accepted_at,json=acceptedAt,proto3" json:"accepted_at,omitempty"`
+	// When it was revoked, and by whom; empty unless revoked.
+	RevokedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
+	RevokedBy     *Subject               `protobuf:"bytes,10,opt,name=revoked_by,json=revokedBy,proto3" json:"revoked_by,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Invitation) Reset() {
+	*x = Invitation{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Invitation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Invitation) ProtoMessage() {}
+
+func (x *Invitation) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Invitation.ProtoReflect.Descriptor instead.
+func (*Invitation) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *Invitation) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Invitation) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *Invitation) GetState() InvitationState {
+	if x != nil {
+		return x.State
+	}
+	return InvitationState_INVITATION_STATE_UNSPECIFIED
+}
+
+func (x *Invitation) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Invitation) GetCreatedBy() *Subject {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return nil
+}
+
+func (x *Invitation) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
+func (x *Invitation) GetAcceptedBy() string {
+	if x != nil {
+		return x.AcceptedBy
+	}
+	return ""
+}
+
+func (x *Invitation) GetAcceptedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.AcceptedAt
+	}
+	return nil
+}
+
+func (x *Invitation) GetRevokedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RevokedAt
+	}
+	return nil
+}
+
+func (x *Invitation) GetRevokedBy() *Subject {
+	if x != nil {
+		return x.RevokedBy
+	}
+	return nil
+}
+
+type ListInvitationsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The most invitations in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListInvitationsRequest) Reset() {
+	*x = ListInvitationsRequest{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListInvitationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListInvitationsRequest) ProtoMessage() {}
+
+func (x *ListInvitationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListInvitationsRequest.ProtoReflect.Descriptor instead.
+func (*ListInvitationsRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ListInvitationsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListInvitationsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+type ListInvitationsResponse struct {
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Invitations []*Invitation          `protobuf:"bytes,1,rep,name=invitations,proto3" json:"invitations,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListInvitationsResponse) Reset() {
+	*x = ListInvitationsResponse{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListInvitationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListInvitationsResponse) ProtoMessage() {}
+
+func (x *ListInvitationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListInvitationsResponse.ProtoReflect.Descriptor instead.
+func (*ListInvitationsResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ListInvitationsResponse) GetInvitations() []*Invitation {
+	if x != nil {
+		return x.Invitations
+	}
+	return nil
+}
+
+func (x *ListInvitationsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
+type RevokeInvitationRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The invitation's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeInvitationRequest) Reset() {
+	*x = RevokeInvitationRequest{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeInvitationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeInvitationRequest) ProtoMessage() {}
+
+func (x *RevokeInvitationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeInvitationRequest.ProtoReflect.Descriptor instead.
+func (*RevokeInvitationRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *RevokeInvitationRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+// RevokeInvitationResponse carries the revoked invitation.
+type RevokeInvitationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Invitation    *Invitation            `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeInvitationResponse) Reset() {
+	*x = RevokeInvitationResponse{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeInvitationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeInvitationResponse) ProtoMessage() {}
+
+func (x *RevokeInvitationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeInvitationResponse.ProtoReflect.Descriptor instead.
+func (*RevokeInvitationResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *RevokeInvitationResponse) GetInvitation() *Invitation {
+	if x != nil {
+		return x.Invitation
+	}
+	return nil
+}
+
+type AcceptInvitationRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The code CreateInvitation returned.
+	Code          string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AcceptInvitationRequest) Reset() {
+	*x = AcceptInvitationRequest{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AcceptInvitationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AcceptInvitationRequest) ProtoMessage() {}
+
+func (x *AcceptInvitationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AcceptInvitationRequest.ProtoReflect.Descriptor instead.
+func (*AcceptInvitationRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *AcceptInvitationRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+type AcceptInvitationResponse struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Invitation *Invitation            `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
+	// The id of the workspace the caller is now a member of.
+	Workspace string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	// Whether the caller was made the workspace's owner.
+	Owner         bool `protobuf:"varint,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AcceptInvitationResponse) Reset() {
+	*x = AcceptInvitationResponse{}
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AcceptInvitationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AcceptInvitationResponse) ProtoMessage() {}
+
+func (x *AcceptInvitationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_roles_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AcceptInvitationResponse.ProtoReflect.Descriptor instead.
+func (*AcceptInvitationResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_roles_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *AcceptInvitationResponse) GetInvitation() *Invitation {
+	if x != nil {
+		return x.Invitation
+	}
+	return nil
+}
+
+func (x *AcceptInvitationResponse) GetWorkspace() string {
+	if x != nil {
+		return x.Workspace
+	}
+	return ""
+}
+
+func (x *AcceptInvitationResponse) GetOwner() bool {
+	if x != nil {
+		return x.Owner
+	}
+	return false
+}
+
 var File_toshi_workspace_v1_roles_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\n" +
-	"\x1etoshi/workspace/v1/roles.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"g\n" +
+	"\x1etoshi/workspace/v1/roles.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"g\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -1130,12 +2065,90 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\x11RevokeRoleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"I\n" +
 	"\x12RevokeRoleResponse\x123\n" +
-	"\x05grant\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.RoleGrantR\x05grant*u\n" +
+	"\x05grant\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.RoleGrantR\x05grant\"P\n" +
+	"\x12ListMembersRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"s\n" +
+	"\x13ListMembersResponse\x124\n" +
+	"\amembers\x18\x01 \x03(\v2\x1a.toshi.workspace.v1.MemberR\amembers\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xeb\x01\n" +
+	"\x06Member\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12/\n" +
+	"\x03via\x18\x04 \x01(\x0e2\x1d.toshi.workspace.v1.MemberViaR\x03via\x125\n" +
+	"\badded_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aaddedAt\x126\n" +
+	"\badded_by\x18\x06 \x01(\v2\x1b.toshi.workspace.v1.SubjectR\aaddedBy\".\n" +
+	"\x13RemoveMemberRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"=\n" +
+	"\x14RemoveMemberResponse\x12%\n" +
+	"\x0egrants_removed\x18\x01 \x01(\x05R\rgrantsRemoved\"Z\n" +
+	"\x17CreateInvitationRequest\x12\x12\n" +
+	"\x04note\x18\x01 \x01(\tR\x04note\x12+\n" +
+	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x03ttl\"n\n" +
+	"\x18CreateInvitationResponse\x12>\n" +
+	"\n" +
+	"invitation\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.InvitationR\n" +
+	"invitation\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\"\xf2\x03\n" +
+	"\n" +
+	"Invitation\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04note\x18\x02 \x01(\tR\x04note\x129\n" +
+	"\x05state\x18\x03 \x01(\x0e2#.toshi.workspace.v1.InvitationStateR\x05state\x129\n" +
+	"\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12:\n" +
+	"\n" +
+	"created_by\x18\x05 \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedBy\x129\n" +
+	"\n" +
+	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1f\n" +
+	"\vaccepted_by\x18\a \x01(\tR\n" +
+	"acceptedBy\x12;\n" +
+	"\vaccepted_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"acceptedAt\x129\n" +
+	"\n" +
+	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12:\n" +
+	"\n" +
+	"revoked_by\x18\n" +
+	" \x01(\v2\x1b.toshi.workspace.v1.SubjectR\trevokedBy\"T\n" +
+	"\x16ListInvitationsRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"\x83\x01\n" +
+	"\x17ListInvitationsResponse\x12@\n" +
+	"\vinvitations\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.InvitationR\vinvitations\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\")\n" +
+	"\x17RevokeInvitationRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"Z\n" +
+	"\x18RevokeInvitationResponse\x12>\n" +
+	"\n" +
+	"invitation\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.InvitationR\n" +
+	"invitation\"-\n" +
+	"\x17AcceptInvitationRequest\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\"\x8e\x01\n" +
+	"\x18AcceptInvitationResponse\x12>\n" +
+	"\n" +
+	"invitation\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.InvitationR\n" +
+	"invitation\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x14\n" +
+	"\x05owner\x18\x03 \x01(\bR\x05owner*u\n" +
 	"\vSubjectKind\x12\x1c\n" +
 	"\x18SUBJECT_KIND_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13SUBJECT_KIND_PERSON\x10\x01\x12\x16\n" +
 	"\x12SUBJECT_KIND_TOKEN\x10\x02\x12\x17\n" +
-	"\x13SUBJECT_KIND_SYSTEM\x10\x032\xeb\x06\n" +
+	"\x13SUBJECT_KIND_SYSTEM\x10\x03*y\n" +
+	"\tMemberVia\x12\x1a\n" +
+	"\x16MEMBER_VIA_UNSPECIFIED\x10\x00\x12\x1b\n" +
+	"\x17MEMBER_VIA_GITHUB_ADMIN\x10\x01\x12\x19\n" +
+	"\x15MEMBER_VIA_INVITATION\x10\x02\x12\x18\n" +
+	"\x14MEMBER_VIA_MIGRATION\x10\x03*\xa9\x01\n" +
+	"\x0fInvitationState\x12 \n" +
+	"\x1cINVITATION_STATE_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x15INVITATION_STATE_OPEN\x10\x01\x12\x1d\n" +
+	"\x19INVITATION_STATE_ACCEPTED\x10\x02\x12\x1c\n" +
+	"\x18INVITATION_STATE_REVOKED\x10\x03\x12\x1c\n" +
+	"\x18INVITATION_STATE_EXPIRED\x10\x042\x89\x0e\n" +
 	"\vRoleService\x12j\n" +
 	"\tListRoles\x12$.toshi.workspace.v1.ListRolesRequest\x1a%.toshi.workspace.v1.ListRolesResponse\"\x10\xc2\xf3\x18\fmembers.read\x12n\n" +
 	"\n" +
@@ -1147,7 +2160,15 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\x0eListRoleGrants\x12).toshi.workspace.v1.ListRoleGrantsRequest\x1a*.toshi.workspace.v1.ListRoleGrantsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x87\x01\n" +
 	"\tGrantRole\x12$.toshi.workspace.v1.GrantRoleRequest\x1a%.toshi.workspace.v1.GrantRoleResponse\"-\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\v\x12\trole:role\x12\x8c\x01\n" +
 	"\n" +
-	"RevokeRole\x12%.toshi.workspace.v1.RevokeRoleRequest\x1a&.toshi.workspace.v1.RevokeRoleResponse\"/\xc2\xf3\x18\rmembers.write\xd2\xf3\x18\x1a\x12\x18role:response.grant.roleB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"RevokeRole\x12%.toshi.workspace.v1.RevokeRoleRequest\x1a&.toshi.workspace.v1.RevokeRoleResponse\"/\xc2\xf3\x18\rmembers.write\xd2\xf3\x18\x1a\x12\x18role:response.grant.role\x12}\n" +
+	"\vListMembers\x12&.toshi.workspace.v1.ListMembersRequest\x1a'.toshi.workspace.v1.ListMembersResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xa5\x01\n" +
+	"\fRemoveMember\x12'.toshi.workspace.v1.RemoveMemberRequest\x1a(.toshi.workspace.v1.RemoveMemberResponse\"B\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18 \n" +
+	"\x0emember.removed\x12\x0emember:user_id\x12\x8d\x01\n" +
+	"\x10CreateInvitation\x12+.toshi.workspace.v1.CreateInvitationRequest\x1a,.toshi.workspace.v1.CreateInvitationResponse\"\x1e\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x12\x89\x01\n" +
+	"\x0fListInvitations\x12*.toshi.workspace.v1.ListInvitationsRequest\x1a+.toshi.workspace.v1.ListInvitationsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x8d\x01\n" +
+	"\x10RevokeInvitation\x12+.toshi.workspace.v1.RevokeInvitationRequest\x1a,.toshi.workspace.v1.RevokeInvitationResponse\"\x1e\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x12\xc8\x01\n" +
+	"\x10AcceptInvitation\x12+.toshi.workspace.v1.AcceptInvitationRequest\x1a,.toshi.workspace.v1.AcceptInvitationResponse\"Y\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\xd2\xf3\x188\n" +
+	"\x13invitation.accepted\x12!invitation:response.invitation.idB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_roles_proto_rawDescOnce sync.Once
@@ -1161,62 +2182,107 @@ func file_toshi_workspace_v1_roles_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_roles_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_roles_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_roles_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_toshi_workspace_v1_roles_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_toshi_workspace_v1_roles_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_toshi_workspace_v1_roles_proto_goTypes = []any{
-	(SubjectKind)(0),               // 0: toshi.workspace.v1.SubjectKind
-	(*Role)(nil),                   // 1: toshi.workspace.v1.Role
-	(*Subject)(nil),                // 2: toshi.workspace.v1.Subject
-	(*RoleGrant)(nil),              // 3: toshi.workspace.v1.RoleGrant
-	(*ListRolesRequest)(nil),       // 4: toshi.workspace.v1.ListRolesRequest
-	(*ListRolesResponse)(nil),      // 5: toshi.workspace.v1.ListRolesResponse
-	(*CreateRoleRequest)(nil),      // 6: toshi.workspace.v1.CreateRoleRequest
-	(*CreateRoleResponse)(nil),     // 7: toshi.workspace.v1.CreateRoleResponse
-	(*UpdateRoleRequest)(nil),      // 8: toshi.workspace.v1.UpdateRoleRequest
-	(*UpdateRoleResponse)(nil),     // 9: toshi.workspace.v1.UpdateRoleResponse
-	(*DeleteRoleRequest)(nil),      // 10: toshi.workspace.v1.DeleteRoleRequest
-	(*DeleteRoleResponse)(nil),     // 11: toshi.workspace.v1.DeleteRoleResponse
-	(*ListRoleGrantsRequest)(nil),  // 12: toshi.workspace.v1.ListRoleGrantsRequest
-	(*ListRoleGrantsResponse)(nil), // 13: toshi.workspace.v1.ListRoleGrantsResponse
-	(*GrantRoleRequest)(nil),       // 14: toshi.workspace.v1.GrantRoleRequest
-	(*GrantRoleResponse)(nil),      // 15: toshi.workspace.v1.GrantRoleResponse
-	(*RevokeRoleRequest)(nil),      // 16: toshi.workspace.v1.RevokeRoleRequest
-	(*RevokeRoleResponse)(nil),     // 17: toshi.workspace.v1.RevokeRoleResponse
-	(*timestamppb.Timestamp)(nil),  // 18: google.protobuf.Timestamp
+	(SubjectKind)(0),                 // 0: toshi.workspace.v1.SubjectKind
+	(MemberVia)(0),                   // 1: toshi.workspace.v1.MemberVia
+	(InvitationState)(0),             // 2: toshi.workspace.v1.InvitationState
+	(*Role)(nil),                     // 3: toshi.workspace.v1.Role
+	(*Subject)(nil),                  // 4: toshi.workspace.v1.Subject
+	(*RoleGrant)(nil),                // 5: toshi.workspace.v1.RoleGrant
+	(*ListRolesRequest)(nil),         // 6: toshi.workspace.v1.ListRolesRequest
+	(*ListRolesResponse)(nil),        // 7: toshi.workspace.v1.ListRolesResponse
+	(*CreateRoleRequest)(nil),        // 8: toshi.workspace.v1.CreateRoleRequest
+	(*CreateRoleResponse)(nil),       // 9: toshi.workspace.v1.CreateRoleResponse
+	(*UpdateRoleRequest)(nil),        // 10: toshi.workspace.v1.UpdateRoleRequest
+	(*UpdateRoleResponse)(nil),       // 11: toshi.workspace.v1.UpdateRoleResponse
+	(*DeleteRoleRequest)(nil),        // 12: toshi.workspace.v1.DeleteRoleRequest
+	(*DeleteRoleResponse)(nil),       // 13: toshi.workspace.v1.DeleteRoleResponse
+	(*ListRoleGrantsRequest)(nil),    // 14: toshi.workspace.v1.ListRoleGrantsRequest
+	(*ListRoleGrantsResponse)(nil),   // 15: toshi.workspace.v1.ListRoleGrantsResponse
+	(*GrantRoleRequest)(nil),         // 16: toshi.workspace.v1.GrantRoleRequest
+	(*GrantRoleResponse)(nil),        // 17: toshi.workspace.v1.GrantRoleResponse
+	(*RevokeRoleRequest)(nil),        // 18: toshi.workspace.v1.RevokeRoleRequest
+	(*RevokeRoleResponse)(nil),       // 19: toshi.workspace.v1.RevokeRoleResponse
+	(*ListMembersRequest)(nil),       // 20: toshi.workspace.v1.ListMembersRequest
+	(*ListMembersResponse)(nil),      // 21: toshi.workspace.v1.ListMembersResponse
+	(*Member)(nil),                   // 22: toshi.workspace.v1.Member
+	(*RemoveMemberRequest)(nil),      // 23: toshi.workspace.v1.RemoveMemberRequest
+	(*RemoveMemberResponse)(nil),     // 24: toshi.workspace.v1.RemoveMemberResponse
+	(*CreateInvitationRequest)(nil),  // 25: toshi.workspace.v1.CreateInvitationRequest
+	(*CreateInvitationResponse)(nil), // 26: toshi.workspace.v1.CreateInvitationResponse
+	(*Invitation)(nil),               // 27: toshi.workspace.v1.Invitation
+	(*ListInvitationsRequest)(nil),   // 28: toshi.workspace.v1.ListInvitationsRequest
+	(*ListInvitationsResponse)(nil),  // 29: toshi.workspace.v1.ListInvitationsResponse
+	(*RevokeInvitationRequest)(nil),  // 30: toshi.workspace.v1.RevokeInvitationRequest
+	(*RevokeInvitationResponse)(nil), // 31: toshi.workspace.v1.RevokeInvitationResponse
+	(*AcceptInvitationRequest)(nil),  // 32: toshi.workspace.v1.AcceptInvitationRequest
+	(*AcceptInvitationResponse)(nil), // 33: toshi.workspace.v1.AcceptInvitationResponse
+	(*timestamppb.Timestamp)(nil),    // 34: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),      // 35: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_roles_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Subject.kind:type_name -> toshi.workspace.v1.SubjectKind
-	2,  // 1: toshi.workspace.v1.RoleGrant.subject:type_name -> toshi.workspace.v1.Subject
-	18, // 2: toshi.workspace.v1.RoleGrant.created_at:type_name -> google.protobuf.Timestamp
-	2,  // 3: toshi.workspace.v1.RoleGrant.created_by:type_name -> toshi.workspace.v1.Subject
-	1,  // 4: toshi.workspace.v1.ListRolesResponse.roles:type_name -> toshi.workspace.v1.Role
-	1,  // 5: toshi.workspace.v1.CreateRoleResponse.role:type_name -> toshi.workspace.v1.Role
-	1,  // 6: toshi.workspace.v1.UpdateRoleResponse.role:type_name -> toshi.workspace.v1.Role
-	1,  // 7: toshi.workspace.v1.DeleteRoleResponse.role:type_name -> toshi.workspace.v1.Role
-	2,  // 8: toshi.workspace.v1.ListRoleGrantsRequest.subject:type_name -> toshi.workspace.v1.Subject
-	3,  // 9: toshi.workspace.v1.ListRoleGrantsResponse.grants:type_name -> toshi.workspace.v1.RoleGrant
-	2,  // 10: toshi.workspace.v1.GrantRoleRequest.subject:type_name -> toshi.workspace.v1.Subject
-	3,  // 11: toshi.workspace.v1.GrantRoleResponse.grant:type_name -> toshi.workspace.v1.RoleGrant
-	3,  // 12: toshi.workspace.v1.RevokeRoleResponse.grant:type_name -> toshi.workspace.v1.RoleGrant
-	4,  // 13: toshi.workspace.v1.RoleService.ListRoles:input_type -> toshi.workspace.v1.ListRolesRequest
-	6,  // 14: toshi.workspace.v1.RoleService.CreateRole:input_type -> toshi.workspace.v1.CreateRoleRequest
-	8,  // 15: toshi.workspace.v1.RoleService.UpdateRole:input_type -> toshi.workspace.v1.UpdateRoleRequest
-	10, // 16: toshi.workspace.v1.RoleService.DeleteRole:input_type -> toshi.workspace.v1.DeleteRoleRequest
-	12, // 17: toshi.workspace.v1.RoleService.ListRoleGrants:input_type -> toshi.workspace.v1.ListRoleGrantsRequest
-	14, // 18: toshi.workspace.v1.RoleService.GrantRole:input_type -> toshi.workspace.v1.GrantRoleRequest
-	16, // 19: toshi.workspace.v1.RoleService.RevokeRole:input_type -> toshi.workspace.v1.RevokeRoleRequest
-	5,  // 20: toshi.workspace.v1.RoleService.ListRoles:output_type -> toshi.workspace.v1.ListRolesResponse
-	7,  // 21: toshi.workspace.v1.RoleService.CreateRole:output_type -> toshi.workspace.v1.CreateRoleResponse
-	9,  // 22: toshi.workspace.v1.RoleService.UpdateRole:output_type -> toshi.workspace.v1.UpdateRoleResponse
-	11, // 23: toshi.workspace.v1.RoleService.DeleteRole:output_type -> toshi.workspace.v1.DeleteRoleResponse
-	13, // 24: toshi.workspace.v1.RoleService.ListRoleGrants:output_type -> toshi.workspace.v1.ListRoleGrantsResponse
-	15, // 25: toshi.workspace.v1.RoleService.GrantRole:output_type -> toshi.workspace.v1.GrantRoleResponse
-	17, // 26: toshi.workspace.v1.RoleService.RevokeRole:output_type -> toshi.workspace.v1.RevokeRoleResponse
-	20, // [20:27] is the sub-list for method output_type
-	13, // [13:20] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	4,  // 1: toshi.workspace.v1.RoleGrant.subject:type_name -> toshi.workspace.v1.Subject
+	34, // 2: toshi.workspace.v1.RoleGrant.created_at:type_name -> google.protobuf.Timestamp
+	4,  // 3: toshi.workspace.v1.RoleGrant.created_by:type_name -> toshi.workspace.v1.Subject
+	3,  // 4: toshi.workspace.v1.ListRolesResponse.roles:type_name -> toshi.workspace.v1.Role
+	3,  // 5: toshi.workspace.v1.CreateRoleResponse.role:type_name -> toshi.workspace.v1.Role
+	3,  // 6: toshi.workspace.v1.UpdateRoleResponse.role:type_name -> toshi.workspace.v1.Role
+	3,  // 7: toshi.workspace.v1.DeleteRoleResponse.role:type_name -> toshi.workspace.v1.Role
+	4,  // 8: toshi.workspace.v1.ListRoleGrantsRequest.subject:type_name -> toshi.workspace.v1.Subject
+	5,  // 9: toshi.workspace.v1.ListRoleGrantsResponse.grants:type_name -> toshi.workspace.v1.RoleGrant
+	4,  // 10: toshi.workspace.v1.GrantRoleRequest.subject:type_name -> toshi.workspace.v1.Subject
+	5,  // 11: toshi.workspace.v1.GrantRoleResponse.grant:type_name -> toshi.workspace.v1.RoleGrant
+	5,  // 12: toshi.workspace.v1.RevokeRoleResponse.grant:type_name -> toshi.workspace.v1.RoleGrant
+	22, // 13: toshi.workspace.v1.ListMembersResponse.members:type_name -> toshi.workspace.v1.Member
+	1,  // 14: toshi.workspace.v1.Member.via:type_name -> toshi.workspace.v1.MemberVia
+	34, // 15: toshi.workspace.v1.Member.added_at:type_name -> google.protobuf.Timestamp
+	4,  // 16: toshi.workspace.v1.Member.added_by:type_name -> toshi.workspace.v1.Subject
+	35, // 17: toshi.workspace.v1.CreateInvitationRequest.ttl:type_name -> google.protobuf.Duration
+	27, // 18: toshi.workspace.v1.CreateInvitationResponse.invitation:type_name -> toshi.workspace.v1.Invitation
+	2,  // 19: toshi.workspace.v1.Invitation.state:type_name -> toshi.workspace.v1.InvitationState
+	34, // 20: toshi.workspace.v1.Invitation.created_at:type_name -> google.protobuf.Timestamp
+	4,  // 21: toshi.workspace.v1.Invitation.created_by:type_name -> toshi.workspace.v1.Subject
+	34, // 22: toshi.workspace.v1.Invitation.expires_at:type_name -> google.protobuf.Timestamp
+	34, // 23: toshi.workspace.v1.Invitation.accepted_at:type_name -> google.protobuf.Timestamp
+	34, // 24: toshi.workspace.v1.Invitation.revoked_at:type_name -> google.protobuf.Timestamp
+	4,  // 25: toshi.workspace.v1.Invitation.revoked_by:type_name -> toshi.workspace.v1.Subject
+	27, // 26: toshi.workspace.v1.ListInvitationsResponse.invitations:type_name -> toshi.workspace.v1.Invitation
+	27, // 27: toshi.workspace.v1.RevokeInvitationResponse.invitation:type_name -> toshi.workspace.v1.Invitation
+	27, // 28: toshi.workspace.v1.AcceptInvitationResponse.invitation:type_name -> toshi.workspace.v1.Invitation
+	6,  // 29: toshi.workspace.v1.RoleService.ListRoles:input_type -> toshi.workspace.v1.ListRolesRequest
+	8,  // 30: toshi.workspace.v1.RoleService.CreateRole:input_type -> toshi.workspace.v1.CreateRoleRequest
+	10, // 31: toshi.workspace.v1.RoleService.UpdateRole:input_type -> toshi.workspace.v1.UpdateRoleRequest
+	12, // 32: toshi.workspace.v1.RoleService.DeleteRole:input_type -> toshi.workspace.v1.DeleteRoleRequest
+	14, // 33: toshi.workspace.v1.RoleService.ListRoleGrants:input_type -> toshi.workspace.v1.ListRoleGrantsRequest
+	16, // 34: toshi.workspace.v1.RoleService.GrantRole:input_type -> toshi.workspace.v1.GrantRoleRequest
+	18, // 35: toshi.workspace.v1.RoleService.RevokeRole:input_type -> toshi.workspace.v1.RevokeRoleRequest
+	20, // 36: toshi.workspace.v1.RoleService.ListMembers:input_type -> toshi.workspace.v1.ListMembersRequest
+	23, // 37: toshi.workspace.v1.RoleService.RemoveMember:input_type -> toshi.workspace.v1.RemoveMemberRequest
+	25, // 38: toshi.workspace.v1.RoleService.CreateInvitation:input_type -> toshi.workspace.v1.CreateInvitationRequest
+	28, // 39: toshi.workspace.v1.RoleService.ListInvitations:input_type -> toshi.workspace.v1.ListInvitationsRequest
+	30, // 40: toshi.workspace.v1.RoleService.RevokeInvitation:input_type -> toshi.workspace.v1.RevokeInvitationRequest
+	32, // 41: toshi.workspace.v1.RoleService.AcceptInvitation:input_type -> toshi.workspace.v1.AcceptInvitationRequest
+	7,  // 42: toshi.workspace.v1.RoleService.ListRoles:output_type -> toshi.workspace.v1.ListRolesResponse
+	9,  // 43: toshi.workspace.v1.RoleService.CreateRole:output_type -> toshi.workspace.v1.CreateRoleResponse
+	11, // 44: toshi.workspace.v1.RoleService.UpdateRole:output_type -> toshi.workspace.v1.UpdateRoleResponse
+	13, // 45: toshi.workspace.v1.RoleService.DeleteRole:output_type -> toshi.workspace.v1.DeleteRoleResponse
+	15, // 46: toshi.workspace.v1.RoleService.ListRoleGrants:output_type -> toshi.workspace.v1.ListRoleGrantsResponse
+	17, // 47: toshi.workspace.v1.RoleService.GrantRole:output_type -> toshi.workspace.v1.GrantRoleResponse
+	19, // 48: toshi.workspace.v1.RoleService.RevokeRole:output_type -> toshi.workspace.v1.RevokeRoleResponse
+	21, // 49: toshi.workspace.v1.RoleService.ListMembers:output_type -> toshi.workspace.v1.ListMembersResponse
+	24, // 50: toshi.workspace.v1.RoleService.RemoveMember:output_type -> toshi.workspace.v1.RemoveMemberResponse
+	26, // 51: toshi.workspace.v1.RoleService.CreateInvitation:output_type -> toshi.workspace.v1.CreateInvitationResponse
+	29, // 52: toshi.workspace.v1.RoleService.ListInvitations:output_type -> toshi.workspace.v1.ListInvitationsResponse
+	31, // 53: toshi.workspace.v1.RoleService.RevokeInvitation:output_type -> toshi.workspace.v1.RevokeInvitationResponse
+	33, // 54: toshi.workspace.v1.RoleService.AcceptInvitation:output_type -> toshi.workspace.v1.AcceptInvitationResponse
+	42, // [42:55] is the sub-list for method output_type
+	29, // [29:42] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_roles_proto_init() }
@@ -1229,8 +2295,8 @@ func file_toshi_workspace_v1_roles_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_roles_proto_rawDesc), len(file_toshi_workspace_v1_roles_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   17,
+			NumEnums:      3,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
