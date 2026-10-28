@@ -1723,7 +1723,8 @@ export const InvitationStateSchema: GenEnum<InvitationState, InvitationStateJson
  * no deny rules.
  *
  * Four roles are built in: owner (every permission), admin (every
- * permission but billing.write and workspace.delete), member (reads and
+ * permission but billing.write, workspace.delete and workspace.signin),
+ * member (reads and
  * writes of every product and of projects, secrets and tokens, and reads of
  * the rest) and viewer (every read). They cannot be changed. A workspace
  * adds its own from the permissions docs/api/permissions.md lists.

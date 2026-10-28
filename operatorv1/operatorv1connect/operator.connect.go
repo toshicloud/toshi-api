@@ -112,6 +112,9 @@ const (
 	// OperatorServiceSetTenantOwnHostsOnlyProcedure is the fully-qualified name of the
 	// OperatorService's SetTenantOwnHostsOnly RPC.
 	OperatorServiceSetTenantOwnHostsOnlyProcedure = "/toshi.operator.v1.OperatorService/SetTenantOwnHostsOnly"
+	// OperatorServiceClearTenantSignInProcedure is the fully-qualified name of the OperatorService's
+	// ClearTenantSignIn RPC.
+	OperatorServiceClearTenantSignInProcedure = "/toshi.operator.v1.OperatorService/ClearTenantSignIn"
 	// OperatorServiceSetTenantAllowOverflowProcedure is the fully-qualified name of the
 	// OperatorService's SetTenantAllowOverflow RPC.
 	OperatorServiceSetTenantAllowOverflowProcedure = "/toshi.operator.v1.OperatorService/SetTenantAllowOverflow"
@@ -393,6 +396,12 @@ type OperatorServiceClient interface {
 	// hosts and never run on shared ones, and returns the workspace as stored. An
 	// empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantOwnHostsOnly(context.Context, *connect.Request[operatorv1.SetTenantOwnHostsOnlyRequest]) (*connect.Response[operatorv1.SetTenantOwnHostsOnlyResponse], error)
+	// ClearTenantSignIn makes the workspace require no sign-in provider: the
+	// way back in when the provider a workspace requires is gone or broken
+	// and no member can sign in through it. It answers what the workspace
+	// required; an empty ID fails with INVALID_ARGUMENT and an unknown ID with
+	// NOT_FOUND.
+	ClearTenantSignIn(context.Context, *connect.Request[operatorv1.ClearTenantSignInRequest]) (*connect.Response[operatorv1.ClearTenantSignInResponse], error)
 	// SetTenantAllowOverflow sets whether shared overflow hosts may take the
 	// workspace's jobs and returns the workspace as stored; its own
 	// overflow hosts always may. An empty ID fails with INVALID_ARGUMENT; an
@@ -893,6 +902,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("SetTenantOwnHostsOnly")),
 			connect.WithClientOptions(opts...),
 		),
+		clearTenantSignIn: connect.NewClient[operatorv1.ClearTenantSignInRequest, operatorv1.ClearTenantSignInResponse](
+			httpClient,
+			baseURL+OperatorServiceClearTenantSignInProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("ClearTenantSignIn")),
+			connect.WithClientOptions(opts...),
+		),
 		setTenantAllowOverflow: connect.NewClient[operatorv1.SetTenantAllowOverflowRequest, operatorv1.SetTenantAllowOverflowResponse](
 			httpClient,
 			baseURL+OperatorServiceSetTenantAllowOverflowProcedure,
@@ -1218,6 +1233,7 @@ type operatorServiceClient struct {
 	setWorkspaceEntitlement     *connect.Client[operatorv1.SetWorkspaceEntitlementRequest, operatorv1.SetWorkspaceEntitlementResponse]
 	clearWorkspaceEntitlement   *connect.Client[operatorv1.ClearWorkspaceEntitlementRequest, operatorv1.ClearWorkspaceEntitlementResponse]
 	setTenantOwnHostsOnly       *connect.Client[operatorv1.SetTenantOwnHostsOnlyRequest, operatorv1.SetTenantOwnHostsOnlyResponse]
+	clearTenantSignIn           *connect.Client[operatorv1.ClearTenantSignInRequest, operatorv1.ClearTenantSignInResponse]
 	setTenantAllowOverflow      *connect.Client[operatorv1.SetTenantAllowOverflowRequest, operatorv1.SetTenantAllowOverflowResponse]
 	suspendTenant               *connect.Client[operatorv1.SuspendTenantRequest, operatorv1.SuspendTenantResponse]
 	resumeTenant                *connect.Client[operatorv1.ResumeTenantRequest, operatorv1.ResumeTenantResponse]
@@ -1397,6 +1413,11 @@ func (c *operatorServiceClient) ClearWorkspaceEntitlement(ctx context.Context, r
 // SetTenantOwnHostsOnly calls toshi.operator.v1.OperatorService.SetTenantOwnHostsOnly.
 func (c *operatorServiceClient) SetTenantOwnHostsOnly(ctx context.Context, req *connect.Request[operatorv1.SetTenantOwnHostsOnlyRequest]) (*connect.Response[operatorv1.SetTenantOwnHostsOnlyResponse], error) {
 	return c.setTenantOwnHostsOnly.CallUnary(ctx, req)
+}
+
+// ClearTenantSignIn calls toshi.operator.v1.OperatorService.ClearTenantSignIn.
+func (c *operatorServiceClient) ClearTenantSignIn(ctx context.Context, req *connect.Request[operatorv1.ClearTenantSignInRequest]) (*connect.Response[operatorv1.ClearTenantSignInResponse], error) {
+	return c.clearTenantSignIn.CallUnary(ctx, req)
 }
 
 // SetTenantAllowOverflow calls toshi.operator.v1.OperatorService.SetTenantAllowOverflow.
@@ -1776,6 +1797,12 @@ type OperatorServiceHandler interface {
 	// hosts and never run on shared ones, and returns the workspace as stored. An
 	// empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantOwnHostsOnly(context.Context, *connect.Request[operatorv1.SetTenantOwnHostsOnlyRequest]) (*connect.Response[operatorv1.SetTenantOwnHostsOnlyResponse], error)
+	// ClearTenantSignIn makes the workspace require no sign-in provider: the
+	// way back in when the provider a workspace requires is gone or broken
+	// and no member can sign in through it. It answers what the workspace
+	// required; an empty ID fails with INVALID_ARGUMENT and an unknown ID with
+	// NOT_FOUND.
+	ClearTenantSignIn(context.Context, *connect.Request[operatorv1.ClearTenantSignInRequest]) (*connect.Response[operatorv1.ClearTenantSignInResponse], error)
 	// SetTenantAllowOverflow sets whether shared overflow hosts may take the
 	// workspace's jobs and returns the workspace as stored; its own
 	// overflow hosts always may. An empty ID fails with INVALID_ARGUMENT; an
@@ -2272,6 +2299,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("SetTenantOwnHostsOnly")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceClearTenantSignInHandler := connect.NewUnaryHandler(
+		OperatorServiceClearTenantSignInProcedure,
+		svc.ClearTenantSignIn,
+		connect.WithSchema(operatorServiceMethods.ByName("ClearTenantSignIn")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceSetTenantAllowOverflowHandler := connect.NewUnaryHandler(
 		OperatorServiceSetTenantAllowOverflowProcedure,
 		svc.SetTenantAllowOverflow,
@@ -2620,6 +2653,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceClearWorkspaceEntitlementHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantOwnHostsOnlyProcedure:
 			operatorServiceSetTenantOwnHostsOnlyHandler.ServeHTTP(w, r)
+		case OperatorServiceClearTenantSignInProcedure:
+			operatorServiceClearTenantSignInHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantAllowOverflowProcedure:
 			operatorServiceSetTenantAllowOverflowHandler.ServeHTTP(w, r)
 		case OperatorServiceSuspendTenantProcedure:
@@ -2829,6 +2864,10 @@ func (UnimplementedOperatorServiceHandler) ClearWorkspaceEntitlement(context.Con
 
 func (UnimplementedOperatorServiceHandler) SetTenantOwnHostsOnly(context.Context, *connect.Request[operatorv1.SetTenantOwnHostsOnlyRequest]) (*connect.Response[operatorv1.SetTenantOwnHostsOnlyResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantOwnHostsOnly is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) ClearTenantSignIn(context.Context, *connect.Request[operatorv1.ClearTenantSignInRequest]) (*connect.Response[operatorv1.ClearTenantSignInResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ClearTenantSignIn is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) SetTenantAllowOverflow(context.Context, *connect.Request[operatorv1.SetTenantAllowOverflowRequest]) (*connect.Response[operatorv1.SetTenantAllowOverflowResponse], error) {

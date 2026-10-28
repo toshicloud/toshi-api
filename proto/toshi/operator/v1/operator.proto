@@ -207,6 +207,15 @@ service OperatorService {
     option (toshi.audit) = {action: "workspace.own_hosts_only_set"};
   }
 
+  // ClearTenantSignIn makes the workspace require no sign-in provider: the
+  // way back in when the provider a workspace requires is gone or broken
+  // and no member can sign in through it. It answers what the workspace
+  // required; an empty ID fails with INVALID_ARGUMENT and an unknown ID with
+  // NOT_FOUND.
+  rpc ClearTenantSignIn(ClearTenantSignInRequest) returns (ClearTenantSignInResponse) {
+    option (toshi.audit) = {action: "workspace_signin.cleared"};
+  }
+
   // SetTenantAllowOverflow sets whether shared overflow hosts may take the
   // workspace's jobs and returns the workspace as stored; its own
   // overflow hosts always may. An empty ID fails with INVALID_ARGUMENT; an
@@ -1694,6 +1703,17 @@ message SetTenantLimitsRequest {
 
 message SetTenantLimitsResponse {
   Tenant tenant = 1;
+}
+
+message ClearTenantSignInRequest {
+  string id = 1;
+}
+
+message ClearTenantSignInResponse {
+  // The provider entry's name and issuer the workspace required; empty
+  // when it required none.
+  string provider = 1;
+  string issuer = 2;
 }
 
 message SetTenantOwnHostsOnlyRequest {
