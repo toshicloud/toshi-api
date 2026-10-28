@@ -20,12 +20,12 @@
 // means the provider gave no answer: the instance may or may not have
 // changed, and the client never reads it as "not found".
 //
-// Paths. Disk paths, image files, the state root, screen captures and
-// console logs cross as strings that name files on the host both processes
-// share. Open checks it: the agent writes a nonce file and the provider
-// reads it back. A provider that cannot read an image file it is given
-// answers ERROR_CODE_UNSUPPORTED: the agent sees a directory the program
-// does not.
+// Paths. Disk paths, image files, captured disks, the state root, screen
+// captures and console logs cross as strings that name files on the host
+// both processes share. Open checks it: the agent writes a nonce file and
+// the provider reads it back. A provider that cannot read an image file it
+// is given, or see the directory of a disk it is to capture, answers
+// ERROR_CODE_UNSUPPORTED: the agent sees a directory the program does not.
 //
 // Enums. ErrorCode, State, OperatingSystem, DiskKind and CheckStatus are
 // closed sets that later versions may grow. A client reads a value it does
@@ -130,6 +130,9 @@ const (
 	// ProviderServiceBaseImagesProcedure is the fully-qualified name of the ProviderService's
 	// BaseImages RPC.
 	ProviderServiceBaseImagesProcedure = "/toshi.backend.provider.v1.ProviderService/BaseImages"
+	// ProviderServiceCaptureDiskProcedure is the fully-qualified name of the ProviderService's
+	// CaptureDisk RPC.
+	ProviderServiceCaptureDiskProcedure = "/toshi.backend.provider.v1.ProviderService/CaptureDisk"
 	// ProviderServiceDescribeProcedure is the fully-qualified name of the ProviderService's Describe
 	// RPC.
 	ProviderServiceDescribeProcedure = "/toshi.backend.provider.v1.ProviderService/Describe"
@@ -267,6 +270,17 @@ type ProviderServiceClient interface {
 	Forget(context.Context, *connect.Request[providerv1.ForgetRequest]) (*connect.Response[providerv1.ForgetResponse], error)
 	// BaseImages lists the bases an image version can be an overlay on.
 	BaseImages(context.Context, *connect.Request[providerv1.BaseImagesRequest]) (*connect.Response[providerv1.BaseImagesResponse], error)
+	// CaptureDisk writes the root disk of a stopped instance to dst, a file
+	// it creates, as a compressed qcow2 overlay whose backing file is named by
+	// the base image's file name alone. dst is replaced only once it is
+	// complete. A running instance fails with ERROR_CODE_INVALID_TRANSITION;
+	// an instance with a state volume or booted from an image version, or a
+	// base whose SHA-256 the provider does not know, with
+	// ERROR_CODE_UNSUPPORTED; a base that changed on disk since the instance
+	// booted, with ERROR_CODE_IMAGE_CHANGED. An empty id fails with
+	// ERROR_CODE_NOT_FOUND, so a client can tell a program that serves the
+	// call from one that does not.
+	CaptureDisk(context.Context, *connect.Request[providerv1.CaptureDiskRequest]) (*connect.Response[providerv1.CaptureDiskResponse], error)
 	// Describe returns the backend facets the provider offers and its
 	// capabilities.
 	Describe(context.Context, *connect.Request[providerv1.DescribeRequest]) (*connect.Response[providerv1.DescribeResponse], error)
@@ -493,6 +507,12 @@ func NewProviderServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(providerServiceMethods.ByName("BaseImages")),
 			connect.WithClientOptions(opts...),
 		),
+		captureDisk: connect.NewClient[providerv1.CaptureDiskRequest, providerv1.CaptureDiskResponse](
+			httpClient,
+			baseURL+ProviderServiceCaptureDiskProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("CaptureDisk")),
+			connect.WithClientOptions(opts...),
+		),
 		describe: connect.NewClient[providerv1.DescribeRequest, providerv1.DescribeResponse](
 			httpClient,
 			baseURL+ProviderServiceDescribeProcedure,
@@ -632,6 +652,7 @@ type providerServiceClient struct {
 	collect               *connect.Client[providerv1.CollectRequest, providerv1.CollectResponse]
 	forget                *connect.Client[providerv1.ForgetRequest, providerv1.ForgetResponse]
 	baseImages            *connect.Client[providerv1.BaseImagesRequest, providerv1.BaseImagesResponse]
+	captureDisk           *connect.Client[providerv1.CaptureDiskRequest, providerv1.CaptureDiskResponse]
 	describe              *connect.Client[providerv1.DescribeRequest, providerv1.DescribeResponse]
 	preflight             *connect.Client[providerv1.PreflightRequest, providerv1.PreflightResponse]
 	status                *connect.Client[providerv1.StatusRequest, providerv1.StatusResponse]
@@ -780,6 +801,11 @@ func (c *providerServiceClient) Forget(ctx context.Context, req *connect.Request
 // BaseImages calls toshi.backend.provider.v1.ProviderService.BaseImages.
 func (c *providerServiceClient) BaseImages(ctx context.Context, req *connect.Request[providerv1.BaseImagesRequest]) (*connect.Response[providerv1.BaseImagesResponse], error) {
 	return c.baseImages.CallUnary(ctx, req)
+}
+
+// CaptureDisk calls toshi.backend.provider.v1.ProviderService.CaptureDisk.
+func (c *providerServiceClient) CaptureDisk(ctx context.Context, req *connect.Request[providerv1.CaptureDiskRequest]) (*connect.Response[providerv1.CaptureDiskResponse], error) {
+	return c.captureDisk.CallUnary(ctx, req)
 }
 
 // Describe calls toshi.backend.provider.v1.ProviderService.Describe.
@@ -956,6 +982,17 @@ type ProviderServiceHandler interface {
 	Forget(context.Context, *connect.Request[providerv1.ForgetRequest]) (*connect.Response[providerv1.ForgetResponse], error)
 	// BaseImages lists the bases an image version can be an overlay on.
 	BaseImages(context.Context, *connect.Request[providerv1.BaseImagesRequest]) (*connect.Response[providerv1.BaseImagesResponse], error)
+	// CaptureDisk writes the root disk of a stopped instance to dst, a file
+	// it creates, as a compressed qcow2 overlay whose backing file is named by
+	// the base image's file name alone. dst is replaced only once it is
+	// complete. A running instance fails with ERROR_CODE_INVALID_TRANSITION;
+	// an instance with a state volume or booted from an image version, or a
+	// base whose SHA-256 the provider does not know, with
+	// ERROR_CODE_UNSUPPORTED; a base that changed on disk since the instance
+	// booted, with ERROR_CODE_IMAGE_CHANGED. An empty id fails with
+	// ERROR_CODE_NOT_FOUND, so a client can tell a program that serves the
+	// call from one that does not.
+	CaptureDisk(context.Context, *connect.Request[providerv1.CaptureDiskRequest]) (*connect.Response[providerv1.CaptureDiskResponse], error)
 	// Describe returns the backend facets the provider offers and its
 	// capabilities.
 	Describe(context.Context, *connect.Request[providerv1.DescribeRequest]) (*connect.Response[providerv1.DescribeResponse], error)
@@ -1178,6 +1215,12 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 		connect.WithSchema(providerServiceMethods.ByName("BaseImages")),
 		connect.WithHandlerOptions(opts...),
 	)
+	providerServiceCaptureDiskHandler := connect.NewUnaryHandler(
+		ProviderServiceCaptureDiskProcedure,
+		svc.CaptureDisk,
+		connect.WithSchema(providerServiceMethods.ByName("CaptureDisk")),
+		connect.WithHandlerOptions(opts...),
+	)
 	providerServiceDescribeHandler := connect.NewUnaryHandler(
 		ProviderServiceDescribeProcedure,
 		svc.Describe,
@@ -1340,6 +1383,8 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 			providerServiceForgetHandler.ServeHTTP(w, r)
 		case ProviderServiceBaseImagesProcedure:
 			providerServiceBaseImagesHandler.ServeHTTP(w, r)
+		case ProviderServiceCaptureDiskProcedure:
+			providerServiceCaptureDiskHandler.ServeHTTP(w, r)
 		case ProviderServiceDescribeProcedure:
 			providerServiceDescribeHandler.ServeHTTP(w, r)
 		case ProviderServicePreflightProcedure:
@@ -1487,6 +1532,10 @@ func (UnimplementedProviderServiceHandler) Forget(context.Context, *connect.Requ
 
 func (UnimplementedProviderServiceHandler) BaseImages(context.Context, *connect.Request[providerv1.BaseImagesRequest]) (*connect.Response[providerv1.BaseImagesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.BaseImages is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) CaptureDisk(context.Context, *connect.Request[providerv1.CaptureDiskRequest]) (*connect.Response[providerv1.CaptureDiskResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.CaptureDisk is not implemented"))
 }
 
 func (UnimplementedProviderServiceHandler) Describe(context.Context, *connect.Request[providerv1.DescribeRequest]) (*connect.Response[providerv1.DescribeResponse], error) {

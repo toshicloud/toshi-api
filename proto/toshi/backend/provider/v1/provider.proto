@@ -18,12 +18,12 @@ syntax = "proto3";
 // means the provider gave no answer: the instance may or may not have
 // changed, and the client never reads it as "not found".
 //
-// Paths. Disk paths, image files, the state root, screen captures and
-// console logs cross as strings that name files on the host both processes
-// share. Open checks it: the agent writes a nonce file and the provider
-// reads it back. A provider that cannot read an image file it is given
-// answers ERROR_CODE_UNSUPPORTED: the agent sees a directory the program
-// does not.
+// Paths. Disk paths, image files, captured disks, the state root, screen
+// captures and console logs cross as strings that name files on the host
+// both processes share. Open checks it: the agent writes a nonce file and
+// the provider reads it back. A provider that cannot read an image file it
+// is given, or see the directory of a disk it is to capture, answers
+// ERROR_CODE_UNSUPPORTED: the agent sees a directory the program does not.
 //
 // Enums. ErrorCode, State, OperatingSystem, DiskKind and CheckStatus are
 // closed sets that later versions may grow. A client reads a value it does
@@ -145,6 +145,20 @@ service ProviderService {
 
   // BaseImages lists the bases an image version can be an overlay on.
   rpc BaseImages(BaseImagesRequest) returns (BaseImagesResponse);
+
+  // Image build: the facet "disk_capturer".
+
+  // CaptureDisk writes the root disk of a stopped instance to dst, a file
+  // it creates, as a compressed qcow2 overlay whose backing file is named by
+  // the base image's file name alone. dst is replaced only once it is
+  // complete. A running instance fails with ERROR_CODE_INVALID_TRANSITION;
+  // an instance with a state volume or booted from an image version, or a
+  // base whose SHA-256 the provider does not know, with
+  // ERROR_CODE_UNSUPPORTED; a base that changed on disk since the instance
+  // booted, with ERROR_CODE_IMAGE_CHANGED. An empty id fails with
+  // ERROR_CODE_NOT_FOUND, so a client can tell a program that serves the
+  // call from one that does not.
+  rpc CaptureDisk(CaptureDiskRequest) returns (CaptureDiskResponse);
 
   // Checks: asked of a provider that has not started. Each carries the
   // config Open would get, and none starts the provider or acts on the host.
@@ -639,6 +653,20 @@ message BaseImage {
   string sha256 = 2;
   // The base file's absolute path on the host.
   string path = 3;
+}
+
+message CaptureDiskRequest {
+  string id = 1;
+  // An absolute path on the host both processes share.
+  string dst = 2;
+}
+
+// CaptureDiskResponse names the base the captured disk is an overlay on.
+message CaptureDiskResponse {
+  // The base's name, such as "ubuntu-24.04".
+  string base = 1;
+  // The base file's SHA-256 in hex.
+  string base_digest = 2;
 }
 
 message DescribeRequest {
