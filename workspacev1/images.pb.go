@@ -141,6 +141,9 @@ const (
 	ImagePusher_IMAGE_PUSHER_UNSPECIFIED ImagePusher = 0
 	// A build of the image.
 	ImagePusher_IMAGE_PUSHER_BUILD ImagePusher = 1
+	// A push to the deployment's registry by a person or a pipeline, found
+	// there by Toshi within about a minute.
+	ImagePusher_IMAGE_PUSHER_HAND ImagePusher = 2
 )
 
 // Enum value maps for ImagePusher.
@@ -148,10 +151,12 @@ var (
 	ImagePusher_name = map[int32]string{
 		0: "IMAGE_PUSHER_UNSPECIFIED",
 		1: "IMAGE_PUSHER_BUILD",
+		2: "IMAGE_PUSHER_HAND",
 	}
 	ImagePusher_value = map[string]int32{
 		"IMAGE_PUSHER_UNSPECIFIED": 0,
 		"IMAGE_PUSHER_BUILD":       1,
+		"IMAGE_PUSHER_HAND":        2,
 	}
 )
 
@@ -431,12 +436,13 @@ func (x *Image) GetRegistrySecret() string {
 	return ""
 }
 
-// ImageVersion is one build of an image.
+// ImageVersion is one build of an image, or one push of a container image.
 type ImageVersion struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Counts from 1 in the order the image's builds started, failed ones
-	// included.
+	// Counts from 1 in the order the image's versions were recorded: a
+	// build's when it started, failed ones included, and a push's when Toshi
+	// found it.
 	Number int64             `protobuf:"varint,2,opt,name=number,proto3" json:"number,omitempty"`
 	State  ImageVersionState `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.ImageVersionState" json:"state,omitempty"`
 	// The base it was built on, and that base's SHA-256 in hex; the base is
@@ -473,7 +479,10 @@ type ImageVersion struct {
 	BuilderFrontendDigest string       `protobuf:"bytes,21,opt,name=builder_frontend_digest,json=builderFrontendDigest,proto3" json:"builder_frontend_digest,omitempty"`
 	// Whether the build's commit is the source repository's own rather than
 	// a fork's. An untrusted build receives no build secrets.
-	Trusted       bool `protobuf:"varint,22,opt,name=trusted,proto3" json:"trusted,omitempty"`
+	Trusted bool `protobuf:"varint,22,opt,name=trusted,proto3" json:"trusted,omitempty"`
+	// The tag a container version pushed by hand was found under; empty for
+	// a build's version. A later push of the same tag is a new version.
+	Tag           string `protobuf:"bytes,23,opt,name=tag,proto3" json:"tag,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -660,6 +669,13 @@ func (x *ImageVersion) GetTrusted() bool {
 		return x.Trusted
 	}
 	return false
+}
+
+func (x *ImageVersion) GetTag() string {
+	if x != nil {
+		return x.Tag
+	}
+	return ""
 }
 
 // ImageVersionPin is a service revision made with an image version.
@@ -1363,7 +1379,7 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x06source\x18\r \x01(\tR\x06source\x12:\n" +
 	"\abuilder\x18\x0e \x01(\x0e2 .toshi.workspace.v1.ImageBuilderR\abuilder\x12\x1a\n" +
 	"\bregistry\x18\x0f \x01(\tR\bregistry\x12'\n" +
-	"\x0fregistry_secret\x18\x10 \x01(\tR\x0eregistrySecret\"\xc9\a\n" +
+	"\x0fregistry_secret\x18\x10 \x01(\tR\x0eregistrySecret\"\xdb\a\n" +
 	"\fImageVersion\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06number\x18\x02 \x01(\x03R\x06number\x12;\n" +
@@ -1392,7 +1408,8 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\abuilder\x18\x13 \x01(\x0e2 .toshi.workspace.v1.ImageBuilderR\abuilder\x12'\n" +
 	"\x0fbuilder_version\x18\x14 \x01(\tR\x0ebuilderVersion\x126\n" +
 	"\x17builder_frontend_digest\x18\x15 \x01(\tR\x15builderFrontendDigest\x12\x18\n" +
-	"\atrusted\x18\x16 \x01(\bR\atrusted\"o\n" +
+	"\atrusted\x18\x16 \x01(\bR\atrusted\x12\x10\n" +
+	"\x03tag\x18\x17 \x01(\tR\x03tag\"o\n" +
 	"\x0fImageVersionPin\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x01 \x01(\tR\tserviceId\x12!\n" +
@@ -1447,10 +1464,11 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x19IMAGE_BUILDER_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12IMAGE_BUILDER_AUTO\x10\x01\x12\x1c\n" +
 	"\x18IMAGE_BUILDER_DOCKERFILE\x10\x02\x12\x1a\n" +
-	"\x16IMAGE_BUILDER_RAILPACK\x10\x03*C\n" +
+	"\x16IMAGE_BUILDER_RAILPACK\x10\x03*Z\n" +
 	"\vImagePusher\x12\x1c\n" +
 	"\x18IMAGE_PUSHER_UNSPECIFIED\x10\x00\x12\x16\n" +
-	"\x12IMAGE_PUSHER_BUILD\x10\x01*\xe4\x01\n" +
+	"\x12IMAGE_PUSHER_BUILD\x10\x01\x12\x15\n" +
+	"\x11IMAGE_PUSHER_HAND\x10\x02*\xe4\x01\n" +
 	"\x11ImageVersionState\x12#\n" +
 	"\x1fIMAGE_VERSION_STATE_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cIMAGE_VERSION_STATE_BUILDING\x10\x01\x12\x1e\n" +

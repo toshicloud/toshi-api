@@ -127,6 +127,9 @@ enum ImagePusher {
   IMAGE_PUSHER_UNSPECIFIED = 0;
   // A build of the image.
   IMAGE_PUSHER_BUILD = 1;
+  // A push to the deployment's registry by a person or a pipeline, found
+  // there by Toshi within about a minute.
+  IMAGE_PUSHER_HAND = 2;
 }
 
 // ImageVersionState is where a version is in its life.
@@ -184,11 +187,12 @@ message Image {
   string registry_secret = 16;
 }
 
-// ImageVersion is one build of an image.
+// ImageVersion is one build of an image, or one push of a container image.
 message ImageVersion {
   string id = 1;
-  // Counts from 1 in the order the image's builds started, failed ones
-  // included.
+  // Counts from 1 in the order the image's versions were recorded: a
+  // build's when it started, failed ones included, and a push's when Toshi
+  // found it.
   int64 number = 2;
   ImageVersionState state = 3;
   // The base it was built on, and that base's SHA-256 in hex; the base is
@@ -226,6 +230,9 @@ message ImageVersion {
   // Whether the build's commit is the source repository's own rather than
   // a fork's. An untrusted build receives no build secrets.
   bool trusted = 22;
+  // The tag a container version pushed by hand was found under; empty for
+  // a build's version. A later push of the same tag is a new version.
+  string tag = 23;
 }
 
 // ImageVersionPin is a service revision made with an image version.
