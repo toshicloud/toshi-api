@@ -77,16 +77,18 @@ type VolumeServiceClient interface {
 	DetachVolume(context.Context, *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error)
 	// ListVolumeVersions returns a state volume's saved versions, newest
 	// first. A run that releases the volume saves its data as the next
-	// version when the workspace has object storage.
+	// version when the workspace has object storage. The volume keeps its
+	// newest five versions and the one a run holding it started from; the
+	// others expire and are not listed.
 	//
 	// A page holds 100 versions when page_size is zero, and 1000 at most.
 	ListVolumeVersions(context.Context, *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error)
 	// RestoreVolume copies one of a state volume's versions as its next
 	// version, so the next run that mounts the volume starts from that data.
-	// The earlier versions are kept, and the new one names the version it was
-	// copied from. A volume a run holds fails with FAILED_PRECONDITION, as
-	// does a volume that is not a state volume. A version the volume does
-	// not have is NOT_FOUND.
+	// The new version names the version it was copied from. A volume a run
+	// holds fails with FAILED_PRECONDITION, as do a volume that is not a
+	// state volume and an expired version. A version the volume does not
+	// have is NOT_FOUND.
 	RestoreVolume(context.Context, *connect.Request[workspacev1.RestoreVolumeRequest]) (*connect.Response[workspacev1.RestoreVolumeResponse], error)
 }
 
@@ -195,16 +197,18 @@ type VolumeServiceHandler interface {
 	DetachVolume(context.Context, *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error)
 	// ListVolumeVersions returns a state volume's saved versions, newest
 	// first. A run that releases the volume saves its data as the next
-	// version when the workspace has object storage.
+	// version when the workspace has object storage. The volume keeps its
+	// newest five versions and the one a run holding it started from; the
+	// others expire and are not listed.
 	//
 	// A page holds 100 versions when page_size is zero, and 1000 at most.
 	ListVolumeVersions(context.Context, *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error)
 	// RestoreVolume copies one of a state volume's versions as its next
 	// version, so the next run that mounts the volume starts from that data.
-	// The earlier versions are kept, and the new one names the version it was
-	// copied from. A volume a run holds fails with FAILED_PRECONDITION, as
-	// does a volume that is not a state volume. A version the volume does
-	// not have is NOT_FOUND.
+	// The new version names the version it was copied from. A volume a run
+	// holds fails with FAILED_PRECONDITION, as do a volume that is not a
+	// state volume and an expired version. A version the volume does not
+	// have is NOT_FOUND.
 	RestoreVolume(context.Context, *connect.Request[workspacev1.RestoreVolumeRequest]) (*connect.Response[workspacev1.RestoreVolumeResponse], error)
 }
 
