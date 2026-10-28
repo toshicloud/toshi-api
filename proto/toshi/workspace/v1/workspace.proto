@@ -1194,6 +1194,20 @@ message ServiceRevision {
   // The secret a SECRET revision was made for; never its value.
   string secret = 4;
   google.protobuf.Timestamp created_at = 5;
+  // The recipe's container image as submitted, a registry reference;
+  // empty for a service that runs in a VM.
+  string container_image = 6;
+  // The digest, sha256:<hex>, container_image named when the revision was
+  // made. Every run of the revision pulls it; a rollback never resolves
+  // the reference again.
+  string container_image_digest = 7;
+  // Whether a rollback may select the revision: it is one of the service's
+  // 10 newest revisions, or in use, selected or the revision of a queued
+  // or running run. Toshi deletes no image; a revision whose image the
+  // registry no longer holds is eligible, and its run fails at pull.
+  bool eligible = 8;
+  // Why a rollback may not select the revision; empty when eligible.
+  string ineligible_reason = 9;
 }
 
 // ServiceRevisionReason is why a revision was made.

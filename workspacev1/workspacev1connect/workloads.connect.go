@@ -395,9 +395,12 @@ type WorkloadServiceClient interface {
 	// it: the recipe comes back, and the mode, size, state volume and secret
 	// values do not change. No revision is made. expected_revision, when
 	// set, must be the selected revision, else FAILED_PRECONDITION naming
-	// the selected one; so is a revision already selected. An unknown
-	// revision is NOT_FOUND. The answer carries the activation, whose
-	// outcome follows the revision's next run (ListServiceActivations).
+	// the selected one; so is a revision already selected, and a revision
+	// that is not eligible (ServiceRevision.eligible), with its reason. An
+	// unknown revision is NOT_FOUND. The next run pulls the revision's image
+	// by its digest: nothing is resolved again or built. The answer carries
+	// the activation, whose outcome follows the revision's next run
+	// (ListServiceActivations).
 	RollbackService(context.Context, *connect.Request[workspacev1.RollbackServiceRequest]) (*connect.Response[workspacev1.RollbackServiceResponse], error)
 	// ListServiceActivations returns each time a revision of the service was
 	// selected, by its create, a deploy or a rollback, oldest first, with
@@ -1212,9 +1215,12 @@ type WorkloadServiceHandler interface {
 	// it: the recipe comes back, and the mode, size, state volume and secret
 	// values do not change. No revision is made. expected_revision, when
 	// set, must be the selected revision, else FAILED_PRECONDITION naming
-	// the selected one; so is a revision already selected. An unknown
-	// revision is NOT_FOUND. The answer carries the activation, whose
-	// outcome follows the revision's next run (ListServiceActivations).
+	// the selected one; so is a revision already selected, and a revision
+	// that is not eligible (ServiceRevision.eligible), with its reason. An
+	// unknown revision is NOT_FOUND. The next run pulls the revision's image
+	// by its digest: nothing is resolved again or built. The answer carries
+	// the activation, whose outcome follows the revision's next run
+	// (ListServiceActivations).
 	RollbackService(context.Context, *connect.Request[workspacev1.RollbackServiceRequest]) (*connect.Response[workspacev1.RollbackServiceResponse], error)
 	// ListServiceActivations returns each time a revision of the service was
 	// selected, by its create, a deploy or a rollback, oldest first, with

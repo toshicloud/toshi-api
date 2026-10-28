@@ -7285,10 +7285,24 @@ type ServiceRevision struct {
 	// The revision's recipe, resolved, in TOML.
 	Recipe string `protobuf:"bytes,3,opt,name=recipe,proto3" json:"recipe,omitempty"`
 	// The secret a SECRET revision was made for; never its value.
-	Secret        string                 `protobuf:"bytes,4,opt,name=secret,proto3" json:"secret,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Secret    string                 `protobuf:"bytes,4,opt,name=secret,proto3" json:"secret,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// The recipe's container image as submitted, a registry reference;
+	// empty for a service that runs in a VM.
+	ContainerImage string `protobuf:"bytes,6,opt,name=container_image,json=containerImage,proto3" json:"container_image,omitempty"`
+	// The digest, sha256:<hex>, container_image named when the revision was
+	// made. Every run of the revision pulls it; a rollback never resolves
+	// the reference again.
+	ContainerImageDigest string `protobuf:"bytes,7,opt,name=container_image_digest,json=containerImageDigest,proto3" json:"container_image_digest,omitempty"`
+	// Whether a rollback may select the revision: it is one of the service's
+	// 10 newest revisions, or in use, selected or the revision of a queued
+	// or running run. Toshi deletes no image; a revision whose image the
+	// registry no longer holds is eligible, and its run fails at pull.
+	Eligible bool `protobuf:"varint,8,opt,name=eligible,proto3" json:"eligible,omitempty"`
+	// Why a rollback may not select the revision; empty when eligible.
+	IneligibleReason string `protobuf:"bytes,9,opt,name=ineligible_reason,json=ineligibleReason,proto3" json:"ineligible_reason,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ServiceRevision) Reset() {
@@ -7354,6 +7368,34 @@ func (x *ServiceRevision) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *ServiceRevision) GetContainerImage() string {
+	if x != nil {
+		return x.ContainerImage
+	}
+	return ""
+}
+
+func (x *ServiceRevision) GetContainerImageDigest() string {
+	if x != nil {
+		return x.ContainerImageDigest
+	}
+	return ""
+}
+
+func (x *ServiceRevision) GetEligible() bool {
+	if x != nil {
+		return x.Eligible
+	}
+	return false
+}
+
+func (x *ServiceRevision) GetIneligibleReason() string {
+	if x != nil {
+		return x.IneligibleReason
+	}
+	return ""
 }
 
 type RollbackServiceRequest struct {
@@ -8441,14 +8483,18 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x02id\x18\x03 \x01(\tR\x02id\x12\x16\n" +
 	"\x06number\x18\x04 \x01(\x03R\x06number\"]\n" +
 	"\x1aGetServiceRevisionResponse\x12?\n" +
-	"\brevision\x18\x01 \x01(\v2#.toshi.workspace.v1.ServiceRevisionR\brevision\"\xd7\x01\n" +
+	"\brevision\x18\x01 \x01(\v2#.toshi.workspace.v1.ServiceRevisionR\brevision\"\xff\x02\n" +
 	"\x0fServiceRevision\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\x12A\n" +
 	"\x06reason\x18\x02 \x01(\x0e2).toshi.workspace.v1.ServiceRevisionReasonR\x06reason\x12\x16\n" +
 	"\x06recipe\x18\x03 \x01(\tR\x06recipe\x12\x16\n" +
 	"\x06secret\x18\x04 \x01(\tR\x06secret\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xce\x01\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12'\n" +
+	"\x0fcontainer_image\x18\x06 \x01(\tR\x0econtainerImage\x124\n" +
+	"\x16container_image_digest\x18\a \x01(\tR\x14containerImageDigest\x12\x1a\n" +
+	"\beligible\x18\b \x01(\bR\beligible\x12+\n" +
+	"\x11ineligible_reason\x18\t \x01(\tR\x10ineligibleReason\"\xce\x01\n" +
 	"\x16RollbackServiceRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
