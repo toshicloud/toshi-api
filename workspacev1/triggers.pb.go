@@ -372,6 +372,7 @@ type TriggerTarget struct {
 	// Types that are valid to be assigned to Target:
 	//
 	//	*TriggerTarget_Sandbox
+	//	*TriggerTarget_Preview
 	Target        isTriggerTarget_Target `protobuf_oneof:"target"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -423,6 +424,15 @@ func (x *TriggerTarget) GetSandbox() *TriggerSandbox {
 	return nil
 }
 
+func (x *TriggerTarget) GetPreview() *TriggerPreview {
+	if x != nil {
+		if x, ok := x.Target.(*TriggerTarget_Preview); ok {
+			return x.Preview
+		}
+	}
+	return nil
+}
+
 type isTriggerTarget_Target interface {
 	isTriggerTarget_Target()
 }
@@ -431,7 +441,59 @@ type TriggerTarget_Sandbox struct {
 	Sandbox *TriggerSandbox `protobuf:"bytes,1,opt,name=sandbox,proto3,oneof"`
 }
 
+type TriggerTarget_Preview struct {
+	Preview *TriggerPreview `protobuf:"bytes,2,opt,name=preview,proto3,oneof"`
+}
+
 func (*TriggerTarget_Sandbox) isTriggerTarget_Target() {}
+
+func (*TriggerTarget_Preview) isTriggerTarget_Target() {}
+
+// TriggerPreview is a sandbox per pull request that the repository
+// describes in the file `.toshi/preview.toml`. The file is read from the
+// tip of the pull request's base branch for every event, never from its
+// head, so a pull request cannot change its own size, time limit or
+// bindings; a change to the file applies once it is merged. The sandbox
+// clones the pull request's head commit before its setup runs. A missing
+// or invalid file makes no sandbox: the trigger records the event as
+// failed with the reason `no_template` or `invalid_template`. A trigger
+// with a preview target takes only the pull request events of a GITHUB
+// connection.
+type TriggerPreview struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TriggerPreview) Reset() {
+	*x = TriggerPreview{}
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TriggerPreview) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerPreview) ProtoMessage() {}
+
+func (x *TriggerPreview) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TriggerPreview.ProtoReflect.Descriptor instead.
+func (*TriggerPreview) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{3}
+}
 
 // TriggerSandbox is a sandbox a trigger makes.
 type TriggerSandbox struct {
@@ -460,7 +522,7 @@ type TriggerSandbox struct {
 
 func (x *TriggerSandbox) Reset() {
 	*x = TriggerSandbox{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -472,7 +534,7 @@ func (x *TriggerSandbox) String() string {
 func (*TriggerSandbox) ProtoMessage() {}
 
 func (x *TriggerSandbox) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -485,7 +547,7 @@ func (x *TriggerSandbox) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TriggerSandbox.ProtoReflect.Descriptor instead.
 func (*TriggerSandbox) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *TriggerSandbox) GetSize() string {
@@ -550,7 +612,7 @@ type CreateTriggerRequest struct {
 
 func (x *CreateTriggerRequest) Reset() {
 	*x = CreateTriggerRequest{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -562,7 +624,7 @@ func (x *CreateTriggerRequest) String() string {
 func (*CreateTriggerRequest) ProtoMessage() {}
 
 func (x *CreateTriggerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -575,7 +637,7 @@ func (x *CreateTriggerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTriggerRequest.ProtoReflect.Descriptor instead.
 func (*CreateTriggerRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateTriggerRequest) GetProject() string {
@@ -615,7 +677,7 @@ type CreateTriggerResponse struct {
 
 func (x *CreateTriggerResponse) Reset() {
 	*x = CreateTriggerResponse{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -627,7 +689,7 @@ func (x *CreateTriggerResponse) String() string {
 func (*CreateTriggerResponse) ProtoMessage() {}
 
 func (x *CreateTriggerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -640,7 +702,7 @@ func (x *CreateTriggerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTriggerResponse.ProtoReflect.Descriptor instead.
 func (*CreateTriggerResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CreateTriggerResponse) GetTrigger() *Trigger {
@@ -661,7 +723,7 @@ type GetTriggerRequest struct {
 
 func (x *GetTriggerRequest) Reset() {
 	*x = GetTriggerRequest{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -673,7 +735,7 @@ func (x *GetTriggerRequest) String() string {
 func (*GetTriggerRequest) ProtoMessage() {}
 
 func (x *GetTriggerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -686,7 +748,7 @@ func (x *GetTriggerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTriggerRequest.ProtoReflect.Descriptor instead.
 func (*GetTriggerRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetTriggerRequest) GetProject() string {
@@ -719,7 +781,7 @@ type GetTriggerResponse struct {
 
 func (x *GetTriggerResponse) Reset() {
 	*x = GetTriggerResponse{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -731,7 +793,7 @@ func (x *GetTriggerResponse) String() string {
 func (*GetTriggerResponse) ProtoMessage() {}
 
 func (x *GetTriggerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -744,7 +806,7 @@ func (x *GetTriggerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTriggerResponse.ProtoReflect.Descriptor instead.
 func (*GetTriggerResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetTriggerResponse) GetTrigger() *Trigger {
@@ -768,7 +830,7 @@ type ListTriggersRequest struct {
 
 func (x *ListTriggersRequest) Reset() {
 	*x = ListTriggersRequest{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -780,7 +842,7 @@ func (x *ListTriggersRequest) String() string {
 func (*ListTriggersRequest) ProtoMessage() {}
 
 func (x *ListTriggersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -793,7 +855,7 @@ func (x *ListTriggersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTriggersRequest.ProtoReflect.Descriptor instead.
 func (*ListTriggersRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListTriggersRequest) GetProject() string {
@@ -835,7 +897,7 @@ type ListTriggersResponse struct {
 
 func (x *ListTriggersResponse) Reset() {
 	*x = ListTriggersResponse{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -847,7 +909,7 @@ func (x *ListTriggersResponse) String() string {
 func (*ListTriggersResponse) ProtoMessage() {}
 
 func (x *ListTriggersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -860,7 +922,7 @@ func (x *ListTriggersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTriggersResponse.ProtoReflect.Descriptor instead.
 func (*ListTriggersResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListTriggersResponse) GetTriggers() []*Trigger {
@@ -892,7 +954,7 @@ type UpdateTriggerRequest struct {
 
 func (x *UpdateTriggerRequest) Reset() {
 	*x = UpdateTriggerRequest{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -904,7 +966,7 @@ func (x *UpdateTriggerRequest) String() string {
 func (*UpdateTriggerRequest) ProtoMessage() {}
 
 func (x *UpdateTriggerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -917,7 +979,7 @@ func (x *UpdateTriggerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTriggerRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTriggerRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UpdateTriggerRequest) GetProject() string {
@@ -971,7 +1033,7 @@ type UpdateTriggerResponse struct {
 
 func (x *UpdateTriggerResponse) Reset() {
 	*x = UpdateTriggerResponse{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -983,7 +1045,7 @@ func (x *UpdateTriggerResponse) String() string {
 func (*UpdateTriggerResponse) ProtoMessage() {}
 
 func (x *UpdateTriggerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -996,7 +1058,7 @@ func (x *UpdateTriggerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTriggerResponse.ProtoReflect.Descriptor instead.
 func (*UpdateTriggerResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpdateTriggerResponse) GetTrigger() *Trigger {
@@ -1018,7 +1080,7 @@ type DeleteTriggerRequest struct {
 
 func (x *DeleteTriggerRequest) Reset() {
 	*x = DeleteTriggerRequest{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1030,7 +1092,7 @@ func (x *DeleteTriggerRequest) String() string {
 func (*DeleteTriggerRequest) ProtoMessage() {}
 
 func (x *DeleteTriggerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1043,7 +1105,7 @@ func (x *DeleteTriggerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTriggerRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTriggerRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DeleteTriggerRequest) GetProject() string {
@@ -1082,7 +1144,7 @@ type DeleteTriggerResponse struct {
 
 func (x *DeleteTriggerResponse) Reset() {
 	*x = DeleteTriggerResponse{}
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1094,7 +1156,7 @@ func (x *DeleteTriggerResponse) String() string {
 func (*DeleteTriggerResponse) ProtoMessage() {}
 
 func (x *DeleteTriggerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1107,7 +1169,7 @@ func (x *DeleteTriggerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTriggerResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTriggerResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{13}
+	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{14}
 }
 
 var File_toshi_workspace_v1_triggers_proto protoreflect.FileDescriptor
@@ -1135,10 +1197,12 @@ const file_toshi_workspace_v1_triggers_proto_rawDesc = "" +
 	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"X\n" +
 	"\rTriggerFilter\x12\"\n" +
 	"\frepositories\x18\x01 \x03(\tR\frepositories\x12#\n" +
-	"\rbase_branches\x18\x02 \x03(\tR\fbaseBranches\"Y\n" +
+	"\rbase_branches\x18\x02 \x03(\tR\fbaseBranches\"\x99\x01\n" +
 	"\rTriggerTarget\x12>\n" +
-	"\asandbox\x18\x01 \x01(\v2\".toshi.workspace.v1.TriggerSandboxH\x00R\asandboxB\b\n" +
-	"\x06target\"\xc8\x02\n" +
+	"\asandbox\x18\x01 \x01(\v2\".toshi.workspace.v1.TriggerSandboxH\x00R\asandbox\x12>\n" +
+	"\apreview\x18\x02 \x01(\v2\".toshi.workspace.v1.TriggerPreviewH\x00R\apreviewB\b\n" +
+	"\x06target\"\x10\n" +
+	"\x0eTriggerPreview\"\xc8\x02\n" +
 	"\x0eTriggerSandbox\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
 	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
@@ -1217,65 +1281,67 @@ func file_toshi_workspace_v1_triggers_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_triggers_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_toshi_workspace_v1_triggers_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_toshi_workspace_v1_triggers_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_toshi_workspace_v1_triggers_proto_goTypes = []any{
 	(TriggerAction)(0),            // 0: toshi.workspace.v1.TriggerAction
 	(TriggerForks)(0),             // 1: toshi.workspace.v1.TriggerForks
 	(*Trigger)(nil),               // 2: toshi.workspace.v1.Trigger
 	(*TriggerFilter)(nil),         // 3: toshi.workspace.v1.TriggerFilter
 	(*TriggerTarget)(nil),         // 4: toshi.workspace.v1.TriggerTarget
-	(*TriggerSandbox)(nil),        // 5: toshi.workspace.v1.TriggerSandbox
-	(*CreateTriggerRequest)(nil),  // 6: toshi.workspace.v1.CreateTriggerRequest
-	(*CreateTriggerResponse)(nil), // 7: toshi.workspace.v1.CreateTriggerResponse
-	(*GetTriggerRequest)(nil),     // 8: toshi.workspace.v1.GetTriggerRequest
-	(*GetTriggerResponse)(nil),    // 9: toshi.workspace.v1.GetTriggerResponse
-	(*ListTriggersRequest)(nil),   // 10: toshi.workspace.v1.ListTriggersRequest
-	(*ListTriggersResponse)(nil),  // 11: toshi.workspace.v1.ListTriggersResponse
-	(*UpdateTriggerRequest)(nil),  // 12: toshi.workspace.v1.UpdateTriggerRequest
-	(*UpdateTriggerResponse)(nil), // 13: toshi.workspace.v1.UpdateTriggerResponse
-	(*DeleteTriggerRequest)(nil),  // 14: toshi.workspace.v1.DeleteTriggerRequest
-	(*DeleteTriggerResponse)(nil), // 15: toshi.workspace.v1.DeleteTriggerResponse
-	(*durationpb.Duration)(nil),   // 16: google.protobuf.Duration
-	(*timestamppb.Timestamp)(nil), // 17: google.protobuf.Timestamp
-	(*Binding)(nil),               // 18: toshi.workspace.v1.Binding
-	(*Command)(nil),               // 19: toshi.workspace.v1.Command
-	(*fieldmaskpb.FieldMask)(nil), // 20: google.protobuf.FieldMask
+	(*TriggerPreview)(nil),        // 5: toshi.workspace.v1.TriggerPreview
+	(*TriggerSandbox)(nil),        // 6: toshi.workspace.v1.TriggerSandbox
+	(*CreateTriggerRequest)(nil),  // 7: toshi.workspace.v1.CreateTriggerRequest
+	(*CreateTriggerResponse)(nil), // 8: toshi.workspace.v1.CreateTriggerResponse
+	(*GetTriggerRequest)(nil),     // 9: toshi.workspace.v1.GetTriggerRequest
+	(*GetTriggerResponse)(nil),    // 10: toshi.workspace.v1.GetTriggerResponse
+	(*ListTriggersRequest)(nil),   // 11: toshi.workspace.v1.ListTriggersRequest
+	(*ListTriggersResponse)(nil),  // 12: toshi.workspace.v1.ListTriggersResponse
+	(*UpdateTriggerRequest)(nil),  // 13: toshi.workspace.v1.UpdateTriggerRequest
+	(*UpdateTriggerResponse)(nil), // 14: toshi.workspace.v1.UpdateTriggerResponse
+	(*DeleteTriggerRequest)(nil),  // 15: toshi.workspace.v1.DeleteTriggerRequest
+	(*DeleteTriggerResponse)(nil), // 16: toshi.workspace.v1.DeleteTriggerResponse
+	(*durationpb.Duration)(nil),   // 17: google.protobuf.Duration
+	(*timestamppb.Timestamp)(nil), // 18: google.protobuf.Timestamp
+	(*Binding)(nil),               // 19: toshi.workspace.v1.Binding
+	(*Command)(nil),               // 20: toshi.workspace.v1.Command
+	(*fieldmaskpb.FieldMask)(nil), // 21: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_triggers_proto_depIdxs = []int32{
 	3,  // 0: toshi.workspace.v1.Trigger.filter:type_name -> toshi.workspace.v1.TriggerFilter
 	0,  // 1: toshi.workspace.v1.Trigger.action:type_name -> toshi.workspace.v1.TriggerAction
 	4,  // 2: toshi.workspace.v1.Trigger.target:type_name -> toshi.workspace.v1.TriggerTarget
-	16, // 3: toshi.workspace.v1.Trigger.idle_timeout:type_name -> google.protobuf.Duration
+	17, // 3: toshi.workspace.v1.Trigger.idle_timeout:type_name -> google.protobuf.Duration
 	1,  // 4: toshi.workspace.v1.Trigger.forks:type_name -> toshi.workspace.v1.TriggerForks
-	17, // 5: toshi.workspace.v1.Trigger.created_at:type_name -> google.protobuf.Timestamp
-	17, // 6: toshi.workspace.v1.Trigger.updated_at:type_name -> google.protobuf.Timestamp
-	5,  // 7: toshi.workspace.v1.TriggerTarget.sandbox:type_name -> toshi.workspace.v1.TriggerSandbox
-	16, // 8: toshi.workspace.v1.TriggerSandbox.max_duration:type_name -> google.protobuf.Duration
-	18, // 9: toshi.workspace.v1.TriggerSandbox.bindings:type_name -> toshi.workspace.v1.Binding
-	19, // 10: toshi.workspace.v1.TriggerSandbox.setup:type_name -> toshi.workspace.v1.Command
-	19, // 11: toshi.workspace.v1.TriggerSandbox.process:type_name -> toshi.workspace.v1.Command
-	2,  // 12: toshi.workspace.v1.CreateTriggerRequest.trigger:type_name -> toshi.workspace.v1.Trigger
-	2,  // 13: toshi.workspace.v1.CreateTriggerResponse.trigger:type_name -> toshi.workspace.v1.Trigger
-	2,  // 14: toshi.workspace.v1.GetTriggerResponse.trigger:type_name -> toshi.workspace.v1.Trigger
-	2,  // 15: toshi.workspace.v1.ListTriggersResponse.triggers:type_name -> toshi.workspace.v1.Trigger
-	2,  // 16: toshi.workspace.v1.UpdateTriggerRequest.trigger:type_name -> toshi.workspace.v1.Trigger
-	20, // 17: toshi.workspace.v1.UpdateTriggerRequest.update_mask:type_name -> google.protobuf.FieldMask
-	2,  // 18: toshi.workspace.v1.UpdateTriggerResponse.trigger:type_name -> toshi.workspace.v1.Trigger
-	6,  // 19: toshi.workspace.v1.TriggerService.CreateTrigger:input_type -> toshi.workspace.v1.CreateTriggerRequest
-	8,  // 20: toshi.workspace.v1.TriggerService.GetTrigger:input_type -> toshi.workspace.v1.GetTriggerRequest
-	10, // 21: toshi.workspace.v1.TriggerService.ListTriggers:input_type -> toshi.workspace.v1.ListTriggersRequest
-	12, // 22: toshi.workspace.v1.TriggerService.UpdateTrigger:input_type -> toshi.workspace.v1.UpdateTriggerRequest
-	14, // 23: toshi.workspace.v1.TriggerService.DeleteTrigger:input_type -> toshi.workspace.v1.DeleteTriggerRequest
-	7,  // 24: toshi.workspace.v1.TriggerService.CreateTrigger:output_type -> toshi.workspace.v1.CreateTriggerResponse
-	9,  // 25: toshi.workspace.v1.TriggerService.GetTrigger:output_type -> toshi.workspace.v1.GetTriggerResponse
-	11, // 26: toshi.workspace.v1.TriggerService.ListTriggers:output_type -> toshi.workspace.v1.ListTriggersResponse
-	13, // 27: toshi.workspace.v1.TriggerService.UpdateTrigger:output_type -> toshi.workspace.v1.UpdateTriggerResponse
-	15, // 28: toshi.workspace.v1.TriggerService.DeleteTrigger:output_type -> toshi.workspace.v1.DeleteTriggerResponse
-	24, // [24:29] is the sub-list for method output_type
-	19, // [19:24] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	18, // 5: toshi.workspace.v1.Trigger.created_at:type_name -> google.protobuf.Timestamp
+	18, // 6: toshi.workspace.v1.Trigger.updated_at:type_name -> google.protobuf.Timestamp
+	6,  // 7: toshi.workspace.v1.TriggerTarget.sandbox:type_name -> toshi.workspace.v1.TriggerSandbox
+	5,  // 8: toshi.workspace.v1.TriggerTarget.preview:type_name -> toshi.workspace.v1.TriggerPreview
+	17, // 9: toshi.workspace.v1.TriggerSandbox.max_duration:type_name -> google.protobuf.Duration
+	19, // 10: toshi.workspace.v1.TriggerSandbox.bindings:type_name -> toshi.workspace.v1.Binding
+	20, // 11: toshi.workspace.v1.TriggerSandbox.setup:type_name -> toshi.workspace.v1.Command
+	20, // 12: toshi.workspace.v1.TriggerSandbox.process:type_name -> toshi.workspace.v1.Command
+	2,  // 13: toshi.workspace.v1.CreateTriggerRequest.trigger:type_name -> toshi.workspace.v1.Trigger
+	2,  // 14: toshi.workspace.v1.CreateTriggerResponse.trigger:type_name -> toshi.workspace.v1.Trigger
+	2,  // 15: toshi.workspace.v1.GetTriggerResponse.trigger:type_name -> toshi.workspace.v1.Trigger
+	2,  // 16: toshi.workspace.v1.ListTriggersResponse.triggers:type_name -> toshi.workspace.v1.Trigger
+	2,  // 17: toshi.workspace.v1.UpdateTriggerRequest.trigger:type_name -> toshi.workspace.v1.Trigger
+	21, // 18: toshi.workspace.v1.UpdateTriggerRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 19: toshi.workspace.v1.UpdateTriggerResponse.trigger:type_name -> toshi.workspace.v1.Trigger
+	7,  // 20: toshi.workspace.v1.TriggerService.CreateTrigger:input_type -> toshi.workspace.v1.CreateTriggerRequest
+	9,  // 21: toshi.workspace.v1.TriggerService.GetTrigger:input_type -> toshi.workspace.v1.GetTriggerRequest
+	11, // 22: toshi.workspace.v1.TriggerService.ListTriggers:input_type -> toshi.workspace.v1.ListTriggersRequest
+	13, // 23: toshi.workspace.v1.TriggerService.UpdateTrigger:input_type -> toshi.workspace.v1.UpdateTriggerRequest
+	15, // 24: toshi.workspace.v1.TriggerService.DeleteTrigger:input_type -> toshi.workspace.v1.DeleteTriggerRequest
+	8,  // 25: toshi.workspace.v1.TriggerService.CreateTrigger:output_type -> toshi.workspace.v1.CreateTriggerResponse
+	10, // 26: toshi.workspace.v1.TriggerService.GetTrigger:output_type -> toshi.workspace.v1.GetTriggerResponse
+	12, // 27: toshi.workspace.v1.TriggerService.ListTriggers:output_type -> toshi.workspace.v1.ListTriggersResponse
+	14, // 28: toshi.workspace.v1.TriggerService.UpdateTrigger:output_type -> toshi.workspace.v1.UpdateTriggerResponse
+	16, // 29: toshi.workspace.v1.TriggerService.DeleteTrigger:output_type -> toshi.workspace.v1.DeleteTriggerResponse
+	25, // [25:30] is the sub-list for method output_type
+	20, // [20:25] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_triggers_proto_init() }
@@ -1286,6 +1352,7 @@ func file_toshi_workspace_v1_triggers_proto_init() {
 	file_toshi_workspace_v1_workspace_proto_init()
 	file_toshi_workspace_v1_triggers_proto_msgTypes[2].OneofWrappers = []any{
 		(*TriggerTarget_Sandbox)(nil),
+		(*TriggerTarget_Preview)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1293,7 +1360,7 @@ func file_toshi_workspace_v1_triggers_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_triggers_proto_rawDesc), len(file_toshi_workspace_v1_triggers_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   14,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

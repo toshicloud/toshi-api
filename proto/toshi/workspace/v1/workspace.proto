@@ -458,6 +458,29 @@ message SandboxSpec {
   string image = 10;
   // As JobSpec.image_version_id. Set by the server; ignored in a request.
   string image_version_id = 11;
+  // Create only: a commit the sandbox's host clones into the directory
+  // `source` of the home directory once it runs, before setup; setup and
+  // process then start in it, or in their cwd taken as a path inside it.
+  // The clone uses a token that reads only that repository's contents,
+  // made for the clone alone: setup and process never see it, and no copy
+  // is kept in the sandbox. It runs where setup does, so the VM, or
+  // container_image when one is set, needs `sh` and `git`. A clone that
+  // fails, or that finds another commit at ref, ends the sandbox FAILED
+  // with last_error.code "setup_failed". Unset: nothing is cloned.
+  SandboxSource source = 12;
+}
+
+// SandboxSource is a commit of a repository that one of the workspace's
+// connections reaches.
+message SandboxSource {
+  // The id of the GITHUB connection that reaches the repository.
+  string connection = 1;
+  // The repository, as owner/name; one the sandbox's project holds.
+  string repository = 2;
+  // The ref the commit is fetched by, for example `refs/pull/42/head`.
+  string ref = 3;
+  // The commit's full SHA, which ref must point at.
+  string commit = 4;
 }
 
 // ServiceSpec is a service. Its fields are set wherever a service's

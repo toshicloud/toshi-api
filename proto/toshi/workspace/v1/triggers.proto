@@ -31,8 +31,10 @@ service TriggerService {
   // the workspace fails with NOT_FOUND, and so does a WEBHOOK connection of
   // another project or environment. No events, an event name with the
   // reserved prefix `trigger.`, no target for the action CREATE, a key
-  // that is not a template of the event data, or a production environment
-  // for pull request events fails with INVALID_ARGUMENT, and a name another
+  // that is not a template of the event data, a production environment for
+  // pull request events, or a preview target whose source is not a GITHUB
+  // connection or whose events are not all pull request events fails with
+  // INVALID_ARGUMENT, and a name another
   // trigger of the project has with ALREADY_EXISTS.
   rpc CreateTrigger(CreateTriggerRequest) returns (CreateTriggerResponse) {
     option (toshi.permission) = "triggers.write";
@@ -142,8 +144,21 @@ enum TriggerAction {
 message TriggerTarget {
   oneof target {
     TriggerSandbox sandbox = 1;
+    TriggerPreview preview = 2;
   }
 }
+
+// TriggerPreview is a sandbox per pull request that the repository
+// describes in the file `.toshi/preview.toml`. The file is read from the
+// tip of the pull request's base branch for every event, never from its
+// head, so a pull request cannot change its own size, time limit or
+// bindings; a change to the file applies once it is merged. The sandbox
+// clones the pull request's head commit before its setup runs. A missing
+// or invalid file makes no sandbox: the trigger records the event as
+// failed with the reason `no_template` or `invalid_template`. A trigger
+// with a preview target takes only the pull request events of a GITHUB
+// connection.
+message TriggerPreview {}
 
 // TriggerSandbox is a sandbox a trigger makes.
 message TriggerSandbox {

@@ -15,7 +15,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/triggers.proto.
  */
 export const file_toshi_workspace_v1_triggers: GenFile = /*@__PURE__*/
-  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvdHJpZ2dlcnMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSLRAwoHVHJpZ2dlchIKCgJpZBgBIAEoCRIPCgdwcm9qZWN0GAIgASgJEhMKC2Vudmlyb25tZW50GAMgASgJEgwKBG5hbWUYBCABKAkSDgoGc291cmNlGAUgASgJEg4KBmV2ZW50cxgGIAMoCRIxCgZmaWx0ZXIYByABKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlckZpbHRlchIxCgZhY3Rpb24YCCABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlckFjdGlvbhIxCgZ0YXJnZXQYCSABKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlclRhcmdldBILCgNrZXkYCiABKAkSLwoMaWRsZV90aW1lb3V0GAsgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEi8KBWZvcmtzGAwgASgOMiAudG9zaGkud29ya3NwYWNlLnYxLlRyaWdnZXJGb3JrcxIuCgpjcmVhdGVkX2F0GA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI8Cg1UcmlnZ2VyRmlsdGVyEhQKDHJlcG9zaXRvcmllcxgBIAMoCRIVCg1iYXNlX2JyYW5jaGVzGAIgAygJIlAKDVRyaWdnZXJUYXJnZXQSNQoHc2FuZGJveBgBIAEoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5UcmlnZ2VyU2FuZGJveEgAQggKBnRhcmdldCKCAgoOVHJpZ2dlclNhbmRib3gSDAoEc2l6ZRgBIAEoCRIvCgxtYXhfZHVyYXRpb24YAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SLQoIYmluZGluZ3MYAyADKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuQmluZGluZxIqCgVzZXR1cBgEIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5Db21tYW5kEiwKB3Byb2Nlc3MYBSABKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuQ29tbWFuZBIPCgdjaGFubmVsGAYgASgJEhcKD2NvbnRhaW5lcl9pbWFnZRgHIAEoCSJ/ChRDcmVhdGVUcmlnZ2VyUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhMKC2Vudmlyb25tZW50GAIgASgJEiwKB3RyaWdnZXIYAyABKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlchITCgtyZXF1ZXN0X2tleRgEIAEoCSJFChVDcmVhdGVUcmlnZ2VyUmVzcG9uc2USLAoHdHJpZ2dlchgBIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5UcmlnZ2VyIkUKEUdldFRyaWdnZXJSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkSCgoCaWQYAyABKAkiQgoSR2V0VHJpZ2dlclJlc3BvbnNlEiwKB3RyaWdnZXIYASABKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlciJiChNMaXN0VHJpZ2dlcnNSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkiXgoUTGlzdFRyaWdnZXJzUmVzcG9uc2USLQoIdHJpZ2dlcnMYASADKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlchIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkivAEKFFVwZGF0ZVRyaWdnZXJSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkSCgoCaWQYAyABKAkSLAoHdHJpZ2dlchgEIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5UcmlnZ2VyEi8KC3VwZGF0ZV9tYXNrGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLkZpZWxkTWFzaxITCgtyZXF1ZXN0X2tleRgGIAEoCSJFChVVcGRhdGVUcmlnZ2VyUmVzcG9uc2USLAoHdHJpZ2dlchgBIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5UcmlnZ2VyIl0KFERlbGV0ZVRyaWdnZXJSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkSCgoCaWQYAyABKAkSEwoLcmVxdWVzdF9rZXkYBCABKAkiFwoVRGVsZXRlVHJpZ2dlclJlc3BvbnNlKmUKDVRyaWdnZXJBY3Rpb24SHgoaVFJJR0dFUl9BQ1RJT05fVU5TUEVDSUZJRUQQABIZChVUUklHR0VSX0FDVElPTl9DUkVBVEUQARIZChVUUklHR0VSX0FDVElPTl9ERUxFVEUQAipfCgxUcmlnZ2VyRm9ya3MSHQoZVFJJR0dFUl9GT1JLU19VTlNQRUNJRklFRBAAEhcKE1RSSUdHRVJfRk9SS1NfTEFCRUwQARIXChNUUklHR0VSX0ZPUktTX05FVkVSEAIyswUKDlRyaWdnZXJTZXJ2aWNlEocBCg1DcmVhdGVUcmlnZ2VyEigudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZVRyaWdnZXJSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZVRyaWdnZXJSZXNwb25zZSIhwvMYDnRyaWdnZXJzLndyaXRlyvMYC2Vudmlyb25tZW50En0KCkdldFRyaWdnZXISJS50b3NoaS53b3Jrc3BhY2UudjEuR2V0VHJpZ2dlclJlcXVlc3QaJi50b3NoaS53b3Jrc3BhY2UudjEuR2V0VHJpZ2dlclJlc3BvbnNlIiDC8xgNdHJpZ2dlcnMucmVhZMrzGAtlbnZpcm9ubWVudBKDAQoMTGlzdFRyaWdnZXJzEicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RUcmlnZ2Vyc1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFRyaWdnZXJzUmVzcG9uc2UiIMLzGA10cmlnZ2Vycy5yZWFkyvMYC2Vudmlyb25tZW50EocBCg1VcGRhdGVUcmlnZ2VyEigudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVRyaWdnZXJSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVRyaWdnZXJSZXNwb25zZSIhwvMYDnRyaWdnZXJzLndyaXRlyvMYC2Vudmlyb25tZW50EocBCg1EZWxldGVUcmlnZ2VyEigudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZVRyaWdnZXJSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZVRyaWdnZXJSZXNwb25zZSIhwvMYDnRyaWdnZXJzLndyaXRlyvMYC2Vudmlyb25tZW50QiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_workspace]);
+  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvdHJpZ2dlcnMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSLRAwoHVHJpZ2dlchIKCgJpZBgBIAEoCRIPCgdwcm9qZWN0GAIgASgJEhMKC2Vudmlyb25tZW50GAMgASgJEgwKBG5hbWUYBCABKAkSDgoGc291cmNlGAUgASgJEg4KBmV2ZW50cxgGIAMoCRIxCgZmaWx0ZXIYByABKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlckZpbHRlchIxCgZhY3Rpb24YCCABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlckFjdGlvbhIxCgZ0YXJnZXQYCSABKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlclRhcmdldBILCgNrZXkYCiABKAkSLwoMaWRsZV90aW1lb3V0GAsgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEi8KBWZvcmtzGAwgASgOMiAudG9zaGkud29ya3NwYWNlLnYxLlRyaWdnZXJGb3JrcxIuCgpjcmVhdGVkX2F0GA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI8Cg1UcmlnZ2VyRmlsdGVyEhQKDHJlcG9zaXRvcmllcxgBIAMoCRIVCg1iYXNlX2JyYW5jaGVzGAIgAygJIocBCg1UcmlnZ2VyVGFyZ2V0EjUKB3NhbmRib3gYASABKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuVHJpZ2dlclNhbmRib3hIABI1CgdwcmV2aWV3GAIgASgLMiIudG9zaGkud29ya3NwYWNlLnYxLlRyaWdnZXJQcmV2aWV3SABCCAoGdGFyZ2V0IhAKDlRyaWdnZXJQcmV2aWV3IoICCg5UcmlnZ2VyU2FuZGJveBIMCgRzaXplGAEgASgJEi8KDG1heF9kdXJhdGlvbhgCIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbhItCghiaW5kaW5ncxgDIAMoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5CaW5kaW5nEioKBXNldHVwGAQgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLkNvbW1hbmQSLAoHcHJvY2VzcxgFIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5Db21tYW5kEg8KB2NoYW5uZWwYBiABKAkSFwoPY29udGFpbmVyX2ltYWdlGAcgASgJIn8KFENyZWF0ZVRyaWdnZXJSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkSLAoHdHJpZ2dlchgDIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5UcmlnZ2VyEhMKC3JlcXVlc3Rfa2V5GAQgASgJIkUKFUNyZWF0ZVRyaWdnZXJSZXNwb25zZRIsCgd0cmlnZ2VyGAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLlRyaWdnZXIiRQoRR2V0VHJpZ2dlclJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRITCgtlbnZpcm9ubWVudBgCIAEoCRIKCgJpZBgDIAEoCSJCChJHZXRUcmlnZ2VyUmVzcG9uc2USLAoHdHJpZ2dlchgBIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5UcmlnZ2VyImIKE0xpc3RUcmlnZ2Vyc1JlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRITCgtlbnZpcm9ubWVudBgCIAEoCRIRCglwYWdlX3NpemUYAyABKAUSEgoKcGFnZV90b2tlbhgEIAEoCSJeChRMaXN0VHJpZ2dlcnNSZXNwb25zZRItCgh0cmlnZ2VycxgBIAMoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5UcmlnZ2VyEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSK8AQoUVXBkYXRlVHJpZ2dlclJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRITCgtlbnZpcm9ubWVudBgCIAEoCRIKCgJpZBgDIAEoCRIsCgd0cmlnZ2VyGAQgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLlRyaWdnZXISLwoLdXBkYXRlX21hc2sYBSABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrEhMKC3JlcXVlc3Rfa2V5GAYgASgJIkUKFVVwZGF0ZVRyaWdnZXJSZXNwb25zZRIsCgd0cmlnZ2VyGAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLlRyaWdnZXIiXQoURGVsZXRlVHJpZ2dlclJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRITCgtlbnZpcm9ubWVudBgCIAEoCRIKCgJpZBgDIAEoCRITCgtyZXF1ZXN0X2tleRgEIAEoCSIXChVEZWxldGVUcmlnZ2VyUmVzcG9uc2UqZQoNVHJpZ2dlckFjdGlvbhIeChpUUklHR0VSX0FDVElPTl9VTlNQRUNJRklFRBAAEhkKFVRSSUdHRVJfQUNUSU9OX0NSRUFURRABEhkKFVRSSUdHRVJfQUNUSU9OX0RFTEVURRACKl8KDFRyaWdnZXJGb3JrcxIdChlUUklHR0VSX0ZPUktTX1VOU1BFQ0lGSUVEEAASFwoTVFJJR0dFUl9GT1JLU19MQUJFTBABEhcKE1RSSUdHRVJfRk9SS1NfTkVWRVIQAjKzBQoOVHJpZ2dlclNlcnZpY2UShwEKDUNyZWF0ZVRyaWdnZXISKC50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlVHJpZ2dlclJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlVHJpZ2dlclJlc3BvbnNlIiHC8xgOdHJpZ2dlcnMud3JpdGXK8xgLZW52aXJvbm1lbnQSfQoKR2V0VHJpZ2dlchIlLnRvc2hpLndvcmtzcGFjZS52MS5HZXRUcmlnZ2VyUmVxdWVzdBomLnRvc2hpLndvcmtzcGFjZS52MS5HZXRUcmlnZ2VyUmVzcG9uc2UiIMLzGA10cmlnZ2Vycy5yZWFkyvMYC2Vudmlyb25tZW50EoMBCgxMaXN0VHJpZ2dlcnMSJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFRyaWdnZXJzUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0VHJpZ2dlcnNSZXNwb25zZSIgwvMYDXRyaWdnZXJzLnJlYWTK8xgLZW52aXJvbm1lbnQShwEKDVVwZGF0ZVRyaWdnZXISKC50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlVHJpZ2dlclJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlVHJpZ2dlclJlc3BvbnNlIiHC8xgOdHJpZ2dlcnMud3JpdGXK8xgLZW52aXJvbm1lbnQShwEKDURlbGV0ZVRyaWdnZXISKC50b3NoaS53b3Jrc3BhY2UudjEuRGVsZXRlVHJpZ2dlclJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuRGVsZXRlVHJpZ2dlclJlc3BvbnNlIiHC8xgOdHJpZ2dlcnMud3JpdGXK8xgLZW52aXJvbm1lbnRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_duration, file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_workspace]);
 
 /**
  * Trigger binds the events of one connection to an action.
@@ -320,6 +320,12 @@ export type TriggerTarget = Message<"toshi.workspace.v1.TriggerTarget"> & {
      */
     value: TriggerSandbox;
     case: "sandbox";
+  } | {
+    /**
+     * @generated from field: toshi.workspace.v1.TriggerPreview preview = 2;
+     */
+    value: TriggerPreview;
+    case: "preview";
   } | { case: undefined; value?: undefined };
 };
 
@@ -333,6 +339,11 @@ export type TriggerTargetJson = {
    * @generated from field: toshi.workspace.v1.TriggerSandbox sandbox = 1;
    */
   sandbox?: TriggerSandboxJson;
+
+  /**
+   * @generated from field: toshi.workspace.v1.TriggerPreview preview = 2;
+   */
+  preview?: TriggerPreviewJson;
 };
 
 /**
@@ -341,6 +352,47 @@ export type TriggerTargetJson = {
  */
 export const TriggerTargetSchema: GenMessage<TriggerTarget, {jsonType: TriggerTargetJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_triggers, 2);
+
+/**
+ * TriggerPreview is a sandbox per pull request that the repository
+ * describes in the file `.toshi/preview.toml`. The file is read from the
+ * tip of the pull request's base branch for every event, never from its
+ * head, so a pull request cannot change its own size, time limit or
+ * bindings; a change to the file applies once it is merged. The sandbox
+ * clones the pull request's head commit before its setup runs. A missing
+ * or invalid file makes no sandbox: the trigger records the event as
+ * failed with the reason `no_template` or `invalid_template`. A trigger
+ * with a preview target takes only the pull request events of a GITHUB
+ * connection.
+ *
+ * @generated from message toshi.workspace.v1.TriggerPreview
+ */
+export type TriggerPreview = Message<"toshi.workspace.v1.TriggerPreview"> & {
+};
+
+/**
+ * TriggerPreview is a sandbox per pull request that the repository
+ * describes in the file `.toshi/preview.toml`. The file is read from the
+ * tip of the pull request's base branch for every event, never from its
+ * head, so a pull request cannot change its own size, time limit or
+ * bindings; a change to the file applies once it is merged. The sandbox
+ * clones the pull request's head commit before its setup runs. A missing
+ * or invalid file makes no sandbox: the trigger records the event as
+ * failed with the reason `no_template` or `invalid_template`. A trigger
+ * with a preview target takes only the pull request events of a GITHUB
+ * connection.
+ *
+ * @generated from message toshi.workspace.v1.TriggerPreview
+ */
+export type TriggerPreviewJson = {
+};
+
+/**
+ * Describes the message toshi.workspace.v1.TriggerPreview.
+ * Use `create(TriggerPreviewSchema)` to create a new message.
+ */
+export const TriggerPreviewSchema: GenMessage<TriggerPreview, {jsonType: TriggerPreviewJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_triggers, 3);
 
 /**
  * TriggerSandbox is a sandbox a trigger makes.
@@ -467,7 +519,7 @@ export type TriggerSandboxJson = {
  * Use `create(TriggerSandboxSchema)` to create a new message.
  */
 export const TriggerSandboxSchema: GenMessage<TriggerSandbox, {jsonType: TriggerSandboxJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 3);
+  messageDesc(file_toshi_workspace_v1_triggers, 4);
 
 /**
  * @generated from message toshi.workspace.v1.CreateTriggerRequest
@@ -528,7 +580,7 @@ export type CreateTriggerRequestJson = {
  * Use `create(CreateTriggerRequestSchema)` to create a new message.
  */
 export const CreateTriggerRequestSchema: GenMessage<CreateTriggerRequest, {jsonType: CreateTriggerRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 4);
+  messageDesc(file_toshi_workspace_v1_triggers, 5);
 
 /**
  * @generated from message toshi.workspace.v1.CreateTriggerResponse
@@ -555,7 +607,7 @@ export type CreateTriggerResponseJson = {
  * Use `create(CreateTriggerResponseSchema)` to create a new message.
  */
 export const CreateTriggerResponseSchema: GenMessage<CreateTriggerResponse, {jsonType: CreateTriggerResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 5);
+  messageDesc(file_toshi_workspace_v1_triggers, 6);
 
 /**
  * @generated from message toshi.workspace.v1.GetTriggerRequest
@@ -602,7 +654,7 @@ export type GetTriggerRequestJson = {
  * Use `create(GetTriggerRequestSchema)` to create a new message.
  */
 export const GetTriggerRequestSchema: GenMessage<GetTriggerRequest, {jsonType: GetTriggerRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 6);
+  messageDesc(file_toshi_workspace_v1_triggers, 7);
 
 /**
  * @generated from message toshi.workspace.v1.GetTriggerResponse
@@ -629,7 +681,7 @@ export type GetTriggerResponseJson = {
  * Use `create(GetTriggerResponseSchema)` to create a new message.
  */
 export const GetTriggerResponseSchema: GenMessage<GetTriggerResponse, {jsonType: GetTriggerResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 7);
+  messageDesc(file_toshi_workspace_v1_triggers, 8);
 
 /**
  * @generated from message toshi.workspace.v1.ListTriggersRequest
@@ -694,7 +746,7 @@ export type ListTriggersRequestJson = {
  * Use `create(ListTriggersRequestSchema)` to create a new message.
  */
 export const ListTriggersRequestSchema: GenMessage<ListTriggersRequest, {jsonType: ListTriggersRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 8);
+  messageDesc(file_toshi_workspace_v1_triggers, 9);
 
 /**
  * @generated from message toshi.workspace.v1.ListTriggersResponse
@@ -735,7 +787,7 @@ export type ListTriggersResponseJson = {
  * Use `create(ListTriggersResponseSchema)` to create a new message.
  */
 export const ListTriggersResponseSchema: GenMessage<ListTriggersResponse, {jsonType: ListTriggersResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 9);
+  messageDesc(file_toshi_workspace_v1_triggers, 10);
 
 /**
  * @generated from message toshi.workspace.v1.UpdateTriggerRequest
@@ -816,7 +868,7 @@ export type UpdateTriggerRequestJson = {
  * Use `create(UpdateTriggerRequestSchema)` to create a new message.
  */
 export const UpdateTriggerRequestSchema: GenMessage<UpdateTriggerRequest, {jsonType: UpdateTriggerRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 10);
+  messageDesc(file_toshi_workspace_v1_triggers, 11);
 
 /**
  * @generated from message toshi.workspace.v1.UpdateTriggerResponse
@@ -843,7 +895,7 @@ export type UpdateTriggerResponseJson = {
  * Use `create(UpdateTriggerResponseSchema)` to create a new message.
  */
 export const UpdateTriggerResponseSchema: GenMessage<UpdateTriggerResponse, {jsonType: UpdateTriggerResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 11);
+  messageDesc(file_toshi_workspace_v1_triggers, 12);
 
 /**
  * @generated from message toshi.workspace.v1.DeleteTriggerRequest
@@ -900,7 +952,7 @@ export type DeleteTriggerRequestJson = {
  * Use `create(DeleteTriggerRequestSchema)` to create a new message.
  */
 export const DeleteTriggerRequestSchema: GenMessage<DeleteTriggerRequest, {jsonType: DeleteTriggerRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 12);
+  messageDesc(file_toshi_workspace_v1_triggers, 13);
 
 /**
  * @generated from message toshi.workspace.v1.DeleteTriggerResponse
@@ -919,7 +971,7 @@ export type DeleteTriggerResponseJson = {
  * Use `create(DeleteTriggerResponseSchema)` to create a new message.
  */
 export const DeleteTriggerResponseSchema: GenMessage<DeleteTriggerResponse, {jsonType: DeleteTriggerResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_triggers, 13);
+  messageDesc(file_toshi_workspace_v1_triggers, 14);
 
 /**
  * TriggerAction is what a trigger does with an event it matches.
@@ -1033,8 +1085,10 @@ export const TriggerService: GenService<{
    * the workspace fails with NOT_FOUND, and so does a WEBHOOK connection of
    * another project or environment. No events, an event name with the
    * reserved prefix `trigger.`, no target for the action CREATE, a key
-   * that is not a template of the event data, or a production environment
-   * for pull request events fails with INVALID_ARGUMENT, and a name another
+   * that is not a template of the event data, a production environment for
+   * pull request events, or a preview target whose source is not a GITHUB
+   * connection or whose events are not all pull request events fails with
+   * INVALID_ARGUMENT, and a name another
    * trigger of the project has with ALREADY_EXISTS.
    *
    * @generated from rpc toshi.workspace.v1.TriggerService.CreateTrigger

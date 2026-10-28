@@ -56,8 +56,10 @@ type TriggerServiceClient interface {
 	// the workspace fails with NOT_FOUND, and so does a WEBHOOK connection of
 	// another project or environment. No events, an event name with the
 	// reserved prefix `trigger.`, no target for the action CREATE, a key
-	// that is not a template of the event data, or a production environment
-	// for pull request events fails with INVALID_ARGUMENT, and a name another
+	// that is not a template of the event data, a production environment for
+	// pull request events, or a preview target whose source is not a GITHUB
+	// connection or whose events are not all pull request events fails with
+	// INVALID_ARGUMENT, and a name another
 	// trigger of the project has with ALREADY_EXISTS.
 	CreateTrigger(context.Context, *connect.Request[workspacev1.CreateTriggerRequest]) (*connect.Response[workspacev1.CreateTriggerResponse], error)
 	// GetTrigger returns one trigger. One the project does not have, or one
@@ -163,8 +165,10 @@ type TriggerServiceHandler interface {
 	// the workspace fails with NOT_FOUND, and so does a WEBHOOK connection of
 	// another project or environment. No events, an event name with the
 	// reserved prefix `trigger.`, no target for the action CREATE, a key
-	// that is not a template of the event data, or a production environment
-	// for pull request events fails with INVALID_ARGUMENT, and a name another
+	// that is not a template of the event data, a production environment for
+	// pull request events, or a preview target whose source is not a GITHUB
+	// connection or whose events are not all pull request events fails with
+	// INVALID_ARGUMENT, and a name another
 	// trigger of the project has with ALREADY_EXISTS.
 	CreateTrigger(context.Context, *connect.Request[workspacev1.CreateTriggerRequest]) (*connect.Response[workspacev1.CreateTriggerResponse], error)
 	// GetTrigger returns one trigger. One the project does not have, or one
