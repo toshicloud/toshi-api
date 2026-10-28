@@ -83,7 +83,8 @@ service ProviderService {
   // passes. A failure carries the instance as it last was in the error.
   rpc Wait(WaitRequest) returns (WaitResponse);
 
-  // Disks: the facet "disks", and "disk_data" for DiskHasData.
+  // Disks: the facet "disks", "disk_data" for DiskHasData, and
+  // "disk_exporter" for ExportDisk.
 
   // CreateCacheBase creates an empty cache disk of size_gib at path.
   rpc CreateCacheBase(CreateCacheBaseRequest) returns (CreateCacheBaseResponse);
@@ -99,6 +100,9 @@ service ProviderService {
   rpc AttachDisk(AttachDiskRequest) returns (AttachDiskResponse);
   // DiskHasData reports whether the disk at path holds data.
   rpc DiskHasData(DiskHasDataRequest) returns (DiskHasDataResponse);
+  // ExportDisk writes the disk at src to dst, a file it creates, as one
+  // disk that needs no other file.
+  rpc ExportDisk(ExportDiskRequest) returns (ExportDiskResponse);
 
   // State: the facet "instances_gone". The state root is in OpenResponse.
 
@@ -520,6 +524,13 @@ message DiskHasDataRequest {
 message DiskHasDataResponse {
   bool has_data = 1;
 }
+
+message ExportDiskRequest {
+  string src = 1;
+  string dst = 2;
+}
+
+message ExportDiskResponse {}
 
 message InstanceGoneRequest {
   string id = 1;

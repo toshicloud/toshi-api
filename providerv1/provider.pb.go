@@ -2517,6 +2517,94 @@ func (x *DiskHasDataResponse) GetHasData() bool {
 	return false
 }
 
+type ExportDiskRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Src           string                 `protobuf:"bytes,1,opt,name=src,proto3" json:"src,omitempty"`
+	Dst           string                 `protobuf:"bytes,2,opt,name=dst,proto3" json:"dst,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExportDiskRequest) Reset() {
+	*x = ExportDiskRequest{}
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExportDiskRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExportDiskRequest) ProtoMessage() {}
+
+func (x *ExportDiskRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExportDiskRequest.ProtoReflect.Descriptor instead.
+func (*ExportDiskRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *ExportDiskRequest) GetSrc() string {
+	if x != nil {
+		return x.Src
+	}
+	return ""
+}
+
+func (x *ExportDiskRequest) GetDst() string {
+	if x != nil {
+		return x.Dst
+	}
+	return ""
+}
+
+type ExportDiskResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExportDiskResponse) Reset() {
+	*x = ExportDiskResponse{}
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExportDiskResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExportDiskResponse) ProtoMessage() {}
+
+func (x *ExportDiskResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExportDiskResponse.ProtoReflect.Descriptor instead.
+func (*ExportDiskResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{40}
+}
+
 type InstanceGoneRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -2526,7 +2614,7 @@ type InstanceGoneRequest struct {
 
 func (x *InstanceGoneRequest) Reset() {
 	*x = InstanceGoneRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[39]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2538,7 +2626,7 @@ func (x *InstanceGoneRequest) String() string {
 func (*InstanceGoneRequest) ProtoMessage() {}
 
 func (x *InstanceGoneRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[39]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2551,7 +2639,7 @@ func (x *InstanceGoneRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InstanceGoneRequest.ProtoReflect.Descriptor instead.
 func (*InstanceGoneRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{39}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *InstanceGoneRequest) GetId() string {
@@ -2573,7 +2661,7 @@ type InstanceGoneResponse struct {
 
 func (x *InstanceGoneResponse) Reset() {
 	*x = InstanceGoneResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[40]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2585,7 +2673,7 @@ func (x *InstanceGoneResponse) String() string {
 func (*InstanceGoneResponse) ProtoMessage() {}
 
 func (x *InstanceGoneResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[40]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2598,7 +2686,7 @@ func (x *InstanceGoneResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InstanceGoneResponse.ProtoReflect.Descriptor instead.
 func (*InstanceGoneResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{40}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *InstanceGoneResponse) GetGone() bool {
@@ -2623,7 +2711,7 @@ type UnreapedRequest struct {
 
 func (x *UnreapedRequest) Reset() {
 	*x = UnreapedRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[41]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2635,7 +2723,7 @@ func (x *UnreapedRequest) String() string {
 func (*UnreapedRequest) ProtoMessage() {}
 
 func (x *UnreapedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[41]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2648,7 +2736,7 @@ func (x *UnreapedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnreapedRequest.ProtoReflect.Descriptor instead.
 func (*UnreapedRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{41}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{43}
 }
 
 type UnreapedResponse struct {
@@ -2662,7 +2750,7 @@ type UnreapedResponse struct {
 
 func (x *UnreapedResponse) Reset() {
 	*x = UnreapedResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[42]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2674,7 +2762,7 @@ func (x *UnreapedResponse) String() string {
 func (*UnreapedResponse) ProtoMessage() {}
 
 func (x *UnreapedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[42]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2687,7 +2775,7 @@ func (x *UnreapedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnreapedResponse.ProtoReflect.Descriptor instead.
 func (*UnreapedResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{42}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *UnreapedResponse) GetLeft() int32 {
@@ -2713,7 +2801,7 @@ type SnapshotRequest struct {
 
 func (x *SnapshotRequest) Reset() {
 	*x = SnapshotRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[43]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2725,7 +2813,7 @@ func (x *SnapshotRequest) String() string {
 func (*SnapshotRequest) ProtoMessage() {}
 
 func (x *SnapshotRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[43]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2738,7 +2826,7 @@ func (x *SnapshotRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SnapshotRequest.ProtoReflect.Descriptor instead.
 func (*SnapshotRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{43}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *SnapshotRequest) GetId() string {
@@ -2757,7 +2845,7 @@ type SnapshotResponse struct {
 
 func (x *SnapshotResponse) Reset() {
 	*x = SnapshotResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[44]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2769,7 +2857,7 @@ func (x *SnapshotResponse) String() string {
 func (*SnapshotResponse) ProtoMessage() {}
 
 func (x *SnapshotResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[44]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2782,7 +2870,7 @@ func (x *SnapshotResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SnapshotResponse.ProtoReflect.Descriptor instead.
 func (*SnapshotResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{44}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *SnapshotResponse) GetSnapshotId() string {
@@ -2804,7 +2892,7 @@ type RestoreRequest struct {
 
 func (x *RestoreRequest) Reset() {
 	*x = RestoreRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[45]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2816,7 +2904,7 @@ func (x *RestoreRequest) String() string {
 func (*RestoreRequest) ProtoMessage() {}
 
 func (x *RestoreRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[45]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2829,7 +2917,7 @@ func (x *RestoreRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestoreRequest.ProtoReflect.Descriptor instead.
 func (*RestoreRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{45}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *RestoreRequest) GetSnapshotId() string {
@@ -2862,7 +2950,7 @@ type RestoreResponse struct {
 
 func (x *RestoreResponse) Reset() {
 	*x = RestoreResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[46]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2874,7 +2962,7 @@ func (x *RestoreResponse) String() string {
 func (*RestoreResponse) ProtoMessage() {}
 
 func (x *RestoreResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[46]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2887,7 +2975,7 @@ func (x *RestoreResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestoreResponse.ProtoReflect.Descriptor instead.
 func (*RestoreResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{46}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *RestoreResponse) GetInstance() *Instance {
@@ -2906,7 +2994,7 @@ type ImageIdentityRequest struct {
 
 func (x *ImageIdentityRequest) Reset() {
 	*x = ImageIdentityRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[47]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2918,7 +3006,7 @@ func (x *ImageIdentityRequest) String() string {
 func (*ImageIdentityRequest) ProtoMessage() {}
 
 func (x *ImageIdentityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[47]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2931,7 +3019,7 @@ func (x *ImageIdentityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImageIdentityRequest.ProtoReflect.Descriptor instead.
 func (*ImageIdentityRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{47}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *ImageIdentityRequest) GetSpec() *Spec {
@@ -2950,7 +3038,7 @@ type ImageIdentityResponse struct {
 
 func (x *ImageIdentityResponse) Reset() {
 	*x = ImageIdentityResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[48]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2962,7 +3050,7 @@ func (x *ImageIdentityResponse) String() string {
 func (*ImageIdentityResponse) ProtoMessage() {}
 
 func (x *ImageIdentityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[48]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2975,7 +3063,7 @@ func (x *ImageIdentityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImageIdentityResponse.ProtoReflect.Descriptor instead.
 func (*ImageIdentityResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{48}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *ImageIdentityResponse) GetIdentity() string {
@@ -2994,7 +3082,7 @@ type SnapshotImageIdentityRequest struct {
 
 func (x *SnapshotImageIdentityRequest) Reset() {
 	*x = SnapshotImageIdentityRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[49]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3006,7 +3094,7 @@ func (x *SnapshotImageIdentityRequest) String() string {
 func (*SnapshotImageIdentityRequest) ProtoMessage() {}
 
 func (x *SnapshotImageIdentityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[49]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3019,7 +3107,7 @@ func (x *SnapshotImageIdentityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SnapshotImageIdentityRequest.ProtoReflect.Descriptor instead.
 func (*SnapshotImageIdentityRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{49}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *SnapshotImageIdentityRequest) GetSnapshotId() string {
@@ -3038,7 +3126,7 @@ type SnapshotImageIdentityResponse struct {
 
 func (x *SnapshotImageIdentityResponse) Reset() {
 	*x = SnapshotImageIdentityResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[50]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3050,7 +3138,7 @@ func (x *SnapshotImageIdentityResponse) String() string {
 func (*SnapshotImageIdentityResponse) ProtoMessage() {}
 
 func (x *SnapshotImageIdentityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[50]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3063,7 +3151,7 @@ func (x *SnapshotImageIdentityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SnapshotImageIdentityResponse.ProtoReflect.Descriptor instead.
 func (*SnapshotImageIdentityResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{50}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *SnapshotImageIdentityResponse) GetIdentity() string {
@@ -3085,7 +3173,7 @@ type SetSnapshotRefsRequest struct {
 
 func (x *SetSnapshotRefsRequest) Reset() {
 	*x = SetSnapshotRefsRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[51]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3097,7 +3185,7 @@ func (x *SetSnapshotRefsRequest) String() string {
 func (*SetSnapshotRefsRequest) ProtoMessage() {}
 
 func (x *SetSnapshotRefsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[51]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3110,7 +3198,7 @@ func (x *SetSnapshotRefsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetSnapshotRefsRequest.ProtoReflect.Descriptor instead.
 func (*SetSnapshotRefsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{51}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *SetSnapshotRefsRequest) GetPools() map[string]string {
@@ -3135,7 +3223,7 @@ type SetSnapshotRefsResponse struct {
 
 func (x *SetSnapshotRefsResponse) Reset() {
 	*x = SetSnapshotRefsResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[52]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3147,7 +3235,7 @@ func (x *SetSnapshotRefsResponse) String() string {
 func (*SetSnapshotRefsResponse) ProtoMessage() {}
 
 func (x *SetSnapshotRefsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[52]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3160,7 +3248,7 @@ func (x *SetSnapshotRefsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetSnapshotRefsResponse.ProtoReflect.Descriptor instead.
 func (*SetSnapshotRefsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{52}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{54}
 }
 
 type CollectRequest struct {
@@ -3173,7 +3261,7 @@ type CollectRequest struct {
 
 func (x *CollectRequest) Reset() {
 	*x = CollectRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[53]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3185,7 +3273,7 @@ func (x *CollectRequest) String() string {
 func (*CollectRequest) ProtoMessage() {}
 
 func (x *CollectRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[53]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3198,7 +3286,7 @@ func (x *CollectRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CollectRequest.ProtoReflect.Descriptor instead.
 func (*CollectRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{53}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *CollectRequest) GetGrace() *durationpb.Duration {
@@ -3224,7 +3312,7 @@ type CollectResponse struct {
 
 func (x *CollectResponse) Reset() {
 	*x = CollectResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[54]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3236,7 +3324,7 @@ func (x *CollectResponse) String() string {
 func (*CollectResponse) ProtoMessage() {}
 
 func (x *CollectResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[54]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3249,7 +3337,7 @@ func (x *CollectResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CollectResponse.ProtoReflect.Descriptor instead.
 func (*CollectResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{54}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *CollectResponse) GetFreedBytes() int64 {
@@ -3268,7 +3356,7 @@ type ForgetRequest struct {
 
 func (x *ForgetRequest) Reset() {
 	*x = ForgetRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[55]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3280,7 +3368,7 @@ func (x *ForgetRequest) String() string {
 func (*ForgetRequest) ProtoMessage() {}
 
 func (x *ForgetRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[55]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3293,7 +3381,7 @@ func (x *ForgetRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ForgetRequest.ProtoReflect.Descriptor instead.
 func (*ForgetRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{55}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *ForgetRequest) GetId() string {
@@ -3311,7 +3399,7 @@ type ForgetResponse struct {
 
 func (x *ForgetResponse) Reset() {
 	*x = ForgetResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[56]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3323,7 +3411,7 @@ func (x *ForgetResponse) String() string {
 func (*ForgetResponse) ProtoMessage() {}
 
 func (x *ForgetResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[56]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3336,7 +3424,7 @@ func (x *ForgetResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ForgetResponse.ProtoReflect.Descriptor instead.
 func (*ForgetResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{56}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{58}
 }
 
 type DescribeRequest struct {
@@ -3348,7 +3436,7 @@ type DescribeRequest struct {
 
 func (x *DescribeRequest) Reset() {
 	*x = DescribeRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[57]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3360,7 +3448,7 @@ func (x *DescribeRequest) String() string {
 func (*DescribeRequest) ProtoMessage() {}
 
 func (x *DescribeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[57]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3373,7 +3461,7 @@ func (x *DescribeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DescribeRequest.ProtoReflect.Descriptor instead.
 func (*DescribeRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{57}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *DescribeRequest) GetConfig() *ProviderConfig {
@@ -3395,7 +3483,7 @@ type DescribeResponse struct {
 
 func (x *DescribeResponse) Reset() {
 	*x = DescribeResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[58]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3407,7 +3495,7 @@ func (x *DescribeResponse) String() string {
 func (*DescribeResponse) ProtoMessage() {}
 
 func (x *DescribeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[58]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3420,7 +3508,7 @@ func (x *DescribeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DescribeResponse.ProtoReflect.Descriptor instead.
 func (*DescribeResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{58}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *DescribeResponse) GetFacets() []string {
@@ -3449,7 +3537,7 @@ type CheckResult struct {
 
 func (x *CheckResult) Reset() {
 	*x = CheckResult{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[59]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3461,7 +3549,7 @@ func (x *CheckResult) String() string {
 func (*CheckResult) ProtoMessage() {}
 
 func (x *CheckResult) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[59]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3474,7 +3562,7 @@ func (x *CheckResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckResult.ProtoReflect.Descriptor instead.
 func (*CheckResult) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{59}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *CheckResult) GetCheck() string {
@@ -3511,7 +3599,7 @@ type PreflightRequest struct {
 
 func (x *PreflightRequest) Reset() {
 	*x = PreflightRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[60]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3523,7 +3611,7 @@ func (x *PreflightRequest) String() string {
 func (*PreflightRequest) ProtoMessage() {}
 
 func (x *PreflightRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[60]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3536,7 +3624,7 @@ func (x *PreflightRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PreflightRequest.ProtoReflect.Descriptor instead.
 func (*PreflightRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{60}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *PreflightRequest) GetConfig() *ProviderConfig {
@@ -3569,7 +3657,7 @@ type PreflightResponse struct {
 
 func (x *PreflightResponse) Reset() {
 	*x = PreflightResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[61]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3581,7 +3669,7 @@ func (x *PreflightResponse) String() string {
 func (*PreflightResponse) ProtoMessage() {}
 
 func (x *PreflightResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[61]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3594,7 +3682,7 @@ func (x *PreflightResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PreflightResponse.ProtoReflect.Descriptor instead.
 func (*PreflightResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{61}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *PreflightResponse) GetResults() []*CheckResult {
@@ -3622,7 +3710,7 @@ type StatusRequest struct {
 
 func (x *StatusRequest) Reset() {
 	*x = StatusRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[62]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3634,7 +3722,7 @@ func (x *StatusRequest) String() string {
 func (*StatusRequest) ProtoMessage() {}
 
 func (x *StatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[62]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3647,7 +3735,7 @@ func (x *StatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatusRequest.ProtoReflect.Descriptor instead.
 func (*StatusRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{62}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *StatusRequest) GetConfig() *ProviderConfig {
@@ -3701,7 +3789,7 @@ type StatusResponse struct {
 
 func (x *StatusResponse) Reset() {
 	*x = StatusResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[63]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3713,7 +3801,7 @@ func (x *StatusResponse) String() string {
 func (*StatusResponse) ProtoMessage() {}
 
 func (x *StatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[63]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3726,7 +3814,7 @@ func (x *StatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatusResponse.ProtoReflect.Descriptor instead.
 func (*StatusResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{63}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *StatusResponse) GetResults() []*CheckResult {
@@ -3745,7 +3833,7 @@ type IdleMemoryMiBRequest struct {
 
 func (x *IdleMemoryMiBRequest) Reset() {
 	*x = IdleMemoryMiBRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[64]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3757,7 +3845,7 @@ func (x *IdleMemoryMiBRequest) String() string {
 func (*IdleMemoryMiBRequest) ProtoMessage() {}
 
 func (x *IdleMemoryMiBRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[64]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3770,7 +3858,7 @@ func (x *IdleMemoryMiBRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IdleMemoryMiBRequest.ProtoReflect.Descriptor instead.
 func (*IdleMemoryMiBRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{64}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *IdleMemoryMiBRequest) GetSpec() *Spec {
@@ -3789,7 +3877,7 @@ type IdleMemoryMiBResponse struct {
 
 func (x *IdleMemoryMiBResponse) Reset() {
 	*x = IdleMemoryMiBResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[65]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3801,7 +3889,7 @@ func (x *IdleMemoryMiBResponse) String() string {
 func (*IdleMemoryMiBResponse) ProtoMessage() {}
 
 func (x *IdleMemoryMiBResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[65]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3814,7 +3902,7 @@ func (x *IdleMemoryMiBResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IdleMemoryMiBResponse.ProtoReflect.Descriptor instead.
 func (*IdleMemoryMiBResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{65}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *IdleMemoryMiBResponse) GetMib() int32 {
@@ -3834,7 +3922,7 @@ type SetMemoryTargetRequest struct {
 
 func (x *SetMemoryTargetRequest) Reset() {
 	*x = SetMemoryTargetRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[66]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3846,7 +3934,7 @@ func (x *SetMemoryTargetRequest) String() string {
 func (*SetMemoryTargetRequest) ProtoMessage() {}
 
 func (x *SetMemoryTargetRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[66]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3859,7 +3947,7 @@ func (x *SetMemoryTargetRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMemoryTargetRequest.ProtoReflect.Descriptor instead.
 func (*SetMemoryTargetRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{66}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *SetMemoryTargetRequest) GetId() string {
@@ -3884,7 +3972,7 @@ type SetMemoryTargetResponse struct {
 
 func (x *SetMemoryTargetResponse) Reset() {
 	*x = SetMemoryTargetResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[67]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3896,7 +3984,7 @@ func (x *SetMemoryTargetResponse) String() string {
 func (*SetMemoryTargetResponse) ProtoMessage() {}
 
 func (x *SetMemoryTargetResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[67]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3909,7 +3997,7 @@ func (x *SetMemoryTargetResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMemoryTargetResponse.ProtoReflect.Descriptor instead.
 func (*SetMemoryTargetResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{67}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{69}
 }
 
 type MemoryMiBRequest struct {
@@ -3921,7 +4009,7 @@ type MemoryMiBRequest struct {
 
 func (x *MemoryMiBRequest) Reset() {
 	*x = MemoryMiBRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[68]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3933,7 +4021,7 @@ func (x *MemoryMiBRequest) String() string {
 func (*MemoryMiBRequest) ProtoMessage() {}
 
 func (x *MemoryMiBRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[68]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3946,7 +4034,7 @@ func (x *MemoryMiBRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MemoryMiBRequest.ProtoReflect.Descriptor instead.
 func (*MemoryMiBRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{68}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *MemoryMiBRequest) GetId() string {
@@ -3965,7 +4053,7 @@ type MemoryMiBResponse struct {
 
 func (x *MemoryMiBResponse) Reset() {
 	*x = MemoryMiBResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[69]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3977,7 +4065,7 @@ func (x *MemoryMiBResponse) String() string {
 func (*MemoryMiBResponse) ProtoMessage() {}
 
 func (x *MemoryMiBResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[69]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3990,7 +4078,7 @@ func (x *MemoryMiBResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MemoryMiBResponse.ProtoReflect.Descriptor instead.
 func (*MemoryMiBResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{69}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *MemoryMiBResponse) GetMib() int32 {
@@ -4009,7 +4097,7 @@ type GuestAvailableMiBRequest struct {
 
 func (x *GuestAvailableMiBRequest) Reset() {
 	*x = GuestAvailableMiBRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[70]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4021,7 +4109,7 @@ func (x *GuestAvailableMiBRequest) String() string {
 func (*GuestAvailableMiBRequest) ProtoMessage() {}
 
 func (x *GuestAvailableMiBRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[70]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4034,7 +4122,7 @@ func (x *GuestAvailableMiBRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GuestAvailableMiBRequest.ProtoReflect.Descriptor instead.
 func (*GuestAvailableMiBRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{70}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *GuestAvailableMiBRequest) GetId() string {
@@ -4053,7 +4141,7 @@ type GuestAvailableMiBResponse struct {
 
 func (x *GuestAvailableMiBResponse) Reset() {
 	*x = GuestAvailableMiBResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[71]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4065,7 +4153,7 @@ func (x *GuestAvailableMiBResponse) String() string {
 func (*GuestAvailableMiBResponse) ProtoMessage() {}
 
 func (x *GuestAvailableMiBResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[71]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4078,7 +4166,7 @@ func (x *GuestAvailableMiBResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GuestAvailableMiBResponse.ProtoReflect.Descriptor instead.
 func (*GuestAvailableMiBResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{71}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *GuestAvailableMiBResponse) GetMib() int32 {
@@ -4098,7 +4186,7 @@ type SetMemoryHighRequest struct {
 
 func (x *SetMemoryHighRequest) Reset() {
 	*x = SetMemoryHighRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[72]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4110,7 +4198,7 @@ func (x *SetMemoryHighRequest) String() string {
 func (*SetMemoryHighRequest) ProtoMessage() {}
 
 func (x *SetMemoryHighRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[72]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4123,7 +4211,7 @@ func (x *SetMemoryHighRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMemoryHighRequest.ProtoReflect.Descriptor instead.
 func (*SetMemoryHighRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{72}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *SetMemoryHighRequest) GetId() string {
@@ -4148,7 +4236,7 @@ type SetMemoryHighResponse struct {
 
 func (x *SetMemoryHighResponse) Reset() {
 	*x = SetMemoryHighResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[73]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4160,7 +4248,7 @@ func (x *SetMemoryHighResponse) String() string {
 func (*SetMemoryHighResponse) ProtoMessage() {}
 
 func (x *SetMemoryHighResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[73]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4173,7 +4261,7 @@ func (x *SetMemoryHighResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMemoryHighResponse.ProtoReflect.Descriptor instead.
 func (*SetMemoryHighResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{73}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{75}
 }
 
 type UsageRequest struct {
@@ -4185,7 +4273,7 @@ type UsageRequest struct {
 
 func (x *UsageRequest) Reset() {
 	*x = UsageRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[74]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4197,7 +4285,7 @@ func (x *UsageRequest) String() string {
 func (*UsageRequest) ProtoMessage() {}
 
 func (x *UsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[74]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4210,7 +4298,7 @@ func (x *UsageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsageRequest.ProtoReflect.Descriptor instead.
 func (*UsageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{74}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *UsageRequest) GetId() string {
@@ -4236,7 +4324,7 @@ type UsageResponse struct {
 
 func (x *UsageResponse) Reset() {
 	*x = UsageResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[75]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4248,7 +4336,7 @@ func (x *UsageResponse) String() string {
 func (*UsageResponse) ProtoMessage() {}
 
 func (x *UsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[75]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4261,7 +4349,7 @@ func (x *UsageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsageResponse.ProtoReflect.Descriptor instead.
 func (*UsageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{75}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *UsageResponse) GetCpuTime() *durationpb.Duration {
@@ -4322,7 +4410,7 @@ type HostMemoryRequest struct {
 
 func (x *HostMemoryRequest) Reset() {
 	*x = HostMemoryRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[76]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4334,7 +4422,7 @@ func (x *HostMemoryRequest) String() string {
 func (*HostMemoryRequest) ProtoMessage() {}
 
 func (x *HostMemoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[76]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4347,7 +4435,7 @@ func (x *HostMemoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostMemoryRequest.ProtoReflect.Descriptor instead.
 func (*HostMemoryRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{76}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *HostMemoryRequest) GetId() string {
@@ -4366,7 +4454,7 @@ type HostMemoryResponse struct {
 
 func (x *HostMemoryResponse) Reset() {
 	*x = HostMemoryResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[77]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4378,7 +4466,7 @@ func (x *HostMemoryResponse) String() string {
 func (*HostMemoryResponse) ProtoMessage() {}
 
 func (x *HostMemoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[77]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4391,7 +4479,7 @@ func (x *HostMemoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostMemoryResponse.ProtoReflect.Descriptor instead.
 func (*HostMemoryResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{77}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *HostMemoryResponse) GetBytes() uint64 {
@@ -4410,7 +4498,7 @@ type ProcessLimitRequest struct {
 
 func (x *ProcessLimitRequest) Reset() {
 	*x = ProcessLimitRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[78]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4422,7 +4510,7 @@ func (x *ProcessLimitRequest) String() string {
 func (*ProcessLimitRequest) ProtoMessage() {}
 
 func (x *ProcessLimitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[78]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4435,7 +4523,7 @@ func (x *ProcessLimitRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProcessLimitRequest.ProtoReflect.Descriptor instead.
 func (*ProcessLimitRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{78}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *ProcessLimitRequest) GetId() string {
@@ -4460,7 +4548,7 @@ type ProcessLimitResponse struct {
 
 func (x *ProcessLimitResponse) Reset() {
 	*x = ProcessLimitResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[79]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4472,7 +4560,7 @@ func (x *ProcessLimitResponse) String() string {
 func (*ProcessLimitResponse) ProtoMessage() {}
 
 func (x *ProcessLimitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[79]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4485,7 +4573,7 @@ func (x *ProcessLimitResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProcessLimitResponse.ProtoReflect.Descriptor instead.
 func (*ProcessLimitResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{79}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *ProcessLimitResponse) GetOk() bool {
@@ -4535,7 +4623,7 @@ type DialGuestRequest struct {
 
 func (x *DialGuestRequest) Reset() {
 	*x = DialGuestRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[80]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4547,7 +4635,7 @@ func (x *DialGuestRequest) String() string {
 func (*DialGuestRequest) ProtoMessage() {}
 
 func (x *DialGuestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[80]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4560,7 +4648,7 @@ func (x *DialGuestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DialGuestRequest.ProtoReflect.Descriptor instead.
 func (*DialGuestRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{80}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *DialGuestRequest) GetId() string {
@@ -4587,7 +4675,7 @@ type DialGuestResponse struct {
 
 func (x *DialGuestResponse) Reset() {
 	*x = DialGuestResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[81]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4599,7 +4687,7 @@ func (x *DialGuestResponse) String() string {
 func (*DialGuestResponse) ProtoMessage() {}
 
 func (x *DialGuestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[81]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4612,7 +4700,7 @@ func (x *DialGuestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DialGuestResponse.ProtoReflect.Descriptor instead.
 func (*DialGuestResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{81}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *DialGuestResponse) GetData() []byte {
@@ -4634,7 +4722,7 @@ type DialDisplayRequest struct {
 
 func (x *DialDisplayRequest) Reset() {
 	*x = DialDisplayRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[82]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4646,7 +4734,7 @@ func (x *DialDisplayRequest) String() string {
 func (*DialDisplayRequest) ProtoMessage() {}
 
 func (x *DialDisplayRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[82]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4659,7 +4747,7 @@ func (x *DialDisplayRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DialDisplayRequest.ProtoReflect.Descriptor instead.
 func (*DialDisplayRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{82}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *DialDisplayRequest) GetId() string {
@@ -4686,7 +4774,7 @@ type DialDisplayResponse struct {
 
 func (x *DialDisplayResponse) Reset() {
 	*x = DialDisplayResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[83]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4698,7 +4786,7 @@ func (x *DialDisplayResponse) String() string {
 func (*DialDisplayResponse) ProtoMessage() {}
 
 func (x *DialDisplayResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[83]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4711,7 +4799,7 @@ func (x *DialDisplayResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DialDisplayResponse.ProtoReflect.Descriptor instead.
 func (*DialDisplayResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{83}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *DialDisplayResponse) GetData() []byte {
@@ -4733,7 +4821,7 @@ type CaptureScreenRequest struct {
 
 func (x *CaptureScreenRequest) Reset() {
 	*x = CaptureScreenRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[84]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4745,7 +4833,7 @@ func (x *CaptureScreenRequest) String() string {
 func (*CaptureScreenRequest) ProtoMessage() {}
 
 func (x *CaptureScreenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[84]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4758,7 +4846,7 @@ func (x *CaptureScreenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CaptureScreenRequest.ProtoReflect.Descriptor instead.
 func (*CaptureScreenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{84}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *CaptureScreenRequest) GetId() string {
@@ -4783,7 +4871,7 @@ type CaptureScreenResponse struct {
 
 func (x *CaptureScreenResponse) Reset() {
 	*x = CaptureScreenResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[85]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4795,7 +4883,7 @@ func (x *CaptureScreenResponse) String() string {
 func (*CaptureScreenResponse) ProtoMessage() {}
 
 func (x *CaptureScreenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[85]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4808,7 +4896,7 @@ func (x *CaptureScreenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CaptureScreenResponse.ProtoReflect.Descriptor instead.
 func (*CaptureScreenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{85}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{87}
 }
 
 type ReadConsoleRequest struct {
@@ -4827,7 +4915,7 @@ type ReadConsoleRequest struct {
 
 func (x *ReadConsoleRequest) Reset() {
 	*x = ReadConsoleRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[86]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4839,7 +4927,7 @@ func (x *ReadConsoleRequest) String() string {
 func (*ReadConsoleRequest) ProtoMessage() {}
 
 func (x *ReadConsoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[86]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4852,7 +4940,7 @@ func (x *ReadConsoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadConsoleRequest.ProtoReflect.Descriptor instead.
 func (*ReadConsoleRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{86}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *ReadConsoleRequest) GetId() string {
@@ -4910,7 +4998,7 @@ type ReadConsoleResponse struct {
 
 func (x *ReadConsoleResponse) Reset() {
 	*x = ReadConsoleResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[87]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4922,7 +5010,7 @@ func (x *ReadConsoleResponse) String() string {
 func (*ReadConsoleResponse) ProtoMessage() {}
 
 func (x *ReadConsoleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[87]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4935,7 +5023,7 @@ func (x *ReadConsoleResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadConsoleResponse.ProtoReflect.Descriptor instead.
 func (*ReadConsoleResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{87}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *ReadConsoleResponse) GetStart() string {
@@ -4982,7 +5070,7 @@ type KeepConsoleLogRequest struct {
 
 func (x *KeepConsoleLogRequest) Reset() {
 	*x = KeepConsoleLogRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[88]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4994,7 +5082,7 @@ func (x *KeepConsoleLogRequest) String() string {
 func (*KeepConsoleLogRequest) ProtoMessage() {}
 
 func (x *KeepConsoleLogRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[88]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5007,7 +5095,7 @@ func (x *KeepConsoleLogRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KeepConsoleLogRequest.ProtoReflect.Descriptor instead.
 func (*KeepConsoleLogRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{88}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *KeepConsoleLogRequest) GetId() string {
@@ -5026,7 +5114,7 @@ type KeepConsoleLogResponse struct {
 
 func (x *KeepConsoleLogResponse) Reset() {
 	*x = KeepConsoleLogResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[89]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5038,7 +5126,7 @@ func (x *KeepConsoleLogResponse) String() string {
 func (*KeepConsoleLogResponse) ProtoMessage() {}
 
 func (x *KeepConsoleLogResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[89]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5051,7 +5139,7 @@ func (x *KeepConsoleLogResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KeepConsoleLogResponse.ProtoReflect.Descriptor instead.
 func (*KeepConsoleLogResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{89}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *KeepConsoleLogResponse) GetPath() string {
@@ -5070,7 +5158,7 @@ type DebugSSHAddrRequest struct {
 
 func (x *DebugSSHAddrRequest) Reset() {
 	*x = DebugSSHAddrRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[90]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5082,7 +5170,7 @@ func (x *DebugSSHAddrRequest) String() string {
 func (*DebugSSHAddrRequest) ProtoMessage() {}
 
 func (x *DebugSSHAddrRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[90]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5095,7 +5183,7 @@ func (x *DebugSSHAddrRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DebugSSHAddrRequest.ProtoReflect.Descriptor instead.
 func (*DebugSSHAddrRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{90}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *DebugSSHAddrRequest) GetId() string {
@@ -5116,7 +5204,7 @@ type DebugSSHAddrResponse struct {
 
 func (x *DebugSSHAddrResponse) Reset() {
 	*x = DebugSSHAddrResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[91]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5128,7 +5216,7 @@ func (x *DebugSSHAddrResponse) String() string {
 func (*DebugSSHAddrResponse) ProtoMessage() {}
 
 func (x *DebugSSHAddrResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[91]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5141,7 +5229,7 @@ func (x *DebugSSHAddrResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DebugSSHAddrResponse.ProtoReflect.Descriptor instead.
 func (*DebugSSHAddrResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{91}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *DebugSSHAddrResponse) GetOk() bool {
@@ -5167,7 +5255,7 @@ type PreviewAddrRequest struct {
 
 func (x *PreviewAddrRequest) Reset() {
 	*x = PreviewAddrRequest{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[92]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5179,7 +5267,7 @@ func (x *PreviewAddrRequest) String() string {
 func (*PreviewAddrRequest) ProtoMessage() {}
 
 func (x *PreviewAddrRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[92]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5192,7 +5280,7 @@ func (x *PreviewAddrRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PreviewAddrRequest.ProtoReflect.Descriptor instead.
 func (*PreviewAddrRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{92}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *PreviewAddrRequest) GetId() string {
@@ -5214,7 +5302,7 @@ type PreviewAddrResponse struct {
 
 func (x *PreviewAddrResponse) Reset() {
 	*x = PreviewAddrResponse{}
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[93]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5226,7 +5314,7 @@ func (x *PreviewAddrResponse) String() string {
 func (*PreviewAddrResponse) ProtoMessage() {}
 
 func (x *PreviewAddrResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[93]
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5239,7 +5327,7 @@ func (x *PreviewAddrResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PreviewAddrResponse.ProtoReflect.Descriptor instead.
 func (*PreviewAddrResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{93}
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *PreviewAddrResponse) GetOk() bool {
@@ -5409,7 +5497,11 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\x12DiskHasDataRequest\x12\x12\n" +
 	"\x04path\x18\x01 \x01(\tR\x04path\"0\n" +
 	"\x13DiskHasDataResponse\x12\x19\n" +
-	"\bhas_data\x18\x01 \x01(\bR\ahasData\"%\n" +
+	"\bhas_data\x18\x01 \x01(\bR\ahasData\"7\n" +
+	"\x11ExportDiskRequest\x12\x10\n" +
+	"\x03src\x18\x01 \x01(\tR\x03src\x12\x10\n" +
+	"\x03dst\x18\x02 \x01(\tR\x03dst\"\x14\n" +
+	"\x12ExportDiskResponse\"%\n" +
 	"\x13InstanceGoneRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"D\n" +
 	"\x14InstanceGoneResponse\x12\x12\n" +
@@ -5608,7 +5700,7 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\x18CHECK_STATUS_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fCHECK_STATUS_OK\x10\x01\x12\x15\n" +
 	"\x11CHECK_STATUS_WARN\x10\x02\x12\x15\n" +
-	"\x11CHECK_STATUS_FAIL\x10\x032\xc5#\n" +
+	"\x11CHECK_STATUS_FAIL\x10\x032\xb0$\n" +
 	"\x0fProviderService\x12W\n" +
 	"\x04Open\x12&.toshi.backend.provider.v1.OpenRequest\x1a'.toshi.backend.provider.v1.OpenResponse\x12]\n" +
 	"\x06Create\x12(.toshi.backend.provider.v1.CreateRequest\x1a).toshi.backend.provider.v1.CreateResponse\x12r\n" +
@@ -5625,7 +5717,9 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\fFlattenCache\x12..toshi.backend.provider.v1.FlattenCacheRequest\x1a/.toshi.backend.provider.v1.FlattenCacheResponse\x12i\n" +
 	"\n" +
 	"AttachDisk\x12,.toshi.backend.provider.v1.AttachDiskRequest\x1a-.toshi.backend.provider.v1.AttachDiskResponse\x12l\n" +
-	"\vDiskHasData\x12-.toshi.backend.provider.v1.DiskHasDataRequest\x1a..toshi.backend.provider.v1.DiskHasDataResponse\x12o\n" +
+	"\vDiskHasData\x12-.toshi.backend.provider.v1.DiskHasDataRequest\x1a..toshi.backend.provider.v1.DiskHasDataResponse\x12i\n" +
+	"\n" +
+	"ExportDisk\x12,.toshi.backend.provider.v1.ExportDiskRequest\x1a-.toshi.backend.provider.v1.ExportDiskResponse\x12o\n" +
 	"\fInstanceGone\x12..toshi.backend.provider.v1.InstanceGoneRequest\x1a/.toshi.backend.provider.v1.InstanceGoneResponse\x12c\n" +
 	"\bUnreaped\x12*.toshi.backend.provider.v1.UnreapedRequest\x1a+.toshi.backend.provider.v1.UnreapedResponse\x12c\n" +
 	"\bSnapshot\x12*.toshi.backend.provider.v1.SnapshotRequest\x1a+.toshi.backend.provider.v1.SnapshotResponse\x12`\n" +
@@ -5668,7 +5762,7 @@ func file_toshi_backend_provider_v1_provider_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_backend_provider_v1_provider_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_toshi_backend_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 99)
+var file_toshi_backend_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 101)
 var file_toshi_backend_provider_v1_provider_proto_goTypes = []any{
 	(ErrorCode)(0),                        // 0: toshi.backend.provider.v1.ErrorCode
 	(State)(0),                            // 1: toshi.backend.provider.v1.State
@@ -5715,68 +5809,70 @@ var file_toshi_backend_provider_v1_provider_proto_goTypes = []any{
 	(*AttachDiskResponse)(nil),            // 42: toshi.backend.provider.v1.AttachDiskResponse
 	(*DiskHasDataRequest)(nil),            // 43: toshi.backend.provider.v1.DiskHasDataRequest
 	(*DiskHasDataResponse)(nil),           // 44: toshi.backend.provider.v1.DiskHasDataResponse
-	(*InstanceGoneRequest)(nil),           // 45: toshi.backend.provider.v1.InstanceGoneRequest
-	(*InstanceGoneResponse)(nil),          // 46: toshi.backend.provider.v1.InstanceGoneResponse
-	(*UnreapedRequest)(nil),               // 47: toshi.backend.provider.v1.UnreapedRequest
-	(*UnreapedResponse)(nil),              // 48: toshi.backend.provider.v1.UnreapedResponse
-	(*SnapshotRequest)(nil),               // 49: toshi.backend.provider.v1.SnapshotRequest
-	(*SnapshotResponse)(nil),              // 50: toshi.backend.provider.v1.SnapshotResponse
-	(*RestoreRequest)(nil),                // 51: toshi.backend.provider.v1.RestoreRequest
-	(*RestoreResponse)(nil),               // 52: toshi.backend.provider.v1.RestoreResponse
-	(*ImageIdentityRequest)(nil),          // 53: toshi.backend.provider.v1.ImageIdentityRequest
-	(*ImageIdentityResponse)(nil),         // 54: toshi.backend.provider.v1.ImageIdentityResponse
-	(*SnapshotImageIdentityRequest)(nil),  // 55: toshi.backend.provider.v1.SnapshotImageIdentityRequest
-	(*SnapshotImageIdentityResponse)(nil), // 56: toshi.backend.provider.v1.SnapshotImageIdentityResponse
-	(*SetSnapshotRefsRequest)(nil),        // 57: toshi.backend.provider.v1.SetSnapshotRefsRequest
-	(*SetSnapshotRefsResponse)(nil),       // 58: toshi.backend.provider.v1.SetSnapshotRefsResponse
-	(*CollectRequest)(nil),                // 59: toshi.backend.provider.v1.CollectRequest
-	(*CollectResponse)(nil),               // 60: toshi.backend.provider.v1.CollectResponse
-	(*ForgetRequest)(nil),                 // 61: toshi.backend.provider.v1.ForgetRequest
-	(*ForgetResponse)(nil),                // 62: toshi.backend.provider.v1.ForgetResponse
-	(*DescribeRequest)(nil),               // 63: toshi.backend.provider.v1.DescribeRequest
-	(*DescribeResponse)(nil),              // 64: toshi.backend.provider.v1.DescribeResponse
-	(*CheckResult)(nil),                   // 65: toshi.backend.provider.v1.CheckResult
-	(*PreflightRequest)(nil),              // 66: toshi.backend.provider.v1.PreflightRequest
-	(*PreflightResponse)(nil),             // 67: toshi.backend.provider.v1.PreflightResponse
-	(*StatusRequest)(nil),                 // 68: toshi.backend.provider.v1.StatusRequest
-	(*StatusResponse)(nil),                // 69: toshi.backend.provider.v1.StatusResponse
-	(*IdleMemoryMiBRequest)(nil),          // 70: toshi.backend.provider.v1.IdleMemoryMiBRequest
-	(*IdleMemoryMiBResponse)(nil),         // 71: toshi.backend.provider.v1.IdleMemoryMiBResponse
-	(*SetMemoryTargetRequest)(nil),        // 72: toshi.backend.provider.v1.SetMemoryTargetRequest
-	(*SetMemoryTargetResponse)(nil),       // 73: toshi.backend.provider.v1.SetMemoryTargetResponse
-	(*MemoryMiBRequest)(nil),              // 74: toshi.backend.provider.v1.MemoryMiBRequest
-	(*MemoryMiBResponse)(nil),             // 75: toshi.backend.provider.v1.MemoryMiBResponse
-	(*GuestAvailableMiBRequest)(nil),      // 76: toshi.backend.provider.v1.GuestAvailableMiBRequest
-	(*GuestAvailableMiBResponse)(nil),     // 77: toshi.backend.provider.v1.GuestAvailableMiBResponse
-	(*SetMemoryHighRequest)(nil),          // 78: toshi.backend.provider.v1.SetMemoryHighRequest
-	(*SetMemoryHighResponse)(nil),         // 79: toshi.backend.provider.v1.SetMemoryHighResponse
-	(*UsageRequest)(nil),                  // 80: toshi.backend.provider.v1.UsageRequest
-	(*UsageResponse)(nil),                 // 81: toshi.backend.provider.v1.UsageResponse
-	(*HostMemoryRequest)(nil),             // 82: toshi.backend.provider.v1.HostMemoryRequest
-	(*HostMemoryResponse)(nil),            // 83: toshi.backend.provider.v1.HostMemoryResponse
-	(*ProcessLimitRequest)(nil),           // 84: toshi.backend.provider.v1.ProcessLimitRequest
-	(*ProcessLimitResponse)(nil),          // 85: toshi.backend.provider.v1.ProcessLimitResponse
-	(*DialGuestRequest)(nil),              // 86: toshi.backend.provider.v1.DialGuestRequest
-	(*DialGuestResponse)(nil),             // 87: toshi.backend.provider.v1.DialGuestResponse
-	(*DialDisplayRequest)(nil),            // 88: toshi.backend.provider.v1.DialDisplayRequest
-	(*DialDisplayResponse)(nil),           // 89: toshi.backend.provider.v1.DialDisplayResponse
-	(*CaptureScreenRequest)(nil),          // 90: toshi.backend.provider.v1.CaptureScreenRequest
-	(*CaptureScreenResponse)(nil),         // 91: toshi.backend.provider.v1.CaptureScreenResponse
-	(*ReadConsoleRequest)(nil),            // 92: toshi.backend.provider.v1.ReadConsoleRequest
-	(*ReadConsoleResponse)(nil),           // 93: toshi.backend.provider.v1.ReadConsoleResponse
-	(*KeepConsoleLogRequest)(nil),         // 94: toshi.backend.provider.v1.KeepConsoleLogRequest
-	(*KeepConsoleLogResponse)(nil),        // 95: toshi.backend.provider.v1.KeepConsoleLogResponse
-	(*DebugSSHAddrRequest)(nil),           // 96: toshi.backend.provider.v1.DebugSSHAddrRequest
-	(*DebugSSHAddrResponse)(nil),          // 97: toshi.backend.provider.v1.DebugSSHAddrResponse
-	(*PreviewAddrRequest)(nil),            // 98: toshi.backend.provider.v1.PreviewAddrRequest
-	(*PreviewAddrResponse)(nil),           // 99: toshi.backend.provider.v1.PreviewAddrResponse
-	nil,                                   // 100: toshi.backend.provider.v1.Spec.MetadataEntry
-	nil,                                   // 101: toshi.backend.provider.v1.Spec.LabelsEntry
-	nil,                                   // 102: toshi.backend.provider.v1.SetSnapshotRefsRequest.PoolsEntry
-	nil,                                   // 103: toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry
-	nil,                                   // 104: toshi.backend.provider.v1.StatusRequest.PoolsEntry
-	(*timestamppb.Timestamp)(nil),         // 105: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),           // 106: google.protobuf.Duration
+	(*ExportDiskRequest)(nil),             // 45: toshi.backend.provider.v1.ExportDiskRequest
+	(*ExportDiskResponse)(nil),            // 46: toshi.backend.provider.v1.ExportDiskResponse
+	(*InstanceGoneRequest)(nil),           // 47: toshi.backend.provider.v1.InstanceGoneRequest
+	(*InstanceGoneResponse)(nil),          // 48: toshi.backend.provider.v1.InstanceGoneResponse
+	(*UnreapedRequest)(nil),               // 49: toshi.backend.provider.v1.UnreapedRequest
+	(*UnreapedResponse)(nil),              // 50: toshi.backend.provider.v1.UnreapedResponse
+	(*SnapshotRequest)(nil),               // 51: toshi.backend.provider.v1.SnapshotRequest
+	(*SnapshotResponse)(nil),              // 52: toshi.backend.provider.v1.SnapshotResponse
+	(*RestoreRequest)(nil),                // 53: toshi.backend.provider.v1.RestoreRequest
+	(*RestoreResponse)(nil),               // 54: toshi.backend.provider.v1.RestoreResponse
+	(*ImageIdentityRequest)(nil),          // 55: toshi.backend.provider.v1.ImageIdentityRequest
+	(*ImageIdentityResponse)(nil),         // 56: toshi.backend.provider.v1.ImageIdentityResponse
+	(*SnapshotImageIdentityRequest)(nil),  // 57: toshi.backend.provider.v1.SnapshotImageIdentityRequest
+	(*SnapshotImageIdentityResponse)(nil), // 58: toshi.backend.provider.v1.SnapshotImageIdentityResponse
+	(*SetSnapshotRefsRequest)(nil),        // 59: toshi.backend.provider.v1.SetSnapshotRefsRequest
+	(*SetSnapshotRefsResponse)(nil),       // 60: toshi.backend.provider.v1.SetSnapshotRefsResponse
+	(*CollectRequest)(nil),                // 61: toshi.backend.provider.v1.CollectRequest
+	(*CollectResponse)(nil),               // 62: toshi.backend.provider.v1.CollectResponse
+	(*ForgetRequest)(nil),                 // 63: toshi.backend.provider.v1.ForgetRequest
+	(*ForgetResponse)(nil),                // 64: toshi.backend.provider.v1.ForgetResponse
+	(*DescribeRequest)(nil),               // 65: toshi.backend.provider.v1.DescribeRequest
+	(*DescribeResponse)(nil),              // 66: toshi.backend.provider.v1.DescribeResponse
+	(*CheckResult)(nil),                   // 67: toshi.backend.provider.v1.CheckResult
+	(*PreflightRequest)(nil),              // 68: toshi.backend.provider.v1.PreflightRequest
+	(*PreflightResponse)(nil),             // 69: toshi.backend.provider.v1.PreflightResponse
+	(*StatusRequest)(nil),                 // 70: toshi.backend.provider.v1.StatusRequest
+	(*StatusResponse)(nil),                // 71: toshi.backend.provider.v1.StatusResponse
+	(*IdleMemoryMiBRequest)(nil),          // 72: toshi.backend.provider.v1.IdleMemoryMiBRequest
+	(*IdleMemoryMiBResponse)(nil),         // 73: toshi.backend.provider.v1.IdleMemoryMiBResponse
+	(*SetMemoryTargetRequest)(nil),        // 74: toshi.backend.provider.v1.SetMemoryTargetRequest
+	(*SetMemoryTargetResponse)(nil),       // 75: toshi.backend.provider.v1.SetMemoryTargetResponse
+	(*MemoryMiBRequest)(nil),              // 76: toshi.backend.provider.v1.MemoryMiBRequest
+	(*MemoryMiBResponse)(nil),             // 77: toshi.backend.provider.v1.MemoryMiBResponse
+	(*GuestAvailableMiBRequest)(nil),      // 78: toshi.backend.provider.v1.GuestAvailableMiBRequest
+	(*GuestAvailableMiBResponse)(nil),     // 79: toshi.backend.provider.v1.GuestAvailableMiBResponse
+	(*SetMemoryHighRequest)(nil),          // 80: toshi.backend.provider.v1.SetMemoryHighRequest
+	(*SetMemoryHighResponse)(nil),         // 81: toshi.backend.provider.v1.SetMemoryHighResponse
+	(*UsageRequest)(nil),                  // 82: toshi.backend.provider.v1.UsageRequest
+	(*UsageResponse)(nil),                 // 83: toshi.backend.provider.v1.UsageResponse
+	(*HostMemoryRequest)(nil),             // 84: toshi.backend.provider.v1.HostMemoryRequest
+	(*HostMemoryResponse)(nil),            // 85: toshi.backend.provider.v1.HostMemoryResponse
+	(*ProcessLimitRequest)(nil),           // 86: toshi.backend.provider.v1.ProcessLimitRequest
+	(*ProcessLimitResponse)(nil),          // 87: toshi.backend.provider.v1.ProcessLimitResponse
+	(*DialGuestRequest)(nil),              // 88: toshi.backend.provider.v1.DialGuestRequest
+	(*DialGuestResponse)(nil),             // 89: toshi.backend.provider.v1.DialGuestResponse
+	(*DialDisplayRequest)(nil),            // 90: toshi.backend.provider.v1.DialDisplayRequest
+	(*DialDisplayResponse)(nil),           // 91: toshi.backend.provider.v1.DialDisplayResponse
+	(*CaptureScreenRequest)(nil),          // 92: toshi.backend.provider.v1.CaptureScreenRequest
+	(*CaptureScreenResponse)(nil),         // 93: toshi.backend.provider.v1.CaptureScreenResponse
+	(*ReadConsoleRequest)(nil),            // 94: toshi.backend.provider.v1.ReadConsoleRequest
+	(*ReadConsoleResponse)(nil),           // 95: toshi.backend.provider.v1.ReadConsoleResponse
+	(*KeepConsoleLogRequest)(nil),         // 96: toshi.backend.provider.v1.KeepConsoleLogRequest
+	(*KeepConsoleLogResponse)(nil),        // 97: toshi.backend.provider.v1.KeepConsoleLogResponse
+	(*DebugSSHAddrRequest)(nil),           // 98: toshi.backend.provider.v1.DebugSSHAddrRequest
+	(*DebugSSHAddrResponse)(nil),          // 99: toshi.backend.provider.v1.DebugSSHAddrResponse
+	(*PreviewAddrRequest)(nil),            // 100: toshi.backend.provider.v1.PreviewAddrRequest
+	(*PreviewAddrResponse)(nil),           // 101: toshi.backend.provider.v1.PreviewAddrResponse
+	nil,                                   // 102: toshi.backend.provider.v1.Spec.MetadataEntry
+	nil,                                   // 103: toshi.backend.provider.v1.Spec.LabelsEntry
+	nil,                                   // 104: toshi.backend.provider.v1.SetSnapshotRefsRequest.PoolsEntry
+	nil,                                   // 105: toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry
+	nil,                                   // 106: toshi.backend.provider.v1.StatusRequest.PoolsEntry
+	(*timestamppb.Timestamp)(nil),         // 107: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),           // 108: google.protobuf.Duration
 }
 var file_toshi_backend_provider_v1_provider_proto_depIdxs = []int32{
 	0,   // 0: toshi.backend.provider.v1.ProviderError.code:type_name -> toshi.backend.provider.v1.ErrorCode
@@ -5786,11 +5882,11 @@ var file_toshi_backend_provider_v1_provider_proto_depIdxs = []int32{
 	3,   // 4: toshi.backend.provider.v1.Disk.kind:type_name -> toshi.backend.provider.v1.DiskKind
 	2,   // 5: toshi.backend.provider.v1.Spec.os:type_name -> toshi.backend.provider.v1.OperatingSystem
 	9,   // 6: toshi.backend.provider.v1.Spec.disks:type_name -> toshi.backend.provider.v1.Disk
-	100, // 7: toshi.backend.provider.v1.Spec.metadata:type_name -> toshi.backend.provider.v1.Spec.MetadataEntry
-	101, // 8: toshi.backend.provider.v1.Spec.labels:type_name -> toshi.backend.provider.v1.Spec.LabelsEntry
+	102, // 7: toshi.backend.provider.v1.Spec.metadata:type_name -> toshi.backend.provider.v1.Spec.MetadataEntry
+	103, // 8: toshi.backend.provider.v1.Spec.labels:type_name -> toshi.backend.provider.v1.Spec.LabelsEntry
 	10,  // 9: toshi.backend.provider.v1.Instance.spec:type_name -> toshi.backend.provider.v1.Spec
 	1,   // 10: toshi.backend.provider.v1.Instance.state:type_name -> toshi.backend.provider.v1.State
-	105, // 11: toshi.backend.provider.v1.Instance.created_at:type_name -> google.protobuf.Timestamp
+	107, // 11: toshi.backend.provider.v1.Instance.created_at:type_name -> google.protobuf.Timestamp
 	14,  // 12: toshi.backend.provider.v1.ProviderConfig.host:type_name -> toshi.backend.provider.v1.HostFacts
 	13,  // 13: toshi.backend.provider.v1.OpenRequest.config:type_name -> toshi.backend.provider.v1.ProviderConfig
 	12,  // 14: toshi.backend.provider.v1.OpenResponse.capabilities:type_name -> toshi.backend.provider.v1.Capabilities
@@ -5808,24 +5904,24 @@ var file_toshi_backend_provider_v1_provider_proto_depIdxs = []int32{
 	10,  // 26: toshi.backend.provider.v1.RestoreRequest.spec:type_name -> toshi.backend.provider.v1.Spec
 	11,  // 27: toshi.backend.provider.v1.RestoreResponse.instance:type_name -> toshi.backend.provider.v1.Instance
 	10,  // 28: toshi.backend.provider.v1.ImageIdentityRequest.spec:type_name -> toshi.backend.provider.v1.Spec
-	102, // 29: toshi.backend.provider.v1.SetSnapshotRefsRequest.pools:type_name -> toshi.backend.provider.v1.SetSnapshotRefsRequest.PoolsEntry
-	103, // 30: toshi.backend.provider.v1.SetSnapshotRefsRequest.dropped:type_name -> toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry
-	106, // 31: toshi.backend.provider.v1.CollectRequest.grace:type_name -> google.protobuf.Duration
+	104, // 29: toshi.backend.provider.v1.SetSnapshotRefsRequest.pools:type_name -> toshi.backend.provider.v1.SetSnapshotRefsRequest.PoolsEntry
+	105, // 30: toshi.backend.provider.v1.SetSnapshotRefsRequest.dropped:type_name -> toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry
+	108, // 31: toshi.backend.provider.v1.CollectRequest.grace:type_name -> google.protobuf.Duration
 	13,  // 32: toshi.backend.provider.v1.DescribeRequest.config:type_name -> toshi.backend.provider.v1.ProviderConfig
 	12,  // 33: toshi.backend.provider.v1.DescribeResponse.capabilities:type_name -> toshi.backend.provider.v1.Capabilities
 	4,   // 34: toshi.backend.provider.v1.CheckResult.status:type_name -> toshi.backend.provider.v1.CheckStatus
 	13,  // 35: toshi.backend.provider.v1.PreflightRequest.config:type_name -> toshi.backend.provider.v1.ProviderConfig
-	65,  // 36: toshi.backend.provider.v1.PreflightResponse.results:type_name -> toshi.backend.provider.v1.CheckResult
+	67,  // 36: toshi.backend.provider.v1.PreflightResponse.results:type_name -> toshi.backend.provider.v1.CheckResult
 	13,  // 37: toshi.backend.provider.v1.StatusRequest.config:type_name -> toshi.backend.provider.v1.ProviderConfig
-	104, // 38: toshi.backend.provider.v1.StatusRequest.pools:type_name -> toshi.backend.provider.v1.StatusRequest.PoolsEntry
-	105, // 39: toshi.backend.provider.v1.StatusRequest.now:type_name -> google.protobuf.Timestamp
-	106, // 40: toshi.backend.provider.v1.StatusRequest.grace:type_name -> google.protobuf.Duration
-	65,  // 41: toshi.backend.provider.v1.StatusResponse.results:type_name -> toshi.backend.provider.v1.CheckResult
+	106, // 38: toshi.backend.provider.v1.StatusRequest.pools:type_name -> toshi.backend.provider.v1.StatusRequest.PoolsEntry
+	107, // 39: toshi.backend.provider.v1.StatusRequest.now:type_name -> google.protobuf.Timestamp
+	108, // 40: toshi.backend.provider.v1.StatusRequest.grace:type_name -> google.protobuf.Duration
+	67,  // 41: toshi.backend.provider.v1.StatusResponse.results:type_name -> toshi.backend.provider.v1.CheckResult
 	10,  // 42: toshi.backend.provider.v1.IdleMemoryMiBRequest.spec:type_name -> toshi.backend.provider.v1.Spec
-	106, // 43: toshi.backend.provider.v1.UsageResponse.cpu_time:type_name -> google.protobuf.Duration
-	106, // 44: toshi.backend.provider.v1.UsageResponse.cpu_wait:type_name -> google.protobuf.Duration
-	106, // 45: toshi.backend.provider.v1.ReadConsoleRequest.wait:type_name -> google.protobuf.Duration
-	105, // 46: toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry.value:type_name -> google.protobuf.Timestamp
+	108, // 43: toshi.backend.provider.v1.UsageResponse.cpu_time:type_name -> google.protobuf.Duration
+	108, // 44: toshi.backend.provider.v1.UsageResponse.cpu_wait:type_name -> google.protobuf.Duration
+	108, // 45: toshi.backend.provider.v1.ReadConsoleRequest.wait:type_name -> google.protobuf.Duration
+	107, // 46: toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry.value:type_name -> google.protobuf.Timestamp
 	15,  // 47: toshi.backend.provider.v1.ProviderService.Open:input_type -> toshi.backend.provider.v1.OpenRequest
 	17,  // 48: toshi.backend.provider.v1.ProviderService.Create:input_type -> toshi.backend.provider.v1.CreateRequest
 	19,  // 49: toshi.backend.provider.v1.ProviderService.CreateOutcome:input_type -> toshi.backend.provider.v1.CreateOutcomeRequest
@@ -5841,77 +5937,79 @@ var file_toshi_backend_provider_v1_provider_proto_depIdxs = []int32{
 	39,  // 59: toshi.backend.provider.v1.ProviderService.FlattenCache:input_type -> toshi.backend.provider.v1.FlattenCacheRequest
 	41,  // 60: toshi.backend.provider.v1.ProviderService.AttachDisk:input_type -> toshi.backend.provider.v1.AttachDiskRequest
 	43,  // 61: toshi.backend.provider.v1.ProviderService.DiskHasData:input_type -> toshi.backend.provider.v1.DiskHasDataRequest
-	45,  // 62: toshi.backend.provider.v1.ProviderService.InstanceGone:input_type -> toshi.backend.provider.v1.InstanceGoneRequest
-	47,  // 63: toshi.backend.provider.v1.ProviderService.Unreaped:input_type -> toshi.backend.provider.v1.UnreapedRequest
-	49,  // 64: toshi.backend.provider.v1.ProviderService.Snapshot:input_type -> toshi.backend.provider.v1.SnapshotRequest
-	51,  // 65: toshi.backend.provider.v1.ProviderService.Restore:input_type -> toshi.backend.provider.v1.RestoreRequest
-	53,  // 66: toshi.backend.provider.v1.ProviderService.ImageIdentity:input_type -> toshi.backend.provider.v1.ImageIdentityRequest
-	55,  // 67: toshi.backend.provider.v1.ProviderService.SnapshotImageIdentity:input_type -> toshi.backend.provider.v1.SnapshotImageIdentityRequest
-	57,  // 68: toshi.backend.provider.v1.ProviderService.SetSnapshotRefs:input_type -> toshi.backend.provider.v1.SetSnapshotRefsRequest
-	59,  // 69: toshi.backend.provider.v1.ProviderService.Collect:input_type -> toshi.backend.provider.v1.CollectRequest
-	61,  // 70: toshi.backend.provider.v1.ProviderService.Forget:input_type -> toshi.backend.provider.v1.ForgetRequest
-	63,  // 71: toshi.backend.provider.v1.ProviderService.Describe:input_type -> toshi.backend.provider.v1.DescribeRequest
-	66,  // 72: toshi.backend.provider.v1.ProviderService.Preflight:input_type -> toshi.backend.provider.v1.PreflightRequest
-	68,  // 73: toshi.backend.provider.v1.ProviderService.Status:input_type -> toshi.backend.provider.v1.StatusRequest
-	70,  // 74: toshi.backend.provider.v1.ProviderService.IdleMemoryMiB:input_type -> toshi.backend.provider.v1.IdleMemoryMiBRequest
-	72,  // 75: toshi.backend.provider.v1.ProviderService.SetMemoryTarget:input_type -> toshi.backend.provider.v1.SetMemoryTargetRequest
-	74,  // 76: toshi.backend.provider.v1.ProviderService.MemoryMiB:input_type -> toshi.backend.provider.v1.MemoryMiBRequest
-	76,  // 77: toshi.backend.provider.v1.ProviderService.GuestAvailableMiB:input_type -> toshi.backend.provider.v1.GuestAvailableMiBRequest
-	78,  // 78: toshi.backend.provider.v1.ProviderService.SetMemoryHigh:input_type -> toshi.backend.provider.v1.SetMemoryHighRequest
-	80,  // 79: toshi.backend.provider.v1.ProviderService.Usage:input_type -> toshi.backend.provider.v1.UsageRequest
-	82,  // 80: toshi.backend.provider.v1.ProviderService.HostMemory:input_type -> toshi.backend.provider.v1.HostMemoryRequest
-	84,  // 81: toshi.backend.provider.v1.ProviderService.ProcessLimit:input_type -> toshi.backend.provider.v1.ProcessLimitRequest
-	86,  // 82: toshi.backend.provider.v1.ProviderService.DialGuest:input_type -> toshi.backend.provider.v1.DialGuestRequest
-	88,  // 83: toshi.backend.provider.v1.ProviderService.DialDisplay:input_type -> toshi.backend.provider.v1.DialDisplayRequest
-	90,  // 84: toshi.backend.provider.v1.ProviderService.CaptureScreen:input_type -> toshi.backend.provider.v1.CaptureScreenRequest
-	92,  // 85: toshi.backend.provider.v1.ProviderService.ReadConsole:input_type -> toshi.backend.provider.v1.ReadConsoleRequest
-	94,  // 86: toshi.backend.provider.v1.ProviderService.KeepConsoleLog:input_type -> toshi.backend.provider.v1.KeepConsoleLogRequest
-	96,  // 87: toshi.backend.provider.v1.ProviderService.DebugSSHAddr:input_type -> toshi.backend.provider.v1.DebugSSHAddrRequest
-	98,  // 88: toshi.backend.provider.v1.ProviderService.PreviewAddr:input_type -> toshi.backend.provider.v1.PreviewAddrRequest
-	16,  // 89: toshi.backend.provider.v1.ProviderService.Open:output_type -> toshi.backend.provider.v1.OpenResponse
-	18,  // 90: toshi.backend.provider.v1.ProviderService.Create:output_type -> toshi.backend.provider.v1.CreateResponse
-	20,  // 91: toshi.backend.provider.v1.ProviderService.CreateOutcome:output_type -> toshi.backend.provider.v1.CreateOutcomeResponse
-	22,  // 92: toshi.backend.provider.v1.ProviderService.Get:output_type -> toshi.backend.provider.v1.GetResponse
-	24,  // 93: toshi.backend.provider.v1.ProviderService.List:output_type -> toshi.backend.provider.v1.ListResponse
-	26,  // 94: toshi.backend.provider.v1.ProviderService.Start:output_type -> toshi.backend.provider.v1.StartResponse
-	28,  // 95: toshi.backend.provider.v1.ProviderService.Stop:output_type -> toshi.backend.provider.v1.StopResponse
-	30,  // 96: toshi.backend.provider.v1.ProviderService.Destroy:output_type -> toshi.backend.provider.v1.DestroyResponse
-	32,  // 97: toshi.backend.provider.v1.ProviderService.Wait:output_type -> toshi.backend.provider.v1.WaitResponse
-	34,  // 98: toshi.backend.provider.v1.ProviderService.CreateCacheBase:output_type -> toshi.backend.provider.v1.CreateCacheBaseResponse
-	36,  // 99: toshi.backend.provider.v1.ProviderService.CreateCacheOverlay:output_type -> toshi.backend.provider.v1.CreateCacheOverlayResponse
-	38,  // 100: toshi.backend.provider.v1.ProviderService.CacheRequiredBytes:output_type -> toshi.backend.provider.v1.CacheRequiredBytesResponse
-	40,  // 101: toshi.backend.provider.v1.ProviderService.FlattenCache:output_type -> toshi.backend.provider.v1.FlattenCacheResponse
-	42,  // 102: toshi.backend.provider.v1.ProviderService.AttachDisk:output_type -> toshi.backend.provider.v1.AttachDiskResponse
-	44,  // 103: toshi.backend.provider.v1.ProviderService.DiskHasData:output_type -> toshi.backend.provider.v1.DiskHasDataResponse
-	46,  // 104: toshi.backend.provider.v1.ProviderService.InstanceGone:output_type -> toshi.backend.provider.v1.InstanceGoneResponse
-	48,  // 105: toshi.backend.provider.v1.ProviderService.Unreaped:output_type -> toshi.backend.provider.v1.UnreapedResponse
-	50,  // 106: toshi.backend.provider.v1.ProviderService.Snapshot:output_type -> toshi.backend.provider.v1.SnapshotResponse
-	52,  // 107: toshi.backend.provider.v1.ProviderService.Restore:output_type -> toshi.backend.provider.v1.RestoreResponse
-	54,  // 108: toshi.backend.provider.v1.ProviderService.ImageIdentity:output_type -> toshi.backend.provider.v1.ImageIdentityResponse
-	56,  // 109: toshi.backend.provider.v1.ProviderService.SnapshotImageIdentity:output_type -> toshi.backend.provider.v1.SnapshotImageIdentityResponse
-	58,  // 110: toshi.backend.provider.v1.ProviderService.SetSnapshotRefs:output_type -> toshi.backend.provider.v1.SetSnapshotRefsResponse
-	60,  // 111: toshi.backend.provider.v1.ProviderService.Collect:output_type -> toshi.backend.provider.v1.CollectResponse
-	62,  // 112: toshi.backend.provider.v1.ProviderService.Forget:output_type -> toshi.backend.provider.v1.ForgetResponse
-	64,  // 113: toshi.backend.provider.v1.ProviderService.Describe:output_type -> toshi.backend.provider.v1.DescribeResponse
-	67,  // 114: toshi.backend.provider.v1.ProviderService.Preflight:output_type -> toshi.backend.provider.v1.PreflightResponse
-	69,  // 115: toshi.backend.provider.v1.ProviderService.Status:output_type -> toshi.backend.provider.v1.StatusResponse
-	71,  // 116: toshi.backend.provider.v1.ProviderService.IdleMemoryMiB:output_type -> toshi.backend.provider.v1.IdleMemoryMiBResponse
-	73,  // 117: toshi.backend.provider.v1.ProviderService.SetMemoryTarget:output_type -> toshi.backend.provider.v1.SetMemoryTargetResponse
-	75,  // 118: toshi.backend.provider.v1.ProviderService.MemoryMiB:output_type -> toshi.backend.provider.v1.MemoryMiBResponse
-	77,  // 119: toshi.backend.provider.v1.ProviderService.GuestAvailableMiB:output_type -> toshi.backend.provider.v1.GuestAvailableMiBResponse
-	79,  // 120: toshi.backend.provider.v1.ProviderService.SetMemoryHigh:output_type -> toshi.backend.provider.v1.SetMemoryHighResponse
-	81,  // 121: toshi.backend.provider.v1.ProviderService.Usage:output_type -> toshi.backend.provider.v1.UsageResponse
-	83,  // 122: toshi.backend.provider.v1.ProviderService.HostMemory:output_type -> toshi.backend.provider.v1.HostMemoryResponse
-	85,  // 123: toshi.backend.provider.v1.ProviderService.ProcessLimit:output_type -> toshi.backend.provider.v1.ProcessLimitResponse
-	87,  // 124: toshi.backend.provider.v1.ProviderService.DialGuest:output_type -> toshi.backend.provider.v1.DialGuestResponse
-	89,  // 125: toshi.backend.provider.v1.ProviderService.DialDisplay:output_type -> toshi.backend.provider.v1.DialDisplayResponse
-	91,  // 126: toshi.backend.provider.v1.ProviderService.CaptureScreen:output_type -> toshi.backend.provider.v1.CaptureScreenResponse
-	93,  // 127: toshi.backend.provider.v1.ProviderService.ReadConsole:output_type -> toshi.backend.provider.v1.ReadConsoleResponse
-	95,  // 128: toshi.backend.provider.v1.ProviderService.KeepConsoleLog:output_type -> toshi.backend.provider.v1.KeepConsoleLogResponse
-	97,  // 129: toshi.backend.provider.v1.ProviderService.DebugSSHAddr:output_type -> toshi.backend.provider.v1.DebugSSHAddrResponse
-	99,  // 130: toshi.backend.provider.v1.ProviderService.PreviewAddr:output_type -> toshi.backend.provider.v1.PreviewAddrResponse
-	89,  // [89:131] is the sub-list for method output_type
-	47,  // [47:89] is the sub-list for method input_type
+	45,  // 62: toshi.backend.provider.v1.ProviderService.ExportDisk:input_type -> toshi.backend.provider.v1.ExportDiskRequest
+	47,  // 63: toshi.backend.provider.v1.ProviderService.InstanceGone:input_type -> toshi.backend.provider.v1.InstanceGoneRequest
+	49,  // 64: toshi.backend.provider.v1.ProviderService.Unreaped:input_type -> toshi.backend.provider.v1.UnreapedRequest
+	51,  // 65: toshi.backend.provider.v1.ProviderService.Snapshot:input_type -> toshi.backend.provider.v1.SnapshotRequest
+	53,  // 66: toshi.backend.provider.v1.ProviderService.Restore:input_type -> toshi.backend.provider.v1.RestoreRequest
+	55,  // 67: toshi.backend.provider.v1.ProviderService.ImageIdentity:input_type -> toshi.backend.provider.v1.ImageIdentityRequest
+	57,  // 68: toshi.backend.provider.v1.ProviderService.SnapshotImageIdentity:input_type -> toshi.backend.provider.v1.SnapshotImageIdentityRequest
+	59,  // 69: toshi.backend.provider.v1.ProviderService.SetSnapshotRefs:input_type -> toshi.backend.provider.v1.SetSnapshotRefsRequest
+	61,  // 70: toshi.backend.provider.v1.ProviderService.Collect:input_type -> toshi.backend.provider.v1.CollectRequest
+	63,  // 71: toshi.backend.provider.v1.ProviderService.Forget:input_type -> toshi.backend.provider.v1.ForgetRequest
+	65,  // 72: toshi.backend.provider.v1.ProviderService.Describe:input_type -> toshi.backend.provider.v1.DescribeRequest
+	68,  // 73: toshi.backend.provider.v1.ProviderService.Preflight:input_type -> toshi.backend.provider.v1.PreflightRequest
+	70,  // 74: toshi.backend.provider.v1.ProviderService.Status:input_type -> toshi.backend.provider.v1.StatusRequest
+	72,  // 75: toshi.backend.provider.v1.ProviderService.IdleMemoryMiB:input_type -> toshi.backend.provider.v1.IdleMemoryMiBRequest
+	74,  // 76: toshi.backend.provider.v1.ProviderService.SetMemoryTarget:input_type -> toshi.backend.provider.v1.SetMemoryTargetRequest
+	76,  // 77: toshi.backend.provider.v1.ProviderService.MemoryMiB:input_type -> toshi.backend.provider.v1.MemoryMiBRequest
+	78,  // 78: toshi.backend.provider.v1.ProviderService.GuestAvailableMiB:input_type -> toshi.backend.provider.v1.GuestAvailableMiBRequest
+	80,  // 79: toshi.backend.provider.v1.ProviderService.SetMemoryHigh:input_type -> toshi.backend.provider.v1.SetMemoryHighRequest
+	82,  // 80: toshi.backend.provider.v1.ProviderService.Usage:input_type -> toshi.backend.provider.v1.UsageRequest
+	84,  // 81: toshi.backend.provider.v1.ProviderService.HostMemory:input_type -> toshi.backend.provider.v1.HostMemoryRequest
+	86,  // 82: toshi.backend.provider.v1.ProviderService.ProcessLimit:input_type -> toshi.backend.provider.v1.ProcessLimitRequest
+	88,  // 83: toshi.backend.provider.v1.ProviderService.DialGuest:input_type -> toshi.backend.provider.v1.DialGuestRequest
+	90,  // 84: toshi.backend.provider.v1.ProviderService.DialDisplay:input_type -> toshi.backend.provider.v1.DialDisplayRequest
+	92,  // 85: toshi.backend.provider.v1.ProviderService.CaptureScreen:input_type -> toshi.backend.provider.v1.CaptureScreenRequest
+	94,  // 86: toshi.backend.provider.v1.ProviderService.ReadConsole:input_type -> toshi.backend.provider.v1.ReadConsoleRequest
+	96,  // 87: toshi.backend.provider.v1.ProviderService.KeepConsoleLog:input_type -> toshi.backend.provider.v1.KeepConsoleLogRequest
+	98,  // 88: toshi.backend.provider.v1.ProviderService.DebugSSHAddr:input_type -> toshi.backend.provider.v1.DebugSSHAddrRequest
+	100, // 89: toshi.backend.provider.v1.ProviderService.PreviewAddr:input_type -> toshi.backend.provider.v1.PreviewAddrRequest
+	16,  // 90: toshi.backend.provider.v1.ProviderService.Open:output_type -> toshi.backend.provider.v1.OpenResponse
+	18,  // 91: toshi.backend.provider.v1.ProviderService.Create:output_type -> toshi.backend.provider.v1.CreateResponse
+	20,  // 92: toshi.backend.provider.v1.ProviderService.CreateOutcome:output_type -> toshi.backend.provider.v1.CreateOutcomeResponse
+	22,  // 93: toshi.backend.provider.v1.ProviderService.Get:output_type -> toshi.backend.provider.v1.GetResponse
+	24,  // 94: toshi.backend.provider.v1.ProviderService.List:output_type -> toshi.backend.provider.v1.ListResponse
+	26,  // 95: toshi.backend.provider.v1.ProviderService.Start:output_type -> toshi.backend.provider.v1.StartResponse
+	28,  // 96: toshi.backend.provider.v1.ProviderService.Stop:output_type -> toshi.backend.provider.v1.StopResponse
+	30,  // 97: toshi.backend.provider.v1.ProviderService.Destroy:output_type -> toshi.backend.provider.v1.DestroyResponse
+	32,  // 98: toshi.backend.provider.v1.ProviderService.Wait:output_type -> toshi.backend.provider.v1.WaitResponse
+	34,  // 99: toshi.backend.provider.v1.ProviderService.CreateCacheBase:output_type -> toshi.backend.provider.v1.CreateCacheBaseResponse
+	36,  // 100: toshi.backend.provider.v1.ProviderService.CreateCacheOverlay:output_type -> toshi.backend.provider.v1.CreateCacheOverlayResponse
+	38,  // 101: toshi.backend.provider.v1.ProviderService.CacheRequiredBytes:output_type -> toshi.backend.provider.v1.CacheRequiredBytesResponse
+	40,  // 102: toshi.backend.provider.v1.ProviderService.FlattenCache:output_type -> toshi.backend.provider.v1.FlattenCacheResponse
+	42,  // 103: toshi.backend.provider.v1.ProviderService.AttachDisk:output_type -> toshi.backend.provider.v1.AttachDiskResponse
+	44,  // 104: toshi.backend.provider.v1.ProviderService.DiskHasData:output_type -> toshi.backend.provider.v1.DiskHasDataResponse
+	46,  // 105: toshi.backend.provider.v1.ProviderService.ExportDisk:output_type -> toshi.backend.provider.v1.ExportDiskResponse
+	48,  // 106: toshi.backend.provider.v1.ProviderService.InstanceGone:output_type -> toshi.backend.provider.v1.InstanceGoneResponse
+	50,  // 107: toshi.backend.provider.v1.ProviderService.Unreaped:output_type -> toshi.backend.provider.v1.UnreapedResponse
+	52,  // 108: toshi.backend.provider.v1.ProviderService.Snapshot:output_type -> toshi.backend.provider.v1.SnapshotResponse
+	54,  // 109: toshi.backend.provider.v1.ProviderService.Restore:output_type -> toshi.backend.provider.v1.RestoreResponse
+	56,  // 110: toshi.backend.provider.v1.ProviderService.ImageIdentity:output_type -> toshi.backend.provider.v1.ImageIdentityResponse
+	58,  // 111: toshi.backend.provider.v1.ProviderService.SnapshotImageIdentity:output_type -> toshi.backend.provider.v1.SnapshotImageIdentityResponse
+	60,  // 112: toshi.backend.provider.v1.ProviderService.SetSnapshotRefs:output_type -> toshi.backend.provider.v1.SetSnapshotRefsResponse
+	62,  // 113: toshi.backend.provider.v1.ProviderService.Collect:output_type -> toshi.backend.provider.v1.CollectResponse
+	64,  // 114: toshi.backend.provider.v1.ProviderService.Forget:output_type -> toshi.backend.provider.v1.ForgetResponse
+	66,  // 115: toshi.backend.provider.v1.ProviderService.Describe:output_type -> toshi.backend.provider.v1.DescribeResponse
+	69,  // 116: toshi.backend.provider.v1.ProviderService.Preflight:output_type -> toshi.backend.provider.v1.PreflightResponse
+	71,  // 117: toshi.backend.provider.v1.ProviderService.Status:output_type -> toshi.backend.provider.v1.StatusResponse
+	73,  // 118: toshi.backend.provider.v1.ProviderService.IdleMemoryMiB:output_type -> toshi.backend.provider.v1.IdleMemoryMiBResponse
+	75,  // 119: toshi.backend.provider.v1.ProviderService.SetMemoryTarget:output_type -> toshi.backend.provider.v1.SetMemoryTargetResponse
+	77,  // 120: toshi.backend.provider.v1.ProviderService.MemoryMiB:output_type -> toshi.backend.provider.v1.MemoryMiBResponse
+	79,  // 121: toshi.backend.provider.v1.ProviderService.GuestAvailableMiB:output_type -> toshi.backend.provider.v1.GuestAvailableMiBResponse
+	81,  // 122: toshi.backend.provider.v1.ProviderService.SetMemoryHigh:output_type -> toshi.backend.provider.v1.SetMemoryHighResponse
+	83,  // 123: toshi.backend.provider.v1.ProviderService.Usage:output_type -> toshi.backend.provider.v1.UsageResponse
+	85,  // 124: toshi.backend.provider.v1.ProviderService.HostMemory:output_type -> toshi.backend.provider.v1.HostMemoryResponse
+	87,  // 125: toshi.backend.provider.v1.ProviderService.ProcessLimit:output_type -> toshi.backend.provider.v1.ProcessLimitResponse
+	89,  // 126: toshi.backend.provider.v1.ProviderService.DialGuest:output_type -> toshi.backend.provider.v1.DialGuestResponse
+	91,  // 127: toshi.backend.provider.v1.ProviderService.DialDisplay:output_type -> toshi.backend.provider.v1.DialDisplayResponse
+	93,  // 128: toshi.backend.provider.v1.ProviderService.CaptureScreen:output_type -> toshi.backend.provider.v1.CaptureScreenResponse
+	95,  // 129: toshi.backend.provider.v1.ProviderService.ReadConsole:output_type -> toshi.backend.provider.v1.ReadConsoleResponse
+	97,  // 130: toshi.backend.provider.v1.ProviderService.KeepConsoleLog:output_type -> toshi.backend.provider.v1.KeepConsoleLogResponse
+	99,  // 131: toshi.backend.provider.v1.ProviderService.DebugSSHAddr:output_type -> toshi.backend.provider.v1.DebugSSHAddrResponse
+	101, // 132: toshi.backend.provider.v1.ProviderService.PreviewAddr:output_type -> toshi.backend.provider.v1.PreviewAddrResponse
+	90,  // [90:133] is the sub-list for method output_type
+	47,  // [47:90] is the sub-list for method input_type
 	47,  // [47:47] is the sub-list for extension type_name
 	47,  // [47:47] is the sub-list for extension extendee
 	0,   // [0:47] is the sub-list for field type_name
@@ -5928,7 +6026,7 @@ func file_toshi_backend_provider_v1_provider_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_backend_provider_v1_provider_proto_rawDesc), len(file_toshi_backend_provider_v1_provider_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   99,
+			NumMessages:   101,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
