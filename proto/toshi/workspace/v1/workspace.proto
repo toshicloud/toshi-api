@@ -1214,8 +1214,9 @@ message GetServiceRevisionResponse {
   ServiceRevision revision = 1;
 }
 
-// ServiceRevision is one recipe of a service. A revision never changes
-// once made; selecting one runs its recipe from the service's next run.
+// ServiceRevision is one recipe of a service. Its recipe and image digest
+// never change once made; selecting one runs its recipe from the service's
+// next run.
 message ServiceRevision {
   // Counts from 1 in the order the service's revisions were made.
   int64 number = 1;
@@ -1234,11 +1235,49 @@ message ServiceRevision {
   string container_image_digest = 7;
   // Whether a rollback may select the revision: it is one of the service's
   // 10 newest revisions, or in use, selected or the revision of a queued
-  // or running run. Toshi deletes no image; a revision whose image the
-  // registry no longer holds is eligible, and its run fails at pull.
+  // or running run, and its registry did not last answer that it does not
+  // serve the revision's image (image_check). Toshi keeps no copy of a
+  // registry's image.
   bool eligible = 8;
-  // Why a rollback may not select the revision; empty when eligible.
+  // Why a rollback may not select the revision; empty when eligible. It is
+  // one of two reasons: the window ("revision N is older than the
+  // service's 10 newest revisions and no run uses it"), or the registry's
+  // last answer ("the registry answered <status> for <digest> at <time>:
+  // it does not serve the revision's image (<message>)").
   string ineligible_reason = 9;
+  // The last answer of the registry of container_image to a rollback's
+  // check that it serves container_image_digest; unset until a rollback
+  // selects the revision. Reading a revision asks no registry: the next
+  // rollback to the revision checks again and replaces it.
+  ServiceRevisionImageCheck image_check = 10;
+}
+
+// ServiceRevisionImageCheck is one answer of a revision's registry to the
+// check a rollback makes before it selects the revision: a request for the
+// manifest by digest, with the recipe's registry login, reading no image.
+message ServiceRevisionImageCheck {
+  ServiceRevisionImageOutcome outcome = 1;
+  // The registry's HTTP status, such as "404 Not Found"; empty when no
+  // answer came.
+  string status = 2;
+  // The registry's answer, or why it could not be asked.
+  string message = 3;
+  google.protobuf.Timestamp checked_at = 4;
+}
+
+// ServiceRevisionImageOutcome is what a rollback's check of a revision's
+// image found.
+enum ServiceRevisionImageOutcome {
+  SERVICE_REVISION_IMAGE_OUTCOME_UNSPECIFIED = 0;
+  // The registry serves the revision's digest.
+  SERVICE_REVISION_IMAGE_OUTCOME_SERVED = 1;
+  // The registry answered that it holds no such manifest or repository:
+  // the revision is not eligible until a rollback finds it again.
+  SERVICE_REVISION_IMAGE_OUTCOME_NOT_SERVED = 2;
+  // The registry could not be reached, refused the login or failed. That
+  // is no evidence the image is gone, and the revision stays as eligible
+  // as the window makes it.
+  SERVICE_REVISION_IMAGE_OUTCOME_CHECK_FAILED = 3;
 }
 
 // ServiceRevisionReason is why a revision was made.
