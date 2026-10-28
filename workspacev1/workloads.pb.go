@@ -2529,11 +2529,19 @@ type UpdateServiceRequest struct {
 	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// Carries the new values of the fields update_mask names.
-	Service       *Service               `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
-	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,5,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Service    *Service               `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
+	UpdateMask *fieldmaskpb.FieldMask `protobuf:"bytes,5,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	RequestKey string                 `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// Lets a deploy to a started service with a state volume start the new
+	// revision without a saved version of the volume when none can be saved:
+	// the run's pre_save refused, the save did not finish within the upgrade
+	// window, or this control plane keeps no volume versions. A rollback then
+	// has no version to restore. Without it, such a deploy is rolled back
+	// before the revision starts, or, with no volume versions kept, refused
+	// with FAILED_PRECONDITION.
+	AllowUnsavedVolume bool `protobuf:"varint,7,opt,name=allow_unsaved_volume,json=allowUnsavedVolume,proto3" json:"allow_unsaved_volume,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *UpdateServiceRequest) Reset() {
@@ -2606,6 +2614,13 @@ func (x *UpdateServiceRequest) GetRequestKey() string {
 		return x.RequestKey
 	}
 	return ""
+}
+
+func (x *UpdateServiceRequest) GetAllowUnsavedVolume() bool {
+	if x != nil {
+		return x.AllowUnsavedVolume
+	}
+	return false
 }
 
 type UpdateServiceResponse struct {
@@ -3245,7 +3260,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x14ListServicesResponse\x127\n" +
 	"\bservices\x18\x01 \x03(\v2\x1b.toshi.workspace.v1.ServiceR\bservices\x12&\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\x12\x16\n" +
-	"\x06cursor\x18\x03 \x01(\tR\x06cursor\"\xf7\x01\n" +
+	"\x06cursor\x18\x03 \x01(\tR\x06cursor\"\xa9\x02\n" +
 	"\x14UpdateServiceRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
@@ -3254,7 +3269,8 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\vupdate_mask\x18\x05 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\x12\x1f\n" +
 	"\vrequest_key\x18\x06 \x01(\tR\n" +
-	"requestKey\"N\n" +
+	"requestKey\x120\n" +
+	"\x14allow_unsaved_volume\x18\a \x01(\bR\x12allowUnsavedVolume\"N\n" +
 	"\x15UpdateServiceResponse\x125\n" +
 	"\aservice\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ServiceR\aservice\"\x83\x01\n" +
 	"\x14DeleteServiceRequest\x12\x18\n" +

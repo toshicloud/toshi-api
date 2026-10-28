@@ -649,10 +649,13 @@ const (
 	// It failed: from_revision is selected again and the state volume is
 	// being restored.
 	ServiceUpgradeState_SERVICE_UPGRADE_STATE_ROLLING_BACK ServiceUpgradeState = 3
-	// It failed and was rolled back.
+	// It failed and was rolled back, or the state volume was not saved and
+	// from_revision was selected again before the revision started.
 	ServiceUpgradeState_SERVICE_UPGRADE_STATE_ROLLED_BACK ServiceUpgradeState = 4
 	// A deploy, a rollback or a stop of the service ended the watch first.
 	ServiceUpgradeState_SERVICE_UPGRADE_STATE_ENDED ServiceUpgradeState = 5
+	// The revision waits for the state volume's save before it starts.
+	ServiceUpgradeState_SERVICE_UPGRADE_STATE_SAVING ServiceUpgradeState = 6
 )
 
 // Enum value maps for ServiceUpgradeState.
@@ -664,6 +667,7 @@ var (
 		3: "SERVICE_UPGRADE_STATE_ROLLING_BACK",
 		4: "SERVICE_UPGRADE_STATE_ROLLED_BACK",
 		5: "SERVICE_UPGRADE_STATE_ENDED",
+		6: "SERVICE_UPGRADE_STATE_SAVING",
 	}
 	ServiceUpgradeState_value = map[string]int32{
 		"SERVICE_UPGRADE_STATE_UNSPECIFIED":  0,
@@ -672,6 +676,7 @@ var (
 		"SERVICE_UPGRADE_STATE_ROLLING_BACK": 3,
 		"SERVICE_UPGRADE_STATE_ROLLED_BACK":  4,
 		"SERVICE_UPGRADE_STATE_ENDED":        5,
+		"SERVICE_UPGRADE_STATE_SAVING":       6,
 	}
 )
 
@@ -7996,13 +8001,18 @@ func (x *ServiceRevision) GetUpgrade() *ServiceUpgrade {
 	return nil
 }
 
-// ServiceUpgrade is the watch of a deploy to a started service. Its window,
-// the recipe's upgrade_window (5 minutes unless set, at most 30), counts
-// from the start of the revision's first run, and again from the next run's
+// ServiceUpgrade is the watch of a deploy to a started service. When the
+// service has a state volume, the revision does not start until the run the
+// deploy stopped has saved a version of the volume (SAVING), within the
+// upgrade window; a save that is refused or does not finish in time rolls
+// the upgrade back before the revision starts, unless the deploy allowed it
+// to start without a saved version (allow_unsaved_volume). Its window, the
+// recipe's upgrade_window (5 minutes unless set, at most 30), counts from
+// the start of the revision's first run, and again from the next run's
 // start after the run's host was lost. A run that fails inside the window,
 // or a run not ready when the window ends, fails the upgrade: Toshi stops
-// the run, restores the state volume's version saved when the deploy
-// stopped the run before, selects from_revision again and starts it.
+// the run, restores the state volume's version the save pinned, selects
+// from_revision again and starts it.
 type ServiceUpgrade struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	State ServiceUpgradeState    `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.ServiceUpgradeState" json:"state,omitempty"`
@@ -8017,13 +8027,27 @@ type ServiceUpgrade struct {
 	// deploy stopped the run before; 0 when none was saved.
 	VolumeVersion int64 `protobuf:"varint,6,opt,name=volume_version,json=volumeVersion,proto3" json:"volume_version,omitempty"`
 	// Why the upgrade failed, and whether the state volume was restored; set
-	// once it is ROLLING_BACK.
+	// once it is ROLLING_BACK, or ROLLED_BACK when the state volume was not
+	// saved.
 	RollbackReason string `protobuf:"bytes,7,opt,name=rollback_reason,json=rollbackReason,proto3" json:"rollback_reason,omitempty"`
-	// When it passed, was rolled back or ended; unset while it is watched or
-	// rolling back.
-	FinishTime    *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=finish_time,json=finishTime,proto3" json:"finish_time,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// When it passed, was rolled back or ended; unset while it is saving,
+	// watched or rolling back.
+	FinishTime *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=finish_time,json=finishTime,proto3" json:"finish_time,omitempty"`
+	// When the deploy started the state volume's save; unset when the
+	// service has no state volume or the save was skipped.
+	VolumeSaveStartTime *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=volume_save_start_time,json=volumeSaveStartTime,proto3" json:"volume_save_start_time,omitempty"`
+	// When the save ended; unset while it is SAVING.
+	VolumeSaveFinishTime *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=volume_save_finish_time,json=volumeSaveFinishTime,proto3" json:"volume_save_finish_time,omitempty"`
+	// How the save ended: "saved as version N", "nothing to save; version N
+	// pinned", "nothing to save; the volume has no saved version", or "not
+	// saved: <why>; started without a saved version as the deploy allowed". Empty while it is SAVING, and when the save was
+	// refused (rollback_reason says why).
+	VolumeSaveMessage string `protobuf:"bytes,11,opt,name=volume_save_message,json=volumeSaveMessage,proto3" json:"volume_save_message,omitempty"`
+	// Whether the deploy let the revision start without a saved version of
+	// the state volume (UpdateServiceRequest.allow_unsaved_volume).
+	AllowUnsavedVolume bool `protobuf:"varint,12,opt,name=allow_unsaved_volume,json=allowUnsavedVolume,proto3" json:"allow_unsaved_volume,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ServiceUpgrade) Reset() {
@@ -8110,6 +8134,34 @@ func (x *ServiceUpgrade) GetFinishTime() *timestamppb.Timestamp {
 		return x.FinishTime
 	}
 	return nil
+}
+
+func (x *ServiceUpgrade) GetVolumeSaveStartTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.VolumeSaveStartTime
+	}
+	return nil
+}
+
+func (x *ServiceUpgrade) GetVolumeSaveFinishTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.VolumeSaveFinishTime
+	}
+	return nil
+}
+
+func (x *ServiceUpgrade) GetVolumeSaveMessage() string {
+	if x != nil {
+		return x.VolumeSaveMessage
+	}
+	return ""
+}
+
+func (x *ServiceUpgrade) GetAllowUnsavedVolume() bool {
+	if x != nil {
+		return x.AllowUnsavedVolume
+	}
+	return false
 }
 
 // ServiceRevisionImageCheck is one answer of a revision's registry to the
@@ -9330,7 +9382,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\vimage_check\x18\n" +
 	" \x01(\v2-.toshi.workspace.v1.ServiceRevisionImageCheckR\n" +
 	"imageCheck\x12<\n" +
-	"\aupgrade\x18\v \x01(\v2\".toshi.workspace.v1.ServiceUpgradeR\aupgrade\"\xc0\x03\n" +
+	"\aupgrade\x18\v \x01(\v2\".toshi.workspace.v1.ServiceUpgradeR\aupgrade\"\xc6\x05\n" +
 	"\x0eServiceUpgrade\x12=\n" +
 	"\x05state\x18\x01 \x01(\x0e2'.toshi.workspace.v1.ServiceUpgradeStateR\x05state\x12#\n" +
 	"\rfrom_revision\x18\x02 \x01(\x03R\ffromRevision\x121\n" +
@@ -9340,7 +9392,12 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x0evolume_version\x18\x06 \x01(\x03R\rvolumeVersion\x12'\n" +
 	"\x0frollback_reason\x18\a \x01(\tR\x0erollbackReason\x12;\n" +
 	"\vfinish_time\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"finishTime\"\xd3\x01\n" +
+	"finishTime\x12O\n" +
+	"\x16volume_save_start_time\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x13volumeSaveStartTime\x12Q\n" +
+	"\x17volume_save_finish_time\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x14volumeSaveFinishTime\x12.\n" +
+	"\x13volume_save_message\x18\v \x01(\tR\x11volumeSaveMessage\x120\n" +
+	"\x14allow_unsaved_volume\x18\f \x01(\bR\x12allowUnsavedVolume\"\xd3\x01\n" +
 	"\x19ServiceRevisionImageCheck\x12I\n" +
 	"\aoutcome\x18\x01 \x01(\x0e2/.toshi.workspace.v1.ServiceRevisionImageOutcomeR\aoutcome\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12\x18\n" +
@@ -9465,14 +9522,15 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x1fPREVIEW_SHARE_LINK_STATE_IN_USE\x10\x02\x12$\n" +
 	" PREVIEW_SHARE_LINK_STATE_REVOKED\x10\x03\x12\"\n" +
 	"\x1ePREVIEW_SHARE_LINK_STATE_ENDED\x10\x04\x12$\n" +
-	" PREVIEW_SHARE_LINK_STATE_EXPIRED\x10\x05*\xf2\x01\n" +
+	" PREVIEW_SHARE_LINK_STATE_EXPIRED\x10\x05*\x94\x02\n" +
 	"\x13ServiceUpgradeState\x12%\n" +
 	"!SERVICE_UPGRADE_STATE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eSERVICE_UPGRADE_STATE_WATCHING\x10\x01\x12 \n" +
 	"\x1cSERVICE_UPGRADE_STATE_PASSED\x10\x02\x12&\n" +
 	"\"SERVICE_UPGRADE_STATE_ROLLING_BACK\x10\x03\x12%\n" +
 	"!SERVICE_UPGRADE_STATE_ROLLED_BACK\x10\x04\x12\x1f\n" +
-	"\x1bSERVICE_UPGRADE_STATE_ENDED\x10\x05*\xd8\x01\n" +
+	"\x1bSERVICE_UPGRADE_STATE_ENDED\x10\x05\x12 \n" +
+	"\x1cSERVICE_UPGRADE_STATE_SAVING\x10\x06*\xd8\x01\n" +
 	"\x1bServiceRevisionImageOutcome\x12.\n" +
 	"*SERVICE_REVISION_IMAGE_OUTCOME_UNSPECIFIED\x10\x00\x12)\n" +
 	"%SERVICE_REVISION_IMAGE_OUTCOME_SERVED\x10\x01\x12-\n" +
@@ -9770,25 +9828,27 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	115, // 128: toshi.workspace.v1.ServiceUpgrade.window_start_time:type_name -> google.protobuf.Timestamp
 	115, // 129: toshi.workspace.v1.ServiceUpgrade.window_end_time:type_name -> google.protobuf.Timestamp
 	115, // 130: toshi.workspace.v1.ServiceUpgrade.finish_time:type_name -> google.protobuf.Timestamp
-	10,  // 131: toshi.workspace.v1.ServiceRevisionImageCheck.outcome:type_name -> toshi.workspace.v1.ServiceRevisionImageOutcome
-	115, // 132: toshi.workspace.v1.ServiceRevisionImageCheck.checked_at:type_name -> google.protobuf.Timestamp
-	20,  // 133: toshi.workspace.v1.RollbackServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	108, // 134: toshi.workspace.v1.RollbackServiceResponse.activation:type_name -> toshi.workspace.v1.ServiceActivation
-	108, // 135: toshi.workspace.v1.ListServiceActivationsResponse.activations:type_name -> toshi.workspace.v1.ServiceActivation
-	12,  // 136: toshi.workspace.v1.ServiceActivation.kind:type_name -> toshi.workspace.v1.ServiceActivationKind
-	115, // 137: toshi.workspace.v1.ServiceActivation.requested_at:type_name -> google.protobuf.Timestamp
-	13,  // 138: toshi.workspace.v1.ServiceActivation.outcome:type_name -> toshi.workspace.v1.ServiceActivationOutcome
-	109, // 139: toshi.workspace.v1.ServiceActivation.secret_versions:type_name -> toshi.workspace.v1.ServiceSecretVersion
-	14,  // 140: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
-	115, // 141: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
-	115, // 142: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
-	115, // 143: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
-	115, // 144: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
-	145, // [145:145] is the sub-list for method output_type
-	145, // [145:145] is the sub-list for method input_type
-	145, // [145:145] is the sub-list for extension type_name
-	145, // [145:145] is the sub-list for extension extendee
-	0,   // [0:145] is the sub-list for field type_name
+	115, // 131: toshi.workspace.v1.ServiceUpgrade.volume_save_start_time:type_name -> google.protobuf.Timestamp
+	115, // 132: toshi.workspace.v1.ServiceUpgrade.volume_save_finish_time:type_name -> google.protobuf.Timestamp
+	10,  // 133: toshi.workspace.v1.ServiceRevisionImageCheck.outcome:type_name -> toshi.workspace.v1.ServiceRevisionImageOutcome
+	115, // 134: toshi.workspace.v1.ServiceRevisionImageCheck.checked_at:type_name -> google.protobuf.Timestamp
+	20,  // 135: toshi.workspace.v1.RollbackServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	108, // 136: toshi.workspace.v1.RollbackServiceResponse.activation:type_name -> toshi.workspace.v1.ServiceActivation
+	108, // 137: toshi.workspace.v1.ListServiceActivationsResponse.activations:type_name -> toshi.workspace.v1.ServiceActivation
+	12,  // 138: toshi.workspace.v1.ServiceActivation.kind:type_name -> toshi.workspace.v1.ServiceActivationKind
+	115, // 139: toshi.workspace.v1.ServiceActivation.requested_at:type_name -> google.protobuf.Timestamp
+	13,  // 140: toshi.workspace.v1.ServiceActivation.outcome:type_name -> toshi.workspace.v1.ServiceActivationOutcome
+	109, // 141: toshi.workspace.v1.ServiceActivation.secret_versions:type_name -> toshi.workspace.v1.ServiceSecretVersion
+	14,  // 142: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
+	115, // 143: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
+	115, // 144: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
+	115, // 145: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
+	115, // 146: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
+	147, // [147:147] is the sub-list for method output_type
+	147, // [147:147] is the sub-list for method input_type
+	147, // [147:147] is the sub-list for extension type_name
+	147, // [147:147] is the sub-list for extension extendee
+	0,   // [0:147] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_workspace_proto_init() }

@@ -1343,13 +1343,18 @@ message ServiceRevision {
   ServiceUpgrade upgrade = 11;
 }
 
-// ServiceUpgrade is the watch of a deploy to a started service. Its window,
-// the recipe's upgrade_window (5 minutes unless set, at most 30), counts
-// from the start of the revision's first run, and again from the next run's
+// ServiceUpgrade is the watch of a deploy to a started service. When the
+// service has a state volume, the revision does not start until the run the
+// deploy stopped has saved a version of the volume (SAVING), within the
+// upgrade window; a save that is refused or does not finish in time rolls
+// the upgrade back before the revision starts, unless the deploy allowed it
+// to start without a saved version (allow_unsaved_volume). Its window, the
+// recipe's upgrade_window (5 minutes unless set, at most 30), counts from
+// the start of the revision's first run, and again from the next run's
 // start after the run's host was lost. A run that fails inside the window,
 // or a run not ready when the window ends, fails the upgrade: Toshi stops
-// the run, restores the state volume's version saved when the deploy
-// stopped the run before, selects from_revision again and starts it.
+// the run, restores the state volume's version the save pinned, selects
+// from_revision again and starts it.
 message ServiceUpgrade {
   ServiceUpgradeState state = 1;
   // The revision the deploy replaced.
@@ -1363,11 +1368,25 @@ message ServiceUpgrade {
   // deploy stopped the run before; 0 when none was saved.
   int64 volume_version = 6;
   // Why the upgrade failed, and whether the state volume was restored; set
-  // once it is ROLLING_BACK.
+  // once it is ROLLING_BACK, or ROLLED_BACK when the state volume was not
+  // saved.
   string rollback_reason = 7;
-  // When it passed, was rolled back or ended; unset while it is watched or
-  // rolling back.
+  // When it passed, was rolled back or ended; unset while it is saving,
+  // watched or rolling back.
   google.protobuf.Timestamp finish_time = 8;
+  // When the deploy started the state volume's save; unset when the
+  // service has no state volume or the save was skipped.
+  google.protobuf.Timestamp volume_save_start_time = 9;
+  // When the save ended; unset while it is SAVING.
+  google.protobuf.Timestamp volume_save_finish_time = 10;
+  // How the save ended: "saved as version N", "nothing to save; version N
+  // pinned", "nothing to save; the volume has no saved version", or "not
+  // saved: <why>; started without a saved version as the deploy allowed". Empty while it is SAVING, and when the save was
+  // refused (rollback_reason says why).
+  string volume_save_message = 11;
+  // Whether the deploy let the revision start without a saved version of
+  // the state volume (UpdateServiceRequest.allow_unsaved_volume).
+  bool allow_unsaved_volume = 12;
 }
 
 // ServiceUpgradeState is where an upgrade's watch is.
@@ -1380,10 +1399,13 @@ enum ServiceUpgradeState {
   // It failed: from_revision is selected again and the state volume is
   // being restored.
   SERVICE_UPGRADE_STATE_ROLLING_BACK = 3;
-  // It failed and was rolled back.
+  // It failed and was rolled back, or the state volume was not saved and
+  // from_revision was selected again before the revision started.
   SERVICE_UPGRADE_STATE_ROLLED_BACK = 4;
   // A deploy, a rollback or a stop of the service ended the watch first.
   SERVICE_UPGRADE_STATE_ENDED = 5;
+  // The revision waits for the state volume's save before it starts.
+  SERVICE_UPGRADE_STATE_SAVING = 6;
 }
 
 // ServiceRevisionImageCheck is one answer of a revision's registry to the

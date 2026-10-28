@@ -852,6 +852,14 @@ message UpdateServiceRequest {
   Service service = 4;
   google.protobuf.FieldMask update_mask = 5;
   string request_key = 6;
+  // Lets a deploy to a started service with a state volume start the new
+  // revision without a saved version of the volume when none can be saved:
+  // the run's pre_save refused, the save did not finish within the upgrade
+  // window, or this control plane keeps no volume versions. A rollback then
+  // has no version to restore. Without it, such a deploy is rolled back
+  // before the revision starts, or, with no volume versions kept, refused
+  // with FAILED_PRECONDITION.
+  bool allow_unsaved_volume = 7;
 }
 
 message UpdateServiceResponse {
