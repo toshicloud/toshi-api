@@ -35,7 +35,8 @@ const (
 	// or has failed. An event older than the newest one the key has seen
 	// changes nothing.
 	TriggerAction_TRIGGER_ACTION_CREATE TriggerAction = 1
-	// Deletes every workload the trigger made with the event's key.
+	// Deletes the workloads the environment's CREATE triggers of the same
+	// source made for the event's key.
 	TriggerAction_TRIGGER_ACTION_DELETE TriggerAction = 2
 )
 
@@ -448,9 +449,13 @@ type TriggerSandbox struct {
 	// Runs after setup and is kept running for the sandbox's life.
 	Process *Command `protobuf:"bytes,5,opt,name=process,proto3" json:"process,omitempty"`
 	// The http channel whose link the trigger reports; empty is `preview`.
-	Channel       string `protobuf:"bytes,6,opt,name=channel,proto3" json:"channel,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Channel string `protobuf:"bytes,6,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The container image the sandbox runs, as a sandbox's spec names it
+	// (`registry/repository:tag` or `@sha256:` digest); a tag is resolved when
+	// each sandbox is made. Empty runs none.
+	ContainerImage string `protobuf:"bytes,7,opt,name=container_image,json=containerImage,proto3" json:"container_image,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *TriggerSandbox) Reset() {
@@ -521,6 +526,13 @@ func (x *TriggerSandbox) GetProcess() *Command {
 func (x *TriggerSandbox) GetChannel() string {
 	if x != nil {
 		return x.Channel
+	}
+	return ""
+}
+
+func (x *TriggerSandbox) GetContainerImage() string {
+	if x != nil {
+		return x.ContainerImage
 	}
 	return ""
 }
@@ -1126,14 +1138,15 @@ const file_toshi_workspace_v1_triggers_proto_rawDesc = "" +
 	"\rbase_branches\x18\x02 \x03(\tR\fbaseBranches\"Y\n" +
 	"\rTriggerTarget\x12>\n" +
 	"\asandbox\x18\x01 \x01(\v2\".toshi.workspace.v1.TriggerSandboxH\x00R\asandboxB\b\n" +
-	"\x06target\"\x9f\x02\n" +
+	"\x06target\"\xc8\x02\n" +
 	"\x0eTriggerSandbox\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
 	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
 	"\bbindings\x18\x03 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x121\n" +
 	"\x05setup\x18\x04 \x01(\v2\x1b.toshi.workspace.v1.CommandR\x05setup\x125\n" +
 	"\aprocess\x18\x05 \x01(\v2\x1b.toshi.workspace.v1.CommandR\aprocess\x12\x18\n" +
-	"\achannel\x18\x06 \x01(\tR\achannel\"\xaa\x01\n" +
+	"\achannel\x18\x06 \x01(\tR\achannel\x12'\n" +
+	"\x0fcontainer_image\x18\a \x01(\tR\x0econtainerImage\"\xaa\x01\n" +
 	"\x14CreateTriggerRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x125\n" +

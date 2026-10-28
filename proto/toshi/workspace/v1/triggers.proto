@@ -133,7 +133,8 @@ enum TriggerAction {
   // or has failed. An event older than the newest one the key has seen
   // changes nothing.
   TRIGGER_ACTION_CREATE = 1;
-  // Deletes every workload the trigger made with the event's key.
+  // Deletes the workloads the environment's CREATE triggers of the same
+  // source made for the event's key.
   TRIGGER_ACTION_DELETE = 2;
 }
 
@@ -160,6 +161,10 @@ message TriggerSandbox {
   Command process = 5;
   // The http channel whose link the trigger reports; empty is `preview`.
   string channel = 6;
+  // The container image the sandbox runs, as a sandbox's spec names it
+  // (`registry/repository:tag` or `@sha256:` digest); a tag is resolved when
+  // each sandbox is made. Empty runs none.
+  string container_image = 7;
 }
 
 // TriggerForks is what a trigger does with a pull request from a fork.

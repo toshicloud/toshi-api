@@ -793,6 +793,14 @@ enum EventType {
   // while the starter holds no role in the workspace. Name:
   // "<kind>.secret_withheld".
   EVENT_TYPE_SECRET_WITHHELD = 10;
+  // A workload a trigger made is ready, with the link of its channel. Name:
+  // "trigger.ready".
+  EVENT_TYPE_TRIGGER_READY = 11;
+  // A workload a trigger made failed, with why. Name: "trigger.failed".
+  EVENT_TYPE_TRIGGER_FAILED = 12;
+  // A workload a trigger made was removed, with why. Name:
+  // "trigger.removed".
+  EVENT_TYPE_TRIGGER_REMOVED = 13;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -829,6 +837,8 @@ message Event {
     ConnectionEvent connection = 17;
     // For SECRET_WITHHELD.
     SecretWithheldEvent secret_withheld = 18;
+    // For the TRIGGER_* types.
+    TriggerResult trigger = 19;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -861,6 +871,27 @@ message WithheldSecret {
   // Why it was withheld: "owner_has_no_role", the owner holds no role in
   // the workspace.
   string reason = 3;
+}
+
+// TriggerResult is the payload of a trigger's events: the trigger, the key
+// its event named, the workload it made for the key, the event that caused
+// it, the link of the workload's channel once it is ready, why it failed or
+// was removed, and the commit it was made from.
+message TriggerResult {
+  string trigger_id = 1;
+  string trigger_name = 2;
+  // The key the trigger's event named.
+  string key = 3;
+  // The workload it made for the key; empty when it made none.
+  string workload_id = 4;
+  // The event that caused it; empty when none did.
+  string event_id = 5;
+  // The link of the workload's channel, once it is ready.
+  string link = 6;
+  // Why it failed or was removed.
+  string reason = 7;
+  // The commit it was made from.
+  string head_sha = 8;
 }
 
 // ExecutionEvent is an execution starting or ending.
