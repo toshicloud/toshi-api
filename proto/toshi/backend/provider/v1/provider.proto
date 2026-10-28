@@ -18,9 +18,12 @@ syntax = "proto3";
 // means the provider gave no answer: the instance may or may not have
 // changed, and the client never reads it as "not found".
 //
-// Paths. Disk paths, the state root, screen captures and console logs cross
-// as strings that name files on the host both processes share. Open checks
-// it: the agent writes a nonce file and the provider reads it back.
+// Paths. Disk paths, image files, the state root, screen captures and
+// console logs cross as strings that name files on the host both processes
+// share. Open checks it: the agent writes a nonce file and the provider
+// reads it back. A provider that cannot read an image file it is given
+// answers ERROR_CODE_UNSUPPORTED: the agent sees a directory the program
+// does not.
 //
 // Enums. ErrorCode, State, OperatingSystem, DiskKind and CheckStatus are
 // closed sets that later versions may grow. A client reads a value it does
@@ -137,6 +140,11 @@ service ProviderService {
   rpc Collect(CollectRequest) returns (CollectResponse);
   // Forget drops a destroyed instance from the provider's records.
   rpc Forget(ForgetRequest) returns (ForgetResponse);
+
+  // Image boot: the facet "image_booter".
+
+  // BaseImages lists the bases an image version can be an overlay on.
+  rpc BaseImages(BaseImagesRequest) returns (BaseImagesResponse);
 
   // Checks: asked of a provider that has not started. Each carries the
   // config Open would get, and none starts the provider or acts on the host.
@@ -332,6 +340,11 @@ message Spec {
   string workspace = 16;
   // A Windows guest with a USB controller and a tablet for display input.
   bool display_input = 17;
+  // The absolute path of a qcow2 overlay the instance boots from in place
+  // of image's base, for a Linux guest: an image version whose backing file
+  // is the base, named by its file name alone and found beside it. Only a
+  // provider that offers "image_booter" accepts it.
+  string image_file = 18;
 }
 
 // Instance is one instance as it was when the call answered.
@@ -611,6 +624,22 @@ message ForgetRequest {
 }
 
 message ForgetResponse {}
+
+message BaseImagesRequest {}
+
+message BaseImagesResponse {
+  repeated BaseImage bases = 1;
+}
+
+// BaseImage is a base an image version can be an overlay on.
+message BaseImage {
+  // The base's name, such as "ubuntu-24.04", as Spec.image names it.
+  string name = 1;
+  // The base file's SHA-256 in hex.
+  string sha256 = 2;
+  // The base file's absolute path on the host.
+  string path = 3;
+}
 
 message DescribeRequest {
   ProviderConfig config = 1;

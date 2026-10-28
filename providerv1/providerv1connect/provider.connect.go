@@ -20,9 +20,12 @@
 // means the provider gave no answer: the instance may or may not have
 // changed, and the client never reads it as "not found".
 //
-// Paths. Disk paths, the state root, screen captures and console logs cross
-// as strings that name files on the host both processes share. Open checks
-// it: the agent writes a nonce file and the provider reads it back.
+// Paths. Disk paths, image files, the state root, screen captures and
+// console logs cross as strings that name files on the host both processes
+// share. Open checks it: the agent writes a nonce file and the provider
+// reads it back. A provider that cannot read an image file it is given
+// answers ERROR_CODE_UNSUPPORTED: the agent sees a directory the program
+// does not.
 //
 // Enums. ErrorCode, State, OperatingSystem, DiskKind and CheckStatus are
 // closed sets that later versions may grow. A client reads a value it does
@@ -124,6 +127,9 @@ const (
 	ProviderServiceCollectProcedure = "/toshi.backend.provider.v1.ProviderService/Collect"
 	// ProviderServiceForgetProcedure is the fully-qualified name of the ProviderService's Forget RPC.
 	ProviderServiceForgetProcedure = "/toshi.backend.provider.v1.ProviderService/Forget"
+	// ProviderServiceBaseImagesProcedure is the fully-qualified name of the ProviderService's
+	// BaseImages RPC.
+	ProviderServiceBaseImagesProcedure = "/toshi.backend.provider.v1.ProviderService/BaseImages"
 	// ProviderServiceDescribeProcedure is the fully-qualified name of the ProviderService's Describe
 	// RPC.
 	ProviderServiceDescribeProcedure = "/toshi.backend.provider.v1.ProviderService/Describe"
@@ -259,6 +265,8 @@ type ProviderServiceClient interface {
 	Collect(context.Context, *connect.Request[providerv1.CollectRequest]) (*connect.Response[providerv1.CollectResponse], error)
 	// Forget drops a destroyed instance from the provider's records.
 	Forget(context.Context, *connect.Request[providerv1.ForgetRequest]) (*connect.Response[providerv1.ForgetResponse], error)
+	// BaseImages lists the bases an image version can be an overlay on.
+	BaseImages(context.Context, *connect.Request[providerv1.BaseImagesRequest]) (*connect.Response[providerv1.BaseImagesResponse], error)
 	// Describe returns the backend facets the provider offers and its
 	// capabilities.
 	Describe(context.Context, *connect.Request[providerv1.DescribeRequest]) (*connect.Response[providerv1.DescribeResponse], error)
@@ -479,6 +487,12 @@ func NewProviderServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(providerServiceMethods.ByName("Forget")),
 			connect.WithClientOptions(opts...),
 		),
+		baseImages: connect.NewClient[providerv1.BaseImagesRequest, providerv1.BaseImagesResponse](
+			httpClient,
+			baseURL+ProviderServiceBaseImagesProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("BaseImages")),
+			connect.WithClientOptions(opts...),
+		),
 		describe: connect.NewClient[providerv1.DescribeRequest, providerv1.DescribeResponse](
 			httpClient,
 			baseURL+ProviderServiceDescribeProcedure,
@@ -617,6 +631,7 @@ type providerServiceClient struct {
 	setSnapshotRefs       *connect.Client[providerv1.SetSnapshotRefsRequest, providerv1.SetSnapshotRefsResponse]
 	collect               *connect.Client[providerv1.CollectRequest, providerv1.CollectResponse]
 	forget                *connect.Client[providerv1.ForgetRequest, providerv1.ForgetResponse]
+	baseImages            *connect.Client[providerv1.BaseImagesRequest, providerv1.BaseImagesResponse]
 	describe              *connect.Client[providerv1.DescribeRequest, providerv1.DescribeResponse]
 	preflight             *connect.Client[providerv1.PreflightRequest, providerv1.PreflightResponse]
 	status                *connect.Client[providerv1.StatusRequest, providerv1.StatusResponse]
@@ -760,6 +775,11 @@ func (c *providerServiceClient) Collect(ctx context.Context, req *connect.Reques
 // Forget calls toshi.backend.provider.v1.ProviderService.Forget.
 func (c *providerServiceClient) Forget(ctx context.Context, req *connect.Request[providerv1.ForgetRequest]) (*connect.Response[providerv1.ForgetResponse], error) {
 	return c.forget.CallUnary(ctx, req)
+}
+
+// BaseImages calls toshi.backend.provider.v1.ProviderService.BaseImages.
+func (c *providerServiceClient) BaseImages(ctx context.Context, req *connect.Request[providerv1.BaseImagesRequest]) (*connect.Response[providerv1.BaseImagesResponse], error) {
+	return c.baseImages.CallUnary(ctx, req)
 }
 
 // Describe calls toshi.backend.provider.v1.ProviderService.Describe.
@@ -934,6 +954,8 @@ type ProviderServiceHandler interface {
 	Collect(context.Context, *connect.Request[providerv1.CollectRequest]) (*connect.Response[providerv1.CollectResponse], error)
 	// Forget drops a destroyed instance from the provider's records.
 	Forget(context.Context, *connect.Request[providerv1.ForgetRequest]) (*connect.Response[providerv1.ForgetResponse], error)
+	// BaseImages lists the bases an image version can be an overlay on.
+	BaseImages(context.Context, *connect.Request[providerv1.BaseImagesRequest]) (*connect.Response[providerv1.BaseImagesResponse], error)
 	// Describe returns the backend facets the provider offers and its
 	// capabilities.
 	Describe(context.Context, *connect.Request[providerv1.DescribeRequest]) (*connect.Response[providerv1.DescribeResponse], error)
@@ -1150,6 +1172,12 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 		connect.WithSchema(providerServiceMethods.ByName("Forget")),
 		connect.WithHandlerOptions(opts...),
 	)
+	providerServiceBaseImagesHandler := connect.NewUnaryHandler(
+		ProviderServiceBaseImagesProcedure,
+		svc.BaseImages,
+		connect.WithSchema(providerServiceMethods.ByName("BaseImages")),
+		connect.WithHandlerOptions(opts...),
+	)
 	providerServiceDescribeHandler := connect.NewUnaryHandler(
 		ProviderServiceDescribeProcedure,
 		svc.Describe,
@@ -1310,6 +1338,8 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 			providerServiceCollectHandler.ServeHTTP(w, r)
 		case ProviderServiceForgetProcedure:
 			providerServiceForgetHandler.ServeHTTP(w, r)
+		case ProviderServiceBaseImagesProcedure:
+			providerServiceBaseImagesHandler.ServeHTTP(w, r)
 		case ProviderServiceDescribeProcedure:
 			providerServiceDescribeHandler.ServeHTTP(w, r)
 		case ProviderServicePreflightProcedure:
@@ -1453,6 +1483,10 @@ func (UnimplementedProviderServiceHandler) Collect(context.Context, *connect.Req
 
 func (UnimplementedProviderServiceHandler) Forget(context.Context, *connect.Request[providerv1.ForgetRequest]) (*connect.Response[providerv1.ForgetResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.Forget is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) BaseImages(context.Context, *connect.Request[providerv1.BaseImagesRequest]) (*connect.Response[providerv1.BaseImagesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.BaseImages is not implemented"))
 }
 
 func (UnimplementedProviderServiceHandler) Describe(context.Context, *connect.Request[providerv1.DescribeRequest]) (*connect.Response[providerv1.DescribeResponse], error) {
