@@ -715,8 +715,10 @@ type ChannelMessage struct {
 	// When a pending message is next posted.
 	NextAttemptAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=next_attempt_at,json=nextAttemptAt,proto3" json:"next_attempt_at,omitempty"`
 	// Why its last attempt failed; empty when none has.
-	LastError     string                 `protobuf:"bytes,10,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
-	DeliveredAt   *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=delivered_at,json=deliveredAt,proto3" json:"delivered_at,omitempty"`
+	LastError   string                 `protobuf:"bytes,10,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	DeliveredAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=delivered_at,json=deliveredAt,proto3" json:"delivered_at,omitempty"`
+	// When the message was last replayed, unset for never.
+	ReplayedAt    *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=replayed_at,json=replayedAt,proto3" json:"replayed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -824,6 +826,13 @@ func (x *ChannelMessage) GetLastError() string {
 func (x *ChannelMessage) GetDeliveredAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.DeliveredAt
+	}
+	return nil
+}
+
+func (x *ChannelMessage) GetReplayedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ReplayedAt
 	}
 	return nil
 }
@@ -3720,6 +3729,112 @@ func (x *TailChannelMessagesResponse) GetNextCursor() string {
 	return ""
 }
 
+type ReplayChannelMessageRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The event channel's service, by its ID, and the channel's name.
+	Service       string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	Channel       string `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`
+	MessageId     string `protobuf:"bytes,3,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReplayChannelMessageRequest) Reset() {
+	*x = ReplayChannelMessageRequest{}
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReplayChannelMessageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplayChannelMessageRequest) ProtoMessage() {}
+
+func (x *ReplayChannelMessageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplayChannelMessageRequest.ProtoReflect.Descriptor instead.
+func (*ReplayChannelMessageRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *ReplayChannelMessageRequest) GetService() string {
+	if x != nil {
+		return x.Service
+	}
+	return ""
+}
+
+func (x *ReplayChannelMessageRequest) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *ReplayChannelMessageRequest) GetMessageId() string {
+	if x != nil {
+		return x.MessageId
+	}
+	return ""
+}
+
+type ReplayChannelMessageResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The message as it now is: pending.
+	Message       *ChannelMessage `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReplayChannelMessageResponse) Reset() {
+	*x = ReplayChannelMessageResponse{}
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReplayChannelMessageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplayChannelMessageResponse) ProtoMessage() {}
+
+func (x *ReplayChannelMessageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplayChannelMessageResponse.ProtoReflect.Descriptor instead.
+func (*ReplayChannelMessageResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *ReplayChannelMessageResponse) GetMessage() *ChannelMessage {
+	if x != nil {
+		return x.Message
+	}
+	return nil
+}
+
 var File_toshi_workspace_v1_channels_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
@@ -3766,7 +3881,7 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\flast_failure\x18\a \x01(\tR\vlastFailure\":\n" +
 	"\x14ChannelMessageSource\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\tR\x02id\"\xc9\x03\n" +
+	"\x02id\x18\x02 \x01(\tR\x02id\"\x86\x04\n" +
 	"\x0eChannelMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
 	"\x03seq\x18\x02 \x01(\x03R\x03seq\x12\x12\n" +
@@ -3780,7 +3895,9 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\n" +
 	"last_error\x18\n" +
 	" \x01(\tR\tlastError\x12=\n" +
-	"\fdelivered_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\vdeliveredAt\"\xa7\x03\n" +
+	"\fdelivered_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\vdeliveredAt\x12;\n" +
+	"\vreplayed_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"replayedAt\"\xa7\x03\n" +
 	"\rChannelClient\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
 	"\x04mode\x18\x02 \x01(\x0e2%.toshi.workspace.v1.ChannelAttachModeR\x04mode\x12\x1f\n" +
@@ -4010,7 +4127,14 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\x1bTailChannelMessagesResponse\x12<\n" +
 	"\amessage\x18\x01 \x01(\v2\".toshi.workspace.v1.ChannelMessageR\amessage\x12\x1f\n" +
 	"\vnext_cursor\x18\x02 \x01(\tR\n" +
-	"nextCursor*x\n" +
+	"nextCursor\"p\n" +
+	"\x1bReplayChannelMessageRequest\x12\x18\n" +
+	"\aservice\x18\x01 \x01(\tR\aservice\x12\x18\n" +
+	"\achannel\x18\x02 \x01(\tR\achannel\x12\x1d\n" +
+	"\n" +
+	"message_id\x18\x03 \x01(\tR\tmessageId\"\\\n" +
+	"\x1cReplayChannelMessageResponse\x12<\n" +
+	"\amessage\x18\x01 \x01(\v2\".toshi.workspace.v1.ChannelMessageR\amessage*x\n" +
 	"\fChannelShape\x12\x1d\n" +
 	"\x19CHANNEL_SHAPE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12CHANNEL_SHAPE_HTTP\x10\x01\x12\x18\n" +
@@ -4037,7 +4161,7 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\x1fCHANNEL_MESSAGE_STATE_IN_FLIGHT\x10\x02\x12#\n" +
 	"\x1fCHANNEL_MESSAGE_STATE_DELIVERED\x10\x03\x12 \n" +
 	"\x1cCHANNEL_MESSAGE_STATE_FAILED\x10\x04\x12!\n" +
-	"\x1dCHANNEL_MESSAGE_STATE_EXPIRED\x10\x052\x84\x12\n" +
+	"\x1dCHANNEL_MESSAGE_STATE_EXPIRED\x10\x052\xcb\x13\n" +
 	"\x0eChannelService\x12\xa7\x01\n" +
 	"\rCreateChannel\x12(.toshi.workspace.v1.CreateChannelRequest\x1a).toshi.workspace.v1.CreateChannelResponse\"A\xc2\xf3\x18\x0echannels.write\xd2\xf3\x18+\n" +
 	"\x18host_job.channel_exposed\x12\x0fhost_job:job_id\x12t\n" +
@@ -4061,7 +4185,9 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\aGetLink\x12\".toshi.workspace.v1.GetLinkRequest\x1a#.toshi.workspace.v1.GetLinkResponse\"\x11\xc2\xf3\x18\rchannels.read\x12\x91\x01\n" +
 	"\x12SendChannelMessage\x12-.toshi.workspace.v1.SendChannelMessageRequest\x1a..toshi.workspace.v1.SendChannelMessageResponse\"\x1c\xc2\xf3\x18\x0echannels.write\xd2\xf3\x18\x06\n" +
 	"\x04none\x12\x8b\x01\n" +
-	"\x13TailChannelMessages\x12..toshi.workspace.v1.TailChannelMessagesRequest\x1a/.toshi.workspace.v1.TailChannelMessagesResponse\"\x11\xc2\xf3\x18\rchannels.read0\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x13TailChannelMessages\x12..toshi.workspace.v1.TailChannelMessagesRequest\x1a/.toshi.workspace.v1.TailChannelMessagesResponse\"\x11\xc2\xf3\x18\rchannels.read0\x01\x12\xc4\x01\n" +
+	"\x14ReplayChannelMessage\x12/.toshi.workspace.v1.ReplayChannelMessageRequest\x1a0.toshi.workspace.v1.ReplayChannelMessageResponse\"I\xc2\xf3\x18\x0echannels.write\xd2\xf3\x183\n" +
+	" service.channel_message_replayed\x12\x0fservice:serviceB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_channels_proto_rawDescOnce sync.Once
@@ -4076,7 +4202,7 @@ func file_toshi_workspace_v1_channels_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_channels_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_toshi_workspace_v1_channels_proto_msgTypes = make([]protoimpl.MessageInfo, 46)
+var file_toshi_workspace_v1_channels_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_toshi_workspace_v1_channels_proto_goTypes = []any{
 	(ChannelShape)(0),                         // 0: toshi.workspace.v1.ChannelShape
 	(ChannelState)(0),                         // 1: toshi.workspace.v1.ChannelState
@@ -4128,97 +4254,103 @@ var file_toshi_workspace_v1_channels_proto_goTypes = []any{
 	(*SendChannelMessageResponse)(nil),        // 47: toshi.workspace.v1.SendChannelMessageResponse
 	(*TailChannelMessagesRequest)(nil),        // 48: toshi.workspace.v1.TailChannelMessagesRequest
 	(*TailChannelMessagesResponse)(nil),       // 49: toshi.workspace.v1.TailChannelMessagesResponse
-	nil,                                       // 50: toshi.workspace.v1.ChannelMatch.HeadersEntry
-	(*timestamppb.Timestamp)(nil),             // 51: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),               // 52: google.protobuf.Duration
+	(*ReplayChannelMessageRequest)(nil),       // 50: toshi.workspace.v1.ReplayChannelMessageRequest
+	(*ReplayChannelMessageResponse)(nil),      // 51: toshi.workspace.v1.ReplayChannelMessageResponse
+	nil,                                       // 52: toshi.workspace.v1.ChannelMatch.HeadersEntry
+	(*timestamppb.Timestamp)(nil),             // 53: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),               // 54: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_channels_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Channel.shape:type_name -> toshi.workspace.v1.ChannelShape
 	1,  // 1: toshi.workspace.v1.Channel.state:type_name -> toshi.workspace.v1.ChannelState
-	51, // 2: toshi.workspace.v1.Channel.created_at:type_name -> google.protobuf.Timestamp
-	51, // 3: toshi.workspace.v1.Channel.ended_at:type_name -> google.protobuf.Timestamp
+	53, // 2: toshi.workspace.v1.Channel.created_at:type_name -> google.protobuf.Timestamp
+	53, // 3: toshi.workspace.v1.Channel.ended_at:type_name -> google.protobuf.Timestamp
 	10, // 4: toshi.workspace.v1.Channel.policy:type_name -> toshi.workspace.v1.ChannelPolicy
 	9,  // 5: toshi.workspace.v1.Channel.clients:type_name -> toshi.workspace.v1.ChannelClient
 	6,  // 6: toshi.workspace.v1.Channel.events:type_name -> toshi.workspace.v1.ChannelEventCounts
-	51, // 7: toshi.workspace.v1.ChannelEventCounts.last_delivery_at:type_name -> google.protobuf.Timestamp
-	51, // 8: toshi.workspace.v1.ChannelMessage.time:type_name -> google.protobuf.Timestamp
+	53, // 7: toshi.workspace.v1.ChannelEventCounts.last_delivery_at:type_name -> google.protobuf.Timestamp
+	53, // 8: toshi.workspace.v1.ChannelMessage.time:type_name -> google.protobuf.Timestamp
 	7,  // 9: toshi.workspace.v1.ChannelMessage.source:type_name -> toshi.workspace.v1.ChannelMessageSource
 	4,  // 10: toshi.workspace.v1.ChannelMessage.state:type_name -> toshi.workspace.v1.ChannelMessageState
-	51, // 11: toshi.workspace.v1.ChannelMessage.next_attempt_at:type_name -> google.protobuf.Timestamp
-	51, // 12: toshi.workspace.v1.ChannelMessage.delivered_at:type_name -> google.protobuf.Timestamp
-	2,  // 13: toshi.workspace.v1.ChannelClient.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
-	51, // 14: toshi.workspace.v1.ChannelClient.attached_since:type_name -> google.protobuf.Timestamp
-	51, // 15: toshi.workspace.v1.ChannelClient.seen_at:type_name -> google.protobuf.Timestamp
-	51, // 16: toshi.workspace.v1.ChannelClient.detached_at:type_name -> google.protobuf.Timestamp
-	11, // 17: toshi.workspace.v1.ChannelPolicy.modules:type_name -> toshi.workspace.v1.ChannelModuleList
-	12, // 18: toshi.workspace.v1.ChannelModuleList.modules:type_name -> toshi.workspace.v1.ChannelModule
-	13, // 19: toshi.workspace.v1.ChannelModule.match:type_name -> toshi.workspace.v1.ChannelMatch
-	50, // 20: toshi.workspace.v1.ChannelMatch.headers:type_name -> toshi.workspace.v1.ChannelMatch.HeadersEntry
-	51, // 21: toshi.workspace.v1.ChannelRequest.arrived_at:type_name -> google.protobuf.Timestamp
-	52, // 22: toshi.workspace.v1.ChannelRequest.duration:type_name -> google.protobuf.Duration
-	15, // 23: toshi.workspace.v1.ChannelRequest.caller:type_name -> toshi.workspace.v1.ChannelRequestCaller
-	16, // 24: toshi.workspace.v1.ChannelRequest.request_headers:type_name -> toshi.workspace.v1.ChannelHeader
-	16, // 25: toshi.workspace.v1.ChannelRequest.response_headers:type_name -> toshi.workspace.v1.ChannelHeader
-	17, // 26: toshi.workspace.v1.ChannelRequest.request_body:type_name -> toshi.workspace.v1.ChannelBody
-	17, // 27: toshi.workspace.v1.ChannelRequest.response_body:type_name -> toshi.workspace.v1.ChannelBody
-	51, // 28: toshi.workspace.v1.Forward.opened_at:type_name -> google.protobuf.Timestamp
-	51, // 29: toshi.workspace.v1.Link.since:type_name -> google.protobuf.Timestamp
-	10, // 30: toshi.workspace.v1.CreateChannelRequest.policy:type_name -> toshi.workspace.v1.ChannelPolicy
-	5,  // 31: toshi.workspace.v1.CreateChannelResponse.channel:type_name -> toshi.workspace.v1.Channel
-	5,  // 32: toshi.workspace.v1.ListChannelsResponse.channels:type_name -> toshi.workspace.v1.Channel
-	5,  // 33: toshi.workspace.v1.GetChannelResponse.channel:type_name -> toshi.workspace.v1.Channel
-	10, // 34: toshi.workspace.v1.GetChannelPolicyResponse.policy:type_name -> toshi.workspace.v1.ChannelPolicy
-	10, // 35: toshi.workspace.v1.SetChannelPolicyRequest.policy:type_name -> toshi.workspace.v1.ChannelPolicy
-	10, // 36: toshi.workspace.v1.SetChannelPolicyResponse.policy:type_name -> toshi.workspace.v1.ChannelPolicy
-	51, // 37: toshi.workspace.v1.ListChannelRequestsRequest.since:type_name -> google.protobuf.Timestamp
-	51, // 38: toshi.workspace.v1.ListChannelRequestsRequest.until:type_name -> google.protobuf.Timestamp
-	14, // 39: toshi.workspace.v1.ListChannelRequestsResponse.requests:type_name -> toshi.workspace.v1.ChannelRequest
-	14, // 40: toshi.workspace.v1.GetChannelRequestResponse.request:type_name -> toshi.workspace.v1.ChannelRequest
-	3,  // 41: toshi.workspace.v1.ExportChannelLogRequest.log:type_name -> toshi.workspace.v1.ChannelLog
-	51, // 42: toshi.workspace.v1.ExportChannelLogRequest.since:type_name -> google.protobuf.Timestamp
-	51, // 43: toshi.workspace.v1.ExportChannelLogRequest.until:type_name -> google.protobuf.Timestamp
-	2,  // 44: toshi.workspace.v1.CreateChannelConnectTokenRequest.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
-	51, // 45: toshi.workspace.v1.CreateChannelConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 46: toshi.workspace.v1.CreateChannelConnectTokenResponse.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
-	18, // 47: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
-	19, // 48: toshi.workspace.v1.GetLinkResponse.link:type_name -> toshi.workspace.v1.Link
-	4,  // 49: toshi.workspace.v1.TailChannelMessagesRequest.states:type_name -> toshi.workspace.v1.ChannelMessageState
-	8,  // 50: toshi.workspace.v1.TailChannelMessagesResponse.message:type_name -> toshi.workspace.v1.ChannelMessage
-	20, // 51: toshi.workspace.v1.ChannelService.CreateChannel:input_type -> toshi.workspace.v1.CreateChannelRequest
-	22, // 52: toshi.workspace.v1.ChannelService.ListChannels:input_type -> toshi.workspace.v1.ListChannelsRequest
-	24, // 53: toshi.workspace.v1.ChannelService.GetChannel:input_type -> toshi.workspace.v1.GetChannelRequest
-	26, // 54: toshi.workspace.v1.ChannelService.GetChannelPolicy:input_type -> toshi.workspace.v1.GetChannelPolicyRequest
-	28, // 55: toshi.workspace.v1.ChannelService.SetChannelPolicy:input_type -> toshi.workspace.v1.SetChannelPolicyRequest
-	30, // 56: toshi.workspace.v1.ChannelService.ListChannelRequests:input_type -> toshi.workspace.v1.ListChannelRequestsRequest
-	32, // 57: toshi.workspace.v1.ChannelService.GetChannelRequest:input_type -> toshi.workspace.v1.GetChannelRequestRequest
-	34, // 58: toshi.workspace.v1.ChannelService.ExportChannelLog:input_type -> toshi.workspace.v1.ExportChannelLogRequest
-	36, // 59: toshi.workspace.v1.ChannelService.CreateChannelConnectToken:input_type -> toshi.workspace.v1.CreateChannelConnectTokenRequest
-	38, // 60: toshi.workspace.v1.ChannelService.RevokeChannelConnectToken:input_type -> toshi.workspace.v1.RevokeChannelConnectTokenRequest
-	40, // 61: toshi.workspace.v1.ChannelService.DeleteChannel:input_type -> toshi.workspace.v1.DeleteChannelRequest
-	42, // 62: toshi.workspace.v1.ChannelService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
-	44, // 63: toshi.workspace.v1.ChannelService.GetLink:input_type -> toshi.workspace.v1.GetLinkRequest
-	46, // 64: toshi.workspace.v1.ChannelService.SendChannelMessage:input_type -> toshi.workspace.v1.SendChannelMessageRequest
-	48, // 65: toshi.workspace.v1.ChannelService.TailChannelMessages:input_type -> toshi.workspace.v1.TailChannelMessagesRequest
-	21, // 66: toshi.workspace.v1.ChannelService.CreateChannel:output_type -> toshi.workspace.v1.CreateChannelResponse
-	23, // 67: toshi.workspace.v1.ChannelService.ListChannels:output_type -> toshi.workspace.v1.ListChannelsResponse
-	25, // 68: toshi.workspace.v1.ChannelService.GetChannel:output_type -> toshi.workspace.v1.GetChannelResponse
-	27, // 69: toshi.workspace.v1.ChannelService.GetChannelPolicy:output_type -> toshi.workspace.v1.GetChannelPolicyResponse
-	29, // 70: toshi.workspace.v1.ChannelService.SetChannelPolicy:output_type -> toshi.workspace.v1.SetChannelPolicyResponse
-	31, // 71: toshi.workspace.v1.ChannelService.ListChannelRequests:output_type -> toshi.workspace.v1.ListChannelRequestsResponse
-	33, // 72: toshi.workspace.v1.ChannelService.GetChannelRequest:output_type -> toshi.workspace.v1.GetChannelRequestResponse
-	35, // 73: toshi.workspace.v1.ChannelService.ExportChannelLog:output_type -> toshi.workspace.v1.ExportChannelLogResponse
-	37, // 74: toshi.workspace.v1.ChannelService.CreateChannelConnectToken:output_type -> toshi.workspace.v1.CreateChannelConnectTokenResponse
-	39, // 75: toshi.workspace.v1.ChannelService.RevokeChannelConnectToken:output_type -> toshi.workspace.v1.RevokeChannelConnectTokenResponse
-	41, // 76: toshi.workspace.v1.ChannelService.DeleteChannel:output_type -> toshi.workspace.v1.DeleteChannelResponse
-	43, // 77: toshi.workspace.v1.ChannelService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
-	45, // 78: toshi.workspace.v1.ChannelService.GetLink:output_type -> toshi.workspace.v1.GetLinkResponse
-	47, // 79: toshi.workspace.v1.ChannelService.SendChannelMessage:output_type -> toshi.workspace.v1.SendChannelMessageResponse
-	49, // 80: toshi.workspace.v1.ChannelService.TailChannelMessages:output_type -> toshi.workspace.v1.TailChannelMessagesResponse
-	66, // [66:81] is the sub-list for method output_type
-	51, // [51:66] is the sub-list for method input_type
-	51, // [51:51] is the sub-list for extension type_name
-	51, // [51:51] is the sub-list for extension extendee
-	0,  // [0:51] is the sub-list for field type_name
+	53, // 11: toshi.workspace.v1.ChannelMessage.next_attempt_at:type_name -> google.protobuf.Timestamp
+	53, // 12: toshi.workspace.v1.ChannelMessage.delivered_at:type_name -> google.protobuf.Timestamp
+	53, // 13: toshi.workspace.v1.ChannelMessage.replayed_at:type_name -> google.protobuf.Timestamp
+	2,  // 14: toshi.workspace.v1.ChannelClient.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
+	53, // 15: toshi.workspace.v1.ChannelClient.attached_since:type_name -> google.protobuf.Timestamp
+	53, // 16: toshi.workspace.v1.ChannelClient.seen_at:type_name -> google.protobuf.Timestamp
+	53, // 17: toshi.workspace.v1.ChannelClient.detached_at:type_name -> google.protobuf.Timestamp
+	11, // 18: toshi.workspace.v1.ChannelPolicy.modules:type_name -> toshi.workspace.v1.ChannelModuleList
+	12, // 19: toshi.workspace.v1.ChannelModuleList.modules:type_name -> toshi.workspace.v1.ChannelModule
+	13, // 20: toshi.workspace.v1.ChannelModule.match:type_name -> toshi.workspace.v1.ChannelMatch
+	52, // 21: toshi.workspace.v1.ChannelMatch.headers:type_name -> toshi.workspace.v1.ChannelMatch.HeadersEntry
+	53, // 22: toshi.workspace.v1.ChannelRequest.arrived_at:type_name -> google.protobuf.Timestamp
+	54, // 23: toshi.workspace.v1.ChannelRequest.duration:type_name -> google.protobuf.Duration
+	15, // 24: toshi.workspace.v1.ChannelRequest.caller:type_name -> toshi.workspace.v1.ChannelRequestCaller
+	16, // 25: toshi.workspace.v1.ChannelRequest.request_headers:type_name -> toshi.workspace.v1.ChannelHeader
+	16, // 26: toshi.workspace.v1.ChannelRequest.response_headers:type_name -> toshi.workspace.v1.ChannelHeader
+	17, // 27: toshi.workspace.v1.ChannelRequest.request_body:type_name -> toshi.workspace.v1.ChannelBody
+	17, // 28: toshi.workspace.v1.ChannelRequest.response_body:type_name -> toshi.workspace.v1.ChannelBody
+	53, // 29: toshi.workspace.v1.Forward.opened_at:type_name -> google.protobuf.Timestamp
+	53, // 30: toshi.workspace.v1.Link.since:type_name -> google.protobuf.Timestamp
+	10, // 31: toshi.workspace.v1.CreateChannelRequest.policy:type_name -> toshi.workspace.v1.ChannelPolicy
+	5,  // 32: toshi.workspace.v1.CreateChannelResponse.channel:type_name -> toshi.workspace.v1.Channel
+	5,  // 33: toshi.workspace.v1.ListChannelsResponse.channels:type_name -> toshi.workspace.v1.Channel
+	5,  // 34: toshi.workspace.v1.GetChannelResponse.channel:type_name -> toshi.workspace.v1.Channel
+	10, // 35: toshi.workspace.v1.GetChannelPolicyResponse.policy:type_name -> toshi.workspace.v1.ChannelPolicy
+	10, // 36: toshi.workspace.v1.SetChannelPolicyRequest.policy:type_name -> toshi.workspace.v1.ChannelPolicy
+	10, // 37: toshi.workspace.v1.SetChannelPolicyResponse.policy:type_name -> toshi.workspace.v1.ChannelPolicy
+	53, // 38: toshi.workspace.v1.ListChannelRequestsRequest.since:type_name -> google.protobuf.Timestamp
+	53, // 39: toshi.workspace.v1.ListChannelRequestsRequest.until:type_name -> google.protobuf.Timestamp
+	14, // 40: toshi.workspace.v1.ListChannelRequestsResponse.requests:type_name -> toshi.workspace.v1.ChannelRequest
+	14, // 41: toshi.workspace.v1.GetChannelRequestResponse.request:type_name -> toshi.workspace.v1.ChannelRequest
+	3,  // 42: toshi.workspace.v1.ExportChannelLogRequest.log:type_name -> toshi.workspace.v1.ChannelLog
+	53, // 43: toshi.workspace.v1.ExportChannelLogRequest.since:type_name -> google.protobuf.Timestamp
+	53, // 44: toshi.workspace.v1.ExportChannelLogRequest.until:type_name -> google.protobuf.Timestamp
+	2,  // 45: toshi.workspace.v1.CreateChannelConnectTokenRequest.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
+	53, // 46: toshi.workspace.v1.CreateChannelConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 47: toshi.workspace.v1.CreateChannelConnectTokenResponse.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
+	18, // 48: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
+	19, // 49: toshi.workspace.v1.GetLinkResponse.link:type_name -> toshi.workspace.v1.Link
+	4,  // 50: toshi.workspace.v1.TailChannelMessagesRequest.states:type_name -> toshi.workspace.v1.ChannelMessageState
+	8,  // 51: toshi.workspace.v1.TailChannelMessagesResponse.message:type_name -> toshi.workspace.v1.ChannelMessage
+	8,  // 52: toshi.workspace.v1.ReplayChannelMessageResponse.message:type_name -> toshi.workspace.v1.ChannelMessage
+	20, // 53: toshi.workspace.v1.ChannelService.CreateChannel:input_type -> toshi.workspace.v1.CreateChannelRequest
+	22, // 54: toshi.workspace.v1.ChannelService.ListChannels:input_type -> toshi.workspace.v1.ListChannelsRequest
+	24, // 55: toshi.workspace.v1.ChannelService.GetChannel:input_type -> toshi.workspace.v1.GetChannelRequest
+	26, // 56: toshi.workspace.v1.ChannelService.GetChannelPolicy:input_type -> toshi.workspace.v1.GetChannelPolicyRequest
+	28, // 57: toshi.workspace.v1.ChannelService.SetChannelPolicy:input_type -> toshi.workspace.v1.SetChannelPolicyRequest
+	30, // 58: toshi.workspace.v1.ChannelService.ListChannelRequests:input_type -> toshi.workspace.v1.ListChannelRequestsRequest
+	32, // 59: toshi.workspace.v1.ChannelService.GetChannelRequest:input_type -> toshi.workspace.v1.GetChannelRequestRequest
+	34, // 60: toshi.workspace.v1.ChannelService.ExportChannelLog:input_type -> toshi.workspace.v1.ExportChannelLogRequest
+	36, // 61: toshi.workspace.v1.ChannelService.CreateChannelConnectToken:input_type -> toshi.workspace.v1.CreateChannelConnectTokenRequest
+	38, // 62: toshi.workspace.v1.ChannelService.RevokeChannelConnectToken:input_type -> toshi.workspace.v1.RevokeChannelConnectTokenRequest
+	40, // 63: toshi.workspace.v1.ChannelService.DeleteChannel:input_type -> toshi.workspace.v1.DeleteChannelRequest
+	42, // 64: toshi.workspace.v1.ChannelService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
+	44, // 65: toshi.workspace.v1.ChannelService.GetLink:input_type -> toshi.workspace.v1.GetLinkRequest
+	46, // 66: toshi.workspace.v1.ChannelService.SendChannelMessage:input_type -> toshi.workspace.v1.SendChannelMessageRequest
+	48, // 67: toshi.workspace.v1.ChannelService.TailChannelMessages:input_type -> toshi.workspace.v1.TailChannelMessagesRequest
+	50, // 68: toshi.workspace.v1.ChannelService.ReplayChannelMessage:input_type -> toshi.workspace.v1.ReplayChannelMessageRequest
+	21, // 69: toshi.workspace.v1.ChannelService.CreateChannel:output_type -> toshi.workspace.v1.CreateChannelResponse
+	23, // 70: toshi.workspace.v1.ChannelService.ListChannels:output_type -> toshi.workspace.v1.ListChannelsResponse
+	25, // 71: toshi.workspace.v1.ChannelService.GetChannel:output_type -> toshi.workspace.v1.GetChannelResponse
+	27, // 72: toshi.workspace.v1.ChannelService.GetChannelPolicy:output_type -> toshi.workspace.v1.GetChannelPolicyResponse
+	29, // 73: toshi.workspace.v1.ChannelService.SetChannelPolicy:output_type -> toshi.workspace.v1.SetChannelPolicyResponse
+	31, // 74: toshi.workspace.v1.ChannelService.ListChannelRequests:output_type -> toshi.workspace.v1.ListChannelRequestsResponse
+	33, // 75: toshi.workspace.v1.ChannelService.GetChannelRequest:output_type -> toshi.workspace.v1.GetChannelRequestResponse
+	35, // 76: toshi.workspace.v1.ChannelService.ExportChannelLog:output_type -> toshi.workspace.v1.ExportChannelLogResponse
+	37, // 77: toshi.workspace.v1.ChannelService.CreateChannelConnectToken:output_type -> toshi.workspace.v1.CreateChannelConnectTokenResponse
+	39, // 78: toshi.workspace.v1.ChannelService.RevokeChannelConnectToken:output_type -> toshi.workspace.v1.RevokeChannelConnectTokenResponse
+	41, // 79: toshi.workspace.v1.ChannelService.DeleteChannel:output_type -> toshi.workspace.v1.DeleteChannelResponse
+	43, // 80: toshi.workspace.v1.ChannelService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
+	45, // 81: toshi.workspace.v1.ChannelService.GetLink:output_type -> toshi.workspace.v1.GetLinkResponse
+	47, // 82: toshi.workspace.v1.ChannelService.SendChannelMessage:output_type -> toshi.workspace.v1.SendChannelMessageResponse
+	49, // 83: toshi.workspace.v1.ChannelService.TailChannelMessages:output_type -> toshi.workspace.v1.TailChannelMessagesResponse
+	51, // 84: toshi.workspace.v1.ChannelService.ReplayChannelMessage:output_type -> toshi.workspace.v1.ReplayChannelMessageResponse
+	69, // [69:85] is the sub-list for method output_type
+	53, // [53:69] is the sub-list for method input_type
+	53, // [53:53] is the sub-list for extension type_name
+	53, // [53:53] is the sub-list for extension extendee
+	0,  // [0:53] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_channels_proto_init() }
@@ -4235,7 +4367,7 @@ func file_toshi_workspace_v1_channels_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_channels_proto_rawDesc), len(file_toshi_workspace_v1_channels_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   46,
+			NumMessages:   48,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -77,6 +77,9 @@ const (
 	// ChannelServiceTailChannelMessagesProcedure is the fully-qualified name of the ChannelService's
 	// TailChannelMessages RPC.
 	ChannelServiceTailChannelMessagesProcedure = "/toshi.workspace.v1.ChannelService/TailChannelMessages"
+	// ChannelServiceReplayChannelMessageProcedure is the fully-qualified name of the ChannelService's
+	// ReplayChannelMessage RPC.
+	ChannelServiceReplayChannelMessageProcedure = "/toshi.workspace.v1.ChannelService/ReplayChannelMessage"
 )
 
 // ChannelServiceClient is a client for the toshi.workspace.v1.ChannelService service.
@@ -159,6 +162,12 @@ type ChannelServiceClient interface {
 	// added, until the caller ends the call. States narrows the stream to
 	// messages in those states when it is read.
 	TailChannelMessages(context.Context, *connect.Request[workspacev1.TailChannelMessagesRequest]) (*connect.ServerStreamForClient[workspacev1.TailChannelMessagesResponse], error)
+	// ReplayChannelMessage puts a failed, expired or delivered message of an
+	// event channel back in its queue under its own ID, so its webhook-id is
+	// the same: its attempts start again from 0, and its retry window and
+	// keep from the replay. A message pending or in flight fails with
+	// FAILED_PRECONDITION.
+	ReplayChannelMessage(context.Context, *connect.Request[workspacev1.ReplayChannelMessageRequest]) (*connect.Response[workspacev1.ReplayChannelMessageResponse], error)
 }
 
 // NewChannelServiceClient constructs a client for the toshi.workspace.v1.ChannelService service. By
@@ -262,6 +271,12 @@ func NewChannelServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(channelServiceMethods.ByName("TailChannelMessages")),
 			connect.WithClientOptions(opts...),
 		),
+		replayChannelMessage: connect.NewClient[workspacev1.ReplayChannelMessageRequest, workspacev1.ReplayChannelMessageResponse](
+			httpClient,
+			baseURL+ChannelServiceReplayChannelMessageProcedure,
+			connect.WithSchema(channelServiceMethods.ByName("ReplayChannelMessage")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -282,6 +297,7 @@ type channelServiceClient struct {
 	getLink                   *connect.Client[workspacev1.GetLinkRequest, workspacev1.GetLinkResponse]
 	sendChannelMessage        *connect.Client[workspacev1.SendChannelMessageRequest, workspacev1.SendChannelMessageResponse]
 	tailChannelMessages       *connect.Client[workspacev1.TailChannelMessagesRequest, workspacev1.TailChannelMessagesResponse]
+	replayChannelMessage      *connect.Client[workspacev1.ReplayChannelMessageRequest, workspacev1.ReplayChannelMessageResponse]
 }
 
 // CreateChannel calls toshi.workspace.v1.ChannelService.CreateChannel.
@@ -357,6 +373,11 @@ func (c *channelServiceClient) SendChannelMessage(ctx context.Context, req *conn
 // TailChannelMessages calls toshi.workspace.v1.ChannelService.TailChannelMessages.
 func (c *channelServiceClient) TailChannelMessages(ctx context.Context, req *connect.Request[workspacev1.TailChannelMessagesRequest]) (*connect.ServerStreamForClient[workspacev1.TailChannelMessagesResponse], error) {
 	return c.tailChannelMessages.CallServerStream(ctx, req)
+}
+
+// ReplayChannelMessage calls toshi.workspace.v1.ChannelService.ReplayChannelMessage.
+func (c *channelServiceClient) ReplayChannelMessage(ctx context.Context, req *connect.Request[workspacev1.ReplayChannelMessageRequest]) (*connect.Response[workspacev1.ReplayChannelMessageResponse], error) {
+	return c.replayChannelMessage.CallUnary(ctx, req)
 }
 
 // ChannelServiceHandler is an implementation of the toshi.workspace.v1.ChannelService service.
@@ -439,6 +460,12 @@ type ChannelServiceHandler interface {
 	// added, until the caller ends the call. States narrows the stream to
 	// messages in those states when it is read.
 	TailChannelMessages(context.Context, *connect.Request[workspacev1.TailChannelMessagesRequest], *connect.ServerStream[workspacev1.TailChannelMessagesResponse]) error
+	// ReplayChannelMessage puts a failed, expired or delivered message of an
+	// event channel back in its queue under its own ID, so its webhook-id is
+	// the same: its attempts start again from 0, and its retry window and
+	// keep from the replay. A message pending or in flight fails with
+	// FAILED_PRECONDITION.
+	ReplayChannelMessage(context.Context, *connect.Request[workspacev1.ReplayChannelMessageRequest]) (*connect.Response[workspacev1.ReplayChannelMessageResponse], error)
 }
 
 // NewChannelServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -538,6 +565,12 @@ func NewChannelServiceHandler(svc ChannelServiceHandler, opts ...connect.Handler
 		connect.WithSchema(channelServiceMethods.ByName("TailChannelMessages")),
 		connect.WithHandlerOptions(opts...),
 	)
+	channelServiceReplayChannelMessageHandler := connect.NewUnaryHandler(
+		ChannelServiceReplayChannelMessageProcedure,
+		svc.ReplayChannelMessage,
+		connect.WithSchema(channelServiceMethods.ByName("ReplayChannelMessage")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.ChannelService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ChannelServiceCreateChannelProcedure:
@@ -570,6 +603,8 @@ func NewChannelServiceHandler(svc ChannelServiceHandler, opts ...connect.Handler
 			channelServiceSendChannelMessageHandler.ServeHTTP(w, r)
 		case ChannelServiceTailChannelMessagesProcedure:
 			channelServiceTailChannelMessagesHandler.ServeHTTP(w, r)
+		case ChannelServiceReplayChannelMessageProcedure:
+			channelServiceReplayChannelMessageHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -637,4 +672,8 @@ func (UnimplementedChannelServiceHandler) SendChannelMessage(context.Context, *c
 
 func (UnimplementedChannelServiceHandler) TailChannelMessages(context.Context, *connect.Request[workspacev1.TailChannelMessagesRequest], *connect.ServerStream[workspacev1.TailChannelMessagesResponse]) error {
 	return connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ChannelService.TailChannelMessages is not implemented"))
+}
+
+func (UnimplementedChannelServiceHandler) ReplayChannelMessage(context.Context, *connect.Request[workspacev1.ReplayChannelMessageRequest]) (*connect.Response[workspacev1.ReplayChannelMessageResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ChannelService.ReplayChannelMessage is not implemented"))
 }
