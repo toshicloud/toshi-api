@@ -330,6 +330,8 @@ message Spec {
   // one instance that is not destroyed has a key in a workspace.
   string key = 15;
   string workspace = 16;
+  // A Windows guest with a USB controller and a tablet for display input.
+  bool display_input = 17;
 }
 
 // Instance is one instance as it was when the call answered.

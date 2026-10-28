@@ -699,8 +699,10 @@ type Spec struct {
 	Labels        map[string]string      `protobuf:"bytes,14,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// With workspace, the instance's identity for Create's retries: at most
 	// one instance that is not destroyed has a key in a workspace.
-	Key           string `protobuf:"bytes,15,opt,name=key,proto3" json:"key,omitempty"`
-	Workspace     string `protobuf:"bytes,16,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	Key       string `protobuf:"bytes,15,opt,name=key,proto3" json:"key,omitempty"`
+	Workspace string `protobuf:"bytes,16,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	// A Windows guest with a USB controller and a tablet for display input.
+	DisplayInput  bool `protobuf:"varint,17,opt,name=display_input,json=displayInput,proto3" json:"display_input,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -845,6 +847,13 @@ func (x *Spec) GetWorkspace() string {
 		return x.Workspace
 	}
 	return ""
+}
+
+func (x *Spec) GetDisplayInput() bool {
+	if x != nil {
+		return x.DisplayInput
+	}
+	return false
 }
 
 // Instance is one instance as it was when the call answered.
@@ -5374,7 +5383,7 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\foperation_id\x18\x03 \x01(\tR\voperationId\"S\n" +
 	"\x04Disk\x127\n" +
 	"\x04kind\x18\x01 \x01(\x0e2#.toshi.backend.provider.v1.DiskKindR\x04kind\x12\x12\n" +
-	"\x04path\x18\x02 \x01(\tR\x04path\"\xdf\x05\n" +
+	"\x04path\x18\x02 \x01(\tR\x04path\"\x84\x06\n" +
 	"\x04Spec\x12\x14\n" +
 	"\x05image\x18\x01 \x01(\tR\x05image\x12:\n" +
 	"\x02os\x18\x02 \x01(\x0e2*.toshi.backend.provider.v1.OperatingSystemR\x02os\x12\x12\n" +
@@ -5396,7 +5405,8 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\bmetadata\x18\r \x03(\v2-.toshi.backend.provider.v1.Spec.MetadataEntryR\bmetadata\x12C\n" +
 	"\x06labels\x18\x0e \x03(\v2+.toshi.backend.provider.v1.Spec.LabelsEntryR\x06labels\x12\x10\n" +
 	"\x03key\x18\x0f \x01(\tR\x03key\x12\x1c\n" +
-	"\tworkspace\x18\x10 \x01(\tR\tworkspace\x1a;\n" +
+	"\tworkspace\x18\x10 \x01(\tR\tworkspace\x12#\n" +
+	"\rdisplay_input\x18\x11 \x01(\bR\fdisplayInput\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1a9\n" +

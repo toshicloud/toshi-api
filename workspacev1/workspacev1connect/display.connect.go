@@ -64,7 +64,9 @@ type DisplayServiceClient interface {
 	// OpenDisplaySession opens a session on a running job and returns its
 	// URL and token. A job that is not running, or one beyond the plan's
 	// viewers, or a second session with input on a job, fails with
-	// FAILED_PRECONDITION. A session ends when it is closed, when no bytes
+	// FAILED_PRECONDITION. A session with input on a Windows VM whose host's
+	// pool does not set display_input fails with FAILED_PRECONDITION and the
+	// reason DISPLAY_INPUT_NOT_ENABLED. A session ends when it is closed, when no bytes
 	// of the screen's protocol go either way for its idle close, when its
 	// token expires before it attaches, when its job stops running on the
 	// VM it was opened on, or when the workspace is suspended.
@@ -86,10 +88,13 @@ type DisplayServiceClient interface {
 	// Closing a closed session changes nothing.
 	CloseDisplaySession(context.Context, *connect.Request[workspacev1.CloseDisplaySessionRequest]) (*connect.Response[workspacev1.CloseDisplaySessionResponse], error)
 	// SendDisplayKeys presses and releases keys on the screen. A view-only
-	// session refuses it with FAILED_PRECONDITION.
+	// session refuses it with FAILED_PRECONDITION, with the reason
+	// DISPLAY_INPUT_NOT_ENABLED on a Windows VM that takes no input.
 	SendDisplayKeys(context.Context, *connect.Request[workspacev1.SendDisplayKeysRequest]) (*connect.Response[workspacev1.SendDisplayKeysResponse], error)
 	// SendDisplayPointer moves the pointer and presses or releases its
-	// buttons. A view-only session refuses it with FAILED_PRECONDITION.
+	// buttons. A view-only session refuses it with FAILED_PRECONDITION, with
+	// the reason DISPLAY_INPUT_NOT_ENABLED on a Windows VM that takes no
+	// input.
 	SendDisplayPointer(context.Context, *connect.Request[workspacev1.SendDisplayPointerRequest]) (*connect.Response[workspacev1.SendDisplayPointerResponse], error)
 	// SetDisplayClipboard sets the screen's clipboard. It reaches the
 	// guest's own clipboard only where the guest image runs a clipboard
@@ -223,7 +228,9 @@ type DisplayServiceHandler interface {
 	// OpenDisplaySession opens a session on a running job and returns its
 	// URL and token. A job that is not running, or one beyond the plan's
 	// viewers, or a second session with input on a job, fails with
-	// FAILED_PRECONDITION. A session ends when it is closed, when no bytes
+	// FAILED_PRECONDITION. A session with input on a Windows VM whose host's
+	// pool does not set display_input fails with FAILED_PRECONDITION and the
+	// reason DISPLAY_INPUT_NOT_ENABLED. A session ends when it is closed, when no bytes
 	// of the screen's protocol go either way for its idle close, when its
 	// token expires before it attaches, when its job stops running on the
 	// VM it was opened on, or when the workspace is suspended.
@@ -245,10 +252,13 @@ type DisplayServiceHandler interface {
 	// Closing a closed session changes nothing.
 	CloseDisplaySession(context.Context, *connect.Request[workspacev1.CloseDisplaySessionRequest]) (*connect.Response[workspacev1.CloseDisplaySessionResponse], error)
 	// SendDisplayKeys presses and releases keys on the screen. A view-only
-	// session refuses it with FAILED_PRECONDITION.
+	// session refuses it with FAILED_PRECONDITION, with the reason
+	// DISPLAY_INPUT_NOT_ENABLED on a Windows VM that takes no input.
 	SendDisplayKeys(context.Context, *connect.Request[workspacev1.SendDisplayKeysRequest]) (*connect.Response[workspacev1.SendDisplayKeysResponse], error)
 	// SendDisplayPointer moves the pointer and presses or releases its
-	// buttons. A view-only session refuses it with FAILED_PRECONDITION.
+	// buttons. A view-only session refuses it with FAILED_PRECONDITION, with
+	// the reason DISPLAY_INPUT_NOT_ENABLED on a Windows VM that takes no
+	// input.
 	SendDisplayPointer(context.Context, *connect.Request[workspacev1.SendDisplayPointerRequest]) (*connect.Response[workspacev1.SendDisplayPointerResponse], error)
 	// SetDisplayClipboard sets the screen's clipboard. It reaches the
 	// guest's own clipboard only where the guest image runs a clipboard
