@@ -73,13 +73,6 @@ type AdmitGrantResponse struct {
 	ActorId   string `protobuf:"bytes,3,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
 	// workspaces are the caller's workspaces; empty for the operator.
 	Tenants []string `protobuf:"bytes,4,rep,name=tenants,proto3" json:"tenants,omitempty"`
-	// Deprecated: job_id, tenant, repository, approved and installation_id
-	// are no longer set; args carries the arguments the grant binds.
-	JobId          string `protobuf:"bytes,5,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Tenant         string `protobuf:"bytes,6,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	Repository     string `protobuf:"bytes,7,opt,name=repository,proto3" json:"repository,omitempty"`
-	Approved       bool   `protobuf:"varint,8,opt,name=approved,proto3" json:"approved,omitempty"`
-	InstallationId int64  `protobuf:"varint,9,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
 	// generation is the delivery check the grant began; 0 for none.
 	Generation int64                  `protobuf:"varint,10,opt,name=generation,proto3" json:"generation,omitempty"`
 	CreatedAt  *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -148,41 +141,6 @@ func (x *AdmitGrantResponse) GetTenants() []string {
 		return x.Tenants
 	}
 	return nil
-}
-
-func (x *AdmitGrantResponse) GetJobId() string {
-	if x != nil {
-		return x.JobId
-	}
-	return ""
-}
-
-func (x *AdmitGrantResponse) GetTenant() string {
-	if x != nil {
-		return x.Tenant
-	}
-	return ""
-}
-
-func (x *AdmitGrantResponse) GetRepository() string {
-	if x != nil {
-		return x.Repository
-	}
-	return ""
-}
-
-func (x *AdmitGrantResponse) GetApproved() bool {
-	if x != nil {
-		return x.Approved
-	}
-	return false
-}
-
-func (x *AdmitGrantResponse) GetInstallationId() int64 {
-	if x != nil {
-		return x.InstallationId
-	}
-	return 0
 }
 
 func (x *AdmitGrantResponse) GetGeneration() int64 {
@@ -1213,20 +1171,13 @@ var File_toshi_githubcore_v1_githubcore_proto protoreflect.FileDescriptor
 const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\n" +
 	"$toshi/githubcore/v1/githubcore.proto\x12\x13toshi.githubcore.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
-	"\x11AdmitGrantRequest\"\xba\x03\n" +
+	"\x11AdmitGrantRequest\"\xe3\x02\n" +
 	"\x12AdmitGrantResponse\x12\x12\n" +
 	"\x04call\x18\x01 \x01(\tR\x04call\x12\x1d\n" +
 	"\n" +
 	"actor_kind\x18\x02 \x01(\tR\tactorKind\x12\x19\n" +
 	"\bactor_id\x18\x03 \x01(\tR\aactorId\x12\x18\n" +
-	"\atenants\x18\x04 \x03(\tR\atenants\x12\x15\n" +
-	"\x06job_id\x18\x05 \x01(\tR\x05jobId\x12\x16\n" +
-	"\x06tenant\x18\x06 \x01(\tR\x06tenant\x12\x1e\n" +
-	"\n" +
-	"repository\x18\a \x01(\tR\n" +
-	"repository\x12\x1a\n" +
-	"\bapproved\x18\b \x01(\bR\bapproved\x12'\n" +
-	"\x0finstallation_id\x18\t \x01(\x03R\x0einstallationId\x12\x1e\n" +
+	"\atenants\x18\x04 \x03(\tR\atenants\x12\x1e\n" +
 	"\n" +
 	"generation\x18\n" +
 	" \x01(\x03R\n" +
@@ -1235,7 +1186,9 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"expires_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x12\n" +
-	"\x04args\x18\r \x01(\fR\x04args\"\x99\x01\n" +
+	"\x04args\x18\r \x01(\fR\x04argsJ\x04\b\x05\x10\n" +
+	"R\x06job_idR\x06tenantR\n" +
+	"repositoryR\bapprovedR\x0finstallation_id\"\x99\x01\n" +
 	"\tGrantArgs\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x1c\n" +
 	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x12\n" +

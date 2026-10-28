@@ -36,6 +36,9 @@ const (
 	// WorkspaceServiceGetWorkspaceProcedure is the fully-qualified name of the WorkspaceService's
 	// GetWorkspace RPC.
 	WorkspaceServiceGetWorkspaceProcedure = "/toshi.workspace.v1.WorkspaceService/GetWorkspace"
+	// WorkspaceServiceUpdateWorkspaceProcedure is the fully-qualified name of the WorkspaceService's
+	// UpdateWorkspace RPC.
+	WorkspaceServiceUpdateWorkspaceProcedure = "/toshi.workspace.v1.WorkspaceService/UpdateWorkspace"
 	// WorkspaceServiceListWorkspacesProcedure is the fully-qualified name of the WorkspaceService's
 	// ListWorkspaces RPC.
 	WorkspaceServiceListWorkspacesProcedure = "/toshi.workspace.v1.WorkspaceService/ListWorkspaces"
@@ -45,24 +48,6 @@ const (
 	// WorkspaceServiceGetWorkspaceStatementProcedure is the fully-qualified name of the
 	// WorkspaceService's GetWorkspaceStatement RPC.
 	WorkspaceServiceGetWorkspaceStatementProcedure = "/toshi.workspace.v1.WorkspaceService/GetWorkspaceStatement"
-	// WorkspaceServiceSetWorkspaceOwnHostsOnlyProcedure is the fully-qualified name of the
-	// WorkspaceService's SetWorkspaceOwnHostsOnly RPC.
-	WorkspaceServiceSetWorkspaceOwnHostsOnlyProcedure = "/toshi.workspace.v1.WorkspaceService/SetWorkspaceOwnHostsOnly"
-	// WorkspaceServiceSetWorkspaceAllowOverflowProcedure is the fully-qualified name of the
-	// WorkspaceService's SetWorkspaceAllowOverflow RPC.
-	WorkspaceServiceSetWorkspaceAllowOverflowProcedure = "/toshi.workspace.v1.WorkspaceService/SetWorkspaceAllowOverflow"
-	// WorkspaceServiceSetWorkspaceAllowCacheWarmProcedure is the fully-qualified name of the
-	// WorkspaceService's SetWorkspaceAllowCacheWarm RPC.
-	WorkspaceServiceSetWorkspaceAllowCacheWarmProcedure = "/toshi.workspace.v1.WorkspaceService/SetWorkspaceAllowCacheWarm"
-	// WorkspaceServiceSetWorkspaceCancelRunOnVmDeathProcedure is the fully-qualified name of the
-	// WorkspaceService's SetWorkspaceCancelRunOnVmDeath RPC.
-	WorkspaceServiceSetWorkspaceCancelRunOnVmDeathProcedure = "/toshi.workspace.v1.WorkspaceService/SetWorkspaceCancelRunOnVmDeath"
-	// WorkspaceServiceSetWorkspaceMemberJoinProcedure is the fully-qualified name of the
-	// WorkspaceService's SetWorkspaceMemberJoin RPC.
-	WorkspaceServiceSetWorkspaceMemberJoinProcedure = "/toshi.workspace.v1.WorkspaceService/SetWorkspaceMemberJoin"
-	// WorkspaceServiceSetWorkspaceSpendLimitsProcedure is the fully-qualified name of the
-	// WorkspaceService's SetWorkspaceSpendLimits RPC.
-	WorkspaceServiceSetWorkspaceSpendLimitsProcedure = "/toshi.workspace.v1.WorkspaceService/SetWorkspaceSpendLimits"
 	// WorkspaceServiceListEgressIPsProcedure is the fully-qualified name of the WorkspaceService's
 	// ListEgressIPs RPC.
 	WorkspaceServiceListEgressIPsProcedure = "/toshi.workspace.v1.WorkspaceService/ListEgressIPs"
@@ -93,6 +78,24 @@ const (
 type WorkspaceServiceClient interface {
 	// GetWorkspace returns the caller's workspace.
 	GetWorkspace(context.Context, *connect.Request[workspacev1.GetWorkspaceRequest]) (*connect.Response[workspacev1.GetWorkspaceResponse], error)
+	// UpdateWorkspace changes the fields of the caller's workspace that
+	// update_mask names and returns the workspace as stored. The paths are
+	// "name" and "settings.<field>" for a field of WorkspaceSettings. An
+	// omitted update_mask means the fields the request populates, an empty
+	// one changes nothing, and "*" or another path fails with
+	// INVALID_ARGUMENT. The call needs no permission of its own: each path
+	// needs its field group's, workspace.signin for settings.sign_in,
+	// billing.write for the spending limits and workspace.write for the
+	// others, and a mask that names nothing needs any one of them. A caller
+	// that lacks one is refused with PERMISSION_DENIED naming it, and nothing
+	// is written.
+	//
+	// The workspace's settings are checked as a whole after the change, and a
+	// value they refuse fails with INVALID_ARGUMENT; the fields the mask names
+	// are also checked against the plan and the caller, as their
+	// descriptions say. A workspace.etag that differs from the workspace's
+	// fails with ABORTED and changes nothing; without one the last write wins.
+	UpdateWorkspace(context.Context, *connect.Request[workspacev1.UpdateWorkspaceRequest]) (*connect.Response[workspacev1.UpdateWorkspaceResponse], error)
 	// ListWorkspaces returns the workspaces of the caller, ordered by ID: a
 	// session's workspaces, or a token's one.
 	//
@@ -110,33 +113,6 @@ type WorkspaceServiceClient interface {
 	// and held time by reason. A month not in YYYY-MM form fails with
 	// INVALID_ARGUMENT.
 	GetWorkspaceStatement(context.Context, *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error)
-	// SetWorkspaceOwnHostsOnly sets whether the workspace's jobs wait for its
-	// own hosts and never run on shared ones, and returns the workspace as
-	// stored.
-	SetWorkspaceOwnHostsOnly(context.Context, *connect.Request[workspacev1.SetWorkspaceOwnHostsOnlyRequest]) (*connect.Response[workspacev1.SetWorkspaceOwnHostsOnlyResponse], error)
-	// SetWorkspaceAllowOverflow sets whether shared overflow hosts may take
-	// the workspace's jobs and returns the workspace as stored; its own
-	// overflow hosts always may.
-	SetWorkspaceAllowOverflow(context.Context, *connect.Request[workspacev1.SetWorkspaceAllowOverflowRequest]) (*connect.Response[workspacev1.SetWorkspaceAllowOverflowResponse], error)
-	// SetWorkspaceAllowCacheWarm sets whether the workspace's fillers run and
-	// returns the workspace as stored. Off by default.
-	SetWorkspaceAllowCacheWarm(context.Context, *connect.Request[workspacev1.SetWorkspaceAllowCacheWarmRequest]) (*connect.Response[workspacev1.SetWorkspaceAllowCacheWarmResponse], error)
-	// SetWorkspaceCancelRunOnVmDeath sets whether Toshi cancels the workflow
-	// run of the workspace's job when the job's VM is gone and returns the
-	// workspace as stored. On by default.
-	SetWorkspaceCancelRunOnVmDeath(context.Context, *connect.Request[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest]) (*connect.Response[workspacev1.SetWorkspaceCancelRunOnVmDeathResponse], error)
-	// SetWorkspaceMemberJoin sets who may join the workspace through its
-	// GitHub App installation on an organisation, "off", "approve" or "open",
-	// and returns the workspace as stored. Off by default. Another value fails
-	// with INVALID_ARGUMENT. Turning it off removes no member and leaves the
-	// people waiting for approval listed and approvable.
-	SetWorkspaceMemberJoin(context.Context, *connect.Request[workspacev1.SetWorkspaceMemberJoinRequest]) (*connect.Response[workspacev1.SetWorkspaceMemberJoinResponse], error)
-	// SetWorkspaceSpendLimits sets the workspace's monthly spending cap and its
-	// own jobs-per-hour limit, and returns the workspace as stored; an unset
-	// field is left as it is. A negative value, or a max_jobs_per_hour above
-	// the plan's, fails with INVALID_ARGUMENT; a spending cap while billing is
-	// off fails with FAILED_PRECONDITION.
-	SetWorkspaceSpendLimits(context.Context, *connect.Request[workspacev1.SetWorkspaceSpendLimitsRequest]) (*connect.Response[workspacev1.SetWorkspaceSpendLimitsResponse], error)
 	// ListEgressIPs returns the public addresses the workspace's jobs may
 	// reach the internet from: the egress addresses of the hosts its jobs can
 	// land on, its own hosts and, unless it runs on its own hosts only, the
@@ -200,6 +176,12 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspace")),
 			connect.WithClientOptions(opts...),
 		),
+		updateWorkspace: connect.NewClient[workspacev1.UpdateWorkspaceRequest, workspacev1.UpdateWorkspaceResponse](
+			httpClient,
+			baseURL+WorkspaceServiceUpdateWorkspaceProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("UpdateWorkspace")),
+			connect.WithClientOptions(opts...),
+		),
 		listWorkspaces: connect.NewClient[workspacev1.ListWorkspacesRequest, workspacev1.ListWorkspacesResponse](
 			httpClient,
 			baseURL+WorkspaceServiceListWorkspacesProcedure,
@@ -216,42 +198,6 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			httpClient,
 			baseURL+WorkspaceServiceGetWorkspaceStatementProcedure,
 			connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspaceStatement")),
-			connect.WithClientOptions(opts...),
-		),
-		setWorkspaceOwnHostsOnly: connect.NewClient[workspacev1.SetWorkspaceOwnHostsOnlyRequest, workspacev1.SetWorkspaceOwnHostsOnlyResponse](
-			httpClient,
-			baseURL+WorkspaceServiceSetWorkspaceOwnHostsOnlyProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceOwnHostsOnly")),
-			connect.WithClientOptions(opts...),
-		),
-		setWorkspaceAllowOverflow: connect.NewClient[workspacev1.SetWorkspaceAllowOverflowRequest, workspacev1.SetWorkspaceAllowOverflowResponse](
-			httpClient,
-			baseURL+WorkspaceServiceSetWorkspaceAllowOverflowProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceAllowOverflow")),
-			connect.WithClientOptions(opts...),
-		),
-		setWorkspaceAllowCacheWarm: connect.NewClient[workspacev1.SetWorkspaceAllowCacheWarmRequest, workspacev1.SetWorkspaceAllowCacheWarmResponse](
-			httpClient,
-			baseURL+WorkspaceServiceSetWorkspaceAllowCacheWarmProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceAllowCacheWarm")),
-			connect.WithClientOptions(opts...),
-		),
-		setWorkspaceCancelRunOnVmDeath: connect.NewClient[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest, workspacev1.SetWorkspaceCancelRunOnVmDeathResponse](
-			httpClient,
-			baseURL+WorkspaceServiceSetWorkspaceCancelRunOnVmDeathProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceCancelRunOnVmDeath")),
-			connect.WithClientOptions(opts...),
-		),
-		setWorkspaceMemberJoin: connect.NewClient[workspacev1.SetWorkspaceMemberJoinRequest, workspacev1.SetWorkspaceMemberJoinResponse](
-			httpClient,
-			baseURL+WorkspaceServiceSetWorkspaceMemberJoinProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceMemberJoin")),
-			connect.WithClientOptions(opts...),
-		),
-		setWorkspaceSpendLimits: connect.NewClient[workspacev1.SetWorkspaceSpendLimitsRequest, workspacev1.SetWorkspaceSpendLimitsResponse](
-			httpClient,
-			baseURL+WorkspaceServiceSetWorkspaceSpendLimitsProcedure,
-			connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceSpendLimits")),
 			connect.WithClientOptions(opts...),
 		),
 		listEgressIPs: connect.NewClient[workspacev1.ListEgressIPsRequest, workspacev1.ListEgressIPsResponse](
@@ -307,29 +253,29 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 
 // workspaceServiceClient implements WorkspaceServiceClient.
 type workspaceServiceClient struct {
-	getWorkspace                   *connect.Client[workspacev1.GetWorkspaceRequest, workspacev1.GetWorkspaceResponse]
-	listWorkspaces                 *connect.Client[workspacev1.ListWorkspacesRequest, workspacev1.ListWorkspacesResponse]
-	getWorkspaceBilling            *connect.Client[workspacev1.GetWorkspaceBillingRequest, workspacev1.GetWorkspaceBillingResponse]
-	getWorkspaceStatement          *connect.Client[workspacev1.GetWorkspaceStatementRequest, workspacev1.GetWorkspaceStatementResponse]
-	setWorkspaceOwnHostsOnly       *connect.Client[workspacev1.SetWorkspaceOwnHostsOnlyRequest, workspacev1.SetWorkspaceOwnHostsOnlyResponse]
-	setWorkspaceAllowOverflow      *connect.Client[workspacev1.SetWorkspaceAllowOverflowRequest, workspacev1.SetWorkspaceAllowOverflowResponse]
-	setWorkspaceAllowCacheWarm     *connect.Client[workspacev1.SetWorkspaceAllowCacheWarmRequest, workspacev1.SetWorkspaceAllowCacheWarmResponse]
-	setWorkspaceCancelRunOnVmDeath *connect.Client[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest, workspacev1.SetWorkspaceCancelRunOnVmDeathResponse]
-	setWorkspaceMemberJoin         *connect.Client[workspacev1.SetWorkspaceMemberJoinRequest, workspacev1.SetWorkspaceMemberJoinResponse]
-	setWorkspaceSpendLimits        *connect.Client[workspacev1.SetWorkspaceSpendLimitsRequest, workspacev1.SetWorkspaceSpendLimitsResponse]
-	listEgressIPs                  *connect.Client[workspacev1.ListEgressIPsRequest, workspacev1.ListEgressIPsResponse]
-	getUsage                       *connect.Client[workspacev1.GetUsageRequest, workspacev1.GetUsageResponse]
-	getQueueTimes                  *connect.Client[workspacev1.GetQueueTimesRequest, workspacev1.GetQueueTimesResponse]
-	getWorkflowUsage               *connect.Client[workspacev1.GetWorkflowUsageRequest, workspacev1.GetWorkflowUsageResponse]
-	listPlans                      *connect.Client[workspacev1.ListPlansRequest, workspacev1.ListPlansResponse]
-	createCheckoutSession          *connect.Client[workspacev1.CreateCheckoutSessionRequest, workspacev1.CreateCheckoutSessionResponse]
-	createBillingPortalSession     *connect.Client[workspacev1.CreateBillingPortalSessionRequest, workspacev1.CreateBillingPortalSessionResponse]
-	getVersion                     *connect.Client[workspacev1.GetVersionRequest, workspacev1.GetVersionResponse]
+	getWorkspace               *connect.Client[workspacev1.GetWorkspaceRequest, workspacev1.GetWorkspaceResponse]
+	updateWorkspace            *connect.Client[workspacev1.UpdateWorkspaceRequest, workspacev1.UpdateWorkspaceResponse]
+	listWorkspaces             *connect.Client[workspacev1.ListWorkspacesRequest, workspacev1.ListWorkspacesResponse]
+	getWorkspaceBilling        *connect.Client[workspacev1.GetWorkspaceBillingRequest, workspacev1.GetWorkspaceBillingResponse]
+	getWorkspaceStatement      *connect.Client[workspacev1.GetWorkspaceStatementRequest, workspacev1.GetWorkspaceStatementResponse]
+	listEgressIPs              *connect.Client[workspacev1.ListEgressIPsRequest, workspacev1.ListEgressIPsResponse]
+	getUsage                   *connect.Client[workspacev1.GetUsageRequest, workspacev1.GetUsageResponse]
+	getQueueTimes              *connect.Client[workspacev1.GetQueueTimesRequest, workspacev1.GetQueueTimesResponse]
+	getWorkflowUsage           *connect.Client[workspacev1.GetWorkflowUsageRequest, workspacev1.GetWorkflowUsageResponse]
+	listPlans                  *connect.Client[workspacev1.ListPlansRequest, workspacev1.ListPlansResponse]
+	createCheckoutSession      *connect.Client[workspacev1.CreateCheckoutSessionRequest, workspacev1.CreateCheckoutSessionResponse]
+	createBillingPortalSession *connect.Client[workspacev1.CreateBillingPortalSessionRequest, workspacev1.CreateBillingPortalSessionResponse]
+	getVersion                 *connect.Client[workspacev1.GetVersionRequest, workspacev1.GetVersionResponse]
 }
 
 // GetWorkspace calls toshi.workspace.v1.WorkspaceService.GetWorkspace.
 func (c *workspaceServiceClient) GetWorkspace(ctx context.Context, req *connect.Request[workspacev1.GetWorkspaceRequest]) (*connect.Response[workspacev1.GetWorkspaceResponse], error) {
 	return c.getWorkspace.CallUnary(ctx, req)
+}
+
+// UpdateWorkspace calls toshi.workspace.v1.WorkspaceService.UpdateWorkspace.
+func (c *workspaceServiceClient) UpdateWorkspace(ctx context.Context, req *connect.Request[workspacev1.UpdateWorkspaceRequest]) (*connect.Response[workspacev1.UpdateWorkspaceResponse], error) {
+	return c.updateWorkspace.CallUnary(ctx, req)
 }
 
 // ListWorkspaces calls toshi.workspace.v1.WorkspaceService.ListWorkspaces.
@@ -345,37 +291,6 @@ func (c *workspaceServiceClient) GetWorkspaceBilling(ctx context.Context, req *c
 // GetWorkspaceStatement calls toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement.
 func (c *workspaceServiceClient) GetWorkspaceStatement(ctx context.Context, req *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error) {
 	return c.getWorkspaceStatement.CallUnary(ctx, req)
-}
-
-// SetWorkspaceOwnHostsOnly calls toshi.workspace.v1.WorkspaceService.SetWorkspaceOwnHostsOnly.
-func (c *workspaceServiceClient) SetWorkspaceOwnHostsOnly(ctx context.Context, req *connect.Request[workspacev1.SetWorkspaceOwnHostsOnlyRequest]) (*connect.Response[workspacev1.SetWorkspaceOwnHostsOnlyResponse], error) {
-	return c.setWorkspaceOwnHostsOnly.CallUnary(ctx, req)
-}
-
-// SetWorkspaceAllowOverflow calls toshi.workspace.v1.WorkspaceService.SetWorkspaceAllowOverflow.
-func (c *workspaceServiceClient) SetWorkspaceAllowOverflow(ctx context.Context, req *connect.Request[workspacev1.SetWorkspaceAllowOverflowRequest]) (*connect.Response[workspacev1.SetWorkspaceAllowOverflowResponse], error) {
-	return c.setWorkspaceAllowOverflow.CallUnary(ctx, req)
-}
-
-// SetWorkspaceAllowCacheWarm calls toshi.workspace.v1.WorkspaceService.SetWorkspaceAllowCacheWarm.
-func (c *workspaceServiceClient) SetWorkspaceAllowCacheWarm(ctx context.Context, req *connect.Request[workspacev1.SetWorkspaceAllowCacheWarmRequest]) (*connect.Response[workspacev1.SetWorkspaceAllowCacheWarmResponse], error) {
-	return c.setWorkspaceAllowCacheWarm.CallUnary(ctx, req)
-}
-
-// SetWorkspaceCancelRunOnVmDeath calls
-// toshi.workspace.v1.WorkspaceService.SetWorkspaceCancelRunOnVmDeath.
-func (c *workspaceServiceClient) SetWorkspaceCancelRunOnVmDeath(ctx context.Context, req *connect.Request[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest]) (*connect.Response[workspacev1.SetWorkspaceCancelRunOnVmDeathResponse], error) {
-	return c.setWorkspaceCancelRunOnVmDeath.CallUnary(ctx, req)
-}
-
-// SetWorkspaceMemberJoin calls toshi.workspace.v1.WorkspaceService.SetWorkspaceMemberJoin.
-func (c *workspaceServiceClient) SetWorkspaceMemberJoin(ctx context.Context, req *connect.Request[workspacev1.SetWorkspaceMemberJoinRequest]) (*connect.Response[workspacev1.SetWorkspaceMemberJoinResponse], error) {
-	return c.setWorkspaceMemberJoin.CallUnary(ctx, req)
-}
-
-// SetWorkspaceSpendLimits calls toshi.workspace.v1.WorkspaceService.SetWorkspaceSpendLimits.
-func (c *workspaceServiceClient) SetWorkspaceSpendLimits(ctx context.Context, req *connect.Request[workspacev1.SetWorkspaceSpendLimitsRequest]) (*connect.Response[workspacev1.SetWorkspaceSpendLimitsResponse], error) {
-	return c.setWorkspaceSpendLimits.CallUnary(ctx, req)
 }
 
 // ListEgressIPs calls toshi.workspace.v1.WorkspaceService.ListEgressIPs.
@@ -422,6 +337,24 @@ func (c *workspaceServiceClient) GetVersion(ctx context.Context, req *connect.Re
 type WorkspaceServiceHandler interface {
 	// GetWorkspace returns the caller's workspace.
 	GetWorkspace(context.Context, *connect.Request[workspacev1.GetWorkspaceRequest]) (*connect.Response[workspacev1.GetWorkspaceResponse], error)
+	// UpdateWorkspace changes the fields of the caller's workspace that
+	// update_mask names and returns the workspace as stored. The paths are
+	// "name" and "settings.<field>" for a field of WorkspaceSettings. An
+	// omitted update_mask means the fields the request populates, an empty
+	// one changes nothing, and "*" or another path fails with
+	// INVALID_ARGUMENT. The call needs no permission of its own: each path
+	// needs its field group's, workspace.signin for settings.sign_in,
+	// billing.write for the spending limits and workspace.write for the
+	// others, and a mask that names nothing needs any one of them. A caller
+	// that lacks one is refused with PERMISSION_DENIED naming it, and nothing
+	// is written.
+	//
+	// The workspace's settings are checked as a whole after the change, and a
+	// value they refuse fails with INVALID_ARGUMENT; the fields the mask names
+	// are also checked against the plan and the caller, as their
+	// descriptions say. A workspace.etag that differs from the workspace's
+	// fails with ABORTED and changes nothing; without one the last write wins.
+	UpdateWorkspace(context.Context, *connect.Request[workspacev1.UpdateWorkspaceRequest]) (*connect.Response[workspacev1.UpdateWorkspaceResponse], error)
 	// ListWorkspaces returns the workspaces of the caller, ordered by ID: a
 	// session's workspaces, or a token's one.
 	//
@@ -439,33 +372,6 @@ type WorkspaceServiceHandler interface {
 	// and held time by reason. A month not in YYYY-MM form fails with
 	// INVALID_ARGUMENT.
 	GetWorkspaceStatement(context.Context, *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error)
-	// SetWorkspaceOwnHostsOnly sets whether the workspace's jobs wait for its
-	// own hosts and never run on shared ones, and returns the workspace as
-	// stored.
-	SetWorkspaceOwnHostsOnly(context.Context, *connect.Request[workspacev1.SetWorkspaceOwnHostsOnlyRequest]) (*connect.Response[workspacev1.SetWorkspaceOwnHostsOnlyResponse], error)
-	// SetWorkspaceAllowOverflow sets whether shared overflow hosts may take
-	// the workspace's jobs and returns the workspace as stored; its own
-	// overflow hosts always may.
-	SetWorkspaceAllowOverflow(context.Context, *connect.Request[workspacev1.SetWorkspaceAllowOverflowRequest]) (*connect.Response[workspacev1.SetWorkspaceAllowOverflowResponse], error)
-	// SetWorkspaceAllowCacheWarm sets whether the workspace's fillers run and
-	// returns the workspace as stored. Off by default.
-	SetWorkspaceAllowCacheWarm(context.Context, *connect.Request[workspacev1.SetWorkspaceAllowCacheWarmRequest]) (*connect.Response[workspacev1.SetWorkspaceAllowCacheWarmResponse], error)
-	// SetWorkspaceCancelRunOnVmDeath sets whether Toshi cancels the workflow
-	// run of the workspace's job when the job's VM is gone and returns the
-	// workspace as stored. On by default.
-	SetWorkspaceCancelRunOnVmDeath(context.Context, *connect.Request[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest]) (*connect.Response[workspacev1.SetWorkspaceCancelRunOnVmDeathResponse], error)
-	// SetWorkspaceMemberJoin sets who may join the workspace through its
-	// GitHub App installation on an organisation, "off", "approve" or "open",
-	// and returns the workspace as stored. Off by default. Another value fails
-	// with INVALID_ARGUMENT. Turning it off removes no member and leaves the
-	// people waiting for approval listed and approvable.
-	SetWorkspaceMemberJoin(context.Context, *connect.Request[workspacev1.SetWorkspaceMemberJoinRequest]) (*connect.Response[workspacev1.SetWorkspaceMemberJoinResponse], error)
-	// SetWorkspaceSpendLimits sets the workspace's monthly spending cap and its
-	// own jobs-per-hour limit, and returns the workspace as stored; an unset
-	// field is left as it is. A negative value, or a max_jobs_per_hour above
-	// the plan's, fails with INVALID_ARGUMENT; a spending cap while billing is
-	// off fails with FAILED_PRECONDITION.
-	SetWorkspaceSpendLimits(context.Context, *connect.Request[workspacev1.SetWorkspaceSpendLimitsRequest]) (*connect.Response[workspacev1.SetWorkspaceSpendLimitsResponse], error)
 	// ListEgressIPs returns the public addresses the workspace's jobs may
 	// reach the internet from: the egress addresses of the hosts its jobs can
 	// land on, its own hosts and, unless it runs on its own hosts only, the
@@ -525,6 +431,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspace")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceUpdateWorkspaceHandler := connect.NewUnaryHandler(
+		WorkspaceServiceUpdateWorkspaceProcedure,
+		svc.UpdateWorkspace,
+		connect.WithSchema(workspaceServiceMethods.ByName("UpdateWorkspace")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceListWorkspacesHandler := connect.NewUnaryHandler(
 		WorkspaceServiceListWorkspacesProcedure,
 		svc.ListWorkspaces,
@@ -541,42 +453,6 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		WorkspaceServiceGetWorkspaceStatementProcedure,
 		svc.GetWorkspaceStatement,
 		connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspaceStatement")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceSetWorkspaceOwnHostsOnlyHandler := connect.NewUnaryHandler(
-		WorkspaceServiceSetWorkspaceOwnHostsOnlyProcedure,
-		svc.SetWorkspaceOwnHostsOnly,
-		connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceOwnHostsOnly")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceSetWorkspaceAllowOverflowHandler := connect.NewUnaryHandler(
-		WorkspaceServiceSetWorkspaceAllowOverflowProcedure,
-		svc.SetWorkspaceAllowOverflow,
-		connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceAllowOverflow")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceSetWorkspaceAllowCacheWarmHandler := connect.NewUnaryHandler(
-		WorkspaceServiceSetWorkspaceAllowCacheWarmProcedure,
-		svc.SetWorkspaceAllowCacheWarm,
-		connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceAllowCacheWarm")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceSetWorkspaceCancelRunOnVmDeathHandler := connect.NewUnaryHandler(
-		WorkspaceServiceSetWorkspaceCancelRunOnVmDeathProcedure,
-		svc.SetWorkspaceCancelRunOnVmDeath,
-		connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceCancelRunOnVmDeath")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceSetWorkspaceMemberJoinHandler := connect.NewUnaryHandler(
-		WorkspaceServiceSetWorkspaceMemberJoinProcedure,
-		svc.SetWorkspaceMemberJoin,
-		connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceMemberJoin")),
-		connect.WithHandlerOptions(opts...),
-	)
-	workspaceServiceSetWorkspaceSpendLimitsHandler := connect.NewUnaryHandler(
-		WorkspaceServiceSetWorkspaceSpendLimitsProcedure,
-		svc.SetWorkspaceSpendLimits,
-		connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceSpendLimits")),
 		connect.WithHandlerOptions(opts...),
 	)
 	workspaceServiceListEgressIPsHandler := connect.NewUnaryHandler(
@@ -631,24 +507,14 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		switch r.URL.Path {
 		case WorkspaceServiceGetWorkspaceProcedure:
 			workspaceServiceGetWorkspaceHandler.ServeHTTP(w, r)
+		case WorkspaceServiceUpdateWorkspaceProcedure:
+			workspaceServiceUpdateWorkspaceHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListWorkspacesProcedure:
 			workspaceServiceListWorkspacesHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetWorkspaceBillingProcedure:
 			workspaceServiceGetWorkspaceBillingHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetWorkspaceStatementProcedure:
 			workspaceServiceGetWorkspaceStatementHandler.ServeHTTP(w, r)
-		case WorkspaceServiceSetWorkspaceOwnHostsOnlyProcedure:
-			workspaceServiceSetWorkspaceOwnHostsOnlyHandler.ServeHTTP(w, r)
-		case WorkspaceServiceSetWorkspaceAllowOverflowProcedure:
-			workspaceServiceSetWorkspaceAllowOverflowHandler.ServeHTTP(w, r)
-		case WorkspaceServiceSetWorkspaceAllowCacheWarmProcedure:
-			workspaceServiceSetWorkspaceAllowCacheWarmHandler.ServeHTTP(w, r)
-		case WorkspaceServiceSetWorkspaceCancelRunOnVmDeathProcedure:
-			workspaceServiceSetWorkspaceCancelRunOnVmDeathHandler.ServeHTTP(w, r)
-		case WorkspaceServiceSetWorkspaceMemberJoinProcedure:
-			workspaceServiceSetWorkspaceMemberJoinHandler.ServeHTTP(w, r)
-		case WorkspaceServiceSetWorkspaceSpendLimitsProcedure:
-			workspaceServiceSetWorkspaceSpendLimitsHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListEgressIPsProcedure:
 			workspaceServiceListEgressIPsHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetUsageProcedure:
@@ -678,6 +544,10 @@ func (UnimplementedWorkspaceServiceHandler) GetWorkspace(context.Context, *conne
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetWorkspace is not implemented"))
 }
 
+func (UnimplementedWorkspaceServiceHandler) UpdateWorkspace(context.Context, *connect.Request[workspacev1.UpdateWorkspaceRequest]) (*connect.Response[workspacev1.UpdateWorkspaceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.UpdateWorkspace is not implemented"))
+}
+
 func (UnimplementedWorkspaceServiceHandler) ListWorkspaces(context.Context, *connect.Request[workspacev1.ListWorkspacesRequest]) (*connect.Response[workspacev1.ListWorkspacesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.ListWorkspaces is not implemented"))
 }
@@ -688,30 +558,6 @@ func (UnimplementedWorkspaceServiceHandler) GetWorkspaceBilling(context.Context,
 
 func (UnimplementedWorkspaceServiceHandler) GetWorkspaceStatement(context.Context, *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) SetWorkspaceOwnHostsOnly(context.Context, *connect.Request[workspacev1.SetWorkspaceOwnHostsOnlyRequest]) (*connect.Response[workspacev1.SetWorkspaceOwnHostsOnlyResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.SetWorkspaceOwnHostsOnly is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) SetWorkspaceAllowOverflow(context.Context, *connect.Request[workspacev1.SetWorkspaceAllowOverflowRequest]) (*connect.Response[workspacev1.SetWorkspaceAllowOverflowResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.SetWorkspaceAllowOverflow is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) SetWorkspaceAllowCacheWarm(context.Context, *connect.Request[workspacev1.SetWorkspaceAllowCacheWarmRequest]) (*connect.Response[workspacev1.SetWorkspaceAllowCacheWarmResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.SetWorkspaceAllowCacheWarm is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) SetWorkspaceCancelRunOnVmDeath(context.Context, *connect.Request[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest]) (*connect.Response[workspacev1.SetWorkspaceCancelRunOnVmDeathResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.SetWorkspaceCancelRunOnVmDeath is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) SetWorkspaceMemberJoin(context.Context, *connect.Request[workspacev1.SetWorkspaceMemberJoinRequest]) (*connect.Response[workspacev1.SetWorkspaceMemberJoinResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.SetWorkspaceMemberJoin is not implemented"))
-}
-
-func (UnimplementedWorkspaceServiceHandler) SetWorkspaceSpendLimits(context.Context, *connect.Request[workspacev1.SetWorkspaceSpendLimitsRequest]) (*connect.Response[workspacev1.SetWorkspaceSpendLimitsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.SetWorkspaceSpendLimits is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) ListEgressIPs(context.Context, *connect.Request[workspacev1.ListEgressIPsRequest]) (*connect.Response[workspacev1.ListEgressIPsResponse], error) {

@@ -103,13 +103,8 @@ message AdmitGrantResponse {
   string actor_id = 3;
   // workspaces are the caller's workspaces; empty for the operator.
   repeated string tenants = 4;
-  // Deprecated: job_id, tenant, repository, approved and installation_id
-  // are no longer set; args carries the arguments the grant binds.
-  string job_id = 5;
-  string tenant = 6;
-  string repository = 7;
-  bool approved = 8;
-  int64 installation_id = 9;
+  reserved 5 to 9;
+  reserved "job_id", "tenant", "repository", "approved", "installation_id";
   // generation is the delivery check the grant began; 0 for none.
   int64 generation = 10;
   google.protobuf.Timestamp created_at = 11;

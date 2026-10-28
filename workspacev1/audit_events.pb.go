@@ -49,7 +49,7 @@ type AuditEvent struct {
 	// an event no call records.
 	Scope string `protobuf:"bytes,10,opt,name=scope,proto3" json:"scope,omitempty"`
 	// "ok", or the reason the call was refused: PERMISSION_MISSING,
-	// OUTSIDE_LIMIT, or a product switch reason such as PRODUCT_DISABLED.
+	// OUTSIDE_LIMIT or PRODUCT_UNAVAILABLE.
 	// Empty for an event no call records.
 	Outcome string `protobuf:"bytes,11,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	// The id of the token the call was made with (never its value); empty for

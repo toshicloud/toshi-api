@@ -48,9 +48,9 @@ const (
 	// ConnectionServiceRotateConnectionSecretProcedure is the fully-qualified name of the
 	// ConnectionService's RotateConnectionSecret RPC.
 	ConnectionServiceRotateConnectionSecretProcedure = "/toshi.workspace.v1.ConnectionService/RotateConnectionSecret"
-	// ConnectionServiceSetConnectionTransformProcedure is the fully-qualified name of the
-	// ConnectionService's SetConnectionTransform RPC.
-	ConnectionServiceSetConnectionTransformProcedure = "/toshi.workspace.v1.ConnectionService/SetConnectionTransform"
+	// ConnectionServiceUpdateConnectionProcedure is the fully-qualified name of the ConnectionService's
+	// UpdateConnection RPC.
+	ConnectionServiceUpdateConnectionProcedure = "/toshi.workspace.v1.ConnectionService/UpdateConnection"
 	// ConnectionServiceListConnectionDeliveriesProcedure is the fully-qualified name of the
 	// ConnectionService's ListConnectionDeliveries RPC.
 	ConnectionServiceListConnectionDeliveriesProcedure = "/toshi.workspace.v1.ConnectionService/ListConnectionDeliveries"
@@ -91,12 +91,17 @@ type ConnectionServiceClient interface {
 	// with INVALID_ARGUMENT, a GITHUB connection with FAILED_PRECONDITION,
 	// and one the workspace does not have with NOT_FOUND.
 	RotateConnectionSecret(context.Context, *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error)
-	// SetConnectionTransform makes version the version of the workspace's
-	// transform hook a WEBHOOK connection runs on each delivery, and zero
-	// makes it run none. A version of that type the workspace does not have is
-	// NOT_FOUND, one below zero INVALID_ARGUMENT, and a GITHUB connection
-	// FAILED_PRECONDITION, as only a WEBHOOK connection runs one.
-	SetConnectionTransform(context.Context, *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error)
+	// UpdateConnection sets the fields of connection.id's connection that
+	// update_mask names. The one field it sets is target, the URL a WEBHOOK
+	// connection's deliveries are posted to in place of the event log: its
+	// url and secret, both required, or an empty url to clear it. An unset
+	// update_mask names the fields connection carries, an empty one changes
+	// nothing, and "*" or a path of another field is INVALID_ARGUMENT. The
+	// secret is sealed under the workspace's data key and never returned; a
+	// deployment with no keyring refuses it with FAILED_PRECONDITION. A
+	// GITHUB connection is FAILED_PRECONDITION, and one the workspace does
+	// not have NOT_FOUND.
+	UpdateConnection(context.Context, *connect.Request[workspacev1.UpdateConnectionRequest]) (*connect.Response[workspacev1.UpdateConnectionResponse], error)
 	// ListConnectionDeliveries returns a WEBHOOK connection's deliveries: the
 	// messages its sender sent, one for each webhook id, newest received
 	// first. A delivery never carries its body. A connection the workspace
@@ -106,13 +111,13 @@ type ConnectionServiceClient interface {
 	// A page holds 100 deliveries when page_size is zero, and 1000 at most.
 	ListConnectionDeliveries(context.Context, *connect.Request[workspacev1.ListConnectionDeliveriesRequest]) (*connect.Response[workspacev1.ListConnectionDeliveriesResponse], error)
 	// GetConnectionDelivery returns one delivery, without its body, and its
-	// runs: each time a worker made it an event, dropped it or failed it,
-	// oldest first. A delivery the workspace does not have is NOT_FOUND.
+	// runs: each time a worker made it an event, posted it to its
+	// connection's target, dropped it or failed it, oldest first. A delivery the workspace does not have is NOT_FOUND.
 	GetConnectionDelivery(context.Context, *connect.Request[workspacev1.GetConnectionDeliveryRequest]) (*connect.Response[workspacev1.GetConnectionDeliveryResponse], error)
 	// ReplayConnectionDelivery sends a processed, dropped or failed delivery
 	// through its connection again, as a new message under the same webhook
-	// id: it runs the transform the connection runs then, and its run
-	// records the caller. A delivery still received, whose receipt or body
+	// id: it goes to the connection's target then, or to the event log when
+	// it has none, and its run records the caller. A delivery still received, whose receipt or body
 	// expired, or whose connection is deleted is FAILED_PRECONDITION, as is
 	// one another replay counted since this call read it. A delivery the
 	// workspace does not have is NOT_FOUND.
@@ -163,10 +168,10 @@ func NewConnectionServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(connectionServiceMethods.ByName("RotateConnectionSecret")),
 			connect.WithClientOptions(opts...),
 		),
-		setConnectionTransform: connect.NewClient[workspacev1.SetConnectionTransformRequest, workspacev1.SetConnectionTransformResponse](
+		updateConnection: connect.NewClient[workspacev1.UpdateConnectionRequest, workspacev1.UpdateConnectionResponse](
 			httpClient,
-			baseURL+ConnectionServiceSetConnectionTransformProcedure,
-			connect.WithSchema(connectionServiceMethods.ByName("SetConnectionTransform")),
+			baseURL+ConnectionServiceUpdateConnectionProcedure,
+			connect.WithSchema(connectionServiceMethods.ByName("UpdateConnection")),
 			connect.WithClientOptions(opts...),
 		),
 		listConnectionDeliveries: connect.NewClient[workspacev1.ListConnectionDeliveriesRequest, workspacev1.ListConnectionDeliveriesResponse](
@@ -197,7 +202,7 @@ type connectionServiceClient struct {
 	createConnection         *connect.Client[workspacev1.CreateConnectionRequest, workspacev1.CreateConnectionResponse]
 	deleteConnection         *connect.Client[workspacev1.DeleteConnectionRequest, workspacev1.DeleteConnectionResponse]
 	rotateConnectionSecret   *connect.Client[workspacev1.RotateConnectionSecretRequest, workspacev1.RotateConnectionSecretResponse]
-	setConnectionTransform   *connect.Client[workspacev1.SetConnectionTransformRequest, workspacev1.SetConnectionTransformResponse]
+	updateConnection         *connect.Client[workspacev1.UpdateConnectionRequest, workspacev1.UpdateConnectionResponse]
 	listConnectionDeliveries *connect.Client[workspacev1.ListConnectionDeliveriesRequest, workspacev1.ListConnectionDeliveriesResponse]
 	getConnectionDelivery    *connect.Client[workspacev1.GetConnectionDeliveryRequest, workspacev1.GetConnectionDeliveryResponse]
 	replayConnectionDelivery *connect.Client[workspacev1.ReplayConnectionDeliveryRequest, workspacev1.ReplayConnectionDeliveryResponse]
@@ -228,9 +233,9 @@ func (c *connectionServiceClient) RotateConnectionSecret(ctx context.Context, re
 	return c.rotateConnectionSecret.CallUnary(ctx, req)
 }
 
-// SetConnectionTransform calls toshi.workspace.v1.ConnectionService.SetConnectionTransform.
-func (c *connectionServiceClient) SetConnectionTransform(ctx context.Context, req *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error) {
-	return c.setConnectionTransform.CallUnary(ctx, req)
+// UpdateConnection calls toshi.workspace.v1.ConnectionService.UpdateConnection.
+func (c *connectionServiceClient) UpdateConnection(ctx context.Context, req *connect.Request[workspacev1.UpdateConnectionRequest]) (*connect.Response[workspacev1.UpdateConnectionResponse], error) {
+	return c.updateConnection.CallUnary(ctx, req)
 }
 
 // ListConnectionDeliveries calls toshi.workspace.v1.ConnectionService.ListConnectionDeliveries.
@@ -278,12 +283,17 @@ type ConnectionServiceHandler interface {
 	// with INVALID_ARGUMENT, a GITHUB connection with FAILED_PRECONDITION,
 	// and one the workspace does not have with NOT_FOUND.
 	RotateConnectionSecret(context.Context, *connect.Request[workspacev1.RotateConnectionSecretRequest]) (*connect.Response[workspacev1.RotateConnectionSecretResponse], error)
-	// SetConnectionTransform makes version the version of the workspace's
-	// transform hook a WEBHOOK connection runs on each delivery, and zero
-	// makes it run none. A version of that type the workspace does not have is
-	// NOT_FOUND, one below zero INVALID_ARGUMENT, and a GITHUB connection
-	// FAILED_PRECONDITION, as only a WEBHOOK connection runs one.
-	SetConnectionTransform(context.Context, *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error)
+	// UpdateConnection sets the fields of connection.id's connection that
+	// update_mask names. The one field it sets is target, the URL a WEBHOOK
+	// connection's deliveries are posted to in place of the event log: its
+	// url and secret, both required, or an empty url to clear it. An unset
+	// update_mask names the fields connection carries, an empty one changes
+	// nothing, and "*" or a path of another field is INVALID_ARGUMENT. The
+	// secret is sealed under the workspace's data key and never returned; a
+	// deployment with no keyring refuses it with FAILED_PRECONDITION. A
+	// GITHUB connection is FAILED_PRECONDITION, and one the workspace does
+	// not have NOT_FOUND.
+	UpdateConnection(context.Context, *connect.Request[workspacev1.UpdateConnectionRequest]) (*connect.Response[workspacev1.UpdateConnectionResponse], error)
 	// ListConnectionDeliveries returns a WEBHOOK connection's deliveries: the
 	// messages its sender sent, one for each webhook id, newest received
 	// first. A delivery never carries its body. A connection the workspace
@@ -293,13 +303,13 @@ type ConnectionServiceHandler interface {
 	// A page holds 100 deliveries when page_size is zero, and 1000 at most.
 	ListConnectionDeliveries(context.Context, *connect.Request[workspacev1.ListConnectionDeliveriesRequest]) (*connect.Response[workspacev1.ListConnectionDeliveriesResponse], error)
 	// GetConnectionDelivery returns one delivery, without its body, and its
-	// runs: each time a worker made it an event, dropped it or failed it,
-	// oldest first. A delivery the workspace does not have is NOT_FOUND.
+	// runs: each time a worker made it an event, posted it to its
+	// connection's target, dropped it or failed it, oldest first. A delivery the workspace does not have is NOT_FOUND.
 	GetConnectionDelivery(context.Context, *connect.Request[workspacev1.GetConnectionDeliveryRequest]) (*connect.Response[workspacev1.GetConnectionDeliveryResponse], error)
 	// ReplayConnectionDelivery sends a processed, dropped or failed delivery
 	// through its connection again, as a new message under the same webhook
-	// id: it runs the transform the connection runs then, and its run
-	// records the caller. A delivery still received, whose receipt or body
+	// id: it goes to the connection's target then, or to the event log when
+	// it has none, and its run records the caller. A delivery still received, whose receipt or body
 	// expired, or whose connection is deleted is FAILED_PRECONDITION, as is
 	// one another replay counted since this call read it. A delivery the
 	// workspace does not have is NOT_FOUND.
@@ -346,10 +356,10 @@ func NewConnectionServiceHandler(svc ConnectionServiceHandler, opts ...connect.H
 		connect.WithSchema(connectionServiceMethods.ByName("RotateConnectionSecret")),
 		connect.WithHandlerOptions(opts...),
 	)
-	connectionServiceSetConnectionTransformHandler := connect.NewUnaryHandler(
-		ConnectionServiceSetConnectionTransformProcedure,
-		svc.SetConnectionTransform,
-		connect.WithSchema(connectionServiceMethods.ByName("SetConnectionTransform")),
+	connectionServiceUpdateConnectionHandler := connect.NewUnaryHandler(
+		ConnectionServiceUpdateConnectionProcedure,
+		svc.UpdateConnection,
+		connect.WithSchema(connectionServiceMethods.ByName("UpdateConnection")),
 		connect.WithHandlerOptions(opts...),
 	)
 	connectionServiceListConnectionDeliveriesHandler := connect.NewUnaryHandler(
@@ -382,8 +392,8 @@ func NewConnectionServiceHandler(svc ConnectionServiceHandler, opts ...connect.H
 			connectionServiceDeleteConnectionHandler.ServeHTTP(w, r)
 		case ConnectionServiceRotateConnectionSecretProcedure:
 			connectionServiceRotateConnectionSecretHandler.ServeHTTP(w, r)
-		case ConnectionServiceSetConnectionTransformProcedure:
-			connectionServiceSetConnectionTransformHandler.ServeHTTP(w, r)
+		case ConnectionServiceUpdateConnectionProcedure:
+			connectionServiceUpdateConnectionHandler.ServeHTTP(w, r)
 		case ConnectionServiceListConnectionDeliveriesProcedure:
 			connectionServiceListConnectionDeliveriesHandler.ServeHTTP(w, r)
 		case ConnectionServiceGetConnectionDeliveryProcedure:
@@ -419,8 +429,8 @@ func (UnimplementedConnectionServiceHandler) RotateConnectionSecret(context.Cont
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.RotateConnectionSecret is not implemented"))
 }
 
-func (UnimplementedConnectionServiceHandler) SetConnectionTransform(context.Context, *connect.Request[workspacev1.SetConnectionTransformRequest]) (*connect.Response[workspacev1.SetConnectionTransformResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.SetConnectionTransform is not implemented"))
+func (UnimplementedConnectionServiceHandler) UpdateConnection(context.Context, *connect.Request[workspacev1.UpdateConnectionRequest]) (*connect.Response[workspacev1.UpdateConnectionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ConnectionService.UpdateConnection is not implemented"))
 }
 
 func (UnimplementedConnectionServiceHandler) ListConnectionDeliveries(context.Context, *connect.Request[workspacev1.ListConnectionDeliveriesRequest]) (*connect.Response[workspacev1.ListConnectionDeliveriesResponse], error) {

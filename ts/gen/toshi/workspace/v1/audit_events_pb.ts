@@ -91,7 +91,7 @@ export type AuditEvent = Message<"toshi.workspace.v1.AuditEvent"> & {
 
   /**
    * "ok", or the reason the call was refused: PERMISSION_MISSING,
-   * OUTSIDE_LIMIT, or a product switch reason such as PRODUCT_DISABLED.
+   * OUTSIDE_LIMIT or PRODUCT_UNAVAILABLE.
    * Empty for an event no call records.
    *
    * @generated from field: string outcome = 11;
@@ -191,7 +191,7 @@ export type AuditEventJson = {
 
   /**
    * "ok", or the reason the call was refused: PERMISSION_MISSING,
-   * OUTSIDE_LIMIT, or a product switch reason such as PRODUCT_DISABLED.
+   * OUTSIDE_LIMIT or PRODUCT_UNAVAILABLE.
    * Empty for an event no call records.
    *
    * @generated from field: string outcome = 11;

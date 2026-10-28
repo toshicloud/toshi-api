@@ -113,6 +113,22 @@ var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 		Tag:           "bytes,51002,opt,name=audit",
 		Filename:      "toshi/permission.proto",
 	},
+	{
+		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
+		ExtensionType: (*bool)(nil),
+		Field:         51004,
+		Name:          "toshi.by_field",
+		Tag:           "varint,51004,opt,name=by_field",
+		Filename:      "toshi/permission.proto",
+	},
+	{
+		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
+		ExtensionType: (*string)(nil),
+		Field:         51003,
+		Name:          "toshi.field_permission",
+		Tag:           "bytes,51003,opt,name=field_permission",
+		Filename:      "toshi/permission.proto",
+	},
 }
 
 // Extension fields to descriptorpb.MethodOptions.
@@ -155,6 +171,27 @@ var (
 	//
 	// optional toshi.Audit audit = 51002;
 	E_Audit = &file_toshi_permission_proto_extTypes[2]
+	// by_field marks an update call that needs no permission of its own: each
+	// field its mask names needs its field group's permission, the field's
+	// field_permission or, for a field without one, the method's permission.
+	// The caller needs at least one of them to make the call, and the
+	// handler checks each field the mask names before it writes; a mask that
+	// names nothing needs any one.
+	//
+	// optional bool by_field = 51004;
+	E_ByField = &file_toshi_permission_proto_extTypes[3]
+)
+
+// Extension fields to descriptorpb.FieldOptions.
+var (
+	// field_permission names what a caller needs to change the field through
+	// the mask of an update call marked by_field: a field group of its own,
+	// such as "billing.write" for a workspace's spending limits. A field
+	// without it needs the method's permission. The build checks the name's
+	// shape, and the permissions page lists the field groups.
+	//
+	// optional string field_permission = 51003;
+	E_FieldPermission = &file_toshi_permission_proto_extTypes[4]
 )
 
 var File_toshi_permission_proto protoreflect.FileDescriptor
@@ -169,7 +206,9 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"permission\x12\x1e.google.protobuf.MethodOptions\x18\xb8\x8e\x03 \x01(\tR\n" +
 	"permission:6\n" +
 	"\x05scope\x12\x1e.google.protobuf.MethodOptions\x18\xb9\x8e\x03 \x01(\tR\x05scope:D\n" +
-	"\x05audit\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\f.toshi.AuditR\x05auditB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
+	"\x05audit\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\f.toshi.AuditR\x05audit:;\n" +
+	"\bby_field\x12\x1e.google.protobuf.MethodOptions\x18\xbc\x8e\x03 \x01(\bR\abyField:J\n" +
+	"\x10field_permission\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\tR\x0ffieldPermissionB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
 
 var (
 	file_toshi_permission_proto_rawDescOnce sync.Once
@@ -187,16 +226,19 @@ var file_toshi_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_toshi_permission_proto_goTypes = []any{
 	(*Audit)(nil),                      // 0: toshi.Audit
 	(*descriptorpb.MethodOptions)(nil), // 1: google.protobuf.MethodOptions
+	(*descriptorpb.FieldOptions)(nil),  // 2: google.protobuf.FieldOptions
 }
 var file_toshi_permission_proto_depIdxs = []int32{
 	1, // 0: toshi.permission:extendee -> google.protobuf.MethodOptions
 	1, // 1: toshi.scope:extendee -> google.protobuf.MethodOptions
 	1, // 2: toshi.audit:extendee -> google.protobuf.MethodOptions
-	0, // 3: toshi.audit:type_name -> toshi.Audit
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	3, // [3:4] is the sub-list for extension type_name
-	0, // [0:3] is the sub-list for extension extendee
+	1, // 3: toshi.by_field:extendee -> google.protobuf.MethodOptions
+	2, // 4: toshi.field_permission:extendee -> google.protobuf.FieldOptions
+	0, // 5: toshi.audit:type_name -> toshi.Audit
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	5, // [5:6] is the sub-list for extension type_name
+	0, // [0:5] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
 }
 
@@ -212,7 +254,7 @@ func file_toshi_permission_proto_init() {
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_permission_proto_rawDesc), len(file_toshi_permission_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   1,
-			NumExtensions: 3,
+			NumExtensions: 5,
 			NumServices:   0,
 		},
 		GoTypes:           file_toshi_permission_proto_goTypes,

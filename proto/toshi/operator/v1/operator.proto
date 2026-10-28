@@ -5,7 +5,6 @@ syntax = "proto3";
 package toshi.operator.v1;
 
 import "google/protobuf/duration.proto";
-import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -30,15 +29,6 @@ service OperatorService {
   //
   // A page holds 100 events when page_size is zero, and 1000 at most.
   rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse);
-
-  // GetJob returns one job. An unknown ID fails with NOT_FOUND.
-  rpc GetJob(GetJobRequest) returns (GetJobResponse);
-
-  // GetJobTelemetry returns the resource samples of one job's VM and their
-  // summary. A member reads its own workspace's jobs with the Workspace
-  // API's HostJobService.GetHostJobTelemetry. An unknown ID fails with
-  // NOT_FOUND; a job without samples returns none.
-  rpc GetJobTelemetry(GetJobTelemetryRequest) returns (GetJobTelemetryResponse);
 
   // SummariseJobTelemetry sums up the telemetry of the jobs queued in a
   // range that started and finished, by OS and runner size: peak
@@ -88,21 +78,6 @@ service OperatorService {
   // ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
   rpc RevokeHost(RevokeHostRequest) returns (RevokeHostResponse);
 
-  // ResetCatalogSource forgets the index this deployment last accepted from
-  // a catalog source: its sequence, expiry and digest. The next index the
-  // source serves is then accepted whatever its sequence, as long as it is
-  // signed by a listed key and has not expired. It is for a source whose
-  // signing key was compromised and whose sequence was raised by a forged
-  // index, or that was rebuilt from scratch. The control plane reads the
-  // source again at its next refresh. Operators only. A source with no
-  // accepted index fails with NOT_FOUND.
-  rpc ResetCatalogSource(ResetCatalogSourceRequest) returns (ResetCatalogSourceResponse) {
-    option (toshi.audit) = {
-      action: "catalog_source.reset"
-      target: "catalog_source:name"
-    };
-  }
-
   // RetireOfflineHosts lists the hosts whose state is offline and whose last
   // heartbeat is older than offline_longer_than, oldest first, and with apply
   // set removes each one that holds no assigned, starting or running job.
@@ -116,18 +91,6 @@ service OperatorService {
     };
   }
 
-  // CreateCloudHost registers a workspace-owned cloud host the control plane
-  // drives in the workspace's AWS account, for any workspace; a member adds
-  // its own with the Workspace API's HostService.CreateCloudHost. When
-  // cloud hosts are not configured on the control plane the call fails with
-  // FAILED_PRECONDITION.
-  rpc CreateCloudHost(CreateCloudHostRequest) returns (CreateCloudHostResponse) {
-    option (toshi.audit) = {
-      action: "cloud_host.added"
-      target: "host:response.host.id"
-    };
-  }
-
   // CreateWorkspace makes a workspace that has no GitHub installation and
   // returns it with its new id. It is on plan when one is given and on the
   // control plane's default_plan otherwise, as an installed workspace is,
@@ -135,10 +98,6 @@ service OperatorService {
   // configuration does not define, fails with INVALID_ARGUMENT. Names are not
   // unique: two workspaces may share one. Only the operator may call it.
   rpc CreateWorkspace(CreateWorkspaceRequest) returns (CreateWorkspaceResponse);
-
-  // GetWorkspace returns one workspace. An empty ID fails with
-  // INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse);
 
   // ListTenants returns every workspace, ordered by ID.
   //
@@ -151,15 +110,6 @@ service OperatorService {
   // unknown ID fails with NOT_FOUND.
   rpc SetTenantCap(SetTenantCapRequest) returns (SetTenantCapResponse) {
     option (toshi.audit) = {action: "workspace.cap_set"};
-  }
-
-  // SetTenantHistory sets a workspace's job history retention override and
-  // returns the workspace as stored; omitting history_days clears the override,
-  // so the workspace's plan applies. 0 keeps history forever. An empty workspace
-  // or a negative history_days fails with INVALID_ARGUMENT; an unknown workspace
-  // fails with NOT_FOUND.
-  rpc SetTenantHistory(SetTenantHistoryRequest) returns (SetTenantHistoryResponse) {
-    option (toshi.audit) = {action: "workspace.history_set"};
   }
 
   // SetTenantLimits sets or clears a workspace's own secret and preview limits,
@@ -198,30 +148,6 @@ service OperatorService {
   // ClearWorkspaceEntitlement removes an override and reports whether one existed.
   rpc ClearWorkspaceEntitlement(ClearWorkspaceEntitlementRequest) returns (ClearWorkspaceEntitlementResponse) {
     option (toshi.audit) = {action: "workspace.entitlement_cleared"};
-  }
-
-  // SetTenantOwnHostsOnly sets whether the workspace's jobs wait for its own
-  // hosts and never run on shared ones, and returns the workspace as stored. An
-  // empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc SetTenantOwnHostsOnly(SetTenantOwnHostsOnlyRequest) returns (SetTenantOwnHostsOnlyResponse) {
-    option (toshi.audit) = {action: "workspace.own_hosts_only_set"};
-  }
-
-  // ClearTenantSignIn makes the workspace require no sign-in provider: the
-  // way back in when the provider a workspace requires is gone or broken
-  // and no member can sign in through it. It answers what the workspace
-  // required; an empty ID fails with INVALID_ARGUMENT and an unknown ID with
-  // NOT_FOUND.
-  rpc ClearTenantSignIn(ClearTenantSignInRequest) returns (ClearTenantSignInResponse) {
-    option (toshi.audit) = {action: "workspace_signin.cleared"};
-  }
-
-  // SetTenantAllowOverflow sets whether shared overflow hosts may take the
-  // workspace's jobs and returns the workspace as stored; its own
-  // overflow hosts always may. An empty ID fails with INVALID_ARGUMENT; an
-  // unknown ID fails with NOT_FOUND.
-  rpc SetTenantAllowOverflow(SetTenantAllowOverflowRequest) returns (SetTenantAllowOverflowResponse) {
-    option (toshi.audit) = {action: "workspace.allow_overflow_set"};
   }
 
   // SuspendTenant suspends an active workspace: its new and queued jobs are
@@ -267,16 +193,6 @@ service OperatorService {
   // fails with FAILED_PRECONDITION when no pass has run yet.
   rpc GetCapacity(GetCapacityRequest) returns (GetCapacityResponse);
 
-  // SetTenantSpendLimits sets a workspace's monthly spending cap and its own
-  // jobs-per-hour limit, and returns the workspace as stored; an unset field is
-  // left as it is. An empty ID, a negative value, or a
-  // max_jobs_per_hour above the plan's fails with INVALID_ARGUMENT; a
-  // spending cap while billing is off fails with FAILED_PRECONDITION; an
-  // unknown ID fails with NOT_FOUND.
-  rpc SetTenantSpendLimits(SetTenantSpendLimitsRequest) returns (SetTenantSpendLimitsResponse) {
-    option (toshi.audit) = {action: "workspace.spend_limits_set"};
-  }
-
   // GetUsage returns job counts and billable minutes per workspace, UTC day,
   // conclusion, outcome and kind, for the jobs whose queued_at is in the
   // window. The window defaults to the last 7 days. A window whose from is not before its
@@ -296,20 +212,15 @@ service OperatorService {
   // fails with INVALID_ARGUMENT.
   rpc GetWorkflowUsage(GetWorkflowUsageRequest) returns (GetWorkflowUsageResponse);
 
-  // GetTenantBilling returns a workspace's billing customer, subscription and
-  // its status, the usage reported to the billing provider per month and
-  // runner size, and the events that failed. An empty ID, or months outside 0
-  // to 12, fails with INVALID_ARGUMENT; an unknown workspace fails with
-  // NOT_FOUND.
-  rpc GetTenantBilling(GetTenantBillingRequest) returns (GetTenantBillingResponse);
-
   // GetTenantStatement returns a workspace's usage statement for one UTC month:
   // minutes by runner size and OS of the jobs that finished in it, the
   // minutes metered to the billing provider by size with their estimated
   // cost at the plan's prices, the starter credit applied in it, and held
   // time by reason. An empty ID or a month not in YYYY-MM form fails with
-  // INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND. A member
-  // reads its own workspace's with the Workspace API's
+  // INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND. It stays on
+  // the operator service because statements outlive the workspace: it reads
+  // a deleted workspace's saved statements too. Inside a live workspace,
+  // members and the operator under its grant read
   // WorkspaceService.GetWorkspaceStatement.
   rpc GetTenantStatement(GetTenantStatementRequest) returns (GetTenantStatementResponse);
 
@@ -320,74 +231,6 @@ service OperatorService {
   // customer id held by another workspace fails with ALREADY_EXISTS.
   rpc SetTenantBillingCustomer(SetTenantBillingCustomerRequest) returns (SetTenantBillingCustomerResponse) {
     option (toshi.audit) = {action: "workspace.billing_customer_set"};
-  }
-
-  // CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
-  // workspace to plan, first creating and linking a billing customer for a
-  // workspace without one. An empty ID, an empty plan, or a plan the
-  // configuration does not define fails with INVALID_ARGUMENT; an unknown
-  // workspace fails with NOT_FOUND; self-serve billing off, a plan that is not
-  // sold or maps to several lookup keys, a price missing in Stripe, or a
-  // workspace that already has a subscription fails with FAILED_PRECONDITION; a
-  // billing provider failure fails with UNAVAILABLE. A member calls the
-  // Workspace API's WorkspaceService.CreateCheckoutSession for its own
-  // workspace.
-  rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse) {
-    option (toshi.audit) = {
-      action: "billing.checkout_opened"
-      target: "workspace:id"
-    };
-  }
-
-  // CreateBillingPortalSession returns a Stripe Customer Portal URL where the
-  // workspace manages its card and subscription. An empty ID fails with
-  // INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; self-serve
-  // billing not configured or a workspace with no billing customer fails with
-  // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
-  // A member calls the Workspace API's
-  // WorkspaceService.CreateBillingPortalSession for its own workspace.
-  rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse) {
-    option (toshi.audit) = {
-      action: "billing.portal_opened"
-      target: "workspace:id"
-    };
-  }
-
-  // CancelJob cancels a queued job at once. An assigned, starting or running
-  // job moves to JOB_STATE_STOPPING: its host stops the runner after a grace
-  // period, destroys the VM and reports the job JOB_STATE_CANCELLED.
-  // A stopping job is returned unchanged; a finished job fails
-  // with FailedPrecondition.
-  rpc CancelJob(CancelJobRequest) returns (CancelJobResponse) {
-    option (toshi.audit) = {
-      action: "host_job.cancelled"
-      target: "host_job:job_id"
-    };
-  }
-
-  // StopJobDebug ends a job's debug session before its expiry:
-  // the job moves to JOB_STATE_STOPPING with stop_reason debug_ended, its
-  // host destroys the kept VM and the job finishes completed with its
-  // conclusion unchanged. A job that is not debugging fails with
-  // FailedPrecondition; one already stopping is returned unchanged.
-  rpc StopJobDebug(StopJobDebugRequest) returns (StopJobDebugResponse) {
-    option (toshi.audit) = {
-      action: "host_job.debug_stopped"
-      target: "host_job:job_id"
-    };
-  }
-
-  // GetJobDebugAccess returns the key that opens a debugging job's guest
-  // ssh through the control plane's relay. The job's host makes
-  // the key and gives it out once per session; the control plane does not
-  // keep it. A job that is not debugging fails with
-  // FAILED_PRECONDITION, a key already issued with ALREADY_EXISTS, and a
-  // host that does not answer with UNAVAILABLE.
-  rpc GetJobDebugAccess(GetJobDebugAccessRequest) returns (GetJobDebugAccessResponse) {
-    option (toshi.audit) = {
-      action: "host_job.debug_access_issued"
-      target: "host_job:job_id"
-    };
   }
 
   // ListTokens returns the operator and enrollment tokens the control plane
@@ -414,34 +257,10 @@ service OperatorService {
   // RollToken gives a token a new value and returns it; it is not stored
   // and cannot be shown again. The old value stops working at once. The
   // token keeps its id, kind, name, roles, limit, restrictions, expiry and
-  // creator, so what was granted to it stays granted and an installation
-  // stays linked to it. An unknown id fails with NOT_FOUND; a revoked or
+  // creator, so what was granted to it stays granted. An unknown id fails with NOT_FOUND; a revoked or
   // expired token with FailedPrecondition. A token file that still holds
   // the old value is refused at the next start, as a revoked token's is.
   rpc RollToken(RollTokenRequest) returns (RollTokenResponse);
-
-  // UpdateToken changes a workspace token's name, expiry, start and client
-  // address ranges: the fields update_mask names. Other kinds take none of
-  // them and fail with InvalidArgument; an unknown id fails with NOT_FOUND,
-  // a revoked token with FailedPrecondition.
-  rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse);
-
-  // CreateEnrollmentToken makes an enrollment token for one workspace and
-  // returns it with its value; a host that registers with it is owned by that
-  // workspace. The token does not expire and the other tokens are untouched. An
-  // unknown workspace fails with NOT_FOUND; a closed workspace fails with
-  // FailedPrecondition.
-  rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse) {
-    option (toshi.audit) = {action: "token.created"};
-  }
-
-  // CreateTenantToken makes an API token for one workspace that authenticates
-  // the Workspace API as that workspace, with a dashboard session's scope, and
-  // returns it with its value. An unknown workspace fails with NOT_FOUND; a
-  // closed workspace fails with FailedPrecondition.
-  rpc CreateTenantToken(CreateTenantTokenRequest) returns (CreateTenantTokenResponse) {
-    option (toshi.audit) = {action: "token.created"};
-  }
 
   // CreateProductToken makes a token a product's adapter authenticates to
   // the core with. Operator only. It expires within 90 days, and a product
@@ -488,17 +307,6 @@ service OperatorService {
   //
   // A page holds 100 alerts when page_size is zero, and 1000 at most.
   rpc ListHostAlerts(ListHostAlertsRequest) returns (ListHostAlertsResponse);
-
-  // ListEgressIPs returns the public addresses a workspace's jobs may reach the
-  // internet from: the egress addresses of the hosts its jobs can land on,
-  // its own hosts and, unless it runs on its own hosts only, the shared hosts
-  // its plan's operating systems run on. A member asks for its own
-  // workspace with the Workspace API's WorkspaceService.ListEgressIPs. An
-  // empty workspace fails with INVALID_ARGUMENT; an unknown workspace fails
-  // with NOT_FOUND.
-  //
-  // A page holds 100 hosts when page_size is zero, and 1000 at most.
-  rpc ListEgressIPs(ListEgressIPsRequest) returns (ListEgressIPsResponse);
 
   // CheckCloudHost checks a cloud host's AWS setup without launching
   // anything: the role can be assumed, the AMI is visible, the subnet routes
@@ -551,36 +359,6 @@ service OperatorService {
   //
   // A page holds 50 runs when page_size is zero, and 500 at most.
   rpc ListFillerRuns(ListFillerRunsRequest) returns (ListFillerRunsResponse);
-
-  // SetTenantAllowCacheWarm sets whether the workspace's dispatch fillers run
-  // and returns the workspace as stored. Off by default. An empty
-  // ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc SetTenantAllowCacheWarm(SetTenantAllowCacheWarmRequest) returns (SetTenantAllowCacheWarmResponse) {
-    option (toshi.audit) = {action: "workspace.allow_cache_warm_set"};
-  }
-
-  // SetTenantCancelRunOnVmDeath sets whether Toshi cancels the workflow run
-  // of the workspace's job when the job's VM is gone and returns the
-  // workspace as stored. On by default. An empty ID fails with
-  // INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc SetTenantCancelRunOnVmDeath(SetTenantCancelRunOnVmDeathRequest) returns (SetTenantCancelRunOnVmDeathResponse) {
-    option (toshi.audit) = {action: "workspace.cancel_run_on_vm_death_set"};
-  }
-
-  // SetTenantMemberJoin sets who may join the workspace through its GitHub
-  // App installation on an organisation, "off", "approve" or "open", and
-  // returns the workspace as stored. Off by default. An empty ID or another
-  // value fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc SetTenantMemberJoin(SetTenantMemberJoinRequest) returns (SetTenantMemberJoinResponse) {
-    option (toshi.audit) = {action: "workspace.member_join_set"};
-  }
-
-  // GetJobFailure says why a job ended the way it did and what to do next,
-  // from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
-  // says, which the CLI and the dashboard compose into it. A workspace caller
-  // sees only its own jobs. An empty ID fails with INVALID_ARGUMENT; an
-  // unknown ID fails with NOT_FOUND.
-  rpc GetJobFailure(GetJobFailureRequest) returns (GetJobFailureResponse);
 
   // GetSecretDelivery returns the switch for delivering secrets to CI jobs
   // and the hosts that keep it from turning on. The
@@ -817,7 +595,7 @@ message Job {
   string host_kind = 33;
   // The cloud pool's name when the job started on a warm instance of the
   // pool's previous image or runner, because the cloud refused a launch on
-  // the current one. Empty otherwise. Set by GetJob only.
+  // the current one. Empty otherwise, and in ListJobs.
   string previous_pool_image = 34;
   // The whole minutes the job counts in the usage report: from started_at
   // to stop_requested_at when the job was asked to stop, else to
@@ -911,32 +689,6 @@ message Job {
   int32 run_attempt = 53;
 }
 
-// JobAttempt is one attempt of a job: one assignment to a host and its
-// runner, and why it ended.
-message JobAttempt {
-  // Counting from 1.
-  int32 attempt = 1;
-  // As Job.runner_id and Job.runner_name; empty when no runner was named
-  // for the assignment.
-  string runner_id = 2;
-  string runner_name = 3;
-  string host_id = 4;
-  string instance_id = 5;
-  string provider = 6;
-  google.protobuf.Timestamp assigned_at = 7;
-  // Unset when the attempt was assigned and never started.
-  google.protobuf.Timestamp started_at = 8;
-  // When the attempt ended; unset for the current attempt until the job
-  // finished.
-  google.protobuf.Timestamp finished_at = 9;
-  // The job's conclusion as GitHub or its runner reported it in the
-  // attempt, such as "success"; empty when none was.
-  string conclusion = 10;
-  // Why an attempt that was queued again ended, such as "requeued: its
-  // assignment timed out"; empty for the current attempt.
-  string end = 11;
-}
-
 // JobCache is what a job's cache disk did.
 message JobCache {
   // "attached", or "not_attached" when the disk never reached the job's VM
@@ -998,38 +750,6 @@ message JobTelemetrySummary {
   // vCPUs and 4 GiB of 16 GiB: a size smaller, toshi-linux-2x, would fit".
   // Empty when the verdict is.
   string verdict_reason = 10;
-}
-
-message GetJobTelemetryRequest {
-  string job_id = 1;
-}
-
-message GetJobTelemetryResponse {
-  // The job's runner size and its VM's vCPUs and memory, to scale the
-  // samples by.
-  string size = 1;
-  int32 vcpus = 2;
-  int64 memory_mib = 3;
-  // Unset when the job has no samples.
-  JobTelemetrySummary summary = 4;
-  // Oldest first.
-  repeated JobTelemetrySample samples = 5;
-}
-
-// JobTelemetrySample is the same as toshi.agent.v1.TelemetrySample: one
-// window of a job VM's resource use.
-message JobTelemetrySample {
-  google.protobuf.Timestamp at = 1;
-  int32 window_ms = 2;
-  int64 cpu_ms = 3;
-  int64 cpu_wait_ms = 4;
-  optional int64 guest_memory_mib = 5;
-  int64 host_memory_mib = 6;
-  int64 disk_read_bytes = 7;
-  int64 disk_write_bytes = 8;
-  optional int64 net_rx_bytes = 9;
-  optional int64 net_tx_bytes = 10;
-  optional int32 oom_kills = 11;
 }
 
 message SummariseJobTelemetryRequest {
@@ -1212,23 +932,16 @@ message ListJobsRequest {
   string workload_id = 5;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 6;
+  // Only the job with this id, whatever its state, which names the workspace
+  // that owns it: the job's other calls are that workspace's. The other
+  // filters are left empty with it.
+  string id = 7;
 }
 
 message ListJobsResponse {
   repeated Job jobs = 1;
   // Empty on the last page.
   string next_page_token = 2;
-}
-
-message GetJobRequest {
-  string id = 1;
-}
-
-message GetJobResponse {
-  Job job = 1;
-  // The job's attempts, oldest first: one for each assignment to a host,
-  // the current one last while the job holds it.
-  repeated JobAttempt attempts = 2;
 }
 
 // AuditEvent is one append-only audit log entry.
@@ -1243,8 +956,8 @@ message AuditEvent {
   // Empty when the event is not tied to a workspace.
   string tenant = 5;
   string action = 6;
-  // A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...,
-  // workspace:... or installation:....
+  // A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...
+  // or workspace:....
   string target = 7;
   // A JSON object whose keys depend on the action.
   string details_json = 8;
@@ -1257,7 +970,7 @@ message AuditEvent {
   // an event no call records.
   string scope = 11;
   // "ok", or the reason the call was refused: PERMISSION_MISSING,
-  // OUTSIDE_LIMIT, or a product switch reason such as PRODUCT_DISABLED.
+  // OUTSIDE_LIMIT or PRODUCT_UNAVAILABLE.
   // Empty for an event no call records.
   string outcome = 12;
   // The id of the token the call was made with (never its value); empty for
@@ -1404,20 +1117,6 @@ message RevokeHostRequest {
   string id = 1;
 }
 
-message ResetCatalogSourceRequest {
-  // name is the catalog source's name, as [[catalog.sources]] names it.
-  string name = 1;
-}
-
-message ResetCatalogSourceResponse {
-  // sequence is the sequence of the index that was accepted.
-  int64 sequence = 1;
-  // expires_at is when that index expired or expires.
-  google.protobuf.Timestamp expires_at = 2;
-  // key_id is the key that signed it.
-  string key_id = 3;
-}
-
 message RevokeHostResponse {
   // The host as stored after the call.
   Host host = 1;
@@ -1453,115 +1152,6 @@ message RetireOfflineHostsResponse {
 message OfflineHostResult {
   Host host = 1;
   OfflineHostOutcome outcome = 2;
-}
-
-// CloudHost is the AWS account behind a workspace-owned host the control plane
-// drives.
-message CloudHost {
-  // The host row this cloud host belongs to.
-  string host_id = 1;
-  // The workspace that owns the host.
-  string tenant = 2;
-  // The cloud provider: "aws" or "gcp".
-  string cloud = 3;
-  // The region the instances run in; on GCP the zone's region.
-  string region = 4;
-  // The role in the workspace's account the control plane assumes (AWS).
-  string role_arn = 5;
-  // The external ID the role's trust policy requires (AWS), or the project
-  // metadata must name (GCP); generated by Toshi.
-  string external_id = 6;
-  // The image the instances boot: an AMI, or a GCE image path.
-  string image = 7;
-  // The subnet (AWS) or subnetwork (GCP) to launch into; empty means a
-  // default subnet or the default network.
-  string subnet_id = 8;
-  // The security groups of the instances; empty means the VPC default.
-  repeated string security_group_ids = 9;
-  // Maps a runner size to an instance type, overriding the defaults.
-  map<string, string> instance_types = 10;
-  // The most vCPUs the host runs at once.
-  int32 max_vcpus = 11;
-  google.protobuf.Timestamp created_at = 12;
-  // Launches spot instances, moving an interrupted job onto on demand once.
-  bool spot = 13;
-  // The most instances the host runs at once; 0 means no limit.
-  int32 max_instances = 14;
-  // The most instance-minutes the host runs per UTC day; 0 means no limit.
-  int32 max_instance_minutes_per_day = 15;
-  // The GCP project and zone the instances run in.
-  string project = 16;
-  string zone = 17;
-  // The workspace's service account the control plane impersonates (GCP).
-  string service_account = 18;
-  // Where the instances reach the internet: "public" (each gets its own
-  // public address) or "nat" (none: the workspace's NAT carries the traffic).
-  string egress = 19;
-}
-
-// CreateCloudHostRequest names the workspace and the cloud host to register.
-message CreateCloudHostRequest {
-  // The workspace that owns the host.
-  string tenant = 1;
-  // The host name; it becomes the host id the same way enrollment does.
-  string name = 2;
-  // The cloud provider: "aws" (the default) or "gcp".
-  string cloud = 3;
-  // The AWS region the instances run in (AWS).
-  string region = 4;
-  // The role in the workspace's account the control plane assumes (AWS).
-  string role_arn = 5;
-  // The image the instances boot: an AMI (AWS), or a GCE image or family
-  // (an image name, family/NAME, or a projects/... path).
-  string image = 6;
-  // The subnet (AWS) or subnetwork (GCP, a name in the zone's region or
-  // regions/R/subnetworks/S) to launch into; empty means a default subnet
-  // or the default network.
-  string subnet_id = 7;
-  // The security groups of the instances; empty means the VPC default.
-  repeated string security_group_ids = 8;
-  // Maps a runner size to an instance type, overriding the defaults.
-  map<string, string> instance_types = 9;
-  // The most vCPUs the host runs at once; 0 means 64.
-  int32 max_vcpus = 10;
-  // Launches spot instances, moving an interrupted job onto on demand once.
-  bool spot = 11;
-  // The most instances the host runs at once; 0 means no limit.
-  int32 max_instances = 12;
-  // The most instance-minutes the host runs per UTC day; 0 means no limit.
-  int32 max_instance_minutes_per_day = 13;
-  // The public addresses the host's instances reach the internet from, when
-  // the subnet sends their traffic through fixed ones (a NAT gateway's
-  // Elastic IP); empty means each instance's own public address.
-  repeated string egress_ips = 14;
-  // Register the host as an ordinary own host instead of an overflow host:
-  // it then takes the workspace's jobs without waiting for the plan's
-  // overflow_after. False, the default, makes an overflow host.
-  bool no_overflow = 15;
-  // The GCP project and zone the instances run in (GCP).
-  string project = 16;
-  string zone = 17;
-  // The workspace's service account the control plane impersonates (GCP).
-  string service_account = 18;
-  // Where the instances reach the internet: "public" (the default: each
-  // instance gets its own public address) or "nat" (no public address; the
-  // subnet routes through the workspace's NAT gateway or Cloud NAT, whose
-  // addresses become the host's egress set).
-  string egress = 19;
-}
-
-// CreateCloudHostResponse carries the host, the trust external id and the
-// principal the role must allow.
-message CreateCloudHostResponse {
-  Host host = 1;
-  // The external ID the role's trust policy requires.
-  string external_id = 2;
-  // The AWS principal the workspace's role must trust (AWS).
-  string principal_arn = 3;
-  CloudHost cloud_host = 4;
-  // The Google principal the workspace's service account must let create
-  // tokens for it, with roles/iam.serviceAccountTokenCreator (GCP).
-  string gcp_principal = 5;
 }
 
 // Workspace owns a plan, an optional concurrency override, and one or more GitHub
@@ -1664,14 +1254,6 @@ message CreateWorkspaceResponse {
   Tenant workspace = 1;
 }
 
-message GetWorkspaceRequest {
-  string id = 1;
-}
-
-message GetWorkspaceResponse {
-  Tenant workspace = 1;
-}
-
 message ListTenantsRequest {
   // The most workspaces in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -1694,16 +1276,6 @@ message SetTenantCapResponse {
   Tenant tenant = 1;
 }
 
-message SetTenantHistoryRequest {
-  string tenant = 1;
-  // Unset clears the workspace's override so its plan's history_days applies.
-  optional int32 history_days = 2;
-}
-
-message SetTenantHistoryResponse {
-  Tenant tenant = 1;
-}
-
 message SetTenantLimitsRequest {
   string tenant = 1;
   optional int32 secret_max_sets = 2;
@@ -1716,35 +1288,6 @@ message SetTenantLimitsRequest {
 }
 
 message SetTenantLimitsResponse {
-  Tenant tenant = 1;
-}
-
-message ClearTenantSignInRequest {
-  string id = 1;
-}
-
-message ClearTenantSignInResponse {
-  // The provider entry's name and issuer the workspace required; empty
-  // when it required none.
-  string provider = 1;
-  string issuer = 2;
-}
-
-message SetTenantOwnHostsOnlyRequest {
-  string id = 1;
-  bool own_hosts_only = 2;
-}
-
-message SetTenantOwnHostsOnlyResponse {
-  Tenant tenant = 1;
-}
-
-message SetTenantAllowOverflowRequest {
-  string id = 1;
-  bool allow_overflow = 2;
-}
-
-message SetTenantAllowOverflowResponse {
   Tenant tenant = 1;
 }
 
@@ -1790,18 +1333,6 @@ message SetTenantReservationRequest {
 message SetTenantReservationResponse {
   // The workspace's effective reservations after the change, ordered by size.
   repeated Reservation reservations = 1;
-}
-
-message SetTenantSpendLimitsRequest {
-  string id = 1;
-  // Unset leaves the cap; 0 clears it.
-  optional int64 spend_cap_cents = 2;
-  // Unset leaves the limit; 0 clears the workspace's own limit.
-  optional int32 max_jobs_per_hour = 3;
-}
-
-message SetTenantSpendLimitsResponse {
-  Tenant tenant = 1;
 }
 
 message Plan {
@@ -2162,17 +1693,6 @@ message CapacityReservation {
   int32 short = 8;
 }
 
-message GetTenantBillingRequest {
-  string id = 1;
-  // How many UTC months of usage to return, the current one included.
-  // 0 means 2; at most 12.
-  int32 months = 2;
-}
-
-message GetTenantBillingResponse {
-  TenantBilling billing = 1;
-}
-
 message GetTenantStatementRequest {
   string id = 1;
   // The UTC month as YYYY-MM. Empty: the current month.
@@ -2282,69 +1802,6 @@ message SetTenantBillingCustomerResponse {
   TenantBilling billing = 1;
 }
 
-message CreateCheckoutSessionRequest {
-  string id = 1;
-  string plan = 2;
-}
-
-message CreateCheckoutSessionResponse {
-  // The provider's hosted Checkout URL to send the browser to.
-  string url = 1;
-}
-
-message CreateBillingPortalSessionRequest {
-  string id = 1;
-}
-
-message CreateBillingPortalSessionResponse {
-  // The provider's hosted Customer Portal URL to send the browser to.
-  string url = 1;
-}
-
-// CancelJobRequest names the job to cancel.
-message CancelJobRequest {
-  // Toshi's job id.
-  string job_id = 1;
-}
-
-// CancelJobResponse carries the job after the cancel.
-message CancelJobResponse {
-  Job job = 1;
-}
-
-// StopJobDebugRequest names the job whose debug session ends.
-message StopJobDebugRequest {
-  // Toshi's job id.
-  string job_id = 1;
-}
-
-// StopJobDebugResponse carries the job after the stop.
-message StopJobDebugResponse {
-  Job job = 1;
-}
-
-// GetJobDebugAccessRequest names the debugging job.
-message GetJobDebugAccessRequest {
-  // Toshi's job id.
-  string job_id = 1;
-}
-
-// GetJobDebugAccessResponse is the way into a debugging job's guest.
-message GetJobDebugAccessResponse {
-  // The guest's login user.
-  string user = 1;
-  // The session's ed25519 private key in OpenSSH format. It is returned
-  // only here, once per session.
-  bytes private_key = 2;
-  // The relay's path on the control plane, "/debug/<job id>/ssh". A GET
-  // with "Connection: Upgrade" and "Upgrade: toshi-debug-ssh", carrying
-  // the same credentials as this call, becomes a byte stream to the
-  // guest's ssh server.
-  string relay_path = 3;
-  // When the session ends.
-  google.protobuf.Timestamp expires_at = 4;
-}
-
 // TenantBilling is a workspace's billing link, its subscription's status and the
 // usage reported to the billing provider.
 message TenantBilling {
@@ -2354,9 +1811,8 @@ message TenantBilling {
   string subscription_id = 2;
   // When billable usage begins; unset when the workspace is not billed.
   google.protobuf.Timestamp billing_started_at = 3;
-  // Always unset: the hourly export ledger is no longer read. Usage is in
-  // totals and failed_events.
-  BillingExport last_export = 4 [deprecated = true];
+  reserved 4;
+  reserved "last_export";
   // The provider's status of the subscription from the last event applied,
   // such as active or past_due; empty when no event has been applied.
   string subscription_status = 5;
@@ -2445,16 +1901,6 @@ message BillingEventFailure {
   string last_error = 8;
 }
 
-// BillingExport is one exported billing period in the ledger.
-message BillingExport {
-  google.protobuf.Timestamp period_start = 1;
-  google.protobuf.Timestamp period_end = 2;
-  int64 minutes = 3;
-  // Empty when no meter event was sent for the period.
-  string provider_event_id = 4;
-  google.protobuf.Timestamp exported_at = 5;
-}
-
 // TokenKind says what a token grants.
 enum TokenKind {
   TOKEN_KIND_UNSPECIFIED = 0;
@@ -2475,9 +1921,9 @@ message Token {
   string id = 1;
   TokenKind kind = 2;
   // "file" for a token read from the control plane's token file, "rotate"
-  // for one made by RotateToken, "tenant" for one made by
-  // CreateEnrollmentToken, "session" for a workspace token minted from a
-  // dashboard session.
+  // for one made by RotateToken, "tenant" for one made by the Workspace
+  // API's CreateEnrollmentToken, "session" for a workspace token minted
+  // from a dashboard session.
   string source = 3;
   google.protobuf.Timestamp created_at = 4;
   // Unset when the token does not expire.
@@ -2603,64 +2049,6 @@ message RollTokenResponse {
   string value = 2;
 }
 
-// UpdateTokenRequest names a workspace token and the fields to change.
-message UpdateTokenRequest {
-  string id = 1;
-  // Carries the new values of the fields update_mask names. An unset
-  // not_before or client_ranges clears it; expires_at must be set.
-  Token token = 2;
-  // One or more of name, expires_at, not_before and client_ranges.
-  google.protobuf.FieldMask update_mask = 3;
-}
-
-// UpdateTokenResponse carries the token as it now is.
-message UpdateTokenResponse {
-  Token token = 1;
-}
-
-// CreateEnrollmentTokenRequest names the workspace to enroll hosts for.
-message CreateEnrollmentTokenRequest {
-  string tenant = 1;
-  // Hosts that enroll with the token register as overflow hosts.
-  bool overflow = 2;
-}
-
-// CreateEnrollmentTokenResponse carries the new token and its value.
-message CreateEnrollmentTokenResponse {
-  Token token = 1;
-  // The new token. It is returned only here.
-  string value = 2;
-}
-
-message CreateTenantTokenRequest {
-  string tenant = 1;
-  string name = 2;
-  // Unset means the longest lifetime allowed, 90 days by default.
-  google.protobuf.Timestamp expires_at = 3;
-  // Limits the token to this project of the workspace, by name. Empty makes
-  // a token for the whole workspace.
-  string project = 4;
-  // Limits the token further to this environment of project, by name.
-  // Needs project.
-  string environment = 5;
-  // When the token starts working; unset means at once.
-  google.protobuf.Timestamp not_before = 6;
-  // The client addresses the token is accepted from; unset means every
-  // address.
-  ClientRanges client_ranges = 7;
-  // The token's role, by id: a built-in role or one of the workspace's
-  // own, which the creator must hold everything of where the token acts.
-  // Empty gives Admin to a whole-workspace token and Member to a limited
-  // one.
-  string role = 8;
-}
-
-message CreateTenantTokenResponse {
-  Token token = 1;
-  // The new token. It is returned only here.
-  string value = 2;
-}
-
 message CreateProductTokenRequest {
   string product = 1;
   // Unset means 90 days from now.
@@ -2724,52 +2112,6 @@ message DeleteClientRequest {
 }
 
 message DeleteClientResponse {}
-
-message ListEgressIPsRequest {
-  string tenant = 1;
-  // The most hosts in one page; zero lets the server choose.
-  int32 page_size = 2;
-  // From an earlier response's next_page_token; empty for the first page.
-  string page_token = 3;
-}
-
-// ListEgressIPsResponse lists the addresses to allowlist and the hosts they
-// come from.
-message ListEgressIPsResponse {
-  // Every address of the hosts of every page with known addresses, sorted
-  // and without repeats. Every page holds all of them.
-  repeated string ips = 1;
-  // The hosts the workspace's jobs can land on, ordered by kind (own hosts
-  // first) and ID.
-  repeated EgressHost hosts = 2;
-  // False when some host of any page has addresses that are unknown or
-  // change per job, so ips may not cover every job.
-  bool complete = 3;
-  // Empty on the last page.
-  string next_page_token = 4;
-}
-
-// EgressHost is one host a workspace's jobs can land on.
-message EgressHost {
-  // The host's id and name. A member's answer, from the Workspace API,
-  // leaves them empty for a shared host.
-  string host_id = 1;
-  string name = 2;
-  // The host is shared between workspaces rather than the workspace's own.
-  bool shared = 3;
-  HostEgress egress = 4;
-  // For an EGRESS_SOURCE_PER_JOB host: the addresses its jobs ran from in
-  // the last 7 days, sorted.
-  repeated string recent_ips = 5;
-  // The host's cloud ("aws"), empty for a host with an agent.
-  string cloud = 6;
-  // For a cloud host: "public" or "nat".
-  string cloud_egress = 7;
-  // For a "nat" cloud host: a job echoed one of the host's addresses in the
-  // last 7 days. Until then the response is not complete, and recent_ips
-  // shows what jobs echoed.
-  bool confirmed = 8;
-}
 
 message CheckCloudHostRequest {
   string host_id = 1;
@@ -2968,102 +2310,6 @@ message FillerPause {
   google.protobuf.Timestamp since = 4;
   // When a filler pass last read the states; see Filler.pause_as_of.
   google.protobuf.Timestamp as_of = 5;
-}
-
-message SetTenantAllowCacheWarmRequest {
-  string id = 1;
-  bool allow_cache_warm = 2;
-}
-
-message SetTenantAllowCacheWarmResponse {
-  Tenant tenant = 1;
-}
-
-message SetTenantCancelRunOnVmDeathRequest {
-  string id = 1;
-  bool cancel_run_on_vm_death = 2;
-}
-
-message SetTenantCancelRunOnVmDeathResponse {
-  Tenant tenant = 1;
-}
-
-message SetTenantMemberJoinRequest {
-  string id = 1;
-  // "off", "approve" or "open".
-  string member_join = 2;
-}
-
-message SetTenantMemberJoinResponse {
-  Tenant tenant = 1;
-}
-
-message GetJobFailureRequest {
-  string job_id = 1;
-}
-
-message GetJobFailureResponse {
-  string job_id = 1;
-  // Toshi's cause in one word, such as "out_of_memory", "time_limit",
-  // "vm_died" or "step_failed"; "none" for a job that succeeded and
-  // "not_ended" for one that has not ended. The full list: "none",
-  // "not_ended", "out_of_memory", "refused", "time_limit", "cancelled",
-  // "cancelled_by_tenant", "cancelled_by_operator", "cancelled_by_uninstall",
-  // "vm_died", "host_lost", "host_revoked", "stop_unconfirmed",
-  // "runner_not_started", "runner_exited", "failed", "too_small",
-  // "throttled", "step_failed", "timed_out", "cancelled_on_github" and
-  // "unknown".
-  string cause = 2;
-  // The cause in one sentence. Where the dashboard's Jobs table shows why
-  // the job ended, this is the same text. A job that ran out of time with a
-  // cold cache or without its cache disk gets a second sentence saying so.
-  string explanation = 3;
-  // GitHub's conclusion for the job, such as "success" or "failure". Empty
-  // when GitHub has not concluded it.
-  string conclusion = 4;
-  // The same as JobTelemetrySummary.verdict and verdict_reason.
-  string verdict = 5;
-  string verdict_reason = 6;
-  // GitHub's failing step, annotations and note are
-  // GitHubService.GetJobFailure's.
-  reserved 7, 8, 12;
-  reserved "failing_step", "annotations", "github_note";
-  // One line on what to do next.
-  string what_to_do = 9;
-  // The job's page on GitHub, and its page on the dashboard. Each is empty
-  // when Toshi does not know it.
-  string github_url = 10;
-  string dashboard_url = 11;
-  // How earlier failures of the same job went when they were re-run on
-  // GitHub. Unset for a job that succeeded, has not ended or
-  // was refused, and for a job without a name.
-  JobFailureHistory history = 13;
-  // The job's cache line, as Job.cache.line. Empty when the job's host
-  // reported nothing about a cache disk.
-  string cache = 14;
-  // The job's tier line, as Job.tier_line. Empty for a job that ran in a
-  // VM.
-  string tier_line = 15;
-}
-
-// JobFailureHistory counts the failures of the jobs with the same
-// repository and job name, in the last `days` days, whose re-run on
-// GitHub passed or failed again. A failure that passed on any re-run
-// counts as passed; one with a failed re-run and none passed counts as
-// failed again. Toshi re-runs and hides nothing for it.
-message JobFailureHistory {
-  int32 days = 1;
-  int32 passed_on_rerun = 2;
-  int32 failed_again = 3;
-  // The job's failing step, and the counts of the failures at a step of
-  // the same name. Empty and 0 when Toshi knows no failing step.
-  string step = 4;
-  int32 step_passed_on_rerun = 5;
-  int32 step_failed_again = 6;
-  // The counts in a sentence or two; it says the failure is likely a
-  // flake only when the job failed on its own and passed on re-run at
-  // least twice. Empty when every count is 0.
-  string sentence = 7;
 }
 
 message GetSecretDeliveryRequest {}

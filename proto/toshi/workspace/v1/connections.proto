@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -73,17 +74,20 @@ service ConnectionService {
     };
   }
 
-  // SetConnectionTransform makes version the version of the workspace's
-  // transform hook a WEBHOOK connection runs on each delivery, and zero
-  // makes it run none. A version of that type the workspace does not have is
-  // NOT_FOUND, one below zero INVALID_ARGUMENT, and a GITHUB connection
-  // FAILED_PRECONDITION, as only a WEBHOOK connection runs one.
-  rpc SetConnectionTransform(SetConnectionTransformRequest) returns (SetConnectionTransformResponse) {
+  // UpdateConnection sets the fields of connection.id's connection that
+  // update_mask names. The one field it sets is target, the URL a WEBHOOK
+  // connection's deliveries are posted to in place of the event log: its
+  // url and secret, both required, or an empty url to clear it. An unset
+  // update_mask names the fields connection carries, an empty one changes
+  // nothing, and "*" or a path of another field is INVALID_ARGUMENT. The
+  // secret is sealed under the workspace's data key and never returned; a
+  // deployment with no keyring refuses it with FAILED_PRECONDITION. A
+  // GITHUB connection is FAILED_PRECONDITION, and one the workspace does
+  // not have NOT_FOUND.
+  rpc UpdateConnection(UpdateConnectionRequest) returns (UpdateConnectionResponse) {
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
-    option (toshi.audit) = {
-      action: "connection.transform_set"
-    };
+    option (toshi.audit) = {target: "connection:connection.id"};
   }
 
   // ListConnectionDeliveries returns a WEBHOOK connection's deliveries: the
@@ -99,8 +103,8 @@ service ConnectionService {
   }
 
   // GetConnectionDelivery returns one delivery, without its body, and its
-  // runs: each time a worker made it an event, dropped it or failed it,
-  // oldest first. A delivery the workspace does not have is NOT_FOUND.
+  // runs: each time a worker made it an event, posted it to its
+  // connection's target, dropped it or failed it, oldest first. A delivery the workspace does not have is NOT_FOUND.
   rpc GetConnectionDelivery(GetConnectionDeliveryRequest) returns (GetConnectionDeliveryResponse) {
     option (toshi.permission) = "connections.read";
     option (toshi.scope) = "workspace";
@@ -108,8 +112,8 @@ service ConnectionService {
 
   // ReplayConnectionDelivery sends a processed, dropped or failed delivery
   // through its connection again, as a new message under the same webhook
-  // id: it runs the transform the connection runs then, and its run
-  // records the caller. A delivery still received, whose receipt or body
+  // id: it goes to the connection's target then, or to the event log when
+  // it has none, and its run records the caller. A delivery still received, whose receipt or body
   // expired, or whose connection is deleted is FAILED_PRECONDITION, as is
   // one another replay counted since this call read it. A delivery the
   // workspace does not have is NOT_FOUND.
@@ -152,9 +156,26 @@ message Connection {
   // Until when a rotated WEBHOOK connection's previous secret still
   // verifies; unset when there is none.
   google.protobuf.Timestamp previous_secret_expires_at = 8;
-  // The version of the workspace's transform hook a WEBHOOK connection runs
-  // on each delivery; zero runs none.
-  int32 transform_version = 9;
+  reserved 9;
+  reserved "transform_version";
+  // Where a WEBHOOK connection's deliveries are posted in place of the
+  // event log; unset when they become events.
+  ConnectionTarget target = 10;
+}
+
+// ConnectionTarget is the URL a WEBHOOK connection's deliveries are posted
+// to: each delivery's event, as the event log would hold it, signed as
+// Standard Webhooks does with the target's own secret, until the URL
+// answers 2xx or the tries run out.
+message ConnectionTarget {
+  // url is the https URL the events are posted to.
+  string url = 1;
+  // secret is the signing secret: "whsec_" and the base64 of 24 to 64
+  // bytes. Input only: no call returns it.
+  string secret = 2;
+  // updated_by is who set it last, as the audit log names them.
+  string updated_by = 3;
+  google.protobuf.Timestamp updated_at = 4;
 }
 
 message ListConnectionsRequest {
@@ -217,16 +238,15 @@ message RotateConnectionSecretResponse {
   string secret = 2;
 }
 
-message SetConnectionTransformRequest {
-  string connection_id = 1;
-  // The transform hook version the connection runs; zero runs none.
-  int32 version = 2;
+message UpdateConnectionRequest {
+  // id names the connection; the fields update_mask names carry the new
+  // values.
+  Connection connection = 1;
+  google.protobuf.FieldMask update_mask = 2;
 }
 
-message SetConnectionTransformResponse {
+message UpdateConnectionResponse {
   Connection connection = 1;
-  // The version the connection ran before; zero for none.
-  int32 previous_version = 2;
 }
 
 // ConnectionDeliveryState is where a WEBHOOK connection's delivery stands.
@@ -234,11 +254,12 @@ enum ConnectionDeliveryState {
   CONNECTION_DELIVERY_STATE_UNSPECIFIED = 0;
   // Stored and waiting for a worker, or being run.
   CONNECTION_DELIVERY_STATE_RECEIVED = 1;
-  // It became an event.
+  // It became an event, or its connection's target took it.
   CONNECTION_DELIVERY_STATE_PROCESSED = 2;
   // It became no event, for the reason the delivery names.
   CONNECTION_DELIVERY_STATE_DROPPED = 3;
-  // The store failed on every try to write its event.
+  // The store failed on every try to write its event, or its connection's
+  // target took it on no try.
   CONNECTION_DELIVERY_STATE_FAILED = 4;
 }
 
@@ -250,7 +271,7 @@ message ConnectionDelivery {
   // The sender's webhook-id header.
   string webhook_id = 3;
   ConnectionDeliveryState state = 4;
-  // Why it was dropped or failed, such as transform_error or store_error;
+  // Why it was dropped or failed, such as delivery_failed or store_error;
   // empty otherwise.
   string reason = 5;
   // The time the sender signed; when the ingress stored it.
@@ -267,9 +288,8 @@ message ConnectionDelivery {
   // When the workspace's retention removed the body; unset while it is
   // kept. A delivery without its body is not replayed.
   google.protobuf.Timestamp body_expired_at = 12;
-  // The transform version the connection ran when the delivery arrived;
-  // zero for none.
-  int32 transform_version = 13;
+  reserved 13;
+  reserved "transform_version";
   // How many times it was replayed.
   int32 replays = 14;
   // Who asked for the latest replay; empty before one.
@@ -284,24 +304,23 @@ message ConnectionDelivery {
 message ConnectionDeliveryRun {
   // 1 for the first run, counting up.
   int32 run = 1;
-  // The transform version the run ran; zero for none.
-  int32 transform_version = 2;
-  // The transform version the connection ran when the delivery arrived.
-  int32 receipt_version = 3;
-  // event, drop, transform_error, transform_timeout,
-  // transform_invalid_output, connection_deleted, body_not_json,
+  reserved 2, 3, 6;
+  reserved "transform_version", "receipt_version", "reason";
+  // event, delivered, delivery_failed, connection_deleted, body_not_json,
   // invalid_event, unnamed or failed.
   string outcome = 4;
   // The event the run wrote or found; empty when it wrote none.
   string event_id = 5;
-  // The transform's own reason for a drop.
-  string reason = 6;
-  // What failed, for a transform that failed or a store that did.
+  // What failed, for a target that took the delivery on no try or a store
+  // that failed.
   string error = 7;
   google.protobuf.Duration duration = 8;
   google.protobuf.Timestamp finished_at = 9;
   // Who asked for the replay the run ran; empty for the sender's message.
   string actor = 10;
+  // The outbound delivery that posted it to the connection's target, for
+  // delivered and delivery_failed.
+  string target_delivery_id = 11;
 }
 
 message ListConnectionDeliveriesRequest {
