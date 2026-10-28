@@ -235,6 +235,9 @@ const (
 	// OperatorServiceSetTenantCancelRunOnVmDeathProcedure is the fully-qualified name of the
 	// OperatorService's SetTenantCancelRunOnVmDeath RPC.
 	OperatorServiceSetTenantCancelRunOnVmDeathProcedure = "/toshi.operator.v1.OperatorService/SetTenantCancelRunOnVmDeath"
+	// OperatorServiceSetTenantMemberJoinProcedure is the fully-qualified name of the OperatorService's
+	// SetTenantMemberJoin RPC.
+	OperatorServiceSetTenantMemberJoinProcedure = "/toshi.operator.v1.OperatorService/SetTenantMemberJoin"
 	// OperatorServiceGetJobFailureProcedure is the fully-qualified name of the OperatorService's
 	// GetJobFailure RPC.
 	OperatorServiceGetJobFailureProcedure = "/toshi.operator.v1.OperatorService/GetJobFailure"
@@ -649,6 +652,11 @@ type OperatorServiceClient interface {
 	// workspace as stored. On by default. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantCancelRunOnVmDeath(context.Context, *connect.Request[operatorv1.SetTenantCancelRunOnVmDeathRequest]) (*connect.Response[operatorv1.SetTenantCancelRunOnVmDeathResponse], error)
+	// SetTenantMemberJoin sets who may join the workspace through its GitHub
+	// App installation on an organisation, "off", "approve" or "open", and
+	// returns the workspace as stored. Off by default. An empty ID or another
+	// value fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+	SetTenantMemberJoin(context.Context, *connect.Request[operatorv1.SetTenantMemberJoinRequest]) (*connect.Response[operatorv1.SetTenantMemberJoinResponse], error)
 	// GetJobFailure says why a job ended the way it did and what to do next,
 	// from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
 	// says, which the CLI and the dashboard compose into it. A workspace caller
@@ -1148,6 +1156,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("SetTenantCancelRunOnVmDeath")),
 			connect.WithClientOptions(opts...),
 		),
+		setTenantMemberJoin: connect.NewClient[operatorv1.SetTenantMemberJoinRequest, operatorv1.SetTenantMemberJoinResponse](
+			httpClient,
+			baseURL+OperatorServiceSetTenantMemberJoinProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("SetTenantMemberJoin")),
+			connect.WithClientOptions(opts...),
+		),
 		getJobFailure: connect.NewClient[operatorv1.GetJobFailureRequest, operatorv1.GetJobFailureResponse](
 			httpClient,
 			baseURL+OperatorServiceGetJobFailureProcedure,
@@ -1274,6 +1288,7 @@ type operatorServiceClient struct {
 	listFillerRuns              *connect.Client[operatorv1.ListFillerRunsRequest, operatorv1.ListFillerRunsResponse]
 	setTenantAllowCacheWarm     *connect.Client[operatorv1.SetTenantAllowCacheWarmRequest, operatorv1.SetTenantAllowCacheWarmResponse]
 	setTenantCancelRunOnVmDeath *connect.Client[operatorv1.SetTenantCancelRunOnVmDeathRequest, operatorv1.SetTenantCancelRunOnVmDeathResponse]
+	setTenantMemberJoin         *connect.Client[operatorv1.SetTenantMemberJoinRequest, operatorv1.SetTenantMemberJoinResponse]
 	getJobFailure               *connect.Client[operatorv1.GetJobFailureRequest, operatorv1.GetJobFailureResponse]
 	getSecretDelivery           *connect.Client[operatorv1.GetSecretDeliveryRequest, operatorv1.GetSecretDeliveryResponse]
 	setSecretDelivery           *connect.Client[operatorv1.SetSecretDeliveryRequest, operatorv1.SetSecretDeliveryResponse]
@@ -1618,6 +1633,11 @@ func (c *operatorServiceClient) SetTenantAllowCacheWarm(ctx context.Context, req
 // SetTenantCancelRunOnVmDeath calls toshi.operator.v1.OperatorService.SetTenantCancelRunOnVmDeath.
 func (c *operatorServiceClient) SetTenantCancelRunOnVmDeath(ctx context.Context, req *connect.Request[operatorv1.SetTenantCancelRunOnVmDeathRequest]) (*connect.Response[operatorv1.SetTenantCancelRunOnVmDeathResponse], error) {
 	return c.setTenantCancelRunOnVmDeath.CallUnary(ctx, req)
+}
+
+// SetTenantMemberJoin calls toshi.operator.v1.OperatorService.SetTenantMemberJoin.
+func (c *operatorServiceClient) SetTenantMemberJoin(ctx context.Context, req *connect.Request[operatorv1.SetTenantMemberJoinRequest]) (*connect.Response[operatorv1.SetTenantMemberJoinResponse], error) {
+	return c.setTenantMemberJoin.CallUnary(ctx, req)
 }
 
 // GetJobFailure calls toshi.operator.v1.OperatorService.GetJobFailure.
@@ -2050,6 +2070,11 @@ type OperatorServiceHandler interface {
 	// workspace as stored. On by default. An empty ID fails with
 	// INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
 	SetTenantCancelRunOnVmDeath(context.Context, *connect.Request[operatorv1.SetTenantCancelRunOnVmDeathRequest]) (*connect.Response[operatorv1.SetTenantCancelRunOnVmDeathResponse], error)
+	// SetTenantMemberJoin sets who may join the workspace through its GitHub
+	// App installation on an organisation, "off", "approve" or "open", and
+	// returns the workspace as stored. Off by default. An empty ID or another
+	// value fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+	SetTenantMemberJoin(context.Context, *connect.Request[operatorv1.SetTenantMemberJoinRequest]) (*connect.Response[operatorv1.SetTenantMemberJoinResponse], error)
 	// GetJobFailure says why a job ended the way it did and what to do next,
 	// from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
 	// says, which the CLI and the dashboard compose into it. A workspace caller
@@ -2545,6 +2570,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("SetTenantCancelRunOnVmDeath")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceSetTenantMemberJoinHandler := connect.NewUnaryHandler(
+		OperatorServiceSetTenantMemberJoinProcedure,
+		svc.SetTenantMemberJoin,
+		connect.WithSchema(operatorServiceMethods.ByName("SetTenantMemberJoin")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceGetJobFailureHandler := connect.NewUnaryHandler(
 		OperatorServiceGetJobFailureProcedure,
 		svc.GetJobFailure,
@@ -2735,6 +2766,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceSetTenantAllowCacheWarmHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantCancelRunOnVmDeathProcedure:
 			operatorServiceSetTenantCancelRunOnVmDeathHandler.ServeHTTP(w, r)
+		case OperatorServiceSetTenantMemberJoinProcedure:
+			operatorServiceSetTenantMemberJoinHandler.ServeHTTP(w, r)
 		case OperatorServiceGetJobFailureProcedure:
 			operatorServiceGetJobFailureHandler.ServeHTTP(w, r)
 		case OperatorServiceGetSecretDeliveryProcedure:
@@ -3028,6 +3061,10 @@ func (UnimplementedOperatorServiceHandler) SetTenantAllowCacheWarm(context.Conte
 
 func (UnimplementedOperatorServiceHandler) SetTenantCancelRunOnVmDeath(context.Context, *connect.Request[operatorv1.SetTenantCancelRunOnVmDeathRequest]) (*connect.Response[operatorv1.SetTenantCancelRunOnVmDeathResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantCancelRunOnVmDeath is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) SetTenantMemberJoin(context.Context, *connect.Request[operatorv1.SetTenantMemberJoinRequest]) (*connect.Response[operatorv1.SetTenantMemberJoinResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantMemberJoin is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) GetJobFailure(context.Context, *connect.Request[operatorv1.GetJobFailureRequest]) (*connect.Response[operatorv1.GetJobFailureResponse], error) {

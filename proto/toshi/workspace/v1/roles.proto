@@ -91,7 +91,9 @@ service RoleService {
   }
   // ListMembers returns the workspace's members, oldest first: the people
   // a session opens the workspace for, with how and when each joined. A
-  // removed member is not listed.
+  // removed member is not listed. With state MEMBER_STATE_PENDING it
+  // returns instead the people waiting for a workspace admin's approval to
+  // join, oldest request first.
   //
   // A page holds 100 members when page_size is zero, and 1000 at most.
   rpc ListMembers(ListMembersRequest) returns (ListMembersResponse) {
@@ -109,6 +111,23 @@ service RoleService {
     option (toshi.permission) = "members.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "member.removed", target: "member:user_id"};
+  }
+  // ApproveMember makes a person waiting for approval a member, as an
+  // accepted invitation does: it grants no role, and makes them an owner
+  // only when the workspace has no person who owns the whole of it. A
+  // person who is not waiting fails with NOT_FOUND.
+  rpc ApproveMember(ApproveMemberRequest) returns (ApproveMemberResponse) {
+    option (toshi.permission) = "members.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "member.approved", target: "member:user_id"};
+  }
+  // DeclineMember turns down a person waiting for approval. They may ask
+  // again by signing in a day after the decline at the earliest. A person
+  // who is not waiting fails with NOT_FOUND.
+  rpc DeclineMember(DeclineMemberRequest) returns (DeclineMemberResponse) {
+    option (toshi.permission) = "members.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "member.declined", target: "member:user_id"};
   }
   // CreateInvitation makes an invitation to join the workspace and returns
   // its code, once: the control plane keeps only its hash. It is valid for
@@ -305,6 +324,9 @@ message ListMembersRequest {
   int32 page_size = 1;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 2;
+  // MEMBER_STATE_PENDING lists the people waiting for approval; unset or
+  // MEMBER_STATE_ACTIVE lists the members.
+  MemberState state = 3;
 }
 
 message ListMembersResponse {
@@ -323,6 +345,18 @@ enum MemberVia {
   MEMBER_VIA_INVITATION = 2;
   // Holding a role in the workspace when members came in.
   MEMBER_VIA_MIGRATION = 3;
+  // Signing in with GitHub as a member of the organisation of one of the
+  // workspace's GitHub App installations, when the workspace lets such
+  // members join.
+  MEMBER_VIA_GITHUB_MEMBER = 4;
+}
+
+// MemberState says whether a person is a member or waiting to be one.
+enum MemberState {
+  MEMBER_STATE_UNSPECIFIED = 0;
+  MEMBER_STATE_ACTIVE = 1;
+  // Waiting for a workspace admin to approve them.
+  MEMBER_STATE_PENDING = 2;
 }
 
 // Member is a person a session opens the workspace for.
@@ -336,14 +370,36 @@ message Member {
   MemberVia via = 4;
   google.protobuf.Timestamp added_at = 5;
   // Who made the person a member: the inviter for an invitation, the
-  // system for a sign-in.
+  // system for a sign-in, the approver for an approved request.
   Subject added_by = 6;
+  MemberState state = 7;
+  // When a person waiting for approval asked to join; unset for a member.
+  google.protobuf.Timestamp requested_at = 8;
 }
 
 message RemoveMemberRequest {
   // The person's user id.
   string user_id = 1;
 }
+
+message ApproveMemberRequest {
+  // The person's user id.
+  string user_id = 1;
+}
+
+// ApproveMemberResponse carries the new member and whether they became an
+// owner.
+message ApproveMemberResponse {
+  Member member = 1;
+  bool owner = 2;
+}
+
+message DeclineMemberRequest {
+  // The person's user id.
+  string user_id = 1;
+}
+
+message DeclineMemberResponse {}
 
 // RemoveMemberResponse says how many grants went with the membership.
 message RemoveMemberResponse {

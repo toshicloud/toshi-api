@@ -53,6 +53,12 @@ const (
 	// RoleServiceRemoveMemberProcedure is the fully-qualified name of the RoleService's RemoveMember
 	// RPC.
 	RoleServiceRemoveMemberProcedure = "/toshi.workspace.v1.RoleService/RemoveMember"
+	// RoleServiceApproveMemberProcedure is the fully-qualified name of the RoleService's ApproveMember
+	// RPC.
+	RoleServiceApproveMemberProcedure = "/toshi.workspace.v1.RoleService/ApproveMember"
+	// RoleServiceDeclineMemberProcedure is the fully-qualified name of the RoleService's DeclineMember
+	// RPC.
+	RoleServiceDeclineMemberProcedure = "/toshi.workspace.v1.RoleService/DeclineMember"
 	// RoleServiceCreateInvitationProcedure is the fully-qualified name of the RoleService's
 	// CreateInvitation RPC.
 	RoleServiceCreateInvitationProcedure = "/toshi.workspace.v1.RoleService/CreateInvitation"
@@ -109,7 +115,9 @@ type RoleServiceClient interface {
 	RevokeRole(context.Context, *connect.Request[workspacev1.RevokeRoleRequest]) (*connect.Response[workspacev1.RevokeRoleResponse], error)
 	// ListMembers returns the workspace's members, oldest first: the people
 	// a session opens the workspace for, with how and when each joined. A
-	// removed member is not listed.
+	// removed member is not listed. With state MEMBER_STATE_PENDING it
+	// returns instead the people waiting for a workspace admin's approval to
+	// join, oldest request first.
 	//
 	// A page holds 100 members when page_size is zero, and 1000 at most.
 	ListMembers(context.Context, *connect.Request[workspacev1.ListMembersRequest]) (*connect.Response[workspacev1.ListMembersResponse], error)
@@ -121,6 +129,15 @@ type RoleServiceClient interface {
 	// workspace with the reason LAST_OWNER; each names the person under the
 	// key "person". A person who is not a member fails with NOT_FOUND.
 	RemoveMember(context.Context, *connect.Request[workspacev1.RemoveMemberRequest]) (*connect.Response[workspacev1.RemoveMemberResponse], error)
+	// ApproveMember makes a person waiting for approval a member, as an
+	// accepted invitation does: it grants no role, and makes them an owner
+	// only when the workspace has no person who owns the whole of it. A
+	// person who is not waiting fails with NOT_FOUND.
+	ApproveMember(context.Context, *connect.Request[workspacev1.ApproveMemberRequest]) (*connect.Response[workspacev1.ApproveMemberResponse], error)
+	// DeclineMember turns down a person waiting for approval. They may ask
+	// again by signing in a day after the decline at the earliest. A person
+	// who is not waiting fails with NOT_FOUND.
+	DeclineMember(context.Context, *connect.Request[workspacev1.DeclineMemberRequest]) (*connect.Response[workspacev1.DeclineMemberResponse], error)
 	// CreateInvitation makes an invitation to join the workspace and returns
 	// its code, once: the control plane keeps only its hash. It is valid for
 	// ttl, seven days when unset, and 30 days at most. The note is free text,
@@ -214,6 +231,18 @@ func NewRoleServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(roleServiceMethods.ByName("RemoveMember")),
 			connect.WithClientOptions(opts...),
 		),
+		approveMember: connect.NewClient[workspacev1.ApproveMemberRequest, workspacev1.ApproveMemberResponse](
+			httpClient,
+			baseURL+RoleServiceApproveMemberProcedure,
+			connect.WithSchema(roleServiceMethods.ByName("ApproveMember")),
+			connect.WithClientOptions(opts...),
+		),
+		declineMember: connect.NewClient[workspacev1.DeclineMemberRequest, workspacev1.DeclineMemberResponse](
+			httpClient,
+			baseURL+RoleServiceDeclineMemberProcedure,
+			connect.WithSchema(roleServiceMethods.ByName("DeclineMember")),
+			connect.WithClientOptions(opts...),
+		),
 		createInvitation: connect.NewClient[workspacev1.CreateInvitationRequest, workspacev1.CreateInvitationResponse](
 			httpClient,
 			baseURL+RoleServiceCreateInvitationProcedure,
@@ -252,6 +281,8 @@ type roleServiceClient struct {
 	revokeRole       *connect.Client[workspacev1.RevokeRoleRequest, workspacev1.RevokeRoleResponse]
 	listMembers      *connect.Client[workspacev1.ListMembersRequest, workspacev1.ListMembersResponse]
 	removeMember     *connect.Client[workspacev1.RemoveMemberRequest, workspacev1.RemoveMemberResponse]
+	approveMember    *connect.Client[workspacev1.ApproveMemberRequest, workspacev1.ApproveMemberResponse]
+	declineMember    *connect.Client[workspacev1.DeclineMemberRequest, workspacev1.DeclineMemberResponse]
 	createInvitation *connect.Client[workspacev1.CreateInvitationRequest, workspacev1.CreateInvitationResponse]
 	listInvitations  *connect.Client[workspacev1.ListInvitationsRequest, workspacev1.ListInvitationsResponse]
 	revokeInvitation *connect.Client[workspacev1.RevokeInvitationRequest, workspacev1.RevokeInvitationResponse]
@@ -301,6 +332,16 @@ func (c *roleServiceClient) ListMembers(ctx context.Context, req *connect.Reques
 // RemoveMember calls toshi.workspace.v1.RoleService.RemoveMember.
 func (c *roleServiceClient) RemoveMember(ctx context.Context, req *connect.Request[workspacev1.RemoveMemberRequest]) (*connect.Response[workspacev1.RemoveMemberResponse], error) {
 	return c.removeMember.CallUnary(ctx, req)
+}
+
+// ApproveMember calls toshi.workspace.v1.RoleService.ApproveMember.
+func (c *roleServiceClient) ApproveMember(ctx context.Context, req *connect.Request[workspacev1.ApproveMemberRequest]) (*connect.Response[workspacev1.ApproveMemberResponse], error) {
+	return c.approveMember.CallUnary(ctx, req)
+}
+
+// DeclineMember calls toshi.workspace.v1.RoleService.DeclineMember.
+func (c *roleServiceClient) DeclineMember(ctx context.Context, req *connect.Request[workspacev1.DeclineMemberRequest]) (*connect.Response[workspacev1.DeclineMemberResponse], error) {
+	return c.declineMember.CallUnary(ctx, req)
 }
 
 // CreateInvitation calls toshi.workspace.v1.RoleService.CreateInvitation.
@@ -365,7 +406,9 @@ type RoleServiceHandler interface {
 	RevokeRole(context.Context, *connect.Request[workspacev1.RevokeRoleRequest]) (*connect.Response[workspacev1.RevokeRoleResponse], error)
 	// ListMembers returns the workspace's members, oldest first: the people
 	// a session opens the workspace for, with how and when each joined. A
-	// removed member is not listed.
+	// removed member is not listed. With state MEMBER_STATE_PENDING it
+	// returns instead the people waiting for a workspace admin's approval to
+	// join, oldest request first.
 	//
 	// A page holds 100 members when page_size is zero, and 1000 at most.
 	ListMembers(context.Context, *connect.Request[workspacev1.ListMembersRequest]) (*connect.Response[workspacev1.ListMembersResponse], error)
@@ -377,6 +420,15 @@ type RoleServiceHandler interface {
 	// workspace with the reason LAST_OWNER; each names the person under the
 	// key "person". A person who is not a member fails with NOT_FOUND.
 	RemoveMember(context.Context, *connect.Request[workspacev1.RemoveMemberRequest]) (*connect.Response[workspacev1.RemoveMemberResponse], error)
+	// ApproveMember makes a person waiting for approval a member, as an
+	// accepted invitation does: it grants no role, and makes them an owner
+	// only when the workspace has no person who owns the whole of it. A
+	// person who is not waiting fails with NOT_FOUND.
+	ApproveMember(context.Context, *connect.Request[workspacev1.ApproveMemberRequest]) (*connect.Response[workspacev1.ApproveMemberResponse], error)
+	// DeclineMember turns down a person waiting for approval. They may ask
+	// again by signing in a day after the decline at the earliest. A person
+	// who is not waiting fails with NOT_FOUND.
+	DeclineMember(context.Context, *connect.Request[workspacev1.DeclineMemberRequest]) (*connect.Response[workspacev1.DeclineMemberResponse], error)
 	// CreateInvitation makes an invitation to join the workspace and returns
 	// its code, once: the control plane keeps only its hash. It is valid for
 	// ttl, seven days when unset, and 30 days at most. The note is free text,
@@ -466,6 +518,18 @@ func NewRoleServiceHandler(svc RoleServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(roleServiceMethods.ByName("RemoveMember")),
 		connect.WithHandlerOptions(opts...),
 	)
+	roleServiceApproveMemberHandler := connect.NewUnaryHandler(
+		RoleServiceApproveMemberProcedure,
+		svc.ApproveMember,
+		connect.WithSchema(roleServiceMethods.ByName("ApproveMember")),
+		connect.WithHandlerOptions(opts...),
+	)
+	roleServiceDeclineMemberHandler := connect.NewUnaryHandler(
+		RoleServiceDeclineMemberProcedure,
+		svc.DeclineMember,
+		connect.WithSchema(roleServiceMethods.ByName("DeclineMember")),
+		connect.WithHandlerOptions(opts...),
+	)
 	roleServiceCreateInvitationHandler := connect.NewUnaryHandler(
 		RoleServiceCreateInvitationProcedure,
 		svc.CreateInvitation,
@@ -510,6 +574,10 @@ func NewRoleServiceHandler(svc RoleServiceHandler, opts ...connect.HandlerOption
 			roleServiceListMembersHandler.ServeHTTP(w, r)
 		case RoleServiceRemoveMemberProcedure:
 			roleServiceRemoveMemberHandler.ServeHTTP(w, r)
+		case RoleServiceApproveMemberProcedure:
+			roleServiceApproveMemberHandler.ServeHTTP(w, r)
+		case RoleServiceDeclineMemberProcedure:
+			roleServiceDeclineMemberHandler.ServeHTTP(w, r)
 		case RoleServiceCreateInvitationProcedure:
 			roleServiceCreateInvitationHandler.ServeHTTP(w, r)
 		case RoleServiceListInvitationsProcedure:
@@ -561,6 +629,14 @@ func (UnimplementedRoleServiceHandler) ListMembers(context.Context, *connect.Req
 
 func (UnimplementedRoleServiceHandler) RemoveMember(context.Context, *connect.Request[workspacev1.RemoveMemberRequest]) (*connect.Response[workspacev1.RemoveMemberResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.RoleService.RemoveMember is not implemented"))
+}
+
+func (UnimplementedRoleServiceHandler) ApproveMember(context.Context, *connect.Request[workspacev1.ApproveMemberRequest]) (*connect.Response[workspacev1.ApproveMemberResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.RoleService.ApproveMember is not implemented"))
+}
+
+func (UnimplementedRoleServiceHandler) DeclineMember(context.Context, *connect.Request[workspacev1.DeclineMemberRequest]) (*connect.Response[workspacev1.DeclineMemberResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.RoleService.DeclineMember is not implemented"))
 }
 
 func (UnimplementedRoleServiceHandler) CreateInvitation(context.Context, *connect.Request[workspacev1.CreateInvitationRequest]) (*connect.Response[workspacev1.CreateInvitationResponse], error) {

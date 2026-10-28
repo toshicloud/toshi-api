@@ -567,6 +567,14 @@ service OperatorService {
     option (toshi.audit) = {action: "workspace.cancel_run_on_vm_death_set"};
   }
 
+  // SetTenantMemberJoin sets who may join the workspace through its GitHub
+  // App installation on an organisation, "off", "approve" or "open", and
+  // returns the workspace as stored. Off by default. An empty ID or another
+  // value fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+  rpc SetTenantMemberJoin(SetTenantMemberJoinRequest) returns (SetTenantMemberJoinResponse) {
+    option (toshi.audit) = {action: "workspace.member_join_set"};
+  }
+
   // GetJobFailure says why a job ended the way it did and what to do next,
   // from what Toshi stored; GitHubService.GetJobFailure gives what GitHub
   // says, which the CLI and the dashboard compose into it. A workspace caller
@@ -1623,6 +1631,12 @@ message Tenant {
   int32 secret_max_keys_effective = 29;
   int64 secret_max_kib_effective = 30;
   int32 preview_max_ports_effective = 31;
+  // Who may join the workspace through its GitHub App installation on an
+  // organisation without an invitation: "off", nobody (the default);
+  // "approve", a member of the organisation who signs in waits for a
+  // workspace admin to approve them; "open", such a member joins at once.
+  // Joining grants no role.
+  string member_join = 32;
 }
 
 // Reservation is a workspace's floor of slots jobs of one runner size on shared
@@ -2970,6 +2984,16 @@ message SetTenantCancelRunOnVmDeathRequest {
 }
 
 message SetTenantCancelRunOnVmDeathResponse {
+  Tenant tenant = 1;
+}
+
+message SetTenantMemberJoinRequest {
+  string id = 1;
+  // "off", "approve" or "open".
+  string member_join = 2;
+}
+
+message SetTenantMemberJoinResponse {
   Tenant tenant = 1;
 }
 

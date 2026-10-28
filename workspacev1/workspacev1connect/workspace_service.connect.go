@@ -57,6 +57,9 @@ const (
 	// WorkspaceServiceSetWorkspaceCancelRunOnVmDeathProcedure is the fully-qualified name of the
 	// WorkspaceService's SetWorkspaceCancelRunOnVmDeath RPC.
 	WorkspaceServiceSetWorkspaceCancelRunOnVmDeathProcedure = "/toshi.workspace.v1.WorkspaceService/SetWorkspaceCancelRunOnVmDeath"
+	// WorkspaceServiceSetWorkspaceMemberJoinProcedure is the fully-qualified name of the
+	// WorkspaceService's SetWorkspaceMemberJoin RPC.
+	WorkspaceServiceSetWorkspaceMemberJoinProcedure = "/toshi.workspace.v1.WorkspaceService/SetWorkspaceMemberJoin"
 	// WorkspaceServiceSetWorkspaceSpendLimitsProcedure is the fully-qualified name of the
 	// WorkspaceService's SetWorkspaceSpendLimits RPC.
 	WorkspaceServiceSetWorkspaceSpendLimitsProcedure = "/toshi.workspace.v1.WorkspaceService/SetWorkspaceSpendLimits"
@@ -122,6 +125,12 @@ type WorkspaceServiceClient interface {
 	// run of the workspace's job when the job's VM is gone and returns the
 	// workspace as stored. On by default.
 	SetWorkspaceCancelRunOnVmDeath(context.Context, *connect.Request[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest]) (*connect.Response[workspacev1.SetWorkspaceCancelRunOnVmDeathResponse], error)
+	// SetWorkspaceMemberJoin sets who may join the workspace through its
+	// GitHub App installation on an organisation, "off", "approve" or "open",
+	// and returns the workspace as stored. Off by default. Another value fails
+	// with INVALID_ARGUMENT. Turning it off removes no member and leaves the
+	// people waiting for approval listed and approvable.
+	SetWorkspaceMemberJoin(context.Context, *connect.Request[workspacev1.SetWorkspaceMemberJoinRequest]) (*connect.Response[workspacev1.SetWorkspaceMemberJoinResponse], error)
 	// SetWorkspaceSpendLimits sets the workspace's monthly spending cap and its
 	// own jobs-per-hour limit, and returns the workspace as stored; an unset
 	// field is left as it is. A negative value, or a max_jobs_per_hour above
@@ -233,6 +242,12 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceCancelRunOnVmDeath")),
 			connect.WithClientOptions(opts...),
 		),
+		setWorkspaceMemberJoin: connect.NewClient[workspacev1.SetWorkspaceMemberJoinRequest, workspacev1.SetWorkspaceMemberJoinResponse](
+			httpClient,
+			baseURL+WorkspaceServiceSetWorkspaceMemberJoinProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceMemberJoin")),
+			connect.WithClientOptions(opts...),
+		),
 		setWorkspaceSpendLimits: connect.NewClient[workspacev1.SetWorkspaceSpendLimitsRequest, workspacev1.SetWorkspaceSpendLimitsResponse](
 			httpClient,
 			baseURL+WorkspaceServiceSetWorkspaceSpendLimitsProcedure,
@@ -300,6 +315,7 @@ type workspaceServiceClient struct {
 	setWorkspaceAllowOverflow      *connect.Client[workspacev1.SetWorkspaceAllowOverflowRequest, workspacev1.SetWorkspaceAllowOverflowResponse]
 	setWorkspaceAllowCacheWarm     *connect.Client[workspacev1.SetWorkspaceAllowCacheWarmRequest, workspacev1.SetWorkspaceAllowCacheWarmResponse]
 	setWorkspaceCancelRunOnVmDeath *connect.Client[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest, workspacev1.SetWorkspaceCancelRunOnVmDeathResponse]
+	setWorkspaceMemberJoin         *connect.Client[workspacev1.SetWorkspaceMemberJoinRequest, workspacev1.SetWorkspaceMemberJoinResponse]
 	setWorkspaceSpendLimits        *connect.Client[workspacev1.SetWorkspaceSpendLimitsRequest, workspacev1.SetWorkspaceSpendLimitsResponse]
 	listEgressIPs                  *connect.Client[workspacev1.ListEgressIPsRequest, workspacev1.ListEgressIPsResponse]
 	getUsage                       *connect.Client[workspacev1.GetUsageRequest, workspacev1.GetUsageResponse]
@@ -350,6 +366,11 @@ func (c *workspaceServiceClient) SetWorkspaceAllowCacheWarm(ctx context.Context,
 // toshi.workspace.v1.WorkspaceService.SetWorkspaceCancelRunOnVmDeath.
 func (c *workspaceServiceClient) SetWorkspaceCancelRunOnVmDeath(ctx context.Context, req *connect.Request[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest]) (*connect.Response[workspacev1.SetWorkspaceCancelRunOnVmDeathResponse], error) {
 	return c.setWorkspaceCancelRunOnVmDeath.CallUnary(ctx, req)
+}
+
+// SetWorkspaceMemberJoin calls toshi.workspace.v1.WorkspaceService.SetWorkspaceMemberJoin.
+func (c *workspaceServiceClient) SetWorkspaceMemberJoin(ctx context.Context, req *connect.Request[workspacev1.SetWorkspaceMemberJoinRequest]) (*connect.Response[workspacev1.SetWorkspaceMemberJoinResponse], error) {
+	return c.setWorkspaceMemberJoin.CallUnary(ctx, req)
 }
 
 // SetWorkspaceSpendLimits calls toshi.workspace.v1.WorkspaceService.SetWorkspaceSpendLimits.
@@ -433,6 +454,12 @@ type WorkspaceServiceHandler interface {
 	// run of the workspace's job when the job's VM is gone and returns the
 	// workspace as stored. On by default.
 	SetWorkspaceCancelRunOnVmDeath(context.Context, *connect.Request[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest]) (*connect.Response[workspacev1.SetWorkspaceCancelRunOnVmDeathResponse], error)
+	// SetWorkspaceMemberJoin sets who may join the workspace through its
+	// GitHub App installation on an organisation, "off", "approve" or "open",
+	// and returns the workspace as stored. Off by default. Another value fails
+	// with INVALID_ARGUMENT. Turning it off removes no member and leaves the
+	// people waiting for approval listed and approvable.
+	SetWorkspaceMemberJoin(context.Context, *connect.Request[workspacev1.SetWorkspaceMemberJoinRequest]) (*connect.Response[workspacev1.SetWorkspaceMemberJoinResponse], error)
 	// SetWorkspaceSpendLimits sets the workspace's monthly spending cap and its
 	// own jobs-per-hour limit, and returns the workspace as stored; an unset
 	// field is left as it is. A negative value, or a max_jobs_per_hour above
@@ -540,6 +567,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceCancelRunOnVmDeath")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceSetWorkspaceMemberJoinHandler := connect.NewUnaryHandler(
+		WorkspaceServiceSetWorkspaceMemberJoinProcedure,
+		svc.SetWorkspaceMemberJoin,
+		connect.WithSchema(workspaceServiceMethods.ByName("SetWorkspaceMemberJoin")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceSetWorkspaceSpendLimitsHandler := connect.NewUnaryHandler(
 		WorkspaceServiceSetWorkspaceSpendLimitsProcedure,
 		svc.SetWorkspaceSpendLimits,
@@ -612,6 +645,8 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceSetWorkspaceAllowCacheWarmHandler.ServeHTTP(w, r)
 		case WorkspaceServiceSetWorkspaceCancelRunOnVmDeathProcedure:
 			workspaceServiceSetWorkspaceCancelRunOnVmDeathHandler.ServeHTTP(w, r)
+		case WorkspaceServiceSetWorkspaceMemberJoinProcedure:
+			workspaceServiceSetWorkspaceMemberJoinHandler.ServeHTTP(w, r)
 		case WorkspaceServiceSetWorkspaceSpendLimitsProcedure:
 			workspaceServiceSetWorkspaceSpendLimitsHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListEgressIPsProcedure:
@@ -669,6 +704,10 @@ func (UnimplementedWorkspaceServiceHandler) SetWorkspaceAllowCacheWarm(context.C
 
 func (UnimplementedWorkspaceServiceHandler) SetWorkspaceCancelRunOnVmDeath(context.Context, *connect.Request[workspacev1.SetWorkspaceCancelRunOnVmDeathRequest]) (*connect.Response[workspacev1.SetWorkspaceCancelRunOnVmDeathResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.SetWorkspaceCancelRunOnVmDeath is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) SetWorkspaceMemberJoin(context.Context, *connect.Request[workspacev1.SetWorkspaceMemberJoinRequest]) (*connect.Response[workspacev1.SetWorkspaceMemberJoinResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.SetWorkspaceMemberJoin is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) SetWorkspaceSpendLimits(context.Context, *connect.Request[workspacev1.SetWorkspaceSpendLimitsRequest]) (*connect.Response[workspacev1.SetWorkspaceSpendLimitsResponse], error) {

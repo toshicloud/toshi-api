@@ -73,6 +73,15 @@ service WorkspaceService {
     option (toshi.permission) = "workspace.write";
     option (toshi.audit) = {action: "workspace.cancel_run_on_vm_death_set"};
   }
+  // SetWorkspaceMemberJoin sets who may join the workspace through its
+  // GitHub App installation on an organisation, "off", "approve" or "open",
+  // and returns the workspace as stored. Off by default. Another value fails
+  // with INVALID_ARGUMENT. Turning it off removes no member and leaves the
+  // people waiting for approval listed and approvable.
+  rpc SetWorkspaceMemberJoin(SetWorkspaceMemberJoinRequest) returns (SetWorkspaceMemberJoinResponse) {
+    option (toshi.permission) = "workspace.write";
+    option (toshi.audit) = {action: "workspace.member_join_set"};
+  }
   // SetWorkspaceSpendLimits sets the workspace's monthly spending cap and its
   // own jobs-per-hour limit, and returns the workspace as stored; an unset
   // field is left as it is. A negative value, or a max_jobs_per_hour above
@@ -187,6 +196,10 @@ message SetWorkspaceCancelRunOnVmDeathResponse {
   Workspace workspace = 1;
 }
 
+message SetWorkspaceMemberJoinResponse {
+  Workspace workspace = 1;
+}
+
 message SetWorkspaceSpendLimitsResponse {
   Workspace workspace = 1;
 }
@@ -228,6 +241,11 @@ message SetWorkspaceAllowCacheWarmRequest {
 
 message SetWorkspaceCancelRunOnVmDeathRequest {
   bool cancel_run_on_vm_death = 1;
+}
+
+message SetWorkspaceMemberJoinRequest {
+  // "off", "approve" or "open".
+  string member_join = 1;
 }
 
 message SetWorkspaceSpendLimitsRequest {
@@ -436,6 +454,12 @@ message Workspace {
   int32 secret_max_keys_effective = 29;
   int64 secret_max_kib_effective = 30;
   int32 preview_max_ports_effective = 31;
+  // Who may join the workspace through its GitHub App installation on an
+  // organisation without an invitation: "off", nobody (the default);
+  // "approve", a member of the organisation who signs in waits for a
+  // workspace admin to approve them; "open", such a member joins at once.
+  // Joining grants no role.
+  string member_join = 32;
 }
 
 // Reservation is a workspace's floor of slots jobs of one runner size on shared
