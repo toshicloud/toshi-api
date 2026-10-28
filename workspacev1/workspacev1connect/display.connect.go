@@ -66,7 +66,10 @@ type DisplayServiceClient interface {
 	// viewers, or a second session with input on a job, fails with
 	// FAILED_PRECONDITION. A session with input on a Windows VM whose host's
 	// pool does not set display_input fails with FAILED_PRECONDITION and the
-	// reason DISPLAY_INPUT_NOT_ENABLED. A session ends when it is closed, when no bytes
+	// reason DISPLAY_INPUT_NOT_ENABLED. A job on Windows that Toshi licenses
+	// (a cloud pool, or a pool with licence = "toshi") opens no session of
+	// either mode: FAILED_PRECONDITION with the reason TOSHI_LICENSED_WINDOWS.
+	// A session ends when it is closed, when no bytes
 	// of the screen's protocol go either way for its idle close, when its
 	// token expires before it attaches, when its job stops running on the
 	// VM it was opened on, or when the workspace is suspended.
@@ -230,7 +233,10 @@ type DisplayServiceHandler interface {
 	// viewers, or a second session with input on a job, fails with
 	// FAILED_PRECONDITION. A session with input on a Windows VM whose host's
 	// pool does not set display_input fails with FAILED_PRECONDITION and the
-	// reason DISPLAY_INPUT_NOT_ENABLED. A session ends when it is closed, when no bytes
+	// reason DISPLAY_INPUT_NOT_ENABLED. A job on Windows that Toshi licenses
+	// (a cloud pool, or a pool with licence = "toshi") opens no session of
+	// either mode: FAILED_PRECONDITION with the reason TOSHI_LICENSED_WINDOWS.
+	// A session ends when it is closed, when no bytes
 	// of the screen's protocol go either way for its idle close, when its
 	// token expires before it attaches, when its job stops running on the
 	// VM it was opened on, or when the workspace is suspended.
