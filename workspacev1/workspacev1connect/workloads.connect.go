@@ -156,6 +156,9 @@ const (
 	// WorkloadServiceListEventsProcedure is the fully-qualified name of the WorkloadService's
 	// ListEvents RPC.
 	WorkloadServiceListEventsProcedure = "/toshi.workspace.v1.WorkloadService/ListEvents"
+	// WorkloadServiceExportEventsProcedure is the fully-qualified name of the WorkloadService's
+	// ExportEvents RPC.
+	WorkloadServiceExportEventsProcedure = "/toshi.workspace.v1.WorkloadService/ExportEvents"
 	// WorkloadServiceWatchEventsProcedure is the fully-qualified name of the WorkloadService's
 	// WatchEvents RPC.
 	WorkloadServiceWatchEventsProcedure = "/toshi.workspace.v1.WorkloadService/WatchEvents"
@@ -424,6 +427,19 @@ type WorkloadServiceClient interface {
 	//
 	// A page holds 50 events when page_size is zero, and 500 at most.
 	ListEvents(context.Context, *connect.Request[workspacev1.ListEventsRequest]) (*connect.Response[workspacev1.ListEventsResponse], error)
+	// ExportEvents streams the selected events as JSON lines, oldest first,
+	// without a row cap. The first line is {"header":{"since":...,"until":...,
+	// "retention_boundary":...|null,"crossed":true|false}}, followed by one
+	// Event per line. The plan must include event export or the call fails with
+	// PERMISSION_DENIED. Project and environment are required as in ListEvents.
+	//
+	// Since is required; until defaults to now. Since must be before until,
+	// else INVALID_ARGUMENT. A cursor from a previous response resumes after
+	// its last row, sending the header again. A malformed cursor or one from
+	// another range or filter fails with INVALID_ARGUMENT; a resume cursor at
+	// or behind the retention boundary fails with OUT_OF_RANGE. When resuming
+	// without an until, the cursor keeps the original range's until.
+	ExportEvents(context.Context, *connect.Request[workspacev1.ExportEventsRequest]) (*connect.ServerStreamForClient[workspacev1.ExportEventsResponse], error)
 	// WatchEvents streams the events after a cursor, then each new event as
 	// it is written, for a client that stays connected.
 	WatchEvents(context.Context, *connect.Request[workspacev1.WatchEventsRequest]) (*connect.ServerStreamForClient[workspacev1.WatchEventsResponse], error)
@@ -699,6 +715,12 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("ListEvents")),
 			connect.WithClientOptions(opts...),
 		),
+		exportEvents: connect.NewClient[workspacev1.ExportEventsRequest, workspacev1.ExportEventsResponse](
+			httpClient,
+			baseURL+WorkloadServiceExportEventsProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ExportEvents")),
+			connect.WithClientOptions(opts...),
+		),
 		watchEvents: connect.NewClient[workspacev1.WatchEventsRequest, workspacev1.WatchEventsResponse](
 			httpClient,
 			baseURL+WorkloadServiceWatchEventsProcedure,
@@ -764,6 +786,7 @@ type workloadServiceClient struct {
 	listServiceActivations *connect.Client[workspacev1.ListServiceActivationsRequest, workspacev1.ListServiceActivationsResponse]
 	listServiceRuns        *connect.Client[workspacev1.ListServiceRunsRequest, workspacev1.ListServiceRunsResponse]
 	listEvents             *connect.Client[workspacev1.ListEventsRequest, workspacev1.ListEventsResponse]
+	exportEvents           *connect.Client[workspacev1.ExportEventsRequest, workspacev1.ExportEventsResponse]
 	watchEvents            *connect.Client[workspacev1.WatchEventsRequest, workspacev1.WatchEventsResponse]
 	getOperation           *connect.Client[workspacev1.GetOperationRequest, workspacev1.GetOperationResponse]
 	waitOperation          *connect.Client[workspacev1.WaitOperationRequest, workspacev1.WaitOperationResponse]
@@ -977,6 +1000,11 @@ func (c *workloadServiceClient) ListServiceRuns(ctx context.Context, req *connec
 // ListEvents calls toshi.workspace.v1.WorkloadService.ListEvents.
 func (c *workloadServiceClient) ListEvents(ctx context.Context, req *connect.Request[workspacev1.ListEventsRequest]) (*connect.Response[workspacev1.ListEventsResponse], error) {
 	return c.listEvents.CallUnary(ctx, req)
+}
+
+// ExportEvents calls toshi.workspace.v1.WorkloadService.ExportEvents.
+func (c *workloadServiceClient) ExportEvents(ctx context.Context, req *connect.Request[workspacev1.ExportEventsRequest]) (*connect.ServerStreamForClient[workspacev1.ExportEventsResponse], error) {
+	return c.exportEvents.CallServerStream(ctx, req)
 }
 
 // WatchEvents calls toshi.workspace.v1.WorkloadService.WatchEvents.
@@ -1251,6 +1279,19 @@ type WorkloadServiceHandler interface {
 	//
 	// A page holds 50 events when page_size is zero, and 500 at most.
 	ListEvents(context.Context, *connect.Request[workspacev1.ListEventsRequest]) (*connect.Response[workspacev1.ListEventsResponse], error)
+	// ExportEvents streams the selected events as JSON lines, oldest first,
+	// without a row cap. The first line is {"header":{"since":...,"until":...,
+	// "retention_boundary":...|null,"crossed":true|false}}, followed by one
+	// Event per line. The plan must include event export or the call fails with
+	// PERMISSION_DENIED. Project and environment are required as in ListEvents.
+	//
+	// Since is required; until defaults to now. Since must be before until,
+	// else INVALID_ARGUMENT. A cursor from a previous response resumes after
+	// its last row, sending the header again. A malformed cursor or one from
+	// another range or filter fails with INVALID_ARGUMENT; a resume cursor at
+	// or behind the retention boundary fails with OUT_OF_RANGE. When resuming
+	// without an until, the cursor keeps the original range's until.
+	ExportEvents(context.Context, *connect.Request[workspacev1.ExportEventsRequest], *connect.ServerStream[workspacev1.ExportEventsResponse]) error
 	// WatchEvents streams the events after a cursor, then each new event as
 	// it is written, for a client that stays connected.
 	WatchEvents(context.Context, *connect.Request[workspacev1.WatchEventsRequest], *connect.ServerStream[workspacev1.WatchEventsResponse]) error
@@ -1522,6 +1563,12 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("ListEvents")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceExportEventsHandler := connect.NewServerStreamHandler(
+		WorkloadServiceExportEventsProcedure,
+		svc.ExportEvents,
+		connect.WithSchema(workloadServiceMethods.ByName("ExportEvents")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceWatchEventsHandler := connect.NewServerStreamHandler(
 		WorkloadServiceWatchEventsProcedure,
 		svc.WatchEvents,
@@ -1626,6 +1673,8 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceListServiceRunsHandler.ServeHTTP(w, r)
 		case WorkloadServiceListEventsProcedure:
 			workloadServiceListEventsHandler.ServeHTTP(w, r)
+		case WorkloadServiceExportEventsProcedure:
+			workloadServiceExportEventsHandler.ServeHTTP(w, r)
 		case WorkloadServiceWatchEventsProcedure:
 			workloadServiceWatchEventsHandler.ServeHTTP(w, r)
 		case WorkloadServiceGetOperationProcedure:
@@ -1807,6 +1856,10 @@ func (UnimplementedWorkloadServiceHandler) ListServiceRuns(context.Context, *con
 
 func (UnimplementedWorkloadServiceHandler) ListEvents(context.Context, *connect.Request[workspacev1.ListEventsRequest]) (*connect.Response[workspacev1.ListEventsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ListEvents is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ExportEvents(context.Context, *connect.Request[workspacev1.ExportEventsRequest], *connect.ServerStream[workspacev1.ExportEventsResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ExportEvents is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) WatchEvents(context.Context, *connect.Request[workspacev1.WatchEventsRequest], *connect.ServerStream[workspacev1.WatchEventsResponse]) error {

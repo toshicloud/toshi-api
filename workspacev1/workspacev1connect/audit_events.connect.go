@@ -36,6 +36,9 @@ const (
 	// AuditEventServiceListAuditEventsProcedure is the fully-qualified name of the AuditEventService's
 	// ListAuditEvents RPC.
 	AuditEventServiceListAuditEventsProcedure = "/toshi.workspace.v1.AuditEventService/ListAuditEvents"
+	// AuditEventServiceExportAuditEventsProcedure is the fully-qualified name of the
+	// AuditEventService's ExportAuditEvents RPC.
+	AuditEventServiceExportAuditEventsProcedure = "/toshi.workspace.v1.AuditEventService/ExportAuditEvents"
 )
 
 // AuditEventServiceClient is a client for the toshi.workspace.v1.AuditEventService service.
@@ -45,6 +48,19 @@ type AuditEventServiceClient interface {
 	//
 	// A page holds 100 events when page_size is zero, and 1000 at most.
 	ListAuditEvents(context.Context, *connect.Request[workspacev1.ListAuditEventsRequest]) (*connect.Response[workspacev1.ListAuditEventsResponse], error)
+	// ExportAuditEvents streams the audit log as JSON lines, oldest first,
+	// without a row cap. The first line is {"header":{"since":...,"until":...,
+	// "retention_boundary":...|null,"crossed":true|false}}, followed by one
+	// AuditEvent per line. The plan must include audit export or the call fails
+	// with PERMISSION_DENIED.
+	//
+	// Since is required; until defaults to now. Since must be before until,
+	// else INVALID_ARGUMENT. A cursor from a previous response resumes after
+	// its last row, sending the header again. A malformed cursor or one from
+	// another range fails with INVALID_ARGUMENT; a resume cursor at or behind
+	// the retention boundary fails with OUT_OF_RANGE. When resuming without an
+	// until, the cursor keeps the original range's until.
+	ExportAuditEvents(context.Context, *connect.Request[workspacev1.ExportAuditEventsRequest]) (*connect.ServerStreamForClient[workspacev1.ExportAuditEventsResponse], error)
 }
 
 // NewAuditEventServiceClient constructs a client for the toshi.workspace.v1.AuditEventService
@@ -64,17 +80,29 @@ func NewAuditEventServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(auditEventServiceMethods.ByName("ListAuditEvents")),
 			connect.WithClientOptions(opts...),
 		),
+		exportAuditEvents: connect.NewClient[workspacev1.ExportAuditEventsRequest, workspacev1.ExportAuditEventsResponse](
+			httpClient,
+			baseURL+AuditEventServiceExportAuditEventsProcedure,
+			connect.WithSchema(auditEventServiceMethods.ByName("ExportAuditEvents")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // auditEventServiceClient implements AuditEventServiceClient.
 type auditEventServiceClient struct {
-	listAuditEvents *connect.Client[workspacev1.ListAuditEventsRequest, workspacev1.ListAuditEventsResponse]
+	listAuditEvents   *connect.Client[workspacev1.ListAuditEventsRequest, workspacev1.ListAuditEventsResponse]
+	exportAuditEvents *connect.Client[workspacev1.ExportAuditEventsRequest, workspacev1.ExportAuditEventsResponse]
 }
 
 // ListAuditEvents calls toshi.workspace.v1.AuditEventService.ListAuditEvents.
 func (c *auditEventServiceClient) ListAuditEvents(ctx context.Context, req *connect.Request[workspacev1.ListAuditEventsRequest]) (*connect.Response[workspacev1.ListAuditEventsResponse], error) {
 	return c.listAuditEvents.CallUnary(ctx, req)
+}
+
+// ExportAuditEvents calls toshi.workspace.v1.AuditEventService.ExportAuditEvents.
+func (c *auditEventServiceClient) ExportAuditEvents(ctx context.Context, req *connect.Request[workspacev1.ExportAuditEventsRequest]) (*connect.ServerStreamForClient[workspacev1.ExportAuditEventsResponse], error) {
+	return c.exportAuditEvents.CallServerStream(ctx, req)
 }
 
 // AuditEventServiceHandler is an implementation of the toshi.workspace.v1.AuditEventService
@@ -85,6 +113,19 @@ type AuditEventServiceHandler interface {
 	//
 	// A page holds 100 events when page_size is zero, and 1000 at most.
 	ListAuditEvents(context.Context, *connect.Request[workspacev1.ListAuditEventsRequest]) (*connect.Response[workspacev1.ListAuditEventsResponse], error)
+	// ExportAuditEvents streams the audit log as JSON lines, oldest first,
+	// without a row cap. The first line is {"header":{"since":...,"until":...,
+	// "retention_boundary":...|null,"crossed":true|false}}, followed by one
+	// AuditEvent per line. The plan must include audit export or the call fails
+	// with PERMISSION_DENIED.
+	//
+	// Since is required; until defaults to now. Since must be before until,
+	// else INVALID_ARGUMENT. A cursor from a previous response resumes after
+	// its last row, sending the header again. A malformed cursor or one from
+	// another range fails with INVALID_ARGUMENT; a resume cursor at or behind
+	// the retention boundary fails with OUT_OF_RANGE. When resuming without an
+	// until, the cursor keeps the original range's until.
+	ExportAuditEvents(context.Context, *connect.Request[workspacev1.ExportAuditEventsRequest], *connect.ServerStream[workspacev1.ExportAuditEventsResponse]) error
 }
 
 // NewAuditEventServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -100,10 +141,18 @@ func NewAuditEventServiceHandler(svc AuditEventServiceHandler, opts ...connect.H
 		connect.WithSchema(auditEventServiceMethods.ByName("ListAuditEvents")),
 		connect.WithHandlerOptions(opts...),
 	)
+	auditEventServiceExportAuditEventsHandler := connect.NewServerStreamHandler(
+		AuditEventServiceExportAuditEventsProcedure,
+		svc.ExportAuditEvents,
+		connect.WithSchema(auditEventServiceMethods.ByName("ExportAuditEvents")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.AuditEventService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AuditEventServiceListAuditEventsProcedure:
 			auditEventServiceListAuditEventsHandler.ServeHTTP(w, r)
+		case AuditEventServiceExportAuditEventsProcedure:
+			auditEventServiceExportAuditEventsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -115,4 +164,8 @@ type UnimplementedAuditEventServiceHandler struct{}
 
 func (UnimplementedAuditEventServiceHandler) ListAuditEvents(context.Context, *connect.Request[workspacev1.ListAuditEventsRequest]) (*connect.Response[workspacev1.ListAuditEventsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.AuditEventService.ListAuditEvents is not implemented"))
+}
+
+func (UnimplementedAuditEventServiceHandler) ExportAuditEvents(context.Context, *connect.Request[workspacev1.ExportAuditEventsRequest], *connect.ServerStream[workspacev1.ExportAuditEventsResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.AuditEventService.ExportAuditEvents is not implemented"))
 }

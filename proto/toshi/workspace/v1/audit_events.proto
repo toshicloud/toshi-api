@@ -23,6 +23,26 @@ service AuditEventService {
   rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse) {
     option (toshi.permission) = "audit.read";
   }
+
+  // ExportAuditEvents streams the audit log as JSON lines, oldest first,
+  // without a row cap. The first line is {"header":{"since":...,"until":...,
+  // "retention_boundary":...|null,"crossed":true|false}}, followed by one
+  // AuditEvent per line. The plan must include audit export or the call fails
+  // with PERMISSION_DENIED.
+  //
+  // Since is required; until defaults to now. Since must be before until,
+  // else INVALID_ARGUMENT. A cursor from a previous response resumes after
+  // its last row, sending the header again. A malformed cursor or one from
+  // another range fails with INVALID_ARGUMENT; a resume cursor at or behind
+  // the retention boundary fails with OUT_OF_RANGE. When resuming without an
+  // until, the cursor keeps the original range's until.
+  rpc ExportAuditEvents(ExportAuditEventsRequest) returns (stream ExportAuditEventsResponse) {
+    option (toshi.permission) = "audit.read";
+    option (toshi.audit) = {
+      action: "audit_events.exported"
+      target: "workspace:workspace"
+    };
+  }
 }
 
 // AuditEvent is one append-only audit log entry.
@@ -93,4 +113,15 @@ message ListAuditEventsResponse {
   repeated AuditEvent events = 1;
   // Empty on the last page.
   string next_page_token = 2;
+}
+
+message ExportAuditEventsRequest {
+  google.protobuf.Timestamp since = 1;
+  google.protobuf.Timestamp until = 2;
+  string cursor = 3;
+}
+
+message ExportAuditEventsResponse {
+  bytes data = 1;
+  string cursor = 2;
 }

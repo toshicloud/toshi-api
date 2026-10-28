@@ -353,6 +353,118 @@ func (x *ListAuditEventsResponse) GetNextPageToken() string {
 	return ""
 }
 
+type ExportAuditEventsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Since         *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=since,proto3" json:"since,omitempty"`
+	Until         *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=until,proto3" json:"until,omitempty"`
+	Cursor        string                 `protobuf:"bytes,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExportAuditEventsRequest) Reset() {
+	*x = ExportAuditEventsRequest{}
+	mi := &file_toshi_workspace_v1_audit_events_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExportAuditEventsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExportAuditEventsRequest) ProtoMessage() {}
+
+func (x *ExportAuditEventsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_audit_events_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExportAuditEventsRequest.ProtoReflect.Descriptor instead.
+func (*ExportAuditEventsRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_audit_events_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ExportAuditEventsRequest) GetSince() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Since
+	}
+	return nil
+}
+
+func (x *ExportAuditEventsRequest) GetUntil() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Until
+	}
+	return nil
+}
+
+func (x *ExportAuditEventsRequest) GetCursor() string {
+	if x != nil {
+		return x.Cursor
+	}
+	return ""
+}
+
+type ExportAuditEventsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Cursor        string                 `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExportAuditEventsResponse) Reset() {
+	*x = ExportAuditEventsResponse{}
+	mi := &file_toshi_workspace_v1_audit_events_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExportAuditEventsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExportAuditEventsResponse) ProtoMessage() {}
+
+func (x *ExportAuditEventsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_audit_events_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExportAuditEventsResponse.ProtoReflect.Descriptor instead.
+func (*ExportAuditEventsResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_audit_events_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ExportAuditEventsResponse) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *ExportAuditEventsResponse) GetCursor() string {
+	if x != nil {
+		return x.Cursor
+	}
+	return ""
+}
+
 var File_toshi_workspace_v1_audit_events_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
@@ -391,10 +503,20 @@ const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\aoutcome\x18\b \x01(\tR\aoutcome\"y\n" +
 	"\x17ListAuditEventsResponse\x126\n" +
 	"\x06events\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.AuditEventR\x06events\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken2\x8f\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x96\x01\n" +
+	"\x18ExportAuditEventsRequest\x120\n" +
+	"\x05since\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x120\n" +
+	"\x05until\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05until\x12\x16\n" +
+	"\x06cursor\x18\x03 \x01(\tR\x06cursor\"G\n" +
+	"\x19ExportAuditEventsResponse\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\x12\x16\n" +
+	"\x06cursor\x18\x02 \x01(\tR\x06cursor2\xc4\x02\n" +
 	"\x11AuditEventService\x12z\n" +
 	"\x0fListAuditEvents\x12*.toshi.workspace.v1.ListAuditEventsRequest\x1a+.toshi.workspace.v1.ListAuditEventsResponse\"\x0e\xc2\xf3\x18\n" +
-	"audit.readB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"audit.read\x12\xb2\x01\n" +
+	"\x11ExportAuditEvents\x12,.toshi.workspace.v1.ExportAuditEventsRequest\x1a-.toshi.workspace.v1.ExportAuditEventsResponse\">\xc2\xf3\x18\n" +
+	"audit.read\xd2\xf3\x18,\n" +
+	"\x15audit_events.exported\x12\x13workspace:workspace0\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_audit_events_proto_rawDescOnce sync.Once
@@ -408,24 +530,30 @@ func file_toshi_workspace_v1_audit_events_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_audit_events_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_audit_events_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_toshi_workspace_v1_audit_events_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_toshi_workspace_v1_audit_events_proto_goTypes = []any{
-	(*AuditEvent)(nil),              // 0: toshi.workspace.v1.AuditEvent
-	(*ListAuditEventsRequest)(nil),  // 1: toshi.workspace.v1.ListAuditEventsRequest
-	(*ListAuditEventsResponse)(nil), // 2: toshi.workspace.v1.ListAuditEventsResponse
-	(*timestamppb.Timestamp)(nil),   // 3: google.protobuf.Timestamp
+	(*AuditEvent)(nil),                // 0: toshi.workspace.v1.AuditEvent
+	(*ListAuditEventsRequest)(nil),    // 1: toshi.workspace.v1.ListAuditEventsRequest
+	(*ListAuditEventsResponse)(nil),   // 2: toshi.workspace.v1.ListAuditEventsResponse
+	(*ExportAuditEventsRequest)(nil),  // 3: toshi.workspace.v1.ExportAuditEventsRequest
+	(*ExportAuditEventsResponse)(nil), // 4: toshi.workspace.v1.ExportAuditEventsResponse
+	(*timestamppb.Timestamp)(nil),     // 5: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_audit_events_proto_depIdxs = []int32{
-	3, // 0: toshi.workspace.v1.AuditEvent.at:type_name -> google.protobuf.Timestamp
-	3, // 1: toshi.workspace.v1.ListAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
+	5, // 0: toshi.workspace.v1.AuditEvent.at:type_name -> google.protobuf.Timestamp
+	5, // 1: toshi.workspace.v1.ListAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
 	0, // 2: toshi.workspace.v1.ListAuditEventsResponse.events:type_name -> toshi.workspace.v1.AuditEvent
-	1, // 3: toshi.workspace.v1.AuditEventService.ListAuditEvents:input_type -> toshi.workspace.v1.ListAuditEventsRequest
-	2, // 4: toshi.workspace.v1.AuditEventService.ListAuditEvents:output_type -> toshi.workspace.v1.ListAuditEventsResponse
-	4, // [4:5] is the sub-list for method output_type
-	3, // [3:4] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	5, // 3: toshi.workspace.v1.ExportAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
+	5, // 4: toshi.workspace.v1.ExportAuditEventsRequest.until:type_name -> google.protobuf.Timestamp
+	1, // 5: toshi.workspace.v1.AuditEventService.ListAuditEvents:input_type -> toshi.workspace.v1.ListAuditEventsRequest
+	3, // 6: toshi.workspace.v1.AuditEventService.ExportAuditEvents:input_type -> toshi.workspace.v1.ExportAuditEventsRequest
+	2, // 7: toshi.workspace.v1.AuditEventService.ListAuditEvents:output_type -> toshi.workspace.v1.ListAuditEventsResponse
+	4, // 8: toshi.workspace.v1.AuditEventService.ExportAuditEvents:output_type -> toshi.workspace.v1.ExportAuditEventsResponse
+	7, // [7:9] is the sub-list for method output_type
+	5, // [5:7] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_audit_events_proto_init() }
@@ -439,7 +567,7 @@ func file_toshi_workspace_v1_audit_events_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_audit_events_proto_rawDesc), len(file_toshi_workspace_v1_audit_events_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
