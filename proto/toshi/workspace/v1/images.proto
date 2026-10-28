@@ -1,0 +1,206 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// ImageService keeps a project's own images. A disk image is built on one
+// of Toshi's bases, at one size, from a recipe in the format services use:
+// a fresh VM of the base runs the recipe's setup hook once, and the VM's
+// disk becomes the image's next version, an overlay on that base. A
+// workload names an image to start from its newest ready version.
+//
+// The caller's credential names the workspace, as for WorkloadService.
+// Every request names a project; an empty one is the default project. A
+// project the workspace does not have is NOT_FOUND, and so is an image of
+// another project. With a token limited to one project, any other project
+// is PERMISSION_DENIED, whether the workspace has it or not.
+//
+// An image's name is unique among the workspace's images that are not
+// deleted, in every project, since a CI job names an image by the runner
+// label toshi-image-<name>. A name is lower-case letters, digits and
+// hyphens, starts and ends with a letter or a digit, and is at most 51
+// characters, so that the label is at most 63.
+//
+// Versions are kept by a retention rule. An image keeps its newest 3 ready
+// versions, and any version in use: one a workload that started from it
+// and has not ended runs on, or one a service revision a rollback may
+// select was made with. Any other ready version is pending deletion for 7
+// days, then its overlay is deleted. A service revision whose version is
+// pending deletion or deleted cannot be selected by a rollback.
+//
+// Creating an image needs a plan that allows images; a workspace whose
+// plan does not fails with FAILED_PRECONDITION and the reason
+// PLAN_EXCLUDES_IMAGES. The calls take no request_key.
+service ImageService {
+  // CreateImage creates the image. A name another live image of the
+  // workspace has fails with ALREADY_EXISTS and the reason
+  // IMAGE_NAME_TAKEN. A base that is not one of Toshi's, a size that is
+  // not a Linux size, or a recipe without a setup hook or with a field an
+  // image does not use, fails with INVALID_ARGUMENT.
+  rpc CreateImage(CreateImageRequest) returns (CreateImageResponse) {
+    option (toshi.permission) = "images.write";
+    option (toshi.scope) = "environment";
+  }
+  // GetImage returns the image with its versions, newest first.
+  rpc GetImage(GetImageRequest) returns (GetImageResponse) {
+    option (toshi.permission) = "images.read";
+    option (toshi.scope) = "project";
+  }
+  // ListImages returns the project's images that are not deleted, ordered
+  // by name, each with its newest ready version.
+  //
+  // A page holds 100 images when page_size is zero, and 1000 at most.
+  rpc ListImages(ListImagesRequest) returns (ListImagesResponse) {
+    option (toshi.permission) = "images.read";
+    option (toshi.scope) = "project";
+  }
+  // DeleteImage deletes the image and frees its name. Its versions are
+  // pending deletion at once, with no 7-day wait, and their overlays are
+  // deleted soon after. An image with a version in use fails with
+  // FAILED_PRECONDITION and the reason IMAGE_IN_USE, naming what uses it.
+  rpc DeleteImage(DeleteImageRequest) returns (DeleteImageResponse) {
+    option (toshi.permission) = "images.write";
+    option (toshi.scope) = "project";
+    option (toshi.audit) = {target: "image:name"};
+  }
+}
+
+// ImageKind is what an image is.
+enum ImageKind {
+  IMAGE_KIND_UNSPECIFIED = 0;
+  // A disk: an overlay on one of Toshi's bases, which a VM boots from.
+  IMAGE_KIND_DISK = 1;
+}
+
+// ImageVersionState is where a version is in its life.
+enum ImageVersionState {
+  IMAGE_VERSION_STATE_UNSPECIFIED = 0;
+  // Its build job runs.
+  IMAGE_VERSION_STATE_BUILDING = 1;
+  // Its build did not finish; nothing of it is stored and no workload
+  // starts from it. The image is unchanged.
+  IMAGE_VERSION_STATE_FAILED = 2;
+  // Stored: a workload that names the image starts from the newest one.
+  IMAGE_VERSION_STATE_READY = 3;
+  // Neither one of the newest 3 ready versions nor in use: its overlay is
+  // deleted at delete_after.
+  IMAGE_VERSION_STATE_PENDING_DELETION = 4;
+  // Its overlay is deleted.
+  IMAGE_VERSION_STATE_DELETED = 5;
+}
+
+// Image is a project's own image.
+message Image {
+  string id = 1;
+  string name = 2;
+  // The name of the project it belongs to.
+  string project = 3;
+  ImageKind kind = 4;
+  // The one of Toshi's images it is built on, such as ubuntu-24.04.
+  string base = 5;
+  // The size its builds run at.
+  string size = 6;
+  // The recipe its next build runs, in TOML: that of its newest ready
+  // version, or the one it was created with until a build is ready.
+  string recipe = 7;
+  // The SHA-256 of recipe, in hex.
+  string recipe_digest = 8;
+  // The environment whose secret sets its builds receive.
+  string environment = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  // Its newest ready version; unset when it has none.
+  ImageVersion latest = 12;
+}
+
+// ImageVersion is one build of an image.
+message ImageVersion {
+  string id = 1;
+  // Counts from 1 in the order the image's builds started, failed ones
+  // included.
+  int64 number = 2;
+  ImageVersionState state = 3;
+  // The base it was built on, and that base's SHA-256 in hex; the base is
+  // kept while a version uses it.
+  string base = 4;
+  string base_digest = 5;
+  // The bytes its overlay holds in the object store; 0 until ready.
+  int64 size_bytes = 6;
+  // The SHA-256 of the recipe it was built from, in hex.
+  string recipe_digest = 7;
+  // The job that built it.
+  string build_job_id = 8;
+  // Why its build failed; empty unless state is FAILED.
+  string failure = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp ready_at = 11;
+  // When it became pending deletion, and when its overlay is deleted.
+  google.protobuf.Timestamp pending_since = 12;
+  google.protobuf.Timestamp delete_after = 13;
+  google.protobuf.Timestamp deleted_at = 14;
+  // On a version pending deletion or deleted: the service revisions made
+  // with it, which a rollback can no longer select.
+  repeated ImageVersionPin pinned_by = 15;
+}
+
+// ImageVersionPin is a service revision made with an image version.
+message ImageVersionPin {
+  string service_id = 1;
+  string service_name = 2;
+  int64 revision = 3;
+}
+
+message CreateImageRequest {
+  string project = 1;
+  // The environment whose secret sets the image's builds receive; empty is
+  // the project's default environment.
+  string environment = 2;
+  string name = 3;
+  ImageKind kind = 4;
+  string base = 5;
+  string size = 6;
+  // In the format of a service's recipe, in TOML. An image uses its setup
+  // hook, which is required, and its process's env and cwd for that hook;
+  // any other field fails with INVALID_ARGUMENT.
+  string recipe = 7;
+}
+
+message CreateImageResponse {
+  Image image = 1;
+}
+
+message GetImageRequest {
+  string project = 1;
+  string name = 2;
+}
+
+message GetImageResponse {
+  Image image = 1;
+  // Newest first.
+  repeated ImageVersion versions = 2;
+}
+
+message ListImagesRequest {
+  string project = 1;
+  // The most images in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
+}
+
+message ListImagesResponse {
+  repeated Image images = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message DeleteImageRequest {
+  string project = 1;
+  string name = 2;
+}
+
+message DeleteImageResponse {}
