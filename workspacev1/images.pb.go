@@ -30,6 +30,9 @@ const (
 	ImageKind_IMAGE_KIND_UNSPECIFIED ImageKind = 0
 	// A disk: an overlay on one of Toshi's bases, which a VM boots from.
 	ImageKind_IMAGE_KIND_DISK ImageKind = 1
+	// A container image, pushed to the deployment's container registry at
+	// <workspace id>/<name>. It has no base, size or recipe and is not built.
+	ImageKind_IMAGE_KIND_CONTAINER ImageKind = 2
 )
 
 // Enum value maps for ImageKind.
@@ -37,10 +40,12 @@ var (
 	ImageKind_name = map[int32]string{
 		0: "IMAGE_KIND_UNSPECIFIED",
 		1: "IMAGE_KIND_DISK",
+		2: "IMAGE_KIND_CONTAINER",
 	}
 	ImageKind_value = map[string]int32{
 		"IMAGE_KIND_UNSPECIFIED": 0,
 		"IMAGE_KIND_DISK":        1,
+		"IMAGE_KIND_CONTAINER":   2,
 	}
 )
 
@@ -515,11 +520,13 @@ type CreateImageRequest struct {
 	Environment string    `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	Name        string    `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Kind        ImageKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ImageKind" json:"kind,omitempty"`
-	Base        string    `protobuf:"bytes,5,opt,name=base,proto3" json:"base,omitempty"`
-	Size        string    `protobuf:"bytes,6,opt,name=size,proto3" json:"size,omitempty"`
+	// A disk's base and size; empty for a container image.
+	Base string `protobuf:"bytes,5,opt,name=base,proto3" json:"base,omitempty"`
+	Size string `protobuf:"bytes,6,opt,name=size,proto3" json:"size,omitempty"`
 	// In the format of a service's recipe, in TOML. An image uses its setup
 	// hook, which is required, and its process's env and cwd for that hook;
-	// any other field fails with INVALID_ARGUMENT.
+	// any other field fails with INVALID_ARGUMENT. Empty for a container
+	// image.
 	Recipe        string `protobuf:"bytes,7,opt,name=recipe,proto3" json:"recipe,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1152,10 +1159,11 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x12DeleteImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"\x15\n" +
-	"\x13DeleteImageResponse*<\n" +
+	"\x13DeleteImageResponse*V\n" +
 	"\tImageKind\x12\x1a\n" +
 	"\x16IMAGE_KIND_UNSPECIFIED\x10\x00\x12\x13\n" +
-	"\x0fIMAGE_KIND_DISK\x10\x01*\xe4\x01\n" +
+	"\x0fIMAGE_KIND_DISK\x10\x01\x12\x18\n" +
+	"\x14IMAGE_KIND_CONTAINER\x10\x02*\xe4\x01\n" +
 	"\x11ImageVersionState\x12#\n" +
 	"\x1fIMAGE_VERSION_STATE_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cIMAGE_VERSION_STATE_BUILDING\x10\x01\x12\x1e\n" +
