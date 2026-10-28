@@ -88,6 +88,21 @@ service OperatorService {
   // ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
   rpc RevokeHost(RevokeHostRequest) returns (RevokeHostResponse);
 
+  // ResetCatalogSource forgets the index this deployment last accepted from
+  // a catalog source: its sequence, expiry and digest. The next index the
+  // source serves is then accepted whatever its sequence, as long as it is
+  // signed by a listed key and has not expired. It is for a source whose
+  // signing key was compromised and whose sequence was raised by a forged
+  // index, or that was rebuilt from scratch. The control plane reads the
+  // source again at its next refresh. Operators only. A source with no
+  // accepted index fails with NOT_FOUND.
+  rpc ResetCatalogSource(ResetCatalogSourceRequest) returns (ResetCatalogSourceResponse) {
+    option (toshi.audit) = {
+      action: "catalog_source.reset"
+      target: "catalog_source:name"
+    };
+  }
+
   // RetireOfflineHosts lists the hosts whose state is offline and whose last
   // heartbeat is older than offline_longer_than, oldest first, and with apply
   // set removes each one that holds no assigned, starting or running job.
@@ -1359,6 +1374,20 @@ message RetireHostResponse {}
 
 message RevokeHostRequest {
   string id = 1;
+}
+
+message ResetCatalogSourceRequest {
+  // name is the catalog source's name, as [[catalog.sources]] names it.
+  string name = 1;
+}
+
+message ResetCatalogSourceResponse {
+  // sequence is the sequence of the index that was accepted.
+  int64 sequence = 1;
+  // expires_at is when that index expired or expires.
+  google.protobuf.Timestamp expires_at = 2;
+  // key_id is the key that signed it.
+  string key_id = 3;
 }
 
 message RevokeHostResponse {

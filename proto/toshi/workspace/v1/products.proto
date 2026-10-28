@@ -100,6 +100,15 @@ message CatalogEntry {
   // installation_state is the state of the workspace's installation of it;
   // UNSPECIFIED when the workspace never installed it.
   InstallationState installation_state = 8;
+  // stale is whether the source is stale: the index the deployment last
+  // accepted from it expired more than 7 days ago and it has published no
+  // fresh one. Turning the product on for the first time is
+  // FAILED_PRECONDITION until it does; installations already made keep
+  // running.
+  bool stale = 9;
+  // source_expires_at is when the index the deployment last accepted from
+  // the source expires; unset for an index with no expiry.
+  google.protobuf.Timestamp source_expires_at = 10;
 }
 
 message UpdateProductRequest {

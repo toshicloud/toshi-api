@@ -67,6 +67,9 @@ const (
 	// OperatorServiceRevokeHostProcedure is the fully-qualified name of the OperatorService's
 	// RevokeHost RPC.
 	OperatorServiceRevokeHostProcedure = "/toshi.operator.v1.OperatorService/RevokeHost"
+	// OperatorServiceResetCatalogSourceProcedure is the fully-qualified name of the OperatorService's
+	// ResetCatalogSource RPC.
+	OperatorServiceResetCatalogSourceProcedure = "/toshi.operator.v1.OperatorService/ResetCatalogSource"
 	// OperatorServiceRetireOfflineHostsProcedure is the fully-qualified name of the OperatorService's
 	// RetireOfflineHosts RPC.
 	OperatorServiceRetireOfflineHostsProcedure = "/toshi.operator.v1.OperatorService/RetireOfflineHosts"
@@ -309,6 +312,15 @@ type OperatorServiceClient interface {
 	// changes nothing and returns revoked false. Operators only. An unknown
 	// ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
 	RevokeHost(context.Context, *connect.Request[operatorv1.RevokeHostRequest]) (*connect.Response[operatorv1.RevokeHostResponse], error)
+	// ResetCatalogSource forgets the index this deployment last accepted from
+	// a catalog source: its sequence, expiry and digest. The next index the
+	// source serves is then accepted whatever its sequence, as long as it is
+	// signed by a listed key and has not expired. It is for a source whose
+	// signing key was compromised and whose sequence was raised by a forged
+	// index, or that was rebuilt from scratch. The control plane reads the
+	// source again at its next refresh. Operators only. A source with no
+	// accepted index fails with NOT_FOUND.
+	ResetCatalogSource(context.Context, *connect.Request[operatorv1.ResetCatalogSourceRequest]) (*connect.Response[operatorv1.ResetCatalogSourceResponse], error)
 	// RetireOfflineHosts lists the hosts whose state is offline and whose last
 	// heartbeat is older than offline_longer_than, oldest first, and with apply
 	// set removes each one that holds no assigned, starting or running job.
@@ -780,6 +792,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("RevokeHost")),
 			connect.WithClientOptions(opts...),
 		),
+		resetCatalogSource: connect.NewClient[operatorv1.ResetCatalogSourceRequest, operatorv1.ResetCatalogSourceResponse](
+			httpClient,
+			baseURL+OperatorServiceResetCatalogSourceProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("ResetCatalogSource")),
+			connect.WithClientOptions(opts...),
+		),
 		retireOfflineHosts: connect.NewClient[operatorv1.RetireOfflineHostsRequest, operatorv1.RetireOfflineHostsResponse](
 			httpClient,
 			baseURL+OperatorServiceRetireOfflineHostsProcedure,
@@ -1162,6 +1180,7 @@ type operatorServiceClient struct {
 	setHostOverflow             *connect.Client[operatorv1.SetHostOverflowRequest, operatorv1.SetHostOverflowResponse]
 	retireHost                  *connect.Client[operatorv1.RetireHostRequest, operatorv1.RetireHostResponse]
 	revokeHost                  *connect.Client[operatorv1.RevokeHostRequest, operatorv1.RevokeHostResponse]
+	resetCatalogSource          *connect.Client[operatorv1.ResetCatalogSourceRequest, operatorv1.ResetCatalogSourceResponse]
 	retireOfflineHosts          *connect.Client[operatorv1.RetireOfflineHostsRequest, operatorv1.RetireOfflineHostsResponse]
 	createCloudHost             *connect.Client[operatorv1.CreateCloudHostRequest, operatorv1.CreateCloudHostResponse]
 	createWorkspace             *connect.Client[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse]
@@ -1278,6 +1297,11 @@ func (c *operatorServiceClient) RetireHost(ctx context.Context, req *connect.Req
 // RevokeHost calls toshi.operator.v1.OperatorService.RevokeHost.
 func (c *operatorServiceClient) RevokeHost(ctx context.Context, req *connect.Request[operatorv1.RevokeHostRequest]) (*connect.Response[operatorv1.RevokeHostResponse], error) {
 	return c.revokeHost.CallUnary(ctx, req)
+}
+
+// ResetCatalogSource calls toshi.operator.v1.OperatorService.ResetCatalogSource.
+func (c *operatorServiceClient) ResetCatalogSource(ctx context.Context, req *connect.Request[operatorv1.ResetCatalogSourceRequest]) (*connect.Response[operatorv1.ResetCatalogSourceResponse], error) {
+	return c.resetCatalogSource.CallUnary(ctx, req)
 }
 
 // RetireOfflineHosts calls toshi.operator.v1.OperatorService.RetireOfflineHosts.
@@ -1642,6 +1666,15 @@ type OperatorServiceHandler interface {
 	// changes nothing and returns revoked false. Operators only. An unknown
 	// ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
 	RevokeHost(context.Context, *connect.Request[operatorv1.RevokeHostRequest]) (*connect.Response[operatorv1.RevokeHostResponse], error)
+	// ResetCatalogSource forgets the index this deployment last accepted from
+	// a catalog source: its sequence, expiry and digest. The next index the
+	// source serves is then accepted whatever its sequence, as long as it is
+	// signed by a listed key and has not expired. It is for a source whose
+	// signing key was compromised and whose sequence was raised by a forged
+	// index, or that was rebuilt from scratch. The control plane reads the
+	// source again at its next refresh. Operators only. A source with no
+	// accepted index fails with NOT_FOUND.
+	ResetCatalogSource(context.Context, *connect.Request[operatorv1.ResetCatalogSourceRequest]) (*connect.Response[operatorv1.ResetCatalogSourceResponse], error)
 	// RetireOfflineHosts lists the hosts whose state is offline and whose last
 	// heartbeat is older than offline_longer_than, oldest first, and with apply
 	// set removes each one that holds no assigned, starting or running job.
@@ -2109,6 +2142,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("RevokeHost")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceResetCatalogSourceHandler := connect.NewUnaryHandler(
+		OperatorServiceResetCatalogSourceProcedure,
+		svc.ResetCatalogSource,
+		connect.WithSchema(operatorServiceMethods.ByName("ResetCatalogSource")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceRetireOfflineHostsHandler := connect.NewUnaryHandler(
 		OperatorServiceRetireOfflineHostsProcedure,
 		svc.RetireOfflineHosts,
@@ -2499,6 +2538,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceRetireHostHandler.ServeHTTP(w, r)
 		case OperatorServiceRevokeHostProcedure:
 			operatorServiceRevokeHostHandler.ServeHTTP(w, r)
+		case OperatorServiceResetCatalogSourceProcedure:
+			operatorServiceResetCatalogSourceHandler.ServeHTTP(w, r)
 		case OperatorServiceRetireOfflineHostsProcedure:
 			operatorServiceRetireOfflineHostsHandler.ServeHTTP(w, r)
 		case OperatorServiceCreateCloudHostProcedure:
@@ -2672,6 +2713,10 @@ func (UnimplementedOperatorServiceHandler) RetireHost(context.Context, *connect.
 
 func (UnimplementedOperatorServiceHandler) RevokeHost(context.Context, *connect.Request[operatorv1.RevokeHostRequest]) (*connect.Response[operatorv1.RevokeHostResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RevokeHost is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) ResetCatalogSource(context.Context, *connect.Request[operatorv1.ResetCatalogSourceRequest]) (*connect.Response[operatorv1.ResetCatalogSourceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ResetCatalogSource is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error) {
