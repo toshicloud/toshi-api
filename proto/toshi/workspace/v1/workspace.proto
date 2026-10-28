@@ -15,7 +15,8 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // EndReason says how a workload ended.
 enum EndReason {
   END_REASON_UNSPECIFIED = 0;
-  // A job's command exited; the status's exit_code says with what.
+  // A job's command, or a sandbox's process, exited; the status's
+  // exit_code says with what, 0 being success.
   END_REASON_EXITED = 1;
   // A sandbox or service was stopped.
   END_REASON_STOPPED = 2;
@@ -158,7 +159,8 @@ message Sandbox {
 // SandboxStatus is a sandbox's state and when it got there.
 message SandboxStatus {
   SandboxState state = 1;
-  // Set once the state is ENDED: STOPPED or FAILED.
+  // Set once the state is ENDED: STOPPED or FAILED, or EXITED when its
+  // spec's process exited.
   EndReason end_reason = 2;
   // The most recent error Toshi met running the sandbox.
   Error last_error = 3;
@@ -176,6 +178,13 @@ message SandboxStatus {
   // while the control plane serves no previews. Making or deleting such a
   // channel changes the sandbox, so WatchSandboxes sends it again.
   repeated SandboxPreview previews = 10;
+  // When its spec's process started. Unset while it runs with a process
+  // not started yet: its setup still runs. Never set for a sandbox without
+  // a process.
+  google.protobuf.Timestamp process_started_at = 11;
+  // The exit code of its spec's process, set with end_reason EXITED: 0 is
+  // success, any other code a failure, and -1 a process a signal ended.
+  optional int32 exit_code = 12;
 }
 
 // SandboxState is where a sandbox is in its life. A sandbox can skip a
@@ -420,6 +429,24 @@ message SandboxSpec {
   string container_image_digest = 6;
   // As JobSpec.container_registry_secret, for the sandbox's image.
   string container_registry_secret = 7;
+  // Create only: a command the sandbox's host runs once in it after it
+  // starts running, before process. It must exit 0: any other exit ends
+  // the sandbox FAILED with last_error.code "setup_failed", the exit code
+  // and the end of its output in the message. It runs where an Execute
+  // runs, in container_image when one is set, with the environment an
+  // Execute gets. Unset: none.
+  Command setup = 8;
+  // Create only: a command the sandbox's host starts in it once setup
+  // exited 0 (at once without setup) and keeps running for the sandbox's
+  // life; status.process_started_at says when it started. It is never
+  // started again: its exit ends the sandbox EXITED with the exit code in
+  // status.exit_code, 0 being success. Another code also sets
+  // last_error.code "process_exited", with the code and the end of its
+  // output in the message; a process that could not start ends the sandbox
+  // FAILED with that code. A stop or the time limit ends it with the
+  // sandbox. It runs where and with the environment setup does. Unset:
+  // none.
+  Command process = 9;
 }
 
 // ServiceSpec is a service. Its fields are set wherever a service's
@@ -511,7 +538,8 @@ message SandboxPreview {
 
 // Error is a failure carried in a resource rather than returned by a call.
 message Error {
-  // A Connect error code name, such as "unavailable".
+  // A Connect error code name, such as "unavailable". A sandbox ended by
+  // its own commands has "setup_failed" or "process_exited" instead.
   string code = 1;
   string message = 2;
 }

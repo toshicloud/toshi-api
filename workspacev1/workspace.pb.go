@@ -33,7 +33,8 @@ type EndReason int32
 
 const (
 	EndReason_END_REASON_UNSPECIFIED EndReason = 0
-	// A job's command exited; the status's exit_code says with what.
+	// A job's command, or a sandbox's process, exited; the status's
+	// exit_code says with what, 0 being success.
 	EndReason_END_REASON_EXITED EndReason = 1
 	// A sandbox or service was stopped.
 	EndReason_END_REASON_STOPPED EndReason = 2
@@ -1435,7 +1436,8 @@ func (x *Sandbox) GetRecording() RecordingPolicy {
 type SandboxStatus struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	State SandboxState           `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.SandboxState" json:"state,omitempty"`
-	// Set once the state is ENDED: STOPPED or FAILED.
+	// Set once the state is ENDED: STOPPED or FAILED, or EXITED when its
+	// spec's process exited.
 	EndReason EndReason `protobuf:"varint,2,opt,name=end_reason,json=endReason,proto3,enum=toshi.workspace.v1.EndReason" json:"end_reason,omitempty"`
 	// The most recent error Toshi met running the sandbox.
 	LastError *Error                 `protobuf:"bytes,3,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
@@ -1452,7 +1454,14 @@ type SandboxStatus struct {
 	// at a hostname of its own, the channel `preview` among them. Empty
 	// while the control plane serves no previews. Making or deleting such a
 	// channel changes the sandbox, so WatchSandboxes sends it again.
-	Previews      []*SandboxPreview `protobuf:"bytes,10,rep,name=previews,proto3" json:"previews,omitempty"`
+	Previews []*SandboxPreview `protobuf:"bytes,10,rep,name=previews,proto3" json:"previews,omitempty"`
+	// When its spec's process started. Unset while it runs with a process
+	// not started yet: its setup still runs. Never set for a sandbox without
+	// a process.
+	ProcessStartedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=process_started_at,json=processStartedAt,proto3" json:"process_started_at,omitempty"`
+	// The exit code of its spec's process, set with end_reason EXITED: 0 is
+	// success, any other code a failure, and -1 a process a signal ended.
+	ExitCode      *int32 `protobuf:"varint,12,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1555,6 +1564,20 @@ func (x *SandboxStatus) GetPreviews() []*SandboxPreview {
 		return x.Previews
 	}
 	return nil
+}
+
+func (x *SandboxStatus) GetProcessStartedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ProcessStartedAt
+	}
+	return nil
+}
+
+func (x *SandboxStatus) GetExitCode() int32 {
+	if x != nil && x.ExitCode != nil {
+		return *x.ExitCode
+	}
+	return 0
 }
 
 // Service is a long-running service, started, stopped, woken and held.
@@ -2443,8 +2466,26 @@ type SandboxSpec struct {
 	ContainerImageDigest string `protobuf:"bytes,6,opt,name=container_image_digest,json=containerImageDigest,proto3" json:"container_image_digest,omitempty"`
 	// As JobSpec.container_registry_secret, for the sandbox's image.
 	ContainerRegistrySecret string `protobuf:"bytes,7,opt,name=container_registry_secret,json=containerRegistrySecret,proto3" json:"container_registry_secret,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// Create only: a command the sandbox's host runs once in it after it
+	// starts running, before process. It must exit 0: any other exit ends
+	// the sandbox FAILED with last_error.code "setup_failed", the exit code
+	// and the end of its output in the message. It runs where an Execute
+	// runs, in container_image when one is set, with the environment an
+	// Execute gets. Unset: none.
+	Setup *Command `protobuf:"bytes,8,opt,name=setup,proto3" json:"setup,omitempty"`
+	// Create only: a command the sandbox's host starts in it once setup
+	// exited 0 (at once without setup) and keeps running for the sandbox's
+	// life; status.process_started_at says when it started. It is never
+	// started again: its exit ends the sandbox EXITED with the exit code in
+	// status.exit_code, 0 being success. Another code also sets
+	// last_error.code "process_exited", with the code and the end of its
+	// output in the message; a process that could not start ends the sandbox
+	// FAILED with that code. A stop or the time limit ends it with the
+	// sandbox. It runs where and with the environment setup does. Unset:
+	// none.
+	Process       *Command `protobuf:"bytes,9,opt,name=process,proto3" json:"process,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SandboxSpec) Reset() {
@@ -2524,6 +2565,20 @@ func (x *SandboxSpec) GetContainerRegistrySecret() string {
 		return x.ContainerRegistrySecret
 	}
 	return ""
+}
+
+func (x *SandboxSpec) GetSetup() *Command {
+	if x != nil {
+		return x.Setup
+	}
+	return nil
+}
+
+func (x *SandboxSpec) GetProcess() *Command {
+	if x != nil {
+		return x.Process
+	}
+	return nil
 }
 
 // ServiceSpec is a service. Its fields are set wherever a service's
@@ -2863,7 +2918,8 @@ func (x *SandboxPreview) GetUrl() string {
 // Error is a failure carried in a resource rather than returned by a call.
 type Error struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// A Connect error code name, such as "unavailable".
+	// A Connect error code name, such as "unavailable". A sandbox ended by
+	// its own commands has "setup_failed" or "process_exited" instead.
 	Code          string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
 	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -8324,7 +8380,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\trecording\x18\a \x01(\x0e2#.toshi.workspace.v1.RecordingPolicyR\trecording\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe1\x04\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xdb\x05\n" +
 	"\rSandboxStatus\x126\n" +
 	"\x05state\x18\x01 \x01(\x0e2 .toshi.workspace.v1.SandboxStateR\x05state\x12<\n" +
 	"\n" +
@@ -8342,7 +8398,11 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\vstop_reason\x18\t \x01(\x0e2\x1e.toshi.workspace.v1.StopReasonR\n" +
 	"stopReason\x12>\n" +
 	"\bpreviews\x18\n" +
-	" \x03(\v2\".toshi.workspace.v1.SandboxPreviewR\bpreviews\"\xc1\x02\n" +
+	" \x03(\v2\".toshi.workspace.v1.SandboxPreviewR\bpreviews\x12H\n" +
+	"\x12process_started_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\x10processStartedAt\x12 \n" +
+	"\texit_code\x18\f \x01(\x05H\x00R\bexitCode\x88\x01\x01B\f\n" +
+	"\n" +
+	"_exit_code\"\xc1\x02\n" +
 	"\aService\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x12 \n" +
@@ -8409,7 +8469,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bBoundKey\x12\x15\n" +
 	"\x06set_id\x18\x01 \x01(\tR\x05setId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\x03R\aversion\"\xdb\x02\n" +
+	"\aversion\x18\x03 \x01(\x03R\aversion\"\xc5\x03\n" +
 	"\vSandboxSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
 	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
@@ -8417,7 +8477,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x0fstate_volume_id\x18\x04 \x01(\tR\rstateVolumeId\x12'\n" +
 	"\x0fcontainer_image\x18\x05 \x01(\tR\x0econtainerImage\x124\n" +
 	"\x16container_image_digest\x18\x06 \x01(\tR\x14containerImageDigest\x12:\n" +
-	"\x19container_registry_secret\x18\a \x01(\tR\x17containerRegistrySecret\"\xca\x03\n" +
+	"\x19container_registry_secret\x18\a \x01(\tR\x17containerRegistrySecret\x121\n" +
+	"\x05setup\x18\b \x01(\v2\x1b.toshi.workspace.v1.CommandR\x05setup\x125\n" +
+	"\aprocess\x18\t \x01(\v2\x1b.toshi.workspace.v1.CommandR\aprocess\"\xca\x03\n" +
 	"\vServiceSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x123\n" +
 	"\x04mode\x18\x02 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\x12\x1a\n" +
@@ -9120,114 +9182,117 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	111, // 28: toshi.workspace.v1.SandboxStatus.updated_at:type_name -> google.protobuf.Timestamp
 	1,   // 29: toshi.workspace.v1.SandboxStatus.stop_reason:type_name -> toshi.workspace.v1.StopReason
 	33,  // 30: toshi.workspace.v1.SandboxStatus.previews:type_name -> toshi.workspace.v1.SandboxPreview
-	109, // 31: toshi.workspace.v1.Service.labels:type_name -> toshi.workspace.v1.Service.LabelsEntry
-	30,  // 32: toshi.workspace.v1.Service.spec:type_name -> toshi.workspace.v1.ServiceSpec
-	20,  // 33: toshi.workspace.v1.Service.status:type_name -> toshi.workspace.v1.ServiceStatus
-	4,   // 34: toshi.workspace.v1.ServiceStatus.state:type_name -> toshi.workspace.v1.ServiceState
-	0,   // 35: toshi.workspace.v1.ServiceStatus.end_reason:type_name -> toshi.workspace.v1.EndReason
-	34,  // 36: toshi.workspace.v1.ServiceStatus.last_error:type_name -> toshi.workspace.v1.Error
-	111, // 37: toshi.workspace.v1.ServiceStatus.created_at:type_name -> google.protobuf.Timestamp
-	111, // 38: toshi.workspace.v1.ServiceStatus.queued_at:type_name -> google.protobuf.Timestamp
-	111, // 39: toshi.workspace.v1.ServiceStatus.started_at:type_name -> google.protobuf.Timestamp
-	111, // 40: toshi.workspace.v1.ServiceStatus.ended_at:type_name -> google.protobuf.Timestamp
-	111, // 41: toshi.workspace.v1.ServiceStatus.updated_at:type_name -> google.protobuf.Timestamp
-	106, // 42: toshi.workspace.v1.ServiceStatus.live_run:type_name -> toshi.workspace.v1.ServiceRun
-	32,  // 43: toshi.workspace.v1.JobSpec.command:type_name -> toshi.workspace.v1.Command
-	22,  // 44: toshi.workspace.v1.JobSpec.bindings:type_name -> toshi.workspace.v1.Binding
-	23,  // 45: toshi.workspace.v1.Binding.service:type_name -> toshi.workspace.v1.ServiceChannel
-	24,  // 46: toshi.workspace.v1.Binding.secrets:type_name -> toshi.workspace.v1.EnvironmentSecrets
-	26,  // 47: toshi.workspace.v1.BoundBinding.service:type_name -> toshi.workspace.v1.BoundService
-	27,  // 48: toshi.workspace.v1.BoundBinding.secrets:type_name -> toshi.workspace.v1.BoundSecrets
-	111, // 49: toshi.workspace.v1.BoundBinding.taken_at:type_name -> google.protobuf.Timestamp
-	28,  // 50: toshi.workspace.v1.BoundSecrets.keys:type_name -> toshi.workspace.v1.BoundKey
-	112, // 51: toshi.workspace.v1.SandboxSpec.max_duration:type_name -> google.protobuf.Duration
-	22,  // 52: toshi.workspace.v1.SandboxSpec.bindings:type_name -> toshi.workspace.v1.Binding
-	6,   // 53: toshi.workspace.v1.ServiceSpec.mode:type_name -> toshi.workspace.v1.ServiceMode
-	31,  // 54: toshi.workspace.v1.ServiceSpec.state_volume:type_name -> toshi.workspace.v1.StateVolumeSpec
-	22,  // 55: toshi.workspace.v1.ServiceSpec.bindings:type_name -> toshi.workspace.v1.Binding
-	111, // 56: toshi.workspace.v1.ServiceSpec.awake_until:type_name -> google.protobuf.Timestamp
-	110, // 57: toshi.workspace.v1.Command.env:type_name -> toshi.workspace.v1.Command.EnvEntry
-	38,  // 58: toshi.workspace.v1.WatchOutputResponse.end:type_name -> toshi.workspace.v1.OutputEnd
-	41,  // 59: toshi.workspace.v1.WatchTelemetryResponse.sample:type_name -> toshi.workspace.v1.TelemetrySample
-	71,  // 60: toshi.workspace.v1.WatchTelemetryResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	42,  // 61: toshi.workspace.v1.WatchTelemetryResponse.end:type_name -> toshi.workspace.v1.TelemetryEnd
-	111, // 62: toshi.workspace.v1.TelemetrySample.at:type_name -> google.protobuf.Timestamp
-	45,  // 63: toshi.workspace.v1.WatchGuestLogResponse.chunk:type_name -> toshi.workspace.v1.GuestLogChunk
-	71,  // 64: toshi.workspace.v1.WatchGuestLogResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	46,  // 65: toshi.workspace.v1.WatchGuestLogResponse.end:type_name -> toshi.workspace.v1.GuestLogEnd
-	48,  // 66: toshi.workspace.v1.ExecuteRequest.start:type_name -> toshi.workspace.v1.ExecuteStart
-	32,  // 67: toshi.workspace.v1.ExecuteStart.command:type_name -> toshi.workspace.v1.Command
-	50,  // 68: toshi.workspace.v1.ExecuteResponse.started:type_name -> toshi.workspace.v1.ExecutionStarted
-	51,  // 69: toshi.workspace.v1.ExecuteResponse.exit:type_name -> toshi.workspace.v1.ExecutionExit
-	34,  // 70: toshi.workspace.v1.Operation.error:type_name -> toshi.workspace.v1.Error
-	111, // 71: toshi.workspace.v1.Operation.created_at:type_name -> google.protobuf.Timestamp
-	111, // 72: toshi.workspace.v1.Operation.done_at:type_name -> google.protobuf.Timestamp
-	54,  // 73: toshi.workspace.v1.GetOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
-	112, // 74: toshi.workspace.v1.WaitOperationRequest.timeout:type_name -> google.protobuf.Duration
-	54,  // 75: toshi.workspace.v1.WaitOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
-	7,   // 76: toshi.workspace.v1.Event.type:type_name -> toshi.workspace.v1.EventType
-	111, // 77: toshi.workspace.v1.Event.time:type_name -> google.protobuf.Timestamp
-	14,  // 78: toshi.workspace.v1.Event.job:type_name -> toshi.workspace.v1.Job
-	17,  // 79: toshi.workspace.v1.Event.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	19,  // 80: toshi.workspace.v1.Event.service:type_name -> toshi.workspace.v1.Service
-	63,  // 81: toshi.workspace.v1.Event.execution:type_name -> toshi.workspace.v1.ExecutionEvent
-	64,  // 82: toshi.workspace.v1.Event.emitted:type_name -> toshi.workspace.v1.EmittedEvent
-	66,  // 83: toshi.workspace.v1.Event.recording:type_name -> toshi.workspace.v1.RecordingEvent
-	65,  // 84: toshi.workspace.v1.Event.connection:type_name -> toshi.workspace.v1.ConnectionEvent
-	60,  // 85: toshi.workspace.v1.Event.secret_withheld:type_name -> toshi.workspace.v1.SecretWithheldEvent
-	62,  // 86: toshi.workspace.v1.Event.trigger:type_name -> toshi.workspace.v1.TriggerResult
-	61,  // 87: toshi.workspace.v1.SecretWithheldEvent.keys:type_name -> toshi.workspace.v1.WithheldSecret
-	51,  // 88: toshi.workspace.v1.ExecutionEvent.exit:type_name -> toshi.workspace.v1.ExecutionExit
-	113, // 89: toshi.workspace.v1.RecordingEvent.kind:type_name -> toshi.workspace.v1.RecordingKind
-	59,  // 90: toshi.workspace.v1.ListEventsResponse.events:type_name -> toshi.workspace.v1.Event
-	59,  // 91: toshi.workspace.v1.WatchEventsResponse.event:type_name -> toshi.workspace.v1.Event
-	71,  // 92: toshi.workspace.v1.WatchEventsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	111, // 93: toshi.workspace.v1.Keepalive.sent_at:type_name -> google.protobuf.Timestamp
-	8,   // 94: toshi.workspace.v1.PreviewShareLink.state:type_name -> toshi.workspace.v1.PreviewShareLinkState
-	111, // 95: toshi.workspace.v1.PreviewShareLink.created_at:type_name -> google.protobuf.Timestamp
-	111, // 96: toshi.workspace.v1.PreviewShareLink.expires_at:type_name -> google.protobuf.Timestamp
-	111, // 97: toshi.workspace.v1.PreviewShareLink.opened_at:type_name -> google.protobuf.Timestamp
-	111, // 98: toshi.workspace.v1.PreviewShareLink.revoked_at:type_name -> google.protobuf.Timestamp
-	111, // 99: toshi.workspace.v1.PreviewShareLink.ended_at:type_name -> google.protobuf.Timestamp
-	112, // 100: toshi.workspace.v1.CreatePreviewShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
-	72,  // 101: toshi.workspace.v1.CreatePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
-	72,  // 102: toshi.workspace.v1.ListPreviewShareLinksResponse.share_links:type_name -> toshi.workspace.v1.PreviewShareLink
-	72,  // 103: toshi.workspace.v1.RevokePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
-	19,  // 104: toshi.workspace.v1.StartServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	19,  // 105: toshi.workspace.v1.StopServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	6,   // 106: toshi.workspace.v1.SetServiceModeRequest.mode:type_name -> toshi.workspace.v1.ServiceMode
-	19,  // 107: toshi.workspace.v1.SetServiceModeResponse.service:type_name -> toshi.workspace.v1.Service
-	19,  // 108: toshi.workspace.v1.WakeServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	112, // 109: toshi.workspace.v1.HoldServiceRequest.ttl:type_name -> google.protobuf.Duration
-	89,  // 110: toshi.workspace.v1.HoldServiceResponse.hold:type_name -> toshi.workspace.v1.ServiceHold
-	19,  // 111: toshi.workspace.v1.HoldServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	111, // 112: toshi.workspace.v1.ServiceHold.expires_at:type_name -> google.protobuf.Timestamp
-	19,  // 113: toshi.workspace.v1.ReleaseServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	106, // 114: toshi.workspace.v1.ListServiceRunsResponse.runs:type_name -> toshi.workspace.v1.ServiceRun
-	98,  // 115: toshi.workspace.v1.ListServiceRevisionsResponse.revisions:type_name -> toshi.workspace.v1.ServiceRevision
-	98,  // 116: toshi.workspace.v1.GetServiceRevisionResponse.revision:type_name -> toshi.workspace.v1.ServiceRevision
-	10,  // 117: toshi.workspace.v1.ServiceRevision.reason:type_name -> toshi.workspace.v1.ServiceRevisionReason
-	111, // 118: toshi.workspace.v1.ServiceRevision.created_at:type_name -> google.protobuf.Timestamp
-	99,  // 119: toshi.workspace.v1.ServiceRevision.image_check:type_name -> toshi.workspace.v1.ServiceRevisionImageCheck
-	9,   // 120: toshi.workspace.v1.ServiceRevisionImageCheck.outcome:type_name -> toshi.workspace.v1.ServiceRevisionImageOutcome
-	111, // 121: toshi.workspace.v1.ServiceRevisionImageCheck.checked_at:type_name -> google.protobuf.Timestamp
-	19,  // 122: toshi.workspace.v1.RollbackServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	104, // 123: toshi.workspace.v1.RollbackServiceResponse.activation:type_name -> toshi.workspace.v1.ServiceActivation
-	104, // 124: toshi.workspace.v1.ListServiceActivationsResponse.activations:type_name -> toshi.workspace.v1.ServiceActivation
-	11,  // 125: toshi.workspace.v1.ServiceActivation.kind:type_name -> toshi.workspace.v1.ServiceActivationKind
-	111, // 126: toshi.workspace.v1.ServiceActivation.requested_at:type_name -> google.protobuf.Timestamp
-	12,  // 127: toshi.workspace.v1.ServiceActivation.outcome:type_name -> toshi.workspace.v1.ServiceActivationOutcome
-	105, // 128: toshi.workspace.v1.ServiceActivation.secret_versions:type_name -> toshi.workspace.v1.ServiceSecretVersion
-	13,  // 129: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
-	111, // 130: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
-	111, // 131: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
-	111, // 132: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
-	111, // 133: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
-	134, // [134:134] is the sub-list for method output_type
-	134, // [134:134] is the sub-list for method input_type
-	134, // [134:134] is the sub-list for extension type_name
-	134, // [134:134] is the sub-list for extension extendee
-	0,   // [0:134] is the sub-list for field type_name
+	111, // 31: toshi.workspace.v1.SandboxStatus.process_started_at:type_name -> google.protobuf.Timestamp
+	109, // 32: toshi.workspace.v1.Service.labels:type_name -> toshi.workspace.v1.Service.LabelsEntry
+	30,  // 33: toshi.workspace.v1.Service.spec:type_name -> toshi.workspace.v1.ServiceSpec
+	20,  // 34: toshi.workspace.v1.Service.status:type_name -> toshi.workspace.v1.ServiceStatus
+	4,   // 35: toshi.workspace.v1.ServiceStatus.state:type_name -> toshi.workspace.v1.ServiceState
+	0,   // 36: toshi.workspace.v1.ServiceStatus.end_reason:type_name -> toshi.workspace.v1.EndReason
+	34,  // 37: toshi.workspace.v1.ServiceStatus.last_error:type_name -> toshi.workspace.v1.Error
+	111, // 38: toshi.workspace.v1.ServiceStatus.created_at:type_name -> google.protobuf.Timestamp
+	111, // 39: toshi.workspace.v1.ServiceStatus.queued_at:type_name -> google.protobuf.Timestamp
+	111, // 40: toshi.workspace.v1.ServiceStatus.started_at:type_name -> google.protobuf.Timestamp
+	111, // 41: toshi.workspace.v1.ServiceStatus.ended_at:type_name -> google.protobuf.Timestamp
+	111, // 42: toshi.workspace.v1.ServiceStatus.updated_at:type_name -> google.protobuf.Timestamp
+	106, // 43: toshi.workspace.v1.ServiceStatus.live_run:type_name -> toshi.workspace.v1.ServiceRun
+	32,  // 44: toshi.workspace.v1.JobSpec.command:type_name -> toshi.workspace.v1.Command
+	22,  // 45: toshi.workspace.v1.JobSpec.bindings:type_name -> toshi.workspace.v1.Binding
+	23,  // 46: toshi.workspace.v1.Binding.service:type_name -> toshi.workspace.v1.ServiceChannel
+	24,  // 47: toshi.workspace.v1.Binding.secrets:type_name -> toshi.workspace.v1.EnvironmentSecrets
+	26,  // 48: toshi.workspace.v1.BoundBinding.service:type_name -> toshi.workspace.v1.BoundService
+	27,  // 49: toshi.workspace.v1.BoundBinding.secrets:type_name -> toshi.workspace.v1.BoundSecrets
+	111, // 50: toshi.workspace.v1.BoundBinding.taken_at:type_name -> google.protobuf.Timestamp
+	28,  // 51: toshi.workspace.v1.BoundSecrets.keys:type_name -> toshi.workspace.v1.BoundKey
+	112, // 52: toshi.workspace.v1.SandboxSpec.max_duration:type_name -> google.protobuf.Duration
+	22,  // 53: toshi.workspace.v1.SandboxSpec.bindings:type_name -> toshi.workspace.v1.Binding
+	32,  // 54: toshi.workspace.v1.SandboxSpec.setup:type_name -> toshi.workspace.v1.Command
+	32,  // 55: toshi.workspace.v1.SandboxSpec.process:type_name -> toshi.workspace.v1.Command
+	6,   // 56: toshi.workspace.v1.ServiceSpec.mode:type_name -> toshi.workspace.v1.ServiceMode
+	31,  // 57: toshi.workspace.v1.ServiceSpec.state_volume:type_name -> toshi.workspace.v1.StateVolumeSpec
+	22,  // 58: toshi.workspace.v1.ServiceSpec.bindings:type_name -> toshi.workspace.v1.Binding
+	111, // 59: toshi.workspace.v1.ServiceSpec.awake_until:type_name -> google.protobuf.Timestamp
+	110, // 60: toshi.workspace.v1.Command.env:type_name -> toshi.workspace.v1.Command.EnvEntry
+	38,  // 61: toshi.workspace.v1.WatchOutputResponse.end:type_name -> toshi.workspace.v1.OutputEnd
+	41,  // 62: toshi.workspace.v1.WatchTelemetryResponse.sample:type_name -> toshi.workspace.v1.TelemetrySample
+	71,  // 63: toshi.workspace.v1.WatchTelemetryResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	42,  // 64: toshi.workspace.v1.WatchTelemetryResponse.end:type_name -> toshi.workspace.v1.TelemetryEnd
+	111, // 65: toshi.workspace.v1.TelemetrySample.at:type_name -> google.protobuf.Timestamp
+	45,  // 66: toshi.workspace.v1.WatchGuestLogResponse.chunk:type_name -> toshi.workspace.v1.GuestLogChunk
+	71,  // 67: toshi.workspace.v1.WatchGuestLogResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	46,  // 68: toshi.workspace.v1.WatchGuestLogResponse.end:type_name -> toshi.workspace.v1.GuestLogEnd
+	48,  // 69: toshi.workspace.v1.ExecuteRequest.start:type_name -> toshi.workspace.v1.ExecuteStart
+	32,  // 70: toshi.workspace.v1.ExecuteStart.command:type_name -> toshi.workspace.v1.Command
+	50,  // 71: toshi.workspace.v1.ExecuteResponse.started:type_name -> toshi.workspace.v1.ExecutionStarted
+	51,  // 72: toshi.workspace.v1.ExecuteResponse.exit:type_name -> toshi.workspace.v1.ExecutionExit
+	34,  // 73: toshi.workspace.v1.Operation.error:type_name -> toshi.workspace.v1.Error
+	111, // 74: toshi.workspace.v1.Operation.created_at:type_name -> google.protobuf.Timestamp
+	111, // 75: toshi.workspace.v1.Operation.done_at:type_name -> google.protobuf.Timestamp
+	54,  // 76: toshi.workspace.v1.GetOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
+	112, // 77: toshi.workspace.v1.WaitOperationRequest.timeout:type_name -> google.protobuf.Duration
+	54,  // 78: toshi.workspace.v1.WaitOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
+	7,   // 79: toshi.workspace.v1.Event.type:type_name -> toshi.workspace.v1.EventType
+	111, // 80: toshi.workspace.v1.Event.time:type_name -> google.protobuf.Timestamp
+	14,  // 81: toshi.workspace.v1.Event.job:type_name -> toshi.workspace.v1.Job
+	17,  // 82: toshi.workspace.v1.Event.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	19,  // 83: toshi.workspace.v1.Event.service:type_name -> toshi.workspace.v1.Service
+	63,  // 84: toshi.workspace.v1.Event.execution:type_name -> toshi.workspace.v1.ExecutionEvent
+	64,  // 85: toshi.workspace.v1.Event.emitted:type_name -> toshi.workspace.v1.EmittedEvent
+	66,  // 86: toshi.workspace.v1.Event.recording:type_name -> toshi.workspace.v1.RecordingEvent
+	65,  // 87: toshi.workspace.v1.Event.connection:type_name -> toshi.workspace.v1.ConnectionEvent
+	60,  // 88: toshi.workspace.v1.Event.secret_withheld:type_name -> toshi.workspace.v1.SecretWithheldEvent
+	62,  // 89: toshi.workspace.v1.Event.trigger:type_name -> toshi.workspace.v1.TriggerResult
+	61,  // 90: toshi.workspace.v1.SecretWithheldEvent.keys:type_name -> toshi.workspace.v1.WithheldSecret
+	51,  // 91: toshi.workspace.v1.ExecutionEvent.exit:type_name -> toshi.workspace.v1.ExecutionExit
+	113, // 92: toshi.workspace.v1.RecordingEvent.kind:type_name -> toshi.workspace.v1.RecordingKind
+	59,  // 93: toshi.workspace.v1.ListEventsResponse.events:type_name -> toshi.workspace.v1.Event
+	59,  // 94: toshi.workspace.v1.WatchEventsResponse.event:type_name -> toshi.workspace.v1.Event
+	71,  // 95: toshi.workspace.v1.WatchEventsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	111, // 96: toshi.workspace.v1.Keepalive.sent_at:type_name -> google.protobuf.Timestamp
+	8,   // 97: toshi.workspace.v1.PreviewShareLink.state:type_name -> toshi.workspace.v1.PreviewShareLinkState
+	111, // 98: toshi.workspace.v1.PreviewShareLink.created_at:type_name -> google.protobuf.Timestamp
+	111, // 99: toshi.workspace.v1.PreviewShareLink.expires_at:type_name -> google.protobuf.Timestamp
+	111, // 100: toshi.workspace.v1.PreviewShareLink.opened_at:type_name -> google.protobuf.Timestamp
+	111, // 101: toshi.workspace.v1.PreviewShareLink.revoked_at:type_name -> google.protobuf.Timestamp
+	111, // 102: toshi.workspace.v1.PreviewShareLink.ended_at:type_name -> google.protobuf.Timestamp
+	112, // 103: toshi.workspace.v1.CreatePreviewShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
+	72,  // 104: toshi.workspace.v1.CreatePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
+	72,  // 105: toshi.workspace.v1.ListPreviewShareLinksResponse.share_links:type_name -> toshi.workspace.v1.PreviewShareLink
+	72,  // 106: toshi.workspace.v1.RevokePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
+	19,  // 107: toshi.workspace.v1.StartServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	19,  // 108: toshi.workspace.v1.StopServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	6,   // 109: toshi.workspace.v1.SetServiceModeRequest.mode:type_name -> toshi.workspace.v1.ServiceMode
+	19,  // 110: toshi.workspace.v1.SetServiceModeResponse.service:type_name -> toshi.workspace.v1.Service
+	19,  // 111: toshi.workspace.v1.WakeServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	112, // 112: toshi.workspace.v1.HoldServiceRequest.ttl:type_name -> google.protobuf.Duration
+	89,  // 113: toshi.workspace.v1.HoldServiceResponse.hold:type_name -> toshi.workspace.v1.ServiceHold
+	19,  // 114: toshi.workspace.v1.HoldServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	111, // 115: toshi.workspace.v1.ServiceHold.expires_at:type_name -> google.protobuf.Timestamp
+	19,  // 116: toshi.workspace.v1.ReleaseServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	106, // 117: toshi.workspace.v1.ListServiceRunsResponse.runs:type_name -> toshi.workspace.v1.ServiceRun
+	98,  // 118: toshi.workspace.v1.ListServiceRevisionsResponse.revisions:type_name -> toshi.workspace.v1.ServiceRevision
+	98,  // 119: toshi.workspace.v1.GetServiceRevisionResponse.revision:type_name -> toshi.workspace.v1.ServiceRevision
+	10,  // 120: toshi.workspace.v1.ServiceRevision.reason:type_name -> toshi.workspace.v1.ServiceRevisionReason
+	111, // 121: toshi.workspace.v1.ServiceRevision.created_at:type_name -> google.protobuf.Timestamp
+	99,  // 122: toshi.workspace.v1.ServiceRevision.image_check:type_name -> toshi.workspace.v1.ServiceRevisionImageCheck
+	9,   // 123: toshi.workspace.v1.ServiceRevisionImageCheck.outcome:type_name -> toshi.workspace.v1.ServiceRevisionImageOutcome
+	111, // 124: toshi.workspace.v1.ServiceRevisionImageCheck.checked_at:type_name -> google.protobuf.Timestamp
+	19,  // 125: toshi.workspace.v1.RollbackServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	104, // 126: toshi.workspace.v1.RollbackServiceResponse.activation:type_name -> toshi.workspace.v1.ServiceActivation
+	104, // 127: toshi.workspace.v1.ListServiceActivationsResponse.activations:type_name -> toshi.workspace.v1.ServiceActivation
+	11,  // 128: toshi.workspace.v1.ServiceActivation.kind:type_name -> toshi.workspace.v1.ServiceActivationKind
+	111, // 129: toshi.workspace.v1.ServiceActivation.requested_at:type_name -> google.protobuf.Timestamp
+	12,  // 130: toshi.workspace.v1.ServiceActivation.outcome:type_name -> toshi.workspace.v1.ServiceActivationOutcome
+	105, // 131: toshi.workspace.v1.ServiceActivation.secret_versions:type_name -> toshi.workspace.v1.ServiceSecretVersion
+	13,  // 132: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
+	111, // 133: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
+	111, // 134: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
+	111, // 135: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
+	111, // 136: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
+	137, // [137:137] is the sub-list for method output_type
+	137, // [137:137] is the sub-list for method input_type
+	137, // [137:137] is the sub-list for extension type_name
+	137, // [137:137] is the sub-list for extension extendee
+	0,   // [0:137] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_workspace_proto_init() }
@@ -9237,6 +9302,7 @@ func file_toshi_workspace_v1_workspace_proto_init() {
 	}
 	file_toshi_workspace_v1_recordings_proto_init()
 	file_toshi_workspace_v1_workspace_proto_msgTypes[1].OneofWrappers = []any{}
+	file_toshi_workspace_v1_workspace_proto_msgTypes[4].OneofWrappers = []any{}
 	file_toshi_workspace_v1_workspace_proto_msgTypes[8].OneofWrappers = []any{
 		(*Binding_Service)(nil),
 		(*Binding_Secrets)(nil),
