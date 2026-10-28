@@ -1832,8 +1832,15 @@ type JobSpec struct {
 	// jobs, fails it with FAILED_PRECONDITION. A config with no entry for
 	// the registry leaves the pull anonymous. Empty: no login.
 	ContainerRegistrySecret string `protobuf:"bytes,6,opt,name=container_registry_secret,json=containerRegistrySecret,proto3" json:"container_registry_secret,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// The name of an image of the workspace to boot the job's VM from.
+	// Its newest ready version is fixed at create; it cannot be combined
+	// with container_image.
+	Image string `protobuf:"bytes,7,opt,name=image,proto3" json:"image,omitempty"`
+	// The image version fixed at create. Set by the server; ignored in a
+	// request.
+	ImageVersionId string `protobuf:"bytes,8,opt,name=image_version_id,json=imageVersionId,proto3" json:"image_version_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *JobSpec) Reset() {
@@ -1904,6 +1911,20 @@ func (x *JobSpec) GetContainerImageDigest() string {
 func (x *JobSpec) GetContainerRegistrySecret() string {
 	if x != nil {
 		return x.ContainerRegistrySecret
+	}
+	return ""
+}
+
+func (x *JobSpec) GetImage() string {
+	if x != nil {
+		return x.Image
+	}
+	return ""
+}
+
+func (x *JobSpec) GetImageVersionId() string {
+	if x != nil {
+		return x.ImageVersionId
 	}
 	return ""
 }
@@ -2483,9 +2504,13 @@ type SandboxSpec struct {
 	// FAILED with that code. A stop or the time limit ends it with the
 	// sandbox. It runs where and with the environment setup does. Unset:
 	// none.
-	Process       *Command `protobuf:"bytes,9,opt,name=process,proto3" json:"process,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Process *Command `protobuf:"bytes,9,opt,name=process,proto3" json:"process,omitempty"`
+	// As JobSpec.image, for the sandbox's VM.
+	Image string `protobuf:"bytes,10,opt,name=image,proto3" json:"image,omitempty"`
+	// As JobSpec.image_version_id. Set by the server; ignored in a request.
+	ImageVersionId string `protobuf:"bytes,11,opt,name=image_version_id,json=imageVersionId,proto3" json:"image_version_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *SandboxSpec) Reset() {
@@ -2579,6 +2604,20 @@ func (x *SandboxSpec) GetProcess() *Command {
 		return x.Process
 	}
 	return nil
+}
+
+func (x *SandboxSpec) GetImage() string {
+	if x != nil {
+		return x.Image
+	}
+	return ""
+}
+
+func (x *SandboxSpec) GetImageVersionId() string {
+	if x != nil {
+		return x.ImageVersionId
+	}
+	return ""
 }
 
 // ServiceSpec is a service. Its fields are set wherever a service's
@@ -8449,14 +8488,16 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bended_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
-	"\blive_run\x18\t \x01(\v2\x1e.toshi.workspace.v1.ServiceRunR\aliveRun\"\xa8\x02\n" +
+	"\blive_run\x18\t \x01(\v2\x1e.toshi.workspace.v1.ServiceRunR\aliveRun\"\xe8\x02\n" +
 	"\aJobSpec\x125\n" +
 	"\acommand\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.CommandR\acommand\x127\n" +
 	"\bbindings\x18\x02 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\tR\x04size\x12'\n" +
 	"\x0fcontainer_image\x18\x04 \x01(\tR\x0econtainerImage\x124\n" +
 	"\x16container_image_digest\x18\x05 \x01(\tR\x14containerImageDigest\x12:\n" +
-	"\x19container_registry_secret\x18\x06 \x01(\tR\x17containerRegistrySecret\"\xab\x01\n" +
+	"\x19container_registry_secret\x18\x06 \x01(\tR\x17containerRegistrySecret\x12\x14\n" +
+	"\x05image\x18\a \x01(\tR\x05image\x12(\n" +
+	"\x10image_version_id\x18\b \x01(\tR\x0eimageVersionId\"\xab\x01\n" +
 	"\aBinding\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12>\n" +
 	"\aservice\x18\x02 \x01(\v2\".toshi.workspace.v1.ServiceChannelH\x00R\aservice\x12B\n" +
@@ -8491,7 +8532,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bBoundKey\x12\x15\n" +
 	"\x06set_id\x18\x01 \x01(\tR\x05setId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\x03R\aversion\"\xc5\x03\n" +
+	"\aversion\x18\x03 \x01(\x03R\aversion\"\x85\x04\n" +
 	"\vSandboxSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
 	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
@@ -8501,7 +8542,10 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x16container_image_digest\x18\x06 \x01(\tR\x14containerImageDigest\x12:\n" +
 	"\x19container_registry_secret\x18\a \x01(\tR\x17containerRegistrySecret\x121\n" +
 	"\x05setup\x18\b \x01(\v2\x1b.toshi.workspace.v1.CommandR\x05setup\x125\n" +
-	"\aprocess\x18\t \x01(\v2\x1b.toshi.workspace.v1.CommandR\aprocess\"\xca\x03\n" +
+	"\aprocess\x18\t \x01(\v2\x1b.toshi.workspace.v1.CommandR\aprocess\x12\x14\n" +
+	"\x05image\x18\n" +
+	" \x01(\tR\x05image\x12(\n" +
+	"\x10image_version_id\x18\v \x01(\tR\x0eimageVersionId\"\xca\x03\n" +
 	"\vServiceSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x123\n" +
 	"\x04mode\x18\x02 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\x12\x1a\n" +

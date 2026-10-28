@@ -320,6 +320,13 @@ message JobSpec {
   // jobs, fails it with FAILED_PRECONDITION. A config with no entry for
   // the registry leaves the pull anonymous. Empty: no login.
   string container_registry_secret = 6;
+  // The name of an image of the workspace to boot the job's VM from.
+  // Its newest ready version is fixed at create; it cannot be combined
+  // with container_image.
+  string image = 7;
+  // The image version fixed at create. Set by the server; ignored in a
+  // request.
+  string image_version_id = 8;
 }
 
 // Binding is one binding a workload declares.
@@ -447,6 +454,10 @@ message SandboxSpec {
   // sandbox. It runs where and with the environment setup does. Unset:
   // none.
   Command process = 9;
+  // As JobSpec.image, for the sandbox's VM.
+  string image = 10;
+  // As JobSpec.image_version_id. Set by the server; ignored in a request.
+  string image_version_id = 11;
 }
 
 // ServiceSpec is a service. Its fields are set wherever a service's
