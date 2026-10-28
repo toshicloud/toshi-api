@@ -920,6 +920,14 @@ message TriggerResult {
   string reason = 7;
   // The commit it was made from.
   string head_sha = 8;
+  // The exit code of the sandbox's process, with reason "process_exited"
+  // when the sandbox's status has one: 0 is success, -1 a process a signal
+  // ended.
+  optional int32 exit_code = 9;
+  // With reason "process_exited" or "setup_failed", the sandbox's
+  // last_error message: the exit code and the end of the command's
+  // output. Empty for a process that exited 0.
+  string message = 10;
 }
 
 // ExecutionEvent is an execution starting or ending.

@@ -5199,7 +5199,15 @@ type TriggerResult struct {
 	// Why it failed or was removed.
 	Reason string `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`
 	// The commit it was made from.
-	HeadSha       string `protobuf:"bytes,8,opt,name=head_sha,json=headSha,proto3" json:"head_sha,omitempty"`
+	HeadSha string `protobuf:"bytes,8,opt,name=head_sha,json=headSha,proto3" json:"head_sha,omitempty"`
+	// The exit code of the sandbox's process, with reason "process_exited"
+	// when the sandbox's status has one: 0 is success, -1 a process a signal
+	// ended.
+	ExitCode *int32 `protobuf:"varint,9,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`
+	// With reason "process_exited" or "setup_failed", the sandbox's
+	// last_error message: the exit code and the end of the command's
+	// output. Empty for a process that exited 0.
+	Message       string `protobuf:"bytes,10,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5286,6 +5294,20 @@ func (x *TriggerResult) GetReason() string {
 func (x *TriggerResult) GetHeadSha() string {
 	if x != nil {
 		return x.HeadSha
+	}
+	return ""
+}
+
+func (x *TriggerResult) GetExitCode() int32 {
+	if x != nil && x.ExitCode != nil {
+		return *x.ExitCode
+	}
+	return 0
+}
+
+func (x *TriggerResult) GetMessage() string {
+	if x != nil {
+		return x.Message
 	}
 	return ""
 }
@@ -8668,7 +8690,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x0eWithheldSecret\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05owner\x18\x02 \x01(\tR\x05owner\x12\x16\n" +
-	"\x06reason\x18\x03 \x01(\tR\x06reason\"\xe6\x01\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\"\xb0\x02\n" +
 	"\rTriggerResult\x12\x1d\n" +
 	"\n" +
 	"trigger_id\x18\x01 \x01(\tR\ttriggerId\x12!\n" +
@@ -8679,7 +8701,12 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bevent_id\x18\x05 \x01(\tR\aeventId\x12\x12\n" +
 	"\x04link\x18\x06 \x01(\tR\x04link\x12\x16\n" +
 	"\x06reason\x18\a \x01(\tR\x06reason\x12\x19\n" +
-	"\bhead_sha\x18\b \x01(\tR\aheadSha\"~\n" +
+	"\bhead_sha\x18\b \x01(\tR\aheadSha\x12 \n" +
+	"\texit_code\x18\t \x01(\x05H\x00R\bexitCode\x88\x01\x01\x12\x18\n" +
+	"\amessage\x18\n" +
+	" \x01(\tR\amessageB\f\n" +
+	"\n" +
+	"_exit_code\"~\n" +
 	"\x0eExecutionEvent\x12!\n" +
 	"\fexecution_id\x18\x01 \x01(\tR\vexecutionId\x12\x12\n" +
 	"\x04argv\x18\x02 \x03(\tR\x04argv\x125\n" +
@@ -9351,6 +9378,7 @@ func file_toshi_workspace_v1_workspace_proto_init() {
 		(*Event_SecretWithheld)(nil),
 		(*Event_Trigger)(nil),
 	}
+	file_toshi_workspace_v1_workspace_proto_msgTypes[48].OneofWrappers = []any{}
 	file_toshi_workspace_v1_workspace_proto_msgTypes[59].OneofWrappers = []any{
 		(*CreatePreviewShareLinkRequest_Channel)(nil),
 		(*CreatePreviewShareLinkRequest_Port)(nil),
