@@ -109,6 +109,21 @@ message CatalogEntry {
   // source_expires_at is when the index the deployment last accepted from
   // the source expires; unset for an index with no expiry.
   google.protobuf.Timestamp source_expires_at = 10;
+  // state is the effective listing state of the entry's own version;
+  // UNSPECIFIED when that version is not present. Built-in entries are LISTED.
+  CatalogEntryState state = 11;
+  // state_reason explains a deprecation or block.
+  string state_reason = 12;
+  // successor names the suggested replacement, when one is given.
+  string successor = 13;
+}
+
+// CatalogEntryState is the effective listing state of an entry's version.
+enum CatalogEntryState {
+  CATALOG_ENTRY_STATE_UNSPECIFIED = 0;
+  CATALOG_ENTRY_STATE_LISTED = 1;
+  CATALOG_ENTRY_STATE_DEPRECATED = 2;
+  CATALOG_ENTRY_STATE_BLOCKED = 3;
 }
 
 message UpdateProductRequest {
@@ -137,6 +152,10 @@ message UpdateProductRequest {
   // PERMISSION_DENIED naming it. Ignored when the product is built in or
   // already installed.
   repeated string accepted_access = 5;
+  // version installs that release of an outside product instead of the
+  // entry's own version. A deprecated release installs only when named here,
+  // with a warning. Ignored when built in or already installed.
+  optional string version = 6;
 }
 
 message UpdateProductResponse {
@@ -146,6 +165,9 @@ message UpdateProductResponse {
   // the Workspace API with, "toshi_in_" and 46 characters. Only the call
   // that installs the product returns it.
   string installation_token = 2;
+  // warning is set when the call installed a deprecated release: the
+  // publisher's reason and successor.
+  string warning = 3;
 }
 
 message RemoveProductRequest {
@@ -222,6 +244,36 @@ message ProductInstallation {
   string installed_by = 7;
   google.protobuf.Timestamp installed_at = 8;
   google.protobuf.Timestamp updated_at = 9;
+  // These fields record the trust decision made when the product was
+  // installed. They are empty for a built-in product and for an installation
+  // made before the deployment kept that decision.
+  // source names the catalog source.
+  string source = 10;
+  // index_sequence is the accepted index's sequence, or zero for format 1.
+  int64 index_sequence = 11;
+  // index_sha256 is the SHA-256 of the accepted index's bytes in hex.
+  string index_sha256 = 12;
+  // key_id names the key that signed the accepted index.
+  string key_id = 13;
+  // release_state is the release's effective listing state at installation.
+  CatalogEntryState release_state = 14;
+  // artifacts are the release's artifacts and their selected image manifests.
+  repeated ProductArtifact artifacts = 15;
+}
+
+// ProductArtifact is a release artifact recorded when a product is installed.
+message ProductArtifact {
+  // kind is "cli" or "image".
+  string kind = 1;
+  // os and arch identify a CLI plugin's platform.
+  string os = 2;
+  string arch = 3;
+  // image is the container image repository.
+  string image = 4;
+  // digest is the CLI plugin's SHA-256 or the image index's digest.
+  string digest = 5;
+  // platform is the selected image platform manifest's digest.
+  string platform = 6;
 }
 
 // InstallationState is where an installation stands.

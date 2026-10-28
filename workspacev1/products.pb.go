@@ -23,6 +23,59 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// CatalogEntryState is the effective listing state of an entry's version.
+type CatalogEntryState int32
+
+const (
+	CatalogEntryState_CATALOG_ENTRY_STATE_UNSPECIFIED CatalogEntryState = 0
+	CatalogEntryState_CATALOG_ENTRY_STATE_LISTED      CatalogEntryState = 1
+	CatalogEntryState_CATALOG_ENTRY_STATE_DEPRECATED  CatalogEntryState = 2
+	CatalogEntryState_CATALOG_ENTRY_STATE_BLOCKED     CatalogEntryState = 3
+)
+
+// Enum value maps for CatalogEntryState.
+var (
+	CatalogEntryState_name = map[int32]string{
+		0: "CATALOG_ENTRY_STATE_UNSPECIFIED",
+		1: "CATALOG_ENTRY_STATE_LISTED",
+		2: "CATALOG_ENTRY_STATE_DEPRECATED",
+		3: "CATALOG_ENTRY_STATE_BLOCKED",
+	}
+	CatalogEntryState_value = map[string]int32{
+		"CATALOG_ENTRY_STATE_UNSPECIFIED": 0,
+		"CATALOG_ENTRY_STATE_LISTED":      1,
+		"CATALOG_ENTRY_STATE_DEPRECATED":  2,
+		"CATALOG_ENTRY_STATE_BLOCKED":     3,
+	}
+)
+
+func (x CatalogEntryState) Enum() *CatalogEntryState {
+	p := new(CatalogEntryState)
+	*p = x
+	return p
+}
+
+func (x CatalogEntryState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CatalogEntryState) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_products_proto_enumTypes[0].Descriptor()
+}
+
+func (CatalogEntryState) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_products_proto_enumTypes[0]
+}
+
+func (x CatalogEntryState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CatalogEntryState.Descriptor instead.
+func (CatalogEntryState) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_products_proto_rawDescGZIP(), []int{0}
+}
+
 // InstallationState is where an installation stands.
 type InstallationState int32
 
@@ -65,11 +118,11 @@ func (x InstallationState) String() string {
 }
 
 func (InstallationState) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_products_proto_enumTypes[0].Descriptor()
+	return file_toshi_workspace_v1_products_proto_enumTypes[1].Descriptor()
 }
 
 func (InstallationState) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_products_proto_enumTypes[0]
+	return &file_toshi_workspace_v1_products_proto_enumTypes[1]
 }
 
 func (x InstallationState) Number() protoreflect.EnumNumber {
@@ -78,7 +131,7 @@ func (x InstallationState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use InstallationState.Descriptor instead.
 func (InstallationState) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_products_proto_rawDescGZIP(), []int{0}
+	return file_toshi_workspace_v1_products_proto_rawDescGZIP(), []int{1}
 }
 
 type ListProductsRequest struct {
@@ -275,8 +328,15 @@ type CatalogEntry struct {
 	// source_expires_at is when the index the deployment last accepted from
 	// the source expires; unset for an index with no expiry.
 	SourceExpiresAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=source_expires_at,json=sourceExpiresAt,proto3" json:"source_expires_at,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// state is the effective listing state of the entry's own version;
+	// UNSPECIFIED when that version is not present. Built-in entries are LISTED.
+	State CatalogEntryState `protobuf:"varint,11,opt,name=state,proto3,enum=toshi.workspace.v1.CatalogEntryState" json:"state,omitempty"`
+	// state_reason explains a deprecation or block.
+	StateReason string `protobuf:"bytes,12,opt,name=state_reason,json=stateReason,proto3" json:"state_reason,omitempty"`
+	// successor names the suggested replacement, when one is given.
+	Successor     string `protobuf:"bytes,13,opt,name=successor,proto3" json:"successor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CatalogEntry) Reset() {
@@ -379,6 +439,27 @@ func (x *CatalogEntry) GetSourceExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *CatalogEntry) GetState() CatalogEntryState {
+	if x != nil {
+		return x.State
+	}
+	return CatalogEntryState_CATALOG_ENTRY_STATE_UNSPECIFIED
+}
+
+func (x *CatalogEntry) GetStateReason() string {
+	if x != nil {
+		return x.StateReason
+	}
+	return ""
+}
+
+func (x *CatalogEntry) GetSuccessor() string {
+	if x != nil {
+		return x.Successor
+	}
+	return ""
+}
+
 type UpdateProductRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// id names the product, such as "runners".
@@ -406,8 +487,12 @@ type UpdateProductRequest struct {
 	// PERMISSION_DENIED naming it. Ignored when the product is built in or
 	// already installed.
 	AcceptedAccess []string `protobuf:"bytes,5,rep,name=accepted_access,json=acceptedAccess,proto3" json:"accepted_access,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// version installs that release of an outside product instead of the
+	// entry's own version. A deprecated release installs only when named here,
+	// with a warning. Ignored when built in or already installed.
+	Version       *string `protobuf:"bytes,6,opt,name=version,proto3,oneof" json:"version,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateProductRequest) Reset() {
@@ -475,6 +560,13 @@ func (x *UpdateProductRequest) GetAcceptedAccess() []string {
 	return nil
 }
 
+func (x *UpdateProductRequest) GetVersion() string {
+	if x != nil && x.Version != nil {
+		return *x.Version
+	}
+	return ""
+}
+
 type UpdateProductResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// product is the product as the workspace has it after the change.
@@ -483,8 +575,11 @@ type UpdateProductResponse struct {
 	// the Workspace API with, "toshi_in_" and 46 characters. Only the call
 	// that installs the product returns it.
 	InstallationToken string `protobuf:"bytes,2,opt,name=installation_token,json=installationToken,proto3" json:"installation_token,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// warning is set when the call installed a deprecated release: the
+	// publisher's reason and successor.
+	Warning       string `protobuf:"bytes,3,opt,name=warning,proto3" json:"warning,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateProductResponse) Reset() {
@@ -527,6 +622,13 @@ func (x *UpdateProductResponse) GetProduct() *ProductSettings {
 func (x *UpdateProductResponse) GetInstallationToken() string {
 	if x != nil {
 		return x.InstallationToken
+	}
+	return ""
+}
+
+func (x *UpdateProductResponse) GetWarning() string {
+	if x != nil {
+		return x.Warning
 	}
 	return ""
 }
@@ -826,9 +928,24 @@ type ProductInstallation struct {
 	TokenId string `protobuf:"bytes,6,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
 	// installed_by names who installed it: "person:" and their GitHub user
 	// id, or "token:" and the workspace token's id.
-	InstalledBy   string                 `protobuf:"bytes,7,opt,name=installed_by,json=installedBy,proto3" json:"installed_by,omitempty"`
-	InstalledAt   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=installed_at,json=installedAt,proto3" json:"installed_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	InstalledBy string                 `protobuf:"bytes,7,opt,name=installed_by,json=installedBy,proto3" json:"installed_by,omitempty"`
+	InstalledAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=installed_at,json=installedAt,proto3" json:"installed_at,omitempty"`
+	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// These fields record the trust decision made when the product was
+	// installed. They are empty for a built-in product and for an installation
+	// made before the deployment kept that decision.
+	// source names the catalog source.
+	Source string `protobuf:"bytes,10,opt,name=source,proto3" json:"source,omitempty"`
+	// index_sequence is the accepted index's sequence, or zero for format 1.
+	IndexSequence int64 `protobuf:"varint,11,opt,name=index_sequence,json=indexSequence,proto3" json:"index_sequence,omitempty"`
+	// index_sha256 is the SHA-256 of the accepted index's bytes in hex.
+	IndexSha256 string `protobuf:"bytes,12,opt,name=index_sha256,json=indexSha256,proto3" json:"index_sha256,omitempty"`
+	// key_id names the key that signed the accepted index.
+	KeyId string `protobuf:"bytes,13,opt,name=key_id,json=keyId,proto3" json:"key_id,omitempty"`
+	// release_state is the release's effective listing state at installation.
+	ReleaseState CatalogEntryState `protobuf:"varint,14,opt,name=release_state,json=releaseState,proto3,enum=toshi.workspace.v1.CatalogEntryState" json:"release_state,omitempty"`
+	// artifacts are the release's artifacts and their selected image manifests.
+	Artifacts     []*ProductArtifact `protobuf:"bytes,15,rep,name=artifacts,proto3" json:"artifacts,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -926,6 +1043,138 @@ func (x *ProductInstallation) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *ProductInstallation) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *ProductInstallation) GetIndexSequence() int64 {
+	if x != nil {
+		return x.IndexSequence
+	}
+	return 0
+}
+
+func (x *ProductInstallation) GetIndexSha256() string {
+	if x != nil {
+		return x.IndexSha256
+	}
+	return ""
+}
+
+func (x *ProductInstallation) GetKeyId() string {
+	if x != nil {
+		return x.KeyId
+	}
+	return ""
+}
+
+func (x *ProductInstallation) GetReleaseState() CatalogEntryState {
+	if x != nil {
+		return x.ReleaseState
+	}
+	return CatalogEntryState_CATALOG_ENTRY_STATE_UNSPECIFIED
+}
+
+func (x *ProductInstallation) GetArtifacts() []*ProductArtifact {
+	if x != nil {
+		return x.Artifacts
+	}
+	return nil
+}
+
+// ProductArtifact is a release artifact recorded when a product is installed.
+type ProductArtifact struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// kind is "cli" or "image".
+	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
+	// os and arch identify a CLI plugin's platform.
+	Os   string `protobuf:"bytes,2,opt,name=os,proto3" json:"os,omitempty"`
+	Arch string `protobuf:"bytes,3,opt,name=arch,proto3" json:"arch,omitempty"`
+	// image is the container image repository.
+	Image string `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
+	// digest is the CLI plugin's SHA-256 or the image index's digest.
+	Digest string `protobuf:"bytes,5,opt,name=digest,proto3" json:"digest,omitempty"`
+	// platform is the selected image platform manifest's digest.
+	Platform      string `protobuf:"bytes,6,opt,name=platform,proto3" json:"platform,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductArtifact) Reset() {
+	*x = ProductArtifact{}
+	mi := &file_toshi_workspace_v1_products_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductArtifact) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductArtifact) ProtoMessage() {}
+
+func (x *ProductArtifact) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_products_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductArtifact.ProtoReflect.Descriptor instead.
+func (*ProductArtifact) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_products_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ProductArtifact) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *ProductArtifact) GetOs() string {
+	if x != nil {
+		return x.Os
+	}
+	return ""
+}
+
+func (x *ProductArtifact) GetArch() string {
+	if x != nil {
+		return x.Arch
+	}
+	return ""
+}
+
+func (x *ProductArtifact) GetImage() string {
+	if x != nil {
+		return x.Image
+	}
+	return ""
+}
+
+func (x *ProductArtifact) GetDigest() string {
+	if x != nil {
+		return x.Digest
+	}
+	return ""
+}
+
+func (x *ProductArtifact) GetPlatform() string {
+	if x != nil {
+		return x.Platform
+	}
+	return ""
+}
+
 // FeatureSetting is one feature of a product as the workspace has it.
 type FeatureSetting struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -960,7 +1209,7 @@ type FeatureSetting struct {
 
 func (x *FeatureSetting) Reset() {
 	*x = FeatureSetting{}
-	mi := &file_toshi_workspace_v1_products_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_products_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -972,7 +1221,7 @@ func (x *FeatureSetting) String() string {
 func (*FeatureSetting) ProtoMessage() {}
 
 func (x *FeatureSetting) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_products_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_products_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -985,7 +1234,7 @@ func (x *FeatureSetting) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FeatureSetting.ProtoReflect.Descriptor instead.
 func (*FeatureSetting) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_products_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_products_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *FeatureSetting) GetKey() string {
@@ -1061,7 +1310,7 @@ const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\bproducts\x18\x01 \x03(\v2#.toshi.workspace.v1.ProductSettingsR\bproducts\"\x1b\n" +
 	"\x19ListCatalogEntriesRequest\"X\n" +
 	"\x1aListCatalogEntriesResponse\x12:\n" +
-	"\aentries\x18\x01 \x03(\v2 .toshi.workspace.v1.CatalogEntryR\aentries\"\x8f\x03\n" +
+	"\aentries\x18\x01 \x03(\v2 .toshi.workspace.v1.CatalogEntryR\aentries\"\x8d\x04\n" +
 	"\fCatalogEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1c\n" +
@@ -1073,21 +1322,28 @@ const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\x12installation_state\x18\b \x01(\x0e2%.toshi.workspace.v1.InstallationStateR\x11installationState\x12\x14\n" +
 	"\x05stale\x18\t \x01(\bR\x05stale\x12F\n" +
 	"\x11source_expires_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x0fsourceExpiresAt\"\xc3\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x0fsourceExpiresAt\x12;\n" +
+	"\x05state\x18\v \x01(\x0e2%.toshi.workspace.v1.CatalogEntryStateR\x05state\x12!\n" +
+	"\fstate_reason\x18\f \x01(\tR\vstateReason\x12\x1c\n" +
+	"\tsuccessor\x18\r \x01(\tR\tsuccessor\"\xee\x02\n" +
 	"\x14UpdateProductRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01\x12R\n" +
 	"\bsettings\x18\x03 \x03(\v26.toshi.workspace.v1.UpdateProductRequest.SettingsEntryR\bsettings\x12\x14\n" +
 	"\x05clear\x18\x04 \x03(\tR\x05clear\x12'\n" +
-	"\x0faccepted_access\x18\x05 \x03(\tR\x0eacceptedAccess\x1a]\n" +
+	"\x0faccepted_access\x18\x05 \x03(\tR\x0eacceptedAccess\x12\x1d\n" +
+	"\aversion\x18\x06 \x01(\tH\x01R\aversion\x88\x01\x01\x1a]\n" +
 	"\rSettingsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x126\n" +
 	"\x05value\x18\x02 \x01(\v2 .toshi.workspace.v1.FeatureValueR\x05value:\x028\x01B\n" +
 	"\n" +
-	"\b_enabled\"\x85\x01\n" +
+	"\b_enabledB\n" +
+	"\n" +
+	"\b_version\"\x9f\x01\n" +
 	"\x15UpdateProductResponse\x12=\n" +
 	"\aproduct\x18\x01 \x01(\v2#.toshi.workspace.v1.ProductSettingsR\aproduct\x12-\n" +
-	"\x12installation_token\x18\x02 \x01(\tR\x11installationToken\"&\n" +
+	"\x12installation_token\x18\x02 \x01(\tR\x11installationToken\x12\x18\n" +
+	"\awarning\x18\x03 \x01(\tR\awarning\"&\n" +
 	"\x14RemoveProductRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"V\n" +
 	"\x15RemoveProductResponse\x12=\n" +
@@ -1104,7 +1360,7 @@ const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\x03api\x18\x01 \x01(\tR\x03api\x12\x10\n" +
 	"\x03cli\x18\x02 \x01(\tR\x03cli\x12\x1c\n" +
 	"\tdashboard\x18\x03 \x01(\tR\tdashboard\x12\x10\n" +
-	"\x03sdk\x18\x04 \x01(\tR\x03sdk\"\xf3\x02\n" +
+	"\x03sdk\x18\x04 \x01(\tR\x03sdk\"\xfb\x04\n" +
 	"\x13ProductInstallation\x12;\n" +
 	"\x05state\x18\x01 \x01(\x0e2%.toshi.workspace.v1.InstallationStateR\x05state\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\tR\aversion\x12\x1c\n" +
@@ -1115,7 +1371,21 @@ const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\finstalled_by\x18\a \x01(\tR\vinstalledBy\x12=\n" +
 	"\finstalled_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\vinstalledAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xb2\x03\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x16\n" +
+	"\x06source\x18\n" +
+	" \x01(\tR\x06source\x12%\n" +
+	"\x0eindex_sequence\x18\v \x01(\x03R\rindexSequence\x12!\n" +
+	"\findex_sha256\x18\f \x01(\tR\vindexSha256\x12\x15\n" +
+	"\x06key_id\x18\r \x01(\tR\x05keyId\x12J\n" +
+	"\rrelease_state\x18\x0e \x01(\x0e2%.toshi.workspace.v1.CatalogEntryStateR\freleaseState\x12A\n" +
+	"\tartifacts\x18\x0f \x03(\v2#.toshi.workspace.v1.ProductArtifactR\tartifacts\"\x93\x01\n" +
+	"\x0fProductArtifact\x12\x12\n" +
+	"\x04kind\x18\x01 \x01(\tR\x04kind\x12\x0e\n" +
+	"\x02os\x18\x02 \x01(\tR\x02os\x12\x12\n" +
+	"\x04arch\x18\x03 \x01(\tR\x04arch\x12\x14\n" +
+	"\x05image\x18\x04 \x01(\tR\x05image\x12\x16\n" +
+	"\x06digest\x18\x05 \x01(\tR\x06digest\x12\x1a\n" +
+	"\bplatform\x18\x06 \x01(\tR\bplatform\"\xb2\x03\n" +
 	"\x0eFeatureSetting\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x1e\n" +
 	"\n" +
@@ -1129,7 +1399,12 @@ const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\n" +
 	"changed_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\x129\n" +
 	"\x06source\x18\b \x01(\x0e2!.toshi.workspace.v1.FeatureSourceR\x06source\x12\x19\n" +
-	"\bplan_key\x18\t \x01(\tR\aplanKey*\x98\x01\n" +
+	"\bplan_key\x18\t \x01(\tR\aplanKey*\x9d\x01\n" +
+	"\x11CatalogEntryState\x12#\n" +
+	"\x1fCATALOG_ENTRY_STATE_UNSPECIFIED\x10\x00\x12\x1e\n" +
+	"\x1aCATALOG_ENTRY_STATE_LISTED\x10\x01\x12\"\n" +
+	"\x1eCATALOG_ENTRY_STATE_DEPRECATED\x10\x02\x12\x1f\n" +
+	"\x1bCATALOG_ENTRY_STATE_BLOCKED\x10\x03*\x98\x01\n" +
 	"\x11InstallationState\x12\"\n" +
 	"\x1eINSTALLATION_STATE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19INSTALLATION_STATE_ACTIVE\x10\x01\x12 \n" +
@@ -1154,66 +1429,71 @@ func file_toshi_workspace_v1_products_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_products_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_products_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_products_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_toshi_workspace_v1_products_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_toshi_workspace_v1_products_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_toshi_workspace_v1_products_proto_goTypes = []any{
-	(InstallationState)(0),             // 0: toshi.workspace.v1.InstallationState
-	(*ListProductsRequest)(nil),        // 1: toshi.workspace.v1.ListProductsRequest
-	(*ListProductsResponse)(nil),       // 2: toshi.workspace.v1.ListProductsResponse
-	(*ListCatalogEntriesRequest)(nil),  // 3: toshi.workspace.v1.ListCatalogEntriesRequest
-	(*ListCatalogEntriesResponse)(nil), // 4: toshi.workspace.v1.ListCatalogEntriesResponse
-	(*CatalogEntry)(nil),               // 5: toshi.workspace.v1.CatalogEntry
-	(*UpdateProductRequest)(nil),       // 6: toshi.workspace.v1.UpdateProductRequest
-	(*UpdateProductResponse)(nil),      // 7: toshi.workspace.v1.UpdateProductResponse
-	(*RemoveProductRequest)(nil),       // 8: toshi.workspace.v1.RemoveProductRequest
-	(*RemoveProductResponse)(nil),      // 9: toshi.workspace.v1.RemoveProductResponse
-	(*ProductSettings)(nil),            // 10: toshi.workspace.v1.ProductSettings
-	(*ProductSurfaces)(nil),            // 11: toshi.workspace.v1.ProductSurfaces
-	(*ProductInstallation)(nil),        // 12: toshi.workspace.v1.ProductInstallation
-	(*FeatureSetting)(nil),             // 13: toshi.workspace.v1.FeatureSetting
-	nil,                                // 14: toshi.workspace.v1.UpdateProductRequest.SettingsEntry
-	(*timestamppb.Timestamp)(nil),      // 15: google.protobuf.Timestamp
-	(ProductSwitch)(0),                 // 16: toshi.workspace.v1.ProductSwitch
-	(ProductState)(0),                  // 17: toshi.workspace.v1.ProductState
-	(*FeatureValue)(nil),               // 18: toshi.workspace.v1.FeatureValue
-	(FeatureSource)(0),                 // 19: toshi.workspace.v1.FeatureSource
+	(CatalogEntryState)(0),             // 0: toshi.workspace.v1.CatalogEntryState
+	(InstallationState)(0),             // 1: toshi.workspace.v1.InstallationState
+	(*ListProductsRequest)(nil),        // 2: toshi.workspace.v1.ListProductsRequest
+	(*ListProductsResponse)(nil),       // 3: toshi.workspace.v1.ListProductsResponse
+	(*ListCatalogEntriesRequest)(nil),  // 4: toshi.workspace.v1.ListCatalogEntriesRequest
+	(*ListCatalogEntriesResponse)(nil), // 5: toshi.workspace.v1.ListCatalogEntriesResponse
+	(*CatalogEntry)(nil),               // 6: toshi.workspace.v1.CatalogEntry
+	(*UpdateProductRequest)(nil),       // 7: toshi.workspace.v1.UpdateProductRequest
+	(*UpdateProductResponse)(nil),      // 8: toshi.workspace.v1.UpdateProductResponse
+	(*RemoveProductRequest)(nil),       // 9: toshi.workspace.v1.RemoveProductRequest
+	(*RemoveProductResponse)(nil),      // 10: toshi.workspace.v1.RemoveProductResponse
+	(*ProductSettings)(nil),            // 11: toshi.workspace.v1.ProductSettings
+	(*ProductSurfaces)(nil),            // 12: toshi.workspace.v1.ProductSurfaces
+	(*ProductInstallation)(nil),        // 13: toshi.workspace.v1.ProductInstallation
+	(*ProductArtifact)(nil),            // 14: toshi.workspace.v1.ProductArtifact
+	(*FeatureSetting)(nil),             // 15: toshi.workspace.v1.FeatureSetting
+	nil,                                // 16: toshi.workspace.v1.UpdateProductRequest.SettingsEntry
+	(*timestamppb.Timestamp)(nil),      // 17: google.protobuf.Timestamp
+	(ProductSwitch)(0),                 // 18: toshi.workspace.v1.ProductSwitch
+	(ProductState)(0),                  // 19: toshi.workspace.v1.ProductState
+	(*FeatureValue)(nil),               // 20: toshi.workspace.v1.FeatureValue
+	(FeatureSource)(0),                 // 21: toshi.workspace.v1.FeatureSource
 }
 var file_toshi_workspace_v1_products_proto_depIdxs = []int32{
-	10, // 0: toshi.workspace.v1.ListProductsResponse.products:type_name -> toshi.workspace.v1.ProductSettings
-	5,  // 1: toshi.workspace.v1.ListCatalogEntriesResponse.entries:type_name -> toshi.workspace.v1.CatalogEntry
-	11, // 2: toshi.workspace.v1.CatalogEntry.surfaces:type_name -> toshi.workspace.v1.ProductSurfaces
-	0,  // 3: toshi.workspace.v1.CatalogEntry.installation_state:type_name -> toshi.workspace.v1.InstallationState
-	15, // 4: toshi.workspace.v1.CatalogEntry.source_expires_at:type_name -> google.protobuf.Timestamp
-	14, // 5: toshi.workspace.v1.UpdateProductRequest.settings:type_name -> toshi.workspace.v1.UpdateProductRequest.SettingsEntry
-	10, // 6: toshi.workspace.v1.UpdateProductResponse.product:type_name -> toshi.workspace.v1.ProductSettings
-	10, // 7: toshi.workspace.v1.RemoveProductResponse.product:type_name -> toshi.workspace.v1.ProductSettings
-	16, // 8: toshi.workspace.v1.ProductSettings.switch:type_name -> toshi.workspace.v1.ProductSwitch
-	13, // 9: toshi.workspace.v1.ProductSettings.features:type_name -> toshi.workspace.v1.FeatureSetting
-	17, // 10: toshi.workspace.v1.ProductSettings.state:type_name -> toshi.workspace.v1.ProductState
-	12, // 11: toshi.workspace.v1.ProductSettings.installation:type_name -> toshi.workspace.v1.ProductInstallation
-	11, // 12: toshi.workspace.v1.ProductSettings.surfaces:type_name -> toshi.workspace.v1.ProductSurfaces
-	0,  // 13: toshi.workspace.v1.ProductInstallation.state:type_name -> toshi.workspace.v1.InstallationState
-	15, // 14: toshi.workspace.v1.ProductInstallation.installed_at:type_name -> google.protobuf.Timestamp
-	15, // 15: toshi.workspace.v1.ProductInstallation.updated_at:type_name -> google.protobuf.Timestamp
-	18, // 16: toshi.workspace.v1.FeatureSetting.entitlement:type_name -> toshi.workspace.v1.FeatureValue
-	18, // 17: toshi.workspace.v1.FeatureSetting.setting:type_name -> toshi.workspace.v1.FeatureValue
-	18, // 18: toshi.workspace.v1.FeatureSetting.effective:type_name -> toshi.workspace.v1.FeatureValue
-	15, // 19: toshi.workspace.v1.FeatureSetting.changed_at:type_name -> google.protobuf.Timestamp
-	19, // 20: toshi.workspace.v1.FeatureSetting.source:type_name -> toshi.workspace.v1.FeatureSource
-	18, // 21: toshi.workspace.v1.UpdateProductRequest.SettingsEntry.value:type_name -> toshi.workspace.v1.FeatureValue
-	1,  // 22: toshi.workspace.v1.ProductService.ListProducts:input_type -> toshi.workspace.v1.ListProductsRequest
-	3,  // 23: toshi.workspace.v1.ProductService.ListCatalogEntries:input_type -> toshi.workspace.v1.ListCatalogEntriesRequest
-	6,  // 24: toshi.workspace.v1.ProductService.UpdateProduct:input_type -> toshi.workspace.v1.UpdateProductRequest
-	8,  // 25: toshi.workspace.v1.ProductService.RemoveProduct:input_type -> toshi.workspace.v1.RemoveProductRequest
-	2,  // 26: toshi.workspace.v1.ProductService.ListProducts:output_type -> toshi.workspace.v1.ListProductsResponse
-	4,  // 27: toshi.workspace.v1.ProductService.ListCatalogEntries:output_type -> toshi.workspace.v1.ListCatalogEntriesResponse
-	7,  // 28: toshi.workspace.v1.ProductService.UpdateProduct:output_type -> toshi.workspace.v1.UpdateProductResponse
-	9,  // 29: toshi.workspace.v1.ProductService.RemoveProduct:output_type -> toshi.workspace.v1.RemoveProductResponse
-	26, // [26:30] is the sub-list for method output_type
-	22, // [22:26] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	11, // 0: toshi.workspace.v1.ListProductsResponse.products:type_name -> toshi.workspace.v1.ProductSettings
+	6,  // 1: toshi.workspace.v1.ListCatalogEntriesResponse.entries:type_name -> toshi.workspace.v1.CatalogEntry
+	12, // 2: toshi.workspace.v1.CatalogEntry.surfaces:type_name -> toshi.workspace.v1.ProductSurfaces
+	1,  // 3: toshi.workspace.v1.CatalogEntry.installation_state:type_name -> toshi.workspace.v1.InstallationState
+	17, // 4: toshi.workspace.v1.CatalogEntry.source_expires_at:type_name -> google.protobuf.Timestamp
+	0,  // 5: toshi.workspace.v1.CatalogEntry.state:type_name -> toshi.workspace.v1.CatalogEntryState
+	16, // 6: toshi.workspace.v1.UpdateProductRequest.settings:type_name -> toshi.workspace.v1.UpdateProductRequest.SettingsEntry
+	11, // 7: toshi.workspace.v1.UpdateProductResponse.product:type_name -> toshi.workspace.v1.ProductSettings
+	11, // 8: toshi.workspace.v1.RemoveProductResponse.product:type_name -> toshi.workspace.v1.ProductSettings
+	18, // 9: toshi.workspace.v1.ProductSettings.switch:type_name -> toshi.workspace.v1.ProductSwitch
+	15, // 10: toshi.workspace.v1.ProductSettings.features:type_name -> toshi.workspace.v1.FeatureSetting
+	19, // 11: toshi.workspace.v1.ProductSettings.state:type_name -> toshi.workspace.v1.ProductState
+	13, // 12: toshi.workspace.v1.ProductSettings.installation:type_name -> toshi.workspace.v1.ProductInstallation
+	12, // 13: toshi.workspace.v1.ProductSettings.surfaces:type_name -> toshi.workspace.v1.ProductSurfaces
+	1,  // 14: toshi.workspace.v1.ProductInstallation.state:type_name -> toshi.workspace.v1.InstallationState
+	17, // 15: toshi.workspace.v1.ProductInstallation.installed_at:type_name -> google.protobuf.Timestamp
+	17, // 16: toshi.workspace.v1.ProductInstallation.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 17: toshi.workspace.v1.ProductInstallation.release_state:type_name -> toshi.workspace.v1.CatalogEntryState
+	14, // 18: toshi.workspace.v1.ProductInstallation.artifacts:type_name -> toshi.workspace.v1.ProductArtifact
+	20, // 19: toshi.workspace.v1.FeatureSetting.entitlement:type_name -> toshi.workspace.v1.FeatureValue
+	20, // 20: toshi.workspace.v1.FeatureSetting.setting:type_name -> toshi.workspace.v1.FeatureValue
+	20, // 21: toshi.workspace.v1.FeatureSetting.effective:type_name -> toshi.workspace.v1.FeatureValue
+	17, // 22: toshi.workspace.v1.FeatureSetting.changed_at:type_name -> google.protobuf.Timestamp
+	21, // 23: toshi.workspace.v1.FeatureSetting.source:type_name -> toshi.workspace.v1.FeatureSource
+	20, // 24: toshi.workspace.v1.UpdateProductRequest.SettingsEntry.value:type_name -> toshi.workspace.v1.FeatureValue
+	2,  // 25: toshi.workspace.v1.ProductService.ListProducts:input_type -> toshi.workspace.v1.ListProductsRequest
+	4,  // 26: toshi.workspace.v1.ProductService.ListCatalogEntries:input_type -> toshi.workspace.v1.ListCatalogEntriesRequest
+	7,  // 27: toshi.workspace.v1.ProductService.UpdateProduct:input_type -> toshi.workspace.v1.UpdateProductRequest
+	9,  // 28: toshi.workspace.v1.ProductService.RemoveProduct:input_type -> toshi.workspace.v1.RemoveProductRequest
+	3,  // 29: toshi.workspace.v1.ProductService.ListProducts:output_type -> toshi.workspace.v1.ListProductsResponse
+	5,  // 30: toshi.workspace.v1.ProductService.ListCatalogEntries:output_type -> toshi.workspace.v1.ListCatalogEntriesResponse
+	8,  // 31: toshi.workspace.v1.ProductService.UpdateProduct:output_type -> toshi.workspace.v1.UpdateProductResponse
+	10, // 32: toshi.workspace.v1.ProductService.RemoveProduct:output_type -> toshi.workspace.v1.RemoveProductResponse
+	29, // [29:33] is the sub-list for method output_type
+	25, // [25:29] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_products_proto_init() }
@@ -1228,8 +1508,8 @@ func file_toshi_workspace_v1_products_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_products_proto_rawDesc), len(file_toshi_workspace_v1_products_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   14,
+			NumEnums:      2,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
