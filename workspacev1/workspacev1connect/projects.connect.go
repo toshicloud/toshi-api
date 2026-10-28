@@ -45,6 +45,9 @@ const (
 	// ProjectServiceCreateProjectProcedure is the fully-qualified name of the ProjectService's
 	// CreateProject RPC.
 	ProjectServiceCreateProjectProcedure = "/toshi.workspace.v1.ProjectService/CreateProject"
+	// ProjectServiceUpdateProjectProcedure is the fully-qualified name of the ProjectService's
+	// UpdateProject RPC.
+	ProjectServiceUpdateProjectProcedure = "/toshi.workspace.v1.ProjectService/UpdateProject"
 	// ProjectServiceClaimRepositoryProcedure is the fully-qualified name of the ProjectService's
 	// ClaimRepository RPC.
 	ProjectServiceClaimRepositoryProcedure = "/toshi.workspace.v1.ProjectService/ClaimRepository"
@@ -95,6 +98,16 @@ type ProjectServiceClient interface {
 	// already have is ALREADY_EXISTS. A token limited to a project is
 	// PERMISSION_DENIED: the new project is not its own.
 	CreateProject(context.Context, *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error)
+	// UpdateProject sets the fields of project.name's project that
+	// update_mask names. The one field it sets is admission, the project's
+	// admission webhook: its url and secret, both required, or an empty url
+	// to remove it. An unset update_mask names the fields project carries,
+	// an empty one changes nothing, and "*" or a path of another field is
+	// INVALID_ARGUMENT. The secret is sealed under the workspace's data key
+	// and never returned; a deployment with no keyring refuses it with
+	// FAILED_PRECONDITION. A token limited to environments is
+	// PERMISSION_DENIED.
+	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
 	// ClaimRepository puts a repository in a project: it claims a repository
 	// no project claims, or moves the claim from another project. A CI job
 	// whose repository's claim was read before the move keeps its project,
@@ -195,6 +208,12 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("CreateProject")),
 			connect.WithClientOptions(opts...),
 		),
+		updateProject: connect.NewClient[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse](
+			httpClient,
+			baseURL+ProjectServiceUpdateProjectProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("UpdateProject")),
+			connect.WithClientOptions(opts...),
+		),
 		claimRepository: connect.NewClient[workspacev1.ClaimRepositoryRequest, workspacev1.ClaimRepositoryResponse](
 			httpClient,
 			baseURL+ProjectServiceClaimRepositoryProcedure,
@@ -252,6 +271,7 @@ type projectServiceClient struct {
 	getProject        *connect.Client[workspacev1.GetProjectRequest, workspacev1.GetProjectResponse]
 	listRepositories  *connect.Client[workspacev1.ListRepositoriesRequest, workspacev1.ListRepositoriesResponse]
 	createProject     *connect.Client[workspacev1.CreateProjectRequest, workspacev1.CreateProjectResponse]
+	updateProject     *connect.Client[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse]
 	claimRepository   *connect.Client[workspacev1.ClaimRepositoryRequest, workspacev1.ClaimRepositoryResponse]
 	createEnvironment *connect.Client[workspacev1.CreateEnvironmentRequest, workspacev1.CreateEnvironmentResponse]
 	deleteEnvironment *connect.Client[workspacev1.DeleteEnvironmentRequest, workspacev1.DeleteEnvironmentResponse]
@@ -280,6 +300,11 @@ func (c *projectServiceClient) ListRepositories(ctx context.Context, req *connec
 // CreateProject calls toshi.workspace.v1.ProjectService.CreateProject.
 func (c *projectServiceClient) CreateProject(ctx context.Context, req *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error) {
 	return c.createProject.CallUnary(ctx, req)
+}
+
+// UpdateProject calls toshi.workspace.v1.ProjectService.UpdateProject.
+func (c *projectServiceClient) UpdateProject(ctx context.Context, req *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error) {
+	return c.updateProject.CallUnary(ctx, req)
 }
 
 // ClaimRepository calls toshi.workspace.v1.ProjectService.ClaimRepository.
@@ -346,6 +371,16 @@ type ProjectServiceHandler interface {
 	// already have is ALREADY_EXISTS. A token limited to a project is
 	// PERMISSION_DENIED: the new project is not its own.
 	CreateProject(context.Context, *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error)
+	// UpdateProject sets the fields of project.name's project that
+	// update_mask names. The one field it sets is admission, the project's
+	// admission webhook: its url and secret, both required, or an empty url
+	// to remove it. An unset update_mask names the fields project carries,
+	// an empty one changes nothing, and "*" or a path of another field is
+	// INVALID_ARGUMENT. The secret is sealed under the workspace's data key
+	// and never returned; a deployment with no keyring refuses it with
+	// FAILED_PRECONDITION. A token limited to environments is
+	// PERMISSION_DENIED.
+	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
 	// ClaimRepository puts a repository in a project: it claims a repository
 	// no project claims, or moves the claim from another project. A CI job
 	// whose repository's claim was read before the move keeps its project,
@@ -442,6 +477,12 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("CreateProject")),
 		connect.WithHandlerOptions(opts...),
 	)
+	projectServiceUpdateProjectHandler := connect.NewUnaryHandler(
+		ProjectServiceUpdateProjectProcedure,
+		svc.UpdateProject,
+		connect.WithSchema(projectServiceMethods.ByName("UpdateProject")),
+		connect.WithHandlerOptions(opts...),
+	)
 	projectServiceClaimRepositoryHandler := connect.NewUnaryHandler(
 		ProjectServiceClaimRepositoryProcedure,
 		svc.ClaimRepository,
@@ -500,6 +541,8 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 			projectServiceListRepositoriesHandler.ServeHTTP(w, r)
 		case ProjectServiceCreateProjectProcedure:
 			projectServiceCreateProjectHandler.ServeHTTP(w, r)
+		case ProjectServiceUpdateProjectProcedure:
+			projectServiceUpdateProjectHandler.ServeHTTP(w, r)
 		case ProjectServiceClaimRepositoryProcedure:
 			projectServiceClaimRepositoryHandler.ServeHTTP(w, r)
 		case ProjectServiceCreateEnvironmentProcedure:
@@ -539,6 +582,10 @@ func (UnimplementedProjectServiceHandler) ListRepositories(context.Context, *con
 
 func (UnimplementedProjectServiceHandler) CreateProject(context.Context, *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.CreateProject is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.UpdateProject is not implemented"))
 }
 
 func (UnimplementedProjectServiceHandler) ClaimRepository(context.Context, *connect.Request[workspacev1.ClaimRepositoryRequest]) (*connect.Response[workspacev1.ClaimRepositoryResponse], error) {

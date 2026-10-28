@@ -11,6 +11,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -84,10 +85,13 @@ func (EmbedTokenState) EnumDescriptor() ([]byte, []int) {
 
 // Project is one of a workspace's projects.
 type Project struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Environments  []*ProjectEnvironment  `protobuf:"bytes,3,rep,name=environments,proto3" json:"environments,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Name         string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	CreatedAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Environments []*ProjectEnvironment  `protobuf:"bytes,3,rep,name=environments,proto3" json:"environments,omitempty"`
+	// admission is the project's admission webhook; unset when it has none.
+	// GetProject and UpdateProject return it; ListProjects does not.
+	Admission     *ProjectAdmission `protobuf:"bytes,4,opt,name=admission,proto3" json:"admission,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -143,6 +147,93 @@ func (x *Project) GetEnvironments() []*ProjectEnvironment {
 	return nil
 }
 
+func (x *Project) GetAdmission() *ProjectAdmission {
+	if x != nil {
+		return x.Admission
+	}
+	return nil
+}
+
+// ProjectAdmission is a project's admission webhook. At each admission
+// point of the project, once Toshi's own checks have passed, the control
+// plane posts the admission document to url, signed under Standard Webhooks
+// with secret, and waits at most 2 seconds for {"allow": true} or
+// {"allow": false, "reason": "..."}. No answer, an error, a status other
+// than 2xx or another body is a deny. A refused workload's error is
+// FAILED_PRECONDITION with an ErrorInfo, reason ADMISSION_DENIED, whose
+// metadata names the module and the reason.
+type ProjectAdmission struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// url is the https URL the document is posted to.
+	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	// secret is the signing secret: "whsec_" and the base64 of 24 to 64
+	// bytes. Input only: no call returns it.
+	Secret string `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
+	// updated_by is who set it last, as the audit log names them.
+	UpdatedBy     string                 `protobuf:"bytes,3,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectAdmission) Reset() {
+	*x = ProjectAdmission{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectAdmission) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectAdmission) ProtoMessage() {}
+
+func (x *ProjectAdmission) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectAdmission.ProtoReflect.Descriptor instead.
+func (*ProjectAdmission) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ProjectAdmission) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *ProjectAdmission) GetSecret() string {
+	if x != nil {
+		return x.Secret
+	}
+	return ""
+}
+
+func (x *ProjectAdmission) GetUpdatedBy() string {
+	if x != nil {
+		return x.UpdatedBy
+	}
+	return ""
+}
+
+func (x *ProjectAdmission) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
 // ProjectEnvironment is one of a project's environments.
 type ProjectEnvironment struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -155,7 +246,7 @@ type ProjectEnvironment struct {
 
 func (x *ProjectEnvironment) Reset() {
 	*x = ProjectEnvironment{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -167,7 +258,7 @@ func (x *ProjectEnvironment) String() string {
 func (*ProjectEnvironment) ProtoMessage() {}
 
 func (x *ProjectEnvironment) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -180,7 +271,7 @@ func (x *ProjectEnvironment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectEnvironment.ProtoReflect.Descriptor instead.
 func (*ProjectEnvironment) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ProjectEnvironment) GetName() string {
@@ -212,7 +303,7 @@ type Repository struct {
 
 func (x *Repository) Reset() {
 	*x = Repository{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -224,7 +315,7 @@ func (x *Repository) String() string {
 func (*Repository) ProtoMessage() {}
 
 func (x *Repository) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -237,7 +328,7 @@ func (x *Repository) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Repository.ProtoReflect.Descriptor instead.
 func (*Repository) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Repository) GetRepository() string {
@@ -273,7 +364,7 @@ type ListProjectsRequest struct {
 
 func (x *ListProjectsRequest) Reset() {
 	*x = ListProjectsRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -285,7 +376,7 @@ func (x *ListProjectsRequest) String() string {
 func (*ListProjectsRequest) ProtoMessage() {}
 
 func (x *ListProjectsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -298,7 +389,7 @@ func (x *ListProjectsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProjectsRequest.ProtoReflect.Descriptor instead.
 func (*ListProjectsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListProjectsRequest) GetPageSize() int32 {
@@ -330,7 +421,7 @@ type ListProjectsResponse struct {
 
 func (x *ListProjectsResponse) Reset() {
 	*x = ListProjectsResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -342,7 +433,7 @@ func (x *ListProjectsResponse) String() string {
 func (*ListProjectsResponse) ProtoMessage() {}
 
 func (x *ListProjectsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -355,7 +446,7 @@ func (x *ListProjectsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProjectsResponse.ProtoReflect.Descriptor instead.
 func (*ListProjectsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListProjectsResponse) GetProjects() []*Project {
@@ -394,7 +485,7 @@ type TokenLimit struct {
 
 func (x *TokenLimit) Reset() {
 	*x = TokenLimit{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -406,7 +497,7 @@ func (x *TokenLimit) String() string {
 func (*TokenLimit) ProtoMessage() {}
 
 func (x *TokenLimit) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -419,7 +510,7 @@ func (x *TokenLimit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TokenLimit.ProtoReflect.Descriptor instead.
 func (*TokenLimit) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *TokenLimit) GetProject() string {
@@ -450,7 +541,7 @@ type ListRepositoriesRequest struct {
 
 func (x *ListRepositoriesRequest) Reset() {
 	*x = ListRepositoriesRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -462,7 +553,7 @@ func (x *ListRepositoriesRequest) String() string {
 func (*ListRepositoriesRequest) ProtoMessage() {}
 
 func (x *ListRepositoriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -475,7 +566,7 @@ func (x *ListRepositoriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRepositoriesRequest.ProtoReflect.Descriptor instead.
 func (*ListRepositoriesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListRepositoriesRequest) GetProject() string {
@@ -510,7 +601,7 @@ type ListRepositoriesResponse struct {
 
 func (x *ListRepositoriesResponse) Reset() {
 	*x = ListRepositoriesResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -522,7 +613,7 @@ func (x *ListRepositoriesResponse) String() string {
 func (*ListRepositoriesResponse) ProtoMessage() {}
 
 func (x *ListRepositoriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -535,7 +626,7 @@ func (x *ListRepositoriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRepositoriesResponse.ProtoReflect.Descriptor instead.
 func (*ListRepositoriesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListRepositoriesResponse) GetRepositories() []*Repository {
@@ -561,7 +652,7 @@ type CreateProjectRequest struct {
 
 func (x *CreateProjectRequest) Reset() {
 	*x = CreateProjectRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -573,7 +664,7 @@ func (x *CreateProjectRequest) String() string {
 func (*CreateProjectRequest) ProtoMessage() {}
 
 func (x *CreateProjectRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -586,7 +677,7 @@ func (x *CreateProjectRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProjectRequest.ProtoReflect.Descriptor instead.
 func (*CreateProjectRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateProjectRequest) GetName() string {
@@ -605,7 +696,7 @@ type CreateProjectResponse struct {
 
 func (x *CreateProjectResponse) Reset() {
 	*x = CreateProjectResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -617,7 +708,7 @@ func (x *CreateProjectResponse) String() string {
 func (*CreateProjectResponse) ProtoMessage() {}
 
 func (x *CreateProjectResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -630,10 +721,108 @@ func (x *CreateProjectResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProjectResponse.ProtoReflect.Descriptor instead.
 func (*CreateProjectResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CreateProjectResponse) GetProject() *Project {
+	if x != nil {
+		return x.Project
+	}
+	return nil
+}
+
+type UpdateProjectRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// name names the project; the fields update_mask names carry the new
+	// values.
+	Project       *Project               `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProjectRequest) Reset() {
+	*x = UpdateProjectRequest{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProjectRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProjectRequest) ProtoMessage() {}
+
+func (x *UpdateProjectRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProjectRequest.ProtoReflect.Descriptor instead.
+func (*UpdateProjectRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *UpdateProjectRequest) GetProject() *Project {
+	if x != nil {
+		return x.Project
+	}
+	return nil
+}
+
+func (x *UpdateProjectRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.UpdateMask
+	}
+	return nil
+}
+
+type UpdateProjectResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Project       *Project               `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProjectResponse) Reset() {
+	*x = UpdateProjectResponse{}
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProjectResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProjectResponse) ProtoMessage() {}
+
+func (x *UpdateProjectResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProjectResponse.ProtoReflect.Descriptor instead.
+func (*UpdateProjectResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *UpdateProjectResponse) GetProject() *Project {
 	if x != nil {
 		return x.Project
 	}
@@ -652,7 +841,7 @@ type ClaimRepositoryRequest struct {
 
 func (x *ClaimRepositoryRequest) Reset() {
 	*x = ClaimRepositoryRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -664,7 +853,7 @@ func (x *ClaimRepositoryRequest) String() string {
 func (*ClaimRepositoryRequest) ProtoMessage() {}
 
 func (x *ClaimRepositoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -677,7 +866,7 @@ func (x *ClaimRepositoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClaimRepositoryRequest.ProtoReflect.Descriptor instead.
 func (*ClaimRepositoryRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ClaimRepositoryRequest) GetRepository() string {
@@ -706,7 +895,7 @@ type ClaimRepositoryResponse struct {
 
 func (x *ClaimRepositoryResponse) Reset() {
 	*x = ClaimRepositoryResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -718,7 +907,7 @@ func (x *ClaimRepositoryResponse) String() string {
 func (*ClaimRepositoryResponse) ProtoMessage() {}
 
 func (x *ClaimRepositoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -731,7 +920,7 @@ func (x *ClaimRepositoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClaimRepositoryResponse.ProtoReflect.Descriptor instead.
 func (*ClaimRepositoryResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ClaimRepositoryResponse) GetRepository() *Repository {
@@ -758,7 +947,7 @@ type GetProjectRequest struct {
 
 func (x *GetProjectRequest) Reset() {
 	*x = GetProjectRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -770,7 +959,7 @@ func (x *GetProjectRequest) String() string {
 func (*GetProjectRequest) ProtoMessage() {}
 
 func (x *GetProjectRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -783,7 +972,7 @@ func (x *GetProjectRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProjectRequest.ProtoReflect.Descriptor instead.
 func (*GetProjectRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetProjectRequest) GetName() string {
@@ -802,7 +991,7 @@ type GetProjectResponse struct {
 
 func (x *GetProjectResponse) Reset() {
 	*x = GetProjectResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -814,7 +1003,7 @@ func (x *GetProjectResponse) String() string {
 func (*GetProjectResponse) ProtoMessage() {}
 
 func (x *GetProjectResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -827,7 +1016,7 @@ func (x *GetProjectResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProjectResponse.ProtoReflect.Descriptor instead.
 func (*GetProjectResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{13}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetProjectResponse) GetProject() *Project {
@@ -850,7 +1039,7 @@ type CreateEnvironmentRequest struct {
 
 func (x *CreateEnvironmentRequest) Reset() {
 	*x = CreateEnvironmentRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -862,7 +1051,7 @@ func (x *CreateEnvironmentRequest) String() string {
 func (*CreateEnvironmentRequest) ProtoMessage() {}
 
 func (x *CreateEnvironmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -875,7 +1064,7 @@ func (x *CreateEnvironmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEnvironmentRequest.ProtoReflect.Descriptor instead.
 func (*CreateEnvironmentRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{14}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *CreateEnvironmentRequest) GetProject() string {
@@ -901,7 +1090,7 @@ type CreateEnvironmentResponse struct {
 
 func (x *CreateEnvironmentResponse) Reset() {
 	*x = CreateEnvironmentResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -913,7 +1102,7 @@ func (x *CreateEnvironmentResponse) String() string {
 func (*CreateEnvironmentResponse) ProtoMessage() {}
 
 func (x *CreateEnvironmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -926,7 +1115,7 @@ func (x *CreateEnvironmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEnvironmentResponse.ProtoReflect.Descriptor instead.
 func (*CreateEnvironmentResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{15}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CreateEnvironmentResponse) GetEnvironment() *ProjectEnvironment {
@@ -948,7 +1137,7 @@ type DeleteEnvironmentRequest struct {
 
 func (x *DeleteEnvironmentRequest) Reset() {
 	*x = DeleteEnvironmentRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -960,7 +1149,7 @@ func (x *DeleteEnvironmentRequest) String() string {
 func (*DeleteEnvironmentRequest) ProtoMessage() {}
 
 func (x *DeleteEnvironmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -973,7 +1162,7 @@ func (x *DeleteEnvironmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteEnvironmentRequest.ProtoReflect.Descriptor instead.
 func (*DeleteEnvironmentRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{16}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *DeleteEnvironmentRequest) GetProject() string {
@@ -998,7 +1187,7 @@ type DeleteEnvironmentResponse struct {
 
 func (x *DeleteEnvironmentResponse) Reset() {
 	*x = DeleteEnvironmentResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1010,7 +1199,7 @@ func (x *DeleteEnvironmentResponse) String() string {
 func (*DeleteEnvironmentResponse) ProtoMessage() {}
 
 func (x *DeleteEnvironmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1023,7 +1212,7 @@ func (x *DeleteEnvironmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteEnvironmentResponse.ProtoReflect.Descriptor instead.
 func (*DeleteEnvironmentResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{20}
 }
 
 // BranchRule is one of a project's branch rules: it chooses the
@@ -1051,7 +1240,7 @@ type BranchRule struct {
 
 func (x *BranchRule) Reset() {
 	*x = BranchRule{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1063,7 +1252,7 @@ func (x *BranchRule) String() string {
 func (*BranchRule) ProtoMessage() {}
 
 func (x *BranchRule) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1076,7 +1265,7 @@ func (x *BranchRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BranchRule.ProtoReflect.Descriptor instead.
 func (*BranchRule) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *BranchRule) GetMatch() string {
@@ -1114,7 +1303,7 @@ type ListBranchRulesRequest struct {
 
 func (x *ListBranchRulesRequest) Reset() {
 	*x = ListBranchRulesRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1126,7 +1315,7 @@ func (x *ListBranchRulesRequest) String() string {
 func (*ListBranchRulesRequest) ProtoMessage() {}
 
 func (x *ListBranchRulesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1139,7 +1328,7 @@ func (x *ListBranchRulesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBranchRulesRequest.ProtoReflect.Descriptor instead.
 func (*ListBranchRulesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{19}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ListBranchRulesRequest) GetProject() string {
@@ -1174,7 +1363,7 @@ type ListBranchRulesResponse struct {
 
 func (x *ListBranchRulesResponse) Reset() {
 	*x = ListBranchRulesResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1186,7 +1375,7 @@ func (x *ListBranchRulesResponse) String() string {
 func (*ListBranchRulesResponse) ProtoMessage() {}
 
 func (x *ListBranchRulesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1199,7 +1388,7 @@ func (x *ListBranchRulesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBranchRulesResponse.ProtoReflect.Descriptor instead.
 func (*ListBranchRulesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{20}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ListBranchRulesResponse) GetRules() []*BranchRule {
@@ -1228,7 +1417,7 @@ type SetBranchRulesRequest struct {
 
 func (x *SetBranchRulesRequest) Reset() {
 	*x = SetBranchRulesRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1240,7 +1429,7 @@ func (x *SetBranchRulesRequest) String() string {
 func (*SetBranchRulesRequest) ProtoMessage() {}
 
 func (x *SetBranchRulesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1253,7 +1442,7 @@ func (x *SetBranchRulesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetBranchRulesRequest.ProtoReflect.Descriptor instead.
 func (*SetBranchRulesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{21}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *SetBranchRulesRequest) GetProject() string {
@@ -1280,7 +1469,7 @@ type SetBranchRulesResponse struct {
 
 func (x *SetBranchRulesResponse) Reset() {
 	*x = SetBranchRulesResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1292,7 +1481,7 @@ func (x *SetBranchRulesResponse) String() string {
 func (*SetBranchRulesResponse) ProtoMessage() {}
 
 func (x *SetBranchRulesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1305,7 +1494,7 @@ func (x *SetBranchRulesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetBranchRulesResponse.ProtoReflect.Descriptor instead.
 func (*SetBranchRulesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{22}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *SetBranchRulesResponse) GetRules() []*BranchRule {
@@ -1342,7 +1531,7 @@ type EmbedToken struct {
 
 func (x *EmbedToken) Reset() {
 	*x = EmbedToken{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1354,7 +1543,7 @@ func (x *EmbedToken) String() string {
 func (*EmbedToken) ProtoMessage() {}
 
 func (x *EmbedToken) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1367,7 +1556,7 @@ func (x *EmbedToken) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmbedToken.ProtoReflect.Descriptor instead.
 func (*EmbedToken) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{23}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *EmbedToken) GetId() string {
@@ -1457,7 +1646,7 @@ type CreateEmbedTokenRequest struct {
 
 func (x *CreateEmbedTokenRequest) Reset() {
 	*x = CreateEmbedTokenRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[24]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1469,7 +1658,7 @@ func (x *CreateEmbedTokenRequest) String() string {
 func (*CreateEmbedTokenRequest) ProtoMessage() {}
 
 func (x *CreateEmbedTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[24]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1482,7 +1671,7 @@ func (x *CreateEmbedTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEmbedTokenRequest.ProtoReflect.Descriptor instead.
 func (*CreateEmbedTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{24}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *CreateEmbedTokenRequest) GetProject() string {
@@ -1517,7 +1706,7 @@ type CreateEmbedTokenResponse struct {
 
 func (x *CreateEmbedTokenResponse) Reset() {
 	*x = CreateEmbedTokenResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[25]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1529,7 +1718,7 @@ func (x *CreateEmbedTokenResponse) String() string {
 func (*CreateEmbedTokenResponse) ProtoMessage() {}
 
 func (x *CreateEmbedTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[25]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1542,7 +1731,7 @@ func (x *CreateEmbedTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEmbedTokenResponse.ProtoReflect.Descriptor instead.
 func (*CreateEmbedTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{25}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *CreateEmbedTokenResponse) GetEmbedToken() *EmbedToken {
@@ -1573,7 +1762,7 @@ type ListEmbedTokensRequest struct {
 
 func (x *ListEmbedTokensRequest) Reset() {
 	*x = ListEmbedTokensRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[26]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1585,7 +1774,7 @@ func (x *ListEmbedTokensRequest) String() string {
 func (*ListEmbedTokensRequest) ProtoMessage() {}
 
 func (x *ListEmbedTokensRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[26]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1598,7 +1787,7 @@ func (x *ListEmbedTokensRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEmbedTokensRequest.ProtoReflect.Descriptor instead.
 func (*ListEmbedTokensRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{26}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ListEmbedTokensRequest) GetProject() string {
@@ -1633,7 +1822,7 @@ type ListEmbedTokensResponse struct {
 
 func (x *ListEmbedTokensResponse) Reset() {
 	*x = ListEmbedTokensResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[27]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1645,7 +1834,7 @@ func (x *ListEmbedTokensResponse) String() string {
 func (*ListEmbedTokensResponse) ProtoMessage() {}
 
 func (x *ListEmbedTokensResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[27]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1658,7 +1847,7 @@ func (x *ListEmbedTokensResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEmbedTokensResponse.ProtoReflect.Descriptor instead.
 func (*ListEmbedTokensResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{27}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ListEmbedTokensResponse) GetEmbedTokens() []*EmbedToken {
@@ -1686,7 +1875,7 @@ type RevokeEmbedTokenRequest struct {
 
 func (x *RevokeEmbedTokenRequest) Reset() {
 	*x = RevokeEmbedTokenRequest{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[28]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1698,7 +1887,7 @@ func (x *RevokeEmbedTokenRequest) String() string {
 func (*RevokeEmbedTokenRequest) ProtoMessage() {}
 
 func (x *RevokeEmbedTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[28]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1711,7 +1900,7 @@ func (x *RevokeEmbedTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeEmbedTokenRequest.ProtoReflect.Descriptor instead.
 func (*RevokeEmbedTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{28}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *RevokeEmbedTokenRequest) GetProject() string {
@@ -1737,7 +1926,7 @@ type RevokeEmbedTokenResponse struct {
 
 func (x *RevokeEmbedTokenResponse) Reset() {
 	*x = RevokeEmbedTokenResponse{}
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[29]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1749,7 +1938,7 @@ func (x *RevokeEmbedTokenResponse) String() string {
 func (*RevokeEmbedTokenResponse) ProtoMessage() {}
 
 func (x *RevokeEmbedTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[29]
+	mi := &file_toshi_workspace_v1_projects_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1762,7 +1951,7 @@ func (x *RevokeEmbedTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeEmbedTokenResponse.ProtoReflect.Descriptor instead.
 func (*RevokeEmbedTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{29}
+	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *RevokeEmbedTokenResponse) GetEmbedToken() *EmbedToken {
@@ -1776,12 +1965,20 @@ var File_toshi_workspace_v1_projects_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/projects.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa4\x01\n" +
+	"!toshi/workspace/v1/projects.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xe8\x01\n" +
 	"\aProject\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12J\n" +
-	"\fenvironments\x18\x03 \x03(\v2&.toshi.workspace.v1.ProjectEnvironmentR\fenvironments\"<\n" +
+	"\fenvironments\x18\x03 \x03(\v2&.toshi.workspace.v1.ProjectEnvironmentR\fenvironments\x12B\n" +
+	"\tadmission\x18\x04 \x01(\v2$.toshi.workspace.v1.ProjectAdmissionR\tadmission\"\x96\x01\n" +
+	"\x10ProjectAdmission\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\x12\x16\n" +
+	"\x06secret\x18\x02 \x01(\tR\x06secret\x12\x1d\n" +
+	"\n" +
+	"updated_by\x18\x03 \x01(\tR\tupdatedBy\x129\n" +
+	"\n" +
+	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"<\n" +
 	"\x12ProjectEnvironment\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04kind\x18\x02 \x01(\tR\x04kind\"\x81\x01\n" +
@@ -1817,6 +2014,12 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x14CreateProjectRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\"N\n" +
 	"\x15CreateProjectResponse\x125\n" +
+	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\"\x8a\x01\n" +
+	"\x14UpdateProjectRequest\x125\n" +
+	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\x12;\n" +
+	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\"N\n" +
+	"\x15UpdateProjectResponse\x125\n" +
 	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\"R\n" +
 	"\x16ClaimRepositoryRequest\x12\x1e\n" +
 	"\n" +
@@ -1904,13 +2107,14 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x18EMBED_TOKEN_STATE_ACTIVE\x10\x01\x12\x1a\n" +
 	"\x16EMBED_TOKEN_STATE_USED\x10\x02\x12\x1d\n" +
 	"\x19EMBED_TOKEN_STATE_REVOKED\x10\x03\x12\x1d\n" +
-	"\x19EMBED_TOKEN_STATE_EXPIRED\x10\x042\x83\x0e\n" +
+	"\x19EMBED_TOKEN_STATE_EXPIRED\x10\x042\x9e\x0f\n" +
 	"\x0eProjectService\x12\x7f\n" +
 	"\fListProjects\x12'.toshi.workspace.v1.ListProjectsRequest\x1a(.toshi.workspace.v1.ListProjectsResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12y\n" +
 	"\n" +
 	"GetProject\x12%.toshi.workspace.v1.GetProjectRequest\x1a&.toshi.workspace.v1.GetProjectResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x8b\x01\n" +
 	"\x10ListRepositories\x12+.toshi.workspace.v1.ListRepositoriesRequest\x1a,.toshi.workspace.v1.ListRepositoriesResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x8d\x01\n" +
-	"\rCreateProject\x12(.toshi.workspace.v1.CreateProjectRequest\x1a).toshi.workspace.v1.CreateProjectResponse\"'\xc2\xf3\x18\x0eprojects.write\xd2\xf3\x18\x11\x12\x0fproject:project\x12\x9e\x01\n" +
+	"\rCreateProject\x12(.toshi.workspace.v1.CreateProjectRequest\x1a).toshi.workspace.v1.CreateProjectResponse\"'\xc2\xf3\x18\x0eprojects.write\xd2\xf3\x18\x11\x12\x0fproject:project\x12\x98\x01\n" +
+	"\rUpdateProject\x12(.toshi.workspace.v1.UpdateProjectRequest\x1a).toshi.workspace.v1.UpdateProjectResponse\"2\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x12\x9e\x01\n" +
 	"\x0fClaimRepository\x12*.toshi.workspace.v1.ClaimRepositoryRequest\x1a+.toshi.workspace.v1.ClaimRepositoryResponse\"2\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x12\xa4\x01\n" +
 	"\x11CreateEnvironment\x12,.toshi.workspace.v1.CreateEnvironmentRequest\x1a-.toshi.workspace.v1.CreateEnvironmentResponse\"2\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x12\xa4\x01\n" +
 	"\x11DeleteEnvironment\x12,.toshi.workspace.v1.DeleteEnvironmentRequest\x1a-.toshi.workspace.v1.DeleteEnvironmentResponse\"2\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x12\x88\x01\n" +
@@ -1934,94 +2138,105 @@ func file_toshi_workspace_v1_projects_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_projects_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_projects_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
+var file_toshi_workspace_v1_projects_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
 var file_toshi_workspace_v1_projects_proto_goTypes = []any{
 	(EmbedTokenState)(0),              // 0: toshi.workspace.v1.EmbedTokenState
 	(*Project)(nil),                   // 1: toshi.workspace.v1.Project
-	(*ProjectEnvironment)(nil),        // 2: toshi.workspace.v1.ProjectEnvironment
-	(*Repository)(nil),                // 3: toshi.workspace.v1.Repository
-	(*ListProjectsRequest)(nil),       // 4: toshi.workspace.v1.ListProjectsRequest
-	(*ListProjectsResponse)(nil),      // 5: toshi.workspace.v1.ListProjectsResponse
-	(*TokenLimit)(nil),                // 6: toshi.workspace.v1.TokenLimit
-	(*ListRepositoriesRequest)(nil),   // 7: toshi.workspace.v1.ListRepositoriesRequest
-	(*ListRepositoriesResponse)(nil),  // 8: toshi.workspace.v1.ListRepositoriesResponse
-	(*CreateProjectRequest)(nil),      // 9: toshi.workspace.v1.CreateProjectRequest
-	(*CreateProjectResponse)(nil),     // 10: toshi.workspace.v1.CreateProjectResponse
-	(*ClaimRepositoryRequest)(nil),    // 11: toshi.workspace.v1.ClaimRepositoryRequest
-	(*ClaimRepositoryResponse)(nil),   // 12: toshi.workspace.v1.ClaimRepositoryResponse
-	(*GetProjectRequest)(nil),         // 13: toshi.workspace.v1.GetProjectRequest
-	(*GetProjectResponse)(nil),        // 14: toshi.workspace.v1.GetProjectResponse
-	(*CreateEnvironmentRequest)(nil),  // 15: toshi.workspace.v1.CreateEnvironmentRequest
-	(*CreateEnvironmentResponse)(nil), // 16: toshi.workspace.v1.CreateEnvironmentResponse
-	(*DeleteEnvironmentRequest)(nil),  // 17: toshi.workspace.v1.DeleteEnvironmentRequest
-	(*DeleteEnvironmentResponse)(nil), // 18: toshi.workspace.v1.DeleteEnvironmentResponse
-	(*BranchRule)(nil),                // 19: toshi.workspace.v1.BranchRule
-	(*ListBranchRulesRequest)(nil),    // 20: toshi.workspace.v1.ListBranchRulesRequest
-	(*ListBranchRulesResponse)(nil),   // 21: toshi.workspace.v1.ListBranchRulesResponse
-	(*SetBranchRulesRequest)(nil),     // 22: toshi.workspace.v1.SetBranchRulesRequest
-	(*SetBranchRulesResponse)(nil),    // 23: toshi.workspace.v1.SetBranchRulesResponse
-	(*EmbedToken)(nil),                // 24: toshi.workspace.v1.EmbedToken
-	(*CreateEmbedTokenRequest)(nil),   // 25: toshi.workspace.v1.CreateEmbedTokenRequest
-	(*CreateEmbedTokenResponse)(nil),  // 26: toshi.workspace.v1.CreateEmbedTokenResponse
-	(*ListEmbedTokensRequest)(nil),    // 27: toshi.workspace.v1.ListEmbedTokensRequest
-	(*ListEmbedTokensResponse)(nil),   // 28: toshi.workspace.v1.ListEmbedTokensResponse
-	(*RevokeEmbedTokenRequest)(nil),   // 29: toshi.workspace.v1.RevokeEmbedTokenRequest
-	(*RevokeEmbedTokenResponse)(nil),  // 30: toshi.workspace.v1.RevokeEmbedTokenResponse
-	(*timestamppb.Timestamp)(nil),     // 31: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),       // 32: google.protobuf.Duration
+	(*ProjectAdmission)(nil),          // 2: toshi.workspace.v1.ProjectAdmission
+	(*ProjectEnvironment)(nil),        // 3: toshi.workspace.v1.ProjectEnvironment
+	(*Repository)(nil),                // 4: toshi.workspace.v1.Repository
+	(*ListProjectsRequest)(nil),       // 5: toshi.workspace.v1.ListProjectsRequest
+	(*ListProjectsResponse)(nil),      // 6: toshi.workspace.v1.ListProjectsResponse
+	(*TokenLimit)(nil),                // 7: toshi.workspace.v1.TokenLimit
+	(*ListRepositoriesRequest)(nil),   // 8: toshi.workspace.v1.ListRepositoriesRequest
+	(*ListRepositoriesResponse)(nil),  // 9: toshi.workspace.v1.ListRepositoriesResponse
+	(*CreateProjectRequest)(nil),      // 10: toshi.workspace.v1.CreateProjectRequest
+	(*CreateProjectResponse)(nil),     // 11: toshi.workspace.v1.CreateProjectResponse
+	(*UpdateProjectRequest)(nil),      // 12: toshi.workspace.v1.UpdateProjectRequest
+	(*UpdateProjectResponse)(nil),     // 13: toshi.workspace.v1.UpdateProjectResponse
+	(*ClaimRepositoryRequest)(nil),    // 14: toshi.workspace.v1.ClaimRepositoryRequest
+	(*ClaimRepositoryResponse)(nil),   // 15: toshi.workspace.v1.ClaimRepositoryResponse
+	(*GetProjectRequest)(nil),         // 16: toshi.workspace.v1.GetProjectRequest
+	(*GetProjectResponse)(nil),        // 17: toshi.workspace.v1.GetProjectResponse
+	(*CreateEnvironmentRequest)(nil),  // 18: toshi.workspace.v1.CreateEnvironmentRequest
+	(*CreateEnvironmentResponse)(nil), // 19: toshi.workspace.v1.CreateEnvironmentResponse
+	(*DeleteEnvironmentRequest)(nil),  // 20: toshi.workspace.v1.DeleteEnvironmentRequest
+	(*DeleteEnvironmentResponse)(nil), // 21: toshi.workspace.v1.DeleteEnvironmentResponse
+	(*BranchRule)(nil),                // 22: toshi.workspace.v1.BranchRule
+	(*ListBranchRulesRequest)(nil),    // 23: toshi.workspace.v1.ListBranchRulesRequest
+	(*ListBranchRulesResponse)(nil),   // 24: toshi.workspace.v1.ListBranchRulesResponse
+	(*SetBranchRulesRequest)(nil),     // 25: toshi.workspace.v1.SetBranchRulesRequest
+	(*SetBranchRulesResponse)(nil),    // 26: toshi.workspace.v1.SetBranchRulesResponse
+	(*EmbedToken)(nil),                // 27: toshi.workspace.v1.EmbedToken
+	(*CreateEmbedTokenRequest)(nil),   // 28: toshi.workspace.v1.CreateEmbedTokenRequest
+	(*CreateEmbedTokenResponse)(nil),  // 29: toshi.workspace.v1.CreateEmbedTokenResponse
+	(*ListEmbedTokensRequest)(nil),    // 30: toshi.workspace.v1.ListEmbedTokensRequest
+	(*ListEmbedTokensResponse)(nil),   // 31: toshi.workspace.v1.ListEmbedTokensResponse
+	(*RevokeEmbedTokenRequest)(nil),   // 32: toshi.workspace.v1.RevokeEmbedTokenRequest
+	(*RevokeEmbedTokenResponse)(nil),  // 33: toshi.workspace.v1.RevokeEmbedTokenResponse
+	(*timestamppb.Timestamp)(nil),     // 34: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),     // 35: google.protobuf.FieldMask
+	(*durationpb.Duration)(nil),       // 36: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_projects_proto_depIdxs = []int32{
-	31, // 0: toshi.workspace.v1.Project.created_at:type_name -> google.protobuf.Timestamp
-	2,  // 1: toshi.workspace.v1.Project.environments:type_name -> toshi.workspace.v1.ProjectEnvironment
-	31, // 2: toshi.workspace.v1.Repository.claimed_at:type_name -> google.protobuf.Timestamp
-	1,  // 3: toshi.workspace.v1.ListProjectsResponse.projects:type_name -> toshi.workspace.v1.Project
-	6,  // 4: toshi.workspace.v1.ListProjectsResponse.token_limit:type_name -> toshi.workspace.v1.TokenLimit
-	3,  // 5: toshi.workspace.v1.ListRepositoriesResponse.repositories:type_name -> toshi.workspace.v1.Repository
-	1,  // 6: toshi.workspace.v1.CreateProjectResponse.project:type_name -> toshi.workspace.v1.Project
-	3,  // 7: toshi.workspace.v1.ClaimRepositoryResponse.repository:type_name -> toshi.workspace.v1.Repository
-	1,  // 8: toshi.workspace.v1.GetProjectResponse.project:type_name -> toshi.workspace.v1.Project
-	2,  // 9: toshi.workspace.v1.CreateEnvironmentResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
-	19, // 10: toshi.workspace.v1.ListBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
-	19, // 11: toshi.workspace.v1.SetBranchRulesRequest.rules:type_name -> toshi.workspace.v1.BranchRule
-	19, // 12: toshi.workspace.v1.SetBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
-	0,  // 13: toshi.workspace.v1.EmbedToken.state:type_name -> toshi.workspace.v1.EmbedTokenState
-	31, // 14: toshi.workspace.v1.EmbedToken.created_at:type_name -> google.protobuf.Timestamp
-	31, // 15: toshi.workspace.v1.EmbedToken.expires_at:type_name -> google.protobuf.Timestamp
-	31, // 16: toshi.workspace.v1.EmbedToken.used_at:type_name -> google.protobuf.Timestamp
-	31, // 17: toshi.workspace.v1.EmbedToken.revoked_at:type_name -> google.protobuf.Timestamp
-	32, // 18: toshi.workspace.v1.CreateEmbedTokenRequest.expires_in:type_name -> google.protobuf.Duration
-	24, // 19: toshi.workspace.v1.CreateEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
-	24, // 20: toshi.workspace.v1.ListEmbedTokensResponse.embed_tokens:type_name -> toshi.workspace.v1.EmbedToken
-	24, // 21: toshi.workspace.v1.RevokeEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
-	4,  // 22: toshi.workspace.v1.ProjectService.ListProjects:input_type -> toshi.workspace.v1.ListProjectsRequest
-	13, // 23: toshi.workspace.v1.ProjectService.GetProject:input_type -> toshi.workspace.v1.GetProjectRequest
-	7,  // 24: toshi.workspace.v1.ProjectService.ListRepositories:input_type -> toshi.workspace.v1.ListRepositoriesRequest
-	9,  // 25: toshi.workspace.v1.ProjectService.CreateProject:input_type -> toshi.workspace.v1.CreateProjectRequest
-	11, // 26: toshi.workspace.v1.ProjectService.ClaimRepository:input_type -> toshi.workspace.v1.ClaimRepositoryRequest
-	15, // 27: toshi.workspace.v1.ProjectService.CreateEnvironment:input_type -> toshi.workspace.v1.CreateEnvironmentRequest
-	17, // 28: toshi.workspace.v1.ProjectService.DeleteEnvironment:input_type -> toshi.workspace.v1.DeleteEnvironmentRequest
-	20, // 29: toshi.workspace.v1.ProjectService.ListBranchRules:input_type -> toshi.workspace.v1.ListBranchRulesRequest
-	22, // 30: toshi.workspace.v1.ProjectService.SetBranchRules:input_type -> toshi.workspace.v1.SetBranchRulesRequest
-	25, // 31: toshi.workspace.v1.ProjectService.CreateEmbedToken:input_type -> toshi.workspace.v1.CreateEmbedTokenRequest
-	27, // 32: toshi.workspace.v1.ProjectService.ListEmbedTokens:input_type -> toshi.workspace.v1.ListEmbedTokensRequest
-	29, // 33: toshi.workspace.v1.ProjectService.RevokeEmbedToken:input_type -> toshi.workspace.v1.RevokeEmbedTokenRequest
-	5,  // 34: toshi.workspace.v1.ProjectService.ListProjects:output_type -> toshi.workspace.v1.ListProjectsResponse
-	14, // 35: toshi.workspace.v1.ProjectService.GetProject:output_type -> toshi.workspace.v1.GetProjectResponse
-	8,  // 36: toshi.workspace.v1.ProjectService.ListRepositories:output_type -> toshi.workspace.v1.ListRepositoriesResponse
-	10, // 37: toshi.workspace.v1.ProjectService.CreateProject:output_type -> toshi.workspace.v1.CreateProjectResponse
-	12, // 38: toshi.workspace.v1.ProjectService.ClaimRepository:output_type -> toshi.workspace.v1.ClaimRepositoryResponse
-	16, // 39: toshi.workspace.v1.ProjectService.CreateEnvironment:output_type -> toshi.workspace.v1.CreateEnvironmentResponse
-	18, // 40: toshi.workspace.v1.ProjectService.DeleteEnvironment:output_type -> toshi.workspace.v1.DeleteEnvironmentResponse
-	21, // 41: toshi.workspace.v1.ProjectService.ListBranchRules:output_type -> toshi.workspace.v1.ListBranchRulesResponse
-	23, // 42: toshi.workspace.v1.ProjectService.SetBranchRules:output_type -> toshi.workspace.v1.SetBranchRulesResponse
-	26, // 43: toshi.workspace.v1.ProjectService.CreateEmbedToken:output_type -> toshi.workspace.v1.CreateEmbedTokenResponse
-	28, // 44: toshi.workspace.v1.ProjectService.ListEmbedTokens:output_type -> toshi.workspace.v1.ListEmbedTokensResponse
-	30, // 45: toshi.workspace.v1.ProjectService.RevokeEmbedToken:output_type -> toshi.workspace.v1.RevokeEmbedTokenResponse
-	34, // [34:46] is the sub-list for method output_type
-	22, // [22:34] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	34, // 0: toshi.workspace.v1.Project.created_at:type_name -> google.protobuf.Timestamp
+	3,  // 1: toshi.workspace.v1.Project.environments:type_name -> toshi.workspace.v1.ProjectEnvironment
+	2,  // 2: toshi.workspace.v1.Project.admission:type_name -> toshi.workspace.v1.ProjectAdmission
+	34, // 3: toshi.workspace.v1.ProjectAdmission.updated_at:type_name -> google.protobuf.Timestamp
+	34, // 4: toshi.workspace.v1.Repository.claimed_at:type_name -> google.protobuf.Timestamp
+	1,  // 5: toshi.workspace.v1.ListProjectsResponse.projects:type_name -> toshi.workspace.v1.Project
+	7,  // 6: toshi.workspace.v1.ListProjectsResponse.token_limit:type_name -> toshi.workspace.v1.TokenLimit
+	4,  // 7: toshi.workspace.v1.ListRepositoriesResponse.repositories:type_name -> toshi.workspace.v1.Repository
+	1,  // 8: toshi.workspace.v1.CreateProjectResponse.project:type_name -> toshi.workspace.v1.Project
+	1,  // 9: toshi.workspace.v1.UpdateProjectRequest.project:type_name -> toshi.workspace.v1.Project
+	35, // 10: toshi.workspace.v1.UpdateProjectRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 11: toshi.workspace.v1.UpdateProjectResponse.project:type_name -> toshi.workspace.v1.Project
+	4,  // 12: toshi.workspace.v1.ClaimRepositoryResponse.repository:type_name -> toshi.workspace.v1.Repository
+	1,  // 13: toshi.workspace.v1.GetProjectResponse.project:type_name -> toshi.workspace.v1.Project
+	3,  // 14: toshi.workspace.v1.CreateEnvironmentResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
+	22, // 15: toshi.workspace.v1.ListBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
+	22, // 16: toshi.workspace.v1.SetBranchRulesRequest.rules:type_name -> toshi.workspace.v1.BranchRule
+	22, // 17: toshi.workspace.v1.SetBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
+	0,  // 18: toshi.workspace.v1.EmbedToken.state:type_name -> toshi.workspace.v1.EmbedTokenState
+	34, // 19: toshi.workspace.v1.EmbedToken.created_at:type_name -> google.protobuf.Timestamp
+	34, // 20: toshi.workspace.v1.EmbedToken.expires_at:type_name -> google.protobuf.Timestamp
+	34, // 21: toshi.workspace.v1.EmbedToken.used_at:type_name -> google.protobuf.Timestamp
+	34, // 22: toshi.workspace.v1.EmbedToken.revoked_at:type_name -> google.protobuf.Timestamp
+	36, // 23: toshi.workspace.v1.CreateEmbedTokenRequest.expires_in:type_name -> google.protobuf.Duration
+	27, // 24: toshi.workspace.v1.CreateEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
+	27, // 25: toshi.workspace.v1.ListEmbedTokensResponse.embed_tokens:type_name -> toshi.workspace.v1.EmbedToken
+	27, // 26: toshi.workspace.v1.RevokeEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
+	5,  // 27: toshi.workspace.v1.ProjectService.ListProjects:input_type -> toshi.workspace.v1.ListProjectsRequest
+	16, // 28: toshi.workspace.v1.ProjectService.GetProject:input_type -> toshi.workspace.v1.GetProjectRequest
+	8,  // 29: toshi.workspace.v1.ProjectService.ListRepositories:input_type -> toshi.workspace.v1.ListRepositoriesRequest
+	10, // 30: toshi.workspace.v1.ProjectService.CreateProject:input_type -> toshi.workspace.v1.CreateProjectRequest
+	12, // 31: toshi.workspace.v1.ProjectService.UpdateProject:input_type -> toshi.workspace.v1.UpdateProjectRequest
+	14, // 32: toshi.workspace.v1.ProjectService.ClaimRepository:input_type -> toshi.workspace.v1.ClaimRepositoryRequest
+	18, // 33: toshi.workspace.v1.ProjectService.CreateEnvironment:input_type -> toshi.workspace.v1.CreateEnvironmentRequest
+	20, // 34: toshi.workspace.v1.ProjectService.DeleteEnvironment:input_type -> toshi.workspace.v1.DeleteEnvironmentRequest
+	23, // 35: toshi.workspace.v1.ProjectService.ListBranchRules:input_type -> toshi.workspace.v1.ListBranchRulesRequest
+	25, // 36: toshi.workspace.v1.ProjectService.SetBranchRules:input_type -> toshi.workspace.v1.SetBranchRulesRequest
+	28, // 37: toshi.workspace.v1.ProjectService.CreateEmbedToken:input_type -> toshi.workspace.v1.CreateEmbedTokenRequest
+	30, // 38: toshi.workspace.v1.ProjectService.ListEmbedTokens:input_type -> toshi.workspace.v1.ListEmbedTokensRequest
+	32, // 39: toshi.workspace.v1.ProjectService.RevokeEmbedToken:input_type -> toshi.workspace.v1.RevokeEmbedTokenRequest
+	6,  // 40: toshi.workspace.v1.ProjectService.ListProjects:output_type -> toshi.workspace.v1.ListProjectsResponse
+	17, // 41: toshi.workspace.v1.ProjectService.GetProject:output_type -> toshi.workspace.v1.GetProjectResponse
+	9,  // 42: toshi.workspace.v1.ProjectService.ListRepositories:output_type -> toshi.workspace.v1.ListRepositoriesResponse
+	11, // 43: toshi.workspace.v1.ProjectService.CreateProject:output_type -> toshi.workspace.v1.CreateProjectResponse
+	13, // 44: toshi.workspace.v1.ProjectService.UpdateProject:output_type -> toshi.workspace.v1.UpdateProjectResponse
+	15, // 45: toshi.workspace.v1.ProjectService.ClaimRepository:output_type -> toshi.workspace.v1.ClaimRepositoryResponse
+	19, // 46: toshi.workspace.v1.ProjectService.CreateEnvironment:output_type -> toshi.workspace.v1.CreateEnvironmentResponse
+	21, // 47: toshi.workspace.v1.ProjectService.DeleteEnvironment:output_type -> toshi.workspace.v1.DeleteEnvironmentResponse
+	24, // 48: toshi.workspace.v1.ProjectService.ListBranchRules:output_type -> toshi.workspace.v1.ListBranchRulesResponse
+	26, // 49: toshi.workspace.v1.ProjectService.SetBranchRules:output_type -> toshi.workspace.v1.SetBranchRulesResponse
+	29, // 50: toshi.workspace.v1.ProjectService.CreateEmbedToken:output_type -> toshi.workspace.v1.CreateEmbedTokenResponse
+	31, // 51: toshi.workspace.v1.ProjectService.ListEmbedTokens:output_type -> toshi.workspace.v1.ListEmbedTokensResponse
+	33, // 52: toshi.workspace.v1.ProjectService.RevokeEmbedToken:output_type -> toshi.workspace.v1.RevokeEmbedTokenResponse
+	40, // [40:53] is the sub-list for method output_type
+	27, // [27:40] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_projects_proto_init() }
@@ -2035,7 +2250,7 @@ func file_toshi_workspace_v1_projects_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_projects_proto_rawDesc), len(file_toshi_workspace_v1_projects_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   30,
+			NumMessages:   33,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
