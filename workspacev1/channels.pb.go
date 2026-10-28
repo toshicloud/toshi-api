@@ -34,7 +34,7 @@ const (
 	// A command in the guest, whose input and output clients attach to.
 	ChannelShape_CHANNEL_SHAPE_STREAM ChannelShape = 2
 	// A service's queue of messages, posted to a port and path in its
-	// guest.
+	// guest, signed with the Standard Webhooks headers, at least once.
 	ChannelShape_CHANNEL_SHAPE_EVENT ChannelShape = 3
 )
 
@@ -255,7 +255,9 @@ const (
 	ChannelMessageState_CHANNEL_MESSAGE_STATE_IN_FLIGHT ChannelMessageState = 2
 	// Answered 2xx.
 	ChannelMessageState_CHANNEL_MESSAGE_STATE_DELIVERED ChannelMessageState = 3
-	// Parked after its last attempt failed.
+	// Parked after an hour of failed attempts from its send or replay. The
+	// messages after it are still delivered; ReplayChannelMessage puts it
+	// back.
 	ChannelMessageState_CHANNEL_MESSAGE_STATE_FAILED ChannelMessageState = 4
 	// Its channel's keep passed before it was delivered.
 	ChannelMessageState_CHANNEL_MESSAGE_STATE_EXPIRED ChannelMessageState = 5
@@ -702,7 +704,9 @@ func (x *ChannelMessageSource) GetId() string {
 // ChannelMessage is one message of an event channel.
 type ChannelMessage struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The webhook-id of each of its posts, the same on every attempt and
+	// after a replay.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Its place in the channel's queue, from 1.
 	Seq    int64                  `protobuf:"varint,2,opt,name=seq,proto3" json:"seq,omitempty"`
 	Name   string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
@@ -987,11 +991,14 @@ type ChannelPolicy struct {
 	// list means no modules. An event channel takes none.
 	Modules *ChannelModuleList `protobuf:"bytes,6,opt,name=modules,proto3" json:"modules,omitempty"`
 	// How long an event channel's post may take to be answered 2xx, a
-	// duration from 1s to 10m: 30s unless set.
+	// duration from 1s to 10m: 30s unless set. It is the same for every
+	// message; a later answer is a failed attempt.
 	AckDeadline string `protobuf:"bytes,7,opt,name=ack_deadline,json=ackDeadline,proto3" json:"ack_deadline,omitempty"`
 	// How many of an event channel's posts may be in flight at once, from 1
-	// to 64: 1 unless set. Above 1, messages are no longer delivered in
-	// order.
+	// to 64: 1 unless set. At 1, messages are posted one at a time in the
+	// order they were sent, and none passes one waiting to be tried again;
+	// above 1, order is not kept. Either way a parked message holds up none
+	// after it, so order is promised among the messages delivered.
 	Concurrency   *int32 `protobuf:"varint,8,opt,name=concurrency,proto3,oneof" json:"concurrency,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

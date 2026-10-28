@@ -162,6 +162,9 @@ service ChannelService {
   // set. A caller the channel's input rule does not admit fails with
   // PERMISSION_DENIED; a name under a segment Toshi keeps for its own
   // events, data that is not JSON or past 256 KiB with INVALID_ARGUMENT.
+  // Delivery is at least once: a post whose answer is lost is posted
+  // again with the same webhook-id, the message ID, so a handler drops
+  // repeats by it.
   rpc SendChannelMessage(SendChannelMessageRequest) returns (SendChannelMessageResponse) {
     option (toshi.permission) = "channels.write";
     option (toshi.audit) = {action: "none"};
@@ -197,7 +200,7 @@ enum ChannelShape {
   // A command in the guest, whose input and output clients attach to.
   CHANNEL_SHAPE_STREAM = 2;
   // A service's queue of messages, posted to a port and path in its
-  // guest.
+  // guest, signed with the Standard Webhooks headers, at least once.
   CHANNEL_SHAPE_EVENT = 3;
 }
 
@@ -299,7 +302,9 @@ enum ChannelMessageState {
   CHANNEL_MESSAGE_STATE_IN_FLIGHT = 2;
   // Answered 2xx.
   CHANNEL_MESSAGE_STATE_DELIVERED = 3;
-  // Parked after its last attempt failed.
+  // Parked after an hour of failed attempts from its send or replay. The
+  // messages after it are still delivered; ReplayChannelMessage puts it
+  // back.
   CHANNEL_MESSAGE_STATE_FAILED = 4;
   // Its channel's keep passed before it was delivered.
   CHANNEL_MESSAGE_STATE_EXPIRED = 5;
@@ -316,6 +321,8 @@ message ChannelMessageSource {
 
 // ChannelMessage is one message of an event channel.
 message ChannelMessage {
+  // The webhook-id of each of its posts, the same on every attempt and
+  // after a replay.
   string id = 1;
   // Its place in the channel's queue, from 1.
   int64 seq = 2;
@@ -381,11 +388,14 @@ message ChannelPolicy {
   // list means no modules. An event channel takes none.
   ChannelModuleList modules = 6;
   // How long an event channel's post may take to be answered 2xx, a
-  // duration from 1s to 10m: 30s unless set.
+  // duration from 1s to 10m: 30s unless set. It is the same for every
+  // message; a later answer is a failed attempt.
   string ack_deadline = 7;
   // How many of an event channel's posts may be in flight at once, from 1
-  // to 64: 1 unless set. Above 1, messages are no longer delivered in
-  // order.
+  // to 64: 1 unless set. At 1, messages are posted one at a time in the
+  // order they were sent, and none passes one waiting to be tried again;
+  // above 1, order is not kept. Either way a parked message holds up none
+  // after it, so order is promised among the messages delivered.
   optional int32 concurrency = 8;
 }
 

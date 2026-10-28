@@ -156,6 +156,9 @@ type ChannelServiceClient interface {
 	// set. A caller the channel's input rule does not admit fails with
 	// PERMISSION_DENIED; a name under a segment Toshi keeps for its own
 	// events, data that is not JSON or past 256 KiB with INVALID_ARGUMENT.
+	// Delivery is at least once: a post whose answer is lost is posted
+	// again with the same webhook-id, the message ID, so a handler drops
+	// repeats by it.
 	SendChannelMessage(context.Context, *connect.Request[workspacev1.SendChannelMessageRequest]) (*connect.Response[workspacev1.SendChannelMessageResponse], error)
 	// TailChannelMessages streams an event channel's messages after the
 	// cursor, oldest first, then each message added after them as it is
@@ -454,6 +457,9 @@ type ChannelServiceHandler interface {
 	// set. A caller the channel's input rule does not admit fails with
 	// PERMISSION_DENIED; a name under a segment Toshi keeps for its own
 	// events, data that is not JSON or past 256 KiB with INVALID_ARGUMENT.
+	// Delivery is at least once: a post whose answer is lost is posted
+	// again with the same webhook-id, the message ID, so a handler drops
+	// repeats by it.
 	SendChannelMessage(context.Context, *connect.Request[workspacev1.SendChannelMessageRequest]) (*connect.Response[workspacev1.SendChannelMessageResponse], error)
 	// TailChannelMessages streams an event channel's messages after the
 	// cursor, oldest first, then each message added after them as it is

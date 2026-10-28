@@ -491,6 +491,9 @@ export const ChannelMessageSourceSchema: GenMessage<ChannelMessageSource, {jsonT
  */
 export type ChannelMessage = Message<"toshi.workspace.v1.ChannelMessage"> & {
   /**
+   * The webhook-id of each of its posts, the same on every attempt and
+   * after a replay.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -568,6 +571,9 @@ export type ChannelMessage = Message<"toshi.workspace.v1.ChannelMessage"> & {
  */
 export type ChannelMessageJson = {
   /**
+   * The webhook-id of each of its posts, the same on every attempt and
+   * after a replay.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -851,7 +857,8 @@ export type ChannelPolicy = Message<"toshi.workspace.v1.ChannelPolicy"> & {
 
   /**
    * How long an event channel's post may take to be answered 2xx, a
-   * duration from 1s to 10m: 30s unless set.
+   * duration from 1s to 10m: 30s unless set. It is the same for every
+   * message; a later answer is a failed attempt.
    *
    * @generated from field: string ack_deadline = 7;
    */
@@ -859,8 +866,10 @@ export type ChannelPolicy = Message<"toshi.workspace.v1.ChannelPolicy"> & {
 
   /**
    * How many of an event channel's posts may be in flight at once, from 1
-   * to 64: 1 unless set. Above 1, messages are no longer delivered in
-   * order.
+   * to 64: 1 unless set. At 1, messages are posted one at a time in the
+   * order they were sent, and none passes one waiting to be tried again;
+   * above 1, order is not kept. Either way a parked message holds up none
+   * after it, so order is promised among the messages delivered.
    *
    * @generated from field: optional int32 concurrency = 8;
    */
@@ -926,7 +935,8 @@ export type ChannelPolicyJson = {
 
   /**
    * How long an event channel's post may take to be answered 2xx, a
-   * duration from 1s to 10m: 30s unless set.
+   * duration from 1s to 10m: 30s unless set. It is the same for every
+   * message; a later answer is a failed attempt.
    *
    * @generated from field: string ack_deadline = 7;
    */
@@ -934,8 +944,10 @@ export type ChannelPolicyJson = {
 
   /**
    * How many of an event channel's posts may be in flight at once, from 1
-   * to 64: 1 unless set. Above 1, messages are no longer delivered in
-   * order.
+   * to 64: 1 unless set. At 1, messages are posted one at a time in the
+   * order they were sent, and none passes one waiting to be tried again;
+   * above 1, order is not kept. Either way a parked message holds up none
+   * after it, so order is promised among the messages delivered.
    *
    * @generated from field: optional int32 concurrency = 8;
    */
@@ -3515,7 +3527,7 @@ export enum ChannelShape {
 
   /**
    * A service's queue of messages, posted to a port and path in its
-   * guest.
+   * guest, signed with the Standard Webhooks headers, at least once.
    *
    * @generated from enum value: CHANNEL_SHAPE_EVENT = 3;
    */
@@ -3696,7 +3708,9 @@ export enum ChannelMessageState {
   DELIVERED = 3,
 
   /**
-   * Parked after its last attempt failed.
+   * Parked after an hour of failed attempts from its send or replay. The
+   * messages after it are still delivered; ReplayChannelMessage puts it
+   * back.
    *
    * @generated from enum value: CHANNEL_MESSAGE_STATE_FAILED = 4;
    */
@@ -3924,6 +3938,9 @@ export const ChannelService: GenService<{
    * set. A caller the channel's input rule does not admit fails with
    * PERMISSION_DENIED; a name under a segment Toshi keeps for its own
    * events, data that is not JSON or past 256 KiB with INVALID_ARGUMENT.
+   * Delivery is at least once: a post whose answer is lost is posted
+   * again with the same webhook-id, the message ID, so a handler drops
+   * repeats by it.
    *
    * @generated from rpc toshi.workspace.v1.ChannelService.SendChannelMessage
    */
