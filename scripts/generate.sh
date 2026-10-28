@@ -22,5 +22,5 @@ done
 
 # buf generate --clean would remove the output directory, and the Go output
 # goes to the repository root, so the generated trees are removed here.
-rm -rf workspacev1 operatorv1 githubcorev1 backendv1 keyproviderv1 toshipb ts/gen
+rm -rf workspacev1 operatorv1 githubcorev1 backendv1 keyproviderv1 providerv1 toshipb ts/gen
 buf generate

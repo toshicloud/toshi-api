@@ -1,0 +1,818 @@
+syntax = "proto3";
+
+// Package toshi.backend.provider.v1 is version 1 of the VM provider protocol:
+// between a Toshi host agent and a VM provider program beside it on the same
+// host. The backend type in the handshake (toshi.backend.v1) is
+// "vm_provider"; version 1 defines no capabilities.
+//
+// The protocol carries the Go provider contract of the host agent across a
+// process boundary: one rpc per method of the contract, except the six that
+// return a constant, which Open returns once. A provider program serves it
+// on its Unix socket beside BackendService and the health service.
+//
+// Errors. A call that fails with one of the contract's errors carries one
+// ProviderError in the status details. Its code names the error and maps to
+// a status code, so a generic client still reads it; a client that does not
+// know the code reads the message as a plain error. A failure with no
+// ProviderError (the socket refused, the connection lost, the call cancelled)
+// means the provider gave no answer: the instance may or may not have
+// changed, and the client never reads it as "not found".
+//
+// Paths. Disk paths, the state root, screen captures and console logs cross
+// as strings that name files on the host both processes share. Open checks
+// it: the agent writes a nonce file and the provider reads it back.
+//
+// Enums. ErrorCode, State, OperatingSystem, DiskKind and CheckStatus are
+// closed sets that later versions may grow. A client reads a value it does
+// not know as a plain error with the message (ErrorCode), a failed instance
+// whose error names the value (State), a failed check (CheckStatus), or an
+// invalid spec (OperatingSystem, DiskKind).
+package toshi.backend.provider.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "go.toshicloud.io/api/providerv1";
+
+// ProviderService is served by a VM provider program and called by the host
+// agent, on the program's Unix socket. The agent calls Handshake, then the
+// checks or Open. Every call but Describe, Preflight, Status and Open fails
+// with FAILED_PRECONDITION until Open has succeeded.
+//
+// An instance id is the provider's own. A call that names an instance the
+// provider does not know fails with ERROR_CODE_NOT_FOUND.
+service ProviderService {
+  // Core.
+
+  // Open starts the provider with its settings and returns what does not
+  // change while it runs: its name, its capabilities, the facets it offers
+  // and the other constants of the contract. A second Open with the same
+  // config, as after a reconnect to the same process, returns the first
+  // answer; another config fails with FAILED_PRECONDITION.
+  rpc Open(OpenRequest) returns (OpenResponse);
+  // Create creates an instance of spec and returns it, usually still
+  // creating. The spec's workspace and key, with operation_id, are the
+  // operation's identity: a retried Create with the same operation_id
+  // returns the first one's outcome, waiting for it when it is still running.
+  // A Create with a new operation_id on a key another instance holds fails
+  // with ERROR_CODE_KEY_IN_USE; it never makes a second instance. A Create
+  // whose call is cancelled answers once the provider has undone what it
+  // made; when it cannot confirm that, it fails with ERROR_CODE_NO_REPLY and
+  // the operation in the error.
+  rpc Create(CreateRequest) returns (CreateResponse);
+  // CreateOutcome reads back the outcome of a Create or Restore whose answer
+  // the caller did not get. It creates nothing. It waits while the operation
+  // runs, up to the call's deadline, and then answers pending; an operation
+  // the provider has no record of is unknown.
+  rpc CreateOutcome(CreateOutcomeRequest) returns (CreateOutcomeResponse);
+  // Get returns the instance as it is now.
+  rpc Get(GetRequest) returns (GetResponse);
+  // List returns every instance the provider knows that is not destroyed.
+  rpc List(ListRequest) returns (ListResponse);
+  // Start starts a ready or stopped instance. From another state it fails
+  // with ERROR_CODE_INVALID_TRANSITION, on a retry too.
+  rpc Start(StartRequest) returns (StartResponse);
+  // Stop stops a running instance. From another state it fails with
+  // ERROR_CODE_INVALID_TRANSITION, on a retry too.
+  rpc Stop(StopRequest) returns (StopResponse);
+  // Destroy destroys the instance and everything it holds on the host. It
+  // succeeds for an instance that is already destroyed or unknown.
+  rpc Destroy(DestroyRequest) returns (DestroyResponse);
+  // Wait returns the instance once it is in state want, or fails when it
+  // reaches a state it cannot leave for want or when the call's deadline
+  // passes. A failure carries the instance as it last was in the error.
+  rpc Wait(WaitRequest) returns (WaitResponse);
+
+  // Disks: the facet "disks", and "disk_data" for DiskHasData.
+
+  // CreateCacheBase creates an empty cache disk of size_gib at path.
+  rpc CreateCacheBase(CreateCacheBaseRequest) returns (CreateCacheBaseResponse);
+  // CreateCacheOverlay creates a cache disk at path on top of backing.
+  rpc CreateCacheOverlay(CreateCacheOverlayRequest) returns (CreateCacheOverlayResponse);
+  // CacheRequiredBytes returns the bytes the cache disk at path needs to be
+  // flattened.
+  rpc CacheRequiredBytes(CacheRequiredBytesRequest) returns (CacheRequiredBytesResponse);
+  // FlattenCache writes the cache disk at path, with its backing, as one
+  // disk at dst.
+  rpc FlattenCache(FlattenCacheRequest) returns (FlattenCacheResponse);
+  // AttachDisk attaches a disk to a running instance.
+  rpc AttachDisk(AttachDiskRequest) returns (AttachDiskResponse);
+  // DiskHasData reports whether the disk at path holds data.
+  rpc DiskHasData(DiskHasDataRequest) returns (DiskHasDataResponse);
+
+  // State: the facet "instances_gone". The state root is in OpenResponse.
+
+  // InstanceGone reports whether an instance a previous agent left on the
+  // host is positively gone.
+  rpc InstanceGone(InstanceGoneRequest) returns (InstanceGoneResponse);
+  // Unreaped reports how many instance directories the provider's start-up
+  // scan could not confirm gone.
+  rpc Unreaped(UnreapedRequest) returns (UnreapedResponse);
+
+  // Snapshots: the facets "snapshotter", "image_tracker" and
+  // "snapshot_referrer".
+
+  // Snapshot saves a running instance and returns the snapshot's id.
+  rpc Snapshot(SnapshotRequest) returns (SnapshotResponse);
+  // Restore creates an instance of spec from a snapshot, with Create's rules
+  // for operation_id, a held key and a cancelled call.
+  rpc Restore(RestoreRequest) returns (RestoreResponse);
+  // ImageIdentity returns the identity of the image spec names.
+  rpc ImageIdentity(ImageIdentityRequest) returns (ImageIdentityResponse);
+  // SnapshotImageIdentity returns the identity of the image a snapshot was
+  // made from.
+  rpc SnapshotImageIdentity(SnapshotImageIdentityRequest) returns (SnapshotImageIdentityResponse);
+  // SetSnapshotRefs tells the provider which snapshots the agent's warm
+  // pools hold, for its collector.
+  rpc SetSnapshotRefs(SetSnapshotRefsRequest) returns (SetSnapshotRefsResponse);
+
+  // Upkeep: the facets "collector" and "forgetter".
+
+  // Collect removes what nothing has used for grace, at most max_per_pass
+  // items, and returns the bytes it freed.
+  rpc Collect(CollectRequest) returns (CollectResponse);
+  // Forget drops a destroyed instance from the provider's records.
+  rpc Forget(ForgetRequest) returns (ForgetResponse);
+
+  // Checks: asked of a provider that has not started. Each carries the
+  // config Open would get, and none starts the provider or acts on the host.
+
+  // Describe returns the backend facets the provider offers and its
+  // capabilities.
+  rpc Describe(DescribeRequest) returns (DescribeResponse);
+  // Preflight checks the host before the provider starts: the facet
+  // "preflighter".
+  rpc Preflight(PreflightRequest) returns (PreflightResponse);
+  // Status reports what the provider keeps on the host: the facet
+  // "status_reporter".
+  rpc Status(StatusRequest) returns (StatusResponse);
+
+  // Memory: the facets "memory_reclaimer" and "memory_high_setter".
+
+  // IdleMemoryMiB returns the memory an idle instance of spec keeps, or 0
+  // when the provider reclaims none for it.
+  rpc IdleMemoryMiB(IdleMemoryMiBRequest) returns (IdleMemoryMiBResponse);
+  // SetMemoryTarget asks a running instance's guest to shrink or grow to
+  // target_mib.
+  rpc SetMemoryTarget(SetMemoryTargetRequest) returns (SetMemoryTargetResponse);
+  // MemoryMiB returns the memory a running instance's guest holds now.
+  rpc MemoryMiB(MemoryMiBRequest) returns (MemoryMiBResponse);
+  // GuestAvailableMiB returns the free memory inside a running instance's
+  // guest.
+  rpc GuestAvailableMiB(GuestAvailableMiBRequest) returns (GuestAvailableMiBResponse);
+  // SetMemoryHigh sets the memory level above which the instance's processes
+  // are throttled.
+  rpc SetMemoryHigh(SetMemoryHighRequest) returns (SetMemoryHighResponse);
+
+  // Usage: the facets "usage_reader", "host_memory_reader" and
+  // "process_limit_reader".
+
+  // Usage returns what an instance has used so far.
+  rpc Usage(UsageRequest) returns (UsageResponse);
+  // HostMemory returns the host memory an instance holds now, in bytes.
+  rpc HostMemory(HostMemoryRequest) returns (HostMemoryResponse);
+  // ProcessLimit returns an instance's process limit and how close it came.
+  rpc ProcessLimit(ProcessLimitRequest) returns (ProcessLimitResponse);
+
+  // Guest: the facets "guest_connector", "display_connector",
+  // "screen_capturer", "console_reader", "console_log_keeper",
+  // "debug_forwarder" and "preview_forwarder".
+
+  // DialGuest connects to a running instance's guest channel. The first
+  // request names the instance and carries no data; the first response
+  // carries no data and says the connection is made, or the call fails as
+  // the dial would. Later frames on both sides carry the channel's bytes
+  // unchanged, at most 32 KiB each. The caller closing its side closes the
+  // write side to the guest; the guest closing its side ends the call.
+  rpc DialGuest(stream DialGuestRequest) returns (stream DialGuestResponse);
+  // DialDisplay connects to a running instance's display, framed as
+  // DialGuest.
+  rpc DialDisplay(stream DialDisplayRequest) returns (stream DialDisplayResponse);
+  // CaptureScreen writes a running instance's screen to path as one PNG of
+  // at most OpenResponse.max_screen_bytes bytes. On success the file is
+  // complete. After ERROR_CODE_NO_REPLY the file may still be written until
+  // the instance is destroyed; after any other error nothing is at path.
+  rpc CaptureScreen(CaptureScreenRequest) returns (CaptureScreenResponse);
+  // ReadConsole reads an instance's serial console from (start, offset) on.
+  // When nothing is past offset yet it waits up to wait for more, then
+  // answers with no data.
+  rpc ReadConsole(ReadConsoleRequest) returns (ReadConsoleResponse);
+  // KeepConsoleLog keeps an instance's console log past its destroy and
+  // returns the log's path.
+  rpc KeepConsoleLog(KeepConsoleLogRequest) returns (KeepConsoleLogResponse);
+  // DebugSSHAddr returns the host loopback address that reaches the
+  // instance's debug ssh port.
+  rpc DebugSSHAddr(DebugSSHAddrRequest) returns (DebugSSHAddrResponse);
+  // PreviewAddr returns the host loopback address that reaches the
+  // instance's preview port, and that port.
+  rpc PreviewAddr(PreviewAddrRequest) returns (PreviewAddrResponse);
+}
+
+// ErrorCode names an error of the provider contract.
+enum ErrorCode {
+  // Not one of the contract's errors: the message says what failed.
+  // Status UNKNOWN.
+  ERROR_CODE_UNSPECIFIED = 0;
+  // The provider does not know the instance or snapshot. Status NOT_FOUND.
+  ERROR_CODE_NOT_FOUND = 1;
+  // The instance's state does not allow the call. Status
+  // FAILED_PRECONDITION.
+  ERROR_CODE_INVALID_TRANSITION = 2;
+  // The spec failed validation. Status INVALID_ARGUMENT.
+  ERROR_CODE_INVALID_SPEC = 3;
+  // The provider cannot do what was asked, or does not offer the facet.
+  // Status UNIMPLEMENTED.
+  ERROR_CODE_UNSUPPORTED = 4;
+  // The snapshot's base image changed since it was taken. Status
+  // FAILED_PRECONDITION.
+  ERROR_CODE_IMAGE_CHANGED = 5;
+  // Another instance holds the state volume the spec names. Status
+  // FAILED_PRECONDITION.
+  ERROR_CODE_IN_USE = 6;
+  // Another instance holds the spec's key in its workspace;
+  // ProviderError.key_in_use names it. Status ALREADY_EXISTS.
+  ERROR_CODE_KEY_IN_USE = 7;
+  // A command to the instance got no answer: it may still be running, or a
+  // cancelled Create may have left something behind. Status ABORTED.
+  ERROR_CODE_NO_REPLY = 8;
+  // A console read asked for a position past what was written. Status
+  // OUT_OF_RANGE.
+  ERROR_CODE_CONSOLE_OFFSET = 9;
+}
+
+// ProviderError is the status detail of a call that failed with one of the
+// contract's errors.
+message ProviderError {
+  ErrorCode code = 1;
+  // The error's text, as the provider wrote it.
+  string message = 2;
+  // Set with ERROR_CODE_KEY_IN_USE.
+  KeyInUse key_in_use = 3;
+  // Set when Wait fails: the instance as it last was.
+  Instance instance = 4;
+  // Set with ERROR_CODE_NO_REPLY from Create or Restore: the operation to
+  // read back with CreateOutcome.
+  CreateOperation operation = 5;
+}
+
+// KeyInUse names the instance that holds a key in a workspace.
+message KeyInUse {
+  string workspace = 1;
+  string key = 2;
+  string instance_id = 3;
+}
+
+// CreateOperation identifies one Create or Restore.
+message CreateOperation {
+  string workspace = 1;
+  string key = 2;
+  // The caller's id for the operation, the same on each retry of it.
+  string operation_id = 3;
+}
+
+// State is an instance's lifecycle state.
+enum State {
+  STATE_UNSPECIFIED = 0;
+  STATE_CREATING = 1;
+  STATE_READY = 2;
+  STATE_RUNNING = 3;
+  STATE_STOPPING = 4;
+  STATE_STOPPED = 5;
+  STATE_FAILED = 6;
+  STATE_DESTROYED = 7;
+}
+
+// OperatingSystem is a guest's operating system.
+enum OperatingSystem {
+  OPERATING_SYSTEM_UNSPECIFIED = 0;
+  OPERATING_SYSTEM_LINUX = 1;
+  OPERATING_SYSTEM_WINDOWS = 2;
+  OPERATING_SYSTEM_MACOS = 3;
+}
+
+// DiskKind is what a disk attached to an instance holds.
+enum DiskKind {
+  DISK_KIND_UNSPECIFIED = 0;
+  // A job's cache.
+  DISK_KIND_CACHE = 1;
+  // A state volume that outlives the instance.
+  DISK_KIND_STATE = 2;
+}
+
+// Disk is a disk file or directory on the host and what it holds.
+message Disk {
+  DiskKind kind = 1;
+  // A clean absolute path.
+  string path = 2;
+}
+
+// Spec is what an instance is created with.
+message Spec {
+  string image = 1;
+  OperatingSystem os = 2;
+  int32 cpus = 3;
+  int32 memory_mib = 4;
+  int32 disk_gib = 5;
+  bool nested_kvm = 6;
+  int32 cpu_weight = 7;
+  int32 memory_max_mib = 8;
+  int32 cpu_max_percent = 9;
+  string share_dir = 10;
+  repeated Disk disks = 11;
+  bool open_source = 12;
+  map<string, string> metadata = 13;
+  map<string, string> labels = 14;
+  // With workspace, the instance's identity for Create's retries: at most
+  // one instance that is not destroyed has a key in a workspace.
+  string key = 15;
+  string workspace = 16;
+}
+
+// Instance is one instance as it was when the call answered.
+message Instance {
+  string id = 1;
+  Spec spec = 2;
+  State state = 3;
+  // When the provider accepted the Create or Restore.
+  google.protobuf.Timestamp created_at = 4;
+  // What went wrong; set only in STATE_FAILED.
+  string error = 5;
+}
+
+// Capabilities are what the provider's host can do, which the agent asks
+// instead of comparing provider names.
+message Capabilities {
+  // The tier the host registers as: "container", or empty for a host that
+  // runs each job in a VM.
+  string tier = 1;
+  // A job's memory is its share of the host's by CPUs.
+  bool shared_job_memory = 2;
+  // The provider can give an instance a cgroup of its own with a lower CPU
+  // weight and a memory cap.
+  bool instance_limits = 3;
+  // The provider keeps its instances' disks under its state directory.
+  bool state_disk = 4;
+  // The provider starts nothing on the host and stands in for a tier.
+  bool stand_in = 5;
+}
+
+// ProviderConfig is what the agent gives a provider to build it from.
+message ProviderConfig {
+  // The provider's own settings: the settings table of the agent's
+  // [provider.process] section, as one JSON object.
+  bytes settings_json = 1;
+  // What the host gives every provider.
+  HostFacts host = 2;
+}
+
+// HostFacts are what the host agent gives every provider beside its own
+// settings. Version 1 defines none: a provider program logs to the standard
+// error it inherits.
+message HostFacts {}
+
+message OpenRequest {
+  ProviderConfig config = 1;
+  // A file the agent wrote for this Open. The provider reads it and returns
+  // its contents as OpenResponse.nonce; a provider that cannot read it, or
+  // reads other bytes, does not share the agent's files and is refused.
+  string nonce_path = 2;
+}
+
+message OpenResponse {
+  // The provider's name, as the contract's Name returns it.
+  string name = 1;
+  Capabilities capabilities = 2;
+  // The optional interfaces of the contract the provider offers, by facet
+  // name, such as "disks" or "guest_connector". A name the agent does not
+  // know is ignored.
+  repeated string facets = 3;
+  // Caches are directories, not disk files (facet "cache_directories").
+  bool cache_directories = 4;
+  // The largest screen capture in bytes (facet "screen_capturer").
+  int64 max_screen_bytes = 5;
+  // Guests run executions (facet "guest_executions").
+  bool guests_run_executions = 6;
+  // The absolute, clean directory the provider keeps its instance state in,
+  // its durable identity (facet "instances_gone").
+  string state_root = 7;
+  // The provider's instances keep running when its process ends, and it
+  // finds them again when it starts. When false, the agent takes a provider
+  // process that restarted as one that lost every instance.
+  bool instances_outlive_process = 8;
+  // The contents of the nonce file OpenRequest named.
+  bytes nonce = 9;
+}
+
+message CreateRequest {
+  Spec spec = 1;
+  // The caller's id for this Create, the same on each retry of it.
+  string operation_id = 2;
+}
+
+message CreateResponse {
+  Instance instance = 1;
+}
+
+message CreateOutcomeRequest {
+  CreateOperation operation = 1;
+}
+
+message CreateOutcomeResponse {
+  // Outcome is how far the operation got.
+  enum Outcome {
+    OUTCOME_UNSPECIFIED = 0;
+    // Still running when the call's deadline passed.
+    OUTCOME_PENDING = 1;
+    // Finished: instance, or error, is its result.
+    OUTCOME_DONE = 2;
+    // The provider has no record of it: it never arrived, or the provider
+    // process that took it has ended.
+    OUTCOME_UNKNOWN = 3;
+  }
+  Outcome outcome = 1;
+  // The instance the operation made, when it succeeded.
+  Instance instance = 2;
+  // The operation's error, when it failed.
+  ProviderError error = 3;
+}
+
+message GetRequest {
+  string id = 1;
+}
+
+message GetResponse {
+  Instance instance = 1;
+}
+
+message ListRequest {}
+
+message ListResponse {
+  repeated Instance instances = 1;
+}
+
+message StartRequest {
+  string id = 1;
+}
+
+message StartResponse {}
+
+message StopRequest {
+  string id = 1;
+}
+
+message StopResponse {}
+
+message DestroyRequest {
+  string id = 1;
+}
+
+message DestroyResponse {}
+
+message WaitRequest {
+  string id = 1;
+  State want = 2;
+}
+
+message WaitResponse {
+  Instance instance = 1;
+}
+
+message CreateCacheBaseRequest {
+  string path = 1;
+  int32 size_gib = 2;
+}
+
+message CreateCacheBaseResponse {}
+
+message CreateCacheOverlayRequest {
+  string path = 1;
+  string backing = 2;
+}
+
+message CreateCacheOverlayResponse {}
+
+message CacheRequiredBytesRequest {
+  string path = 1;
+}
+
+message CacheRequiredBytesResponse {
+  int64 bytes = 1;
+}
+
+message FlattenCacheRequest {
+  string path = 1;
+  string dst = 2;
+}
+
+message FlattenCacheResponse {}
+
+message AttachDiskRequest {
+  string id = 1;
+  Disk disk = 2;
+}
+
+message AttachDiskResponse {}
+
+message DiskHasDataRequest {
+  string path = 1;
+}
+
+message DiskHasDataResponse {
+  bool has_data = 1;
+}
+
+message InstanceGoneRequest {
+  string id = 1;
+}
+
+message InstanceGoneResponse {
+  // The start-up scan read the state root and the instance is not there.
+  bool gone = 1;
+  // False when the provider cannot tell.
+  bool certain = 2;
+}
+
+message UnreapedRequest {}
+
+message UnreapedResponse {
+  int32 left = 1;
+  // False when the start-up scan did not read the state root.
+  bool certain = 2;
+}
+
+message SnapshotRequest {
+  string id = 1;
+}
+
+message SnapshotResponse {
+  string snapshot_id = 1;
+}
+
+message RestoreRequest {
+  string snapshot_id = 1;
+  Spec spec = 2;
+  // The caller's id for this Restore, the same on each retry of it.
+  string operation_id = 3;
+}
+
+message RestoreResponse {
+  Instance instance = 1;
+}
+
+message ImageIdentityRequest {
+  Spec spec = 1;
+}
+
+message ImageIdentityResponse {
+  string identity = 1;
+}
+
+message SnapshotImageIdentityRequest {
+  string snapshot_id = 1;
+}
+
+message SnapshotImageIdentityResponse {
+  string identity = 1;
+}
+
+message SetSnapshotRefsRequest {
+  // The snapshot each warm pool restores from, by runner size.
+  map<string, string> pools = 1;
+  // The snapshots the pools stopped using, with when they did.
+  map<string, google.protobuf.Timestamp> dropped = 2;
+}
+
+message SetSnapshotRefsResponse {}
+
+message CollectRequest {
+  google.protobuf.Duration grace = 1;
+  int32 max_per_pass = 2;
+}
+
+message CollectResponse {
+  int64 freed_bytes = 1;
+}
+
+message ForgetRequest {
+  string id = 1;
+}
+
+message ForgetResponse {}
+
+message DescribeRequest {
+  ProviderConfig config = 1;
+}
+
+message DescribeResponse {
+  // The checks the provider offers before it starts, by facet name:
+  // "preflighter", "capable", "status_reporter".
+  repeated string facets = 1;
+  Capabilities capabilities = 2;
+}
+
+// CheckStatus is how one check of the host came out.
+enum CheckStatus {
+  CHECK_STATUS_UNSPECIFIED = 0;
+  CHECK_STATUS_OK = 1;
+  CHECK_STATUS_WARN = 2;
+  CHECK_STATUS_FAIL = 3;
+}
+
+// CheckResult is one row of a host check.
+message CheckResult {
+  string check = 1;
+  CheckStatus status = 2;
+  string detail = 3;
+}
+
+message PreflightRequest {
+  ProviderConfig config = 1;
+  // The images the host's pools use, sorted.
+  repeated string images = 2;
+  // No agent serves the host yet, as in a check before the first start.
+  bool before_start = 3;
+}
+
+message PreflightResponse {
+  repeated CheckResult results = 1;
+}
+
+message StatusRequest {
+  ProviderConfig config = 1;
+  // The host's warm pools restore from snapshots.
+  bool snapshots = 2;
+  // The name of each runner size's image.
+  map<string, string> pools = 3;
+  // The time the rows are for.
+  google.protobuf.Timestamp now = 4;
+  // The collector's grace and limit, as Collect takes them.
+  google.protobuf.Duration grace = 5;
+  int32 max_per_pass = 6;
+}
+
+message StatusResponse {
+  repeated CheckResult results = 1;
+}
+
+message IdleMemoryMiBRequest {
+  Spec spec = 1;
+}
+
+message IdleMemoryMiBResponse {
+  int32 mib = 1;
+}
+
+message SetMemoryTargetRequest {
+  string id = 1;
+  int32 target_mib = 2;
+}
+
+message SetMemoryTargetResponse {}
+
+message MemoryMiBRequest {
+  string id = 1;
+}
+
+message MemoryMiBResponse {
+  int32 mib = 1;
+}
+
+message GuestAvailableMiBRequest {
+  string id = 1;
+}
+
+message GuestAvailableMiBResponse {
+  int32 mib = 1;
+}
+
+message SetMemoryHighRequest {
+  string id = 1;
+  int32 high_mib = 2;
+}
+
+message SetMemoryHighResponse {}
+
+message UsageRequest {
+  string id = 1;
+}
+
+message UsageResponse {
+  google.protobuf.Duration cpu_time = 1;
+  google.protobuf.Duration cpu_wait = 2;
+  uint64 host_memory_bytes = 3;
+  uint64 disk_read_bytes = 4;
+  uint64 disk_write_bytes = 5;
+  uint64 guest_memory_used_bytes = 6;
+  // guest_memory_used_bytes was read from the guest.
+  bool guest_memory_known = 7;
+}
+
+message HostMemoryRequest {
+  string id = 1;
+}
+
+message HostMemoryResponse {
+  uint64 bytes = 1;
+}
+
+message ProcessLimitRequest {
+  string id = 1;
+}
+
+message ProcessLimitResponse {
+  // False when the instance has no process limit the provider can read.
+  bool ok = 1;
+  int32 limit = 2;
+  int32 hits = 3;
+  int32 peak = 4;
+  // What showed the limit was reached, empty when it was not.
+  string signal = 5;
+}
+
+message DialGuestRequest {
+  // The instance, in the first request only.
+  string id = 1;
+  // The channel's bytes, after the first request.
+  bytes data = 2;
+}
+
+message DialGuestResponse {
+  // The channel's bytes, after the first response.
+  bytes data = 1;
+}
+
+message DialDisplayRequest {
+  // The instance, in the first request only.
+  string id = 1;
+  // The display's bytes, after the first request.
+  bytes data = 2;
+}
+
+message DialDisplayResponse {
+  // The display's bytes, after the first response.
+  bytes data = 1;
+}
+
+message CaptureScreenRequest {
+  string id = 1;
+  // A file in a directory of the agent's that the provider's processes can
+  // write.
+  string path = 2;
+}
+
+message CaptureScreenResponse {}
+
+message ReadConsoleRequest {
+  string id = 1;
+  // The start the offset counts in, empty for the current one.
+  string start = 2;
+  int64 offset = 3;
+  // At most this many bytes.
+  int32 max_bytes = 4;
+  // How long to wait when nothing is past offset yet; zero answers at once.
+  google.protobuf.Duration wait = 5;
+}
+
+message ReadConsoleResponse {
+  // The instance start the offsets count in. A new start of the instance
+  // has a new one and counts from zero.
+  string start = 1;
+  // The position of data's first byte in that start.
+  int64 offset = 2;
+  // Empty when nothing is past offset yet.
+  bytes data = 3;
+  // No more bytes will come in this start.
+  bool closed = 4;
+  // Bytes were skipped: start is not the one asked for, or offset is past
+  // the one asked for because that history has expired.
+  bool gap = 5;
+}
+
+message KeepConsoleLogRequest {
+  string id = 1;
+}
+
+message KeepConsoleLogResponse {
+  string path = 1;
+}
+
+message DebugSSHAddrRequest {
+  string id = 1;
+}
+
+message DebugSSHAddrResponse {
+  // False when the instance has no debug ssh port.
+  bool ok = 1;
+  string addr = 2;
+}
+
+message PreviewAddrRequest {
+  string id = 1;
+}
+
+message PreviewAddrResponse {
+  // False when the instance has no preview port.
+  bool ok = 1;
+  string addr = 2;
+  int32 guest_port = 3;
+}
