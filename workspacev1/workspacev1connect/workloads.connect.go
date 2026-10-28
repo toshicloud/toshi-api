@@ -334,8 +334,12 @@ type WorkloadServiceClient interface {
 	// deploys service.spec.recipe as the service's next revision and selects
 	// it. A deploy stops a live run of another revision, so a started
 	// service's next run runs the new recipe; a stopped service runs it once
-	// started. A recipe that does not parse, or of another template, fails
-	// with INVALID_ARGUMENT, as does another path.
+	// started. On a started service the deploy opens the revision's upgrade
+	// window (ServiceRevision.upgrade): a run of the revision that fails in
+	// it, or one not ready when it ends, rolls the service back to the
+	// revision it replaced and restores the state volume's version saved at
+	// the deploy. A recipe that does not parse, or of another template,
+	// fails with INVALID_ARGUMENT, as does another path.
 	UpdateService(context.Context, *connect.Request[workspacev1.UpdateServiceRequest]) (*connect.Response[workspacev1.UpdateServiceResponse], error)
 	// DeleteService stops a service that has not ended and then removes it.
 	// It returns an operation that is done once the service is removed;
@@ -1186,8 +1190,12 @@ type WorkloadServiceHandler interface {
 	// deploys service.spec.recipe as the service's next revision and selects
 	// it. A deploy stops a live run of another revision, so a started
 	// service's next run runs the new recipe; a stopped service runs it once
-	// started. A recipe that does not parse, or of another template, fails
-	// with INVALID_ARGUMENT, as does another path.
+	// started. On a started service the deploy opens the revision's upgrade
+	// window (ServiceRevision.upgrade): a run of the revision that fails in
+	// it, or one not ready when it ends, rolls the service back to the
+	// revision it replaced and restores the state volume's version saved at
+	// the deploy. A recipe that does not parse, or of another template,
+	// fails with INVALID_ARGUMENT, as does another path.
 	UpdateService(context.Context, *connect.Request[workspacev1.UpdateServiceRequest]) (*connect.Response[workspacev1.UpdateServiceResponse], error)
 	// DeleteService stops a service that has not ended and then removes it.
 	// It returns an operation that is done once the service is removed;

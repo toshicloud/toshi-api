@@ -840,6 +840,9 @@ enum EventType {
   // A workload a trigger made was removed, with why. Name:
   // "trigger.removed".
   EVENT_TYPE_TRIGGER_REMOVED = 13;
+  // A service's upgrade failed in its window and was rolled back to the
+  // revision it replaced, with why. Name: "service.upgrade_rolled_back".
+  EVENT_TYPE_UPGRADE_ROLLED_BACK = 14;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -878,6 +881,8 @@ message Event {
     SecretWithheldEvent secret_withheld = 18;
     // For the TRIGGER_* types.
     TriggerResult trigger = 19;
+    // For UPGRADE_ROLLED_BACK.
+    UpgradeRolledBackEvent upgrade_rolled_back = 20;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -887,6 +892,19 @@ message Event {
   string environment = 12;
   // The connection that received a CONNECTION event; empty for the others.
   string connection_id = 16;
+}
+
+// UpgradeRolledBackEvent is a service upgrade that failed in its window and
+// was rolled back.
+message UpgradeRolledBackEvent {
+  // The revision whose upgrade failed.
+  int64 revision = 1;
+  // The revision rolled back to, selected again.
+  int64 from_revision = 2;
+  // Why the upgrade failed, and whether the state volume was restored.
+  string reason = 3;
+  // The state volume's version restored; 0 when none was.
+  int64 volume_version = 4;
 }
 
 // SecretWithheldEvent names the keys one release of a workload's secrets
@@ -1297,6 +1315,52 @@ message ServiceRevision {
   // selects the revision. Reading a revision asks no registry: the next
   // rollback to the revision checks again and replaces it.
   ServiceRevisionImageCheck image_check = 10;
+  // The watch of the upgrade a deploy to a started service made to this
+  // revision; unset for a revision no such deploy made.
+  ServiceUpgrade upgrade = 11;
+}
+
+// ServiceUpgrade is the watch of a deploy to a started service. Its window,
+// the recipe's upgrade_window (5 minutes unless set, at most 30), counts
+// from the start of the revision's first run, and again from the next run's
+// start after the run's host was lost. A run that fails inside the window,
+// or a run not ready when the window ends, fails the upgrade: Toshi stops
+// the run, restores the state volume's version saved when the deploy
+// stopped the run before, selects from_revision again and starts it.
+message ServiceUpgrade {
+  ServiceUpgradeState state = 1;
+  // The revision the deploy replaced.
+  int64 from_revision = 2;
+  google.protobuf.Duration window = 3;
+  // When the window started; unset until the revision's first run starts.
+  google.protobuf.Timestamp window_start_time = 4;
+  // When the window ends; unset until it starts.
+  google.protobuf.Timestamp window_end_time = 5;
+  // The state volume's version a rollback restores: the one saved when the
+  // deploy stopped the run before; 0 when none was saved.
+  int64 volume_version = 6;
+  // Why the upgrade failed, and whether the state volume was restored; set
+  // once it is ROLLING_BACK.
+  string rollback_reason = 7;
+  // When it passed, was rolled back or ended; unset while it is watched or
+  // rolling back.
+  google.protobuf.Timestamp finish_time = 8;
+}
+
+// ServiceUpgradeState is where an upgrade's watch is.
+enum ServiceUpgradeState {
+  SERVICE_UPGRADE_STATE_UNSPECIFIED = 0;
+  // Its window has not started or not ended yet.
+  SERVICE_UPGRADE_STATE_WATCHING = 1;
+  // Its run was ready when the window ended.
+  SERVICE_UPGRADE_STATE_PASSED = 2;
+  // It failed: from_revision is selected again and the state volume is
+  // being restored.
+  SERVICE_UPGRADE_STATE_ROLLING_BACK = 3;
+  // It failed and was rolled back.
+  SERVICE_UPGRADE_STATE_ROLLED_BACK = 4;
+  // A deploy, a rollback or a stop of the service ended the watch first.
+  SERVICE_UPGRADE_STATE_ENDED = 5;
 }
 
 // ServiceRevisionImageCheck is one answer of a revision's registry to the
