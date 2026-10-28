@@ -10657,8 +10657,9 @@ export type Subject = Message<"toshi.operator.v1.Subject"> & {
   kind: SubjectKind;
 
   /**
-   * The GitHub user id of a person, in decimal, such as "583231"; the token
-   * id of a token, such as "tok-1a2b3c4d5e6f"; empty for the system.
+   * The Toshi user id of a person, such as "usr-0f1e2d3c4b5a69788796a5b4",
+   * opaque; the token id of a token, such as "tok-1a2b3c4d5e6f"; empty for
+   * the system.
    *
    * @generated from field: string id = 2;
    */
@@ -10677,8 +10678,9 @@ export type SubjectJson = {
   kind?: SubjectKindJson;
 
   /**
-   * The GitHub user id of a person, in decimal, such as "583231"; the token
-   * id of a token, such as "tok-1a2b3c4d5e6f"; empty for the system.
+   * The Toshi user id of a person, such as "usr-0f1e2d3c4b5a69788796a5b4",
+   * opaque; the token id of a token, such as "tok-1a2b3c4d5e6f"; empty for
+   * the system.
    *
    * @generated from field: string id = 2;
    */
@@ -16743,7 +16745,7 @@ export enum SubjectKind {
   UNSPECIFIED = 0,
 
   /**
-   * A person, by GitHub user id.
+   * A person, by Toshi user id.
    *
    * @generated from enum value: SUBJECT_KIND_PERSON = 1;
    */

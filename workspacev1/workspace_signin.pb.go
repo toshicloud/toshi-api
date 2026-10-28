@@ -28,7 +28,9 @@ type WorkspaceSignIn struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The provider entry's name, as GET /auth/providers lists it.
 	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
-	// The provider's issuer: the identities it signs in are keyed by it.
+	// The provider's issuer: the identities it signs in are keyed by it, as
+	// their Identity.provider, and GET /auth/providers lists it as the
+	// entry's identity_provider.
 	Issuer string `protobuf:"bytes,2,opt,name=issuer,proto3" json:"issuer,omitempty"`
 	// The user who set it, and when.
 	SetBy         string                 `protobuf:"bytes,3,opt,name=set_by,json=setBy,proto3" json:"set_by,omitempty"`

@@ -5159,7 +5159,7 @@ type WithheldSecret struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The key's name.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// The person whose own key it is: their GitHub user id.
+	// The person whose own key it is: their user id.
 	Owner string `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
 	// Why it was withheld: "owner_has_no_role", the owner holds no role in
 	// the workspace.

@@ -99,7 +99,10 @@ func (x *Account) GetCreatedAt() *timestamppb.Timestamp {
 // Identity is a user's account at an identity provider.
 type Identity struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// "github", or the OpenID Connect issuer URL.
+	// "github", "local" for the control plane's local admin, or the OpenID
+	// Connect issuer URL. GET /auth/providers lists it as each sign-in
+	// provider entry's identity_provider, which joins an identity to the
+	// entries that sign it in, and WorkspaceSignIn.issuer is the same value.
 	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
 	// The account's stable id at the provider.
 	Subject string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`

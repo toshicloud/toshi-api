@@ -163,8 +163,8 @@ type Secret struct {
 	// The newest version's size in bytes.
 	Size      int64                  `protobuf:"varint,3,opt,name=size,proto3" json:"size,omitempty"`
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	// The GitHub user id of the person whose own key it is; empty for a key
-	// of the set.
+	// The user id of the person whose own key it is; empty for a key of the
+	// set.
 	Owner string `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
 	// The key is the caller's own.
 	Mine bool `protobuf:"varint,6,opt,name=mine,proto3" json:"mine,omitempty"`
@@ -829,7 +829,7 @@ type DeleteSecretRequest struct {
 	Name        string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	// The caller's own key; not with owner.
 	Own bool `protobuf:"varint,5,opt,name=own,proto3" json:"own,omitempty"`
-	// The own key of the person with this GitHub user id; not with own.
+	// The own key of the person with this user id; not with own.
 	Owner         string `protobuf:"bytes,6,opt,name=owner,proto3" json:"owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1086,7 +1086,7 @@ type ListSecretVersionsRequest struct {
 	PageToken string `protobuf:"bytes,6,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	// The caller's own key; not with owner.
 	Own bool `protobuf:"varint,7,opt,name=own,proto3" json:"own,omitempty"`
-	// The own key of the person with this GitHub user id; not with own.
+	// The own key of the person with this user id; not with own.
 	Owner         string `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

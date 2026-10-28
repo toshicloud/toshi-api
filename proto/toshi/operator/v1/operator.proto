@@ -2515,7 +2515,7 @@ message Token {
 // SubjectKind is what a Subject is; its numbers are the Workspace API's.
 enum SubjectKind {
   SUBJECT_KIND_UNSPECIFIED = 0;
-  // A person, by GitHub user id.
+  // A person, by Toshi user id.
   SUBJECT_KIND_PERSON = 1;
   // An API token, by token id.
   SUBJECT_KIND_TOKEN = 2;
@@ -2526,8 +2526,9 @@ enum SubjectKind {
 // Subject is who made something.
 message Subject {
   SubjectKind kind = 1;
-  // The GitHub user id of a person, in decimal, such as "583231"; the token
-  // id of a token, such as "tok-1a2b3c4d5e6f"; empty for the system.
+  // The Toshi user id of a person, such as "usr-0f1e2d3c4b5a69788796a5b4",
+  // opaque; the token id of a token, such as "tok-1a2b3c4d5e6f"; empty for
+  // the system.
   string id = 2;
 }
 

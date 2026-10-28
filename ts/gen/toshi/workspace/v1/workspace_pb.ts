@@ -4255,7 +4255,7 @@ export type WithheldSecret = Message<"toshi.workspace.v1.WithheldSecret"> & {
   name: string;
 
   /**
-   * The person whose own key it is: their GitHub user id.
+   * The person whose own key it is: their user id.
    *
    * @generated from field: string owner = 2;
    */
@@ -4284,7 +4284,7 @@ export type WithheldSecretJson = {
   name?: string;
 
   /**
-   * The person whose own key it is: their GitHub user id.
+   * The person whose own key it is: their user id.
    *
    * @generated from field: string owner = 2;
    */

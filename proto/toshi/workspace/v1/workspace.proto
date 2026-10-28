@@ -905,7 +905,7 @@ message SecretWithheldEvent {
 message WithheldSecret {
   // The key's name.
   string name = 1;
-  // The person whose own key it is: their GitHub user id.
+  // The person whose own key it is: their user id.
   string owner = 2;
   // Why it was withheld: "owner_has_no_role", the owner holds no role in
   // the workspace.

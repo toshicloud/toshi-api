@@ -55,7 +55,9 @@ service WorkspaceSignInService {
 message WorkspaceSignIn {
   // The provider entry's name, as GET /auth/providers lists it.
   string provider = 1;
-  // The provider's issuer: the identities it signs in are keyed by it.
+  // The provider's issuer: the identities it signs in are keyed by it, as
+  // their Identity.provider, and GET /auth/providers lists it as the
+  // entry's identity_provider.
   string issuer = 2;
   // The user who set it, and when.
   string set_by = 3;

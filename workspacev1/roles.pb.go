@@ -29,7 +29,7 @@ type SubjectKind int32
 
 const (
 	SubjectKind_SUBJECT_KIND_UNSPECIFIED SubjectKind = 0
-	// A person, by GitHub user id.
+	// A person, by Toshi user id.
 	SubjectKind_SUBJECT_KIND_PERSON SubjectKind = 1
 	// One of the workspace's API tokens, by token id.
 	SubjectKind_SUBJECT_KIND_TOKEN SubjectKind = 2
@@ -330,9 +330,11 @@ func (x *Role) GetBuiltIn() bool {
 type Subject struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Kind  SubjectKind            `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.SubjectKind" json:"kind,omitempty"`
-	// The GitHub user id of a person, in decimal, such as "583231", which a
-	// change of login keeps; the token id of a token, such as
-	// "tok-1a2b3c4d5e6f"; empty for the system.
+	// The Toshi user id of a person, such as "usr-0f1e2d3c4b5a69788796a5b4",
+	// which a change of login or identity provider keeps; it is opaque, and
+	// a person who signed in before user accounts came has their GitHub user
+	// id as theirs. The token id of a token, such as "tok-1a2b3c4d5e6f";
+	// empty for the system.
 	Id            string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
