@@ -54,21 +54,32 @@ type ImageServiceClient interface {
 	// IMAGE_NAME_TAKEN. A base that is not one of Toshi's, a size that is
 	// not a Linux size, or a recipe without a setup hook or with a field an
 	// image does not use, fails with INVALID_ARGUMENT. A container image
-	// takes a name and its kind alone; one with a base, size or recipe fails
-	// with INVALID_ARGUMENT.
+	// that is pushed takes a name and its kind alone; one with a base, size
+	// or recipe fails with INVALID_ARGUMENT.
 	//
-	// Creating a disk image starts its first build, as BuildImage does; the
-	// response's version is that build's. A workspace whose plan
+	// A container image built from a repository takes its source, a Linux
+	// size and, optionally, a builder and a registry to push to; one with a
+	// base, a recipe or an environment fails with INVALID_ARGUMENT, as its
+	// builds take the environment the project's branch rules choose for the
+	// source's default branch. A source the project does not claim, or that
+	// none of the workspace's GitHub connections reaches, fails with
+	// FAILED_PRECONDITION.
+	//
+	// Creating a disk image, or a container image built from a repository,
+	// starts its first build, as BuildImage does; the response's version is
+	// that build's. A workspace whose plan
 	// does not include images fails with FAILED_PRECONDITION and the reason
 	// PLAN_EXCLUDES_IMAGES.
 	CreateImage(context.Context, *connect.Request[workspacev1.CreateImageRequest]) (*connect.Response[workspacev1.CreateImageResponse], error)
-	// BuildImage starts a build of the image: a job that runs the recipe's
-	// setup hook in a fresh VM of the base and saves its disk as the next
-	// version. A recipe in the request is the build's, and becomes the
-	// image's when the version is ready. An image with a build in progress
-	// fails with FAILED_PRECONDITION and the reason IMAGE_BUILD_IN_PROGRESS,
-	// and a container image, which is pushed rather than built, with
-	// FAILED_PRECONDITION.
+	// BuildImage starts a build of the image. A disk image's build is a job
+	// that runs the recipe's setup hook in a fresh VM of the base and saves
+	// its disk as the next version; a recipe in the request is the build's,
+	// and becomes the image's when the version is ready. A container image's
+	// build is a job that builds the tip of its source's default branch in a
+	// fresh VM and pushes it; the version is ready with the pushed digest.
+	// An image with a build in progress fails with FAILED_PRECONDITION and
+	// the reason IMAGE_BUILD_IN_PROGRESS, and a container image that is
+	// pushed rather than built, with FAILED_PRECONDITION.
 	BuildImage(context.Context, *connect.Request[workspacev1.BuildImageRequest]) (*connect.Response[workspacev1.BuildImageResponse], error)
 	// GetImage returns the image with its versions, newest first.
 	GetImage(context.Context, *connect.Request[workspacev1.GetImageRequest]) (*connect.Response[workspacev1.GetImageResponse], error)
@@ -169,21 +180,32 @@ type ImageServiceHandler interface {
 	// IMAGE_NAME_TAKEN. A base that is not one of Toshi's, a size that is
 	// not a Linux size, or a recipe without a setup hook or with a field an
 	// image does not use, fails with INVALID_ARGUMENT. A container image
-	// takes a name and its kind alone; one with a base, size or recipe fails
-	// with INVALID_ARGUMENT.
+	// that is pushed takes a name and its kind alone; one with a base, size
+	// or recipe fails with INVALID_ARGUMENT.
 	//
-	// Creating a disk image starts its first build, as BuildImage does; the
-	// response's version is that build's. A workspace whose plan
+	// A container image built from a repository takes its source, a Linux
+	// size and, optionally, a builder and a registry to push to; one with a
+	// base, a recipe or an environment fails with INVALID_ARGUMENT, as its
+	// builds take the environment the project's branch rules choose for the
+	// source's default branch. A source the project does not claim, or that
+	// none of the workspace's GitHub connections reaches, fails with
+	// FAILED_PRECONDITION.
+	//
+	// Creating a disk image, or a container image built from a repository,
+	// starts its first build, as BuildImage does; the response's version is
+	// that build's. A workspace whose plan
 	// does not include images fails with FAILED_PRECONDITION and the reason
 	// PLAN_EXCLUDES_IMAGES.
 	CreateImage(context.Context, *connect.Request[workspacev1.CreateImageRequest]) (*connect.Response[workspacev1.CreateImageResponse], error)
-	// BuildImage starts a build of the image: a job that runs the recipe's
-	// setup hook in a fresh VM of the base and saves its disk as the next
-	// version. A recipe in the request is the build's, and becomes the
-	// image's when the version is ready. An image with a build in progress
-	// fails with FAILED_PRECONDITION and the reason IMAGE_BUILD_IN_PROGRESS,
-	// and a container image, which is pushed rather than built, with
-	// FAILED_PRECONDITION.
+	// BuildImage starts a build of the image. A disk image's build is a job
+	// that runs the recipe's setup hook in a fresh VM of the base and saves
+	// its disk as the next version; a recipe in the request is the build's,
+	// and becomes the image's when the version is ready. A container image's
+	// build is a job that builds the tip of its source's default branch in a
+	// fresh VM and pushes it; the version is ready with the pushed digest.
+	// An image with a build in progress fails with FAILED_PRECONDITION and
+	// the reason IMAGE_BUILD_IN_PROGRESS, and a container image that is
+	// pushed rather than built, with FAILED_PRECONDITION.
 	BuildImage(context.Context, *connect.Request[workspacev1.BuildImageRequest]) (*connect.Response[workspacev1.BuildImageResponse], error)
 	// GetImage returns the image with its versions, newest first.
 	GetImage(context.Context, *connect.Request[workspacev1.GetImageRequest]) (*connect.Response[workspacev1.GetImageResponse], error)

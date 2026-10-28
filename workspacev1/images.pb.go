@@ -30,8 +30,9 @@ const (
 	ImageKind_IMAGE_KIND_UNSPECIFIED ImageKind = 0
 	// A disk: an overlay on one of Toshi's bases, which a VM boots from.
 	ImageKind_IMAGE_KIND_DISK ImageKind = 1
-	// A container image, pushed to the deployment's container registry at
-	// <workspace id>/<name>. It has no base, size or recipe and is not built.
+	// A container image, in the deployment's container registry at
+	// <workspace id>/<name>. It has no base or recipe. One with a source is
+	// built from that repository; one without is pushed and not built.
 	ImageKind_IMAGE_KIND_CONTAINER ImageKind = 2
 )
 
@@ -74,6 +75,111 @@ func (x ImageKind) Number() protoreflect.EnumNumber {
 // Deprecated: Use ImageKind.Descriptor instead.
 func (ImageKind) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{0}
+}
+
+// ImageBuilder is what builds a container image from its source.
+type ImageBuilder int32
+
+const (
+	ImageBuilder_IMAGE_BUILDER_UNSPECIFIED ImageBuilder = 0
+	// The repository's Dockerfile when its root has one, Railpack
+	// otherwise. A version records the one that built it.
+	ImageBuilder_IMAGE_BUILDER_AUTO ImageBuilder = 1
+	// The Dockerfile at the repository's root.
+	ImageBuilder_IMAGE_BUILDER_DOCKERFILE ImageBuilder = 2
+	// Railpack, which builds from the repository's source alone.
+	ImageBuilder_IMAGE_BUILDER_RAILPACK ImageBuilder = 3
+)
+
+// Enum value maps for ImageBuilder.
+var (
+	ImageBuilder_name = map[int32]string{
+		0: "IMAGE_BUILDER_UNSPECIFIED",
+		1: "IMAGE_BUILDER_AUTO",
+		2: "IMAGE_BUILDER_DOCKERFILE",
+		3: "IMAGE_BUILDER_RAILPACK",
+	}
+	ImageBuilder_value = map[string]int32{
+		"IMAGE_BUILDER_UNSPECIFIED": 0,
+		"IMAGE_BUILDER_AUTO":        1,
+		"IMAGE_BUILDER_DOCKERFILE":  2,
+		"IMAGE_BUILDER_RAILPACK":    3,
+	}
+)
+
+func (x ImageBuilder) Enum() *ImageBuilder {
+	p := new(ImageBuilder)
+	*p = x
+	return p
+}
+
+func (x ImageBuilder) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ImageBuilder) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_images_proto_enumTypes[1].Descriptor()
+}
+
+func (ImageBuilder) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_images_proto_enumTypes[1]
+}
+
+func (x ImageBuilder) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ImageBuilder.Descriptor instead.
+func (ImageBuilder) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{1}
+}
+
+// ImagePusher is what pushed a container image's version.
+type ImagePusher int32
+
+const (
+	ImagePusher_IMAGE_PUSHER_UNSPECIFIED ImagePusher = 0
+	// A build of the image.
+	ImagePusher_IMAGE_PUSHER_BUILD ImagePusher = 1
+)
+
+// Enum value maps for ImagePusher.
+var (
+	ImagePusher_name = map[int32]string{
+		0: "IMAGE_PUSHER_UNSPECIFIED",
+		1: "IMAGE_PUSHER_BUILD",
+	}
+	ImagePusher_value = map[string]int32{
+		"IMAGE_PUSHER_UNSPECIFIED": 0,
+		"IMAGE_PUSHER_BUILD":       1,
+	}
+)
+
+func (x ImagePusher) Enum() *ImagePusher {
+	p := new(ImagePusher)
+	*p = x
+	return p
+}
+
+func (x ImagePusher) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ImagePusher) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_images_proto_enumTypes[2].Descriptor()
+}
+
+func (ImagePusher) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_images_proto_enumTypes[2]
+}
+
+func (x ImagePusher) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ImagePusher.Descriptor instead.
+func (ImagePusher) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{2}
 }
 
 // ImageVersionState is where a version is in its life.
@@ -126,11 +232,11 @@ func (x ImageVersionState) String() string {
 }
 
 func (ImageVersionState) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_images_proto_enumTypes[1].Descriptor()
+	return file_toshi_workspace_v1_images_proto_enumTypes[3].Descriptor()
 }
 
 func (ImageVersionState) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_images_proto_enumTypes[1]
+	return &file_toshi_workspace_v1_images_proto_enumTypes[3]
 }
 
 func (x ImageVersionState) Number() protoreflect.EnumNumber {
@@ -139,7 +245,7 @@ func (x ImageVersionState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ImageVersionState.Descriptor instead.
 func (ImageVersionState) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{3}
 }
 
 // Image is a project's own image.
@@ -152,21 +258,35 @@ type Image struct {
 	Kind    ImageKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ImageKind" json:"kind,omitempty"`
 	// The one of Toshi's images it is built on, such as ubuntu-24.04.
 	Base string `protobuf:"bytes,5,opt,name=base,proto3" json:"base,omitempty"`
-	// The size its builds run at.
+	// The size its builds run at; empty for a container image that is
+	// pushed.
 	Size string `protobuf:"bytes,6,opt,name=size,proto3" json:"size,omitempty"`
 	// The recipe its next build runs, in TOML: that of its newest ready
 	// version, or the one it was created with until a build is ready.
 	Recipe string `protobuf:"bytes,7,opt,name=recipe,proto3" json:"recipe,omitempty"`
 	// The SHA-256 of recipe, in hex.
 	RecipeDigest string `protobuf:"bytes,8,opt,name=recipe_digest,json=recipeDigest,proto3" json:"recipe_digest,omitempty"`
-	// The environment whose secret sets its builds receive.
+	// The environment whose secret sets its builds receive. For a container
+	// image built from a repository, the one its first build took: each
+	// build takes the one the branch rules choose then.
 	Environment string                 `protobuf:"bytes,9,opt,name=environment,proto3" json:"environment,omitempty"`
 	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// Its newest ready version; unset when it has none.
-	Latest        *ImageVersion `protobuf:"bytes,12,opt,name=latest,proto3" json:"latest,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Latest *ImageVersion `protobuf:"bytes,12,opt,name=latest,proto3" json:"latest,omitempty"`
+	// The repository a container image is built from, as owner/name, and
+	// the builder its builds use; empty and unspecified for one that is
+	// pushed.
+	Source  string       `protobuf:"bytes,13,opt,name=source,proto3" json:"source,omitempty"`
+	Builder ImageBuilder `protobuf:"varint,14,opt,name=builder,proto3,enum=toshi.workspace.v1.ImageBuilder" json:"builder,omitempty"`
+	// The reference a container image built from a repository pushes to in
+	// the workspace's own registry, and the key of the build secret that
+	// holds that registry's Docker config.json; both empty when its builds
+	// push to the deployment's registry.
+	Registry       string `protobuf:"bytes,15,opt,name=registry,proto3" json:"registry,omitempty"`
+	RegistrySecret string `protobuf:"bytes,16,opt,name=registry_secret,json=registrySecret,proto3" json:"registry_secret,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Image) Reset() {
@@ -283,6 +403,34 @@ func (x *Image) GetLatest() *ImageVersion {
 	return nil
 }
 
+func (x *Image) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *Image) GetBuilder() ImageBuilder {
+	if x != nil {
+		return x.Builder
+	}
+	return ImageBuilder_IMAGE_BUILDER_UNSPECIFIED
+}
+
+func (x *Image) GetRegistry() string {
+	if x != nil {
+		return x.Registry
+	}
+	return ""
+}
+
+func (x *Image) GetRegistrySecret() string {
+	if x != nil {
+		return x.RegistrySecret
+	}
+	return ""
+}
+
 // ImageVersion is one build of an image.
 type ImageVersion struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -311,7 +459,21 @@ type ImageVersion struct {
 	DeletedAt    *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
 	// On a version pending deletion or deleted: the service revisions made
 	// with it, which a rollback can no longer select.
-	PinnedBy      []*ImageVersionPin `protobuf:"bytes,15,rep,name=pinned_by,json=pinnedBy,proto3" json:"pinned_by,omitempty"`
+	PinnedBy []*ImageVersionPin `protobuf:"bytes,15,rep,name=pinned_by,json=pinnedBy,proto3" json:"pinned_by,omitempty"`
+	// A container version's manifest digest, sha256:<hex>, once ready, and
+	// what pushed it.
+	Digest   string      `protobuf:"bytes,16,opt,name=digest,proto3" json:"digest,omitempty"`
+	PushedBy ImagePusher `protobuf:"varint,17,opt,name=pushed_by,json=pushedBy,proto3,enum=toshi.workspace.v1.ImagePusher" json:"pushed_by,omitempty"`
+	// A container version's build: the commit it built, the builder that
+	// built it (never AUTO), and for Railpack its version and the digest of
+	// its BuildKit frontend.
+	SourceCommit          string       `protobuf:"bytes,18,opt,name=source_commit,json=sourceCommit,proto3" json:"source_commit,omitempty"`
+	Builder               ImageBuilder `protobuf:"varint,19,opt,name=builder,proto3,enum=toshi.workspace.v1.ImageBuilder" json:"builder,omitempty"`
+	BuilderVersion        string       `protobuf:"bytes,20,opt,name=builder_version,json=builderVersion,proto3" json:"builder_version,omitempty"`
+	BuilderFrontendDigest string       `protobuf:"bytes,21,opt,name=builder_frontend_digest,json=builderFrontendDigest,proto3" json:"builder_frontend_digest,omitempty"`
+	// Whether the build's commit is the source repository's own rather than
+	// a fork's. An untrusted build receives no build secrets.
+	Trusted       bool `protobuf:"varint,22,opt,name=trusted,proto3" json:"trusted,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -451,6 +613,55 @@ func (x *ImageVersion) GetPinnedBy() []*ImageVersionPin {
 	return nil
 }
 
+func (x *ImageVersion) GetDigest() string {
+	if x != nil {
+		return x.Digest
+	}
+	return ""
+}
+
+func (x *ImageVersion) GetPushedBy() ImagePusher {
+	if x != nil {
+		return x.PushedBy
+	}
+	return ImagePusher_IMAGE_PUSHER_UNSPECIFIED
+}
+
+func (x *ImageVersion) GetSourceCommit() string {
+	if x != nil {
+		return x.SourceCommit
+	}
+	return ""
+}
+
+func (x *ImageVersion) GetBuilder() ImageBuilder {
+	if x != nil {
+		return x.Builder
+	}
+	return ImageBuilder_IMAGE_BUILDER_UNSPECIFIED
+}
+
+func (x *ImageVersion) GetBuilderVersion() string {
+	if x != nil {
+		return x.BuilderVersion
+	}
+	return ""
+}
+
+func (x *ImageVersion) GetBuilderFrontendDigest() string {
+	if x != nil {
+		return x.BuilderFrontendDigest
+	}
+	return ""
+}
+
+func (x *ImageVersion) GetTrusted() bool {
+	if x != nil {
+		return x.Trusted
+	}
+	return false
+}
+
 // ImageVersionPin is a service revision made with an image version.
 type ImageVersionPin struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -516,20 +727,32 @@ type CreateImageRequest struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// The environment whose secret sets the image's builds receive; empty is
-	// the project's default environment.
+	// the project's default environment. Empty for a container image built
+	// from a repository.
 	Environment string    `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	Name        string    `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Kind        ImageKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ImageKind" json:"kind,omitempty"`
-	// A disk's base and size; empty for a container image.
+	// A disk's base, empty for a container image; the size a disk's or a
+	// container image built from a repository's builds run at.
 	Base string `protobuf:"bytes,5,opt,name=base,proto3" json:"base,omitempty"`
 	Size string `protobuf:"bytes,6,opt,name=size,proto3" json:"size,omitempty"`
 	// In the format of a service's recipe, in TOML. An image uses its setup
 	// hook, which is required, and its process's env and cwd for that hook;
 	// any other field fails with INVALID_ARGUMENT. Empty for a container
 	// image.
-	Recipe        string `protobuf:"bytes,7,opt,name=recipe,proto3" json:"recipe,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Recipe string `protobuf:"bytes,7,opt,name=recipe,proto3" json:"recipe,omitempty"`
+	// The repository a container image is built from, as owner/name; empty
+	// for one that is pushed. The builder defaults to AUTO.
+	Source  string       `protobuf:"bytes,8,opt,name=source,proto3" json:"source,omitempty"`
+	Builder ImageBuilder `protobuf:"varint,9,opt,name=builder,proto3,enum=toshi.workspace.v1.ImageBuilder" json:"builder,omitempty"`
+	// A reference in the workspace's own registry for the builds to push to,
+	// such as ghcr.io/acme/web, and the key of a build secret granted to the
+	// image's builds that holds its Docker config.json; both empty to push
+	// to the deployment's registry.
+	Registry       string `protobuf:"bytes,10,opt,name=registry,proto3" json:"registry,omitempty"`
+	RegistrySecret string `protobuf:"bytes,11,opt,name=registry_secret,json=registrySecret,proto3" json:"registry_secret,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *CreateImageRequest) Reset() {
@@ -607,6 +830,34 @@ func (x *CreateImageRequest) GetSize() string {
 func (x *CreateImageRequest) GetRecipe() string {
 	if x != nil {
 		return x.Recipe
+	}
+	return ""
+}
+
+func (x *CreateImageRequest) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *CreateImageRequest) GetBuilder() ImageBuilder {
+	if x != nil {
+		return x.Builder
+	}
+	return ImageBuilder_IMAGE_BUILDER_UNSPECIFIED
+}
+
+func (x *CreateImageRequest) GetRegistry() string {
+	if x != nil {
+		return x.Registry
+	}
+	return ""
+}
+
+func (x *CreateImageRequest) GetRegistrySecret() string {
+	if x != nil {
+		return x.RegistrySecret
 	}
 	return ""
 }
@@ -888,8 +1139,12 @@ type BuildImageRequest struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	Name    string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// Empty: the image's recipe.
-	Recipe        string `protobuf:"bytes,3,opt,name=recipe,proto3" json:"recipe,omitempty"`
+	// Empty: the image's recipe. Empty for a container image.
+	Recipe string `protobuf:"bytes,3,opt,name=recipe,proto3" json:"recipe,omitempty"`
+	// A container image's Railpack builds use the Railpack version its
+	// newest ready version was built with; true builds with the one Toshi's
+	// build image holds. Unset for a disk image.
+	UpdateBuilder bool `protobuf:"varint,4,opt,name=update_builder,json=updateBuilder,proto3" json:"update_builder,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -943,6 +1198,13 @@ func (x *BuildImageRequest) GetRecipe() string {
 		return x.Recipe
 	}
 	return ""
+}
+
+func (x *BuildImageRequest) GetUpdateBuilder() bool {
+	if x != nil {
+		return x.UpdateBuilder
+	}
+	return false
 }
 
 type BuildImageResponse struct {
@@ -1081,7 +1343,7 @@ var File_toshi_workspace_v1_images_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\n" +
-	"\x1ftoshi/workspace/v1/images.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xaf\x03\n" +
+	"\x1ftoshi/workspace/v1/images.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xc8\x04\n" +
 	"\x05Image\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1097,7 +1359,11 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x128\n" +
-	"\x06latest\x18\f \x01(\v2 .toshi.workspace.v1.ImageVersionR\x06latest\"\x97\x05\n" +
+	"\x06latest\x18\f \x01(\v2 .toshi.workspace.v1.ImageVersionR\x06latest\x12\x16\n" +
+	"\x06source\x18\r \x01(\tR\x06source\x12:\n" +
+	"\abuilder\x18\x0e \x01(\x0e2 .toshi.workspace.v1.ImageBuilderR\abuilder\x12\x1a\n" +
+	"\bregistry\x18\x0f \x01(\tR\bregistry\x12'\n" +
+	"\x0fregistry_secret\x18\x10 \x01(\tR\x0eregistrySecret\"\xc9\a\n" +
 	"\fImageVersion\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06number\x18\x02 \x01(\x03R\x06number\x12;\n" +
@@ -1119,12 +1385,19 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\fdelete_after\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\vdeleteAfter\x129\n" +
 	"\n" +
 	"deleted_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAt\x12@\n" +
-	"\tpinned_by\x18\x0f \x03(\v2#.toshi.workspace.v1.ImageVersionPinR\bpinnedBy\"o\n" +
+	"\tpinned_by\x18\x0f \x03(\v2#.toshi.workspace.v1.ImageVersionPinR\bpinnedBy\x12\x16\n" +
+	"\x06digest\x18\x10 \x01(\tR\x06digest\x12<\n" +
+	"\tpushed_by\x18\x11 \x01(\x0e2\x1f.toshi.workspace.v1.ImagePusherR\bpushedBy\x12#\n" +
+	"\rsource_commit\x18\x12 \x01(\tR\fsourceCommit\x12:\n" +
+	"\abuilder\x18\x13 \x01(\x0e2 .toshi.workspace.v1.ImageBuilderR\abuilder\x12'\n" +
+	"\x0fbuilder_version\x18\x14 \x01(\tR\x0ebuilderVersion\x126\n" +
+	"\x17builder_frontend_digest\x18\x15 \x01(\tR\x15builderFrontendDigest\x12\x18\n" +
+	"\atrusted\x18\x16 \x01(\bR\atrusted\"o\n" +
 	"\x0fImageVersionPin\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x01 \x01(\tR\tserviceId\x12!\n" +
 	"\fservice_name\x18\x02 \x01(\tR\vserviceName\x12\x1a\n" +
-	"\brevision\x18\x03 \x01(\x03R\brevision\"\xd7\x01\n" +
+	"\brevision\x18\x03 \x01(\x03R\brevision\"\xf0\x02\n" +
 	"\x12CreateImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x12\n" +
@@ -1132,7 +1405,12 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x04kind\x18\x04 \x01(\x0e2\x1d.toshi.workspace.v1.ImageKindR\x04kind\x12\x12\n" +
 	"\x04base\x18\x05 \x01(\tR\x04base\x12\x12\n" +
 	"\x04size\x18\x06 \x01(\tR\x04size\x12\x16\n" +
-	"\x06recipe\x18\a \x01(\tR\x06recipe\"\x82\x01\n" +
+	"\x06recipe\x18\a \x01(\tR\x06recipe\x12\x16\n" +
+	"\x06source\x18\b \x01(\tR\x06source\x12:\n" +
+	"\abuilder\x18\t \x01(\x0e2 .toshi.workspace.v1.ImageBuilderR\abuilder\x12\x1a\n" +
+	"\bregistry\x18\n" +
+	" \x01(\tR\bregistry\x12'\n" +
+	"\x0fregistry_secret\x18\v \x01(\tR\x0eregistrySecret\"\x82\x01\n" +
 	"\x13CreateImageResponse\x12/\n" +
 	"\x05image\x18\x01 \x01(\v2\x19.toshi.workspace.v1.ImageR\x05image\x12:\n" +
 	"\aversion\x18\x02 \x01(\v2 .toshi.workspace.v1.ImageVersionR\aversion\"?\n" +
@@ -1149,11 +1427,12 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"o\n" +
 	"\x12ListImagesResponse\x121\n" +
 	"\x06images\x18\x01 \x03(\v2\x19.toshi.workspace.v1.ImageR\x06images\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"Y\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x80\x01\n" +
 	"\x11BuildImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
-	"\x06recipe\x18\x03 \x01(\tR\x06recipe\"P\n" +
+	"\x06recipe\x18\x03 \x01(\tR\x06recipe\x12%\n" +
+	"\x0eupdate_builder\x18\x04 \x01(\bR\rupdateBuilder\"P\n" +
 	"\x12BuildImageResponse\x12:\n" +
 	"\aversion\x18\x01 \x01(\v2 .toshi.workspace.v1.ImageVersionR\aversion\"B\n" +
 	"\x12DeleteImageRequest\x12\x18\n" +
@@ -1163,7 +1442,15 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\tImageKind\x12\x1a\n" +
 	"\x16IMAGE_KIND_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fIMAGE_KIND_DISK\x10\x01\x12\x18\n" +
-	"\x14IMAGE_KIND_CONTAINER\x10\x02*\xe4\x01\n" +
+	"\x14IMAGE_KIND_CONTAINER\x10\x02*\x7f\n" +
+	"\fImageBuilder\x12\x1d\n" +
+	"\x19IMAGE_BUILDER_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x12IMAGE_BUILDER_AUTO\x10\x01\x12\x1c\n" +
+	"\x18IMAGE_BUILDER_DOCKERFILE\x10\x02\x12\x1a\n" +
+	"\x16IMAGE_BUILDER_RAILPACK\x10\x03*C\n" +
+	"\vImagePusher\x12\x1c\n" +
+	"\x18IMAGE_PUSHER_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x12IMAGE_PUSHER_BUILD\x10\x01*\xe4\x01\n" +
 	"\x11ImageVersionState\x12#\n" +
 	"\x1fIMAGE_VERSION_STATE_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cIMAGE_VERSION_STATE_BUILDING\x10\x01\x12\x1e\n" +
@@ -1195,60 +1482,66 @@ func file_toshi_workspace_v1_images_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_images_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_images_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_toshi_workspace_v1_images_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_toshi_workspace_v1_images_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_toshi_workspace_v1_images_proto_goTypes = []any{
 	(ImageKind)(0),                // 0: toshi.workspace.v1.ImageKind
-	(ImageVersionState)(0),        // 1: toshi.workspace.v1.ImageVersionState
-	(*Image)(nil),                 // 2: toshi.workspace.v1.Image
-	(*ImageVersion)(nil),          // 3: toshi.workspace.v1.ImageVersion
-	(*ImageVersionPin)(nil),       // 4: toshi.workspace.v1.ImageVersionPin
-	(*CreateImageRequest)(nil),    // 5: toshi.workspace.v1.CreateImageRequest
-	(*CreateImageResponse)(nil),   // 6: toshi.workspace.v1.CreateImageResponse
-	(*GetImageRequest)(nil),       // 7: toshi.workspace.v1.GetImageRequest
-	(*GetImageResponse)(nil),      // 8: toshi.workspace.v1.GetImageResponse
-	(*ListImagesRequest)(nil),     // 9: toshi.workspace.v1.ListImagesRequest
-	(*ListImagesResponse)(nil),    // 10: toshi.workspace.v1.ListImagesResponse
-	(*BuildImageRequest)(nil),     // 11: toshi.workspace.v1.BuildImageRequest
-	(*BuildImageResponse)(nil),    // 12: toshi.workspace.v1.BuildImageResponse
-	(*DeleteImageRequest)(nil),    // 13: toshi.workspace.v1.DeleteImageRequest
-	(*DeleteImageResponse)(nil),   // 14: toshi.workspace.v1.DeleteImageResponse
-	(*timestamppb.Timestamp)(nil), // 15: google.protobuf.Timestamp
+	(ImageBuilder)(0),             // 1: toshi.workspace.v1.ImageBuilder
+	(ImagePusher)(0),              // 2: toshi.workspace.v1.ImagePusher
+	(ImageVersionState)(0),        // 3: toshi.workspace.v1.ImageVersionState
+	(*Image)(nil),                 // 4: toshi.workspace.v1.Image
+	(*ImageVersion)(nil),          // 5: toshi.workspace.v1.ImageVersion
+	(*ImageVersionPin)(nil),       // 6: toshi.workspace.v1.ImageVersionPin
+	(*CreateImageRequest)(nil),    // 7: toshi.workspace.v1.CreateImageRequest
+	(*CreateImageResponse)(nil),   // 8: toshi.workspace.v1.CreateImageResponse
+	(*GetImageRequest)(nil),       // 9: toshi.workspace.v1.GetImageRequest
+	(*GetImageResponse)(nil),      // 10: toshi.workspace.v1.GetImageResponse
+	(*ListImagesRequest)(nil),     // 11: toshi.workspace.v1.ListImagesRequest
+	(*ListImagesResponse)(nil),    // 12: toshi.workspace.v1.ListImagesResponse
+	(*BuildImageRequest)(nil),     // 13: toshi.workspace.v1.BuildImageRequest
+	(*BuildImageResponse)(nil),    // 14: toshi.workspace.v1.BuildImageResponse
+	(*DeleteImageRequest)(nil),    // 15: toshi.workspace.v1.DeleteImageRequest
+	(*DeleteImageResponse)(nil),   // 16: toshi.workspace.v1.DeleteImageResponse
+	(*timestamppb.Timestamp)(nil), // 17: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_images_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Image.kind:type_name -> toshi.workspace.v1.ImageKind
-	15, // 1: toshi.workspace.v1.Image.created_at:type_name -> google.protobuf.Timestamp
-	15, // 2: toshi.workspace.v1.Image.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 3: toshi.workspace.v1.Image.latest:type_name -> toshi.workspace.v1.ImageVersion
-	1,  // 4: toshi.workspace.v1.ImageVersion.state:type_name -> toshi.workspace.v1.ImageVersionState
-	15, // 5: toshi.workspace.v1.ImageVersion.created_at:type_name -> google.protobuf.Timestamp
-	15, // 6: toshi.workspace.v1.ImageVersion.ready_at:type_name -> google.protobuf.Timestamp
-	15, // 7: toshi.workspace.v1.ImageVersion.pending_since:type_name -> google.protobuf.Timestamp
-	15, // 8: toshi.workspace.v1.ImageVersion.delete_after:type_name -> google.protobuf.Timestamp
-	15, // 9: toshi.workspace.v1.ImageVersion.deleted_at:type_name -> google.protobuf.Timestamp
-	4,  // 10: toshi.workspace.v1.ImageVersion.pinned_by:type_name -> toshi.workspace.v1.ImageVersionPin
-	0,  // 11: toshi.workspace.v1.CreateImageRequest.kind:type_name -> toshi.workspace.v1.ImageKind
-	2,  // 12: toshi.workspace.v1.CreateImageResponse.image:type_name -> toshi.workspace.v1.Image
-	3,  // 13: toshi.workspace.v1.CreateImageResponse.version:type_name -> toshi.workspace.v1.ImageVersion
-	2,  // 14: toshi.workspace.v1.GetImageResponse.image:type_name -> toshi.workspace.v1.Image
-	3,  // 15: toshi.workspace.v1.GetImageResponse.versions:type_name -> toshi.workspace.v1.ImageVersion
-	2,  // 16: toshi.workspace.v1.ListImagesResponse.images:type_name -> toshi.workspace.v1.Image
-	3,  // 17: toshi.workspace.v1.BuildImageResponse.version:type_name -> toshi.workspace.v1.ImageVersion
-	5,  // 18: toshi.workspace.v1.ImageService.CreateImage:input_type -> toshi.workspace.v1.CreateImageRequest
-	11, // 19: toshi.workspace.v1.ImageService.BuildImage:input_type -> toshi.workspace.v1.BuildImageRequest
-	7,  // 20: toshi.workspace.v1.ImageService.GetImage:input_type -> toshi.workspace.v1.GetImageRequest
-	9,  // 21: toshi.workspace.v1.ImageService.ListImages:input_type -> toshi.workspace.v1.ListImagesRequest
-	13, // 22: toshi.workspace.v1.ImageService.DeleteImage:input_type -> toshi.workspace.v1.DeleteImageRequest
-	6,  // 23: toshi.workspace.v1.ImageService.CreateImage:output_type -> toshi.workspace.v1.CreateImageResponse
-	12, // 24: toshi.workspace.v1.ImageService.BuildImage:output_type -> toshi.workspace.v1.BuildImageResponse
-	8,  // 25: toshi.workspace.v1.ImageService.GetImage:output_type -> toshi.workspace.v1.GetImageResponse
-	10, // 26: toshi.workspace.v1.ImageService.ListImages:output_type -> toshi.workspace.v1.ListImagesResponse
-	14, // 27: toshi.workspace.v1.ImageService.DeleteImage:output_type -> toshi.workspace.v1.DeleteImageResponse
-	23, // [23:28] is the sub-list for method output_type
-	18, // [18:23] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	17, // 1: toshi.workspace.v1.Image.created_at:type_name -> google.protobuf.Timestamp
+	17, // 2: toshi.workspace.v1.Image.updated_at:type_name -> google.protobuf.Timestamp
+	5,  // 3: toshi.workspace.v1.Image.latest:type_name -> toshi.workspace.v1.ImageVersion
+	1,  // 4: toshi.workspace.v1.Image.builder:type_name -> toshi.workspace.v1.ImageBuilder
+	3,  // 5: toshi.workspace.v1.ImageVersion.state:type_name -> toshi.workspace.v1.ImageVersionState
+	17, // 6: toshi.workspace.v1.ImageVersion.created_at:type_name -> google.protobuf.Timestamp
+	17, // 7: toshi.workspace.v1.ImageVersion.ready_at:type_name -> google.protobuf.Timestamp
+	17, // 8: toshi.workspace.v1.ImageVersion.pending_since:type_name -> google.protobuf.Timestamp
+	17, // 9: toshi.workspace.v1.ImageVersion.delete_after:type_name -> google.protobuf.Timestamp
+	17, // 10: toshi.workspace.v1.ImageVersion.deleted_at:type_name -> google.protobuf.Timestamp
+	6,  // 11: toshi.workspace.v1.ImageVersion.pinned_by:type_name -> toshi.workspace.v1.ImageVersionPin
+	2,  // 12: toshi.workspace.v1.ImageVersion.pushed_by:type_name -> toshi.workspace.v1.ImagePusher
+	1,  // 13: toshi.workspace.v1.ImageVersion.builder:type_name -> toshi.workspace.v1.ImageBuilder
+	0,  // 14: toshi.workspace.v1.CreateImageRequest.kind:type_name -> toshi.workspace.v1.ImageKind
+	1,  // 15: toshi.workspace.v1.CreateImageRequest.builder:type_name -> toshi.workspace.v1.ImageBuilder
+	4,  // 16: toshi.workspace.v1.CreateImageResponse.image:type_name -> toshi.workspace.v1.Image
+	5,  // 17: toshi.workspace.v1.CreateImageResponse.version:type_name -> toshi.workspace.v1.ImageVersion
+	4,  // 18: toshi.workspace.v1.GetImageResponse.image:type_name -> toshi.workspace.v1.Image
+	5,  // 19: toshi.workspace.v1.GetImageResponse.versions:type_name -> toshi.workspace.v1.ImageVersion
+	4,  // 20: toshi.workspace.v1.ListImagesResponse.images:type_name -> toshi.workspace.v1.Image
+	5,  // 21: toshi.workspace.v1.BuildImageResponse.version:type_name -> toshi.workspace.v1.ImageVersion
+	7,  // 22: toshi.workspace.v1.ImageService.CreateImage:input_type -> toshi.workspace.v1.CreateImageRequest
+	13, // 23: toshi.workspace.v1.ImageService.BuildImage:input_type -> toshi.workspace.v1.BuildImageRequest
+	9,  // 24: toshi.workspace.v1.ImageService.GetImage:input_type -> toshi.workspace.v1.GetImageRequest
+	11, // 25: toshi.workspace.v1.ImageService.ListImages:input_type -> toshi.workspace.v1.ListImagesRequest
+	15, // 26: toshi.workspace.v1.ImageService.DeleteImage:input_type -> toshi.workspace.v1.DeleteImageRequest
+	8,  // 27: toshi.workspace.v1.ImageService.CreateImage:output_type -> toshi.workspace.v1.CreateImageResponse
+	14, // 28: toshi.workspace.v1.ImageService.BuildImage:output_type -> toshi.workspace.v1.BuildImageResponse
+	10, // 29: toshi.workspace.v1.ImageService.GetImage:output_type -> toshi.workspace.v1.GetImageResponse
+	12, // 30: toshi.workspace.v1.ImageService.ListImages:output_type -> toshi.workspace.v1.ListImagesResponse
+	16, // 31: toshi.workspace.v1.ImageService.DeleteImage:output_type -> toshi.workspace.v1.DeleteImageResponse
+	27, // [27:32] is the sub-list for method output_type
+	22, // [22:27] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_images_proto_init() }
@@ -1261,7 +1554,7 @@ func file_toshi_workspace_v1_images_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_images_proto_rawDesc), len(file_toshi_workspace_v1_images_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      4,
 			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,

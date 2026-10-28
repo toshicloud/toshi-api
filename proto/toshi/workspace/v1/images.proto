@@ -41,24 +41,35 @@ service ImageService {
   // IMAGE_NAME_TAKEN. A base that is not one of Toshi's, a size that is
   // not a Linux size, or a recipe without a setup hook or with a field an
   // image does not use, fails with INVALID_ARGUMENT. A container image
-  // takes a name and its kind alone; one with a base, size or recipe fails
-  // with INVALID_ARGUMENT.
+  // that is pushed takes a name and its kind alone; one with a base, size
+  // or recipe fails with INVALID_ARGUMENT.
   //
-  // Creating a disk image starts its first build, as BuildImage does; the
-  // response's version is that build's. A workspace whose plan
+  // A container image built from a repository takes its source, a Linux
+  // size and, optionally, a builder and a registry to push to; one with a
+  // base, a recipe or an environment fails with INVALID_ARGUMENT, as its
+  // builds take the environment the project's branch rules choose for the
+  // source's default branch. A source the project does not claim, or that
+  // none of the workspace's GitHub connections reaches, fails with
+  // FAILED_PRECONDITION.
+  //
+  // Creating a disk image, or a container image built from a repository,
+  // starts its first build, as BuildImage does; the response's version is
+  // that build's. A workspace whose plan
   // does not include images fails with FAILED_PRECONDITION and the reason
   // PLAN_EXCLUDES_IMAGES.
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse) {
     option (toshi.permission) = "images.write";
     option (toshi.scope) = "environment";
   }
-  // BuildImage starts a build of the image: a job that runs the recipe's
-  // setup hook in a fresh VM of the base and saves its disk as the next
-  // version. A recipe in the request is the build's, and becomes the
-  // image's when the version is ready. An image with a build in progress
-  // fails with FAILED_PRECONDITION and the reason IMAGE_BUILD_IN_PROGRESS,
-  // and a container image, which is pushed rather than built, with
-  // FAILED_PRECONDITION.
+  // BuildImage starts a build of the image. A disk image's build is a job
+  // that runs the recipe's setup hook in a fresh VM of the base and saves
+  // its disk as the next version; a recipe in the request is the build's,
+  // and becomes the image's when the version is ready. A container image's
+  // build is a job that builds the tip of its source's default branch in a
+  // fresh VM and pushes it; the version is ready with the pushed digest.
+  // An image with a build in progress fails with FAILED_PRECONDITION and
+  // the reason IMAGE_BUILD_IN_PROGRESS, and a container image that is
+  // pushed rather than built, with FAILED_PRECONDITION.
   rpc BuildImage(BuildImageRequest) returns (BuildImageResponse) {
     option (toshi.permission) = "images.write";
     option (toshi.scope) = "project";
@@ -93,9 +104,29 @@ enum ImageKind {
   IMAGE_KIND_UNSPECIFIED = 0;
   // A disk: an overlay on one of Toshi's bases, which a VM boots from.
   IMAGE_KIND_DISK = 1;
-  // A container image, pushed to the deployment's container registry at
-  // <workspace id>/<name>. It has no base, size or recipe and is not built.
+  // A container image, in the deployment's container registry at
+  // <workspace id>/<name>. It has no base or recipe. One with a source is
+  // built from that repository; one without is pushed and not built.
   IMAGE_KIND_CONTAINER = 2;
+}
+
+// ImageBuilder is what builds a container image from its source.
+enum ImageBuilder {
+  IMAGE_BUILDER_UNSPECIFIED = 0;
+  // The repository's Dockerfile when its root has one, Railpack
+  // otherwise. A version records the one that built it.
+  IMAGE_BUILDER_AUTO = 1;
+  // The Dockerfile at the repository's root.
+  IMAGE_BUILDER_DOCKERFILE = 2;
+  // Railpack, which builds from the repository's source alone.
+  IMAGE_BUILDER_RAILPACK = 3;
+}
+
+// ImagePusher is what pushed a container image's version.
+enum ImagePusher {
+  IMAGE_PUSHER_UNSPECIFIED = 0;
+  // A build of the image.
+  IMAGE_PUSHER_BUILD = 1;
 }
 
 // ImageVersionState is where a version is in its life.
@@ -124,19 +155,33 @@ message Image {
   ImageKind kind = 4;
   // The one of Toshi's images it is built on, such as ubuntu-24.04.
   string base = 5;
-  // The size its builds run at.
+  // The size its builds run at; empty for a container image that is
+  // pushed.
   string size = 6;
   // The recipe its next build runs, in TOML: that of its newest ready
   // version, or the one it was created with until a build is ready.
   string recipe = 7;
   // The SHA-256 of recipe, in hex.
   string recipe_digest = 8;
-  // The environment whose secret sets its builds receive.
+  // The environment whose secret sets its builds receive. For a container
+  // image built from a repository, the one its first build took: each
+  // build takes the one the branch rules choose then.
   string environment = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
   // Its newest ready version; unset when it has none.
   ImageVersion latest = 12;
+  // The repository a container image is built from, as owner/name, and
+  // the builder its builds use; empty and unspecified for one that is
+  // pushed.
+  string source = 13;
+  ImageBuilder builder = 14;
+  // The reference a container image built from a repository pushes to in
+  // the workspace's own registry, and the key of the build secret that
+  // holds that registry's Docker config.json; both empty when its builds
+  // push to the deployment's registry.
+  string registry = 15;
+  string registry_secret = 16;
 }
 
 // ImageVersion is one build of an image.
@@ -167,6 +212,20 @@ message ImageVersion {
   // On a version pending deletion or deleted: the service revisions made
   // with it, which a rollback can no longer select.
   repeated ImageVersionPin pinned_by = 15;
+  // A container version's manifest digest, sha256:<hex>, once ready, and
+  // what pushed it.
+  string digest = 16;
+  ImagePusher pushed_by = 17;
+  // A container version's build: the commit it built, the builder that
+  // built it (never AUTO), and for Railpack its version and the digest of
+  // its BuildKit frontend.
+  string source_commit = 18;
+  ImageBuilder builder = 19;
+  string builder_version = 20;
+  string builder_frontend_digest = 21;
+  // Whether the build's commit is the source repository's own rather than
+  // a fork's. An untrusted build receives no build secrets.
+  bool trusted = 22;
 }
 
 // ImageVersionPin is a service revision made with an image version.
@@ -179,11 +238,13 @@ message ImageVersionPin {
 message CreateImageRequest {
   string project = 1;
   // The environment whose secret sets the image's builds receive; empty is
-  // the project's default environment.
+  // the project's default environment. Empty for a container image built
+  // from a repository.
   string environment = 2;
   string name = 3;
   ImageKind kind = 4;
-  // A disk's base and size; empty for a container image.
+  // A disk's base, empty for a container image; the size a disk's or a
+  // container image built from a repository's builds run at.
   string base = 5;
   string size = 6;
   // In the format of a service's recipe, in TOML. An image uses its setup
@@ -191,6 +252,16 @@ message CreateImageRequest {
   // any other field fails with INVALID_ARGUMENT. Empty for a container
   // image.
   string recipe = 7;
+  // The repository a container image is built from, as owner/name; empty
+  // for one that is pushed. The builder defaults to AUTO.
+  string source = 8;
+  ImageBuilder builder = 9;
+  // A reference in the workspace's own registry for the builds to push to,
+  // such as ghcr.io/acme/web, and the key of a build secret granted to the
+  // image's builds that holds its Docker config.json; both empty to push
+  // to the deployment's registry.
+  string registry = 10;
+  string registry_secret = 11;
 }
 
 message CreateImageResponse {
@@ -227,8 +298,12 @@ message ListImagesResponse {
 message BuildImageRequest {
   string project = 1;
   string name = 2;
-  // Empty: the image's recipe.
+  // Empty: the image's recipe. Empty for a container image.
   string recipe = 3;
+  // A container image's Railpack builds use the Railpack version its
+  // newest ready version was built with; true builds with the one Toshi's
+  // build image holds. Unset for a disk image.
+  bool update_builder = 4;
 }
 
 message BuildImageResponse {
