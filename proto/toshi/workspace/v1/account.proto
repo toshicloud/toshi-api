@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// AccountService reads and changes the caller's own Toshi user: who they
+// are, the identities they sign in with, and the workspaces they are a
+// member of. Its calls are a person's: a dashboard session or a person's
+// access token makes them, without the Toshi-Workspace header and without
+// any role; a workspace token and the operator cannot. The permissions
+// named here are not checked.
+//
+// An identity is added only by signing in through it while signed in, at
+// POST /auth/<name>/link (docs/contracts/operator-usage.md), never by a
+// call here and never by a matching email.
+service AccountService {
+  // GetAccount returns the caller's user, its identities, oldest first,
+  // and the workspaces it is a member of, sorted.
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse) {
+    option (toshi.permission) = "members.read";
+    option (toshi.scope) = "workspace";
+  }
+
+  // ListIdentities returns the caller's identities, oldest first.
+  rpc ListIdentities(ListIdentitiesRequest) returns (ListIdentitiesResponse) {
+    option (toshi.permission) = "members.read";
+    option (toshi.scope) = "workspace";
+  }
+
+  // UnlinkIdentity removes one of the caller's identities, so it no longer
+  // signs in as the caller, and ends what was opened through it: its
+  // dashboard sessions, and its access tokens with their grants. The
+  // caller's other identities and their sessions are kept, and so are the
+  // caller's memberships and roles. An identity the caller does not have
+  // fails with NOT_FOUND; the caller's last identity with
+  // FAILED_PRECONDITION and the reason LAST_IDENTITY in a
+  // google.rpc.ErrorInfo detail. A session or token opened through the
+  // identity, the calling one included, stops working at its next call.
+  rpc UnlinkIdentity(UnlinkIdentityRequest) returns (UnlinkIdentityResponse) {
+    option (toshi.permission) = "members.read";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {
+      action: "identity.unlinked"
+      target: "none"
+    };
+  }
+}
+
+// Account is a Toshi user: a person who signs in through one or more
+// identities.
+message Account {
+  // The user's id: the person a role grant names.
+  string user_id = 1;
+  // The name and email the user's latest sign-in reported; shown, never
+  // matched.
+  string name = 2;
+  string email = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+// Identity is a user's account at an identity provider.
+message Identity {
+  // "github", or the OpenID Connect issuer URL.
+  string provider = 1;
+  // The account's stable id at the provider.
+  string subject = 2;
+  // The name the provider shows the account by, as of its latest sign-in.
+  string login = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp last_sign_in_at = 5;
+}
+
+message GetAccountRequest {}
+
+message GetAccountResponse {
+  Account account = 1;
+  repeated Identity identities = 2;
+  // The workspaces the user is a member of, sorted.
+  repeated string workspaces = 3;
+}
+
+message ListIdentitiesRequest {}
+
+message ListIdentitiesResponse {
+  repeated Identity identities = 1;
+}
+
+message UnlinkIdentityRequest {
+  // The identity, as Identity names it.
+  string provider = 1;
+  string subject = 2;
+}
+
+message UnlinkIdentityResponse {
+  // The identity as it was when it was removed.
+  Identity identity = 1;
+  // How many dashboard sessions ended, and how many access-token grants
+  // were revoked with it.
+  int32 sessions_ended = 2;
+  int32 grants_revoked = 3;
+}

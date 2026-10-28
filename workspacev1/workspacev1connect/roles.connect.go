@@ -141,10 +141,11 @@ type RoleServiceClient interface {
 	// person's call: a dashboard session or a person's access token makes it,
 	// without the Toshi-Workspace header and without any role, since the
 	// caller is not yet a member; a workspace token and the operator cannot.
-	// The permission named here is not checked. An unknown code fails with
-	// NOT_FOUND, one accepted, revoked or expired with FAILED_PRECONDITION,
-	// and a caller who is already a member with ALREADY_EXISTS, leaving the
-	// invitation open.
+	// The permission named here is not checked. A code with no open
+	// invitation fails with NOT_FOUND, whether no invitation has it or it is
+	// accepted, revoked or expired; the workspace's audit log records which
+	// as invitation.accept_refused. A caller who is already a member fails
+	// with ALREADY_EXISTS, leaving the invitation open.
 	AcceptInvitation(context.Context, *connect.Request[workspacev1.AcceptInvitationRequest]) (*connect.Response[workspacev1.AcceptInvitationResponse], error)
 }
 
@@ -396,10 +397,11 @@ type RoleServiceHandler interface {
 	// person's call: a dashboard session or a person's access token makes it,
 	// without the Toshi-Workspace header and without any role, since the
 	// caller is not yet a member; a workspace token and the operator cannot.
-	// The permission named here is not checked. An unknown code fails with
-	// NOT_FOUND, one accepted, revoked or expired with FAILED_PRECONDITION,
-	// and a caller who is already a member with ALREADY_EXISTS, leaving the
-	// invitation open.
+	// The permission named here is not checked. A code with no open
+	// invitation fails with NOT_FOUND, whether no invitation has it or it is
+	// accepted, revoked or expired; the workspace's audit log records which
+	// as invitation.accept_refused. A caller who is already a member fails
+	// with ALREADY_EXISTS, leaving the invitation open.
 	AcceptInvitation(context.Context, *connect.Request[workspacev1.AcceptInvitationRequest]) (*connect.Response[workspacev1.AcceptInvitationResponse], error)
 }
 
