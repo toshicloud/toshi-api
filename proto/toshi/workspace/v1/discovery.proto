@@ -44,6 +44,11 @@ message DiscoverResponse {
   // product's own, "<product id>.<level>".
   repeated string permissions = 2;
   APIVersions versions = 3;
+  // registry_address is the deployment's container registry as a client
+  // writes it in an image reference and logs in to it, such as
+  // "registry.example.com": a host name, with a port when it is not 443.
+  // Empty when the deployment runs no container registry.
+  string registry_address = 4;
 }
 
 // DiscoveredProduct is one product the build includes.

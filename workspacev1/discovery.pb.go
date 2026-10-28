@@ -275,10 +275,15 @@ type DiscoverResponse struct {
 	// give it at the request's project and environment. Each is
 	// "<area>.<level>", as docs/api/permissions.md lists them, or a
 	// product's own, "<product id>.<level>".
-	Permissions   []string     `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Versions      *APIVersions `protobuf:"bytes,3,opt,name=versions,proto3" json:"versions,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Permissions []string     `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Versions    *APIVersions `protobuf:"bytes,3,opt,name=versions,proto3" json:"versions,omitempty"`
+	// registry_address is the deployment's container registry as a client
+	// writes it in an image reference and logs in to it, such as
+	// "registry.example.com": a host name, with a port when it is not 443.
+	// Empty when the deployment runs no container registry.
+	RegistryAddress string `protobuf:"bytes,4,opt,name=registry_address,json=registryAddress,proto3" json:"registry_address,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *DiscoverResponse) Reset() {
@@ -330,6 +335,13 @@ func (x *DiscoverResponse) GetVersions() *APIVersions {
 		return x.Versions
 	}
 	return nil
+}
+
+func (x *DiscoverResponse) GetRegistryAddress() string {
+	if x != nil {
+		return x.RegistryAddress
+	}
+	return ""
 }
 
 // DiscoveredProduct is one product the build includes.
@@ -883,11 +895,12 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"\"toshi/workspace/v1/discovery.proto\x12\x12toshi.workspace.v1\x1a\x16toshi/permission.proto\"M\n" +
 	"\x0fDiscoverRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
-	"\venvironment\x18\x02 \x01(\tR\venvironment\"\xb4\x01\n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\"\xdf\x01\n" +
 	"\x10DiscoverResponse\x12A\n" +
 	"\bproducts\x18\x01 \x03(\v2%.toshi.workspace.v1.DiscoveredProductR\bproducts\x12 \n" +
 	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12;\n" +
-	"\bversions\x18\x03 \x01(\v2\x1f.toshi.workspace.v1.APIVersionsR\bversions\"\xed\x02\n" +
+	"\bversions\x18\x03 \x01(\v2\x1f.toshi.workspace.v1.APIVersionsR\bversions\x12)\n" +
+	"\x10registry_address\x18\x04 \x01(\tR\x0fregistryAddress\"\xed\x02\n" +
 	"\x11DiscoveredProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\tR\aversion\x12\x12\n" +
