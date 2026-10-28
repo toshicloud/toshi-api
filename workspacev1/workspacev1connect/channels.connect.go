@@ -167,8 +167,8 @@ type ChannelServiceClient interface {
 	TailChannelMessages(context.Context, *connect.Request[workspacev1.TailChannelMessagesRequest]) (*connect.ServerStreamForClient[workspacev1.TailChannelMessagesResponse], error)
 	// ReplayChannelMessage puts a failed, expired or delivered message of an
 	// event channel back in its queue under its own ID, so its webhook-id is
-	// the same: its attempts start again from 0, and its retry window and
-	// keep from the replay. A message pending or in flight fails with
+	// the same: its attempts start again from 0, and its keep runs from the
+	// replay. A message pending or in flight fails with
 	// FAILED_PRECONDITION.
 	ReplayChannelMessage(context.Context, *connect.Request[workspacev1.ReplayChannelMessageRequest]) (*connect.Response[workspacev1.ReplayChannelMessageResponse], error)
 }
@@ -468,8 +468,8 @@ type ChannelServiceHandler interface {
 	TailChannelMessages(context.Context, *connect.Request[workspacev1.TailChannelMessagesRequest], *connect.ServerStream[workspacev1.TailChannelMessagesResponse]) error
 	// ReplayChannelMessage puts a failed, expired or delivered message of an
 	// event channel back in its queue under its own ID, so its webhook-id is
-	// the same: its attempts start again from 0, and its retry window and
-	// keep from the replay. A message pending or in flight fails with
+	// the same: its attempts start again from 0, and its keep runs from the
+	// replay. A message pending or in flight fails with
 	// FAILED_PRECONDITION.
 	ReplayChannelMessage(context.Context, *connect.Request[workspacev1.ReplayChannelMessageRequest]) (*connect.Response[workspacev1.ReplayChannelMessageResponse], error)
 }
