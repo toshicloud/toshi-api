@@ -81,6 +81,11 @@ message DiscoveredProduct {
   // whose metadata names the input that turned it off; the workspace's
   // product settings show its plan's entitlement and its own setting.
   bool available = 10;
+  // stability is how mature the product is in this build.
+  ProductStability stability = 11;
+  // removal_version is the version a deprecated product is removed in;
+  // empty for the other stabilities.
+  string removal_version = 12;
 }
 
 // DiscoveredSurfaces are what a product adds to Toshi, empty when it adds
@@ -110,6 +115,22 @@ enum ProductState {
   PRODUCT_STATE_DRAINING = 3;
   // Turned off, with nothing left to finish.
   PRODUCT_STATE_STOPPED = 4;
+}
+
+// ProductStability is how mature a product is. A deployment's
+// products.min_stability turns off a product below it, as the operator's
+// switch does.
+enum ProductStability {
+  PRODUCT_STABILITY_UNSPECIFIED = 0;
+  // May change or go away in any release.
+  PRODUCT_STABILITY_ALPHA = 1;
+  // Complete; its configuration and API may still change between minor
+  // releases, with notice.
+  PRODUCT_STABILITY_BETA = 2;
+  // Changes only compatibly within a major version.
+  PRODUCT_STABILITY_STABLE = 3;
+  // Works as it did until its removal version.
+  PRODUCT_STABILITY_DEPRECATED = 4;
 }
 
 // ProductFeature is a typed key a product declares.

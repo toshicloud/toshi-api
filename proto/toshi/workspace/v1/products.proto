@@ -96,6 +96,11 @@ message ProductSettings {
   // name is the product's name as people read it, such as "Runners", or
   // its id when it names none.
   string name = 7;
+  // stability is how mature the product is in this build.
+  ProductStability stability = 8;
+  // removal_version is the version a deprecated product is removed in;
+  // empty for the other stabilities.
+  string removal_version = 9;
 }
 
 // ProductSurfaces are what a product adds to Toshi, empty when it adds none.
