@@ -41,9 +41,24 @@ service ImageService {
   // IMAGE_NAME_TAKEN. A base that is not one of Toshi's, a size that is
   // not a Linux size, or a recipe without a setup hook or with a field an
   // image does not use, fails with INVALID_ARGUMENT.
+  //
+  // Creating an image starts its first build, as BuildImage does; the
+  // response's version is that build's. A workspace whose plan
+  // does not include images fails with FAILED_PRECONDITION and the reason
+  // PLAN_EXCLUDES_IMAGES.
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse) {
     option (toshi.permission) = "images.write";
     option (toshi.scope) = "environment";
+  }
+  // BuildImage starts a build of the image: a job that runs the recipe's
+  // setup hook in a fresh VM of the base and saves its disk as the next
+  // version. A recipe in the request is the build's, and becomes the
+  // image's when the version is ready. An image with a build in progress
+  // fails with FAILED_PRECONDITION and the reason IMAGE_BUILD_IN_PROGRESS.
+  rpc BuildImage(BuildImageRequest) returns (BuildImageResponse) {
+    option (toshi.permission) = "images.write";
+    option (toshi.scope) = "project";
+    option (toshi.audit) = {action: "image.build_started", target: "image:name"};
   }
   // GetImage returns the image with its versions, newest first.
   rpc GetImage(GetImageRequest) returns (GetImageResponse) {
@@ -171,6 +186,8 @@ message CreateImageRequest {
 
 message CreateImageResponse {
   Image image = 1;
+  // The version the image's first build makes, building.
+  ImageVersion version = 2;
 }
 
 message GetImageRequest {
@@ -196,6 +213,17 @@ message ListImagesResponse {
   repeated Image images = 1;
   // Empty on the last page.
   string next_page_token = 2;
+}
+
+message BuildImageRequest {
+  string project = 1;
+  string name = 2;
+  // Empty: the image's recipe.
+  string recipe = 3;
+}
+
+message BuildImageResponse {
+  ImageVersion version = 1;
 }
 
 message DeleteImageRequest {

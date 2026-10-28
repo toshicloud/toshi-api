@@ -34,6 +34,9 @@ const (
 	SecretGranteeKind_SECRET_GRANTEE_KIND_IMAGE SecretGranteeKind = 2
 	// One service: grantee is its name.
 	SecretGranteeKind_SECRET_GRANTEE_KIND_SERVICE SecretGranteeKind = 3
+	// The builds of an image: grantee is the image's name. Its values reach
+	// the build's setup command only, never a VM started from the image.
+	SecretGranteeKind_SECRET_GRANTEE_KIND_IMAGE_BUILD SecretGranteeKind = 4
 )
 
 // Enum value maps for SecretGranteeKind.
@@ -43,12 +46,14 @@ var (
 		1: "SECRET_GRANTEE_KIND_KIND",
 		2: "SECRET_GRANTEE_KIND_IMAGE",
 		3: "SECRET_GRANTEE_KIND_SERVICE",
+		4: "SECRET_GRANTEE_KIND_IMAGE_BUILD",
 	}
 	SecretGranteeKind_value = map[string]int32{
 		"SECRET_GRANTEE_KIND_UNSPECIFIED": 0,
 		"SECRET_GRANTEE_KIND_KIND":        1,
 		"SECRET_GRANTEE_KIND_IMAGE":       2,
 		"SECRET_GRANTEE_KIND_SERVICE":     3,
+		"SECRET_GRANTEE_KIND_IMAGE_BUILD": 4,
 	}
 )
 
@@ -1703,12 +1708,13 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"page_token\x18\x05 \x01(\tR\tpageToken\"~\n" +
 	"\x1bListSecretSetGrantsResponse\x127\n" +
 	"\x06grants\x18\x01 \x03(\v2\x1f.toshi.workspace.v1.SecretGrantR\x06grants\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken*\x96\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken*\xbb\x01\n" +
 	"\x11SecretGranteeKind\x12#\n" +
 	"\x1fSECRET_GRANTEE_KIND_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18SECRET_GRANTEE_KIND_KIND\x10\x01\x12\x1d\n" +
 	"\x19SECRET_GRANTEE_KIND_IMAGE\x10\x02\x12\x1f\n" +
-	"\x1bSECRET_GRANTEE_KIND_SERVICE\x10\x032\xcc\v\n" +
+	"\x1bSECRET_GRANTEE_KIND_SERVICE\x10\x03\x12#\n" +
+	"\x1fSECRET_GRANTEE_KIND_IMAGE_BUILD\x10\x042\xcc\v\n" +
 	"\rSecretService\x12\x96\x01\n" +
 	"\x0fCreateSecretSet\x12*.toshi.workspace.v1.CreateSecretSetRequest\x1a+.toshi.workspace.v1.CreateSecretSetResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x84\x01\n" +
 	"\x0eListSecretSets\x12).toshi.workspace.v1.ListSecretSetsRequest\x1a*.toshi.workspace.v1.ListSecretSetsResponse\"\x1b\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\aproject\x12\x96\x01\n" +

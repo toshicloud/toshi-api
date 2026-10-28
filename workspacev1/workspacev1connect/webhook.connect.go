@@ -74,7 +74,9 @@ type WebhookServiceClient interface {
 	// A page holds 100 endpoints when page_size is zero, and 1000 at most.
 	ListWebhookEndpoints(context.Context, *connect.Request[workspacev1.ListWebhookEndpointsRequest]) (*connect.Response[workspacev1.ListWebhookEndpointsResponse], error)
 	// UpdateWebhookEndpoint sets the fields update_mask names: url, events,
-	// enabled. A disabled endpoint is owed no new event and no try starts;
+	// enabled, cursor. A cursor must be at or after the retention boundary's
+	// sequence and at or before the workspace's newest event sequence.
+	// A disabled endpoint is owed no new event and no try starts;
 	// the events written before the disable stay owed, enabling it again
 	// owes none written while it was disabled, and a try already under way
 	// finishes within its claim, which holds a delivery for one minute.
@@ -237,7 +239,9 @@ type WebhookServiceHandler interface {
 	// A page holds 100 endpoints when page_size is zero, and 1000 at most.
 	ListWebhookEndpoints(context.Context, *connect.Request[workspacev1.ListWebhookEndpointsRequest]) (*connect.Response[workspacev1.ListWebhookEndpointsResponse], error)
 	// UpdateWebhookEndpoint sets the fields update_mask names: url, events,
-	// enabled. A disabled endpoint is owed no new event and no try starts;
+	// enabled, cursor. A cursor must be at or after the retention boundary's
+	// sequence and at or before the workspace's newest event sequence.
+	// A disabled endpoint is owed no new event and no try starts;
 	// the events written before the disable stay owed, enabling it again
 	// owes none written while it was disabled, and a try already under way
 	// finishes within its claim, which holds a delivery for one minute.

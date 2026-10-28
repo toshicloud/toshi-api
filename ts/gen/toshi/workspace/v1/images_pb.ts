@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/images.proto.
  */
 export const file_toshi_workspace_v1_images: GenFile = /*@__PURE__*/
-  fileDesc("Ch90b3NoaS93b3Jrc3BhY2UvdjEvaW1hZ2VzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEiyQIKBUltYWdlEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcHJvamVjdBgDIAEoCRIrCgRraW5kGAQgASgOMh0udG9zaGkud29ya3NwYWNlLnYxLkltYWdlS2luZBIMCgRiYXNlGAUgASgJEgwKBHNpemUYBiABKAkSDgoGcmVjaXBlGAcgASgJEhUKDXJlY2lwZV9kaWdlc3QYCCABKAkSEwoLZW52aXJvbm1lbnQYCSABKAkSLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoGbGF0ZXN0GAwgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkltYWdlVmVyc2lvbiKABAoMSW1hZ2VWZXJzaW9uEgoKAmlkGAEgASgJEg4KBm51bWJlchgCIAEoAxI0CgVzdGF0ZRgDIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZVZlcnNpb25TdGF0ZRIMCgRiYXNlGAQgASgJEhMKC2Jhc2VfZGlnZXN0GAUgASgJEhIKCnNpemVfYnl0ZXMYBiABKAMSFQoNcmVjaXBlX2RpZ2VzdBgHIAEoCRIUCgxidWlsZF9qb2JfaWQYCCABKAkSDwoHZmFpbHVyZRgJIAEoCRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghyZWFkeV9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMQoNcGVuZGluZ19zaW5jZRgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMZGVsZXRlX2FmdGVyGA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpkZWxldGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI2CglwaW5uZWRfYnkYDyADKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VWZXJzaW9uUGluIk0KD0ltYWdlVmVyc2lvblBpbhISCgpzZXJ2aWNlX2lkGAEgASgJEhQKDHNlcnZpY2VfbmFtZRgCIAEoCRIQCghyZXZpc2lvbhgDIAEoAyKhAQoSQ3JlYXRlSW1hZ2VSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkSDAoEbmFtZRgDIAEoCRIrCgRraW5kGAQgASgOMh0udG9zaGkud29ya3NwYWNlLnYxLkltYWdlS2luZBIMCgRiYXNlGAUgASgJEgwKBHNpemUYBiABKAkSDgoGcmVjaXBlGAcgASgJIj8KE0NyZWF0ZUltYWdlUmVzcG9uc2USKAoFaW1hZ2UYASABKAsyGS50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2UiMAoPR2V0SW1hZ2VSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSDAoEbmFtZRgCIAEoCSJwChBHZXRJbWFnZVJlc3BvbnNlEigKBWltYWdlGAEgASgLMhkudG9zaGkud29ya3NwYWNlLnYxLkltYWdlEjIKCHZlcnNpb25zGAIgAygLMiAudG9zaGkud29ya3NwYWNlLnYxLkltYWdlVmVyc2lvbiJLChFMaXN0SW1hZ2VzUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXBhZ2Vfc2l6ZRgCIAEoBRISCgpwYWdlX3Rva2VuGAMgASgJIlgKEkxpc3RJbWFnZXNSZXNwb25zZRIpCgZpbWFnZXMYASADKAsyGS50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2USFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIjMKEkRlbGV0ZUltYWdlUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEgwKBG5hbWUYAiABKAkiFQoTRGVsZXRlSW1hZ2VSZXNwb25zZSo8CglJbWFnZUtpbmQSGgoWSU1BR0VfS0lORF9VTlNQRUNJRklFRBAAEhMKD0lNQUdFX0tJTkRfRElTSxABKuQBChFJbWFnZVZlcnNpb25TdGF0ZRIjCh9JTUFHRV9WRVJTSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASIAocSU1BR0VfVkVSU0lPTl9TVEFURV9CVUlMRElORxABEh4KGklNQUdFX1ZFUlNJT05fU1RBVEVfRkFJTEVEEAISHQoZSU1BR0VfVkVSU0lPTl9TVEFURV9SRUFEWRADEigKJElNQUdFX1ZFUlNJT05fU1RBVEVfUEVORElOR19ERUxFVElPThAEEh8KG0lNQUdFX1ZFUlNJT05fU1RBVEVfREVMRVRFRBAFMokECgxJbWFnZVNlcnZpY2USfwoLQ3JlYXRlSW1hZ2USJi50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlSW1hZ2VSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUltYWdlUmVzcG9uc2UiH8LzGAxpbWFnZXMud3JpdGXK8xgLZW52aXJvbm1lbnQScQoIR2V0SW1hZ2USIy50b3NoaS53b3Jrc3BhY2UudjEuR2V0SW1hZ2VSZXF1ZXN0GiQudG9zaGkud29ya3NwYWNlLnYxLkdldEltYWdlUmVzcG9uc2UiGsLzGAtpbWFnZXMucmVhZMrzGAdwcm9qZWN0EncKCkxpc3RJbWFnZXMSJS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEltYWdlc1JlcXVlc3QaJi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEltYWdlc1Jlc3BvbnNlIhrC8xgLaW1hZ2VzLnJlYWTK8xgHcHJvamVjdBKLAQoLRGVsZXRlSW1hZ2USJi50b3NoaS53b3Jrc3BhY2UudjEuRGVsZXRlSW1hZ2VSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUltYWdlUmVzcG9uc2UiK8LzGAxpbWFnZXMud3JpdGXK8xgHcHJvamVjdNLzGAwSCmltYWdlOm5hbWVCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("Ch90b3NoaS93b3Jrc3BhY2UvdjEvaW1hZ2VzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEiyQIKBUltYWdlEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcHJvamVjdBgDIAEoCRIrCgRraW5kGAQgASgOMh0udG9zaGkud29ya3NwYWNlLnYxLkltYWdlS2luZBIMCgRiYXNlGAUgASgJEgwKBHNpemUYBiABKAkSDgoGcmVjaXBlGAcgASgJEhUKDXJlY2lwZV9kaWdlc3QYCCABKAkSEwoLZW52aXJvbm1lbnQYCSABKAkSLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoGbGF0ZXN0GAwgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkltYWdlVmVyc2lvbiKABAoMSW1hZ2VWZXJzaW9uEgoKAmlkGAEgASgJEg4KBm51bWJlchgCIAEoAxI0CgVzdGF0ZRgDIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZVZlcnNpb25TdGF0ZRIMCgRiYXNlGAQgASgJEhMKC2Jhc2VfZGlnZXN0GAUgASgJEhIKCnNpemVfYnl0ZXMYBiABKAMSFQoNcmVjaXBlX2RpZ2VzdBgHIAEoCRIUCgxidWlsZF9qb2JfaWQYCCABKAkSDwoHZmFpbHVyZRgJIAEoCRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghyZWFkeV9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMQoNcGVuZGluZ19zaW5jZRgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMZGVsZXRlX2FmdGVyGA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpkZWxldGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI2CglwaW5uZWRfYnkYDyADKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VWZXJzaW9uUGluIk0KD0ltYWdlVmVyc2lvblBpbhISCgpzZXJ2aWNlX2lkGAEgASgJEhQKDHNlcnZpY2VfbmFtZRgCIAEoCRIQCghyZXZpc2lvbhgDIAEoAyKhAQoSQ3JlYXRlSW1hZ2VSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkSDAoEbmFtZRgDIAEoCRIrCgRraW5kGAQgASgOMh0udG9zaGkud29ya3NwYWNlLnYxLkltYWdlS2luZBIMCgRiYXNlGAUgASgJEgwKBHNpemUYBiABKAkSDgoGcmVjaXBlGAcgASgJInIKE0NyZWF0ZUltYWdlUmVzcG9uc2USKAoFaW1hZ2UYASABKAsyGS50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2USMQoHdmVyc2lvbhgCIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZVZlcnNpb24iMAoPR2V0SW1hZ2VSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSDAoEbmFtZRgCIAEoCSJwChBHZXRJbWFnZVJlc3BvbnNlEigKBWltYWdlGAEgASgLMhkudG9zaGkud29ya3NwYWNlLnYxLkltYWdlEjIKCHZlcnNpb25zGAIgAygLMiAudG9zaGkud29ya3NwYWNlLnYxLkltYWdlVmVyc2lvbiJLChFMaXN0SW1hZ2VzUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXBhZ2Vfc2l6ZRgCIAEoBRISCgpwYWdlX3Rva2VuGAMgASgJIlgKEkxpc3RJbWFnZXNSZXNwb25zZRIpCgZpbWFnZXMYASADKAsyGS50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2USFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIkIKEUJ1aWxkSW1hZ2VSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSDAoEbmFtZRgCIAEoCRIOCgZyZWNpcGUYAyABKAkiRwoSQnVpbGRJbWFnZVJlc3BvbnNlEjEKB3ZlcnNpb24YASABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VWZXJzaW9uIjMKEkRlbGV0ZUltYWdlUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEgwKBG5hbWUYAiABKAkiFQoTRGVsZXRlSW1hZ2VSZXNwb25zZSo8CglJbWFnZUtpbmQSGgoWSU1BR0VfS0lORF9VTlNQRUNJRklFRBAAEhMKD0lNQUdFX0tJTkRfRElTSxABKuQBChFJbWFnZVZlcnNpb25TdGF0ZRIjCh9JTUFHRV9WRVJTSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASIAocSU1BR0VfVkVSU0lPTl9TVEFURV9CVUlMRElORxABEh4KGklNQUdFX1ZFUlNJT05fU1RBVEVfRkFJTEVEEAISHQoZSU1BR0VfVkVSU0lPTl9TVEFURV9SRUFEWRADEigKJElNQUdFX1ZFUlNJT05fU1RBVEVfUEVORElOR19ERUxFVElPThAEEh8KG0lNQUdFX1ZFUlNJT05fU1RBVEVfREVMRVRFRBAFMqkFCgxJbWFnZVNlcnZpY2USfwoLQ3JlYXRlSW1hZ2USJi50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlSW1hZ2VSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUltYWdlUmVzcG9uc2UiH8LzGAxpbWFnZXMud3JpdGXK8xgLZW52aXJvbm1lbnQSnQEKCkJ1aWxkSW1hZ2USJS50b3NoaS53b3Jrc3BhY2UudjEuQnVpbGRJbWFnZVJlcXVlc3QaJi50b3NoaS53b3Jrc3BhY2UudjEuQnVpbGRJbWFnZVJlc3BvbnNlIkDC8xgMaW1hZ2VzLndyaXRlyvMYB3Byb2plY3TS8xghChNpbWFnZS5idWlsZF9zdGFydGVkEgppbWFnZTpuYW1lEnEKCEdldEltYWdlEiMudG9zaGkud29ya3NwYWNlLnYxLkdldEltYWdlUmVxdWVzdBokLnRvc2hpLndvcmtzcGFjZS52MS5HZXRJbWFnZVJlc3BvbnNlIhrC8xgLaW1hZ2VzLnJlYWTK8xgHcHJvamVjdBJ3CgpMaXN0SW1hZ2VzEiUudG9zaGkud29ya3NwYWNlLnYxLkxpc3RJbWFnZXNSZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLkxpc3RJbWFnZXNSZXNwb25zZSIawvMYC2ltYWdlcy5yZWFkyvMYB3Byb2plY3QSiwEKC0RlbGV0ZUltYWdlEiYudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUltYWdlUmVxdWVzdBonLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVJbWFnZVJlc3BvbnNlIivC8xgMaW1hZ2VzLndyaXRlyvMYB3Byb2plY3TS8xgMEgppbWFnZTpuYW1lQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Image is a project's own image.
@@ -555,6 +555,13 @@ export type CreateImageResponse = Message<"toshi.workspace.v1.CreateImageRespons
    * @generated from field: toshi.workspace.v1.Image image = 1;
    */
   image?: Image | undefined;
+
+  /**
+   * The version the image's first build makes, building.
+   *
+   * @generated from field: toshi.workspace.v1.ImageVersion version = 2;
+   */
+  version?: ImageVersion | undefined;
 };
 
 /**
@@ -565,6 +572,13 @@ export type CreateImageResponseJson = {
    * @generated from field: toshi.workspace.v1.Image image = 1;
    */
   image?: ImageJson;
+
+  /**
+   * The version the image's first build makes, building.
+   *
+   * @generated from field: toshi.workspace.v1.ImageVersion version = 2;
+   */
+  version?: ImageVersionJson;
 };
 
 /**
@@ -749,6 +763,84 @@ export const ListImagesResponseSchema: GenMessage<ListImagesResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_images, 8);
 
 /**
+ * @generated from message toshi.workspace.v1.BuildImageRequest
+ */
+export type BuildImageRequest = Message<"toshi.workspace.v1.BuildImageRequest"> & {
+  /**
+   * @generated from field: string project = 1;
+   */
+  project: string;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * Empty: the image's recipe.
+   *
+   * @generated from field: string recipe = 3;
+   */
+  recipe: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.BuildImageRequest
+ */
+export type BuildImageRequestJson = {
+  /**
+   * @generated from field: string project = 1;
+   */
+  project?: string;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name?: string;
+
+  /**
+   * Empty: the image's recipe.
+   *
+   * @generated from field: string recipe = 3;
+   */
+  recipe?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.BuildImageRequest.
+ * Use `create(BuildImageRequestSchema)` to create a new message.
+ */
+export const BuildImageRequestSchema: GenMessage<BuildImageRequest, {jsonType: BuildImageRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_images, 9);
+
+/**
+ * @generated from message toshi.workspace.v1.BuildImageResponse
+ */
+export type BuildImageResponse = Message<"toshi.workspace.v1.BuildImageResponse"> & {
+  /**
+   * @generated from field: toshi.workspace.v1.ImageVersion version = 1;
+   */
+  version?: ImageVersion | undefined;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.BuildImageResponse
+ */
+export type BuildImageResponseJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.ImageVersion version = 1;
+   */
+  version?: ImageVersionJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.BuildImageResponse.
+ * Use `create(BuildImageResponseSchema)` to create a new message.
+ */
+export const BuildImageResponseSchema: GenMessage<BuildImageResponse, {jsonType: BuildImageResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_images, 10);
+
+/**
  * @generated from message toshi.workspace.v1.DeleteImageRequest
  */
 export type DeleteImageRequest = Message<"toshi.workspace.v1.DeleteImageRequest"> & {
@@ -783,7 +875,7 @@ export type DeleteImageRequestJson = {
  * Use `create(DeleteImageRequestSchema)` to create a new message.
  */
 export const DeleteImageRequestSchema: GenMessage<DeleteImageRequest, {jsonType: DeleteImageRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_images, 9);
+  messageDesc(file_toshi_workspace_v1_images, 11);
 
 /**
  * @generated from message toshi.workspace.v1.DeleteImageResponse
@@ -802,7 +894,7 @@ export type DeleteImageResponseJson = {
  * Use `create(DeleteImageResponseSchema)` to create a new message.
  */
 export const DeleteImageResponseSchema: GenMessage<DeleteImageResponse, {jsonType: DeleteImageResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_images, 10);
+  messageDesc(file_toshi_workspace_v1_images, 12);
 
 /**
  * ImageKind is what an image is.
@@ -938,12 +1030,31 @@ export const ImageService: GenService<{
    * not a Linux size, or a recipe without a setup hook or with a field an
    * image does not use, fails with INVALID_ARGUMENT.
    *
+   * Creating an image starts its first build, as BuildImage does; the
+   * response's version is that build's. A workspace whose plan
+   * does not include images fails with FAILED_PRECONDITION and the reason
+   * PLAN_EXCLUDES_IMAGES.
+   *
    * @generated from rpc toshi.workspace.v1.ImageService.CreateImage
    */
   createImage: {
     methodKind: "unary";
     input: typeof CreateImageRequestSchema;
     output: typeof CreateImageResponseSchema;
+  },
+  /**
+   * BuildImage starts a build of the image: a job that runs the recipe's
+   * setup hook in a fresh VM of the base and saves its disk as the next
+   * version. A recipe in the request is the build's, and becomes the
+   * image's when the version is ready. An image with a build in progress
+   * fails with FAILED_PRECONDITION and the reason IMAGE_BUILD_IN_PROGRESS.
+   *
+   * @generated from rpc toshi.workspace.v1.ImageService.BuildImage
+   */
+  buildImage: {
+    methodKind: "unary";
+    input: typeof BuildImageRequestSchema;
+    output: typeof BuildImageResponseSchema;
   },
   /**
    * GetImage returns the image with its versions, newest first.

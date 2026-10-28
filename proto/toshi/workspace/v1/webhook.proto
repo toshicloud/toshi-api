@@ -52,7 +52,9 @@ service WebhookService {
   }
 
   // UpdateWebhookEndpoint sets the fields update_mask names: url, events,
-  // enabled. A disabled endpoint is owed no new event and no try starts;
+  // enabled, cursor. A cursor must be at or after the retention boundary's
+  // sequence and at or before the workspace's newest event sequence.
+  // A disabled endpoint is owed no new event and no try starts;
   // the events written before the disable stay owed, enabling it again
   // owes none written while it was disabled, and a try already under way
   // finishes within its claim, which holds a delivery for one minute.
@@ -135,6 +137,11 @@ message WebhookEndpoint {
   google.protobuf.Timestamp previous_secret_expires_at = 6;
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
+  // Set when events after the endpoint's cursor were removed by retention.
+  // The endpoint is owed nothing until its cursor is moved.
+  bool cursor_expired = 9;
+  // The latest time of an event the log removed; unset when none.
+  google.protobuf.Timestamp retention_boundary = 10;
 }
 
 enum WebhookDeliveryState {
@@ -206,7 +213,7 @@ message UpdateWebhookEndpointRequest {
   string id = 1;
   // Carries the new values of the fields update_mask names.
   WebhookEndpoint endpoint = 2;
-  // One or more of url, events and enabled.
+  // One or more of url, events, enabled and cursor.
   google.protobuf.FieldMask update_mask = 3;
   string request_key = 4;
 }

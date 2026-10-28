@@ -103,6 +103,12 @@ const (
 	// OperatorServiceSetTenantPlanProcedure is the fully-qualified name of the OperatorService's
 	// SetTenantPlan RPC.
 	OperatorServiceSetTenantPlanProcedure = "/toshi.operator.v1.OperatorService/SetTenantPlan"
+	// OperatorServiceSetWorkspaceEntitlementProcedure is the fully-qualified name of the
+	// OperatorService's SetWorkspaceEntitlement RPC.
+	OperatorServiceSetWorkspaceEntitlementProcedure = "/toshi.operator.v1.OperatorService/SetWorkspaceEntitlement"
+	// OperatorServiceClearWorkspaceEntitlementProcedure is the fully-qualified name of the
+	// OperatorService's ClearWorkspaceEntitlement RPC.
+	OperatorServiceClearWorkspaceEntitlementProcedure = "/toshi.operator.v1.OperatorService/ClearWorkspaceEntitlement"
 	// OperatorServiceSetTenantOwnHostsOnlyProcedure is the fully-qualified name of the
 	// OperatorService's SetTenantOwnHostsOnly RPC.
 	OperatorServiceSetTenantOwnHostsOnlyProcedure = "/toshi.operator.v1.OperatorService/SetTenantOwnHostsOnly"
@@ -378,6 +384,11 @@ type OperatorServiceClient interface {
 	// plan, or a plan the configuration does not define, fails with
 	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
 	SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error)
+	// SetWorkspaceEntitlement sets an operator override and returns the resolved
+	// value. Retention overrides cannot be below the plan or deployment default.
+	SetWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.SetWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.SetWorkspaceEntitlementResponse], error)
+	// ClearWorkspaceEntitlement removes an override and reports whether one existed.
+	ClearWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.ClearWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.ClearWorkspaceEntitlementResponse], error)
 	// SetTenantOwnHostsOnly sets whether the workspace's jobs wait for its own
 	// hosts and never run on shared ones, and returns the workspace as stored. An
 	// empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
@@ -864,6 +875,18 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("SetTenantPlan")),
 			connect.WithClientOptions(opts...),
 		),
+		setWorkspaceEntitlement: connect.NewClient[operatorv1.SetWorkspaceEntitlementRequest, operatorv1.SetWorkspaceEntitlementResponse](
+			httpClient,
+			baseURL+OperatorServiceSetWorkspaceEntitlementProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("SetWorkspaceEntitlement")),
+			connect.WithClientOptions(opts...),
+		),
+		clearWorkspaceEntitlement: connect.NewClient[operatorv1.ClearWorkspaceEntitlementRequest, operatorv1.ClearWorkspaceEntitlementResponse](
+			httpClient,
+			baseURL+OperatorServiceClearWorkspaceEntitlementProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("ClearWorkspaceEntitlement")),
+			connect.WithClientOptions(opts...),
+		),
 		setTenantOwnHostsOnly: connect.NewClient[operatorv1.SetTenantOwnHostsOnlyRequest, operatorv1.SetTenantOwnHostsOnlyResponse](
 			httpClient,
 			baseURL+OperatorServiceSetTenantOwnHostsOnlyProcedure,
@@ -1192,6 +1215,8 @@ type operatorServiceClient struct {
 	listPlans                   *connect.Client[operatorv1.ListPlansRequest, operatorv1.ListPlansResponse]
 	getVersion                  *connect.Client[operatorv1.GetVersionRequest, operatorv1.GetVersionResponse]
 	setTenantPlan               *connect.Client[operatorv1.SetTenantPlanRequest, operatorv1.SetTenantPlanResponse]
+	setWorkspaceEntitlement     *connect.Client[operatorv1.SetWorkspaceEntitlementRequest, operatorv1.SetWorkspaceEntitlementResponse]
+	clearWorkspaceEntitlement   *connect.Client[operatorv1.ClearWorkspaceEntitlementRequest, operatorv1.ClearWorkspaceEntitlementResponse]
 	setTenantOwnHostsOnly       *connect.Client[operatorv1.SetTenantOwnHostsOnlyRequest, operatorv1.SetTenantOwnHostsOnlyResponse]
 	setTenantAllowOverflow      *connect.Client[operatorv1.SetTenantAllowOverflowRequest, operatorv1.SetTenantAllowOverflowResponse]
 	suspendTenant               *connect.Client[operatorv1.SuspendTenantRequest, operatorv1.SuspendTenantResponse]
@@ -1357,6 +1382,16 @@ func (c *operatorServiceClient) GetVersion(ctx context.Context, req *connect.Req
 // SetTenantPlan calls toshi.operator.v1.OperatorService.SetTenantPlan.
 func (c *operatorServiceClient) SetTenantPlan(ctx context.Context, req *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error) {
 	return c.setTenantPlan.CallUnary(ctx, req)
+}
+
+// SetWorkspaceEntitlement calls toshi.operator.v1.OperatorService.SetWorkspaceEntitlement.
+func (c *operatorServiceClient) SetWorkspaceEntitlement(ctx context.Context, req *connect.Request[operatorv1.SetWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.SetWorkspaceEntitlementResponse], error) {
+	return c.setWorkspaceEntitlement.CallUnary(ctx, req)
+}
+
+// ClearWorkspaceEntitlement calls toshi.operator.v1.OperatorService.ClearWorkspaceEntitlement.
+func (c *operatorServiceClient) ClearWorkspaceEntitlement(ctx context.Context, req *connect.Request[operatorv1.ClearWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.ClearWorkspaceEntitlementResponse], error) {
+	return c.clearWorkspaceEntitlement.CallUnary(ctx, req)
 }
 
 // SetTenantOwnHostsOnly calls toshi.operator.v1.OperatorService.SetTenantOwnHostsOnly.
@@ -1732,6 +1767,11 @@ type OperatorServiceHandler interface {
 	// plan, or a plan the configuration does not define, fails with
 	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
 	SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error)
+	// SetWorkspaceEntitlement sets an operator override and returns the resolved
+	// value. Retention overrides cannot be below the plan or deployment default.
+	SetWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.SetWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.SetWorkspaceEntitlementResponse], error)
+	// ClearWorkspaceEntitlement removes an override and reports whether one existed.
+	ClearWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.ClearWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.ClearWorkspaceEntitlementResponse], error)
 	// SetTenantOwnHostsOnly sets whether the workspace's jobs wait for its own
 	// hosts and never run on shared ones, and returns the workspace as stored. An
 	// empty ID fails with INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
@@ -2214,6 +2254,18 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("SetTenantPlan")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceSetWorkspaceEntitlementHandler := connect.NewUnaryHandler(
+		OperatorServiceSetWorkspaceEntitlementProcedure,
+		svc.SetWorkspaceEntitlement,
+		connect.WithSchema(operatorServiceMethods.ByName("SetWorkspaceEntitlement")),
+		connect.WithHandlerOptions(opts...),
+	)
+	operatorServiceClearWorkspaceEntitlementHandler := connect.NewUnaryHandler(
+		OperatorServiceClearWorkspaceEntitlementProcedure,
+		svc.ClearWorkspaceEntitlement,
+		connect.WithSchema(operatorServiceMethods.ByName("ClearWorkspaceEntitlement")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceSetTenantOwnHostsOnlyHandler := connect.NewUnaryHandler(
 		OperatorServiceSetTenantOwnHostsOnlyProcedure,
 		svc.SetTenantOwnHostsOnly,
@@ -2562,6 +2614,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceGetVersionHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantPlanProcedure:
 			operatorServiceSetTenantPlanHandler.ServeHTTP(w, r)
+		case OperatorServiceSetWorkspaceEntitlementProcedure:
+			operatorServiceSetWorkspaceEntitlementHandler.ServeHTTP(w, r)
+		case OperatorServiceClearWorkspaceEntitlementProcedure:
+			operatorServiceClearWorkspaceEntitlementHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantOwnHostsOnlyProcedure:
 			operatorServiceSetTenantOwnHostsOnlyHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantAllowOverflowProcedure:
@@ -2761,6 +2817,14 @@ func (UnimplementedOperatorServiceHandler) GetVersion(context.Context, *connect.
 
 func (UnimplementedOperatorServiceHandler) SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantPlan is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) SetWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.SetWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.SetWorkspaceEntitlementResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetWorkspaceEntitlement is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) ClearWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.ClearWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.ClearWorkspaceEntitlementResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ClearWorkspaceEntitlement is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) SetTenantOwnHostsOnly(context.Context, *connect.Request[operatorv1.SetTenantOwnHostsOnlyRequest]) (*connect.Response[operatorv1.SetTenantOwnHostsOnlyResponse], error) {

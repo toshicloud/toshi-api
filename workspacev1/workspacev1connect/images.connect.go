@@ -36,6 +36,8 @@ const (
 	// ImageServiceCreateImageProcedure is the fully-qualified name of the ImageService's CreateImage
 	// RPC.
 	ImageServiceCreateImageProcedure = "/toshi.workspace.v1.ImageService/CreateImage"
+	// ImageServiceBuildImageProcedure is the fully-qualified name of the ImageService's BuildImage RPC.
+	ImageServiceBuildImageProcedure = "/toshi.workspace.v1.ImageService/BuildImage"
 	// ImageServiceGetImageProcedure is the fully-qualified name of the ImageService's GetImage RPC.
 	ImageServiceGetImageProcedure = "/toshi.workspace.v1.ImageService/GetImage"
 	// ImageServiceListImagesProcedure is the fully-qualified name of the ImageService's ListImages RPC.
@@ -52,7 +54,18 @@ type ImageServiceClient interface {
 	// IMAGE_NAME_TAKEN. A base that is not one of Toshi's, a size that is
 	// not a Linux size, or a recipe without a setup hook or with a field an
 	// image does not use, fails with INVALID_ARGUMENT.
+	//
+	// Creating an image starts its first build, as BuildImage does; the
+	// response's version is that build's. A workspace whose plan
+	// does not include images fails with FAILED_PRECONDITION and the reason
+	// PLAN_EXCLUDES_IMAGES.
 	CreateImage(context.Context, *connect.Request[workspacev1.CreateImageRequest]) (*connect.Response[workspacev1.CreateImageResponse], error)
+	// BuildImage starts a build of the image: a job that runs the recipe's
+	// setup hook in a fresh VM of the base and saves its disk as the next
+	// version. A recipe in the request is the build's, and becomes the
+	// image's when the version is ready. An image with a build in progress
+	// fails with FAILED_PRECONDITION and the reason IMAGE_BUILD_IN_PROGRESS.
+	BuildImage(context.Context, *connect.Request[workspacev1.BuildImageRequest]) (*connect.Response[workspacev1.BuildImageResponse], error)
 	// GetImage returns the image with its versions, newest first.
 	GetImage(context.Context, *connect.Request[workspacev1.GetImageRequest]) (*connect.Response[workspacev1.GetImageResponse], error)
 	// ListImages returns the project's images that are not deleted, ordered
@@ -84,6 +97,12 @@ func NewImageServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(imageServiceMethods.ByName("CreateImage")),
 			connect.WithClientOptions(opts...),
 		),
+		buildImage: connect.NewClient[workspacev1.BuildImageRequest, workspacev1.BuildImageResponse](
+			httpClient,
+			baseURL+ImageServiceBuildImageProcedure,
+			connect.WithSchema(imageServiceMethods.ByName("BuildImage")),
+			connect.WithClientOptions(opts...),
+		),
 		getImage: connect.NewClient[workspacev1.GetImageRequest, workspacev1.GetImageResponse](
 			httpClient,
 			baseURL+ImageServiceGetImageProcedure,
@@ -108,6 +127,7 @@ func NewImageServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 // imageServiceClient implements ImageServiceClient.
 type imageServiceClient struct {
 	createImage *connect.Client[workspacev1.CreateImageRequest, workspacev1.CreateImageResponse]
+	buildImage  *connect.Client[workspacev1.BuildImageRequest, workspacev1.BuildImageResponse]
 	getImage    *connect.Client[workspacev1.GetImageRequest, workspacev1.GetImageResponse]
 	listImages  *connect.Client[workspacev1.ListImagesRequest, workspacev1.ListImagesResponse]
 	deleteImage *connect.Client[workspacev1.DeleteImageRequest, workspacev1.DeleteImageResponse]
@@ -116,6 +136,11 @@ type imageServiceClient struct {
 // CreateImage calls toshi.workspace.v1.ImageService.CreateImage.
 func (c *imageServiceClient) CreateImage(ctx context.Context, req *connect.Request[workspacev1.CreateImageRequest]) (*connect.Response[workspacev1.CreateImageResponse], error) {
 	return c.createImage.CallUnary(ctx, req)
+}
+
+// BuildImage calls toshi.workspace.v1.ImageService.BuildImage.
+func (c *imageServiceClient) BuildImage(ctx context.Context, req *connect.Request[workspacev1.BuildImageRequest]) (*connect.Response[workspacev1.BuildImageResponse], error) {
+	return c.buildImage.CallUnary(ctx, req)
 }
 
 // GetImage calls toshi.workspace.v1.ImageService.GetImage.
@@ -140,7 +165,18 @@ type ImageServiceHandler interface {
 	// IMAGE_NAME_TAKEN. A base that is not one of Toshi's, a size that is
 	// not a Linux size, or a recipe without a setup hook or with a field an
 	// image does not use, fails with INVALID_ARGUMENT.
+	//
+	// Creating an image starts its first build, as BuildImage does; the
+	// response's version is that build's. A workspace whose plan
+	// does not include images fails with FAILED_PRECONDITION and the reason
+	// PLAN_EXCLUDES_IMAGES.
 	CreateImage(context.Context, *connect.Request[workspacev1.CreateImageRequest]) (*connect.Response[workspacev1.CreateImageResponse], error)
+	// BuildImage starts a build of the image: a job that runs the recipe's
+	// setup hook in a fresh VM of the base and saves its disk as the next
+	// version. A recipe in the request is the build's, and becomes the
+	// image's when the version is ready. An image with a build in progress
+	// fails with FAILED_PRECONDITION and the reason IMAGE_BUILD_IN_PROGRESS.
+	BuildImage(context.Context, *connect.Request[workspacev1.BuildImageRequest]) (*connect.Response[workspacev1.BuildImageResponse], error)
 	// GetImage returns the image with its versions, newest first.
 	GetImage(context.Context, *connect.Request[workspacev1.GetImageRequest]) (*connect.Response[workspacev1.GetImageResponse], error)
 	// ListImages returns the project's images that are not deleted, ordered
@@ -168,6 +204,12 @@ func NewImageServiceHandler(svc ImageServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(imageServiceMethods.ByName("CreateImage")),
 		connect.WithHandlerOptions(opts...),
 	)
+	imageServiceBuildImageHandler := connect.NewUnaryHandler(
+		ImageServiceBuildImageProcedure,
+		svc.BuildImage,
+		connect.WithSchema(imageServiceMethods.ByName("BuildImage")),
+		connect.WithHandlerOptions(opts...),
+	)
 	imageServiceGetImageHandler := connect.NewUnaryHandler(
 		ImageServiceGetImageProcedure,
 		svc.GetImage,
@@ -190,6 +232,8 @@ func NewImageServiceHandler(svc ImageServiceHandler, opts ...connect.HandlerOpti
 		switch r.URL.Path {
 		case ImageServiceCreateImageProcedure:
 			imageServiceCreateImageHandler.ServeHTTP(w, r)
+		case ImageServiceBuildImageProcedure:
+			imageServiceBuildImageHandler.ServeHTTP(w, r)
 		case ImageServiceGetImageProcedure:
 			imageServiceGetImageHandler.ServeHTTP(w, r)
 		case ImageServiceListImagesProcedure:
@@ -207,6 +251,10 @@ type UnimplementedImageServiceHandler struct{}
 
 func (UnimplementedImageServiceHandler) CreateImage(context.Context, *connect.Request[workspacev1.CreateImageRequest]) (*connect.Response[workspacev1.CreateImageResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ImageService.CreateImage is not implemented"))
+}
+
+func (UnimplementedImageServiceHandler) BuildImage(context.Context, *connect.Request[workspacev1.BuildImageRequest]) (*connect.Response[workspacev1.BuildImageResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ImageService.BuildImage is not implemented"))
 }
 
 func (UnimplementedImageServiceHandler) GetImage(context.Context, *connect.Request[workspacev1.GetImageRequest]) (*connect.Response[workspacev1.GetImageResponse], error) {

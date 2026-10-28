@@ -99,8 +99,13 @@ type WebhookEndpoint struct {
 	PreviousSecretExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=previous_secret_expires_at,json=previousSecretExpiresAt,proto3" json:"previous_secret_expires_at,omitempty"`
 	CreatedAt               *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt               *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// Set when events after the endpoint's cursor were removed by retention.
+	// The endpoint is owed nothing until its cursor is moved.
+	CursorExpired bool `protobuf:"varint,9,opt,name=cursor_expired,json=cursorExpired,proto3" json:"cursor_expired,omitempty"`
+	// The latest time of an event the log removed; unset when none.
+	RetentionBoundary *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=retention_boundary,json=retentionBoundary,proto3" json:"retention_boundary,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *WebhookEndpoint) Reset() {
@@ -185,6 +190,20 @@ func (x *WebhookEndpoint) GetCreatedAt() *timestamppb.Timestamp {
 func (x *WebhookEndpoint) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *WebhookEndpoint) GetCursorExpired() bool {
+	if x != nil {
+		return x.CursorExpired
+	}
+	return false
+}
+
+func (x *WebhookEndpoint) GetRetentionBoundary() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RetentionBoundary
 	}
 	return nil
 }
@@ -634,7 +653,7 @@ type UpdateWebhookEndpointRequest struct {
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Carries the new values of the fields update_mask names.
 	Endpoint *WebhookEndpoint `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	// One or more of url, events and enabled.
+	// One or more of url, events, enabled and cursor.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1183,7 +1202,7 @@ var File_toshi_workspace_v1_webhook_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xcc\x02\n" +
+	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xbe\x03\n" +
 	"\x0fWebhookEndpoint\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12\x16\n" +
@@ -1194,7 +1213,10 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9f\x03\n" +
+	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12%\n" +
+	"\x0ecursor_expired\x18\t \x01(\bR\rcursorExpired\x12I\n" +
+	"\x12retention_boundary\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x11retentionBoundary\"\x9f\x03\n" +
 	"\x0fWebhookDelivery\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12\x16\n" +
 	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12\x1f\n" +
@@ -1333,39 +1355,40 @@ var file_toshi_workspace_v1_webhook_proto_depIdxs = []int32{
 	19, // 0: toshi.workspace.v1.WebhookEndpoint.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
 	19, // 1: toshi.workspace.v1.WebhookEndpoint.created_at:type_name -> google.protobuf.Timestamp
 	19, // 2: toshi.workspace.v1.WebhookEndpoint.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: toshi.workspace.v1.WebhookDelivery.state:type_name -> toshi.workspace.v1.WebhookDeliveryState
-	19, // 4: toshi.workspace.v1.WebhookDelivery.next_try_at:type_name -> google.protobuf.Timestamp
-	19, // 5: toshi.workspace.v1.WebhookDelivery.due_at:type_name -> google.protobuf.Timestamp
-	19, // 6: toshi.workspace.v1.WebhookDelivery.done_at:type_name -> google.protobuf.Timestamp
-	1,  // 7: toshi.workspace.v1.CreateWebhookEndpointResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
-	1,  // 8: toshi.workspace.v1.GetWebhookEndpointResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
-	1,  // 9: toshi.workspace.v1.ListWebhookEndpointsResponse.endpoints:type_name -> toshi.workspace.v1.WebhookEndpoint
-	1,  // 10: toshi.workspace.v1.UpdateWebhookEndpointRequest.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
-	20, // 11: toshi.workspace.v1.UpdateWebhookEndpointRequest.update_mask:type_name -> google.protobuf.FieldMask
-	1,  // 12: toshi.workspace.v1.UpdateWebhookEndpointResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
-	1,  // 13: toshi.workspace.v1.RotateWebhookEndpointSecretResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
-	2,  // 14: toshi.workspace.v1.ListWebhookDeliveriesResponse.deliveries:type_name -> toshi.workspace.v1.WebhookDelivery
-	3,  // 15: toshi.workspace.v1.WebhookService.CreateWebhookEndpoint:input_type -> toshi.workspace.v1.CreateWebhookEndpointRequest
-	5,  // 16: toshi.workspace.v1.WebhookService.GetWebhookEndpoint:input_type -> toshi.workspace.v1.GetWebhookEndpointRequest
-	7,  // 17: toshi.workspace.v1.WebhookService.ListWebhookEndpoints:input_type -> toshi.workspace.v1.ListWebhookEndpointsRequest
-	9,  // 18: toshi.workspace.v1.WebhookService.UpdateWebhookEndpoint:input_type -> toshi.workspace.v1.UpdateWebhookEndpointRequest
-	11, // 19: toshi.workspace.v1.WebhookService.DeleteWebhookEndpoint:input_type -> toshi.workspace.v1.DeleteWebhookEndpointRequest
-	13, // 20: toshi.workspace.v1.WebhookService.RotateWebhookEndpointSecret:input_type -> toshi.workspace.v1.RotateWebhookEndpointSecretRequest
-	15, // 21: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:input_type -> toshi.workspace.v1.ListWebhookDeliveriesRequest
-	17, // 22: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:input_type -> toshi.workspace.v1.ReplayWebhookEventsRequest
-	4,  // 23: toshi.workspace.v1.WebhookService.CreateWebhookEndpoint:output_type -> toshi.workspace.v1.CreateWebhookEndpointResponse
-	6,  // 24: toshi.workspace.v1.WebhookService.GetWebhookEndpoint:output_type -> toshi.workspace.v1.GetWebhookEndpointResponse
-	8,  // 25: toshi.workspace.v1.WebhookService.ListWebhookEndpoints:output_type -> toshi.workspace.v1.ListWebhookEndpointsResponse
-	10, // 26: toshi.workspace.v1.WebhookService.UpdateWebhookEndpoint:output_type -> toshi.workspace.v1.UpdateWebhookEndpointResponse
-	12, // 27: toshi.workspace.v1.WebhookService.DeleteWebhookEndpoint:output_type -> toshi.workspace.v1.DeleteWebhookEndpointResponse
-	14, // 28: toshi.workspace.v1.WebhookService.RotateWebhookEndpointSecret:output_type -> toshi.workspace.v1.RotateWebhookEndpointSecretResponse
-	16, // 29: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:output_type -> toshi.workspace.v1.ListWebhookDeliveriesResponse
-	18, // 30: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:output_type -> toshi.workspace.v1.ReplayWebhookEventsResponse
-	23, // [23:31] is the sub-list for method output_type
-	15, // [15:23] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	19, // 3: toshi.workspace.v1.WebhookEndpoint.retention_boundary:type_name -> google.protobuf.Timestamp
+	0,  // 4: toshi.workspace.v1.WebhookDelivery.state:type_name -> toshi.workspace.v1.WebhookDeliveryState
+	19, // 5: toshi.workspace.v1.WebhookDelivery.next_try_at:type_name -> google.protobuf.Timestamp
+	19, // 6: toshi.workspace.v1.WebhookDelivery.due_at:type_name -> google.protobuf.Timestamp
+	19, // 7: toshi.workspace.v1.WebhookDelivery.done_at:type_name -> google.protobuf.Timestamp
+	1,  // 8: toshi.workspace.v1.CreateWebhookEndpointResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
+	1,  // 9: toshi.workspace.v1.GetWebhookEndpointResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
+	1,  // 10: toshi.workspace.v1.ListWebhookEndpointsResponse.endpoints:type_name -> toshi.workspace.v1.WebhookEndpoint
+	1,  // 11: toshi.workspace.v1.UpdateWebhookEndpointRequest.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
+	20, // 12: toshi.workspace.v1.UpdateWebhookEndpointRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 13: toshi.workspace.v1.UpdateWebhookEndpointResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
+	1,  // 14: toshi.workspace.v1.RotateWebhookEndpointSecretResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
+	2,  // 15: toshi.workspace.v1.ListWebhookDeliveriesResponse.deliveries:type_name -> toshi.workspace.v1.WebhookDelivery
+	3,  // 16: toshi.workspace.v1.WebhookService.CreateWebhookEndpoint:input_type -> toshi.workspace.v1.CreateWebhookEndpointRequest
+	5,  // 17: toshi.workspace.v1.WebhookService.GetWebhookEndpoint:input_type -> toshi.workspace.v1.GetWebhookEndpointRequest
+	7,  // 18: toshi.workspace.v1.WebhookService.ListWebhookEndpoints:input_type -> toshi.workspace.v1.ListWebhookEndpointsRequest
+	9,  // 19: toshi.workspace.v1.WebhookService.UpdateWebhookEndpoint:input_type -> toshi.workspace.v1.UpdateWebhookEndpointRequest
+	11, // 20: toshi.workspace.v1.WebhookService.DeleteWebhookEndpoint:input_type -> toshi.workspace.v1.DeleteWebhookEndpointRequest
+	13, // 21: toshi.workspace.v1.WebhookService.RotateWebhookEndpointSecret:input_type -> toshi.workspace.v1.RotateWebhookEndpointSecretRequest
+	15, // 22: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:input_type -> toshi.workspace.v1.ListWebhookDeliveriesRequest
+	17, // 23: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:input_type -> toshi.workspace.v1.ReplayWebhookEventsRequest
+	4,  // 24: toshi.workspace.v1.WebhookService.CreateWebhookEndpoint:output_type -> toshi.workspace.v1.CreateWebhookEndpointResponse
+	6,  // 25: toshi.workspace.v1.WebhookService.GetWebhookEndpoint:output_type -> toshi.workspace.v1.GetWebhookEndpointResponse
+	8,  // 26: toshi.workspace.v1.WebhookService.ListWebhookEndpoints:output_type -> toshi.workspace.v1.ListWebhookEndpointsResponse
+	10, // 27: toshi.workspace.v1.WebhookService.UpdateWebhookEndpoint:output_type -> toshi.workspace.v1.UpdateWebhookEndpointResponse
+	12, // 28: toshi.workspace.v1.WebhookService.DeleteWebhookEndpoint:output_type -> toshi.workspace.v1.DeleteWebhookEndpointResponse
+	14, // 29: toshi.workspace.v1.WebhookService.RotateWebhookEndpointSecret:output_type -> toshi.workspace.v1.RotateWebhookEndpointSecretResponse
+	16, // 30: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:output_type -> toshi.workspace.v1.ListWebhookDeliveriesResponse
+	18, // 31: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:output_type -> toshi.workspace.v1.ReplayWebhookEventsResponse
+	24, // [24:32] is the sub-list for method output_type
+	16, // [16:24] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_webhook_proto_init() }

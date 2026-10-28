@@ -605,8 +605,10 @@ func (x *CreateImageRequest) GetRecipe() string {
 }
 
 type CreateImageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Image         *Image                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Image *Image                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	// The version the image's first build makes, building.
+	Version       *ImageVersion `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -644,6 +646,13 @@ func (*CreateImageResponse) Descriptor() ([]byte, []int) {
 func (x *CreateImageResponse) GetImage() *Image {
 	if x != nil {
 		return x.Image
+	}
+	return nil
+}
+
+func (x *CreateImageResponse) GetVersion() *ImageVersion {
+	if x != nil {
+		return x.Version
 	}
 	return nil
 }
@@ -868,6 +877,111 @@ func (x *ListImagesResponse) GetNextPageToken() string {
 	return ""
 }
 
+type BuildImageRequest struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Name    string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// Empty: the image's recipe.
+	Recipe        string `protobuf:"bytes,3,opt,name=recipe,proto3" json:"recipe,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BuildImageRequest) Reset() {
+	*x = BuildImageRequest{}
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BuildImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BuildImageRequest) ProtoMessage() {}
+
+func (x *BuildImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BuildImageRequest.ProtoReflect.Descriptor instead.
+func (*BuildImageRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *BuildImageRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *BuildImageRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *BuildImageRequest) GetRecipe() string {
+	if x != nil {
+		return x.Recipe
+	}
+	return ""
+}
+
+type BuildImageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Version       *ImageVersion          `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BuildImageResponse) Reset() {
+	*x = BuildImageResponse{}
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BuildImageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BuildImageResponse) ProtoMessage() {}
+
+func (x *BuildImageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BuildImageResponse.ProtoReflect.Descriptor instead.
+func (*BuildImageResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *BuildImageResponse) GetVersion() *ImageVersion {
+	if x != nil {
+		return x.Version
+	}
+	return nil
+}
+
 type DeleteImageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
@@ -878,7 +992,7 @@ type DeleteImageRequest struct {
 
 func (x *DeleteImageRequest) Reset() {
 	*x = DeleteImageRequest{}
-	mi := &file_toshi_workspace_v1_images_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -890,7 +1004,7 @@ func (x *DeleteImageRequest) String() string {
 func (*DeleteImageRequest) ProtoMessage() {}
 
 func (x *DeleteImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_images_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -903,7 +1017,7 @@ func (x *DeleteImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteImageRequest.ProtoReflect.Descriptor instead.
 func (*DeleteImageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *DeleteImageRequest) GetProject() string {
@@ -928,7 +1042,7 @@ type DeleteImageResponse struct {
 
 func (x *DeleteImageResponse) Reset() {
 	*x = DeleteImageResponse{}
-	mi := &file_toshi_workspace_v1_images_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -940,7 +1054,7 @@ func (x *DeleteImageResponse) String() string {
 func (*DeleteImageResponse) ProtoMessage() {}
 
 func (x *DeleteImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_images_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -953,7 +1067,7 @@ func (x *DeleteImageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteImageResponse.ProtoReflect.Descriptor instead.
 func (*DeleteImageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{12}
 }
 
 var File_toshi_workspace_v1_images_proto protoreflect.FileDescriptor
@@ -1011,9 +1125,10 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x04kind\x18\x04 \x01(\x0e2\x1d.toshi.workspace.v1.ImageKindR\x04kind\x12\x12\n" +
 	"\x04base\x18\x05 \x01(\tR\x04base\x12\x12\n" +
 	"\x04size\x18\x06 \x01(\tR\x04size\x12\x16\n" +
-	"\x06recipe\x18\a \x01(\tR\x06recipe\"F\n" +
+	"\x06recipe\x18\a \x01(\tR\x06recipe\"\x82\x01\n" +
 	"\x13CreateImageResponse\x12/\n" +
-	"\x05image\x18\x01 \x01(\v2\x19.toshi.workspace.v1.ImageR\x05image\"?\n" +
+	"\x05image\x18\x01 \x01(\v2\x19.toshi.workspace.v1.ImageR\x05image\x12:\n" +
+	"\aversion\x18\x02 \x01(\v2 .toshi.workspace.v1.ImageVersionR\aversion\"?\n" +
 	"\x0fGetImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"\x81\x01\n" +
@@ -1027,7 +1142,13 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"o\n" +
 	"\x12ListImagesResponse\x121\n" +
 	"\x06images\x18\x01 \x03(\v2\x19.toshi.workspace.v1.ImageR\x06images\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"B\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"Y\n" +
+	"\x11BuildImageRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
+	"\x06recipe\x18\x03 \x01(\tR\x06recipe\"P\n" +
+	"\x12BuildImageResponse\x12:\n" +
+	"\aversion\x18\x01 \x01(\v2 .toshi.workspace.v1.ImageVersionR\aversion\"B\n" +
 	"\x12DeleteImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"\x15\n" +
@@ -1041,9 +1162,13 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x1aIMAGE_VERSION_STATE_FAILED\x10\x02\x12\x1d\n" +
 	"\x19IMAGE_VERSION_STATE_READY\x10\x03\x12(\n" +
 	"$IMAGE_VERSION_STATE_PENDING_DELETION\x10\x04\x12\x1f\n" +
-	"\x1bIMAGE_VERSION_STATE_DELETED\x10\x052\x89\x04\n" +
+	"\x1bIMAGE_VERSION_STATE_DELETED\x10\x052\xa9\x05\n" +
 	"\fImageService\x12\x7f\n" +
-	"\vCreateImage\x12&.toshi.workspace.v1.CreateImageRequest\x1a'.toshi.workspace.v1.CreateImageResponse\"\x1f\xc2\xf3\x18\fimages.write\xca\xf3\x18\venvironment\x12q\n" +
+	"\vCreateImage\x12&.toshi.workspace.v1.CreateImageRequest\x1a'.toshi.workspace.v1.CreateImageResponse\"\x1f\xc2\xf3\x18\fimages.write\xca\xf3\x18\venvironment\x12\x9d\x01\n" +
+	"\n" +
+	"BuildImage\x12%.toshi.workspace.v1.BuildImageRequest\x1a&.toshi.workspace.v1.BuildImageResponse\"@\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18!\n" +
+	"\x13image.build_started\x12\n" +
+	"image:name\x12q\n" +
 	"\bGetImage\x12#.toshi.workspace.v1.GetImageRequest\x1a$.toshi.workspace.v1.GetImageResponse\"\x1a\xc2\xf3\x18\vimages.read\xca\xf3\x18\aproject\x12w\n" +
 	"\n" +
 	"ListImages\x12%.toshi.workspace.v1.ListImagesRequest\x1a&.toshi.workspace.v1.ListImagesResponse\"\x1a\xc2\xf3\x18\vimages.read\xca\xf3\x18\aproject\x12\x8b\x01\n" +
@@ -1063,7 +1188,7 @@ func file_toshi_workspace_v1_images_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_images_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_toshi_workspace_v1_images_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_toshi_workspace_v1_images_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_toshi_workspace_v1_images_proto_goTypes = []any{
 	(ImageKind)(0),                // 0: toshi.workspace.v1.ImageKind
 	(ImageVersionState)(0),        // 1: toshi.workspace.v1.ImageVersionState
@@ -1076,40 +1201,46 @@ var file_toshi_workspace_v1_images_proto_goTypes = []any{
 	(*GetImageResponse)(nil),      // 8: toshi.workspace.v1.GetImageResponse
 	(*ListImagesRequest)(nil),     // 9: toshi.workspace.v1.ListImagesRequest
 	(*ListImagesResponse)(nil),    // 10: toshi.workspace.v1.ListImagesResponse
-	(*DeleteImageRequest)(nil),    // 11: toshi.workspace.v1.DeleteImageRequest
-	(*DeleteImageResponse)(nil),   // 12: toshi.workspace.v1.DeleteImageResponse
-	(*timestamppb.Timestamp)(nil), // 13: google.protobuf.Timestamp
+	(*BuildImageRequest)(nil),     // 11: toshi.workspace.v1.BuildImageRequest
+	(*BuildImageResponse)(nil),    // 12: toshi.workspace.v1.BuildImageResponse
+	(*DeleteImageRequest)(nil),    // 13: toshi.workspace.v1.DeleteImageRequest
+	(*DeleteImageResponse)(nil),   // 14: toshi.workspace.v1.DeleteImageResponse
+	(*timestamppb.Timestamp)(nil), // 15: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_images_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Image.kind:type_name -> toshi.workspace.v1.ImageKind
-	13, // 1: toshi.workspace.v1.Image.created_at:type_name -> google.protobuf.Timestamp
-	13, // 2: toshi.workspace.v1.Image.updated_at:type_name -> google.protobuf.Timestamp
+	15, // 1: toshi.workspace.v1.Image.created_at:type_name -> google.protobuf.Timestamp
+	15, // 2: toshi.workspace.v1.Image.updated_at:type_name -> google.protobuf.Timestamp
 	3,  // 3: toshi.workspace.v1.Image.latest:type_name -> toshi.workspace.v1.ImageVersion
 	1,  // 4: toshi.workspace.v1.ImageVersion.state:type_name -> toshi.workspace.v1.ImageVersionState
-	13, // 5: toshi.workspace.v1.ImageVersion.created_at:type_name -> google.protobuf.Timestamp
-	13, // 6: toshi.workspace.v1.ImageVersion.ready_at:type_name -> google.protobuf.Timestamp
-	13, // 7: toshi.workspace.v1.ImageVersion.pending_since:type_name -> google.protobuf.Timestamp
-	13, // 8: toshi.workspace.v1.ImageVersion.delete_after:type_name -> google.protobuf.Timestamp
-	13, // 9: toshi.workspace.v1.ImageVersion.deleted_at:type_name -> google.protobuf.Timestamp
+	15, // 5: toshi.workspace.v1.ImageVersion.created_at:type_name -> google.protobuf.Timestamp
+	15, // 6: toshi.workspace.v1.ImageVersion.ready_at:type_name -> google.protobuf.Timestamp
+	15, // 7: toshi.workspace.v1.ImageVersion.pending_since:type_name -> google.protobuf.Timestamp
+	15, // 8: toshi.workspace.v1.ImageVersion.delete_after:type_name -> google.protobuf.Timestamp
+	15, // 9: toshi.workspace.v1.ImageVersion.deleted_at:type_name -> google.protobuf.Timestamp
 	4,  // 10: toshi.workspace.v1.ImageVersion.pinned_by:type_name -> toshi.workspace.v1.ImageVersionPin
 	0,  // 11: toshi.workspace.v1.CreateImageRequest.kind:type_name -> toshi.workspace.v1.ImageKind
 	2,  // 12: toshi.workspace.v1.CreateImageResponse.image:type_name -> toshi.workspace.v1.Image
-	2,  // 13: toshi.workspace.v1.GetImageResponse.image:type_name -> toshi.workspace.v1.Image
-	3,  // 14: toshi.workspace.v1.GetImageResponse.versions:type_name -> toshi.workspace.v1.ImageVersion
-	2,  // 15: toshi.workspace.v1.ListImagesResponse.images:type_name -> toshi.workspace.v1.Image
-	5,  // 16: toshi.workspace.v1.ImageService.CreateImage:input_type -> toshi.workspace.v1.CreateImageRequest
-	7,  // 17: toshi.workspace.v1.ImageService.GetImage:input_type -> toshi.workspace.v1.GetImageRequest
-	9,  // 18: toshi.workspace.v1.ImageService.ListImages:input_type -> toshi.workspace.v1.ListImagesRequest
-	11, // 19: toshi.workspace.v1.ImageService.DeleteImage:input_type -> toshi.workspace.v1.DeleteImageRequest
-	6,  // 20: toshi.workspace.v1.ImageService.CreateImage:output_type -> toshi.workspace.v1.CreateImageResponse
-	8,  // 21: toshi.workspace.v1.ImageService.GetImage:output_type -> toshi.workspace.v1.GetImageResponse
-	10, // 22: toshi.workspace.v1.ImageService.ListImages:output_type -> toshi.workspace.v1.ListImagesResponse
-	12, // 23: toshi.workspace.v1.ImageService.DeleteImage:output_type -> toshi.workspace.v1.DeleteImageResponse
-	20, // [20:24] is the sub-list for method output_type
-	16, // [16:20] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	3,  // 13: toshi.workspace.v1.CreateImageResponse.version:type_name -> toshi.workspace.v1.ImageVersion
+	2,  // 14: toshi.workspace.v1.GetImageResponse.image:type_name -> toshi.workspace.v1.Image
+	3,  // 15: toshi.workspace.v1.GetImageResponse.versions:type_name -> toshi.workspace.v1.ImageVersion
+	2,  // 16: toshi.workspace.v1.ListImagesResponse.images:type_name -> toshi.workspace.v1.Image
+	3,  // 17: toshi.workspace.v1.BuildImageResponse.version:type_name -> toshi.workspace.v1.ImageVersion
+	5,  // 18: toshi.workspace.v1.ImageService.CreateImage:input_type -> toshi.workspace.v1.CreateImageRequest
+	11, // 19: toshi.workspace.v1.ImageService.BuildImage:input_type -> toshi.workspace.v1.BuildImageRequest
+	7,  // 20: toshi.workspace.v1.ImageService.GetImage:input_type -> toshi.workspace.v1.GetImageRequest
+	9,  // 21: toshi.workspace.v1.ImageService.ListImages:input_type -> toshi.workspace.v1.ListImagesRequest
+	13, // 22: toshi.workspace.v1.ImageService.DeleteImage:input_type -> toshi.workspace.v1.DeleteImageRequest
+	6,  // 23: toshi.workspace.v1.ImageService.CreateImage:output_type -> toshi.workspace.v1.CreateImageResponse
+	12, // 24: toshi.workspace.v1.ImageService.BuildImage:output_type -> toshi.workspace.v1.BuildImageResponse
+	8,  // 25: toshi.workspace.v1.ImageService.GetImage:output_type -> toshi.workspace.v1.GetImageResponse
+	10, // 26: toshi.workspace.v1.ImageService.ListImages:output_type -> toshi.workspace.v1.ListImagesResponse
+	14, // 27: toshi.workspace.v1.ImageService.DeleteImage:output_type -> toshi.workspace.v1.DeleteImageResponse
+	23, // [23:28] is the sub-list for method output_type
+	18, // [18:23] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_images_proto_init() }
@@ -1123,7 +1254,7 @@ func file_toshi_workspace_v1_images_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_images_proto_rawDesc), len(file_toshi_workspace_v1_images_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   11,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
