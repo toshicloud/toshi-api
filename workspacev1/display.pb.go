@@ -211,8 +211,9 @@ type DisplaySession struct {
 	// Why it closed: closed, idle, expired, suspended, ended (its job
 	// stopped running where the session was opened), protocol_error (the
 	// viewer sent what the relay does not accept), unavailable (the job's
-	// host did not open the screen) or shutdown (the control plane
-	// stopped). Empty while it is open.
+	// host did not open the screen), shutdown (the control plane stopped)
+	// or grant_revoked (it was opened through a grant that ended). Empty
+	// while it is open.
 	CloseReason string `protobuf:"bytes,12,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`
 	// Who opened it, as the audit log names the caller: the GitHub login of
 	// the signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
@@ -224,6 +225,9 @@ type DisplaySession struct {
 	// The id (jti) of the one token that attaches the session: an id, never
 	// the token.
 	AttachTokenId string `protobuf:"bytes,15,opt,name=attach_token_id,json=attachTokenId,proto3" json:"attach_token_id,omitempty"`
+	// The grant through which another workspace opened the session, or
+	// empty for one the job's own workspace opened.
+	GrantId       string `protobuf:"bytes,16,opt,name=grant_id,json=grantId,proto3" json:"grant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -363,6 +367,13 @@ func (x *DisplaySession) GetAttachTokenId() string {
 	return ""
 }
 
+func (x *DisplaySession) GetGrantId() string {
+	if x != nil {
+		return x.GrantId
+	}
+	return ""
+}
+
 type OpenDisplaySessionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// What to view. A job runs on a host and has a screen; a workload of
@@ -378,6 +389,9 @@ type OpenDisplaySessionRequest struct {
 	IdleClose     *durationpb.Duration `protobuf:"bytes,4,opt,name=idle_close,json=idleClose,proto3" json:"idle_close,omitempty"`
 	AllowTakeover bool                 `protobuf:"varint,5,opt,name=allow_takeover,json=allowTakeover,proto3" json:"allow_takeover,omitempty"`
 	RequestKey    string               `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox's job through it (docs/grants.md).
+	Grant         string `protobuf:"bytes,7,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -461,6 +475,13 @@ func (x *OpenDisplaySessionRequest) GetAllowTakeover() bool {
 func (x *OpenDisplaySessionRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
+	}
+	return ""
+}
+
+func (x *OpenDisplaySessionRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
 	}
 	return ""
 }
@@ -558,8 +579,11 @@ func (x *OpenDisplaySessionResponse) GetReplayed() bool {
 }
 
 type GetDisplaySessionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	// A grant the caller's workspace received: the call then reaches the
+	// sessions opened through that grant (docs/grants.md).
+	Grant         string `protobuf:"bytes,2,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -597,6 +621,13 @@ func (*GetDisplaySessionRequest) Descriptor() ([]byte, []int) {
 func (x *GetDisplaySessionRequest) GetSessionId() string {
 	if x != nil {
 		return x.SessionId
+	}
+	return ""
+}
+
+func (x *GetDisplaySessionRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
 	}
 	return ""
 }
@@ -654,7 +685,10 @@ type ListDisplaySessionsRequest struct {
 	// The most sessions in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
-	PageToken     string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageToken string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// A grant the caller's workspace received: the call then reaches the
+	// sessions opened through that grant (docs/grants.md).
+	Grant         string `protobuf:"bytes,5,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -717,6 +751,13 @@ func (x *ListDisplaySessionsRequest) GetPageToken() string {
 	return ""
 }
 
+func (x *ListDisplaySessionsRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
+	}
+	return ""
+}
+
 type ListDisplaySessionsResponse struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	Sessions []*DisplaySession      `protobuf:"bytes,1,rep,name=sessions,proto3" json:"sessions,omitempty"`
@@ -771,8 +812,11 @@ func (x *ListDisplaySessionsResponse) GetNextPageToken() string {
 }
 
 type CloseDisplaySessionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	// A grant the caller's workspace received: the call then reaches the
+	// sessions opened through that grant (docs/grants.md).
+	Grant         string `protobuf:"bytes,2,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -810,6 +854,13 @@ func (*CloseDisplaySessionRequest) Descriptor() ([]byte, []int) {
 func (x *CloseDisplaySessionRequest) GetSessionId() string {
 	if x != nil {
 		return x.SessionId
+	}
+	return ""
+}
+
+func (x *CloseDisplaySessionRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
 	}
 	return ""
 }
@@ -1405,7 +1456,7 @@ var File_toshi_workspace_v1_display_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/display.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xb4\x05\n" +
+	" toshi/workspace/v1/display.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xcf\x05\n" +
 	"\x0eDisplaySession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06job_id\x18\x02 \x01(\tR\x05jobId\x123\n" +
@@ -1424,7 +1475,8 @@ const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	"\fclose_reason\x18\f \x01(\tR\vcloseReason\x12\x1b\n" +
 	"\topener_id\x18\r \x01(\tR\bopenerId\x12\x16\n" +
 	"\x06origin\x18\x0e \x01(\tR\x06origin\x12&\n" +
-	"\x0fattach_token_id\x18\x0f \x01(\tR\rattachTokenId\"\x98\x02\n" +
+	"\x0fattach_token_id\x18\x0f \x01(\tR\rattachTokenId\x12\x19\n" +
+	"\bgrant_id\x18\x10 \x01(\tR\agrantId\"\xae\x02\n" +
 	"\x19OpenDisplaySessionRequest\x12\x17\n" +
 	"\x06job_id\x18\x01 \x01(\tH\x00R\x05jobId\x12!\n" +
 	"\vworkload_id\x18\x02 \x01(\tH\x00R\n" +
@@ -1434,30 +1486,34 @@ const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	"idle_close\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\tidleClose\x12%\n" +
 	"\x0eallow_takeover\x18\x05 \x01(\bR\rallowTakeover\x12\x1f\n" +
 	"\vrequest_key\x18\x06 \x01(\tR\n" +
-	"requestKeyB\b\n" +
+	"requestKey\x12\x14\n" +
+	"\x05grant\x18\a \x01(\tR\x05grantB\b\n" +
 	"\x06target\"\x9e\x01\n" +
 	"\x1aOpenDisplaySessionResponse\x12<\n" +
 	"\asession\x18\x01 \x01(\v2\".toshi.workspace.v1.DisplaySessionR\asession\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12\x14\n" +
 	"\x05token\x18\x03 \x01(\tR\x05token\x12\x1a\n" +
-	"\breplayed\x18\x04 \x01(\bR\breplayed\"9\n" +
+	"\breplayed\x18\x04 \x01(\bR\breplayed\"O\n" +
 	"\x18GetDisplaySessionRequest\x12\x1d\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\"Y\n" +
+	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x14\n" +
+	"\x05grant\x18\x02 \x01(\tR\x05grant\"Y\n" +
 	"\x19GetDisplaySessionResponse\x12<\n" +
-	"\asession\x18\x01 \x01(\v2\".toshi.workspace.v1.DisplaySessionR\asession\"\x8c\x01\n" +
+	"\asession\x18\x01 \x01(\v2\".toshi.workspace.v1.DisplaySessionR\asession\"\xa2\x01\n" +
 	"\x1aListDisplaySessionsRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x1b\n" +
 	"\topen_only\x18\x02 \x01(\bR\bopenOnly\x12\x1b\n" +
 	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\x04 \x01(\tR\tpageToken\"\x85\x01\n" +
+	"page_token\x18\x04 \x01(\tR\tpageToken\x12\x14\n" +
+	"\x05grant\x18\x05 \x01(\tR\x05grant\"\x85\x01\n" +
 	"\x1bListDisplaySessionsResponse\x12>\n" +
 	"\bsessions\x18\x01 \x03(\v2\".toshi.workspace.v1.DisplaySessionR\bsessions\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\";\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"Q\n" +
 	"\x1aCloseDisplaySessionRequest\x12\x1d\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\"[\n" +
+	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x14\n" +
+	"\x05grant\x18\x02 \x01(\tR\x05grant\"[\n" +
 	"\x1bCloseDisplaySessionResponse\x12<\n" +
 	"\asession\x18\x01 \x01(\v2\".toshi.workspace.v1.DisplaySessionR\asession\"\x8d\x01\n" +
 	"\x16SendDisplayKeysRequest\x12\x1d\n" +

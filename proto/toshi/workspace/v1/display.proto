@@ -196,8 +196,9 @@ message DisplaySession {
   // Why it closed: closed, idle, expired, suspended, ended (its job
   // stopped running where the session was opened), protocol_error (the
   // viewer sent what the relay does not accept), unavailable (the job's
-  // host did not open the screen) or shutdown (the control plane
-  // stopped). Empty while it is open.
+  // host did not open the screen), shutdown (the control plane stopped)
+  // or grant_revoked (it was opened through a grant that ended). Empty
+  // while it is open.
   string close_reason = 12;
   // Who opened it, as the audit log names the caller: the GitHub login of
   // the signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
@@ -209,6 +210,9 @@ message DisplaySession {
   // The id (jti) of the one token that attaches the session: an id, never
   // the token.
   string attach_token_id = 15;
+  // The grant through which another workspace opened the session, or
+  // empty for one the job's own workspace opened.
+  string grant_id = 16;
 }
 
 message OpenDisplaySessionRequest {
@@ -223,6 +227,9 @@ message OpenDisplaySessionRequest {
   google.protobuf.Duration idle_close = 4;
   bool allow_takeover = 5;
   string request_key = 6;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox's job through it (docs/grants.md).
+  string grant = 7;
 }
 
 message OpenDisplaySessionResponse {
@@ -242,6 +249,9 @@ message OpenDisplaySessionResponse {
 
 message GetDisplaySessionRequest {
   string session_id = 1;
+  // A grant the caller's workspace received: the call then reaches the
+  // sessions opened through that grant (docs/grants.md).
+  string grant = 2;
 }
 
 message GetDisplaySessionResponse {
@@ -257,6 +267,9 @@ message ListDisplaySessionsRequest {
   int32 page_size = 3;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 4;
+  // A grant the caller's workspace received: the call then reaches the
+  // sessions opened through that grant (docs/grants.md).
+  string grant = 5;
 }
 
 message ListDisplaySessionsResponse {
@@ -267,6 +280,9 @@ message ListDisplaySessionsResponse {
 
 message CloseDisplaySessionRequest {
   string session_id = 1;
+  // A grant the caller's workspace received: the call then reaches the
+  // sessions opened through that grant (docs/grants.md).
+  string grant = 2;
 }
 
 message CloseDisplaySessionResponse {

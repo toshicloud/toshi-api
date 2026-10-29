@@ -277,6 +277,9 @@ message Channel {
   string path = 22;
   // An event channel's messages counted by state.
   ChannelEventCounts events = 23;
+  // The grant through which another workspace exposed the channel, or
+  // empty for one the job's own workspace exposed.
+  string grant_id = 24;
 }
 
 // ChannelEventCounts counts an event channel's messages by state.
@@ -562,6 +565,9 @@ message CreateChannelRequest {
   // The policy the channel starts with, without a version; unset takes
   // the defaults.
   ChannelPolicy policy = 5;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox's job through it (docs/grants.md).
+  string grant = 6;
 }
 
 message CreateChannelResponse {
@@ -578,6 +584,9 @@ message ListChannelsRequest {
   string page_token = 3;
   // Only this service's event channels, by its ID; not with job_id.
   string service = 4;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox's job through it (docs/grants.md).
+  string grant = 5;
 }
 
 message ListChannelsResponse {
@@ -591,6 +600,9 @@ message GetChannelRequest {
   string name = 2;
   // An event channel's service, by its ID, in place of job_id.
   string service = 3;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox's job through it (docs/grants.md).
+  string grant = 4;
 }
 
 message GetChannelResponse {
@@ -704,6 +716,9 @@ message CreateChannelConnectTokenRequest {
   string device = 3;
   // The mode the token grants the attach it admits; unset grants input.
   ChannelAttachMode mode = 4;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox's job through it (docs/grants.md).
+  string grant = 5;
 }
 
 message CreateChannelConnectTokenResponse {
@@ -731,6 +746,9 @@ message RevokeChannelConnectTokenResponse {}
 message DeleteChannelRequest {
   string job_id = 1;
   string name = 2;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox's job through it (docs/grants.md).
+  string grant = 3;
 }
 
 message DeleteChannelResponse {}

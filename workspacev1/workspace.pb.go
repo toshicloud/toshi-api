@@ -1485,7 +1485,7 @@ type Sandbox struct {
 	// sandbox recorded before workloads kept one.
 	Network *WorkloadNetwork `protobuf:"bytes,10,opt,name=network,proto3" json:"network,omitempty"`
 	// Set on a sandbox read through a grant: the grant and what it allows on
-	// this sandbox. Such a read leaves out the spec's bindings, its
+	// this sandbox. Such a read leaves out network, the spec's bindings, its
 	// container_registry_secret and its commands' env.
 	Shared        *SharedAccess `protobuf:"bytes,11,opt,name=shared,proto3" json:"shared,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -5039,7 +5039,11 @@ type ExecuteCommandRequest struct {
 	// A retry with the same key does not start a second command: its stream
 	// carries the first execution's started message and, once it has ended,
 	// its exit. Output already sent is not sent again.
-	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox through it (docs/grants.md); project and environment are then
+	// left empty.
+	Grant         string `protobuf:"bytes,6,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5105,6 +5109,13 @@ func (x *ExecuteCommandRequest) GetCommand() *Command {
 func (x *ExecuteCommandRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
+	}
+	return ""
+}
+
+func (x *ExecuteCommandRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
 	}
 	return ""
 }
@@ -11125,7 +11136,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x06stdout\x18\x02 \x01(\fH\x00R\x06stdout\x12\x18\n" +
 	"\x06stderr\x18\x03 \x01(\fH\x00R\x06stderr\x127\n" +
 	"\x04exit\x18\x04 \x01(\v2!.toshi.workspace.v1.ExecutionExitH\x00R\x04exitB\t\n" +
-	"\amessage\"\xca\x01\n" +
+	"\amessage\"\xe0\x01\n" +
 	"\x15ExecuteCommandRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
@@ -11133,7 +11144,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"sandbox_id\x18\x03 \x01(\tR\tsandboxId\x125\n" +
 	"\acommand\x18\x04 \x01(\v2\x1b.toshi.workspace.v1.CommandR\acommand\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +
-	"requestKey\"\xd2\x01\n" +
+	"requestKey\x12\x14\n" +
+	"\x05grant\x18\x06 \x01(\tR\x05grant\"\xd2\x01\n" +
 	"\x16ExecuteCommandResponse\x12@\n" +
 	"\astarted\x18\x01 \x01(\v2$.toshi.workspace.v1.ExecutionStartedH\x00R\astarted\x12\x18\n" +
 	"\x06stdout\x18\x02 \x01(\fH\x00R\x06stdout\x12\x18\n" +

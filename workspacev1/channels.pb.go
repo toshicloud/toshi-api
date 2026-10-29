@@ -354,7 +354,10 @@ type Channel struct {
 	// Where an event channel posts in the guest.
 	Path string `protobuf:"bytes,22,opt,name=path,proto3" json:"path,omitempty"`
 	// An event channel's messages counted by state.
-	Events        *ChannelEventCounts `protobuf:"bytes,23,opt,name=events,proto3" json:"events,omitempty"`
+	Events *ChannelEventCounts `protobuf:"bytes,23,opt,name=events,proto3" json:"events,omitempty"`
+	// The grant through which another workspace exposed the channel, or
+	// empty for one the job's own workspace exposed.
+	GrantId       string `protobuf:"bytes,24,opt,name=grant_id,json=grantId,proto3" json:"grant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -548,6 +551,13 @@ func (x *Channel) GetEvents() *ChannelEventCounts {
 		return x.Events
 	}
 	return nil
+}
+
+func (x *Channel) GetGrantId() string {
+	if x != nil {
+		return x.GrantId
+	}
+	return ""
 }
 
 // ChannelEventCounts counts an event channel's messages by state.
@@ -1984,7 +1994,10 @@ type CreateChannelRequest struct {
 	Command []string `protobuf:"bytes,4,rep,name=command,proto3" json:"command,omitempty"`
 	// The policy the channel starts with, without a version; unset takes
 	// the defaults.
-	Policy        *ChannelPolicy `protobuf:"bytes,5,opt,name=policy,proto3" json:"policy,omitempty"`
+	Policy *ChannelPolicy `protobuf:"bytes,5,opt,name=policy,proto3" json:"policy,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox's job through it (docs/grants.md).
+	Grant         string `protobuf:"bytes,6,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2054,6 +2067,13 @@ func (x *CreateChannelRequest) GetPolicy() *ChannelPolicy {
 	return nil
 }
 
+func (x *CreateChannelRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
+	}
+	return ""
+}
+
 type CreateChannelResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Channel       *Channel               `protobuf:"bytes,1,opt,name=channel,proto3" json:"channel,omitempty"`
@@ -2108,7 +2128,10 @@ type ListChannelsRequest struct {
 	// From an earlier response's next_page_token; empty for the first page.
 	PageToken string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	// Only this service's event channels, by its ID; not with job_id.
-	Service       string `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
+	Service string `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox's job through it (docs/grants.md).
+	Grant         string `protobuf:"bytes,5,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2171,6 +2194,13 @@ func (x *ListChannelsRequest) GetService() string {
 	return ""
 }
 
+func (x *ListChannelsRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
+	}
+	return ""
+}
+
 type ListChannelsResponse struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	Channels []*Channel             `protobuf:"bytes,1,rep,name=channels,proto3" json:"channels,omitempty"`
@@ -2229,7 +2259,10 @@ type GetChannelRequest struct {
 	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// An event channel's service, by its ID, in place of job_id.
-	Service       string `protobuf:"bytes,3,opt,name=service,proto3" json:"service,omitempty"`
+	Service string `protobuf:"bytes,3,opt,name=service,proto3" json:"service,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox's job through it (docs/grants.md).
+	Grant         string `protobuf:"bytes,4,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2281,6 +2314,13 @@ func (x *GetChannelRequest) GetName() string {
 func (x *GetChannelRequest) GetService() string {
 	if x != nil {
 		return x.Service
+	}
+	return ""
+}
+
+func (x *GetChannelRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
 	}
 	return ""
 }
@@ -3039,7 +3079,10 @@ type CreateChannelConnectTokenRequest struct {
 	// carry: at most 64 letters, digits, '.', '_' and '-'.
 	Device string `protobuf:"bytes,3,opt,name=device,proto3" json:"device,omitempty"`
 	// The mode the token grants the attach it admits; unset grants input.
-	Mode          ChannelAttachMode `protobuf:"varint,4,opt,name=mode,proto3,enum=toshi.workspace.v1.ChannelAttachMode" json:"mode,omitempty"`
+	Mode ChannelAttachMode `protobuf:"varint,4,opt,name=mode,proto3,enum=toshi.workspace.v1.ChannelAttachMode" json:"mode,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox's job through it (docs/grants.md).
+	Grant         string `protobuf:"bytes,5,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3100,6 +3143,13 @@ func (x *CreateChannelConnectTokenRequest) GetMode() ChannelAttachMode {
 		return x.Mode
 	}
 	return ChannelAttachMode_CHANNEL_ATTACH_MODE_UNSPECIFIED
+}
+
+func (x *CreateChannelConnectTokenRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
+	}
+	return ""
 }
 
 type CreateChannelConnectTokenResponse struct {
@@ -3288,9 +3338,12 @@ func (*RevokeChannelConnectTokenResponse) Descriptor() ([]byte, []int) {
 }
 
 type DeleteChannelRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	JobId         string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox's job through it (docs/grants.md).
+	Grant         string `protobuf:"bytes,3,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3335,6 +3388,13 @@ func (x *DeleteChannelRequest) GetJobId() string {
 func (x *DeleteChannelRequest) GetName() string {
 	if x != nil {
 		return x.Name
+	}
+	return ""
+}
+
+func (x *DeleteChannelRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
 	}
 	return ""
 }
@@ -3947,7 +4007,7 @@ var File_toshi_workspace_v1_channels_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/channels.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf7\x06\n" +
+	"!toshi/workspace/v1/channels.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x92\a\n" +
 	"\aChannel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06job_id\x18\x02 \x01(\tR\x05jobId\x12\x12\n" +
@@ -3976,7 +4036,8 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\aclients\x18\x14 \x03(\v2!.toshi.workspace.v1.ChannelClientR\aclients\x12\x18\n" +
 	"\aservice\x18\x15 \x01(\tR\aservice\x12\x12\n" +
 	"\x04path\x18\x16 \x01(\tR\x04path\x12>\n" +
-	"\x06events\x18\x17 \x01(\v2&.toshi.workspace.v1.ChannelEventCountsR\x06eventsB\f\n" +
+	"\x06events\x18\x17 \x01(\v2&.toshi.workspace.v1.ChannelEventCountsR\x06events\x12\x19\n" +
+	"\bgrant_id\x18\x18 \x01(\tR\agrantIdB\f\n" +
 	"\n" +
 	"_exit_code\"\x84\x02\n" +
 	"\x12ChannelEventCounts\x12\x18\n" +
@@ -4113,28 +4174,31 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"last_error\x18\x05 \x01(\tR\tlastError\x12\x18\n" +
 	"\areplica\x18\x06 \x01(\tR\areplica\x12\x1a\n" +
 	"\bforwards\x18\a \x01(\x05R\bforwards\x12\x1b\n" +
-	"\tjob_state\x18\b \x01(\tR\bjobState\"\xaa\x01\n" +
+	"\tjob_state\x18\b \x01(\tR\bjobState\"\xc0\x01\n" +
 	"\x14CreateChannelRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04port\x18\x03 \x01(\x05R\x04port\x12\x18\n" +
 	"\acommand\x18\x04 \x03(\tR\acommand\x129\n" +
-	"\x06policy\x18\x05 \x01(\v2!.toshi.workspace.v1.ChannelPolicyR\x06policy\"N\n" +
+	"\x06policy\x18\x05 \x01(\v2!.toshi.workspace.v1.ChannelPolicyR\x06policy\x12\x14\n" +
+	"\x05grant\x18\x06 \x01(\tR\x05grant\"N\n" +
 	"\x15CreateChannelResponse\x125\n" +
-	"\achannel\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ChannelR\achannel\"\x82\x01\n" +
+	"\achannel\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ChannelR\achannel\"\x98\x01\n" +
 	"\x13ListChannelsRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\x12\x18\n" +
-	"\aservice\x18\x04 \x01(\tR\aservice\"w\n" +
+	"\aservice\x18\x04 \x01(\tR\aservice\x12\x14\n" +
+	"\x05grant\x18\x05 \x01(\tR\x05grant\"w\n" +
 	"\x14ListChannelsResponse\x127\n" +
 	"\bchannels\x18\x01 \x03(\v2\x1b.toshi.workspace.v1.ChannelR\bchannels\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"X\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"n\n" +
 	"\x11GetChannelRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
-	"\aservice\x18\x03 \x01(\tR\aservice\"K\n" +
+	"\aservice\x18\x03 \x01(\tR\aservice\x12\x14\n" +
+	"\x05grant\x18\x04 \x01(\tR\x05grant\"K\n" +
 	"\x12GetChannelResponse\x125\n" +
 	"\achannel\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ChannelR\achannel\"^\n" +
 	"\x17GetChannelPolicyRequest\x12\x15\n" +
@@ -4192,12 +4256,13 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12!\n" +
 	"\fcontent_type\x18\x03 \x01(\tR\vcontentType\x12\x12\n" +
 	"\x04from\x18\x04 \x01(\x03R\x04from\x12\x12\n" +
-	"\x04next\x18\x05 \x01(\x03R\x04next\"\xa0\x01\n" +
+	"\x04next\x18\x05 \x01(\x03R\x04next\"\xb6\x01\n" +
 	" CreateChannelConnectTokenRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
 	"\x06device\x18\x03 \x01(\tR\x06device\x129\n" +
-	"\x04mode\x18\x04 \x01(\x0e2%.toshi.workspace.v1.ChannelAttachModeR\x04mode\"\xef\x01\n" +
+	"\x04mode\x18\x04 \x01(\x0e2%.toshi.workspace.v1.ChannelAttachModeR\x04mode\x12\x14\n" +
+	"\x05grant\x18\x05 \x01(\tR\x05grant\"\xef\x01\n" +
 	"!CreateChannelConnectTokenResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05token\x18\x02 \x01(\tR\x05token\x12\x10\n" +
@@ -4210,10 +4275,11 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x0e\n" +
 	"\x02id\x18\x03 \x01(\tR\x02id\"#\n" +
-	"!RevokeChannelConnectTokenResponse\"A\n" +
+	"!RevokeChannelConnectTokenResponse\"W\n" +
 	"\x14DeleteChannelRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"\x17\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
+	"\x05grant\x18\x03 \x01(\tR\x05grant\"\x17\n" +
 	"\x15DeleteChannelResponse\"h\n" +
 	"\x13ListForwardsRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x1b\n" +

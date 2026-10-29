@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/display.proto.
  */
 export const file_toshi_workspace_v1_display: GenFile = /*@__PURE__*/
-  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvZGlzcGxheS5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIqAECg5EaXNwbGF5U2Vzc2lvbhIKCgJpZBgBIAEoCRIOCgZqb2JfaWQYAiABKAkSLQoEbW9kZRgDIAEoDjIfLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5TW9kZRIWCg5hbGxvd190YWtlb3ZlchgEIAEoCBItCgppZGxlX2Nsb3NlGAUgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEjYKBXN0YXRlGAYgASgOMicudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uU3RhdGUSNAoJb3BlbmVkX2J5GAcgASgOMiEudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlPcGVuZXISLQoJb3BlbmVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglhdHRhY2hfYnkYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KC2F0dGFjaGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCgljbG9zZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGNsb3NlX3JlYXNvbhgMIAEoCRIRCglvcGVuZXJfaWQYDSABKAkSDgoGb3JpZ2luGA4gASgJEhcKD2F0dGFjaF90b2tlbl9pZBgPIAEoCSLZAQoZT3BlbkRpc3BsYXlTZXNzaW9uUmVxdWVzdBIQCgZqb2JfaWQYASABKAlIABIVCgt3b3JrbG9hZF9pZBgCIAEoCUgAEi0KBG1vZGUYAyABKA4yHy50b3NoaS53b3Jrc3BhY2UudjEuRGlzcGxheU1vZGUSLQoKaWRsZV9jbG9zZRgEIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbhIWCg5hbGxvd190YWtlb3ZlchgFIAEoCBITCgtyZXF1ZXN0X2tleRgGIAEoCUIICgZ0YXJnZXQifwoaT3BlbkRpc3BsYXlTZXNzaW9uUmVzcG9uc2USMwoHc2Vzc2lvbhgBIAEoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5U2Vzc2lvbhILCgN1cmwYAiABKAkSDQoFdG9rZW4YAyABKAkSEAoIcmVwbGF5ZWQYBCABKAgiLgoYR2V0RGlzcGxheVNlc3Npb25SZXF1ZXN0EhIKCnNlc3Npb25faWQYASABKAkiUAoZR2V0RGlzcGxheVNlc3Npb25SZXNwb25zZRIzCgdzZXNzaW9uGAEgASgLMiIudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uImYKGkxpc3REaXNwbGF5U2Vzc2lvbnNSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCRIRCglvcGVuX29ubHkYAiABKAgSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkibAobTGlzdERpc3BsYXlTZXNzaW9uc1Jlc3BvbnNlEjQKCHNlc3Npb25zGAEgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSIwChpDbG9zZURpc3BsYXlTZXNzaW9uUmVxdWVzdBISCgpzZXNzaW9uX2lkGAEgASgJIlIKG0Nsb3NlRGlzcGxheVNlc3Npb25SZXNwb25zZRIzCgdzZXNzaW9uGAEgASgLMiIudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uInYKFlNlbmREaXNwbGF5S2V5c1JlcXVlc3QSEgoKc2Vzc2lvbl9pZBgBIAEoCRIOCgR0ZXh0GAIgASgJSAASLwoEa2V5cxgDIAEoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5S2V5c0gAQgcKBWlucHV0IhsKC0Rpc3BsYXlLZXlzEgwKBGtleXMYASADKAkiGQoXU2VuZERpc3BsYXlLZXlzUmVzcG9uc2UiaAoZU2VuZERpc3BsYXlQb2ludGVyUmVxdWVzdBISCgpzZXNzaW9uX2lkGAEgASgJEjcKBmV2ZW50cxgCIAMoCzInLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5UG9pbnRlckV2ZW50IjwKE0Rpc3BsYXlQb2ludGVyRXZlbnQSCQoBeBgBIAEoBRIJCgF5GAIgASgFEg8KB2J1dHRvbnMYAyABKA0iHAoaU2VuZERpc3BsYXlQb2ludGVyUmVzcG9uc2UiPgoaU2V0RGlzcGxheUNsaXBib2FyZFJlcXVlc3QSEgoKc2Vzc2lvbl9pZBgBIAEoCRIMCgR0ZXh0GAIgASgJIh0KG1NldERpc3BsYXlDbGlwYm9hcmRSZXNwb25zZSIyChxUYWtlRGlzcGxheVNjcmVlbnNob3RSZXF1ZXN0EhIKCnNlc3Npb25faWQYASABKAkieQodVGFrZURpc3BsYXlTY3JlZW5zaG90UmVzcG9uc2USCwoDcG5nGAEgASgMEg0KBXdpZHRoGAIgASgFEg4KBmhlaWdodBgDIAEoBRIsCgh0YWtlbl9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqZAoLRGlzcGxheU1vZGUSHAoYRElTUExBWV9NT0RFX1VOU1BFQ0lGSUVEEAASGgoWRElTUExBWV9NT0RFX1ZJRVdfT05MWRABEhsKF0RJU1BMQVlfTU9ERV9XSVRIX0lOUFVUEAIqpQEKE0Rpc3BsYXlTZXNzaW9uU3RhdGUSJQohRElTUExBWV9TRVNTSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASIQodRElTUExBWV9TRVNTSU9OX1NUQVRFX1dBSVRJTkcQARIiCh5ESVNQTEFZX1NFU1NJT05fU1RBVEVfQVRUQUNIRUQQAhIgChxESVNQTEFZX1NFU1NJT05fU1RBVEVfQ0xPU0VEEAMqZgoNRGlzcGxheU9wZW5lchIeChpESVNQTEFZX09QRU5FUl9VTlNQRUNJRklFRBAAEhkKFURJU1BMQVlfT1BFTkVSX1BFUlNPThABEhoKFkRJU1BMQVlfT1BFTkVSX1BST0dSQU0QAjK3CwoORGlzcGxheVNlcnZpY2USyAEKEk9wZW5EaXNwbGF5U2Vzc2lvbhItLnRvc2hpLndvcmtzcGFjZS52MS5PcGVuRGlzcGxheVNlc3Npb25SZXF1ZXN0Gi4udG9zaGkud29ya3NwYWNlLnYxLk9wZW5EaXNwbGF5U2Vzc2lvblJlc3BvbnNlIlPC8xgOZGlzcGxheXMud3JpdGXS8xg9ChZkaXNwbGF5LnNlc3Npb25fb3BlbmVkEiNkaXNwbGF5X3Nlc3Npb246cmVzcG9uc2Uuc2Vzc2lvbi5pZBKDAQoRR2V0RGlzcGxheVNlc3Npb24SLC50b3NoaS53b3Jrc3BhY2UudjEuR2V0RGlzcGxheVNlc3Npb25SZXF1ZXN0Gi0udG9zaGkud29ya3NwYWNlLnYxLkdldERpc3BsYXlTZXNzaW9uUmVzcG9uc2UiEcLzGA1kaXNwbGF5cy5yZWFkEokBChNMaXN0RGlzcGxheVNlc3Npb25zEi4udG9zaGkud29ya3NwYWNlLnYxLkxpc3REaXNwbGF5U2Vzc2lvbnNSZXF1ZXN0Gi8udG9zaGkud29ya3NwYWNlLnYxLkxpc3REaXNwbGF5U2Vzc2lvbnNSZXNwb25zZSIRwvMYDWRpc3BsYXlzLnJlYWQSwgEKE0Nsb3NlRGlzcGxheVNlc3Npb24SLi50b3NoaS53b3Jrc3BhY2UudjEuQ2xvc2VEaXNwbGF5U2Vzc2lvblJlcXVlc3QaLy50b3NoaS53b3Jrc3BhY2UudjEuQ2xvc2VEaXNwbGF5U2Vzc2lvblJlc3BvbnNlIkrC8xgOZGlzcGxheXMud3JpdGXS8xg0ChZkaXNwbGF5LnNlc3Npb25fY2xvc2VkEhpkaXNwbGF5X3Nlc3Npb246c2Vzc2lvbl9pZBKxAQoPU2VuZERpc3BsYXlLZXlzEioudG9zaGkud29ya3NwYWNlLnYxLlNlbmREaXNwbGF5S2V5c1JlcXVlc3QaKy50b3NoaS53b3Jrc3BhY2UudjEuU2VuZERpc3BsYXlLZXlzUmVzcG9uc2UiRcLzGA5kaXNwbGF5cy53cml0ZdLzGC8KEWRpc3BsYXkua2V5c19zZW50EhpkaXNwbGF5X3Nlc3Npb246c2Vzc2lvbl9pZBK9AQoSU2VuZERpc3BsYXlQb2ludGVyEi0udG9zaGkud29ya3NwYWNlLnYxLlNlbmREaXNwbGF5UG9pbnRlclJlcXVlc3QaLi50b3NoaS53b3Jrc3BhY2UudjEuU2VuZERpc3BsYXlQb2ludGVyUmVzcG9uc2UiSMLzGA5kaXNwbGF5cy53cml0ZdLzGDIKFGRpc3BsYXkucG9pbnRlcl9zZW50EhpkaXNwbGF5X3Nlc3Npb246c2Vzc2lvbl9pZBLBAQoTU2V0RGlzcGxheUNsaXBib2FyZBIuLnRvc2hpLndvcmtzcGFjZS52MS5TZXREaXNwbGF5Q2xpcGJvYXJkUmVxdWVzdBovLnRvc2hpLndvcmtzcGFjZS52MS5TZXREaXNwbGF5Q2xpcGJvYXJkUmVzcG9uc2UiScLzGA5kaXNwbGF5cy53cml0ZdLzGDMKFWRpc3BsYXkuY2xpcGJvYXJkX3NldBIaZGlzcGxheV9zZXNzaW9uOnNlc3Npb25faWQSygEKFVRha2VEaXNwbGF5U2NyZWVuc2hvdBIwLnRvc2hpLndvcmtzcGFjZS52MS5UYWtlRGlzcGxheVNjcmVlbnNob3RSZXF1ZXN0GjEudG9zaGkud29ya3NwYWNlLnYxLlRha2VEaXNwbGF5U2NyZWVuc2hvdFJlc3BvbnNlIkzC8xgOZGlzcGxheXMud3JpdGXS8xg2ChhkaXNwbGF5LnNjcmVlbnNob3RfdGFrZW4SGmRpc3BsYXlfc2Vzc2lvbjpzZXNzaW9uX2lkQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvZGlzcGxheS5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIrIECg5EaXNwbGF5U2Vzc2lvbhIKCgJpZBgBIAEoCRIOCgZqb2JfaWQYAiABKAkSLQoEbW9kZRgDIAEoDjIfLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5TW9kZRIWCg5hbGxvd190YWtlb3ZlchgEIAEoCBItCgppZGxlX2Nsb3NlGAUgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEjYKBXN0YXRlGAYgASgOMicudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uU3RhdGUSNAoJb3BlbmVkX2J5GAcgASgOMiEudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlPcGVuZXISLQoJb3BlbmVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglhdHRhY2hfYnkYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KC2F0dGFjaGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCgljbG9zZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGNsb3NlX3JlYXNvbhgMIAEoCRIRCglvcGVuZXJfaWQYDSABKAkSDgoGb3JpZ2luGA4gASgJEhcKD2F0dGFjaF90b2tlbl9pZBgPIAEoCRIQCghncmFudF9pZBgQIAEoCSLoAQoZT3BlbkRpc3BsYXlTZXNzaW9uUmVxdWVzdBIQCgZqb2JfaWQYASABKAlIABIVCgt3b3JrbG9hZF9pZBgCIAEoCUgAEi0KBG1vZGUYAyABKA4yHy50b3NoaS53b3Jrc3BhY2UudjEuRGlzcGxheU1vZGUSLQoKaWRsZV9jbG9zZRgEIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbhIWCg5hbGxvd190YWtlb3ZlchgFIAEoCBITCgtyZXF1ZXN0X2tleRgGIAEoCRINCgVncmFudBgHIAEoCUIICgZ0YXJnZXQifwoaT3BlbkRpc3BsYXlTZXNzaW9uUmVzcG9uc2USMwoHc2Vzc2lvbhgBIAEoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5U2Vzc2lvbhILCgN1cmwYAiABKAkSDQoFdG9rZW4YAyABKAkSEAoIcmVwbGF5ZWQYBCABKAgiPQoYR2V0RGlzcGxheVNlc3Npb25SZXF1ZXN0EhIKCnNlc3Npb25faWQYASABKAkSDQoFZ3JhbnQYAiABKAkiUAoZR2V0RGlzcGxheVNlc3Npb25SZXNwb25zZRIzCgdzZXNzaW9uGAEgASgLMiIudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uInUKGkxpc3REaXNwbGF5U2Vzc2lvbnNSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCRIRCglvcGVuX29ubHkYAiABKAgSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkSDQoFZ3JhbnQYBSABKAkibAobTGlzdERpc3BsYXlTZXNzaW9uc1Jlc3BvbnNlEjQKCHNlc3Npb25zGAEgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSI/ChpDbG9zZURpc3BsYXlTZXNzaW9uUmVxdWVzdBISCgpzZXNzaW9uX2lkGAEgASgJEg0KBWdyYW50GAIgASgJIlIKG0Nsb3NlRGlzcGxheVNlc3Npb25SZXNwb25zZRIzCgdzZXNzaW9uGAEgASgLMiIudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uInYKFlNlbmREaXNwbGF5S2V5c1JlcXVlc3QSEgoKc2Vzc2lvbl9pZBgBIAEoCRIOCgR0ZXh0GAIgASgJSAASLwoEa2V5cxgDIAEoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5S2V5c0gAQgcKBWlucHV0IhsKC0Rpc3BsYXlLZXlzEgwKBGtleXMYASADKAkiGQoXU2VuZERpc3BsYXlLZXlzUmVzcG9uc2UiaAoZU2VuZERpc3BsYXlQb2ludGVyUmVxdWVzdBISCgpzZXNzaW9uX2lkGAEgASgJEjcKBmV2ZW50cxgCIAMoCzInLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5UG9pbnRlckV2ZW50IjwKE0Rpc3BsYXlQb2ludGVyRXZlbnQSCQoBeBgBIAEoBRIJCgF5GAIgASgFEg8KB2J1dHRvbnMYAyABKA0iHAoaU2VuZERpc3BsYXlQb2ludGVyUmVzcG9uc2UiPgoaU2V0RGlzcGxheUNsaXBib2FyZFJlcXVlc3QSEgoKc2Vzc2lvbl9pZBgBIAEoCRIMCgR0ZXh0GAIgASgJIh0KG1NldERpc3BsYXlDbGlwYm9hcmRSZXNwb25zZSIyChxUYWtlRGlzcGxheVNjcmVlbnNob3RSZXF1ZXN0EhIKCnNlc3Npb25faWQYASABKAkieQodVGFrZURpc3BsYXlTY3JlZW5zaG90UmVzcG9uc2USCwoDcG5nGAEgASgMEg0KBXdpZHRoGAIgASgFEg4KBmhlaWdodBgDIAEoBRIsCgh0YWtlbl9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqZAoLRGlzcGxheU1vZGUSHAoYRElTUExBWV9NT0RFX1VOU1BFQ0lGSUVEEAASGgoWRElTUExBWV9NT0RFX1ZJRVdfT05MWRABEhsKF0RJU1BMQVlfTU9ERV9XSVRIX0lOUFVUEAIqpQEKE0Rpc3BsYXlTZXNzaW9uU3RhdGUSJQohRElTUExBWV9TRVNTSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASIQodRElTUExBWV9TRVNTSU9OX1NUQVRFX1dBSVRJTkcQARIiCh5ESVNQTEFZX1NFU1NJT05fU1RBVEVfQVRUQUNIRUQQAhIgChxESVNQTEFZX1NFU1NJT05fU1RBVEVfQ0xPU0VEEAMqZgoNRGlzcGxheU9wZW5lchIeChpESVNQTEFZX09QRU5FUl9VTlNQRUNJRklFRBAAEhkKFURJU1BMQVlfT1BFTkVSX1BFUlNPThABEhoKFkRJU1BMQVlfT1BFTkVSX1BST0dSQU0QAjK3CwoORGlzcGxheVNlcnZpY2USyAEKEk9wZW5EaXNwbGF5U2Vzc2lvbhItLnRvc2hpLndvcmtzcGFjZS52MS5PcGVuRGlzcGxheVNlc3Npb25SZXF1ZXN0Gi4udG9zaGkud29ya3NwYWNlLnYxLk9wZW5EaXNwbGF5U2Vzc2lvblJlc3BvbnNlIlPC8xgOZGlzcGxheXMud3JpdGXS8xg9ChZkaXNwbGF5LnNlc3Npb25fb3BlbmVkEiNkaXNwbGF5X3Nlc3Npb246cmVzcG9uc2Uuc2Vzc2lvbi5pZBKDAQoRR2V0RGlzcGxheVNlc3Npb24SLC50b3NoaS53b3Jrc3BhY2UudjEuR2V0RGlzcGxheVNlc3Npb25SZXF1ZXN0Gi0udG9zaGkud29ya3NwYWNlLnYxLkdldERpc3BsYXlTZXNzaW9uUmVzcG9uc2UiEcLzGA1kaXNwbGF5cy5yZWFkEokBChNMaXN0RGlzcGxheVNlc3Npb25zEi4udG9zaGkud29ya3NwYWNlLnYxLkxpc3REaXNwbGF5U2Vzc2lvbnNSZXF1ZXN0Gi8udG9zaGkud29ya3NwYWNlLnYxLkxpc3REaXNwbGF5U2Vzc2lvbnNSZXNwb25zZSIRwvMYDWRpc3BsYXlzLnJlYWQSwgEKE0Nsb3NlRGlzcGxheVNlc3Npb24SLi50b3NoaS53b3Jrc3BhY2UudjEuQ2xvc2VEaXNwbGF5U2Vzc2lvblJlcXVlc3QaLy50b3NoaS53b3Jrc3BhY2UudjEuQ2xvc2VEaXNwbGF5U2Vzc2lvblJlc3BvbnNlIkrC8xgOZGlzcGxheXMud3JpdGXS8xg0ChZkaXNwbGF5LnNlc3Npb25fY2xvc2VkEhpkaXNwbGF5X3Nlc3Npb246c2Vzc2lvbl9pZBKxAQoPU2VuZERpc3BsYXlLZXlzEioudG9zaGkud29ya3NwYWNlLnYxLlNlbmREaXNwbGF5S2V5c1JlcXVlc3QaKy50b3NoaS53b3Jrc3BhY2UudjEuU2VuZERpc3BsYXlLZXlzUmVzcG9uc2UiRcLzGA5kaXNwbGF5cy53cml0ZdLzGC8KEWRpc3BsYXkua2V5c19zZW50EhpkaXNwbGF5X3Nlc3Npb246c2Vzc2lvbl9pZBK9AQoSU2VuZERpc3BsYXlQb2ludGVyEi0udG9zaGkud29ya3NwYWNlLnYxLlNlbmREaXNwbGF5UG9pbnRlclJlcXVlc3QaLi50b3NoaS53b3Jrc3BhY2UudjEuU2VuZERpc3BsYXlQb2ludGVyUmVzcG9uc2UiSMLzGA5kaXNwbGF5cy53cml0ZdLzGDIKFGRpc3BsYXkucG9pbnRlcl9zZW50EhpkaXNwbGF5X3Nlc3Npb246c2Vzc2lvbl9pZBLBAQoTU2V0RGlzcGxheUNsaXBib2FyZBIuLnRvc2hpLndvcmtzcGFjZS52MS5TZXREaXNwbGF5Q2xpcGJvYXJkUmVxdWVzdBovLnRvc2hpLndvcmtzcGFjZS52MS5TZXREaXNwbGF5Q2xpcGJvYXJkUmVzcG9uc2UiScLzGA5kaXNwbGF5cy53cml0ZdLzGDMKFWRpc3BsYXkuY2xpcGJvYXJkX3NldBIaZGlzcGxheV9zZXNzaW9uOnNlc3Npb25faWQSygEKFVRha2VEaXNwbGF5U2NyZWVuc2hvdBIwLnRvc2hpLndvcmtzcGFjZS52MS5UYWtlRGlzcGxheVNjcmVlbnNob3RSZXF1ZXN0GjEudG9zaGkud29ya3NwYWNlLnYxLlRha2VEaXNwbGF5U2NyZWVuc2hvdFJlc3BvbnNlIkzC8xgOZGlzcGxheXMud3JpdGXS8xg2ChhkaXNwbGF5LnNjcmVlbnNob3RfdGFrZW4SGmRpc3BsYXlfc2Vzc2lvbjpzZXNzaW9uX2lkQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * @generated from message toshi.workspace.v1.DisplaySession
@@ -95,8 +95,9 @@ export type DisplaySession = Message<"toshi.workspace.v1.DisplaySession"> & {
    * Why it closed: closed, idle, expired, suspended, ended (its job
    * stopped running where the session was opened), protocol_error (the
    * viewer sent what the relay does not accept), unavailable (the job's
-   * host did not open the screen) or shutdown (the control plane
-   * stopped). Empty while it is open.
+   * host did not open the screen), shutdown (the control plane stopped)
+   * or grant_revoked (it was opened through a grant that ended). Empty
+   * while it is open.
    *
    * @generated from field: string close_reason = 12;
    */
@@ -126,6 +127,14 @@ export type DisplaySession = Message<"toshi.workspace.v1.DisplaySession"> & {
    * @generated from field: string attach_token_id = 15;
    */
   attachTokenId: string;
+
+  /**
+   * The grant through which another workspace opened the session, or
+   * empty for one the job's own workspace opened.
+   *
+   * @generated from field: string grant_id = 16;
+   */
+  grantId: string;
 };
 
 /**
@@ -208,8 +217,9 @@ export type DisplaySessionJson = {
    * Why it closed: closed, idle, expired, suspended, ended (its job
    * stopped running where the session was opened), protocol_error (the
    * viewer sent what the relay does not accept), unavailable (the job's
-   * host did not open the screen) or shutdown (the control plane
-   * stopped). Empty while it is open.
+   * host did not open the screen), shutdown (the control plane stopped)
+   * or grant_revoked (it was opened through a grant that ended). Empty
+   * while it is open.
    *
    * @generated from field: string close_reason = 12;
    */
@@ -239,6 +249,14 @@ export type DisplaySessionJson = {
    * @generated from field: string attach_token_id = 15;
    */
   attachTokenId?: string;
+
+  /**
+   * The grant through which another workspace opened the session, or
+   * empty for one the job's own workspace opened.
+   *
+   * @generated from field: string grant_id = 16;
+   */
+  grantId?: string;
 };
 
 /**
@@ -293,6 +311,14 @@ export type OpenDisplaySessionRequest = Message<"toshi.workspace.v1.OpenDisplayS
    * @generated from field: string request_key = 6;
    */
   requestKey: string;
+
+  /**
+   * A grant the caller's workspace received, to act on the owner's
+   * sandbox's job through it (docs/grants.md).
+   *
+   * @generated from field: string grant = 7;
+   */
+  grant: string;
 };
 
 /**
@@ -330,6 +356,14 @@ export type OpenDisplaySessionRequestJson = {
    * @generated from field: string request_key = 6;
    */
   requestKey?: string;
+
+  /**
+   * A grant the caller's workspace received, to act on the owner's
+   * sandbox's job through it (docs/grants.md).
+   *
+   * @generated from field: string grant = 7;
+   */
+  grant?: string;
 };
 
 /**
@@ -426,6 +460,14 @@ export type GetDisplaySessionRequest = Message<"toshi.workspace.v1.GetDisplaySes
    * @generated from field: string session_id = 1;
    */
   sessionId: string;
+
+  /**
+   * A grant the caller's workspace received: the call then reaches the
+   * sessions opened through that grant (docs/grants.md).
+   *
+   * @generated from field: string grant = 2;
+   */
+  grant: string;
 };
 
 /**
@@ -436,6 +478,14 @@ export type GetDisplaySessionRequestJson = {
    * @generated from field: string session_id = 1;
    */
   sessionId?: string;
+
+  /**
+   * A grant the caller's workspace received: the call then reaches the
+   * sessions opened through that grant (docs/grants.md).
+   *
+   * @generated from field: string grant = 2;
+   */
+  grant?: string;
 };
 
 /**
@@ -503,6 +553,14 @@ export type ListDisplaySessionsRequest = Message<"toshi.workspace.v1.ListDisplay
    * @generated from field: string page_token = 4;
    */
   pageToken: string;
+
+  /**
+   * A grant the caller's workspace received: the call then reaches the
+   * sessions opened through that grant (docs/grants.md).
+   *
+   * @generated from field: string grant = 5;
+   */
+  grant: string;
 };
 
 /**
@@ -536,6 +594,14 @@ export type ListDisplaySessionsRequestJson = {
    * @generated from field: string page_token = 4;
    */
   pageToken?: string;
+
+  /**
+   * A grant the caller's workspace received: the call then reaches the
+   * sessions opened through that grant (docs/grants.md).
+   *
+   * @generated from field: string grant = 5;
+   */
+  grant?: string;
 };
 
 /**
@@ -594,6 +660,14 @@ export type CloseDisplaySessionRequest = Message<"toshi.workspace.v1.CloseDispla
    * @generated from field: string session_id = 1;
    */
   sessionId: string;
+
+  /**
+   * A grant the caller's workspace received: the call then reaches the
+   * sessions opened through that grant (docs/grants.md).
+   *
+   * @generated from field: string grant = 2;
+   */
+  grant: string;
 };
 
 /**
@@ -604,6 +678,14 @@ export type CloseDisplaySessionRequestJson = {
    * @generated from field: string session_id = 1;
    */
   sessionId?: string;
+
+  /**
+   * A grant the caller's workspace received: the call then reaches the
+   * sessions opened through that grant (docs/grants.md).
+   *
+   * @generated from field: string grant = 2;
+   */
+  grant?: string;
 };
 
 /**
