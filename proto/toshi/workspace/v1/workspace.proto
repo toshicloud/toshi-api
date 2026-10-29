@@ -421,6 +421,9 @@ message Binding {
     ServiceChannel service = 2;
     // The secret set of the workload's environment.
     EnvironmentSecrets secrets = 3;
+    // The deployment's mail listener, which sends the workload's messages
+    // through its mail provider. At most one per workload.
+    Mail mail = 4;
   }
 }
 
@@ -436,6 +439,12 @@ message ServiceChannel {
 // with the project's shared keys. The set must grant the workload's kind.
 message EnvironmentSecrets {}
 
+// Mail binds the deployment's mail listener: the command gets the
+// listener's host and port and a credential it authenticates with, and
+// sends as a service of its workspace. The workspace's plan must allow mail
+// (mail_messages_per_day above 0).
+message Mail {}
+
 // BoundBinding is a binding as it was fixed when its workload started.
 // A later change or delete of the target leaves it as it is.
 message BoundBinding {
@@ -443,6 +452,7 @@ message BoundBinding {
   oneof target {
     BoundService service = 2;
     BoundSecrets secrets = 3;
+    BoundMail mail = 5;
   }
   google.protobuf.Timestamp taken_at = 4;
 }
@@ -467,6 +477,15 @@ message BoundService {
   // The id (jti) of the connect credential minted for this binding. Never
   // the credential.
   string credential_id = 9;
+}
+
+// BoundMail is a mail binding as it was fixed when the workload started:
+// the credential the mail listener accepts, "workload_identity", the
+// audience it names and its id (jti). Never the credential.
+message BoundMail {
+  string credential = 1;
+  string audience = 2;
+  string credential_id = 3;
 }
 
 // BoundSecrets is the environment's secret set as it was when the
@@ -954,7 +973,7 @@ message WaitOperationResponse {
 
 // EventType is the closed set of event types. Built-in event names are
 // reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
-// takeover.*, spend.*, egress.*, host.*, github.* and webhook.*.
+// takeover.*, spend.*, egress.*, host.*, github.*, webhook.* and mail.*.
 enum EventType {
   EVENT_TYPE_UNSPECIFIED = 0;
   // A workload was created. Name: "<kind>.created".
@@ -1000,6 +1019,9 @@ enum EventType {
   // The connections a host's firewall refused the workload since its last
   // such event. Name: "<kind>.egress_denied". Payload: EgressDeniedEvent.
   EVENT_TYPE_EGRESS_DENIED = 16;
+  // The mail listener handed a message the workload sent to the mail
+  // provider, which accepted it. Name: "mail.sent".
+  EVENT_TYPE_MAIL_SENT = 17;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -1044,6 +1066,8 @@ message Event {
     AgentAnswerEvent agent_answer = 21;
     // For EGRESS_DENIED.
     EgressDeniedEvent egress_denied = 22;
+    // For MAIL_SENT.
+    MailSentEvent mail_sent = 23;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -1170,6 +1194,19 @@ message AgentAnswerEvent {
   string answer = 2;
   // The Toshi user id of the person who answered.
   string answered_by = 3;
+}
+
+// MailSentEvent is a message a workload's mail binding sent: the mail
+// provider accepted it. It names no address.
+message MailSentEvent {
+  // The mail binding's name.
+  string binding = 1;
+  // The message's Message-ID header, without its angle brackets.
+  string message_id = 2;
+  // How many recipients the message named.
+  int32 recipients = 3;
+  // The id the mail provider gave the message; empty when it gave none.
+  string provider_message_id = 4;
 }
 
 // AgentPrompt is a question or an approval an agent workload asked that
