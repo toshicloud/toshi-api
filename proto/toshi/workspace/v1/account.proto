@@ -15,7 +15,7 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // named here are not checked.
 //
 // An identity is added only by signing in through it while signed in, at
-// POST /auth/<name>/link (docs/contracts/operator-usage.md), never by a
+// POST /auth/<name>/link on the control plane, never by a
 // call here and never by a matching email.
 service AccountService {
   // GetAccount returns the caller's user, its identities, oldest first,

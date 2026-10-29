@@ -259,8 +259,8 @@ type Role struct {
 	// such as "role-1a2b3c4d5e6f" for one of the workspace's.
 	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// The permissions the role gives, sorted, as docs/api/permissions.md
-	// names them.
+	// The permissions the role gives, sorted, as this API's methods or a
+	// product's calls name them.
 	Permissions []string `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	// Whether the role is built in, and cannot be changed.
 	BuiltIn       bool `protobuf:"varint,4,opt,name=built_in,json=builtIn,proto3" json:"built_in,omitempty"`
@@ -594,7 +594,8 @@ func (x *ListRolesResponse) GetNextPageToken() string {
 type CreateRoleRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// At least one permission, as docs/api/permissions.md names it.
+	// At least one permission, as this API's methods or a product's calls
+	// name it.
 	Permissions   []string `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

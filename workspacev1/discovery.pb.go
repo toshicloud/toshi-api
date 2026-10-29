@@ -336,7 +336,8 @@ type DiscoverResponse struct {
 	Products []*DiscoveredProduct `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
 	// permissions are the caller's, sorted: what its roles in the workspace
 	// give it at the request's project and environment. Each is
-	// "<area>.<level>", as docs/api/permissions.md lists them, or a
+	// "<area>.<level>", as this API's methods name them in their
+	// toshi.permission option, or a
 	// product's own, "<product id>.<level>".
 	Permissions []string     `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	Versions    *APIVersions `protobuf:"bytes,3,opt,name=versions,proto3" json:"versions,omitempty"`

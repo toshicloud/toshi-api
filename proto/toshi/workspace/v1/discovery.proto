@@ -40,7 +40,8 @@ message DiscoverResponse {
   repeated DiscoveredProduct products = 1;
   // permissions are the caller's, sorted: what its roles in the workspace
   // give it at the request's project and environment. Each is
-  // "<area>.<level>", as docs/api/permissions.md lists them, or a
+  // "<area>.<level>", as this API's methods name them in their
+  // toshi.permission option, or a
   // product's own, "<product id>.<level>".
   repeated string permissions = 2;
   APIVersions versions = 3;

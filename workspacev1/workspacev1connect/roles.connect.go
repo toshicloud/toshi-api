@@ -83,7 +83,8 @@ type RoleServiceClient interface {
 	// CreateRole adds a role of the workspace's own. A name that a role of
 	// the workspace has fails with ALREADY_EXISTS; a built-in role's name,
 	// compared without regard to case, an empty name, no permissions, or a
-	// permission docs/api/permissions.md does not list, with
+	// permission that neither a method of this API nor a product's calls
+	// name, with
 	// INVALID_ARGUMENT.
 	CreateRole(context.Context, *connect.Request[workspacev1.CreateRoleRequest]) (*connect.Response[workspacev1.CreateRoleResponse], error)
 	// UpdateRole sets the name and the permissions of one of the
@@ -377,7 +378,8 @@ type RoleServiceHandler interface {
 	// CreateRole adds a role of the workspace's own. A name that a role of
 	// the workspace has fails with ALREADY_EXISTS; a built-in role's name,
 	// compared without regard to case, an empty name, no permissions, or a
-	// permission docs/api/permissions.md does not list, with
+	// permission that neither a method of this API nor a product's calls
+	// name, with
 	// INVALID_ARGUMENT.
 	CreateRole(context.Context, *connect.Request[workspacev1.CreateRoleRequest]) (*connect.Response[workspacev1.CreateRoleResponse], error)
 	// UpdateRole sets the name and the permissions of one of the
