@@ -406,7 +406,8 @@ message ChannelModuleList {
 // ChannelModule is one entry of a policy's module list. Each kind takes
 // the settings it names and no others.
 message ChannelModule {
-  // identity_headers, sign_in_required, ip_allowlist or record_requests.
+  // redirect, rewrite, ip_allowlist, sign_in_required, rate_limit,
+  // wake_page, identity_headers or record_requests, listed in that order.
   string kind = 1;
   // The requests a request module acts on; unset means every request.
   ChannelMatch match = 2;
@@ -418,6 +419,26 @@ message ChannelModule {
   // The most bytes of each body a record_requests record keeps at
   // bodies; zero takes the default.
   int64 body_cap = 5;
+  // A redirect's status: 301, 302 or 308; zero takes 302.
+  int32 status = 6;
+  // A redirect's target: an http or https URL or a path. $1 to $9 take
+  // what the stars of the match's path matched.
+  string target = 7;
+  // The path a rewrite serves the request at; $1 to $9 as in target.
+  string path = 8;
+  // The provided name, of the same workspace, a rewrite serves the request
+  // from; a service's channel only.
+  string host = 9;
+  // What a rate_limit counts requests by: identity (the signed-in caller,
+  // else the address) or address.
+  string key = 10;
+  // The most requests a rate_limit admits per key in one window.
+  int32 count = 11;
+  // A rate_limit's window, as a duration such as 1m.
+  string window = 12;
+  // The page a wake_page answers with while the service wakes; empty takes
+  // the default page. A service's channel only.
+  string html = 13;
 }
 
 // ChannelMatch narrows the requests a module acts on. Every field empty

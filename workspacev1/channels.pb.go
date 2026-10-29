@@ -1138,7 +1138,8 @@ func (x *ChannelModuleList) GetModules() []*ChannelModule {
 // the settings it names and no others.
 type ChannelModule struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// identity_headers, sign_in_required, ip_allowlist or record_requests.
+	// redirect, rewrite, ip_allowlist, sign_in_required, rate_limit,
+	// wake_page, identity_headers or record_requests, listed in that order.
 	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
 	// The requests a request module acts on; unset means every request.
 	Match *ChannelMatch `protobuf:"bytes,2,opt,name=match,proto3" json:"match,omitempty"`
@@ -1149,7 +1150,27 @@ type ChannelModule struct {
 	Level string `protobuf:"bytes,4,opt,name=level,proto3" json:"level,omitempty"`
 	// The most bytes of each body a record_requests record keeps at
 	// bodies; zero takes the default.
-	BodyCap       int64 `protobuf:"varint,5,opt,name=body_cap,json=bodyCap,proto3" json:"body_cap,omitempty"`
+	BodyCap int64 `protobuf:"varint,5,opt,name=body_cap,json=bodyCap,proto3" json:"body_cap,omitempty"`
+	// A redirect's status: 301, 302 or 308; zero takes 302.
+	Status int32 `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"`
+	// A redirect's target: an http or https URL or a path. $1 to $9 take
+	// what the stars of the match's path matched.
+	Target string `protobuf:"bytes,7,opt,name=target,proto3" json:"target,omitempty"`
+	// The path a rewrite serves the request at; $1 to $9 as in target.
+	Path string `protobuf:"bytes,8,opt,name=path,proto3" json:"path,omitempty"`
+	// The provided name, of the same workspace, a rewrite serves the request
+	// from; a service's channel only.
+	Host string `protobuf:"bytes,9,opt,name=host,proto3" json:"host,omitempty"`
+	// What a rate_limit counts requests by: identity (the signed-in caller,
+	// else the address) or address.
+	Key string `protobuf:"bytes,10,opt,name=key,proto3" json:"key,omitempty"`
+	// The most requests a rate_limit admits per key in one window.
+	Count int32 `protobuf:"varint,11,opt,name=count,proto3" json:"count,omitempty"`
+	// A rate_limit's window, as a duration such as 1m.
+	Window string `protobuf:"bytes,12,opt,name=window,proto3" json:"window,omitempty"`
+	// The page a wake_page answers with while the service wakes; empty takes
+	// the default page. A service's channel only.
+	Html          string `protobuf:"bytes,13,opt,name=html,proto3" json:"html,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1217,6 +1238,62 @@ func (x *ChannelModule) GetBodyCap() int64 {
 		return x.BodyCap
 	}
 	return 0
+}
+
+func (x *ChannelModule) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *ChannelModule) GetTarget() string {
+	if x != nil {
+		return x.Target
+	}
+	return ""
+}
+
+func (x *ChannelModule) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *ChannelModule) GetHost() string {
+	if x != nil {
+		return x.Host
+	}
+	return ""
+}
+
+func (x *ChannelModule) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *ChannelModule) GetCount() int32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+func (x *ChannelModule) GetWindow() string {
+	if x != nil {
+		return x.Window
+	}
+	return ""
+}
+
+func (x *ChannelModule) GetHtml() string {
+	if x != nil {
+		return x.Html
+	}
+	return ""
 }
 
 // ChannelMatch narrows the requests a module acts on. Every field empty
@@ -3934,13 +4011,22 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\f_max_clientsB\x0e\n" +
 	"\f_concurrency\"P\n" +
 	"\x11ChannelModuleList\x12;\n" +
-	"\amodules\x18\x01 \x03(\v2!.toshi.workspace.v1.ChannelModuleR\amodules\"\xa4\x01\n" +
+	"\amodules\x18\x01 \x03(\v2!.toshi.workspace.v1.ChannelModuleR\amodules\"\xd0\x02\n" +
 	"\rChannelModule\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x126\n" +
 	"\x05match\x18\x02 \x01(\v2 .toshi.workspace.v1.ChannelMatchR\x05match\x12\x16\n" +
 	"\x06ranges\x18\x03 \x03(\tR\x06ranges\x12\x14\n" +
 	"\x05level\x18\x04 \x01(\tR\x05level\x12\x19\n" +
-	"\bbody_cap\x18\x05 \x01(\x03R\abodyCap\"\xd9\x01\n" +
+	"\bbody_cap\x18\x05 \x01(\x03R\abodyCap\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\x05R\x06status\x12\x16\n" +
+	"\x06target\x18\a \x01(\tR\x06target\x12\x12\n" +
+	"\x04path\x18\b \x01(\tR\x04path\x12\x12\n" +
+	"\x04host\x18\t \x01(\tR\x04host\x12\x10\n" +
+	"\x03key\x18\n" +
+	" \x01(\tR\x03key\x12\x14\n" +
+	"\x05count\x18\v \x01(\x05R\x05count\x12\x16\n" +
+	"\x06window\x18\f \x01(\tR\x06window\x12\x12\n" +
+	"\x04html\x18\r \x01(\tR\x04html\"\xd9\x01\n" +
 	"\fChannelMatch\x12\x14\n" +
 	"\x05hosts\x18\x01 \x03(\tR\x05hosts\x12\x14\n" +
 	"\x05paths\x18\x02 \x03(\tR\x05paths\x12\x18\n" +
