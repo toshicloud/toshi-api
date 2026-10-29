@@ -1510,6 +1510,9 @@ message GetUsageResponse {
   // Filler jobs that finished in the window, by workspace. They are
   // not billed and not in rows.
   repeated FillerUsage filler = 4;
+  // Stored data per UTC day and kind in the window, ordered by workspace, then day, then
+  // kind. A day with no sampled hour has no rows.
+  repeated StorageUsageRow storage = 5;
 }
 
 // FillerUsage counts one workspace's filler jobs: runs its dispatch fillers
@@ -1779,6 +1782,8 @@ message TenantStatement {
   // The month's service runs billed by the VM-second, by size; included in
   // estimated_cents.
   repeated Awake awake = 22;
+  // The month's stored data; its cost is included in estimated_cents.
+  Storage storage = 23;
 }
 
 // OwnHostFee is the month's own-server fee: the run time of the workspace's
@@ -1812,6 +1817,48 @@ message Awake {
   // billed_seconds at the plan's price today, rounded up, in the smallest
   // unit of currency; 0 when the plan has no price for the size.
   int64 estimated_cents = 6;
+}
+
+// Storage is the month's stored data: images, volume versions, artifacts
+// and recordings, sampled once an hour. Each hour's total past the plan's
+// included GB is billed, summed over the month in GB-months.
+message Storage {
+  // Each kind's figures, ordered by kind.
+  repeated StoredKind kinds = 1;
+  // The plan's included GB in each hour.
+  int64 included_gb = 2;
+  // Every kind's GB summed over the sampled hours, from the workspace's
+  // billing start.
+  double gb_hours = 3;
+  // The part of gb_hours past included_gb in each hour.
+  double excess_gb_hours = 4;
+  // excess_gb_hours in GB-months, rounded up once to a thousandth.
+  double billed_gb_months = 5;
+  // billed_gb_months at the plan's price today, rounded up, in the smallest
+  // unit of currency; 0 when the plan has no price for storage.
+  int64 estimated_cents = 6;
+}
+
+// StoredKind is one kind of stored data in a month: image, volume_version,
+// artifact or recording.
+message StoredKind {
+  string kind = 1;
+  // The bytes the last sampled hour held.
+  int64 bytes = 2;
+  // The kind's GB summed over the sampled hours.
+  double gb_hours = 3;
+}
+
+// StorageUsageRow is one kind of stored data on one UTC day.
+message StorageUsageRow {
+  string tenant = 1;
+  // The day's first hour, UTC, as YYYY-MM-DD.
+  string day = 2;
+  string kind = 3;
+  // The kind's GB summed over the day's sampled hours.
+  double gb_hours = 4;
+  // The bytes the day's last sampled hour held.
+  int64 bytes = 5;
 }
 
 message StatementUsage {

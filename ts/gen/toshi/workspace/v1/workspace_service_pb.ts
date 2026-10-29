@@ -15,7 +15,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/workspace_service.proto.
  */
 export const file_toshi_workspace_v1_workspace_service: GenFile = /*@__PURE__*/
-  fileDesc("Cip0b3NoaS93b3Jrc3BhY2UvdjEvd29ya3NwYWNlX3NlcnZpY2UucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNHZXRXb3Jrc3BhY2VSZXF1ZXN0IkgKFEdldFdvcmtzcGFjZVJlc3BvbnNlEjAKCXdvcmtzcGFjZRgBIAEoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Xb3Jrc3BhY2UiewoWVXBkYXRlV29ya3NwYWNlUmVxdWVzdBIwCgl3b3Jrc3BhY2UYASABKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlEi8KC3VwZGF0ZV9tYXNrGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLkZpZWxkTWFzayJLChdVcGRhdGVXb3Jrc3BhY2VSZXNwb25zZRIwCgl3b3Jrc3BhY2UYASABKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlIj4KFUxpc3RXb3Jrc3BhY2VzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJkChZMaXN0V29ya3NwYWNlc1Jlc3BvbnNlEjEKCndvcmtzcGFjZXMYASADKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSIsChpHZXRXb3Jrc3BhY2VCaWxsaW5nUmVxdWVzdBIOCgZtb250aHMYASABKAUiVAobR2V0V29ya3NwYWNlQmlsbGluZ1Jlc3BvbnNlEjUKB2JpbGxpbmcYASABKAsyJC50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlQmlsbGluZyI6ChxHZXRXb3Jrc3BhY2VTdGF0ZW1lbnRSZXF1ZXN0Eg0KBW1vbnRoGAEgASgJEgsKA2NzdhgCIAEoCCJnCh1HZXRXb3Jrc3BhY2VTdGF0ZW1lbnRSZXNwb25zZRI5CglzdGF0ZW1lbnQYASABKAsyJi50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlU3RhdGVtZW50EgsKA2NzdhgCIAEoCSI9ChRMaXN0RWdyZXNzSVBzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJ+ChVMaXN0RWdyZXNzSVBzUmVzcG9uc2USCwoDaXBzGAEgAygJEi0KBWhvc3RzGAIgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkVncmVzc0hvc3QSEAoIY29tcGxldGUYAyABKAgSFwoPbmV4dF9wYWdlX3Rva2VuGAQgASgJImMKD0dldFVzYWdlUmVxdWVzdBIoCgRmcm9tGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiwQEKEEdldFVzYWdlUmVzcG9uc2USKgoEcm93cxgBIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5Vc2FnZVJvdxIoCgRmcm9tGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoGZmlsbGVyGAQgASgLMh8udG9zaGkud29ya3NwYWNlLnYxLkZpbGxlclVzYWdlImgKFEdldFF1ZXVlVGltZXNSZXF1ZXN0EigKBGZyb20YASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKAnRvGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLoAQoVR2V0UXVldWVUaW1lc1Jlc3BvbnNlEgwKBGpvYnMYASABKAMSDgoGcDUwX21zGAIgASgDEg4KBnA5MF9tcxgDIAEoAxIOCgZtYXhfbXMYBCABKAMSEgoKd2FybV9zaGFyZRgFIAEoARIoCgRmcm9tGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoEaGVsZBgIIAMoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Ib2xkVGltZXMiawoXR2V0V29ya2Zsb3dVc2FnZVJlcXVlc3QSKAoEZnJvbRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJgoCdG8YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqABChhHZXRXb3JrZmxvd1VzYWdlUmVzcG9uc2USMgoEcm93cxgBIAMoCzIkLnRvc2hpLndvcmtzcGFjZS52MS5Xb3JrZmxvd1VzYWdlUm93EigKBGZyb20YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKAnRvGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI5ChBMaXN0UGxhbnNSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJIlUKEUxpc3RQbGFuc1Jlc3BvbnNlEicKBXBsYW5zGAEgAygLMhgudG9zaGkud29ya3NwYWNlLnYxLlBsYW4SFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIkAKHENyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlcXVlc3QSDAoEcGxhbhgBIAEoCRISCgpyZXR1cm5fdXJsGAIgASgJIiwKHUNyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlc3BvbnNlEgsKA3VybBgBIAEoCSI3CiFDcmVhdGVCaWxsaW5nUG9ydGFsU2Vzc2lvblJlcXVlc3QSEgoKcmV0dXJuX3VybBgBIAEoCSIxCiJDcmVhdGVCaWxsaW5nUG9ydGFsU2Vzc2lvblJlc3BvbnNlEgsKA3VybBgBIAEoCSITChFHZXRWZXJzaW9uUmVxdWVzdCJiChJHZXRWZXJzaW9uUmVzcG9uc2USDwoHdmVyc2lvbhgBIAEoCRIOCgZjb21taXQYAiABKAkSDAoEZGF0ZRgDIAEoCRIdChVtaW5pbXVtX2FnZW50X3ZlcnNpb24YBCABKAki+wgKCVdvcmtzcGFjZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhwKD2NvbmN1cnJlbmN5X2NhcBgDIAEoBUgAiAEBEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEgwKBHBsYW4YBSABKAkSHQoVZWZmZWN0aXZlX2NvbmN1cnJlbmN5GAYgASgFEg4KBnN0YXR1cxgHIAEoCRIjChtlZmZlY3RpdmVfbWF4X2pvYnNfcGVyX2hvdXIYCyABKAUSHAoUc3RhcnRlcl9jcmVkaXRfY2VudHMYDCABKAMSPQoZc3RhcnRlcl9jcmVkaXRfZ3JhbnRlZF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNQoMcmVzZXJ2YXRpb25zGBAgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlJlc2VydmF0aW9uEg0KBXN0YXRlGBEgASgJEhQKDHN0YXRlX3JlYXNvbhgSIAEoCRIvCgtzdGF0ZV9zaW5jZRgTIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLcHVyZ2VfYWZ0ZXIYFCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEh4KFmhpc3RvcnlfZGF5c19lZmZlY3RpdmUYFiABKAUSHAoPc2VjcmV0X21heF9zZXRzGBggASgFSAGIAQESHAoPc2VjcmV0X21heF9rZXlzGBkgASgFSAKIAQESGwoOc2VjcmV0X21heF9raWIYGiABKANIA4gBARIeChFwcmV2aWV3X21heF9wb3J0cxgbIAEoBUgEiAEBEiEKGXNlY3JldF9tYXhfc2V0c19lZmZlY3RpdmUYHCABKAUSIQoZc2VjcmV0X21heF9rZXlzX2VmZmVjdGl2ZRgdIAEoBRIgChhzZWNyZXRfbWF4X2tpYl9lZmZlY3RpdmUYHiABKAMSIwobcHJldmlld19tYXhfcG9ydHNfZWZmZWN0aXZlGB8gASgFEjcKCHNldHRpbmdzGCEgASgLMiUudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZVNldHRpbmdzEgwKBGV0YWcYIiABKAlCEgoQX2NvbmN1cnJlbmN5X2NhcEISChBfc2VjcmV0X21heF9zZXRzQhIKEF9zZWNyZXRfbWF4X2tleXNCEQoPX3NlY3JldF9tYXhfa2liQhQKEl9wcmV2aWV3X21heF9wb3J0c0oECAgQCUoECAkQCkoECAoQC0oECA4QD0oECA8QEEoECBUQFkoECBcQGEoECCAQIVIOb3duX2hvc3RzX29ubHlSD3NwZW5kX2NhcF9jZW50c1IRbWF4X2pvYnNfcGVyX2hvdXJSDmFsbG93X292ZXJmbG93UhBhbGxvd19jYWNoZV93YXJtUgxoaXN0b3J5X2RheXNSFmNhbmNlbF9ydW5fb25fdm1fZGVhdGhSC21lbWJlcl9qb2luIuQCChFXb3Jrc3BhY2VTZXR0aW5ncxITCgttZW1iZXJfam9pbhgBIAEoCRJKCgdzaWduX2luGAIgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZVNpZ25JbkIU2vMYEHdvcmtzcGFjZS5zaWduaW4SGQoMaGlzdG9yeV9kYXlzGAMgASgFSACIAQESFgoOb3duX2hvc3RzX29ubHkYBCABKAgSFgoOYWxsb3dfb3ZlcmZsb3cYBSABKAgSGAoQYWxsb3dfY2FjaGVfd2FybRgGIAEoCBIeChZjYW5jZWxfcnVuX29uX3ZtX2RlYXRoGAcgASgIEioKD3NwZW5kX2NhcF9jZW50cxgIIAEoA0IR2vMYDWJpbGxpbmcud3JpdGUSLAoRbWF4X2pvYnNfcGVyX2hvdXIYCSABKAVCEdrzGA1iaWxsaW5nLndyaXRlQg8KDV9oaXN0b3J5X2RheXMibwoPV29ya3NwYWNlU2lnbkluEhAKCHByb3ZpZGVyGAEgASgJEg4KBmlzc3VlchgCIAEoCRIOCgZzZXRfYnkYAyABKAkSKgoGc2V0X2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJICgtSZXNlcnZhdGlvbhIMCgRzaXplGAEgASgJEg0KBXNsb3RzGAIgASgFEgwKBHdhcm0YAyABKAUSDgoGc291cmNlGAQgASgJIoMHChBXb3Jrc3BhY2VCaWxsaW5nEhMKC2N1c3RvbWVyX2lkGAEgASgJEhcKD3N1YnNjcmlwdGlvbl9pZBgCIAEoCRI2ChJiaWxsaW5nX3N0YXJ0ZWRfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhsKE3N1YnNjcmlwdGlvbl9zdGF0dXMYBCABKAkSPQoZc3Vic2NyaXB0aW9uX3N0YXR1c19zaW5jZRgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMQoGdG90YWxzGAYgAygLMiEudG9zaGkud29ya3NwYWNlLnYxLkJpbGxpbmdUb3RhbHMSPgoNZmFpbGVkX2V2ZW50cxgHIAMoCzInLnRvc2hpLndvcmtzcGFjZS52MS5CaWxsaW5nRXZlbnRGYWlsdXJlEhoKEm1pbnV0ZXNfdGhpc19tb250aBgIIAEoAxIeChZmcmVlX21pbnV0ZXNfcGVyX21vbnRoGAkgASgDEhUKDWNhcmRfdmVyaWZpZWQYCiABKAgSNAoQY2FyZF92ZXJpZmllZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPc3BlbmRfY2FwX2NlbnRzGAwgASgDEhMKC3NwZW5kX2NlbnRzGA0gASgDEhMKC3NwZW5kX2xldmVsGA4gASgFEhAKCGN1cnJlbmN5GA8gASgJEhMKC3NwZW5kX2tub3duGBAgASgIEhwKFHN0YXJ0ZXJfY3JlZGl0X2NlbnRzGBEgASgDEiEKGXN0YXJ0ZXJfY3JlZGl0X2xlZnRfY2VudHMYEiABKAMSPQoZc3RhcnRlcl9jcmVkaXRfYXBwbGllZF9hdBgTIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPYmlsbGluZ19lbmFibGVkGBQgASgIEj8KCGhlbGRfbm93GBUgAygLMi0udG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZUJpbGxpbmcuSGVsZEpvYnMSGAoQY29uY3VycmVuY3lfdXNlZBgWIAEoAxpTCghIZWxkSm9icxIOCgZyZWFzb24YFyABKAkSDAoEam9icxgYIAEoAxIpCgVzaW5jZRgZIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAitwEKDUJpbGxpbmdUb3RhbHMSDQoFbW9udGgYASABKAkSDAoEc2l6ZRgCIAEoCRITCgtzZW50X2V2ZW50cxgDIAEoAxIUCgxzZW50X21pbnV0ZXMYBCABKAMSFgoOcGVuZGluZ19ldmVudHMYBSABKAMSFwoPcGVuZGluZ19taW51dGVzGAYgASgDEhUKDWZhaWxlZF9ldmVudHMYByABKAMSFgoOZmFpbGVkX21pbnV0ZXMYCCABKAMi3gEKE0JpbGxpbmdFdmVudEZhaWx1cmUSDgoGam9iX2lkGAEgASgJEgwKBHNpemUYAiABKAkSEgoKZXZlbnRfbmFtZRgDIAEoCRIPCgdtaW51dGVzGAQgASgDEi8KC29jY3VycmVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglmYWlsZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCGF0dGVtcHRzGAcgASgFEhIKCmxhc3RfZXJyb3IYCCABKAkisQYKEldvcmtzcGFjZVN0YXRlbWVudBINCgVtb250aBgBIAEoCRIoCgRmcm9tGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDAoEcGxhbhgEIAEoCRIxCgV1c2FnZRgFIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5TdGF0ZW1lbnRVc2FnZRIxCgV0b3RhbBgGIAEoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5TdGF0ZW1lbnRVc2FnZRI0CgdjaGFyZ2VzGAcgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlN0YXRlbWVudENoYXJnZRIXCg9lc3RpbWF0ZWRfY2VudHMYCCABKAMSEAoIY3VycmVuY3kYCSABKAkSFgoOZXN0aW1hdGVfa25vd24YCiABKAgSJAocc3RhcnRlcl9jcmVkaXRfYXBwbGllZF9jZW50cxgLIAEoAxI9ChlzdGFydGVyX2NyZWRpdF9hcHBsaWVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgRoZWxkGA0gAygLMh0udG9zaGkud29ya3NwYWNlLnYxLkhvbGRUaW1lcxIdChVjdXJyZW50X3ByaWNlX21pbnV0ZXMYDiABKAMSLwoGZmlsbGVyGA8gASgLMh8udG9zaGkud29ya3NwYWNlLnYxLkZpbGxlclVzYWdlEhcKD2JpbGxpbmdfZW5hYmxlZBgQIAEoCBI4ChRzcGVuZF9jYXBfcmVhY2hlZF9hdBgRIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHwoXc3BlbmRfY2FwX3JlYWNoZWRfY2VudHMYEiABKAMSFwoPc3BlbmRfY2FwX2NlbnRzGBMgASgDEjQKDG93bl9ob3N0X2ZlZRgUIAEoCzIeLnRvc2hpLndvcmtzcGFjZS52MS5Pd25Ib3N0RmVlEigKBWF3YWtlGBUgAygLMhkudG9zaGkud29ya3NwYWNlLnYxLkF3YWtlImQKCk93bkhvc3RGZWUSDwoHc2Vjb25kcxgBIAEoARIUCgxmcmVlX3NlY29uZHMYAiABKAMSFgoOYmlsbGVkX3NlY29uZHMYAyABKAMSFwoPZXN0aW1hdGVkX2NlbnRzGAQgASgDInsKBUF3YWtlEgwKBHNpemUYASABKAkSDAoEcnVucxgCIAEoAxIPCgdzZWNvbmRzGAMgASgBEhQKDGlkbGVfc2Vjb25kcxgEIAEoARIWCg5iaWxsZWRfc2Vjb25kcxgFIAEoAxIXCg9lc3RpbWF0ZWRfY2VudHMYBiABKAMi7QEKDlN0YXRlbWVudFVzYWdlEgwKBHNpemUYASABKAkSCgoCb3MYAiABKAkSDAoEam9icxgDIAEoAxIPCgdtaW51dGVzGAQgASgDEhgKEG93bl9ob3N0X21pbnV0ZXMYBSABKAMSFQoNZGVidWdfbWludXRlcxgGIAEoAxIYChBvdmVyZmxvd19taW51dGVzGAcgASgDEhsKE3Jlc2VydmVkX3Nsb3RfaG91cnMYCCABKAMSDwoHb3V0Y29tZRgJIAEoCRIPCgdzZWNvbmRzGAogASgBEhgKEG93bl9ob3N0X3NlY29uZHMYCyABKAEiSQoPU3RhdGVtZW50Q2hhcmdlEgwKBHNpemUYASABKAkSDwoHbWludXRlcxgCIAEoAxIXCg9lc3RpbWF0ZWRfY2VudHMYAyABKAMinAEKCUhvbGRUaW1lcxIOCgZyZWFzb24YASABKAkSDAoEam9icxgCIAEoAxIOCgZwNTBfbXMYAyABKAMSDgoGcDkwX21zGAQgASgDEg4KBm1heF9tcxgFIAEoAxIRCglvcGVuX2pvYnMYBiABKAMSLgoKb3Blbl9zaW5jZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiLAoLRmlsbGVyVXNhZ2USDAoEam9icxgBIAEoAxIPCgdtaW51dGVzGAIgASgDIqkCCghVc2FnZVJvdxILCgNkYXkYASABKAkSEgoKY29uY2x1c2lvbhgCIAEoCRIMCgRqb2JzGAMgASgDEg8KB21pbnV0ZXMYBCABKAMSGAoQb3duX2hvc3RfbWludXRlcxgFIAEoAxIVCg1kZWJ1Z19taW51dGVzGAYgASgDEhgKEG92ZXJmbG93X21pbnV0ZXMYByABKAMSGwoTcmVzZXJ2ZWRfc2xvdF9ob3VycxgIIAEoAxIPCgdvdXRjb21lGAkgASgJEgwKBGtpbmQYCiABKAkSDwoHc2Vjb25kcxgLIAEoARIYChBvd25faG9zdF9zZWNvbmRzGAwgASgBEhUKDWF3YWtlX3NlY29uZHMYDSABKAESFAoMaWRsZV9zZWNvbmRzGA4gASgBIsQBChBXb3JrZmxvd1VzYWdlUm93EhIKCnJlcG9zaXRvcnkYASABKAkSEAoId29ya2Zsb3cYAiABKAkSDAoEam9icxgDIAEoAxIPCgdtaW51dGVzGAQgASgDEhgKEG93bl9ob3N0X21pbnV0ZXMYBSABKAMSEwoLZmFpbGVkX2pvYnMYBiABKAMSEgoKdGltZWRfam9icxgHIAEoAxITCgtwNTBfc2Vjb25kcxgIIAEoAxITCgtwOTVfc2Vjb25kcxgJIAEoAyKYAwoEUGxhbhIMCgRuYW1lGAEgASgJEhMKC2NvbmN1cnJlbmN5GAIgASgFEhcKD21heF9qb2JfbWludXRlcxgDIAEoBRISCgppc19kZWZhdWx0GAQgASgIEhIKCnNlbGZfc2VydmUYBSABKAgSEgoKYWxsb3dlZF9vcxgGIAMoCRIQCghtYXhfc2l6ZRgHIAEoCRIQCghtYXhfdmNwdRgIIAEoBRIeChZmcmVlX21pbnV0ZXNfcGVyX21vbnRoGAkgASgFEg0KBXNpemVzGAogAygJEhkKEWNhcmRfcmVxdWlyZWRfZm9yGAsgAygJEhkKEW1heF9qb2JzX3Blcl9ob3VyGAwgASgFEhgKEGJ1cnN0X2d1YXJkX2pvYnMYDSABKAUSHAoUc3RhcnRlcl9jcmVkaXRfY2VudHMYDiABKAMSFAoMaGlzdG9yeV9kYXlzGA8gASgFEhUKDWRlYnVnX21pbnV0ZXMYECABKAUSFQoNbWF4X293bl9ob3N0cxgRIAEoBRITCgtvcGVuX3NvdXJjZRgSIAEoCCK3AQoKRWdyZXNzSG9zdBIPCgdob3N0X2lkGAEgASgJEgwKBG5hbWUYAiABKAkSDgoGc2hhcmVkGAMgASgIEi4KBmVncmVzcxgEIAEoCzIeLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0RWdyZXNzEhIKCnJlY2VudF9pcHMYBSADKAkSDQoFY2xvdWQYBiABKAkSFAoMY2xvdWRfZWdyZXNzGAcgASgJEhEKCWNvbmZpcm1lZBgIIAEoCDL9DQoQV29ya3NwYWNlU2VydmljZRJ1CgxHZXRXb3Jrc3BhY2USJy50b3NoaS53b3Jrc3BhY2UudjEuR2V0V29ya3NwYWNlUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEoMBCg9VcGRhdGVXb3Jrc3BhY2USKi50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlV29ya3NwYWNlUmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVXb3Jrc3BhY2VSZXNwb25zZSIXwvMYD3dvcmtzcGFjZS53cml0ZeDzGAESewoOTGlzdFdvcmtzcGFjZXMSKS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFdvcmtzcGFjZXNSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLkxpc3RXb3Jrc3BhY2VzUmVzcG9uc2UiEsLzGA53b3Jrc3BhY2UucmVhZBKIAQoTR2V0V29ya3NwYWNlQmlsbGluZxIuLnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VCaWxsaW5nUmVxdWVzdBovLnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VCaWxsaW5nUmVzcG9uc2UiEMLzGAxiaWxsaW5nLnJlYWQSjgEKFUdldFdvcmtzcGFjZVN0YXRlbWVudBIwLnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VTdGF0ZW1lbnRSZXF1ZXN0GjEudG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtzcGFjZVN0YXRlbWVudFJlc3BvbnNlIhDC8xgMYmlsbGluZy5yZWFkEngKDUxpc3RFZ3Jlc3NJUHMSKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEVncmVzc0lQc1JlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEVncmVzc0lQc1Jlc3BvbnNlIhLC8xgOd29ya3NwYWNlLnJlYWQSaQoIR2V0VXNhZ2USIy50b3NoaS53b3Jrc3BhY2UudjEuR2V0VXNhZ2VSZXF1ZXN0GiQudG9zaGkud29ya3NwYWNlLnYxLkdldFVzYWdlUmVzcG9uc2UiEsLzGA53b3Jrc3BhY2UucmVhZBJ4Cg1HZXRRdWV1ZVRpbWVzEigudG9zaGkud29ya3NwYWNlLnYxLkdldFF1ZXVlVGltZXNSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkdldFF1ZXVlVGltZXNSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEoEBChBHZXRXb3JrZmxvd1VzYWdlEisudG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtmbG93VXNhZ2VSZXF1ZXN0GiwudG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtmbG93VXNhZ2VSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEmoKCUxpc3RQbGFucxIkLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UGxhbnNSZXF1ZXN0GiUudG9zaGkud29ya3NwYWNlLnYxLkxpc3RQbGFuc1Jlc3BvbnNlIhDC8xgMYmlsbGluZy5yZWFkEsEBChVDcmVhdGVDaGVja291dFNlc3Npb24SMC50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQ2hlY2tvdXRTZXNzaW9uUmVxdWVzdBoxLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVDaGVja291dFNlc3Npb25SZXNwb25zZSJDwvMYDWJpbGxpbmcud3JpdGXS8xguChdiaWxsaW5nLmNoZWNrb3V0X29wZW5lZBITd29ya3NwYWNlOndvcmtzcGFjZRLOAQoaQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb24SNS50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb25SZXF1ZXN0GjYudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUJpbGxpbmdQb3J0YWxTZXNzaW9uUmVzcG9uc2UiQcLzGA1iaWxsaW5nLndyaXRl0vMYLAoVYmlsbGluZy5wb3J0YWxfb3BlbmVkEhN3b3Jrc3BhY2U6d29ya3NwYWNlEm8KCkdldFZlcnNpb24SJS50b3NoaS53b3Jrc3BhY2UudjEuR2V0VmVyc2lvblJlcXVlc3QaJi50b3NoaS53b3Jrc3BhY2UudjEuR2V0VmVyc2lvblJlc3BvbnNlIhLC8xgOd29ya3NwYWNlLnJlYWRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_hosts]);
+  fileDesc("Cip0b3NoaS93b3Jrc3BhY2UvdjEvd29ya3NwYWNlX3NlcnZpY2UucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNHZXRXb3Jrc3BhY2VSZXF1ZXN0IkgKFEdldFdvcmtzcGFjZVJlc3BvbnNlEjAKCXdvcmtzcGFjZRgBIAEoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Xb3Jrc3BhY2UiewoWVXBkYXRlV29ya3NwYWNlUmVxdWVzdBIwCgl3b3Jrc3BhY2UYASABKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlEi8KC3VwZGF0ZV9tYXNrGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLkZpZWxkTWFzayJLChdVcGRhdGVXb3Jrc3BhY2VSZXNwb25zZRIwCgl3b3Jrc3BhY2UYASABKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlIj4KFUxpc3RXb3Jrc3BhY2VzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJkChZMaXN0V29ya3NwYWNlc1Jlc3BvbnNlEjEKCndvcmtzcGFjZXMYASADKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSIsChpHZXRXb3Jrc3BhY2VCaWxsaW5nUmVxdWVzdBIOCgZtb250aHMYASABKAUiVAobR2V0V29ya3NwYWNlQmlsbGluZ1Jlc3BvbnNlEjUKB2JpbGxpbmcYASABKAsyJC50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlQmlsbGluZyI6ChxHZXRXb3Jrc3BhY2VTdGF0ZW1lbnRSZXF1ZXN0Eg0KBW1vbnRoGAEgASgJEgsKA2NzdhgCIAEoCCJnCh1HZXRXb3Jrc3BhY2VTdGF0ZW1lbnRSZXNwb25zZRI5CglzdGF0ZW1lbnQYASABKAsyJi50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlU3RhdGVtZW50EgsKA2NzdhgCIAEoCSI9ChRMaXN0RWdyZXNzSVBzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJ+ChVMaXN0RWdyZXNzSVBzUmVzcG9uc2USCwoDaXBzGAEgAygJEi0KBWhvc3RzGAIgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkVncmVzc0hvc3QSEAoIY29tcGxldGUYAyABKAgSFwoPbmV4dF9wYWdlX3Rva2VuGAQgASgJImMKD0dldFVzYWdlUmVxdWVzdBIoCgRmcm9tGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi9wEKEEdldFVzYWdlUmVzcG9uc2USKgoEcm93cxgBIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5Vc2FnZVJvdxIoCgRmcm9tGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoGZmlsbGVyGAQgASgLMh8udG9zaGkud29ya3NwYWNlLnYxLkZpbGxlclVzYWdlEjQKB3N0b3JhZ2UYBSADKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuU3RvcmFnZVVzYWdlUm93ImgKFEdldFF1ZXVlVGltZXNSZXF1ZXN0EigKBGZyb20YASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKAnRvGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLoAQoVR2V0UXVldWVUaW1lc1Jlc3BvbnNlEgwKBGpvYnMYASABKAMSDgoGcDUwX21zGAIgASgDEg4KBnA5MF9tcxgDIAEoAxIOCgZtYXhfbXMYBCABKAMSEgoKd2FybV9zaGFyZRgFIAEoARIoCgRmcm9tGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoEaGVsZBgIIAMoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Ib2xkVGltZXMiawoXR2V0V29ya2Zsb3dVc2FnZVJlcXVlc3QSKAoEZnJvbRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJgoCdG8YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqABChhHZXRXb3JrZmxvd1VzYWdlUmVzcG9uc2USMgoEcm93cxgBIAMoCzIkLnRvc2hpLndvcmtzcGFjZS52MS5Xb3JrZmxvd1VzYWdlUm93EigKBGZyb20YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKAnRvGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI5ChBMaXN0UGxhbnNSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJIlUKEUxpc3RQbGFuc1Jlc3BvbnNlEicKBXBsYW5zGAEgAygLMhgudG9zaGkud29ya3NwYWNlLnYxLlBsYW4SFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIkAKHENyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlcXVlc3QSDAoEcGxhbhgBIAEoCRISCgpyZXR1cm5fdXJsGAIgASgJIiwKHUNyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlc3BvbnNlEgsKA3VybBgBIAEoCSI3CiFDcmVhdGVCaWxsaW5nUG9ydGFsU2Vzc2lvblJlcXVlc3QSEgoKcmV0dXJuX3VybBgBIAEoCSIxCiJDcmVhdGVCaWxsaW5nUG9ydGFsU2Vzc2lvblJlc3BvbnNlEgsKA3VybBgBIAEoCSITChFHZXRWZXJzaW9uUmVxdWVzdCJiChJHZXRWZXJzaW9uUmVzcG9uc2USDwoHdmVyc2lvbhgBIAEoCRIOCgZjb21taXQYAiABKAkSDAoEZGF0ZRgDIAEoCRIdChVtaW5pbXVtX2FnZW50X3ZlcnNpb24YBCABKAki+wgKCVdvcmtzcGFjZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhwKD2NvbmN1cnJlbmN5X2NhcBgDIAEoBUgAiAEBEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEgwKBHBsYW4YBSABKAkSHQoVZWZmZWN0aXZlX2NvbmN1cnJlbmN5GAYgASgFEg4KBnN0YXR1cxgHIAEoCRIjChtlZmZlY3RpdmVfbWF4X2pvYnNfcGVyX2hvdXIYCyABKAUSHAoUc3RhcnRlcl9jcmVkaXRfY2VudHMYDCABKAMSPQoZc3RhcnRlcl9jcmVkaXRfZ3JhbnRlZF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNQoMcmVzZXJ2YXRpb25zGBAgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlJlc2VydmF0aW9uEg0KBXN0YXRlGBEgASgJEhQKDHN0YXRlX3JlYXNvbhgSIAEoCRIvCgtzdGF0ZV9zaW5jZRgTIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLcHVyZ2VfYWZ0ZXIYFCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEh4KFmhpc3RvcnlfZGF5c19lZmZlY3RpdmUYFiABKAUSHAoPc2VjcmV0X21heF9zZXRzGBggASgFSAGIAQESHAoPc2VjcmV0X21heF9rZXlzGBkgASgFSAKIAQESGwoOc2VjcmV0X21heF9raWIYGiABKANIA4gBARIeChFwcmV2aWV3X21heF9wb3J0cxgbIAEoBUgEiAEBEiEKGXNlY3JldF9tYXhfc2V0c19lZmZlY3RpdmUYHCABKAUSIQoZc2VjcmV0X21heF9rZXlzX2VmZmVjdGl2ZRgdIAEoBRIgChhzZWNyZXRfbWF4X2tpYl9lZmZlY3RpdmUYHiABKAMSIwobcHJldmlld19tYXhfcG9ydHNfZWZmZWN0aXZlGB8gASgFEjcKCHNldHRpbmdzGCEgASgLMiUudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZVNldHRpbmdzEgwKBGV0YWcYIiABKAlCEgoQX2NvbmN1cnJlbmN5X2NhcEISChBfc2VjcmV0X21heF9zZXRzQhIKEF9zZWNyZXRfbWF4X2tleXNCEQoPX3NlY3JldF9tYXhfa2liQhQKEl9wcmV2aWV3X21heF9wb3J0c0oECAgQCUoECAkQCkoECAoQC0oECA4QD0oECA8QEEoECBUQFkoECBcQGEoECCAQIVIOb3duX2hvc3RzX29ubHlSD3NwZW5kX2NhcF9jZW50c1IRbWF4X2pvYnNfcGVyX2hvdXJSDmFsbG93X292ZXJmbG93UhBhbGxvd19jYWNoZV93YXJtUgxoaXN0b3J5X2RheXNSFmNhbmNlbF9ydW5fb25fdm1fZGVhdGhSC21lbWJlcl9qb2luIuQCChFXb3Jrc3BhY2VTZXR0aW5ncxITCgttZW1iZXJfam9pbhgBIAEoCRJKCgdzaWduX2luGAIgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZVNpZ25JbkIU2vMYEHdvcmtzcGFjZS5zaWduaW4SGQoMaGlzdG9yeV9kYXlzGAMgASgFSACIAQESFgoOb3duX2hvc3RzX29ubHkYBCABKAgSFgoOYWxsb3dfb3ZlcmZsb3cYBSABKAgSGAoQYWxsb3dfY2FjaGVfd2FybRgGIAEoCBIeChZjYW5jZWxfcnVuX29uX3ZtX2RlYXRoGAcgASgIEioKD3NwZW5kX2NhcF9jZW50cxgIIAEoA0IR2vMYDWJpbGxpbmcud3JpdGUSLAoRbWF4X2pvYnNfcGVyX2hvdXIYCSABKAVCEdrzGA1iaWxsaW5nLndyaXRlQg8KDV9oaXN0b3J5X2RheXMibwoPV29ya3NwYWNlU2lnbkluEhAKCHByb3ZpZGVyGAEgASgJEg4KBmlzc3VlchgCIAEoCRIOCgZzZXRfYnkYAyABKAkSKgoGc2V0X2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJICgtSZXNlcnZhdGlvbhIMCgRzaXplGAEgASgJEg0KBXNsb3RzGAIgASgFEgwKBHdhcm0YAyABKAUSDgoGc291cmNlGAQgASgJIoMHChBXb3Jrc3BhY2VCaWxsaW5nEhMKC2N1c3RvbWVyX2lkGAEgASgJEhcKD3N1YnNjcmlwdGlvbl9pZBgCIAEoCRI2ChJiaWxsaW5nX3N0YXJ0ZWRfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhsKE3N1YnNjcmlwdGlvbl9zdGF0dXMYBCABKAkSPQoZc3Vic2NyaXB0aW9uX3N0YXR1c19zaW5jZRgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMQoGdG90YWxzGAYgAygLMiEudG9zaGkud29ya3NwYWNlLnYxLkJpbGxpbmdUb3RhbHMSPgoNZmFpbGVkX2V2ZW50cxgHIAMoCzInLnRvc2hpLndvcmtzcGFjZS52MS5CaWxsaW5nRXZlbnRGYWlsdXJlEhoKEm1pbnV0ZXNfdGhpc19tb250aBgIIAEoAxIeChZmcmVlX21pbnV0ZXNfcGVyX21vbnRoGAkgASgDEhUKDWNhcmRfdmVyaWZpZWQYCiABKAgSNAoQY2FyZF92ZXJpZmllZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPc3BlbmRfY2FwX2NlbnRzGAwgASgDEhMKC3NwZW5kX2NlbnRzGA0gASgDEhMKC3NwZW5kX2xldmVsGA4gASgFEhAKCGN1cnJlbmN5GA8gASgJEhMKC3NwZW5kX2tub3duGBAgASgIEhwKFHN0YXJ0ZXJfY3JlZGl0X2NlbnRzGBEgASgDEiEKGXN0YXJ0ZXJfY3JlZGl0X2xlZnRfY2VudHMYEiABKAMSPQoZc3RhcnRlcl9jcmVkaXRfYXBwbGllZF9hdBgTIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPYmlsbGluZ19lbmFibGVkGBQgASgIEj8KCGhlbGRfbm93GBUgAygLMi0udG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZUJpbGxpbmcuSGVsZEpvYnMSGAoQY29uY3VycmVuY3lfdXNlZBgWIAEoAxpTCghIZWxkSm9icxIOCgZyZWFzb24YFyABKAkSDAoEam9icxgYIAEoAxIpCgVzaW5jZRgZIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAitwEKDUJpbGxpbmdUb3RhbHMSDQoFbW9udGgYASABKAkSDAoEc2l6ZRgCIAEoCRITCgtzZW50X2V2ZW50cxgDIAEoAxIUCgxzZW50X21pbnV0ZXMYBCABKAMSFgoOcGVuZGluZ19ldmVudHMYBSABKAMSFwoPcGVuZGluZ19taW51dGVzGAYgASgDEhUKDWZhaWxlZF9ldmVudHMYByABKAMSFgoOZmFpbGVkX21pbnV0ZXMYCCABKAMi3gEKE0JpbGxpbmdFdmVudEZhaWx1cmUSDgoGam9iX2lkGAEgASgJEgwKBHNpemUYAiABKAkSEgoKZXZlbnRfbmFtZRgDIAEoCRIPCgdtaW51dGVzGAQgASgDEi8KC29jY3VycmVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglmYWlsZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCGF0dGVtcHRzGAcgASgFEhIKCmxhc3RfZXJyb3IYCCABKAki3wYKEldvcmtzcGFjZVN0YXRlbWVudBINCgVtb250aBgBIAEoCRIoCgRmcm9tGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDAoEcGxhbhgEIAEoCRIxCgV1c2FnZRgFIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5TdGF0ZW1lbnRVc2FnZRIxCgV0b3RhbBgGIAEoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5TdGF0ZW1lbnRVc2FnZRI0CgdjaGFyZ2VzGAcgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlN0YXRlbWVudENoYXJnZRIXCg9lc3RpbWF0ZWRfY2VudHMYCCABKAMSEAoIY3VycmVuY3kYCSABKAkSFgoOZXN0aW1hdGVfa25vd24YCiABKAgSJAocc3RhcnRlcl9jcmVkaXRfYXBwbGllZF9jZW50cxgLIAEoAxI9ChlzdGFydGVyX2NyZWRpdF9hcHBsaWVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgRoZWxkGA0gAygLMh0udG9zaGkud29ya3NwYWNlLnYxLkhvbGRUaW1lcxIdChVjdXJyZW50X3ByaWNlX21pbnV0ZXMYDiABKAMSLwoGZmlsbGVyGA8gASgLMh8udG9zaGkud29ya3NwYWNlLnYxLkZpbGxlclVzYWdlEhcKD2JpbGxpbmdfZW5hYmxlZBgQIAEoCBI4ChRzcGVuZF9jYXBfcmVhY2hlZF9hdBgRIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASHwoXc3BlbmRfY2FwX3JlYWNoZWRfY2VudHMYEiABKAMSFwoPc3BlbmRfY2FwX2NlbnRzGBMgASgDEjQKDG93bl9ob3N0X2ZlZRgUIAEoCzIeLnRvc2hpLndvcmtzcGFjZS52MS5Pd25Ib3N0RmVlEigKBWF3YWtlGBUgAygLMhkudG9zaGkud29ya3NwYWNlLnYxLkF3YWtlEiwKB3N0b3JhZ2UYFiABKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuU3RvcmFnZSJkCgpPd25Ib3N0RmVlEg8KB3NlY29uZHMYASABKAESFAoMZnJlZV9zZWNvbmRzGAIgASgDEhYKDmJpbGxlZF9zZWNvbmRzGAMgASgDEhcKD2VzdGltYXRlZF9jZW50cxgEIAEoAyJ7CgVBd2FrZRIMCgRzaXplGAEgASgJEgwKBHJ1bnMYAiABKAMSDwoHc2Vjb25kcxgDIAEoARIUCgxpZGxlX3NlY29uZHMYBCABKAESFgoOYmlsbGVkX3NlY29uZHMYBSABKAMSFwoPZXN0aW1hdGVkX2NlbnRzGAYgASgDIqsBCgdTdG9yYWdlEi0KBWtpbmRzGAEgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLlN0b3JlZEtpbmQSEwoLaW5jbHVkZWRfZ2IYAiABKAMSEAoIZ2JfaG91cnMYAyABKAESFwoPZXhjZXNzX2diX2hvdXJzGAQgASgBEhgKEGJpbGxlZF9nYl9tb250aHMYBSABKAESFwoPZXN0aW1hdGVkX2NlbnRzGAYgASgDIjsKClN0b3JlZEtpbmQSDAoEa2luZBgBIAEoCRINCgVieXRlcxgCIAEoAxIQCghnYl9ob3VycxgDIAEoASJNCg9TdG9yYWdlVXNhZ2VSb3cSCwoDZGF5GAEgASgJEgwKBGtpbmQYAiABKAkSEAoIZ2JfaG91cnMYAyABKAESDQoFYnl0ZXMYBCABKAMi7QEKDlN0YXRlbWVudFVzYWdlEgwKBHNpemUYASABKAkSCgoCb3MYAiABKAkSDAoEam9icxgDIAEoAxIPCgdtaW51dGVzGAQgASgDEhgKEG93bl9ob3N0X21pbnV0ZXMYBSABKAMSFQoNZGVidWdfbWludXRlcxgGIAEoAxIYChBvdmVyZmxvd19taW51dGVzGAcgASgDEhsKE3Jlc2VydmVkX3Nsb3RfaG91cnMYCCABKAMSDwoHb3V0Y29tZRgJIAEoCRIPCgdzZWNvbmRzGAogASgBEhgKEG93bl9ob3N0X3NlY29uZHMYCyABKAEiSQoPU3RhdGVtZW50Q2hhcmdlEgwKBHNpemUYASABKAkSDwoHbWludXRlcxgCIAEoAxIXCg9lc3RpbWF0ZWRfY2VudHMYAyABKAMinAEKCUhvbGRUaW1lcxIOCgZyZWFzb24YASABKAkSDAoEam9icxgCIAEoAxIOCgZwNTBfbXMYAyABKAMSDgoGcDkwX21zGAQgASgDEg4KBm1heF9tcxgFIAEoAxIRCglvcGVuX2pvYnMYBiABKAMSLgoKb3Blbl9zaW5jZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiLAoLRmlsbGVyVXNhZ2USDAoEam9icxgBIAEoAxIPCgdtaW51dGVzGAIgASgDIqkCCghVc2FnZVJvdxILCgNkYXkYASABKAkSEgoKY29uY2x1c2lvbhgCIAEoCRIMCgRqb2JzGAMgASgDEg8KB21pbnV0ZXMYBCABKAMSGAoQb3duX2hvc3RfbWludXRlcxgFIAEoAxIVCg1kZWJ1Z19taW51dGVzGAYgASgDEhgKEG92ZXJmbG93X21pbnV0ZXMYByABKAMSGwoTcmVzZXJ2ZWRfc2xvdF9ob3VycxgIIAEoAxIPCgdvdXRjb21lGAkgASgJEgwKBGtpbmQYCiABKAkSDwoHc2Vjb25kcxgLIAEoARIYChBvd25faG9zdF9zZWNvbmRzGAwgASgBEhUKDWF3YWtlX3NlY29uZHMYDSABKAESFAoMaWRsZV9zZWNvbmRzGA4gASgBIsQBChBXb3JrZmxvd1VzYWdlUm93EhIKCnJlcG9zaXRvcnkYASABKAkSEAoId29ya2Zsb3cYAiABKAkSDAoEam9icxgDIAEoAxIPCgdtaW51dGVzGAQgASgDEhgKEG93bl9ob3N0X21pbnV0ZXMYBSABKAMSEwoLZmFpbGVkX2pvYnMYBiABKAMSEgoKdGltZWRfam9icxgHIAEoAxITCgtwNTBfc2Vjb25kcxgIIAEoAxITCgtwOTVfc2Vjb25kcxgJIAEoAyKYAwoEUGxhbhIMCgRuYW1lGAEgASgJEhMKC2NvbmN1cnJlbmN5GAIgASgFEhcKD21heF9qb2JfbWludXRlcxgDIAEoBRISCgppc19kZWZhdWx0GAQgASgIEhIKCnNlbGZfc2VydmUYBSABKAgSEgoKYWxsb3dlZF9vcxgGIAMoCRIQCghtYXhfc2l6ZRgHIAEoCRIQCghtYXhfdmNwdRgIIAEoBRIeChZmcmVlX21pbnV0ZXNfcGVyX21vbnRoGAkgASgFEg0KBXNpemVzGAogAygJEhkKEWNhcmRfcmVxdWlyZWRfZm9yGAsgAygJEhkKEW1heF9qb2JzX3Blcl9ob3VyGAwgASgFEhgKEGJ1cnN0X2d1YXJkX2pvYnMYDSABKAUSHAoUc3RhcnRlcl9jcmVkaXRfY2VudHMYDiABKAMSFAoMaGlzdG9yeV9kYXlzGA8gASgFEhUKDWRlYnVnX21pbnV0ZXMYECABKAUSFQoNbWF4X293bl9ob3N0cxgRIAEoBRITCgtvcGVuX3NvdXJjZRgSIAEoCCK3AQoKRWdyZXNzSG9zdBIPCgdob3N0X2lkGAEgASgJEgwKBG5hbWUYAiABKAkSDgoGc2hhcmVkGAMgASgIEi4KBmVncmVzcxgEIAEoCzIeLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0RWdyZXNzEhIKCnJlY2VudF9pcHMYBSADKAkSDQoFY2xvdWQYBiABKAkSFAoMY2xvdWRfZWdyZXNzGAcgASgJEhEKCWNvbmZpcm1lZBgIIAEoCDL9DQoQV29ya3NwYWNlU2VydmljZRJ1CgxHZXRXb3Jrc3BhY2USJy50b3NoaS53b3Jrc3BhY2UudjEuR2V0V29ya3NwYWNlUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEoMBCg9VcGRhdGVXb3Jrc3BhY2USKi50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlV29ya3NwYWNlUmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVXb3Jrc3BhY2VSZXNwb25zZSIXwvMYD3dvcmtzcGFjZS53cml0ZeDzGAESewoOTGlzdFdvcmtzcGFjZXMSKS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFdvcmtzcGFjZXNSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLkxpc3RXb3Jrc3BhY2VzUmVzcG9uc2UiEsLzGA53b3Jrc3BhY2UucmVhZBKIAQoTR2V0V29ya3NwYWNlQmlsbGluZxIuLnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VCaWxsaW5nUmVxdWVzdBovLnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VCaWxsaW5nUmVzcG9uc2UiEMLzGAxiaWxsaW5nLnJlYWQSjgEKFUdldFdvcmtzcGFjZVN0YXRlbWVudBIwLnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VTdGF0ZW1lbnRSZXF1ZXN0GjEudG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtzcGFjZVN0YXRlbWVudFJlc3BvbnNlIhDC8xgMYmlsbGluZy5yZWFkEngKDUxpc3RFZ3Jlc3NJUHMSKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEVncmVzc0lQc1JlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEVncmVzc0lQc1Jlc3BvbnNlIhLC8xgOd29ya3NwYWNlLnJlYWQSaQoIR2V0VXNhZ2USIy50b3NoaS53b3Jrc3BhY2UudjEuR2V0VXNhZ2VSZXF1ZXN0GiQudG9zaGkud29ya3NwYWNlLnYxLkdldFVzYWdlUmVzcG9uc2UiEsLzGA53b3Jrc3BhY2UucmVhZBJ4Cg1HZXRRdWV1ZVRpbWVzEigudG9zaGkud29ya3NwYWNlLnYxLkdldFF1ZXVlVGltZXNSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkdldFF1ZXVlVGltZXNSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEoEBChBHZXRXb3JrZmxvd1VzYWdlEisudG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtmbG93VXNhZ2VSZXF1ZXN0GiwudG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtmbG93VXNhZ2VSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEmoKCUxpc3RQbGFucxIkLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UGxhbnNSZXF1ZXN0GiUudG9zaGkud29ya3NwYWNlLnYxLkxpc3RQbGFuc1Jlc3BvbnNlIhDC8xgMYmlsbGluZy5yZWFkEsEBChVDcmVhdGVDaGVja291dFNlc3Npb24SMC50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQ2hlY2tvdXRTZXNzaW9uUmVxdWVzdBoxLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVDaGVja291dFNlc3Npb25SZXNwb25zZSJDwvMYDWJpbGxpbmcud3JpdGXS8xguChdiaWxsaW5nLmNoZWNrb3V0X29wZW5lZBITd29ya3NwYWNlOndvcmtzcGFjZRLOAQoaQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb24SNS50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb25SZXF1ZXN0GjYudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUJpbGxpbmdQb3J0YWxTZXNzaW9uUmVzcG9uc2UiQcLzGA1iaWxsaW5nLndyaXRl0vMYLAoVYmlsbGluZy5wb3J0YWxfb3BlbmVkEhN3b3Jrc3BhY2U6d29ya3NwYWNlEm8KCkdldFZlcnNpb24SJS50b3NoaS53b3Jrc3BhY2UudjEuR2V0VmVyc2lvblJlcXVlc3QaJi50b3NoaS53b3Jrc3BhY2UudjEuR2V0VmVyc2lvblJlc3BvbnNlIhLC8xgOd29ya3NwYWNlLnJlYWRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_hosts]);
 
 /**
  * @generated from message toshi.workspace.v1.GetWorkspaceRequest
@@ -579,6 +579,14 @@ export type GetUsageResponse = Message<"toshi.workspace.v1.GetUsageResponse"> & 
    * @generated from field: toshi.workspace.v1.FillerUsage filler = 4;
    */
   filler?: FillerUsage | undefined;
+
+  /**
+   * Stored data per UTC day and kind in the window, ordered by day, then
+   * kind. A day with no sampled hour has no rows.
+   *
+   * @generated from field: repeated toshi.workspace.v1.StorageUsageRow storage = 5;
+   */
+  storage: StorageUsageRow[];
 };
 
 /**
@@ -612,6 +620,14 @@ export type GetUsageResponseJson = {
    * @generated from field: toshi.workspace.v1.FillerUsage filler = 4;
    */
   filler?: FillerUsageJson;
+
+  /**
+   * Stored data per UTC day and kind in the window, ordered by day, then
+   * kind. A day with no sampled hour has no rows.
+   *
+   * @generated from field: repeated toshi.workspace.v1.StorageUsageRow storage = 5;
+   */
+  storage?: StorageUsageRowJson[];
 };
 
 /**
@@ -2726,6 +2742,13 @@ export type WorkspaceStatement = Message<"toshi.workspace.v1.WorkspaceStatement"
    * @generated from field: repeated toshi.workspace.v1.Awake awake = 21;
    */
   awake: Awake[];
+
+  /**
+   * The month's stored data; its cost is included in estimated_cents.
+   *
+   * @generated from field: toshi.workspace.v1.Storage storage = 22;
+   */
+  storage?: Storage | undefined;
 };
 
 /**
@@ -2887,6 +2910,13 @@ export type WorkspaceStatementJson = {
    * @generated from field: repeated toshi.workspace.v1.Awake awake = 21;
    */
   awake?: AwakeJson[];
+
+  /**
+   * The month's stored data; its cost is included in estimated_cents.
+   *
+   * @generated from field: toshi.workspace.v1.Storage storage = 22;
+   */
+  storage?: StorageJson;
 };
 
 /**
@@ -3085,6 +3115,253 @@ export const AwakeSchema: GenMessage<Awake, {jsonType: AwakeJson}> = /*@__PURE__
   messageDesc(file_toshi_workspace_v1_workspace_service, 35);
 
 /**
+ * Storage is the month's stored data: images, volume versions, artifacts
+ * and recordings, sampled once an hour. Each hour's total past the plan's
+ * included GB is billed, summed over the month in GB-months.
+ *
+ * @generated from message toshi.workspace.v1.Storage
+ */
+export type Storage = Message<"toshi.workspace.v1.Storage"> & {
+  /**
+   * Each kind's figures, ordered by kind.
+   *
+   * @generated from field: repeated toshi.workspace.v1.StoredKind kinds = 1;
+   */
+  kinds: StoredKind[];
+
+  /**
+   * The plan's included GB in each hour.
+   *
+   * @generated from field: int64 included_gb = 2;
+   */
+  includedGb: bigint;
+
+  /**
+   * Every kind's GB summed over the sampled hours, from the workspace's
+   * billing start.
+   *
+   * @generated from field: double gb_hours = 3;
+   */
+  gbHours: number;
+
+  /**
+   * The part of gb_hours past included_gb in each hour.
+   *
+   * @generated from field: double excess_gb_hours = 4;
+   */
+  excessGbHours: number;
+
+  /**
+   * excess_gb_hours in GB-months, rounded up once to a thousandth.
+   *
+   * @generated from field: double billed_gb_months = 5;
+   */
+  billedGbMonths: number;
+
+  /**
+   * billed_gb_months at the plan's price today, rounded up, in the smallest
+   * unit of currency; 0 when the plan has no price for storage.
+   *
+   * @generated from field: int64 estimated_cents = 6;
+   */
+  estimatedCents: bigint;
+};
+
+/**
+ * Storage is the month's stored data: images, volume versions, artifacts
+ * and recordings, sampled once an hour. Each hour's total past the plan's
+ * included GB is billed, summed over the month in GB-months.
+ *
+ * @generated from message toshi.workspace.v1.Storage
+ */
+export type StorageJson = {
+  /**
+   * Each kind's figures, ordered by kind.
+   *
+   * @generated from field: repeated toshi.workspace.v1.StoredKind kinds = 1;
+   */
+  kinds?: StoredKindJson[];
+
+  /**
+   * The plan's included GB in each hour.
+   *
+   * @generated from field: int64 included_gb = 2;
+   */
+  includedGb?: string;
+
+  /**
+   * Every kind's GB summed over the sampled hours, from the workspace's
+   * billing start.
+   *
+   * @generated from field: double gb_hours = 3;
+   */
+  gbHours?: number | "NaN" | "Infinity" | "-Infinity";
+
+  /**
+   * The part of gb_hours past included_gb in each hour.
+   *
+   * @generated from field: double excess_gb_hours = 4;
+   */
+  excessGbHours?: number | "NaN" | "Infinity" | "-Infinity";
+
+  /**
+   * excess_gb_hours in GB-months, rounded up once to a thousandth.
+   *
+   * @generated from field: double billed_gb_months = 5;
+   */
+  billedGbMonths?: number | "NaN" | "Infinity" | "-Infinity";
+
+  /**
+   * billed_gb_months at the plan's price today, rounded up, in the smallest
+   * unit of currency; 0 when the plan has no price for storage.
+   *
+   * @generated from field: int64 estimated_cents = 6;
+   */
+  estimatedCents?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.Storage.
+ * Use `create(StorageSchema)` to create a new message.
+ */
+export const StorageSchema: GenMessage<Storage, {jsonType: StorageJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_workspace_service, 36);
+
+/**
+ * StoredKind is one kind of stored data in a month: image, volume_version,
+ * artifact or recording.
+ *
+ * @generated from message toshi.workspace.v1.StoredKind
+ */
+export type StoredKind = Message<"toshi.workspace.v1.StoredKind"> & {
+  /**
+   * @generated from field: string kind = 1;
+   */
+  kind: string;
+
+  /**
+   * The bytes the last sampled hour held.
+   *
+   * @generated from field: int64 bytes = 2;
+   */
+  bytes: bigint;
+
+  /**
+   * The kind's GB summed over the sampled hours.
+   *
+   * @generated from field: double gb_hours = 3;
+   */
+  gbHours: number;
+};
+
+/**
+ * StoredKind is one kind of stored data in a month: image, volume_version,
+ * artifact or recording.
+ *
+ * @generated from message toshi.workspace.v1.StoredKind
+ */
+export type StoredKindJson = {
+  /**
+   * @generated from field: string kind = 1;
+   */
+  kind?: string;
+
+  /**
+   * The bytes the last sampled hour held.
+   *
+   * @generated from field: int64 bytes = 2;
+   */
+  bytes?: string;
+
+  /**
+   * The kind's GB summed over the sampled hours.
+   *
+   * @generated from field: double gb_hours = 3;
+   */
+  gbHours?: number | "NaN" | "Infinity" | "-Infinity";
+};
+
+/**
+ * Describes the message toshi.workspace.v1.StoredKind.
+ * Use `create(StoredKindSchema)` to create a new message.
+ */
+export const StoredKindSchema: GenMessage<StoredKind, {jsonType: StoredKindJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_workspace_service, 37);
+
+/**
+ * StorageUsageRow is one kind of stored data on one UTC day.
+ *
+ * @generated from message toshi.workspace.v1.StorageUsageRow
+ */
+export type StorageUsageRow = Message<"toshi.workspace.v1.StorageUsageRow"> & {
+  /**
+   * The day's first hour, UTC, as YYYY-MM-DD.
+   *
+   * @generated from field: string day = 1;
+   */
+  day: string;
+
+  /**
+   * @generated from field: string kind = 2;
+   */
+  kind: string;
+
+  /**
+   * The kind's GB summed over the day's sampled hours.
+   *
+   * @generated from field: double gb_hours = 3;
+   */
+  gbHours: number;
+
+  /**
+   * The bytes the day's last sampled hour held.
+   *
+   * @generated from field: int64 bytes = 4;
+   */
+  bytes: bigint;
+};
+
+/**
+ * StorageUsageRow is one kind of stored data on one UTC day.
+ *
+ * @generated from message toshi.workspace.v1.StorageUsageRow
+ */
+export type StorageUsageRowJson = {
+  /**
+   * The day's first hour, UTC, as YYYY-MM-DD.
+   *
+   * @generated from field: string day = 1;
+   */
+  day?: string;
+
+  /**
+   * @generated from field: string kind = 2;
+   */
+  kind?: string;
+
+  /**
+   * The kind's GB summed over the day's sampled hours.
+   *
+   * @generated from field: double gb_hours = 3;
+   */
+  gbHours?: number | "NaN" | "Infinity" | "-Infinity";
+
+  /**
+   * The bytes the day's last sampled hour held.
+   *
+   * @generated from field: int64 bytes = 4;
+   */
+  bytes?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.StorageUsageRow.
+ * Use `create(StorageUsageRowSchema)` to create a new message.
+ */
+export const StorageUsageRowSchema: GenMessage<StorageUsageRow, {jsonType: StorageUsageRowJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_workspace_service, 38);
+
+/**
  * @generated from message toshi.workspace.v1.StatementUsage
  */
 export type StatementUsage = Message<"toshi.workspace.v1.StatementUsage"> & {
@@ -3245,7 +3522,7 @@ export type StatementUsageJson = {
  * Use `create(StatementUsageSchema)` to create a new message.
  */
 export const StatementUsageSchema: GenMessage<StatementUsage, {jsonType: StatementUsageJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_workspace_service, 36);
+  messageDesc(file_toshi_workspace_v1_workspace_service, 39);
 
 /**
  * @generated from message toshi.workspace.v1.StatementCharge
@@ -3304,7 +3581,7 @@ export type StatementChargeJson = {
  * Use `create(StatementChargeSchema)` to create a new message.
  */
 export const StatementChargeSchema: GenMessage<StatementCharge, {jsonType: StatementChargeJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_workspace_service, 37);
+  messageDesc(file_toshi_workspace_v1_workspace_service, 40);
 
 /**
  * @generated from message toshi.workspace.v1.HoldTimes
@@ -3413,7 +3690,7 @@ export type HoldTimesJson = {
  * Use `create(HoldTimesSchema)` to create a new message.
  */
 export const HoldTimesSchema: GenMessage<HoldTimes, {jsonType: HoldTimesJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_workspace_service, 38);
+  messageDesc(file_toshi_workspace_v1_workspace_service, 41);
 
 /**
  * FillerUsage counts one workspace's filler jobs: runs its dispatch fillers
@@ -3462,7 +3739,7 @@ export type FillerUsageJson = {
  * Use `create(FillerUsageSchema)` to create a new message.
  */
 export const FillerUsageSchema: GenMessage<FillerUsage, {jsonType: FillerUsageJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_workspace_service, 39);
+  messageDesc(file_toshi_workspace_v1_workspace_service, 42);
 
 /**
  * UsageRow counts the jobs of one UTC day, conclusion, outcome and kind.
@@ -3697,7 +3974,7 @@ export type UsageRowJson = {
  * Use `create(UsageRowSchema)` to create a new message.
  */
 export const UsageRowSchema: GenMessage<UsageRow, {jsonType: UsageRowJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_workspace_service, 40);
+  messageDesc(file_toshi_workspace_v1_workspace_service, 43);
 
 /**
  * WorkflowUsageRow counts the jobs of one repository and workflow.
@@ -3850,7 +4127,7 @@ export type WorkflowUsageRowJson = {
  * Use `create(WorkflowUsageRowSchema)` to create a new message.
  */
 export const WorkflowUsageRowSchema: GenMessage<WorkflowUsageRow, {jsonType: WorkflowUsageRowJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_workspace_service, 41);
+  messageDesc(file_toshi_workspace_v1_workspace_service, 44);
 
 /**
  * @generated from message toshi.workspace.v1.Plan
@@ -4129,7 +4406,7 @@ export type PlanJson = {
  * Use `create(PlanSchema)` to create a new message.
  */
 export const PlanSchema: GenMessage<Plan, {jsonType: PlanJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_workspace_service, 42);
+  messageDesc(file_toshi_workspace_v1_workspace_service, 45);
 
 /**
  * EgressHost is one host a workspace's jobs can land on.
@@ -4260,7 +4537,7 @@ export type EgressHostJson = {
  * Use `create(EgressHostSchema)` to create a new message.
  */
 export const EgressHostSchema: GenMessage<EgressHost, {jsonType: EgressHostJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_workspace_service, 43);
+  messageDesc(file_toshi_workspace_v1_workspace_service, 46);
 
 /**
  * WorkspaceService reads and sets the caller's workspace: its settings, its
