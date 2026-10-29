@@ -1,0 +1,206 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// DomainService manages customer domains: names a workspace owns at its
+// own DNS provider and points at an http channel of one of its services,
+// beside the channel's provided name. A domain serves once its two
+// records check out, a CNAME record to the channel's provided name and a
+// TXT record carrying the domain's token; its certificate is ordered at
+// its first visit, or by IssueDomain, and renewed with no call. The
+// caller's credential names the workspace; a domain of another workspace
+// is NOT_FOUND. A control plane that serves no provided names refuses
+// every call with FAILED_PRECONDITION, and one whose names are reached on
+// a port other than 443 refuses CreateDomain the same way: a customer
+// domain is a 443 feature.
+service DomainService {
+  // CreateDomain adds a domain for an http channel of a service and
+  // returns it with the records to set. Only a name below a registered
+  // domain is taken (shop.example.com, not example.com), and no wildcard.
+  // A name the workspace already has is ALREADY_EXISTS; past the plan's
+  // domains.max, RESOURCE_EXHAUSTED.
+  rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+  }
+
+  // GetDomain returns one domain.
+  rpc GetDomain(GetDomainRequest) returns (GetDomainResponse) {
+    option (toshi.permission) = "services.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // ListDomains returns a service's domains, ordered by name.
+  //
+  // A page holds 100 domains when page_size is zero, and 1000 at most.
+  rpc ListDomains(ListDomainsRequest) returns (ListDomainsResponse) {
+    option (toshi.permission) = "services.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // VerifyDomain checks the domain's records now, instead of at its next
+  // check, and returns the domain as the check left it. A retry with the
+  // same request_key returns the first call's answer.
+  rpc VerifyDomain(VerifyDomainRequest) returns (VerifyDomainResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {action: "domain.checked"};
+  }
+
+  // IssueDomain asks for a verified domain's certificate now, before its
+  // first visit, under the same checks as an order at a visit: a domain
+  // not verified is FAILED_PRECONDITION. A domain with a certificate, or
+  // one being ordered, is returned as it is. A retry with the same
+  // request_key returns the first call's answer.
+  rpc IssueDomain(IssueDomainRequest) returns (IssueDomainResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {action: "domain.issue_requested"};
+  }
+
+  // DeleteDomain removes a domain: it stops serving at once, and its
+  // certificate is not renewed.
+  rpc DeleteDomain(DeleteDomainRequest) returns (DeleteDomainResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+  }
+}
+
+// DomainState is where a domain is.
+enum DomainState {
+  DOMAIN_STATE_UNSPECIFIED = 0;
+  // Its records do not check out yet, or no longer do: it does not serve.
+  DOMAIN_STATE_WAITING_FOR_RECORDS = 1;
+  // Its records check out and it has no certificate yet: one is ordered at
+  // its first visit, or by IssueDomain.
+  DOMAIN_STATE_VERIFIED = 2;
+  // Its certificate is being ordered.
+  DOMAIN_STATE_ISSUING = 3;
+  // It serves under a certificate until not_after.
+  DOMAIN_STATE_VALID = 4;
+  // An order was refused for now, by the plan's domains.orders_per_day,
+  // the deployment's budget or the certificate authority's own limits;
+  // nothing is ordered before retry_at.
+  DOMAIN_STATE_RATE_LIMITED = 5;
+  // Its certificate's renewal is failing; the certificate serves until
+  // not_after.
+  DOMAIN_STATE_RENEWAL_FAILING = 6;
+}
+
+// DomainRecord is one DNS record a domain needs at its DNS provider.
+message DomainRecord {
+  // CNAME or TXT.
+  string type = 1;
+  // The record's name.
+  string name = 2;
+  // The record's value.
+  string value = 3;
+}
+
+message Domain {
+  string id = 1;
+  // The domain, lowercase, in its ASCII form.
+  string name = 2;
+  // The service's workload id.
+  string service_id = 3;
+  // The service's http channel the domain serves, by its name in the
+  // recipe; the front channel's when the create named none.
+  string channel = 4;
+  DomainState state = 5;
+  // The CNAME record to the channel's provided name, then the TXT record
+  // with the domain's token; only the TXT record while the service's
+  // current revision gives the channel no provided name.
+  repeated DomainRecord records = 6;
+  // Unset until its records are first checked.
+  google.protobuf.Timestamp checked_at = 7;
+  // Unset until its records first check out.
+  google.protobuf.Timestamp verified_at = 8;
+  // Unset until a certificate is first ordered.
+  google.protobuf.Timestamp last_order_at = 9;
+  // When the next order may start; set only while RATE_LIMITED, or after
+  // a failed order.
+  google.protobuf.Timestamp retry_at = 10;
+  // When its certificate ends; unset without one.
+  google.protobuf.Timestamp not_after = 11;
+  // Why the last check or order failed; empty after a success.
+  string last_error = 12;
+  google.protobuf.Timestamp created_at = 13;
+}
+
+message CreateDomainRequest {
+  string project = 1;
+  string environment = 2;
+  // The service's workload id.
+  string service_id = 3;
+  // The http channel the domain serves; empty is the service's front
+  // channel, the one at the service's own name.
+  string channel = 4;
+  // The domain, in its Unicode or ASCII form.
+  string name = 5;
+}
+
+message CreateDomainResponse {
+  Domain domain = 1;
+}
+
+message GetDomainRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+}
+
+message GetDomainResponse {
+  Domain domain = 1;
+}
+
+message ListDomainsRequest {
+  string project = 1;
+  string environment = 2;
+  // The service's workload id.
+  string service_id = 3;
+  // The most domains in one page; zero lets the server choose.
+  int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
+}
+
+message ListDomainsResponse {
+  repeated Domain domains = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message VerifyDomainRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  string request_key = 4;
+}
+
+message VerifyDomainResponse {
+  Domain domain = 1;
+}
+
+message IssueDomainRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  string request_key = 4;
+}
+
+message IssueDomainResponse {
+  Domain domain = 1;
+}
+
+message DeleteDomainRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+}
+
+message DeleteDomainResponse {}
