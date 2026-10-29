@@ -1903,10 +1903,12 @@ export type SandboxSpec = Message<"toshi.workspace.v1.SandboxSpec"> & {
   maxDuration?: Duration | undefined;
 
   /**
-   * What in its workspace the sandbox uses: only the secret set
-   * of its environment. Checked at create and fixed when the sandbox
-   * starts; each Execute gets the fixed values in its command's
-   * environment.
+   * What in its workspace the sandbox uses: the secret set of its
+   * environment and the channels of its project's and environment's
+   * services. Checked at create and fixed when the sandbox starts; each
+   * Execute gets the secret set's fixed values in its command's
+   * environment, and reaches a bound http channel by the service's name,
+   * <service>.toshi, at the channel's port.
    *
    * @generated from field: repeated toshi.workspace.v1.Binding bindings = 3;
    */
@@ -2032,10 +2034,12 @@ export type SandboxSpecJson = {
   maxDuration?: DurationJson;
 
   /**
-   * What in its workspace the sandbox uses: only the secret set
-   * of its environment. Checked at create and fixed when the sandbox
-   * starts; each Execute gets the fixed values in its command's
-   * environment.
+   * What in its workspace the sandbox uses: the secret set of its
+   * environment and the channels of its project's and environment's
+   * services. Checked at create and fixed when the sandbox starts; each
+   * Execute gets the secret set's fixed values in its command's
+   * environment, and reaches a bound http channel by the service's name,
+   * <service>.toshi, at the channel's port.
    *
    * @generated from field: repeated toshi.workspace.v1.Binding bindings = 3;
    */
@@ -2291,8 +2295,8 @@ export type ServiceSpec = Message<"toshi.workspace.v1.ServiceSpec"> & {
   stateVolume?: StateVolumeSpec | undefined;
 
   /**
-   * Create only: the service's bindings, secret sets only. Answers leave
-   * them empty.
+   * Create only: the service's bindings, a secret set or its project's
+   * and environment's services' channels. Answers leave them empty.
    *
    * @generated from field: repeated toshi.workspace.v1.Binding bindings = 8;
    */
@@ -2396,8 +2400,8 @@ export type ServiceSpecJson = {
   stateVolume?: StateVolumeSpecJson;
 
   /**
-   * Create only: the service's bindings, secret sets only. Answers leave
-   * them empty.
+   * Create only: the service's bindings, a secret set or its project's
+   * and environment's services' channels. Answers leave them empty.
    *
    * @generated from field: repeated toshi.workspace.v1.Binding bindings = 8;
    */

@@ -2692,10 +2692,12 @@ type SandboxSpec struct {
 	// cannot be longer than the plan's cap. Its owner can raise it while the
 	// sandbox runs (UpdateSandbox).
 	MaxDuration *durationpb.Duration `protobuf:"bytes,2,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
-	// What in its workspace the sandbox uses: only the secret set
-	// of its environment. Checked at create and fixed when the sandbox
-	// starts; each Execute gets the fixed values in its command's
-	// environment.
+	// What in its workspace the sandbox uses: the secret set of its
+	// environment and the channels of its project's and environment's
+	// services. Checked at create and fixed when the sandbox starts; each
+	// Execute gets the secret set's fixed values in its command's
+	// environment, and reaches a bound http channel by the service's name,
+	// <service>.toshi, at the channel's port.
 	Bindings []*Binding `protobuf:"bytes,3,rep,name=bindings,proto3" json:"bindings,omitempty"`
 	// Create only: the id of a state volume of the sandbox's project to
 	// attach to it, which it mounts when it starts. A volume of another
@@ -2968,8 +2970,8 @@ type ServiceSpec struct {
 	// Create only: a state volume made with the service. Answers leave it
 	// unset.
 	StateVolume *StateVolumeSpec `protobuf:"bytes,7,opt,name=state_volume,json=stateVolume,proto3" json:"state_volume,omitempty"`
-	// Create only: the service's bindings, secret sets only. Answers leave
-	// them empty.
+	// Create only: the service's bindings, a secret set or its project's
+	// and environment's services' channels. Answers leave them empty.
 	Bindings []*Binding `protobuf:"bytes,8,rep,name=bindings,proto3" json:"bindings,omitempty"`
 	// Whether a started on-demand service is asleep: no run is live, and
 	// nothing keeps it awake. Set by the server; ignored in a request.
