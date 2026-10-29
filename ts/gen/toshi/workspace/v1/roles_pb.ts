@@ -2030,7 +2030,10 @@ export const RoleService: GenService<{
    * or on one project or environment. The role is a built-in role's ID or
    * one of the workspace's. A grant the subject already has fails with
    * ALREADY_EXISTS; an unknown role, project or environment, or a token
-   * that is not the workspace's or is revoked, with NOT_FOUND.
+   * that is not the workspace's or is revoked, with NOT_FOUND. A person
+   * who is not a member of the workspace fails with FAILED_PRECONDITION
+   * and a google.rpc.ErrorInfo detail with the reason PERSON_NOT_MEMBER,
+   * naming the person under the key "person": roles are given to members.
    *
    * @generated from rpc toshi.workspace.v1.RoleService.GrantRole
    */
