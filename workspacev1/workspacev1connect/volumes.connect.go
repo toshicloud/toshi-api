@@ -36,6 +36,8 @@ const (
 	// VolumeServiceListVolumesProcedure is the fully-qualified name of the VolumeService's ListVolumes
 	// RPC.
 	VolumeServiceListVolumesProcedure = "/toshi.workspace.v1.VolumeService/ListVolumes"
+	// VolumeServiceGetVolumeProcedure is the fully-qualified name of the VolumeService's GetVolume RPC.
+	VolumeServiceGetVolumeProcedure = "/toshi.workspace.v1.VolumeService/GetVolume"
 	// VolumeServiceAttachVolumeProcedure is the fully-qualified name of the VolumeService's
 	// AttachVolume RPC.
 	VolumeServiceAttachVolumeProcedure = "/toshi.workspace.v1.VolumeService/AttachVolume"
@@ -57,6 +59,8 @@ type VolumeServiceClient interface {
 	//
 	// A page holds 100 volumes when page_size is zero, and 1000 at most.
 	ListVolumes(context.Context, *connect.Request[workspacev1.ListVolumesRequest]) (*connect.Response[workspacev1.ListVolumesResponse], error)
+	// GetVolume returns one of the project's volumes that is not deleted.
+	GetVolume(context.Context, *connect.Request[workspacev1.GetVolumeRequest]) (*connect.Response[workspacev1.GetVolumeResponse], error)
 	// AttachVolume attaches a state volume to a service or sandbox: the
 	// service's next run mounts it, and a sandbox mounts it when it starts.
 	// A workload has at most one volume, and a volume at most one workload.
@@ -109,6 +113,12 @@ func NewVolumeServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(volumeServiceMethods.ByName("ListVolumes")),
 			connect.WithClientOptions(opts...),
 		),
+		getVolume: connect.NewClient[workspacev1.GetVolumeRequest, workspacev1.GetVolumeResponse](
+			httpClient,
+			baseURL+VolumeServiceGetVolumeProcedure,
+			connect.WithSchema(volumeServiceMethods.ByName("GetVolume")),
+			connect.WithClientOptions(opts...),
+		),
 		attachVolume: connect.NewClient[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse](
 			httpClient,
 			baseURL+VolumeServiceAttachVolumeProcedure,
@@ -139,6 +149,7 @@ func NewVolumeServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 // volumeServiceClient implements VolumeServiceClient.
 type volumeServiceClient struct {
 	listVolumes        *connect.Client[workspacev1.ListVolumesRequest, workspacev1.ListVolumesResponse]
+	getVolume          *connect.Client[workspacev1.GetVolumeRequest, workspacev1.GetVolumeResponse]
 	attachVolume       *connect.Client[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse]
 	detachVolume       *connect.Client[workspacev1.DetachVolumeRequest, workspacev1.DetachVolumeResponse]
 	listVolumeVersions *connect.Client[workspacev1.ListVolumeVersionsRequest, workspacev1.ListVolumeVersionsResponse]
@@ -148,6 +159,11 @@ type volumeServiceClient struct {
 // ListVolumes calls toshi.workspace.v1.VolumeService.ListVolumes.
 func (c *volumeServiceClient) ListVolumes(ctx context.Context, req *connect.Request[workspacev1.ListVolumesRequest]) (*connect.Response[workspacev1.ListVolumesResponse], error) {
 	return c.listVolumes.CallUnary(ctx, req)
+}
+
+// GetVolume calls toshi.workspace.v1.VolumeService.GetVolume.
+func (c *volumeServiceClient) GetVolume(ctx context.Context, req *connect.Request[workspacev1.GetVolumeRequest]) (*connect.Response[workspacev1.GetVolumeResponse], error) {
+	return c.getVolume.CallUnary(ctx, req)
 }
 
 // AttachVolume calls toshi.workspace.v1.VolumeService.AttachVolume.
@@ -177,6 +193,8 @@ type VolumeServiceHandler interface {
 	//
 	// A page holds 100 volumes when page_size is zero, and 1000 at most.
 	ListVolumes(context.Context, *connect.Request[workspacev1.ListVolumesRequest]) (*connect.Response[workspacev1.ListVolumesResponse], error)
+	// GetVolume returns one of the project's volumes that is not deleted.
+	GetVolume(context.Context, *connect.Request[workspacev1.GetVolumeRequest]) (*connect.Response[workspacev1.GetVolumeResponse], error)
 	// AttachVolume attaches a state volume to a service or sandbox: the
 	// service's next run mounts it, and a sandbox mounts it when it starts.
 	// A workload has at most one volume, and a volume at most one workload.
@@ -225,6 +243,12 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(volumeServiceMethods.ByName("ListVolumes")),
 		connect.WithHandlerOptions(opts...),
 	)
+	volumeServiceGetVolumeHandler := connect.NewUnaryHandler(
+		VolumeServiceGetVolumeProcedure,
+		svc.GetVolume,
+		connect.WithSchema(volumeServiceMethods.ByName("GetVolume")),
+		connect.WithHandlerOptions(opts...),
+	)
 	volumeServiceAttachVolumeHandler := connect.NewUnaryHandler(
 		VolumeServiceAttachVolumeProcedure,
 		svc.AttachVolume,
@@ -253,6 +277,8 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 		switch r.URL.Path {
 		case VolumeServiceListVolumesProcedure:
 			volumeServiceListVolumesHandler.ServeHTTP(w, r)
+		case VolumeServiceGetVolumeProcedure:
+			volumeServiceGetVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceAttachVolumeProcedure:
 			volumeServiceAttachVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceDetachVolumeProcedure:
@@ -272,6 +298,10 @@ type UnimplementedVolumeServiceHandler struct{}
 
 func (UnimplementedVolumeServiceHandler) ListVolumes(context.Context, *connect.Request[workspacev1.ListVolumesRequest]) (*connect.Response[workspacev1.ListVolumesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.ListVolumes is not implemented"))
+}
+
+func (UnimplementedVolumeServiceHandler) GetVolume(context.Context, *connect.Request[workspacev1.GetVolumeRequest]) (*connect.Response[workspacev1.GetVolumeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.GetVolume is not implemented"))
 }
 
 func (UnimplementedVolumeServiceHandler) AttachVolume(context.Context, *connect.Request[workspacev1.AttachVolumeRequest]) (*connect.Response[workspacev1.AttachVolumeResponse], error) {

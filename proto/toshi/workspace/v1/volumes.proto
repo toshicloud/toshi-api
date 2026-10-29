@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package toshi.workspace.v1;
 
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -30,6 +31,12 @@ service VolumeService {
   //
   // A page holds 100 volumes when page_size is zero, and 1000 at most.
   rpc ListVolumes(ListVolumesRequest) returns (ListVolumesResponse) {
+    option (toshi.permission) = "volumes.read";
+    option (toshi.scope) = "project";
+  }
+
+  // GetVolume returns one of the project's volumes that is not deleted.
+  rpc GetVolume(GetVolumeRequest) returns (GetVolumeResponse) {
     option (toshi.permission) = "volumes.read";
     option (toshi.scope) = "project";
   }
@@ -124,6 +131,21 @@ message Volume {
   // only copy was removed, and no run mounts it again. Unset while it is
   // not lost.
   google.protobuf.Timestamp lost_time = 11;
+  // What its newest version's data can be trusted for; unspecified when it
+  // has none.
+  VolumeConsistency latest_version_consistency = 12;
+  // How often a service that mounts it snapshots it while the service's
+  // VM runs: its workspace's interval. Unset for a volume that is not a
+  // state volume, and when the workspace takes no snapshots or saves no
+  // versions.
+  google.protobuf.Duration snapshot_interval = 13;
+  // Why its newest failed save or snapshot saved no version: a pre_save
+  // hook that failed, or a copy its host could not take or upload. Empty
+  // when none failed. A later version does not clear it: compare
+  // last_save_failure_time with latest_version_time.
+  string last_save_failure = 14;
+  // When that save or snapshot failed; unset when none failed.
+  google.protobuf.Timestamp last_save_failure_time = 15;
 }
 
 // VolumeVersion is a saved copy of a state volume's data.
@@ -179,6 +201,15 @@ message ListVolumesResponse {
   repeated Volume volumes = 1;
   // Empty on the last page.
   string next_page_token = 2;
+}
+
+message GetVolumeRequest {
+  string project = 1;
+  string volume_id = 2;
+}
+
+message GetVolumeResponse {
+  Volume volume = 1;
 }
 
 message AttachVolumeRequest {
