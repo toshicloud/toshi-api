@@ -76,6 +76,60 @@ func (TokenKind) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{0}
 }
 
+// TokenExpiryReason says why a token expires when it does.
+type TokenExpiryReason int32
+
+const (
+	// The token does not expire.
+	TokenExpiryReason_TOKEN_EXPIRY_REASON_UNSPECIFIED TokenExpiryReason = 0
+	// The token expires when it was made, rolled or updated to.
+	TokenExpiryReason_TOKEN_EXPIRY_REASON_SET TokenExpiryReason = 1
+	// The token expires 30 days after its creator left the workspace, sooner
+	// than the expiry it was given.
+	TokenExpiryReason_TOKEN_EXPIRY_REASON_CREATOR_LEFT TokenExpiryReason = 2
+)
+
+// Enum value maps for TokenExpiryReason.
+var (
+	TokenExpiryReason_name = map[int32]string{
+		0: "TOKEN_EXPIRY_REASON_UNSPECIFIED",
+		1: "TOKEN_EXPIRY_REASON_SET",
+		2: "TOKEN_EXPIRY_REASON_CREATOR_LEFT",
+	}
+	TokenExpiryReason_value = map[string]int32{
+		"TOKEN_EXPIRY_REASON_UNSPECIFIED":  0,
+		"TOKEN_EXPIRY_REASON_SET":          1,
+		"TOKEN_EXPIRY_REASON_CREATOR_LEFT": 2,
+	}
+)
+
+func (x TokenExpiryReason) Enum() *TokenExpiryReason {
+	p := new(TokenExpiryReason)
+	*p = x
+	return p
+}
+
+func (x TokenExpiryReason) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TokenExpiryReason) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_tokens_proto_enumTypes[1].Descriptor()
+}
+
+func (TokenExpiryReason) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_tokens_proto_enumTypes[1]
+}
+
+func (x TokenExpiryReason) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TokenExpiryReason.Descriptor instead.
+func (TokenExpiryReason) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_tokens_proto_rawDescGZIP(), []int{1}
+}
+
 // Token is one of the workspace's tokens, without its value.
 type Token struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -85,7 +139,9 @@ type Token struct {
 	// "tenant" for an enrollment token, "session" for an API token.
 	Source    string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	// Unset when the token does not expire.
+	// When the token stops working: the expiry it was given, or 30 days
+	// after creator_left_at when that is sooner (expiry_reason). Unset when
+	// the token does not expire.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// Unset when the token is not revoked.
 	RevokedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
@@ -111,7 +167,13 @@ type Token struct {
 	CreatedBy *Subject `protobuf:"bytes,13,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	// When the token was last accepted for a call, at most a minute out of
 	// date; unset when it never was.
-	LastUsed      *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=last_used,json=lastUsed,proto3" json:"last_used,omitempty"`
+	LastUsed *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=last_used,json=lastUsed,proto3" json:"last_used,omitempty"`
+	// When the person who made the token, or made the token that made it,
+	// stopped being a member of the workspace; unset while they are one, and
+	// once an Owner re-owns the token (UpdateToken).
+	CreatorLeftAt *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=creator_left_at,json=creatorLeftAt,proto3" json:"creator_left_at,omitempty"`
+	// Why expires_at is what it is.
+	ExpiryReason  TokenExpiryReason `protobuf:"varint,16,opt,name=expiry_reason,json=expiryReason,proto3,enum=toshi.workspace.v1.TokenExpiryReason" json:"expiry_reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -242,6 +304,20 @@ func (x *Token) GetLastUsed() *timestamppb.Timestamp {
 		return x.LastUsed
 	}
 	return nil
+}
+
+func (x *Token) GetCreatorLeftAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatorLeftAt
+	}
+	return nil
+}
+
+func (x *Token) GetExpiryReason() TokenExpiryReason {
+	if x != nil {
+		return x.ExpiryReason
+	}
+	return TokenExpiryReason_TOKEN_EXPIRY_REASON_UNSPECIFIED
 }
 
 // ClientRanges are the client addresses an API token is accepted from,
@@ -789,7 +865,8 @@ type UpdateTokenRequest struct {
 	// Carries the new values of the fields update_mask names. An unset
 	// not_before or client_ranges clears it; expires_at must be set.
 	Token *Token `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
-	// One or more of name, expires_at, not_before and client_ranges.
+	// One or more of name, expires_at, not_before, client_ranges and
+	// created_by.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -895,7 +972,7 @@ var File_toshi_workspace_v1_tokens_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\n" +
-	"\x1ftoshi/workspace/v1/tokens.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1etoshi/workspace/v1/roles.proto\"\xf2\x04\n" +
+	"\x1ftoshi/workspace/v1/tokens.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1etoshi/workspace/v1/roles.proto\"\x82\x06\n" +
 	"\x05Token\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x121\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x1d.toshi.workspace.v1.TokenKindR\x04kind\x12\x16\n" +
@@ -916,7 +993,9 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\rclient_ranges\x18\f \x01(\v2 .toshi.workspace.v1.ClientRangesR\fclientRanges\x12:\n" +
 	"\n" +
 	"created_by\x18\r \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedBy\x127\n" +
-	"\tlast_used\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\blastUsed\"5\n" +
+	"\tlast_used\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\blastUsed\x12B\n" +
+	"\x0fcreator_left_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\rcreatorLeftAt\x12J\n" +
+	"\rexpiry_reason\x18\x10 \x01(\x0e2%.toshi.workspace.v1.TokenExpiryReasonR\fexpiryReason\"5\n" +
 	"\fClientRanges\x12\x0e\n" +
 	"\x02in\x18\x01 \x03(\tR\x02in\x12\x15\n" +
 	"\x06not_in\x18\x02 \x03(\tR\x05notIn\"\x82\x01\n" +
@@ -961,7 +1040,11 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\tTokenKind\x12\x1a\n" +
 	"\x16TOKEN_KIND_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15TOKEN_KIND_ENROLLMENT\x10\x02\x12\x18\n" +
-	"\x14TOKEN_KIND_WORKSPACE\x10\x032\xa8\x05\n" +
+	"\x14TOKEN_KIND_WORKSPACE\x10\x03*{\n" +
+	"\x11TokenExpiryReason\x12#\n" +
+	"\x1fTOKEN_EXPIRY_REASON_UNSPECIFIED\x10\x00\x12\x1b\n" +
+	"\x17TOKEN_EXPIRY_REASON_SET\x10\x01\x12$\n" +
+	" TOKEN_EXPIRY_REASON_CREATOR_LEFT\x10\x022\xa8\x05\n" +
 	"\fTokenService\x12l\n" +
 	"\n" +
 	"ListTokens\x12%.toshi.workspace.v1.ListTokensRequest\x1a&.toshi.workspace.v1.ListTokensResponse\"\x0f\xc2\xf3\x18\vtokens.read\x12\xab\x01\n" +
@@ -984,61 +1067,64 @@ func file_toshi_workspace_v1_tokens_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_tokens_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_tokens_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_toshi_workspace_v1_tokens_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_toshi_workspace_v1_tokens_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_toshi_workspace_v1_tokens_proto_goTypes = []any{
 	(TokenKind)(0),                       // 0: toshi.workspace.v1.TokenKind
-	(*Token)(nil),                        // 1: toshi.workspace.v1.Token
-	(*ClientRanges)(nil),                 // 2: toshi.workspace.v1.ClientRanges
-	(*ListTokensRequest)(nil),            // 3: toshi.workspace.v1.ListTokensRequest
-	(*ListTokensResponse)(nil),           // 4: toshi.workspace.v1.ListTokensResponse
-	(*CreateWorkspaceTokenRequest)(nil),  // 5: toshi.workspace.v1.CreateWorkspaceTokenRequest
-	(*CreateWorkspaceTokenResponse)(nil), // 6: toshi.workspace.v1.CreateWorkspaceTokenResponse
-	(*RevokeTokenRequest)(nil),           // 7: toshi.workspace.v1.RevokeTokenRequest
-	(*RevokeTokenResponse)(nil),          // 8: toshi.workspace.v1.RevokeTokenResponse
-	(*RollWorkspaceTokenRequest)(nil),    // 9: toshi.workspace.v1.RollWorkspaceTokenRequest
-	(*RollWorkspaceTokenResponse)(nil),   // 10: toshi.workspace.v1.RollWorkspaceTokenResponse
-	(*UpdateTokenRequest)(nil),           // 11: toshi.workspace.v1.UpdateTokenRequest
-	(*UpdateTokenResponse)(nil),          // 12: toshi.workspace.v1.UpdateTokenResponse
-	(*timestamppb.Timestamp)(nil),        // 13: google.protobuf.Timestamp
-	(*Subject)(nil),                      // 14: toshi.workspace.v1.Subject
-	(*fieldmaskpb.FieldMask)(nil),        // 15: google.protobuf.FieldMask
+	(TokenExpiryReason)(0),               // 1: toshi.workspace.v1.TokenExpiryReason
+	(*Token)(nil),                        // 2: toshi.workspace.v1.Token
+	(*ClientRanges)(nil),                 // 3: toshi.workspace.v1.ClientRanges
+	(*ListTokensRequest)(nil),            // 4: toshi.workspace.v1.ListTokensRequest
+	(*ListTokensResponse)(nil),           // 5: toshi.workspace.v1.ListTokensResponse
+	(*CreateWorkspaceTokenRequest)(nil),  // 6: toshi.workspace.v1.CreateWorkspaceTokenRequest
+	(*CreateWorkspaceTokenResponse)(nil), // 7: toshi.workspace.v1.CreateWorkspaceTokenResponse
+	(*RevokeTokenRequest)(nil),           // 8: toshi.workspace.v1.RevokeTokenRequest
+	(*RevokeTokenResponse)(nil),          // 9: toshi.workspace.v1.RevokeTokenResponse
+	(*RollWorkspaceTokenRequest)(nil),    // 10: toshi.workspace.v1.RollWorkspaceTokenRequest
+	(*RollWorkspaceTokenResponse)(nil),   // 11: toshi.workspace.v1.RollWorkspaceTokenResponse
+	(*UpdateTokenRequest)(nil),           // 12: toshi.workspace.v1.UpdateTokenRequest
+	(*UpdateTokenResponse)(nil),          // 13: toshi.workspace.v1.UpdateTokenResponse
+	(*timestamppb.Timestamp)(nil),        // 14: google.protobuf.Timestamp
+	(*Subject)(nil),                      // 15: toshi.workspace.v1.Subject
+	(*fieldmaskpb.FieldMask)(nil),        // 16: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_tokens_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Token.kind:type_name -> toshi.workspace.v1.TokenKind
-	13, // 1: toshi.workspace.v1.Token.created_at:type_name -> google.protobuf.Timestamp
-	13, // 2: toshi.workspace.v1.Token.expires_at:type_name -> google.protobuf.Timestamp
-	13, // 3: toshi.workspace.v1.Token.revoked_at:type_name -> google.protobuf.Timestamp
-	13, // 4: toshi.workspace.v1.Token.not_before:type_name -> google.protobuf.Timestamp
-	2,  // 5: toshi.workspace.v1.Token.client_ranges:type_name -> toshi.workspace.v1.ClientRanges
-	14, // 6: toshi.workspace.v1.Token.created_by:type_name -> toshi.workspace.v1.Subject
-	13, // 7: toshi.workspace.v1.Token.last_used:type_name -> google.protobuf.Timestamp
-	0,  // 8: toshi.workspace.v1.ListTokensRequest.kind:type_name -> toshi.workspace.v1.TokenKind
-	1,  // 9: toshi.workspace.v1.ListTokensResponse.tokens:type_name -> toshi.workspace.v1.Token
-	13, // 10: toshi.workspace.v1.CreateWorkspaceTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
-	13, // 11: toshi.workspace.v1.CreateWorkspaceTokenRequest.not_before:type_name -> google.protobuf.Timestamp
-	2,  // 12: toshi.workspace.v1.CreateWorkspaceTokenRequest.client_ranges:type_name -> toshi.workspace.v1.ClientRanges
-	1,  // 13: toshi.workspace.v1.CreateWorkspaceTokenResponse.token:type_name -> toshi.workspace.v1.Token
-	1,  // 14: toshi.workspace.v1.RevokeTokenResponse.token:type_name -> toshi.workspace.v1.Token
-	1,  // 15: toshi.workspace.v1.RollWorkspaceTokenResponse.token:type_name -> toshi.workspace.v1.Token
-	1,  // 16: toshi.workspace.v1.UpdateTokenRequest.token:type_name -> toshi.workspace.v1.Token
-	15, // 17: toshi.workspace.v1.UpdateTokenRequest.update_mask:type_name -> google.protobuf.FieldMask
-	1,  // 18: toshi.workspace.v1.UpdateTokenResponse.token:type_name -> toshi.workspace.v1.Token
-	3,  // 19: toshi.workspace.v1.TokenService.ListTokens:input_type -> toshi.workspace.v1.ListTokensRequest
-	5,  // 20: toshi.workspace.v1.TokenService.CreateWorkspaceToken:input_type -> toshi.workspace.v1.CreateWorkspaceTokenRequest
-	7,  // 21: toshi.workspace.v1.TokenService.RevokeToken:input_type -> toshi.workspace.v1.RevokeTokenRequest
-	9,  // 22: toshi.workspace.v1.TokenService.RollWorkspaceToken:input_type -> toshi.workspace.v1.RollWorkspaceTokenRequest
-	11, // 23: toshi.workspace.v1.TokenService.UpdateToken:input_type -> toshi.workspace.v1.UpdateTokenRequest
-	4,  // 24: toshi.workspace.v1.TokenService.ListTokens:output_type -> toshi.workspace.v1.ListTokensResponse
-	6,  // 25: toshi.workspace.v1.TokenService.CreateWorkspaceToken:output_type -> toshi.workspace.v1.CreateWorkspaceTokenResponse
-	8,  // 26: toshi.workspace.v1.TokenService.RevokeToken:output_type -> toshi.workspace.v1.RevokeTokenResponse
-	10, // 27: toshi.workspace.v1.TokenService.RollWorkspaceToken:output_type -> toshi.workspace.v1.RollWorkspaceTokenResponse
-	12, // 28: toshi.workspace.v1.TokenService.UpdateToken:output_type -> toshi.workspace.v1.UpdateTokenResponse
-	24, // [24:29] is the sub-list for method output_type
-	19, // [19:24] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	14, // 1: toshi.workspace.v1.Token.created_at:type_name -> google.protobuf.Timestamp
+	14, // 2: toshi.workspace.v1.Token.expires_at:type_name -> google.protobuf.Timestamp
+	14, // 3: toshi.workspace.v1.Token.revoked_at:type_name -> google.protobuf.Timestamp
+	14, // 4: toshi.workspace.v1.Token.not_before:type_name -> google.protobuf.Timestamp
+	3,  // 5: toshi.workspace.v1.Token.client_ranges:type_name -> toshi.workspace.v1.ClientRanges
+	15, // 6: toshi.workspace.v1.Token.created_by:type_name -> toshi.workspace.v1.Subject
+	14, // 7: toshi.workspace.v1.Token.last_used:type_name -> google.protobuf.Timestamp
+	14, // 8: toshi.workspace.v1.Token.creator_left_at:type_name -> google.protobuf.Timestamp
+	1,  // 9: toshi.workspace.v1.Token.expiry_reason:type_name -> toshi.workspace.v1.TokenExpiryReason
+	0,  // 10: toshi.workspace.v1.ListTokensRequest.kind:type_name -> toshi.workspace.v1.TokenKind
+	2,  // 11: toshi.workspace.v1.ListTokensResponse.tokens:type_name -> toshi.workspace.v1.Token
+	14, // 12: toshi.workspace.v1.CreateWorkspaceTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	14, // 13: toshi.workspace.v1.CreateWorkspaceTokenRequest.not_before:type_name -> google.protobuf.Timestamp
+	3,  // 14: toshi.workspace.v1.CreateWorkspaceTokenRequest.client_ranges:type_name -> toshi.workspace.v1.ClientRanges
+	2,  // 15: toshi.workspace.v1.CreateWorkspaceTokenResponse.token:type_name -> toshi.workspace.v1.Token
+	2,  // 16: toshi.workspace.v1.RevokeTokenResponse.token:type_name -> toshi.workspace.v1.Token
+	2,  // 17: toshi.workspace.v1.RollWorkspaceTokenResponse.token:type_name -> toshi.workspace.v1.Token
+	2,  // 18: toshi.workspace.v1.UpdateTokenRequest.token:type_name -> toshi.workspace.v1.Token
+	16, // 19: toshi.workspace.v1.UpdateTokenRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 20: toshi.workspace.v1.UpdateTokenResponse.token:type_name -> toshi.workspace.v1.Token
+	4,  // 21: toshi.workspace.v1.TokenService.ListTokens:input_type -> toshi.workspace.v1.ListTokensRequest
+	6,  // 22: toshi.workspace.v1.TokenService.CreateWorkspaceToken:input_type -> toshi.workspace.v1.CreateWorkspaceTokenRequest
+	8,  // 23: toshi.workspace.v1.TokenService.RevokeToken:input_type -> toshi.workspace.v1.RevokeTokenRequest
+	10, // 24: toshi.workspace.v1.TokenService.RollWorkspaceToken:input_type -> toshi.workspace.v1.RollWorkspaceTokenRequest
+	12, // 25: toshi.workspace.v1.TokenService.UpdateToken:input_type -> toshi.workspace.v1.UpdateTokenRequest
+	5,  // 26: toshi.workspace.v1.TokenService.ListTokens:output_type -> toshi.workspace.v1.ListTokensResponse
+	7,  // 27: toshi.workspace.v1.TokenService.CreateWorkspaceToken:output_type -> toshi.workspace.v1.CreateWorkspaceTokenResponse
+	9,  // 28: toshi.workspace.v1.TokenService.RevokeToken:output_type -> toshi.workspace.v1.RevokeTokenResponse
+	11, // 29: toshi.workspace.v1.TokenService.RollWorkspaceToken:output_type -> toshi.workspace.v1.RollWorkspaceTokenResponse
+	13, // 30: toshi.workspace.v1.TokenService.UpdateToken:output_type -> toshi.workspace.v1.UpdateTokenResponse
+	26, // [26:31] is the sub-list for method output_type
+	21, // [21:26] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_tokens_proto_init() }
@@ -1052,7 +1138,7 @@ func file_toshi_workspace_v1_tokens_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_tokens_proto_rawDesc), len(file_toshi_workspace_v1_tokens_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,

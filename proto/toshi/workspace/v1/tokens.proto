@@ -67,6 +67,14 @@ service TokenService {
   // as for RollWorkspaceToken. An enrollment token fails with
   // INVALID_ARGUMENT; a token of another workspace, and an unknown ID,
   // with NOT_FOUND; a revoked token with FAILED_PRECONDITION.
+  //
+  // created_by re-owns the token: the caller becomes its creator, and the
+  // token, with the tokens it made, no longer runs out because its
+  // creator left (creator_left_at). The new creator must be the caller,
+  // or the call fails with INVALID_ARGUMENT; the caller needs the Owner
+  // role, and must hold every permission of the token's role where the
+  // token acts, or it fails with PERMISSION_DENIED; an expired token
+  // fails with FAILED_PRECONDITION.
   rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse) {
     option (toshi.permission) = "tokens.write";
   }
@@ -89,7 +97,9 @@ message Token {
   // "tenant" for an enrollment token, "session" for an API token.
   string source = 3;
   google.protobuf.Timestamp created_at = 4;
-  // Unset when the token does not expire.
+  // When the token stops working: the expiry it was given, or 30 days
+  // after creator_left_at when that is sooner (expiry_reason). Unset when
+  // the token does not expire.
   google.protobuf.Timestamp expires_at = 5;
   // Unset when the token is not revoked.
   google.protobuf.Timestamp revoked_at = 6;
@@ -116,6 +126,23 @@ message Token {
   // When the token was last accepted for a call, at most a minute out of
   // date; unset when it never was.
   google.protobuf.Timestamp last_used = 14;
+  // When the person who made the token, or made the token that made it,
+  // stopped being a member of the workspace; unset while they are one, and
+  // once an Owner re-owns the token (UpdateToken).
+  google.protobuf.Timestamp creator_left_at = 15;
+  // Why expires_at is what it is.
+  TokenExpiryReason expiry_reason = 16;
+}
+
+// TokenExpiryReason says why a token expires when it does.
+enum TokenExpiryReason {
+  // The token does not expire.
+  TOKEN_EXPIRY_REASON_UNSPECIFIED = 0;
+  // The token expires when it was made, rolled or updated to.
+  TOKEN_EXPIRY_REASON_SET = 1;
+  // The token expires 30 days after its creator left the workspace, sooner
+  // than the expiry it was given.
+  TOKEN_EXPIRY_REASON_CREATOR_LEFT = 2;
 }
 
 // ClientRanges are the client addresses an API token is accepted from,
@@ -211,7 +238,8 @@ message UpdateTokenRequest {
   // Carries the new values of the fields update_mask names. An unset
   // not_before or client_ranges clears it; expires_at must be set.
   Token token = 2;
-  // One or more of name, expires_at, not_before and client_ranges.
+  // One or more of name, expires_at, not_before, client_ranges and
+  // created_by.
   google.protobuf.FieldMask update_mask = 3;
 }
 

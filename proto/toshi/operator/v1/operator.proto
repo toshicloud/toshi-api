@@ -2242,7 +2242,9 @@ message Token {
   // from a dashboard session.
   string source = 3;
   google.protobuf.Timestamp created_at = 4;
-  // Unset when the token does not expire.
+  // When the token stops working: the expiry it was given, or 30 days
+  // after creator_left_at when that is sooner (expiry_reason). Unset when
+  // the token does not expire.
   google.protobuf.Timestamp expires_at = 5;
   // Unset when the token is not revoked.
   google.protobuf.Timestamp revoked_at = 6;
@@ -2272,6 +2274,24 @@ message Token {
   // When the token was last accepted for a call, at most a minute out of
   // date; unset when it never was.
   google.protobuf.Timestamp last_used = 16;
+  // When the person who made the token, or made the token that made it,
+  // stopped being a member of its workspace; unset while they are one, and
+  // once an Owner re-owns the token.
+  google.protobuf.Timestamp creator_left_at = 17;
+  // Why expires_at is what it is.
+  TokenExpiryReason expiry_reason = 18;
+}
+
+// TokenExpiryReason says why a token expires when it does; its numbers are
+// the Workspace API's.
+enum TokenExpiryReason {
+  // The token does not expire.
+  TOKEN_EXPIRY_REASON_UNSPECIFIED = 0;
+  // The token expires when it was made, rolled or updated to.
+  TOKEN_EXPIRY_REASON_SET = 1;
+  // The token expires 30 days after its creator left the workspace, sooner
+  // than the expiry it was given.
+  TOKEN_EXPIRY_REASON_CREATOR_LEFT = 2;
 }
 
 // SubjectKind is what a Subject is; its numbers are the Workspace API's.

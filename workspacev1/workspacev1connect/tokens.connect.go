@@ -86,6 +86,14 @@ type TokenServiceClient interface {
 	// as for RollWorkspaceToken. An enrollment token fails with
 	// INVALID_ARGUMENT; a token of another workspace, and an unknown ID,
 	// with NOT_FOUND; a revoked token with FAILED_PRECONDITION.
+	//
+	// created_by re-owns the token: the caller becomes its creator, and the
+	// token, with the tokens it made, no longer runs out because its
+	// creator left (creator_left_at). The new creator must be the caller,
+	// or the call fails with INVALID_ARGUMENT; the caller needs the Owner
+	// role, and must hold every permission of the token's role where the
+	// token acts, or it fails with PERMISSION_DENIED; an expired token
+	// fails with FAILED_PRECONDITION.
 	UpdateToken(context.Context, *connect.Request[workspacev1.UpdateTokenRequest]) (*connect.Response[workspacev1.UpdateTokenResponse], error)
 }
 
@@ -204,6 +212,14 @@ type TokenServiceHandler interface {
 	// as for RollWorkspaceToken. An enrollment token fails with
 	// INVALID_ARGUMENT; a token of another workspace, and an unknown ID,
 	// with NOT_FOUND; a revoked token with FAILED_PRECONDITION.
+	//
+	// created_by re-owns the token: the caller becomes its creator, and the
+	// token, with the tokens it made, no longer runs out because its
+	// creator left (creator_left_at). The new creator must be the caller,
+	// or the call fails with INVALID_ARGUMENT; the caller needs the Owner
+	// role, and must hold every permission of the token's role where the
+	// token acts, or it fails with PERMISSION_DENIED; an expired token
+	// fails with FAILED_PRECONDITION.
 	UpdateToken(context.Context, *connect.Request[workspacev1.UpdateTokenRequest]) (*connect.Response[workspacev1.UpdateTokenResponse], error)
 }
 
