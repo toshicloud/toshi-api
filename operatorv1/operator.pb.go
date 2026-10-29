@@ -1954,8 +1954,16 @@ type Host struct {
 	KeptVms       []*KeptVM `protobuf:"bytes,29,rep,name=kept_vms,json=keptVms,proto3" json:"kept_vms,omitempty"`
 	KeptMemoryMib int64     `protobuf:"varint,30,opt,name=kept_memory_mib,json=keptMemoryMib,proto3" json:"kept_memory_mib,omitempty"`
 	KeptDiskBytes int64     `protobuf:"varint,31,opt,name=kept_disk_bytes,json=keptDiskBytes,proto3" json:"kept_disk_bytes,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Who licenses the Windows the host runs: "customer" for the workspace's
+	// own licence (no pool licence in the agent's configuration, or a cloud
+	// host in the workspace's own account), "toshi" when its agent's pools
+	// set licence = "toshi", or "cloud" for a cloud pool's host, whose
+	// instances include their licence. Empty for a host that runs no Windows.
+	// A wrong declaration is fixed in the agent's configuration. Set where
+	// cloud is set.
+	WindowsLicence string `protobuf:"bytes,32,opt,name=windows_licence,json=windowsLicence,proto3" json:"windows_licence,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Host) Reset() {
@@ -2203,6 +2211,13 @@ func (x *Host) GetKeptDiskBytes() int64 {
 		return x.KeptDiskBytes
 	}
 	return 0
+}
+
+func (x *Host) GetWindowsLicence() string {
+	if x != nil {
+		return x.WindowsLicence
+	}
+	return ""
 }
 
 // KeptVM is a VM a host keeps for a workload with keep_vm.
@@ -14096,7 +14111,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"HeldRefill\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x16\n" +
-	"\x06reason\x18\x02 \x01(\tR\x06reason\"\xcb\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"\xf4\n" +
 	"\n" +
 	"\x04Host\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
@@ -14133,7 +14148,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\akeep_vm\x18\x1c \x01(\bR\x06keepVm\x124\n" +
 	"\bkept_vms\x18\x1d \x03(\v2\x19.toshi.operator.v1.KeptVMR\akeptVms\x12&\n" +
 	"\x0fkept_memory_mib\x18\x1e \x01(\x03R\rkeptMemoryMib\x12&\n" +
-	"\x0fkept_disk_bytes\x18\x1f \x01(\x03R\rkeptDiskBytes\x1a9\n" +
+	"\x0fkept_disk_bytes\x18\x1f \x01(\x03R\rkeptDiskBytes\x12'\n" +
+	"\x0fwindows_licence\x18  \x01(\tR\x0ewindowsLicence\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa8\x02\n" +

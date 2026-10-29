@@ -905,6 +905,14 @@ message Host {
   repeated KeptVM kept_vms = 29;
   int64 kept_memory_mib = 30;
   int64 kept_disk_bytes = 31;
+  // Who licenses the Windows the host runs: "customer" for the workspace's
+  // own licence (no pool licence in the agent's configuration, or a cloud
+  // host in the workspace's own account), "toshi" when its agent's pools
+  // set licence = "toshi", or "cloud" for a cloud pool's host, whose
+  // instances include their licence. Empty for a host that runs no Windows.
+  // A wrong declaration is fixed in the agent's configuration. Set where
+  // cloud is set.
+  string windows_licence = 32;
 }
 
 // KeptVM is a VM a host keeps for a workload with keep_vm.
