@@ -429,6 +429,81 @@ func (*Grant_Sandbox) isGrant_Target() {}
 
 func (*Grant_Preview) isGrant_Target() {}
 
+// SharedAccess is what a grant gives the grantee on one sandbox.
+type SharedAccess struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant the sandbox was read through.
+	GrantId string `protobuf:"bytes,1,opt,name=grant_id,json=grantId,proto3" json:"grant_id,omitempty"`
+	// The grant's level.
+	GrantLevel GrantLevel `protobuf:"varint,2,opt,name=grant_level,json=grantLevel,proto3,enum=toshi.workspace.v1.GrantLevel" json:"grant_level,omitempty"`
+	// The level on this sandbox: the grant's, or VIEW for a sandbox with
+	// bindings or a state volume, or while the owner's workspace is
+	// suspended.
+	Level GrantLevel `protobuf:"varint,3,opt,name=level,proto3,enum=toshi.workspace.v1.GrantLevel" json:"level,omitempty"`
+	// The workspace that owns the sandbox.
+	Owner         *GrantWorkspace `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SharedAccess) Reset() {
+	*x = SharedAccess{}
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SharedAccess) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SharedAccess) ProtoMessage() {}
+
+func (x *SharedAccess) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SharedAccess.ProtoReflect.Descriptor instead.
+func (*SharedAccess) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *SharedAccess) GetGrantId() string {
+	if x != nil {
+		return x.GrantId
+	}
+	return ""
+}
+
+func (x *SharedAccess) GetGrantLevel() GrantLevel {
+	if x != nil {
+		return x.GrantLevel
+	}
+	return GrantLevel_GRANT_LEVEL_UNSPECIFIED
+}
+
+func (x *SharedAccess) GetLevel() GrantLevel {
+	if x != nil {
+		return x.Level
+	}
+	return GrantLevel_GRANT_LEVEL_UNSPECIFIED
+}
+
+func (x *SharedAccess) GetOwner() *GrantWorkspace {
+	if x != nil {
+		return x.Owner
+	}
+	return nil
+}
+
 // GrantWorkspace is one side of a grant.
 type GrantWorkspace struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -441,7 +516,7 @@ type GrantWorkspace struct {
 
 func (x *GrantWorkspace) Reset() {
 	*x = GrantWorkspace{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -453,7 +528,7 @@ func (x *GrantWorkspace) String() string {
 func (*GrantWorkspace) ProtoMessage() {}
 
 func (x *GrantWorkspace) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -466,7 +541,7 @@ func (x *GrantWorkspace) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantWorkspace.ProtoReflect.Descriptor instead.
 func (*GrantWorkspace) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GrantWorkspace) GetId() string {
@@ -494,7 +569,7 @@ type GrantEnvironmentTarget struct {
 
 func (x *GrantEnvironmentTarget) Reset() {
 	*x = GrantEnvironmentTarget{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -506,7 +581,7 @@ func (x *GrantEnvironmentTarget) String() string {
 func (*GrantEnvironmentTarget) ProtoMessage() {}
 
 func (x *GrantEnvironmentTarget) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -519,7 +594,7 @@ func (x *GrantEnvironmentTarget) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantEnvironmentTarget.ProtoReflect.Descriptor instead.
 func (*GrantEnvironmentTarget) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GrantEnvironmentTarget) GetProject() string {
@@ -549,7 +624,7 @@ type GrantSandboxTarget struct {
 
 func (x *GrantSandboxTarget) Reset() {
 	*x = GrantSandboxTarget{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -561,7 +636,7 @@ func (x *GrantSandboxTarget) String() string {
 func (*GrantSandboxTarget) ProtoMessage() {}
 
 func (x *GrantSandboxTarget) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -574,7 +649,7 @@ func (x *GrantSandboxTarget) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantSandboxTarget.ProtoReflect.Descriptor instead.
 func (*GrantSandboxTarget) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GrantSandboxTarget) GetSandboxId() string {
@@ -614,7 +689,7 @@ type GrantPreviewTarget struct {
 
 func (x *GrantPreviewTarget) Reset() {
 	*x = GrantPreviewTarget{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -626,7 +701,7 @@ func (x *GrantPreviewTarget) String() string {
 func (*GrantPreviewTarget) ProtoMessage() {}
 
 func (x *GrantPreviewTarget) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -639,7 +714,7 @@ func (x *GrantPreviewTarget) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantPreviewTarget.ProtoReflect.Descriptor instead.
 func (*GrantPreviewTarget) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GrantPreviewTarget) GetSandboxId() string {
@@ -692,7 +767,7 @@ type CreateGrantRequest struct {
 
 func (x *CreateGrantRequest) Reset() {
 	*x = CreateGrantRequest{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -704,7 +779,7 @@ func (x *CreateGrantRequest) String() string {
 func (*CreateGrantRequest) ProtoMessage() {}
 
 func (x *CreateGrantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -717,7 +792,7 @@ func (x *CreateGrantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateGrantRequest.ProtoReflect.Descriptor instead.
 func (*CreateGrantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CreateGrantRequest) GetGranteeWorkspace() string {
@@ -806,7 +881,7 @@ type CreateGrantResponse struct {
 
 func (x *CreateGrantResponse) Reset() {
 	*x = CreateGrantResponse{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -818,7 +893,7 @@ func (x *CreateGrantResponse) String() string {
 func (*CreateGrantResponse) ProtoMessage() {}
 
 func (x *CreateGrantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -831,7 +906,7 @@ func (x *CreateGrantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateGrantResponse.ProtoReflect.Descriptor instead.
 func (*CreateGrantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CreateGrantResponse) GetGrant() *Grant {
@@ -850,7 +925,7 @@ type GetGrantRequest struct {
 
 func (x *GetGrantRequest) Reset() {
 	*x = GetGrantRequest{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -862,7 +937,7 @@ func (x *GetGrantRequest) String() string {
 func (*GetGrantRequest) ProtoMessage() {}
 
 func (x *GetGrantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -875,7 +950,7 @@ func (x *GetGrantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGrantRequest.ProtoReflect.Descriptor instead.
 func (*GetGrantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetGrantRequest) GetId() string {
@@ -894,7 +969,7 @@ type GetGrantResponse struct {
 
 func (x *GetGrantResponse) Reset() {
 	*x = GetGrantResponse{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -906,7 +981,7 @@ func (x *GetGrantResponse) String() string {
 func (*GetGrantResponse) ProtoMessage() {}
 
 func (x *GetGrantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -919,7 +994,7 @@ func (x *GetGrantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGrantResponse.ProtoReflect.Descriptor instead.
 func (*GetGrantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetGrantResponse) GetGrant() *Grant {
@@ -944,7 +1019,7 @@ type ListGrantsRequest struct {
 
 func (x *ListGrantsRequest) Reset() {
 	*x = ListGrantsRequest{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -956,7 +1031,7 @@ func (x *ListGrantsRequest) String() string {
 func (*ListGrantsRequest) ProtoMessage() {}
 
 func (x *ListGrantsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -969,7 +1044,7 @@ func (x *ListGrantsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListGrantsRequest.ProtoReflect.Descriptor instead.
 func (*ListGrantsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListGrantsRequest) GetSide() GrantSide {
@@ -1011,7 +1086,7 @@ type ListGrantsResponse struct {
 
 func (x *ListGrantsResponse) Reset() {
 	*x = ListGrantsResponse{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1023,7 +1098,7 @@ func (x *ListGrantsResponse) String() string {
 func (*ListGrantsResponse) ProtoMessage() {}
 
 func (x *ListGrantsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1036,7 +1111,7 @@ func (x *ListGrantsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListGrantsResponse.ProtoReflect.Descriptor instead.
 func (*ListGrantsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListGrantsResponse) GetGrants() []*Grant {
@@ -1062,7 +1137,7 @@ type AcceptGrantRequest struct {
 
 func (x *AcceptGrantRequest) Reset() {
 	*x = AcceptGrantRequest{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1074,7 +1149,7 @@ func (x *AcceptGrantRequest) String() string {
 func (*AcceptGrantRequest) ProtoMessage() {}
 
 func (x *AcceptGrantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1087,7 +1162,7 @@ func (x *AcceptGrantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptGrantRequest.ProtoReflect.Descriptor instead.
 func (*AcceptGrantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *AcceptGrantRequest) GetId() string {
@@ -1106,7 +1181,7 @@ type AcceptGrantResponse struct {
 
 func (x *AcceptGrantResponse) Reset() {
 	*x = AcceptGrantResponse{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1118,7 +1193,7 @@ func (x *AcceptGrantResponse) String() string {
 func (*AcceptGrantResponse) ProtoMessage() {}
 
 func (x *AcceptGrantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1131,7 +1206,7 @@ func (x *AcceptGrantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptGrantResponse.ProtoReflect.Descriptor instead.
 func (*AcceptGrantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *AcceptGrantResponse) GetGrant() *Grant {
@@ -1150,7 +1225,7 @@ type DeclineGrantRequest struct {
 
 func (x *DeclineGrantRequest) Reset() {
 	*x = DeclineGrantRequest{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1162,7 +1237,7 @@ func (x *DeclineGrantRequest) String() string {
 func (*DeclineGrantRequest) ProtoMessage() {}
 
 func (x *DeclineGrantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1175,7 +1250,7 @@ func (x *DeclineGrantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeclineGrantRequest.ProtoReflect.Descriptor instead.
 func (*DeclineGrantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{13}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *DeclineGrantRequest) GetId() string {
@@ -1194,7 +1269,7 @@ type DeclineGrantResponse struct {
 
 func (x *DeclineGrantResponse) Reset() {
 	*x = DeclineGrantResponse{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1206,7 +1281,7 @@ func (x *DeclineGrantResponse) String() string {
 func (*DeclineGrantResponse) ProtoMessage() {}
 
 func (x *DeclineGrantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1219,7 +1294,7 @@ func (x *DeclineGrantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeclineGrantResponse.ProtoReflect.Descriptor instead.
 func (*DeclineGrantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{14}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *DeclineGrantResponse) GetGrant() *Grant {
@@ -1240,7 +1315,7 @@ type UpdateGrantRequest struct {
 
 func (x *UpdateGrantRequest) Reset() {
 	*x = UpdateGrantRequest{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1252,7 +1327,7 @@ func (x *UpdateGrantRequest) String() string {
 func (*UpdateGrantRequest) ProtoMessage() {}
 
 func (x *UpdateGrantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1265,7 +1340,7 @@ func (x *UpdateGrantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateGrantRequest.ProtoReflect.Descriptor instead.
 func (*UpdateGrantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{15}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *UpdateGrantRequest) GetGrant() *Grant {
@@ -1291,7 +1366,7 @@ type UpdateGrantResponse struct {
 
 func (x *UpdateGrantResponse) Reset() {
 	*x = UpdateGrantResponse{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1303,7 +1378,7 @@ func (x *UpdateGrantResponse) String() string {
 func (*UpdateGrantResponse) ProtoMessage() {}
 
 func (x *UpdateGrantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1316,7 +1391,7 @@ func (x *UpdateGrantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateGrantResponse.ProtoReflect.Descriptor instead.
 func (*UpdateGrantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{16}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *UpdateGrantResponse) GetGrant() *Grant {
@@ -1335,7 +1410,7 @@ type RevokeGrantRequest struct {
 
 func (x *RevokeGrantRequest) Reset() {
 	*x = RevokeGrantRequest{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1347,7 +1422,7 @@ func (x *RevokeGrantRequest) String() string {
 func (*RevokeGrantRequest) ProtoMessage() {}
 
 func (x *RevokeGrantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1360,7 +1435,7 @@ func (x *RevokeGrantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeGrantRequest.ProtoReflect.Descriptor instead.
 func (*RevokeGrantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RevokeGrantRequest) GetId() string {
@@ -1379,7 +1454,7 @@ type RevokeGrantResponse struct {
 
 func (x *RevokeGrantResponse) Reset() {
 	*x = RevokeGrantResponse{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1391,7 +1466,7 @@ func (x *RevokeGrantResponse) String() string {
 func (*RevokeGrantResponse) ProtoMessage() {}
 
 func (x *RevokeGrantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1404,7 +1479,7 @@ func (x *RevokeGrantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeGrantResponse.ProtoReflect.Descriptor instead.
 func (*RevokeGrantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RevokeGrantResponse) GetGrant() *Grant {
@@ -1423,7 +1498,7 @@ type LeaveGrantRequest struct {
 
 func (x *LeaveGrantRequest) Reset() {
 	*x = LeaveGrantRequest{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1435,7 +1510,7 @@ func (x *LeaveGrantRequest) String() string {
 func (*LeaveGrantRequest) ProtoMessage() {}
 
 func (x *LeaveGrantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1448,7 +1523,7 @@ func (x *LeaveGrantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LeaveGrantRequest.ProtoReflect.Descriptor instead.
 func (*LeaveGrantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{19}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *LeaveGrantRequest) GetId() string {
@@ -1467,7 +1542,7 @@ type LeaveGrantResponse struct {
 
 func (x *LeaveGrantResponse) Reset() {
 	*x = LeaveGrantResponse{}
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1479,7 +1554,7 @@ func (x *LeaveGrantResponse) String() string {
 func (*LeaveGrantResponse) ProtoMessage() {}
 
 func (x *LeaveGrantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_grants_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1492,7 +1567,7 @@ func (x *LeaveGrantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LeaveGrantResponse.ProtoReflect.Descriptor instead.
 func (*LeaveGrantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{20}
+	return file_toshi_workspace_v1_grants_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *LeaveGrantResponse) GetGrant() *Grant {
@@ -1530,7 +1605,13 @@ const file_toshi_workspace_v1_grants_proto_rawDesc = "" +
 	"expires_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x125\n" +
 	"\bended_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x12\x19\n" +
 	"\bended_by\x18\x10 \x01(\tR\aendedByB\b\n" +
-	"\x06target\"4\n" +
+	"\x06target\"\xda\x01\n" +
+	"\fSharedAccess\x12\x19\n" +
+	"\bgrant_id\x18\x01 \x01(\tR\agrantId\x12?\n" +
+	"\vgrant_level\x18\x02 \x01(\x0e2\x1e.toshi.workspace.v1.GrantLevelR\n" +
+	"grantLevel\x124\n" +
+	"\x05level\x18\x03 \x01(\x0e2\x1e.toshi.workspace.v1.GrantLevelR\x05level\x128\n" +
+	"\x05owner\x18\x04 \x01(\v2\".toshi.workspace.v1.GrantWorkspaceR\x05owner\"4\n" +
 	"\x0eGrantWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"T\n" +
@@ -1644,87 +1725,91 @@ func file_toshi_workspace_v1_grants_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_grants_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_toshi_workspace_v1_grants_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
+var file_toshi_workspace_v1_grants_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_toshi_workspace_v1_grants_proto_goTypes = []any{
 	(GrantLevel)(0),                // 0: toshi.workspace.v1.GrantLevel
 	(GrantState)(0),                // 1: toshi.workspace.v1.GrantState
 	(GrantSide)(0),                 // 2: toshi.workspace.v1.GrantSide
 	(*Grant)(nil),                  // 3: toshi.workspace.v1.Grant
-	(*GrantWorkspace)(nil),         // 4: toshi.workspace.v1.GrantWorkspace
-	(*GrantEnvironmentTarget)(nil), // 5: toshi.workspace.v1.GrantEnvironmentTarget
-	(*GrantSandboxTarget)(nil),     // 6: toshi.workspace.v1.GrantSandboxTarget
-	(*GrantPreviewTarget)(nil),     // 7: toshi.workspace.v1.GrantPreviewTarget
-	(*CreateGrantRequest)(nil),     // 8: toshi.workspace.v1.CreateGrantRequest
-	(*CreateGrantResponse)(nil),    // 9: toshi.workspace.v1.CreateGrantResponse
-	(*GetGrantRequest)(nil),        // 10: toshi.workspace.v1.GetGrantRequest
-	(*GetGrantResponse)(nil),       // 11: toshi.workspace.v1.GetGrantResponse
-	(*ListGrantsRequest)(nil),      // 12: toshi.workspace.v1.ListGrantsRequest
-	(*ListGrantsResponse)(nil),     // 13: toshi.workspace.v1.ListGrantsResponse
-	(*AcceptGrantRequest)(nil),     // 14: toshi.workspace.v1.AcceptGrantRequest
-	(*AcceptGrantResponse)(nil),    // 15: toshi.workspace.v1.AcceptGrantResponse
-	(*DeclineGrantRequest)(nil),    // 16: toshi.workspace.v1.DeclineGrantRequest
-	(*DeclineGrantResponse)(nil),   // 17: toshi.workspace.v1.DeclineGrantResponse
-	(*UpdateGrantRequest)(nil),     // 18: toshi.workspace.v1.UpdateGrantRequest
-	(*UpdateGrantResponse)(nil),    // 19: toshi.workspace.v1.UpdateGrantResponse
-	(*RevokeGrantRequest)(nil),     // 20: toshi.workspace.v1.RevokeGrantRequest
-	(*RevokeGrantResponse)(nil),    // 21: toshi.workspace.v1.RevokeGrantResponse
-	(*LeaveGrantRequest)(nil),      // 22: toshi.workspace.v1.LeaveGrantRequest
-	(*LeaveGrantResponse)(nil),     // 23: toshi.workspace.v1.LeaveGrantResponse
-	(*timestamppb.Timestamp)(nil),  // 24: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),  // 25: google.protobuf.FieldMask
+	(*SharedAccess)(nil),           // 4: toshi.workspace.v1.SharedAccess
+	(*GrantWorkspace)(nil),         // 5: toshi.workspace.v1.GrantWorkspace
+	(*GrantEnvironmentTarget)(nil), // 6: toshi.workspace.v1.GrantEnvironmentTarget
+	(*GrantSandboxTarget)(nil),     // 7: toshi.workspace.v1.GrantSandboxTarget
+	(*GrantPreviewTarget)(nil),     // 8: toshi.workspace.v1.GrantPreviewTarget
+	(*CreateGrantRequest)(nil),     // 9: toshi.workspace.v1.CreateGrantRequest
+	(*CreateGrantResponse)(nil),    // 10: toshi.workspace.v1.CreateGrantResponse
+	(*GetGrantRequest)(nil),        // 11: toshi.workspace.v1.GetGrantRequest
+	(*GetGrantResponse)(nil),       // 12: toshi.workspace.v1.GetGrantResponse
+	(*ListGrantsRequest)(nil),      // 13: toshi.workspace.v1.ListGrantsRequest
+	(*ListGrantsResponse)(nil),     // 14: toshi.workspace.v1.ListGrantsResponse
+	(*AcceptGrantRequest)(nil),     // 15: toshi.workspace.v1.AcceptGrantRequest
+	(*AcceptGrantResponse)(nil),    // 16: toshi.workspace.v1.AcceptGrantResponse
+	(*DeclineGrantRequest)(nil),    // 17: toshi.workspace.v1.DeclineGrantRequest
+	(*DeclineGrantResponse)(nil),   // 18: toshi.workspace.v1.DeclineGrantResponse
+	(*UpdateGrantRequest)(nil),     // 19: toshi.workspace.v1.UpdateGrantRequest
+	(*UpdateGrantResponse)(nil),    // 20: toshi.workspace.v1.UpdateGrantResponse
+	(*RevokeGrantRequest)(nil),     // 21: toshi.workspace.v1.RevokeGrantRequest
+	(*RevokeGrantResponse)(nil),    // 22: toshi.workspace.v1.RevokeGrantResponse
+	(*LeaveGrantRequest)(nil),      // 23: toshi.workspace.v1.LeaveGrantRequest
+	(*LeaveGrantResponse)(nil),     // 24: toshi.workspace.v1.LeaveGrantResponse
+	(*timestamppb.Timestamp)(nil),  // 25: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),  // 26: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_grants_proto_depIdxs = []int32{
-	4,  // 0: toshi.workspace.v1.Grant.owner:type_name -> toshi.workspace.v1.GrantWorkspace
-	4,  // 1: toshi.workspace.v1.Grant.grantee:type_name -> toshi.workspace.v1.GrantWorkspace
-	5,  // 2: toshi.workspace.v1.Grant.environment:type_name -> toshi.workspace.v1.GrantEnvironmentTarget
-	6,  // 3: toshi.workspace.v1.Grant.sandbox:type_name -> toshi.workspace.v1.GrantSandboxTarget
-	7,  // 4: toshi.workspace.v1.Grant.preview:type_name -> toshi.workspace.v1.GrantPreviewTarget
+	5,  // 0: toshi.workspace.v1.Grant.owner:type_name -> toshi.workspace.v1.GrantWorkspace
+	5,  // 1: toshi.workspace.v1.Grant.grantee:type_name -> toshi.workspace.v1.GrantWorkspace
+	6,  // 2: toshi.workspace.v1.Grant.environment:type_name -> toshi.workspace.v1.GrantEnvironmentTarget
+	7,  // 3: toshi.workspace.v1.Grant.sandbox:type_name -> toshi.workspace.v1.GrantSandboxTarget
+	8,  // 4: toshi.workspace.v1.Grant.preview:type_name -> toshi.workspace.v1.GrantPreviewTarget
 	0,  // 5: toshi.workspace.v1.Grant.level:type_name -> toshi.workspace.v1.GrantLevel
 	1,  // 6: toshi.workspace.v1.Grant.state:type_name -> toshi.workspace.v1.GrantState
-	24, // 7: toshi.workspace.v1.Grant.offered_at:type_name -> google.protobuf.Timestamp
-	24, // 8: toshi.workspace.v1.Grant.lapses_at:type_name -> google.protobuf.Timestamp
-	24, // 9: toshi.workspace.v1.Grant.accepted_at:type_name -> google.protobuf.Timestamp
-	24, // 10: toshi.workspace.v1.Grant.last_used_at:type_name -> google.protobuf.Timestamp
-	24, // 11: toshi.workspace.v1.Grant.expires_at:type_name -> google.protobuf.Timestamp
-	24, // 12: toshi.workspace.v1.Grant.ended_at:type_name -> google.protobuf.Timestamp
-	5,  // 13: toshi.workspace.v1.CreateGrantRequest.environment:type_name -> toshi.workspace.v1.GrantEnvironmentTarget
-	6,  // 14: toshi.workspace.v1.CreateGrantRequest.sandbox:type_name -> toshi.workspace.v1.GrantSandboxTarget
-	7,  // 15: toshi.workspace.v1.CreateGrantRequest.preview:type_name -> toshi.workspace.v1.GrantPreviewTarget
-	0,  // 16: toshi.workspace.v1.CreateGrantRequest.level:type_name -> toshi.workspace.v1.GrantLevel
-	24, // 17: toshi.workspace.v1.CreateGrantRequest.expires_at:type_name -> google.protobuf.Timestamp
-	3,  // 18: toshi.workspace.v1.CreateGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
-	3,  // 19: toshi.workspace.v1.GetGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
-	2,  // 20: toshi.workspace.v1.ListGrantsRequest.side:type_name -> toshi.workspace.v1.GrantSide
-	1,  // 21: toshi.workspace.v1.ListGrantsRequest.states:type_name -> toshi.workspace.v1.GrantState
-	3,  // 22: toshi.workspace.v1.ListGrantsResponse.grants:type_name -> toshi.workspace.v1.Grant
-	3,  // 23: toshi.workspace.v1.AcceptGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
-	3,  // 24: toshi.workspace.v1.DeclineGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
-	3,  // 25: toshi.workspace.v1.UpdateGrantRequest.grant:type_name -> toshi.workspace.v1.Grant
-	25, // 26: toshi.workspace.v1.UpdateGrantRequest.update_mask:type_name -> google.protobuf.FieldMask
-	3,  // 27: toshi.workspace.v1.UpdateGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
-	3,  // 28: toshi.workspace.v1.RevokeGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
-	3,  // 29: toshi.workspace.v1.LeaveGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
-	8,  // 30: toshi.workspace.v1.GrantService.CreateGrant:input_type -> toshi.workspace.v1.CreateGrantRequest
-	10, // 31: toshi.workspace.v1.GrantService.GetGrant:input_type -> toshi.workspace.v1.GetGrantRequest
-	12, // 32: toshi.workspace.v1.GrantService.ListGrants:input_type -> toshi.workspace.v1.ListGrantsRequest
-	14, // 33: toshi.workspace.v1.GrantService.AcceptGrant:input_type -> toshi.workspace.v1.AcceptGrantRequest
-	16, // 34: toshi.workspace.v1.GrantService.DeclineGrant:input_type -> toshi.workspace.v1.DeclineGrantRequest
-	18, // 35: toshi.workspace.v1.GrantService.UpdateGrant:input_type -> toshi.workspace.v1.UpdateGrantRequest
-	20, // 36: toshi.workspace.v1.GrantService.RevokeGrant:input_type -> toshi.workspace.v1.RevokeGrantRequest
-	22, // 37: toshi.workspace.v1.GrantService.LeaveGrant:input_type -> toshi.workspace.v1.LeaveGrantRequest
-	9,  // 38: toshi.workspace.v1.GrantService.CreateGrant:output_type -> toshi.workspace.v1.CreateGrantResponse
-	11, // 39: toshi.workspace.v1.GrantService.GetGrant:output_type -> toshi.workspace.v1.GetGrantResponse
-	13, // 40: toshi.workspace.v1.GrantService.ListGrants:output_type -> toshi.workspace.v1.ListGrantsResponse
-	15, // 41: toshi.workspace.v1.GrantService.AcceptGrant:output_type -> toshi.workspace.v1.AcceptGrantResponse
-	17, // 42: toshi.workspace.v1.GrantService.DeclineGrant:output_type -> toshi.workspace.v1.DeclineGrantResponse
-	19, // 43: toshi.workspace.v1.GrantService.UpdateGrant:output_type -> toshi.workspace.v1.UpdateGrantResponse
-	21, // 44: toshi.workspace.v1.GrantService.RevokeGrant:output_type -> toshi.workspace.v1.RevokeGrantResponse
-	23, // 45: toshi.workspace.v1.GrantService.LeaveGrant:output_type -> toshi.workspace.v1.LeaveGrantResponse
-	38, // [38:46] is the sub-list for method output_type
-	30, // [30:38] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	25, // 7: toshi.workspace.v1.Grant.offered_at:type_name -> google.protobuf.Timestamp
+	25, // 8: toshi.workspace.v1.Grant.lapses_at:type_name -> google.protobuf.Timestamp
+	25, // 9: toshi.workspace.v1.Grant.accepted_at:type_name -> google.protobuf.Timestamp
+	25, // 10: toshi.workspace.v1.Grant.last_used_at:type_name -> google.protobuf.Timestamp
+	25, // 11: toshi.workspace.v1.Grant.expires_at:type_name -> google.protobuf.Timestamp
+	25, // 12: toshi.workspace.v1.Grant.ended_at:type_name -> google.protobuf.Timestamp
+	0,  // 13: toshi.workspace.v1.SharedAccess.grant_level:type_name -> toshi.workspace.v1.GrantLevel
+	0,  // 14: toshi.workspace.v1.SharedAccess.level:type_name -> toshi.workspace.v1.GrantLevel
+	5,  // 15: toshi.workspace.v1.SharedAccess.owner:type_name -> toshi.workspace.v1.GrantWorkspace
+	6,  // 16: toshi.workspace.v1.CreateGrantRequest.environment:type_name -> toshi.workspace.v1.GrantEnvironmentTarget
+	7,  // 17: toshi.workspace.v1.CreateGrantRequest.sandbox:type_name -> toshi.workspace.v1.GrantSandboxTarget
+	8,  // 18: toshi.workspace.v1.CreateGrantRequest.preview:type_name -> toshi.workspace.v1.GrantPreviewTarget
+	0,  // 19: toshi.workspace.v1.CreateGrantRequest.level:type_name -> toshi.workspace.v1.GrantLevel
+	25, // 20: toshi.workspace.v1.CreateGrantRequest.expires_at:type_name -> google.protobuf.Timestamp
+	3,  // 21: toshi.workspace.v1.CreateGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
+	3,  // 22: toshi.workspace.v1.GetGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
+	2,  // 23: toshi.workspace.v1.ListGrantsRequest.side:type_name -> toshi.workspace.v1.GrantSide
+	1,  // 24: toshi.workspace.v1.ListGrantsRequest.states:type_name -> toshi.workspace.v1.GrantState
+	3,  // 25: toshi.workspace.v1.ListGrantsResponse.grants:type_name -> toshi.workspace.v1.Grant
+	3,  // 26: toshi.workspace.v1.AcceptGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
+	3,  // 27: toshi.workspace.v1.DeclineGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
+	3,  // 28: toshi.workspace.v1.UpdateGrantRequest.grant:type_name -> toshi.workspace.v1.Grant
+	26, // 29: toshi.workspace.v1.UpdateGrantRequest.update_mask:type_name -> google.protobuf.FieldMask
+	3,  // 30: toshi.workspace.v1.UpdateGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
+	3,  // 31: toshi.workspace.v1.RevokeGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
+	3,  // 32: toshi.workspace.v1.LeaveGrantResponse.grant:type_name -> toshi.workspace.v1.Grant
+	9,  // 33: toshi.workspace.v1.GrantService.CreateGrant:input_type -> toshi.workspace.v1.CreateGrantRequest
+	11, // 34: toshi.workspace.v1.GrantService.GetGrant:input_type -> toshi.workspace.v1.GetGrantRequest
+	13, // 35: toshi.workspace.v1.GrantService.ListGrants:input_type -> toshi.workspace.v1.ListGrantsRequest
+	15, // 36: toshi.workspace.v1.GrantService.AcceptGrant:input_type -> toshi.workspace.v1.AcceptGrantRequest
+	17, // 37: toshi.workspace.v1.GrantService.DeclineGrant:input_type -> toshi.workspace.v1.DeclineGrantRequest
+	19, // 38: toshi.workspace.v1.GrantService.UpdateGrant:input_type -> toshi.workspace.v1.UpdateGrantRequest
+	21, // 39: toshi.workspace.v1.GrantService.RevokeGrant:input_type -> toshi.workspace.v1.RevokeGrantRequest
+	23, // 40: toshi.workspace.v1.GrantService.LeaveGrant:input_type -> toshi.workspace.v1.LeaveGrantRequest
+	10, // 41: toshi.workspace.v1.GrantService.CreateGrant:output_type -> toshi.workspace.v1.CreateGrantResponse
+	12, // 42: toshi.workspace.v1.GrantService.GetGrant:output_type -> toshi.workspace.v1.GetGrantResponse
+	14, // 43: toshi.workspace.v1.GrantService.ListGrants:output_type -> toshi.workspace.v1.ListGrantsResponse
+	16, // 44: toshi.workspace.v1.GrantService.AcceptGrant:output_type -> toshi.workspace.v1.AcceptGrantResponse
+	18, // 45: toshi.workspace.v1.GrantService.DeclineGrant:output_type -> toshi.workspace.v1.DeclineGrantResponse
+	20, // 46: toshi.workspace.v1.GrantService.UpdateGrant:output_type -> toshi.workspace.v1.UpdateGrantResponse
+	22, // 47: toshi.workspace.v1.GrantService.RevokeGrant:output_type -> toshi.workspace.v1.RevokeGrantResponse
+	24, // 48: toshi.workspace.v1.GrantService.LeaveGrant:output_type -> toshi.workspace.v1.LeaveGrantResponse
+	41, // [41:49] is the sub-list for method output_type
+	33, // [33:41] is the sub-list for method input_type
+	33, // [33:33] is the sub-list for extension type_name
+	33, // [33:33] is the sub-list for extension extendee
+	0,  // [0:33] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_grants_proto_init() }
@@ -1737,7 +1822,7 @@ func file_toshi_workspace_v1_grants_proto_init() {
 		(*Grant_Sandbox)(nil),
 		(*Grant_Preview)(nil),
 	}
-	file_toshi_workspace_v1_grants_proto_msgTypes[5].OneofWrappers = []any{
+	file_toshi_workspace_v1_grants_proto_msgTypes[6].OneofWrappers = []any{
 		(*CreateGrantRequest_Environment)(nil),
 		(*CreateGrantRequest_Sandbox)(nil),
 		(*CreateGrantRequest_Preview)(nil),
@@ -1748,7 +1833,7 @@ func file_toshi_workspace_v1_grants_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_grants_proto_rawDesc), len(file_toshi_workspace_v1_grants_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   21,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

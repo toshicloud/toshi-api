@@ -1466,10 +1466,14 @@ func (x *CreateSandboxResponse) GetSandbox() *Sandbox {
 }
 
 type GetSandboxRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox through it (docs/grants.md); project and environment are then
+	// left empty.
+	Grant         string `protobuf:"bytes,4,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1521,6 +1525,13 @@ func (x *GetSandboxRequest) GetEnvironment() string {
 func (x *GetSandboxRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *GetSandboxRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
 	}
 	return ""
 }
@@ -1591,7 +1602,11 @@ type ListSandboxesRequest struct {
 	PageToken string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	// Only the sandboxes that carry every one of these labels, each with
 	// exactly this value, as ListJobsRequest's labels match.
-	Labels        map[string]string `protobuf:"bytes,6,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Labels map[string]string `protobuf:"bytes,6,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox through it (docs/grants.md); project and environment are then
+	// left empty.
+	Grant         string `protobuf:"bytes,7,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1668,6 +1683,13 @@ func (x *ListSandboxesRequest) GetLabels() map[string]string {
 	return nil
 }
 
+func (x *ListSandboxesRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
+	}
+	return ""
+}
+
 type ListSandboxesResponse struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	Sandboxes []*Sandbox             `protobuf:"bytes,1,rep,name=sandboxes,proto3" json:"sandboxes,omitempty"`
@@ -1738,9 +1760,13 @@ type UpdateSandboxRequest struct {
 	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// Carries the new values of the fields update_mask names.
-	Sandbox       *Sandbox               `protobuf:"bytes,4,opt,name=sandbox,proto3" json:"sandbox,omitempty"`
-	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,5,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	Sandbox    *Sandbox               `protobuf:"bytes,4,opt,name=sandbox,proto3" json:"sandbox,omitempty"`
+	UpdateMask *fieldmaskpb.FieldMask `protobuf:"bytes,5,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	RequestKey string                 `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox through it (docs/grants.md); project and environment are then
+	// left empty.
+	Grant         string `protobuf:"bytes,7,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1813,6 +1839,13 @@ func (x *UpdateSandboxRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 func (x *UpdateSandboxRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
+	}
+	return ""
+}
+
+func (x *UpdateSandboxRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
 	}
 	return ""
 }
@@ -1991,7 +2024,11 @@ type WaitSandboxRequest struct {
 	// Return once the sandbox is in any of these states; empty means ENDED.
 	States []SandboxState `protobuf:"varint,4,rep,packed,name=states,proto3,enum=toshi.workspace.v1.SandboxState" json:"states,omitempty"`
 	// The longest to block.
-	Timeout       *durationpb.Duration `protobuf:"bytes,5,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	Timeout *durationpb.Duration `protobuf:"bytes,5,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox through it (docs/grants.md); project and environment are then
+	// left empty.
+	Grant         string `protobuf:"bytes,6,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2061,6 +2098,13 @@ func (x *WaitSandboxRequest) GetTimeout() *durationpb.Duration {
 	return nil
 }
 
+func (x *WaitSandboxRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
+	}
+	return ""
+}
+
 type WaitSandboxResponse struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Sandbox *Sandbox               `protobuf:"bytes,1,opt,name=sandbox,proto3" json:"sandbox,omitempty"`
@@ -2122,7 +2166,11 @@ type WatchSandboxesRequest struct {
 	// keeps. A cursor older than that event fails with OUT_OF_RANGE.
 	Cursor string `protobuf:"bytes,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	// Ask for keepalives, as WatchJobsRequest's keepalive does.
-	Keepalive     bool `protobuf:"varint,4,opt,name=keepalive,proto3" json:"keepalive,omitempty"`
+	Keepalive bool `protobuf:"varint,4,opt,name=keepalive,proto3" json:"keepalive,omitempty"`
+	// A grant the caller's workspace received, to act on the owner's
+	// sandbox through it (docs/grants.md); project and environment are then
+	// left empty.
+	Grant         string `protobuf:"bytes,5,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2183,6 +2231,13 @@ func (x *WatchSandboxesRequest) GetKeepalive() bool {
 		return x.Keepalive
 	}
 	return false
+}
+
+func (x *WatchSandboxesRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
+	}
+	return ""
 }
 
 type WatchSandboxesResponse struct {
@@ -3297,14 +3352,15 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"N\n" +
 	"\x15CreateSandboxResponse\x125\n" +
-	"\asandbox\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.SandboxR\asandbox\"_\n" +
+	"\asandbox\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.SandboxR\asandbox\"u\n" +
 	"\x11GetSandboxRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
-	"\x02id\x18\x03 \x01(\tR\x02id\"\x83\x01\n" +
+	"\x02id\x18\x03 \x01(\tR\x02id\x12\x14\n" +
+	"\x05grant\x18\x04 \x01(\tR\x05grant\"\x83\x01\n" +
 	"\x12GetSandboxResponse\x125\n" +
 	"\asandbox\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.SandboxR\asandbox\x126\n" +
-	"\x05bound\x18\x02 \x03(\v2 .toshi.workspace.v1.BoundBindingR\x05bound\"\xd1\x02\n" +
+	"\x05bound\x18\x02 \x03(\v2 .toshi.workspace.v1.BoundBindingR\x05bound\"\xe7\x02\n" +
 	"\x14ListSandboxesRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x128\n" +
@@ -3312,14 +3368,15 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x05 \x01(\tR\tpageToken\x12L\n" +
-	"\x06labels\x18\x06 \x03(\v24.toshi.workspace.v1.ListSandboxesRequest.LabelsEntryR\x06labels\x1a9\n" +
+	"\x06labels\x18\x06 \x03(\v24.toshi.workspace.v1.ListSandboxesRequest.LabelsEntryR\x06labels\x12\x14\n" +
+	"\x05grant\x18\a \x01(\tR\x05grant\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x92\x01\n" +
 	"\x15ListSandboxesResponse\x129\n" +
 	"\tsandboxes\x18\x01 \x03(\v2\x1b.toshi.workspace.v1.SandboxR\tsandboxes\x12&\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\x12\x16\n" +
-	"\x06cursor\x18\x03 \x01(\tR\x06cursor\"\xf7\x01\n" +
+	"\x06cursor\x18\x03 \x01(\tR\x06cursor\"\x8d\x02\n" +
 	"\x14UpdateSandboxRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
@@ -3328,7 +3385,8 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\vupdate_mask\x18\x05 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\x12\x1f\n" +
 	"\vrequest_key\x18\x06 \x01(\tR\n" +
-	"requestKey\"\x8b\x01\n" +
+	"requestKey\x12\x14\n" +
+	"\x05grant\x18\a \x01(\tR\x05grant\"\x8b\x01\n" +
 	"\x15UpdateSandboxResponse\x125\n" +
 	"\asandbox\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.SandboxR\asandbox\x12;\n" +
 	"\toperation\x18\x02 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\x83\x01\n" +
@@ -3339,21 +3397,23 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\vrequest_key\x18\x04 \x01(\tR\n" +
 	"requestKey\"T\n" +
 	"\x15DeleteSandboxResponse\x12;\n" +
-	"\toperation\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\xcf\x01\n" +
+	"\toperation\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\xe5\x01\n" +
 	"\x12WaitSandboxRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
 	"\x02id\x18\x03 \x01(\tR\x02id\x128\n" +
 	"\x06states\x18\x04 \x03(\x0e2 .toshi.workspace.v1.SandboxStateR\x06states\x123\n" +
-	"\atimeout\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\atimeout\"f\n" +
+	"\atimeout\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\atimeout\x12\x14\n" +
+	"\x05grant\x18\x06 \x01(\tR\x05grant\"f\n" +
 	"\x13WaitSandboxResponse\x125\n" +
 	"\asandbox\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.SandboxR\asandbox\x12\x18\n" +
-	"\areached\x18\x02 \x01(\bR\areached\"\x89\x01\n" +
+	"\areached\x18\x02 \x01(\bR\areached\"\x9f\x01\n" +
 	"\x15WatchSandboxesRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06cursor\x18\x03 \x01(\tR\x06cursor\x12\x1c\n" +
-	"\tkeepalive\x18\x04 \x01(\bR\tkeepalive\"\xd7\x01\n" +
+	"\tkeepalive\x18\x04 \x01(\bR\tkeepalive\x12\x14\n" +
+	"\x05grant\x18\x05 \x01(\tR\x05grant\"\xd7\x01\n" +
 	"\x16WatchSandboxesResponse\x121\n" +
 	"\x04type\x18\x01 \x01(\x0e2\x1d.toshi.workspace.v1.EventTypeR\x04type\x125\n" +
 	"\asandbox\x18\x02 \x01(\v2\x1b.toshi.workspace.v1.SandboxR\asandbox\x12\x16\n" +

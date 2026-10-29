@@ -8,6 +8,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/workspace/v1/grants.proto";
 import "toshi/workspace/v1/projects.proto";
 import "toshi/workspace/v1/recordings.proto";
 
@@ -177,6 +178,10 @@ message Sandbox {
   // and whether its host enforces network rules at assignment. Unset for a
   // sandbox recorded before workloads kept one.
   WorkloadNetwork network = 10;
+  // Set on a sandbox read through a grant: the grant and what it allows on
+  // this sandbox. Such a read leaves out the spec's bindings, its
+  // container_registry_secret and its commands' env.
+  SharedAccess shared = 11;
 }
 
 // SandboxStatus is a sandbox's state and when it got there.
@@ -878,6 +883,10 @@ message ExecuteStart {
   // carries the first execution's started message and, once it has ended,
   // its exit. Output already sent is not sent again.
   string request_key = 5;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox through it (docs/grants.md); project and environment are then
+  // left empty.
+  string grant = 6;
 }
 
 message ExecuteResponse {
@@ -932,6 +941,10 @@ message CancelExecutionRequest {
   string environment = 2;
   string execution_id = 3;
   string request_key = 4;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox through it (docs/grants.md); project and environment are then
+  // left empty.
+  string grant = 5;
 }
 
 message CancelExecutionResponse {}

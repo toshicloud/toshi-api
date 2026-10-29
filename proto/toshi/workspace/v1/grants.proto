@@ -192,6 +192,20 @@ message Grant {
   string ended_by = 16;
 }
 
+// SharedAccess is what a grant gives the grantee on one sandbox.
+message SharedAccess {
+  // The grant the sandbox was read through.
+  string grant_id = 1;
+  // The grant's level.
+  GrantLevel grant_level = 2;
+  // The level on this sandbox: the grant's, or VIEW for a sandbox with
+  // bindings or a state volume, or while the owner's workspace is
+  // suspended.
+  GrantLevel level = 3;
+  // The workspace that owns the sandbox.
+  GrantWorkspace owner = 4;
+}
+
 // GrantWorkspace is one side of a grant.
 message GrantWorkspace {
   string id = 1;

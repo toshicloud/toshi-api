@@ -66,9 +66,16 @@ type DisplayServiceClient interface {
 	// viewers, or a second session with input on a job, fails with
 	// FAILED_PRECONDITION. A session with input on a Windows VM whose host's
 	// pool does not set display_input fails with FAILED_PRECONDITION and the
-	// reason DISPLAY_INPUT_NOT_ENABLED. A job on Windows that Toshi licenses
-	// (a cloud pool, or a pool with licence = "toshi") opens no session of
-	// either mode: FAILED_PRECONDITION with the reason TOSHI_LICENSED_WINDOWS.
+	// reason DISPLAY_INPUT_NOT_ENABLED. A job on a cloud pool's Windows opens
+	// no session of either mode: FAILED_PRECONDITION with the reason
+	// TOSHI_LICENSED_WINDOWS. On a host whose pool has licence = "toshi" only
+	// a person who holds a live desktop seat in the workspace opens one (a
+	// sign-in, or that person's own access token); anyone else fails with
+	// FAILED_PRECONDITION and the reason DESKTOP_SEAT_PERSON_REQUIRED for a
+	// caller that is not a person (a workspace token, a product token, a
+	// workload) or DESKTOP_SEAT_REQUIRED for a person without a seat. An
+	// input or screenshot call there by anyone but the session's opener is
+	// checked the same way.
 	// A session ends when it is closed, when no bytes
 	// of the screen's protocol go either way for its idle close, when its
 	// token expires before it attaches, when its job stops running on the
@@ -233,9 +240,16 @@ type DisplayServiceHandler interface {
 	// viewers, or a second session with input on a job, fails with
 	// FAILED_PRECONDITION. A session with input on a Windows VM whose host's
 	// pool does not set display_input fails with FAILED_PRECONDITION and the
-	// reason DISPLAY_INPUT_NOT_ENABLED. A job on Windows that Toshi licenses
-	// (a cloud pool, or a pool with licence = "toshi") opens no session of
-	// either mode: FAILED_PRECONDITION with the reason TOSHI_LICENSED_WINDOWS.
+	// reason DISPLAY_INPUT_NOT_ENABLED. A job on a cloud pool's Windows opens
+	// no session of either mode: FAILED_PRECONDITION with the reason
+	// TOSHI_LICENSED_WINDOWS. On a host whose pool has licence = "toshi" only
+	// a person who holds a live desktop seat in the workspace opens one (a
+	// sign-in, or that person's own access token); anyone else fails with
+	// FAILED_PRECONDITION and the reason DESKTOP_SEAT_PERSON_REQUIRED for a
+	// caller that is not a person (a workspace token, a product token, a
+	// workload) or DESKTOP_SEAT_REQUIRED for a person without a seat. An
+	// input or screenshot call there by anyone but the session's opener is
+	// checked the same way.
 	// A session ends when it is closed, when no bytes
 	// of the screen's protocol go either way for its idle close, when its
 	// token expires before it attaches, when its job stops running on the

@@ -1192,12 +1192,13 @@ type HostJob struct {
 	// attempt, 2 for its first re-run. 0 when it was not recorded, as for a
 	// job that is not a GitHub job or one stored before the field.
 	RunAttempt int32 `protobuf:"varint,52,opt,name=run_attempt,json=runAttempt,proto3" json:"run_attempt,omitempty"`
-	// TOSHI_LICENSED_WINDOWS when the job runs on Windows that Toshi licenses
-	// (a cloud pool's host, or a host's pool with licence = "toshi"): no one
-	// sees its screen, so it opens no display session, takes no takeover and
-	// records no screen. Empty when its screen is available, and for a job
-	// without a host. A workspace's own hosts and its own cloud account show
-	// the screen.
+	// TOSHI_LICENSED_WINDOWS when the job runs on a cloud pool's Windows: no
+	// one sees its screen, so it opens no display session, takes no takeover
+	// and records no screen. DESKTOP_SEAT_REQUIRED when it runs on a host
+	// whose pool has licence = "toshi": only a person who holds a desktop seat
+	// in the workspace opens a display session on it, and it records no
+	// screen. Empty when its screen is available, and for a job without a
+	// host. A workspace's own hosts and its own cloud account show the screen.
 	ScreenUnavailableReason string `protobuf:"bytes,53,opt,name=screen_unavailable_reason,json=screenUnavailableReason,proto3" json:"screen_unavailable_reason,omitempty"`
 	unknownFields           protoimpl.UnknownFields
 	sizeCache               protoimpl.SizeCache

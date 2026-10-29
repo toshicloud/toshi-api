@@ -808,6 +808,10 @@ message GetSandboxRequest {
   string project = 1;
   string environment = 2;
   string id = 3;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox through it (docs/grants.md); project and environment are then
+  // left empty.
+  string grant = 4;
 }
 
 message GetSandboxResponse {
@@ -829,6 +833,10 @@ message ListSandboxesRequest {
   // Only the sandboxes that carry every one of these labels, each with
   // exactly this value, as ListJobsRequest's labels match.
   map<string, string> labels = 6;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox through it (docs/grants.md); project and environment are then
+  // left empty.
+  string grant = 7;
 }
 
 message ListSandboxesResponse {
@@ -849,6 +857,10 @@ message UpdateSandboxRequest {
   Sandbox sandbox = 4;
   google.protobuf.FieldMask update_mask = 5;
   string request_key = 6;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox through it (docs/grants.md); project and environment are then
+  // left empty.
+  string grant = 7;
 }
 
 message UpdateSandboxResponse {
@@ -877,6 +889,10 @@ message WaitSandboxRequest {
   repeated SandboxState states = 4;
   // The longest to block.
   google.protobuf.Duration timeout = 5;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox through it (docs/grants.md); project and environment are then
+  // left empty.
+  string grant = 6;
 }
 
 message WaitSandboxResponse {
@@ -893,6 +909,10 @@ message WatchSandboxesRequest {
   string cursor = 3;
   // Ask for keepalives, as WatchJobsRequest's keepalive does.
   bool keepalive = 4;
+  // A grant the caller's workspace received, to act on the owner's
+  // sandbox through it (docs/grants.md); project and environment are then
+  // left empty.
+  string grant = 5;
 }
 
 message WatchSandboxesResponse {

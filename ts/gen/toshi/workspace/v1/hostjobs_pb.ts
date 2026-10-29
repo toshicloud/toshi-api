@@ -1203,12 +1203,13 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
   runAttempt: number;
 
   /**
-   * TOSHI_LICENSED_WINDOWS when the job runs on Windows that Toshi licenses
-   * (a cloud pool's host, or a host's pool with licence = "toshi"): no one
-   * sees its screen, so it opens no display session, takes no takeover and
-   * records no screen. Empty when its screen is available, and for a job
-   * without a host. A workspace's own hosts and its own cloud account show
-   * the screen.
+   * TOSHI_LICENSED_WINDOWS when the job runs on a cloud pool's Windows: no
+   * one sees its screen, so it opens no display session, takes no takeover
+   * and records no screen. DESKTOP_SEAT_REQUIRED when it runs on a host
+   * whose pool has licence = "toshi": only a person who holds a desktop seat
+   * in the workspace opens a display session on it, and it records no
+   * screen. Empty when its screen is available, and for a job without a
+   * host. A workspace's own hosts and its own cloud account show the screen.
    *
    * @generated from field: string screen_unavailable_reason = 53;
    */
@@ -1641,12 +1642,13 @@ export type HostJobJson = {
   runAttempt?: number;
 
   /**
-   * TOSHI_LICENSED_WINDOWS when the job runs on Windows that Toshi licenses
-   * (a cloud pool's host, or a host's pool with licence = "toshi"): no one
-   * sees its screen, so it opens no display session, takes no takeover and
-   * records no screen. Empty when its screen is available, and for a job
-   * without a host. A workspace's own hosts and its own cloud account show
-   * the screen.
+   * TOSHI_LICENSED_WINDOWS when the job runs on a cloud pool's Windows: no
+   * one sees its screen, so it opens no display session, takes no takeover
+   * and records no screen. DESKTOP_SEAT_REQUIRED when it runs on a host
+   * whose pool has licence = "toshi": only a person who holds a desktop seat
+   * in the workspace opens a display session on it, and it records no
+   * screen. Empty when its screen is available, and for a job without a
+   * host. A workspace's own hosts and its own cloud account show the screen.
    *
    * @generated from field: string screen_unavailable_reason = 53;
    */
