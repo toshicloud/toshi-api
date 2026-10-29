@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package toshi.workspace.v1;
 
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -74,6 +75,20 @@ service ImageService {
     option (toshi.permission) = "images.write";
     option (toshi.scope) = "project";
     option (toshi.audit) = {action: "image.build_started", target: "image:name"};
+  }
+  // UpdateImage sets the fields of the image that update_mask names; the
+  // request's image names it by its name. The one field it sets is
+  // rebuild_on_push, of a container image built from a repository: an
+  // unset update_mask sets it to the image's value, an empty one changes
+  // nothing, and "*" or a path of another field is INVALID_ARGUMENT. A
+  // disk image or a container image that is pushed is FAILED_PRECONDITION.
+  // Turning rebuild_on_push on needs what BuildImage needs of the image:
+  // a source its project claims, and a call that reaches the environment
+  // the branch rules choose for the source's default branch.
+  rpc UpdateImage(UpdateImageRequest) returns (UpdateImageResponse) {
+    option (toshi.permission) = "images.write";
+    option (toshi.scope) = "project";
+    option (toshi.audit) = {target: "image:image.name"};
   }
   // GetImage returns the image with its versions, newest first.
   rpc GetImage(GetImageRequest) returns (GetImageResponse) {
@@ -185,6 +200,12 @@ message Image {
   // push to the deployment's registry.
   string registry = 15;
   string registry_secret = 16;
+  // A container image built from a repository is built again on each push
+  // to its source's default branch: at most one build per push, while one
+  // runs the newest push waits and replaces an older one that waited, and
+  // a push to another branch, a fork's or one that deletes the branch
+  // builds nothing. Off unless set.
+  bool rebuild_on_push = 17;
 }
 
 // ImageVersion is one build of an image, or one push of a container image.
@@ -269,6 +290,9 @@ message CreateImageRequest {
   // to the deployment's registry.
   string registry = 10;
   string registry_secret = 11;
+  // Builds the image again on each push to its source's default branch,
+  // as Image.rebuild_on_push says; only for one built from a repository.
+  bool rebuild_on_push = 12;
 }
 
 message CreateImageResponse {
@@ -315,6 +339,18 @@ message BuildImageRequest {
 
 message BuildImageResponse {
   ImageVersion version = 1;
+}
+
+message UpdateImageRequest {
+  string project = 1;
+  // name names the image; the fields update_mask names carry the new
+  // values.
+  Image image = 2;
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+message UpdateImageResponse {
+  Image image = 1;
 }
 
 message DeleteImageRequest {

@@ -4,8 +4,8 @@
 
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
-import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
+import type { FieldMask, FieldMaskJson, Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_field_mask, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import { file_toshi_permission } from "../../permission_pb";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/images.proto.
  */
 export const file_toshi_workspace_v1_images: GenFile = /*@__PURE__*/
-  fileDesc("Ch90b3NoaS93b3Jrc3BhY2UvdjEvaW1hZ2VzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEitwMKBUltYWdlEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcHJvamVjdBgDIAEoCRIrCgRraW5kGAQgASgOMh0udG9zaGkud29ya3NwYWNlLnYxLkltYWdlS2luZBIMCgRiYXNlGAUgASgJEgwKBHNpemUYBiABKAkSDgoGcmVjaXBlGAcgASgJEhUKDXJlY2lwZV9kaWdlc3QYCCABKAkSEwoLZW52aXJvbm1lbnQYCSABKAkSLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoGbGF0ZXN0GAwgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkltYWdlVmVyc2lvbhIOCgZzb3VyY2UYDSABKAkSMQoHYnVpbGRlchgOIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZUJ1aWxkZXISEAoIcmVnaXN0cnkYDyABKAkSFwoPcmVnaXN0cnlfc2VjcmV0GBAgASgJIuYFCgxJbWFnZVZlcnNpb24SCgoCaWQYASABKAkSDgoGbnVtYmVyGAIgASgDEjQKBXN0YXRlGAMgASgOMiUudG9zaGkud29ya3NwYWNlLnYxLkltYWdlVmVyc2lvblN0YXRlEgwKBGJhc2UYBCABKAkSEwoLYmFzZV9kaWdlc3QYBSABKAkSEgoKc2l6ZV9ieXRlcxgGIAEoAxIVCg1yZWNpcGVfZGlnZXN0GAcgASgJEhQKDGJ1aWxkX2pvYl9pZBgIIAEoCRIPCgdmYWlsdXJlGAkgASgJEi4KCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiwKCHJlYWR5X2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCg1wZW5kaW5nX3NpbmNlGAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxkZWxldGVfYWZ0ZXIYDSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmRlbGV0ZWRfYXQYDiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjYKCXBpbm5lZF9ieRgPIAMoCzIjLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZVZlcnNpb25QaW4SDgoGZGlnZXN0GBAgASgJEjIKCXB1c2hlZF9ieRgRIAEoDjIfLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZVB1c2hlchIVCg1zb3VyY2VfY29tbWl0GBIgASgJEjEKB2J1aWxkZXIYEyABKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VCdWlsZGVyEhcKD2J1aWxkZXJfdmVyc2lvbhgUIAEoCRIfChdidWlsZGVyX2Zyb250ZW5kX2RpZ2VzdBgVIAEoCRIPCgd0cnVzdGVkGBYgASgIEgsKA3RhZxgXIAEoCSJNCg9JbWFnZVZlcnNpb25QaW4SEgoKc2VydmljZV9pZBgBIAEoCRIUCgxzZXJ2aWNlX25hbWUYAiABKAkSEAoIcmV2aXNpb24YAyABKAMijwIKEkNyZWF0ZUltYWdlUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhMKC2Vudmlyb25tZW50GAIgASgJEgwKBG5hbWUYAyABKAkSKwoEa2luZBgEIAEoDjIdLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZUtpbmQSDAoEYmFzZRgFIAEoCRIMCgRzaXplGAYgASgJEg4KBnJlY2lwZRgHIAEoCRIOCgZzb3VyY2UYCCABKAkSMQoHYnVpbGRlchgJIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZUJ1aWxkZXISEAoIcmVnaXN0cnkYCiABKAkSFwoPcmVnaXN0cnlfc2VjcmV0GAsgASgJInIKE0NyZWF0ZUltYWdlUmVzcG9uc2USKAoFaW1hZ2UYASABKAsyGS50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2USMQoHdmVyc2lvbhgCIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZVZlcnNpb24iMAoPR2V0SW1hZ2VSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSDAoEbmFtZRgCIAEoCSJwChBHZXRJbWFnZVJlc3BvbnNlEigKBWltYWdlGAEgASgLMhkudG9zaGkud29ya3NwYWNlLnYxLkltYWdlEjIKCHZlcnNpb25zGAIgAygLMiAudG9zaGkud29ya3NwYWNlLnYxLkltYWdlVmVyc2lvbiJLChFMaXN0SW1hZ2VzUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXBhZ2Vfc2l6ZRgCIAEoBRISCgpwYWdlX3Rva2VuGAMgASgJIlgKEkxpc3RJbWFnZXNSZXNwb25zZRIpCgZpbWFnZXMYASADKAsyGS50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2USFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIloKEUJ1aWxkSW1hZ2VSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSDAoEbmFtZRgCIAEoCRIOCgZyZWNpcGUYAyABKAkSFgoOdXBkYXRlX2J1aWxkZXIYBCABKAgiRwoSQnVpbGRJbWFnZVJlc3BvbnNlEjEKB3ZlcnNpb24YASABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VWZXJzaW9uIjMKEkRlbGV0ZUltYWdlUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEgwKBG5hbWUYAiABKAkiFQoTRGVsZXRlSW1hZ2VSZXNwb25zZSpWCglJbWFnZUtpbmQSGgoWSU1BR0VfS0lORF9VTlNQRUNJRklFRBAAEhMKD0lNQUdFX0tJTkRfRElTSxABEhgKFElNQUdFX0tJTkRfQ09OVEFJTkVSEAIqfwoMSW1hZ2VCdWlsZGVyEh0KGUlNQUdFX0JVSUxERVJfVU5TUEVDSUZJRUQQABIWChJJTUFHRV9CVUlMREVSX0FVVE8QARIcChhJTUFHRV9CVUlMREVSX0RPQ0tFUkZJTEUQAhIaChZJTUFHRV9CVUlMREVSX1JBSUxQQUNLEAMqWgoLSW1hZ2VQdXNoZXISHAoYSU1BR0VfUFVTSEVSX1VOU1BFQ0lGSUVEEAASFgoSSU1BR0VfUFVTSEVSX0JVSUxEEAESFQoRSU1BR0VfUFVTSEVSX0hBTkQQAirkAQoRSW1hZ2VWZXJzaW9uU3RhdGUSIwofSU1BR0VfVkVSU0lPTl9TVEFURV9VTlNQRUNJRklFRBAAEiAKHElNQUdFX1ZFUlNJT05fU1RBVEVfQlVJTERJTkcQARIeChpJTUFHRV9WRVJTSU9OX1NUQVRFX0ZBSUxFRBACEh0KGUlNQUdFX1ZFUlNJT05fU1RBVEVfUkVBRFkQAxIoCiRJTUFHRV9WRVJTSU9OX1NUQVRFX1BFTkRJTkdfREVMRVRJT04QBBIfChtJTUFHRV9WRVJTSU9OX1NUQVRFX0RFTEVURUQQBTKpBQoMSW1hZ2VTZXJ2aWNlEn8KC0NyZWF0ZUltYWdlEiYudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUltYWdlUmVxdWVzdBonLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVJbWFnZVJlc3BvbnNlIh/C8xgMaW1hZ2VzLndyaXRlyvMYC2Vudmlyb25tZW50Ep0BCgpCdWlsZEltYWdlEiUudG9zaGkud29ya3NwYWNlLnYxLkJ1aWxkSW1hZ2VSZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLkJ1aWxkSW1hZ2VSZXNwb25zZSJAwvMYDGltYWdlcy53cml0ZcrzGAdwcm9qZWN00vMYIQoTaW1hZ2UuYnVpbGRfc3RhcnRlZBIKaW1hZ2U6bmFtZRJxCghHZXRJbWFnZRIjLnRvc2hpLndvcmtzcGFjZS52MS5HZXRJbWFnZVJlcXVlc3QaJC50b3NoaS53b3Jrc3BhY2UudjEuR2V0SW1hZ2VSZXNwb25zZSIawvMYC2ltYWdlcy5yZWFkyvMYB3Byb2plY3QSdwoKTGlzdEltYWdlcxIlLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SW1hZ2VzUmVxdWVzdBomLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SW1hZ2VzUmVzcG9uc2UiGsLzGAtpbWFnZXMucmVhZMrzGAdwcm9qZWN0EosBCgtEZWxldGVJbWFnZRImLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVJbWFnZVJlcXVlc3QaJy50b3NoaS53b3Jrc3BhY2UudjEuRGVsZXRlSW1hZ2VSZXNwb25zZSIrwvMYDGltYWdlcy53cml0ZcrzGAdwcm9qZWN00vMYDBIKaW1hZ2U6bmFtZUIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("Ch90b3NoaS93b3Jrc3BhY2UvdjEvaW1hZ2VzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEi0AMKBUltYWdlEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHcHJvamVjdBgDIAEoCRIrCgRraW5kGAQgASgOMh0udG9zaGkud29ya3NwYWNlLnYxLkltYWdlS2luZBIMCgRiYXNlGAUgASgJEgwKBHNpemUYBiABKAkSDgoGcmVjaXBlGAcgASgJEhUKDXJlY2lwZV9kaWdlc3QYCCABKAkSEwoLZW52aXJvbm1lbnQYCSABKAkSLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoGbGF0ZXN0GAwgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkltYWdlVmVyc2lvbhIOCgZzb3VyY2UYDSABKAkSMQoHYnVpbGRlchgOIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZUJ1aWxkZXISEAoIcmVnaXN0cnkYDyABKAkSFwoPcmVnaXN0cnlfc2VjcmV0GBAgASgJEhcKD3JlYnVpbGRfb25fcHVzaBgRIAEoCCLmBQoMSW1hZ2VWZXJzaW9uEgoKAmlkGAEgASgJEg4KBm51bWJlchgCIAEoAxI0CgVzdGF0ZRgDIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZVZlcnNpb25TdGF0ZRIMCgRiYXNlGAQgASgJEhMKC2Jhc2VfZGlnZXN0GAUgASgJEhIKCnNpemVfYnl0ZXMYBiABKAMSFQoNcmVjaXBlX2RpZ2VzdBgHIAEoCRIUCgxidWlsZF9qb2JfaWQYCCABKAkSDwoHZmFpbHVyZRgJIAEoCRIuCgpjcmVhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghyZWFkeV9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMQoNcGVuZGluZ19zaW5jZRgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMZGVsZXRlX2FmdGVyGA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpkZWxldGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI2CglwaW5uZWRfYnkYDyADKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VWZXJzaW9uUGluEg4KBmRpZ2VzdBgQIAEoCRIyCglwdXNoZWRfYnkYESABKA4yHy50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VQdXNoZXISFQoNc291cmNlX2NvbW1pdBgSIAEoCRIxCgdidWlsZGVyGBMgASgOMiAudG9zaGkud29ya3NwYWNlLnYxLkltYWdlQnVpbGRlchIXCg9idWlsZGVyX3ZlcnNpb24YFCABKAkSHwoXYnVpbGRlcl9mcm9udGVuZF9kaWdlc3QYFSABKAkSDwoHdHJ1c3RlZBgWIAEoCBILCgN0YWcYFyABKAkiTQoPSW1hZ2VWZXJzaW9uUGluEhIKCnNlcnZpY2VfaWQYASABKAkSFAoMc2VydmljZV9uYW1lGAIgASgJEhAKCHJldmlzaW9uGAMgASgDIqgCChJDcmVhdGVJbWFnZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRITCgtlbnZpcm9ubWVudBgCIAEoCRIMCgRuYW1lGAMgASgJEisKBGtpbmQYBCABKA4yHS50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VLaW5kEgwKBGJhc2UYBSABKAkSDAoEc2l6ZRgGIAEoCRIOCgZyZWNpcGUYByABKAkSDgoGc291cmNlGAggASgJEjEKB2J1aWxkZXIYCSABKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VCdWlsZGVyEhAKCHJlZ2lzdHJ5GAogASgJEhcKD3JlZ2lzdHJ5X3NlY3JldBgLIAEoCRIXCg9yZWJ1aWxkX29uX3B1c2gYDCABKAgicgoTQ3JlYXRlSW1hZ2VSZXNwb25zZRIoCgVpbWFnZRgBIAEoCzIZLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZRIxCgd2ZXJzaW9uGAIgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkltYWdlVmVyc2lvbiIwCg9HZXRJbWFnZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIMCgRuYW1lGAIgASgJInAKEEdldEltYWdlUmVzcG9uc2USKAoFaW1hZ2UYASABKAsyGS50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2USMgoIdmVyc2lvbnMYAiADKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuSW1hZ2VWZXJzaW9uIksKEUxpc3RJbWFnZXNSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEhIKCnBhZ2VfdG9rZW4YAyABKAkiWAoSTGlzdEltYWdlc1Jlc3BvbnNlEikKBmltYWdlcxgBIAMoCzIZLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZRIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiWgoRQnVpbGRJbWFnZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIMCgRuYW1lGAIgASgJEg4KBnJlY2lwZRgDIAEoCRIWCg51cGRhdGVfYnVpbGRlchgEIAEoCCJHChJCdWlsZEltYWdlUmVzcG9uc2USMQoHdmVyc2lvbhgBIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5JbWFnZVZlcnNpb24igAEKElVwZGF0ZUltYWdlUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEigKBWltYWdlGAIgASgLMhkudG9zaGkud29ya3NwYWNlLnYxLkltYWdlEi8KC3VwZGF0ZV9tYXNrGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLkZpZWxkTWFzayI/ChNVcGRhdGVJbWFnZVJlc3BvbnNlEigKBWltYWdlGAEgASgLMhkudG9zaGkud29ya3NwYWNlLnYxLkltYWdlIjMKEkRlbGV0ZUltYWdlUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEgwKBG5hbWUYAiABKAkiFQoTRGVsZXRlSW1hZ2VSZXNwb25zZSpWCglJbWFnZUtpbmQSGgoWSU1BR0VfS0lORF9VTlNQRUNJRklFRBAAEhMKD0lNQUdFX0tJTkRfRElTSxABEhgKFElNQUdFX0tJTkRfQ09OVEFJTkVSEAIqfwoMSW1hZ2VCdWlsZGVyEh0KGUlNQUdFX0JVSUxERVJfVU5TUEVDSUZJRUQQABIWChJJTUFHRV9CVUlMREVSX0FVVE8QARIcChhJTUFHRV9CVUlMREVSX0RPQ0tFUkZJTEUQAhIaChZJTUFHRV9CVUlMREVSX1JBSUxQQUNLEAMqWgoLSW1hZ2VQdXNoZXISHAoYSU1BR0VfUFVTSEVSX1VOU1BFQ0lGSUVEEAASFgoSSU1BR0VfUFVTSEVSX0JVSUxEEAESFQoRSU1BR0VfUFVTSEVSX0hBTkQQAirkAQoRSW1hZ2VWZXJzaW9uU3RhdGUSIwofSU1BR0VfVkVSU0lPTl9TVEFURV9VTlNQRUNJRklFRBAAEiAKHElNQUdFX1ZFUlNJT05fU1RBVEVfQlVJTERJTkcQARIeChpJTUFHRV9WRVJTSU9OX1NUQVRFX0ZBSUxFRBACEh0KGUlNQUdFX1ZFUlNJT05fU1RBVEVfUkVBRFkQAxIoCiRJTUFHRV9WRVJTSU9OX1NUQVRFX1BFTkRJTkdfREVMRVRJT04QBBIfChtJTUFHRV9WRVJTSU9OX1NUQVRFX0RFTEVURUQQBTK9BgoMSW1hZ2VTZXJ2aWNlEn8KC0NyZWF0ZUltYWdlEiYudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUltYWdlUmVxdWVzdBonLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVJbWFnZVJlc3BvbnNlIh/C8xgMaW1hZ2VzLndyaXRlyvMYC2Vudmlyb25tZW50Ep0BCgpCdWlsZEltYWdlEiUudG9zaGkud29ya3NwYWNlLnYxLkJ1aWxkSW1hZ2VSZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLkJ1aWxkSW1hZ2VSZXNwb25zZSJAwvMYDGltYWdlcy53cml0ZcrzGAdwcm9qZWN00vMYIQoTaW1hZ2UuYnVpbGRfc3RhcnRlZBIKaW1hZ2U6bmFtZRKRAQoLVXBkYXRlSW1hZ2USJi50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlSW1hZ2VSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZUltYWdlUmVzcG9uc2UiMcLzGAxpbWFnZXMud3JpdGXK8xgHcHJvamVjdNLzGBISEGltYWdlOmltYWdlLm5hbWUScQoIR2V0SW1hZ2USIy50b3NoaS53b3Jrc3BhY2UudjEuR2V0SW1hZ2VSZXF1ZXN0GiQudG9zaGkud29ya3NwYWNlLnYxLkdldEltYWdlUmVzcG9uc2UiGsLzGAtpbWFnZXMucmVhZMrzGAdwcm9qZWN0EncKCkxpc3RJbWFnZXMSJS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEltYWdlc1JlcXVlc3QaJi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEltYWdlc1Jlc3BvbnNlIhrC8xgLaW1hZ2VzLnJlYWTK8xgHcHJvamVjdBKLAQoLRGVsZXRlSW1hZ2USJi50b3NoaS53b3Jrc3BhY2UudjEuRGVsZXRlSW1hZ2VSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUltYWdlUmVzcG9uc2UiK8LzGAxpbWFnZXMud3JpdGXK8xgHcHJvamVjdNLzGAwSCmltYWdlOm5hbWVCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Image is a project's own image.
@@ -127,6 +127,17 @@ export type Image = Message<"toshi.workspace.v1.Image"> & {
    * @generated from field: string registry_secret = 16;
    */
   registrySecret: string;
+
+  /**
+   * A container image built from a repository is built again on each push
+   * to its source's default branch: at most one build per push, while one
+   * runs the newest push waits and replaces an older one that waited, and
+   * a push to another branch, a fork's or one that deletes the branch
+   * builds nothing. Off unless set.
+   *
+   * @generated from field: bool rebuild_on_push = 17;
+   */
+  rebuildOnPush: boolean;
 };
 
 /**
@@ -241,6 +252,17 @@ export type ImageJson = {
    * @generated from field: string registry_secret = 16;
    */
   registrySecret?: string;
+
+  /**
+   * A container image built from a repository is built again on each push
+   * to its source's default branch: at most one build per push, while one
+   * runs the newest push waits and replaces an older one that waited, and
+   * a push to another branch, a fork's or one that deletes the branch
+   * builds nothing. Off unless set.
+   *
+   * @generated from field: bool rebuild_on_push = 17;
+   */
+  rebuildOnPush?: boolean;
 };
 
 /**
@@ -696,6 +718,14 @@ export type CreateImageRequest = Message<"toshi.workspace.v1.CreateImageRequest"
    * @generated from field: string registry_secret = 11;
    */
   registrySecret: string;
+
+  /**
+   * Builds the image again on each push to its source's default branch,
+   * as Image.rebuild_on_push says; only for one built from a repository.
+   *
+   * @generated from field: bool rebuild_on_push = 12;
+   */
+  rebuildOnPush: boolean;
 };
 
 /**
@@ -776,6 +806,14 @@ export type CreateImageRequestJson = {
    * @generated from field: string registry_secret = 11;
    */
   registrySecret?: string;
+
+  /**
+   * Builds the image again on each push to its source's default branch,
+   * as Image.rebuild_on_push says; only for one built from a repository.
+   *
+   * @generated from field: bool rebuild_on_push = 12;
+   */
+  rebuildOnPush?: boolean;
 };
 
 /**
@@ -1097,6 +1135,86 @@ export const BuildImageResponseSchema: GenMessage<BuildImageResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_images, 10);
 
 /**
+ * @generated from message toshi.workspace.v1.UpdateImageRequest
+ */
+export type UpdateImageRequest = Message<"toshi.workspace.v1.UpdateImageRequest"> & {
+  /**
+   * @generated from field: string project = 1;
+   */
+  project: string;
+
+  /**
+   * name names the image; the fields update_mask names carry the new
+   * values.
+   *
+   * @generated from field: toshi.workspace.v1.Image image = 2;
+   */
+  image?: Image | undefined;
+
+  /**
+   * @generated from field: google.protobuf.FieldMask update_mask = 3;
+   */
+  updateMask?: FieldMask | undefined;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.UpdateImageRequest
+ */
+export type UpdateImageRequestJson = {
+  /**
+   * @generated from field: string project = 1;
+   */
+  project?: string;
+
+  /**
+   * name names the image; the fields update_mask names carry the new
+   * values.
+   *
+   * @generated from field: toshi.workspace.v1.Image image = 2;
+   */
+  image?: ImageJson;
+
+  /**
+   * @generated from field: google.protobuf.FieldMask update_mask = 3;
+   */
+  updateMask?: FieldMaskJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.UpdateImageRequest.
+ * Use `create(UpdateImageRequestSchema)` to create a new message.
+ */
+export const UpdateImageRequestSchema: GenMessage<UpdateImageRequest, {jsonType: UpdateImageRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_images, 11);
+
+/**
+ * @generated from message toshi.workspace.v1.UpdateImageResponse
+ */
+export type UpdateImageResponse = Message<"toshi.workspace.v1.UpdateImageResponse"> & {
+  /**
+   * @generated from field: toshi.workspace.v1.Image image = 1;
+   */
+  image?: Image | undefined;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.UpdateImageResponse
+ */
+export type UpdateImageResponseJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.Image image = 1;
+   */
+  image?: ImageJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.UpdateImageResponse.
+ * Use `create(UpdateImageResponseSchema)` to create a new message.
+ */
+export const UpdateImageResponseSchema: GenMessage<UpdateImageResponse, {jsonType: UpdateImageResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_images, 12);
+
+/**
  * @generated from message toshi.workspace.v1.DeleteImageRequest
  */
 export type DeleteImageRequest = Message<"toshi.workspace.v1.DeleteImageRequest"> & {
@@ -1131,7 +1249,7 @@ export type DeleteImageRequestJson = {
  * Use `create(DeleteImageRequestSchema)` to create a new message.
  */
 export const DeleteImageRequestSchema: GenMessage<DeleteImageRequest, {jsonType: DeleteImageRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_images, 11);
+  messageDesc(file_toshi_workspace_v1_images, 13);
 
 /**
  * @generated from message toshi.workspace.v1.DeleteImageResponse
@@ -1150,7 +1268,7 @@ export type DeleteImageResponseJson = {
  * Use `create(DeleteImageResponseSchema)` to create a new message.
  */
 export const DeleteImageResponseSchema: GenMessage<DeleteImageResponse, {jsonType: DeleteImageResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_images, 12);
+  messageDesc(file_toshi_workspace_v1_images, 14);
 
 /**
  * ImageKind is what an image is.
@@ -1422,6 +1540,24 @@ export const ImageService: GenService<{
     methodKind: "unary";
     input: typeof BuildImageRequestSchema;
     output: typeof BuildImageResponseSchema;
+  },
+  /**
+   * UpdateImage sets the fields of the image that update_mask names; the
+   * request's image names it by its name. The one field it sets is
+   * rebuild_on_push, of a container image built from a repository: an
+   * unset update_mask sets it to the image's value, an empty one changes
+   * nothing, and "*" or a path of another field is INVALID_ARGUMENT. A
+   * disk image or a container image that is pushed is FAILED_PRECONDITION.
+   * Turning rebuild_on_push on needs what BuildImage needs of the image:
+   * a source its project claims, and a call that reaches the environment
+   * the branch rules choose for the source's default branch.
+   *
+   * @generated from rpc toshi.workspace.v1.ImageService.UpdateImage
+   */
+  updateImage: {
+    methodKind: "unary";
+    input: typeof UpdateImageRequestSchema;
+    output: typeof UpdateImageResponseSchema;
   },
   /**
    * GetImage returns the image with its versions, newest first.

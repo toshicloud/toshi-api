@@ -10,6 +10,7 @@ import (
 	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -290,8 +291,14 @@ type Image struct {
 	// push to the deployment's registry.
 	Registry       string `protobuf:"bytes,15,opt,name=registry,proto3" json:"registry,omitempty"`
 	RegistrySecret string `protobuf:"bytes,16,opt,name=registry_secret,json=registrySecret,proto3" json:"registry_secret,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// A container image built from a repository is built again on each push
+	// to its source's default branch: at most one build per push, while one
+	// runs the newest push waits and replaces an older one that waited, and
+	// a push to another branch, a fork's or one that deletes the branch
+	// builds nothing. Off unless set.
+	RebuildOnPush bool `protobuf:"varint,17,opt,name=rebuild_on_push,json=rebuildOnPush,proto3" json:"rebuild_on_push,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Image) Reset() {
@@ -434,6 +441,13 @@ func (x *Image) GetRegistrySecret() string {
 		return x.RegistrySecret
 	}
 	return ""
+}
+
+func (x *Image) GetRebuildOnPush() bool {
+	if x != nil {
+		return x.RebuildOnPush
+	}
+	return false
 }
 
 // ImageVersion is one build of an image, or one push of a container image.
@@ -767,8 +781,11 @@ type CreateImageRequest struct {
 	// to the deployment's registry.
 	Registry       string `protobuf:"bytes,10,opt,name=registry,proto3" json:"registry,omitempty"`
 	RegistrySecret string `protobuf:"bytes,11,opt,name=registry_secret,json=registrySecret,proto3" json:"registry_secret,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Builds the image again on each push to its source's default branch,
+	// as Image.rebuild_on_push says; only for one built from a repository.
+	RebuildOnPush bool `protobuf:"varint,12,opt,name=rebuild_on_push,json=rebuildOnPush,proto3" json:"rebuild_on_push,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateImageRequest) Reset() {
@@ -876,6 +893,13 @@ func (x *CreateImageRequest) GetRegistrySecret() string {
 		return x.RegistrySecret
 	}
 	return ""
+}
+
+func (x *CreateImageRequest) GetRebuildOnPush() bool {
+	if x != nil {
+		return x.RebuildOnPush
+	}
+	return false
 }
 
 type CreateImageResponse struct {
@@ -1267,6 +1291,112 @@ func (x *BuildImageResponse) GetVersion() *ImageVersion {
 	return nil
 }
 
+type UpdateImageRequest struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// name names the image; the fields update_mask names carry the new
+	// values.
+	Image         *Image                 `protobuf:"bytes,2,opt,name=image,proto3" json:"image,omitempty"`
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateImageRequest) Reset() {
+	*x = UpdateImageRequest{}
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateImageRequest) ProtoMessage() {}
+
+func (x *UpdateImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateImageRequest.ProtoReflect.Descriptor instead.
+func (*UpdateImageRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *UpdateImageRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *UpdateImageRequest) GetImage() *Image {
+	if x != nil {
+		return x.Image
+	}
+	return nil
+}
+
+func (x *UpdateImageRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.UpdateMask
+	}
+	return nil
+}
+
+type UpdateImageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Image         *Image                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateImageResponse) Reset() {
+	*x = UpdateImageResponse{}
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateImageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateImageResponse) ProtoMessage() {}
+
+func (x *UpdateImageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateImageResponse.ProtoReflect.Descriptor instead.
+func (*UpdateImageResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *UpdateImageResponse) GetImage() *Image {
+	if x != nil {
+		return x.Image
+	}
+	return nil
+}
+
 type DeleteImageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
@@ -1277,7 +1407,7 @@ type DeleteImageRequest struct {
 
 func (x *DeleteImageRequest) Reset() {
 	*x = DeleteImageRequest{}
-	mi := &file_toshi_workspace_v1_images_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1289,7 +1419,7 @@ func (x *DeleteImageRequest) String() string {
 func (*DeleteImageRequest) ProtoMessage() {}
 
 func (x *DeleteImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_images_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1302,7 +1432,7 @@ func (x *DeleteImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteImageRequest.ProtoReflect.Descriptor instead.
 func (*DeleteImageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DeleteImageRequest) GetProject() string {
@@ -1327,7 +1457,7 @@ type DeleteImageResponse struct {
 
 func (x *DeleteImageResponse) Reset() {
 	*x = DeleteImageResponse{}
-	mi := &file_toshi_workspace_v1_images_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1339,7 +1469,7 @@ func (x *DeleteImageResponse) String() string {
 func (*DeleteImageResponse) ProtoMessage() {}
 
 func (x *DeleteImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_images_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_images_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1352,14 +1482,14 @@ func (x *DeleteImageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteImageResponse.ProtoReflect.Descriptor instead.
 func (*DeleteImageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_images_proto_rawDescGZIP(), []int{14}
 }
 
 var File_toshi_workspace_v1_images_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\n" +
-	"\x1ftoshi/workspace/v1/images.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xc8\x04\n" +
+	"\x1ftoshi/workspace/v1/images.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf0\x04\n" +
 	"\x05Image\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1379,7 +1509,8 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x06source\x18\r \x01(\tR\x06source\x12:\n" +
 	"\abuilder\x18\x0e \x01(\x0e2 .toshi.workspace.v1.ImageBuilderR\abuilder\x12\x1a\n" +
 	"\bregistry\x18\x0f \x01(\tR\bregistry\x12'\n" +
-	"\x0fregistry_secret\x18\x10 \x01(\tR\x0eregistrySecret\"\xdb\a\n" +
+	"\x0fregistry_secret\x18\x10 \x01(\tR\x0eregistrySecret\x12&\n" +
+	"\x0frebuild_on_push\x18\x11 \x01(\bR\rrebuildOnPush\"\xdb\a\n" +
 	"\fImageVersion\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06number\x18\x02 \x01(\x03R\x06number\x12;\n" +
@@ -1414,7 +1545,7 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\n" +
 	"service_id\x18\x01 \x01(\tR\tserviceId\x12!\n" +
 	"\fservice_name\x18\x02 \x01(\tR\vserviceName\x12\x1a\n" +
-	"\brevision\x18\x03 \x01(\x03R\brevision\"\xf0\x02\n" +
+	"\brevision\x18\x03 \x01(\x03R\brevision\"\x98\x03\n" +
 	"\x12CreateImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x12\n" +
@@ -1427,7 +1558,8 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\abuilder\x18\t \x01(\x0e2 .toshi.workspace.v1.ImageBuilderR\abuilder\x12\x1a\n" +
 	"\bregistry\x18\n" +
 	" \x01(\tR\bregistry\x12'\n" +
-	"\x0fregistry_secret\x18\v \x01(\tR\x0eregistrySecret\"\x82\x01\n" +
+	"\x0fregistry_secret\x18\v \x01(\tR\x0eregistrySecret\x12&\n" +
+	"\x0frebuild_on_push\x18\f \x01(\bR\rrebuildOnPush\"\x82\x01\n" +
 	"\x13CreateImageResponse\x12/\n" +
 	"\x05image\x18\x01 \x01(\v2\x19.toshi.workspace.v1.ImageR\x05image\x12:\n" +
 	"\aversion\x18\x02 \x01(\v2 .toshi.workspace.v1.ImageVersionR\aversion\"?\n" +
@@ -1451,7 +1583,14 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x06recipe\x18\x03 \x01(\tR\x06recipe\x12%\n" +
 	"\x0eupdate_builder\x18\x04 \x01(\bR\rupdateBuilder\"P\n" +
 	"\x12BuildImageResponse\x12:\n" +
-	"\aversion\x18\x01 \x01(\v2 .toshi.workspace.v1.ImageVersionR\aversion\"B\n" +
+	"\aversion\x18\x01 \x01(\v2 .toshi.workspace.v1.ImageVersionR\aversion\"\x9c\x01\n" +
+	"\x12UpdateImageRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12/\n" +
+	"\x05image\x18\x02 \x01(\v2\x19.toshi.workspace.v1.ImageR\x05image\x12;\n" +
+	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\"F\n" +
+	"\x13UpdateImageResponse\x12/\n" +
+	"\x05image\x18\x01 \x01(\v2\x19.toshi.workspace.v1.ImageR\x05image\"B\n" +
 	"\x12DeleteImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"\x15\n" +
@@ -1475,13 +1614,14 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x1aIMAGE_VERSION_STATE_FAILED\x10\x02\x12\x1d\n" +
 	"\x19IMAGE_VERSION_STATE_READY\x10\x03\x12(\n" +
 	"$IMAGE_VERSION_STATE_PENDING_DELETION\x10\x04\x12\x1f\n" +
-	"\x1bIMAGE_VERSION_STATE_DELETED\x10\x052\xa9\x05\n" +
+	"\x1bIMAGE_VERSION_STATE_DELETED\x10\x052\xbd\x06\n" +
 	"\fImageService\x12\x7f\n" +
 	"\vCreateImage\x12&.toshi.workspace.v1.CreateImageRequest\x1a'.toshi.workspace.v1.CreateImageResponse\"\x1f\xc2\xf3\x18\fimages.write\xca\xf3\x18\venvironment\x12\x9d\x01\n" +
 	"\n" +
 	"BuildImage\x12%.toshi.workspace.v1.BuildImageRequest\x1a&.toshi.workspace.v1.BuildImageResponse\"@\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18!\n" +
 	"\x13image.build_started\x12\n" +
-	"image:name\x12q\n" +
+	"image:name\x12\x91\x01\n" +
+	"\vUpdateImage\x12&.toshi.workspace.v1.UpdateImageRequest\x1a'.toshi.workspace.v1.UpdateImageResponse\"1\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18\x12\x12\x10image:image.name\x12q\n" +
 	"\bGetImage\x12#.toshi.workspace.v1.GetImageRequest\x1a$.toshi.workspace.v1.GetImageResponse\"\x1a\xc2\xf3\x18\vimages.read\xca\xf3\x18\aproject\x12w\n" +
 	"\n" +
 	"ListImages\x12%.toshi.workspace.v1.ListImagesRequest\x1a&.toshi.workspace.v1.ListImagesResponse\"\x1a\xc2\xf3\x18\vimages.read\xca\xf3\x18\aproject\x12\x8b\x01\n" +
@@ -1501,7 +1641,7 @@ func file_toshi_workspace_v1_images_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_images_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_toshi_workspace_v1_images_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_toshi_workspace_v1_images_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_toshi_workspace_v1_images_proto_goTypes = []any{
 	(ImageKind)(0),                // 0: toshi.workspace.v1.ImageKind
 	(ImageBuilder)(0),             // 1: toshi.workspace.v1.ImageBuilder
@@ -1518,22 +1658,25 @@ var file_toshi_workspace_v1_images_proto_goTypes = []any{
 	(*ListImagesResponse)(nil),    // 12: toshi.workspace.v1.ListImagesResponse
 	(*BuildImageRequest)(nil),     // 13: toshi.workspace.v1.BuildImageRequest
 	(*BuildImageResponse)(nil),    // 14: toshi.workspace.v1.BuildImageResponse
-	(*DeleteImageRequest)(nil),    // 15: toshi.workspace.v1.DeleteImageRequest
-	(*DeleteImageResponse)(nil),   // 16: toshi.workspace.v1.DeleteImageResponse
-	(*timestamppb.Timestamp)(nil), // 17: google.protobuf.Timestamp
+	(*UpdateImageRequest)(nil),    // 15: toshi.workspace.v1.UpdateImageRequest
+	(*UpdateImageResponse)(nil),   // 16: toshi.workspace.v1.UpdateImageResponse
+	(*DeleteImageRequest)(nil),    // 17: toshi.workspace.v1.DeleteImageRequest
+	(*DeleteImageResponse)(nil),   // 18: toshi.workspace.v1.DeleteImageResponse
+	(*timestamppb.Timestamp)(nil), // 19: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil), // 20: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_images_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Image.kind:type_name -> toshi.workspace.v1.ImageKind
-	17, // 1: toshi.workspace.v1.Image.created_at:type_name -> google.protobuf.Timestamp
-	17, // 2: toshi.workspace.v1.Image.updated_at:type_name -> google.protobuf.Timestamp
+	19, // 1: toshi.workspace.v1.Image.created_at:type_name -> google.protobuf.Timestamp
+	19, // 2: toshi.workspace.v1.Image.updated_at:type_name -> google.protobuf.Timestamp
 	5,  // 3: toshi.workspace.v1.Image.latest:type_name -> toshi.workspace.v1.ImageVersion
 	1,  // 4: toshi.workspace.v1.Image.builder:type_name -> toshi.workspace.v1.ImageBuilder
 	3,  // 5: toshi.workspace.v1.ImageVersion.state:type_name -> toshi.workspace.v1.ImageVersionState
-	17, // 6: toshi.workspace.v1.ImageVersion.created_at:type_name -> google.protobuf.Timestamp
-	17, // 7: toshi.workspace.v1.ImageVersion.ready_at:type_name -> google.protobuf.Timestamp
-	17, // 8: toshi.workspace.v1.ImageVersion.pending_since:type_name -> google.protobuf.Timestamp
-	17, // 9: toshi.workspace.v1.ImageVersion.delete_after:type_name -> google.protobuf.Timestamp
-	17, // 10: toshi.workspace.v1.ImageVersion.deleted_at:type_name -> google.protobuf.Timestamp
+	19, // 6: toshi.workspace.v1.ImageVersion.created_at:type_name -> google.protobuf.Timestamp
+	19, // 7: toshi.workspace.v1.ImageVersion.ready_at:type_name -> google.protobuf.Timestamp
+	19, // 8: toshi.workspace.v1.ImageVersion.pending_since:type_name -> google.protobuf.Timestamp
+	19, // 9: toshi.workspace.v1.ImageVersion.delete_after:type_name -> google.protobuf.Timestamp
+	19, // 10: toshi.workspace.v1.ImageVersion.deleted_at:type_name -> google.protobuf.Timestamp
 	6,  // 11: toshi.workspace.v1.ImageVersion.pinned_by:type_name -> toshi.workspace.v1.ImageVersionPin
 	2,  // 12: toshi.workspace.v1.ImageVersion.pushed_by:type_name -> toshi.workspace.v1.ImagePusher
 	1,  // 13: toshi.workspace.v1.ImageVersion.builder:type_name -> toshi.workspace.v1.ImageBuilder
@@ -1545,21 +1688,26 @@ var file_toshi_workspace_v1_images_proto_depIdxs = []int32{
 	5,  // 19: toshi.workspace.v1.GetImageResponse.versions:type_name -> toshi.workspace.v1.ImageVersion
 	4,  // 20: toshi.workspace.v1.ListImagesResponse.images:type_name -> toshi.workspace.v1.Image
 	5,  // 21: toshi.workspace.v1.BuildImageResponse.version:type_name -> toshi.workspace.v1.ImageVersion
-	7,  // 22: toshi.workspace.v1.ImageService.CreateImage:input_type -> toshi.workspace.v1.CreateImageRequest
-	13, // 23: toshi.workspace.v1.ImageService.BuildImage:input_type -> toshi.workspace.v1.BuildImageRequest
-	9,  // 24: toshi.workspace.v1.ImageService.GetImage:input_type -> toshi.workspace.v1.GetImageRequest
-	11, // 25: toshi.workspace.v1.ImageService.ListImages:input_type -> toshi.workspace.v1.ListImagesRequest
-	15, // 26: toshi.workspace.v1.ImageService.DeleteImage:input_type -> toshi.workspace.v1.DeleteImageRequest
-	8,  // 27: toshi.workspace.v1.ImageService.CreateImage:output_type -> toshi.workspace.v1.CreateImageResponse
-	14, // 28: toshi.workspace.v1.ImageService.BuildImage:output_type -> toshi.workspace.v1.BuildImageResponse
-	10, // 29: toshi.workspace.v1.ImageService.GetImage:output_type -> toshi.workspace.v1.GetImageResponse
-	12, // 30: toshi.workspace.v1.ImageService.ListImages:output_type -> toshi.workspace.v1.ListImagesResponse
-	16, // 31: toshi.workspace.v1.ImageService.DeleteImage:output_type -> toshi.workspace.v1.DeleteImageResponse
-	27, // [27:32] is the sub-list for method output_type
-	22, // [22:27] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	4,  // 22: toshi.workspace.v1.UpdateImageRequest.image:type_name -> toshi.workspace.v1.Image
+	20, // 23: toshi.workspace.v1.UpdateImageRequest.update_mask:type_name -> google.protobuf.FieldMask
+	4,  // 24: toshi.workspace.v1.UpdateImageResponse.image:type_name -> toshi.workspace.v1.Image
+	7,  // 25: toshi.workspace.v1.ImageService.CreateImage:input_type -> toshi.workspace.v1.CreateImageRequest
+	13, // 26: toshi.workspace.v1.ImageService.BuildImage:input_type -> toshi.workspace.v1.BuildImageRequest
+	15, // 27: toshi.workspace.v1.ImageService.UpdateImage:input_type -> toshi.workspace.v1.UpdateImageRequest
+	9,  // 28: toshi.workspace.v1.ImageService.GetImage:input_type -> toshi.workspace.v1.GetImageRequest
+	11, // 29: toshi.workspace.v1.ImageService.ListImages:input_type -> toshi.workspace.v1.ListImagesRequest
+	17, // 30: toshi.workspace.v1.ImageService.DeleteImage:input_type -> toshi.workspace.v1.DeleteImageRequest
+	8,  // 31: toshi.workspace.v1.ImageService.CreateImage:output_type -> toshi.workspace.v1.CreateImageResponse
+	14, // 32: toshi.workspace.v1.ImageService.BuildImage:output_type -> toshi.workspace.v1.BuildImageResponse
+	16, // 33: toshi.workspace.v1.ImageService.UpdateImage:output_type -> toshi.workspace.v1.UpdateImageResponse
+	10, // 34: toshi.workspace.v1.ImageService.GetImage:output_type -> toshi.workspace.v1.GetImageResponse
+	12, // 35: toshi.workspace.v1.ImageService.ListImages:output_type -> toshi.workspace.v1.ListImagesResponse
+	18, // 36: toshi.workspace.v1.ImageService.DeleteImage:output_type -> toshi.workspace.v1.DeleteImageResponse
+	31, // [31:37] is the sub-list for method output_type
+	25, // [25:31] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_images_proto_init() }
@@ -1573,7 +1721,7 @@ func file_toshi_workspace_v1_images_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_images_proto_rawDesc), len(file_toshi_workspace_v1_images_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   13,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

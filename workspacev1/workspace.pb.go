@@ -491,7 +491,8 @@ const (
 	EventType_EVENT_TYPE_RECORDING_READY EventType = 8
 	// An event a connection received, about no workload. Name:
 	// "<kind>.<event>.<action>", the connection's kind and what the sender
-	// said happened, such as "github.pull_request.opened".
+	// said happened, such as "github.pull_request.opened", or
+	// "<kind>.<event>" for an event with no action, such as "github.push".
 	EventType_EVENT_TYPE_CONNECTION EventType = 9
 	// A release of a workload's secrets withheld keys: its starter's own,
 	// while the starter holds no role in the workspace. Name:

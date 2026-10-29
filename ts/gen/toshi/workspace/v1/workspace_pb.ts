@@ -8172,7 +8172,8 @@ export enum EventType {
   /**
    * An event a connection received, about no workload. Name:
    * "<kind>.<event>.<action>", the connection's kind and what the sender
-   * said happened, such as "github.pull_request.opened".
+   * said happened, such as "github.pull_request.opened", or
+   * "<kind>.<event>" for an event with no action, such as "github.push".
    *
    * @generated from enum value: EVENT_TYPE_CONNECTION = 9;
    */
