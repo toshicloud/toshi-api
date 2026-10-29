@@ -136,8 +136,8 @@ message Volume {
   VolumeConsistency latest_version_consistency = 12;
   // How often a service that mounts it snapshots it while the service's
   // VM runs: its workspace's interval. Unset for a volume that is not a
-  // state volume, and when the workspace takes no snapshots or saves no
-  // versions.
+  // state volume, for one kept as a directory, which is never snapshotted,
+  // and when the workspace takes no snapshots or saves no versions.
   google.protobuf.Duration snapshot_interval = 13;
   // Why its newest failed save or snapshot saved no version: a pre_save
   // hook that failed, or a copy its host could not take or upload. Empty
@@ -146,6 +146,21 @@ message Volume {
   string last_save_failure = 14;
   // When that save or snapshot failed; unset when none failed.
   google.protobuf.Timestamp last_save_failure_time = 15;
+  // How hosts keep a state volume, fixed by the first run that mounts it:
+  // a disk on the VM tiers, a directory on the container tier. Later runs
+  // go only to hosts that keep it the same way. Unspecified until a run
+  // mounted it, and for a volume that is not a state volume.
+  VolumeFormat format = 16;
+}
+
+// VolumeFormat is how hosts keep a state volume, and so what its saved
+// versions hold.
+enum VolumeFormat {
+  VOLUME_FORMAT_UNSPECIFIED = 0;
+  // A disk image a VM attaches. A version holds the image.
+  VOLUME_FORMAT_DISK = 1;
+  // A directory a container mounts. A version holds a tar of it.
+  VOLUME_FORMAT_DIRECTORY = 2;
 }
 
 // VolumeVersion is a saved copy of a state volume's data.

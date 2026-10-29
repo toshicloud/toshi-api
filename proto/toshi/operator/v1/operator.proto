@@ -1265,6 +1265,9 @@ message Tenant {
   google.protobuf.Timestamp state_since = 19;
   // When a scheduled deletion purges the workspace; unset when none.
   google.protobuf.Timestamp purge_after = 20;
+  // Who scheduled the deletion: "operator", or "owner" for one of the
+  // workspace's Owners; empty when none is scheduled. Either resume clears it.
+  string deletion_by = 37;
   // Days of finished job history the workspace keeps; unset when the plan's
   // applies. 0 keeps forever.
   optional int32 history_days = 21;

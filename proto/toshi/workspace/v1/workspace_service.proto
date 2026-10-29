@@ -165,11 +165,52 @@ service WorkspaceService {
   rpc GetVersion(GetVersionRequest) returns (GetVersionResponse) {
     option (toshi.permission) = "workspace.read";
   }
+  // DeleteWorkspace schedules the caller's workspace's deletion: the
+  // workspace is suspended until purge_after, the deployment's default
+  // grace from now, after which its data is purged from the control plane
+  // and every host. confirm must equal the workspace's name as
+  // GetWorkspace returns it, else the call fails with INVALID_ARGUMENT. A
+  // workspace that is not active (suspended, deletion scheduled, deleting or
+  // deleted) fails with FAILED_PRECONDITION, with the state as the
+  // google.rpc.ErrorInfo reason. The answer carries the workspace with
+  // purge_after and deletion_by "owner".
+  rpc DeleteWorkspace(DeleteWorkspaceRequest) returns (DeleteWorkspaceResponse) {
+    option (toshi.permission) = "workspace.delete";
+    option (toshi.audit) = {action: "workspace.deletion_scheduled"};
+  }
+  // CancelWorkspaceDeletion cancels a deletion an Owner scheduled while its
+  // purge_after is in the future, and returns the workspace to active; held
+  // jobs run at the next scheduler pass. It is the one call other than the
+  // reads a workspace with a scheduled deletion takes. A workspace with no
+  // scheduled deletion, one the operator scheduled, or one whose
+  // purge_after has passed fails with FAILED_PRECONDITION, with the reason
+  // in a google.rpc.ErrorInfo.
+  rpc CancelWorkspaceDeletion(CancelWorkspaceDeletionRequest) returns (CancelWorkspaceDeletionResponse) {
+    option (toshi.permission) = "workspace.delete";
+    option (toshi.audit) = {action: "workspace.resumed"};
+  }
 }
 
 message GetWorkspaceRequest {}
 
 message GetWorkspaceResponse {
+  Workspace workspace = 1;
+}
+
+message DeleteWorkspaceRequest {
+  // The workspace's name, as GetWorkspace returns it.
+  string confirm = 1;
+  // Why the workspace is deleted; kept as its state_reason.
+  string reason = 2;
+}
+
+message DeleteWorkspaceResponse {
+  Workspace workspace = 1;
+}
+
+message CancelWorkspaceDeletionRequest {}
+
+message CancelWorkspaceDeletionResponse {
   Workspace workspace = 1;
 }
 
@@ -445,12 +486,17 @@ message Workspace {
   // purge_after has passed and while the purge runs; or "deleted", when the
   // purge is done, its sessions ended and its tokens revoked.
   string state = 17;
-  // Why the operator suspended or deleted the workspace; empty when active.
+  // Why the operator suspended the workspace, or why it is deleted; empty
+  // when active.
   string state_reason = 18;
   // When the workspace entered its state; unset for a workspace always active.
   google.protobuf.Timestamp state_since = 19;
   // When a scheduled deletion purges the workspace; unset when none.
   google.protobuf.Timestamp purge_after = 20;
+  // Who scheduled the deletion: "owner" for one of the workspace's Owners,
+  // which an Owner may cancel with CancelWorkspaceDeletion, or "operator";
+  // empty when none is scheduled.
+  string deletion_by = 39;
   // The period the retention pass uses: the workspace's value when set, else
   // its plan's.
   int32 history_days_effective = 22;

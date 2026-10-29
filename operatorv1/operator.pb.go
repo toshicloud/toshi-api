@@ -3943,6 +3943,9 @@ type Tenant struct {
 	StateSince *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=state_since,json=stateSince,proto3" json:"state_since,omitempty"`
 	// When a scheduled deletion purges the workspace; unset when none.
 	PurgeAfter *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=purge_after,json=purgeAfter,proto3" json:"purge_after,omitempty"`
+	// Who scheduled the deletion: "operator", or "owner" for one of the
+	// workspace's Owners; empty when none is scheduled. Either resume clears it.
+	DeletionBy string `protobuf:"bytes,37,opt,name=deletion_by,json=deletionBy,proto3" json:"deletion_by,omitempty"`
 	// Days of finished job history the workspace keeps; unset when the plan's
 	// applies. 0 keeps forever.
 	HistoryDays *int32 `protobuf:"varint,21,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
@@ -4155,6 +4158,13 @@ func (x *Tenant) GetPurgeAfter() *timestamppb.Timestamp {
 		return x.PurgeAfter
 	}
 	return nil
+}
+
+func (x *Tenant) GetDeletionBy() string {
+	if x != nil {
+		return x.DeletionBy
+	}
+	return ""
 }
 
 func (x *Tenant) GetHistoryDays() int32 {
@@ -14996,7 +15006,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x05hosts\x18\x01 \x03(\v2$.toshi.operator.v1.OfflineHostResultR\x05hosts\"\x81\x01\n" +
 	"\x11OfflineHostResult\x12+\n" +
 	"\x04host\x18\x01 \x01(\v2\x17.toshi.operator.v1.HostR\x04host\x12?\n" +
-	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\x8b\x0f\n" +
+	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\xac\x0f\n" +
 	"\x06Tenant\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -15021,7 +15031,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\vstate_since\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"stateSince\x12;\n" +
 	"\vpurge_after\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"purgeAfter\x12&\n" +
+	"purgeAfter\x12\x1f\n" +
+	"\vdeletion_by\x18% \x01(\tR\n" +
+	"deletionBy\x12&\n" +
 	"\fhistory_days\x18\x15 \x01(\x05H\x01R\vhistoryDays\x88\x01\x01\x124\n" +
 	"\x16history_days_effective\x18\x16 \x01(\x05R\x14historyDaysEffective\x122\n" +
 	"\x16cancel_run_on_vm_death\x18\x17 \x01(\bR\x12cancelRunOnVmDeath\x12+\n" +

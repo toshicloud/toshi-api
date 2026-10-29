@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/volumes.proto.
  */
 export const file_toshi_workspace_v1_volumes: GenFile = /*@__PURE__*/
-  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvdm9sdW1lcy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIrQECgZWb2x1bWUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdwcm9qZWN0GAMgASgJEhIKCnByb2plY3RfaWQYBCABKAkSLAoEbW9kZRgFIAEoDjIeLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVNb2RlEhYKDnNpemVfY2FwX2J5dGVzGAYgASgDEi8KC2NyZWF0ZV90aW1lGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIcChRhdHRhY2hlZF93b3JrbG9hZF9pZBgIIAEoCRIWCg5sYXRlc3RfdmVyc2lvbhgJIAEoAxI3ChNsYXRlc3RfdmVyc2lvbl90aW1lGAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglsb3N0X3RpbWUYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEkkKGmxhdGVzdF92ZXJzaW9uX2NvbnNpc3RlbmN5GAwgASgOMiUudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZUNvbnNpc3RlbmN5EjQKEXNuYXBzaG90X2ludGVydmFsGA0gASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEhkKEWxhc3Rfc2F2ZV9mYWlsdXJlGA4gASgJEjoKFmxhc3Rfc2F2ZV9mYWlsdXJlX3RpbWUYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIvwBCg1Wb2x1bWVWZXJzaW9uEg4KBm51bWJlchgBIAEoAxIvCgtjcmVhdGVfdGltZRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKc2l6ZV9ieXRlcxgDIAEoAxIOCgZzaGEyNTYYBCABKAkSFQoNcmVzdG9yZWRfZnJvbRgFIAEoAxIzCgRraW5kGAYgASgOMiUudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZVZlcnNpb25LaW5kEjoKC2NvbnNpc3RlbmN5GAcgASgOMiUudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZUNvbnNpc3RlbmN5IkwKEkxpc3RWb2x1bWVzUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXBhZ2Vfc2l6ZRgCIAEoBRISCgpwYWdlX3Rva2VuGAMgASgJIlsKE0xpc3RWb2x1bWVzUmVzcG9uc2USKwoHdm9sdW1lcxgBIAMoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIjYKEEdldFZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkiPwoRR2V0Vm9sdW1lUmVzcG9uc2USKgoGdm9sdW1lGAEgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZSJOChNBdHRhY2hWb2x1bWVSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJdm9sdW1lX2lkGAIgASgJEhMKC3dvcmtsb2FkX2lkGAMgASgJIkIKFEF0dGFjaFZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUiOQoTRGV0YWNoVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCSJCChREZXRhY2hWb2x1bWVSZXNwb25zZRIqCgZ2b2x1bWUYASABKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lImYKGUxpc3RWb2x1bWVWZXJzaW9uc1JlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkiagoaTGlzdFZvbHVtZVZlcnNpb25zUmVzcG9uc2USMwoIdmVyc2lvbnMYASADKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lVmVyc2lvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiSwoUUmVzdG9yZVZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSDwoHdmVyc2lvbhgDIAEoAyJ3ChVSZXN0b3JlVm9sdW1lUmVzcG9uc2USMgoHdmVyc2lvbhgBIAEoCzIhLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVWZXJzaW9uEioKBnZvbHVtZRgCIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUqhwEKClZvbHVtZU1vZGUSGwoXVk9MVU1FX01PREVfVU5TUEVDSUZJRUQQABIVChFWT0xVTUVfTU9ERV9DQUNIRRABEhQKEFZPTFVNRV9NT0RFX1NFRUQQAhIVChFWT0xVTUVfTU9ERV9TVEFURRADEhgKFFZPTFVNRV9NT0RFX0FSVElGQUNUEAQqeAoRVm9sdW1lVmVyc2lvbktpbmQSIwofVk9MVU1FX1ZFUlNJT05fS0lORF9VTlNQRUNJRklFRBAAEhwKGFZPTFVNRV9WRVJTSU9OX0tJTkRfU0FWRRABEiAKHFZPTFVNRV9WRVJTSU9OX0tJTkRfU05BUFNIT1QQAip5ChFWb2x1bWVDb25zaXN0ZW5jeRIiCh5WT0xVTUVfQ09OU0lTVEVOQ1lfVU5TUEVDSUZJRUQQABIcChhWT0xVTUVfQ09OU0lTVEVOQ1lfQ1JBU0gQARIiCh5WT0xVTUVfQ09OU0lTVEVOQ1lfQVBQTElDQVRJT04QAjKyBgoNVm9sdW1lU2VydmljZRJ7CgtMaXN0Vm9sdW1lcxImLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Vm9sdW1lc1JlcXVlc3QaJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFZvbHVtZXNSZXNwb25zZSIbwvMYDHZvbHVtZXMucmVhZMrzGAdwcm9qZWN0EnUKCUdldFZvbHVtZRIkLnRvc2hpLndvcmtzcGFjZS52MS5HZXRWb2x1bWVSZXF1ZXN0GiUudG9zaGkud29ya3NwYWNlLnYxLkdldFZvbHVtZVJlc3BvbnNlIhvC8xgMdm9sdW1lcy5yZWFkyvMYB3Byb2plY3QSfwoMQXR0YWNoVm9sdW1lEicudG9zaGkud29ya3NwYWNlLnYxLkF0dGFjaFZvbHVtZVJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuQXR0YWNoVm9sdW1lUmVzcG9uc2UiHMLzGA12b2x1bWVzLndyaXRlyvMYB3Byb2plY3QSfwoMRGV0YWNoVm9sdW1lEicudG9zaGkud29ya3NwYWNlLnYxLkRldGFjaFZvbHVtZVJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuRGV0YWNoVm9sdW1lUmVzcG9uc2UiHMLzGA12b2x1bWVzLndyaXRlyvMYB3Byb2plY3QSkAEKEkxpc3RWb2x1bWVWZXJzaW9ucxItLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Vm9sdW1lVmVyc2lvbnNSZXF1ZXN0Gi4udG9zaGkud29ya3NwYWNlLnYxLkxpc3RWb2x1bWVWZXJzaW9uc1Jlc3BvbnNlIhvC8xgMdm9sdW1lcy5yZWFkyvMYB3Byb2plY3QSlwEKDVJlc3RvcmVWb2x1bWUSKC50b3NoaS53b3Jrc3BhY2UudjEuUmVzdG9yZVZvbHVtZVJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuUmVzdG9yZVZvbHVtZVJlc3BvbnNlIjHC8xgNdm9sdW1lcy53cml0ZcrzGAdwcm9qZWN00vMYEQoPdm9sdW1lLnJlc3RvcmVkQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvdm9sdW1lcy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIuYECgZWb2x1bWUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdwcm9qZWN0GAMgASgJEhIKCnByb2plY3RfaWQYBCABKAkSLAoEbW9kZRgFIAEoDjIeLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVNb2RlEhYKDnNpemVfY2FwX2J5dGVzGAYgASgDEi8KC2NyZWF0ZV90aW1lGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIcChRhdHRhY2hlZF93b3JrbG9hZF9pZBgIIAEoCRIWCg5sYXRlc3RfdmVyc2lvbhgJIAEoAxI3ChNsYXRlc3RfdmVyc2lvbl90aW1lGAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglsb3N0X3RpbWUYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEkkKGmxhdGVzdF92ZXJzaW9uX2NvbnNpc3RlbmN5GAwgASgOMiUudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZUNvbnNpc3RlbmN5EjQKEXNuYXBzaG90X2ludGVydmFsGA0gASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEhkKEWxhc3Rfc2F2ZV9mYWlsdXJlGA4gASgJEjoKFmxhc3Rfc2F2ZV9mYWlsdXJlX3RpbWUYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKBmZvcm1hdBgQIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVGb3JtYXQi/AEKDVZvbHVtZVZlcnNpb24SDgoGbnVtYmVyGAEgASgDEi8KC2NyZWF0ZV90aW1lGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgpzaXplX2J5dGVzGAMgASgDEg4KBnNoYTI1NhgEIAEoCRIVCg1yZXN0b3JlZF9mcm9tGAUgASgDEjMKBGtpbmQYBiABKA4yJS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lVmVyc2lvbktpbmQSOgoLY29uc2lzdGVuY3kYByABKA4yJS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lQ29uc2lzdGVuY3kiTAoSTGlzdFZvbHVtZXNSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEhIKCnBhZ2VfdG9rZW4YAyABKAkiWwoTTGlzdFZvbHVtZXNSZXNwb25zZRIrCgd2b2x1bWVzGAEgAygLMhoudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZRIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiNgoQR2V0Vm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCSI/ChFHZXRWb2x1bWVSZXNwb25zZRIqCgZ2b2x1bWUYASABKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lIk4KE0F0dGFjaFZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSEwoLd29ya2xvYWRfaWQYAyABKAkiQgoUQXR0YWNoVm9sdW1lUmVzcG9uc2USKgoGdm9sdW1lGAEgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZSI5ChNEZXRhY2hWb2x1bWVSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJdm9sdW1lX2lkGAIgASgJIkIKFERldGFjaFZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUiZgoZTGlzdFZvbHVtZVZlcnNpb25zUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCRIRCglwYWdlX3NpemUYAyABKAUSEgoKcGFnZV90b2tlbhgEIAEoCSJqChpMaXN0Vm9sdW1lVmVyc2lvbnNSZXNwb25zZRIzCgh2ZXJzaW9ucxgBIAMoCzIhLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVWZXJzaW9uEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSJLChRSZXN0b3JlVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCRIPCgd2ZXJzaW9uGAMgASgDIncKFVJlc3RvcmVWb2x1bWVSZXNwb25zZRIyCgd2ZXJzaW9uGAEgASgLMiEudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZVZlcnNpb24SKgoGdm9sdW1lGAIgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZSqHAQoKVm9sdW1lTW9kZRIbChdWT0xVTUVfTU9ERV9VTlNQRUNJRklFRBAAEhUKEVZPTFVNRV9NT0RFX0NBQ0hFEAESFAoQVk9MVU1FX01PREVfU0VFRBACEhUKEVZPTFVNRV9NT0RFX1NUQVRFEAMSGAoUVk9MVU1FX01PREVfQVJUSUZBQ1QQBCpiCgxWb2x1bWVGb3JtYXQSHQoZVk9MVU1FX0ZPUk1BVF9VTlNQRUNJRklFRBAAEhYKElZPTFVNRV9GT1JNQVRfRElTSxABEhsKF1ZPTFVNRV9GT1JNQVRfRElSRUNUT1JZEAIqeAoRVm9sdW1lVmVyc2lvbktpbmQSIwofVk9MVU1FX1ZFUlNJT05fS0lORF9VTlNQRUNJRklFRBAAEhwKGFZPTFVNRV9WRVJTSU9OX0tJTkRfU0FWRRABEiAKHFZPTFVNRV9WRVJTSU9OX0tJTkRfU05BUFNIT1QQAip5ChFWb2x1bWVDb25zaXN0ZW5jeRIiCh5WT0xVTUVfQ09OU0lTVEVOQ1lfVU5TUEVDSUZJRUQQABIcChhWT0xVTUVfQ09OU0lTVEVOQ1lfQ1JBU0gQARIiCh5WT0xVTUVfQ09OU0lTVEVOQ1lfQVBQTElDQVRJT04QAjKyBgoNVm9sdW1lU2VydmljZRJ7CgtMaXN0Vm9sdW1lcxImLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Vm9sdW1lc1JlcXVlc3QaJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFZvbHVtZXNSZXNwb25zZSIbwvMYDHZvbHVtZXMucmVhZMrzGAdwcm9qZWN0EnUKCUdldFZvbHVtZRIkLnRvc2hpLndvcmtzcGFjZS52MS5HZXRWb2x1bWVSZXF1ZXN0GiUudG9zaGkud29ya3NwYWNlLnYxLkdldFZvbHVtZVJlc3BvbnNlIhvC8xgMdm9sdW1lcy5yZWFkyvMYB3Byb2plY3QSfwoMQXR0YWNoVm9sdW1lEicudG9zaGkud29ya3NwYWNlLnYxLkF0dGFjaFZvbHVtZVJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuQXR0YWNoVm9sdW1lUmVzcG9uc2UiHMLzGA12b2x1bWVzLndyaXRlyvMYB3Byb2plY3QSfwoMRGV0YWNoVm9sdW1lEicudG9zaGkud29ya3NwYWNlLnYxLkRldGFjaFZvbHVtZVJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuRGV0YWNoVm9sdW1lUmVzcG9uc2UiHMLzGA12b2x1bWVzLndyaXRlyvMYB3Byb2plY3QSkAEKEkxpc3RWb2x1bWVWZXJzaW9ucxItLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Vm9sdW1lVmVyc2lvbnNSZXF1ZXN0Gi4udG9zaGkud29ya3NwYWNlLnYxLkxpc3RWb2x1bWVWZXJzaW9uc1Jlc3BvbnNlIhvC8xgMdm9sdW1lcy5yZWFkyvMYB3Byb2plY3QSlwEKDVJlc3RvcmVWb2x1bWUSKC50b3NoaS53b3Jrc3BhY2UudjEuUmVzdG9yZVZvbHVtZVJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuUmVzdG9yZVZvbHVtZVJlc3BvbnNlIjHC8xgNdm9sdW1lcy53cml0ZcrzGAdwcm9qZWN00vMYEQoPdm9sdW1lLnJlc3RvcmVkQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Volume is a disk of a project.
@@ -106,8 +106,8 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
   /**
    * How often a service that mounts it snapshots it while the service's
    * VM runs: its workspace's interval. Unset for a volume that is not a
-   * state volume, and when the workspace takes no snapshots or saves no
-   * versions.
+   * state volume, for one kept as a directory, which is never snapshotted,
+   * and when the workspace takes no snapshots or saves no versions.
    *
    * @generated from field: google.protobuf.Duration snapshot_interval = 13;
    */
@@ -129,6 +129,16 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
    * @generated from field: google.protobuf.Timestamp last_save_failure_time = 15;
    */
   lastSaveFailureTime?: Timestamp | undefined;
+
+  /**
+   * How hosts keep a state volume, fixed by the first run that mounts it:
+   * a disk on the VM tiers, a directory on the container tier. Later runs
+   * go only to hosts that keep it the same way. Unspecified until a run
+   * mounted it, and for a volume that is not a state volume.
+   *
+   * @generated from field: toshi.workspace.v1.VolumeFormat format = 16;
+   */
+  format: VolumeFormat;
 };
 
 /**
@@ -222,8 +232,8 @@ export type VolumeJson = {
   /**
    * How often a service that mounts it snapshots it while the service's
    * VM runs: its workspace's interval. Unset for a volume that is not a
-   * state volume, and when the workspace takes no snapshots or saves no
-   * versions.
+   * state volume, for one kept as a directory, which is never snapshotted,
+   * and when the workspace takes no snapshots or saves no versions.
    *
    * @generated from field: google.protobuf.Duration snapshot_interval = 13;
    */
@@ -245,6 +255,16 @@ export type VolumeJson = {
    * @generated from field: google.protobuf.Timestamp last_save_failure_time = 15;
    */
   lastSaveFailureTime?: TimestampJson;
+
+  /**
+   * How hosts keep a state volume, fixed by the first run that mounts it:
+   * a disk on the VM tiers, a directory on the container tier. Later runs
+   * go only to hosts that keep it the same way. Unspecified until a run
+   * mounted it, and for a volume that is not a state volume.
+   *
+   * @generated from field: toshi.workspace.v1.VolumeFormat format = 16;
+   */
+  format?: VolumeFormatJson;
 };
 
 /**
@@ -927,6 +947,47 @@ export const VolumeModeSchema: GenEnum<VolumeMode, VolumeModeJson> = /*@__PURE__
   enumDesc(file_toshi_workspace_v1_volumes, 0);
 
 /**
+ * VolumeFormat is how hosts keep a state volume, and so what its saved
+ * versions hold.
+ *
+ * @generated from enum toshi.workspace.v1.VolumeFormat
+ */
+export enum VolumeFormat {
+  /**
+   * @generated from enum value: VOLUME_FORMAT_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * A disk image a VM attaches. A version holds the image.
+   *
+   * @generated from enum value: VOLUME_FORMAT_DISK = 1;
+   */
+  DISK = 1,
+
+  /**
+   * A directory a container mounts. A version holds a tar of it.
+   *
+   * @generated from enum value: VOLUME_FORMAT_DIRECTORY = 2;
+   */
+  DIRECTORY = 2,
+}
+
+/**
+ * VolumeFormat is how hosts keep a state volume, and so what its saved
+ * versions hold.
+ *
+ * @generated from enum toshi.workspace.v1.VolumeFormat
+ */
+export type VolumeFormatJson = "VOLUME_FORMAT_UNSPECIFIED" | "VOLUME_FORMAT_DISK" | "VOLUME_FORMAT_DIRECTORY";
+
+/**
+ * Describes the enum toshi.workspace.v1.VolumeFormat.
+ */
+export const VolumeFormatSchema: GenEnum<VolumeFormat, VolumeFormatJson> = /*@__PURE__*/
+  enumDesc(file_toshi_workspace_v1_volumes, 1);
+
+/**
  * VolumeVersionKind is how a run made a volume version.
  *
  * @generated from enum toshi.workspace.v1.VolumeVersionKind
@@ -965,7 +1026,7 @@ export type VolumeVersionKindJson = "VOLUME_VERSION_KIND_UNSPECIFIED" | "VOLUME_
  * Describes the enum toshi.workspace.v1.VolumeVersionKind.
  */
 export const VolumeVersionKindSchema: GenEnum<VolumeVersionKind, VolumeVersionKindJson> = /*@__PURE__*/
-  enumDesc(file_toshi_workspace_v1_volumes, 1);
+  enumDesc(file_toshi_workspace_v1_volumes, 2);
 
 /**
  * VolumeConsistency is what a volume version's data can be trusted for.
@@ -1007,7 +1068,7 @@ export type VolumeConsistencyJson = "VOLUME_CONSISTENCY_UNSPECIFIED" | "VOLUME_C
  * Describes the enum toshi.workspace.v1.VolumeConsistency.
  */
 export const VolumeConsistencySchema: GenEnum<VolumeConsistency, VolumeConsistencyJson> = /*@__PURE__*/
-  enumDesc(file_toshi_workspace_v1_volumes, 2);
+  enumDesc(file_toshi_workspace_v1_volumes, 3);
 
 /**
  * VolumeService keeps a workspace's volumes: each belongs to one project,

@@ -81,6 +81,12 @@ const (
 	// WorkspaceServiceGetVersionProcedure is the fully-qualified name of the WorkspaceService's
 	// GetVersion RPC.
 	WorkspaceServiceGetVersionProcedure = "/toshi.workspace.v1.WorkspaceService/GetVersion"
+	// WorkspaceServiceDeleteWorkspaceProcedure is the fully-qualified name of the WorkspaceService's
+	// DeleteWorkspace RPC.
+	WorkspaceServiceDeleteWorkspaceProcedure = "/toshi.workspace.v1.WorkspaceService/DeleteWorkspace"
+	// WorkspaceServiceCancelWorkspaceDeletionProcedure is the fully-qualified name of the
+	// WorkspaceService's CancelWorkspaceDeletion RPC.
+	WorkspaceServiceCancelWorkspaceDeletionProcedure = "/toshi.workspace.v1.WorkspaceService/CancelWorkspaceDeletion"
 )
 
 // WorkspaceServiceClient is a client for the toshi.workspace.v1.WorkspaceService service.
@@ -186,6 +192,24 @@ type WorkspaceServiceClient interface {
 	// GetVersion returns the control plane's version, commit and commit
 	// date, and the oldest agent release it admits.
 	GetVersion(context.Context, *connect.Request[workspacev1.GetVersionRequest]) (*connect.Response[workspacev1.GetVersionResponse], error)
+	// DeleteWorkspace schedules the caller's workspace's deletion: the
+	// workspace is suspended until purge_after, the deployment's default
+	// grace from now, after which its data is purged from the control plane
+	// and every host. confirm must equal the workspace's name as
+	// GetWorkspace returns it, else the call fails with INVALID_ARGUMENT. A
+	// workspace that is not active (suspended, deletion scheduled, deleting or
+	// deleted) fails with FAILED_PRECONDITION, with the state as the
+	// google.rpc.ErrorInfo reason. The answer carries the workspace with
+	// purge_after and deletion_by "owner".
+	DeleteWorkspace(context.Context, *connect.Request[workspacev1.DeleteWorkspaceRequest]) (*connect.Response[workspacev1.DeleteWorkspaceResponse], error)
+	// CancelWorkspaceDeletion cancels a deletion an Owner scheduled while its
+	// purge_after is in the future, and returns the workspace to active; held
+	// jobs run at the next scheduler pass. It is the one call other than the
+	// reads a workspace with a scheduled deletion takes. A workspace with no
+	// scheduled deletion, one the operator scheduled, or one whose
+	// purge_after has passed fails with FAILED_PRECONDITION, with the reason
+	// in a google.rpc.ErrorInfo.
+	CancelWorkspaceDeletion(context.Context, *connect.Request[workspacev1.CancelWorkspaceDeletionRequest]) (*connect.Response[workspacev1.CancelWorkspaceDeletionResponse], error)
 }
 
 // NewWorkspaceServiceClient constructs a client for the toshi.workspace.v1.WorkspaceService
@@ -295,6 +319,18 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("GetVersion")),
 			connect.WithClientOptions(opts...),
 		),
+		deleteWorkspace: connect.NewClient[workspacev1.DeleteWorkspaceRequest, workspacev1.DeleteWorkspaceResponse](
+			httpClient,
+			baseURL+WorkspaceServiceDeleteWorkspaceProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("DeleteWorkspace")),
+			connect.WithClientOptions(opts...),
+		),
+		cancelWorkspaceDeletion: connect.NewClient[workspacev1.CancelWorkspaceDeletionRequest, workspacev1.CancelWorkspaceDeletionResponse](
+			httpClient,
+			baseURL+WorkspaceServiceCancelWorkspaceDeletionProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("CancelWorkspaceDeletion")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -316,6 +352,8 @@ type workspaceServiceClient struct {
 	createCheckoutSession      *connect.Client[workspacev1.CreateCheckoutSessionRequest, workspacev1.CreateCheckoutSessionResponse]
 	createBillingPortalSession *connect.Client[workspacev1.CreateBillingPortalSessionRequest, workspacev1.CreateBillingPortalSessionResponse]
 	getVersion                 *connect.Client[workspacev1.GetVersionRequest, workspacev1.GetVersionResponse]
+	deleteWorkspace            *connect.Client[workspacev1.DeleteWorkspaceRequest, workspacev1.DeleteWorkspaceResponse]
+	cancelWorkspaceDeletion    *connect.Client[workspacev1.CancelWorkspaceDeletionRequest, workspacev1.CancelWorkspaceDeletionResponse]
 }
 
 // GetWorkspace calls toshi.workspace.v1.WorkspaceService.GetWorkspace.
@@ -396,6 +434,16 @@ func (c *workspaceServiceClient) CreateBillingPortalSession(ctx context.Context,
 // GetVersion calls toshi.workspace.v1.WorkspaceService.GetVersion.
 func (c *workspaceServiceClient) GetVersion(ctx context.Context, req *connect.Request[workspacev1.GetVersionRequest]) (*connect.Response[workspacev1.GetVersionResponse], error) {
 	return c.getVersion.CallUnary(ctx, req)
+}
+
+// DeleteWorkspace calls toshi.workspace.v1.WorkspaceService.DeleteWorkspace.
+func (c *workspaceServiceClient) DeleteWorkspace(ctx context.Context, req *connect.Request[workspacev1.DeleteWorkspaceRequest]) (*connect.Response[workspacev1.DeleteWorkspaceResponse], error) {
+	return c.deleteWorkspace.CallUnary(ctx, req)
+}
+
+// CancelWorkspaceDeletion calls toshi.workspace.v1.WorkspaceService.CancelWorkspaceDeletion.
+func (c *workspaceServiceClient) CancelWorkspaceDeletion(ctx context.Context, req *connect.Request[workspacev1.CancelWorkspaceDeletionRequest]) (*connect.Response[workspacev1.CancelWorkspaceDeletionResponse], error) {
+	return c.cancelWorkspaceDeletion.CallUnary(ctx, req)
 }
 
 // WorkspaceServiceHandler is an implementation of the toshi.workspace.v1.WorkspaceService service.
@@ -501,6 +549,24 @@ type WorkspaceServiceHandler interface {
 	// GetVersion returns the control plane's version, commit and commit
 	// date, and the oldest agent release it admits.
 	GetVersion(context.Context, *connect.Request[workspacev1.GetVersionRequest]) (*connect.Response[workspacev1.GetVersionResponse], error)
+	// DeleteWorkspace schedules the caller's workspace's deletion: the
+	// workspace is suspended until purge_after, the deployment's default
+	// grace from now, after which its data is purged from the control plane
+	// and every host. confirm must equal the workspace's name as
+	// GetWorkspace returns it, else the call fails with INVALID_ARGUMENT. A
+	// workspace that is not active (suspended, deletion scheduled, deleting or
+	// deleted) fails with FAILED_PRECONDITION, with the state as the
+	// google.rpc.ErrorInfo reason. The answer carries the workspace with
+	// purge_after and deletion_by "owner".
+	DeleteWorkspace(context.Context, *connect.Request[workspacev1.DeleteWorkspaceRequest]) (*connect.Response[workspacev1.DeleteWorkspaceResponse], error)
+	// CancelWorkspaceDeletion cancels a deletion an Owner scheduled while its
+	// purge_after is in the future, and returns the workspace to active; held
+	// jobs run at the next scheduler pass. It is the one call other than the
+	// reads a workspace with a scheduled deletion takes. A workspace with no
+	// scheduled deletion, one the operator scheduled, or one whose
+	// purge_after has passed fails with FAILED_PRECONDITION, with the reason
+	// in a google.rpc.ErrorInfo.
+	CancelWorkspaceDeletion(context.Context, *connect.Request[workspacev1.CancelWorkspaceDeletionRequest]) (*connect.Response[workspacev1.CancelWorkspaceDeletionResponse], error)
 }
 
 // NewWorkspaceServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -606,6 +672,18 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("GetVersion")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceDeleteWorkspaceHandler := connect.NewUnaryHandler(
+		WorkspaceServiceDeleteWorkspaceProcedure,
+		svc.DeleteWorkspace,
+		connect.WithSchema(workspaceServiceMethods.ByName("DeleteWorkspace")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceCancelWorkspaceDeletionHandler := connect.NewUnaryHandler(
+		WorkspaceServiceCancelWorkspaceDeletionProcedure,
+		svc.CancelWorkspaceDeletion,
+		connect.WithSchema(workspaceServiceMethods.ByName("CancelWorkspaceDeletion")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.WorkspaceService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case WorkspaceServiceGetWorkspaceProcedure:
@@ -640,6 +718,10 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceCreateBillingPortalSessionHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetVersionProcedure:
 			workspaceServiceGetVersionHandler.ServeHTTP(w, r)
+		case WorkspaceServiceDeleteWorkspaceProcedure:
+			workspaceServiceDeleteWorkspaceHandler.ServeHTTP(w, r)
+		case WorkspaceServiceCancelWorkspaceDeletionProcedure:
+			workspaceServiceCancelWorkspaceDeletionHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -711,4 +793,12 @@ func (UnimplementedWorkspaceServiceHandler) CreateBillingPortalSession(context.C
 
 func (UnimplementedWorkspaceServiceHandler) GetVersion(context.Context, *connect.Request[workspacev1.GetVersionRequest]) (*connect.Response[workspacev1.GetVersionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetVersion is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) DeleteWorkspace(context.Context, *connect.Request[workspacev1.DeleteWorkspaceRequest]) (*connect.Response[workspacev1.DeleteWorkspaceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.DeleteWorkspace is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) CancelWorkspaceDeletion(context.Context, *connect.Request[workspacev1.CancelWorkspaceDeletionRequest]) (*connect.Response[workspacev1.CancelWorkspaceDeletionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.CancelWorkspaceDeletion is not implemented"))
 }
