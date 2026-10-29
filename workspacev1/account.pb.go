@@ -711,13 +711,13 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"\x16UnlinkIdentityResponse\x128\n" +
 	"\bidentity\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.IdentityR\bidentity\x12%\n" +
 	"\x0esessions_ended\x18\x02 \x01(\x05R\rsessionsEnded\x12%\n" +
-	"\x0egrants_revoked\x18\x03 \x01(\x05R\rgrantsRevoked2\xbb\x03\n" +
+	"\x0egrants_revoked\x18\x03 \x01(\x05R\rgrantsRevoked2\xc5\x03\n" +
 	"\x0eAccountService\x12z\n" +
 	"\n" +
 	"GetAccount\x12%.toshi.workspace.v1.GetAccountRequest\x1a&.toshi.workspace.v1.GetAccountResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x86\x01\n" +
-	"\x0eListIdentities\x12).toshi.workspace.v1.ListIdentitiesRequest\x1a*.toshi.workspace.v1.ListIdentitiesResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xa3\x01\n" +
-	"\x0eUnlinkIdentity\x12).toshi.workspace.v1.UnlinkIdentityRequest\x1a*.toshi.workspace.v1.UnlinkIdentityResponse\":\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\xd2\xf3\x18\x19\n" +
-	"\x11identity.unlinked\x12\x04noneB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x0eListIdentities\x12).toshi.workspace.v1.ListIdentitiesRequest\x1a*.toshi.workspace.v1.ListIdentitiesResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xad\x01\n" +
+	"\x0eUnlinkIdentity\x12).toshi.workspace.v1.UnlinkIdentityRequest\x1a*.toshi.workspace.v1.UnlinkIdentityResponse\"D\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\xd2\xf3\x18\x19\n" +
+	"\x11identity.unlinked\x12\x04none\xea\xf3\x18\x06\b\x00\x10\x01\x18\x00B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_account_proto_rawDescOnce sync.Once

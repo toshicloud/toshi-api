@@ -14,11 +14,13 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // caller's permissions are the union of the roles granted to it; there are
 // no deny rules.
 //
-// Four roles are built in: owner (every permission), admin (every
+// Five roles are built in: owner (every permission), admin (every
 // permission but billing.write, workspace.delete and workspace.signin),
 // member (reads and
 // writes of every product and of projects, secrets and tokens, and reads of
-// the rest) and viewer (every read). They cannot be changed. A workspace
+// the rest), agent (every read, and sandboxes.write, channels.write,
+// artifacts.write and volumes.write) and viewer (every read). They cannot
+// be changed. A workspace
 // adds its own from the permissions docs/api/permissions.md lists.
 //
 // Nobody makes, changes, deletes, gives or revokes a role with a
@@ -169,6 +171,8 @@ service RoleService {
   // with ALREADY_EXISTS, leaving the invitation open.
   rpc AcceptInvitation(AcceptInvitationRequest) returns (AcceptInvitationResponse) {
     option (toshi.permission) = "members.read";
+    // members.read only files a person's own call; it makes them a member.
+    option (toshi.mcp) = {read_only: false, idempotent: false};
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "invitation.accepted", target: "invitation:response.invitation.id"};
   }
@@ -176,7 +180,7 @@ service RoleService {
 
 // Role is a named set of permissions.
 message Role {
-  // Role id: "owner", "admin", "member" or "viewer" for a built-in role,
+  // Role id: "owner", "admin", "member", "agent" or "viewer" for a built-in role,
   // such as "role-1a2b3c4d5e6f" for one of the workspace's.
   string id = 1;
   string name = 2;

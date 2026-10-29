@@ -44,6 +44,8 @@ service AccountService {
   // identity, the calling one included, stops working at its next call.
   rpc UnlinkIdentity(UnlinkIdentityRequest) returns (UnlinkIdentityResponse) {
     option (toshi.permission) = "members.read";
+    // members.read only files a person's own call; it changes the account.
+    option (toshi.mcp) = {read_only: false, idempotent: false, destructive: true};
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {
       action: "identity.unlinked"
