@@ -3886,9 +3886,15 @@ type Tenant struct {
 	// Whether the workspace's services and sandboxes may set keep_vm, which
 	// keeps a workload's VM on one of its own hosts across its stops and
 	// sleeps. Off by default.
-	KeepVm        bool `protobuf:"varint,34,opt,name=keep_vm,json=keepVm,proto3" json:"keep_vm,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	KeepVm bool `protobuf:"varint,34,opt,name=keep_vm,json=keepVm,proto3" json:"keep_vm,omitempty"`
+	// How often, in seconds, a running VM's state volumes are snapshotted;
+	// unset when its plan's applies. 0 takes no snapshots.
+	VolumeSnapshotIntervalSeconds *int32 `protobuf:"varint,35,opt,name=volume_snapshot_interval_seconds,json=volumeSnapshotIntervalSeconds,proto3,oneof" json:"volume_snapshot_interval_seconds,omitempty"`
+	// The interval Toshi uses: the workspace's own value when set, else its
+	// plan's.
+	VolumeSnapshotIntervalSecondsEffective int32 `protobuf:"varint,36,opt,name=volume_snapshot_interval_seconds_effective,json=volumeSnapshotIntervalSecondsEffective,proto3" json:"volume_snapshot_interval_seconds_effective,omitempty"`
+	unknownFields                          protoimpl.UnknownFields
+	sizeCache                              protoimpl.SizeCache
 }
 
 func (x *Tenant) Reset() {
@@ -4157,6 +4163,20 @@ func (x *Tenant) GetKeepVm() bool {
 		return x.KeepVm
 	}
 	return false
+}
+
+func (x *Tenant) GetVolumeSnapshotIntervalSeconds() int32 {
+	if x != nil && x.VolumeSnapshotIntervalSeconds != nil {
+		return *x.VolumeSnapshotIntervalSeconds
+	}
+	return 0
+}
+
+func (x *Tenant) GetVolumeSnapshotIntervalSecondsEffective() int32 {
+	if x != nil {
+		return x.VolumeSnapshotIntervalSecondsEffective
+	}
+	return 0
 }
 
 // HostingCertificate is a workspace's wildcard certificate for its
@@ -4637,10 +4657,13 @@ type SetTenantLimitsRequest struct {
 	SecretMaxKib    *int64                 `protobuf:"varint,4,opt,name=secret_max_kib,json=secretMaxKib,proto3,oneof" json:"secret_max_kib,omitempty"`
 	PreviewMaxPorts *int32                 `protobuf:"varint,5,opt,name=preview_max_ports,json=previewMaxPorts,proto3,oneof" json:"preview_max_ports,omitempty"`
 	// Limits to clear, by name ("secret_max_sets", "secret_max_keys",
-	// "secret_max_kib", "preview_max_ports").
-	Clear         []string `protobuf:"bytes,6,rep,name=clear,proto3" json:"clear,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// "secret_max_kib", "preview_max_ports",
+	// "volume_snapshot_interval_seconds").
+	Clear []string `protobuf:"bytes,6,rep,name=clear,proto3" json:"clear,omitempty"`
+	// Seconds between snapshots of a running VM's state volumes; 0 takes none.
+	VolumeSnapshotIntervalSeconds *int32 `protobuf:"varint,7,opt,name=volume_snapshot_interval_seconds,json=volumeSnapshotIntervalSeconds,proto3,oneof" json:"volume_snapshot_interval_seconds,omitempty"`
+	unknownFields                 protoimpl.UnknownFields
+	sizeCache                     protoimpl.SizeCache
 }
 
 func (x *SetTenantLimitsRequest) Reset() {
@@ -4713,6 +4736,13 @@ func (x *SetTenantLimitsRequest) GetClear() []string {
 		return x.Clear
 	}
 	return nil
+}
+
+func (x *SetTenantLimitsRequest) GetVolumeSnapshotIntervalSeconds() int32 {
+	if x != nil && x.VolumeSnapshotIntervalSeconds != nil {
+		return *x.VolumeSnapshotIntervalSeconds
+	}
+	return 0
 }
 
 type SetTenantLimitsResponse struct {
@@ -14220,7 +14250,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x05hosts\x18\x01 \x03(\v2$.toshi.operator.v1.OfflineHostResultR\x05hosts\"\x81\x01\n" +
 	"\x11OfflineHostResult\x12+\n" +
 	"\x04host\x18\x01 \x01(\v2\x17.toshi.operator.v1.HostR\x04host\x12?\n" +
-	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\xbc\r\n" +
+	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\x8b\x0f\n" +
 	"\x06Tenant\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -14260,13 +14290,16 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\vmember_join\x18  \x01(\tR\n" +
 	"memberJoin\x12V\n" +
 	"\x13hosting_certificate\x18! \x01(\v2%.toshi.operator.v1.HostingCertificateR\x12hostingCertificate\x12\x17\n" +
-	"\akeep_vm\x18\" \x01(\bR\x06keepVmB\x12\n" +
+	"\akeep_vm\x18\" \x01(\bR\x06keepVm\x12L\n" +
+	" volume_snapshot_interval_seconds\x18# \x01(\x05H\x06R\x1dvolumeSnapshotIntervalSeconds\x88\x01\x01\x12Z\n" +
+	"*volume_snapshot_interval_seconds_effective\x18$ \x01(\x05R&volumeSnapshotIntervalSecondsEffectiveB\x12\n" +
 	"\x10_concurrency_capB\x0f\n" +
 	"\r_history_daysB\x12\n" +
 	"\x10_secret_max_setsB\x12\n" +
 	"\x10_secret_max_keysB\x11\n" +
 	"\x0f_secret_max_kibB\x14\n" +
-	"\x12_preview_max_ports\"\xa7\x02\n" +
+	"\x12_preview_max_portsB#\n" +
+	"!_volume_snapshot_interval_seconds\"\xa7\x02\n" +
 	"\x12HostingCertificate\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12@\n" +
 	"\x05state\x18\x02 \x01(\x0e2*.toshi.operator.v1.HostingCertificateStateR\x05state\x127\n" +
@@ -14295,18 +14328,20 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0fconcurrency_cap\x18\x02 \x01(\x05R\x0econcurrencyCap\"I\n" +
 	"\x14SetTenantCapResponse\x121\n" +
-	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"\xcd\x02\n" +
+	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"\xc0\x03\n" +
 	"\x16SetTenantLimitsRequest\x12\x16\n" +
 	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12+\n" +
 	"\x0fsecret_max_sets\x18\x02 \x01(\x05H\x00R\rsecretMaxSets\x88\x01\x01\x12+\n" +
 	"\x0fsecret_max_keys\x18\x03 \x01(\x05H\x01R\rsecretMaxKeys\x88\x01\x01\x12)\n" +
 	"\x0esecret_max_kib\x18\x04 \x01(\x03H\x02R\fsecretMaxKib\x88\x01\x01\x12/\n" +
 	"\x11preview_max_ports\x18\x05 \x01(\x05H\x03R\x0fpreviewMaxPorts\x88\x01\x01\x12\x14\n" +
-	"\x05clear\x18\x06 \x03(\tR\x05clearB\x12\n" +
+	"\x05clear\x18\x06 \x03(\tR\x05clear\x12L\n" +
+	" volume_snapshot_interval_seconds\x18\a \x01(\x05H\x04R\x1dvolumeSnapshotIntervalSeconds\x88\x01\x01B\x12\n" +
 	"\x10_secret_max_setsB\x12\n" +
 	"\x10_secret_max_keysB\x11\n" +
 	"\x0f_secret_max_kibB\x14\n" +
-	"\x12_preview_max_ports\"L\n" +
+	"\x12_preview_max_portsB#\n" +
+	"!_volume_snapshot_interval_seconds\"L\n" +
 	"\x17SetTenantLimitsResponse\x121\n" +
 	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\">\n" +
 	"\x14SuspendTenantRequest\x12\x0e\n" +

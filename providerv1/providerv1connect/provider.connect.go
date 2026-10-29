@@ -103,6 +103,9 @@ const (
 	// ProviderServiceExportDiskProcedure is the fully-qualified name of the ProviderService's
 	// ExportDisk RPC.
 	ProviderServiceExportDiskProcedure = "/toshi.backend.provider.v1.ProviderService/ExportDisk"
+	// ProviderServiceSnapshotDiskProcedure is the fully-qualified name of the ProviderService's
+	// SnapshotDisk RPC.
+	ProviderServiceSnapshotDiskProcedure = "/toshi.backend.provider.v1.ProviderService/SnapshotDisk"
 	// ProviderServiceInstanceGoneProcedure is the fully-qualified name of the ProviderService's
 	// InstanceGone RPC.
 	ProviderServiceInstanceGoneProcedure = "/toshi.backend.provider.v1.ProviderService/InstanceGone"
@@ -253,6 +256,10 @@ type ProviderServiceClient interface {
 	// ExportDisk writes the disk at src to dst, a file it creates, as one
 	// disk that needs no other file.
 	ExportDisk(context.Context, *connect.Request[providerv1.ExportDiskRequest]) (*connect.Response[providerv1.ExportDiskResponse], error)
+	// SnapshotDisk writes the state volume disk of a running instance to
+	// dst, a file it creates, as it is at one moment, while the instance
+	// runs: the facet "disk_snapshotter".
+	SnapshotDisk(context.Context, *connect.Request[providerv1.SnapshotDiskRequest]) (*connect.Response[providerv1.SnapshotDiskResponse], error)
 	// InstanceGone reports whether an instance a previous agent left on the
 	// host is positively gone.
 	InstanceGone(context.Context, *connect.Request[providerv1.InstanceGoneRequest]) (*connect.Response[providerv1.InstanceGoneResponse], error)
@@ -471,6 +478,12 @@ func NewProviderServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			httpClient,
 			baseURL+ProviderServiceExportDiskProcedure,
 			connect.WithSchema(providerServiceMethods.ByName("ExportDisk")),
+			connect.WithClientOptions(opts...),
+		),
+		snapshotDisk: connect.NewClient[providerv1.SnapshotDiskRequest, providerv1.SnapshotDiskResponse](
+			httpClient,
+			baseURL+ProviderServiceSnapshotDiskProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("SnapshotDisk")),
 			connect.WithClientOptions(opts...),
 		),
 		instanceGone: connect.NewClient[providerv1.InstanceGoneRequest, providerv1.InstanceGoneResponse](
@@ -692,6 +705,7 @@ type providerServiceClient struct {
 	attachDisk            *connect.Client[providerv1.AttachDiskRequest, providerv1.AttachDiskResponse]
 	diskHasData           *connect.Client[providerv1.DiskHasDataRequest, providerv1.DiskHasDataResponse]
 	exportDisk            *connect.Client[providerv1.ExportDiskRequest, providerv1.ExportDiskResponse]
+	snapshotDisk          *connect.Client[providerv1.SnapshotDiskRequest, providerv1.SnapshotDiskResponse]
 	instanceGone          *connect.Client[providerv1.InstanceGoneRequest, providerv1.InstanceGoneResponse]
 	unreaped              *connect.Client[providerv1.UnreapedRequest, providerv1.UnreapedResponse]
 	keep                  *connect.Client[providerv1.KeepRequest, providerv1.KeepResponse]
@@ -805,6 +819,11 @@ func (c *providerServiceClient) DiskHasData(ctx context.Context, req *connect.Re
 // ExportDisk calls toshi.backend.provider.v1.ProviderService.ExportDisk.
 func (c *providerServiceClient) ExportDisk(ctx context.Context, req *connect.Request[providerv1.ExportDiskRequest]) (*connect.Response[providerv1.ExportDiskResponse], error) {
 	return c.exportDisk.CallUnary(ctx, req)
+}
+
+// SnapshotDisk calls toshi.backend.provider.v1.ProviderService.SnapshotDisk.
+func (c *providerServiceClient) SnapshotDisk(ctx context.Context, req *connect.Request[providerv1.SnapshotDiskRequest]) (*connect.Response[providerv1.SnapshotDiskResponse], error) {
+	return c.snapshotDisk.CallUnary(ctx, req)
 }
 
 // InstanceGone calls toshi.backend.provider.v1.ProviderService.InstanceGone.
@@ -1030,6 +1049,10 @@ type ProviderServiceHandler interface {
 	// ExportDisk writes the disk at src to dst, a file it creates, as one
 	// disk that needs no other file.
 	ExportDisk(context.Context, *connect.Request[providerv1.ExportDiskRequest]) (*connect.Response[providerv1.ExportDiskResponse], error)
+	// SnapshotDisk writes the state volume disk of a running instance to
+	// dst, a file it creates, as it is at one moment, while the instance
+	// runs: the facet "disk_snapshotter".
+	SnapshotDisk(context.Context, *connect.Request[providerv1.SnapshotDiskRequest]) (*connect.Response[providerv1.SnapshotDiskResponse], error)
 	// InstanceGone reports whether an instance a previous agent left on the
 	// host is positively gone.
 	InstanceGone(context.Context, *connect.Request[providerv1.InstanceGoneRequest]) (*connect.Response[providerv1.InstanceGoneResponse], error)
@@ -1244,6 +1267,12 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 		ProviderServiceExportDiskProcedure,
 		svc.ExportDisk,
 		connect.WithSchema(providerServiceMethods.ByName("ExportDisk")),
+		connect.WithHandlerOptions(opts...),
+	)
+	providerServiceSnapshotDiskHandler := connect.NewUnaryHandler(
+		ProviderServiceSnapshotDiskProcedure,
+		svc.SnapshotDisk,
+		connect.WithSchema(providerServiceMethods.ByName("SnapshotDisk")),
 		connect.WithHandlerOptions(opts...),
 	)
 	providerServiceInstanceGoneHandler := connect.NewUnaryHandler(
@@ -1478,6 +1507,8 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 			providerServiceDiskHasDataHandler.ServeHTTP(w, r)
 		case ProviderServiceExportDiskProcedure:
 			providerServiceExportDiskHandler.ServeHTTP(w, r)
+		case ProviderServiceSnapshotDiskProcedure:
+			providerServiceSnapshotDiskHandler.ServeHTTP(w, r)
 		case ProviderServiceInstanceGoneProcedure:
 			providerServiceInstanceGoneHandler.ServeHTTP(w, r)
 		case ProviderServiceUnreapedProcedure:
@@ -1615,6 +1646,10 @@ func (UnimplementedProviderServiceHandler) DiskHasData(context.Context, *connect
 
 func (UnimplementedProviderServiceHandler) ExportDisk(context.Context, *connect.Request[providerv1.ExportDiskRequest]) (*connect.Response[providerv1.ExportDiskResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.ExportDisk is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) SnapshotDisk(context.Context, *connect.Request[providerv1.SnapshotDiskRequest]) (*connect.Response[providerv1.SnapshotDiskResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.SnapshotDisk is not implemented"))
 }
 
 func (UnimplementedProviderServiceHandler) InstanceGone(context.Context, *connect.Request[providerv1.InstanceGoneRequest]) (*connect.Response[providerv1.InstanceGoneResponse], error) {

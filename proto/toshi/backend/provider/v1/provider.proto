@@ -106,6 +106,10 @@ service ProviderService {
   // ExportDisk writes the disk at src to dst, a file it creates, as one
   // disk that needs no other file.
   rpc ExportDisk(ExportDiskRequest) returns (ExportDiskResponse);
+  // SnapshotDisk writes the state volume disk of a running instance to
+  // dst, a file it creates, as it is at one moment, while the instance
+  // runs: the facet "disk_snapshotter".
+  rpc SnapshotDisk(SnapshotDiskRequest) returns (SnapshotDiskResponse);
 
   // State: the facet "instances_gone". The state root is in OpenResponse.
 
@@ -582,6 +586,13 @@ message ExportDiskRequest {
 }
 
 message ExportDiskResponse {}
+
+message SnapshotDiskRequest {
+  string id = 1;
+  string dst = 2;
+}
+
+message SnapshotDiskResponse {}
 
 message InstanceGoneRequest {
   string id = 1;

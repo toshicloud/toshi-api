@@ -85,6 +85,115 @@ func (VolumeMode) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{0}
 }
 
+// VolumeVersionKind is how a run made a volume version.
+type VolumeVersionKind int32
+
+const (
+	VolumeVersionKind_VOLUME_VERSION_KIND_UNSPECIFIED VolumeVersionKind = 0
+	// Saved when the run that mounted the volume ended, or restored from
+	// such a version.
+	VolumeVersionKind_VOLUME_VERSION_KIND_SAVE VolumeVersionKind = 1
+	// Taken while the run's VM ran. A run keeps only its newest snapshot,
+	// and its save replaces it.
+	VolumeVersionKind_VOLUME_VERSION_KIND_SNAPSHOT VolumeVersionKind = 2
+)
+
+// Enum value maps for VolumeVersionKind.
+var (
+	VolumeVersionKind_name = map[int32]string{
+		0: "VOLUME_VERSION_KIND_UNSPECIFIED",
+		1: "VOLUME_VERSION_KIND_SAVE",
+		2: "VOLUME_VERSION_KIND_SNAPSHOT",
+	}
+	VolumeVersionKind_value = map[string]int32{
+		"VOLUME_VERSION_KIND_UNSPECIFIED": 0,
+		"VOLUME_VERSION_KIND_SAVE":        1,
+		"VOLUME_VERSION_KIND_SNAPSHOT":    2,
+	}
+)
+
+func (x VolumeVersionKind) Enum() *VolumeVersionKind {
+	p := new(VolumeVersionKind)
+	*p = x
+	return p
+}
+
+func (x VolumeVersionKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (VolumeVersionKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_volumes_proto_enumTypes[1].Descriptor()
+}
+
+func (VolumeVersionKind) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_volumes_proto_enumTypes[1]
+}
+
+func (x VolumeVersionKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use VolumeVersionKind.Descriptor instead.
+func (VolumeVersionKind) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{1}
+}
+
+// VolumeConsistency is what a volume version's data can be trusted for.
+type VolumeConsistency int32
+
+const (
+	VolumeConsistency_VOLUME_CONSISTENCY_UNSPECIFIED VolumeConsistency = 0
+	// The data as a power cut would leave it: a file system recovers it, an
+	// application may need to repair what it was writing.
+	VolumeConsistency_VOLUME_CONSISTENCY_CRASH VolumeConsistency = 1
+	// The application settled it first: the service's pre_snapshot hook
+	// exited 0 before the snapshot, or the guest unmounted the volume
+	// cleanly before the save.
+	VolumeConsistency_VOLUME_CONSISTENCY_APPLICATION VolumeConsistency = 2
+)
+
+// Enum value maps for VolumeConsistency.
+var (
+	VolumeConsistency_name = map[int32]string{
+		0: "VOLUME_CONSISTENCY_UNSPECIFIED",
+		1: "VOLUME_CONSISTENCY_CRASH",
+		2: "VOLUME_CONSISTENCY_APPLICATION",
+	}
+	VolumeConsistency_value = map[string]int32{
+		"VOLUME_CONSISTENCY_UNSPECIFIED": 0,
+		"VOLUME_CONSISTENCY_CRASH":       1,
+		"VOLUME_CONSISTENCY_APPLICATION": 2,
+	}
+)
+
+func (x VolumeConsistency) Enum() *VolumeConsistency {
+	p := new(VolumeConsistency)
+	*p = x
+	return p
+}
+
+func (x VolumeConsistency) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (VolumeConsistency) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_volumes_proto_enumTypes[2].Descriptor()
+}
+
+func (VolumeConsistency) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_volumes_proto_enumTypes[2]
+}
+
+func (x VolumeConsistency) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use VolumeConsistency.Descriptor instead.
+func (VolumeConsistency) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{2}
+}
+
 // Volume is a disk of a project.
 type Volume struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -233,7 +342,11 @@ type VolumeVersion struct {
 	Sha256 string `protobuf:"bytes,4,opt,name=sha256,proto3" json:"sha256,omitempty"`
 	// The version RestoreVolume copied this one from; zero for one a run
 	// saved.
-	RestoredFrom  int64 `protobuf:"varint,5,opt,name=restored_from,json=restoredFrom,proto3" json:"restored_from,omitempty"`
+	RestoredFrom int64 `protobuf:"varint,5,opt,name=restored_from,json=restoredFrom,proto3" json:"restored_from,omitempty"`
+	// Whether a run saved it when it ended or snapshotted it while it ran.
+	Kind VolumeVersionKind `protobuf:"varint,6,opt,name=kind,proto3,enum=toshi.workspace.v1.VolumeVersionKind" json:"kind,omitempty"`
+	// What its data can be trusted for.
+	Consistency   VolumeConsistency `protobuf:"varint,7,opt,name=consistency,proto3,enum=toshi.workspace.v1.VolumeConsistency" json:"consistency,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -301,6 +414,20 @@ func (x *VolumeVersion) GetRestoredFrom() int64 {
 		return x.RestoredFrom
 	}
 	return 0
+}
+
+func (x *VolumeVersion) GetKind() VolumeVersionKind {
+	if x != nil {
+		return x.Kind
+	}
+	return VolumeVersionKind_VOLUME_VERSION_KIND_UNSPECIFIED
+}
+
+func (x *VolumeVersion) GetConsistency() VolumeConsistency {
+	if x != nil {
+		return x.Consistency
+	}
+	return VolumeConsistency_VOLUME_CONSISTENCY_UNSPECIFIED
 }
 
 type ListVolumesRequest struct {
@@ -875,7 +1002,7 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x0elatest_version\x18\t \x01(\x03R\rlatestVersion\x12J\n" +
 	"\x13latest_version_time\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\x11latestVersionTime\x127\n" +
-	"\tlost_time\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\blostTime\"\xc0\x01\n" +
+	"\tlost_time\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\blostTime\"\xc4\x02\n" +
 	"\rVolumeVersion\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\x12;\n" +
 	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -883,7 +1010,9 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
 	"size_bytes\x18\x03 \x01(\x03R\tsizeBytes\x12\x16\n" +
 	"\x06sha256\x18\x04 \x01(\tR\x06sha256\x12#\n" +
-	"\rrestored_from\x18\x05 \x01(\x03R\frestoredFrom\"j\n" +
+	"\rrestored_from\x18\x05 \x01(\x03R\frestoredFrom\x129\n" +
+	"\x04kind\x18\x06 \x01(\x0e2%.toshi.workspace.v1.VolumeVersionKindR\x04kind\x12G\n" +
+	"\vconsistency\x18\a \x01(\x0e2%.toshi.workspace.v1.VolumeConsistencyR\vconsistency\"j\n" +
 	"\x12ListVolumesRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
@@ -926,7 +1055,15 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x11VOLUME_MODE_CACHE\x10\x01\x12\x14\n" +
 	"\x10VOLUME_MODE_SEED\x10\x02\x12\x15\n" +
 	"\x11VOLUME_MODE_STATE\x10\x03\x12\x18\n" +
-	"\x14VOLUME_MODE_ARTIFACT\x10\x042\xbb\x05\n" +
+	"\x14VOLUME_MODE_ARTIFACT\x10\x04*x\n" +
+	"\x11VolumeVersionKind\x12#\n" +
+	"\x1fVOLUME_VERSION_KIND_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18VOLUME_VERSION_KIND_SAVE\x10\x01\x12 \n" +
+	"\x1cVOLUME_VERSION_KIND_SNAPSHOT\x10\x02*y\n" +
+	"\x11VolumeConsistency\x12\"\n" +
+	"\x1eVOLUME_CONSISTENCY_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18VOLUME_CONSISTENCY_CRASH\x10\x01\x12\"\n" +
+	"\x1eVOLUME_CONSISTENCY_APPLICATION\x10\x022\xbb\x05\n" +
 	"\rVolumeService\x12{\n" +
 	"\vListVolumes\x12&.toshi.workspace.v1.ListVolumesRequest\x1a'.toshi.workspace.v1.ListVolumesResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12\x7f\n" +
 	"\fAttachVolume\x12'.toshi.workspace.v1.AttachVolumeRequest\x1a(.toshi.workspace.v1.AttachVolumeResponse\"\x1c\xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\x12\x7f\n" +
@@ -947,51 +1084,55 @@ func file_toshi_workspace_v1_volumes_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_volumes_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_volumes_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_toshi_workspace_v1_volumes_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_toshi_workspace_v1_volumes_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_toshi_workspace_v1_volumes_proto_goTypes = []any{
 	(VolumeMode)(0),                    // 0: toshi.workspace.v1.VolumeMode
-	(*Volume)(nil),                     // 1: toshi.workspace.v1.Volume
-	(*VolumeVersion)(nil),              // 2: toshi.workspace.v1.VolumeVersion
-	(*ListVolumesRequest)(nil),         // 3: toshi.workspace.v1.ListVolumesRequest
-	(*ListVolumesResponse)(nil),        // 4: toshi.workspace.v1.ListVolumesResponse
-	(*AttachVolumeRequest)(nil),        // 5: toshi.workspace.v1.AttachVolumeRequest
-	(*AttachVolumeResponse)(nil),       // 6: toshi.workspace.v1.AttachVolumeResponse
-	(*DetachVolumeRequest)(nil),        // 7: toshi.workspace.v1.DetachVolumeRequest
-	(*DetachVolumeResponse)(nil),       // 8: toshi.workspace.v1.DetachVolumeResponse
-	(*ListVolumeVersionsRequest)(nil),  // 9: toshi.workspace.v1.ListVolumeVersionsRequest
-	(*ListVolumeVersionsResponse)(nil), // 10: toshi.workspace.v1.ListVolumeVersionsResponse
-	(*RestoreVolumeRequest)(nil),       // 11: toshi.workspace.v1.RestoreVolumeRequest
-	(*RestoreVolumeResponse)(nil),      // 12: toshi.workspace.v1.RestoreVolumeResponse
-	(*timestamppb.Timestamp)(nil),      // 13: google.protobuf.Timestamp
+	(VolumeVersionKind)(0),             // 1: toshi.workspace.v1.VolumeVersionKind
+	(VolumeConsistency)(0),             // 2: toshi.workspace.v1.VolumeConsistency
+	(*Volume)(nil),                     // 3: toshi.workspace.v1.Volume
+	(*VolumeVersion)(nil),              // 4: toshi.workspace.v1.VolumeVersion
+	(*ListVolumesRequest)(nil),         // 5: toshi.workspace.v1.ListVolumesRequest
+	(*ListVolumesResponse)(nil),        // 6: toshi.workspace.v1.ListVolumesResponse
+	(*AttachVolumeRequest)(nil),        // 7: toshi.workspace.v1.AttachVolumeRequest
+	(*AttachVolumeResponse)(nil),       // 8: toshi.workspace.v1.AttachVolumeResponse
+	(*DetachVolumeRequest)(nil),        // 9: toshi.workspace.v1.DetachVolumeRequest
+	(*DetachVolumeResponse)(nil),       // 10: toshi.workspace.v1.DetachVolumeResponse
+	(*ListVolumeVersionsRequest)(nil),  // 11: toshi.workspace.v1.ListVolumeVersionsRequest
+	(*ListVolumeVersionsResponse)(nil), // 12: toshi.workspace.v1.ListVolumeVersionsResponse
+	(*RestoreVolumeRequest)(nil),       // 13: toshi.workspace.v1.RestoreVolumeRequest
+	(*RestoreVolumeResponse)(nil),      // 14: toshi.workspace.v1.RestoreVolumeResponse
+	(*timestamppb.Timestamp)(nil),      // 15: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_volumes_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Volume.mode:type_name -> toshi.workspace.v1.VolumeMode
-	13, // 1: toshi.workspace.v1.Volume.create_time:type_name -> google.protobuf.Timestamp
-	13, // 2: toshi.workspace.v1.Volume.latest_version_time:type_name -> google.protobuf.Timestamp
-	13, // 3: toshi.workspace.v1.Volume.lost_time:type_name -> google.protobuf.Timestamp
-	13, // 4: toshi.workspace.v1.VolumeVersion.create_time:type_name -> google.protobuf.Timestamp
-	1,  // 5: toshi.workspace.v1.ListVolumesResponse.volumes:type_name -> toshi.workspace.v1.Volume
-	1,  // 6: toshi.workspace.v1.AttachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	1,  // 7: toshi.workspace.v1.DetachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	2,  // 8: toshi.workspace.v1.ListVolumeVersionsResponse.versions:type_name -> toshi.workspace.v1.VolumeVersion
-	2,  // 9: toshi.workspace.v1.RestoreVolumeResponse.version:type_name -> toshi.workspace.v1.VolumeVersion
-	1,  // 10: toshi.workspace.v1.RestoreVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	3,  // 11: toshi.workspace.v1.VolumeService.ListVolumes:input_type -> toshi.workspace.v1.ListVolumesRequest
-	5,  // 12: toshi.workspace.v1.VolumeService.AttachVolume:input_type -> toshi.workspace.v1.AttachVolumeRequest
-	7,  // 13: toshi.workspace.v1.VolumeService.DetachVolume:input_type -> toshi.workspace.v1.DetachVolumeRequest
-	9,  // 14: toshi.workspace.v1.VolumeService.ListVolumeVersions:input_type -> toshi.workspace.v1.ListVolumeVersionsRequest
-	11, // 15: toshi.workspace.v1.VolumeService.RestoreVolume:input_type -> toshi.workspace.v1.RestoreVolumeRequest
-	4,  // 16: toshi.workspace.v1.VolumeService.ListVolumes:output_type -> toshi.workspace.v1.ListVolumesResponse
-	6,  // 17: toshi.workspace.v1.VolumeService.AttachVolume:output_type -> toshi.workspace.v1.AttachVolumeResponse
-	8,  // 18: toshi.workspace.v1.VolumeService.DetachVolume:output_type -> toshi.workspace.v1.DetachVolumeResponse
-	10, // 19: toshi.workspace.v1.VolumeService.ListVolumeVersions:output_type -> toshi.workspace.v1.ListVolumeVersionsResponse
-	12, // 20: toshi.workspace.v1.VolumeService.RestoreVolume:output_type -> toshi.workspace.v1.RestoreVolumeResponse
-	16, // [16:21] is the sub-list for method output_type
-	11, // [11:16] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	15, // 1: toshi.workspace.v1.Volume.create_time:type_name -> google.protobuf.Timestamp
+	15, // 2: toshi.workspace.v1.Volume.latest_version_time:type_name -> google.protobuf.Timestamp
+	15, // 3: toshi.workspace.v1.Volume.lost_time:type_name -> google.protobuf.Timestamp
+	15, // 4: toshi.workspace.v1.VolumeVersion.create_time:type_name -> google.protobuf.Timestamp
+	1,  // 5: toshi.workspace.v1.VolumeVersion.kind:type_name -> toshi.workspace.v1.VolumeVersionKind
+	2,  // 6: toshi.workspace.v1.VolumeVersion.consistency:type_name -> toshi.workspace.v1.VolumeConsistency
+	3,  // 7: toshi.workspace.v1.ListVolumesResponse.volumes:type_name -> toshi.workspace.v1.Volume
+	3,  // 8: toshi.workspace.v1.AttachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	3,  // 9: toshi.workspace.v1.DetachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	4,  // 10: toshi.workspace.v1.ListVolumeVersionsResponse.versions:type_name -> toshi.workspace.v1.VolumeVersion
+	4,  // 11: toshi.workspace.v1.RestoreVolumeResponse.version:type_name -> toshi.workspace.v1.VolumeVersion
+	3,  // 12: toshi.workspace.v1.RestoreVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	5,  // 13: toshi.workspace.v1.VolumeService.ListVolumes:input_type -> toshi.workspace.v1.ListVolumesRequest
+	7,  // 14: toshi.workspace.v1.VolumeService.AttachVolume:input_type -> toshi.workspace.v1.AttachVolumeRequest
+	9,  // 15: toshi.workspace.v1.VolumeService.DetachVolume:input_type -> toshi.workspace.v1.DetachVolumeRequest
+	11, // 16: toshi.workspace.v1.VolumeService.ListVolumeVersions:input_type -> toshi.workspace.v1.ListVolumeVersionsRequest
+	13, // 17: toshi.workspace.v1.VolumeService.RestoreVolume:input_type -> toshi.workspace.v1.RestoreVolumeRequest
+	6,  // 18: toshi.workspace.v1.VolumeService.ListVolumes:output_type -> toshi.workspace.v1.ListVolumesResponse
+	8,  // 19: toshi.workspace.v1.VolumeService.AttachVolume:output_type -> toshi.workspace.v1.AttachVolumeResponse
+	10, // 20: toshi.workspace.v1.VolumeService.DetachVolume:output_type -> toshi.workspace.v1.DetachVolumeResponse
+	12, // 21: toshi.workspace.v1.VolumeService.ListVolumeVersions:output_type -> toshi.workspace.v1.ListVolumeVersionsResponse
+	14, // 22: toshi.workspace.v1.VolumeService.RestoreVolume:output_type -> toshi.workspace.v1.RestoreVolumeResponse
+	18, // [18:23] is the sub-list for method output_type
+	13, // [13:18] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_volumes_proto_init() }
@@ -1004,7 +1145,7 @@ func file_toshi_workspace_v1_volumes_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_volumes_proto_rawDesc), len(file_toshi_workspace_v1_volumes_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      3,
 			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,

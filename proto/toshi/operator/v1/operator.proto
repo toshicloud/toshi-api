@@ -1264,6 +1264,12 @@ message Tenant {
   // keeps a workload's VM on one of its own hosts across its stops and
   // sleeps. Off by default.
   bool keep_vm = 34;
+  // How often, in seconds, a running VM's state volumes are snapshotted;
+  // unset when its plan's applies. 0 takes no snapshots.
+  optional int32 volume_snapshot_interval_seconds = 35;
+  // The interval Toshi uses: the workspace's own value when set, else its
+  // plan's.
+  int32 volume_snapshot_interval_seconds_effective = 36;
 }
 
 // HostingCertificate is a workspace's wildcard certificate for its
@@ -1352,8 +1358,11 @@ message SetTenantLimitsRequest {
   optional int64 secret_max_kib = 4;
   optional int32 preview_max_ports = 5;
   // Limits to clear, by name ("secret_max_sets", "secret_max_keys",
-  // "secret_max_kib", "preview_max_ports").
+  // "secret_max_kib", "preview_max_ports",
+  // "volume_snapshot_interval_seconds").
   repeated string clear = 6;
+  // Seconds between snapshots of a running VM's state volumes; 0 takes none.
+  optional int32 volume_snapshot_interval_seconds = 7;
 }
 
 message SetTenantLimitsResponse {

@@ -138,6 +138,33 @@ message VolumeVersion {
   // The version RestoreVolume copied this one from; zero for one a run
   // saved.
   int64 restored_from = 5;
+  // Whether a run saved it when it ended or snapshotted it while it ran.
+  VolumeVersionKind kind = 6;
+  // What its data can be trusted for.
+  VolumeConsistency consistency = 7;
+}
+
+// VolumeVersionKind is how a run made a volume version.
+enum VolumeVersionKind {
+  VOLUME_VERSION_KIND_UNSPECIFIED = 0;
+  // Saved when the run that mounted the volume ended, or restored from
+  // such a version.
+  VOLUME_VERSION_KIND_SAVE = 1;
+  // Taken while the run's VM ran. A run keeps only its newest snapshot,
+  // and its save replaces it.
+  VOLUME_VERSION_KIND_SNAPSHOT = 2;
+}
+
+// VolumeConsistency is what a volume version's data can be trusted for.
+enum VolumeConsistency {
+  VOLUME_CONSISTENCY_UNSPECIFIED = 0;
+  // The data as a power cut would leave it: a file system recovers it, an
+  // application may need to repair what it was writing.
+  VOLUME_CONSISTENCY_CRASH = 1;
+  // The application settled it first: the service's pre_snapshot hook
+  // exited 0 before the snapshot, or the guest unmounted the volume
+  // cleanly before the save.
+  VOLUME_CONSISTENCY_APPLICATION = 2;
 }
 
 message ListVolumesRequest {
