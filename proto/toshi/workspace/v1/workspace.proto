@@ -8,6 +8,7 @@ package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/workspace/v1/projects.proto";
 import "toshi/workspace/v1/recordings.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
@@ -65,6 +66,10 @@ message Job {
   // when AnswerPrompt answers it, and all of them when the job's run ends.
   // Set by Toshi.
   repeated AgentPrompt waiting = 9;
+  // The network policy the job was admitted with, its layers in order, and
+  // whether its host enforces network rules at assignment. Unset for a job
+  // recorded before workloads kept one.
+  WorkloadNetwork network = 10;
 }
 
 // JobStatus is a job's state and when it got there.
@@ -168,6 +173,10 @@ message Sandbox {
   // removed when AnswerPrompt answers it, and all of them when the
   // sandbox's run ends. Set by Toshi.
   repeated AgentPrompt waiting = 9;
+  // The network policy the sandbox was admitted with, its layers in order,
+  // and whether its host enforces network rules at assignment. Unset for a
+  // sandbox recorded before workloads kept one.
+  WorkloadNetwork network = 10;
 }
 
 // SandboxStatus is a sandbox's state and when it got there.
@@ -236,6 +245,32 @@ message Service {
   // removed when AnswerPrompt answers it, and all of them when the
   // service's run ends. Set by Toshi.
   repeated AgentPrompt waiting = 8;
+  // The network policy the service was admitted with, its layers in order,
+  // and whether its host enforces network rules at assignment. Unset for a
+  // service recorded before workloads kept one.
+  WorkloadNetwork network = 9;
+}
+
+// WorkloadNetwork is the network policy a workload was admitted with: its
+// layers in order, and whether the host it was assigned to enforces network
+// rules.
+message WorkloadNetwork {
+  // The layers in the order a connection is checked: operator, workspace,
+  // environment, then request when the workload asked for one.
+  repeated NetworkLayer layers = 1;
+  // Whether the workload's host enforces network rules at assignment. An
+  // unplaced workload is not enforced, with not_enforced_reason "not placed
+  // yet".
+  bool enforced = 2;
+  // Why the host does not enforce network rules, when enforced is false.
+  string not_enforced_reason = 3;
+}
+
+// NetworkLayer is one named policy of a workload's network policy.
+message NetworkLayer {
+  // Its name: "operator", "workspace", "environment" or "request".
+  string name = 1;
+  NetworkPolicy policy = 2;
 }
 
 // ServiceStatus is a service's state and when it got there.
@@ -445,6 +480,14 @@ message BoundKey {
   int64 version = 3;
 }
 
+// RequestNetwork is what a sandbox asks to reach: the request layer of its
+// network policy.
+message RequestNetwork {
+  // Each entry is a destination the sandbox may reach, "DEST[:PORTS][/tcp|/udp]"
+  // as the project network rules write it.
+  repeated string egress = 1;
+}
+
 // SandboxSpec is a sandbox: a VM that runs until its owner
 // deletes it or Toshi stops it.
 message SandboxSpec {
@@ -511,6 +554,11 @@ message SandboxSpec {
   // fails, or that finds another commit at ref, ends the sandbox FAILED
   // with last_error.code "setup_failed". Unset: nothing is cloned.
   SandboxSource source = 12;
+  // Create only: the destinations the sandbox may reach, each an entry as
+  // RequestNetwork.egress writes one. With it set the sandbox reaches only
+  // those entries, and only where the project's and environment's policies
+  // allow them. Unset means no request layer.
+  RequestNetwork network = 13;
 }
 
 // SandboxSource is a commit of a repository that one of the workspace's
