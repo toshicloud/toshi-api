@@ -255,6 +255,25 @@ message ServiceStatus {
   // run of the selected revision is opened, and whether it is ready.
   // Unset while no run is live.
   ServiceRun live_run = 9;
+  // The names visitors reach the service's http channels at, one per
+  // channel of its current revision's recipe that has one: the front
+  // channel at "<service>.<workspace>.svc.<domain>", every other at
+  // "<port>-<service>.<workspace>.svc.<domain>". Empty while the
+  // deployment hosts no names. Set by Toshi on GetService; ignored in a
+  // request.
+  repeated ProvidedName provided_names = 10;
+  // Why a service with an http channel has no provided names, such as a
+  // name that does not start with a letter; empty otherwise. Set by Toshi
+  // on GetService.
+  string provided_names_reason = 11;
+}
+
+// ProvidedName is the name one http channel of a service is reached at.
+message ProvidedName {
+  // The channel's name in the service's recipe.
+  string channel = 1;
+  // The full name, without a scheme or a port.
+  string host = 2;
 }
 
 // ServiceState is where a service is in its life. Unlike a job or a
