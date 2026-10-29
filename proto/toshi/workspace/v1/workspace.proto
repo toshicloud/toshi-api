@@ -264,6 +264,9 @@ message WorkloadNetwork {
   bool enforced = 2;
   // Why the host does not enforce network rules, when enforced is false.
   string not_enforced_reason = 3;
+  // The most recent denials kept on the workload, newest first, at most 20;
+  // absent from a workload stored before the field.
+  repeated EgressDenial last_denials = 4;
 }
 
 // NetworkLayer is one named policy of a workload's network policy.
@@ -986,6 +989,9 @@ enum EventType {
   // gave it. Name: "agent.answered". AnswerPrompt writes it; a workload
   // cannot emit it.
   EVENT_TYPE_AGENT_ANSWERED = 15;
+  // The connections a host's firewall refused the workload since its last
+  // such event. Name: "<kind>.egress_denied". Payload: EgressDeniedEvent.
+  EVENT_TYPE_EGRESS_DENIED = 16;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -1028,6 +1034,8 @@ message Event {
     UpgradeRolledBackEvent upgrade_rolled_back = 20;
     // For AGENT_ANSWERED.
     AgentAnswerEvent agent_answer = 21;
+    // For EGRESS_DENIED.
+    EgressDeniedEvent egress_denied = 22;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -1073,6 +1081,34 @@ message WithheldSecret {
   // Why it was withheld: "owner_has_no_role", the owner holds no role in
   // the workspace.
   string reason = 3;
+}
+
+// EgressDeniedEvent is the connections a host's firewall refused a
+// workload's run since its last such event, newest first.
+message EgressDeniedEvent {
+  // The run the denials were for; empty when the host did not say.
+  string run_id = 1;
+  repeated EgressDenial denials = 2;
+}
+
+// EgressDenial is one connection a host's firewall refused a workload's run,
+// and the layer of its network policy that denied it.
+message EgressDenial {
+  // The destination refused.
+  string address = 1;
+  // tcp, udp or other.
+  string protocol = 2;
+  // 0 for other.
+  int32 port = 3;
+  // The policy layer that denied it: "operator", "workspace", "environment"
+  // or "request".
+  string layer = 4;
+  // Its rule or default: "rule 2: deny 10.0.0.0/8" or "default deny".
+  string entry = 5;
+  // Packets refused.
+  int64 packets = 6;
+  // When the host reported it.
+  google.protobuf.Timestamp time = 7;
 }
 
 // TriggerResult is the payload of a trigger's events: the trigger, the key
