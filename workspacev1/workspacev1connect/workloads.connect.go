@@ -102,6 +102,15 @@ const (
 	// WorkloadServiceRevokePreviewShareLinkProcedure is the fully-qualified name of the
 	// WorkloadService's RevokePreviewShareLink RPC.
 	WorkloadServiceRevokePreviewShareLinkProcedure = "/toshi.workspace.v1.WorkloadService/RevokePreviewShareLink"
+	// WorkloadServiceCreateServiceShareLinkProcedure is the fully-qualified name of the
+	// WorkloadService's CreateServiceShareLink RPC.
+	WorkloadServiceCreateServiceShareLinkProcedure = "/toshi.workspace.v1.WorkloadService/CreateServiceShareLink"
+	// WorkloadServiceListServiceShareLinksProcedure is the fully-qualified name of the
+	// WorkloadService's ListServiceShareLinks RPC.
+	WorkloadServiceListServiceShareLinksProcedure = "/toshi.workspace.v1.WorkloadService/ListServiceShareLinks"
+	// WorkloadServiceRevokeServiceShareLinkProcedure is the fully-qualified name of the
+	// WorkloadService's RevokeServiceShareLink RPC.
+	WorkloadServiceRevokeServiceShareLinkProcedure = "/toshi.workspace.v1.WorkloadService/RevokeServiceShareLink"
 	// WorkloadServiceCreateServiceProcedure is the fully-qualified name of the WorkloadService's
 	// CreateService RPC.
 	WorkloadServiceCreateServiceProcedure = "/toshi.workspace.v1.WorkloadService/CreateService"
@@ -334,6 +343,26 @@ type WorkloadServiceClient interface {
 	// again, and its open connections end within seconds. Revoking a link
 	// that was revoked or has ended returns it as it is.
 	RevokePreviewShareLink(context.Context, *connect.Request[workspacev1.RevokePreviewShareLinkRequest]) (*connect.Response[workspacev1.RevokePreviewShareLinkResponse], error)
+	// CreateServiceShareLink mints a share link for one of a service's
+	// provided names: its front channel's, unless the request names another
+	// of its http channels. The link admits one device, the first to open
+	// it, until it expires, carries its byte cap or is revoked, on whichever
+	// run of the service is running, across restarts and redeploys. The link
+	// is in this answer only. The call fails with FAILED_PRECONDITION when
+	// this server serves no provided names, when the service has none, or
+	// when the workspace's plan turns share links off; with NOT_FOUND for a
+	// channel that is not an http channel of the service's current revision;
+	// and with INVALID_ARGUMENT for an expiry or a byte cap above the plan's.
+	CreateServiceShareLink(context.Context, *connect.Request[workspacev1.CreateServiceShareLinkRequest]) (*connect.Response[workspacev1.CreateServiceShareLinkResponse], error)
+	// ListServiceShareLinks returns a service's share links, for all of its
+	// channels, the oldest first, never with the link itself.
+	//
+	// A page holds 100 share links when page_size is zero, and 1000 at most.
+	ListServiceShareLinks(context.Context, *connect.Request[workspacev1.ListServiceShareLinksRequest]) (*connect.Response[workspacev1.ListServiceShareLinksResponse], error)
+	// RevokeServiceShareLink revokes a service's share link: it admits no
+	// device again, and its open connections end within seconds. Revoking a
+	// link that was revoked or has ended returns it as it is.
+	RevokeServiceShareLink(context.Context, *connect.Request[workspacev1.RevokeServiceShareLinkRequest]) (*connect.Response[workspacev1.RevokeServiceShareLinkResponse], error)
 	// CreateService creates a service with its recipe as revision 1 and
 	// returns it, created and not started: StartService starts it.
 	CreateService(context.Context, *connect.Request[workspacev1.CreateServiceRequest]) (*connect.Response[workspacev1.CreateServiceResponse], error)
@@ -626,6 +655,24 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("RevokePreviewShareLink")),
 			connect.WithClientOptions(opts...),
 		),
+		createServiceShareLink: connect.NewClient[workspacev1.CreateServiceShareLinkRequest, workspacev1.CreateServiceShareLinkResponse](
+			httpClient,
+			baseURL+WorkloadServiceCreateServiceShareLinkProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("CreateServiceShareLink")),
+			connect.WithClientOptions(opts...),
+		),
+		listServiceShareLinks: connect.NewClient[workspacev1.ListServiceShareLinksRequest, workspacev1.ListServiceShareLinksResponse](
+			httpClient,
+			baseURL+WorkloadServiceListServiceShareLinksProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ListServiceShareLinks")),
+			connect.WithClientOptions(opts...),
+		),
+		revokeServiceShareLink: connect.NewClient[workspacev1.RevokeServiceShareLinkRequest, workspacev1.RevokeServiceShareLinkResponse](
+			httpClient,
+			baseURL+WorkloadServiceRevokeServiceShareLinkProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("RevokeServiceShareLink")),
+			connect.WithClientOptions(opts...),
+		),
 		createService: connect.NewClient[workspacev1.CreateServiceRequest, workspacev1.CreateServiceResponse](
 			httpClient,
 			baseURL+WorkloadServiceCreateServiceProcedure,
@@ -793,6 +840,9 @@ type workloadServiceClient struct {
 	createPreviewShareLink *connect.Client[workspacev1.CreatePreviewShareLinkRequest, workspacev1.CreatePreviewShareLinkResponse]
 	listPreviewShareLinks  *connect.Client[workspacev1.ListPreviewShareLinksRequest, workspacev1.ListPreviewShareLinksResponse]
 	revokePreviewShareLink *connect.Client[workspacev1.RevokePreviewShareLinkRequest, workspacev1.RevokePreviewShareLinkResponse]
+	createServiceShareLink *connect.Client[workspacev1.CreateServiceShareLinkRequest, workspacev1.CreateServiceShareLinkResponse]
+	listServiceShareLinks  *connect.Client[workspacev1.ListServiceShareLinksRequest, workspacev1.ListServiceShareLinksResponse]
+	revokeServiceShareLink *connect.Client[workspacev1.RevokeServiceShareLinkRequest, workspacev1.RevokeServiceShareLinkResponse]
 	createService          *connect.Client[workspacev1.CreateServiceRequest, workspacev1.CreateServiceResponse]
 	getService             *connect.Client[workspacev1.GetServiceRequest, workspacev1.GetServiceResponse]
 	listServices           *connect.Client[workspacev1.ListServicesRequest, workspacev1.ListServicesResponse]
@@ -936,6 +986,21 @@ func (c *workloadServiceClient) ListPreviewShareLinks(ctx context.Context, req *
 // RevokePreviewShareLink calls toshi.workspace.v1.WorkloadService.RevokePreviewShareLink.
 func (c *workloadServiceClient) RevokePreviewShareLink(ctx context.Context, req *connect.Request[workspacev1.RevokePreviewShareLinkRequest]) (*connect.Response[workspacev1.RevokePreviewShareLinkResponse], error) {
 	return c.revokePreviewShareLink.CallUnary(ctx, req)
+}
+
+// CreateServiceShareLink calls toshi.workspace.v1.WorkloadService.CreateServiceShareLink.
+func (c *workloadServiceClient) CreateServiceShareLink(ctx context.Context, req *connect.Request[workspacev1.CreateServiceShareLinkRequest]) (*connect.Response[workspacev1.CreateServiceShareLinkResponse], error) {
+	return c.createServiceShareLink.CallUnary(ctx, req)
+}
+
+// ListServiceShareLinks calls toshi.workspace.v1.WorkloadService.ListServiceShareLinks.
+func (c *workloadServiceClient) ListServiceShareLinks(ctx context.Context, req *connect.Request[workspacev1.ListServiceShareLinksRequest]) (*connect.Response[workspacev1.ListServiceShareLinksResponse], error) {
+	return c.listServiceShareLinks.CallUnary(ctx, req)
+}
+
+// RevokeServiceShareLink calls toshi.workspace.v1.WorkloadService.RevokeServiceShareLink.
+func (c *workloadServiceClient) RevokeServiceShareLink(ctx context.Context, req *connect.Request[workspacev1.RevokeServiceShareLinkRequest]) (*connect.Response[workspacev1.RevokeServiceShareLinkResponse], error) {
+	return c.revokeServiceShareLink.CallUnary(ctx, req)
 }
 
 // CreateService calls toshi.workspace.v1.WorkloadService.CreateService.
@@ -1214,6 +1279,26 @@ type WorkloadServiceHandler interface {
 	// again, and its open connections end within seconds. Revoking a link
 	// that was revoked or has ended returns it as it is.
 	RevokePreviewShareLink(context.Context, *connect.Request[workspacev1.RevokePreviewShareLinkRequest]) (*connect.Response[workspacev1.RevokePreviewShareLinkResponse], error)
+	// CreateServiceShareLink mints a share link for one of a service's
+	// provided names: its front channel's, unless the request names another
+	// of its http channels. The link admits one device, the first to open
+	// it, until it expires, carries its byte cap or is revoked, on whichever
+	// run of the service is running, across restarts and redeploys. The link
+	// is in this answer only. The call fails with FAILED_PRECONDITION when
+	// this server serves no provided names, when the service has none, or
+	// when the workspace's plan turns share links off; with NOT_FOUND for a
+	// channel that is not an http channel of the service's current revision;
+	// and with INVALID_ARGUMENT for an expiry or a byte cap above the plan's.
+	CreateServiceShareLink(context.Context, *connect.Request[workspacev1.CreateServiceShareLinkRequest]) (*connect.Response[workspacev1.CreateServiceShareLinkResponse], error)
+	// ListServiceShareLinks returns a service's share links, for all of its
+	// channels, the oldest first, never with the link itself.
+	//
+	// A page holds 100 share links when page_size is zero, and 1000 at most.
+	ListServiceShareLinks(context.Context, *connect.Request[workspacev1.ListServiceShareLinksRequest]) (*connect.Response[workspacev1.ListServiceShareLinksResponse], error)
+	// RevokeServiceShareLink revokes a service's share link: it admits no
+	// device again, and its open connections end within seconds. Revoking a
+	// link that was revoked or has ended returns it as it is.
+	RevokeServiceShareLink(context.Context, *connect.Request[workspacev1.RevokeServiceShareLinkRequest]) (*connect.Response[workspacev1.RevokeServiceShareLinkResponse], error)
 	// CreateService creates a service with its recipe as revision 1 and
 	// returns it, created and not started: StartService starts it.
 	CreateService(context.Context, *connect.Request[workspacev1.CreateServiceRequest]) (*connect.Response[workspacev1.CreateServiceResponse], error)
@@ -1502,6 +1587,24 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("RevokePreviewShareLink")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceCreateServiceShareLinkHandler := connect.NewUnaryHandler(
+		WorkloadServiceCreateServiceShareLinkProcedure,
+		svc.CreateServiceShareLink,
+		connect.WithSchema(workloadServiceMethods.ByName("CreateServiceShareLink")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceListServiceShareLinksHandler := connect.NewUnaryHandler(
+		WorkloadServiceListServiceShareLinksProcedure,
+		svc.ListServiceShareLinks,
+		connect.WithSchema(workloadServiceMethods.ByName("ListServiceShareLinks")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceRevokeServiceShareLinkHandler := connect.NewUnaryHandler(
+		WorkloadServiceRevokeServiceShareLinkProcedure,
+		svc.RevokeServiceShareLink,
+		connect.WithSchema(workloadServiceMethods.ByName("RevokeServiceShareLink")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceCreateServiceHandler := connect.NewUnaryHandler(
 		WorkloadServiceCreateServiceProcedure,
 		svc.CreateService,
@@ -1690,6 +1793,12 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceListPreviewShareLinksHandler.ServeHTTP(w, r)
 		case WorkloadServiceRevokePreviewShareLinkProcedure:
 			workloadServiceRevokePreviewShareLinkHandler.ServeHTTP(w, r)
+		case WorkloadServiceCreateServiceShareLinkProcedure:
+			workloadServiceCreateServiceShareLinkHandler.ServeHTTP(w, r)
+		case WorkloadServiceListServiceShareLinksProcedure:
+			workloadServiceListServiceShareLinksHandler.ServeHTTP(w, r)
+		case WorkloadServiceRevokeServiceShareLinkProcedure:
+			workloadServiceRevokeServiceShareLinkHandler.ServeHTTP(w, r)
 		case WorkloadServiceCreateServiceProcedure:
 			workloadServiceCreateServiceHandler.ServeHTTP(w, r)
 		case WorkloadServiceGetServiceProcedure:
@@ -1839,6 +1948,18 @@ func (UnimplementedWorkloadServiceHandler) ListPreviewShareLinks(context.Context
 
 func (UnimplementedWorkloadServiceHandler) RevokePreviewShareLink(context.Context, *connect.Request[workspacev1.RevokePreviewShareLinkRequest]) (*connect.Response[workspacev1.RevokePreviewShareLinkResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.RevokePreviewShareLink is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) CreateServiceShareLink(context.Context, *connect.Request[workspacev1.CreateServiceShareLinkRequest]) (*connect.Response[workspacev1.CreateServiceShareLinkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.CreateServiceShareLink is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ListServiceShareLinks(context.Context, *connect.Request[workspacev1.ListServiceShareLinksRequest]) (*connect.Response[workspacev1.ListServiceShareLinksResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ListServiceShareLinks is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) RevokeServiceShareLink(context.Context, *connect.Request[workspacev1.RevokeServiceShareLinkRequest]) (*connect.Response[workspacev1.RevokeServiceShareLinkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.RevokeServiceShareLink is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) CreateService(context.Context, *connect.Request[workspacev1.CreateServiceRequest]) (*connect.Response[workspacev1.CreateServiceResponse], error) {

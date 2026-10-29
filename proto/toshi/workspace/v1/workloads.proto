@@ -311,6 +311,46 @@ service WorkloadService {
     };
   }
 
+  // CreateServiceShareLink mints a share link for one of a service's
+  // provided names: its front channel's, unless the request names another
+  // of its http channels. The link admits one device, the first to open
+  // it, until it expires, carries its byte cap or is revoked, on whichever
+  // run of the service is running, across restarts and redeploys. The link
+  // is in this answer only. The call fails with FAILED_PRECONDITION when
+  // this server serves no provided names, when the service has none, or
+  // when the workspace's plan turns share links off; with NOT_FOUND for a
+  // channel that is not an http channel of the service's current revision;
+  // and with INVALID_ARGUMENT for an expiry or a byte cap above the plan's.
+  rpc CreateServiceShareLink(CreateServiceShareLinkRequest) returns (CreateServiceShareLinkResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "service.share_link_issued"
+      target: "none"
+    };
+  }
+
+  // ListServiceShareLinks returns a service's share links, for all of its
+  // channels, the oldest first, never with the link itself.
+  //
+  // A page holds 100 share links when page_size is zero, and 1000 at most.
+  rpc ListServiceShareLinks(ListServiceShareLinksRequest) returns (ListServiceShareLinksResponse) {
+    option (toshi.permission) = "services.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // RevokeServiceShareLink revokes a service's share link: it admits no
+  // device again, and its open connections end within seconds. Revoking a
+  // link that was revoked or has ended returns it as it is.
+  rpc RevokeServiceShareLink(RevokeServiceShareLinkRequest) returns (RevokeServiceShareLinkResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "service.share_link_revoked"
+      target: "none"
+    };
+  }
+
   // CreateService creates a service with its recipe as revision 1 and
   // returns it, created and not started: StartService starts it.
   rpc CreateService(CreateServiceRequest) returns (CreateServiceResponse) {

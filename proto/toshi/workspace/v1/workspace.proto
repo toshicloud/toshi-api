@@ -1246,6 +1246,84 @@ message RevokePreviewShareLinkResponse {
   PreviewShareLink share_link = 1;
 }
 
+// ServiceShareLink is one share link of one of a service's provided names,
+// without the link itself. It moves through the states of a preview's
+// share link.
+message ServiceShareLink {
+  // Assigned by the server.
+  string id = 1;
+  // The service whose provided name the link opens.
+  string service_id = 2;
+  // The http channel of the service's recipe whose provided name the link
+  // opens.
+  string channel = 3;
+  PreviewShareLinkState state = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp expires_at = 6;
+  // The most bytes, both ways, its connections may carry.
+  int64 max_bytes = 7;
+  // The bytes its connections have carried so far.
+  int64 used_bytes = 8;
+  // Unset until a device opens it.
+  google.protobuf.Timestamp opened_at = 9;
+  // Unset unless it was revoked.
+  google.protobuf.Timestamp revoked_at = 10;
+  // Unset unless it ended.
+  google.protobuf.Timestamp ended_at = 11;
+}
+
+message CreateServiceShareLinkRequest {
+  string project = 1;
+  string environment = 2;
+  // The service's workload id.
+  string service_id = 3;
+  // The http channel whose provided name the link opens; empty is the
+  // service's front channel, the one at the service's own name.
+  string channel = 4;
+  // How long the link stays valid, at most the plan's maximum; unset is
+  // 24 hours, or the plan's maximum when that is shorter.
+  google.protobuf.Duration expires_in = 5;
+  // The most bytes, both ways, its connections may carry, at most the
+  // plan's; 0 is the plan's.
+  int64 max_bytes = 6;
+}
+
+message CreateServiceShareLinkResponse {
+  ServiceShareLink share_link = 1;
+  // The URL to give the viewer: it opens the provided name and carries the
+  // link. It is in this answer only.
+  string url = 2;
+}
+
+message ListServiceShareLinksRequest {
+  string project = 1;
+  string environment = 2;
+  // The service's workload id.
+  string service_id = 3;
+  // The most share links in one page; zero lets the server choose.
+  int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
+}
+
+message ListServiceShareLinksResponse {
+  repeated ServiceShareLink share_links = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message RevokeServiceShareLinkRequest {
+  string project = 1;
+  string environment = 2;
+  // The service's workload id.
+  string service_id = 3;
+  string share_link_id = 4;
+}
+
+message RevokeServiceShareLinkResponse {
+  ServiceShareLink share_link = 1;
+}
+
 message StartServiceRequest {
   string project = 1;
   string environment = 2;
