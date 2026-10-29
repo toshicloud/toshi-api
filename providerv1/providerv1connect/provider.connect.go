@@ -109,6 +109,12 @@ const (
 	// ProviderServiceUnreapedProcedure is the fully-qualified name of the ProviderService's Unreaped
 	// RPC.
 	ProviderServiceUnreapedProcedure = "/toshi.backend.provider.v1.ProviderService/Unreaped"
+	// ProviderServiceKeepProcedure is the fully-qualified name of the ProviderService's Keep RPC.
+	ProviderServiceKeepProcedure = "/toshi.backend.provider.v1.ProviderService/Keep"
+	// ProviderServicePauseProcedure is the fully-qualified name of the ProviderService's Pause RPC.
+	ProviderServicePauseProcedure = "/toshi.backend.provider.v1.ProviderService/Pause"
+	// ProviderServiceResumeProcedure is the fully-qualified name of the ProviderService's Resume RPC.
+	ProviderServiceResumeProcedure = "/toshi.backend.provider.v1.ProviderService/Resume"
 	// ProviderServiceSnapshotProcedure is the fully-qualified name of the ProviderService's Snapshot
 	// RPC.
 	ProviderServiceSnapshotProcedure = "/toshi.backend.provider.v1.ProviderService/Snapshot"
@@ -220,8 +226,8 @@ type ProviderServiceClient interface {
 	// Start starts a ready or stopped instance. From another state it fails
 	// with ERROR_CODE_INVALID_TRANSITION, on a retry too.
 	Start(context.Context, *connect.Request[providerv1.StartRequest]) (*connect.Response[providerv1.StartResponse], error)
-	// Stop stops a running instance. From another state it fails with
-	// ERROR_CODE_INVALID_TRANSITION, on a retry too.
+	// Stop stops a running or paused instance. From another state it fails
+	// with ERROR_CODE_INVALID_TRANSITION, on a retry too.
 	Stop(context.Context, *connect.Request[providerv1.StopRequest]) (*connect.Response[providerv1.StopResponse], error)
 	// Destroy destroys the instance and everything it holds on the host. It
 	// succeeds for an instance that is already destroyed or unknown.
@@ -253,6 +259,19 @@ type ProviderServiceClient interface {
 	// Unreaped reports how many instance directories the provider's start-up
 	// scan could not confirm gone.
 	Unreaped(context.Context, *connect.Request[providerv1.UnreapedRequest]) (*connect.Response[providerv1.UnreapedResponse], error)
+	// Keep marks an instance kept: its id, disk and place outlive a stop and
+	// the provider's own restart, after which List returns it stopped. It
+	// succeeds for a kept instance, and fails with
+	// ERROR_CODE_INVALID_TRANSITION for a destroyed or failed one.
+	Keep(context.Context, *connect.Request[providerv1.KeepRequest]) (*connect.Response[providerv1.KeepResponse], error)
+	// Pause stops a running instance's processors, its memory held, and
+	// moves it to STATE_PAUSED. From another state it fails with
+	// ERROR_CODE_INVALID_TRANSITION.
+	Pause(context.Context, *connect.Request[providerv1.PauseRequest]) (*connect.Response[providerv1.PauseResponse], error)
+	// Resume moves a paused instance back to running, or boots a kept
+	// stopped instance again from its own disk through ready to running.
+	// From another state it fails with ERROR_CODE_INVALID_TRANSITION.
+	Resume(context.Context, *connect.Request[providerv1.ResumeRequest]) (*connect.Response[providerv1.ResumeResponse], error)
 	// Snapshot saves a running instance and returns the snapshot's id.
 	Snapshot(context.Context, *connect.Request[providerv1.SnapshotRequest]) (*connect.Response[providerv1.SnapshotResponse], error)
 	// Restore creates an instance of spec from a snapshot, with Create's rules
@@ -466,6 +485,24 @@ func NewProviderServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(providerServiceMethods.ByName("Unreaped")),
 			connect.WithClientOptions(opts...),
 		),
+		keep: connect.NewClient[providerv1.KeepRequest, providerv1.KeepResponse](
+			httpClient,
+			baseURL+ProviderServiceKeepProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("Keep")),
+			connect.WithClientOptions(opts...),
+		),
+		pause: connect.NewClient[providerv1.PauseRequest, providerv1.PauseResponse](
+			httpClient,
+			baseURL+ProviderServicePauseProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("Pause")),
+			connect.WithClientOptions(opts...),
+		),
+		resume: connect.NewClient[providerv1.ResumeRequest, providerv1.ResumeResponse](
+			httpClient,
+			baseURL+ProviderServiceResumeProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("Resume")),
+			connect.WithClientOptions(opts...),
+		),
 		snapshot: connect.NewClient[providerv1.SnapshotRequest, providerv1.SnapshotResponse](
 			httpClient,
 			baseURL+ProviderServiceSnapshotProcedure,
@@ -657,6 +694,9 @@ type providerServiceClient struct {
 	exportDisk            *connect.Client[providerv1.ExportDiskRequest, providerv1.ExportDiskResponse]
 	instanceGone          *connect.Client[providerv1.InstanceGoneRequest, providerv1.InstanceGoneResponse]
 	unreaped              *connect.Client[providerv1.UnreapedRequest, providerv1.UnreapedResponse]
+	keep                  *connect.Client[providerv1.KeepRequest, providerv1.KeepResponse]
+	pause                 *connect.Client[providerv1.PauseRequest, providerv1.PauseResponse]
+	resume                *connect.Client[providerv1.ResumeRequest, providerv1.ResumeResponse]
 	snapshot              *connect.Client[providerv1.SnapshotRequest, providerv1.SnapshotResponse]
 	restore               *connect.Client[providerv1.RestoreRequest, providerv1.RestoreResponse]
 	imageIdentity         *connect.Client[providerv1.ImageIdentityRequest, providerv1.ImageIdentityResponse]
@@ -775,6 +815,21 @@ func (c *providerServiceClient) InstanceGone(ctx context.Context, req *connect.R
 // Unreaped calls toshi.backend.provider.v1.ProviderService.Unreaped.
 func (c *providerServiceClient) Unreaped(ctx context.Context, req *connect.Request[providerv1.UnreapedRequest]) (*connect.Response[providerv1.UnreapedResponse], error) {
 	return c.unreaped.CallUnary(ctx, req)
+}
+
+// Keep calls toshi.backend.provider.v1.ProviderService.Keep.
+func (c *providerServiceClient) Keep(ctx context.Context, req *connect.Request[providerv1.KeepRequest]) (*connect.Response[providerv1.KeepResponse], error) {
+	return c.keep.CallUnary(ctx, req)
+}
+
+// Pause calls toshi.backend.provider.v1.ProviderService.Pause.
+func (c *providerServiceClient) Pause(ctx context.Context, req *connect.Request[providerv1.PauseRequest]) (*connect.Response[providerv1.PauseResponse], error) {
+	return c.pause.CallUnary(ctx, req)
+}
+
+// Resume calls toshi.backend.provider.v1.ProviderService.Resume.
+func (c *providerServiceClient) Resume(ctx context.Context, req *connect.Request[providerv1.ResumeRequest]) (*connect.Response[providerv1.ResumeResponse], error) {
+	return c.resume.CallUnary(ctx, req)
 }
 
 // Snapshot calls toshi.backend.provider.v1.ProviderService.Snapshot.
@@ -948,8 +1003,8 @@ type ProviderServiceHandler interface {
 	// Start starts a ready or stopped instance. From another state it fails
 	// with ERROR_CODE_INVALID_TRANSITION, on a retry too.
 	Start(context.Context, *connect.Request[providerv1.StartRequest]) (*connect.Response[providerv1.StartResponse], error)
-	// Stop stops a running instance. From another state it fails with
-	// ERROR_CODE_INVALID_TRANSITION, on a retry too.
+	// Stop stops a running or paused instance. From another state it fails
+	// with ERROR_CODE_INVALID_TRANSITION, on a retry too.
 	Stop(context.Context, *connect.Request[providerv1.StopRequest]) (*connect.Response[providerv1.StopResponse], error)
 	// Destroy destroys the instance and everything it holds on the host. It
 	// succeeds for an instance that is already destroyed or unknown.
@@ -981,6 +1036,19 @@ type ProviderServiceHandler interface {
 	// Unreaped reports how many instance directories the provider's start-up
 	// scan could not confirm gone.
 	Unreaped(context.Context, *connect.Request[providerv1.UnreapedRequest]) (*connect.Response[providerv1.UnreapedResponse], error)
+	// Keep marks an instance kept: its id, disk and place outlive a stop and
+	// the provider's own restart, after which List returns it stopped. It
+	// succeeds for a kept instance, and fails with
+	// ERROR_CODE_INVALID_TRANSITION for a destroyed or failed one.
+	Keep(context.Context, *connect.Request[providerv1.KeepRequest]) (*connect.Response[providerv1.KeepResponse], error)
+	// Pause stops a running instance's processors, its memory held, and
+	// moves it to STATE_PAUSED. From another state it fails with
+	// ERROR_CODE_INVALID_TRANSITION.
+	Pause(context.Context, *connect.Request[providerv1.PauseRequest]) (*connect.Response[providerv1.PauseResponse], error)
+	// Resume moves a paused instance back to running, or boots a kept
+	// stopped instance again from its own disk through ready to running.
+	// From another state it fails with ERROR_CODE_INVALID_TRANSITION.
+	Resume(context.Context, *connect.Request[providerv1.ResumeRequest]) (*connect.Response[providerv1.ResumeResponse], error)
 	// Snapshot saves a running instance and returns the snapshot's id.
 	Snapshot(context.Context, *connect.Request[providerv1.SnapshotRequest]) (*connect.Response[providerv1.SnapshotResponse], error)
 	// Restore creates an instance of spec from a snapshot, with Create's rules
@@ -1190,6 +1258,24 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 		connect.WithSchema(providerServiceMethods.ByName("Unreaped")),
 		connect.WithHandlerOptions(opts...),
 	)
+	providerServiceKeepHandler := connect.NewUnaryHandler(
+		ProviderServiceKeepProcedure,
+		svc.Keep,
+		connect.WithSchema(providerServiceMethods.ByName("Keep")),
+		connect.WithHandlerOptions(opts...),
+	)
+	providerServicePauseHandler := connect.NewUnaryHandler(
+		ProviderServicePauseProcedure,
+		svc.Pause,
+		connect.WithSchema(providerServiceMethods.ByName("Pause")),
+		connect.WithHandlerOptions(opts...),
+	)
+	providerServiceResumeHandler := connect.NewUnaryHandler(
+		ProviderServiceResumeProcedure,
+		svc.Resume,
+		connect.WithSchema(providerServiceMethods.ByName("Resume")),
+		connect.WithHandlerOptions(opts...),
+	)
 	providerServiceSnapshotHandler := connect.NewUnaryHandler(
 		ProviderServiceSnapshotProcedure,
 		svc.Snapshot,
@@ -1396,6 +1482,12 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 			providerServiceInstanceGoneHandler.ServeHTTP(w, r)
 		case ProviderServiceUnreapedProcedure:
 			providerServiceUnreapedHandler.ServeHTTP(w, r)
+		case ProviderServiceKeepProcedure:
+			providerServiceKeepHandler.ServeHTTP(w, r)
+		case ProviderServicePauseProcedure:
+			providerServicePauseHandler.ServeHTTP(w, r)
+		case ProviderServiceResumeProcedure:
+			providerServiceResumeHandler.ServeHTTP(w, r)
 		case ProviderServiceSnapshotProcedure:
 			providerServiceSnapshotHandler.ServeHTTP(w, r)
 		case ProviderServiceRestoreProcedure:
@@ -1531,6 +1623,18 @@ func (UnimplementedProviderServiceHandler) InstanceGone(context.Context, *connec
 
 func (UnimplementedProviderServiceHandler) Unreaped(context.Context, *connect.Request[providerv1.UnreapedRequest]) (*connect.Response[providerv1.UnreapedResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.Unreaped is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) Keep(context.Context, *connect.Request[providerv1.KeepRequest]) (*connect.Response[providerv1.KeepResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.Keep is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) Pause(context.Context, *connect.Request[providerv1.PauseRequest]) (*connect.Response[providerv1.PauseResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.Pause is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) Resume(context.Context, *connect.Request[providerv1.ResumeRequest]) (*connect.Response[providerv1.ResumeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.Resume is not implemented"))
 }
 
 func (UnimplementedProviderServiceHandler) Snapshot(context.Context, *connect.Request[providerv1.SnapshotRequest]) (*connect.Response[providerv1.SnapshotResponse], error) {

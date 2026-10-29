@@ -75,8 +75,8 @@ service ProviderService {
   // Start starts a ready or stopped instance. From another state it fails
   // with ERROR_CODE_INVALID_TRANSITION, on a retry too.
   rpc Start(StartRequest) returns (StartResponse);
-  // Stop stops a running instance. From another state it fails with
-  // ERROR_CODE_INVALID_TRANSITION, on a retry too.
+  // Stop stops a running or paused instance. From another state it fails
+  // with ERROR_CODE_INVALID_TRANSITION, on a retry too.
   rpc Stop(StopRequest) returns (StopResponse);
   // Destroy destroys the instance and everything it holds on the host. It
   // succeeds for an instance that is already destroyed or unknown.
@@ -115,6 +115,22 @@ service ProviderService {
   // Unreaped reports how many instance directories the provider's start-up
   // scan could not confirm gone.
   rpc Unreaped(UnreapedRequest) returns (UnreapedResponse);
+
+  // Kept instances: the facet "keeper".
+
+  // Keep marks an instance kept: its id, disk and place outlive a stop and
+  // the provider's own restart, after which List returns it stopped. It
+  // succeeds for a kept instance, and fails with
+  // ERROR_CODE_INVALID_TRANSITION for a destroyed or failed one.
+  rpc Keep(KeepRequest) returns (KeepResponse);
+  // Pause stops a running instance's processors, its memory held, and
+  // moves it to STATE_PAUSED. From another state it fails with
+  // ERROR_CODE_INVALID_TRANSITION.
+  rpc Pause(PauseRequest) returns (PauseResponse);
+  // Resume moves a paused instance back to running, or boots a kept
+  // stopped instance again from its own disk through ready to running.
+  // From another state it fails with ERROR_CODE_INVALID_TRANSITION.
+  rpc Resume(ResumeRequest) returns (ResumeResponse);
 
   // Snapshots: the facets "snapshotter", "image_tracker" and
   // "snapshot_referrer".
@@ -310,6 +326,8 @@ enum State {
   STATE_STOPPED = 5;
   STATE_FAILED = 6;
   STATE_DESTROYED = 7;
+  // A kept instance whose processors are stopped, its memory held.
+  STATE_PAUSED = 8;
 }
 
 // OperatingSystem is a guest's operating system.
@@ -583,6 +601,24 @@ message UnreapedResponse {
   // False when the start-up scan did not read the state root.
   bool certain = 2;
 }
+
+message KeepRequest {
+  string id = 1;
+}
+
+message KeepResponse {}
+
+message PauseRequest {
+  string id = 1;
+}
+
+message PauseResponse {}
+
+message ResumeRequest {
+  string id = 1;
+}
+
+message ResumeResponse {}
 
 message SnapshotRequest {
   string id = 1;
