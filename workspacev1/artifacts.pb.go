@@ -51,7 +51,9 @@ type Artifact struct {
 	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	CompletedAt *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	// The kind of workload that uploaded it, as its token named: job or
-	// sandbox. workload_id and execution_id are that workload's.
+	// sandbox. workload_id and execution_id are that workload's. A CI
+	// job runs no workload, and its token names the kind job with the
+	// host job's own id: its artifacts' workload_id is that id.
 	WorkloadKind  string `protobuf:"bytes,16,opt,name=workload_kind,json=workloadKind,proto3" json:"workload_kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

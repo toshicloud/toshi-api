@@ -1151,7 +1151,11 @@ type HostJob struct {
 	Kind HostJobKind `protobuf:"varint,43,opt,name=kind,proto3,enum=toshi.workspace.v1.HostJobKind" json:"kind,omitempty"`
 	// The Workspace API workload the job runs: a sandbox's or a service's
 	// id, or the id of a job workload run on a host. Empty for a
-	// CI job.
+	// CI job, which runs no workload: it has no recordings and no
+	// workload events. Its artifacts carry workload_kind "job" and this
+	// job's id as their workload_id, so ArtifactService.ListArtifacts
+	// with workload_id set to the id lists them; its display sessions
+	// are ListDisplaySessions' by job_id.
 	WorkloadId string `protobuf:"bytes,44,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	// The project the job belongs to, by name: the project that
 	// claimed the job's repository when the job was stored, else the

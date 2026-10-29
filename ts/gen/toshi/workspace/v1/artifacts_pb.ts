@@ -115,7 +115,9 @@ export type Artifact = Message<"toshi.workspace.v1.Artifact"> & {
 
   /**
    * The kind of workload that uploaded it, as its token named: job or
-   * sandbox. workload_id and execution_id are that workload's.
+   * sandbox. workload_id and execution_id are that workload's. A CI
+   * job runs no workload, and its token names the kind job with the
+   * host job's own id: its artifacts' workload_id is that id.
    *
    * @generated from field: string workload_kind = 16;
    */
@@ -220,7 +222,9 @@ export type ArtifactJson = {
 
   /**
    * The kind of workload that uploaded it, as its token named: job or
-   * sandbox. workload_id and execution_id are that workload's.
+   * sandbox. workload_id and execution_id are that workload's. A CI
+   * job runs no workload, and its token names the kind job with the
+   * host job's own id: its artifacts' workload_id is that id.
    *
    * @generated from field: string workload_kind = 16;
    */

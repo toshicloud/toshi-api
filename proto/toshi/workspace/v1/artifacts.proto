@@ -96,7 +96,9 @@ message Artifact {
   google.protobuf.Timestamp created_at = 14;
   google.protobuf.Timestamp completed_at = 15;
   // The kind of workload that uploaded it, as its token named: job or
-  // sandbox. workload_id and execution_id are that workload's.
+  // sandbox. workload_id and execution_id are that workload's. A CI
+  // job runs no workload, and its token names the kind job with the
+  // host job's own id: its artifacts' workload_id is that id.
   string workload_kind = 16;
 }
 
