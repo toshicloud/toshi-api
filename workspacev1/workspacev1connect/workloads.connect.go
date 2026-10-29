@@ -84,6 +84,9 @@ const (
 	// WorkloadServiceCancelExecutionProcedure is the fully-qualified name of the WorkloadService's
 	// CancelExecution RPC.
 	WorkloadServiceCancelExecutionProcedure = "/toshi.workspace.v1.WorkloadService/CancelExecution"
+	// WorkloadServiceExecuteCommandProcedure is the fully-qualified name of the WorkloadService's
+	// ExecuteCommand RPC.
+	WorkloadServiceExecuteCommandProcedure = "/toshi.workspace.v1.WorkloadService/ExecuteCommand"
 	// WorkloadServiceAnswerPromptProcedure is the fully-qualified name of the WorkloadService's
 	// AnswerPrompt RPC.
 	WorkloadServiceAnswerPromptProcedure = "/toshi.workspace.v1.WorkloadService/AnswerPrompt"
@@ -290,6 +293,13 @@ type WorkloadServiceClient interface {
 	// changes nothing. It returns once the execution has ended, whether or not
 	// the Execute stream's client still reads it.
 	CancelExecution(context.Context, *connect.Request[workspacev1.CancelExecutionRequest]) (*connect.Response[workspacev1.CancelExecutionResponse], error)
+	// ExecuteCommand runs a command as Execute does, with its standard input
+	// closed, for a client that cannot stream a request, such as a browser.
+	// The stream answers as Execute's does: the execution's ID, then its
+	// output, and last its exit. The execution is one of Execute's:
+	// CancelExecution stops it, and a request_key retry of either call
+	// replays it.
+	ExecuteCommand(context.Context, *connect.Request[workspacev1.ExecuteCommandRequest]) (*connect.ServerStreamForClient[workspacev1.ExecuteCommandResponse], error)
 	// AnswerPrompt answers a prompt an agent workload waits on, one of its
 	// job's, sandbox's or service's waiting, and returns the
 	// AGENT_ANSWERED event that records the answer and who gave it. The
@@ -619,6 +629,12 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("CancelExecution")),
 			connect.WithClientOptions(opts...),
 		),
+		executeCommand: connect.NewClient[workspacev1.ExecuteCommandRequest, workspacev1.ExecuteCommandResponse](
+			httpClient,
+			baseURL+WorkloadServiceExecuteCommandProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ExecuteCommand")),
+			connect.WithClientOptions(opts...),
+		),
 		answerPrompt: connect.NewClient[workspacev1.AnswerPromptRequest, workspacev1.AnswerPromptResponse](
 			httpClient,
 			baseURL+WorkloadServiceAnswerPromptProcedure,
@@ -834,6 +850,7 @@ type workloadServiceClient struct {
 	watchSandboxes         *connect.Client[workspacev1.WatchSandboxesRequest, workspacev1.WatchSandboxesResponse]
 	execute                *connect.Client[workspacev1.ExecuteRequest, workspacev1.ExecuteResponse]
 	cancelExecution        *connect.Client[workspacev1.CancelExecutionRequest, workspacev1.CancelExecutionResponse]
+	executeCommand         *connect.Client[workspacev1.ExecuteCommandRequest, workspacev1.ExecuteCommandResponse]
 	answerPrompt           *connect.Client[workspacev1.AnswerPromptRequest, workspacev1.AnswerPromptResponse]
 	watchTelemetry         *connect.Client[workspacev1.WatchTelemetryRequest, workspacev1.WatchTelemetryResponse]
 	watchGuestLog          *connect.Client[workspacev1.WatchGuestLogRequest, workspacev1.WatchGuestLogResponse]
@@ -956,6 +973,11 @@ func (c *workloadServiceClient) Execute(ctx context.Context) *connect.BidiStream
 // CancelExecution calls toshi.workspace.v1.WorkloadService.CancelExecution.
 func (c *workloadServiceClient) CancelExecution(ctx context.Context, req *connect.Request[workspacev1.CancelExecutionRequest]) (*connect.Response[workspacev1.CancelExecutionResponse], error) {
 	return c.cancelExecution.CallUnary(ctx, req)
+}
+
+// ExecuteCommand calls toshi.workspace.v1.WorkloadService.ExecuteCommand.
+func (c *workloadServiceClient) ExecuteCommand(ctx context.Context, req *connect.Request[workspacev1.ExecuteCommandRequest]) (*connect.ServerStreamForClient[workspacev1.ExecuteCommandResponse], error) {
+	return c.executeCommand.CallServerStream(ctx, req)
 }
 
 // AnswerPrompt calls toshi.workspace.v1.WorkloadService.AnswerPrompt.
@@ -1226,6 +1248,13 @@ type WorkloadServiceHandler interface {
 	// changes nothing. It returns once the execution has ended, whether or not
 	// the Execute stream's client still reads it.
 	CancelExecution(context.Context, *connect.Request[workspacev1.CancelExecutionRequest]) (*connect.Response[workspacev1.CancelExecutionResponse], error)
+	// ExecuteCommand runs a command as Execute does, with its standard input
+	// closed, for a client that cannot stream a request, such as a browser.
+	// The stream answers as Execute's does: the execution's ID, then its
+	// output, and last its exit. The execution is one of Execute's:
+	// CancelExecution stops it, and a request_key retry of either call
+	// replays it.
+	ExecuteCommand(context.Context, *connect.Request[workspacev1.ExecuteCommandRequest], *connect.ServerStream[workspacev1.ExecuteCommandResponse]) error
 	// AnswerPrompt answers a prompt an agent workload waits on, one of its
 	// job's, sandbox's or service's waiting, and returns the
 	// AGENT_ANSWERED event that records the answer and who gave it. The
@@ -1551,6 +1580,12 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("CancelExecution")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceExecuteCommandHandler := connect.NewServerStreamHandler(
+		WorkloadServiceExecuteCommandProcedure,
+		svc.ExecuteCommand,
+		connect.WithSchema(workloadServiceMethods.ByName("ExecuteCommand")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceAnswerPromptHandler := connect.NewUnaryHandler(
 		WorkloadServiceAnswerPromptProcedure,
 		svc.AnswerPrompt,
@@ -1781,6 +1816,8 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceExecuteHandler.ServeHTTP(w, r)
 		case WorkloadServiceCancelExecutionProcedure:
 			workloadServiceCancelExecutionHandler.ServeHTTP(w, r)
+		case WorkloadServiceExecuteCommandProcedure:
+			workloadServiceExecuteCommandHandler.ServeHTTP(w, r)
 		case WorkloadServiceAnswerPromptProcedure:
 			workloadServiceAnswerPromptHandler.ServeHTTP(w, r)
 		case WorkloadServiceWatchTelemetryProcedure:
@@ -1924,6 +1961,10 @@ func (UnimplementedWorkloadServiceHandler) Execute(context.Context, *connect.Bid
 
 func (UnimplementedWorkloadServiceHandler) CancelExecution(context.Context, *connect.Request[workspacev1.CancelExecutionRequest]) (*connect.Response[workspacev1.CancelExecutionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.CancelExecution is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ExecuteCommand(context.Context, *connect.Request[workspacev1.ExecuteCommandRequest], *connect.ServerStream[workspacev1.ExecuteCommandResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ExecuteCommand is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error) {

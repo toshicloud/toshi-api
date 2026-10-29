@@ -813,6 +813,30 @@ message ExecuteResponse {
   }
 }
 
+// ExecuteCommandRequest starts an execution whose standard input is closed.
+message ExecuteCommandRequest {
+  string project = 1;
+  string environment = 2;
+  // The sandbox the command runs in.
+  string sandbox_id = 3;
+  Command command = 4;
+  // A retry with the same key does not start a second command: its stream
+  // carries the first execution's started message and, once it has ended,
+  // its exit. Output already sent is not sent again.
+  string request_key = 5;
+}
+
+message ExecuteCommandResponse {
+  oneof message {
+    // First and only once.
+    ExecutionStarted started = 1;
+    bytes stdout = 2;
+    bytes stderr = 3;
+    // Last.
+    ExecutionExit exit = 4;
+  }
+}
+
 // ExecutionStarted names an execution.
 message ExecutionStarted {
   string execution_id = 1;

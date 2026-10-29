@@ -222,6 +222,19 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
+  // ExecuteCommand runs a command as Execute does, with its standard input
+  // closed, for a client that cannot stream a request, such as a browser.
+  // The stream answers as Execute's does: the execution's ID, then its
+  // output, and last its exit. The execution is one of Execute's:
+  // CancelExecution stops it, and a request_key retry of either call
+  // replays it.
+  rpc ExecuteCommand(ExecuteCommandRequest) returns (stream ExecuteCommandResponse) {
+    option (toshi.permission) = "sandboxes.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {action: "sandbox.executed"};
+    option (toshi.mcp) = {exclude: true};
+  }
+
   // AnswerPrompt answers a prompt an agent workload waits on, one of its
   // job's, sandbox's or service's waiting, and returns the
   // AGENT_ANSWERED event that records the answer and who gave it. The
