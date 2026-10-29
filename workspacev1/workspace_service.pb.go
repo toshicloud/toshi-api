@@ -2675,8 +2675,12 @@ type WorkspaceBilling struct {
 	// the scheduler checks against the workspace's limit,
 	// Workspace.effective_concurrency.
 	ConcurrencyUsed int64 `protobuf:"varint,22,opt,name=concurrency_used,json=concurrencyUsed,proto3" json:"concurrency_used,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// The price of one desktop seat a month on the workspace's plan, in the
+	// smallest unit of currency; unset while the billing provider has no price
+	// for it.
+	DesktopSeatPriceCents *int64 `protobuf:"varint,26,opt,name=desktop_seat_price_cents,json=desktopSeatPriceCents,proto3,oneof" json:"desktop_seat_price_cents,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *WorkspaceBilling) Reset() {
@@ -2859,6 +2863,13 @@ func (x *WorkspaceBilling) GetHeldNow() []*WorkspaceBilling_HeldJobs {
 func (x *WorkspaceBilling) GetConcurrencyUsed() int64 {
 	if x != nil {
 		return x.ConcurrencyUsed
+	}
+	return 0
+}
+
+func (x *WorkspaceBilling) GetDesktopSeatPriceCents() int64 {
+	if x != nil && x.DesktopSeatPriceCents != nil {
+		return *x.DesktopSeatPriceCents
 	}
 	return 0
 }
@@ -3126,7 +3137,10 @@ type WorkspaceStatement struct {
 	// estimated_cents.
 	Awake []*Awake `protobuf:"bytes,21,rep,name=awake,proto3" json:"awake,omitempty"`
 	// The month's stored data; its cost is included in estimated_cents.
-	Storage       *Storage `protobuf:"bytes,22,opt,name=storage,proto3" json:"storage,omitempty"`
+	Storage *Storage `protobuf:"bytes,22,opt,name=storage,proto3" json:"storage,omitempty"`
+	// The month's desktop seats; unset when there were none. Their cost is
+	// included in estimated_cents.
+	DesktopSeats  *DesktopSeats `protobuf:"bytes,23,opt,name=desktop_seats,json=desktopSeats,proto3" json:"desktop_seats,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3315,6 +3329,199 @@ func (x *WorkspaceStatement) GetStorage() *Storage {
 	return nil
 }
 
+func (x *WorkspaceStatement) GetDesktopSeats() *DesktopSeats {
+	if x != nil {
+		return x.DesktopSeats
+	}
+	return nil
+}
+
+// DesktopSeats is the month's desktop seats: every seat the workspace held
+// at some time in the month, from its billing start, and what they cost. A
+// person's seats in one month are billed as one seat, and so are a seat and
+// the one an operator moved it to; a second person is a second seat.
+type DesktopSeats struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The seats billed for the month.
+	BilledSeats int64 `protobuf:"varint,1,opt,name=billed_seats,json=billedSeats,proto3" json:"billed_seats,omitempty"`
+	// One seat's price for a month at the plan's price today, in the smallest
+	// unit of currency; 0 when unpriced.
+	SeatPriceCents int64 `protobuf:"varint,2,opt,name=seat_price_cents,json=seatPriceCents,proto3" json:"seat_price_cents,omitempty"`
+	// True when the plan has no price for desktop seats yet: the seats are
+	// listed and cost nothing.
+	Unpriced bool `protobuf:"varint,3,opt,name=unpriced,proto3" json:"unpriced,omitempty"`
+	// billed_seats at seat_price_cents; included in estimated_cents.
+	EstimatedCents int64 `protobuf:"varint,4,opt,name=estimated_cents,json=estimatedCents,proto3" json:"estimated_cents,omitempty"`
+	// The seats, oldest assigned first.
+	Seats         []*StatementSeat `protobuf:"bytes,5,rep,name=seats,proto3" json:"seats,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DesktopSeats) Reset() {
+	*x = DesktopSeats{}
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DesktopSeats) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DesktopSeats) ProtoMessage() {}
+
+func (x *DesktopSeats) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DesktopSeats.ProtoReflect.Descriptor instead.
+func (*DesktopSeats) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *DesktopSeats) GetBilledSeats() int64 {
+	if x != nil {
+		return x.BilledSeats
+	}
+	return 0
+}
+
+func (x *DesktopSeats) GetSeatPriceCents() int64 {
+	if x != nil {
+		return x.SeatPriceCents
+	}
+	return 0
+}
+
+func (x *DesktopSeats) GetUnpriced() bool {
+	if x != nil {
+		return x.Unpriced
+	}
+	return false
+}
+
+func (x *DesktopSeats) GetEstimatedCents() int64 {
+	if x != nil {
+		return x.EstimatedCents
+	}
+	return 0
+}
+
+func (x *DesktopSeats) GetSeats() []*StatementSeat {
+	if x != nil {
+		return x.Seats
+	}
+	return nil
+}
+
+// StatementSeat is one desktop seat on a statement.
+type StatementSeat struct {
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	SeatId string                 `protobuf:"bytes,1,opt,name=seat_id,json=seatId,proto3" json:"seat_id,omitempty"`
+	// The Toshi user id of the person it was assigned to, and their name.
+	UserId     string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Name       string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	AssignedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
+	// Unset while the seat is live.
+	RemovedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=removed_at,json=removedAt,proto3" json:"removed_at,omitempty"`
+	// The seat an operator moved to this one, when it replaces one.
+	Replaces string `protobuf:"bytes,6,opt,name=replaces,proto3" json:"replaces,omitempty"`
+	// True when the seat carries a month's charge; false when it is billed
+	// with an older seat of the month: the same person's, or the one an
+	// operator moved to it.
+	Billed        bool `protobuf:"varint,7,opt,name=billed,proto3" json:"billed,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StatementSeat) Reset() {
+	*x = StatementSeat{}
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StatementSeat) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StatementSeat) ProtoMessage() {}
+
+func (x *StatementSeat) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StatementSeat.ProtoReflect.Descriptor instead.
+func (*StatementSeat) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *StatementSeat) GetSeatId() string {
+	if x != nil {
+		return x.SeatId
+	}
+	return ""
+}
+
+func (x *StatementSeat) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *StatementSeat) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *StatementSeat) GetAssignedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.AssignedAt
+	}
+	return nil
+}
+
+func (x *StatementSeat) GetRemovedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RemovedAt
+	}
+	return nil
+}
+
+func (x *StatementSeat) GetReplaces() string {
+	if x != nil {
+		return x.Replaces
+	}
+	return ""
+}
+
+func (x *StatementSeat) GetBilled() bool {
+	if x != nil {
+		return x.Billed
+	}
+	return false
+}
+
 // OwnHostFee is the month's own-server fee: the run time of the workspace's
 // billed jobs on its own hosts, less the plan's free seconds, rounded up once
 // to whole seconds.
@@ -3335,7 +3542,7 @@ type OwnHostFee struct {
 
 func (x *OwnHostFee) Reset() {
 	*x = OwnHostFee{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[42]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3347,7 +3554,7 @@ func (x *OwnHostFee) String() string {
 func (*OwnHostFee) ProtoMessage() {}
 
 func (x *OwnHostFee) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[42]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3360,7 +3567,7 @@ func (x *OwnHostFee) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OwnHostFee.ProtoReflect.Descriptor instead.
 func (*OwnHostFee) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{42}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *OwnHostFee) GetSeconds() float64 {
@@ -3414,7 +3621,7 @@ type Awake struct {
 
 func (x *Awake) Reset() {
 	*x = Awake{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[43]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3426,7 +3633,7 @@ func (x *Awake) String() string {
 func (*Awake) ProtoMessage() {}
 
 func (x *Awake) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[43]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3439,7 +3646,7 @@ func (x *Awake) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Awake.ProtoReflect.Descriptor instead.
 func (*Awake) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{43}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *Awake) GetSize() string {
@@ -3509,7 +3716,7 @@ type Storage struct {
 
 func (x *Storage) Reset() {
 	*x = Storage{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[44]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3521,7 +3728,7 @@ func (x *Storage) String() string {
 func (*Storage) ProtoMessage() {}
 
 func (x *Storage) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[44]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3534,7 +3741,7 @@ func (x *Storage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Storage.ProtoReflect.Descriptor instead.
 func (*Storage) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{44}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *Storage) GetKinds() []*StoredKind {
@@ -3594,7 +3801,7 @@ type StoredKind struct {
 
 func (x *StoredKind) Reset() {
 	*x = StoredKind{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[45]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3606,7 +3813,7 @@ func (x *StoredKind) String() string {
 func (*StoredKind) ProtoMessage() {}
 
 func (x *StoredKind) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[45]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3619,7 +3826,7 @@ func (x *StoredKind) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StoredKind.ProtoReflect.Descriptor instead.
 func (*StoredKind) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{45}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *StoredKind) GetKind() string {
@@ -3659,7 +3866,7 @@ type StorageUsageRow struct {
 
 func (x *StorageUsageRow) Reset() {
 	*x = StorageUsageRow{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[46]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3671,7 +3878,7 @@ func (x *StorageUsageRow) String() string {
 func (*StorageUsageRow) ProtoMessage() {}
 
 func (x *StorageUsageRow) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[46]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3684,7 +3891,7 @@ func (x *StorageUsageRow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StorageUsageRow.ProtoReflect.Descriptor instead.
 func (*StorageUsageRow) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{46}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *StorageUsageRow) GetDay() string {
@@ -3745,7 +3952,7 @@ type StatementUsage struct {
 
 func (x *StatementUsage) Reset() {
 	*x = StatementUsage{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[47]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3757,7 +3964,7 @@ func (x *StatementUsage) String() string {
 func (*StatementUsage) ProtoMessage() {}
 
 func (x *StatementUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[47]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3770,7 +3977,7 @@ func (x *StatementUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatementUsage.ProtoReflect.Descriptor instead.
 func (*StatementUsage) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{47}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *StatementUsage) GetSize() string {
@@ -3865,7 +4072,7 @@ type StatementCharge struct {
 
 func (x *StatementCharge) Reset() {
 	*x = StatementCharge{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[48]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3877,7 +4084,7 @@ func (x *StatementCharge) String() string {
 func (*StatementCharge) ProtoMessage() {}
 
 func (x *StatementCharge) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[48]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3890,7 +4097,7 @@ func (x *StatementCharge) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatementCharge.ProtoReflect.Descriptor instead.
 func (*StatementCharge) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{48}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *StatementCharge) GetSize() string {
@@ -3936,7 +4143,7 @@ type HoldTimes struct {
 
 func (x *HoldTimes) Reset() {
 	*x = HoldTimes{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[49]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3948,7 +4155,7 @@ func (x *HoldTimes) String() string {
 func (*HoldTimes) ProtoMessage() {}
 
 func (x *HoldTimes) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[49]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3961,7 +4168,7 @@ func (x *HoldTimes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HoldTimes.ProtoReflect.Descriptor instead.
 func (*HoldTimes) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{49}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *HoldTimes) GetReason() string {
@@ -4027,7 +4234,7 @@ type FillerUsage struct {
 
 func (x *FillerUsage) Reset() {
 	*x = FillerUsage{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[50]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4039,7 +4246,7 @@ func (x *FillerUsage) String() string {
 func (*FillerUsage) ProtoMessage() {}
 
 func (x *FillerUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[50]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4052,7 +4259,7 @@ func (x *FillerUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FillerUsage.ProtoReflect.Descriptor instead.
 func (*FillerUsage) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{50}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *FillerUsage) GetJobs() int64 {
@@ -4117,7 +4324,7 @@ type UsageRow struct {
 
 func (x *UsageRow) Reset() {
 	*x = UsageRow{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[51]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4129,7 +4336,7 @@ func (x *UsageRow) String() string {
 func (*UsageRow) ProtoMessage() {}
 
 func (x *UsageRow) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[51]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4142,7 +4349,7 @@ func (x *UsageRow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsageRow.ProtoReflect.Descriptor instead.
 func (*UsageRow) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{51}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *UsageRow) GetDay() string {
@@ -4274,7 +4481,7 @@ type WorkflowUsageRow struct {
 
 func (x *WorkflowUsageRow) Reset() {
 	*x = WorkflowUsageRow{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[52]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4286,7 +4493,7 @@ func (x *WorkflowUsageRow) String() string {
 func (*WorkflowUsageRow) ProtoMessage() {}
 
 func (x *WorkflowUsageRow) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[52]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4299,7 +4506,7 @@ func (x *WorkflowUsageRow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkflowUsageRow.ProtoReflect.Descriptor instead.
 func (*WorkflowUsageRow) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{52}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *WorkflowUsageRow) GetRepository() string {
@@ -4418,7 +4625,7 @@ type Plan struct {
 
 func (x *Plan) Reset() {
 	*x = Plan{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[53]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4430,7 +4637,7 @@ func (x *Plan) String() string {
 func (*Plan) ProtoMessage() {}
 
 func (x *Plan) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[53]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4443,7 +4650,7 @@ func (x *Plan) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Plan.ProtoReflect.Descriptor instead.
 func (*Plan) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{53}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *Plan) GetName() string {
@@ -4598,7 +4805,7 @@ type EgressHost struct {
 
 func (x *EgressHost) Reset() {
 	*x = EgressHost{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[54]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4610,7 +4817,7 @@ func (x *EgressHost) String() string {
 func (*EgressHost) ProtoMessage() {}
 
 func (x *EgressHost) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[54]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4623,7 +4830,7 @@ func (x *EgressHost) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EgressHost.ProtoReflect.Descriptor instead.
 func (*EgressHost) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{54}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *EgressHost) GetHostId() string {
@@ -4696,7 +4903,7 @@ type WorkspaceBilling_HeldJobs struct {
 
 func (x *WorkspaceBilling_HeldJobs) Reset() {
 	*x = WorkspaceBilling_HeldJobs{}
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[55]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4708,7 +4915,7 @@ func (x *WorkspaceBilling_HeldJobs) String() string {
 func (*WorkspaceBilling_HeldJobs) ProtoMessage() {}
 
 func (x *WorkspaceBilling_HeldJobs) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[55]
+	mi := &file_toshi_workspace_v1_workspace_service_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4936,7 +5143,8 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x14\n" +
 	"\x05slots\x18\x02 \x01(\x05R\x05slots\x12\x12\n" +
 	"\x04warm\x18\x03 \x01(\x05R\x04warm\x12\x16\n" +
-	"\x06source\x18\x04 \x01(\tR\x06source\"\xf9\t\n" +
+	"\x06source\x18\x04 \x01(\tR\x06source\"\xd4\n" +
+	"\n" +
 	"\x10WorkspaceBilling\x12\x1f\n" +
 	"\vcustomer_id\x18\x01 \x01(\tR\n" +
 	"customerId\x12'\n" +
@@ -4964,11 +5172,13 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x19starter_credit_applied_at\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampR\x16starterCreditAppliedAt\x12'\n" +
 	"\x0fbilling_enabled\x18\x14 \x01(\bR\x0ebillingEnabled\x12H\n" +
 	"\bheld_now\x18\x15 \x03(\v2-.toshi.workspace.v1.WorkspaceBilling.HeldJobsR\aheldNow\x12)\n" +
-	"\x10concurrency_used\x18\x16 \x01(\x03R\x0fconcurrencyUsed\x1ah\n" +
+	"\x10concurrency_used\x18\x16 \x01(\x03R\x0fconcurrencyUsed\x12<\n" +
+	"\x18desktop_seat_price_cents\x18\x1a \x01(\x03H\x00R\x15desktopSeatPriceCents\x88\x01\x01\x1ah\n" +
 	"\bHeldJobs\x12\x16\n" +
 	"\x06reason\x18\x17 \x01(\tR\x06reason\x12\x12\n" +
 	"\x04jobs\x18\x18 \x01(\x03R\x04jobs\x120\n" +
-	"\x05since\x18\x19 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\"\x99\x02\n" +
+	"\x05since\x18\x19 \x01(\v2\x1a.google.protobuf.TimestampR\x05sinceB\x1b\n" +
+	"\x19_desktop_seat_price_cents\"\x99\x02\n" +
 	"\rBillingTotals\x12\x14\n" +
 	"\x05month\x18\x01 \x01(\tR\x05month\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\tR\x04size\x12\x1f\n" +
@@ -4990,7 +5200,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\tfailed_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bfailedAt\x12\x1a\n" +
 	"\battempts\x18\a \x01(\x05R\battempts\x12\x1d\n" +
 	"\n" +
-	"last_error\x18\b \x01(\tR\tlastError\"\xf0\b\n" +
+	"last_error\x18\b \x01(\tR\tlastError\"\xb7\t\n" +
 	"\x12WorkspaceStatement\x12\x14\n" +
 	"\x05month\x18\x01 \x01(\tR\x05month\x12.\n" +
 	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
@@ -5015,7 +5225,24 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\fown_host_fee\x18\x14 \x01(\v2\x1e.toshi.workspace.v1.OwnHostFeeR\n" +
 	"ownHostFee\x12/\n" +
 	"\x05awake\x18\x15 \x03(\v2\x19.toshi.workspace.v1.AwakeR\x05awake\x125\n" +
-	"\astorage\x18\x16 \x01(\v2\x1b.toshi.workspace.v1.StorageR\astorage\"\x99\x01\n" +
+	"\astorage\x18\x16 \x01(\v2\x1b.toshi.workspace.v1.StorageR\astorage\x12E\n" +
+	"\rdesktop_seats\x18\x17 \x01(\v2 .toshi.workspace.v1.DesktopSeatsR\fdesktopSeats\"\xd9\x01\n" +
+	"\fDesktopSeats\x12!\n" +
+	"\fbilled_seats\x18\x01 \x01(\x03R\vbilledSeats\x12(\n" +
+	"\x10seat_price_cents\x18\x02 \x01(\x03R\x0eseatPriceCents\x12\x1a\n" +
+	"\bunpriced\x18\x03 \x01(\bR\bunpriced\x12'\n" +
+	"\x0festimated_cents\x18\x04 \x01(\x03R\x0eestimatedCents\x127\n" +
+	"\x05seats\x18\x05 \x03(\v2!.toshi.workspace.v1.StatementSeatR\x05seats\"\x81\x02\n" +
+	"\rStatementSeat\x12\x17\n" +
+	"\aseat_id\x18\x01 \x01(\tR\x06seatId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12;\n" +
+	"\vassigned_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"assignedAt\x129\n" +
+	"\n" +
+	"removed_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tremovedAt\x12\x1a\n" +
+	"\breplaces\x18\x06 \x01(\tR\breplaces\x12\x16\n" +
+	"\x06billed\x18\a \x01(\bR\x06billed\"\x99\x01\n" +
 	"\n" +
 	"OwnHostFee\x12\x18\n" +
 	"\aseconds\x18\x01 \x01(\x01R\aseconds\x12!\n" +
@@ -5190,7 +5417,7 @@ func file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_workspace_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_workspace_service_proto_msgTypes = make([]protoimpl.MessageInfo, 56)
+var file_toshi_workspace_v1_workspace_service_proto_msgTypes = make([]protoimpl.MessageInfo, 58)
 var file_toshi_workspace_v1_workspace_service_proto_goTypes = []any{
 	(HostingCertificateState)(0),               // 0: toshi.workspace.v1.HostingCertificateState
 	(*GetWorkspaceRequest)(nil),                // 1: toshi.workspace.v1.GetWorkspaceRequest
@@ -5235,134 +5462,140 @@ var file_toshi_workspace_v1_workspace_service_proto_goTypes = []any{
 	(*BillingTotals)(nil),                      // 40: toshi.workspace.v1.BillingTotals
 	(*BillingEventFailure)(nil),                // 41: toshi.workspace.v1.BillingEventFailure
 	(*WorkspaceStatement)(nil),                 // 42: toshi.workspace.v1.WorkspaceStatement
-	(*OwnHostFee)(nil),                         // 43: toshi.workspace.v1.OwnHostFee
-	(*Awake)(nil),                              // 44: toshi.workspace.v1.Awake
-	(*Storage)(nil),                            // 45: toshi.workspace.v1.Storage
-	(*StoredKind)(nil),                         // 46: toshi.workspace.v1.StoredKind
-	(*StorageUsageRow)(nil),                    // 47: toshi.workspace.v1.StorageUsageRow
-	(*StatementUsage)(nil),                     // 48: toshi.workspace.v1.StatementUsage
-	(*StatementCharge)(nil),                    // 49: toshi.workspace.v1.StatementCharge
-	(*HoldTimes)(nil),                          // 50: toshi.workspace.v1.HoldTimes
-	(*FillerUsage)(nil),                        // 51: toshi.workspace.v1.FillerUsage
-	(*UsageRow)(nil),                           // 52: toshi.workspace.v1.UsageRow
-	(*WorkflowUsageRow)(nil),                   // 53: toshi.workspace.v1.WorkflowUsageRow
-	(*Plan)(nil),                               // 54: toshi.workspace.v1.Plan
-	(*EgressHost)(nil),                         // 55: toshi.workspace.v1.EgressHost
-	(*WorkspaceBilling_HeldJobs)(nil),          // 56: toshi.workspace.v1.WorkspaceBilling.HeldJobs
-	(*fieldmaskpb.FieldMask)(nil),              // 57: google.protobuf.FieldMask
-	(*timestamppb.Timestamp)(nil),              // 58: google.protobuf.Timestamp
-	(*Subject)(nil),                            // 59: toshi.workspace.v1.Subject
-	(*HostEgress)(nil),                         // 60: toshi.workspace.v1.HostEgress
+	(*DesktopSeats)(nil),                       // 43: toshi.workspace.v1.DesktopSeats
+	(*StatementSeat)(nil),                      // 44: toshi.workspace.v1.StatementSeat
+	(*OwnHostFee)(nil),                         // 45: toshi.workspace.v1.OwnHostFee
+	(*Awake)(nil),                              // 46: toshi.workspace.v1.Awake
+	(*Storage)(nil),                            // 47: toshi.workspace.v1.Storage
+	(*StoredKind)(nil),                         // 48: toshi.workspace.v1.StoredKind
+	(*StorageUsageRow)(nil),                    // 49: toshi.workspace.v1.StorageUsageRow
+	(*StatementUsage)(nil),                     // 50: toshi.workspace.v1.StatementUsage
+	(*StatementCharge)(nil),                    // 51: toshi.workspace.v1.StatementCharge
+	(*HoldTimes)(nil),                          // 52: toshi.workspace.v1.HoldTimes
+	(*FillerUsage)(nil),                        // 53: toshi.workspace.v1.FillerUsage
+	(*UsageRow)(nil),                           // 54: toshi.workspace.v1.UsageRow
+	(*WorkflowUsageRow)(nil),                   // 55: toshi.workspace.v1.WorkflowUsageRow
+	(*Plan)(nil),                               // 56: toshi.workspace.v1.Plan
+	(*EgressHost)(nil),                         // 57: toshi.workspace.v1.EgressHost
+	(*WorkspaceBilling_HeldJobs)(nil),          // 58: toshi.workspace.v1.WorkspaceBilling.HeldJobs
+	(*fieldmaskpb.FieldMask)(nil),              // 59: google.protobuf.FieldMask
+	(*timestamppb.Timestamp)(nil),              // 60: google.protobuf.Timestamp
+	(*Subject)(nil),                            // 61: toshi.workspace.v1.Subject
+	(*HostEgress)(nil),                         // 62: toshi.workspace.v1.HostEgress
 }
 var file_toshi_workspace_v1_workspace_service_proto_depIdxs = []int32{
 	34, // 0: toshi.workspace.v1.GetWorkspaceResponse.workspace:type_name -> toshi.workspace.v1.Workspace
 	34, // 1: toshi.workspace.v1.UpdateWorkspaceRequest.workspace:type_name -> toshi.workspace.v1.Workspace
-	57, // 2: toshi.workspace.v1.UpdateWorkspaceRequest.update_mask:type_name -> google.protobuf.FieldMask
+	59, // 2: toshi.workspace.v1.UpdateWorkspaceRequest.update_mask:type_name -> google.protobuf.FieldMask
 	34, // 3: toshi.workspace.v1.UpdateWorkspaceResponse.workspace:type_name -> toshi.workspace.v1.Workspace
 	34, // 4: toshi.workspace.v1.ListWorkspacesResponse.workspaces:type_name -> toshi.workspace.v1.Workspace
 	39, // 5: toshi.workspace.v1.GetWorkspaceBillingResponse.billing:type_name -> toshi.workspace.v1.WorkspaceBilling
 	42, // 6: toshi.workspace.v1.GetWorkspaceStatementResponse.statement:type_name -> toshi.workspace.v1.WorkspaceStatement
-	58, // 7: toshi.workspace.v1.Seat.assigned_at:type_name -> google.protobuf.Timestamp
-	59, // 8: toshi.workspace.v1.Seat.assigned_by:type_name -> toshi.workspace.v1.Subject
-	58, // 9: toshi.workspace.v1.Seat.removed_at:type_name -> google.protobuf.Timestamp
-	59, // 10: toshi.workspace.v1.Seat.removed_by:type_name -> toshi.workspace.v1.Subject
+	60, // 7: toshi.workspace.v1.Seat.assigned_at:type_name -> google.protobuf.Timestamp
+	61, // 8: toshi.workspace.v1.Seat.assigned_by:type_name -> toshi.workspace.v1.Subject
+	60, // 9: toshi.workspace.v1.Seat.removed_at:type_name -> google.protobuf.Timestamp
+	61, // 10: toshi.workspace.v1.Seat.removed_by:type_name -> toshi.workspace.v1.Subject
 	11, // 11: toshi.workspace.v1.ListSeatsResponse.seats:type_name -> toshi.workspace.v1.Seat
 	11, // 12: toshi.workspace.v1.AssignSeatResponse.seat:type_name -> toshi.workspace.v1.Seat
 	11, // 13: toshi.workspace.v1.RemoveSeatResponse.seat:type_name -> toshi.workspace.v1.Seat
-	55, // 14: toshi.workspace.v1.ListEgressIPsResponse.hosts:type_name -> toshi.workspace.v1.EgressHost
-	58, // 15: toshi.workspace.v1.GetUsageRequest.from:type_name -> google.protobuf.Timestamp
-	58, // 16: toshi.workspace.v1.GetUsageRequest.to:type_name -> google.protobuf.Timestamp
-	52, // 17: toshi.workspace.v1.GetUsageResponse.rows:type_name -> toshi.workspace.v1.UsageRow
-	58, // 18: toshi.workspace.v1.GetUsageResponse.from:type_name -> google.protobuf.Timestamp
-	58, // 19: toshi.workspace.v1.GetUsageResponse.to:type_name -> google.protobuf.Timestamp
-	51, // 20: toshi.workspace.v1.GetUsageResponse.filler:type_name -> toshi.workspace.v1.FillerUsage
-	47, // 21: toshi.workspace.v1.GetUsageResponse.storage:type_name -> toshi.workspace.v1.StorageUsageRow
-	58, // 22: toshi.workspace.v1.GetQueueTimesRequest.from:type_name -> google.protobuf.Timestamp
-	58, // 23: toshi.workspace.v1.GetQueueTimesRequest.to:type_name -> google.protobuf.Timestamp
-	58, // 24: toshi.workspace.v1.GetQueueTimesResponse.from:type_name -> google.protobuf.Timestamp
-	58, // 25: toshi.workspace.v1.GetQueueTimesResponse.to:type_name -> google.protobuf.Timestamp
-	50, // 26: toshi.workspace.v1.GetQueueTimesResponse.held:type_name -> toshi.workspace.v1.HoldTimes
-	58, // 27: toshi.workspace.v1.GetWorkflowUsageRequest.from:type_name -> google.protobuf.Timestamp
-	58, // 28: toshi.workspace.v1.GetWorkflowUsageRequest.to:type_name -> google.protobuf.Timestamp
-	53, // 29: toshi.workspace.v1.GetWorkflowUsageResponse.rows:type_name -> toshi.workspace.v1.WorkflowUsageRow
-	58, // 30: toshi.workspace.v1.GetWorkflowUsageResponse.from:type_name -> google.protobuf.Timestamp
-	58, // 31: toshi.workspace.v1.GetWorkflowUsageResponse.to:type_name -> google.protobuf.Timestamp
-	54, // 32: toshi.workspace.v1.ListPlansResponse.plans:type_name -> toshi.workspace.v1.Plan
-	58, // 33: toshi.workspace.v1.Workspace.created_at:type_name -> google.protobuf.Timestamp
-	58, // 34: toshi.workspace.v1.Workspace.starter_credit_granted_at:type_name -> google.protobuf.Timestamp
+	57, // 14: toshi.workspace.v1.ListEgressIPsResponse.hosts:type_name -> toshi.workspace.v1.EgressHost
+	60, // 15: toshi.workspace.v1.GetUsageRequest.from:type_name -> google.protobuf.Timestamp
+	60, // 16: toshi.workspace.v1.GetUsageRequest.to:type_name -> google.protobuf.Timestamp
+	54, // 17: toshi.workspace.v1.GetUsageResponse.rows:type_name -> toshi.workspace.v1.UsageRow
+	60, // 18: toshi.workspace.v1.GetUsageResponse.from:type_name -> google.protobuf.Timestamp
+	60, // 19: toshi.workspace.v1.GetUsageResponse.to:type_name -> google.protobuf.Timestamp
+	53, // 20: toshi.workspace.v1.GetUsageResponse.filler:type_name -> toshi.workspace.v1.FillerUsage
+	49, // 21: toshi.workspace.v1.GetUsageResponse.storage:type_name -> toshi.workspace.v1.StorageUsageRow
+	60, // 22: toshi.workspace.v1.GetQueueTimesRequest.from:type_name -> google.protobuf.Timestamp
+	60, // 23: toshi.workspace.v1.GetQueueTimesRequest.to:type_name -> google.protobuf.Timestamp
+	60, // 24: toshi.workspace.v1.GetQueueTimesResponse.from:type_name -> google.protobuf.Timestamp
+	60, // 25: toshi.workspace.v1.GetQueueTimesResponse.to:type_name -> google.protobuf.Timestamp
+	52, // 26: toshi.workspace.v1.GetQueueTimesResponse.held:type_name -> toshi.workspace.v1.HoldTimes
+	60, // 27: toshi.workspace.v1.GetWorkflowUsageRequest.from:type_name -> google.protobuf.Timestamp
+	60, // 28: toshi.workspace.v1.GetWorkflowUsageRequest.to:type_name -> google.protobuf.Timestamp
+	55, // 29: toshi.workspace.v1.GetWorkflowUsageResponse.rows:type_name -> toshi.workspace.v1.WorkflowUsageRow
+	60, // 30: toshi.workspace.v1.GetWorkflowUsageResponse.from:type_name -> google.protobuf.Timestamp
+	60, // 31: toshi.workspace.v1.GetWorkflowUsageResponse.to:type_name -> google.protobuf.Timestamp
+	56, // 32: toshi.workspace.v1.ListPlansResponse.plans:type_name -> toshi.workspace.v1.Plan
+	60, // 33: toshi.workspace.v1.Workspace.created_at:type_name -> google.protobuf.Timestamp
+	60, // 34: toshi.workspace.v1.Workspace.starter_credit_granted_at:type_name -> google.protobuf.Timestamp
 	38, // 35: toshi.workspace.v1.Workspace.reservations:type_name -> toshi.workspace.v1.Reservation
-	58, // 36: toshi.workspace.v1.Workspace.state_since:type_name -> google.protobuf.Timestamp
-	58, // 37: toshi.workspace.v1.Workspace.purge_after:type_name -> google.protobuf.Timestamp
+	60, // 36: toshi.workspace.v1.Workspace.state_since:type_name -> google.protobuf.Timestamp
+	60, // 37: toshi.workspace.v1.Workspace.purge_after:type_name -> google.protobuf.Timestamp
 	36, // 38: toshi.workspace.v1.Workspace.settings:type_name -> toshi.workspace.v1.WorkspaceSettings
 	35, // 39: toshi.workspace.v1.Workspace.hosting_certificate:type_name -> toshi.workspace.v1.HostingCertificate
 	0,  // 40: toshi.workspace.v1.HostingCertificate.state:type_name -> toshi.workspace.v1.HostingCertificateState
-	58, // 41: toshi.workspace.v1.HostingCertificate.not_after:type_name -> google.protobuf.Timestamp
-	58, // 42: toshi.workspace.v1.HostingCertificate.renew_at:type_name -> google.protobuf.Timestamp
-	58, // 43: toshi.workspace.v1.HostingCertificate.retry_at:type_name -> google.protobuf.Timestamp
+	60, // 41: toshi.workspace.v1.HostingCertificate.not_after:type_name -> google.protobuf.Timestamp
+	60, // 42: toshi.workspace.v1.HostingCertificate.renew_at:type_name -> google.protobuf.Timestamp
+	60, // 43: toshi.workspace.v1.HostingCertificate.retry_at:type_name -> google.protobuf.Timestamp
 	37, // 44: toshi.workspace.v1.WorkspaceSettings.sign_in:type_name -> toshi.workspace.v1.WorkspaceSignIn
-	58, // 45: toshi.workspace.v1.WorkspaceSignIn.set_at:type_name -> google.protobuf.Timestamp
-	58, // 46: toshi.workspace.v1.WorkspaceBilling.billing_started_at:type_name -> google.protobuf.Timestamp
-	58, // 47: toshi.workspace.v1.WorkspaceBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
+	60, // 45: toshi.workspace.v1.WorkspaceSignIn.set_at:type_name -> google.protobuf.Timestamp
+	60, // 46: toshi.workspace.v1.WorkspaceBilling.billing_started_at:type_name -> google.protobuf.Timestamp
+	60, // 47: toshi.workspace.v1.WorkspaceBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
 	40, // 48: toshi.workspace.v1.WorkspaceBilling.totals:type_name -> toshi.workspace.v1.BillingTotals
 	41, // 49: toshi.workspace.v1.WorkspaceBilling.failed_events:type_name -> toshi.workspace.v1.BillingEventFailure
-	58, // 50: toshi.workspace.v1.WorkspaceBilling.card_verified_at:type_name -> google.protobuf.Timestamp
-	58, // 51: toshi.workspace.v1.WorkspaceBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	56, // 52: toshi.workspace.v1.WorkspaceBilling.held_now:type_name -> toshi.workspace.v1.WorkspaceBilling.HeldJobs
-	58, // 53: toshi.workspace.v1.BillingEventFailure.occurred_at:type_name -> google.protobuf.Timestamp
-	58, // 54: toshi.workspace.v1.BillingEventFailure.failed_at:type_name -> google.protobuf.Timestamp
-	58, // 55: toshi.workspace.v1.WorkspaceStatement.from:type_name -> google.protobuf.Timestamp
-	58, // 56: toshi.workspace.v1.WorkspaceStatement.to:type_name -> google.protobuf.Timestamp
-	48, // 57: toshi.workspace.v1.WorkspaceStatement.usage:type_name -> toshi.workspace.v1.StatementUsage
-	48, // 58: toshi.workspace.v1.WorkspaceStatement.total:type_name -> toshi.workspace.v1.StatementUsage
-	49, // 59: toshi.workspace.v1.WorkspaceStatement.charges:type_name -> toshi.workspace.v1.StatementCharge
-	58, // 60: toshi.workspace.v1.WorkspaceStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	50, // 61: toshi.workspace.v1.WorkspaceStatement.held:type_name -> toshi.workspace.v1.HoldTimes
-	51, // 62: toshi.workspace.v1.WorkspaceStatement.filler:type_name -> toshi.workspace.v1.FillerUsage
-	58, // 63: toshi.workspace.v1.WorkspaceStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
-	43, // 64: toshi.workspace.v1.WorkspaceStatement.own_host_fee:type_name -> toshi.workspace.v1.OwnHostFee
-	44, // 65: toshi.workspace.v1.WorkspaceStatement.awake:type_name -> toshi.workspace.v1.Awake
-	45, // 66: toshi.workspace.v1.WorkspaceStatement.storage:type_name -> toshi.workspace.v1.Storage
-	46, // 67: toshi.workspace.v1.Storage.kinds:type_name -> toshi.workspace.v1.StoredKind
-	58, // 68: toshi.workspace.v1.HoldTimes.open_since:type_name -> google.protobuf.Timestamp
-	60, // 69: toshi.workspace.v1.EgressHost.egress:type_name -> toshi.workspace.v1.HostEgress
-	58, // 70: toshi.workspace.v1.WorkspaceBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
-	1,  // 71: toshi.workspace.v1.WorkspaceService.GetWorkspace:input_type -> toshi.workspace.v1.GetWorkspaceRequest
-	3,  // 72: toshi.workspace.v1.WorkspaceService.UpdateWorkspace:input_type -> toshi.workspace.v1.UpdateWorkspaceRequest
-	5,  // 73: toshi.workspace.v1.WorkspaceService.ListWorkspaces:input_type -> toshi.workspace.v1.ListWorkspacesRequest
-	7,  // 74: toshi.workspace.v1.WorkspaceService.GetWorkspaceBilling:input_type -> toshi.workspace.v1.GetWorkspaceBillingRequest
-	9,  // 75: toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement:input_type -> toshi.workspace.v1.GetWorkspaceStatementRequest
-	12, // 76: toshi.workspace.v1.WorkspaceService.ListSeats:input_type -> toshi.workspace.v1.ListSeatsRequest
-	14, // 77: toshi.workspace.v1.WorkspaceService.AssignSeat:input_type -> toshi.workspace.v1.AssignSeatRequest
-	16, // 78: toshi.workspace.v1.WorkspaceService.RemoveSeat:input_type -> toshi.workspace.v1.RemoveSeatRequest
-	18, // 79: toshi.workspace.v1.WorkspaceService.ListEgressIPs:input_type -> toshi.workspace.v1.ListEgressIPsRequest
-	20, // 80: toshi.workspace.v1.WorkspaceService.GetUsage:input_type -> toshi.workspace.v1.GetUsageRequest
-	22, // 81: toshi.workspace.v1.WorkspaceService.GetQueueTimes:input_type -> toshi.workspace.v1.GetQueueTimesRequest
-	24, // 82: toshi.workspace.v1.WorkspaceService.GetWorkflowUsage:input_type -> toshi.workspace.v1.GetWorkflowUsageRequest
-	26, // 83: toshi.workspace.v1.WorkspaceService.ListPlans:input_type -> toshi.workspace.v1.ListPlansRequest
-	28, // 84: toshi.workspace.v1.WorkspaceService.CreateCheckoutSession:input_type -> toshi.workspace.v1.CreateCheckoutSessionRequest
-	30, // 85: toshi.workspace.v1.WorkspaceService.CreateBillingPortalSession:input_type -> toshi.workspace.v1.CreateBillingPortalSessionRequest
-	32, // 86: toshi.workspace.v1.WorkspaceService.GetVersion:input_type -> toshi.workspace.v1.GetVersionRequest
-	2,  // 87: toshi.workspace.v1.WorkspaceService.GetWorkspace:output_type -> toshi.workspace.v1.GetWorkspaceResponse
-	4,  // 88: toshi.workspace.v1.WorkspaceService.UpdateWorkspace:output_type -> toshi.workspace.v1.UpdateWorkspaceResponse
-	6,  // 89: toshi.workspace.v1.WorkspaceService.ListWorkspaces:output_type -> toshi.workspace.v1.ListWorkspacesResponse
-	8,  // 90: toshi.workspace.v1.WorkspaceService.GetWorkspaceBilling:output_type -> toshi.workspace.v1.GetWorkspaceBillingResponse
-	10, // 91: toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement:output_type -> toshi.workspace.v1.GetWorkspaceStatementResponse
-	13, // 92: toshi.workspace.v1.WorkspaceService.ListSeats:output_type -> toshi.workspace.v1.ListSeatsResponse
-	15, // 93: toshi.workspace.v1.WorkspaceService.AssignSeat:output_type -> toshi.workspace.v1.AssignSeatResponse
-	17, // 94: toshi.workspace.v1.WorkspaceService.RemoveSeat:output_type -> toshi.workspace.v1.RemoveSeatResponse
-	19, // 95: toshi.workspace.v1.WorkspaceService.ListEgressIPs:output_type -> toshi.workspace.v1.ListEgressIPsResponse
-	21, // 96: toshi.workspace.v1.WorkspaceService.GetUsage:output_type -> toshi.workspace.v1.GetUsageResponse
-	23, // 97: toshi.workspace.v1.WorkspaceService.GetQueueTimes:output_type -> toshi.workspace.v1.GetQueueTimesResponse
-	25, // 98: toshi.workspace.v1.WorkspaceService.GetWorkflowUsage:output_type -> toshi.workspace.v1.GetWorkflowUsageResponse
-	27, // 99: toshi.workspace.v1.WorkspaceService.ListPlans:output_type -> toshi.workspace.v1.ListPlansResponse
-	29, // 100: toshi.workspace.v1.WorkspaceService.CreateCheckoutSession:output_type -> toshi.workspace.v1.CreateCheckoutSessionResponse
-	31, // 101: toshi.workspace.v1.WorkspaceService.CreateBillingPortalSession:output_type -> toshi.workspace.v1.CreateBillingPortalSessionResponse
-	33, // 102: toshi.workspace.v1.WorkspaceService.GetVersion:output_type -> toshi.workspace.v1.GetVersionResponse
-	87, // [87:103] is the sub-list for method output_type
-	71, // [71:87] is the sub-list for method input_type
-	71, // [71:71] is the sub-list for extension type_name
-	71, // [71:71] is the sub-list for extension extendee
-	0,  // [0:71] is the sub-list for field type_name
+	60, // 50: toshi.workspace.v1.WorkspaceBilling.card_verified_at:type_name -> google.protobuf.Timestamp
+	60, // 51: toshi.workspace.v1.WorkspaceBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	58, // 52: toshi.workspace.v1.WorkspaceBilling.held_now:type_name -> toshi.workspace.v1.WorkspaceBilling.HeldJobs
+	60, // 53: toshi.workspace.v1.BillingEventFailure.occurred_at:type_name -> google.protobuf.Timestamp
+	60, // 54: toshi.workspace.v1.BillingEventFailure.failed_at:type_name -> google.protobuf.Timestamp
+	60, // 55: toshi.workspace.v1.WorkspaceStatement.from:type_name -> google.protobuf.Timestamp
+	60, // 56: toshi.workspace.v1.WorkspaceStatement.to:type_name -> google.protobuf.Timestamp
+	50, // 57: toshi.workspace.v1.WorkspaceStatement.usage:type_name -> toshi.workspace.v1.StatementUsage
+	50, // 58: toshi.workspace.v1.WorkspaceStatement.total:type_name -> toshi.workspace.v1.StatementUsage
+	51, // 59: toshi.workspace.v1.WorkspaceStatement.charges:type_name -> toshi.workspace.v1.StatementCharge
+	60, // 60: toshi.workspace.v1.WorkspaceStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	52, // 61: toshi.workspace.v1.WorkspaceStatement.held:type_name -> toshi.workspace.v1.HoldTimes
+	53, // 62: toshi.workspace.v1.WorkspaceStatement.filler:type_name -> toshi.workspace.v1.FillerUsage
+	60, // 63: toshi.workspace.v1.WorkspaceStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
+	45, // 64: toshi.workspace.v1.WorkspaceStatement.own_host_fee:type_name -> toshi.workspace.v1.OwnHostFee
+	46, // 65: toshi.workspace.v1.WorkspaceStatement.awake:type_name -> toshi.workspace.v1.Awake
+	47, // 66: toshi.workspace.v1.WorkspaceStatement.storage:type_name -> toshi.workspace.v1.Storage
+	43, // 67: toshi.workspace.v1.WorkspaceStatement.desktop_seats:type_name -> toshi.workspace.v1.DesktopSeats
+	44, // 68: toshi.workspace.v1.DesktopSeats.seats:type_name -> toshi.workspace.v1.StatementSeat
+	60, // 69: toshi.workspace.v1.StatementSeat.assigned_at:type_name -> google.protobuf.Timestamp
+	60, // 70: toshi.workspace.v1.StatementSeat.removed_at:type_name -> google.protobuf.Timestamp
+	48, // 71: toshi.workspace.v1.Storage.kinds:type_name -> toshi.workspace.v1.StoredKind
+	60, // 72: toshi.workspace.v1.HoldTimes.open_since:type_name -> google.protobuf.Timestamp
+	62, // 73: toshi.workspace.v1.EgressHost.egress:type_name -> toshi.workspace.v1.HostEgress
+	60, // 74: toshi.workspace.v1.WorkspaceBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
+	1,  // 75: toshi.workspace.v1.WorkspaceService.GetWorkspace:input_type -> toshi.workspace.v1.GetWorkspaceRequest
+	3,  // 76: toshi.workspace.v1.WorkspaceService.UpdateWorkspace:input_type -> toshi.workspace.v1.UpdateWorkspaceRequest
+	5,  // 77: toshi.workspace.v1.WorkspaceService.ListWorkspaces:input_type -> toshi.workspace.v1.ListWorkspacesRequest
+	7,  // 78: toshi.workspace.v1.WorkspaceService.GetWorkspaceBilling:input_type -> toshi.workspace.v1.GetWorkspaceBillingRequest
+	9,  // 79: toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement:input_type -> toshi.workspace.v1.GetWorkspaceStatementRequest
+	12, // 80: toshi.workspace.v1.WorkspaceService.ListSeats:input_type -> toshi.workspace.v1.ListSeatsRequest
+	14, // 81: toshi.workspace.v1.WorkspaceService.AssignSeat:input_type -> toshi.workspace.v1.AssignSeatRequest
+	16, // 82: toshi.workspace.v1.WorkspaceService.RemoveSeat:input_type -> toshi.workspace.v1.RemoveSeatRequest
+	18, // 83: toshi.workspace.v1.WorkspaceService.ListEgressIPs:input_type -> toshi.workspace.v1.ListEgressIPsRequest
+	20, // 84: toshi.workspace.v1.WorkspaceService.GetUsage:input_type -> toshi.workspace.v1.GetUsageRequest
+	22, // 85: toshi.workspace.v1.WorkspaceService.GetQueueTimes:input_type -> toshi.workspace.v1.GetQueueTimesRequest
+	24, // 86: toshi.workspace.v1.WorkspaceService.GetWorkflowUsage:input_type -> toshi.workspace.v1.GetWorkflowUsageRequest
+	26, // 87: toshi.workspace.v1.WorkspaceService.ListPlans:input_type -> toshi.workspace.v1.ListPlansRequest
+	28, // 88: toshi.workspace.v1.WorkspaceService.CreateCheckoutSession:input_type -> toshi.workspace.v1.CreateCheckoutSessionRequest
+	30, // 89: toshi.workspace.v1.WorkspaceService.CreateBillingPortalSession:input_type -> toshi.workspace.v1.CreateBillingPortalSessionRequest
+	32, // 90: toshi.workspace.v1.WorkspaceService.GetVersion:input_type -> toshi.workspace.v1.GetVersionRequest
+	2,  // 91: toshi.workspace.v1.WorkspaceService.GetWorkspace:output_type -> toshi.workspace.v1.GetWorkspaceResponse
+	4,  // 92: toshi.workspace.v1.WorkspaceService.UpdateWorkspace:output_type -> toshi.workspace.v1.UpdateWorkspaceResponse
+	6,  // 93: toshi.workspace.v1.WorkspaceService.ListWorkspaces:output_type -> toshi.workspace.v1.ListWorkspacesResponse
+	8,  // 94: toshi.workspace.v1.WorkspaceService.GetWorkspaceBilling:output_type -> toshi.workspace.v1.GetWorkspaceBillingResponse
+	10, // 95: toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement:output_type -> toshi.workspace.v1.GetWorkspaceStatementResponse
+	13, // 96: toshi.workspace.v1.WorkspaceService.ListSeats:output_type -> toshi.workspace.v1.ListSeatsResponse
+	15, // 97: toshi.workspace.v1.WorkspaceService.AssignSeat:output_type -> toshi.workspace.v1.AssignSeatResponse
+	17, // 98: toshi.workspace.v1.WorkspaceService.RemoveSeat:output_type -> toshi.workspace.v1.RemoveSeatResponse
+	19, // 99: toshi.workspace.v1.WorkspaceService.ListEgressIPs:output_type -> toshi.workspace.v1.ListEgressIPsResponse
+	21, // 100: toshi.workspace.v1.WorkspaceService.GetUsage:output_type -> toshi.workspace.v1.GetUsageResponse
+	23, // 101: toshi.workspace.v1.WorkspaceService.GetQueueTimes:output_type -> toshi.workspace.v1.GetQueueTimesResponse
+	25, // 102: toshi.workspace.v1.WorkspaceService.GetWorkflowUsage:output_type -> toshi.workspace.v1.GetWorkflowUsageResponse
+	27, // 103: toshi.workspace.v1.WorkspaceService.ListPlans:output_type -> toshi.workspace.v1.ListPlansResponse
+	29, // 104: toshi.workspace.v1.WorkspaceService.CreateCheckoutSession:output_type -> toshi.workspace.v1.CreateCheckoutSessionResponse
+	31, // 105: toshi.workspace.v1.WorkspaceService.CreateBillingPortalSession:output_type -> toshi.workspace.v1.CreateBillingPortalSessionResponse
+	33, // 106: toshi.workspace.v1.WorkspaceService.GetVersion:output_type -> toshi.workspace.v1.GetVersionResponse
+	91, // [91:107] is the sub-list for method output_type
+	75, // [75:91] is the sub-list for method input_type
+	75, // [75:75] is the sub-list for extension type_name
+	75, // [75:75] is the sub-list for extension extendee
+	0,  // [0:75] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_workspace_service_proto_init() }
@@ -5374,13 +5607,14 @@ func file_toshi_workspace_v1_workspace_service_proto_init() {
 	file_toshi_workspace_v1_roles_proto_init()
 	file_toshi_workspace_v1_workspace_service_proto_msgTypes[33].OneofWrappers = []any{}
 	file_toshi_workspace_v1_workspace_service_proto_msgTypes[35].OneofWrappers = []any{}
+	file_toshi_workspace_v1_workspace_service_proto_msgTypes[38].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_workspace_service_proto_rawDesc), len(file_toshi_workspace_v1_workspace_service_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   56,
+			NumMessages:   58,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

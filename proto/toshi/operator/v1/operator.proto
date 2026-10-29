@@ -136,6 +136,14 @@ service OperatorService {
   rpc ReassignSeat(ReassignSeatRequest) returns (ReassignSeatResponse) {
     option (toshi.audit) = {action: "seat.reassigned"};
   }
+  // ListSeats returns the desktop seats every workspace, or one, held in a
+  // UTC month, by workspace and then oldest assigned first: the seats live
+  // at some time in it, removed ones included, with which of them are
+  // billed. A person's seats in one month are billed as one seat, and so are
+  // a seat and the one ReassignSeat moved it to. csv adds the same rows as
+  // CSV. A month not in YYYY-MM form fails with INVALID_ARGUMENT, and an
+  // unknown workspace with NOT_FOUND.
+  rpc ListSeats(ListSeatsRequest) returns (ListSeatsResponse);
 
   // ListPlans returns configured plans sorted by name.
   //
@@ -1429,6 +1437,36 @@ message ReassignSeatResponse {
   Seat seat = 2;
 }
 
+message ListSeatsRequest {
+  // The UTC month as YYYY-MM. Empty: the current month.
+  string month = 1;
+  // One workspace's seats; empty: every workspace's.
+  string workspace = 2;
+  // Also return the rows as CSV.
+  bool csv = 3;
+}
+
+message ListSeatsResponse {
+  repeated SeatMonth seats = 1;
+  // The month's billed seats over every workspace listed.
+  int64 billed_seats = 2;
+  // With csv: one header row, then one row per seat: month, workspace,
+  // seat_id, user_id, name, assigned_at, removed_at, replaces,
+  // replace_reason and billed.
+  string csv = 3;
+}
+
+// SeatMonth is one seat in a month's report.
+message SeatMonth {
+  Seat seat = 1;
+  // The name of the person it is assigned to.
+  string name = 2;
+  // True when the seat carries the month's charge; false when it is billed
+  // with an older seat of the month: the same person's, or the one
+  // ReassignSeat moved to it.
+  bool billed = 3;
+}
+
 message SuspendTenantRequest {
   string id = 1;
   string reason = 2;
@@ -1915,6 +1953,45 @@ message TenantStatement {
   repeated Awake awake = 22;
   // The month's stored data; its cost is included in estimated_cents.
   Storage storage = 23;
+  // The month's desktop seats; unset when there were none. Their cost is
+  // included in estimated_cents.
+  DesktopSeats desktop_seats = 24;
+}
+
+// DesktopSeats is the month's desktop seats: every seat the workspace held
+// at some time in the month, from its billing start, and what they cost. A
+// person's seats in one month are billed as one seat, and so are a seat and
+// the one an operator moved it to; a second person is a second seat.
+message DesktopSeats {
+  // The seats billed for the month.
+  int64 billed_seats = 1;
+  // One seat's price for a month at the plan's price today, in the smallest
+  // unit of currency; 0 when unpriced.
+  int64 seat_price_cents = 2;
+  // True when the plan has no price for desktop seats yet: the seats are
+  // listed and cost nothing.
+  bool unpriced = 3;
+  // billed_seats at seat_price_cents; included in estimated_cents.
+  int64 estimated_cents = 4;
+  // The seats, oldest assigned first.
+  repeated StatementSeat seats = 5;
+}
+
+// StatementSeat is one desktop seat on a statement.
+message StatementSeat {
+  string seat_id = 1;
+  // The Toshi user id of the person it was assigned to, and their name.
+  string user_id = 2;
+  string name = 3;
+  google.protobuf.Timestamp assigned_at = 4;
+  // Unset while the seat is live.
+  google.protobuf.Timestamp removed_at = 5;
+  // The seat an operator moved to this one, when it replaces one.
+  string replaces = 6;
+  // True when the seat carries a month's charge; false when it is billed
+  // with an older seat of the month: the same person's, or the one an
+  // operator moved to it.
+  bool billed = 7;
 }
 
 // OwnHostFee is the month's own-server fee: the run time of the workspace's
@@ -2098,6 +2175,10 @@ message TenantBilling {
   // the scheduler checks against the workspace's limit,
   // Tenant.effective_concurrency.
   int64 concurrency_used = 23;
+  // The price of one desktop seat a month on the workspace's plan, in the
+  // smallest unit of currency; unset while the billing provider has no price
+  // for it.
+  optional int64 desktop_seat_price_cents = 24;
   // HeldJobs counts the jobs held now for one reason.
   message HeldJobs {
     // One of the job hold reasons (see Job.hold_reason).

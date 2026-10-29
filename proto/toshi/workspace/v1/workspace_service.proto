@@ -656,6 +656,10 @@ message WorkspaceBilling {
   // the scheduler checks against the workspace's limit,
   // Workspace.effective_concurrency.
   int64 concurrency_used = 22;
+  // The price of one desktop seat a month on the workspace's plan, in the
+  // smallest unit of currency; unset while the billing provider has no price
+  // for it.
+  optional int64 desktop_seat_price_cents = 26;
   // HeldJobs counts the jobs held now for one reason.
   message HeldJobs {
     // One of the job hold reasons (see Job.hold_reason).
@@ -751,6 +755,45 @@ message WorkspaceStatement {
   repeated Awake awake = 21;
   // The month's stored data; its cost is included in estimated_cents.
   Storage storage = 22;
+  // The month's desktop seats; unset when there were none. Their cost is
+  // included in estimated_cents.
+  DesktopSeats desktop_seats = 23;
+}
+
+// DesktopSeats is the month's desktop seats: every seat the workspace held
+// at some time in the month, from its billing start, and what they cost. A
+// person's seats in one month are billed as one seat, and so are a seat and
+// the one an operator moved it to; a second person is a second seat.
+message DesktopSeats {
+  // The seats billed for the month.
+  int64 billed_seats = 1;
+  // One seat's price for a month at the plan's price today, in the smallest
+  // unit of currency; 0 when unpriced.
+  int64 seat_price_cents = 2;
+  // True when the plan has no price for desktop seats yet: the seats are
+  // listed and cost nothing.
+  bool unpriced = 3;
+  // billed_seats at seat_price_cents; included in estimated_cents.
+  int64 estimated_cents = 4;
+  // The seats, oldest assigned first.
+  repeated StatementSeat seats = 5;
+}
+
+// StatementSeat is one desktop seat on a statement.
+message StatementSeat {
+  string seat_id = 1;
+  // The Toshi user id of the person it was assigned to, and their name.
+  string user_id = 2;
+  string name = 3;
+  google.protobuf.Timestamp assigned_at = 4;
+  // Unset while the seat is live.
+  google.protobuf.Timestamp removed_at = 5;
+  // The seat an operator moved to this one, when it replaces one.
+  string replaces = 6;
+  // True when the seat carries a month's charge; false when it is billed
+  // with an older seat of the month: the same person's, or the one an
+  // operator moved to it.
+  bool billed = 7;
 }
 
 // OwnHostFee is the month's own-server fee: the run time of the workspace's

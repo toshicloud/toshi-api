@@ -80,6 +80,9 @@ const (
 	// OperatorServiceReassignSeatProcedure is the fully-qualified name of the OperatorService's
 	// ReassignSeat RPC.
 	OperatorServiceReassignSeatProcedure = "/toshi.operator.v1.OperatorService/ReassignSeat"
+	// OperatorServiceListSeatsProcedure is the fully-qualified name of the OperatorService's ListSeats
+	// RPC.
+	OperatorServiceListSeatsProcedure = "/toshi.operator.v1.OperatorService/ListSeats"
 	// OperatorServiceListPlansProcedure is the fully-qualified name of the OperatorService's ListPlans
 	// RPC.
 	OperatorServiceListPlansProcedure = "/toshi.operator.v1.OperatorService/ListPlans"
@@ -292,6 +295,14 @@ type OperatorServiceClient interface {
 	// is not a member, with NOT_FOUND; a person who holds a live seat with
 	// ALREADY_EXISTS. The seat's own person fails with INVALID_ARGUMENT.
 	ReassignSeat(context.Context, *connect.Request[operatorv1.ReassignSeatRequest]) (*connect.Response[operatorv1.ReassignSeatResponse], error)
+	// ListSeats returns the desktop seats every workspace, or one, held in a
+	// UTC month, by workspace and then oldest assigned first: the seats live
+	// at some time in it, removed ones included, with which of them are
+	// billed. A person's seats in one month are billed as one seat, and so are
+	// a seat and the one ReassignSeat moved it to. csv adds the same rows as
+	// CSV. A month not in YYYY-MM form fails with INVALID_ARGUMENT, and an
+	// unknown workspace with NOT_FOUND.
+	ListSeats(context.Context, *connect.Request[operatorv1.ListSeatsRequest]) (*connect.Response[operatorv1.ListSeatsResponse], error)
 	// ListPlans returns configured plans sorted by name.
 	//
 	// A page holds 100 plans when page_size is zero, and 1000 at most.
@@ -645,6 +656,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("ReassignSeat")),
 			connect.WithClientOptions(opts...),
 		),
+		listSeats: connect.NewClient[operatorv1.ListSeatsRequest, operatorv1.ListSeatsResponse](
+			httpClient,
+			baseURL+OperatorServiceListSeatsProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("ListSeats")),
+			connect.WithClientOptions(opts...),
+		),
 		listPlans: connect.NewClient[operatorv1.ListPlansRequest, operatorv1.ListPlansResponse](
 			httpClient,
 			baseURL+OperatorServiceListPlansProcedure,
@@ -899,6 +916,7 @@ type operatorServiceClient struct {
 	setTenantCap              *connect.Client[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse]
 	setTenantLimits           *connect.Client[operatorv1.SetTenantLimitsRequest, operatorv1.SetTenantLimitsResponse]
 	reassignSeat              *connect.Client[operatorv1.ReassignSeatRequest, operatorv1.ReassignSeatResponse]
+	listSeats                 *connect.Client[operatorv1.ListSeatsRequest, operatorv1.ListSeatsResponse]
 	listPlans                 *connect.Client[operatorv1.ListPlansRequest, operatorv1.ListPlansResponse]
 	getVersion                *connect.Client[operatorv1.GetVersionRequest, operatorv1.GetVersionResponse]
 	setTenantPlan             *connect.Client[operatorv1.SetTenantPlanRequest, operatorv1.SetTenantPlanResponse]
@@ -1013,6 +1031,11 @@ func (c *operatorServiceClient) SetTenantLimits(ctx context.Context, req *connec
 // ReassignSeat calls toshi.operator.v1.OperatorService.ReassignSeat.
 func (c *operatorServiceClient) ReassignSeat(ctx context.Context, req *connect.Request[operatorv1.ReassignSeatRequest]) (*connect.Response[operatorv1.ReassignSeatResponse], error) {
 	return c.reassignSeat.CallUnary(ctx, req)
+}
+
+// ListSeats calls toshi.operator.v1.OperatorService.ListSeats.
+func (c *operatorServiceClient) ListSeats(ctx context.Context, req *connect.Request[operatorv1.ListSeatsRequest]) (*connect.Response[operatorv1.ListSeatsResponse], error) {
+	return c.listSeats.CallUnary(ctx, req)
 }
 
 // ListPlans calls toshi.operator.v1.OperatorService.ListPlans.
@@ -1303,6 +1326,14 @@ type OperatorServiceHandler interface {
 	// is not a member, with NOT_FOUND; a person who holds a live seat with
 	// ALREADY_EXISTS. The seat's own person fails with INVALID_ARGUMENT.
 	ReassignSeat(context.Context, *connect.Request[operatorv1.ReassignSeatRequest]) (*connect.Response[operatorv1.ReassignSeatResponse], error)
+	// ListSeats returns the desktop seats every workspace, or one, held in a
+	// UTC month, by workspace and then oldest assigned first: the seats live
+	// at some time in it, removed ones included, with which of them are
+	// billed. A person's seats in one month are billed as one seat, and so are
+	// a seat and the one ReassignSeat moved it to. csv adds the same rows as
+	// CSV. A month not in YYYY-MM form fails with INVALID_ARGUMENT, and an
+	// unknown workspace with NOT_FOUND.
+	ListSeats(context.Context, *connect.Request[operatorv1.ListSeatsRequest]) (*connect.Response[operatorv1.ListSeatsResponse], error)
 	// ListPlans returns configured plans sorted by name.
 	//
 	// A page holds 100 plans when page_size is zero, and 1000 at most.
@@ -1652,6 +1683,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("ReassignSeat")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceListSeatsHandler := connect.NewUnaryHandler(
+		OperatorServiceListSeatsProcedure,
+		svc.ListSeats,
+		connect.WithSchema(operatorServiceMethods.ByName("ListSeats")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceListPlansHandler := connect.NewUnaryHandler(
 		OperatorServiceListPlansProcedure,
 		svc.ListPlans,
@@ -1918,6 +1955,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceSetTenantLimitsHandler.ServeHTTP(w, r)
 		case OperatorServiceReassignSeatProcedure:
 			operatorServiceReassignSeatHandler.ServeHTTP(w, r)
+		case OperatorServiceListSeatsProcedure:
+			operatorServiceListSeatsHandler.ServeHTTP(w, r)
 		case OperatorServiceListPlansProcedure:
 			operatorServiceListPlansHandler.ServeHTTP(w, r)
 		case OperatorServiceGetVersionProcedure:
@@ -2063,6 +2102,10 @@ func (UnimplementedOperatorServiceHandler) SetTenantLimits(context.Context, *con
 
 func (UnimplementedOperatorServiceHandler) ReassignSeat(context.Context, *connect.Request[operatorv1.ReassignSeatRequest]) (*connect.Response[operatorv1.ReassignSeatResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ReassignSeat is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) ListSeats(context.Context, *connect.Request[operatorv1.ListSeatsRequest]) (*connect.Response[operatorv1.ListSeatsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ListSeats is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error) {
