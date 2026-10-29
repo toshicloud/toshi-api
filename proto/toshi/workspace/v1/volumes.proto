@@ -120,6 +120,10 @@ message Volume {
   int64 latest_version = 9;
   // When its newest version was saved; unset when it has none.
   google.protobuf.Timestamp latest_version_time = 10;
+  // When it was lost: it had no saved version when the host that held its
+  // only copy was removed, and no run mounts it again. Unset while it is
+  // not lost.
+  google.protobuf.Timestamp lost_time = 11;
 }
 
 // VolumeVersion is a saved copy of a state volume's data.

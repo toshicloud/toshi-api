@@ -106,8 +106,12 @@ type Volume struct {
 	LatestVersion int64 `protobuf:"varint,9,opt,name=latest_version,json=latestVersion,proto3" json:"latest_version,omitempty"`
 	// When its newest version was saved; unset when it has none.
 	LatestVersionTime *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=latest_version_time,json=latestVersionTime,proto3" json:"latest_version_time,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// When it was lost: it had no saved version when the host that held its
+	// only copy was removed, and no run mounts it again. Unset while it is
+	// not lost.
+	LostTime      *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=lost_time,json=lostTime,proto3" json:"lost_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Volume) Reset() {
@@ -206,6 +210,13 @@ func (x *Volume) GetLatestVersion() int64 {
 func (x *Volume) GetLatestVersionTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.LatestVersionTime
+	}
+	return nil
+}
+
+func (x *Volume) GetLostTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LostTime
 	}
 	return nil
 }
@@ -849,7 +860,7 @@ var File_toshi_workspace_v1_volumes_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa1\x03\n" +
+	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xda\x03\n" +
 	"\x06Volume\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -863,7 +874,8 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x14attached_workload_id\x18\b \x01(\tR\x12attachedWorkloadId\x12%\n" +
 	"\x0elatest_version\x18\t \x01(\x03R\rlatestVersion\x12J\n" +
 	"\x13latest_version_time\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x11latestVersionTime\"\xc0\x01\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x11latestVersionTime\x127\n" +
+	"\tlost_time\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\blostTime\"\xc0\x01\n" +
 	"\rVolumeVersion\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\x12;\n" +
 	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -957,28 +969,29 @@ var file_toshi_workspace_v1_volumes_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Volume.mode:type_name -> toshi.workspace.v1.VolumeMode
 	13, // 1: toshi.workspace.v1.Volume.create_time:type_name -> google.protobuf.Timestamp
 	13, // 2: toshi.workspace.v1.Volume.latest_version_time:type_name -> google.protobuf.Timestamp
-	13, // 3: toshi.workspace.v1.VolumeVersion.create_time:type_name -> google.protobuf.Timestamp
-	1,  // 4: toshi.workspace.v1.ListVolumesResponse.volumes:type_name -> toshi.workspace.v1.Volume
-	1,  // 5: toshi.workspace.v1.AttachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	1,  // 6: toshi.workspace.v1.DetachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	2,  // 7: toshi.workspace.v1.ListVolumeVersionsResponse.versions:type_name -> toshi.workspace.v1.VolumeVersion
-	2,  // 8: toshi.workspace.v1.RestoreVolumeResponse.version:type_name -> toshi.workspace.v1.VolumeVersion
-	1,  // 9: toshi.workspace.v1.RestoreVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	3,  // 10: toshi.workspace.v1.VolumeService.ListVolumes:input_type -> toshi.workspace.v1.ListVolumesRequest
-	5,  // 11: toshi.workspace.v1.VolumeService.AttachVolume:input_type -> toshi.workspace.v1.AttachVolumeRequest
-	7,  // 12: toshi.workspace.v1.VolumeService.DetachVolume:input_type -> toshi.workspace.v1.DetachVolumeRequest
-	9,  // 13: toshi.workspace.v1.VolumeService.ListVolumeVersions:input_type -> toshi.workspace.v1.ListVolumeVersionsRequest
-	11, // 14: toshi.workspace.v1.VolumeService.RestoreVolume:input_type -> toshi.workspace.v1.RestoreVolumeRequest
-	4,  // 15: toshi.workspace.v1.VolumeService.ListVolumes:output_type -> toshi.workspace.v1.ListVolumesResponse
-	6,  // 16: toshi.workspace.v1.VolumeService.AttachVolume:output_type -> toshi.workspace.v1.AttachVolumeResponse
-	8,  // 17: toshi.workspace.v1.VolumeService.DetachVolume:output_type -> toshi.workspace.v1.DetachVolumeResponse
-	10, // 18: toshi.workspace.v1.VolumeService.ListVolumeVersions:output_type -> toshi.workspace.v1.ListVolumeVersionsResponse
-	12, // 19: toshi.workspace.v1.VolumeService.RestoreVolume:output_type -> toshi.workspace.v1.RestoreVolumeResponse
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	13, // 3: toshi.workspace.v1.Volume.lost_time:type_name -> google.protobuf.Timestamp
+	13, // 4: toshi.workspace.v1.VolumeVersion.create_time:type_name -> google.protobuf.Timestamp
+	1,  // 5: toshi.workspace.v1.ListVolumesResponse.volumes:type_name -> toshi.workspace.v1.Volume
+	1,  // 6: toshi.workspace.v1.AttachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	1,  // 7: toshi.workspace.v1.DetachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	2,  // 8: toshi.workspace.v1.ListVolumeVersionsResponse.versions:type_name -> toshi.workspace.v1.VolumeVersion
+	2,  // 9: toshi.workspace.v1.RestoreVolumeResponse.version:type_name -> toshi.workspace.v1.VolumeVersion
+	1,  // 10: toshi.workspace.v1.RestoreVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	3,  // 11: toshi.workspace.v1.VolumeService.ListVolumes:input_type -> toshi.workspace.v1.ListVolumesRequest
+	5,  // 12: toshi.workspace.v1.VolumeService.AttachVolume:input_type -> toshi.workspace.v1.AttachVolumeRequest
+	7,  // 13: toshi.workspace.v1.VolumeService.DetachVolume:input_type -> toshi.workspace.v1.DetachVolumeRequest
+	9,  // 14: toshi.workspace.v1.VolumeService.ListVolumeVersions:input_type -> toshi.workspace.v1.ListVolumeVersionsRequest
+	11, // 15: toshi.workspace.v1.VolumeService.RestoreVolume:input_type -> toshi.workspace.v1.RestoreVolumeRequest
+	4,  // 16: toshi.workspace.v1.VolumeService.ListVolumes:output_type -> toshi.workspace.v1.ListVolumesResponse
+	6,  // 17: toshi.workspace.v1.VolumeService.AttachVolume:output_type -> toshi.workspace.v1.AttachVolumeResponse
+	8,  // 18: toshi.workspace.v1.VolumeService.DetachVolume:output_type -> toshi.workspace.v1.DetachVolumeResponse
+	10, // 19: toshi.workspace.v1.VolumeService.ListVolumeVersions:output_type -> toshi.workspace.v1.ListVolumeVersionsResponse
+	12, // 20: toshi.workspace.v1.VolumeService.RestoreVolume:output_type -> toshi.workspace.v1.RestoreVolumeResponse
+	16, // [16:21] is the sub-list for method output_type
+	11, // [11:16] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_volumes_proto_init() }
