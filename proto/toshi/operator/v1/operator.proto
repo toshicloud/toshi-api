@@ -1561,6 +1561,10 @@ message UsageRow {
   // rounded.
   double seconds = 12;
   double own_host_seconds = 13;
+  // The exact time service runs were awake, from first ready to release,
+  // and the idle part of it before they were put to sleep, in seconds.
+  double awake_seconds = 14;
+  double idle_seconds = 15;
 }
 
 // GetQueueTimesRequest selects the jobs to summarize. A job is in the window
@@ -1772,6 +1776,9 @@ message TenantStatement {
   int64 spend_cap_cents = 20;
   // The own-server fee of the month; included in estimated_cents.
   OwnHostFee own_host_fee = 21;
+  // The month's service runs billed by the VM-second, by size; included in
+  // estimated_cents.
+  repeated Awake awake = 22;
 }
 
 // OwnHostFee is the month's own-server fee: the run time of the workspace's
@@ -1787,6 +1794,24 @@ message OwnHostFee {
   // billed_seconds at the plan's price today, rounded up, in the smallest
   // unit of currency; 0 when the plan has no price for the fee.
   int64 estimated_cents = 4;
+}
+
+// Awake is the month's service runs of one runner size billed by the
+// VM-second: each run's time from first ready to release, summed and rounded
+// up once to whole seconds.
+message Awake {
+  string size = 1;
+  int64 runs = 2;
+  // The exact awake time, in seconds, from the workspace's billing start.
+  double seconds = 3;
+  // The part of seconds after the last demand before the run was put to
+  // sleep.
+  double idle_seconds = 4;
+  // seconds rounded up once.
+  int64 billed_seconds = 5;
+  // billed_seconds at the plan's price today, rounded up, in the smallest
+  // unit of currency; 0 when the plan has no price for the size.
+  int64 estimated_cents = 6;
 }
 
 message StatementUsage {
