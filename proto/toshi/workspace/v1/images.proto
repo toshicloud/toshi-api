@@ -206,6 +206,9 @@ message Image {
   // a push to another branch, a fork's or one that deletes the branch
   // builds nothing. Off unless set.
   bool rebuild_on_push = 17;
+  // Whether recipe declares an [agent] table: a job, sandbox or service
+  // that runs the image is an agent. Set by Toshi from the recipe.
+  bool agent = 18;
 }
 
 // ImageVersion is one build of an image, or one push of a container image.
@@ -254,6 +257,9 @@ message ImageVersion {
   // The tag a container version pushed by hand was found under; empty for
   // a build's version. A later push of the same tag is a new version.
   string tag = 23;
+  // Whether the recipe this version was built from declares an [agent]
+  // table. Set by Toshi from that recipe.
+  bool agent = 24;
 }
 
 // ImageVersionPin is a service revision made with an image version.

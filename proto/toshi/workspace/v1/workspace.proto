@@ -58,6 +58,9 @@ message Job {
   JobStatus status = 6;
   // What it records of its runs, fixed at create: never UNSPECIFIED.
   RecordingPolicy recording = 7;
+  // Whether the job is an agent: the image version it runs declares an
+  // [agent] table in its recipe. Fixed at create; set by Toshi.
+  bool agent = 8;
 }
 
 // JobStatus is a job's state and when it got there.
@@ -154,6 +157,9 @@ message Sandbox {
   SandboxStatus status = 6;
   // What it records of its runs, fixed at create: never UNSPECIFIED.
   RecordingPolicy recording = 7;
+  // Whether the sandbox is an agent: the image version it runs declares an
+  // [agent] table in its recipe. Fixed at create; set by Toshi.
+  bool agent = 8;
 }
 
 // SandboxStatus is a sandbox's state and when it got there.
@@ -214,6 +220,10 @@ message Service {
   // The service as ServiceSpec describes its answers.
   ServiceSpec spec = 5;
   ServiceStatus status = 6;
+  // Whether the service is an agent: the image version of its current
+  // revision declares an [agent] table in its recipe. A deploy or a rollback
+  // changes it; set by Toshi.
+  bool agent = 7;
 }
 
 // ServiceStatus is a service's state and when it got there.

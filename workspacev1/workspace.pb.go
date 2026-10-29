@@ -1027,7 +1027,10 @@ type Job struct {
 	Spec   *JobSpec   `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
 	Status *JobStatus `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
 	// What it records of its runs, fixed at create: never UNSPECIFIED.
-	Recording     RecordingPolicy `protobuf:"varint,7,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingPolicy" json:"recording,omitempty"`
+	Recording RecordingPolicy `protobuf:"varint,7,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingPolicy" json:"recording,omitempty"`
+	// Whether the job is an agent: the image version it runs declares an
+	// [agent] table in its recipe. Fixed at create; set by Toshi.
+	Agent         bool `protobuf:"varint,8,opt,name=agent,proto3" json:"agent,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1109,6 +1112,13 @@ func (x *Job) GetRecording() RecordingPolicy {
 		return x.Recording
 	}
 	return RecordingPolicy_RECORDING_POLICY_UNSPECIFIED
+}
+
+func (x *Job) GetAgent() bool {
+	if x != nil {
+		return x.Agent
+	}
+	return false
 }
 
 // JobStatus is a job's state and when it got there.
@@ -1424,7 +1434,10 @@ type Sandbox struct {
 	Spec   *SandboxSpec   `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
 	Status *SandboxStatus `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
 	// What it records of its runs, fixed at create: never UNSPECIFIED.
-	Recording     RecordingPolicy `protobuf:"varint,7,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingPolicy" json:"recording,omitempty"`
+	Recording RecordingPolicy `protobuf:"varint,7,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingPolicy" json:"recording,omitempty"`
+	// Whether the sandbox is an agent: the image version it runs declares an
+	// [agent] table in its recipe. Fixed at create; set by Toshi.
+	Agent         bool `protobuf:"varint,8,opt,name=agent,proto3" json:"agent,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1506,6 +1519,13 @@ func (x *Sandbox) GetRecording() RecordingPolicy {
 		return x.Recording
 	}
 	return RecordingPolicy_RECORDING_POLICY_UNSPECIFIED
+}
+
+func (x *Sandbox) GetAgent() bool {
+	if x != nil {
+		return x.Agent
+	}
+	return false
 }
 
 // SandboxStatus is a sandbox's state and when it got there.
@@ -1667,8 +1687,12 @@ type Service struct {
 	// Free-form labels, set at create and changed by UpdateService.
 	Labels map[string]string `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// The service as ServiceSpec describes its answers.
-	Spec          *ServiceSpec   `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
-	Status        *ServiceStatus `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	Spec   *ServiceSpec   `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
+	Status *ServiceStatus `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	// Whether the service is an agent: the image version of its current
+	// revision declares an [agent] table in its recipe. A deploy or a rollback
+	// changes it; set by Toshi.
+	Agent         bool `protobuf:"varint,7,opt,name=agent,proto3" json:"agent,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1743,6 +1767,13 @@ func (x *Service) GetStatus() *ServiceStatus {
 		return x.Status
 	}
 	return nil
+}
+
+func (x *Service) GetAgent() bool {
+	if x != nil {
+		return x.Agent
+	}
+	return false
 }
 
 // ServiceStatus is a service's state and when it got there.
@@ -8806,7 +8837,7 @@ var File_toshi_workspace_v1_workspace_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/workspace.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a#toshi/workspace/v1/recordings.proto\"\xf4\x02\n" +
+	"\"toshi/workspace/v1/workspace.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a#toshi/workspace/v1/recordings.proto\"\x8a\x03\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x12 \n" +
@@ -8814,7 +8845,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x06labels\x18\x04 \x03(\v2#.toshi.workspace.v1.Job.LabelsEntryR\x06labels\x12/\n" +
 	"\x04spec\x18\x05 \x01(\v2\x1b.toshi.workspace.v1.JobSpecR\x04spec\x125\n" +
 	"\x06status\x18\x06 \x01(\v2\x1d.toshi.workspace.v1.JobStatusR\x06status\x12A\n" +
-	"\trecording\x18\a \x01(\x0e2#.toshi.workspace.v1.RecordingPolicyR\trecording\x1a9\n" +
+	"\trecording\x18\a \x01(\x0e2#.toshi.workspace.v1.RecordingPolicyR\trecording\x12\x14\n" +
+	"\x05agent\x18\b \x01(\bR\x05agent\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x94\x06\n" +
@@ -8861,7 +8893,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"conclusion\x18\a \x01(\tR\n" +
 	"conclusion\x12\x10\n" +
-	"\x03end\x18\b \x01(\tR\x03end\"\x84\x03\n" +
+	"\x03end\x18\b \x01(\tR\x03end\"\x9a\x03\n" +
 	"\aSandbox\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x12 \n" +
@@ -8869,7 +8901,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x06labels\x18\x04 \x03(\v2'.toshi.workspace.v1.Sandbox.LabelsEntryR\x06labels\x123\n" +
 	"\x04spec\x18\x05 \x01(\v2\x1f.toshi.workspace.v1.SandboxSpecR\x04spec\x129\n" +
 	"\x06status\x18\x06 \x01(\v2!.toshi.workspace.v1.SandboxStatusR\x06status\x12A\n" +
-	"\trecording\x18\a \x01(\x0e2#.toshi.workspace.v1.RecordingPolicyR\trecording\x1a9\n" +
+	"\trecording\x18\a \x01(\x0e2#.toshi.workspace.v1.RecordingPolicyR\trecording\x12\x14\n" +
+	"\x05agent\x18\b \x01(\bR\x05agent\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xdb\x05\n" +
@@ -8894,14 +8927,15 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x12process_started_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\x10processStartedAt\x12 \n" +
 	"\texit_code\x18\f \x01(\x05H\x00R\bexitCode\x88\x01\x01B\f\n" +
 	"\n" +
-	"_exit_code\"\xc1\x02\n" +
+	"_exit_code\"\xd7\x02\n" +
 	"\aService\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x03 \x01(\tR\venvironment\x12?\n" +
 	"\x06labels\x18\x04 \x03(\v2'.toshi.workspace.v1.Service.LabelsEntryR\x06labels\x123\n" +
 	"\x04spec\x18\x05 \x01(\v2\x1f.toshi.workspace.v1.ServiceSpecR\x04spec\x129\n" +
-	"\x06status\x18\x06 \x01(\v2!.toshi.workspace.v1.ServiceStatusR\x06status\x1a9\n" +
+	"\x06status\x18\x06 \x01(\v2!.toshi.workspace.v1.ServiceStatusR\x06status\x12\x14\n" +
+	"\x05agent\x18\a \x01(\bR\x05agent\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x9b\x04\n" +

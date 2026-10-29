@@ -297,6 +297,9 @@ type Image struct {
 	// a push to another branch, a fork's or one that deletes the branch
 	// builds nothing. Off unless set.
 	RebuildOnPush bool `protobuf:"varint,17,opt,name=rebuild_on_push,json=rebuildOnPush,proto3" json:"rebuild_on_push,omitempty"`
+	// Whether recipe declares an [agent] table: a job, sandbox or service
+	// that runs the image is an agent. Set by Toshi from the recipe.
+	Agent         bool `protobuf:"varint,18,opt,name=agent,proto3" json:"agent,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -450,6 +453,13 @@ func (x *Image) GetRebuildOnPush() bool {
 	return false
 }
 
+func (x *Image) GetAgent() bool {
+	if x != nil {
+		return x.Agent
+	}
+	return false
+}
+
 // ImageVersion is one build of an image, or one push of a container image.
 type ImageVersion struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -496,7 +506,10 @@ type ImageVersion struct {
 	Trusted bool `protobuf:"varint,22,opt,name=trusted,proto3" json:"trusted,omitempty"`
 	// The tag a container version pushed by hand was found under; empty for
 	// a build's version. A later push of the same tag is a new version.
-	Tag           string `protobuf:"bytes,23,opt,name=tag,proto3" json:"tag,omitempty"`
+	Tag string `protobuf:"bytes,23,opt,name=tag,proto3" json:"tag,omitempty"`
+	// Whether the recipe this version was built from declares an [agent]
+	// table. Set by Toshi from that recipe.
+	Agent         bool `protobuf:"varint,24,opt,name=agent,proto3" json:"agent,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -690,6 +703,13 @@ func (x *ImageVersion) GetTag() string {
 		return x.Tag
 	}
 	return ""
+}
+
+func (x *ImageVersion) GetAgent() bool {
+	if x != nil {
+		return x.Agent
+	}
+	return false
 }
 
 // ImageVersionPin is a service revision made with an image version.
@@ -1489,7 +1509,7 @@ var File_toshi_workspace_v1_images_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\n" +
-	"\x1ftoshi/workspace/v1/images.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf0\x04\n" +
+	"\x1ftoshi/workspace/v1/images.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x86\x05\n" +
 	"\x05Image\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1510,7 +1530,8 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\abuilder\x18\x0e \x01(\x0e2 .toshi.workspace.v1.ImageBuilderR\abuilder\x12\x1a\n" +
 	"\bregistry\x18\x0f \x01(\tR\bregistry\x12'\n" +
 	"\x0fregistry_secret\x18\x10 \x01(\tR\x0eregistrySecret\x12&\n" +
-	"\x0frebuild_on_push\x18\x11 \x01(\bR\rrebuildOnPush\"\xdb\a\n" +
+	"\x0frebuild_on_push\x18\x11 \x01(\bR\rrebuildOnPush\x12\x14\n" +
+	"\x05agent\x18\x12 \x01(\bR\x05agent\"\xf1\a\n" +
 	"\fImageVersion\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06number\x18\x02 \x01(\x03R\x06number\x12;\n" +
@@ -1540,7 +1561,8 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x0fbuilder_version\x18\x14 \x01(\tR\x0ebuilderVersion\x126\n" +
 	"\x17builder_frontend_digest\x18\x15 \x01(\tR\x15builderFrontendDigest\x12\x18\n" +
 	"\atrusted\x18\x16 \x01(\bR\atrusted\x12\x10\n" +
-	"\x03tag\x18\x17 \x01(\tR\x03tag\"o\n" +
+	"\x03tag\x18\x17 \x01(\tR\x03tag\x12\x14\n" +
+	"\x05agent\x18\x18 \x01(\bR\x05agent\"o\n" +
 	"\x0fImageVersionPin\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x01 \x01(\tR\tserviceId\x12!\n" +
