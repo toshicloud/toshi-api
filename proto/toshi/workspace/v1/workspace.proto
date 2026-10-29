@@ -151,7 +151,7 @@ enum JobState {
   JOB_STATE_ENDED = 4;
 }
 
-// Sandbox runs until it is deleted or its time limit passes.
+// Sandbox runs until it is stopped, deleted or its time limit passes.
 message Sandbox {
   // Assigned by the server; unique within the workspace, among its jobs,
   // sandboxes and services.
@@ -208,13 +208,15 @@ message SandboxStatus {
   // The exit code of its spec's process, set with end_reason EXITED: 0 is
   // success, any other code a failure, and -1 a process a signal ended.
   optional int32 exit_code = 12;
+  // Set while a sandbox with keep_vm is stopped in CREATED; unset otherwise.
+  google.protobuf.Timestamp stopped_at = 13;
 }
 
 // SandboxState is where a sandbox is in its life. A sandbox can skip a
 // state: one deleted while queued ends without running.
 enum SandboxState {
   SANDBOX_STATE_UNSPECIFIED = 0;
-  // Recorded, not yet waiting for capacity.
+  // Recorded, not yet waiting for capacity, or stopped with keep_vm.
   SANDBOX_STATE_CREATED = 1;
   // Waiting for capacity.
   SANDBOX_STATE_QUEUED = 2;
@@ -534,8 +536,8 @@ message SandboxSpec {
   Command setup = 8;
   // Create only: a command the sandbox's host starts in it once setup
   // exited 0 (at once without setup) and keeps running for the sandbox's
-  // life; status.process_started_at says when it started. It is never
-  // started again: its exit ends the sandbox EXITED with the exit code in
+  // run; status.process_started_at says when it started. Its exit ends the
+  // sandbox EXITED with the exit code in
   // status.exit_code, 0 being success. Another code also sets
   // last_error.code "process_exited", with the code and the end of its
   // output in the message; a process that could not start ends the sandbox
@@ -562,6 +564,12 @@ message SandboxSpec {
   // those entries, and only where the project's and environment's policies
   // allow them. Unset means no request layer.
   RequestNetwork network = 13;
+  // Create only: keep the VM on one of the workspace's own hosts while the
+  // sandbox is stopped. StopSandbox and StartSandbox keep its disk. The
+  // workspace must enable keep_vm, hold fewer than keep_vm.max VMs, and have
+  // an own host whose agent keeps VMs; otherwise create fails with
+  // FAILED_PRECONDITION and reason KEEP_VM_UNAVAILABLE.
+  bool keep_vm = 14;
 }
 
 // SandboxSource is a commit of a repository that one of the workspace's
@@ -1430,6 +1438,28 @@ message RevokeServiceShareLinkRequest {
 
 message RevokeServiceShareLinkResponse {
   ServiceShareLink share_link = 1;
+}
+
+message StartSandboxRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  string request_key = 4;
+}
+
+message StartSandboxResponse {
+  Sandbox sandbox = 1;
+}
+
+message StopSandboxRequest {
+  string project = 1;
+  string environment = 2;
+  string id = 3;
+  string request_key = 4;
+}
+
+message StopSandboxResponse {
+  Sandbox sandbox = 1;
 }
 
 message StartServiceRequest {

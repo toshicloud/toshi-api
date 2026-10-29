@@ -73,6 +73,12 @@ const (
 	// WorkloadServiceDeleteSandboxProcedure is the fully-qualified name of the WorkloadService's
 	// DeleteSandbox RPC.
 	WorkloadServiceDeleteSandboxProcedure = "/toshi.workspace.v1.WorkloadService/DeleteSandbox"
+	// WorkloadServiceStopSandboxProcedure is the fully-qualified name of the WorkloadService's
+	// StopSandbox RPC.
+	WorkloadServiceStopSandboxProcedure = "/toshi.workspace.v1.WorkloadService/StopSandbox"
+	// WorkloadServiceStartSandboxProcedure is the fully-qualified name of the WorkloadService's
+	// StartSandbox RPC.
+	WorkloadServiceStartSandboxProcedure = "/toshi.workspace.v1.WorkloadService/StartSandbox"
 	// WorkloadServiceWaitSandboxProcedure is the fully-qualified name of the WorkloadService's
 	// WaitSandbox RPC.
 	WorkloadServiceWaitSandboxProcedure = "/toshi.workspace.v1.WorkloadService/WaitSandbox"
@@ -274,6 +280,15 @@ type WorkloadServiceClient interface {
 	// done once the sandbox is removed; GetSandbox then fails with NOT_FOUND,
 	// and the event log keeps its events.
 	DeleteSandbox(context.Context, *connect.Request[workspacev1.DeleteSandboxRequest]) (*connect.Response[workspacev1.DeleteSandboxResponse], error)
+	// StopSandbox ends its run and every execution in it and moves it to
+	// CREATED, keeping its VM. Stopping a stopped sandbox returns it as it is.
+	// A sandbox without keep_vm, or one that has ended, fails with
+	// FAILED_PRECONDITION. DeleteSandbox ends a sandbox.
+	StopSandbox(context.Context, *connect.Request[workspacev1.StopSandboxRequest]) (*connect.Response[workspacev1.StopSandboxResponse], error)
+	// StartSandbox queues a run on its kept VM. Starting a queued or running
+	// sandbox returns it as it is. A sandbox without keep_vm, or one that has
+	// ended, fails with FAILED_PRECONDITION.
+	StartSandbox(context.Context, *connect.Request[workspacev1.StartSandboxRequest]) (*connect.Response[workspacev1.StartSandboxResponse], error)
 	// WaitSandbox blocks until the sandbox is in one of the states asked for
 	// or the bound passes, as WaitJob does for a job.
 	WaitSandbox(context.Context, *connect.Request[workspacev1.WaitSandboxRequest]) (*connect.Response[workspacev1.WaitSandboxResponse], error)
@@ -605,6 +620,18 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("DeleteSandbox")),
 			connect.WithClientOptions(opts...),
 		),
+		stopSandbox: connect.NewClient[workspacev1.StopSandboxRequest, workspacev1.StopSandboxResponse](
+			httpClient,
+			baseURL+WorkloadServiceStopSandboxProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("StopSandbox")),
+			connect.WithClientOptions(opts...),
+		),
+		startSandbox: connect.NewClient[workspacev1.StartSandboxRequest, workspacev1.StartSandboxResponse](
+			httpClient,
+			baseURL+WorkloadServiceStartSandboxProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("StartSandbox")),
+			connect.WithClientOptions(opts...),
+		),
 		waitSandbox: connect.NewClient[workspacev1.WaitSandboxRequest, workspacev1.WaitSandboxResponse](
 			httpClient,
 			baseURL+WorkloadServiceWaitSandboxProcedure,
@@ -846,6 +873,8 @@ type workloadServiceClient struct {
 	listSandboxes          *connect.Client[workspacev1.ListSandboxesRequest, workspacev1.ListSandboxesResponse]
 	updateSandbox          *connect.Client[workspacev1.UpdateSandboxRequest, workspacev1.UpdateSandboxResponse]
 	deleteSandbox          *connect.Client[workspacev1.DeleteSandboxRequest, workspacev1.DeleteSandboxResponse]
+	stopSandbox            *connect.Client[workspacev1.StopSandboxRequest, workspacev1.StopSandboxResponse]
+	startSandbox           *connect.Client[workspacev1.StartSandboxRequest, workspacev1.StartSandboxResponse]
 	waitSandbox            *connect.Client[workspacev1.WaitSandboxRequest, workspacev1.WaitSandboxResponse]
 	watchSandboxes         *connect.Client[workspacev1.WatchSandboxesRequest, workspacev1.WatchSandboxesResponse]
 	execute                *connect.Client[workspacev1.ExecuteRequest, workspacev1.ExecuteResponse]
@@ -953,6 +982,16 @@ func (c *workloadServiceClient) UpdateSandbox(ctx context.Context, req *connect.
 // DeleteSandbox calls toshi.workspace.v1.WorkloadService.DeleteSandbox.
 func (c *workloadServiceClient) DeleteSandbox(ctx context.Context, req *connect.Request[workspacev1.DeleteSandboxRequest]) (*connect.Response[workspacev1.DeleteSandboxResponse], error) {
 	return c.deleteSandbox.CallUnary(ctx, req)
+}
+
+// StopSandbox calls toshi.workspace.v1.WorkloadService.StopSandbox.
+func (c *workloadServiceClient) StopSandbox(ctx context.Context, req *connect.Request[workspacev1.StopSandboxRequest]) (*connect.Response[workspacev1.StopSandboxResponse], error) {
+	return c.stopSandbox.CallUnary(ctx, req)
+}
+
+// StartSandbox calls toshi.workspace.v1.WorkloadService.StartSandbox.
+func (c *workloadServiceClient) StartSandbox(ctx context.Context, req *connect.Request[workspacev1.StartSandboxRequest]) (*connect.Response[workspacev1.StartSandboxResponse], error) {
+	return c.startSandbox.CallUnary(ctx, req)
 }
 
 // WaitSandbox calls toshi.workspace.v1.WorkloadService.WaitSandbox.
@@ -1229,6 +1268,15 @@ type WorkloadServiceHandler interface {
 	// done once the sandbox is removed; GetSandbox then fails with NOT_FOUND,
 	// and the event log keeps its events.
 	DeleteSandbox(context.Context, *connect.Request[workspacev1.DeleteSandboxRequest]) (*connect.Response[workspacev1.DeleteSandboxResponse], error)
+	// StopSandbox ends its run and every execution in it and moves it to
+	// CREATED, keeping its VM. Stopping a stopped sandbox returns it as it is.
+	// A sandbox without keep_vm, or one that has ended, fails with
+	// FAILED_PRECONDITION. DeleteSandbox ends a sandbox.
+	StopSandbox(context.Context, *connect.Request[workspacev1.StopSandboxRequest]) (*connect.Response[workspacev1.StopSandboxResponse], error)
+	// StartSandbox queues a run on its kept VM. Starting a queued or running
+	// sandbox returns it as it is. A sandbox without keep_vm, or one that has
+	// ended, fails with FAILED_PRECONDITION.
+	StartSandbox(context.Context, *connect.Request[workspacev1.StartSandboxRequest]) (*connect.Response[workspacev1.StartSandboxResponse], error)
 	// WaitSandbox blocks until the sandbox is in one of the states asked for
 	// or the bound passes, as WaitJob does for a job.
 	WaitSandbox(context.Context, *connect.Request[workspacev1.WaitSandboxRequest]) (*connect.Response[workspacev1.WaitSandboxResponse], error)
@@ -1556,6 +1604,18 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("DeleteSandbox")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceStopSandboxHandler := connect.NewUnaryHandler(
+		WorkloadServiceStopSandboxProcedure,
+		svc.StopSandbox,
+		connect.WithSchema(workloadServiceMethods.ByName("StopSandbox")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceStartSandboxHandler := connect.NewUnaryHandler(
+		WorkloadServiceStartSandboxProcedure,
+		svc.StartSandbox,
+		connect.WithSchema(workloadServiceMethods.ByName("StartSandbox")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceWaitSandboxHandler := connect.NewUnaryHandler(
 		WorkloadServiceWaitSandboxProcedure,
 		svc.WaitSandbox,
@@ -1808,6 +1868,10 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceUpdateSandboxHandler.ServeHTTP(w, r)
 		case WorkloadServiceDeleteSandboxProcedure:
 			workloadServiceDeleteSandboxHandler.ServeHTTP(w, r)
+		case WorkloadServiceStopSandboxProcedure:
+			workloadServiceStopSandboxHandler.ServeHTTP(w, r)
+		case WorkloadServiceStartSandboxProcedure:
+			workloadServiceStartSandboxHandler.ServeHTTP(w, r)
 		case WorkloadServiceWaitSandboxProcedure:
 			workloadServiceWaitSandboxHandler.ServeHTTP(w, r)
 		case WorkloadServiceWatchSandboxesProcedure:
@@ -1945,6 +2009,14 @@ func (UnimplementedWorkloadServiceHandler) UpdateSandbox(context.Context, *conne
 
 func (UnimplementedWorkloadServiceHandler) DeleteSandbox(context.Context, *connect.Request[workspacev1.DeleteSandboxRequest]) (*connect.Response[workspacev1.DeleteSandboxResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.DeleteSandbox is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) StopSandbox(context.Context, *connect.Request[workspacev1.StopSandboxRequest]) (*connect.Response[workspacev1.StopSandboxResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.StopSandbox is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) StartSandbox(context.Context, *connect.Request[workspacev1.StartSandboxRequest]) (*connect.Response[workspacev1.StartSandboxResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.StartSandbox is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) WaitSandbox(context.Context, *connect.Request[workspacev1.WaitSandboxRequest]) (*connect.Response[workspacev1.WaitSandboxResponse], error) {

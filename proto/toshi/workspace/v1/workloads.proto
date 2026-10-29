@@ -182,6 +182,24 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
+  // StopSandbox ends its run and every execution in it and moves it to
+  // CREATED, keeping its VM. Stopping a stopped sandbox returns it as it is.
+  // A sandbox without keep_vm, or one that has ended, fails with
+  // FAILED_PRECONDITION. DeleteSandbox ends a sandbox.
+  rpc StopSandbox(StopSandboxRequest) returns (StopSandboxResponse) {
+    option (toshi.permission) = "sandboxes.write";
+    option (toshi.scope) = "environment";
+  }
+
+  // StartSandbox queues a run on its kept VM. Starting a queued or running
+  // sandbox returns it as it is. A sandbox without keep_vm, or one that has
+  // ended, fails with FAILED_PRECONDITION.
+  rpc StartSandbox(StartSandboxRequest) returns (StartSandboxResponse) {
+    option (toshi.permission) = "sandboxes.write";
+    option (toshi.mcp) = {open_world: true};
+    option (toshi.scope) = "environment";
+  }
+
   // WaitSandbox blocks until the sandbox is in one of the states asked for
   // or the bound passes, as WaitJob does for a job.
   rpc WaitSandbox(WaitSandboxRequest) returns (WaitSandboxResponse) {

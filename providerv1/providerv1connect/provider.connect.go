@@ -106,6 +106,12 @@ const (
 	// ProviderServiceSnapshotDiskProcedure is the fully-qualified name of the ProviderService's
 	// SnapshotDisk RPC.
 	ProviderServiceSnapshotDiskProcedure = "/toshi.backend.provider.v1.ProviderService/SnapshotDisk"
+	// ProviderServiceReleaseDiskCheckpointProcedure is the fully-qualified name of the
+	// ProviderService's ReleaseDiskCheckpoint RPC.
+	ProviderServiceReleaseDiskCheckpointProcedure = "/toshi.backend.provider.v1.ProviderService/ReleaseDiskCheckpoint"
+	// ProviderServiceMergeDiskLayersProcedure is the fully-qualified name of the ProviderService's
+	// MergeDiskLayers RPC.
+	ProviderServiceMergeDiskLayersProcedure = "/toshi.backend.provider.v1.ProviderService/MergeDiskLayers"
 	// ProviderServiceInstanceGoneProcedure is the fully-qualified name of the ProviderService's
 	// InstanceGone RPC.
 	ProviderServiceInstanceGoneProcedure = "/toshi.backend.provider.v1.ProviderService/InstanceGone"
@@ -260,6 +266,12 @@ type ProviderServiceClient interface {
 	// dst, a file it creates, as it is at one moment, while the instance
 	// runs: the facet "disk_snapshotter".
 	SnapshotDisk(context.Context, *connect.Request[providerv1.SnapshotDiskRequest]) (*connect.Response[providerv1.SnapshotDiskResponse], error)
+	// ReleaseDiskCheckpoint stops tracking a checkpoint SnapshotDisk
+	// started: the facet "disk_snapshotter".
+	ReleaseDiskCheckpoint(context.Context, *connect.Request[providerv1.ReleaseDiskCheckpointRequest]) (*connect.Response[providerv1.ReleaseDiskCheckpointResponse], error)
+	// MergeDiskLayers writes the standalone disk that snapshot layers make,
+	// oldest first: the facet "disk_snapshotter".
+	MergeDiskLayers(context.Context, *connect.Request[providerv1.MergeDiskLayersRequest]) (*connect.Response[providerv1.MergeDiskLayersResponse], error)
 	// InstanceGone reports whether an instance a previous agent left on the
 	// host is positively gone.
 	InstanceGone(context.Context, *connect.Request[providerv1.InstanceGoneRequest]) (*connect.Response[providerv1.InstanceGoneResponse], error)
@@ -486,6 +498,18 @@ func NewProviderServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(providerServiceMethods.ByName("SnapshotDisk")),
 			connect.WithClientOptions(opts...),
 		),
+		releaseDiskCheckpoint: connect.NewClient[providerv1.ReleaseDiskCheckpointRequest, providerv1.ReleaseDiskCheckpointResponse](
+			httpClient,
+			baseURL+ProviderServiceReleaseDiskCheckpointProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("ReleaseDiskCheckpoint")),
+			connect.WithClientOptions(opts...),
+		),
+		mergeDiskLayers: connect.NewClient[providerv1.MergeDiskLayersRequest, providerv1.MergeDiskLayersResponse](
+			httpClient,
+			baseURL+ProviderServiceMergeDiskLayersProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("MergeDiskLayers")),
+			connect.WithClientOptions(opts...),
+		),
 		instanceGone: connect.NewClient[providerv1.InstanceGoneRequest, providerv1.InstanceGoneResponse](
 			httpClient,
 			baseURL+ProviderServiceInstanceGoneProcedure,
@@ -706,6 +730,8 @@ type providerServiceClient struct {
 	diskHasData           *connect.Client[providerv1.DiskHasDataRequest, providerv1.DiskHasDataResponse]
 	exportDisk            *connect.Client[providerv1.ExportDiskRequest, providerv1.ExportDiskResponse]
 	snapshotDisk          *connect.Client[providerv1.SnapshotDiskRequest, providerv1.SnapshotDiskResponse]
+	releaseDiskCheckpoint *connect.Client[providerv1.ReleaseDiskCheckpointRequest, providerv1.ReleaseDiskCheckpointResponse]
+	mergeDiskLayers       *connect.Client[providerv1.MergeDiskLayersRequest, providerv1.MergeDiskLayersResponse]
 	instanceGone          *connect.Client[providerv1.InstanceGoneRequest, providerv1.InstanceGoneResponse]
 	unreaped              *connect.Client[providerv1.UnreapedRequest, providerv1.UnreapedResponse]
 	keep                  *connect.Client[providerv1.KeepRequest, providerv1.KeepResponse]
@@ -824,6 +850,16 @@ func (c *providerServiceClient) ExportDisk(ctx context.Context, req *connect.Req
 // SnapshotDisk calls toshi.backend.provider.v1.ProviderService.SnapshotDisk.
 func (c *providerServiceClient) SnapshotDisk(ctx context.Context, req *connect.Request[providerv1.SnapshotDiskRequest]) (*connect.Response[providerv1.SnapshotDiskResponse], error) {
 	return c.snapshotDisk.CallUnary(ctx, req)
+}
+
+// ReleaseDiskCheckpoint calls toshi.backend.provider.v1.ProviderService.ReleaseDiskCheckpoint.
+func (c *providerServiceClient) ReleaseDiskCheckpoint(ctx context.Context, req *connect.Request[providerv1.ReleaseDiskCheckpointRequest]) (*connect.Response[providerv1.ReleaseDiskCheckpointResponse], error) {
+	return c.releaseDiskCheckpoint.CallUnary(ctx, req)
+}
+
+// MergeDiskLayers calls toshi.backend.provider.v1.ProviderService.MergeDiskLayers.
+func (c *providerServiceClient) MergeDiskLayers(ctx context.Context, req *connect.Request[providerv1.MergeDiskLayersRequest]) (*connect.Response[providerv1.MergeDiskLayersResponse], error) {
+	return c.mergeDiskLayers.CallUnary(ctx, req)
 }
 
 // InstanceGone calls toshi.backend.provider.v1.ProviderService.InstanceGone.
@@ -1053,6 +1089,12 @@ type ProviderServiceHandler interface {
 	// dst, a file it creates, as it is at one moment, while the instance
 	// runs: the facet "disk_snapshotter".
 	SnapshotDisk(context.Context, *connect.Request[providerv1.SnapshotDiskRequest]) (*connect.Response[providerv1.SnapshotDiskResponse], error)
+	// ReleaseDiskCheckpoint stops tracking a checkpoint SnapshotDisk
+	// started: the facet "disk_snapshotter".
+	ReleaseDiskCheckpoint(context.Context, *connect.Request[providerv1.ReleaseDiskCheckpointRequest]) (*connect.Response[providerv1.ReleaseDiskCheckpointResponse], error)
+	// MergeDiskLayers writes the standalone disk that snapshot layers make,
+	// oldest first: the facet "disk_snapshotter".
+	MergeDiskLayers(context.Context, *connect.Request[providerv1.MergeDiskLayersRequest]) (*connect.Response[providerv1.MergeDiskLayersResponse], error)
 	// InstanceGone reports whether an instance a previous agent left on the
 	// host is positively gone.
 	InstanceGone(context.Context, *connect.Request[providerv1.InstanceGoneRequest]) (*connect.Response[providerv1.InstanceGoneResponse], error)
@@ -1273,6 +1315,18 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 		ProviderServiceSnapshotDiskProcedure,
 		svc.SnapshotDisk,
 		connect.WithSchema(providerServiceMethods.ByName("SnapshotDisk")),
+		connect.WithHandlerOptions(opts...),
+	)
+	providerServiceReleaseDiskCheckpointHandler := connect.NewUnaryHandler(
+		ProviderServiceReleaseDiskCheckpointProcedure,
+		svc.ReleaseDiskCheckpoint,
+		connect.WithSchema(providerServiceMethods.ByName("ReleaseDiskCheckpoint")),
+		connect.WithHandlerOptions(opts...),
+	)
+	providerServiceMergeDiskLayersHandler := connect.NewUnaryHandler(
+		ProviderServiceMergeDiskLayersProcedure,
+		svc.MergeDiskLayers,
+		connect.WithSchema(providerServiceMethods.ByName("MergeDiskLayers")),
 		connect.WithHandlerOptions(opts...),
 	)
 	providerServiceInstanceGoneHandler := connect.NewUnaryHandler(
@@ -1509,6 +1563,10 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 			providerServiceExportDiskHandler.ServeHTTP(w, r)
 		case ProviderServiceSnapshotDiskProcedure:
 			providerServiceSnapshotDiskHandler.ServeHTTP(w, r)
+		case ProviderServiceReleaseDiskCheckpointProcedure:
+			providerServiceReleaseDiskCheckpointHandler.ServeHTTP(w, r)
+		case ProviderServiceMergeDiskLayersProcedure:
+			providerServiceMergeDiskLayersHandler.ServeHTTP(w, r)
 		case ProviderServiceInstanceGoneProcedure:
 			providerServiceInstanceGoneHandler.ServeHTTP(w, r)
 		case ProviderServiceUnreapedProcedure:
@@ -1650,6 +1708,14 @@ func (UnimplementedProviderServiceHandler) ExportDisk(context.Context, *connect.
 
 func (UnimplementedProviderServiceHandler) SnapshotDisk(context.Context, *connect.Request[providerv1.SnapshotDiskRequest]) (*connect.Response[providerv1.SnapshotDiskResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.SnapshotDisk is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) ReleaseDiskCheckpoint(context.Context, *connect.Request[providerv1.ReleaseDiskCheckpointRequest]) (*connect.Response[providerv1.ReleaseDiskCheckpointResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.ReleaseDiskCheckpoint is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) MergeDiskLayers(context.Context, *connect.Request[providerv1.MergeDiskLayersRequest]) (*connect.Response[providerv1.MergeDiskLayersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.MergeDiskLayers is not implemented"))
 }
 
 func (UnimplementedProviderServiceHandler) InstanceGone(context.Context, *connect.Request[providerv1.InstanceGoneRequest]) (*connect.Response[providerv1.InstanceGoneResponse], error) {

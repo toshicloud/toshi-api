@@ -110,6 +110,12 @@ service ProviderService {
   // dst, a file it creates, as it is at one moment, while the instance
   // runs: the facet "disk_snapshotter".
   rpc SnapshotDisk(SnapshotDiskRequest) returns (SnapshotDiskResponse);
+  // ReleaseDiskCheckpoint stops tracking a checkpoint SnapshotDisk
+  // started: the facet "disk_snapshotter".
+  rpc ReleaseDiskCheckpoint(ReleaseDiskCheckpointRequest) returns (ReleaseDiskCheckpointResponse);
+  // MergeDiskLayers writes the standalone disk that snapshot layers make,
+  // oldest first: the facet "disk_snapshotter".
+  rpc MergeDiskLayers(MergeDiskLayersRequest) returns (MergeDiskLayersResponse);
 
   // State: the facet "instances_gone". The state root is in OpenResponse.
 
@@ -598,9 +604,28 @@ message ExportDiskResponse {}
 message SnapshotDiskRequest {
   string id = 1;
   string dst = 2;
+  // The checkpoint this snapshot starts, and the one it holds only the
+  // changes since; empty for none.
+  string checkpoint = 3;
+  string since = 4;
 }
 
 message SnapshotDiskResponse {}
+
+message ReleaseDiskCheckpointRequest {
+  string id = 1;
+  string name = 2;
+}
+
+message ReleaseDiskCheckpointResponse {}
+
+message MergeDiskLayersRequest {
+  string dst = 1;
+  // Oldest first.
+  repeated string layers = 2;
+}
+
+message MergeDiskLayersResponse {}
 
 message InstanceGoneRequest {
   string id = 1;
