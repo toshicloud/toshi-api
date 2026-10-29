@@ -220,7 +220,11 @@ type GetAccountResponse struct {
 	Account    *Account               `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
 	Identities []*Identity            `protobuf:"bytes,2,rep,name=identities,proto3" json:"identities,omitempty"`
 	// The workspaces the user is a member of, sorted.
-	Workspaces    []string `protobuf:"bytes,3,rep,name=workspaces,proto3" json:"workspaces,omitempty"`
+	Workspaces []string `protobuf:"bytes,3,rep,name=workspaces,proto3" json:"workspaces,omitempty"`
+	// The sign-ins the calling session or access token holds, oldest first:
+	// the one that opened it, then each step-up sign-in a session adds. GET
+	// /auth/session answers the same rows as signed_in_with.
+	SignedInWith  []*SignInProof `protobuf:"bytes,4,rep,name=signed_in_with,json=signedInWith,proto3" json:"signed_in_with,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -276,6 +280,85 @@ func (x *GetAccountResponse) GetWorkspaces() []string {
 	return nil
 }
 
+func (x *GetAccountResponse) GetSignedInWith() []*SignInProof {
+	if x != nil {
+		return x.SignedInWith
+	}
+	return nil
+}
+
+// SignInProof is one sign-in a session or access token holds.
+type SignInProof struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The identity that signed in, as Identity names it.
+	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	Subject  string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
+	// How it signed in: "github", "oidc" for an OpenID Connect issuer, or
+	// "local" for the control plane's local admin.
+	Method          string                 `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
+	AuthenticatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=authenticated_at,json=authenticatedAt,proto3" json:"authenticated_at,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *SignInProof) Reset() {
+	*x = SignInProof{}
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SignInProof) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignInProof) ProtoMessage() {}
+
+func (x *SignInProof) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignInProof.ProtoReflect.Descriptor instead.
+func (*SignInProof) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *SignInProof) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *SignInProof) GetSubject() string {
+	if x != nil {
+		return x.Subject
+	}
+	return ""
+}
+
+func (x *SignInProof) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
+}
+
+func (x *SignInProof) GetAuthenticatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.AuthenticatedAt
+	}
+	return nil
+}
+
 type ListIdentitiesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -284,7 +367,7 @@ type ListIdentitiesRequest struct {
 
 func (x *ListIdentitiesRequest) Reset() {
 	*x = ListIdentitiesRequest{}
-	mi := &file_toshi_workspace_v1_account_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -296,7 +379,7 @@ func (x *ListIdentitiesRequest) String() string {
 func (*ListIdentitiesRequest) ProtoMessage() {}
 
 func (x *ListIdentitiesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_account_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -309,7 +392,7 @@ func (x *ListIdentitiesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListIdentitiesRequest.ProtoReflect.Descriptor instead.
 func (*ListIdentitiesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{5}
 }
 
 type ListIdentitiesResponse struct {
@@ -321,7 +404,7 @@ type ListIdentitiesResponse struct {
 
 func (x *ListIdentitiesResponse) Reset() {
 	*x = ListIdentitiesResponse{}
-	mi := &file_toshi_workspace_v1_account_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -333,7 +416,7 @@ func (x *ListIdentitiesResponse) String() string {
 func (*ListIdentitiesResponse) ProtoMessage() {}
 
 func (x *ListIdentitiesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_account_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -346,7 +429,7 @@ func (x *ListIdentitiesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListIdentitiesResponse.ProtoReflect.Descriptor instead.
 func (*ListIdentitiesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListIdentitiesResponse) GetIdentities() []*Identity {
@@ -367,7 +450,7 @@ type UnlinkIdentityRequest struct {
 
 func (x *UnlinkIdentityRequest) Reset() {
 	*x = UnlinkIdentityRequest{}
-	mi := &file_toshi_workspace_v1_account_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -379,7 +462,7 @@ func (x *UnlinkIdentityRequest) String() string {
 func (*UnlinkIdentityRequest) ProtoMessage() {}
 
 func (x *UnlinkIdentityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_account_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -392,7 +475,7 @@ func (x *UnlinkIdentityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnlinkIdentityRequest.ProtoReflect.Descriptor instead.
 func (*UnlinkIdentityRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UnlinkIdentityRequest) GetProvider() string {
@@ -423,7 +506,7 @@ type UnlinkIdentityResponse struct {
 
 func (x *UnlinkIdentityResponse) Reset() {
 	*x = UnlinkIdentityResponse{}
-	mi := &file_toshi_workspace_v1_account_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -435,7 +518,7 @@ func (x *UnlinkIdentityResponse) String() string {
 func (*UnlinkIdentityResponse) ProtoMessage() {}
 
 func (x *UnlinkIdentityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_account_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -448,7 +531,7 @@ func (x *UnlinkIdentityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnlinkIdentityResponse.ProtoReflect.Descriptor instead.
 func (*UnlinkIdentityResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UnlinkIdentityResponse) GetIdentity() *Identity {
@@ -490,7 +573,7 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12A\n" +
 	"\x0flast_sign_in_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\flastSignInAt\"\x13\n" +
-	"\x11GetAccountRequest\"\xa9\x01\n" +
+	"\x11GetAccountRequest\"\xf0\x01\n" +
 	"\x12GetAccountResponse\x125\n" +
 	"\aaccount\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.AccountR\aaccount\x12<\n" +
 	"\n" +
@@ -498,7 +581,13 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"identities\x12\x1e\n" +
 	"\n" +
 	"workspaces\x18\x03 \x03(\tR\n" +
-	"workspaces\"\x17\n" +
+	"workspaces\x12E\n" +
+	"\x0esigned_in_with\x18\x04 \x03(\v2\x1f.toshi.workspace.v1.SignInProofR\fsignedInWith\"\xa2\x01\n" +
+	"\vSignInProof\x12\x1a\n" +
+	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x18\n" +
+	"\asubject\x18\x02 \x01(\tR\asubject\x12\x16\n" +
+	"\x06method\x18\x03 \x01(\tR\x06method\x12E\n" +
+	"\x10authenticated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0fauthenticatedAt\"\x17\n" +
 	"\x15ListIdentitiesRequest\"V\n" +
 	"\x16ListIdentitiesResponse\x12<\n" +
 	"\n" +
@@ -530,37 +619,40 @@ func file_toshi_workspace_v1_account_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_account_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_account_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_toshi_workspace_v1_account_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_toshi_workspace_v1_account_proto_goTypes = []any{
 	(*Account)(nil),                // 0: toshi.workspace.v1.Account
 	(*Identity)(nil),               // 1: toshi.workspace.v1.Identity
 	(*GetAccountRequest)(nil),      // 2: toshi.workspace.v1.GetAccountRequest
 	(*GetAccountResponse)(nil),     // 3: toshi.workspace.v1.GetAccountResponse
-	(*ListIdentitiesRequest)(nil),  // 4: toshi.workspace.v1.ListIdentitiesRequest
-	(*ListIdentitiesResponse)(nil), // 5: toshi.workspace.v1.ListIdentitiesResponse
-	(*UnlinkIdentityRequest)(nil),  // 6: toshi.workspace.v1.UnlinkIdentityRequest
-	(*UnlinkIdentityResponse)(nil), // 7: toshi.workspace.v1.UnlinkIdentityResponse
-	(*timestamppb.Timestamp)(nil),  // 8: google.protobuf.Timestamp
+	(*SignInProof)(nil),            // 4: toshi.workspace.v1.SignInProof
+	(*ListIdentitiesRequest)(nil),  // 5: toshi.workspace.v1.ListIdentitiesRequest
+	(*ListIdentitiesResponse)(nil), // 6: toshi.workspace.v1.ListIdentitiesResponse
+	(*UnlinkIdentityRequest)(nil),  // 7: toshi.workspace.v1.UnlinkIdentityRequest
+	(*UnlinkIdentityResponse)(nil), // 8: toshi.workspace.v1.UnlinkIdentityResponse
+	(*timestamppb.Timestamp)(nil),  // 9: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_account_proto_depIdxs = []int32{
-	8,  // 0: toshi.workspace.v1.Account.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 1: toshi.workspace.v1.Identity.created_at:type_name -> google.protobuf.Timestamp
-	8,  // 2: toshi.workspace.v1.Identity.last_sign_in_at:type_name -> google.protobuf.Timestamp
+	9,  // 0: toshi.workspace.v1.Account.created_at:type_name -> google.protobuf.Timestamp
+	9,  // 1: toshi.workspace.v1.Identity.created_at:type_name -> google.protobuf.Timestamp
+	9,  // 2: toshi.workspace.v1.Identity.last_sign_in_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: toshi.workspace.v1.GetAccountResponse.account:type_name -> toshi.workspace.v1.Account
 	1,  // 4: toshi.workspace.v1.GetAccountResponse.identities:type_name -> toshi.workspace.v1.Identity
-	1,  // 5: toshi.workspace.v1.ListIdentitiesResponse.identities:type_name -> toshi.workspace.v1.Identity
-	1,  // 6: toshi.workspace.v1.UnlinkIdentityResponse.identity:type_name -> toshi.workspace.v1.Identity
-	2,  // 7: toshi.workspace.v1.AccountService.GetAccount:input_type -> toshi.workspace.v1.GetAccountRequest
-	4,  // 8: toshi.workspace.v1.AccountService.ListIdentities:input_type -> toshi.workspace.v1.ListIdentitiesRequest
-	6,  // 9: toshi.workspace.v1.AccountService.UnlinkIdentity:input_type -> toshi.workspace.v1.UnlinkIdentityRequest
-	3,  // 10: toshi.workspace.v1.AccountService.GetAccount:output_type -> toshi.workspace.v1.GetAccountResponse
-	5,  // 11: toshi.workspace.v1.AccountService.ListIdentities:output_type -> toshi.workspace.v1.ListIdentitiesResponse
-	7,  // 12: toshi.workspace.v1.AccountService.UnlinkIdentity:output_type -> toshi.workspace.v1.UnlinkIdentityResponse
-	10, // [10:13] is the sub-list for method output_type
-	7,  // [7:10] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	4,  // 5: toshi.workspace.v1.GetAccountResponse.signed_in_with:type_name -> toshi.workspace.v1.SignInProof
+	9,  // 6: toshi.workspace.v1.SignInProof.authenticated_at:type_name -> google.protobuf.Timestamp
+	1,  // 7: toshi.workspace.v1.ListIdentitiesResponse.identities:type_name -> toshi.workspace.v1.Identity
+	1,  // 8: toshi.workspace.v1.UnlinkIdentityResponse.identity:type_name -> toshi.workspace.v1.Identity
+	2,  // 9: toshi.workspace.v1.AccountService.GetAccount:input_type -> toshi.workspace.v1.GetAccountRequest
+	5,  // 10: toshi.workspace.v1.AccountService.ListIdentities:input_type -> toshi.workspace.v1.ListIdentitiesRequest
+	7,  // 11: toshi.workspace.v1.AccountService.UnlinkIdentity:input_type -> toshi.workspace.v1.UnlinkIdentityRequest
+	3,  // 12: toshi.workspace.v1.AccountService.GetAccount:output_type -> toshi.workspace.v1.GetAccountResponse
+	6,  // 13: toshi.workspace.v1.AccountService.ListIdentities:output_type -> toshi.workspace.v1.ListIdentitiesResponse
+	8,  // 14: toshi.workspace.v1.AccountService.UnlinkIdentity:output_type -> toshi.workspace.v1.UnlinkIdentityResponse
+	12, // [12:15] is the sub-list for method output_type
+	9,  // [9:12] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_account_proto_init() }
@@ -574,7 +666,7 @@ func file_toshi_workspace_v1_account_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_account_proto_rawDesc), len(file_toshi_workspace_v1_account_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

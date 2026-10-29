@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/account.proto.
  */
 export const file_toshi_workspace_v1_account: GenFile = /*@__PURE__*/
-  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvYWNjb3VudC5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxImcKB0FjY291bnQSDwoHdXNlcl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBWVtYWlsGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqEBCghJZGVudGl0eRIQCghwcm92aWRlchgBIAEoCRIPCgdzdWJqZWN0GAIgASgJEg0KBWxvZ2luGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKD2xhc3Rfc2lnbl9pbl9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiEwoRR2V0QWNjb3VudFJlcXVlc3QiiAEKEkdldEFjY291bnRSZXNwb25zZRIsCgdhY2NvdW50GAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLkFjY291bnQSMAoKaWRlbnRpdGllcxgCIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRISCgp3b3Jrc3BhY2VzGAMgAygJIhcKFUxpc3RJZGVudGl0aWVzUmVxdWVzdCJKChZMaXN0SWRlbnRpdGllc1Jlc3BvbnNlEjAKCmlkZW50aXRpZXMYASADKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuSWRlbnRpdHkiOgoVVW5saW5rSWRlbnRpdHlSZXF1ZXN0EhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkieAoWVW5saW5rSWRlbnRpdHlSZXNwb25zZRIuCghpZGVudGl0eRgBIAEoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRIWCg5zZXNzaW9uc19lbmRlZBgCIAEoBRIWCg5ncmFudHNfcmV2b2tlZBgDIAEoBTK7AwoOQWNjb3VudFNlcnZpY2USegoKR2V0QWNjb3VudBIlLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBY2NvdW50UmVxdWVzdBomLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBY2NvdW50UmVzcG9uc2UiHcLzGAxtZW1iZXJzLnJlYWTK8xgJd29ya3NwYWNlEoYBCg5MaXN0SWRlbnRpdGllcxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SWRlbnRpdGllc1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdElkZW50aXRpZXNSZXNwb25zZSIdwvMYDG1lbWJlcnMucmVhZMrzGAl3b3Jrc3BhY2USowEKDlVubGlua0lkZW50aXR5EikudG9zaGkud29ya3NwYWNlLnYxLlVubGlua0lkZW50aXR5UmVxdWVzdBoqLnRvc2hpLndvcmtzcGFjZS52MS5VbmxpbmtJZGVudGl0eVJlc3BvbnNlIjrC8xgMbWVtYmVycy5yZWFkyvMYCXdvcmtzcGFjZdLzGBkKEWlkZW50aXR5LnVubGlua2VkEgRub25lQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvYWNjb3VudC5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxImcKB0FjY291bnQSDwoHdXNlcl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBWVtYWlsGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqEBCghJZGVudGl0eRIQCghwcm92aWRlchgBIAEoCRIPCgdzdWJqZWN0GAIgASgJEg0KBWxvZ2luGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKD2xhc3Rfc2lnbl9pbl9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiEwoRR2V0QWNjb3VudFJlcXVlc3QiwQEKEkdldEFjY291bnRSZXNwb25zZRIsCgdhY2NvdW50GAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLkFjY291bnQSMAoKaWRlbnRpdGllcxgCIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRISCgp3b3Jrc3BhY2VzGAMgAygJEjcKDnNpZ25lZF9pbl93aXRoGAQgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlNpZ25JblByb29mInYKC1NpZ25JblByb29mEhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkSDgoGbWV0aG9kGAMgASgJEjQKEGF1dGhlbnRpY2F0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIhcKFUxpc3RJZGVudGl0aWVzUmVxdWVzdCJKChZMaXN0SWRlbnRpdGllc1Jlc3BvbnNlEjAKCmlkZW50aXRpZXMYASADKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuSWRlbnRpdHkiOgoVVW5saW5rSWRlbnRpdHlSZXF1ZXN0EhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkieAoWVW5saW5rSWRlbnRpdHlSZXNwb25zZRIuCghpZGVudGl0eRgBIAEoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRIWCg5zZXNzaW9uc19lbmRlZBgCIAEoBRIWCg5ncmFudHNfcmV2b2tlZBgDIAEoBTK7AwoOQWNjb3VudFNlcnZpY2USegoKR2V0QWNjb3VudBIlLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBY2NvdW50UmVxdWVzdBomLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBY2NvdW50UmVzcG9uc2UiHcLzGAxtZW1iZXJzLnJlYWTK8xgJd29ya3NwYWNlEoYBCg5MaXN0SWRlbnRpdGllcxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SWRlbnRpdGllc1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdElkZW50aXRpZXNSZXNwb25zZSIdwvMYDG1lbWJlcnMucmVhZMrzGAl3b3Jrc3BhY2USowEKDlVubGlua0lkZW50aXR5EikudG9zaGkud29ya3NwYWNlLnYxLlVubGlua0lkZW50aXR5UmVxdWVzdBoqLnRvc2hpLndvcmtzcGFjZS52MS5VbmxpbmtJZGVudGl0eVJlc3BvbnNlIjrC8xgMbWVtYmVycy5yZWFkyvMYCXdvcmtzcGFjZdLzGBkKEWlkZW50aXR5LnVubGlua2VkEgRub25lQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Account is a Toshi user: a person who signs in through one or more
@@ -216,6 +216,15 @@ export type GetAccountResponse = Message<"toshi.workspace.v1.GetAccountResponse"
    * @generated from field: repeated string workspaces = 3;
    */
   workspaces: string[];
+
+  /**
+   * The sign-ins the calling session or access token holds, oldest first:
+   * the one that opened it, then each step-up sign-in a session adds. GET
+   * /auth/session answers the same rows as signed_in_with.
+   *
+   * @generated from field: repeated toshi.workspace.v1.SignInProof signed_in_with = 4;
+   */
+  signedInWith: SignInProof[];
 };
 
 /**
@@ -238,6 +247,15 @@ export type GetAccountResponseJson = {
    * @generated from field: repeated string workspaces = 3;
    */
   workspaces?: string[];
+
+  /**
+   * The sign-ins the calling session or access token holds, oldest first:
+   * the one that opened it, then each step-up sign-in a session adds. GET
+   * /auth/session answers the same rows as signed_in_with.
+   *
+   * @generated from field: repeated toshi.workspace.v1.SignInProof signed_in_with = 4;
+   */
+  signedInWith?: SignInProofJson[];
 };
 
 /**
@@ -246,6 +264,77 @@ export type GetAccountResponseJson = {
  */
 export const GetAccountResponseSchema: GenMessage<GetAccountResponse, {jsonType: GetAccountResponseJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_account, 3);
+
+/**
+ * SignInProof is one sign-in a session or access token holds.
+ *
+ * @generated from message toshi.workspace.v1.SignInProof
+ */
+export type SignInProof = Message<"toshi.workspace.v1.SignInProof"> & {
+  /**
+   * The identity that signed in, as Identity names it.
+   *
+   * @generated from field: string provider = 1;
+   */
+  provider: string;
+
+  /**
+   * @generated from field: string subject = 2;
+   */
+  subject: string;
+
+  /**
+   * How it signed in: "github", "oidc" for an OpenID Connect issuer, or
+   * "local" for the control plane's local admin.
+   *
+   * @generated from field: string method = 3;
+   */
+  method: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp authenticated_at = 4;
+   */
+  authenticatedAt?: Timestamp | undefined;
+};
+
+/**
+ * SignInProof is one sign-in a session or access token holds.
+ *
+ * @generated from message toshi.workspace.v1.SignInProof
+ */
+export type SignInProofJson = {
+  /**
+   * The identity that signed in, as Identity names it.
+   *
+   * @generated from field: string provider = 1;
+   */
+  provider?: string;
+
+  /**
+   * @generated from field: string subject = 2;
+   */
+  subject?: string;
+
+  /**
+   * How it signed in: "github", "oidc" for an OpenID Connect issuer, or
+   * "local" for the control plane's local admin.
+   *
+   * @generated from field: string method = 3;
+   */
+  method?: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp authenticated_at = 4;
+   */
+  authenticatedAt?: TimestampJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.SignInProof.
+ * Use `create(SignInProofSchema)` to create a new message.
+ */
+export const SignInProofSchema: GenMessage<SignInProof, {jsonType: SignInProofJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_account, 4);
 
 /**
  * @generated from message toshi.workspace.v1.ListIdentitiesRequest
@@ -264,7 +353,7 @@ export type ListIdentitiesRequestJson = {
  * Use `create(ListIdentitiesRequestSchema)` to create a new message.
  */
 export const ListIdentitiesRequestSchema: GenMessage<ListIdentitiesRequest, {jsonType: ListIdentitiesRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_account, 4);
+  messageDesc(file_toshi_workspace_v1_account, 5);
 
 /**
  * @generated from message toshi.workspace.v1.ListIdentitiesResponse
@@ -291,7 +380,7 @@ export type ListIdentitiesResponseJson = {
  * Use `create(ListIdentitiesResponseSchema)` to create a new message.
  */
 export const ListIdentitiesResponseSchema: GenMessage<ListIdentitiesResponse, {jsonType: ListIdentitiesResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_account, 5);
+  messageDesc(file_toshi_workspace_v1_account, 6);
 
 /**
  * @generated from message toshi.workspace.v1.UnlinkIdentityRequest
@@ -332,7 +421,7 @@ export type UnlinkIdentityRequestJson = {
  * Use `create(UnlinkIdentityRequestSchema)` to create a new message.
  */
 export const UnlinkIdentityRequestSchema: GenMessage<UnlinkIdentityRequest, {jsonType: UnlinkIdentityRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_account, 6);
+  messageDesc(file_toshi_workspace_v1_account, 7);
 
 /**
  * @generated from message toshi.workspace.v1.UnlinkIdentityResponse
@@ -389,7 +478,7 @@ export type UnlinkIdentityResponseJson = {
  * Use `create(UnlinkIdentityResponseSchema)` to create a new message.
  */
 export const UnlinkIdentityResponseSchema: GenMessage<UnlinkIdentityResponse, {jsonType: UnlinkIdentityResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_account, 7);
+  messageDesc(file_toshi_workspace_v1_account, 8);
 
 /**
  * AccountService reads and changes the caller's own Toshi user: who they
@@ -408,7 +497,8 @@ export const UnlinkIdentityResponseSchema: GenMessage<UnlinkIdentityResponse, {j
 export const AccountService: GenService<{
   /**
    * GetAccount returns the caller's user, its identities, oldest first,
-   * and the workspaces it is a member of, sorted.
+   * the workspaces it is a member of, sorted, and the sign-ins the calling
+   * session or access token holds.
    *
    * @generated from rpc toshi.workspace.v1.AccountService.GetAccount
    */
