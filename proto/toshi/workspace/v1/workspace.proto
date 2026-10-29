@@ -655,6 +655,11 @@ message ServiceSpec {
   // every run of the revision pulls it, a retry, a wake and a new VM
   // included. Set by the server; ignored in a request.
   string container_image_digest = 11;
+  // Who its verified customer domains admit; set with an UpdateService of
+  // spec.visitors, ignored in a create. Its provided names never
+  // serve open visitors. Unspecified in an event recorded before services
+  // had the setting.
+  ServiceVisitors visitors = 12;
 }
 
 // StateVolumeSpec is the state volume a service is created with: it is
@@ -662,6 +667,18 @@ message ServiceSpec {
 message StateVolumeSpec {
   // The volume's size cap, in bytes.
   int64 size_cap_bytes = 1;
+}
+
+// ServiceVisitors is who a service's verified customer domains admit.
+enum ServiceVisitors {
+  SERVICE_VISITORS_UNSPECIFIED = 0;
+  // A visitor signs in, or holds a share link, as on a provided name.
+  // The default.
+  SERVICE_VISITORS_GATED = 1;
+  // Anyone: a visitor with neither a session nor a share link is served
+  // with empty identity headers, within the plan's
+  // domains.open_requests_per_minute for each domain.
+  SERVICE_VISITORS_OPEN = 2;
 }
 
 // ServiceMode is how a service runs.

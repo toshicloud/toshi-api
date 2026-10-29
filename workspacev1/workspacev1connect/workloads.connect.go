@@ -408,7 +408,13 @@ type WorkloadServiceClient interface {
 	// it, or one not ready when it ends, rolls the service back to the
 	// revision it replaced and restores the state volume's version saved at
 	// the deploy. A recipe that does not parse, or of another template,
-	// fails with INVALID_ARGUMENT, as does another path.
+	// fails with INVALID_ARGUMENT, as does another path. "spec.visitors"
+	// sets who the service's verified customer domains admit: OPEN serves a
+	// visitor with neither a session nor a share link, with empty identity
+	// headers, on its customer domains only, and a plan whose
+	// domains.open_requests_per_minute is 0 refuses it with
+	// FAILED_PRECONDITION. Setting the value the service has changes
+	// nothing.
 	UpdateService(context.Context, *connect.Request[workspacev1.UpdateServiceRequest]) (*connect.Response[workspacev1.UpdateServiceResponse], error)
 	// DeleteService stops a service that has not ended and then removes it.
 	// It returns an operation that is done once the service is removed;
@@ -1396,7 +1402,13 @@ type WorkloadServiceHandler interface {
 	// it, or one not ready when it ends, rolls the service back to the
 	// revision it replaced and restores the state volume's version saved at
 	// the deploy. A recipe that does not parse, or of another template,
-	// fails with INVALID_ARGUMENT, as does another path.
+	// fails with INVALID_ARGUMENT, as does another path. "spec.visitors"
+	// sets who the service's verified customer domains admit: OPEN serves a
+	// visitor with neither a session nor a share link, with empty identity
+	// headers, on its customer domains only, and a plan whose
+	// domains.open_requests_per_minute is 0 refuses it with
+	// FAILED_PRECONDITION. Setting the value the service has changes
+	// nothing.
 	UpdateService(context.Context, *connect.Request[workspacev1.UpdateServiceRequest]) (*connect.Response[workspacev1.UpdateServiceResponse], error)
 	// DeleteService stops a service that has not ended and then removes it.
 	// It returns an operation that is done once the service is removed;
