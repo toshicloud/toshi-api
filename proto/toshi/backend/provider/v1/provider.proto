@@ -396,6 +396,11 @@ message Instance {
   google.protobuf.Timestamp created_at = 4;
   // What went wrong; set only in STATE_FAILED.
   string error = 5;
+  // The cgroup v2 directory of the instance's own that its processes run
+  // in, an absolute path under the cgroup mount: set from Start until
+  // Destroy, or until Stop when the provider removes the cgroup then, and
+  // only by a provider with instance_cgroups; empty otherwise.
+  string cgroup = 6;
 }
 
 // Capabilities are what the provider's host can do, which the agent asks
@@ -413,6 +418,9 @@ message Capabilities {
   bool state_disk = 4;
   // The provider starts nothing on the host and stands in for a tier.
   bool stand_in = 5;
+  // The provider can give each instance a cgroup of its own and names it
+  // in Instance.cgroup.
+  bool instance_cgroups = 6;
 }
 
 // ProviderConfig is what the agent gives a provider to build it from.

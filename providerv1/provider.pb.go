@@ -884,7 +884,12 @@ type Instance struct {
 	// When the provider accepted the Create or Restore.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// What went wrong; set only in STATE_FAILED.
-	Error         string `protobuf:"bytes,5,opt,name=error,proto3" json:"error,omitempty"`
+	Error string `protobuf:"bytes,5,opt,name=error,proto3" json:"error,omitempty"`
+	// The cgroup v2 directory of the instance's own that its processes run
+	// in, an absolute path under the cgroup mount: set from Start until
+	// Destroy, or until Stop when the provider removes the cgroup then, and
+	// only by a provider with instance_cgroups; empty otherwise.
+	Cgroup        string `protobuf:"bytes,6,opt,name=cgroup,proto3" json:"cgroup,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -954,6 +959,13 @@ func (x *Instance) GetError() string {
 	return ""
 }
 
+func (x *Instance) GetCgroup() string {
+	if x != nil {
+		return x.Cgroup
+	}
+	return ""
+}
+
 // Capabilities are what the provider's host can do, which the agent asks
 // instead of comparing provider names.
 type Capabilities struct {
@@ -969,9 +981,12 @@ type Capabilities struct {
 	// The provider keeps its instances' disks under its state directory.
 	StateDisk bool `protobuf:"varint,4,opt,name=state_disk,json=stateDisk,proto3" json:"state_disk,omitempty"`
 	// The provider starts nothing on the host and stands in for a tier.
-	StandIn       bool `protobuf:"varint,5,opt,name=stand_in,json=standIn,proto3" json:"stand_in,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	StandIn bool `protobuf:"varint,5,opt,name=stand_in,json=standIn,proto3" json:"stand_in,omitempty"`
+	// The provider can give each instance a cgroup of its own and names it
+	// in Instance.cgroup.
+	InstanceCgroups bool `protobuf:"varint,6,opt,name=instance_cgroups,json=instanceCgroups,proto3" json:"instance_cgroups,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Capabilities) Reset() {
@@ -1035,6 +1050,13 @@ func (x *Capabilities) GetStateDisk() bool {
 func (x *Capabilities) GetStandIn() bool {
 	if x != nil {
 		return x.StandIn
+	}
+	return false
+}
+
+func (x *Capabilities) GetInstanceCgroups() bool {
+	if x != nil {
+		return x.InstanceCgroups
 	}
 	return false
 }
@@ -6110,21 +6132,23 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xd8\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xf0\x01\n" +
 	"\bInstance\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x123\n" +
 	"\x04spec\x18\x02 \x01(\v2\x1f.toshi.backend.provider.v1.SpecR\x04spec\x126\n" +
 	"\x05state\x18\x03 \x01(\x0e2 .toshi.backend.provider.v1.StateR\x05state\x129\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x14\n" +
-	"\x05error\x18\x05 \x01(\tR\x05error\"\xb1\x01\n" +
+	"\x05error\x18\x05 \x01(\tR\x05error\x12\x16\n" +
+	"\x06cgroup\x18\x06 \x01(\tR\x06cgroup\"\xdc\x01\n" +
 	"\fCapabilities\x12\x12\n" +
 	"\x04tier\x18\x01 \x01(\tR\x04tier\x12*\n" +
 	"\x11shared_job_memory\x18\x02 \x01(\bR\x0fsharedJobMemory\x12'\n" +
 	"\x0finstance_limits\x18\x03 \x01(\bR\x0einstanceLimits\x12\x1d\n" +
 	"\n" +
 	"state_disk\x18\x04 \x01(\bR\tstateDisk\x12\x19\n" +
-	"\bstand_in\x18\x05 \x01(\bR\astandIn\"o\n" +
+	"\bstand_in\x18\x05 \x01(\bR\astandIn\x12)\n" +
+	"\x10instance_cgroups\x18\x06 \x01(\bR\x0finstanceCgroups\"o\n" +
 	"\x0eProviderConfig\x12#\n" +
 	"\rsettings_json\x18\x01 \x01(\fR\fsettingsJson\x128\n" +
 	"\x04host\x18\x02 \x01(\v2$.toshi.backend.provider.v1.HostFactsR\x04host\"\v\n" +
