@@ -19,8 +19,9 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // call here and never by a matching email.
 service AccountService {
   // GetAccount returns the caller's user, its identities, oldest first,
-  // the workspaces it is a member of, sorted, and the sign-ins the calling
-  // session or access token holds.
+  // the workspaces it is a member of, sorted, the sign-ins the calling
+  // session or access token holds, and where a person installs the app
+  // that makes a workspace.
   rpc GetAccount(GetAccountRequest) returns (GetAccountResponse) {
     option (toshi.permission) = "members.read";
     option (toshi.scope) = "workspace";
@@ -89,6 +90,14 @@ message GetAccountResponse {
   // the one that opened it, then each step-up sign-in a session adds. GET
   // /auth/session answers the same rows as signed_in_with.
   repeated SignInProof signed_in_with = 4;
+  // The page where a person installs the control plane's app on an
+  // organisation or user account at the code host. The install makes a
+  // workspace for that account; the person's next sign-in opens it, as its
+  // owner when they administer the account. This is how a person with no
+  // workspace gets one: no call here creates a workspace. Empty when the
+  // control plane has no app to install. GET /auth/session answers the same
+  // page as install_url.
+  string install_url = 5;
 }
 
 // SignInProof is one sign-in a session or access token holds.

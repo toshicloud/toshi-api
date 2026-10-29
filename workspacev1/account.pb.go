@@ -224,7 +224,15 @@ type GetAccountResponse struct {
 	// The sign-ins the calling session or access token holds, oldest first:
 	// the one that opened it, then each step-up sign-in a session adds. GET
 	// /auth/session answers the same rows as signed_in_with.
-	SignedInWith  []*SignInProof `protobuf:"bytes,4,rep,name=signed_in_with,json=signedInWith,proto3" json:"signed_in_with,omitempty"`
+	SignedInWith []*SignInProof `protobuf:"bytes,4,rep,name=signed_in_with,json=signedInWith,proto3" json:"signed_in_with,omitempty"`
+	// The page where a person installs the control plane's app on an
+	// organisation or user account at the code host. The install makes a
+	// workspace for that account; the person's next sign-in opens it, as its
+	// owner when they administer the account. This is how a person with no
+	// workspace gets one: no call here creates a workspace. Empty when the
+	// control plane has no app to install. GET /auth/session answers the same
+	// page as install_url.
+	InstallUrl    string `protobuf:"bytes,5,opt,name=install_url,json=installUrl,proto3" json:"install_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -285,6 +293,13 @@ func (x *GetAccountResponse) GetSignedInWith() []*SignInProof {
 		return x.SignedInWith
 	}
 	return nil
+}
+
+func (x *GetAccountResponse) GetInstallUrl() string {
+	if x != nil {
+		return x.InstallUrl
+	}
+	return ""
 }
 
 // SignInProof is one sign-in a session or access token holds.
@@ -573,7 +588,7 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12A\n" +
 	"\x0flast_sign_in_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\flastSignInAt\"\x13\n" +
-	"\x11GetAccountRequest\"\xf0\x01\n" +
+	"\x11GetAccountRequest\"\x91\x02\n" +
 	"\x12GetAccountResponse\x125\n" +
 	"\aaccount\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.AccountR\aaccount\x12<\n" +
 	"\n" +
@@ -582,7 +597,9 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"\n" +
 	"workspaces\x18\x03 \x03(\tR\n" +
 	"workspaces\x12E\n" +
-	"\x0esigned_in_with\x18\x04 \x03(\v2\x1f.toshi.workspace.v1.SignInProofR\fsignedInWith\"\xa2\x01\n" +
+	"\x0esigned_in_with\x18\x04 \x03(\v2\x1f.toshi.workspace.v1.SignInProofR\fsignedInWith\x12\x1f\n" +
+	"\vinstall_url\x18\x05 \x01(\tR\n" +
+	"installUrl\"\xa2\x01\n" +
 	"\vSignInProof\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x18\n" +
 	"\asubject\x18\x02 \x01(\tR\asubject\x12\x16\n" +

@@ -47,8 +47,9 @@ const (
 // AccountServiceClient is a client for the toshi.workspace.v1.AccountService service.
 type AccountServiceClient interface {
 	// GetAccount returns the caller's user, its identities, oldest first,
-	// the workspaces it is a member of, sorted, and the sign-ins the calling
-	// session or access token holds.
+	// the workspaces it is a member of, sorted, the sign-ins the calling
+	// session or access token holds, and where a person installs the app
+	// that makes a workspace.
 	GetAccount(context.Context, *connect.Request[workspacev1.GetAccountRequest]) (*connect.Response[workspacev1.GetAccountResponse], error)
 	// ListIdentities returns the caller's identities, oldest first.
 	ListIdentities(context.Context, *connect.Request[workspacev1.ListIdentitiesRequest]) (*connect.Response[workspacev1.ListIdentitiesResponse], error)
@@ -121,8 +122,9 @@ func (c *accountServiceClient) UnlinkIdentity(ctx context.Context, req *connect.
 // AccountServiceHandler is an implementation of the toshi.workspace.v1.AccountService service.
 type AccountServiceHandler interface {
 	// GetAccount returns the caller's user, its identities, oldest first,
-	// the workspaces it is a member of, sorted, and the sign-ins the calling
-	// session or access token holds.
+	// the workspaces it is a member of, sorted, the sign-ins the calling
+	// session or access token holds, and where a person installs the app
+	// that makes a workspace.
 	GetAccount(context.Context, *connect.Request[workspacev1.GetAccountRequest]) (*connect.Response[workspacev1.GetAccountResponse], error)
 	// ListIdentities returns the caller's identities, oldest first.
 	ListIdentities(context.Context, *connect.Request[workspacev1.ListIdentitiesRequest]) (*connect.Response[workspacev1.ListIdentitiesResponse], error)
