@@ -49,6 +49,13 @@ extend google.protobuf.MethodOptions {
   // handler checks each field the mask names before it writes; a mask that
   // names nothing needs any one.
   bool by_field = 51004;
+
+  // mcp sets how the call appears as a tool of the MCP server, where the
+  // rules its generator applies give the wrong answer. Without it a call
+  // whose permission's level is "read" is read-only and idempotent, a call
+  // whose name begins with Delete, Cancel, Revoke, Remove, Stop or Rollback
+  // is destructive, and no call reaches outside the workspace.
+  MCP mcp = 51005;
 }
 
 extend google.protobuf.FieldOptions {
@@ -78,4 +85,29 @@ message Audit {
   // "response.endpoint.id", "workspace" for the call's workspace, or
   // "project" for the project the call resolved.
   string target = 2;
+}
+
+// MCP is how a call appears as a tool of the MCP server: each hint that is
+// set replaces the one the generator's rules give, and exclude leaves the
+// call out of the tool list.
+message MCP {
+  // read_only is the tool's readOnlyHint: the call changes nothing.
+  optional bool read_only = 1;
+
+  // destructive is the tool's destructiveHint: the call may end or remove
+  // something it cannot bring back.
+  optional bool destructive = 2;
+
+  // idempotent is the tool's idempotentHint: a second call with the same
+  // input changes nothing more.
+  optional bool idempotent = 3;
+
+  // open_world is the tool's openWorldHint: the call reaches past the
+  // workspace, such as a workload that reaches what its network policy
+  // allows.
+  optional bool open_world = 4;
+
+  // exclude leaves the call out, for a call that makes no sense as a tool,
+  // such as one only a workload's own token may make.
+  bool exclude = 5;
 }

@@ -73,6 +73,7 @@ service ImageService {
   // pushed rather than built, with FAILED_PRECONDITION.
   rpc BuildImage(BuildImageRequest) returns (BuildImageResponse) {
     option (toshi.permission) = "images.write";
+    option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "project";
     option (toshi.audit) = {action: "image.build_started", target: "image:name"};
   }

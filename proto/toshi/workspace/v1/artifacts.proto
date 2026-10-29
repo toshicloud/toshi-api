@@ -27,6 +27,7 @@ service ArtifactUploadService {
   // profile is refused with INVALID_ARGUMENT.
   rpc ReserveUpload(ReserveUploadRequest) returns (ReserveUploadResponse) {
     option (toshi.permission) = "artifacts.write";
+    option (toshi.mcp) = {exclude: true};
     option (toshi.audit) = {action: "artifact_upload.reserved", target: "artifact:response.artifact_id"};
   }
   // CompleteUpload checks every part's size, copies the parts to their
@@ -35,6 +36,7 @@ service ArtifactUploadService {
   // call at or after the upload deadline.
   rpc CompleteUpload(CompleteUploadRequest) returns (CompleteUploadResponse) {
     option (toshi.permission) = "artifacts.write";
+    option (toshi.mcp) = {exclude: true};
     option (toshi.audit) = {action: "artifact.uploaded"};
   }
 }

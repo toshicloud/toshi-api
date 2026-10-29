@@ -88,6 +88,95 @@ func (x *Audit) GetTarget() string {
 	return ""
 }
 
+// MCP is how a call appears as a tool of the MCP server: each hint that is
+// set replaces the one the generator's rules give, and exclude leaves the
+// call out of the tool list.
+type MCP struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// read_only is the tool's readOnlyHint: the call changes nothing.
+	ReadOnly *bool `protobuf:"varint,1,opt,name=read_only,json=readOnly,proto3,oneof" json:"read_only,omitempty"`
+	// destructive is the tool's destructiveHint: the call may end or remove
+	// something it cannot bring back.
+	Destructive *bool `protobuf:"varint,2,opt,name=destructive,proto3,oneof" json:"destructive,omitempty"`
+	// idempotent is the tool's idempotentHint: a second call with the same
+	// input changes nothing more.
+	Idempotent *bool `protobuf:"varint,3,opt,name=idempotent,proto3,oneof" json:"idempotent,omitempty"`
+	// open_world is the tool's openWorldHint: the call reaches past the
+	// workspace, such as a workload that reaches what its network policy
+	// allows.
+	OpenWorld *bool `protobuf:"varint,4,opt,name=open_world,json=openWorld,proto3,oneof" json:"open_world,omitempty"`
+	// exclude leaves the call out, for a call that makes no sense as a tool,
+	// such as one only a workload's own token may make.
+	Exclude       bool `protobuf:"varint,5,opt,name=exclude,proto3" json:"exclude,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MCP) Reset() {
+	*x = MCP{}
+	mi := &file_toshi_permission_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MCP) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MCP) ProtoMessage() {}
+
+func (x *MCP) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_permission_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MCP.ProtoReflect.Descriptor instead.
+func (*MCP) Descriptor() ([]byte, []int) {
+	return file_toshi_permission_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *MCP) GetReadOnly() bool {
+	if x != nil && x.ReadOnly != nil {
+		return *x.ReadOnly
+	}
+	return false
+}
+
+func (x *MCP) GetDestructive() bool {
+	if x != nil && x.Destructive != nil {
+		return *x.Destructive
+	}
+	return false
+}
+
+func (x *MCP) GetIdempotent() bool {
+	if x != nil && x.Idempotent != nil {
+		return *x.Idempotent
+	}
+	return false
+}
+
+func (x *MCP) GetOpenWorld() bool {
+	if x != nil && x.OpenWorld != nil {
+		return *x.OpenWorld
+	}
+	return false
+}
+
+func (x *MCP) GetExclude() bool {
+	if x != nil {
+		return x.Exclude
+	}
+	return false
+}
+
 var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
@@ -119,6 +208,14 @@ var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 		Field:         51004,
 		Name:          "toshi.by_field",
 		Tag:           "varint,51004,opt,name=by_field",
+		Filename:      "toshi/permission.proto",
+	},
+	{
+		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
+		ExtensionType: (*MCP)(nil),
+		Field:         51005,
+		Name:          "toshi.mcp",
+		Tag:           "bytes,51005,opt,name=mcp",
 		Filename:      "toshi/permission.proto",
 	},
 	{
@@ -180,6 +277,14 @@ var (
 	//
 	// optional bool by_field = 51004;
 	E_ByField = &file_toshi_permission_proto_extTypes[3]
+	// mcp sets how the call appears as a tool of the MCP server, where the
+	// rules its generator applies give the wrong answer. Without it a call
+	// whose permission's level is "read" is read-only and idempotent, a call
+	// whose name begins with Delete, Cancel, Revoke, Remove, Stop or Rollback
+	// is destructive, and no call reaches outside the workspace.
+	//
+	// optional toshi.MCP mcp = 51005;
+	E_Mcp = &file_toshi_permission_proto_extTypes[4]
 )
 
 // Extension fields to descriptorpb.FieldOptions.
@@ -191,7 +296,7 @@ var (
 	// shape, and the permissions page lists the field groups.
 	//
 	// optional string field_permission = 51003;
-	E_FieldPermission = &file_toshi_permission_proto_extTypes[4]
+	E_FieldPermission = &file_toshi_permission_proto_extTypes[5]
 )
 
 var File_toshi_permission_proto protoreflect.FileDescriptor
@@ -201,13 +306,29 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\x16toshi/permission.proto\x12\x05toshi\x1a google/protobuf/descriptor.proto\"7\n" +
 	"\x05Audit\x12\x16\n" +
 	"\x06action\x18\x01 \x01(\tR\x06action\x12\x16\n" +
-	"\x06target\x18\x02 \x01(\tR\x06target:@\n" +
+	"\x06target\x18\x02 \x01(\tR\x06target\"\xed\x01\n" +
+	"\x03MCP\x12 \n" +
+	"\tread_only\x18\x01 \x01(\bH\x00R\breadOnly\x88\x01\x01\x12%\n" +
+	"\vdestructive\x18\x02 \x01(\bH\x01R\vdestructive\x88\x01\x01\x12#\n" +
+	"\n" +
+	"idempotent\x18\x03 \x01(\bH\x02R\n" +
+	"idempotent\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"open_world\x18\x04 \x01(\bH\x03R\topenWorld\x88\x01\x01\x12\x18\n" +
+	"\aexclude\x18\x05 \x01(\bR\aexcludeB\f\n" +
+	"\n" +
+	"_read_onlyB\x0e\n" +
+	"\f_destructiveB\r\n" +
+	"\v_idempotentB\r\n" +
+	"\v_open_world:@\n" +
 	"\n" +
 	"permission\x12\x1e.google.protobuf.MethodOptions\x18\xb8\x8e\x03 \x01(\tR\n" +
 	"permission:6\n" +
 	"\x05scope\x12\x1e.google.protobuf.MethodOptions\x18\xb9\x8e\x03 \x01(\tR\x05scope:D\n" +
 	"\x05audit\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\f.toshi.AuditR\x05audit:;\n" +
-	"\bby_field\x12\x1e.google.protobuf.MethodOptions\x18\xbc\x8e\x03 \x01(\bR\abyField:J\n" +
+	"\bby_field\x12\x1e.google.protobuf.MethodOptions\x18\xbc\x8e\x03 \x01(\bR\abyField:>\n" +
+	"\x03mcp\x12\x1e.google.protobuf.MethodOptions\x18\xbd\x8e\x03 \x01(\v2\n" +
+	".toshi.MCPR\x03mcp:J\n" +
 	"\x10field_permission\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\tR\x0ffieldPermissionB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
 
 var (
@@ -222,23 +343,26 @@ func file_toshi_permission_proto_rawDescGZIP() []byte {
 	return file_toshi_permission_proto_rawDescData
 }
 
-var file_toshi_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_toshi_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_toshi_permission_proto_goTypes = []any{
 	(*Audit)(nil),                      // 0: toshi.Audit
-	(*descriptorpb.MethodOptions)(nil), // 1: google.protobuf.MethodOptions
-	(*descriptorpb.FieldOptions)(nil),  // 2: google.protobuf.FieldOptions
+	(*MCP)(nil),                        // 1: toshi.MCP
+	(*descriptorpb.MethodOptions)(nil), // 2: google.protobuf.MethodOptions
+	(*descriptorpb.FieldOptions)(nil),  // 3: google.protobuf.FieldOptions
 }
 var file_toshi_permission_proto_depIdxs = []int32{
-	1, // 0: toshi.permission:extendee -> google.protobuf.MethodOptions
-	1, // 1: toshi.scope:extendee -> google.protobuf.MethodOptions
-	1, // 2: toshi.audit:extendee -> google.protobuf.MethodOptions
-	1, // 3: toshi.by_field:extendee -> google.protobuf.MethodOptions
-	2, // 4: toshi.field_permission:extendee -> google.protobuf.FieldOptions
-	0, // 5: toshi.audit:type_name -> toshi.Audit
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	5, // [5:6] is the sub-list for extension type_name
-	0, // [0:5] is the sub-list for extension extendee
+	2, // 0: toshi.permission:extendee -> google.protobuf.MethodOptions
+	2, // 1: toshi.scope:extendee -> google.protobuf.MethodOptions
+	2, // 2: toshi.audit:extendee -> google.protobuf.MethodOptions
+	2, // 3: toshi.by_field:extendee -> google.protobuf.MethodOptions
+	2, // 4: toshi.mcp:extendee -> google.protobuf.MethodOptions
+	3, // 5: toshi.field_permission:extendee -> google.protobuf.FieldOptions
+	0, // 6: toshi.audit:type_name -> toshi.Audit
+	1, // 7: toshi.mcp:type_name -> toshi.MCP
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	6, // [6:8] is the sub-list for extension type_name
+	0, // [0:6] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
 }
 
@@ -247,14 +371,15 @@ func file_toshi_permission_proto_init() {
 	if File_toshi_permission_proto != nil {
 		return
 	}
+	file_toshi_permission_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_permission_proto_rawDesc), len(file_toshi_permission_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
-			NumExtensions: 5,
+			NumMessages:   2,
+			NumExtensions: 6,
 			NumServices:   0,
 		},
 		GoTypes:           file_toshi_permission_proto_goTypes,

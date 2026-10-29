@@ -44,6 +44,7 @@ service WorkloadService {
   // no later call returns it.
   rpc CreateJob(CreateJobRequest) returns (CreateJobResponse) {
     option (toshi.permission) = "jobs.write";
+    option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
   }
 
@@ -131,6 +132,7 @@ service WorkloadService {
   // host takes it, and until it is deleted or its time limit passes.
   rpc CreateSandbox(CreateSandboxRequest) returns (CreateSandboxResponse) {
     option (toshi.permission) = "sandboxes.write";
+    option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
   }
 
@@ -203,6 +205,7 @@ service WorkloadService {
   // an execution whose client stops reading its output.
   rpc Execute(stream ExecuteRequest) returns (stream ExecuteResponse) {
     option (toshi.permission) = "sandboxes.write";
+    option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
       action: "sandbox.executed"
@@ -382,6 +385,7 @@ service WorkloadService {
   // fail with FAILED_PRECONDITION.
   rpc StartService(StartServiceRequest) returns (StartServiceResponse) {
     option (toshi.permission) = "services.write";
+    option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
   }
 
@@ -411,6 +415,7 @@ service WorkloadService {
   // started fails with FAILED_PRECONDITION.
   rpc WakeService(WakeServiceRequest) returns (WakeServiceResponse) {
     option (toshi.permission) = "services.write";
+    option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
   }
 
@@ -423,6 +428,7 @@ service WorkloadService {
   // hour with INVALID_ARGUMENT.
   rpc HoldService(HoldServiceRequest) returns (HoldServiceResponse) {
     option (toshi.permission) = "services.write";
+    option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
   }
 
@@ -467,6 +473,7 @@ service WorkloadService {
   // revision's next run (ListServiceActivations).
   rpc RollbackService(RollbackServiceRequest) returns (RollbackServiceResponse) {
     option (toshi.permission) = "services.write";
+    option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
       action: "service.activation_requested"

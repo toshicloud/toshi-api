@@ -394,9 +394,44 @@ message Workspace {
   // A hash of the name and the settings, which changes whenever they do.
   // UpdateWorkspace refuses a workspace that carries another one.
   string etag = 34;
+  // The wildcard certificate of its services' provided names; unset when
+  // it never hosted one.
+  HostingCertificate hosting_certificate = 35;
 
   reserved 8, 9, 10, 14, 15, 21, 23, 32;
   reserved "own_hosts_only", "spend_cap_cents", "max_jobs_per_hour", "allow_overflow", "allow_cache_warm", "history_days", "cancel_run_on_vm_death", "member_join";
+}
+
+// HostingCertificate is a workspace's wildcard certificate for its
+// services' provided names. Toshi orders it when the workspace first
+// hosts a service with an http channel and renews it before it expires.
+message HostingCertificate {
+  // The wildcard name, *.<workspace id>.svc.<domain>.
+  string name = 1;
+  HostingCertificateState state = 2;
+  // When the certificate in use expires; unset before the first one.
+  google.protobuf.Timestamp not_after = 3;
+  // When Toshi renews it; unset before the first one.
+  google.protobuf.Timestamp renew_at = 4;
+  // When Toshi tries again after a failure or a rate limit; unset when
+  // nothing failed.
+  google.protobuf.Timestamp retry_at = 5;
+  // Why the last order or renewal failed; empty when the last one
+  // succeeded.
+  string error = 6;
+}
+
+enum HostingCertificateState {
+  HOSTING_CERTIFICATE_STATE_UNSPECIFIED = 0;
+  // The first certificate is being ordered; until it is, provided names
+  // refuse connections.
+  HOSTING_CERTIFICATE_STATE_ISSUING = 1;
+  // The authority refused an order for its rate limits; Toshi tries again
+  // at retry_at.
+  HOSTING_CERTIFICATE_STATE_RATE_LIMITED = 2;
+  HOSTING_CERTIFICATE_STATE_VALID = 3;
+  // A renewal failed; the current certificate serves until not_after.
+  HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING = 4;
 }
 
 // WorkspaceSettings is everything a workspace's members choose about it,
