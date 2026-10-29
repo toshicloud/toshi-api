@@ -919,6 +919,11 @@ message KeptVM {
   int64 disk_bytes = 6;
   // When its workload last stopped or slept; unset while it runs.
   google.protobuf.Timestamp stopped_at = 7;
+  // The base image the kept VM's disk is pinned to. The host keeps that file
+  // while the VM is kept.
+  string base_image = 8;
+  // The base image's SHA-256 when the host lists one; empty when unknown.
+  string base_sha256 = 9;
 }
 
 // HostEgress is the public addresses a host's jobs reach the internet from.

@@ -2217,7 +2217,12 @@ type KeptVM struct {
 	MemoryMib int64  `protobuf:"varint,5,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
 	DiskBytes int64  `protobuf:"varint,6,opt,name=disk_bytes,json=diskBytes,proto3" json:"disk_bytes,omitempty"`
 	// When its workload last stopped or slept; unset while it runs.
-	StoppedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=stopped_at,json=stoppedAt,proto3" json:"stopped_at,omitempty"`
+	StoppedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=stopped_at,json=stoppedAt,proto3" json:"stopped_at,omitempty"`
+	// The base image the kept VM's disk is pinned to. The host keeps that file
+	// while the VM is kept.
+	BaseImage string `protobuf:"bytes,8,opt,name=base_image,json=baseImage,proto3" json:"base_image,omitempty"`
+	// The base image's SHA-256 when the host lists one; empty when unknown.
+	BaseSha256    string `protobuf:"bytes,9,opt,name=base_sha256,json=baseSha256,proto3" json:"base_sha256,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2299,6 +2304,20 @@ func (x *KeptVM) GetStoppedAt() *timestamppb.Timestamp {
 		return x.StoppedAt
 	}
 	return nil
+}
+
+func (x *KeptVM) GetBaseImage() string {
+	if x != nil {
+		return x.BaseImage
+	}
+	return ""
+}
+
+func (x *KeptVM) GetBaseSha256() string {
+	if x != nil {
+		return x.BaseSha256
+	}
+	return ""
 }
 
 // HostEgress is the public addresses a host's jobs reach the internet from.
@@ -14117,7 +14136,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x0fkept_disk_bytes\x18\x1f \x01(\x03R\rkeptDiskBytes\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe8\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa8\x02\n" +
 	"\x06KeptVM\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x1f\n" +
 	"\vworkload_id\x18\x02 \x01(\tR\n" +
@@ -14129,7 +14148,11 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"disk_bytes\x18\x06 \x01(\x03R\tdiskBytes\x129\n" +
 	"\n" +
-	"stopped_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tstoppedAt\"\x92\x01\n" +
+	"stopped_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tstoppedAt\x12\x1d\n" +
+	"\n" +
+	"base_image\x18\b \x01(\tR\tbaseImage\x12\x1f\n" +
+	"\vbase_sha256\x18\t \x01(\tR\n" +
+	"baseSha256\"\x92\x01\n" +
 	"\n" +
 	"HostEgress\x12\x10\n" +
 	"\x03ips\x18\x01 \x03(\tR\x03ips\x127\n" +
