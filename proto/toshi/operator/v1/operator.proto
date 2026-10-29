@@ -1557,6 +1557,10 @@ message UsageRow {
   // The kind of the row's jobs: "job", "sandbox" or "service". Empty on a
   // reserved-hours row.
   string kind = 11;
+  // The exact run time behind minutes and own_host_minutes, in seconds, not
+  // rounded.
+  double seconds = 12;
+  double own_host_seconds = 13;
 }
 
 // GetQueueTimesRequest selects the jobs to summarize. A job is in the window
@@ -1766,6 +1770,23 @@ message TenantStatement {
   int64 spend_cap_reached_cents = 19;
   // The workspace's spending cap when the statement was built; 0 when none.
   int64 spend_cap_cents = 20;
+  // The own-server fee of the month; included in estimated_cents.
+  OwnHostFee own_host_fee = 21;
+}
+
+// OwnHostFee is the month's own-server fee: the run time of the workspace's
+// billed jobs on its own hosts, less the plan's free seconds, rounded up once
+// to whole seconds.
+message OwnHostFee {
+  // The exact run time, in seconds, from the workspace's billing start.
+  double seconds = 1;
+  // The plan's free seconds a month.
+  int64 free_seconds = 2;
+  // seconds past free_seconds, rounded up once.
+  int64 billed_seconds = 3;
+  // billed_seconds at the plan's price today, rounded up, in the smallest
+  // unit of currency; 0 when the plan has no price for the fee.
+  int64 estimated_cents = 4;
 }
 
 message StatementUsage {
@@ -1774,7 +1795,8 @@ message StatementUsage {
   int64 jobs = 3;
   // Billable minutes on shared hosts, rounded up per job.
   int64 minutes = 4;
-  // Minutes on the workspace's own hosts, which are not billed.
+  // Minutes on the workspace's own hosts, which are not billed by the
+  // minute; their exact run time carries the own-server fee.
   int64 own_host_minutes = 5;
   // The part of minutes and own_host_minutes spent in debug sessions.
   int64 debug_minutes = 6;
@@ -1787,6 +1809,9 @@ message StatementUsage {
   // Toshi's own word for the jobs in this entry when Toshi ended them
   // itself (the values of Job.outcome); empty for every other entry.
   string outcome = 9;
+  // The exact run time behind minutes and own_host_minutes, in seconds.
+  double seconds = 10;
+  double own_host_seconds = 11;
 }
 
 message StatementCharge {
