@@ -11,8 +11,9 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 
 // ProjectService reads a workspace's projects and the repositories they
 // claim, creates a project, creates or deletes an environment of one, moves a
-// repository's claim and sets the branch rules that choose a CI job's
-// environment. A workspace holds projects, and a project holds environments.
+// repository's claim, sets the branch rules that choose a CI job's
+// environment and sets the network policies a project's workloads connect
+// out under. A workspace holds projects, and a project holds environments.
 //
 // The caller's credential names the workspace, as for WorkloadService.
 // Nothing of another workspace is visible.
@@ -130,6 +131,50 @@ service ProjectService {
   rpc SetBranchRules(SetBranchRulesRequest) returns (SetBranchRulesResponse) {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
+    option (toshi.audit) = {target: "project:project"};
+  }
+  // GetProjectNetwork returns a project's network policy: where its
+  // workloads may connect outbound. A project that never set one allows
+  // every destination. A project the workspace does not have is NOT_FOUND.
+  // A token limited to a project reads only that project's policy, and a
+  // token limited to an environment is PERMISSION_DENIED.
+  rpc GetProjectNetwork(GetProjectNetworkRequest) returns (GetProjectNetworkResponse) {
+    option (toshi.permission) = "projects.read";
+    option (toshi.scope) = "project";
+  }
+  // SetProjectNetwork replaces a project's network policy whole: the
+  // default and the ordered rules. It has at most 100 rules, each an allow
+  // or a deny of an address, a CIDR prefix or a DNS name, with an optional
+  // port or port range and protocol. Any other policy is INVALID_ARGUMENT
+  // and changes nothing. A workload keeps the policy it was admitted with;
+  // the new one applies to workloads admitted after it. A project the
+  // workspace does not have is NOT_FOUND. A token limited to a project
+  // sets only that project's policy, and a token limited to an environment
+  // is PERMISSION_DENIED.
+  rpc SetProjectNetwork(SetProjectNetworkRequest) returns (SetProjectNetworkResponse) {
+    option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
+    option (toshi.audit) = {target: "project:project"};
+  }
+  // GetEnvironmentNetwork returns an environment's network policy, which
+  // narrows its project's: a destination is reached only when both allow
+  // it. An environment that never set one allows every destination its
+  // project allows. A project or environment the workspace does not have is
+  // NOT_FOUND. A token limited to an environment reads only that
+  // environment's policy.
+  rpc GetEnvironmentNetwork(GetEnvironmentNetworkRequest) returns (GetEnvironmentNetworkResponse) {
+    option (toshi.permission) = "projects.read";
+    option (toshi.scope) = "environment";
+  }
+  // SetEnvironmentNetwork replaces an environment's network policy whole,
+  // checked as SetProjectNetwork checks a project's. It can only narrow
+  // the project's policy: an allow the project denies stays denied. A
+  // workload keeps the policy it was admitted with. A project or
+  // environment the workspace does not have is NOT_FOUND. A token limited
+  // to an environment sets only that environment's policy.
+  rpc SetEnvironmentNetwork(SetEnvironmentNetworkRequest) returns (SetEnvironmentNetworkResponse) {
+    option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "environment";
     option (toshi.audit) = {target: "project:project"};
   }
   // CreateEmbedToken mints an embed token for a project: a credential for
@@ -355,6 +400,86 @@ message SetBranchRulesRequest {
 message SetBranchRulesResponse {
   // The rules as stored.
   repeated BranchRule rules = 1;
+}
+
+// NetworkPolicy is where a project's or an environment's workloads may
+// connect outbound. The first rule that matches a destination decides;
+// one no rule matches gets default_action.
+message NetworkPolicy {
+  // "allow" or "deny".
+  string default_action = 1;
+  // At most 100 rules, read in order.
+  repeated EgressRule egress = 2;
+}
+
+// EgressRule allows or denies outbound connections to one destination.
+message EgressRule {
+  // "allow" or "deny".
+  string action = 1;
+  // An IPv4 or IPv6 address, a CIDR prefix, or a DNS name such as
+  // "api.example.com". A name is resolved by the host that runs the
+  // workload, so it matches the addresses the name had when last
+  // resolved; it does not check a TLS server name. Stored in canonical
+  // form: a prefix masked, a name in lower case.
+  string destination = 2;
+  // A port such as "443", a range such as "8000-8100", or empty for every
+  // port.
+  string ports = 3;
+  // "tcp", "udp", or empty for both; empty with no ports covers every
+  // protocol, ICMP included.
+  string protocol = 4;
+}
+
+message GetProjectNetworkRequest {
+  // The project's name.
+  string project = 1;
+}
+
+message GetProjectNetworkResponse {
+  NetworkPolicy network = 1;
+  // The audit actor that last set it, "<kind>:<id>"; empty when it was
+  // never set.
+  string updated_by = 2;
+  google.protobuf.Timestamp updated_at = 3;
+}
+
+message SetProjectNetworkRequest {
+  // The project's name.
+  string project = 1;
+  NetworkPolicy network = 2;
+}
+
+message SetProjectNetworkResponse {
+  // The policy as stored.
+  NetworkPolicy network = 1;
+}
+
+message GetEnvironmentNetworkRequest {
+  // The project's name.
+  string project = 1;
+  // The environment's name.
+  string environment = 2;
+}
+
+message GetEnvironmentNetworkResponse {
+  NetworkPolicy network = 1;
+  // The audit actor that last set it, "<kind>:<id>"; empty when it was
+  // never set.
+  string updated_by = 2;
+  google.protobuf.Timestamp updated_at = 3;
+}
+
+message SetEnvironmentNetworkRequest {
+  // The project's name.
+  string project = 1;
+  // The environment's name.
+  string environment = 2;
+  NetworkPolicy network = 3;
+}
+
+message SetEnvironmentNetworkResponse {
+  // The policy as stored.
+  NetworkPolicy network = 1;
 }
 
 // EmbedTokenState is where an embed token is in its life.

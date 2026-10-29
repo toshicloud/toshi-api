@@ -63,6 +63,18 @@ const (
 	// ProjectServiceSetBranchRulesProcedure is the fully-qualified name of the ProjectService's
 	// SetBranchRules RPC.
 	ProjectServiceSetBranchRulesProcedure = "/toshi.workspace.v1.ProjectService/SetBranchRules"
+	// ProjectServiceGetProjectNetworkProcedure is the fully-qualified name of the ProjectService's
+	// GetProjectNetwork RPC.
+	ProjectServiceGetProjectNetworkProcedure = "/toshi.workspace.v1.ProjectService/GetProjectNetwork"
+	// ProjectServiceSetProjectNetworkProcedure is the fully-qualified name of the ProjectService's
+	// SetProjectNetwork RPC.
+	ProjectServiceSetProjectNetworkProcedure = "/toshi.workspace.v1.ProjectService/SetProjectNetwork"
+	// ProjectServiceGetEnvironmentNetworkProcedure is the fully-qualified name of the ProjectService's
+	// GetEnvironmentNetwork RPC.
+	ProjectServiceGetEnvironmentNetworkProcedure = "/toshi.workspace.v1.ProjectService/GetEnvironmentNetwork"
+	// ProjectServiceSetEnvironmentNetworkProcedure is the fully-qualified name of the ProjectService's
+	// SetEnvironmentNetwork RPC.
+	ProjectServiceSetEnvironmentNetworkProcedure = "/toshi.workspace.v1.ProjectService/SetEnvironmentNetwork"
 	// ProjectServiceCreateEmbedTokenProcedure is the fully-qualified name of the ProjectService's
 	// CreateEmbedToken RPC.
 	ProjectServiceCreateEmbedTokenProcedure = "/toshi.workspace.v1.ProjectService/CreateEmbedToken"
@@ -156,6 +168,36 @@ type ProjectServiceClient interface {
 	// project's rules, and a token limited to an environment is
 	// PERMISSION_DENIED.
 	SetBranchRules(context.Context, *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error)
+	// GetProjectNetwork returns a project's network policy: where its
+	// workloads may connect outbound. A project that never set one allows
+	// every destination. A project the workspace does not have is NOT_FOUND.
+	// A token limited to a project reads only that project's policy, and a
+	// token limited to an environment is PERMISSION_DENIED.
+	GetProjectNetwork(context.Context, *connect.Request[workspacev1.GetProjectNetworkRequest]) (*connect.Response[workspacev1.GetProjectNetworkResponse], error)
+	// SetProjectNetwork replaces a project's network policy whole: the
+	// default and the ordered rules. It has at most 100 rules, each an allow
+	// or a deny of an address, a CIDR prefix or a DNS name, with an optional
+	// port or port range and protocol. Any other policy is INVALID_ARGUMENT
+	// and changes nothing. A workload keeps the policy it was admitted with;
+	// the new one applies to workloads admitted after it. A project the
+	// workspace does not have is NOT_FOUND. A token limited to a project
+	// sets only that project's policy, and a token limited to an environment
+	// is PERMISSION_DENIED.
+	SetProjectNetwork(context.Context, *connect.Request[workspacev1.SetProjectNetworkRequest]) (*connect.Response[workspacev1.SetProjectNetworkResponse], error)
+	// GetEnvironmentNetwork returns an environment's network policy, which
+	// narrows its project's: a destination is reached only when both allow
+	// it. An environment that never set one allows every destination its
+	// project allows. A project or environment the workspace does not have is
+	// NOT_FOUND. A token limited to an environment reads only that
+	// environment's policy.
+	GetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.GetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.GetEnvironmentNetworkResponse], error)
+	// SetEnvironmentNetwork replaces an environment's network policy whole,
+	// checked as SetProjectNetwork checks a project's. It can only narrow
+	// the project's policy: an allow the project denies stays denied. A
+	// workload keeps the policy it was admitted with. A project or
+	// environment the workspace does not have is NOT_FOUND. A token limited
+	// to an environment sets only that environment's policy.
+	SetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -244,6 +286,30 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("SetBranchRules")),
 			connect.WithClientOptions(opts...),
 		),
+		getProjectNetwork: connect.NewClient[workspacev1.GetProjectNetworkRequest, workspacev1.GetProjectNetworkResponse](
+			httpClient,
+			baseURL+ProjectServiceGetProjectNetworkProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("GetProjectNetwork")),
+			connect.WithClientOptions(opts...),
+		),
+		setProjectNetwork: connect.NewClient[workspacev1.SetProjectNetworkRequest, workspacev1.SetProjectNetworkResponse](
+			httpClient,
+			baseURL+ProjectServiceSetProjectNetworkProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("SetProjectNetwork")),
+			connect.WithClientOptions(opts...),
+		),
+		getEnvironmentNetwork: connect.NewClient[workspacev1.GetEnvironmentNetworkRequest, workspacev1.GetEnvironmentNetworkResponse](
+			httpClient,
+			baseURL+ProjectServiceGetEnvironmentNetworkProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("GetEnvironmentNetwork")),
+			connect.WithClientOptions(opts...),
+		),
+		setEnvironmentNetwork: connect.NewClient[workspacev1.SetEnvironmentNetworkRequest, workspacev1.SetEnvironmentNetworkResponse](
+			httpClient,
+			baseURL+ProjectServiceSetEnvironmentNetworkProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentNetwork")),
+			connect.WithClientOptions(opts...),
+		),
 		createEmbedToken: connect.NewClient[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse](
 			httpClient,
 			baseURL+ProjectServiceCreateEmbedTokenProcedure,
@@ -267,19 +333,23 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // projectServiceClient implements ProjectServiceClient.
 type projectServiceClient struct {
-	listProjects      *connect.Client[workspacev1.ListProjectsRequest, workspacev1.ListProjectsResponse]
-	getProject        *connect.Client[workspacev1.GetProjectRequest, workspacev1.GetProjectResponse]
-	listRepositories  *connect.Client[workspacev1.ListRepositoriesRequest, workspacev1.ListRepositoriesResponse]
-	createProject     *connect.Client[workspacev1.CreateProjectRequest, workspacev1.CreateProjectResponse]
-	updateProject     *connect.Client[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse]
-	claimRepository   *connect.Client[workspacev1.ClaimRepositoryRequest, workspacev1.ClaimRepositoryResponse]
-	createEnvironment *connect.Client[workspacev1.CreateEnvironmentRequest, workspacev1.CreateEnvironmentResponse]
-	deleteEnvironment *connect.Client[workspacev1.DeleteEnvironmentRequest, workspacev1.DeleteEnvironmentResponse]
-	listBranchRules   *connect.Client[workspacev1.ListBranchRulesRequest, workspacev1.ListBranchRulesResponse]
-	setBranchRules    *connect.Client[workspacev1.SetBranchRulesRequest, workspacev1.SetBranchRulesResponse]
-	createEmbedToken  *connect.Client[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse]
-	listEmbedTokens   *connect.Client[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse]
-	revokeEmbedToken  *connect.Client[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse]
+	listProjects          *connect.Client[workspacev1.ListProjectsRequest, workspacev1.ListProjectsResponse]
+	getProject            *connect.Client[workspacev1.GetProjectRequest, workspacev1.GetProjectResponse]
+	listRepositories      *connect.Client[workspacev1.ListRepositoriesRequest, workspacev1.ListRepositoriesResponse]
+	createProject         *connect.Client[workspacev1.CreateProjectRequest, workspacev1.CreateProjectResponse]
+	updateProject         *connect.Client[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse]
+	claimRepository       *connect.Client[workspacev1.ClaimRepositoryRequest, workspacev1.ClaimRepositoryResponse]
+	createEnvironment     *connect.Client[workspacev1.CreateEnvironmentRequest, workspacev1.CreateEnvironmentResponse]
+	deleteEnvironment     *connect.Client[workspacev1.DeleteEnvironmentRequest, workspacev1.DeleteEnvironmentResponse]
+	listBranchRules       *connect.Client[workspacev1.ListBranchRulesRequest, workspacev1.ListBranchRulesResponse]
+	setBranchRules        *connect.Client[workspacev1.SetBranchRulesRequest, workspacev1.SetBranchRulesResponse]
+	getProjectNetwork     *connect.Client[workspacev1.GetProjectNetworkRequest, workspacev1.GetProjectNetworkResponse]
+	setProjectNetwork     *connect.Client[workspacev1.SetProjectNetworkRequest, workspacev1.SetProjectNetworkResponse]
+	getEnvironmentNetwork *connect.Client[workspacev1.GetEnvironmentNetworkRequest, workspacev1.GetEnvironmentNetworkResponse]
+	setEnvironmentNetwork *connect.Client[workspacev1.SetEnvironmentNetworkRequest, workspacev1.SetEnvironmentNetworkResponse]
+	createEmbedToken      *connect.Client[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse]
+	listEmbedTokens       *connect.Client[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse]
+	revokeEmbedToken      *connect.Client[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse]
 }
 
 // ListProjects calls toshi.workspace.v1.ProjectService.ListProjects.
@@ -330,6 +400,26 @@ func (c *projectServiceClient) ListBranchRules(ctx context.Context, req *connect
 // SetBranchRules calls toshi.workspace.v1.ProjectService.SetBranchRules.
 func (c *projectServiceClient) SetBranchRules(ctx context.Context, req *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error) {
 	return c.setBranchRules.CallUnary(ctx, req)
+}
+
+// GetProjectNetwork calls toshi.workspace.v1.ProjectService.GetProjectNetwork.
+func (c *projectServiceClient) GetProjectNetwork(ctx context.Context, req *connect.Request[workspacev1.GetProjectNetworkRequest]) (*connect.Response[workspacev1.GetProjectNetworkResponse], error) {
+	return c.getProjectNetwork.CallUnary(ctx, req)
+}
+
+// SetProjectNetwork calls toshi.workspace.v1.ProjectService.SetProjectNetwork.
+func (c *projectServiceClient) SetProjectNetwork(ctx context.Context, req *connect.Request[workspacev1.SetProjectNetworkRequest]) (*connect.Response[workspacev1.SetProjectNetworkResponse], error) {
+	return c.setProjectNetwork.CallUnary(ctx, req)
+}
+
+// GetEnvironmentNetwork calls toshi.workspace.v1.ProjectService.GetEnvironmentNetwork.
+func (c *projectServiceClient) GetEnvironmentNetwork(ctx context.Context, req *connect.Request[workspacev1.GetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.GetEnvironmentNetworkResponse], error) {
+	return c.getEnvironmentNetwork.CallUnary(ctx, req)
+}
+
+// SetEnvironmentNetwork calls toshi.workspace.v1.ProjectService.SetEnvironmentNetwork.
+func (c *projectServiceClient) SetEnvironmentNetwork(ctx context.Context, req *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error) {
+	return c.setEnvironmentNetwork.CallUnary(ctx, req)
 }
 
 // CreateEmbedToken calls toshi.workspace.v1.ProjectService.CreateEmbedToken.
@@ -429,6 +519,36 @@ type ProjectServiceHandler interface {
 	// project's rules, and a token limited to an environment is
 	// PERMISSION_DENIED.
 	SetBranchRules(context.Context, *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error)
+	// GetProjectNetwork returns a project's network policy: where its
+	// workloads may connect outbound. A project that never set one allows
+	// every destination. A project the workspace does not have is NOT_FOUND.
+	// A token limited to a project reads only that project's policy, and a
+	// token limited to an environment is PERMISSION_DENIED.
+	GetProjectNetwork(context.Context, *connect.Request[workspacev1.GetProjectNetworkRequest]) (*connect.Response[workspacev1.GetProjectNetworkResponse], error)
+	// SetProjectNetwork replaces a project's network policy whole: the
+	// default and the ordered rules. It has at most 100 rules, each an allow
+	// or a deny of an address, a CIDR prefix or a DNS name, with an optional
+	// port or port range and protocol. Any other policy is INVALID_ARGUMENT
+	// and changes nothing. A workload keeps the policy it was admitted with;
+	// the new one applies to workloads admitted after it. A project the
+	// workspace does not have is NOT_FOUND. A token limited to a project
+	// sets only that project's policy, and a token limited to an environment
+	// is PERMISSION_DENIED.
+	SetProjectNetwork(context.Context, *connect.Request[workspacev1.SetProjectNetworkRequest]) (*connect.Response[workspacev1.SetProjectNetworkResponse], error)
+	// GetEnvironmentNetwork returns an environment's network policy, which
+	// narrows its project's: a destination is reached only when both allow
+	// it. An environment that never set one allows every destination its
+	// project allows. A project or environment the workspace does not have is
+	// NOT_FOUND. A token limited to an environment reads only that
+	// environment's policy.
+	GetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.GetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.GetEnvironmentNetworkResponse], error)
+	// SetEnvironmentNetwork replaces an environment's network policy whole,
+	// checked as SetProjectNetwork checks a project's. It can only narrow
+	// the project's policy: an allow the project denies stays denied. A
+	// workload keeps the policy it was admitted with. A project or
+	// environment the workspace does not have is NOT_FOUND. A token limited
+	// to an environment sets only that environment's policy.
+	SetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -513,6 +633,30 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("SetBranchRules")),
 		connect.WithHandlerOptions(opts...),
 	)
+	projectServiceGetProjectNetworkHandler := connect.NewUnaryHandler(
+		ProjectServiceGetProjectNetworkProcedure,
+		svc.GetProjectNetwork,
+		connect.WithSchema(projectServiceMethods.ByName("GetProjectNetwork")),
+		connect.WithHandlerOptions(opts...),
+	)
+	projectServiceSetProjectNetworkHandler := connect.NewUnaryHandler(
+		ProjectServiceSetProjectNetworkProcedure,
+		svc.SetProjectNetwork,
+		connect.WithSchema(projectServiceMethods.ByName("SetProjectNetwork")),
+		connect.WithHandlerOptions(opts...),
+	)
+	projectServiceGetEnvironmentNetworkHandler := connect.NewUnaryHandler(
+		ProjectServiceGetEnvironmentNetworkProcedure,
+		svc.GetEnvironmentNetwork,
+		connect.WithSchema(projectServiceMethods.ByName("GetEnvironmentNetwork")),
+		connect.WithHandlerOptions(opts...),
+	)
+	projectServiceSetEnvironmentNetworkHandler := connect.NewUnaryHandler(
+		ProjectServiceSetEnvironmentNetworkProcedure,
+		svc.SetEnvironmentNetwork,
+		connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentNetwork")),
+		connect.WithHandlerOptions(opts...),
+	)
 	projectServiceCreateEmbedTokenHandler := connect.NewUnaryHandler(
 		ProjectServiceCreateEmbedTokenProcedure,
 		svc.CreateEmbedToken,
@@ -553,6 +697,14 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 			projectServiceListBranchRulesHandler.ServeHTTP(w, r)
 		case ProjectServiceSetBranchRulesProcedure:
 			projectServiceSetBranchRulesHandler.ServeHTTP(w, r)
+		case ProjectServiceGetProjectNetworkProcedure:
+			projectServiceGetProjectNetworkHandler.ServeHTTP(w, r)
+		case ProjectServiceSetProjectNetworkProcedure:
+			projectServiceSetProjectNetworkHandler.ServeHTTP(w, r)
+		case ProjectServiceGetEnvironmentNetworkProcedure:
+			projectServiceGetEnvironmentNetworkHandler.ServeHTTP(w, r)
+		case ProjectServiceSetEnvironmentNetworkProcedure:
+			projectServiceSetEnvironmentNetworkHandler.ServeHTTP(w, r)
 		case ProjectServiceCreateEmbedTokenProcedure:
 			projectServiceCreateEmbedTokenHandler.ServeHTTP(w, r)
 		case ProjectServiceListEmbedTokensProcedure:
@@ -606,6 +758,22 @@ func (UnimplementedProjectServiceHandler) ListBranchRules(context.Context, *conn
 
 func (UnimplementedProjectServiceHandler) SetBranchRules(context.Context, *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetBranchRules is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) GetProjectNetwork(context.Context, *connect.Request[workspacev1.GetProjectNetworkRequest]) (*connect.Response[workspacev1.GetProjectNetworkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.GetProjectNetwork is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) SetProjectNetwork(context.Context, *connect.Request[workspacev1.SetProjectNetworkRequest]) (*connect.Response[workspacev1.SetProjectNetworkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetProjectNetwork is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) GetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.GetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.GetEnvironmentNetworkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.GetEnvironmentNetwork is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) SetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetEnvironmentNetwork is not implemented"))
 }
 
 func (UnimplementedProjectServiceHandler) CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error) {
