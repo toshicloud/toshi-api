@@ -98,6 +98,26 @@ message GetAccountResponse {
   // control plane has no app to install. GET /auth/session answers the same
   // page as install_url.
   string install_url = 5;
+  // The user's requests to join a workspace they are not a member of that
+  // wait for one of its admins, or that an admin declined less than a day
+  // ago, oldest first. A workspace admin finds the pending ones with
+  // RoleService.ListMembers at state PENDING and answers them with
+  // ApproveMember or DeclineMember. GET /auth/session answers the same rows
+  // as pending.
+  repeated JoinRequest pending = 6;
+}
+
+// JoinRequest is a person's request to join a workspace, made when a
+// sign-in finds them in the workspace's account at the code host.
+message JoinRequest {
+  // The workspace's id and, when it has one, its name; else its id again.
+  string workspace = 1;
+  string name = 2;
+  // "pending" while it waits for an admin, "declined" once one declined it.
+  string state = 3;
+  // When a declined request may be asked again: the person's next sign-in
+  // after it asks again. Unset while pending.
+  google.protobuf.Timestamp retry_after = 4;
 }
 
 // SignInProof is one sign-in a session or access token holds.

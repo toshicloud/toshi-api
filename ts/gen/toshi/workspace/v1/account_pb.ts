@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/account.proto.
  */
 export const file_toshi_workspace_v1_account: GenFile = /*@__PURE__*/
-  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvYWNjb3VudC5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxImcKB0FjY291bnQSDwoHdXNlcl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBWVtYWlsGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqEBCghJZGVudGl0eRIQCghwcm92aWRlchgBIAEoCRIPCgdzdWJqZWN0GAIgASgJEg0KBWxvZ2luGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKD2xhc3Rfc2lnbl9pbl9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiEwoRR2V0QWNjb3VudFJlcXVlc3Qi1gEKEkdldEFjY291bnRSZXNwb25zZRIsCgdhY2NvdW50GAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLkFjY291bnQSMAoKaWRlbnRpdGllcxgCIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRISCgp3b3Jrc3BhY2VzGAMgAygJEjcKDnNpZ25lZF9pbl93aXRoGAQgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlNpZ25JblByb29mEhMKC2luc3RhbGxfdXJsGAUgASgJInYKC1NpZ25JblByb29mEhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkSDgoGbWV0aG9kGAMgASgJEjQKEGF1dGhlbnRpY2F0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIhcKFUxpc3RJZGVudGl0aWVzUmVxdWVzdCJKChZMaXN0SWRlbnRpdGllc1Jlc3BvbnNlEjAKCmlkZW50aXRpZXMYASADKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuSWRlbnRpdHkiOgoVVW5saW5rSWRlbnRpdHlSZXF1ZXN0EhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkieAoWVW5saW5rSWRlbnRpdHlSZXNwb25zZRIuCghpZGVudGl0eRgBIAEoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRIWCg5zZXNzaW9uc19lbmRlZBgCIAEoBRIWCg5ncmFudHNfcmV2b2tlZBgDIAEoBTK7AwoOQWNjb3VudFNlcnZpY2USegoKR2V0QWNjb3VudBIlLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBY2NvdW50UmVxdWVzdBomLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBY2NvdW50UmVzcG9uc2UiHcLzGAxtZW1iZXJzLnJlYWTK8xgJd29ya3NwYWNlEoYBCg5MaXN0SWRlbnRpdGllcxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SWRlbnRpdGllc1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdElkZW50aXRpZXNSZXNwb25zZSIdwvMYDG1lbWJlcnMucmVhZMrzGAl3b3Jrc3BhY2USowEKDlVubGlua0lkZW50aXR5EikudG9zaGkud29ya3NwYWNlLnYxLlVubGlua0lkZW50aXR5UmVxdWVzdBoqLnRvc2hpLndvcmtzcGFjZS52MS5VbmxpbmtJZGVudGl0eVJlc3BvbnNlIjrC8xgMbWVtYmVycy5yZWFkyvMYCXdvcmtzcGFjZdLzGBkKEWlkZW50aXR5LnVubGlua2VkEgRub25lQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvYWNjb3VudC5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxImcKB0FjY291bnQSDwoHdXNlcl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBWVtYWlsGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqEBCghJZGVudGl0eRIQCghwcm92aWRlchgBIAEoCRIPCgdzdWJqZWN0GAIgASgJEg0KBWxvZ2luGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKD2xhc3Rfc2lnbl9pbl9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiEwoRR2V0QWNjb3VudFJlcXVlc3QiiAIKEkdldEFjY291bnRSZXNwb25zZRIsCgdhY2NvdW50GAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLkFjY291bnQSMAoKaWRlbnRpdGllcxgCIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRISCgp3b3Jrc3BhY2VzGAMgAygJEjcKDnNpZ25lZF9pbl93aXRoGAQgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlNpZ25JblByb29mEhMKC2luc3RhbGxfdXJsGAUgASgJEjAKB3BlbmRpbmcYBiADKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuSm9pblJlcXVlc3QibgoLSm9pblJlcXVlc3QSEQoJd29ya3NwYWNlGAEgASgJEgwKBG5hbWUYAiABKAkSDQoFc3RhdGUYAyABKAkSLwoLcmV0cnlfYWZ0ZXIYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wInYKC1NpZ25JblByb29mEhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkSDgoGbWV0aG9kGAMgASgJEjQKEGF1dGhlbnRpY2F0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIhcKFUxpc3RJZGVudGl0aWVzUmVxdWVzdCJKChZMaXN0SWRlbnRpdGllc1Jlc3BvbnNlEjAKCmlkZW50aXRpZXMYASADKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuSWRlbnRpdHkiOgoVVW5saW5rSWRlbnRpdHlSZXF1ZXN0EhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkieAoWVW5saW5rSWRlbnRpdHlSZXNwb25zZRIuCghpZGVudGl0eRgBIAEoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRIWCg5zZXNzaW9uc19lbmRlZBgCIAEoBRIWCg5ncmFudHNfcmV2b2tlZBgDIAEoBTK7AwoOQWNjb3VudFNlcnZpY2USegoKR2V0QWNjb3VudBIlLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBY2NvdW50UmVxdWVzdBomLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBY2NvdW50UmVzcG9uc2UiHcLzGAxtZW1iZXJzLnJlYWTK8xgJd29ya3NwYWNlEoYBCg5MaXN0SWRlbnRpdGllcxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SWRlbnRpdGllc1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdElkZW50aXRpZXNSZXNwb25zZSIdwvMYDG1lbWJlcnMucmVhZMrzGAl3b3Jrc3BhY2USowEKDlVubGlua0lkZW50aXR5EikudG9zaGkud29ya3NwYWNlLnYxLlVubGlua0lkZW50aXR5UmVxdWVzdBoqLnRvc2hpLndvcmtzcGFjZS52MS5VbmxpbmtJZGVudGl0eVJlc3BvbnNlIjrC8xgMbWVtYmVycy5yZWFkyvMYCXdvcmtzcGFjZdLzGBkKEWlkZW50aXR5LnVubGlua2VkEgRub25lQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Account is a Toshi user: a person who signs in through one or more
@@ -238,6 +238,18 @@ export type GetAccountResponse = Message<"toshi.workspace.v1.GetAccountResponse"
    * @generated from field: string install_url = 5;
    */
   installUrl: string;
+
+  /**
+   * The user's requests to join a workspace they are not a member of that
+   * wait for one of its admins, or that an admin declined less than a day
+   * ago, oldest first. A workspace admin finds the pending ones with
+   * RoleService.ListMembers at state PENDING and answers them with
+   * ApproveMember or DeclineMember. GET /auth/session answers the same rows
+   * as pending.
+   *
+   * @generated from field: repeated toshi.workspace.v1.JoinRequest pending = 6;
+   */
+  pending: JoinRequest[];
 };
 
 /**
@@ -282,6 +294,18 @@ export type GetAccountResponseJson = {
    * @generated from field: string install_url = 5;
    */
   installUrl?: string;
+
+  /**
+   * The user's requests to join a workspace they are not a member of that
+   * wait for one of its admins, or that an admin declined less than a day
+   * ago, oldest first. A workspace admin finds the pending ones with
+   * RoleService.ListMembers at state PENDING and answers them with
+   * ApproveMember or DeclineMember. GET /auth/session answers the same rows
+   * as pending.
+   *
+   * @generated from field: repeated toshi.workspace.v1.JoinRequest pending = 6;
+   */
+  pending?: JoinRequestJson[];
 };
 
 /**
@@ -290,6 +314,83 @@ export type GetAccountResponseJson = {
  */
 export const GetAccountResponseSchema: GenMessage<GetAccountResponse, {jsonType: GetAccountResponseJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_account, 3);
+
+/**
+ * JoinRequest is a person's request to join a workspace, made when a
+ * sign-in finds them in the workspace's account at the code host.
+ *
+ * @generated from message toshi.workspace.v1.JoinRequest
+ */
+export type JoinRequest = Message<"toshi.workspace.v1.JoinRequest"> & {
+  /**
+   * The workspace's id and, when it has one, its name; else its id again.
+   *
+   * @generated from field: string workspace = 1;
+   */
+  workspace: string;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * "pending" while it waits for an admin, "declined" once one declined it.
+   *
+   * @generated from field: string state = 3;
+   */
+  state: string;
+
+  /**
+   * When a declined request may be asked again: the person's next sign-in
+   * after it asks again. Unset while pending.
+   *
+   * @generated from field: google.protobuf.Timestamp retry_after = 4;
+   */
+  retryAfter?: Timestamp | undefined;
+};
+
+/**
+ * JoinRequest is a person's request to join a workspace, made when a
+ * sign-in finds them in the workspace's account at the code host.
+ *
+ * @generated from message toshi.workspace.v1.JoinRequest
+ */
+export type JoinRequestJson = {
+  /**
+   * The workspace's id and, when it has one, its name; else its id again.
+   *
+   * @generated from field: string workspace = 1;
+   */
+  workspace?: string;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name?: string;
+
+  /**
+   * "pending" while it waits for an admin, "declined" once one declined it.
+   *
+   * @generated from field: string state = 3;
+   */
+  state?: string;
+
+  /**
+   * When a declined request may be asked again: the person's next sign-in
+   * after it asks again. Unset while pending.
+   *
+   * @generated from field: google.protobuf.Timestamp retry_after = 4;
+   */
+  retryAfter?: TimestampJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.JoinRequest.
+ * Use `create(JoinRequestSchema)` to create a new message.
+ */
+export const JoinRequestSchema: GenMessage<JoinRequest, {jsonType: JoinRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_account, 4);
 
 /**
  * SignInProof is one sign-in a session or access token holds.
@@ -360,7 +461,7 @@ export type SignInProofJson = {
  * Use `create(SignInProofSchema)` to create a new message.
  */
 export const SignInProofSchema: GenMessage<SignInProof, {jsonType: SignInProofJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_account, 4);
+  messageDesc(file_toshi_workspace_v1_account, 5);
 
 /**
  * @generated from message toshi.workspace.v1.ListIdentitiesRequest
@@ -379,7 +480,7 @@ export type ListIdentitiesRequestJson = {
  * Use `create(ListIdentitiesRequestSchema)` to create a new message.
  */
 export const ListIdentitiesRequestSchema: GenMessage<ListIdentitiesRequest, {jsonType: ListIdentitiesRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_account, 5);
+  messageDesc(file_toshi_workspace_v1_account, 6);
 
 /**
  * @generated from message toshi.workspace.v1.ListIdentitiesResponse
@@ -406,7 +507,7 @@ export type ListIdentitiesResponseJson = {
  * Use `create(ListIdentitiesResponseSchema)` to create a new message.
  */
 export const ListIdentitiesResponseSchema: GenMessage<ListIdentitiesResponse, {jsonType: ListIdentitiesResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_account, 6);
+  messageDesc(file_toshi_workspace_v1_account, 7);
 
 /**
  * @generated from message toshi.workspace.v1.UnlinkIdentityRequest
@@ -447,7 +548,7 @@ export type UnlinkIdentityRequestJson = {
  * Use `create(UnlinkIdentityRequestSchema)` to create a new message.
  */
 export const UnlinkIdentityRequestSchema: GenMessage<UnlinkIdentityRequest, {jsonType: UnlinkIdentityRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_account, 7);
+  messageDesc(file_toshi_workspace_v1_account, 8);
 
 /**
  * @generated from message toshi.workspace.v1.UnlinkIdentityResponse
@@ -504,7 +605,7 @@ export type UnlinkIdentityResponseJson = {
  * Use `create(UnlinkIdentityResponseSchema)` to create a new message.
  */
 export const UnlinkIdentityResponseSchema: GenMessage<UnlinkIdentityResponse, {jsonType: UnlinkIdentityResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_account, 8);
+  messageDesc(file_toshi_workspace_v1_account, 9);
 
 /**
  * AccountService reads and changes the caller's own Toshi user: who they
