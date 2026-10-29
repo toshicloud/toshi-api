@@ -1,0 +1,310 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// GrantService keeps the grants between workspaces: one workspace, the
+// owner, lets another, the grantee, reach one of its environments,
+// sandboxes or previews at a level. The owner offers a grant to the
+// grantee's workspace id, and nothing is shared until a person of the
+// grantee accepts it. Either side ends it at once: the owner revokes it,
+// the grantee leaves it. An offer not answered lapses, and a grant with
+// an expiry expires when it passes.
+//
+// The caller's credential names the workspace, as for WorkloadService.
+// Each call answers for the caller's side only: a grant the workspace
+// neither gave nor received, or one the call does not act on from the
+// caller's side, is NOT_FOUND. Offering, accepting, declining and
+// changing the expiry take a person's session: an API token is refused
+// with PERMISSION_DENIED, as only a person may open a workspace to
+// another. A workspace that is not active can neither offer nor be
+// offered a grant (FAILED_PRECONDITION).
+//
+// Every change writes an audit event into both workspaces' logs, with the
+// same request id; each names the other workspace in its details.
+service GrantService {
+  // CreateGrant offers a grant on the caller's workspace to the workspace
+  // grantee_workspace names, and returns it in the state OFFERED. A
+  // sandbox with bindings or a state volume is offered at VIEW only:
+  // CONNECT or OPERATE for it is FAILED_PRECONDITION. A grantee that is
+  // the caller's own workspace is INVALID_ARGUMENT, an environment or
+  // sandbox the workspace does not have NOT_FOUND, and an offer on a plan
+  // with no grants, or past the plan's grants at once or offers a day,
+  // RESOURCE_EXHAUSTED.
+  rpc CreateGrant(CreateGrantRequest) returns (CreateGrantResponse) {
+    option (toshi.permission) = "grants.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "grant.offered"};
+  }
+
+  // GetGrant returns one grant the workspace gave or received.
+  rpc GetGrant(GetGrantRequest) returns (GetGrantResponse) {
+    option (toshi.permission) = "grants.read";
+    option (toshi.scope) = "workspace";
+  }
+
+  // ListGrants returns the grants the workspace gave, received, or both,
+  // newest offered first, in the states the request names (all when it
+  // names none).
+  //
+  // A page holds 100 grants when page_size is zero, and 1000 at most.
+  rpc ListGrants(ListGrantsRequest) returns (ListGrantsResponse) {
+    option (toshi.permission) = "grants.read";
+    option (toshi.scope) = "workspace";
+  }
+
+  // AcceptGrant accepts an offer the workspace received: the grant becomes
+  // ACTIVE. An offer no longer OFFERED is FAILED_PRECONDITION.
+  rpc AcceptGrant(AcceptGrantRequest) returns (AcceptGrantResponse) {
+    option (toshi.permission) = "grants.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "grant.accepted"};
+  }
+
+  // DeclineGrant declines an offer the workspace received: the grant
+  // becomes DECLINED. An offer no longer OFFERED is FAILED_PRECONDITION.
+  rpc DeclineGrant(DeclineGrantRequest) returns (DeclineGrantResponse) {
+    option (toshi.permission) = "grants.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "grant.declined"};
+  }
+
+  // UpdateGrant sets the fields of grant.id's grant that update_mask
+  // names, on a grant the workspace gave that is OFFERED or ACTIVE. The
+  // one field it sets is expires_at: a time in the future, or unset for
+  // no expiry. An unset update_mask names the fields grant carries, an
+  // empty one changes nothing, and "*" or a path of another field is
+  // INVALID_ARGUMENT. A grant that has ended is FAILED_PRECONDITION.
+  rpc UpdateGrant(UpdateGrantRequest) returns (UpdateGrantResponse) {
+    option (toshi.permission) = "grants.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {
+      action: "grant.expiry_changed"
+      target: "grant:grant.id"
+    };
+  }
+
+  // RevokeGrant ends a grant the workspace gave, OFFERED or ACTIVE: it
+  // becomes REVOKED, and nothing reaches the target through it again. A
+  // token limited to a project or an environment may revoke a grant whose
+  // target lies inside its limit. A grant that has ended is returned as it
+  // is.
+  rpc RevokeGrant(RevokeGrantRequest) returns (RevokeGrantResponse) {
+    option (toshi.permission) = "grants.write";
+    option (toshi.scope) = "environment";
+  }
+
+  // LeaveGrant ends a grant the workspace received and accepted: it
+  // becomes REVOKED, recorded as ended by the grantee. A grant that has
+  // ended is returned as it is; an offer is declined, not left
+  // (FAILED_PRECONDITION).
+  rpc LeaveGrant(LeaveGrantRequest) returns (LeaveGrantResponse) {
+    option (toshi.permission) = "grants.write";
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "grant.revoked"};
+  }
+}
+
+// GrantLevel is what a grant lets the grantee do; each level includes the
+// one before.
+enum GrantLevel {
+  GRANT_LEVEL_UNSPECIFIED = 0;
+  // List, get and watch the sandboxes the grant covers; sign in to their
+  // previews.
+  GRANT_LEVEL_VIEW = 1;
+  // Also connect to their channels, open forwards and display sessions.
+  GRANT_LEVEL_CONNECT = 2;
+  // Also run and cancel executions, raise a sandbox's cap within the
+  // owner's plan, and expose channels and delete the ones it exposed.
+  GRANT_LEVEL_OPERATE = 3;
+}
+
+// GrantState is where a grant is in its life. OFFERED and ACTIVE are
+// live; every other state is final.
+enum GrantState {
+  GRANT_STATE_UNSPECIFIED = 0;
+  // Offered and not yet answered.
+  GRANT_STATE_OFFERED = 1;
+  // Accepted: the grantee reaches the target.
+  GRANT_STATE_ACTIVE = 2;
+  // The grantee declined the offer.
+  GRANT_STATE_DECLINED = 3;
+  // The offer was not answered in time, or a side stopped being active
+  // while it was open.
+  GRANT_STATE_LAPSED = 4;
+  // The owner revoked it, or the grantee left it.
+  GRANT_STATE_REVOKED = 5;
+  // Its expiry passed.
+  GRANT_STATE_EXPIRED = 6;
+  // One of the two workspaces was deleted.
+  GRANT_STATE_ENDED = 7;
+}
+
+// GrantSide is which of a workspace's grants a list returns.
+enum GrantSide {
+  // Both the grants it gave and those it received.
+  GRANT_SIDE_UNSPECIFIED = 0;
+  // The grants it gave, as the owner.
+  GRANT_SIDE_GIVEN = 1;
+  // The grants it received, as the grantee.
+  GRANT_SIDE_RECEIVED = 2;
+}
+
+// Grant is one workspace's grant to another. Both sides read the same
+// message.
+message Grant {
+  // Assigned by the server.
+  string id = 1;
+  // The workspace that gave it.
+  GrantWorkspace owner = 2;
+  // The workspace it was given to.
+  GrantWorkspace grantee = 3;
+  // What it covers, in the owner's workspace.
+  oneof target {
+    // Every sandbox of one environment.
+    GrantEnvironmentTarget environment = 4;
+    // One sandbox.
+    GrantSandboxTarget sandbox = 5;
+    // One preview of one sandbox, at VIEW only.
+    GrantPreviewTarget preview = 6;
+  }
+  GrantLevel level = 7;
+  GrantState state = 8;
+  // Who offered it, as the audit log names them.
+  string offered_by = 9;
+  google.protobuf.Timestamp offered_at = 10;
+  // When an offer not answered lapses.
+  google.protobuf.Timestamp lapses_at = 11;
+  // Unset until it is accepted.
+  google.protobuf.Timestamp accepted_at = 12;
+  // Unset until something reaches the target through it.
+  google.protobuf.Timestamp last_used_at = 13;
+  // Unset when it has no expiry.
+  google.protobuf.Timestamp expires_at = 14;
+  // Unset while it is live.
+  google.protobuf.Timestamp ended_at = 15;
+  // Who ended it: "owner", "grantee" or "system"; empty while it is live.
+  string ended_by = 16;
+}
+
+// GrantWorkspace is one side of a grant.
+message GrantWorkspace {
+  string id = 1;
+  // Empty once the workspace is deleted.
+  string name = 2;
+}
+
+// GrantEnvironmentTarget covers every sandbox of one environment.
+message GrantEnvironmentTarget {
+  string project = 1;
+  string environment = 2;
+}
+
+// GrantSandboxTarget covers one sandbox.
+message GrantSandboxTarget {
+  string sandbox_id = 1;
+  // The sandbox's project and environment, set by the server.
+  string project = 2;
+  string environment = 3;
+}
+
+// GrantPreviewTarget covers one preview of one sandbox.
+message GrantPreviewTarget {
+  string sandbox_id = 1;
+  // The channel whose preview it covers: `preview` for the sandbox's own
+  // hostname, or another of its http channels.
+  string channel = 2;
+  // The sandbox's project and environment, set by the server.
+  string project = 3;
+  string environment = 4;
+}
+
+message CreateGrantRequest {
+  // The id of the workspace the grant is offered to.
+  string grantee_workspace = 1;
+  // What it covers, in the caller's workspace.
+  oneof target {
+    GrantEnvironmentTarget environment = 2;
+    GrantSandboxTarget sandbox = 3;
+    GrantPreviewTarget preview = 4;
+  }
+  // VIEW for a preview.
+  GrantLevel level = 5;
+  // Unset for no expiry.
+  google.protobuf.Timestamp expires_at = 6;
+}
+
+message CreateGrantResponse {
+  Grant grant = 1;
+}
+
+message GetGrantRequest {
+  string id = 1;
+}
+
+message GetGrantResponse {
+  Grant grant = 1;
+}
+
+message ListGrantsRequest {
+  GrantSide side = 1;
+  // The states to list; empty lists every state.
+  repeated GrantState states = 2;
+  // The most grants in one page; zero lets the server choose.
+  int32 page_size = 3;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 4;
+}
+
+message ListGrantsResponse {
+  repeated Grant grants = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+message AcceptGrantRequest {
+  string id = 1;
+}
+
+message AcceptGrantResponse {
+  Grant grant = 1;
+}
+
+message DeclineGrantRequest {
+  string id = 1;
+}
+
+message DeclineGrantResponse {
+  Grant grant = 1;
+}
+
+message UpdateGrantRequest {
+  // id names the grant; expires_at is the one field set.
+  Grant grant = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateGrantResponse {
+  Grant grant = 1;
+}
+
+message RevokeGrantRequest {
+  string id = 1;
+}
+
+message RevokeGrantResponse {
+  Grant grant = 1;
+}
+
+message LeaveGrantRequest {
+  string id = 1;
+}
+
+message LeaveGrantResponse {
+  Grant grant = 1;
+}
