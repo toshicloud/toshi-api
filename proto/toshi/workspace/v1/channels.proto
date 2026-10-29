@@ -406,8 +406,9 @@ message ChannelModuleList {
 // ChannelModule is one entry of a policy's module list. Each kind takes
 // the settings it names and no others.
 message ChannelModule {
-  // redirect, rewrite, ip_allowlist, sign_in_required, rate_limit,
-  // wake_page, identity_headers or record_requests, listed in that order.
+  // redirect, rewrite, ip_allowlist, client_certificate_required,
+  // sign_in_required, rate_limit, wake_page, identity_headers or
+  // record_requests, listed in that order.
   string kind = 1;
   // The requests a request module acts on; unset means every request.
   ChannelMatch match = 2;
@@ -439,6 +440,15 @@ message ChannelModule {
   // The page a wake_page answers with while the service wakes; empty takes
   // the default page. A service's channel only.
   string html = 13;
+  // The PEM certificates of the CAs, at most 64 KiB, whose client
+  // certificates a client_certificate_required admits besides the
+  // workloads'. Such a certificate is checked for its chain and its expiry
+  // only.
+  string ca_bundle = 14;
+  // Whether a client_certificate_required admits a workload of another
+  // workspace that an active grant, of connect or more, on the channel's
+  // environment admits.
+  bool grants = 15;
 }
 
 // ChannelMatch narrows the requests a module acts on. Every field empty

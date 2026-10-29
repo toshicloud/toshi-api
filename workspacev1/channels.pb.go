@@ -1138,8 +1138,9 @@ func (x *ChannelModuleList) GetModules() []*ChannelModule {
 // the settings it names and no others.
 type ChannelModule struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// redirect, rewrite, ip_allowlist, sign_in_required, rate_limit,
-	// wake_page, identity_headers or record_requests, listed in that order.
+	// redirect, rewrite, ip_allowlist, client_certificate_required,
+	// sign_in_required, rate_limit, wake_page, identity_headers or
+	// record_requests, listed in that order.
 	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
 	// The requests a request module acts on; unset means every request.
 	Match *ChannelMatch `protobuf:"bytes,2,opt,name=match,proto3" json:"match,omitempty"`
@@ -1170,7 +1171,16 @@ type ChannelModule struct {
 	Window string `protobuf:"bytes,12,opt,name=window,proto3" json:"window,omitempty"`
 	// The page a wake_page answers with while the service wakes; empty takes
 	// the default page. A service's channel only.
-	Html          string `protobuf:"bytes,13,opt,name=html,proto3" json:"html,omitempty"`
+	Html string `protobuf:"bytes,13,opt,name=html,proto3" json:"html,omitempty"`
+	// The PEM certificates of the CAs, at most 64 KiB, whose client
+	// certificates a client_certificate_required admits besides the
+	// workloads'. Such a certificate is checked for its chain and its expiry
+	// only.
+	CaBundle string `protobuf:"bytes,14,opt,name=ca_bundle,json=caBundle,proto3" json:"ca_bundle,omitempty"`
+	// Whether a client_certificate_required admits a workload of another
+	// workspace that an active grant, of connect or more, on the channel's
+	// environment admits.
+	Grants        bool `protobuf:"varint,15,opt,name=grants,proto3" json:"grants,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1294,6 +1304,20 @@ func (x *ChannelModule) GetHtml() string {
 		return x.Html
 	}
 	return ""
+}
+
+func (x *ChannelModule) GetCaBundle() string {
+	if x != nil {
+		return x.CaBundle
+	}
+	return ""
+}
+
+func (x *ChannelModule) GetGrants() bool {
+	if x != nil {
+		return x.Grants
+	}
+	return false
 }
 
 // ChannelMatch narrows the requests a module acts on. Every field empty
@@ -4011,7 +4035,7 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\f_max_clientsB\x0e\n" +
 	"\f_concurrency\"P\n" +
 	"\x11ChannelModuleList\x12;\n" +
-	"\amodules\x18\x01 \x03(\v2!.toshi.workspace.v1.ChannelModuleR\amodules\"\xd0\x02\n" +
+	"\amodules\x18\x01 \x03(\v2!.toshi.workspace.v1.ChannelModuleR\amodules\"\x85\x03\n" +
 	"\rChannelModule\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x126\n" +
 	"\x05match\x18\x02 \x01(\v2 .toshi.workspace.v1.ChannelMatchR\x05match\x12\x16\n" +
@@ -4026,7 +4050,9 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	" \x01(\tR\x03key\x12\x14\n" +
 	"\x05count\x18\v \x01(\x05R\x05count\x12\x16\n" +
 	"\x06window\x18\f \x01(\tR\x06window\x12\x12\n" +
-	"\x04html\x18\r \x01(\tR\x04html\"\xd9\x01\n" +
+	"\x04html\x18\r \x01(\tR\x04html\x12\x1b\n" +
+	"\tca_bundle\x18\x0e \x01(\tR\bcaBundle\x12\x16\n" +
+	"\x06grants\x18\x0f \x01(\bR\x06grants\"\xd9\x01\n" +
 	"\fChannelMatch\x12\x14\n" +
 	"\x05hosts\x18\x01 \x03(\tR\x05hosts\x12\x14\n" +
 	"\x05paths\x18\x02 \x03(\tR\x05paths\x12\x18\n" +
