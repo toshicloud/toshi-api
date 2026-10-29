@@ -397,6 +397,14 @@ message Workspace {
   // The wildcard certificate of its services' provided names; unset when
   // it never hosted one.
   HostingCertificate hosting_certificate = 35;
+  // How many kept VMs the workspace may hold at once on its own hosts: its
+  // plan's keep_vm.max, or the operator's override. 0 means keep_vm is
+  // refused.
+  int32 keep_vm_max_effective = 36;
+  // The workspace's kept VMs, and how many of them have been stopped for
+  // over 30 days.
+  int32 keep_vm_count = 37;
+  int32 keep_vm_stopped_long_count = 38;
 
   reserved 8, 9, 10, 14, 15, 21, 23, 32;
   reserved "own_hosts_only", "spend_cap_cents", "max_jobs_per_hour", "allow_overflow", "allow_cache_warm", "history_days", "cancel_run_on_vm_death", "member_join";
@@ -479,6 +487,11 @@ message WorkspaceSettings {
   // may only lower the plan's limit: a higher one fails with
   // INVALID_ARGUMENT.
   int32 max_jobs_per_hour = 9 [(toshi.field_permission) = "billing.write"];
+  // Whether the workspace's services and sandboxes may set keep_vm, which
+  // keeps a workload's VM on one of the workspace's own hosts across its
+  // stops and sleeps. Off by default; keep_vm_max_effective must be above 0
+  // too.
+  bool keep_vm = 10;
 }
 
 // WorkspaceSignIn is the sign-in provider a workspace requires.

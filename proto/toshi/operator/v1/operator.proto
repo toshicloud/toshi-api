@@ -896,6 +896,29 @@ message Host {
   // agent has not registered since the control plane began to store it,
   // whose agent sent none, or a cloud host.
   string provider = 27;
+  // Whether the host's agent can keep a VM for a workload with keep_vm, as it
+  // said when it last registered.
+  bool keep_vm = 28;
+  // The VMs kept on the host for workloads with keep_vm, ordered by
+  // workspace and workload, and the memory and disk they hold. A kept VM's
+  // memory is held only while it runs or is paused.
+  repeated KeptVM kept_vms = 29;
+  int64 kept_memory_mib = 30;
+  int64 kept_disk_bytes = 31;
+}
+
+// KeptVM is a VM a host keeps for a workload with keep_vm.
+message KeptVM {
+  string workspace = 1;
+  string workload_id = 2;
+  // "service" or "sandbox".
+  string kind = 3;
+  // "running", "paused" or "powered_down".
+  string form = 4;
+  int64 memory_mib = 5;
+  int64 disk_bytes = 6;
+  // When its workload last stopped or slept; unset while it runs.
+  google.protobuf.Timestamp stopped_at = 7;
 }
 
 // HostEgress is the public addresses a host's jobs reach the internet from.
@@ -1237,6 +1260,10 @@ message Tenant {
   // The wildcard certificate of its services' provided names; unset when
   // it never hosted one.
   HostingCertificate hosting_certificate = 33;
+  // Whether the workspace's services and sandboxes may set keep_vm, which
+  // keeps a workload's VM on one of its own hosts across its stops and
+  // sleeps. Off by default.
+  bool keep_vm = 34;
 }
 
 // HostingCertificate is a workspace's wildcard certificate for its

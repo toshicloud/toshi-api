@@ -1587,8 +1587,16 @@ type Workspace struct {
 	// The wildcard certificate of its services' provided names; unset when
 	// it never hosted one.
 	HostingCertificate *HostingCertificate `protobuf:"bytes,35,opt,name=hosting_certificate,json=hostingCertificate,proto3" json:"hosting_certificate,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	// How many kept VMs the workspace may hold at once on its own hosts: its
+	// plan's keep_vm.max, or the operator's override. 0 means keep_vm is
+	// refused.
+	KeepVmMaxEffective int32 `protobuf:"varint,36,opt,name=keep_vm_max_effective,json=keepVmMaxEffective,proto3" json:"keep_vm_max_effective,omitempty"`
+	// The workspace's kept VMs, and how many of them have been stopped for
+	// over 30 days.
+	KeepVmCount            int32 `protobuf:"varint,37,opt,name=keep_vm_count,json=keepVmCount,proto3" json:"keep_vm_count,omitempty"`
+	KeepVmStoppedLongCount int32 `protobuf:"varint,38,opt,name=keep_vm_stopped_long_count,json=keepVmStoppedLongCount,proto3" json:"keep_vm_stopped_long_count,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *Workspace) Reset() {
@@ -1810,6 +1818,27 @@ func (x *Workspace) GetHostingCertificate() *HostingCertificate {
 	return nil
 }
 
+func (x *Workspace) GetKeepVmMaxEffective() int32 {
+	if x != nil {
+		return x.KeepVmMaxEffective
+	}
+	return 0
+}
+
+func (x *Workspace) GetKeepVmCount() int32 {
+	if x != nil {
+		return x.KeepVmCount
+	}
+	return 0
+}
+
+func (x *Workspace) GetKeepVmStoppedLongCount() int32 {
+	if x != nil {
+		return x.KeepVmStoppedLongCount
+	}
+	return 0
+}
+
 // HostingCertificate is a workspace's wildcard certificate for its
 // services' provided names. Toshi orders it when the workspace first
 // hosts a service with an http channel and renews it before it expires.
@@ -1950,8 +1979,13 @@ type WorkspaceSettings struct {
 	// may only lower the plan's limit: a higher one fails with
 	// INVALID_ARGUMENT.
 	MaxJobsPerHour int32 `protobuf:"varint,9,opt,name=max_jobs_per_hour,json=maxJobsPerHour,proto3" json:"max_jobs_per_hour,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Whether the workspace's services and sandboxes may set keep_vm, which
+	// keeps a workload's VM on one of the workspace's own hosts across its
+	// stops and sleeps. Off by default; keep_vm_max_effective must be above 0
+	// too.
+	KeepVm        bool `protobuf:"varint,10,opt,name=keep_vm,json=keepVm,proto3" json:"keep_vm,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *WorkspaceSettings) Reset() {
@@ -2045,6 +2079,13 @@ func (x *WorkspaceSettings) GetMaxJobsPerHour() int32 {
 		return x.MaxJobsPerHour
 	}
 	return 0
+}
+
+func (x *WorkspaceSettings) GetKeepVm() bool {
+	if x != nil {
+		return x.KeepVm
+	}
+	return false
 }
 
 // WorkspaceSignIn is the sign-in provider a workspace requires.
@@ -4420,7 +4461,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x16\n" +
 	"\x06commit\x18\x02 \x01(\tR\x06commit\x12\x12\n" +
 	"\x04date\x18\x03 \x01(\tR\x04date\x122\n" +
-	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xe0\f\n" +
+	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xf3\r\n" +
 	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -4451,7 +4492,10 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x1bpreview_max_ports_effective\x18\x1f \x01(\x05R\x18previewMaxPortsEffective\x12A\n" +
 	"\bsettings\x18! \x01(\v2%.toshi.workspace.v1.WorkspaceSettingsR\bsettings\x12\x12\n" +
 	"\x04etag\x18\" \x01(\tR\x04etag\x12W\n" +
-	"\x13hosting_certificate\x18# \x01(\v2&.toshi.workspace.v1.HostingCertificateR\x12hostingCertificateB\x12\n" +
+	"\x13hosting_certificate\x18# \x01(\v2&.toshi.workspace.v1.HostingCertificateR\x12hostingCertificate\x121\n" +
+	"\x15keep_vm_max_effective\x18$ \x01(\x05R\x12keepVmMaxEffective\x12\"\n" +
+	"\rkeep_vm_count\x18% \x01(\x05R\vkeepVmCount\x12:\n" +
+	"\x1akeep_vm_stopped_long_count\x18& \x01(\x05R\x16keepVmStoppedLongCountB\x12\n" +
 	"\x10_concurrency_capB\x12\n" +
 	"\x10_secret_max_setsB\x12\n" +
 	"\x10_secret_max_keysB\x11\n" +
@@ -4465,7 +4509,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\tnot_after\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bnotAfter\x125\n" +
 	"\brenew_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\arenewAt\x125\n" +
 	"\bretry_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aretryAt\x12\x14\n" +
-	"\x05error\x18\x06 \x01(\tR\x05error\"\xe5\x03\n" +
+	"\x05error\x18\x06 \x01(\tR\x05error\"\xfe\x03\n" +
 	"\x11WorkspaceSettings\x12\x1f\n" +
 	"\vmember_join\x18\x01 \x01(\tR\n" +
 	"memberJoin\x12R\n" +
@@ -4476,7 +4520,9 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x10allow_cache_warm\x18\x06 \x01(\bR\x0eallowCacheWarm\x122\n" +
 	"\x16cancel_run_on_vm_death\x18\a \x01(\bR\x12cancelRunOnVmDeath\x129\n" +
 	"\x0fspend_cap_cents\x18\b \x01(\x03B\x11\xda\xf3\x18\rbilling.writeR\rspendCapCents\x12<\n" +
-	"\x11max_jobs_per_hour\x18\t \x01(\x05B\x11\xda\xf3\x18\rbilling.writeR\x0emaxJobsPerHourB\x0f\n" +
+	"\x11max_jobs_per_hour\x18\t \x01(\x05B\x11\xda\xf3\x18\rbilling.writeR\x0emaxJobsPerHour\x12\x17\n" +
+	"\akeep_vm\x18\n" +
+	" \x01(\bR\x06keepVmB\x0f\n" +
 	"\r_history_days\"\x8f\x01\n" +
 	"\x0fWorkspaceSignIn\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x16\n" +
