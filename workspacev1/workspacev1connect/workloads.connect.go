@@ -84,6 +84,9 @@ const (
 	// WorkloadServiceCancelExecutionProcedure is the fully-qualified name of the WorkloadService's
 	// CancelExecution RPC.
 	WorkloadServiceCancelExecutionProcedure = "/toshi.workspace.v1.WorkloadService/CancelExecution"
+	// WorkloadServiceAnswerPromptProcedure is the fully-qualified name of the WorkloadService's
+	// AnswerPrompt RPC.
+	WorkloadServiceAnswerPromptProcedure = "/toshi.workspace.v1.WorkloadService/AnswerPrompt"
 	// WorkloadServiceWatchTelemetryProcedure is the fully-qualified name of the WorkloadService's
 	// WatchTelemetry RPC.
 	WorkloadServiceWatchTelemetryProcedure = "/toshi.workspace.v1.WorkloadService/WatchTelemetry"
@@ -278,6 +281,18 @@ type WorkloadServiceClient interface {
 	// changes nothing. It returns once the execution has ended, whether or not
 	// the Execute stream's client still reads it.
 	CancelExecution(context.Context, *connect.Request[workspacev1.CancelExecutionRequest]) (*connect.Response[workspacev1.CancelExecutionResponse], error)
+	// AnswerPrompt answers a prompt an agent workload waits on, one of its
+	// job's, sandbox's or service's waiting, and returns the
+	// AGENT_ANSWERED event that records the answer and who gave it. The
+	// prompt leaves waiting, and the event reaches the agent through Toshi.
+	// Only a person answers: a call that acts for no person, such as a
+	// workload's own token, fails with PERMISSION_DENIED. A prompt is
+	// answered once: a prompt that is not waiting, answered or ended with
+	// the workload's run, fails with FAILED_PRECONDITION. An approval is
+	// answered "approved" or "denied", a question with options one of them,
+	// and one without options any text of 1 to 4096 bytes; another answer
+	// fails with INVALID_ARGUMENT.
+	AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error)
 	// WatchTelemetry streams a sandbox's resource samples as its host reports
 	// them, in cursor order: the samples kept after a cursor, then each one as
 	// it is stored. Each sample stored takes the next cursor, also one timed
@@ -575,6 +590,12 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("CancelExecution")),
 			connect.WithClientOptions(opts...),
 		),
+		answerPrompt: connect.NewClient[workspacev1.AnswerPromptRequest, workspacev1.AnswerPromptResponse](
+			httpClient,
+			baseURL+WorkloadServiceAnswerPromptProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("AnswerPrompt")),
+			connect.WithClientOptions(opts...),
+		),
 		watchTelemetry: connect.NewClient[workspacev1.WatchTelemetryRequest, workspacev1.WatchTelemetryResponse](
 			httpClient,
 			baseURL+WorkloadServiceWatchTelemetryProcedure,
@@ -766,6 +787,7 @@ type workloadServiceClient struct {
 	watchSandboxes         *connect.Client[workspacev1.WatchSandboxesRequest, workspacev1.WatchSandboxesResponse]
 	execute                *connect.Client[workspacev1.ExecuteRequest, workspacev1.ExecuteResponse]
 	cancelExecution        *connect.Client[workspacev1.CancelExecutionRequest, workspacev1.CancelExecutionResponse]
+	answerPrompt           *connect.Client[workspacev1.AnswerPromptRequest, workspacev1.AnswerPromptResponse]
 	watchTelemetry         *connect.Client[workspacev1.WatchTelemetryRequest, workspacev1.WatchTelemetryResponse]
 	watchGuestLog          *connect.Client[workspacev1.WatchGuestLogRequest, workspacev1.WatchGuestLogResponse]
 	createPreviewShareLink *connect.Client[workspacev1.CreatePreviewShareLinkRequest, workspacev1.CreatePreviewShareLinkResponse]
@@ -884,6 +906,11 @@ func (c *workloadServiceClient) Execute(ctx context.Context) *connect.BidiStream
 // CancelExecution calls toshi.workspace.v1.WorkloadService.CancelExecution.
 func (c *workloadServiceClient) CancelExecution(ctx context.Context, req *connect.Request[workspacev1.CancelExecutionRequest]) (*connect.Response[workspacev1.CancelExecutionResponse], error) {
 	return c.cancelExecution.CallUnary(ctx, req)
+}
+
+// AnswerPrompt calls toshi.workspace.v1.WorkloadService.AnswerPrompt.
+func (c *workloadServiceClient) AnswerPrompt(ctx context.Context, req *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error) {
+	return c.answerPrompt.CallUnary(ctx, req)
 }
 
 // WatchTelemetry calls toshi.workspace.v1.WorkloadService.WatchTelemetry.
@@ -1134,6 +1161,18 @@ type WorkloadServiceHandler interface {
 	// changes nothing. It returns once the execution has ended, whether or not
 	// the Execute stream's client still reads it.
 	CancelExecution(context.Context, *connect.Request[workspacev1.CancelExecutionRequest]) (*connect.Response[workspacev1.CancelExecutionResponse], error)
+	// AnswerPrompt answers a prompt an agent workload waits on, one of its
+	// job's, sandbox's or service's waiting, and returns the
+	// AGENT_ANSWERED event that records the answer and who gave it. The
+	// prompt leaves waiting, and the event reaches the agent through Toshi.
+	// Only a person answers: a call that acts for no person, such as a
+	// workload's own token, fails with PERMISSION_DENIED. A prompt is
+	// answered once: a prompt that is not waiting, answered or ended with
+	// the workload's run, fails with FAILED_PRECONDITION. An approval is
+	// answered "approved" or "denied", a question with options one of them,
+	// and one without options any text of 1 to 4096 bytes; another answer
+	// fails with INVALID_ARGUMENT.
+	AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error)
 	// WatchTelemetry streams a sandbox's resource samples as its host reports
 	// them, in cursor order: the samples kept after a cursor, then each one as
 	// it is stored. Each sample stored takes the next cursor, also one timed
@@ -1427,6 +1466,12 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("CancelExecution")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceAnswerPromptHandler := connect.NewUnaryHandler(
+		WorkloadServiceAnswerPromptProcedure,
+		svc.AnswerPrompt,
+		connect.WithSchema(workloadServiceMethods.ByName("AnswerPrompt")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceWatchTelemetryHandler := connect.NewServerStreamHandler(
 		WorkloadServiceWatchTelemetryProcedure,
 		svc.WatchTelemetry,
@@ -1633,6 +1678,8 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceExecuteHandler.ServeHTTP(w, r)
 		case WorkloadServiceCancelExecutionProcedure:
 			workloadServiceCancelExecutionHandler.ServeHTTP(w, r)
+		case WorkloadServiceAnswerPromptProcedure:
+			workloadServiceAnswerPromptHandler.ServeHTTP(w, r)
 		case WorkloadServiceWatchTelemetryProcedure:
 			workloadServiceWatchTelemetryHandler.ServeHTTP(w, r)
 		case WorkloadServiceWatchGuestLogProcedure:
@@ -1768,6 +1815,10 @@ func (UnimplementedWorkloadServiceHandler) Execute(context.Context, *connect.Bid
 
 func (UnimplementedWorkloadServiceHandler) CancelExecution(context.Context, *connect.Request[workspacev1.CancelExecutionRequest]) (*connect.Response[workspacev1.CancelExecutionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.CancelExecution is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.AnswerPrompt is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) WatchTelemetry(context.Context, *connect.Request[workspacev1.WatchTelemetryRequest], *connect.ServerStream[workspacev1.WatchTelemetryResponse]) error {

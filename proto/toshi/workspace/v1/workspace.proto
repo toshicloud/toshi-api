@@ -61,6 +61,10 @@ message Job {
   // Whether the job is an agent: the image version it runs declares an
   // [agent] table in its recipe. Fixed at create; set by Toshi.
   bool agent = 8;
+  // The prompts the job's agent waits on, oldest first: each is removed
+  // when AnswerPrompt answers it, and all of them when the job's run ends.
+  // Set by Toshi.
+  repeated AgentPrompt waiting = 9;
 }
 
 // JobStatus is a job's state and when it got there.
@@ -160,6 +164,10 @@ message Sandbox {
   // Whether the sandbox is an agent: the image version it runs declares an
   // [agent] table in its recipe. Fixed at create; set by Toshi.
   bool agent = 8;
+  // The prompts the sandbox's agent waits on, oldest first: each is
+  // removed when AnswerPrompt answers it, and all of them when the
+  // sandbox's run ends. Set by Toshi.
+  repeated AgentPrompt waiting = 9;
 }
 
 // SandboxStatus is a sandbox's state and when it got there.
@@ -224,6 +232,10 @@ message Service {
   // revision declares an [agent] table in its recipe. A deploy or a rollback
   // changes it; set by Toshi.
   bool agent = 7;
+  // The prompts the service's agent waits on, oldest first: each is
+  // removed when AnswerPrompt answers it, and all of them when the
+  // service's run ends. Set by Toshi.
+  repeated AgentPrompt waiting = 8;
 }
 
 // ServiceStatus is a service's state and when it got there.
@@ -877,6 +889,10 @@ enum EventType {
   // A service's upgrade failed in its window and was rolled back to the
   // revision it replaced, with why. Name: "service.upgrade_rolled_back".
   EVENT_TYPE_UPGRADE_ROLLED_BACK = 14;
+  // A person answered a prompt an agent waits on, with the answer and who
+  // gave it. Name: "agent.answered". AnswerPrompt writes it; a workload
+  // cannot emit it.
+  EVENT_TYPE_AGENT_ANSWERED = 15;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -917,6 +933,8 @@ message Event {
     TriggerResult trigger = 19;
     // For UPGRADE_ROLLED_BACK.
     UpgradeRolledBackEvent upgrade_rolled_back = 20;
+    // For AGENT_ANSWERED.
+    AgentAnswerEvent agent_answer = 21;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -1004,6 +1022,37 @@ message ExecutionEvent {
 // EmittedEvent is an event a guest emitted.
 message EmittedEvent {
   bytes data = 1;
+}
+
+// AgentAnswerEvent is a person's answer to a prompt an agent waited on.
+message AgentAnswerEvent {
+  // The prompt's id, as the agent gave it.
+  string prompt_id = 1;
+  // The answer: one of a question's options, a question's free text, or
+  // "approved" or "denied" for an approval.
+  string answer = 2;
+  // The Toshi user id of the person who answered.
+  string answered_by = 3;
+}
+
+// AgentPrompt is a question or an approval an agent workload asked that
+// nobody has answered yet. AnswerPrompt answers it.
+message AgentPrompt {
+  // The prompt's id, as the agent gave it; unique among the prompts the
+  // workload waits on.
+  string id = 1;
+  // "agent.question" or "agent.approval": the event that asked it.
+  string name = 2;
+  // What an approval asks to be let do: plan, push, pull_request, command
+  // or domain. Empty for a question.
+  string kind = 3;
+  string text = 4;
+  // The answers a question offers; empty for an approval and for a
+  // question answered in free text.
+  repeated string options = 5;
+  // The event that asked it.
+  string event_id = 6;
+  google.protobuf.Timestamp asked_at = 7;
 }
 
 // ConnectionEvent is an event a connection received.

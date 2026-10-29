@@ -219,6 +219,26 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
+  // AnswerPrompt answers a prompt an agent workload waits on, one of its
+  // job's, sandbox's or service's waiting, and returns the
+  // AGENT_ANSWERED event that records the answer and who gave it. The
+  // prompt leaves waiting, and the event reaches the agent through Toshi.
+  // Only a person answers: a call that acts for no person, such as a
+  // workload's own token, fails with PERMISSION_DENIED. A prompt is
+  // answered once: a prompt that is not waiting, answered or ended with
+  // the workload's run, fails with FAILED_PRECONDITION. An approval is
+  // answered "approved" or "denied", a question with options one of them,
+  // and one without options any text of 1 to 4096 bytes; another answer
+  // fails with INVALID_ARGUMENT.
+  rpc AnswerPrompt(AnswerPromptRequest) returns (AnswerPromptResponse) {
+    option (toshi.permission) = "workloads.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "agent.prompt_answered"
+      target: "workload:workload_id"
+    };
+  }
+
   // WatchTelemetry streams a sandbox's resource samples as its host reports
   // them, in cursor order: the samples kept after a cursor, then each one as
   // it is stored. Each sample stored takes the next cursor, also one timed
@@ -522,6 +542,21 @@ service WorkloadService {
     option (toshi.permission) = "workloads.read";
     option (toshi.scope) = "environment";
   }
+}
+
+message AnswerPromptRequest {
+  string project = 1;
+  string environment = 2;
+  // The job, sandbox or service whose prompt is answered.
+  string workload_id = 3;
+  // The prompt's id, as its waiting entry gives it.
+  string prompt_id = 4;
+  string answer = 5;
+}
+
+message AnswerPromptResponse {
+  // The AGENT_ANSWERED event.
+  Event event = 1;
 }
 
 message ExportEventsRequest {
