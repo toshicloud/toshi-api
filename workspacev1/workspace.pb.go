@@ -1887,11 +1887,12 @@ type WorkloadNetwork struct {
 	// The layers in the order a connection is checked: operator, workspace,
 	// environment, then request when the workload asked for one.
 	Layers []*NetworkLayer `protobuf:"bytes,1,rep,name=layers,proto3" json:"layers,omitempty"`
-	// Whether the workload's host enforces network rules at assignment. An
-	// unplaced workload is not enforced, with not_enforced_reason "not placed
-	// yet".
+	// Whether the workload's host enforces network rules at assignment and
+	// was sent the workload's rules. An unplaced workload is not enforced,
+	// with not_enforced_reason "not placed yet", and one whose host was sent
+	// no rules with "its host was sent no network rules".
 	Enforced bool `protobuf:"varint,2,opt,name=enforced,proto3" json:"enforced,omitempty"`
-	// Why the host does not enforce network rules, when enforced is false.
+	// Why the workload's rules are not enforced, when enforced is false.
 	NotEnforcedReason string `protobuf:"bytes,3,opt,name=not_enforced_reason,json=notEnforcedReason,proto3" json:"not_enforced_reason,omitempty"`
 	// The most recent denials kept on the workload, newest first, at most 20;
 	// absent from a workload stored before the field.

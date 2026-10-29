@@ -1108,16 +1108,17 @@ export type WorkloadNetwork = Message<"toshi.workspace.v1.WorkloadNetwork"> & {
   layers: NetworkLayer[];
 
   /**
-   * Whether the workload's host enforces network rules at assignment. An
-   * unplaced workload is not enforced, with not_enforced_reason "not placed
-   * yet".
+   * Whether the workload's host enforces network rules at assignment and
+   * was sent the workload's rules. An unplaced workload is not enforced,
+   * with not_enforced_reason "not placed yet", and one whose host was sent
+   * no rules with "its host was sent no network rules".
    *
    * @generated from field: bool enforced = 2;
    */
   enforced: boolean;
 
   /**
-   * Why the host does not enforce network rules, when enforced is false.
+   * Why the workload's rules are not enforced, when enforced is false.
    *
    * @generated from field: string not_enforced_reason = 3;
    */
@@ -1149,16 +1150,17 @@ export type WorkloadNetworkJson = {
   layers?: NetworkLayerJson[];
 
   /**
-   * Whether the workload's host enforces network rules at assignment. An
-   * unplaced workload is not enforced, with not_enforced_reason "not placed
-   * yet".
+   * Whether the workload's host enforces network rules at assignment and
+   * was sent the workload's rules. An unplaced workload is not enforced,
+   * with not_enforced_reason "not placed yet", and one whose host was sent
+   * no rules with "its host was sent no network rules".
    *
    * @generated from field: bool enforced = 2;
    */
   enforced?: boolean;
 
   /**
-   * Why the host does not enforce network rules, when enforced is false.
+   * Why the workload's rules are not enforced, when enforced is false.
    *
    * @generated from field: string not_enforced_reason = 3;
    */

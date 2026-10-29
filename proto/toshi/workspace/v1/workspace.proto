@@ -265,11 +265,12 @@ message WorkloadNetwork {
   // The layers in the order a connection is checked: operator, workspace,
   // environment, then request when the workload asked for one.
   repeated NetworkLayer layers = 1;
-  // Whether the workload's host enforces network rules at assignment. An
-  // unplaced workload is not enforced, with not_enforced_reason "not placed
-  // yet".
+  // Whether the workload's host enforces network rules at assignment and
+  // was sent the workload's rules. An unplaced workload is not enforced,
+  // with not_enforced_reason "not placed yet", and one whose host was sent
+  // no rules with "its host was sent no network rules".
   bool enforced = 2;
-  // Why the host does not enforce network rules, when enforced is false.
+  // Why the workload's rules are not enforced, when enforced is false.
   string not_enforced_reason = 3;
   // The most recent denials kept on the workload, newest first, at most 20;
   // absent from a workload stored before the field.
