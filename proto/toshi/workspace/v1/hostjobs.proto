@@ -365,6 +365,13 @@ message HostJob {
   // attempt, 2 for its first re-run. 0 when it was not recorded, as for a
   // job that is not a GitHub job or one stored before the field.
   int32 run_attempt = 52;
+  // TOSHI_LICENSED_WINDOWS when the job runs on Windows that Toshi licenses
+  // (a cloud pool's host, or a host's pool with licence = "toshi"): no one
+  // sees its screen, so it opens no display session, takes no takeover and
+  // records no screen. Empty when its screen is available, and for a job
+  // without a host. A workspace's own hosts and its own cloud account show
+  // the screen.
+  string screen_unavailable_reason = 53;
 }
 
 // HostJobAttempt is one attempt of a host job: one assignment to a host

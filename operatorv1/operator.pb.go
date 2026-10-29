@@ -753,9 +753,16 @@ type Job struct {
 	// workflow_job webhook Toshi made the job from said: 1 for a run's first
 	// attempt, 2 for its first re-run. 0 when it was not recorded, as for a
 	// job that is not a GitHub job or one stored before the field.
-	RunAttempt    int32 `protobuf:"varint,53,opt,name=run_attempt,json=runAttempt,proto3" json:"run_attempt,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	RunAttempt int32 `protobuf:"varint,53,opt,name=run_attempt,json=runAttempt,proto3" json:"run_attempt,omitempty"`
+	// TOSHI_LICENSED_WINDOWS when the job runs on Windows that Toshi licenses
+	// (a cloud pool's host, or a host's pool with licence = "toshi"): no one
+	// sees its screen, so it opens no display session, takes no takeover and
+	// records no screen. Empty when its screen is available, and for a job
+	// without a host. A workspace's own hosts and its own cloud account show
+	// the screen.
+	ScreenUnavailableReason string `protobuf:"bytes,54,opt,name=screen_unavailable_reason,json=screenUnavailableReason,proto3" json:"screen_unavailable_reason,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *Job) Reset() {
@@ -1157,6 +1164,13 @@ func (x *Job) GetRunAttempt() int32 {
 		return x.RunAttempt
 	}
 	return 0
+}
+
+func (x *Job) GetScreenUnavailableReason() string {
+	if x != nil {
+		return x.ScreenUnavailableReason
+	}
+	return ""
 }
 
 // JobCache is what a job's cache disk did.
@@ -13097,7 +13111,7 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x95\x10\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd1\x10\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
@@ -13168,7 +13182,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"runnerName\x12\x18\n" +
 	"\aattempt\x184 \x01(\x05R\aattempt\x12\x1f\n" +
 	"\vrun_attempt\x185 \x01(\x05R\n" +
-	"runAttempt\"\xee\x01\n" +
+	"runAttempt\x12:\n" +
+	"\x19screen_unavailable_reason\x186 \x01(\tR\x17screenUnavailableReason\"\xee\x01\n" +
 	"\bJobCache\x12\x16\n" +
 	"\x06attach\x18\x01 \x01(\tR\x06attach\x12'\n" +
 	"\x0fbase_generation\x18\x02 \x01(\x03R\x0ebaseGeneration\x12\x1d\n" +

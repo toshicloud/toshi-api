@@ -1191,9 +1191,16 @@ type HostJob struct {
 	// workflow_job webhook Toshi made the job from said: 1 for a run's first
 	// attempt, 2 for its first re-run. 0 when it was not recorded, as for a
 	// job that is not a GitHub job or one stored before the field.
-	RunAttempt    int32 `protobuf:"varint,52,opt,name=run_attempt,json=runAttempt,proto3" json:"run_attempt,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	RunAttempt int32 `protobuf:"varint,52,opt,name=run_attempt,json=runAttempt,proto3" json:"run_attempt,omitempty"`
+	// TOSHI_LICENSED_WINDOWS when the job runs on Windows that Toshi licenses
+	// (a cloud pool's host, or a host's pool with licence = "toshi"): no one
+	// sees its screen, so it opens no display session, takes no takeover and
+	// records no screen. Empty when its screen is available, and for a job
+	// without a host. A workspace's own hosts and its own cloud account show
+	// the screen.
+	ScreenUnavailableReason string `protobuf:"bytes,53,opt,name=screen_unavailable_reason,json=screenUnavailableReason,proto3" json:"screen_unavailable_reason,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *HostJob) Reset() {
@@ -1588,6 +1595,13 @@ func (x *HostJob) GetRunAttempt() int32 {
 		return x.RunAttempt
 	}
 	return 0
+}
+
+func (x *HostJob) GetScreenUnavailableReason() string {
+	if x != nil {
+		return x.ScreenUnavailableReason
+	}
+	return ""
 }
 
 // HostJobAttempt is one attempt of a host job: one assignment to a host
@@ -2270,7 +2284,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x17StopHostJobDebugRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
 	"\x18StopHostJobDebugResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\x95\x10\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xd1\x10\n" +
 	"\aHostJob\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1e\n" +
 	"\n" +
@@ -2340,7 +2354,8 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"runnerName\x12\x18\n" +
 	"\aattempt\x183 \x01(\x05R\aattempt\x12\x1f\n" +
 	"\vrun_attempt\x184 \x01(\x05R\n" +
-	"runAttempt\"\xa5\x03\n" +
+	"runAttempt\x12:\n" +
+	"\x19screen_unavailable_reason\x185 \x01(\tR\x17screenUnavailableReason\"\xa5\x03\n" +
 	"\x0eHostJobAttempt\x12\x18\n" +
 	"\aattempt\x18\x01 \x01(\x05R\aattempt\x12\x1b\n" +
 	"\trunner_id\x18\x02 \x01(\tR\brunnerId\x12\x1f\n" +
