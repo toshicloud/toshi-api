@@ -503,6 +503,8 @@ type WorkloadServiceClient interface {
 	ListServiceRuns(context.Context, *connect.Request[workspacev1.ListServiceRunsRequest]) (*connect.Response[workspacev1.ListServiceRunsResponse], error)
 	// ListEvents returns the events after a cursor, oldest first, a page at a
 	// time, for a client that polls or catches up after downtime.
+	// A kept VM discarded for an image change has type KEPT_VM_DISCARDED,
+	// with its run and reason under kept_vm_discarded.
 	//
 	// A page holds 50 events when page_size is zero, and 500 at most.
 	ListEvents(context.Context, *connect.Request[workspacev1.ListEventsRequest]) (*connect.Response[workspacev1.ListEventsResponse], error)
@@ -1497,6 +1499,8 @@ type WorkloadServiceHandler interface {
 	ListServiceRuns(context.Context, *connect.Request[workspacev1.ListServiceRunsRequest]) (*connect.Response[workspacev1.ListServiceRunsResponse], error)
 	// ListEvents returns the events after a cursor, oldest first, a page at a
 	// time, for a client that polls or catches up after downtime.
+	// A kept VM discarded for an image change has type KEPT_VM_DISCARDED,
+	// with its run and reason under kept_vm_discarded.
 	//
 	// A page holds 50 events when page_size is zero, and 500 at most.
 	ListEvents(context.Context, *connect.Request[workspacev1.ListEventsRequest]) (*connect.Response[workspacev1.ListEventsResponse], error)

@@ -27,6 +27,9 @@ enum EndReason {
   // Toshi could not run or keep running it; the status's last_error says
   // why.
   END_REASON_FAILED = 4;
+  // The host that kept the sandbox's VM failed or was removed, and the VM
+  // is gone.
+  END_REASON_LOST = 5;
 }
 
 // StopReason is why a sandbox was stopped.
@@ -187,8 +190,8 @@ message Sandbox {
 // SandboxStatus is a sandbox's state and when it got there.
 message SandboxStatus {
   SandboxState state = 1;
-  // Set once the state is ENDED: STOPPED or FAILED, or EXITED when its
-  // spec's process exited.
+  // Set once the state is ENDED: STOPPED, FAILED or LOST, or EXITED when
+  // its spec's process exited.
   EndReason end_reason = 2;
   // The most recent error Toshi met running the sandbox.
   Error last_error = 3;
@@ -198,8 +201,8 @@ message SandboxStatus {
   google.protobuf.Timestamp ended_at = 7;
   // When anything in the sandbox last changed.
   google.protobuf.Timestamp updated_at = 8;
-  // Why it was stopped, set once it has ended: with STOPPED, and with
-  // FAILED when it failed after a stop was asked.
+  // Why it was stopped, set while a kept sandbox is stopped, and once it
+  // has ended when a stop was asked.
   StopReason stop_reason = 9;
   // While it runs, its previews: one for each of its http channels served
   // at a hostname of its own, the channel `preview` among them. Empty
@@ -1058,6 +1061,9 @@ enum EventType {
   // The mail listener handed a message the workload sent to the mail
   // provider, which accepted it. Name: "mail.sent".
   EVENT_TYPE_MAIL_SENT = 17;
+  // A kept VM was discarded before a run because its image changed. Name:
+  // "<kind>.kept_vm_discarded". Payload: KeptVMDiscardedEvent.
+  EVENT_TYPE_KEPT_VM_DISCARDED = 18;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -1104,6 +1110,8 @@ message Event {
     EgressDeniedEvent egress_denied = 22;
     // For MAIL_SENT.
     MailSentEvent mail_sent = 23;
+    // For KEPT_VM_DISCARDED.
+    KeptVMDiscardedEvent kept_vm_discarded = 24;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -1113,6 +1121,14 @@ message Event {
   string environment = 12;
   // The connection that received a CONNECTION event; empty for the others.
   string connection_id = 16;
+}
+
+// KeptVMDiscardedEvent records a kept VM discarded before a fresh run.
+message KeptVMDiscardedEvent {
+  // The job ID of the run for which the VM was discarded.
+  string run_id = 1;
+  // Why the VM was discarded, currently "image_changed".
+  string reason = 2;
 }
 
 // UpgradeRolledBackEvent is a service upgrade that failed in its window and

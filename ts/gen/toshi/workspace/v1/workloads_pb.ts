@@ -3629,6 +3629,8 @@ export const WorkloadService: GenService<{
   /**
    * ListEvents returns the events after a cursor, oldest first, a page at a
    * time, for a client that polls or catches up after downtime.
+   * A kept VM discarded for an image change has type KEPT_VM_DISCARDED,
+   * with its run and reason under kept_vm_discarded.
    *
    * A page holds 50 events when page_size is zero, and 500 at most.
    *
