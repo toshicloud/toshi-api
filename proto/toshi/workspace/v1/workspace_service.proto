@@ -108,11 +108,12 @@ service WorkspaceService {
   }
   // CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
   // workspace to plan, first creating and linking a billing customer for a
-  // workspace without one. An empty plan, or a plan the configuration does
-  // not define, fails with INVALID_ARGUMENT; self-serve billing off, a plan
-  // that is not sold or maps to several lookup keys, a price missing in
-  // Stripe, or a workspace that already has a subscription fails with
-  // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
+  // workspace without one. An empty plan, a plan the configuration does not
+  // define, or a return_url outside the allowed origins fails with
+  // INVALID_ARGUMENT; self-serve billing off, a plan that is not sold or
+  // maps to several lookup keys, a price missing in Stripe, or a workspace
+  // that already has a subscription fails with FAILED_PRECONDITION; a
+  // billing provider failure fails with UNAVAILABLE.
   rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse) {
     option (toshi.permission) = "billing.write";
     option (toshi.audit) = {
@@ -121,7 +122,8 @@ service WorkspaceService {
     };
   }
   // CreateBillingPortalSession returns a Stripe Customer Portal URL where
-  // the workspace manages its card and subscription. Self-serve billing not
+  // the workspace manages its card and subscription. A return_url outside
+  // the allowed origins fails with INVALID_ARGUMENT; self-serve billing not
   // configured, or a workspace with no billing customer, fails with
   // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
   rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse) {
@@ -298,6 +300,13 @@ message ListPlansResponse {
 
 message CreateCheckoutSessionRequest {
   string plan = 1;
+  // Where the browser goes back to when checkout finishes or is cancelled.
+  // The workspace id rides on it as the tenant query parameter, and billing
+  // as checkout-done or checkout-cancelled; its own query is kept. Its
+  // origin must be the control plane's public URL or a redirect URI origin
+  // of a client declared in [[oauth.clients]]. Empty returns to the
+  // control plane's dashboard.
+  string return_url = 2;
 }
 
 message CreateCheckoutSessionResponse {
@@ -305,7 +314,13 @@ message CreateCheckoutSessionResponse {
   string url = 1;
 }
 
-message CreateBillingPortalSessionRequest {}
+message CreateBillingPortalSessionRequest {
+  // Where the browser goes back to from the portal, with the workspace id as
+  // the tenant query parameter; its own query is kept. The same origins as
+  // CreateCheckoutSessionRequest.return_url are allowed. Empty returns to the
+  // control plane's dashboard.
+  string return_url = 1;
+}
 
 message CreateBillingPortalSessionResponse {
   // The provider's hosted Customer Portal URL to send the browser to.

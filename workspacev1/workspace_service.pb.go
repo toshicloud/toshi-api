@@ -1159,8 +1159,15 @@ func (x *ListPlansResponse) GetNextPageToken() string {
 }
 
 type CreateCheckoutSessionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Plan          string                 `protobuf:"bytes,1,opt,name=plan,proto3" json:"plan,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Plan  string                 `protobuf:"bytes,1,opt,name=plan,proto3" json:"plan,omitempty"`
+	// Where the browser goes back to when checkout finishes or is cancelled.
+	// The workspace id rides on it as the tenant query parameter, and billing
+	// as checkout-done or checkout-cancelled; its own query is kept. Its
+	// origin must be the control plane's public URL or a redirect URI origin
+	// of a client declared in [[oauth.clients]]. Empty returns to the
+	// control plane's dashboard.
+	ReturnUrl     string `protobuf:"bytes,2,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1198,6 +1205,13 @@ func (*CreateCheckoutSessionRequest) Descriptor() ([]byte, []int) {
 func (x *CreateCheckoutSessionRequest) GetPlan() string {
 	if x != nil {
 		return x.Plan
+	}
+	return ""
+}
+
+func (x *CreateCheckoutSessionRequest) GetReturnUrl() string {
+	if x != nil {
+		return x.ReturnUrl
 	}
 	return ""
 }
@@ -1248,7 +1262,12 @@ func (x *CreateCheckoutSessionResponse) GetUrl() string {
 }
 
 type CreateBillingPortalSessionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Where the browser goes back to from the portal, with the workspace id as
+	// the tenant query parameter; its own query is kept. The same origins as
+	// CreateCheckoutSessionRequest.return_url are allowed. Empty returns to the
+	// control plane's dashboard.
+	ReturnUrl     string `protobuf:"bytes,1,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1281,6 +1300,13 @@ func (x *CreateBillingPortalSessionRequest) ProtoReflect() protoreflect.Message 
 // Deprecated: Use CreateBillingPortalSessionRequest.ProtoReflect.Descriptor instead.
 func (*CreateBillingPortalSessionRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *CreateBillingPortalSessionRequest) GetReturnUrl() string {
+	if x != nil {
+		return x.ReturnUrl
+	}
+	return ""
 }
 
 type CreateBillingPortalSessionResponse struct {
@@ -3720,12 +3746,16 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"k\n" +
 	"\x11ListPlansResponse\x12.\n" +
 	"\x05plans\x18\x01 \x03(\v2\x18.toshi.workspace.v1.PlanR\x05plans\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"2\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"Q\n" +
 	"\x1cCreateCheckoutSessionRequest\x12\x12\n" +
-	"\x04plan\x18\x01 \x01(\tR\x04plan\"1\n" +
+	"\x04plan\x18\x01 \x01(\tR\x04plan\x12\x1d\n" +
+	"\n" +
+	"return_url\x18\x02 \x01(\tR\treturnUrl\"1\n" +
 	"\x1dCreateCheckoutSessionResponse\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url\"#\n" +
-	"!CreateBillingPortalSessionRequest\"6\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\"B\n" +
+	"!CreateBillingPortalSessionRequest\x12\x1d\n" +
+	"\n" +
+	"return_url\x18\x01 \x01(\tR\treturnUrl\"6\n" +
 	"\"CreateBillingPortalSessionResponse\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\"\x13\n" +
 	"\x11GetVersionRequest\"\x8e\x01\n" +

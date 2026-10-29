@@ -143,14 +143,16 @@ type WorkspaceServiceClient interface {
 	ListPlans(context.Context, *connect.Request[workspacev1.ListPlansRequest]) (*connect.Response[workspacev1.ListPlansResponse], error)
 	// CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
 	// workspace to plan, first creating and linking a billing customer for a
-	// workspace without one. An empty plan, or a plan the configuration does
-	// not define, fails with INVALID_ARGUMENT; self-serve billing off, a plan
-	// that is not sold or maps to several lookup keys, a price missing in
-	// Stripe, or a workspace that already has a subscription fails with
-	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
+	// workspace without one. An empty plan, a plan the configuration does not
+	// define, or a return_url outside the allowed origins fails with
+	// INVALID_ARGUMENT; self-serve billing off, a plan that is not sold or
+	// maps to several lookup keys, a price missing in Stripe, or a workspace
+	// that already has a subscription fails with FAILED_PRECONDITION; a
+	// billing provider failure fails with UNAVAILABLE.
 	CreateCheckoutSession(context.Context, *connect.Request[workspacev1.CreateCheckoutSessionRequest]) (*connect.Response[workspacev1.CreateCheckoutSessionResponse], error)
 	// CreateBillingPortalSession returns a Stripe Customer Portal URL where
-	// the workspace manages its card and subscription. Self-serve billing not
+	// the workspace manages its card and subscription. A return_url outside
+	// the allowed origins fails with INVALID_ARGUMENT; self-serve billing not
 	// configured, or a workspace with no billing customer, fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
 	CreateBillingPortalSession(context.Context, *connect.Request[workspacev1.CreateBillingPortalSessionRequest]) (*connect.Response[workspacev1.CreateBillingPortalSessionResponse], error)
@@ -402,14 +404,16 @@ type WorkspaceServiceHandler interface {
 	ListPlans(context.Context, *connect.Request[workspacev1.ListPlansRequest]) (*connect.Response[workspacev1.ListPlansResponse], error)
 	// CreateCheckoutSession returns a Stripe Checkout URL that subscribes the
 	// workspace to plan, first creating and linking a billing customer for a
-	// workspace without one. An empty plan, or a plan the configuration does
-	// not define, fails with INVALID_ARGUMENT; self-serve billing off, a plan
-	// that is not sold or maps to several lookup keys, a price missing in
-	// Stripe, or a workspace that already has a subscription fails with
-	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
+	// workspace without one. An empty plan, a plan the configuration does not
+	// define, or a return_url outside the allowed origins fails with
+	// INVALID_ARGUMENT; self-serve billing off, a plan that is not sold or
+	// maps to several lookup keys, a price missing in Stripe, or a workspace
+	// that already has a subscription fails with FAILED_PRECONDITION; a
+	// billing provider failure fails with UNAVAILABLE.
 	CreateCheckoutSession(context.Context, *connect.Request[workspacev1.CreateCheckoutSessionRequest]) (*connect.Response[workspacev1.CreateCheckoutSessionResponse], error)
 	// CreateBillingPortalSession returns a Stripe Customer Portal URL where
-	// the workspace manages its card and subscription. Self-serve billing not
+	// the workspace manages its card and subscription. A return_url outside
+	// the allowed origins fails with INVALID_ARGUMENT; self-serve billing not
 	// configured, or a workspace with no billing customer, fails with
 	// FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
 	CreateBillingPortalSession(context.Context, *connect.Request[workspacev1.CreateBillingPortalSessionRequest]) (*connect.Response[workspacev1.CreateBillingPortalSessionResponse], error)
