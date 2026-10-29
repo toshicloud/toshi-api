@@ -95,7 +95,8 @@ message Trigger {
   // Further limits on a pull request event; unset matches every one.
   TriggerFilter filter = 7;
   TriggerAction action = 8;
-  // What CREATE makes; unset for DELETE.
+  // What CREATE makes, or the service DELIVER delivers to; unset for
+  // DELETE.
   TriggerTarget target = 9;
   // A template over the event's data that names the workload an event is
   // about: `{path}` is the value at that dot-separated path of the data, a
@@ -103,12 +104,13 @@ message Trigger {
   // workloads it makes carry the result as the label toshi.trigger.key.
   // Unset for pull request events, it is `{repository.full_name}#{number}`;
   // unset for any other event, a create fails with INVALID_ARGUMENT.
+  // DELIVER takes none.
   string key = 10;
   // How long a workload it made may go without a request before it is
-  // removed; unset is 2 hours.
+  // removed; unset is 2 hours. DELIVER takes none.
   google.protobuf.Duration idle_timeout = 11;
   // What it does with a pull request whose head repository is not its base
-  // repository.
+  // repository. DELIVER takes none.
   TriggerForks forks = 12;
   // Set by the server; ignored in a request.
   google.protobuf.Timestamp created_at = 13;
@@ -138,14 +140,30 @@ enum TriggerAction {
   // Deletes the workloads the environment's CREATE triggers of the same
   // source made for the event's key.
   TRIGGER_ACTION_DELETE = 2;
+  // Puts the event on the target service's event channel, which wakes the
+  // service if it sleeps and posts the event to it. The message's source
+  // is the trigger, and the event's id makes its request key, so an event
+  // is put on the channel once.
+  TRIGGER_ACTION_DELIVER = 3;
 }
 
-// TriggerTarget is the workload a trigger's CREATE makes.
+// TriggerTarget is the workload a trigger's CREATE makes, or the service
+// its DELIVER delivers to.
 message TriggerTarget {
   oneof target {
     TriggerSandbox sandbox = 1;
     TriggerPreview preview = 2;
+    TriggerServiceChannel service = 3;
   }
+}
+
+// TriggerServiceChannel is the event channel a trigger's DELIVER puts its
+// events on.
+message TriggerServiceChannel {
+  // A service of the trigger's project and environment, by name. Required.
+  string service = 1;
+  // The name of one of the service's event channels. Required.
+  string channel = 2;
 }
 
 // TriggerPreview is a sandbox per pull request that the repository
