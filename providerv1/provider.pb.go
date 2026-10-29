@@ -5627,6 +5627,103 @@ func (x *PreviewAddrResponse) GetGuestPort() int32 {
 	return 0
 }
 
+type BindingAddrRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BindingAddrRequest) Reset() {
+	*x = BindingAddrRequest{}
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[101]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BindingAddrRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BindingAddrRequest) ProtoMessage() {}
+
+func (x *BindingAddrRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[101]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BindingAddrRequest.ProtoReflect.Descriptor instead.
+func (*BindingAddrRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{101}
+}
+
+func (x *BindingAddrRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type BindingAddrResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// False when the instance has no binding port.
+	Ok            bool   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
+	Addr          string `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BindingAddrResponse) Reset() {
+	*x = BindingAddrResponse{}
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[102]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BindingAddrResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BindingAddrResponse) ProtoMessage() {}
+
+func (x *BindingAddrResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_backend_provider_v1_provider_proto_msgTypes[102]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BindingAddrResponse.ProtoReflect.Descriptor instead.
+func (*BindingAddrResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_backend_provider_v1_provider_proto_rawDescGZIP(), []int{102}
+}
+
+func (x *BindingAddrResponse) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
+func (x *BindingAddrResponse) GetAddr() string {
+	if x != nil {
+		return x.Addr
+	}
+	return ""
+}
+
 var File_toshi_backend_provider_v1_provider_proto protoreflect.FileDescriptor
 
 const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
@@ -5959,7 +6056,12 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\x02ok\x18\x01 \x01(\bR\x02ok\x12\x12\n" +
 	"\x04addr\x18\x02 \x01(\tR\x04addr\x12\x1d\n" +
 	"\n" +
-	"guest_port\x18\x03 \x01(\x05R\tguestPort*\xa5\x02\n" +
+	"guest_port\x18\x03 \x01(\x05R\tguestPort\"$\n" +
+	"\x12BindingAddrRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"9\n" +
+	"\x13BindingAddrResponse\x12\x0e\n" +
+	"\x02ok\x18\x01 \x01(\bR\x02ok\x12\x12\n" +
+	"\x04addr\x18\x02 \x01(\tR\x04addr*\xa5\x02\n" +
 	"\tErrorCode\x12\x1a\n" +
 	"\x16ERROR_CODE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14ERROR_CODE_NOT_FOUND\x10\x01\x12!\n" +
@@ -5993,7 +6095,7 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\x18CHECK_STATUS_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fCHECK_STATUS_OK\x10\x01\x12\x15\n" +
 	"\x11CHECK_STATUS_WARN\x10\x02\x12\x15\n" +
-	"\x11CHECK_STATUS_FAIL\x10\x032\x89&\n" +
+	"\x11CHECK_STATUS_FAIL\x10\x032\xf7&\n" +
 	"\x0fProviderService\x12W\n" +
 	"\x04Open\x12&.toshi.backend.provider.v1.OpenRequest\x1a'.toshi.backend.provider.v1.OpenResponse\x12]\n" +
 	"\x06Create\x12(.toshi.backend.provider.v1.CreateRequest\x1a).toshi.backend.provider.v1.CreateResponse\x12r\n" +
@@ -6043,7 +6145,8 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\vReadConsole\x12-.toshi.backend.provider.v1.ReadConsoleRequest\x1a..toshi.backend.provider.v1.ReadConsoleResponse\x12u\n" +
 	"\x0eKeepConsoleLog\x120.toshi.backend.provider.v1.KeepConsoleLogRequest\x1a1.toshi.backend.provider.v1.KeepConsoleLogResponse\x12o\n" +
 	"\fDebugSSHAddr\x12..toshi.backend.provider.v1.DebugSSHAddrRequest\x1a/.toshi.backend.provider.v1.DebugSSHAddrResponse\x12l\n" +
-	"\vPreviewAddr\x12-.toshi.backend.provider.v1.PreviewAddrRequest\x1a..toshi.backend.provider.v1.PreviewAddrResponseB!Z\x1fgo.toshicloud.io/api/providerv1b\x06proto3"
+	"\vPreviewAddr\x12-.toshi.backend.provider.v1.PreviewAddrRequest\x1a..toshi.backend.provider.v1.PreviewAddrResponse\x12l\n" +
+	"\vBindingAddr\x12-.toshi.backend.provider.v1.BindingAddrRequest\x1a..toshi.backend.provider.v1.BindingAddrResponseB!Z\x1fgo.toshicloud.io/api/providerv1b\x06proto3"
 
 var (
 	file_toshi_backend_provider_v1_provider_proto_rawDescOnce sync.Once
@@ -6058,7 +6161,7 @@ func file_toshi_backend_provider_v1_provider_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_backend_provider_v1_provider_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_toshi_backend_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 106)
+var file_toshi_backend_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 108)
 var file_toshi_backend_provider_v1_provider_proto_goTypes = []any{
 	(ErrorCode)(0),                        // 0: toshi.backend.provider.v1.ErrorCode
 	(State)(0),                            // 1: toshi.backend.provider.v1.State
@@ -6167,13 +6270,15 @@ var file_toshi_backend_provider_v1_provider_proto_goTypes = []any{
 	(*DebugSSHAddrResponse)(nil),          // 104: toshi.backend.provider.v1.DebugSSHAddrResponse
 	(*PreviewAddrRequest)(nil),            // 105: toshi.backend.provider.v1.PreviewAddrRequest
 	(*PreviewAddrResponse)(nil),           // 106: toshi.backend.provider.v1.PreviewAddrResponse
-	nil,                                   // 107: toshi.backend.provider.v1.Spec.MetadataEntry
-	nil,                                   // 108: toshi.backend.provider.v1.Spec.LabelsEntry
-	nil,                                   // 109: toshi.backend.provider.v1.SetSnapshotRefsRequest.PoolsEntry
-	nil,                                   // 110: toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry
-	nil,                                   // 111: toshi.backend.provider.v1.StatusRequest.PoolsEntry
-	(*timestamppb.Timestamp)(nil),         // 112: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),           // 113: google.protobuf.Duration
+	(*BindingAddrRequest)(nil),            // 107: toshi.backend.provider.v1.BindingAddrRequest
+	(*BindingAddrResponse)(nil),           // 108: toshi.backend.provider.v1.BindingAddrResponse
+	nil,                                   // 109: toshi.backend.provider.v1.Spec.MetadataEntry
+	nil,                                   // 110: toshi.backend.provider.v1.Spec.LabelsEntry
+	nil,                                   // 111: toshi.backend.provider.v1.SetSnapshotRefsRequest.PoolsEntry
+	nil,                                   // 112: toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry
+	nil,                                   // 113: toshi.backend.provider.v1.StatusRequest.PoolsEntry
+	(*timestamppb.Timestamp)(nil),         // 114: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),           // 115: google.protobuf.Duration
 }
 var file_toshi_backend_provider_v1_provider_proto_depIdxs = []int32{
 	0,   // 0: toshi.backend.provider.v1.ProviderError.code:type_name -> toshi.backend.provider.v1.ErrorCode
@@ -6183,11 +6288,11 @@ var file_toshi_backend_provider_v1_provider_proto_depIdxs = []int32{
 	3,   // 4: toshi.backend.provider.v1.Disk.kind:type_name -> toshi.backend.provider.v1.DiskKind
 	2,   // 5: toshi.backend.provider.v1.Spec.os:type_name -> toshi.backend.provider.v1.OperatingSystem
 	9,   // 6: toshi.backend.provider.v1.Spec.disks:type_name -> toshi.backend.provider.v1.Disk
-	107, // 7: toshi.backend.provider.v1.Spec.metadata:type_name -> toshi.backend.provider.v1.Spec.MetadataEntry
-	108, // 8: toshi.backend.provider.v1.Spec.labels:type_name -> toshi.backend.provider.v1.Spec.LabelsEntry
+	109, // 7: toshi.backend.provider.v1.Spec.metadata:type_name -> toshi.backend.provider.v1.Spec.MetadataEntry
+	110, // 8: toshi.backend.provider.v1.Spec.labels:type_name -> toshi.backend.provider.v1.Spec.LabelsEntry
 	10,  // 9: toshi.backend.provider.v1.Instance.spec:type_name -> toshi.backend.provider.v1.Spec
 	1,   // 10: toshi.backend.provider.v1.Instance.state:type_name -> toshi.backend.provider.v1.State
-	112, // 11: toshi.backend.provider.v1.Instance.created_at:type_name -> google.protobuf.Timestamp
+	114, // 11: toshi.backend.provider.v1.Instance.created_at:type_name -> google.protobuf.Timestamp
 	14,  // 12: toshi.backend.provider.v1.ProviderConfig.host:type_name -> toshi.backend.provider.v1.HostFacts
 	13,  // 13: toshi.backend.provider.v1.OpenRequest.config:type_name -> toshi.backend.provider.v1.ProviderConfig
 	12,  // 14: toshi.backend.provider.v1.OpenResponse.capabilities:type_name -> toshi.backend.provider.v1.Capabilities
@@ -6205,9 +6310,9 @@ var file_toshi_backend_provider_v1_provider_proto_depIdxs = []int32{
 	10,  // 26: toshi.backend.provider.v1.RestoreRequest.spec:type_name -> toshi.backend.provider.v1.Spec
 	11,  // 27: toshi.backend.provider.v1.RestoreResponse.instance:type_name -> toshi.backend.provider.v1.Instance
 	10,  // 28: toshi.backend.provider.v1.ImageIdentityRequest.spec:type_name -> toshi.backend.provider.v1.Spec
-	109, // 29: toshi.backend.provider.v1.SetSnapshotRefsRequest.pools:type_name -> toshi.backend.provider.v1.SetSnapshotRefsRequest.PoolsEntry
-	110, // 30: toshi.backend.provider.v1.SetSnapshotRefsRequest.dropped:type_name -> toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry
-	113, // 31: toshi.backend.provider.v1.CollectRequest.grace:type_name -> google.protobuf.Duration
+	111, // 29: toshi.backend.provider.v1.SetSnapshotRefsRequest.pools:type_name -> toshi.backend.provider.v1.SetSnapshotRefsRequest.PoolsEntry
+	112, // 30: toshi.backend.provider.v1.SetSnapshotRefsRequest.dropped:type_name -> toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry
+	115, // 31: toshi.backend.provider.v1.CollectRequest.grace:type_name -> google.protobuf.Duration
 	67,  // 32: toshi.backend.provider.v1.BaseImagesResponse.bases:type_name -> toshi.backend.provider.v1.BaseImage
 	13,  // 33: toshi.backend.provider.v1.DescribeRequest.config:type_name -> toshi.backend.provider.v1.ProviderConfig
 	12,  // 34: toshi.backend.provider.v1.DescribeResponse.capabilities:type_name -> toshi.backend.provider.v1.Capabilities
@@ -6215,15 +6320,15 @@ var file_toshi_backend_provider_v1_provider_proto_depIdxs = []int32{
 	13,  // 36: toshi.backend.provider.v1.PreflightRequest.config:type_name -> toshi.backend.provider.v1.ProviderConfig
 	72,  // 37: toshi.backend.provider.v1.PreflightResponse.results:type_name -> toshi.backend.provider.v1.CheckResult
 	13,  // 38: toshi.backend.provider.v1.StatusRequest.config:type_name -> toshi.backend.provider.v1.ProviderConfig
-	111, // 39: toshi.backend.provider.v1.StatusRequest.pools:type_name -> toshi.backend.provider.v1.StatusRequest.PoolsEntry
-	112, // 40: toshi.backend.provider.v1.StatusRequest.now:type_name -> google.protobuf.Timestamp
-	113, // 41: toshi.backend.provider.v1.StatusRequest.grace:type_name -> google.protobuf.Duration
+	113, // 39: toshi.backend.provider.v1.StatusRequest.pools:type_name -> toshi.backend.provider.v1.StatusRequest.PoolsEntry
+	114, // 40: toshi.backend.provider.v1.StatusRequest.now:type_name -> google.protobuf.Timestamp
+	115, // 41: toshi.backend.provider.v1.StatusRequest.grace:type_name -> google.protobuf.Duration
 	72,  // 42: toshi.backend.provider.v1.StatusResponse.results:type_name -> toshi.backend.provider.v1.CheckResult
 	10,  // 43: toshi.backend.provider.v1.IdleMemoryMiBRequest.spec:type_name -> toshi.backend.provider.v1.Spec
-	113, // 44: toshi.backend.provider.v1.UsageResponse.cpu_time:type_name -> google.protobuf.Duration
-	113, // 45: toshi.backend.provider.v1.UsageResponse.cpu_wait:type_name -> google.protobuf.Duration
-	113, // 46: toshi.backend.provider.v1.ReadConsoleRequest.wait:type_name -> google.protobuf.Duration
-	112, // 47: toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry.value:type_name -> google.protobuf.Timestamp
+	115, // 44: toshi.backend.provider.v1.UsageResponse.cpu_time:type_name -> google.protobuf.Duration
+	115, // 45: toshi.backend.provider.v1.UsageResponse.cpu_wait:type_name -> google.protobuf.Duration
+	115, // 46: toshi.backend.provider.v1.ReadConsoleRequest.wait:type_name -> google.protobuf.Duration
+	114, // 47: toshi.backend.provider.v1.SetSnapshotRefsRequest.DroppedEntry.value:type_name -> google.protobuf.Timestamp
 	15,  // 48: toshi.backend.provider.v1.ProviderService.Open:input_type -> toshi.backend.provider.v1.OpenRequest
 	17,  // 49: toshi.backend.provider.v1.ProviderService.Create:input_type -> toshi.backend.provider.v1.CreateRequest
 	19,  // 50: toshi.backend.provider.v1.ProviderService.CreateOutcome:input_type -> toshi.backend.provider.v1.CreateOutcomeRequest
@@ -6269,53 +6374,55 @@ var file_toshi_backend_provider_v1_provider_proto_depIdxs = []int32{
 	101, // 90: toshi.backend.provider.v1.ProviderService.KeepConsoleLog:input_type -> toshi.backend.provider.v1.KeepConsoleLogRequest
 	103, // 91: toshi.backend.provider.v1.ProviderService.DebugSSHAddr:input_type -> toshi.backend.provider.v1.DebugSSHAddrRequest
 	105, // 92: toshi.backend.provider.v1.ProviderService.PreviewAddr:input_type -> toshi.backend.provider.v1.PreviewAddrRequest
-	16,  // 93: toshi.backend.provider.v1.ProviderService.Open:output_type -> toshi.backend.provider.v1.OpenResponse
-	18,  // 94: toshi.backend.provider.v1.ProviderService.Create:output_type -> toshi.backend.provider.v1.CreateResponse
-	20,  // 95: toshi.backend.provider.v1.ProviderService.CreateOutcome:output_type -> toshi.backend.provider.v1.CreateOutcomeResponse
-	22,  // 96: toshi.backend.provider.v1.ProviderService.Get:output_type -> toshi.backend.provider.v1.GetResponse
-	24,  // 97: toshi.backend.provider.v1.ProviderService.List:output_type -> toshi.backend.provider.v1.ListResponse
-	26,  // 98: toshi.backend.provider.v1.ProviderService.Start:output_type -> toshi.backend.provider.v1.StartResponse
-	28,  // 99: toshi.backend.provider.v1.ProviderService.Stop:output_type -> toshi.backend.provider.v1.StopResponse
-	30,  // 100: toshi.backend.provider.v1.ProviderService.Destroy:output_type -> toshi.backend.provider.v1.DestroyResponse
-	32,  // 101: toshi.backend.provider.v1.ProviderService.Wait:output_type -> toshi.backend.provider.v1.WaitResponse
-	34,  // 102: toshi.backend.provider.v1.ProviderService.CreateCacheBase:output_type -> toshi.backend.provider.v1.CreateCacheBaseResponse
-	36,  // 103: toshi.backend.provider.v1.ProviderService.CreateCacheOverlay:output_type -> toshi.backend.provider.v1.CreateCacheOverlayResponse
-	38,  // 104: toshi.backend.provider.v1.ProviderService.CacheRequiredBytes:output_type -> toshi.backend.provider.v1.CacheRequiredBytesResponse
-	40,  // 105: toshi.backend.provider.v1.ProviderService.FlattenCache:output_type -> toshi.backend.provider.v1.FlattenCacheResponse
-	42,  // 106: toshi.backend.provider.v1.ProviderService.AttachDisk:output_type -> toshi.backend.provider.v1.AttachDiskResponse
-	44,  // 107: toshi.backend.provider.v1.ProviderService.DiskHasData:output_type -> toshi.backend.provider.v1.DiskHasDataResponse
-	46,  // 108: toshi.backend.provider.v1.ProviderService.ExportDisk:output_type -> toshi.backend.provider.v1.ExportDiskResponse
-	48,  // 109: toshi.backend.provider.v1.ProviderService.InstanceGone:output_type -> toshi.backend.provider.v1.InstanceGoneResponse
-	50,  // 110: toshi.backend.provider.v1.ProviderService.Unreaped:output_type -> toshi.backend.provider.v1.UnreapedResponse
-	52,  // 111: toshi.backend.provider.v1.ProviderService.Snapshot:output_type -> toshi.backend.provider.v1.SnapshotResponse
-	54,  // 112: toshi.backend.provider.v1.ProviderService.Restore:output_type -> toshi.backend.provider.v1.RestoreResponse
-	56,  // 113: toshi.backend.provider.v1.ProviderService.ImageIdentity:output_type -> toshi.backend.provider.v1.ImageIdentityResponse
-	58,  // 114: toshi.backend.provider.v1.ProviderService.SnapshotImageIdentity:output_type -> toshi.backend.provider.v1.SnapshotImageIdentityResponse
-	60,  // 115: toshi.backend.provider.v1.ProviderService.SetSnapshotRefs:output_type -> toshi.backend.provider.v1.SetSnapshotRefsResponse
-	62,  // 116: toshi.backend.provider.v1.ProviderService.Collect:output_type -> toshi.backend.provider.v1.CollectResponse
-	64,  // 117: toshi.backend.provider.v1.ProviderService.Forget:output_type -> toshi.backend.provider.v1.ForgetResponse
-	66,  // 118: toshi.backend.provider.v1.ProviderService.BaseImages:output_type -> toshi.backend.provider.v1.BaseImagesResponse
-	69,  // 119: toshi.backend.provider.v1.ProviderService.CaptureDisk:output_type -> toshi.backend.provider.v1.CaptureDiskResponse
-	71,  // 120: toshi.backend.provider.v1.ProviderService.Describe:output_type -> toshi.backend.provider.v1.DescribeResponse
-	74,  // 121: toshi.backend.provider.v1.ProviderService.Preflight:output_type -> toshi.backend.provider.v1.PreflightResponse
-	76,  // 122: toshi.backend.provider.v1.ProviderService.Status:output_type -> toshi.backend.provider.v1.StatusResponse
-	78,  // 123: toshi.backend.provider.v1.ProviderService.IdleMemoryMiB:output_type -> toshi.backend.provider.v1.IdleMemoryMiBResponse
-	80,  // 124: toshi.backend.provider.v1.ProviderService.SetMemoryTarget:output_type -> toshi.backend.provider.v1.SetMemoryTargetResponse
-	82,  // 125: toshi.backend.provider.v1.ProviderService.MemoryMiB:output_type -> toshi.backend.provider.v1.MemoryMiBResponse
-	84,  // 126: toshi.backend.provider.v1.ProviderService.GuestAvailableMiB:output_type -> toshi.backend.provider.v1.GuestAvailableMiBResponse
-	86,  // 127: toshi.backend.provider.v1.ProviderService.SetMemoryHigh:output_type -> toshi.backend.provider.v1.SetMemoryHighResponse
-	88,  // 128: toshi.backend.provider.v1.ProviderService.Usage:output_type -> toshi.backend.provider.v1.UsageResponse
-	90,  // 129: toshi.backend.provider.v1.ProviderService.HostMemory:output_type -> toshi.backend.provider.v1.HostMemoryResponse
-	92,  // 130: toshi.backend.provider.v1.ProviderService.ProcessLimit:output_type -> toshi.backend.provider.v1.ProcessLimitResponse
-	94,  // 131: toshi.backend.provider.v1.ProviderService.DialGuest:output_type -> toshi.backend.provider.v1.DialGuestResponse
-	96,  // 132: toshi.backend.provider.v1.ProviderService.DialDisplay:output_type -> toshi.backend.provider.v1.DialDisplayResponse
-	98,  // 133: toshi.backend.provider.v1.ProviderService.CaptureScreen:output_type -> toshi.backend.provider.v1.CaptureScreenResponse
-	100, // 134: toshi.backend.provider.v1.ProviderService.ReadConsole:output_type -> toshi.backend.provider.v1.ReadConsoleResponse
-	102, // 135: toshi.backend.provider.v1.ProviderService.KeepConsoleLog:output_type -> toshi.backend.provider.v1.KeepConsoleLogResponse
-	104, // 136: toshi.backend.provider.v1.ProviderService.DebugSSHAddr:output_type -> toshi.backend.provider.v1.DebugSSHAddrResponse
-	106, // 137: toshi.backend.provider.v1.ProviderService.PreviewAddr:output_type -> toshi.backend.provider.v1.PreviewAddrResponse
-	93,  // [93:138] is the sub-list for method output_type
-	48,  // [48:93] is the sub-list for method input_type
+	107, // 93: toshi.backend.provider.v1.ProviderService.BindingAddr:input_type -> toshi.backend.provider.v1.BindingAddrRequest
+	16,  // 94: toshi.backend.provider.v1.ProviderService.Open:output_type -> toshi.backend.provider.v1.OpenResponse
+	18,  // 95: toshi.backend.provider.v1.ProviderService.Create:output_type -> toshi.backend.provider.v1.CreateResponse
+	20,  // 96: toshi.backend.provider.v1.ProviderService.CreateOutcome:output_type -> toshi.backend.provider.v1.CreateOutcomeResponse
+	22,  // 97: toshi.backend.provider.v1.ProviderService.Get:output_type -> toshi.backend.provider.v1.GetResponse
+	24,  // 98: toshi.backend.provider.v1.ProviderService.List:output_type -> toshi.backend.provider.v1.ListResponse
+	26,  // 99: toshi.backend.provider.v1.ProviderService.Start:output_type -> toshi.backend.provider.v1.StartResponse
+	28,  // 100: toshi.backend.provider.v1.ProviderService.Stop:output_type -> toshi.backend.provider.v1.StopResponse
+	30,  // 101: toshi.backend.provider.v1.ProviderService.Destroy:output_type -> toshi.backend.provider.v1.DestroyResponse
+	32,  // 102: toshi.backend.provider.v1.ProviderService.Wait:output_type -> toshi.backend.provider.v1.WaitResponse
+	34,  // 103: toshi.backend.provider.v1.ProviderService.CreateCacheBase:output_type -> toshi.backend.provider.v1.CreateCacheBaseResponse
+	36,  // 104: toshi.backend.provider.v1.ProviderService.CreateCacheOverlay:output_type -> toshi.backend.provider.v1.CreateCacheOverlayResponse
+	38,  // 105: toshi.backend.provider.v1.ProviderService.CacheRequiredBytes:output_type -> toshi.backend.provider.v1.CacheRequiredBytesResponse
+	40,  // 106: toshi.backend.provider.v1.ProviderService.FlattenCache:output_type -> toshi.backend.provider.v1.FlattenCacheResponse
+	42,  // 107: toshi.backend.provider.v1.ProviderService.AttachDisk:output_type -> toshi.backend.provider.v1.AttachDiskResponse
+	44,  // 108: toshi.backend.provider.v1.ProviderService.DiskHasData:output_type -> toshi.backend.provider.v1.DiskHasDataResponse
+	46,  // 109: toshi.backend.provider.v1.ProviderService.ExportDisk:output_type -> toshi.backend.provider.v1.ExportDiskResponse
+	48,  // 110: toshi.backend.provider.v1.ProviderService.InstanceGone:output_type -> toshi.backend.provider.v1.InstanceGoneResponse
+	50,  // 111: toshi.backend.provider.v1.ProviderService.Unreaped:output_type -> toshi.backend.provider.v1.UnreapedResponse
+	52,  // 112: toshi.backend.provider.v1.ProviderService.Snapshot:output_type -> toshi.backend.provider.v1.SnapshotResponse
+	54,  // 113: toshi.backend.provider.v1.ProviderService.Restore:output_type -> toshi.backend.provider.v1.RestoreResponse
+	56,  // 114: toshi.backend.provider.v1.ProviderService.ImageIdentity:output_type -> toshi.backend.provider.v1.ImageIdentityResponse
+	58,  // 115: toshi.backend.provider.v1.ProviderService.SnapshotImageIdentity:output_type -> toshi.backend.provider.v1.SnapshotImageIdentityResponse
+	60,  // 116: toshi.backend.provider.v1.ProviderService.SetSnapshotRefs:output_type -> toshi.backend.provider.v1.SetSnapshotRefsResponse
+	62,  // 117: toshi.backend.provider.v1.ProviderService.Collect:output_type -> toshi.backend.provider.v1.CollectResponse
+	64,  // 118: toshi.backend.provider.v1.ProviderService.Forget:output_type -> toshi.backend.provider.v1.ForgetResponse
+	66,  // 119: toshi.backend.provider.v1.ProviderService.BaseImages:output_type -> toshi.backend.provider.v1.BaseImagesResponse
+	69,  // 120: toshi.backend.provider.v1.ProviderService.CaptureDisk:output_type -> toshi.backend.provider.v1.CaptureDiskResponse
+	71,  // 121: toshi.backend.provider.v1.ProviderService.Describe:output_type -> toshi.backend.provider.v1.DescribeResponse
+	74,  // 122: toshi.backend.provider.v1.ProviderService.Preflight:output_type -> toshi.backend.provider.v1.PreflightResponse
+	76,  // 123: toshi.backend.provider.v1.ProviderService.Status:output_type -> toshi.backend.provider.v1.StatusResponse
+	78,  // 124: toshi.backend.provider.v1.ProviderService.IdleMemoryMiB:output_type -> toshi.backend.provider.v1.IdleMemoryMiBResponse
+	80,  // 125: toshi.backend.provider.v1.ProviderService.SetMemoryTarget:output_type -> toshi.backend.provider.v1.SetMemoryTargetResponse
+	82,  // 126: toshi.backend.provider.v1.ProviderService.MemoryMiB:output_type -> toshi.backend.provider.v1.MemoryMiBResponse
+	84,  // 127: toshi.backend.provider.v1.ProviderService.GuestAvailableMiB:output_type -> toshi.backend.provider.v1.GuestAvailableMiBResponse
+	86,  // 128: toshi.backend.provider.v1.ProviderService.SetMemoryHigh:output_type -> toshi.backend.provider.v1.SetMemoryHighResponse
+	88,  // 129: toshi.backend.provider.v1.ProviderService.Usage:output_type -> toshi.backend.provider.v1.UsageResponse
+	90,  // 130: toshi.backend.provider.v1.ProviderService.HostMemory:output_type -> toshi.backend.provider.v1.HostMemoryResponse
+	92,  // 131: toshi.backend.provider.v1.ProviderService.ProcessLimit:output_type -> toshi.backend.provider.v1.ProcessLimitResponse
+	94,  // 132: toshi.backend.provider.v1.ProviderService.DialGuest:output_type -> toshi.backend.provider.v1.DialGuestResponse
+	96,  // 133: toshi.backend.provider.v1.ProviderService.DialDisplay:output_type -> toshi.backend.provider.v1.DialDisplayResponse
+	98,  // 134: toshi.backend.provider.v1.ProviderService.CaptureScreen:output_type -> toshi.backend.provider.v1.CaptureScreenResponse
+	100, // 135: toshi.backend.provider.v1.ProviderService.ReadConsole:output_type -> toshi.backend.provider.v1.ReadConsoleResponse
+	102, // 136: toshi.backend.provider.v1.ProviderService.KeepConsoleLog:output_type -> toshi.backend.provider.v1.KeepConsoleLogResponse
+	104, // 137: toshi.backend.provider.v1.ProviderService.DebugSSHAddr:output_type -> toshi.backend.provider.v1.DebugSSHAddrResponse
+	106, // 138: toshi.backend.provider.v1.ProviderService.PreviewAddr:output_type -> toshi.backend.provider.v1.PreviewAddrResponse
+	108, // 139: toshi.backend.provider.v1.ProviderService.BindingAddr:output_type -> toshi.backend.provider.v1.BindingAddrResponse
+	94,  // [94:140] is the sub-list for method output_type
+	48,  // [48:94] is the sub-list for method input_type
 	48,  // [48:48] is the sub-list for extension type_name
 	48,  // [48:48] is the sub-list for extension extendee
 	0,   // [0:48] is the sub-list for field type_name
@@ -6332,7 +6439,7 @@ func file_toshi_backend_provider_v1_provider_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_backend_provider_v1_provider_proto_rawDesc), len(file_toshi_backend_provider_v1_provider_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   106,
+			NumMessages:   108,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

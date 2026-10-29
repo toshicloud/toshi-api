@@ -185,6 +185,9 @@ const (
 	// ProviderServicePreviewAddrProcedure is the fully-qualified name of the ProviderService's
 	// PreviewAddr RPC.
 	ProviderServicePreviewAddrProcedure = "/toshi.backend.provider.v1.ProviderService/PreviewAddr"
+	// ProviderServiceBindingAddrProcedure is the fully-qualified name of the ProviderService's
+	// BindingAddr RPC.
+	ProviderServiceBindingAddrProcedure = "/toshi.backend.provider.v1.ProviderService/BindingAddr"
 )
 
 // ProviderServiceClient is a client for the toshi.backend.provider.v1.ProviderService service.
@@ -338,6 +341,10 @@ type ProviderServiceClient interface {
 	// PreviewAddr returns the host loopback address that reaches the
 	// instance's preview port, and that port.
 	PreviewAddr(context.Context, *connect.Request[providerv1.PreviewAddrRequest]) (*connect.Response[providerv1.PreviewAddrResponse], error)
+	// BindingAddr returns the host loopback address that reaches the
+	// instance's binding port, the port a Linux guest's helper accepts the
+	// host's connections for bound services on.
+	BindingAddr(context.Context, *connect.Request[providerv1.BindingAddrRequest]) (*connect.Response[providerv1.BindingAddrResponse], error)
 }
 
 // NewProviderServiceClient constructs a client for the toshi.backend.provider.v1.ProviderService
@@ -621,6 +628,12 @@ func NewProviderServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(providerServiceMethods.ByName("PreviewAddr")),
 			connect.WithClientOptions(opts...),
 		),
+		bindingAddr: connect.NewClient[providerv1.BindingAddrRequest, providerv1.BindingAddrResponse](
+			httpClient,
+			baseURL+ProviderServiceBindingAddrProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("BindingAddr")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -671,6 +684,7 @@ type providerServiceClient struct {
 	keepConsoleLog        *connect.Client[providerv1.KeepConsoleLogRequest, providerv1.KeepConsoleLogResponse]
 	debugSSHAddr          *connect.Client[providerv1.DebugSSHAddrRequest, providerv1.DebugSSHAddrResponse]
 	previewAddr           *connect.Client[providerv1.PreviewAddrRequest, providerv1.PreviewAddrResponse]
+	bindingAddr           *connect.Client[providerv1.BindingAddrRequest, providerv1.BindingAddrResponse]
 }
 
 // Open calls toshi.backend.provider.v1.ProviderService.Open.
@@ -898,6 +912,11 @@ func (c *providerServiceClient) PreviewAddr(ctx context.Context, req *connect.Re
 	return c.previewAddr.CallUnary(ctx, req)
 }
 
+// BindingAddr calls toshi.backend.provider.v1.ProviderService.BindingAddr.
+func (c *providerServiceClient) BindingAddr(ctx context.Context, req *connect.Request[providerv1.BindingAddrRequest]) (*connect.Response[providerv1.BindingAddrResponse], error) {
+	return c.bindingAddr.CallUnary(ctx, req)
+}
+
 // ProviderServiceHandler is an implementation of the toshi.backend.provider.v1.ProviderService
 // service.
 type ProviderServiceHandler interface {
@@ -1050,6 +1069,10 @@ type ProviderServiceHandler interface {
 	// PreviewAddr returns the host loopback address that reaches the
 	// instance's preview port, and that port.
 	PreviewAddr(context.Context, *connect.Request[providerv1.PreviewAddrRequest]) (*connect.Response[providerv1.PreviewAddrResponse], error)
+	// BindingAddr returns the host loopback address that reaches the
+	// instance's binding port, the port a Linux guest's helper accepts the
+	// host's connections for bound services on.
+	BindingAddr(context.Context, *connect.Request[providerv1.BindingAddrRequest]) (*connect.Response[providerv1.BindingAddrResponse], error)
 }
 
 // NewProviderServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -1329,6 +1352,12 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 		connect.WithSchema(providerServiceMethods.ByName("PreviewAddr")),
 		connect.WithHandlerOptions(opts...),
 	)
+	providerServiceBindingAddrHandler := connect.NewUnaryHandler(
+		ProviderServiceBindingAddrProcedure,
+		svc.BindingAddr,
+		connect.WithSchema(providerServiceMethods.ByName("BindingAddr")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.backend.provider.v1.ProviderService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ProviderServiceOpenProcedure:
@@ -1421,6 +1450,8 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 			providerServiceDebugSSHAddrHandler.ServeHTTP(w, r)
 		case ProviderServicePreviewAddrProcedure:
 			providerServicePreviewAddrHandler.ServeHTTP(w, r)
+		case ProviderServiceBindingAddrProcedure:
+			providerServiceBindingAddrHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -1608,4 +1639,8 @@ func (UnimplementedProviderServiceHandler) DebugSSHAddr(context.Context, *connec
 
 func (UnimplementedProviderServiceHandler) PreviewAddr(context.Context, *connect.Request[providerv1.PreviewAddrRequest]) (*connect.Response[providerv1.PreviewAddrResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.PreviewAddr is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) BindingAddr(context.Context, *connect.Request[providerv1.BindingAddrRequest]) (*connect.Response[providerv1.BindingAddrResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.BindingAddr is not implemented"))
 }

@@ -232,6 +232,10 @@ service ProviderService {
   // PreviewAddr returns the host loopback address that reaches the
   // instance's preview port, and that port.
   rpc PreviewAddr(PreviewAddrRequest) returns (PreviewAddrResponse);
+  // BindingAddr returns the host loopback address that reaches the
+  // instance's binding port, the port a Linux guest's helper accepts the
+  // host's connections for bound services on.
+  rpc BindingAddr(BindingAddrRequest) returns (BindingAddrResponse);
 }
 
 // ErrorCode names an error of the provider contract.
@@ -885,4 +889,14 @@ message PreviewAddrResponse {
   bool ok = 1;
   string addr = 2;
   int32 guest_port = 3;
+}
+
+message BindingAddrRequest {
+  string id = 1;
+}
+
+message BindingAddrResponse {
+  // False when the instance has no binding port.
+  bool ok = 1;
+  string addr = 2;
 }
