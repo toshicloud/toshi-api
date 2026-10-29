@@ -48,6 +48,15 @@ const (
 	// WorkspaceServiceGetWorkspaceStatementProcedure is the fully-qualified name of the
 	// WorkspaceService's GetWorkspaceStatement RPC.
 	WorkspaceServiceGetWorkspaceStatementProcedure = "/toshi.workspace.v1.WorkspaceService/GetWorkspaceStatement"
+	// WorkspaceServiceListSeatsProcedure is the fully-qualified name of the WorkspaceService's
+	// ListSeats RPC.
+	WorkspaceServiceListSeatsProcedure = "/toshi.workspace.v1.WorkspaceService/ListSeats"
+	// WorkspaceServiceAssignSeatProcedure is the fully-qualified name of the WorkspaceService's
+	// AssignSeat RPC.
+	WorkspaceServiceAssignSeatProcedure = "/toshi.workspace.v1.WorkspaceService/AssignSeat"
+	// WorkspaceServiceRemoveSeatProcedure is the fully-qualified name of the WorkspaceService's
+	// RemoveSeat RPC.
+	WorkspaceServiceRemoveSeatProcedure = "/toshi.workspace.v1.WorkspaceService/RemoveSeat"
 	// WorkspaceServiceListEgressIPsProcedure is the fully-qualified name of the WorkspaceService's
 	// ListEgressIPs RPC.
 	WorkspaceServiceListEgressIPsProcedure = "/toshi.workspace.v1.WorkspaceService/ListEgressIPs"
@@ -113,6 +122,24 @@ type WorkspaceServiceClient interface {
 	// and held time by reason. A month not in YYYY-MM form fails with
 	// INVALID_ARGUMENT.
 	GetWorkspaceStatement(context.Context, *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error)
+	// ListSeats returns the desktop seats the workspace held in one UTC
+	// month, oldest assigned first: the seats live at some time in it,
+	// removed ones included. A person assigned a seat may open a display on
+	// Windows that Toshi licenses; each seat is billed for every month it
+	// touches. A month not in YYYY-MM form fails with INVALID_ARGUMENT.
+	ListSeats(context.Context, *connect.Request[workspacev1.ListSeatsRequest]) (*connect.Response[workspacev1.ListSeatsResponse], error)
+	// AssignSeat assigns a desktop seat to a member of the workspace. A
+	// person who holds a live seat fails with ALREADY_EXISTS, and one who is
+	// not a member with NOT_FOUND. A seat removed this month stays billed for
+	// it, so assigning a seat to another person in its place is a second
+	// seat.
+	AssignSeat(context.Context, *connect.Request[workspacev1.AssignSeatRequest]) (*connect.Response[workspacev1.AssignSeatResponse], error)
+	// RemoveSeat removes a live seat: its person may open no display on
+	// Windows that Toshi licenses from then on, and the seat stays billed for
+	// the months it touched. A seat the workspace does not have, or one
+	// already removed, fails with NOT_FOUND. A member's removal from the
+	// workspace removes their seat too.
+	RemoveSeat(context.Context, *connect.Request[workspacev1.RemoveSeatRequest]) (*connect.Response[workspacev1.RemoveSeatResponse], error)
 	// ListEgressIPs returns the public addresses the workspace's jobs may
 	// reach the internet from: the egress addresses of the hosts its jobs can
 	// land on, its own hosts and, unless it runs on its own hosts only, the
@@ -202,6 +229,24 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspaceStatement")),
 			connect.WithClientOptions(opts...),
 		),
+		listSeats: connect.NewClient[workspacev1.ListSeatsRequest, workspacev1.ListSeatsResponse](
+			httpClient,
+			baseURL+WorkspaceServiceListSeatsProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("ListSeats")),
+			connect.WithClientOptions(opts...),
+		),
+		assignSeat: connect.NewClient[workspacev1.AssignSeatRequest, workspacev1.AssignSeatResponse](
+			httpClient,
+			baseURL+WorkspaceServiceAssignSeatProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("AssignSeat")),
+			connect.WithClientOptions(opts...),
+		),
+		removeSeat: connect.NewClient[workspacev1.RemoveSeatRequest, workspacev1.RemoveSeatResponse](
+			httpClient,
+			baseURL+WorkspaceServiceRemoveSeatProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("RemoveSeat")),
+			connect.WithClientOptions(opts...),
+		),
 		listEgressIPs: connect.NewClient[workspacev1.ListEgressIPsRequest, workspacev1.ListEgressIPsResponse](
 			httpClient,
 			baseURL+WorkspaceServiceListEgressIPsProcedure,
@@ -260,6 +305,9 @@ type workspaceServiceClient struct {
 	listWorkspaces             *connect.Client[workspacev1.ListWorkspacesRequest, workspacev1.ListWorkspacesResponse]
 	getWorkspaceBilling        *connect.Client[workspacev1.GetWorkspaceBillingRequest, workspacev1.GetWorkspaceBillingResponse]
 	getWorkspaceStatement      *connect.Client[workspacev1.GetWorkspaceStatementRequest, workspacev1.GetWorkspaceStatementResponse]
+	listSeats                  *connect.Client[workspacev1.ListSeatsRequest, workspacev1.ListSeatsResponse]
+	assignSeat                 *connect.Client[workspacev1.AssignSeatRequest, workspacev1.AssignSeatResponse]
+	removeSeat                 *connect.Client[workspacev1.RemoveSeatRequest, workspacev1.RemoveSeatResponse]
 	listEgressIPs              *connect.Client[workspacev1.ListEgressIPsRequest, workspacev1.ListEgressIPsResponse]
 	getUsage                   *connect.Client[workspacev1.GetUsageRequest, workspacev1.GetUsageResponse]
 	getQueueTimes              *connect.Client[workspacev1.GetQueueTimesRequest, workspacev1.GetQueueTimesResponse]
@@ -293,6 +341,21 @@ func (c *workspaceServiceClient) GetWorkspaceBilling(ctx context.Context, req *c
 // GetWorkspaceStatement calls toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement.
 func (c *workspaceServiceClient) GetWorkspaceStatement(ctx context.Context, req *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error) {
 	return c.getWorkspaceStatement.CallUnary(ctx, req)
+}
+
+// ListSeats calls toshi.workspace.v1.WorkspaceService.ListSeats.
+func (c *workspaceServiceClient) ListSeats(ctx context.Context, req *connect.Request[workspacev1.ListSeatsRequest]) (*connect.Response[workspacev1.ListSeatsResponse], error) {
+	return c.listSeats.CallUnary(ctx, req)
+}
+
+// AssignSeat calls toshi.workspace.v1.WorkspaceService.AssignSeat.
+func (c *workspaceServiceClient) AssignSeat(ctx context.Context, req *connect.Request[workspacev1.AssignSeatRequest]) (*connect.Response[workspacev1.AssignSeatResponse], error) {
+	return c.assignSeat.CallUnary(ctx, req)
+}
+
+// RemoveSeat calls toshi.workspace.v1.WorkspaceService.RemoveSeat.
+func (c *workspaceServiceClient) RemoveSeat(ctx context.Context, req *connect.Request[workspacev1.RemoveSeatRequest]) (*connect.Response[workspacev1.RemoveSeatResponse], error) {
+	return c.removeSeat.CallUnary(ctx, req)
 }
 
 // ListEgressIPs calls toshi.workspace.v1.WorkspaceService.ListEgressIPs.
@@ -374,6 +437,24 @@ type WorkspaceServiceHandler interface {
 	// and held time by reason. A month not in YYYY-MM form fails with
 	// INVALID_ARGUMENT.
 	GetWorkspaceStatement(context.Context, *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error)
+	// ListSeats returns the desktop seats the workspace held in one UTC
+	// month, oldest assigned first: the seats live at some time in it,
+	// removed ones included. A person assigned a seat may open a display on
+	// Windows that Toshi licenses; each seat is billed for every month it
+	// touches. A month not in YYYY-MM form fails with INVALID_ARGUMENT.
+	ListSeats(context.Context, *connect.Request[workspacev1.ListSeatsRequest]) (*connect.Response[workspacev1.ListSeatsResponse], error)
+	// AssignSeat assigns a desktop seat to a member of the workspace. A
+	// person who holds a live seat fails with ALREADY_EXISTS, and one who is
+	// not a member with NOT_FOUND. A seat removed this month stays billed for
+	// it, so assigning a seat to another person in its place is a second
+	// seat.
+	AssignSeat(context.Context, *connect.Request[workspacev1.AssignSeatRequest]) (*connect.Response[workspacev1.AssignSeatResponse], error)
+	// RemoveSeat removes a live seat: its person may open no display on
+	// Windows that Toshi licenses from then on, and the seat stays billed for
+	// the months it touched. A seat the workspace does not have, or one
+	// already removed, fails with NOT_FOUND. A member's removal from the
+	// workspace removes their seat too.
+	RemoveSeat(context.Context, *connect.Request[workspacev1.RemoveSeatRequest]) (*connect.Response[workspacev1.RemoveSeatResponse], error)
 	// ListEgressIPs returns the public addresses the workspace's jobs may
 	// reach the internet from: the egress addresses of the hosts its jobs can
 	// land on, its own hosts and, unless it runs on its own hosts only, the
@@ -459,6 +540,24 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspaceStatement")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceListSeatsHandler := connect.NewUnaryHandler(
+		WorkspaceServiceListSeatsProcedure,
+		svc.ListSeats,
+		connect.WithSchema(workspaceServiceMethods.ByName("ListSeats")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceAssignSeatHandler := connect.NewUnaryHandler(
+		WorkspaceServiceAssignSeatProcedure,
+		svc.AssignSeat,
+		connect.WithSchema(workspaceServiceMethods.ByName("AssignSeat")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceRemoveSeatHandler := connect.NewUnaryHandler(
+		WorkspaceServiceRemoveSeatProcedure,
+		svc.RemoveSeat,
+		connect.WithSchema(workspaceServiceMethods.ByName("RemoveSeat")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceListEgressIPsHandler := connect.NewUnaryHandler(
 		WorkspaceServiceListEgressIPsProcedure,
 		svc.ListEgressIPs,
@@ -519,6 +618,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceGetWorkspaceBillingHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetWorkspaceStatementProcedure:
 			workspaceServiceGetWorkspaceStatementHandler.ServeHTTP(w, r)
+		case WorkspaceServiceListSeatsProcedure:
+			workspaceServiceListSeatsHandler.ServeHTTP(w, r)
+		case WorkspaceServiceAssignSeatProcedure:
+			workspaceServiceAssignSeatHandler.ServeHTTP(w, r)
+		case WorkspaceServiceRemoveSeatProcedure:
+			workspaceServiceRemoveSeatHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListEgressIPsProcedure:
 			workspaceServiceListEgressIPsHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetUsageProcedure:
@@ -562,6 +667,18 @@ func (UnimplementedWorkspaceServiceHandler) GetWorkspaceBilling(context.Context,
 
 func (UnimplementedWorkspaceServiceHandler) GetWorkspaceStatement(context.Context, *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) ListSeats(context.Context, *connect.Request[workspacev1.ListSeatsRequest]) (*connect.Response[workspacev1.ListSeatsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.ListSeats is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) AssignSeat(context.Context, *connect.Request[workspacev1.AssignSeatRequest]) (*connect.Response[workspacev1.AssignSeatResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.AssignSeat is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) RemoveSeat(context.Context, *connect.Request[workspacev1.RemoveSeatRequest]) (*connect.Response[workspacev1.RemoveSeatResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.RemoveSeat is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) ListEgressIPs(context.Context, *connect.Request[workspacev1.ListEgressIPsRequest]) (*connect.Response[workspacev1.ListEgressIPsResponse], error) {

@@ -6,6 +6,7 @@ import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 import "toshi/workspace/v1/hosts.proto";
+import "toshi/workspace/v1/roles.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
@@ -67,6 +68,32 @@ service WorkspaceService {
   // INVALID_ARGUMENT.
   rpc GetWorkspaceStatement(GetWorkspaceStatementRequest) returns (GetWorkspaceStatementResponse) {
     option (toshi.permission) = "billing.read";
+  }
+  // ListSeats returns the desktop seats the workspace held in one UTC
+  // month, oldest assigned first: the seats live at some time in it,
+  // removed ones included. A person assigned a seat may open a display on
+  // Windows that Toshi licenses; each seat is billed for every month it
+  // touches. A month not in YYYY-MM form fails with INVALID_ARGUMENT.
+  rpc ListSeats(ListSeatsRequest) returns (ListSeatsResponse) {
+    option (toshi.permission) = "seats.read";
+  }
+  // AssignSeat assigns a desktop seat to a member of the workspace. A
+  // person who holds a live seat fails with ALREADY_EXISTS, and one who is
+  // not a member with NOT_FOUND. A seat removed this month stays billed for
+  // it, so assigning a seat to another person in its place is a second
+  // seat.
+  rpc AssignSeat(AssignSeatRequest) returns (AssignSeatResponse) {
+    option (toshi.permission) = "seats.write";
+    option (toshi.audit) = {action: "seat.assigned", target: "seat:response.seat.id"};
+  }
+  // RemoveSeat removes a live seat: its person may open no display on
+  // Windows that Toshi licenses from then on, and the seat stays billed for
+  // the months it touched. A seat the workspace does not have, or one
+  // already removed, fails with NOT_FOUND. A member's removal from the
+  // workspace removes their seat too.
+  rpc RemoveSeat(RemoveSeatRequest) returns (RemoveSeatResponse) {
+    option (toshi.permission) = "seats.write";
+    option (toshi.audit) = {action: "seat.removed"};
   }
   // ListEgressIPs returns the public addresses the workspace's jobs may
   // reach the internet from: the egress addresses of the hosts its jobs can
@@ -192,6 +219,55 @@ message GetWorkspaceStatementResponse {
   WorkspaceStatement statement = 1;
   // The statement as CSV with a header row, when the request asked for it.
   string csv = 2;
+}
+
+// Seat is one assignment of a desktop seat to a person.
+message Seat {
+  // The seat's id, such as "seat-0f1e2d3c4b5a69788796a5b4".
+  string id = 1;
+  // The Toshi user id of the person it is assigned to.
+  string user_id = 2;
+  google.protobuf.Timestamp assigned_at = 3;
+  // Who assigned it: a person, or the system for an operator's
+  // reassignment.
+  Subject assigned_by = 4;
+  // When it was removed; unset while the seat is live.
+  google.protobuf.Timestamp removed_at = 5;
+  // Who removed it; unset while the seat is live.
+  Subject removed_by = 6;
+  // The seat this one replaces when an operator moved a seat to this
+  // person within a month, and why: "hardware_failure" or
+  // "temporary_absence". Both are empty for an assigned seat, and the two
+  // seats are billed as one for that month.
+  string replaces = 7;
+  string replace_reason = 8;
+}
+
+message ListSeatsRequest {
+  // The UTC month as YYYY-MM. Empty: the current month.
+  string month = 1;
+}
+
+message ListSeatsResponse {
+  repeated Seat seats = 1;
+}
+
+message AssignSeatRequest {
+  // The Toshi user id of the member to assign a seat to.
+  string user_id = 1;
+}
+
+message AssignSeatResponse {
+  Seat seat = 1;
+}
+
+message RemoveSeatRequest {
+  string seat_id = 1;
+}
+
+message RemoveSeatResponse {
+  // The seat as removed.
+  Seat seat = 1;
 }
 
 message ListEgressIPsRequest {

@@ -123,6 +123,19 @@ service OperatorService {
   rpc SetTenantLimits(SetTenantLimitsRequest) returns (SetTenantLimitsResponse) {
     option (toshi.audit) = {action: "workspace.limits_set"};
   }
+  // ReassignSeat moves a workspace's live desktop seat to another member
+  // within the month, for a reason the workspace's licence allows:
+  // "hardware_failure" or "temporary_absence". It removes the seat and
+  // assigns its person's replacement at once, and the two are billed as
+  // one seat for that month. A workspace has no call of its own for it: a
+  // seat it removes stays billed, and another person's is a second seat.
+  // An empty seat_id or user_id, or another reason, fails with
+  // INVALID_ARGUMENT; a seat that is missing or removed, or a user_id that
+  // is not a member, with NOT_FOUND; a person who holds a live seat with
+  // ALREADY_EXISTS. The seat's own person fails with INVALID_ARGUMENT.
+  rpc ReassignSeat(ReassignSeatRequest) returns (ReassignSeatResponse) {
+    option (toshi.audit) = {action: "seat.reassigned"};
+  }
 
   // ListPlans returns configured plans sorted by name.
   //
@@ -1380,6 +1393,39 @@ message SetTenantLimitsRequest {
 
 message SetTenantLimitsResponse {
   Tenant tenant = 1;
+}
+
+// Seat is one assignment of a desktop seat to a person in a workspace, as
+// the Workspace API's Seat with its workspace.
+message Seat {
+  string id = 1;
+  string workspace = 2;
+  // The Toshi user id of the person it is assigned to.
+  string user_id = 3;
+  google.protobuf.Timestamp assigned_at = 4;
+  Subject assigned_by = 5;
+  // Unset while the seat is live.
+  google.protobuf.Timestamp removed_at = 6;
+  Subject removed_by = 7;
+  // The seat this one replaces after a ReassignSeat, and its reason.
+  string replaces = 8;
+  string replace_reason = 9;
+}
+
+message ReassignSeatRequest {
+  // The live seat to move.
+  string seat_id = 1;
+  // The Toshi user id of the member who takes it.
+  string user_id = 2;
+  // "hardware_failure" or "temporary_absence".
+  string reason = 3;
+}
+
+message ReassignSeatResponse {
+  // The removed seat.
+  Seat replaced = 1;
+  // The new seat, which replaces it.
+  Seat seat = 2;
 }
 
 message SuspendTenantRequest {
