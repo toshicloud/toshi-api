@@ -5,7 +5,7 @@ syntax = "proto3";
 // of that backend's protocol it speaks and what it can do.
 //
 // A backend is a program Toshi reaches over gRPC (HTTP/2 without TLS) on a
-// local Unix socket, one socket per program, such as a key provider. Each
+// local Unix socket, one socket per program, such as a VM provider. Each
 // kind of backend has its own protocol, a package
 // toshi.backend.<type>.v<N>; N is that protocol's version. On the same socket
 // a backend serves BackendService, its own protocol's service, and the
@@ -28,14 +28,14 @@ service BackendService {
 }
 
 message HandshakeRequest {
-  // The type of backend the caller expects, such as "key_provider".
+  // The type of backend the caller expects, such as "vm_provider".
   string backend_type = 1;
   // The versions of that type's protocol the caller speaks.
   repeated uint32 protocol_versions = 2;
 }
 
 message HandshakeResponse {
-  // The type of backend this program is, such as "key_provider".
+  // The type of backend this program is, such as "vm_provider".
   string backend_type = 1;
   // The versions of its type's protocol this program serves, each as the
   // package toshi.backend.<type>.v<N> on the same socket.

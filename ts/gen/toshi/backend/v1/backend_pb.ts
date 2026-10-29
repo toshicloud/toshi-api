@@ -7,7 +7,7 @@
 // of that backend's protocol it speaks and what it can do.
 //
 // A backend is a program Toshi reaches over gRPC (HTTP/2 without TLS) on a
-// local Unix socket, one socket per program, such as a key provider. Each
+// local Unix socket, one socket per program, such as a VM provider. Each
 // kind of backend has its own protocol, a package
 // toshi.backend.<type>.v<N>; N is that protocol's version. On the same socket
 // a backend serves BackendService, its own protocol's service, and the
@@ -33,7 +33,7 @@ export const file_toshi_backend_v1_backend: GenFile = /*@__PURE__*/
  */
 export type HandshakeRequest = Message<"toshi.backend.v1.HandshakeRequest"> & {
   /**
-   * The type of backend the caller expects, such as "key_provider".
+   * The type of backend the caller expects, such as "vm_provider".
    *
    * @generated from field: string backend_type = 1;
    */
@@ -52,7 +52,7 @@ export type HandshakeRequest = Message<"toshi.backend.v1.HandshakeRequest"> & {
  */
 export type HandshakeRequestJson = {
   /**
-   * The type of backend the caller expects, such as "key_provider".
+   * The type of backend the caller expects, such as "vm_provider".
    *
    * @generated from field: string backend_type = 1;
    */
@@ -78,7 +78,7 @@ export const HandshakeRequestSchema: GenMessage<HandshakeRequest, {jsonType: Han
  */
 export type HandshakeResponse = Message<"toshi.backend.v1.HandshakeResponse"> & {
   /**
-   * The type of backend this program is, such as "key_provider".
+   * The type of backend this program is, such as "vm_provider".
    *
    * @generated from field: string backend_type = 1;
    */
@@ -126,7 +126,7 @@ export type HandshakeResponse = Message<"toshi.backend.v1.HandshakeResponse"> & 
  */
 export type HandshakeResponseJson = {
   /**
-   * The type of backend this program is, such as "key_provider".
+   * The type of backend this program is, such as "vm_provider".
    *
    * @generated from field: string backend_type = 1;
    */

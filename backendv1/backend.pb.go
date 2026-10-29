@@ -9,7 +9,7 @@
 // of that backend's protocol it speaks and what it can do.
 //
 // A backend is a program Toshi reaches over gRPC (HTTP/2 without TLS) on a
-// local Unix socket, one socket per program, such as a key provider. Each
+// local Unix socket, one socket per program, such as a VM provider. Each
 // kind of backend has its own protocol, a package
 // toshi.backend.<type>.v<N>; N is that protocol's version. On the same socket
 // a backend serves BackendService, its own protocol's service, and the
@@ -39,7 +39,7 @@ const (
 
 type HandshakeRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The type of backend the caller expects, such as "key_provider".
+	// The type of backend the caller expects, such as "vm_provider".
 	BackendType string `protobuf:"bytes,1,opt,name=backend_type,json=backendType,proto3" json:"backend_type,omitempty"`
 	// The versions of that type's protocol the caller speaks.
 	ProtocolVersions []uint32 `protobuf:"varint,2,rep,packed,name=protocol_versions,json=protocolVersions,proto3" json:"protocol_versions,omitempty"`
@@ -93,7 +93,7 @@ func (x *HandshakeRequest) GetProtocolVersions() []uint32 {
 
 type HandshakeResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The type of backend this program is, such as "key_provider".
+	// The type of backend this program is, such as "vm_provider".
 	BackendType string `protobuf:"bytes,1,opt,name=backend_type,json=backendType,proto3" json:"backend_type,omitempty"`
 	// The versions of its type's protocol this program serves, each as the
 	// package toshi.backend.<type>.v<N> on the same socket.
