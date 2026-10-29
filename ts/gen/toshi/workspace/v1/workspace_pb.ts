@@ -10120,7 +10120,8 @@ export enum EventType {
   WORKLOAD_STATE_CHANGED = 2,
 
   /**
-   * A workload's labels changed. Name: "<kind>.updated".
+   * A workload's labels changed, a sandbox's process started, or the
+   * prompts an agent waits on changed. Name: "<kind>.updated".
    *
    * @generated from enum value: EVENT_TYPE_WORKLOAD_UPDATED = 3;
    */

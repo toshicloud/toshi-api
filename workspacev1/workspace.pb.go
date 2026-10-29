@@ -477,7 +477,8 @@ const (
 	EventType_EVENT_TYPE_WORKLOAD_CREATED EventType = 1
 	// A workload's state changed. Name: "<kind>.state_changed".
 	EventType_EVENT_TYPE_WORKLOAD_STATE_CHANGED EventType = 2
-	// A workload's labels changed. Name: "<kind>.updated".
+	// A workload's labels changed, a sandbox's process started, or the
+	// prompts an agent waits on changed. Name: "<kind>.updated".
 	EventType_EVENT_TYPE_WORKLOAD_UPDATED EventType = 3
 	// A workload was removed. Name: "<kind>.deleted".
 	EventType_EVENT_TYPE_WORKLOAD_DELETED EventType = 4

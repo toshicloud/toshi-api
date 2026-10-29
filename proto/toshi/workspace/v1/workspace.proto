@@ -997,7 +997,8 @@ enum EventType {
   EVENT_TYPE_WORKLOAD_CREATED = 1;
   // A workload's state changed. Name: "<kind>.state_changed".
   EVENT_TYPE_WORKLOAD_STATE_CHANGED = 2;
-  // A workload's labels changed. Name: "<kind>.updated".
+  // A workload's labels changed, a sandbox's process started, or the
+  // prompts an agent waits on changed. Name: "<kind>.updated".
   EVENT_TYPE_WORKLOAD_UPDATED = 3;
   // A workload was removed. Name: "<kind>.deleted".
   EVENT_TYPE_WORKLOAD_DELETED = 4;
