@@ -79,8 +79,9 @@ type ConnectionServiceClient interface {
 	CreateConnection(context.Context, *connect.Request[workspacev1.CreateConnectionRequest]) (*connect.Response[workspacev1.CreateConnectionResponse], error)
 	// DeleteConnection deletes a WEBHOOK connection: its events are no longer
 	// received. A GITHUB connection fails with FAILED_PRECONDITION, as only
-	// removing the GitHub App deletes it, and one the workspace does not have
-	// with NOT_FOUND.
+	// removing the GitHub App deletes it, as does one that live triggers match
+	// events from, naming them as project/name, and one the workspace does
+	// not have with NOT_FOUND.
 	DeleteConnection(context.Context, *connect.Request[workspacev1.DeleteConnectionRequest]) (*connect.Response[workspacev1.DeleteConnectionResponse], error)
 	// RotateConnectionSecret gives a WEBHOOK connection a new signing secret
 	// and returns it. For the overlap after the rotation, the previous secret
@@ -272,8 +273,9 @@ type ConnectionServiceHandler interface {
 	CreateConnection(context.Context, *connect.Request[workspacev1.CreateConnectionRequest]) (*connect.Response[workspacev1.CreateConnectionResponse], error)
 	// DeleteConnection deletes a WEBHOOK connection: its events are no longer
 	// received. A GITHUB connection fails with FAILED_PRECONDITION, as only
-	// removing the GitHub App deletes it, and one the workspace does not have
-	// with NOT_FOUND.
+	// removing the GitHub App deletes it, as does one that live triggers match
+	// events from, naming them as project/name, and one the workspace does
+	// not have with NOT_FOUND.
 	DeleteConnection(context.Context, *connect.Request[workspacev1.DeleteConnectionRequest]) (*connect.Response[workspacev1.DeleteConnectionResponse], error)
 	// RotateConnectionSecret gives a WEBHOOK connection a new signing secret
 	// and returns it. For the overlap after the rotation, the previous secret

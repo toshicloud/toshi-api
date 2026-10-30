@@ -4787,7 +4787,14 @@ type WatchGuestLogRequest struct {
 	// Ask for keepalives: a message with only keepalive set whenever the
 	// stream has sent nothing for an interval the server sets (30 seconds by
 	// default). Without it the stream sends chunks and the end only.
-	Keepalive     bool `protobuf:"varint,5,opt,name=keepalive,proto3" json:"keepalive,omitempty"`
+	Keepalive bool `protobuf:"varint,5,opt,name=keepalive,proto3" json:"keepalive,omitempty"`
+	// Start at the last tail_bytes bytes the host keeps instead, when they
+	// begin later than the cursor's position, moved forward to the first line
+	// start among them; a tail with no line start begins at its first byte.
+	// The first chunk's offset shows the bytes skipped, as any skip is shown,
+	// and the cursors continue from there. 0 starts where the cursor says. A
+	// negative value fails with INVALID_ARGUMENT.
+	TailBytes     int64 `protobuf:"varint,6,opt,name=tail_bytes,json=tailBytes,proto3" json:"tail_bytes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4855,6 +4862,13 @@ func (x *WatchGuestLogRequest) GetKeepalive() bool {
 		return x.Keepalive
 	}
 	return false
+}
+
+func (x *WatchGuestLogRequest) GetTailBytes() int64 {
+	if x != nil {
+		return x.TailBytes
+	}
+	return 0
 }
 
 // WatchGuestLogResponse is one message of a WatchGuestLog stream.
@@ -12299,13 +12313,15 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\r_net_tx_bytesB\f\n" +
 	"\n" +
 	"_oom_kills\"\x0e\n" +
-	"\fTelemetryEnd\"\x98\x01\n" +
+	"\fTelemetryEnd\"\xb7\x01\n" +
 	"\x14WatchGuestLogRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
 	"\x02id\x18\x03 \x01(\tR\x02id\x12\x16\n" +
 	"\x06cursor\x18\x04 \x01(\tR\x06cursor\x12\x1c\n" +
-	"\tkeepalive\x18\x05 \x01(\bR\tkeepalive\"\xd1\x01\n" +
+	"\tkeepalive\x18\x05 \x01(\bR\tkeepalive\x12\x1d\n" +
+	"\n" +
+	"tail_bytes\x18\x06 \x01(\x03R\ttailBytes\"\xd1\x01\n" +
 	"\x15WatchGuestLogResponse\x129\n" +
 	"\x05chunk\x18\x01 \x01(\v2!.toshi.workspace.v1.GuestLogChunkH\x00R\x05chunk\x12=\n" +
 	"\tkeepalive\x18\x02 \x01(\v2\x1d.toshi.workspace.v1.KeepaliveH\x00R\tkeepalive\x123\n" +

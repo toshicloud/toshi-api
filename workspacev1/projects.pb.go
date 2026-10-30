@@ -2450,7 +2450,15 @@ type EmbedToken struct {
 	// Unset unless it was revoked.
 	RevokedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
 	// Who minted it: a person's sign-in or an API token, as in the audit.
-	CreatedBy     string `protobuf:"bytes,10,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	CreatedBy string `protobuf:"bytes,10,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	// Where the recording it was spent on lives, copied from the recording
+	// when it was spent, so they stay after the recording is deleted: its
+	// workload, as ListRecordings takes it, that workload's kind ("job",
+	// "sandbox" or "service") and its environment, as Recording names them.
+	// Empty until spent.
+	WorkloadId    string `protobuf:"bytes,11,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	WorkloadKind  string `protobuf:"bytes,12,opt,name=workload_kind,json=workloadKind,proto3" json:"workload_kind,omitempty"`
+	EnvironmentId string `protobuf:"bytes,13,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2551,6 +2559,27 @@ func (x *EmbedToken) GetRevokedAt() *timestamppb.Timestamp {
 func (x *EmbedToken) GetCreatedBy() string {
 	if x != nil {
 		return x.CreatedBy
+	}
+	return ""
+}
+
+func (x *EmbedToken) GetWorkloadId() string {
+	if x != nil {
+		return x.WorkloadId
+	}
+	return ""
+}
+
+func (x *EmbedToken) GetWorkloadKind() string {
+	if x != nil {
+		return x.WorkloadKind
+	}
+	return ""
+}
+
+func (x *EmbedToken) GetEnvironmentId() string {
+	if x != nil {
+		return x.EnvironmentId
 	}
 	return ""
 }
@@ -3049,7 +3078,7 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\tretention\x18\x03 \x01(\v2(.toshi.workspace.v1.EnvironmentRetentionR\tretention\"\xb1\x01\n" +
 	"\x1fSetEnvironmentRetentionResponse\x12F\n" +
 	"\tretention\x18\x01 \x01(\v2(.toshi.workspace.v1.EnvironmentRetentionR\tretention\x12F\n" +
-	"\teffective\x18\x02 \x01(\v2(.toshi.workspace.v1.EnvironmentRetentionR\teffective\"\xb3\x03\n" +
+	"\teffective\x18\x02 \x01(\v2(.toshi.workspace.v1.EnvironmentRetentionR\teffective\"\xa0\x04\n" +
 	"\n" +
 	"EmbedToken\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
@@ -3066,7 +3095,11 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12\x1d\n" +
 	"\n" +
 	"created_by\x18\n" +
-	" \x01(\tR\tcreatedBy\"\x87\x01\n" +
+	" \x01(\tR\tcreatedBy\x12\x1f\n" +
+	"\vworkload_id\x18\v \x01(\tR\n" +
+	"workloadId\x12#\n" +
+	"\rworkload_kind\x18\f \x01(\tR\fworkloadKind\x12%\n" +
+	"\x0eenvironment_id\x18\r \x01(\tR\renvironmentId\"\x87\x01\n" +
 	"\x17CreateEmbedTokenRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x18\n" +
 	"\aorigins\x18\x02 \x03(\tR\aorigins\x128\n" +

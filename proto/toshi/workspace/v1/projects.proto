@@ -597,6 +597,14 @@ message EmbedToken {
   google.protobuf.Timestamp revoked_at = 9;
   // Who minted it: a person's sign-in or an API token, as in the audit.
   string created_by = 10;
+  // Where the recording it was spent on lives, copied from the recording
+  // when it was spent, so they stay after the recording is deleted: its
+  // workload, as ListRecordings takes it, that workload's kind ("job",
+  // "sandbox" or "service") and its environment, as Recording names them.
+  // Empty until spent.
+  string workload_id = 11;
+  string workload_kind = 12;
+  string environment_id = 13;
 }
 
 message CreateEmbedTokenRequest {

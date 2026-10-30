@@ -51,8 +51,9 @@ service ConnectionService {
 
   // DeleteConnection deletes a WEBHOOK connection: its events are no longer
   // received. A GITHUB connection fails with FAILED_PRECONDITION, as only
-  // removing the GitHub App deletes it, and one the workspace does not have
-  // with NOT_FOUND.
+  // removing the GitHub App deletes it, as does one that live triggers match
+  // events from, naming them as project/name, and one the workspace does
+  // not have with NOT_FOUND.
   rpc DeleteConnection(DeleteConnectionRequest) returns (DeleteConnectionResponse) {
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
@@ -162,6 +163,11 @@ message Connection {
   // Where a WEBHOOK connection's deliveries are posted in place of the
   // event log; unset when they become events.
   ConnectionTarget target = 10;
+  // The inbound address a WEBHOOK connection's sender POSTs to: the
+  // deployment's public address and /ingress/ with the connection's
+  // address token. Empty for GITHUB, and when the deployment names no
+  // public address.
+  string ingress_url = 11;
 }
 
 // ConnectionTarget is the URL a WEBHOOK connection's deliveries are posted

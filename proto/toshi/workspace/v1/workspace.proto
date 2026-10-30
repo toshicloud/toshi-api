@@ -908,6 +908,13 @@ message WatchGuestLogRequest {
   // stream has sent nothing for an interval the server sets (30 seconds by
   // default). Without it the stream sends chunks and the end only.
   bool keepalive = 5;
+  // Start at the last tail_bytes bytes the host keeps instead, when they
+  // begin later than the cursor's position, moved forward to the first line
+  // start among them; a tail with no line start begins at its first byte.
+  // The first chunk's offset shows the bytes skipped, as any skip is shown,
+  // and the cursors continue from there. 0 starts where the cursor says. A
+  // negative value fails with INVALID_ARGUMENT.
+  int64 tail_bytes = 6;
 }
 
 // WatchGuestLogResponse is one message of a WatchGuestLog stream.

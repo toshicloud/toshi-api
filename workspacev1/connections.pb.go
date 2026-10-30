@@ -158,7 +158,12 @@ type Connection struct {
 	PreviousSecretExpiresAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=previous_secret_expires_at,json=previousSecretExpiresAt,proto3" json:"previous_secret_expires_at,omitempty"`
 	// Where a WEBHOOK connection's deliveries are posted in place of the
 	// event log; unset when they become events.
-	Target        *ConnectionTarget `protobuf:"bytes,10,opt,name=target,proto3" json:"target,omitempty"`
+	Target *ConnectionTarget `protobuf:"bytes,10,opt,name=target,proto3" json:"target,omitempty"`
+	// The inbound address a WEBHOOK connection's sender POSTs to: the
+	// deployment's public address and /ingress/ with the connection's
+	// address token. Empty for GITHUB, and when the deployment names no
+	// public address.
+	IngressUrl    string `protobuf:"bytes,11,opt,name=ingress_url,json=ingressUrl,proto3" json:"ingress_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -254,6 +259,13 @@ func (x *Connection) GetTarget() *ConnectionTarget {
 		return x.Target
 	}
 	return nil
+}
+
+func (x *Connection) GetIngressUrl() string {
+	if x != nil {
+		return x.IngressUrl
+	}
+	return ""
 }
 
 // ConnectionTarget is the URL a WEBHOOK connection's deliveries are posted
@@ -1565,7 +1577,7 @@ var File_toshi_workspace_v1_connections_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\n" +
-	"$toshi/workspace/v1/connections.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xb8\x03\n" +
+	"$toshi/workspace/v1/connections.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd9\x03\n" +
 	"\n" +
 	"Connection\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
@@ -1578,7 +1590,9 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12W\n" +
 	"\x1aprevious_secret_expires_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\x17previousSecretExpiresAt\x12<\n" +
 	"\x06target\x18\n" +
-	" \x01(\v2$.toshi.workspace.v1.ConnectionTargetR\x06targetJ\x04\b\t\x10\n" +
+	" \x01(\v2$.toshi.workspace.v1.ConnectionTargetR\x06target\x12\x1f\n" +
+	"\vingress_url\x18\v \x01(\tR\n" +
+	"ingressUrlJ\x04\b\t\x10\n" +
 	"R\x11transform_version\"\x96\x01\n" +
 	"\x10ConnectionTarget\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x16\n" +
