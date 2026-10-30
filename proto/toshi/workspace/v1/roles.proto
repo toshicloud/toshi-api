@@ -389,6 +389,10 @@ message Member {
   MemberState state = 7;
   // When a person waiting for approval asked to join; unset for a member.
   google.protobuf.Timestamp requested_at = 8;
+  // The login the person signed in with last, as that sign-in recorded it:
+  // the name their audit events carry as the actor. Empty for a person who
+  // has not signed in.
+  string login = 9;
 }
 
 message RemoveMemberRequest {

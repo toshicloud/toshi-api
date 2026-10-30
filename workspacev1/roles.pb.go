@@ -1380,7 +1380,11 @@ type Member struct {
 	AddedBy *Subject    `protobuf:"bytes,6,opt,name=added_by,json=addedBy,proto3" json:"added_by,omitempty"`
 	State   MemberState `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.MemberState" json:"state,omitempty"`
 	// When a person waiting for approval asked to join; unset for a member.
-	RequestedAt   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=requested_at,json=requestedAt,proto3" json:"requested_at,omitempty"`
+	RequestedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=requested_at,json=requestedAt,proto3" json:"requested_at,omitempty"`
+	// The login the person signed in with last, as that sign-in recorded it:
+	// the name their audit events carry as the actor. Empty for a person who
+	// has not signed in.
+	Login         string `protobuf:"bytes,9,opt,name=login,proto3" json:"login,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1469,6 +1473,13 @@ func (x *Member) GetRequestedAt() *timestamppb.Timestamp {
 		return x.RequestedAt
 	}
 	return nil
+}
+
+func (x *Member) GetLogin() string {
+	if x != nil {
+		return x.Login
+	}
+	return ""
 }
 
 type RemoveMemberRequest struct {
@@ -2350,7 +2361,7 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\x05state\x18\x03 \x01(\x0e2\x1f.toshi.workspace.v1.MemberStateR\x05state\"s\n" +
 	"\x13ListMembersResponse\x124\n" +
 	"\amembers\x18\x01 \x03(\v2\x1a.toshi.workspace.v1.MemberR\amembers\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xe1\x02\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xf7\x02\n" +
 	"\x06Member\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
@@ -2359,7 +2370,8 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\badded_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aaddedAt\x126\n" +
 	"\badded_by\x18\x06 \x01(\v2\x1b.toshi.workspace.v1.SubjectR\aaddedBy\x125\n" +
 	"\x05state\x18\a \x01(\x0e2\x1f.toshi.workspace.v1.MemberStateR\x05state\x12=\n" +
-	"\frequested_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\vrequestedAt\".\n" +
+	"\frequested_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\vrequestedAt\x12\x14\n" +
+	"\x05login\x18\t \x01(\tR\x05login\".\n" +
 	"\x13RemoveMemberRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"/\n" +
 	"\x14ApproveMemberRequest\x12\x17\n" +
