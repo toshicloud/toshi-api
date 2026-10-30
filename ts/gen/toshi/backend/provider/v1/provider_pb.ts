@@ -898,9 +898,10 @@ export type OpenResponse = Message<"toshi.backend.provider.v1.OpenResponse"> & {
   stateRoot: string;
 
   /**
-   * The provider's instances keep running when its process ends, and it
-   * finds them again when it starts. When false, the agent takes a provider
-   * process that restarted as one that lost every instance.
+   * Deprecated: the agent does not read it, and a provider need not set it.
+   * The agent takes a provider process that restarted as the same provider
+   * when it answers Open with the name, state_root and facets it answered
+   * first, and refuses it otherwise.
    *
    * @generated from field: bool instances_outlive_process = 8;
    */
@@ -969,9 +970,10 @@ export type OpenResponseJson = {
   stateRoot?: string;
 
   /**
-   * The provider's instances keep running when its process ends, and it
-   * finds them again when it starts. When false, the agent takes a provider
-   * process that restarted as one that lost every instance.
+   * Deprecated: the agent does not read it, and a provider need not set it.
+   * The agent takes a provider process that restarted as the same provider
+   * when it answers Open with the name, state_root and facets it answered
+   * first, and refuses it otherwise.
    *
    * @generated from field: bool instances_outlive_process = 8;
    */
@@ -4803,8 +4805,9 @@ export const ProviderService: GenService<{
    * A Create with a new operation_id on a key another instance holds fails
    * with ERROR_CODE_KEY_IN_USE; it never makes a second instance. A Create
    * whose call is cancelled answers once the provider has undone what it
-   * made; when it cannot confirm that, it fails with ERROR_CODE_NO_REPLY and
-   * the operation in the error.
+   * made. A caller that lost the answer, to its cancellation or the
+   * connection, reads the outcome back with CreateOutcome and the same
+   * operation_id.
    *
    * @generated from rpc toshi.backend.provider.v1.ProviderService.Create
    */

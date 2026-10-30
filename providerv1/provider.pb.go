@@ -1229,9 +1229,10 @@ type OpenResponse struct {
 	// The absolute, clean directory the provider keeps its instance state in,
 	// its durable identity (facet "instances_gone").
 	StateRoot string `protobuf:"bytes,7,opt,name=state_root,json=stateRoot,proto3" json:"state_root,omitempty"`
-	// The provider's instances keep running when its process ends, and it
-	// finds them again when it starts. When false, the agent takes a provider
-	// process that restarted as one that lost every instance.
+	// Deprecated: the agent does not read it, and a provider need not set it.
+	// The agent takes a provider process that restarted as the same provider
+	// when it answers Open with the name, state_root and facets it answered
+	// first, and refuses it otherwise.
 	InstancesOutliveProcess bool `protobuf:"varint,8,opt,name=instances_outlive_process,json=instancesOutliveProcess,proto3" json:"instances_outlive_process,omitempty"`
 	// The contents of the nonce file OpenRequest named.
 	Nonce         []byte `protobuf:"bytes,9,opt,name=nonce,proto3" json:"nonce,omitempty"`

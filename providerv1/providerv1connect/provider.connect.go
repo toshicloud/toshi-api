@@ -220,8 +220,9 @@ type ProviderServiceClient interface {
 	// A Create with a new operation_id on a key another instance holds fails
 	// with ERROR_CODE_KEY_IN_USE; it never makes a second instance. A Create
 	// whose call is cancelled answers once the provider has undone what it
-	// made; when it cannot confirm that, it fails with ERROR_CODE_NO_REPLY and
-	// the operation in the error.
+	// made. A caller that lost the answer, to its cancellation or the
+	// connection, reads the outcome back with CreateOutcome and the same
+	// operation_id.
 	Create(context.Context, *connect.Request[providerv1.CreateRequest]) (*connect.Response[providerv1.CreateResponse], error)
 	// CreateOutcome reads back the outcome of a Create or Restore whose answer
 	// the caller did not get. It creates nothing. It waits while the operation
@@ -1047,8 +1048,9 @@ type ProviderServiceHandler interface {
 	// A Create with a new operation_id on a key another instance holds fails
 	// with ERROR_CODE_KEY_IN_USE; it never makes a second instance. A Create
 	// whose call is cancelled answers once the provider has undone what it
-	// made; when it cannot confirm that, it fails with ERROR_CODE_NO_REPLY and
-	// the operation in the error.
+	// made. A caller that lost the answer, to its cancellation or the
+	// connection, reads the outcome back with CreateOutcome and the same
+	// operation_id.
 	Create(context.Context, *connect.Request[providerv1.CreateRequest]) (*connect.Response[providerv1.CreateResponse], error)
 	// CreateOutcome reads back the outcome of a Create or Restore whose answer
 	// the caller did not get. It creates nothing. It waits while the operation

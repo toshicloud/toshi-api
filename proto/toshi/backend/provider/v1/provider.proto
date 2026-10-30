@@ -60,8 +60,9 @@ service ProviderService {
   // A Create with a new operation_id on a key another instance holds fails
   // with ERROR_CODE_KEY_IN_USE; it never makes a second instance. A Create
   // whose call is cancelled answers once the provider has undone what it
-  // made; when it cannot confirm that, it fails with ERROR_CODE_NO_REPLY and
-  // the operation in the error.
+  // made. A caller that lost the answer, to its cancellation or the
+  // connection, reads the outcome back with CreateOutcome and the same
+  // operation_id.
   rpc Create(CreateRequest) returns (CreateResponse);
   // CreateOutcome reads back the outcome of a Create or Restore whose answer
   // the caller did not get. It creates nothing. It waits while the operation
@@ -472,9 +473,10 @@ message OpenResponse {
   // The absolute, clean directory the provider keeps its instance state in,
   // its durable identity (facet "instances_gone").
   string state_root = 7;
-  // The provider's instances keep running when its process ends, and it
-  // finds them again when it starts. When false, the agent takes a provider
-  // process that restarted as one that lost every instance.
+  // Deprecated: the agent does not read it, and a provider need not set it.
+  // The agent takes a provider process that restarted as the same provider
+  // when it answers Open with the name, state_root and facets it answered
+  // first, and refuses it otherwise.
   bool instances_outlive_process = 8;
   // The contents of the nonce file OpenRequest named.
   bytes nonce = 9;
