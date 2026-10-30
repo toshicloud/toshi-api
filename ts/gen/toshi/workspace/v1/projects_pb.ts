@@ -2191,8 +2191,9 @@ export type CreateEmbedTokenRequest = Message<"toshi.workspace.v1.CreateEmbedTok
   origins: string[];
 
   /**
-   * How long the token stays valid; unset is the server's default, and
-   * more than its maximum is INVALID_ARGUMENT.
+   * How long the token stays valid; unset is the server's default, or the
+   * workspace's plan's maximum when that is shorter, and more than the
+   * plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
    *
    * @generated from field: google.protobuf.Duration expires_in = 3;
    */
@@ -2220,8 +2221,9 @@ export type CreateEmbedTokenRequestJson = {
   origins?: string[];
 
   /**
-   * How long the token stays valid; unset is the server's default, and
-   * more than its maximum is INVALID_ARGUMENT.
+   * How long the token stays valid; unset is the server's default, or the
+   * workspace's plan's maximum when that is shorter, and more than the
+   * plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
    *
    * @generated from field: google.protobuf.Duration expires_in = 3;
    */

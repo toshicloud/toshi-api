@@ -807,17 +807,19 @@ export type CreateRecordingShareLinkRequest = Message<"toshi.workspace.v1.Create
   recordingId: string;
 
   /**
-   * How long the link stays valid; unset is the server's default, and
-   * more than its maximum is INVALID_ARGUMENT.
+   * How long the link stays valid; unset is the server's default, or the
+   * workspace's plan's maximum when that is shorter, and more than the
+   * plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
    *
    * @generated from field: google.protobuf.Duration expires_in = 2;
    */
   expiresIn?: Duration | undefined;
 
   /**
-   * The most bytes its fetches may take; 0 is the server's default, and
-   * more than its maximum, or less than the recording's object, is
-   * INVALID_ARGUMENT.
+   * The most bytes its fetches may take; 0 is the server's default, or the
+   * workspace's plan's maximum when that is lower. More than the plan's
+   * maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT, and less than
+   * the recording's object is INVALID_ARGUMENT.
    *
    * @generated from field: int64 max_bytes = 3;
    */
@@ -834,17 +836,19 @@ export type CreateRecordingShareLinkRequestJson = {
   recordingId?: string;
 
   /**
-   * How long the link stays valid; unset is the server's default, and
-   * more than its maximum is INVALID_ARGUMENT.
+   * How long the link stays valid; unset is the server's default, or the
+   * workspace's plan's maximum when that is shorter, and more than the
+   * plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
    *
    * @generated from field: google.protobuf.Duration expires_in = 2;
    */
   expiresIn?: DurationJson;
 
   /**
-   * The most bytes its fetches may take; 0 is the server's default, and
-   * more than its maximum, or less than the recording's object, is
-   * INVALID_ARGUMENT.
+   * The most bytes its fetches may take; 0 is the server's default, or the
+   * workspace's plan's maximum when that is lower. More than the plan's
+   * maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT, and less than
+   * the recording's object is INVALID_ARGUMENT.
    *
    * @generated from field: int64 max_bytes = 3;
    */

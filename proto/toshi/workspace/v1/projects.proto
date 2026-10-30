@@ -605,8 +605,9 @@ message CreateEmbedTokenRequest {
   // with an optional port: https, or http for localhost only. At least
   // one, and more than the server's maximum is INVALID_ARGUMENT.
   repeated string origins = 2;
-  // How long the token stays valid; unset is the server's default, and
-  // more than its maximum is INVALID_ARGUMENT.
+  // How long the token stays valid; unset is the server's default, or the
+  // workspace's plan's maximum when that is shorter, and more than the
+  // plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
   google.protobuf.Duration expires_in = 3;
 }
 

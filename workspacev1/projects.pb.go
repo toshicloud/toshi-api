@@ -2563,8 +2563,9 @@ type CreateEmbedTokenRequest struct {
 	// with an optional port: https, or http for localhost only. At least
 	// one, and more than the server's maximum is INVALID_ARGUMENT.
 	Origins []string `protobuf:"bytes,2,rep,name=origins,proto3" json:"origins,omitempty"`
-	// How long the token stays valid; unset is the server's default, and
-	// more than its maximum is INVALID_ARGUMENT.
+	// How long the token stays valid; unset is the server's default, or the
+	// workspace's plan's maximum when that is shorter, and more than the
+	// plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
 	ExpiresIn     *durationpb.Duration `protobuf:"bytes,3,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

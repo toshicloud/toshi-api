@@ -995,12 +995,14 @@ func (x *RecordingShareLink) GetCreatedBy() string {
 type CreateRecordingShareLinkRequest struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	RecordingId string                 `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
-	// How long the link stays valid; unset is the server's default, and
-	// more than its maximum is INVALID_ARGUMENT.
+	// How long the link stays valid; unset is the server's default, or the
+	// workspace's plan's maximum when that is shorter, and more than the
+	// plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
 	ExpiresIn *durationpb.Duration `protobuf:"bytes,2,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
-	// The most bytes its fetches may take; 0 is the server's default, and
-	// more than its maximum, or less than the recording's object, is
-	// INVALID_ARGUMENT.
+	// The most bytes its fetches may take; 0 is the server's default, or the
+	// workspace's plan's maximum when that is lower. More than the plan's
+	// maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT, and less than
+	// the recording's object is INVALID_ARGUMENT.
 	MaxBytes      int64 `protobuf:"varint,3,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
