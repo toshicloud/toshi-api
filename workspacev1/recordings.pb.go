@@ -238,7 +238,11 @@ type Recording struct {
 	// Set once it is no longer capturing.
 	EndedAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
 	// What it holds: never UNSPECIFIED.
-	Kind          RecordingKind `protobuf:"varint,15,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingKind" json:"kind,omitempty"`
+	Kind RecordingKind `protobuf:"varint,15,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingKind" json:"kind,omitempty"`
+	// A sandbox's strips are numbered from 1 in the order they were taken:
+	// each ends at its plan's segment length and the next starts then. 0 for
+	// a job's recording, its run's only one.
+	Sequence      int32 `protobuf:"varint,16,opt,name=sequence,proto3" json:"sequence,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -376,6 +380,13 @@ func (x *Recording) GetKind() RecordingKind {
 		return x.Kind
 	}
 	return RecordingKind_RECORDING_KIND_UNSPECIFIED
+}
+
+func (x *Recording) GetSequence() int32 {
+	if x != nil {
+		return x.Sequence
+	}
+	return 0
 }
 
 // RecordingPause is a span with no screenshot, while a display session
@@ -1152,7 +1163,7 @@ var File_toshi_workspace_v1_recordings_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\n" +
-	"#toshi/workspace/v1/recordings.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xe1\x04\n" +
+	"#toshi/workspace/v1/recordings.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xfd\x04\n" +
 	"\tRecording\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -1173,7 +1184,8 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x125\n" +
 	"\bended_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x125\n" +
-	"\x04kind\x18\x0f \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\x04kind\"\xb7\x01\n" +
+	"\x04kind\x18\x0f \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\x04kind\x12\x1a\n" +
+	"\bsequence\x18\x10 \x01(\x05R\bsequence\"\xb7\x01\n" +
 	"\x0eRecordingPause\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x14\n" +

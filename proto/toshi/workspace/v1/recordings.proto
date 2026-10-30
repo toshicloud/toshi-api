@@ -131,6 +131,10 @@ message Recording {
   google.protobuf.Timestamp ended_at = 14;
   // What it holds: never UNSPECIFIED.
   RecordingKind kind = 15;
+  // A sandbox's strips are numbered from 1 in the order they were taken:
+  // each ends at its plan's segment length and the next starts then. 0 for
+  // a job's recording, its run's only one.
+  int32 sequence = 16;
 }
 
 // RecordingPause is a span with no screenshot, while a display session

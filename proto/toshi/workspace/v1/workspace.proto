@@ -191,6 +191,12 @@ message Sandbox {
   // the one each StartSandbox creates. The channel and display calls take
   // it as job_id, and through a grant as well. Set by Toshi.
   string job_id = 12;
+  // Where recording came from. Set by Toshi.
+  RecordingSource recording_source = 13;
+  // Why a sandbox that records strips takes none now, empty while it does:
+  // its workspace switched recording off, or its host's image for its OS
+  // boots no desktop. Set by Toshi.
+  string recording_stopped_reason = 14;
 }
 
 // SandboxStatus is a sandbox's state and when it got there.
