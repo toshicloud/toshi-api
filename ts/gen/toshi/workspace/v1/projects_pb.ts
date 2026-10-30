@@ -2253,6 +2253,12 @@ export type UpdateEnvironmentRequest = Message<"toshi.workspace.v1.UpdateEnviron
   environment?: ProjectEnvironment | undefined;
 
   /**
+   * retention, volumes, or both. The paths managed_by, manifest_digest,
+   * manifest_origin and managed_fields set the management mark and go
+   * together: all four or none, and on their own; managed_by "manifest"
+   * needs the digest, an origin and at least one field path, and an empty
+   * managed_by clears all four. An unset mask never sets the mark.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 3;
    */
   updateMask?: FieldMask | undefined;
@@ -2278,6 +2284,12 @@ export type UpdateEnvironmentRequestJson = {
   environment?: ProjectEnvironmentJson;
 
   /**
+   * retention, volumes, or both. The paths managed_by, manifest_digest,
+   * manifest_origin and managed_fields set the management mark and go
+   * together: all four or none, and on their own; managed_by "manifest"
+   * needs the digest, an origin and at least one field path, and an empty
+   * managed_by clears all four. An unset mask never sets the mark.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 3;
    */
   updateMask?: FieldMaskJson;

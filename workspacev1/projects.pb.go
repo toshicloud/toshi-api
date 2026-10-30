@@ -2624,7 +2624,12 @@ type UpdateEnvironmentRequest struct {
 	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// name names the environment; the fields update_mask names carry the
 	// new values.
-	Environment   *ProjectEnvironment    `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	Environment *ProjectEnvironment `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// retention, volumes, or both. The paths managed_by, manifest_digest,
+	// manifest_origin and managed_fields set the management mark and go
+	// together: all four or none, and on their own; managed_by "manifest"
+	// needs the digest, an origin and at least one field path, and an empty
+	// managed_by clears all four. An unset mask never sets the mark.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

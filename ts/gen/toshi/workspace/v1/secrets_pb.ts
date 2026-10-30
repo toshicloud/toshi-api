@@ -637,6 +637,12 @@ export type UpdateSecretSetRequest = Message<"toshi.workspace.v1.UpdateSecretSet
   set?: SecretSet | undefined;
 
   /**
+   * keys, or the four paths of the management mark: managed_by,
+   * manifest_digest, manifest_origin and managed_fields set it and go
+   * together: all four or none, and on their own; managed_by "manifest"
+   * needs the digest, an origin and at least one field path, and an empty
+   * managed_by clears all four. An unset mask never sets the mark.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMask | undefined;
@@ -656,6 +662,12 @@ export type UpdateSecretSetRequestJson = {
   set?: SecretSetJson;
 
   /**
+   * keys, or the four paths of the management mark: managed_by,
+   * manifest_digest, manifest_origin and managed_fields set it and go
+   * together: all four or none, and on their own; managed_by "manifest"
+   * needs the digest, an origin and at least one field path, and an empty
+   * managed_by clears all four. An unset mask never sets the mark.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMaskJson;

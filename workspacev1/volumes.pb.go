@@ -964,7 +964,11 @@ type UpdateVolumeRequest struct {
 	// id names the volume; the fields update_mask names carry the new
 	// values.
 	Volume *Volume `protobuf:"bytes,2,opt,name=volume,proto3" json:"volume,omitempty"`
-	// name, size_cap_bytes, or both.
+	// name, size_cap_bytes, or both. The paths managed_by, manifest_digest,
+	// manifest_origin and managed_fields set the management mark and go
+	// together: all four or none, and on their own; managed_by "manifest"
+	// needs the digest, an origin and at least one field path, and an empty
+	// managed_by clears all four.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

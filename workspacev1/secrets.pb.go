@@ -756,7 +756,12 @@ type UpdateSecretSetRequest struct {
 	// project, environment and shared name the set, as in
 	// DeleteSecretSetRequest; the fields update_mask names carry the new
 	// values.
-	Set           *SecretSet             `protobuf:"bytes,1,opt,name=set,proto3" json:"set,omitempty"`
+	Set *SecretSet `protobuf:"bytes,1,opt,name=set,proto3" json:"set,omitempty"`
+	// keys, or the four paths of the management mark: managed_by,
+	// manifest_digest, manifest_origin and managed_fields set it and go
+	// together: all four or none, and on their own; managed_by "manifest"
+	// needs the digest, an origin and at least one field path, and an empty
+	// managed_by clears all four. An unset mask never sets the mark.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

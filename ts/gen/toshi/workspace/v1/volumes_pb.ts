@@ -807,7 +807,11 @@ export type UpdateVolumeRequest = Message<"toshi.workspace.v1.UpdateVolumeReques
   volume?: Volume | undefined;
 
   /**
-   * name, size_cap_bytes, or both.
+   * name, size_cap_bytes, or both. The paths managed_by, manifest_digest,
+   * manifest_origin and managed_fields set the management mark and go
+   * together: all four or none, and on their own; managed_by "manifest"
+   * needs the digest, an origin and at least one field path, and an empty
+   * managed_by clears all four.
    *
    * @generated from field: google.protobuf.FieldMask update_mask = 3;
    */
@@ -832,7 +836,11 @@ export type UpdateVolumeRequestJson = {
   volume?: VolumeJson;
 
   /**
-   * name, size_cap_bytes, or both.
+   * name, size_cap_bytes, or both. The paths managed_by, manifest_digest,
+   * manifest_origin and managed_fields set the management mark and go
+   * together: all four or none, and on their own; managed_by "manifest"
+   * needs the digest, an origin and at least one field path, and an empty
+   * managed_by clears all four.
    *
    * @generated from field: google.protobuf.FieldMask update_mask = 3;
    */
