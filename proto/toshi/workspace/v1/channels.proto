@@ -369,6 +369,9 @@ message ChannelMessage {
   google.protobuf.Timestamp delivered_at = 11;
   // When the message was last replayed, unset for never.
   google.protobuf.Timestamp replayed_at = 12;
+  // The instant an alarm published this message for; unset for other
+  // sources.
+  google.protobuf.Timestamp scheduled_for = 13;
 }
 
 // ChannelClient is one client of a stream channel: its last attach, who

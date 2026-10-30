@@ -162,6 +162,27 @@ const (
 	// WorkloadServiceReleaseServiceProcedure is the fully-qualified name of the WorkloadService's
 	// ReleaseService RPC.
 	WorkloadServiceReleaseServiceProcedure = "/toshi.workspace.v1.WorkloadService/ReleaseService"
+	// WorkloadServiceSetServiceAlarmProcedure is the fully-qualified name of the WorkloadService's
+	// SetServiceAlarm RPC.
+	WorkloadServiceSetServiceAlarmProcedure = "/toshi.workspace.v1.WorkloadService/SetServiceAlarm"
+	// WorkloadServiceGetServiceAlarmProcedure is the fully-qualified name of the WorkloadService's
+	// GetServiceAlarm RPC.
+	WorkloadServiceGetServiceAlarmProcedure = "/toshi.workspace.v1.WorkloadService/GetServiceAlarm"
+	// WorkloadServiceListServiceAlarmsProcedure is the fully-qualified name of the WorkloadService's
+	// ListServiceAlarms RPC.
+	WorkloadServiceListServiceAlarmsProcedure = "/toshi.workspace.v1.WorkloadService/ListServiceAlarms"
+	// WorkloadServiceDeleteServiceAlarmProcedure is the fully-qualified name of the WorkloadService's
+	// DeleteServiceAlarm RPC.
+	WorkloadServiceDeleteServiceAlarmProcedure = "/toshi.workspace.v1.WorkloadService/DeleteServiceAlarm"
+	// WorkloadServicePauseServiceAlarmProcedure is the fully-qualified name of the WorkloadService's
+	// PauseServiceAlarm RPC.
+	WorkloadServicePauseServiceAlarmProcedure = "/toshi.workspace.v1.WorkloadService/PauseServiceAlarm"
+	// WorkloadServiceResumeServiceAlarmProcedure is the fully-qualified name of the WorkloadService's
+	// ResumeServiceAlarm RPC.
+	WorkloadServiceResumeServiceAlarmProcedure = "/toshi.workspace.v1.WorkloadService/ResumeServiceAlarm"
+	// WorkloadServiceRunServiceAlarmNowProcedure is the fully-qualified name of the WorkloadService's
+	// RunServiceAlarmNow RPC.
+	WorkloadServiceRunServiceAlarmNowProcedure = "/toshi.workspace.v1.WorkloadService/RunServiceAlarmNow"
 	// WorkloadServiceStartServiceSignInProcedure is the fully-qualified name of the WorkloadService's
 	// StartServiceSignIn RPC.
 	WorkloadServiceStartServiceSignInProcedure = "/toshi.workspace.v1.WorkloadService/StartServiceSignIn"
@@ -494,6 +515,37 @@ type WorkloadServiceClient interface {
 	// ReleaseService drops the caller's hold on a service. Releasing a hold
 	// the caller does not have returns the service as it is.
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
+	// SetServiceAlarm creates or replaces the service's alarm with this name
+	// and returns it. At each instant of its schedule an alarm publishes its
+	// event, with its data, on one of the service's event channels. Replacing
+	// an alarm raises its generation and schedules it again from now. A
+	// schedule, zone, channel, event or data that is not valid fails with
+	// INVALID_ARGUMENT, as does an event name under a prefix Toshi keeps for
+	// its own events; a channel the service does not declare fails with
+	// NOT_FOUND; a service holding 100 alarms refuses another with
+	// RESOURCE_EXHAUSTED.
+	SetServiceAlarm(context.Context, *connect.Request[workspacev1.SetServiceAlarmRequest]) (*connect.Response[workspacev1.SetServiceAlarmResponse], error)
+	// GetServiceAlarm returns one alarm and its most recent occurrences,
+	// newest first. An unknown name fails with NOT_FOUND.
+	GetServiceAlarm(context.Context, *connect.Request[workspacev1.GetServiceAlarmRequest]) (*connect.Response[workspacev1.GetServiceAlarmResponse], error)
+	// ListServiceAlarms returns the service's alarms by name.
+	ListServiceAlarms(context.Context, *connect.Request[workspacev1.ListServiceAlarmsRequest]) (*connect.Response[workspacev1.ListServiceAlarmsResponse], error)
+	// DeleteServiceAlarm removes an alarm and its occurrences. Messages it
+	// already published stay on the channel.
+	DeleteServiceAlarm(context.Context, *connect.Request[workspacev1.DeleteServiceAlarmRequest]) (*connect.Response[workspacev1.DeleteServiceAlarmResponse], error)
+	// PauseServiceAlarm stops an alarm publishing until it is resumed.
+	// Pausing a paused alarm changes nothing.
+	PauseServiceAlarm(context.Context, *connect.Request[workspacev1.PauseServiceAlarmRequest]) (*connect.Response[workspacev1.PauseServiceAlarmResponse], error)
+	// ResumeServiceAlarm starts a paused alarm again from the next instant
+	// of its schedule; instants that passed while it was paused are not
+	// published. An alarm with a single instant that has passed stays
+	// without a next instant. Resuming an alarm that is not paused changes
+	// nothing.
+	ResumeServiceAlarm(context.Context, *connect.Request[workspacev1.ResumeServiceAlarmRequest]) (*connect.Response[workspacev1.ResumeServiceAlarmResponse], error)
+	// RunServiceAlarmNow publishes the alarm's event once, now, paused or
+	// not, and returns the occurrence. It does not move the alarm's next
+	// instant.
+	RunServiceAlarmNow(context.Context, *connect.Request[workspacev1.RunServiceAlarmNowRequest]) (*connect.Response[workspacev1.RunServiceAlarmNowResponse], error)
 	// StartServiceSignIn runs one of the service's recipe's sign_in programs
 	// and streams what it writes until it ends: the started message names
 	// the sign-in and when it is stopped, the output messages carry its
@@ -875,6 +927,48 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("ReleaseService")),
 			connect.WithClientOptions(opts...),
 		),
+		setServiceAlarm: connect.NewClient[workspacev1.SetServiceAlarmRequest, workspacev1.SetServiceAlarmResponse](
+			httpClient,
+			baseURL+WorkloadServiceSetServiceAlarmProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("SetServiceAlarm")),
+			connect.WithClientOptions(opts...),
+		),
+		getServiceAlarm: connect.NewClient[workspacev1.GetServiceAlarmRequest, workspacev1.GetServiceAlarmResponse](
+			httpClient,
+			baseURL+WorkloadServiceGetServiceAlarmProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("GetServiceAlarm")),
+			connect.WithClientOptions(opts...),
+		),
+		listServiceAlarms: connect.NewClient[workspacev1.ListServiceAlarmsRequest, workspacev1.ListServiceAlarmsResponse](
+			httpClient,
+			baseURL+WorkloadServiceListServiceAlarmsProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ListServiceAlarms")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteServiceAlarm: connect.NewClient[workspacev1.DeleteServiceAlarmRequest, workspacev1.DeleteServiceAlarmResponse](
+			httpClient,
+			baseURL+WorkloadServiceDeleteServiceAlarmProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("DeleteServiceAlarm")),
+			connect.WithClientOptions(opts...),
+		),
+		pauseServiceAlarm: connect.NewClient[workspacev1.PauseServiceAlarmRequest, workspacev1.PauseServiceAlarmResponse](
+			httpClient,
+			baseURL+WorkloadServicePauseServiceAlarmProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("PauseServiceAlarm")),
+			connect.WithClientOptions(opts...),
+		),
+		resumeServiceAlarm: connect.NewClient[workspacev1.ResumeServiceAlarmRequest, workspacev1.ResumeServiceAlarmResponse](
+			httpClient,
+			baseURL+WorkloadServiceResumeServiceAlarmProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ResumeServiceAlarm")),
+			connect.WithClientOptions(opts...),
+		),
+		runServiceAlarmNow: connect.NewClient[workspacev1.RunServiceAlarmNowRequest, workspacev1.RunServiceAlarmNowResponse](
+			httpClient,
+			baseURL+WorkloadServiceRunServiceAlarmNowProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("RunServiceAlarmNow")),
+			connect.WithClientOptions(opts...),
+		),
 		startServiceSignIn: connect.NewClient[workspacev1.StartServiceSignInRequest, workspacev1.StartServiceSignInResponse](
 			httpClient,
 			baseURL+WorkloadServiceStartServiceSignInProcedure,
@@ -1008,6 +1102,13 @@ type workloadServiceClient struct {
 	wakeService            *connect.Client[workspacev1.WakeServiceRequest, workspacev1.WakeServiceResponse]
 	holdService            *connect.Client[workspacev1.HoldServiceRequest, workspacev1.HoldServiceResponse]
 	releaseService         *connect.Client[workspacev1.ReleaseServiceRequest, workspacev1.ReleaseServiceResponse]
+	setServiceAlarm        *connect.Client[workspacev1.SetServiceAlarmRequest, workspacev1.SetServiceAlarmResponse]
+	getServiceAlarm        *connect.Client[workspacev1.GetServiceAlarmRequest, workspacev1.GetServiceAlarmResponse]
+	listServiceAlarms      *connect.Client[workspacev1.ListServiceAlarmsRequest, workspacev1.ListServiceAlarmsResponse]
+	deleteServiceAlarm     *connect.Client[workspacev1.DeleteServiceAlarmRequest, workspacev1.DeleteServiceAlarmResponse]
+	pauseServiceAlarm      *connect.Client[workspacev1.PauseServiceAlarmRequest, workspacev1.PauseServiceAlarmResponse]
+	resumeServiceAlarm     *connect.Client[workspacev1.ResumeServiceAlarmRequest, workspacev1.ResumeServiceAlarmResponse]
+	runServiceAlarmNow     *connect.Client[workspacev1.RunServiceAlarmNowRequest, workspacev1.RunServiceAlarmNowResponse]
 	startServiceSignIn     *connect.Client[workspacev1.StartServiceSignInRequest, workspacev1.StartServiceSignInResponse]
 	answerServiceSignIn    *connect.Client[workspacev1.AnswerServiceSignInRequest, workspacev1.AnswerServiceSignInResponse]
 	cancelServiceSignIn    *connect.Client[workspacev1.CancelServiceSignInRequest, workspacev1.CancelServiceSignInResponse]
@@ -1242,6 +1343,41 @@ func (c *workloadServiceClient) HoldService(ctx context.Context, req *connect.Re
 // ReleaseService calls toshi.workspace.v1.WorkloadService.ReleaseService.
 func (c *workloadServiceClient) ReleaseService(ctx context.Context, req *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error) {
 	return c.releaseService.CallUnary(ctx, req)
+}
+
+// SetServiceAlarm calls toshi.workspace.v1.WorkloadService.SetServiceAlarm.
+func (c *workloadServiceClient) SetServiceAlarm(ctx context.Context, req *connect.Request[workspacev1.SetServiceAlarmRequest]) (*connect.Response[workspacev1.SetServiceAlarmResponse], error) {
+	return c.setServiceAlarm.CallUnary(ctx, req)
+}
+
+// GetServiceAlarm calls toshi.workspace.v1.WorkloadService.GetServiceAlarm.
+func (c *workloadServiceClient) GetServiceAlarm(ctx context.Context, req *connect.Request[workspacev1.GetServiceAlarmRequest]) (*connect.Response[workspacev1.GetServiceAlarmResponse], error) {
+	return c.getServiceAlarm.CallUnary(ctx, req)
+}
+
+// ListServiceAlarms calls toshi.workspace.v1.WorkloadService.ListServiceAlarms.
+func (c *workloadServiceClient) ListServiceAlarms(ctx context.Context, req *connect.Request[workspacev1.ListServiceAlarmsRequest]) (*connect.Response[workspacev1.ListServiceAlarmsResponse], error) {
+	return c.listServiceAlarms.CallUnary(ctx, req)
+}
+
+// DeleteServiceAlarm calls toshi.workspace.v1.WorkloadService.DeleteServiceAlarm.
+func (c *workloadServiceClient) DeleteServiceAlarm(ctx context.Context, req *connect.Request[workspacev1.DeleteServiceAlarmRequest]) (*connect.Response[workspacev1.DeleteServiceAlarmResponse], error) {
+	return c.deleteServiceAlarm.CallUnary(ctx, req)
+}
+
+// PauseServiceAlarm calls toshi.workspace.v1.WorkloadService.PauseServiceAlarm.
+func (c *workloadServiceClient) PauseServiceAlarm(ctx context.Context, req *connect.Request[workspacev1.PauseServiceAlarmRequest]) (*connect.Response[workspacev1.PauseServiceAlarmResponse], error) {
+	return c.pauseServiceAlarm.CallUnary(ctx, req)
+}
+
+// ResumeServiceAlarm calls toshi.workspace.v1.WorkloadService.ResumeServiceAlarm.
+func (c *workloadServiceClient) ResumeServiceAlarm(ctx context.Context, req *connect.Request[workspacev1.ResumeServiceAlarmRequest]) (*connect.Response[workspacev1.ResumeServiceAlarmResponse], error) {
+	return c.resumeServiceAlarm.CallUnary(ctx, req)
+}
+
+// RunServiceAlarmNow calls toshi.workspace.v1.WorkloadService.RunServiceAlarmNow.
+func (c *workloadServiceClient) RunServiceAlarmNow(ctx context.Context, req *connect.Request[workspacev1.RunServiceAlarmNowRequest]) (*connect.Response[workspacev1.RunServiceAlarmNowResponse], error) {
+	return c.runServiceAlarmNow.CallUnary(ctx, req)
 }
 
 // StartServiceSignIn calls toshi.workspace.v1.WorkloadService.StartServiceSignIn.
@@ -1602,6 +1738,37 @@ type WorkloadServiceHandler interface {
 	// ReleaseService drops the caller's hold on a service. Releasing a hold
 	// the caller does not have returns the service as it is.
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
+	// SetServiceAlarm creates or replaces the service's alarm with this name
+	// and returns it. At each instant of its schedule an alarm publishes its
+	// event, with its data, on one of the service's event channels. Replacing
+	// an alarm raises its generation and schedules it again from now. A
+	// schedule, zone, channel, event or data that is not valid fails with
+	// INVALID_ARGUMENT, as does an event name under a prefix Toshi keeps for
+	// its own events; a channel the service does not declare fails with
+	// NOT_FOUND; a service holding 100 alarms refuses another with
+	// RESOURCE_EXHAUSTED.
+	SetServiceAlarm(context.Context, *connect.Request[workspacev1.SetServiceAlarmRequest]) (*connect.Response[workspacev1.SetServiceAlarmResponse], error)
+	// GetServiceAlarm returns one alarm and its most recent occurrences,
+	// newest first. An unknown name fails with NOT_FOUND.
+	GetServiceAlarm(context.Context, *connect.Request[workspacev1.GetServiceAlarmRequest]) (*connect.Response[workspacev1.GetServiceAlarmResponse], error)
+	// ListServiceAlarms returns the service's alarms by name.
+	ListServiceAlarms(context.Context, *connect.Request[workspacev1.ListServiceAlarmsRequest]) (*connect.Response[workspacev1.ListServiceAlarmsResponse], error)
+	// DeleteServiceAlarm removes an alarm and its occurrences. Messages it
+	// already published stay on the channel.
+	DeleteServiceAlarm(context.Context, *connect.Request[workspacev1.DeleteServiceAlarmRequest]) (*connect.Response[workspacev1.DeleteServiceAlarmResponse], error)
+	// PauseServiceAlarm stops an alarm publishing until it is resumed.
+	// Pausing a paused alarm changes nothing.
+	PauseServiceAlarm(context.Context, *connect.Request[workspacev1.PauseServiceAlarmRequest]) (*connect.Response[workspacev1.PauseServiceAlarmResponse], error)
+	// ResumeServiceAlarm starts a paused alarm again from the next instant
+	// of its schedule; instants that passed while it was paused are not
+	// published. An alarm with a single instant that has passed stays
+	// without a next instant. Resuming an alarm that is not paused changes
+	// nothing.
+	ResumeServiceAlarm(context.Context, *connect.Request[workspacev1.ResumeServiceAlarmRequest]) (*connect.Response[workspacev1.ResumeServiceAlarmResponse], error)
+	// RunServiceAlarmNow publishes the alarm's event once, now, paused or
+	// not, and returns the occurrence. It does not move the alarm's next
+	// instant.
+	RunServiceAlarmNow(context.Context, *connect.Request[workspacev1.RunServiceAlarmNowRequest]) (*connect.Response[workspacev1.RunServiceAlarmNowResponse], error)
 	// StartServiceSignIn runs one of the service's recipe's sign_in programs
 	// and streams what it writes until it ends: the started message names
 	// the sign-in and when it is stopped, the output messages carry its
@@ -1979,6 +2146,48 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("ReleaseService")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceSetServiceAlarmHandler := connect.NewUnaryHandler(
+		WorkloadServiceSetServiceAlarmProcedure,
+		svc.SetServiceAlarm,
+		connect.WithSchema(workloadServiceMethods.ByName("SetServiceAlarm")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceGetServiceAlarmHandler := connect.NewUnaryHandler(
+		WorkloadServiceGetServiceAlarmProcedure,
+		svc.GetServiceAlarm,
+		connect.WithSchema(workloadServiceMethods.ByName("GetServiceAlarm")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceListServiceAlarmsHandler := connect.NewUnaryHandler(
+		WorkloadServiceListServiceAlarmsProcedure,
+		svc.ListServiceAlarms,
+		connect.WithSchema(workloadServiceMethods.ByName("ListServiceAlarms")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceDeleteServiceAlarmHandler := connect.NewUnaryHandler(
+		WorkloadServiceDeleteServiceAlarmProcedure,
+		svc.DeleteServiceAlarm,
+		connect.WithSchema(workloadServiceMethods.ByName("DeleteServiceAlarm")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServicePauseServiceAlarmHandler := connect.NewUnaryHandler(
+		WorkloadServicePauseServiceAlarmProcedure,
+		svc.PauseServiceAlarm,
+		connect.WithSchema(workloadServiceMethods.ByName("PauseServiceAlarm")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceResumeServiceAlarmHandler := connect.NewUnaryHandler(
+		WorkloadServiceResumeServiceAlarmProcedure,
+		svc.ResumeServiceAlarm,
+		connect.WithSchema(workloadServiceMethods.ByName("ResumeServiceAlarm")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceRunServiceAlarmNowHandler := connect.NewUnaryHandler(
+		WorkloadServiceRunServiceAlarmNowProcedure,
+		svc.RunServiceAlarmNow,
+		connect.WithSchema(workloadServiceMethods.ByName("RunServiceAlarmNow")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceStartServiceSignInHandler := connect.NewServerStreamHandler(
 		WorkloadServiceStartServiceSignInProcedure,
 		svc.StartServiceSignIn,
@@ -2153,6 +2362,20 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceHoldServiceHandler.ServeHTTP(w, r)
 		case WorkloadServiceReleaseServiceProcedure:
 			workloadServiceReleaseServiceHandler.ServeHTTP(w, r)
+		case WorkloadServiceSetServiceAlarmProcedure:
+			workloadServiceSetServiceAlarmHandler.ServeHTTP(w, r)
+		case WorkloadServiceGetServiceAlarmProcedure:
+			workloadServiceGetServiceAlarmHandler.ServeHTTP(w, r)
+		case WorkloadServiceListServiceAlarmsProcedure:
+			workloadServiceListServiceAlarmsHandler.ServeHTTP(w, r)
+		case WorkloadServiceDeleteServiceAlarmProcedure:
+			workloadServiceDeleteServiceAlarmHandler.ServeHTTP(w, r)
+		case WorkloadServicePauseServiceAlarmProcedure:
+			workloadServicePauseServiceAlarmHandler.ServeHTTP(w, r)
+		case WorkloadServiceResumeServiceAlarmProcedure:
+			workloadServiceResumeServiceAlarmHandler.ServeHTTP(w, r)
+		case WorkloadServiceRunServiceAlarmNowProcedure:
+			workloadServiceRunServiceAlarmNowHandler.ServeHTTP(w, r)
 		case WorkloadServiceStartServiceSignInProcedure:
 			workloadServiceStartServiceSignInHandler.ServeHTTP(w, r)
 		case WorkloadServiceAnswerServiceSignInProcedure:
@@ -2364,6 +2587,34 @@ func (UnimplementedWorkloadServiceHandler) HoldService(context.Context, *connect
 
 func (UnimplementedWorkloadServiceHandler) ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ReleaseService is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) SetServiceAlarm(context.Context, *connect.Request[workspacev1.SetServiceAlarmRequest]) (*connect.Response[workspacev1.SetServiceAlarmResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.SetServiceAlarm is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) GetServiceAlarm(context.Context, *connect.Request[workspacev1.GetServiceAlarmRequest]) (*connect.Response[workspacev1.GetServiceAlarmResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.GetServiceAlarm is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ListServiceAlarms(context.Context, *connect.Request[workspacev1.ListServiceAlarmsRequest]) (*connect.Response[workspacev1.ListServiceAlarmsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ListServiceAlarms is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) DeleteServiceAlarm(context.Context, *connect.Request[workspacev1.DeleteServiceAlarmRequest]) (*connect.Response[workspacev1.DeleteServiceAlarmResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.DeleteServiceAlarm is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) PauseServiceAlarm(context.Context, *connect.Request[workspacev1.PauseServiceAlarmRequest]) (*connect.Response[workspacev1.PauseServiceAlarmResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.PauseServiceAlarm is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ResumeServiceAlarm(context.Context, *connect.Request[workspacev1.ResumeServiceAlarmRequest]) (*connect.Response[workspacev1.ResumeServiceAlarmResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ResumeServiceAlarm is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) RunServiceAlarmNow(context.Context, *connect.Request[workspacev1.RunServiceAlarmNowRequest]) (*connect.Response[workspacev1.RunServiceAlarmNowResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.RunServiceAlarmNow is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) StartServiceSignIn(context.Context, *connect.Request[workspacev1.StartServiceSignInRequest], *connect.ServerStream[workspacev1.StartServiceSignInResponse]) error {

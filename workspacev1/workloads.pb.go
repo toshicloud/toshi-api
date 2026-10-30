@@ -25,6 +25,65 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// ServiceAlarmMisfire is what an alarm does with the instants of its
+// schedule it missed.
+type ServiceAlarmMisfire int32
+
+const (
+	// The same as COALESCE.
+	ServiceAlarmMisfire_SERVICE_ALARM_MISFIRE_UNSPECIFIED ServiceAlarmMisfire = 0
+	// Publishes one message for the instants missed by more than the
+	// starting deadline.
+	ServiceAlarmMisfire_SERVICE_ALARM_MISFIRE_COALESCE ServiceAlarmMisfire = 1
+	// Publishes a message for each missed instant, oldest first.
+	ServiceAlarmMisfire_SERVICE_ALARM_MISFIRE_ALL ServiceAlarmMisfire = 2
+	// Publishes none for missed instants.
+	ServiceAlarmMisfire_SERVICE_ALARM_MISFIRE_SKIP ServiceAlarmMisfire = 3
+)
+
+// Enum value maps for ServiceAlarmMisfire.
+var (
+	ServiceAlarmMisfire_name = map[int32]string{
+		0: "SERVICE_ALARM_MISFIRE_UNSPECIFIED",
+		1: "SERVICE_ALARM_MISFIRE_COALESCE",
+		2: "SERVICE_ALARM_MISFIRE_ALL",
+		3: "SERVICE_ALARM_MISFIRE_SKIP",
+	}
+	ServiceAlarmMisfire_value = map[string]int32{
+		"SERVICE_ALARM_MISFIRE_UNSPECIFIED": 0,
+		"SERVICE_ALARM_MISFIRE_COALESCE":    1,
+		"SERVICE_ALARM_MISFIRE_ALL":         2,
+		"SERVICE_ALARM_MISFIRE_SKIP":        3,
+	}
+)
+
+func (x ServiceAlarmMisfire) Enum() *ServiceAlarmMisfire {
+	p := new(ServiceAlarmMisfire)
+	*p = x
+	return p
+}
+
+func (x ServiceAlarmMisfire) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ServiceAlarmMisfire) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_workloads_proto_enumTypes[0].Descriptor()
+}
+
+func (ServiceAlarmMisfire) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_workloads_proto_enumTypes[0]
+}
+
+func (x ServiceAlarmMisfire) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ServiceAlarmMisfire.Descriptor instead.
+func (ServiceAlarmMisfire) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{0}
+}
+
 type AnswerPromptRequest struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
@@ -3359,6 +3418,1244 @@ func (x *WatchServicesResponse) GetKeepalive() *Keepalive {
 	return nil
 }
 
+// ServiceAlarm is one of a service's alarms: a schedule, the event it
+// publishes on one of the service's event channels, and the instant it
+// next publishes.
+type ServiceAlarm struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The alarm's name within the service.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Rises each time the alarm is replaced; an occurrence names the
+	// generation it belongs to.
+	Generation int64 `protobuf:"varint,2,opt,name=generation,proto3" json:"generation,omitempty"`
+	// The schedule: a cron expression in timezone, or a single instant.
+	//
+	// Types that are valid to be assigned to Schedule:
+	//
+	//	*ServiceAlarm_Cron
+	//	*ServiceAlarm_At
+	Schedule isServiceAlarm_Schedule `protobuf_oneof:"schedule"`
+	// The IANA zone of the schedule's wall clock; empty for UTC.
+	Timezone string `protobuf:"bytes,5,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	// The name of the service's event channel it publishes on.
+	Channel string `protobuf:"bytes,6,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The event name it publishes.
+	Event string `protobuf:"bytes,7,opt,name=event,proto3" json:"event,omitempty"`
+	// The message's JSON, empty for null.
+	Data []byte `protobuf:"bytes,8,opt,name=data,proto3" json:"data,omitempty"`
+	// What it does with the instants it missed.
+	Misfire ServiceAlarmMisfire `protobuf:"varint,9,opt,name=misfire,proto3,enum=toshi.workspace.v1.ServiceAlarmMisfire" json:"misfire,omitempty"`
+	// How late a missed instant may be published as on time.
+	StartingDeadline *durationpb.Duration `protobuf:"bytes,10,opt,name=starting_deadline,json=startingDeadline,proto3" json:"starting_deadline,omitempty"`
+	// Whether it is paused: a paused alarm publishes nothing until resumed.
+	Paused bool `protobuf:"varint,11,opt,name=paused,proto3" json:"paused,omitempty"`
+	// The instant it next publishes; unset when no instant is left.
+	NextAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=next_at,json=nextAt,proto3" json:"next_at,omitempty"`
+	// When it was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When it was last set, replaced, paused or resumed.
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ServiceAlarm) Reset() {
+	*x = ServiceAlarm{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ServiceAlarm) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ServiceAlarm) ProtoMessage() {}
+
+func (x *ServiceAlarm) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ServiceAlarm.ProtoReflect.Descriptor instead.
+func (*ServiceAlarm) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *ServiceAlarm) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ServiceAlarm) GetGeneration() int64 {
+	if x != nil {
+		return x.Generation
+	}
+	return 0
+}
+
+func (x *ServiceAlarm) GetSchedule() isServiceAlarm_Schedule {
+	if x != nil {
+		return x.Schedule
+	}
+	return nil
+}
+
+func (x *ServiceAlarm) GetCron() string {
+	if x != nil {
+		if x, ok := x.Schedule.(*ServiceAlarm_Cron); ok {
+			return x.Cron
+		}
+	}
+	return ""
+}
+
+func (x *ServiceAlarm) GetAt() *timestamppb.Timestamp {
+	if x != nil {
+		if x, ok := x.Schedule.(*ServiceAlarm_At); ok {
+			return x.At
+		}
+	}
+	return nil
+}
+
+func (x *ServiceAlarm) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
+}
+
+func (x *ServiceAlarm) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *ServiceAlarm) GetEvent() string {
+	if x != nil {
+		return x.Event
+	}
+	return ""
+}
+
+func (x *ServiceAlarm) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *ServiceAlarm) GetMisfire() ServiceAlarmMisfire {
+	if x != nil {
+		return x.Misfire
+	}
+	return ServiceAlarmMisfire_SERVICE_ALARM_MISFIRE_UNSPECIFIED
+}
+
+func (x *ServiceAlarm) GetStartingDeadline() *durationpb.Duration {
+	if x != nil {
+		return x.StartingDeadline
+	}
+	return nil
+}
+
+func (x *ServiceAlarm) GetPaused() bool {
+	if x != nil {
+		return x.Paused
+	}
+	return false
+}
+
+func (x *ServiceAlarm) GetNextAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.NextAt
+	}
+	return nil
+}
+
+func (x *ServiceAlarm) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *ServiceAlarm) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type isServiceAlarm_Schedule interface {
+	isServiceAlarm_Schedule()
+}
+
+type ServiceAlarm_Cron struct {
+	// A five-field cron expression, in timezone's wall clock.
+	Cron string `protobuf:"bytes,3,opt,name=cron,proto3,oneof"`
+}
+
+type ServiceAlarm_At struct {
+	// A single instant, after which the alarm has no next instant.
+	At *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=at,proto3,oneof"`
+}
+
+func (*ServiceAlarm_Cron) isServiceAlarm_Schedule() {}
+
+func (*ServiceAlarm_At) isServiceAlarm_Schedule() {}
+
+// ServiceAlarmOccurrence is one instant an alarm published for.
+type ServiceAlarmOccurrence struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The alarm's generation the occurrence belongs to.
+	Generation int64 `protobuf:"varint,1,opt,name=generation,proto3" json:"generation,omitempty"`
+	// The instant of the schedule it is for; a manual occurrence's is the
+	// call's time.
+	ScheduledFor *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=scheduled_for,json=scheduledFor,proto3" json:"scheduled_for,omitempty"`
+	// Whether RunServiceAlarmNow made it, rather than the schedule.
+	Manual bool `protobuf:"varint,3,opt,name=manual,proto3" json:"manual,omitempty"`
+	// Who ran it, as the audit log names an actor; empty for a scheduled
+	// occurrence.
+	Caller string `protobuf:"bytes,4,opt,name=caller,proto3" json:"caller,omitempty"`
+	// When the occurrence was recorded.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When its message was published; unset while unpublished.
+	PublishedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=published_at,json=publishedAt,proto3" json:"published_at,omitempty"`
+	// The published message's ID; empty while unpublished.
+	MessageId string `protobuf:"bytes,7,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	// Why the publication failed; empty when it did not.
+	Error         string `protobuf:"bytes,8,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ServiceAlarmOccurrence) Reset() {
+	*x = ServiceAlarmOccurrence{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ServiceAlarmOccurrence) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ServiceAlarmOccurrence) ProtoMessage() {}
+
+func (x *ServiceAlarmOccurrence) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ServiceAlarmOccurrence.ProtoReflect.Descriptor instead.
+func (*ServiceAlarmOccurrence) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *ServiceAlarmOccurrence) GetGeneration() int64 {
+	if x != nil {
+		return x.Generation
+	}
+	return 0
+}
+
+func (x *ServiceAlarmOccurrence) GetScheduledFor() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ScheduledFor
+	}
+	return nil
+}
+
+func (x *ServiceAlarmOccurrence) GetManual() bool {
+	if x != nil {
+		return x.Manual
+	}
+	return false
+}
+
+func (x *ServiceAlarmOccurrence) GetCaller() string {
+	if x != nil {
+		return x.Caller
+	}
+	return ""
+}
+
+func (x *ServiceAlarmOccurrence) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *ServiceAlarmOccurrence) GetPublishedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.PublishedAt
+	}
+	return nil
+}
+
+func (x *ServiceAlarmOccurrence) GetMessageId() string {
+	if x != nil {
+		return x.MessageId
+	}
+	return ""
+}
+
+func (x *ServiceAlarmOccurrence) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+// SetServiceAlarmRequest is a call of SetServiceAlarm.
+type SetServiceAlarmRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The service's environment.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	// The alarm's name within the service.
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// The schedule: a cron expression in timezone, or a single instant.
+	//
+	// Types that are valid to be assigned to Schedule:
+	//
+	//	*SetServiceAlarmRequest_Cron
+	//	*SetServiceAlarmRequest_At
+	Schedule isSetServiceAlarmRequest_Schedule `protobuf_oneof:"schedule"`
+	// The IANA zone of the schedule's wall clock; empty for UTC.
+	Timezone string `protobuf:"bytes,7,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	// The name of the service's event channel to publish on.
+	Channel string `protobuf:"bytes,8,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The event name to publish.
+	Event string `protobuf:"bytes,9,opt,name=event,proto3" json:"event,omitempty"`
+	// The message's JSON, empty for null.
+	Data []byte `protobuf:"bytes,10,opt,name=data,proto3" json:"data,omitempty"`
+	// What it does with the instants it missed; unspecified means COALESCE.
+	Misfire ServiceAlarmMisfire `protobuf:"varint,11,opt,name=misfire,proto3,enum=toshi.workspace.v1.ServiceAlarmMisfire" json:"misfire,omitempty"`
+	// How late a missed instant may be published as on time; unset means
+	// 10 minutes.
+	StartingDeadline *durationpb.Duration `protobuf:"bytes,12,opt,name=starting_deadline,json=startingDeadline,proto3" json:"starting_deadline,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SetServiceAlarmRequest) Reset() {
+	*x = SetServiceAlarmRequest{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetServiceAlarmRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetServiceAlarmRequest) ProtoMessage() {}
+
+func (x *SetServiceAlarmRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetServiceAlarmRequest.ProtoReflect.Descriptor instead.
+func (*SetServiceAlarmRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *SetServiceAlarmRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *SetServiceAlarmRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *SetServiceAlarmRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *SetServiceAlarmRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *SetServiceAlarmRequest) GetSchedule() isSetServiceAlarmRequest_Schedule {
+	if x != nil {
+		return x.Schedule
+	}
+	return nil
+}
+
+func (x *SetServiceAlarmRequest) GetCron() string {
+	if x != nil {
+		if x, ok := x.Schedule.(*SetServiceAlarmRequest_Cron); ok {
+			return x.Cron
+		}
+	}
+	return ""
+}
+
+func (x *SetServiceAlarmRequest) GetAt() *timestamppb.Timestamp {
+	if x != nil {
+		if x, ok := x.Schedule.(*SetServiceAlarmRequest_At); ok {
+			return x.At
+		}
+	}
+	return nil
+}
+
+func (x *SetServiceAlarmRequest) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
+}
+
+func (x *SetServiceAlarmRequest) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *SetServiceAlarmRequest) GetEvent() string {
+	if x != nil {
+		return x.Event
+	}
+	return ""
+}
+
+func (x *SetServiceAlarmRequest) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *SetServiceAlarmRequest) GetMisfire() ServiceAlarmMisfire {
+	if x != nil {
+		return x.Misfire
+	}
+	return ServiceAlarmMisfire_SERVICE_ALARM_MISFIRE_UNSPECIFIED
+}
+
+func (x *SetServiceAlarmRequest) GetStartingDeadline() *durationpb.Duration {
+	if x != nil {
+		return x.StartingDeadline
+	}
+	return nil
+}
+
+type isSetServiceAlarmRequest_Schedule interface {
+	isSetServiceAlarmRequest_Schedule()
+}
+
+type SetServiceAlarmRequest_Cron struct {
+	// A five-field cron expression, in timezone's wall clock.
+	Cron string `protobuf:"bytes,5,opt,name=cron,proto3,oneof"`
+}
+
+type SetServiceAlarmRequest_At struct {
+	// A single instant, which must be in the future.
+	At *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=at,proto3,oneof"`
+}
+
+func (*SetServiceAlarmRequest_Cron) isSetServiceAlarmRequest_Schedule() {}
+
+func (*SetServiceAlarmRequest_At) isSetServiceAlarmRequest_Schedule() {}
+
+// SetServiceAlarmResponse is the answer to SetServiceAlarm.
+type SetServiceAlarmResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The alarm as it was set.
+	Alarm         *ServiceAlarm `protobuf:"bytes,1,opt,name=alarm,proto3" json:"alarm,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetServiceAlarmResponse) Reset() {
+	*x = SetServiceAlarmResponse{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetServiceAlarmResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetServiceAlarmResponse) ProtoMessage() {}
+
+func (x *SetServiceAlarmResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetServiceAlarmResponse.ProtoReflect.Descriptor instead.
+func (*SetServiceAlarmResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *SetServiceAlarmResponse) GetAlarm() *ServiceAlarm {
+	if x != nil {
+		return x.Alarm
+	}
+	return nil
+}
+
+// GetServiceAlarmRequest is a call of GetServiceAlarm.
+type GetServiceAlarmRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The service's environment.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	// The alarm's name.
+	Name          string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetServiceAlarmRequest) Reset() {
+	*x = GetServiceAlarmRequest{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetServiceAlarmRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetServiceAlarmRequest) ProtoMessage() {}
+
+func (x *GetServiceAlarmRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetServiceAlarmRequest.ProtoReflect.Descriptor instead.
+func (*GetServiceAlarmRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *GetServiceAlarmRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *GetServiceAlarmRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *GetServiceAlarmRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *GetServiceAlarmRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+// GetServiceAlarmResponse is the answer to GetServiceAlarm.
+type GetServiceAlarmResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The alarm.
+	Alarm *ServiceAlarm `protobuf:"bytes,1,opt,name=alarm,proto3" json:"alarm,omitempty"`
+	// Its most recent occurrences, newest first, at most 20.
+	Occurrences   []*ServiceAlarmOccurrence `protobuf:"bytes,2,rep,name=occurrences,proto3" json:"occurrences,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetServiceAlarmResponse) Reset() {
+	*x = GetServiceAlarmResponse{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetServiceAlarmResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetServiceAlarmResponse) ProtoMessage() {}
+
+func (x *GetServiceAlarmResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetServiceAlarmResponse.ProtoReflect.Descriptor instead.
+func (*GetServiceAlarmResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{55}
+}
+
+func (x *GetServiceAlarmResponse) GetAlarm() *ServiceAlarm {
+	if x != nil {
+		return x.Alarm
+	}
+	return nil
+}
+
+func (x *GetServiceAlarmResponse) GetOccurrences() []*ServiceAlarmOccurrence {
+	if x != nil {
+		return x.Occurrences
+	}
+	return nil
+}
+
+// ListServiceAlarmsRequest is a call of ListServiceAlarms.
+type ListServiceAlarmsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The service's environment.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's ID.
+	ServiceId     string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListServiceAlarmsRequest) Reset() {
+	*x = ListServiceAlarmsRequest{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListServiceAlarmsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListServiceAlarmsRequest) ProtoMessage() {}
+
+func (x *ListServiceAlarmsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListServiceAlarmsRequest.ProtoReflect.Descriptor instead.
+func (*ListServiceAlarmsRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{56}
+}
+
+func (x *ListServiceAlarmsRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *ListServiceAlarmsRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *ListServiceAlarmsRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+// ListServiceAlarmsResponse is the answer to ListServiceAlarms.
+type ListServiceAlarmsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's alarms, by name.
+	Alarms        []*ServiceAlarm `protobuf:"bytes,1,rep,name=alarms,proto3" json:"alarms,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListServiceAlarmsResponse) Reset() {
+	*x = ListServiceAlarmsResponse{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListServiceAlarmsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListServiceAlarmsResponse) ProtoMessage() {}
+
+func (x *ListServiceAlarmsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListServiceAlarmsResponse.ProtoReflect.Descriptor instead.
+func (*ListServiceAlarmsResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *ListServiceAlarmsResponse) GetAlarms() []*ServiceAlarm {
+	if x != nil {
+		return x.Alarms
+	}
+	return nil
+}
+
+// DeleteServiceAlarmRequest is a call of DeleteServiceAlarm.
+type DeleteServiceAlarmRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The service's environment.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	// The alarm's name.
+	Name          string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteServiceAlarmRequest) Reset() {
+	*x = DeleteServiceAlarmRequest{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteServiceAlarmRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteServiceAlarmRequest) ProtoMessage() {}
+
+func (x *DeleteServiceAlarmRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteServiceAlarmRequest.ProtoReflect.Descriptor instead.
+func (*DeleteServiceAlarmRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *DeleteServiceAlarmRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *DeleteServiceAlarmRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *DeleteServiceAlarmRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *DeleteServiceAlarmRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+// DeleteServiceAlarmResponse is the answer to DeleteServiceAlarm.
+type DeleteServiceAlarmResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteServiceAlarmResponse) Reset() {
+	*x = DeleteServiceAlarmResponse{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[59]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteServiceAlarmResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteServiceAlarmResponse) ProtoMessage() {}
+
+func (x *DeleteServiceAlarmResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[59]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteServiceAlarmResponse.ProtoReflect.Descriptor instead.
+func (*DeleteServiceAlarmResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{59}
+}
+
+// PauseServiceAlarmRequest is a call of PauseServiceAlarm.
+type PauseServiceAlarmRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The service's environment.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	// The alarm's name.
+	Name          string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PauseServiceAlarmRequest) Reset() {
+	*x = PauseServiceAlarmRequest{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[60]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PauseServiceAlarmRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PauseServiceAlarmRequest) ProtoMessage() {}
+
+func (x *PauseServiceAlarmRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[60]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PauseServiceAlarmRequest.ProtoReflect.Descriptor instead.
+func (*PauseServiceAlarmRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{60}
+}
+
+func (x *PauseServiceAlarmRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *PauseServiceAlarmRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *PauseServiceAlarmRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *PauseServiceAlarmRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+// PauseServiceAlarmResponse is the answer to PauseServiceAlarm.
+type PauseServiceAlarmResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The alarm as it is.
+	Alarm         *ServiceAlarm `protobuf:"bytes,1,opt,name=alarm,proto3" json:"alarm,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PauseServiceAlarmResponse) Reset() {
+	*x = PauseServiceAlarmResponse{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PauseServiceAlarmResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PauseServiceAlarmResponse) ProtoMessage() {}
+
+func (x *PauseServiceAlarmResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PauseServiceAlarmResponse.ProtoReflect.Descriptor instead.
+func (*PauseServiceAlarmResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{61}
+}
+
+func (x *PauseServiceAlarmResponse) GetAlarm() *ServiceAlarm {
+	if x != nil {
+		return x.Alarm
+	}
+	return nil
+}
+
+// ResumeServiceAlarmRequest is a call of ResumeServiceAlarm.
+type ResumeServiceAlarmRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The service's environment.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	// The alarm's name.
+	Name          string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResumeServiceAlarmRequest) Reset() {
+	*x = ResumeServiceAlarmRequest{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[62]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResumeServiceAlarmRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResumeServiceAlarmRequest) ProtoMessage() {}
+
+func (x *ResumeServiceAlarmRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[62]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResumeServiceAlarmRequest.ProtoReflect.Descriptor instead.
+func (*ResumeServiceAlarmRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *ResumeServiceAlarmRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *ResumeServiceAlarmRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *ResumeServiceAlarmRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *ResumeServiceAlarmRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+// ResumeServiceAlarmResponse is the answer to ResumeServiceAlarm.
+type ResumeServiceAlarmResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The alarm as it is.
+	Alarm         *ServiceAlarm `protobuf:"bytes,1,opt,name=alarm,proto3" json:"alarm,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResumeServiceAlarmResponse) Reset() {
+	*x = ResumeServiceAlarmResponse{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[63]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResumeServiceAlarmResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResumeServiceAlarmResponse) ProtoMessage() {}
+
+func (x *ResumeServiceAlarmResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[63]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResumeServiceAlarmResponse.ProtoReflect.Descriptor instead.
+func (*ResumeServiceAlarmResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{63}
+}
+
+func (x *ResumeServiceAlarmResponse) GetAlarm() *ServiceAlarm {
+	if x != nil {
+		return x.Alarm
+	}
+	return nil
+}
+
+// RunServiceAlarmNowRequest is a call of RunServiceAlarmNow.
+type RunServiceAlarmNowRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The service's environment.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	// The alarm's name.
+	Name          string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RunServiceAlarmNowRequest) Reset() {
+	*x = RunServiceAlarmNowRequest{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[64]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RunServiceAlarmNowRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RunServiceAlarmNowRequest) ProtoMessage() {}
+
+func (x *RunServiceAlarmNowRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[64]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RunServiceAlarmNowRequest.ProtoReflect.Descriptor instead.
+func (*RunServiceAlarmNowRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{64}
+}
+
+func (x *RunServiceAlarmNowRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *RunServiceAlarmNowRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *RunServiceAlarmNowRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *RunServiceAlarmNowRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+// RunServiceAlarmNowResponse is the answer to RunServiceAlarmNow.
+type RunServiceAlarmNowResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The occurrence it published.
+	Occurrence    *ServiceAlarmOccurrence `protobuf:"bytes,1,opt,name=occurrence,proto3" json:"occurrence,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RunServiceAlarmNowResponse) Reset() {
+	*x = RunServiceAlarmNowResponse{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[65]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RunServiceAlarmNowResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RunServiceAlarmNowResponse) ProtoMessage() {}
+
+func (x *RunServiceAlarmNowResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[65]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RunServiceAlarmNowResponse.ProtoReflect.Descriptor instead.
+func (*RunServiceAlarmNowResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{65}
+}
+
+func (x *RunServiceAlarmNowResponse) GetOccurrence() *ServiceAlarmOccurrence {
+	if x != nil {
+		return x.Occurrence
+	}
+	return nil
+}
+
 var File_toshi_workspace_v1_workloads_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
@@ -3627,7 +4924,115 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x04type\x18\x01 \x01(\x0e2\x1d.toshi.workspace.v1.EventTypeR\x04type\x125\n" +
 	"\aservice\x18\x02 \x01(\v2\x1b.toshi.workspace.v1.ServiceR\aservice\x12\x16\n" +
 	"\x06cursor\x18\x03 \x01(\tR\x06cursor\x12;\n" +
-	"\tkeepalive\x18\x04 \x01(\v2\x1d.toshi.workspace.v1.KeepaliveR\tkeepalive2\xfaC\n" +
+	"\tkeepalive\x18\x04 \x01(\v2\x1d.toshi.workspace.v1.KeepaliveR\tkeepalive\"\xc0\x04\n" +
+	"\fServiceAlarm\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1e\n" +
+	"\n" +
+	"generation\x18\x02 \x01(\x03R\n" +
+	"generation\x12\x14\n" +
+	"\x04cron\x18\x03 \x01(\tH\x00R\x04cron\x12,\n" +
+	"\x02at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x02at\x12\x1a\n" +
+	"\btimezone\x18\x05 \x01(\tR\btimezone\x12\x18\n" +
+	"\achannel\x18\x06 \x01(\tR\achannel\x12\x14\n" +
+	"\x05event\x18\a \x01(\tR\x05event\x12\x12\n" +
+	"\x04data\x18\b \x01(\fR\x04data\x12A\n" +
+	"\amisfire\x18\t \x01(\x0e2'.toshi.workspace.v1.ServiceAlarmMisfireR\amisfire\x12F\n" +
+	"\x11starting_deadline\x18\n" +
+	" \x01(\v2\x19.google.protobuf.DurationR\x10startingDeadline\x12\x16\n" +
+	"\x06paused\x18\v \x01(\bR\x06paused\x123\n" +
+	"\anext_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\x06nextAt\x129\n" +
+	"\n" +
+	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\n" +
+	"\n" +
+	"\bschedule\"\xd8\x02\n" +
+	"\x16ServiceAlarmOccurrence\x12\x1e\n" +
+	"\n" +
+	"generation\x18\x01 \x01(\x03R\n" +
+	"generation\x12?\n" +
+	"\rscheduled_for\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\fscheduledFor\x12\x16\n" +
+	"\x06manual\x18\x03 \x01(\bR\x06manual\x12\x16\n" +
+	"\x06caller\x18\x04 \x01(\tR\x06caller\x129\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12=\n" +
+	"\fpublished_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\vpublishedAt\x12\x1d\n" +
+	"\n" +
+	"message_id\x18\a \x01(\tR\tmessageId\x12\x14\n" +
+	"\x05error\x18\b \x01(\tR\x05error\"\xc2\x03\n" +
+	"\x16SetServiceAlarmRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
+	"\x04cron\x18\x05 \x01(\tH\x00R\x04cron\x12,\n" +
+	"\x02at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x02at\x12\x1a\n" +
+	"\btimezone\x18\a \x01(\tR\btimezone\x12\x18\n" +
+	"\achannel\x18\b \x01(\tR\achannel\x12\x14\n" +
+	"\x05event\x18\t \x01(\tR\x05event\x12\x12\n" +
+	"\x04data\x18\n" +
+	" \x01(\fR\x04data\x12A\n" +
+	"\amisfire\x18\v \x01(\x0e2'.toshi.workspace.v1.ServiceAlarmMisfireR\amisfire\x12F\n" +
+	"\x11starting_deadline\x18\f \x01(\v2\x19.google.protobuf.DurationR\x10startingDeadlineB\n" +
+	"\n" +
+	"\bschedule\"Q\n" +
+	"\x17SetServiceAlarmResponse\x126\n" +
+	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\"\x87\x01\n" +
+	"\x16GetServiceAlarmRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\"\x9f\x01\n" +
+	"\x17GetServiceAlarmResponse\x126\n" +
+	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\x12L\n" +
+	"\voccurrences\x18\x02 \x03(\v2*.toshi.workspace.v1.ServiceAlarmOccurrenceR\voccurrences\"u\n" +
+	"\x18ListServiceAlarmsRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\"U\n" +
+	"\x19ListServiceAlarmsResponse\x128\n" +
+	"\x06alarms\x18\x01 \x03(\v2 .toshi.workspace.v1.ServiceAlarmR\x06alarms\"\x8a\x01\n" +
+	"\x19DeleteServiceAlarmRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\"\x1c\n" +
+	"\x1aDeleteServiceAlarmResponse\"\x89\x01\n" +
+	"\x18PauseServiceAlarmRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\"S\n" +
+	"\x19PauseServiceAlarmResponse\x126\n" +
+	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\"\x8a\x01\n" +
+	"\x19ResumeServiceAlarmRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\"T\n" +
+	"\x1aResumeServiceAlarmResponse\x126\n" +
+	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\"\x8a\x01\n" +
+	"\x19RunServiceAlarmNowRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\"h\n" +
+	"\x1aRunServiceAlarmNowResponse\x12J\n" +
+	"\n" +
+	"occurrence\x18\x01 \x01(\v2*.toshi.workspace.v1.ServiceAlarmOccurrenceR\n" +
+	"occurrence*\x9f\x01\n" +
+	"\x13ServiceAlarmMisfire\x12%\n" +
+	"!SERVICE_ALARM_MISFIRE_UNSPECIFIED\x10\x00\x12\"\n" +
+	"\x1eSERVICE_ALARM_MISFIRE_COALESCE\x10\x01\x12\x1d\n" +
+	"\x19SERVICE_ALARM_MISFIRE_ALL\x10\x02\x12\x1e\n" +
+	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xb0M\n" +
 	"\x0fWorkloadService\x12}\n" +
 	"\tCreateJob\x12$.toshi.workspace.v1.CreateJobRequest\x1a%.toshi.workspace.v1.CreateJobResponse\"#\xc2\xf3\x18\n" +
 	"jobs.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12m\n" +
@@ -3687,7 +5092,16 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x10service.mode_set\x12\x87\x01\n" +
 	"\vWakeService\x12&.toshi.workspace.v1.WakeServiceRequest\x1a'.toshi.workspace.v1.WakeServiceResponse\"'\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12\x87\x01\n" +
 	"\vHoldService\x12&.toshi.workspace.v1.HoldServiceRequest\x1a'.toshi.workspace.v1.HoldServiceResponse\"'\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12\x8a\x01\n" +
-	"\x0eReleaseService\x12).toshi.workspace.v1.ReleaseServiceRequest\x1a*.toshi.workspace.v1.ReleaseServiceResponse\"!\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x12\xbb\x01\n" +
+	"\x0eReleaseService\x12).toshi.workspace.v1.ReleaseServiceRequest\x1a*.toshi.workspace.v1.ReleaseServiceResponse\"!\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x12\xa5\x01\n" +
+	"\x0fSetServiceAlarm\x12*.toshi.workspace.v1.SetServiceAlarmRequest\x1a+.toshi.workspace.v1.SetServiceAlarmResponse\"9\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x12\x8c\x01\n" +
+	"\x0fGetServiceAlarm\x12*.toshi.workspace.v1.GetServiceAlarmRequest\x1a+.toshi.workspace.v1.GetServiceAlarmResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x92\x01\n" +
+	"\x11ListServiceAlarms\x12,.toshi.workspace.v1.ListServiceAlarmsRequest\x1a-.toshi.workspace.v1.ListServiceAlarmsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xae\x01\n" +
+	"\x12DeleteServiceAlarm\x12-.toshi.workspace.v1.DeleteServiceAlarmRequest\x1a..toshi.workspace.v1.DeleteServiceAlarmResponse\"9\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x12\xc1\x01\n" +
+	"\x11PauseServiceAlarm\x12,.toshi.workspace.v1.PauseServiceAlarmRequest\x1a-.toshi.workspace.v1.PauseServiceAlarmResponse\"O\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18*\n" +
+	"\x14service_alarm.paused\x12\x12service:service_id\x12\xae\x01\n" +
+	"\x12ResumeServiceAlarm\x12-.toshi.workspace.v1.ResumeServiceAlarmRequest\x1a..toshi.workspace.v1.ResumeServiceAlarmResponse\"9\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x12\xc1\x01\n" +
+	"\x12RunServiceAlarmNow\x12-.toshi.workspace.v1.RunServiceAlarmNowRequest\x1a..toshi.workspace.v1.RunServiceAlarmNowResponse\"L\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
+	"\x11service_alarm.ran\x12\x12service:service_id\x12\xbb\x01\n" +
 	"\x12StartServiceSignIn\x12-.toshi.workspace.v1.StartServiceSignInRequest\x1a..toshi.workspace.v1.StartServiceSignInResponse\"D\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x19\n" +
 	"\x17service.sign_in_started\xea\xf3\x18\x02(\x010\x01\x12\xbd\x01\n" +
 	"\x13AnswerServiceSignIn\x12..toshi.workspace.v1.AnswerServiceSignInRequest\x1a/.toshi.workspace.v1.AnswerServiceSignInResponse\"E\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x1a\n" +
@@ -3721,338 +5135,389 @@ func file_toshi_workspace_v1_workloads_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_workloads_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_workloads_proto_msgTypes = make([]protoimpl.MessageInfo, 56)
+var file_toshi_workspace_v1_workloads_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_toshi_workspace_v1_workloads_proto_msgTypes = make([]protoimpl.MessageInfo, 72)
 var file_toshi_workspace_v1_workloads_proto_goTypes = []any{
-	(*AnswerPromptRequest)(nil),            // 0: toshi.workspace.v1.AnswerPromptRequest
-	(*AnswerPromptResponse)(nil),           // 1: toshi.workspace.v1.AnswerPromptResponse
-	(*EmitWorkloadEventRequest)(nil),       // 2: toshi.workspace.v1.EmitWorkloadEventRequest
-	(*EmitWorkloadEventResponse)(nil),      // 3: toshi.workspace.v1.EmitWorkloadEventResponse
-	(*ExportEventsRequest)(nil),            // 4: toshi.workspace.v1.ExportEventsRequest
-	(*ExportEventsResponse)(nil),           // 5: toshi.workspace.v1.ExportEventsResponse
-	(*CreateJobRequest)(nil),               // 6: toshi.workspace.v1.CreateJobRequest
-	(*CreateJobResponse)(nil),              // 7: toshi.workspace.v1.CreateJobResponse
-	(*GetJobRequest)(nil),                  // 8: toshi.workspace.v1.GetJobRequest
-	(*GetJobResponse)(nil),                 // 9: toshi.workspace.v1.GetJobResponse
-	(*ListJobsRequest)(nil),                // 10: toshi.workspace.v1.ListJobsRequest
-	(*ListJobsResponse)(nil),               // 11: toshi.workspace.v1.ListJobsResponse
-	(*UpdateJobRequest)(nil),               // 12: toshi.workspace.v1.UpdateJobRequest
-	(*UpdateJobResponse)(nil),              // 13: toshi.workspace.v1.UpdateJobResponse
-	(*DeleteJobRequest)(nil),               // 14: toshi.workspace.v1.DeleteJobRequest
-	(*DeleteJobResponse)(nil),              // 15: toshi.workspace.v1.DeleteJobResponse
-	(*CancelJobRequest)(nil),               // 16: toshi.workspace.v1.CancelJobRequest
-	(*CancelJobResponse)(nil),              // 17: toshi.workspace.v1.CancelJobResponse
-	(*WaitJobRequest)(nil),                 // 18: toshi.workspace.v1.WaitJobRequest
-	(*WaitJobResponse)(nil),                // 19: toshi.workspace.v1.WaitJobResponse
-	(*WatchJobsRequest)(nil),               // 20: toshi.workspace.v1.WatchJobsRequest
-	(*WatchJobsResponse)(nil),              // 21: toshi.workspace.v1.WatchJobsResponse
-	(*CreateSandboxRequest)(nil),           // 22: toshi.workspace.v1.CreateSandboxRequest
-	(*CreateSandboxResponse)(nil),          // 23: toshi.workspace.v1.CreateSandboxResponse
-	(*GetSandboxRequest)(nil),              // 24: toshi.workspace.v1.GetSandboxRequest
-	(*GetSandboxResponse)(nil),             // 25: toshi.workspace.v1.GetSandboxResponse
-	(*ListSandboxesRequest)(nil),           // 26: toshi.workspace.v1.ListSandboxesRequest
-	(*ListSandboxesResponse)(nil),          // 27: toshi.workspace.v1.ListSandboxesResponse
-	(*UpdateSandboxRequest)(nil),           // 28: toshi.workspace.v1.UpdateSandboxRequest
-	(*UpdateSandboxResponse)(nil),          // 29: toshi.workspace.v1.UpdateSandboxResponse
-	(*DeleteSandboxRequest)(nil),           // 30: toshi.workspace.v1.DeleteSandboxRequest
-	(*DeleteSandboxResponse)(nil),          // 31: toshi.workspace.v1.DeleteSandboxResponse
-	(*WaitSandboxRequest)(nil),             // 32: toshi.workspace.v1.WaitSandboxRequest
-	(*WaitSandboxResponse)(nil),            // 33: toshi.workspace.v1.WaitSandboxResponse
-	(*WatchSandboxesRequest)(nil),          // 34: toshi.workspace.v1.WatchSandboxesRequest
-	(*WatchSandboxesResponse)(nil),         // 35: toshi.workspace.v1.WatchSandboxesResponse
-	(*CreateServiceRequest)(nil),           // 36: toshi.workspace.v1.CreateServiceRequest
-	(*CreateServiceResponse)(nil),          // 37: toshi.workspace.v1.CreateServiceResponse
-	(*GetServiceRequest)(nil),              // 38: toshi.workspace.v1.GetServiceRequest
-	(*GetServiceResponse)(nil),             // 39: toshi.workspace.v1.GetServiceResponse
-	(*ListServicesRequest)(nil),            // 40: toshi.workspace.v1.ListServicesRequest
-	(*ListServicesResponse)(nil),           // 41: toshi.workspace.v1.ListServicesResponse
-	(*UpdateServiceRequest)(nil),           // 42: toshi.workspace.v1.UpdateServiceRequest
-	(*UpdateServiceResponse)(nil),          // 43: toshi.workspace.v1.UpdateServiceResponse
-	(*DeleteServiceRequest)(nil),           // 44: toshi.workspace.v1.DeleteServiceRequest
-	(*DeleteServiceResponse)(nil),          // 45: toshi.workspace.v1.DeleteServiceResponse
-	(*WaitServiceRequest)(nil),             // 46: toshi.workspace.v1.WaitServiceRequest
-	(*WaitServiceResponse)(nil),            // 47: toshi.workspace.v1.WaitServiceResponse
-	(*WatchServicesRequest)(nil),           // 48: toshi.workspace.v1.WatchServicesRequest
-	(*WatchServicesResponse)(nil),          // 49: toshi.workspace.v1.WatchServicesResponse
-	nil,                                    // 50: toshi.workspace.v1.CreateJobRequest.LabelsEntry
-	nil,                                    // 51: toshi.workspace.v1.ListJobsRequest.LabelsEntry
-	nil,                                    // 52: toshi.workspace.v1.CreateSandboxRequest.LabelsEntry
-	nil,                                    // 53: toshi.workspace.v1.ListSandboxesRequest.LabelsEntry
-	nil,                                    // 54: toshi.workspace.v1.CreateServiceRequest.LabelsEntry
-	nil,                                    // 55: toshi.workspace.v1.ListServicesRequest.LabelsEntry
-	(*Event)(nil),                          // 56: toshi.workspace.v1.Event
-	(*timestamppb.Timestamp)(nil),          // 57: google.protobuf.Timestamp
-	(*JobSpec)(nil),                        // 58: toshi.workspace.v1.JobSpec
-	(RecordingPolicy)(0),                   // 59: toshi.workspace.v1.RecordingPolicy
-	(*durationpb.Duration)(nil),            // 60: google.protobuf.Duration
-	(*Job)(nil),                            // 61: toshi.workspace.v1.Job
-	(*Output)(nil),                         // 62: toshi.workspace.v1.Output
-	(*BoundBinding)(nil),                   // 63: toshi.workspace.v1.BoundBinding
-	(*JobAttempt)(nil),                     // 64: toshi.workspace.v1.JobAttempt
-	(JobState)(0),                          // 65: toshi.workspace.v1.JobState
-	(*fieldmaskpb.FieldMask)(nil),          // 66: google.protobuf.FieldMask
-	(*Operation)(nil),                      // 67: toshi.workspace.v1.Operation
-	(EventType)(0),                         // 68: toshi.workspace.v1.EventType
-	(*Keepalive)(nil),                      // 69: toshi.workspace.v1.Keepalive
-	(*SandboxSpec)(nil),                    // 70: toshi.workspace.v1.SandboxSpec
-	(*Sandbox)(nil),                        // 71: toshi.workspace.v1.Sandbox
-	(SandboxState)(0),                      // 72: toshi.workspace.v1.SandboxState
-	(*ServiceSpec)(nil),                    // 73: toshi.workspace.v1.ServiceSpec
-	(*Service)(nil),                        // 74: toshi.workspace.v1.Service
-	(ServiceState)(0),                      // 75: toshi.workspace.v1.ServiceState
-	(*WatchOutputRequest)(nil),             // 76: toshi.workspace.v1.WatchOutputRequest
-	(*StopSandboxRequest)(nil),             // 77: toshi.workspace.v1.StopSandboxRequest
-	(*StartSandboxRequest)(nil),            // 78: toshi.workspace.v1.StartSandboxRequest
-	(*ExecuteRequest)(nil),                 // 79: toshi.workspace.v1.ExecuteRequest
-	(*CancelExecutionRequest)(nil),         // 80: toshi.workspace.v1.CancelExecutionRequest
-	(*ExecuteCommandRequest)(nil),          // 81: toshi.workspace.v1.ExecuteCommandRequest
-	(*WatchTelemetryRequest)(nil),          // 82: toshi.workspace.v1.WatchTelemetryRequest
-	(*WatchGuestLogRequest)(nil),           // 83: toshi.workspace.v1.WatchGuestLogRequest
-	(*CreatePreviewShareLinkRequest)(nil),  // 84: toshi.workspace.v1.CreatePreviewShareLinkRequest
-	(*ListPreviewShareLinksRequest)(nil),   // 85: toshi.workspace.v1.ListPreviewShareLinksRequest
-	(*RevokePreviewShareLinkRequest)(nil),  // 86: toshi.workspace.v1.RevokePreviewShareLinkRequest
-	(*CreateServiceShareLinkRequest)(nil),  // 87: toshi.workspace.v1.CreateServiceShareLinkRequest
-	(*ListServiceShareLinksRequest)(nil),   // 88: toshi.workspace.v1.ListServiceShareLinksRequest
-	(*RevokeServiceShareLinkRequest)(nil),  // 89: toshi.workspace.v1.RevokeServiceShareLinkRequest
-	(*StartServiceRequest)(nil),            // 90: toshi.workspace.v1.StartServiceRequest
-	(*StopServiceRequest)(nil),             // 91: toshi.workspace.v1.StopServiceRequest
-	(*SetServiceModeRequest)(nil),          // 92: toshi.workspace.v1.SetServiceModeRequest
-	(*WakeServiceRequest)(nil),             // 93: toshi.workspace.v1.WakeServiceRequest
-	(*HoldServiceRequest)(nil),             // 94: toshi.workspace.v1.HoldServiceRequest
-	(*ReleaseServiceRequest)(nil),          // 95: toshi.workspace.v1.ReleaseServiceRequest
-	(*StartServiceSignInRequest)(nil),      // 96: toshi.workspace.v1.StartServiceSignInRequest
-	(*AnswerServiceSignInRequest)(nil),     // 97: toshi.workspace.v1.AnswerServiceSignInRequest
-	(*CancelServiceSignInRequest)(nil),     // 98: toshi.workspace.v1.CancelServiceSignInRequest
-	(*GetServiceSignInStatusRequest)(nil),  // 99: toshi.workspace.v1.GetServiceSignInStatusRequest
-	(*ListServiceRevisionsRequest)(nil),    // 100: toshi.workspace.v1.ListServiceRevisionsRequest
-	(*GetServiceRevisionRequest)(nil),      // 101: toshi.workspace.v1.GetServiceRevisionRequest
-	(*RollbackServiceRequest)(nil),         // 102: toshi.workspace.v1.RollbackServiceRequest
-	(*ListServiceActivationsRequest)(nil),  // 103: toshi.workspace.v1.ListServiceActivationsRequest
-	(*ListServiceRunsRequest)(nil),         // 104: toshi.workspace.v1.ListServiceRunsRequest
-	(*ListEventsRequest)(nil),              // 105: toshi.workspace.v1.ListEventsRequest
-	(*WatchEventsRequest)(nil),             // 106: toshi.workspace.v1.WatchEventsRequest
-	(*GetOperationRequest)(nil),            // 107: toshi.workspace.v1.GetOperationRequest
-	(*WaitOperationRequest)(nil),           // 108: toshi.workspace.v1.WaitOperationRequest
-	(*WatchOutputResponse)(nil),            // 109: toshi.workspace.v1.WatchOutputResponse
-	(*StopSandboxResponse)(nil),            // 110: toshi.workspace.v1.StopSandboxResponse
-	(*StartSandboxResponse)(nil),           // 111: toshi.workspace.v1.StartSandboxResponse
-	(*ExecuteResponse)(nil),                // 112: toshi.workspace.v1.ExecuteResponse
-	(*CancelExecutionResponse)(nil),        // 113: toshi.workspace.v1.CancelExecutionResponse
-	(*ExecuteCommandResponse)(nil),         // 114: toshi.workspace.v1.ExecuteCommandResponse
-	(*WatchTelemetryResponse)(nil),         // 115: toshi.workspace.v1.WatchTelemetryResponse
-	(*WatchGuestLogResponse)(nil),          // 116: toshi.workspace.v1.WatchGuestLogResponse
-	(*CreatePreviewShareLinkResponse)(nil), // 117: toshi.workspace.v1.CreatePreviewShareLinkResponse
-	(*ListPreviewShareLinksResponse)(nil),  // 118: toshi.workspace.v1.ListPreviewShareLinksResponse
-	(*RevokePreviewShareLinkResponse)(nil), // 119: toshi.workspace.v1.RevokePreviewShareLinkResponse
-	(*CreateServiceShareLinkResponse)(nil), // 120: toshi.workspace.v1.CreateServiceShareLinkResponse
-	(*ListServiceShareLinksResponse)(nil),  // 121: toshi.workspace.v1.ListServiceShareLinksResponse
-	(*RevokeServiceShareLinkResponse)(nil), // 122: toshi.workspace.v1.RevokeServiceShareLinkResponse
-	(*StartServiceResponse)(nil),           // 123: toshi.workspace.v1.StartServiceResponse
-	(*StopServiceResponse)(nil),            // 124: toshi.workspace.v1.StopServiceResponse
-	(*SetServiceModeResponse)(nil),         // 125: toshi.workspace.v1.SetServiceModeResponse
-	(*WakeServiceResponse)(nil),            // 126: toshi.workspace.v1.WakeServiceResponse
-	(*HoldServiceResponse)(nil),            // 127: toshi.workspace.v1.HoldServiceResponse
-	(*ReleaseServiceResponse)(nil),         // 128: toshi.workspace.v1.ReleaseServiceResponse
-	(*StartServiceSignInResponse)(nil),     // 129: toshi.workspace.v1.StartServiceSignInResponse
-	(*AnswerServiceSignInResponse)(nil),    // 130: toshi.workspace.v1.AnswerServiceSignInResponse
-	(*CancelServiceSignInResponse)(nil),    // 131: toshi.workspace.v1.CancelServiceSignInResponse
-	(*GetServiceSignInStatusResponse)(nil), // 132: toshi.workspace.v1.GetServiceSignInStatusResponse
-	(*ListServiceRevisionsResponse)(nil),   // 133: toshi.workspace.v1.ListServiceRevisionsResponse
-	(*GetServiceRevisionResponse)(nil),     // 134: toshi.workspace.v1.GetServiceRevisionResponse
-	(*RollbackServiceResponse)(nil),        // 135: toshi.workspace.v1.RollbackServiceResponse
-	(*ListServiceActivationsResponse)(nil), // 136: toshi.workspace.v1.ListServiceActivationsResponse
-	(*ListServiceRunsResponse)(nil),        // 137: toshi.workspace.v1.ListServiceRunsResponse
-	(*ListEventsResponse)(nil),             // 138: toshi.workspace.v1.ListEventsResponse
-	(*WatchEventsResponse)(nil),            // 139: toshi.workspace.v1.WatchEventsResponse
-	(*GetOperationResponse)(nil),           // 140: toshi.workspace.v1.GetOperationResponse
-	(*WaitOperationResponse)(nil),          // 141: toshi.workspace.v1.WaitOperationResponse
+	(ServiceAlarmMisfire)(0),               // 0: toshi.workspace.v1.ServiceAlarmMisfire
+	(*AnswerPromptRequest)(nil),            // 1: toshi.workspace.v1.AnswerPromptRequest
+	(*AnswerPromptResponse)(nil),           // 2: toshi.workspace.v1.AnswerPromptResponse
+	(*EmitWorkloadEventRequest)(nil),       // 3: toshi.workspace.v1.EmitWorkloadEventRequest
+	(*EmitWorkloadEventResponse)(nil),      // 4: toshi.workspace.v1.EmitWorkloadEventResponse
+	(*ExportEventsRequest)(nil),            // 5: toshi.workspace.v1.ExportEventsRequest
+	(*ExportEventsResponse)(nil),           // 6: toshi.workspace.v1.ExportEventsResponse
+	(*CreateJobRequest)(nil),               // 7: toshi.workspace.v1.CreateJobRequest
+	(*CreateJobResponse)(nil),              // 8: toshi.workspace.v1.CreateJobResponse
+	(*GetJobRequest)(nil),                  // 9: toshi.workspace.v1.GetJobRequest
+	(*GetJobResponse)(nil),                 // 10: toshi.workspace.v1.GetJobResponse
+	(*ListJobsRequest)(nil),                // 11: toshi.workspace.v1.ListJobsRequest
+	(*ListJobsResponse)(nil),               // 12: toshi.workspace.v1.ListJobsResponse
+	(*UpdateJobRequest)(nil),               // 13: toshi.workspace.v1.UpdateJobRequest
+	(*UpdateJobResponse)(nil),              // 14: toshi.workspace.v1.UpdateJobResponse
+	(*DeleteJobRequest)(nil),               // 15: toshi.workspace.v1.DeleteJobRequest
+	(*DeleteJobResponse)(nil),              // 16: toshi.workspace.v1.DeleteJobResponse
+	(*CancelJobRequest)(nil),               // 17: toshi.workspace.v1.CancelJobRequest
+	(*CancelJobResponse)(nil),              // 18: toshi.workspace.v1.CancelJobResponse
+	(*WaitJobRequest)(nil),                 // 19: toshi.workspace.v1.WaitJobRequest
+	(*WaitJobResponse)(nil),                // 20: toshi.workspace.v1.WaitJobResponse
+	(*WatchJobsRequest)(nil),               // 21: toshi.workspace.v1.WatchJobsRequest
+	(*WatchJobsResponse)(nil),              // 22: toshi.workspace.v1.WatchJobsResponse
+	(*CreateSandboxRequest)(nil),           // 23: toshi.workspace.v1.CreateSandboxRequest
+	(*CreateSandboxResponse)(nil),          // 24: toshi.workspace.v1.CreateSandboxResponse
+	(*GetSandboxRequest)(nil),              // 25: toshi.workspace.v1.GetSandboxRequest
+	(*GetSandboxResponse)(nil),             // 26: toshi.workspace.v1.GetSandboxResponse
+	(*ListSandboxesRequest)(nil),           // 27: toshi.workspace.v1.ListSandboxesRequest
+	(*ListSandboxesResponse)(nil),          // 28: toshi.workspace.v1.ListSandboxesResponse
+	(*UpdateSandboxRequest)(nil),           // 29: toshi.workspace.v1.UpdateSandboxRequest
+	(*UpdateSandboxResponse)(nil),          // 30: toshi.workspace.v1.UpdateSandboxResponse
+	(*DeleteSandboxRequest)(nil),           // 31: toshi.workspace.v1.DeleteSandboxRequest
+	(*DeleteSandboxResponse)(nil),          // 32: toshi.workspace.v1.DeleteSandboxResponse
+	(*WaitSandboxRequest)(nil),             // 33: toshi.workspace.v1.WaitSandboxRequest
+	(*WaitSandboxResponse)(nil),            // 34: toshi.workspace.v1.WaitSandboxResponse
+	(*WatchSandboxesRequest)(nil),          // 35: toshi.workspace.v1.WatchSandboxesRequest
+	(*WatchSandboxesResponse)(nil),         // 36: toshi.workspace.v1.WatchSandboxesResponse
+	(*CreateServiceRequest)(nil),           // 37: toshi.workspace.v1.CreateServiceRequest
+	(*CreateServiceResponse)(nil),          // 38: toshi.workspace.v1.CreateServiceResponse
+	(*GetServiceRequest)(nil),              // 39: toshi.workspace.v1.GetServiceRequest
+	(*GetServiceResponse)(nil),             // 40: toshi.workspace.v1.GetServiceResponse
+	(*ListServicesRequest)(nil),            // 41: toshi.workspace.v1.ListServicesRequest
+	(*ListServicesResponse)(nil),           // 42: toshi.workspace.v1.ListServicesResponse
+	(*UpdateServiceRequest)(nil),           // 43: toshi.workspace.v1.UpdateServiceRequest
+	(*UpdateServiceResponse)(nil),          // 44: toshi.workspace.v1.UpdateServiceResponse
+	(*DeleteServiceRequest)(nil),           // 45: toshi.workspace.v1.DeleteServiceRequest
+	(*DeleteServiceResponse)(nil),          // 46: toshi.workspace.v1.DeleteServiceResponse
+	(*WaitServiceRequest)(nil),             // 47: toshi.workspace.v1.WaitServiceRequest
+	(*WaitServiceResponse)(nil),            // 48: toshi.workspace.v1.WaitServiceResponse
+	(*WatchServicesRequest)(nil),           // 49: toshi.workspace.v1.WatchServicesRequest
+	(*WatchServicesResponse)(nil),          // 50: toshi.workspace.v1.WatchServicesResponse
+	(*ServiceAlarm)(nil),                   // 51: toshi.workspace.v1.ServiceAlarm
+	(*ServiceAlarmOccurrence)(nil),         // 52: toshi.workspace.v1.ServiceAlarmOccurrence
+	(*SetServiceAlarmRequest)(nil),         // 53: toshi.workspace.v1.SetServiceAlarmRequest
+	(*SetServiceAlarmResponse)(nil),        // 54: toshi.workspace.v1.SetServiceAlarmResponse
+	(*GetServiceAlarmRequest)(nil),         // 55: toshi.workspace.v1.GetServiceAlarmRequest
+	(*GetServiceAlarmResponse)(nil),        // 56: toshi.workspace.v1.GetServiceAlarmResponse
+	(*ListServiceAlarmsRequest)(nil),       // 57: toshi.workspace.v1.ListServiceAlarmsRequest
+	(*ListServiceAlarmsResponse)(nil),      // 58: toshi.workspace.v1.ListServiceAlarmsResponse
+	(*DeleteServiceAlarmRequest)(nil),      // 59: toshi.workspace.v1.DeleteServiceAlarmRequest
+	(*DeleteServiceAlarmResponse)(nil),     // 60: toshi.workspace.v1.DeleteServiceAlarmResponse
+	(*PauseServiceAlarmRequest)(nil),       // 61: toshi.workspace.v1.PauseServiceAlarmRequest
+	(*PauseServiceAlarmResponse)(nil),      // 62: toshi.workspace.v1.PauseServiceAlarmResponse
+	(*ResumeServiceAlarmRequest)(nil),      // 63: toshi.workspace.v1.ResumeServiceAlarmRequest
+	(*ResumeServiceAlarmResponse)(nil),     // 64: toshi.workspace.v1.ResumeServiceAlarmResponse
+	(*RunServiceAlarmNowRequest)(nil),      // 65: toshi.workspace.v1.RunServiceAlarmNowRequest
+	(*RunServiceAlarmNowResponse)(nil),     // 66: toshi.workspace.v1.RunServiceAlarmNowResponse
+	nil,                                    // 67: toshi.workspace.v1.CreateJobRequest.LabelsEntry
+	nil,                                    // 68: toshi.workspace.v1.ListJobsRequest.LabelsEntry
+	nil,                                    // 69: toshi.workspace.v1.CreateSandboxRequest.LabelsEntry
+	nil,                                    // 70: toshi.workspace.v1.ListSandboxesRequest.LabelsEntry
+	nil,                                    // 71: toshi.workspace.v1.CreateServiceRequest.LabelsEntry
+	nil,                                    // 72: toshi.workspace.v1.ListServicesRequest.LabelsEntry
+	(*Event)(nil),                          // 73: toshi.workspace.v1.Event
+	(*timestamppb.Timestamp)(nil),          // 74: google.protobuf.Timestamp
+	(*JobSpec)(nil),                        // 75: toshi.workspace.v1.JobSpec
+	(RecordingPolicy)(0),                   // 76: toshi.workspace.v1.RecordingPolicy
+	(*durationpb.Duration)(nil),            // 77: google.protobuf.Duration
+	(*Job)(nil),                            // 78: toshi.workspace.v1.Job
+	(*Output)(nil),                         // 79: toshi.workspace.v1.Output
+	(*BoundBinding)(nil),                   // 80: toshi.workspace.v1.BoundBinding
+	(*JobAttempt)(nil),                     // 81: toshi.workspace.v1.JobAttempt
+	(JobState)(0),                          // 82: toshi.workspace.v1.JobState
+	(*fieldmaskpb.FieldMask)(nil),          // 83: google.protobuf.FieldMask
+	(*Operation)(nil),                      // 84: toshi.workspace.v1.Operation
+	(EventType)(0),                         // 85: toshi.workspace.v1.EventType
+	(*Keepalive)(nil),                      // 86: toshi.workspace.v1.Keepalive
+	(*SandboxSpec)(nil),                    // 87: toshi.workspace.v1.SandboxSpec
+	(*Sandbox)(nil),                        // 88: toshi.workspace.v1.Sandbox
+	(SandboxState)(0),                      // 89: toshi.workspace.v1.SandboxState
+	(*ServiceSpec)(nil),                    // 90: toshi.workspace.v1.ServiceSpec
+	(*Service)(nil),                        // 91: toshi.workspace.v1.Service
+	(ServiceState)(0),                      // 92: toshi.workspace.v1.ServiceState
+	(*WatchOutputRequest)(nil),             // 93: toshi.workspace.v1.WatchOutputRequest
+	(*StopSandboxRequest)(nil),             // 94: toshi.workspace.v1.StopSandboxRequest
+	(*StartSandboxRequest)(nil),            // 95: toshi.workspace.v1.StartSandboxRequest
+	(*ExecuteRequest)(nil),                 // 96: toshi.workspace.v1.ExecuteRequest
+	(*CancelExecutionRequest)(nil),         // 97: toshi.workspace.v1.CancelExecutionRequest
+	(*ExecuteCommandRequest)(nil),          // 98: toshi.workspace.v1.ExecuteCommandRequest
+	(*WatchTelemetryRequest)(nil),          // 99: toshi.workspace.v1.WatchTelemetryRequest
+	(*WatchGuestLogRequest)(nil),           // 100: toshi.workspace.v1.WatchGuestLogRequest
+	(*CreatePreviewShareLinkRequest)(nil),  // 101: toshi.workspace.v1.CreatePreviewShareLinkRequest
+	(*ListPreviewShareLinksRequest)(nil),   // 102: toshi.workspace.v1.ListPreviewShareLinksRequest
+	(*RevokePreviewShareLinkRequest)(nil),  // 103: toshi.workspace.v1.RevokePreviewShareLinkRequest
+	(*CreateServiceShareLinkRequest)(nil),  // 104: toshi.workspace.v1.CreateServiceShareLinkRequest
+	(*ListServiceShareLinksRequest)(nil),   // 105: toshi.workspace.v1.ListServiceShareLinksRequest
+	(*RevokeServiceShareLinkRequest)(nil),  // 106: toshi.workspace.v1.RevokeServiceShareLinkRequest
+	(*StartServiceRequest)(nil),            // 107: toshi.workspace.v1.StartServiceRequest
+	(*StopServiceRequest)(nil),             // 108: toshi.workspace.v1.StopServiceRequest
+	(*SetServiceModeRequest)(nil),          // 109: toshi.workspace.v1.SetServiceModeRequest
+	(*WakeServiceRequest)(nil),             // 110: toshi.workspace.v1.WakeServiceRequest
+	(*HoldServiceRequest)(nil),             // 111: toshi.workspace.v1.HoldServiceRequest
+	(*ReleaseServiceRequest)(nil),          // 112: toshi.workspace.v1.ReleaseServiceRequest
+	(*StartServiceSignInRequest)(nil),      // 113: toshi.workspace.v1.StartServiceSignInRequest
+	(*AnswerServiceSignInRequest)(nil),     // 114: toshi.workspace.v1.AnswerServiceSignInRequest
+	(*CancelServiceSignInRequest)(nil),     // 115: toshi.workspace.v1.CancelServiceSignInRequest
+	(*GetServiceSignInStatusRequest)(nil),  // 116: toshi.workspace.v1.GetServiceSignInStatusRequest
+	(*ListServiceRevisionsRequest)(nil),    // 117: toshi.workspace.v1.ListServiceRevisionsRequest
+	(*GetServiceRevisionRequest)(nil),      // 118: toshi.workspace.v1.GetServiceRevisionRequest
+	(*RollbackServiceRequest)(nil),         // 119: toshi.workspace.v1.RollbackServiceRequest
+	(*ListServiceActivationsRequest)(nil),  // 120: toshi.workspace.v1.ListServiceActivationsRequest
+	(*ListServiceRunsRequest)(nil),         // 121: toshi.workspace.v1.ListServiceRunsRequest
+	(*ListEventsRequest)(nil),              // 122: toshi.workspace.v1.ListEventsRequest
+	(*WatchEventsRequest)(nil),             // 123: toshi.workspace.v1.WatchEventsRequest
+	(*GetOperationRequest)(nil),            // 124: toshi.workspace.v1.GetOperationRequest
+	(*WaitOperationRequest)(nil),           // 125: toshi.workspace.v1.WaitOperationRequest
+	(*WatchOutputResponse)(nil),            // 126: toshi.workspace.v1.WatchOutputResponse
+	(*StopSandboxResponse)(nil),            // 127: toshi.workspace.v1.StopSandboxResponse
+	(*StartSandboxResponse)(nil),           // 128: toshi.workspace.v1.StartSandboxResponse
+	(*ExecuteResponse)(nil),                // 129: toshi.workspace.v1.ExecuteResponse
+	(*CancelExecutionResponse)(nil),        // 130: toshi.workspace.v1.CancelExecutionResponse
+	(*ExecuteCommandResponse)(nil),         // 131: toshi.workspace.v1.ExecuteCommandResponse
+	(*WatchTelemetryResponse)(nil),         // 132: toshi.workspace.v1.WatchTelemetryResponse
+	(*WatchGuestLogResponse)(nil),          // 133: toshi.workspace.v1.WatchGuestLogResponse
+	(*CreatePreviewShareLinkResponse)(nil), // 134: toshi.workspace.v1.CreatePreviewShareLinkResponse
+	(*ListPreviewShareLinksResponse)(nil),  // 135: toshi.workspace.v1.ListPreviewShareLinksResponse
+	(*RevokePreviewShareLinkResponse)(nil), // 136: toshi.workspace.v1.RevokePreviewShareLinkResponse
+	(*CreateServiceShareLinkResponse)(nil), // 137: toshi.workspace.v1.CreateServiceShareLinkResponse
+	(*ListServiceShareLinksResponse)(nil),  // 138: toshi.workspace.v1.ListServiceShareLinksResponse
+	(*RevokeServiceShareLinkResponse)(nil), // 139: toshi.workspace.v1.RevokeServiceShareLinkResponse
+	(*StartServiceResponse)(nil),           // 140: toshi.workspace.v1.StartServiceResponse
+	(*StopServiceResponse)(nil),            // 141: toshi.workspace.v1.StopServiceResponse
+	(*SetServiceModeResponse)(nil),         // 142: toshi.workspace.v1.SetServiceModeResponse
+	(*WakeServiceResponse)(nil),            // 143: toshi.workspace.v1.WakeServiceResponse
+	(*HoldServiceResponse)(nil),            // 144: toshi.workspace.v1.HoldServiceResponse
+	(*ReleaseServiceResponse)(nil),         // 145: toshi.workspace.v1.ReleaseServiceResponse
+	(*StartServiceSignInResponse)(nil),     // 146: toshi.workspace.v1.StartServiceSignInResponse
+	(*AnswerServiceSignInResponse)(nil),    // 147: toshi.workspace.v1.AnswerServiceSignInResponse
+	(*CancelServiceSignInResponse)(nil),    // 148: toshi.workspace.v1.CancelServiceSignInResponse
+	(*GetServiceSignInStatusResponse)(nil), // 149: toshi.workspace.v1.GetServiceSignInStatusResponse
+	(*ListServiceRevisionsResponse)(nil),   // 150: toshi.workspace.v1.ListServiceRevisionsResponse
+	(*GetServiceRevisionResponse)(nil),     // 151: toshi.workspace.v1.GetServiceRevisionResponse
+	(*RollbackServiceResponse)(nil),        // 152: toshi.workspace.v1.RollbackServiceResponse
+	(*ListServiceActivationsResponse)(nil), // 153: toshi.workspace.v1.ListServiceActivationsResponse
+	(*ListServiceRunsResponse)(nil),        // 154: toshi.workspace.v1.ListServiceRunsResponse
+	(*ListEventsResponse)(nil),             // 155: toshi.workspace.v1.ListEventsResponse
+	(*WatchEventsResponse)(nil),            // 156: toshi.workspace.v1.WatchEventsResponse
+	(*GetOperationResponse)(nil),           // 157: toshi.workspace.v1.GetOperationResponse
+	(*WaitOperationResponse)(nil),          // 158: toshi.workspace.v1.WaitOperationResponse
 }
 var file_toshi_workspace_v1_workloads_proto_depIdxs = []int32{
-	56,  // 0: toshi.workspace.v1.AnswerPromptResponse.event:type_name -> toshi.workspace.v1.Event
-	56,  // 1: toshi.workspace.v1.EmitWorkloadEventResponse.event:type_name -> toshi.workspace.v1.Event
-	57,  // 2: toshi.workspace.v1.ExportEventsRequest.since:type_name -> google.protobuf.Timestamp
-	57,  // 3: toshi.workspace.v1.ExportEventsRequest.until:type_name -> google.protobuf.Timestamp
-	58,  // 4: toshi.workspace.v1.CreateJobRequest.spec:type_name -> toshi.workspace.v1.JobSpec
-	50,  // 5: toshi.workspace.v1.CreateJobRequest.labels:type_name -> toshi.workspace.v1.CreateJobRequest.LabelsEntry
-	59,  // 6: toshi.workspace.v1.CreateJobRequest.recording:type_name -> toshi.workspace.v1.RecordingPolicy
-	60,  // 7: toshi.workspace.v1.CreateJobRequest.wait_for_end:type_name -> google.protobuf.Duration
-	61,  // 8: toshi.workspace.v1.CreateJobResponse.job:type_name -> toshi.workspace.v1.Job
-	62,  // 9: toshi.workspace.v1.CreateJobResponse.output:type_name -> toshi.workspace.v1.Output
-	61,  // 10: toshi.workspace.v1.GetJobResponse.job:type_name -> toshi.workspace.v1.Job
-	63,  // 11: toshi.workspace.v1.GetJobResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
-	64,  // 12: toshi.workspace.v1.GetJobResponse.attempts:type_name -> toshi.workspace.v1.JobAttempt
-	65,  // 13: toshi.workspace.v1.ListJobsRequest.states:type_name -> toshi.workspace.v1.JobState
-	51,  // 14: toshi.workspace.v1.ListJobsRequest.labels:type_name -> toshi.workspace.v1.ListJobsRequest.LabelsEntry
-	61,  // 15: toshi.workspace.v1.ListJobsResponse.jobs:type_name -> toshi.workspace.v1.Job
-	61,  // 16: toshi.workspace.v1.UpdateJobRequest.job:type_name -> toshi.workspace.v1.Job
-	66,  // 17: toshi.workspace.v1.UpdateJobRequest.update_mask:type_name -> google.protobuf.FieldMask
-	61,  // 18: toshi.workspace.v1.UpdateJobResponse.job:type_name -> toshi.workspace.v1.Job
-	67,  // 19: toshi.workspace.v1.DeleteJobResponse.operation:type_name -> toshi.workspace.v1.Operation
-	61,  // 20: toshi.workspace.v1.CancelJobResponse.job:type_name -> toshi.workspace.v1.Job
-	65,  // 21: toshi.workspace.v1.WaitJobRequest.states:type_name -> toshi.workspace.v1.JobState
-	60,  // 22: toshi.workspace.v1.WaitJobRequest.timeout:type_name -> google.protobuf.Duration
-	61,  // 23: toshi.workspace.v1.WaitJobResponse.job:type_name -> toshi.workspace.v1.Job
-	68,  // 24: toshi.workspace.v1.WatchJobsResponse.type:type_name -> toshi.workspace.v1.EventType
-	61,  // 25: toshi.workspace.v1.WatchJobsResponse.job:type_name -> toshi.workspace.v1.Job
-	69,  // 26: toshi.workspace.v1.WatchJobsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	70,  // 27: toshi.workspace.v1.CreateSandboxRequest.spec:type_name -> toshi.workspace.v1.SandboxSpec
-	52,  // 28: toshi.workspace.v1.CreateSandboxRequest.labels:type_name -> toshi.workspace.v1.CreateSandboxRequest.LabelsEntry
-	59,  // 29: toshi.workspace.v1.CreateSandboxRequest.recording:type_name -> toshi.workspace.v1.RecordingPolicy
-	71,  // 30: toshi.workspace.v1.CreateSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	71,  // 31: toshi.workspace.v1.GetSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	63,  // 32: toshi.workspace.v1.GetSandboxResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
-	72,  // 33: toshi.workspace.v1.ListSandboxesRequest.states:type_name -> toshi.workspace.v1.SandboxState
-	53,  // 34: toshi.workspace.v1.ListSandboxesRequest.labels:type_name -> toshi.workspace.v1.ListSandboxesRequest.LabelsEntry
-	71,  // 35: toshi.workspace.v1.ListSandboxesResponse.sandboxes:type_name -> toshi.workspace.v1.Sandbox
-	71,  // 36: toshi.workspace.v1.UpdateSandboxRequest.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	66,  // 37: toshi.workspace.v1.UpdateSandboxRequest.update_mask:type_name -> google.protobuf.FieldMask
-	71,  // 38: toshi.workspace.v1.UpdateSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	67,  // 39: toshi.workspace.v1.UpdateSandboxResponse.operation:type_name -> toshi.workspace.v1.Operation
-	67,  // 40: toshi.workspace.v1.DeleteSandboxResponse.operation:type_name -> toshi.workspace.v1.Operation
-	72,  // 41: toshi.workspace.v1.WaitSandboxRequest.states:type_name -> toshi.workspace.v1.SandboxState
-	60,  // 42: toshi.workspace.v1.WaitSandboxRequest.timeout:type_name -> google.protobuf.Duration
-	71,  // 43: toshi.workspace.v1.WaitSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	68,  // 44: toshi.workspace.v1.WatchSandboxesResponse.type:type_name -> toshi.workspace.v1.EventType
-	71,  // 45: toshi.workspace.v1.WatchSandboxesResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	69,  // 46: toshi.workspace.v1.WatchSandboxesResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	73,  // 47: toshi.workspace.v1.CreateServiceRequest.spec:type_name -> toshi.workspace.v1.ServiceSpec
-	54,  // 48: toshi.workspace.v1.CreateServiceRequest.labels:type_name -> toshi.workspace.v1.CreateServiceRequest.LabelsEntry
-	74,  // 49: toshi.workspace.v1.CreateServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	74,  // 50: toshi.workspace.v1.GetServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	63,  // 51: toshi.workspace.v1.GetServiceResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
-	75,  // 52: toshi.workspace.v1.ListServicesRequest.states:type_name -> toshi.workspace.v1.ServiceState
-	55,  // 53: toshi.workspace.v1.ListServicesRequest.labels:type_name -> toshi.workspace.v1.ListServicesRequest.LabelsEntry
-	74,  // 54: toshi.workspace.v1.ListServicesResponse.services:type_name -> toshi.workspace.v1.Service
-	74,  // 55: toshi.workspace.v1.UpdateServiceRequest.service:type_name -> toshi.workspace.v1.Service
-	66,  // 56: toshi.workspace.v1.UpdateServiceRequest.update_mask:type_name -> google.protobuf.FieldMask
-	74,  // 57: toshi.workspace.v1.UpdateServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	67,  // 58: toshi.workspace.v1.DeleteServiceResponse.operation:type_name -> toshi.workspace.v1.Operation
-	75,  // 59: toshi.workspace.v1.WaitServiceRequest.states:type_name -> toshi.workspace.v1.ServiceState
-	60,  // 60: toshi.workspace.v1.WaitServiceRequest.timeout:type_name -> google.protobuf.Duration
-	74,  // 61: toshi.workspace.v1.WaitServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	68,  // 62: toshi.workspace.v1.WatchServicesResponse.type:type_name -> toshi.workspace.v1.EventType
-	74,  // 63: toshi.workspace.v1.WatchServicesResponse.service:type_name -> toshi.workspace.v1.Service
-	69,  // 64: toshi.workspace.v1.WatchServicesResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	6,   // 65: toshi.workspace.v1.WorkloadService.CreateJob:input_type -> toshi.workspace.v1.CreateJobRequest
-	8,   // 66: toshi.workspace.v1.WorkloadService.GetJob:input_type -> toshi.workspace.v1.GetJobRequest
-	10,  // 67: toshi.workspace.v1.WorkloadService.ListJobs:input_type -> toshi.workspace.v1.ListJobsRequest
-	12,  // 68: toshi.workspace.v1.WorkloadService.UpdateJob:input_type -> toshi.workspace.v1.UpdateJobRequest
-	14,  // 69: toshi.workspace.v1.WorkloadService.DeleteJob:input_type -> toshi.workspace.v1.DeleteJobRequest
-	16,  // 70: toshi.workspace.v1.WorkloadService.CancelJob:input_type -> toshi.workspace.v1.CancelJobRequest
-	18,  // 71: toshi.workspace.v1.WorkloadService.WaitJob:input_type -> toshi.workspace.v1.WaitJobRequest
-	20,  // 72: toshi.workspace.v1.WorkloadService.WatchJobs:input_type -> toshi.workspace.v1.WatchJobsRequest
-	76,  // 73: toshi.workspace.v1.WorkloadService.WatchOutput:input_type -> toshi.workspace.v1.WatchOutputRequest
-	22,  // 74: toshi.workspace.v1.WorkloadService.CreateSandbox:input_type -> toshi.workspace.v1.CreateSandboxRequest
-	24,  // 75: toshi.workspace.v1.WorkloadService.GetSandbox:input_type -> toshi.workspace.v1.GetSandboxRequest
-	26,  // 76: toshi.workspace.v1.WorkloadService.ListSandboxes:input_type -> toshi.workspace.v1.ListSandboxesRequest
-	28,  // 77: toshi.workspace.v1.WorkloadService.UpdateSandbox:input_type -> toshi.workspace.v1.UpdateSandboxRequest
-	30,  // 78: toshi.workspace.v1.WorkloadService.DeleteSandbox:input_type -> toshi.workspace.v1.DeleteSandboxRequest
-	77,  // 79: toshi.workspace.v1.WorkloadService.StopSandbox:input_type -> toshi.workspace.v1.StopSandboxRequest
-	78,  // 80: toshi.workspace.v1.WorkloadService.StartSandbox:input_type -> toshi.workspace.v1.StartSandboxRequest
-	32,  // 81: toshi.workspace.v1.WorkloadService.WaitSandbox:input_type -> toshi.workspace.v1.WaitSandboxRequest
-	34,  // 82: toshi.workspace.v1.WorkloadService.WatchSandboxes:input_type -> toshi.workspace.v1.WatchSandboxesRequest
-	79,  // 83: toshi.workspace.v1.WorkloadService.Execute:input_type -> toshi.workspace.v1.ExecuteRequest
-	80,  // 84: toshi.workspace.v1.WorkloadService.CancelExecution:input_type -> toshi.workspace.v1.CancelExecutionRequest
-	81,  // 85: toshi.workspace.v1.WorkloadService.ExecuteCommand:input_type -> toshi.workspace.v1.ExecuteCommandRequest
-	0,   // 86: toshi.workspace.v1.WorkloadService.AnswerPrompt:input_type -> toshi.workspace.v1.AnswerPromptRequest
-	2,   // 87: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:input_type -> toshi.workspace.v1.EmitWorkloadEventRequest
-	82,  // 88: toshi.workspace.v1.WorkloadService.WatchTelemetry:input_type -> toshi.workspace.v1.WatchTelemetryRequest
-	83,  // 89: toshi.workspace.v1.WorkloadService.WatchGuestLog:input_type -> toshi.workspace.v1.WatchGuestLogRequest
-	84,  // 90: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:input_type -> toshi.workspace.v1.CreatePreviewShareLinkRequest
-	85,  // 91: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:input_type -> toshi.workspace.v1.ListPreviewShareLinksRequest
-	86,  // 92: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:input_type -> toshi.workspace.v1.RevokePreviewShareLinkRequest
-	87,  // 93: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:input_type -> toshi.workspace.v1.CreateServiceShareLinkRequest
-	88,  // 94: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:input_type -> toshi.workspace.v1.ListServiceShareLinksRequest
-	89,  // 95: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:input_type -> toshi.workspace.v1.RevokeServiceShareLinkRequest
-	36,  // 96: toshi.workspace.v1.WorkloadService.CreateService:input_type -> toshi.workspace.v1.CreateServiceRequest
-	38,  // 97: toshi.workspace.v1.WorkloadService.GetService:input_type -> toshi.workspace.v1.GetServiceRequest
-	40,  // 98: toshi.workspace.v1.WorkloadService.ListServices:input_type -> toshi.workspace.v1.ListServicesRequest
-	42,  // 99: toshi.workspace.v1.WorkloadService.UpdateService:input_type -> toshi.workspace.v1.UpdateServiceRequest
-	44,  // 100: toshi.workspace.v1.WorkloadService.DeleteService:input_type -> toshi.workspace.v1.DeleteServiceRequest
-	46,  // 101: toshi.workspace.v1.WorkloadService.WaitService:input_type -> toshi.workspace.v1.WaitServiceRequest
-	48,  // 102: toshi.workspace.v1.WorkloadService.WatchServices:input_type -> toshi.workspace.v1.WatchServicesRequest
-	90,  // 103: toshi.workspace.v1.WorkloadService.StartService:input_type -> toshi.workspace.v1.StartServiceRequest
-	91,  // 104: toshi.workspace.v1.WorkloadService.StopService:input_type -> toshi.workspace.v1.StopServiceRequest
-	92,  // 105: toshi.workspace.v1.WorkloadService.SetServiceMode:input_type -> toshi.workspace.v1.SetServiceModeRequest
-	93,  // 106: toshi.workspace.v1.WorkloadService.WakeService:input_type -> toshi.workspace.v1.WakeServiceRequest
-	94,  // 107: toshi.workspace.v1.WorkloadService.HoldService:input_type -> toshi.workspace.v1.HoldServiceRequest
-	95,  // 108: toshi.workspace.v1.WorkloadService.ReleaseService:input_type -> toshi.workspace.v1.ReleaseServiceRequest
-	96,  // 109: toshi.workspace.v1.WorkloadService.StartServiceSignIn:input_type -> toshi.workspace.v1.StartServiceSignInRequest
-	97,  // 110: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:input_type -> toshi.workspace.v1.AnswerServiceSignInRequest
-	98,  // 111: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:input_type -> toshi.workspace.v1.CancelServiceSignInRequest
-	99,  // 112: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:input_type -> toshi.workspace.v1.GetServiceSignInStatusRequest
-	100, // 113: toshi.workspace.v1.WorkloadService.ListServiceRevisions:input_type -> toshi.workspace.v1.ListServiceRevisionsRequest
-	101, // 114: toshi.workspace.v1.WorkloadService.GetServiceRevision:input_type -> toshi.workspace.v1.GetServiceRevisionRequest
-	102, // 115: toshi.workspace.v1.WorkloadService.RollbackService:input_type -> toshi.workspace.v1.RollbackServiceRequest
-	103, // 116: toshi.workspace.v1.WorkloadService.ListServiceActivations:input_type -> toshi.workspace.v1.ListServiceActivationsRequest
-	104, // 117: toshi.workspace.v1.WorkloadService.ListServiceRuns:input_type -> toshi.workspace.v1.ListServiceRunsRequest
-	105, // 118: toshi.workspace.v1.WorkloadService.ListEvents:input_type -> toshi.workspace.v1.ListEventsRequest
-	4,   // 119: toshi.workspace.v1.WorkloadService.ExportEvents:input_type -> toshi.workspace.v1.ExportEventsRequest
-	106, // 120: toshi.workspace.v1.WorkloadService.WatchEvents:input_type -> toshi.workspace.v1.WatchEventsRequest
-	107, // 121: toshi.workspace.v1.WorkloadService.GetOperation:input_type -> toshi.workspace.v1.GetOperationRequest
-	108, // 122: toshi.workspace.v1.WorkloadService.WaitOperation:input_type -> toshi.workspace.v1.WaitOperationRequest
-	7,   // 123: toshi.workspace.v1.WorkloadService.CreateJob:output_type -> toshi.workspace.v1.CreateJobResponse
-	9,   // 124: toshi.workspace.v1.WorkloadService.GetJob:output_type -> toshi.workspace.v1.GetJobResponse
-	11,  // 125: toshi.workspace.v1.WorkloadService.ListJobs:output_type -> toshi.workspace.v1.ListJobsResponse
-	13,  // 126: toshi.workspace.v1.WorkloadService.UpdateJob:output_type -> toshi.workspace.v1.UpdateJobResponse
-	15,  // 127: toshi.workspace.v1.WorkloadService.DeleteJob:output_type -> toshi.workspace.v1.DeleteJobResponse
-	17,  // 128: toshi.workspace.v1.WorkloadService.CancelJob:output_type -> toshi.workspace.v1.CancelJobResponse
-	19,  // 129: toshi.workspace.v1.WorkloadService.WaitJob:output_type -> toshi.workspace.v1.WaitJobResponse
-	21,  // 130: toshi.workspace.v1.WorkloadService.WatchJobs:output_type -> toshi.workspace.v1.WatchJobsResponse
-	109, // 131: toshi.workspace.v1.WorkloadService.WatchOutput:output_type -> toshi.workspace.v1.WatchOutputResponse
-	23,  // 132: toshi.workspace.v1.WorkloadService.CreateSandbox:output_type -> toshi.workspace.v1.CreateSandboxResponse
-	25,  // 133: toshi.workspace.v1.WorkloadService.GetSandbox:output_type -> toshi.workspace.v1.GetSandboxResponse
-	27,  // 134: toshi.workspace.v1.WorkloadService.ListSandboxes:output_type -> toshi.workspace.v1.ListSandboxesResponse
-	29,  // 135: toshi.workspace.v1.WorkloadService.UpdateSandbox:output_type -> toshi.workspace.v1.UpdateSandboxResponse
-	31,  // 136: toshi.workspace.v1.WorkloadService.DeleteSandbox:output_type -> toshi.workspace.v1.DeleteSandboxResponse
-	110, // 137: toshi.workspace.v1.WorkloadService.StopSandbox:output_type -> toshi.workspace.v1.StopSandboxResponse
-	111, // 138: toshi.workspace.v1.WorkloadService.StartSandbox:output_type -> toshi.workspace.v1.StartSandboxResponse
-	33,  // 139: toshi.workspace.v1.WorkloadService.WaitSandbox:output_type -> toshi.workspace.v1.WaitSandboxResponse
-	35,  // 140: toshi.workspace.v1.WorkloadService.WatchSandboxes:output_type -> toshi.workspace.v1.WatchSandboxesResponse
-	112, // 141: toshi.workspace.v1.WorkloadService.Execute:output_type -> toshi.workspace.v1.ExecuteResponse
-	113, // 142: toshi.workspace.v1.WorkloadService.CancelExecution:output_type -> toshi.workspace.v1.CancelExecutionResponse
-	114, // 143: toshi.workspace.v1.WorkloadService.ExecuteCommand:output_type -> toshi.workspace.v1.ExecuteCommandResponse
-	1,   // 144: toshi.workspace.v1.WorkloadService.AnswerPrompt:output_type -> toshi.workspace.v1.AnswerPromptResponse
-	3,   // 145: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:output_type -> toshi.workspace.v1.EmitWorkloadEventResponse
-	115, // 146: toshi.workspace.v1.WorkloadService.WatchTelemetry:output_type -> toshi.workspace.v1.WatchTelemetryResponse
-	116, // 147: toshi.workspace.v1.WorkloadService.WatchGuestLog:output_type -> toshi.workspace.v1.WatchGuestLogResponse
-	117, // 148: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:output_type -> toshi.workspace.v1.CreatePreviewShareLinkResponse
-	118, // 149: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:output_type -> toshi.workspace.v1.ListPreviewShareLinksResponse
-	119, // 150: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:output_type -> toshi.workspace.v1.RevokePreviewShareLinkResponse
-	120, // 151: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:output_type -> toshi.workspace.v1.CreateServiceShareLinkResponse
-	121, // 152: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:output_type -> toshi.workspace.v1.ListServiceShareLinksResponse
-	122, // 153: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:output_type -> toshi.workspace.v1.RevokeServiceShareLinkResponse
-	37,  // 154: toshi.workspace.v1.WorkloadService.CreateService:output_type -> toshi.workspace.v1.CreateServiceResponse
-	39,  // 155: toshi.workspace.v1.WorkloadService.GetService:output_type -> toshi.workspace.v1.GetServiceResponse
-	41,  // 156: toshi.workspace.v1.WorkloadService.ListServices:output_type -> toshi.workspace.v1.ListServicesResponse
-	43,  // 157: toshi.workspace.v1.WorkloadService.UpdateService:output_type -> toshi.workspace.v1.UpdateServiceResponse
-	45,  // 158: toshi.workspace.v1.WorkloadService.DeleteService:output_type -> toshi.workspace.v1.DeleteServiceResponse
-	47,  // 159: toshi.workspace.v1.WorkloadService.WaitService:output_type -> toshi.workspace.v1.WaitServiceResponse
-	49,  // 160: toshi.workspace.v1.WorkloadService.WatchServices:output_type -> toshi.workspace.v1.WatchServicesResponse
-	123, // 161: toshi.workspace.v1.WorkloadService.StartService:output_type -> toshi.workspace.v1.StartServiceResponse
-	124, // 162: toshi.workspace.v1.WorkloadService.StopService:output_type -> toshi.workspace.v1.StopServiceResponse
-	125, // 163: toshi.workspace.v1.WorkloadService.SetServiceMode:output_type -> toshi.workspace.v1.SetServiceModeResponse
-	126, // 164: toshi.workspace.v1.WorkloadService.WakeService:output_type -> toshi.workspace.v1.WakeServiceResponse
-	127, // 165: toshi.workspace.v1.WorkloadService.HoldService:output_type -> toshi.workspace.v1.HoldServiceResponse
-	128, // 166: toshi.workspace.v1.WorkloadService.ReleaseService:output_type -> toshi.workspace.v1.ReleaseServiceResponse
-	129, // 167: toshi.workspace.v1.WorkloadService.StartServiceSignIn:output_type -> toshi.workspace.v1.StartServiceSignInResponse
-	130, // 168: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:output_type -> toshi.workspace.v1.AnswerServiceSignInResponse
-	131, // 169: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:output_type -> toshi.workspace.v1.CancelServiceSignInResponse
-	132, // 170: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:output_type -> toshi.workspace.v1.GetServiceSignInStatusResponse
-	133, // 171: toshi.workspace.v1.WorkloadService.ListServiceRevisions:output_type -> toshi.workspace.v1.ListServiceRevisionsResponse
-	134, // 172: toshi.workspace.v1.WorkloadService.GetServiceRevision:output_type -> toshi.workspace.v1.GetServiceRevisionResponse
-	135, // 173: toshi.workspace.v1.WorkloadService.RollbackService:output_type -> toshi.workspace.v1.RollbackServiceResponse
-	136, // 174: toshi.workspace.v1.WorkloadService.ListServiceActivations:output_type -> toshi.workspace.v1.ListServiceActivationsResponse
-	137, // 175: toshi.workspace.v1.WorkloadService.ListServiceRuns:output_type -> toshi.workspace.v1.ListServiceRunsResponse
-	138, // 176: toshi.workspace.v1.WorkloadService.ListEvents:output_type -> toshi.workspace.v1.ListEventsResponse
-	5,   // 177: toshi.workspace.v1.WorkloadService.ExportEvents:output_type -> toshi.workspace.v1.ExportEventsResponse
-	139, // 178: toshi.workspace.v1.WorkloadService.WatchEvents:output_type -> toshi.workspace.v1.WatchEventsResponse
-	140, // 179: toshi.workspace.v1.WorkloadService.GetOperation:output_type -> toshi.workspace.v1.GetOperationResponse
-	141, // 180: toshi.workspace.v1.WorkloadService.WaitOperation:output_type -> toshi.workspace.v1.WaitOperationResponse
-	123, // [123:181] is the sub-list for method output_type
-	65,  // [65:123] is the sub-list for method input_type
-	65,  // [65:65] is the sub-list for extension type_name
-	65,  // [65:65] is the sub-list for extension extendee
-	0,   // [0:65] is the sub-list for field type_name
+	73,  // 0: toshi.workspace.v1.AnswerPromptResponse.event:type_name -> toshi.workspace.v1.Event
+	73,  // 1: toshi.workspace.v1.EmitWorkloadEventResponse.event:type_name -> toshi.workspace.v1.Event
+	74,  // 2: toshi.workspace.v1.ExportEventsRequest.since:type_name -> google.protobuf.Timestamp
+	74,  // 3: toshi.workspace.v1.ExportEventsRequest.until:type_name -> google.protobuf.Timestamp
+	75,  // 4: toshi.workspace.v1.CreateJobRequest.spec:type_name -> toshi.workspace.v1.JobSpec
+	67,  // 5: toshi.workspace.v1.CreateJobRequest.labels:type_name -> toshi.workspace.v1.CreateJobRequest.LabelsEntry
+	76,  // 6: toshi.workspace.v1.CreateJobRequest.recording:type_name -> toshi.workspace.v1.RecordingPolicy
+	77,  // 7: toshi.workspace.v1.CreateJobRequest.wait_for_end:type_name -> google.protobuf.Duration
+	78,  // 8: toshi.workspace.v1.CreateJobResponse.job:type_name -> toshi.workspace.v1.Job
+	79,  // 9: toshi.workspace.v1.CreateJobResponse.output:type_name -> toshi.workspace.v1.Output
+	78,  // 10: toshi.workspace.v1.GetJobResponse.job:type_name -> toshi.workspace.v1.Job
+	80,  // 11: toshi.workspace.v1.GetJobResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
+	81,  // 12: toshi.workspace.v1.GetJobResponse.attempts:type_name -> toshi.workspace.v1.JobAttempt
+	82,  // 13: toshi.workspace.v1.ListJobsRequest.states:type_name -> toshi.workspace.v1.JobState
+	68,  // 14: toshi.workspace.v1.ListJobsRequest.labels:type_name -> toshi.workspace.v1.ListJobsRequest.LabelsEntry
+	78,  // 15: toshi.workspace.v1.ListJobsResponse.jobs:type_name -> toshi.workspace.v1.Job
+	78,  // 16: toshi.workspace.v1.UpdateJobRequest.job:type_name -> toshi.workspace.v1.Job
+	83,  // 17: toshi.workspace.v1.UpdateJobRequest.update_mask:type_name -> google.protobuf.FieldMask
+	78,  // 18: toshi.workspace.v1.UpdateJobResponse.job:type_name -> toshi.workspace.v1.Job
+	84,  // 19: toshi.workspace.v1.DeleteJobResponse.operation:type_name -> toshi.workspace.v1.Operation
+	78,  // 20: toshi.workspace.v1.CancelJobResponse.job:type_name -> toshi.workspace.v1.Job
+	82,  // 21: toshi.workspace.v1.WaitJobRequest.states:type_name -> toshi.workspace.v1.JobState
+	77,  // 22: toshi.workspace.v1.WaitJobRequest.timeout:type_name -> google.protobuf.Duration
+	78,  // 23: toshi.workspace.v1.WaitJobResponse.job:type_name -> toshi.workspace.v1.Job
+	85,  // 24: toshi.workspace.v1.WatchJobsResponse.type:type_name -> toshi.workspace.v1.EventType
+	78,  // 25: toshi.workspace.v1.WatchJobsResponse.job:type_name -> toshi.workspace.v1.Job
+	86,  // 26: toshi.workspace.v1.WatchJobsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	87,  // 27: toshi.workspace.v1.CreateSandboxRequest.spec:type_name -> toshi.workspace.v1.SandboxSpec
+	69,  // 28: toshi.workspace.v1.CreateSandboxRequest.labels:type_name -> toshi.workspace.v1.CreateSandboxRequest.LabelsEntry
+	76,  // 29: toshi.workspace.v1.CreateSandboxRequest.recording:type_name -> toshi.workspace.v1.RecordingPolicy
+	88,  // 30: toshi.workspace.v1.CreateSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	88,  // 31: toshi.workspace.v1.GetSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	80,  // 32: toshi.workspace.v1.GetSandboxResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
+	89,  // 33: toshi.workspace.v1.ListSandboxesRequest.states:type_name -> toshi.workspace.v1.SandboxState
+	70,  // 34: toshi.workspace.v1.ListSandboxesRequest.labels:type_name -> toshi.workspace.v1.ListSandboxesRequest.LabelsEntry
+	88,  // 35: toshi.workspace.v1.ListSandboxesResponse.sandboxes:type_name -> toshi.workspace.v1.Sandbox
+	88,  // 36: toshi.workspace.v1.UpdateSandboxRequest.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	83,  // 37: toshi.workspace.v1.UpdateSandboxRequest.update_mask:type_name -> google.protobuf.FieldMask
+	88,  // 38: toshi.workspace.v1.UpdateSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	84,  // 39: toshi.workspace.v1.UpdateSandboxResponse.operation:type_name -> toshi.workspace.v1.Operation
+	84,  // 40: toshi.workspace.v1.DeleteSandboxResponse.operation:type_name -> toshi.workspace.v1.Operation
+	89,  // 41: toshi.workspace.v1.WaitSandboxRequest.states:type_name -> toshi.workspace.v1.SandboxState
+	77,  // 42: toshi.workspace.v1.WaitSandboxRequest.timeout:type_name -> google.protobuf.Duration
+	88,  // 43: toshi.workspace.v1.WaitSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	85,  // 44: toshi.workspace.v1.WatchSandboxesResponse.type:type_name -> toshi.workspace.v1.EventType
+	88,  // 45: toshi.workspace.v1.WatchSandboxesResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	86,  // 46: toshi.workspace.v1.WatchSandboxesResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	90,  // 47: toshi.workspace.v1.CreateServiceRequest.spec:type_name -> toshi.workspace.v1.ServiceSpec
+	71,  // 48: toshi.workspace.v1.CreateServiceRequest.labels:type_name -> toshi.workspace.v1.CreateServiceRequest.LabelsEntry
+	91,  // 49: toshi.workspace.v1.CreateServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	91,  // 50: toshi.workspace.v1.GetServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	80,  // 51: toshi.workspace.v1.GetServiceResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
+	92,  // 52: toshi.workspace.v1.ListServicesRequest.states:type_name -> toshi.workspace.v1.ServiceState
+	72,  // 53: toshi.workspace.v1.ListServicesRequest.labels:type_name -> toshi.workspace.v1.ListServicesRequest.LabelsEntry
+	91,  // 54: toshi.workspace.v1.ListServicesResponse.services:type_name -> toshi.workspace.v1.Service
+	91,  // 55: toshi.workspace.v1.UpdateServiceRequest.service:type_name -> toshi.workspace.v1.Service
+	83,  // 56: toshi.workspace.v1.UpdateServiceRequest.update_mask:type_name -> google.protobuf.FieldMask
+	91,  // 57: toshi.workspace.v1.UpdateServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	84,  // 58: toshi.workspace.v1.DeleteServiceResponse.operation:type_name -> toshi.workspace.v1.Operation
+	92,  // 59: toshi.workspace.v1.WaitServiceRequest.states:type_name -> toshi.workspace.v1.ServiceState
+	77,  // 60: toshi.workspace.v1.WaitServiceRequest.timeout:type_name -> google.protobuf.Duration
+	91,  // 61: toshi.workspace.v1.WaitServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	85,  // 62: toshi.workspace.v1.WatchServicesResponse.type:type_name -> toshi.workspace.v1.EventType
+	91,  // 63: toshi.workspace.v1.WatchServicesResponse.service:type_name -> toshi.workspace.v1.Service
+	86,  // 64: toshi.workspace.v1.WatchServicesResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	74,  // 65: toshi.workspace.v1.ServiceAlarm.at:type_name -> google.protobuf.Timestamp
+	0,   // 66: toshi.workspace.v1.ServiceAlarm.misfire:type_name -> toshi.workspace.v1.ServiceAlarmMisfire
+	77,  // 67: toshi.workspace.v1.ServiceAlarm.starting_deadline:type_name -> google.protobuf.Duration
+	74,  // 68: toshi.workspace.v1.ServiceAlarm.next_at:type_name -> google.protobuf.Timestamp
+	74,  // 69: toshi.workspace.v1.ServiceAlarm.created_at:type_name -> google.protobuf.Timestamp
+	74,  // 70: toshi.workspace.v1.ServiceAlarm.updated_at:type_name -> google.protobuf.Timestamp
+	74,  // 71: toshi.workspace.v1.ServiceAlarmOccurrence.scheduled_for:type_name -> google.protobuf.Timestamp
+	74,  // 72: toshi.workspace.v1.ServiceAlarmOccurrence.created_at:type_name -> google.protobuf.Timestamp
+	74,  // 73: toshi.workspace.v1.ServiceAlarmOccurrence.published_at:type_name -> google.protobuf.Timestamp
+	74,  // 74: toshi.workspace.v1.SetServiceAlarmRequest.at:type_name -> google.protobuf.Timestamp
+	0,   // 75: toshi.workspace.v1.SetServiceAlarmRequest.misfire:type_name -> toshi.workspace.v1.ServiceAlarmMisfire
+	77,  // 76: toshi.workspace.v1.SetServiceAlarmRequest.starting_deadline:type_name -> google.protobuf.Duration
+	51,  // 77: toshi.workspace.v1.SetServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	51,  // 78: toshi.workspace.v1.GetServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	52,  // 79: toshi.workspace.v1.GetServiceAlarmResponse.occurrences:type_name -> toshi.workspace.v1.ServiceAlarmOccurrence
+	51,  // 80: toshi.workspace.v1.ListServiceAlarmsResponse.alarms:type_name -> toshi.workspace.v1.ServiceAlarm
+	51,  // 81: toshi.workspace.v1.PauseServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	51,  // 82: toshi.workspace.v1.ResumeServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	52,  // 83: toshi.workspace.v1.RunServiceAlarmNowResponse.occurrence:type_name -> toshi.workspace.v1.ServiceAlarmOccurrence
+	7,   // 84: toshi.workspace.v1.WorkloadService.CreateJob:input_type -> toshi.workspace.v1.CreateJobRequest
+	9,   // 85: toshi.workspace.v1.WorkloadService.GetJob:input_type -> toshi.workspace.v1.GetJobRequest
+	11,  // 86: toshi.workspace.v1.WorkloadService.ListJobs:input_type -> toshi.workspace.v1.ListJobsRequest
+	13,  // 87: toshi.workspace.v1.WorkloadService.UpdateJob:input_type -> toshi.workspace.v1.UpdateJobRequest
+	15,  // 88: toshi.workspace.v1.WorkloadService.DeleteJob:input_type -> toshi.workspace.v1.DeleteJobRequest
+	17,  // 89: toshi.workspace.v1.WorkloadService.CancelJob:input_type -> toshi.workspace.v1.CancelJobRequest
+	19,  // 90: toshi.workspace.v1.WorkloadService.WaitJob:input_type -> toshi.workspace.v1.WaitJobRequest
+	21,  // 91: toshi.workspace.v1.WorkloadService.WatchJobs:input_type -> toshi.workspace.v1.WatchJobsRequest
+	93,  // 92: toshi.workspace.v1.WorkloadService.WatchOutput:input_type -> toshi.workspace.v1.WatchOutputRequest
+	23,  // 93: toshi.workspace.v1.WorkloadService.CreateSandbox:input_type -> toshi.workspace.v1.CreateSandboxRequest
+	25,  // 94: toshi.workspace.v1.WorkloadService.GetSandbox:input_type -> toshi.workspace.v1.GetSandboxRequest
+	27,  // 95: toshi.workspace.v1.WorkloadService.ListSandboxes:input_type -> toshi.workspace.v1.ListSandboxesRequest
+	29,  // 96: toshi.workspace.v1.WorkloadService.UpdateSandbox:input_type -> toshi.workspace.v1.UpdateSandboxRequest
+	31,  // 97: toshi.workspace.v1.WorkloadService.DeleteSandbox:input_type -> toshi.workspace.v1.DeleteSandboxRequest
+	94,  // 98: toshi.workspace.v1.WorkloadService.StopSandbox:input_type -> toshi.workspace.v1.StopSandboxRequest
+	95,  // 99: toshi.workspace.v1.WorkloadService.StartSandbox:input_type -> toshi.workspace.v1.StartSandboxRequest
+	33,  // 100: toshi.workspace.v1.WorkloadService.WaitSandbox:input_type -> toshi.workspace.v1.WaitSandboxRequest
+	35,  // 101: toshi.workspace.v1.WorkloadService.WatchSandboxes:input_type -> toshi.workspace.v1.WatchSandboxesRequest
+	96,  // 102: toshi.workspace.v1.WorkloadService.Execute:input_type -> toshi.workspace.v1.ExecuteRequest
+	97,  // 103: toshi.workspace.v1.WorkloadService.CancelExecution:input_type -> toshi.workspace.v1.CancelExecutionRequest
+	98,  // 104: toshi.workspace.v1.WorkloadService.ExecuteCommand:input_type -> toshi.workspace.v1.ExecuteCommandRequest
+	1,   // 105: toshi.workspace.v1.WorkloadService.AnswerPrompt:input_type -> toshi.workspace.v1.AnswerPromptRequest
+	3,   // 106: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:input_type -> toshi.workspace.v1.EmitWorkloadEventRequest
+	99,  // 107: toshi.workspace.v1.WorkloadService.WatchTelemetry:input_type -> toshi.workspace.v1.WatchTelemetryRequest
+	100, // 108: toshi.workspace.v1.WorkloadService.WatchGuestLog:input_type -> toshi.workspace.v1.WatchGuestLogRequest
+	101, // 109: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:input_type -> toshi.workspace.v1.CreatePreviewShareLinkRequest
+	102, // 110: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:input_type -> toshi.workspace.v1.ListPreviewShareLinksRequest
+	103, // 111: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:input_type -> toshi.workspace.v1.RevokePreviewShareLinkRequest
+	104, // 112: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:input_type -> toshi.workspace.v1.CreateServiceShareLinkRequest
+	105, // 113: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:input_type -> toshi.workspace.v1.ListServiceShareLinksRequest
+	106, // 114: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:input_type -> toshi.workspace.v1.RevokeServiceShareLinkRequest
+	37,  // 115: toshi.workspace.v1.WorkloadService.CreateService:input_type -> toshi.workspace.v1.CreateServiceRequest
+	39,  // 116: toshi.workspace.v1.WorkloadService.GetService:input_type -> toshi.workspace.v1.GetServiceRequest
+	41,  // 117: toshi.workspace.v1.WorkloadService.ListServices:input_type -> toshi.workspace.v1.ListServicesRequest
+	43,  // 118: toshi.workspace.v1.WorkloadService.UpdateService:input_type -> toshi.workspace.v1.UpdateServiceRequest
+	45,  // 119: toshi.workspace.v1.WorkloadService.DeleteService:input_type -> toshi.workspace.v1.DeleteServiceRequest
+	47,  // 120: toshi.workspace.v1.WorkloadService.WaitService:input_type -> toshi.workspace.v1.WaitServiceRequest
+	49,  // 121: toshi.workspace.v1.WorkloadService.WatchServices:input_type -> toshi.workspace.v1.WatchServicesRequest
+	107, // 122: toshi.workspace.v1.WorkloadService.StartService:input_type -> toshi.workspace.v1.StartServiceRequest
+	108, // 123: toshi.workspace.v1.WorkloadService.StopService:input_type -> toshi.workspace.v1.StopServiceRequest
+	109, // 124: toshi.workspace.v1.WorkloadService.SetServiceMode:input_type -> toshi.workspace.v1.SetServiceModeRequest
+	110, // 125: toshi.workspace.v1.WorkloadService.WakeService:input_type -> toshi.workspace.v1.WakeServiceRequest
+	111, // 126: toshi.workspace.v1.WorkloadService.HoldService:input_type -> toshi.workspace.v1.HoldServiceRequest
+	112, // 127: toshi.workspace.v1.WorkloadService.ReleaseService:input_type -> toshi.workspace.v1.ReleaseServiceRequest
+	53,  // 128: toshi.workspace.v1.WorkloadService.SetServiceAlarm:input_type -> toshi.workspace.v1.SetServiceAlarmRequest
+	55,  // 129: toshi.workspace.v1.WorkloadService.GetServiceAlarm:input_type -> toshi.workspace.v1.GetServiceAlarmRequest
+	57,  // 130: toshi.workspace.v1.WorkloadService.ListServiceAlarms:input_type -> toshi.workspace.v1.ListServiceAlarmsRequest
+	59,  // 131: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:input_type -> toshi.workspace.v1.DeleteServiceAlarmRequest
+	61,  // 132: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:input_type -> toshi.workspace.v1.PauseServiceAlarmRequest
+	63,  // 133: toshi.workspace.v1.WorkloadService.ResumeServiceAlarm:input_type -> toshi.workspace.v1.ResumeServiceAlarmRequest
+	65,  // 134: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:input_type -> toshi.workspace.v1.RunServiceAlarmNowRequest
+	113, // 135: toshi.workspace.v1.WorkloadService.StartServiceSignIn:input_type -> toshi.workspace.v1.StartServiceSignInRequest
+	114, // 136: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:input_type -> toshi.workspace.v1.AnswerServiceSignInRequest
+	115, // 137: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:input_type -> toshi.workspace.v1.CancelServiceSignInRequest
+	116, // 138: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:input_type -> toshi.workspace.v1.GetServiceSignInStatusRequest
+	117, // 139: toshi.workspace.v1.WorkloadService.ListServiceRevisions:input_type -> toshi.workspace.v1.ListServiceRevisionsRequest
+	118, // 140: toshi.workspace.v1.WorkloadService.GetServiceRevision:input_type -> toshi.workspace.v1.GetServiceRevisionRequest
+	119, // 141: toshi.workspace.v1.WorkloadService.RollbackService:input_type -> toshi.workspace.v1.RollbackServiceRequest
+	120, // 142: toshi.workspace.v1.WorkloadService.ListServiceActivations:input_type -> toshi.workspace.v1.ListServiceActivationsRequest
+	121, // 143: toshi.workspace.v1.WorkloadService.ListServiceRuns:input_type -> toshi.workspace.v1.ListServiceRunsRequest
+	122, // 144: toshi.workspace.v1.WorkloadService.ListEvents:input_type -> toshi.workspace.v1.ListEventsRequest
+	5,   // 145: toshi.workspace.v1.WorkloadService.ExportEvents:input_type -> toshi.workspace.v1.ExportEventsRequest
+	123, // 146: toshi.workspace.v1.WorkloadService.WatchEvents:input_type -> toshi.workspace.v1.WatchEventsRequest
+	124, // 147: toshi.workspace.v1.WorkloadService.GetOperation:input_type -> toshi.workspace.v1.GetOperationRequest
+	125, // 148: toshi.workspace.v1.WorkloadService.WaitOperation:input_type -> toshi.workspace.v1.WaitOperationRequest
+	8,   // 149: toshi.workspace.v1.WorkloadService.CreateJob:output_type -> toshi.workspace.v1.CreateJobResponse
+	10,  // 150: toshi.workspace.v1.WorkloadService.GetJob:output_type -> toshi.workspace.v1.GetJobResponse
+	12,  // 151: toshi.workspace.v1.WorkloadService.ListJobs:output_type -> toshi.workspace.v1.ListJobsResponse
+	14,  // 152: toshi.workspace.v1.WorkloadService.UpdateJob:output_type -> toshi.workspace.v1.UpdateJobResponse
+	16,  // 153: toshi.workspace.v1.WorkloadService.DeleteJob:output_type -> toshi.workspace.v1.DeleteJobResponse
+	18,  // 154: toshi.workspace.v1.WorkloadService.CancelJob:output_type -> toshi.workspace.v1.CancelJobResponse
+	20,  // 155: toshi.workspace.v1.WorkloadService.WaitJob:output_type -> toshi.workspace.v1.WaitJobResponse
+	22,  // 156: toshi.workspace.v1.WorkloadService.WatchJobs:output_type -> toshi.workspace.v1.WatchJobsResponse
+	126, // 157: toshi.workspace.v1.WorkloadService.WatchOutput:output_type -> toshi.workspace.v1.WatchOutputResponse
+	24,  // 158: toshi.workspace.v1.WorkloadService.CreateSandbox:output_type -> toshi.workspace.v1.CreateSandboxResponse
+	26,  // 159: toshi.workspace.v1.WorkloadService.GetSandbox:output_type -> toshi.workspace.v1.GetSandboxResponse
+	28,  // 160: toshi.workspace.v1.WorkloadService.ListSandboxes:output_type -> toshi.workspace.v1.ListSandboxesResponse
+	30,  // 161: toshi.workspace.v1.WorkloadService.UpdateSandbox:output_type -> toshi.workspace.v1.UpdateSandboxResponse
+	32,  // 162: toshi.workspace.v1.WorkloadService.DeleteSandbox:output_type -> toshi.workspace.v1.DeleteSandboxResponse
+	127, // 163: toshi.workspace.v1.WorkloadService.StopSandbox:output_type -> toshi.workspace.v1.StopSandboxResponse
+	128, // 164: toshi.workspace.v1.WorkloadService.StartSandbox:output_type -> toshi.workspace.v1.StartSandboxResponse
+	34,  // 165: toshi.workspace.v1.WorkloadService.WaitSandbox:output_type -> toshi.workspace.v1.WaitSandboxResponse
+	36,  // 166: toshi.workspace.v1.WorkloadService.WatchSandboxes:output_type -> toshi.workspace.v1.WatchSandboxesResponse
+	129, // 167: toshi.workspace.v1.WorkloadService.Execute:output_type -> toshi.workspace.v1.ExecuteResponse
+	130, // 168: toshi.workspace.v1.WorkloadService.CancelExecution:output_type -> toshi.workspace.v1.CancelExecutionResponse
+	131, // 169: toshi.workspace.v1.WorkloadService.ExecuteCommand:output_type -> toshi.workspace.v1.ExecuteCommandResponse
+	2,   // 170: toshi.workspace.v1.WorkloadService.AnswerPrompt:output_type -> toshi.workspace.v1.AnswerPromptResponse
+	4,   // 171: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:output_type -> toshi.workspace.v1.EmitWorkloadEventResponse
+	132, // 172: toshi.workspace.v1.WorkloadService.WatchTelemetry:output_type -> toshi.workspace.v1.WatchTelemetryResponse
+	133, // 173: toshi.workspace.v1.WorkloadService.WatchGuestLog:output_type -> toshi.workspace.v1.WatchGuestLogResponse
+	134, // 174: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:output_type -> toshi.workspace.v1.CreatePreviewShareLinkResponse
+	135, // 175: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:output_type -> toshi.workspace.v1.ListPreviewShareLinksResponse
+	136, // 176: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:output_type -> toshi.workspace.v1.RevokePreviewShareLinkResponse
+	137, // 177: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:output_type -> toshi.workspace.v1.CreateServiceShareLinkResponse
+	138, // 178: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:output_type -> toshi.workspace.v1.ListServiceShareLinksResponse
+	139, // 179: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:output_type -> toshi.workspace.v1.RevokeServiceShareLinkResponse
+	38,  // 180: toshi.workspace.v1.WorkloadService.CreateService:output_type -> toshi.workspace.v1.CreateServiceResponse
+	40,  // 181: toshi.workspace.v1.WorkloadService.GetService:output_type -> toshi.workspace.v1.GetServiceResponse
+	42,  // 182: toshi.workspace.v1.WorkloadService.ListServices:output_type -> toshi.workspace.v1.ListServicesResponse
+	44,  // 183: toshi.workspace.v1.WorkloadService.UpdateService:output_type -> toshi.workspace.v1.UpdateServiceResponse
+	46,  // 184: toshi.workspace.v1.WorkloadService.DeleteService:output_type -> toshi.workspace.v1.DeleteServiceResponse
+	48,  // 185: toshi.workspace.v1.WorkloadService.WaitService:output_type -> toshi.workspace.v1.WaitServiceResponse
+	50,  // 186: toshi.workspace.v1.WorkloadService.WatchServices:output_type -> toshi.workspace.v1.WatchServicesResponse
+	140, // 187: toshi.workspace.v1.WorkloadService.StartService:output_type -> toshi.workspace.v1.StartServiceResponse
+	141, // 188: toshi.workspace.v1.WorkloadService.StopService:output_type -> toshi.workspace.v1.StopServiceResponse
+	142, // 189: toshi.workspace.v1.WorkloadService.SetServiceMode:output_type -> toshi.workspace.v1.SetServiceModeResponse
+	143, // 190: toshi.workspace.v1.WorkloadService.WakeService:output_type -> toshi.workspace.v1.WakeServiceResponse
+	144, // 191: toshi.workspace.v1.WorkloadService.HoldService:output_type -> toshi.workspace.v1.HoldServiceResponse
+	145, // 192: toshi.workspace.v1.WorkloadService.ReleaseService:output_type -> toshi.workspace.v1.ReleaseServiceResponse
+	54,  // 193: toshi.workspace.v1.WorkloadService.SetServiceAlarm:output_type -> toshi.workspace.v1.SetServiceAlarmResponse
+	56,  // 194: toshi.workspace.v1.WorkloadService.GetServiceAlarm:output_type -> toshi.workspace.v1.GetServiceAlarmResponse
+	58,  // 195: toshi.workspace.v1.WorkloadService.ListServiceAlarms:output_type -> toshi.workspace.v1.ListServiceAlarmsResponse
+	60,  // 196: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:output_type -> toshi.workspace.v1.DeleteServiceAlarmResponse
+	62,  // 197: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:output_type -> toshi.workspace.v1.PauseServiceAlarmResponse
+	64,  // 198: toshi.workspace.v1.WorkloadService.ResumeServiceAlarm:output_type -> toshi.workspace.v1.ResumeServiceAlarmResponse
+	66,  // 199: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:output_type -> toshi.workspace.v1.RunServiceAlarmNowResponse
+	146, // 200: toshi.workspace.v1.WorkloadService.StartServiceSignIn:output_type -> toshi.workspace.v1.StartServiceSignInResponse
+	147, // 201: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:output_type -> toshi.workspace.v1.AnswerServiceSignInResponse
+	148, // 202: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:output_type -> toshi.workspace.v1.CancelServiceSignInResponse
+	149, // 203: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:output_type -> toshi.workspace.v1.GetServiceSignInStatusResponse
+	150, // 204: toshi.workspace.v1.WorkloadService.ListServiceRevisions:output_type -> toshi.workspace.v1.ListServiceRevisionsResponse
+	151, // 205: toshi.workspace.v1.WorkloadService.GetServiceRevision:output_type -> toshi.workspace.v1.GetServiceRevisionResponse
+	152, // 206: toshi.workspace.v1.WorkloadService.RollbackService:output_type -> toshi.workspace.v1.RollbackServiceResponse
+	153, // 207: toshi.workspace.v1.WorkloadService.ListServiceActivations:output_type -> toshi.workspace.v1.ListServiceActivationsResponse
+	154, // 208: toshi.workspace.v1.WorkloadService.ListServiceRuns:output_type -> toshi.workspace.v1.ListServiceRunsResponse
+	155, // 209: toshi.workspace.v1.WorkloadService.ListEvents:output_type -> toshi.workspace.v1.ListEventsResponse
+	6,   // 210: toshi.workspace.v1.WorkloadService.ExportEvents:output_type -> toshi.workspace.v1.ExportEventsResponse
+	156, // 211: toshi.workspace.v1.WorkloadService.WatchEvents:output_type -> toshi.workspace.v1.WatchEventsResponse
+	157, // 212: toshi.workspace.v1.WorkloadService.GetOperation:output_type -> toshi.workspace.v1.GetOperationResponse
+	158, // 213: toshi.workspace.v1.WorkloadService.WaitOperation:output_type -> toshi.workspace.v1.WaitOperationResponse
+	149, // [149:214] is the sub-list for method output_type
+	84,  // [84:149] is the sub-list for method input_type
+	84,  // [84:84] is the sub-list for extension type_name
+	84,  // [84:84] is the sub-list for extension extendee
+	0,   // [0:84] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_workloads_proto_init() }
@@ -4061,18 +5526,27 @@ func file_toshi_workspace_v1_workloads_proto_init() {
 		return
 	}
 	file_toshi_workspace_v1_workspace_proto_init()
+	file_toshi_workspace_v1_workloads_proto_msgTypes[50].OneofWrappers = []any{
+		(*ServiceAlarm_Cron)(nil),
+		(*ServiceAlarm_At)(nil),
+	}
+	file_toshi_workspace_v1_workloads_proto_msgTypes[52].OneofWrappers = []any{
+		(*SetServiceAlarmRequest_Cron)(nil),
+		(*SetServiceAlarmRequest_At)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_workloads_proto_rawDesc), len(file_toshi_workspace_v1_workloads_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   56,
+			NumEnums:      1,
+			NumMessages:   72,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_toshi_workspace_v1_workloads_proto_goTypes,
 		DependencyIndexes: file_toshi_workspace_v1_workloads_proto_depIdxs,
+		EnumInfos:         file_toshi_workspace_v1_workloads_proto_enumTypes,
 		MessageInfos:      file_toshi_workspace_v1_workloads_proto_msgTypes,
 	}.Build()
 	File_toshi_workspace_v1_workloads_proto = out.File

@@ -23,8 +23,8 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // workspace does not have is NOT_FOUND. A job, sandbox, service, execution,
 // operation or event of another project or environment is NOT_FOUND.
 //
-// Every mutating call but CancelJob, AnswerPrompt and EmitWorkloadEvent
-// takes a request_key. A key is bound to the workspace,
+// Every mutating call but CancelJob, AnswerPrompt, EmitWorkloadEvent and the
+// service alarm calls takes a request_key. A key is bound to the workspace,
 // the call and the request's payload: a retry with the same key and the same
 // payload returns what the first call returned and starts nothing new; the
 // same key with a different payload fails with FAILED_PRECONDITION. A create
@@ -535,6 +535,82 @@ service WorkloadService {
   rpc ReleaseService(ReleaseServiceRequest) returns (ReleaseServiceResponse) {
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
+  }
+
+  // SetServiceAlarm creates or replaces the service's alarm with this name
+  // and returns it. At each instant of its schedule an alarm publishes its
+  // event, with its data, on one of the service's event channels. Replacing
+  // an alarm raises its generation and schedules it again from now. A
+  // schedule, zone, channel, event or data that is not valid fails with
+  // INVALID_ARGUMENT, as does an event name under a prefix Toshi keeps for
+  // its own events; a channel the service does not declare fails with
+  // NOT_FOUND; a service holding 100 alarms refuses another with
+  // RESOURCE_EXHAUSTED.
+  rpc SetServiceAlarm(SetServiceAlarmRequest) returns (SetServiceAlarmResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      target: "service:service_id"
+    };
+  }
+
+  // GetServiceAlarm returns one alarm and its most recent occurrences,
+  // newest first. An unknown name fails with NOT_FOUND.
+  rpc GetServiceAlarm(GetServiceAlarmRequest) returns (GetServiceAlarmResponse) {
+    option (toshi.permission) = "services.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // ListServiceAlarms returns the service's alarms by name.
+  rpc ListServiceAlarms(ListServiceAlarmsRequest) returns (ListServiceAlarmsResponse) {
+    option (toshi.permission) = "services.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // DeleteServiceAlarm removes an alarm and its occurrences. Messages it
+  // already published stay on the channel.
+  rpc DeleteServiceAlarm(DeleteServiceAlarmRequest) returns (DeleteServiceAlarmResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      target: "service:service_id"
+    };
+  }
+
+  // PauseServiceAlarm stops an alarm publishing until it is resumed.
+  // Pausing a paused alarm changes nothing.
+  rpc PauseServiceAlarm(PauseServiceAlarmRequest) returns (PauseServiceAlarmResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "service_alarm.paused"
+      target: "service:service_id"
+    };
+  }
+
+  // ResumeServiceAlarm starts a paused alarm again from the next instant
+  // of its schedule; instants that passed while it was paused are not
+  // published. An alarm with a single instant that has passed stays
+  // without a next instant. Resuming an alarm that is not paused changes
+  // nothing.
+  rpc ResumeServiceAlarm(ResumeServiceAlarmRequest) returns (ResumeServiceAlarmResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      target: "service:service_id"
+    };
+  }
+
+  // RunServiceAlarmNow publishes the alarm's event once, now, paused or
+  // not, and returns the occurrence. It does not move the alarm's next
+  // instant.
+  rpc RunServiceAlarmNow(RunServiceAlarmNowRequest) returns (RunServiceAlarmNowResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "service_alarm.ran"
+      target: "service:service_id"
+    };
   }
 
   // StartServiceSignIn runs one of the service's recipe's sign_in programs
@@ -1156,4 +1232,221 @@ message WatchServicesResponse {
   // Set on a keepalive, with every other field empty. Only a request
   // with keepalive set gets one.
   Keepalive keepalive = 4;
+}
+
+// ServiceAlarmMisfire is what an alarm does with the instants of its
+// schedule it missed.
+enum ServiceAlarmMisfire {
+  // The same as COALESCE.
+  SERVICE_ALARM_MISFIRE_UNSPECIFIED = 0;
+  // Publishes one message for the instants missed by more than the
+  // starting deadline.
+  SERVICE_ALARM_MISFIRE_COALESCE = 1;
+  // Publishes a message for each missed instant, oldest first.
+  SERVICE_ALARM_MISFIRE_ALL = 2;
+  // Publishes none for missed instants.
+  SERVICE_ALARM_MISFIRE_SKIP = 3;
+}
+
+// ServiceAlarm is one of a service's alarms: a schedule, the event it
+// publishes on one of the service's event channels, and the instant it
+// next publishes.
+message ServiceAlarm {
+  // The alarm's name within the service.
+  string name = 1;
+  // Rises each time the alarm is replaced; an occurrence names the
+  // generation it belongs to.
+  int64 generation = 2;
+  // The schedule: a cron expression in timezone, or a single instant.
+  oneof schedule {
+    // A five-field cron expression, in timezone's wall clock.
+    string cron = 3;
+    // A single instant, after which the alarm has no next instant.
+    google.protobuf.Timestamp at = 4;
+  }
+  // The IANA zone of the schedule's wall clock; empty for UTC.
+  string timezone = 5;
+  // The name of the service's event channel it publishes on.
+  string channel = 6;
+  // The event name it publishes.
+  string event = 7;
+  // The message's JSON, empty for null.
+  bytes data = 8;
+  // What it does with the instants it missed.
+  ServiceAlarmMisfire misfire = 9;
+  // How late a missed instant may be published as on time.
+  google.protobuf.Duration starting_deadline = 10;
+  // Whether it is paused: a paused alarm publishes nothing until resumed.
+  bool paused = 11;
+  // The instant it next publishes; unset when no instant is left.
+  google.protobuf.Timestamp next_at = 12;
+  // When it was created.
+  google.protobuf.Timestamp created_at = 13;
+  // When it was last set, replaced, paused or resumed.
+  google.protobuf.Timestamp updated_at = 14;
+}
+
+// ServiceAlarmOccurrence is one instant an alarm published for.
+message ServiceAlarmOccurrence {
+  // The alarm's generation the occurrence belongs to.
+  int64 generation = 1;
+  // The instant of the schedule it is for; a manual occurrence's is the
+  // call's time.
+  google.protobuf.Timestamp scheduled_for = 2;
+  // Whether RunServiceAlarmNow made it, rather than the schedule.
+  bool manual = 3;
+  // Who ran it, as the audit log names an actor; empty for a scheduled
+  // occurrence.
+  string caller = 4;
+  // When the occurrence was recorded.
+  google.protobuf.Timestamp created_at = 5;
+  // When its message was published; unset while unpublished.
+  google.protobuf.Timestamp published_at = 6;
+  // The published message's ID; empty while unpublished.
+  string message_id = 7;
+  // Why the publication failed; empty when it did not.
+  string error = 8;
+}
+
+// SetServiceAlarmRequest is a call of SetServiceAlarm.
+message SetServiceAlarmRequest {
+  // The service's project.
+  string project = 1;
+  // The service's environment.
+  string environment = 2;
+  // The service's ID.
+  string service_id = 3;
+  // The alarm's name within the service.
+  string name = 4;
+  // The schedule: a cron expression in timezone, or a single instant.
+  oneof schedule {
+    // A five-field cron expression, in timezone's wall clock.
+    string cron = 5;
+    // A single instant, which must be in the future.
+    google.protobuf.Timestamp at = 6;
+  }
+  // The IANA zone of the schedule's wall clock; empty for UTC.
+  string timezone = 7;
+  // The name of the service's event channel to publish on.
+  string channel = 8;
+  // The event name to publish.
+  string event = 9;
+  // The message's JSON, empty for null.
+  bytes data = 10;
+  // What it does with the instants it missed; unspecified means COALESCE.
+  ServiceAlarmMisfire misfire = 11;
+  // How late a missed instant may be published as on time; unset means
+  // 10 minutes.
+  google.protobuf.Duration starting_deadline = 12;
+}
+
+// SetServiceAlarmResponse is the answer to SetServiceAlarm.
+message SetServiceAlarmResponse {
+  // The alarm as it was set.
+  ServiceAlarm alarm = 1;
+}
+
+// GetServiceAlarmRequest is a call of GetServiceAlarm.
+message GetServiceAlarmRequest {
+  // The service's project.
+  string project = 1;
+  // The service's environment.
+  string environment = 2;
+  // The service's ID.
+  string service_id = 3;
+  // The alarm's name.
+  string name = 4;
+}
+
+// GetServiceAlarmResponse is the answer to GetServiceAlarm.
+message GetServiceAlarmResponse {
+  // The alarm.
+  ServiceAlarm alarm = 1;
+  // Its most recent occurrences, newest first, at most 20.
+  repeated ServiceAlarmOccurrence occurrences = 2;
+}
+
+// ListServiceAlarmsRequest is a call of ListServiceAlarms.
+message ListServiceAlarmsRequest {
+  // The service's project.
+  string project = 1;
+  // The service's environment.
+  string environment = 2;
+  // The service's ID.
+  string service_id = 3;
+}
+
+// ListServiceAlarmsResponse is the answer to ListServiceAlarms.
+message ListServiceAlarmsResponse {
+  // The service's alarms, by name.
+  repeated ServiceAlarm alarms = 1;
+}
+
+// DeleteServiceAlarmRequest is a call of DeleteServiceAlarm.
+message DeleteServiceAlarmRequest {
+  // The service's project.
+  string project = 1;
+  // The service's environment.
+  string environment = 2;
+  // The service's ID.
+  string service_id = 3;
+  // The alarm's name.
+  string name = 4;
+}
+
+// DeleteServiceAlarmResponse is the answer to DeleteServiceAlarm.
+message DeleteServiceAlarmResponse {}
+
+// PauseServiceAlarmRequest is a call of PauseServiceAlarm.
+message PauseServiceAlarmRequest {
+  // The service's project.
+  string project = 1;
+  // The service's environment.
+  string environment = 2;
+  // The service's ID.
+  string service_id = 3;
+  // The alarm's name.
+  string name = 4;
+}
+
+// PauseServiceAlarmResponse is the answer to PauseServiceAlarm.
+message PauseServiceAlarmResponse {
+  // The alarm as it is.
+  ServiceAlarm alarm = 1;
+}
+
+// ResumeServiceAlarmRequest is a call of ResumeServiceAlarm.
+message ResumeServiceAlarmRequest {
+  // The service's project.
+  string project = 1;
+  // The service's environment.
+  string environment = 2;
+  // The service's ID.
+  string service_id = 3;
+  // The alarm's name.
+  string name = 4;
+}
+
+// ResumeServiceAlarmResponse is the answer to ResumeServiceAlarm.
+message ResumeServiceAlarmResponse {
+  // The alarm as it is.
+  ServiceAlarm alarm = 1;
+}
+
+// RunServiceAlarmNowRequest is a call of RunServiceAlarmNow.
+message RunServiceAlarmNowRequest {
+  // The service's project.
+  string project = 1;
+  // The service's environment.
+  string environment = 2;
+  // The service's ID.
+  string service_id = 3;
+  // The alarm's name.
+  string name = 4;
+}
+
+// RunServiceAlarmNowResponse is the answer to RunServiceAlarmNow.
+message RunServiceAlarmNowResponse {
+  // The occurrence it published.
+  ServiceAlarmOccurrence occurrence = 1;
 }
