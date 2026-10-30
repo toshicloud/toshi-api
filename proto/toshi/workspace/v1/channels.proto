@@ -228,6 +228,21 @@ enum ChannelAttachMode {
   CHANNEL_ATTACH_MODE_READ_ONLY = 2;
 }
 
+// ChannelStreams is what a policy change does to a stream channel's
+// clients attached under the policy it replaces.
+enum ChannelStreams {
+  // As KEEP.
+  CHANNEL_STREAMS_UNSPECIFIED = 0;
+  // They stay attached; only those the new policy no longer admits, or now
+  // grants read_only while they hold input, end.
+  CHANNEL_STREAMS_KEEP = 1;
+  // They stay attached for up to 30 seconds, then end with the reason
+  // "reconnect", so each client attaches again under the new policy.
+  CHANNEL_STREAMS_DRAIN = 2;
+  // They end now with the reason "policy_changed".
+  CHANNEL_STREAMS_END = 3;
+}
+
 // ChannelLog names the log of a channel an export carries.
 enum ChannelLog {
   CHANNEL_LOG_UNSPECIFIED = 0;
@@ -631,6 +646,10 @@ message SetChannelPolicyRequest {
   ChannelPolicy policy = 3;
   // An event channel's service, by its ID, in place of job_id.
   string service = 4;
+  // What the change does to a stream channel's attached clients; unset
+  // keeps them. DRAIN and END on an http or an event channel are
+  // INVALID_ARGUMENT.
+  ChannelStreams streams = 5;
 }
 
 message SetChannelPolicyResponse {
