@@ -204,6 +204,9 @@ message CreateCloudHostRequest {
   // subnet routes through the workspace's NAT gateway or Cloud NAT, whose
   // addresses become the host's egress set).
   string egress = 18;
+  // A key that makes the call safe to retry: a retry with the same key and
+  // the same request answers with the host the first call made.
+  string request_key = 19;
 }
 
 // CreateCloudHostResponse carries the host, the trust external id and the

@@ -850,7 +850,10 @@ type CreateCloudHostRequest struct {
 	// instance gets its own public address) or "nat" (no public address; the
 	// subnet routes through the workspace's NAT gateway or Cloud NAT, whose
 	// addresses become the host's egress set).
-	Egress        string `protobuf:"bytes,18,opt,name=egress,proto3" json:"egress,omitempty"`
+	Egress string `protobuf:"bytes,18,opt,name=egress,proto3" json:"egress,omitempty"`
+	// A key that makes the call safe to retry: a retry with the same key and
+	// the same request answers with the host the first call made.
+	RequestKey    string `protobuf:"bytes,19,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1007,6 +1010,13 @@ func (x *CreateCloudHostRequest) GetServiceAccount() string {
 func (x *CreateCloudHostRequest) GetEgress() string {
 	if x != nil {
 		return x.Egress
+	}
+	return ""
+}
+
+func (x *CreateCloudHostRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -2352,7 +2362,7 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x04host\x18\x01 \x01(\v2\x18.toshi.workspace.v1.HostR\x04host\"#\n" +
 	"\x11RetireHostRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x14\n" +
-	"\x12RetireHostResponse\"\xc3\x05\n" +
+	"\x12RetireHostResponse\"\xe4\x05\n" +
 	"\x16CreateCloudHostRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05cloud\x18\x02 \x01(\tR\x05cloud\x12\x16\n" +
@@ -2374,7 +2384,9 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\aproject\x18\x0f \x01(\tR\aproject\x12\x12\n" +
 	"\x04zone\x18\x10 \x01(\tR\x04zone\x12'\n" +
 	"\x0fservice_account\x18\x11 \x01(\tR\x0eserviceAccount\x12\x16\n" +
-	"\x06egress\x18\x12 \x01(\tR\x06egress\x1a@\n" +
+	"\x06egress\x18\x12 \x01(\tR\x06egress\x12\x1f\n" +
+	"\vrequest_key\x18\x13 \x01(\tR\n" +
+	"requestKey\x1a@\n" +
 	"\x12InstanceTypesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xf0\x01\n" +
