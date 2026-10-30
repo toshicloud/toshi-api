@@ -41,7 +41,9 @@ export type DisplaySession = Message<"toshi.workspace.v1.DisplaySession"> & {
 
   /**
    * For an agent's run: whether a person may take the input from the
-   * agent. Recorded; takeover itself is not served yet.
+   * agent. A person's DISPLAY_MODE_WITH_INPUT open on the job closes this
+   * session with close_reason taken_over when it is a program's session
+   * with input that allows it, and is refused when it does not.
    *
    * @generated from field: bool allow_takeover = 4;
    */
@@ -95,9 +97,10 @@ export type DisplaySession = Message<"toshi.workspace.v1.DisplaySession"> & {
    * Why it closed: closed, idle, expired, suspended, ended (its job
    * stopped running where the session was opened), protocol_error (the
    * viewer sent what the relay does not accept), unavailable (the job's
-   * host did not open the screen), shutdown (the control plane stopped)
-   * or grant_revoked (it was opened through a grant that ended). Empty
-   * while it is open.
+   * host did not open the screen), shutdown (the control plane stopped),
+   * grant_revoked (it was opened through a grant that ended) or
+   * taken_over (a person's session with input took its input). Empty while
+   * it is open.
    *
    * @generated from field: string close_reason = 12;
    */
@@ -180,7 +183,9 @@ export type DisplaySessionJson = {
 
   /**
    * For an agent's run: whether a person may take the input from the
-   * agent. Recorded; takeover itself is not served yet.
+   * agent. A person's DISPLAY_MODE_WITH_INPUT open on the job closes this
+   * session with close_reason taken_over when it is a program's session
+   * with input that allows it, and is refused when it does not.
    *
    * @generated from field: bool allow_takeover = 4;
    */
@@ -234,9 +239,10 @@ export type DisplaySessionJson = {
    * Why it closed: closed, idle, expired, suspended, ended (its job
    * stopped running where the session was opened), protocol_error (the
    * viewer sent what the relay does not accept), unavailable (the job's
-   * host did not open the screen), shutdown (the control plane stopped)
-   * or grant_revoked (it was opened through a grant that ended). Empty
-   * while it is open.
+   * host did not open the screen), shutdown (the control plane stopped),
+   * grant_revoked (it was opened through a grant that ended) or
+   * taken_over (a person's session with input took its input). Empty while
+   * it is open.
    *
    * @generated from field: string close_reason = 12;
    */

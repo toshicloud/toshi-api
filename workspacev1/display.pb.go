@@ -263,7 +263,9 @@ type DisplaySession struct {
 	JobId string      `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	Mode  DisplayMode `protobuf:"varint,3,opt,name=mode,proto3,enum=toshi.workspace.v1.DisplayMode" json:"mode,omitempty"`
 	// For an agent's run: whether a person may take the input from the
-	// agent. Recorded; takeover itself is not served yet.
+	// agent. A person's DISPLAY_MODE_WITH_INPUT open on the job closes this
+	// session with close_reason taken_over when it is a program's session
+	// with input that allows it, and is refused when it does not.
 	AllowTakeover bool `protobuf:"varint,4,opt,name=allow_takeover,json=allowTakeover,proto3" json:"allow_takeover,omitempty"`
 	// The session ends once no bytes of the screen's protocol have gone
 	// either way for this long.
@@ -280,9 +282,10 @@ type DisplaySession struct {
 	// Why it closed: closed, idle, expired, suspended, ended (its job
 	// stopped running where the session was opened), protocol_error (the
 	// viewer sent what the relay does not accept), unavailable (the job's
-	// host did not open the screen), shutdown (the control plane stopped)
-	// or grant_revoked (it was opened through a grant that ended). Empty
-	// while it is open.
+	// host did not open the screen), shutdown (the control plane stopped),
+	// grant_revoked (it was opened through a grant that ended) or
+	// taken_over (a person's session with input took its input). Empty while
+	// it is open.
 	CloseReason string `protobuf:"bytes,12,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`
 	// Who opened it, as the audit log names the caller: the user ID of the
 	// signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
