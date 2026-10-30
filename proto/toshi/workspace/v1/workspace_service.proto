@@ -527,6 +527,9 @@ message Workspace {
   // over 30 days.
   int32 keep_vm_count = 37;
   int32 keep_vm_stopped_long_count = 38;
+  // Who last changed settings.recording, and when; unset while it was never
+  // changed. Set by Toshi.
+  WorkspaceSettingChange recording_changed = 40;
 
   reserved 8, 9, 10, 14, 15, 21, 23, 32;
   reserved "own_hosts_only", "spend_cap_cents", "max_jobs_per_hour", "allow_overflow", "allow_cache_warm", "history_days", "cancel_run_on_vm_death", "member_join";
@@ -614,6 +617,23 @@ message WorkspaceSettings {
   // stops and sleeps. Off by default; keep_vm_max_effective must be above 0
   // too.
   bool keep_vm = 10;
+  // Whether the workspace's hosts record its jobs' screens; left out is on.
+  // While it is off, a job create that names a strip or a video fails with
+  // FAILED_PRECONDITION, one that names none records nothing, and
+  // RECORDING_POLICY_OFF is always accepted. Switching it off stops every
+  // strip and video of the workspace being captured, within one of its
+  // host's heartbeats: each becomes ready, truncated, with the reason
+  // "recording was switched off for the workspace", when its run ends, and
+  // no new one starts. Switching it on applies to jobs created after it. It
+  // does not cover the recordings a run uploads itself.
+  optional bool recording = 11;
+}
+
+// WorkspaceSettingChange is who last changed one of a workspace's settings,
+// and when.
+message WorkspaceSettingChange {
+  Subject changed_by = 1;
+  google.protobuf.Timestamp changed_at = 2;
 }
 
 // WorkspaceSignIn is the sign-in provider a workspace requires.

@@ -74,6 +74,8 @@ message Job {
   // whether its host enforces network rules at assignment. Unset for a job
   // recorded before workloads kept one.
   WorkloadNetwork network = 10;
+  // Where recording came from. Set by Toshi.
+  RecordingSource recording_source = 11;
 }
 
 // JobStatus is a job's state and when it got there.
@@ -361,6 +363,21 @@ enum RecordingPolicy {
   // recording's reason says why. A job only: set for another kind it
   // fails with INVALID_ARGUMENT.
   RECORDING_POLICY_VIDEO = 3;
+}
+
+// RecordingSource is where a workload's recording policy came from at
+// create.
+enum RecordingSource {
+  // A workload created before the source was kept, or a kind that records
+  // nothing and named no policy.
+  RECORDING_SOURCE_UNSPECIFIED = 0;
+  // The create named the policy.
+  RECORDING_SOURCE_REQUEST = 1;
+  // The create named none, and the workspace plan's default applied.
+  RECORDING_SOURCE_PLAN = 2;
+  // The create named none while the workspace's recording setting was off,
+  // so the policy is OFF.
+  RECORDING_SOURCE_WORKSPACE_OFF = 3;
 }
 
 // JobSpec is a job: one command, run once.
