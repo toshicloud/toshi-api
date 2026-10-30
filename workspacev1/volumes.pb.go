@@ -292,7 +292,12 @@ type Volume struct {
 	// a disk on the VM tiers, a directory on the container tier. Later runs
 	// go only to hosts that keep it the same way. Unspecified until a run
 	// mounted it, and for a volume that is not a state volume.
-	Format        VolumeFormat `protobuf:"varint,16,opt,name=format,proto3,enum=toshi.workspace.v1.VolumeFormat" json:"format,omitempty"`
+	Format VolumeFormat `protobuf:"varint,16,opt,name=format,proto3,enum=toshi.workspace.v1.VolumeFormat" json:"format,omitempty"`
+	// Set when the volume holds a browser profile: it was made as the state
+	// volume of a browser service. A volume made before this field is one
+	// when it was attached to a browser service then. Read-only; it never
+	// changes.
+	Profile       bool `protobuf:"varint,17,opt,name=profile,proto3" json:"profile,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -439,6 +444,13 @@ func (x *Volume) GetFormat() VolumeFormat {
 	return VolumeFormat_VOLUME_FORMAT_UNSPECIFIED
 }
 
+func (x *Volume) GetProfile() bool {
+	if x != nil {
+		return x.Profile
+	}
+	return false
+}
+
 // VolumeVersion is a saved copy of a state volume's data.
 type VolumeVersion struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -545,7 +557,9 @@ type ListVolumesRequest struct {
 	// The most volumes in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
-	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	PageToken string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	// True lists only the volumes that hold a browser profile (profile set).
+	Profile       bool `protobuf:"varint,4,opt,name=profile,proto3" json:"profile,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -599,6 +613,13 @@ func (x *ListVolumesRequest) GetPageToken() string {
 		return x.PageToken
 	}
 	return ""
+}
+
+func (x *ListVolumesRequest) GetProfile() bool {
+	if x != nil {
+		return x.Profile
+	}
+	return false
 }
 
 type ListVolumesResponse struct {
@@ -1192,7 +1213,7 @@ var File_toshi_workspace_v1_volumes_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xbe\x06\n" +
+	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd8\x06\n" +
 	"\x06Volume\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1212,7 +1233,8 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x11snapshot_interval\x18\r \x01(\v2\x19.google.protobuf.DurationR\x10snapshotInterval\x12*\n" +
 	"\x11last_save_failure\x18\x0e \x01(\tR\x0flastSaveFailure\x12O\n" +
 	"\x16last_save_failure_time\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\x13lastSaveFailureTime\x128\n" +
-	"\x06format\x18\x10 \x01(\x0e2 .toshi.workspace.v1.VolumeFormatR\x06format\"\xc4\x02\n" +
+	"\x06format\x18\x10 \x01(\x0e2 .toshi.workspace.v1.VolumeFormatR\x06format\x12\x18\n" +
+	"\aprofile\x18\x11 \x01(\bR\aprofile\"\xc4\x02\n" +
 	"\rVolumeVersion\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\x12;\n" +
 	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -1222,12 +1244,13 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x06sha256\x18\x04 \x01(\tR\x06sha256\x12#\n" +
 	"\rrestored_from\x18\x05 \x01(\x03R\frestoredFrom\x129\n" +
 	"\x04kind\x18\x06 \x01(\x0e2%.toshi.workspace.v1.VolumeVersionKindR\x04kind\x12G\n" +
-	"\vconsistency\x18\a \x01(\x0e2%.toshi.workspace.v1.VolumeConsistencyR\vconsistency\"j\n" +
+	"\vconsistency\x18\a \x01(\x0e2%.toshi.workspace.v1.VolumeConsistencyR\vconsistency\"\x84\x01\n" +
 	"\x12ListVolumesRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\x03 \x01(\tR\tpageToken\"s\n" +
+	"page_token\x18\x03 \x01(\tR\tpageToken\x12\x18\n" +
+	"\aprofile\x18\x04 \x01(\bR\aprofile\"s\n" +
 	"\x13ListVolumesResponse\x124\n" +
 	"\avolumes\x18\x01 \x03(\v2\x1a.toshi.workspace.v1.VolumeR\avolumes\x12&\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"I\n" +

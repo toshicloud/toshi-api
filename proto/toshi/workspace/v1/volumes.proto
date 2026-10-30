@@ -151,6 +151,11 @@ message Volume {
   // go only to hosts that keep it the same way. Unspecified until a run
   // mounted it, and for a volume that is not a state volume.
   VolumeFormat format = 16;
+  // Set when the volume holds a browser profile: it was made as the state
+  // volume of a browser service. A volume made before this field is one
+  // when it was attached to a browser service then. Read-only; it never
+  // changes.
+  bool profile = 17;
 }
 
 // VolumeFormat is how hosts keep a state volume, and so what its saved
@@ -210,6 +215,8 @@ message ListVolumesRequest {
   int32 page_size = 2;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 3;
+  // True lists only the volumes that hold a browser profile (profile set).
+  bool profile = 4;
 }
 
 message ListVolumesResponse {
