@@ -32,6 +32,7 @@ service WebhookService {
   // call fails with FAILED_PRECONDITION.
   rpc CreateWebhookEndpoint(CreateWebhookEndpointRequest) returns (CreateWebhookEndpointResponse) {
     option (toshi.permission) = "webhooks.write";
+    option (toshi.scope) = "workspace";
     option (toshi.audit) = {
       action: "webhook.endpoint_created"
       target: "webhook_endpoint:response.endpoint.id"
@@ -52,7 +53,7 @@ service WebhookService {
   }
 
   // UpdateWebhookEndpoint sets the fields update_mask names: url, events,
-  // enabled, cursor. A cursor must be at or after the retention boundary's
+  // project, enabled, cursor. A cursor must be at or after the retention boundary's
   // sequence and at or before the workspace's newest event sequence.
   // A disabled endpoint is owed no new event and no try starts;
   // the events written before the disable stay owed, enabling it again
@@ -142,6 +143,10 @@ message WebhookEndpoint {
   bool cursor_expired = 9;
   // The latest time of an event the log removed; unset when none.
   google.protobuf.Timestamp retention_boundary = 10;
+  // The name of a project in the workspace: the endpoint is owed only that
+  // project's events, those of its workloads and those its connections
+  // received. Empty keeps the events of every project.
+  string project = 11;
 }
 
 enum WebhookDeliveryState {
@@ -180,6 +185,8 @@ message CreateWebhookEndpointRequest {
   // Set to make the endpoint disabled.
   bool disabled = 3;
   string request_key = 4;
+  // The name of a project in the workspace; see WebhookEndpoint.project.
+  string project = 5;
 }
 
 message CreateWebhookEndpointResponse {
@@ -213,7 +220,7 @@ message UpdateWebhookEndpointRequest {
   string id = 1;
   // Carries the new values of the fields update_mask names.
   WebhookEndpoint endpoint = 2;
-  // One or more of url, events, enabled and cursor.
+  // One or more of url, events, project, enabled and cursor.
   google.protobuf.FieldMask update_mask = 3;
   string request_key = 4;
 }

@@ -104,8 +104,12 @@ type WebhookEndpoint struct {
 	CursorExpired bool `protobuf:"varint,9,opt,name=cursor_expired,json=cursorExpired,proto3" json:"cursor_expired,omitempty"`
 	// The latest time of an event the log removed; unset when none.
 	RetentionBoundary *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=retention_boundary,json=retentionBoundary,proto3" json:"retention_boundary,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// The name of a project in the workspace: the endpoint is owed only that
+	// project's events, those of its workloads and those its connections
+	// received. Empty keeps the events of every project.
+	Project       string `protobuf:"bytes,11,opt,name=project,proto3" json:"project,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *WebhookEndpoint) Reset() {
@@ -206,6 +210,13 @@ func (x *WebhookEndpoint) GetRetentionBoundary() *timestamppb.Timestamp {
 		return x.RetentionBoundary
 	}
 	return nil
+}
+
+func (x *WebhookEndpoint) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
 }
 
 // WebhookDelivery is one event owed to one endpoint.
@@ -336,8 +347,10 @@ type CreateWebhookEndpointRequest struct {
 	Url    string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 	Events []string               `protobuf:"bytes,2,rep,name=events,proto3" json:"events,omitempty"`
 	// Set to make the endpoint disabled.
-	Disabled      bool   `protobuf:"varint,3,opt,name=disabled,proto3" json:"disabled,omitempty"`
-	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	Disabled   bool   `protobuf:"varint,3,opt,name=disabled,proto3" json:"disabled,omitempty"`
+	RequestKey string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// The name of a project in the workspace; see WebhookEndpoint.project.
+	Project       string `protobuf:"bytes,5,opt,name=project,proto3" json:"project,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -396,6 +409,13 @@ func (x *CreateWebhookEndpointRequest) GetDisabled() bool {
 func (x *CreateWebhookEndpointRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
+	}
+	return ""
+}
+
+func (x *CreateWebhookEndpointRequest) GetProject() string {
+	if x != nil {
+		return x.Project
 	}
 	return ""
 }
@@ -653,7 +673,7 @@ type UpdateWebhookEndpointRequest struct {
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Carries the new values of the fields update_mask names.
 	Endpoint *WebhookEndpoint `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	// One or more of url, events, enabled and cursor.
+	// One or more of url, events, project, enabled and cursor.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1202,7 +1222,7 @@ var File_toshi_workspace_v1_webhook_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xbe\x03\n" +
+	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd8\x03\n" +
 	"\x0fWebhookEndpoint\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12\x16\n" +
@@ -1216,7 +1236,8 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12%\n" +
 	"\x0ecursor_expired\x18\t \x01(\bR\rcursorExpired\x12I\n" +
 	"\x12retention_boundary\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x11retentionBoundary\"\x9f\x03\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x11retentionBoundary\x12\x18\n" +
+	"\aproject\x18\v \x01(\tR\aproject\"\x9f\x03\n" +
 	"\x0fWebhookDelivery\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12\x16\n" +
 	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12\x1f\n" +
@@ -1231,13 +1252,14 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"last_error\x18\b \x01(\tR\tlastError\x121\n" +
 	"\x06due_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x05dueAt\x123\n" +
 	"\adone_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x06doneAt\"\x85\x01\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x06doneAt\"\x9f\x01\n" +
 	"\x1cCreateWebhookEndpointRequest\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x16\n" +
 	"\x06events\x18\x02 \x03(\tR\x06events\x12\x1a\n" +
 	"\bdisabled\x18\x03 \x01(\bR\bdisabled\x12\x1f\n" +
 	"\vrequest_key\x18\x04 \x01(\tR\n" +
-	"requestKey\"x\n" +
+	"requestKey\x12\x18\n" +
+	"\aproject\x18\x05 \x01(\tR\aproject\"x\n" +
 	"\x1dCreateWebhookEndpointResponse\x12?\n" +
 	"\bendpoint\x18\x01 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\x12\x16\n" +
 	"\x06secret\x18\x02 \x01(\tR\x06secret\"+\n" +
@@ -1298,9 +1320,9 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\"WEBHOOK_DELIVERY_STATE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eWEBHOOK_DELIVERY_STATE_PENDING\x10\x01\x12$\n" +
 	" WEBHOOK_DELIVERY_STATE_DELIVERED\x10\x02\x12\x1f\n" +
-	"\x1bWEBHOOK_DELIVERY_STATE_DEAD\x10\x032\xbc\v\n" +
-	"\x0eWebhookService\x12\xd5\x01\n" +
-	"\x15CreateWebhookEndpoint\x120.toshi.workspace.v1.CreateWebhookEndpointRequest\x1a1.toshi.workspace.v1.CreateWebhookEndpointResponse\"W\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18A\n" +
+	"\x1bWEBHOOK_DELIVERY_STATE_DEAD\x10\x032\xc9\v\n" +
+	"\x0eWebhookService\x12\xe2\x01\n" +
+	"\x15CreateWebhookEndpoint\x120.toshi.workspace.v1.CreateWebhookEndpointRequest\x1a1.toshi.workspace.v1.CreateWebhookEndpointResponse\"d\xc2\xf3\x18\x0ewebhooks.write\xca\xf3\x18\tworkspace\xd2\xf3\x18A\n" +
 	"\x18webhook.endpoint_created\x12%webhook_endpoint:response.endpoint.id\x12\x86\x01\n" +
 	"\x12GetWebhookEndpoint\x12-.toshi.workspace.v1.GetWebhookEndpointRequest\x1a..toshi.workspace.v1.GetWebhookEndpointResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\x8c\x01\n" +
 	"\x14ListWebhookEndpoints\x12/.toshi.workspace.v1.ListWebhookEndpointsRequest\x1a0.toshi.workspace.v1.ListWebhookEndpointsResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\xc3\x01\n" +
