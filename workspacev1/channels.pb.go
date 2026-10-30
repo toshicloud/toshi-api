@@ -2072,7 +2072,10 @@ type CreateChannelRequest struct {
 	Policy *ChannelPolicy `protobuf:"bytes,5,opt,name=policy,proto3" json:"policy,omitempty"`
 	// A grant the caller's workspace received, to act on the owner's
 	// sandbox's job through it (docs/grants.md).
-	Grant         string `protobuf:"bytes,6,opt,name=grant,proto3" json:"grant,omitempty"`
+	Grant string `protobuf:"bytes,6,opt,name=grant,proto3" json:"grant,omitempty"`
+	// A key that makes the call safe to retry: a retry with the same key and
+	// the same request answers with the channel the first call made.
+	RequestKey    string `protobuf:"bytes,7,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2145,6 +2148,13 @@ func (x *CreateChannelRequest) GetPolicy() *ChannelPolicy {
 func (x *CreateChannelRequest) GetGrant() string {
 	if x != nil {
 		return x.Grant
+	}
+	return ""
+}
+
+func (x *CreateChannelRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -4271,14 +4281,16 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"last_error\x18\x05 \x01(\tR\tlastError\x12\x18\n" +
 	"\areplica\x18\x06 \x01(\tR\areplica\x12\x1a\n" +
 	"\bforwards\x18\a \x01(\x05R\bforwards\x12\x1b\n" +
-	"\tjob_state\x18\b \x01(\tR\bjobState\"\xc0\x01\n" +
+	"\tjob_state\x18\b \x01(\tR\bjobState\"\xe1\x01\n" +
 	"\x14CreateChannelRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04port\x18\x03 \x01(\x05R\x04port\x12\x18\n" +
 	"\acommand\x18\x04 \x03(\tR\acommand\x129\n" +
 	"\x06policy\x18\x05 \x01(\v2!.toshi.workspace.v1.ChannelPolicyR\x06policy\x12\x14\n" +
-	"\x05grant\x18\x06 \x01(\tR\x05grant\"N\n" +
+	"\x05grant\x18\x06 \x01(\tR\x05grant\x12\x1f\n" +
+	"\vrequest_key\x18\a \x01(\tR\n" +
+	"requestKey\"N\n" +
 	"\x15CreateChannelResponse\x125\n" +
 	"\achannel\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ChannelR\achannel\"\x98\x01\n" +
 	"\x13ListChannelsRequest\x12\x15\n" +

@@ -103,6 +103,9 @@ message CreateStorageProviderRequest {
   // "tenant_bucket", the only mode a workspace stores; empty means it.
   // Another mode fails with INVALID_ARGUMENT.
   string mode = 10;
+  // A key that makes the call safe to retry: a retry with the same key and
+  // the same request answers with the provider the first call stored.
+  string request_key = 11;
 }
 
 // StorageCredential is an S3 access key. It is write-only: no response

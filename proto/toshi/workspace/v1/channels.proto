@@ -595,6 +595,9 @@ message CreateChannelRequest {
   // A grant the caller's workspace received, to act on the owner's
   // sandbox's job through it (docs/grants.md).
   string grant = 6;
+  // A key that makes the call safe to retry: a retry with the same key and
+  // the same request answers with the channel the first call made.
+  string request_key = 7;
 }
 
 message CreateChannelResponse {
