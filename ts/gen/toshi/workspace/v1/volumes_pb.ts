@@ -104,8 +104,8 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
   latestVersionConsistency: VolumeConsistency;
 
   /**
-   * How often a service that mounts it snapshots it while the service's
-   * VM runs: its workspace's interval. Unset for a volume that is not a
+   * How often the service, sandbox or CI job that mounts it snapshots it
+   * while its VM runs: its workspace's interval. Unset for a volume that is not a
    * state volume, for one kept as a directory, which is never snapshotted,
    * and when the workspace takes no snapshots or saves no versions.
    *
@@ -254,8 +254,8 @@ export type VolumeJson = {
   latestVersionConsistency?: VolumeConsistencyJson;
 
   /**
-   * How often a service that mounts it snapshots it while the service's
-   * VM runs: its workspace's interval. Unset for a volume that is not a
+   * How often the service, sandbox or CI job that mounts it snapshots it
+   * while its VM runs: its workspace's interval. Unset for a volume that is not a
    * state volume, for one kept as a directory, which is never snapshotted,
    * and when the workspace takes no snapshots or saves no versions.
    *

@@ -277,8 +277,8 @@ type Volume struct {
 	// What its newest version's data can be trusted for; unspecified when it
 	// has none.
 	LatestVersionConsistency VolumeConsistency `protobuf:"varint,12,opt,name=latest_version_consistency,json=latestVersionConsistency,proto3,enum=toshi.workspace.v1.VolumeConsistency" json:"latest_version_consistency,omitempty"`
-	// How often a service that mounts it snapshots it while the service's
-	// VM runs: its workspace's interval. Unset for a volume that is not a
+	// How often the service, sandbox or CI job that mounts it snapshots it
+	// while its VM runs: its workspace's interval. Unset for a volume that is not a
 	// state volume, for one kept as a directory, which is never snapshotted,
 	// and when the workspace takes no snapshots or saves no versions.
 	SnapshotInterval *durationpb.Duration `protobuf:"bytes,13,opt,name=snapshot_interval,json=snapshotInterval,proto3" json:"snapshot_interval,omitempty"`
