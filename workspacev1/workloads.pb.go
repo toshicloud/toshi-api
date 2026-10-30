@@ -4548,6 +4548,7 @@ type RunServiceAlarmNowRequest struct {
 	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The alarm's name.
 	Name          string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4606,6 +4607,13 @@ func (x *RunServiceAlarmNowRequest) GetServiceId() string {
 func (x *RunServiceAlarmNowRequest) GetName() string {
 	if x != nil {
 		return x.Name
+	}
+	return ""
+}
+
+func (x *RunServiceAlarmNowRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -5017,13 +5025,15 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\"T\n" +
 	"\x1aResumeServiceAlarmResponse\x126\n" +
-	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\"\x8a\x01\n" +
+	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\"\xab\x01\n" +
 	"\x19RunServiceAlarmNowRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\"h\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1f\n" +
+	"\vrequest_key\x18\x05 \x01(\tR\n" +
+	"requestKey\"h\n" +
 	"\x1aRunServiceAlarmNowResponse\x12J\n" +
 	"\n" +
 	"occurrence\x18\x01 \x01(\v2*.toshi.workspace.v1.ServiceAlarmOccurrenceR\n" +

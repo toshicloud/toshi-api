@@ -24,13 +24,14 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // operation or event of another project or environment is NOT_FOUND.
 //
 // Every mutating call but CancelJob, AnswerPrompt, EmitWorkloadEvent and the
-// service alarm calls takes a request_key. A key is bound to the workspace,
-// the call and the request's payload: a retry with the same key and the same
-// payload returns what the first call returned and starts nothing new; the
-// same key with a different payload fails with FAILED_PRECONDITION. A create
-// requires a key: a create without one fails with INVALID_ARGUMENT. For the
-// other calls an empty key means no retry protection. CancelJob takes none:
-// a repeat of it changes nothing.
+// service alarm calls other than RunServiceAlarmNow takes a request_key. A
+// key is bound to the workspace, the call and the request's payload: a retry
+// with the same key and the same payload returns what the first call returned
+// and starts nothing new; the same key with a different payload fails with
+// FAILED_PRECONDITION. A create requires a key: a create without one fails
+// with INVALID_ARGUMENT. For the other calls an empty key means no retry
+// protection. CancelJob takes none: a repeat of it changes nothing. The other
+// service alarm calls take none.
 //
 // A caller over its rate limit gets RESOURCE_EXHAUSTED with a
 // google.rpc.RetryInfo detail: the delay before a retry, on every protocol.
@@ -1443,6 +1444,7 @@ message RunServiceAlarmNowRequest {
   string service_id = 3;
   // The alarm's name.
   string name = 4;
+  string request_key = 5;
 }
 
 // RunServiceAlarmNowResponse is the answer to RunServiceAlarmNow.
