@@ -533,6 +533,68 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
+  // StartServiceSignIn runs one of the service's recipe's sign_in programs
+  // and streams what it writes until it ends: the started message names
+  // the sign-in and when it is stopped, the output messages carry its
+  // stdout and stderr, and the ended message says how it ended. A sign-in
+  // may run for 15 minutes; past that the command is cancelled and the
+  // sign-in ends TIMED_OUT. Only one sign-in of a program runs at a time:
+  // a second fails with FAILED_PRECONDITION while the first is under way.
+  // The output is streamed only and never stored.
+  //
+  // A sign-in is answered with AnswerServiceSignIn and ends early with
+  // CancelServiceSignIn; its stream ending for another reason, as a client
+  // that leaves, also ends it, cancelled. An unknown service or a program
+  // its recipe does not declare fails with NOT_FOUND; a service that is
+  // not running fails with FAILED_PRECONDITION.
+  rpc StartServiceSignIn(StartServiceSignInRequest) returns (stream StartServiceSignInResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.audit) = {action: "service.sign_in_started"};
+    option (toshi.scope) = "environment";
+    option (toshi.mcp) = {exclude: true};
+  }
+
+  // AnswerServiceSignIn writes one line to a running sign-in's standard
+  // input, from any control plane process: the sign-in's program reads it.
+  // The answer is one line of at most 4 KiB, with no newline in it, and is
+  // never stored. An answer to a sign-in that is not under way fails with
+  // NOT_FOUND; a text that is not one line, or is longer, with
+  // INVALID_ARGUMENT.
+  rpc AnswerServiceSignIn(AnswerServiceSignInRequest) returns (AnswerServiceSignInResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.audit) = {action: "service.sign_in_answered"};
+    option (toshi.scope) = "environment";
+    option (toshi.mcp) = {exclude: true};
+  }
+
+  // CancelServiceSignIn ends a running sign-in: its program is cancelled
+  // and its stream ends CANCELLED. It returns once the cancel is asked
+  // for, not once the sign-in has ended, and works from any control plane
+  // process. Cancelling a sign-in that is not under way fails with
+  // NOT_FOUND; one that has ended changes nothing.
+  rpc CancelServiceSignIn(CancelServiceSignInRequest) returns (CancelServiceSignInResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.audit) = {action: "service.sign_in_cancelled"};
+    option (toshi.scope) = "environment";
+    option (toshi.mcp) = {exclude: true};
+  }
+
+  // GetServiceSignInStatus runs the status commands of the service's
+  // recipe and reports, for each sign_in program, whether it is signed in
+  // and what its status command wrote. program names one program; empty
+  // asks for every program the recipe declares, in its order. Each command
+  // runs for 30 seconds at most, past which it is not signed in. An output
+  // is cut at 4 KiB, ending with "[cut]". The status is not stored.
+  //
+  // An unknown service or a program its recipe does not declare fails with
+  // NOT_FOUND; a service that is not running fails with
+  // FAILED_PRECONDITION.
+  rpc GetServiceSignInStatus(GetServiceSignInStatusRequest) returns (GetServiceSignInStatusResponse) {
+    option (toshi.permission) = "services.read";
+    option (toshi.scope) = "environment";
+    option (toshi.mcp) = {exclude: true};
+  }
+
   // ListServiceRevisions returns a service's revisions, newest first, a
   // page at a time. An unknown ID fails with NOT_FOUND.
   rpc ListServiceRevisions(ListServiceRevisionsRequest) returns (ListServiceRevisionsResponse) {

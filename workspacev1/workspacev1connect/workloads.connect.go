@@ -162,6 +162,18 @@ const (
 	// WorkloadServiceReleaseServiceProcedure is the fully-qualified name of the WorkloadService's
 	// ReleaseService RPC.
 	WorkloadServiceReleaseServiceProcedure = "/toshi.workspace.v1.WorkloadService/ReleaseService"
+	// WorkloadServiceStartServiceSignInProcedure is the fully-qualified name of the WorkloadService's
+	// StartServiceSignIn RPC.
+	WorkloadServiceStartServiceSignInProcedure = "/toshi.workspace.v1.WorkloadService/StartServiceSignIn"
+	// WorkloadServiceAnswerServiceSignInProcedure is the fully-qualified name of the WorkloadService's
+	// AnswerServiceSignIn RPC.
+	WorkloadServiceAnswerServiceSignInProcedure = "/toshi.workspace.v1.WorkloadService/AnswerServiceSignIn"
+	// WorkloadServiceCancelServiceSignInProcedure is the fully-qualified name of the WorkloadService's
+	// CancelServiceSignIn RPC.
+	WorkloadServiceCancelServiceSignInProcedure = "/toshi.workspace.v1.WorkloadService/CancelServiceSignIn"
+	// WorkloadServiceGetServiceSignInStatusProcedure is the fully-qualified name of the
+	// WorkloadService's GetServiceSignInStatus RPC.
+	WorkloadServiceGetServiceSignInStatusProcedure = "/toshi.workspace.v1.WorkloadService/GetServiceSignInStatus"
 	// WorkloadServiceListServiceRevisionsProcedure is the fully-qualified name of the WorkloadService's
 	// ListServiceRevisions RPC.
 	WorkloadServiceListServiceRevisionsProcedure = "/toshi.workspace.v1.WorkloadService/ListServiceRevisions"
@@ -479,6 +491,45 @@ type WorkloadServiceClient interface {
 	// ReleaseService drops the caller's hold on a service. Releasing a hold
 	// the caller does not have returns the service as it is.
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
+	// StartServiceSignIn runs one of the service's recipe's sign_in programs
+	// and streams what it writes until it ends: the started message names
+	// the sign-in and when it is stopped, the output messages carry its
+	// stdout and stderr, and the ended message says how it ended. A sign-in
+	// may run for 15 minutes; past that the command is cancelled and the
+	// sign-in ends TIMED_OUT. Only one sign-in of a program runs at a time:
+	// a second fails with FAILED_PRECONDITION while the first is under way.
+	// The output is streamed only and never stored.
+	//
+	// A sign-in is answered with AnswerServiceSignIn and ends early with
+	// CancelServiceSignIn; its stream ending for another reason, as a client
+	// that leaves, also ends it, cancelled. An unknown service or a program
+	// its recipe does not declare fails with NOT_FOUND; a service that is
+	// not running fails with FAILED_PRECONDITION.
+	StartServiceSignIn(context.Context, *connect.Request[workspacev1.StartServiceSignInRequest]) (*connect.ServerStreamForClient[workspacev1.StartServiceSignInResponse], error)
+	// AnswerServiceSignIn writes one line to a running sign-in's standard
+	// input, from any control plane process: the sign-in's program reads it.
+	// The answer is one line of at most 4 KiB, with no newline in it, and is
+	// never stored. An answer to a sign-in that is not under way fails with
+	// NOT_FOUND; a text that is not one line, or is longer, with
+	// INVALID_ARGUMENT.
+	AnswerServiceSignIn(context.Context, *connect.Request[workspacev1.AnswerServiceSignInRequest]) (*connect.Response[workspacev1.AnswerServiceSignInResponse], error)
+	// CancelServiceSignIn ends a running sign-in: its program is cancelled
+	// and its stream ends CANCELLED. It returns once the cancel is asked
+	// for, not once the sign-in has ended, and works from any control plane
+	// process. Cancelling a sign-in that is not under way fails with
+	// NOT_FOUND; one that has ended changes nothing.
+	CancelServiceSignIn(context.Context, *connect.Request[workspacev1.CancelServiceSignInRequest]) (*connect.Response[workspacev1.CancelServiceSignInResponse], error)
+	// GetServiceSignInStatus runs the status commands of the service's
+	// recipe and reports, for each sign_in program, whether it is signed in
+	// and what its status command wrote. program names one program; empty
+	// asks for every program the recipe declares, in its order. Each command
+	// runs for 30 seconds at most, past which it is not signed in. An output
+	// is cut at 4 KiB, ending with "[cut]". The status is not stored.
+	//
+	// An unknown service or a program its recipe does not declare fails with
+	// NOT_FOUND; a service that is not running fails with
+	// FAILED_PRECONDITION.
+	GetServiceSignInStatus(context.Context, *connect.Request[workspacev1.GetServiceSignInStatusRequest]) (*connect.Response[workspacev1.GetServiceSignInStatusResponse], error)
 	// ListServiceRevisions returns a service's revisions, newest first, a
 	// page at a time. An unknown ID fails with NOT_FOUND.
 	ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error)
@@ -821,6 +872,30 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("ReleaseService")),
 			connect.WithClientOptions(opts...),
 		),
+		startServiceSignIn: connect.NewClient[workspacev1.StartServiceSignInRequest, workspacev1.StartServiceSignInResponse](
+			httpClient,
+			baseURL+WorkloadServiceStartServiceSignInProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("StartServiceSignIn")),
+			connect.WithClientOptions(opts...),
+		),
+		answerServiceSignIn: connect.NewClient[workspacev1.AnswerServiceSignInRequest, workspacev1.AnswerServiceSignInResponse](
+			httpClient,
+			baseURL+WorkloadServiceAnswerServiceSignInProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("AnswerServiceSignIn")),
+			connect.WithClientOptions(opts...),
+		),
+		cancelServiceSignIn: connect.NewClient[workspacev1.CancelServiceSignInRequest, workspacev1.CancelServiceSignInResponse](
+			httpClient,
+			baseURL+WorkloadServiceCancelServiceSignInProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("CancelServiceSignIn")),
+			connect.WithClientOptions(opts...),
+		),
+		getServiceSignInStatus: connect.NewClient[workspacev1.GetServiceSignInStatusRequest, workspacev1.GetServiceSignInStatusResponse](
+			httpClient,
+			baseURL+WorkloadServiceGetServiceSignInStatusProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("GetServiceSignInStatus")),
+			connect.WithClientOptions(opts...),
+		),
 		listServiceRevisions: connect.NewClient[workspacev1.ListServiceRevisionsRequest, workspacev1.ListServiceRevisionsResponse](
 			httpClient,
 			baseURL+WorkloadServiceListServiceRevisionsProcedure,
@@ -930,6 +1005,10 @@ type workloadServiceClient struct {
 	wakeService            *connect.Client[workspacev1.WakeServiceRequest, workspacev1.WakeServiceResponse]
 	holdService            *connect.Client[workspacev1.HoldServiceRequest, workspacev1.HoldServiceResponse]
 	releaseService         *connect.Client[workspacev1.ReleaseServiceRequest, workspacev1.ReleaseServiceResponse]
+	startServiceSignIn     *connect.Client[workspacev1.StartServiceSignInRequest, workspacev1.StartServiceSignInResponse]
+	answerServiceSignIn    *connect.Client[workspacev1.AnswerServiceSignInRequest, workspacev1.AnswerServiceSignInResponse]
+	cancelServiceSignIn    *connect.Client[workspacev1.CancelServiceSignInRequest, workspacev1.CancelServiceSignInResponse]
+	getServiceSignInStatus *connect.Client[workspacev1.GetServiceSignInStatusRequest, workspacev1.GetServiceSignInStatusResponse]
 	listServiceRevisions   *connect.Client[workspacev1.ListServiceRevisionsRequest, workspacev1.ListServiceRevisionsResponse]
 	getServiceRevision     *connect.Client[workspacev1.GetServiceRevisionRequest, workspacev1.GetServiceRevisionResponse]
 	rollbackService        *connect.Client[workspacev1.RollbackServiceRequest, workspacev1.RollbackServiceResponse]
@@ -1160,6 +1239,26 @@ func (c *workloadServiceClient) HoldService(ctx context.Context, req *connect.Re
 // ReleaseService calls toshi.workspace.v1.WorkloadService.ReleaseService.
 func (c *workloadServiceClient) ReleaseService(ctx context.Context, req *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error) {
 	return c.releaseService.CallUnary(ctx, req)
+}
+
+// StartServiceSignIn calls toshi.workspace.v1.WorkloadService.StartServiceSignIn.
+func (c *workloadServiceClient) StartServiceSignIn(ctx context.Context, req *connect.Request[workspacev1.StartServiceSignInRequest]) (*connect.ServerStreamForClient[workspacev1.StartServiceSignInResponse], error) {
+	return c.startServiceSignIn.CallServerStream(ctx, req)
+}
+
+// AnswerServiceSignIn calls toshi.workspace.v1.WorkloadService.AnswerServiceSignIn.
+func (c *workloadServiceClient) AnswerServiceSignIn(ctx context.Context, req *connect.Request[workspacev1.AnswerServiceSignInRequest]) (*connect.Response[workspacev1.AnswerServiceSignInResponse], error) {
+	return c.answerServiceSignIn.CallUnary(ctx, req)
+}
+
+// CancelServiceSignIn calls toshi.workspace.v1.WorkloadService.CancelServiceSignIn.
+func (c *workloadServiceClient) CancelServiceSignIn(ctx context.Context, req *connect.Request[workspacev1.CancelServiceSignInRequest]) (*connect.Response[workspacev1.CancelServiceSignInResponse], error) {
+	return c.cancelServiceSignIn.CallUnary(ctx, req)
+}
+
+// GetServiceSignInStatus calls toshi.workspace.v1.WorkloadService.GetServiceSignInStatus.
+func (c *workloadServiceClient) GetServiceSignInStatus(ctx context.Context, req *connect.Request[workspacev1.GetServiceSignInStatusRequest]) (*connect.Response[workspacev1.GetServiceSignInStatusResponse], error) {
+	return c.getServiceSignInStatus.CallUnary(ctx, req)
 }
 
 // ListServiceRevisions calls toshi.workspace.v1.WorkloadService.ListServiceRevisions.
@@ -1497,6 +1596,45 @@ type WorkloadServiceHandler interface {
 	// ReleaseService drops the caller's hold on a service. Releasing a hold
 	// the caller does not have returns the service as it is.
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
+	// StartServiceSignIn runs one of the service's recipe's sign_in programs
+	// and streams what it writes until it ends: the started message names
+	// the sign-in and when it is stopped, the output messages carry its
+	// stdout and stderr, and the ended message says how it ended. A sign-in
+	// may run for 15 minutes; past that the command is cancelled and the
+	// sign-in ends TIMED_OUT. Only one sign-in of a program runs at a time:
+	// a second fails with FAILED_PRECONDITION while the first is under way.
+	// The output is streamed only and never stored.
+	//
+	// A sign-in is answered with AnswerServiceSignIn and ends early with
+	// CancelServiceSignIn; its stream ending for another reason, as a client
+	// that leaves, also ends it, cancelled. An unknown service or a program
+	// its recipe does not declare fails with NOT_FOUND; a service that is
+	// not running fails with FAILED_PRECONDITION.
+	StartServiceSignIn(context.Context, *connect.Request[workspacev1.StartServiceSignInRequest], *connect.ServerStream[workspacev1.StartServiceSignInResponse]) error
+	// AnswerServiceSignIn writes one line to a running sign-in's standard
+	// input, from any control plane process: the sign-in's program reads it.
+	// The answer is one line of at most 4 KiB, with no newline in it, and is
+	// never stored. An answer to a sign-in that is not under way fails with
+	// NOT_FOUND; a text that is not one line, or is longer, with
+	// INVALID_ARGUMENT.
+	AnswerServiceSignIn(context.Context, *connect.Request[workspacev1.AnswerServiceSignInRequest]) (*connect.Response[workspacev1.AnswerServiceSignInResponse], error)
+	// CancelServiceSignIn ends a running sign-in: its program is cancelled
+	// and its stream ends CANCELLED. It returns once the cancel is asked
+	// for, not once the sign-in has ended, and works from any control plane
+	// process. Cancelling a sign-in that is not under way fails with
+	// NOT_FOUND; one that has ended changes nothing.
+	CancelServiceSignIn(context.Context, *connect.Request[workspacev1.CancelServiceSignInRequest]) (*connect.Response[workspacev1.CancelServiceSignInResponse], error)
+	// GetServiceSignInStatus runs the status commands of the service's
+	// recipe and reports, for each sign_in program, whether it is signed in
+	// and what its status command wrote. program names one program; empty
+	// asks for every program the recipe declares, in its order. Each command
+	// runs for 30 seconds at most, past which it is not signed in. An output
+	// is cut at 4 KiB, ending with "[cut]". The status is not stored.
+	//
+	// An unknown service or a program its recipe does not declare fails with
+	// NOT_FOUND; a service that is not running fails with
+	// FAILED_PRECONDITION.
+	GetServiceSignInStatus(context.Context, *connect.Request[workspacev1.GetServiceSignInStatusRequest]) (*connect.Response[workspacev1.GetServiceSignInStatusResponse], error)
 	// ListServiceRevisions returns a service's revisions, newest first, a
 	// page at a time. An unknown ID fails with NOT_FOUND.
 	ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error)
@@ -1835,6 +1973,30 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("ReleaseService")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceStartServiceSignInHandler := connect.NewServerStreamHandler(
+		WorkloadServiceStartServiceSignInProcedure,
+		svc.StartServiceSignIn,
+		connect.WithSchema(workloadServiceMethods.ByName("StartServiceSignIn")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceAnswerServiceSignInHandler := connect.NewUnaryHandler(
+		WorkloadServiceAnswerServiceSignInProcedure,
+		svc.AnswerServiceSignIn,
+		connect.WithSchema(workloadServiceMethods.ByName("AnswerServiceSignIn")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceCancelServiceSignInHandler := connect.NewUnaryHandler(
+		WorkloadServiceCancelServiceSignInProcedure,
+		svc.CancelServiceSignIn,
+		connect.WithSchema(workloadServiceMethods.ByName("CancelServiceSignIn")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceGetServiceSignInStatusHandler := connect.NewUnaryHandler(
+		WorkloadServiceGetServiceSignInStatusProcedure,
+		svc.GetServiceSignInStatus,
+		connect.WithSchema(workloadServiceMethods.ByName("GetServiceSignInStatus")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceListServiceRevisionsHandler := connect.NewUnaryHandler(
 		WorkloadServiceListServiceRevisionsProcedure,
 		svc.ListServiceRevisions,
@@ -1985,6 +2147,14 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceHoldServiceHandler.ServeHTTP(w, r)
 		case WorkloadServiceReleaseServiceProcedure:
 			workloadServiceReleaseServiceHandler.ServeHTTP(w, r)
+		case WorkloadServiceStartServiceSignInProcedure:
+			workloadServiceStartServiceSignInHandler.ServeHTTP(w, r)
+		case WorkloadServiceAnswerServiceSignInProcedure:
+			workloadServiceAnswerServiceSignInHandler.ServeHTTP(w, r)
+		case WorkloadServiceCancelServiceSignInProcedure:
+			workloadServiceCancelServiceSignInHandler.ServeHTTP(w, r)
+		case WorkloadServiceGetServiceSignInStatusProcedure:
+			workloadServiceGetServiceSignInStatusHandler.ServeHTTP(w, r)
 		case WorkloadServiceListServiceRevisionsProcedure:
 			workloadServiceListServiceRevisionsHandler.ServeHTTP(w, r)
 		case WorkloadServiceGetServiceRevisionProcedure:
@@ -2188,6 +2358,22 @@ func (UnimplementedWorkloadServiceHandler) HoldService(context.Context, *connect
 
 func (UnimplementedWorkloadServiceHandler) ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ReleaseService is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) StartServiceSignIn(context.Context, *connect.Request[workspacev1.StartServiceSignInRequest], *connect.ServerStream[workspacev1.StartServiceSignInResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.StartServiceSignIn is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) AnswerServiceSignIn(context.Context, *connect.Request[workspacev1.AnswerServiceSignInRequest]) (*connect.Response[workspacev1.AnswerServiceSignInResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.AnswerServiceSignIn is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) CancelServiceSignIn(context.Context, *connect.Request[workspacev1.CancelServiceSignInRequest]) (*connect.Response[workspacev1.CancelServiceSignInResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.CancelServiceSignIn is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) GetServiceSignInStatus(context.Context, *connect.Request[workspacev1.GetServiceSignInStatusRequest]) (*connect.Response[workspacev1.GetServiceSignInStatusResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.GetServiceSignInStatus is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error) {

@@ -1711,6 +1711,106 @@ message ReleaseServiceResponse {
   Service service = 2;
 }
 
+message StartServiceSignInRequest {
+  string project = 1;
+  string environment = 2;
+  // The service's workload id.
+  string service_id = 3;
+  // The program the recipe declares in [[sign_in]].
+  string program = 4;
+}
+
+// StartServiceSignInResponse is one sign-in's stream: the started message,
+// the output as it comes, and the ended message last.
+message StartServiceSignInResponse {
+  oneof message {
+    // First and only once.
+    ServiceSignInStarted started = 1;
+    // A chunk of the program's standard output or its standard error, in
+    // the order it wrote them.
+    bytes output = 2;
+    // Last.
+    ServiceSignInEnded ended = 3;
+  }
+}
+
+message ServiceSignInStarted {
+  // The sign-in, for AnswerServiceSignIn and CancelServiceSignIn.
+  string sign_in_id = 1;
+  // When the sign-in is cancelled if it has not ended: 15 minutes after it
+  // started.
+  google.protobuf.Timestamp ends_at = 2;
+}
+
+message ServiceSignInEnded {
+  // How the sign-in ended.
+  ServiceSignInOutcome outcome = 1;
+  // The program's exit code, when it exited; unset when it was cancelled
+  // before it exited, or never ran.
+  optional int32 exit_code = 2;
+}
+
+// ServiceSignInOutcome is how a sign-in ended.
+enum ServiceSignInOutcome {
+  SERVICE_SIGN_IN_OUTCOME_UNSPECIFIED = 0;
+  // The program exited 0: it is signed in.
+  SERVICE_SIGN_IN_OUTCOME_SIGNED_IN = 1;
+  // The program exited other than 0, or it did not run.
+  SERVICE_SIGN_IN_OUTCOME_FAILED = 2;
+  // The sign-in was cancelled: by CancelServiceSignIn, or its client left.
+  SERVICE_SIGN_IN_OUTCOME_CANCELLED = 3;
+  // The sign-in reached its 15-minute end and was cancelled.
+  SERVICE_SIGN_IN_OUTCOME_TIMED_OUT = 4;
+}
+
+message AnswerServiceSignInRequest {
+  string project = 1;
+  string environment = 2;
+  string service_id = 3;
+  // From StartServiceSignInResponse.started.
+  string sign_in_id = 4;
+  // One line, at most 4 KiB, with no newline in it.
+  string text = 5;
+}
+
+message AnswerServiceSignInResponse {}
+
+message CancelServiceSignInRequest {
+  string project = 1;
+  string environment = 2;
+  string service_id = 3;
+  // From StartServiceSignInResponse.started.
+  string sign_in_id = 4;
+}
+
+message CancelServiceSignInResponse {}
+
+message GetServiceSignInStatusRequest {
+  string project = 1;
+  string environment = 2;
+  string service_id = 3;
+  // The program to ask about; empty asks for every program the recipe
+  // declares.
+  string program = 4;
+}
+
+message GetServiceSignInStatusResponse {
+  repeated ServiceSignInStatus statuses = 1;
+}
+
+// ServiceSignInStatus is one sign_in program's state.
+message ServiceSignInStatus {
+  string program = 1;
+  // Its status command exited 0.
+  bool signed_in = 2;
+  // The status command's exit code; -1 when it did not run, or did not end
+  // within its 30 seconds.
+  int32 exit_code = 3;
+  // What the status command wrote: its standard output, then its standard
+  // error, at most 4 KiB, ending "[cut]" when it was cut.
+  string output = 4;
+}
+
 message ListServiceRunsRequest {
   string project = 1;
   string environment = 2;
