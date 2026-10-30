@@ -202,6 +202,19 @@ service ProjectService {
     option (toshi.scope) = "environment";
     option (toshi.audit) = {target: "project:project"};
   }
+  // SetEnvironmentVolumes replaces the list of the project's volumes an
+  // environment's services and sandboxes may attach; an empty list lets
+  // them attach any. An attach of a volume the list leaves out, by
+  // AttachVolume or at sandbox create, is FAILED_PRECONDITION naming the
+  // environment and the volume; a volume attached before stays. A name
+  // that is no volume of the project is INVALID_ARGUMENT naming it. A
+  // project or environment the workspace does not have is NOT_FOUND. A
+  // token limited to an environment sets only that environment's.
+  rpc SetEnvironmentVolumes(SetEnvironmentVolumesRequest) returns (SetEnvironmentVolumesResponse) {
+    option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {target: "project:project"};
+  }
   // CreateEmbedToken mints an embed token for a project: a credential for
   // a web page on one of the token's origins, which spends it once to
   // fetch one of the project's ready recordings. It expires in minutes. A
@@ -263,6 +276,10 @@ message ProjectEnvironment {
   string name = 1;
   // development, preview or production.
   string kind = 2;
+  // The names of the project's volumes the environment's services and
+  // sandboxes may attach, sorted; empty when any of them may. Set with
+  // SetEnvironmentVolumes.
+  repeated string volumes = 3;
 }
 
 // Repository is a repository a project claims: a CI job of the repository
@@ -566,6 +583,20 @@ message SetEnvironmentRetentionResponse {
   EnvironmentRetention retention = 1;
   // What applies after it, as GetEnvironmentRetention reports it.
   EnvironmentRetention effective = 2;
+}
+
+message SetEnvironmentVolumesRequest {
+  // The project's name.
+  string project = 1;
+  // The environment's name.
+  string environment = 2;
+  // The whole list of volume names; empty lifts the limit.
+  repeated string volumes = 3;
+}
+
+message SetEnvironmentVolumesResponse {
+  // The environment with its list as stored.
+  ProjectEnvironment environment = 1;
 }
 
 // EmbedTokenState is where an embed token is in its life.

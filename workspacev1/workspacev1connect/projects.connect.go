@@ -81,6 +81,9 @@ const (
 	// ProjectServiceSetEnvironmentRetentionProcedure is the fully-qualified name of the
 	// ProjectService's SetEnvironmentRetention RPC.
 	ProjectServiceSetEnvironmentRetentionProcedure = "/toshi.workspace.v1.ProjectService/SetEnvironmentRetention"
+	// ProjectServiceSetEnvironmentVolumesProcedure is the fully-qualified name of the ProjectService's
+	// SetEnvironmentVolumes RPC.
+	ProjectServiceSetEnvironmentVolumesProcedure = "/toshi.workspace.v1.ProjectService/SetEnvironmentVolumes"
 	// ProjectServiceCreateEmbedTokenProcedure is the fully-qualified name of the ProjectService's
 	// CreateEmbedToken RPC.
 	ProjectServiceCreateEmbedTokenProcedure = "/toshi.workspace.v1.ProjectService/CreateEmbedToken"
@@ -221,6 +224,15 @@ type ProjectServiceClient interface {
 	// environment the workspace does not have is NOT_FOUND. A token limited
 	// to an environment sets only that environment's.
 	SetEnvironmentRetention(context.Context, *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error)
+	// SetEnvironmentVolumes replaces the list of the project's volumes an
+	// environment's services and sandboxes may attach; an empty list lets
+	// them attach any. An attach of a volume the list leaves out, by
+	// AttachVolume or at sandbox create, is FAILED_PRECONDITION naming the
+	// environment and the volume; a volume attached before stays. A name
+	// that is no volume of the project is INVALID_ARGUMENT naming it. A
+	// project or environment the workspace does not have is NOT_FOUND. A
+	// token limited to an environment sets only that environment's.
+	SetEnvironmentVolumes(context.Context, *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -345,6 +357,12 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentRetention")),
 			connect.WithClientOptions(opts...),
 		),
+		setEnvironmentVolumes: connect.NewClient[workspacev1.SetEnvironmentVolumesRequest, workspacev1.SetEnvironmentVolumesResponse](
+			httpClient,
+			baseURL+ProjectServiceSetEnvironmentVolumesProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentVolumes")),
+			connect.WithClientOptions(opts...),
+		),
 		createEmbedToken: connect.NewClient[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse](
 			httpClient,
 			baseURL+ProjectServiceCreateEmbedTokenProcedure,
@@ -384,6 +402,7 @@ type projectServiceClient struct {
 	setEnvironmentNetwork   *connect.Client[workspacev1.SetEnvironmentNetworkRequest, workspacev1.SetEnvironmentNetworkResponse]
 	getEnvironmentRetention *connect.Client[workspacev1.GetEnvironmentRetentionRequest, workspacev1.GetEnvironmentRetentionResponse]
 	setEnvironmentRetention *connect.Client[workspacev1.SetEnvironmentRetentionRequest, workspacev1.SetEnvironmentRetentionResponse]
+	setEnvironmentVolumes   *connect.Client[workspacev1.SetEnvironmentVolumesRequest, workspacev1.SetEnvironmentVolumesResponse]
 	createEmbedToken        *connect.Client[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse]
 	listEmbedTokens         *connect.Client[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse]
 	revokeEmbedToken        *connect.Client[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse]
@@ -467,6 +486,11 @@ func (c *projectServiceClient) GetEnvironmentRetention(ctx context.Context, req 
 // SetEnvironmentRetention calls toshi.workspace.v1.ProjectService.SetEnvironmentRetention.
 func (c *projectServiceClient) SetEnvironmentRetention(ctx context.Context, req *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error) {
 	return c.setEnvironmentRetention.CallUnary(ctx, req)
+}
+
+// SetEnvironmentVolumes calls toshi.workspace.v1.ProjectService.SetEnvironmentVolumes.
+func (c *projectServiceClient) SetEnvironmentVolumes(ctx context.Context, req *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error) {
+	return c.setEnvironmentVolumes.CallUnary(ctx, req)
 }
 
 // CreateEmbedToken calls toshi.workspace.v1.ProjectService.CreateEmbedToken.
@@ -613,6 +637,15 @@ type ProjectServiceHandler interface {
 	// environment the workspace does not have is NOT_FOUND. A token limited
 	// to an environment sets only that environment's.
 	SetEnvironmentRetention(context.Context, *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error)
+	// SetEnvironmentVolumes replaces the list of the project's volumes an
+	// environment's services and sandboxes may attach; an empty list lets
+	// them attach any. An attach of a volume the list leaves out, by
+	// AttachVolume or at sandbox create, is FAILED_PRECONDITION naming the
+	// environment and the volume; a volume attached before stays. A name
+	// that is no volume of the project is INVALID_ARGUMENT naming it. A
+	// project or environment the workspace does not have is NOT_FOUND. A
+	// token limited to an environment sets only that environment's.
+	SetEnvironmentVolumes(context.Context, *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -733,6 +766,12 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentRetention")),
 		connect.WithHandlerOptions(opts...),
 	)
+	projectServiceSetEnvironmentVolumesHandler := connect.NewUnaryHandler(
+		ProjectServiceSetEnvironmentVolumesProcedure,
+		svc.SetEnvironmentVolumes,
+		connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentVolumes")),
+		connect.WithHandlerOptions(opts...),
+	)
 	projectServiceCreateEmbedTokenHandler := connect.NewUnaryHandler(
 		ProjectServiceCreateEmbedTokenProcedure,
 		svc.CreateEmbedToken,
@@ -785,6 +824,8 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 			projectServiceGetEnvironmentRetentionHandler.ServeHTTP(w, r)
 		case ProjectServiceSetEnvironmentRetentionProcedure:
 			projectServiceSetEnvironmentRetentionHandler.ServeHTTP(w, r)
+		case ProjectServiceSetEnvironmentVolumesProcedure:
+			projectServiceSetEnvironmentVolumesHandler.ServeHTTP(w, r)
 		case ProjectServiceCreateEmbedTokenProcedure:
 			projectServiceCreateEmbedTokenHandler.ServeHTTP(w, r)
 		case ProjectServiceListEmbedTokensProcedure:
@@ -862,6 +903,10 @@ func (UnimplementedProjectServiceHandler) GetEnvironmentRetention(context.Contex
 
 func (UnimplementedProjectServiceHandler) SetEnvironmentRetention(context.Context, *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetEnvironmentRetention is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) SetEnvironmentVolumes(context.Context, *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetEnvironmentVolumes is not implemented"))
 }
 
 func (UnimplementedProjectServiceHandler) CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error) {
