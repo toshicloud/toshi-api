@@ -419,6 +419,9 @@ const (
 	HostingCertificateState_HOSTING_CERTIFICATE_STATE_VALID        HostingCertificateState = 3
 	// A renewal failed; the current certificate serves until not_after.
 	HostingCertificateState_HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING HostingCertificateState = 4
+	// The control plane signed the certificate itself, as [hosting] dev = true
+	// does for test stacks; clients do not trust it.
+	HostingCertificateState_HOSTING_CERTIFICATE_STATE_SELF_SIGNED HostingCertificateState = 5
 )
 
 // Enum value maps for HostingCertificateState.
@@ -429,6 +432,7 @@ var (
 		2: "HOSTING_CERTIFICATE_STATE_RATE_LIMITED",
 		3: "HOSTING_CERTIFICATE_STATE_VALID",
 		4: "HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING",
+		5: "HOSTING_CERTIFICATE_STATE_SELF_SIGNED",
 	}
 	HostingCertificateState_value = map[string]int32{
 		"HOSTING_CERTIFICATE_STATE_UNSPECIFIED":     0,
@@ -436,6 +440,7 @@ var (
 		"HOSTING_CERTIFICATE_STATE_RATE_LIMITED":    2,
 		"HOSTING_CERTIFICATE_STATE_VALID":           3,
 		"HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING": 4,
+		"HOSTING_CERTIFICATE_STATE_SELF_SIGNED":     5,
 	}
 )
 
@@ -15975,13 +15980,14 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	" OFFLINE_HOST_OUTCOME_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bOFFLINE_HOST_OUTCOME_RETIRE\x10\x01\x12$\n" +
 	" OFFLINE_HOST_OUTCOME_SKIPPED_JOB\x10\x02\x12&\n" +
-	"\"OFFLINE_HOST_OUTCOME_SKIPPED_OWNED\x10\x03*\xeb\x01\n" +
+	"\"OFFLINE_HOST_OUTCOME_SKIPPED_OWNED\x10\x03*\x96\x02\n" +
 	"\x17HostingCertificateState\x12)\n" +
 	"%HOSTING_CERTIFICATE_STATE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!HOSTING_CERTIFICATE_STATE_ISSUING\x10\x01\x12*\n" +
 	"&HOSTING_CERTIFICATE_STATE_RATE_LIMITED\x10\x02\x12#\n" +
 	"\x1fHOSTING_CERTIFICATE_STATE_VALID\x10\x03\x12-\n" +
-	")HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING\x10\x04*\x8a\x01\n" +
+	")HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING\x10\x04\x12)\n" +
+	"%HOSTING_CERTIFICATE_STATE_SELF_SIGNED\x10\x05*\x8a\x01\n" +
 	"\tTokenKind\x12\x1a\n" +
 	"\x16TOKEN_KIND_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13TOKEN_KIND_OPERATOR\x10\x01\x12\x19\n" +

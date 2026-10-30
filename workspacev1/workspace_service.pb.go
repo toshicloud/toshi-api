@@ -37,6 +37,9 @@ const (
 	HostingCertificateState_HOSTING_CERTIFICATE_STATE_VALID        HostingCertificateState = 3
 	// A renewal failed; the current certificate serves until not_after.
 	HostingCertificateState_HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING HostingCertificateState = 4
+	// The control plane signed the certificate itself, as [hosting] dev = true
+	// does for test stacks; clients do not trust it.
+	HostingCertificateState_HOSTING_CERTIFICATE_STATE_SELF_SIGNED HostingCertificateState = 5
 )
 
 // Enum value maps for HostingCertificateState.
@@ -47,6 +50,7 @@ var (
 		2: "HOSTING_CERTIFICATE_STATE_RATE_LIMITED",
 		3: "HOSTING_CERTIFICATE_STATE_VALID",
 		4: "HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING",
+		5: "HOSTING_CERTIFICATE_STATE_SELF_SIGNED",
 	}
 	HostingCertificateState_value = map[string]int32{
 		"HOSTING_CERTIFICATE_STATE_UNSPECIFIED":     0,
@@ -54,6 +58,7 @@ var (
 		"HOSTING_CERTIFICATE_STATE_RATE_LIMITED":    2,
 		"HOSTING_CERTIFICATE_STATE_VALID":           3,
 		"HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING": 4,
+		"HOSTING_CERTIFICATE_STATE_SELF_SIGNED":     5,
 	}
 )
 
@@ -5702,13 +5707,14 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"recent_ips\x18\x05 \x03(\tR\trecentIps\x12\x14\n" +
 	"\x05cloud\x18\x06 \x01(\tR\x05cloud\x12!\n" +
 	"\fcloud_egress\x18\a \x01(\tR\vcloudEgress\x12\x1c\n" +
-	"\tconfirmed\x18\b \x01(\bR\tconfirmed*\xeb\x01\n" +
+	"\tconfirmed\x18\b \x01(\bR\tconfirmed*\x96\x02\n" +
 	"\x17HostingCertificateState\x12)\n" +
 	"%HOSTING_CERTIFICATE_STATE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!HOSTING_CERTIFICATE_STATE_ISSUING\x10\x01\x12*\n" +
 	"&HOSTING_CERTIFICATE_STATE_RATE_LIMITED\x10\x02\x12#\n" +
 	"\x1fHOSTING_CERTIFICATE_STATE_VALID\x10\x03\x12-\n" +
-	")HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING\x10\x042\xd7\x13\n" +
+	")HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING\x10\x04\x12)\n" +
+	"%HOSTING_CERTIFICATE_STATE_SELF_SIGNED\x10\x052\xd7\x13\n" +
 	"\x10WorkspaceService\x12u\n" +
 	"\fGetWorkspace\x12'.toshi.workspace.v1.GetWorkspaceRequest\x1a(.toshi.workspace.v1.GetWorkspaceResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\x83\x01\n" +
 	"\x0fUpdateWorkspace\x12*.toshi.workspace.v1.UpdateWorkspaceRequest\x1a+.toshi.workspace.v1.UpdateWorkspaceResponse\"\x17\xc2\xf3\x18\x0fworkspace.write\xe0\xf3\x18\x01\x12{\n" +

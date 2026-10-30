@@ -574,6 +574,9 @@ enum HostingCertificateState {
   HOSTING_CERTIFICATE_STATE_VALID = 3;
   // A renewal failed; the current certificate serves until not_after.
   HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING = 4;
+  // The control plane signed the certificate itself, as [hosting] dev = true
+  // does for test stacks; clients do not trust it.
+  HOSTING_CERTIFICATE_STATE_SELF_SIGNED = 5;
 }
 
 // WorkspaceSettings is everything a workspace's members choose about it,
