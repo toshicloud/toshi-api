@@ -535,6 +535,9 @@ message Workspace {
   // Who last changed settings.recording, and when; unset while it was never
   // changed. Set by Toshi.
   WorkspaceSettingChange recording_changed = 40;
+  // Who last changed settings.recording_human_spans, and when; unset while it
+  // was never changed. Set by Toshi.
+  WorkspaceSettingChange recording_human_spans_changed = 42;
 
   reserved 8, 9, 10, 14, 15, 21, 23, 32;
   reserved "own_hosts_only", "spend_cap_cents", "max_jobs_per_hour", "allow_overflow", "allow_cache_warm", "history_days", "cancel_run_on_vm_death", "member_join";
@@ -633,6 +636,12 @@ message WorkspaceSettings {
   // no new one starts. Switching it on applies to jobs created after it. It
   // does not cover the recordings a run uploads itself.
   optional bool recording = 11;
+  // Whether a sandbox's strips keep the screenshots of a person's control
+  // through a viewer with input; left out is off, and a person's span is left
+  // out of the strip as a gap. Switching it applies to the person's next
+  // control, and switching it off stops an open span's screenshots within one
+  // interval.
+  optional bool recording_human_spans = 12;
 }
 
 // WorkspaceSettingChange is who last changed one of a workspace's settings,

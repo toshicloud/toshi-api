@@ -15168,7 +15168,8 @@ export enum TokenKind {
   ENROLLMENT = 2,
 
   /**
-   * A workspace API token: the operator API as one workspace.
+   * A workspace API token: the Workspace API as one workspace. The operator
+   * API refuses it.
    *
    * @generated from enum value: TOKEN_KIND_TENANT = 3;
    */
@@ -15472,8 +15473,9 @@ export const OperatorService: GenService<{
    * heartbeat is older than offline_longer_than, oldest first, and with apply
    * set removes each one that holds no assigned, starting or running job.
    * Without apply nothing changes: the response says what a call with apply
-   * would do. A host a workspace owns is skipped unless include_owned is set.
-   * Each removal records one host.retired audit event. Operators only.
+   * would do. A host a workspace owns is skipped unless include_owned is set,
+   * and a revoked host is never listed. Each removal records one
+   * host.retired audit event. Operators only.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.RetireOfflineHosts
    */
@@ -15529,8 +15531,9 @@ export const OperatorService: GenService<{
    * no cap; a limit named in clear goes back to the plan's; any other keeps
    * its current value. A negative limit, secret_max_kib above 1073741824, an
    * unknown name in clear, a limit both set and cleared, or a request that
-   * sets and clears nothing fails with INVALID_ARGUMENT; an unknown workspace
-   * fails with NOT_FOUND. A workspace's own token cannot call it.
+   * sets and clears nothing fails with INVALID_ARGUMENT, as does a
+   * volume_snapshot_interval_seconds other than 0 and below 60; an unknown
+   * workspace fails with NOT_FOUND. A workspace's own token cannot call it.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetTenantLimits
    */
@@ -15549,7 +15552,8 @@ export const OperatorService: GenService<{
    * An empty seat_id or user_id, or another reason, fails with
    * INVALID_ARGUMENT; a seat that is missing or removed, or a user_id that
    * is not a member, with NOT_FOUND; a person who holds a live seat with
-   * ALREADY_EXISTS. The seat's own person fails with INVALID_ARGUMENT.
+   * ALREADY_EXISTS; a workspace that is not active with FAILED_PRECONDITION.
+   * The seat's own person fails with INVALID_ARGUMENT.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.ReassignSeat
    */
@@ -15775,8 +15779,8 @@ export const OperatorService: GenService<{
     output: typeof SetTenantBillingCustomerResponseSchema;
   },
   /**
-   * ListTokens returns the operator and enrollment tokens the control plane
-   * knows, oldest first, without their values.
+   * ListTokens returns the tokens the control plane knows, of every kind or
+   * of the one kind names, oldest first, without their values.
    *
    * A page holds 100 tokens when page_size is zero, and 1000 at most.
    *
@@ -15847,9 +15851,11 @@ export const OperatorService: GenService<{
    * through the authorization endpoints, and returns it. A confidential
    * client's secret is returned only here: only its hash is stored, and it
    * cannot be shown again. An ID in use, by a registered client, a deleted
-   * one or one the config file declares, fails with ALREADY_EXISTS; a
-   * missing name or redirect URI, or a redirect URI that is not https
-   * (but for a loopback address), fails with INVALID_ARGUMENT.
+   * one or one the config file declares, fails with ALREADY_EXISTS; an ID
+   * that is not 1 to 64 letters, digits, '-', '_' or '.', a missing name or
+   * redirect URI, or a redirect URI that is not https (but for a loopback
+   * address), fails with INVALID_ARGUMENT. While oauth.issuer is unset, the
+   * authorization endpoints are off and it fails with FAILED_PRECONDITION.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.RegisterClient
    */
@@ -15900,7 +15906,9 @@ export const OperatorService: GenService<{
   /**
    * ListHostAlerts returns the active alerts of hosts that workspaces own:
    * memory_held, egress_changed and agent_version_skew, one per workspace and
-   * kind, ordered by workspace, then kind. A workspace caller gets those of its
+   * kind, and the workspaces' token notices, token_creator_left and
+   * token_expiring, one for each person who left; ordered by workspace, then
+   * kind. A workspace caller gets those of its
    * own workspaces; an operator gets every workspace's, or one workspace's with the
    * filter.
    *
@@ -16040,7 +16048,7 @@ export const OperatorService: GenService<{
    * SuggestPools replays the store's finished jobs queued in the last days
    * against the hosts as registered, with the warm targets their agents
    * report, and suggests each size's warm target, as `toshi replay
-   * suggest-pools` does on an export. A run reads the
+   * pool suggest` does on an export. A run reads the
    * newest max_jobs jobs of the window, stops after timeout, and runs in the
    * background, one at a time in each control plane process, which keeps its
    * own result. A call returns the last result for the window; it starts a

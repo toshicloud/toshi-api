@@ -475,7 +475,8 @@ const (
 	TokenKind_TOKEN_KIND_OPERATOR TokenKind = 1
 	// The enrollment token: registering a host.
 	TokenKind_TOKEN_KIND_ENROLLMENT TokenKind = 2
-	// A workspace API token: the operator API as one workspace.
+	// A workspace API token: the Workspace API as one workspace. The operator
+	// API refuses it.
 	TokenKind_TOKEN_KIND_TENANT TokenKind = 3
 	// A product token: a product's adapter calling the core.
 	TokenKind_TOKEN_KIND_PRODUCT TokenKind = 4
