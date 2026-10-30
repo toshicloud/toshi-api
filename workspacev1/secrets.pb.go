@@ -10,6 +10,7 @@ import (
 	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -106,8 +107,11 @@ type SecretSet struct {
 	// apply created it, "adopted" when an apply took over an object that
 	// already existed. Empty when managed_by is empty.
 	ManifestOrigin string `protobuf:"bytes,8,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// The names of the set's keys, sorted; never a value. A person's own
+	// keys are not listed.
+	Keys          []string `protobuf:"bytes,9,rep,name=keys,proto3" json:"keys,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SecretSet) Reset() {
@@ -194,6 +198,13 @@ func (x *SecretSet) GetManifestOrigin() string {
 		return x.ManifestOrigin
 	}
 	return ""
+}
+
+func (x *SecretSet) GetKeys() []string {
+	if x != nil {
+		return x.Keys
+	}
+	return nil
 }
 
 // Secret is a key as anyone may see it: never its value.
@@ -740,6 +751,106 @@ func (*DeleteSecretSetResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{9}
 }
 
+type UpdateSecretSetRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project, environment and shared name the set, as in
+	// DeleteSecretSetRequest; the fields update_mask names carry the new
+	// values.
+	Set           *SecretSet             `protobuf:"bytes,1,opt,name=set,proto3" json:"set,omitempty"`
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSecretSetRequest) Reset() {
+	*x = UpdateSecretSetRequest{}
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSecretSetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSecretSetRequest) ProtoMessage() {}
+
+func (x *UpdateSecretSetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSecretSetRequest.ProtoReflect.Descriptor instead.
+func (*UpdateSecretSetRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *UpdateSecretSetRequest) GetSet() *SecretSet {
+	if x != nil {
+		return x.Set
+	}
+	return nil
+}
+
+func (x *UpdateSecretSetRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.UpdateMask
+	}
+	return nil
+}
+
+type UpdateSecretSetResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The set as stored.
+	Set           *SecretSet `protobuf:"bytes,1,opt,name=set,proto3" json:"set,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSecretSetResponse) Reset() {
+	*x = UpdateSecretSetResponse{}
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSecretSetResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSecretSetResponse) ProtoMessage() {}
+
+func (x *UpdateSecretSetResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSecretSetResponse.ProtoReflect.Descriptor instead.
+func (*UpdateSecretSetResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *UpdateSecretSetResponse) GetSet() *SecretSet {
+	if x != nil {
+		return x.Set
+	}
+	return nil
+}
+
 type PutSecretRequest struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
@@ -757,7 +868,7 @@ type PutSecretRequest struct {
 
 func (x *PutSecretRequest) Reset() {
 	*x = PutSecretRequest{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -769,7 +880,7 @@ func (x *PutSecretRequest) String() string {
 func (*PutSecretRequest) ProtoMessage() {}
 
 func (x *PutSecretRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -782,7 +893,7 @@ func (x *PutSecretRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutSecretRequest.ProtoReflect.Descriptor instead.
 func (*PutSecretRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *PutSecretRequest) GetProject() string {
@@ -836,7 +947,7 @@ type PutSecretResponse struct {
 
 func (x *PutSecretResponse) Reset() {
 	*x = PutSecretResponse{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -848,7 +959,7 @@ func (x *PutSecretResponse) String() string {
 func (*PutSecretResponse) ProtoMessage() {}
 
 func (x *PutSecretResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -861,7 +972,7 @@ func (x *PutSecretResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutSecretResponse.ProtoReflect.Descriptor instead.
 func (*PutSecretResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *PutSecretResponse) GetSecret() *Secret {
@@ -887,7 +998,7 @@ type DeleteSecretRequest struct {
 
 func (x *DeleteSecretRequest) Reset() {
 	*x = DeleteSecretRequest{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -899,7 +1010,7 @@ func (x *DeleteSecretRequest) String() string {
 func (*DeleteSecretRequest) ProtoMessage() {}
 
 func (x *DeleteSecretRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -912,7 +1023,7 @@ func (x *DeleteSecretRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSecretRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSecretRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *DeleteSecretRequest) GetProject() string {
@@ -965,7 +1076,7 @@ type DeleteSecretResponse struct {
 
 func (x *DeleteSecretResponse) Reset() {
 	*x = DeleteSecretResponse{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -977,7 +1088,7 @@ func (x *DeleteSecretResponse) String() string {
 func (*DeleteSecretResponse) ProtoMessage() {}
 
 func (x *DeleteSecretResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -990,7 +1101,7 @@ func (x *DeleteSecretResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSecretResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSecretResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{13}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{15}
 }
 
 type ListSecretsRequest struct {
@@ -1008,7 +1119,7 @@ type ListSecretsRequest struct {
 
 func (x *ListSecretsRequest) Reset() {
 	*x = ListSecretsRequest{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1020,7 +1131,7 @@ func (x *ListSecretsRequest) String() string {
 func (*ListSecretsRequest) ProtoMessage() {}
 
 func (x *ListSecretsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1033,7 +1144,7 @@ func (x *ListSecretsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSecretsRequest.ProtoReflect.Descriptor instead.
 func (*ListSecretsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{14}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListSecretsRequest) GetProject() string {
@@ -1082,7 +1193,7 @@ type ListSecretsResponse struct {
 
 func (x *ListSecretsResponse) Reset() {
 	*x = ListSecretsResponse{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1094,7 +1205,7 @@ func (x *ListSecretsResponse) String() string {
 func (*ListSecretsResponse) ProtoMessage() {}
 
 func (x *ListSecretsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1107,7 +1218,7 @@ func (x *ListSecretsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSecretsResponse.ProtoReflect.Descriptor instead.
 func (*ListSecretsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{15}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ListSecretsResponse) GetSecrets() []*Secret {
@@ -1144,7 +1255,7 @@ type ListSecretVersionsRequest struct {
 
 func (x *ListSecretVersionsRequest) Reset() {
 	*x = ListSecretVersionsRequest{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1156,7 +1267,7 @@ func (x *ListSecretVersionsRequest) String() string {
 func (*ListSecretVersionsRequest) ProtoMessage() {}
 
 func (x *ListSecretVersionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1169,7 +1280,7 @@ func (x *ListSecretVersionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSecretVersionsRequest.ProtoReflect.Descriptor instead.
 func (*ListSecretVersionsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{16}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ListSecretVersionsRequest) GetProject() string {
@@ -1239,7 +1350,7 @@ type ListSecretVersionsResponse struct {
 
 func (x *ListSecretVersionsResponse) Reset() {
 	*x = ListSecretVersionsResponse{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1251,7 +1362,7 @@ func (x *ListSecretVersionsResponse) String() string {
 func (*ListSecretVersionsResponse) ProtoMessage() {}
 
 func (x *ListSecretVersionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1264,7 +1375,7 @@ func (x *ListSecretVersionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSecretVersionsResponse.ProtoReflect.Descriptor instead.
 func (*ListSecretVersionsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ListSecretVersionsResponse) GetVersions() []*SecretVersion {
@@ -1294,7 +1405,7 @@ type GrantSecretSetRequest struct {
 
 func (x *GrantSecretSetRequest) Reset() {
 	*x = GrantSecretSetRequest{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1306,7 +1417,7 @@ func (x *GrantSecretSetRequest) String() string {
 func (*GrantSecretSetRequest) ProtoMessage() {}
 
 func (x *GrantSecretSetRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1319,7 +1430,7 @@ func (x *GrantSecretSetRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantSecretSetRequest.ProtoReflect.Descriptor instead.
 func (*GrantSecretSetRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GrantSecretSetRequest) GetProject() string {
@@ -1366,7 +1477,7 @@ type GrantSecretSetResponse struct {
 
 func (x *GrantSecretSetResponse) Reset() {
 	*x = GrantSecretSetResponse{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1378,7 +1489,7 @@ func (x *GrantSecretSetResponse) String() string {
 func (*GrantSecretSetResponse) ProtoMessage() {}
 
 func (x *GrantSecretSetResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1391,7 +1502,7 @@ func (x *GrantSecretSetResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantSecretSetResponse.ProtoReflect.Descriptor instead.
 func (*GrantSecretSetResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{19}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GrantSecretSetResponse) GetGrant() *SecretGrant {
@@ -1414,7 +1525,7 @@ type RevokeSecretSetRequest struct {
 
 func (x *RevokeSecretSetRequest) Reset() {
 	*x = RevokeSecretSetRequest{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1426,7 +1537,7 @@ func (x *RevokeSecretSetRequest) String() string {
 func (*RevokeSecretSetRequest) ProtoMessage() {}
 
 func (x *RevokeSecretSetRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1439,7 +1550,7 @@ func (x *RevokeSecretSetRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeSecretSetRequest.ProtoReflect.Descriptor instead.
 func (*RevokeSecretSetRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{20}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *RevokeSecretSetRequest) GetProject() string {
@@ -1485,7 +1596,7 @@ type RevokeSecretSetResponse struct {
 
 func (x *RevokeSecretSetResponse) Reset() {
 	*x = RevokeSecretSetResponse{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1497,7 +1608,7 @@ func (x *RevokeSecretSetResponse) String() string {
 func (*RevokeSecretSetResponse) ProtoMessage() {}
 
 func (x *RevokeSecretSetResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1510,7 +1621,7 @@ func (x *RevokeSecretSetResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeSecretSetResponse.ProtoReflect.Descriptor instead.
 func (*RevokeSecretSetResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{21}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{23}
 }
 
 type ListSecretSetGrantsRequest struct {
@@ -1528,7 +1639,7 @@ type ListSecretSetGrantsRequest struct {
 
 func (x *ListSecretSetGrantsRequest) Reset() {
 	*x = ListSecretSetGrantsRequest{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1540,7 +1651,7 @@ func (x *ListSecretSetGrantsRequest) String() string {
 func (*ListSecretSetGrantsRequest) ProtoMessage() {}
 
 func (x *ListSecretSetGrantsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1553,7 +1664,7 @@ func (x *ListSecretSetGrantsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSecretSetGrantsRequest.ProtoReflect.Descriptor instead.
 func (*ListSecretSetGrantsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{22}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ListSecretSetGrantsRequest) GetProject() string {
@@ -1602,7 +1713,7 @@ type ListSecretSetGrantsResponse struct {
 
 func (x *ListSecretSetGrantsResponse) Reset() {
 	*x = ListSecretSetGrantsResponse{}
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1614,7 +1725,7 @@ func (x *ListSecretSetGrantsResponse) String() string {
 func (*ListSecretSetGrantsResponse) ProtoMessage() {}
 
 func (x *ListSecretSetGrantsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_secrets_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1627,7 +1738,7 @@ func (x *ListSecretSetGrantsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSecretSetGrantsResponse.ProtoReflect.Descriptor instead.
 func (*ListSecretSetGrantsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{23}
+	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ListSecretSetGrantsResponse) GetGrants() []*SecretGrant {
@@ -1648,7 +1759,7 @@ var File_toshi_workspace_v1_secrets_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/secrets.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xb2\x02\n" +
+	" toshi/workspace/v1/secrets.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xc6\x02\n" +
 	"\tSecretSet\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
@@ -1659,7 +1770,8 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"managed_by\x18\x05 \x01(\tR\tmanagedBy\x12'\n" +
 	"\x0fmanifest_digest\x18\x06 \x01(\tR\x0emanifestDigest\x12%\n" +
 	"\x0emanaged_fields\x18\a \x03(\tR\rmanagedFields\x12'\n" +
-	"\x0fmanifest_origin\x18\b \x01(\tR\x0emanifestOrigin\"\xce\x01\n" +
+	"\x0fmanifest_origin\x18\b \x01(\tR\x0emanifestOrigin\x12\x12\n" +
+	"\x04keys\x18\t \x03(\tR\x04keys\"\xce\x01\n" +
 	"\x06Secret\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\x03R\aversion\x12\x12\n" +
@@ -1700,7 +1812,13 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\"\x19\n" +
-	"\x17DeleteSecretSetResponse\"\xa2\x01\n" +
+	"\x17DeleteSecretSetResponse\"\x86\x01\n" +
+	"\x16UpdateSecretSetRequest\x12/\n" +
+	"\x03set\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.SecretSetR\x03set\x12;\n" +
+	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\"J\n" +
+	"\x17UpdateSecretSetResponse\x12/\n" +
+	"\x03set\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.SecretSetR\x03set\"\xa2\x01\n" +
 	"\x10PutSecretRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
@@ -1771,11 +1889,12 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x18SECRET_GRANTEE_KIND_KIND\x10\x01\x12\x1d\n" +
 	"\x19SECRET_GRANTEE_KIND_IMAGE\x10\x02\x12\x1f\n" +
 	"\x1bSECRET_GRANTEE_KIND_SERVICE\x10\x03\x12#\n" +
-	"\x1fSECRET_GRANTEE_KIND_IMAGE_BUILD\x10\x042\xcc\v\n" +
+	"\x1fSECRET_GRANTEE_KIND_IMAGE_BUILD\x10\x042\xe5\f\n" +
 	"\rSecretService\x12\x96\x01\n" +
 	"\x0fCreateSecretSet\x12*.toshi.workspace.v1.CreateSecretSetRequest\x1a+.toshi.workspace.v1.CreateSecretSetResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x84\x01\n" +
 	"\x0eListSecretSets\x12).toshi.workspace.v1.ListSecretSetsRequest\x1a*.toshi.workspace.v1.ListSecretSetsResponse\"\x1b\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\aproject\x12\x96\x01\n" +
-	"\x0fDeleteSecretSet\x12*.toshi.workspace.v1.DeleteSecretSetRequest\x1a+.toshi.workspace.v1.DeleteSecretSetResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x90\x01\n" +
+	"\x0fDeleteSecretSet\x12*.toshi.workspace.v1.DeleteSecretSetRequest\x1a+.toshi.workspace.v1.DeleteSecretSetResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x96\x01\n" +
+	"\x0fUpdateSecretSet\x12*.toshi.workspace.v1.UpdateSecretSetRequest\x1a+.toshi.workspace.v1.UpdateSecretSetResponse\"*\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x12\x90\x01\n" +
 	"\tPutSecret\x12$.toshi.workspace.v1.PutSecretRequest\x1a%.toshi.workspace.v1.PutSecretResponse\"6\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
 	"\n" +
 	"secret.set\x12\x04none\x12\x8d\x01\n" +
@@ -1799,7 +1918,7 @@ func file_toshi_workspace_v1_secrets_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_secrets_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_secrets_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_toshi_workspace_v1_secrets_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_toshi_workspace_v1_secrets_proto_goTypes = []any{
 	(SecretGranteeKind)(0),              // 0: toshi.workspace.v1.SecretGranteeKind
 	(*SecretSet)(nil),                   // 1: toshi.workspace.v1.SecretSet
@@ -1812,62 +1931,70 @@ var file_toshi_workspace_v1_secrets_proto_goTypes = []any{
 	(*ListSecretSetsResponse)(nil),      // 8: toshi.workspace.v1.ListSecretSetsResponse
 	(*DeleteSecretSetRequest)(nil),      // 9: toshi.workspace.v1.DeleteSecretSetRequest
 	(*DeleteSecretSetResponse)(nil),     // 10: toshi.workspace.v1.DeleteSecretSetResponse
-	(*PutSecretRequest)(nil),            // 11: toshi.workspace.v1.PutSecretRequest
-	(*PutSecretResponse)(nil),           // 12: toshi.workspace.v1.PutSecretResponse
-	(*DeleteSecretRequest)(nil),         // 13: toshi.workspace.v1.DeleteSecretRequest
-	(*DeleteSecretResponse)(nil),        // 14: toshi.workspace.v1.DeleteSecretResponse
-	(*ListSecretsRequest)(nil),          // 15: toshi.workspace.v1.ListSecretsRequest
-	(*ListSecretsResponse)(nil),         // 16: toshi.workspace.v1.ListSecretsResponse
-	(*ListSecretVersionsRequest)(nil),   // 17: toshi.workspace.v1.ListSecretVersionsRequest
-	(*ListSecretVersionsResponse)(nil),  // 18: toshi.workspace.v1.ListSecretVersionsResponse
-	(*GrantSecretSetRequest)(nil),       // 19: toshi.workspace.v1.GrantSecretSetRequest
-	(*GrantSecretSetResponse)(nil),      // 20: toshi.workspace.v1.GrantSecretSetResponse
-	(*RevokeSecretSetRequest)(nil),      // 21: toshi.workspace.v1.RevokeSecretSetRequest
-	(*RevokeSecretSetResponse)(nil),     // 22: toshi.workspace.v1.RevokeSecretSetResponse
-	(*ListSecretSetGrantsRequest)(nil),  // 23: toshi.workspace.v1.ListSecretSetGrantsRequest
-	(*ListSecretSetGrantsResponse)(nil), // 24: toshi.workspace.v1.ListSecretSetGrantsResponse
-	(*timestamppb.Timestamp)(nil),       // 25: google.protobuf.Timestamp
+	(*UpdateSecretSetRequest)(nil),      // 11: toshi.workspace.v1.UpdateSecretSetRequest
+	(*UpdateSecretSetResponse)(nil),     // 12: toshi.workspace.v1.UpdateSecretSetResponse
+	(*PutSecretRequest)(nil),            // 13: toshi.workspace.v1.PutSecretRequest
+	(*PutSecretResponse)(nil),           // 14: toshi.workspace.v1.PutSecretResponse
+	(*DeleteSecretRequest)(nil),         // 15: toshi.workspace.v1.DeleteSecretRequest
+	(*DeleteSecretResponse)(nil),        // 16: toshi.workspace.v1.DeleteSecretResponse
+	(*ListSecretsRequest)(nil),          // 17: toshi.workspace.v1.ListSecretsRequest
+	(*ListSecretsResponse)(nil),         // 18: toshi.workspace.v1.ListSecretsResponse
+	(*ListSecretVersionsRequest)(nil),   // 19: toshi.workspace.v1.ListSecretVersionsRequest
+	(*ListSecretVersionsResponse)(nil),  // 20: toshi.workspace.v1.ListSecretVersionsResponse
+	(*GrantSecretSetRequest)(nil),       // 21: toshi.workspace.v1.GrantSecretSetRequest
+	(*GrantSecretSetResponse)(nil),      // 22: toshi.workspace.v1.GrantSecretSetResponse
+	(*RevokeSecretSetRequest)(nil),      // 23: toshi.workspace.v1.RevokeSecretSetRequest
+	(*RevokeSecretSetResponse)(nil),     // 24: toshi.workspace.v1.RevokeSecretSetResponse
+	(*ListSecretSetGrantsRequest)(nil),  // 25: toshi.workspace.v1.ListSecretSetGrantsRequest
+	(*ListSecretSetGrantsResponse)(nil), // 26: toshi.workspace.v1.ListSecretSetGrantsResponse
+	(*timestamppb.Timestamp)(nil),       // 27: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),       // 28: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_secrets_proto_depIdxs = []int32{
-	25, // 0: toshi.workspace.v1.SecretSet.created_at:type_name -> google.protobuf.Timestamp
-	25, // 1: toshi.workspace.v1.Secret.updated_at:type_name -> google.protobuf.Timestamp
-	25, // 2: toshi.workspace.v1.SecretVersion.created_at:type_name -> google.protobuf.Timestamp
+	27, // 0: toshi.workspace.v1.SecretSet.created_at:type_name -> google.protobuf.Timestamp
+	27, // 1: toshi.workspace.v1.Secret.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 2: toshi.workspace.v1.SecretVersion.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: toshi.workspace.v1.SecretGrant.kind:type_name -> toshi.workspace.v1.SecretGranteeKind
-	25, // 4: toshi.workspace.v1.SecretGrant.created_at:type_name -> google.protobuf.Timestamp
+	27, // 4: toshi.workspace.v1.SecretGrant.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 5: toshi.workspace.v1.CreateSecretSetResponse.set:type_name -> toshi.workspace.v1.SecretSet
 	1,  // 6: toshi.workspace.v1.ListSecretSetsResponse.sets:type_name -> toshi.workspace.v1.SecretSet
-	2,  // 7: toshi.workspace.v1.PutSecretResponse.secret:type_name -> toshi.workspace.v1.Secret
-	2,  // 8: toshi.workspace.v1.ListSecretsResponse.secrets:type_name -> toshi.workspace.v1.Secret
-	3,  // 9: toshi.workspace.v1.ListSecretVersionsResponse.versions:type_name -> toshi.workspace.v1.SecretVersion
-	0,  // 10: toshi.workspace.v1.GrantSecretSetRequest.kind:type_name -> toshi.workspace.v1.SecretGranteeKind
-	4,  // 11: toshi.workspace.v1.GrantSecretSetResponse.grant:type_name -> toshi.workspace.v1.SecretGrant
-	0,  // 12: toshi.workspace.v1.RevokeSecretSetRequest.kind:type_name -> toshi.workspace.v1.SecretGranteeKind
-	4,  // 13: toshi.workspace.v1.ListSecretSetGrantsResponse.grants:type_name -> toshi.workspace.v1.SecretGrant
-	5,  // 14: toshi.workspace.v1.SecretService.CreateSecretSet:input_type -> toshi.workspace.v1.CreateSecretSetRequest
-	7,  // 15: toshi.workspace.v1.SecretService.ListSecretSets:input_type -> toshi.workspace.v1.ListSecretSetsRequest
-	9,  // 16: toshi.workspace.v1.SecretService.DeleteSecretSet:input_type -> toshi.workspace.v1.DeleteSecretSetRequest
-	11, // 17: toshi.workspace.v1.SecretService.PutSecret:input_type -> toshi.workspace.v1.PutSecretRequest
-	13, // 18: toshi.workspace.v1.SecretService.DeleteSecret:input_type -> toshi.workspace.v1.DeleteSecretRequest
-	15, // 19: toshi.workspace.v1.SecretService.ListSecrets:input_type -> toshi.workspace.v1.ListSecretsRequest
-	17, // 20: toshi.workspace.v1.SecretService.ListSecretVersions:input_type -> toshi.workspace.v1.ListSecretVersionsRequest
-	19, // 21: toshi.workspace.v1.SecretService.GrantSecretSet:input_type -> toshi.workspace.v1.GrantSecretSetRequest
-	21, // 22: toshi.workspace.v1.SecretService.RevokeSecretSet:input_type -> toshi.workspace.v1.RevokeSecretSetRequest
-	23, // 23: toshi.workspace.v1.SecretService.ListSecretSetGrants:input_type -> toshi.workspace.v1.ListSecretSetGrantsRequest
-	6,  // 24: toshi.workspace.v1.SecretService.CreateSecretSet:output_type -> toshi.workspace.v1.CreateSecretSetResponse
-	8,  // 25: toshi.workspace.v1.SecretService.ListSecretSets:output_type -> toshi.workspace.v1.ListSecretSetsResponse
-	10, // 26: toshi.workspace.v1.SecretService.DeleteSecretSet:output_type -> toshi.workspace.v1.DeleteSecretSetResponse
-	12, // 27: toshi.workspace.v1.SecretService.PutSecret:output_type -> toshi.workspace.v1.PutSecretResponse
-	14, // 28: toshi.workspace.v1.SecretService.DeleteSecret:output_type -> toshi.workspace.v1.DeleteSecretResponse
-	16, // 29: toshi.workspace.v1.SecretService.ListSecrets:output_type -> toshi.workspace.v1.ListSecretsResponse
-	18, // 30: toshi.workspace.v1.SecretService.ListSecretVersions:output_type -> toshi.workspace.v1.ListSecretVersionsResponse
-	20, // 31: toshi.workspace.v1.SecretService.GrantSecretSet:output_type -> toshi.workspace.v1.GrantSecretSetResponse
-	22, // 32: toshi.workspace.v1.SecretService.RevokeSecretSet:output_type -> toshi.workspace.v1.RevokeSecretSetResponse
-	24, // 33: toshi.workspace.v1.SecretService.ListSecretSetGrants:output_type -> toshi.workspace.v1.ListSecretSetGrantsResponse
-	24, // [24:34] is the sub-list for method output_type
-	14, // [14:24] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	1,  // 7: toshi.workspace.v1.UpdateSecretSetRequest.set:type_name -> toshi.workspace.v1.SecretSet
+	28, // 8: toshi.workspace.v1.UpdateSecretSetRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 9: toshi.workspace.v1.UpdateSecretSetResponse.set:type_name -> toshi.workspace.v1.SecretSet
+	2,  // 10: toshi.workspace.v1.PutSecretResponse.secret:type_name -> toshi.workspace.v1.Secret
+	2,  // 11: toshi.workspace.v1.ListSecretsResponse.secrets:type_name -> toshi.workspace.v1.Secret
+	3,  // 12: toshi.workspace.v1.ListSecretVersionsResponse.versions:type_name -> toshi.workspace.v1.SecretVersion
+	0,  // 13: toshi.workspace.v1.GrantSecretSetRequest.kind:type_name -> toshi.workspace.v1.SecretGranteeKind
+	4,  // 14: toshi.workspace.v1.GrantSecretSetResponse.grant:type_name -> toshi.workspace.v1.SecretGrant
+	0,  // 15: toshi.workspace.v1.RevokeSecretSetRequest.kind:type_name -> toshi.workspace.v1.SecretGranteeKind
+	4,  // 16: toshi.workspace.v1.ListSecretSetGrantsResponse.grants:type_name -> toshi.workspace.v1.SecretGrant
+	5,  // 17: toshi.workspace.v1.SecretService.CreateSecretSet:input_type -> toshi.workspace.v1.CreateSecretSetRequest
+	7,  // 18: toshi.workspace.v1.SecretService.ListSecretSets:input_type -> toshi.workspace.v1.ListSecretSetsRequest
+	9,  // 19: toshi.workspace.v1.SecretService.DeleteSecretSet:input_type -> toshi.workspace.v1.DeleteSecretSetRequest
+	11, // 20: toshi.workspace.v1.SecretService.UpdateSecretSet:input_type -> toshi.workspace.v1.UpdateSecretSetRequest
+	13, // 21: toshi.workspace.v1.SecretService.PutSecret:input_type -> toshi.workspace.v1.PutSecretRequest
+	15, // 22: toshi.workspace.v1.SecretService.DeleteSecret:input_type -> toshi.workspace.v1.DeleteSecretRequest
+	17, // 23: toshi.workspace.v1.SecretService.ListSecrets:input_type -> toshi.workspace.v1.ListSecretsRequest
+	19, // 24: toshi.workspace.v1.SecretService.ListSecretVersions:input_type -> toshi.workspace.v1.ListSecretVersionsRequest
+	21, // 25: toshi.workspace.v1.SecretService.GrantSecretSet:input_type -> toshi.workspace.v1.GrantSecretSetRequest
+	23, // 26: toshi.workspace.v1.SecretService.RevokeSecretSet:input_type -> toshi.workspace.v1.RevokeSecretSetRequest
+	25, // 27: toshi.workspace.v1.SecretService.ListSecretSetGrants:input_type -> toshi.workspace.v1.ListSecretSetGrantsRequest
+	6,  // 28: toshi.workspace.v1.SecretService.CreateSecretSet:output_type -> toshi.workspace.v1.CreateSecretSetResponse
+	8,  // 29: toshi.workspace.v1.SecretService.ListSecretSets:output_type -> toshi.workspace.v1.ListSecretSetsResponse
+	10, // 30: toshi.workspace.v1.SecretService.DeleteSecretSet:output_type -> toshi.workspace.v1.DeleteSecretSetResponse
+	12, // 31: toshi.workspace.v1.SecretService.UpdateSecretSet:output_type -> toshi.workspace.v1.UpdateSecretSetResponse
+	14, // 32: toshi.workspace.v1.SecretService.PutSecret:output_type -> toshi.workspace.v1.PutSecretResponse
+	16, // 33: toshi.workspace.v1.SecretService.DeleteSecret:output_type -> toshi.workspace.v1.DeleteSecretResponse
+	18, // 34: toshi.workspace.v1.SecretService.ListSecrets:output_type -> toshi.workspace.v1.ListSecretsResponse
+	20, // 35: toshi.workspace.v1.SecretService.ListSecretVersions:output_type -> toshi.workspace.v1.ListSecretVersionsResponse
+	22, // 36: toshi.workspace.v1.SecretService.GrantSecretSet:output_type -> toshi.workspace.v1.GrantSecretSetResponse
+	24, // 37: toshi.workspace.v1.SecretService.RevokeSecretSet:output_type -> toshi.workspace.v1.RevokeSecretSetResponse
+	26, // 38: toshi.workspace.v1.SecretService.ListSecretSetGrants:output_type -> toshi.workspace.v1.ListSecretSetGrantsResponse
+	28, // [28:39] is the sub-list for method output_type
+	17, // [17:28] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_secrets_proto_init() }
@@ -1881,7 +2008,7 @@ func file_toshi_workspace_v1_secrets_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_secrets_proto_rawDesc), len(file_toshi_workspace_v1_secrets_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   24,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

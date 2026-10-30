@@ -42,6 +42,9 @@ const (
 	// SecretServiceDeleteSecretSetProcedure is the fully-qualified name of the SecretService's
 	// DeleteSecretSet RPC.
 	SecretServiceDeleteSecretSetProcedure = "/toshi.workspace.v1.SecretService/DeleteSecretSet"
+	// SecretServiceUpdateSecretSetProcedure is the fully-qualified name of the SecretService's
+	// UpdateSecretSet RPC.
+	SecretServiceUpdateSecretSetProcedure = "/toshi.workspace.v1.SecretService/UpdateSecretSet"
 	// SecretServicePutSecretProcedure is the fully-qualified name of the SecretService's PutSecret RPC.
 	SecretServicePutSecretProcedure = "/toshi.workspace.v1.SecretService/PutSecret"
 	// SecretServiceDeleteSecretProcedure is the fully-qualified name of the SecretService's
@@ -75,6 +78,17 @@ type SecretServiceClient interface {
 	ListSecretSets(context.Context, *connect.Request[workspacev1.ListSecretSetsRequest]) (*connect.Response[workspacev1.ListSecretSetsResponse], error)
 	// DeleteSecretSet removes the set with its keys, versions and grants.
 	DeleteSecretSet(context.Context, *connect.Request[workspacev1.DeleteSecretSetRequest]) (*connect.Response[workspacev1.DeleteSecretSetResponse], error)
+	// UpdateSecretSet sets the fields update_mask names on a set. keys
+	// names the keys the set keeps: a key of the set the list leaves out is
+	// deleted with all its versions, in one write. The request never carries
+	// a value, so a name the set does not hold is FAILED_PRECONDITION naming
+	// it: its value is set with PutSecret first. A person's own keys are not
+	// in a set's list and are never deleted by it. An omitted mask means the
+	// fields the request sets; an empty list deletes every key of the set
+	// only when the mask names keys. "*" and a path of any other field are
+	// INVALID_ARGUMENT, and so are an empty and a repeated name. A set the
+	// project does not have is NOT_FOUND.
+	UpdateSecretSet(context.Context, *connect.Request[workspacev1.UpdateSecretSetRequest]) (*connect.Response[workspacev1.UpdateSecretSetResponse], error)
 	// PutSecret makes the key's next version, holding value, and returns the
 	// key without it. A name is either shared or set per environment: a
 	// shared name set in an environment's set, or an environment's name set
@@ -142,6 +156,12 @@ func NewSecretServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(secretServiceMethods.ByName("DeleteSecretSet")),
 			connect.WithClientOptions(opts...),
 		),
+		updateSecretSet: connect.NewClient[workspacev1.UpdateSecretSetRequest, workspacev1.UpdateSecretSetResponse](
+			httpClient,
+			baseURL+SecretServiceUpdateSecretSetProcedure,
+			connect.WithSchema(secretServiceMethods.ByName("UpdateSecretSet")),
+			connect.WithClientOptions(opts...),
+		),
 		putSecret: connect.NewClient[workspacev1.PutSecretRequest, workspacev1.PutSecretResponse](
 			httpClient,
 			baseURL+SecretServicePutSecretProcedure,
@@ -192,6 +212,7 @@ type secretServiceClient struct {
 	createSecretSet     *connect.Client[workspacev1.CreateSecretSetRequest, workspacev1.CreateSecretSetResponse]
 	listSecretSets      *connect.Client[workspacev1.ListSecretSetsRequest, workspacev1.ListSecretSetsResponse]
 	deleteSecretSet     *connect.Client[workspacev1.DeleteSecretSetRequest, workspacev1.DeleteSecretSetResponse]
+	updateSecretSet     *connect.Client[workspacev1.UpdateSecretSetRequest, workspacev1.UpdateSecretSetResponse]
 	putSecret           *connect.Client[workspacev1.PutSecretRequest, workspacev1.PutSecretResponse]
 	deleteSecret        *connect.Client[workspacev1.DeleteSecretRequest, workspacev1.DeleteSecretResponse]
 	listSecrets         *connect.Client[workspacev1.ListSecretsRequest, workspacev1.ListSecretsResponse]
@@ -214,6 +235,11 @@ func (c *secretServiceClient) ListSecretSets(ctx context.Context, req *connect.R
 // DeleteSecretSet calls toshi.workspace.v1.SecretService.DeleteSecretSet.
 func (c *secretServiceClient) DeleteSecretSet(ctx context.Context, req *connect.Request[workspacev1.DeleteSecretSetRequest]) (*connect.Response[workspacev1.DeleteSecretSetResponse], error) {
 	return c.deleteSecretSet.CallUnary(ctx, req)
+}
+
+// UpdateSecretSet calls toshi.workspace.v1.SecretService.UpdateSecretSet.
+func (c *secretServiceClient) UpdateSecretSet(ctx context.Context, req *connect.Request[workspacev1.UpdateSecretSetRequest]) (*connect.Response[workspacev1.UpdateSecretSetResponse], error) {
+	return c.updateSecretSet.CallUnary(ctx, req)
 }
 
 // PutSecret calls toshi.workspace.v1.SecretService.PutSecret.
@@ -262,6 +288,17 @@ type SecretServiceHandler interface {
 	ListSecretSets(context.Context, *connect.Request[workspacev1.ListSecretSetsRequest]) (*connect.Response[workspacev1.ListSecretSetsResponse], error)
 	// DeleteSecretSet removes the set with its keys, versions and grants.
 	DeleteSecretSet(context.Context, *connect.Request[workspacev1.DeleteSecretSetRequest]) (*connect.Response[workspacev1.DeleteSecretSetResponse], error)
+	// UpdateSecretSet sets the fields update_mask names on a set. keys
+	// names the keys the set keeps: a key of the set the list leaves out is
+	// deleted with all its versions, in one write. The request never carries
+	// a value, so a name the set does not hold is FAILED_PRECONDITION naming
+	// it: its value is set with PutSecret first. A person's own keys are not
+	// in a set's list and are never deleted by it. An omitted mask means the
+	// fields the request sets; an empty list deletes every key of the set
+	// only when the mask names keys. "*" and a path of any other field are
+	// INVALID_ARGUMENT, and so are an empty and a repeated name. A set the
+	// project does not have is NOT_FOUND.
+	UpdateSecretSet(context.Context, *connect.Request[workspacev1.UpdateSecretSetRequest]) (*connect.Response[workspacev1.UpdateSecretSetResponse], error)
 	// PutSecret makes the key's next version, holding value, and returns the
 	// key without it. A name is either shared or set per environment: a
 	// shared name set in an environment's set, or an environment's name set
@@ -325,6 +362,12 @@ func NewSecretServiceHandler(svc SecretServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(secretServiceMethods.ByName("DeleteSecretSet")),
 		connect.WithHandlerOptions(opts...),
 	)
+	secretServiceUpdateSecretSetHandler := connect.NewUnaryHandler(
+		SecretServiceUpdateSecretSetProcedure,
+		svc.UpdateSecretSet,
+		connect.WithSchema(secretServiceMethods.ByName("UpdateSecretSet")),
+		connect.WithHandlerOptions(opts...),
+	)
 	secretServicePutSecretHandler := connect.NewUnaryHandler(
 		SecretServicePutSecretProcedure,
 		svc.PutSecret,
@@ -375,6 +418,8 @@ func NewSecretServiceHandler(svc SecretServiceHandler, opts ...connect.HandlerOp
 			secretServiceListSecretSetsHandler.ServeHTTP(w, r)
 		case SecretServiceDeleteSecretSetProcedure:
 			secretServiceDeleteSecretSetHandler.ServeHTTP(w, r)
+		case SecretServiceUpdateSecretSetProcedure:
+			secretServiceUpdateSecretSetHandler.ServeHTTP(w, r)
 		case SecretServicePutSecretProcedure:
 			secretServicePutSecretHandler.ServeHTTP(w, r)
 		case SecretServiceDeleteSecretProcedure:
@@ -408,6 +453,10 @@ func (UnimplementedSecretServiceHandler) ListSecretSets(context.Context, *connec
 
 func (UnimplementedSecretServiceHandler) DeleteSecretSet(context.Context, *connect.Request[workspacev1.DeleteSecretSetRequest]) (*connect.Response[workspacev1.DeleteSecretSetResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.SecretService.DeleteSecretSet is not implemented"))
+}
+
+func (UnimplementedSecretServiceHandler) UpdateSecretSet(context.Context, *connect.Request[workspacev1.UpdateSecretSetRequest]) (*connect.Response[workspacev1.UpdateSecretSetResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.SecretService.UpdateSecretSet is not implemented"))
 }
 
 func (UnimplementedSecretServiceHandler) PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error) {
