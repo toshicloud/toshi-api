@@ -1062,9 +1062,9 @@ type HostJob struct {
 	// tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
 	// free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
 	// installation_suspended, overflow_wait, no_own_capacity, no_capacity,
-	// cloud_budget, reserved_for_other, volume_claimed, service_quota or
-	// no_network_enforcement. Empty when the job was never held. It is kept
-	// after the job starts.
+	// cloud_budget, reserved_for_other, volume_claimed, service_quota,
+	// no_network_enforcement or no_build_base. Empty when the job was never
+	// held. It is kept after the job starts.
 	HoldReason string `protobuf:"bytes,20,opt,name=hold_reason,json=holdReason,proto3" json:"hold_reason,omitempty"`
 	// Whether the job was placed on a host its workspace owns. Such a job sends no
 	// meter event.
