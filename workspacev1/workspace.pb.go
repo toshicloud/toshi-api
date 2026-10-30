@@ -1622,7 +1622,11 @@ type Sandbox struct {
 	// Set on a sandbox read through a grant: the grant and what it allows on
 	// this sandbox. Such a read leaves out network, the spec's bindings, its
 	// container_registry_secret and its commands' env.
-	Shared        *SharedAccess `protobuf:"bytes,11,opt,name=shared,proto3" json:"shared,omitempty"`
+	Shared *SharedAccess `protobuf:"bytes,11,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The job of the sandbox's current run: the one created with it, then
+	// the one each StartSandbox creates. The channel and display calls take
+	// it as job_id, and through a grant as well. Set by Toshi.
+	JobId         string `protobuf:"bytes,12,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1732,6 +1736,13 @@ func (x *Sandbox) GetShared() *SharedAccess {
 		return x.Shared
 	}
 	return nil
+}
+
+func (x *Sandbox) GetJobId() string {
+	if x != nil {
+		return x.JobId
+	}
+	return ""
 }
 
 // SandboxStatus is a sandbox's state and when it got there.
@@ -7309,7 +7320,15 @@ type ListEventsRequest struct {
 	// OUT_OF_RANGE.
 	PageToken string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	// The most events in one page; zero lets the server choose.
-	PageSize      int32 `protobuf:"varint,5,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	PageSize int32 `protobuf:"varint,5,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// A grant the caller's workspace received, to read the events of the
+	// owner's sandbox through it at view (docs/grants.md); project and
+	// environment are then left empty and workload_id names the sandbox.
+	// Such a read gives the sandbox's own events, its executions, emitted
+	// events, recordings and agent answers, and leaves out the events of
+	// the owner's settings: withheld secrets, egress denials, mail sent,
+	// trigger results and connections.
+	Grant         string `protobuf:"bytes,6,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7377,6 +7396,13 @@ func (x *ListEventsRequest) GetPageSize() int32 {
 		return x.PageSize
 	}
 	return 0
+}
+
+func (x *ListEventsRequest) GetGrant() string {
+	if x != nil {
+		return x.Grant
+	}
+	return ""
 }
 
 type ListEventsResponse struct {
@@ -11084,7 +11110,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"conclusion\x18\a \x01(\tR\n" +
 	"conclusion\x12\x10\n" +
-	"\x03end\x18\b \x01(\tR\x03end\"\xce\x04\n" +
+	"\x03end\x18\b \x01(\tR\x03end\"\xe5\x04\n" +
 	"\aSandbox\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x12 \n" +
@@ -11097,7 +11123,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\awaiting\x18\t \x03(\v2\x1f.toshi.workspace.v1.AgentPromptR\awaiting\x12=\n" +
 	"\anetwork\x18\n" +
 	" \x01(\v2#.toshi.workspace.v1.WorkloadNetworkR\anetwork\x128\n" +
-	"\x06shared\x18\v \x01(\v2 .toshi.workspace.v1.SharedAccessR\x06shared\x1a9\n" +
+	"\x06shared\x18\v \x01(\v2 .toshi.workspace.v1.SharedAccessR\x06shared\x12\x15\n" +
+	"\x06job_id\x18\f \x01(\tR\x05jobId\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x96\x06\n" +
@@ -11529,7 +11556,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x12\x1f\n" +
 	"\vartifact_id\x18\x02 \x01(\tR\n" +
 	"artifactId\x125\n" +
-	"\x04kind\x18\x03 \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\x04kind\"\xac\x01\n" +
+	"\x04kind\x18\x03 \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\x04kind\"\xc2\x01\n" +
 	"\x11ListEventsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
@@ -11537,7 +11564,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"workloadId\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x04 \x01(\tR\tpageToken\x12\x1b\n" +
-	"\tpage_size\x18\x05 \x01(\x05R\bpageSize\"\x87\x01\n" +
+	"\tpage_size\x18\x05 \x01(\x05R\bpageSize\x12\x14\n" +
+	"\x05grant\x18\x06 \x01(\tR\x05grant\"\x87\x01\n" +
 	"\x12ListEventsResponse\x121\n" +
 	"\x06events\x18\x01 \x03(\v2\x19.toshi.workspace.v1.EventR\x06events\x12\x16\n" +
 	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12&\n" +

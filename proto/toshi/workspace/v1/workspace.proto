@@ -187,6 +187,10 @@ message Sandbox {
   // this sandbox. Such a read leaves out network, the spec's bindings, its
   // container_registry_secret and its commands' env.
   SharedAccess shared = 11;
+  // The job of the sandbox's current run: the one created with it, then
+  // the one each StartSandbox creates. The channel and display calls take
+  // it as job_id, and through a grant as well. Set by Toshi.
+  string job_id = 12;
 }
 
 // SandboxStatus is a sandbox's state and when it got there.
@@ -1333,6 +1337,14 @@ message ListEventsRequest {
   string page_token = 4;
   // The most events in one page; zero lets the server choose.
   int32 page_size = 5;
+  // A grant the caller's workspace received, to read the events of the
+  // owner's sandbox through it at view (docs/grants.md); project and
+  // environment are then left empty and workload_id names the sandbox.
+  // Such a read gives the sandbox's own events, its executions, emitted
+  // events, recordings and agent answers, and leaves out the events of
+  // the owner's settings: withheld secrets, egress denials, mail sent,
+  // trigger results and connections.
+  string grant = 6;
 }
 
 message ListEventsResponse {
