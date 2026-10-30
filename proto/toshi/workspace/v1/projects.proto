@@ -12,8 +12,9 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // ProjectService reads a workspace's projects and the repositories they
 // claim, creates a project, creates or deletes an environment of one, moves a
 // repository's claim, sets the branch rules that choose a CI job's
-// environment and sets the network policies a project's workloads connect
-// out under. A workspace holds projects, and a project holds environments.
+// environment, sets the network policies a project's workloads connect out
+// under and sets how long an environment keeps its jobs and artifacts. A
+// workspace holds projects, and a project holds environments.
 //
 // The caller's credential names the workspace, as for WorkloadService.
 // Nothing of another workspace is visible.
@@ -173,6 +174,29 @@ service ProjectService {
   // environment the workspace does not have is NOT_FOUND. A token limited
   // to an environment sets only that environment's policy.
   rpc SetEnvironmentNetwork(SetEnvironmentNetworkRequest) returns (SetEnvironmentNetworkResponse) {
+    option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {target: "project:project"};
+  }
+  // GetEnvironmentRetention returns an environment's retention override,
+  // as stored, and the retention that applies to it: the override where it
+  // shortens the workspace's, else the workspace's. An environment that
+  // never set one follows its workspace. A project or environment the
+  // workspace does not have is NOT_FOUND. A token limited to an
+  // environment reads only that environment's.
+  rpc GetEnvironmentRetention(GetEnvironmentRetentionRequest) returns (GetEnvironmentRetentionResponse) {
+    option (toshi.permission) = "projects.read";
+    option (toshi.scope) = "environment";
+  }
+  // SetEnvironmentRetention replaces an environment's retention override
+  // whole; an empty retention clears it. An override may only shorten the
+  // workspace's: history_days above the workspace's period, or a keep
+  // longer than the workspace's keep of that kind, is INVALID_ARGUMENT
+  // naming the field and the limit, and so is a recording-signed-in keep
+  // longer than the recording keep that applies after it. A project or
+  // environment the workspace does not have is NOT_FOUND. A token limited
+  // to an environment sets only that environment's.
+  rpc SetEnvironmentRetention(SetEnvironmentRetentionRequest) returns (SetEnvironmentRetentionResponse) {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {target: "project:project"};
@@ -480,6 +504,65 @@ message SetEnvironmentNetworkRequest {
 message SetEnvironmentNetworkResponse {
   // The policy as stored.
   NetworkPolicy network = 1;
+}
+
+// RetentionKeep is how long one kind of artifact is kept after it
+// completes.
+message RetentionKeep {
+  // The artifact kind: recording, recording-signed-in, trace or report.
+  string kind = 1;
+  // At least one hour.
+  google.protobuf.Duration keep = 2;
+}
+
+// EnvironmentRetention is how long an environment keeps its finished jobs
+// and its artifacts. As an override, what it leaves out follows the
+// workspace, and what it sets may only shorten the workspace's.
+message EnvironmentRetention {
+  // Days the environment keeps its finished jobs. In an override, unset
+  // follows the workspace and the value is at least 1 and at most the
+  // workspace's period: an override cannot keep forever. In the retention
+  // that applies, 0 keeps forever.
+  optional int32 history_days = 1;
+  // Each kind's keep, by kind. In an override, a kind left out follows the
+  // workspace. In the retention that applies, a kind left out is kept
+  // forever.
+  repeated RetentionKeep keeps = 2;
+}
+
+message GetEnvironmentRetentionRequest {
+  // The project's name.
+  string project = 1;
+  // The environment's name.
+  string environment = 2;
+}
+
+message GetEnvironmentRetentionResponse {
+  // The override as stored; empty when none is set.
+  EnvironmentRetention retention = 1;
+  // What applies to the environment's jobs and artifacts: each value of the
+  // override that is shorter than the workspace's, else the workspace's.
+  EnvironmentRetention effective = 2;
+  // The audit actor that last set it, "<kind>:<id>"; empty when it was
+  // never set.
+  string updated_by = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message SetEnvironmentRetentionRequest {
+  // The project's name.
+  string project = 1;
+  // The environment's name.
+  string environment = 2;
+  // The whole override; empty clears it.
+  EnvironmentRetention retention = 3;
+}
+
+message SetEnvironmentRetentionResponse {
+  // The override as stored.
+  EnvironmentRetention retention = 1;
+  // What applies after it, as GetEnvironmentRetention reports it.
+  EnvironmentRetention effective = 2;
 }
 
 // EmbedTokenState is where an embed token is in its life.

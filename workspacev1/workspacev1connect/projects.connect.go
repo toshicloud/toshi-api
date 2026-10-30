@@ -75,6 +75,12 @@ const (
 	// ProjectServiceSetEnvironmentNetworkProcedure is the fully-qualified name of the ProjectService's
 	// SetEnvironmentNetwork RPC.
 	ProjectServiceSetEnvironmentNetworkProcedure = "/toshi.workspace.v1.ProjectService/SetEnvironmentNetwork"
+	// ProjectServiceGetEnvironmentRetentionProcedure is the fully-qualified name of the
+	// ProjectService's GetEnvironmentRetention RPC.
+	ProjectServiceGetEnvironmentRetentionProcedure = "/toshi.workspace.v1.ProjectService/GetEnvironmentRetention"
+	// ProjectServiceSetEnvironmentRetentionProcedure is the fully-qualified name of the
+	// ProjectService's SetEnvironmentRetention RPC.
+	ProjectServiceSetEnvironmentRetentionProcedure = "/toshi.workspace.v1.ProjectService/SetEnvironmentRetention"
 	// ProjectServiceCreateEmbedTokenProcedure is the fully-qualified name of the ProjectService's
 	// CreateEmbedToken RPC.
 	ProjectServiceCreateEmbedTokenProcedure = "/toshi.workspace.v1.ProjectService/CreateEmbedToken"
@@ -198,6 +204,22 @@ type ProjectServiceClient interface {
 	// environment the workspace does not have is NOT_FOUND. A token limited
 	// to an environment sets only that environment's policy.
 	SetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error)
+	// GetEnvironmentRetention returns an environment's retention override,
+	// as stored, and the retention that applies to it: the override where it
+	// shortens the workspace's, else the workspace's. An environment that
+	// never set one follows its workspace. A project or environment the
+	// workspace does not have is NOT_FOUND. A token limited to an
+	// environment reads only that environment's.
+	GetEnvironmentRetention(context.Context, *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error)
+	// SetEnvironmentRetention replaces an environment's retention override
+	// whole; an empty retention clears it. An override may only shorten the
+	// workspace's: history_days above the workspace's period, or a keep
+	// longer than the workspace's keep of that kind, is INVALID_ARGUMENT
+	// naming the field and the limit, and so is a recording-signed-in keep
+	// longer than the recording keep that applies after it. A project or
+	// environment the workspace does not have is NOT_FOUND. A token limited
+	// to an environment sets only that environment's.
+	SetEnvironmentRetention(context.Context, *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -310,6 +332,18 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentNetwork")),
 			connect.WithClientOptions(opts...),
 		),
+		getEnvironmentRetention: connect.NewClient[workspacev1.GetEnvironmentRetentionRequest, workspacev1.GetEnvironmentRetentionResponse](
+			httpClient,
+			baseURL+ProjectServiceGetEnvironmentRetentionProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("GetEnvironmentRetention")),
+			connect.WithClientOptions(opts...),
+		),
+		setEnvironmentRetention: connect.NewClient[workspacev1.SetEnvironmentRetentionRequest, workspacev1.SetEnvironmentRetentionResponse](
+			httpClient,
+			baseURL+ProjectServiceSetEnvironmentRetentionProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentRetention")),
+			connect.WithClientOptions(opts...),
+		),
 		createEmbedToken: connect.NewClient[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse](
 			httpClient,
 			baseURL+ProjectServiceCreateEmbedTokenProcedure,
@@ -333,23 +367,25 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // projectServiceClient implements ProjectServiceClient.
 type projectServiceClient struct {
-	listProjects          *connect.Client[workspacev1.ListProjectsRequest, workspacev1.ListProjectsResponse]
-	getProject            *connect.Client[workspacev1.GetProjectRequest, workspacev1.GetProjectResponse]
-	listRepositories      *connect.Client[workspacev1.ListRepositoriesRequest, workspacev1.ListRepositoriesResponse]
-	createProject         *connect.Client[workspacev1.CreateProjectRequest, workspacev1.CreateProjectResponse]
-	updateProject         *connect.Client[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse]
-	claimRepository       *connect.Client[workspacev1.ClaimRepositoryRequest, workspacev1.ClaimRepositoryResponse]
-	createEnvironment     *connect.Client[workspacev1.CreateEnvironmentRequest, workspacev1.CreateEnvironmentResponse]
-	deleteEnvironment     *connect.Client[workspacev1.DeleteEnvironmentRequest, workspacev1.DeleteEnvironmentResponse]
-	listBranchRules       *connect.Client[workspacev1.ListBranchRulesRequest, workspacev1.ListBranchRulesResponse]
-	setBranchRules        *connect.Client[workspacev1.SetBranchRulesRequest, workspacev1.SetBranchRulesResponse]
-	getProjectNetwork     *connect.Client[workspacev1.GetProjectNetworkRequest, workspacev1.GetProjectNetworkResponse]
-	setProjectNetwork     *connect.Client[workspacev1.SetProjectNetworkRequest, workspacev1.SetProjectNetworkResponse]
-	getEnvironmentNetwork *connect.Client[workspacev1.GetEnvironmentNetworkRequest, workspacev1.GetEnvironmentNetworkResponse]
-	setEnvironmentNetwork *connect.Client[workspacev1.SetEnvironmentNetworkRequest, workspacev1.SetEnvironmentNetworkResponse]
-	createEmbedToken      *connect.Client[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse]
-	listEmbedTokens       *connect.Client[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse]
-	revokeEmbedToken      *connect.Client[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse]
+	listProjects            *connect.Client[workspacev1.ListProjectsRequest, workspacev1.ListProjectsResponse]
+	getProject              *connect.Client[workspacev1.GetProjectRequest, workspacev1.GetProjectResponse]
+	listRepositories        *connect.Client[workspacev1.ListRepositoriesRequest, workspacev1.ListRepositoriesResponse]
+	createProject           *connect.Client[workspacev1.CreateProjectRequest, workspacev1.CreateProjectResponse]
+	updateProject           *connect.Client[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse]
+	claimRepository         *connect.Client[workspacev1.ClaimRepositoryRequest, workspacev1.ClaimRepositoryResponse]
+	createEnvironment       *connect.Client[workspacev1.CreateEnvironmentRequest, workspacev1.CreateEnvironmentResponse]
+	deleteEnvironment       *connect.Client[workspacev1.DeleteEnvironmentRequest, workspacev1.DeleteEnvironmentResponse]
+	listBranchRules         *connect.Client[workspacev1.ListBranchRulesRequest, workspacev1.ListBranchRulesResponse]
+	setBranchRules          *connect.Client[workspacev1.SetBranchRulesRequest, workspacev1.SetBranchRulesResponse]
+	getProjectNetwork       *connect.Client[workspacev1.GetProjectNetworkRequest, workspacev1.GetProjectNetworkResponse]
+	setProjectNetwork       *connect.Client[workspacev1.SetProjectNetworkRequest, workspacev1.SetProjectNetworkResponse]
+	getEnvironmentNetwork   *connect.Client[workspacev1.GetEnvironmentNetworkRequest, workspacev1.GetEnvironmentNetworkResponse]
+	setEnvironmentNetwork   *connect.Client[workspacev1.SetEnvironmentNetworkRequest, workspacev1.SetEnvironmentNetworkResponse]
+	getEnvironmentRetention *connect.Client[workspacev1.GetEnvironmentRetentionRequest, workspacev1.GetEnvironmentRetentionResponse]
+	setEnvironmentRetention *connect.Client[workspacev1.SetEnvironmentRetentionRequest, workspacev1.SetEnvironmentRetentionResponse]
+	createEmbedToken        *connect.Client[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse]
+	listEmbedTokens         *connect.Client[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse]
+	revokeEmbedToken        *connect.Client[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse]
 }
 
 // ListProjects calls toshi.workspace.v1.ProjectService.ListProjects.
@@ -420,6 +456,16 @@ func (c *projectServiceClient) GetEnvironmentNetwork(ctx context.Context, req *c
 // SetEnvironmentNetwork calls toshi.workspace.v1.ProjectService.SetEnvironmentNetwork.
 func (c *projectServiceClient) SetEnvironmentNetwork(ctx context.Context, req *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error) {
 	return c.setEnvironmentNetwork.CallUnary(ctx, req)
+}
+
+// GetEnvironmentRetention calls toshi.workspace.v1.ProjectService.GetEnvironmentRetention.
+func (c *projectServiceClient) GetEnvironmentRetention(ctx context.Context, req *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error) {
+	return c.getEnvironmentRetention.CallUnary(ctx, req)
+}
+
+// SetEnvironmentRetention calls toshi.workspace.v1.ProjectService.SetEnvironmentRetention.
+func (c *projectServiceClient) SetEnvironmentRetention(ctx context.Context, req *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error) {
+	return c.setEnvironmentRetention.CallUnary(ctx, req)
 }
 
 // CreateEmbedToken calls toshi.workspace.v1.ProjectService.CreateEmbedToken.
@@ -549,6 +595,22 @@ type ProjectServiceHandler interface {
 	// environment the workspace does not have is NOT_FOUND. A token limited
 	// to an environment sets only that environment's policy.
 	SetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error)
+	// GetEnvironmentRetention returns an environment's retention override,
+	// as stored, and the retention that applies to it: the override where it
+	// shortens the workspace's, else the workspace's. An environment that
+	// never set one follows its workspace. A project or environment the
+	// workspace does not have is NOT_FOUND. A token limited to an
+	// environment reads only that environment's.
+	GetEnvironmentRetention(context.Context, *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error)
+	// SetEnvironmentRetention replaces an environment's retention override
+	// whole; an empty retention clears it. An override may only shorten the
+	// workspace's: history_days above the workspace's period, or a keep
+	// longer than the workspace's keep of that kind, is INVALID_ARGUMENT
+	// naming the field and the limit, and so is a recording-signed-in keep
+	// longer than the recording keep that applies after it. A project or
+	// environment the workspace does not have is NOT_FOUND. A token limited
+	// to an environment sets only that environment's.
+	SetEnvironmentRetention(context.Context, *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -657,6 +719,18 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentNetwork")),
 		connect.WithHandlerOptions(opts...),
 	)
+	projectServiceGetEnvironmentRetentionHandler := connect.NewUnaryHandler(
+		ProjectServiceGetEnvironmentRetentionProcedure,
+		svc.GetEnvironmentRetention,
+		connect.WithSchema(projectServiceMethods.ByName("GetEnvironmentRetention")),
+		connect.WithHandlerOptions(opts...),
+	)
+	projectServiceSetEnvironmentRetentionHandler := connect.NewUnaryHandler(
+		ProjectServiceSetEnvironmentRetentionProcedure,
+		svc.SetEnvironmentRetention,
+		connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentRetention")),
+		connect.WithHandlerOptions(opts...),
+	)
 	projectServiceCreateEmbedTokenHandler := connect.NewUnaryHandler(
 		ProjectServiceCreateEmbedTokenProcedure,
 		svc.CreateEmbedToken,
@@ -705,6 +779,10 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 			projectServiceGetEnvironmentNetworkHandler.ServeHTTP(w, r)
 		case ProjectServiceSetEnvironmentNetworkProcedure:
 			projectServiceSetEnvironmentNetworkHandler.ServeHTTP(w, r)
+		case ProjectServiceGetEnvironmentRetentionProcedure:
+			projectServiceGetEnvironmentRetentionHandler.ServeHTTP(w, r)
+		case ProjectServiceSetEnvironmentRetentionProcedure:
+			projectServiceSetEnvironmentRetentionHandler.ServeHTTP(w, r)
 		case ProjectServiceCreateEmbedTokenProcedure:
 			projectServiceCreateEmbedTokenHandler.ServeHTTP(w, r)
 		case ProjectServiceListEmbedTokensProcedure:
@@ -774,6 +852,14 @@ func (UnimplementedProjectServiceHandler) GetEnvironmentNetwork(context.Context,
 
 func (UnimplementedProjectServiceHandler) SetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetEnvironmentNetwork is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) GetEnvironmentRetention(context.Context, *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.GetEnvironmentRetention is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) SetEnvironmentRetention(context.Context, *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetEnvironmentRetention is not implemented"))
 }
 
 func (UnimplementedProjectServiceHandler) CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error) {
