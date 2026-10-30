@@ -466,8 +466,8 @@ type WorkloadServiceClient interface {
 	// ReleaseService drops the caller's hold on a service. Releasing a hold
 	// the caller does not have returns the service as it is.
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
-	// ListServiceRevisions returns a service's revisions, oldest first. An
-	// unknown ID fails with NOT_FOUND.
+	// ListServiceRevisions returns a service's revisions, newest first, a
+	// page at a time. An unknown ID fails with NOT_FOUND.
 	ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error)
 	// GetServiceRevision returns one revision of a service. An unknown ID or
 	// number fails with NOT_FOUND.
@@ -492,8 +492,8 @@ type WorkloadServiceClient interface {
 	// revision's next run (ListServiceActivations).
 	RollbackService(context.Context, *connect.Request[workspacev1.RollbackServiceRequest]) (*connect.Response[workspacev1.RollbackServiceResponse], error)
 	// ListServiceActivations returns each time a revision of the service was
-	// selected, by its create, a deploy or a rollback, oldest first, with
-	// what came of it.
+	// selected, by its create, a deploy or a rollback, newest first, a page
+	// at a time, with what came of it.
 	ListServiceActivations(context.Context, *connect.Request[workspacev1.ListServiceActivationsRequest]) (*connect.Response[workspacev1.ListServiceActivationsResponse], error)
 	// ListServiceRuns returns a service's runs, the newest first: each run
 	// is a job on a host, of the revision that was current when it was
@@ -1462,8 +1462,8 @@ type WorkloadServiceHandler interface {
 	// ReleaseService drops the caller's hold on a service. Releasing a hold
 	// the caller does not have returns the service as it is.
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
-	// ListServiceRevisions returns a service's revisions, oldest first. An
-	// unknown ID fails with NOT_FOUND.
+	// ListServiceRevisions returns a service's revisions, newest first, a
+	// page at a time. An unknown ID fails with NOT_FOUND.
 	ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error)
 	// GetServiceRevision returns one revision of a service. An unknown ID or
 	// number fails with NOT_FOUND.
@@ -1488,8 +1488,8 @@ type WorkloadServiceHandler interface {
 	// revision's next run (ListServiceActivations).
 	RollbackService(context.Context, *connect.Request[workspacev1.RollbackServiceRequest]) (*connect.Response[workspacev1.RollbackServiceResponse], error)
 	// ListServiceActivations returns each time a revision of the service was
-	// selected, by its create, a deploy or a rollback, oldest first, with
-	// what came of it.
+	// selected, by its create, a deploy or a rollback, newest first, a page
+	// at a time, with what came of it.
 	ListServiceActivations(context.Context, *connect.Request[workspacev1.ListServiceActivationsRequest]) (*connect.Response[workspacev1.ListServiceActivationsResponse], error)
 	// ListServiceRuns returns a service's runs, the newest first: each run
 	// is a job on a host, of the revision that was current when it was

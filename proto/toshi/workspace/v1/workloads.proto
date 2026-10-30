@@ -516,8 +516,8 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
-  // ListServiceRevisions returns a service's revisions, oldest first. An
-  // unknown ID fails with NOT_FOUND.
+  // ListServiceRevisions returns a service's revisions, newest first, a
+  // page at a time. An unknown ID fails with NOT_FOUND.
   rpc ListServiceRevisions(ListServiceRevisionsRequest) returns (ListServiceRevisionsResponse) {
     option (toshi.permission) = "services.read";
     option (toshi.scope) = "environment";
@@ -558,8 +558,8 @@ service WorkloadService {
   }
 
   // ListServiceActivations returns each time a revision of the service was
-  // selected, by its create, a deploy or a rollback, oldest first, with
-  // what came of it.
+  // selected, by its create, a deploy or a rollback, newest first, a page
+  // at a time, with what came of it.
   rpc ListServiceActivations(ListServiceActivationsRequest) returns (ListServiceActivationsResponse) {
     option (toshi.permission) = "services.read";
     option (toshi.scope) = "environment";

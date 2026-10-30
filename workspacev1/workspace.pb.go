@@ -9994,10 +9994,14 @@ func (x *ListServiceRunsResponse) GetNextPageToken() string {
 }
 
 type ListServiceRevisionsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// The most revisions in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10053,10 +10057,26 @@ func (x *ListServiceRevisionsRequest) GetId() string {
 	return ""
 }
 
+func (x *ListServiceRevisionsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListServiceRevisionsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListServiceRevisionsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The service's revisions, oldest first.
-	Revisions     []*ServiceRevision `protobuf:"bytes,1,rep,name=revisions,proto3" json:"revisions,omitempty"`
+	// The service's revisions, newest first.
+	Revisions []*ServiceRevision `protobuf:"bytes,1,rep,name=revisions,proto3" json:"revisions,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10096,6 +10116,13 @@ func (x *ListServiceRevisionsResponse) GetRevisions() []*ServiceRevision {
 		return x.Revisions
 	}
 	return nil
+}
+
+func (x *ListServiceRevisionsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 type GetServiceRevisionRequest struct {
@@ -10741,10 +10768,14 @@ func (x *RollbackServiceResponse) GetActivation() *ServiceActivation {
 }
 
 type ListServiceActivationsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// The most activations in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10800,10 +10831,26 @@ func (x *ListServiceActivationsRequest) GetId() string {
 	return ""
 }
 
+func (x *ListServiceActivationsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListServiceActivationsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListServiceActivationsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The service's activations, oldest first.
-	Activations   []*ServiceActivation `protobuf:"bytes,1,rep,name=activations,proto3" json:"activations,omitempty"`
+	// The service's activations, newest first.
+	Activations []*ServiceActivation `protobuf:"bytes,1,rep,name=activations,proto3" json:"activations,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10843,6 +10890,13 @@ func (x *ListServiceActivationsResponse) GetActivations() []*ServiceActivation {
 		return x.Activations
 	}
 	return nil
+}
+
+func (x *ListServiceActivationsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 // ServiceActivation is one selection of a service's revision and what came
@@ -11896,13 +11950,17 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"page_token\x18\x05 \x01(\tR\tpageToken\"u\n" +
 	"\x17ListServiceRunsResponse\x122\n" +
 	"\x04runs\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.ServiceRunR\x04runs\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"i\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xa5\x01\n" +
 	"\x1bListServiceRevisionsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
-	"\x02id\x18\x03 \x01(\tR\x02id\"a\n" +
+	"\x02id\x18\x03 \x01(\tR\x02id\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x05 \x01(\tR\tpageToken\"\x89\x01\n" +
 	"\x1cListServiceRevisionsResponse\x12A\n" +
-	"\trevisions\x18\x01 \x03(\v2#.toshi.workspace.v1.ServiceRevisionR\trevisions\"\x7f\n" +
+	"\trevisions\x18\x01 \x03(\v2#.toshi.workspace.v1.ServiceRevisionR\trevisions\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x7f\n" +
 	"\x19GetServiceRevisionRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
@@ -11958,13 +12016,17 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\aservice\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ServiceR\aservice\x12E\n" +
 	"\n" +
 	"activation\x18\x02 \x01(\v2%.toshi.workspace.v1.ServiceActivationR\n" +
-	"activation\"k\n" +
+	"activation\"\xa7\x01\n" +
 	"\x1dListServiceActivationsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
-	"\x02id\x18\x03 \x01(\tR\x02id\"i\n" +
+	"\x02id\x18\x03 \x01(\tR\x02id\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x05 \x01(\tR\tpageToken\"\x91\x01\n" +
 	"\x1eListServiceActivationsResponse\x12G\n" +
-	"\vactivations\x18\x01 \x03(\v2%.toshi.workspace.v1.ServiceActivationR\vactivations\"\xf2\x03\n" +
+	"\vactivations\x18\x01 \x03(\v2%.toshi.workspace.v1.ServiceActivationR\vactivations\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xf2\x03\n" +
 	"\x11ServiceActivation\x12\x1a\n" +
 	"\bsequence\x18\x01 \x01(\x03R\bsequence\x12=\n" +
 	"\x04kind\x18\x02 \x01(\x0e2).toshi.workspace.v1.ServiceActivationKindR\x04kind\x12\x14\n" +

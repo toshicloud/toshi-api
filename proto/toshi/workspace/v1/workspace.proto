@@ -1729,11 +1729,17 @@ message ListServiceRevisionsRequest {
   string project = 1;
   string environment = 2;
   string id = 3;
+  // The most revisions in one page; zero lets the server choose.
+  int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
 }
 
 message ListServiceRevisionsResponse {
-  // The service's revisions, oldest first.
+  // The service's revisions, newest first.
   repeated ServiceRevision revisions = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message GetServiceRevisionRequest {
@@ -1915,11 +1921,17 @@ message ListServiceActivationsRequest {
   string project = 1;
   string environment = 2;
   string id = 3;
+  // The most activations in one page; zero lets the server choose.
+  int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
 }
 
 message ListServiceActivationsResponse {
-  // The service's activations, oldest first.
+  // The service's activations, newest first.
   repeated ServiceActivation activations = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 // ServiceActivation is one selection of a service's revision and what came

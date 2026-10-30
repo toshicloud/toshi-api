@@ -3552,8 +3552,8 @@ export const WorkloadService: GenService<{
     output: typeof ReleaseServiceResponseSchema;
   },
   /**
-   * ListServiceRevisions returns a service's revisions, oldest first. An
-   * unknown ID fails with NOT_FOUND.
+   * ListServiceRevisions returns a service's revisions, newest first, a
+   * page at a time. An unknown ID fails with NOT_FOUND.
    *
    * @generated from rpc toshi.workspace.v1.WorkloadService.ListServiceRevisions
    */
@@ -3602,8 +3602,8 @@ export const WorkloadService: GenService<{
   },
   /**
    * ListServiceActivations returns each time a revision of the service was
-   * selected, by its create, a deploy or a rollback, oldest first, with
-   * what came of it.
+   * selected, by its create, a deploy or a rollback, newest first, a page
+   * at a time, with what came of it.
    *
    * @generated from rpc toshi.workspace.v1.WorkloadService.ListServiceActivations
    */
