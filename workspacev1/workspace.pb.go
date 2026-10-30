@@ -2237,9 +2237,16 @@ type WorkloadNetwork struct {
 	NotEnforcedReason string `protobuf:"bytes,3,opt,name=not_enforced_reason,json=notEnforcedReason,proto3" json:"not_enforced_reason,omitempty"`
 	// The most recent denials kept on the workload, newest first, at most 20;
 	// absent from a workload stored before the field.
-	LastDenials   []*EgressDenial `protobuf:"bytes,4,rep,name=last_denials,json=lastDenials,proto3" json:"last_denials,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	LastDenials []*EgressDenial `protobuf:"bytes,4,rep,name=last_denials,json=lastDenials,proto3" json:"last_denials,omitempty"`
+	// Bytes the workload's VMs sent off their hosts, over all its runs, as
+	// counted at each heartbeat; retransmissions count, denied connections and
+	// packets over the egress cap do not.
+	EgressBytes uint64 `protobuf:"varint,5,opt,name=egress_bytes,json=egressBytes,proto3" json:"egress_bytes,omitempty"`
+	// Bytes to the exempt destinations (the control plane, the nameservers, the
+	// image mirror, a binding's endpoint), counted apart from egress_bytes.
+	EgressExemptBytes uint64 `protobuf:"varint,6,opt,name=egress_exempt_bytes,json=egressExemptBytes,proto3" json:"egress_exempt_bytes,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *WorkloadNetwork) Reset() {
@@ -2298,6 +2305,20 @@ func (x *WorkloadNetwork) GetLastDenials() []*EgressDenial {
 		return x.LastDenials
 	}
 	return nil
+}
+
+func (x *WorkloadNetwork) GetEgressBytes() uint64 {
+	if x != nil {
+		return x.EgressBytes
+	}
+	return 0
+}
+
+func (x *WorkloadNetwork) GetEgressExemptBytes() uint64 {
+	if x != nil {
+		return x.EgressExemptBytes
+	}
+	return 0
 }
 
 // NetworkLayer is one named policy of a workload's network policy.
@@ -12246,12 +12267,14 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x0fmanifest_origin\x18\x0e \x01(\tR\x0emanifestOrigin\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xdc\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xaf\x02\n" +
 	"\x0fWorkloadNetwork\x128\n" +
 	"\x06layers\x18\x01 \x03(\v2 .toshi.workspace.v1.NetworkLayerR\x06layers\x12\x1a\n" +
 	"\benforced\x18\x02 \x01(\bR\benforced\x12.\n" +
 	"\x13not_enforced_reason\x18\x03 \x01(\tR\x11notEnforcedReason\x12C\n" +
-	"\flast_denials\x18\x04 \x03(\v2 .toshi.workspace.v1.EgressDenialR\vlastDenials\"]\n" +
+	"\flast_denials\x18\x04 \x03(\v2 .toshi.workspace.v1.EgressDenialR\vlastDenials\x12!\n" +
+	"\fegress_bytes\x18\x05 \x01(\x04R\vegressBytes\x12.\n" +
+	"\x13egress_exempt_bytes\x18\x06 \x01(\x04R\x11egressExemptBytes\"]\n" +
 	"\fNetworkLayer\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\x06policy\x18\x02 \x01(\v2!.toshi.workspace.v1.NetworkPolicyR\x06policy\"\xd3\x05\n" +

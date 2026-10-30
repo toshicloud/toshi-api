@@ -311,6 +311,13 @@ message WorkloadNetwork {
   // The most recent denials kept on the workload, newest first, at most 20;
   // absent from a workload stored before the field.
   repeated EgressDenial last_denials = 4;
+  // Bytes the workload's VMs sent off their hosts, over all its runs, as
+  // counted at each heartbeat; retransmissions count, denied connections and
+  // packets over the egress cap do not.
+  uint64 egress_bytes = 5;
+  // Bytes to the exempt destinations (the control plane, the nameservers, the
+  // image mirror, a binding's endpoint), counted apart from egress_bytes.
+  uint64 egress_exempt_bytes = 6;
 }
 
 // NetworkLayer is one named policy of a workload's network policy.
