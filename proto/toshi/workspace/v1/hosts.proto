@@ -305,6 +305,32 @@ message Host {
   // The minimum agent release the control plane admits when
   // agent_version_status is BELOW_MINIMUM; empty otherwise.
   string agent_version_minimum = 25;
+  // Whether the host's agent keeps VMs, so a workload with keep_vm can run
+  // on it.
+  bool keep_vm = 26;
+  // The VMs the host keeps for the workspace's workloads with keep_vm,
+  // ordered by workload; another workspace's are left out.
+  repeated KeptVM kept_vms = 27;
+  // The memory those VMs hold, in MiB: only the ones not powered down.
+  int64 kept_memory_mib = 28;
+  // The disk those VMs hold, in bytes: all of them.
+  int64 kept_disk_bytes = 29;
+}
+
+// KeptVM is a VM a host keeps for one of the workspace's workloads with
+// keep_vm.
+message KeptVM {
+  // The service or sandbox that keeps it.
+  string workload_id = 1;
+  // "service" or "sandbox".
+  string kind = 2;
+  // "running", "paused" or "powered_down".
+  string form = 3;
+  // The VM's memory and disk.
+  int64 memory_mib = 4;
+  int64 disk_bytes = 5;
+  // When its workload last stopped or slept; unset while it runs.
+  google.protobuf.Timestamp stopped_at = 6;
 }
 
 // HostState says whether a host takes new jobs.

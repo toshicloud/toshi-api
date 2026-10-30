@@ -3531,7 +3531,11 @@ type ServiceSpec struct {
 	// spec.visitors, ignored in a create. Its provided names never
 	// serve open visitors. Unspecified in an event recorded before services
 	// had the setting.
-	Visitors      ServiceVisitors `protobuf:"varint,12,opt,name=visitors,proto3,enum=toshi.workspace.v1.ServiceVisitors" json:"visitors,omitempty"`
+	Visitors ServiceVisitors `protobuf:"varint,12,opt,name=visitors,proto3,enum=toshi.workspace.v1.ServiceVisitors" json:"visitors,omitempty"`
+	// Whether the current revision's recipe sets keep_vm: the service's runs
+	// keep their VM on one of the workspace's own hosts. Set by the server
+	// from the recipe; ignored in a request.
+	KeepVm        bool `protobuf:"varint,13,opt,name=keep_vm,json=keepVm,proto3" json:"keep_vm,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3648,6 +3652,13 @@ func (x *ServiceSpec) GetVisitors() ServiceVisitors {
 		return x.Visitors
 	}
 	return ServiceVisitors_SERVICE_VISITORS_UNSPECIFIED
+}
+
+func (x *ServiceSpec) GetKeepVm() bool {
+	if x != nil {
+		return x.KeepVm
+	}
+	return false
 }
 
 // StateVolumeSpec is the state volume a service is created with: it is
@@ -11235,7 +11246,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"repository\x18\x02 \x01(\tR\n" +
 	"repository\x12\x10\n" +
 	"\x03ref\x18\x03 \x01(\tR\x03ref\x12\x16\n" +
-	"\x06commit\x18\x04 \x01(\tR\x06commit\"\x8b\x04\n" +
+	"\x06commit\x18\x04 \x01(\tR\x06commit\"\xa4\x04\n" +
 	"\vServiceSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x123\n" +
 	"\x04mode\x18\x02 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\x12\x1a\n" +
@@ -11250,7 +11261,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"awakeUntil\x124\n" +
 	"\x16container_image_digest\x18\v \x01(\tR\x14containerImageDigest\x12?\n" +
-	"\bvisitors\x18\f \x01(\x0e2#.toshi.workspace.v1.ServiceVisitorsR\bvisitors\"7\n" +
+	"\bvisitors\x18\f \x01(\x0e2#.toshi.workspace.v1.ServiceVisitorsR\bvisitors\x12\x17\n" +
+	"\akeep_vm\x18\r \x01(\bR\x06keepVm\"7\n" +
 	"\x0fStateVolumeSpec\x12$\n" +
 	"\x0esize_cap_bytes\x18\x01 \x01(\x03R\fsizeCapBytes\"\x9f\x01\n" +
 	"\aCommand\x12\x12\n" +

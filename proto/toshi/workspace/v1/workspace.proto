@@ -680,6 +680,10 @@ message ServiceSpec {
   // serve open visitors. Unspecified in an event recorded before services
   // had the setting.
   ServiceVisitors visitors = 12;
+  // Whether the current revision's recipe sets keep_vm: the service's runs
+  // keep their VM on one of the workspace's own hosts. Set by the server
+  // from the recipe; ignored in a request.
+  bool keep_vm = 13;
 }
 
 // StateVolumeSpec is the state volume a service is created with: it is

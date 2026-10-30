@@ -1348,8 +1348,18 @@ type Host struct {
 	// The minimum agent release the control plane admits when
 	// agent_version_status is BELOW_MINIMUM; empty otherwise.
 	AgentVersionMinimum string `protobuf:"bytes,25,opt,name=agent_version_minimum,json=agentVersionMinimum,proto3" json:"agent_version_minimum,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	// Whether the host's agent keeps VMs, so a workload with keep_vm can run
+	// on it.
+	KeepVm bool `protobuf:"varint,26,opt,name=keep_vm,json=keepVm,proto3" json:"keep_vm,omitempty"`
+	// The VMs the host keeps for the workspace's workloads with keep_vm,
+	// ordered by workload; another workspace's are left out.
+	KeptVms []*KeptVM `protobuf:"bytes,27,rep,name=kept_vms,json=keptVms,proto3" json:"kept_vms,omitempty"`
+	// The memory those VMs hold, in MiB: only the ones not powered down.
+	KeptMemoryMib int64 `protobuf:"varint,28,opt,name=kept_memory_mib,json=keptMemoryMib,proto3" json:"kept_memory_mib,omitempty"`
+	// The disk those VMs hold, in bytes: all of them.
+	KeptDiskBytes int64 `protobuf:"varint,29,opt,name=kept_disk_bytes,json=keptDiskBytes,proto3" json:"kept_disk_bytes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Host) Reset() {
@@ -1557,6 +1567,125 @@ func (x *Host) GetAgentVersionMinimum() string {
 	return ""
 }
 
+func (x *Host) GetKeepVm() bool {
+	if x != nil {
+		return x.KeepVm
+	}
+	return false
+}
+
+func (x *Host) GetKeptVms() []*KeptVM {
+	if x != nil {
+		return x.KeptVms
+	}
+	return nil
+}
+
+func (x *Host) GetKeptMemoryMib() int64 {
+	if x != nil {
+		return x.KeptMemoryMib
+	}
+	return 0
+}
+
+func (x *Host) GetKeptDiskBytes() int64 {
+	if x != nil {
+		return x.KeptDiskBytes
+	}
+	return 0
+}
+
+// KeptVM is a VM a host keeps for one of the workspace's workloads with
+// keep_vm.
+type KeptVM struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service or sandbox that keeps it.
+	WorkloadId string `protobuf:"bytes,1,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	// "service" or "sandbox".
+	Kind string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	// "running", "paused" or "powered_down".
+	Form string `protobuf:"bytes,3,opt,name=form,proto3" json:"form,omitempty"`
+	// The VM's memory and disk.
+	MemoryMib int64 `protobuf:"varint,4,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
+	DiskBytes int64 `protobuf:"varint,5,opt,name=disk_bytes,json=diskBytes,proto3" json:"disk_bytes,omitempty"`
+	// When its workload last stopped or slept; unset while it runs.
+	StoppedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=stopped_at,json=stoppedAt,proto3" json:"stopped_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *KeptVM) Reset() {
+	*x = KeptVM{}
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *KeptVM) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*KeptVM) ProtoMessage() {}
+
+func (x *KeptVM) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use KeptVM.ProtoReflect.Descriptor instead.
+func (*KeptVM) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *KeptVM) GetWorkloadId() string {
+	if x != nil {
+		return x.WorkloadId
+	}
+	return ""
+}
+
+func (x *KeptVM) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *KeptVM) GetForm() string {
+	if x != nil {
+		return x.Form
+	}
+	return ""
+}
+
+func (x *KeptVM) GetMemoryMib() int64 {
+	if x != nil {
+		return x.MemoryMib
+	}
+	return 0
+}
+
+func (x *KeptVM) GetDiskBytes() int64 {
+	if x != nil {
+		return x.DiskBytes
+	}
+	return 0
+}
+
+func (x *KeptVM) GetStoppedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StoppedAt
+	}
+	return nil
+}
+
 // HeldRefill is one warm pool whose refill a host holds.
 type HeldRefill struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1569,7 +1698,7 @@ type HeldRefill struct {
 
 func (x *HeldRefill) Reset() {
 	*x = HeldRefill{}
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1581,7 +1710,7 @@ func (x *HeldRefill) String() string {
 func (*HeldRefill) ProtoMessage() {}
 
 func (x *HeldRefill) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1594,7 +1723,7 @@ func (x *HeldRefill) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HeldRefill.ProtoReflect.Descriptor instead.
 func (*HeldRefill) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *HeldRefill) GetSize() string {
@@ -1626,7 +1755,7 @@ type HostEgress struct {
 
 func (x *HostEgress) Reset() {
 	*x = HostEgress{}
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1638,7 +1767,7 @@ func (x *HostEgress) String() string {
 func (*HostEgress) ProtoMessage() {}
 
 func (x *HostEgress) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1651,7 +1780,7 @@ func (x *HostEgress) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostEgress.ProtoReflect.Descriptor instead.
 func (*HostEgress) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *HostEgress) GetIps() []string {
@@ -1704,7 +1833,7 @@ type HostVolume struct {
 
 func (x *HostVolume) Reset() {
 	*x = HostVolume{}
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1716,7 +1845,7 @@ func (x *HostVolume) String() string {
 func (*HostVolume) ProtoMessage() {}
 
 func (x *HostVolume) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1729,7 +1858,7 @@ func (x *HostVolume) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostVolume.ProtoReflect.Descriptor instead.
 func (*HostVolume) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{19}
+	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *HostVolume) GetVolumeId() string {
@@ -1823,7 +1952,7 @@ type HostAlert struct {
 
 func (x *HostAlert) Reset() {
 	*x = HostAlert{}
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1835,7 +1964,7 @@ func (x *HostAlert) String() string {
 func (*HostAlert) ProtoMessage() {}
 
 func (x *HostAlert) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1848,7 +1977,7 @@ func (x *HostAlert) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HostAlert.ProtoReflect.Descriptor instead.
 func (*HostAlert) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{20}
+	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *HostAlert) GetKind() string {
@@ -1947,7 +2076,7 @@ type CloudHost struct {
 
 func (x *CloudHost) Reset() {
 	*x = CloudHost{}
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1959,7 +2088,7 @@ func (x *CloudHost) String() string {
 func (*CloudHost) ProtoMessage() {}
 
 func (x *CloudHost) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1972,7 +2101,7 @@ func (x *CloudHost) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CloudHost.ProtoReflect.Descriptor instead.
 func (*CloudHost) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{21}
+	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *CloudHost) GetHostId() string {
@@ -2115,7 +2244,7 @@ type CloudHostCheck struct {
 
 func (x *CloudHostCheck) Reset() {
 	*x = CloudHostCheck{}
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2127,7 +2256,7 @@ func (x *CloudHostCheck) String() string {
 func (*CloudHostCheck) ProtoMessage() {}
 
 func (x *CloudHostCheck) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_hosts_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2140,7 +2269,7 @@ func (x *CloudHostCheck) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CloudHostCheck.ProtoReflect.Descriptor instead.
 func (*CloudHostCheck) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{22}
+	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *CloudHostCheck) GetName() string {
@@ -2243,7 +2372,8 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\boverflow\x18\x01 \x01(\bR\boverflow\"f\n" +
 	"\x1dCreateEnrollmentTokenResponse\x12/\n" +
 	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\"\xf2\b\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"\x92\n" +
+	"\n" +
 	"\x04Host\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x0e\n" +
@@ -2273,10 +2403,25 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"revoked_at\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12(\n" +
 	"\x10memory_limit_mib\x18\x17 \x01(\x03R\x0ememoryLimitMib\x12.\n" +
 	"\x13memory_limit_source\x18\x18 \x01(\tR\x11memoryLimitSource\x122\n" +
-	"\x15agent_version_minimum\x18\x19 \x01(\tR\x13agentVersionMinimum\x1a9\n" +
+	"\x15agent_version_minimum\x18\x19 \x01(\tR\x13agentVersionMinimum\x12\x17\n" +
+	"\akeep_vm\x18\x1a \x01(\bR\x06keepVm\x125\n" +
+	"\bkept_vms\x18\x1b \x03(\v2\x1a.toshi.workspace.v1.KeptVMR\akeptVms\x12&\n" +
+	"\x0fkept_memory_mib\x18\x1c \x01(\x03R\rkeptMemoryMib\x12&\n" +
+	"\x0fkept_disk_bytes\x18\x1d \x01(\x03R\rkeptDiskBytes\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"8\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xca\x01\n" +
+	"\x06KeptVM\x12\x1f\n" +
+	"\vworkload_id\x18\x01 \x01(\tR\n" +
+	"workloadId\x12\x12\n" +
+	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x12\n" +
+	"\x04form\x18\x03 \x01(\tR\x04form\x12\x1d\n" +
+	"\n" +
+	"memory_mib\x18\x04 \x01(\x03R\tmemoryMib\x12\x1d\n" +
+	"\n" +
+	"disk_bytes\x18\x05 \x01(\x03R\tdiskBytes\x129\n" +
+	"\n" +
+	"stopped_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tstoppedAt\"8\n" +
 	"\n" +
 	"HeldRefill\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x16\n" +
@@ -2396,7 +2541,7 @@ func file_toshi_workspace_v1_hosts_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_hosts_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_toshi_workspace_v1_hosts_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_toshi_workspace_v1_hosts_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_toshi_workspace_v1_hosts_proto_goTypes = []any{
 	(HostState)(0),                        // 0: toshi.workspace.v1.HostState
 	(EgressSource)(0),                     // 1: toshi.workspace.v1.EgressSource
@@ -2419,71 +2564,74 @@ var file_toshi_workspace_v1_hosts_proto_goTypes = []any{
 	(*CreateEnrollmentTokenRequest)(nil),  // 18: toshi.workspace.v1.CreateEnrollmentTokenRequest
 	(*CreateEnrollmentTokenResponse)(nil), // 19: toshi.workspace.v1.CreateEnrollmentTokenResponse
 	(*Host)(nil),                          // 20: toshi.workspace.v1.Host
-	(*HeldRefill)(nil),                    // 21: toshi.workspace.v1.HeldRefill
-	(*HostEgress)(nil),                    // 22: toshi.workspace.v1.HostEgress
-	(*HostVolume)(nil),                    // 23: toshi.workspace.v1.HostVolume
-	(*HostAlert)(nil),                     // 24: toshi.workspace.v1.HostAlert
-	(*CloudHost)(nil),                     // 25: toshi.workspace.v1.CloudHost
-	(*CloudHostCheck)(nil),                // 26: toshi.workspace.v1.CloudHostCheck
-	nil,                                   // 27: toshi.workspace.v1.CreateCloudHostRequest.InstanceTypesEntry
-	nil,                                   // 28: toshi.workspace.v1.Host.LabelsEntry
-	nil,                                   // 29: toshi.workspace.v1.HostAlert.ReasonsEntry
-	nil,                                   // 30: toshi.workspace.v1.CloudHost.InstanceTypesEntry
-	(*durationpb.Duration)(nil),           // 31: google.protobuf.Duration
-	(*Token)(nil),                         // 32: toshi.workspace.v1.Token
-	(*timestamppb.Timestamp)(nil),         // 33: google.protobuf.Timestamp
+	(*KeptVM)(nil),                        // 21: toshi.workspace.v1.KeptVM
+	(*HeldRefill)(nil),                    // 22: toshi.workspace.v1.HeldRefill
+	(*HostEgress)(nil),                    // 23: toshi.workspace.v1.HostEgress
+	(*HostVolume)(nil),                    // 24: toshi.workspace.v1.HostVolume
+	(*HostAlert)(nil),                     // 25: toshi.workspace.v1.HostAlert
+	(*CloudHost)(nil),                     // 26: toshi.workspace.v1.CloudHost
+	(*CloudHostCheck)(nil),                // 27: toshi.workspace.v1.CloudHostCheck
+	nil,                                   // 28: toshi.workspace.v1.CreateCloudHostRequest.InstanceTypesEntry
+	nil,                                   // 29: toshi.workspace.v1.Host.LabelsEntry
+	nil,                                   // 30: toshi.workspace.v1.HostAlert.ReasonsEntry
+	nil,                                   // 31: toshi.workspace.v1.CloudHost.InstanceTypesEntry
+	(*durationpb.Duration)(nil),           // 32: google.protobuf.Duration
+	(*Token)(nil),                         // 33: toshi.workspace.v1.Token
+	(*timestamppb.Timestamp)(nil),         // 34: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_hosts_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.ListHostsRequest.states:type_name -> toshi.workspace.v1.HostState
 	20, // 1: toshi.workspace.v1.ListHostsResponse.hosts:type_name -> toshi.workspace.v1.Host
-	31, // 2: toshi.workspace.v1.ListHostsResponse.long_offline_after:type_name -> google.protobuf.Duration
-	23, // 3: toshi.workspace.v1.ListHostStorageResponse.volumes:type_name -> toshi.workspace.v1.HostVolume
-	24, // 4: toshi.workspace.v1.ListHostAlertsResponse.alerts:type_name -> toshi.workspace.v1.HostAlert
+	32, // 2: toshi.workspace.v1.ListHostsResponse.long_offline_after:type_name -> google.protobuf.Duration
+	24, // 3: toshi.workspace.v1.ListHostStorageResponse.volumes:type_name -> toshi.workspace.v1.HostVolume
+	25, // 4: toshi.workspace.v1.ListHostAlertsResponse.alerts:type_name -> toshi.workspace.v1.HostAlert
 	0,  // 5: toshi.workspace.v1.SetHostStateRequest.state:type_name -> toshi.workspace.v1.HostState
 	20, // 6: toshi.workspace.v1.SetHostStateResponse.host:type_name -> toshi.workspace.v1.Host
-	27, // 7: toshi.workspace.v1.CreateCloudHostRequest.instance_types:type_name -> toshi.workspace.v1.CreateCloudHostRequest.InstanceTypesEntry
+	28, // 7: toshi.workspace.v1.CreateCloudHostRequest.instance_types:type_name -> toshi.workspace.v1.CreateCloudHostRequest.InstanceTypesEntry
 	20, // 8: toshi.workspace.v1.CreateCloudHostResponse.host:type_name -> toshi.workspace.v1.Host
-	25, // 9: toshi.workspace.v1.CreateCloudHostResponse.cloud_host:type_name -> toshi.workspace.v1.CloudHost
-	26, // 10: toshi.workspace.v1.CheckCloudHostResponse.checks:type_name -> toshi.workspace.v1.CloudHostCheck
-	32, // 11: toshi.workspace.v1.CreateEnrollmentTokenResponse.token:type_name -> toshi.workspace.v1.Token
-	28, // 12: toshi.workspace.v1.Host.labels:type_name -> toshi.workspace.v1.Host.LabelsEntry
+	26, // 9: toshi.workspace.v1.CreateCloudHostResponse.cloud_host:type_name -> toshi.workspace.v1.CloudHost
+	27, // 10: toshi.workspace.v1.CheckCloudHostResponse.checks:type_name -> toshi.workspace.v1.CloudHostCheck
+	33, // 11: toshi.workspace.v1.CreateEnrollmentTokenResponse.token:type_name -> toshi.workspace.v1.Token
+	29, // 12: toshi.workspace.v1.Host.labels:type_name -> toshi.workspace.v1.Host.LabelsEntry
 	0,  // 13: toshi.workspace.v1.Host.state:type_name -> toshi.workspace.v1.HostState
-	33, // 14: toshi.workspace.v1.Host.last_seen_at:type_name -> google.protobuf.Timestamp
-	21, // 15: toshi.workspace.v1.Host.held_refills:type_name -> toshi.workspace.v1.HeldRefill
-	22, // 16: toshi.workspace.v1.Host.egress:type_name -> toshi.workspace.v1.HostEgress
+	34, // 14: toshi.workspace.v1.Host.last_seen_at:type_name -> google.protobuf.Timestamp
+	22, // 15: toshi.workspace.v1.Host.held_refills:type_name -> toshi.workspace.v1.HeldRefill
+	23, // 16: toshi.workspace.v1.Host.egress:type_name -> toshi.workspace.v1.HostEgress
 	2,  // 17: toshi.workspace.v1.Host.agent_version_status:type_name -> toshi.workspace.v1.AgentVersionStatus
-	33, // 18: toshi.workspace.v1.Host.heartbeat_refused_at:type_name -> google.protobuf.Timestamp
-	33, // 19: toshi.workspace.v1.Host.revoked_at:type_name -> google.protobuf.Timestamp
-	1,  // 20: toshi.workspace.v1.HostEgress.source:type_name -> toshi.workspace.v1.EgressSource
-	33, // 21: toshi.workspace.v1.HostEgress.changed_at:type_name -> google.protobuf.Timestamp
-	33, // 22: toshi.workspace.v1.HostVolume.claimed_at:type_name -> google.protobuf.Timestamp
-	33, // 23: toshi.workspace.v1.HostAlert.raised_at:type_name -> google.protobuf.Timestamp
-	33, // 24: toshi.workspace.v1.HostAlert.since:type_name -> google.protobuf.Timestamp
-	29, // 25: toshi.workspace.v1.HostAlert.reasons:type_name -> toshi.workspace.v1.HostAlert.ReasonsEntry
-	30, // 26: toshi.workspace.v1.CloudHost.instance_types:type_name -> toshi.workspace.v1.CloudHost.InstanceTypesEntry
-	33, // 27: toshi.workspace.v1.CloudHost.created_at:type_name -> google.protobuf.Timestamp
-	3,  // 28: toshi.workspace.v1.CloudHostCheck.status:type_name -> toshi.workspace.v1.CloudHostCheckStatus
-	4,  // 29: toshi.workspace.v1.HostService.ListHosts:input_type -> toshi.workspace.v1.ListHostsRequest
-	6,  // 30: toshi.workspace.v1.HostService.ListHostStorage:input_type -> toshi.workspace.v1.ListHostStorageRequest
-	8,  // 31: toshi.workspace.v1.HostService.ListHostAlerts:input_type -> toshi.workspace.v1.ListHostAlertsRequest
-	10, // 32: toshi.workspace.v1.HostService.SetHostState:input_type -> toshi.workspace.v1.SetHostStateRequest
-	12, // 33: toshi.workspace.v1.HostService.RetireHost:input_type -> toshi.workspace.v1.RetireHostRequest
-	14, // 34: toshi.workspace.v1.HostService.CreateCloudHost:input_type -> toshi.workspace.v1.CreateCloudHostRequest
-	16, // 35: toshi.workspace.v1.HostService.CheckCloudHost:input_type -> toshi.workspace.v1.CheckCloudHostRequest
-	18, // 36: toshi.workspace.v1.HostService.CreateEnrollmentToken:input_type -> toshi.workspace.v1.CreateEnrollmentTokenRequest
-	5,  // 37: toshi.workspace.v1.HostService.ListHosts:output_type -> toshi.workspace.v1.ListHostsResponse
-	7,  // 38: toshi.workspace.v1.HostService.ListHostStorage:output_type -> toshi.workspace.v1.ListHostStorageResponse
-	9,  // 39: toshi.workspace.v1.HostService.ListHostAlerts:output_type -> toshi.workspace.v1.ListHostAlertsResponse
-	11, // 40: toshi.workspace.v1.HostService.SetHostState:output_type -> toshi.workspace.v1.SetHostStateResponse
-	13, // 41: toshi.workspace.v1.HostService.RetireHost:output_type -> toshi.workspace.v1.RetireHostResponse
-	15, // 42: toshi.workspace.v1.HostService.CreateCloudHost:output_type -> toshi.workspace.v1.CreateCloudHostResponse
-	17, // 43: toshi.workspace.v1.HostService.CheckCloudHost:output_type -> toshi.workspace.v1.CheckCloudHostResponse
-	19, // 44: toshi.workspace.v1.HostService.CreateEnrollmentToken:output_type -> toshi.workspace.v1.CreateEnrollmentTokenResponse
-	37, // [37:45] is the sub-list for method output_type
-	29, // [29:37] is the sub-list for method input_type
-	29, // [29:29] is the sub-list for extension type_name
-	29, // [29:29] is the sub-list for extension extendee
-	0,  // [0:29] is the sub-list for field type_name
+	34, // 18: toshi.workspace.v1.Host.heartbeat_refused_at:type_name -> google.protobuf.Timestamp
+	34, // 19: toshi.workspace.v1.Host.revoked_at:type_name -> google.protobuf.Timestamp
+	21, // 20: toshi.workspace.v1.Host.kept_vms:type_name -> toshi.workspace.v1.KeptVM
+	34, // 21: toshi.workspace.v1.KeptVM.stopped_at:type_name -> google.protobuf.Timestamp
+	1,  // 22: toshi.workspace.v1.HostEgress.source:type_name -> toshi.workspace.v1.EgressSource
+	34, // 23: toshi.workspace.v1.HostEgress.changed_at:type_name -> google.protobuf.Timestamp
+	34, // 24: toshi.workspace.v1.HostVolume.claimed_at:type_name -> google.protobuf.Timestamp
+	34, // 25: toshi.workspace.v1.HostAlert.raised_at:type_name -> google.protobuf.Timestamp
+	34, // 26: toshi.workspace.v1.HostAlert.since:type_name -> google.protobuf.Timestamp
+	30, // 27: toshi.workspace.v1.HostAlert.reasons:type_name -> toshi.workspace.v1.HostAlert.ReasonsEntry
+	31, // 28: toshi.workspace.v1.CloudHost.instance_types:type_name -> toshi.workspace.v1.CloudHost.InstanceTypesEntry
+	34, // 29: toshi.workspace.v1.CloudHost.created_at:type_name -> google.protobuf.Timestamp
+	3,  // 30: toshi.workspace.v1.CloudHostCheck.status:type_name -> toshi.workspace.v1.CloudHostCheckStatus
+	4,  // 31: toshi.workspace.v1.HostService.ListHosts:input_type -> toshi.workspace.v1.ListHostsRequest
+	6,  // 32: toshi.workspace.v1.HostService.ListHostStorage:input_type -> toshi.workspace.v1.ListHostStorageRequest
+	8,  // 33: toshi.workspace.v1.HostService.ListHostAlerts:input_type -> toshi.workspace.v1.ListHostAlertsRequest
+	10, // 34: toshi.workspace.v1.HostService.SetHostState:input_type -> toshi.workspace.v1.SetHostStateRequest
+	12, // 35: toshi.workspace.v1.HostService.RetireHost:input_type -> toshi.workspace.v1.RetireHostRequest
+	14, // 36: toshi.workspace.v1.HostService.CreateCloudHost:input_type -> toshi.workspace.v1.CreateCloudHostRequest
+	16, // 37: toshi.workspace.v1.HostService.CheckCloudHost:input_type -> toshi.workspace.v1.CheckCloudHostRequest
+	18, // 38: toshi.workspace.v1.HostService.CreateEnrollmentToken:input_type -> toshi.workspace.v1.CreateEnrollmentTokenRequest
+	5,  // 39: toshi.workspace.v1.HostService.ListHosts:output_type -> toshi.workspace.v1.ListHostsResponse
+	7,  // 40: toshi.workspace.v1.HostService.ListHostStorage:output_type -> toshi.workspace.v1.ListHostStorageResponse
+	9,  // 41: toshi.workspace.v1.HostService.ListHostAlerts:output_type -> toshi.workspace.v1.ListHostAlertsResponse
+	11, // 42: toshi.workspace.v1.HostService.SetHostState:output_type -> toshi.workspace.v1.SetHostStateResponse
+	13, // 43: toshi.workspace.v1.HostService.RetireHost:output_type -> toshi.workspace.v1.RetireHostResponse
+	15, // 44: toshi.workspace.v1.HostService.CreateCloudHost:output_type -> toshi.workspace.v1.CreateCloudHostResponse
+	17, // 45: toshi.workspace.v1.HostService.CheckCloudHost:output_type -> toshi.workspace.v1.CheckCloudHostResponse
+	19, // 46: toshi.workspace.v1.HostService.CreateEnrollmentToken:output_type -> toshi.workspace.v1.CreateEnrollmentTokenResponse
+	39, // [39:47] is the sub-list for method output_type
+	31, // [31:39] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_hosts_proto_init() }
@@ -2498,7 +2646,7 @@ func file_toshi_workspace_v1_hosts_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_hosts_proto_rawDesc), len(file_toshi_workspace_v1_hosts_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   27,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

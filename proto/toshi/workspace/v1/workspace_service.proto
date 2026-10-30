@@ -5,6 +5,7 @@ package toshi.workspace.v1;
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
+import "toshi/workspace/v1/discovery.proto";
 import "toshi/workspace/v1/hosts.proto";
 import "toshi/workspace/v1/roles.proto";
 
@@ -523,6 +524,10 @@ message Workspace {
   // plan's keep_vm.max, or the operator's override. 0 means keep_vm is
   // refused.
   int32 keep_vm_max_effective = 36;
+  // Where keep_vm_max_effective comes from: the operator's override for the
+  // workspace, its plan's keep_vm.max, or the default, 0, when the plan sets
+  // none.
+  FeatureSource keep_vm_max_source = 41;
   // The workspace's kept VMs, and how many of them have been stopped for
   // over 30 days.
   int32 keep_vm_count = 37;

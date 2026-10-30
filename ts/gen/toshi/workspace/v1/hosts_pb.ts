@@ -15,7 +15,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/hosts.proto.
  */
 export const file_toshi_workspace_v1_hosts: GenFile = /*@__PURE__*/
-  fileDesc("Ch50b3NoaS93b3Jrc3BhY2UvdjEvaG9zdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSKBAQoQTGlzdEhvc3RzUmVxdWVzdBItCgZzdGF0ZXMYASADKA4yHS50b3NoaS53b3Jrc3BhY2UudjEuSG9zdFN0YXRlEhcKD2V4Y2x1ZGVfcmV2b2tlZBgCIAEoCBIRCglwYWdlX3NpemUYAyABKAUSEgoKcGFnZV90b2tlbhgEIAEoCSKMAQoRTGlzdEhvc3RzUmVzcG9uc2USJwoFaG9zdHMYASADKAsyGC50b3NoaS53b3Jrc3BhY2UudjEuSG9zdBI1ChJsb25nX29mZmxpbmVfYWZ0ZXIYAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SFwoPbmV4dF9wYWdlX3Rva2VuGAMgASgJIlAKFkxpc3RIb3N0U3RvcmFnZVJlcXVlc3QSDwoHaG9zdF9pZBgBIAEoCRIRCglwYWdlX3NpemUYAiABKAUSEgoKcGFnZV90b2tlbhgDIAEoCSJjChdMaXN0SG9zdFN0b3JhZ2VSZXNwb25zZRIvCgd2b2x1bWVzGAEgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkhvc3RWb2x1bWUSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIj4KFUxpc3RIb3N0QWxlcnRzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJgChZMaXN0SG9zdEFsZXJ0c1Jlc3BvbnNlEi0KBmFsZXJ0cxgBIAMoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0QWxlcnQSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIk8KE1NldEhvc3RTdGF0ZVJlcXVlc3QSCgoCaWQYASABKAkSLAoFc3RhdGUYAiABKA4yHS50b3NoaS53b3Jrc3BhY2UudjEuSG9zdFN0YXRlIj4KFFNldEhvc3RTdGF0ZVJlc3BvbnNlEiYKBGhvc3QYASABKAsyGC50b3NoaS53b3Jrc3BhY2UudjEuSG9zdCIfChFSZXRpcmVIb3N0UmVxdWVzdBIKCgJpZBgBIAEoCSIUChJSZXRpcmVIb3N0UmVzcG9uc2Ui8QMKFkNyZWF0ZUNsb3VkSG9zdFJlcXVlc3QSDAoEbmFtZRgBIAEoCRINCgVjbG91ZBgCIAEoCRIOCgZyZWdpb24YAyABKAkSEAoIcm9sZV9hcm4YBCABKAkSDQoFaW1hZ2UYBSABKAkSEQoJc3VibmV0X2lkGAYgASgJEhoKEnNlY3VyaXR5X2dyb3VwX2lkcxgHIAMoCRJVCg5pbnN0YW5jZV90eXBlcxgIIAMoCzI9LnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVDbG91ZEhvc3RSZXF1ZXN0Lkluc3RhbmNlVHlwZXNFbnRyeRIRCgltYXhfdmNwdXMYCSABKAUSDAoEc3BvdBgKIAEoCBIVCg1tYXhfaW5zdGFuY2VzGAsgASgFEiQKHG1heF9pbnN0YW5jZV9taW51dGVzX3Blcl9kYXkYDCABKAUSEgoKZWdyZXNzX2lwcxgNIAMoCRITCgtub19vdmVyZmxvdxgOIAEoCBIPCgdwcm9qZWN0GA8gASgJEgwKBHpvbmUYECABKAkSFwoPc2VydmljZV9hY2NvdW50GBEgASgJEg4KBmVncmVzcxgSIAEoCRo0ChJJbnN0YW5jZVR5cGVzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASK3AQoXQ3JlYXRlQ2xvdWRIb3N0UmVzcG9uc2USJgoEaG9zdBgBIAEoCzIYLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0EhMKC2V4dGVybmFsX2lkGAIgASgJEhUKDXByaW5jaXBhbF9hcm4YAyABKAkSMQoKY2xvdWRfaG9zdBgEIAEoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5DbG91ZEhvc3QSFQoNZ2NwX3ByaW5jaXBhbBgFIAEoCSIoChVDaGVja0Nsb3VkSG9zdFJlcXVlc3QSDwoHaG9zdF9pZBgBIAEoCSJMChZDaGVja0Nsb3VkSG9zdFJlc3BvbnNlEjIKBmNoZWNrcxgBIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5DbG91ZEhvc3RDaGVjayIwChxDcmVhdGVFbnJvbGxtZW50VG9rZW5SZXF1ZXN0EhAKCG92ZXJmbG93GAEgASgIIlgKHUNyZWF0ZUVucm9sbG1lbnRUb2tlblJlc3BvbnNlEigKBXRva2VuGAEgASgLMhkudG9zaGkud29ya3NwYWNlLnYxLlRva2VuEg0KBXZhbHVlGAIgASgJIr0GCgRIb3N0EgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSCgoCb3MYAyADKAkSDAoEY3B1cxgEIAEoBRISCgptZW1vcnlfbWliGAUgASgFEjQKBmxhYmVscxgGIAMoCzIkLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0LkxhYmVsc0VudHJ5EiwKBXN0YXRlGAcgASgOMh0udG9zaGkud29ya3NwYWNlLnYxLkhvc3RTdGF0ZRIwCgxsYXN0X3NlZW5fYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhcKD2ZyZWVfbWVtb3J5X21pYhgJIAEoAxI0CgxoZWxkX3JlZmlsbHMYCiADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuSGVsZFJlZmlsbBIQCghzdG9wcGluZxgLIAEoCBINCgVjbG91ZBgMIAEoCRIQCghvdmVyZmxvdxgNIAEoCBIuCgZlZ3Jlc3MYDiABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuSG9zdEVncmVzcxIVCg1hZ2VudF92ZXJzaW9uGA8gASgJEkQKFGFnZW50X3ZlcnNpb25fc3RhdHVzGBAgASgOMiYudG9zaGkud29ya3NwYWNlLnYxLkFnZW50VmVyc2lvblN0YXR1cxIaChJhZ2VudF92ZXJzaW9uX3NrZXcYESABKAkSFAoMbG9uZ19vZmZsaW5lGBIgASgIEhkKEWhlYXJ0YmVhdF9yZWZ1c2FsGBMgASgJEjgKFGhlYXJ0YmVhdF9yZWZ1c2VkX2F0GBQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIMCgR0aWVyGBUgASgJEi4KCnJldm9rZWRfYXQYFiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhgKEG1lbW9yeV9saW1pdF9taWIYFyABKAMSGwoTbWVtb3J5X2xpbWl0X3NvdXJjZRgYIAEoCRIdChVhZ2VudF92ZXJzaW9uX21pbmltdW0YGSABKAkaLQoLTGFiZWxzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASIqCgpIZWxkUmVmaWxsEgwKBHNpemUYASABKAkSDgoGcmVhc29uGAIgASgJInsKCkhvc3RFZ3Jlc3MSCwoDaXBzGAEgAygJEjAKBnNvdXJjZRgCIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5FZ3Jlc3NTb3VyY2USLgoKY2hhbmdlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi3QEKCkhvc3RWb2x1bWUSEQoJdm9sdW1lX2lkGAEgASgJEg8KB3Byb2plY3QYAiABKAkSEgoKcHJvamVjdF9pZBgDIAEoCRIMCgRuYW1lGAQgASgJEgwKBG1vZGUYBSABKAkSFgoOc2l6ZV9jYXBfYnl0ZXMYBiABKAMSEQoJd2FybV9jb3B5GAcgASgIEhAKCGNsYWltX2lkGAggASgJEg4KBmpvYl9pZBgJIAEoCRIuCgpjbGFpbWVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKUAgoJSG9zdEFsZXJ0EgwKBGtpbmQYASABKAkSLQoJcmFpc2VkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIpCgVzaW5jZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFY291bnQYBCABKAMSOwoHcmVhc29ucxgFIAMoCzIqLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0QWxlcnQuUmVhc29uc0VudHJ5EhIKCnRvcF9yZWFzb24YBiABKAkSDwoHbWVzc2FnZRgHIAEoCRouCgxSZWFzb25zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgDOgI4ASL2AwoJQ2xvdWRIb3N0Eg8KB2hvc3RfaWQYASABKAkSDQoFY2xvdWQYAiABKAkSDgoGcmVnaW9uGAMgASgJEhAKCHJvbGVfYXJuGAQgASgJEhMKC2V4dGVybmFsX2lkGAUgASgJEg0KBWltYWdlGAYgASgJEhEKCXN1Ym5ldF9pZBgHIAEoCRIaChJzZWN1cml0eV9ncm91cF9pZHMYCCADKAkSSAoOaW5zdGFuY2VfdHlwZXMYCSADKAsyMC50b3NoaS53b3Jrc3BhY2UudjEuQ2xvdWRIb3N0Lkluc3RhbmNlVHlwZXNFbnRyeRIRCgltYXhfdmNwdXMYCiABKAUSLgoKY3JlYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDAoEc3BvdBgMIAEoCBIVCg1tYXhfaW5zdGFuY2VzGA0gASgFEiQKHG1heF9pbnN0YW5jZV9taW51dGVzX3Blcl9kYXkYDiABKAUSDwoHcHJvamVjdBgPIAEoCRIMCgR6b25lGBAgASgJEhcKD3NlcnZpY2VfYWNjb3VudBgRIAEoCRIOCgZlZ3Jlc3MYEiABKAkaNAoSSW5zdGFuY2VUeXBlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEiaAoOQ2xvdWRIb3N0Q2hlY2sSDAoEbmFtZRgBIAEoCRI4CgZzdGF0dXMYAiABKA4yKC50b3NoaS53b3Jrc3BhY2UudjEuQ2xvdWRIb3N0Q2hlY2tTdGF0dXMSDgoGZGV0YWlsGAMgASgJKm8KCUhvc3RTdGF0ZRIaChZIT1NUX1NUQVRFX1VOU1BFQ0lGSUVEEAASFQoRSE9TVF9TVEFURV9PTkxJTkUQARIXChNIT1NUX1NUQVRFX0RSQUlOSU5HEAISFgoSSE9TVF9TVEFURV9PRkZMSU5FEAMqnwEKDEVncmVzc1NvdXJjZRIdChlFR1JFU1NfU09VUkNFX1VOU1BFQ0lGSUVEEAASHAoYRUdSRVNTX1NPVVJDRV9DT05GSUdVUkVEEAESHAoYRUdSRVNTX1NPVVJDRV9ESVNDT1ZFUkVEEAISGQoVRUdSRVNTX1NPVVJDRV9VTktOT1dOEAMSGQoVRUdSRVNTX1NPVVJDRV9QRVJfSk9CEAQqwAEKEkFnZW50VmVyc2lvblN0YXR1cxIkCiBBR0VOVF9WRVJTSU9OX1NUQVRVU19VTlNQRUNJRklFRBAAEiAKHEFHRU5UX1ZFUlNJT05fU1RBVFVTX1VOS05PV04QARIbChdBR0VOVF9WRVJTSU9OX1NUQVRVU19PSxACEh0KGUFHRU5UX1ZFUlNJT05fU1RBVFVTX1NLRVcQAxImCiJBR0VOVF9WRVJTSU9OX1NUQVRVU19CRUxPV19NSU5JTVVNEAQqyAEKFENsb3VkSG9zdENoZWNrU3RhdHVzEicKI0NMT1VEX0hPU1RfQ0hFQ0tfU1RBVFVTX1VOU1BFQ0lGSUVEEAASHgoaQ0xPVURfSE9TVF9DSEVDS19TVEFUVVNfT0sQARIgChxDTE9VRF9IT1NUX0NIRUNLX1NUQVRVU19XQVJOEAISIAocQ0xPVURfSE9TVF9DSEVDS19TVEFUVVNfRkFJTBADEiMKH0NMT1VEX0hPU1RfQ0hFQ0tfU1RBVFVTX1NLSVBQRUQQBDLLCAoLSG9zdFNlcnZpY2USaAoJTGlzdEhvc3RzEiQudG9zaGkud29ya3NwYWNlLnYxLkxpc3RIb3N0c1JlcXVlc3QaJS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEhvc3RzUmVzcG9uc2UiDsLzGApob3N0cy5yZWFkEnoKD0xpc3RIb3N0U3RvcmFnZRIqLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SG9zdFN0b3JhZ2VSZXF1ZXN0GisudG9zaGkud29ya3NwYWNlLnYxLkxpc3RIb3N0U3RvcmFnZVJlc3BvbnNlIg7C8xgKaG9zdHMucmVhZBJ3Cg5MaXN0SG9zdEFsZXJ0cxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SG9zdEFsZXJ0c1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEhvc3RBbGVydHNSZXNwb25zZSIOwvMYCmhvc3RzLnJlYWQShgEKDFNldEhvc3RTdGF0ZRInLnRvc2hpLndvcmtzcGFjZS52MS5TZXRIb3N0U3RhdGVSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLlNldEhvc3RTdGF0ZVJlc3BvbnNlIiPC8xgLaG9zdHMud3JpdGXS8xgQCg5ob3N0LnN0YXRlX3NldBJsCgpSZXRpcmVIb3N0EiUudG9zaGkud29ya3NwYWNlLnYxLlJldGlyZUhvc3RSZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLlJldGlyZUhvc3RSZXNwb25zZSIPwvMYC2hvc3RzLndyaXRlErUBCg9DcmVhdGVDbG91ZEhvc3QSKi50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQ2xvdWRIb3N0UmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVDbG91ZEhvc3RSZXNwb25zZSJJwvMYC2hvc3RzLndyaXRlyvMYCXdvcmtzcGFjZdLzGCkKEGNsb3VkX2hvc3QuYWRkZWQSFWhvc3Q6cmVzcG9uc2UuaG9zdC5pZBKKAQoOQ2hlY2tDbG91ZEhvc3QSKS50b3NoaS53b3Jrc3BhY2UudjEuQ2hlY2tDbG91ZEhvc3RSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLkNoZWNrQ2xvdWRIb3N0UmVzcG9uc2UiIcLzGAtob3N0cy53cml0ZdLzGA4SDGhvc3Q6aG9zdF9pZBKgAQoVQ3JlYXRlRW5yb2xsbWVudFRva2VuEjAudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUVucm9sbG1lbnRUb2tlblJlcXVlc3QaMS50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlRW5yb2xsbWVudFRva2VuUmVzcG9uc2UiIsLzGAtob3N0cy53cml0ZdLzGA8KDXRva2VuLmNyZWF0ZWRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_tokens]);
+  fileDesc("Ch50b3NoaS93b3Jrc3BhY2UvdjEvaG9zdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSKBAQoQTGlzdEhvc3RzUmVxdWVzdBItCgZzdGF0ZXMYASADKA4yHS50b3NoaS53b3Jrc3BhY2UudjEuSG9zdFN0YXRlEhcKD2V4Y2x1ZGVfcmV2b2tlZBgCIAEoCBIRCglwYWdlX3NpemUYAyABKAUSEgoKcGFnZV90b2tlbhgEIAEoCSKMAQoRTGlzdEhvc3RzUmVzcG9uc2USJwoFaG9zdHMYASADKAsyGC50b3NoaS53b3Jrc3BhY2UudjEuSG9zdBI1ChJsb25nX29mZmxpbmVfYWZ0ZXIYAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SFwoPbmV4dF9wYWdlX3Rva2VuGAMgASgJIlAKFkxpc3RIb3N0U3RvcmFnZVJlcXVlc3QSDwoHaG9zdF9pZBgBIAEoCRIRCglwYWdlX3NpemUYAiABKAUSEgoKcGFnZV90b2tlbhgDIAEoCSJjChdMaXN0SG9zdFN0b3JhZ2VSZXNwb25zZRIvCgd2b2x1bWVzGAEgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkhvc3RWb2x1bWUSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIj4KFUxpc3RIb3N0QWxlcnRzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJgChZMaXN0SG9zdEFsZXJ0c1Jlc3BvbnNlEi0KBmFsZXJ0cxgBIAMoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0QWxlcnQSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIk8KE1NldEhvc3RTdGF0ZVJlcXVlc3QSCgoCaWQYASABKAkSLAoFc3RhdGUYAiABKA4yHS50b3NoaS53b3Jrc3BhY2UudjEuSG9zdFN0YXRlIj4KFFNldEhvc3RTdGF0ZVJlc3BvbnNlEiYKBGhvc3QYASABKAsyGC50b3NoaS53b3Jrc3BhY2UudjEuSG9zdCIfChFSZXRpcmVIb3N0UmVxdWVzdBIKCgJpZBgBIAEoCSIUChJSZXRpcmVIb3N0UmVzcG9uc2Ui8QMKFkNyZWF0ZUNsb3VkSG9zdFJlcXVlc3QSDAoEbmFtZRgBIAEoCRINCgVjbG91ZBgCIAEoCRIOCgZyZWdpb24YAyABKAkSEAoIcm9sZV9hcm4YBCABKAkSDQoFaW1hZ2UYBSABKAkSEQoJc3VibmV0X2lkGAYgASgJEhoKEnNlY3VyaXR5X2dyb3VwX2lkcxgHIAMoCRJVCg5pbnN0YW5jZV90eXBlcxgIIAMoCzI9LnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVDbG91ZEhvc3RSZXF1ZXN0Lkluc3RhbmNlVHlwZXNFbnRyeRIRCgltYXhfdmNwdXMYCSABKAUSDAoEc3BvdBgKIAEoCBIVCg1tYXhfaW5zdGFuY2VzGAsgASgFEiQKHG1heF9pbnN0YW5jZV9taW51dGVzX3Blcl9kYXkYDCABKAUSEgoKZWdyZXNzX2lwcxgNIAMoCRITCgtub19vdmVyZmxvdxgOIAEoCBIPCgdwcm9qZWN0GA8gASgJEgwKBHpvbmUYECABKAkSFwoPc2VydmljZV9hY2NvdW50GBEgASgJEg4KBmVncmVzcxgSIAEoCRo0ChJJbnN0YW5jZVR5cGVzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASK3AQoXQ3JlYXRlQ2xvdWRIb3N0UmVzcG9uc2USJgoEaG9zdBgBIAEoCzIYLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0EhMKC2V4dGVybmFsX2lkGAIgASgJEhUKDXByaW5jaXBhbF9hcm4YAyABKAkSMQoKY2xvdWRfaG9zdBgEIAEoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5DbG91ZEhvc3QSFQoNZ2NwX3ByaW5jaXBhbBgFIAEoCSIoChVDaGVja0Nsb3VkSG9zdFJlcXVlc3QSDwoHaG9zdF9pZBgBIAEoCSJMChZDaGVja0Nsb3VkSG9zdFJlc3BvbnNlEjIKBmNoZWNrcxgBIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5DbG91ZEhvc3RDaGVjayIwChxDcmVhdGVFbnJvbGxtZW50VG9rZW5SZXF1ZXN0EhAKCG92ZXJmbG93GAEgASgIIlgKHUNyZWF0ZUVucm9sbG1lbnRUb2tlblJlc3BvbnNlEigKBXRva2VuGAEgASgLMhkudG9zaGkud29ya3NwYWNlLnYxLlRva2VuEg0KBXZhbHVlGAIgASgJIq4HCgRIb3N0EgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSCgoCb3MYAyADKAkSDAoEY3B1cxgEIAEoBRISCgptZW1vcnlfbWliGAUgASgFEjQKBmxhYmVscxgGIAMoCzIkLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0LkxhYmVsc0VudHJ5EiwKBXN0YXRlGAcgASgOMh0udG9zaGkud29ya3NwYWNlLnYxLkhvc3RTdGF0ZRIwCgxsYXN0X3NlZW5fYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhcKD2ZyZWVfbWVtb3J5X21pYhgJIAEoAxI0CgxoZWxkX3JlZmlsbHMYCiADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuSGVsZFJlZmlsbBIQCghzdG9wcGluZxgLIAEoCBINCgVjbG91ZBgMIAEoCRIQCghvdmVyZmxvdxgNIAEoCBIuCgZlZ3Jlc3MYDiABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuSG9zdEVncmVzcxIVCg1hZ2VudF92ZXJzaW9uGA8gASgJEkQKFGFnZW50X3ZlcnNpb25fc3RhdHVzGBAgASgOMiYudG9zaGkud29ya3NwYWNlLnYxLkFnZW50VmVyc2lvblN0YXR1cxIaChJhZ2VudF92ZXJzaW9uX3NrZXcYESABKAkSFAoMbG9uZ19vZmZsaW5lGBIgASgIEhkKEWhlYXJ0YmVhdF9yZWZ1c2FsGBMgASgJEjgKFGhlYXJ0YmVhdF9yZWZ1c2VkX2F0GBQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIMCgR0aWVyGBUgASgJEi4KCnJldm9rZWRfYXQYFiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhgKEG1lbW9yeV9saW1pdF9taWIYFyABKAMSGwoTbWVtb3J5X2xpbWl0X3NvdXJjZRgYIAEoCRIdChVhZ2VudF92ZXJzaW9uX21pbmltdW0YGSABKAkSDwoHa2VlcF92bRgaIAEoCBIsCghrZXB0X3ZtcxgbIAMoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5LZXB0Vk0SFwoPa2VwdF9tZW1vcnlfbWliGBwgASgDEhcKD2tlcHRfZGlza19ieXRlcxgdIAEoAxotCgtMYWJlbHNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpEBCgZLZXB0Vk0SEwoLd29ya2xvYWRfaWQYASABKAkSDAoEa2luZBgCIAEoCRIMCgRmb3JtGAMgASgJEhIKCm1lbW9yeV9taWIYBCABKAMSEgoKZGlza19ieXRlcxgFIAEoAxIuCgpzdG9wcGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCIqCgpIZWxkUmVmaWxsEgwKBHNpemUYASABKAkSDgoGcmVhc29uGAIgASgJInsKCkhvc3RFZ3Jlc3MSCwoDaXBzGAEgAygJEjAKBnNvdXJjZRgCIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5FZ3Jlc3NTb3VyY2USLgoKY2hhbmdlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi3QEKCkhvc3RWb2x1bWUSEQoJdm9sdW1lX2lkGAEgASgJEg8KB3Byb2plY3QYAiABKAkSEgoKcHJvamVjdF9pZBgDIAEoCRIMCgRuYW1lGAQgASgJEgwKBG1vZGUYBSABKAkSFgoOc2l6ZV9jYXBfYnl0ZXMYBiABKAMSEQoJd2FybV9jb3B5GAcgASgIEhAKCGNsYWltX2lkGAggASgJEg4KBmpvYl9pZBgJIAEoCRIuCgpjbGFpbWVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKUAgoJSG9zdEFsZXJ0EgwKBGtpbmQYASABKAkSLQoJcmFpc2VkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIpCgVzaW5jZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFY291bnQYBCABKAMSOwoHcmVhc29ucxgFIAMoCzIqLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0QWxlcnQuUmVhc29uc0VudHJ5EhIKCnRvcF9yZWFzb24YBiABKAkSDwoHbWVzc2FnZRgHIAEoCRouCgxSZWFzb25zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgDOgI4ASL2AwoJQ2xvdWRIb3N0Eg8KB2hvc3RfaWQYASABKAkSDQoFY2xvdWQYAiABKAkSDgoGcmVnaW9uGAMgASgJEhAKCHJvbGVfYXJuGAQgASgJEhMKC2V4dGVybmFsX2lkGAUgASgJEg0KBWltYWdlGAYgASgJEhEKCXN1Ym5ldF9pZBgHIAEoCRIaChJzZWN1cml0eV9ncm91cF9pZHMYCCADKAkSSAoOaW5zdGFuY2VfdHlwZXMYCSADKAsyMC50b3NoaS53b3Jrc3BhY2UudjEuQ2xvdWRIb3N0Lkluc3RhbmNlVHlwZXNFbnRyeRIRCgltYXhfdmNwdXMYCiABKAUSLgoKY3JlYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDAoEc3BvdBgMIAEoCBIVCg1tYXhfaW5zdGFuY2VzGA0gASgFEiQKHG1heF9pbnN0YW5jZV9taW51dGVzX3Blcl9kYXkYDiABKAUSDwoHcHJvamVjdBgPIAEoCRIMCgR6b25lGBAgASgJEhcKD3NlcnZpY2VfYWNjb3VudBgRIAEoCRIOCgZlZ3Jlc3MYEiABKAkaNAoSSW5zdGFuY2VUeXBlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEiaAoOQ2xvdWRIb3N0Q2hlY2sSDAoEbmFtZRgBIAEoCRI4CgZzdGF0dXMYAiABKA4yKC50b3NoaS53b3Jrc3BhY2UudjEuQ2xvdWRIb3N0Q2hlY2tTdGF0dXMSDgoGZGV0YWlsGAMgASgJKm8KCUhvc3RTdGF0ZRIaChZIT1NUX1NUQVRFX1VOU1BFQ0lGSUVEEAASFQoRSE9TVF9TVEFURV9PTkxJTkUQARIXChNIT1NUX1NUQVRFX0RSQUlOSU5HEAISFgoSSE9TVF9TVEFURV9PRkZMSU5FEAMqnwEKDEVncmVzc1NvdXJjZRIdChlFR1JFU1NfU09VUkNFX1VOU1BFQ0lGSUVEEAASHAoYRUdSRVNTX1NPVVJDRV9DT05GSUdVUkVEEAESHAoYRUdSRVNTX1NPVVJDRV9ESVNDT1ZFUkVEEAISGQoVRUdSRVNTX1NPVVJDRV9VTktOT1dOEAMSGQoVRUdSRVNTX1NPVVJDRV9QRVJfSk9CEAQqwAEKEkFnZW50VmVyc2lvblN0YXR1cxIkCiBBR0VOVF9WRVJTSU9OX1NUQVRVU19VTlNQRUNJRklFRBAAEiAKHEFHRU5UX1ZFUlNJT05fU1RBVFVTX1VOS05PV04QARIbChdBR0VOVF9WRVJTSU9OX1NUQVRVU19PSxACEh0KGUFHRU5UX1ZFUlNJT05fU1RBVFVTX1NLRVcQAxImCiJBR0VOVF9WRVJTSU9OX1NUQVRVU19CRUxPV19NSU5JTVVNEAQqyAEKFENsb3VkSG9zdENoZWNrU3RhdHVzEicKI0NMT1VEX0hPU1RfQ0hFQ0tfU1RBVFVTX1VOU1BFQ0lGSUVEEAASHgoaQ0xPVURfSE9TVF9DSEVDS19TVEFUVVNfT0sQARIgChxDTE9VRF9IT1NUX0NIRUNLX1NUQVRVU19XQVJOEAISIAocQ0xPVURfSE9TVF9DSEVDS19TVEFUVVNfRkFJTBADEiMKH0NMT1VEX0hPU1RfQ0hFQ0tfU1RBVFVTX1NLSVBQRUQQBDLLCAoLSG9zdFNlcnZpY2USaAoJTGlzdEhvc3RzEiQudG9zaGkud29ya3NwYWNlLnYxLkxpc3RIb3N0c1JlcXVlc3QaJS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEhvc3RzUmVzcG9uc2UiDsLzGApob3N0cy5yZWFkEnoKD0xpc3RIb3N0U3RvcmFnZRIqLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SG9zdFN0b3JhZ2VSZXF1ZXN0GisudG9zaGkud29ya3NwYWNlLnYxLkxpc3RIb3N0U3RvcmFnZVJlc3BvbnNlIg7C8xgKaG9zdHMucmVhZBJ3Cg5MaXN0SG9zdEFsZXJ0cxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SG9zdEFsZXJ0c1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEhvc3RBbGVydHNSZXNwb25zZSIOwvMYCmhvc3RzLnJlYWQShgEKDFNldEhvc3RTdGF0ZRInLnRvc2hpLndvcmtzcGFjZS52MS5TZXRIb3N0U3RhdGVSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLlNldEhvc3RTdGF0ZVJlc3BvbnNlIiPC8xgLaG9zdHMud3JpdGXS8xgQCg5ob3N0LnN0YXRlX3NldBJsCgpSZXRpcmVIb3N0EiUudG9zaGkud29ya3NwYWNlLnYxLlJldGlyZUhvc3RSZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLlJldGlyZUhvc3RSZXNwb25zZSIPwvMYC2hvc3RzLndyaXRlErUBCg9DcmVhdGVDbG91ZEhvc3QSKi50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQ2xvdWRIb3N0UmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVDbG91ZEhvc3RSZXNwb25zZSJJwvMYC2hvc3RzLndyaXRlyvMYCXdvcmtzcGFjZdLzGCkKEGNsb3VkX2hvc3QuYWRkZWQSFWhvc3Q6cmVzcG9uc2UuaG9zdC5pZBKKAQoOQ2hlY2tDbG91ZEhvc3QSKS50b3NoaS53b3Jrc3BhY2UudjEuQ2hlY2tDbG91ZEhvc3RSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLkNoZWNrQ2xvdWRIb3N0UmVzcG9uc2UiIcLzGAtob3N0cy53cml0ZdLzGA4SDGhvc3Q6aG9zdF9pZBKgAQoVQ3JlYXRlRW5yb2xsbWVudFRva2VuEjAudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUVucm9sbG1lbnRUb2tlblJlcXVlc3QaMS50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlRW5yb2xsbWVudFRva2VuUmVzcG9uc2UiIsLzGAtob3N0cy53cml0ZdLzGA8KDXRva2VuLmNyZWF0ZWRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_tokens]);
 
 /**
  * @generated from message toshi.workspace.v1.ListHostsRequest
@@ -1152,6 +1152,36 @@ export type Host = Message<"toshi.workspace.v1.Host"> & {
    * @generated from field: string agent_version_minimum = 25;
    */
   agentVersionMinimum: string;
+
+  /**
+   * Whether the host's agent keeps VMs, so a workload with keep_vm can run
+   * on it.
+   *
+   * @generated from field: bool keep_vm = 26;
+   */
+  keepVm: boolean;
+
+  /**
+   * The VMs the host keeps for the workspace's workloads with keep_vm,
+   * ordered by workload; another workspace's are left out.
+   *
+   * @generated from field: repeated toshi.workspace.v1.KeptVM kept_vms = 27;
+   */
+  keptVms: KeptVM[];
+
+  /**
+   * The memory those VMs hold, in MiB: only the ones not powered down.
+   *
+   * @generated from field: int64 kept_memory_mib = 28;
+   */
+  keptMemoryMib: bigint;
+
+  /**
+   * The disk those VMs hold, in bytes: all of them.
+   *
+   * @generated from field: int64 kept_disk_bytes = 29;
+   */
+  keptDiskBytes: bigint;
 };
 
 /**
@@ -1341,6 +1371,36 @@ export type HostJson = {
    * @generated from field: string agent_version_minimum = 25;
    */
   agentVersionMinimum?: string;
+
+  /**
+   * Whether the host's agent keeps VMs, so a workload with keep_vm can run
+   * on it.
+   *
+   * @generated from field: bool keep_vm = 26;
+   */
+  keepVm?: boolean;
+
+  /**
+   * The VMs the host keeps for the workspace's workloads with keep_vm,
+   * ordered by workload; another workspace's are left out.
+   *
+   * @generated from field: repeated toshi.workspace.v1.KeptVM kept_vms = 27;
+   */
+  keptVms?: KeptVMJson[];
+
+  /**
+   * The memory those VMs hold, in MiB: only the ones not powered down.
+   *
+   * @generated from field: int64 kept_memory_mib = 28;
+   */
+  keptMemoryMib?: string;
+
+  /**
+   * The disk those VMs hold, in bytes: all of them.
+   *
+   * @generated from field: int64 kept_disk_bytes = 29;
+   */
+  keptDiskBytes?: string;
 };
 
 /**
@@ -1349,6 +1409,109 @@ export type HostJson = {
  */
 export const HostSchema: GenMessage<Host, {jsonType: HostJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_hosts, 16);
+
+/**
+ * KeptVM is a VM a host keeps for one of the workspace's workloads with
+ * keep_vm.
+ *
+ * @generated from message toshi.workspace.v1.KeptVM
+ */
+export type KeptVM = Message<"toshi.workspace.v1.KeptVM"> & {
+  /**
+   * The service or sandbox that keeps it.
+   *
+   * @generated from field: string workload_id = 1;
+   */
+  workloadId: string;
+
+  /**
+   * "service" or "sandbox".
+   *
+   * @generated from field: string kind = 2;
+   */
+  kind: string;
+
+  /**
+   * "running", "paused" or "powered_down".
+   *
+   * @generated from field: string form = 3;
+   */
+  form: string;
+
+  /**
+   * The VM's memory and disk.
+   *
+   * @generated from field: int64 memory_mib = 4;
+   */
+  memoryMib: bigint;
+
+  /**
+   * @generated from field: int64 disk_bytes = 5;
+   */
+  diskBytes: bigint;
+
+  /**
+   * When its workload last stopped or slept; unset while it runs.
+   *
+   * @generated from field: google.protobuf.Timestamp stopped_at = 6;
+   */
+  stoppedAt?: Timestamp | undefined;
+};
+
+/**
+ * KeptVM is a VM a host keeps for one of the workspace's workloads with
+ * keep_vm.
+ *
+ * @generated from message toshi.workspace.v1.KeptVM
+ */
+export type KeptVMJson = {
+  /**
+   * The service or sandbox that keeps it.
+   *
+   * @generated from field: string workload_id = 1;
+   */
+  workloadId?: string;
+
+  /**
+   * "service" or "sandbox".
+   *
+   * @generated from field: string kind = 2;
+   */
+  kind?: string;
+
+  /**
+   * "running", "paused" or "powered_down".
+   *
+   * @generated from field: string form = 3;
+   */
+  form?: string;
+
+  /**
+   * The VM's memory and disk.
+   *
+   * @generated from field: int64 memory_mib = 4;
+   */
+  memoryMib?: string;
+
+  /**
+   * @generated from field: int64 disk_bytes = 5;
+   */
+  diskBytes?: string;
+
+  /**
+   * When its workload last stopped or slept; unset while it runs.
+   *
+   * @generated from field: google.protobuf.Timestamp stopped_at = 6;
+   */
+  stoppedAt?: TimestampJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.KeptVM.
+ * Use `create(KeptVMSchema)` to create a new message.
+ */
+export const KeptVMSchema: GenMessage<KeptVM, {jsonType: KeptVMJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_hosts, 17);
 
 /**
  * HeldRefill is one warm pool whose refill a host holds.
@@ -1393,7 +1556,7 @@ export type HeldRefillJson = {
  * Use `create(HeldRefillSchema)` to create a new message.
  */
 export const HeldRefillSchema: GenMessage<HeldRefill, {jsonType: HeldRefillJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_hosts, 17);
+  messageDesc(file_toshi_workspace_v1_hosts, 18);
 
 /**
  * HostEgress is the public addresses a host's jobs reach the internet from.
@@ -1454,7 +1617,7 @@ export type HostEgressJson = {
  * Use `create(HostEgressSchema)` to create a new message.
  */
 export const HostEgressSchema: GenMessage<HostEgress, {jsonType: HostEgressJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_hosts, 18);
+  messageDesc(file_toshi_workspace_v1_hosts, 19);
 
 /**
  * HostVolume is one volume a host holds.
@@ -1615,7 +1778,7 @@ export type HostVolumeJson = {
  * Use `create(HostVolumeSchema)` to create a new message.
  */
 export const HostVolumeSchema: GenMessage<HostVolume, {jsonType: HostVolumeJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_hosts, 19);
+  messageDesc(file_toshi_workspace_v1_hosts, 20);
 
 /**
  * HostAlert is one active alert of the workspace's hosts.
@@ -1724,7 +1887,7 @@ export type HostAlertJson = {
  * Use `create(HostAlertSchema)` to create a new message.
  */
 export const HostAlertSchema: GenMessage<HostAlert, {jsonType: HostAlertJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_hosts, 20);
+  messageDesc(file_toshi_workspace_v1_hosts, 21);
 
 /**
  * CloudHost is the AWS account behind a workspace-owned host the control plane
@@ -1997,7 +2160,7 @@ export type CloudHostJson = {
  * Use `create(CloudHostSchema)` to create a new message.
  */
 export const CloudHostSchema: GenMessage<CloudHost, {jsonType: CloudHostJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_hosts, 21);
+  messageDesc(file_toshi_workspace_v1_hosts, 22);
 
 /**
  * CloudHostCheck is the outcome of one cloud host check.
@@ -2056,7 +2219,7 @@ export type CloudHostCheckJson = {
  * Use `create(CloudHostCheckSchema)` to create a new message.
  */
 export const CloudHostCheckSchema: GenMessage<CloudHostCheck, {jsonType: CloudHostCheckJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_hosts, 22);
+  messageDesc(file_toshi_workspace_v1_hosts, 23);
 
 /**
  * HostState says whether a host takes new jobs.
