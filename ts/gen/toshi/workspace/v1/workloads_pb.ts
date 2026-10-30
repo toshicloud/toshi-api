@@ -2560,6 +2560,11 @@ export type UpdateServiceRequest = Message<"toshi.workspace.v1.UpdateServiceRequ
   service?: Service | undefined;
 
   /**
+   * The paths managed_by, manifest_digest, manifest_origin and managed_fields
+   * set the management mark and go together: all four or none, and on their
+   * own; managed_by "manifest" needs the digest, an origin and at least one
+   * field path, and an empty managed_by clears all four.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 5;
    */
   updateMask?: FieldMask | undefined;
@@ -2610,6 +2615,11 @@ export type UpdateServiceRequestJson = {
   service?: ServiceJson;
 
   /**
+   * The paths managed_by, manifest_digest, manifest_origin and managed_fields
+   * set the management mark and go together: all four or none, and on their
+   * own; managed_by "manifest" needs the digest, an origin and at least one
+   * field path, and an empty managed_by clears all four.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 5;
    */
   updateMask?: FieldMaskJson;

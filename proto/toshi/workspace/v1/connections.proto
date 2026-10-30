@@ -168,6 +168,20 @@ message Connection {
   // address token. Empty for GITHUB, and when the deployment names no
   // public address.
   string ingress_url = 11;
+  // Who manages this object: "manifest" when the project manifest declares
+  // it, empty when nothing does. A manifest apply sets managed_by,
+  // manifest_digest, manifest_origin and managed_fields together.
+  string managed_by = 12;
+  // The SHA-256 of the manifest file that last set this object, as 64
+  // lowercase hex characters. Empty when managed_by is empty.
+  string manifest_digest = 13;
+  // The fields of this object the manifest declares, as update mask paths.
+  // Empty when managed_by is empty.
+  repeated string managed_fields = 14;
+  // How the manifest came to manage this object: "created" when a manifest
+  // apply created it, "adopted" when an apply took over an object that
+  // already existed. Empty when managed_by is empty.
+  string manifest_origin = 15;
 }
 
 // ConnectionTarget is the URL a WEBHOOK connection's deliveries are posted
@@ -249,6 +263,10 @@ message UpdateConnectionRequest {
   // id names the connection; the fields update_mask names carry the new
   // values.
   Connection connection = 1;
+  // The paths managed_by, manifest_digest, manifest_origin and managed_fields
+  // set the management mark and go together: all four or none, and on their
+  // own; managed_by "manifest" needs the digest, an origin and at least one
+  // field path, and an empty managed_by clears all four.
   google.protobuf.FieldMask update_mask = 2;
 }
 

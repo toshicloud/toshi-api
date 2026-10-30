@@ -2830,7 +2830,11 @@ type UpdateServiceRequest struct {
 	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// Carries the new values of the fields update_mask names.
-	Service    *Service               `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
+	Service *Service `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
+	// The paths managed_by, manifest_digest, manifest_origin and managed_fields
+	// set the management mark and go together: all four or none, and on their
+	// own; managed_by "manifest" needs the digest, an origin and at least one
+	// field path, and an empty managed_by clears all four.
 	UpdateMask *fieldmaskpb.FieldMask `protobuf:"bytes,5,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	RequestKey string                 `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// Lets a deploy to a started service with a state volume start the new

@@ -163,9 +163,23 @@ type Connection struct {
 	// deployment's public address and /ingress/ with the connection's
 	// address token. Empty for GITHUB, and when the deployment names no
 	// public address.
-	IngressUrl    string `protobuf:"bytes,11,opt,name=ingress_url,json=ingressUrl,proto3" json:"ingress_url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	IngressUrl string `protobuf:"bytes,11,opt,name=ingress_url,json=ingressUrl,proto3" json:"ingress_url,omitempty"`
+	// Who manages this object: "manifest" when the project manifest declares
+	// it, empty when nothing does. A manifest apply sets managed_by,
+	// manifest_digest, manifest_origin and managed_fields together.
+	ManagedBy string `protobuf:"bytes,12,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	// The SHA-256 of the manifest file that last set this object, as 64
+	// lowercase hex characters. Empty when managed_by is empty.
+	ManifestDigest string `protobuf:"bytes,13,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	// The fields of this object the manifest declares, as update mask paths.
+	// Empty when managed_by is empty.
+	ManagedFields []string `protobuf:"bytes,14,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	// How the manifest came to manage this object: "created" when a manifest
+	// apply created it, "adopted" when an apply took over an object that
+	// already existed. Empty when managed_by is empty.
+	ManifestOrigin string `protobuf:"bytes,15,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Connection) Reset() {
@@ -264,6 +278,34 @@ func (x *Connection) GetTarget() *ConnectionTarget {
 func (x *Connection) GetIngressUrl() string {
 	if x != nil {
 		return x.IngressUrl
+	}
+	return ""
+}
+
+func (x *Connection) GetManagedBy() string {
+	if x != nil {
+		return x.ManagedBy
+	}
+	return ""
+}
+
+func (x *Connection) GetManifestDigest() string {
+	if x != nil {
+		return x.ManifestDigest
+	}
+	return ""
+}
+
+func (x *Connection) GetManagedFields() []string {
+	if x != nil {
+		return x.ManagedFields
+	}
+	return nil
+}
+
+func (x *Connection) GetManifestOrigin() string {
+	if x != nil {
+		return x.ManifestOrigin
 	}
 	return ""
 }
@@ -879,7 +921,11 @@ type UpdateConnectionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// id names the connection; the fields update_mask names carry the new
 	// values.
-	Connection    *Connection            `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
+	Connection *Connection `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
+	// The paths managed_by, manifest_digest, manifest_origin and managed_fields
+	// set the management mark and go together: all four or none, and on their
+	// own; managed_by "manifest" needs the digest, an origin and at least one
+	// field path, and an empty managed_by clears all four.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1577,7 +1623,7 @@ var File_toshi_workspace_v1_connections_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\n" +
-	"$toshi/workspace/v1/connections.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd9\x03\n" +
+	"$toshi/workspace/v1/connections.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf1\x04\n" +
 	"\n" +
 	"Connection\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
@@ -1592,7 +1638,12 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x06target\x18\n" +
 	" \x01(\v2$.toshi.workspace.v1.ConnectionTargetR\x06target\x12\x1f\n" +
 	"\vingress_url\x18\v \x01(\tR\n" +
-	"ingressUrlJ\x04\b\t\x10\n" +
+	"ingressUrl\x12\x1d\n" +
+	"\n" +
+	"managed_by\x18\f \x01(\tR\tmanagedBy\x12'\n" +
+	"\x0fmanifest_digest\x18\r \x01(\tR\x0emanifestDigest\x12%\n" +
+	"\x0emanaged_fields\x18\x0e \x03(\tR\rmanagedFields\x12'\n" +
+	"\x0fmanifest_origin\x18\x0f \x01(\tR\x0emanifestOriginJ\x04\b\t\x10\n" +
 	"R\x11transform_version\"\x96\x01\n" +
 	"\x10ConnectionTarget\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x16\n" +

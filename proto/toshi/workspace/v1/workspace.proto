@@ -278,6 +278,20 @@ message Service {
   // The live holds on it, soonest expiry first: each keeps it awake until
   // its expires_at unless renewed (HoldService). Empty when none.
   repeated ServiceHold holds = 10;
+  // Who manages this object: "manifest" when the project manifest declares
+  // it, empty when nothing does. A manifest apply sets managed_by,
+  // manifest_digest, manifest_origin and managed_fields together.
+  string managed_by = 11;
+  // The SHA-256 of the manifest file that last set this object, as 64
+  // lowercase hex characters. Empty when managed_by is empty.
+  string manifest_digest = 12;
+  // The fields of this object the manifest declares, as update mask paths.
+  // Empty when managed_by is empty.
+  repeated string managed_fields = 13;
+  // How the manifest came to manage this object: "created" when a manifest
+  // apply created it, "adopted" when an apply took over an object that
+  // already existed. Empty when managed_by is empty.
+  string manifest_origin = 14;
 }
 
 // WorkloadNetwork is the network policy a workload was admitted with: its

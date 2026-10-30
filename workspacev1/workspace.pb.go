@@ -2073,9 +2073,23 @@ type Service struct {
 	Network *WorkloadNetwork `protobuf:"bytes,9,opt,name=network,proto3" json:"network,omitempty"`
 	// The live holds on it, soonest expiry first: each keeps it awake until
 	// its expires_at unless renewed (HoldService). Empty when none.
-	Holds         []*ServiceHold `protobuf:"bytes,10,rep,name=holds,proto3" json:"holds,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Holds []*ServiceHold `protobuf:"bytes,10,rep,name=holds,proto3" json:"holds,omitempty"`
+	// Who manages this object: "manifest" when the project manifest declares
+	// it, empty when nothing does. A manifest apply sets managed_by,
+	// manifest_digest, manifest_origin and managed_fields together.
+	ManagedBy string `protobuf:"bytes,11,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	// The SHA-256 of the manifest file that last set this object, as 64
+	// lowercase hex characters. Empty when managed_by is empty.
+	ManifestDigest string `protobuf:"bytes,12,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	// The fields of this object the manifest declares, as update mask paths.
+	// Empty when managed_by is empty.
+	ManagedFields []string `protobuf:"bytes,13,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	// How the manifest came to manage this object: "created" when a manifest
+	// apply created it, "adopted" when an apply took over an object that
+	// already existed. Empty when managed_by is empty.
+	ManifestOrigin string `protobuf:"bytes,14,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Service) Reset() {
@@ -2176,6 +2190,34 @@ func (x *Service) GetHolds() []*ServiceHold {
 		return x.Holds
 	}
 	return nil
+}
+
+func (x *Service) GetManagedBy() string {
+	if x != nil {
+		return x.ManagedBy
+	}
+	return ""
+}
+
+func (x *Service) GetManifestDigest() string {
+	if x != nil {
+		return x.ManifestDigest
+	}
+	return ""
+}
+
+func (x *Service) GetManagedFields() []string {
+	if x != nil {
+		return x.ManagedFields
+	}
+	return nil
+}
+
+func (x *Service) GetManifestOrigin() string {
+	if x != nil {
+		return x.ManifestOrigin
+	}
+	return ""
 }
 
 // WorkloadNetwork is the network policy a workload was admitted with: its
@@ -12183,7 +12225,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"stopped_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tstoppedAtB\f\n" +
 	"\n" +
-	"_exit_code\"\x88\x04\n" +
+	"_exit_code\"\xa0\x05\n" +
 	"\aService\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x12 \n" +
@@ -12195,7 +12237,12 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\awaiting\x18\b \x03(\v2\x1f.toshi.workspace.v1.AgentPromptR\awaiting\x12=\n" +
 	"\anetwork\x18\t \x01(\v2#.toshi.workspace.v1.WorkloadNetworkR\anetwork\x125\n" +
 	"\x05holds\x18\n" +
-	" \x03(\v2\x1f.toshi.workspace.v1.ServiceHoldR\x05holds\x1a9\n" +
+	" \x03(\v2\x1f.toshi.workspace.v1.ServiceHoldR\x05holds\x12\x1d\n" +
+	"\n" +
+	"managed_by\x18\v \x01(\tR\tmanagedBy\x12'\n" +
+	"\x0fmanifest_digest\x18\f \x01(\tR\x0emanifestDigest\x12%\n" +
+	"\x0emanaged_fields\x18\r \x03(\tR\rmanagedFields\x12'\n" +
+	"\x0fmanifest_origin\x18\x0e \x01(\tR\x0emanifestOrigin\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xdc\x01\n" +

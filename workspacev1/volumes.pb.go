@@ -304,8 +304,22 @@ type Volume struct {
 	// both empty when it is attached to none.
 	AttachedWorkloadKind string `protobuf:"bytes,18,opt,name=attached_workload_kind,json=attachedWorkloadKind,proto3" json:"attached_workload_kind,omitempty"`
 	AttachedEnvironment  string `protobuf:"bytes,19,opt,name=attached_environment,json=attachedEnvironment,proto3" json:"attached_environment,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// Who manages this object: "manifest" when the project manifest declares
+	// it, empty when nothing does. A manifest apply sets managed_by,
+	// manifest_digest, manifest_origin and managed_fields together.
+	ManagedBy string `protobuf:"bytes,20,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	// The SHA-256 of the manifest file that last set this object, as 64
+	// lowercase hex characters. Empty when managed_by is empty.
+	ManifestDigest string `protobuf:"bytes,21,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	// The fields of this object the manifest declares, as update mask paths.
+	// Empty when managed_by is empty.
+	ManagedFields []string `protobuf:"bytes,22,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	// How the manifest came to manage this object: "created" when a manifest
+	// apply created it, "adopted" when an apply took over an object that
+	// already existed. Empty when managed_by is empty.
+	ManifestOrigin string `protobuf:"bytes,23,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Volume) Reset() {
@@ -467,6 +481,34 @@ func (x *Volume) GetAttachedWorkloadKind() string {
 func (x *Volume) GetAttachedEnvironment() string {
 	if x != nil {
 		return x.AttachedEnvironment
+	}
+	return ""
+}
+
+func (x *Volume) GetManagedBy() string {
+	if x != nil {
+		return x.ManagedBy
+	}
+	return ""
+}
+
+func (x *Volume) GetManifestDigest() string {
+	if x != nil {
+		return x.ManifestDigest
+	}
+	return ""
+}
+
+func (x *Volume) GetManagedFields() []string {
+	if x != nil {
+		return x.ManagedFields
+	}
+	return nil
+}
+
+func (x *Volume) GetManifestOrigin() string {
+	if x != nil {
+		return x.ManifestOrigin
 	}
 	return ""
 }
@@ -1234,7 +1276,7 @@ var File_toshi_workspace_v1_volumes_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xc1\a\n" +
+	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd9\b\n" +
 	"\x06Volume\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1257,7 +1299,12 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x06format\x18\x10 \x01(\x0e2 .toshi.workspace.v1.VolumeFormatR\x06format\x12\x18\n" +
 	"\aprofile\x18\x11 \x01(\bR\aprofile\x124\n" +
 	"\x16attached_workload_kind\x18\x12 \x01(\tR\x14attachedWorkloadKind\x121\n" +
-	"\x14attached_environment\x18\x13 \x01(\tR\x13attachedEnvironment\"\xc4\x02\n" +
+	"\x14attached_environment\x18\x13 \x01(\tR\x13attachedEnvironment\x12\x1d\n" +
+	"\n" +
+	"managed_by\x18\x14 \x01(\tR\tmanagedBy\x12'\n" +
+	"\x0fmanifest_digest\x18\x15 \x01(\tR\x0emanifestDigest\x12%\n" +
+	"\x0emanaged_fields\x18\x16 \x03(\tR\rmanagedFields\x12'\n" +
+	"\x0fmanifest_origin\x18\x17 \x01(\tR\x0emanifestOrigin\"\xc4\x02\n" +
 	"\rVolumeVersion\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\x12;\n" +
 	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +

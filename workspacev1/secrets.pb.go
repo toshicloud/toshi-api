@@ -89,11 +89,25 @@ type SecretSet struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// Empty for the shared set.
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared        bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Who manages this object: "manifest" when the project manifest declares
+	// it, empty when nothing does. A manifest apply sets managed_by,
+	// manifest_digest, manifest_origin and managed_fields together.
+	ManagedBy string `protobuf:"bytes,5,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	// The SHA-256 of the manifest file that last set this object, as 64
+	// lowercase hex characters. Empty when managed_by is empty.
+	ManifestDigest string `protobuf:"bytes,6,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	// The fields of this object the manifest declares, as update mask paths.
+	// Empty when managed_by is empty.
+	ManagedFields []string `protobuf:"bytes,7,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	// How the manifest came to manage this object: "created" when a manifest
+	// apply created it, "adopted" when an apply took over an object that
+	// already existed. Empty when managed_by is empty.
+	ManifestOrigin string `protobuf:"bytes,8,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *SecretSet) Reset() {
@@ -152,6 +166,34 @@ func (x *SecretSet) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *SecretSet) GetManagedBy() string {
+	if x != nil {
+		return x.ManagedBy
+	}
+	return ""
+}
+
+func (x *SecretSet) GetManifestDigest() string {
+	if x != nil {
+		return x.ManifestDigest
+	}
+	return ""
+}
+
+func (x *SecretSet) GetManagedFields() []string {
+	if x != nil {
+		return x.ManagedFields
+	}
+	return nil
+}
+
+func (x *SecretSet) GetManifestOrigin() string {
+	if x != nil {
+		return x.ManifestOrigin
+	}
+	return ""
 }
 
 // Secret is a key as anyone may see it: never its value.
@@ -1606,13 +1648,18 @@ var File_toshi_workspace_v1_secrets_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/secrets.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x9a\x01\n" +
+	" toshi/workspace/v1/secrets.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xb2\x02\n" +
 	"\tSecretSet\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x03 \x01(\bR\x06shared\x129\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xce\x01\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"managed_by\x18\x05 \x01(\tR\tmanagedBy\x12'\n" +
+	"\x0fmanifest_digest\x18\x06 \x01(\tR\x0emanifestDigest\x12%\n" +
+	"\x0emanaged_fields\x18\a \x03(\tR\rmanagedFields\x12'\n" +
+	"\x0fmanifest_origin\x18\b \x01(\tR\x0emanifestOrigin\"\xce\x01\n" +
 	"\x06Secret\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\x03R\aversion\x12\x12\n" +
