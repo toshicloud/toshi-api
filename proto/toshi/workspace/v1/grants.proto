@@ -251,6 +251,7 @@ message CreateGrantRequest {
   GrantLevel level = 5;
   // Unset for no expiry.
   google.protobuf.Timestamp expires_at = 6;
+  string request_key = 7;
 }
 
 message CreateGrantResponse {

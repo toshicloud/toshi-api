@@ -142,6 +142,7 @@ message CreateDomainRequest {
   string channel = 4;
   // The domain, in its Unicode or ASCII form.
   string name = 5;
+  string request_key = 6;
 }
 
 message CreateDomainResponse {

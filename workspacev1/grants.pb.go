@@ -761,6 +761,7 @@ type CreateGrantRequest struct {
 	Level GrantLevel `protobuf:"varint,5,opt,name=level,proto3,enum=toshi.workspace.v1.GrantLevel" json:"level,omitempty"`
 	// Unset for no expiry.
 	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	RequestKey    string                 `protobuf:"bytes,7,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -848,6 +849,13 @@ func (x *CreateGrantRequest) GetExpiresAt() *timestamppb.Timestamp {
 		return x.ExpiresAt
 	}
 	return nil
+}
+
+func (x *CreateGrantRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type isCreateGrantRequest_Target interface {
@@ -1628,7 +1636,7 @@ const file_toshi_workspace_v1_grants_proto_rawDesc = "" +
 	"sandbox_id\x18\x01 \x01(\tR\tsandboxId\x12\x18\n" +
 	"\achannel\x18\x02 \x01(\tR\achannel\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
-	"\venvironment\x18\x04 \x01(\tR\venvironment\"\x94\x03\n" +
+	"\venvironment\x18\x04 \x01(\tR\venvironment\"\xb5\x03\n" +
 	"\x12CreateGrantRequest\x12+\n" +
 	"\x11grantee_workspace\x18\x01 \x01(\tR\x10granteeWorkspace\x12N\n" +
 	"\venvironment\x18\x02 \x01(\v2*.toshi.workspace.v1.GrantEnvironmentTargetH\x00R\venvironment\x12B\n" +
@@ -1636,7 +1644,9 @@ const file_toshi_workspace_v1_grants_proto_rawDesc = "" +
 	"\apreview\x18\x04 \x01(\v2&.toshi.workspace.v1.GrantPreviewTargetH\x00R\apreview\x124\n" +
 	"\x05level\x18\x05 \x01(\x0e2\x1e.toshi.workspace.v1.GrantLevelR\x05level\x129\n" +
 	"\n" +
-	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAtB\b\n" +
+	"expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1f\n" +
+	"\vrequest_key\x18\a \x01(\tR\n" +
+	"requestKeyB\b\n" +
 	"\x06target\"F\n" +
 	"\x13CreateGrantResponse\x12/\n" +
 	"\x05grant\x18\x01 \x01(\v2\x19.toshi.workspace.v1.GrantR\x05grant\"!\n" +

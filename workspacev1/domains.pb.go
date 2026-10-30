@@ -324,6 +324,7 @@ type CreateDomainRequest struct {
 	Channel string `protobuf:"bytes,4,opt,name=channel,proto3" json:"channel,omitempty"`
 	// The domain, in its Unicode or ASCII form.
 	Name          string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	RequestKey    string `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -389,6 +390,13 @@ func (x *CreateDomainRequest) GetChannel() string {
 func (x *CreateDomainRequest) GetName() string {
 	if x != nil {
 		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateDomainRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -1021,14 +1029,16 @@ const file_toshi_workspace_v1_domains_proto_rawDesc = "" +
 	"\n" +
 	"last_error\x18\f \x01(\tR\tlastError\x129\n" +
 	"\n" +
-	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9e\x01\n" +
+	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xbf\x01\n" +
 	"\x13CreateDomainRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x18\n" +
 	"\achannel\x18\x04 \x01(\tR\achannel\x12\x12\n" +
-	"\x04name\x18\x05 \x01(\tR\x04name\"J\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12\x1f\n" +
+	"\vrequest_key\x18\x06 \x01(\tR\n" +
+	"requestKey\"J\n" +
 	"\x14CreateDomainResponse\x122\n" +
 	"\x06domain\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.DomainR\x06domain\"^\n" +
 	"\x10GetDomainRequest\x12\x18\n" +
