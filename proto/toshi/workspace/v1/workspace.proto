@@ -1960,7 +1960,8 @@ message ServiceRun {
   ServiceRunState state = 3;
   // Why a queued run waits, for example "service_quota" past the plan's
   // shared services, "no_own_capacity" while the workspace's own host is
-  // full, or "volume_claimed" while the run before it still holds the
+  // full, "limits_unavailable" while its workspace's limits could not be
+  // read, or "volume_claimed" while the run before it still holds the
   // service's state volume; empty when it does not wait.
   string held = 4;
   google.protobuf.Timestamp queued_at = 5;

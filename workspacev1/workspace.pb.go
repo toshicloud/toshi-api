@@ -10927,7 +10927,8 @@ type ServiceRun struct {
 	State    ServiceRunState `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.ServiceRunState" json:"state,omitempty"`
 	// Why a queued run waits, for example "service_quota" past the plan's
 	// shared services, "no_own_capacity" while the workspace's own host is
-	// full, or "volume_claimed" while the run before it still holds the
+	// full, "limits_unavailable" while its workspace's limits could not be
+	// read, or "volume_claimed" while the run before it still holds the
 	// service's state volume; empty when it does not wait.
 	Held     string                 `protobuf:"bytes,4,opt,name=held,proto3" json:"held,omitempty"`
 	QueuedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`

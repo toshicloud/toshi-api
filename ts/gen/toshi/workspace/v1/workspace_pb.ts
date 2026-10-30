@@ -9730,7 +9730,8 @@ export type ServiceRun = Message<"toshi.workspace.v1.ServiceRun"> & {
   /**
    * Why a queued run waits, for example "service_quota" past the plan's
    * shared services, "no_own_capacity" while the workspace's own host is
-   * full, or "volume_claimed" while the run before it still holds the
+   * full, "limits_unavailable" while its workspace's limits could not be
+   * read, or "volume_claimed" while the run before it still holds the
    * service's state volume; empty when it does not wait.
    *
    * @generated from field: string held = 4;
@@ -9807,7 +9808,8 @@ export type ServiceRunJson = {
   /**
    * Why a queued run waits, for example "service_quota" past the plan's
    * shared services, "no_own_capacity" while the workspace's own host is
-   * full, or "volume_claimed" while the run before it still holds the
+   * full, "limits_unavailable" while its workspace's limits could not be
+   * read, or "volume_claimed" while the run before it still holds the
    * service's state volume; empty when it does not wait.
    *
    * @generated from field: string held = 4;

@@ -1058,10 +1058,10 @@ type HostJob struct {
 	// never did.
 	StopRequestedAt *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=stop_requested_at,json=stopRequestedAt,proto3" json:"stop_requested_at,omitempty"`
 	// Why the scheduler last held the job while it was queued:
-	// tenant_suspended, tenant_cap, tenant_vcpu, free_allowance, spend_cap,
-	// jobs_per_hour, burst_guard, plan_os, installation_suspended,
-	// overflow_wait, no_own_capacity or no_capacity. Empty when the job was
-	// never held. It is kept after the job starts.
+	// tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
+	// free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
+	// installation_suspended, overflow_wait, no_own_capacity or no_capacity.
+	// Empty when the job was never held. It is kept after the job starts.
 	HoldReason string `protobuf:"bytes,20,opt,name=hold_reason,json=holdReason,proto3" json:"hold_reason,omitempty"`
 	// Whether the job was placed on a host its workspace owns. Such a job sends no
 	// meter event.

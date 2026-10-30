@@ -149,10 +149,10 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
 
   /**
    * Why the scheduler last held the job while it was queued:
-   * tenant_suspended, tenant_cap, tenant_vcpu, free_allowance, spend_cap,
-   * jobs_per_hour, burst_guard, plan_os, installation_suspended,
-   * overflow_wait, no_own_capacity or no_capacity. Empty when the job was
-   * never held. It is kept after the job starts.
+   * tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
+   * free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
+   * installation_suspended, overflow_wait, no_own_capacity or no_capacity.
+   * Empty when the job was never held. It is kept after the job starts.
    *
    * @generated from field: string hold_reason = 21;
    */
@@ -591,10 +591,10 @@ export type JobJson = {
 
   /**
    * Why the scheduler last held the job while it was queued:
-   * tenant_suspended, tenant_cap, tenant_vcpu, free_allowance, spend_cap,
-   * jobs_per_hour, burst_guard, plan_os, installation_suspended,
-   * overflow_wait, no_own_capacity or no_capacity. Empty when the job was
-   * never held. It is kept after the job starts.
+   * tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
+   * free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
+   * installation_suspended, overflow_wait, no_own_capacity or no_capacity.
+   * Empty when the job was never held. It is kept after the job starts.
    *
    * @generated from field: string hold_reason = 21;
    */
