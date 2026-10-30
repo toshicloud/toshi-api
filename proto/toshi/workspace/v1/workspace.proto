@@ -275,6 +275,9 @@ message Service {
   // and whether its host enforces network rules at assignment. Always set;
   // a service recorded before workloads kept one has no layers.
   WorkloadNetwork network = 9;
+  // The live holds on it, soonest expiry first: each keeps it awake until
+  // its expires_at unless renewed (HoldService). Empty when none.
+  repeated ServiceHold holds = 10;
 }
 
 // WorkloadNetwork is the network policy a workload was admitted with: its

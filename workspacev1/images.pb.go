@@ -1661,14 +1661,14 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x1aIMAGE_VERSION_STATE_FAILED\x10\x02\x12\x1d\n" +
 	"\x19IMAGE_VERSION_STATE_READY\x10\x03\x12(\n" +
 	"$IMAGE_VERSION_STATE_PENDING_DELETION\x10\x04\x12\x1f\n" +
-	"\x1bIMAGE_VERSION_STATE_DELETED\x10\x052\xc3\x06\n" +
+	"\x1bIMAGE_VERSION_STATE_DELETED\x10\x052\xca\x06\n" +
 	"\fImageService\x12\x7f\n" +
 	"\vCreateImage\x12&.toshi.workspace.v1.CreateImageRequest\x1a'.toshi.workspace.v1.CreateImageResponse\"\x1f\xc2\xf3\x18\fimages.write\xca\xf3\x18\venvironment\x12\xa3\x01\n" +
 	"\n" +
 	"BuildImage\x12%.toshi.workspace.v1.BuildImageRequest\x1a&.toshi.workspace.v1.BuildImageResponse\"F\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18!\n" +
 	"\x13image.build_started\x12\n" +
-	"image:name\xea\xf3\x18\x02 \x01\x12\x91\x01\n" +
-	"\vUpdateImage\x12&.toshi.workspace.v1.UpdateImageRequest\x1a'.toshi.workspace.v1.UpdateImageResponse\"1\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18\x12\x12\x10image:image.name\x12q\n" +
+	"image:name\xea\xf3\x18\x02 \x01\x12\x98\x01\n" +
+	"\vUpdateImage\x12&.toshi.workspace.v1.UpdateImageRequest\x1a'.toshi.workspace.v1.UpdateImageResponse\"8\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18\x19\x12\x17image:response.image.id\x12q\n" +
 	"\bGetImage\x12#.toshi.workspace.v1.GetImageRequest\x1a$.toshi.workspace.v1.GetImageResponse\"\x1a\xc2\xf3\x18\vimages.read\xca\xf3\x18\aproject\x12w\n" +
 	"\n" +
 	"ListImages\x12%.toshi.workspace.v1.ListImagesRequest\x1a&.toshi.workspace.v1.ListImagesResponse\"\x1a\xc2\xf3\x18\vimages.read\xca\xf3\x18\aproject\x12\x8b\x01\n" +

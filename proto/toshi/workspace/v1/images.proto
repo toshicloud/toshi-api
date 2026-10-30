@@ -92,7 +92,7 @@ service ImageService {
   rpc UpdateImage(UpdateImageRequest) returns (UpdateImageResponse) {
     option (toshi.permission) = "images.write";
     option (toshi.scope) = "project";
-    option (toshi.audit) = {target: "image:image.name"};
+    option (toshi.audit) = {target: "image:response.image.id"};
   }
   // GetImage returns the image with its versions, newest first.
   rpc GetImage(GetImageRequest) returns (GetImageResponse) {
