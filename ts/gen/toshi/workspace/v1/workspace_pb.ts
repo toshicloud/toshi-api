@@ -2887,8 +2887,9 @@ export type ServiceSpec = Message<"toshi.workspace.v1.ServiceSpec"> & {
   recipe: string;
 
   /**
-   * Create only: a state volume made with the service. Answers leave it
-   * unset.
+   * Create only: a state volume made with the service. Unset takes the
+   * template's: the agent and database templates make one of 10 GiB, the
+   * others none. Answers leave it unset.
    *
    * @generated from field: toshi.workspace.v1.StateVolumeSpec state_volume = 7;
    */
@@ -3011,8 +3012,9 @@ export type ServiceSpecJson = {
   recipe?: string;
 
   /**
-   * Create only: a state volume made with the service. Answers leave it
-   * unset.
+   * Create only: a state volume made with the service. Unset takes the
+   * template's: the agent and database templates make one of 10 GiB, the
+   * others none. Answers leave it unset.
    *
    * @generated from field: toshi.workspace.v1.StateVolumeSpec state_volume = 7;
    */

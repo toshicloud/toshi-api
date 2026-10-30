@@ -3637,8 +3637,9 @@ type ServiceSpec struct {
 	// The recipe of revision 1 in a create, and the recipe to deploy in an
 	// UpdateService of spec.recipe, in TOML. Answers leave it empty.
 	Recipe string `protobuf:"bytes,6,opt,name=recipe,proto3" json:"recipe,omitempty"`
-	// Create only: a state volume made with the service. Answers leave it
-	// unset.
+	// Create only: a state volume made with the service. Unset takes the
+	// template's: the agent and database templates make one of 10 GiB, the
+	// others none. Answers leave it unset.
 	StateVolume *StateVolumeSpec `protobuf:"bytes,7,opt,name=state_volume,json=stateVolume,proto3" json:"state_volume,omitempty"`
 	// Create only: the service's bindings, a secret set or its project's
 	// and environment's services' channels. Answers leave them empty.

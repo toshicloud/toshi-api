@@ -689,8 +689,9 @@ message ServiceSpec {
   // The recipe of revision 1 in a create, and the recipe to deploy in an
   // UpdateService of spec.recipe, in TOML. Answers leave it empty.
   string recipe = 6;
-  // Create only: a state volume made with the service. Answers leave it
-  // unset.
+  // Create only: a state volume made with the service. Unset takes the
+  // template's: the agent and database templates make one of 10 GiB, the
+  // others none. Answers leave it unset.
   StateVolumeSpec state_volume = 7;
   // Create only: the service's bindings, a secret set or its project's
   // and environment's services' channels. Answers leave them empty.
