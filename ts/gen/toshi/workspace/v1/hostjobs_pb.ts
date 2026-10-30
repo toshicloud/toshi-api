@@ -911,8 +911,8 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
    * free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
    * installation_suspended, overflow_wait, no_own_capacity, no_capacity,
    * cloud_budget, reserved_for_other, volume_claimed, service_quota,
-   * no_network_enforcement or no_build_base. Empty when the job was never
-   * held. It is kept after the job starts.
+   * no_network_enforcement, no_build_base or host_kinds. Empty when the job
+   * was never held. It is kept after the job starts.
    *
    * @generated from field: string hold_reason = 20;
    */
@@ -1357,8 +1357,8 @@ export type HostJobJson = {
    * free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
    * installation_suspended, overflow_wait, no_own_capacity, no_capacity,
    * cloud_budget, reserved_for_other, volume_claimed, service_quota,
-   * no_network_enforcement or no_build_base. Empty when the job was never
-   * held. It is kept after the job starts.
+   * no_network_enforcement, no_build_base or host_kinds. Empty when the job
+   * was never held. It is kept after the job starts.
    *
    * @generated from field: string hold_reason = 20;
    */

@@ -11956,8 +11956,9 @@ type ServiceRun struct {
 	// Why a queued run waits, for example "service_quota" past the plan's
 	// shared services, "no_own_capacity" while the workspace's own host is
 	// full, "limits_unavailable" while its workspace's limits could not be
-	// read, or "volume_claimed" while the run before it still holds the
-	// service's state volume; empty when it does not wait.
+	// read, "volume_claimed" while the run before it still holds the
+	// service's state volume, or "host_kinds" while no host of the kinds the
+	// service lists can take it; empty when it does not wait.
 	Held     string                 `protobuf:"bytes,4,opt,name=held,proto3" json:"held,omitempty"`
 	QueuedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
 	// When its process started; unset before.
