@@ -274,6 +274,9 @@ const (
 	DiskKind_DISK_KIND_CACHE DiskKind = 1
 	// A state volume that outlives the instance.
 	DiskKind_DISK_KIND_STATE DiskKind = 2
+	// A filler run's output: a raw disk file with no file system, which the
+	// host reads after the instance has stopped.
+	DiskKind_DISK_KIND_OUTPUT DiskKind = 3
 )
 
 // Enum value maps for DiskKind.
@@ -282,11 +285,13 @@ var (
 		0: "DISK_KIND_UNSPECIFIED",
 		1: "DISK_KIND_CACHE",
 		2: "DISK_KIND_STATE",
+		3: "DISK_KIND_OUTPUT",
 	}
 	DiskKind_value = map[string]int32{
 		"DISK_KIND_UNSPECIFIED": 0,
 		"DISK_KIND_CACHE":       1,
 		"DISK_KIND_STATE":       2,
+		"DISK_KIND_OUTPUT":      3,
 	}
 )
 
@@ -6664,11 +6669,12 @@ const file_toshi_backend_provider_v1_provider_proto_rawDesc = "" +
 	"\x1cOPERATING_SYSTEM_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16OPERATING_SYSTEM_LINUX\x10\x01\x12\x1c\n" +
 	"\x18OPERATING_SYSTEM_WINDOWS\x10\x02\x12\x1a\n" +
-	"\x16OPERATING_SYSTEM_MACOS\x10\x03*O\n" +
+	"\x16OPERATING_SYSTEM_MACOS\x10\x03*e\n" +
 	"\bDiskKind\x12\x19\n" +
 	"\x15DISK_KIND_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fDISK_KIND_CACHE\x10\x01\x12\x13\n" +
-	"\x0fDISK_KIND_STATE\x10\x02*n\n" +
+	"\x0fDISK_KIND_STATE\x10\x02\x12\x14\n" +
+	"\x10DISK_KIND_OUTPUT\x10\x03*n\n" +
 	"\vCheckStatus\x12\x1c\n" +
 	"\x18CHECK_STATUS_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fCHECK_STATUS_OK\x10\x01\x12\x15\n" +

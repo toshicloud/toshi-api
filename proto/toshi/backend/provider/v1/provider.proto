@@ -360,6 +360,9 @@ enum DiskKind {
   DISK_KIND_CACHE = 1;
   // A state volume that outlives the instance.
   DISK_KIND_STATE = 2;
+  // A filler run's output: a raw disk file with no file system, which the
+  // host reads after the instance has stopped.
+  DISK_KIND_OUTPUT = 3;
 }
 
 // Disk is a disk file or directory on the host and what it holds.
