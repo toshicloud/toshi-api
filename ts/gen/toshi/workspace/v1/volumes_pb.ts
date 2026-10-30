@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/volumes.proto.
  */
 export const file_toshi_workspace_v1_volumes: GenFile = /*@__PURE__*/
-  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvdm9sdW1lcy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIpMGCgZWb2x1bWUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdwcm9qZWN0GAMgASgJEhIKCnByb2plY3RfaWQYBCABKAkSLAoEbW9kZRgFIAEoDjIeLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVNb2RlEhYKDnNpemVfY2FwX2J5dGVzGAYgASgDEi8KC2NyZWF0ZV90aW1lGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIcChRhdHRhY2hlZF93b3JrbG9hZF9pZBgIIAEoCRIWCg5sYXRlc3RfdmVyc2lvbhgJIAEoAxI3ChNsYXRlc3RfdmVyc2lvbl90aW1lGAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglsb3N0X3RpbWUYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEkkKGmxhdGVzdF92ZXJzaW9uX2NvbnNpc3RlbmN5GAwgASgOMiUudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZUNvbnNpc3RlbmN5EjQKEXNuYXBzaG90X2ludGVydmFsGA0gASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEhkKEWxhc3Rfc2F2ZV9mYWlsdXJlGA4gASgJEjoKFmxhc3Rfc2F2ZV9mYWlsdXJlX3RpbWUYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKBmZvcm1hdBgQIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVGb3JtYXQSDwoHcHJvZmlsZRgRIAEoCBIeChZhdHRhY2hlZF93b3JrbG9hZF9raW5kGBIgASgJEhwKFGF0dGFjaGVkX2Vudmlyb25tZW50GBMgASgJEhIKCm1hbmFnZWRfYnkYFCABKAkSFwoPbWFuaWZlc3RfZGlnZXN0GBUgASgJEhYKDm1hbmFnZWRfZmllbGRzGBYgAygJEhcKD21hbmlmZXN0X29yaWdpbhgXIAEoCSL8AQoNVm9sdW1lVmVyc2lvbhIOCgZudW1iZXIYASABKAMSLwoLY3JlYXRlX3RpbWUYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCnNpemVfYnl0ZXMYAyABKAMSDgoGc2hhMjU2GAQgASgJEhUKDXJlc3RvcmVkX2Zyb20YBSABKAMSMwoEa2luZBgGIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVWZXJzaW9uS2luZBI6Cgtjb25zaXN0ZW5jeRgHIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVDb25zaXN0ZW5jeSJdChJMaXN0Vm9sdW1lc1JlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCglwYWdlX3NpemUYAiABKAUSEgoKcGFnZV90b2tlbhgDIAEoCRIPCgdwcm9maWxlGAQgASgIIlsKE0xpc3RWb2x1bWVzUmVzcG9uc2USKwoHdm9sdW1lcxgBIAMoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIjYKEEdldFZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkiPwoRR2V0Vm9sdW1lUmVzcG9uc2USKgoGdm9sdW1lGAEgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZSJOChNBdHRhY2hWb2x1bWVSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJdm9sdW1lX2lkGAIgASgJEhMKC3dvcmtsb2FkX2lkGAMgASgJIkIKFEF0dGFjaFZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUiOQoTRGV0YWNoVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCSJCChREZXRhY2hWb2x1bWVSZXNwb25zZRIqCgZ2b2x1bWUYASABKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lImYKGUxpc3RWb2x1bWVWZXJzaW9uc1JlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkiagoaTGlzdFZvbHVtZVZlcnNpb25zUmVzcG9uc2USMwoIdmVyc2lvbnMYASADKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lVmVyc2lvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiSwoUUmVzdG9yZVZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSDwoHdmVyc2lvbhgDIAEoAyJ3ChVSZXN0b3JlVm9sdW1lUmVzcG9uc2USMgoHdmVyc2lvbhgBIAEoCzIhLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVWZXJzaW9uEioKBnZvbHVtZRgCIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUqhwEKClZvbHVtZU1vZGUSGwoXVk9MVU1FX01PREVfVU5TUEVDSUZJRUQQABIVChFWT0xVTUVfTU9ERV9DQUNIRRABEhQKEFZPTFVNRV9NT0RFX1NFRUQQAhIVChFWT0xVTUVfTU9ERV9TVEFURRADEhgKFFZPTFVNRV9NT0RFX0FSVElGQUNUEAQqYgoMVm9sdW1lRm9ybWF0Eh0KGVZPTFVNRV9GT1JNQVRfVU5TUEVDSUZJRUQQABIWChJWT0xVTUVfRk9STUFUX0RJU0sQARIbChdWT0xVTUVfRk9STUFUX0RJUkVDVE9SWRACKngKEVZvbHVtZVZlcnNpb25LaW5kEiMKH1ZPTFVNRV9WRVJTSU9OX0tJTkRfVU5TUEVDSUZJRUQQABIcChhWT0xVTUVfVkVSU0lPTl9LSU5EX1NBVkUQARIgChxWT0xVTUVfVkVSU0lPTl9LSU5EX1NOQVBTSE9UEAIqeQoRVm9sdW1lQ29uc2lzdGVuY3kSIgoeVk9MVU1FX0NPTlNJU1RFTkNZX1VOU1BFQ0lGSUVEEAASHAoYVk9MVU1FX0NPTlNJU1RFTkNZX0NSQVNIEAESIgoeVk9MVU1FX0NPTlNJU1RFTkNZX0FQUExJQ0FUSU9OEAIysgYKDVZvbHVtZVNlcnZpY2USewoLTGlzdFZvbHVtZXMSJi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFZvbHVtZXNSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RWb2x1bWVzUmVzcG9uc2UiG8LzGAx2b2x1bWVzLnJlYWTK8xgHcHJvamVjdBJ1CglHZXRWb2x1bWUSJC50b3NoaS53b3Jrc3BhY2UudjEuR2V0Vm9sdW1lUmVxdWVzdBolLnRvc2hpLndvcmtzcGFjZS52MS5HZXRWb2x1bWVSZXNwb25zZSIbwvMYDHZvbHVtZXMucmVhZMrzGAdwcm9qZWN0En8KDEF0dGFjaFZvbHVtZRInLnRvc2hpLndvcmtzcGFjZS52MS5BdHRhY2hWb2x1bWVSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkF0dGFjaFZvbHVtZVJlc3BvbnNlIhzC8xgNdm9sdW1lcy53cml0ZcrzGAdwcm9qZWN0En8KDERldGFjaFZvbHVtZRInLnRvc2hpLndvcmtzcGFjZS52MS5EZXRhY2hWb2x1bWVSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkRldGFjaFZvbHVtZVJlc3BvbnNlIhzC8xgNdm9sdW1lcy53cml0ZcrzGAdwcm9qZWN0EpABChJMaXN0Vm9sdW1lVmVyc2lvbnMSLS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFZvbHVtZVZlcnNpb25zUmVxdWVzdBouLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Vm9sdW1lVmVyc2lvbnNSZXNwb25zZSIbwvMYDHZvbHVtZXMucmVhZMrzGAdwcm9qZWN0EpcBCg1SZXN0b3JlVm9sdW1lEigudG9zaGkud29ya3NwYWNlLnYxLlJlc3RvcmVWb2x1bWVSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLlJlc3RvcmVWb2x1bWVSZXNwb25zZSIxwvMYDXZvbHVtZXMud3JpdGXK8xgHcHJvamVjdNLzGBEKD3ZvbHVtZS5yZXN0b3JlZEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvdm9sdW1lcy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIpMGCgZWb2x1bWUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdwcm9qZWN0GAMgASgJEhIKCnByb2plY3RfaWQYBCABKAkSLAoEbW9kZRgFIAEoDjIeLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVNb2RlEhYKDnNpemVfY2FwX2J5dGVzGAYgASgDEi8KC2NyZWF0ZV90aW1lGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIcChRhdHRhY2hlZF93b3JrbG9hZF9pZBgIIAEoCRIWCg5sYXRlc3RfdmVyc2lvbhgJIAEoAxI3ChNsYXRlc3RfdmVyc2lvbl90aW1lGAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglsb3N0X3RpbWUYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEkkKGmxhdGVzdF92ZXJzaW9uX2NvbnNpc3RlbmN5GAwgASgOMiUudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZUNvbnNpc3RlbmN5EjQKEXNuYXBzaG90X2ludGVydmFsGA0gASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEhkKEWxhc3Rfc2F2ZV9mYWlsdXJlGA4gASgJEjoKFmxhc3Rfc2F2ZV9mYWlsdXJlX3RpbWUYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKBmZvcm1hdBgQIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVGb3JtYXQSDwoHcHJvZmlsZRgRIAEoCBIeChZhdHRhY2hlZF93b3JrbG9hZF9raW5kGBIgASgJEhwKFGF0dGFjaGVkX2Vudmlyb25tZW50GBMgASgJEhIKCm1hbmFnZWRfYnkYFCABKAkSFwoPbWFuaWZlc3RfZGlnZXN0GBUgASgJEhYKDm1hbmFnZWRfZmllbGRzGBYgAygJEhcKD21hbmlmZXN0X29yaWdpbhgXIAEoCSL8AQoNVm9sdW1lVmVyc2lvbhIOCgZudW1iZXIYASABKAMSLwoLY3JlYXRlX3RpbWUYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCnNpemVfYnl0ZXMYAyABKAMSDgoGc2hhMjU2GAQgASgJEhUKDXJlc3RvcmVkX2Zyb20YBSABKAMSMwoEa2luZBgGIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVWZXJzaW9uS2luZBI6Cgtjb25zaXN0ZW5jeRgHIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVDb25zaXN0ZW5jeSJdChJMaXN0Vm9sdW1lc1JlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCglwYWdlX3NpemUYAiABKAUSEgoKcGFnZV90b2tlbhgDIAEoCRIPCgdwcm9maWxlGAQgASgIIlsKE0xpc3RWb2x1bWVzUmVzcG9uc2USKwoHdm9sdW1lcxgBIAMoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIjYKEEdldFZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkiPwoRR2V0Vm9sdW1lUmVzcG9uc2USKgoGdm9sdW1lGAEgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZSKPAQoTQ3JlYXRlVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEgwKBG5hbWUYAiABKAkSLAoEbW9kZRgDIAEoDjIeLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVNb2RlEhYKDnNpemVfY2FwX2J5dGVzGAQgASgDEhMKC3JlcXVlc3Rfa2V5GAUgASgJIkIKFENyZWF0ZVZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUiOQoTRGVsZXRlVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCSIWChREZWxldGVWb2x1bWVSZXNwb25zZSJOChNBdHRhY2hWb2x1bWVSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJdm9sdW1lX2lkGAIgASgJEhMKC3dvcmtsb2FkX2lkGAMgASgJIkIKFEF0dGFjaFZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUiOQoTRGV0YWNoVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCSJCChREZXRhY2hWb2x1bWVSZXNwb25zZRIqCgZ2b2x1bWUYASABKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lImYKGUxpc3RWb2x1bWVWZXJzaW9uc1JlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkiagoaTGlzdFZvbHVtZVZlcnNpb25zUmVzcG9uc2USMwoIdmVyc2lvbnMYASADKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lVmVyc2lvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiSwoUUmVzdG9yZVZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSDwoHdmVyc2lvbhgDIAEoAyJ3ChVSZXN0b3JlVm9sdW1lUmVzcG9uc2USMgoHdmVyc2lvbhgBIAEoCzIhLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVWZXJzaW9uEioKBnZvbHVtZRgCIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUqhwEKClZvbHVtZU1vZGUSGwoXVk9MVU1FX01PREVfVU5TUEVDSUZJRUQQABIVChFWT0xVTUVfTU9ERV9DQUNIRRABEhQKEFZPTFVNRV9NT0RFX1NFRUQQAhIVChFWT0xVTUVfTU9ERV9TVEFURRADEhgKFFZPTFVNRV9NT0RFX0FSVElGQUNUEAQqYgoMVm9sdW1lRm9ybWF0Eh0KGVZPTFVNRV9GT1JNQVRfVU5TUEVDSUZJRUQQABIWChJWT0xVTUVfRk9STUFUX0RJU0sQARIbChdWT0xVTUVfRk9STUFUX0RJUkVDVE9SWRACKngKEVZvbHVtZVZlcnNpb25LaW5kEiMKH1ZPTFVNRV9WRVJTSU9OX0tJTkRfVU5TUEVDSUZJRUQQABIcChhWT0xVTUVfVkVSU0lPTl9LSU5EX1NBVkUQARIgChxWT0xVTUVfVkVSU0lPTl9LSU5EX1NOQVBTSE9UEAIqeQoRVm9sdW1lQ29uc2lzdGVuY3kSIgoeVk9MVU1FX0NPTlNJU1RFTkNZX1VOU1BFQ0lGSUVEEAASHAoYVk9MVU1FX0NPTlNJU1RFTkNZX0NSQVNIEAESIgoeVk9MVU1FX0NPTlNJU1RFTkNZX0FQUExJQ0FUSU9OEAIyuAgKDVZvbHVtZVNlcnZpY2USewoLTGlzdFZvbHVtZXMSJi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFZvbHVtZXNSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RWb2x1bWVzUmVzcG9uc2UiG8LzGAx2b2x1bWVzLnJlYWTK8xgHcHJvamVjdBJ1CglHZXRWb2x1bWUSJC50b3NoaS53b3Jrc3BhY2UudjEuR2V0Vm9sdW1lUmVxdWVzdBolLnRvc2hpLndvcmtzcGFjZS52MS5HZXRWb2x1bWVSZXNwb25zZSIbwvMYDHZvbHVtZXMucmVhZMrzGAdwcm9qZWN0EoABCgxDcmVhdGVWb2x1bWUSJy50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlVm9sdW1lUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVWb2x1bWVSZXNwb25zZSIdwvMYDnByb2plY3RzLndyaXRlyvMYB3Byb2plY3QSfwoMQXR0YWNoVm9sdW1lEicudG9zaGkud29ya3NwYWNlLnYxLkF0dGFjaFZvbHVtZVJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuQXR0YWNoVm9sdW1lUmVzcG9uc2UiHMLzGA12b2x1bWVzLndyaXRlyvMYB3Byb2plY3QSfwoMRGV0YWNoVm9sdW1lEicudG9zaGkud29ya3NwYWNlLnYxLkRldGFjaFZvbHVtZVJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuRGV0YWNoVm9sdW1lUmVzcG9uc2UiHMLzGA12b2x1bWVzLndyaXRlyvMYB3Byb2plY3QSgAEKDERlbGV0ZVZvbHVtZRInLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVWb2x1bWVSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZVZvbHVtZVJlc3BvbnNlIh3C8xgOcHJvamVjdHMud3JpdGXK8xgHcHJvamVjdBKQAQoSTGlzdFZvbHVtZVZlcnNpb25zEi0udG9zaGkud29ya3NwYWNlLnYxLkxpc3RWb2x1bWVWZXJzaW9uc1JlcXVlc3QaLi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFZvbHVtZVZlcnNpb25zUmVzcG9uc2UiG8LzGAx2b2x1bWVzLnJlYWTK8xgHcHJvamVjdBKXAQoNUmVzdG9yZVZvbHVtZRIoLnRvc2hpLndvcmtzcGFjZS52MS5SZXN0b3JlVm9sdW1lUmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5SZXN0b3JlVm9sdW1lUmVzcG9uc2UiMcLzGA12b2x1bWVzLndyaXRlyvMYB3Byb2plY3TS8xgRCg92b2x1bWUucmVzdG9yZWRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Volume is a disk of a project.
@@ -684,6 +684,168 @@ export const GetVolumeResponseSchema: GenMessage<GetVolumeResponse, {jsonType: G
   messageDesc(file_toshi_workspace_v1_volumes, 5);
 
 /**
+ * @generated from message toshi.workspace.v1.CreateVolumeRequest
+ */
+export type CreateVolumeRequest = Message<"toshi.workspace.v1.CreateVolumeRequest"> & {
+  /**
+   * @generated from field: string project = 1;
+   */
+  project: string;
+
+  /**
+   * Unique among the project's volumes that are not deleted.
+   *
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * @generated from field: toshi.workspace.v1.VolumeMode mode = 3;
+   */
+  mode: VolumeMode;
+
+  /**
+   * The most it holds, in bytes; zero is 10 GiB.
+   *
+   * @generated from field: int64 size_cap_bytes = 4;
+   */
+  sizeCapBytes: bigint;
+
+  /**
+   * Required: the same key on every retry of this create.
+   *
+   * @generated from field: string request_key = 5;
+   */
+  requestKey: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.CreateVolumeRequest
+ */
+export type CreateVolumeRequestJson = {
+  /**
+   * @generated from field: string project = 1;
+   */
+  project?: string;
+
+  /**
+   * Unique among the project's volumes that are not deleted.
+   *
+   * @generated from field: string name = 2;
+   */
+  name?: string;
+
+  /**
+   * @generated from field: toshi.workspace.v1.VolumeMode mode = 3;
+   */
+  mode?: VolumeModeJson;
+
+  /**
+   * The most it holds, in bytes; zero is 10 GiB.
+   *
+   * @generated from field: int64 size_cap_bytes = 4;
+   */
+  sizeCapBytes?: string;
+
+  /**
+   * Required: the same key on every retry of this create.
+   *
+   * @generated from field: string request_key = 5;
+   */
+  requestKey?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.CreateVolumeRequest.
+ * Use `create(CreateVolumeRequestSchema)` to create a new message.
+ */
+export const CreateVolumeRequestSchema: GenMessage<CreateVolumeRequest, {jsonType: CreateVolumeRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_volumes, 6);
+
+/**
+ * @generated from message toshi.workspace.v1.CreateVolumeResponse
+ */
+export type CreateVolumeResponse = Message<"toshi.workspace.v1.CreateVolumeResponse"> & {
+  /**
+   * @generated from field: toshi.workspace.v1.Volume volume = 1;
+   */
+  volume?: Volume | undefined;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.CreateVolumeResponse
+ */
+export type CreateVolumeResponseJson = {
+  /**
+   * @generated from field: toshi.workspace.v1.Volume volume = 1;
+   */
+  volume?: VolumeJson;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.CreateVolumeResponse.
+ * Use `create(CreateVolumeResponseSchema)` to create a new message.
+ */
+export const CreateVolumeResponseSchema: GenMessage<CreateVolumeResponse, {jsonType: CreateVolumeResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_volumes, 7);
+
+/**
+ * @generated from message toshi.workspace.v1.DeleteVolumeRequest
+ */
+export type DeleteVolumeRequest = Message<"toshi.workspace.v1.DeleteVolumeRequest"> & {
+  /**
+   * @generated from field: string project = 1;
+   */
+  project: string;
+
+  /**
+   * @generated from field: string volume_id = 2;
+   */
+  volumeId: string;
+};
+
+/**
+ * @generated from message toshi.workspace.v1.DeleteVolumeRequest
+ */
+export type DeleteVolumeRequestJson = {
+  /**
+   * @generated from field: string project = 1;
+   */
+  project?: string;
+
+  /**
+   * @generated from field: string volume_id = 2;
+   */
+  volumeId?: string;
+};
+
+/**
+ * Describes the message toshi.workspace.v1.DeleteVolumeRequest.
+ * Use `create(DeleteVolumeRequestSchema)` to create a new message.
+ */
+export const DeleteVolumeRequestSchema: GenMessage<DeleteVolumeRequest, {jsonType: DeleteVolumeRequestJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_volumes, 8);
+
+/**
+ * @generated from message toshi.workspace.v1.DeleteVolumeResponse
+ */
+export type DeleteVolumeResponse = Message<"toshi.workspace.v1.DeleteVolumeResponse"> & {
+};
+
+/**
+ * @generated from message toshi.workspace.v1.DeleteVolumeResponse
+ */
+export type DeleteVolumeResponseJson = {
+};
+
+/**
+ * Describes the message toshi.workspace.v1.DeleteVolumeResponse.
+ * Use `create(DeleteVolumeResponseSchema)` to create a new message.
+ */
+export const DeleteVolumeResponseSchema: GenMessage<DeleteVolumeResponse, {jsonType: DeleteVolumeResponseJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_workspace_v1_volumes, 9);
+
+/**
  * @generated from message toshi.workspace.v1.AttachVolumeRequest
  */
 export type AttachVolumeRequest = Message<"toshi.workspace.v1.AttachVolumeRequest"> & {
@@ -732,7 +894,7 @@ export type AttachVolumeRequestJson = {
  * Use `create(AttachVolumeRequestSchema)` to create a new message.
  */
 export const AttachVolumeRequestSchema: GenMessage<AttachVolumeRequest, {jsonType: AttachVolumeRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_volumes, 6);
+  messageDesc(file_toshi_workspace_v1_volumes, 10);
 
 /**
  * @generated from message toshi.workspace.v1.AttachVolumeResponse
@@ -759,7 +921,7 @@ export type AttachVolumeResponseJson = {
  * Use `create(AttachVolumeResponseSchema)` to create a new message.
  */
 export const AttachVolumeResponseSchema: GenMessage<AttachVolumeResponse, {jsonType: AttachVolumeResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_volumes, 7);
+  messageDesc(file_toshi_workspace_v1_volumes, 11);
 
 /**
  * @generated from message toshi.workspace.v1.DetachVolumeRequest
@@ -796,7 +958,7 @@ export type DetachVolumeRequestJson = {
  * Use `create(DetachVolumeRequestSchema)` to create a new message.
  */
 export const DetachVolumeRequestSchema: GenMessage<DetachVolumeRequest, {jsonType: DetachVolumeRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_volumes, 8);
+  messageDesc(file_toshi_workspace_v1_volumes, 12);
 
 /**
  * @generated from message toshi.workspace.v1.DetachVolumeResponse
@@ -823,7 +985,7 @@ export type DetachVolumeResponseJson = {
  * Use `create(DetachVolumeResponseSchema)` to create a new message.
  */
 export const DetachVolumeResponseSchema: GenMessage<DetachVolumeResponse, {jsonType: DetachVolumeResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_volumes, 9);
+  messageDesc(file_toshi_workspace_v1_volumes, 13);
 
 /**
  * @generated from message toshi.workspace.v1.ListVolumeVersionsRequest
@@ -888,7 +1050,7 @@ export type ListVolumeVersionsRequestJson = {
  * Use `create(ListVolumeVersionsRequestSchema)` to create a new message.
  */
 export const ListVolumeVersionsRequestSchema: GenMessage<ListVolumeVersionsRequest, {jsonType: ListVolumeVersionsRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_volumes, 10);
+  messageDesc(file_toshi_workspace_v1_volumes, 14);
 
 /**
  * @generated from message toshi.workspace.v1.ListVolumeVersionsResponse
@@ -929,7 +1091,7 @@ export type ListVolumeVersionsResponseJson = {
  * Use `create(ListVolumeVersionsResponseSchema)` to create a new message.
  */
 export const ListVolumeVersionsResponseSchema: GenMessage<ListVolumeVersionsResponse, {jsonType: ListVolumeVersionsResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_volumes, 11);
+  messageDesc(file_toshi_workspace_v1_volumes, 15);
 
 /**
  * @generated from message toshi.workspace.v1.RestoreVolumeRequest
@@ -980,7 +1142,7 @@ export type RestoreVolumeRequestJson = {
  * Use `create(RestoreVolumeRequestSchema)` to create a new message.
  */
 export const RestoreVolumeRequestSchema: GenMessage<RestoreVolumeRequest, {jsonType: RestoreVolumeRequestJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_volumes, 12);
+  messageDesc(file_toshi_workspace_v1_volumes, 16);
 
 /**
  * @generated from message toshi.workspace.v1.RestoreVolumeResponse
@@ -1021,7 +1183,7 @@ export type RestoreVolumeResponseJson = {
  * Use `create(RestoreVolumeResponseSchema)` to create a new message.
  */
 export const RestoreVolumeResponseSchema: GenMessage<RestoreVolumeResponse, {jsonType: RestoreVolumeResponseJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_workspace_v1_volumes, 13);
+  messageDesc(file_toshi_workspace_v1_volumes, 17);
 
 /**
  * VolumeMode is what a volume holds and how runs use it.
@@ -1217,10 +1379,10 @@ export const VolumeConsistencySchema: GenEnum<VolumeConsistency, VolumeConsisten
  * whether the workspace has it or not, and a workload of another project
  * is NOT_FOUND.
  *
- * The calls take no request_key: attaching a volume to the workload it is
- * attached to, while no run holds it, and detaching a detached volume
- * return it as it is. RestoreVolume sent twice records two versions, each
- * a copy of the one it names.
+ * CreateVolume takes a request_key; the other calls take none: attaching a
+ * volume to the workload it is attached to, while no run holds it, and
+ * detaching a detached volume return it as it is. RestoreVolume sent twice
+ * records two versions, each a copy of the one it names.
  *
  * @generated from service toshi.workspace.v1.VolumeService
  */
@@ -1247,6 +1409,24 @@ export const VolumeService: GenService<{
     methodKind: "unary";
     input: typeof GetVolumeRequestSchema;
     output: typeof GetVolumeResponseSchema;
+  },
+  /**
+   * CreateVolume makes a volume in the project, in any of the four modes:
+   * empty, with no version, and attached to nothing. A name another of the
+   * project's volumes has, deleted ones aside, fails with ALREADY_EXISTS. A
+   * name a service could not take, a missing mode and a negative size cap
+   * fail with INVALID_ARGUMENT; a size cap of zero is 10 GiB.
+   *
+   * The same request sent again with its request_key returns the volume the
+   * first one made; the key with a different request fails with
+   * FAILED_PRECONDITION.
+   *
+   * @generated from rpc toshi.workspace.v1.VolumeService.CreateVolume
+   */
+  createVolume: {
+    methodKind: "unary";
+    input: typeof CreateVolumeRequestSchema;
+    output: typeof CreateVolumeResponseSchema;
   },
   /**
    * AttachVolume attaches a state volume to a service or sandbox: the
@@ -1281,6 +1461,22 @@ export const VolumeService: GenService<{
     methodKind: "unary";
     input: typeof DetachVolumeRequestSchema;
     output: typeof DetachVolumeResponseSchema;
+  },
+  /**
+   * DeleteVolume deletes a volume with its saved versions and their data.
+   * A volume attached to a service or sandbox, one a run holds and one a
+   * job that has not ended names fail with FAILED_PRECONDITION. Its name is
+   * free for a new volume at once, and its versions' data is removed from
+   * object storage shortly after. An environment that allows a CI job's
+   * state volume by name keeps that name, and a later volume of the name
+   * matches it.
+   *
+   * @generated from rpc toshi.workspace.v1.VolumeService.DeleteVolume
+   */
+  deleteVolume: {
+    methodKind: "unary";
+    input: typeof DeleteVolumeRequestSchema;
+    output: typeof DeleteVolumeResponseSchema;
   },
   /**
    * ListVolumeVersions returns a state volume's saved versions, newest

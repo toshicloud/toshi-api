@@ -21,10 +21,10 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // whether the workspace has it or not, and a workload of another project
 // is NOT_FOUND.
 //
-// The calls take no request_key: attaching a volume to the workload it is
-// attached to, while no run holds it, and detaching a detached volume
-// return it as it is. RestoreVolume sent twice records two versions, each
-// a copy of the one it names.
+// CreateVolume takes a request_key; the other calls take none: attaching a
+// volume to the workload it is attached to, while no run holds it, and
+// detaching a detached volume return it as it is. RestoreVolume sent twice
+// records two versions, each a copy of the one it names.
 service VolumeService {
   // ListVolumes returns the project's volumes that are not deleted,
   // ordered by name.
@@ -38,6 +38,20 @@ service VolumeService {
   // GetVolume returns one of the project's volumes that is not deleted.
   rpc GetVolume(GetVolumeRequest) returns (GetVolumeResponse) {
     option (toshi.permission) = "volumes.read";
+    option (toshi.scope) = "project";
+  }
+
+  // CreateVolume makes a volume in the project, in any of the four modes:
+  // empty, with no version, and attached to nothing. A name another of the
+  // project's volumes has, deleted ones aside, fails with ALREADY_EXISTS. A
+  // name a service could not take, a missing mode and a negative size cap
+  // fail with INVALID_ARGUMENT; a size cap of zero is 10 GiB.
+  //
+  // The same request sent again with its request_key returns the volume the
+  // first one made; the key with a different request fails with
+  // FAILED_PRECONDITION.
+  rpc CreateVolume(CreateVolumeRequest) returns (CreateVolumeResponse) {
+    option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
   }
 
@@ -64,6 +78,18 @@ service VolumeService {
   // volume; neither deletes the volume.
   rpc DetachVolume(DetachVolumeRequest) returns (DetachVolumeResponse) {
     option (toshi.permission) = "volumes.write";
+    option (toshi.scope) = "project";
+  }
+
+  // DeleteVolume deletes a volume with its saved versions and their data.
+  // A volume attached to a service or sandbox, one a run holds and one a
+  // job that has not ended names fail with FAILED_PRECONDITION. Its name is
+  // free for a new volume at once, and its versions' data is removed from
+  // object storage shortly after. An environment that allows a CI job's
+  // state volume by name keeps that name, and a later volume of the name
+  // matches it.
+  rpc DeleteVolume(DeleteVolumeRequest) returns (DeleteVolumeResponse) {
+    option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
   }
 
@@ -257,6 +283,28 @@ message GetVolumeRequest {
 message GetVolumeResponse {
   Volume volume = 1;
 }
+
+message CreateVolumeRequest {
+  string project = 1;
+  // Unique among the project's volumes that are not deleted.
+  string name = 2;
+  VolumeMode mode = 3;
+  // The most it holds, in bytes; zero is 10 GiB.
+  int64 size_cap_bytes = 4;
+  // Required: the same key on every retry of this create.
+  string request_key = 5;
+}
+
+message CreateVolumeResponse {
+  Volume volume = 1;
+}
+
+message DeleteVolumeRequest {
+  string project = 1;
+  string volume_id = 2;
+}
+
+message DeleteVolumeResponse {}
 
 message AttachVolumeRequest {
   string project = 1;

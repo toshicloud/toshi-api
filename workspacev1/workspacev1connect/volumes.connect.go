@@ -38,12 +38,18 @@ const (
 	VolumeServiceListVolumesProcedure = "/toshi.workspace.v1.VolumeService/ListVolumes"
 	// VolumeServiceGetVolumeProcedure is the fully-qualified name of the VolumeService's GetVolume RPC.
 	VolumeServiceGetVolumeProcedure = "/toshi.workspace.v1.VolumeService/GetVolume"
+	// VolumeServiceCreateVolumeProcedure is the fully-qualified name of the VolumeService's
+	// CreateVolume RPC.
+	VolumeServiceCreateVolumeProcedure = "/toshi.workspace.v1.VolumeService/CreateVolume"
 	// VolumeServiceAttachVolumeProcedure is the fully-qualified name of the VolumeService's
 	// AttachVolume RPC.
 	VolumeServiceAttachVolumeProcedure = "/toshi.workspace.v1.VolumeService/AttachVolume"
 	// VolumeServiceDetachVolumeProcedure is the fully-qualified name of the VolumeService's
 	// DetachVolume RPC.
 	VolumeServiceDetachVolumeProcedure = "/toshi.workspace.v1.VolumeService/DetachVolume"
+	// VolumeServiceDeleteVolumeProcedure is the fully-qualified name of the VolumeService's
+	// DeleteVolume RPC.
+	VolumeServiceDeleteVolumeProcedure = "/toshi.workspace.v1.VolumeService/DeleteVolume"
 	// VolumeServiceListVolumeVersionsProcedure is the fully-qualified name of the VolumeService's
 	// ListVolumeVersions RPC.
 	VolumeServiceListVolumeVersionsProcedure = "/toshi.workspace.v1.VolumeService/ListVolumeVersions"
@@ -61,6 +67,16 @@ type VolumeServiceClient interface {
 	ListVolumes(context.Context, *connect.Request[workspacev1.ListVolumesRequest]) (*connect.Response[workspacev1.ListVolumesResponse], error)
 	// GetVolume returns one of the project's volumes that is not deleted.
 	GetVolume(context.Context, *connect.Request[workspacev1.GetVolumeRequest]) (*connect.Response[workspacev1.GetVolumeResponse], error)
+	// CreateVolume makes a volume in the project, in any of the four modes:
+	// empty, with no version, and attached to nothing. A name another of the
+	// project's volumes has, deleted ones aside, fails with ALREADY_EXISTS. A
+	// name a service could not take, a missing mode and a negative size cap
+	// fail with INVALID_ARGUMENT; a size cap of zero is 10 GiB.
+	//
+	// The same request sent again with its request_key returns the volume the
+	// first one made; the key with a different request fails with
+	// FAILED_PRECONDITION.
+	CreateVolume(context.Context, *connect.Request[workspacev1.CreateVolumeRequest]) (*connect.Response[workspacev1.CreateVolumeResponse], error)
 	// AttachVolume attaches a state volume to a service or sandbox: the
 	// service's next run mounts it, and a sandbox mounts it when it starts.
 	// A workload has at most one volume, and a volume at most one workload.
@@ -79,6 +95,14 @@ type VolumeServiceClient interface {
 	// so does deleting a service, which is refused while a run holds the
 	// volume; neither deletes the volume.
 	DetachVolume(context.Context, *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error)
+	// DeleteVolume deletes a volume with its saved versions and their data.
+	// A volume attached to a service or sandbox, one a run holds and one a
+	// job that has not ended names fail with FAILED_PRECONDITION. Its name is
+	// free for a new volume at once, and its versions' data is removed from
+	// object storage shortly after. An environment that allows a CI job's
+	// state volume by name keeps that name, and a later volume of the name
+	// matches it.
+	DeleteVolume(context.Context, *connect.Request[workspacev1.DeleteVolumeRequest]) (*connect.Response[workspacev1.DeleteVolumeResponse], error)
 	// ListVolumeVersions returns a state volume's saved versions, newest
 	// first. A run that releases the volume saves its data as the next
 	// version when the workspace has object storage. The volume keeps its
@@ -122,6 +146,12 @@ func NewVolumeServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(volumeServiceMethods.ByName("GetVolume")),
 			connect.WithClientOptions(opts...),
 		),
+		createVolume: connect.NewClient[workspacev1.CreateVolumeRequest, workspacev1.CreateVolumeResponse](
+			httpClient,
+			baseURL+VolumeServiceCreateVolumeProcedure,
+			connect.WithSchema(volumeServiceMethods.ByName("CreateVolume")),
+			connect.WithClientOptions(opts...),
+		),
 		attachVolume: connect.NewClient[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse](
 			httpClient,
 			baseURL+VolumeServiceAttachVolumeProcedure,
@@ -132,6 +162,12 @@ func NewVolumeServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			httpClient,
 			baseURL+VolumeServiceDetachVolumeProcedure,
 			connect.WithSchema(volumeServiceMethods.ByName("DetachVolume")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteVolume: connect.NewClient[workspacev1.DeleteVolumeRequest, workspacev1.DeleteVolumeResponse](
+			httpClient,
+			baseURL+VolumeServiceDeleteVolumeProcedure,
+			connect.WithSchema(volumeServiceMethods.ByName("DeleteVolume")),
 			connect.WithClientOptions(opts...),
 		),
 		listVolumeVersions: connect.NewClient[workspacev1.ListVolumeVersionsRequest, workspacev1.ListVolumeVersionsResponse](
@@ -153,8 +189,10 @@ func NewVolumeServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 type volumeServiceClient struct {
 	listVolumes        *connect.Client[workspacev1.ListVolumesRequest, workspacev1.ListVolumesResponse]
 	getVolume          *connect.Client[workspacev1.GetVolumeRequest, workspacev1.GetVolumeResponse]
+	createVolume       *connect.Client[workspacev1.CreateVolumeRequest, workspacev1.CreateVolumeResponse]
 	attachVolume       *connect.Client[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse]
 	detachVolume       *connect.Client[workspacev1.DetachVolumeRequest, workspacev1.DetachVolumeResponse]
+	deleteVolume       *connect.Client[workspacev1.DeleteVolumeRequest, workspacev1.DeleteVolumeResponse]
 	listVolumeVersions *connect.Client[workspacev1.ListVolumeVersionsRequest, workspacev1.ListVolumeVersionsResponse]
 	restoreVolume      *connect.Client[workspacev1.RestoreVolumeRequest, workspacev1.RestoreVolumeResponse]
 }
@@ -169,6 +207,11 @@ func (c *volumeServiceClient) GetVolume(ctx context.Context, req *connect.Reques
 	return c.getVolume.CallUnary(ctx, req)
 }
 
+// CreateVolume calls toshi.workspace.v1.VolumeService.CreateVolume.
+func (c *volumeServiceClient) CreateVolume(ctx context.Context, req *connect.Request[workspacev1.CreateVolumeRequest]) (*connect.Response[workspacev1.CreateVolumeResponse], error) {
+	return c.createVolume.CallUnary(ctx, req)
+}
+
 // AttachVolume calls toshi.workspace.v1.VolumeService.AttachVolume.
 func (c *volumeServiceClient) AttachVolume(ctx context.Context, req *connect.Request[workspacev1.AttachVolumeRequest]) (*connect.Response[workspacev1.AttachVolumeResponse], error) {
 	return c.attachVolume.CallUnary(ctx, req)
@@ -177,6 +220,11 @@ func (c *volumeServiceClient) AttachVolume(ctx context.Context, req *connect.Req
 // DetachVolume calls toshi.workspace.v1.VolumeService.DetachVolume.
 func (c *volumeServiceClient) DetachVolume(ctx context.Context, req *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error) {
 	return c.detachVolume.CallUnary(ctx, req)
+}
+
+// DeleteVolume calls toshi.workspace.v1.VolumeService.DeleteVolume.
+func (c *volumeServiceClient) DeleteVolume(ctx context.Context, req *connect.Request[workspacev1.DeleteVolumeRequest]) (*connect.Response[workspacev1.DeleteVolumeResponse], error) {
+	return c.deleteVolume.CallUnary(ctx, req)
 }
 
 // ListVolumeVersions calls toshi.workspace.v1.VolumeService.ListVolumeVersions.
@@ -198,6 +246,16 @@ type VolumeServiceHandler interface {
 	ListVolumes(context.Context, *connect.Request[workspacev1.ListVolumesRequest]) (*connect.Response[workspacev1.ListVolumesResponse], error)
 	// GetVolume returns one of the project's volumes that is not deleted.
 	GetVolume(context.Context, *connect.Request[workspacev1.GetVolumeRequest]) (*connect.Response[workspacev1.GetVolumeResponse], error)
+	// CreateVolume makes a volume in the project, in any of the four modes:
+	// empty, with no version, and attached to nothing. A name another of the
+	// project's volumes has, deleted ones aside, fails with ALREADY_EXISTS. A
+	// name a service could not take, a missing mode and a negative size cap
+	// fail with INVALID_ARGUMENT; a size cap of zero is 10 GiB.
+	//
+	// The same request sent again with its request_key returns the volume the
+	// first one made; the key with a different request fails with
+	// FAILED_PRECONDITION.
+	CreateVolume(context.Context, *connect.Request[workspacev1.CreateVolumeRequest]) (*connect.Response[workspacev1.CreateVolumeResponse], error)
 	// AttachVolume attaches a state volume to a service or sandbox: the
 	// service's next run mounts it, and a sandbox mounts it when it starts.
 	// A workload has at most one volume, and a volume at most one workload.
@@ -216,6 +274,14 @@ type VolumeServiceHandler interface {
 	// so does deleting a service, which is refused while a run holds the
 	// volume; neither deletes the volume.
 	DetachVolume(context.Context, *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error)
+	// DeleteVolume deletes a volume with its saved versions and their data.
+	// A volume attached to a service or sandbox, one a run holds and one a
+	// job that has not ended names fail with FAILED_PRECONDITION. Its name is
+	// free for a new volume at once, and its versions' data is removed from
+	// object storage shortly after. An environment that allows a CI job's
+	// state volume by name keeps that name, and a later volume of the name
+	// matches it.
+	DeleteVolume(context.Context, *connect.Request[workspacev1.DeleteVolumeRequest]) (*connect.Response[workspacev1.DeleteVolumeResponse], error)
 	// ListVolumeVersions returns a state volume's saved versions, newest
 	// first. A run that releases the volume saves its data as the next
 	// version when the workspace has object storage. The volume keeps its
@@ -255,6 +321,12 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(volumeServiceMethods.ByName("GetVolume")),
 		connect.WithHandlerOptions(opts...),
 	)
+	volumeServiceCreateVolumeHandler := connect.NewUnaryHandler(
+		VolumeServiceCreateVolumeProcedure,
+		svc.CreateVolume,
+		connect.WithSchema(volumeServiceMethods.ByName("CreateVolume")),
+		connect.WithHandlerOptions(opts...),
+	)
 	volumeServiceAttachVolumeHandler := connect.NewUnaryHandler(
 		VolumeServiceAttachVolumeProcedure,
 		svc.AttachVolume,
@@ -265,6 +337,12 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 		VolumeServiceDetachVolumeProcedure,
 		svc.DetachVolume,
 		connect.WithSchema(volumeServiceMethods.ByName("DetachVolume")),
+		connect.WithHandlerOptions(opts...),
+	)
+	volumeServiceDeleteVolumeHandler := connect.NewUnaryHandler(
+		VolumeServiceDeleteVolumeProcedure,
+		svc.DeleteVolume,
+		connect.WithSchema(volumeServiceMethods.ByName("DeleteVolume")),
 		connect.WithHandlerOptions(opts...),
 	)
 	volumeServiceListVolumeVersionsHandler := connect.NewUnaryHandler(
@@ -285,10 +363,14 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 			volumeServiceListVolumesHandler.ServeHTTP(w, r)
 		case VolumeServiceGetVolumeProcedure:
 			volumeServiceGetVolumeHandler.ServeHTTP(w, r)
+		case VolumeServiceCreateVolumeProcedure:
+			volumeServiceCreateVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceAttachVolumeProcedure:
 			volumeServiceAttachVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceDetachVolumeProcedure:
 			volumeServiceDetachVolumeHandler.ServeHTTP(w, r)
+		case VolumeServiceDeleteVolumeProcedure:
+			volumeServiceDeleteVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceListVolumeVersionsProcedure:
 			volumeServiceListVolumeVersionsHandler.ServeHTTP(w, r)
 		case VolumeServiceRestoreVolumeProcedure:
@@ -310,12 +392,20 @@ func (UnimplementedVolumeServiceHandler) GetVolume(context.Context, *connect.Req
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.GetVolume is not implemented"))
 }
 
+func (UnimplementedVolumeServiceHandler) CreateVolume(context.Context, *connect.Request[workspacev1.CreateVolumeRequest]) (*connect.Response[workspacev1.CreateVolumeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.CreateVolume is not implemented"))
+}
+
 func (UnimplementedVolumeServiceHandler) AttachVolume(context.Context, *connect.Request[workspacev1.AttachVolumeRequest]) (*connect.Response[workspacev1.AttachVolumeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.AttachVolume is not implemented"))
 }
 
 func (UnimplementedVolumeServiceHandler) DetachVolume(context.Context, *connect.Request[workspacev1.DetachVolumeRequest]) (*connect.Response[workspacev1.DetachVolumeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.DetachVolume is not implemented"))
+}
+
+func (UnimplementedVolumeServiceHandler) DeleteVolume(context.Context, *connect.Request[workspacev1.DeleteVolumeRequest]) (*connect.Response[workspacev1.DeleteVolumeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.DeleteVolume is not implemented"))
 }
 
 func (UnimplementedVolumeServiceHandler) ListVolumeVersions(context.Context, *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error) {
