@@ -6881,8 +6881,8 @@ func (x *WithheldSecret) GetReason() string {
 	return ""
 }
 
-// EgressDeniedEvent is the connections a host's firewall refused a
-// workload's run since its last such event, newest first.
+// EgressDeniedEvent is the destinations a host's firewall or DNS forwarder
+// refused a workload's run since its last such event, newest first.
 type EgressDeniedEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The run the denials were for; empty when the host did not say.
@@ -6936,8 +6936,8 @@ func (x *EgressDeniedEvent) GetDenials() []*EgressDenial {
 	return nil
 }
 
-// EgressDenial is one connection a host's firewall refused a workload's run,
-// and the layer of its network policy that denied it.
+// EgressDenial is one destination refused for a workload's run by the host
+// firewall or DNS forwarder, and the layer that denied it.
 type EgressDenial struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The destination refused.
@@ -6946,12 +6946,13 @@ type EgressDenial struct {
 	Protocol string `protobuf:"bytes,2,opt,name=protocol,proto3" json:"protocol,omitempty"`
 	// 0 for other.
 	Port int32 `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty"`
-	// The policy layer that denied it: "operator", "workspace", "environment"
-	// or "request".
+	// The layer that denied it: "operator", "workspace", "environment",
+	// "request" or "resolver" (the DNS forwarder, not a policy layer).
 	Layer string `protobuf:"bytes,4,opt,name=layer,proto3" json:"layer,omitempty"`
-	// Its rule or default: "rule 2: deny 10.0.0.0/8" or "default deny".
+	// Its rule or default, such as "rule 2: deny 10.0.0.0/8" or "default
+	// deny"; for a resolver denial, the name the guest asked.
 	Entry string `protobuf:"bytes,5,opt,name=entry,proto3" json:"entry,omitempty"`
-	// Packets refused.
+	// Packets or DNS queries refused.
 	Packets int64 `protobuf:"varint,6,opt,name=packets,proto3" json:"packets,omitempty"`
 	// When the host reported it.
 	Time          *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=time,proto3" json:"time,omitempty"`

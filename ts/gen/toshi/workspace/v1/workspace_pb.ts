@@ -5811,8 +5811,8 @@ export const WithheldSecretSchema: GenMessage<WithheldSecret, {jsonType: Withhel
   messageDesc(file_toshi_workspace_v1_workspace, 59);
 
 /**
- * EgressDeniedEvent is the connections a host's firewall refused a
- * workload's run since its last such event, newest first.
+ * EgressDeniedEvent is the destinations a host's firewall or DNS forwarder
+ * refused a workload's run since its last such event, newest first.
  *
  * @generated from message toshi.workspace.v1.EgressDeniedEvent
  */
@@ -5831,8 +5831,8 @@ export type EgressDeniedEvent = Message<"toshi.workspace.v1.EgressDeniedEvent"> 
 };
 
 /**
- * EgressDeniedEvent is the connections a host's firewall refused a
- * workload's run since its last such event, newest first.
+ * EgressDeniedEvent is the destinations a host's firewall or DNS forwarder
+ * refused a workload's run since its last such event, newest first.
  *
  * @generated from message toshi.workspace.v1.EgressDeniedEvent
  */
@@ -5858,8 +5858,8 @@ export const EgressDeniedEventSchema: GenMessage<EgressDeniedEvent, {jsonType: E
   messageDesc(file_toshi_workspace_v1_workspace, 60);
 
 /**
- * EgressDenial is one connection a host's firewall refused a workload's run,
- * and the layer of its network policy that denied it.
+ * EgressDenial is one destination refused for a workload's run by the host
+ * firewall or DNS forwarder, and the layer that denied it.
  *
  * @generated from message toshi.workspace.v1.EgressDenial
  */
@@ -5886,22 +5886,23 @@ export type EgressDenial = Message<"toshi.workspace.v1.EgressDenial"> & {
   port: number;
 
   /**
-   * The policy layer that denied it: "operator", "workspace", "environment"
-   * or "request".
+   * The layer that denied it: "operator", "workspace", "environment",
+   * "request" or "resolver" (the DNS forwarder, not a policy layer).
    *
    * @generated from field: string layer = 4;
    */
   layer: string;
 
   /**
-   * Its rule or default: "rule 2: deny 10.0.0.0/8" or "default deny".
+   * Its rule or default, such as "rule 2: deny 10.0.0.0/8" or "default
+   * deny"; for a resolver denial, the name the guest asked.
    *
    * @generated from field: string entry = 5;
    */
   entry: string;
 
   /**
-   * Packets refused.
+   * Packets or DNS queries refused.
    *
    * @generated from field: int64 packets = 6;
    */
@@ -5916,8 +5917,8 @@ export type EgressDenial = Message<"toshi.workspace.v1.EgressDenial"> & {
 };
 
 /**
- * EgressDenial is one connection a host's firewall refused a workload's run,
- * and the layer of its network policy that denied it.
+ * EgressDenial is one destination refused for a workload's run by the host
+ * firewall or DNS forwarder, and the layer that denied it.
  *
  * @generated from message toshi.workspace.v1.EgressDenial
  */
@@ -5944,22 +5945,23 @@ export type EgressDenialJson = {
   port?: number;
 
   /**
-   * The policy layer that denied it: "operator", "workspace", "environment"
-   * or "request".
+   * The layer that denied it: "operator", "workspace", "environment",
+   * "request" or "resolver" (the DNS forwarder, not a policy layer).
    *
    * @generated from field: string layer = 4;
    */
   layer?: string;
 
   /**
-   * Its rule or default: "rule 2: deny 10.0.0.0/8" or "default deny".
+   * Its rule or default, such as "rule 2: deny 10.0.0.0/8" or "default
+   * deny"; for a resolver denial, the name the guest asked.
    *
    * @generated from field: string entry = 5;
    */
   entry?: string;
 
   /**
-   * Packets refused.
+   * Packets or DNS queries refused.
    *
    * @generated from field: int64 packets = 6;
    */
