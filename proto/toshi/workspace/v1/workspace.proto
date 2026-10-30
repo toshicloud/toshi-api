@@ -321,6 +321,27 @@ message ServiceStatus {
   // name that does not start with a letter; empty otherwise. Set by Toshi
   // on GetService.
   string provided_names_reason = 11;
+  // The state of the backups of the service's state volume: its newest
+  // saved version and its newest failed save. Unset when the service has
+  // no state volume. Set by Toshi on GetService; ignored in a request.
+  ServiceBackup backup = 12;
+}
+
+// ServiceBackup is the state of the backups of a service's state volume,
+// as GetVolume shows them on the volume.
+message ServiceBackup {
+  // The service's state volume.
+  string volume_id = 1;
+  // The number of its newest saved version; zero when it has none.
+  int64 latest_version = 2;
+  // When its newest version was saved; unset when it has none.
+  google.protobuf.Timestamp latest_version_time = 3;
+  // Why its newest failed save or snapshot saved no version. Empty when
+  // none failed. A later version does not clear it: compare
+  // last_save_failure_time with latest_version_time.
+  string last_save_failure = 4;
+  // When that save or snapshot failed; unset when none failed.
+  google.protobuf.Timestamp last_save_failure_time = 5;
 }
 
 // ProvidedName is the name one http channel of a service is reached at.
