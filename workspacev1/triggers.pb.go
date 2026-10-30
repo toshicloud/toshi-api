@@ -583,8 +583,9 @@ type TriggerSandbox struct {
 	// The runner size of its VM, which picks its image, for example
 	// "toshi-linux-2x". Required.
 	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
-	// How long it may run; unset is 24 hours. It cannot be longer than the
-	// plan's sandbox cap.
+	// How long it may run, in whole minutes; unset is 24 hours, or the plan's
+	// sandbox cap when shorter. It cannot be longer than the cap: a create or
+	// update past it is refused.
 	MaxDuration *durationpb.Duration `protobuf:"bytes,2,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
 	// What in its workspace it uses, as SandboxSpec's bindings.
 	Bindings []*Binding `protobuf:"bytes,3,rep,name=bindings,proto3" json:"bindings,omitempty"`

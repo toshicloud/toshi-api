@@ -477,8 +477,9 @@ export type TriggerSandbox = Message<"toshi.workspace.v1.TriggerSandbox"> & {
   size: string;
 
   /**
-   * How long it may run; unset is 24 hours. It cannot be longer than the
-   * plan's sandbox cap.
+   * How long it may run, in whole minutes; unset is 24 hours, or the plan's
+   * sandbox cap when shorter. It cannot be longer than the cap: a create or
+   * update past it is refused.
    *
    * @generated from field: google.protobuf.Duration max_duration = 2;
    */
@@ -539,8 +540,9 @@ export type TriggerSandboxJson = {
   size?: string;
 
   /**
-   * How long it may run; unset is 24 hours. It cannot be longer than the
-   * plan's sandbox cap.
+   * How long it may run, in whole minutes; unset is 24 hours, or the plan's
+   * sandbox cap when shorter. It cannot be longer than the cap: a create or
+   * update past it is refused.
    *
    * @generated from field: google.protobuf.Duration max_duration = 2;
    */
