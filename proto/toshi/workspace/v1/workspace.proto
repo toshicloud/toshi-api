@@ -724,6 +724,28 @@ message ServiceSpec {
   // keep their VM on one of the workspace's own hosts. Set by the server
   // from the recipe; ignored in a request.
   bool keep_vm = 13;
+  // The kinds of host its runs may use, in order of preference: a run goes
+  // to a host of the first kind that can take it now, and waits when none
+  // can, never on a kind not listed. Empty takes any kind: the workspace's
+  // own host when one could run it, else a shared host. Set in a create
+  // and with an UpdateService of spec.host_kinds; each kind at most once,
+  // never HOST_KIND_UNSPECIFIED. A changed list applies to the service's
+  // runs that are still queued and to every later run.
+  repeated HostKind host_kinds = 14;
+}
+
+// HostKind is a kind of host a service's runs may use.
+enum HostKind {
+  HOST_KIND_UNSPECIFIED = 0;
+  // The deployment's own hosts, shared by its workspaces, the operator's
+  // cloud pools included; within the plan's shared services.
+  HOST_KIND_SHARED = 1;
+  // The hosts the workspace enrolled.
+  HOST_KIND_OWN = 2;
+  // The workspace's cloud hosts, which launch instances in its own cloud
+  // account. A cloud host takes no service run yet: a run passes to the
+  // next kind, and one that lists only this kind waits.
+  HOST_KIND_CLOUD = 3;
 }
 
 // StateVolumeSpec is the state volume a service is created with: it is

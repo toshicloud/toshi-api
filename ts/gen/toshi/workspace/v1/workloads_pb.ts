@@ -3545,7 +3545,10 @@ export const WorkloadService: GenService<{
    * headers, on its customer domains only, and a plan whose
    * domains.open_requests_per_minute is 0 refuses it with
    * FAILED_PRECONDITION. Setting the value the service has changes
-   * nothing.
+   * nothing. "spec.host_kinds" sets the kinds of host its runs may use, in
+   * order (ServiceSpec.host_kinds), its still-queued runs included; an empty
+   * list takes any kind, and a repeated or unspecified kind fails with
+   * INVALID_ARGUMENT.
    *
    * @generated from rpc toshi.workspace.v1.WorkloadService.UpdateService
    */

@@ -439,7 +439,10 @@ type WorkloadServiceClient interface {
 	// headers, on its customer domains only, and a plan whose
 	// domains.open_requests_per_minute is 0 refuses it with
 	// FAILED_PRECONDITION. Setting the value the service has changes
-	// nothing.
+	// nothing. "spec.host_kinds" sets the kinds of host its runs may use, in
+	// order (ServiceSpec.host_kinds), its still-queued runs included; an empty
+	// list takes any kind, and a repeated or unspecified kind fails with
+	// INVALID_ARGUMENT.
 	UpdateService(context.Context, *connect.Request[workspacev1.UpdateServiceRequest]) (*connect.Response[workspacev1.UpdateServiceResponse], error)
 	// DeleteService stops a service that has not ended and then removes it.
 	// It returns an operation that is done once the service is removed;
@@ -1544,7 +1547,10 @@ type WorkloadServiceHandler interface {
 	// headers, on its customer domains only, and a plan whose
 	// domains.open_requests_per_minute is 0 refuses it with
 	// FAILED_PRECONDITION. Setting the value the service has changes
-	// nothing.
+	// nothing. "spec.host_kinds" sets the kinds of host its runs may use, in
+	// order (ServiceSpec.host_kinds), its still-queued runs included; an empty
+	// list takes any kind, and a repeated or unspecified kind fails with
+	// INVALID_ARGUMENT.
 	UpdateService(context.Context, *connect.Request[workspacev1.UpdateServiceRequest]) (*connect.Response[workspacev1.UpdateServiceResponse], error)
 	// DeleteService stops a service that has not ended and then removes it.
 	// It returns an operation that is done once the service is removed;
