@@ -2198,8 +2198,9 @@ type ServiceStatus struct {
 	LiveRun *ServiceRun `protobuf:"bytes,9,opt,name=live_run,json=liveRun,proto3" json:"live_run,omitempty"`
 	// The names visitors reach the service's http channels at, one per
 	// channel of its current revision's recipe that has one: the front
-	// channel at "<service>.<workspace>.svc.<domain>", every other at
-	// "<port>-<service>.<workspace>.svc.<domain>". Empty while the
+	// channel first, at "<service>.<workspace>.svc.<domain>", then every
+	// other in recipe order at "<port>-<service>.<workspace>.svc.<domain>".
+	// Empty while the
 	// deployment hosts no names. Set by Toshi on GetService; ignored in a
 	// request.
 	ProvidedNames []*ProvidedName `protobuf:"bytes,10,rep,name=provided_names,json=providedNames,proto3" json:"provided_names,omitempty"`

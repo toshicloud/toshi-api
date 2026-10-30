@@ -1355,8 +1355,9 @@ export type ServiceStatus = Message<"toshi.workspace.v1.ServiceStatus"> & {
   /**
    * The names visitors reach the service's http channels at, one per
    * channel of its current revision's recipe that has one: the front
-   * channel at "<service>.<workspace>.svc.<domain>", every other at
-   * "<port>-<service>.<workspace>.svc.<domain>". Empty while the
+   * channel first, at "<service>.<workspace>.svc.<domain>", then every
+   * other in recipe order at "<port>-<service>.<workspace>.svc.<domain>".
+   * Empty while the
    * deployment hosts no names. Set by Toshi on GetService; ignored in a
    * request.
    *
@@ -1447,8 +1448,9 @@ export type ServiceStatusJson = {
   /**
    * The names visitors reach the service's http channels at, one per
    * channel of its current revision's recipe that has one: the front
-   * channel at "<service>.<workspace>.svc.<domain>", every other at
-   * "<port>-<service>.<workspace>.svc.<domain>". Empty while the
+   * channel first, at "<service>.<workspace>.svc.<domain>", then every
+   * other in recipe order at "<port>-<service>.<workspace>.svc.<domain>".
+   * Empty while the
    * deployment hosts no names. Set by Toshi on GetService; ignored in a
    * request.
    *
