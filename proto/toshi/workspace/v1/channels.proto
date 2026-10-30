@@ -550,13 +550,17 @@ message ChannelBody {
 // Forward is one open Forward: what it reaches in the guest, named as the
 // audit log names it (a command by its first word only), who opened it,
 // with the device of the connect token that admitted them, and the http
-// channel whose connection carries it, if one does.
+// channel whose connection carries it, if one does, and the grant it was
+// opened through, if one was.
 message Forward {
   string target = 1;
   string by = 2;
   string device = 3;
   string channel = 4;
   google.protobuf.Timestamp opened_at = 5;
+  // The grant through which another workspace's caller opened it, or
+  // empty for one the job's own workspace opened.
+  string grant_id = 6;
 }
 
 // Link is the state of a runner's Link, the connection its guest holds to

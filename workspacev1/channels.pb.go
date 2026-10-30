@@ -1870,14 +1870,18 @@ func (x *ChannelBody) GetCut() bool {
 // Forward is one open Forward: what it reaches in the guest, named as the
 // audit log names it (a command by its first word only), who opened it,
 // with the device of the connect token that admitted them, and the http
-// channel whose connection carries it, if one does.
+// channel whose connection carries it, if one does, and the grant it was
+// opened through, if one was.
 type Forward struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Target        string                 `protobuf:"bytes,1,opt,name=target,proto3" json:"target,omitempty"`
-	By            string                 `protobuf:"bytes,2,opt,name=by,proto3" json:"by,omitempty"`
-	Device        string                 `protobuf:"bytes,3,opt,name=device,proto3" json:"device,omitempty"`
-	Channel       string                 `protobuf:"bytes,4,opt,name=channel,proto3" json:"channel,omitempty"`
-	OpenedAt      *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=opened_at,json=openedAt,proto3" json:"opened_at,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Target   string                 `protobuf:"bytes,1,opt,name=target,proto3" json:"target,omitempty"`
+	By       string                 `protobuf:"bytes,2,opt,name=by,proto3" json:"by,omitempty"`
+	Device   string                 `protobuf:"bytes,3,opt,name=device,proto3" json:"device,omitempty"`
+	Channel  string                 `protobuf:"bytes,4,opt,name=channel,proto3" json:"channel,omitempty"`
+	OpenedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=opened_at,json=openedAt,proto3" json:"opened_at,omitempty"`
+	// The grant through which another workspace's caller opened it, or
+	// empty for one the job's own workspace opened.
+	GrantId       string `protobuf:"bytes,6,opt,name=grant_id,json=grantId,proto3" json:"grant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1945,6 +1949,13 @@ func (x *Forward) GetOpenedAt() *timestamppb.Timestamp {
 		return x.OpenedAt
 	}
 	return nil
+}
+
+func (x *Forward) GetGrantId() string {
+	if x != nil {
+		return x.GrantId
+	}
+	return ""
 }
 
 // Link is the state of a runner's Link, the connection its guest holds to
@@ -4265,13 +4276,14 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\vChannelBody\x12!\n" +
 	"\fcontent_type\x18\x01 \x01(\tR\vcontentType\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\fR\x04data\x12\x10\n" +
-	"\x03cut\x18\x03 \x01(\bR\x03cut\"\x9c\x01\n" +
+	"\x03cut\x18\x03 \x01(\bR\x03cut\"\xb7\x01\n" +
 	"\aForward\x12\x16\n" +
 	"\x06target\x18\x01 \x01(\tR\x06target\x12\x0e\n" +
 	"\x02by\x18\x02 \x01(\tR\x02by\x12\x16\n" +
 	"\x06device\x18\x03 \x01(\tR\x06device\x12\x18\n" +
 	"\achannel\x18\x04 \x01(\tR\achannel\x127\n" +
-	"\topened_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\bopenedAt\"\xfe\x01\n" +
+	"\topened_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\bopenedAt\x12\x19\n" +
+	"\bgrant_id\x18\x06 \x01(\tR\agrantId\"\xfe\x01\n" +
 	"\x04Link\x12\x1c\n" +
 	"\tconnected\x18\x01 \x01(\bR\tconnected\x120\n" +
 	"\x05since\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x1a\n" +
