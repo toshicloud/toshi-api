@@ -37,7 +37,8 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 //
 // Creating an image needs a plan that allows images; a workspace whose
 // plan does not fails with FAILED_PRECONDITION and the reason
-// PLAN_EXCLUDES_IMAGES. The calls take no request_key.
+// PLAN_EXCLUDES_IMAGES. CreateImage takes a request_key; the other calls
+// take none.
 service ImageService {
   // CreateImage creates the image. A name another live image of the
   // workspace has fails with ALREADY_EXISTS and the reason
@@ -309,6 +310,7 @@ message CreateImageRequest {
   // Builds the image again on each push to its source's default branch,
   // as Image.rebuild_on_push says; only for one built from a repository.
   bool rebuild_on_push = 12;
+  string request_key = 13;
 }
 
 message CreateImageResponse {

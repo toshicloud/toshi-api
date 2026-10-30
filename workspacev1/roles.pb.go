@@ -597,6 +597,7 @@ type CreateRoleRequest struct {
 	// At least one permission, as this API's methods or a product's calls
 	// name it.
 	Permissions   []string `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	RequestKey    string   `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -643,6 +644,13 @@ func (x *CreateRoleRequest) GetPermissions() []string {
 		return x.Permissions
 	}
 	return nil
+}
+
+func (x *CreateRoleRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type CreateRoleResponse struct {
@@ -2295,10 +2303,12 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"k\n" +
 	"\x11ListRolesResponse\x12.\n" +
 	"\x05roles\x18\x01 \x03(\v2\x18.toshi.workspace.v1.RoleR\x05roles\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"I\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"j\n" +
 	"\x11CreateRoleRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
-	"\vpermissions\x18\x02 \x03(\tR\vpermissions\"B\n" +
+	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12\x1f\n" +
+	"\vrequest_key\x18\x03 \x01(\tR\n" +
+	"requestKey\"B\n" +
 	"\x12CreateRoleResponse\x12,\n" +
 	"\x04role\x18\x01 \x01(\v2\x18.toshi.workspace.v1.RoleR\x04role\"Y\n" +
 	"\x11UpdateRoleRequest\x12\x0e\n" +

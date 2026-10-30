@@ -253,6 +253,7 @@ message CreateRoleRequest {
   // At least one permission, as this API's methods or a product's calls
   // name it.
   repeated string permissions = 2;
+  string request_key = 3;
 }
 
 message CreateRoleResponse {

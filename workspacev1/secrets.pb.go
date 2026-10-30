@@ -380,6 +380,7 @@ type CreateSecretSetRequest struct {
 	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	Shared        bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -433,6 +434,13 @@ func (x *CreateSecretSetRequest) GetShared() bool {
 		return x.Shared
 	}
 	return false
+}
+
+func (x *CreateSecretSetRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type CreateSecretSetResponse struct {
@@ -1624,11 +1632,13 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x04kind\x18\x01 \x01(\x0e2%.toshi.workspace.v1.SecretGranteeKindR\x04kind\x12\x18\n" +
 	"\agrantee\x18\x02 \x01(\tR\agrantee\x129\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"l\n" +
+	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x8d\x01\n" +
 	"\x16CreateSecretSetRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x16\n" +
-	"\x06shared\x18\x03 \x01(\bR\x06shared\"J\n" +
+	"\x06shared\x18\x03 \x01(\bR\x06shared\x12\x1f\n" +
+	"\vrequest_key\x18\x04 \x01(\tR\n" +
+	"requestKey\"J\n" +
 	"\x17CreateSecretSetResponse\x12/\n" +
 	"\x03set\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.SecretSetR\x03set\"m\n" +
 	"\x15ListSecretSetsRequest\x12\x18\n" +

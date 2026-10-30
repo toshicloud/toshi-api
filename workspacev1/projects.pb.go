@@ -646,6 +646,7 @@ func (x *ListRepositoriesResponse) GetNextPageToken() string {
 type CreateProjectRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	RequestKey    string                 `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -683,6 +684,13 @@ func (*CreateProjectRequest) Descriptor() ([]byte, []int) {
 func (x *CreateProjectRequest) GetName() string {
 	if x != nil {
 		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateProjectRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -1033,6 +1041,7 @@ type CreateEnvironmentRequest struct {
 	// development, preview or production; the environment is named after
 	// it.
 	Kind          string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1077,6 +1086,13 @@ func (x *CreateEnvironmentRequest) GetProject() string {
 func (x *CreateEnvironmentRequest) GetKind() string {
 	if x != nil {
 		return x.Kind
+	}
+	return ""
+}
+
+func (x *CreateEnvironmentRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -2966,9 +2982,11 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"\x86\x01\n" +
 	"\x18ListRepositoriesResponse\x12B\n" +
 	"\frepositories\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.RepositoryR\frepositories\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"*\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"K\n" +
 	"\x14CreateProjectRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"N\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
+	"\vrequest_key\x18\x02 \x01(\tR\n" +
+	"requestKey\"N\n" +
 	"\x15CreateProjectResponse\x125\n" +
 	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\"\x8a\x01\n" +
 	"\x14UpdateProjectRequest\x125\n" +
@@ -2990,10 +3008,12 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x11GetProjectRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\"K\n" +
 	"\x12GetProjectResponse\x125\n" +
-	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\"H\n" +
+	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\"i\n" +
 	"\x18CreateEnvironmentRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
-	"\x04kind\x18\x02 \x01(\tR\x04kind\"e\n" +
+	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x1f\n" +
+	"\vrequest_key\x18\x03 \x01(\tR\n" +
+	"requestKey\"e\n" +
 	"\x19CreateEnvironmentResponse\x12H\n" +
 	"\venvironment\x18\x01 \x01(\v2&.toshi.workspace.v1.ProjectEnvironmentR\venvironment\"H\n" +
 	"\x18DeleteEnvironmentRequest\x12\x18\n" +

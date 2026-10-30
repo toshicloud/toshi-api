@@ -817,7 +817,8 @@ type CreateImageRequest struct {
 	RegistrySecret string `protobuf:"bytes,11,opt,name=registry_secret,json=registrySecret,proto3" json:"registry_secret,omitempty"`
 	// Builds the image again on each push to its source's default branch,
 	// as Image.rebuild_on_push says; only for one built from a repository.
-	RebuildOnPush bool `protobuf:"varint,12,opt,name=rebuild_on_push,json=rebuildOnPush,proto3" json:"rebuild_on_push,omitempty"`
+	RebuildOnPush bool   `protobuf:"varint,12,opt,name=rebuild_on_push,json=rebuildOnPush,proto3" json:"rebuild_on_push,omitempty"`
+	RequestKey    string `protobuf:"bytes,13,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -934,6 +935,13 @@ func (x *CreateImageRequest) GetRebuildOnPush() bool {
 		return x.RebuildOnPush
 	}
 	return false
+}
+
+func (x *CreateImageRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type CreateImageResponse struct {
@@ -1582,7 +1590,7 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\n" +
 	"service_id\x18\x01 \x01(\tR\tserviceId\x12!\n" +
 	"\fservice_name\x18\x02 \x01(\tR\vserviceName\x12\x1a\n" +
-	"\brevision\x18\x03 \x01(\x03R\brevision\"\x98\x03\n" +
+	"\brevision\x18\x03 \x01(\x03R\brevision\"\xb9\x03\n" +
 	"\x12CreateImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x12\n" +
@@ -1596,7 +1604,9 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\bregistry\x18\n" +
 	" \x01(\tR\bregistry\x12'\n" +
 	"\x0fregistry_secret\x18\v \x01(\tR\x0eregistrySecret\x12&\n" +
-	"\x0frebuild_on_push\x18\f \x01(\bR\rrebuildOnPush\"\x82\x01\n" +
+	"\x0frebuild_on_push\x18\f \x01(\bR\rrebuildOnPush\x12\x1f\n" +
+	"\vrequest_key\x18\r \x01(\tR\n" +
+	"requestKey\"\x82\x01\n" +
 	"\x13CreateImageResponse\x12/\n" +
 	"\x05image\x18\x01 \x01(\v2\x19.toshi.workspace.v1.ImageR\x05image\x12:\n" +
 	"\aversion\x18\x02 \x01(\v2 .toshi.workspace.v1.ImageVersionR\aversion\"?\n" +

@@ -319,6 +319,7 @@ message ListRepositoriesResponse {
 
 message CreateProjectRequest {
   string name = 1;
+  string request_key = 2;
 }
 
 message CreateProjectResponse {
@@ -365,6 +366,7 @@ message CreateEnvironmentRequest {
   // development, preview or production; the environment is named after
   // it.
   string kind = 2;
+  string request_key = 3;
 }
 
 message CreateEnvironmentResponse {
