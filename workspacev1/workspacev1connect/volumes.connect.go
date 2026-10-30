@@ -41,6 +41,9 @@ const (
 	// VolumeServiceCreateVolumeProcedure is the fully-qualified name of the VolumeService's
 	// CreateVolume RPC.
 	VolumeServiceCreateVolumeProcedure = "/toshi.workspace.v1.VolumeService/CreateVolume"
+	// VolumeServiceUpdateVolumeProcedure is the fully-qualified name of the VolumeService's
+	// UpdateVolume RPC.
+	VolumeServiceUpdateVolumeProcedure = "/toshi.workspace.v1.VolumeService/UpdateVolume"
 	// VolumeServiceAttachVolumeProcedure is the fully-qualified name of the VolumeService's
 	// AttachVolume RPC.
 	VolumeServiceAttachVolumeProcedure = "/toshi.workspace.v1.VolumeService/AttachVolume"
@@ -77,6 +80,15 @@ type VolumeServiceClient interface {
 	// first one made; the key with a different request fails with
 	// FAILED_PRECONDITION.
 	CreateVolume(context.Context, *connect.Request[workspacev1.CreateVolumeRequest]) (*connect.Response[workspacev1.CreateVolumeResponse], error)
+	// UpdateVolume renames a volume or changes its size cap, the two paths
+	// update_mask may name; its mode is fixed. A name another of the
+	// project's volumes has, deleted ones aside, fails with ALREADY_EXISTS.
+	// A size cap below the newest version's size, a negative one, a mode
+	// path and any other path fail with INVALID_ARGUMENT; a size cap of zero
+	// is 10 GiB. A volume may be renamed while attached or held by a run; an
+	// environment that allows a CI job's state volume by its old name no
+	// longer matches it.
+	UpdateVolume(context.Context, *connect.Request[workspacev1.UpdateVolumeRequest]) (*connect.Response[workspacev1.UpdateVolumeResponse], error)
 	// AttachVolume attaches a state volume to a service or sandbox: the
 	// service's next run mounts it, and a sandbox mounts it when it starts.
 	// A workload has at most one volume, and a volume at most one workload.
@@ -152,6 +164,12 @@ func NewVolumeServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(volumeServiceMethods.ByName("CreateVolume")),
 			connect.WithClientOptions(opts...),
 		),
+		updateVolume: connect.NewClient[workspacev1.UpdateVolumeRequest, workspacev1.UpdateVolumeResponse](
+			httpClient,
+			baseURL+VolumeServiceUpdateVolumeProcedure,
+			connect.WithSchema(volumeServiceMethods.ByName("UpdateVolume")),
+			connect.WithClientOptions(opts...),
+		),
 		attachVolume: connect.NewClient[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse](
 			httpClient,
 			baseURL+VolumeServiceAttachVolumeProcedure,
@@ -190,6 +208,7 @@ type volumeServiceClient struct {
 	listVolumes        *connect.Client[workspacev1.ListVolumesRequest, workspacev1.ListVolumesResponse]
 	getVolume          *connect.Client[workspacev1.GetVolumeRequest, workspacev1.GetVolumeResponse]
 	createVolume       *connect.Client[workspacev1.CreateVolumeRequest, workspacev1.CreateVolumeResponse]
+	updateVolume       *connect.Client[workspacev1.UpdateVolumeRequest, workspacev1.UpdateVolumeResponse]
 	attachVolume       *connect.Client[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse]
 	detachVolume       *connect.Client[workspacev1.DetachVolumeRequest, workspacev1.DetachVolumeResponse]
 	deleteVolume       *connect.Client[workspacev1.DeleteVolumeRequest, workspacev1.DeleteVolumeResponse]
@@ -210,6 +229,11 @@ func (c *volumeServiceClient) GetVolume(ctx context.Context, req *connect.Reques
 // CreateVolume calls toshi.workspace.v1.VolumeService.CreateVolume.
 func (c *volumeServiceClient) CreateVolume(ctx context.Context, req *connect.Request[workspacev1.CreateVolumeRequest]) (*connect.Response[workspacev1.CreateVolumeResponse], error) {
 	return c.createVolume.CallUnary(ctx, req)
+}
+
+// UpdateVolume calls toshi.workspace.v1.VolumeService.UpdateVolume.
+func (c *volumeServiceClient) UpdateVolume(ctx context.Context, req *connect.Request[workspacev1.UpdateVolumeRequest]) (*connect.Response[workspacev1.UpdateVolumeResponse], error) {
+	return c.updateVolume.CallUnary(ctx, req)
 }
 
 // AttachVolume calls toshi.workspace.v1.VolumeService.AttachVolume.
@@ -256,6 +280,15 @@ type VolumeServiceHandler interface {
 	// first one made; the key with a different request fails with
 	// FAILED_PRECONDITION.
 	CreateVolume(context.Context, *connect.Request[workspacev1.CreateVolumeRequest]) (*connect.Response[workspacev1.CreateVolumeResponse], error)
+	// UpdateVolume renames a volume or changes its size cap, the two paths
+	// update_mask may name; its mode is fixed. A name another of the
+	// project's volumes has, deleted ones aside, fails with ALREADY_EXISTS.
+	// A size cap below the newest version's size, a negative one, a mode
+	// path and any other path fail with INVALID_ARGUMENT; a size cap of zero
+	// is 10 GiB. A volume may be renamed while attached or held by a run; an
+	// environment that allows a CI job's state volume by its old name no
+	// longer matches it.
+	UpdateVolume(context.Context, *connect.Request[workspacev1.UpdateVolumeRequest]) (*connect.Response[workspacev1.UpdateVolumeResponse], error)
 	// AttachVolume attaches a state volume to a service or sandbox: the
 	// service's next run mounts it, and a sandbox mounts it when it starts.
 	// A workload has at most one volume, and a volume at most one workload.
@@ -327,6 +360,12 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(volumeServiceMethods.ByName("CreateVolume")),
 		connect.WithHandlerOptions(opts...),
 	)
+	volumeServiceUpdateVolumeHandler := connect.NewUnaryHandler(
+		VolumeServiceUpdateVolumeProcedure,
+		svc.UpdateVolume,
+		connect.WithSchema(volumeServiceMethods.ByName("UpdateVolume")),
+		connect.WithHandlerOptions(opts...),
+	)
 	volumeServiceAttachVolumeHandler := connect.NewUnaryHandler(
 		VolumeServiceAttachVolumeProcedure,
 		svc.AttachVolume,
@@ -365,6 +404,8 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 			volumeServiceGetVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceCreateVolumeProcedure:
 			volumeServiceCreateVolumeHandler.ServeHTTP(w, r)
+		case VolumeServiceUpdateVolumeProcedure:
+			volumeServiceUpdateVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceAttachVolumeProcedure:
 			volumeServiceAttachVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceDetachVolumeProcedure:
@@ -394,6 +435,10 @@ func (UnimplementedVolumeServiceHandler) GetVolume(context.Context, *connect.Req
 
 func (UnimplementedVolumeServiceHandler) CreateVolume(context.Context, *connect.Request[workspacev1.CreateVolumeRequest]) (*connect.Response[workspacev1.CreateVolumeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.CreateVolume is not implemented"))
+}
+
+func (UnimplementedVolumeServiceHandler) UpdateVolume(context.Context, *connect.Request[workspacev1.UpdateVolumeRequest]) (*connect.Response[workspacev1.UpdateVolumeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.UpdateVolume is not implemented"))
 }
 
 func (UnimplementedVolumeServiceHandler) AttachVolume(context.Context, *connect.Request[workspacev1.AttachVolumeRequest]) (*connect.Response[workspacev1.AttachVolumeResponse], error) {

@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -23,8 +24,9 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 //
 // CreateVolume takes a request_key; the other calls take none: attaching a
 // volume to the workload it is attached to, while no run holds it, and
-// detaching a detached volume return it as it is. RestoreVolume sent twice
-// records two versions, each a copy of the one it names.
+// detaching a detached volume return it as it is. UpdateVolume sent twice
+// ends with the same values. RestoreVolume sent twice records two
+// versions, each a copy of the one it names.
 service VolumeService {
   // ListVolumes returns the project's volumes that are not deleted,
   // ordered by name.
@@ -53,6 +55,20 @@ service VolumeService {
   rpc CreateVolume(CreateVolumeRequest) returns (CreateVolumeResponse) {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
+  }
+
+  // UpdateVolume renames a volume or changes its size cap, the two paths
+  // update_mask may name; its mode is fixed. A name another of the
+  // project's volumes has, deleted ones aside, fails with ALREADY_EXISTS.
+  // A size cap below the newest version's size, a negative one, a mode
+  // path and any other path fail with INVALID_ARGUMENT; a size cap of zero
+  // is 10 GiB. A volume may be renamed while attached or held by a run; an
+  // environment that allows a CI job's state volume by its old name no
+  // longer matches it.
+  rpc UpdateVolume(UpdateVolumeRequest) returns (UpdateVolumeResponse) {
+    option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
+    option (toshi.audit) = {target: "volume:response.volume.id"};
   }
 
   // AttachVolume attaches a state volume to a service or sandbox: the
@@ -296,6 +312,19 @@ message CreateVolumeRequest {
 }
 
 message CreateVolumeResponse {
+  Volume volume = 1;
+}
+
+message UpdateVolumeRequest {
+  string project = 1;
+  // id names the volume; the fields update_mask names carry the new
+  // values.
+  Volume volume = 2;
+  // name, size_cap_bytes, or both.
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+message UpdateVolumeResponse {
   Volume volume = 1;
 }
 
