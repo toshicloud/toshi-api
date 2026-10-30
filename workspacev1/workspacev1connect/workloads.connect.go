@@ -96,6 +96,9 @@ const (
 	// WorkloadServiceAnswerPromptProcedure is the fully-qualified name of the WorkloadService's
 	// AnswerPrompt RPC.
 	WorkloadServiceAnswerPromptProcedure = "/toshi.workspace.v1.WorkloadService/AnswerPrompt"
+	// WorkloadServiceEmitWorkloadEventProcedure is the fully-qualified name of the WorkloadService's
+	// EmitWorkloadEvent RPC.
+	WorkloadServiceEmitWorkloadEventProcedure = "/toshi.workspace.v1.WorkloadService/EmitWorkloadEvent"
 	// WorkloadServiceWatchTelemetryProcedure is the fully-qualified name of the WorkloadService's
 	// WatchTelemetry RPC.
 	WorkloadServiceWatchTelemetryProcedure = "/toshi.workspace.v1.WorkloadService/WatchTelemetry"
@@ -327,6 +330,16 @@ type WorkloadServiceClient interface {
 	// and one without options any text of 1 to 4096 bytes; another answer
 	// fails with INVALID_ARGUMENT.
 	AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error)
+	// EmitWorkloadEvent appends an event to a job's, sandbox's or service's
+	// event log, as its guest emits one, and returns it: type EMITTED, the
+	// name given and data. The workload need not be running. The name is 1
+	// to 200 bytes with no space or control character, and its first
+	// dot-separated segment is none Toshi keeps for its own events (job,
+	// sandbox, run, service, recording, agent, takeover, spend, egress, host,
+	// github, webhook, trigger and mail); data is empty or JSON of at most
+	// 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown workload
+	// with NOT_FOUND.
+	EmitWorkloadEvent(context.Context, *connect.Request[workspacev1.EmitWorkloadEventRequest]) (*connect.Response[workspacev1.EmitWorkloadEventResponse], error)
 	// WatchTelemetry streams a sandbox's resource samples as its host reports
 	// them, in cursor order: the samples kept after a cursor, then each one as
 	// it is stored. Each sample stored takes the next cursor, also one timed
@@ -676,6 +689,12 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("AnswerPrompt")),
 			connect.WithClientOptions(opts...),
 		),
+		emitWorkloadEvent: connect.NewClient[workspacev1.EmitWorkloadEventRequest, workspacev1.EmitWorkloadEventResponse](
+			httpClient,
+			baseURL+WorkloadServiceEmitWorkloadEventProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("EmitWorkloadEvent")),
+			connect.WithClientOptions(opts...),
+		),
 		watchTelemetry: connect.NewClient[workspacev1.WatchTelemetryRequest, workspacev1.WatchTelemetryResponse](
 			httpClient,
 			baseURL+WorkloadServiceWatchTelemetryProcedure,
@@ -889,6 +908,7 @@ type workloadServiceClient struct {
 	cancelExecution        *connect.Client[workspacev1.CancelExecutionRequest, workspacev1.CancelExecutionResponse]
 	executeCommand         *connect.Client[workspacev1.ExecuteCommandRequest, workspacev1.ExecuteCommandResponse]
 	answerPrompt           *connect.Client[workspacev1.AnswerPromptRequest, workspacev1.AnswerPromptResponse]
+	emitWorkloadEvent      *connect.Client[workspacev1.EmitWorkloadEventRequest, workspacev1.EmitWorkloadEventResponse]
 	watchTelemetry         *connect.Client[workspacev1.WatchTelemetryRequest, workspacev1.WatchTelemetryResponse]
 	watchGuestLog          *connect.Client[workspacev1.WatchGuestLogRequest, workspacev1.WatchGuestLogResponse]
 	createPreviewShareLink *connect.Client[workspacev1.CreatePreviewShareLinkRequest, workspacev1.CreatePreviewShareLinkResponse]
@@ -1030,6 +1050,11 @@ func (c *workloadServiceClient) ExecuteCommand(ctx context.Context, req *connect
 // AnswerPrompt calls toshi.workspace.v1.WorkloadService.AnswerPrompt.
 func (c *workloadServiceClient) AnswerPrompt(ctx context.Context, req *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error) {
 	return c.answerPrompt.CallUnary(ctx, req)
+}
+
+// EmitWorkloadEvent calls toshi.workspace.v1.WorkloadService.EmitWorkloadEvent.
+func (c *workloadServiceClient) EmitWorkloadEvent(ctx context.Context, req *connect.Request[workspacev1.EmitWorkloadEventRequest]) (*connect.Response[workspacev1.EmitWorkloadEventResponse], error) {
+	return c.emitWorkloadEvent.CallUnary(ctx, req)
 }
 
 // WatchTelemetry calls toshi.workspace.v1.WorkloadService.WatchTelemetry.
@@ -1323,6 +1348,16 @@ type WorkloadServiceHandler interface {
 	// and one without options any text of 1 to 4096 bytes; another answer
 	// fails with INVALID_ARGUMENT.
 	AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error)
+	// EmitWorkloadEvent appends an event to a job's, sandbox's or service's
+	// event log, as its guest emits one, and returns it: type EMITTED, the
+	// name given and data. The workload need not be running. The name is 1
+	// to 200 bytes with no space or control character, and its first
+	// dot-separated segment is none Toshi keeps for its own events (job,
+	// sandbox, run, service, recording, agent, takeover, spend, egress, host,
+	// github, webhook, trigger and mail); data is empty or JSON of at most
+	// 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown workload
+	// with NOT_FOUND.
+	EmitWorkloadEvent(context.Context, *connect.Request[workspacev1.EmitWorkloadEventRequest]) (*connect.Response[workspacev1.EmitWorkloadEventResponse], error)
 	// WatchTelemetry streams a sandbox's resource samples as its host reports
 	// them, in cursor order: the samples kept after a cursor, then each one as
 	// it is stored. Each sample stored takes the next cursor, also one timed
@@ -1668,6 +1703,12 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("AnswerPrompt")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceEmitWorkloadEventHandler := connect.NewUnaryHandler(
+		WorkloadServiceEmitWorkloadEventProcedure,
+		svc.EmitWorkloadEvent,
+		connect.WithSchema(workloadServiceMethods.ByName("EmitWorkloadEvent")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceWatchTelemetryHandler := connect.NewServerStreamHandler(
 		WorkloadServiceWatchTelemetryProcedure,
 		svc.WatchTelemetry,
@@ -1900,6 +1941,8 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceExecuteCommandHandler.ServeHTTP(w, r)
 		case WorkloadServiceAnswerPromptProcedure:
 			workloadServiceAnswerPromptHandler.ServeHTTP(w, r)
+		case WorkloadServiceEmitWorkloadEventProcedure:
+			workloadServiceEmitWorkloadEventHandler.ServeHTTP(w, r)
 		case WorkloadServiceWatchTelemetryProcedure:
 			workloadServiceWatchTelemetryHandler.ServeHTTP(w, r)
 		case WorkloadServiceWatchGuestLogProcedure:
@@ -2057,6 +2100,10 @@ func (UnimplementedWorkloadServiceHandler) ExecuteCommand(context.Context, *conn
 
 func (UnimplementedWorkloadServiceHandler) AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.AnswerPrompt is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) EmitWorkloadEvent(context.Context, *connect.Request[workspacev1.EmitWorkloadEventRequest]) (*connect.Response[workspacev1.EmitWorkloadEventResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.EmitWorkloadEvent is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) WatchTelemetry(context.Context, *connect.Request[workspacev1.WatchTelemetryRequest], *connect.ServerStream[workspacev1.WatchTelemetryResponse]) error {

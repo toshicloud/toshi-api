@@ -273,6 +273,23 @@ service WorkloadService {
     };
   }
 
+  // EmitWorkloadEvent appends an event to a job's, sandbox's or service's
+  // event log, as its guest emits one, and returns it: type EMITTED, the
+  // name given and data. The workload need not be running. The name is 1
+  // to 200 bytes with no space or control character, and its first
+  // dot-separated segment is none Toshi keeps for its own events (job,
+  // sandbox, run, service, recording, agent, takeover, spend, egress, host,
+  // github, webhook, trigger and mail); data is empty or JSON of at most
+  // 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown workload
+  // with NOT_FOUND.
+  rpc EmitWorkloadEvent(EmitWorkloadEventRequest) returns (EmitWorkloadEventResponse) {
+    option (toshi.permission) = "workloads.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "workload.event_emitted"
+    };
+  }
+
   // WatchTelemetry streams a sandbox's resource samples as its host reports
   // them, in cursor order: the samples kept after a cursor, then each one as
   // it is stored. Each sample stored takes the next cursor, also one timed
@@ -642,6 +659,21 @@ message AnswerPromptRequest {
 
 message AnswerPromptResponse {
   // The AGENT_ANSWERED event.
+  Event event = 1;
+}
+
+message EmitWorkloadEventRequest {
+  string project = 1;
+  string environment = 2;
+  // The job, sandbox or service the event is about.
+  string workload_id = 3;
+  string name = 4;
+  // JSON, at most 64 KiB; empty for none.
+  bytes data = 5;
+}
+
+message EmitWorkloadEventResponse {
+  // The EMITTED event as stored.
   Event event = 1;
 }
 
