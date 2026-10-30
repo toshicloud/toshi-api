@@ -166,7 +166,9 @@ type RoleServiceClient interface {
 	// invitation fails with NOT_FOUND, whether no invitation has it or it is
 	// accepted, revoked or expired; the workspace's audit log records which
 	// as invitation.accept_refused. A caller who is already a member fails
-	// with ALREADY_EXISTS, leaving the invitation open.
+	// with ALREADY_EXISTS, leaving the invitation open, and a closed
+	// workspace with FAILED_PRECONDITION: it takes no new member until it is
+	// reopened.
 	AcceptInvitation(context.Context, *connect.Request[workspacev1.AcceptInvitationRequest]) (*connect.Response[workspacev1.AcceptInvitationResponse], error)
 }
 
@@ -461,7 +463,9 @@ type RoleServiceHandler interface {
 	// invitation fails with NOT_FOUND, whether no invitation has it or it is
 	// accepted, revoked or expired; the workspace's audit log records which
 	// as invitation.accept_refused. A caller who is already a member fails
-	// with ALREADY_EXISTS, leaving the invitation open.
+	// with ALREADY_EXISTS, leaving the invitation open, and a closed
+	// workspace with FAILED_PRECONDITION: it takes no new member until it is
+	// reopened.
 	AcceptInvitation(context.Context, *connect.Request[workspacev1.AcceptInvitationRequest]) (*connect.Response[workspacev1.AcceptInvitationResponse], error)
 }
 

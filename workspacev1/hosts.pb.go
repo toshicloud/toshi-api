@@ -1310,7 +1310,9 @@ type Host struct {
 	Overflow bool `protobuf:"varint,13,opt,name=overflow,proto3" json:"overflow,omitempty"`
 	// The host's public egress addresses.
 	Egress *HostEgress `protobuf:"bytes,14,opt,name=egress,proto3" json:"egress,omitempty"`
-	// The version the host's agent reported when it last registered; empty when unknown.
+	// The version the host's agent reported when it last registered; empty when
+	// unknown. This API leaves it, agent_version_status and agent_version_skew
+	// unset: the operator's ListHosts reports them.
 	AgentVersion string `protobuf:"bytes,15,opt,name=agent_version,json=agentVersion,proto3" json:"agent_version,omitempty"`
 	// Whether agent_version is inside the promise between this control plane and its agents.
 	AgentVersionStatus AgentVersionStatus `protobuf:"varint,16,opt,name=agent_version_status,json=agentVersionStatus,proto3,enum=toshi.workspace.v1.AgentVersionStatus" json:"agent_version_status,omitempty"`
@@ -1710,7 +1712,7 @@ func (x *KeptVM) GetStoppedAt() *timestamppb.Timestamp {
 type HeldRefill struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Size  string                 `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
-	// "memory" or "cpus".
+	// "memory", "memory_limit" or "cpus".
 	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

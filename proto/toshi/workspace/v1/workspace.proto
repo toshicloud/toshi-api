@@ -61,7 +61,8 @@ message Job {
   // The job as created.
   JobSpec spec = 5;
   JobStatus status = 6;
-  // What it records of its runs, fixed at create: never UNSPECIFIED.
+  // What it records of its runs, fixed at create: never UNSPECIFIED,
+  // except in an event's snapshot stored before workloads had one.
   RecordingPolicy recording = 7;
   // Whether the job is an agent: the image version it runs declares an
   // [agent] table in its recipe. Fixed at create; set by Toshi.
@@ -71,8 +72,8 @@ message Job {
   // Set by Toshi.
   repeated AgentPrompt waiting = 9;
   // The network policy the job was admitted with, its layers in order, and
-  // whether its host enforces network rules at assignment. Unset for a job
-  // recorded before workloads kept one.
+  // whether its host enforces network rules at assignment. Always set; a
+  // job recorded before workloads kept one has no layers.
   WorkloadNetwork network = 10;
   // Where recording came from. Set by Toshi.
   RecordingSource recording_source = 11;
@@ -170,7 +171,8 @@ message Sandbox {
   // it.
   SandboxSpec spec = 5;
   SandboxStatus status = 6;
-  // What it records of its runs, fixed at create: never UNSPECIFIED.
+  // What it records of its runs, fixed at create: never UNSPECIFIED,
+  // except in an event's snapshot stored before workloads had one.
   RecordingPolicy recording = 7;
   // Whether the sandbox is an agent: the image version it runs declares an
   // [agent] table in its recipe. Fixed at create; set by Toshi.
@@ -180,8 +182,8 @@ message Sandbox {
   // sandbox's run ends. Set by Toshi.
   repeated AgentPrompt waiting = 9;
   // The network policy the sandbox was admitted with, its layers in order,
-  // and whether its host enforces network rules at assignment. Unset for a
-  // sandbox recorded before workloads kept one.
+  // and whether its host enforces network rules at assignment. Always set;
+  // a sandbox recorded before workloads kept one has no layers.
   WorkloadNetwork network = 10;
   // Set on a sandbox read through a grant: the grant and what it allows on
   // this sandbox. Such a read leaves out network, the spec's bindings, its
@@ -194,8 +196,10 @@ message Sandbox {
   // Where recording came from. Set by Toshi.
   RecordingSource recording_source = 13;
   // Why a sandbox that records strips takes none now, empty while it does:
-  // its workspace switched recording off, or its host's image for its OS
-  // boots no desktop. Set by Toshi.
+  // its workspace switched recording off or cannot store new data, its
+  // host's image for its OS boots no desktop, Toshi licenses its Windows,
+  // it reached the plan's recording size for a sandbox, or the workspace's
+  // sandboxes reached the plan's strips for the day. Set by Toshi.
   string recording_stopped_reason = 14;
 }
 
@@ -268,8 +272,8 @@ message Service {
   // service's run ends. Set by Toshi.
   repeated AgentPrompt waiting = 8;
   // The network policy the service was admitted with, its layers in order,
-  // and whether its host enforces network rules at assignment. Unset for a
-  // service recorded before workloads kept one.
+  // and whether its host enforces network rules at assignment. Always set;
+  // a service recorded before workloads kept one has no layers.
   WorkloadNetwork network = 9;
 }
 
@@ -377,8 +381,8 @@ enum ServiceState {
 
 // RecordingPolicy is what a workload records of its runs.
 enum RecordingPolicy {
-  // At create: the workspace plan's default for a job, and OFF for another
-  // kind.
+  // At create: the workspace plan's default for a job, the plan's sandbox
+  // default for a sandbox, and OFF for another kind.
   RECORDING_POLICY_UNSPECIFIED = 0;
   // No capture. A file the run uploads as its test framework's recording
   // is still one of its recordings.
@@ -386,8 +390,8 @@ enum RecordingPolicy {
   // A screenshot strip of each run (RecordingService), unless a video or
   // trace the run uploaded as its test framework's recording is ready when
   // its strip is finished, after the run ended: the run then keeps that
-  // recording and no strip. A job only: set for another kind it fails with
-  // INVALID_ARGUMENT.
+  // recording and no strip. Jobs and sandboxes only: set for another kind
+  // it fails with INVALID_ARGUMENT.
   RECORDING_POLICY_STRIP = 2;
   // A video of each run's screen, recorded by its host, on the same terms
   // as STRIP. A host that cannot record a video, because it has no encoder
@@ -1065,7 +1069,8 @@ message WaitOperationResponse {
 
 // EventType is the closed set of event types. Built-in event names are
 // reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
-// takeover.*, spend.*, egress.*, host.*, github.*, webhook.* and mail.*.
+// takeover.*, spend.*, egress.*, host.*, github.*, webhook.*, trigger.* and
+// mail.*.
 enum EventType {
   EVENT_TYPE_UNSPECIFIED = 0;
   // A workload was created. Name: "<kind>.created".
@@ -1428,7 +1433,7 @@ enum PreviewShareLinkState {
   // A device opened it; it admits that device only.
   PREVIEW_SHARE_LINK_STATE_IN_USE = 2;
   PREVIEW_SHARE_LINK_STATE_REVOKED = 3;
-  // Its connections carried its byte cap.
+  // Its connections carried its byte cap, or its channel was deleted.
   PREVIEW_SHARE_LINK_STATE_ENDED = 4;
   PREVIEW_SHARE_LINK_STATE_EXPIRED = 5;
 }
@@ -1882,10 +1887,12 @@ message ServiceRevision {
   // registry's image.
   bool eligible = 8;
   // Why a rollback may not select the revision; empty when eligible. It is
-  // one of two reasons: the window ("revision N is older than the
-  // service's 10 newest revisions and no run uses it"), or the registry's
+  // one of three reasons: the window ("revision N is older than the
+  // service's 10 newest revisions and no run uses it"), the registry's
   // last answer ("the registry answered <status> for <digest> at <time>:
-  // it does not serve the revision's image (<message>)").
+  // it does not serve the revision's image (<message>)"), or its disk
+  // image version ("image <image> version <n> is pending deletion since
+  // <time> and is deleted at <time>", or "... was deleted at <time>").
   string ineligible_reason = 9;
   // The last answer of the registry of container_image to a rollback's
   // check that it serves container_image_digest; unset until a rollback

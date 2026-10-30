@@ -71,14 +71,16 @@ type HostServiceClient interface {
 	// A page holds 100 volumes when page_size is zero, and 1000 at most.
 	ListHostStorage(context.Context, *connect.Request[workspacev1.ListHostStorageRequest]) (*connect.Response[workspacev1.ListHostStorageResponse], error)
 	// ListHostAlerts returns the active alerts of the workspace's hosts:
-	// memory_held, egress_changed and agent_version_skew, one per kind,
-	// ordered by kind.
+	// memory_held, egress_changed, agent_version_skew, host_offline, vm_died,
+	// job_oom_killed and spend_cap_reached, one per kind, and its token
+	// notices, token_creator_left and token_expiring, one for each person who
+	// left; ordered by kind.
 	//
 	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListHostAlerts(context.Context, *connect.Request[workspacev1.ListHostAlertsRequest]) (*connect.Response[workspacev1.ListHostAlertsResponse], error)
 	// SetHostState drains a host or puts it back in service. Only
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
-	// fails with NOT_FOUND.
+	// fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
 	SetHostState(context.Context, *connect.Request[workspacev1.SetHostStateRequest]) (*connect.Response[workspacev1.SetHostStateResponse], error)
 	// RetireHost removes a host that holds no assigned, starting or running
 	// host job; otherwise it fails with FAILED_PRECONDITION (drain it first).
@@ -233,14 +235,16 @@ type HostServiceHandler interface {
 	// A page holds 100 volumes when page_size is zero, and 1000 at most.
 	ListHostStorage(context.Context, *connect.Request[workspacev1.ListHostStorageRequest]) (*connect.Response[workspacev1.ListHostStorageResponse], error)
 	// ListHostAlerts returns the active alerts of the workspace's hosts:
-	// memory_held, egress_changed and agent_version_skew, one per kind,
-	// ordered by kind.
+	// memory_held, egress_changed, agent_version_skew, host_offline, vm_died,
+	// job_oom_killed and spend_cap_reached, one per kind, and its token
+	// notices, token_creator_left and token_expiring, one for each person who
+	// left; ordered by kind.
 	//
 	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListHostAlerts(context.Context, *connect.Request[workspacev1.ListHostAlertsRequest]) (*connect.Response[workspacev1.ListHostAlertsResponse], error)
 	// SetHostState drains a host or puts it back in service. Only
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
-	// fails with NOT_FOUND.
+	// fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
 	SetHostState(context.Context, *connect.Request[workspacev1.SetHostStateRequest]) (*connect.Response[workspacev1.SetHostStateResponse], error)
 	// RetireHost removes a host that holds no assigned, starting or running
 	// host job; otherwise it fails with FAILED_PRECONDITION (drain it first).

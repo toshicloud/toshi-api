@@ -881,7 +881,7 @@ export type ChannelPolicy = Message<"toshi.workspace.v1.ChannelPolicy"> & {
    * newest 8 MiB, or channel, as long as the channel's record lasts. An
    * event channel's is a duration, how long a message waits to be
    * delivered before it expires: 24h unless set, and at most the
-   * workspace's plan allows.
+   * workspace's plan allows, which is never less than 24h.
    *
    * @generated from field: string keep = 5;
    */
@@ -959,7 +959,7 @@ export type ChannelPolicyJson = {
    * newest 8 MiB, or channel, as long as the channel's record lasts. An
    * event channel's is a duration, how long a message waits to be
    * delivered before it expires: 24h unless set, and at most the
-   * workspace's plan allows.
+   * workspace's plan allows, which is never less than 24h.
    *
    * @generated from field: string keep = 5;
    */
@@ -1862,7 +1862,8 @@ export type Link = Message<"toshi.workspace.v1.Link"> & {
   connected: boolean;
 
   /**
-   * Since when it has been connected; unset while it is not.
+   * Since when it has been connected; unset while it is not, and while
+   * another process of the control plane holds the link.
    *
    * @generated from field: google.protobuf.Timestamp since = 2;
    */
@@ -1922,7 +1923,8 @@ export type LinkJson = {
   connected?: boolean;
 
   /**
-   * Since when it has been connected; unset while it is not.
+   * Since when it has been connected; unset while it is not, and while
+   * another process of the control plane holds the link.
    *
    * @generated from field: google.protobuf.Timestamp since = 2;
    */
@@ -3511,7 +3513,8 @@ export type SendChannelMessageRequest = Message<"toshi.workspace.v1.SendChannelM
   channel: string;
 
   /**
-   * The message's name, such as order.paid: up to 200 bytes with no space.
+   * The message's name, such as order.paid: up to 200 bytes with no space
+   * or control character.
    *
    * @generated from field: string name = 3;
    */
@@ -3550,7 +3553,8 @@ export type SendChannelMessageRequestJson = {
   channel?: string;
 
   /**
-   * The message's name, such as order.paid: up to 200 bytes with no space.
+   * The message's name, such as order.paid: up to 200 bytes with no space
+   * or control character.
    *
    * @generated from field: string name = 3;
    */

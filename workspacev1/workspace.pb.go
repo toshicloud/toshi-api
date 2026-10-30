@@ -354,8 +354,8 @@ func (ServiceState) EnumDescriptor() ([]byte, []int) {
 type RecordingPolicy int32
 
 const (
-	// At create: the workspace plan's default for a job, and OFF for another
-	// kind.
+	// At create: the workspace plan's default for a job, the plan's sandbox
+	// default for a sandbox, and OFF for another kind.
 	RecordingPolicy_RECORDING_POLICY_UNSPECIFIED RecordingPolicy = 0
 	// No capture. A file the run uploads as its test framework's recording
 	// is still one of its recordings.
@@ -363,8 +363,8 @@ const (
 	// A screenshot strip of each run (RecordingService), unless a video or
 	// trace the run uploaded as its test framework's recording is ready when
 	// its strip is finished, after the run ended: the run then keeps that
-	// recording and no strip. A job only: set for another kind it fails with
-	// INVALID_ARGUMENT.
+	// recording and no strip. Jobs and sandboxes only: set for another kind
+	// it fails with INVALID_ARGUMENT.
 	RecordingPolicy_RECORDING_POLICY_STRIP RecordingPolicy = 2
 	// A video of each run's screen, recorded by its host, on the same terms
 	// as STRIP. A host that cannot record a video, because it has no encoder
@@ -588,7 +588,8 @@ func (ServiceMode) EnumDescriptor() ([]byte, []int) {
 
 // EventType is the closed set of event types. Built-in event names are
 // reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
-// takeover.*, spend.*, egress.*, host.*, github.*, webhook.* and mail.*.
+// takeover.*, spend.*, egress.*, host.*, github.*, webhook.*, trigger.* and
+// mail.*.
 type EventType int32
 
 const (
@@ -728,7 +729,7 @@ const (
 	// A device opened it; it admits that device only.
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_IN_USE  PreviewShareLinkState = 2
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_REVOKED PreviewShareLinkState = 3
-	// Its connections carried its byte cap.
+	// Its connections carried its byte cap, or its channel was deleted.
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_ENDED   PreviewShareLinkState = 4
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_EXPIRED PreviewShareLinkState = 5
 )
@@ -1228,7 +1229,8 @@ type Job struct {
 	// The job as created.
 	Spec   *JobSpec   `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
 	Status *JobStatus `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
-	// What it records of its runs, fixed at create: never UNSPECIFIED.
+	// What it records of its runs, fixed at create: never UNSPECIFIED,
+	// except in an event's snapshot stored before workloads had one.
 	Recording RecordingPolicy `protobuf:"varint,7,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingPolicy" json:"recording,omitempty"`
 	// Whether the job is an agent: the image version it runs declares an
 	// [agent] table in its recipe. Fixed at create; set by Toshi.
@@ -1238,8 +1240,8 @@ type Job struct {
 	// Set by Toshi.
 	Waiting []*AgentPrompt `protobuf:"bytes,9,rep,name=waiting,proto3" json:"waiting,omitempty"`
 	// The network policy the job was admitted with, its layers in order, and
-	// whether its host enforces network rules at assignment. Unset for a job
-	// recorded before workloads kept one.
+	// whether its host enforces network rules at assignment. Always set; a
+	// job recorded before workloads kept one has no layers.
 	Network *WorkloadNetwork `protobuf:"bytes,10,opt,name=network,proto3" json:"network,omitempty"`
 	// Where recording came from. Set by Toshi.
 	RecordingSource RecordingSource `protobuf:"varint,11,opt,name=recording_source,json=recordingSource,proto3,enum=toshi.workspace.v1.RecordingSource" json:"recording_source,omitempty"`
@@ -1666,7 +1668,8 @@ type Sandbox struct {
 	// it.
 	Spec   *SandboxSpec   `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
 	Status *SandboxStatus `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
-	// What it records of its runs, fixed at create: never UNSPECIFIED.
+	// What it records of its runs, fixed at create: never UNSPECIFIED,
+	// except in an event's snapshot stored before workloads had one.
 	Recording RecordingPolicy `protobuf:"varint,7,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingPolicy" json:"recording,omitempty"`
 	// Whether the sandbox is an agent: the image version it runs declares an
 	// [agent] table in its recipe. Fixed at create; set by Toshi.
@@ -1676,8 +1679,8 @@ type Sandbox struct {
 	// sandbox's run ends. Set by Toshi.
 	Waiting []*AgentPrompt `protobuf:"bytes,9,rep,name=waiting,proto3" json:"waiting,omitempty"`
 	// The network policy the sandbox was admitted with, its layers in order,
-	// and whether its host enforces network rules at assignment. Unset for a
-	// sandbox recorded before workloads kept one.
+	// and whether its host enforces network rules at assignment. Always set;
+	// a sandbox recorded before workloads kept one has no layers.
 	Network *WorkloadNetwork `protobuf:"bytes,10,opt,name=network,proto3" json:"network,omitempty"`
 	// Set on a sandbox read through a grant: the grant and what it allows on
 	// this sandbox. Such a read leaves out network, the spec's bindings, its
@@ -1690,8 +1693,10 @@ type Sandbox struct {
 	// Where recording came from. Set by Toshi.
 	RecordingSource RecordingSource `protobuf:"varint,13,opt,name=recording_source,json=recordingSource,proto3,enum=toshi.workspace.v1.RecordingSource" json:"recording_source,omitempty"`
 	// Why a sandbox that records strips takes none now, empty while it does:
-	// its workspace switched recording off, or its host's image for its OS
-	// boots no desktop. Set by Toshi.
+	// its workspace switched recording off or cannot store new data, its
+	// host's image for its OS boots no desktop, Toshi licenses its Windows,
+	// it reached the plan's recording size for a sandbox, or the workspace's
+	// sandboxes reached the plan's strips for the day. Set by Toshi.
 	RecordingStoppedReason string `protobuf:"bytes,14,opt,name=recording_stopped_reason,json=recordingStoppedReason,proto3" json:"recording_stopped_reason,omitempty"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
@@ -2004,8 +2009,8 @@ type Service struct {
 	// service's run ends. Set by Toshi.
 	Waiting []*AgentPrompt `protobuf:"bytes,8,rep,name=waiting,proto3" json:"waiting,omitempty"`
 	// The network policy the service was admitted with, its layers in order,
-	// and whether its host enforces network rules at assignment. Unset for a
-	// service recorded before workloads kept one.
+	// and whether its host enforces network rules at assignment. Always set;
+	// a service recorded before workloads kept one has no layers.
 	Network       *WorkloadNetwork `protobuf:"bytes,9,opt,name=network,proto3" json:"network,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -11018,10 +11023,12 @@ type ServiceRevision struct {
 	// registry's image.
 	Eligible bool `protobuf:"varint,8,opt,name=eligible,proto3" json:"eligible,omitempty"`
 	// Why a rollback may not select the revision; empty when eligible. It is
-	// one of two reasons: the window ("revision N is older than the
-	// service's 10 newest revisions and no run uses it"), or the registry's
+	// one of three reasons: the window ("revision N is older than the
+	// service's 10 newest revisions and no run uses it"), the registry's
 	// last answer ("the registry answered <status> for <digest> at <time>:
-	// it does not serve the revision's image (<message>)").
+	// it does not serve the revision's image (<message>)"), or its disk
+	// image version ("image <image> version <n> is pending deletion since
+	// <time> and is deleted at <time>", or "... was deleted at <time>").
 	IneligibleReason string `protobuf:"bytes,9,opt,name=ineligible_reason,json=ineligibleReason,proto3" json:"ineligible_reason,omitempty"`
 	// The last answer of the registry of container_image to a rollback's
 	// check that it serves container_image_digest; unset until a rollback

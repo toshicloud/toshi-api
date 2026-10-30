@@ -1497,8 +1497,9 @@ export const ConnectionService: GenService<{
    * update_mask names. The one field it sets is target, the URL a WEBHOOK
    * connection's deliveries are posted to in place of the event log: its
    * url and secret, both required, or an empty url to clear it. An unset
-   * update_mask names the fields connection carries, an empty one changes
-   * nothing, and "*" or a path of another field is INVALID_ARGUMENT. The
+   * update_mask names the fields connection carries. An empty one, an
+   * unset one with no target, "*" and a path of another field are
+   * INVALID_ARGUMENT. The
    * secret is sealed under the workspace's data key and never returned; a
    * deployment with no keyring refuses it with FAILED_PRECONDITION. A
    * GITHUB connection is FAILED_PRECONDITION, and one the workspace does
@@ -1516,7 +1517,7 @@ export const ConnectionService: GenService<{
    * messages its sender sent, one for each webhook id, newest received
    * first. A delivery never carries its body. A connection the workspace
    * does not have is NOT_FOUND; a deleted one's deliveries are still
-   * listed.
+   * listed, and a deleted one with none is NOT_FOUND.
    *
    * A page holds 100 deliveries when page_size is zero, and 1000 at most.
    *

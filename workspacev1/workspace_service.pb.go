@@ -2549,8 +2549,10 @@ type WorkspaceSettings struct {
 	// control plane has (GET /auth/providers lists them) and needs a person
 	// whose own session or token was signed in through it, so it is known to
 	// work before it is enforced; otherwise FAILED_PRECONDITION with the
-	// reason SIGNIN_UNTESTED. A workspace token can only clear it, by naming
-	// the path with no provider. Members with no identity at the provider
+	// reason SIGNIN_UNTESTED. A name the control plane does not have fails
+	// with INVALID_ARGUMENT. A workspace token can only clear it, by naming
+	// the path with no provider; one that sets it fails with
+	// PERMISSION_DENIED. Members with no identity at the provider
 	// lose the workspace until they link one; nothing is deleted.
 	SignIn *WorkspaceSignIn `protobuf:"bytes,2,opt,name=sign_in,json=signIn,proto3" json:"sign_in,omitempty"`
 	// Days of finished job history the workspace keeps; unset when the plan's

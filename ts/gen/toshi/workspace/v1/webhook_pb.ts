@@ -1077,9 +1077,9 @@ export const WebhookDeliveryStateSchema: GenEnum<WebhookDeliveryState, WebhookDe
  * WebhookService manages a workspace's webhook endpoints: the URLs its
  * events are POSTed to, signed per Standard Webhooks. The caller's credential
  * names the workspace, as for WorkloadService. An endpoint belongs to the
- * workspace, not to a project or environment, and is owed the events of all
- * of them; no request names either. An endpoint of another workspace is
- * NOT_FOUND.
+ * workspace, not to an environment, and is owed the events of every
+ * project unless its project names one. An endpoint of another workspace
+ * is NOT_FOUND.
  *
  * Every mutating call takes a request_key, with WorkloadService's rule: a
  * retry with the same key and the same payload returns what the first

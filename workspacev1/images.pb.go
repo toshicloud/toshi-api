@@ -200,8 +200,8 @@ const (
 	ImageVersionState_IMAGE_VERSION_STATE_FAILED ImageVersionState = 2
 	// Stored: a workload that names the image starts from the newest one.
 	ImageVersionState_IMAGE_VERSION_STATE_READY ImageVersionState = 3
-	// Neither one of the newest 3 ready versions nor in use: its overlay is
-	// deleted at delete_after.
+	// Neither one of the newest ready versions the retention rule keeps nor
+	// in use: its overlay is deleted at delete_after.
 	ImageVersionState_IMAGE_VERSION_STATE_PENDING_DELETION ImageVersionState = 4
 	// Its overlay is deleted.
 	ImageVersionState_IMAGE_VERSION_STATE_DELETED ImageVersionState = 5

@@ -623,7 +623,8 @@ type ProductFeature struct {
 	// entitlement is the most the workspace may have of the feature: the
 	// operator's override for the workspace, else its plan's value, else the
 	// value of the plan key it falls back to, else the feature's default
-	// (source). Unset when the config turns the product off.
+	// (source). Unset when the config turns the product off or the build
+	// does not include it.
 	Entitlement *FeatureValue `protobuf:"bytes,5,opt,name=entitlement,proto3" json:"entitlement,omitempty"`
 	// setting is the workspace's own value of the feature, unset when it has
 	// none or when its entitlements leave the product, or this bool feature,
@@ -632,7 +633,8 @@ type ProductFeature struct {
 	Setting *FeatureValue `protobuf:"bytes,6,opt,name=setting,proto3" json:"setting,omitempty"`
 	// effective is the value that applies: the setting when the feature is
 	// narrowable and the entitlement contains it, else the entitlement.
-	// Unset when the config turns the product off.
+	// Unset when the config turns the product off or the build does not
+	// include it.
 	Effective *FeatureValue `protobuf:"bytes,7,opt,name=effective,proto3" json:"effective,omitempty"`
 	// default_value is the feature's default in its product's manifest: the
 	// entitlement when no override, plan value or plan key gives one.

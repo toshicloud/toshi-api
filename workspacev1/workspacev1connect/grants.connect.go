@@ -84,9 +84,9 @@ type GrantServiceClient interface {
 	// UpdateGrant sets the fields of grant.id's grant that update_mask
 	// names, on a grant the workspace gave that is OFFERED or ACTIVE. The
 	// one field it sets is expires_at: a time in the future, or unset for
-	// no expiry. An unset update_mask names the fields grant carries, an
-	// empty one changes nothing, and "*" or a path of another field is
-	// INVALID_ARGUMENT. A grant that has ended is FAILED_PRECONDITION.
+	// no expiry. An unset update_mask names the fields grant carries. An
+	// empty one, an unset one with no expires_at, "*" and a path of another
+	// field are INVALID_ARGUMENT. A grant that has ended is FAILED_PRECONDITION.
 	UpdateGrant(context.Context, *connect.Request[workspacev1.UpdateGrantRequest]) (*connect.Response[workspacev1.UpdateGrantResponse], error)
 	// RevokeGrant ends a grant the workspace gave, OFFERED or ACTIVE: it
 	// becomes REVOKED, and nothing reaches the target through it again. A
@@ -243,9 +243,9 @@ type GrantServiceHandler interface {
 	// UpdateGrant sets the fields of grant.id's grant that update_mask
 	// names, on a grant the workspace gave that is OFFERED or ACTIVE. The
 	// one field it sets is expires_at: a time in the future, or unset for
-	// no expiry. An unset update_mask names the fields grant carries, an
-	// empty one changes nothing, and "*" or a path of another field is
-	// INVALID_ARGUMENT. A grant that has ended is FAILED_PRECONDITION.
+	// no expiry. An unset update_mask names the fields grant carries. An
+	// empty one, an unset one with no expires_at, "*" and a path of another
+	// field are INVALID_ARGUMENT. A grant that has ended is FAILED_PRECONDITION.
 	UpdateGrant(context.Context, *connect.Request[workspacev1.UpdateGrantRequest]) (*connect.Response[workspacev1.UpdateGrantResponse], error)
 	// RevokeGrant ends a grant the workspace gave, OFFERED or ACTIVE: it
 	// becomes REVOKED, and nothing reaches the target through it again. A

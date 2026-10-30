@@ -2567,12 +2567,12 @@ export const ProjectService: GenService<{
    * UpdateProject sets the fields of project.name's project that
    * update_mask names. The one field it sets is admission, the project's
    * admission webhook: its url and secret, both required, or an empty url
-   * to remove it. An unset update_mask names the fields project carries,
-   * an empty one changes nothing, and "*" or a path of another field is
-   * INVALID_ARGUMENT. The secret is sealed under the workspace's data key
-   * and never returned; a deployment with no keyring refuses it with
-   * FAILED_PRECONDITION. A token limited to environments is
-   * PERMISSION_DENIED.
+   * to remove it. An unset update_mask names the fields project carries.
+   * An empty one, an unset one with no admission, "*" and a path of
+   * another field are INVALID_ARGUMENT. The secret is sealed under the
+   * workspace's data key and never returned; a deployment with no keyring
+   * refuses it with FAILED_PRECONDITION. A token limited to environments
+   * is PERMISSION_DENIED.
    *
    * @generated from rpc toshi.workspace.v1.ProjectService.UpdateProject
    */
@@ -2617,8 +2617,9 @@ export const ProjectService: GenService<{
    * production environment is FAILED_PRECONDITION, and so is an
    * environment that anything live still refers to, with each kind and
    * its count in the message: secret sets, API tokens that are neither
-   * revoked nor expired, unfinished jobs, workloads that are not deleted
-   * and artifacts still being uploaded. Finished jobs and complete
+   * revoked nor expired, unfinished jobs, workloads that are not deleted,
+   * artifacts still being uploaded, the project's branch rules that choose
+   * it and its triggers that are not deleted. Finished jobs and complete
    * artifacts keep the environment as history. A project or environment
    * the workspace does not have is NOT_FOUND. A token limited to a
    * project deletes only in that project, and a token limited to an

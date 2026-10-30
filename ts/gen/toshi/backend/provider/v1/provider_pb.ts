@@ -4837,7 +4837,8 @@ export const ProviderService: GenService<{
     output: typeof GetResponseSchema;
   },
   /**
-   * List returns every instance the provider knows that is not destroyed.
+   * List returns every instance the provider still knows, destroyed ones
+   * included until they are forgotten, in no particular order.
    *
    * @generated from rpc toshi.backend.provider.v1.ProviderService.List
    */
@@ -4847,8 +4848,8 @@ export const ProviderService: GenService<{
     output: typeof ListResponseSchema;
   },
   /**
-   * Start starts a ready or stopped instance. From another state it fails
-   * with ERROR_CODE_INVALID_TRANSITION, on a retry too.
+   * Start starts a ready instance. From another state it fails with
+   * ERROR_CODE_INVALID_TRANSITION, on a retry too.
    *
    * @generated from rpc toshi.backend.provider.v1.ProviderService.Start
    */
@@ -4869,8 +4870,9 @@ export const ProviderService: GenService<{
     output: typeof StopResponseSchema;
   },
   /**
-   * Destroy destroys the instance and everything it holds on the host. It
-   * succeeds for an instance that is already destroyed or unknown.
+   * Destroy destroys the instance and everything it holds on the host,
+   * from any state. It succeeds for an instance that is already destroyed;
+   * an unknown one fails with ERROR_CODE_NOT_FOUND.
    *
    * @generated from rpc toshi.backend.provider.v1.ProviderService.Destroy
    */
@@ -5058,7 +5060,9 @@ export const ProviderService: GenService<{
     output: typeof ResumeResponseSchema;
   },
   /**
-   * Snapshot saves a running instance and returns the snapshot's id.
+   * Snapshot saves a running or stopped instance and returns the
+   * snapshot's id. From another state it fails with
+   * ERROR_CODE_INVALID_TRANSITION.
    *
    * @generated from rpc toshi.backend.provider.v1.ProviderService.Snapshot
    */

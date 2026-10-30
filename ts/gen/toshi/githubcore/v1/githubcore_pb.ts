@@ -1035,15 +1035,13 @@ export const PublishJobDeliveryCheckResponseSchema: GenMessage<PublishJobDeliver
  * the grant was admitted with the call's nonce; and every argument the
  * grant binds equals the grant's. The arguments a grant binds are the
  * product's: Runners encodes them, and the core reads them only to compare
- * them with the call's. Until the first public release the core also takes
- * github, the product's former name, wherever runners is required. The
- * error does not say which rule refused. A refusal with a valid product
- * token is recorded in the audit log as product.call_refused, with the
- * call and the reason.
+ * them with the call's. The error does not say which rule refused. A
+ * refusal with a valid product token is recorded in the audit log as
+ * product.call_refused, with the call and the reason.
  *
  * Each product call allows AdmitGrant and:
  *   - GetJobFailure: GetJob and FillJobFailingStep, for the grant's job;
- *   - ListOpenSourceRepositories: ListOpenSourceRepositories, for the
+ *   - ListOpenSourceRepos: ListOpenSourceRepositories, for the
  *     grant's workspace or none;
  *   - SetOpenSourceApproval: SetOpenSourceApproval, for the grant's
  *     repository and decision;
@@ -1118,7 +1116,8 @@ export const GitHubCoreService: GenService<{
   /**
    * SetOpenSourceApproval approves or revokes a repository on every
    * workspace's row of it, or keeps the decision when no workspace has a row.
-   * The operator's only.
+   * Revoking a repository that has neither a row nor a kept decision fails
+   * with NOT_FOUND. The operator's only.
    *
    * @generated from rpc toshi.githubcore.v1.GitHubCoreService.SetOpenSourceApproval
    */

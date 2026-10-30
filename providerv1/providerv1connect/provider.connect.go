@@ -230,16 +230,18 @@ type ProviderServiceClient interface {
 	CreateOutcome(context.Context, *connect.Request[providerv1.CreateOutcomeRequest]) (*connect.Response[providerv1.CreateOutcomeResponse], error)
 	// Get returns the instance as it is now.
 	Get(context.Context, *connect.Request[providerv1.GetRequest]) (*connect.Response[providerv1.GetResponse], error)
-	// List returns every instance the provider knows that is not destroyed.
+	// List returns every instance the provider still knows, destroyed ones
+	// included until they are forgotten, in no particular order.
 	List(context.Context, *connect.Request[providerv1.ListRequest]) (*connect.Response[providerv1.ListResponse], error)
-	// Start starts a ready or stopped instance. From another state it fails
-	// with ERROR_CODE_INVALID_TRANSITION, on a retry too.
+	// Start starts a ready instance. From another state it fails with
+	// ERROR_CODE_INVALID_TRANSITION, on a retry too.
 	Start(context.Context, *connect.Request[providerv1.StartRequest]) (*connect.Response[providerv1.StartResponse], error)
 	// Stop stops a running or paused instance. From another state it fails
 	// with ERROR_CODE_INVALID_TRANSITION, on a retry too.
 	Stop(context.Context, *connect.Request[providerv1.StopRequest]) (*connect.Response[providerv1.StopResponse], error)
-	// Destroy destroys the instance and everything it holds on the host. It
-	// succeeds for an instance that is already destroyed or unknown.
+	// Destroy destroys the instance and everything it holds on the host,
+	// from any state. It succeeds for an instance that is already destroyed;
+	// an unknown one fails with ERROR_CODE_NOT_FOUND.
 	Destroy(context.Context, *connect.Request[providerv1.DestroyRequest]) (*connect.Response[providerv1.DestroyResponse], error)
 	// Wait returns the instance once it is in state want, or fails when it
 	// reaches a state it cannot leave for want or when the call's deadline
@@ -291,7 +293,9 @@ type ProviderServiceClient interface {
 	// stopped instance again from its own disk through ready to running.
 	// From another state it fails with ERROR_CODE_INVALID_TRANSITION.
 	Resume(context.Context, *connect.Request[providerv1.ResumeRequest]) (*connect.Response[providerv1.ResumeResponse], error)
-	// Snapshot saves a running instance and returns the snapshot's id.
+	// Snapshot saves a running or stopped instance and returns the
+	// snapshot's id. From another state it fails with
+	// ERROR_CODE_INVALID_TRANSITION.
 	Snapshot(context.Context, *connect.Request[providerv1.SnapshotRequest]) (*connect.Response[providerv1.SnapshotResponse], error)
 	// Restore creates an instance of spec from a snapshot, with Create's rules
 	// for operation_id, a held key and a cancelled call.
@@ -1053,16 +1057,18 @@ type ProviderServiceHandler interface {
 	CreateOutcome(context.Context, *connect.Request[providerv1.CreateOutcomeRequest]) (*connect.Response[providerv1.CreateOutcomeResponse], error)
 	// Get returns the instance as it is now.
 	Get(context.Context, *connect.Request[providerv1.GetRequest]) (*connect.Response[providerv1.GetResponse], error)
-	// List returns every instance the provider knows that is not destroyed.
+	// List returns every instance the provider still knows, destroyed ones
+	// included until they are forgotten, in no particular order.
 	List(context.Context, *connect.Request[providerv1.ListRequest]) (*connect.Response[providerv1.ListResponse], error)
-	// Start starts a ready or stopped instance. From another state it fails
-	// with ERROR_CODE_INVALID_TRANSITION, on a retry too.
+	// Start starts a ready instance. From another state it fails with
+	// ERROR_CODE_INVALID_TRANSITION, on a retry too.
 	Start(context.Context, *connect.Request[providerv1.StartRequest]) (*connect.Response[providerv1.StartResponse], error)
 	// Stop stops a running or paused instance. From another state it fails
 	// with ERROR_CODE_INVALID_TRANSITION, on a retry too.
 	Stop(context.Context, *connect.Request[providerv1.StopRequest]) (*connect.Response[providerv1.StopResponse], error)
-	// Destroy destroys the instance and everything it holds on the host. It
-	// succeeds for an instance that is already destroyed or unknown.
+	// Destroy destroys the instance and everything it holds on the host,
+	// from any state. It succeeds for an instance that is already destroyed;
+	// an unknown one fails with ERROR_CODE_NOT_FOUND.
 	Destroy(context.Context, *connect.Request[providerv1.DestroyRequest]) (*connect.Response[providerv1.DestroyResponse], error)
 	// Wait returns the instance once it is in state want, or fails when it
 	// reaches a state it cannot leave for want or when the call's deadline
@@ -1114,7 +1120,9 @@ type ProviderServiceHandler interface {
 	// stopped instance again from its own disk through ready to running.
 	// From another state it fails with ERROR_CODE_INVALID_TRANSITION.
 	Resume(context.Context, *connect.Request[providerv1.ResumeRequest]) (*connect.Response[providerv1.ResumeResponse], error)
-	// Snapshot saves a running instance and returns the snapshot's id.
+	// Snapshot saves a running or stopped instance and returns the
+	// snapshot's id. From another state it fails with
+	// ERROR_CODE_INVALID_TRANSITION.
 	Snapshot(context.Context, *connect.Request[providerv1.SnapshotRequest]) (*connect.Response[providerv1.SnapshotResponse], error)
 	// Restore creates an instance of spec from a snapshot, with Create's rules
 	// for operation_id, a held key and a cancelled call.

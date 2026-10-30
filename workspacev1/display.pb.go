@@ -284,8 +284,8 @@ type DisplaySession struct {
 	// or grant_revoked (it was opened through a grant that ended). Empty
 	// while it is open.
 	CloseReason string `protobuf:"bytes,12,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`
-	// Who opened it, as the audit log names the caller: the GitHub login of
-	// the signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
+	// Who opened it, as the audit log names the caller: the user ID of the
+	// signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
 	// DISPLAY_OPENER_PROGRAM.
 	OpenerId string `protobuf:"bytes,13,opt,name=opener_id,json=openerId,proto3" json:"opener_id,omitempty"`
 	// The web origin of the call that opened it, for example
@@ -475,7 +475,8 @@ type OpenDisplaySessionRequest struct {
 	//	*OpenDisplaySessionRequest_WorkloadId
 	Target isOpenDisplaySessionRequest_Target `protobuf_oneof:"target"`
 	Mode   DisplayMode                        `protobuf:"varint,3,opt,name=mode,proto3,enum=toshi.workspace.v1.DisplayMode" json:"mode,omitempty"`
-	// The idle close, at most the plan's; unset is the plan's.
+	// The idle close, at least 1 second and at most the plan's; unset is the
+	// plan's.
 	IdleClose     *durationpb.Duration `protobuf:"bytes,4,opt,name=idle_close,json=idleClose,proto3" json:"idle_close,omitempty"`
 	AllowTakeover bool                 `protobuf:"varint,5,opt,name=allow_takeover,json=allowTakeover,proto3" json:"allow_takeover,omitempty"`
 	RequestKey    string               `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`

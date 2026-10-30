@@ -9,7 +9,8 @@
 // A backend is a program Toshi reaches over gRPC (HTTP/2 without TLS) on a
 // local Unix socket, one socket per program, such as a VM provider. Each
 // kind of backend has its own protocol, a package
-// toshi.backend.<type>.v<N>; N is that protocol's version. On the same socket
+// toshi.backend.<protocol>.v<N>; N is that protocol's version. The
+// "vm_provider" type's is toshi.backend.provider.v<N>. On the same socket
 // a backend serves BackendService, its own protocol's service, and the
 // standard grpc.health.v1.Health service, which answers for its protocol's
 // service name.

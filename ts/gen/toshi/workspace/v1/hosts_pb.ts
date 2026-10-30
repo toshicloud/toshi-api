@@ -1061,7 +1061,9 @@ export type Host = Message<"toshi.workspace.v1.Host"> & {
   egress?: HostEgress | undefined;
 
   /**
-   * The version the host's agent reported when it last registered; empty when unknown.
+   * The version the host's agent reported when it last registered; empty when
+   * unknown. This API leaves it, agent_version_status and agent_version_skew
+   * unset: the operator's ListHosts reports them.
    *
    * @generated from field: string agent_version = 15;
    */
@@ -1295,7 +1297,9 @@ export type HostJson = {
   egress?: HostEgressJson;
 
   /**
-   * The version the host's agent reported when it last registered; empty when unknown.
+   * The version the host's agent reported when it last registered; empty when
+   * unknown. This API leaves it, agent_version_status and agent_version_skew
+   * unset: the operator's ListHosts reports them.
    *
    * @generated from field: string agent_version = 15;
    */
@@ -1555,7 +1559,7 @@ export type HeldRefill = Message<"toshi.workspace.v1.HeldRefill"> & {
   size: string;
 
   /**
-   * "memory" or "cpus".
+   * "memory", "memory_limit" or "cpus".
    *
    * @generated from field: string reason = 2;
    */
@@ -1574,7 +1578,7 @@ export type HeldRefillJson = {
   size?: string;
 
   /**
-   * "memory" or "cpus".
+   * "memory", "memory_limit" or "cpus".
    *
    * @generated from field: string reason = 2;
    */
@@ -2508,8 +2512,10 @@ export const HostService: GenService<{
   },
   /**
    * ListHostAlerts returns the active alerts of the workspace's hosts:
-   * memory_held, egress_changed and agent_version_skew, one per kind,
-   * ordered by kind.
+   * memory_held, egress_changed, agent_version_skew, host_offline, vm_died,
+   * job_oom_killed and spend_cap_reached, one per kind, and its token
+   * notices, token_creator_left and token_expiring, one for each person who
+   * left; ordered by kind.
    *
    * A page holds 100 alerts when page_size is zero, and 1000 at most.
    *
@@ -2523,7 +2529,7 @@ export const HostService: GenService<{
   /**
    * SetHostState drains a host or puts it back in service. Only
    * HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
-   * fails with NOT_FOUND.
+   * fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
    *
    * @generated from rpc toshi.workspace.v1.HostService.SetHostState
    */

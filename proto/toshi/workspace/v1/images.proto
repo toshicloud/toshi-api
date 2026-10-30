@@ -26,11 +26,13 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // hyphens, starts and ends with a letter or a digit, and is at most 51
 // characters, so that the label is at most 63.
 //
-// Versions are kept by a retention rule. An image keeps its newest 3 ready
-// versions, and any version in use: one a workload that started from it
-// and has not ended runs on, or one a service revision a rollback may
-// select was made with. Any other ready version is pending deletion for 7
-// days, then its overlay is deleted. A service revision whose version is
+// Versions are kept by a retention rule. An image keeps its newest ready
+// versions, 3 unless the control plane or the workspace's plan sets
+// another number, and any version in use: one a workload that started
+// from it and has not ended runs on, or one a service revision a rollback
+// may select was made with. Any other ready version is pending deletion
+// for 7 days unless the control plane or the plan sets another time, then
+// its overlay is deleted. A service revision whose version is
 // pending deletion or deleted cannot be selected by a rollback.
 //
 // Creating an image needs a plan that allows images; a workspace whose
@@ -80,8 +82,8 @@ service ImageService {
   // UpdateImage sets the fields of the image that update_mask names; the
   // request's image names it by its name. The one field it sets is
   // rebuild_on_push, of a container image built from a repository: an
-  // unset update_mask sets it to the image's value, an empty one changes
-  // nothing, and "*" or a path of another field is INVALID_ARGUMENT. A
+  // unset update_mask sets it to the image's value, and an empty one, "*"
+  // or a path of another field is INVALID_ARGUMENT. A
   // disk image or a container image that is pushed is FAILED_PRECONDITION.
   // Turning rebuild_on_push on needs what BuildImage needs of the image:
   // a source its project claims, and a call that reaches the environment
@@ -158,8 +160,8 @@ enum ImageVersionState {
   IMAGE_VERSION_STATE_FAILED = 2;
   // Stored: a workload that names the image starts from the newest one.
   IMAGE_VERSION_STATE_READY = 3;
-  // Neither one of the newest 3 ready versions nor in use: its overlay is
-  // deleted at delete_after.
+  // Neither one of the newest ready versions the retention rule keeps nor
+  // in use: its overlay is deleted at delete_after.
   IMAGE_VERSION_STATE_PENDING_DELETION = 4;
   // Its overlay is deleted.
   IMAGE_VERSION_STATE_DELETED = 5;

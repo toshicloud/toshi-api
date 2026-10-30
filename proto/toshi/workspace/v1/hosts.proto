@@ -36,8 +36,10 @@ service HostService {
     option (toshi.permission) = "hosts.read";
   }
   // ListHostAlerts returns the active alerts of the workspace's hosts:
-  // memory_held, egress_changed and agent_version_skew, one per kind,
-  // ordered by kind.
+  // memory_held, egress_changed, agent_version_skew, host_offline, vm_died,
+  // job_oom_killed and spend_cap_reached, one per kind, and its token
+  // notices, token_creator_left and token_expiring, one for each person who
+  // left; ordered by kind.
   //
   // A page holds 100 alerts when page_size is zero, and 1000 at most.
   rpc ListHostAlerts(ListHostAlertsRequest) returns (ListHostAlertsResponse) {
@@ -45,7 +47,7 @@ service HostService {
   }
   // SetHostState drains a host or puts it back in service. Only
   // HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
-  // fails with NOT_FOUND.
+  // fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
   rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse) {
     option (toshi.permission) = "hosts.write";
     option (toshi.audit) = {action: "host.state_set"};
@@ -267,7 +269,9 @@ message Host {
   bool overflow = 13;
   // The host's public egress addresses.
   HostEgress egress = 14;
-  // The version the host's agent reported when it last registered; empty when unknown.
+  // The version the host's agent reported when it last registered; empty when
+  // unknown. This API leaves it, agent_version_status and agent_version_skew
+  // unset: the operator's ListHosts reports them.
   string agent_version = 15;
   // Whether agent_version is inside the promise between this control plane and its agents.
   AgentVersionStatus agent_version_status = 16;
@@ -353,7 +357,7 @@ enum HostState {
 // HeldRefill is one warm pool whose refill a host holds.
 message HeldRefill {
   string size = 1;
-  // "memory" or "cpus".
+  // "memory", "memory_limit" or "cpus".
   string reason = 2;
 }
 

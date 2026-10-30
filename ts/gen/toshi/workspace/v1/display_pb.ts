@@ -104,8 +104,8 @@ export type DisplaySession = Message<"toshi.workspace.v1.DisplaySession"> & {
   closeReason: string;
 
   /**
-   * Who opened it, as the audit log names the caller: the GitHub login of
-   * the signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
+   * Who opened it, as the audit log names the caller: the user ID of the
+   * signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
    * DISPLAY_OPENER_PROGRAM.
    *
    * @generated from field: string opener_id = 13;
@@ -243,8 +243,8 @@ export type DisplaySessionJson = {
   closeReason?: string;
 
   /**
-   * Who opened it, as the audit log names the caller: the GitHub login of
-   * the signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
+   * Who opened it, as the audit log names the caller: the user ID of the
+   * signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
    * DISPLAY_OPENER_PROGRAM.
    *
    * @generated from field: string opener_id = 13;
@@ -330,7 +330,8 @@ export type OpenDisplaySessionRequest = Message<"toshi.workspace.v1.OpenDisplayS
   mode: DisplayMode;
 
   /**
-   * The idle close, at most the plan's; unset is the plan's.
+   * The idle close, at least 1 second and at most the plan's; unset is the
+   * plan's.
    *
    * @generated from field: google.protobuf.Duration idle_close = 4;
    */
@@ -375,7 +376,8 @@ export type OpenDisplaySessionRequestJson = {
   mode?: DisplayModeJson;
 
   /**
-   * The idle close, at most the plan's; unset is the plan's.
+   * The idle close, at least 1 second and at most the plan's; unset is the
+   * plan's.
    *
    * @generated from field: google.protobuf.Duration idle_close = 4;
    */

@@ -319,8 +319,8 @@ func (x *Trigger) GetUpdatedAt() *timestamppb.Timestamp {
 
 // TriggerFilter limits the pull request events a trigger matches. Each
 // list, when set, must hold the event's value; an empty list holds every
-// value. An event that is not a pull request's matches only an empty
-// filter.
+// value. An event that is not a pull request's is not filtered: it
+// matches whatever the filter holds.
 type TriggerFilter struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Base repositories, as owner/name.
@@ -592,7 +592,9 @@ type TriggerSandbox struct {
 	Setup *Command `protobuf:"bytes,4,opt,name=setup,proto3" json:"setup,omitempty"`
 	// Runs after setup and is kept running for the sandbox's life.
 	Process *Command `protobuf:"bytes,5,opt,name=process,proto3" json:"process,omitempty"`
-	// The http channel whose link the trigger reports; empty is `preview`.
+	// The http channel whose link the trigger reports. Empty reports the
+	// first preview the sandbox serves, and a sandbox that serves none is
+	// ready with no link.
 	Channel string `protobuf:"bytes,6,opt,name=channel,proto3" json:"channel,omitempty"`
 	// The container image the sandbox runs, as a sandbox's spec names it
 	// (`registry/repository:tag` or `@sha256:` digest); a tag is resolved when

@@ -96,14 +96,14 @@ type WorkspaceServiceClient interface {
 	// UpdateWorkspace changes the fields of the caller's workspace that
 	// update_mask names and returns the workspace as stored. The paths are
 	// "name" and "settings.<field>" for a field of WorkspaceSettings. An
-	// omitted update_mask means the fields the request populates, an empty
-	// one changes nothing, and "*" or another path fails with
-	// INVALID_ARGUMENT. The call needs no permission of its own: each path
-	// needs its field group's, workspace.signin for settings.sign_in,
-	// billing.write for the spending limits and workspace.write for the
-	// others, and a mask that names nothing needs any one of them. A caller
-	// that lacks one is refused with PERMISSION_DENIED naming it, and nothing
-	// is written.
+	// omitted update_mask means the fields the request populates, and an
+	// empty one, an omitted one with no field populated, "*" or another
+	// path fails with INVALID_ARGUMENT. The call needs no permission of its
+	// own: each path needs its field group's, workspace.signin for
+	// settings.sign_in, billing.write for the spending limits and
+	// workspace.write for the others, and a mask that names nothing needs any
+	// one of them. A caller that lacks one is refused with PERMISSION_DENIED
+	// naming it, and nothing is written.
 	//
 	// The workspace's settings are checked as a whole after the change, and a
 	// value they refuse fails with INVALID_ARGUMENT; the fields the mask names
@@ -155,8 +155,9 @@ type WorkspaceServiceClient interface {
 	ListEgressIPs(context.Context, *connect.Request[workspacev1.ListEgressIPsRequest]) (*connect.Response[workspacev1.ListEgressIPsResponse], error)
 	// GetUsage returns the workspace's job counts and billable minutes per UTC
 	// day, conclusion, outcome and kind, for the jobs whose queued_at is in
-	// the window. The window defaults to the last 7 days. A window whose from
-	// is not before its to fails with INVALID_ARGUMENT.
+	// the window. Filler jobs, and jobs cancelled before a host held them,
+	// are left out. The window defaults to the last 7 days. A window whose
+	// from is not before its to fails with INVALID_ARGUMENT.
 	GetUsage(context.Context, *connect.Request[workspacev1.GetUsageRequest]) (*connect.Response[workspacev1.GetUsageResponse], error)
 	// GetQueueTimes returns a queue-time summary (percentiles, maximum and
 	// warm share) for the workspace's jobs that reached running in the
@@ -453,14 +454,14 @@ type WorkspaceServiceHandler interface {
 	// UpdateWorkspace changes the fields of the caller's workspace that
 	// update_mask names and returns the workspace as stored. The paths are
 	// "name" and "settings.<field>" for a field of WorkspaceSettings. An
-	// omitted update_mask means the fields the request populates, an empty
-	// one changes nothing, and "*" or another path fails with
-	// INVALID_ARGUMENT. The call needs no permission of its own: each path
-	// needs its field group's, workspace.signin for settings.sign_in,
-	// billing.write for the spending limits and workspace.write for the
-	// others, and a mask that names nothing needs any one of them. A caller
-	// that lacks one is refused with PERMISSION_DENIED naming it, and nothing
-	// is written.
+	// omitted update_mask means the fields the request populates, and an
+	// empty one, an omitted one with no field populated, "*" or another
+	// path fails with INVALID_ARGUMENT. The call needs no permission of its
+	// own: each path needs its field group's, workspace.signin for
+	// settings.sign_in, billing.write for the spending limits and
+	// workspace.write for the others, and a mask that names nothing needs any
+	// one of them. A caller that lacks one is refused with PERMISSION_DENIED
+	// naming it, and nothing is written.
 	//
 	// The workspace's settings are checked as a whole after the change, and a
 	// value they refuse fails with INVALID_ARGUMENT; the fields the mask names
@@ -512,8 +513,9 @@ type WorkspaceServiceHandler interface {
 	ListEgressIPs(context.Context, *connect.Request[workspacev1.ListEgressIPsRequest]) (*connect.Response[workspacev1.ListEgressIPsResponse], error)
 	// GetUsage returns the workspace's job counts and billable minutes per UTC
 	// day, conclusion, outcome and kind, for the jobs whose queued_at is in
-	// the window. The window defaults to the last 7 days. A window whose from
-	// is not before its to fails with INVALID_ARGUMENT.
+	// the window. Filler jobs, and jobs cancelled before a host held them,
+	// are left out. The window defaults to the last 7 days. A window whose
+	// from is not before its to fails with INVALID_ARGUMENT.
 	GetUsage(context.Context, *connect.Request[workspacev1.GetUsageRequest]) (*connect.Response[workspacev1.GetUsageResponse], error)
 	// GetQueueTimes returns a queue-time summary (percentiles, maximum and
 	// warm share) for the workspace's jobs that reached running in the

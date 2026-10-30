@@ -1309,8 +1309,8 @@ export type CreateSandboxRequest = Message<"toshi.workspace.v1.CreateSandboxRequ
   requestKey: string;
 
   /**
-   * What the sandbox records of its runs: UNSPECIFIED or OFF. STRIP and
-   * VIDEO are a job's, and fail with INVALID_ARGUMENT.
+   * What the sandbox records of its runs: UNSPECIFIED, OFF or STRIP. VIDEO
+   * is a job's, and fails with INVALID_ARGUMENT.
    *
    * @generated from field: toshi.workspace.v1.RecordingPolicy recording = 6;
    */
@@ -1349,8 +1349,8 @@ export type CreateSandboxRequestJson = {
   requestKey?: string;
 
   /**
-   * What the sandbox records of its runs: UNSPECIFIED or OFF. STRIP and
-   * VIDEO are a job's, and fail with INVALID_ARGUMENT.
+   * What the sandbox records of its runs: UNSPECIFIED, OFF or STRIP. VIDEO
+   * is a job's, and fails with INVALID_ARGUMENT.
    *
    * @generated from field: toshi.workspace.v1.RecordingPolicy recording = 6;
    */
@@ -3023,7 +3023,8 @@ export const WatchServicesResponseSchema: GenMessage<WatchServicesResponse, {jso
  * workspace does not have is NOT_FOUND. A job, sandbox, service, execution,
  * operation or event of another project or environment is NOT_FOUND.
  *
- * Every mutating call takes a request_key. A key is bound to the workspace,
+ * Every mutating call but CancelJob, AnswerPrompt and EmitWorkloadEvent
+ * takes a request_key. A key is bound to the workspace,
  * the call and the request's payload: a retry with the same key and the same
  * payload returns what the first call returned and starts nothing new; the
  * same key with a different payload fails with FAILED_PRECONDITION. A create
@@ -3354,7 +3355,7 @@ export const WorkloadService: GenService<{
    * EmitWorkloadEvent appends an event to a job's, sandbox's or service's
    * event log, as its guest emits one, and returns it: type EMITTED, the
    * name given and data. The workload need not be running. The name is 1
-   * to 200 bytes with no space or control character, and its first
+   * to 200 bytes of UTF-8 with no space or control character, and its first
    * dot-separated segment is none Toshi keeps for its own events (job,
    * sandbox, run, service, recording, agent, takeover, spend, egress, host,
    * github, webhook, trigger and mail); data is empty or JSON of at most

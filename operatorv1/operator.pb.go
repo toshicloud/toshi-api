@@ -728,8 +728,9 @@ type Job struct {
 	Error string `protobuf:"bytes,18,opt,name=error,proto3" json:"error,omitempty"`
 	// Why the job was stopped: github_cancelled, max_duration, operator,
 	// github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-	// ran_elsewhere, or for a sandbox spend_cap, tenant_suspended or
-	// tenant_deleted. Empty if it never was.
+	// ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
+	// tenant_deleted or owner, or for a service's run owner_deleted,
+	// service_restart or sleep. Empty if it never was.
 	StopReason string `protobuf:"bytes,19,opt,name=stop_reason,json=stopReason,proto3" json:"stop_reason,omitempty"`
 	// When the control plane asked the host to stop the job. Unset if it
 	// never did.
@@ -737,8 +738,10 @@ type Job struct {
 	// Why the scheduler last held the job while it was queued:
 	// tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
 	// free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
-	// installation_suspended, overflow_wait, no_own_capacity or no_capacity.
-	// Empty when the job was never held. It is kept after the job starts.
+	// installation_suspended, overflow_wait, no_own_capacity, no_capacity,
+	// cloud_budget, reserved_for_other, volume_claimed, service_quota or
+	// no_network_enforcement. Empty when the job was never held. It is kept
+	// after the job starts.
 	HoldReason string `protobuf:"bytes,21,opt,name=hold_reason,json=holdReason,proto3" json:"hold_reason,omitempty"`
 	// Whether the job was placed on a host its workspace owns. Such a job sends no
 	// meter event.
@@ -1878,7 +1881,7 @@ func (x *TelemetryPercentiles) GetMax() float64 {
 type HeldRefill struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Size  string                 `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
-	// "memory" or "cpus".
+	// "memory", "memory_limit" or "cpus".
 	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1959,7 +1962,9 @@ type Host struct {
 	Overflow bool `protobuf:"varint,14,opt,name=overflow,proto3" json:"overflow,omitempty"`
 	// The host's public egress addresses.
 	Egress *HostEgress `protobuf:"bytes,15,opt,name=egress,proto3" json:"egress,omitempty"`
-	// The version the host's agent reported when it last registered; empty when unknown.
+	// The version the host's agent reported when it last registered; empty when
+	// unknown. It, agent_version_status and agent_version_skew are unset for a
+	// workspace caller.
 	AgentVersion string `protobuf:"bytes,16,opt,name=agent_version,json=agentVersion,proto3" json:"agent_version,omitempty"`
 	// Whether agent_version is inside the promise between this control plane and its agents.
 	AgentVersionStatus AgentVersionStatus `protobuf:"varint,17,opt,name=agent_version_status,json=agentVersionStatus,proto3,enum=toshi.operator.v1.AgentVersionStatus" json:"agent_version_status,omitempty"`
@@ -2486,9 +2491,9 @@ type ListJobsRequest struct {
 	Repository string `protobuf:"bytes,3,opt,name=repository,proto3" json:"repository,omitempty"`
 	// The most jobs in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	// Only the job of this Workspace API workload. Within one workspace a workload
-	// has at most one job, and a service workload has none. The job is returned
-	// whatever its state, unless states excludes it.
+	// Only the jobs of this Workspace API workload: a job workload's one, and
+	// one for each run of a sandbox or a service. They are returned whatever
+	// their state, unless states excludes them.
 	WorkloadId string `protobuf:"bytes,5,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
 	PageToken string `protobuf:"bytes,6,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
@@ -5766,8 +5771,8 @@ type Plan struct {
 	// Largest runner size the plan allows, as a runs-on label; empty means any
 	// size.
 	MaxSize string `protobuf:"bytes,7,opt,name=max_size,json=maxSize,proto3" json:"max_size,omitempty"`
-	// vCPUs a workspace may have in assigned, starting or running jobs at once; 0
-	// means no cap.
+	// vCPUs a workspace may have in assigned, starting, running or debugging jobs
+	// at once; 0 means no cap.
 	MaxVcpu int32 `protobuf:"varint,8,opt,name=max_vcpu,json=maxVcpu,proto3" json:"max_vcpu,omitempty"`
 	// Minutes a workspace may run each UTC calendar month without a verified card;
 	// 0 means the plan has no allowance.
@@ -7051,8 +7056,9 @@ type UsageRow struct {
 	// rounded.
 	Seconds        float64 `protobuf:"fixed64,12,opt,name=seconds,proto3" json:"seconds,omitempty"`
 	OwnHostSeconds float64 `protobuf:"fixed64,13,opt,name=own_host_seconds,json=ownHostSeconds,proto3" json:"own_host_seconds,omitempty"`
-	// The exact time service runs were awake, from first ready to release,
-	// and the idle part of it before they were put to sleep, in seconds.
+	// The exact time service runs on shared hosts were awake, from first
+	// ready to release, and the idle part of it before they were put to
+	// sleep, in seconds. Open-source runs are left out.
 	AwakeSeconds  float64 `protobuf:"fixed64,14,opt,name=awake_seconds,json=awakeSeconds,proto3" json:"awake_seconds,omitempty"`
 	IdleSeconds   float64 `protobuf:"fixed64,15,opt,name=idle_seconds,json=idleSeconds,proto3" json:"idle_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -9333,8 +9339,10 @@ type TenantBilling struct {
 	CardVerifiedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=card_verified_at,json=cardVerifiedAt,proto3" json:"card_verified_at,omitempty"`
 	// The spending cap; 0 when none.
 	SpendCapCents int64 `protobuf:"varint,13,opt,name=spend_cap_cents,json=spendCapCents,proto3" json:"spend_cap_cents,omitempty"`
-	// Estimated metered spend this UTC month, rounded up: finished jobs plus
-	// what running ones have run so far, at the plan's current prices.
+	// Estimated metered spend this UTC month, rounded up: finished jobs, each
+	// at the price recorded when it finished, plus what running ones have run
+	// so far, the own-server fee, VM-seconds, stored data past the plan's
+	// included amount and desktop seats, at the plan's current prices.
 	SpendCents int64 `protobuf:"varint,14,opt,name=spend_cents,json=spendCents,proto3" json:"spend_cents,omitempty"`
 	// 0, 80 or 100: the share of the cap spend_cents has reached.
 	SpendLevel int32 `protobuf:"varint,15,opt,name=spend_level,json=spendLevel,proto3" json:"spend_level,omitempty"`
@@ -9775,7 +9783,9 @@ type Token struct {
 	// "file" for a token read from the control plane's token file, "rotate"
 	// for one made by RotateToken, "tenant" for one made by the Workspace
 	// API's CreateEnrollmentToken, "session" for a workspace token minted
-	// from a dashboard session.
+	// from a dashboard session, "product" for a product token the operator
+	// made, "hosted" for a product token the control plane minted for an
+	// adapter it runs.
 	Source    string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// When the token stops working: the expiry it was given, or 30 days
@@ -11217,9 +11227,12 @@ type Filler struct {
 	// default branch.
 	Ref string `protobuf:"bytes,10,opt,name=ref,proto3" json:"ref,omitempty"`
 	// How long after a run completes or fails the next may start. Default
-	// 24 hours.
+	// 24 hours. After a run that was preempted, rejected or lost the next
+	// may start after the control plane's fillers.retry_after, 2 minutes
+	// unless set.
 	Every *durationpb.Duration `protobuf:"bytes,11,opt,name=every,proto3" json:"every,omitempty"`
-	// The longest one run may take. Default 2 hours.
+	// The longest one run may take. Default 2 hours; a workspace's own filler
+	// gets 1 hour when unset and may take at most 1 hour.
 	MaxDuration *durationpb.Duration `protobuf:"bytes,12,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
 	Enabled     bool                 `protobuf:"varint,13,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	// Where the filler comes from: "config", "operator" or "tenant".
@@ -14016,7 +14029,9 @@ type CreateStorageProviderRequest struct {
 	ExternalId             string `protobuf:"bytes,16,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
 	// The key of a workspace's own bucket. The control plane wraps it before
 	// the row exists and never returns, logs or audits it. Set only with a
-	// tenant_id, mode "tenant_bucket" and no credentials_file.
+	// tenant_id, mode "tenant_bucket", an access key id and secret, an https
+	// endpoint, and no credentials_file, credentials_profile, role_arn,
+	// external_id, global replication or egress price.
 	Credential    *StorageCredential `protobuf:"bytes,17,opt,name=credential,proto3" json:"credential,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

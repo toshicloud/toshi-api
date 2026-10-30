@@ -341,14 +341,15 @@ export type VolumeVersion = Message<"toshi.workspace.v1.VolumeVersion"> & {
   createTime?: Timestamp | undefined;
 
   /**
-   * The length of the saved disk image, in bytes.
+   * The length of the saved copy, in bytes: the disk image, or for a
+   * volume kept as a directory the compressed tar of it.
    *
    * @generated from field: int64 size_bytes = 3;
    */
   sizeBytes: bigint;
 
   /**
-   * The hex SHA-256 of the saved disk image.
+   * The hex SHA-256 of the saved copy.
    *
    * @generated from field: string sha256 = 4;
    */
@@ -396,14 +397,15 @@ export type VolumeVersionJson = {
   createTime?: TimestampJson;
 
   /**
-   * The length of the saved disk image, in bytes.
+   * The length of the saved copy, in bytes: the disk image, or for a
+   * volume kept as a directory the compressed tar of it.
    *
    * @generated from field: int64 size_bytes = 3;
    */
   sizeBytes?: string;
 
   /**
-   * The hex SHA-256 of the saved disk image.
+   * The hex SHA-256 of the saved copy.
    *
    * @generated from field: string sha256 = 4;
    */
@@ -1069,8 +1071,9 @@ export enum VolumeVersionKind {
   SAVE = 1,
 
   /**
-   * Taken while the run's VM ran. A run keeps only its newest snapshot,
-   * and its save replaces it.
+   * Taken while the run's VM ran. A run's complete snapshot, and its save,
+   * replace its earlier snapshots; an incremental snapshot keeps the ones
+   * it is based on.
    *
    * @generated from enum value: VOLUME_VERSION_KIND_SNAPSHOT = 2;
    */
@@ -1111,8 +1114,8 @@ export enum VolumeConsistency {
 
   /**
    * The application settled it first: the service's pre_snapshot hook
-   * exited 0 before the snapshot, or the guest unmounted the volume
-   * cleanly before the save.
+   * exited 0 before the snapshot, the run's pre_save hook exited 0 before
+   * the save, or the guest unmounted the volume cleanly before the save.
    *
    * @generated from enum value: VOLUME_CONSISTENCY_APPLICATION = 2;
    */
@@ -1215,7 +1218,8 @@ export const VolumeService: GenService<{
    * ListVolumeVersions returns a state volume's saved versions, newest
    * first. A run that releases the volume saves its data as the next
    * version when the workspace has object storage. The volume keeps its
-   * newest five versions and the one a run holding it started from; the
+   * five newest saves and any version after the oldest of them, the one a
+   * run holding it started from and any a kept version is based on; the
    * others expire and are not listed.
    *
    * A page holds 100 versions when page_size is zero, and 1000 at most.
@@ -1232,8 +1236,10 @@ export const VolumeService: GenService<{
    * version, so the next run that mounts the volume starts from that data.
    * The new version names the version it was copied from. A volume a run
    * holds fails with FAILED_PRECONDITION, as do a volume that is not a
-   * state volume and an expired version. A version the volume does not
-   * have is NOT_FOUND.
+   * state volume and an expired version, and so does a control plane that
+   * keeps no versions. A version below 1 fails with INVALID_ARGUMENT, and
+   * one the volume does not have is NOT_FOUND. A copy the storage provider
+   * cannot make fails with UNAVAILABLE.
    *
    * @generated from rpc toshi.workspace.v1.VolumeService.RestoreVolume
    */

@@ -156,7 +156,8 @@ message ProductFeature {
   // entitlement is the most the workspace may have of the feature: the
   // operator's override for the workspace, else its plan's value, else the
   // value of the plan key it falls back to, else the feature's default
-  // (source). Unset when the config turns the product off.
+  // (source). Unset when the config turns the product off or the build
+  // does not include it.
   FeatureValue entitlement = 5;
   // setting is the workspace's own value of the feature, unset when it has
   // none or when its entitlements leave the product, or this bool feature,
@@ -165,7 +166,8 @@ message ProductFeature {
   FeatureValue setting = 6;
   // effective is the value that applies: the setting when the feature is
   // narrowable and the entitlement contains it, else the entitlement.
-  // Unset when the config turns the product off.
+  // Unset when the config turns the product off or the build does not
+  // include it.
   FeatureValue effective = 7;
   // default_value is the feature's default in its product's manifest: the
   // entitlement when no override, plan value or plan key gives one.

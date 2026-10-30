@@ -82,7 +82,8 @@ type VolumeServiceClient interface {
 	// ListVolumeVersions returns a state volume's saved versions, newest
 	// first. A run that releases the volume saves its data as the next
 	// version when the workspace has object storage. The volume keeps its
-	// newest five versions and the one a run holding it started from; the
+	// five newest saves and any version after the oldest of them, the one a
+	// run holding it started from and any a kept version is based on; the
 	// others expire and are not listed.
 	//
 	// A page holds 100 versions when page_size is zero, and 1000 at most.
@@ -91,8 +92,10 @@ type VolumeServiceClient interface {
 	// version, so the next run that mounts the volume starts from that data.
 	// The new version names the version it was copied from. A volume a run
 	// holds fails with FAILED_PRECONDITION, as do a volume that is not a
-	// state volume and an expired version. A version the volume does not
-	// have is NOT_FOUND.
+	// state volume and an expired version, and so does a control plane that
+	// keeps no versions. A version below 1 fails with INVALID_ARGUMENT, and
+	// one the volume does not have is NOT_FOUND. A copy the storage provider
+	// cannot make fails with UNAVAILABLE.
 	RestoreVolume(context.Context, *connect.Request[workspacev1.RestoreVolumeRequest]) (*connect.Response[workspacev1.RestoreVolumeResponse], error)
 }
 
@@ -216,7 +219,8 @@ type VolumeServiceHandler interface {
 	// ListVolumeVersions returns a state volume's saved versions, newest
 	// first. A run that releases the volume saves its data as the next
 	// version when the workspace has object storage. The volume keeps its
-	// newest five versions and the one a run holding it started from; the
+	// five newest saves and any version after the oldest of them, the one a
+	// run holding it started from and any a kept version is based on; the
 	// others expire and are not listed.
 	//
 	// A page holds 100 versions when page_size is zero, and 1000 at most.
@@ -225,8 +229,10 @@ type VolumeServiceHandler interface {
 	// version, so the next run that mounts the volume starts from that data.
 	// The new version names the version it was copied from. A volume a run
 	// holds fails with FAILED_PRECONDITION, as do a volume that is not a
-	// state volume and an expired version. A version the volume does not
-	// have is NOT_FOUND.
+	// state volume and an expired version, and so does a control plane that
+	// keeps no versions. A version below 1 fails with INVALID_ARGUMENT, and
+	// one the volume does not have is NOT_FOUND. A copy the storage provider
+	// cannot make fails with UNAVAILABLE.
 	RestoreVolume(context.Context, *connect.Request[workspacev1.RestoreVolumeRequest]) (*connect.Response[workspacev1.RestoreVolumeResponse], error)
 }
 

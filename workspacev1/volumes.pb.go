@@ -147,8 +147,9 @@ const (
 	// Saved when the run that mounted the volume ended, or restored from
 	// such a version.
 	VolumeVersionKind_VOLUME_VERSION_KIND_SAVE VolumeVersionKind = 1
-	// Taken while the run's VM ran. A run keeps only its newest snapshot,
-	// and its save replaces it.
+	// Taken while the run's VM ran. A run's complete snapshot, and its save,
+	// replace its earlier snapshots; an incremental snapshot keeps the ones
+	// it is based on.
 	VolumeVersionKind_VOLUME_VERSION_KIND_SNAPSHOT VolumeVersionKind = 2
 )
 
@@ -202,8 +203,8 @@ const (
 	// application may need to repair what it was writing.
 	VolumeConsistency_VOLUME_CONSISTENCY_CRASH VolumeConsistency = 1
 	// The application settled it first: the service's pre_snapshot hook
-	// exited 0 before the snapshot, or the guest unmounted the volume
-	// cleanly before the save.
+	// exited 0 before the snapshot, the run's pre_save hook exited 0 before
+	// the save, or the guest unmounted the volume cleanly before the save.
 	VolumeConsistency_VOLUME_CONSISTENCY_APPLICATION VolumeConsistency = 2
 )
 
@@ -476,9 +477,10 @@ type VolumeVersion struct {
 	// One higher than the volume's previous version; the first is 1.
 	Number     int64                  `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
 	CreateTime *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	// The length of the saved disk image, in bytes.
+	// The length of the saved copy, in bytes: the disk image, or for a
+	// volume kept as a directory the compressed tar of it.
 	SizeBytes int64 `protobuf:"varint,3,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
-	// The hex SHA-256 of the saved disk image.
+	// The hex SHA-256 of the saved copy.
 	Sha256 string `protobuf:"bytes,4,opt,name=sha256,proto3" json:"sha256,omitempty"`
 	// The version RestoreVolume copied this one from; zero for one a run
 	// saved.

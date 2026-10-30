@@ -69,7 +69,8 @@ export type Job = Message<"toshi.workspace.v1.Job"> & {
   status?: JobStatus | undefined;
 
   /**
-   * What it records of its runs, fixed at create: never UNSPECIFIED.
+   * What it records of its runs, fixed at create: never UNSPECIFIED,
+   * except in an event's snapshot stored before workloads had one.
    *
    * @generated from field: toshi.workspace.v1.RecordingPolicy recording = 7;
    */
@@ -94,8 +95,8 @@ export type Job = Message<"toshi.workspace.v1.Job"> & {
 
   /**
    * The network policy the job was admitted with, its layers in order, and
-   * whether its host enforces network rules at assignment. Unset for a job
-   * recorded before workloads kept one.
+   * whether its host enforces network rules at assignment. Always set; a
+   * job recorded before workloads kept one has no layers.
    *
    * @generated from field: toshi.workspace.v1.WorkloadNetwork network = 10;
    */
@@ -153,7 +154,8 @@ export type JobJson = {
   status?: JobStatusJson;
 
   /**
-   * What it records of its runs, fixed at create: never UNSPECIFIED.
+   * What it records of its runs, fixed at create: never UNSPECIFIED,
+   * except in an event's snapshot stored before workloads had one.
    *
    * @generated from field: toshi.workspace.v1.RecordingPolicy recording = 7;
    */
@@ -178,8 +180,8 @@ export type JobJson = {
 
   /**
    * The network policy the job was admitted with, its layers in order, and
-   * whether its host enforces network rules at assignment. Unset for a job
-   * recorded before workloads kept one.
+   * whether its host enforces network rules at assignment. Always set; a
+   * job recorded before workloads kept one has no layers.
    *
    * @generated from field: toshi.workspace.v1.WorkloadNetwork network = 10;
    */
@@ -621,7 +623,8 @@ export type Sandbox = Message<"toshi.workspace.v1.Sandbox"> & {
   status?: SandboxStatus | undefined;
 
   /**
-   * What it records of its runs, fixed at create: never UNSPECIFIED.
+   * What it records of its runs, fixed at create: never UNSPECIFIED,
+   * except in an event's snapshot stored before workloads had one.
    *
    * @generated from field: toshi.workspace.v1.RecordingPolicy recording = 7;
    */
@@ -646,8 +649,8 @@ export type Sandbox = Message<"toshi.workspace.v1.Sandbox"> & {
 
   /**
    * The network policy the sandbox was admitted with, its layers in order,
-   * and whether its host enforces network rules at assignment. Unset for a
-   * sandbox recorded before workloads kept one.
+   * and whether its host enforces network rules at assignment. Always set;
+   * a sandbox recorded before workloads kept one has no layers.
    *
    * @generated from field: toshi.workspace.v1.WorkloadNetwork network = 10;
    */
@@ -680,8 +683,10 @@ export type Sandbox = Message<"toshi.workspace.v1.Sandbox"> & {
 
   /**
    * Why a sandbox that records strips takes none now, empty while it does:
-   * its workspace switched recording off, or its host's image for its OS
-   * boots no desktop. Set by Toshi.
+   * its workspace switched recording off or cannot store new data, its
+   * host's image for its OS boots no desktop, Toshi licenses its Windows,
+   * it reached the plan's recording size for a sandbox, or the workspace's
+   * sandboxes reached the plan's strips for the day. Set by Toshi.
    *
    * @generated from field: string recording_stopped_reason = 14;
    */
@@ -733,7 +738,8 @@ export type SandboxJson = {
   status?: SandboxStatusJson;
 
   /**
-   * What it records of its runs, fixed at create: never UNSPECIFIED.
+   * What it records of its runs, fixed at create: never UNSPECIFIED,
+   * except in an event's snapshot stored before workloads had one.
    *
    * @generated from field: toshi.workspace.v1.RecordingPolicy recording = 7;
    */
@@ -758,8 +764,8 @@ export type SandboxJson = {
 
   /**
    * The network policy the sandbox was admitted with, its layers in order,
-   * and whether its host enforces network rules at assignment. Unset for a
-   * sandbox recorded before workloads kept one.
+   * and whether its host enforces network rules at assignment. Always set;
+   * a sandbox recorded before workloads kept one has no layers.
    *
    * @generated from field: toshi.workspace.v1.WorkloadNetwork network = 10;
    */
@@ -792,8 +798,10 @@ export type SandboxJson = {
 
   /**
    * Why a sandbox that records strips takes none now, empty while it does:
-   * its workspace switched recording off, or its host's image for its OS
-   * boots no desktop. Set by Toshi.
+   * its workspace switched recording off or cannot store new data, its
+   * host's image for its OS boots no desktop, Toshi licenses its Windows,
+   * it reached the plan's recording size for a sandbox, or the workspace's
+   * sandboxes reached the plan's strips for the day. Set by Toshi.
    *
    * @generated from field: string recording_stopped_reason = 14;
    */
@@ -1069,8 +1077,8 @@ export type Service = Message<"toshi.workspace.v1.Service"> & {
 
   /**
    * The network policy the service was admitted with, its layers in order,
-   * and whether its host enforces network rules at assignment. Unset for a
-   * service recorded before workloads kept one.
+   * and whether its host enforces network rules at assignment. Always set;
+   * a service recorded before workloads kept one has no layers.
    *
    * @generated from field: toshi.workspace.v1.WorkloadNetwork network = 9;
    */
@@ -1140,8 +1148,8 @@ export type ServiceJson = {
 
   /**
    * The network policy the service was admitted with, its layers in order,
-   * and whether its host enforces network rules at assignment. Unset for a
-   * service recorded before workloads kept one.
+   * and whether its host enforces network rules at assignment. Always set;
+   * a service recorded before workloads kept one has no layers.
    *
    * @generated from field: toshi.workspace.v1.WorkloadNetwork network = 9;
    */
@@ -9622,10 +9630,12 @@ export type ServiceRevision = Message<"toshi.workspace.v1.ServiceRevision"> & {
 
   /**
    * Why a rollback may not select the revision; empty when eligible. It is
-   * one of two reasons: the window ("revision N is older than the
-   * service's 10 newest revisions and no run uses it"), or the registry's
+   * one of three reasons: the window ("revision N is older than the
+   * service's 10 newest revisions and no run uses it"), the registry's
    * last answer ("the registry answered <status> for <digest> at <time>:
-   * it does not serve the revision's image (<message>)").
+   * it does not serve the revision's image (<message>)"), or its disk
+   * image version ("image <image> version <n> is pending deletion since
+   * <time> and is deleted at <time>", or "... was deleted at <time>").
    *
    * @generated from field: string ineligible_reason = 9;
    */
@@ -9719,10 +9729,12 @@ export type ServiceRevisionJson = {
 
   /**
    * Why a rollback may not select the revision; empty when eligible. It is
-   * one of two reasons: the window ("revision N is older than the
-   * service's 10 newest revisions and no run uses it"), or the registry's
+   * one of three reasons: the window ("revision N is older than the
+   * service's 10 newest revisions and no run uses it"), the registry's
    * last answer ("the registry answered <status> for <digest> at <time>:
-   * it does not serve the revision's image (<message>)").
+   * it does not serve the revision's image (<message>)"), or its disk
+   * image version ("image <image> version <n> is pending deletion since
+   * <time> and is deleted at <time>", or "... was deleted at <time>").
    *
    * @generated from field: string ineligible_reason = 9;
    */
@@ -10982,8 +10994,8 @@ export const ServiceStateSchema: GenEnum<ServiceState, ServiceStateJson> = /*@__
  */
 export enum RecordingPolicy {
   /**
-   * At create: the workspace plan's default for a job, and OFF for another
-   * kind.
+   * At create: the workspace plan's default for a job, the plan's sandbox
+   * default for a sandbox, and OFF for another kind.
    *
    * @generated from enum value: RECORDING_POLICY_UNSPECIFIED = 0;
    */
@@ -11001,8 +11013,8 @@ export enum RecordingPolicy {
    * A screenshot strip of each run (RecordingService), unless a video or
    * trace the run uploaded as its test framework's recording is ready when
    * its strip is finished, after the run ended: the run then keeps that
-   * recording and no strip. A job only: set for another kind it fails with
-   * INVALID_ARGUMENT.
+   * recording and no strip. Jobs and sandboxes only: set for another kind
+   * it fails with INVALID_ARGUMENT.
    *
    * @generated from enum value: RECORDING_POLICY_STRIP = 2;
    */
@@ -11171,7 +11183,8 @@ export const ServiceModeSchema: GenEnum<ServiceMode, ServiceModeJson> = /*@__PUR
 /**
  * EventType is the closed set of event types. Built-in event names are
  * reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
- * takeover.*, spend.*, egress.*, host.*, github.*, webhook.* and mail.*.
+ * takeover.*, spend.*, egress.*, host.*, github.*, webhook.*, trigger.* and
+ * mail.*.
  *
  * @generated from enum toshi.workspace.v1.EventType
  */
@@ -11325,7 +11338,8 @@ export enum EventType {
 /**
  * EventType is the closed set of event types. Built-in event names are
  * reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
- * takeover.*, spend.*, egress.*, host.*, github.*, webhook.* and mail.*.
+ * takeover.*, spend.*, egress.*, host.*, github.*, webhook.*, trigger.* and
+ * mail.*.
  *
  * @generated from enum toshi.workspace.v1.EventType
  */
@@ -11368,7 +11382,7 @@ export enum PreviewShareLinkState {
   REVOKED = 3,
 
   /**
-   * Its connections carried its byte cap.
+   * Its connections carried its byte cap, or its channel was deleted.
    *
    * @generated from enum value: PREVIEW_SHARE_LINK_STATE_ENDED = 4;
    */

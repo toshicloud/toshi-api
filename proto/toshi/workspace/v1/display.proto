@@ -222,8 +222,8 @@ message DisplaySession {
   // or grant_revoked (it was opened through a grant that ended). Empty
   // while it is open.
   string close_reason = 12;
-  // Who opened it, as the audit log names the caller: the GitHub login of
-  // the signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
+  // Who opened it, as the audit log names the caller: the user ID of the
+  // signed-in person for DISPLAY_OPENER_PERSON, the API token's id for
   // DISPLAY_OPENER_PROGRAM.
   string opener_id = 13;
   // The web origin of the call that opened it, for example
@@ -252,7 +252,8 @@ message OpenDisplaySessionRequest {
     string workload_id = 2;
   }
   DisplayMode mode = 3;
-  // The idle close, at most the plan's; unset is the plan's.
+  // The idle close, at least 1 second and at most the plan's; unset is the
+  // plan's.
   google.protobuf.Duration idle_close = 4;
   bool allow_takeover = 5;
   string request_key = 6;

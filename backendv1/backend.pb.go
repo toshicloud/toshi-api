@@ -11,7 +11,8 @@
 // A backend is a program Toshi reaches over gRPC (HTTP/2 without TLS) on a
 // local Unix socket, one socket per program, such as a VM provider. Each
 // kind of backend has its own protocol, a package
-// toshi.backend.<type>.v<N>; N is that protocol's version. On the same socket
+// toshi.backend.<protocol>.v<N>; N is that protocol's version. The
+// "vm_provider" type's is toshi.backend.provider.v<N>. On the same socket
 // a backend serves BackendService, its own protocol's service, and the
 // standard grpc.health.v1.Health service, which answers for its protocol's
 // service name.
@@ -96,7 +97,7 @@ type HandshakeResponse struct {
 	// The type of backend this program is, such as "vm_provider".
 	BackendType string `protobuf:"bytes,1,opt,name=backend_type,json=backendType,proto3" json:"backend_type,omitempty"`
 	// The versions of its type's protocol this program serves, each as the
-	// package toshi.backend.<type>.v<N> on the same socket.
+	// package toshi.backend.<protocol>.v<N> on the same socket.
 	ProtocolVersions []uint32 `protobuf:"varint,2,rep,packed,name=protocol_versions,json=protocolVersions,proto3" json:"protocol_versions,omitempty"`
 	// The program's own name for itself, for the caller's log. It is not an
 	// identity and no call depends on it.

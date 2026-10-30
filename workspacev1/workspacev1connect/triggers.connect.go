@@ -77,7 +77,7 @@ type TriggerServiceClient interface {
 	// The change applies to the events written after it.
 	UpdateTrigger(context.Context, *connect.Request[workspacev1.UpdateTriggerRequest]) (*connect.Response[workspacev1.UpdateTriggerResponse], error)
 	// DeleteTrigger deletes a trigger: it acts on no further event, and the
-	// hourly check removes the workloads it made.
+	// evaluator's next pass removes the workloads it made.
 	DeleteTrigger(context.Context, *connect.Request[workspacev1.DeleteTriggerRequest]) (*connect.Response[workspacev1.DeleteTriggerResponse], error)
 }
 
@@ -186,7 +186,7 @@ type TriggerServiceHandler interface {
 	// The change applies to the events written after it.
 	UpdateTrigger(context.Context, *connect.Request[workspacev1.UpdateTriggerRequest]) (*connect.Response[workspacev1.UpdateTriggerResponse], error)
 	// DeleteTrigger deletes a trigger: it acts on no further event, and the
-	// hourly check removes the workloads it made.
+	// evaluator's next pass removes the workloads it made.
 	DeleteTrigger(context.Context, *connect.Request[workspacev1.DeleteTriggerRequest]) (*connect.Response[workspacev1.DeleteTriggerResponse], error)
 }
 

@@ -84,7 +84,8 @@ type GitHubCoreServiceClient interface {
 	ListOpenSourceRepositories(context.Context, *connect.Request[githubcorev1.ListOpenSourceRepositoriesRequest]) (*connect.Response[githubcorev1.ListOpenSourceRepositoriesResponse], error)
 	// SetOpenSourceApproval approves or revokes a repository on every
 	// workspace's row of it, or keeps the decision when no workspace has a row.
-	// The operator's only.
+	// Revoking a repository that has neither a row nor a kept decision fails
+	// with NOT_FOUND. The operator's only.
 	SetOpenSourceApproval(context.Context, *connect.Request[githubcorev1.SetOpenSourceApprovalRequest]) (*connect.Response[githubcorev1.SetOpenSourceApprovalResponse], error)
 	// MapInstallation maps a GitHub App installation to a workspace. An unknown
 	// workspace fails with NOT_FOUND and a deleted one with
@@ -226,7 +227,8 @@ type GitHubCoreServiceHandler interface {
 	ListOpenSourceRepositories(context.Context, *connect.Request[githubcorev1.ListOpenSourceRepositoriesRequest]) (*connect.Response[githubcorev1.ListOpenSourceRepositoriesResponse], error)
 	// SetOpenSourceApproval approves or revokes a repository on every
 	// workspace's row of it, or keeps the decision when no workspace has a row.
-	// The operator's only.
+	// Revoking a repository that has neither a row nor a kept decision fails
+	// with NOT_FOUND. The operator's only.
 	SetOpenSourceApproval(context.Context, *connect.Request[githubcorev1.SetOpenSourceApprovalRequest]) (*connect.Response[githubcorev1.SetOpenSourceApprovalResponse], error)
 	// MapInstallation maps a GitHub App installation to a workspace. An unknown
 	// workspace fails with NOT_FOUND and a deleted one with

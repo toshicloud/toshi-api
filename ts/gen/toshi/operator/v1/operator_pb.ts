@@ -132,8 +132,9 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   /**
    * Why the job was stopped: github_cancelled, max_duration, operator,
    * github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-   * ran_elsewhere, or for a sandbox spend_cap, tenant_suspended or
-   * tenant_deleted. Empty if it never was.
+   * ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
+   * tenant_deleted or owner, or for a service's run owner_deleted,
+   * service_restart or sleep. Empty if it never was.
    *
    * @generated from field: string stop_reason = 19;
    */
@@ -151,8 +152,10 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
    * Why the scheduler last held the job while it was queued:
    * tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
    * free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
-   * installation_suspended, overflow_wait, no_own_capacity or no_capacity.
-   * Empty when the job was never held. It is kept after the job starts.
+   * installation_suspended, overflow_wait, no_own_capacity, no_capacity,
+   * cloud_budget, reserved_for_other, volume_claimed, service_quota or
+   * no_network_enforcement. Empty when the job was never held. It is kept
+   * after the job starts.
    *
    * @generated from field: string hold_reason = 21;
    */
@@ -574,8 +577,9 @@ export type JobJson = {
   /**
    * Why the job was stopped: github_cancelled, max_duration, operator,
    * github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-   * ran_elsewhere, or for a sandbox spend_cap, tenant_suspended or
-   * tenant_deleted. Empty if it never was.
+   * ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
+   * tenant_deleted or owner, or for a service's run owner_deleted,
+   * service_restart or sleep. Empty if it never was.
    *
    * @generated from field: string stop_reason = 19;
    */
@@ -593,8 +597,10 @@ export type JobJson = {
    * Why the scheduler last held the job while it was queued:
    * tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
    * free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
-   * installation_suspended, overflow_wait, no_own_capacity or no_capacity.
-   * Empty when the job was never held. It is kept after the job starts.
+   * installation_suspended, overflow_wait, no_own_capacity, no_capacity,
+   * cloud_budget, reserved_for_other, volume_claimed, service_quota or
+   * no_network_enforcement. Empty when the job was never held. It is kept
+   * after the job starts.
    *
    * @generated from field: string hold_reason = 21;
    */
@@ -1597,7 +1603,7 @@ export type HeldRefill = Message<"toshi.operator.v1.HeldRefill"> & {
   size: string;
 
   /**
-   * "memory" or "cpus".
+   * "memory", "memory_limit" or "cpus".
    *
    * @generated from field: string reason = 2;
    */
@@ -1616,7 +1622,7 @@ export type HeldRefillJson = {
   size?: string;
 
   /**
-   * "memory" or "cpus".
+   * "memory", "memory_limit" or "cpus".
    *
    * @generated from field: string reason = 2;
    */
@@ -1734,7 +1740,9 @@ export type Host = Message<"toshi.operator.v1.Host"> & {
   egress?: HostEgress | undefined;
 
   /**
-   * The version the host's agent reported when it last registered; empty when unknown.
+   * The version the host's agent reported when it last registered; empty when
+   * unknown. It, agent_version_status and agent_version_skew are unset for a
+   * workspace caller.
    *
    * @generated from field: string agent_version = 16;
    */
@@ -1996,7 +2004,9 @@ export type HostJson = {
   egress?: HostEgressJson;
 
   /**
-   * The version the host's agent reported when it last registered; empty when unknown.
+   * The version the host's agent reported when it last registered; empty when
+   * unknown. It, agent_version_status and agent_version_skew are unset for a
+   * workspace caller.
    *
    * @generated from field: string agent_version = 16;
    */
@@ -2388,9 +2398,9 @@ export type ListJobsRequest = Message<"toshi.operator.v1.ListJobsRequest"> & {
   pageSize: number;
 
   /**
-   * Only the job of this Workspace API workload. Within one workspace a workload
-   * has at most one job, and a service workload has none. The job is returned
-   * whatever its state, unless states excludes it.
+   * Only the jobs of this Workspace API workload: a job workload's one, and
+   * one for each run of a sandbox or a service. They are returned whatever
+   * their state, unless states excludes them.
    *
    * @generated from field: string workload_id = 5;
    */
@@ -2446,9 +2456,9 @@ export type ListJobsRequestJson = {
   pageSize?: number;
 
   /**
-   * Only the job of this Workspace API workload. Within one workspace a workload
-   * has at most one job, and a service workload has none. The job is returned
-   * whatever its state, unless states excludes it.
+   * Only the jobs of this Workspace API workload: a job workload's one, and
+   * one for each run of a sandbox or a service. They are returned whatever
+   * their state, unless states excludes them.
    *
    * @generated from field: string workload_id = 5;
    */
@@ -5609,8 +5619,8 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   maxSize: string;
 
   /**
-   * vCPUs a workspace may have in assigned, starting or running jobs at once; 0
-   * means no cap.
+   * vCPUs a workspace may have in assigned, starting, running or debugging jobs
+   * at once; 0 means no cap.
    *
    * @generated from field: int32 max_vcpu = 8;
    */
@@ -5745,8 +5755,8 @@ export type PlanJson = {
   maxSize?: string;
 
   /**
-   * vCPUs a workspace may have in assigned, starting or running jobs at once; 0
-   * means no cap.
+   * vCPUs a workspace may have in assigned, starting, running or debugging jobs
+   * at once; 0 means no cap.
    *
    * @generated from field: int32 max_vcpu = 8;
    */
@@ -6841,8 +6851,9 @@ export type UsageRow = Message<"toshi.operator.v1.UsageRow"> & {
   ownHostSeconds: number;
 
   /**
-   * The exact time service runs were awake, from first ready to release,
-   * and the idle part of it before they were put to sleep, in seconds.
+   * The exact time service runs on shared hosts were awake, from first
+   * ready to release, and the idle part of it before they were put to
+   * sleep, in seconds. Open-source runs are left out.
    *
    * @generated from field: double awake_seconds = 14;
    */
@@ -6961,8 +6972,9 @@ export type UsageRowJson = {
   ownHostSeconds?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
-   * The exact time service runs were awake, from first ready to release,
-   * and the idle part of it before they were put to sleep, in seconds.
+   * The exact time service runs on shared hosts were awake, from first
+   * ready to release, and the idle part of it before they were put to
+   * sleep, in seconds. Open-source runs are left out.
    *
    * @generated from field: double awake_seconds = 14;
    */
@@ -9386,8 +9398,10 @@ export type TenantBilling = Message<"toshi.operator.v1.TenantBilling"> & {
   spendCapCents: bigint;
 
   /**
-   * Estimated metered spend this UTC month, rounded up: finished jobs plus
-   * what running ones have run so far, at the plan's current prices.
+   * Estimated metered spend this UTC month, rounded up: finished jobs, each
+   * at the price recorded when it finished, plus what running ones have run
+   * so far, the own-server fee, VM-seconds, stored data past the plan's
+   * included amount and desktop seats, at the plan's current prices.
    *
    * @generated from field: int64 spend_cents = 14;
    */
@@ -9568,8 +9582,10 @@ export type TenantBillingJson = {
   spendCapCents?: string;
 
   /**
-   * Estimated metered spend this UTC month, rounded up: finished jobs plus
-   * what running ones have run so far, at the plan's current prices.
+   * Estimated metered spend this UTC month, rounded up: finished jobs, each
+   * at the price recorded when it finished, plus what running ones have run
+   * so far, the own-server fee, VM-seconds, stored data past the plan's
+   * included amount and desktop seats, at the plan's current prices.
    *
    * @generated from field: int64 spend_cents = 14;
    */
@@ -9958,7 +9974,9 @@ export type Token = Message<"toshi.operator.v1.Token"> & {
    * "file" for a token read from the control plane's token file, "rotate"
    * for one made by RotateToken, "tenant" for one made by the Workspace
    * API's CreateEnrollmentToken, "session" for a workspace token minted
-   * from a dashboard session.
+   * from a dashboard session, "product" for a product token the operator
+   * made, "hosted" for a product token the control plane minted for an
+   * adapter it runs.
    *
    * @generated from field: string source = 3;
    */
@@ -10101,7 +10119,9 @@ export type TokenJson = {
    * "file" for a token read from the control plane's token file, "rotate"
    * for one made by RotateToken, "tenant" for one made by the Workspace
    * API's CreateEnrollmentToken, "session" for a workspace token minted
-   * from a dashboard session.
+   * from a dashboard session, "product" for a product token the operator
+   * made, "hosted" for a product token the control plane minted for an
+   * adapter it runs.
    *
    * @generated from field: string source = 3;
    */
@@ -11330,14 +11350,17 @@ export type Filler = Message<"toshi.operator.v1.Filler"> & {
 
   /**
    * How long after a run completes or fails the next may start. Default
-   * 24 hours.
+   * 24 hours. After a run that was preempted, rejected or lost the next
+   * may start after the control plane's fillers.retry_after, 2 minutes
+   * unless set.
    *
    * @generated from field: google.protobuf.Duration every = 11;
    */
   every?: Duration | undefined;
 
   /**
-   * The longest one run may take. Default 2 hours.
+   * The longest one run may take. Default 2 hours; a workspace's own filler
+   * gets 1 hour when unset and may take at most 1 hour.
    *
    * @generated from field: google.protobuf.Duration max_duration = 12;
    */
@@ -11489,14 +11512,17 @@ export type FillerJson = {
 
   /**
    * How long after a run completes or fails the next may start. Default
-   * 24 hours.
+   * 24 hours. After a run that was preempted, rejected or lost the next
+   * may start after the control plane's fillers.retry_after, 2 minutes
+   * unless set.
    *
    * @generated from field: google.protobuf.Duration every = 11;
    */
   every?: DurationJson;
 
   /**
-   * The longest one run may take. Default 2 hours.
+   * The longest one run may take. Default 2 hours; a workspace's own filler
+   * gets 1 hour when unset and may take at most 1 hour.
    *
    * @generated from field: google.protobuf.Duration max_duration = 12;
    */
@@ -14247,7 +14273,9 @@ export type CreateStorageProviderRequest = Message<"toshi.operator.v1.CreateStor
   /**
    * The key of a workspace's own bucket. The control plane wraps it before
    * the row exists and never returns, logs or audits it. Set only with a
-   * tenant_id, mode "tenant_bucket" and no credentials_file.
+   * tenant_id, mode "tenant_bucket", an access key id and secret, an https
+   * endpoint, and no credentials_file, credentials_profile, role_arn,
+   * external_id, global replication or egress price.
    *
    * @generated from field: toshi.operator.v1.StorageCredential credential = 17;
    */
@@ -14343,7 +14371,9 @@ export type CreateStorageProviderRequestJson = {
   /**
    * The key of a workspace's own bucket. The control plane wraps it before
    * the row exists and never returns, logs or audits it. Set only with a
-   * tenant_id, mode "tenant_bucket" and no credentials_file.
+   * tenant_id, mode "tenant_bucket", an access key id and secret, an https
+   * endpoint, and no credentials_file, credentials_profile, role_arn,
+   * external_id, global replication or egress price.
    *
    * @generated from field: toshi.operator.v1.StorageCredential credential = 17;
    */
@@ -15418,7 +15448,7 @@ export const OperatorService: GenService<{
   /**
    * SetHostState drains a host or puts it back in service. Only
    * HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
-   * fails with NOT_FOUND.
+   * fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
    *
    * @generated from rpc toshi.operator.v1.OperatorService.SetHostState
    */
@@ -15905,8 +15935,9 @@ export const OperatorService: GenService<{
   },
   /**
    * ListHostAlerts returns the active alerts of hosts that workspaces own:
-   * memory_held, egress_changed and agent_version_skew, one per workspace and
-   * kind, and the workspaces' token notices, token_creator_left and
+   * memory_held, egress_changed, agent_version_skew, host_offline, vm_died,
+   * job_oom_killed and spend_cap_reached, one per workspace and kind, and
+   * the workspaces' token notices, token_creator_left and
    * token_expiring, one for each person who left; ordered by workspace, then
    * kind. A workspace caller gets those of its
    * own workspaces; an operator gets every workspace's, or one workspace's with the
@@ -16054,7 +16085,8 @@ export const OperatorService: GenService<{
    * own result. A call returns the last result for the window; it starts a
    * run when no run is in progress and there is no result for the window
    * from the current UTC day, or force is set. A result, failed or not, is
-   * kept in memory until the next run replaces it; a restart loses it.
+   * kept in memory until the next run replaces it; a successful result for
+   * the default window is also kept in the store, so a restart keeps it.
    * Operator only. A `days` value outside 0 to max_days fails with
    * INVALID_ARGUMENT.
    *

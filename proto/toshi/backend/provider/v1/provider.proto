@@ -70,16 +70,18 @@ service ProviderService {
   rpc CreateOutcome(CreateOutcomeRequest) returns (CreateOutcomeResponse);
   // Get returns the instance as it is now.
   rpc Get(GetRequest) returns (GetResponse);
-  // List returns every instance the provider knows that is not destroyed.
+  // List returns every instance the provider still knows, destroyed ones
+  // included until they are forgotten, in no particular order.
   rpc List(ListRequest) returns (ListResponse);
-  // Start starts a ready or stopped instance. From another state it fails
-  // with ERROR_CODE_INVALID_TRANSITION, on a retry too.
+  // Start starts a ready instance. From another state it fails with
+  // ERROR_CODE_INVALID_TRANSITION, on a retry too.
   rpc Start(StartRequest) returns (StartResponse);
   // Stop stops a running or paused instance. From another state it fails
   // with ERROR_CODE_INVALID_TRANSITION, on a retry too.
   rpc Stop(StopRequest) returns (StopResponse);
-  // Destroy destroys the instance and everything it holds on the host. It
-  // succeeds for an instance that is already destroyed or unknown.
+  // Destroy destroys the instance and everything it holds on the host,
+  // from any state. It succeeds for an instance that is already destroyed;
+  // an unknown one fails with ERROR_CODE_NOT_FOUND.
   rpc Destroy(DestroyRequest) returns (DestroyResponse);
   // Wait returns the instance once it is in state want, or fails when it
   // reaches a state it cannot leave for want or when the call's deadline
@@ -145,7 +147,9 @@ service ProviderService {
   // Snapshots: the facets "snapshotter", "image_tracker" and
   // "snapshot_referrer".
 
-  // Snapshot saves a running instance and returns the snapshot's id.
+  // Snapshot saves a running or stopped instance and returns the
+  // snapshot's id. From another state it fails with
+  // ERROR_CODE_INVALID_TRANSITION.
   rpc Snapshot(SnapshotRequest) returns (SnapshotResponse);
   // Restore creates an instance of spec from a snapshot, with Create's rules
   // for operation_id, a held key and a cancelled call.
@@ -228,7 +232,7 @@ service ProviderService {
 
   // Guest: the facets "guest_connector", "display_connector",
   // "screen_capturer", "console_reader", "console_log_keeper",
-  // "debug_forwarder" and "preview_forwarder".
+  // "debug_forwarder", "preview_forwarder" and "binding_forwarder".
 
   // DialGuest connects to a running instance's guest channel. The first
   // request names the instance and carries no data; the first response

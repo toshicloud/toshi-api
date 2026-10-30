@@ -889,8 +889,9 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
   /**
    * Why the job was stopped: github_cancelled, max_duration, operator,
    * github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-   * ran_elsewhere, or for a sandbox spend_cap, tenant_suspended or
-   * tenant_deleted. Empty if it never was.
+   * ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
+   * tenant_deleted or owner, or for a service's run owner_deleted,
+   * service_restart or sleep. Empty if it never was.
    *
    * @generated from field: string stop_reason = 18;
    */
@@ -908,8 +909,10 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
    * Why the scheduler last held the job while it was queued:
    * tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
    * free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
-   * installation_suspended, overflow_wait, no_own_capacity or no_capacity.
-   * Empty when the job was never held. It is kept after the job starts.
+   * installation_suspended, overflow_wait, no_own_capacity, no_capacity,
+   * cloud_budget, reserved_for_other, volume_claimed, service_quota or
+   * no_network_enforcement. Empty when the job was never held. It is kept
+   * after the job starts.
    *
    * @generated from field: string hold_reason = 20;
    */
@@ -1332,8 +1335,9 @@ export type HostJobJson = {
   /**
    * Why the job was stopped: github_cancelled, max_duration, operator,
    * github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-   * ran_elsewhere, or for a sandbox spend_cap, tenant_suspended or
-   * tenant_deleted. Empty if it never was.
+   * ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
+   * tenant_deleted or owner, or for a service's run owner_deleted,
+   * service_restart or sleep. Empty if it never was.
    *
    * @generated from field: string stop_reason = 18;
    */
@@ -1351,8 +1355,10 @@ export type HostJobJson = {
    * Why the scheduler last held the job while it was queued:
    * tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
    * free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
-   * installation_suspended, overflow_wait, no_own_capacity or no_capacity.
-   * Empty when the job was never held. It is kept after the job starts.
+   * installation_suspended, overflow_wait, no_own_capacity, no_capacity,
+   * cloud_budget, reserved_for_other, volume_claimed, service_quota or
+   * no_network_enforcement. Empty when the job was never held. It is kept
+   * after the job starts.
    *
    * @generated from field: string hold_reason = 20;
    */
@@ -2633,7 +2639,8 @@ export const HostJobService: GenService<{
    * host job moves to HOST_JOB_STATE_STOPPING with stop_reason debug_ended,
    * its host destroys the kept VM and the host job finishes completed with
    * its conclusion unchanged. A host job that is not debugging fails with
-   * FAILED_PRECONDITION; one already stopping is returned unchanged.
+   * FAILED_PRECONDITION, as does one stopping for another reason; one
+   * already stopping with debug_ended is returned unchanged.
    *
    * @generated from rpc toshi.workspace.v1.HostJobService.StopHostJobDebug
    */

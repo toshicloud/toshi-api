@@ -345,7 +345,7 @@ type WorkloadServiceClient interface {
 	// EmitWorkloadEvent appends an event to a job's, sandbox's or service's
 	// event log, as its guest emits one, and returns it: type EMITTED, the
 	// name given and data. The workload need not be running. The name is 1
-	// to 200 bytes with no space or control character, and its first
+	// to 200 bytes of UTF-8 with no space or control character, and its first
 	// dot-separated segment is none Toshi keeps for its own events (job,
 	// sandbox, run, service, recording, agent, takeover, spend, egress, host,
 	// github, webhook, trigger and mail); data is empty or JSON of at most
@@ -1450,7 +1450,7 @@ type WorkloadServiceHandler interface {
 	// EmitWorkloadEvent appends an event to a job's, sandbox's or service's
 	// event log, as its guest emits one, and returns it: type EMITTED, the
 	// name given and data. The workload need not be running. The name is 1
-	// to 200 bytes with no space or control character, and its first
+	// to 200 bytes of UTF-8 with no space or control character, and its first
 	// dot-separated segment is none Toshi keeps for its own events (job,
 	// sandbox, run, service, recording, agent, takeover, spend, egress, host,
 	// github, webhook, trigger and mail); data is empty or JSON of at most

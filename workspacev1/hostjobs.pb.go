@@ -1051,8 +1051,9 @@ type HostJob struct {
 	Error string `protobuf:"bytes,17,opt,name=error,proto3" json:"error,omitempty"`
 	// Why the job was stopped: github_cancelled, max_duration, operator,
 	// github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-	// ran_elsewhere, or for a sandbox spend_cap, tenant_suspended or
-	// tenant_deleted. Empty if it never was.
+	// ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
+	// tenant_deleted or owner, or for a service's run owner_deleted,
+	// service_restart or sleep. Empty if it never was.
 	StopReason string `protobuf:"bytes,18,opt,name=stop_reason,json=stopReason,proto3" json:"stop_reason,omitempty"`
 	// When the control plane asked the host to stop the job. Unset if it
 	// never did.
@@ -1060,8 +1061,10 @@ type HostJob struct {
 	// Why the scheduler last held the job while it was queued:
 	// tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
 	// free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
-	// installation_suspended, overflow_wait, no_own_capacity or no_capacity.
-	// Empty when the job was never held. It is kept after the job starts.
+	// installation_suspended, overflow_wait, no_own_capacity, no_capacity,
+	// cloud_budget, reserved_for_other, volume_claimed, service_quota or
+	// no_network_enforcement. Empty when the job was never held. It is kept
+	// after the job starts.
 	HoldReason string `protobuf:"bytes,20,opt,name=hold_reason,json=holdReason,proto3" json:"hold_reason,omitempty"`
 	// Whether the job was placed on a host its workspace owns. Such a job sends no
 	// meter event.

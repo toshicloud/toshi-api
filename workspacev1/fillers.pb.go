@@ -44,9 +44,13 @@ type Filler struct {
 	// branch.
 	Ref string `protobuf:"bytes,6,opt,name=ref,proto3" json:"ref,omitempty"`
 	// How long after a run completes or fails the next may start. Default
-	// 24 hours.
+	// 24 hours. After a run that was preempted, rejected or lost the next
+	// may start after the control plane's fillers.retry_after, 2 minutes
+	// unless set.
 	Every *durationpb.Duration `protobuf:"bytes,7,opt,name=every,proto3" json:"every,omitempty"`
-	// The longest one run may take. Default 2 hours.
+	// The longest one run may take. A filler PutFiller stores gets 1 hour
+	// when unset and may take at most 1 hour; the operator's default is 2
+	// hours.
 	MaxDuration *durationpb.Duration `protobuf:"bytes,8,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
 	Enabled     bool                 `protobuf:"varint,9,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	// Where the filler comes from: "config", "operator" or "tenant" (the

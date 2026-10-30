@@ -233,7 +233,7 @@ type OperatorServiceClient interface {
 	ListHostStorage(context.Context, *connect.Request[operatorv1.ListHostStorageRequest]) (*connect.Response[operatorv1.ListHostStorageResponse], error)
 	// SetHostState drains a host or puts it back in service. Only
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
-	// fails with NOT_FOUND.
+	// fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
 	SetHostState(context.Context, *connect.Request[operatorv1.SetHostStateRequest]) (*connect.Response[operatorv1.SetHostStateResponse], error)
 	// SetHostOverflow sets whether a host is an overflow host and returns it as
 	// stored: an overflow host takes a job only when no other host the job may
@@ -440,8 +440,9 @@ type OperatorServiceClient interface {
 	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListOperatorAlerts(context.Context, *connect.Request[operatorv1.ListOperatorAlertsRequest]) (*connect.Response[operatorv1.ListOperatorAlertsResponse], error)
 	// ListHostAlerts returns the active alerts of hosts that workspaces own:
-	// memory_held, egress_changed and agent_version_skew, one per workspace and
-	// kind, and the workspaces' token notices, token_creator_left and
+	// memory_held, egress_changed, agent_version_skew, host_offline, vm_died,
+	// job_oom_killed and spend_cap_reached, one per workspace and kind, and
+	// the workspaces' token notices, token_creator_left and
 	// token_expiring, one for each person who left; ordered by workspace, then
 	// kind. A workspace caller gets those of its
 	// own workspaces; an operator gets every workspace's, or one workspace's with the
@@ -509,7 +510,8 @@ type OperatorServiceClient interface {
 	// own result. A call returns the last result for the window; it starts a
 	// run when no run is in progress and there is no result for the window
 	// from the current UTC day, or force is set. A result, failed or not, is
-	// kept in memory until the next run replaces it; a restart loses it.
+	// kept in memory until the next run replaces it; a successful result for
+	// the default window is also kept in the store, so a restart keeps it.
 	// Operator only. A `days` value outside 0 to max_days fails with
 	// INVALID_ARGUMENT.
 	SuggestPools(context.Context, *connect.Request[operatorv1.SuggestPoolsRequest]) (*connect.Response[operatorv1.SuggestPoolsResponse], error)
@@ -1271,7 +1273,7 @@ type OperatorServiceHandler interface {
 	ListHostStorage(context.Context, *connect.Request[operatorv1.ListHostStorageRequest]) (*connect.Response[operatorv1.ListHostStorageResponse], error)
 	// SetHostState drains a host or puts it back in service. Only
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
-	// fails with NOT_FOUND.
+	// fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
 	SetHostState(context.Context, *connect.Request[operatorv1.SetHostStateRequest]) (*connect.Response[operatorv1.SetHostStateResponse], error)
 	// SetHostOverflow sets whether a host is an overflow host and returns it as
 	// stored: an overflow host takes a job only when no other host the job may
@@ -1478,8 +1480,9 @@ type OperatorServiceHandler interface {
 	// A page holds 100 alerts when page_size is zero, and 1000 at most.
 	ListOperatorAlerts(context.Context, *connect.Request[operatorv1.ListOperatorAlertsRequest]) (*connect.Response[operatorv1.ListOperatorAlertsResponse], error)
 	// ListHostAlerts returns the active alerts of hosts that workspaces own:
-	// memory_held, egress_changed and agent_version_skew, one per workspace and
-	// kind, and the workspaces' token notices, token_creator_left and
+	// memory_held, egress_changed, agent_version_skew, host_offline, vm_died,
+	// job_oom_killed and spend_cap_reached, one per workspace and kind, and
+	// the workspaces' token notices, token_creator_left and
 	// token_expiring, one for each person who left; ordered by workspace, then
 	// kind. A workspace caller gets those of its
 	// own workspaces; an operator gets every workspace's, or one workspace's with the
@@ -1547,7 +1550,8 @@ type OperatorServiceHandler interface {
 	// own result. A call returns the last result for the window; it starts a
 	// run when no run is in progress and there is no result for the window
 	// from the current UTC day, or force is set. A result, failed or not, is
-	// kept in memory until the next run replaces it; a restart loses it.
+	// kept in memory until the next run replaces it; a successful result for
+	// the default window is also kept in the store, so a restart keeps it.
 	// Operator only. A `days` value outside 0 to max_days fails with
 	// INVALID_ARGUMENT.
 	SuggestPools(context.Context, *connect.Request[operatorv1.SuggestPoolsRequest]) (*connect.Response[operatorv1.SuggestPoolsResponse], error)

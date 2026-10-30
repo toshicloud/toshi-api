@@ -82,8 +82,9 @@ type TokenServiceClient interface {
 	// UpdateToken changes an API token's name, expiry, start and client
 	// address ranges: the fields update_mask names. The expiry stays within
 	// the longest lifetime allowed from now. Only a signed-in session may
-	// call it, and a token someone else made needs members.write as well,
-	// as for RollWorkspaceToken. An enrollment token fails with
+	// call it, but a person's access token may make the call whose mask is
+	// created_by alone; and a token someone else made needs members.write as
+	// well, as for RollWorkspaceToken. An enrollment token fails with
 	// INVALID_ARGUMENT; a token of another workspace, and an unknown ID,
 	// with NOT_FOUND; a revoked token with FAILED_PRECONDITION.
 	//
@@ -208,8 +209,9 @@ type TokenServiceHandler interface {
 	// UpdateToken changes an API token's name, expiry, start and client
 	// address ranges: the fields update_mask names. The expiry stays within
 	// the longest lifetime allowed from now. Only a signed-in session may
-	// call it, and a token someone else made needs members.write as well,
-	// as for RollWorkspaceToken. An enrollment token fails with
+	// call it, but a person's access token may make the call whose mask is
+	// created_by alone; and a token someone else made needs members.write as
+	// well, as for RollWorkspaceToken. An enrollment token fails with
 	// INVALID_ARGUMENT; a token of another workspace, and an unknown ID,
 	// with NOT_FOUND; a revoked token with FAILED_PRECONDITION.
 	//

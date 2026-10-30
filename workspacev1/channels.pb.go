@@ -1069,7 +1069,7 @@ type ChannelPolicy struct {
 	// newest 8 MiB, or channel, as long as the channel's record lasts. An
 	// event channel's is a duration, how long a message waits to be
 	// delivered before it expires: 24h unless set, and at most the
-	// workspace's plan allows.
+	// workspace's plan allows, which is never less than 24h.
 	Keep string `protobuf:"bytes,5,opt,name=keep,proto3" json:"keep,omitempty"`
 	// The ordered module list. Unset takes the shape's defaults; an empty
 	// list means no modules. An event channel takes none.
@@ -1952,7 +1952,8 @@ func (x *Forward) GetOpenedAt() *timestamppb.Timestamp {
 type Link struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	Connected bool                   `protobuf:"varint,1,opt,name=connected,proto3" json:"connected,omitempty"`
-	// Since when it has been connected; unset while it is not.
+	// Since when it has been connected; unset while it is not, and while
+	// another process of the control plane holds the link.
 	Since *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=since,proto3" json:"since,omitempty"`
 	// How many times the guest has connected.
 	Connects int32 `protobuf:"varint,3,opt,name=connects,proto3" json:"connects,omitempty"`
@@ -3737,7 +3738,8 @@ type SendChannelMessageRequest struct {
 	// The event channel's service, by its ID, and the channel's name.
 	Service string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
 	Channel string `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`
-	// The message's name, such as order.paid: up to 200 bytes with no space.
+	// The message's name, such as order.paid: up to 200 bytes with no space
+	// or control character.
 	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	// The message's JSON, at most 256 KiB.
 	Data []byte `protobuf:"bytes,4,opt,name=data,proto3" json:"data,omitempty"`

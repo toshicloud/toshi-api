@@ -87,8 +87,8 @@ type ImageServiceClient interface {
 	// UpdateImage sets the fields of the image that update_mask names; the
 	// request's image names it by its name. The one field it sets is
 	// rebuild_on_push, of a container image built from a repository: an
-	// unset update_mask sets it to the image's value, an empty one changes
-	// nothing, and "*" or a path of another field is INVALID_ARGUMENT. A
+	// unset update_mask sets it to the image's value, and an empty one, "*"
+	// or a path of another field is INVALID_ARGUMENT. A
 	// disk image or a container image that is pushed is FAILED_PRECONDITION.
 	// Turning rebuild_on_push on needs what BuildImage needs of the image:
 	// a source its project claims, and a call that reaches the environment
@@ -235,8 +235,8 @@ type ImageServiceHandler interface {
 	// UpdateImage sets the fields of the image that update_mask names; the
 	// request's image names it by its name. The one field it sets is
 	// rebuild_on_push, of a container image built from a repository: an
-	// unset update_mask sets it to the image's value, an empty one changes
-	// nothing, and "*" or a path of another field is INVALID_ARGUMENT. A
+	// unset update_mask sets it to the image's value, and an empty one, "*"
+	// or a path of another field is INVALID_ARGUMENT. A
 	// disk image or a container image that is pushed is FAILED_PRECONDITION.
 	// Turning rebuild_on_push on needs what BuildImage needs of the image:
 	// a source its project claims, and a call that reaches the environment

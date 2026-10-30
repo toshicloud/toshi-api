@@ -1465,8 +1465,8 @@ type CreateSandboxRequest struct {
 	Labels      map[string]string      `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Required: the same key on every retry of this create.
 	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
-	// What the sandbox records of its runs: UNSPECIFIED or OFF. STRIP and
-	// VIDEO are a job's, and fail with INVALID_ARGUMENT.
+	// What the sandbox records of its runs: UNSPECIFIED, OFF or STRIP. VIDEO
+	// is a job's, and fails with INVALID_ARGUMENT.
 	Recording     RecordingPolicy `protobuf:"varint,6,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingPolicy" json:"recording,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

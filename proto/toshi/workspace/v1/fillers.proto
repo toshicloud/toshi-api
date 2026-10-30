@@ -82,9 +82,13 @@ message Filler {
   // branch.
   string ref = 6;
   // How long after a run completes or fails the next may start. Default
-  // 24 hours.
+  // 24 hours. After a run that was preempted, rejected or lost the next
+  // may start after the control plane's fillers.retry_after, 2 minutes
+  // unless set.
   google.protobuf.Duration every = 7;
-  // The longest one run may take. Default 2 hours.
+  // The longest one run may take. A filler PutFiller stores gets 1 hour
+  // when unset and may take at most 1 hour; the operator's default is 2
+  // hours.
   google.protobuf.Duration max_duration = 8;
   bool enabled = 9;
   // Where the filler comes from: "config", "operator" or "tenant" (the

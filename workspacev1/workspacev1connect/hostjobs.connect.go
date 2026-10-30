@@ -91,7 +91,8 @@ type HostJobServiceClient interface {
 	// host job moves to HOST_JOB_STATE_STOPPING with stop_reason debug_ended,
 	// its host destroys the kept VM and the host job finishes completed with
 	// its conclusion unchanged. A host job that is not debugging fails with
-	// FAILED_PRECONDITION; one already stopping is returned unchanged.
+	// FAILED_PRECONDITION, as does one stopping for another reason; one
+	// already stopping with debug_ended is returned unchanged.
 	StopHostJobDebug(context.Context, *connect.Request[workspacev1.StopHostJobDebugRequest]) (*connect.Response[workspacev1.StopHostJobDebugResponse], error)
 }
 
@@ -232,7 +233,8 @@ type HostJobServiceHandler interface {
 	// host job moves to HOST_JOB_STATE_STOPPING with stop_reason debug_ended,
 	// its host destroys the kept VM and the host job finishes completed with
 	// its conclusion unchanged. A host job that is not debugging fails with
-	// FAILED_PRECONDITION; one already stopping is returned unchanged.
+	// FAILED_PRECONDITION, as does one stopping for another reason; one
+	// already stopping with debug_ended is returned unchanged.
 	StopHostJobDebug(context.Context, *connect.Request[workspacev1.StopHostJobDebugRequest]) (*connect.Response[workspacev1.StopHostJobDebugResponse], error)
 }
 
