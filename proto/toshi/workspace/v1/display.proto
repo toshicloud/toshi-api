@@ -162,6 +162,28 @@ enum DisplaySessionState {
   DISPLAY_SESSION_STATE_CLOSED = 3;
 }
 
+// DisplayRecordingState says whether the screen a session views is being
+// recorded now. It describes the job or sandbox, not the viewer: every
+// session of the same screen has the same state. The first that holds is
+// the state, in this order.
+enum DisplayRecordingState {
+  // Never sent.
+  DISPLAY_RECORDING_STATE_UNSPECIFIED = 0;
+  // Nothing is recorded: the recording policy is off, the workspace
+  // switched recording off, or the host boots no desktop for it.
+  DISPLAY_RECORDING_STATE_OFF = 1;
+  // A recording cap holds the recording back; recording_stopped_reason
+  // says which.
+  DISPLAY_RECORDING_STATE_QUOTA_REACHED = 2;
+  // A person controls the screen and is not recorded: the workspace
+  // keeps no screenshots of a person's control, the person paused it, or
+  // the pause reached its limit and the control has not ended yet.
+  DISPLAY_RECORDING_STATE_PRIVATE = 3;
+  // Any other time: a strip is capturing, or the next one is still to
+  // start.
+  DISPLAY_RECORDING_STATE_RECORDING = 4;
+}
+
 // DisplayOpener is how a session was opened.
 enum DisplayOpener {
   DISPLAY_OPENER_UNSPECIFIED = 0;
@@ -213,6 +235,13 @@ message DisplaySession {
   // The grant through which another workspace opened the session, or
   // empty for one the job's own workspace opened.
   string grant_id = 16;
+  // Whether the screen is being recorded now, for the session's viewer to
+  // show beside it.
+  DisplayRecordingState recording_state = 17;
+  // While recording_state is DISPLAY_RECORDING_STATE_QUOTA_REACHED, the
+  // cap that holds the recording back, as the sandbox's
+  // recording_stopped_reason says it; empty in every other state.
+  string recording_stopped_reason = 18;
 }
 
 message OpenDisplaySessionRequest {

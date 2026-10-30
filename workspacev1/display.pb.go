@@ -133,6 +133,75 @@ func (DisplaySessionState) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_display_proto_rawDescGZIP(), []int{1}
 }
 
+// DisplayRecordingState says whether the screen a session views is being
+// recorded now. It describes the job or sandbox, not the viewer: every
+// session of the same screen has the same state. The first that holds is
+// the state, in this order.
+type DisplayRecordingState int32
+
+const (
+	// Never sent.
+	DisplayRecordingState_DISPLAY_RECORDING_STATE_UNSPECIFIED DisplayRecordingState = 0
+	// Nothing is recorded: the recording policy is off, the workspace
+	// switched recording off, or the host boots no desktop for it.
+	DisplayRecordingState_DISPLAY_RECORDING_STATE_OFF DisplayRecordingState = 1
+	// A recording cap holds the recording back; recording_stopped_reason
+	// says which.
+	DisplayRecordingState_DISPLAY_RECORDING_STATE_QUOTA_REACHED DisplayRecordingState = 2
+	// A person controls the screen and is not recorded: the workspace
+	// keeps no screenshots of a person's control, the person paused it, or
+	// the pause reached its limit and the control has not ended yet.
+	DisplayRecordingState_DISPLAY_RECORDING_STATE_PRIVATE DisplayRecordingState = 3
+	// Any other time: a strip is capturing, or the next one is still to
+	// start.
+	DisplayRecordingState_DISPLAY_RECORDING_STATE_RECORDING DisplayRecordingState = 4
+)
+
+// Enum value maps for DisplayRecordingState.
+var (
+	DisplayRecordingState_name = map[int32]string{
+		0: "DISPLAY_RECORDING_STATE_UNSPECIFIED",
+		1: "DISPLAY_RECORDING_STATE_OFF",
+		2: "DISPLAY_RECORDING_STATE_QUOTA_REACHED",
+		3: "DISPLAY_RECORDING_STATE_PRIVATE",
+		4: "DISPLAY_RECORDING_STATE_RECORDING",
+	}
+	DisplayRecordingState_value = map[string]int32{
+		"DISPLAY_RECORDING_STATE_UNSPECIFIED":   0,
+		"DISPLAY_RECORDING_STATE_OFF":           1,
+		"DISPLAY_RECORDING_STATE_QUOTA_REACHED": 2,
+		"DISPLAY_RECORDING_STATE_PRIVATE":       3,
+		"DISPLAY_RECORDING_STATE_RECORDING":     4,
+	}
+)
+
+func (x DisplayRecordingState) Enum() *DisplayRecordingState {
+	p := new(DisplayRecordingState)
+	*p = x
+	return p
+}
+
+func (x DisplayRecordingState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DisplayRecordingState) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_display_proto_enumTypes[2].Descriptor()
+}
+
+func (DisplayRecordingState) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_display_proto_enumTypes[2]
+}
+
+func (x DisplayRecordingState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DisplayRecordingState.Descriptor instead.
+func (DisplayRecordingState) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_display_proto_rawDescGZIP(), []int{2}
+}
+
 // DisplayOpener is how a session was opened.
 type DisplayOpener int32
 
@@ -169,11 +238,11 @@ func (x DisplayOpener) String() string {
 }
 
 func (DisplayOpener) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_display_proto_enumTypes[2].Descriptor()
+	return file_toshi_workspace_v1_display_proto_enumTypes[3].Descriptor()
 }
 
 func (DisplayOpener) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_display_proto_enumTypes[2]
+	return &file_toshi_workspace_v1_display_proto_enumTypes[3]
 }
 
 func (x DisplayOpener) Number() protoreflect.EnumNumber {
@@ -182,7 +251,7 @@ func (x DisplayOpener) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use DisplayOpener.Descriptor instead.
 func (DisplayOpener) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_display_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_display_proto_rawDescGZIP(), []int{3}
 }
 
 type DisplaySession struct {
@@ -227,9 +296,16 @@ type DisplaySession struct {
 	AttachTokenId string `protobuf:"bytes,15,opt,name=attach_token_id,json=attachTokenId,proto3" json:"attach_token_id,omitempty"`
 	// The grant through which another workspace opened the session, or
 	// empty for one the job's own workspace opened.
-	GrantId       string `protobuf:"bytes,16,opt,name=grant_id,json=grantId,proto3" json:"grant_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	GrantId string `protobuf:"bytes,16,opt,name=grant_id,json=grantId,proto3" json:"grant_id,omitempty"`
+	// Whether the screen is being recorded now, for the session's viewer to
+	// show beside it.
+	RecordingState DisplayRecordingState `protobuf:"varint,17,opt,name=recording_state,json=recordingState,proto3,enum=toshi.workspace.v1.DisplayRecordingState" json:"recording_state,omitempty"`
+	// While recording_state is DISPLAY_RECORDING_STATE_QUOTA_REACHED, the
+	// cap that holds the recording back, as the sandbox's
+	// recording_stopped_reason says it; empty in every other state.
+	RecordingStoppedReason string `protobuf:"bytes,18,opt,name=recording_stopped_reason,json=recordingStoppedReason,proto3" json:"recording_stopped_reason,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *DisplaySession) Reset() {
@@ -370,6 +446,20 @@ func (x *DisplaySession) GetAttachTokenId() string {
 func (x *DisplaySession) GetGrantId() string {
 	if x != nil {
 		return x.GrantId
+	}
+	return ""
+}
+
+func (x *DisplaySession) GetRecordingState() DisplayRecordingState {
+	if x != nil {
+		return x.RecordingState
+	}
+	return DisplayRecordingState_DISPLAY_RECORDING_STATE_UNSPECIFIED
+}
+
+func (x *DisplaySession) GetRecordingStoppedReason() string {
+	if x != nil {
+		return x.RecordingStoppedReason
 	}
 	return ""
 }
@@ -1456,7 +1546,7 @@ var File_toshi_workspace_v1_display_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/display.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xcf\x05\n" +
+	" toshi/workspace/v1/display.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xdd\x06\n" +
 	"\x0eDisplaySession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06job_id\x18\x02 \x01(\tR\x05jobId\x123\n" +
@@ -1476,7 +1566,9 @@ const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	"\topener_id\x18\r \x01(\tR\bopenerId\x12\x16\n" +
 	"\x06origin\x18\x0e \x01(\tR\x06origin\x12&\n" +
 	"\x0fattach_token_id\x18\x0f \x01(\tR\rattachTokenId\x12\x19\n" +
-	"\bgrant_id\x18\x10 \x01(\tR\agrantId\"\xae\x02\n" +
+	"\bgrant_id\x18\x10 \x01(\tR\agrantId\x12R\n" +
+	"\x0frecording_state\x18\x11 \x01(\x0e2).toshi.workspace.v1.DisplayRecordingStateR\x0erecordingState\x128\n" +
+	"\x18recording_stopped_reason\x18\x12 \x01(\tR\x16recordingStoppedReason\"\xae\x02\n" +
 	"\x19OpenDisplaySessionRequest\x12\x17\n" +
 	"\x06job_id\x18\x01 \x01(\tH\x00R\x05jobId\x12!\n" +
 	"\vworkload_id\x18\x02 \x01(\tH\x00R\n" +
@@ -1555,7 +1647,13 @@ const file_toshi_workspace_v1_display_proto_rawDesc = "" +
 	"!DISPLAY_SESSION_STATE_UNSPECIFIED\x10\x00\x12!\n" +
 	"\x1dDISPLAY_SESSION_STATE_WAITING\x10\x01\x12\"\n" +
 	"\x1eDISPLAY_SESSION_STATE_ATTACHED\x10\x02\x12 \n" +
-	"\x1cDISPLAY_SESSION_STATE_CLOSED\x10\x03*f\n" +
+	"\x1cDISPLAY_SESSION_STATE_CLOSED\x10\x03*\xd8\x01\n" +
+	"\x15DisplayRecordingState\x12'\n" +
+	"#DISPLAY_RECORDING_STATE_UNSPECIFIED\x10\x00\x12\x1f\n" +
+	"\x1bDISPLAY_RECORDING_STATE_OFF\x10\x01\x12)\n" +
+	"%DISPLAY_RECORDING_STATE_QUOTA_REACHED\x10\x02\x12#\n" +
+	"\x1fDISPLAY_RECORDING_STATE_PRIVATE\x10\x03\x12%\n" +
+	"!DISPLAY_RECORDING_STATE_RECORDING\x10\x04*f\n" +
 	"\rDisplayOpener\x12\x1e\n" +
 	"\x1aDISPLAY_OPENER_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15DISPLAY_OPENER_PERSON\x10\x01\x12\x1a\n" +
@@ -1588,73 +1686,75 @@ func file_toshi_workspace_v1_display_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_display_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_display_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_toshi_workspace_v1_display_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_toshi_workspace_v1_display_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_toshi_workspace_v1_display_proto_goTypes = []any{
 	(DisplayMode)(0),                      // 0: toshi.workspace.v1.DisplayMode
 	(DisplaySessionState)(0),              // 1: toshi.workspace.v1.DisplaySessionState
-	(DisplayOpener)(0),                    // 2: toshi.workspace.v1.DisplayOpener
-	(*DisplaySession)(nil),                // 3: toshi.workspace.v1.DisplaySession
-	(*OpenDisplaySessionRequest)(nil),     // 4: toshi.workspace.v1.OpenDisplaySessionRequest
-	(*OpenDisplaySessionResponse)(nil),    // 5: toshi.workspace.v1.OpenDisplaySessionResponse
-	(*GetDisplaySessionRequest)(nil),      // 6: toshi.workspace.v1.GetDisplaySessionRequest
-	(*GetDisplaySessionResponse)(nil),     // 7: toshi.workspace.v1.GetDisplaySessionResponse
-	(*ListDisplaySessionsRequest)(nil),    // 8: toshi.workspace.v1.ListDisplaySessionsRequest
-	(*ListDisplaySessionsResponse)(nil),   // 9: toshi.workspace.v1.ListDisplaySessionsResponse
-	(*CloseDisplaySessionRequest)(nil),    // 10: toshi.workspace.v1.CloseDisplaySessionRequest
-	(*CloseDisplaySessionResponse)(nil),   // 11: toshi.workspace.v1.CloseDisplaySessionResponse
-	(*SendDisplayKeysRequest)(nil),        // 12: toshi.workspace.v1.SendDisplayKeysRequest
-	(*DisplayKeys)(nil),                   // 13: toshi.workspace.v1.DisplayKeys
-	(*SendDisplayKeysResponse)(nil),       // 14: toshi.workspace.v1.SendDisplayKeysResponse
-	(*SendDisplayPointerRequest)(nil),     // 15: toshi.workspace.v1.SendDisplayPointerRequest
-	(*DisplayPointerEvent)(nil),           // 16: toshi.workspace.v1.DisplayPointerEvent
-	(*SendDisplayPointerResponse)(nil),    // 17: toshi.workspace.v1.SendDisplayPointerResponse
-	(*SetDisplayClipboardRequest)(nil),    // 18: toshi.workspace.v1.SetDisplayClipboardRequest
-	(*SetDisplayClipboardResponse)(nil),   // 19: toshi.workspace.v1.SetDisplayClipboardResponse
-	(*TakeDisplayScreenshotRequest)(nil),  // 20: toshi.workspace.v1.TakeDisplayScreenshotRequest
-	(*TakeDisplayScreenshotResponse)(nil), // 21: toshi.workspace.v1.TakeDisplayScreenshotResponse
-	(*durationpb.Duration)(nil),           // 22: google.protobuf.Duration
-	(*timestamppb.Timestamp)(nil),         // 23: google.protobuf.Timestamp
+	(DisplayRecordingState)(0),            // 2: toshi.workspace.v1.DisplayRecordingState
+	(DisplayOpener)(0),                    // 3: toshi.workspace.v1.DisplayOpener
+	(*DisplaySession)(nil),                // 4: toshi.workspace.v1.DisplaySession
+	(*OpenDisplaySessionRequest)(nil),     // 5: toshi.workspace.v1.OpenDisplaySessionRequest
+	(*OpenDisplaySessionResponse)(nil),    // 6: toshi.workspace.v1.OpenDisplaySessionResponse
+	(*GetDisplaySessionRequest)(nil),      // 7: toshi.workspace.v1.GetDisplaySessionRequest
+	(*GetDisplaySessionResponse)(nil),     // 8: toshi.workspace.v1.GetDisplaySessionResponse
+	(*ListDisplaySessionsRequest)(nil),    // 9: toshi.workspace.v1.ListDisplaySessionsRequest
+	(*ListDisplaySessionsResponse)(nil),   // 10: toshi.workspace.v1.ListDisplaySessionsResponse
+	(*CloseDisplaySessionRequest)(nil),    // 11: toshi.workspace.v1.CloseDisplaySessionRequest
+	(*CloseDisplaySessionResponse)(nil),   // 12: toshi.workspace.v1.CloseDisplaySessionResponse
+	(*SendDisplayKeysRequest)(nil),        // 13: toshi.workspace.v1.SendDisplayKeysRequest
+	(*DisplayKeys)(nil),                   // 14: toshi.workspace.v1.DisplayKeys
+	(*SendDisplayKeysResponse)(nil),       // 15: toshi.workspace.v1.SendDisplayKeysResponse
+	(*SendDisplayPointerRequest)(nil),     // 16: toshi.workspace.v1.SendDisplayPointerRequest
+	(*DisplayPointerEvent)(nil),           // 17: toshi.workspace.v1.DisplayPointerEvent
+	(*SendDisplayPointerResponse)(nil),    // 18: toshi.workspace.v1.SendDisplayPointerResponse
+	(*SetDisplayClipboardRequest)(nil),    // 19: toshi.workspace.v1.SetDisplayClipboardRequest
+	(*SetDisplayClipboardResponse)(nil),   // 20: toshi.workspace.v1.SetDisplayClipboardResponse
+	(*TakeDisplayScreenshotRequest)(nil),  // 21: toshi.workspace.v1.TakeDisplayScreenshotRequest
+	(*TakeDisplayScreenshotResponse)(nil), // 22: toshi.workspace.v1.TakeDisplayScreenshotResponse
+	(*durationpb.Duration)(nil),           // 23: google.protobuf.Duration
+	(*timestamppb.Timestamp)(nil),         // 24: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_display_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.DisplaySession.mode:type_name -> toshi.workspace.v1.DisplayMode
-	22, // 1: toshi.workspace.v1.DisplaySession.idle_close:type_name -> google.protobuf.Duration
+	23, // 1: toshi.workspace.v1.DisplaySession.idle_close:type_name -> google.protobuf.Duration
 	1,  // 2: toshi.workspace.v1.DisplaySession.state:type_name -> toshi.workspace.v1.DisplaySessionState
-	2,  // 3: toshi.workspace.v1.DisplaySession.opened_by:type_name -> toshi.workspace.v1.DisplayOpener
-	23, // 4: toshi.workspace.v1.DisplaySession.opened_at:type_name -> google.protobuf.Timestamp
-	23, // 5: toshi.workspace.v1.DisplaySession.attach_by:type_name -> google.protobuf.Timestamp
-	23, // 6: toshi.workspace.v1.DisplaySession.attached_at:type_name -> google.protobuf.Timestamp
-	23, // 7: toshi.workspace.v1.DisplaySession.closed_at:type_name -> google.protobuf.Timestamp
-	0,  // 8: toshi.workspace.v1.OpenDisplaySessionRequest.mode:type_name -> toshi.workspace.v1.DisplayMode
-	22, // 9: toshi.workspace.v1.OpenDisplaySessionRequest.idle_close:type_name -> google.protobuf.Duration
-	3,  // 10: toshi.workspace.v1.OpenDisplaySessionResponse.session:type_name -> toshi.workspace.v1.DisplaySession
-	3,  // 11: toshi.workspace.v1.GetDisplaySessionResponse.session:type_name -> toshi.workspace.v1.DisplaySession
-	3,  // 12: toshi.workspace.v1.ListDisplaySessionsResponse.sessions:type_name -> toshi.workspace.v1.DisplaySession
-	3,  // 13: toshi.workspace.v1.CloseDisplaySessionResponse.session:type_name -> toshi.workspace.v1.DisplaySession
-	13, // 14: toshi.workspace.v1.SendDisplayKeysRequest.keys:type_name -> toshi.workspace.v1.DisplayKeys
-	16, // 15: toshi.workspace.v1.SendDisplayPointerRequest.events:type_name -> toshi.workspace.v1.DisplayPointerEvent
-	23, // 16: toshi.workspace.v1.TakeDisplayScreenshotResponse.taken_at:type_name -> google.protobuf.Timestamp
-	4,  // 17: toshi.workspace.v1.DisplayService.OpenDisplaySession:input_type -> toshi.workspace.v1.OpenDisplaySessionRequest
-	6,  // 18: toshi.workspace.v1.DisplayService.GetDisplaySession:input_type -> toshi.workspace.v1.GetDisplaySessionRequest
-	8,  // 19: toshi.workspace.v1.DisplayService.ListDisplaySessions:input_type -> toshi.workspace.v1.ListDisplaySessionsRequest
-	10, // 20: toshi.workspace.v1.DisplayService.CloseDisplaySession:input_type -> toshi.workspace.v1.CloseDisplaySessionRequest
-	12, // 21: toshi.workspace.v1.DisplayService.SendDisplayKeys:input_type -> toshi.workspace.v1.SendDisplayKeysRequest
-	15, // 22: toshi.workspace.v1.DisplayService.SendDisplayPointer:input_type -> toshi.workspace.v1.SendDisplayPointerRequest
-	18, // 23: toshi.workspace.v1.DisplayService.SetDisplayClipboard:input_type -> toshi.workspace.v1.SetDisplayClipboardRequest
-	20, // 24: toshi.workspace.v1.DisplayService.TakeDisplayScreenshot:input_type -> toshi.workspace.v1.TakeDisplayScreenshotRequest
-	5,  // 25: toshi.workspace.v1.DisplayService.OpenDisplaySession:output_type -> toshi.workspace.v1.OpenDisplaySessionResponse
-	7,  // 26: toshi.workspace.v1.DisplayService.GetDisplaySession:output_type -> toshi.workspace.v1.GetDisplaySessionResponse
-	9,  // 27: toshi.workspace.v1.DisplayService.ListDisplaySessions:output_type -> toshi.workspace.v1.ListDisplaySessionsResponse
-	11, // 28: toshi.workspace.v1.DisplayService.CloseDisplaySession:output_type -> toshi.workspace.v1.CloseDisplaySessionResponse
-	14, // 29: toshi.workspace.v1.DisplayService.SendDisplayKeys:output_type -> toshi.workspace.v1.SendDisplayKeysResponse
-	17, // 30: toshi.workspace.v1.DisplayService.SendDisplayPointer:output_type -> toshi.workspace.v1.SendDisplayPointerResponse
-	19, // 31: toshi.workspace.v1.DisplayService.SetDisplayClipboard:output_type -> toshi.workspace.v1.SetDisplayClipboardResponse
-	21, // 32: toshi.workspace.v1.DisplayService.TakeDisplayScreenshot:output_type -> toshi.workspace.v1.TakeDisplayScreenshotResponse
-	25, // [25:33] is the sub-list for method output_type
-	17, // [17:25] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	3,  // 3: toshi.workspace.v1.DisplaySession.opened_by:type_name -> toshi.workspace.v1.DisplayOpener
+	24, // 4: toshi.workspace.v1.DisplaySession.opened_at:type_name -> google.protobuf.Timestamp
+	24, // 5: toshi.workspace.v1.DisplaySession.attach_by:type_name -> google.protobuf.Timestamp
+	24, // 6: toshi.workspace.v1.DisplaySession.attached_at:type_name -> google.protobuf.Timestamp
+	24, // 7: toshi.workspace.v1.DisplaySession.closed_at:type_name -> google.protobuf.Timestamp
+	2,  // 8: toshi.workspace.v1.DisplaySession.recording_state:type_name -> toshi.workspace.v1.DisplayRecordingState
+	0,  // 9: toshi.workspace.v1.OpenDisplaySessionRequest.mode:type_name -> toshi.workspace.v1.DisplayMode
+	23, // 10: toshi.workspace.v1.OpenDisplaySessionRequest.idle_close:type_name -> google.protobuf.Duration
+	4,  // 11: toshi.workspace.v1.OpenDisplaySessionResponse.session:type_name -> toshi.workspace.v1.DisplaySession
+	4,  // 12: toshi.workspace.v1.GetDisplaySessionResponse.session:type_name -> toshi.workspace.v1.DisplaySession
+	4,  // 13: toshi.workspace.v1.ListDisplaySessionsResponse.sessions:type_name -> toshi.workspace.v1.DisplaySession
+	4,  // 14: toshi.workspace.v1.CloseDisplaySessionResponse.session:type_name -> toshi.workspace.v1.DisplaySession
+	14, // 15: toshi.workspace.v1.SendDisplayKeysRequest.keys:type_name -> toshi.workspace.v1.DisplayKeys
+	17, // 16: toshi.workspace.v1.SendDisplayPointerRequest.events:type_name -> toshi.workspace.v1.DisplayPointerEvent
+	24, // 17: toshi.workspace.v1.TakeDisplayScreenshotResponse.taken_at:type_name -> google.protobuf.Timestamp
+	5,  // 18: toshi.workspace.v1.DisplayService.OpenDisplaySession:input_type -> toshi.workspace.v1.OpenDisplaySessionRequest
+	7,  // 19: toshi.workspace.v1.DisplayService.GetDisplaySession:input_type -> toshi.workspace.v1.GetDisplaySessionRequest
+	9,  // 20: toshi.workspace.v1.DisplayService.ListDisplaySessions:input_type -> toshi.workspace.v1.ListDisplaySessionsRequest
+	11, // 21: toshi.workspace.v1.DisplayService.CloseDisplaySession:input_type -> toshi.workspace.v1.CloseDisplaySessionRequest
+	13, // 22: toshi.workspace.v1.DisplayService.SendDisplayKeys:input_type -> toshi.workspace.v1.SendDisplayKeysRequest
+	16, // 23: toshi.workspace.v1.DisplayService.SendDisplayPointer:input_type -> toshi.workspace.v1.SendDisplayPointerRequest
+	19, // 24: toshi.workspace.v1.DisplayService.SetDisplayClipboard:input_type -> toshi.workspace.v1.SetDisplayClipboardRequest
+	21, // 25: toshi.workspace.v1.DisplayService.TakeDisplayScreenshot:input_type -> toshi.workspace.v1.TakeDisplayScreenshotRequest
+	6,  // 26: toshi.workspace.v1.DisplayService.OpenDisplaySession:output_type -> toshi.workspace.v1.OpenDisplaySessionResponse
+	8,  // 27: toshi.workspace.v1.DisplayService.GetDisplaySession:output_type -> toshi.workspace.v1.GetDisplaySessionResponse
+	10, // 28: toshi.workspace.v1.DisplayService.ListDisplaySessions:output_type -> toshi.workspace.v1.ListDisplaySessionsResponse
+	12, // 29: toshi.workspace.v1.DisplayService.CloseDisplaySession:output_type -> toshi.workspace.v1.CloseDisplaySessionResponse
+	15, // 30: toshi.workspace.v1.DisplayService.SendDisplayKeys:output_type -> toshi.workspace.v1.SendDisplayKeysResponse
+	18, // 31: toshi.workspace.v1.DisplayService.SendDisplayPointer:output_type -> toshi.workspace.v1.SendDisplayPointerResponse
+	20, // 32: toshi.workspace.v1.DisplayService.SetDisplayClipboard:output_type -> toshi.workspace.v1.SetDisplayClipboardResponse
+	22, // 33: toshi.workspace.v1.DisplayService.TakeDisplayScreenshot:output_type -> toshi.workspace.v1.TakeDisplayScreenshotResponse
+	26, // [26:34] is the sub-list for method output_type
+	18, // [18:26] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_display_proto_init() }
@@ -1675,7 +1775,7 @@ func file_toshi_workspace_v1_display_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_display_proto_rawDesc), len(file_toshi_workspace_v1_display_proto_rawDesc)),
-			NumEnums:      3,
+			NumEnums:      4,
 			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
