@@ -2546,7 +2546,8 @@ type WorkspaceSettings struct {
 	// Days of finished job history the workspace keeps; unset when the plan's
 	// applies, and 0 keeps forever. A member may set it from 1 up to the
 	// plan's period, and 0 only on a plan that keeps forever; a longer one
-	// fails with INVALID_ARGUMENT.
+	// fails with INVALID_ARGUMENT. Naming it in the update mask with no value
+	// clears it, so the plan's applies again.
 	HistoryDays *int32 `protobuf:"varint,3,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
 	// The workspace's jobs wait for its own hosts and never run on shared ones.
 	OwnHostsOnly bool `protobuf:"varint,4,opt,name=own_hosts_only,json=ownHostsOnly,proto3" json:"own_hosts_only,omitempty"`

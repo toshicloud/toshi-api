@@ -2290,7 +2290,8 @@ export type WorkspaceSettings = Message<"toshi.workspace.v1.WorkspaceSettings"> 
    * Days of finished job history the workspace keeps; unset when the plan's
    * applies, and 0 keeps forever. A member may set it from 1 up to the
    * plan's period, and 0 only on a plan that keeps forever; a longer one
-   * fails with INVALID_ARGUMENT.
+   * fails with INVALID_ARGUMENT. Naming it in the update mask with no value
+   * clears it, so the plan's applies again.
    *
    * @generated from field: optional int32 history_days = 3;
    */
@@ -2410,7 +2411,8 @@ export type WorkspaceSettingsJson = {
    * Days of finished job history the workspace keeps; unset when the plan's
    * applies, and 0 keeps forever. A member may set it from 1 up to the
    * plan's period, and 0 only on a plan that keeps forever; a longer one
-   * fails with INVALID_ARGUMENT.
+   * fails with INVALID_ARGUMENT. Naming it in the update mask with no value
+   * clears it, so the plan's applies again.
    *
    * @generated from field: optional int32 history_days = 3;
    */
