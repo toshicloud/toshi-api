@@ -299,6 +299,13 @@ message Channel {
   // The grant through which another workspace exposed the channel, or
   // empty for one the job's own workspace exposed.
   string grant_id = 24;
+  // The policy version the channel's process of the control plane applies.
+  // A stream channel's owner records it as it applies each version, so a
+  // value below policy.version is a change its attached clients are not
+  // yet held to; 0 until an owner applied one. An http channel's process
+  // reads the policy at each request: its value is policy.version. An
+  // event channel's is 0.
+  int64 applied_policy_version = 25;
 }
 
 // ChannelEventCounts counts an event channel's messages by state.

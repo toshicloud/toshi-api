@@ -417,9 +417,16 @@ type Channel struct {
 	Events *ChannelEventCounts `protobuf:"bytes,23,opt,name=events,proto3" json:"events,omitempty"`
 	// The grant through which another workspace exposed the channel, or
 	// empty for one the job's own workspace exposed.
-	GrantId       string `protobuf:"bytes,24,opt,name=grant_id,json=grantId,proto3" json:"grant_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	GrantId string `protobuf:"bytes,24,opt,name=grant_id,json=grantId,proto3" json:"grant_id,omitempty"`
+	// The policy version the channel's process of the control plane applies.
+	// A stream channel's owner records it as it applies each version, so a
+	// value below policy.version is a change its attached clients are not
+	// yet held to; 0 until an owner applied one. An http channel's process
+	// reads the policy at each request: its value is policy.version. An
+	// event channel's is 0.
+	AppliedPolicyVersion int64 `protobuf:"varint,25,opt,name=applied_policy_version,json=appliedPolicyVersion,proto3" json:"applied_policy_version,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Channel) Reset() {
@@ -618,6 +625,13 @@ func (x *Channel) GetGrantId() string {
 		return x.GrantId
 	}
 	return ""
+}
+
+func (x *Channel) GetAppliedPolicyVersion() int64 {
+	if x != nil {
+		return x.AppliedPolicyVersion
+	}
+	return 0
 }
 
 // ChannelEventCounts counts an event channel's messages by state.
@@ -4087,7 +4101,7 @@ var File_toshi_workspace_v1_channels_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/channels.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x92\a\n" +
+	"!toshi/workspace/v1/channels.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xc8\a\n" +
 	"\aChannel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06job_id\x18\x02 \x01(\tR\x05jobId\x12\x12\n" +
@@ -4117,7 +4131,8 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\aservice\x18\x15 \x01(\tR\aservice\x12\x12\n" +
 	"\x04path\x18\x16 \x01(\tR\x04path\x12>\n" +
 	"\x06events\x18\x17 \x01(\v2&.toshi.workspace.v1.ChannelEventCountsR\x06events\x12\x19\n" +
-	"\bgrant_id\x18\x18 \x01(\tR\agrantIdB\f\n" +
+	"\bgrant_id\x18\x18 \x01(\tR\agrantId\x124\n" +
+	"\x16applied_policy_version\x18\x19 \x01(\x03R\x14appliedPolicyVersionB\f\n" +
 	"\n" +
 	"_exit_code\"\x84\x02\n" +
 	"\x12ChannelEventCounts\x12\x18\n" +
