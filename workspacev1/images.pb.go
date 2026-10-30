@@ -299,7 +299,14 @@ type Image struct {
 	RebuildOnPush bool `protobuf:"varint,17,opt,name=rebuild_on_push,json=rebuildOnPush,proto3" json:"rebuild_on_push,omitempty"`
 	// Whether recipe declares an [agent] table: a job, sandbox or service
 	// that runs the image is an agent. Set by Toshi from the recipe.
-	Agent         bool `protobuf:"varint,18,opt,name=agent,proto3" json:"agent,omitempty"`
+	Agent bool `protobuf:"varint,18,opt,name=agent,proto3" json:"agent,omitempty"`
+	// The reference a client pulls a container image by from the
+	// deployment's registry, pinned to its newest ready version, such as
+	// registry.example.com/<workspace id>/<name>@sha256:<hex>. Empty for a
+	// disk image, for one whose builds push to the workspace's own registry,
+	// for one with no ready version, and when the deployment runs no
+	// registry.
+	Reference     string `protobuf:"bytes,19,opt,name=reference,proto3" json:"reference,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -458,6 +465,13 @@ func (x *Image) GetAgent() bool {
 		return x.Agent
 	}
 	return false
+}
+
+func (x *Image) GetReference() string {
+	if x != nil {
+		return x.Reference
+	}
+	return ""
 }
 
 // ImageVersion is one build of an image, or one push of a container image.
@@ -1509,7 +1523,7 @@ var File_toshi_workspace_v1_images_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\n" +
-	"\x1ftoshi/workspace/v1/images.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x86\x05\n" +
+	"\x1ftoshi/workspace/v1/images.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa4\x05\n" +
 	"\x05Image\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1531,7 +1545,8 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\bregistry\x18\x0f \x01(\tR\bregistry\x12'\n" +
 	"\x0fregistry_secret\x18\x10 \x01(\tR\x0eregistrySecret\x12&\n" +
 	"\x0frebuild_on_push\x18\x11 \x01(\bR\rrebuildOnPush\x12\x14\n" +
-	"\x05agent\x18\x12 \x01(\bR\x05agent\"\xf1\a\n" +
+	"\x05agent\x18\x12 \x01(\bR\x05agent\x12\x1c\n" +
+	"\treference\x18\x13 \x01(\tR\treference\"\xf1\a\n" +
 	"\fImageVersion\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06number\x18\x02 \x01(\x03R\x06number\x12;\n" +

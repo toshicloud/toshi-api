@@ -2479,7 +2479,9 @@ type SetChannelPolicyRequest struct {
 	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The whole document, with the version it was read at.
-	Policy        *ChannelPolicy `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
+	Policy *ChannelPolicy `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
+	// An event channel's service, by its ID, in place of job_id.
+	Service       string `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2533,6 +2535,13 @@ func (x *SetChannelPolicyRequest) GetPolicy() *ChannelPolicy {
 		return x.Policy
 	}
 	return nil
+}
+
+func (x *SetChannelPolicyRequest) GetService() string {
+	if x != nil {
+		return x.Service
+	}
+	return ""
 }
 
 type SetChannelPolicyResponse struct {
@@ -4206,11 +4215,12 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
 	"\aservice\x18\x03 \x01(\tR\aservice\"U\n" +
 	"\x18GetChannelPolicyResponse\x129\n" +
-	"\x06policy\x18\x01 \x01(\v2!.toshi.workspace.v1.ChannelPolicyR\x06policy\"\x7f\n" +
+	"\x06policy\x18\x01 \x01(\v2!.toshi.workspace.v1.ChannelPolicyR\x06policy\"\x99\x01\n" +
 	"\x17SetChannelPolicyRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x129\n" +
-	"\x06policy\x18\x03 \x01(\v2!.toshi.workspace.v1.ChannelPolicyR\x06policy\"U\n" +
+	"\x06policy\x18\x03 \x01(\v2!.toshi.workspace.v1.ChannelPolicyR\x06policy\x12\x18\n" +
+	"\aservice\x18\x04 \x01(\tR\aservice\"U\n" +
 	"\x18SetChannelPolicyResponse\x129\n" +
 	"\x06policy\x18\x01 \x01(\v2!.toshi.workspace.v1.ChannelPolicyR\x06policy\"\xe9\x02\n" +
 	"\x1aListChannelRequestsRequest\x12\x15\n" +

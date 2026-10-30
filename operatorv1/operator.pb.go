@@ -2018,8 +2018,14 @@ type Host struct {
 	// A wrong declaration is fixed in the agent's configuration. Set where
 	// cloud is set.
 	WindowsLicence string `protobuf:"bytes,32,opt,name=windows_licence,json=windowsLicence,proto3" json:"windows_licence,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Whether the host enforces network rules, as its agent said at its last
+	// registration or heartbeat: a workload whose network policy restricts
+	// is placed only on a host that does. network_reason says why it does
+	// not; empty when it does.
+	NetworkEnforced bool   `protobuf:"varint,33,opt,name=network_enforced,json=networkEnforced,proto3" json:"network_enforced,omitempty"`
+	NetworkReason   string `protobuf:"bytes,34,opt,name=network_reason,json=networkReason,proto3" json:"network_reason,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Host) Reset() {
@@ -2272,6 +2278,20 @@ func (x *Host) GetKeptDiskBytes() int64 {
 func (x *Host) GetWindowsLicence() string {
 	if x != nil {
 		return x.WindowsLicence
+	}
+	return ""
+}
+
+func (x *Host) GetNetworkEnforced() bool {
+	if x != nil {
+		return x.NetworkEnforced
+	}
+	return false
+}
+
+func (x *Host) GetNetworkReason() string {
+	if x != nil {
+		return x.NetworkReason
 	}
 	return ""
 }
@@ -14828,8 +14848,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"HeldRefill\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x16\n" +
-	"\x06reason\x18\x02 \x01(\tR\x06reason\"\xf4\n" +
-	"\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"\xc6\v\n" +
 	"\x04Host\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x0e\n" +
@@ -14866,7 +14885,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\bkept_vms\x18\x1d \x03(\v2\x19.toshi.operator.v1.KeptVMR\akeptVms\x12&\n" +
 	"\x0fkept_memory_mib\x18\x1e \x01(\x03R\rkeptMemoryMib\x12&\n" +
 	"\x0fkept_disk_bytes\x18\x1f \x01(\x03R\rkeptDiskBytes\x12'\n" +
-	"\x0fwindows_licence\x18  \x01(\tR\x0ewindowsLicence\x1a9\n" +
+	"\x0fwindows_licence\x18  \x01(\tR\x0ewindowsLicence\x12)\n" +
+	"\x10network_enforced\x18! \x01(\bR\x0fnetworkEnforced\x12%\n" +
+	"\x0enetwork_reason\x18\" \x01(\tR\rnetworkReason\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa8\x02\n" +

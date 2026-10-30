@@ -315,6 +315,12 @@ message Host {
   int64 kept_memory_mib = 28;
   // The disk those VMs hold, in bytes: all of them.
   int64 kept_disk_bytes = 29;
+  // Whether the host enforces network rules, as its agent said at its last
+  // registration or heartbeat: a workload whose network policy restricts
+  // is placed only on a host that does. network_reason says why it does
+  // not; empty when it does.
+  bool network_enforced = 30;
+  string network_reason = 31;
 }
 
 // KeptVM is a VM a host keeps for one of the workspace's workloads with

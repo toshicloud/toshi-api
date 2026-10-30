@@ -107,7 +107,11 @@ type ChannelServiceClient interface {
 	// changed since that version fails with ABORTED: read it again. A
 	// malformed policy fails with INVALID_ARGUMENT, and one the channel
 	// refuses, such as a list without a module that may not be removed,
-	// with FAILED_PRECONDITION.
+	// with FAILED_PRECONDITION. A service's event channel, named by service
+	// in place of job_id, takes what its recipe's policy takes, a keep the
+	// plan allows among it, and keeps the policy set until a deploy whose
+	// recipe changes the channel's policy; its set is recorded as
+	// service.channel_policy_set on the service.
 	SetChannelPolicy(context.Context, *connect.Request[workspacev1.SetChannelPolicyRequest]) (*connect.Response[workspacev1.SetChannelPolicyResponse], error)
 	// ListChannelRequests lists an http channel's request records the
 	// filters select, newest first, or oldest first after after_seq,
@@ -408,7 +412,11 @@ type ChannelServiceHandler interface {
 	// changed since that version fails with ABORTED: read it again. A
 	// malformed policy fails with INVALID_ARGUMENT, and one the channel
 	// refuses, such as a list without a module that may not be removed,
-	// with FAILED_PRECONDITION.
+	// with FAILED_PRECONDITION. A service's event channel, named by service
+	// in place of job_id, takes what its recipe's policy takes, a keep the
+	// plan allows among it, and keeps the policy set until a deploy whose
+	// recipe changes the channel's policy; its set is recorded as
+	// service.channel_policy_set on the service.
 	SetChannelPolicy(context.Context, *connect.Request[workspacev1.SetChannelPolicyRequest]) (*connect.Response[workspacev1.SetChannelPolicyResponse], error)
 	// ListChannelRequests lists an http channel's request records the
 	// filters select, newest first, or oldest first after after_seq,

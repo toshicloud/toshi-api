@@ -2431,7 +2431,7 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\x15INVITATION_STATE_OPEN\x10\x01\x12\x1d\n" +
 	"\x19INVITATION_STATE_ACCEPTED\x10\x02\x12\x1c\n" +
 	"\x18INVITATION_STATE_REVOKED\x10\x03\x12\x1c\n" +
-	"\x18INVITATION_STATE_EXPIRED\x10\x042\xe9\x10\n" +
+	"\x18INVITATION_STATE_EXPIRED\x10\x042\xe2\x10\n" +
 	"\vRoleService\x12j\n" +
 	"\tListRoles\x12$.toshi.workspace.v1.ListRolesRequest\x1a%.toshi.workspace.v1.ListRolesResponse\"\x10\xc2\xf3\x18\fmembers.read\x12n\n" +
 	"\n" +
@@ -2453,9 +2453,9 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\x0fmember.declined\x12\x0emember:user_id\x12\x8d\x01\n" +
 	"\x10CreateInvitation\x12+.toshi.workspace.v1.CreateInvitationRequest\x1a,.toshi.workspace.v1.CreateInvitationResponse\"\x1e\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x12\x89\x01\n" +
 	"\x0fListInvitations\x12*.toshi.workspace.v1.ListInvitationsRequest\x1a+.toshi.workspace.v1.ListInvitationsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x8d\x01\n" +
-	"\x10RevokeInvitation\x12+.toshi.workspace.v1.RevokeInvitationRequest\x1a,.toshi.workspace.v1.RevokeInvitationResponse\"\x1e\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x12\xd0\x01\n" +
-	"\x10AcceptInvitation\x12+.toshi.workspace.v1.AcceptInvitationRequest\x1a,.toshi.workspace.v1.AcceptInvitationResponse\"a\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\xd2\xf3\x188\n" +
-	"\x13invitation.accepted\x12!invitation:response.invitation.id\xea\xf3\x18\x04\b\x00\x18\x00B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x10RevokeInvitation\x12+.toshi.workspace.v1.RevokeInvitationRequest\x1a,.toshi.workspace.v1.RevokeInvitationResponse\"\x1e\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x12\xc9\x01\n" +
+	"\x10AcceptInvitation\x12+.toshi.workspace.v1.AcceptInvitationRequest\x1a,.toshi.workspace.v1.AcceptInvitationResponse\"Z\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x188\n" +
+	"\x13invitation.accepted\x12!invitation:response.invitation.idB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_roles_proto_rawDescOnce sync.Once

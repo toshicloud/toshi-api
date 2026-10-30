@@ -1358,8 +1358,14 @@ type Host struct {
 	KeptMemoryMib int64 `protobuf:"varint,28,opt,name=kept_memory_mib,json=keptMemoryMib,proto3" json:"kept_memory_mib,omitempty"`
 	// The disk those VMs hold, in bytes: all of them.
 	KeptDiskBytes int64 `protobuf:"varint,29,opt,name=kept_disk_bytes,json=keptDiskBytes,proto3" json:"kept_disk_bytes,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Whether the host enforces network rules, as its agent said at its last
+	// registration or heartbeat: a workload whose network policy restricts
+	// is placed only on a host that does. network_reason says why it does
+	// not; empty when it does.
+	NetworkEnforced bool   `protobuf:"varint,30,opt,name=network_enforced,json=networkEnforced,proto3" json:"network_enforced,omitempty"`
+	NetworkReason   string `protobuf:"bytes,31,opt,name=network_reason,json=networkReason,proto3" json:"network_reason,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Host) Reset() {
@@ -1593,6 +1599,20 @@ func (x *Host) GetKeptDiskBytes() int64 {
 		return x.KeptDiskBytes
 	}
 	return 0
+}
+
+func (x *Host) GetNetworkEnforced() bool {
+	if x != nil {
+		return x.NetworkEnforced
+	}
+	return false
+}
+
+func (x *Host) GetNetworkReason() string {
+	if x != nil {
+		return x.NetworkReason
+	}
+	return ""
 }
 
 // KeptVM is a VM a host keeps for one of the workspace's workloads with
@@ -2372,7 +2392,7 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\boverflow\x18\x01 \x01(\bR\boverflow\"f\n" +
 	"\x1dCreateEnrollmentTokenResponse\x12/\n" +
 	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\"\x92\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"\xe4\n" +
 	"\n" +
 	"\x04Host\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
@@ -2407,7 +2427,9 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\akeep_vm\x18\x1a \x01(\bR\x06keepVm\x125\n" +
 	"\bkept_vms\x18\x1b \x03(\v2\x1a.toshi.workspace.v1.KeptVMR\akeptVms\x12&\n" +
 	"\x0fkept_memory_mib\x18\x1c \x01(\x03R\rkeptMemoryMib\x12&\n" +
-	"\x0fkept_disk_bytes\x18\x1d \x01(\x03R\rkeptDiskBytes\x1a9\n" +
+	"\x0fkept_disk_bytes\x18\x1d \x01(\x03R\rkeptDiskBytes\x12)\n" +
+	"\x10network_enforced\x18\x1e \x01(\bR\x0fnetworkEnforced\x12%\n" +
+	"\x0enetwork_reason\x18\x1f \x01(\tR\rnetworkReason\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xca\x01\n" +

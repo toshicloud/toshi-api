@@ -210,6 +210,13 @@ message Image {
   // Whether recipe declares an [agent] table: a job, sandbox or service
   // that runs the image is an agent. Set by Toshi from the recipe.
   bool agent = 18;
+  // The reference a client pulls a container image by from the
+  // deployment's registry, pinned to its newest ready version, such as
+  // registry.example.com/<workspace id>/<name>@sha256:<hex>. Empty for a
+  // disk image, for one whose builds push to the workspace's own registry,
+  // for one with no ready version, and when the deployment runs no
+  // registry.
+  string reference = 19;
 }
 
 // ImageVersion is one build of an image, or one push of a container image.

@@ -156,6 +156,11 @@ message Volume {
   // when it was attached to a browser service then. Read-only; it never
   // changes.
   bool profile = 17;
+  // The kind of the workload it is attached to, service or sandbox, and
+  // that workload's environment, which GetService and GetSandbox take;
+  // both empty when it is attached to none.
+  string attached_workload_kind = 18;
+  string attached_environment = 19;
 }
 
 // VolumeFormat is how hosts keep a state volume, and so what its saved

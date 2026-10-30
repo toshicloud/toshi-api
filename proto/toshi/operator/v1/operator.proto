@@ -935,6 +935,12 @@ message Host {
   // A wrong declaration is fixed in the agent's configuration. Set where
   // cloud is set.
   string windows_licence = 32;
+  // Whether the host enforces network rules, as its agent said at its last
+  // registration or heartbeat: a workload whose network policy restricts
+  // is placed only on a host that does. network_reason says why it does
+  // not; empty when it does.
+  bool network_enforced = 33;
+  string network_reason = 34;
 }
 
 // KeptVM is a VM a host keeps for a workload with keep_vm.

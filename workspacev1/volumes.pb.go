@@ -297,9 +297,14 @@ type Volume struct {
 	// volume of a browser service. A volume made before this field is one
 	// when it was attached to a browser service then. Read-only; it never
 	// changes.
-	Profile       bool `protobuf:"varint,17,opt,name=profile,proto3" json:"profile,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Profile bool `protobuf:"varint,17,opt,name=profile,proto3" json:"profile,omitempty"`
+	// The kind of the workload it is attached to, service or sandbox, and
+	// that workload's environment, which GetService and GetSandbox take;
+	// both empty when it is attached to none.
+	AttachedWorkloadKind string `protobuf:"bytes,18,opt,name=attached_workload_kind,json=attachedWorkloadKind,proto3" json:"attached_workload_kind,omitempty"`
+	AttachedEnvironment  string `protobuf:"bytes,19,opt,name=attached_environment,json=attachedEnvironment,proto3" json:"attached_environment,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Volume) Reset() {
@@ -449,6 +454,20 @@ func (x *Volume) GetProfile() bool {
 		return x.Profile
 	}
 	return false
+}
+
+func (x *Volume) GetAttachedWorkloadKind() string {
+	if x != nil {
+		return x.AttachedWorkloadKind
+	}
+	return ""
+}
+
+func (x *Volume) GetAttachedEnvironment() string {
+	if x != nil {
+		return x.AttachedEnvironment
+	}
+	return ""
 }
 
 // VolumeVersion is a saved copy of a state volume's data.
@@ -1213,7 +1232,7 @@ var File_toshi_workspace_v1_volumes_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd8\x06\n" +
+	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xc1\a\n" +
 	"\x06Volume\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1234,7 +1253,9 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x11last_save_failure\x18\x0e \x01(\tR\x0flastSaveFailure\x12O\n" +
 	"\x16last_save_failure_time\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\x13lastSaveFailureTime\x128\n" +
 	"\x06format\x18\x10 \x01(\x0e2 .toshi.workspace.v1.VolumeFormatR\x06format\x12\x18\n" +
-	"\aprofile\x18\x11 \x01(\bR\aprofile\"\xc4\x02\n" +
+	"\aprofile\x18\x11 \x01(\bR\aprofile\x124\n" +
+	"\x16attached_workload_kind\x18\x12 \x01(\tR\x14attachedWorkloadKind\x121\n" +
+	"\x14attached_environment\x18\x13 \x01(\tR\x13attachedEnvironment\"\xc4\x02\n" +
 	"\rVolumeVersion\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\x12;\n" +
 	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
