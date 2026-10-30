@@ -84,6 +84,9 @@ const (
 	// ProjectServiceSetEnvironmentVolumesProcedure is the fully-qualified name of the ProjectService's
 	// SetEnvironmentVolumes RPC.
 	ProjectServiceSetEnvironmentVolumesProcedure = "/toshi.workspace.v1.ProjectService/SetEnvironmentVolumes"
+	// ProjectServiceUpdateEnvironmentProcedure is the fully-qualified name of the ProjectService's
+	// UpdateEnvironment RPC.
+	ProjectServiceUpdateEnvironmentProcedure = "/toshi.workspace.v1.ProjectService/UpdateEnvironment"
 	// ProjectServiceCreateEmbedTokenProcedure is the fully-qualified name of the ProjectService's
 	// CreateEmbedToken RPC.
 	ProjectServiceCreateEmbedTokenProcedure = "/toshi.workspace.v1.ProjectService/CreateEmbedToken"
@@ -233,6 +236,18 @@ type ProjectServiceClient interface {
 	// project or environment the workspace does not have is NOT_FOUND. A
 	// token limited to an environment sets only that environment's.
 	SetEnvironmentVolumes(context.Context, *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error)
+	// UpdateEnvironment sets the fields update_mask names on an environment:
+	// retention replaces its retention override whole, as
+	// SetEnvironmentRetention does, and volumes replaces the list of the
+	// project's volumes its services and sandboxes may attach, as
+	// SetEnvironmentVolumes does. Each is checked as that call checks it,
+	// and both are written together or not at all. An omitted mask means
+	// the fields the request sets; clearing the override or the list needs
+	// its path in the mask. "*" and a path of any other field are
+	// INVALID_ARGUMENT. A project or environment the workspace does not have
+	// is NOT_FOUND. A token limited to an environment updates only that
+	// environment.
+	UpdateEnvironment(context.Context, *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -363,6 +378,12 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentVolumes")),
 			connect.WithClientOptions(opts...),
 		),
+		updateEnvironment: connect.NewClient[workspacev1.UpdateEnvironmentRequest, workspacev1.UpdateEnvironmentResponse](
+			httpClient,
+			baseURL+ProjectServiceUpdateEnvironmentProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("UpdateEnvironment")),
+			connect.WithClientOptions(opts...),
+		),
 		createEmbedToken: connect.NewClient[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse](
 			httpClient,
 			baseURL+ProjectServiceCreateEmbedTokenProcedure,
@@ -403,6 +424,7 @@ type projectServiceClient struct {
 	getEnvironmentRetention *connect.Client[workspacev1.GetEnvironmentRetentionRequest, workspacev1.GetEnvironmentRetentionResponse]
 	setEnvironmentRetention *connect.Client[workspacev1.SetEnvironmentRetentionRequest, workspacev1.SetEnvironmentRetentionResponse]
 	setEnvironmentVolumes   *connect.Client[workspacev1.SetEnvironmentVolumesRequest, workspacev1.SetEnvironmentVolumesResponse]
+	updateEnvironment       *connect.Client[workspacev1.UpdateEnvironmentRequest, workspacev1.UpdateEnvironmentResponse]
 	createEmbedToken        *connect.Client[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse]
 	listEmbedTokens         *connect.Client[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse]
 	revokeEmbedToken        *connect.Client[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse]
@@ -491,6 +513,11 @@ func (c *projectServiceClient) SetEnvironmentRetention(ctx context.Context, req 
 // SetEnvironmentVolumes calls toshi.workspace.v1.ProjectService.SetEnvironmentVolumes.
 func (c *projectServiceClient) SetEnvironmentVolumes(ctx context.Context, req *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error) {
 	return c.setEnvironmentVolumes.CallUnary(ctx, req)
+}
+
+// UpdateEnvironment calls toshi.workspace.v1.ProjectService.UpdateEnvironment.
+func (c *projectServiceClient) UpdateEnvironment(ctx context.Context, req *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error) {
+	return c.updateEnvironment.CallUnary(ctx, req)
 }
 
 // CreateEmbedToken calls toshi.workspace.v1.ProjectService.CreateEmbedToken.
@@ -646,6 +673,18 @@ type ProjectServiceHandler interface {
 	// project or environment the workspace does not have is NOT_FOUND. A
 	// token limited to an environment sets only that environment's.
 	SetEnvironmentVolumes(context.Context, *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error)
+	// UpdateEnvironment sets the fields update_mask names on an environment:
+	// retention replaces its retention override whole, as
+	// SetEnvironmentRetention does, and volumes replaces the list of the
+	// project's volumes its services and sandboxes may attach, as
+	// SetEnvironmentVolumes does. Each is checked as that call checks it,
+	// and both are written together or not at all. An omitted mask means
+	// the fields the request sets; clearing the override or the list needs
+	// its path in the mask. "*" and a path of any other field are
+	// INVALID_ARGUMENT. A project or environment the workspace does not have
+	// is NOT_FOUND. A token limited to an environment updates only that
+	// environment.
+	UpdateEnvironment(context.Context, *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -772,6 +811,12 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentVolumes")),
 		connect.WithHandlerOptions(opts...),
 	)
+	projectServiceUpdateEnvironmentHandler := connect.NewUnaryHandler(
+		ProjectServiceUpdateEnvironmentProcedure,
+		svc.UpdateEnvironment,
+		connect.WithSchema(projectServiceMethods.ByName("UpdateEnvironment")),
+		connect.WithHandlerOptions(opts...),
+	)
 	projectServiceCreateEmbedTokenHandler := connect.NewUnaryHandler(
 		ProjectServiceCreateEmbedTokenProcedure,
 		svc.CreateEmbedToken,
@@ -826,6 +871,8 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 			projectServiceSetEnvironmentRetentionHandler.ServeHTTP(w, r)
 		case ProjectServiceSetEnvironmentVolumesProcedure:
 			projectServiceSetEnvironmentVolumesHandler.ServeHTTP(w, r)
+		case ProjectServiceUpdateEnvironmentProcedure:
+			projectServiceUpdateEnvironmentHandler.ServeHTTP(w, r)
 		case ProjectServiceCreateEmbedTokenProcedure:
 			projectServiceCreateEmbedTokenHandler.ServeHTTP(w, r)
 		case ProjectServiceListEmbedTokensProcedure:
@@ -907,6 +954,10 @@ func (UnimplementedProjectServiceHandler) SetEnvironmentRetention(context.Contex
 
 func (UnimplementedProjectServiceHandler) SetEnvironmentVolumes(context.Context, *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetEnvironmentVolumes is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) UpdateEnvironment(context.Context, *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.UpdateEnvironment is not implemented"))
 }
 
 func (UnimplementedProjectServiceHandler) CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error) {

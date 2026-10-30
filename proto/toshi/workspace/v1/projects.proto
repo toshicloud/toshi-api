@@ -215,6 +215,22 @@ service ProjectService {
     option (toshi.scope) = "environment";
     option (toshi.audit) = {target: "project:project"};
   }
+  // UpdateEnvironment sets the fields update_mask names on an environment:
+  // retention replaces its retention override whole, as
+  // SetEnvironmentRetention does, and volumes replaces the list of the
+  // project's volumes its services and sandboxes may attach, as
+  // SetEnvironmentVolumes does. Each is checked as that call checks it,
+  // and both are written together or not at all. An omitted mask means
+  // the fields the request sets; clearing the override or the list needs
+  // its path in the mask. "*" and a path of any other field are
+  // INVALID_ARGUMENT. A project or environment the workspace does not have
+  // is NOT_FOUND. A token limited to an environment updates only that
+  // environment.
+  rpc UpdateEnvironment(UpdateEnvironmentRequest) returns (UpdateEnvironmentResponse) {
+    option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {target: "project:project"};
+  }
   // CreateEmbedToken mints an embed token for a project: a credential for
   // a web page on one of the token's origins, which spends it once to
   // fetch one of the project's ready recordings. It expires in minutes. A
@@ -278,7 +294,7 @@ message ProjectEnvironment {
   string kind = 2;
   // The names of the project's volumes the environment's services and
   // sandboxes may attach, sorted; empty when any of them may. Set with
-  // SetEnvironmentVolumes.
+  // UpdateEnvironment or SetEnvironmentVolumes.
   repeated string volumes = 3;
   // Who manages this object: "manifest" when the project manifest declares
   // it, empty when nothing does. A manifest apply sets managed_by,
@@ -294,6 +310,10 @@ message ProjectEnvironment {
   // apply created it, "adopted" when an apply took over an object that
   // already existed. Empty when managed_by is empty.
   string manifest_origin = 7;
+  // The environment's retention override as stored; empty when it
+  // follows the workspace. Set with UpdateEnvironment or
+  // SetEnvironmentRetention.
+  EnvironmentRetention retention = 8;
 }
 
 // Repository is a repository a project claims: a CI job of the repository
@@ -610,6 +630,19 @@ message SetEnvironmentVolumesRequest {
 
 message SetEnvironmentVolumesResponse {
   // The environment with its list as stored.
+  ProjectEnvironment environment = 1;
+}
+
+message UpdateEnvironmentRequest {
+  // The project's name.
+  string project = 1;
+  // name names the environment; the fields update_mask names carry the
+  // new values.
+  ProjectEnvironment environment = 2;
+  google.protobuf.FieldMask update_mask = 3;
+}
+message UpdateEnvironmentResponse {
+  // The environment as stored.
   ProjectEnvironment environment = 1;
 }
 
