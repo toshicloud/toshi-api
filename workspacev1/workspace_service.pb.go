@@ -2574,8 +2574,8 @@ type WorkspaceSettings struct {
 	// failure, about 10 minutes later. On by default.
 	CancelRunOnVmDeath bool `protobuf:"varint,7,opt,name=cancel_run_on_vm_death,json=cancelRunOnVmDeath,proto3" json:"cancel_run_on_vm_death,omitempty"`
 	// Monthly spending cap in the smallest unit of the billing currency; 0
-	// means none. At most 2^50; a cap while billing is off fails with
-	// FAILED_PRECONDITION.
+	// means none. At most 2^50; a new cap while billing is off, or on a
+	// workspace with no billing customer, fails with FAILED_PRECONDITION.
 	SpendCapCents int64 `protobuf:"varint,8,opt,name=spend_cap_cents,json=spendCapCents,proto3" json:"spend_cap_cents,omitempty"`
 	// The workspace's own jobs-per-hour limit; 0 means the plan's applies. It
 	// may only lower the plan's limit: a higher one fails with

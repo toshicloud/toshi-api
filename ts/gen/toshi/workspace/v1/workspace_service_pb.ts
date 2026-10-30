@@ -2349,8 +2349,8 @@ export type WorkspaceSettings = Message<"toshi.workspace.v1.WorkspaceSettings"> 
 
   /**
    * Monthly spending cap in the smallest unit of the billing currency; 0
-   * means none. At most 2^50; a cap while billing is off fails with
-   * FAILED_PRECONDITION.
+   * means none. At most 2^50; a new cap while billing is off, or on a
+   * workspace with no billing customer, fails with FAILED_PRECONDITION.
    *
    * @generated from field: int64 spend_cap_cents = 8;
    */
@@ -2483,8 +2483,8 @@ export type WorkspaceSettingsJson = {
 
   /**
    * Monthly spending cap in the smallest unit of the billing currency; 0
-   * means none. At most 2^50; a cap while billing is off fails with
-   * FAILED_PRECONDITION.
+   * means none. At most 2^50; a new cap while billing is off, or on a
+   * workspace with no billing customer, fails with FAILED_PRECONDITION.
    *
    * @generated from field: int64 spend_cap_cents = 8;
    */

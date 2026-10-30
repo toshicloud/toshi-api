@@ -617,8 +617,8 @@ message WorkspaceSettings {
   // failure, about 10 minutes later. On by default.
   bool cancel_run_on_vm_death = 7;
   // Monthly spending cap in the smallest unit of the billing currency; 0
-  // means none. At most 2^50; a cap while billing is off fails with
-  // FAILED_PRECONDITION.
+  // means none. At most 2^50; a new cap while billing is off, or on a
+  // workspace with no billing customer, fails with FAILED_PRECONDITION.
   int64 spend_cap_cents = 8 [(toshi.field_permission) = "billing.write"];
   // The workspace's own jobs-per-hour limit; 0 means the plan's applies. It
   // may only lower the plan's limit: a higher one fails with
