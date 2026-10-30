@@ -123,8 +123,8 @@ message Recording {
   // The host's capture of a strip or video stopped at a bound before the
   // run ended.
   bool truncated = 11;
-  // The spans a strip or its host's video left out while an input session
-  // was open.
+  // The stretches a strip or its host's video left out: every human or
+  // paused span below that was not captured.
   repeated RecordingPause pauses = 12;
   google.protobuf.Timestamp created_at = 13;
   // Set once it is no longer capturing.
@@ -135,6 +135,38 @@ message Recording {
   // each ends at its plan's segment length and the next starts then. 0 for
   // a job's recording, its run's only one.
   int32 sequence = 16;
+  // Who held the screen from the strip's start to its end, with no gap, in
+  // order of their starts. Empty for a recording kept before strips had
+  // spans, and for a video or trace the test framework wrote.
+  repeated RecordingSpan spans = 17;
+}
+
+// RecordingSpanKind is who held a recorded screen.
+enum RecordingSpanKind {
+  RECORDING_SPAN_KIND_UNSPECIFIED = 0;
+  // The run itself: a job's command, or a sandbox's program, its agent's
+  // input through the display API included.
+  RECORDING_SPAN_KIND_AGENT = 1;
+  // A person controlling a sandbox through a viewer with input.
+  RECORDING_SPAN_KIND_HUMAN = 2;
+  // A job's capture paused while an input session was open.
+  RECORDING_SPAN_KIND_PAUSED = 3;
+}
+
+// RecordingSpan is a stretch of a recording with one holder of its screen.
+message RecordingSpan {
+  RecordingSpanKind kind = 1;
+  // A human or paused span: the display session that held input, how it
+  // was opened (person or program) and the path its input came by
+  // (websocket or api). Empty on an agent span.
+  string session_id = 2;
+  string actor = 3;
+  string via = 4;
+  google.protobuf.Timestamp start = 5;
+  google.protobuf.Timestamp end = 6;
+  // Whether its screenshots were kept: always for an agent span, never for
+  // a paused one.
+  bool captured = 7;
 }
 
 // RecordingPause is a span with no screenshot, while a display session

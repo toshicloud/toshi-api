@@ -147,6 +147,63 @@ func (RecordingKind) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{1}
 }
 
+// RecordingSpanKind is who held a recorded screen.
+type RecordingSpanKind int32
+
+const (
+	RecordingSpanKind_RECORDING_SPAN_KIND_UNSPECIFIED RecordingSpanKind = 0
+	// The run itself: a job's command, or a sandbox's program, its agent's
+	// input through the display API included.
+	RecordingSpanKind_RECORDING_SPAN_KIND_AGENT RecordingSpanKind = 1
+	// A person controlling a sandbox through a viewer with input.
+	RecordingSpanKind_RECORDING_SPAN_KIND_HUMAN RecordingSpanKind = 2
+	// A job's capture paused while an input session was open.
+	RecordingSpanKind_RECORDING_SPAN_KIND_PAUSED RecordingSpanKind = 3
+)
+
+// Enum value maps for RecordingSpanKind.
+var (
+	RecordingSpanKind_name = map[int32]string{
+		0: "RECORDING_SPAN_KIND_UNSPECIFIED",
+		1: "RECORDING_SPAN_KIND_AGENT",
+		2: "RECORDING_SPAN_KIND_HUMAN",
+		3: "RECORDING_SPAN_KIND_PAUSED",
+	}
+	RecordingSpanKind_value = map[string]int32{
+		"RECORDING_SPAN_KIND_UNSPECIFIED": 0,
+		"RECORDING_SPAN_KIND_AGENT":       1,
+		"RECORDING_SPAN_KIND_HUMAN":       2,
+		"RECORDING_SPAN_KIND_PAUSED":      3,
+	}
+)
+
+func (x RecordingSpanKind) Enum() *RecordingSpanKind {
+	p := new(RecordingSpanKind)
+	*p = x
+	return p
+}
+
+func (x RecordingSpanKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RecordingSpanKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_recordings_proto_enumTypes[2].Descriptor()
+}
+
+func (RecordingSpanKind) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_recordings_proto_enumTypes[2]
+}
+
+func (x RecordingSpanKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RecordingSpanKind.Descriptor instead.
+func (RecordingSpanKind) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{2}
+}
+
 // RecordingShareLinkState is where a recording's share link is in its
 // life.
 type RecordingShareLinkState int32
@@ -190,11 +247,11 @@ func (x RecordingShareLinkState) String() string {
 }
 
 func (RecordingShareLinkState) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_recordings_proto_enumTypes[2].Descriptor()
+	return file_toshi_workspace_v1_recordings_proto_enumTypes[3].Descriptor()
 }
 
 func (RecordingShareLinkState) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_recordings_proto_enumTypes[2]
+	return &file_toshi_workspace_v1_recordings_proto_enumTypes[3]
 }
 
 func (x RecordingShareLinkState) Number() protoreflect.EnumNumber {
@@ -203,7 +260,7 @@ func (x RecordingShareLinkState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RecordingShareLinkState.Descriptor instead.
 func (RecordingShareLinkState) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{3}
 }
 
 // Recording is one recording of a run attempt: its screenshot strip or
@@ -231,8 +288,8 @@ type Recording struct {
 	// The host's capture of a strip or video stopped at a bound before the
 	// run ended.
 	Truncated bool `protobuf:"varint,11,opt,name=truncated,proto3" json:"truncated,omitempty"`
-	// The spans a strip or its host's video left out while an input session
-	// was open.
+	// The stretches a strip or its host's video left out: every human or
+	// paused span below that was not captured.
 	Pauses    []*RecordingPause      `protobuf:"bytes,12,rep,name=pauses,proto3" json:"pauses,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Set once it is no longer capturing.
@@ -242,7 +299,11 @@ type Recording struct {
 	// A sandbox's strips are numbered from 1 in the order they were taken:
 	// each ends at its plan's segment length and the next starts then. 0 for
 	// a job's recording, its run's only one.
-	Sequence      int32 `protobuf:"varint,16,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Sequence int32 `protobuf:"varint,16,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	// Who held the screen from the strip's start to its end, with no gap, in
+	// order of their starts. Empty for a recording kept before strips had
+	// spans, and for a video or trace the test framework wrote.
+	Spans         []*RecordingSpan `protobuf:"bytes,17,rep,name=spans,proto3" json:"spans,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -389,6 +450,111 @@ func (x *Recording) GetSequence() int32 {
 	return 0
 }
 
+func (x *Recording) GetSpans() []*RecordingSpan {
+	if x != nil {
+		return x.Spans
+	}
+	return nil
+}
+
+// RecordingSpan is a stretch of a recording with one holder of its screen.
+type RecordingSpan struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Kind  RecordingSpanKind      `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingSpanKind" json:"kind,omitempty"`
+	// A human or paused span: the display session that held input, how it
+	// was opened (person or program) and the path its input came by
+	// (websocket or api). Empty on an agent span.
+	SessionId string                 `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	Actor     string                 `protobuf:"bytes,3,opt,name=actor,proto3" json:"actor,omitempty"`
+	Via       string                 `protobuf:"bytes,4,opt,name=via,proto3" json:"via,omitempty"`
+	Start     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=start,proto3" json:"start,omitempty"`
+	End       *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=end,proto3" json:"end,omitempty"`
+	// Whether its screenshots were kept: always for an agent span, never for
+	// a paused one.
+	Captured      bool `protobuf:"varint,7,opt,name=captured,proto3" json:"captured,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordingSpan) Reset() {
+	*x = RecordingSpan{}
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordingSpan) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordingSpan) ProtoMessage() {}
+
+func (x *RecordingSpan) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordingSpan.ProtoReflect.Descriptor instead.
+func (*RecordingSpan) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *RecordingSpan) GetKind() RecordingSpanKind {
+	if x != nil {
+		return x.Kind
+	}
+	return RecordingSpanKind_RECORDING_SPAN_KIND_UNSPECIFIED
+}
+
+func (x *RecordingSpan) GetSessionId() string {
+	if x != nil {
+		return x.SessionId
+	}
+	return ""
+}
+
+func (x *RecordingSpan) GetActor() string {
+	if x != nil {
+		return x.Actor
+	}
+	return ""
+}
+
+func (x *RecordingSpan) GetVia() string {
+	if x != nil {
+		return x.Via
+	}
+	return ""
+}
+
+func (x *RecordingSpan) GetStart() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Start
+	}
+	return nil
+}
+
+func (x *RecordingSpan) GetEnd() *timestamppb.Timestamp {
+	if x != nil {
+		return x.End
+	}
+	return nil
+}
+
+func (x *RecordingSpan) GetCaptured() bool {
+	if x != nil {
+		return x.Captured
+	}
+	return false
+}
+
 // RecordingPause is a span with no screenshot, while a display session
 // with input was open.
 type RecordingPause struct {
@@ -406,7 +572,7 @@ type RecordingPause struct {
 
 func (x *RecordingPause) Reset() {
 	*x = RecordingPause{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -418,7 +584,7 @@ func (x *RecordingPause) String() string {
 func (*RecordingPause) ProtoMessage() {}
 
 func (x *RecordingPause) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -431,7 +597,7 @@ func (x *RecordingPause) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordingPause.ProtoReflect.Descriptor instead.
 func (*RecordingPause) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *RecordingPause) GetSessionId() string {
@@ -482,7 +648,7 @@ type ListRecordingsRequest struct {
 
 func (x *ListRecordingsRequest) Reset() {
 	*x = ListRecordingsRequest{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -494,7 +660,7 @@ func (x *ListRecordingsRequest) String() string {
 func (*ListRecordingsRequest) ProtoMessage() {}
 
 func (x *ListRecordingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -507,7 +673,7 @@ func (x *ListRecordingsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRecordingsRequest.ProtoReflect.Descriptor instead.
 func (*ListRecordingsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ListRecordingsRequest) GetWorkloadId() string {
@@ -542,7 +708,7 @@ type ListRecordingsResponse struct {
 
 func (x *ListRecordingsResponse) Reset() {
 	*x = ListRecordingsResponse{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -554,7 +720,7 @@ func (x *ListRecordingsResponse) String() string {
 func (*ListRecordingsResponse) ProtoMessage() {}
 
 func (x *ListRecordingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -567,7 +733,7 @@ func (x *ListRecordingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRecordingsResponse.ProtoReflect.Descriptor instead.
 func (*ListRecordingsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListRecordingsResponse) GetRecordings() []*Recording {
@@ -596,7 +762,7 @@ type GetRecordingRequest struct {
 
 func (x *GetRecordingRequest) Reset() {
 	*x = GetRecordingRequest{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -608,7 +774,7 @@ func (x *GetRecordingRequest) String() string {
 func (*GetRecordingRequest) ProtoMessage() {}
 
 func (x *GetRecordingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -621,7 +787,7 @@ func (x *GetRecordingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRecordingRequest.ProtoReflect.Descriptor instead.
 func (*GetRecordingRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetRecordingRequest) GetRecordingId() string {
@@ -652,7 +818,7 @@ type GetRecordingResponse struct {
 
 func (x *GetRecordingResponse) Reset() {
 	*x = GetRecordingResponse{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -664,7 +830,7 @@ func (x *GetRecordingResponse) String() string {
 func (*GetRecordingResponse) ProtoMessage() {}
 
 func (x *GetRecordingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -677,7 +843,7 @@ func (x *GetRecordingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRecordingResponse.ProtoReflect.Descriptor instead.
 func (*GetRecordingResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetRecordingResponse) GetRecording() *Recording {
@@ -728,7 +894,7 @@ type RecordingShareLink struct {
 
 func (x *RecordingShareLink) Reset() {
 	*x = RecordingShareLink{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -740,7 +906,7 @@ func (x *RecordingShareLink) String() string {
 func (*RecordingShareLink) ProtoMessage() {}
 
 func (x *RecordingShareLink) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -753,7 +919,7 @@ func (x *RecordingShareLink) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordingShareLink.ProtoReflect.Descriptor instead.
 func (*RecordingShareLink) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *RecordingShareLink) GetId() string {
@@ -842,7 +1008,7 @@ type CreateRecordingShareLinkRequest struct {
 
 func (x *CreateRecordingShareLinkRequest) Reset() {
 	*x = CreateRecordingShareLinkRequest{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -854,7 +1020,7 @@ func (x *CreateRecordingShareLinkRequest) String() string {
 func (*CreateRecordingShareLinkRequest) ProtoMessage() {}
 
 func (x *CreateRecordingShareLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -867,7 +1033,7 @@ func (x *CreateRecordingShareLinkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRecordingShareLinkRequest.ProtoReflect.Descriptor instead.
 func (*CreateRecordingShareLinkRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CreateRecordingShareLinkRequest) GetRecordingId() string {
@@ -907,7 +1073,7 @@ type CreateRecordingShareLinkResponse struct {
 
 func (x *CreateRecordingShareLinkResponse) Reset() {
 	*x = CreateRecordingShareLinkResponse{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -919,7 +1085,7 @@ func (x *CreateRecordingShareLinkResponse) String() string {
 func (*CreateRecordingShareLinkResponse) ProtoMessage() {}
 
 func (x *CreateRecordingShareLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -932,7 +1098,7 @@ func (x *CreateRecordingShareLinkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRecordingShareLinkResponse.ProtoReflect.Descriptor instead.
 func (*CreateRecordingShareLinkResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateRecordingShareLinkResponse) GetShareLink() *RecordingShareLink {
@@ -969,7 +1135,7 @@ type ListRecordingShareLinksRequest struct {
 
 func (x *ListRecordingShareLinksRequest) Reset() {
 	*x = ListRecordingShareLinksRequest{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -981,7 +1147,7 @@ func (x *ListRecordingShareLinksRequest) String() string {
 func (*ListRecordingShareLinksRequest) ProtoMessage() {}
 
 func (x *ListRecordingShareLinksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -994,7 +1160,7 @@ func (x *ListRecordingShareLinksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRecordingShareLinksRequest.ProtoReflect.Descriptor instead.
 func (*ListRecordingShareLinksRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListRecordingShareLinksRequest) GetRecordingId() string {
@@ -1029,7 +1195,7 @@ type ListRecordingShareLinksResponse struct {
 
 func (x *ListRecordingShareLinksResponse) Reset() {
 	*x = ListRecordingShareLinksResponse{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1041,7 +1207,7 @@ func (x *ListRecordingShareLinksResponse) String() string {
 func (*ListRecordingShareLinksResponse) ProtoMessage() {}
 
 func (x *ListRecordingShareLinksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1054,7 +1220,7 @@ func (x *ListRecordingShareLinksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRecordingShareLinksResponse.ProtoReflect.Descriptor instead.
 func (*ListRecordingShareLinksResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListRecordingShareLinksResponse) GetShareLinks() []*RecordingShareLink {
@@ -1080,7 +1246,7 @@ type RevokeRecordingShareLinkRequest struct {
 
 func (x *RevokeRecordingShareLinkRequest) Reset() {
 	*x = RevokeRecordingShareLinkRequest{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1092,7 +1258,7 @@ func (x *RevokeRecordingShareLinkRequest) String() string {
 func (*RevokeRecordingShareLinkRequest) ProtoMessage() {}
 
 func (x *RevokeRecordingShareLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1105,7 +1271,7 @@ func (x *RevokeRecordingShareLinkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeRecordingShareLinkRequest.ProtoReflect.Descriptor instead.
 func (*RevokeRecordingShareLinkRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RevokeRecordingShareLinkRequest) GetShareLinkId() string {
@@ -1124,7 +1290,7 @@ type RevokeRecordingShareLinkResponse struct {
 
 func (x *RevokeRecordingShareLinkResponse) Reset() {
 	*x = RevokeRecordingShareLinkResponse{}
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1136,7 +1302,7 @@ func (x *RevokeRecordingShareLinkResponse) String() string {
 func (*RevokeRecordingShareLinkResponse) ProtoMessage() {}
 
 func (x *RevokeRecordingShareLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_recordings_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1149,7 +1315,7 @@ func (x *RevokeRecordingShareLinkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeRecordingShareLinkResponse.ProtoReflect.Descriptor instead.
 func (*RevokeRecordingShareLinkResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_recordings_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *RevokeRecordingShareLinkResponse) GetShareLink() *RecordingShareLink {
@@ -1163,7 +1329,7 @@ var File_toshi_workspace_v1_recordings_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\n" +
-	"#toshi/workspace/v1/recordings.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xfd\x04\n" +
+	"#toshi/workspace/v1/recordings.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xb6\x05\n" +
 	"\tRecording\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -1185,7 +1351,17 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x125\n" +
 	"\bended_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x125\n" +
 	"\x04kind\x18\x0f \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\x04kind\x12\x1a\n" +
-	"\bsequence\x18\x10 \x01(\x05R\bsequence\"\xb7\x01\n" +
+	"\bsequence\x18\x10 \x01(\x05R\bsequence\x127\n" +
+	"\x05spans\x18\x11 \x03(\v2!.toshi.workspace.v1.RecordingSpanR\x05spans\"\x8d\x02\n" +
+	"\rRecordingSpan\x129\n" +
+	"\x04kind\x18\x01 \x01(\x0e2%.toshi.workspace.v1.RecordingSpanKindR\x04kind\x12\x1d\n" +
+	"\n" +
+	"session_id\x18\x02 \x01(\tR\tsessionId\x12\x14\n" +
+	"\x05actor\x18\x03 \x01(\tR\x05actor\x12\x10\n" +
+	"\x03via\x18\x04 \x01(\tR\x03via\x120\n" +
+	"\x05start\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
+	"\x03end\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x03end\x12\x1a\n" +
+	"\bcaptured\x18\a \x01(\bR\bcaptured\"\xb7\x01\n" +
 	"\x0eRecordingPause\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x14\n" +
@@ -1265,7 +1441,12 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\x1aRECORDING_KIND_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14RECORDING_KIND_STRIP\x10\x01\x12\x18\n" +
 	"\x14RECORDING_KIND_VIDEO\x10\x02\x12\x18\n" +
-	"\x14RECORDING_KIND_TRACE\x10\x03*\xe2\x01\n" +
+	"\x14RECORDING_KIND_TRACE\x10\x03*\x96\x01\n" +
+	"\x11RecordingSpanKind\x12#\n" +
+	"\x1fRECORDING_SPAN_KIND_UNSPECIFIED\x10\x00\x12\x1d\n" +
+	"\x19RECORDING_SPAN_KIND_AGENT\x10\x01\x12\x1d\n" +
+	"\x19RECORDING_SPAN_KIND_HUMAN\x10\x02\x12\x1e\n" +
+	"\x1aRECORDING_SPAN_KIND_PAUSED\x10\x03*\xe2\x01\n" +
 	"\x17RecordingShareLinkState\x12*\n" +
 	"&RECORDING_SHARE_LINK_STATE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!RECORDING_SHARE_LINK_STATE_ACTIVE\x10\x01\x12&\n" +
@@ -1294,64 +1475,70 @@ func file_toshi_workspace_v1_recordings_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_recordings_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_recordings_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_toshi_workspace_v1_recordings_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_toshi_workspace_v1_recordings_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_toshi_workspace_v1_recordings_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_toshi_workspace_v1_recordings_proto_goTypes = []any{
 	(RecordingState)(0),                      // 0: toshi.workspace.v1.RecordingState
 	(RecordingKind)(0),                       // 1: toshi.workspace.v1.RecordingKind
-	(RecordingShareLinkState)(0),             // 2: toshi.workspace.v1.RecordingShareLinkState
-	(*Recording)(nil),                        // 3: toshi.workspace.v1.Recording
-	(*RecordingPause)(nil),                   // 4: toshi.workspace.v1.RecordingPause
-	(*ListRecordingsRequest)(nil),            // 5: toshi.workspace.v1.ListRecordingsRequest
-	(*ListRecordingsResponse)(nil),           // 6: toshi.workspace.v1.ListRecordingsResponse
-	(*GetRecordingRequest)(nil),              // 7: toshi.workspace.v1.GetRecordingRequest
-	(*GetRecordingResponse)(nil),             // 8: toshi.workspace.v1.GetRecordingResponse
-	(*RecordingShareLink)(nil),               // 9: toshi.workspace.v1.RecordingShareLink
-	(*CreateRecordingShareLinkRequest)(nil),  // 10: toshi.workspace.v1.CreateRecordingShareLinkRequest
-	(*CreateRecordingShareLinkResponse)(nil), // 11: toshi.workspace.v1.CreateRecordingShareLinkResponse
-	(*ListRecordingShareLinksRequest)(nil),   // 12: toshi.workspace.v1.ListRecordingShareLinksRequest
-	(*ListRecordingShareLinksResponse)(nil),  // 13: toshi.workspace.v1.ListRecordingShareLinksResponse
-	(*RevokeRecordingShareLinkRequest)(nil),  // 14: toshi.workspace.v1.RevokeRecordingShareLinkRequest
-	(*RevokeRecordingShareLinkResponse)(nil), // 15: toshi.workspace.v1.RevokeRecordingShareLinkResponse
-	(*durationpb.Duration)(nil),              // 16: google.protobuf.Duration
-	(*timestamppb.Timestamp)(nil),            // 17: google.protobuf.Timestamp
+	(RecordingSpanKind)(0),                   // 2: toshi.workspace.v1.RecordingSpanKind
+	(RecordingShareLinkState)(0),             // 3: toshi.workspace.v1.RecordingShareLinkState
+	(*Recording)(nil),                        // 4: toshi.workspace.v1.Recording
+	(*RecordingSpan)(nil),                    // 5: toshi.workspace.v1.RecordingSpan
+	(*RecordingPause)(nil),                   // 6: toshi.workspace.v1.RecordingPause
+	(*ListRecordingsRequest)(nil),            // 7: toshi.workspace.v1.ListRecordingsRequest
+	(*ListRecordingsResponse)(nil),           // 8: toshi.workspace.v1.ListRecordingsResponse
+	(*GetRecordingRequest)(nil),              // 9: toshi.workspace.v1.GetRecordingRequest
+	(*GetRecordingResponse)(nil),             // 10: toshi.workspace.v1.GetRecordingResponse
+	(*RecordingShareLink)(nil),               // 11: toshi.workspace.v1.RecordingShareLink
+	(*CreateRecordingShareLinkRequest)(nil),  // 12: toshi.workspace.v1.CreateRecordingShareLinkRequest
+	(*CreateRecordingShareLinkResponse)(nil), // 13: toshi.workspace.v1.CreateRecordingShareLinkResponse
+	(*ListRecordingShareLinksRequest)(nil),   // 14: toshi.workspace.v1.ListRecordingShareLinksRequest
+	(*ListRecordingShareLinksResponse)(nil),  // 15: toshi.workspace.v1.ListRecordingShareLinksResponse
+	(*RevokeRecordingShareLinkRequest)(nil),  // 16: toshi.workspace.v1.RevokeRecordingShareLinkRequest
+	(*RevokeRecordingShareLinkResponse)(nil), // 17: toshi.workspace.v1.RevokeRecordingShareLinkResponse
+	(*durationpb.Duration)(nil),              // 18: google.protobuf.Duration
+	(*timestamppb.Timestamp)(nil),            // 19: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_recordings_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Recording.state:type_name -> toshi.workspace.v1.RecordingState
-	16, // 1: toshi.workspace.v1.Recording.interval:type_name -> google.protobuf.Duration
-	4,  // 2: toshi.workspace.v1.Recording.pauses:type_name -> toshi.workspace.v1.RecordingPause
-	17, // 3: toshi.workspace.v1.Recording.created_at:type_name -> google.protobuf.Timestamp
-	17, // 4: toshi.workspace.v1.Recording.ended_at:type_name -> google.protobuf.Timestamp
+	18, // 1: toshi.workspace.v1.Recording.interval:type_name -> google.protobuf.Duration
+	6,  // 2: toshi.workspace.v1.Recording.pauses:type_name -> toshi.workspace.v1.RecordingPause
+	19, // 3: toshi.workspace.v1.Recording.created_at:type_name -> google.protobuf.Timestamp
+	19, // 4: toshi.workspace.v1.Recording.ended_at:type_name -> google.protobuf.Timestamp
 	1,  // 5: toshi.workspace.v1.Recording.kind:type_name -> toshi.workspace.v1.RecordingKind
-	17, // 6: toshi.workspace.v1.RecordingPause.start:type_name -> google.protobuf.Timestamp
-	17, // 7: toshi.workspace.v1.RecordingPause.end:type_name -> google.protobuf.Timestamp
-	3,  // 8: toshi.workspace.v1.ListRecordingsResponse.recordings:type_name -> toshi.workspace.v1.Recording
-	3,  // 9: toshi.workspace.v1.GetRecordingResponse.recording:type_name -> toshi.workspace.v1.Recording
-	17, // 10: toshi.workspace.v1.GetRecordingResponse.expires_at:type_name -> google.protobuf.Timestamp
-	1,  // 11: toshi.workspace.v1.RecordingShareLink.kind:type_name -> toshi.workspace.v1.RecordingKind
-	2,  // 12: toshi.workspace.v1.RecordingShareLink.state:type_name -> toshi.workspace.v1.RecordingShareLinkState
-	17, // 13: toshi.workspace.v1.RecordingShareLink.created_at:type_name -> google.protobuf.Timestamp
-	17, // 14: toshi.workspace.v1.RecordingShareLink.expires_at:type_name -> google.protobuf.Timestamp
-	17, // 15: toshi.workspace.v1.RecordingShareLink.revoked_at:type_name -> google.protobuf.Timestamp
-	16, // 16: toshi.workspace.v1.CreateRecordingShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
-	9,  // 17: toshi.workspace.v1.CreateRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
-	9,  // 18: toshi.workspace.v1.ListRecordingShareLinksResponse.share_links:type_name -> toshi.workspace.v1.RecordingShareLink
-	9,  // 19: toshi.workspace.v1.RevokeRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
-	5,  // 20: toshi.workspace.v1.RecordingService.ListRecordings:input_type -> toshi.workspace.v1.ListRecordingsRequest
-	7,  // 21: toshi.workspace.v1.RecordingService.GetRecording:input_type -> toshi.workspace.v1.GetRecordingRequest
-	10, // 22: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:input_type -> toshi.workspace.v1.CreateRecordingShareLinkRequest
-	12, // 23: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:input_type -> toshi.workspace.v1.ListRecordingShareLinksRequest
-	14, // 24: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:input_type -> toshi.workspace.v1.RevokeRecordingShareLinkRequest
-	6,  // 25: toshi.workspace.v1.RecordingService.ListRecordings:output_type -> toshi.workspace.v1.ListRecordingsResponse
-	8,  // 26: toshi.workspace.v1.RecordingService.GetRecording:output_type -> toshi.workspace.v1.GetRecordingResponse
-	11, // 27: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:output_type -> toshi.workspace.v1.CreateRecordingShareLinkResponse
-	13, // 28: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:output_type -> toshi.workspace.v1.ListRecordingShareLinksResponse
-	15, // 29: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:output_type -> toshi.workspace.v1.RevokeRecordingShareLinkResponse
-	25, // [25:30] is the sub-list for method output_type
-	20, // [20:25] is the sub-list for method input_type
-	20, // [20:20] is the sub-list for extension type_name
-	20, // [20:20] is the sub-list for extension extendee
-	0,  // [0:20] is the sub-list for field type_name
+	5,  // 6: toshi.workspace.v1.Recording.spans:type_name -> toshi.workspace.v1.RecordingSpan
+	2,  // 7: toshi.workspace.v1.RecordingSpan.kind:type_name -> toshi.workspace.v1.RecordingSpanKind
+	19, // 8: toshi.workspace.v1.RecordingSpan.start:type_name -> google.protobuf.Timestamp
+	19, // 9: toshi.workspace.v1.RecordingSpan.end:type_name -> google.protobuf.Timestamp
+	19, // 10: toshi.workspace.v1.RecordingPause.start:type_name -> google.protobuf.Timestamp
+	19, // 11: toshi.workspace.v1.RecordingPause.end:type_name -> google.protobuf.Timestamp
+	4,  // 12: toshi.workspace.v1.ListRecordingsResponse.recordings:type_name -> toshi.workspace.v1.Recording
+	4,  // 13: toshi.workspace.v1.GetRecordingResponse.recording:type_name -> toshi.workspace.v1.Recording
+	19, // 14: toshi.workspace.v1.GetRecordingResponse.expires_at:type_name -> google.protobuf.Timestamp
+	1,  // 15: toshi.workspace.v1.RecordingShareLink.kind:type_name -> toshi.workspace.v1.RecordingKind
+	3,  // 16: toshi.workspace.v1.RecordingShareLink.state:type_name -> toshi.workspace.v1.RecordingShareLinkState
+	19, // 17: toshi.workspace.v1.RecordingShareLink.created_at:type_name -> google.protobuf.Timestamp
+	19, // 18: toshi.workspace.v1.RecordingShareLink.expires_at:type_name -> google.protobuf.Timestamp
+	19, // 19: toshi.workspace.v1.RecordingShareLink.revoked_at:type_name -> google.protobuf.Timestamp
+	18, // 20: toshi.workspace.v1.CreateRecordingShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
+	11, // 21: toshi.workspace.v1.CreateRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
+	11, // 22: toshi.workspace.v1.ListRecordingShareLinksResponse.share_links:type_name -> toshi.workspace.v1.RecordingShareLink
+	11, // 23: toshi.workspace.v1.RevokeRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
+	7,  // 24: toshi.workspace.v1.RecordingService.ListRecordings:input_type -> toshi.workspace.v1.ListRecordingsRequest
+	9,  // 25: toshi.workspace.v1.RecordingService.GetRecording:input_type -> toshi.workspace.v1.GetRecordingRequest
+	12, // 26: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:input_type -> toshi.workspace.v1.CreateRecordingShareLinkRequest
+	14, // 27: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:input_type -> toshi.workspace.v1.ListRecordingShareLinksRequest
+	16, // 28: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:input_type -> toshi.workspace.v1.RevokeRecordingShareLinkRequest
+	8,  // 29: toshi.workspace.v1.RecordingService.ListRecordings:output_type -> toshi.workspace.v1.ListRecordingsResponse
+	10, // 30: toshi.workspace.v1.RecordingService.GetRecording:output_type -> toshi.workspace.v1.GetRecordingResponse
+	13, // 31: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:output_type -> toshi.workspace.v1.CreateRecordingShareLinkResponse
+	15, // 32: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:output_type -> toshi.workspace.v1.ListRecordingShareLinksResponse
+	17, // 33: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:output_type -> toshi.workspace.v1.RevokeRecordingShareLinkResponse
+	29, // [29:34] is the sub-list for method output_type
+	24, // [24:29] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_recordings_proto_init() }
@@ -1364,8 +1551,8 @@ func file_toshi_workspace_v1_recordings_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_recordings_proto_rawDesc), len(file_toshi_workspace_v1_recordings_proto_rawDesc)),
-			NumEnums:      3,
-			NumMessages:   13,
+			NumEnums:      4,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
