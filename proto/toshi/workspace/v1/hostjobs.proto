@@ -286,6 +286,12 @@ message HostJob {
   // a job on its workspace's own host and a dispatch filler's job, which are not
   // billed.
   int64 billable_minutes = 34;
+  // The job's exact run time in seconds, from started_at to
+  // stop_requested_at when the job was asked to stop, else to finished_at,
+  // with no rounding: what a plan that bills by the second counts.
+  // billable_minutes is the same time rounded up to whole minutes. 0 for
+  // the same jobs as billable_minutes.
+  double billable_seconds = 55;
   // The job's page on GitHub, on the configured GitHub web URL. Empty when
   // the job has no repository, run or workflow job id.
   string github_url = 35;

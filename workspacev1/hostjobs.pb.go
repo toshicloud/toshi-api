@@ -1103,6 +1103,12 @@ type HostJob struct {
 	// a job on its workspace's own host and a dispatch filler's job, which are not
 	// billed.
 	BillableMinutes int64 `protobuf:"varint,34,opt,name=billable_minutes,json=billableMinutes,proto3" json:"billable_minutes,omitempty"`
+	// The job's exact run time in seconds, from started_at to
+	// stop_requested_at when the job was asked to stop, else to finished_at,
+	// with no rounding: what a plan that bills by the second counts.
+	// billable_minutes is the same time rounded up to whole minutes. 0 for
+	// the same jobs as billable_minutes.
+	BillableSeconds float64 `protobuf:"fixed64,55,opt,name=billable_seconds,json=billableSeconds,proto3" json:"billable_seconds,omitempty"`
 	// The job's page on GitHub, on the configured GitHub web URL. Empty when
 	// the job has no repository, run or workflow job id.
 	GithubUrl string `protobuf:"bytes,35,opt,name=github_url,json=githubUrl,proto3" json:"github_url,omitempty"`
@@ -1469,6 +1475,13 @@ func (x *HostJob) GetPreviousPoolImage() string {
 func (x *HostJob) GetBillableMinutes() int64 {
 	if x != nil {
 		return x.BillableMinutes
+	}
+	return 0
+}
+
+func (x *HostJob) GetBillableSeconds() float64 {
+	if x != nil {
+		return x.BillableSeconds
 	}
 	return 0
 }
@@ -2292,7 +2305,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x17StopHostJobDebugRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
 	"\x18StopHostJobDebugResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xf0\x10\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\x9b\x11\n" +
 	"\aHostJob\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1e\n" +
 	"\n" +
@@ -2340,7 +2353,8 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\aoutcome\x18\x1f \x01(\tR\aoutcome\x12\x1b\n" +
 	"\thost_kind\x18  \x01(\tR\bhostKind\x12.\n" +
 	"\x13previous_pool_image\x18! \x01(\tR\x11previousPoolImage\x12)\n" +
-	"\x10billable_minutes\x18\" \x01(\x03R\x0fbillableMinutes\x12\x1d\n" +
+	"\x10billable_minutes\x18\" \x01(\x03R\x0fbillableMinutes\x12)\n" +
+	"\x10billable_seconds\x187 \x01(\x01R\x0fbillableSeconds\x12\x1d\n" +
 	"\n" +
 	"github_url\x18# \x01(\tR\tgithubUrl\x12#\n" +
 	"\rworkflow_name\x18$ \x01(\tR\fworkflowName\x126\n" +

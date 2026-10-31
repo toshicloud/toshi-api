@@ -1050,10 +1050,15 @@ message StatementCharge {
   // Empty for usage recorded without a size, priced at the plan's highest
   // per-minute price.
   string size = 1;
+  // The metered minutes of a size billed by the minute; 0 on a line of
+  // seconds.
   int64 minutes = 2;
   // The minutes at their recorded prices, or today's for minutes with none,
-  // rounded up.
+  // or the seconds at today's per-second price, rounded up.
   int64 estimated_cents = 3;
+  // The billed running seconds of a size billed by the second, its
+  // month's seconds summed and rounded up once; 0 on a line of minutes.
+  int64 seconds = 4;
 }
 
 message HoldTimes {

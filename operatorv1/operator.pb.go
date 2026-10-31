@@ -794,6 +794,12 @@ type Job struct {
 	// a job on its workspace's own host and a dispatch filler's job, which are not
 	// billed.
 	BillableMinutes int64 `protobuf:"varint,35,opt,name=billable_minutes,json=billableMinutes,proto3" json:"billable_minutes,omitempty"`
+	// The job's exact run time in seconds, from started_at to
+	// stop_requested_at when the job was asked to stop, else to finished_at,
+	// with no rounding: what a plan that bills by the second counts.
+	// billable_minutes is the same time rounded up to whole minutes. 0 for
+	// the same jobs as billable_minutes.
+	BillableSeconds float64 `protobuf:"fixed64,56,opt,name=billable_seconds,json=billableSeconds,proto3" json:"billable_seconds,omitempty"`
 	// The job's page on GitHub, on the configured GitHub web URL. Empty when
 	// the job has no repository, run or workflow job id.
 	GithubUrl string `protobuf:"bytes,36,opt,name=github_url,json=githubUrl,proto3" json:"github_url,omitempty"`
@@ -1164,6 +1170,13 @@ func (x *Job) GetPreviousPoolImage() string {
 func (x *Job) GetBillableMinutes() int64 {
 	if x != nil {
 		return x.BillableMinutes
+	}
+	return 0
+}
+
+func (x *Job) GetBillableSeconds() float64 {
+	if x != nil {
+		return x.BillableSeconds
 	}
 	return 0
 }
@@ -9164,13 +9177,18 @@ type StatementCharge struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Empty for usage recorded without a size, priced at the plan's highest
 	// per-minute price.
-	Size    string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
-	Minutes int64  `protobuf:"varint,2,opt,name=minutes,proto3" json:"minutes,omitempty"`
+	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
+	// The metered minutes of a size billed by the minute; 0 on a line of
+	// seconds.
+	Minutes int64 `protobuf:"varint,2,opt,name=minutes,proto3" json:"minutes,omitempty"`
 	// The minutes at their recorded prices, or today's for minutes with none,
-	// rounded up.
+	// or the seconds at today's per-second price, rounded up.
 	EstimatedCents int64 `protobuf:"varint,3,opt,name=estimated_cents,json=estimatedCents,proto3" json:"estimated_cents,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// The billed running seconds of a size billed by the second, its
+	// month's seconds summed and rounded up once; 0 on a line of minutes.
+	Seconds       int64 `protobuf:"varint,4,opt,name=seconds,proto3" json:"seconds,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StatementCharge) Reset() {
@@ -9220,6 +9238,13 @@ func (x *StatementCharge) GetMinutes() int64 {
 func (x *StatementCharge) GetEstimatedCents() int64 {
 	if x != nil {
 		return x.EstimatedCents
+	}
+	return 0
+}
+
+func (x *StatementCharge) GetSeconds() int64 {
+	if x != nil {
+		return x.Seconds
 	}
 	return 0
 }
@@ -14751,7 +14776,7 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf0\x10\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x9b\x11\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
@@ -14800,7 +14825,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\aoutcome\x18  \x01(\tR\aoutcome\x12\x1b\n" +
 	"\thost_kind\x18! \x01(\tR\bhostKind\x12.\n" +
 	"\x13previous_pool_image\x18\" \x01(\tR\x11previousPoolImage\x12)\n" +
-	"\x10billable_minutes\x18# \x01(\x03R\x0fbillableMinutes\x12\x1d\n" +
+	"\x10billable_minutes\x18# \x01(\x03R\x0fbillableMinutes\x12)\n" +
+	"\x10billable_seconds\x188 \x01(\x01R\x0fbillableSeconds\x12\x1d\n" +
 	"\n" +
 	"github_url\x18$ \x01(\tR\tgithubUrl\x12#\n" +
 	"\rworkflow_name\x18% \x01(\tR\fworkflowName\x121\n" +
@@ -15494,11 +15520,12 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\aoutcome\x18\t \x01(\tR\aoutcome\x12\x18\n" +
 	"\aseconds\x18\n" +
 	" \x01(\x01R\aseconds\x12(\n" +
-	"\x10own_host_seconds\x18\v \x01(\x01R\x0eownHostSeconds\"h\n" +
+	"\x10own_host_seconds\x18\v \x01(\x01R\x0eownHostSeconds\"\x82\x01\n" +
 	"\x0fStatementCharge\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x18\n" +
 	"\aminutes\x18\x02 \x01(\x03R\aminutes\x12'\n" +
-	"\x0festimated_cents\x18\x03 \x01(\x03R\x0eestimatedCents\"R\n" +
+	"\x0festimated_cents\x18\x03 \x01(\x03R\x0eestimatedCents\x12\x18\n" +
+	"\aseconds\x18\x04 \x01(\x03R\aseconds\"R\n" +
 	"\x1fSetTenantBillingCustomerRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcustomer_id\x18\x02 \x01(\tR\n" +

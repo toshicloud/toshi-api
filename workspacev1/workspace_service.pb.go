@@ -4665,13 +4665,18 @@ type StatementCharge struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Empty for usage recorded without a size, priced at the plan's highest
 	// per-minute price.
-	Size    string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
-	Minutes int64  `protobuf:"varint,2,opt,name=minutes,proto3" json:"minutes,omitempty"`
+	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
+	// The metered minutes of a size billed by the minute; 0 on a line of
+	// seconds.
+	Minutes int64 `protobuf:"varint,2,opt,name=minutes,proto3" json:"minutes,omitempty"`
 	// The minutes at their recorded prices, or today's for minutes with none,
-	// rounded up.
+	// or the seconds at today's per-second price, rounded up.
 	EstimatedCents int64 `protobuf:"varint,3,opt,name=estimated_cents,json=estimatedCents,proto3" json:"estimated_cents,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// The billed running seconds of a size billed by the second, its
+	// month's seconds summed and rounded up once; 0 on a line of minutes.
+	Seconds       int64 `protobuf:"varint,4,opt,name=seconds,proto3" json:"seconds,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StatementCharge) Reset() {
@@ -4721,6 +4726,13 @@ func (x *StatementCharge) GetMinutes() int64 {
 func (x *StatementCharge) GetEstimatedCents() int64 {
 	if x != nil {
 		return x.EstimatedCents
+	}
+	return 0
+}
+
+func (x *StatementCharge) GetSeconds() int64 {
+	if x != nil {
+		return x.Seconds
 	}
 	return 0
 }
@@ -5934,11 +5946,12 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\aoutcome\x18\t \x01(\tR\aoutcome\x12\x18\n" +
 	"\aseconds\x18\n" +
 	" \x01(\x01R\aseconds\x12(\n" +
-	"\x10own_host_seconds\x18\v \x01(\x01R\x0eownHostSeconds\"h\n" +
+	"\x10own_host_seconds\x18\v \x01(\x01R\x0eownHostSeconds\"\x82\x01\n" +
 	"\x0fStatementCharge\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x18\n" +
 	"\aminutes\x18\x02 \x01(\x03R\aminutes\x12'\n" +
-	"\x0festimated_cents\x18\x03 \x01(\x03R\x0eestimatedCents\"\xd4\x01\n" +
+	"\x0festimated_cents\x18\x03 \x01(\x03R\x0eestimatedCents\x12\x18\n" +
+	"\aseconds\x18\x04 \x01(\x03R\aseconds\"\xd4\x01\n" +
 	"\tHoldTimes\x12\x16\n" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\x12\x12\n" +
 	"\x04jobs\x18\x02 \x01(\x03R\x04jobs\x12\x15\n" +
