@@ -1443,6 +1443,11 @@ message ListEventsResponse {
   string cursor = 2;
   // Empty on the last page.
   string next_page_token = 3;
+  // How many bytes the workload's stored events take: the size of every
+  // event of workload_id still kept, on every page alike, not only those
+  // of this page. Zero when workload_id is empty or the read goes through
+  // a grant.
+  int64 total_bytes = 4;
 }
 
 message WatchEventsRequest {

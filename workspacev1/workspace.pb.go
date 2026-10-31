@@ -7759,6 +7759,11 @@ type ListEventsResponse struct {
 	Cursor string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,3,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	// How many bytes the workload's stored events take: the size of every
+	// event of workload_id still kept, on every page alike, not only those
+	// of this page. Zero when workload_id is empty or the read goes through
+	// a grant.
+	TotalBytes    int64 `protobuf:"varint,4,opt,name=total_bytes,json=totalBytes,proto3" json:"total_bytes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7812,6 +7817,13 @@ func (x *ListEventsResponse) GetNextPageToken() string {
 		return x.NextPageToken
 	}
 	return ""
+}
+
+func (x *ListEventsResponse) GetTotalBytes() int64 {
+	if x != nil {
+		return x.TotalBytes
+	}
+	return 0
 }
 
 type WatchEventsRequest struct {
@@ -12681,11 +12693,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"page_token\x18\x04 \x01(\tR\tpageToken\x12\x1b\n" +
 	"\tpage_size\x18\x05 \x01(\x05R\bpageSize\x12\x14\n" +
-	"\x05grant\x18\x06 \x01(\tR\x05grant\"\x87\x01\n" +
+	"\x05grant\x18\x06 \x01(\tR\x05grant\"\xa8\x01\n" +
 	"\x12ListEventsResponse\x121\n" +
 	"\x06events\x18\x01 \x03(\v2\x19.toshi.workspace.v1.EventR\x06events\x12\x16\n" +
 	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12&\n" +
-	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken\"\xa7\x01\n" +
+	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken\x12\x1f\n" +
+	"\vtotal_bytes\x18\x04 \x01(\x03R\n" +
+	"totalBytes\"\xa7\x01\n" +
 	"\x12WatchEventsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
