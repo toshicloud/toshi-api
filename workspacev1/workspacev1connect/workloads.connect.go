@@ -41,6 +41,12 @@ const (
 	// WorkloadServiceListJobsProcedure is the fully-qualified name of the WorkloadService's ListJobs
 	// RPC.
 	WorkloadServiceListJobsProcedure = "/toshi.workspace.v1.WorkloadService/ListJobs"
+	// WorkloadServiceGetWorkloadUsageProcedure is the fully-qualified name of the WorkloadService's
+	// GetWorkloadUsage RPC.
+	WorkloadServiceGetWorkloadUsageProcedure = "/toshi.workspace.v1.WorkloadService/GetWorkloadUsage"
+	// WorkloadServiceListWorkloadUsagesProcedure is the fully-qualified name of the WorkloadService's
+	// ListWorkloadUsages RPC.
+	WorkloadServiceListWorkloadUsagesProcedure = "/toshi.workspace.v1.WorkloadService/ListWorkloadUsages"
 	// WorkloadServiceUpdateJobProcedure is the fully-qualified name of the WorkloadService's UpdateJob
 	// RPC.
 	WorkloadServiceUpdateJobProcedure = "/toshi.workspace.v1.WorkloadService/UpdateJob"
@@ -250,6 +256,27 @@ type WorkloadServiceClient interface {
 	//
 	// A page holds 50 jobs when page_size is zero, and 500 at most.
 	ListJobs(context.Context, *connect.Request[workspacev1.ListJobsRequest]) (*connect.Response[workspacev1.ListJobsResponse], error)
+	// GetWorkloadUsage returns one job's, sandbox's or service's runtime and
+	// counters for a UTC month. The request names exactly one of job_id,
+	// sandbox_id and service_id; naming none or more than one fails with
+	// INVALID_ARGUMENT, and so does a month that is not YYYY-MM. An empty month
+	// is the current UTC month. An unknown workload, or one of another kind
+	// than the field naming it, fails with NOT_FOUND.
+	//
+	// The counts need workloads.read. cost is set only for a caller that also
+	// holds billing.read where the workload is; it is an estimate, and the
+	// invoice stays authoritative.
+	GetWorkloadUsage(context.Context, *connect.Request[workspacev1.GetWorkloadUsageRequest]) (*connect.Response[workspacev1.GetWorkloadUsageResponse], error)
+	// ListWorkloadUsages returns the jobs, sandboxes and services of the
+	// project and environment that ran any part of a UTC month, a page at a
+	// time. month is the UTC month as YYYY-MM, and an empty month is the
+	// current one. A page holds 50 workloads when page_size is zero, and 500
+	// at most.
+	//
+	// The runtime and counters need workloads.read. cost is set only for a
+	// caller that also holds billing.read where the workload is; it is an
+	// estimate, and the invoice stays authoritative.
+	ListWorkloadUsages(context.Context, *connect.Request[workspacev1.ListWorkloadUsagesRequest]) (*connect.Response[workspacev1.ListWorkloadUsagesResponse], error)
 	// UpdateJob changes the fields the mask names and returns the job. Only
 	// "labels" can be changed; another path fails with INVALID_ARGUMENT.
 	UpdateJob(context.Context, *connect.Request[workspacev1.UpdateJobRequest]) (*connect.Response[workspacev1.UpdateJobResponse], error)
@@ -697,6 +724,18 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("ListJobs")),
 			connect.WithClientOptions(opts...),
 		),
+		getWorkloadUsage: connect.NewClient[workspacev1.GetWorkloadUsageRequest, workspacev1.GetWorkloadUsageResponse](
+			httpClient,
+			baseURL+WorkloadServiceGetWorkloadUsageProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("GetWorkloadUsage")),
+			connect.WithClientOptions(opts...),
+		),
+		listWorkloadUsages: connect.NewClient[workspacev1.ListWorkloadUsagesRequest, workspacev1.ListWorkloadUsagesResponse](
+			httpClient,
+			baseURL+WorkloadServiceListWorkloadUsagesProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ListWorkloadUsages")),
+			connect.WithClientOptions(opts...),
+		),
 		updateJob: connect.NewClient[workspacev1.UpdateJobRequest, workspacev1.UpdateJobResponse](
 			httpClient,
 			baseURL+WorkloadServiceUpdateJobProcedure,
@@ -1089,6 +1128,8 @@ type workloadServiceClient struct {
 	createJob              *connect.Client[workspacev1.CreateJobRequest, workspacev1.CreateJobResponse]
 	getJob                 *connect.Client[workspacev1.GetJobRequest, workspacev1.GetJobResponse]
 	listJobs               *connect.Client[workspacev1.ListJobsRequest, workspacev1.ListJobsResponse]
+	getWorkloadUsage       *connect.Client[workspacev1.GetWorkloadUsageRequest, workspacev1.GetWorkloadUsageResponse]
+	listWorkloadUsages     *connect.Client[workspacev1.ListWorkloadUsagesRequest, workspacev1.ListWorkloadUsagesResponse]
 	updateJob              *connect.Client[workspacev1.UpdateJobRequest, workspacev1.UpdateJobResponse]
 	deleteJob              *connect.Client[workspacev1.DeleteJobRequest, workspacev1.DeleteJobResponse]
 	cancelJob              *connect.Client[workspacev1.CancelJobRequest, workspacev1.CancelJobResponse]
@@ -1168,6 +1209,16 @@ func (c *workloadServiceClient) GetJob(ctx context.Context, req *connect.Request
 // ListJobs calls toshi.workspace.v1.WorkloadService.ListJobs.
 func (c *workloadServiceClient) ListJobs(ctx context.Context, req *connect.Request[workspacev1.ListJobsRequest]) (*connect.Response[workspacev1.ListJobsResponse], error) {
 	return c.listJobs.CallUnary(ctx, req)
+}
+
+// GetWorkloadUsage calls toshi.workspace.v1.WorkloadService.GetWorkloadUsage.
+func (c *workloadServiceClient) GetWorkloadUsage(ctx context.Context, req *connect.Request[workspacev1.GetWorkloadUsageRequest]) (*connect.Response[workspacev1.GetWorkloadUsageResponse], error) {
+	return c.getWorkloadUsage.CallUnary(ctx, req)
+}
+
+// ListWorkloadUsages calls toshi.workspace.v1.WorkloadService.ListWorkloadUsages.
+func (c *workloadServiceClient) ListWorkloadUsages(ctx context.Context, req *connect.Request[workspacev1.ListWorkloadUsagesRequest]) (*connect.Response[workspacev1.ListWorkloadUsagesResponse], error) {
+	return c.listWorkloadUsages.CallUnary(ctx, req)
 }
 
 // UpdateJob calls toshi.workspace.v1.WorkloadService.UpdateJob.
@@ -1507,6 +1558,27 @@ type WorkloadServiceHandler interface {
 	//
 	// A page holds 50 jobs when page_size is zero, and 500 at most.
 	ListJobs(context.Context, *connect.Request[workspacev1.ListJobsRequest]) (*connect.Response[workspacev1.ListJobsResponse], error)
+	// GetWorkloadUsage returns one job's, sandbox's or service's runtime and
+	// counters for a UTC month. The request names exactly one of job_id,
+	// sandbox_id and service_id; naming none or more than one fails with
+	// INVALID_ARGUMENT, and so does a month that is not YYYY-MM. An empty month
+	// is the current UTC month. An unknown workload, or one of another kind
+	// than the field naming it, fails with NOT_FOUND.
+	//
+	// The counts need workloads.read. cost is set only for a caller that also
+	// holds billing.read where the workload is; it is an estimate, and the
+	// invoice stays authoritative.
+	GetWorkloadUsage(context.Context, *connect.Request[workspacev1.GetWorkloadUsageRequest]) (*connect.Response[workspacev1.GetWorkloadUsageResponse], error)
+	// ListWorkloadUsages returns the jobs, sandboxes and services of the
+	// project and environment that ran any part of a UTC month, a page at a
+	// time. month is the UTC month as YYYY-MM, and an empty month is the
+	// current one. A page holds 50 workloads when page_size is zero, and 500
+	// at most.
+	//
+	// The runtime and counters need workloads.read. cost is set only for a
+	// caller that also holds billing.read where the workload is; it is an
+	// estimate, and the invoice stays authoritative.
+	ListWorkloadUsages(context.Context, *connect.Request[workspacev1.ListWorkloadUsagesRequest]) (*connect.Response[workspacev1.ListWorkloadUsagesResponse], error)
 	// UpdateJob changes the fields the mask names and returns the job. Only
 	// "labels" can be changed; another path fails with INVALID_ARGUMENT.
 	UpdateJob(context.Context, *connect.Request[workspacev1.UpdateJobRequest]) (*connect.Response[workspacev1.UpdateJobResponse], error)
@@ -1950,6 +2022,18 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("ListJobs")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceGetWorkloadUsageHandler := connect.NewUnaryHandler(
+		WorkloadServiceGetWorkloadUsageProcedure,
+		svc.GetWorkloadUsage,
+		connect.WithSchema(workloadServiceMethods.ByName("GetWorkloadUsage")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceListWorkloadUsagesHandler := connect.NewUnaryHandler(
+		WorkloadServiceListWorkloadUsagesProcedure,
+		svc.ListWorkloadUsages,
+		connect.WithSchema(workloadServiceMethods.ByName("ListWorkloadUsages")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceUpdateJobHandler := connect.NewUnaryHandler(
 		WorkloadServiceUpdateJobProcedure,
 		svc.UpdateJob,
@@ -2342,6 +2426,10 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceGetJobHandler.ServeHTTP(w, r)
 		case WorkloadServiceListJobsProcedure:
 			workloadServiceListJobsHandler.ServeHTTP(w, r)
+		case WorkloadServiceGetWorkloadUsageProcedure:
+			workloadServiceGetWorkloadUsageHandler.ServeHTTP(w, r)
+		case WorkloadServiceListWorkloadUsagesProcedure:
+			workloadServiceListWorkloadUsagesHandler.ServeHTTP(w, r)
 		case WorkloadServiceUpdateJobProcedure:
 			workloadServiceUpdateJobHandler.ServeHTTP(w, r)
 		case WorkloadServiceDeleteJobProcedure:
@@ -2489,6 +2577,14 @@ func (UnimplementedWorkloadServiceHandler) GetJob(context.Context, *connect.Requ
 
 func (UnimplementedWorkloadServiceHandler) ListJobs(context.Context, *connect.Request[workspacev1.ListJobsRequest]) (*connect.Response[workspacev1.ListJobsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ListJobs is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) GetWorkloadUsage(context.Context, *connect.Request[workspacev1.GetWorkloadUsageRequest]) (*connect.Response[workspacev1.GetWorkloadUsageResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.GetWorkloadUsage is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ListWorkloadUsages(context.Context, *connect.Request[workspacev1.ListWorkloadUsagesRequest]) (*connect.Response[workspacev1.ListWorkloadUsagesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ListWorkloadUsages is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) UpdateJob(context.Context, *connect.Request[workspacev1.UpdateJobRequest]) (*connect.Response[workspacev1.UpdateJobResponse], error) {

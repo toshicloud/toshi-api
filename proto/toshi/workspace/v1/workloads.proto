@@ -67,6 +67,35 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
+  // GetWorkloadUsage returns one job's, sandbox's or service's runtime and
+  // counters for a UTC month. The request names exactly one of job_id,
+  // sandbox_id and service_id; naming none or more than one fails with
+  // INVALID_ARGUMENT, and so does a month that is not YYYY-MM. An empty month
+  // is the current UTC month. An unknown workload, or one of another kind
+  // than the field naming it, fails with NOT_FOUND.
+  //
+  // The counts need workloads.read. cost is set only for a caller that also
+  // holds billing.read where the workload is; it is an estimate, and the
+  // invoice stays authoritative.
+  rpc GetWorkloadUsage(GetWorkloadUsageRequest) returns (GetWorkloadUsageResponse) {
+    option (toshi.permission) = "workloads.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // ListWorkloadUsages returns the jobs, sandboxes and services of the
+  // project and environment that ran any part of a UTC month, a page at a
+  // time. month is the UTC month as YYYY-MM, and an empty month is the
+  // current one. A page holds 50 workloads when page_size is zero, and 500
+  // at most.
+  //
+  // The runtime and counters need workloads.read. cost is set only for a
+  // caller that also holds billing.read where the workload is; it is an
+  // estimate, and the invoice stays authoritative.
+  rpc ListWorkloadUsages(ListWorkloadUsagesRequest) returns (ListWorkloadUsagesResponse) {
+    option (toshi.permission) = "workloads.read";
+    option (toshi.scope) = "environment";
+  }
+
   // UpdateJob changes the fields the mask names and returns the job. Only
   // "labels" can be changed; another path fails with INVALID_ARGUMENT.
   rpc UpdateJob(UpdateJobRequest) returns (UpdateJobResponse) {
@@ -912,6 +941,91 @@ message ListJobsResponse {
   // the list returns it. WatchJobs from this cursor shows every change
   // after the list.
   string cursor = 3;
+}
+
+message GetWorkloadUsageRequest {
+  string project = 1;
+  string environment = 2;
+  // Exactly one of job_id, sandbox_id and service_id names the workload.
+  string job_id = 3;
+  string sandbox_id = 4;
+  string service_id = 5;
+  // The UTC month as YYYY-MM; empty is the current UTC month.
+  string month = 6;
+  // A grant the caller's workspace received, to act on the owner's sandbox
+  // through it (docs/grants.md); project and environment are then left
+  // empty, and sandbox_id names its workload.
+  string grant = 7;
+}
+
+message GetWorkloadUsageResponse {
+  WorkloadUsage usage = 1;
+}
+
+// WorkloadUsage is one workload's runtime, counters and, for a caller that
+// holds billing.read, an estimate of its share of the month's bill.
+message WorkloadUsage {
+  // The job's, sandbox's or service's id.
+  string workload_id = 1;
+  // "job", "sandbox" or "service".
+  string kind = 2;
+  // The UTC month, as YYYY-MM.
+  string month = 3;
+  // Whole seconds it ran in the month.
+  int64 running_seconds_month = 4;
+  // Whole seconds it has run since its first start.
+  int64 running_seconds_life = 5;
+  // The CPU milliseconds its runs used, over its life.
+  int64 cpu_millis = 6;
+  // The executions it ran, over its life.
+  int64 executions = 7;
+  // The bytes it sent off its hosts, over its life.
+  uint64 egress_bytes = 8;
+  // The bytes it sent to the exempt destinations, over its life.
+  uint64 exempt_egress_bytes = 9;
+  // Always 0 today: paid starts are counted once start windows exist.
+  int64 paid_starts = 10;
+  // When its runtime was read.
+  google.protobuf.Timestamp running_read_at = 11;
+  // When its counters were read.
+  google.protobuf.Timestamp counters_read_at = 12;
+  // When its egress was read. The three reads are separate, not one
+  // snapshot.
+  google.protobuf.Timestamp egress_read_at = 13;
+  // An estimate of the workload's share of the month's bill. Set only for
+  // a caller that holds billing.read where the workload is; the invoice
+  // stays authoritative.
+  WorkloadCost cost = 14;
+}
+
+// WorkloadCost is an estimate of one workload's share of its invoice. The
+// invoice the provider bills stays authoritative.
+message WorkloadCost {
+  // The cost of the runs that have finished in the month, in cents.
+  int64 current_cents = 1;
+  // current_cents with the open run, if any, priced as if it ended at the
+  // read time.
+  int64 estimated_cents = 2;
+  string currency = 3;
+  // Always true today: a per-workload share is an estimate, not an invoice.
+  bool estimate = 4;
+}
+
+message ListWorkloadUsagesRequest {
+  string project = 1;
+  string environment = 2;
+  // The UTC month as YYYY-MM; empty is the current UTC month.
+  string month = 3;
+  // The most workloads in one page; zero lets the server choose.
+  int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
+}
+
+message ListWorkloadUsagesResponse {
+  repeated WorkloadUsage usages = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message UpdateJobRequest {
