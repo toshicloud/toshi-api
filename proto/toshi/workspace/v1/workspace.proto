@@ -1266,6 +1266,12 @@ enum EventType {
   // Toshi recorded its sign-in. Name: "service.signout". Payload:
   // ServiceSignInEvent.
   EVENT_TYPE_SERVICE_SIGNOUT = 24;
+  // The mail provider reported that a message the workload sent did not
+  // reach a recipient. Name: "mail.bounced". Payload: MailNoticeEvent.
+  EVENT_TYPE_MAIL_BOUNCED = 25;
+  // A recipient of a message the workload sent reported it to their mail
+  // provider as unwanted. Name: "mail.complained". Payload: MailNoticeEvent.
+  EVENT_TYPE_MAIL_COMPLAINED = 26;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -1322,6 +1328,8 @@ message Event {
     ServiceSnapshotFailedEvent service_snapshot_failed = 27;
     // For SERVICE_SIGNIN and SERVICE_SIGNOUT.
     ServiceSignInEvent service_sign_in = 28;
+    // For MAIL_BOUNCED and MAIL_COMPLAINED.
+    MailNoticeEvent mail_notice = 29;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -1331,6 +1339,20 @@ message Event {
   string environment = 12;
   // The connection that received a CONNECTION event; empty for the others.
   string connection_id = 16;
+}
+
+// MailNoticeEvent is what the mail provider reported about one recipient of
+// a message the workload sent. It never holds the message.
+message MailNoticeEvent {
+  // The message's Message-ID header, without its angle brackets.
+  string message_id = 1;
+  // The id the mail provider gave the message.
+  string provider_message_id = 2;
+  // The recipient the notice is about.
+  string recipient = 3;
+  // The provider's own kind of bounce or complaint, as it reported it,
+  // such as "Permanent/General"; empty when it gave none.
+  string detail = 4;
 }
 
 // KeptVMDiscardedEvent records a kept VM discarded before a fresh run.
