@@ -818,6 +818,9 @@ message WorkspaceBilling {
     int64 jobs = 24;
     // Since when the longest-held of them has been held.
     google.protobuf.Timestamp since = 25;
+    // For reason start_rate: the earliest time every start window of the
+    // workspace has room again. Unset otherwise.
+    google.protobuf.Timestamp next_start_at = 26;
   }
 }
 
@@ -909,6 +912,9 @@ message WorkspaceStatement {
   // The month's desktop seats; unset when there were none. Their cost is
   // included in estimated_cents.
   DesktopSeats desktop_seats = 23;
+  // The month's paid starts; unset when there were none. Their cost is
+  // included in estimated_cents.
+  PaidStarts paid_starts = 24;
 }
 
 // DesktopSeats is the month's desktop seats: every seat the workspace held
@@ -928,6 +934,16 @@ message DesktopSeats {
   int64 estimated_cents = 4;
   // The seats, oldest assigned first.
   repeated StatementSeat seats = 5;
+}
+
+// PaidStarts is the month's paid starts: the starts past the plan's included
+// starts, within its ceiling, and what they cost.
+message PaidStarts {
+  // The starts billed for the month.
+  int64 count = 1;
+  // count at the plan's price today, in the smallest unit of currency;
+  // included in estimated_cents.
+  int64 estimated_cents = 2;
 }
 
 // StatementSeat is one desktop seat on a statement.

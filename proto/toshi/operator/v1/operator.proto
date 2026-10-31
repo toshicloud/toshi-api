@@ -584,12 +584,15 @@ message Job {
   google.protobuf.Timestamp stop_requested_at = 20;
   // Why the scheduler last held the job while it was queued:
   // tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
-  // free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
-  // installation_suspended, overflow_wait, no_own_capacity, no_capacity,
-  // cloud_budget, reserved_for_other, volume_claimed, service_quota,
-  // no_network_enforcement, no_build_base or host_kinds. Empty when the job
-  // was never held. It is kept after the job starts.
+  // free_allowance, spend_cap, jobs_per_hour, start_rate, burst_guard,
+  // plan_os, installation_suspended, overflow_wait, no_own_capacity,
+  // no_capacity, cloud_budget, reserved_for_other, volume_claimed,
+  // service_quota, no_network_enforcement, no_build_base or host_kinds.
+  // Empty when the job was never held. It is kept after the job starts.
   string hold_reason = 21;
+  // When the job's hold_reason is start_rate: the earliest time every start
+  // window of the workspace has room again. Unset otherwise.
+  google.protobuf.Timestamp next_start_at = 57;
   // Whether the job was placed on a host its workspace owns. Such a job sends no
   // meter event.
   bool own_host = 22;
@@ -1992,6 +1995,19 @@ message TenantStatement {
   // The month's desktop seats; unset when there were none. Their cost is
   // included in estimated_cents.
   DesktopSeats desktop_seats = 24;
+  // The month's paid starts; unset when there were none. Their cost is
+  // included in estimated_cents.
+  PaidStarts paid_starts = 25;
+}
+
+// PaidStarts is the month's paid starts: the starts past the plan's included
+// starts, within its ceiling, and what they cost.
+message PaidStarts {
+  // The starts billed for the month.
+  int64 count = 1;
+  // count at the plan's price today, in the smallest unit of currency;
+  // included in estimated_cents.
+  int64 estimated_cents = 2;
 }
 
 // DesktopSeats is the month's desktop seats: every seat the workspace held
@@ -2229,6 +2245,9 @@ message TenantBilling {
     int64 jobs = 2;
     // Since when the longest-held of them has been held.
     google.protobuf.Timestamp since = 3;
+    // For reason start_rate: the earliest time every start window of the
+    // workspace has room again. Unset otherwise.
+    google.protobuf.Timestamp next_start_at = 4;
   }
 }
 

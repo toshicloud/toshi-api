@@ -1051,12 +1051,15 @@ type HostJob struct {
 	StopRequestedAt *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=stop_requested_at,json=stopRequestedAt,proto3" json:"stop_requested_at,omitempty"`
 	// Why the scheduler last held the job while it was queued:
 	// tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
-	// free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
-	// installation_suspended, overflow_wait, no_own_capacity, no_capacity,
-	// cloud_budget, reserved_for_other, volume_claimed, service_quota,
-	// no_network_enforcement, no_build_base or host_kinds. Empty when the job
-	// was never held. It is kept after the job starts.
+	// free_allowance, spend_cap, jobs_per_hour, start_rate, burst_guard,
+	// plan_os, installation_suspended, overflow_wait, no_own_capacity,
+	// no_capacity, cloud_budget, reserved_for_other, volume_claimed,
+	// service_quota, no_network_enforcement, no_build_base or host_kinds.
+	// Empty when the job was never held. It is kept after the job starts.
 	HoldReason string `protobuf:"bytes,20,opt,name=hold_reason,json=holdReason,proto3" json:"hold_reason,omitempty"`
+	// When the job's hold_reason is start_rate: the earliest time every start
+	// window of the workspace has room again. Unset otherwise.
+	NextStartAt *timestamppb.Timestamp `protobuf:"bytes,56,opt,name=next_start_at,json=nextStartAt,proto3" json:"next_start_at,omitempty"`
 	// Whether the job was placed on a host its workspace owns. Such a job sends no
 	// meter event.
 	OwnHost bool `protobuf:"varint,21,opt,name=own_host,json=ownHost,proto3" json:"own_host,omitempty"`
@@ -1379,6 +1382,13 @@ func (x *HostJob) GetHoldReason() string {
 		return x.HoldReason
 	}
 	return ""
+}
+
+func (x *HostJob) GetNextStartAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.NextStartAt
+	}
+	return nil
 }
 
 func (x *HostJob) GetOwnHost() bool {
@@ -2305,7 +2315,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x17StopHostJobDebugRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
 	"\x18StopHostJobDebugResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\x9b\x11\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xdb\x11\n" +
 	"\aHostJob\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1e\n" +
 	"\n" +
@@ -2337,7 +2347,8 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"stopReason\x12F\n" +
 	"\x11stop_requested_at\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampR\x0fstopRequestedAt\x12\x1f\n" +
 	"\vhold_reason\x18\x14 \x01(\tR\n" +
-	"holdReason\x12\x19\n" +
+	"holdReason\x12>\n" +
+	"\rnext_start_at\x188 \x01(\v2\x1a.google.protobuf.TimestampR\vnextStartAt\x12\x19\n" +
 	"\bown_host\x18\x15 \x01(\bR\aownHost\x126\n" +
 	"\x17debug_requested_minutes\x18\x16 \x01(\x05R\x15debugRequestedMinutes\x12#\n" +
 	"\rdebug_minutes\x18\x17 \x01(\x05R\fdebugMinutes\x12\x1d\n" +
@@ -2540,36 +2551,37 @@ var file_toshi_workspace_v1_hostjobs_proto_depIdxs = []int32{
 	22, // 13: toshi.workspace.v1.HostJob.started_at:type_name -> google.protobuf.Timestamp
 	22, // 14: toshi.workspace.v1.HostJob.finished_at:type_name -> google.protobuf.Timestamp
 	22, // 15: toshi.workspace.v1.HostJob.stop_requested_at:type_name -> google.protobuf.Timestamp
-	22, // 16: toshi.workspace.v1.HostJob.debug_started_at:type_name -> google.protobuf.Timestamp
-	22, // 17: toshi.workspace.v1.HostJob.debug_until:type_name -> google.protobuf.Timestamp
-	18, // 18: toshi.workspace.v1.HostJob.telemetry:type_name -> toshi.workspace.v1.HostJobTelemetrySummary
-	22, // 19: toshi.workspace.v1.HostJob.runner_request_since:type_name -> google.protobuf.Timestamp
-	19, // 20: toshi.workspace.v1.HostJob.cache:type_name -> toshi.workspace.v1.HostJobCache
-	22, // 21: toshi.workspace.v1.HostJob.runner_exited_at:type_name -> google.protobuf.Timestamp
-	1,  // 22: toshi.workspace.v1.HostJob.kind:type_name -> toshi.workspace.v1.HostJobKind
-	22, // 23: toshi.workspace.v1.HostJobAttempt.assigned_at:type_name -> google.protobuf.Timestamp
-	22, // 24: toshi.workspace.v1.HostJobAttempt.started_at:type_name -> google.protobuf.Timestamp
-	22, // 25: toshi.workspace.v1.HostJobAttempt.finished_at:type_name -> google.protobuf.Timestamp
-	22, // 26: toshi.workspace.v1.HostJobTelemetrySample.at:type_name -> google.protobuf.Timestamp
-	2,  // 27: toshi.workspace.v1.HostJobService.ListHostJobs:input_type -> toshi.workspace.v1.ListHostJobsRequest
-	4,  // 28: toshi.workspace.v1.HostJobService.GetHostJob:input_type -> toshi.workspace.v1.GetHostJobRequest
-	6,  // 29: toshi.workspace.v1.HostJobService.CancelHostJob:input_type -> toshi.workspace.v1.CancelHostJobRequest
-	8,  // 30: toshi.workspace.v1.HostJobService.GetHostJobFailure:input_type -> toshi.workspace.v1.GetHostJobFailureRequest
-	10, // 31: toshi.workspace.v1.HostJobService.GetHostJobTelemetry:input_type -> toshi.workspace.v1.GetHostJobTelemetryRequest
-	12, // 32: toshi.workspace.v1.HostJobService.GetHostJobDebugAccess:input_type -> toshi.workspace.v1.GetHostJobDebugAccessRequest
-	14, // 33: toshi.workspace.v1.HostJobService.StopHostJobDebug:input_type -> toshi.workspace.v1.StopHostJobDebugRequest
-	3,  // 34: toshi.workspace.v1.HostJobService.ListHostJobs:output_type -> toshi.workspace.v1.ListHostJobsResponse
-	5,  // 35: toshi.workspace.v1.HostJobService.GetHostJob:output_type -> toshi.workspace.v1.GetHostJobResponse
-	7,  // 36: toshi.workspace.v1.HostJobService.CancelHostJob:output_type -> toshi.workspace.v1.CancelHostJobResponse
-	9,  // 37: toshi.workspace.v1.HostJobService.GetHostJobFailure:output_type -> toshi.workspace.v1.GetHostJobFailureResponse
-	11, // 38: toshi.workspace.v1.HostJobService.GetHostJobTelemetry:output_type -> toshi.workspace.v1.GetHostJobTelemetryResponse
-	13, // 39: toshi.workspace.v1.HostJobService.GetHostJobDebugAccess:output_type -> toshi.workspace.v1.GetHostJobDebugAccessResponse
-	15, // 40: toshi.workspace.v1.HostJobService.StopHostJobDebug:output_type -> toshi.workspace.v1.StopHostJobDebugResponse
-	34, // [34:41] is the sub-list for method output_type
-	27, // [27:34] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	22, // 16: toshi.workspace.v1.HostJob.next_start_at:type_name -> google.protobuf.Timestamp
+	22, // 17: toshi.workspace.v1.HostJob.debug_started_at:type_name -> google.protobuf.Timestamp
+	22, // 18: toshi.workspace.v1.HostJob.debug_until:type_name -> google.protobuf.Timestamp
+	18, // 19: toshi.workspace.v1.HostJob.telemetry:type_name -> toshi.workspace.v1.HostJobTelemetrySummary
+	22, // 20: toshi.workspace.v1.HostJob.runner_request_since:type_name -> google.protobuf.Timestamp
+	19, // 21: toshi.workspace.v1.HostJob.cache:type_name -> toshi.workspace.v1.HostJobCache
+	22, // 22: toshi.workspace.v1.HostJob.runner_exited_at:type_name -> google.protobuf.Timestamp
+	1,  // 23: toshi.workspace.v1.HostJob.kind:type_name -> toshi.workspace.v1.HostJobKind
+	22, // 24: toshi.workspace.v1.HostJobAttempt.assigned_at:type_name -> google.protobuf.Timestamp
+	22, // 25: toshi.workspace.v1.HostJobAttempt.started_at:type_name -> google.protobuf.Timestamp
+	22, // 26: toshi.workspace.v1.HostJobAttempt.finished_at:type_name -> google.protobuf.Timestamp
+	22, // 27: toshi.workspace.v1.HostJobTelemetrySample.at:type_name -> google.protobuf.Timestamp
+	2,  // 28: toshi.workspace.v1.HostJobService.ListHostJobs:input_type -> toshi.workspace.v1.ListHostJobsRequest
+	4,  // 29: toshi.workspace.v1.HostJobService.GetHostJob:input_type -> toshi.workspace.v1.GetHostJobRequest
+	6,  // 30: toshi.workspace.v1.HostJobService.CancelHostJob:input_type -> toshi.workspace.v1.CancelHostJobRequest
+	8,  // 31: toshi.workspace.v1.HostJobService.GetHostJobFailure:input_type -> toshi.workspace.v1.GetHostJobFailureRequest
+	10, // 32: toshi.workspace.v1.HostJobService.GetHostJobTelemetry:input_type -> toshi.workspace.v1.GetHostJobTelemetryRequest
+	12, // 33: toshi.workspace.v1.HostJobService.GetHostJobDebugAccess:input_type -> toshi.workspace.v1.GetHostJobDebugAccessRequest
+	14, // 34: toshi.workspace.v1.HostJobService.StopHostJobDebug:input_type -> toshi.workspace.v1.StopHostJobDebugRequest
+	3,  // 35: toshi.workspace.v1.HostJobService.ListHostJobs:output_type -> toshi.workspace.v1.ListHostJobsResponse
+	5,  // 36: toshi.workspace.v1.HostJobService.GetHostJob:output_type -> toshi.workspace.v1.GetHostJobResponse
+	7,  // 37: toshi.workspace.v1.HostJobService.CancelHostJob:output_type -> toshi.workspace.v1.CancelHostJobResponse
+	9,  // 38: toshi.workspace.v1.HostJobService.GetHostJobFailure:output_type -> toshi.workspace.v1.GetHostJobFailureResponse
+	11, // 39: toshi.workspace.v1.HostJobService.GetHostJobTelemetry:output_type -> toshi.workspace.v1.GetHostJobTelemetryResponse
+	13, // 40: toshi.workspace.v1.HostJobService.GetHostJobDebugAccess:output_type -> toshi.workspace.v1.GetHostJobDebugAccessResponse
+	15, // 41: toshi.workspace.v1.HostJobService.StopHostJobDebug:output_type -> toshi.workspace.v1.StopHostJobDebugResponse
+	35, // [35:42] is the sub-list for method output_type
+	28, // [28:35] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_hostjobs_proto_init() }

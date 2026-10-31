@@ -234,12 +234,15 @@ message HostJob {
   google.protobuf.Timestamp stop_requested_at = 19;
   // Why the scheduler last held the job while it was queued:
   // tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
-  // free_allowance, spend_cap, jobs_per_hour, burst_guard, plan_os,
-  // installation_suspended, overflow_wait, no_own_capacity, no_capacity,
-  // cloud_budget, reserved_for_other, volume_claimed, service_quota,
-  // no_network_enforcement, no_build_base or host_kinds. Empty when the job
-  // was never held. It is kept after the job starts.
+  // free_allowance, spend_cap, jobs_per_hour, start_rate, burst_guard,
+  // plan_os, installation_suspended, overflow_wait, no_own_capacity,
+  // no_capacity, cloud_budget, reserved_for_other, volume_claimed,
+  // service_quota, no_network_enforcement, no_build_base or host_kinds.
+  // Empty when the job was never held. It is kept after the job starts.
   string hold_reason = 20;
+  // When the job's hold_reason is start_rate: the earliest time every start
+  // window of the workspace has room again. Unset otherwise.
+  google.protobuf.Timestamp next_start_at = 56;
   // Whether the job was placed on a host its workspace owns. Such a job sends no
   // meter event.
   bool own_host = 21;
