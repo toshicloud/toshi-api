@@ -1246,6 +1246,13 @@ enum EventType {
   // why. Name: "service.snapshot_failed" or "service.restore_failed".
   // Payload: ServiceSnapshotFailedEvent.
   EVENT_TYPE_SERVICE_SNAPSHOT_FAILED = 22;
+  // A service's sign-in program signed the service in. Name:
+  // "service.signin". Payload: ServiceSignInEvent.
+  EVENT_TYPE_SERVICE_SIGNIN = 23;
+  // A status command found a service's sign-in program signed out after
+  // Toshi recorded its sign-in. Name: "service.signout". Payload:
+  // ServiceSignInEvent.
+  EVENT_TYPE_SERVICE_SIGNOUT = 24;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -1300,6 +1307,8 @@ message Event {
     ServiceRestoredEvent service_restored = 26;
     // For SERVICE_SNAPSHOT_FAILED.
     ServiceSnapshotFailedEvent service_snapshot_failed = 27;
+    // For SERVICE_SIGNIN and SERVICE_SIGNOUT.
+    ServiceSignInEvent service_sign_in = 28;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -1347,6 +1356,13 @@ message ServiceSnapshotFailedEvent {
   string step = 3;
   // Why.
   string error = 4;
+}
+
+// ServiceSignInEvent is a service's sign-in or sign-out. The service is the
+// event's workload and the time is the event's time.
+message ServiceSignInEvent {
+  // The sign-in program's name, as the recipe declares it.
+  string program = 1;
 }
 
 // UpgradeRolledBackEvent is a service upgrade that failed in its window and
