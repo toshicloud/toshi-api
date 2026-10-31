@@ -306,6 +306,27 @@ message Channel {
   // reads the policy at each request: its value is policy.version. An
   // event channel's is 0.
   int64 applied_policy_version = 25;
+  // The protocol the channel's process speaks, from the service recipe:
+  // "acp", "stream-json" or empty for bytes the relay does not read.
+  // Read-only.
+  string framing = 26;
+  // An ACP channel's state, as its owner last recorded it; unset on any
+  // other channel.
+  ChannelACPState acp_state = 27;
+}
+
+// ChannelACPState is what an ACP channel's process is doing, as the
+// control plane owning the channel last read it from the frames that pass.
+message ChannelACPState {
+  // What the process is doing: idle, turn or permission.
+  string state = 1;
+  // The ACP session the state belongs to.
+  string session_id = 2;
+  // When the state began.
+  google.protobuf.Timestamp since = 3;
+  // The frames the relay dropped since the channel opened, by reason:
+  // unparsable, duplicate_key, too_long or tools.
+  map<string, int64> dropped = 4;
 }
 
 // ChannelEventCounts counts an event channel's messages by state.
@@ -429,6 +450,10 @@ message ChannelPolicy {
   // above 1, order is not kept. Either way a parked message holds up none
   // after it, so order is promised among the messages delivered.
   optional int32 concurrency = 8;
+  // Where an ACP channel's agent runs file and terminal requests: vm (the
+  // default) or device. Only a stream channel declared framing acp takes
+  // it.
+  string tools = 9;
 }
 
 message ChannelModuleList {

@@ -425,8 +425,15 @@ type Channel struct {
 	// reads the policy at each request: its value is policy.version. An
 	// event channel's is 0.
 	AppliedPolicyVersion int64 `protobuf:"varint,25,opt,name=applied_policy_version,json=appliedPolicyVersion,proto3" json:"applied_policy_version,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// The protocol the channel's process speaks, from the service recipe:
+	// "acp", "stream-json" or empty for bytes the relay does not read.
+	// Read-only.
+	Framing string `protobuf:"bytes,26,opt,name=framing,proto3" json:"framing,omitempty"`
+	// An ACP channel's state, as its owner last recorded it; unset on any
+	// other channel.
+	AcpState      *ChannelACPState `protobuf:"bytes,27,opt,name=acp_state,json=acpState,proto3" json:"acp_state,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Channel) Reset() {
@@ -634,6 +641,95 @@ func (x *Channel) GetAppliedPolicyVersion() int64 {
 	return 0
 }
 
+func (x *Channel) GetFraming() string {
+	if x != nil {
+		return x.Framing
+	}
+	return ""
+}
+
+func (x *Channel) GetAcpState() *ChannelACPState {
+	if x != nil {
+		return x.AcpState
+	}
+	return nil
+}
+
+// ChannelACPState is what an ACP channel's process is doing, as the
+// control plane owning the channel last read it from the frames that pass.
+type ChannelACPState struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// What the process is doing: idle, turn or permission.
+	State string `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
+	// The ACP session the state belongs to.
+	SessionId string `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	// When the state began.
+	Since *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=since,proto3" json:"since,omitempty"`
+	// The frames the relay dropped since the channel opened, by reason:
+	// unparsable, duplicate_key, too_long or tools.
+	Dropped       map[string]int64 `protobuf:"bytes,4,rep,name=dropped,proto3" json:"dropped,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChannelACPState) Reset() {
+	*x = ChannelACPState{}
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChannelACPState) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChannelACPState) ProtoMessage() {}
+
+func (x *ChannelACPState) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChannelACPState.ProtoReflect.Descriptor instead.
+func (*ChannelACPState) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ChannelACPState) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *ChannelACPState) GetSessionId() string {
+	if x != nil {
+		return x.SessionId
+	}
+	return ""
+}
+
+func (x *ChannelACPState) GetSince() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Since
+	}
+	return nil
+}
+
+func (x *ChannelACPState) GetDropped() map[string]int64 {
+	if x != nil {
+		return x.Dropped
+	}
+	return nil
+}
+
 // ChannelEventCounts counts an event channel's messages by state.
 type ChannelEventCounts struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
@@ -652,7 +748,7 @@ type ChannelEventCounts struct {
 
 func (x *ChannelEventCounts) Reset() {
 	*x = ChannelEventCounts{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -664,7 +760,7 @@ func (x *ChannelEventCounts) String() string {
 func (*ChannelEventCounts) ProtoMessage() {}
 
 func (x *ChannelEventCounts) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -677,7 +773,7 @@ func (x *ChannelEventCounts) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelEventCounts.ProtoReflect.Descriptor instead.
 func (*ChannelEventCounts) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ChannelEventCounts) GetPending() int64 {
@@ -743,7 +839,7 @@ type ChannelMessageSource struct {
 
 func (x *ChannelMessageSource) Reset() {
 	*x = ChannelMessageSource{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -755,7 +851,7 @@ func (x *ChannelMessageSource) String() string {
 func (*ChannelMessageSource) ProtoMessage() {}
 
 func (x *ChannelMessageSource) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -768,7 +864,7 @@ func (x *ChannelMessageSource) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelMessageSource.ProtoReflect.Descriptor instead.
 func (*ChannelMessageSource) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ChannelMessageSource) GetKind() string {
@@ -816,7 +912,7 @@ type ChannelMessage struct {
 
 func (x *ChannelMessage) Reset() {
 	*x = ChannelMessage{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -828,7 +924,7 @@ func (x *ChannelMessage) String() string {
 func (*ChannelMessage) ProtoMessage() {}
 
 func (x *ChannelMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -841,7 +937,7 @@ func (x *ChannelMessage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelMessage.ProtoReflect.Descriptor instead.
 func (*ChannelMessage) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ChannelMessage) GetId() string {
@@ -962,7 +1058,7 @@ type ChannelClient struct {
 
 func (x *ChannelClient) Reset() {
 	*x = ChannelClient{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -974,7 +1070,7 @@ func (x *ChannelClient) String() string {
 func (*ChannelClient) ProtoMessage() {}
 
 func (x *ChannelClient) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -987,7 +1083,7 @@ func (x *ChannelClient) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelClient.ProtoReflect.Descriptor instead.
 func (*ChannelClient) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ChannelClient) GetId() string {
@@ -1093,14 +1189,18 @@ type ChannelPolicy struct {
 	// order they were sent, and none passes one waiting to be tried again;
 	// above 1, order is not kept. Either way a parked message holds up none
 	// after it, so order is promised among the messages delivered.
-	Concurrency   *int32 `protobuf:"varint,8,opt,name=concurrency,proto3,oneof" json:"concurrency,omitempty"`
+	Concurrency *int32 `protobuf:"varint,8,opt,name=concurrency,proto3,oneof" json:"concurrency,omitempty"`
+	// Where an ACP channel's agent runs file and terminal requests: vm (the
+	// default) or device. Only a stream channel declared framing acp takes
+	// it.
+	Tools         string `protobuf:"bytes,9,opt,name=tools,proto3" json:"tools,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ChannelPolicy) Reset() {
 	*x = ChannelPolicy{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1112,7 +1212,7 @@ func (x *ChannelPolicy) String() string {
 func (*ChannelPolicy) ProtoMessage() {}
 
 func (x *ChannelPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1125,7 +1225,7 @@ func (x *ChannelPolicy) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelPolicy.ProtoReflect.Descriptor instead.
 func (*ChannelPolicy) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ChannelPolicy) GetVersion() int64 {
@@ -1184,6 +1284,13 @@ func (x *ChannelPolicy) GetConcurrency() int32 {
 	return 0
 }
 
+func (x *ChannelPolicy) GetTools() string {
+	if x != nil {
+		return x.Tools
+	}
+	return ""
+}
+
 type ChannelModuleList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Modules       []*ChannelModule       `protobuf:"bytes,1,rep,name=modules,proto3" json:"modules,omitempty"`
@@ -1193,7 +1300,7 @@ type ChannelModuleList struct {
 
 func (x *ChannelModuleList) Reset() {
 	*x = ChannelModuleList{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1205,7 +1312,7 @@ func (x *ChannelModuleList) String() string {
 func (*ChannelModuleList) ProtoMessage() {}
 
 func (x *ChannelModuleList) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1218,7 +1325,7 @@ func (x *ChannelModuleList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelModuleList.ProtoReflect.Descriptor instead.
 func (*ChannelModuleList) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ChannelModuleList) GetModules() []*ChannelModule {
@@ -1281,7 +1388,7 @@ type ChannelModule struct {
 
 func (x *ChannelModule) Reset() {
 	*x = ChannelModule{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1293,7 +1400,7 @@ func (x *ChannelModule) String() string {
 func (*ChannelModule) ProtoMessage() {}
 
 func (x *ChannelModule) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1306,7 +1413,7 @@ func (x *ChannelModule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelModule.ProtoReflect.Descriptor instead.
 func (*ChannelModule) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ChannelModule) GetKind() string {
@@ -1432,7 +1539,7 @@ type ChannelMatch struct {
 
 func (x *ChannelMatch) Reset() {
 	*x = ChannelMatch{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1444,7 +1551,7 @@ func (x *ChannelMatch) String() string {
 func (*ChannelMatch) ProtoMessage() {}
 
 func (x *ChannelMatch) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1457,7 +1564,7 @@ func (x *ChannelMatch) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelMatch.ProtoReflect.Descriptor instead.
 func (*ChannelMatch) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ChannelMatch) GetHosts() []string {
@@ -1524,7 +1631,7 @@ type ChannelRequest struct {
 
 func (x *ChannelRequest) Reset() {
 	*x = ChannelRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1536,7 +1643,7 @@ func (x *ChannelRequest) String() string {
 func (*ChannelRequest) ProtoMessage() {}
 
 func (x *ChannelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1549,7 +1656,7 @@ func (x *ChannelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelRequest.ProtoReflect.Descriptor instead.
 func (*ChannelRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ChannelRequest) GetSeq() int64 {
@@ -1705,7 +1812,7 @@ type ChannelRequestCaller struct {
 
 func (x *ChannelRequestCaller) Reset() {
 	*x = ChannelRequestCaller{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1717,7 +1824,7 @@ func (x *ChannelRequestCaller) String() string {
 func (*ChannelRequestCaller) ProtoMessage() {}
 
 func (x *ChannelRequestCaller) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1730,7 +1837,7 @@ func (x *ChannelRequestCaller) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelRequestCaller.ProtoReflect.Descriptor instead.
 func (*ChannelRequestCaller) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ChannelRequestCaller) GetUser() string {
@@ -1767,7 +1874,7 @@ type ChannelHeader struct {
 
 func (x *ChannelHeader) Reset() {
 	*x = ChannelHeader{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1779,7 +1886,7 @@ func (x *ChannelHeader) String() string {
 func (*ChannelHeader) ProtoMessage() {}
 
 func (x *ChannelHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1792,7 +1899,7 @@ func (x *ChannelHeader) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelHeader.ProtoReflect.Descriptor instead.
 func (*ChannelHeader) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ChannelHeader) GetName() string {
@@ -1828,7 +1935,7 @@ type ChannelBody struct {
 
 func (x *ChannelBody) Reset() {
 	*x = ChannelBody{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1840,7 +1947,7 @@ func (x *ChannelBody) String() string {
 func (*ChannelBody) ProtoMessage() {}
 
 func (x *ChannelBody) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1853,7 +1960,7 @@ func (x *ChannelBody) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelBody.ProtoReflect.Descriptor instead.
 func (*ChannelBody) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ChannelBody) GetContentType() string {
@@ -1898,7 +2005,7 @@ type Forward struct {
 
 func (x *Forward) Reset() {
 	*x = Forward{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1910,7 +2017,7 @@ func (x *Forward) String() string {
 func (*Forward) ProtoMessage() {}
 
 func (x *Forward) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1923,7 +2030,7 @@ func (x *Forward) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Forward.ProtoReflect.Descriptor instead.
 func (*Forward) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{13}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *Forward) GetTarget() string {
@@ -1993,7 +2100,7 @@ type Link struct {
 
 func (x *Link) Reset() {
 	*x = Link{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2005,7 +2112,7 @@ func (x *Link) String() string {
 func (*Link) ProtoMessage() {}
 
 func (x *Link) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2018,7 +2125,7 @@ func (x *Link) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Link.ProtoReflect.Descriptor instead.
 func (*Link) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{14}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *Link) GetConnected() bool {
@@ -2103,7 +2210,7 @@ type CreateChannelRequest struct {
 
 func (x *CreateChannelRequest) Reset() {
 	*x = CreateChannelRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2115,7 +2222,7 @@ func (x *CreateChannelRequest) String() string {
 func (*CreateChannelRequest) ProtoMessage() {}
 
 func (x *CreateChannelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2128,7 +2235,7 @@ func (x *CreateChannelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateChannelRequest.ProtoReflect.Descriptor instead.
 func (*CreateChannelRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{15}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *CreateChannelRequest) GetJobId() string {
@@ -2189,7 +2296,7 @@ type CreateChannelResponse struct {
 
 func (x *CreateChannelResponse) Reset() {
 	*x = CreateChannelResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2201,7 +2308,7 @@ func (x *CreateChannelResponse) String() string {
 func (*CreateChannelResponse) ProtoMessage() {}
 
 func (x *CreateChannelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2214,7 +2321,7 @@ func (x *CreateChannelResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateChannelResponse.ProtoReflect.Descriptor instead.
 func (*CreateChannelResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{16}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *CreateChannelResponse) GetChannel() *Channel {
@@ -2244,7 +2351,7 @@ type ListChannelsRequest struct {
 
 func (x *ListChannelsRequest) Reset() {
 	*x = ListChannelsRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2256,7 +2363,7 @@ func (x *ListChannelsRequest) String() string {
 func (*ListChannelsRequest) ProtoMessage() {}
 
 func (x *ListChannelsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2269,7 +2376,7 @@ func (x *ListChannelsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListChannelsRequest.ProtoReflect.Descriptor instead.
 func (*ListChannelsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ListChannelsRequest) GetJobId() string {
@@ -2318,7 +2425,7 @@ type ListChannelsResponse struct {
 
 func (x *ListChannelsResponse) Reset() {
 	*x = ListChannelsResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2330,7 +2437,7 @@ func (x *ListChannelsResponse) String() string {
 func (*ListChannelsResponse) ProtoMessage() {}
 
 func (x *ListChannelsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2343,7 +2450,7 @@ func (x *ListChannelsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListChannelsResponse.ProtoReflect.Descriptor instead.
 func (*ListChannelsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ListChannelsResponse) GetChannels() []*Channel {
@@ -2375,7 +2482,7 @@ type GetChannelRequest struct {
 
 func (x *GetChannelRequest) Reset() {
 	*x = GetChannelRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2387,7 +2494,7 @@ func (x *GetChannelRequest) String() string {
 func (*GetChannelRequest) ProtoMessage() {}
 
 func (x *GetChannelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2400,7 +2507,7 @@ func (x *GetChannelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetChannelRequest.ProtoReflect.Descriptor instead.
 func (*GetChannelRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{19}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetChannelRequest) GetJobId() string {
@@ -2440,7 +2547,7 @@ type GetChannelResponse struct {
 
 func (x *GetChannelResponse) Reset() {
 	*x = GetChannelResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2452,7 +2559,7 @@ func (x *GetChannelResponse) String() string {
 func (*GetChannelResponse) ProtoMessage() {}
 
 func (x *GetChannelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2465,7 +2572,7 @@ func (x *GetChannelResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetChannelResponse.ProtoReflect.Descriptor instead.
 func (*GetChannelResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{20}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetChannelResponse) GetChannel() *Channel {
@@ -2487,7 +2594,7 @@ type GetChannelPolicyRequest struct {
 
 func (x *GetChannelPolicyRequest) Reset() {
 	*x = GetChannelPolicyRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2499,7 +2606,7 @@ func (x *GetChannelPolicyRequest) String() string {
 func (*GetChannelPolicyRequest) ProtoMessage() {}
 
 func (x *GetChannelPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2512,7 +2619,7 @@ func (x *GetChannelPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetChannelPolicyRequest.ProtoReflect.Descriptor instead.
 func (*GetChannelPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{21}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetChannelPolicyRequest) GetJobId() string {
@@ -2545,7 +2652,7 @@ type GetChannelPolicyResponse struct {
 
 func (x *GetChannelPolicyResponse) Reset() {
 	*x = GetChannelPolicyResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2557,7 +2664,7 @@ func (x *GetChannelPolicyResponse) String() string {
 func (*GetChannelPolicyResponse) ProtoMessage() {}
 
 func (x *GetChannelPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2570,7 +2677,7 @@ func (x *GetChannelPolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetChannelPolicyResponse.ProtoReflect.Descriptor instead.
 func (*GetChannelPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{22}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetChannelPolicyResponse) GetPolicy() *ChannelPolicy {
@@ -2598,7 +2705,7 @@ type SetChannelPolicyRequest struct {
 
 func (x *SetChannelPolicyRequest) Reset() {
 	*x = SetChannelPolicyRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2610,7 +2717,7 @@ func (x *SetChannelPolicyRequest) String() string {
 func (*SetChannelPolicyRequest) ProtoMessage() {}
 
 func (x *SetChannelPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2623,7 +2730,7 @@ func (x *SetChannelPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetChannelPolicyRequest.ProtoReflect.Descriptor instead.
 func (*SetChannelPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{23}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *SetChannelPolicyRequest) GetJobId() string {
@@ -2671,7 +2778,7 @@ type SetChannelPolicyResponse struct {
 
 func (x *SetChannelPolicyResponse) Reset() {
 	*x = SetChannelPolicyResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[24]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2683,7 +2790,7 @@ func (x *SetChannelPolicyResponse) String() string {
 func (*SetChannelPolicyResponse) ProtoMessage() {}
 
 func (x *SetChannelPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[24]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2696,7 +2803,7 @@ func (x *SetChannelPolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetChannelPolicyResponse.ProtoReflect.Descriptor instead.
 func (*SetChannelPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{24}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *SetChannelPolicyResponse) GetPolicy() *ChannelPolicy {
@@ -2735,7 +2842,7 @@ type ListChannelRequestsRequest struct {
 
 func (x *ListChannelRequestsRequest) Reset() {
 	*x = ListChannelRequestsRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[25]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2747,7 +2854,7 @@ func (x *ListChannelRequestsRequest) String() string {
 func (*ListChannelRequestsRequest) ProtoMessage() {}
 
 func (x *ListChannelRequestsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[25]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2760,7 +2867,7 @@ func (x *ListChannelRequestsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListChannelRequestsRequest.ProtoReflect.Descriptor instead.
 func (*ListChannelRequestsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{25}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ListChannelRequestsRequest) GetJobId() string {
@@ -2855,7 +2962,7 @@ type ListChannelRequestsResponse struct {
 
 func (x *ListChannelRequestsResponse) Reset() {
 	*x = ListChannelRequestsResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[26]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2867,7 +2974,7 @@ func (x *ListChannelRequestsResponse) String() string {
 func (*ListChannelRequestsResponse) ProtoMessage() {}
 
 func (x *ListChannelRequestsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[26]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2880,7 +2987,7 @@ func (x *ListChannelRequestsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListChannelRequestsResponse.ProtoReflect.Descriptor instead.
 func (*ListChannelRequestsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{26}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListChannelRequestsResponse) GetRequests() []*ChannelRequest {
@@ -2922,7 +3029,7 @@ type GetChannelRequestRequest struct {
 
 func (x *GetChannelRequestRequest) Reset() {
 	*x = GetChannelRequestRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[27]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2934,7 +3041,7 @@ func (x *GetChannelRequestRequest) String() string {
 func (*GetChannelRequestRequest) ProtoMessage() {}
 
 func (x *GetChannelRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[27]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2947,7 +3054,7 @@ func (x *GetChannelRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetChannelRequestRequest.ProtoReflect.Descriptor instead.
 func (*GetChannelRequestRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{27}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *GetChannelRequestRequest) GetJobId() string {
@@ -2980,7 +3087,7 @@ type GetChannelRequestResponse struct {
 
 func (x *GetChannelRequestResponse) Reset() {
 	*x = GetChannelRequestResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[28]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2992,7 +3099,7 @@ func (x *GetChannelRequestResponse) String() string {
 func (*GetChannelRequestResponse) ProtoMessage() {}
 
 func (x *GetChannelRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[28]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3005,7 +3112,7 @@ func (x *GetChannelRequestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetChannelRequestResponse.ProtoReflect.Descriptor instead.
 func (*GetChannelRequestResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{28}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *GetChannelRequestResponse) GetRequest() *ChannelRequest {
@@ -3036,7 +3143,7 @@ type ExportChannelLogRequest struct {
 
 func (x *ExportChannelLogRequest) Reset() {
 	*x = ExportChannelLogRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[29]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3048,7 +3155,7 @@ func (x *ExportChannelLogRequest) String() string {
 func (*ExportChannelLogRequest) ProtoMessage() {}
 
 func (x *ExportChannelLogRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[29]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3061,7 +3168,7 @@ func (x *ExportChannelLogRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportChannelLogRequest.ProtoReflect.Descriptor instead.
 func (*ExportChannelLogRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{29}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ExportChannelLogRequest) GetJobId() string {
@@ -3134,7 +3241,7 @@ type ExportChannelLogResponse struct {
 
 func (x *ExportChannelLogResponse) Reset() {
 	*x = ExportChannelLogResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[30]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3146,7 +3253,7 @@ func (x *ExportChannelLogResponse) String() string {
 func (*ExportChannelLogResponse) ProtoMessage() {}
 
 func (x *ExportChannelLogResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[30]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3159,7 +3266,7 @@ func (x *ExportChannelLogResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportChannelLogResponse.ProtoReflect.Descriptor instead.
 func (*ExportChannelLogResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{30}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ExportChannelLogResponse) GetData() []byte {
@@ -3215,7 +3322,7 @@ type CreateChannelConnectTokenRequest struct {
 
 func (x *CreateChannelConnectTokenRequest) Reset() {
 	*x = CreateChannelConnectTokenRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[31]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3227,7 +3334,7 @@ func (x *CreateChannelConnectTokenRequest) String() string {
 func (*CreateChannelConnectTokenRequest) ProtoMessage() {}
 
 func (x *CreateChannelConnectTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[31]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3240,7 +3347,7 @@ func (x *CreateChannelConnectTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateChannelConnectTokenRequest.ProtoReflect.Descriptor instead.
 func (*CreateChannelConnectTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{31}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *CreateChannelConnectTokenRequest) GetJobId() string {
@@ -3296,7 +3403,7 @@ type CreateChannelConnectTokenResponse struct {
 
 func (x *CreateChannelConnectTokenResponse) Reset() {
 	*x = CreateChannelConnectTokenResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[32]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3308,7 +3415,7 @@ func (x *CreateChannelConnectTokenResponse) String() string {
 func (*CreateChannelConnectTokenResponse) ProtoMessage() {}
 
 func (x *CreateChannelConnectTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[32]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3321,7 +3428,7 @@ func (x *CreateChannelConnectTokenResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use CreateChannelConnectTokenResponse.ProtoReflect.Descriptor instead.
 func (*CreateChannelConnectTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{32}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *CreateChannelConnectTokenResponse) GetId() string {
@@ -3378,7 +3485,7 @@ type RevokeChannelConnectTokenRequest struct {
 
 func (x *RevokeChannelConnectTokenRequest) Reset() {
 	*x = RevokeChannelConnectTokenRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[33]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3390,7 +3497,7 @@ func (x *RevokeChannelConnectTokenRequest) String() string {
 func (*RevokeChannelConnectTokenRequest) ProtoMessage() {}
 
 func (x *RevokeChannelConnectTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[33]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3403,7 +3510,7 @@ func (x *RevokeChannelConnectTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeChannelConnectTokenRequest.ProtoReflect.Descriptor instead.
 func (*RevokeChannelConnectTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{33}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *RevokeChannelConnectTokenRequest) GetJobId() string {
@@ -3435,7 +3542,7 @@ type RevokeChannelConnectTokenResponse struct {
 
 func (x *RevokeChannelConnectTokenResponse) Reset() {
 	*x = RevokeChannelConnectTokenResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[34]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3447,7 +3554,7 @@ func (x *RevokeChannelConnectTokenResponse) String() string {
 func (*RevokeChannelConnectTokenResponse) ProtoMessage() {}
 
 func (x *RevokeChannelConnectTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[34]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3460,7 +3567,7 @@ func (x *RevokeChannelConnectTokenResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use RevokeChannelConnectTokenResponse.ProtoReflect.Descriptor instead.
 func (*RevokeChannelConnectTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{34}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{35}
 }
 
 type DeleteChannelRequest struct {
@@ -3476,7 +3583,7 @@ type DeleteChannelRequest struct {
 
 func (x *DeleteChannelRequest) Reset() {
 	*x = DeleteChannelRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[35]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3488,7 +3595,7 @@ func (x *DeleteChannelRequest) String() string {
 func (*DeleteChannelRequest) ProtoMessage() {}
 
 func (x *DeleteChannelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[35]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3501,7 +3608,7 @@ func (x *DeleteChannelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteChannelRequest.ProtoReflect.Descriptor instead.
 func (*DeleteChannelRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{35}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *DeleteChannelRequest) GetJobId() string {
@@ -3533,7 +3640,7 @@ type DeleteChannelResponse struct {
 
 func (x *DeleteChannelResponse) Reset() {
 	*x = DeleteChannelResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[36]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3545,7 +3652,7 @@ func (x *DeleteChannelResponse) String() string {
 func (*DeleteChannelResponse) ProtoMessage() {}
 
 func (x *DeleteChannelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[36]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3558,7 +3665,7 @@ func (x *DeleteChannelResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteChannelResponse.ProtoReflect.Descriptor instead.
 func (*DeleteChannelResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{36}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{37}
 }
 
 type ListForwardsRequest struct {
@@ -3574,7 +3681,7 @@ type ListForwardsRequest struct {
 
 func (x *ListForwardsRequest) Reset() {
 	*x = ListForwardsRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[37]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3586,7 +3693,7 @@ func (x *ListForwardsRequest) String() string {
 func (*ListForwardsRequest) ProtoMessage() {}
 
 func (x *ListForwardsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[37]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3599,7 +3706,7 @@ func (x *ListForwardsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListForwardsRequest.ProtoReflect.Descriptor instead.
 func (*ListForwardsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{37}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *ListForwardsRequest) GetJobId() string {
@@ -3634,7 +3741,7 @@ type ListForwardsResponse struct {
 
 func (x *ListForwardsResponse) Reset() {
 	*x = ListForwardsResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[38]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3646,7 +3753,7 @@ func (x *ListForwardsResponse) String() string {
 func (*ListForwardsResponse) ProtoMessage() {}
 
 func (x *ListForwardsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[38]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3659,7 +3766,7 @@ func (x *ListForwardsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListForwardsResponse.ProtoReflect.Descriptor instead.
 func (*ListForwardsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{38}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ListForwardsResponse) GetForwards() []*Forward {
@@ -3685,7 +3792,7 @@ type GetLinkRequest struct {
 
 func (x *GetLinkRequest) Reset() {
 	*x = GetLinkRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[39]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3697,7 +3804,7 @@ func (x *GetLinkRequest) String() string {
 func (*GetLinkRequest) ProtoMessage() {}
 
 func (x *GetLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[39]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3710,7 +3817,7 @@ func (x *GetLinkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLinkRequest.ProtoReflect.Descriptor instead.
 func (*GetLinkRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{39}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *GetLinkRequest) GetJobId() string {
@@ -3729,7 +3836,7 @@ type GetLinkResponse struct {
 
 func (x *GetLinkResponse) Reset() {
 	*x = GetLinkResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[40]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3741,7 +3848,7 @@ func (x *GetLinkResponse) String() string {
 func (*GetLinkResponse) ProtoMessage() {}
 
 func (x *GetLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[40]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3754,7 +3861,7 @@ func (x *GetLinkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLinkResponse.ProtoReflect.Descriptor instead.
 func (*GetLinkResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{40}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetLinkResponse) GetLink() *Link {
@@ -3783,7 +3890,7 @@ type SendChannelMessageRequest struct {
 
 func (x *SendChannelMessageRequest) Reset() {
 	*x = SendChannelMessageRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[41]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3795,7 +3902,7 @@ func (x *SendChannelMessageRequest) String() string {
 func (*SendChannelMessageRequest) ProtoMessage() {}
 
 func (x *SendChannelMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[41]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3808,7 +3915,7 @@ func (x *SendChannelMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendChannelMessageRequest.ProtoReflect.Descriptor instead.
 func (*SendChannelMessageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{41}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *SendChannelMessageRequest) GetService() string {
@@ -3857,7 +3964,7 @@ type SendChannelMessageResponse struct {
 
 func (x *SendChannelMessageResponse) Reset() {
 	*x = SendChannelMessageResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[42]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3869,7 +3976,7 @@ func (x *SendChannelMessageResponse) String() string {
 func (*SendChannelMessageResponse) ProtoMessage() {}
 
 func (x *SendChannelMessageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[42]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3882,7 +3989,7 @@ func (x *SendChannelMessageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendChannelMessageResponse.ProtoReflect.Descriptor instead.
 func (*SendChannelMessageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{42}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *SendChannelMessageResponse) GetMessageId() string {
@@ -3915,7 +4022,7 @@ type TailChannelMessagesRequest struct {
 
 func (x *TailChannelMessagesRequest) Reset() {
 	*x = TailChannelMessagesRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[43]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3927,7 +4034,7 @@ func (x *TailChannelMessagesRequest) String() string {
 func (*TailChannelMessagesRequest) ProtoMessage() {}
 
 func (x *TailChannelMessagesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[43]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3940,7 +4047,7 @@ func (x *TailChannelMessagesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TailChannelMessagesRequest.ProtoReflect.Descriptor instead.
 func (*TailChannelMessagesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{43}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *TailChannelMessagesRequest) GetService() string {
@@ -3982,7 +4089,7 @@ type TailChannelMessagesResponse struct {
 
 func (x *TailChannelMessagesResponse) Reset() {
 	*x = TailChannelMessagesResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[44]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3994,7 +4101,7 @@ func (x *TailChannelMessagesResponse) String() string {
 func (*TailChannelMessagesResponse) ProtoMessage() {}
 
 func (x *TailChannelMessagesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[44]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4007,7 +4114,7 @@ func (x *TailChannelMessagesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TailChannelMessagesResponse.ProtoReflect.Descriptor instead.
 func (*TailChannelMessagesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{44}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *TailChannelMessagesResponse) GetMessage() *ChannelMessage {
@@ -4036,7 +4143,7 @@ type ReplayChannelMessageRequest struct {
 
 func (x *ReplayChannelMessageRequest) Reset() {
 	*x = ReplayChannelMessageRequest{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[45]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4048,7 +4155,7 @@ func (x *ReplayChannelMessageRequest) String() string {
 func (*ReplayChannelMessageRequest) ProtoMessage() {}
 
 func (x *ReplayChannelMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[45]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4061,7 +4168,7 @@ func (x *ReplayChannelMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReplayChannelMessageRequest.ProtoReflect.Descriptor instead.
 func (*ReplayChannelMessageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{45}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *ReplayChannelMessageRequest) GetService() string {
@@ -4095,7 +4202,7 @@ type ReplayChannelMessageResponse struct {
 
 func (x *ReplayChannelMessageResponse) Reset() {
 	*x = ReplayChannelMessageResponse{}
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[46]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4107,7 +4214,7 @@ func (x *ReplayChannelMessageResponse) String() string {
 func (*ReplayChannelMessageResponse) ProtoMessage() {}
 
 func (x *ReplayChannelMessageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[46]
+	mi := &file_toshi_workspace_v1_channels_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4120,7 +4227,7 @@ func (x *ReplayChannelMessageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReplayChannelMessageResponse.ProtoReflect.Descriptor instead.
 func (*ReplayChannelMessageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{46}
+	return file_toshi_workspace_v1_channels_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *ReplayChannelMessageResponse) GetMessage() *ChannelMessage {
@@ -4134,7 +4241,7 @@ var File_toshi_workspace_v1_channels_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/channels.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xc8\a\n" +
+	"!toshi/workspace/v1/channels.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa4\b\n" +
 	"\aChannel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06job_id\x18\x02 \x01(\tR\x05jobId\x12\x12\n" +
@@ -4165,9 +4272,20 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\x04path\x18\x16 \x01(\tR\x04path\x12>\n" +
 	"\x06events\x18\x17 \x01(\v2&.toshi.workspace.v1.ChannelEventCountsR\x06events\x12\x19\n" +
 	"\bgrant_id\x18\x18 \x01(\tR\agrantId\x124\n" +
-	"\x16applied_policy_version\x18\x19 \x01(\x03R\x14appliedPolicyVersionB\f\n" +
+	"\x16applied_policy_version\x18\x19 \x01(\x03R\x14appliedPolicyVersion\x12\x18\n" +
+	"\aframing\x18\x1a \x01(\tR\aframing\x12@\n" +
+	"\tacp_state\x18\x1b \x01(\v2#.toshi.workspace.v1.ChannelACPStateR\bacpStateB\f\n" +
 	"\n" +
-	"_exit_code\"\x84\x02\n" +
+	"_exit_code\"\x80\x02\n" +
+	"\x0fChannelACPState\x12\x14\n" +
+	"\x05state\x18\x01 \x01(\tR\x05state\x12\x1d\n" +
+	"\n" +
+	"session_id\x18\x02 \x01(\tR\tsessionId\x120\n" +
+	"\x05since\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12J\n" +
+	"\adropped\x18\x04 \x03(\v20.toshi.workspace.v1.ChannelACPState.DroppedEntryR\adropped\x1a:\n" +
+	"\fDroppedEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01\"\x84\x02\n" +
 	"\x12ChannelEventCounts\x12\x18\n" +
 	"\apending\x18\x01 \x01(\x03R\apending\x12\x1b\n" +
 	"\tin_flight\x18\x02 \x01(\x03R\binFlight\x12\x1c\n" +
@@ -4211,7 +4329,7 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"detachedAt\x12!\n" +
 	"\foutput_acked\x18\t \x01(\x03R\voutputAcked\x12\x1a\n" +
 	"\battached\x18\n" +
-	" \x01(\bR\battached\"\xbc\x02\n" +
+	" \x01(\bR\battached\"\xd2\x02\n" +
 	"\rChannelPolicy\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\x03R\aversion\x12\x16\n" +
 	"\x06attach\x18\x02 \x01(\tR\x06attach\x12$\n" +
@@ -4221,7 +4339,8 @@ const file_toshi_workspace_v1_channels_proto_rawDesc = "" +
 	"\x04keep\x18\x05 \x01(\tR\x04keep\x12?\n" +
 	"\amodules\x18\x06 \x01(\v2%.toshi.workspace.v1.ChannelModuleListR\amodules\x12!\n" +
 	"\fack_deadline\x18\a \x01(\tR\vackDeadline\x12%\n" +
-	"\vconcurrency\x18\b \x01(\x05H\x01R\vconcurrency\x88\x01\x01B\x0e\n" +
+	"\vconcurrency\x18\b \x01(\x05H\x01R\vconcurrency\x88\x01\x01\x12\x14\n" +
+	"\x05tools\x18\t \x01(\tR\x05toolsB\x0e\n" +
 	"\f_max_clientsB\x0e\n" +
 	"\f_concurrency\"P\n" +
 	"\x11ChannelModuleList\x12;\n" +
@@ -4526,7 +4645,7 @@ func file_toshi_workspace_v1_channels_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_channels_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_toshi_workspace_v1_channels_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
+var file_toshi_workspace_v1_channels_proto_msgTypes = make([]protoimpl.MessageInfo, 50)
 var file_toshi_workspace_v1_channels_proto_goTypes = []any{
 	(ChannelShape)(0),                         // 0: toshi.workspace.v1.ChannelShape
 	(ChannelState)(0),                         // 1: toshi.workspace.v1.ChannelState
@@ -4535,149 +4654,154 @@ var file_toshi_workspace_v1_channels_proto_goTypes = []any{
 	(ChannelLog)(0),                           // 4: toshi.workspace.v1.ChannelLog
 	(ChannelMessageState)(0),                  // 5: toshi.workspace.v1.ChannelMessageState
 	(*Channel)(nil),                           // 6: toshi.workspace.v1.Channel
-	(*ChannelEventCounts)(nil),                // 7: toshi.workspace.v1.ChannelEventCounts
-	(*ChannelMessageSource)(nil),              // 8: toshi.workspace.v1.ChannelMessageSource
-	(*ChannelMessage)(nil),                    // 9: toshi.workspace.v1.ChannelMessage
-	(*ChannelClient)(nil),                     // 10: toshi.workspace.v1.ChannelClient
-	(*ChannelPolicy)(nil),                     // 11: toshi.workspace.v1.ChannelPolicy
-	(*ChannelModuleList)(nil),                 // 12: toshi.workspace.v1.ChannelModuleList
-	(*ChannelModule)(nil),                     // 13: toshi.workspace.v1.ChannelModule
-	(*ChannelMatch)(nil),                      // 14: toshi.workspace.v1.ChannelMatch
-	(*ChannelRequest)(nil),                    // 15: toshi.workspace.v1.ChannelRequest
-	(*ChannelRequestCaller)(nil),              // 16: toshi.workspace.v1.ChannelRequestCaller
-	(*ChannelHeader)(nil),                     // 17: toshi.workspace.v1.ChannelHeader
-	(*ChannelBody)(nil),                       // 18: toshi.workspace.v1.ChannelBody
-	(*Forward)(nil),                           // 19: toshi.workspace.v1.Forward
-	(*Link)(nil),                              // 20: toshi.workspace.v1.Link
-	(*CreateChannelRequest)(nil),              // 21: toshi.workspace.v1.CreateChannelRequest
-	(*CreateChannelResponse)(nil),             // 22: toshi.workspace.v1.CreateChannelResponse
-	(*ListChannelsRequest)(nil),               // 23: toshi.workspace.v1.ListChannelsRequest
-	(*ListChannelsResponse)(nil),              // 24: toshi.workspace.v1.ListChannelsResponse
-	(*GetChannelRequest)(nil),                 // 25: toshi.workspace.v1.GetChannelRequest
-	(*GetChannelResponse)(nil),                // 26: toshi.workspace.v1.GetChannelResponse
-	(*GetChannelPolicyRequest)(nil),           // 27: toshi.workspace.v1.GetChannelPolicyRequest
-	(*GetChannelPolicyResponse)(nil),          // 28: toshi.workspace.v1.GetChannelPolicyResponse
-	(*SetChannelPolicyRequest)(nil),           // 29: toshi.workspace.v1.SetChannelPolicyRequest
-	(*SetChannelPolicyResponse)(nil),          // 30: toshi.workspace.v1.SetChannelPolicyResponse
-	(*ListChannelRequestsRequest)(nil),        // 31: toshi.workspace.v1.ListChannelRequestsRequest
-	(*ListChannelRequestsResponse)(nil),       // 32: toshi.workspace.v1.ListChannelRequestsResponse
-	(*GetChannelRequestRequest)(nil),          // 33: toshi.workspace.v1.GetChannelRequestRequest
-	(*GetChannelRequestResponse)(nil),         // 34: toshi.workspace.v1.GetChannelRequestResponse
-	(*ExportChannelLogRequest)(nil),           // 35: toshi.workspace.v1.ExportChannelLogRequest
-	(*ExportChannelLogResponse)(nil),          // 36: toshi.workspace.v1.ExportChannelLogResponse
-	(*CreateChannelConnectTokenRequest)(nil),  // 37: toshi.workspace.v1.CreateChannelConnectTokenRequest
-	(*CreateChannelConnectTokenResponse)(nil), // 38: toshi.workspace.v1.CreateChannelConnectTokenResponse
-	(*RevokeChannelConnectTokenRequest)(nil),  // 39: toshi.workspace.v1.RevokeChannelConnectTokenRequest
-	(*RevokeChannelConnectTokenResponse)(nil), // 40: toshi.workspace.v1.RevokeChannelConnectTokenResponse
-	(*DeleteChannelRequest)(nil),              // 41: toshi.workspace.v1.DeleteChannelRequest
-	(*DeleteChannelResponse)(nil),             // 42: toshi.workspace.v1.DeleteChannelResponse
-	(*ListForwardsRequest)(nil),               // 43: toshi.workspace.v1.ListForwardsRequest
-	(*ListForwardsResponse)(nil),              // 44: toshi.workspace.v1.ListForwardsResponse
-	(*GetLinkRequest)(nil),                    // 45: toshi.workspace.v1.GetLinkRequest
-	(*GetLinkResponse)(nil),                   // 46: toshi.workspace.v1.GetLinkResponse
-	(*SendChannelMessageRequest)(nil),         // 47: toshi.workspace.v1.SendChannelMessageRequest
-	(*SendChannelMessageResponse)(nil),        // 48: toshi.workspace.v1.SendChannelMessageResponse
-	(*TailChannelMessagesRequest)(nil),        // 49: toshi.workspace.v1.TailChannelMessagesRequest
-	(*TailChannelMessagesResponse)(nil),       // 50: toshi.workspace.v1.TailChannelMessagesResponse
-	(*ReplayChannelMessageRequest)(nil),       // 51: toshi.workspace.v1.ReplayChannelMessageRequest
-	(*ReplayChannelMessageResponse)(nil),      // 52: toshi.workspace.v1.ReplayChannelMessageResponse
-	nil,                                       // 53: toshi.workspace.v1.ChannelMatch.HeadersEntry
-	(*timestamppb.Timestamp)(nil),             // 54: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),               // 55: google.protobuf.Duration
+	(*ChannelACPState)(nil),                   // 7: toshi.workspace.v1.ChannelACPState
+	(*ChannelEventCounts)(nil),                // 8: toshi.workspace.v1.ChannelEventCounts
+	(*ChannelMessageSource)(nil),              // 9: toshi.workspace.v1.ChannelMessageSource
+	(*ChannelMessage)(nil),                    // 10: toshi.workspace.v1.ChannelMessage
+	(*ChannelClient)(nil),                     // 11: toshi.workspace.v1.ChannelClient
+	(*ChannelPolicy)(nil),                     // 12: toshi.workspace.v1.ChannelPolicy
+	(*ChannelModuleList)(nil),                 // 13: toshi.workspace.v1.ChannelModuleList
+	(*ChannelModule)(nil),                     // 14: toshi.workspace.v1.ChannelModule
+	(*ChannelMatch)(nil),                      // 15: toshi.workspace.v1.ChannelMatch
+	(*ChannelRequest)(nil),                    // 16: toshi.workspace.v1.ChannelRequest
+	(*ChannelRequestCaller)(nil),              // 17: toshi.workspace.v1.ChannelRequestCaller
+	(*ChannelHeader)(nil),                     // 18: toshi.workspace.v1.ChannelHeader
+	(*ChannelBody)(nil),                       // 19: toshi.workspace.v1.ChannelBody
+	(*Forward)(nil),                           // 20: toshi.workspace.v1.Forward
+	(*Link)(nil),                              // 21: toshi.workspace.v1.Link
+	(*CreateChannelRequest)(nil),              // 22: toshi.workspace.v1.CreateChannelRequest
+	(*CreateChannelResponse)(nil),             // 23: toshi.workspace.v1.CreateChannelResponse
+	(*ListChannelsRequest)(nil),               // 24: toshi.workspace.v1.ListChannelsRequest
+	(*ListChannelsResponse)(nil),              // 25: toshi.workspace.v1.ListChannelsResponse
+	(*GetChannelRequest)(nil),                 // 26: toshi.workspace.v1.GetChannelRequest
+	(*GetChannelResponse)(nil),                // 27: toshi.workspace.v1.GetChannelResponse
+	(*GetChannelPolicyRequest)(nil),           // 28: toshi.workspace.v1.GetChannelPolicyRequest
+	(*GetChannelPolicyResponse)(nil),          // 29: toshi.workspace.v1.GetChannelPolicyResponse
+	(*SetChannelPolicyRequest)(nil),           // 30: toshi.workspace.v1.SetChannelPolicyRequest
+	(*SetChannelPolicyResponse)(nil),          // 31: toshi.workspace.v1.SetChannelPolicyResponse
+	(*ListChannelRequestsRequest)(nil),        // 32: toshi.workspace.v1.ListChannelRequestsRequest
+	(*ListChannelRequestsResponse)(nil),       // 33: toshi.workspace.v1.ListChannelRequestsResponse
+	(*GetChannelRequestRequest)(nil),          // 34: toshi.workspace.v1.GetChannelRequestRequest
+	(*GetChannelRequestResponse)(nil),         // 35: toshi.workspace.v1.GetChannelRequestResponse
+	(*ExportChannelLogRequest)(nil),           // 36: toshi.workspace.v1.ExportChannelLogRequest
+	(*ExportChannelLogResponse)(nil),          // 37: toshi.workspace.v1.ExportChannelLogResponse
+	(*CreateChannelConnectTokenRequest)(nil),  // 38: toshi.workspace.v1.CreateChannelConnectTokenRequest
+	(*CreateChannelConnectTokenResponse)(nil), // 39: toshi.workspace.v1.CreateChannelConnectTokenResponse
+	(*RevokeChannelConnectTokenRequest)(nil),  // 40: toshi.workspace.v1.RevokeChannelConnectTokenRequest
+	(*RevokeChannelConnectTokenResponse)(nil), // 41: toshi.workspace.v1.RevokeChannelConnectTokenResponse
+	(*DeleteChannelRequest)(nil),              // 42: toshi.workspace.v1.DeleteChannelRequest
+	(*DeleteChannelResponse)(nil),             // 43: toshi.workspace.v1.DeleteChannelResponse
+	(*ListForwardsRequest)(nil),               // 44: toshi.workspace.v1.ListForwardsRequest
+	(*ListForwardsResponse)(nil),              // 45: toshi.workspace.v1.ListForwardsResponse
+	(*GetLinkRequest)(nil),                    // 46: toshi.workspace.v1.GetLinkRequest
+	(*GetLinkResponse)(nil),                   // 47: toshi.workspace.v1.GetLinkResponse
+	(*SendChannelMessageRequest)(nil),         // 48: toshi.workspace.v1.SendChannelMessageRequest
+	(*SendChannelMessageResponse)(nil),        // 49: toshi.workspace.v1.SendChannelMessageResponse
+	(*TailChannelMessagesRequest)(nil),        // 50: toshi.workspace.v1.TailChannelMessagesRequest
+	(*TailChannelMessagesResponse)(nil),       // 51: toshi.workspace.v1.TailChannelMessagesResponse
+	(*ReplayChannelMessageRequest)(nil),       // 52: toshi.workspace.v1.ReplayChannelMessageRequest
+	(*ReplayChannelMessageResponse)(nil),      // 53: toshi.workspace.v1.ReplayChannelMessageResponse
+	nil,                                       // 54: toshi.workspace.v1.ChannelACPState.DroppedEntry
+	nil,                                       // 55: toshi.workspace.v1.ChannelMatch.HeadersEntry
+	(*timestamppb.Timestamp)(nil),             // 56: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),               // 57: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_channels_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Channel.shape:type_name -> toshi.workspace.v1.ChannelShape
 	1,  // 1: toshi.workspace.v1.Channel.state:type_name -> toshi.workspace.v1.ChannelState
-	54, // 2: toshi.workspace.v1.Channel.created_at:type_name -> google.protobuf.Timestamp
-	54, // 3: toshi.workspace.v1.Channel.ended_at:type_name -> google.protobuf.Timestamp
-	11, // 4: toshi.workspace.v1.Channel.policy:type_name -> toshi.workspace.v1.ChannelPolicy
-	10, // 5: toshi.workspace.v1.Channel.clients:type_name -> toshi.workspace.v1.ChannelClient
-	7,  // 6: toshi.workspace.v1.Channel.events:type_name -> toshi.workspace.v1.ChannelEventCounts
-	54, // 7: toshi.workspace.v1.ChannelEventCounts.last_delivery_at:type_name -> google.protobuf.Timestamp
-	54, // 8: toshi.workspace.v1.ChannelMessage.time:type_name -> google.protobuf.Timestamp
-	8,  // 9: toshi.workspace.v1.ChannelMessage.source:type_name -> toshi.workspace.v1.ChannelMessageSource
-	5,  // 10: toshi.workspace.v1.ChannelMessage.state:type_name -> toshi.workspace.v1.ChannelMessageState
-	54, // 11: toshi.workspace.v1.ChannelMessage.next_attempt_at:type_name -> google.protobuf.Timestamp
-	54, // 12: toshi.workspace.v1.ChannelMessage.delivered_at:type_name -> google.protobuf.Timestamp
-	54, // 13: toshi.workspace.v1.ChannelMessage.replayed_at:type_name -> google.protobuf.Timestamp
-	54, // 14: toshi.workspace.v1.ChannelMessage.scheduled_for:type_name -> google.protobuf.Timestamp
-	2,  // 15: toshi.workspace.v1.ChannelClient.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
-	54, // 16: toshi.workspace.v1.ChannelClient.attached_since:type_name -> google.protobuf.Timestamp
-	54, // 17: toshi.workspace.v1.ChannelClient.seen_at:type_name -> google.protobuf.Timestamp
-	54, // 18: toshi.workspace.v1.ChannelClient.detached_at:type_name -> google.protobuf.Timestamp
-	12, // 19: toshi.workspace.v1.ChannelPolicy.modules:type_name -> toshi.workspace.v1.ChannelModuleList
-	13, // 20: toshi.workspace.v1.ChannelModuleList.modules:type_name -> toshi.workspace.v1.ChannelModule
-	14, // 21: toshi.workspace.v1.ChannelModule.match:type_name -> toshi.workspace.v1.ChannelMatch
-	53, // 22: toshi.workspace.v1.ChannelMatch.headers:type_name -> toshi.workspace.v1.ChannelMatch.HeadersEntry
-	54, // 23: toshi.workspace.v1.ChannelRequest.arrived_at:type_name -> google.protobuf.Timestamp
-	55, // 24: toshi.workspace.v1.ChannelRequest.duration:type_name -> google.protobuf.Duration
-	16, // 25: toshi.workspace.v1.ChannelRequest.caller:type_name -> toshi.workspace.v1.ChannelRequestCaller
-	17, // 26: toshi.workspace.v1.ChannelRequest.request_headers:type_name -> toshi.workspace.v1.ChannelHeader
-	17, // 27: toshi.workspace.v1.ChannelRequest.response_headers:type_name -> toshi.workspace.v1.ChannelHeader
-	18, // 28: toshi.workspace.v1.ChannelRequest.request_body:type_name -> toshi.workspace.v1.ChannelBody
-	18, // 29: toshi.workspace.v1.ChannelRequest.response_body:type_name -> toshi.workspace.v1.ChannelBody
-	54, // 30: toshi.workspace.v1.Forward.opened_at:type_name -> google.protobuf.Timestamp
-	54, // 31: toshi.workspace.v1.Link.since:type_name -> google.protobuf.Timestamp
-	11, // 32: toshi.workspace.v1.CreateChannelRequest.policy:type_name -> toshi.workspace.v1.ChannelPolicy
-	6,  // 33: toshi.workspace.v1.CreateChannelResponse.channel:type_name -> toshi.workspace.v1.Channel
-	6,  // 34: toshi.workspace.v1.ListChannelsResponse.channels:type_name -> toshi.workspace.v1.Channel
-	6,  // 35: toshi.workspace.v1.GetChannelResponse.channel:type_name -> toshi.workspace.v1.Channel
-	11, // 36: toshi.workspace.v1.GetChannelPolicyResponse.policy:type_name -> toshi.workspace.v1.ChannelPolicy
-	11, // 37: toshi.workspace.v1.SetChannelPolicyRequest.policy:type_name -> toshi.workspace.v1.ChannelPolicy
-	3,  // 38: toshi.workspace.v1.SetChannelPolicyRequest.streams:type_name -> toshi.workspace.v1.ChannelStreams
-	11, // 39: toshi.workspace.v1.SetChannelPolicyResponse.policy:type_name -> toshi.workspace.v1.ChannelPolicy
-	54, // 40: toshi.workspace.v1.ListChannelRequestsRequest.since:type_name -> google.protobuf.Timestamp
-	54, // 41: toshi.workspace.v1.ListChannelRequestsRequest.until:type_name -> google.protobuf.Timestamp
-	15, // 42: toshi.workspace.v1.ListChannelRequestsResponse.requests:type_name -> toshi.workspace.v1.ChannelRequest
-	15, // 43: toshi.workspace.v1.GetChannelRequestResponse.request:type_name -> toshi.workspace.v1.ChannelRequest
-	4,  // 44: toshi.workspace.v1.ExportChannelLogRequest.log:type_name -> toshi.workspace.v1.ChannelLog
-	54, // 45: toshi.workspace.v1.ExportChannelLogRequest.since:type_name -> google.protobuf.Timestamp
-	54, // 46: toshi.workspace.v1.ExportChannelLogRequest.until:type_name -> google.protobuf.Timestamp
-	2,  // 47: toshi.workspace.v1.CreateChannelConnectTokenRequest.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
-	54, // 48: toshi.workspace.v1.CreateChannelConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 49: toshi.workspace.v1.CreateChannelConnectTokenResponse.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
-	19, // 50: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
-	20, // 51: toshi.workspace.v1.GetLinkResponse.link:type_name -> toshi.workspace.v1.Link
-	5,  // 52: toshi.workspace.v1.TailChannelMessagesRequest.states:type_name -> toshi.workspace.v1.ChannelMessageState
-	9,  // 53: toshi.workspace.v1.TailChannelMessagesResponse.message:type_name -> toshi.workspace.v1.ChannelMessage
-	9,  // 54: toshi.workspace.v1.ReplayChannelMessageResponse.message:type_name -> toshi.workspace.v1.ChannelMessage
-	21, // 55: toshi.workspace.v1.ChannelService.CreateChannel:input_type -> toshi.workspace.v1.CreateChannelRequest
-	23, // 56: toshi.workspace.v1.ChannelService.ListChannels:input_type -> toshi.workspace.v1.ListChannelsRequest
-	25, // 57: toshi.workspace.v1.ChannelService.GetChannel:input_type -> toshi.workspace.v1.GetChannelRequest
-	27, // 58: toshi.workspace.v1.ChannelService.GetChannelPolicy:input_type -> toshi.workspace.v1.GetChannelPolicyRequest
-	29, // 59: toshi.workspace.v1.ChannelService.SetChannelPolicy:input_type -> toshi.workspace.v1.SetChannelPolicyRequest
-	31, // 60: toshi.workspace.v1.ChannelService.ListChannelRequests:input_type -> toshi.workspace.v1.ListChannelRequestsRequest
-	33, // 61: toshi.workspace.v1.ChannelService.GetChannelRequest:input_type -> toshi.workspace.v1.GetChannelRequestRequest
-	35, // 62: toshi.workspace.v1.ChannelService.ExportChannelLog:input_type -> toshi.workspace.v1.ExportChannelLogRequest
-	37, // 63: toshi.workspace.v1.ChannelService.CreateChannelConnectToken:input_type -> toshi.workspace.v1.CreateChannelConnectTokenRequest
-	39, // 64: toshi.workspace.v1.ChannelService.RevokeChannelConnectToken:input_type -> toshi.workspace.v1.RevokeChannelConnectTokenRequest
-	41, // 65: toshi.workspace.v1.ChannelService.DeleteChannel:input_type -> toshi.workspace.v1.DeleteChannelRequest
-	43, // 66: toshi.workspace.v1.ChannelService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
-	45, // 67: toshi.workspace.v1.ChannelService.GetLink:input_type -> toshi.workspace.v1.GetLinkRequest
-	47, // 68: toshi.workspace.v1.ChannelService.SendChannelMessage:input_type -> toshi.workspace.v1.SendChannelMessageRequest
-	49, // 69: toshi.workspace.v1.ChannelService.TailChannelMessages:input_type -> toshi.workspace.v1.TailChannelMessagesRequest
-	51, // 70: toshi.workspace.v1.ChannelService.ReplayChannelMessage:input_type -> toshi.workspace.v1.ReplayChannelMessageRequest
-	22, // 71: toshi.workspace.v1.ChannelService.CreateChannel:output_type -> toshi.workspace.v1.CreateChannelResponse
-	24, // 72: toshi.workspace.v1.ChannelService.ListChannels:output_type -> toshi.workspace.v1.ListChannelsResponse
-	26, // 73: toshi.workspace.v1.ChannelService.GetChannel:output_type -> toshi.workspace.v1.GetChannelResponse
-	28, // 74: toshi.workspace.v1.ChannelService.GetChannelPolicy:output_type -> toshi.workspace.v1.GetChannelPolicyResponse
-	30, // 75: toshi.workspace.v1.ChannelService.SetChannelPolicy:output_type -> toshi.workspace.v1.SetChannelPolicyResponse
-	32, // 76: toshi.workspace.v1.ChannelService.ListChannelRequests:output_type -> toshi.workspace.v1.ListChannelRequestsResponse
-	34, // 77: toshi.workspace.v1.ChannelService.GetChannelRequest:output_type -> toshi.workspace.v1.GetChannelRequestResponse
-	36, // 78: toshi.workspace.v1.ChannelService.ExportChannelLog:output_type -> toshi.workspace.v1.ExportChannelLogResponse
-	38, // 79: toshi.workspace.v1.ChannelService.CreateChannelConnectToken:output_type -> toshi.workspace.v1.CreateChannelConnectTokenResponse
-	40, // 80: toshi.workspace.v1.ChannelService.RevokeChannelConnectToken:output_type -> toshi.workspace.v1.RevokeChannelConnectTokenResponse
-	42, // 81: toshi.workspace.v1.ChannelService.DeleteChannel:output_type -> toshi.workspace.v1.DeleteChannelResponse
-	44, // 82: toshi.workspace.v1.ChannelService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
-	46, // 83: toshi.workspace.v1.ChannelService.GetLink:output_type -> toshi.workspace.v1.GetLinkResponse
-	48, // 84: toshi.workspace.v1.ChannelService.SendChannelMessage:output_type -> toshi.workspace.v1.SendChannelMessageResponse
-	50, // 85: toshi.workspace.v1.ChannelService.TailChannelMessages:output_type -> toshi.workspace.v1.TailChannelMessagesResponse
-	52, // 86: toshi.workspace.v1.ChannelService.ReplayChannelMessage:output_type -> toshi.workspace.v1.ReplayChannelMessageResponse
-	71, // [71:87] is the sub-list for method output_type
-	55, // [55:71] is the sub-list for method input_type
-	55, // [55:55] is the sub-list for extension type_name
-	55, // [55:55] is the sub-list for extension extendee
-	0,  // [0:55] is the sub-list for field type_name
+	56, // 2: toshi.workspace.v1.Channel.created_at:type_name -> google.protobuf.Timestamp
+	56, // 3: toshi.workspace.v1.Channel.ended_at:type_name -> google.protobuf.Timestamp
+	12, // 4: toshi.workspace.v1.Channel.policy:type_name -> toshi.workspace.v1.ChannelPolicy
+	11, // 5: toshi.workspace.v1.Channel.clients:type_name -> toshi.workspace.v1.ChannelClient
+	8,  // 6: toshi.workspace.v1.Channel.events:type_name -> toshi.workspace.v1.ChannelEventCounts
+	7,  // 7: toshi.workspace.v1.Channel.acp_state:type_name -> toshi.workspace.v1.ChannelACPState
+	56, // 8: toshi.workspace.v1.ChannelACPState.since:type_name -> google.protobuf.Timestamp
+	54, // 9: toshi.workspace.v1.ChannelACPState.dropped:type_name -> toshi.workspace.v1.ChannelACPState.DroppedEntry
+	56, // 10: toshi.workspace.v1.ChannelEventCounts.last_delivery_at:type_name -> google.protobuf.Timestamp
+	56, // 11: toshi.workspace.v1.ChannelMessage.time:type_name -> google.protobuf.Timestamp
+	9,  // 12: toshi.workspace.v1.ChannelMessage.source:type_name -> toshi.workspace.v1.ChannelMessageSource
+	5,  // 13: toshi.workspace.v1.ChannelMessage.state:type_name -> toshi.workspace.v1.ChannelMessageState
+	56, // 14: toshi.workspace.v1.ChannelMessage.next_attempt_at:type_name -> google.protobuf.Timestamp
+	56, // 15: toshi.workspace.v1.ChannelMessage.delivered_at:type_name -> google.protobuf.Timestamp
+	56, // 16: toshi.workspace.v1.ChannelMessage.replayed_at:type_name -> google.protobuf.Timestamp
+	56, // 17: toshi.workspace.v1.ChannelMessage.scheduled_for:type_name -> google.protobuf.Timestamp
+	2,  // 18: toshi.workspace.v1.ChannelClient.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
+	56, // 19: toshi.workspace.v1.ChannelClient.attached_since:type_name -> google.protobuf.Timestamp
+	56, // 20: toshi.workspace.v1.ChannelClient.seen_at:type_name -> google.protobuf.Timestamp
+	56, // 21: toshi.workspace.v1.ChannelClient.detached_at:type_name -> google.protobuf.Timestamp
+	13, // 22: toshi.workspace.v1.ChannelPolicy.modules:type_name -> toshi.workspace.v1.ChannelModuleList
+	14, // 23: toshi.workspace.v1.ChannelModuleList.modules:type_name -> toshi.workspace.v1.ChannelModule
+	15, // 24: toshi.workspace.v1.ChannelModule.match:type_name -> toshi.workspace.v1.ChannelMatch
+	55, // 25: toshi.workspace.v1.ChannelMatch.headers:type_name -> toshi.workspace.v1.ChannelMatch.HeadersEntry
+	56, // 26: toshi.workspace.v1.ChannelRequest.arrived_at:type_name -> google.protobuf.Timestamp
+	57, // 27: toshi.workspace.v1.ChannelRequest.duration:type_name -> google.protobuf.Duration
+	17, // 28: toshi.workspace.v1.ChannelRequest.caller:type_name -> toshi.workspace.v1.ChannelRequestCaller
+	18, // 29: toshi.workspace.v1.ChannelRequest.request_headers:type_name -> toshi.workspace.v1.ChannelHeader
+	18, // 30: toshi.workspace.v1.ChannelRequest.response_headers:type_name -> toshi.workspace.v1.ChannelHeader
+	19, // 31: toshi.workspace.v1.ChannelRequest.request_body:type_name -> toshi.workspace.v1.ChannelBody
+	19, // 32: toshi.workspace.v1.ChannelRequest.response_body:type_name -> toshi.workspace.v1.ChannelBody
+	56, // 33: toshi.workspace.v1.Forward.opened_at:type_name -> google.protobuf.Timestamp
+	56, // 34: toshi.workspace.v1.Link.since:type_name -> google.protobuf.Timestamp
+	12, // 35: toshi.workspace.v1.CreateChannelRequest.policy:type_name -> toshi.workspace.v1.ChannelPolicy
+	6,  // 36: toshi.workspace.v1.CreateChannelResponse.channel:type_name -> toshi.workspace.v1.Channel
+	6,  // 37: toshi.workspace.v1.ListChannelsResponse.channels:type_name -> toshi.workspace.v1.Channel
+	6,  // 38: toshi.workspace.v1.GetChannelResponse.channel:type_name -> toshi.workspace.v1.Channel
+	12, // 39: toshi.workspace.v1.GetChannelPolicyResponse.policy:type_name -> toshi.workspace.v1.ChannelPolicy
+	12, // 40: toshi.workspace.v1.SetChannelPolicyRequest.policy:type_name -> toshi.workspace.v1.ChannelPolicy
+	3,  // 41: toshi.workspace.v1.SetChannelPolicyRequest.streams:type_name -> toshi.workspace.v1.ChannelStreams
+	12, // 42: toshi.workspace.v1.SetChannelPolicyResponse.policy:type_name -> toshi.workspace.v1.ChannelPolicy
+	56, // 43: toshi.workspace.v1.ListChannelRequestsRequest.since:type_name -> google.protobuf.Timestamp
+	56, // 44: toshi.workspace.v1.ListChannelRequestsRequest.until:type_name -> google.protobuf.Timestamp
+	16, // 45: toshi.workspace.v1.ListChannelRequestsResponse.requests:type_name -> toshi.workspace.v1.ChannelRequest
+	16, // 46: toshi.workspace.v1.GetChannelRequestResponse.request:type_name -> toshi.workspace.v1.ChannelRequest
+	4,  // 47: toshi.workspace.v1.ExportChannelLogRequest.log:type_name -> toshi.workspace.v1.ChannelLog
+	56, // 48: toshi.workspace.v1.ExportChannelLogRequest.since:type_name -> google.protobuf.Timestamp
+	56, // 49: toshi.workspace.v1.ExportChannelLogRequest.until:type_name -> google.protobuf.Timestamp
+	2,  // 50: toshi.workspace.v1.CreateChannelConnectTokenRequest.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
+	56, // 51: toshi.workspace.v1.CreateChannelConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 52: toshi.workspace.v1.CreateChannelConnectTokenResponse.mode:type_name -> toshi.workspace.v1.ChannelAttachMode
+	20, // 53: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
+	21, // 54: toshi.workspace.v1.GetLinkResponse.link:type_name -> toshi.workspace.v1.Link
+	5,  // 55: toshi.workspace.v1.TailChannelMessagesRequest.states:type_name -> toshi.workspace.v1.ChannelMessageState
+	10, // 56: toshi.workspace.v1.TailChannelMessagesResponse.message:type_name -> toshi.workspace.v1.ChannelMessage
+	10, // 57: toshi.workspace.v1.ReplayChannelMessageResponse.message:type_name -> toshi.workspace.v1.ChannelMessage
+	22, // 58: toshi.workspace.v1.ChannelService.CreateChannel:input_type -> toshi.workspace.v1.CreateChannelRequest
+	24, // 59: toshi.workspace.v1.ChannelService.ListChannels:input_type -> toshi.workspace.v1.ListChannelsRequest
+	26, // 60: toshi.workspace.v1.ChannelService.GetChannel:input_type -> toshi.workspace.v1.GetChannelRequest
+	28, // 61: toshi.workspace.v1.ChannelService.GetChannelPolicy:input_type -> toshi.workspace.v1.GetChannelPolicyRequest
+	30, // 62: toshi.workspace.v1.ChannelService.SetChannelPolicy:input_type -> toshi.workspace.v1.SetChannelPolicyRequest
+	32, // 63: toshi.workspace.v1.ChannelService.ListChannelRequests:input_type -> toshi.workspace.v1.ListChannelRequestsRequest
+	34, // 64: toshi.workspace.v1.ChannelService.GetChannelRequest:input_type -> toshi.workspace.v1.GetChannelRequestRequest
+	36, // 65: toshi.workspace.v1.ChannelService.ExportChannelLog:input_type -> toshi.workspace.v1.ExportChannelLogRequest
+	38, // 66: toshi.workspace.v1.ChannelService.CreateChannelConnectToken:input_type -> toshi.workspace.v1.CreateChannelConnectTokenRequest
+	40, // 67: toshi.workspace.v1.ChannelService.RevokeChannelConnectToken:input_type -> toshi.workspace.v1.RevokeChannelConnectTokenRequest
+	42, // 68: toshi.workspace.v1.ChannelService.DeleteChannel:input_type -> toshi.workspace.v1.DeleteChannelRequest
+	44, // 69: toshi.workspace.v1.ChannelService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
+	46, // 70: toshi.workspace.v1.ChannelService.GetLink:input_type -> toshi.workspace.v1.GetLinkRequest
+	48, // 71: toshi.workspace.v1.ChannelService.SendChannelMessage:input_type -> toshi.workspace.v1.SendChannelMessageRequest
+	50, // 72: toshi.workspace.v1.ChannelService.TailChannelMessages:input_type -> toshi.workspace.v1.TailChannelMessagesRequest
+	52, // 73: toshi.workspace.v1.ChannelService.ReplayChannelMessage:input_type -> toshi.workspace.v1.ReplayChannelMessageRequest
+	23, // 74: toshi.workspace.v1.ChannelService.CreateChannel:output_type -> toshi.workspace.v1.CreateChannelResponse
+	25, // 75: toshi.workspace.v1.ChannelService.ListChannels:output_type -> toshi.workspace.v1.ListChannelsResponse
+	27, // 76: toshi.workspace.v1.ChannelService.GetChannel:output_type -> toshi.workspace.v1.GetChannelResponse
+	29, // 77: toshi.workspace.v1.ChannelService.GetChannelPolicy:output_type -> toshi.workspace.v1.GetChannelPolicyResponse
+	31, // 78: toshi.workspace.v1.ChannelService.SetChannelPolicy:output_type -> toshi.workspace.v1.SetChannelPolicyResponse
+	33, // 79: toshi.workspace.v1.ChannelService.ListChannelRequests:output_type -> toshi.workspace.v1.ListChannelRequestsResponse
+	35, // 80: toshi.workspace.v1.ChannelService.GetChannelRequest:output_type -> toshi.workspace.v1.GetChannelRequestResponse
+	37, // 81: toshi.workspace.v1.ChannelService.ExportChannelLog:output_type -> toshi.workspace.v1.ExportChannelLogResponse
+	39, // 82: toshi.workspace.v1.ChannelService.CreateChannelConnectToken:output_type -> toshi.workspace.v1.CreateChannelConnectTokenResponse
+	41, // 83: toshi.workspace.v1.ChannelService.RevokeChannelConnectToken:output_type -> toshi.workspace.v1.RevokeChannelConnectTokenResponse
+	43, // 84: toshi.workspace.v1.ChannelService.DeleteChannel:output_type -> toshi.workspace.v1.DeleteChannelResponse
+	45, // 85: toshi.workspace.v1.ChannelService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
+	47, // 86: toshi.workspace.v1.ChannelService.GetLink:output_type -> toshi.workspace.v1.GetLinkResponse
+	49, // 87: toshi.workspace.v1.ChannelService.SendChannelMessage:output_type -> toshi.workspace.v1.SendChannelMessageResponse
+	51, // 88: toshi.workspace.v1.ChannelService.TailChannelMessages:output_type -> toshi.workspace.v1.TailChannelMessagesResponse
+	53, // 89: toshi.workspace.v1.ChannelService.ReplayChannelMessage:output_type -> toshi.workspace.v1.ReplayChannelMessageResponse
+	74, // [74:90] is the sub-list for method output_type
+	58, // [58:74] is the sub-list for method input_type
+	58, // [58:58] is the sub-list for extension type_name
+	58, // [58:58] is the sub-list for extension extendee
+	0,  // [0:58] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_channels_proto_init() }
@@ -4686,15 +4810,15 @@ func file_toshi_workspace_v1_channels_proto_init() {
 		return
 	}
 	file_toshi_workspace_v1_channels_proto_msgTypes[0].OneofWrappers = []any{}
-	file_toshi_workspace_v1_channels_proto_msgTypes[5].OneofWrappers = []any{}
-	file_toshi_workspace_v1_channels_proto_msgTypes[29].OneofWrappers = []any{}
+	file_toshi_workspace_v1_channels_proto_msgTypes[6].OneofWrappers = []any{}
+	file_toshi_workspace_v1_channels_proto_msgTypes[30].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_channels_proto_rawDesc), len(file_toshi_workspace_v1_channels_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   48,
+			NumMessages:   50,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

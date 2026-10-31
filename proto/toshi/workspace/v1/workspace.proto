@@ -1230,6 +1230,12 @@ enum EventType {
   // A kept VM was discarded before a run because its image changed. Name:
   // "<kind>.kept_vm_discarded". Payload: KeptVMDiscardedEvent.
   EVENT_TYPE_KEPT_VM_DISCARDED = 18;
+  // An ACP channel's agent asked the client's permission to use a tool.
+  // Name: "channel.acp.permission_requested". Payload: ChannelACPEvent.
+  EVENT_TYPE_CHANNEL_ACP_PERMISSION_REQUESTED = 19;
+  // An ACP channel's agent finished a prompt. Name:
+  // "channel.acp.turn_ended". Payload: ChannelACPEvent.
+  EVENT_TYPE_CHANNEL_ACP_TURN_ENDED = 20;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -1278,6 +1284,8 @@ message Event {
     MailSentEvent mail_sent = 23;
     // For KEPT_VM_DISCARDED.
     KeptVMDiscardedEvent kept_vm_discarded = 24;
+    // For CHANNEL_ACP_PERMISSION_REQUESTED and CHANNEL_ACP_TURN_ENDED.
+    ChannelACPEvent channel_acp = 25;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -1426,6 +1434,20 @@ message MailSentEvent {
   int32 recipients = 3;
   // The id the mail provider gave the message; empty when it gave none.
   string provider_message_id = 4;
+}
+
+// ChannelACPEvent is an event of an ACP channel: the channel, its ACP
+// session, and the tool call's kind a permission request named or the reason
+// a turn ended. It carries no title, content or path.
+message ChannelACPEvent {
+  // The channel's name on its job.
+  string channel = 1;
+  // The ACP session the event belongs to.
+  string session_id = 2;
+  // The tool call's kind, on a permission request.
+  string tool_kind = 3;
+  // The prompt response's stopReason, at a turn's end.
+  string stop_reason = 4;
 }
 
 // AgentPrompt is a question or an approval an agent workload asked that
