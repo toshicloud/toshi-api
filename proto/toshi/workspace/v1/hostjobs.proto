@@ -135,10 +135,10 @@ message GetHostJobFailureResponse {
   string verdict_reason = 5;
   // One line on what to do next.
   string what_to_do = 6;
-  // The host job's page on GitHub, and its page on the dashboard. Each is
-  // empty when Toshi does not know it.
+  // The host job's page on GitHub. Empty when Toshi does not know it.
   string github_url = 7;
-  string dashboard_url = 8;
+  reserved 8;
+  reserved "dashboard_url";
   // How earlier failures of the same job went when they were re-run on
   // GitHub. Unset for a host job that succeeded, has not ended or was
   // refused, and for one without a name.

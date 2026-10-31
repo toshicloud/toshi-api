@@ -552,10 +552,8 @@ type GetHostJobFailureResponse struct {
 	VerdictReason string `protobuf:"bytes,5,opt,name=verdict_reason,json=verdictReason,proto3" json:"verdict_reason,omitempty"`
 	// One line on what to do next.
 	WhatToDo string `protobuf:"bytes,6,opt,name=what_to_do,json=whatToDo,proto3" json:"what_to_do,omitempty"`
-	// The host job's page on GitHub, and its page on the dashboard. Each is
-	// empty when Toshi does not know it.
-	GithubUrl    string `protobuf:"bytes,7,opt,name=github_url,json=githubUrl,proto3" json:"github_url,omitempty"`
-	DashboardUrl string `protobuf:"bytes,8,opt,name=dashboard_url,json=dashboardUrl,proto3" json:"dashboard_url,omitempty"`
+	// The host job's page on GitHub. Empty when Toshi does not know it.
+	GithubUrl string `protobuf:"bytes,7,opt,name=github_url,json=githubUrl,proto3" json:"github_url,omitempty"`
 	// How earlier failures of the same job went when they were re-run on
 	// GitHub. Unset for a host job that succeeded, has not ended or was
 	// refused, and for one without a name.
@@ -647,13 +645,6 @@ func (x *GetHostJobFailureResponse) GetWhatToDo() string {
 func (x *GetHostJobFailureResponse) GetGithubUrl() string {
 	if x != nil {
 		return x.GithubUrl
-	}
-	return ""
-}
-
-func (x *GetHostJobFailureResponse) GetDashboardUrl() string {
-	if x != nil {
-		return x.DashboardUrl
 	}
 	return ""
 }
@@ -2261,7 +2252,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x15CancelHostJobResponse\x126\n" +
 	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"*\n" +
 	"\x18GetHostJobFailureRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xa5\x03\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x95\x03\n" +
 	"\x19GetHostJobFailureResponse\x12\x14\n" +
 	"\x05cause\x18\x01 \x01(\tR\x05cause\x12 \n" +
 	"\vexplanation\x18\x02 \x01(\tR\vexplanation\x12\x1e\n" +
@@ -2273,13 +2264,12 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\n" +
 	"what_to_do\x18\x06 \x01(\tR\bwhatToDo\x12\x1d\n" +
 	"\n" +
-	"github_url\x18\a \x01(\tR\tgithubUrl\x12#\n" +
-	"\rdashboard_url\x18\b \x01(\tR\fdashboardUrl\x12C\n" +
+	"github_url\x18\a \x01(\tR\tgithubUrl\x12C\n" +
 	"\ahistory\x18\t \x01(\v2).toshi.workspace.v1.HostJobFailureHistoryR\ahistory\x12\x14\n" +
 	"\x05cache\x18\n" +
 	" \x01(\tR\x05cache\x12\x1b\n" +
 	"\ttier_line\x18\v \x01(\tR\btierLine\x12\x15\n" +
-	"\x06job_id\x18\f \x01(\tR\x05jobId\",\n" +
+	"\x06job_id\x18\f \x01(\tR\x05jobIdJ\x04\b\b\x10\tR\rdashboard_url\",\n" +
 	"\x1aGetHostJobTelemetryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\xf3\x01\n" +
 	"\x1bGetHostJobTelemetryResponse\x12\x12\n" +
