@@ -1053,7 +1053,7 @@ type HostJob struct {
 	// github_completed, runner_not_started, runner_unconfirmed, debug_ended,
 	// ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
 	// tenant_deleted or owner, or for a service's run owner_deleted,
-	// service_restart or sleep. Empty if it never was.
+	// service_restart or sleep, or policy. Empty if it never was.
 	StopReason string `protobuf:"bytes,18,opt,name=stop_reason,json=stopReason,proto3" json:"stop_reason,omitempty"`
 	// When the control plane asked the host to stop the job. Unset if it
 	// never did.
@@ -1207,8 +1207,11 @@ type HostJob struct {
 	// screen. Empty when its screen is available, and for a job without a
 	// host. A workspace's own hosts and its own cloud account show the screen.
 	ScreenUnavailableReason string `protobuf:"bytes,53,opt,name=screen_unavailable_reason,json=screenUnavailableReason,proto3" json:"screen_unavailable_reason,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// exec_rate, connection_rate, request_rate, mining, operator or runner_swap; set only
+	// with stop_reason "policy".
+	StopCause     string `protobuf:"bytes,54,opt,name=stop_cause,json=stopCause,proto3" json:"stop_cause,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *HostJob) Reset() {
@@ -1608,6 +1611,13 @@ func (x *HostJob) GetRunAttempt() int32 {
 func (x *HostJob) GetScreenUnavailableReason() string {
 	if x != nil {
 		return x.ScreenUnavailableReason
+	}
+	return ""
+}
+
+func (x *HostJob) GetStopCause() string {
+	if x != nil {
+		return x.StopCause
 	}
 	return ""
 }
@@ -2292,7 +2302,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x17StopHostJobDebugRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
 	"\x18StopHostJobDebugResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xd1\x10\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xf0\x10\n" +
 	"\aHostJob\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1e\n" +
 	"\n" +
@@ -2363,7 +2373,9 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\aattempt\x183 \x01(\x05R\aattempt\x12\x1f\n" +
 	"\vrun_attempt\x184 \x01(\x05R\n" +
 	"runAttempt\x12:\n" +
-	"\x19screen_unavailable_reason\x185 \x01(\tR\x17screenUnavailableReason\"\xa5\x03\n" +
+	"\x19screen_unavailable_reason\x185 \x01(\tR\x17screenUnavailableReason\x12\x1d\n" +
+	"\n" +
+	"stop_cause\x186 \x01(\tR\tstopCause\"\xa5\x03\n" +
 	"\x0eHostJobAttempt\x12\x18\n" +
 	"\aattempt\x18\x01 \x01(\x05R\aattempt\x12\x1b\n" +
 	"\trunner_id\x18\x02 \x01(\tR\brunnerId\x12\x1f\n" +

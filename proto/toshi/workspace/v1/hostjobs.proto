@@ -227,7 +227,7 @@ message HostJob {
   // github_completed, runner_not_started, runner_unconfirmed, debug_ended,
   // ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
   // tenant_deleted or owner, or for a service's run owner_deleted,
-  // service_restart or sleep. Empty if it never was.
+  // service_restart or sleep, or policy. Empty if it never was.
   string stop_reason = 18;
   // When the control plane asked the host to stop the job. Unset if it
   // never did.
@@ -381,6 +381,9 @@ message HostJob {
   // screen. Empty when its screen is available, and for a job without a
   // host. A workspace's own hosts and its own cloud account show the screen.
   string screen_unavailable_reason = 53;
+  // exec_rate, connection_rate, request_rate, mining, operator or runner_swap; set only
+  // with stop_reason "policy".
+  string stop_cause = 54;
 }
 
 // HostJobAttempt is one attempt of a host job: one assignment to a host

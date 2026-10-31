@@ -518,6 +518,24 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
+  // HoldWorkload places an operator hold on a sandbox or service. Only an
+  // operator may call it; another caller is refused with PERMISSION_DENIED.
+  // The operator's reason header is required. A running workload is stopped
+  // with reason POLICY and cause OPERATOR; a stopped one only gets the hold.
+  // A job cannot be held; cancel it instead.
+  rpc HoldWorkload(HoldWorkloadRequest) returns (HoldWorkloadResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+  }
+
+  // ReleaseWorkload lifts an operator hold and starts nothing. Only an
+  // operator may call it; another caller is refused with PERMISSION_DENIED.
+  // The operator's reason header is required.
+  rpc ReleaseWorkload(ReleaseWorkloadRequest) returns (ReleaseWorkloadResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.scope) = "environment";
+  }
+
   // HoldService takes or renews the caller's hold on a started service:
   // while any hold is live, an on-demand service does not sleep, and a
   // hold on one that is asleep wakes it. Each caller has one hold per

@@ -4565,8 +4565,8 @@ export const StorageSchema: GenMessage<Storage, {jsonType: StorageJson}> = /*@__
   messageDesc(file_toshi_workspace_v1_workspace_service, 55);
 
 /**
- * StoredKind is one kind of stored data in a month: image, volume_version,
- * artifact or recording.
+ * StoredKind is one kind of stored data in a month: images, volume_versions,
+ * artifacts, recordings or held_disks.
  *
  * @generated from message toshi.workspace.v1.StoredKind
  */
@@ -4592,8 +4592,8 @@ export type StoredKind = Message<"toshi.workspace.v1.StoredKind"> & {
 };
 
 /**
- * StoredKind is one kind of stored data in a month: image, volume_version,
- * artifact or recording.
+ * StoredKind is one kind of stored data in a month: images, volume_versions,
+ * artifacts, recordings or held_disks.
  *
  * @generated from message toshi.workspace.v1.StoredKind
  */

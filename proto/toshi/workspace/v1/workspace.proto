@@ -32,7 +32,7 @@ enum EndReason {
   END_REASON_LOST = 5;
 }
 
-// StopReason is why a sandbox was stopped.
+// StopReason is why a sandbox or service was stopped.
 enum StopReason {
   STOP_REASON_UNSPECIFIED = 0;
   // Its owner stopped it: deleted it, or cancelled its job.
@@ -47,6 +47,34 @@ enum StopReason {
   STOP_REASON_TENANT_DELETED = 5;
   // An operator cancelled its job.
   STOP_REASON_OPERATOR = 6;
+  // Toshi stopped it for a policy; stop_cause says which.
+  STOP_REASON_POLICY = 7;
+}
+
+// StopCause identifies the policy behind a stop.
+enum StopCause {
+  STOP_CAUSE_UNSPECIFIED = 0;
+  // Executions exceeded their rate.
+  STOP_CAUSE_EXEC_RATE = 1;
+  // Outbound connections exceeded their rate.
+  STOP_CAUSE_CONNECTION_RATE = 2;
+  // Requests at its public names exceeded their rate.
+  STOP_CAUSE_REQUEST_RATE = 3;
+  // Its CPU and traffic looked like mining.
+  STOP_CAUSE_MINING = 4;
+  // An operator stopped it.
+  STOP_CAUSE_OPERATOR = 5;
+  // a job from a pull request from a fork was handed a runner whose VM could not be narrowed before it started
+  STOP_CAUSE_RUNNER_SWAP = 6;
+}
+
+// OperatorHold is an operator's hold on a workload.
+enum OperatorHold {
+  OPERATOR_HOLD_UNSPECIFIED = 0;
+  // Abuse is suspected.
+  OPERATOR_HOLD_ABUSE_SUSPECTED = 1;
+  // Abuse is confirmed.
+  OPERATOR_HOLD_ABUSE_CONFIRMED = 2;
 }
 
 // Job runs one command once and ends.
@@ -234,6 +262,13 @@ message SandboxStatus {
   optional int32 exit_code = 12;
   // Set while a sandbox with keep_vm is stopped in CREATED; unset otherwise.
   google.protobuf.Timestamp stopped_at = 13;
+  // The cause of a policy stop; unspecified for another stop.
+  StopCause stop_cause = 14;
+  // While held, its owner cannot start, wake or delete it and its public
+  // names answer a page naming the hold; only an operator releases it.
+  OperatorHold operator_hold = 15;
+  // When the current operator hold was placed; unset when not held.
+  google.protobuf.Timestamp held_at = 16;
 }
 
 // SandboxState is where a sandbox is in its life. A sandbox can skip a
@@ -360,6 +395,15 @@ message ServiceStatus {
   // saved version and its newest failed save. Unset when the service has
   // no state volume. Set by Toshi on GetService; ignored in a request.
   ServiceBackup backup = 12;
+  // Why it was stopped.
+  StopReason stop_reason = 13;
+  // The cause of a policy stop; unspecified for another stop.
+  StopCause stop_cause = 14;
+  // While held, its owner cannot start, wake or delete it and its public
+  // names answer a page naming the hold; only an operator releases it.
+  OperatorHold operator_hold = 15;
+  // When the current operator hold was placed; unset when not held.
+  google.protobuf.Timestamp held_at = 16;
 }
 
 // ServiceBackup is the state of the backups of a service's state volume,
@@ -1735,6 +1779,25 @@ message WakeServiceResponse {
   // The service after the wake.
   Service service = 2;
 }
+
+// HoldWorkloadRequest names the sandbox or service and its operator hold.
+message HoldWorkloadRequest {
+  string project = 1;
+  string environment = 2;
+  string workload_id = 3;
+  OperatorHold hold = 4;
+}
+
+message HoldWorkloadResponse {}
+
+// ReleaseWorkloadRequest names the sandbox or service to release.
+message ReleaseWorkloadRequest {
+  string project = 1;
+  string environment = 2;
+  string workload_id = 3;
+}
+
+message ReleaseWorkloadResponse {}
 
 message HoldServiceRequest {
   string project = 1;

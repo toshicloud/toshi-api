@@ -1000,8 +1000,8 @@ message Storage {
   int64 estimated_cents = 6;
 }
 
-// StoredKind is one kind of stored data in a month: image, volume_version,
-// artifact or recording.
+// StoredKind is one kind of stored data in a month: images, volume_versions,
+// artifacts, recordings or held_disks.
 message StoredKind {
   string kind = 1;
   // The bytes the last sampled hour held.

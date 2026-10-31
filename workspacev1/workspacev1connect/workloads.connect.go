@@ -156,6 +156,12 @@ const (
 	// WorkloadServiceWakeServiceProcedure is the fully-qualified name of the WorkloadService's
 	// WakeService RPC.
 	WorkloadServiceWakeServiceProcedure = "/toshi.workspace.v1.WorkloadService/WakeService"
+	// WorkloadServiceHoldWorkloadProcedure is the fully-qualified name of the WorkloadService's
+	// HoldWorkload RPC.
+	WorkloadServiceHoldWorkloadProcedure = "/toshi.workspace.v1.WorkloadService/HoldWorkload"
+	// WorkloadServiceReleaseWorkloadProcedure is the fully-qualified name of the WorkloadService's
+	// ReleaseWorkload RPC.
+	WorkloadServiceReleaseWorkloadProcedure = "/toshi.workspace.v1.WorkloadService/ReleaseWorkload"
 	// WorkloadServiceHoldServiceProcedure is the fully-qualified name of the WorkloadService's
 	// HoldService RPC.
 	WorkloadServiceHoldServiceProcedure = "/toshi.workspace.v1.WorkloadService/HoldService"
@@ -504,6 +510,16 @@ type WorkloadServiceClient interface {
 	// started always-on service returns it as it is; a service that is not
 	// started fails with FAILED_PRECONDITION.
 	WakeService(context.Context, *connect.Request[workspacev1.WakeServiceRequest]) (*connect.Response[workspacev1.WakeServiceResponse], error)
+	// HoldWorkload places an operator hold on a sandbox or service. Only an
+	// operator may call it; another caller is refused with PERMISSION_DENIED.
+	// The operator's reason header is required. A running workload is stopped
+	// with reason POLICY and cause OPERATOR; a stopped one only gets the hold.
+	// A job cannot be held; cancel it instead.
+	HoldWorkload(context.Context, *connect.Request[workspacev1.HoldWorkloadRequest]) (*connect.Response[workspacev1.HoldWorkloadResponse], error)
+	// ReleaseWorkload lifts an operator hold and starts nothing. Only an
+	// operator may call it; another caller is refused with PERMISSION_DENIED.
+	// The operator's reason header is required.
+	ReleaseWorkload(context.Context, *connect.Request[workspacev1.ReleaseWorkloadRequest]) (*connect.Response[workspacev1.ReleaseWorkloadResponse], error)
 	// HoldService takes or renews the caller's hold on a started service:
 	// while any hold is live, an on-demand service does not sleep, and a
 	// hold on one that is asleep wakes it. Each caller has one hold per
@@ -915,6 +931,18 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("WakeService")),
 			connect.WithClientOptions(opts...),
 		),
+		holdWorkload: connect.NewClient[workspacev1.HoldWorkloadRequest, workspacev1.HoldWorkloadResponse](
+			httpClient,
+			baseURL+WorkloadServiceHoldWorkloadProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("HoldWorkload")),
+			connect.WithClientOptions(opts...),
+		),
+		releaseWorkload: connect.NewClient[workspacev1.ReleaseWorkloadRequest, workspacev1.ReleaseWorkloadResponse](
+			httpClient,
+			baseURL+WorkloadServiceReleaseWorkloadProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ReleaseWorkload")),
+			connect.WithClientOptions(opts...),
+		),
 		holdService: connect.NewClient[workspacev1.HoldServiceRequest, workspacev1.HoldServiceResponse](
 			httpClient,
 			baseURL+WorkloadServiceHoldServiceProcedure,
@@ -1100,6 +1128,8 @@ type workloadServiceClient struct {
 	stopService            *connect.Client[workspacev1.StopServiceRequest, workspacev1.StopServiceResponse]
 	setServiceMode         *connect.Client[workspacev1.SetServiceModeRequest, workspacev1.SetServiceModeResponse]
 	wakeService            *connect.Client[workspacev1.WakeServiceRequest, workspacev1.WakeServiceResponse]
+	holdWorkload           *connect.Client[workspacev1.HoldWorkloadRequest, workspacev1.HoldWorkloadResponse]
+	releaseWorkload        *connect.Client[workspacev1.ReleaseWorkloadRequest, workspacev1.ReleaseWorkloadResponse]
 	holdService            *connect.Client[workspacev1.HoldServiceRequest, workspacev1.HoldServiceResponse]
 	releaseService         *connect.Client[workspacev1.ReleaseServiceRequest, workspacev1.ReleaseServiceResponse]
 	setServiceAlarm        *connect.Client[workspacev1.SetServiceAlarmRequest, workspacev1.SetServiceAlarmResponse]
@@ -1333,6 +1363,16 @@ func (c *workloadServiceClient) SetServiceMode(ctx context.Context, req *connect
 // WakeService calls toshi.workspace.v1.WorkloadService.WakeService.
 func (c *workloadServiceClient) WakeService(ctx context.Context, req *connect.Request[workspacev1.WakeServiceRequest]) (*connect.Response[workspacev1.WakeServiceResponse], error) {
 	return c.wakeService.CallUnary(ctx, req)
+}
+
+// HoldWorkload calls toshi.workspace.v1.WorkloadService.HoldWorkload.
+func (c *workloadServiceClient) HoldWorkload(ctx context.Context, req *connect.Request[workspacev1.HoldWorkloadRequest]) (*connect.Response[workspacev1.HoldWorkloadResponse], error) {
+	return c.holdWorkload.CallUnary(ctx, req)
+}
+
+// ReleaseWorkload calls toshi.workspace.v1.WorkloadService.ReleaseWorkload.
+func (c *workloadServiceClient) ReleaseWorkload(ctx context.Context, req *connect.Request[workspacev1.ReleaseWorkloadRequest]) (*connect.Response[workspacev1.ReleaseWorkloadResponse], error) {
+	return c.releaseWorkload.CallUnary(ctx, req)
 }
 
 // HoldService calls toshi.workspace.v1.WorkloadService.HoldService.
@@ -1727,6 +1767,16 @@ type WorkloadServiceHandler interface {
 	// started always-on service returns it as it is; a service that is not
 	// started fails with FAILED_PRECONDITION.
 	WakeService(context.Context, *connect.Request[workspacev1.WakeServiceRequest]) (*connect.Response[workspacev1.WakeServiceResponse], error)
+	// HoldWorkload places an operator hold on a sandbox or service. Only an
+	// operator may call it; another caller is refused with PERMISSION_DENIED.
+	// The operator's reason header is required. A running workload is stopped
+	// with reason POLICY and cause OPERATOR; a stopped one only gets the hold.
+	// A job cannot be held; cancel it instead.
+	HoldWorkload(context.Context, *connect.Request[workspacev1.HoldWorkloadRequest]) (*connect.Response[workspacev1.HoldWorkloadResponse], error)
+	// ReleaseWorkload lifts an operator hold and starts nothing. Only an
+	// operator may call it; another caller is refused with PERMISSION_DENIED.
+	// The operator's reason header is required.
+	ReleaseWorkload(context.Context, *connect.Request[workspacev1.ReleaseWorkloadRequest]) (*connect.Response[workspacev1.ReleaseWorkloadResponse], error)
 	// HoldService takes or renews the caller's hold on a started service:
 	// while any hold is live, an on-demand service does not sleep, and a
 	// hold on one that is asleep wakes it. Each caller has one hold per
@@ -2134,6 +2184,18 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("WakeService")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceHoldWorkloadHandler := connect.NewUnaryHandler(
+		WorkloadServiceHoldWorkloadProcedure,
+		svc.HoldWorkload,
+		connect.WithSchema(workloadServiceMethods.ByName("HoldWorkload")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceReleaseWorkloadHandler := connect.NewUnaryHandler(
+		WorkloadServiceReleaseWorkloadProcedure,
+		svc.ReleaseWorkload,
+		connect.WithSchema(workloadServiceMethods.ByName("ReleaseWorkload")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceHoldServiceHandler := connect.NewUnaryHandler(
 		WorkloadServiceHoldServiceProcedure,
 		svc.HoldService,
@@ -2358,6 +2420,10 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceSetServiceModeHandler.ServeHTTP(w, r)
 		case WorkloadServiceWakeServiceProcedure:
 			workloadServiceWakeServiceHandler.ServeHTTP(w, r)
+		case WorkloadServiceHoldWorkloadProcedure:
+			workloadServiceHoldWorkloadHandler.ServeHTTP(w, r)
+		case WorkloadServiceReleaseWorkloadProcedure:
+			workloadServiceReleaseWorkloadHandler.ServeHTTP(w, r)
 		case WorkloadServiceHoldServiceProcedure:
 			workloadServiceHoldServiceHandler.ServeHTTP(w, r)
 		case WorkloadServiceReleaseServiceProcedure:
@@ -2579,6 +2645,14 @@ func (UnimplementedWorkloadServiceHandler) SetServiceMode(context.Context, *conn
 
 func (UnimplementedWorkloadServiceHandler) WakeService(context.Context, *connect.Request[workspacev1.WakeServiceRequest]) (*connect.Response[workspacev1.WakeServiceResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.WakeService is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) HoldWorkload(context.Context, *connect.Request[workspacev1.HoldWorkloadRequest]) (*connect.Response[workspacev1.HoldWorkloadResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.HoldWorkload is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ReleaseWorkload(context.Context, *connect.Request[workspacev1.ReleaseWorkloadRequest]) (*connect.Response[workspacev1.ReleaseWorkloadResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ReleaseWorkload is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) HoldService(context.Context, *connect.Request[workspacev1.HoldServiceRequest]) (*connect.Response[workspacev1.HoldServiceResponse], error) {

@@ -735,7 +735,7 @@ type Job struct {
 	// github_completed, runner_not_started, runner_unconfirmed, debug_ended,
 	// ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
 	// tenant_deleted or owner, or for a service's run owner_deleted,
-	// service_restart or sleep. Empty if it never was.
+	// service_restart or sleep, or policy. Empty if it never was.
 	StopReason string `protobuf:"bytes,19,opt,name=stop_reason,json=stopReason,proto3" json:"stop_reason,omitempty"`
 	// When the control plane asked the host to stop the job. Unset if it
 	// never did.
@@ -886,8 +886,11 @@ type Job struct {
 	// screen. Empty when its screen is available, and for a job without a
 	// host. A workspace's own hosts and its own cloud account show the screen.
 	ScreenUnavailableReason string `protobuf:"bytes,54,opt,name=screen_unavailable_reason,json=screenUnavailableReason,proto3" json:"screen_unavailable_reason,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// exec_rate, connection_rate, request_rate, mining, operator or runner_swap; set only
+	// with stop_reason "policy".
+	StopCause     string `protobuf:"bytes,55,opt,name=stop_cause,json=stopCause,proto3" json:"stop_cause,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Job) Reset() {
@@ -1294,6 +1297,13 @@ func (x *Job) GetRunAttempt() int32 {
 func (x *Job) GetScreenUnavailableReason() string {
 	if x != nil {
 		return x.ScreenUnavailableReason
+	}
+	return ""
+}
+
+func (x *Job) GetStopCause() string {
+	if x != nil {
+		return x.StopCause
 	}
 	return ""
 }
@@ -8871,8 +8881,8 @@ func (x *Storage) GetEstimatedCents() int64 {
 	return 0
 }
 
-// StoredKind is one kind of stored data in a month: image, volume_version,
-// artifact or recording.
+// StoredKind is one kind of stored data in a month: images, volume_versions,
+// artifacts, recordings or held_disks.
 type StoredKind struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Kind  string                 `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
@@ -14741,7 +14751,7 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd1\x10\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf0\x10\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
@@ -14813,7 +14823,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\aattempt\x184 \x01(\x05R\aattempt\x12\x1f\n" +
 	"\vrun_attempt\x185 \x01(\x05R\n" +
 	"runAttempt\x12:\n" +
-	"\x19screen_unavailable_reason\x186 \x01(\tR\x17screenUnavailableReason\"\xee\x01\n" +
+	"\x19screen_unavailable_reason\x186 \x01(\tR\x17screenUnavailableReason\x12\x1d\n" +
+	"\n" +
+	"stop_cause\x187 \x01(\tR\tstopCause\"\xee\x01\n" +
 	"\bJobCache\x12\x16\n" +
 	"\x06attach\x18\x01 \x01(\tR\x06attach\x12'\n" +
 	"\x0fbase_generation\x18\x02 \x01(\x03R\x0ebaseGeneration\x12\x1d\n" +
