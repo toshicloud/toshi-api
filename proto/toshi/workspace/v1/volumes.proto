@@ -220,6 +220,10 @@ message Volume {
   // apply created it, "adopted" when an apply took over an object that
   // already existed. Empty when managed_by is empty.
   string manifest_origin = 23;
+  // Set when its newest version is larger than size_cap_bytes: a run that
+  // held it while the cap was lowered saved more. No run mounts it until
+  // the cap is raised or a version within the cap is restored.
+  bool latest_version_over_cap = 24;
 }
 
 // VolumeFormat is how hosts keep a state volume, and so what its saved

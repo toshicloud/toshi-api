@@ -319,8 +319,12 @@ type Volume struct {
 	// apply created it, "adopted" when an apply took over an object that
 	// already existed. Empty when managed_by is empty.
 	ManifestOrigin string `protobuf:"bytes,23,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Set when its newest version is larger than size_cap_bytes: a run that
+	// held it while the cap was lowered saved more. No run mounts it until
+	// the cap is raised or a version within the cap is restored.
+	LatestVersionOverCap bool `protobuf:"varint,24,opt,name=latest_version_over_cap,json=latestVersionOverCap,proto3" json:"latest_version_over_cap,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Volume) Reset() {
@@ -512,6 +516,13 @@ func (x *Volume) GetManifestOrigin() string {
 		return x.ManifestOrigin
 	}
 	return ""
+}
+
+func (x *Volume) GetLatestVersionOverCap() bool {
+	if x != nil {
+		return x.LatestVersionOverCap
+	}
+	return false
 }
 
 // VolumeVersion is a saved copy of a state volume's data.
@@ -1599,7 +1610,7 @@ var File_toshi_workspace_v1_volumes_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd9\b\n" +
+	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x90\t\n" +
 	"\x06Volume\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1627,7 +1638,8 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"managed_by\x18\x14 \x01(\tR\tmanagedBy\x12'\n" +
 	"\x0fmanifest_digest\x18\x15 \x01(\tR\x0emanifestDigest\x12%\n" +
 	"\x0emanaged_fields\x18\x16 \x03(\tR\rmanagedFields\x12'\n" +
-	"\x0fmanifest_origin\x18\x17 \x01(\tR\x0emanifestOrigin\"\xc4\x02\n" +
+	"\x0fmanifest_origin\x18\x17 \x01(\tR\x0emanifestOrigin\x125\n" +
+	"\x17latest_version_over_cap\x18\x18 \x01(\bR\x14latestVersionOverCap\"\xc4\x02\n" +
 	"\rVolumeVersion\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\x12;\n" +
 	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
