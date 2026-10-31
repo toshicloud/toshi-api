@@ -269,6 +269,11 @@ message SandboxStatus {
   OperatorHold operator_hold = 15;
   // When the current operator hold was placed; unset when not held.
   google.protobuf.Timestamp held_at = 16;
+  // Where its owner writes about the hold, as the deployment's operator set
+  // it: an email address or a URL. Set only while the workload is held and
+  // the operator set one; empty otherwise. Set by Toshi; ignored in a
+  // request.
+  string hold_contact = 17;
 }
 
 // SandboxState is where a sandbox is in its life. A sandbox can skip a
@@ -404,6 +409,11 @@ message ServiceStatus {
   OperatorHold operator_hold = 15;
   // When the current operator hold was placed; unset when not held.
   google.protobuf.Timestamp held_at = 16;
+  // Where its owner writes about the hold, as the deployment's operator set
+  // it: an email address or a URL. Set only while the workload is held and
+  // the operator set one; empty otherwise. Set by Toshi; ignored in a
+  // request.
+  string hold_contact = 17;
 }
 
 // ServiceBackup is the state of the backups of a service's state volume,

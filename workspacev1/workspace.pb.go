@@ -2051,7 +2051,12 @@ type SandboxStatus struct {
 	// names answer a page naming the hold; only an operator releases it.
 	OperatorHold OperatorHold `protobuf:"varint,15,opt,name=operator_hold,json=operatorHold,proto3,enum=toshi.workspace.v1.OperatorHold" json:"operator_hold,omitempty"`
 	// When the current operator hold was placed; unset when not held.
-	HeldAt        *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=held_at,json=heldAt,proto3" json:"held_at,omitempty"`
+	HeldAt *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=held_at,json=heldAt,proto3" json:"held_at,omitempty"`
+	// Where its owner writes about the hold, as the deployment's operator set
+	// it: an email address or a URL. Set only while the workload is held and
+	// the operator set one; empty otherwise. Set by Toshi; ignored in a
+	// request.
+	HoldContact   string `protobuf:"bytes,17,opt,name=hold_contact,json=holdContact,proto3" json:"hold_contact,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2196,6 +2201,13 @@ func (x *SandboxStatus) GetHeldAt() *timestamppb.Timestamp {
 		return x.HeldAt
 	}
 	return nil
+}
+
+func (x *SandboxStatus) GetHoldContact() string {
+	if x != nil {
+		return x.HoldContact
+	}
+	return ""
 }
 
 // Service is a long-running service, started, stopped, woken and held.
@@ -2569,7 +2581,12 @@ type ServiceStatus struct {
 	// names answer a page naming the hold; only an operator releases it.
 	OperatorHold OperatorHold `protobuf:"varint,15,opt,name=operator_hold,json=operatorHold,proto3,enum=toshi.workspace.v1.OperatorHold" json:"operator_hold,omitempty"`
 	// When the current operator hold was placed; unset when not held.
-	HeldAt        *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=held_at,json=heldAt,proto3" json:"held_at,omitempty"`
+	HeldAt *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=held_at,json=heldAt,proto3" json:"held_at,omitempty"`
+	// Where its owner writes about the hold, as the deployment's operator set
+	// it: an email address or a URL. Set only while the workload is held and
+	// the operator set one; empty otherwise. Set by Toshi; ignored in a
+	// request.
+	HoldContact   string `protobuf:"bytes,17,opt,name=hold_contact,json=holdContact,proto3" json:"hold_contact,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2714,6 +2731,13 @@ func (x *ServiceStatus) GetHeldAt() *timestamppb.Timestamp {
 		return x.HeldAt
 	}
 	return nil
+}
+
+func (x *ServiceStatus) GetHoldContact() string {
+	if x != nil {
+		return x.HoldContact
+	}
+	return ""
 }
 
 // ServiceBackup is the state of the backups of a service's state volume,
@@ -12626,7 +12650,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x18recording_stopped_reason\x18\x0e \x01(\tR\x16recordingStoppedReason\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xd0\a\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xf3\a\n" +
 	"\rSandboxStatus\x126\n" +
 	"\x05state\x18\x01 \x01(\x0e2 .toshi.workspace.v1.SandboxStateR\x05state\x12<\n" +
 	"\n" +
@@ -12652,7 +12676,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"stop_cause\x18\x0e \x01(\x0e2\x1d.toshi.workspace.v1.StopCauseR\tstopCause\x12E\n" +
 	"\roperator_hold\x18\x0f \x01(\x0e2 .toshi.workspace.v1.OperatorHoldR\foperatorHold\x123\n" +
-	"\aheld_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\x06heldAtB\f\n" +
+	"\aheld_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\x06heldAt\x12!\n" +
+	"\fhold_contact\x18\x11 \x01(\tR\vholdContactB\f\n" +
 	"\n" +
 	"_exit_code\"\xa0\x05\n" +
 	"\aService\x12\x0e\n" +
@@ -12684,7 +12709,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x13egress_exempt_bytes\x18\x06 \x01(\x04R\x11egressExemptBytes\"]\n" +
 	"\fNetworkLayer\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
-	"\x06policy\x18\x02 \x01(\v2!.toshi.workspace.v1.NetworkPolicyR\x06policy\"\xce\a\n" +
+	"\x06policy\x18\x02 \x01(\v2!.toshi.workspace.v1.NetworkPolicyR\x06policy\"\xf1\a\n" +
 	"\rServiceStatus\x126\n" +
 	"\x05state\x18\x01 \x01(\x0e2 .toshi.workspace.v1.ServiceStateR\x05state\x12<\n" +
 	"\n" +
@@ -12709,7 +12734,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"stop_cause\x18\x0e \x01(\x0e2\x1d.toshi.workspace.v1.StopCauseR\tstopCause\x12E\n" +
 	"\roperator_hold\x18\x0f \x01(\x0e2 .toshi.workspace.v1.OperatorHoldR\foperatorHold\x123\n" +
-	"\aheld_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\x06heldAt\"\x9c\x02\n" +
+	"\aheld_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\x06heldAt\x12!\n" +
+	"\fhold_contact\x18\x11 \x01(\tR\vholdContact\"\x9c\x02\n" +
 	"\rServiceBackup\x12\x1b\n" +
 	"\tvolume_id\x18\x01 \x01(\tR\bvolumeId\x12%\n" +
 	"\x0elatest_version\x18\x02 \x01(\x03R\rlatestVersion\x12J\n" +
