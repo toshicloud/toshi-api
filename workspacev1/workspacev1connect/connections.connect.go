@@ -71,17 +71,22 @@ type ConnectionServiceClient interface {
 	// GetConnection returns one connection. One the workspace does not have,
 	// or one deleted, is NOT_FOUND.
 	GetConnection(context.Context, *connect.Request[workspacev1.GetConnectionRequest]) (*connect.Response[workspacev1.GetConnectionResponse], error)
-	// CreateConnection creates a WEBHOOK connection whose events belong to a
-	// project's environment, and returns it with its signing secret. A kind
-	// other than WEBHOOK fails with INVALID_ARGUMENT, a name a live
-	// connection of the workspace has with ALREADY_EXISTS, and an
-	// environment the project does not have with NOT_FOUND.
+	// CreateConnection creates a WEBHOOK or MAIL connection. A WEBHOOK
+	// connection's events belong to a project's environment, and the call
+	// returns it with its signing secret. A MAIL connection receives mail at
+	// an address the deployment's inbound mail provider serves and sends each
+	// message to a service's event channel; it has no secret. A kind other
+	// than WEBHOOK or MAIL fails with INVALID_ARGUMENT, as does a missing
+	// required field, a name a live connection of the workspace has with
+	// ALREADY_EXISTS, and an environment the project does not have with
+	// NOT_FOUND.
 	CreateConnection(context.Context, *connect.Request[workspacev1.CreateConnectionRequest]) (*connect.Response[workspacev1.CreateConnectionResponse], error)
-	// DeleteConnection deletes a WEBHOOK connection: its events are no longer
-	// received. A GITHUB connection fails with FAILED_PRECONDITION, as only
-	// removing the GitHub App deletes it, as does one that live triggers match
-	// events from, naming them as project/name, and one the workspace does
-	// not have with NOT_FOUND.
+	// DeleteConnection deletes a WEBHOOK or MAIL connection: its events are no
+	// longer received, and a mail connection's address takes no more mail. A
+	// GITHUB connection fails with FAILED_PRECONDITION, as only removing the
+	// GitHub App deletes it, as does one that live triggers match events from,
+	// naming them as project/name, and one the workspace does not have with
+	// NOT_FOUND.
 	DeleteConnection(context.Context, *connect.Request[workspacev1.DeleteConnectionRequest]) (*connect.Response[workspacev1.DeleteConnectionResponse], error)
 	// RotateConnectionSecret gives a WEBHOOK connection a new signing secret
 	// and returns it. For the overlap after the rotation, the previous secret
@@ -265,17 +270,22 @@ type ConnectionServiceHandler interface {
 	// GetConnection returns one connection. One the workspace does not have,
 	// or one deleted, is NOT_FOUND.
 	GetConnection(context.Context, *connect.Request[workspacev1.GetConnectionRequest]) (*connect.Response[workspacev1.GetConnectionResponse], error)
-	// CreateConnection creates a WEBHOOK connection whose events belong to a
-	// project's environment, and returns it with its signing secret. A kind
-	// other than WEBHOOK fails with INVALID_ARGUMENT, a name a live
-	// connection of the workspace has with ALREADY_EXISTS, and an
-	// environment the project does not have with NOT_FOUND.
+	// CreateConnection creates a WEBHOOK or MAIL connection. A WEBHOOK
+	// connection's events belong to a project's environment, and the call
+	// returns it with its signing secret. A MAIL connection receives mail at
+	// an address the deployment's inbound mail provider serves and sends each
+	// message to a service's event channel; it has no secret. A kind other
+	// than WEBHOOK or MAIL fails with INVALID_ARGUMENT, as does a missing
+	// required field, a name a live connection of the workspace has with
+	// ALREADY_EXISTS, and an environment the project does not have with
+	// NOT_FOUND.
 	CreateConnection(context.Context, *connect.Request[workspacev1.CreateConnectionRequest]) (*connect.Response[workspacev1.CreateConnectionResponse], error)
-	// DeleteConnection deletes a WEBHOOK connection: its events are no longer
-	// received. A GITHUB connection fails with FAILED_PRECONDITION, as only
-	// removing the GitHub App deletes it, as does one that live triggers match
-	// events from, naming them as project/name, and one the workspace does
-	// not have with NOT_FOUND.
+	// DeleteConnection deletes a WEBHOOK or MAIL connection: its events are no
+	// longer received, and a mail connection's address takes no more mail. A
+	// GITHUB connection fails with FAILED_PRECONDITION, as only removing the
+	// GitHub App deletes it, as does one that live triggers match events from,
+	// naming them as project/name, and one the workspace does not have with
+	// NOT_FOUND.
 	DeleteConnection(context.Context, *connect.Request[workspacev1.DeleteConnectionRequest]) (*connect.Response[workspacev1.DeleteConnectionResponse], error)
 	// RotateConnectionSecret gives a WEBHOOK connection a new signing secret
 	// and returns it. For the overlap after the rotation, the previous secret

@@ -34,6 +34,10 @@ const (
 	ConnectionKind_CONNECTION_KIND_GITHUB ConnectionKind = 1
 	// A sender that signs its requests as Standard Webhooks does.
 	ConnectionKind_CONNECTION_KIND_WEBHOOK ConnectionKind = 2
+	// An inbound mail address. The deployment's mail provider receives the
+	// messages; each is stored as a receipt before it goes to a service's
+	// event channel.
+	ConnectionKind_CONNECTION_KIND_MAIL ConnectionKind = 3
 )
 
 // Enum value maps for ConnectionKind.
@@ -42,11 +46,13 @@ var (
 		0: "CONNECTION_KIND_UNSPECIFIED",
 		1: "CONNECTION_KIND_GITHUB",
 		2: "CONNECTION_KIND_WEBHOOK",
+		3: "CONNECTION_KIND_MAIL",
 	}
 	ConnectionKind_value = map[string]int32{
 		"CONNECTION_KIND_UNSPECIFIED": 0,
 		"CONNECTION_KIND_GITHUB":      1,
 		"CONNECTION_KIND_WEBHOOK":     2,
+		"CONNECTION_KIND_MAIL":        3,
 	}
 )
 
@@ -143,11 +149,11 @@ type Connection struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Kind  ConnectionKind         `protobuf:"varint,2,opt,name=kind,proto3,enum=toshi.workspace.v1.ConnectionKind" json:"kind,omitempty"`
-	// Unique among the workspace's WEBHOOK connections; for GITHUB, the
-	// login of the account the App is installed on.
+	// Unique among the workspace's live connections of its kind, WEBHOOK or
+	// MAIL; for GITHUB, the login of the account the App is installed on.
 	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	// The project and environment a WEBHOOK connection's events belong to;
-	// empty for GITHUB, whose events belong to their repository's project.
+	// The project and environment a WEBHOOK or MAIL connection's events belong
+	// to; empty for GITHUB, whose events belong to their repository's project.
 	Project     string `protobuf:"bytes,4,opt,name=project,proto3" json:"project,omitempty"`
 	Environment string `protobuf:"bytes,5,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The GitHub App installation of a GITHUB connection; zero otherwise.
@@ -161,8 +167,8 @@ type Connection struct {
 	Target *ConnectionTarget `protobuf:"bytes,10,opt,name=target,proto3" json:"target,omitempty"`
 	// The inbound address a WEBHOOK connection's sender POSTs to: the
 	// deployment's public address and /ingress/ with the connection's
-	// address token. Empty for GITHUB, and when the deployment names no
-	// public address.
+	// address token. Empty for GITHUB and MAIL, and when the deployment names
+	// no public address.
 	IngressUrl string `protobuf:"bytes,11,opt,name=ingress_url,json=ingressUrl,proto3" json:"ingress_url,omitempty"`
 	// Who manages this object: "manifest" when the project manifest declares
 	// it, empty when nothing does. A manifest apply sets managed_by,
@@ -178,8 +184,11 @@ type Connection struct {
 	// apply created it, "adopted" when an apply took over an object that
 	// already existed. Empty when managed_by is empty.
 	ManifestOrigin string `protobuf:"bytes,15,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Where a MAIL connection receives mail and where it sends it; unset for
+	// the other kinds.
+	Mail          *MailConnection `protobuf:"bytes,16,opt,name=mail,proto3" json:"mail,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Connection) Reset() {
@@ -310,6 +319,90 @@ func (x *Connection) GetManifestOrigin() string {
 	return ""
 }
 
+func (x *Connection) GetMail() *MailConnection {
+	if x != nil {
+		return x.Mail
+	}
+	return nil
+}
+
+// MailConnection is where a MAIL connection receives mail and where it
+// sends it.
+type MailConnection struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Output only. The address mail is received at: the connection's name,
+	// "@", the workspace's ID and the deployment's inbound mail domain, all
+	// lowercase.
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	// The service, by its ID, whose event channel the mail goes to.
+	Service string `protobuf:"bytes,2,opt,name=service,proto3" json:"service,omitempty"`
+	// The name of that service's event channel.
+	Channel string `protobuf:"bytes,3,opt,name=channel,proto3" json:"channel,omitempty"`
+	// Output only. The mail provider that receives for the address, such as
+	// "ses".
+	Provider      string `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MailConnection) Reset() {
+	*x = MailConnection{}
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MailConnection) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MailConnection) ProtoMessage() {}
+
+func (x *MailConnection) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MailConnection.ProtoReflect.Descriptor instead.
+func (*MailConnection) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *MailConnection) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *MailConnection) GetService() string {
+	if x != nil {
+		return x.Service
+	}
+	return ""
+}
+
+func (x *MailConnection) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *MailConnection) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
 // ConnectionTarget is the URL a WEBHOOK connection's deliveries are posted
 // to: each delivery's event, as the event log would hold it, signed as
 // Standard Webhooks does with the target's own secret, until the URL
@@ -330,7 +423,7 @@ type ConnectionTarget struct {
 
 func (x *ConnectionTarget) Reset() {
 	*x = ConnectionTarget{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -342,7 +435,7 @@ func (x *ConnectionTarget) String() string {
 func (*ConnectionTarget) ProtoMessage() {}
 
 func (x *ConnectionTarget) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -355,7 +448,7 @@ func (x *ConnectionTarget) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConnectionTarget.ProtoReflect.Descriptor instead.
 func (*ConnectionTarget) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ConnectionTarget) GetUrl() string {
@@ -398,7 +491,7 @@ type ListConnectionsRequest struct {
 
 func (x *ListConnectionsRequest) Reset() {
 	*x = ListConnectionsRequest{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -410,7 +503,7 @@ func (x *ListConnectionsRequest) String() string {
 func (*ListConnectionsRequest) ProtoMessage() {}
 
 func (x *ListConnectionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -423,7 +516,7 @@ func (x *ListConnectionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConnectionsRequest.ProtoReflect.Descriptor instead.
 func (*ListConnectionsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ListConnectionsRequest) GetPageSize() int32 {
@@ -451,7 +544,7 @@ type ListConnectionsResponse struct {
 
 func (x *ListConnectionsResponse) Reset() {
 	*x = ListConnectionsResponse{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -463,7 +556,7 @@ func (x *ListConnectionsResponse) String() string {
 func (*ListConnectionsResponse) ProtoMessage() {}
 
 func (x *ListConnectionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -476,7 +569,7 @@ func (x *ListConnectionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConnectionsResponse.ProtoReflect.Descriptor instead.
 func (*ListConnectionsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListConnectionsResponse) GetConnections() []*Connection {
@@ -502,7 +595,7 @@ type GetConnectionRequest struct {
 
 func (x *GetConnectionRequest) Reset() {
 	*x = GetConnectionRequest{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -514,7 +607,7 @@ func (x *GetConnectionRequest) String() string {
 func (*GetConnectionRequest) ProtoMessage() {}
 
 func (x *GetConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -527,7 +620,7 @@ func (x *GetConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetConnectionRequest.ProtoReflect.Descriptor instead.
 func (*GetConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetConnectionRequest) GetId() string {
@@ -546,7 +639,7 @@ type GetConnectionResponse struct {
 
 func (x *GetConnectionResponse) Reset() {
 	*x = GetConnectionResponse{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -558,7 +651,7 @@ func (x *GetConnectionResponse) String() string {
 func (*GetConnectionResponse) ProtoMessage() {}
 
 func (x *GetConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -571,7 +664,7 @@ func (x *GetConnectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetConnectionResponse.ProtoReflect.Descriptor instead.
 func (*GetConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetConnectionResponse) GetConnection() *Connection {
@@ -583,20 +676,28 @@ func (x *GetConnectionResponse) GetConnection() *Connection {
 
 type CreateConnectionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// WEBHOOK; no other kind is created here.
+	// The kind to create: WEBHOOK or MAIL. Installing the GitHub App creates
+	// a GITHUB connection.
 	Kind ConnectionKind `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.ConnectionKind" json:"kind,omitempty"`
 	// A lowercase DNS label of at most 63 characters.
-	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Project       string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
-	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The project and environment the connection's events belong to. Both
+	// are required for WEBHOOK. For MAIL they are optional, and when set must
+	// be the service's.
+	Project     string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	Environment string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
+	RequestKey  string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// The mail address and where its mail goes, for a MAIL connection; unset
+	// for WEBHOOK. service and channel are required; address and provider are
+	// output only, and ignored on input.
+	Mail          *MailConnection `protobuf:"bytes,6,opt,name=mail,proto3" json:"mail,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateConnectionRequest) Reset() {
 	*x = CreateConnectionRequest{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -608,7 +709,7 @@ func (x *CreateConnectionRequest) String() string {
 func (*CreateConnectionRequest) ProtoMessage() {}
 
 func (x *CreateConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -621,7 +722,7 @@ func (x *CreateConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateConnectionRequest.ProtoReflect.Descriptor instead.
 func (*CreateConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CreateConnectionRequest) GetKind() ConnectionKind {
@@ -659,11 +760,19 @@ func (x *CreateConnectionRequest) GetRequestKey() string {
 	return ""
 }
 
+func (x *CreateConnectionRequest) GetMail() *MailConnection {
+	if x != nil {
+		return x.Mail
+	}
+	return nil
+}
+
 type CreateConnectionResponse struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	Connection *Connection            `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
 	// The signing secret in its whsec_ form, for the sender to sign its
-	// requests with. Shown only in this answer and an identical retry's.
+	// requests with; empty for a MAIL connection. Shown only in this answer
+	// and an identical retry's.
 	Secret        string `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -671,7 +780,7 @@ type CreateConnectionResponse struct {
 
 func (x *CreateConnectionResponse) Reset() {
 	*x = CreateConnectionResponse{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -683,7 +792,7 @@ func (x *CreateConnectionResponse) String() string {
 func (*CreateConnectionResponse) ProtoMessage() {}
 
 func (x *CreateConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -696,7 +805,7 @@ func (x *CreateConnectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateConnectionResponse.ProtoReflect.Descriptor instead.
 func (*CreateConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CreateConnectionResponse) GetConnection() *Connection {
@@ -723,7 +832,7 @@ type DeleteConnectionRequest struct {
 
 func (x *DeleteConnectionRequest) Reset() {
 	*x = DeleteConnectionRequest{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -735,7 +844,7 @@ func (x *DeleteConnectionRequest) String() string {
 func (*DeleteConnectionRequest) ProtoMessage() {}
 
 func (x *DeleteConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -748,7 +857,7 @@ func (x *DeleteConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteConnectionRequest.ProtoReflect.Descriptor instead.
 func (*DeleteConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteConnectionRequest) GetId() string {
@@ -773,7 +882,7 @@ type DeleteConnectionResponse struct {
 
 func (x *DeleteConnectionResponse) Reset() {
 	*x = DeleteConnectionResponse{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -785,7 +894,7 @@ func (x *DeleteConnectionResponse) String() string {
 func (*DeleteConnectionResponse) ProtoMessage() {}
 
 func (x *DeleteConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -798,7 +907,7 @@ func (x *DeleteConnectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteConnectionResponse.ProtoReflect.Descriptor instead.
 func (*DeleteConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{10}
 }
 
 type RotateConnectionSecretRequest struct {
@@ -814,7 +923,7 @@ type RotateConnectionSecretRequest struct {
 
 func (x *RotateConnectionSecretRequest) Reset() {
 	*x = RotateConnectionSecretRequest{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -826,7 +935,7 @@ func (x *RotateConnectionSecretRequest) String() string {
 func (*RotateConnectionSecretRequest) ProtoMessage() {}
 
 func (x *RotateConnectionSecretRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -839,7 +948,7 @@ func (x *RotateConnectionSecretRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RotateConnectionSecretRequest.ProtoReflect.Descriptor instead.
 func (*RotateConnectionSecretRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *RotateConnectionSecretRequest) GetId() string {
@@ -875,7 +984,7 @@ type RotateConnectionSecretResponse struct {
 
 func (x *RotateConnectionSecretResponse) Reset() {
 	*x = RotateConnectionSecretResponse{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -887,7 +996,7 @@ func (x *RotateConnectionSecretResponse) String() string {
 func (*RotateConnectionSecretResponse) ProtoMessage() {}
 
 func (x *RotateConnectionSecretResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -900,7 +1009,7 @@ func (x *RotateConnectionSecretResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RotateConnectionSecretResponse.ProtoReflect.Descriptor instead.
 func (*RotateConnectionSecretResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RotateConnectionSecretResponse) GetConnection() *Connection {
@@ -933,7 +1042,7 @@ type UpdateConnectionRequest struct {
 
 func (x *UpdateConnectionRequest) Reset() {
 	*x = UpdateConnectionRequest{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -945,7 +1054,7 @@ func (x *UpdateConnectionRequest) String() string {
 func (*UpdateConnectionRequest) ProtoMessage() {}
 
 func (x *UpdateConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -958,7 +1067,7 @@ func (x *UpdateConnectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateConnectionRequest.ProtoReflect.Descriptor instead.
 func (*UpdateConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UpdateConnectionRequest) GetConnection() *Connection {
@@ -984,7 +1093,7 @@ type UpdateConnectionResponse struct {
 
 func (x *UpdateConnectionResponse) Reset() {
 	*x = UpdateConnectionResponse{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -996,7 +1105,7 @@ func (x *UpdateConnectionResponse) String() string {
 func (*UpdateConnectionResponse) ProtoMessage() {}
 
 func (x *UpdateConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1009,7 +1118,7 @@ func (x *UpdateConnectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateConnectionResponse.ProtoReflect.Descriptor instead.
 func (*UpdateConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{13}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateConnectionResponse) GetConnection() *Connection {
@@ -1059,7 +1168,7 @@ type ConnectionDelivery struct {
 
 func (x *ConnectionDelivery) Reset() {
 	*x = ConnectionDelivery{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1071,7 +1180,7 @@ func (x *ConnectionDelivery) String() string {
 func (*ConnectionDelivery) ProtoMessage() {}
 
 func (x *ConnectionDelivery) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1084,7 +1193,7 @@ func (x *ConnectionDelivery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConnectionDelivery.ProtoReflect.Descriptor instead.
 func (*ConnectionDelivery) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{14}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ConnectionDelivery) GetId() string {
@@ -1218,7 +1327,7 @@ type ConnectionDeliveryRun struct {
 
 func (x *ConnectionDeliveryRun) Reset() {
 	*x = ConnectionDeliveryRun{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1230,7 +1339,7 @@ func (x *ConnectionDeliveryRun) String() string {
 func (*ConnectionDeliveryRun) ProtoMessage() {}
 
 func (x *ConnectionDeliveryRun) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1243,7 +1352,7 @@ func (x *ConnectionDeliveryRun) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConnectionDeliveryRun.ProtoReflect.Descriptor instead.
 func (*ConnectionDeliveryRun) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{15}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ConnectionDeliveryRun) GetRun() int32 {
@@ -1317,7 +1426,7 @@ type ListConnectionDeliveriesRequest struct {
 
 func (x *ListConnectionDeliveriesRequest) Reset() {
 	*x = ListConnectionDeliveriesRequest{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1329,7 +1438,7 @@ func (x *ListConnectionDeliveriesRequest) String() string {
 func (*ListConnectionDeliveriesRequest) ProtoMessage() {}
 
 func (x *ListConnectionDeliveriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1342,7 +1451,7 @@ func (x *ListConnectionDeliveriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConnectionDeliveriesRequest.ProtoReflect.Descriptor instead.
 func (*ListConnectionDeliveriesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{16}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ListConnectionDeliveriesRequest) GetConnectionId() string {
@@ -1384,7 +1493,7 @@ type ListConnectionDeliveriesResponse struct {
 
 func (x *ListConnectionDeliveriesResponse) Reset() {
 	*x = ListConnectionDeliveriesResponse{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1396,7 +1505,7 @@ func (x *ListConnectionDeliveriesResponse) String() string {
 func (*ListConnectionDeliveriesResponse) ProtoMessage() {}
 
 func (x *ListConnectionDeliveriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1409,7 +1518,7 @@ func (x *ListConnectionDeliveriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConnectionDeliveriesResponse.ProtoReflect.Descriptor instead.
 func (*ListConnectionDeliveriesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ListConnectionDeliveriesResponse) GetDeliveries() []*ConnectionDelivery {
@@ -1435,7 +1544,7 @@ type GetConnectionDeliveryRequest struct {
 
 func (x *GetConnectionDeliveryRequest) Reset() {
 	*x = GetConnectionDeliveryRequest{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1447,7 +1556,7 @@ func (x *GetConnectionDeliveryRequest) String() string {
 func (*GetConnectionDeliveryRequest) ProtoMessage() {}
 
 func (x *GetConnectionDeliveryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1460,7 +1569,7 @@ func (x *GetConnectionDeliveryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetConnectionDeliveryRequest.ProtoReflect.Descriptor instead.
 func (*GetConnectionDeliveryRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetConnectionDeliveryRequest) GetId() string {
@@ -1480,7 +1589,7 @@ type GetConnectionDeliveryResponse struct {
 
 func (x *GetConnectionDeliveryResponse) Reset() {
 	*x = GetConnectionDeliveryResponse{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1492,7 +1601,7 @@ func (x *GetConnectionDeliveryResponse) String() string {
 func (*GetConnectionDeliveryResponse) ProtoMessage() {}
 
 func (x *GetConnectionDeliveryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1505,7 +1614,7 @@ func (x *GetConnectionDeliveryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetConnectionDeliveryResponse.ProtoReflect.Descriptor instead.
 func (*GetConnectionDeliveryResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{19}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetConnectionDeliveryResponse) GetDelivery() *ConnectionDelivery {
@@ -1532,7 +1641,7 @@ type ReplayConnectionDeliveryRequest struct {
 
 func (x *ReplayConnectionDeliveryRequest) Reset() {
 	*x = ReplayConnectionDeliveryRequest{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1544,7 +1653,7 @@ func (x *ReplayConnectionDeliveryRequest) String() string {
 func (*ReplayConnectionDeliveryRequest) ProtoMessage() {}
 
 func (x *ReplayConnectionDeliveryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1557,7 +1666,7 @@ func (x *ReplayConnectionDeliveryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReplayConnectionDeliveryRequest.ProtoReflect.Descriptor instead.
 func (*ReplayConnectionDeliveryRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{20}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ReplayConnectionDeliveryRequest) GetId() string {
@@ -1584,7 +1693,7 @@ type ReplayConnectionDeliveryResponse struct {
 
 func (x *ReplayConnectionDeliveryResponse) Reset() {
 	*x = ReplayConnectionDeliveryResponse{}
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1596,7 +1705,7 @@ func (x *ReplayConnectionDeliveryResponse) String() string {
 func (*ReplayConnectionDeliveryResponse) ProtoMessage() {}
 
 func (x *ReplayConnectionDeliveryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_connections_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1609,7 +1718,7 @@ func (x *ReplayConnectionDeliveryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReplayConnectionDeliveryResponse.ProtoReflect.Descriptor instead.
 func (*ReplayConnectionDeliveryResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{21}
+	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ReplayConnectionDeliveryResponse) GetDelivery() *ConnectionDelivery {
@@ -1623,7 +1732,7 @@ var File_toshi_workspace_v1_connections_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\n" +
-	"$toshi/workspace/v1/connections.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf1\x04\n" +
+	"$toshi/workspace/v1/connections.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa9\x05\n" +
 	"\n" +
 	"Connection\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x126\n" +
@@ -1643,8 +1752,14 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"managed_by\x18\f \x01(\tR\tmanagedBy\x12'\n" +
 	"\x0fmanifest_digest\x18\r \x01(\tR\x0emanifestDigest\x12%\n" +
 	"\x0emanaged_fields\x18\x0e \x03(\tR\rmanagedFields\x12'\n" +
-	"\x0fmanifest_origin\x18\x0f \x01(\tR\x0emanifestOriginJ\x04\b\t\x10\n" +
-	"R\x11transform_version\"\x96\x01\n" +
+	"\x0fmanifest_origin\x18\x0f \x01(\tR\x0emanifestOrigin\x126\n" +
+	"\x04mail\x18\x10 \x01(\v2\".toshi.workspace.v1.MailConnectionR\x04mailJ\x04\b\t\x10\n" +
+	"R\x11transform_version\"z\n" +
+	"\x0eMailConnection\x12\x18\n" +
+	"\aaddress\x18\x01 \x01(\tR\aaddress\x12\x18\n" +
+	"\aservice\x18\x02 \x01(\tR\aservice\x12\x18\n" +
+	"\achannel\x18\x03 \x01(\tR\achannel\x12\x1a\n" +
+	"\bprovider\x18\x04 \x01(\tR\bprovider\"\x96\x01\n" +
 	"\x10ConnectionTarget\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x16\n" +
 	"\x06secret\x18\x02 \x01(\tR\x06secret\x12\x1d\n" +
@@ -1664,14 +1779,15 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x15GetConnectionResponse\x12>\n" +
 	"\n" +
 	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +
-	"connection\"\xc2\x01\n" +
+	"connection\"\xfa\x01\n" +
 	"\x17CreateConnectionRequest\x126\n" +
 	"\x04kind\x18\x01 \x01(\x0e2\".toshi.workspace.v1.ConnectionKindR\x04kind\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x04 \x01(\tR\venvironment\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +
-	"requestKey\"r\n" +
+	"requestKey\x126\n" +
+	"\x04mail\x18\x06 \x01(\v2\".toshi.workspace.v1.MailConnectionR\x04mail\"r\n" +
 	"\x18CreateConnectionResponse\x12>\n" +
 	"\n" +
 	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +
@@ -1756,11 +1872,12 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\vrequest_key\x18\x02 \x01(\tR\n" +
 	"requestKey\"f\n" +
 	" ReplayConnectionDeliveryResponse\x12B\n" +
-	"\bdelivery\x18\x01 \x01(\v2&.toshi.workspace.v1.ConnectionDeliveryR\bdelivery*j\n" +
+	"\bdelivery\x18\x01 \x01(\v2&.toshi.workspace.v1.ConnectionDeliveryR\bdelivery*\x84\x01\n" +
 	"\x0eConnectionKind\x12\x1f\n" +
 	"\x1bCONNECTION_KIND_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16CONNECTION_KIND_GITHUB\x10\x01\x12\x1b\n" +
-	"\x17CONNECTION_KIND_WEBHOOK\x10\x02*\xe2\x01\n" +
+	"\x17CONNECTION_KIND_WEBHOOK\x10\x02\x12\x18\n" +
+	"\x14CONNECTION_KIND_MAIL\x10\x03*\xe2\x01\n" +
 	"\x17ConnectionDeliveryState\x12)\n" +
 	"%CONNECTION_DELIVERY_STATE_UNSPECIFIED\x10\x00\x12&\n" +
 	"\"CONNECTION_DELIVERY_STATE_RECEIVED\x10\x01\x12'\n" +
@@ -1793,86 +1910,89 @@ func file_toshi_workspace_v1_connections_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_connections_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_toshi_workspace_v1_connections_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_toshi_workspace_v1_connections_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_toshi_workspace_v1_connections_proto_goTypes = []any{
 	(ConnectionKind)(0),                      // 0: toshi.workspace.v1.ConnectionKind
 	(ConnectionDeliveryState)(0),             // 1: toshi.workspace.v1.ConnectionDeliveryState
 	(*Connection)(nil),                       // 2: toshi.workspace.v1.Connection
-	(*ConnectionTarget)(nil),                 // 3: toshi.workspace.v1.ConnectionTarget
-	(*ListConnectionsRequest)(nil),           // 4: toshi.workspace.v1.ListConnectionsRequest
-	(*ListConnectionsResponse)(nil),          // 5: toshi.workspace.v1.ListConnectionsResponse
-	(*GetConnectionRequest)(nil),             // 6: toshi.workspace.v1.GetConnectionRequest
-	(*GetConnectionResponse)(nil),            // 7: toshi.workspace.v1.GetConnectionResponse
-	(*CreateConnectionRequest)(nil),          // 8: toshi.workspace.v1.CreateConnectionRequest
-	(*CreateConnectionResponse)(nil),         // 9: toshi.workspace.v1.CreateConnectionResponse
-	(*DeleteConnectionRequest)(nil),          // 10: toshi.workspace.v1.DeleteConnectionRequest
-	(*DeleteConnectionResponse)(nil),         // 11: toshi.workspace.v1.DeleteConnectionResponse
-	(*RotateConnectionSecretRequest)(nil),    // 12: toshi.workspace.v1.RotateConnectionSecretRequest
-	(*RotateConnectionSecretResponse)(nil),   // 13: toshi.workspace.v1.RotateConnectionSecretResponse
-	(*UpdateConnectionRequest)(nil),          // 14: toshi.workspace.v1.UpdateConnectionRequest
-	(*UpdateConnectionResponse)(nil),         // 15: toshi.workspace.v1.UpdateConnectionResponse
-	(*ConnectionDelivery)(nil),               // 16: toshi.workspace.v1.ConnectionDelivery
-	(*ConnectionDeliveryRun)(nil),            // 17: toshi.workspace.v1.ConnectionDeliveryRun
-	(*ListConnectionDeliveriesRequest)(nil),  // 18: toshi.workspace.v1.ListConnectionDeliveriesRequest
-	(*ListConnectionDeliveriesResponse)(nil), // 19: toshi.workspace.v1.ListConnectionDeliveriesResponse
-	(*GetConnectionDeliveryRequest)(nil),     // 20: toshi.workspace.v1.GetConnectionDeliveryRequest
-	(*GetConnectionDeliveryResponse)(nil),    // 21: toshi.workspace.v1.GetConnectionDeliveryResponse
-	(*ReplayConnectionDeliveryRequest)(nil),  // 22: toshi.workspace.v1.ReplayConnectionDeliveryRequest
-	(*ReplayConnectionDeliveryResponse)(nil), // 23: toshi.workspace.v1.ReplayConnectionDeliveryResponse
-	(*timestamppb.Timestamp)(nil),            // 24: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),              // 25: google.protobuf.Duration
-	(*fieldmaskpb.FieldMask)(nil),            // 26: google.protobuf.FieldMask
+	(*MailConnection)(nil),                   // 3: toshi.workspace.v1.MailConnection
+	(*ConnectionTarget)(nil),                 // 4: toshi.workspace.v1.ConnectionTarget
+	(*ListConnectionsRequest)(nil),           // 5: toshi.workspace.v1.ListConnectionsRequest
+	(*ListConnectionsResponse)(nil),          // 6: toshi.workspace.v1.ListConnectionsResponse
+	(*GetConnectionRequest)(nil),             // 7: toshi.workspace.v1.GetConnectionRequest
+	(*GetConnectionResponse)(nil),            // 8: toshi.workspace.v1.GetConnectionResponse
+	(*CreateConnectionRequest)(nil),          // 9: toshi.workspace.v1.CreateConnectionRequest
+	(*CreateConnectionResponse)(nil),         // 10: toshi.workspace.v1.CreateConnectionResponse
+	(*DeleteConnectionRequest)(nil),          // 11: toshi.workspace.v1.DeleteConnectionRequest
+	(*DeleteConnectionResponse)(nil),         // 12: toshi.workspace.v1.DeleteConnectionResponse
+	(*RotateConnectionSecretRequest)(nil),    // 13: toshi.workspace.v1.RotateConnectionSecretRequest
+	(*RotateConnectionSecretResponse)(nil),   // 14: toshi.workspace.v1.RotateConnectionSecretResponse
+	(*UpdateConnectionRequest)(nil),          // 15: toshi.workspace.v1.UpdateConnectionRequest
+	(*UpdateConnectionResponse)(nil),         // 16: toshi.workspace.v1.UpdateConnectionResponse
+	(*ConnectionDelivery)(nil),               // 17: toshi.workspace.v1.ConnectionDelivery
+	(*ConnectionDeliveryRun)(nil),            // 18: toshi.workspace.v1.ConnectionDeliveryRun
+	(*ListConnectionDeliveriesRequest)(nil),  // 19: toshi.workspace.v1.ListConnectionDeliveriesRequest
+	(*ListConnectionDeliveriesResponse)(nil), // 20: toshi.workspace.v1.ListConnectionDeliveriesResponse
+	(*GetConnectionDeliveryRequest)(nil),     // 21: toshi.workspace.v1.GetConnectionDeliveryRequest
+	(*GetConnectionDeliveryResponse)(nil),    // 22: toshi.workspace.v1.GetConnectionDeliveryResponse
+	(*ReplayConnectionDeliveryRequest)(nil),  // 23: toshi.workspace.v1.ReplayConnectionDeliveryRequest
+	(*ReplayConnectionDeliveryResponse)(nil), // 24: toshi.workspace.v1.ReplayConnectionDeliveryResponse
+	(*timestamppb.Timestamp)(nil),            // 25: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),              // 26: google.protobuf.Duration
+	(*fieldmaskpb.FieldMask)(nil),            // 27: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_connections_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Connection.kind:type_name -> toshi.workspace.v1.ConnectionKind
-	24, // 1: toshi.workspace.v1.Connection.created_at:type_name -> google.protobuf.Timestamp
-	24, // 2: toshi.workspace.v1.Connection.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
-	3,  // 3: toshi.workspace.v1.Connection.target:type_name -> toshi.workspace.v1.ConnectionTarget
-	24, // 4: toshi.workspace.v1.ConnectionTarget.updated_at:type_name -> google.protobuf.Timestamp
-	2,  // 5: toshi.workspace.v1.ListConnectionsResponse.connections:type_name -> toshi.workspace.v1.Connection
-	2,  // 6: toshi.workspace.v1.GetConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
-	0,  // 7: toshi.workspace.v1.CreateConnectionRequest.kind:type_name -> toshi.workspace.v1.ConnectionKind
-	2,  // 8: toshi.workspace.v1.CreateConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
-	25, // 9: toshi.workspace.v1.RotateConnectionSecretRequest.overlap:type_name -> google.protobuf.Duration
-	2,  // 10: toshi.workspace.v1.RotateConnectionSecretResponse.connection:type_name -> toshi.workspace.v1.Connection
-	2,  // 11: toshi.workspace.v1.UpdateConnectionRequest.connection:type_name -> toshi.workspace.v1.Connection
-	26, // 12: toshi.workspace.v1.UpdateConnectionRequest.update_mask:type_name -> google.protobuf.FieldMask
-	2,  // 13: toshi.workspace.v1.UpdateConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
-	1,  // 14: toshi.workspace.v1.ConnectionDelivery.state:type_name -> toshi.workspace.v1.ConnectionDeliveryState
-	24, // 15: toshi.workspace.v1.ConnectionDelivery.sent_at:type_name -> google.protobuf.Timestamp
-	24, // 16: toshi.workspace.v1.ConnectionDelivery.received_at:type_name -> google.protobuf.Timestamp
-	24, // 17: toshi.workspace.v1.ConnectionDelivery.processed_at:type_name -> google.protobuf.Timestamp
-	24, // 18: toshi.workspace.v1.ConnectionDelivery.body_expired_at:type_name -> google.protobuf.Timestamp
-	25, // 19: toshi.workspace.v1.ConnectionDeliveryRun.duration:type_name -> google.protobuf.Duration
-	24, // 20: toshi.workspace.v1.ConnectionDeliveryRun.finished_at:type_name -> google.protobuf.Timestamp
-	1,  // 21: toshi.workspace.v1.ListConnectionDeliveriesRequest.state:type_name -> toshi.workspace.v1.ConnectionDeliveryState
-	16, // 22: toshi.workspace.v1.ListConnectionDeliveriesResponse.deliveries:type_name -> toshi.workspace.v1.ConnectionDelivery
-	16, // 23: toshi.workspace.v1.GetConnectionDeliveryResponse.delivery:type_name -> toshi.workspace.v1.ConnectionDelivery
-	17, // 24: toshi.workspace.v1.GetConnectionDeliveryResponse.runs:type_name -> toshi.workspace.v1.ConnectionDeliveryRun
-	16, // 25: toshi.workspace.v1.ReplayConnectionDeliveryResponse.delivery:type_name -> toshi.workspace.v1.ConnectionDelivery
-	4,  // 26: toshi.workspace.v1.ConnectionService.ListConnections:input_type -> toshi.workspace.v1.ListConnectionsRequest
-	6,  // 27: toshi.workspace.v1.ConnectionService.GetConnection:input_type -> toshi.workspace.v1.GetConnectionRequest
-	8,  // 28: toshi.workspace.v1.ConnectionService.CreateConnection:input_type -> toshi.workspace.v1.CreateConnectionRequest
-	10, // 29: toshi.workspace.v1.ConnectionService.DeleteConnection:input_type -> toshi.workspace.v1.DeleteConnectionRequest
-	12, // 30: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:input_type -> toshi.workspace.v1.RotateConnectionSecretRequest
-	14, // 31: toshi.workspace.v1.ConnectionService.UpdateConnection:input_type -> toshi.workspace.v1.UpdateConnectionRequest
-	18, // 32: toshi.workspace.v1.ConnectionService.ListConnectionDeliveries:input_type -> toshi.workspace.v1.ListConnectionDeliveriesRequest
-	20, // 33: toshi.workspace.v1.ConnectionService.GetConnectionDelivery:input_type -> toshi.workspace.v1.GetConnectionDeliveryRequest
-	22, // 34: toshi.workspace.v1.ConnectionService.ReplayConnectionDelivery:input_type -> toshi.workspace.v1.ReplayConnectionDeliveryRequest
-	5,  // 35: toshi.workspace.v1.ConnectionService.ListConnections:output_type -> toshi.workspace.v1.ListConnectionsResponse
-	7,  // 36: toshi.workspace.v1.ConnectionService.GetConnection:output_type -> toshi.workspace.v1.GetConnectionResponse
-	9,  // 37: toshi.workspace.v1.ConnectionService.CreateConnection:output_type -> toshi.workspace.v1.CreateConnectionResponse
-	11, // 38: toshi.workspace.v1.ConnectionService.DeleteConnection:output_type -> toshi.workspace.v1.DeleteConnectionResponse
-	13, // 39: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:output_type -> toshi.workspace.v1.RotateConnectionSecretResponse
-	15, // 40: toshi.workspace.v1.ConnectionService.UpdateConnection:output_type -> toshi.workspace.v1.UpdateConnectionResponse
-	19, // 41: toshi.workspace.v1.ConnectionService.ListConnectionDeliveries:output_type -> toshi.workspace.v1.ListConnectionDeliveriesResponse
-	21, // 42: toshi.workspace.v1.ConnectionService.GetConnectionDelivery:output_type -> toshi.workspace.v1.GetConnectionDeliveryResponse
-	23, // 43: toshi.workspace.v1.ConnectionService.ReplayConnectionDelivery:output_type -> toshi.workspace.v1.ReplayConnectionDeliveryResponse
-	35, // [35:44] is the sub-list for method output_type
-	26, // [26:35] is the sub-list for method input_type
-	26, // [26:26] is the sub-list for extension type_name
-	26, // [26:26] is the sub-list for extension extendee
-	0,  // [0:26] is the sub-list for field type_name
+	25, // 1: toshi.workspace.v1.Connection.created_at:type_name -> google.protobuf.Timestamp
+	25, // 2: toshi.workspace.v1.Connection.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
+	4,  // 3: toshi.workspace.v1.Connection.target:type_name -> toshi.workspace.v1.ConnectionTarget
+	3,  // 4: toshi.workspace.v1.Connection.mail:type_name -> toshi.workspace.v1.MailConnection
+	25, // 5: toshi.workspace.v1.ConnectionTarget.updated_at:type_name -> google.protobuf.Timestamp
+	2,  // 6: toshi.workspace.v1.ListConnectionsResponse.connections:type_name -> toshi.workspace.v1.Connection
+	2,  // 7: toshi.workspace.v1.GetConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
+	0,  // 8: toshi.workspace.v1.CreateConnectionRequest.kind:type_name -> toshi.workspace.v1.ConnectionKind
+	3,  // 9: toshi.workspace.v1.CreateConnectionRequest.mail:type_name -> toshi.workspace.v1.MailConnection
+	2,  // 10: toshi.workspace.v1.CreateConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
+	26, // 11: toshi.workspace.v1.RotateConnectionSecretRequest.overlap:type_name -> google.protobuf.Duration
+	2,  // 12: toshi.workspace.v1.RotateConnectionSecretResponse.connection:type_name -> toshi.workspace.v1.Connection
+	2,  // 13: toshi.workspace.v1.UpdateConnectionRequest.connection:type_name -> toshi.workspace.v1.Connection
+	27, // 14: toshi.workspace.v1.UpdateConnectionRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 15: toshi.workspace.v1.UpdateConnectionResponse.connection:type_name -> toshi.workspace.v1.Connection
+	1,  // 16: toshi.workspace.v1.ConnectionDelivery.state:type_name -> toshi.workspace.v1.ConnectionDeliveryState
+	25, // 17: toshi.workspace.v1.ConnectionDelivery.sent_at:type_name -> google.protobuf.Timestamp
+	25, // 18: toshi.workspace.v1.ConnectionDelivery.received_at:type_name -> google.protobuf.Timestamp
+	25, // 19: toshi.workspace.v1.ConnectionDelivery.processed_at:type_name -> google.protobuf.Timestamp
+	25, // 20: toshi.workspace.v1.ConnectionDelivery.body_expired_at:type_name -> google.protobuf.Timestamp
+	26, // 21: toshi.workspace.v1.ConnectionDeliveryRun.duration:type_name -> google.protobuf.Duration
+	25, // 22: toshi.workspace.v1.ConnectionDeliveryRun.finished_at:type_name -> google.protobuf.Timestamp
+	1,  // 23: toshi.workspace.v1.ListConnectionDeliveriesRequest.state:type_name -> toshi.workspace.v1.ConnectionDeliveryState
+	17, // 24: toshi.workspace.v1.ListConnectionDeliveriesResponse.deliveries:type_name -> toshi.workspace.v1.ConnectionDelivery
+	17, // 25: toshi.workspace.v1.GetConnectionDeliveryResponse.delivery:type_name -> toshi.workspace.v1.ConnectionDelivery
+	18, // 26: toshi.workspace.v1.GetConnectionDeliveryResponse.runs:type_name -> toshi.workspace.v1.ConnectionDeliveryRun
+	17, // 27: toshi.workspace.v1.ReplayConnectionDeliveryResponse.delivery:type_name -> toshi.workspace.v1.ConnectionDelivery
+	5,  // 28: toshi.workspace.v1.ConnectionService.ListConnections:input_type -> toshi.workspace.v1.ListConnectionsRequest
+	7,  // 29: toshi.workspace.v1.ConnectionService.GetConnection:input_type -> toshi.workspace.v1.GetConnectionRequest
+	9,  // 30: toshi.workspace.v1.ConnectionService.CreateConnection:input_type -> toshi.workspace.v1.CreateConnectionRequest
+	11, // 31: toshi.workspace.v1.ConnectionService.DeleteConnection:input_type -> toshi.workspace.v1.DeleteConnectionRequest
+	13, // 32: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:input_type -> toshi.workspace.v1.RotateConnectionSecretRequest
+	15, // 33: toshi.workspace.v1.ConnectionService.UpdateConnection:input_type -> toshi.workspace.v1.UpdateConnectionRequest
+	19, // 34: toshi.workspace.v1.ConnectionService.ListConnectionDeliveries:input_type -> toshi.workspace.v1.ListConnectionDeliveriesRequest
+	21, // 35: toshi.workspace.v1.ConnectionService.GetConnectionDelivery:input_type -> toshi.workspace.v1.GetConnectionDeliveryRequest
+	23, // 36: toshi.workspace.v1.ConnectionService.ReplayConnectionDelivery:input_type -> toshi.workspace.v1.ReplayConnectionDeliveryRequest
+	6,  // 37: toshi.workspace.v1.ConnectionService.ListConnections:output_type -> toshi.workspace.v1.ListConnectionsResponse
+	8,  // 38: toshi.workspace.v1.ConnectionService.GetConnection:output_type -> toshi.workspace.v1.GetConnectionResponse
+	10, // 39: toshi.workspace.v1.ConnectionService.CreateConnection:output_type -> toshi.workspace.v1.CreateConnectionResponse
+	12, // 40: toshi.workspace.v1.ConnectionService.DeleteConnection:output_type -> toshi.workspace.v1.DeleteConnectionResponse
+	14, // 41: toshi.workspace.v1.ConnectionService.RotateConnectionSecret:output_type -> toshi.workspace.v1.RotateConnectionSecretResponse
+	16, // 42: toshi.workspace.v1.ConnectionService.UpdateConnection:output_type -> toshi.workspace.v1.UpdateConnectionResponse
+	20, // 43: toshi.workspace.v1.ConnectionService.ListConnectionDeliveries:output_type -> toshi.workspace.v1.ListConnectionDeliveriesResponse
+	22, // 44: toshi.workspace.v1.ConnectionService.GetConnectionDelivery:output_type -> toshi.workspace.v1.GetConnectionDeliveryResponse
+	24, // 45: toshi.workspace.v1.ConnectionService.ReplayConnectionDelivery:output_type -> toshi.workspace.v1.ReplayConnectionDeliveryResponse
+	37, // [37:46] is the sub-list for method output_type
+	28, // [28:37] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_connections_proto_init() }
@@ -1886,7 +2006,7 @@ func file_toshi_workspace_v1_connections_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_connections_proto_rawDesc), len(file_toshi_workspace_v1_connections_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   22,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

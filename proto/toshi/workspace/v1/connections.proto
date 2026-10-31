@@ -14,7 +14,10 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // GITHUB, which installing the App creates and removing it deletes; the
 // calls here list it and cannot create or delete it. A WEBHOOK connection
 // receives events from a sender that signs its requests as Standard
-// Webhooks does, with a secret the connection keeps.
+// Webhooks does, with a secret the connection keeps. A MAIL connection
+// receives mail at an address the deployment's inbound mail provider
+// serves; each message is stored as a receipt before it goes to a
+// service's event channel.
 //
 // The caller's credential names the workspace, as for WorkloadService.
 // CreateConnection and RotateConnectionSecret require a request_key, which
@@ -39,21 +42,26 @@ service ConnectionService {
     option (toshi.scope) = "workspace";
   }
 
-  // CreateConnection creates a WEBHOOK connection whose events belong to a
-  // project's environment, and returns it with its signing secret. A kind
-  // other than WEBHOOK fails with INVALID_ARGUMENT, a name a live
-  // connection of the workspace has with ALREADY_EXISTS, and an
-  // environment the project does not have with NOT_FOUND.
+  // CreateConnection creates a WEBHOOK or MAIL connection. A WEBHOOK
+  // connection's events belong to a project's environment, and the call
+  // returns it with its signing secret. A MAIL connection receives mail at
+  // an address the deployment's inbound mail provider serves and sends each
+  // message to a service's event channel; it has no secret. A kind other
+  // than WEBHOOK or MAIL fails with INVALID_ARGUMENT, as does a missing
+  // required field, a name a live connection of the workspace has with
+  // ALREADY_EXISTS, and an environment the project does not have with
+  // NOT_FOUND.
   rpc CreateConnection(CreateConnectionRequest) returns (CreateConnectionResponse) {
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
   }
 
-  // DeleteConnection deletes a WEBHOOK connection: its events are no longer
-  // received. A GITHUB connection fails with FAILED_PRECONDITION, as only
-  // removing the GitHub App deletes it, as does one that live triggers match
-  // events from, naming them as project/name, and one the workspace does
-  // not have with NOT_FOUND.
+  // DeleteConnection deletes a WEBHOOK or MAIL connection: its events are no
+  // longer received, and a mail connection's address takes no more mail. A
+  // GITHUB connection fails with FAILED_PRECONDITION, as only removing the
+  // GitHub App deletes it, as does one that live triggers match events from,
+  // naming them as project/name, and one the workspace does not have with
+  // NOT_FOUND.
   rpc DeleteConnection(DeleteConnectionRequest) returns (DeleteConnectionResponse) {
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
@@ -139,17 +147,21 @@ enum ConnectionKind {
   CONNECTION_KIND_GITHUB = 1;
   // A sender that signs its requests as Standard Webhooks does.
   CONNECTION_KIND_WEBHOOK = 2;
+  // An inbound mail address. The deployment's mail provider receives the
+  // messages; each is stored as a receipt before it goes to a service's
+  // event channel.
+  CONNECTION_KIND_MAIL = 3;
 }
 
 // Connection is one source of a workspace's events.
 message Connection {
   string id = 1;
   ConnectionKind kind = 2;
-  // Unique among the workspace's WEBHOOK connections; for GITHUB, the
-  // login of the account the App is installed on.
+  // Unique among the workspace's live connections of its kind, WEBHOOK or
+  // MAIL; for GITHUB, the login of the account the App is installed on.
   string name = 3;
-  // The project and environment a WEBHOOK connection's events belong to;
-  // empty for GITHUB, whose events belong to their repository's project.
+  // The project and environment a WEBHOOK or MAIL connection's events belong
+  // to; empty for GITHUB, whose events belong to their repository's project.
   string project = 4;
   string environment = 5;
   // The GitHub App installation of a GITHUB connection; zero otherwise.
@@ -165,8 +177,8 @@ message Connection {
   ConnectionTarget target = 10;
   // The inbound address a WEBHOOK connection's sender POSTs to: the
   // deployment's public address and /ingress/ with the connection's
-  // address token. Empty for GITHUB, and when the deployment names no
-  // public address.
+  // address token. Empty for GITHUB and MAIL, and when the deployment names
+  // no public address.
   string ingress_url = 11;
   // Who manages this object: "manifest" when the project manifest declares
   // it, empty when nothing does. A manifest apply sets managed_by,
@@ -182,6 +194,25 @@ message Connection {
   // apply created it, "adopted" when an apply took over an object that
   // already existed. Empty when managed_by is empty.
   string manifest_origin = 15;
+  // Where a MAIL connection receives mail and where it sends it; unset for
+  // the other kinds.
+  MailConnection mail = 16;
+}
+
+// MailConnection is where a MAIL connection receives mail and where it
+// sends it.
+message MailConnection {
+  // Output only. The address mail is received at: the connection's name,
+  // "@", the workspace's ID and the deployment's inbound mail domain, all
+  // lowercase.
+  string address = 1;
+  // The service, by its ID, whose event channel the mail goes to.
+  string service = 2;
+  // The name of that service's event channel.
+  string channel = 3;
+  // Output only. The mail provider that receives for the address, such as
+  // "ses".
+  string provider = 4;
 }
 
 // ConnectionTarget is the URL a WEBHOOK connection's deliveries are posted
@@ -221,19 +252,28 @@ message GetConnectionResponse {
 }
 
 message CreateConnectionRequest {
-  // WEBHOOK; no other kind is created here.
+  // The kind to create: WEBHOOK or MAIL. Installing the GitHub App creates
+  // a GITHUB connection.
   ConnectionKind kind = 1;
   // A lowercase DNS label of at most 63 characters.
   string name = 2;
+  // The project and environment the connection's events belong to. Both
+  // are required for WEBHOOK. For MAIL they are optional, and when set must
+  // be the service's.
   string project = 3;
   string environment = 4;
   string request_key = 5;
+  // The mail address and where its mail goes, for a MAIL connection; unset
+  // for WEBHOOK. service and channel are required; address and provider are
+  // output only, and ignored on input.
+  MailConnection mail = 6;
 }
 
 message CreateConnectionResponse {
   Connection connection = 1;
   // The signing secret in its whsec_ form, for the sender to sign its
-  // requests with. Shown only in this answer and an identical retry's.
+  // requests with; empty for a MAIL connection. Shown only in this answer
+  // and an identical retry's.
   string secret = 2;
 }
 
