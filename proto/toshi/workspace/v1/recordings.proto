@@ -24,8 +24,9 @@ service RecordingService {
     option (toshi.scope) = "environment";
   }
   // GetRecording returns one recording and, when it is ready, a signed URL
-  // for its object that expires. A ready recording whose object's
-  // retention has deleted it is FAILED_PRECONDITION.
+  // for its object that expires and the page that plays it in a browser. A
+  // ready recording whose object's retention has deleted it is
+  // FAILED_PRECONDITION.
   rpc GetRecording(GetRecordingRequest) returns (GetRecordingResponse) {
     option (toshi.permission) = "recordings.read";
     option (toshi.scope) = "environment";
@@ -209,6 +210,11 @@ message GetRecordingResponse {
   // offset in the strip's index.
   string url = 2;
   google.protobuf.Timestamp expires_at = 3;
+  // The page that plays the recording in a browser from url, which its
+  // fragment carries, so the address never reaches a server: set with url,
+  // and empty when the control plane has no public URL. It expires with
+  // url.
+  string player_url = 4;
 }
 
 // RecordingShareLinkState is where a recording's share link is in its

@@ -60,8 +60,9 @@ type RecordingServiceClient interface {
 	// A page holds 100 recordings when page_size is zero, and 1000 at most.
 	ListRecordings(context.Context, *connect.Request[workspacev1.ListRecordingsRequest]) (*connect.Response[workspacev1.ListRecordingsResponse], error)
 	// GetRecording returns one recording and, when it is ready, a signed URL
-	// for its object that expires. A ready recording whose object's
-	// retention has deleted it is FAILED_PRECONDITION.
+	// for its object that expires and the page that plays it in a browser. A
+	// ready recording whose object's retention has deleted it is
+	// FAILED_PRECONDITION.
 	GetRecording(context.Context, *connect.Request[workspacev1.GetRecordingRequest]) (*connect.Response[workspacev1.GetRecordingResponse], error)
 	// CreateRecordingShareLink mints a share link for a ready recording: a
 	// URL that fetches its object without a Toshi sign-in until the link
@@ -168,8 +169,9 @@ type RecordingServiceHandler interface {
 	// A page holds 100 recordings when page_size is zero, and 1000 at most.
 	ListRecordings(context.Context, *connect.Request[workspacev1.ListRecordingsRequest]) (*connect.Response[workspacev1.ListRecordingsResponse], error)
 	// GetRecording returns one recording and, when it is ready, a signed URL
-	// for its object that expires. A ready recording whose object's
-	// retention has deleted it is FAILED_PRECONDITION.
+	// for its object that expires and the page that plays it in a browser. A
+	// ready recording whose object's retention has deleted it is
+	// FAILED_PRECONDITION.
 	GetRecording(context.Context, *connect.Request[workspacev1.GetRecordingRequest]) (*connect.Response[workspacev1.GetRecordingResponse], error)
 	// CreateRecordingShareLink mints a share link for a ready recording: a
 	// URL that fetches its object without a Toshi sign-in until the link

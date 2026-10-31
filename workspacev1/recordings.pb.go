@@ -810,8 +810,13 @@ type GetRecordingResponse struct {
 	// A signed GET for its object, set only when the recording is ready. It
 	// honours a byte Range, so one frame of a strip can be fetched by its
 	// offset in the strip's index.
-	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
-	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	Url       string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// The page that plays the recording in a browser from url, which its
+	// fragment carries, so the address never reaches a server: set with url,
+	// and empty when the control plane has no public URL. It expires with
+	// url.
+	PlayerUrl     string `protobuf:"bytes,4,opt,name=player_url,json=playerUrl,proto3" json:"player_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -865,6 +870,13 @@ func (x *GetRecordingResponse) GetExpiresAt() *timestamppb.Timestamp {
 		return x.ExpiresAt
 	}
 	return nil
+}
+
+func (x *GetRecordingResponse) GetPlayerUrl() string {
+	if x != nil {
+		return x.PlayerUrl
+	}
+	return ""
 }
 
 // RecordingShareLink is one share link of a recording, without the link
@@ -1385,12 +1397,14 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\x13GetRecordingRequest\x12!\n" +
 	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x12\x1f\n" +
 	"\vttl_seconds\x18\x02 \x01(\x03R\n" +
-	"ttlSeconds\"\xa0\x01\n" +
+	"ttlSeconds\"\xbf\x01\n" +
 	"\x14GetRecordingResponse\x12;\n" +
 	"\trecording\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.RecordingR\trecording\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x129\n" +
 	"\n" +
-	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xcd\x03\n" +
+	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1d\n" +
+	"\n" +
+	"player_url\x18\x04 \x01(\tR\tplayerUrl\"\xcd\x03\n" +
 	"\x12RecordingShareLink\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\frecording_id\x18\x02 \x01(\tR\vrecordingId\x125\n" +
