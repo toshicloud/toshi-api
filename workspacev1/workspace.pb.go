@@ -833,6 +833,16 @@ const (
 	// An ACP channel's agent finished a prompt. Name:
 	// "channel.acp.turn_ended". Payload: ChannelACPEvent.
 	EventType_EVENT_TYPE_CHANNEL_ACP_TURN_ENDED EventType = 20
+	// A service's run was restored from the snapshot its VM left when the
+	// run before it went to sleep, with when the snapshot was taken and how
+	// much time passed since. Name: "service.restored". Payload:
+	// ServiceRestoredEvent.
+	EventType_EVENT_TYPE_SERVICE_RESTORED EventType = 21
+	// A service's run could not keep a snapshot when it went to sleep, or
+	// its snapshot could not be restored and the run started cold, with
+	// why. Name: "service.snapshot_failed" or "service.restore_failed".
+	// Payload: ServiceSnapshotFailedEvent.
+	EventType_EVENT_TYPE_SERVICE_SNAPSHOT_FAILED EventType = 22
 )
 
 // Enum value maps for EventType.
@@ -859,6 +869,8 @@ var (
 		18: "EVENT_TYPE_KEPT_VM_DISCARDED",
 		19: "EVENT_TYPE_CHANNEL_ACP_PERMISSION_REQUESTED",
 		20: "EVENT_TYPE_CHANNEL_ACP_TURN_ENDED",
+		21: "EVENT_TYPE_SERVICE_RESTORED",
+		22: "EVENT_TYPE_SERVICE_SNAPSHOT_FAILED",
 	}
 	EventType_value = map[string]int32{
 		"EVENT_TYPE_UNSPECIFIED":                      0,
@@ -882,6 +894,8 @@ var (
 		"EVENT_TYPE_KEPT_VM_DISCARDED":                18,
 		"EVENT_TYPE_CHANNEL_ACP_PERMISSION_REQUESTED": 19,
 		"EVENT_TYPE_CHANNEL_ACP_TURN_ENDED":           20,
+		"EVENT_TYPE_SERVICE_RESTORED":                 21,
+		"EVENT_TYPE_SERVICE_SNAPSHOT_FAILED":          22,
 	}
 )
 
@@ -6525,6 +6539,8 @@ type Event struct {
 	//	*Event_MailSent
 	//	*Event_KeptVmDiscarded
 	//	*Event_ChannelAcp
+	//	*Event_ServiceRestored
+	//	*Event_ServiceSnapshotFailed
 	Payload isEvent_Payload `protobuf_oneof:"payload"`
 	// The project the workload or the connection's event belongs to; set on
 	// every event.
@@ -6752,6 +6768,24 @@ func (x *Event) GetChannelAcp() *ChannelACPEvent {
 	return nil
 }
 
+func (x *Event) GetServiceRestored() *ServiceRestoredEvent {
+	if x != nil {
+		if x, ok := x.Payload.(*Event_ServiceRestored); ok {
+			return x.ServiceRestored
+		}
+	}
+	return nil
+}
+
+func (x *Event) GetServiceSnapshotFailed() *ServiceSnapshotFailedEvent {
+	if x != nil {
+		if x, ok := x.Payload.(*Event_ServiceSnapshotFailed); ok {
+			return x.ServiceSnapshotFailed
+		}
+	}
+	return nil
+}
+
 func (x *Event) GetProject() string {
 	if x != nil {
 		return x.Project
@@ -6852,6 +6886,16 @@ type Event_ChannelAcp struct {
 	ChannelAcp *ChannelACPEvent `protobuf:"bytes,25,opt,name=channel_acp,json=channelAcp,proto3,oneof"`
 }
 
+type Event_ServiceRestored struct {
+	// For SERVICE_RESTORED.
+	ServiceRestored *ServiceRestoredEvent `protobuf:"bytes,26,opt,name=service_restored,json=serviceRestored,proto3,oneof"`
+}
+
+type Event_ServiceSnapshotFailed struct {
+	// For SERVICE_SNAPSHOT_FAILED.
+	ServiceSnapshotFailed *ServiceSnapshotFailedEvent `protobuf:"bytes,27,opt,name=service_snapshot_failed,json=serviceSnapshotFailed,proto3,oneof"`
+}
+
 func (*Event_Job) isEvent_Payload() {}
 
 func (*Event_Sandbox) isEvent_Payload() {}
@@ -6881,6 +6925,10 @@ func (*Event_MailSent) isEvent_Payload() {}
 func (*Event_KeptVmDiscarded) isEvent_Payload() {}
 
 func (*Event_ChannelAcp) isEvent_Payload() {}
+
+func (*Event_ServiceRestored) isEvent_Payload() {}
+
+func (*Event_ServiceSnapshotFailed) isEvent_Payload() {}
 
 // KeptVMDiscardedEvent records a kept VM discarded before a fresh run.
 type KeptVMDiscardedEvent struct {
@@ -6937,6 +6985,165 @@ func (x *KeptVMDiscardedEvent) GetReason() string {
 	return ""
 }
 
+// ServiceRestoredEvent records a service run restored from a snapshot.
+type ServiceRestoredEvent struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The job ID of the restored run.
+	RunId string `protobuf:"bytes,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	// The snapshot it was restored from.
+	SnapshotId string `protobuf:"bytes,2,opt,name=snapshot_id,json=snapshotId,proto3" json:"snapshot_id,omitempty"`
+	// When the snapshot was taken: the run before it went to sleep then.
+	SnapshotTakenAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=snapshot_taken_at,json=snapshotTakenAt,proto3" json:"snapshot_taken_at,omitempty"`
+	// When the run was restored.
+	RestoredAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=restored_at,json=restoredAt,proto3" json:"restored_at,omitempty"`
+	// The time between the two: how long the service's process was
+	// stopped.
+	Lost          *durationpb.Duration `protobuf:"bytes,5,opt,name=lost,proto3" json:"lost,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ServiceRestoredEvent) Reset() {
+	*x = ServiceRestoredEvent{}
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ServiceRestoredEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ServiceRestoredEvent) ProtoMessage() {}
+
+func (x *ServiceRestoredEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ServiceRestoredEvent.ProtoReflect.Descriptor instead.
+func (*ServiceRestoredEvent) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *ServiceRestoredEvent) GetRunId() string {
+	if x != nil {
+		return x.RunId
+	}
+	return ""
+}
+
+func (x *ServiceRestoredEvent) GetSnapshotId() string {
+	if x != nil {
+		return x.SnapshotId
+	}
+	return ""
+}
+
+func (x *ServiceRestoredEvent) GetSnapshotTakenAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.SnapshotTakenAt
+	}
+	return nil
+}
+
+func (x *ServiceRestoredEvent) GetRestoredAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RestoredAt
+	}
+	return nil
+}
+
+func (x *ServiceRestoredEvent) GetLost() *durationpb.Duration {
+	if x != nil {
+		return x.Lost
+	}
+	return nil
+}
+
+// ServiceSnapshotFailedEvent records a snapshot a service run could not
+// keep at sleep or restore at wake. The service's next wake, or this one,
+// starts cold.
+type ServiceSnapshotFailedEvent struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The job ID of the run.
+	RunId string `protobuf:"bytes,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	// The snapshot that could not be restored; empty when none was taken.
+	SnapshotId string `protobuf:"bytes,2,opt,name=snapshot_id,json=snapshotId,proto3" json:"snapshot_id,omitempty"`
+	// "snapshot" when the sleep kept none, "restore" when the wake started
+	// cold.
+	Step string `protobuf:"bytes,3,opt,name=step,proto3" json:"step,omitempty"`
+	// Why.
+	Error         string `protobuf:"bytes,4,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ServiceSnapshotFailedEvent) Reset() {
+	*x = ServiceSnapshotFailedEvent{}
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ServiceSnapshotFailedEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ServiceSnapshotFailedEvent) ProtoMessage() {}
+
+func (x *ServiceSnapshotFailedEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ServiceSnapshotFailedEvent.ProtoReflect.Descriptor instead.
+func (*ServiceSnapshotFailedEvent) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *ServiceSnapshotFailedEvent) GetRunId() string {
+	if x != nil {
+		return x.RunId
+	}
+	return ""
+}
+
+func (x *ServiceSnapshotFailedEvent) GetSnapshotId() string {
+	if x != nil {
+		return x.SnapshotId
+	}
+	return ""
+}
+
+func (x *ServiceSnapshotFailedEvent) GetStep() string {
+	if x != nil {
+		return x.Step
+	}
+	return ""
+}
+
+func (x *ServiceSnapshotFailedEvent) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
 // UpgradeRolledBackEvent is a service upgrade that failed in its window and
 // was rolled back.
 type UpgradeRolledBackEvent struct {
@@ -6955,7 +7162,7 @@ type UpgradeRolledBackEvent struct {
 
 func (x *UpgradeRolledBackEvent) Reset() {
 	*x = UpgradeRolledBackEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[57]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6967,7 +7174,7 @@ func (x *UpgradeRolledBackEvent) String() string {
 func (*UpgradeRolledBackEvent) ProtoMessage() {}
 
 func (x *UpgradeRolledBackEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[57]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6980,7 +7187,7 @@ func (x *UpgradeRolledBackEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpgradeRolledBackEvent.ProtoReflect.Descriptor instead.
 func (*UpgradeRolledBackEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{57}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *UpgradeRolledBackEvent) GetRevision() int64 {
@@ -7028,7 +7235,7 @@ type SecretWithheldEvent struct {
 
 func (x *SecretWithheldEvent) Reset() {
 	*x = SecretWithheldEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[58]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7040,7 +7247,7 @@ func (x *SecretWithheldEvent) String() string {
 func (*SecretWithheldEvent) ProtoMessage() {}
 
 func (x *SecretWithheldEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[58]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7053,7 +7260,7 @@ func (x *SecretWithheldEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SecretWithheldEvent.ProtoReflect.Descriptor instead.
 func (*SecretWithheldEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{58}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *SecretWithheldEvent) GetRunId() string {
@@ -7093,7 +7300,7 @@ type WithheldSecret struct {
 
 func (x *WithheldSecret) Reset() {
 	*x = WithheldSecret{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[59]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7105,7 +7312,7 @@ func (x *WithheldSecret) String() string {
 func (*WithheldSecret) ProtoMessage() {}
 
 func (x *WithheldSecret) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[59]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7118,7 +7325,7 @@ func (x *WithheldSecret) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WithheldSecret.ProtoReflect.Descriptor instead.
 func (*WithheldSecret) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{59}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *WithheldSecret) GetName() string {
@@ -7155,7 +7362,7 @@ type EgressDeniedEvent struct {
 
 func (x *EgressDeniedEvent) Reset() {
 	*x = EgressDeniedEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[60]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7167,7 +7374,7 @@ func (x *EgressDeniedEvent) String() string {
 func (*EgressDeniedEvent) ProtoMessage() {}
 
 func (x *EgressDeniedEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[60]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7180,7 +7387,7 @@ func (x *EgressDeniedEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EgressDeniedEvent.ProtoReflect.Descriptor instead.
 func (*EgressDeniedEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{60}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *EgressDeniedEvent) GetRunId() string {
@@ -7223,7 +7430,7 @@ type EgressDenial struct {
 
 func (x *EgressDenial) Reset() {
 	*x = EgressDenial{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[61]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7235,7 +7442,7 @@ func (x *EgressDenial) String() string {
 func (*EgressDenial) ProtoMessage() {}
 
 func (x *EgressDenial) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[61]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7248,7 +7455,7 @@ func (x *EgressDenial) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EgressDenial.ProtoReflect.Descriptor instead.
 func (*EgressDenial) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{61}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *EgressDenial) GetAddress() string {
@@ -7334,7 +7541,7 @@ type TriggerResult struct {
 
 func (x *TriggerResult) Reset() {
 	*x = TriggerResult{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[62]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7346,7 +7553,7 @@ func (x *TriggerResult) String() string {
 func (*TriggerResult) ProtoMessage() {}
 
 func (x *TriggerResult) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[62]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7359,7 +7566,7 @@ func (x *TriggerResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TriggerResult.ProtoReflect.Descriptor instead.
 func (*TriggerResult) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{62}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *TriggerResult) GetTriggerId() string {
@@ -7445,7 +7652,7 @@ type ExecutionEvent struct {
 
 func (x *ExecutionEvent) Reset() {
 	*x = ExecutionEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[63]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7457,7 +7664,7 @@ func (x *ExecutionEvent) String() string {
 func (*ExecutionEvent) ProtoMessage() {}
 
 func (x *ExecutionEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[63]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7470,7 +7677,7 @@ func (x *ExecutionEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExecutionEvent.ProtoReflect.Descriptor instead.
 func (*ExecutionEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{63}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *ExecutionEvent) GetExecutionId() string {
@@ -7504,7 +7711,7 @@ type EmittedEvent struct {
 
 func (x *EmittedEvent) Reset() {
 	*x = EmittedEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[64]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7516,7 +7723,7 @@ func (x *EmittedEvent) String() string {
 func (*EmittedEvent) ProtoMessage() {}
 
 func (x *EmittedEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[64]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7529,7 +7736,7 @@ func (x *EmittedEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmittedEvent.ProtoReflect.Descriptor instead.
 func (*EmittedEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{64}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *EmittedEvent) GetData() []byte {
@@ -7555,7 +7762,7 @@ type AgentAnswerEvent struct {
 
 func (x *AgentAnswerEvent) Reset() {
 	*x = AgentAnswerEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[65]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7567,7 +7774,7 @@ func (x *AgentAnswerEvent) String() string {
 func (*AgentAnswerEvent) ProtoMessage() {}
 
 func (x *AgentAnswerEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[65]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7580,7 +7787,7 @@ func (x *AgentAnswerEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentAnswerEvent.ProtoReflect.Descriptor instead.
 func (*AgentAnswerEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{65}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *AgentAnswerEvent) GetPromptId() string {
@@ -7622,7 +7829,7 @@ type MailSentEvent struct {
 
 func (x *MailSentEvent) Reset() {
 	*x = MailSentEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[66]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7634,7 +7841,7 @@ func (x *MailSentEvent) String() string {
 func (*MailSentEvent) ProtoMessage() {}
 
 func (x *MailSentEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[66]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7647,7 +7854,7 @@ func (x *MailSentEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MailSentEvent.ProtoReflect.Descriptor instead.
 func (*MailSentEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{66}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *MailSentEvent) GetBinding() string {
@@ -7697,7 +7904,7 @@ type ChannelACPEvent struct {
 
 func (x *ChannelACPEvent) Reset() {
 	*x = ChannelACPEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[67]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7709,7 +7916,7 @@ func (x *ChannelACPEvent) String() string {
 func (*ChannelACPEvent) ProtoMessage() {}
 
 func (x *ChannelACPEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[67]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7722,7 +7929,7 @@ func (x *ChannelACPEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelACPEvent.ProtoReflect.Descriptor instead.
 func (*ChannelACPEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{67}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *ChannelACPEvent) GetChannel() string {
@@ -7778,7 +7985,7 @@ type AgentPrompt struct {
 
 func (x *AgentPrompt) Reset() {
 	*x = AgentPrompt{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[68]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7790,7 +7997,7 @@ func (x *AgentPrompt) String() string {
 func (*AgentPrompt) ProtoMessage() {}
 
 func (x *AgentPrompt) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[68]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7803,7 +8010,7 @@ func (x *AgentPrompt) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgentPrompt.ProtoReflect.Descriptor instead.
 func (*AgentPrompt) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{68}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *AgentPrompt) GetId() string {
@@ -7869,7 +8076,7 @@ type ConnectionEvent struct {
 
 func (x *ConnectionEvent) Reset() {
 	*x = ConnectionEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[69]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7881,7 +8088,7 @@ func (x *ConnectionEvent) String() string {
 func (*ConnectionEvent) ProtoMessage() {}
 
 func (x *ConnectionEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[69]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7894,7 +8101,7 @@ func (x *ConnectionEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConnectionEvent.ProtoReflect.Descriptor instead.
 func (*ConnectionEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{69}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *ConnectionEvent) GetData() []byte {
@@ -7919,7 +8126,7 @@ type RecordingEvent struct {
 
 func (x *RecordingEvent) Reset() {
 	*x = RecordingEvent{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[70]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7931,7 +8138,7 @@ func (x *RecordingEvent) String() string {
 func (*RecordingEvent) ProtoMessage() {}
 
 func (x *RecordingEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[70]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7944,7 +8151,7 @@ func (x *RecordingEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordingEvent.ProtoReflect.Descriptor instead.
 func (*RecordingEvent) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{70}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *RecordingEvent) GetRecordingId() string {
@@ -7995,7 +8202,7 @@ type ListEventsRequest struct {
 
 func (x *ListEventsRequest) Reset() {
 	*x = ListEventsRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[71]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8007,7 +8214,7 @@ func (x *ListEventsRequest) String() string {
 func (*ListEventsRequest) ProtoMessage() {}
 
 func (x *ListEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[71]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8020,7 +8227,7 @@ func (x *ListEventsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEventsRequest.ProtoReflect.Descriptor instead.
 func (*ListEventsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{71}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *ListEventsRequest) GetProject() string {
@@ -8085,7 +8292,7 @@ type ListEventsResponse struct {
 
 func (x *ListEventsResponse) Reset() {
 	*x = ListEventsResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[72]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8097,7 +8304,7 @@ func (x *ListEventsResponse) String() string {
 func (*ListEventsResponse) ProtoMessage() {}
 
 func (x *ListEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[72]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8110,7 +8317,7 @@ func (x *ListEventsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEventsResponse.ProtoReflect.Descriptor instead.
 func (*ListEventsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{72}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *ListEventsResponse) GetEvents() []*Event {
@@ -8160,7 +8367,7 @@ type WatchEventsRequest struct {
 
 func (x *WatchEventsRequest) Reset() {
 	*x = WatchEventsRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[73]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8172,7 +8379,7 @@ func (x *WatchEventsRequest) String() string {
 func (*WatchEventsRequest) ProtoMessage() {}
 
 func (x *WatchEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[73]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8185,7 +8392,7 @@ func (x *WatchEventsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchEventsRequest.ProtoReflect.Descriptor instead.
 func (*WatchEventsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{73}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *WatchEventsRequest) GetProject() string {
@@ -8235,7 +8442,7 @@ type WatchEventsResponse struct {
 
 func (x *WatchEventsResponse) Reset() {
 	*x = WatchEventsResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[74]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8247,7 +8454,7 @@ func (x *WatchEventsResponse) String() string {
 func (*WatchEventsResponse) ProtoMessage() {}
 
 func (x *WatchEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[74]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8260,7 +8467,7 @@ func (x *WatchEventsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchEventsResponse.ProtoReflect.Descriptor instead.
 func (*WatchEventsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{74}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *WatchEventsResponse) GetEvent() *Event {
@@ -8295,7 +8502,7 @@ type Keepalive struct {
 
 func (x *Keepalive) Reset() {
 	*x = Keepalive{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[75]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8307,7 +8514,7 @@ func (x *Keepalive) String() string {
 func (*Keepalive) ProtoMessage() {}
 
 func (x *Keepalive) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[75]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8320,7 +8527,7 @@ func (x *Keepalive) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Keepalive.ProtoReflect.Descriptor instead.
 func (*Keepalive) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{75}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *Keepalive) GetSentAt() *timestamppb.Timestamp {
@@ -8369,7 +8576,7 @@ type PreviewShareLink struct {
 
 func (x *PreviewShareLink) Reset() {
 	*x = PreviewShareLink{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[76]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8381,7 +8588,7 @@ func (x *PreviewShareLink) String() string {
 func (*PreviewShareLink) ProtoMessage() {}
 
 func (x *PreviewShareLink) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[76]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8394,7 +8601,7 @@ func (x *PreviewShareLink) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PreviewShareLink.ProtoReflect.Descriptor instead.
 func (*PreviewShareLink) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{76}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *PreviewShareLink) GetId() string {
@@ -8507,7 +8714,7 @@ type CreatePreviewShareLinkRequest struct {
 
 func (x *CreatePreviewShareLinkRequest) Reset() {
 	*x = CreatePreviewShareLinkRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[77]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8519,7 +8726,7 @@ func (x *CreatePreviewShareLinkRequest) String() string {
 func (*CreatePreviewShareLinkRequest) ProtoMessage() {}
 
 func (x *CreatePreviewShareLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[77]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8532,7 +8739,7 @@ func (x *CreatePreviewShareLinkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePreviewShareLinkRequest.ProtoReflect.Descriptor instead.
 func (*CreatePreviewShareLinkRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{77}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *CreatePreviewShareLinkRequest) GetProject() string {
@@ -8623,7 +8830,7 @@ type CreatePreviewShareLinkResponse struct {
 
 func (x *CreatePreviewShareLinkResponse) Reset() {
 	*x = CreatePreviewShareLinkResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[78]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8635,7 +8842,7 @@ func (x *CreatePreviewShareLinkResponse) String() string {
 func (*CreatePreviewShareLinkResponse) ProtoMessage() {}
 
 func (x *CreatePreviewShareLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[78]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8648,7 +8855,7 @@ func (x *CreatePreviewShareLinkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePreviewShareLinkResponse.ProtoReflect.Descriptor instead.
 func (*CreatePreviewShareLinkResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{78}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *CreatePreviewShareLinkResponse) GetShareLink() *PreviewShareLink {
@@ -8680,7 +8887,7 @@ type ListPreviewShareLinksRequest struct {
 
 func (x *ListPreviewShareLinksRequest) Reset() {
 	*x = ListPreviewShareLinksRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[79]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8692,7 +8899,7 @@ func (x *ListPreviewShareLinksRequest) String() string {
 func (*ListPreviewShareLinksRequest) ProtoMessage() {}
 
 func (x *ListPreviewShareLinksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[79]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8705,7 +8912,7 @@ func (x *ListPreviewShareLinksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPreviewShareLinksRequest.ProtoReflect.Descriptor instead.
 func (*ListPreviewShareLinksRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{79}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *ListPreviewShareLinksRequest) GetProject() string {
@@ -8754,7 +8961,7 @@ type ListPreviewShareLinksResponse struct {
 
 func (x *ListPreviewShareLinksResponse) Reset() {
 	*x = ListPreviewShareLinksResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[80]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8766,7 +8973,7 @@ func (x *ListPreviewShareLinksResponse) String() string {
 func (*ListPreviewShareLinksResponse) ProtoMessage() {}
 
 func (x *ListPreviewShareLinksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[80]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8779,7 +8986,7 @@ func (x *ListPreviewShareLinksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPreviewShareLinksResponse.ProtoReflect.Descriptor instead.
 func (*ListPreviewShareLinksResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{80}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *ListPreviewShareLinksResponse) GetShareLinks() []*PreviewShareLink {
@@ -8808,7 +9015,7 @@ type RevokePreviewShareLinkRequest struct {
 
 func (x *RevokePreviewShareLinkRequest) Reset() {
 	*x = RevokePreviewShareLinkRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[81]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8820,7 +9027,7 @@ func (x *RevokePreviewShareLinkRequest) String() string {
 func (*RevokePreviewShareLinkRequest) ProtoMessage() {}
 
 func (x *RevokePreviewShareLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[81]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8833,7 +9040,7 @@ func (x *RevokePreviewShareLinkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokePreviewShareLinkRequest.ProtoReflect.Descriptor instead.
 func (*RevokePreviewShareLinkRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{81}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *RevokePreviewShareLinkRequest) GetProject() string {
@@ -8873,7 +9080,7 @@ type RevokePreviewShareLinkResponse struct {
 
 func (x *RevokePreviewShareLinkResponse) Reset() {
 	*x = RevokePreviewShareLinkResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[82]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8885,7 +9092,7 @@ func (x *RevokePreviewShareLinkResponse) String() string {
 func (*RevokePreviewShareLinkResponse) ProtoMessage() {}
 
 func (x *RevokePreviewShareLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[82]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8898,7 +9105,7 @@ func (x *RevokePreviewShareLinkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokePreviewShareLinkResponse.ProtoReflect.Descriptor instead.
 func (*RevokePreviewShareLinkResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{82}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *RevokePreviewShareLinkResponse) GetShareLink() *PreviewShareLink {
@@ -8939,7 +9146,7 @@ type ServiceShareLink struct {
 
 func (x *ServiceShareLink) Reset() {
 	*x = ServiceShareLink{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[83]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8951,7 +9158,7 @@ func (x *ServiceShareLink) String() string {
 func (*ServiceShareLink) ProtoMessage() {}
 
 func (x *ServiceShareLink) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[83]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8964,7 +9171,7 @@ func (x *ServiceShareLink) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceShareLink.ProtoReflect.Descriptor instead.
 func (*ServiceShareLink) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{83}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *ServiceShareLink) GetId() string {
@@ -9065,7 +9272,7 @@ type CreateServiceShareLinkRequest struct {
 
 func (x *CreateServiceShareLinkRequest) Reset() {
 	*x = CreateServiceShareLinkRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[84]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9077,7 +9284,7 @@ func (x *CreateServiceShareLinkRequest) String() string {
 func (*CreateServiceShareLinkRequest) ProtoMessage() {}
 
 func (x *CreateServiceShareLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[84]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9090,7 +9297,7 @@ func (x *CreateServiceShareLinkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateServiceShareLinkRequest.ProtoReflect.Descriptor instead.
 func (*CreateServiceShareLinkRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{84}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *CreateServiceShareLinkRequest) GetProject() string {
@@ -9147,7 +9354,7 @@ type CreateServiceShareLinkResponse struct {
 
 func (x *CreateServiceShareLinkResponse) Reset() {
 	*x = CreateServiceShareLinkResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[85]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9159,7 +9366,7 @@ func (x *CreateServiceShareLinkResponse) String() string {
 func (*CreateServiceShareLinkResponse) ProtoMessage() {}
 
 func (x *CreateServiceShareLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[85]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9172,7 +9379,7 @@ func (x *CreateServiceShareLinkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateServiceShareLinkResponse.ProtoReflect.Descriptor instead.
 func (*CreateServiceShareLinkResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{85}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *CreateServiceShareLinkResponse) GetShareLink() *ServiceShareLink {
@@ -9205,7 +9412,7 @@ type ListServiceShareLinksRequest struct {
 
 func (x *ListServiceShareLinksRequest) Reset() {
 	*x = ListServiceShareLinksRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[86]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9217,7 +9424,7 @@ func (x *ListServiceShareLinksRequest) String() string {
 func (*ListServiceShareLinksRequest) ProtoMessage() {}
 
 func (x *ListServiceShareLinksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[86]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9230,7 +9437,7 @@ func (x *ListServiceShareLinksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceShareLinksRequest.ProtoReflect.Descriptor instead.
 func (*ListServiceShareLinksRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{86}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *ListServiceShareLinksRequest) GetProject() string {
@@ -9279,7 +9486,7 @@ type ListServiceShareLinksResponse struct {
 
 func (x *ListServiceShareLinksResponse) Reset() {
 	*x = ListServiceShareLinksResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[87]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9291,7 +9498,7 @@ func (x *ListServiceShareLinksResponse) String() string {
 func (*ListServiceShareLinksResponse) ProtoMessage() {}
 
 func (x *ListServiceShareLinksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[87]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9304,7 +9511,7 @@ func (x *ListServiceShareLinksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceShareLinksResponse.ProtoReflect.Descriptor instead.
 func (*ListServiceShareLinksResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{87}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *ListServiceShareLinksResponse) GetShareLinks() []*ServiceShareLink {
@@ -9334,7 +9541,7 @@ type RevokeServiceShareLinkRequest struct {
 
 func (x *RevokeServiceShareLinkRequest) Reset() {
 	*x = RevokeServiceShareLinkRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[88]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9346,7 +9553,7 @@ func (x *RevokeServiceShareLinkRequest) String() string {
 func (*RevokeServiceShareLinkRequest) ProtoMessage() {}
 
 func (x *RevokeServiceShareLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[88]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9359,7 +9566,7 @@ func (x *RevokeServiceShareLinkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeServiceShareLinkRequest.ProtoReflect.Descriptor instead.
 func (*RevokeServiceShareLinkRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{88}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *RevokeServiceShareLinkRequest) GetProject() string {
@@ -9399,7 +9606,7 @@ type RevokeServiceShareLinkResponse struct {
 
 func (x *RevokeServiceShareLinkResponse) Reset() {
 	*x = RevokeServiceShareLinkResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[89]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9411,7 +9618,7 @@ func (x *RevokeServiceShareLinkResponse) String() string {
 func (*RevokeServiceShareLinkResponse) ProtoMessage() {}
 
 func (x *RevokeServiceShareLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[89]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9424,7 +9631,7 @@ func (x *RevokeServiceShareLinkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeServiceShareLinkResponse.ProtoReflect.Descriptor instead.
 func (*RevokeServiceShareLinkResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{89}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *RevokeServiceShareLinkResponse) GetShareLink() *ServiceShareLink {
@@ -9446,7 +9653,7 @@ type StartSandboxRequest struct {
 
 func (x *StartSandboxRequest) Reset() {
 	*x = StartSandboxRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[90]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9458,7 +9665,7 @@ func (x *StartSandboxRequest) String() string {
 func (*StartSandboxRequest) ProtoMessage() {}
 
 func (x *StartSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[90]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9471,7 +9678,7 @@ func (x *StartSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartSandboxRequest.ProtoReflect.Descriptor instead.
 func (*StartSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{90}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *StartSandboxRequest) GetProject() string {
@@ -9511,7 +9718,7 @@ type StartSandboxResponse struct {
 
 func (x *StartSandboxResponse) Reset() {
 	*x = StartSandboxResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[91]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9523,7 +9730,7 @@ func (x *StartSandboxResponse) String() string {
 func (*StartSandboxResponse) ProtoMessage() {}
 
 func (x *StartSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[91]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9536,7 +9743,7 @@ func (x *StartSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartSandboxResponse.ProtoReflect.Descriptor instead.
 func (*StartSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{91}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *StartSandboxResponse) GetSandbox() *Sandbox {
@@ -9558,7 +9765,7 @@ type StopSandboxRequest struct {
 
 func (x *StopSandboxRequest) Reset() {
 	*x = StopSandboxRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[92]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9570,7 +9777,7 @@ func (x *StopSandboxRequest) String() string {
 func (*StopSandboxRequest) ProtoMessage() {}
 
 func (x *StopSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[92]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9583,7 +9790,7 @@ func (x *StopSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopSandboxRequest.ProtoReflect.Descriptor instead.
 func (*StopSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{92}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *StopSandboxRequest) GetProject() string {
@@ -9623,7 +9830,7 @@ type StopSandboxResponse struct {
 
 func (x *StopSandboxResponse) Reset() {
 	*x = StopSandboxResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[93]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9635,7 +9842,7 @@ func (x *StopSandboxResponse) String() string {
 func (*StopSandboxResponse) ProtoMessage() {}
 
 func (x *StopSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[93]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9648,7 +9855,7 @@ func (x *StopSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopSandboxResponse.ProtoReflect.Descriptor instead.
 func (*StopSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{93}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *StopSandboxResponse) GetSandbox() *Sandbox {
@@ -9671,7 +9878,7 @@ type StartServiceRequest struct {
 
 func (x *StartServiceRequest) Reset() {
 	*x = StartServiceRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[94]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9683,7 +9890,7 @@ func (x *StartServiceRequest) String() string {
 func (*StartServiceRequest) ProtoMessage() {}
 
 func (x *StartServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[94]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9696,7 +9903,7 @@ func (x *StartServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartServiceRequest.ProtoReflect.Descriptor instead.
 func (*StartServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{94}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *StartServiceRequest) GetProject() string {
@@ -9737,7 +9944,7 @@ type StartServiceResponse struct {
 
 func (x *StartServiceResponse) Reset() {
 	*x = StartServiceResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[95]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9749,7 +9956,7 @@ func (x *StartServiceResponse) String() string {
 func (*StartServiceResponse) ProtoMessage() {}
 
 func (x *StartServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[95]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9762,7 +9969,7 @@ func (x *StartServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartServiceResponse.ProtoReflect.Descriptor instead.
 func (*StartServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{95}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *StartServiceResponse) GetService() *Service {
@@ -9784,7 +9991,7 @@ type StopServiceRequest struct {
 
 func (x *StopServiceRequest) Reset() {
 	*x = StopServiceRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[96]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9796,7 +10003,7 @@ func (x *StopServiceRequest) String() string {
 func (*StopServiceRequest) ProtoMessage() {}
 
 func (x *StopServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[96]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9809,7 +10016,7 @@ func (x *StopServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopServiceRequest.ProtoReflect.Descriptor instead.
 func (*StopServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{96}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *StopServiceRequest) GetProject() string {
@@ -9850,7 +10057,7 @@ type StopServiceResponse struct {
 
 func (x *StopServiceResponse) Reset() {
 	*x = StopServiceResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[97]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9862,7 +10069,7 @@ func (x *StopServiceResponse) String() string {
 func (*StopServiceResponse) ProtoMessage() {}
 
 func (x *StopServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[97]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9875,7 +10082,7 @@ func (x *StopServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopServiceResponse.ProtoReflect.Descriptor instead.
 func (*StopServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{97}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *StopServiceResponse) GetService() *Service {
@@ -9899,7 +10106,7 @@ type SetServiceModeRequest struct {
 
 func (x *SetServiceModeRequest) Reset() {
 	*x = SetServiceModeRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[98]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9911,7 +10118,7 @@ func (x *SetServiceModeRequest) String() string {
 func (*SetServiceModeRequest) ProtoMessage() {}
 
 func (x *SetServiceModeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[98]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9924,7 +10131,7 @@ func (x *SetServiceModeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetServiceModeRequest.ProtoReflect.Descriptor instead.
 func (*SetServiceModeRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{98}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{100}
 }
 
 func (x *SetServiceModeRequest) GetProject() string {
@@ -9972,7 +10179,7 @@ type SetServiceModeResponse struct {
 
 func (x *SetServiceModeResponse) Reset() {
 	*x = SetServiceModeResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[99]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9984,7 +10191,7 @@ func (x *SetServiceModeResponse) String() string {
 func (*SetServiceModeResponse) ProtoMessage() {}
 
 func (x *SetServiceModeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[99]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9997,7 +10204,7 @@ func (x *SetServiceModeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetServiceModeResponse.ProtoReflect.Descriptor instead.
 func (*SetServiceModeResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{99}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{101}
 }
 
 func (x *SetServiceModeResponse) GetService() *Service {
@@ -10019,7 +10226,7 @@ type WakeServiceRequest struct {
 
 func (x *WakeServiceRequest) Reset() {
 	*x = WakeServiceRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[100]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[102]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10031,7 +10238,7 @@ func (x *WakeServiceRequest) String() string {
 func (*WakeServiceRequest) ProtoMessage() {}
 
 func (x *WakeServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[100]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[102]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10044,7 +10251,7 @@ func (x *WakeServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WakeServiceRequest.ProtoReflect.Descriptor instead.
 func (*WakeServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{100}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{102}
 }
 
 func (x *WakeServiceRequest) GetProject() string {
@@ -10085,7 +10292,7 @@ type WakeServiceResponse struct {
 
 func (x *WakeServiceResponse) Reset() {
 	*x = WakeServiceResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[101]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[103]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10097,7 +10304,7 @@ func (x *WakeServiceResponse) String() string {
 func (*WakeServiceResponse) ProtoMessage() {}
 
 func (x *WakeServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[101]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[103]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10110,7 +10317,7 @@ func (x *WakeServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WakeServiceResponse.ProtoReflect.Descriptor instead.
 func (*WakeServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{101}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{103}
 }
 
 func (x *WakeServiceResponse) GetService() *Service {
@@ -10133,7 +10340,7 @@ type HoldWorkloadRequest struct {
 
 func (x *HoldWorkloadRequest) Reset() {
 	*x = HoldWorkloadRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[102]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[104]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10145,7 +10352,7 @@ func (x *HoldWorkloadRequest) String() string {
 func (*HoldWorkloadRequest) ProtoMessage() {}
 
 func (x *HoldWorkloadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[102]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[104]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10158,7 +10365,7 @@ func (x *HoldWorkloadRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HoldWorkloadRequest.ProtoReflect.Descriptor instead.
 func (*HoldWorkloadRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{102}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{104}
 }
 
 func (x *HoldWorkloadRequest) GetProject() string {
@@ -10197,7 +10404,7 @@ type HoldWorkloadResponse struct {
 
 func (x *HoldWorkloadResponse) Reset() {
 	*x = HoldWorkloadResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[103]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10209,7 +10416,7 @@ func (x *HoldWorkloadResponse) String() string {
 func (*HoldWorkloadResponse) ProtoMessage() {}
 
 func (x *HoldWorkloadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[103]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10222,7 +10429,7 @@ func (x *HoldWorkloadResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HoldWorkloadResponse.ProtoReflect.Descriptor instead.
 func (*HoldWorkloadResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{103}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{105}
 }
 
 // ReleaseWorkloadRequest names the sandbox or service to release.
@@ -10237,7 +10444,7 @@ type ReleaseWorkloadRequest struct {
 
 func (x *ReleaseWorkloadRequest) Reset() {
 	*x = ReleaseWorkloadRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[104]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[106]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10249,7 +10456,7 @@ func (x *ReleaseWorkloadRequest) String() string {
 func (*ReleaseWorkloadRequest) ProtoMessage() {}
 
 func (x *ReleaseWorkloadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[104]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[106]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10262,7 +10469,7 @@ func (x *ReleaseWorkloadRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReleaseWorkloadRequest.ProtoReflect.Descriptor instead.
 func (*ReleaseWorkloadRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{104}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{106}
 }
 
 func (x *ReleaseWorkloadRequest) GetProject() string {
@@ -10294,7 +10501,7 @@ type ReleaseWorkloadResponse struct {
 
 func (x *ReleaseWorkloadResponse) Reset() {
 	*x = ReleaseWorkloadResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[105]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[107]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10306,7 +10513,7 @@ func (x *ReleaseWorkloadResponse) String() string {
 func (*ReleaseWorkloadResponse) ProtoMessage() {}
 
 func (x *ReleaseWorkloadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[105]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[107]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10319,7 +10526,7 @@ func (x *ReleaseWorkloadResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReleaseWorkloadResponse.ProtoReflect.Descriptor instead.
 func (*ReleaseWorkloadResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{105}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{107}
 }
 
 type HoldServiceRequest struct {
@@ -10336,7 +10543,7 @@ type HoldServiceRequest struct {
 
 func (x *HoldServiceRequest) Reset() {
 	*x = HoldServiceRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[106]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[108]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10348,7 +10555,7 @@ func (x *HoldServiceRequest) String() string {
 func (*HoldServiceRequest) ProtoMessage() {}
 
 func (x *HoldServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[106]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[108]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10361,7 +10568,7 @@ func (x *HoldServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HoldServiceRequest.ProtoReflect.Descriptor instead.
 func (*HoldServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{106}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{108}
 }
 
 func (x *HoldServiceRequest) GetProject() string {
@@ -10410,7 +10617,7 @@ type HoldServiceResponse struct {
 
 func (x *HoldServiceResponse) Reset() {
 	*x = HoldServiceResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[107]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[109]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10422,7 +10629,7 @@ func (x *HoldServiceResponse) String() string {
 func (*HoldServiceResponse) ProtoMessage() {}
 
 func (x *HoldServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[107]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[109]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10435,7 +10642,7 @@ func (x *HoldServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HoldServiceResponse.ProtoReflect.Descriptor instead.
 func (*HoldServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{107}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{109}
 }
 
 func (x *HoldServiceResponse) GetHold() *ServiceHold {
@@ -10465,7 +10672,7 @@ type ServiceHold struct {
 
 func (x *ServiceHold) Reset() {
 	*x = ServiceHold{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[108]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[110]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10477,7 +10684,7 @@ func (x *ServiceHold) String() string {
 func (*ServiceHold) ProtoMessage() {}
 
 func (x *ServiceHold) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[108]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[110]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10490,7 +10697,7 @@ func (x *ServiceHold) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceHold.ProtoReflect.Descriptor instead.
 func (*ServiceHold) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{108}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{110}
 }
 
 func (x *ServiceHold) GetHolder() string {
@@ -10519,7 +10726,7 @@ type ReleaseServiceRequest struct {
 
 func (x *ReleaseServiceRequest) Reset() {
 	*x = ReleaseServiceRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[109]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[111]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10531,7 +10738,7 @@ func (x *ReleaseServiceRequest) String() string {
 func (*ReleaseServiceRequest) ProtoMessage() {}
 
 func (x *ReleaseServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[109]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[111]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10544,7 +10751,7 @@ func (x *ReleaseServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReleaseServiceRequest.ProtoReflect.Descriptor instead.
 func (*ReleaseServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{109}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{111}
 }
 
 func (x *ReleaseServiceRequest) GetProject() string {
@@ -10585,7 +10792,7 @@ type ReleaseServiceResponse struct {
 
 func (x *ReleaseServiceResponse) Reset() {
 	*x = ReleaseServiceResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[110]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[112]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10597,7 +10804,7 @@ func (x *ReleaseServiceResponse) String() string {
 func (*ReleaseServiceResponse) ProtoMessage() {}
 
 func (x *ReleaseServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[110]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[112]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10610,7 +10817,7 @@ func (x *ReleaseServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReleaseServiceResponse.ProtoReflect.Descriptor instead.
 func (*ReleaseServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{110}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{112}
 }
 
 func (x *ReleaseServiceResponse) GetService() *Service {
@@ -10634,7 +10841,7 @@ type StartServiceSignInRequest struct {
 
 func (x *StartServiceSignInRequest) Reset() {
 	*x = StartServiceSignInRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[111]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[113]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10646,7 +10853,7 @@ func (x *StartServiceSignInRequest) String() string {
 func (*StartServiceSignInRequest) ProtoMessage() {}
 
 func (x *StartServiceSignInRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[111]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[113]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10659,7 +10866,7 @@ func (x *StartServiceSignInRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartServiceSignInRequest.ProtoReflect.Descriptor instead.
 func (*StartServiceSignInRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{111}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{113}
 }
 
 func (x *StartServiceSignInRequest) GetProject() string {
@@ -10706,7 +10913,7 @@ type StartServiceSignInResponse struct {
 
 func (x *StartServiceSignInResponse) Reset() {
 	*x = StartServiceSignInResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[112]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[114]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10718,7 +10925,7 @@ func (x *StartServiceSignInResponse) String() string {
 func (*StartServiceSignInResponse) ProtoMessage() {}
 
 func (x *StartServiceSignInResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[112]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[114]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10731,7 +10938,7 @@ func (x *StartServiceSignInResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartServiceSignInResponse.ProtoReflect.Descriptor instead.
 func (*StartServiceSignInResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{112}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{114}
 }
 
 func (x *StartServiceSignInResponse) GetMessage() isStartServiceSignInResponse_Message {
@@ -10807,7 +11014,7 @@ type ServiceSignInStarted struct {
 
 func (x *ServiceSignInStarted) Reset() {
 	*x = ServiceSignInStarted{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[113]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[115]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10819,7 +11026,7 @@ func (x *ServiceSignInStarted) String() string {
 func (*ServiceSignInStarted) ProtoMessage() {}
 
 func (x *ServiceSignInStarted) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[113]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[115]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10832,7 +11039,7 @@ func (x *ServiceSignInStarted) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceSignInStarted.ProtoReflect.Descriptor instead.
 func (*ServiceSignInStarted) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{113}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{115}
 }
 
 func (x *ServiceSignInStarted) GetSignInId() string {
@@ -10862,7 +11069,7 @@ type ServiceSignInEnded struct {
 
 func (x *ServiceSignInEnded) Reset() {
 	*x = ServiceSignInEnded{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[114]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[116]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10874,7 +11081,7 @@ func (x *ServiceSignInEnded) String() string {
 func (*ServiceSignInEnded) ProtoMessage() {}
 
 func (x *ServiceSignInEnded) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[114]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[116]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10887,7 +11094,7 @@ func (x *ServiceSignInEnded) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceSignInEnded.ProtoReflect.Descriptor instead.
 func (*ServiceSignInEnded) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{114}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{116}
 }
 
 func (x *ServiceSignInEnded) GetOutcome() ServiceSignInOutcome {
@@ -10919,7 +11126,7 @@ type AnswerServiceSignInRequest struct {
 
 func (x *AnswerServiceSignInRequest) Reset() {
 	*x = AnswerServiceSignInRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[115]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[117]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10931,7 +11138,7 @@ func (x *AnswerServiceSignInRequest) String() string {
 func (*AnswerServiceSignInRequest) ProtoMessage() {}
 
 func (x *AnswerServiceSignInRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[115]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[117]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10944,7 +11151,7 @@ func (x *AnswerServiceSignInRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AnswerServiceSignInRequest.ProtoReflect.Descriptor instead.
 func (*AnswerServiceSignInRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{115}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{117}
 }
 
 func (x *AnswerServiceSignInRequest) GetProject() string {
@@ -10990,7 +11197,7 @@ type AnswerServiceSignInResponse struct {
 
 func (x *AnswerServiceSignInResponse) Reset() {
 	*x = AnswerServiceSignInResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[116]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[118]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11002,7 +11209,7 @@ func (x *AnswerServiceSignInResponse) String() string {
 func (*AnswerServiceSignInResponse) ProtoMessage() {}
 
 func (x *AnswerServiceSignInResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[116]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[118]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11015,7 +11222,7 @@ func (x *AnswerServiceSignInResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AnswerServiceSignInResponse.ProtoReflect.Descriptor instead.
 func (*AnswerServiceSignInResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{116}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{118}
 }
 
 type CancelServiceSignInRequest struct {
@@ -11031,7 +11238,7 @@ type CancelServiceSignInRequest struct {
 
 func (x *CancelServiceSignInRequest) Reset() {
 	*x = CancelServiceSignInRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[117]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[119]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11043,7 +11250,7 @@ func (x *CancelServiceSignInRequest) String() string {
 func (*CancelServiceSignInRequest) ProtoMessage() {}
 
 func (x *CancelServiceSignInRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[117]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[119]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11056,7 +11263,7 @@ func (x *CancelServiceSignInRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelServiceSignInRequest.ProtoReflect.Descriptor instead.
 func (*CancelServiceSignInRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{117}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{119}
 }
 
 func (x *CancelServiceSignInRequest) GetProject() string {
@@ -11095,7 +11302,7 @@ type CancelServiceSignInResponse struct {
 
 func (x *CancelServiceSignInResponse) Reset() {
 	*x = CancelServiceSignInResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[118]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[120]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11107,7 +11314,7 @@ func (x *CancelServiceSignInResponse) String() string {
 func (*CancelServiceSignInResponse) ProtoMessage() {}
 
 func (x *CancelServiceSignInResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[118]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[120]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11120,7 +11327,7 @@ func (x *CancelServiceSignInResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelServiceSignInResponse.ProtoReflect.Descriptor instead.
 func (*CancelServiceSignInResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{118}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{120}
 }
 
 type GetServiceSignInStatusRequest struct {
@@ -11137,7 +11344,7 @@ type GetServiceSignInStatusRequest struct {
 
 func (x *GetServiceSignInStatusRequest) Reset() {
 	*x = GetServiceSignInStatusRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[119]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[121]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11149,7 +11356,7 @@ func (x *GetServiceSignInStatusRequest) String() string {
 func (*GetServiceSignInStatusRequest) ProtoMessage() {}
 
 func (x *GetServiceSignInStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[119]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[121]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11162,7 +11369,7 @@ func (x *GetServiceSignInStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceSignInStatusRequest.ProtoReflect.Descriptor instead.
 func (*GetServiceSignInStatusRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{119}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{121}
 }
 
 func (x *GetServiceSignInStatusRequest) GetProject() string {
@@ -11202,7 +11409,7 @@ type GetServiceSignInStatusResponse struct {
 
 func (x *GetServiceSignInStatusResponse) Reset() {
 	*x = GetServiceSignInStatusResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[120]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[122]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11214,7 +11421,7 @@ func (x *GetServiceSignInStatusResponse) String() string {
 func (*GetServiceSignInStatusResponse) ProtoMessage() {}
 
 func (x *GetServiceSignInStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[120]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[122]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11227,7 +11434,7 @@ func (x *GetServiceSignInStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceSignInStatusResponse.ProtoReflect.Descriptor instead.
 func (*GetServiceSignInStatusResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{120}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{122}
 }
 
 func (x *GetServiceSignInStatusResponse) GetStatuses() []*ServiceSignInStatus {
@@ -11255,7 +11462,7 @@ type ServiceSignInStatus struct {
 
 func (x *ServiceSignInStatus) Reset() {
 	*x = ServiceSignInStatus{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[121]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[123]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11267,7 +11474,7 @@ func (x *ServiceSignInStatus) String() string {
 func (*ServiceSignInStatus) ProtoMessage() {}
 
 func (x *ServiceSignInStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[121]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[123]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11280,7 +11487,7 @@ func (x *ServiceSignInStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceSignInStatus.ProtoReflect.Descriptor instead.
 func (*ServiceSignInStatus) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{121}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{123}
 }
 
 func (x *ServiceSignInStatus) GetProgram() string {
@@ -11326,7 +11533,7 @@ type ListServiceRunsRequest struct {
 
 func (x *ListServiceRunsRequest) Reset() {
 	*x = ListServiceRunsRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[122]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[124]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11338,7 +11545,7 @@ func (x *ListServiceRunsRequest) String() string {
 func (*ListServiceRunsRequest) ProtoMessage() {}
 
 func (x *ListServiceRunsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[122]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[124]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11351,7 +11558,7 @@ func (x *ListServiceRunsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceRunsRequest.ProtoReflect.Descriptor instead.
 func (*ListServiceRunsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{122}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{124}
 }
 
 func (x *ListServiceRunsRequest) GetProject() string {
@@ -11400,7 +11607,7 @@ type ListServiceRunsResponse struct {
 
 func (x *ListServiceRunsResponse) Reset() {
 	*x = ListServiceRunsResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[123]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[125]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11412,7 +11619,7 @@ func (x *ListServiceRunsResponse) String() string {
 func (*ListServiceRunsResponse) ProtoMessage() {}
 
 func (x *ListServiceRunsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[123]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[125]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11425,7 +11632,7 @@ func (x *ListServiceRunsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceRunsResponse.ProtoReflect.Descriptor instead.
 func (*ListServiceRunsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{123}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{125}
 }
 
 func (x *ListServiceRunsResponse) GetRuns() []*ServiceRun {
@@ -11457,7 +11664,7 @@ type ListServiceRevisionsRequest struct {
 
 func (x *ListServiceRevisionsRequest) Reset() {
 	*x = ListServiceRevisionsRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[124]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[126]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11469,7 +11676,7 @@ func (x *ListServiceRevisionsRequest) String() string {
 func (*ListServiceRevisionsRequest) ProtoMessage() {}
 
 func (x *ListServiceRevisionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[124]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[126]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11482,7 +11689,7 @@ func (x *ListServiceRevisionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceRevisionsRequest.ProtoReflect.Descriptor instead.
 func (*ListServiceRevisionsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{124}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{126}
 }
 
 func (x *ListServiceRevisionsRequest) GetProject() string {
@@ -11532,7 +11739,7 @@ type ListServiceRevisionsResponse struct {
 
 func (x *ListServiceRevisionsResponse) Reset() {
 	*x = ListServiceRevisionsResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[125]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[127]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11544,7 +11751,7 @@ func (x *ListServiceRevisionsResponse) String() string {
 func (*ListServiceRevisionsResponse) ProtoMessage() {}
 
 func (x *ListServiceRevisionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[125]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[127]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11557,7 +11764,7 @@ func (x *ListServiceRevisionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceRevisionsResponse.ProtoReflect.Descriptor instead.
 func (*ListServiceRevisionsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{125}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{127}
 }
 
 func (x *ListServiceRevisionsResponse) GetRevisions() []*ServiceRevision {
@@ -11587,7 +11794,7 @@ type GetServiceRevisionRequest struct {
 
 func (x *GetServiceRevisionRequest) Reset() {
 	*x = GetServiceRevisionRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[126]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[128]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11599,7 +11806,7 @@ func (x *GetServiceRevisionRequest) String() string {
 func (*GetServiceRevisionRequest) ProtoMessage() {}
 
 func (x *GetServiceRevisionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[126]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[128]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11612,7 +11819,7 @@ func (x *GetServiceRevisionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceRevisionRequest.ProtoReflect.Descriptor instead.
 func (*GetServiceRevisionRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{126}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{128}
 }
 
 func (x *GetServiceRevisionRequest) GetProject() string {
@@ -11652,7 +11859,7 @@ type GetServiceRevisionResponse struct {
 
 func (x *GetServiceRevisionResponse) Reset() {
 	*x = GetServiceRevisionResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[127]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[129]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11664,7 +11871,7 @@ func (x *GetServiceRevisionResponse) String() string {
 func (*GetServiceRevisionResponse) ProtoMessage() {}
 
 func (x *GetServiceRevisionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[127]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[129]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11677,7 +11884,7 @@ func (x *GetServiceRevisionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceRevisionResponse.ProtoReflect.Descriptor instead.
 func (*GetServiceRevisionResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{127}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{129}
 }
 
 func (x *GetServiceRevisionResponse) GetRevision() *ServiceRevision {
@@ -11735,7 +11942,7 @@ type ServiceRevision struct {
 
 func (x *ServiceRevision) Reset() {
 	*x = ServiceRevision{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[128]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[130]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11747,7 +11954,7 @@ func (x *ServiceRevision) String() string {
 func (*ServiceRevision) ProtoMessage() {}
 
 func (x *ServiceRevision) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[128]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[130]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11760,7 +11967,7 @@ func (x *ServiceRevision) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceRevision.ProtoReflect.Descriptor instead.
 func (*ServiceRevision) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{128}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{130}
 }
 
 func (x *ServiceRevision) GetNumber() int64 {
@@ -11891,7 +12098,7 @@ type ServiceUpgrade struct {
 
 func (x *ServiceUpgrade) Reset() {
 	*x = ServiceUpgrade{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[129]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[131]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11903,7 +12110,7 @@ func (x *ServiceUpgrade) String() string {
 func (*ServiceUpgrade) ProtoMessage() {}
 
 func (x *ServiceUpgrade) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[129]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[131]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11916,7 +12123,7 @@ func (x *ServiceUpgrade) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceUpgrade.ProtoReflect.Descriptor instead.
 func (*ServiceUpgrade) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{129}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{131}
 }
 
 func (x *ServiceUpgrade) GetState() ServiceUpgradeState {
@@ -12021,7 +12228,7 @@ type ServiceRevisionImageCheck struct {
 
 func (x *ServiceRevisionImageCheck) Reset() {
 	*x = ServiceRevisionImageCheck{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[130]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[132]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12033,7 +12240,7 @@ func (x *ServiceRevisionImageCheck) String() string {
 func (*ServiceRevisionImageCheck) ProtoMessage() {}
 
 func (x *ServiceRevisionImageCheck) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[130]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[132]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12046,7 +12253,7 @@ func (x *ServiceRevisionImageCheck) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceRevisionImageCheck.ProtoReflect.Descriptor instead.
 func (*ServiceRevisionImageCheck) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{130}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{132}
 }
 
 func (x *ServiceRevisionImageCheck) GetOutcome() ServiceRevisionImageOutcome {
@@ -12094,7 +12301,7 @@ type RollbackServiceRequest struct {
 
 func (x *RollbackServiceRequest) Reset() {
 	*x = RollbackServiceRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[131]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[133]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12106,7 +12313,7 @@ func (x *RollbackServiceRequest) String() string {
 func (*RollbackServiceRequest) ProtoMessage() {}
 
 func (x *RollbackServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[131]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[133]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12119,7 +12326,7 @@ func (x *RollbackServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RollbackServiceRequest.ProtoReflect.Descriptor instead.
 func (*RollbackServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{131}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{133}
 }
 
 func (x *RollbackServiceRequest) GetProject() string {
@@ -12176,7 +12383,7 @@ type RollbackServiceResponse struct {
 
 func (x *RollbackServiceResponse) Reset() {
 	*x = RollbackServiceResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[132]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[134]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12188,7 +12395,7 @@ func (x *RollbackServiceResponse) String() string {
 func (*RollbackServiceResponse) ProtoMessage() {}
 
 func (x *RollbackServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[132]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[134]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12201,7 +12408,7 @@ func (x *RollbackServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RollbackServiceResponse.ProtoReflect.Descriptor instead.
 func (*RollbackServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{132}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{134}
 }
 
 func (x *RollbackServiceResponse) GetService() *Service {
@@ -12233,7 +12440,7 @@ type ListServiceActivationsRequest struct {
 
 func (x *ListServiceActivationsRequest) Reset() {
 	*x = ListServiceActivationsRequest{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[133]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[135]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12245,7 +12452,7 @@ func (x *ListServiceActivationsRequest) String() string {
 func (*ListServiceActivationsRequest) ProtoMessage() {}
 
 func (x *ListServiceActivationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[133]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[135]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12258,7 +12465,7 @@ func (x *ListServiceActivationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceActivationsRequest.ProtoReflect.Descriptor instead.
 func (*ListServiceActivationsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{133}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{135}
 }
 
 func (x *ListServiceActivationsRequest) GetProject() string {
@@ -12308,7 +12515,7 @@ type ListServiceActivationsResponse struct {
 
 func (x *ListServiceActivationsResponse) Reset() {
 	*x = ListServiceActivationsResponse{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[134]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[136]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12320,7 +12527,7 @@ func (x *ListServiceActivationsResponse) String() string {
 func (*ListServiceActivationsResponse) ProtoMessage() {}
 
 func (x *ListServiceActivationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[134]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[136]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12333,7 +12540,7 @@ func (x *ListServiceActivationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceActivationsResponse.ProtoReflect.Descriptor instead.
 func (*ListServiceActivationsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{134}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{136}
 }
 
 func (x *ListServiceActivationsResponse) GetActivations() []*ServiceActivation {
@@ -12380,7 +12587,7 @@ type ServiceActivation struct {
 
 func (x *ServiceActivation) Reset() {
 	*x = ServiceActivation{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[135]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[137]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12392,7 +12599,7 @@ func (x *ServiceActivation) String() string {
 func (*ServiceActivation) ProtoMessage() {}
 
 func (x *ServiceActivation) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[135]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[137]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12405,7 +12612,7 @@ func (x *ServiceActivation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceActivation.ProtoReflect.Descriptor instead.
 func (*ServiceActivation) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{135}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{137}
 }
 
 func (x *ServiceActivation) GetSequence() int64 {
@@ -12496,7 +12703,7 @@ type ServiceSecretVersion struct {
 
 func (x *ServiceSecretVersion) Reset() {
 	*x = ServiceSecretVersion{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[136]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[138]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12508,7 +12715,7 @@ func (x *ServiceSecretVersion) String() string {
 func (*ServiceSecretVersion) ProtoMessage() {}
 
 func (x *ServiceSecretVersion) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[136]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[138]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12521,7 +12728,7 @@ func (x *ServiceSecretVersion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceSecretVersion.ProtoReflect.Descriptor instead.
 func (*ServiceSecretVersion) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{136}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{138}
 }
 
 func (x *ServiceSecretVersion) GetName() string {
@@ -12564,14 +12771,18 @@ type ServiceRun struct {
 	// Its process's exit code, when it exited.
 	ExitCode *int32 `protobuf:"varint,9,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`
 	// Why it ended, for a run that failed or was lost.
-	Error         string `protobuf:"bytes,10,opt,name=error,proto3" json:"error,omitempty"`
+	Error string `protobuf:"bytes,10,opt,name=error,proto3" json:"error,omitempty"`
+	// The snapshot the run was restored from: the VM of the run before it,
+	// as it was when that run went to sleep. Empty for a run that started
+	// cold.
+	RestoredFrom  string `protobuf:"bytes,11,opt,name=restored_from,json=restoredFrom,proto3" json:"restored_from,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ServiceRun) Reset() {
 	*x = ServiceRun{}
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[137]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[139]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12583,7 +12794,7 @@ func (x *ServiceRun) String() string {
 func (*ServiceRun) ProtoMessage() {}
 
 func (x *ServiceRun) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[137]
+	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[139]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12596,7 +12807,7 @@ func (x *ServiceRun) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceRun.ProtoReflect.Descriptor instead.
 func (*ServiceRun) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{137}
+	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{139}
 }
 
 func (x *ServiceRun) GetId() string {
@@ -12665,6 +12876,13 @@ func (x *ServiceRun) GetExitCode() int32 {
 func (x *ServiceRun) GetError() string {
 	if x != nil {
 		return x.Error
+	}
+	return ""
+}
+
+func (x *ServiceRun) GetRestoredFrom() string {
+	if x != nil {
+		return x.RestoredFrom
 	}
 	return ""
 }
@@ -13106,8 +13324,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x02id\x18\x03 \x01(\tR\x02id\x123\n" +
 	"\atimeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\atimeout\"T\n" +
 	"\x15WaitOperationResponse\x12;\n" +
-	"\toperation\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\xdb\n" +
-	"\n" +
+	"\toperation\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\x9c\f\n" +
 	"\x05Event\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x121\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1d.toshi.workspace.v1.EventTypeR\x04type\x12\x12\n" +
@@ -13134,14 +13351,30 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\tmail_sent\x18\x17 \x01(\v2!.toshi.workspace.v1.MailSentEventH\x00R\bmailSent\x12V\n" +
 	"\x11kept_vm_discarded\x18\x18 \x01(\v2(.toshi.workspace.v1.KeptVMDiscardedEventH\x00R\x0fkeptVmDiscarded\x12F\n" +
 	"\vchannel_acp\x18\x19 \x01(\v2#.toshi.workspace.v1.ChannelACPEventH\x00R\n" +
-	"channelAcp\x12\x18\n" +
+	"channelAcp\x12U\n" +
+	"\x10service_restored\x18\x1a \x01(\v2(.toshi.workspace.v1.ServiceRestoredEventH\x00R\x0fserviceRestored\x12h\n" +
+	"\x17service_snapshot_failed\x18\x1b \x01(\v2..toshi.workspace.v1.ServiceSnapshotFailedEventH\x00R\x15serviceSnapshotFailed\x12\x18\n" +
 	"\aproject\x18\v \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\f \x01(\tR\venvironment\x12#\n" +
 	"\rconnection_id\x18\x10 \x01(\tR\fconnectionIdB\t\n" +
 	"\apayloadJ\x04\b\a\x10\bR\bworkload\"E\n" +
 	"\x14KeptVMDiscardedEvent\x12\x15\n" +
 	"\x06run_id\x18\x01 \x01(\tR\x05runId\x12\x16\n" +
-	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x98\x01\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x82\x02\n" +
+	"\x14ServiceRestoredEvent\x12\x15\n" +
+	"\x06run_id\x18\x01 \x01(\tR\x05runId\x12\x1f\n" +
+	"\vsnapshot_id\x18\x02 \x01(\tR\n" +
+	"snapshotId\x12F\n" +
+	"\x11snapshot_taken_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0fsnapshotTakenAt\x12;\n" +
+	"\vrestored_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"restoredAt\x12-\n" +
+	"\x04lost\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\x04lost\"~\n" +
+	"\x1aServiceSnapshotFailedEvent\x12\x15\n" +
+	"\x06run_id\x18\x01 \x01(\tR\x05runId\x12\x1f\n" +
+	"\vsnapshot_id\x18\x02 \x01(\tR\n" +
+	"snapshotId\x12\x12\n" +
+	"\x04step\x18\x03 \x01(\tR\x04step\x12\x14\n" +
+	"\x05error\x18\x04 \x01(\tR\x05error\"\x98\x01\n" +
 	"\x16UpgradeRolledBackEvent\x12\x1a\n" +
 	"\brevision\x18\x01 \x01(\x03R\brevision\x12#\n" +
 	"\rfrom_revision\x18\x02 \x01(\x03R\ffromRevision\x12\x16\n" +
@@ -13595,7 +13828,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x0fsecret_versions\x18\v \x03(\v2(.toshi.workspace.v1.ServiceSecretVersionR\x0esecretVersions\"D\n" +
 	"\x14ServiceSecretVersion\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
-	"\aversion\x18\x02 \x01(\x03R\aversion\"\xaf\x03\n" +
+	"\aversion\x18\x02 \x01(\x03R\aversion\"\xd4\x03\n" +
 	"\n" +
 	"ServiceRun\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
@@ -13609,7 +13842,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bended_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x12 \n" +
 	"\texit_code\x18\t \x01(\x05H\x00R\bexitCode\x88\x01\x01\x12\x14\n" +
 	"\x05error\x18\n" +
-	" \x01(\tR\x05errorB\f\n" +
+	" \x01(\tR\x05error\x12#\n" +
+	"\rrestored_from\x18\v \x01(\tR\frestoredFromB\f\n" +
 	"\n" +
 	"_exit_code*\x9c\x01\n" +
 	"\tEndReason\x12\x1a\n" +
@@ -13681,7 +13915,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\vServiceMode\x12\x1c\n" +
 	"\x18SERVICE_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16SERVICE_MODE_ALWAYS_ON\x10\x01\x12\x1a\n" +
-	"\x16SERVICE_MODE_ON_DEMAND\x10\x02*\xb8\x05\n" +
+	"\x16SERVICE_MODE_ON_DEMAND\x10\x02*\x81\x06\n" +
 	"\tEventType\x12\x1a\n" +
 	"\x16EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bEVENT_TYPE_WORKLOAD_CREATED\x10\x01\x12%\n" +
@@ -13704,7 +13938,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x14EVENT_TYPE_MAIL_SENT\x10\x11\x12 \n" +
 	"\x1cEVENT_TYPE_KEPT_VM_DISCARDED\x10\x12\x12/\n" +
 	"+EVENT_TYPE_CHANNEL_ACP_PERMISSION_REQUESTED\x10\x13\x12%\n" +
-	"!EVENT_TYPE_CHANNEL_ACP_TURN_ENDED\x10\x14*\xf9\x01\n" +
+	"!EVENT_TYPE_CHANNEL_ACP_TURN_ENDED\x10\x14\x12\x1f\n" +
+	"\x1bEVENT_TYPE_SERVICE_RESTORED\x10\x15\x12&\n" +
+	"\"EVENT_TYPE_SERVICE_SNAPSHOT_FAILED\x10\x16*\xf9\x01\n" +
 	"\x15PreviewShareLinkState\x12(\n" +
 	"$PREVIEW_SHARE_LINK_STATE_UNSPECIFIED\x10\x00\x12!\n" +
 	"\x1dPREVIEW_SHARE_LINK_STATE_OPEN\x10\x01\x12#\n" +
@@ -13770,7 +14006,7 @@ func file_toshi_workspace_v1_workspace_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_workspace_proto_enumTypes = make([]protoimpl.EnumInfo, 21)
-var file_toshi_workspace_v1_workspace_proto_msgTypes = make([]protoimpl.MessageInfo, 142)
+var file_toshi_workspace_v1_workspace_proto_msgTypes = make([]protoimpl.MessageInfo, 144)
 var file_toshi_workspace_v1_workspace_proto_goTypes = []any{
 	(EndReason)(0),                         // 0: toshi.workspace.v1.EndReason
 	(StopReason)(0),                        // 1: toshi.workspace.v1.StopReason
@@ -13850,167 +14086,169 @@ var file_toshi_workspace_v1_workspace_proto_goTypes = []any{
 	(*WaitOperationResponse)(nil),          // 75: toshi.workspace.v1.WaitOperationResponse
 	(*Event)(nil),                          // 76: toshi.workspace.v1.Event
 	(*KeptVMDiscardedEvent)(nil),           // 77: toshi.workspace.v1.KeptVMDiscardedEvent
-	(*UpgradeRolledBackEvent)(nil),         // 78: toshi.workspace.v1.UpgradeRolledBackEvent
-	(*SecretWithheldEvent)(nil),            // 79: toshi.workspace.v1.SecretWithheldEvent
-	(*WithheldSecret)(nil),                 // 80: toshi.workspace.v1.WithheldSecret
-	(*EgressDeniedEvent)(nil),              // 81: toshi.workspace.v1.EgressDeniedEvent
-	(*EgressDenial)(nil),                   // 82: toshi.workspace.v1.EgressDenial
-	(*TriggerResult)(nil),                  // 83: toshi.workspace.v1.TriggerResult
-	(*ExecutionEvent)(nil),                 // 84: toshi.workspace.v1.ExecutionEvent
-	(*EmittedEvent)(nil),                   // 85: toshi.workspace.v1.EmittedEvent
-	(*AgentAnswerEvent)(nil),               // 86: toshi.workspace.v1.AgentAnswerEvent
-	(*MailSentEvent)(nil),                  // 87: toshi.workspace.v1.MailSentEvent
-	(*ChannelACPEvent)(nil),                // 88: toshi.workspace.v1.ChannelACPEvent
-	(*AgentPrompt)(nil),                    // 89: toshi.workspace.v1.AgentPrompt
-	(*ConnectionEvent)(nil),                // 90: toshi.workspace.v1.ConnectionEvent
-	(*RecordingEvent)(nil),                 // 91: toshi.workspace.v1.RecordingEvent
-	(*ListEventsRequest)(nil),              // 92: toshi.workspace.v1.ListEventsRequest
-	(*ListEventsResponse)(nil),             // 93: toshi.workspace.v1.ListEventsResponse
-	(*WatchEventsRequest)(nil),             // 94: toshi.workspace.v1.WatchEventsRequest
-	(*WatchEventsResponse)(nil),            // 95: toshi.workspace.v1.WatchEventsResponse
-	(*Keepalive)(nil),                      // 96: toshi.workspace.v1.Keepalive
-	(*PreviewShareLink)(nil),               // 97: toshi.workspace.v1.PreviewShareLink
-	(*CreatePreviewShareLinkRequest)(nil),  // 98: toshi.workspace.v1.CreatePreviewShareLinkRequest
-	(*CreatePreviewShareLinkResponse)(nil), // 99: toshi.workspace.v1.CreatePreviewShareLinkResponse
-	(*ListPreviewShareLinksRequest)(nil),   // 100: toshi.workspace.v1.ListPreviewShareLinksRequest
-	(*ListPreviewShareLinksResponse)(nil),  // 101: toshi.workspace.v1.ListPreviewShareLinksResponse
-	(*RevokePreviewShareLinkRequest)(nil),  // 102: toshi.workspace.v1.RevokePreviewShareLinkRequest
-	(*RevokePreviewShareLinkResponse)(nil), // 103: toshi.workspace.v1.RevokePreviewShareLinkResponse
-	(*ServiceShareLink)(nil),               // 104: toshi.workspace.v1.ServiceShareLink
-	(*CreateServiceShareLinkRequest)(nil),  // 105: toshi.workspace.v1.CreateServiceShareLinkRequest
-	(*CreateServiceShareLinkResponse)(nil), // 106: toshi.workspace.v1.CreateServiceShareLinkResponse
-	(*ListServiceShareLinksRequest)(nil),   // 107: toshi.workspace.v1.ListServiceShareLinksRequest
-	(*ListServiceShareLinksResponse)(nil),  // 108: toshi.workspace.v1.ListServiceShareLinksResponse
-	(*RevokeServiceShareLinkRequest)(nil),  // 109: toshi.workspace.v1.RevokeServiceShareLinkRequest
-	(*RevokeServiceShareLinkResponse)(nil), // 110: toshi.workspace.v1.RevokeServiceShareLinkResponse
-	(*StartSandboxRequest)(nil),            // 111: toshi.workspace.v1.StartSandboxRequest
-	(*StartSandboxResponse)(nil),           // 112: toshi.workspace.v1.StartSandboxResponse
-	(*StopSandboxRequest)(nil),             // 113: toshi.workspace.v1.StopSandboxRequest
-	(*StopSandboxResponse)(nil),            // 114: toshi.workspace.v1.StopSandboxResponse
-	(*StartServiceRequest)(nil),            // 115: toshi.workspace.v1.StartServiceRequest
-	(*StartServiceResponse)(nil),           // 116: toshi.workspace.v1.StartServiceResponse
-	(*StopServiceRequest)(nil),             // 117: toshi.workspace.v1.StopServiceRequest
-	(*StopServiceResponse)(nil),            // 118: toshi.workspace.v1.StopServiceResponse
-	(*SetServiceModeRequest)(nil),          // 119: toshi.workspace.v1.SetServiceModeRequest
-	(*SetServiceModeResponse)(nil),         // 120: toshi.workspace.v1.SetServiceModeResponse
-	(*WakeServiceRequest)(nil),             // 121: toshi.workspace.v1.WakeServiceRequest
-	(*WakeServiceResponse)(nil),            // 122: toshi.workspace.v1.WakeServiceResponse
-	(*HoldWorkloadRequest)(nil),            // 123: toshi.workspace.v1.HoldWorkloadRequest
-	(*HoldWorkloadResponse)(nil),           // 124: toshi.workspace.v1.HoldWorkloadResponse
-	(*ReleaseWorkloadRequest)(nil),         // 125: toshi.workspace.v1.ReleaseWorkloadRequest
-	(*ReleaseWorkloadResponse)(nil),        // 126: toshi.workspace.v1.ReleaseWorkloadResponse
-	(*HoldServiceRequest)(nil),             // 127: toshi.workspace.v1.HoldServiceRequest
-	(*HoldServiceResponse)(nil),            // 128: toshi.workspace.v1.HoldServiceResponse
-	(*ServiceHold)(nil),                    // 129: toshi.workspace.v1.ServiceHold
-	(*ReleaseServiceRequest)(nil),          // 130: toshi.workspace.v1.ReleaseServiceRequest
-	(*ReleaseServiceResponse)(nil),         // 131: toshi.workspace.v1.ReleaseServiceResponse
-	(*StartServiceSignInRequest)(nil),      // 132: toshi.workspace.v1.StartServiceSignInRequest
-	(*StartServiceSignInResponse)(nil),     // 133: toshi.workspace.v1.StartServiceSignInResponse
-	(*ServiceSignInStarted)(nil),           // 134: toshi.workspace.v1.ServiceSignInStarted
-	(*ServiceSignInEnded)(nil),             // 135: toshi.workspace.v1.ServiceSignInEnded
-	(*AnswerServiceSignInRequest)(nil),     // 136: toshi.workspace.v1.AnswerServiceSignInRequest
-	(*AnswerServiceSignInResponse)(nil),    // 137: toshi.workspace.v1.AnswerServiceSignInResponse
-	(*CancelServiceSignInRequest)(nil),     // 138: toshi.workspace.v1.CancelServiceSignInRequest
-	(*CancelServiceSignInResponse)(nil),    // 139: toshi.workspace.v1.CancelServiceSignInResponse
-	(*GetServiceSignInStatusRequest)(nil),  // 140: toshi.workspace.v1.GetServiceSignInStatusRequest
-	(*GetServiceSignInStatusResponse)(nil), // 141: toshi.workspace.v1.GetServiceSignInStatusResponse
-	(*ServiceSignInStatus)(nil),            // 142: toshi.workspace.v1.ServiceSignInStatus
-	(*ListServiceRunsRequest)(nil),         // 143: toshi.workspace.v1.ListServiceRunsRequest
-	(*ListServiceRunsResponse)(nil),        // 144: toshi.workspace.v1.ListServiceRunsResponse
-	(*ListServiceRevisionsRequest)(nil),    // 145: toshi.workspace.v1.ListServiceRevisionsRequest
-	(*ListServiceRevisionsResponse)(nil),   // 146: toshi.workspace.v1.ListServiceRevisionsResponse
-	(*GetServiceRevisionRequest)(nil),      // 147: toshi.workspace.v1.GetServiceRevisionRequest
-	(*GetServiceRevisionResponse)(nil),     // 148: toshi.workspace.v1.GetServiceRevisionResponse
-	(*ServiceRevision)(nil),                // 149: toshi.workspace.v1.ServiceRevision
-	(*ServiceUpgrade)(nil),                 // 150: toshi.workspace.v1.ServiceUpgrade
-	(*ServiceRevisionImageCheck)(nil),      // 151: toshi.workspace.v1.ServiceRevisionImageCheck
-	(*RollbackServiceRequest)(nil),         // 152: toshi.workspace.v1.RollbackServiceRequest
-	(*RollbackServiceResponse)(nil),        // 153: toshi.workspace.v1.RollbackServiceResponse
-	(*ListServiceActivationsRequest)(nil),  // 154: toshi.workspace.v1.ListServiceActivationsRequest
-	(*ListServiceActivationsResponse)(nil), // 155: toshi.workspace.v1.ListServiceActivationsResponse
-	(*ServiceActivation)(nil),              // 156: toshi.workspace.v1.ServiceActivation
-	(*ServiceSecretVersion)(nil),           // 157: toshi.workspace.v1.ServiceSecretVersion
-	(*ServiceRun)(nil),                     // 158: toshi.workspace.v1.ServiceRun
-	nil,                                    // 159: toshi.workspace.v1.Job.LabelsEntry
-	nil,                                    // 160: toshi.workspace.v1.Sandbox.LabelsEntry
-	nil,                                    // 161: toshi.workspace.v1.Service.LabelsEntry
-	nil,                                    // 162: toshi.workspace.v1.Command.EnvEntry
-	(*timestamppb.Timestamp)(nil),          // 163: google.protobuf.Timestamp
-	(*SharedAccess)(nil),                   // 164: toshi.workspace.v1.SharedAccess
-	(*NetworkPolicy)(nil),                  // 165: toshi.workspace.v1.NetworkPolicy
-	(*durationpb.Duration)(nil),            // 166: google.protobuf.Duration
-	(RecordingKind)(0),                     // 167: toshi.workspace.v1.RecordingKind
+	(*ServiceRestoredEvent)(nil),           // 78: toshi.workspace.v1.ServiceRestoredEvent
+	(*ServiceSnapshotFailedEvent)(nil),     // 79: toshi.workspace.v1.ServiceSnapshotFailedEvent
+	(*UpgradeRolledBackEvent)(nil),         // 80: toshi.workspace.v1.UpgradeRolledBackEvent
+	(*SecretWithheldEvent)(nil),            // 81: toshi.workspace.v1.SecretWithheldEvent
+	(*WithheldSecret)(nil),                 // 82: toshi.workspace.v1.WithheldSecret
+	(*EgressDeniedEvent)(nil),              // 83: toshi.workspace.v1.EgressDeniedEvent
+	(*EgressDenial)(nil),                   // 84: toshi.workspace.v1.EgressDenial
+	(*TriggerResult)(nil),                  // 85: toshi.workspace.v1.TriggerResult
+	(*ExecutionEvent)(nil),                 // 86: toshi.workspace.v1.ExecutionEvent
+	(*EmittedEvent)(nil),                   // 87: toshi.workspace.v1.EmittedEvent
+	(*AgentAnswerEvent)(nil),               // 88: toshi.workspace.v1.AgentAnswerEvent
+	(*MailSentEvent)(nil),                  // 89: toshi.workspace.v1.MailSentEvent
+	(*ChannelACPEvent)(nil),                // 90: toshi.workspace.v1.ChannelACPEvent
+	(*AgentPrompt)(nil),                    // 91: toshi.workspace.v1.AgentPrompt
+	(*ConnectionEvent)(nil),                // 92: toshi.workspace.v1.ConnectionEvent
+	(*RecordingEvent)(nil),                 // 93: toshi.workspace.v1.RecordingEvent
+	(*ListEventsRequest)(nil),              // 94: toshi.workspace.v1.ListEventsRequest
+	(*ListEventsResponse)(nil),             // 95: toshi.workspace.v1.ListEventsResponse
+	(*WatchEventsRequest)(nil),             // 96: toshi.workspace.v1.WatchEventsRequest
+	(*WatchEventsResponse)(nil),            // 97: toshi.workspace.v1.WatchEventsResponse
+	(*Keepalive)(nil),                      // 98: toshi.workspace.v1.Keepalive
+	(*PreviewShareLink)(nil),               // 99: toshi.workspace.v1.PreviewShareLink
+	(*CreatePreviewShareLinkRequest)(nil),  // 100: toshi.workspace.v1.CreatePreviewShareLinkRequest
+	(*CreatePreviewShareLinkResponse)(nil), // 101: toshi.workspace.v1.CreatePreviewShareLinkResponse
+	(*ListPreviewShareLinksRequest)(nil),   // 102: toshi.workspace.v1.ListPreviewShareLinksRequest
+	(*ListPreviewShareLinksResponse)(nil),  // 103: toshi.workspace.v1.ListPreviewShareLinksResponse
+	(*RevokePreviewShareLinkRequest)(nil),  // 104: toshi.workspace.v1.RevokePreviewShareLinkRequest
+	(*RevokePreviewShareLinkResponse)(nil), // 105: toshi.workspace.v1.RevokePreviewShareLinkResponse
+	(*ServiceShareLink)(nil),               // 106: toshi.workspace.v1.ServiceShareLink
+	(*CreateServiceShareLinkRequest)(nil),  // 107: toshi.workspace.v1.CreateServiceShareLinkRequest
+	(*CreateServiceShareLinkResponse)(nil), // 108: toshi.workspace.v1.CreateServiceShareLinkResponse
+	(*ListServiceShareLinksRequest)(nil),   // 109: toshi.workspace.v1.ListServiceShareLinksRequest
+	(*ListServiceShareLinksResponse)(nil),  // 110: toshi.workspace.v1.ListServiceShareLinksResponse
+	(*RevokeServiceShareLinkRequest)(nil),  // 111: toshi.workspace.v1.RevokeServiceShareLinkRequest
+	(*RevokeServiceShareLinkResponse)(nil), // 112: toshi.workspace.v1.RevokeServiceShareLinkResponse
+	(*StartSandboxRequest)(nil),            // 113: toshi.workspace.v1.StartSandboxRequest
+	(*StartSandboxResponse)(nil),           // 114: toshi.workspace.v1.StartSandboxResponse
+	(*StopSandboxRequest)(nil),             // 115: toshi.workspace.v1.StopSandboxRequest
+	(*StopSandboxResponse)(nil),            // 116: toshi.workspace.v1.StopSandboxResponse
+	(*StartServiceRequest)(nil),            // 117: toshi.workspace.v1.StartServiceRequest
+	(*StartServiceResponse)(nil),           // 118: toshi.workspace.v1.StartServiceResponse
+	(*StopServiceRequest)(nil),             // 119: toshi.workspace.v1.StopServiceRequest
+	(*StopServiceResponse)(nil),            // 120: toshi.workspace.v1.StopServiceResponse
+	(*SetServiceModeRequest)(nil),          // 121: toshi.workspace.v1.SetServiceModeRequest
+	(*SetServiceModeResponse)(nil),         // 122: toshi.workspace.v1.SetServiceModeResponse
+	(*WakeServiceRequest)(nil),             // 123: toshi.workspace.v1.WakeServiceRequest
+	(*WakeServiceResponse)(nil),            // 124: toshi.workspace.v1.WakeServiceResponse
+	(*HoldWorkloadRequest)(nil),            // 125: toshi.workspace.v1.HoldWorkloadRequest
+	(*HoldWorkloadResponse)(nil),           // 126: toshi.workspace.v1.HoldWorkloadResponse
+	(*ReleaseWorkloadRequest)(nil),         // 127: toshi.workspace.v1.ReleaseWorkloadRequest
+	(*ReleaseWorkloadResponse)(nil),        // 128: toshi.workspace.v1.ReleaseWorkloadResponse
+	(*HoldServiceRequest)(nil),             // 129: toshi.workspace.v1.HoldServiceRequest
+	(*HoldServiceResponse)(nil),            // 130: toshi.workspace.v1.HoldServiceResponse
+	(*ServiceHold)(nil),                    // 131: toshi.workspace.v1.ServiceHold
+	(*ReleaseServiceRequest)(nil),          // 132: toshi.workspace.v1.ReleaseServiceRequest
+	(*ReleaseServiceResponse)(nil),         // 133: toshi.workspace.v1.ReleaseServiceResponse
+	(*StartServiceSignInRequest)(nil),      // 134: toshi.workspace.v1.StartServiceSignInRequest
+	(*StartServiceSignInResponse)(nil),     // 135: toshi.workspace.v1.StartServiceSignInResponse
+	(*ServiceSignInStarted)(nil),           // 136: toshi.workspace.v1.ServiceSignInStarted
+	(*ServiceSignInEnded)(nil),             // 137: toshi.workspace.v1.ServiceSignInEnded
+	(*AnswerServiceSignInRequest)(nil),     // 138: toshi.workspace.v1.AnswerServiceSignInRequest
+	(*AnswerServiceSignInResponse)(nil),    // 139: toshi.workspace.v1.AnswerServiceSignInResponse
+	(*CancelServiceSignInRequest)(nil),     // 140: toshi.workspace.v1.CancelServiceSignInRequest
+	(*CancelServiceSignInResponse)(nil),    // 141: toshi.workspace.v1.CancelServiceSignInResponse
+	(*GetServiceSignInStatusRequest)(nil),  // 142: toshi.workspace.v1.GetServiceSignInStatusRequest
+	(*GetServiceSignInStatusResponse)(nil), // 143: toshi.workspace.v1.GetServiceSignInStatusResponse
+	(*ServiceSignInStatus)(nil),            // 144: toshi.workspace.v1.ServiceSignInStatus
+	(*ListServiceRunsRequest)(nil),         // 145: toshi.workspace.v1.ListServiceRunsRequest
+	(*ListServiceRunsResponse)(nil),        // 146: toshi.workspace.v1.ListServiceRunsResponse
+	(*ListServiceRevisionsRequest)(nil),    // 147: toshi.workspace.v1.ListServiceRevisionsRequest
+	(*ListServiceRevisionsResponse)(nil),   // 148: toshi.workspace.v1.ListServiceRevisionsResponse
+	(*GetServiceRevisionRequest)(nil),      // 149: toshi.workspace.v1.GetServiceRevisionRequest
+	(*GetServiceRevisionResponse)(nil),     // 150: toshi.workspace.v1.GetServiceRevisionResponse
+	(*ServiceRevision)(nil),                // 151: toshi.workspace.v1.ServiceRevision
+	(*ServiceUpgrade)(nil),                 // 152: toshi.workspace.v1.ServiceUpgrade
+	(*ServiceRevisionImageCheck)(nil),      // 153: toshi.workspace.v1.ServiceRevisionImageCheck
+	(*RollbackServiceRequest)(nil),         // 154: toshi.workspace.v1.RollbackServiceRequest
+	(*RollbackServiceResponse)(nil),        // 155: toshi.workspace.v1.RollbackServiceResponse
+	(*ListServiceActivationsRequest)(nil),  // 156: toshi.workspace.v1.ListServiceActivationsRequest
+	(*ListServiceActivationsResponse)(nil), // 157: toshi.workspace.v1.ListServiceActivationsResponse
+	(*ServiceActivation)(nil),              // 158: toshi.workspace.v1.ServiceActivation
+	(*ServiceSecretVersion)(nil),           // 159: toshi.workspace.v1.ServiceSecretVersion
+	(*ServiceRun)(nil),                     // 160: toshi.workspace.v1.ServiceRun
+	nil,                                    // 161: toshi.workspace.v1.Job.LabelsEntry
+	nil,                                    // 162: toshi.workspace.v1.Sandbox.LabelsEntry
+	nil,                                    // 163: toshi.workspace.v1.Service.LabelsEntry
+	nil,                                    // 164: toshi.workspace.v1.Command.EnvEntry
+	(*timestamppb.Timestamp)(nil),          // 165: google.protobuf.Timestamp
+	(*SharedAccess)(nil),                   // 166: toshi.workspace.v1.SharedAccess
+	(*NetworkPolicy)(nil),                  // 167: toshi.workspace.v1.NetworkPolicy
+	(*durationpb.Duration)(nil),            // 168: google.protobuf.Duration
+	(RecordingKind)(0),                     // 169: toshi.workspace.v1.RecordingKind
 }
 var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
-	159, // 0: toshi.workspace.v1.Job.labels:type_name -> toshi.workspace.v1.Job.LabelsEntry
+	161, // 0: toshi.workspace.v1.Job.labels:type_name -> toshi.workspace.v1.Job.LabelsEntry
 	32,  // 1: toshi.workspace.v1.Job.spec:type_name -> toshi.workspace.v1.JobSpec
 	22,  // 2: toshi.workspace.v1.Job.status:type_name -> toshi.workspace.v1.JobStatus
 	7,   // 3: toshi.workspace.v1.Job.recording:type_name -> toshi.workspace.v1.RecordingPolicy
-	89,  // 4: toshi.workspace.v1.Job.waiting:type_name -> toshi.workspace.v1.AgentPrompt
+	91,  // 4: toshi.workspace.v1.Job.waiting:type_name -> toshi.workspace.v1.AgentPrompt
 	27,  // 5: toshi.workspace.v1.Job.network:type_name -> toshi.workspace.v1.WorkloadNetwork
 	8,   // 6: toshi.workspace.v1.Job.recording_source:type_name -> toshi.workspace.v1.RecordingSource
 	4,   // 7: toshi.workspace.v1.JobStatus.state:type_name -> toshi.workspace.v1.JobState
 	0,   // 8: toshi.workspace.v1.JobStatus.end_reason:type_name -> toshi.workspace.v1.EndReason
 	49,  // 9: toshi.workspace.v1.JobStatus.last_error:type_name -> toshi.workspace.v1.Error
-	163, // 10: toshi.workspace.v1.JobStatus.created_at:type_name -> google.protobuf.Timestamp
-	163, // 11: toshi.workspace.v1.JobStatus.queued_at:type_name -> google.protobuf.Timestamp
-	163, // 12: toshi.workspace.v1.JobStatus.started_at:type_name -> google.protobuf.Timestamp
-	163, // 13: toshi.workspace.v1.JobStatus.ended_at:type_name -> google.protobuf.Timestamp
-	163, // 14: toshi.workspace.v1.JobStatus.updated_at:type_name -> google.protobuf.Timestamp
-	163, // 15: toshi.workspace.v1.JobStatus.completed_at:type_name -> google.protobuf.Timestamp
-	163, // 16: toshi.workspace.v1.JobStatus.assigned_at:type_name -> google.protobuf.Timestamp
-	163, // 17: toshi.workspace.v1.JobAttempt.assigned_at:type_name -> google.protobuf.Timestamp
-	163, // 18: toshi.workspace.v1.JobAttempt.started_at:type_name -> google.protobuf.Timestamp
-	163, // 19: toshi.workspace.v1.JobAttempt.completed_at:type_name -> google.protobuf.Timestamp
-	160, // 20: toshi.workspace.v1.Sandbox.labels:type_name -> toshi.workspace.v1.Sandbox.LabelsEntry
+	165, // 10: toshi.workspace.v1.JobStatus.created_at:type_name -> google.protobuf.Timestamp
+	165, // 11: toshi.workspace.v1.JobStatus.queued_at:type_name -> google.protobuf.Timestamp
+	165, // 12: toshi.workspace.v1.JobStatus.started_at:type_name -> google.protobuf.Timestamp
+	165, // 13: toshi.workspace.v1.JobStatus.ended_at:type_name -> google.protobuf.Timestamp
+	165, // 14: toshi.workspace.v1.JobStatus.updated_at:type_name -> google.protobuf.Timestamp
+	165, // 15: toshi.workspace.v1.JobStatus.completed_at:type_name -> google.protobuf.Timestamp
+	165, // 16: toshi.workspace.v1.JobStatus.assigned_at:type_name -> google.protobuf.Timestamp
+	165, // 17: toshi.workspace.v1.JobAttempt.assigned_at:type_name -> google.protobuf.Timestamp
+	165, // 18: toshi.workspace.v1.JobAttempt.started_at:type_name -> google.protobuf.Timestamp
+	165, // 19: toshi.workspace.v1.JobAttempt.completed_at:type_name -> google.protobuf.Timestamp
+	162, // 20: toshi.workspace.v1.Sandbox.labels:type_name -> toshi.workspace.v1.Sandbox.LabelsEntry
 	43,  // 21: toshi.workspace.v1.Sandbox.spec:type_name -> toshi.workspace.v1.SandboxSpec
 	25,  // 22: toshi.workspace.v1.Sandbox.status:type_name -> toshi.workspace.v1.SandboxStatus
 	7,   // 23: toshi.workspace.v1.Sandbox.recording:type_name -> toshi.workspace.v1.RecordingPolicy
-	89,  // 24: toshi.workspace.v1.Sandbox.waiting:type_name -> toshi.workspace.v1.AgentPrompt
+	91,  // 24: toshi.workspace.v1.Sandbox.waiting:type_name -> toshi.workspace.v1.AgentPrompt
 	27,  // 25: toshi.workspace.v1.Sandbox.network:type_name -> toshi.workspace.v1.WorkloadNetwork
-	164, // 26: toshi.workspace.v1.Sandbox.shared:type_name -> toshi.workspace.v1.SharedAccess
+	166, // 26: toshi.workspace.v1.Sandbox.shared:type_name -> toshi.workspace.v1.SharedAccess
 	8,   // 27: toshi.workspace.v1.Sandbox.recording_source:type_name -> toshi.workspace.v1.RecordingSource
 	5,   // 28: toshi.workspace.v1.SandboxStatus.state:type_name -> toshi.workspace.v1.SandboxState
 	0,   // 29: toshi.workspace.v1.SandboxStatus.end_reason:type_name -> toshi.workspace.v1.EndReason
 	49,  // 30: toshi.workspace.v1.SandboxStatus.last_error:type_name -> toshi.workspace.v1.Error
-	163, // 31: toshi.workspace.v1.SandboxStatus.created_at:type_name -> google.protobuf.Timestamp
-	163, // 32: toshi.workspace.v1.SandboxStatus.queued_at:type_name -> google.protobuf.Timestamp
-	163, // 33: toshi.workspace.v1.SandboxStatus.started_at:type_name -> google.protobuf.Timestamp
-	163, // 34: toshi.workspace.v1.SandboxStatus.ended_at:type_name -> google.protobuf.Timestamp
-	163, // 35: toshi.workspace.v1.SandboxStatus.updated_at:type_name -> google.protobuf.Timestamp
+	165, // 31: toshi.workspace.v1.SandboxStatus.created_at:type_name -> google.protobuf.Timestamp
+	165, // 32: toshi.workspace.v1.SandboxStatus.queued_at:type_name -> google.protobuf.Timestamp
+	165, // 33: toshi.workspace.v1.SandboxStatus.started_at:type_name -> google.protobuf.Timestamp
+	165, // 34: toshi.workspace.v1.SandboxStatus.ended_at:type_name -> google.protobuf.Timestamp
+	165, // 35: toshi.workspace.v1.SandboxStatus.updated_at:type_name -> google.protobuf.Timestamp
 	1,   // 36: toshi.workspace.v1.SandboxStatus.stop_reason:type_name -> toshi.workspace.v1.StopReason
 	48,  // 37: toshi.workspace.v1.SandboxStatus.previews:type_name -> toshi.workspace.v1.SandboxPreview
-	163, // 38: toshi.workspace.v1.SandboxStatus.process_started_at:type_name -> google.protobuf.Timestamp
-	163, // 39: toshi.workspace.v1.SandboxStatus.stopped_at:type_name -> google.protobuf.Timestamp
+	165, // 38: toshi.workspace.v1.SandboxStatus.process_started_at:type_name -> google.protobuf.Timestamp
+	165, // 39: toshi.workspace.v1.SandboxStatus.stopped_at:type_name -> google.protobuf.Timestamp
 	2,   // 40: toshi.workspace.v1.SandboxStatus.stop_cause:type_name -> toshi.workspace.v1.StopCause
 	3,   // 41: toshi.workspace.v1.SandboxStatus.operator_hold:type_name -> toshi.workspace.v1.OperatorHold
-	163, // 42: toshi.workspace.v1.SandboxStatus.held_at:type_name -> google.protobuf.Timestamp
-	161, // 43: toshi.workspace.v1.Service.labels:type_name -> toshi.workspace.v1.Service.LabelsEntry
+	165, // 42: toshi.workspace.v1.SandboxStatus.held_at:type_name -> google.protobuf.Timestamp
+	163, // 43: toshi.workspace.v1.Service.labels:type_name -> toshi.workspace.v1.Service.LabelsEntry
 	45,  // 44: toshi.workspace.v1.Service.spec:type_name -> toshi.workspace.v1.ServiceSpec
 	29,  // 45: toshi.workspace.v1.Service.status:type_name -> toshi.workspace.v1.ServiceStatus
-	89,  // 46: toshi.workspace.v1.Service.waiting:type_name -> toshi.workspace.v1.AgentPrompt
+	91,  // 46: toshi.workspace.v1.Service.waiting:type_name -> toshi.workspace.v1.AgentPrompt
 	27,  // 47: toshi.workspace.v1.Service.network:type_name -> toshi.workspace.v1.WorkloadNetwork
-	129, // 48: toshi.workspace.v1.Service.holds:type_name -> toshi.workspace.v1.ServiceHold
+	131, // 48: toshi.workspace.v1.Service.holds:type_name -> toshi.workspace.v1.ServiceHold
 	28,  // 49: toshi.workspace.v1.WorkloadNetwork.layers:type_name -> toshi.workspace.v1.NetworkLayer
-	82,  // 50: toshi.workspace.v1.WorkloadNetwork.last_denials:type_name -> toshi.workspace.v1.EgressDenial
-	165, // 51: toshi.workspace.v1.NetworkLayer.policy:type_name -> toshi.workspace.v1.NetworkPolicy
+	84,  // 50: toshi.workspace.v1.WorkloadNetwork.last_denials:type_name -> toshi.workspace.v1.EgressDenial
+	167, // 51: toshi.workspace.v1.NetworkLayer.policy:type_name -> toshi.workspace.v1.NetworkPolicy
 	6,   // 52: toshi.workspace.v1.ServiceStatus.state:type_name -> toshi.workspace.v1.ServiceState
 	0,   // 53: toshi.workspace.v1.ServiceStatus.end_reason:type_name -> toshi.workspace.v1.EndReason
 	49,  // 54: toshi.workspace.v1.ServiceStatus.last_error:type_name -> toshi.workspace.v1.Error
-	163, // 55: toshi.workspace.v1.ServiceStatus.created_at:type_name -> google.protobuf.Timestamp
-	163, // 56: toshi.workspace.v1.ServiceStatus.queued_at:type_name -> google.protobuf.Timestamp
-	163, // 57: toshi.workspace.v1.ServiceStatus.started_at:type_name -> google.protobuf.Timestamp
-	163, // 58: toshi.workspace.v1.ServiceStatus.ended_at:type_name -> google.protobuf.Timestamp
-	163, // 59: toshi.workspace.v1.ServiceStatus.updated_at:type_name -> google.protobuf.Timestamp
-	158, // 60: toshi.workspace.v1.ServiceStatus.live_run:type_name -> toshi.workspace.v1.ServiceRun
+	165, // 55: toshi.workspace.v1.ServiceStatus.created_at:type_name -> google.protobuf.Timestamp
+	165, // 56: toshi.workspace.v1.ServiceStatus.queued_at:type_name -> google.protobuf.Timestamp
+	165, // 57: toshi.workspace.v1.ServiceStatus.started_at:type_name -> google.protobuf.Timestamp
+	165, // 58: toshi.workspace.v1.ServiceStatus.ended_at:type_name -> google.protobuf.Timestamp
+	165, // 59: toshi.workspace.v1.ServiceStatus.updated_at:type_name -> google.protobuf.Timestamp
+	160, // 60: toshi.workspace.v1.ServiceStatus.live_run:type_name -> toshi.workspace.v1.ServiceRun
 	31,  // 61: toshi.workspace.v1.ServiceStatus.provided_names:type_name -> toshi.workspace.v1.ProvidedName
 	30,  // 62: toshi.workspace.v1.ServiceStatus.backup:type_name -> toshi.workspace.v1.ServiceBackup
 	1,   // 63: toshi.workspace.v1.ServiceStatus.stop_reason:type_name -> toshi.workspace.v1.StopReason
 	2,   // 64: toshi.workspace.v1.ServiceStatus.stop_cause:type_name -> toshi.workspace.v1.StopCause
 	3,   // 65: toshi.workspace.v1.ServiceStatus.operator_hold:type_name -> toshi.workspace.v1.OperatorHold
-	163, // 66: toshi.workspace.v1.ServiceStatus.held_at:type_name -> google.protobuf.Timestamp
-	163, // 67: toshi.workspace.v1.ServiceBackup.latest_version_time:type_name -> google.protobuf.Timestamp
-	163, // 68: toshi.workspace.v1.ServiceBackup.last_save_failure_time:type_name -> google.protobuf.Timestamp
+	165, // 66: toshi.workspace.v1.ServiceStatus.held_at:type_name -> google.protobuf.Timestamp
+	165, // 67: toshi.workspace.v1.ServiceBackup.latest_version_time:type_name -> google.protobuf.Timestamp
+	165, // 68: toshi.workspace.v1.ServiceBackup.last_save_failure_time:type_name -> google.protobuf.Timestamp
 	47,  // 69: toshi.workspace.v1.JobSpec.command:type_name -> toshi.workspace.v1.Command
 	33,  // 70: toshi.workspace.v1.JobSpec.bindings:type_name -> toshi.workspace.v1.Binding
 	34,  // 71: toshi.workspace.v1.Binding.service:type_name -> toshi.workspace.v1.ServiceChannel
@@ -14019,9 +14257,9 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	38,  // 74: toshi.workspace.v1.BoundBinding.service:type_name -> toshi.workspace.v1.BoundService
 	40,  // 75: toshi.workspace.v1.BoundBinding.secrets:type_name -> toshi.workspace.v1.BoundSecrets
 	39,  // 76: toshi.workspace.v1.BoundBinding.mail:type_name -> toshi.workspace.v1.BoundMail
-	163, // 77: toshi.workspace.v1.BoundBinding.taken_at:type_name -> google.protobuf.Timestamp
+	165, // 77: toshi.workspace.v1.BoundBinding.taken_at:type_name -> google.protobuf.Timestamp
 	41,  // 78: toshi.workspace.v1.BoundSecrets.keys:type_name -> toshi.workspace.v1.BoundKey
-	166, // 79: toshi.workspace.v1.SandboxSpec.max_duration:type_name -> google.protobuf.Duration
+	168, // 79: toshi.workspace.v1.SandboxSpec.max_duration:type_name -> google.protobuf.Duration
 	33,  // 80: toshi.workspace.v1.SandboxSpec.bindings:type_name -> toshi.workspace.v1.Binding
 	47,  // 81: toshi.workspace.v1.SandboxSpec.setup:type_name -> toshi.workspace.v1.Command
 	47,  // 82: toshi.workspace.v1.SandboxSpec.process:type_name -> toshi.workspace.v1.Command
@@ -14030,17 +14268,17 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	11,  // 85: toshi.workspace.v1.ServiceSpec.mode:type_name -> toshi.workspace.v1.ServiceMode
 	46,  // 86: toshi.workspace.v1.ServiceSpec.state_volume:type_name -> toshi.workspace.v1.StateVolumeSpec
 	33,  // 87: toshi.workspace.v1.ServiceSpec.bindings:type_name -> toshi.workspace.v1.Binding
-	163, // 88: toshi.workspace.v1.ServiceSpec.awake_until:type_name -> google.protobuf.Timestamp
+	165, // 88: toshi.workspace.v1.ServiceSpec.awake_until:type_name -> google.protobuf.Timestamp
 	10,  // 89: toshi.workspace.v1.ServiceSpec.visitors:type_name -> toshi.workspace.v1.ServiceVisitors
 	9,   // 90: toshi.workspace.v1.ServiceSpec.host_kinds:type_name -> toshi.workspace.v1.HostKind
-	162, // 91: toshi.workspace.v1.Command.env:type_name -> toshi.workspace.v1.Command.EnvEntry
+	164, // 91: toshi.workspace.v1.Command.env:type_name -> toshi.workspace.v1.Command.EnvEntry
 	53,  // 92: toshi.workspace.v1.WatchOutputResponse.end:type_name -> toshi.workspace.v1.OutputEnd
 	56,  // 93: toshi.workspace.v1.WatchTelemetryResponse.sample:type_name -> toshi.workspace.v1.TelemetrySample
-	96,  // 94: toshi.workspace.v1.WatchTelemetryResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	98,  // 94: toshi.workspace.v1.WatchTelemetryResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
 	57,  // 95: toshi.workspace.v1.WatchTelemetryResponse.end:type_name -> toshi.workspace.v1.TelemetryEnd
-	163, // 96: toshi.workspace.v1.TelemetrySample.at:type_name -> google.protobuf.Timestamp
+	165, // 96: toshi.workspace.v1.TelemetrySample.at:type_name -> google.protobuf.Timestamp
 	60,  // 97: toshi.workspace.v1.WatchGuestLogResponse.chunk:type_name -> toshi.workspace.v1.GuestLogChunk
-	96,  // 98: toshi.workspace.v1.WatchGuestLogResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	98,  // 98: toshi.workspace.v1.WatchGuestLogResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
 	61,  // 99: toshi.workspace.v1.WatchGuestLogResponse.end:type_name -> toshi.workspace.v1.GuestLogEnd
 	63,  // 100: toshi.workspace.v1.ExecuteRequest.start:type_name -> toshi.workspace.v1.ExecuteStart
 	47,  // 101: toshi.workspace.v1.ExecuteStart.command:type_name -> toshi.workspace.v1.Command
@@ -14050,109 +14288,114 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	67,  // 105: toshi.workspace.v1.ExecuteCommandResponse.started:type_name -> toshi.workspace.v1.ExecutionStarted
 	68,  // 106: toshi.workspace.v1.ExecuteCommandResponse.exit:type_name -> toshi.workspace.v1.ExecutionExit
 	49,  // 107: toshi.workspace.v1.Operation.error:type_name -> toshi.workspace.v1.Error
-	163, // 108: toshi.workspace.v1.Operation.created_at:type_name -> google.protobuf.Timestamp
-	163, // 109: toshi.workspace.v1.Operation.done_at:type_name -> google.protobuf.Timestamp
+	165, // 108: toshi.workspace.v1.Operation.created_at:type_name -> google.protobuf.Timestamp
+	165, // 109: toshi.workspace.v1.Operation.done_at:type_name -> google.protobuf.Timestamp
 	71,  // 110: toshi.workspace.v1.GetOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
-	166, // 111: toshi.workspace.v1.WaitOperationRequest.timeout:type_name -> google.protobuf.Duration
+	168, // 111: toshi.workspace.v1.WaitOperationRequest.timeout:type_name -> google.protobuf.Duration
 	71,  // 112: toshi.workspace.v1.WaitOperationResponse.operation:type_name -> toshi.workspace.v1.Operation
 	12,  // 113: toshi.workspace.v1.Event.type:type_name -> toshi.workspace.v1.EventType
-	163, // 114: toshi.workspace.v1.Event.time:type_name -> google.protobuf.Timestamp
+	165, // 114: toshi.workspace.v1.Event.time:type_name -> google.protobuf.Timestamp
 	21,  // 115: toshi.workspace.v1.Event.job:type_name -> toshi.workspace.v1.Job
 	24,  // 116: toshi.workspace.v1.Event.sandbox:type_name -> toshi.workspace.v1.Sandbox
 	26,  // 117: toshi.workspace.v1.Event.service:type_name -> toshi.workspace.v1.Service
-	84,  // 118: toshi.workspace.v1.Event.execution:type_name -> toshi.workspace.v1.ExecutionEvent
-	85,  // 119: toshi.workspace.v1.Event.emitted:type_name -> toshi.workspace.v1.EmittedEvent
-	91,  // 120: toshi.workspace.v1.Event.recording:type_name -> toshi.workspace.v1.RecordingEvent
-	90,  // 121: toshi.workspace.v1.Event.connection:type_name -> toshi.workspace.v1.ConnectionEvent
-	79,  // 122: toshi.workspace.v1.Event.secret_withheld:type_name -> toshi.workspace.v1.SecretWithheldEvent
-	83,  // 123: toshi.workspace.v1.Event.trigger:type_name -> toshi.workspace.v1.TriggerResult
-	78,  // 124: toshi.workspace.v1.Event.upgrade_rolled_back:type_name -> toshi.workspace.v1.UpgradeRolledBackEvent
-	86,  // 125: toshi.workspace.v1.Event.agent_answer:type_name -> toshi.workspace.v1.AgentAnswerEvent
-	81,  // 126: toshi.workspace.v1.Event.egress_denied:type_name -> toshi.workspace.v1.EgressDeniedEvent
-	87,  // 127: toshi.workspace.v1.Event.mail_sent:type_name -> toshi.workspace.v1.MailSentEvent
+	86,  // 118: toshi.workspace.v1.Event.execution:type_name -> toshi.workspace.v1.ExecutionEvent
+	87,  // 119: toshi.workspace.v1.Event.emitted:type_name -> toshi.workspace.v1.EmittedEvent
+	93,  // 120: toshi.workspace.v1.Event.recording:type_name -> toshi.workspace.v1.RecordingEvent
+	92,  // 121: toshi.workspace.v1.Event.connection:type_name -> toshi.workspace.v1.ConnectionEvent
+	81,  // 122: toshi.workspace.v1.Event.secret_withheld:type_name -> toshi.workspace.v1.SecretWithheldEvent
+	85,  // 123: toshi.workspace.v1.Event.trigger:type_name -> toshi.workspace.v1.TriggerResult
+	80,  // 124: toshi.workspace.v1.Event.upgrade_rolled_back:type_name -> toshi.workspace.v1.UpgradeRolledBackEvent
+	88,  // 125: toshi.workspace.v1.Event.agent_answer:type_name -> toshi.workspace.v1.AgentAnswerEvent
+	83,  // 126: toshi.workspace.v1.Event.egress_denied:type_name -> toshi.workspace.v1.EgressDeniedEvent
+	89,  // 127: toshi.workspace.v1.Event.mail_sent:type_name -> toshi.workspace.v1.MailSentEvent
 	77,  // 128: toshi.workspace.v1.Event.kept_vm_discarded:type_name -> toshi.workspace.v1.KeptVMDiscardedEvent
-	88,  // 129: toshi.workspace.v1.Event.channel_acp:type_name -> toshi.workspace.v1.ChannelACPEvent
-	80,  // 130: toshi.workspace.v1.SecretWithheldEvent.keys:type_name -> toshi.workspace.v1.WithheldSecret
-	82,  // 131: toshi.workspace.v1.EgressDeniedEvent.denials:type_name -> toshi.workspace.v1.EgressDenial
-	163, // 132: toshi.workspace.v1.EgressDenial.time:type_name -> google.protobuf.Timestamp
-	68,  // 133: toshi.workspace.v1.ExecutionEvent.exit:type_name -> toshi.workspace.v1.ExecutionExit
-	163, // 134: toshi.workspace.v1.AgentPrompt.asked_at:type_name -> google.protobuf.Timestamp
-	167, // 135: toshi.workspace.v1.RecordingEvent.kind:type_name -> toshi.workspace.v1.RecordingKind
-	76,  // 136: toshi.workspace.v1.ListEventsResponse.events:type_name -> toshi.workspace.v1.Event
-	76,  // 137: toshi.workspace.v1.WatchEventsResponse.event:type_name -> toshi.workspace.v1.Event
-	96,  // 138: toshi.workspace.v1.WatchEventsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	163, // 139: toshi.workspace.v1.Keepalive.sent_at:type_name -> google.protobuf.Timestamp
-	13,  // 140: toshi.workspace.v1.PreviewShareLink.state:type_name -> toshi.workspace.v1.PreviewShareLinkState
-	163, // 141: toshi.workspace.v1.PreviewShareLink.created_at:type_name -> google.protobuf.Timestamp
-	163, // 142: toshi.workspace.v1.PreviewShareLink.expires_at:type_name -> google.protobuf.Timestamp
-	163, // 143: toshi.workspace.v1.PreviewShareLink.opened_at:type_name -> google.protobuf.Timestamp
-	163, // 144: toshi.workspace.v1.PreviewShareLink.revoked_at:type_name -> google.protobuf.Timestamp
-	163, // 145: toshi.workspace.v1.PreviewShareLink.ended_at:type_name -> google.protobuf.Timestamp
-	166, // 146: toshi.workspace.v1.CreatePreviewShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
-	97,  // 147: toshi.workspace.v1.CreatePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
-	97,  // 148: toshi.workspace.v1.ListPreviewShareLinksResponse.share_links:type_name -> toshi.workspace.v1.PreviewShareLink
-	97,  // 149: toshi.workspace.v1.RevokePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
-	13,  // 150: toshi.workspace.v1.ServiceShareLink.state:type_name -> toshi.workspace.v1.PreviewShareLinkState
-	163, // 151: toshi.workspace.v1.ServiceShareLink.created_at:type_name -> google.protobuf.Timestamp
-	163, // 152: toshi.workspace.v1.ServiceShareLink.expires_at:type_name -> google.protobuf.Timestamp
-	163, // 153: toshi.workspace.v1.ServiceShareLink.opened_at:type_name -> google.protobuf.Timestamp
-	163, // 154: toshi.workspace.v1.ServiceShareLink.revoked_at:type_name -> google.protobuf.Timestamp
-	163, // 155: toshi.workspace.v1.ServiceShareLink.ended_at:type_name -> google.protobuf.Timestamp
-	166, // 156: toshi.workspace.v1.CreateServiceShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
-	104, // 157: toshi.workspace.v1.CreateServiceShareLinkResponse.share_link:type_name -> toshi.workspace.v1.ServiceShareLink
-	104, // 158: toshi.workspace.v1.ListServiceShareLinksResponse.share_links:type_name -> toshi.workspace.v1.ServiceShareLink
-	104, // 159: toshi.workspace.v1.RevokeServiceShareLinkResponse.share_link:type_name -> toshi.workspace.v1.ServiceShareLink
-	24,  // 160: toshi.workspace.v1.StartSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	24,  // 161: toshi.workspace.v1.StopSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	26,  // 162: toshi.workspace.v1.StartServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	26,  // 163: toshi.workspace.v1.StopServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	11,  // 164: toshi.workspace.v1.SetServiceModeRequest.mode:type_name -> toshi.workspace.v1.ServiceMode
-	26,  // 165: toshi.workspace.v1.SetServiceModeResponse.service:type_name -> toshi.workspace.v1.Service
-	26,  // 166: toshi.workspace.v1.WakeServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	3,   // 167: toshi.workspace.v1.HoldWorkloadRequest.hold:type_name -> toshi.workspace.v1.OperatorHold
-	166, // 168: toshi.workspace.v1.HoldServiceRequest.ttl:type_name -> google.protobuf.Duration
-	129, // 169: toshi.workspace.v1.HoldServiceResponse.hold:type_name -> toshi.workspace.v1.ServiceHold
-	26,  // 170: toshi.workspace.v1.HoldServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	163, // 171: toshi.workspace.v1.ServiceHold.expires_at:type_name -> google.protobuf.Timestamp
-	26,  // 172: toshi.workspace.v1.ReleaseServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	134, // 173: toshi.workspace.v1.StartServiceSignInResponse.started:type_name -> toshi.workspace.v1.ServiceSignInStarted
-	135, // 174: toshi.workspace.v1.StartServiceSignInResponse.ended:type_name -> toshi.workspace.v1.ServiceSignInEnded
-	163, // 175: toshi.workspace.v1.ServiceSignInStarted.ends_at:type_name -> google.protobuf.Timestamp
-	14,  // 176: toshi.workspace.v1.ServiceSignInEnded.outcome:type_name -> toshi.workspace.v1.ServiceSignInOutcome
-	142, // 177: toshi.workspace.v1.GetServiceSignInStatusResponse.statuses:type_name -> toshi.workspace.v1.ServiceSignInStatus
-	158, // 178: toshi.workspace.v1.ListServiceRunsResponse.runs:type_name -> toshi.workspace.v1.ServiceRun
-	149, // 179: toshi.workspace.v1.ListServiceRevisionsResponse.revisions:type_name -> toshi.workspace.v1.ServiceRevision
-	149, // 180: toshi.workspace.v1.GetServiceRevisionResponse.revision:type_name -> toshi.workspace.v1.ServiceRevision
-	17,  // 181: toshi.workspace.v1.ServiceRevision.reason:type_name -> toshi.workspace.v1.ServiceRevisionReason
-	163, // 182: toshi.workspace.v1.ServiceRevision.created_at:type_name -> google.protobuf.Timestamp
-	151, // 183: toshi.workspace.v1.ServiceRevision.image_check:type_name -> toshi.workspace.v1.ServiceRevisionImageCheck
-	150, // 184: toshi.workspace.v1.ServiceRevision.upgrade:type_name -> toshi.workspace.v1.ServiceUpgrade
-	15,  // 185: toshi.workspace.v1.ServiceUpgrade.state:type_name -> toshi.workspace.v1.ServiceUpgradeState
-	166, // 186: toshi.workspace.v1.ServiceUpgrade.window:type_name -> google.protobuf.Duration
-	163, // 187: toshi.workspace.v1.ServiceUpgrade.window_start_time:type_name -> google.protobuf.Timestamp
-	163, // 188: toshi.workspace.v1.ServiceUpgrade.window_end_time:type_name -> google.protobuf.Timestamp
-	163, // 189: toshi.workspace.v1.ServiceUpgrade.finish_time:type_name -> google.protobuf.Timestamp
-	163, // 190: toshi.workspace.v1.ServiceUpgrade.volume_save_start_time:type_name -> google.protobuf.Timestamp
-	163, // 191: toshi.workspace.v1.ServiceUpgrade.volume_save_finish_time:type_name -> google.protobuf.Timestamp
-	16,  // 192: toshi.workspace.v1.ServiceRevisionImageCheck.outcome:type_name -> toshi.workspace.v1.ServiceRevisionImageOutcome
-	163, // 193: toshi.workspace.v1.ServiceRevisionImageCheck.checked_at:type_name -> google.protobuf.Timestamp
-	26,  // 194: toshi.workspace.v1.RollbackServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	156, // 195: toshi.workspace.v1.RollbackServiceResponse.activation:type_name -> toshi.workspace.v1.ServiceActivation
-	156, // 196: toshi.workspace.v1.ListServiceActivationsResponse.activations:type_name -> toshi.workspace.v1.ServiceActivation
-	18,  // 197: toshi.workspace.v1.ServiceActivation.kind:type_name -> toshi.workspace.v1.ServiceActivationKind
-	163, // 198: toshi.workspace.v1.ServiceActivation.requested_at:type_name -> google.protobuf.Timestamp
-	19,  // 199: toshi.workspace.v1.ServiceActivation.outcome:type_name -> toshi.workspace.v1.ServiceActivationOutcome
-	157, // 200: toshi.workspace.v1.ServiceActivation.secret_versions:type_name -> toshi.workspace.v1.ServiceSecretVersion
-	20,  // 201: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
-	163, // 202: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
-	163, // 203: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
-	163, // 204: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
-	163, // 205: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
-	206, // [206:206] is the sub-list for method output_type
-	206, // [206:206] is the sub-list for method input_type
-	206, // [206:206] is the sub-list for extension type_name
-	206, // [206:206] is the sub-list for extension extendee
-	0,   // [0:206] is the sub-list for field type_name
+	90,  // 129: toshi.workspace.v1.Event.channel_acp:type_name -> toshi.workspace.v1.ChannelACPEvent
+	78,  // 130: toshi.workspace.v1.Event.service_restored:type_name -> toshi.workspace.v1.ServiceRestoredEvent
+	79,  // 131: toshi.workspace.v1.Event.service_snapshot_failed:type_name -> toshi.workspace.v1.ServiceSnapshotFailedEvent
+	165, // 132: toshi.workspace.v1.ServiceRestoredEvent.snapshot_taken_at:type_name -> google.protobuf.Timestamp
+	165, // 133: toshi.workspace.v1.ServiceRestoredEvent.restored_at:type_name -> google.protobuf.Timestamp
+	168, // 134: toshi.workspace.v1.ServiceRestoredEvent.lost:type_name -> google.protobuf.Duration
+	82,  // 135: toshi.workspace.v1.SecretWithheldEvent.keys:type_name -> toshi.workspace.v1.WithheldSecret
+	84,  // 136: toshi.workspace.v1.EgressDeniedEvent.denials:type_name -> toshi.workspace.v1.EgressDenial
+	165, // 137: toshi.workspace.v1.EgressDenial.time:type_name -> google.protobuf.Timestamp
+	68,  // 138: toshi.workspace.v1.ExecutionEvent.exit:type_name -> toshi.workspace.v1.ExecutionExit
+	165, // 139: toshi.workspace.v1.AgentPrompt.asked_at:type_name -> google.protobuf.Timestamp
+	169, // 140: toshi.workspace.v1.RecordingEvent.kind:type_name -> toshi.workspace.v1.RecordingKind
+	76,  // 141: toshi.workspace.v1.ListEventsResponse.events:type_name -> toshi.workspace.v1.Event
+	76,  // 142: toshi.workspace.v1.WatchEventsResponse.event:type_name -> toshi.workspace.v1.Event
+	98,  // 143: toshi.workspace.v1.WatchEventsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	165, // 144: toshi.workspace.v1.Keepalive.sent_at:type_name -> google.protobuf.Timestamp
+	13,  // 145: toshi.workspace.v1.PreviewShareLink.state:type_name -> toshi.workspace.v1.PreviewShareLinkState
+	165, // 146: toshi.workspace.v1.PreviewShareLink.created_at:type_name -> google.protobuf.Timestamp
+	165, // 147: toshi.workspace.v1.PreviewShareLink.expires_at:type_name -> google.protobuf.Timestamp
+	165, // 148: toshi.workspace.v1.PreviewShareLink.opened_at:type_name -> google.protobuf.Timestamp
+	165, // 149: toshi.workspace.v1.PreviewShareLink.revoked_at:type_name -> google.protobuf.Timestamp
+	165, // 150: toshi.workspace.v1.PreviewShareLink.ended_at:type_name -> google.protobuf.Timestamp
+	168, // 151: toshi.workspace.v1.CreatePreviewShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
+	99,  // 152: toshi.workspace.v1.CreatePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
+	99,  // 153: toshi.workspace.v1.ListPreviewShareLinksResponse.share_links:type_name -> toshi.workspace.v1.PreviewShareLink
+	99,  // 154: toshi.workspace.v1.RevokePreviewShareLinkResponse.share_link:type_name -> toshi.workspace.v1.PreviewShareLink
+	13,  // 155: toshi.workspace.v1.ServiceShareLink.state:type_name -> toshi.workspace.v1.PreviewShareLinkState
+	165, // 156: toshi.workspace.v1.ServiceShareLink.created_at:type_name -> google.protobuf.Timestamp
+	165, // 157: toshi.workspace.v1.ServiceShareLink.expires_at:type_name -> google.protobuf.Timestamp
+	165, // 158: toshi.workspace.v1.ServiceShareLink.opened_at:type_name -> google.protobuf.Timestamp
+	165, // 159: toshi.workspace.v1.ServiceShareLink.revoked_at:type_name -> google.protobuf.Timestamp
+	165, // 160: toshi.workspace.v1.ServiceShareLink.ended_at:type_name -> google.protobuf.Timestamp
+	168, // 161: toshi.workspace.v1.CreateServiceShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
+	106, // 162: toshi.workspace.v1.CreateServiceShareLinkResponse.share_link:type_name -> toshi.workspace.v1.ServiceShareLink
+	106, // 163: toshi.workspace.v1.ListServiceShareLinksResponse.share_links:type_name -> toshi.workspace.v1.ServiceShareLink
+	106, // 164: toshi.workspace.v1.RevokeServiceShareLinkResponse.share_link:type_name -> toshi.workspace.v1.ServiceShareLink
+	24,  // 165: toshi.workspace.v1.StartSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	24,  // 166: toshi.workspace.v1.StopSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	26,  // 167: toshi.workspace.v1.StartServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	26,  // 168: toshi.workspace.v1.StopServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	11,  // 169: toshi.workspace.v1.SetServiceModeRequest.mode:type_name -> toshi.workspace.v1.ServiceMode
+	26,  // 170: toshi.workspace.v1.SetServiceModeResponse.service:type_name -> toshi.workspace.v1.Service
+	26,  // 171: toshi.workspace.v1.WakeServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	3,   // 172: toshi.workspace.v1.HoldWorkloadRequest.hold:type_name -> toshi.workspace.v1.OperatorHold
+	168, // 173: toshi.workspace.v1.HoldServiceRequest.ttl:type_name -> google.protobuf.Duration
+	131, // 174: toshi.workspace.v1.HoldServiceResponse.hold:type_name -> toshi.workspace.v1.ServiceHold
+	26,  // 175: toshi.workspace.v1.HoldServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	165, // 176: toshi.workspace.v1.ServiceHold.expires_at:type_name -> google.protobuf.Timestamp
+	26,  // 177: toshi.workspace.v1.ReleaseServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	136, // 178: toshi.workspace.v1.StartServiceSignInResponse.started:type_name -> toshi.workspace.v1.ServiceSignInStarted
+	137, // 179: toshi.workspace.v1.StartServiceSignInResponse.ended:type_name -> toshi.workspace.v1.ServiceSignInEnded
+	165, // 180: toshi.workspace.v1.ServiceSignInStarted.ends_at:type_name -> google.protobuf.Timestamp
+	14,  // 181: toshi.workspace.v1.ServiceSignInEnded.outcome:type_name -> toshi.workspace.v1.ServiceSignInOutcome
+	144, // 182: toshi.workspace.v1.GetServiceSignInStatusResponse.statuses:type_name -> toshi.workspace.v1.ServiceSignInStatus
+	160, // 183: toshi.workspace.v1.ListServiceRunsResponse.runs:type_name -> toshi.workspace.v1.ServiceRun
+	151, // 184: toshi.workspace.v1.ListServiceRevisionsResponse.revisions:type_name -> toshi.workspace.v1.ServiceRevision
+	151, // 185: toshi.workspace.v1.GetServiceRevisionResponse.revision:type_name -> toshi.workspace.v1.ServiceRevision
+	17,  // 186: toshi.workspace.v1.ServiceRevision.reason:type_name -> toshi.workspace.v1.ServiceRevisionReason
+	165, // 187: toshi.workspace.v1.ServiceRevision.created_at:type_name -> google.protobuf.Timestamp
+	153, // 188: toshi.workspace.v1.ServiceRevision.image_check:type_name -> toshi.workspace.v1.ServiceRevisionImageCheck
+	152, // 189: toshi.workspace.v1.ServiceRevision.upgrade:type_name -> toshi.workspace.v1.ServiceUpgrade
+	15,  // 190: toshi.workspace.v1.ServiceUpgrade.state:type_name -> toshi.workspace.v1.ServiceUpgradeState
+	168, // 191: toshi.workspace.v1.ServiceUpgrade.window:type_name -> google.protobuf.Duration
+	165, // 192: toshi.workspace.v1.ServiceUpgrade.window_start_time:type_name -> google.protobuf.Timestamp
+	165, // 193: toshi.workspace.v1.ServiceUpgrade.window_end_time:type_name -> google.protobuf.Timestamp
+	165, // 194: toshi.workspace.v1.ServiceUpgrade.finish_time:type_name -> google.protobuf.Timestamp
+	165, // 195: toshi.workspace.v1.ServiceUpgrade.volume_save_start_time:type_name -> google.protobuf.Timestamp
+	165, // 196: toshi.workspace.v1.ServiceUpgrade.volume_save_finish_time:type_name -> google.protobuf.Timestamp
+	16,  // 197: toshi.workspace.v1.ServiceRevisionImageCheck.outcome:type_name -> toshi.workspace.v1.ServiceRevisionImageOutcome
+	165, // 198: toshi.workspace.v1.ServiceRevisionImageCheck.checked_at:type_name -> google.protobuf.Timestamp
+	26,  // 199: toshi.workspace.v1.RollbackServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	158, // 200: toshi.workspace.v1.RollbackServiceResponse.activation:type_name -> toshi.workspace.v1.ServiceActivation
+	158, // 201: toshi.workspace.v1.ListServiceActivationsResponse.activations:type_name -> toshi.workspace.v1.ServiceActivation
+	18,  // 202: toshi.workspace.v1.ServiceActivation.kind:type_name -> toshi.workspace.v1.ServiceActivationKind
+	165, // 203: toshi.workspace.v1.ServiceActivation.requested_at:type_name -> google.protobuf.Timestamp
+	19,  // 204: toshi.workspace.v1.ServiceActivation.outcome:type_name -> toshi.workspace.v1.ServiceActivationOutcome
+	159, // 205: toshi.workspace.v1.ServiceActivation.secret_versions:type_name -> toshi.workspace.v1.ServiceSecretVersion
+	20,  // 206: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
+	165, // 207: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
+	165, // 208: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
+	165, // 209: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
+	165, // 210: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
+	211, // [211:211] is the sub-list for method output_type
+	211, // [211:211] is the sub-list for method input_type
+	211, // [211:211] is the sub-list for extension type_name
+	211, // [211:211] is the sub-list for extension extendee
+	0,   // [0:211] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_workspace_proto_init() }
@@ -14226,26 +14469,28 @@ func file_toshi_workspace_v1_workspace_proto_init() {
 		(*Event_MailSent)(nil),
 		(*Event_KeptVmDiscarded)(nil),
 		(*Event_ChannelAcp)(nil),
+		(*Event_ServiceRestored)(nil),
+		(*Event_ServiceSnapshotFailed)(nil),
 	}
-	file_toshi_workspace_v1_workspace_proto_msgTypes[62].OneofWrappers = []any{}
-	file_toshi_workspace_v1_workspace_proto_msgTypes[77].OneofWrappers = []any{
+	file_toshi_workspace_v1_workspace_proto_msgTypes[64].OneofWrappers = []any{}
+	file_toshi_workspace_v1_workspace_proto_msgTypes[79].OneofWrappers = []any{
 		(*CreatePreviewShareLinkRequest_Channel)(nil),
 		(*CreatePreviewShareLinkRequest_Port)(nil),
 	}
-	file_toshi_workspace_v1_workspace_proto_msgTypes[112].OneofWrappers = []any{
+	file_toshi_workspace_v1_workspace_proto_msgTypes[114].OneofWrappers = []any{
 		(*StartServiceSignInResponse_Started)(nil),
 		(*StartServiceSignInResponse_Output)(nil),
 		(*StartServiceSignInResponse_Ended)(nil),
 	}
-	file_toshi_workspace_v1_workspace_proto_msgTypes[114].OneofWrappers = []any{}
-	file_toshi_workspace_v1_workspace_proto_msgTypes[137].OneofWrappers = []any{}
+	file_toshi_workspace_v1_workspace_proto_msgTypes[116].OneofWrappers = []any{}
+	file_toshi_workspace_v1_workspace_proto_msgTypes[139].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_workspace_proto_rawDesc), len(file_toshi_workspace_v1_workspace_proto_rawDesc)),
 			NumEnums:      21,
-			NumMessages:   142,
+			NumMessages:   144,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

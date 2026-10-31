@@ -1236,6 +1236,16 @@ enum EventType {
   // An ACP channel's agent finished a prompt. Name:
   // "channel.acp.turn_ended". Payload: ChannelACPEvent.
   EVENT_TYPE_CHANNEL_ACP_TURN_ENDED = 20;
+  // A service's run was restored from the snapshot its VM left when the
+  // run before it went to sleep, with when the snapshot was taken and how
+  // much time passed since. Name: "service.restored". Payload:
+  // ServiceRestoredEvent.
+  EVENT_TYPE_SERVICE_RESTORED = 21;
+  // A service's run could not keep a snapshot when it went to sleep, or
+  // its snapshot could not be restored and the run started cold, with
+  // why. Name: "service.snapshot_failed" or "service.restore_failed".
+  // Payload: ServiceSnapshotFailedEvent.
+  EVENT_TYPE_SERVICE_SNAPSHOT_FAILED = 22;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -1286,6 +1296,10 @@ message Event {
     KeptVMDiscardedEvent kept_vm_discarded = 24;
     // For CHANNEL_ACP_PERMISSION_REQUESTED and CHANNEL_ACP_TURN_ENDED.
     ChannelACPEvent channel_acp = 25;
+    // For SERVICE_RESTORED.
+    ServiceRestoredEvent service_restored = 26;
+    // For SERVICE_SNAPSHOT_FAILED.
+    ServiceSnapshotFailedEvent service_snapshot_failed = 27;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -1303,6 +1317,36 @@ message KeptVMDiscardedEvent {
   string run_id = 1;
   // Why the VM was discarded, currently "image_changed".
   string reason = 2;
+}
+
+// ServiceRestoredEvent records a service run restored from a snapshot.
+message ServiceRestoredEvent {
+  // The job ID of the restored run.
+  string run_id = 1;
+  // The snapshot it was restored from.
+  string snapshot_id = 2;
+  // When the snapshot was taken: the run before it went to sleep then.
+  google.protobuf.Timestamp snapshot_taken_at = 3;
+  // When the run was restored.
+  google.protobuf.Timestamp restored_at = 4;
+  // The time between the two: how long the service's process was
+  // stopped.
+  google.protobuf.Duration lost = 5;
+}
+
+// ServiceSnapshotFailedEvent records a snapshot a service run could not
+// keep at sleep or restore at wake. The service's next wake, or this one,
+// starts cold.
+message ServiceSnapshotFailedEvent {
+  // The job ID of the run.
+  string run_id = 1;
+  // The snapshot that could not be restored; empty when none was taken.
+  string snapshot_id = 2;
+  // "snapshot" when the sleep kept none, "restore" when the wake started
+  // cold.
+  string step = 3;
+  // Why.
+  string error = 4;
 }
 
 // UpgradeRolledBackEvent is a service upgrade that failed in its window and
@@ -2279,6 +2323,10 @@ message ServiceRun {
   optional int32 exit_code = 9;
   // Why it ended, for a run that failed or was lost.
   string error = 10;
+  // The snapshot the run was restored from: the VM of the run before it,
+  // as it was when that run went to sleep. Empty for a run that started
+  // cold.
+  string restored_from = 11;
 }
 
 // ServiceRunState is where a service's run is.

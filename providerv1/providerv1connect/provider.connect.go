@@ -138,6 +138,9 @@ const (
 	// ProviderServiceSetSnapshotRefsProcedure is the fully-qualified name of the ProviderService's
 	// SetSnapshotRefs RPC.
 	ProviderServiceSetSnapshotRefsProcedure = "/toshi.backend.provider.v1.ProviderService/SetSnapshotRefs"
+	// ProviderServiceSnapshotBytesProcedure is the fully-qualified name of the ProviderService's
+	// SnapshotBytes RPC.
+	ProviderServiceSnapshotBytesProcedure = "/toshi.backend.provider.v1.ProviderService/SnapshotBytes"
 	// ProviderServiceCollectProcedure is the fully-qualified name of the ProviderService's Collect RPC.
 	ProviderServiceCollectProcedure = "/toshi.backend.provider.v1.ProviderService/Collect"
 	// ProviderServiceForgetProcedure is the fully-qualified name of the ProviderService's Forget RPC.
@@ -307,8 +310,10 @@ type ProviderServiceClient interface {
 	// made from.
 	SnapshotImageIdentity(context.Context, *connect.Request[providerv1.SnapshotImageIdentityRequest]) (*connect.Response[providerv1.SnapshotImageIdentityResponse], error)
 	// SetSnapshotRefs tells the provider which snapshots the agent's warm
-	// pools hold, for its collector.
+	// pools hold and which it keeps for a workload, for its collector.
 	SetSnapshotRefs(context.Context, *connect.Request[providerv1.SetSnapshotRefsRequest]) (*connect.Response[providerv1.SetSnapshotRefsResponse], error)
+	// SnapshotBytes returns the bytes a snapshot holds on disk.
+	SnapshotBytes(context.Context, *connect.Request[providerv1.SnapshotBytesRequest]) (*connect.Response[providerv1.SnapshotBytesResponse], error)
 	// Collect removes what nothing has used for grace, at most max_per_pass
 	// items, and returns the bytes it freed.
 	Collect(context.Context, *connect.Request[providerv1.CollectRequest]) (*connect.Response[providerv1.CollectResponse], error)
@@ -575,6 +580,12 @@ func NewProviderServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(providerServiceMethods.ByName("SetSnapshotRefs")),
 			connect.WithClientOptions(opts...),
 		),
+		snapshotBytes: connect.NewClient[providerv1.SnapshotBytesRequest, providerv1.SnapshotBytesResponse](
+			httpClient,
+			baseURL+ProviderServiceSnapshotBytesProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("SnapshotBytes")),
+			connect.WithClientOptions(opts...),
+		),
 		collect: connect.NewClient[providerv1.CollectRequest, providerv1.CollectResponse](
 			httpClient,
 			baseURL+ProviderServiceCollectProcedure,
@@ -747,6 +758,7 @@ type providerServiceClient struct {
 	imageIdentity         *connect.Client[providerv1.ImageIdentityRequest, providerv1.ImageIdentityResponse]
 	snapshotImageIdentity *connect.Client[providerv1.SnapshotImageIdentityRequest, providerv1.SnapshotImageIdentityResponse]
 	setSnapshotRefs       *connect.Client[providerv1.SetSnapshotRefsRequest, providerv1.SetSnapshotRefsResponse]
+	snapshotBytes         *connect.Client[providerv1.SnapshotBytesRequest, providerv1.SnapshotBytesResponse]
 	collect               *connect.Client[providerv1.CollectRequest, providerv1.CollectResponse]
 	forget                *connect.Client[providerv1.ForgetRequest, providerv1.ForgetResponse]
 	baseImages            *connect.Client[providerv1.BaseImagesRequest, providerv1.BaseImagesResponse]
@@ -915,6 +927,11 @@ func (c *providerServiceClient) SnapshotImageIdentity(ctx context.Context, req *
 // SetSnapshotRefs calls toshi.backend.provider.v1.ProviderService.SetSnapshotRefs.
 func (c *providerServiceClient) SetSnapshotRefs(ctx context.Context, req *connect.Request[providerv1.SetSnapshotRefsRequest]) (*connect.Response[providerv1.SetSnapshotRefsResponse], error) {
 	return c.setSnapshotRefs.CallUnary(ctx, req)
+}
+
+// SnapshotBytes calls toshi.backend.provider.v1.ProviderService.SnapshotBytes.
+func (c *providerServiceClient) SnapshotBytes(ctx context.Context, req *connect.Request[providerv1.SnapshotBytesRequest]) (*connect.Response[providerv1.SnapshotBytesResponse], error) {
+	return c.snapshotBytes.CallUnary(ctx, req)
 }
 
 // Collect calls toshi.backend.provider.v1.ProviderService.Collect.
@@ -1135,8 +1152,10 @@ type ProviderServiceHandler interface {
 	// made from.
 	SnapshotImageIdentity(context.Context, *connect.Request[providerv1.SnapshotImageIdentityRequest]) (*connect.Response[providerv1.SnapshotImageIdentityResponse], error)
 	// SetSnapshotRefs tells the provider which snapshots the agent's warm
-	// pools hold, for its collector.
+	// pools hold and which it keeps for a workload, for its collector.
 	SetSnapshotRefs(context.Context, *connect.Request[providerv1.SetSnapshotRefsRequest]) (*connect.Response[providerv1.SetSnapshotRefsResponse], error)
+	// SnapshotBytes returns the bytes a snapshot holds on disk.
+	SnapshotBytes(context.Context, *connect.Request[providerv1.SnapshotBytesRequest]) (*connect.Response[providerv1.SnapshotBytesResponse], error)
 	// Collect removes what nothing has used for grace, at most max_per_pass
 	// items, and returns the bytes it freed.
 	Collect(context.Context, *connect.Request[providerv1.CollectRequest]) (*connect.Response[providerv1.CollectResponse], error)
@@ -1399,6 +1418,12 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 		connect.WithSchema(providerServiceMethods.ByName("SetSnapshotRefs")),
 		connect.WithHandlerOptions(opts...),
 	)
+	providerServiceSnapshotBytesHandler := connect.NewUnaryHandler(
+		ProviderServiceSnapshotBytesProcedure,
+		svc.SnapshotBytes,
+		connect.WithSchema(providerServiceMethods.ByName("SnapshotBytes")),
+		connect.WithHandlerOptions(opts...),
+	)
 	providerServiceCollectHandler := connect.NewUnaryHandler(
 		ProviderServiceCollectProcedure,
 		svc.Collect,
@@ -1597,6 +1622,8 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 			providerServiceSnapshotImageIdentityHandler.ServeHTTP(w, r)
 		case ProviderServiceSetSnapshotRefsProcedure:
 			providerServiceSetSnapshotRefsHandler.ServeHTTP(w, r)
+		case ProviderServiceSnapshotBytesProcedure:
+			providerServiceSnapshotBytesHandler.ServeHTTP(w, r)
 		case ProviderServiceCollectProcedure:
 			providerServiceCollectHandler.ServeHTTP(w, r)
 		case ProviderServiceForgetProcedure:
@@ -1766,6 +1793,10 @@ func (UnimplementedProviderServiceHandler) SnapshotImageIdentity(context.Context
 
 func (UnimplementedProviderServiceHandler) SetSnapshotRefs(context.Context, *connect.Request[providerv1.SetSnapshotRefsRequest]) (*connect.Response[providerv1.SetSnapshotRefsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.SetSnapshotRefs is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) SnapshotBytes(context.Context, *connect.Request[providerv1.SnapshotBytesRequest]) (*connect.Response[providerv1.SnapshotBytesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.SnapshotBytes is not implemented"))
 }
 
 func (UnimplementedProviderServiceHandler) Collect(context.Context, *connect.Request[providerv1.CollectRequest]) (*connect.Response[providerv1.CollectResponse], error) {

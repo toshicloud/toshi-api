@@ -161,8 +161,10 @@ service ProviderService {
   // made from.
   rpc SnapshotImageIdentity(SnapshotImageIdentityRequest) returns (SnapshotImageIdentityResponse);
   // SetSnapshotRefs tells the provider which snapshots the agent's warm
-  // pools hold, for its collector.
+  // pools hold and which it keeps for a workload, for its collector.
   rpc SetSnapshotRefs(SetSnapshotRefsRequest) returns (SetSnapshotRefsResponse);
+  // SnapshotBytes returns the bytes a snapshot holds on disk.
+  rpc SnapshotBytes(SnapshotBytesRequest) returns (SnapshotBytesResponse);
 
   // Upkeep: the facets "collector" and "forgetter".
 
@@ -713,9 +715,20 @@ message SetSnapshotRefsRequest {
   map<string, string> pools = 1;
   // The snapshots the pools stopped using, with when they did.
   map<string, google.protobuf.Timestamp> dropped = 2;
+  // The snapshots the agent keeps for a workload, with when it started
+  // keeping each.
+  map<string, google.protobuf.Timestamp> kept = 3;
 }
 
 message SetSnapshotRefsResponse {}
+
+message SnapshotBytesRequest {
+  string snapshot_id = 1;
+}
+
+message SnapshotBytesResponse {
+  int64 bytes = 1;
+}
 
 message CollectRequest {
   google.protobuf.Duration grace = 1;
