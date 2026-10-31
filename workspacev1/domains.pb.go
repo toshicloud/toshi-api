@@ -98,7 +98,7 @@ func (DomainState) EnumDescriptor() ([]byte, []int) {
 // DomainRecord is one DNS record a domain needs at its DNS provider.
 type DomainRecord struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// CNAME or TXT.
+	// CNAME, TXT or MX. An MX value is its priority and host, such as "10 mail.example.com".
 	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	// The record's name.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`

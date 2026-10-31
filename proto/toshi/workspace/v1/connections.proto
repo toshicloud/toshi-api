@@ -6,6 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
+import "toshi/workspace/v1/domains.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
@@ -202,9 +203,9 @@ message Connection {
 // MailConnection is where a MAIL connection receives mail and where it
 // sends it.
 message MailConnection {
-  // Output only. The address mail is received at: the connection's name,
-  // "@", the workspace's ID and the deployment's inbound mail domain, all
-  // lowercase.
+  // Output only. The lowercase address mail is received at: the connection's
+  // name at its custom domain, or at the workspace's name under the
+  // deployment's inbound mail domain when no custom domain is set.
   string address = 1;
   // The service, by its ID, whose event channel the mail goes to.
   string service = 2;
@@ -213,6 +214,48 @@ message MailConnection {
   // Output only. The mail provider that receives for the address, such as
   // "ses".
   string provider = 4;
+  // A custom mail domain, lowercase in ASCII. Empty uses the deployment's
+  // inbound mail domain.
+  string domain = 5;
+  // Output only. The custom domain's checks and required DNS records; unset
+  // when the connection uses the deployment's inbound mail domain.
+  MailDomainStatus domain_status = 6;
+}
+
+// MailDomainState is whether a connection's custom mail domain receives mail.
+enum MailDomainState {
+  // No custom domain is set.
+  MAIL_DOMAIN_STATE_UNSPECIFIED = 0;
+  // The domain has not yet passed all checks, or another workspace holds it.
+  MAIL_DOMAIN_STATE_PENDING = 1;
+  // The ownership, MX and provider checks all pass.
+  MAIL_DOMAIN_STATE_READY = 2;
+  // A previously ready domain no longer passes all checks.
+  MAIL_DOMAIN_STATE_FAILING = 3;
+}
+
+// MailDomainCheck is the result of one custom mail domain check.
+enum MailDomainCheck {
+  // The check has not run yet.
+  MAIL_DOMAIN_CHECK_UNSPECIFIED = 0;
+  // The check passed.
+  MAIL_DOMAIN_CHECK_PASSED = 1;
+  // The check failed.
+  MAIL_DOMAIN_CHECK_FAILED = 2;
+}
+
+// MailDomainStatus describes the checks and DNS records of a custom domain.
+message MailDomainStatus {
+  MailDomainState state = 1;
+  MailDomainCheck ownership = 2;
+  MailDomainCheck mx = 3;
+  MailDomainCheck provider = 4;
+  // The ownership TXT, inbound MX and provider records, in that order.
+  repeated DomainRecord records = 5;
+  // Why the domain is not ready, or why the last lookup failed.
+  string reason = 6;
+  // Unset until the first check.
+  google.protobuf.Timestamp checked_at = 7;
 }
 
 // ConnectionTarget is the URL a WEBHOOK connection's deliveries are posted

@@ -22,7 +22,7 @@ export const file_toshi_workspace_v1_domains: GenFile = /*@__PURE__*/
  */
 export type DomainRecord = Message<"toshi.workspace.v1.DomainRecord"> & {
   /**
-   * CNAME or TXT.
+   * CNAME, TXT or MX. An MX value is its priority and host, such as "10 mail.example.com".
    *
    * @generated from field: string type = 1;
    */
@@ -50,7 +50,7 @@ export type DomainRecord = Message<"toshi.workspace.v1.DomainRecord"> & {
  */
 export type DomainRecordJson = {
   /**
-   * CNAME or TXT.
+   * CNAME, TXT or MX. An MX value is its priority and host, such as "10 mail.example.com".
    *
    * @generated from field: string type = 1;
    */

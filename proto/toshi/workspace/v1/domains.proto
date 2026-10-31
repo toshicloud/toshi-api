@@ -94,7 +94,7 @@ enum DomainState {
 
 // DomainRecord is one DNS record a domain needs at its DNS provider.
 message DomainRecord {
-  // CNAME or TXT.
+  // CNAME, TXT or MX. An MX value is its priority and host, such as "10 mail.example.com".
   string type = 1;
   // The record's name.
   string name = 2;
