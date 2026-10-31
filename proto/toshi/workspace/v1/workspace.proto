@@ -729,6 +729,19 @@ message SandboxSpec {
   // an own host whose agent keeps VMs; otherwise create fails with
   // FAILED_PRECONDITION and reason KEEP_VM_UNAVAILABLE.
   bool keep_vm = 14;
+  // Create only: a command the sandbox's host runs in it at every stop
+  // but the loss of its host: StopSandbox, the duration cap, the spending
+  // cap, a policy stop, an operator's hold, the workspace's suspension and
+  // deletion. New executions are refused first; pre_stop runs while the
+  // running ones go on, and they are cancelled once it ends. It has two
+  // minutes at StopSandbox and the duration cap, and 15 seconds at the
+  // others; past that it is killed. It never keeps the sandbox from
+  // stopping: an exit other than 0, or the end of its time, is written on
+  // the stop's event as last_error.code "pre_stop_failed" and the stop
+  // goes on. It runs where and with the environment setup does. The
+  // sandbox is placed only on a host that runs workload hooks. Unset:
+  // none.
+  Command pre_stop = 15;
 }
 
 // SandboxSource is a commit of a repository that one of the workspace's
