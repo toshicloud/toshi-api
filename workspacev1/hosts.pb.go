@@ -808,18 +808,21 @@ type CreateCloudHostRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The host name; it becomes the host id the same way enrollment does.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// The cloud provider: "aws" (the default) or "gcp".
+	// The cloud provider: "aws" (the default), "gcp" or "azure".
 	Cloud string `protobuf:"bytes,2,opt,name=cloud,proto3" json:"cloud,omitempty"`
-	// The AWS region the instances run in (AWS).
+	// The AWS region (AWS), the zone's region (GCP) or the location (Azure)
+	// the instances run in.
 	Region string `protobuf:"bytes,3,opt,name=region,proto3" json:"region,omitempty"`
 	// The role in the workspace's account the control plane assumes (AWS).
 	RoleArn string `protobuf:"bytes,4,opt,name=role_arn,json=roleArn,proto3" json:"role_arn,omitempty"`
-	// The image the instances boot: an AMI (AWS), or a GCE image or family
-	// (an image name, family/NAME, or a projects/... path).
+	// The image the instances boot: an AMI (AWS), a GCE image or family
+	// (an image name, family/NAME, or a projects/... path), or a Compute
+	// Gallery image version ID (Azure).
 	Image string `protobuf:"bytes,5,opt,name=image,proto3" json:"image,omitempty"`
-	// The subnet (AWS) or subnetwork (GCP, a name in the zone's region or
-	// regions/R/subnetworks/S) to launch into; empty means a default subnet
-	// or the default network.
+	// The subnet (AWS), subnetwork (GCP, a name in the zone's region or
+	// regions/R/subnetworks/S) or subnet resource ID (Azure) to launch into;
+	// empty means a default subnet or the default network (required on
+	// Azure).
 	SubnetId string `protobuf:"bytes,6,opt,name=subnet_id,json=subnetId,proto3" json:"subnet_id,omitempty"`
 	// The security groups of the instances; empty means the VPC default.
 	SecurityGroupIds []string `protobuf:"bytes,7,rep,name=security_group_ids,json=securityGroupIds,proto3" json:"security_group_ids,omitempty"`
@@ -853,7 +856,11 @@ type CreateCloudHostRequest struct {
 	Egress string `protobuf:"bytes,18,opt,name=egress,proto3" json:"egress,omitempty"`
 	// A key that makes the call safe to retry: a retry with the same key and
 	// the same request answers with the host the first call made.
-	RequestKey    string `protobuf:"bytes,19,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	RequestKey string `protobuf:"bytes,19,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// The Azure subscription the instances run in (Azure).
+	SubscriptionId string `protobuf:"bytes,20,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	// The Azure resource group the instances run in (Azure).
+	ResourceGroup string `protobuf:"bytes,21,opt,name=resource_group,json=resourceGroup,proto3" json:"resource_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1021,6 +1028,20 @@ func (x *CreateCloudHostRequest) GetRequestKey() string {
 	return ""
 }
 
+func (x *CreateCloudHostRequest) GetSubscriptionId() string {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return ""
+}
+
+func (x *CreateCloudHostRequest) GetResourceGroup() string {
+	if x != nil {
+		return x.ResourceGroup
+	}
+	return ""
+}
+
 // CreateCloudHostResponse carries the host, the trust external id and the
 // principal the role must allow.
 type CreateCloudHostResponse struct {
@@ -1033,9 +1054,12 @@ type CreateCloudHostResponse struct {
 	CloudHost    *CloudHost `protobuf:"bytes,4,opt,name=cloud_host,json=cloudHost,proto3" json:"cloud_host,omitempty"`
 	// The Google principal the workspace's service account must let create
 	// tokens for it, with roles/iam.serviceAccountTokenCreator (GCP).
-	GcpPrincipal  string `protobuf:"bytes,5,opt,name=gcp_principal,json=gcpPrincipal,proto3" json:"gcp_principal,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	GcpPrincipal string `protobuf:"bytes,5,opt,name=gcp_principal,json=gcpPrincipal,proto3" json:"gcp_principal,omitempty"`
+	// The application (client) id the workspace consents into its tenant and
+	// grants the host's role to (Azure).
+	AzureApplicationId string `protobuf:"bytes,6,opt,name=azure_application_id,json=azureApplicationId,proto3" json:"azure_application_id,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *CreateCloudHostResponse) Reset() {
@@ -1099,6 +1123,13 @@ func (x *CreateCloudHostResponse) GetCloudHost() *CloudHost {
 func (x *CreateCloudHostResponse) GetGcpPrincipal() string {
 	if x != nil {
 		return x.GcpPrincipal
+	}
+	return ""
+}
+
+func (x *CreateCloudHostResponse) GetAzureApplicationId() string {
+	if x != nil {
+		return x.AzureApplicationId
 	}
 	return ""
 }
@@ -1312,8 +1343,8 @@ type Host struct {
 	// The host's agent is draining before a stop: it takes no new jobs. On an
 	// offline host: the host was draining when it went offline.
 	Stopping bool `protobuf:"varint,11,opt,name=stopping,proto3" json:"stopping,omitempty"`
-	// The cloud the host runs in when it is a cloud host ("aws"); empty
-	// otherwise.
+	// The cloud the host runs in when it is a cloud host ("aws", "gcp" or
+	// "azure"); empty otherwise.
 	Cloud string `protobuf:"bytes,12,opt,name=cloud,proto3" json:"cloud,omitempty"`
 	// An overflow host takes a job only when no other host the job may use has
 	// room and the job has queued for its plan's overflow_after.
@@ -2061,25 +2092,28 @@ func (x *HostAlert) GetMessage() string {
 	return ""
 }
 
-// CloudHost is the AWS account behind a workspace-owned host the control plane
-// drives.
+// CloudHost is the AWS account, GCP project or Azure subscription behind a
+// workspace-owned host the control plane drives.
 type CloudHost struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The host row this cloud host belongs to.
 	HostId string `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
-	// The cloud provider: "aws" or "gcp".
+	// The cloud provider: "aws", "gcp" or "azure".
 	Cloud string `protobuf:"bytes,2,opt,name=cloud,proto3" json:"cloud,omitempty"`
-	// The region the instances run in; on GCP the zone's region.
+	// The region the instances run in; on GCP the zone's region, on Azure
+	// the location.
 	Region string `protobuf:"bytes,3,opt,name=region,proto3" json:"region,omitempty"`
 	// The role in the workspace's account the control plane assumes (AWS).
 	RoleArn string `protobuf:"bytes,4,opt,name=role_arn,json=roleArn,proto3" json:"role_arn,omitempty"`
-	// The external ID the role's trust policy requires (AWS), or the project
-	// metadata must name (GCP); generated by Toshi.
+	// The external ID the role's trust policy requires (AWS), the project
+	// metadata must name (GCP), or the resource group's toshi-external-id tag
+	// must name (Azure); generated by Toshi.
 	ExternalId string `protobuf:"bytes,5,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
-	// The image the instances boot: an AMI, or a GCE image path.
+	// The image the instances boot: an AMI (AWS), a GCE image path (GCP) or
+	// a Compute Gallery image version ID (Azure).
 	Image string `protobuf:"bytes,6,opt,name=image,proto3" json:"image,omitempty"`
-	// The subnet (AWS) or subnetwork (GCP) to launch into; empty means a
-	// default subnet or the default network.
+	// The subnet (AWS), subnetwork (GCP) or subnet resource ID (Azure) to
+	// launch into; empty means a default subnet or the default network.
 	SubnetId string `protobuf:"bytes,7,opt,name=subnet_id,json=subnetId,proto3" json:"subnet_id,omitempty"`
 	// The security groups of the instances; empty means the VPC default.
 	SecurityGroupIds []string `protobuf:"bytes,8,rep,name=security_group_ids,json=securityGroupIds,proto3" json:"security_group_ids,omitempty"`
@@ -2101,7 +2135,11 @@ type CloudHost struct {
 	ServiceAccount string `protobuf:"bytes,17,opt,name=service_account,json=serviceAccount,proto3" json:"service_account,omitempty"`
 	// Where the instances reach the internet: "public" (each gets its own
 	// public address) or "nat" (none: the workspace's NAT carries the traffic).
-	Egress        string `protobuf:"bytes,18,opt,name=egress,proto3" json:"egress,omitempty"`
+	Egress string `protobuf:"bytes,18,opt,name=egress,proto3" json:"egress,omitempty"`
+	// The Azure subscription the instances run in (Azure).
+	SubscriptionId string `protobuf:"bytes,19,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	// The Azure resource group the instances run in (Azure).
+	ResourceGroup string `protobuf:"bytes,20,opt,name=resource_group,json=resourceGroup,proto3" json:"resource_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2262,6 +2300,20 @@ func (x *CloudHost) GetEgress() string {
 	return ""
 }
 
+func (x *CloudHost) GetSubscriptionId() string {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return ""
+}
+
+func (x *CloudHost) GetResourceGroup() string {
+	if x != nil {
+		return x.ResourceGroup
+	}
+	return ""
+}
+
 // CloudHostCheck is the outcome of one cloud host check.
 type CloudHostCheck struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -2362,7 +2414,7 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x04host\x18\x01 \x01(\v2\x18.toshi.workspace.v1.HostR\x04host\"#\n" +
 	"\x11RetireHostRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x14\n" +
-	"\x12RetireHostResponse\"\xe4\x05\n" +
+	"\x12RetireHostResponse\"\xb4\x06\n" +
 	"\x16CreateCloudHostRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05cloud\x18\x02 \x01(\tR\x05cloud\x12\x16\n" +
@@ -2386,10 +2438,12 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x0fservice_account\x18\x11 \x01(\tR\x0eserviceAccount\x12\x16\n" +
 	"\x06egress\x18\x12 \x01(\tR\x06egress\x12\x1f\n" +
 	"\vrequest_key\x18\x13 \x01(\tR\n" +
-	"requestKey\x1a@\n" +
+	"requestKey\x12'\n" +
+	"\x0fsubscription_id\x18\x14 \x01(\tR\x0esubscriptionId\x12%\n" +
+	"\x0eresource_group\x18\x15 \x01(\tR\rresourceGroup\x1a@\n" +
 	"\x12InstanceTypesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xf0\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa2\x02\n" +
 	"\x17CreateCloudHostResponse\x12,\n" +
 	"\x04host\x18\x01 \x01(\v2\x18.toshi.workspace.v1.HostR\x04host\x12\x1f\n" +
 	"\vexternal_id\x18\x02 \x01(\tR\n" +
@@ -2397,7 +2451,8 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\rprincipal_arn\x18\x03 \x01(\tR\fprincipalArn\x12<\n" +
 	"\n" +
 	"cloud_host\x18\x04 \x01(\v2\x1d.toshi.workspace.v1.CloudHostR\tcloudHost\x12#\n" +
-	"\rgcp_principal\x18\x05 \x01(\tR\fgcpPrincipal\"0\n" +
+	"\rgcp_principal\x18\x05 \x01(\tR\fgcpPrincipal\x120\n" +
+	"\x14azure_application_id\x18\x06 \x01(\tR\x12azureApplicationId\"0\n" +
 	"\x15CheckCloudHostRequest\x12\x17\n" +
 	"\ahost_id\x18\x01 \x01(\tR\x06hostId\"T\n" +
 	"\x16CheckCloudHostResponse\x12:\n" +
@@ -2494,7 +2549,7 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\amessage\x18\a \x01(\tR\amessage\x1a:\n" +
 	"\fReasonsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01\"\xca\x05\n" +
+	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01\"\x9a\x06\n" +
 	"\tCloudHost\x12\x17\n" +
 	"\ahost_id\x18\x01 \x01(\tR\x06hostId\x12\x14\n" +
 	"\x05cloud\x18\x02 \x01(\tR\x05cloud\x12\x16\n" +
@@ -2516,7 +2571,9 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\aproject\x18\x0f \x01(\tR\aproject\x12\x12\n" +
 	"\x04zone\x18\x10 \x01(\tR\x04zone\x12'\n" +
 	"\x0fservice_account\x18\x11 \x01(\tR\x0eserviceAccount\x12\x16\n" +
-	"\x06egress\x18\x12 \x01(\tR\x06egress\x1a@\n" +
+	"\x06egress\x18\x12 \x01(\tR\x06egress\x12'\n" +
+	"\x0fsubscription_id\x18\x13 \x01(\tR\x0esubscriptionId\x12%\n" +
+	"\x0eresource_group\x18\x14 \x01(\tR\rresourceGroup\x1a@\n" +
 	"\x12InstanceTypesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"~\n" +
