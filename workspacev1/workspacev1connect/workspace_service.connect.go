@@ -48,6 +48,9 @@ const (
 	// WorkspaceServiceGetWorkspaceStatementProcedure is the fully-qualified name of the
 	// WorkspaceService's GetWorkspaceStatement RPC.
 	WorkspaceServiceGetWorkspaceStatementProcedure = "/toshi.workspace.v1.WorkspaceService/GetWorkspaceStatement"
+	// WorkspaceServiceGetWorkspaceUpcomingInvoiceProcedure is the fully-qualified name of the
+	// WorkspaceService's GetWorkspaceUpcomingInvoice RPC.
+	WorkspaceServiceGetWorkspaceUpcomingInvoiceProcedure = "/toshi.workspace.v1.WorkspaceService/GetWorkspaceUpcomingInvoice"
 	// WorkspaceServiceListSeatsProcedure is the fully-qualified name of the WorkspaceService's
 	// ListSeats RPC.
 	WorkspaceServiceListSeatsProcedure = "/toshi.workspace.v1.WorkspaceService/ListSeats"
@@ -128,6 +131,15 @@ type WorkspaceServiceClient interface {
 	// and held time by reason. A month not in YYYY-MM form fails with
 	// INVALID_ARGUMENT.
 	GetWorkspaceStatement(context.Context, *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error)
+	// GetWorkspaceUpcomingInvoice returns the billing provider's preview of
+	// the workspace's next invoice, and the current UTC month's cost so far
+	// per project with a straight-line estimate to the month's end. The cost
+	// comes from the same usage and prices as GetWorkspaceStatement, and the
+	// projects' cost so far sums to its estimated_cents. Meter events reach
+	// the provider asynchronously, so the preview can lag the usage; the
+	// invoice is what is billed, and no estimate here changes it. A workspace
+	// with no billing customer gets a preview with available false.
+	GetWorkspaceUpcomingInvoice(context.Context, *connect.Request[workspacev1.GetWorkspaceUpcomingInvoiceRequest]) (*connect.Response[workspacev1.GetWorkspaceUpcomingInvoiceResponse], error)
 	// ListSeats returns the desktop seats the workspace held in one UTC
 	// month, oldest assigned first: the seats live at some time in it,
 	// removed ones included. A person assigned a seat may open a display on
@@ -254,6 +266,12 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspaceStatement")),
 			connect.WithClientOptions(opts...),
 		),
+		getWorkspaceUpcomingInvoice: connect.NewClient[workspacev1.GetWorkspaceUpcomingInvoiceRequest, workspacev1.GetWorkspaceUpcomingInvoiceResponse](
+			httpClient,
+			baseURL+WorkspaceServiceGetWorkspaceUpcomingInvoiceProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspaceUpcomingInvoice")),
+			connect.WithClientOptions(opts...),
+		),
 		listSeats: connect.NewClient[workspacev1.ListSeatsRequest, workspacev1.ListSeatsResponse](
 			httpClient,
 			baseURL+WorkspaceServiceListSeatsProcedure,
@@ -337,24 +355,25 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 
 // workspaceServiceClient implements WorkspaceServiceClient.
 type workspaceServiceClient struct {
-	getWorkspace               *connect.Client[workspacev1.GetWorkspaceRequest, workspacev1.GetWorkspaceResponse]
-	updateWorkspace            *connect.Client[workspacev1.UpdateWorkspaceRequest, workspacev1.UpdateWorkspaceResponse]
-	listWorkspaces             *connect.Client[workspacev1.ListWorkspacesRequest, workspacev1.ListWorkspacesResponse]
-	getWorkspaceBilling        *connect.Client[workspacev1.GetWorkspaceBillingRequest, workspacev1.GetWorkspaceBillingResponse]
-	getWorkspaceStatement      *connect.Client[workspacev1.GetWorkspaceStatementRequest, workspacev1.GetWorkspaceStatementResponse]
-	listSeats                  *connect.Client[workspacev1.ListSeatsRequest, workspacev1.ListSeatsResponse]
-	assignSeat                 *connect.Client[workspacev1.AssignSeatRequest, workspacev1.AssignSeatResponse]
-	removeSeat                 *connect.Client[workspacev1.RemoveSeatRequest, workspacev1.RemoveSeatResponse]
-	listEgressIPs              *connect.Client[workspacev1.ListEgressIPsRequest, workspacev1.ListEgressIPsResponse]
-	getUsage                   *connect.Client[workspacev1.GetUsageRequest, workspacev1.GetUsageResponse]
-	getQueueTimes              *connect.Client[workspacev1.GetQueueTimesRequest, workspacev1.GetQueueTimesResponse]
-	getWorkflowUsage           *connect.Client[workspacev1.GetWorkflowUsageRequest, workspacev1.GetWorkflowUsageResponse]
-	listPlans                  *connect.Client[workspacev1.ListPlansRequest, workspacev1.ListPlansResponse]
-	createCheckoutSession      *connect.Client[workspacev1.CreateCheckoutSessionRequest, workspacev1.CreateCheckoutSessionResponse]
-	createBillingPortalSession *connect.Client[workspacev1.CreateBillingPortalSessionRequest, workspacev1.CreateBillingPortalSessionResponse]
-	getVersion                 *connect.Client[workspacev1.GetVersionRequest, workspacev1.GetVersionResponse]
-	deleteWorkspace            *connect.Client[workspacev1.DeleteWorkspaceRequest, workspacev1.DeleteWorkspaceResponse]
-	cancelWorkspaceDeletion    *connect.Client[workspacev1.CancelWorkspaceDeletionRequest, workspacev1.CancelWorkspaceDeletionResponse]
+	getWorkspace                *connect.Client[workspacev1.GetWorkspaceRequest, workspacev1.GetWorkspaceResponse]
+	updateWorkspace             *connect.Client[workspacev1.UpdateWorkspaceRequest, workspacev1.UpdateWorkspaceResponse]
+	listWorkspaces              *connect.Client[workspacev1.ListWorkspacesRequest, workspacev1.ListWorkspacesResponse]
+	getWorkspaceBilling         *connect.Client[workspacev1.GetWorkspaceBillingRequest, workspacev1.GetWorkspaceBillingResponse]
+	getWorkspaceStatement       *connect.Client[workspacev1.GetWorkspaceStatementRequest, workspacev1.GetWorkspaceStatementResponse]
+	getWorkspaceUpcomingInvoice *connect.Client[workspacev1.GetWorkspaceUpcomingInvoiceRequest, workspacev1.GetWorkspaceUpcomingInvoiceResponse]
+	listSeats                   *connect.Client[workspacev1.ListSeatsRequest, workspacev1.ListSeatsResponse]
+	assignSeat                  *connect.Client[workspacev1.AssignSeatRequest, workspacev1.AssignSeatResponse]
+	removeSeat                  *connect.Client[workspacev1.RemoveSeatRequest, workspacev1.RemoveSeatResponse]
+	listEgressIPs               *connect.Client[workspacev1.ListEgressIPsRequest, workspacev1.ListEgressIPsResponse]
+	getUsage                    *connect.Client[workspacev1.GetUsageRequest, workspacev1.GetUsageResponse]
+	getQueueTimes               *connect.Client[workspacev1.GetQueueTimesRequest, workspacev1.GetQueueTimesResponse]
+	getWorkflowUsage            *connect.Client[workspacev1.GetWorkflowUsageRequest, workspacev1.GetWorkflowUsageResponse]
+	listPlans                   *connect.Client[workspacev1.ListPlansRequest, workspacev1.ListPlansResponse]
+	createCheckoutSession       *connect.Client[workspacev1.CreateCheckoutSessionRequest, workspacev1.CreateCheckoutSessionResponse]
+	createBillingPortalSession  *connect.Client[workspacev1.CreateBillingPortalSessionRequest, workspacev1.CreateBillingPortalSessionResponse]
+	getVersion                  *connect.Client[workspacev1.GetVersionRequest, workspacev1.GetVersionResponse]
+	deleteWorkspace             *connect.Client[workspacev1.DeleteWorkspaceRequest, workspacev1.DeleteWorkspaceResponse]
+	cancelWorkspaceDeletion     *connect.Client[workspacev1.CancelWorkspaceDeletionRequest, workspacev1.CancelWorkspaceDeletionResponse]
 }
 
 // GetWorkspace calls toshi.workspace.v1.WorkspaceService.GetWorkspace.
@@ -380,6 +399,12 @@ func (c *workspaceServiceClient) GetWorkspaceBilling(ctx context.Context, req *c
 // GetWorkspaceStatement calls toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement.
 func (c *workspaceServiceClient) GetWorkspaceStatement(ctx context.Context, req *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error) {
 	return c.getWorkspaceStatement.CallUnary(ctx, req)
+}
+
+// GetWorkspaceUpcomingInvoice calls
+// toshi.workspace.v1.WorkspaceService.GetWorkspaceUpcomingInvoice.
+func (c *workspaceServiceClient) GetWorkspaceUpcomingInvoice(ctx context.Context, req *connect.Request[workspacev1.GetWorkspaceUpcomingInvoiceRequest]) (*connect.Response[workspacev1.GetWorkspaceUpcomingInvoiceResponse], error) {
+	return c.getWorkspaceUpcomingInvoice.CallUnary(ctx, req)
 }
 
 // ListSeats calls toshi.workspace.v1.WorkspaceService.ListSeats.
@@ -486,6 +511,15 @@ type WorkspaceServiceHandler interface {
 	// and held time by reason. A month not in YYYY-MM form fails with
 	// INVALID_ARGUMENT.
 	GetWorkspaceStatement(context.Context, *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error)
+	// GetWorkspaceUpcomingInvoice returns the billing provider's preview of
+	// the workspace's next invoice, and the current UTC month's cost so far
+	// per project with a straight-line estimate to the month's end. The cost
+	// comes from the same usage and prices as GetWorkspaceStatement, and the
+	// projects' cost so far sums to its estimated_cents. Meter events reach
+	// the provider asynchronously, so the preview can lag the usage; the
+	// invoice is what is billed, and no estimate here changes it. A workspace
+	// with no billing customer gets a preview with available false.
+	GetWorkspaceUpcomingInvoice(context.Context, *connect.Request[workspacev1.GetWorkspaceUpcomingInvoiceRequest]) (*connect.Response[workspacev1.GetWorkspaceUpcomingInvoiceResponse], error)
 	// ListSeats returns the desktop seats the workspace held in one UTC
 	// month, oldest assigned first: the seats live at some time in it,
 	// removed ones included. A person assigned a seat may open a display on
@@ -608,6 +642,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspaceStatement")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceGetWorkspaceUpcomingInvoiceHandler := connect.NewUnaryHandler(
+		WorkspaceServiceGetWorkspaceUpcomingInvoiceProcedure,
+		svc.GetWorkspaceUpcomingInvoice,
+		connect.WithSchema(workspaceServiceMethods.ByName("GetWorkspaceUpcomingInvoice")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceListSeatsHandler := connect.NewUnaryHandler(
 		WorkspaceServiceListSeatsProcedure,
 		svc.ListSeats,
@@ -698,6 +738,8 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceGetWorkspaceBillingHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetWorkspaceStatementProcedure:
 			workspaceServiceGetWorkspaceStatementHandler.ServeHTTP(w, r)
+		case WorkspaceServiceGetWorkspaceUpcomingInvoiceProcedure:
+			workspaceServiceGetWorkspaceUpcomingInvoiceHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListSeatsProcedure:
 			workspaceServiceListSeatsHandler.ServeHTTP(w, r)
 		case WorkspaceServiceAssignSeatProcedure:
@@ -751,6 +793,10 @@ func (UnimplementedWorkspaceServiceHandler) GetWorkspaceBilling(context.Context,
 
 func (UnimplementedWorkspaceServiceHandler) GetWorkspaceStatement(context.Context, *connect.Request[workspacev1.GetWorkspaceStatementRequest]) (*connect.Response[workspacev1.GetWorkspaceStatementResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) GetWorkspaceUpcomingInvoice(context.Context, *connect.Request[workspacev1.GetWorkspaceUpcomingInvoiceRequest]) (*connect.Response[workspacev1.GetWorkspaceUpcomingInvoiceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetWorkspaceUpcomingInvoice is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) ListSeats(context.Context, *connect.Request[workspacev1.ListSeatsRequest]) (*connect.Response[workspacev1.ListSeatsResponse], error) {

@@ -70,6 +70,17 @@ service WorkspaceService {
   rpc GetWorkspaceStatement(GetWorkspaceStatementRequest) returns (GetWorkspaceStatementResponse) {
     option (toshi.permission) = "billing.read";
   }
+  // GetWorkspaceUpcomingInvoice returns the billing provider's preview of
+  // the workspace's next invoice, and the current UTC month's cost so far
+  // per project with a straight-line estimate to the month's end. The cost
+  // comes from the same usage and prices as GetWorkspaceStatement, and the
+  // projects' cost so far sums to its estimated_cents. Meter events reach
+  // the provider asynchronously, so the preview can lag the usage; the
+  // invoice is what is billed, and no estimate here changes it. A workspace
+  // with no billing customer gets a preview with available false.
+  rpc GetWorkspaceUpcomingInvoice(GetWorkspaceUpcomingInvoiceRequest) returns (GetWorkspaceUpcomingInvoiceResponse) {
+    option (toshi.permission) = "billing.read";
+  }
   // ListSeats returns the desktop seats the workspace held in one UTC
   // month, oldest assigned first: the seats live at some time in it,
   // removed ones included. A person assigned a seat may open a display on
@@ -262,6 +273,59 @@ message GetWorkspaceStatementResponse {
   WorkspaceStatement statement = 1;
   // The statement as CSV with a header row, when the request asked for it.
   string csv = 2;
+}
+
+message GetWorkspaceUpcomingInvoiceRequest {}
+
+message GetWorkspaceUpcomingInvoiceResponse {
+  // The billing provider's preview of the next invoice.
+  UpcomingInvoice invoice = 1;
+  // The current UTC month's cost per project, highest cost so far first.
+  // The row with an empty project_id holds what no project accounts for.
+  repeated ProjectCost projects = 2;
+  // The sums of the projects' month_so_far_cents and estimated_month_cents.
+  // month_so_far_cents equals the current month's statement estimated_cents.
+  int64 month_so_far_cents = 3;
+  int64 estimated_month_cents = 4;
+  // The currency of the project costs, as the statement gives it; empty
+  // while no price is known.
+  string currency = 5;
+}
+
+// UpcomingInvoice is the billing provider's preview of a workspace's next
+// invoice.
+message UpcomingInvoice {
+  // The amount due, in the currency's minor unit, after the customer
+  // balance (such as a starter credit) is applied.
+  int64 amount_cents = 1;
+  // The ISO currency code in lower case, such as "usd".
+  string currency = 2;
+  // The period the invoice covers.
+  google.protobuf.Timestamp period_start = 3;
+  google.protobuf.Timestamp period_end = 4;
+  // When the usage behind this answer was read. Meter events reach the
+  // provider asynchronously, so the preview may not yet include usage
+  // read at this time.
+  google.protobuf.Timestamp meters_read_at = 5;
+  // False when the workspace has no billing customer, or the provider has
+  // no upcoming invoice for it: the other fields are then empty.
+  bool available = 6;
+}
+
+// ProjectCost is one project's cost in the current UTC month.
+message ProjectCost {
+  // The project's id and name. An empty project_id is the cost no project
+  // accounts for: the own-host fee, storage, desktop seats, and minutes of
+  // jobs with no project, a deleted project, or that history retention
+  // already removed.
+  string project_id = 1;
+  string project_name = 2;
+  // The cost of the month so far, in the currency's minor unit.
+  int64 month_so_far_cents = 3;
+  // month_so_far_cents carried in a straight line to the month's end: so
+  // far times the month's length over the time elapsed. Desktop seats are
+  // a whole-month charge and are not carried forward.
+  int64 estimated_month_cents = 4;
 }
 
 // Seat is one assignment of a desktop seat to a person.
