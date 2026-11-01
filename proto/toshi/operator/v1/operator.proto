@@ -645,6 +645,14 @@ message Job {
   // billable_minutes is the same time rounded up to whole minutes. 0 for
   // the same jobs as billable_minutes.
   double billable_seconds = 56;
+  // The usual run time in seconds of a job like this one: the median of
+  // the run times of its last 20 successful runs in the past 30 days, a
+  // run being comparable when it has the same workspace, repository,
+  // workflow, job name, size and OS. Set while the job waits (queued,
+  // assigned or starting). 0 when the job runs or ended, when fewer than
+  // 5 such runs exist or the newest is older than 30 days, and for a job
+  // that is not a GitHub job.
+  double usual_run_seconds = 58;
   // The job's page on GitHub, on the configured GitHub web URL. Empty when
   // the job has no repository, run or workflow job id.
   string github_url = 36;

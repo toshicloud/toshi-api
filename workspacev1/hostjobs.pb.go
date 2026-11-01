@@ -1112,6 +1112,14 @@ type HostJob struct {
 	// billable_minutes is the same time rounded up to whole minutes. 0 for
 	// the same jobs as billable_minutes.
 	BillableSeconds float64 `protobuf:"fixed64,55,opt,name=billable_seconds,json=billableSeconds,proto3" json:"billable_seconds,omitempty"`
+	// The usual run time in seconds of a job like this one: the median of
+	// the run times of its last 20 successful runs in the past 30 days, a
+	// run being comparable when it has the same workspace, repository,
+	// workflow, job name, size and OS. Set while the job waits (queued,
+	// assigned or starting). 0 when the job runs or ended, when fewer than
+	// 5 such runs exist or the newest is older than 30 days, and for a job
+	// that is not a GitHub job.
+	UsualRunSeconds float64 `protobuf:"fixed64,57,opt,name=usual_run_seconds,json=usualRunSeconds,proto3" json:"usual_run_seconds,omitempty"`
 	// The job's page on GitHub, on the configured GitHub web URL. Empty when
 	// the job has no repository, run or workflow job id.
 	GithubUrl string `protobuf:"bytes,35,opt,name=github_url,json=githubUrl,proto3" json:"github_url,omitempty"`
@@ -1492,6 +1500,13 @@ func (x *HostJob) GetBillableMinutes() int64 {
 func (x *HostJob) GetBillableSeconds() float64 {
 	if x != nil {
 		return x.BillableSeconds
+	}
+	return 0
+}
+
+func (x *HostJob) GetUsualRunSeconds() float64 {
+	if x != nil {
+		return x.UsualRunSeconds
 	}
 	return 0
 }
@@ -2315,7 +2330,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x17StopHostJobDebugRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
 	"\x18StopHostJobDebugResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xdb\x11\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\x87\x12\n" +
 	"\aHostJob\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1e\n" +
 	"\n" +
@@ -2365,7 +2380,8 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\thost_kind\x18  \x01(\tR\bhostKind\x12.\n" +
 	"\x13previous_pool_image\x18! \x01(\tR\x11previousPoolImage\x12)\n" +
 	"\x10billable_minutes\x18\" \x01(\x03R\x0fbillableMinutes\x12)\n" +
-	"\x10billable_seconds\x187 \x01(\x01R\x0fbillableSeconds\x12\x1d\n" +
+	"\x10billable_seconds\x187 \x01(\x01R\x0fbillableSeconds\x12*\n" +
+	"\x11usual_run_seconds\x189 \x01(\x01R\x0fusualRunSeconds\x12\x1d\n" +
 	"\n" +
 	"github_url\x18# \x01(\tR\tgithubUrl\x12#\n" +
 	"\rworkflow_name\x18$ \x01(\tR\fworkflowName\x126\n" +

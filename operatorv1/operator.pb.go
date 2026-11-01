@@ -803,6 +803,14 @@ type Job struct {
 	// billable_minutes is the same time rounded up to whole minutes. 0 for
 	// the same jobs as billable_minutes.
 	BillableSeconds float64 `protobuf:"fixed64,56,opt,name=billable_seconds,json=billableSeconds,proto3" json:"billable_seconds,omitempty"`
+	// The usual run time in seconds of a job like this one: the median of
+	// the run times of its last 20 successful runs in the past 30 days, a
+	// run being comparable when it has the same workspace, repository,
+	// workflow, job name, size and OS. Set while the job waits (queued,
+	// assigned or starting). 0 when the job runs or ended, when fewer than
+	// 5 such runs exist or the newest is older than 30 days, and for a job
+	// that is not a GitHub job.
+	UsualRunSeconds float64 `protobuf:"fixed64,58,opt,name=usual_run_seconds,json=usualRunSeconds,proto3" json:"usual_run_seconds,omitempty"`
 	// The job's page on GitHub, on the configured GitHub web URL. Empty when
 	// the job has no repository, run or workflow job id.
 	GithubUrl string `protobuf:"bytes,36,opt,name=github_url,json=githubUrl,proto3" json:"github_url,omitempty"`
@@ -1187,6 +1195,13 @@ func (x *Job) GetBillableMinutes() int64 {
 func (x *Job) GetBillableSeconds() float64 {
 	if x != nil {
 		return x.BillableSeconds
+	}
+	return 0
+}
+
+func (x *Job) GetUsualRunSeconds() float64 {
+	if x != nil {
+		return x.UsualRunSeconds
 	}
 	return 0
 }
@@ -14874,7 +14889,7 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xdb\x11\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x87\x12\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
@@ -14925,7 +14940,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\thost_kind\x18! \x01(\tR\bhostKind\x12.\n" +
 	"\x13previous_pool_image\x18\" \x01(\tR\x11previousPoolImage\x12)\n" +
 	"\x10billable_minutes\x18# \x01(\x03R\x0fbillableMinutes\x12)\n" +
-	"\x10billable_seconds\x188 \x01(\x01R\x0fbillableSeconds\x12\x1d\n" +
+	"\x10billable_seconds\x188 \x01(\x01R\x0fbillableSeconds\x12*\n" +
+	"\x11usual_run_seconds\x18: \x01(\x01R\x0fusualRunSeconds\x12\x1d\n" +
 	"\n" +
 	"github_url\x18$ \x01(\tR\tgithubUrl\x12#\n" +
 	"\rworkflow_name\x18% \x01(\tR\fworkflowName\x121\n" +
