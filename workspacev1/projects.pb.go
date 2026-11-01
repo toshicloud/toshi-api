@@ -1115,10 +1115,16 @@ type CreateEnvironmentRequest struct {
 	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// development, preview or production; the environment is named after
 	// it.
-	Kind          string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
-	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Kind       string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	RequestKey string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// The management mark goes together: all four fields or none; managed_by
+	// "manifest" needs the digest, an origin and at least one field path.
+	ManagedBy      string   `protobuf:"bytes,4,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	ManifestDigest string   `protobuf:"bytes,5,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	ManagedFields  []string `protobuf:"bytes,6,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	ManifestOrigin string   `protobuf:"bytes,7,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *CreateEnvironmentRequest) Reset() {
@@ -1168,6 +1174,34 @@ func (x *CreateEnvironmentRequest) GetKind() string {
 func (x *CreateEnvironmentRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
+	}
+	return ""
+}
+
+func (x *CreateEnvironmentRequest) GetManagedBy() string {
+	if x != nil {
+		return x.ManagedBy
+	}
+	return ""
+}
+
+func (x *CreateEnvironmentRequest) GetManifestDigest() string {
+	if x != nil {
+		return x.ManifestDigest
+	}
+	return ""
+}
+
+func (x *CreateEnvironmentRequest) GetManagedFields() []string {
+	if x != nil {
+		return x.ManagedFields
+	}
+	return nil
+}
+
+func (x *CreateEnvironmentRequest) GetManifestOrigin() string {
+	if x != nil {
+		return x.ManifestOrigin
 	}
 	return ""
 }
@@ -3312,12 +3346,17 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x11GetProjectRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\"K\n" +
 	"\x12GetProjectResponse\x125\n" +
-	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\"i\n" +
+	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\"\x81\x02\n" +
 	"\x18CreateEnvironmentRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
 	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x1f\n" +
 	"\vrequest_key\x18\x03 \x01(\tR\n" +
-	"requestKey\"e\n" +
+	"requestKey\x12\x1d\n" +
+	"\n" +
+	"managed_by\x18\x04 \x01(\tR\tmanagedBy\x12'\n" +
+	"\x0fmanifest_digest\x18\x05 \x01(\tR\x0emanifestDigest\x12%\n" +
+	"\x0emanaged_fields\x18\x06 \x03(\tR\rmanagedFields\x12'\n" +
+	"\x0fmanifest_origin\x18\a \x01(\tR\x0emanifestOrigin\"e\n" +
 	"\x19CreateEnvironmentResponse\x12H\n" +
 	"\venvironment\x18\x01 \x01(\v2&.toshi.workspace.v1.ProjectEnvironmentR\venvironment\"H\n" +
 	"\x18DeleteEnvironmentRequest\x12\x18\n" +

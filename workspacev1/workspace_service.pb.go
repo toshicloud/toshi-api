@@ -3156,8 +3156,15 @@ type WorkspaceSettings struct {
 	// A default applies where its credential's key serves the workload's
 	// project and environment. Setting it needs model_credentials.write.
 	ModelCredentialDefaults []*ModelCredentialDefault `protobuf:"bytes,13,rep,name=model_credential_defaults,json=modelCredentialDefaults,proto3" json:"model_credential_defaults,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// Whether the workspace makes paid starts; left out is on. Off, a start
+	// past the included starts of any start window is treated as one at the
+	// window's ceiling: a job waits with the reason start_rate, and a
+	// CreateSandbox is refused with RESOURCE_EXHAUSTED, so no paid start is
+	// made and GetStartWindows reports each ceiling as its included starts.
+	// Setting it needs the permission that sets the spending cap.
+	PaidStarts    *bool `protobuf:"varint,14,opt,name=paid_starts,json=paidStarts,proto3,oneof" json:"paid_starts,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *WorkspaceSettings) Reset() {
@@ -3279,6 +3286,13 @@ func (x *WorkspaceSettings) GetModelCredentialDefaults() []*ModelCredentialDefau
 		return x.ModelCredentialDefaults
 	}
 	return nil
+}
+
+func (x *WorkspaceSettings) GetPaidStarts() bool {
+	if x != nil && x.PaidStarts != nil {
+		return *x.PaidStarts
+	}
+	return false
 }
 
 // WorkspaceSettingChange is who last changed one of a workspace's settings,
@@ -6127,7 +6141,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\tnot_after\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bnotAfter\x125\n" +
 	"\brenew_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\arenewAt\x125\n" +
 	"\bretry_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aretryAt\x12\x14\n" +
-	"\x05error\x18\x06 \x01(\tR\x05error\"\x88\x06\n" +
+	"\x05error\x18\x06 \x01(\tR\x05error\"\xd1\x06\n" +
 	"\x11WorkspaceSettings\x12\x1f\n" +
 	"\vmember_join\x18\x01 \x01(\tR\n" +
 	"memberJoin\x12R\n" +
@@ -6143,11 +6157,14 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	" \x01(\bR\x06keepVm\x12!\n" +
 	"\trecording\x18\v \x01(\bH\x01R\trecording\x88\x01\x01\x127\n" +
 	"\x15recording_human_spans\x18\f \x01(\bH\x02R\x13recordingHumanSpans\x88\x01\x01\x12\x83\x01\n" +
-	"\x19model_credential_defaults\x18\r \x03(\v2*.toshi.workspace.v1.ModelCredentialDefaultB\x1b\xda\xf3\x18\x17model_credentials.writeR\x17modelCredentialDefaultsB\x0f\n" +
+	"\x19model_credential_defaults\x18\r \x03(\v2*.toshi.workspace.v1.ModelCredentialDefaultB\x1b\xda\xf3\x18\x17model_credentials.writeR\x17modelCredentialDefaults\x127\n" +
+	"\vpaid_starts\x18\x0e \x01(\bB\x11\xda\xf3\x18\rbilling.writeH\x03R\n" +
+	"paidStarts\x88\x01\x01B\x0f\n" +
 	"\r_history_daysB\f\n" +
 	"\n" +
 	"_recordingB\x18\n" +
-	"\x16_recording_human_spans\"\x8f\x01\n" +
+	"\x16_recording_human_spansB\x0e\n" +
+	"\f_paid_starts\"\x8f\x01\n" +
 	"\x16WorkspaceSettingChange\x12:\n" +
 	"\n" +
 	"changed_by\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tchangedBy\x129\n" +

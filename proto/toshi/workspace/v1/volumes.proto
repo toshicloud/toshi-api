@@ -313,6 +313,12 @@ message CreateVolumeRequest {
   int64 size_cap_bytes = 4;
   // Required: the same key on every retry of this create.
   string request_key = 5;
+  // The management mark goes together: all four fields or none; managed_by
+  // "manifest" needs the digest, an origin and at least one field path.
+  string managed_by = 6;
+  string manifest_digest = 7;
+  repeated string managed_fields = 8;
+  string manifest_origin = 9;
 }
 
 message CreateVolumeResponse {

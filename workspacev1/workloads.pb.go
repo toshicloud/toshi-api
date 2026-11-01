@@ -3016,9 +3016,15 @@ type CreateServiceRequest struct {
 	Spec        *ServiceSpec           `protobuf:"bytes,3,opt,name=spec,proto3" json:"spec,omitempty"`
 	Labels      map[string]string      `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Required: the same key on every retry of this create.
-	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// The management mark goes together: all four fields or none; managed_by
+	// "manifest" needs the digest, an origin and at least one field path.
+	ManagedBy      string   `protobuf:"bytes,6,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	ManifestDigest string   `protobuf:"bytes,7,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	ManagedFields  []string `protobuf:"bytes,8,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	ManifestOrigin string   `protobuf:"bytes,9,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *CreateServiceRequest) Reset() {
@@ -3082,6 +3088,34 @@ func (x *CreateServiceRequest) GetLabels() map[string]string {
 func (x *CreateServiceRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
+	}
+	return ""
+}
+
+func (x *CreateServiceRequest) GetManagedBy() string {
+	if x != nil {
+		return x.ManagedBy
+	}
+	return ""
+}
+
+func (x *CreateServiceRequest) GetManifestDigest() string {
+	if x != nil {
+		return x.ManifestDigest
+	}
+	return ""
+}
+
+func (x *CreateServiceRequest) GetManagedFields() []string {
+	if x != nil {
+		return x.ManagedFields
+	}
+	return nil
+}
+
+func (x *CreateServiceRequest) GetManifestOrigin() string {
+	if x != nil {
+		return x.ManifestOrigin
 	}
 	return ""
 }
@@ -5421,14 +5455,19 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x04type\x18\x01 \x01(\x0e2\x1d.toshi.workspace.v1.EventTypeR\x04type\x125\n" +
 	"\asandbox\x18\x02 \x01(\v2\x1b.toshi.workspace.v1.SandboxR\asandbox\x12\x16\n" +
 	"\x06cursor\x18\x03 \x01(\tR\x06cursor\x12;\n" +
-	"\tkeepalive\x18\x04 \x01(\v2\x1d.toshi.workspace.v1.KeepaliveR\tkeepalive\"\xb1\x02\n" +
+	"\tkeepalive\x18\x04 \x01(\v2\x1d.toshi.workspace.v1.KeepaliveR\tkeepalive\"\xc9\x03\n" +
 	"\x14CreateServiceRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x123\n" +
 	"\x04spec\x18\x03 \x01(\v2\x1f.toshi.workspace.v1.ServiceSpecR\x04spec\x12L\n" +
 	"\x06labels\x18\x04 \x03(\v24.toshi.workspace.v1.CreateServiceRequest.LabelsEntryR\x06labels\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +
-	"requestKey\x1a9\n" +
+	"requestKey\x12\x1d\n" +
+	"\n" +
+	"managed_by\x18\x06 \x01(\tR\tmanagedBy\x12'\n" +
+	"\x0fmanifest_digest\x18\a \x01(\tR\x0emanifestDigest\x12%\n" +
+	"\x0emanaged_fields\x18\b \x03(\tR\rmanagedFields\x12'\n" +
+	"\x0fmanifest_origin\x18\t \x01(\tR\x0emanifestOrigin\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"N\n" +

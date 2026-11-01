@@ -785,6 +785,13 @@ message WorkspaceSettings {
   // A default applies where its credential's key serves the workload's
   // project and environment. Setting it needs model_credentials.write.
   repeated ModelCredentialDefault model_credential_defaults = 13 [(toshi.field_permission) = "model_credentials.write"];
+  // Whether the workspace makes paid starts; left out is on. Off, a start
+  // past the included starts of any start window is treated as one at the
+  // window's ceiling: a job waits with the reason start_rate, and a
+  // CreateSandbox is refused with RESOURCE_EXHAUSTED, so no paid start is
+  // made and GetStartWindows reports each ceiling as its included starts.
+  // Setting it needs the permission that sets the spending cap.
+  optional bool paid_starts = 14 [(toshi.field_permission) = "billing.write"];
 }
 
 // WorkspaceSettingChange is who last changed one of a workspace's settings,

@@ -916,9 +916,15 @@ type CreateConnectionRequest struct {
 	// The mail address and where its mail goes, for a MAIL connection; unset
 	// for WEBHOOK. service and endpoint are required; address and provider are
 	// output only, and ignored on input.
-	Mail          *MailConnection `protobuf:"bytes,6,opt,name=mail,proto3" json:"mail,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Mail *MailConnection `protobuf:"bytes,6,opt,name=mail,proto3" json:"mail,omitempty"`
+	// The management mark goes together: all four fields or none; managed_by
+	// "manifest" needs the digest, an origin and at least one field path.
+	ManagedBy      string   `protobuf:"bytes,7,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	ManifestDigest string   `protobuf:"bytes,8,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	ManagedFields  []string `protobuf:"bytes,9,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	ManifestOrigin string   `protobuf:"bytes,10,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *CreateConnectionRequest) Reset() {
@@ -991,6 +997,34 @@ func (x *CreateConnectionRequest) GetMail() *MailConnection {
 		return x.Mail
 	}
 	return nil
+}
+
+func (x *CreateConnectionRequest) GetManagedBy() string {
+	if x != nil {
+		return x.ManagedBy
+	}
+	return ""
+}
+
+func (x *CreateConnectionRequest) GetManifestDigest() string {
+	if x != nil {
+		return x.ManifestDigest
+	}
+	return ""
+}
+
+func (x *CreateConnectionRequest) GetManagedFields() []string {
+	if x != nil {
+		return x.ManagedFields
+	}
+	return nil
+}
+
+func (x *CreateConnectionRequest) GetManifestOrigin() string {
+	if x != nil {
+		return x.ManifestOrigin
+	}
+	return ""
 }
 
 type CreateConnectionResponse struct {
@@ -2016,7 +2050,7 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x15GetConnectionResponse\x12>\n" +
 	"\n" +
 	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +
-	"connection\"\xfa\x01\n" +
+	"connection\"\x92\x03\n" +
 	"\x17CreateConnectionRequest\x126\n" +
 	"\x04kind\x18\x01 \x01(\x0e2\".toshi.workspace.v1.ConnectionKindR\x04kind\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -2024,7 +2058,13 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\venvironment\x18\x04 \x01(\tR\venvironment\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +
 	"requestKey\x126\n" +
-	"\x04mail\x18\x06 \x01(\v2\".toshi.workspace.v1.MailConnectionR\x04mail\"r\n" +
+	"\x04mail\x18\x06 \x01(\v2\".toshi.workspace.v1.MailConnectionR\x04mail\x12\x1d\n" +
+	"\n" +
+	"managed_by\x18\a \x01(\tR\tmanagedBy\x12'\n" +
+	"\x0fmanifest_digest\x18\b \x01(\tR\x0emanifestDigest\x12%\n" +
+	"\x0emanaged_fields\x18\t \x03(\tR\rmanagedFields\x12'\n" +
+	"\x0fmanifest_origin\x18\n" +
+	" \x01(\tR\x0emanifestOrigin\"r\n" +
 	"\x18CreateConnectionResponse\x12>\n" +
 	"\n" +
 	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +

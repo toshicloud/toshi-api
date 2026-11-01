@@ -855,9 +855,15 @@ type CreateVolumeRequest struct {
 	// The most it holds, in bytes; zero is 10 GiB.
 	SizeCapBytes int64 `protobuf:"varint,4,opt,name=size_cap_bytes,json=sizeCapBytes,proto3" json:"size_cap_bytes,omitempty"`
 	// Required: the same key on every retry of this create.
-	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// The management mark goes together: all four fields or none; managed_by
+	// "manifest" needs the digest, an origin and at least one field path.
+	ManagedBy      string   `protobuf:"bytes,6,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	ManifestDigest string   `protobuf:"bytes,7,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	ManagedFields  []string `protobuf:"bytes,8,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	ManifestOrigin string   `protobuf:"bytes,9,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *CreateVolumeRequest) Reset() {
@@ -921,6 +927,34 @@ func (x *CreateVolumeRequest) GetSizeCapBytes() int64 {
 func (x *CreateVolumeRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
+	}
+	return ""
+}
+
+func (x *CreateVolumeRequest) GetManagedBy() string {
+	if x != nil {
+		return x.ManagedBy
+	}
+	return ""
+}
+
+func (x *CreateVolumeRequest) GetManifestDigest() string {
+	if x != nil {
+		return x.ManifestDigest
+	}
+	return ""
+}
+
+func (x *CreateVolumeRequest) GetManagedFields() []string {
+	if x != nil {
+		return x.ManagedFields
+	}
+	return nil
+}
+
+func (x *CreateVolumeRequest) GetManifestOrigin() string {
+	if x != nil {
+		return x.ManifestOrigin
 	}
 	return ""
 }
@@ -1663,14 +1697,19 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x1b\n" +
 	"\tvolume_id\x18\x02 \x01(\tR\bvolumeId\"G\n" +
 	"\x11GetVolumeResponse\x122\n" +
-	"\x06volume\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.VolumeR\x06volume\"\xbe\x01\n" +
+	"\x06volume\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.VolumeR\x06volume\"\xd6\x02\n" +
 	"\x13CreateVolumeRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x122\n" +
 	"\x04mode\x18\x03 \x01(\x0e2\x1e.toshi.workspace.v1.VolumeModeR\x04mode\x12$\n" +
 	"\x0esize_cap_bytes\x18\x04 \x01(\x03R\fsizeCapBytes\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +
-	"requestKey\"J\n" +
+	"requestKey\x12\x1d\n" +
+	"\n" +
+	"managed_by\x18\x06 \x01(\tR\tmanagedBy\x12'\n" +
+	"\x0fmanifest_digest\x18\a \x01(\tR\x0emanifestDigest\x12%\n" +
+	"\x0emanaged_fields\x18\b \x03(\tR\rmanagedFields\x12'\n" +
+	"\x0fmanifest_origin\x18\t \x01(\tR\x0emanifestOrigin\"J\n" +
 	"\x14CreateVolumeResponse\x122\n" +
 	"\x06volume\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.VolumeR\x06volume\"\xa0\x01\n" +
 	"\x13UpdateVolumeRequest\x12\x18\n" +

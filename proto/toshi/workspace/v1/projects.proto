@@ -425,6 +425,12 @@ message CreateEnvironmentRequest {
   // it.
   string kind = 2;
   string request_key = 3;
+  // The management mark goes together: all four fields or none; managed_by
+  // "manifest" needs the digest, an origin and at least one field path.
+  string managed_by = 4;
+  string manifest_digest = 5;
+  repeated string managed_fields = 6;
+  string manifest_origin = 7;
 }
 
 message CreateEnvironmentResponse {

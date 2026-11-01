@@ -310,6 +310,12 @@ message CreateConnectionRequest {
   // for WEBHOOK. service and endpoint are required; address and provider are
   // output only, and ignored on input.
   MailConnection mail = 6;
+  // The management mark goes together: all four fields or none; managed_by
+  // "manifest" needs the digest, an origin and at least one field path.
+  string managed_by = 7;
+  string manifest_digest = 8;
+  repeated string managed_fields = 9;
+  string manifest_origin = 10;
 }
 
 message CreateConnectionResponse {
