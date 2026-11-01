@@ -227,6 +227,63 @@ func (x *ModelCredential) GetCreatedBy() string {
 	return ""
 }
 
+// ModelCredentialDefault names the workspace credential a workload gets for
+// a provider when it binds none and its starter has no own credential for
+// that provider.
+type ModelCredentialDefault struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// "anthropic" or "openai"; one default per provider.
+	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	// The credential's ID. Only a workspace credential may be a default.
+	ModelCredential string `protobuf:"bytes,2,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ModelCredentialDefault) Reset() {
+	*x = ModelCredentialDefault{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ModelCredentialDefault) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ModelCredentialDefault) ProtoMessage() {}
+
+func (x *ModelCredentialDefault) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ModelCredentialDefault.ProtoReflect.Descriptor instead.
+func (*ModelCredentialDefault) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ModelCredentialDefault) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *ModelCredentialDefault) GetModelCredential() string {
+	if x != nil {
+		return x.ModelCredential
+	}
+	return ""
+}
+
 type CreateModelCredentialRequest struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	Name     string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -249,7 +306,7 @@ type CreateModelCredentialRequest struct {
 
 func (x *CreateModelCredentialRequest) Reset() {
 	*x = CreateModelCredentialRequest{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -261,7 +318,7 @@ func (x *CreateModelCredentialRequest) String() string {
 func (*CreateModelCredentialRequest) ProtoMessage() {}
 
 func (x *CreateModelCredentialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -274,7 +331,7 @@ func (x *CreateModelCredentialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateModelCredentialRequest.ProtoReflect.Descriptor instead.
 func (*CreateModelCredentialRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateModelCredentialRequest) GetName() string {
@@ -342,7 +399,7 @@ type CreateModelCredentialResponse struct {
 
 func (x *CreateModelCredentialResponse) Reset() {
 	*x = CreateModelCredentialResponse{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -354,7 +411,7 @@ func (x *CreateModelCredentialResponse) String() string {
 func (*CreateModelCredentialResponse) ProtoMessage() {}
 
 func (x *CreateModelCredentialResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -367,7 +424,7 @@ func (x *CreateModelCredentialResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateModelCredentialResponse.ProtoReflect.Descriptor instead.
 func (*CreateModelCredentialResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateModelCredentialResponse) GetModelCredential() *ModelCredential {
@@ -386,7 +443,7 @@ type GetModelCredentialRequest struct {
 
 func (x *GetModelCredentialRequest) Reset() {
 	*x = GetModelCredentialRequest{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -398,7 +455,7 @@ func (x *GetModelCredentialRequest) String() string {
 func (*GetModelCredentialRequest) ProtoMessage() {}
 
 func (x *GetModelCredentialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -411,7 +468,7 @@ func (x *GetModelCredentialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetModelCredentialRequest.ProtoReflect.Descriptor instead.
 func (*GetModelCredentialRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetModelCredentialRequest) GetId() string {
@@ -430,7 +487,7 @@ type GetModelCredentialResponse struct {
 
 func (x *GetModelCredentialResponse) Reset() {
 	*x = GetModelCredentialResponse{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -442,7 +499,7 @@ func (x *GetModelCredentialResponse) String() string {
 func (*GetModelCredentialResponse) ProtoMessage() {}
 
 func (x *GetModelCredentialResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -455,7 +512,7 @@ func (x *GetModelCredentialResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetModelCredentialResponse.ProtoReflect.Descriptor instead.
 func (*GetModelCredentialResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetModelCredentialResponse) GetModelCredential() *ModelCredential {
@@ -477,7 +534,7 @@ type ListModelCredentialsRequest struct {
 
 func (x *ListModelCredentialsRequest) Reset() {
 	*x = ListModelCredentialsRequest{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -489,7 +546,7 @@ func (x *ListModelCredentialsRequest) String() string {
 func (*ListModelCredentialsRequest) ProtoMessage() {}
 
 func (x *ListModelCredentialsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -502,7 +559,7 @@ func (x *ListModelCredentialsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListModelCredentialsRequest.ProtoReflect.Descriptor instead.
 func (*ListModelCredentialsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListModelCredentialsRequest) GetProvider() string {
@@ -536,7 +593,7 @@ type ListModelCredentialsResponse struct {
 
 func (x *ListModelCredentialsResponse) Reset() {
 	*x = ListModelCredentialsResponse{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -548,7 +605,7 @@ func (x *ListModelCredentialsResponse) String() string {
 func (*ListModelCredentialsResponse) ProtoMessage() {}
 
 func (x *ListModelCredentialsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -561,7 +618,7 @@ func (x *ListModelCredentialsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListModelCredentialsResponse.ProtoReflect.Descriptor instead.
 func (*ListModelCredentialsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListModelCredentialsResponse) GetModelCredentials() []*ModelCredential {
@@ -590,7 +647,7 @@ type UpdateModelCredentialRequest struct {
 
 func (x *UpdateModelCredentialRequest) Reset() {
 	*x = UpdateModelCredentialRequest{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -602,7 +659,7 @@ func (x *UpdateModelCredentialRequest) String() string {
 func (*UpdateModelCredentialRequest) ProtoMessage() {}
 
 func (x *UpdateModelCredentialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -615,7 +672,7 @@ func (x *UpdateModelCredentialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateModelCredentialRequest.ProtoReflect.Descriptor instead.
 func (*UpdateModelCredentialRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UpdateModelCredentialRequest) GetModelCredential() *ModelCredential {
@@ -641,7 +698,7 @@ type UpdateModelCredentialResponse struct {
 
 func (x *UpdateModelCredentialResponse) Reset() {
 	*x = UpdateModelCredentialResponse{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -653,7 +710,7 @@ func (x *UpdateModelCredentialResponse) String() string {
 func (*UpdateModelCredentialResponse) ProtoMessage() {}
 
 func (x *UpdateModelCredentialResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -666,7 +723,7 @@ func (x *UpdateModelCredentialResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateModelCredentialResponse.ProtoReflect.Descriptor instead.
 func (*UpdateModelCredentialResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UpdateModelCredentialResponse) GetModelCredential() *ModelCredential {
@@ -685,7 +742,7 @@ type DeleteModelCredentialRequest struct {
 
 func (x *DeleteModelCredentialRequest) Reset() {
 	*x = DeleteModelCredentialRequest{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -697,7 +754,7 @@ func (x *DeleteModelCredentialRequest) String() string {
 func (*DeleteModelCredentialRequest) ProtoMessage() {}
 
 func (x *DeleteModelCredentialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -710,7 +767,7 @@ func (x *DeleteModelCredentialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteModelCredentialRequest.ProtoReflect.Descriptor instead.
 func (*DeleteModelCredentialRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DeleteModelCredentialRequest) GetId() string {
@@ -728,7 +785,7 @@ type DeleteModelCredentialResponse struct {
 
 func (x *DeleteModelCredentialResponse) Reset() {
 	*x = DeleteModelCredentialResponse{}
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -740,7 +797,7 @@ func (x *DeleteModelCredentialResponse) String() string {
 func (*DeleteModelCredentialResponse) ProtoMessage() {}
 
 func (x *DeleteModelCredentialResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -753,7 +810,7 @@ func (x *DeleteModelCredentialResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteModelCredentialResponse.ProtoReflect.Descriptor instead.
 func (*DeleteModelCredentialResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{11}
 }
 
 var File_toshi_workspace_v1_model_credentials_proto protoreflect.FileDescriptor
@@ -778,7 +835,10 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"created_by\x18\r \x01(\tR\tcreatedBy\"\xe2\x01\n" +
+	"created_by\x18\r \x01(\tR\tcreatedBy\"_\n" +
+	"\x16ModelCredentialDefault\x12\x1a\n" +
+	"\bprovider\x18\x01 \x01(\tR\bprovider\x12)\n" +
+	"\x10model_credential\x18\x02 \x01(\tR\x0fmodelCredential\"\xe2\x01\n" +
 	"\x1cCreateModelCredentialRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
 	"\bprovider\x18\x02 \x01(\tR\bprovider\x12\x18\n" +
@@ -834,42 +894,43 @@ func file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_model_credentials_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_model_credentials_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_toshi_workspace_v1_model_credentials_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_toshi_workspace_v1_model_credentials_proto_goTypes = []any{
 	(ModelCredentialKind)(0),              // 0: toshi.workspace.v1.ModelCredentialKind
 	(*ModelCredential)(nil),               // 1: toshi.workspace.v1.ModelCredential
-	(*CreateModelCredentialRequest)(nil),  // 2: toshi.workspace.v1.CreateModelCredentialRequest
-	(*CreateModelCredentialResponse)(nil), // 3: toshi.workspace.v1.CreateModelCredentialResponse
-	(*GetModelCredentialRequest)(nil),     // 4: toshi.workspace.v1.GetModelCredentialRequest
-	(*GetModelCredentialResponse)(nil),    // 5: toshi.workspace.v1.GetModelCredentialResponse
-	(*ListModelCredentialsRequest)(nil),   // 6: toshi.workspace.v1.ListModelCredentialsRequest
-	(*ListModelCredentialsResponse)(nil),  // 7: toshi.workspace.v1.ListModelCredentialsResponse
-	(*UpdateModelCredentialRequest)(nil),  // 8: toshi.workspace.v1.UpdateModelCredentialRequest
-	(*UpdateModelCredentialResponse)(nil), // 9: toshi.workspace.v1.UpdateModelCredentialResponse
-	(*DeleteModelCredentialRequest)(nil),  // 10: toshi.workspace.v1.DeleteModelCredentialRequest
-	(*DeleteModelCredentialResponse)(nil), // 11: toshi.workspace.v1.DeleteModelCredentialResponse
-	(*timestamppb.Timestamp)(nil),         // 12: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),         // 13: google.protobuf.FieldMask
+	(*ModelCredentialDefault)(nil),        // 2: toshi.workspace.v1.ModelCredentialDefault
+	(*CreateModelCredentialRequest)(nil),  // 3: toshi.workspace.v1.CreateModelCredentialRequest
+	(*CreateModelCredentialResponse)(nil), // 4: toshi.workspace.v1.CreateModelCredentialResponse
+	(*GetModelCredentialRequest)(nil),     // 5: toshi.workspace.v1.GetModelCredentialRequest
+	(*GetModelCredentialResponse)(nil),    // 6: toshi.workspace.v1.GetModelCredentialResponse
+	(*ListModelCredentialsRequest)(nil),   // 7: toshi.workspace.v1.ListModelCredentialsRequest
+	(*ListModelCredentialsResponse)(nil),  // 8: toshi.workspace.v1.ListModelCredentialsResponse
+	(*UpdateModelCredentialRequest)(nil),  // 9: toshi.workspace.v1.UpdateModelCredentialRequest
+	(*UpdateModelCredentialResponse)(nil), // 10: toshi.workspace.v1.UpdateModelCredentialResponse
+	(*DeleteModelCredentialRequest)(nil),  // 11: toshi.workspace.v1.DeleteModelCredentialRequest
+	(*DeleteModelCredentialResponse)(nil), // 12: toshi.workspace.v1.DeleteModelCredentialResponse
+	(*timestamppb.Timestamp)(nil),         // 13: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),         // 14: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_model_credentials_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.ModelCredential.kind:type_name -> toshi.workspace.v1.ModelCredentialKind
-	12, // 1: toshi.workspace.v1.ModelCredential.created_at:type_name -> google.protobuf.Timestamp
+	13, // 1: toshi.workspace.v1.ModelCredential.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: toshi.workspace.v1.CreateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
 	1,  // 3: toshi.workspace.v1.GetModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
 	1,  // 4: toshi.workspace.v1.ListModelCredentialsResponse.model_credentials:type_name -> toshi.workspace.v1.ModelCredential
 	1,  // 5: toshi.workspace.v1.UpdateModelCredentialRequest.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	13, // 6: toshi.workspace.v1.UpdateModelCredentialRequest.update_mask:type_name -> google.protobuf.FieldMask
+	14, // 6: toshi.workspace.v1.UpdateModelCredentialRequest.update_mask:type_name -> google.protobuf.FieldMask
 	1,  // 7: toshi.workspace.v1.UpdateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	2,  // 8: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:input_type -> toshi.workspace.v1.CreateModelCredentialRequest
-	4,  // 9: toshi.workspace.v1.ModelCredentialService.GetModelCredential:input_type -> toshi.workspace.v1.GetModelCredentialRequest
-	6,  // 10: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:input_type -> toshi.workspace.v1.ListModelCredentialsRequest
-	8,  // 11: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:input_type -> toshi.workspace.v1.UpdateModelCredentialRequest
-	10, // 12: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:input_type -> toshi.workspace.v1.DeleteModelCredentialRequest
-	3,  // 13: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:output_type -> toshi.workspace.v1.CreateModelCredentialResponse
-	5,  // 14: toshi.workspace.v1.ModelCredentialService.GetModelCredential:output_type -> toshi.workspace.v1.GetModelCredentialResponse
-	7,  // 15: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:output_type -> toshi.workspace.v1.ListModelCredentialsResponse
-	9,  // 16: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:output_type -> toshi.workspace.v1.UpdateModelCredentialResponse
-	11, // 17: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:output_type -> toshi.workspace.v1.DeleteModelCredentialResponse
+	3,  // 8: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:input_type -> toshi.workspace.v1.CreateModelCredentialRequest
+	5,  // 9: toshi.workspace.v1.ModelCredentialService.GetModelCredential:input_type -> toshi.workspace.v1.GetModelCredentialRequest
+	7,  // 10: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:input_type -> toshi.workspace.v1.ListModelCredentialsRequest
+	9,  // 11: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:input_type -> toshi.workspace.v1.UpdateModelCredentialRequest
+	11, // 12: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:input_type -> toshi.workspace.v1.DeleteModelCredentialRequest
+	4,  // 13: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:output_type -> toshi.workspace.v1.CreateModelCredentialResponse
+	6,  // 14: toshi.workspace.v1.ModelCredentialService.GetModelCredential:output_type -> toshi.workspace.v1.GetModelCredentialResponse
+	8,  // 15: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:output_type -> toshi.workspace.v1.ListModelCredentialsResponse
+	10, // 16: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:output_type -> toshi.workspace.v1.UpdateModelCredentialResponse
+	12, // 17: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:output_type -> toshi.workspace.v1.DeleteModelCredentialResponse
 	13, // [13:18] is the sub-list for method output_type
 	8,  // [8:13] is the sub-list for method input_type
 	8,  // [8:8] is the sub-list for extension type_name
@@ -888,7 +949,7 @@ func file_toshi_workspace_v1_model_credentials_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_model_credentials_proto_rawDesc), len(file_toshi_workspace_v1_model_credentials_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   11,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -103,7 +103,8 @@ type WorkspaceServiceClient interface {
 	// empty one, an omitted one with no field populated, "*" or another
 	// path fails with INVALID_ARGUMENT. The call needs no permission of its
 	// own: each path needs its field group's, workspace.signin for
-	// settings.sign_in, billing.write for the spending limits and
+	// settings.sign_in, billing.write for the spending limits,
+	// model_credentials.write for settings.model_credential_defaults and
 	// workspace.write for the others, and a mask that names nothing needs any
 	// one of them. A caller that lacks one is refused with PERMISSION_DENIED
 	// naming it, and nothing is written.
@@ -483,7 +484,8 @@ type WorkspaceServiceHandler interface {
 	// empty one, an omitted one with no field populated, "*" or another
 	// path fails with INVALID_ARGUMENT. The call needs no permission of its
 	// own: each path needs its field group's, workspace.signin for
-	// settings.sign_in, billing.write for the spending limits and
+	// settings.sign_in, billing.write for the spending limits,
+	// model_credentials.write for settings.model_credential_defaults and
 	// workspace.write for the others, and a mask that names nothing needs any
 	// one of them. A caller that lacks one is refused with PERMISSION_DENIED
 	// naming it, and nothing is written.

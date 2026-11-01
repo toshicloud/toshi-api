@@ -261,9 +261,13 @@ type ProjectEnvironment struct {
 	// The environment's retention override as stored; empty when it
 	// follows the workspace. Set with UpdateEnvironment or
 	// SetEnvironmentRetention.
-	Retention     *EnvironmentRetention `protobuf:"bytes,8,opt,name=retention,proto3" json:"retention,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Retention *EnvironmentRetention `protobuf:"bytes,8,opt,name=retention,proto3" json:"retention,omitempty"`
+	// The environment's default model credential per provider, before the
+	// workspace's. Each names a workspace credential whose key serves this
+	// environment. Set with UpdateEnvironment.
+	ModelCredentialDefaults []*ModelCredentialDefault `protobuf:"bytes,9,rep,name=model_credential_defaults,json=modelCredentialDefaults,proto3" json:"model_credential_defaults,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *ProjectEnvironment) Reset() {
@@ -348,6 +352,13 @@ func (x *ProjectEnvironment) GetManifestOrigin() string {
 func (x *ProjectEnvironment) GetRetention() *EnvironmentRetention {
 	if x != nil {
 		return x.Retention
+	}
+	return nil
+}
+
+func (x *ProjectEnvironment) GetModelCredentialDefaults() []*ModelCredentialDefault {
+	if x != nil {
+		return x.ModelCredentialDefaults
 	}
 	return nil
 }
@@ -2625,7 +2636,7 @@ type UpdateEnvironmentRequest struct {
 	// name names the environment; the fields update_mask names carry the
 	// new values.
 	Environment *ProjectEnvironment `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	// retention, volumes, or both. The paths managed_by, manifest_digest,
+	// retention, volumes, model_credential_defaults, or several. The paths managed_by, manifest_digest,
 	// manifest_origin and managed_fields set the management mark and go
 	// together: all four or none, and on their own; managed_by "manifest"
 	// needs the digest, an origin and at least one field path, and an empty
@@ -3222,7 +3233,7 @@ var File_toshi_workspace_v1_projects_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/projects.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xe8\x01\n" +
+	"!toshi/workspace/v1/projects.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a*toshi/workspace/v1/model_credentials.proto\"\xe8\x01\n" +
 	"\aProject\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\n" +
@@ -3235,7 +3246,7 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\n" +
 	"updated_by\x18\x03 \x01(\tR\tupdatedBy\x129\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xb6\x02\n" +
+	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9e\x03\n" +
 	"\x12ProjectEnvironment\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x18\n" +
@@ -3245,7 +3256,8 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x0fmanifest_digest\x18\x05 \x01(\tR\x0emanifestDigest\x12%\n" +
 	"\x0emanaged_fields\x18\x06 \x03(\tR\rmanagedFields\x12'\n" +
 	"\x0fmanifest_origin\x18\a \x01(\tR\x0emanifestOrigin\x12F\n" +
-	"\tretention\x18\b \x01(\v2(.toshi.workspace.v1.EnvironmentRetentionR\tretention\"\x81\x01\n" +
+	"\tretention\x18\b \x01(\v2(.toshi.workspace.v1.EnvironmentRetentionR\tretention\x12f\n" +
+	"\x19model_credential_defaults\x18\t \x03(\v2*.toshi.workspace.v1.ModelCredentialDefaultR\x17modelCredentialDefaults\"\x81\x01\n" +
 	"\n" +
 	"Repository\x12\x1e\n" +
 	"\n" +
@@ -3549,8 +3561,9 @@ var file_toshi_workspace_v1_projects_proto_goTypes = []any{
 	(*RevokeEmbedTokenRequest)(nil),         // 52: toshi.workspace.v1.RevokeEmbedTokenRequest
 	(*RevokeEmbedTokenResponse)(nil),        // 53: toshi.workspace.v1.RevokeEmbedTokenResponse
 	(*timestamppb.Timestamp)(nil),           // 54: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),           // 55: google.protobuf.FieldMask
-	(*durationpb.Duration)(nil),             // 56: google.protobuf.Duration
+	(*ModelCredentialDefault)(nil),          // 55: toshi.workspace.v1.ModelCredentialDefault
+	(*fieldmaskpb.FieldMask)(nil),           // 56: google.protobuf.FieldMask
+	(*durationpb.Duration)(nil),             // 57: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_projects_proto_depIdxs = []int32{
 	54, // 0: toshi.workspace.v1.Project.created_at:type_name -> google.protobuf.Timestamp
@@ -3558,97 +3571,98 @@ var file_toshi_workspace_v1_projects_proto_depIdxs = []int32{
 	2,  // 2: toshi.workspace.v1.Project.admission:type_name -> toshi.workspace.v1.ProjectAdmission
 	54, // 3: toshi.workspace.v1.ProjectAdmission.updated_at:type_name -> google.protobuf.Timestamp
 	38, // 4: toshi.workspace.v1.ProjectEnvironment.retention:type_name -> toshi.workspace.v1.EnvironmentRetention
-	54, // 5: toshi.workspace.v1.Repository.claimed_at:type_name -> google.protobuf.Timestamp
-	1,  // 6: toshi.workspace.v1.ListProjectsResponse.projects:type_name -> toshi.workspace.v1.Project
-	7,  // 7: toshi.workspace.v1.ListProjectsResponse.token_limit:type_name -> toshi.workspace.v1.TokenLimit
-	4,  // 8: toshi.workspace.v1.ListRepositoriesResponse.repositories:type_name -> toshi.workspace.v1.Repository
-	1,  // 9: toshi.workspace.v1.CreateProjectResponse.project:type_name -> toshi.workspace.v1.Project
-	1,  // 10: toshi.workspace.v1.UpdateProjectRequest.project:type_name -> toshi.workspace.v1.Project
-	55, // 11: toshi.workspace.v1.UpdateProjectRequest.update_mask:type_name -> google.protobuf.FieldMask
-	1,  // 12: toshi.workspace.v1.UpdateProjectResponse.project:type_name -> toshi.workspace.v1.Project
-	4,  // 13: toshi.workspace.v1.ClaimRepositoryResponse.repository:type_name -> toshi.workspace.v1.Repository
-	1,  // 14: toshi.workspace.v1.GetProjectResponse.project:type_name -> toshi.workspace.v1.Project
-	3,  // 15: toshi.workspace.v1.CreateEnvironmentResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
-	22, // 16: toshi.workspace.v1.ListBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
-	22, // 17: toshi.workspace.v1.SetBranchRulesRequest.rules:type_name -> toshi.workspace.v1.BranchRule
-	22, // 18: toshi.workspace.v1.SetBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
-	28, // 19: toshi.workspace.v1.NetworkPolicy.egress:type_name -> toshi.workspace.v1.EgressRule
-	27, // 20: toshi.workspace.v1.GetProjectNetworkResponse.network:type_name -> toshi.workspace.v1.NetworkPolicy
-	54, // 21: toshi.workspace.v1.GetProjectNetworkResponse.updated_at:type_name -> google.protobuf.Timestamp
-	27, // 22: toshi.workspace.v1.SetProjectNetworkRequest.network:type_name -> toshi.workspace.v1.NetworkPolicy
-	27, // 23: toshi.workspace.v1.SetProjectNetworkResponse.network:type_name -> toshi.workspace.v1.NetworkPolicy
-	27, // 24: toshi.workspace.v1.GetEnvironmentNetworkResponse.network:type_name -> toshi.workspace.v1.NetworkPolicy
-	54, // 25: toshi.workspace.v1.GetEnvironmentNetworkResponse.updated_at:type_name -> google.protobuf.Timestamp
-	27, // 26: toshi.workspace.v1.SetEnvironmentNetworkRequest.network:type_name -> toshi.workspace.v1.NetworkPolicy
-	27, // 27: toshi.workspace.v1.SetEnvironmentNetworkResponse.network:type_name -> toshi.workspace.v1.NetworkPolicy
-	56, // 28: toshi.workspace.v1.RetentionKeep.keep:type_name -> google.protobuf.Duration
-	37, // 29: toshi.workspace.v1.EnvironmentRetention.keeps:type_name -> toshi.workspace.v1.RetentionKeep
-	38, // 30: toshi.workspace.v1.GetEnvironmentRetentionResponse.retention:type_name -> toshi.workspace.v1.EnvironmentRetention
-	38, // 31: toshi.workspace.v1.GetEnvironmentRetentionResponse.effective:type_name -> toshi.workspace.v1.EnvironmentRetention
-	54, // 32: toshi.workspace.v1.GetEnvironmentRetentionResponse.updated_at:type_name -> google.protobuf.Timestamp
-	38, // 33: toshi.workspace.v1.SetEnvironmentRetentionRequest.retention:type_name -> toshi.workspace.v1.EnvironmentRetention
-	38, // 34: toshi.workspace.v1.SetEnvironmentRetentionResponse.retention:type_name -> toshi.workspace.v1.EnvironmentRetention
-	38, // 35: toshi.workspace.v1.SetEnvironmentRetentionResponse.effective:type_name -> toshi.workspace.v1.EnvironmentRetention
-	3,  // 36: toshi.workspace.v1.SetEnvironmentVolumesResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
-	3,  // 37: toshi.workspace.v1.UpdateEnvironmentRequest.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
-	55, // 38: toshi.workspace.v1.UpdateEnvironmentRequest.update_mask:type_name -> google.protobuf.FieldMask
-	3,  // 39: toshi.workspace.v1.UpdateEnvironmentResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
-	0,  // 40: toshi.workspace.v1.EmbedToken.state:type_name -> toshi.workspace.v1.EmbedTokenState
-	54, // 41: toshi.workspace.v1.EmbedToken.created_at:type_name -> google.protobuf.Timestamp
-	54, // 42: toshi.workspace.v1.EmbedToken.expires_at:type_name -> google.protobuf.Timestamp
-	54, // 43: toshi.workspace.v1.EmbedToken.used_at:type_name -> google.protobuf.Timestamp
-	54, // 44: toshi.workspace.v1.EmbedToken.revoked_at:type_name -> google.protobuf.Timestamp
-	56, // 45: toshi.workspace.v1.CreateEmbedTokenRequest.expires_in:type_name -> google.protobuf.Duration
-	47, // 46: toshi.workspace.v1.CreateEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
-	47, // 47: toshi.workspace.v1.ListEmbedTokensResponse.embed_tokens:type_name -> toshi.workspace.v1.EmbedToken
-	47, // 48: toshi.workspace.v1.RevokeEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
-	5,  // 49: toshi.workspace.v1.ProjectService.ListProjects:input_type -> toshi.workspace.v1.ListProjectsRequest
-	16, // 50: toshi.workspace.v1.ProjectService.GetProject:input_type -> toshi.workspace.v1.GetProjectRequest
-	8,  // 51: toshi.workspace.v1.ProjectService.ListRepositories:input_type -> toshi.workspace.v1.ListRepositoriesRequest
-	10, // 52: toshi.workspace.v1.ProjectService.CreateProject:input_type -> toshi.workspace.v1.CreateProjectRequest
-	12, // 53: toshi.workspace.v1.ProjectService.UpdateProject:input_type -> toshi.workspace.v1.UpdateProjectRequest
-	14, // 54: toshi.workspace.v1.ProjectService.ClaimRepository:input_type -> toshi.workspace.v1.ClaimRepositoryRequest
-	18, // 55: toshi.workspace.v1.ProjectService.CreateEnvironment:input_type -> toshi.workspace.v1.CreateEnvironmentRequest
-	20, // 56: toshi.workspace.v1.ProjectService.DeleteEnvironment:input_type -> toshi.workspace.v1.DeleteEnvironmentRequest
-	23, // 57: toshi.workspace.v1.ProjectService.ListBranchRules:input_type -> toshi.workspace.v1.ListBranchRulesRequest
-	25, // 58: toshi.workspace.v1.ProjectService.SetBranchRules:input_type -> toshi.workspace.v1.SetBranchRulesRequest
-	29, // 59: toshi.workspace.v1.ProjectService.GetProjectNetwork:input_type -> toshi.workspace.v1.GetProjectNetworkRequest
-	31, // 60: toshi.workspace.v1.ProjectService.SetProjectNetwork:input_type -> toshi.workspace.v1.SetProjectNetworkRequest
-	33, // 61: toshi.workspace.v1.ProjectService.GetEnvironmentNetwork:input_type -> toshi.workspace.v1.GetEnvironmentNetworkRequest
-	35, // 62: toshi.workspace.v1.ProjectService.SetEnvironmentNetwork:input_type -> toshi.workspace.v1.SetEnvironmentNetworkRequest
-	39, // 63: toshi.workspace.v1.ProjectService.GetEnvironmentRetention:input_type -> toshi.workspace.v1.GetEnvironmentRetentionRequest
-	41, // 64: toshi.workspace.v1.ProjectService.SetEnvironmentRetention:input_type -> toshi.workspace.v1.SetEnvironmentRetentionRequest
-	43, // 65: toshi.workspace.v1.ProjectService.SetEnvironmentVolumes:input_type -> toshi.workspace.v1.SetEnvironmentVolumesRequest
-	45, // 66: toshi.workspace.v1.ProjectService.UpdateEnvironment:input_type -> toshi.workspace.v1.UpdateEnvironmentRequest
-	48, // 67: toshi.workspace.v1.ProjectService.CreateEmbedToken:input_type -> toshi.workspace.v1.CreateEmbedTokenRequest
-	50, // 68: toshi.workspace.v1.ProjectService.ListEmbedTokens:input_type -> toshi.workspace.v1.ListEmbedTokensRequest
-	52, // 69: toshi.workspace.v1.ProjectService.RevokeEmbedToken:input_type -> toshi.workspace.v1.RevokeEmbedTokenRequest
-	6,  // 70: toshi.workspace.v1.ProjectService.ListProjects:output_type -> toshi.workspace.v1.ListProjectsResponse
-	17, // 71: toshi.workspace.v1.ProjectService.GetProject:output_type -> toshi.workspace.v1.GetProjectResponse
-	9,  // 72: toshi.workspace.v1.ProjectService.ListRepositories:output_type -> toshi.workspace.v1.ListRepositoriesResponse
-	11, // 73: toshi.workspace.v1.ProjectService.CreateProject:output_type -> toshi.workspace.v1.CreateProjectResponse
-	13, // 74: toshi.workspace.v1.ProjectService.UpdateProject:output_type -> toshi.workspace.v1.UpdateProjectResponse
-	15, // 75: toshi.workspace.v1.ProjectService.ClaimRepository:output_type -> toshi.workspace.v1.ClaimRepositoryResponse
-	19, // 76: toshi.workspace.v1.ProjectService.CreateEnvironment:output_type -> toshi.workspace.v1.CreateEnvironmentResponse
-	21, // 77: toshi.workspace.v1.ProjectService.DeleteEnvironment:output_type -> toshi.workspace.v1.DeleteEnvironmentResponse
-	24, // 78: toshi.workspace.v1.ProjectService.ListBranchRules:output_type -> toshi.workspace.v1.ListBranchRulesResponse
-	26, // 79: toshi.workspace.v1.ProjectService.SetBranchRules:output_type -> toshi.workspace.v1.SetBranchRulesResponse
-	30, // 80: toshi.workspace.v1.ProjectService.GetProjectNetwork:output_type -> toshi.workspace.v1.GetProjectNetworkResponse
-	32, // 81: toshi.workspace.v1.ProjectService.SetProjectNetwork:output_type -> toshi.workspace.v1.SetProjectNetworkResponse
-	34, // 82: toshi.workspace.v1.ProjectService.GetEnvironmentNetwork:output_type -> toshi.workspace.v1.GetEnvironmentNetworkResponse
-	36, // 83: toshi.workspace.v1.ProjectService.SetEnvironmentNetwork:output_type -> toshi.workspace.v1.SetEnvironmentNetworkResponse
-	40, // 84: toshi.workspace.v1.ProjectService.GetEnvironmentRetention:output_type -> toshi.workspace.v1.GetEnvironmentRetentionResponse
-	42, // 85: toshi.workspace.v1.ProjectService.SetEnvironmentRetention:output_type -> toshi.workspace.v1.SetEnvironmentRetentionResponse
-	44, // 86: toshi.workspace.v1.ProjectService.SetEnvironmentVolumes:output_type -> toshi.workspace.v1.SetEnvironmentVolumesResponse
-	46, // 87: toshi.workspace.v1.ProjectService.UpdateEnvironment:output_type -> toshi.workspace.v1.UpdateEnvironmentResponse
-	49, // 88: toshi.workspace.v1.ProjectService.CreateEmbedToken:output_type -> toshi.workspace.v1.CreateEmbedTokenResponse
-	51, // 89: toshi.workspace.v1.ProjectService.ListEmbedTokens:output_type -> toshi.workspace.v1.ListEmbedTokensResponse
-	53, // 90: toshi.workspace.v1.ProjectService.RevokeEmbedToken:output_type -> toshi.workspace.v1.RevokeEmbedTokenResponse
-	70, // [70:91] is the sub-list for method output_type
-	49, // [49:70] is the sub-list for method input_type
-	49, // [49:49] is the sub-list for extension type_name
-	49, // [49:49] is the sub-list for extension extendee
-	0,  // [0:49] is the sub-list for field type_name
+	55, // 5: toshi.workspace.v1.ProjectEnvironment.model_credential_defaults:type_name -> toshi.workspace.v1.ModelCredentialDefault
+	54, // 6: toshi.workspace.v1.Repository.claimed_at:type_name -> google.protobuf.Timestamp
+	1,  // 7: toshi.workspace.v1.ListProjectsResponse.projects:type_name -> toshi.workspace.v1.Project
+	7,  // 8: toshi.workspace.v1.ListProjectsResponse.token_limit:type_name -> toshi.workspace.v1.TokenLimit
+	4,  // 9: toshi.workspace.v1.ListRepositoriesResponse.repositories:type_name -> toshi.workspace.v1.Repository
+	1,  // 10: toshi.workspace.v1.CreateProjectResponse.project:type_name -> toshi.workspace.v1.Project
+	1,  // 11: toshi.workspace.v1.UpdateProjectRequest.project:type_name -> toshi.workspace.v1.Project
+	56, // 12: toshi.workspace.v1.UpdateProjectRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 13: toshi.workspace.v1.UpdateProjectResponse.project:type_name -> toshi.workspace.v1.Project
+	4,  // 14: toshi.workspace.v1.ClaimRepositoryResponse.repository:type_name -> toshi.workspace.v1.Repository
+	1,  // 15: toshi.workspace.v1.GetProjectResponse.project:type_name -> toshi.workspace.v1.Project
+	3,  // 16: toshi.workspace.v1.CreateEnvironmentResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
+	22, // 17: toshi.workspace.v1.ListBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
+	22, // 18: toshi.workspace.v1.SetBranchRulesRequest.rules:type_name -> toshi.workspace.v1.BranchRule
+	22, // 19: toshi.workspace.v1.SetBranchRulesResponse.rules:type_name -> toshi.workspace.v1.BranchRule
+	28, // 20: toshi.workspace.v1.NetworkPolicy.egress:type_name -> toshi.workspace.v1.EgressRule
+	27, // 21: toshi.workspace.v1.GetProjectNetworkResponse.network:type_name -> toshi.workspace.v1.NetworkPolicy
+	54, // 22: toshi.workspace.v1.GetProjectNetworkResponse.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 23: toshi.workspace.v1.SetProjectNetworkRequest.network:type_name -> toshi.workspace.v1.NetworkPolicy
+	27, // 24: toshi.workspace.v1.SetProjectNetworkResponse.network:type_name -> toshi.workspace.v1.NetworkPolicy
+	27, // 25: toshi.workspace.v1.GetEnvironmentNetworkResponse.network:type_name -> toshi.workspace.v1.NetworkPolicy
+	54, // 26: toshi.workspace.v1.GetEnvironmentNetworkResponse.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 27: toshi.workspace.v1.SetEnvironmentNetworkRequest.network:type_name -> toshi.workspace.v1.NetworkPolicy
+	27, // 28: toshi.workspace.v1.SetEnvironmentNetworkResponse.network:type_name -> toshi.workspace.v1.NetworkPolicy
+	57, // 29: toshi.workspace.v1.RetentionKeep.keep:type_name -> google.protobuf.Duration
+	37, // 30: toshi.workspace.v1.EnvironmentRetention.keeps:type_name -> toshi.workspace.v1.RetentionKeep
+	38, // 31: toshi.workspace.v1.GetEnvironmentRetentionResponse.retention:type_name -> toshi.workspace.v1.EnvironmentRetention
+	38, // 32: toshi.workspace.v1.GetEnvironmentRetentionResponse.effective:type_name -> toshi.workspace.v1.EnvironmentRetention
+	54, // 33: toshi.workspace.v1.GetEnvironmentRetentionResponse.updated_at:type_name -> google.protobuf.Timestamp
+	38, // 34: toshi.workspace.v1.SetEnvironmentRetentionRequest.retention:type_name -> toshi.workspace.v1.EnvironmentRetention
+	38, // 35: toshi.workspace.v1.SetEnvironmentRetentionResponse.retention:type_name -> toshi.workspace.v1.EnvironmentRetention
+	38, // 36: toshi.workspace.v1.SetEnvironmentRetentionResponse.effective:type_name -> toshi.workspace.v1.EnvironmentRetention
+	3,  // 37: toshi.workspace.v1.SetEnvironmentVolumesResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
+	3,  // 38: toshi.workspace.v1.UpdateEnvironmentRequest.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
+	56, // 39: toshi.workspace.v1.UpdateEnvironmentRequest.update_mask:type_name -> google.protobuf.FieldMask
+	3,  // 40: toshi.workspace.v1.UpdateEnvironmentResponse.environment:type_name -> toshi.workspace.v1.ProjectEnvironment
+	0,  // 41: toshi.workspace.v1.EmbedToken.state:type_name -> toshi.workspace.v1.EmbedTokenState
+	54, // 42: toshi.workspace.v1.EmbedToken.created_at:type_name -> google.protobuf.Timestamp
+	54, // 43: toshi.workspace.v1.EmbedToken.expires_at:type_name -> google.protobuf.Timestamp
+	54, // 44: toshi.workspace.v1.EmbedToken.used_at:type_name -> google.protobuf.Timestamp
+	54, // 45: toshi.workspace.v1.EmbedToken.revoked_at:type_name -> google.protobuf.Timestamp
+	57, // 46: toshi.workspace.v1.CreateEmbedTokenRequest.expires_in:type_name -> google.protobuf.Duration
+	47, // 47: toshi.workspace.v1.CreateEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
+	47, // 48: toshi.workspace.v1.ListEmbedTokensResponse.embed_tokens:type_name -> toshi.workspace.v1.EmbedToken
+	47, // 49: toshi.workspace.v1.RevokeEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
+	5,  // 50: toshi.workspace.v1.ProjectService.ListProjects:input_type -> toshi.workspace.v1.ListProjectsRequest
+	16, // 51: toshi.workspace.v1.ProjectService.GetProject:input_type -> toshi.workspace.v1.GetProjectRequest
+	8,  // 52: toshi.workspace.v1.ProjectService.ListRepositories:input_type -> toshi.workspace.v1.ListRepositoriesRequest
+	10, // 53: toshi.workspace.v1.ProjectService.CreateProject:input_type -> toshi.workspace.v1.CreateProjectRequest
+	12, // 54: toshi.workspace.v1.ProjectService.UpdateProject:input_type -> toshi.workspace.v1.UpdateProjectRequest
+	14, // 55: toshi.workspace.v1.ProjectService.ClaimRepository:input_type -> toshi.workspace.v1.ClaimRepositoryRequest
+	18, // 56: toshi.workspace.v1.ProjectService.CreateEnvironment:input_type -> toshi.workspace.v1.CreateEnvironmentRequest
+	20, // 57: toshi.workspace.v1.ProjectService.DeleteEnvironment:input_type -> toshi.workspace.v1.DeleteEnvironmentRequest
+	23, // 58: toshi.workspace.v1.ProjectService.ListBranchRules:input_type -> toshi.workspace.v1.ListBranchRulesRequest
+	25, // 59: toshi.workspace.v1.ProjectService.SetBranchRules:input_type -> toshi.workspace.v1.SetBranchRulesRequest
+	29, // 60: toshi.workspace.v1.ProjectService.GetProjectNetwork:input_type -> toshi.workspace.v1.GetProjectNetworkRequest
+	31, // 61: toshi.workspace.v1.ProjectService.SetProjectNetwork:input_type -> toshi.workspace.v1.SetProjectNetworkRequest
+	33, // 62: toshi.workspace.v1.ProjectService.GetEnvironmentNetwork:input_type -> toshi.workspace.v1.GetEnvironmentNetworkRequest
+	35, // 63: toshi.workspace.v1.ProjectService.SetEnvironmentNetwork:input_type -> toshi.workspace.v1.SetEnvironmentNetworkRequest
+	39, // 64: toshi.workspace.v1.ProjectService.GetEnvironmentRetention:input_type -> toshi.workspace.v1.GetEnvironmentRetentionRequest
+	41, // 65: toshi.workspace.v1.ProjectService.SetEnvironmentRetention:input_type -> toshi.workspace.v1.SetEnvironmentRetentionRequest
+	43, // 66: toshi.workspace.v1.ProjectService.SetEnvironmentVolumes:input_type -> toshi.workspace.v1.SetEnvironmentVolumesRequest
+	45, // 67: toshi.workspace.v1.ProjectService.UpdateEnvironment:input_type -> toshi.workspace.v1.UpdateEnvironmentRequest
+	48, // 68: toshi.workspace.v1.ProjectService.CreateEmbedToken:input_type -> toshi.workspace.v1.CreateEmbedTokenRequest
+	50, // 69: toshi.workspace.v1.ProjectService.ListEmbedTokens:input_type -> toshi.workspace.v1.ListEmbedTokensRequest
+	52, // 70: toshi.workspace.v1.ProjectService.RevokeEmbedToken:input_type -> toshi.workspace.v1.RevokeEmbedTokenRequest
+	6,  // 71: toshi.workspace.v1.ProjectService.ListProjects:output_type -> toshi.workspace.v1.ListProjectsResponse
+	17, // 72: toshi.workspace.v1.ProjectService.GetProject:output_type -> toshi.workspace.v1.GetProjectResponse
+	9,  // 73: toshi.workspace.v1.ProjectService.ListRepositories:output_type -> toshi.workspace.v1.ListRepositoriesResponse
+	11, // 74: toshi.workspace.v1.ProjectService.CreateProject:output_type -> toshi.workspace.v1.CreateProjectResponse
+	13, // 75: toshi.workspace.v1.ProjectService.UpdateProject:output_type -> toshi.workspace.v1.UpdateProjectResponse
+	15, // 76: toshi.workspace.v1.ProjectService.ClaimRepository:output_type -> toshi.workspace.v1.ClaimRepositoryResponse
+	19, // 77: toshi.workspace.v1.ProjectService.CreateEnvironment:output_type -> toshi.workspace.v1.CreateEnvironmentResponse
+	21, // 78: toshi.workspace.v1.ProjectService.DeleteEnvironment:output_type -> toshi.workspace.v1.DeleteEnvironmentResponse
+	24, // 79: toshi.workspace.v1.ProjectService.ListBranchRules:output_type -> toshi.workspace.v1.ListBranchRulesResponse
+	26, // 80: toshi.workspace.v1.ProjectService.SetBranchRules:output_type -> toshi.workspace.v1.SetBranchRulesResponse
+	30, // 81: toshi.workspace.v1.ProjectService.GetProjectNetwork:output_type -> toshi.workspace.v1.GetProjectNetworkResponse
+	32, // 82: toshi.workspace.v1.ProjectService.SetProjectNetwork:output_type -> toshi.workspace.v1.SetProjectNetworkResponse
+	34, // 83: toshi.workspace.v1.ProjectService.GetEnvironmentNetwork:output_type -> toshi.workspace.v1.GetEnvironmentNetworkResponse
+	36, // 84: toshi.workspace.v1.ProjectService.SetEnvironmentNetwork:output_type -> toshi.workspace.v1.SetEnvironmentNetworkResponse
+	40, // 85: toshi.workspace.v1.ProjectService.GetEnvironmentRetention:output_type -> toshi.workspace.v1.GetEnvironmentRetentionResponse
+	42, // 86: toshi.workspace.v1.ProjectService.SetEnvironmentRetention:output_type -> toshi.workspace.v1.SetEnvironmentRetentionResponse
+	44, // 87: toshi.workspace.v1.ProjectService.SetEnvironmentVolumes:output_type -> toshi.workspace.v1.SetEnvironmentVolumesResponse
+	46, // 88: toshi.workspace.v1.ProjectService.UpdateEnvironment:output_type -> toshi.workspace.v1.UpdateEnvironmentResponse
+	49, // 89: toshi.workspace.v1.ProjectService.CreateEmbedToken:output_type -> toshi.workspace.v1.CreateEmbedTokenResponse
+	51, // 90: toshi.workspace.v1.ProjectService.ListEmbedTokens:output_type -> toshi.workspace.v1.ListEmbedTokensResponse
+	53, // 91: toshi.workspace.v1.ProjectService.RevokeEmbedToken:output_type -> toshi.workspace.v1.RevokeEmbedTokenResponse
+	71, // [71:92] is the sub-list for method output_type
+	50, // [50:71] is the sub-list for method input_type
+	50, // [50:50] is the sub-list for extension type_name
+	50, // [50:50] is the sub-list for extension extendee
+	0,  // [0:50] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_projects_proto_init() }
@@ -3656,6 +3670,7 @@ func file_toshi_workspace_v1_projects_proto_init() {
 	if File_toshi_workspace_v1_projects_proto != nil {
 		return
 	}
+	file_toshi_workspace_v1_model_credentials_proto_init()
 	file_toshi_workspace_v1_projects_proto_msgTypes[37].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

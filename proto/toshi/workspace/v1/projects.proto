@@ -6,6 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
+import "toshi/workspace/v1/model_credentials.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
@@ -219,8 +220,10 @@ service ProjectService {
   // retention replaces its retention override whole, as
   // SetEnvironmentRetention does, and volumes replaces the list of the
   // project's volumes its services and sandboxes may attach, as
-  // SetEnvironmentVolumes does. Each is checked as that call checks it,
-  // and both are written together or not at all. An omitted mask means
+  // SetEnvironmentVolumes does, and model_credential_defaults replaces the
+  // environment's default model credentials, which also needs
+  // model_credentials.write. Each is checked as that call checks it,
+  // and all are written together or not at all. An omitted mask means
   // the fields the request sets; clearing the override or the list needs
   // its path in the mask. "*" and a path of any other field are
   // INVALID_ARGUMENT. A project or environment the workspace does not have
@@ -314,6 +317,10 @@ message ProjectEnvironment {
   // follows the workspace. Set with UpdateEnvironment or
   // SetEnvironmentRetention.
   EnvironmentRetention retention = 8;
+  // The environment's default model credential per provider, before the
+  // workspace's. Each names a workspace credential whose key serves this
+  // environment. Set with UpdateEnvironment.
+  repeated ModelCredentialDefault model_credential_defaults = 9;
 }
 
 // Repository is a repository a project claims: a CI job of the repository
@@ -639,7 +646,7 @@ message UpdateEnvironmentRequest {
   // name names the environment; the fields update_mask names carry the
   // new values.
   ProjectEnvironment environment = 2;
-  // retention, volumes, or both. The paths managed_by, manifest_digest,
+  // retention, volumes, model_credential_defaults, or several. The paths managed_by, manifest_digest,
   // manifest_origin and managed_fields set the management mark and go
   // together: all four or none, and on their own; managed_by "manifest"
   // needs the digest, an origin and at least one field path, and an empty

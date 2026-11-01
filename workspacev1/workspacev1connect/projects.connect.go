@@ -240,8 +240,10 @@ type ProjectServiceClient interface {
 	// retention replaces its retention override whole, as
 	// SetEnvironmentRetention does, and volumes replaces the list of the
 	// project's volumes its services and sandboxes may attach, as
-	// SetEnvironmentVolumes does. Each is checked as that call checks it,
-	// and both are written together or not at all. An omitted mask means
+	// SetEnvironmentVolumes does, and model_credential_defaults replaces the
+	// environment's default model credentials, which also needs
+	// model_credentials.write. Each is checked as that call checks it,
+	// and all are written together or not at all. An omitted mask means
 	// the fields the request sets; clearing the override or the list needs
 	// its path in the mask. "*" and a path of any other field are
 	// INVALID_ARGUMENT. A project or environment the workspace does not have
@@ -677,8 +679,10 @@ type ProjectServiceHandler interface {
 	// retention replaces its retention override whole, as
 	// SetEnvironmentRetention does, and volumes replaces the list of the
 	// project's volumes its services and sandboxes may attach, as
-	// SetEnvironmentVolumes does. Each is checked as that call checks it,
-	// and both are written together or not at all. An omitted mask means
+	// SetEnvironmentVolumes does, and model_credential_defaults replaces the
+	// environment's default model credentials, which also needs
+	// model_credentials.write. Each is checked as that call checks it,
+	// and all are written together or not at all. An omitted mask means
 	// the fields the request sets; clearing the override or the list needs
 	// its path in the mask. "*" and a path of any other field are
 	// INVALID_ARGUMENT. A project or environment the workspace does not have

@@ -564,6 +564,8 @@ message Binding {
     // The deployment's mail listener, which sends the workload's messages
     // through its mail provider. At most one per workload.
     Mail mail = 4;
+    // A model credential, by name. At most one per provider.
+    ModelCredentialBinding model_credential = 5;
   }
 }
 
@@ -579,6 +581,21 @@ message ServiceEndpoint {
 // with the project's shared keys. The set must grant the workload's kind.
 message EnvironmentSecrets {}
 
+// ModelCredentialBinding binds a model credential by its name: the
+// starter's own credential of that name, else the workspace's. It must
+// serve the workload's project and environment, and the starter must be
+// allowed to receive it; otherwise the create is FAILED_PRECONDITION. A
+// workload that binds none for a provider gets, when it starts, the
+// starter's own credential for that provider, else the environment's
+// default, else the workspace's, skipping one its key does not serve or
+// the starter may not receive. With several own credentials for one
+// provider the create must bind one: it is FAILED_PRECONDITION naming
+// them. A starter who has several when the workload starts, and bound
+// none, gives it no credential for that provider.
+message ModelCredentialBinding {
+  string name = 1;
+}
+
 // Mail binds the deployment's mail listener: the command gets the
 // listener's host and port and a credential it authenticates with, and
 // sends as a service of its workspace. The workspace's plan must allow mail
@@ -593,6 +610,7 @@ message BoundBinding {
     BoundService service = 2;
     BoundSecrets secrets = 3;
     BoundMail mail = 5;
+    BoundModelCredential model_credential = 6;
   }
   google.protobuf.Timestamp taken_at = 4;
 }
@@ -626,6 +644,19 @@ message BoundMail {
   string credential = 1;
   string audience = 2;
   string credential_id = 3;
+}
+
+// BoundModelCredential is the model credential a workload took for one
+// provider when it started. Never the key. A credential the workload took
+// without binding it is named "~model:<provider>", a name no binding can
+// take.
+message BoundModelCredential {
+  string model_credential_id = 1;
+  string name = 2;
+  string provider = 3;
+  // How the workload took it: "binding", "own", "environment" or
+  // "workspace".
+  string source = 4;
 }
 
 // BoundSecrets is the environment's secret set as it was when the

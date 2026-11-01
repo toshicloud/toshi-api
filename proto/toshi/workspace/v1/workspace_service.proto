@@ -7,6 +7,7 @@ import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 import "toshi/workspace/v1/discovery.proto";
 import "toshi/workspace/v1/hosts.proto";
+import "toshi/workspace/v1/model_credentials.proto";
 import "toshi/workspace/v1/roles.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
@@ -33,7 +34,8 @@ service WorkspaceService {
   // empty one, an omitted one with no field populated, "*" or another
   // path fails with INVALID_ARGUMENT. The call needs no permission of its
   // own: each path needs its field group's, workspace.signin for
-  // settings.sign_in, billing.write for the spending limits and
+  // settings.sign_in, billing.write for the spending limits,
+  // model_credentials.write for settings.model_credential_defaults and
   // workspace.write for the others, and a mask that names nothing needs any
   // one of them. A caller that lacks one is refused with PERMISSION_DENIED
   // naming it, and nothing is written.
@@ -711,6 +713,10 @@ message WorkspaceSettings {
   // control, and switching it off stops an open span's screenshots within one
   // interval.
   optional bool recording_human_spans = 12;
+  // The workspace's default model credential per provider (ModelCredentialDefault).
+  // A default applies where its credential's key serves the workload's
+  // project and environment. Setting it needs model_credentials.write.
+  repeated ModelCredentialDefault model_credential_defaults = 13 [(toshi.field_permission) = "model_credentials.write"];
 }
 
 // WorkspaceSettingChange is who last changed one of a workspace's settings,
