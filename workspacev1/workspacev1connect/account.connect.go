@@ -42,6 +42,12 @@ const (
 	// AccountServiceUnlinkIdentityProcedure is the fully-qualified name of the AccountService's
 	// UnlinkIdentity RPC.
 	AccountServiceUnlinkIdentityProcedure = "/toshi.workspace.v1.AccountService/UnlinkIdentity"
+	// AccountServiceListSessionsProcedure is the fully-qualified name of the AccountService's
+	// ListSessions RPC.
+	AccountServiceListSessionsProcedure = "/toshi.workspace.v1.AccountService/ListSessions"
+	// AccountServiceEndSessionProcedure is the fully-qualified name of the AccountService's EndSession
+	// RPC.
+	AccountServiceEndSessionProcedure = "/toshi.workspace.v1.AccountService/EndSession"
 )
 
 // AccountServiceClient is a client for the toshi.workspace.v1.AccountService service.
@@ -63,6 +69,16 @@ type AccountServiceClient interface {
 	// google.rpc.ErrorInfo detail. A session or token opened through the
 	// identity, the calling one included, stops working at its next call.
 	UnlinkIdentity(context.Context, *connect.Request[workspacev1.UnlinkIdentityRequest]) (*connect.Response[workspacev1.UnlinkIdentityResponse], error)
+	// ListSessions returns the caller's own sign-in sessions that have not
+	// expired, newest first, in pages. A session opened by another person is
+	// never listed. The one making the call is marked current.
+	ListSessions(context.Context, *connect.Request[workspacev1.ListSessionsRequest]) (*connect.Response[workspacev1.ListSessionsResponse], error)
+	// EndSession ends one of the caller's own sign-in sessions, and the
+	// access tokens and grants it refreshes through, so it cannot be
+	// refreshed back. A session that is not the caller's, or does not exist,
+	// fails with NOT_FOUND. The session ended stops working at its next
+	// call, the calling one included.
+	EndSession(context.Context, *connect.Request[workspacev1.EndSessionRequest]) (*connect.Response[workspacev1.EndSessionResponse], error)
 }
 
 // NewAccountServiceClient constructs a client for the toshi.workspace.v1.AccountService service. By
@@ -94,6 +110,18 @@ func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(accountServiceMethods.ByName("UnlinkIdentity")),
 			connect.WithClientOptions(opts...),
 		),
+		listSessions: connect.NewClient[workspacev1.ListSessionsRequest, workspacev1.ListSessionsResponse](
+			httpClient,
+			baseURL+AccountServiceListSessionsProcedure,
+			connect.WithSchema(accountServiceMethods.ByName("ListSessions")),
+			connect.WithClientOptions(opts...),
+		),
+		endSession: connect.NewClient[workspacev1.EndSessionRequest, workspacev1.EndSessionResponse](
+			httpClient,
+			baseURL+AccountServiceEndSessionProcedure,
+			connect.WithSchema(accountServiceMethods.ByName("EndSession")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -102,6 +130,8 @@ type accountServiceClient struct {
 	getAccount     *connect.Client[workspacev1.GetAccountRequest, workspacev1.GetAccountResponse]
 	listIdentities *connect.Client[workspacev1.ListIdentitiesRequest, workspacev1.ListIdentitiesResponse]
 	unlinkIdentity *connect.Client[workspacev1.UnlinkIdentityRequest, workspacev1.UnlinkIdentityResponse]
+	listSessions   *connect.Client[workspacev1.ListSessionsRequest, workspacev1.ListSessionsResponse]
+	endSession     *connect.Client[workspacev1.EndSessionRequest, workspacev1.EndSessionResponse]
 }
 
 // GetAccount calls toshi.workspace.v1.AccountService.GetAccount.
@@ -117,6 +147,16 @@ func (c *accountServiceClient) ListIdentities(ctx context.Context, req *connect.
 // UnlinkIdentity calls toshi.workspace.v1.AccountService.UnlinkIdentity.
 func (c *accountServiceClient) UnlinkIdentity(ctx context.Context, req *connect.Request[workspacev1.UnlinkIdentityRequest]) (*connect.Response[workspacev1.UnlinkIdentityResponse], error) {
 	return c.unlinkIdentity.CallUnary(ctx, req)
+}
+
+// ListSessions calls toshi.workspace.v1.AccountService.ListSessions.
+func (c *accountServiceClient) ListSessions(ctx context.Context, req *connect.Request[workspacev1.ListSessionsRequest]) (*connect.Response[workspacev1.ListSessionsResponse], error) {
+	return c.listSessions.CallUnary(ctx, req)
+}
+
+// EndSession calls toshi.workspace.v1.AccountService.EndSession.
+func (c *accountServiceClient) EndSession(ctx context.Context, req *connect.Request[workspacev1.EndSessionRequest]) (*connect.Response[workspacev1.EndSessionResponse], error) {
+	return c.endSession.CallUnary(ctx, req)
 }
 
 // AccountServiceHandler is an implementation of the toshi.workspace.v1.AccountService service.
@@ -138,6 +178,16 @@ type AccountServiceHandler interface {
 	// google.rpc.ErrorInfo detail. A session or token opened through the
 	// identity, the calling one included, stops working at its next call.
 	UnlinkIdentity(context.Context, *connect.Request[workspacev1.UnlinkIdentityRequest]) (*connect.Response[workspacev1.UnlinkIdentityResponse], error)
+	// ListSessions returns the caller's own sign-in sessions that have not
+	// expired, newest first, in pages. A session opened by another person is
+	// never listed. The one making the call is marked current.
+	ListSessions(context.Context, *connect.Request[workspacev1.ListSessionsRequest]) (*connect.Response[workspacev1.ListSessionsResponse], error)
+	// EndSession ends one of the caller's own sign-in sessions, and the
+	// access tokens and grants it refreshes through, so it cannot be
+	// refreshed back. A session that is not the caller's, or does not exist,
+	// fails with NOT_FOUND. The session ended stops working at its next
+	// call, the calling one included.
+	EndSession(context.Context, *connect.Request[workspacev1.EndSessionRequest]) (*connect.Response[workspacev1.EndSessionResponse], error)
 }
 
 // NewAccountServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -165,6 +215,18 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 		connect.WithSchema(accountServiceMethods.ByName("UnlinkIdentity")),
 		connect.WithHandlerOptions(opts...),
 	)
+	accountServiceListSessionsHandler := connect.NewUnaryHandler(
+		AccountServiceListSessionsProcedure,
+		svc.ListSessions,
+		connect.WithSchema(accountServiceMethods.ByName("ListSessions")),
+		connect.WithHandlerOptions(opts...),
+	)
+	accountServiceEndSessionHandler := connect.NewUnaryHandler(
+		AccountServiceEndSessionProcedure,
+		svc.EndSession,
+		connect.WithSchema(accountServiceMethods.ByName("EndSession")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.AccountService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AccountServiceGetAccountProcedure:
@@ -173,6 +235,10 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 			accountServiceListIdentitiesHandler.ServeHTTP(w, r)
 		case AccountServiceUnlinkIdentityProcedure:
 			accountServiceUnlinkIdentityHandler.ServeHTTP(w, r)
+		case AccountServiceListSessionsProcedure:
+			accountServiceListSessionsHandler.ServeHTTP(w, r)
+		case AccountServiceEndSessionProcedure:
+			accountServiceEndSessionHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -192,4 +258,12 @@ func (UnimplementedAccountServiceHandler) ListIdentities(context.Context, *conne
 
 func (UnimplementedAccountServiceHandler) UnlinkIdentity(context.Context, *connect.Request[workspacev1.UnlinkIdentityRequest]) (*connect.Response[workspacev1.UnlinkIdentityResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.AccountService.UnlinkIdentity is not implemented"))
+}
+
+func (UnimplementedAccountServiceHandler) ListSessions(context.Context, *connect.Request[workspacev1.ListSessionsRequest]) (*connect.Response[workspacev1.ListSessionsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.AccountService.ListSessions is not implemented"))
+}
+
+func (UnimplementedAccountServiceHandler) EndSession(context.Context, *connect.Request[workspacev1.EndSessionRequest]) (*connect.Response[workspacev1.EndSessionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.AccountService.EndSession is not implemented"))
 }

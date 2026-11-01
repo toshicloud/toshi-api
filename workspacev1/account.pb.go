@@ -658,6 +658,283 @@ func (x *UnlinkIdentityResponse) GetGrantsRevoked() int32 {
 	return 0
 }
 
+type ListSessionsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Sessions per page; the server picks a default and a maximum.
+	PageSize      int32  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSessionsRequest) Reset() {
+	*x = ListSessionsRequest{}
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSessionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSessionsRequest) ProtoMessage() {}
+
+func (x *ListSessionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSessionsRequest.ProtoReflect.Descriptor instead.
+func (*ListSessionsRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ListSessionsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListSessionsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+type ListSessionsResponse struct {
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Sessions []*SignInSession       `protobuf:"bytes,1,rep,name=sessions,proto3" json:"sessions,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSessionsResponse) Reset() {
+	*x = ListSessionsResponse{}
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSessionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSessionsResponse) ProtoMessage() {}
+
+func (x *ListSessionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSessionsResponse.ProtoReflect.Descriptor instead.
+func (*ListSessionsResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ListSessionsResponse) GetSessions() []*SignInSession {
+	if x != nil {
+		return x.Sessions
+	}
+	return nil
+}
+
+func (x *ListSessionsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
+// SignInSession is one dashboard sign-in session of the caller.
+type SignInSession struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// An opaque id, stable for the session's life, that EndSession takes. It
+	// is not the cookie and cannot be used to sign in.
+	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// The identity provider the session was opened through.
+	Provider string `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
+	// The sign-ins the session holds, the one that opened it first.
+	SignedInWith []*SignInProof `protobuf:"bytes,5,rep,name=signed_in_with,json=signedInWith,proto3" json:"signed_in_with,omitempty"`
+	// True for the session making this call.
+	Current       bool `protobuf:"varint,6,opt,name=current,proto3" json:"current,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SignInSession) Reset() {
+	*x = SignInSession{}
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SignInSession) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignInSession) ProtoMessage() {}
+
+func (x *SignInSession) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignInSession.ProtoReflect.Descriptor instead.
+func (*SignInSession) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *SignInSession) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *SignInSession) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *SignInSession) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
+func (x *SignInSession) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *SignInSession) GetSignedInWith() []*SignInProof {
+	if x != nil {
+		return x.SignedInWith
+	}
+	return nil
+}
+
+func (x *SignInSession) GetCurrent() bool {
+	if x != nil {
+		return x.Current
+	}
+	return false
+}
+
+type EndSessionRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session's id, as SignInSession names it.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EndSessionRequest) Reset() {
+	*x = EndSessionRequest{}
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EndSessionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EndSessionRequest) ProtoMessage() {}
+
+func (x *EndSessionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EndSessionRequest.ProtoReflect.Descriptor instead.
+func (*EndSessionRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *EndSessionRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type EndSessionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EndSessionResponse) Reset() {
+	*x = EndSessionResponse{}
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EndSessionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EndSessionResponse) ProtoMessage() {}
+
+func (x *EndSessionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EndSessionResponse.ProtoReflect.Descriptor instead.
+func (*EndSessionResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{14}
+}
+
 var File_toshi_workspace_v1_account_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_account_proto_rawDesc = "" +
@@ -711,13 +988,36 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"\x16UnlinkIdentityResponse\x128\n" +
 	"\bidentity\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.IdentityR\bidentity\x12%\n" +
 	"\x0esessions_ended\x18\x02 \x01(\x05R\rsessionsEnded\x12%\n" +
-	"\x0egrants_revoked\x18\x03 \x01(\x05R\rgrantsRevoked2\xc2\x03\n" +
+	"\x0egrants_revoked\x18\x03 \x01(\x05R\rgrantsRevoked\"Q\n" +
+	"\x13ListSessionsRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"}\n" +
+	"\x14ListSessionsResponse\x12=\n" +
+	"\bsessions\x18\x01 \x03(\v2!.toshi.workspace.v1.SignInSessionR\bsessions\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x92\x02\n" +
+	"\rSignInSession\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1a\n" +
+	"\bprovider\x18\x04 \x01(\tR\bprovider\x12E\n" +
+	"\x0esigned_in_with\x18\x05 \x03(\v2\x1f.toshi.workspace.v1.SignInProofR\fsignedInWith\x12\x18\n" +
+	"\acurrent\x18\x06 \x01(\bR\acurrent\"#\n" +
+	"\x11EndSessionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x14\n" +
+	"\x12EndSessionResponse2\xe2\x05\n" +
 	"\x0eAccountService\x12z\n" +
 	"\n" +
 	"GetAccount\x12%.toshi.workspace.v1.GetAccountRequest\x1a&.toshi.workspace.v1.GetAccountResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x86\x01\n" +
 	"\x0eListIdentities\x12).toshi.workspace.v1.ListIdentitiesRequest\x1a*.toshi.workspace.v1.ListIdentitiesResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xaa\x01\n" +
 	"\x0eUnlinkIdentity\x12).toshi.workspace.v1.UnlinkIdentityRequest\x1a*.toshi.workspace.v1.UnlinkIdentityResponse\"A\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x19\n" +
-	"\x11identity.unlinked\x12\x04none\xea\xf3\x18\x02\x10\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x11identity.unlinked\x12\x04none\xea\xf3\x18\x02\x10\x01\x12\x80\x01\n" +
+	"\fListSessions\x12'.toshi.workspace.v1.ListSessionsRequest\x1a(.toshi.workspace.v1.ListSessionsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x9a\x01\n" +
+	"\n" +
+	"EndSession\x12%.toshi.workspace.v1.EndSessionRequest\x1a&.toshi.workspace.v1.EndSessionResponse\"=\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x15\n" +
+	"\rsession.ended\x12\x04none\xea\xf3\x18\x02\x10\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_account_proto_rawDescOnce sync.Once
@@ -731,7 +1031,7 @@ func file_toshi_workspace_v1_account_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_account_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_account_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_toshi_workspace_v1_account_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_toshi_workspace_v1_account_proto_goTypes = []any{
 	(*Account)(nil),                // 0: toshi.workspace.v1.Account
 	(*Identity)(nil),               // 1: toshi.workspace.v1.Identity
@@ -743,31 +1043,44 @@ var file_toshi_workspace_v1_account_proto_goTypes = []any{
 	(*ListIdentitiesResponse)(nil), // 7: toshi.workspace.v1.ListIdentitiesResponse
 	(*UnlinkIdentityRequest)(nil),  // 8: toshi.workspace.v1.UnlinkIdentityRequest
 	(*UnlinkIdentityResponse)(nil), // 9: toshi.workspace.v1.UnlinkIdentityResponse
-	(*timestamppb.Timestamp)(nil),  // 10: google.protobuf.Timestamp
+	(*ListSessionsRequest)(nil),    // 10: toshi.workspace.v1.ListSessionsRequest
+	(*ListSessionsResponse)(nil),   // 11: toshi.workspace.v1.ListSessionsResponse
+	(*SignInSession)(nil),          // 12: toshi.workspace.v1.SignInSession
+	(*EndSessionRequest)(nil),      // 13: toshi.workspace.v1.EndSessionRequest
+	(*EndSessionResponse)(nil),     // 14: toshi.workspace.v1.EndSessionResponse
+	(*timestamppb.Timestamp)(nil),  // 15: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_account_proto_depIdxs = []int32{
-	10, // 0: toshi.workspace.v1.Account.created_at:type_name -> google.protobuf.Timestamp
-	10, // 1: toshi.workspace.v1.Identity.created_at:type_name -> google.protobuf.Timestamp
-	10, // 2: toshi.workspace.v1.Identity.last_sign_in_at:type_name -> google.protobuf.Timestamp
+	15, // 0: toshi.workspace.v1.Account.created_at:type_name -> google.protobuf.Timestamp
+	15, // 1: toshi.workspace.v1.Identity.created_at:type_name -> google.protobuf.Timestamp
+	15, // 2: toshi.workspace.v1.Identity.last_sign_in_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: toshi.workspace.v1.GetAccountResponse.account:type_name -> toshi.workspace.v1.Account
 	1,  // 4: toshi.workspace.v1.GetAccountResponse.identities:type_name -> toshi.workspace.v1.Identity
 	5,  // 5: toshi.workspace.v1.GetAccountResponse.signed_in_with:type_name -> toshi.workspace.v1.SignInProof
 	4,  // 6: toshi.workspace.v1.GetAccountResponse.pending:type_name -> toshi.workspace.v1.JoinRequest
-	10, // 7: toshi.workspace.v1.JoinRequest.retry_after:type_name -> google.protobuf.Timestamp
-	10, // 8: toshi.workspace.v1.SignInProof.authenticated_at:type_name -> google.protobuf.Timestamp
+	15, // 7: toshi.workspace.v1.JoinRequest.retry_after:type_name -> google.protobuf.Timestamp
+	15, // 8: toshi.workspace.v1.SignInProof.authenticated_at:type_name -> google.protobuf.Timestamp
 	1,  // 9: toshi.workspace.v1.ListIdentitiesResponse.identities:type_name -> toshi.workspace.v1.Identity
 	1,  // 10: toshi.workspace.v1.UnlinkIdentityResponse.identity:type_name -> toshi.workspace.v1.Identity
-	2,  // 11: toshi.workspace.v1.AccountService.GetAccount:input_type -> toshi.workspace.v1.GetAccountRequest
-	6,  // 12: toshi.workspace.v1.AccountService.ListIdentities:input_type -> toshi.workspace.v1.ListIdentitiesRequest
-	8,  // 13: toshi.workspace.v1.AccountService.UnlinkIdentity:input_type -> toshi.workspace.v1.UnlinkIdentityRequest
-	3,  // 14: toshi.workspace.v1.AccountService.GetAccount:output_type -> toshi.workspace.v1.GetAccountResponse
-	7,  // 15: toshi.workspace.v1.AccountService.ListIdentities:output_type -> toshi.workspace.v1.ListIdentitiesResponse
-	9,  // 16: toshi.workspace.v1.AccountService.UnlinkIdentity:output_type -> toshi.workspace.v1.UnlinkIdentityResponse
-	14, // [14:17] is the sub-list for method output_type
-	11, // [11:14] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	12, // 11: toshi.workspace.v1.ListSessionsResponse.sessions:type_name -> toshi.workspace.v1.SignInSession
+	15, // 12: toshi.workspace.v1.SignInSession.created_at:type_name -> google.protobuf.Timestamp
+	15, // 13: toshi.workspace.v1.SignInSession.expires_at:type_name -> google.protobuf.Timestamp
+	5,  // 14: toshi.workspace.v1.SignInSession.signed_in_with:type_name -> toshi.workspace.v1.SignInProof
+	2,  // 15: toshi.workspace.v1.AccountService.GetAccount:input_type -> toshi.workspace.v1.GetAccountRequest
+	6,  // 16: toshi.workspace.v1.AccountService.ListIdentities:input_type -> toshi.workspace.v1.ListIdentitiesRequest
+	8,  // 17: toshi.workspace.v1.AccountService.UnlinkIdentity:input_type -> toshi.workspace.v1.UnlinkIdentityRequest
+	10, // 18: toshi.workspace.v1.AccountService.ListSessions:input_type -> toshi.workspace.v1.ListSessionsRequest
+	13, // 19: toshi.workspace.v1.AccountService.EndSession:input_type -> toshi.workspace.v1.EndSessionRequest
+	3,  // 20: toshi.workspace.v1.AccountService.GetAccount:output_type -> toshi.workspace.v1.GetAccountResponse
+	7,  // 21: toshi.workspace.v1.AccountService.ListIdentities:output_type -> toshi.workspace.v1.ListIdentitiesResponse
+	9,  // 22: toshi.workspace.v1.AccountService.UnlinkIdentity:output_type -> toshi.workspace.v1.UnlinkIdentityResponse
+	11, // 23: toshi.workspace.v1.AccountService.ListSessions:output_type -> toshi.workspace.v1.ListSessionsResponse
+	14, // 24: toshi.workspace.v1.AccountService.EndSession:output_type -> toshi.workspace.v1.EndSessionResponse
+	20, // [20:25] is the sub-list for method output_type
+	15, // [15:20] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_account_proto_init() }
@@ -781,7 +1094,7 @@ func file_toshi_workspace_v1_account_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_account_proto_rawDesc), len(file_toshi_workspace_v1_account_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

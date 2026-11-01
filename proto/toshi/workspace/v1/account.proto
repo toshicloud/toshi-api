@@ -52,6 +52,30 @@ service AccountService {
       target: "none"
     };
   }
+
+  // ListSessions returns the caller's own sign-in sessions that have not
+  // expired, newest first, in pages. A session opened by another person is
+  // never listed. The one making the call is marked current.
+  rpc ListSessions(ListSessionsRequest) returns (ListSessionsResponse) {
+    option (toshi.permission) = "members.read";
+    option (toshi.scope) = "workspace";
+  }
+
+  // EndSession ends one of the caller's own sign-in sessions, and the
+  // access tokens and grants it refreshes through, so it cannot be
+  // refreshed back. A session that is not the caller's, or does not exist,
+  // fails with NOT_FOUND. The session ended stops working at its next
+  // call, the calling one included.
+  rpc EndSession(EndSessionRequest) returns (EndSessionResponse) {
+    option (toshi.permission) = "members.write";
+    // members.write only files a person's own call; it is not checked.
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {
+      action: "session.ended"
+      target: "none"
+    };
+  }
 }
 
 // Account is a Toshi user: a person who signs in through one or more
@@ -153,3 +177,37 @@ message UnlinkIdentityResponse {
   int32 sessions_ended = 2;
   int32 grants_revoked = 3;
 }
+
+message ListSessionsRequest {
+  // Sessions per page; the server picks a default and a maximum.
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListSessionsResponse {
+  repeated SignInSession sessions = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
+}
+
+// SignInSession is one dashboard sign-in session of the caller.
+message SignInSession {
+  // An opaque id, stable for the session's life, that EndSession takes. It
+  // is not the cookie and cannot be used to sign in.
+  string id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp expires_at = 3;
+  // The identity provider the session was opened through.
+  string provider = 4;
+  // The sign-ins the session holds, the one that opened it first.
+  repeated SignInProof signed_in_with = 5;
+  // True for the session making this call.
+  bool current = 6;
+}
+
+message EndSessionRequest {
+  // The session's id, as SignInSession names it.
+  string id = 1;
+}
+
+message EndSessionResponse {}
