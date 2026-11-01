@@ -123,14 +123,20 @@ type ProjectServiceClient interface {
 	// PERMISSION_DENIED: the new project is not its own.
 	CreateProject(context.Context, *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error)
 	// UpdateProject sets the fields of project.name's project that
-	// update_mask names. The one field it sets is admission, the project's
+	// update_mask names. The fields it sets are admission, the project's
 	// admission webhook: its url and secret, both required, or an empty url
-	// to remove it. An unset update_mask names the fields project carries.
-	// An empty one, an unset one with no admission, "*" and a path of
-	// another field are INVALID_ARGUMENT. The secret is sealed under the
-	// workspace's data key and never returned; a deployment with no keyring
-	// refuses it with FAILED_PRECONDITION. A token limited to environments
-	// is PERMISSION_DENIED.
+	// to remove it; and recording_defaults, the project's recording
+	// defaults, either whole or by its sub-paths
+	// recording_defaults.sandbox_recording_policy,
+	// recording_defaults.job_recording_policy, recording_defaults.human_spans,
+	// recording_defaults.recording_segment_minutes and
+	// recording_defaults.recording_max_mib. An unset update_mask names the fields
+	// project carries. An empty one, an unset one with no admission and no
+	// recording_defaults, "*" and a path of another field are
+	// INVALID_ARGUMENT. The secret is sealed under the workspace's data key
+	// and never returned; a deployment with no keyring refuses it with
+	// FAILED_PRECONDITION. A token limited to environments is
+	// PERMISSION_DENIED.
 	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
 	// ClaimRepository puts a repository in a project: it claims a repository
 	// no project claims, or moves the claim from another project. A CI job
@@ -562,14 +568,20 @@ type ProjectServiceHandler interface {
 	// PERMISSION_DENIED: the new project is not its own.
 	CreateProject(context.Context, *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error)
 	// UpdateProject sets the fields of project.name's project that
-	// update_mask names. The one field it sets is admission, the project's
+	// update_mask names. The fields it sets are admission, the project's
 	// admission webhook: its url and secret, both required, or an empty url
-	// to remove it. An unset update_mask names the fields project carries.
-	// An empty one, an unset one with no admission, "*" and a path of
-	// another field are INVALID_ARGUMENT. The secret is sealed under the
-	// workspace's data key and never returned; a deployment with no keyring
-	// refuses it with FAILED_PRECONDITION. A token limited to environments
-	// is PERMISSION_DENIED.
+	// to remove it; and recording_defaults, the project's recording
+	// defaults, either whole or by its sub-paths
+	// recording_defaults.sandbox_recording_policy,
+	// recording_defaults.job_recording_policy, recording_defaults.human_spans,
+	// recording_defaults.recording_segment_minutes and
+	// recording_defaults.recording_max_mib. An unset update_mask names the fields
+	// project carries. An empty one, an unset one with no admission and no
+	// recording_defaults, "*" and a path of another field are
+	// INVALID_ARGUMENT. The secret is sealed under the workspace's data key
+	// and never returned; a deployment with no keyring refuses it with
+	// FAILED_PRECONDITION. A token limited to environments is
+	// PERMISSION_DENIED.
 	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
 	// ClaimRepository puts a repository in a project: it claims a repository
 	// no project claims, or moves the claim from another project. A CI job

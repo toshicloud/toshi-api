@@ -512,9 +512,10 @@ enum RecordingSource {
   RECORDING_SOURCE_REQUEST = 1;
   // The create named none, and the workspace plan's default applied.
   RECORDING_SOURCE_PLAN = 2;
-  // The create named none while the workspace's recording setting was off,
-  // so the policy is OFF.
+  // The workspace's recording setting was off, so the policy is OFF.
   RECORDING_SOURCE_WORKSPACE_OFF = 3;
+  // The create named none, and the project's default for its kind applied.
+  RECORDING_SOURCE_PROJECT = 4;
 }
 
 // JobSpec is a job: one command, run once.

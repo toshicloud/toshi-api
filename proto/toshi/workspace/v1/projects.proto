@@ -55,14 +55,20 @@ service ProjectService {
     option (toshi.audit) = {target: "project:project"};
   }
   // UpdateProject sets the fields of project.name's project that
-  // update_mask names. The one field it sets is admission, the project's
+  // update_mask names. The fields it sets are admission, the project's
   // admission webhook: its url and secret, both required, or an empty url
-  // to remove it. An unset update_mask names the fields project carries.
-  // An empty one, an unset one with no admission, "*" and a path of
-  // another field are INVALID_ARGUMENT. The secret is sealed under the
-  // workspace's data key and never returned; a deployment with no keyring
-  // refuses it with FAILED_PRECONDITION. A token limited to environments
-  // is PERMISSION_DENIED.
+  // to remove it; and recording_defaults, the project's recording
+  // defaults, either whole or by its sub-paths
+  // recording_defaults.sandbox_recording_policy,
+  // recording_defaults.job_recording_policy, recording_defaults.human_spans,
+  // recording_defaults.recording_segment_minutes and
+  // recording_defaults.recording_max_mib. An unset update_mask names the fields
+  // project carries. An empty one, an unset one with no admission and no
+  // recording_defaults, "*" and a path of another field are
+  // INVALID_ARGUMENT. The secret is sealed under the workspace's data key
+  // and never returned; a deployment with no keyring refuses it with
+  // FAILED_PRECONDITION. A token limited to environments is
+  // PERMISSION_DENIED.
   rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
@@ -269,6 +275,10 @@ message Project {
   // admission is the project's admission webhook; unset when it has none.
   // GetProject and UpdateProject return it; ListProjects does not.
   ProjectAdmission admission = 4;
+  // recording_defaults is the project's recording defaults. GetProject and
+  // UpdateProject return it; ListProjects does not. A project that set none
+  // has every field of it unspecified.
+  ProjectRecordingDefaults recording_defaults = 5;
 }
 
 // ProjectAdmission is a project's admission webhook. At each admission
@@ -288,6 +298,64 @@ message ProjectAdmission {
   // updated_by is who set it last, as the audit log names them.
   string updated_by = 3;
   google.protobuf.Timestamp updated_at = 4;
+}
+
+// ProjectRecordingDefaults is what a project's workloads record when their
+// create names no policy, and how the project's human control is captured.
+// A workload records under the first of these that applies: the
+// workspace's recording setting, when it is off; the policy the workload's
+// create names; the project's default for its kind; the plan's default.
+// Human control follows the workspace's setting when that setting does not
+// capture, and the project's setting otherwise: a project can opt out of the
+// capture but never opt in while the workspace does not capture.
+message ProjectRecordingDefaults {
+  // sandbox_recording_policy is what a sandbox of the project records when
+  // its create names no policy. PROJECT_RECORDING_POLICY_UNSPECIFIED
+  // follows the plan's sandbox default. PROJECT_RECORDING_POLICY_VIDEO is
+  // INVALID_ARGUMENT.
+  ProjectRecordingPolicy sandbox_recording_policy = 1;
+  // job_recording_policy is what a job of the project records when its
+  // create names no policy, PROJECT_RECORDING_POLICY_VIDEO included.
+  // PROJECT_RECORDING_POLICY_UNSPECIFIED follows the plan's default.
+  ProjectRecordingPolicy job_recording_policy = 2;
+  // human_spans is what Toshi captures of the project's human control.
+  ProjectHumanSpans human_spans = 3;
+  // updated_by is who set the defaults last, as the audit log names them.
+  string updated_by = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  // recording_segment_minutes limits a sandbox strip's duration. Zero
+  // follows the plan; positive values are capped by the plan and frame limit.
+  // Negative values are INVALID_ARGUMENT.
+  int32 recording_segment_minutes = 6;
+  // recording_max_mib limits one recording's size. Zero follows the plan;
+  // positive values are capped by the plan. Negative values are INVALID_ARGUMENT.
+  int32 recording_max_mib = 7;
+}
+
+// ProjectRecordingPolicy is what a project's workload records of its runs
+// when its create names no policy. It has the values RecordingPolicy has,
+// and a workload records what its create names instead when it names one.
+enum ProjectRecordingPolicy {
+  // The plan's default for the workload's kind applies.
+  PROJECT_RECORDING_POLICY_UNSPECIFIED = 0;
+  // No capture. A file the run uploads as its test framework's recording
+  // is still one of its recordings.
+  PROJECT_RECORDING_POLICY_OFF = 1;
+  // A screenshot strip of each run, unless a video or trace the run
+  // uploaded as its test framework's recording is ready when its strip is
+  // finished. Jobs and sandboxes only.
+  PROJECT_RECORDING_POLICY_STRIP = 2;
+  // A video of each run's screen, recorded by its host, on the same terms
+  // as STRIP. A job only.
+  PROJECT_RECORDING_POLICY_VIDEO = 3;
+}
+
+// ProjectHumanSpans is what Toshi captures of a project's human control.
+enum ProjectHumanSpans {
+  // The workspace's setting applies.
+  PROJECT_HUMAN_SPANS_UNSPECIFIED = 0;
+  // This project's human control is never captured.
+  PROJECT_HUMAN_SPANS_OFF = 1;
 }
 
 // ProjectEnvironment is one of a project's environments.

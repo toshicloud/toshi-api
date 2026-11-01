@@ -553,9 +553,10 @@ const (
 	RecordingSource_RECORDING_SOURCE_REQUEST RecordingSource = 1
 	// The create named none, and the workspace plan's default applied.
 	RecordingSource_RECORDING_SOURCE_PLAN RecordingSource = 2
-	// The create named none while the workspace's recording setting was off,
-	// so the policy is OFF.
+	// The workspace's recording setting was off, so the policy is OFF.
 	RecordingSource_RECORDING_SOURCE_WORKSPACE_OFF RecordingSource = 3
+	// The create named none, and the project's default for its kind applied.
+	RecordingSource_RECORDING_SOURCE_PROJECT RecordingSource = 4
 )
 
 // Enum value maps for RecordingSource.
@@ -565,12 +566,14 @@ var (
 		1: "RECORDING_SOURCE_REQUEST",
 		2: "RECORDING_SOURCE_PLAN",
 		3: "RECORDING_SOURCE_WORKSPACE_OFF",
+		4: "RECORDING_SOURCE_PROJECT",
 	}
 	RecordingSource_value = map[string]int32{
 		"RECORDING_SOURCE_UNSPECIFIED":   0,
 		"RECORDING_SOURCE_REQUEST":       1,
 		"RECORDING_SOURCE_PLAN":          2,
 		"RECORDING_SOURCE_WORKSPACE_OFF": 3,
+		"RECORDING_SOURCE_PROJECT":       4,
 	}
 )
 
@@ -14711,12 +14714,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x1cRECORDING_POLICY_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14RECORDING_POLICY_OFF\x10\x01\x12\x1a\n" +
 	"\x16RECORDING_POLICY_STRIP\x10\x02\x12\x1a\n" +
-	"\x16RECORDING_POLICY_VIDEO\x10\x03*\x90\x01\n" +
+	"\x16RECORDING_POLICY_VIDEO\x10\x03*\xae\x01\n" +
 	"\x0fRecordingSource\x12 \n" +
 	"\x1cRECORDING_SOURCE_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18RECORDING_SOURCE_REQUEST\x10\x01\x12\x19\n" +
 	"\x15RECORDING_SOURCE_PLAN\x10\x02\x12\"\n" +
-	"\x1eRECORDING_SOURCE_WORKSPACE_OFF\x10\x03*c\n" +
+	"\x1eRECORDING_SOURCE_WORKSPACE_OFF\x10\x03\x12\x1c\n" +
+	"\x18RECORDING_SOURCE_PROJECT\x10\x04*c\n" +
 	"\bHostKind\x12\x19\n" +
 	"\x15HOST_KIND_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10HOST_KIND_SHARED\x10\x01\x12\x11\n" +
