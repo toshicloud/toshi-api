@@ -86,7 +86,9 @@ holds the version of this tree. A change to `proto/` raises it.
 
 While the major version is 0:
 
-- an addition, a fix or a comment change bumps the patch version;
+- an addition bumps the minor version, once per release however many
+  additions the release holds;
+- a fix or a comment change bumps the patch version;
 - a breaking change bumps the minor version, and the title of the pull
   request that makes it marks it with `!`, as in Conventional Commits
   (`feat!: ...`).
@@ -99,9 +101,9 @@ goes into a new one, `toshi.workspace.v2` or `toshi.operator.v2`, and a
 
 Every change is checked with `buf breaking` before it is published,
 against the branch it targets and against this repository's newest tag:
-`toshi.workspace.v1` with the `FILE` rules, `toshi.operator.v1` and
-`toshi.githubcore.v1` with the `WIRE_JSON` rules. A field or value that
-goes away keeps its number and name reserved. While the newest tag's
+`toshi.workspace.v1` with the `FILE` rules, `toshi.operator.v1`,
+`toshi.githubcore.v1` and `toshi.github.v1` with the `WIRE_JSON` rules.
+A field or value that goes away keeps its number and name reserved. While the newest tag's
 major version is 0, a pull request whose title marks a breaking change
 with `!` may break compatibility; no other failure is accepted. While
 the major version is 0, the comparison with the newest tag counts only
