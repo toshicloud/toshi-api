@@ -33,10 +33,10 @@ const (
 	// List, get and watch the sandboxes the grant covers; sign in to their
 	// previews.
 	GrantLevel_GRANT_LEVEL_VIEW GrantLevel = 1
-	// Also connect to their channels, open forwards and display sessions.
+	// Also connect to their endpoints, open forwards and display sessions.
 	GrantLevel_GRANT_LEVEL_CONNECT GrantLevel = 2
 	// Also run and cancel executions, raise a sandbox's cap within the
-	// owner's plan, and expose channels and delete the ones it exposed.
+	// owner's plan, and expose endpoints and delete the ones it exposed.
 	GrantLevel_GRANT_LEVEL_OPERATE GrantLevel = 3
 )
 
@@ -677,9 +677,9 @@ func (x *GrantSandboxTarget) GetEnvironment() string {
 type GrantPreviewTarget struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	SandboxId string                 `protobuf:"bytes,1,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
-	// The channel whose preview it covers: `preview` for the sandbox's own
-	// hostname, or another of its http channels.
-	Channel string `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The endpoint whose preview it covers: `preview` for the sandbox's own
+	// hostname, or another of its http endpoints.
+	Endpoint string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The sandbox's project and environment, set by the server.
 	Project       string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
 	Environment   string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
@@ -724,9 +724,9 @@ func (x *GrantPreviewTarget) GetSandboxId() string {
 	return ""
 }
 
-func (x *GrantPreviewTarget) GetChannel() string {
+func (x *GrantPreviewTarget) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -1630,11 +1630,11 @@ const file_toshi_workspace_v1_grants_proto_rawDesc = "" +
 	"\n" +
 	"sandbox_id\x18\x01 \x01(\tR\tsandboxId\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x12 \n" +
-	"\venvironment\x18\x03 \x01(\tR\venvironment\"\x89\x01\n" +
+	"\venvironment\x18\x03 \x01(\tR\venvironment\"\x8b\x01\n" +
 	"\x12GrantPreviewTarget\x12\x1d\n" +
 	"\n" +
-	"sandbox_id\x18\x01 \x01(\tR\tsandboxId\x12\x18\n" +
-	"\achannel\x18\x02 \x01(\tR\achannel\x12\x18\n" +
+	"sandbox_id\x18\x01 \x01(\tR\tsandboxId\x12\x1a\n" +
+	"\bendpoint\x18\x02 \x01(\tR\bendpoint\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x04 \x01(\tR\venvironment\"\xb5\x03\n" +
 	"\x12CreateGrantRequest\x12+\n" +

@@ -33,24 +33,24 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// WebhookServiceCreateWebhookEndpointProcedure is the fully-qualified name of the WebhookService's
-	// CreateWebhookEndpoint RPC.
-	WebhookServiceCreateWebhookEndpointProcedure = "/toshi.workspace.v1.WebhookService/CreateWebhookEndpoint"
-	// WebhookServiceGetWebhookEndpointProcedure is the fully-qualified name of the WebhookService's
-	// GetWebhookEndpoint RPC.
-	WebhookServiceGetWebhookEndpointProcedure = "/toshi.workspace.v1.WebhookService/GetWebhookEndpoint"
-	// WebhookServiceListWebhookEndpointsProcedure is the fully-qualified name of the WebhookService's
-	// ListWebhookEndpoints RPC.
-	WebhookServiceListWebhookEndpointsProcedure = "/toshi.workspace.v1.WebhookService/ListWebhookEndpoints"
-	// WebhookServiceUpdateWebhookEndpointProcedure is the fully-qualified name of the WebhookService's
-	// UpdateWebhookEndpoint RPC.
-	WebhookServiceUpdateWebhookEndpointProcedure = "/toshi.workspace.v1.WebhookService/UpdateWebhookEndpoint"
-	// WebhookServiceDeleteWebhookEndpointProcedure is the fully-qualified name of the WebhookService's
-	// DeleteWebhookEndpoint RPC.
-	WebhookServiceDeleteWebhookEndpointProcedure = "/toshi.workspace.v1.WebhookService/DeleteWebhookEndpoint"
-	// WebhookServiceRotateWebhookEndpointSecretProcedure is the fully-qualified name of the
-	// WebhookService's RotateWebhookEndpointSecret RPC.
-	WebhookServiceRotateWebhookEndpointSecretProcedure = "/toshi.workspace.v1.WebhookService/RotateWebhookEndpointSecret"
+	// WebhookServiceCreateWebhookProcedure is the fully-qualified name of the WebhookService's
+	// CreateWebhook RPC.
+	WebhookServiceCreateWebhookProcedure = "/toshi.workspace.v1.WebhookService/CreateWebhook"
+	// WebhookServiceGetWebhookProcedure is the fully-qualified name of the WebhookService's GetWebhook
+	// RPC.
+	WebhookServiceGetWebhookProcedure = "/toshi.workspace.v1.WebhookService/GetWebhook"
+	// WebhookServiceListWebhooksProcedure is the fully-qualified name of the WebhookService's
+	// ListWebhooks RPC.
+	WebhookServiceListWebhooksProcedure = "/toshi.workspace.v1.WebhookService/ListWebhooks"
+	// WebhookServiceUpdateWebhookProcedure is the fully-qualified name of the WebhookService's
+	// UpdateWebhook RPC.
+	WebhookServiceUpdateWebhookProcedure = "/toshi.workspace.v1.WebhookService/UpdateWebhook"
+	// WebhookServiceDeleteWebhookProcedure is the fully-qualified name of the WebhookService's
+	// DeleteWebhook RPC.
+	WebhookServiceDeleteWebhookProcedure = "/toshi.workspace.v1.WebhookService/DeleteWebhook"
+	// WebhookServiceRotateWebhookSecretProcedure is the fully-qualified name of the WebhookService's
+	// RotateWebhookSecret RPC.
+	WebhookServiceRotateWebhookSecretProcedure = "/toshi.workspace.v1.WebhookService/RotateWebhookSecret"
 	// WebhookServiceListWebhookDeliveriesProcedure is the fully-qualified name of the WebhookService's
 	// ListWebhookDeliveries RPC.
 	WebhookServiceListWebhookDeliveriesProcedure = "/toshi.workspace.v1.WebhookService/ListWebhookDeliveries"
@@ -61,52 +61,52 @@ const (
 
 // WebhookServiceClient is a client for the toshi.workspace.v1.WebhookService service.
 type WebhookServiceClient interface {
-	// CreateWebhookEndpoint makes an endpoint and its signing secret. The
-	// endpoint is owed the events written after it, from its cursor on. The
+	// CreateWebhook makes a webhook and its signing secret. The
+	// webhook is owed the events written after it, from its cursor on. The
 	// control plane must hold a keyring to seal the secret; without one the
 	// call fails with FAILED_PRECONDITION.
-	CreateWebhookEndpoint(context.Context, *connect.Request[workspacev1.CreateWebhookEndpointRequest]) (*connect.Response[workspacev1.CreateWebhookEndpointResponse], error)
-	// GetWebhookEndpoint returns one endpoint. An unknown ID fails with
+	CreateWebhook(context.Context, *connect.Request[workspacev1.CreateWebhookRequest]) (*connect.Response[workspacev1.CreateWebhookResponse], error)
+	// GetWebhook returns one webhook. An unknown ID fails with
 	// NOT_FOUND.
-	GetWebhookEndpoint(context.Context, *connect.Request[workspacev1.GetWebhookEndpointRequest]) (*connect.Response[workspacev1.GetWebhookEndpointResponse], error)
-	// ListWebhookEndpoints returns the workspace's endpoints in ID order.
+	GetWebhook(context.Context, *connect.Request[workspacev1.GetWebhookRequest]) (*connect.Response[workspacev1.GetWebhookResponse], error)
+	// ListWebhooks returns the workspace's webhooks in ID order.
 	//
-	// A page holds 100 endpoints when page_size is zero, and 1000 at most.
-	ListWebhookEndpoints(context.Context, *connect.Request[workspacev1.ListWebhookEndpointsRequest]) (*connect.Response[workspacev1.ListWebhookEndpointsResponse], error)
-	// UpdateWebhookEndpoint sets the fields update_mask names: url, events,
+	// A page holds 100 webhooks when page_size is zero, and 1000 at most.
+	ListWebhooks(context.Context, *connect.Request[workspacev1.ListWebhooksRequest]) (*connect.Response[workspacev1.ListWebhooksResponse], error)
+	// UpdateWebhook sets the fields update_mask names: url, events,
 	// project, enabled, cursor. A cursor must be at or after the retention boundary's
 	// sequence and at or before the workspace's newest event sequence.
-	// A disabled endpoint is owed no new event and no try starts;
+	// A disabled webhook is owed no new event and no try starts;
 	// the events written before the disable stay owed, enabling it again
 	// owes none written while it was disabled, and a try already under way
 	// finishes within its claim, which holds a delivery for one minute.
-	UpdateWebhookEndpoint(context.Context, *connect.Request[workspacev1.UpdateWebhookEndpointRequest]) (*connect.Response[workspacev1.UpdateWebhookEndpointResponse], error)
-	// DeleteWebhookEndpoint deletes an endpoint and its deliveries.
-	DeleteWebhookEndpoint(context.Context, *connect.Request[workspacev1.DeleteWebhookEndpointRequest]) (*connect.Response[workspacev1.DeleteWebhookEndpointResponse], error)
-	// RotateWebhookEndpointSecret makes the endpoint a new signing secret and
+	UpdateWebhook(context.Context, *connect.Request[workspacev1.UpdateWebhookRequest]) (*connect.Response[workspacev1.UpdateWebhookResponse], error)
+	// DeleteWebhook deletes a webhook and its deliveries.
+	DeleteWebhook(context.Context, *connect.Request[workspacev1.DeleteWebhookRequest]) (*connect.Response[workspacev1.DeleteWebhookResponse], error)
+	// RotateWebhookSecret makes the webhook a new signing secret and
 	// returns it. For the next 24 hours each try that starts after the
 	// rotation is signed with the new secret and the one it replaced, so a
 	// receiver can move to the new one in that window; after it, with the
 	// new one only. A try under way when the rotation is made is signed with
 	// the replaced secret alone. A rotation while the
 	// previous secret's window is still open fails with FAILED_PRECONDITION.
-	RotateWebhookEndpointSecret(context.Context, *connect.Request[workspacev1.RotateWebhookEndpointSecretRequest]) (*connect.Response[workspacev1.RotateWebhookEndpointSecretResponse], error)
-	// ListWebhookDeliveries returns an endpoint's deliveries in event order,
+	RotateWebhookSecret(context.Context, *connect.Request[workspacev1.RotateWebhookSecretRequest]) (*connect.Response[workspacev1.RotateWebhookSecretResponse], error)
+	// ListWebhookDeliveries returns a webhook's deliveries in event order,
 	// a page at a time.
 	//
 	// A page holds 50 deliveries when page_size is zero, and 500 at most.
 	ListWebhookDeliveries(context.Context, *connect.Request[workspacev1.ListWebhookDeliveriesRequest]) (*connect.Response[workspacev1.ListWebhookDeliveriesResponse], error)
-	// ReplayWebhookEvents makes the endpoint owed again the events after
+	// ReplayWebhookEvents makes the webhook owed again the events after
 	// cursor that its filter keeps now, up to its own cursor, at most 500 per
 	// call. That includes events delivered or given up before, events written
 	// while it was disabled and events written before it was made. Each is
 	// due now and tried on the retry schedule from its first try; an event
-	// still pending at the endpoint is left as it is. A workload's events stay
-	// one at a time at the endpoint: an older event sent again is not due
+	// still pending at the webhook is left as it is. A workload's events stay
+	// one at a time at the webhook: an older event sent again is not due
 	// before the latest next try among the newer ones that have been tried
 	// and are still pending, the end of that try under way or backoff, and
 	// then goes before it; it does not wait for the newer ones to be
-	// delivered. A disabled endpoint fails with FAILED_PRECONDITION.
+	// delivered. A disabled webhook fails with FAILED_PRECONDITION.
 	ReplayWebhookEvents(context.Context, *connect.Request[workspacev1.ReplayWebhookEventsRequest]) (*connect.Response[workspacev1.ReplayWebhookEventsResponse], error)
 }
 
@@ -121,40 +121,40 @@ func NewWebhookServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 	baseURL = strings.TrimRight(baseURL, "/")
 	webhookServiceMethods := workspacev1.File_toshi_workspace_v1_webhook_proto.Services().ByName("WebhookService").Methods()
 	return &webhookServiceClient{
-		createWebhookEndpoint: connect.NewClient[workspacev1.CreateWebhookEndpointRequest, workspacev1.CreateWebhookEndpointResponse](
+		createWebhook: connect.NewClient[workspacev1.CreateWebhookRequest, workspacev1.CreateWebhookResponse](
 			httpClient,
-			baseURL+WebhookServiceCreateWebhookEndpointProcedure,
-			connect.WithSchema(webhookServiceMethods.ByName("CreateWebhookEndpoint")),
+			baseURL+WebhookServiceCreateWebhookProcedure,
+			connect.WithSchema(webhookServiceMethods.ByName("CreateWebhook")),
 			connect.WithClientOptions(opts...),
 		),
-		getWebhookEndpoint: connect.NewClient[workspacev1.GetWebhookEndpointRequest, workspacev1.GetWebhookEndpointResponse](
+		getWebhook: connect.NewClient[workspacev1.GetWebhookRequest, workspacev1.GetWebhookResponse](
 			httpClient,
-			baseURL+WebhookServiceGetWebhookEndpointProcedure,
-			connect.WithSchema(webhookServiceMethods.ByName("GetWebhookEndpoint")),
+			baseURL+WebhookServiceGetWebhookProcedure,
+			connect.WithSchema(webhookServiceMethods.ByName("GetWebhook")),
 			connect.WithClientOptions(opts...),
 		),
-		listWebhookEndpoints: connect.NewClient[workspacev1.ListWebhookEndpointsRequest, workspacev1.ListWebhookEndpointsResponse](
+		listWebhooks: connect.NewClient[workspacev1.ListWebhooksRequest, workspacev1.ListWebhooksResponse](
 			httpClient,
-			baseURL+WebhookServiceListWebhookEndpointsProcedure,
-			connect.WithSchema(webhookServiceMethods.ByName("ListWebhookEndpoints")),
+			baseURL+WebhookServiceListWebhooksProcedure,
+			connect.WithSchema(webhookServiceMethods.ByName("ListWebhooks")),
 			connect.WithClientOptions(opts...),
 		),
-		updateWebhookEndpoint: connect.NewClient[workspacev1.UpdateWebhookEndpointRequest, workspacev1.UpdateWebhookEndpointResponse](
+		updateWebhook: connect.NewClient[workspacev1.UpdateWebhookRequest, workspacev1.UpdateWebhookResponse](
 			httpClient,
-			baseURL+WebhookServiceUpdateWebhookEndpointProcedure,
-			connect.WithSchema(webhookServiceMethods.ByName("UpdateWebhookEndpoint")),
+			baseURL+WebhookServiceUpdateWebhookProcedure,
+			connect.WithSchema(webhookServiceMethods.ByName("UpdateWebhook")),
 			connect.WithClientOptions(opts...),
 		),
-		deleteWebhookEndpoint: connect.NewClient[workspacev1.DeleteWebhookEndpointRequest, workspacev1.DeleteWebhookEndpointResponse](
+		deleteWebhook: connect.NewClient[workspacev1.DeleteWebhookRequest, workspacev1.DeleteWebhookResponse](
 			httpClient,
-			baseURL+WebhookServiceDeleteWebhookEndpointProcedure,
-			connect.WithSchema(webhookServiceMethods.ByName("DeleteWebhookEndpoint")),
+			baseURL+WebhookServiceDeleteWebhookProcedure,
+			connect.WithSchema(webhookServiceMethods.ByName("DeleteWebhook")),
 			connect.WithClientOptions(opts...),
 		),
-		rotateWebhookEndpointSecret: connect.NewClient[workspacev1.RotateWebhookEndpointSecretRequest, workspacev1.RotateWebhookEndpointSecretResponse](
+		rotateWebhookSecret: connect.NewClient[workspacev1.RotateWebhookSecretRequest, workspacev1.RotateWebhookSecretResponse](
 			httpClient,
-			baseURL+WebhookServiceRotateWebhookEndpointSecretProcedure,
-			connect.WithSchema(webhookServiceMethods.ByName("RotateWebhookEndpointSecret")),
+			baseURL+WebhookServiceRotateWebhookSecretProcedure,
+			connect.WithSchema(webhookServiceMethods.ByName("RotateWebhookSecret")),
 			connect.WithClientOptions(opts...),
 		),
 		listWebhookDeliveries: connect.NewClient[workspacev1.ListWebhookDeliveriesRequest, workspacev1.ListWebhookDeliveriesResponse](
@@ -174,44 +174,44 @@ func NewWebhookServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // webhookServiceClient implements WebhookServiceClient.
 type webhookServiceClient struct {
-	createWebhookEndpoint       *connect.Client[workspacev1.CreateWebhookEndpointRequest, workspacev1.CreateWebhookEndpointResponse]
-	getWebhookEndpoint          *connect.Client[workspacev1.GetWebhookEndpointRequest, workspacev1.GetWebhookEndpointResponse]
-	listWebhookEndpoints        *connect.Client[workspacev1.ListWebhookEndpointsRequest, workspacev1.ListWebhookEndpointsResponse]
-	updateWebhookEndpoint       *connect.Client[workspacev1.UpdateWebhookEndpointRequest, workspacev1.UpdateWebhookEndpointResponse]
-	deleteWebhookEndpoint       *connect.Client[workspacev1.DeleteWebhookEndpointRequest, workspacev1.DeleteWebhookEndpointResponse]
-	rotateWebhookEndpointSecret *connect.Client[workspacev1.RotateWebhookEndpointSecretRequest, workspacev1.RotateWebhookEndpointSecretResponse]
-	listWebhookDeliveries       *connect.Client[workspacev1.ListWebhookDeliveriesRequest, workspacev1.ListWebhookDeliveriesResponse]
-	replayWebhookEvents         *connect.Client[workspacev1.ReplayWebhookEventsRequest, workspacev1.ReplayWebhookEventsResponse]
+	createWebhook         *connect.Client[workspacev1.CreateWebhookRequest, workspacev1.CreateWebhookResponse]
+	getWebhook            *connect.Client[workspacev1.GetWebhookRequest, workspacev1.GetWebhookResponse]
+	listWebhooks          *connect.Client[workspacev1.ListWebhooksRequest, workspacev1.ListWebhooksResponse]
+	updateWebhook         *connect.Client[workspacev1.UpdateWebhookRequest, workspacev1.UpdateWebhookResponse]
+	deleteWebhook         *connect.Client[workspacev1.DeleteWebhookRequest, workspacev1.DeleteWebhookResponse]
+	rotateWebhookSecret   *connect.Client[workspacev1.RotateWebhookSecretRequest, workspacev1.RotateWebhookSecretResponse]
+	listWebhookDeliveries *connect.Client[workspacev1.ListWebhookDeliveriesRequest, workspacev1.ListWebhookDeliveriesResponse]
+	replayWebhookEvents   *connect.Client[workspacev1.ReplayWebhookEventsRequest, workspacev1.ReplayWebhookEventsResponse]
 }
 
-// CreateWebhookEndpoint calls toshi.workspace.v1.WebhookService.CreateWebhookEndpoint.
-func (c *webhookServiceClient) CreateWebhookEndpoint(ctx context.Context, req *connect.Request[workspacev1.CreateWebhookEndpointRequest]) (*connect.Response[workspacev1.CreateWebhookEndpointResponse], error) {
-	return c.createWebhookEndpoint.CallUnary(ctx, req)
+// CreateWebhook calls toshi.workspace.v1.WebhookService.CreateWebhook.
+func (c *webhookServiceClient) CreateWebhook(ctx context.Context, req *connect.Request[workspacev1.CreateWebhookRequest]) (*connect.Response[workspacev1.CreateWebhookResponse], error) {
+	return c.createWebhook.CallUnary(ctx, req)
 }
 
-// GetWebhookEndpoint calls toshi.workspace.v1.WebhookService.GetWebhookEndpoint.
-func (c *webhookServiceClient) GetWebhookEndpoint(ctx context.Context, req *connect.Request[workspacev1.GetWebhookEndpointRequest]) (*connect.Response[workspacev1.GetWebhookEndpointResponse], error) {
-	return c.getWebhookEndpoint.CallUnary(ctx, req)
+// GetWebhook calls toshi.workspace.v1.WebhookService.GetWebhook.
+func (c *webhookServiceClient) GetWebhook(ctx context.Context, req *connect.Request[workspacev1.GetWebhookRequest]) (*connect.Response[workspacev1.GetWebhookResponse], error) {
+	return c.getWebhook.CallUnary(ctx, req)
 }
 
-// ListWebhookEndpoints calls toshi.workspace.v1.WebhookService.ListWebhookEndpoints.
-func (c *webhookServiceClient) ListWebhookEndpoints(ctx context.Context, req *connect.Request[workspacev1.ListWebhookEndpointsRequest]) (*connect.Response[workspacev1.ListWebhookEndpointsResponse], error) {
-	return c.listWebhookEndpoints.CallUnary(ctx, req)
+// ListWebhooks calls toshi.workspace.v1.WebhookService.ListWebhooks.
+func (c *webhookServiceClient) ListWebhooks(ctx context.Context, req *connect.Request[workspacev1.ListWebhooksRequest]) (*connect.Response[workspacev1.ListWebhooksResponse], error) {
+	return c.listWebhooks.CallUnary(ctx, req)
 }
 
-// UpdateWebhookEndpoint calls toshi.workspace.v1.WebhookService.UpdateWebhookEndpoint.
-func (c *webhookServiceClient) UpdateWebhookEndpoint(ctx context.Context, req *connect.Request[workspacev1.UpdateWebhookEndpointRequest]) (*connect.Response[workspacev1.UpdateWebhookEndpointResponse], error) {
-	return c.updateWebhookEndpoint.CallUnary(ctx, req)
+// UpdateWebhook calls toshi.workspace.v1.WebhookService.UpdateWebhook.
+func (c *webhookServiceClient) UpdateWebhook(ctx context.Context, req *connect.Request[workspacev1.UpdateWebhookRequest]) (*connect.Response[workspacev1.UpdateWebhookResponse], error) {
+	return c.updateWebhook.CallUnary(ctx, req)
 }
 
-// DeleteWebhookEndpoint calls toshi.workspace.v1.WebhookService.DeleteWebhookEndpoint.
-func (c *webhookServiceClient) DeleteWebhookEndpoint(ctx context.Context, req *connect.Request[workspacev1.DeleteWebhookEndpointRequest]) (*connect.Response[workspacev1.DeleteWebhookEndpointResponse], error) {
-	return c.deleteWebhookEndpoint.CallUnary(ctx, req)
+// DeleteWebhook calls toshi.workspace.v1.WebhookService.DeleteWebhook.
+func (c *webhookServiceClient) DeleteWebhook(ctx context.Context, req *connect.Request[workspacev1.DeleteWebhookRequest]) (*connect.Response[workspacev1.DeleteWebhookResponse], error) {
+	return c.deleteWebhook.CallUnary(ctx, req)
 }
 
-// RotateWebhookEndpointSecret calls toshi.workspace.v1.WebhookService.RotateWebhookEndpointSecret.
-func (c *webhookServiceClient) RotateWebhookEndpointSecret(ctx context.Context, req *connect.Request[workspacev1.RotateWebhookEndpointSecretRequest]) (*connect.Response[workspacev1.RotateWebhookEndpointSecretResponse], error) {
-	return c.rotateWebhookEndpointSecret.CallUnary(ctx, req)
+// RotateWebhookSecret calls toshi.workspace.v1.WebhookService.RotateWebhookSecret.
+func (c *webhookServiceClient) RotateWebhookSecret(ctx context.Context, req *connect.Request[workspacev1.RotateWebhookSecretRequest]) (*connect.Response[workspacev1.RotateWebhookSecretResponse], error) {
+	return c.rotateWebhookSecret.CallUnary(ctx, req)
 }
 
 // ListWebhookDeliveries calls toshi.workspace.v1.WebhookService.ListWebhookDeliveries.
@@ -226,52 +226,52 @@ func (c *webhookServiceClient) ReplayWebhookEvents(ctx context.Context, req *con
 
 // WebhookServiceHandler is an implementation of the toshi.workspace.v1.WebhookService service.
 type WebhookServiceHandler interface {
-	// CreateWebhookEndpoint makes an endpoint and its signing secret. The
-	// endpoint is owed the events written after it, from its cursor on. The
+	// CreateWebhook makes a webhook and its signing secret. The
+	// webhook is owed the events written after it, from its cursor on. The
 	// control plane must hold a keyring to seal the secret; without one the
 	// call fails with FAILED_PRECONDITION.
-	CreateWebhookEndpoint(context.Context, *connect.Request[workspacev1.CreateWebhookEndpointRequest]) (*connect.Response[workspacev1.CreateWebhookEndpointResponse], error)
-	// GetWebhookEndpoint returns one endpoint. An unknown ID fails with
+	CreateWebhook(context.Context, *connect.Request[workspacev1.CreateWebhookRequest]) (*connect.Response[workspacev1.CreateWebhookResponse], error)
+	// GetWebhook returns one webhook. An unknown ID fails with
 	// NOT_FOUND.
-	GetWebhookEndpoint(context.Context, *connect.Request[workspacev1.GetWebhookEndpointRequest]) (*connect.Response[workspacev1.GetWebhookEndpointResponse], error)
-	// ListWebhookEndpoints returns the workspace's endpoints in ID order.
+	GetWebhook(context.Context, *connect.Request[workspacev1.GetWebhookRequest]) (*connect.Response[workspacev1.GetWebhookResponse], error)
+	// ListWebhooks returns the workspace's webhooks in ID order.
 	//
-	// A page holds 100 endpoints when page_size is zero, and 1000 at most.
-	ListWebhookEndpoints(context.Context, *connect.Request[workspacev1.ListWebhookEndpointsRequest]) (*connect.Response[workspacev1.ListWebhookEndpointsResponse], error)
-	// UpdateWebhookEndpoint sets the fields update_mask names: url, events,
+	// A page holds 100 webhooks when page_size is zero, and 1000 at most.
+	ListWebhooks(context.Context, *connect.Request[workspacev1.ListWebhooksRequest]) (*connect.Response[workspacev1.ListWebhooksResponse], error)
+	// UpdateWebhook sets the fields update_mask names: url, events,
 	// project, enabled, cursor. A cursor must be at or after the retention boundary's
 	// sequence and at or before the workspace's newest event sequence.
-	// A disabled endpoint is owed no new event and no try starts;
+	// A disabled webhook is owed no new event and no try starts;
 	// the events written before the disable stay owed, enabling it again
 	// owes none written while it was disabled, and a try already under way
 	// finishes within its claim, which holds a delivery for one minute.
-	UpdateWebhookEndpoint(context.Context, *connect.Request[workspacev1.UpdateWebhookEndpointRequest]) (*connect.Response[workspacev1.UpdateWebhookEndpointResponse], error)
-	// DeleteWebhookEndpoint deletes an endpoint and its deliveries.
-	DeleteWebhookEndpoint(context.Context, *connect.Request[workspacev1.DeleteWebhookEndpointRequest]) (*connect.Response[workspacev1.DeleteWebhookEndpointResponse], error)
-	// RotateWebhookEndpointSecret makes the endpoint a new signing secret and
+	UpdateWebhook(context.Context, *connect.Request[workspacev1.UpdateWebhookRequest]) (*connect.Response[workspacev1.UpdateWebhookResponse], error)
+	// DeleteWebhook deletes a webhook and its deliveries.
+	DeleteWebhook(context.Context, *connect.Request[workspacev1.DeleteWebhookRequest]) (*connect.Response[workspacev1.DeleteWebhookResponse], error)
+	// RotateWebhookSecret makes the webhook a new signing secret and
 	// returns it. For the next 24 hours each try that starts after the
 	// rotation is signed with the new secret and the one it replaced, so a
 	// receiver can move to the new one in that window; after it, with the
 	// new one only. A try under way when the rotation is made is signed with
 	// the replaced secret alone. A rotation while the
 	// previous secret's window is still open fails with FAILED_PRECONDITION.
-	RotateWebhookEndpointSecret(context.Context, *connect.Request[workspacev1.RotateWebhookEndpointSecretRequest]) (*connect.Response[workspacev1.RotateWebhookEndpointSecretResponse], error)
-	// ListWebhookDeliveries returns an endpoint's deliveries in event order,
+	RotateWebhookSecret(context.Context, *connect.Request[workspacev1.RotateWebhookSecretRequest]) (*connect.Response[workspacev1.RotateWebhookSecretResponse], error)
+	// ListWebhookDeliveries returns a webhook's deliveries in event order,
 	// a page at a time.
 	//
 	// A page holds 50 deliveries when page_size is zero, and 500 at most.
 	ListWebhookDeliveries(context.Context, *connect.Request[workspacev1.ListWebhookDeliveriesRequest]) (*connect.Response[workspacev1.ListWebhookDeliveriesResponse], error)
-	// ReplayWebhookEvents makes the endpoint owed again the events after
+	// ReplayWebhookEvents makes the webhook owed again the events after
 	// cursor that its filter keeps now, up to its own cursor, at most 500 per
 	// call. That includes events delivered or given up before, events written
 	// while it was disabled and events written before it was made. Each is
 	// due now and tried on the retry schedule from its first try; an event
-	// still pending at the endpoint is left as it is. A workload's events stay
-	// one at a time at the endpoint: an older event sent again is not due
+	// still pending at the webhook is left as it is. A workload's events stay
+	// one at a time at the webhook: an older event sent again is not due
 	// before the latest next try among the newer ones that have been tried
 	// and are still pending, the end of that try under way or backoff, and
 	// then goes before it; it does not wait for the newer ones to be
-	// delivered. A disabled endpoint fails with FAILED_PRECONDITION.
+	// delivered. A disabled webhook fails with FAILED_PRECONDITION.
 	ReplayWebhookEvents(context.Context, *connect.Request[workspacev1.ReplayWebhookEventsRequest]) (*connect.Response[workspacev1.ReplayWebhookEventsResponse], error)
 }
 
@@ -282,40 +282,40 @@ type WebhookServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewWebhookServiceHandler(svc WebhookServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	webhookServiceMethods := workspacev1.File_toshi_workspace_v1_webhook_proto.Services().ByName("WebhookService").Methods()
-	webhookServiceCreateWebhookEndpointHandler := connect.NewUnaryHandler(
-		WebhookServiceCreateWebhookEndpointProcedure,
-		svc.CreateWebhookEndpoint,
-		connect.WithSchema(webhookServiceMethods.ByName("CreateWebhookEndpoint")),
+	webhookServiceCreateWebhookHandler := connect.NewUnaryHandler(
+		WebhookServiceCreateWebhookProcedure,
+		svc.CreateWebhook,
+		connect.WithSchema(webhookServiceMethods.ByName("CreateWebhook")),
 		connect.WithHandlerOptions(opts...),
 	)
-	webhookServiceGetWebhookEndpointHandler := connect.NewUnaryHandler(
-		WebhookServiceGetWebhookEndpointProcedure,
-		svc.GetWebhookEndpoint,
-		connect.WithSchema(webhookServiceMethods.ByName("GetWebhookEndpoint")),
+	webhookServiceGetWebhookHandler := connect.NewUnaryHandler(
+		WebhookServiceGetWebhookProcedure,
+		svc.GetWebhook,
+		connect.WithSchema(webhookServiceMethods.ByName("GetWebhook")),
 		connect.WithHandlerOptions(opts...),
 	)
-	webhookServiceListWebhookEndpointsHandler := connect.NewUnaryHandler(
-		WebhookServiceListWebhookEndpointsProcedure,
-		svc.ListWebhookEndpoints,
-		connect.WithSchema(webhookServiceMethods.ByName("ListWebhookEndpoints")),
+	webhookServiceListWebhooksHandler := connect.NewUnaryHandler(
+		WebhookServiceListWebhooksProcedure,
+		svc.ListWebhooks,
+		connect.WithSchema(webhookServiceMethods.ByName("ListWebhooks")),
 		connect.WithHandlerOptions(opts...),
 	)
-	webhookServiceUpdateWebhookEndpointHandler := connect.NewUnaryHandler(
-		WebhookServiceUpdateWebhookEndpointProcedure,
-		svc.UpdateWebhookEndpoint,
-		connect.WithSchema(webhookServiceMethods.ByName("UpdateWebhookEndpoint")),
+	webhookServiceUpdateWebhookHandler := connect.NewUnaryHandler(
+		WebhookServiceUpdateWebhookProcedure,
+		svc.UpdateWebhook,
+		connect.WithSchema(webhookServiceMethods.ByName("UpdateWebhook")),
 		connect.WithHandlerOptions(opts...),
 	)
-	webhookServiceDeleteWebhookEndpointHandler := connect.NewUnaryHandler(
-		WebhookServiceDeleteWebhookEndpointProcedure,
-		svc.DeleteWebhookEndpoint,
-		connect.WithSchema(webhookServiceMethods.ByName("DeleteWebhookEndpoint")),
+	webhookServiceDeleteWebhookHandler := connect.NewUnaryHandler(
+		WebhookServiceDeleteWebhookProcedure,
+		svc.DeleteWebhook,
+		connect.WithSchema(webhookServiceMethods.ByName("DeleteWebhook")),
 		connect.WithHandlerOptions(opts...),
 	)
-	webhookServiceRotateWebhookEndpointSecretHandler := connect.NewUnaryHandler(
-		WebhookServiceRotateWebhookEndpointSecretProcedure,
-		svc.RotateWebhookEndpointSecret,
-		connect.WithSchema(webhookServiceMethods.ByName("RotateWebhookEndpointSecret")),
+	webhookServiceRotateWebhookSecretHandler := connect.NewUnaryHandler(
+		WebhookServiceRotateWebhookSecretProcedure,
+		svc.RotateWebhookSecret,
+		connect.WithSchema(webhookServiceMethods.ByName("RotateWebhookSecret")),
 		connect.WithHandlerOptions(opts...),
 	)
 	webhookServiceListWebhookDeliveriesHandler := connect.NewUnaryHandler(
@@ -332,18 +332,18 @@ func NewWebhookServiceHandler(svc WebhookServiceHandler, opts ...connect.Handler
 	)
 	return "/toshi.workspace.v1.WebhookService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case WebhookServiceCreateWebhookEndpointProcedure:
-			webhookServiceCreateWebhookEndpointHandler.ServeHTTP(w, r)
-		case WebhookServiceGetWebhookEndpointProcedure:
-			webhookServiceGetWebhookEndpointHandler.ServeHTTP(w, r)
-		case WebhookServiceListWebhookEndpointsProcedure:
-			webhookServiceListWebhookEndpointsHandler.ServeHTTP(w, r)
-		case WebhookServiceUpdateWebhookEndpointProcedure:
-			webhookServiceUpdateWebhookEndpointHandler.ServeHTTP(w, r)
-		case WebhookServiceDeleteWebhookEndpointProcedure:
-			webhookServiceDeleteWebhookEndpointHandler.ServeHTTP(w, r)
-		case WebhookServiceRotateWebhookEndpointSecretProcedure:
-			webhookServiceRotateWebhookEndpointSecretHandler.ServeHTTP(w, r)
+		case WebhookServiceCreateWebhookProcedure:
+			webhookServiceCreateWebhookHandler.ServeHTTP(w, r)
+		case WebhookServiceGetWebhookProcedure:
+			webhookServiceGetWebhookHandler.ServeHTTP(w, r)
+		case WebhookServiceListWebhooksProcedure:
+			webhookServiceListWebhooksHandler.ServeHTTP(w, r)
+		case WebhookServiceUpdateWebhookProcedure:
+			webhookServiceUpdateWebhookHandler.ServeHTTP(w, r)
+		case WebhookServiceDeleteWebhookProcedure:
+			webhookServiceDeleteWebhookHandler.ServeHTTP(w, r)
+		case WebhookServiceRotateWebhookSecretProcedure:
+			webhookServiceRotateWebhookSecretHandler.ServeHTTP(w, r)
 		case WebhookServiceListWebhookDeliveriesProcedure:
 			webhookServiceListWebhookDeliveriesHandler.ServeHTTP(w, r)
 		case WebhookServiceReplayWebhookEventsProcedure:
@@ -357,28 +357,28 @@ func NewWebhookServiceHandler(svc WebhookServiceHandler, opts ...connect.Handler
 // UnimplementedWebhookServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedWebhookServiceHandler struct{}
 
-func (UnimplementedWebhookServiceHandler) CreateWebhookEndpoint(context.Context, *connect.Request[workspacev1.CreateWebhookEndpointRequest]) (*connect.Response[workspacev1.CreateWebhookEndpointResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.CreateWebhookEndpoint is not implemented"))
+func (UnimplementedWebhookServiceHandler) CreateWebhook(context.Context, *connect.Request[workspacev1.CreateWebhookRequest]) (*connect.Response[workspacev1.CreateWebhookResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.CreateWebhook is not implemented"))
 }
 
-func (UnimplementedWebhookServiceHandler) GetWebhookEndpoint(context.Context, *connect.Request[workspacev1.GetWebhookEndpointRequest]) (*connect.Response[workspacev1.GetWebhookEndpointResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.GetWebhookEndpoint is not implemented"))
+func (UnimplementedWebhookServiceHandler) GetWebhook(context.Context, *connect.Request[workspacev1.GetWebhookRequest]) (*connect.Response[workspacev1.GetWebhookResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.GetWebhook is not implemented"))
 }
 
-func (UnimplementedWebhookServiceHandler) ListWebhookEndpoints(context.Context, *connect.Request[workspacev1.ListWebhookEndpointsRequest]) (*connect.Response[workspacev1.ListWebhookEndpointsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.ListWebhookEndpoints is not implemented"))
+func (UnimplementedWebhookServiceHandler) ListWebhooks(context.Context, *connect.Request[workspacev1.ListWebhooksRequest]) (*connect.Response[workspacev1.ListWebhooksResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.ListWebhooks is not implemented"))
 }
 
-func (UnimplementedWebhookServiceHandler) UpdateWebhookEndpoint(context.Context, *connect.Request[workspacev1.UpdateWebhookEndpointRequest]) (*connect.Response[workspacev1.UpdateWebhookEndpointResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.UpdateWebhookEndpoint is not implemented"))
+func (UnimplementedWebhookServiceHandler) UpdateWebhook(context.Context, *connect.Request[workspacev1.UpdateWebhookRequest]) (*connect.Response[workspacev1.UpdateWebhookResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.UpdateWebhook is not implemented"))
 }
 
-func (UnimplementedWebhookServiceHandler) DeleteWebhookEndpoint(context.Context, *connect.Request[workspacev1.DeleteWebhookEndpointRequest]) (*connect.Response[workspacev1.DeleteWebhookEndpointResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.DeleteWebhookEndpoint is not implemented"))
+func (UnimplementedWebhookServiceHandler) DeleteWebhook(context.Context, *connect.Request[workspacev1.DeleteWebhookRequest]) (*connect.Response[workspacev1.DeleteWebhookResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.DeleteWebhook is not implemented"))
 }
 
-func (UnimplementedWebhookServiceHandler) RotateWebhookEndpointSecret(context.Context, *connect.Request[workspacev1.RotateWebhookEndpointSecretRequest]) (*connect.Response[workspacev1.RotateWebhookEndpointSecretResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.RotateWebhookEndpointSecret is not implemented"))
+func (UnimplementedWebhookServiceHandler) RotateWebhookSecret(context.Context, *connect.Request[workspacev1.RotateWebhookSecretRequest]) (*connect.Response[workspacev1.RotateWebhookSecretResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WebhookService.RotateWebhookSecret is not implemented"))
 }
 
 func (UnimplementedWebhookServiceHandler) ListWebhookDeliveries(context.Context, *connect.Request[workspacev1.ListWebhookDeliveriesRequest]) (*connect.Response[workspacev1.ListWebhookDeliveriesResponse], error) {

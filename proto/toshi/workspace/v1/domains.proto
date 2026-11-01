@@ -8,9 +8,9 @@ import "toshi/permission.proto";
 option go_package = "go.toshicloud.io/api/workspacev1";
 
 // DomainService manages customer domains: names a workspace owns at its
-// own DNS provider and points at an http channel of one of its services,
-// beside the channel's provided name. A domain serves once its two
-// records check out, a CNAME record to the channel's provided name and a
+// own DNS provider and points at an http endpoint of one of its services,
+// beside the endpoint's provided name. A domain serves once its two
+// records check out, a CNAME record to the endpoint's provided name and a
 // TXT record carrying the domain's token; its certificate is ordered at
 // its first visit, or by IssueDomain, and renewed with no call. The
 // caller's credential names the workspace; a domain of another workspace
@@ -19,7 +19,7 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // a port other than 443 refuses CreateDomain the same way: a customer
 // domain is a 443 feature.
 service DomainService {
-  // CreateDomain adds a domain for an http channel of a service and
+  // CreateDomain adds a domain for an http endpoint of a service and
   // returns it with the records to set. Only a name below a registered
   // domain is taken (shop.example.com, not example.com), and no wildcard.
   // A name the workspace already has is ALREADY_EXISTS; past the plan's
@@ -108,13 +108,13 @@ message Domain {
   string name = 2;
   // The service's workload id.
   string service_id = 3;
-  // The service's http channel the domain serves, by its name in the
-  // recipe; the front channel's when the create named none.
-  string channel = 4;
+  // The service's http endpoint the domain serves, by its name in the
+  // recipe; the front endpoint's when the create named none.
+  string endpoint = 4;
   DomainState state = 5;
-  // The CNAME record to the channel's provided name, then the TXT record
+  // The CNAME record to the endpoint's provided name, then the TXT record
   // with the domain's token; only the TXT record while the service's
-  // current revision gives the channel no provided name.
+  // current revision gives the endpoint no provided name.
   repeated DomainRecord records = 6;
   // Unset until its records are first checked.
   google.protobuf.Timestamp checked_at = 7;
@@ -137,9 +137,9 @@ message CreateDomainRequest {
   string environment = 2;
   // The service's workload id.
   string service_id = 3;
-  // The http channel the domain serves; empty is the service's front
-  // channel, the one at the service's own name.
-  string channel = 4;
+  // The http endpoint the domain serves; empty is the service's front
+  // endpoint, the one at the service's own name.
+  string endpoint = 4;
   // The domain, in its Unicode or ASCII form.
   string name = 5;
   string request_key = 6;

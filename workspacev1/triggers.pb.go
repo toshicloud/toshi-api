@@ -38,10 +38,10 @@ const (
 	// Deletes the workloads the environment's CREATE triggers of the same
 	// source made for the event's key.
 	TriggerAction_TRIGGER_ACTION_DELETE TriggerAction = 2
-	// Puts the event on the target service's event channel, which wakes the
+	// Puts the event on the target service's event endpoint, which wakes the
 	// service if it sleeps and posts the event to it. The message's source
 	// is the trigger, and the event's id makes its request key, so an event
-	// is put on the channel once.
+	// is put on the endpoint once.
 	TriggerAction_TRIGGER_ACTION_DELIVER TriggerAction = 3
 )
 
@@ -444,7 +444,7 @@ func (x *TriggerTarget) GetPreview() *TriggerPreview {
 	return nil
 }
 
-func (x *TriggerTarget) GetService() *TriggerServiceChannel {
+func (x *TriggerTarget) GetService() *TriggerServiceEndpoint {
 	if x != nil {
 		if x, ok := x.Target.(*TriggerTarget_Service); ok {
 			return x.Service
@@ -466,7 +466,7 @@ type TriggerTarget_Preview struct {
 }
 
 type TriggerTarget_Service struct {
-	Service *TriggerServiceChannel `protobuf:"bytes,3,opt,name=service,proto3,oneof"`
+	Service *TriggerServiceEndpoint `protobuf:"bytes,3,opt,name=service,proto3,oneof"`
 }
 
 func (*TriggerTarget_Sandbox) isTriggerTarget_Target() {}
@@ -475,32 +475,32 @@ func (*TriggerTarget_Preview) isTriggerTarget_Target() {}
 
 func (*TriggerTarget_Service) isTriggerTarget_Target() {}
 
-// TriggerServiceChannel is the event channel a trigger's DELIVER puts its
+// TriggerServiceEndpoint is the event endpoint a trigger's DELIVER puts its
 // events on.
-type TriggerServiceChannel struct {
+type TriggerServiceEndpoint struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// A service of the trigger's project and environment, by name. Required.
 	Service string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
-	// The name of one of the service's event channels. Required.
-	Channel       string `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The name of one of the service's event endpoints. Required.
+	Endpoint      string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TriggerServiceChannel) Reset() {
-	*x = TriggerServiceChannel{}
+func (x *TriggerServiceEndpoint) Reset() {
+	*x = TriggerServiceEndpoint{}
 	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TriggerServiceChannel) String() string {
+func (x *TriggerServiceEndpoint) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TriggerServiceChannel) ProtoMessage() {}
+func (*TriggerServiceEndpoint) ProtoMessage() {}
 
-func (x *TriggerServiceChannel) ProtoReflect() protoreflect.Message {
+func (x *TriggerServiceEndpoint) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_triggers_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -512,21 +512,21 @@ func (x *TriggerServiceChannel) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TriggerServiceChannel.ProtoReflect.Descriptor instead.
-func (*TriggerServiceChannel) Descriptor() ([]byte, []int) {
+// Deprecated: Use TriggerServiceEndpoint.ProtoReflect.Descriptor instead.
+func (*TriggerServiceEndpoint) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_triggers_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *TriggerServiceChannel) GetService() string {
+func (x *TriggerServiceEndpoint) GetService() string {
 	if x != nil {
 		return x.Service
 	}
 	return ""
 }
 
-func (x *TriggerServiceChannel) GetChannel() string {
+func (x *TriggerServiceEndpoint) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -593,10 +593,10 @@ type TriggerSandbox struct {
 	Setup *Command `protobuf:"bytes,4,opt,name=setup,proto3" json:"setup,omitempty"`
 	// Runs after setup and is kept running for the sandbox's life.
 	Process *Command `protobuf:"bytes,5,opt,name=process,proto3" json:"process,omitempty"`
-	// The http channel whose link the trigger reports. Empty reports the
+	// The http endpoint whose link the trigger reports. Empty reports the
 	// first preview the sandbox serves, and a sandbox that serves none is
 	// ready with no link.
-	Channel string `protobuf:"bytes,6,opt,name=channel,proto3" json:"channel,omitempty"`
+	Endpoint string `protobuf:"bytes,6,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The container image the sandbox runs, as a sandbox's spec names it
 	// (`registry/repository:tag` or `@sha256:` digest); a tag is resolved when
 	// each sandbox is made. Empty runs none.
@@ -670,9 +670,9 @@ func (x *TriggerSandbox) GetProcess() *Command {
 	return nil
 }
 
-func (x *TriggerSandbox) GetChannel() string {
+func (x *TriggerSandbox) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -1282,23 +1282,23 @@ const file_toshi_workspace_v1_triggers_proto_rawDesc = "" +
 	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"X\n" +
 	"\rTriggerFilter\x12\"\n" +
 	"\frepositories\x18\x01 \x03(\tR\frepositories\x12#\n" +
-	"\rbase_branches\x18\x02 \x03(\tR\fbaseBranches\"\xe0\x01\n" +
+	"\rbase_branches\x18\x02 \x03(\tR\fbaseBranches\"\xe1\x01\n" +
 	"\rTriggerTarget\x12>\n" +
 	"\asandbox\x18\x01 \x01(\v2\".toshi.workspace.v1.TriggerSandboxH\x00R\asandbox\x12>\n" +
-	"\apreview\x18\x02 \x01(\v2\".toshi.workspace.v1.TriggerPreviewH\x00R\apreview\x12E\n" +
-	"\aservice\x18\x03 \x01(\v2).toshi.workspace.v1.TriggerServiceChannelH\x00R\aserviceB\b\n" +
-	"\x06target\"K\n" +
-	"\x15TriggerServiceChannel\x12\x18\n" +
-	"\aservice\x18\x01 \x01(\tR\aservice\x12\x18\n" +
-	"\achannel\x18\x02 \x01(\tR\achannel\"\x10\n" +
-	"\x0eTriggerPreview\"\xc8\x02\n" +
+	"\apreview\x18\x02 \x01(\v2\".toshi.workspace.v1.TriggerPreviewH\x00R\apreview\x12F\n" +
+	"\aservice\x18\x03 \x01(\v2*.toshi.workspace.v1.TriggerServiceEndpointH\x00R\aserviceB\b\n" +
+	"\x06target\"N\n" +
+	"\x16TriggerServiceEndpoint\x12\x18\n" +
+	"\aservice\x18\x01 \x01(\tR\aservice\x12\x1a\n" +
+	"\bendpoint\x18\x02 \x01(\tR\bendpoint\"\x10\n" +
+	"\x0eTriggerPreview\"\xca\x02\n" +
 	"\x0eTriggerSandbox\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
 	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
 	"\bbindings\x18\x03 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x121\n" +
 	"\x05setup\x18\x04 \x01(\v2\x1b.toshi.workspace.v1.CommandR\x05setup\x125\n" +
-	"\aprocess\x18\x05 \x01(\v2\x1b.toshi.workspace.v1.CommandR\aprocess\x12\x18\n" +
-	"\achannel\x18\x06 \x01(\tR\achannel\x12'\n" +
+	"\aprocess\x18\x05 \x01(\v2\x1b.toshi.workspace.v1.CommandR\aprocess\x12\x1a\n" +
+	"\bendpoint\x18\x06 \x01(\tR\bendpoint\x12'\n" +
 	"\x0fcontainer_image\x18\a \x01(\tR\x0econtainerImage\"\xaa\x01\n" +
 	"\x14CreateTriggerRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
@@ -1373,29 +1373,29 @@ func file_toshi_workspace_v1_triggers_proto_rawDescGZIP() []byte {
 var file_toshi_workspace_v1_triggers_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_toshi_workspace_v1_triggers_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_toshi_workspace_v1_triggers_proto_goTypes = []any{
-	(TriggerAction)(0),            // 0: toshi.workspace.v1.TriggerAction
-	(TriggerForks)(0),             // 1: toshi.workspace.v1.TriggerForks
-	(*Trigger)(nil),               // 2: toshi.workspace.v1.Trigger
-	(*TriggerFilter)(nil),         // 3: toshi.workspace.v1.TriggerFilter
-	(*TriggerTarget)(nil),         // 4: toshi.workspace.v1.TriggerTarget
-	(*TriggerServiceChannel)(nil), // 5: toshi.workspace.v1.TriggerServiceChannel
-	(*TriggerPreview)(nil),        // 6: toshi.workspace.v1.TriggerPreview
-	(*TriggerSandbox)(nil),        // 7: toshi.workspace.v1.TriggerSandbox
-	(*CreateTriggerRequest)(nil),  // 8: toshi.workspace.v1.CreateTriggerRequest
-	(*CreateTriggerResponse)(nil), // 9: toshi.workspace.v1.CreateTriggerResponse
-	(*GetTriggerRequest)(nil),     // 10: toshi.workspace.v1.GetTriggerRequest
-	(*GetTriggerResponse)(nil),    // 11: toshi.workspace.v1.GetTriggerResponse
-	(*ListTriggersRequest)(nil),   // 12: toshi.workspace.v1.ListTriggersRequest
-	(*ListTriggersResponse)(nil),  // 13: toshi.workspace.v1.ListTriggersResponse
-	(*UpdateTriggerRequest)(nil),  // 14: toshi.workspace.v1.UpdateTriggerRequest
-	(*UpdateTriggerResponse)(nil), // 15: toshi.workspace.v1.UpdateTriggerResponse
-	(*DeleteTriggerRequest)(nil),  // 16: toshi.workspace.v1.DeleteTriggerRequest
-	(*DeleteTriggerResponse)(nil), // 17: toshi.workspace.v1.DeleteTriggerResponse
-	(*durationpb.Duration)(nil),   // 18: google.protobuf.Duration
-	(*timestamppb.Timestamp)(nil), // 19: google.protobuf.Timestamp
-	(*Binding)(nil),               // 20: toshi.workspace.v1.Binding
-	(*Command)(nil),               // 21: toshi.workspace.v1.Command
-	(*fieldmaskpb.FieldMask)(nil), // 22: google.protobuf.FieldMask
+	(TriggerAction)(0),             // 0: toshi.workspace.v1.TriggerAction
+	(TriggerForks)(0),              // 1: toshi.workspace.v1.TriggerForks
+	(*Trigger)(nil),                // 2: toshi.workspace.v1.Trigger
+	(*TriggerFilter)(nil),          // 3: toshi.workspace.v1.TriggerFilter
+	(*TriggerTarget)(nil),          // 4: toshi.workspace.v1.TriggerTarget
+	(*TriggerServiceEndpoint)(nil), // 5: toshi.workspace.v1.TriggerServiceEndpoint
+	(*TriggerPreview)(nil),         // 6: toshi.workspace.v1.TriggerPreview
+	(*TriggerSandbox)(nil),         // 7: toshi.workspace.v1.TriggerSandbox
+	(*CreateTriggerRequest)(nil),   // 8: toshi.workspace.v1.CreateTriggerRequest
+	(*CreateTriggerResponse)(nil),  // 9: toshi.workspace.v1.CreateTriggerResponse
+	(*GetTriggerRequest)(nil),      // 10: toshi.workspace.v1.GetTriggerRequest
+	(*GetTriggerResponse)(nil),     // 11: toshi.workspace.v1.GetTriggerResponse
+	(*ListTriggersRequest)(nil),    // 12: toshi.workspace.v1.ListTriggersRequest
+	(*ListTriggersResponse)(nil),   // 13: toshi.workspace.v1.ListTriggersResponse
+	(*UpdateTriggerRequest)(nil),   // 14: toshi.workspace.v1.UpdateTriggerRequest
+	(*UpdateTriggerResponse)(nil),  // 15: toshi.workspace.v1.UpdateTriggerResponse
+	(*DeleteTriggerRequest)(nil),   // 16: toshi.workspace.v1.DeleteTriggerRequest
+	(*DeleteTriggerResponse)(nil),  // 17: toshi.workspace.v1.DeleteTriggerResponse
+	(*durationpb.Duration)(nil),    // 18: google.protobuf.Duration
+	(*timestamppb.Timestamp)(nil),  // 19: google.protobuf.Timestamp
+	(*Binding)(nil),                // 20: toshi.workspace.v1.Binding
+	(*Command)(nil),                // 21: toshi.workspace.v1.Command
+	(*fieldmaskpb.FieldMask)(nil),  // 22: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_triggers_proto_depIdxs = []int32{
 	3,  // 0: toshi.workspace.v1.Trigger.filter:type_name -> toshi.workspace.v1.TriggerFilter
@@ -1407,7 +1407,7 @@ var file_toshi_workspace_v1_triggers_proto_depIdxs = []int32{
 	19, // 6: toshi.workspace.v1.Trigger.updated_at:type_name -> google.protobuf.Timestamp
 	7,  // 7: toshi.workspace.v1.TriggerTarget.sandbox:type_name -> toshi.workspace.v1.TriggerSandbox
 	6,  // 8: toshi.workspace.v1.TriggerTarget.preview:type_name -> toshi.workspace.v1.TriggerPreview
-	5,  // 9: toshi.workspace.v1.TriggerTarget.service:type_name -> toshi.workspace.v1.TriggerServiceChannel
+	5,  // 9: toshi.workspace.v1.TriggerTarget.service:type_name -> toshi.workspace.v1.TriggerServiceEndpoint
 	18, // 10: toshi.workspace.v1.TriggerSandbox.max_duration:type_name -> google.protobuf.Duration
 	20, // 11: toshi.workspace.v1.TriggerSandbox.bindings:type_name -> toshi.workspace.v1.Binding
 	21, // 12: toshi.workspace.v1.TriggerSandbox.setup:type_name -> toshi.workspace.v1.Command

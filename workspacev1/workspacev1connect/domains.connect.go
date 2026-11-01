@@ -54,7 +54,7 @@ const (
 
 // DomainServiceClient is a client for the toshi.workspace.v1.DomainService service.
 type DomainServiceClient interface {
-	// CreateDomain adds a domain for an http channel of a service and
+	// CreateDomain adds a domain for an http endpoint of a service and
 	// returns it with the records to set. Only a name below a registered
 	// domain is taken (shop.example.com, not example.com), and no wildcard.
 	// A name the workspace already has is ALREADY_EXISTS; past the plan's
@@ -173,7 +173,7 @@ func (c *domainServiceClient) DeleteDomain(ctx context.Context, req *connect.Req
 
 // DomainServiceHandler is an implementation of the toshi.workspace.v1.DomainService service.
 type DomainServiceHandler interface {
-	// CreateDomain adds a domain for an http channel of a service and
+	// CreateDomain adds a domain for an http endpoint of a service and
 	// returns it with the records to set. Only a name below a registered
 	// domain is taken (shop.example.com, not example.com), and no wildcard.
 	// A name the workspace already has is ALREADY_EXISTS; past the plan's

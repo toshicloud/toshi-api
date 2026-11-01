@@ -117,10 +117,10 @@ enum GrantLevel {
   // List, get and watch the sandboxes the grant covers; sign in to their
   // previews.
   GRANT_LEVEL_VIEW = 1;
-  // Also connect to their channels, open forwards and display sessions.
+  // Also connect to their endpoints, open forwards and display sessions.
   GRANT_LEVEL_CONNECT = 2;
   // Also run and cancel executions, raise a sandbox's cap within the
-  // owner's plan, and expose channels and delete the ones it exposed.
+  // owner's plan, and expose endpoints and delete the ones it exposed.
   GRANT_LEVEL_OPERATE = 3;
 }
 
@@ -230,9 +230,9 @@ message GrantSandboxTarget {
 // GrantPreviewTarget covers one preview of one sandbox.
 message GrantPreviewTarget {
   string sandbox_id = 1;
-  // The channel whose preview it covers: `preview` for the sandbox's own
-  // hostname, or another of its http channels.
-  string channel = 2;
+  // The endpoint whose preview it covers: `preview` for the sandbox's own
+  // hostname, or another of its http endpoints.
+  string endpoint = 2;
   // The sandbox's project and environment, set by the server.
   string project = 3;
   string environment = 4;

@@ -8,11 +8,11 @@ import "toshi/permission.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
-// WebhookService manages a workspace's webhook endpoints: the URLs its
+// WebhookService manages a workspace's webhooks: the URLs its
 // events are POSTed to, signed per Standard Webhooks. The caller's credential
-// names the workspace, as for WorkloadService. An endpoint belongs to the
+// names the workspace, as for WorkloadService. A webhook belongs to the
 // workspace, not to an environment, and is owed the events of every
-// project unless its project names one. An endpoint of another workspace
+// project unless its project names one. A webhook of another workspace
 // is NOT_FOUND.
 //
 // Every mutating call takes a request_key, with WorkloadService's rule: a
@@ -20,78 +20,63 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // call returned and changes nothing; the same key with a different payload
 // fails with FAILED_PRECONDITION; an empty key means no retry protection.
 //
-// An endpoint's signing secret is in the answer to the call that made it,
-// CreateWebhookEndpoint or RotateWebhookEndpointSecret, and in no other
+// A webhook's signing secret is in the answer to the call that made it,
+// CreateWebhook or RotateWebhookSecret, and in no other
 // answer. A retry of that call returns the same secret while it is the
-// endpoint's newest; once the endpoint is rotated again or deleted, the
+// webhook's newest; once the webhook is rotated again or deleted, the
 // retry fails with FAILED_PRECONDITION and changes nothing.
 service WebhookService {
-  // CreateWebhookEndpoint makes an endpoint and its signing secret. The
-  // endpoint is owed the events written after it, from its cursor on. The
+  // CreateWebhook makes a webhook and its signing secret. The
+  // webhook is owed the events written after it, from its cursor on. The
   // control plane must hold a keyring to seal the secret; without one the
   // call fails with FAILED_PRECONDITION.
-  rpc CreateWebhookEndpoint(CreateWebhookEndpointRequest) returns (CreateWebhookEndpointResponse) {
+  rpc CreateWebhook(CreateWebhookRequest) returns (CreateWebhookResponse) {
     option (toshi.permission) = "webhooks.write";
     option (toshi.scope) = "workspace";
-    option (toshi.audit) = {
-      action: "webhook.endpoint_created"
-      target: "webhook_endpoint:response.endpoint.id"
-    };
   }
 
-  // GetWebhookEndpoint returns one endpoint. An unknown ID fails with
+  // GetWebhook returns one webhook. An unknown ID fails with
   // NOT_FOUND.
-  rpc GetWebhookEndpoint(GetWebhookEndpointRequest) returns (GetWebhookEndpointResponse) {
+  rpc GetWebhook(GetWebhookRequest) returns (GetWebhookResponse) {
     option (toshi.permission) = "webhooks.read";
   }
 
-  // ListWebhookEndpoints returns the workspace's endpoints in ID order.
+  // ListWebhooks returns the workspace's webhooks in ID order.
   //
-  // A page holds 100 endpoints when page_size is zero, and 1000 at most.
-  rpc ListWebhookEndpoints(ListWebhookEndpointsRequest) returns (ListWebhookEndpointsResponse) {
+  // A page holds 100 webhooks when page_size is zero, and 1000 at most.
+  rpc ListWebhooks(ListWebhooksRequest) returns (ListWebhooksResponse) {
     option (toshi.permission) = "webhooks.read";
   }
 
-  // UpdateWebhookEndpoint sets the fields update_mask names: url, events,
+  // UpdateWebhook sets the fields update_mask names: url, events,
   // project, enabled, cursor. A cursor must be at or after the retention boundary's
   // sequence and at or before the workspace's newest event sequence.
-  // A disabled endpoint is owed no new event and no try starts;
+  // A disabled webhook is owed no new event and no try starts;
   // the events written before the disable stay owed, enabling it again
   // owes none written while it was disabled, and a try already under way
   // finishes within its claim, which holds a delivery for one minute.
-  rpc UpdateWebhookEndpoint(UpdateWebhookEndpointRequest) returns (UpdateWebhookEndpointResponse) {
+  rpc UpdateWebhook(UpdateWebhookRequest) returns (UpdateWebhookResponse) {
     option (toshi.permission) = "webhooks.write";
-    option (toshi.audit) = {
-      action: "webhook.endpoint_updated"
-      target: "webhook_endpoint:id"
-    };
   }
 
-  // DeleteWebhookEndpoint deletes an endpoint and its deliveries.
-  rpc DeleteWebhookEndpoint(DeleteWebhookEndpointRequest) returns (DeleteWebhookEndpointResponse) {
+  // DeleteWebhook deletes a webhook and its deliveries.
+  rpc DeleteWebhook(DeleteWebhookRequest) returns (DeleteWebhookResponse) {
     option (toshi.permission) = "webhooks.write";
-    option (toshi.audit) = {
-      action: "webhook.endpoint_deleted"
-      target: "webhook_endpoint:id"
-    };
   }
 
-  // RotateWebhookEndpointSecret makes the endpoint a new signing secret and
+  // RotateWebhookSecret makes the webhook a new signing secret and
   // returns it. For the next 24 hours each try that starts after the
   // rotation is signed with the new secret and the one it replaced, so a
   // receiver can move to the new one in that window; after it, with the
   // new one only. A try under way when the rotation is made is signed with
   // the replaced secret alone. A rotation while the
   // previous secret's window is still open fails with FAILED_PRECONDITION.
-  rpc RotateWebhookEndpointSecret(RotateWebhookEndpointSecretRequest) returns (RotateWebhookEndpointSecretResponse) {
+  rpc RotateWebhookSecret(RotateWebhookSecretRequest) returns (RotateWebhookSecretResponse) {
     option (toshi.permission) = "webhooks.write";
-    option (toshi.audit) = {
-      action: "webhook.secret_rotated"
-      target: "webhook_endpoint:id"
-    };
+    option (toshi.audit) = {action: "webhook.secret_rotated"};
   }
 
-  // ListWebhookDeliveries returns an endpoint's deliveries in event order,
+  // ListWebhookDeliveries returns a webhook's deliveries in event order,
   // a page at a time.
   //
   // A page holds 50 deliveries when page_size is zero, and 500 at most.
@@ -99,38 +84,35 @@ service WebhookService {
     option (toshi.permission) = "webhooks.read";
   }
 
-  // ReplayWebhookEvents makes the endpoint owed again the events after
+  // ReplayWebhookEvents makes the webhook owed again the events after
   // cursor that its filter keeps now, up to its own cursor, at most 500 per
   // call. That includes events delivered or given up before, events written
   // while it was disabled and events written before it was made. Each is
   // due now and tried on the retry schedule from its first try; an event
-  // still pending at the endpoint is left as it is. A workload's events stay
-  // one at a time at the endpoint: an older event sent again is not due
+  // still pending at the webhook is left as it is. A workload's events stay
+  // one at a time at the webhook: an older event sent again is not due
   // before the latest next try among the newer ones that have been tried
   // and are still pending, the end of that try under way or backoff, and
   // then goes before it; it does not wait for the newer ones to be
-  // delivered. A disabled endpoint fails with FAILED_PRECONDITION.
+  // delivered. A disabled webhook fails with FAILED_PRECONDITION.
   rpc ReplayWebhookEvents(ReplayWebhookEventsRequest) returns (ReplayWebhookEventsResponse) {
     option (toshi.permission) = "webhooks.write";
-    option (toshi.audit) = {
-      action: "webhook.events_replayed"
-      target: "webhook_endpoint:endpoint_id"
-    };
+    option (toshi.audit) = {action: "webhook.events_replayed"};
   }
 }
 
-message WebhookEndpoint {
+message Webhook {
   // Assigned by the server; unique within the workspace.
   string id = 1;
   // An https URL with a host and no user or password, at most 2048 bytes.
   string url = 2;
-  // The event names the endpoint is owed, each a name (job.state_changed)
+  // The event names the webhook is owed, each a name (job.state_changed)
   // or a prefix ending in ".*" (job.*); at most 64. Empty keeps every
   // event but those a connection received, which only a name or prefix
   // that matches them keeps.
   repeated string events = 3;
   bool enabled = 4;
-  // The position in the workspace's event log the endpoint has read up to,
+  // The position in the workspace's event log the webhook has read up to,
   // an Event's cursor.
   string cursor = 5;
   // When the secret the last rotation replaced stops signing; unset when
@@ -138,12 +120,12 @@ message WebhookEndpoint {
   google.protobuf.Timestamp previous_secret_expires_at = 6;
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
-  // Set when events after the endpoint's cursor were removed by retention.
-  // The endpoint is owed nothing until its cursor is moved.
+  // Set when events after the webhook's cursor were removed by retention.
+  // The webhook is owed nothing until its cursor is moved.
   bool cursor_expired = 9;
   // The latest time of an event the log removed; unset when none.
   google.protobuf.Timestamp retention_boundary = 10;
-  // The name of a project in the workspace: the endpoint is owed only that
+  // The name of a project in the workspace: the webhook is owed only that
   // project's events, those of its workloads and those its connections
   // received. Empty keeps the events of every project.
   string project = 11;
@@ -159,7 +141,7 @@ enum WebhookDeliveryState {
   WEBHOOK_DELIVERY_STATE_DEAD = 3;
 }
 
-// WebhookDelivery is one event owed to one endpoint.
+// WebhookDelivery is one event owed to one webhook.
 message WebhookDelivery {
   string event_id = 1;
   // The event's cursor.
@@ -179,76 +161,76 @@ message WebhookDelivery {
   google.protobuf.Timestamp done_at = 10;
 }
 
-message CreateWebhookEndpointRequest {
+message CreateWebhookRequest {
   string url = 1;
   repeated string events = 2;
-  // Set to make the endpoint disabled.
+  // Set to make the webhook disabled.
   bool disabled = 3;
   string request_key = 4;
-  // The name of a project in the workspace; see WebhookEndpoint.project.
+  // The name of a project in the workspace; see Webhook.project.
   string project = 5;
 }
 
-message CreateWebhookEndpointResponse {
-  WebhookEndpoint endpoint = 1;
+message CreateWebhookResponse {
+  Webhook webhook = 1;
   // whsec_ and the base64 of 32 random bytes. No other answer carries it.
   string secret = 2;
 }
 
-message GetWebhookEndpointRequest {
+message GetWebhookRequest {
   string id = 1;
 }
 
-message GetWebhookEndpointResponse {
-  WebhookEndpoint endpoint = 1;
+message GetWebhookResponse {
+  Webhook webhook = 1;
 }
 
-message ListWebhookEndpointsRequest {
-  // The most endpoints in one page; zero lets the server choose.
+message ListWebhooksRequest {
+  // The most webhooks in one page; zero lets the server choose.
   int32 page_size = 1;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 2;
 }
 
-message ListWebhookEndpointsResponse {
-  repeated WebhookEndpoint endpoints = 1;
+message ListWebhooksResponse {
+  repeated Webhook webhooks = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
-message UpdateWebhookEndpointRequest {
+message UpdateWebhookRequest {
   string id = 1;
   // Carries the new values of the fields update_mask names.
-  WebhookEndpoint endpoint = 2;
+  Webhook webhook = 2;
   // One or more of url, events, project, enabled and cursor.
   google.protobuf.FieldMask update_mask = 3;
   string request_key = 4;
 }
 
-message UpdateWebhookEndpointResponse {
-  WebhookEndpoint endpoint = 1;
+message UpdateWebhookResponse {
+  Webhook webhook = 1;
 }
 
-message DeleteWebhookEndpointRequest {
+message DeleteWebhookRequest {
   string id = 1;
   string request_key = 2;
 }
 
-message DeleteWebhookEndpointResponse {}
+message DeleteWebhookResponse {}
 
-message RotateWebhookEndpointSecretRequest {
+message RotateWebhookSecretRequest {
   string id = 1;
   string request_key = 2;
 }
 
-message RotateWebhookEndpointSecretResponse {
-  WebhookEndpoint endpoint = 1;
-  // The new secret, as CreateWebhookEndpointResponse's.
+message RotateWebhookSecretResponse {
+  Webhook webhook = 1;
+  // The new secret, as CreateWebhookResponse's.
   string secret = 2;
 }
 
 message ListWebhookDeliveriesRequest {
-  string endpoint_id = 1;
+  string webhook_id = 1;
   // From an earlier response's next_page_token, or a delivery's cursor:
   // the deliveries of the events after that position. Empty starts at the
   // oldest.
@@ -264,7 +246,7 @@ message ListWebhookDeliveriesResponse {
 }
 
 message ReplayWebhookEventsRequest {
-  string endpoint_id = 1;
+  string webhook_id = 1;
   // Events after this cursor; empty starts at the oldest event the log
   // keeps. A cursor older than that event fails with OUT_OF_RANGE.
   string cursor = 2;
@@ -277,6 +259,6 @@ message ReplayWebhookEventsResponse {
   // The cursor of the last event looked at, or the cursor asked for when
   // there were none: pass it to the next call while more is set.
   string cursor = 2;
-  // Set when events up to the endpoint's own cursor remain after cursor.
+  // Set when events up to the webhook's own cursor remain after cursor.
   bool more = 3;
 }

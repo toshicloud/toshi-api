@@ -18,7 +18,7 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // Webhooks does, with a secret the connection keeps. A MAIL connection
 // receives mail at an address the deployment's inbound mail provider
 // serves; each message is stored as a receipt before it goes to a
-// service's event channel.
+// service's event endpoint.
 //
 // The caller's credential names the workspace, as for WorkloadService.
 // CreateConnection and RotateConnectionSecret require a request_key, which
@@ -47,7 +47,7 @@ service ConnectionService {
   // connection's events belong to a project's environment, and the call
   // returns it with its signing secret. A MAIL connection receives mail at
   // an address the deployment's inbound mail provider serves and sends each
-  // message to a service's event channel; it has no secret. A kind other
+  // message to a service's event endpoint; it has no secret. A kind other
   // than WEBHOOK or MAIL fails with INVALID_ARGUMENT, as does a missing
   // required field, a name a live connection of the workspace has with
   // ALREADY_EXISTS, and an environment the project does not have with
@@ -150,7 +150,7 @@ enum ConnectionKind {
   CONNECTION_KIND_WEBHOOK = 2;
   // An inbound mail address. The deployment's mail provider receives the
   // messages; each is stored as a receipt before it goes to a service's
-  // event channel.
+  // event endpoint.
   CONNECTION_KIND_MAIL = 3;
 }
 
@@ -207,10 +207,10 @@ message MailConnection {
   // name at its custom domain, or at the workspace's name under the
   // deployment's inbound mail domain when no custom domain is set.
   string address = 1;
-  // The service, by its ID, whose event channel the mail goes to.
+  // The service, by its ID, whose event endpoint the mail goes to.
   string service = 2;
-  // The name of that service's event channel.
-  string channel = 3;
+  // The name of that service's event endpoint.
+  string endpoint = 3;
   // Output only. The mail provider that receives for the address, such as
   // "ses".
   string provider = 4;
@@ -307,7 +307,7 @@ message CreateConnectionRequest {
   string environment = 4;
   string request_key = 5;
   // The mail address and where its mail goes, for a MAIL connection; unset
-  // for WEBHOOK. service and channel are required; address and provider are
+  // for WEBHOOK. service and endpoint are required; address and provider are
   // output only, and ignored on input.
   MailConnection mail = 6;
 }

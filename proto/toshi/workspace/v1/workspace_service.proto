@@ -610,7 +610,7 @@ message Workspace {
 
 // HostingCertificate is a workspace's wildcard certificate for its
 // services' provided names. Toshi orders it when the workspace first
-// hosts a service with an http channel and renews it before it expires.
+// hosts a service with an http endpoint and renews it before it expires.
 message HostingCertificate {
   // The wildcard name, *.<workspace id>.svc.<domain>.
   string name = 1;

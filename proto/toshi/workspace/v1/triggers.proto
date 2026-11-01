@@ -140,10 +140,10 @@ enum TriggerAction {
   // Deletes the workloads the environment's CREATE triggers of the same
   // source made for the event's key.
   TRIGGER_ACTION_DELETE = 2;
-  // Puts the event on the target service's event channel, which wakes the
+  // Puts the event on the target service's event endpoint, which wakes the
   // service if it sleeps and posts the event to it. The message's source
   // is the trigger, and the event's id makes its request key, so an event
-  // is put on the channel once.
+  // is put on the endpoint once.
   TRIGGER_ACTION_DELIVER = 3;
 }
 
@@ -153,17 +153,17 @@ message TriggerTarget {
   oneof target {
     TriggerSandbox sandbox = 1;
     TriggerPreview preview = 2;
-    TriggerServiceChannel service = 3;
+    TriggerServiceEndpoint service = 3;
   }
 }
 
-// TriggerServiceChannel is the event channel a trigger's DELIVER puts its
+// TriggerServiceEndpoint is the event endpoint a trigger's DELIVER puts its
 // events on.
-message TriggerServiceChannel {
+message TriggerServiceEndpoint {
   // A service of the trigger's project and environment, by name. Required.
   string service = 1;
-  // The name of one of the service's event channels. Required.
-  string channel = 2;
+  // The name of one of the service's event endpoints. Required.
+  string endpoint = 2;
 }
 
 // TriggerPreview is a sandbox per pull request that the repository
@@ -193,10 +193,10 @@ message TriggerSandbox {
   Command setup = 4;
   // Runs after setup and is kept running for the sandbox's life.
   Command process = 5;
-  // The http channel whose link the trigger reports. Empty reports the
+  // The http endpoint whose link the trigger reports. Empty reports the
   // first preview the sandbox serves, and a sandbox that serves none is
   // ready with no link.
-  string channel = 6;
+  string endpoint = 6;
   // The container image the sandbox runs, as a sandbox's spec names it
   // (`registry/repository:tag` or `@sha256:` digest); a tag is resolved when
   // each sandbox is made. Empty runs none.

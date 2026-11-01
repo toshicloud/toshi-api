@@ -723,7 +723,7 @@ const (
 	// Runs while it is started, and runs again after each run ends.
 	ServiceMode_SERVICE_MODE_ALWAYS_ON ServiceMode = 1
 	// Runs while it is awake: woken by WakeService, a hold or a connect on
-	// one of its channels, and asleep again after its recipe's idle period
+	// one of its endpoints, and asleep again after its recipe's idle period
 	// with no hold.
 	ServiceMode_SERVICE_MODE_ON_DEMAND ServiceMode = 2
 )
@@ -803,7 +803,7 @@ const (
 	// while the starter holds no role in the workspace. Name:
 	// "<kind>.secret_withheld".
 	EventType_EVENT_TYPE_SECRET_WITHHELD EventType = 10
-	// A workload a trigger made is ready, with the link of its channel. Name:
+	// A workload a trigger made is ready, with the link of its endpoint. Name:
 	// "trigger.ready".
 	EventType_EVENT_TYPE_TRIGGER_READY EventType = 11
 	// A workload a trigger made failed, with why. Name: "trigger.failed".
@@ -827,12 +827,12 @@ const (
 	// A kept VM was discarded before a run because its image changed. Name:
 	// "<kind>.kept_vm_discarded". Payload: KeptVMDiscardedEvent.
 	EventType_EVENT_TYPE_KEPT_VM_DISCARDED EventType = 18
-	// An ACP channel's agent asked the client's permission to use a tool.
-	// Name: "channel.acp.permission_requested". Payload: ChannelACPEvent.
-	EventType_EVENT_TYPE_CHANNEL_ACP_PERMISSION_REQUESTED EventType = 19
-	// An ACP channel's agent finished a prompt. Name:
-	// "channel.acp.turn_ended". Payload: ChannelACPEvent.
-	EventType_EVENT_TYPE_CHANNEL_ACP_TURN_ENDED EventType = 20
+	// An ACP endpoint's agent asked the client's permission to use a tool.
+	// Name: "endpoint.acp.permission_requested". Payload: EndpointACPEvent.
+	EventType_EVENT_TYPE_ENDPOINT_ACP_PERMISSION_REQUESTED EventType = 19
+	// An ACP endpoint's agent finished a prompt. Name:
+	// "endpoint.acp.turn_ended". Payload: EndpointACPEvent.
+	EventType_EVENT_TYPE_ENDPOINT_ACP_TURN_ENDED EventType = 20
 	// A service's run was restored from the snapshot its VM left when the
 	// run before it went to sleep, with when the snapshot was taken and how
 	// much time passed since. Name: "service.restored". Payload:
@@ -880,8 +880,8 @@ var (
 		16: "EVENT_TYPE_EGRESS_DENIED",
 		17: "EVENT_TYPE_MAIL_SENT",
 		18: "EVENT_TYPE_KEPT_VM_DISCARDED",
-		19: "EVENT_TYPE_CHANNEL_ACP_PERMISSION_REQUESTED",
-		20: "EVENT_TYPE_CHANNEL_ACP_TURN_ENDED",
+		19: "EVENT_TYPE_ENDPOINT_ACP_PERMISSION_REQUESTED",
+		20: "EVENT_TYPE_ENDPOINT_ACP_TURN_ENDED",
 		21: "EVENT_TYPE_SERVICE_RESTORED",
 		22: "EVENT_TYPE_SERVICE_SNAPSHOT_FAILED",
 		23: "EVENT_TYPE_SERVICE_SIGNIN",
@@ -890,33 +890,33 @@ var (
 		26: "EVENT_TYPE_MAIL_COMPLAINED",
 	}
 	EventType_value = map[string]int32{
-		"EVENT_TYPE_UNSPECIFIED":                      0,
-		"EVENT_TYPE_WORKLOAD_CREATED":                 1,
-		"EVENT_TYPE_WORKLOAD_STATE_CHANGED":           2,
-		"EVENT_TYPE_WORKLOAD_UPDATED":                 3,
-		"EVENT_TYPE_WORKLOAD_DELETED":                 4,
-		"EVENT_TYPE_EXECUTION_STARTED":                5,
-		"EVENT_TYPE_EXECUTION_ENDED":                  6,
-		"EVENT_TYPE_EMITTED":                          7,
-		"EVENT_TYPE_RECORDING_READY":                  8,
-		"EVENT_TYPE_CONNECTION":                       9,
-		"EVENT_TYPE_SECRET_WITHHELD":                  10,
-		"EVENT_TYPE_TRIGGER_READY":                    11,
-		"EVENT_TYPE_TRIGGER_FAILED":                   12,
-		"EVENT_TYPE_TRIGGER_REMOVED":                  13,
-		"EVENT_TYPE_UPGRADE_ROLLED_BACK":              14,
-		"EVENT_TYPE_AGENT_ANSWERED":                   15,
-		"EVENT_TYPE_EGRESS_DENIED":                    16,
-		"EVENT_TYPE_MAIL_SENT":                        17,
-		"EVENT_TYPE_KEPT_VM_DISCARDED":                18,
-		"EVENT_TYPE_CHANNEL_ACP_PERMISSION_REQUESTED": 19,
-		"EVENT_TYPE_CHANNEL_ACP_TURN_ENDED":           20,
-		"EVENT_TYPE_SERVICE_RESTORED":                 21,
-		"EVENT_TYPE_SERVICE_SNAPSHOT_FAILED":          22,
-		"EVENT_TYPE_SERVICE_SIGNIN":                   23,
-		"EVENT_TYPE_SERVICE_SIGNOUT":                  24,
-		"EVENT_TYPE_MAIL_BOUNCED":                     25,
-		"EVENT_TYPE_MAIL_COMPLAINED":                  26,
+		"EVENT_TYPE_UNSPECIFIED":                       0,
+		"EVENT_TYPE_WORKLOAD_CREATED":                  1,
+		"EVENT_TYPE_WORKLOAD_STATE_CHANGED":            2,
+		"EVENT_TYPE_WORKLOAD_UPDATED":                  3,
+		"EVENT_TYPE_WORKLOAD_DELETED":                  4,
+		"EVENT_TYPE_EXECUTION_STARTED":                 5,
+		"EVENT_TYPE_EXECUTION_ENDED":                   6,
+		"EVENT_TYPE_EMITTED":                           7,
+		"EVENT_TYPE_RECORDING_READY":                   8,
+		"EVENT_TYPE_CONNECTION":                        9,
+		"EVENT_TYPE_SECRET_WITHHELD":                   10,
+		"EVENT_TYPE_TRIGGER_READY":                     11,
+		"EVENT_TYPE_TRIGGER_FAILED":                    12,
+		"EVENT_TYPE_TRIGGER_REMOVED":                   13,
+		"EVENT_TYPE_UPGRADE_ROLLED_BACK":               14,
+		"EVENT_TYPE_AGENT_ANSWERED":                    15,
+		"EVENT_TYPE_EGRESS_DENIED":                     16,
+		"EVENT_TYPE_MAIL_SENT":                         17,
+		"EVENT_TYPE_KEPT_VM_DISCARDED":                 18,
+		"EVENT_TYPE_ENDPOINT_ACP_PERMISSION_REQUESTED": 19,
+		"EVENT_TYPE_ENDPOINT_ACP_TURN_ENDED":           20,
+		"EVENT_TYPE_SERVICE_RESTORED":                  21,
+		"EVENT_TYPE_SERVICE_SNAPSHOT_FAILED":           22,
+		"EVENT_TYPE_SERVICE_SIGNIN":                    23,
+		"EVENT_TYPE_SERVICE_SIGNOUT":                   24,
+		"EVENT_TYPE_MAIL_BOUNCED":                      25,
+		"EVENT_TYPE_MAIL_COMPLAINED":                   26,
 	}
 )
 
@@ -957,7 +957,7 @@ const (
 	// A device opened it; it admits that device only.
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_IN_USE  PreviewShareLinkState = 2
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_REVOKED PreviewShareLinkState = 3
-	// Its connections carried its byte cap, or its channel was deleted.
+	// Its connections carried its byte cap, or its endpoint was deleted.
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_ENDED   PreviewShareLinkState = 4
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_EXPIRED PreviewShareLinkState = 5
 )
@@ -1915,7 +1915,7 @@ type Sandbox struct {
 	// container_registry_secret and its commands' env.
 	Shared *SharedAccess `protobuf:"bytes,11,opt,name=shared,proto3" json:"shared,omitempty"`
 	// The job of the sandbox's current run: the one created with it, then
-	// the one each StartSandbox creates. The channel and display calls take
+	// the one each StartSandbox creates. The endpoint and display calls take
 	// it as job_id, and through a grant as well. Set by Toshi.
 	JobId string `protobuf:"bytes,12,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	// Where recording came from. Set by Toshi.
@@ -2076,10 +2076,10 @@ type SandboxStatus struct {
 	// Why it was stopped, set while a kept sandbox is stopped, and once it
 	// has ended when a stop was asked.
 	StopReason StopReason `protobuf:"varint,9,opt,name=stop_reason,json=stopReason,proto3,enum=toshi.workspace.v1.StopReason" json:"stop_reason,omitempty"`
-	// While it runs, its previews: one for each of its http channels served
-	// at a hostname of its own, the channel `preview` among them. Empty
-	// while the control plane serves no previews. Making or deleting such a
-	// channel changes the sandbox, so WatchSandboxes sends it again.
+	// While it runs, its previews: one for each of its http endpoints served
+	// at a hostname of its own, the endpoint `preview` among them. Empty
+	// while the control plane serves no previews. Making or deleting such an
+	// endpoint changes the sandbox, so WatchSandboxes sends it again.
 	Previews []*SandboxPreview `protobuf:"bytes,10,rep,name=previews,proto3" json:"previews,omitempty"`
 	// When its spec's process started. Unset while it runs with a process
 	// not started yet: its setup still runs. Never set for a sandbox without
@@ -2602,15 +2602,15 @@ type ServiceStatus struct {
 	// run of the selected revision is opened, and whether it is ready.
 	// Unset while no run is live.
 	LiveRun *ServiceRun `protobuf:"bytes,9,opt,name=live_run,json=liveRun,proto3" json:"live_run,omitempty"`
-	// The names visitors reach the service's http channels at, one per
-	// channel of its current revision's recipe that has one: the front
-	// channel first, at "<service>.<workspace>.svc.<domain>", then every
+	// The names visitors reach the service's http endpoints at, one per
+	// endpoint of its current revision's recipe that has one: the front
+	// endpoint first, at "<service>.<workspace>.svc.<domain>", then every
 	// other in recipe order at "<port>-<service>.<workspace>.svc.<domain>".
 	// Empty while the
 	// deployment hosts no names. Set by Toshi on GetService; ignored in a
 	// request.
 	ProvidedNames []*ProvidedName `protobuf:"bytes,10,rep,name=provided_names,json=providedNames,proto3" json:"provided_names,omitempty"`
-	// Why a service with an http channel has no provided names, such as a
+	// Why a service with an http endpoint has no provided names, such as a
 	// name that does not start with a letter; empty otherwise. Set by Toshi
 	// on GetService.
 	ProvidedNamesReason string `protobuf:"bytes,11,opt,name=provided_names_reason,json=providedNamesReason,proto3" json:"provided_names_reason,omitempty"`
@@ -2870,11 +2870,11 @@ func (x *ServiceBackup) GetLastSaveFailureTime() *timestamppb.Timestamp {
 	return nil
 }
 
-// ProvidedName is the name one http channel of a service is reached at.
+// ProvidedName is the name one http endpoint of a service is reached at.
 type ProvidedName struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The channel's name in the service's recipe.
-	Channel string `protobuf:"bytes,1,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The endpoint's name in the service's recipe.
+	Endpoint string `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The full name, without a scheme or a port.
 	Host          string `protobuf:"bytes,2,opt,name=host,proto3" json:"host,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2911,9 +2911,9 @@ func (*ProvidedName) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ProvidedName) GetChannel() string {
+func (x *ProvidedName) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -3132,7 +3132,7 @@ func (x *Binding) GetTarget() isBinding_Target {
 	return nil
 }
 
-func (x *Binding) GetService() *ServiceChannel {
+func (x *Binding) GetService() *ServiceEndpoint {
 	if x != nil {
 		if x, ok := x.Target.(*Binding_Service); ok {
 			return x.Service
@@ -3164,8 +3164,8 @@ type isBinding_Target interface {
 }
 
 type Binding_Service struct {
-	// A channel of a service of the workload's project and environment.
-	Service *ServiceChannel `protobuf:"bytes,2,opt,name=service,proto3,oneof"`
+	// An endpoint of a service of the workload's project and environment.
+	Service *ServiceEndpoint `protobuf:"bytes,2,opt,name=service,proto3,oneof"`
 }
 
 type Binding_Secrets struct {
@@ -3185,31 +3185,31 @@ func (*Binding_Secrets) isBinding_Target() {}
 
 func (*Binding_Mail) isBinding_Target() {}
 
-// ServiceChannel is a channel of a service, by the service's name and the
-// channel's name in its recipe, as a recipe's uses names it:
-// "<service>.<channel>".
-type ServiceChannel struct {
+// ServiceEndpoint is an endpoint of a service, by the service's name and the
+// endpoint's name in its recipe, as a recipe's uses names it:
+// "<service>.<endpoint>".
+type ServiceEndpoint struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Service       string                 `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
-	Channel       string                 `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`
+	Endpoint      string                 `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ServiceChannel) Reset() {
-	*x = ServiceChannel{}
+func (x *ServiceEndpoint) Reset() {
+	*x = ServiceEndpoint{}
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ServiceChannel) String() string {
+func (x *ServiceEndpoint) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ServiceChannel) ProtoMessage() {}
+func (*ServiceEndpoint) ProtoMessage() {}
 
-func (x *ServiceChannel) ProtoReflect() protoreflect.Message {
+func (x *ServiceEndpoint) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3221,21 +3221,21 @@ func (x *ServiceChannel) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ServiceChannel.ProtoReflect.Descriptor instead.
-func (*ServiceChannel) Descriptor() ([]byte, []int) {
+// Deprecated: Use ServiceEndpoint.ProtoReflect.Descriptor instead.
+func (*ServiceEndpoint) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *ServiceChannel) GetService() string {
+func (x *ServiceEndpoint) GetService() string {
 	if x != nil {
 		return x.Service
 	}
 	return ""
 }
 
-func (x *ServiceChannel) GetChannel() string {
+func (x *ServiceEndpoint) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -3434,7 +3434,7 @@ func (*BoundBinding_Secrets) isBoundBinding_Target() {}
 
 func (*BoundBinding_Mail) isBoundBinding_Target() {}
 
-// BoundService is a service channel as it was when the workload started.
+// BoundService is a service endpoint as it was when the workload started.
 type BoundService struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Service string                 `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
@@ -3442,11 +3442,11 @@ type BoundService struct {
 	ServiceId string `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The service's revision that was current.
 	Revision int64  `protobuf:"varint,3,opt,name=revision,proto3" json:"revision,omitempty"`
-	Channel  string `protobuf:"bytes,4,opt,name=channel,proto3" json:"channel,omitempty"`
-	// The channel's shape and, for an http channel, its guest port.
+	Endpoint string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// The endpoint's shape and, for an http endpoint, its guest port.
 	Shape string `protobuf:"bytes,5,opt,name=shape,proto3" json:"shape,omitempty"`
 	Port  int32  `protobuf:"varint,6,opt,name=port,proto3" json:"port,omitempty"`
-	// What the channel accepts from the caller: "workload_identity", a
+	// What the endpoint accepts from the caller: "workload_identity", a
 	// connect credential signed by the workload identity issuer
 	// naming audience and this binding. Minted when the job's command
 	// starts, and passed only to that command.
@@ -3510,9 +3510,9 @@ func (x *BoundService) GetRevision() int64 {
 	return 0
 }
 
-func (x *BoundService) GetChannel() string {
+func (x *BoundService) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -3793,11 +3793,11 @@ type SandboxSpec struct {
 	// sandbox runs (UpdateSandbox).
 	MaxDuration *durationpb.Duration `protobuf:"bytes,2,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
 	// What in its workspace the sandbox uses: the secret set of its
-	// environment and the channels of its project's and environment's
+	// environment and the endpoints of its project's and environment's
 	// services. Checked at create and fixed when the sandbox starts; each
 	// Execute gets the secret set's fixed values in its command's
-	// environment, and reaches a bound http channel by the service's name,
-	// <service>.toshi, at the channel's port.
+	// environment, and reaches a bound http endpoint by the service's name,
+	// <service>.toshi, at the endpoint's port.
 	Bindings []*Binding `protobuf:"bytes,3,rep,name=bindings,proto3" json:"bindings,omitempty"`
 	// Create only: the id of a state volume of the sandbox's project to
 	// attach to it, which it mounts when it starts. A volume of another
@@ -4117,7 +4117,7 @@ type ServiceSpec struct {
 	// others none. Answers leave it unset.
 	StateVolume *StateVolumeSpec `protobuf:"bytes,7,opt,name=state_volume,json=stateVolume,proto3" json:"state_volume,omitempty"`
 	// Create only: the service's bindings, a secret set or its project's
-	// and environment's services' channels. Answers leave them empty.
+	// and environment's services' endpoints. Answers leave them empty.
 	Bindings []*Binding `protobuf:"bytes,8,rep,name=bindings,proto3" json:"bindings,omitempty"`
 	// Whether a started on-demand service is asleep: no run is live, and
 	// nothing keeps it awake. Set by the server; ignored in a request.
@@ -4392,13 +4392,13 @@ func (x *Command) GetCwd() string {
 	return ""
 }
 
-// SandboxPreview is where a browser opens one http channel of a sandbox.
+// SandboxPreview is where a browser opens one http endpoint of a sandbox.
 type SandboxPreview struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The channel's name; `preview` for the port the sandbox's image
+	// The endpoint's name; `preview` for the port the sandbox's image
 	// declares.
-	Channel string `protobuf:"bytes,1,opt,name=channel,proto3" json:"channel,omitempty"`
-	// The guest port the channel reaches.
+	Endpoint string `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// The guest port the endpoint reaches.
 	Port int32 `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
 	// The preview's origin, a scheme and a hostname without a path.
 	Url           string `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
@@ -4436,9 +4436,9 @@ func (*SandboxPreview) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *SandboxPreview) GetChannel() string {
+func (x *SandboxPreview) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -6579,7 +6579,7 @@ type Event struct {
 	//	*Event_EgressDenied
 	//	*Event_MailSent
 	//	*Event_KeptVmDiscarded
-	//	*Event_ChannelAcp
+	//	*Event_EndpointAcp
 	//	*Event_ServiceRestored
 	//	*Event_ServiceSnapshotFailed
 	//	*Event_ServiceSignIn
@@ -6802,10 +6802,10 @@ func (x *Event) GetKeptVmDiscarded() *KeptVMDiscardedEvent {
 	return nil
 }
 
-func (x *Event) GetChannelAcp() *ChannelACPEvent {
+func (x *Event) GetEndpointAcp() *EndpointACPEvent {
 	if x != nil {
-		if x, ok := x.Payload.(*Event_ChannelAcp); ok {
-			return x.ChannelAcp
+		if x, ok := x.Payload.(*Event_EndpointAcp); ok {
+			return x.EndpointAcp
 		}
 	}
 	return nil
@@ -6942,9 +6942,9 @@ type Event_KeptVmDiscarded struct {
 	KeptVmDiscarded *KeptVMDiscardedEvent `protobuf:"bytes,24,opt,name=kept_vm_discarded,json=keptVmDiscarded,proto3,oneof"`
 }
 
-type Event_ChannelAcp struct {
-	// For CHANNEL_ACP_PERMISSION_REQUESTED and CHANNEL_ACP_TURN_ENDED.
-	ChannelAcp *ChannelACPEvent `protobuf:"bytes,25,opt,name=channel_acp,json=channelAcp,proto3,oneof"`
+type Event_EndpointAcp struct {
+	// For ENDPOINT_ACP_PERMISSION_REQUESTED and ENDPOINT_ACP_TURN_ENDED.
+	EndpointAcp *EndpointACPEvent `protobuf:"bytes,25,opt,name=endpoint_acp,json=endpointAcp,proto3,oneof"`
 }
 
 type Event_ServiceRestored struct {
@@ -6995,7 +6995,7 @@ func (*Event_MailSent) isEvent_Payload() {}
 
 func (*Event_KeptVmDiscarded) isEvent_Payload() {}
 
-func (*Event_ChannelAcp) isEvent_Payload() {}
+func (*Event_EndpointAcp) isEvent_Payload() {}
 
 func (*Event_ServiceRestored) isEvent_Payload() {}
 
@@ -7706,7 +7706,7 @@ func (x *EgressDenial) GetTime() *timestamppb.Timestamp {
 
 // TriggerResult is the payload of a trigger's events: the trigger, the key
 // its event named, the workload it made for the key, the event that caused
-// it, the link of the workload's channel once it is ready, why it failed or
+// it, the link of the workload's endpoint once it is ready, why it failed or
 // was removed, and the commit it was made from.
 type TriggerResult struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
@@ -7718,7 +7718,7 @@ type TriggerResult struct {
 	WorkloadId string `protobuf:"bytes,4,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	// The event that caused it; empty when none did.
 	EventId string `protobuf:"bytes,5,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
-	// The link of the workload's channel, once it is ready.
+	// The link of the workload's endpoint, once it is ready.
 	Link string `protobuf:"bytes,6,opt,name=link,proto3" json:"link,omitempty"`
 	// Why it failed or was removed.
 	Reason string `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`
@@ -8082,13 +8082,13 @@ func (x *MailSentEvent) GetProviderMessageId() string {
 	return ""
 }
 
-// ChannelACPEvent is an event of an ACP channel: the channel, its ACP
+// EndpointACPEvent is an event of an ACP endpoint: the endpoint, its ACP
 // session, and the tool call's kind a permission request named or the reason
 // a turn ended. It carries no title, content or path.
-type ChannelACPEvent struct {
+type EndpointACPEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The channel's name on its job.
-	Channel string `protobuf:"bytes,1,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The endpoint's name on its job.
+	Endpoint string `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The ACP session the event belongs to.
 	SessionId string `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	// The tool call's kind, on a permission request.
@@ -8099,20 +8099,20 @@ type ChannelACPEvent struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ChannelACPEvent) Reset() {
-	*x = ChannelACPEvent{}
+func (x *EndpointACPEvent) Reset() {
+	*x = EndpointACPEvent{}
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ChannelACPEvent) String() string {
+func (x *EndpointACPEvent) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ChannelACPEvent) ProtoMessage() {}
+func (*EndpointACPEvent) ProtoMessage() {}
 
-func (x *ChannelACPEvent) ProtoReflect() protoreflect.Message {
+func (x *EndpointACPEvent) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -8124,33 +8124,33 @@ func (x *ChannelACPEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChannelACPEvent.ProtoReflect.Descriptor instead.
-func (*ChannelACPEvent) Descriptor() ([]byte, []int) {
+// Deprecated: Use EndpointACPEvent.ProtoReflect.Descriptor instead.
+func (*EndpointACPEvent) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{71}
 }
 
-func (x *ChannelACPEvent) GetChannel() string {
+func (x *EndpointACPEvent) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
 
-func (x *ChannelACPEvent) GetSessionId() string {
+func (x *EndpointACPEvent) GetSessionId() string {
 	if x != nil {
 		return x.SessionId
 	}
 	return ""
 }
 
-func (x *ChannelACPEvent) GetToolKind() string {
+func (x *EndpointACPEvent) GetToolKind() string {
 	if x != nil {
 		return x.ToolKind
 	}
 	return ""
 }
 
-func (x *ChannelACPEvent) GetStopReason() string {
+func (x *EndpointACPEvent) GetStopReason() string {
 	if x != nil {
 		return x.StopReason
 	}
@@ -8762,10 +8762,10 @@ type PreviewShareLink struct {
 	RevokedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
 	// Unset unless it ended.
 	EndedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
-	// The channel whose preview the link opens: `preview` for the sandbox's
-	// own hostname, or another of its http channels.
-	Channel string `protobuf:"bytes,11,opt,name=channel,proto3" json:"channel,omitempty"`
-	// The guest port that channel reaches.
+	// The endpoint whose preview the link opens: `preview` for the sandbox's
+	// own hostname, or another of its http endpoints.
+	Endpoint string `protobuf:"bytes,11,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// The guest port that endpoint reaches.
 	Port          int32 `protobuf:"varint,12,opt,name=port,proto3" json:"port,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -8871,9 +8871,9 @@ func (x *PreviewShareLink) GetEndedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *PreviewShareLink) GetChannel() string {
+func (x *PreviewShareLink) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -8897,14 +8897,14 @@ type CreatePreviewShareLinkRequest struct {
 	// The most bytes, both ways, its connections may carry, at most the
 	// plan's; 0 is the plan's.
 	MaxBytes int64 `protobuf:"varint,5,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
-	// The preview the link opens: one of the sandbox's http channels, by
-	// its name or by its guest port. Neither set is the channel `preview`.
+	// The preview the link opens: one of the sandbox's http endpoints, by
+	// its name or by its guest port. Neither set is the endpoint `preview`.
 	//
-	// Types that are valid to be assigned to ChannelRef:
+	// Types that are valid to be assigned to EndpointRef:
 	//
-	//	*CreatePreviewShareLinkRequest_Channel
+	//	*CreatePreviewShareLinkRequest_Endpoint
 	//	*CreatePreviewShareLinkRequest_Port
-	ChannelRef    isCreatePreviewShareLinkRequest_ChannelRef `protobuf_oneof:"channel_ref"`
+	EndpointRef   isCreatePreviewShareLinkRequest_EndpointRef `protobuf_oneof:"endpoint_ref"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -8974,17 +8974,17 @@ func (x *CreatePreviewShareLinkRequest) GetMaxBytes() int64 {
 	return 0
 }
 
-func (x *CreatePreviewShareLinkRequest) GetChannelRef() isCreatePreviewShareLinkRequest_ChannelRef {
+func (x *CreatePreviewShareLinkRequest) GetEndpointRef() isCreatePreviewShareLinkRequest_EndpointRef {
 	if x != nil {
-		return x.ChannelRef
+		return x.EndpointRef
 	}
 	return nil
 }
 
-func (x *CreatePreviewShareLinkRequest) GetChannel() string {
+func (x *CreatePreviewShareLinkRequest) GetEndpoint() string {
 	if x != nil {
-		if x, ok := x.ChannelRef.(*CreatePreviewShareLinkRequest_Channel); ok {
-			return x.Channel
+		if x, ok := x.EndpointRef.(*CreatePreviewShareLinkRequest_Endpoint); ok {
+			return x.Endpoint
 		}
 	}
 	return ""
@@ -8992,28 +8992,28 @@ func (x *CreatePreviewShareLinkRequest) GetChannel() string {
 
 func (x *CreatePreviewShareLinkRequest) GetPort() int32 {
 	if x != nil {
-		if x, ok := x.ChannelRef.(*CreatePreviewShareLinkRequest_Port); ok {
+		if x, ok := x.EndpointRef.(*CreatePreviewShareLinkRequest_Port); ok {
 			return x.Port
 		}
 	}
 	return 0
 }
 
-type isCreatePreviewShareLinkRequest_ChannelRef interface {
-	isCreatePreviewShareLinkRequest_ChannelRef()
+type isCreatePreviewShareLinkRequest_EndpointRef interface {
+	isCreatePreviewShareLinkRequest_EndpointRef()
 }
 
-type CreatePreviewShareLinkRequest_Channel struct {
-	Channel string `protobuf:"bytes,6,opt,name=channel,proto3,oneof"`
+type CreatePreviewShareLinkRequest_Endpoint struct {
+	Endpoint string `protobuf:"bytes,6,opt,name=endpoint,proto3,oneof"`
 }
 
 type CreatePreviewShareLinkRequest_Port struct {
 	Port int32 `protobuf:"varint,7,opt,name=port,proto3,oneof"`
 }
 
-func (*CreatePreviewShareLinkRequest_Channel) isCreatePreviewShareLinkRequest_ChannelRef() {}
+func (*CreatePreviewShareLinkRequest_Endpoint) isCreatePreviewShareLinkRequest_EndpointRef() {}
 
-func (*CreatePreviewShareLinkRequest_Port) isCreatePreviewShareLinkRequest_ChannelRef() {}
+func (*CreatePreviewShareLinkRequest_Port) isCreatePreviewShareLinkRequest_EndpointRef() {}
 
 type CreatePreviewShareLinkResponse struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
@@ -9321,9 +9321,9 @@ type ServiceShareLink struct {
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The service whose provided name the link opens.
 	ServiceId string `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
-	// The http channel of the service's recipe whose provided name the link
+	// The http endpoint of the service's recipe whose provided name the link
 	// opens.
-	Channel   string                 `protobuf:"bytes,3,opt,name=channel,proto3" json:"channel,omitempty"`
+	Endpoint  string                 `protobuf:"bytes,3,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	State     PreviewShareLinkState  `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.PreviewShareLinkState" json:"state,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
@@ -9385,9 +9385,9 @@ func (x *ServiceShareLink) GetServiceId() string {
 	return ""
 }
 
-func (x *ServiceShareLink) GetChannel() string {
+func (x *ServiceShareLink) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -9454,9 +9454,9 @@ type CreateServiceShareLinkRequest struct {
 	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
 	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
-	// The http channel whose provided name the link opens; empty is the
-	// service's front channel, the one at the service's own name.
-	Channel string `protobuf:"bytes,4,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The http endpoint whose provided name the link opens; empty is the
+	// service's front endpoint, the one at the service's own name.
+	Endpoint string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// How long the link stays valid, at most the plan's maximum; unset is
 	// 24 hours, or the plan's maximum when that is shorter.
 	ExpiresIn *durationpb.Duration `protobuf:"bytes,5,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
@@ -9518,9 +9518,9 @@ func (x *CreateServiceShareLinkRequest) GetServiceId() string {
 	return ""
 }
 
-func (x *CreateServiceShareLinkRequest) GetChannel() string {
+func (x *CreateServiceShareLinkRequest) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -13258,9 +13258,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x0elatest_version\x18\x02 \x01(\x03R\rlatestVersion\x12J\n" +
 	"\x13latest_version_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x11latestVersionTime\x12*\n" +
 	"\x11last_save_failure\x18\x04 \x01(\tR\x0flastSaveFailure\x12O\n" +
-	"\x16last_save_failure_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x13lastSaveFailureTime\"<\n" +
-	"\fProvidedName\x12\x18\n" +
-	"\achannel\x18\x01 \x01(\tR\achannel\x12\x12\n" +
+	"\x16last_save_failure_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x13lastSaveFailureTime\">\n" +
+	"\fProvidedName\x12\x1a\n" +
+	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12\x12\n" +
 	"\x04host\x18\x02 \x01(\tR\x04host\"\xe8\x02\n" +
 	"\aJobSpec\x125\n" +
 	"\acommand\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.CommandR\acommand\x127\n" +
@@ -13270,16 +13270,16 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x16container_image_digest\x18\x05 \x01(\tR\x14containerImageDigest\x12:\n" +
 	"\x19container_registry_secret\x18\x06 \x01(\tR\x17containerRegistrySecret\x12\x14\n" +
 	"\x05image\x18\a \x01(\tR\x05image\x12(\n" +
-	"\x10image_version_id\x18\b \x01(\tR\x0eimageVersionId\"\xdb\x01\n" +
+	"\x10image_version_id\x18\b \x01(\tR\x0eimageVersionId\"\xdc\x01\n" +
 	"\aBinding\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12>\n" +
-	"\aservice\x18\x02 \x01(\v2\".toshi.workspace.v1.ServiceChannelH\x00R\aservice\x12B\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12?\n" +
+	"\aservice\x18\x02 \x01(\v2#.toshi.workspace.v1.ServiceEndpointH\x00R\aservice\x12B\n" +
 	"\asecrets\x18\x03 \x01(\v2&.toshi.workspace.v1.EnvironmentSecretsH\x00R\asecrets\x12.\n" +
 	"\x04mail\x18\x04 \x01(\v2\x18.toshi.workspace.v1.MailH\x00R\x04mailB\b\n" +
-	"\x06target\"D\n" +
-	"\x0eServiceChannel\x12\x18\n" +
-	"\aservice\x18\x01 \x01(\tR\aservice\x12\x18\n" +
-	"\achannel\x18\x02 \x01(\tR\achannel\"\x14\n" +
+	"\x06target\"G\n" +
+	"\x0fServiceEndpoint\x12\x18\n" +
+	"\aservice\x18\x01 \x01(\tR\aservice\x12\x1a\n" +
+	"\bendpoint\x18\x02 \x01(\tR\bendpoint\"\x14\n" +
 	"\x12EnvironmentSecrets\"\x06\n" +
 	"\x04Mail\"\x94\x02\n" +
 	"\fBoundBinding\x12\x12\n" +
@@ -13288,13 +13288,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\asecrets\x18\x03 \x01(\v2 .toshi.workspace.v1.BoundSecretsH\x00R\asecrets\x123\n" +
 	"\x04mail\x18\x05 \x01(\v2\x1d.toshi.workspace.v1.BoundMailH\x00R\x04mail\x125\n" +
 	"\btaken_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\atakenAtB\b\n" +
-	"\x06target\"\x88\x02\n" +
+	"\x06target\"\x8a\x02\n" +
 	"\fBoundService\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x02 \x01(\tR\tserviceId\x12\x1a\n" +
-	"\brevision\x18\x03 \x01(\x03R\brevision\x12\x18\n" +
-	"\achannel\x18\x04 \x01(\tR\achannel\x12\x14\n" +
+	"\brevision\x18\x03 \x01(\x03R\brevision\x12\x1a\n" +
+	"\bendpoint\x18\x04 \x01(\tR\bendpoint\x12\x14\n" +
 	"\x05shape\x18\x05 \x01(\tR\x05shape\x12\x12\n" +
 	"\x04port\x18\x06 \x01(\x05R\x04port\x12\x1e\n" +
 	"\n" +
@@ -13369,9 +13369,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x03cwd\x18\x03 \x01(\tR\x03cwd\x1a6\n" +
 	"\bEnvEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"P\n" +
-	"\x0eSandboxPreview\x12\x18\n" +
-	"\achannel\x18\x01 \x01(\tR\achannel\x12\x12\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"R\n" +
+	"\x0eSandboxPreview\x12\x1a\n" +
+	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12\x12\n" +
 	"\x04port\x18\x02 \x01(\x05R\x04port\x12\x10\n" +
 	"\x03url\x18\x03 \x01(\tR\x03url\"5\n" +
 	"\x05Error\x12\x12\n" +
@@ -13522,7 +13522,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x02id\x18\x03 \x01(\tR\x02id\x123\n" +
 	"\atimeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\atimeout\"T\n" +
 	"\x15WaitOperationResponse\x12;\n" +
-	"\toperation\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\xb6\r\n" +
+	"\toperation\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.OperationR\toperation\"\xb9\r\n" +
 	"\x05Event\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x121\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1d.toshi.workspace.v1.EventTypeR\x04type\x12\x12\n" +
@@ -13547,9 +13547,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\fagent_answer\x18\x15 \x01(\v2$.toshi.workspace.v1.AgentAnswerEventH\x00R\vagentAnswer\x12L\n" +
 	"\regress_denied\x18\x16 \x01(\v2%.toshi.workspace.v1.EgressDeniedEventH\x00R\fegressDenied\x12@\n" +
 	"\tmail_sent\x18\x17 \x01(\v2!.toshi.workspace.v1.MailSentEventH\x00R\bmailSent\x12V\n" +
-	"\x11kept_vm_discarded\x18\x18 \x01(\v2(.toshi.workspace.v1.KeptVMDiscardedEventH\x00R\x0fkeptVmDiscarded\x12F\n" +
-	"\vchannel_acp\x18\x19 \x01(\v2#.toshi.workspace.v1.ChannelACPEventH\x00R\n" +
-	"channelAcp\x12U\n" +
+	"\x11kept_vm_discarded\x18\x18 \x01(\v2(.toshi.workspace.v1.KeptVMDiscardedEventH\x00R\x0fkeptVmDiscarded\x12I\n" +
+	"\fendpoint_acp\x18\x19 \x01(\v2$.toshi.workspace.v1.EndpointACPEventH\x00R\vendpointAcp\x12U\n" +
 	"\x10service_restored\x18\x1a \x01(\v2(.toshi.workspace.v1.ServiceRestoredEventH\x00R\x0fserviceRestored\x12h\n" +
 	"\x17service_snapshot_failed\x18\x1b \x01(\v2..toshi.workspace.v1.ServiceSnapshotFailedEventH\x00R\x15serviceSnapshotFailed\x12P\n" +
 	"\x0fservice_sign_in\x18\x1c \x01(\v2&.toshi.workspace.v1.ServiceSignInEventH\x00R\rserviceSignIn\x12F\n" +
@@ -13642,9 +13641,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"recipients\x18\x03 \x01(\x05R\n" +
 	"recipients\x12.\n" +
-	"\x13provider_message_id\x18\x04 \x01(\tR\x11providerMessageId\"\x88\x01\n" +
-	"\x0fChannelACPEvent\x12\x18\n" +
-	"\achannel\x18\x01 \x01(\tR\achannel\x12\x1d\n" +
+	"\x13provider_message_id\x18\x04 \x01(\tR\x11providerMessageId\"\x8b\x01\n" +
+	"\x10EndpointACPEvent\x12\x1a\n" +
+	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x02 \x01(\tR\tsessionId\x12\x1b\n" +
 	"\ttool_kind\x18\x03 \x01(\tR\btoolKind\x12\x1f\n" +
@@ -13692,7 +13691,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\tkeepalive\x18\x02 \x01(\v2\x1d.toshi.workspace.v1.KeepaliveR\tkeepalive\"X\n" +
 	"\tKeepalive\x123\n" +
 	"\asent_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x06sentAt\x12\x16\n" +
-	"\x06cursor\x18\x02 \x01(\tR\x06cursor\"\x8d\x04\n" +
+	"\x06cursor\x18\x02 \x01(\tR\x06cursor\"\x8f\x04\n" +
 	"\x10PreviewShareLink\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -13709,9 +13708,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x125\n" +
 	"\bended_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x12\x18\n" +
-	"\achannel\x18\v \x01(\tR\achannel\x12\x12\n" +
-	"\x04port\x18\f \x01(\x05R\x04port\"\x92\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x12\x1a\n" +
+	"\bendpoint\x18\v \x01(\tR\bendpoint\x12\x12\n" +
+	"\x04port\x18\f \x01(\x05R\x04port\"\x95\x02\n" +
 	"\x1dCreatePreviewShareLinkRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
@@ -13719,10 +13718,10 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"sandbox_id\x18\x03 \x01(\tR\tsandboxId\x128\n" +
 	"\n" +
 	"expires_in\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12\x1b\n" +
-	"\tmax_bytes\x18\x05 \x01(\x03R\bmaxBytes\x12\x1a\n" +
-	"\achannel\x18\x06 \x01(\tH\x00R\achannel\x12\x14\n" +
-	"\x04port\x18\a \x01(\x05H\x00R\x04portB\r\n" +
-	"\vchannel_ref\"w\n" +
+	"\tmax_bytes\x18\x05 \x01(\x03R\bmaxBytes\x12\x1c\n" +
+	"\bendpoint\x18\x06 \x01(\tH\x00R\bendpoint\x12\x14\n" +
+	"\x04port\x18\a \x01(\x05H\x00R\x04portB\x0e\n" +
+	"\fendpoint_ref\"w\n" +
 	"\x1eCreatePreviewShareLinkResponse\x12C\n" +
 	"\n" +
 	"share_link\x18\x01 \x01(\v2$.toshi.workspace.v1.PreviewShareLinkR\tshareLink\x12\x10\n" +
@@ -13747,12 +13746,12 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\rshare_link_id\x18\x04 \x01(\tR\vshareLinkId\"e\n" +
 	"\x1eRevokePreviewShareLinkResponse\x12C\n" +
 	"\n" +
-	"share_link\x18\x01 \x01(\v2$.toshi.workspace.v1.PreviewShareLinkR\tshareLink\"\xf9\x03\n" +
+	"share_link\x18\x01 \x01(\v2$.toshi.workspace.v1.PreviewShareLinkR\tshareLink\"\xfb\x03\n" +
 	"\x10ServiceShareLink\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
-	"service_id\x18\x02 \x01(\tR\tserviceId\x12\x18\n" +
-	"\achannel\x18\x03 \x01(\tR\achannel\x12?\n" +
+	"service_id\x18\x02 \x01(\tR\tserviceId\x12\x1a\n" +
+	"\bendpoint\x18\x03 \x01(\tR\bendpoint\x12?\n" +
 	"\x05state\x18\x04 \x01(\x0e2).toshi.workspace.v1.PreviewShareLinkStateR\x05state\x129\n" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
@@ -13765,13 +13764,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"revoked_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x125\n" +
-	"\bended_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\"\xeb\x01\n" +
+	"\bended_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\"\xed\x01\n" +
 	"\x1dCreateServiceShareLinkRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
 	"\n" +
-	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x18\n" +
-	"\achannel\x18\x04 \x01(\tR\achannel\x128\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x1a\n" +
+	"\bendpoint\x18\x04 \x01(\tR\bendpoint\x128\n" +
 	"\n" +
 	"expires_in\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12\x1b\n" +
 	"\tmax_bytes\x18\x06 \x01(\x03R\bmaxBytes\"w\n" +
@@ -14124,7 +14123,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\vServiceMode\x12\x1c\n" +
 	"\x18SERVICE_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16SERVICE_MODE_ALWAYS_ON\x10\x01\x12\x1a\n" +
-	"\x16SERVICE_MODE_ON_DEMAND\x10\x02*\xfd\x06\n" +
+	"\x16SERVICE_MODE_ON_DEMAND\x10\x02*\xff\x06\n" +
 	"\tEventType\x12\x1a\n" +
 	"\x16EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bEVENT_TYPE_WORKLOAD_CREATED\x10\x01\x12%\n" +
@@ -14145,9 +14144,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x19EVENT_TYPE_AGENT_ANSWERED\x10\x0f\x12\x1c\n" +
 	"\x18EVENT_TYPE_EGRESS_DENIED\x10\x10\x12\x18\n" +
 	"\x14EVENT_TYPE_MAIL_SENT\x10\x11\x12 \n" +
-	"\x1cEVENT_TYPE_KEPT_VM_DISCARDED\x10\x12\x12/\n" +
-	"+EVENT_TYPE_CHANNEL_ACP_PERMISSION_REQUESTED\x10\x13\x12%\n" +
-	"!EVENT_TYPE_CHANNEL_ACP_TURN_ENDED\x10\x14\x12\x1f\n" +
+	"\x1cEVENT_TYPE_KEPT_VM_DISCARDED\x10\x12\x120\n" +
+	",EVENT_TYPE_ENDPOINT_ACP_PERMISSION_REQUESTED\x10\x13\x12&\n" +
+	"\"EVENT_TYPE_ENDPOINT_ACP_TURN_ENDED\x10\x14\x12\x1f\n" +
 	"\x1bEVENT_TYPE_SERVICE_RESTORED\x10\x15\x12&\n" +
 	"\"EVENT_TYPE_SERVICE_SNAPSHOT_FAILED\x10\x16\x12\x1d\n" +
 	"\x19EVENT_TYPE_SERVICE_SIGNIN\x10\x17\x12\x1e\n" +
@@ -14255,7 +14254,7 @@ var file_toshi_workspace_v1_workspace_proto_goTypes = []any{
 	(*ProvidedName)(nil),                   // 31: toshi.workspace.v1.ProvidedName
 	(*JobSpec)(nil),                        // 32: toshi.workspace.v1.JobSpec
 	(*Binding)(nil),                        // 33: toshi.workspace.v1.Binding
-	(*ServiceChannel)(nil),                 // 34: toshi.workspace.v1.ServiceChannel
+	(*ServiceEndpoint)(nil),                // 34: toshi.workspace.v1.ServiceEndpoint
 	(*EnvironmentSecrets)(nil),             // 35: toshi.workspace.v1.EnvironmentSecrets
 	(*Mail)(nil),                           // 36: toshi.workspace.v1.Mail
 	(*BoundBinding)(nil),                   // 37: toshi.workspace.v1.BoundBinding
@@ -14313,7 +14312,7 @@ var file_toshi_workspace_v1_workspace_proto_goTypes = []any{
 	(*EmittedEvent)(nil),                   // 89: toshi.workspace.v1.EmittedEvent
 	(*AgentAnswerEvent)(nil),               // 90: toshi.workspace.v1.AgentAnswerEvent
 	(*MailSentEvent)(nil),                  // 91: toshi.workspace.v1.MailSentEvent
-	(*ChannelACPEvent)(nil),                // 92: toshi.workspace.v1.ChannelACPEvent
+	(*EndpointACPEvent)(nil),               // 92: toshi.workspace.v1.EndpointACPEvent
 	(*AgentPrompt)(nil),                    // 93: toshi.workspace.v1.AgentPrompt
 	(*ConnectionEvent)(nil),                // 94: toshi.workspace.v1.ConnectionEvent
 	(*RecordingEvent)(nil),                 // 95: toshi.workspace.v1.RecordingEvent
@@ -14466,7 +14465,7 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	167, // 68: toshi.workspace.v1.ServiceBackup.last_save_failure_time:type_name -> google.protobuf.Timestamp
 	47,  // 69: toshi.workspace.v1.JobSpec.command:type_name -> toshi.workspace.v1.Command
 	33,  // 70: toshi.workspace.v1.JobSpec.bindings:type_name -> toshi.workspace.v1.Binding
-	34,  // 71: toshi.workspace.v1.Binding.service:type_name -> toshi.workspace.v1.ServiceChannel
+	34,  // 71: toshi.workspace.v1.Binding.service:type_name -> toshi.workspace.v1.ServiceEndpoint
 	35,  // 72: toshi.workspace.v1.Binding.secrets:type_name -> toshi.workspace.v1.EnvironmentSecrets
 	36,  // 73: toshi.workspace.v1.Binding.mail:type_name -> toshi.workspace.v1.Mail
 	38,  // 74: toshi.workspace.v1.BoundBinding.service:type_name -> toshi.workspace.v1.BoundService
@@ -14525,7 +14524,7 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	85,  // 127: toshi.workspace.v1.Event.egress_denied:type_name -> toshi.workspace.v1.EgressDeniedEvent
 	91,  // 128: toshi.workspace.v1.Event.mail_sent:type_name -> toshi.workspace.v1.MailSentEvent
 	78,  // 129: toshi.workspace.v1.Event.kept_vm_discarded:type_name -> toshi.workspace.v1.KeptVMDiscardedEvent
-	92,  // 130: toshi.workspace.v1.Event.channel_acp:type_name -> toshi.workspace.v1.ChannelACPEvent
+	92,  // 130: toshi.workspace.v1.Event.endpoint_acp:type_name -> toshi.workspace.v1.EndpointACPEvent
 	79,  // 131: toshi.workspace.v1.Event.service_restored:type_name -> toshi.workspace.v1.ServiceRestoredEvent
 	80,  // 132: toshi.workspace.v1.Event.service_snapshot_failed:type_name -> toshi.workspace.v1.ServiceSnapshotFailedEvent
 	81,  // 133: toshi.workspace.v1.Event.service_sign_in:type_name -> toshi.workspace.v1.ServiceSignInEvent
@@ -14686,7 +14685,7 @@ func file_toshi_workspace_v1_workspace_proto_init() {
 		(*Event_EgressDenied)(nil),
 		(*Event_MailSent)(nil),
 		(*Event_KeptVmDiscarded)(nil),
-		(*Event_ChannelAcp)(nil),
+		(*Event_EndpointAcp)(nil),
 		(*Event_ServiceRestored)(nil),
 		(*Event_ServiceSnapshotFailed)(nil),
 		(*Event_ServiceSignIn)(nil),
@@ -14694,7 +14693,7 @@ func file_toshi_workspace_v1_workspace_proto_init() {
 	}
 	file_toshi_workspace_v1_workspace_proto_msgTypes[66].OneofWrappers = []any{}
 	file_toshi_workspace_v1_workspace_proto_msgTypes[81].OneofWrappers = []any{
-		(*CreatePreviewShareLinkRequest_Channel)(nil),
+		(*CreatePreviewShareLinkRequest_Endpoint)(nil),
 		(*CreatePreviewShareLinkRequest_Port)(nil),
 	}
 	file_toshi_workspace_v1_workspace_proto_msgTypes[116].OneofWrappers = []any{

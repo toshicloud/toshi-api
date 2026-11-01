@@ -8,272 +8,272 @@ import "toshi/permission.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
-// ChannelService manages the channels of the workspace's jobs, lists a
-// job's Forwards and reads its Link. A channel is a port in the job's
-// guest served as HTTP (an http channel), or a command whose input and
-// output clients attach to (a stream channel). The caller's credential
+// EndpointService manages the endpoints of the workspace's jobs, lists a
+// job's Forwards and reads its Tunnel. An endpoint is a port in the job's
+// guest served as HTTP (an http endpoint), or a command whose input and
+// output clients attach to (a stream endpoint). The caller's credential
 // names the workspace, as for WorkloadService; a job of another workspace
 // is NOT_FOUND. Every call names the job by its ID as the jobs API and
-// `toshi host-job list` show it, and a channel by its name on that job.
+// `toshi host-job list` show it, and an endpoint by its name on that job.
 //
-// An event channel is a service's queue of messages, which Toshi posts to
+// An event endpoint is a service's queue of messages, which Toshi posts to
 // a port and path in the service's guest, in order and at least once: the
 // service's recipe declares it, and it lasts while the service does,
 // across its runs. A call names it by its service's ID and its name, in
 // service, never by a job.
 //
 // What carries a stream is not a call: a client attaches to a stream
-// channel, and a Forward opens, on an upgrade of the control plane's
-// connection, with a token from CreateChannelConnectToken. A control
-// plane that serves no channels answers every call with UNIMPLEMENTED.
-service ChannelService {
-  // CreateChannel opens a channel on a running job: a port makes an http
-  // channel, a command a stream channel, whose process the guest starts.
+// endpoint, and a Forward opens, on an upgrade of the control plane's
+// connection, with a token from CreateEndpointConnectToken. A control
+// plane that serves no endpoints answers every call with UNIMPLEMENTED.
+service EndpointService {
+  // CreateEndpoint opens an endpoint on a running job: a port makes an http
+  // endpoint, a command a stream endpoint, whose process the guest starts.
   // A job that is not running fails with FAILED_PRECONDITION, a name the
   // job already has with ALREADY_EXISTS, and a sandbox's port beyond its
   // plan's preview ports with RESOURCE_EXHAUSTED.
-  rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {
-    option (toshi.permission) = "channels.write";
+  rpc CreateEndpoint(CreateEndpointRequest) returns (CreateEndpointResponse) {
+    option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
-      action: "host_job.channel_exposed"
+      action: "host_job.endpoint_exposed"
       target: "host_job:job_id"
     };
   }
 
-  // ListChannels lists a job's channels, or every channel of the
+  // ListEndpoints lists a job's endpoints, or every endpoint of the
   // workspace, ended ones included, oldest first.
   //
-  // A page holds 100 channels when page_size is zero, and 1000 at most.
-  rpc ListChannels(ListChannelsRequest) returns (ListChannelsResponse) {
-    option (toshi.permission) = "channels.read";
+  // A page holds 100 endpoints when page_size is zero, and 1000 at most.
+  rpc ListEndpoints(ListEndpointsRequest) returns (ListEndpointsResponse) {
+    option (toshi.permission) = "endpoints.read";
   }
 
-  // GetChannel returns one channel, with a stream channel's clients. Its
-  // request is named in full: inside the service, GetChannelRequest is
+  // GetEndpoint returns one endpoint, with a stream endpoint's clients. Its
+  // request is named in full: inside the service, GetEndpointRequest is
   // the call below.
-  rpc GetChannel(.toshi.workspace.v1.GetChannelRequest) returns (GetChannelResponse) {
-    option (toshi.permission) = "channels.read";
+  rpc GetEndpoint(.toshi.workspace.v1.GetEndpointRequest) returns (GetEndpointResponse) {
+    option (toshi.permission) = "endpoints.read";
   }
 
-  // GetChannelPolicy returns a channel's effective policy, with its
+  // GetEndpointPolicy returns an endpoint's effective policy, with its
   // version.
-  rpc GetChannelPolicy(GetChannelPolicyRequest) returns (GetChannelPolicyResponse) {
-    option (toshi.permission) = "channels.read";
+  rpc GetEndpointPolicy(GetEndpointPolicyRequest) returns (GetEndpointPolicyResponse) {
+    option (toshi.permission) = "endpoints.read";
   }
 
-  // SetChannelPolicy replaces a channel's policy when the version it names
+  // SetEndpointPolicy replaces an endpoint's policy when the version it names
   // is the one stored, and returns the policy at its new version. A policy
   // changed since that version fails with ABORTED: read it again. A
-  // malformed policy fails with INVALID_ARGUMENT, and one the channel
+  // malformed policy fails with INVALID_ARGUMENT, and one the endpoint
   // refuses, such as a list without a module that may not be removed,
-  // with FAILED_PRECONDITION. A service's event channel, named by service
+  // with FAILED_PRECONDITION. A service's event endpoint, named by service
   // in place of job_id, takes what its recipe's policy takes, a keep the
   // plan allows among it, and keeps the policy set until a deploy whose
-  // recipe changes the channel's policy; its set is recorded as
-  // service.channel_policy_set on the service.
-  rpc SetChannelPolicy(SetChannelPolicyRequest) returns (SetChannelPolicyResponse) {
-    option (toshi.permission) = "channels.write";
+  // recipe changes the endpoint's policy; its set is recorded as
+  // service.endpoint_policy_set on the service.
+  rpc SetEndpointPolicy(SetEndpointPolicyRequest) returns (SetEndpointPolicyResponse) {
+    option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
-      action: "host_job.channel_policy_set"
+      action: "host_job.endpoint_policy_set"
       target: "host_job:job_id"
     };
   }
 
-  // ListChannelRequests lists an http channel's request records the
+  // ListEndpointRequests lists an http endpoint's request records the
   // filters select, newest first, or oldest first after after_seq,
-  // without their headers and bodies. A stream channel fails with
+  // without their headers and bodies. A stream endpoint fails with
   // FAILED_PRECONDITION.
   //
   // A page holds 50 records when page_size is zero, and 500 at most.
-  rpc ListChannelRequests(ListChannelRequestsRequest) returns (ListChannelRequestsResponse) {
-    option (toshi.permission) = "channels.read";
+  rpc ListEndpointRequests(ListEndpointRequestsRequest) returns (ListEndpointRequestsResponse) {
+    option (toshi.permission) = "endpoints.read";
   }
 
-  // GetChannelRequest returns one request record whole. A record the
-  // channel no longer keeps fails with NOT_FOUND, naming the oldest kept.
-  rpc GetChannelRequest(GetChannelRequestRequest) returns (GetChannelRequestResponse) {
-    option (toshi.permission) = "channels.read";
+  // GetEndpointRequest returns one request record whole. A record the
+  // endpoint no longer keeps fails with NOT_FOUND, naming the oldest kept.
+  rpc GetEndpointRequest(GetEndpointRequestRequest) returns (GetEndpointRequestResponse) {
+    option (toshi.permission) = "endpoints.read";
   }
 
-  // ExportChannelLog streams a file of a channel's log: a stream channel's
-  // output between two offsets, as bytes, or an http channel's request
+  // ExportEndpointLog streams a file of an endpoint's log: a stream endpoint's
+  // output between two offsets, as bytes, or an http endpoint's request
   // records between two sequence numbers or times, one JSON line each,
   // oldest first. One export holds at most the control plane's export
   // limit, 64 MiB unless set; the first response's next says where the
   // following export starts. Each export is recorded in the audit log.
-  rpc ExportChannelLog(ExportChannelLogRequest) returns (stream ExportChannelLogResponse) {
-    option (toshi.permission) = "channels.read";
+  rpc ExportEndpointLog(ExportEndpointLogRequest) returns (stream ExportEndpointLogResponse) {
+    option (toshi.permission) = "endpoints.read";
     option (toshi.audit) = {
-      action: "host_job.channel_log_exported"
+      action: "host_job.endpoint_log_exported"
       target: "host_job:job_id"
     };
   }
 
-  // CreateChannelConnectToken mints a token that attaches one client to a
-  // channel, or opens a preview in a browser, once, before it expires. A
-  // channel the connect path would not serve fails as that path does.
-  rpc CreateChannelConnectToken(CreateChannelConnectTokenRequest) returns (CreateChannelConnectTokenResponse) {
-    option (toshi.permission) = "channels.write";
+  // CreateEndpointConnectToken mints a token that attaches one client to an
+  // endpoint, or opens a preview in a browser, once, before it expires. An
+  // endpoint the connect path would not serve fails as that path does.
+  rpc CreateEndpointConnectToken(CreateEndpointConnectTokenRequest) returns (CreateEndpointConnectTokenResponse) {
+    option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
-      action: "host_job.channel_connect_token_issued"
+      action: "host_job.endpoint_connect_token_issued"
       target: "host_job:job_id"
     };
   }
 
-  // RevokeChannelConnectToken refuses a connect token from then on, on
+  // RevokeEndpointConnectToken refuses a connect token from then on, on
   // every process of the control plane; a preview's token also ends what
-  // it opened. A token not minted for this channel is NOT_FOUND. A token
+  // it opened. A token not minted for this endpoint is NOT_FOUND. A token
   // that has expired is refused already, and its revoke writes nothing.
-  rpc RevokeChannelConnectToken(RevokeChannelConnectTokenRequest) returns (RevokeChannelConnectTokenResponse) {
-    option (toshi.permission) = "channels.write";
+  rpc RevokeEndpointConnectToken(RevokeEndpointConnectTokenRequest) returns (RevokeEndpointConnectTokenResponse) {
+    option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
-      action: "host_job.channel_connect_token_revoked"
+      action: "host_job.endpoint_connect_token_revoked"
       target: "host_job:job_id"
     };
   }
 
-  // DeleteChannel ends a channel and its connections. An open stream
-  // channel stays, closing, until the guest has closed its process or the
-  // job has ended; any other channel goes at once.
-  rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {
-    option (toshi.permission) = "channels.write";
+  // DeleteEndpoint ends an endpoint and its connections. An open stream
+  // endpoint stays, closing, until the guest has closed its process or the
+  // job has ended; any other endpoint goes at once.
+  rpc DeleteEndpoint(DeleteEndpointRequest) returns (DeleteEndpointResponse) {
+    option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
-      action: "host_job.channel_deleted"
+      action: "host_job.endpoint_deleted"
       target: "host_job:job_id"
     };
   }
 
   // ListForwards lists a running job's open Forwards, oldest first; a job
   // that is not running has none. When a process of the control plane
-  // that holds the job's Link does not answer, the call fails with
+  // that holds the job's Tunnel does not answer, the call fails with
   // UNAVAILABLE rather than answer short.
   //
   // A page holds 100 Forwards when page_size is zero, and 1000 at most.
   rpc ListForwards(ListForwardsRequest) returns (ListForwardsResponse) {
-    option (toshi.permission) = "channels.read";
+    option (toshi.permission) = "endpoints.read";
   }
 
-  // GetLink returns the state of the Link of the runner the job holds.
-  rpc GetLink(GetLinkRequest) returns (GetLinkResponse) {
-    option (toshi.permission) = "channels.read";
+  // GetTunnel returns the state of the Tunnel of the runner the job holds.
+  rpc GetTunnel(GetTunnelRequest) returns (GetTunnelResponse) {
+    option (toshi.permission) = "endpoints.read";
   }
 
-  // SendChannelMessage adds a message to the end of an event channel's
+  // SendEndpointMessage adds a message to the end of an event endpoint's
   // queue and returns its ID at once; the message waits there until it is
-  // delivered, parked failed, or kept past the channel's keep. A sleeping
+  // delivered, parked failed, or kept past the endpoint's keep. A sleeping
   // on-demand service is woken. A message sent again with the same
   // request_key is not stored again: its ID is returned, with duplicate
-  // set. A caller the channel's input rule does not admit fails with
+  // set. A caller the endpoint's input rule does not admit fails with
   // PERMISSION_DENIED; a name under a segment Toshi keeps for its own
   // events, data that is not JSON or past 256 KiB with INVALID_ARGUMENT.
   // Delivery is at least once: a post whose answer is lost is posted
   // again with the same webhook-id, the message ID, so a handler drops
   // repeats by it.
-  rpc SendChannelMessage(SendChannelMessageRequest) returns (SendChannelMessageResponse) {
-    option (toshi.permission) = "channels.write";
+  rpc SendEndpointMessage(SendEndpointMessageRequest) returns (SendEndpointMessageResponse) {
+    option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {action: "none"};
   }
 
-  // TailChannelMessages streams an event channel's messages after the
+  // TailEndpointMessages streams an event endpoint's messages after the
   // cursor, oldest first, then each message added after them as it is
   // added, until the caller ends the call. States narrows the stream to
   // messages in those states when it is read.
-  rpc TailChannelMessages(TailChannelMessagesRequest) returns (stream TailChannelMessagesResponse) {
-    option (toshi.permission) = "channels.read";
+  rpc TailEndpointMessages(TailEndpointMessagesRequest) returns (stream TailEndpointMessagesResponse) {
+    option (toshi.permission) = "endpoints.read";
   }
 
-  // ReplayChannelMessage puts a failed, expired or delivered message of an
-  // event channel back in its queue under its own ID, so its webhook-id is
+  // ReplayEndpointMessage puts a failed, expired or delivered message of an
+  // event endpoint back in its queue under its own ID, so its webhook-id is
   // the same: its attempts start again from 0, and its keep runs from the
   // replay. A message pending or in flight fails with
   // FAILED_PRECONDITION.
-  rpc ReplayChannelMessage(ReplayChannelMessageRequest) returns (ReplayChannelMessageResponse) {
-    option (toshi.permission) = "channels.write";
+  rpc ReplayEndpointMessage(ReplayEndpointMessageRequest) returns (ReplayEndpointMessageResponse) {
+    option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
-      action: "service.channel_message_replayed"
+      action: "service.endpoint_message_replayed"
       target: "service:service"
     };
   }
 }
 
-// ChannelShape is how a channel carries its bytes.
-enum ChannelShape {
-  CHANNEL_SHAPE_UNSPECIFIED = 0;
+// EndpointShape is how an endpoint carries its bytes.
+enum EndpointShape {
+  ENDPOINT_SHAPE_UNSPECIFIED = 0;
   // A port in the guest, served as HTTP.
-  CHANNEL_SHAPE_HTTP = 1;
+  ENDPOINT_SHAPE_HTTP = 1;
   // A command in the guest, whose input and output clients attach to.
-  CHANNEL_SHAPE_STREAM = 2;
+  ENDPOINT_SHAPE_STREAM = 2;
   // A service's queue of messages, posted to a port and path in its
   // guest, signed with the Standard Webhooks headers, at least once.
-  CHANNEL_SHAPE_EVENT = 3;
+  ENDPOINT_SHAPE_EVENT = 3;
 }
 
-// ChannelState is where a channel is in its life.
-enum ChannelState {
-  CHANNEL_STATE_UNSPECIFIED = 0;
-  CHANNEL_STATE_OPEN = 1;
-  // A stream channel's process has exited; its output is still kept.
-  CHANNEL_STATE_EXITED = 2;
+// EndpointState is where an endpoint is in its life.
+enum EndpointState {
+  ENDPOINT_STATE_UNSPECIFIED = 0;
+  ENDPOINT_STATE_OPEN = 1;
+  // A stream endpoint's process has exited; its output is still kept.
+  ENDPOINT_STATE_EXITED = 2;
   // Deleted, waiting for the guest to close its process.
-  CHANNEL_STATE_CLOSING = 3;
-  CHANNEL_STATE_ENDED = 4;
+  ENDPOINT_STATE_CLOSING = 3;
+  ENDPOINT_STATE_ENDED = 4;
 }
 
-// ChannelAttachMode is what an attached client may do.
-enum ChannelAttachMode {
-  CHANNEL_ATTACH_MODE_UNSPECIFIED = 0;
+// EndpointAttachMode is what an attached client may do.
+enum EndpointAttachMode {
+  ENDPOINT_ATTACH_MODE_UNSPECIFIED = 0;
   // The client may send input.
-  CHANNEL_ATTACH_MODE_INPUT = 1;
+  ENDPOINT_ATTACH_MODE_INPUT = 1;
   // The client reads the output only.
-  CHANNEL_ATTACH_MODE_READ_ONLY = 2;
+  ENDPOINT_ATTACH_MODE_READ_ONLY = 2;
 }
 
-// ChannelStreams is what a policy change does to a stream channel's
+// EndpointStreams is what a policy change does to a stream endpoint's
 // clients attached under the policy it replaces.
-enum ChannelStreams {
+enum EndpointStreams {
   // As KEEP.
-  CHANNEL_STREAMS_UNSPECIFIED = 0;
+  ENDPOINT_STREAMS_UNSPECIFIED = 0;
   // They stay attached; only those the new policy no longer admits, or now
   // grants read_only while they hold input, end.
-  CHANNEL_STREAMS_KEEP = 1;
+  ENDPOINT_STREAMS_KEEP = 1;
   // They stay attached for up to 30 seconds, then end with the reason
   // "reconnect", so each client attaches again under the new policy.
-  CHANNEL_STREAMS_DRAIN = 2;
+  ENDPOINT_STREAMS_DRAIN = 2;
   // They end now with the reason "policy_changed".
-  CHANNEL_STREAMS_END = 3;
+  ENDPOINT_STREAMS_END = 3;
 }
 
-// ChannelLog names the log of a channel an export carries.
-enum ChannelLog {
-  CHANNEL_LOG_UNSPECIFIED = 0;
-  // A stream channel's output.
-  CHANNEL_LOG_OUTPUT = 1;
-  // An http channel's request records.
-  CHANNEL_LOG_REQUESTS = 2;
+// EndpointLog names the log of an endpoint an export carries.
+enum EndpointLog {
+  ENDPOINT_LOG_UNSPECIFIED = 0;
+  // A stream endpoint's output.
+  ENDPOINT_LOG_OUTPUT = 1;
+  // An http endpoint's request records.
+  ENDPOINT_LOG_REQUESTS = 2;
 }
 
-message Channel {
+message Endpoint {
   // Assigned by the server.
   string id = 1;
-  // The job whose guest holds the channel; an event channel's is its
+  // The job whose guest holds the endpoint; an event endpoint's is its
   // service's live run, empty while the service has none.
   string job_id = 2;
   string name = 3;
-  ChannelShape shape = 4;
-  // An http or event channel's port in the guest.
+  EndpointShape shape = 4;
+  // An http or event endpoint's port in the guest.
   int32 port = 5;
-  // A stream channel's command.
+  // A stream endpoint's command.
   repeated string command = 6;
-  ChannelState state = 7;
-  // Who created the channel, as the audit log names an actor.
+  EndpointState state = 7;
+  // Who created the endpoint, as the audit log names an actor.
   string created_by = 8;
   google.protobuf.Timestamp created_at = 9;
-  // Unset while the channel lasts.
+  // Unset while the endpoint lasts.
   google.protobuf.Timestamp ended_at = 10;
   string end_reason = 11;
-  // A stream channel's process's exit code, once it has exited.
+  // A stream endpoint's process's exit code, once it has exited.
   optional int32 exit_code = 12;
-  // The process of the control plane holding the channel, while it does.
+  // The process of the control plane holding the endpoint, while it does.
   string owner = 13;
   // The offsets that bound the output kept; output_next is where the next
   // byte goes.
@@ -281,56 +281,56 @@ message Channel {
   int64 output_next = 15;
   // Whether the process's input is closed.
   bool input_closed = 16;
-  // The sequence numbers that bound an http channel's request records
+  // The sequence numbers that bound an http endpoint's request records
   // kept; both zero when none is.
   int64 requests_oldest = 17;
   int64 requests_newest = 18;
   // The effective policy, with its version.
-  ChannelPolicy policy = 19;
-  // A stream channel's clients, attached now or before; an http channel
+  EndpointPolicy policy = 19;
+  // A stream endpoint's clients, attached now or before; an http endpoint
   // keeps none.
-  repeated ChannelClient clients = 20;
-  // An event channel's service, by its ID.
+  repeated EndpointClient clients = 20;
+  // An event endpoint's service, by its ID.
   string service = 21;
-  // Where an event channel posts in the guest.
+  // Where an event endpoint posts in the guest.
   string path = 22;
-  // An event channel's messages counted by state.
-  ChannelEventCounts events = 23;
-  // The grant through which another workspace exposed the channel, or
+  // An event endpoint's messages counted by state.
+  EndpointEventCounts events = 23;
+  // The grant through which another workspace exposed the endpoint, or
   // empty for one the job's own workspace exposed.
   string grant_id = 24;
-  // The policy version the channel's process of the control plane applies.
-  // A stream channel's owner records it as it applies each version, so a
+  // The policy version the endpoint's process of the control plane applies.
+  // A stream endpoint's owner records it as it applies each version, so a
   // value below policy.version is a change its attached clients are not
-  // yet held to; 0 until an owner applied one. An http channel's process
+  // yet held to; 0 until an owner applied one. An http endpoint's process
   // reads the policy at each request: its value is policy.version. An
-  // event channel's is 0.
+  // event endpoint's is 0.
   int64 applied_policy_version = 25;
-  // The protocol the channel's process speaks, from the service recipe:
+  // The protocol the endpoint's process speaks, from the service recipe:
   // "acp", "stream-json" or empty for bytes the relay does not read.
   // Read-only.
   string framing = 26;
-  // An ACP channel's state, as its owner last recorded it; unset on any
-  // other channel.
-  ChannelACPState acp_state = 27;
+  // An ACP endpoint's state, as its owner last recorded it; unset on any
+  // other endpoint.
+  EndpointACPState acp_state = 27;
 }
 
-// ChannelACPState is what an ACP channel's process is doing, as the
-// control plane owning the channel last read it from the frames that pass.
-message ChannelACPState {
+// EndpointACPState is what an ACP endpoint's process is doing, as the
+// control plane owning the endpoint last read it from the frames that pass.
+message EndpointACPState {
   // What the process is doing: idle, turn or permission.
   string state = 1;
   // The ACP session the state belongs to.
   string session_id = 2;
   // When the state began.
   google.protobuf.Timestamp since = 3;
-  // The frames the relay dropped since the channel opened, by reason:
+  // The frames the relay dropped since the endpoint opened, by reason:
   // unparsable, duplicate_key, too_long or tools.
   map<string, int64> dropped = 4;
 }
 
-// ChannelEventCounts counts an event channel's messages by state.
-message ChannelEventCounts {
+// EndpointEventCounts counts an event endpoint's messages by state.
+message EndpointEventCounts {
   int64 pending = 1;
   int64 in_flight = 2;
   int64 delivered = 3;
@@ -342,26 +342,26 @@ message ChannelEventCounts {
   string last_failure = 7;
 }
 
-// ChannelMessageState is where an event channel's message is in its
+// EndpointMessageState is where an event endpoint's message is in its
 // delivery.
-enum ChannelMessageState {
-  CHANNEL_MESSAGE_STATE_UNSPECIFIED = 0;
+enum EndpointMessageState {
+  ENDPOINT_MESSAGE_STATE_UNSPECIFIED = 0;
   // Waiting for its next attempt.
-  CHANNEL_MESSAGE_STATE_PENDING = 1;
+  ENDPOINT_MESSAGE_STATE_PENDING = 1;
   // Posted, and not yet answered.
-  CHANNEL_MESSAGE_STATE_IN_FLIGHT = 2;
+  ENDPOINT_MESSAGE_STATE_IN_FLIGHT = 2;
   // Answered 2xx.
-  CHANNEL_MESSAGE_STATE_DELIVERED = 3;
+  ENDPOINT_MESSAGE_STATE_DELIVERED = 3;
   // Parked after an hour of failed attempts from its send or replay. The
-  // messages after it are still delivered; ReplayChannelMessage puts it
+  // messages after it are still delivered; ReplayEndpointMessage puts it
   // back.
-  CHANNEL_MESSAGE_STATE_FAILED = 4;
-  // Its channel's keep passed before it was delivered.
-  CHANNEL_MESSAGE_STATE_EXPIRED = 5;
+  ENDPOINT_MESSAGE_STATE_FAILED = 4;
+  // Its endpoint's keep passed before it was delivered.
+  ENDPOINT_MESSAGE_STATE_EXPIRED = 5;
 }
 
-// ChannelMessageSource is who sent a message; Toshi stamps it.
-message ChannelMessageSource {
+// EndpointMessageSource is who sent a message; Toshi stamps it.
+message EndpointMessageSource {
   // principal (a person or token), workload, trigger, mail or alarm.
   string kind = 1;
   // A principal as the audit log names an actor, or the workload's or
@@ -369,19 +369,19 @@ message ChannelMessageSource {
   string id = 2;
 }
 
-// ChannelMessage is one message of an event channel.
-message ChannelMessage {
+// EndpointMessage is one message of an event endpoint.
+message EndpointMessage {
   // The webhook-id of each of its posts, the same on every attempt and
   // after a replay.
   string id = 1;
-  // Its place in the channel's queue, from 1.
+  // Its place in the endpoint's queue, from 1.
   int64 seq = 2;
   string name = 3;
   google.protobuf.Timestamp time = 4;
-  ChannelMessageSource source = 5;
+  EndpointMessageSource source = 5;
   // The message's JSON.
   bytes data = 6;
-  ChannelMessageState state = 7;
+  EndpointMessageState state = 7;
   int32 attempts = 8;
   // When a pending message is next posted.
   google.protobuf.Timestamp next_attempt_at = 9;
@@ -395,13 +395,13 @@ message ChannelMessage {
   google.protobuf.Timestamp scheduled_for = 13;
 }
 
-// ChannelClient is one client of a stream channel: its last attach, who
+// EndpointClient is one client of a stream endpoint: its last attach, who
 // made it, and how far it has acknowledged the output, which it goes on
 // from when it attaches again.
-message ChannelClient {
+message EndpointClient {
   string id = 1;
   // The mode granted to its last attach.
-  ChannelAttachMode mode = 2;
+  EndpointAttachMode mode = 2;
   // Who attached it, as created_by names an actor.
   string attached_by = 3;
   // The device and the credential of the connect token that admitted it,
@@ -417,58 +417,58 @@ message ChannelClient {
   bool attached = 10;
 }
 
-// ChannelPolicy is a channel's policy document, with the words a recipe's
-// channel policy uses.
-message ChannelPolicy {
-  // Rises at each change. SetChannelPolicy names the version it was read
-  // at; CreateChannel takes none.
+// EndpointPolicy is an endpoint's policy document, with the words a recipe's
+// endpoint policy uses.
+message EndpointPolicy {
+  // Rises at each change. SetEndpointPolicy names the version it was read
+  // at; CreateEndpoint takes none.
   int64 version = 1;
   // Who may attach a client: workspace (the default) or creator.
   string attach = 2;
-  // The most clients attached to a stream channel at once; unset sets no
+  // The most clients attached to a stream endpoint at once; unset sets no
   // bound.
   optional int32 max_clients = 3;
-  // Who may send input to a stream channel, or messages to an event
-  // channel: any, creator or none.
+  // Who may send input to a stream endpoint, or messages to an event
+  // endpoint: any, creator or none.
   string input = 4;
   // How much output or how many records are kept: buffer, at least the
-  // newest 8 MiB, or channel, as long as the channel's record lasts. An
-  // event channel's is a duration, how long a message waits to be
+  // newest 8 MiB, or endpoint, as long as the endpoint's record lasts. An
+  // event endpoint's is a duration, how long a message waits to be
   // delivered before it expires: 24h unless set, and at most the
   // workspace's plan allows, which is never less than 24h.
   string keep = 5;
   // The ordered module list. Unset takes the shape's defaults; an empty
-  // list means no modules. An event channel takes none.
-  ChannelModuleList modules = 6;
-  // How long an event channel's post may take to be answered 2xx, a
+  // list means no modules. An event endpoint takes none.
+  EndpointModuleList modules = 6;
+  // How long an event endpoint's post may take to be answered 2xx, a
   // duration from 1s to 10m: 30s unless set. It is the same for every
   // message; a later answer is a failed attempt.
   string ack_deadline = 7;
-  // How many of an event channel's posts may be in flight at once, from 1
+  // How many of an event endpoint's posts may be in flight at once, from 1
   // to 64: 1 unless set. At 1, messages are posted one at a time in the
   // order they were sent, and none passes one waiting to be tried again;
   // above 1, order is not kept. Either way a parked message holds up none
   // after it, so order is promised among the messages delivered.
   optional int32 concurrency = 8;
-  // Where an ACP channel's agent runs file and terminal requests: vm (the
-  // default) or device. Only a stream channel declared framing acp takes
+  // Where an ACP endpoint's agent runs file and terminal requests: vm (the
+  // default) or device. Only a stream endpoint declared framing acp takes
   // it.
   string tools = 9;
 }
 
-message ChannelModuleList {
-  repeated ChannelModule modules = 1;
+message EndpointModuleList {
+  repeated EndpointModule modules = 1;
 }
 
-// ChannelModule is one entry of a policy's module list. Each kind takes
+// EndpointModule is one entry of a policy's module list. Each kind takes
 // the settings it names and no others.
-message ChannelModule {
+message EndpointModule {
   // redirect, rewrite, ip_allowlist, client_certificate_required,
   // sign_in_required, rate_limit, wake_page, identity_headers or
   // record_requests, listed in that order.
   string kind = 1;
   // The requests a request module acts on; unset means every request.
-  ChannelMatch match = 2;
+  EndpointMatch match = 2;
   // The address ranges an ip_allowlist admits.
   repeated string ranges = 3;
   // How much a record_requests record keeps: metadata, headers or
@@ -485,7 +485,7 @@ message ChannelModule {
   // The path a rewrite serves the request at; $1 to $9 as in target.
   string path = 8;
   // The provided name, of the same workspace, a rewrite serves the request
-  // from; a service's channel only.
+  // from; a service's endpoint only.
   string host = 9;
   // What a rate_limit counts requests by: identity (the signed-in caller,
   // else the address) or address.
@@ -495,7 +495,7 @@ message ChannelModule {
   // A rate_limit's window, as a duration such as 1m.
   string window = 12;
   // The page a wake_page answers with while the service wakes; empty takes
-  // the default page. A service's channel only.
+  // the default page. A service's endpoint only.
   string html = 13;
   // The PEM certificates of the CAs, at most 64 KiB, whose client
   // certificates a client_certificate_required admits besides the
@@ -503,14 +503,14 @@ message ChannelModule {
   // only.
   string ca_bundle = 14;
   // Whether a client_certificate_required admits a workload of another
-  // workspace that an active grant, of connect or more, on the channel's
+  // workspace that an active grant, of connect or more, on the endpoint's
   // environment admits.
   bool grants = 15;
 }
 
-// ChannelMatch narrows the requests a module acts on. Every field empty
+// EndpointMatch narrows the requests a module acts on. Every field empty
 // means every request.
-message ChannelMatch {
+message EndpointMatch {
   // Exact hosts.
   repeated string hosts = 1;
   // Path patterns, each starting with a slash.
@@ -521,9 +521,9 @@ message ChannelMatch {
   map<string, string> headers = 4;
 }
 
-// ChannelRequest is one request an http channel's relay served, as its
+// EndpointRequest is one request an http endpoint's relay served, as its
 // record keeps it.
-message ChannelRequest {
+message EndpointRequest {
   int64 seq = 1;
   google.protobuf.Timestamp arrived_at = 2;
   string host = 3;
@@ -535,7 +535,7 @@ message ChannelRequest {
   // To the end of the response, or to a WebSocket's close.
   google.protobuf.Duration duration = 9;
   // The caller, once the request path has identified one.
-  ChannelRequestCaller caller = 10;
+  EndpointRequestCaller caller = 10;
   string address = 11;
   // The module that refused the request, if one did.
   string refused_by = 12;
@@ -545,14 +545,14 @@ message ChannelRequest {
   // At headers and bodies.
   string query = 15;
   bool query_cut = 16;
-  repeated ChannelHeader request_headers = 17;
-  repeated ChannelHeader response_headers = 18;
+  repeated EndpointHeader request_headers = 17;
+  repeated EndpointHeader response_headers = 18;
   // At bodies.
-  ChannelBody request_body = 19;
-  ChannelBody response_body = 20;
+  EndpointBody request_body = 19;
+  EndpointBody response_body = 20;
 }
 
-message ChannelRequestCaller {
+message EndpointRequestCaller {
   // The caller as the audit log names an actor.
   string user = 1;
   string device = 2;
@@ -560,15 +560,15 @@ message ChannelRequestCaller {
   string share_link = 3;
 }
 
-// ChannelHeader is one header line; a credential header keeps its name
+// EndpointHeader is one header line; a credential header keeps its name
 // only, with removed set.
-message ChannelHeader {
+message EndpointHeader {
   string name = 1;
   string value = 2;
   bool removed = 3;
 }
 
-message ChannelBody {
+message EndpointBody {
   string content_type = 1;
   bytes data = 2;
   // Whether the body was longer than the policy's body cap.
@@ -578,32 +578,32 @@ message ChannelBody {
 // Forward is one open Forward: what it reaches in the guest, named as the
 // audit log names it (a command by its first word only), who opened it,
 // with the device of the connect token that admitted them, and the http
-// channel whose connection carries it, if one does, and the grant it was
+// endpoint whose connection carries it, if one does, and the grant it was
 // opened through, if one was.
 message Forward {
   string target = 1;
   string by = 2;
   string device = 3;
-  string channel = 4;
+  string endpoint = 4;
   google.protobuf.Timestamp opened_at = 5;
   // The grant through which another workspace's caller opened it, or
   // empty for one the job's own workspace opened.
   string grant_id = 6;
 }
 
-// Link is the state of a runner's Link, the connection its guest holds to
+// Tunnel is the state of a runner's Tunnel, the connection its guest holds to
 // the control plane.
-message Link {
+message Tunnel {
   bool connected = 1;
   // Since when it has been connected; unset while it is not, and while
-  // another process of the control plane holds the link.
+  // another process of the control plane holds the tunnel.
   google.protobuf.Timestamp since = 2;
   // How many times the guest has connected.
   int32 connects = 3;
   // The streams open on it now.
   int32 streams = 4;
   string last_error = 5;
-  // The runner's second Link, its replica: connected, or none.
+  // The runner's second Tunnel, its replica: connected, or none.
   string replica = 6;
   // The Forwards open on it now.
   int32 forwards = 7;
@@ -611,96 +611,96 @@ message Link {
   string job_state = 8;
 }
 
-message CreateChannelRequest {
+message CreateEndpointRequest {
   string job_id = 1;
-  // The channel's name: lower-case letters, digits, '-' and '_', starting
-  // with a letter or digit, at most 63. An http channel's defaults to its
-  // port; a stream channel needs one.
+  // The endpoint's name: lower-case letters, digits, '-' and '_', starting
+  // with a letter or digit, at most 63. An http endpoint's defaults to its
+  // port; a stream endpoint needs one.
   string name = 2;
-  // A port in the guest, for an http channel; give a port or a command.
+  // A port in the guest, for an http endpoint; give a port or a command.
   int32 port = 3;
-  // A command in the guest, for a stream channel.
+  // A command in the guest, for a stream endpoint.
   repeated string command = 4;
-  // The policy the channel starts with, without a version; unset takes
+  // The policy the endpoint starts with, without a version; unset takes
   // the defaults.
-  ChannelPolicy policy = 5;
+  EndpointPolicy policy = 5;
   // A grant the caller's workspace received, to act on the owner's
   // sandbox's job through it (docs/grants.md).
   string grant = 6;
   // A key that makes the call safe to retry: a retry with the same key and
-  // the same request answers with the channel the first call made.
+  // the same request answers with the endpoint the first call made.
   string request_key = 7;
 }
 
-message CreateChannelResponse {
-  Channel channel = 1;
+message CreateEndpointResponse {
+  Endpoint endpoint = 1;
 }
 
-message ListChannelsRequest {
-  // Only this job's channels; empty lists every job's, and every
-  // service's event channels.
+message ListEndpointsRequest {
+  // Only this job's endpoints; empty lists every job's, and every
+  // service's event endpoints.
   string job_id = 1;
-  // The most channels in one page; zero lets the server choose.
+  // The most endpoints in one page; zero lets the server choose.
   int32 page_size = 2;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 3;
-  // Only this service's event channels, by its ID; not with job_id.
+  // Only this service's event endpoints, by its ID; not with job_id.
   string service = 4;
   // A grant the caller's workspace received, to act on the owner's
   // sandbox's job through it (docs/grants.md).
   string grant = 5;
 }
 
-message ListChannelsResponse {
-  repeated Channel channels = 1;
+message ListEndpointsResponse {
+  repeated Endpoint endpoints = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
-message GetChannelRequest {
+message GetEndpointRequest {
   string job_id = 1;
   string name = 2;
-  // An event channel's service, by its ID, in place of job_id.
+  // An event endpoint's service, by its ID, in place of job_id.
   string service = 3;
   // A grant the caller's workspace received, to act on the owner's
   // sandbox's job through it (docs/grants.md).
   string grant = 4;
 }
 
-message GetChannelResponse {
-  Channel channel = 1;
+message GetEndpointResponse {
+  Endpoint endpoint = 1;
 }
 
-message GetChannelPolicyRequest {
+message GetEndpointPolicyRequest {
   string job_id = 1;
   string name = 2;
-  // An event channel's service, by its ID, in place of job_id.
+  // An event endpoint's service, by its ID, in place of job_id.
   string service = 3;
 }
 
-message GetChannelPolicyResponse {
-  ChannelPolicy policy = 1;
+message GetEndpointPolicyResponse {
+  EndpointPolicy policy = 1;
 }
 
-message SetChannelPolicyRequest {
+message SetEndpointPolicyRequest {
   string job_id = 1;
   string name = 2;
   // The whole document, with the version it was read at.
-  ChannelPolicy policy = 3;
-  // An event channel's service, by its ID, in place of job_id.
+  EndpointPolicy policy = 3;
+  // An event endpoint's service, by its ID, in place of job_id.
   string service = 4;
-  // What the change does to a stream channel's attached clients; unset
-  // keeps them. DRAIN and END on an http or an event channel are
+  // What the change does to a stream endpoint's attached clients; unset
+  // keeps them. DRAIN and END on an http or an event endpoint are
   // INVALID_ARGUMENT.
-  ChannelStreams streams = 5;
+  EndpointStreams streams = 5;
 }
 
-message SetChannelPolicyResponse {
+message SetEndpointPolicyResponse {
   // The document stored, at its new version.
-  ChannelPolicy policy = 1;
+  EndpointPolicy policy = 1;
 }
 
-message ListChannelRequestsRequest {
+message ListEndpointRequestsRequest {
   string job_id = 1;
   string name = 2;
   // The most records in one page; zero lets the server choose.
@@ -724,8 +724,8 @@ message ListChannelRequestsRequest {
   string path_prefix = 11;
 }
 
-message ListChannelRequestsResponse {
-  repeated ChannelRequest requests = 1;
+message ListEndpointRequestsResponse {
+  repeated EndpointRequest requests = 1;
   // Empty on the last page.
   string next_page_token = 2;
   // The sequence numbers that bound the records kept; both zero when none
@@ -734,22 +734,22 @@ message ListChannelRequestsResponse {
   int64 newest_seq = 4;
 }
 
-message GetChannelRequestRequest {
+message GetEndpointRequestRequest {
   string job_id = 1;
   string name = 2;
   int64 seq = 3;
 }
 
-message GetChannelRequestResponse {
-  ChannelRequest request = 1;
+message GetEndpointRequestResponse {
+  EndpointRequest request = 1;
 }
 
-message ExportChannelLogRequest {
+message ExportEndpointLogRequest {
   string job_id = 1;
   string name = 2;
-  // The log to export: a stream channel's output or an http channel's
+  // The log to export: a stream endpoint's output or an http endpoint's
   // request records.
-  ChannelLog log = 3;
+  EndpointLog log = 3;
   // The output's offsets [from, to), or the records' sequence numbers
   // [from, to]; unset runs from the oldest kept, or to the newest.
   optional int64 from = 4;
@@ -760,7 +760,7 @@ message ExportChannelLogRequest {
   google.protobuf.Timestamp until = 7;
 }
 
-message ExportChannelLogResponse {
+message ExportEndpointLogResponse {
   // The file's next bytes.
   bytes data = 1;
   // The rest is set on the first response only. The file's name, with
@@ -776,42 +776,42 @@ message ExportChannelLogResponse {
   int64 next = 5;
 }
 
-message CreateChannelConnectTokenRequest {
+message CreateEndpointConnectTokenRequest {
   string job_id = 1;
   string name = 2;
   // The caller's name for its device, which the token and its audit rows
   // carry: at most 64 letters, digits, '.', '_' and '-'.
   string device = 3;
   // The mode the token grants the attach it admits; unset grants input.
-  ChannelAttachMode mode = 4;
+  EndpointAttachMode mode = 4;
   // A grant the caller's workspace received, to act on the owner's
   // sandbox's job through it (docs/grants.md).
   string grant = 5;
 }
 
-message CreateChannelConnectTokenResponse {
-  // The ID RevokeChannelConnectToken takes.
+message CreateEndpointConnectTokenResponse {
+  // The ID RevokeEndpointConnectToken takes.
   string id = 1;
   string token = 2;
   // Where the token is used.
   string url = 3;
   google.protobuf.Timestamp expires_at = 4;
-  // What reaches url: toshi-channel, an upgrade of the control plane's
+  // What reaches url: toshi-endpoint, an upgrade of the control plane's
   // connection, or https or http for a preview's host.
   string transport = 5;
-  ChannelAttachMode mode = 6;
+  EndpointAttachMode mode = 6;
 }
 
-message RevokeChannelConnectTokenRequest {
+message RevokeEndpointConnectTokenRequest {
   string job_id = 1;
   string name = 2;
   // The ID the token's create returned.
   string id = 3;
 }
 
-message RevokeChannelConnectTokenResponse {}
+message RevokeEndpointConnectTokenResponse {}
 
-message DeleteChannelRequest {
+message DeleteEndpointRequest {
   string job_id = 1;
   string name = 2;
   // A grant the caller's workspace received, to act on the owner's
@@ -819,7 +819,7 @@ message DeleteChannelRequest {
   string grant = 3;
 }
 
-message DeleteChannelResponse {}
+message DeleteEndpointResponse {}
 
 message ListForwardsRequest {
   string job_id = 1;
@@ -835,59 +835,59 @@ message ListForwardsResponse {
   string next_page_token = 2;
 }
 
-message GetLinkRequest {
+message GetTunnelRequest {
   string job_id = 1;
 }
 
-message GetLinkResponse {
-  Link link = 1;
+message GetTunnelResponse {
+  Tunnel tunnel = 1;
 }
 
-message SendChannelMessageRequest {
-  // The event channel's service, by its ID, and the channel's name.
+message SendEndpointMessageRequest {
+  // The event endpoint's service, by its ID, and the endpoint's name.
   string service = 1;
-  string channel = 2;
+  string endpoint = 2;
   // The message's name, such as order.paid: up to 200 bytes with no space
   // or control character.
   string name = 3;
   // The message's JSON, at most 256 KiB.
   bytes data = 4;
-  // Makes the send safe to repeat: a key the channel holds returns that
+  // Makes the send safe to repeat: a key the endpoint holds returns that
   // message.
   string request_key = 5;
 }
 
-message SendChannelMessageResponse {
+message SendEndpointMessageResponse {
   string message_id = 1;
   // Set when request_key named a message sent before.
   bool duplicate = 2;
 }
 
-message TailChannelMessagesRequest {
-  // The event channel's service, by its ID, and the channel's name.
+message TailEndpointMessagesRequest {
+  // The event endpoint's service, by its ID, and the endpoint's name.
   string service = 1;
-  string channel = 2;
+  string endpoint = 2;
   // Only messages in these states; empty is every state.
-  repeated ChannelMessageState states = 3;
+  repeated EndpointMessageState states = 3;
   // A next_cursor from an earlier response; empty starts at the first
   // message kept.
   string cursor = 4;
 }
 
-message TailChannelMessagesResponse {
-  ChannelMessage message = 1;
+message TailEndpointMessagesResponse {
+  EndpointMessage message = 1;
   // Where a later call goes on from, after this message.
   string next_cursor = 2;
 }
 
-message ReplayChannelMessageRequest {
-  // The event channel's service, by its ID, and the channel's name.
+message ReplayEndpointMessageRequest {
+  // The event endpoint's service, by its ID, and the endpoint's name.
   string service = 1;
-  string channel = 2;
+  string endpoint = 2;
   string message_id = 3;
 }
 
-message ReplayChannelMessageResponse {
+message ReplayEndpointMessageResponse {
   // The message as it now is: pending.
-  ChannelMessage message = 1;
+  EndpointMessage message = 1;
 }

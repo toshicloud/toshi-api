@@ -4368,7 +4368,7 @@ export const TenantSchema: GenMessage<Tenant, {jsonType: TenantJson}> = /*@__PUR
 /**
  * HostingCertificate is a workspace's wildcard certificate for its
  * services' provided names. Toshi orders it when the workspace first
- * hosts a service with an http channel and renews it before it expires.
+ * hosts a service with an http endpoint and renews it before it expires.
  *
  * @generated from message toshi.operator.v1.HostingCertificate
  */
@@ -4419,7 +4419,7 @@ export type HostingCertificate = Message<"toshi.operator.v1.HostingCertificate">
 /**
  * HostingCertificate is a workspace's wildcard certificate for its
  * services' provided names. Toshi orders it when the workspace first
- * hosts a service with an http channel and renews it before it expires.
+ * hosts a service with an http endpoint and renews it before it expires.
  *
  * @generated from message toshi.operator.v1.HostingCertificate
  */

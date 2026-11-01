@@ -79,19 +79,19 @@ func (WebhookDeliveryState) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{0}
 }
 
-type WebhookEndpoint struct {
+type Webhook struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Assigned by the server; unique within the workspace.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// An https URL with a host and no user or password, at most 2048 bytes.
 	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
-	// The event names the endpoint is owed, each a name (job.state_changed)
+	// The event names the webhook is owed, each a name (job.state_changed)
 	// or a prefix ending in ".*" (job.*); at most 64. Empty keeps every
 	// event but those a connection received, which only a name or prefix
 	// that matches them keeps.
 	Events  []string `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
 	Enabled bool     `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	// The position in the workspace's event log the endpoint has read up to,
+	// The position in the workspace's event log the webhook has read up to,
 	// an Event's cursor.
 	Cursor string `protobuf:"bytes,5,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	// When the secret the last rotation replaced stops signing; unset when
@@ -99,12 +99,12 @@ type WebhookEndpoint struct {
 	PreviousSecretExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=previous_secret_expires_at,json=previousSecretExpiresAt,proto3" json:"previous_secret_expires_at,omitempty"`
 	CreatedAt               *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt               *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	// Set when events after the endpoint's cursor were removed by retention.
-	// The endpoint is owed nothing until its cursor is moved.
+	// Set when events after the webhook's cursor were removed by retention.
+	// The webhook is owed nothing until its cursor is moved.
 	CursorExpired bool `protobuf:"varint,9,opt,name=cursor_expired,json=cursorExpired,proto3" json:"cursor_expired,omitempty"`
 	// The latest time of an event the log removed; unset when none.
 	RetentionBoundary *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=retention_boundary,json=retentionBoundary,proto3" json:"retention_boundary,omitempty"`
-	// The name of a project in the workspace: the endpoint is owed only that
+	// The name of a project in the workspace: the webhook is owed only that
 	// project's events, those of its workloads and those its connections
 	// received. Empty keeps the events of every project.
 	Project       string `protobuf:"bytes,11,opt,name=project,proto3" json:"project,omitempty"`
@@ -112,20 +112,20 @@ type WebhookEndpoint struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *WebhookEndpoint) Reset() {
-	*x = WebhookEndpoint{}
+func (x *Webhook) Reset() {
+	*x = Webhook{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *WebhookEndpoint) String() string {
+func (x *Webhook) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*WebhookEndpoint) ProtoMessage() {}
+func (*Webhook) ProtoMessage() {}
 
-func (x *WebhookEndpoint) ProtoReflect() protoreflect.Message {
+func (x *Webhook) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -137,89 +137,89 @@ func (x *WebhookEndpoint) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use WebhookEndpoint.ProtoReflect.Descriptor instead.
-func (*WebhookEndpoint) Descriptor() ([]byte, []int) {
+// Deprecated: Use Webhook.ProtoReflect.Descriptor instead.
+func (*Webhook) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *WebhookEndpoint) GetId() string {
+func (x *Webhook) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *WebhookEndpoint) GetUrl() string {
+func (x *Webhook) GetUrl() string {
 	if x != nil {
 		return x.Url
 	}
 	return ""
 }
 
-func (x *WebhookEndpoint) GetEvents() []string {
+func (x *Webhook) GetEvents() []string {
 	if x != nil {
 		return x.Events
 	}
 	return nil
 }
 
-func (x *WebhookEndpoint) GetEnabled() bool {
+func (x *Webhook) GetEnabled() bool {
 	if x != nil {
 		return x.Enabled
 	}
 	return false
 }
 
-func (x *WebhookEndpoint) GetCursor() string {
+func (x *Webhook) GetCursor() string {
 	if x != nil {
 		return x.Cursor
 	}
 	return ""
 }
 
-func (x *WebhookEndpoint) GetPreviousSecretExpiresAt() *timestamppb.Timestamp {
+func (x *Webhook) GetPreviousSecretExpiresAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.PreviousSecretExpiresAt
 	}
 	return nil
 }
 
-func (x *WebhookEndpoint) GetCreatedAt() *timestamppb.Timestamp {
+func (x *Webhook) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *WebhookEndpoint) GetUpdatedAt() *timestamppb.Timestamp {
+func (x *Webhook) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return nil
 }
 
-func (x *WebhookEndpoint) GetCursorExpired() bool {
+func (x *Webhook) GetCursorExpired() bool {
 	if x != nil {
 		return x.CursorExpired
 	}
 	return false
 }
 
-func (x *WebhookEndpoint) GetRetentionBoundary() *timestamppb.Timestamp {
+func (x *Webhook) GetRetentionBoundary() *timestamppb.Timestamp {
 	if x != nil {
 		return x.RetentionBoundary
 	}
 	return nil
 }
 
-func (x *WebhookEndpoint) GetProject() string {
+func (x *Webhook) GetProject() string {
 	if x != nil {
 		return x.Project
 	}
 	return ""
 }
 
-// WebhookDelivery is one event owed to one endpoint.
+// WebhookDelivery is one event owed to one webhook.
 type WebhookDelivery struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	EventId string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
@@ -342,33 +342,33 @@ func (x *WebhookDelivery) GetDoneAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type CreateWebhookEndpointRequest struct {
+type CreateWebhookRequest struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Url    string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 	Events []string               `protobuf:"bytes,2,rep,name=events,proto3" json:"events,omitempty"`
-	// Set to make the endpoint disabled.
+	// Set to make the webhook disabled.
 	Disabled   bool   `protobuf:"varint,3,opt,name=disabled,proto3" json:"disabled,omitempty"`
 	RequestKey string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
-	// The name of a project in the workspace; see WebhookEndpoint.project.
+	// The name of a project in the workspace; see Webhook.project.
 	Project       string `protobuf:"bytes,5,opt,name=project,proto3" json:"project,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateWebhookEndpointRequest) Reset() {
-	*x = CreateWebhookEndpointRequest{}
+func (x *CreateWebhookRequest) Reset() {
+	*x = CreateWebhookRequest{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateWebhookEndpointRequest) String() string {
+func (x *CreateWebhookRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateWebhookEndpointRequest) ProtoMessage() {}
+func (*CreateWebhookRequest) ProtoMessage() {}
 
-func (x *CreateWebhookEndpointRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateWebhookRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -380,69 +380,69 @@ func (x *CreateWebhookEndpointRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateWebhookEndpointRequest.ProtoReflect.Descriptor instead.
-func (*CreateWebhookEndpointRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateWebhookRequest.ProtoReflect.Descriptor instead.
+func (*CreateWebhookRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CreateWebhookEndpointRequest) GetUrl() string {
+func (x *CreateWebhookRequest) GetUrl() string {
 	if x != nil {
 		return x.Url
 	}
 	return ""
 }
 
-func (x *CreateWebhookEndpointRequest) GetEvents() []string {
+func (x *CreateWebhookRequest) GetEvents() []string {
 	if x != nil {
 		return x.Events
 	}
 	return nil
 }
 
-func (x *CreateWebhookEndpointRequest) GetDisabled() bool {
+func (x *CreateWebhookRequest) GetDisabled() bool {
 	if x != nil {
 		return x.Disabled
 	}
 	return false
 }
 
-func (x *CreateWebhookEndpointRequest) GetRequestKey() string {
+func (x *CreateWebhookRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
 	}
 	return ""
 }
 
-func (x *CreateWebhookEndpointRequest) GetProject() string {
+func (x *CreateWebhookRequest) GetProject() string {
 	if x != nil {
 		return x.Project
 	}
 	return ""
 }
 
-type CreateWebhookEndpointResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint *WebhookEndpoint       `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+type CreateWebhookResponse struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Webhook *Webhook               `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
 	// whsec_ and the base64 of 32 random bytes. No other answer carries it.
 	Secret        string `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateWebhookEndpointResponse) Reset() {
-	*x = CreateWebhookEndpointResponse{}
+func (x *CreateWebhookResponse) Reset() {
+	*x = CreateWebhookResponse{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateWebhookEndpointResponse) String() string {
+func (x *CreateWebhookResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateWebhookEndpointResponse) ProtoMessage() {}
+func (*CreateWebhookResponse) ProtoMessage() {}
 
-func (x *CreateWebhookEndpointResponse) ProtoReflect() protoreflect.Message {
+func (x *CreateWebhookResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -454,46 +454,46 @@ func (x *CreateWebhookEndpointResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateWebhookEndpointResponse.ProtoReflect.Descriptor instead.
-func (*CreateWebhookEndpointResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateWebhookResponse.ProtoReflect.Descriptor instead.
+func (*CreateWebhookResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CreateWebhookEndpointResponse) GetEndpoint() *WebhookEndpoint {
+func (x *CreateWebhookResponse) GetWebhook() *Webhook {
 	if x != nil {
-		return x.Endpoint
+		return x.Webhook
 	}
 	return nil
 }
 
-func (x *CreateWebhookEndpointResponse) GetSecret() string {
+func (x *CreateWebhookResponse) GetSecret() string {
 	if x != nil {
 		return x.Secret
 	}
 	return ""
 }
 
-type GetWebhookEndpointRequest struct {
+type GetWebhookRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetWebhookEndpointRequest) Reset() {
-	*x = GetWebhookEndpointRequest{}
+func (x *GetWebhookRequest) Reset() {
+	*x = GetWebhookRequest{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetWebhookEndpointRequest) String() string {
+func (x *GetWebhookRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetWebhookEndpointRequest) ProtoMessage() {}
+func (*GetWebhookRequest) ProtoMessage() {}
 
-func (x *GetWebhookEndpointRequest) ProtoReflect() protoreflect.Message {
+func (x *GetWebhookRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -505,39 +505,39 @@ func (x *GetWebhookEndpointRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetWebhookEndpointRequest.ProtoReflect.Descriptor instead.
-func (*GetWebhookEndpointRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetWebhookRequest.ProtoReflect.Descriptor instead.
+func (*GetWebhookRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetWebhookEndpointRequest) GetId() string {
+func (x *GetWebhookRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-type GetWebhookEndpointResponse struct {
+type GetWebhookResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint      *WebhookEndpoint       `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	Webhook       *Webhook               `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetWebhookEndpointResponse) Reset() {
-	*x = GetWebhookEndpointResponse{}
+func (x *GetWebhookResponse) Reset() {
+	*x = GetWebhookResponse{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetWebhookEndpointResponse) String() string {
+func (x *GetWebhookResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetWebhookEndpointResponse) ProtoMessage() {}
+func (*GetWebhookResponse) ProtoMessage() {}
 
-func (x *GetWebhookEndpointResponse) ProtoReflect() protoreflect.Message {
+func (x *GetWebhookResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -549,21 +549,21 @@ func (x *GetWebhookEndpointResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetWebhookEndpointResponse.ProtoReflect.Descriptor instead.
-func (*GetWebhookEndpointResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetWebhookResponse.ProtoReflect.Descriptor instead.
+func (*GetWebhookResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *GetWebhookEndpointResponse) GetEndpoint() *WebhookEndpoint {
+func (x *GetWebhookResponse) GetWebhook() *Webhook {
 	if x != nil {
-		return x.Endpoint
+		return x.Webhook
 	}
 	return nil
 }
 
-type ListWebhookEndpointsRequest struct {
+type ListWebhooksRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The most endpoints in one page; zero lets the server choose.
+	// The most webhooks in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
 	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
@@ -571,20 +571,20 @@ type ListWebhookEndpointsRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListWebhookEndpointsRequest) Reset() {
-	*x = ListWebhookEndpointsRequest{}
+func (x *ListWebhooksRequest) Reset() {
+	*x = ListWebhooksRequest{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListWebhookEndpointsRequest) String() string {
+func (x *ListWebhooksRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListWebhookEndpointsRequest) ProtoMessage() {}
+func (*ListWebhooksRequest) ProtoMessage() {}
 
-func (x *ListWebhookEndpointsRequest) ProtoReflect() protoreflect.Message {
+func (x *ListWebhooksRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -596,48 +596,48 @@ func (x *ListWebhookEndpointsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListWebhookEndpointsRequest.ProtoReflect.Descriptor instead.
-func (*ListWebhookEndpointsRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListWebhooksRequest.ProtoReflect.Descriptor instead.
+func (*ListWebhooksRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ListWebhookEndpointsRequest) GetPageSize() int32 {
+func (x *ListWebhooksRequest) GetPageSize() int32 {
 	if x != nil {
 		return x.PageSize
 	}
 	return 0
 }
 
-func (x *ListWebhookEndpointsRequest) GetPageToken() string {
+func (x *ListWebhooksRequest) GetPageToken() string {
 	if x != nil {
 		return x.PageToken
 	}
 	return ""
 }
 
-type ListWebhookEndpointsResponse struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Endpoints []*WebhookEndpoint     `protobuf:"bytes,1,rep,name=endpoints,proto3" json:"endpoints,omitempty"`
+type ListWebhooksResponse struct {
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Webhooks []*Webhook             `protobuf:"bytes,1,rep,name=webhooks,proto3" json:"webhooks,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListWebhookEndpointsResponse) Reset() {
-	*x = ListWebhookEndpointsResponse{}
+func (x *ListWebhooksResponse) Reset() {
+	*x = ListWebhooksResponse{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListWebhookEndpointsResponse) String() string {
+func (x *ListWebhooksResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListWebhookEndpointsResponse) ProtoMessage() {}
+func (*ListWebhooksResponse) ProtoMessage() {}
 
-func (x *ListWebhookEndpointsResponse) ProtoReflect() protoreflect.Message {
+func (x *ListWebhooksResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -649,30 +649,30 @@ func (x *ListWebhookEndpointsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListWebhookEndpointsResponse.ProtoReflect.Descriptor instead.
-func (*ListWebhookEndpointsResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListWebhooksResponse.ProtoReflect.Descriptor instead.
+func (*ListWebhooksResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ListWebhookEndpointsResponse) GetEndpoints() []*WebhookEndpoint {
+func (x *ListWebhooksResponse) GetWebhooks() []*Webhook {
 	if x != nil {
-		return x.Endpoints
+		return x.Webhooks
 	}
 	return nil
 }
 
-func (x *ListWebhookEndpointsResponse) GetNextPageToken() string {
+func (x *ListWebhooksResponse) GetNextPageToken() string {
 	if x != nil {
 		return x.NextPageToken
 	}
 	return ""
 }
 
-type UpdateWebhookEndpointRequest struct {
+type UpdateWebhookRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Carries the new values of the fields update_mask names.
-	Endpoint *WebhookEndpoint `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	Webhook *Webhook `protobuf:"bytes,2,opt,name=webhook,proto3" json:"webhook,omitempty"`
 	// One or more of url, events, project, enabled and cursor.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
@@ -680,20 +680,20 @@ type UpdateWebhookEndpointRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateWebhookEndpointRequest) Reset() {
-	*x = UpdateWebhookEndpointRequest{}
+func (x *UpdateWebhookRequest) Reset() {
+	*x = UpdateWebhookRequest{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateWebhookEndpointRequest) String() string {
+func (x *UpdateWebhookRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateWebhookEndpointRequest) ProtoMessage() {}
+func (*UpdateWebhookRequest) ProtoMessage() {}
 
-func (x *UpdateWebhookEndpointRequest) ProtoReflect() protoreflect.Message {
+func (x *UpdateWebhookRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -705,60 +705,60 @@ func (x *UpdateWebhookEndpointRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateWebhookEndpointRequest.ProtoReflect.Descriptor instead.
-func (*UpdateWebhookEndpointRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateWebhookRequest.ProtoReflect.Descriptor instead.
+func (*UpdateWebhookRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *UpdateWebhookEndpointRequest) GetId() string {
+func (x *UpdateWebhookRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *UpdateWebhookEndpointRequest) GetEndpoint() *WebhookEndpoint {
+func (x *UpdateWebhookRequest) GetWebhook() *Webhook {
 	if x != nil {
-		return x.Endpoint
+		return x.Webhook
 	}
 	return nil
 }
 
-func (x *UpdateWebhookEndpointRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
+func (x *UpdateWebhookRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	if x != nil {
 		return x.UpdateMask
 	}
 	return nil
 }
 
-func (x *UpdateWebhookEndpointRequest) GetRequestKey() string {
+func (x *UpdateWebhookRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
 	}
 	return ""
 }
 
-type UpdateWebhookEndpointResponse struct {
+type UpdateWebhookResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint      *WebhookEndpoint       `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	Webhook       *Webhook               `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateWebhookEndpointResponse) Reset() {
-	*x = UpdateWebhookEndpointResponse{}
+func (x *UpdateWebhookResponse) Reset() {
+	*x = UpdateWebhookResponse{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateWebhookEndpointResponse) String() string {
+func (x *UpdateWebhookResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateWebhookEndpointResponse) ProtoMessage() {}
+func (*UpdateWebhookResponse) ProtoMessage() {}
 
-func (x *UpdateWebhookEndpointResponse) ProtoReflect() protoreflect.Message {
+func (x *UpdateWebhookResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -770,19 +770,19 @@ func (x *UpdateWebhookEndpointResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateWebhookEndpointResponse.ProtoReflect.Descriptor instead.
-func (*UpdateWebhookEndpointResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateWebhookResponse.ProtoReflect.Descriptor instead.
+func (*UpdateWebhookResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *UpdateWebhookEndpointResponse) GetEndpoint() *WebhookEndpoint {
+func (x *UpdateWebhookResponse) GetWebhook() *Webhook {
 	if x != nil {
-		return x.Endpoint
+		return x.Webhook
 	}
 	return nil
 }
 
-type DeleteWebhookEndpointRequest struct {
+type DeleteWebhookRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	RequestKey    string                 `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
@@ -790,20 +790,20 @@ type DeleteWebhookEndpointRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteWebhookEndpointRequest) Reset() {
-	*x = DeleteWebhookEndpointRequest{}
+func (x *DeleteWebhookRequest) Reset() {
+	*x = DeleteWebhookRequest{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteWebhookEndpointRequest) String() string {
+func (x *DeleteWebhookRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteWebhookEndpointRequest) ProtoMessage() {}
+func (*DeleteWebhookRequest) ProtoMessage() {}
 
-func (x *DeleteWebhookEndpointRequest) ProtoReflect() protoreflect.Message {
+func (x *DeleteWebhookRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -815,45 +815,45 @@ func (x *DeleteWebhookEndpointRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteWebhookEndpointRequest.ProtoReflect.Descriptor instead.
-func (*DeleteWebhookEndpointRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteWebhookRequest.ProtoReflect.Descriptor instead.
+func (*DeleteWebhookRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *DeleteWebhookEndpointRequest) GetId() string {
+func (x *DeleteWebhookRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *DeleteWebhookEndpointRequest) GetRequestKey() string {
+func (x *DeleteWebhookRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
 	}
 	return ""
 }
 
-type DeleteWebhookEndpointResponse struct {
+type DeleteWebhookResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteWebhookEndpointResponse) Reset() {
-	*x = DeleteWebhookEndpointResponse{}
+func (x *DeleteWebhookResponse) Reset() {
+	*x = DeleteWebhookResponse{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteWebhookEndpointResponse) String() string {
+func (x *DeleteWebhookResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteWebhookEndpointResponse) ProtoMessage() {}
+func (*DeleteWebhookResponse) ProtoMessage() {}
 
-func (x *DeleteWebhookEndpointResponse) ProtoReflect() protoreflect.Message {
+func (x *DeleteWebhookResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -865,12 +865,12 @@ func (x *DeleteWebhookEndpointResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteWebhookEndpointResponse.ProtoReflect.Descriptor instead.
-func (*DeleteWebhookEndpointResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteWebhookResponse.ProtoReflect.Descriptor instead.
+func (*DeleteWebhookResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{11}
 }
 
-type RotateWebhookEndpointSecretRequest struct {
+type RotateWebhookSecretRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	RequestKey    string                 `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
@@ -878,20 +878,20 @@ type RotateWebhookEndpointSecretRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RotateWebhookEndpointSecretRequest) Reset() {
-	*x = RotateWebhookEndpointSecretRequest{}
+func (x *RotateWebhookSecretRequest) Reset() {
+	*x = RotateWebhookSecretRequest{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RotateWebhookEndpointSecretRequest) String() string {
+func (x *RotateWebhookSecretRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RotateWebhookEndpointSecretRequest) ProtoMessage() {}
+func (*RotateWebhookSecretRequest) ProtoMessage() {}
 
-func (x *RotateWebhookEndpointSecretRequest) ProtoReflect() protoreflect.Message {
+func (x *RotateWebhookSecretRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -903,48 +903,48 @@ func (x *RotateWebhookEndpointSecretRequest) ProtoReflect() protoreflect.Message
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RotateWebhookEndpointSecretRequest.ProtoReflect.Descriptor instead.
-func (*RotateWebhookEndpointSecretRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use RotateWebhookSecretRequest.ProtoReflect.Descriptor instead.
+func (*RotateWebhookSecretRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *RotateWebhookEndpointSecretRequest) GetId() string {
+func (x *RotateWebhookSecretRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *RotateWebhookEndpointSecretRequest) GetRequestKey() string {
+func (x *RotateWebhookSecretRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
 	}
 	return ""
 }
 
-type RotateWebhookEndpointSecretResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint *WebhookEndpoint       `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	// The new secret, as CreateWebhookEndpointResponse's.
+type RotateWebhookSecretResponse struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Webhook *Webhook               `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
+	// The new secret, as CreateWebhookResponse's.
 	Secret        string `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RotateWebhookEndpointSecretResponse) Reset() {
-	*x = RotateWebhookEndpointSecretResponse{}
+func (x *RotateWebhookSecretResponse) Reset() {
+	*x = RotateWebhookSecretResponse{}
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RotateWebhookEndpointSecretResponse) String() string {
+func (x *RotateWebhookSecretResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RotateWebhookEndpointSecretResponse) ProtoMessage() {}
+func (*RotateWebhookSecretResponse) ProtoMessage() {}
 
-func (x *RotateWebhookEndpointSecretResponse) ProtoReflect() protoreflect.Message {
+func (x *RotateWebhookSecretResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_webhook_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -956,19 +956,19 @@ func (x *RotateWebhookEndpointSecretResponse) ProtoReflect() protoreflect.Messag
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RotateWebhookEndpointSecretResponse.ProtoReflect.Descriptor instead.
-func (*RotateWebhookEndpointSecretResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use RotateWebhookSecretResponse.ProtoReflect.Descriptor instead.
+func (*RotateWebhookSecretResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *RotateWebhookEndpointSecretResponse) GetEndpoint() *WebhookEndpoint {
+func (x *RotateWebhookSecretResponse) GetWebhook() *Webhook {
 	if x != nil {
-		return x.Endpoint
+		return x.Webhook
 	}
 	return nil
 }
 
-func (x *RotateWebhookEndpointSecretResponse) GetSecret() string {
+func (x *RotateWebhookSecretResponse) GetSecret() string {
 	if x != nil {
 		return x.Secret
 	}
@@ -976,8 +976,8 @@ func (x *RotateWebhookEndpointSecretResponse) GetSecret() string {
 }
 
 type ListWebhookDeliveriesRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	EndpointId string                 `protobuf:"bytes,1,opt,name=endpoint_id,json=endpointId,proto3" json:"endpoint_id,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	WebhookId string                 `protobuf:"bytes,1,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
 	// From an earlier response's next_page_token, or a delivery's cursor:
 	// the deliveries of the events after that position. Empty starts at the
 	// oldest.
@@ -1018,9 +1018,9 @@ func (*ListWebhookDeliveriesRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *ListWebhookDeliveriesRequest) GetEndpointId() string {
+func (x *ListWebhookDeliveriesRequest) GetWebhookId() string {
 	if x != nil {
-		return x.EndpointId
+		return x.WebhookId
 	}
 	return ""
 }
@@ -1093,8 +1093,8 @@ func (x *ListWebhookDeliveriesResponse) GetNextPageToken() string {
 }
 
 type ReplayWebhookEventsRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	EndpointId string                 `protobuf:"bytes,1,opt,name=endpoint_id,json=endpointId,proto3" json:"endpoint_id,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	WebhookId string                 `protobuf:"bytes,1,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
 	// Events after this cursor; empty starts at the oldest event the log
 	// keeps. A cursor older than that event fails with OUT_OF_RANGE.
 	Cursor        string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
@@ -1133,9 +1133,9 @@ func (*ReplayWebhookEventsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *ReplayWebhookEventsRequest) GetEndpointId() string {
+func (x *ReplayWebhookEventsRequest) GetWebhookId() string {
 	if x != nil {
-		return x.EndpointId
+		return x.WebhookId
 	}
 	return ""
 }
@@ -1161,7 +1161,7 @@ type ReplayWebhookEventsResponse struct {
 	// The cursor of the last event looked at, or the cursor asked for when
 	// there were none: pass it to the next call while more is set.
 	Cursor string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	// Set when events up to the endpoint's own cursor remain after cursor.
+	// Set when events up to the webhook's own cursor remain after cursor.
 	More          bool `protobuf:"varint,3,opt,name=more,proto3" json:"more,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1222,8 +1222,8 @@ var File_toshi_workspace_v1_webhook_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd8\x03\n" +
-	"\x0fWebhookEndpoint\x12\x0e\n" +
+	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd0\x03\n" +
+	"\aWebhook\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12\x16\n" +
 	"\x06events\x18\x03 \x03(\tR\x06events\x12\x18\n" +
@@ -1252,52 +1252,52 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"last_error\x18\b \x01(\tR\tlastError\x121\n" +
 	"\x06due_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x05dueAt\x123\n" +
 	"\adone_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x06doneAt\"\x9f\x01\n" +
-	"\x1cCreateWebhookEndpointRequest\x12\x10\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x06doneAt\"\x97\x01\n" +
+	"\x14CreateWebhookRequest\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x16\n" +
 	"\x06events\x18\x02 \x03(\tR\x06events\x12\x1a\n" +
 	"\bdisabled\x18\x03 \x01(\bR\bdisabled\x12\x1f\n" +
 	"\vrequest_key\x18\x04 \x01(\tR\n" +
 	"requestKey\x12\x18\n" +
-	"\aproject\x18\x05 \x01(\tR\aproject\"x\n" +
-	"\x1dCreateWebhookEndpointResponse\x12?\n" +
-	"\bendpoint\x18\x01 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\x12\x16\n" +
-	"\x06secret\x18\x02 \x01(\tR\x06secret\"+\n" +
-	"\x19GetWebhookEndpointRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"]\n" +
-	"\x1aGetWebhookEndpointResponse\x12?\n" +
-	"\bendpoint\x18\x01 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\"Y\n" +
-	"\x1bListWebhookEndpointsRequest\x12\x1b\n" +
+	"\aproject\x18\x05 \x01(\tR\aproject\"f\n" +
+	"\x15CreateWebhookResponse\x125\n" +
+	"\awebhook\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.WebhookR\awebhook\x12\x16\n" +
+	"\x06secret\x18\x02 \x01(\tR\x06secret\"#\n" +
+	"\x11GetWebhookRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"K\n" +
+	"\x12GetWebhookResponse\x125\n" +
+	"\awebhook\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.WebhookR\awebhook\"Q\n" +
+	"\x13ListWebhooksRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\x02 \x01(\tR\tpageToken\"\x89\x01\n" +
-	"\x1cListWebhookEndpointsResponse\x12A\n" +
-	"\tendpoints\x18\x01 \x03(\v2#.toshi.workspace.v1.WebhookEndpointR\tendpoints\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xcd\x01\n" +
-	"\x1cUpdateWebhookEndpointRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12?\n" +
-	"\bendpoint\x18\x02 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\x12;\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"w\n" +
+	"\x14ListWebhooksResponse\x127\n" +
+	"\bwebhooks\x18\x01 \x03(\v2\x1b.toshi.workspace.v1.WebhookR\bwebhooks\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xbb\x01\n" +
+	"\x14UpdateWebhookRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x125\n" +
+	"\awebhook\x18\x02 \x01(\v2\x1b.toshi.workspace.v1.WebhookR\awebhook\x12;\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\x12\x1f\n" +
 	"\vrequest_key\x18\x04 \x01(\tR\n" +
-	"requestKey\"`\n" +
-	"\x1dUpdateWebhookEndpointResponse\x12?\n" +
-	"\bendpoint\x18\x01 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\"O\n" +
-	"\x1cDeleteWebhookEndpointRequest\x12\x0e\n" +
+	"requestKey\"N\n" +
+	"\x15UpdateWebhookResponse\x125\n" +
+	"\awebhook\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.WebhookR\awebhook\"G\n" +
+	"\x14DeleteWebhookRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vrequest_key\x18\x02 \x01(\tR\n" +
-	"requestKey\"\x1f\n" +
-	"\x1dDeleteWebhookEndpointResponse\"U\n" +
-	"\"RotateWebhookEndpointSecretRequest\x12\x0e\n" +
+	"requestKey\"\x17\n" +
+	"\x15DeleteWebhookResponse\"M\n" +
+	"\x1aRotateWebhookSecretRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vrequest_key\x18\x02 \x01(\tR\n" +
-	"requestKey\"~\n" +
-	"#RotateWebhookEndpointSecretResponse\x12?\n" +
-	"\bendpoint\x18\x01 \x01(\v2#.toshi.workspace.v1.WebhookEndpointR\bendpoint\x12\x16\n" +
-	"\x06secret\x18\x02 \x01(\tR\x06secret\"{\n" +
-	"\x1cListWebhookDeliveriesRequest\x12\x1f\n" +
-	"\vendpoint_id\x18\x01 \x01(\tR\n" +
-	"endpointId\x12\x1d\n" +
+	"requestKey\"l\n" +
+	"\x1bRotateWebhookSecretResponse\x125\n" +
+	"\awebhook\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.WebhookR\awebhook\x12\x16\n" +
+	"\x06secret\x18\x02 \x01(\tR\x06secret\"y\n" +
+	"\x1cListWebhookDeliveriesRequest\x12\x1d\n" +
+	"\n" +
+	"webhook_id\x18\x01 \x01(\tR\twebhookId\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\x12\x1b\n" +
 	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\"\x8c\x01\n" +
@@ -1305,10 +1305,10 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\n" +
 	"deliveries\x18\x01 \x03(\v2#.toshi.workspace.v1.WebhookDeliveryR\n" +
 	"deliveries\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"v\n" +
-	"\x1aReplayWebhookEventsRequest\x12\x1f\n" +
-	"\vendpoint_id\x18\x01 \x01(\tR\n" +
-	"endpointId\x12\x16\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"t\n" +
+	"\x1aReplayWebhookEventsRequest\x12\x1d\n" +
+	"\n" +
+	"webhook_id\x18\x01 \x01(\tR\twebhookId\x12\x16\n" +
 	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12\x1f\n" +
 	"\vrequest_key\x18\x03 \x01(\tR\n" +
 	"requestKey\"e\n" +
@@ -1320,21 +1320,19 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\"WEBHOOK_DELIVERY_STATE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eWEBHOOK_DELIVERY_STATE_PENDING\x10\x01\x12$\n" +
 	" WEBHOOK_DELIVERY_STATE_DELIVERED\x10\x02\x12\x1f\n" +
-	"\x1bWEBHOOK_DELIVERY_STATE_DEAD\x10\x032\xc9\v\n" +
-	"\x0eWebhookService\x12\xe2\x01\n" +
-	"\x15CreateWebhookEndpoint\x120.toshi.workspace.v1.CreateWebhookEndpointRequest\x1a1.toshi.workspace.v1.CreateWebhookEndpointResponse\"d\xc2\xf3\x18\x0ewebhooks.write\xca\xf3\x18\tworkspace\xd2\xf3\x18A\n" +
-	"\x18webhook.endpoint_created\x12%webhook_endpoint:response.endpoint.id\x12\x86\x01\n" +
-	"\x12GetWebhookEndpoint\x12-.toshi.workspace.v1.GetWebhookEndpointRequest\x1a..toshi.workspace.v1.GetWebhookEndpointResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\x8c\x01\n" +
-	"\x14ListWebhookEndpoints\x12/.toshi.workspace.v1.ListWebhookEndpointsRequest\x1a0.toshi.workspace.v1.ListWebhookEndpointsResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\xc3\x01\n" +
-	"\x15UpdateWebhookEndpoint\x120.toshi.workspace.v1.UpdateWebhookEndpointRequest\x1a1.toshi.workspace.v1.UpdateWebhookEndpointResponse\"E\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18/\n" +
-	"\x18webhook.endpoint_updated\x12\x13webhook_endpoint:id\x12\xc3\x01\n" +
-	"\x15DeleteWebhookEndpoint\x120.toshi.workspace.v1.DeleteWebhookEndpointRequest\x1a1.toshi.workspace.v1.DeleteWebhookEndpointResponse\"E\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18/\n" +
-	"\x18webhook.endpoint_deleted\x12\x13webhook_endpoint:id\x12\xd3\x01\n" +
-	"\x1bRotateWebhookEndpointSecret\x126.toshi.workspace.v1.RotateWebhookEndpointSecretRequest\x1a7.toshi.workspace.v1.RotateWebhookEndpointSecretResponse\"C\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18-\n" +
-	"\x16webhook.secret_rotated\x12\x13webhook_endpoint:id\x12\x8f\x01\n" +
-	"\x15ListWebhookDeliveries\x120.toshi.workspace.v1.ListWebhookDeliveriesRequest\x1a1.toshi.workspace.v1.ListWebhookDeliveriesResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\xc5\x01\n" +
-	"\x13ReplayWebhookEvents\x12..toshi.workspace.v1.ReplayWebhookEventsRequest\x1a/.toshi.workspace.v1.ReplayWebhookEventsResponse\"M\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x187\n" +
-	"\x17webhook.events_replayed\x12\x1cwebhook_endpoint:endpoint_idB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x1bWEBHOOK_DELIVERY_STATE_DEAD\x10\x032\xd7\b\n" +
+	"\x0eWebhookService\x12\x85\x01\n" +
+	"\rCreateWebhook\x12(.toshi.workspace.v1.CreateWebhookRequest\x1a).toshi.workspace.v1.CreateWebhookResponse\"\x1f\xc2\xf3\x18\x0ewebhooks.write\xca\xf3\x18\tworkspace\x12n\n" +
+	"\n" +
+	"GetWebhook\x12%.toshi.workspace.v1.GetWebhookRequest\x1a&.toshi.workspace.v1.GetWebhookResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12t\n" +
+	"\fListWebhooks\x12'.toshi.workspace.v1.ListWebhooksRequest\x1a(.toshi.workspace.v1.ListWebhooksResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12x\n" +
+	"\rUpdateWebhook\x12(.toshi.workspace.v1.UpdateWebhookRequest\x1a).toshi.workspace.v1.UpdateWebhookResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12x\n" +
+	"\rDeleteWebhook\x12(.toshi.workspace.v1.DeleteWebhookRequest\x1a).toshi.workspace.v1.DeleteWebhookResponse\"\x12\xc2\xf3\x18\x0ewebhooks.write\x12\xa6\x01\n" +
+	"\x13RotateWebhookSecret\x12..toshi.workspace.v1.RotateWebhookSecretRequest\x1a/.toshi.workspace.v1.RotateWebhookSecretResponse\".\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18\x18\n" +
+	"\x16webhook.secret_rotated\x12\x8f\x01\n" +
+	"\x15ListWebhookDeliveries\x120.toshi.workspace.v1.ListWebhookDeliveriesRequest\x1a1.toshi.workspace.v1.ListWebhookDeliveriesResponse\"\x11\xc2\xf3\x18\rwebhooks.read\x12\xa7\x01\n" +
+	"\x13ReplayWebhookEvents\x12..toshi.workspace.v1.ReplayWebhookEventsRequest\x1a/.toshi.workspace.v1.ReplayWebhookEventsResponse\"/\xc2\xf3\x18\x0ewebhooks.write\xd2\xf3\x18\x19\n" +
+	"\x17webhook.events_replayedB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_webhook_proto_rawDescOnce sync.Once
@@ -1351,59 +1349,59 @@ func file_toshi_workspace_v1_webhook_proto_rawDescGZIP() []byte {
 var file_toshi_workspace_v1_webhook_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_toshi_workspace_v1_webhook_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_toshi_workspace_v1_webhook_proto_goTypes = []any{
-	(WebhookDeliveryState)(0),                   // 0: toshi.workspace.v1.WebhookDeliveryState
-	(*WebhookEndpoint)(nil),                     // 1: toshi.workspace.v1.WebhookEndpoint
-	(*WebhookDelivery)(nil),                     // 2: toshi.workspace.v1.WebhookDelivery
-	(*CreateWebhookEndpointRequest)(nil),        // 3: toshi.workspace.v1.CreateWebhookEndpointRequest
-	(*CreateWebhookEndpointResponse)(nil),       // 4: toshi.workspace.v1.CreateWebhookEndpointResponse
-	(*GetWebhookEndpointRequest)(nil),           // 5: toshi.workspace.v1.GetWebhookEndpointRequest
-	(*GetWebhookEndpointResponse)(nil),          // 6: toshi.workspace.v1.GetWebhookEndpointResponse
-	(*ListWebhookEndpointsRequest)(nil),         // 7: toshi.workspace.v1.ListWebhookEndpointsRequest
-	(*ListWebhookEndpointsResponse)(nil),        // 8: toshi.workspace.v1.ListWebhookEndpointsResponse
-	(*UpdateWebhookEndpointRequest)(nil),        // 9: toshi.workspace.v1.UpdateWebhookEndpointRequest
-	(*UpdateWebhookEndpointResponse)(nil),       // 10: toshi.workspace.v1.UpdateWebhookEndpointResponse
-	(*DeleteWebhookEndpointRequest)(nil),        // 11: toshi.workspace.v1.DeleteWebhookEndpointRequest
-	(*DeleteWebhookEndpointResponse)(nil),       // 12: toshi.workspace.v1.DeleteWebhookEndpointResponse
-	(*RotateWebhookEndpointSecretRequest)(nil),  // 13: toshi.workspace.v1.RotateWebhookEndpointSecretRequest
-	(*RotateWebhookEndpointSecretResponse)(nil), // 14: toshi.workspace.v1.RotateWebhookEndpointSecretResponse
-	(*ListWebhookDeliveriesRequest)(nil),        // 15: toshi.workspace.v1.ListWebhookDeliveriesRequest
-	(*ListWebhookDeliveriesResponse)(nil),       // 16: toshi.workspace.v1.ListWebhookDeliveriesResponse
-	(*ReplayWebhookEventsRequest)(nil),          // 17: toshi.workspace.v1.ReplayWebhookEventsRequest
-	(*ReplayWebhookEventsResponse)(nil),         // 18: toshi.workspace.v1.ReplayWebhookEventsResponse
-	(*timestamppb.Timestamp)(nil),               // 19: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),               // 20: google.protobuf.FieldMask
+	(WebhookDeliveryState)(0),             // 0: toshi.workspace.v1.WebhookDeliveryState
+	(*Webhook)(nil),                       // 1: toshi.workspace.v1.Webhook
+	(*WebhookDelivery)(nil),               // 2: toshi.workspace.v1.WebhookDelivery
+	(*CreateWebhookRequest)(nil),          // 3: toshi.workspace.v1.CreateWebhookRequest
+	(*CreateWebhookResponse)(nil),         // 4: toshi.workspace.v1.CreateWebhookResponse
+	(*GetWebhookRequest)(nil),             // 5: toshi.workspace.v1.GetWebhookRequest
+	(*GetWebhookResponse)(nil),            // 6: toshi.workspace.v1.GetWebhookResponse
+	(*ListWebhooksRequest)(nil),           // 7: toshi.workspace.v1.ListWebhooksRequest
+	(*ListWebhooksResponse)(nil),          // 8: toshi.workspace.v1.ListWebhooksResponse
+	(*UpdateWebhookRequest)(nil),          // 9: toshi.workspace.v1.UpdateWebhookRequest
+	(*UpdateWebhookResponse)(nil),         // 10: toshi.workspace.v1.UpdateWebhookResponse
+	(*DeleteWebhookRequest)(nil),          // 11: toshi.workspace.v1.DeleteWebhookRequest
+	(*DeleteWebhookResponse)(nil),         // 12: toshi.workspace.v1.DeleteWebhookResponse
+	(*RotateWebhookSecretRequest)(nil),    // 13: toshi.workspace.v1.RotateWebhookSecretRequest
+	(*RotateWebhookSecretResponse)(nil),   // 14: toshi.workspace.v1.RotateWebhookSecretResponse
+	(*ListWebhookDeliveriesRequest)(nil),  // 15: toshi.workspace.v1.ListWebhookDeliveriesRequest
+	(*ListWebhookDeliveriesResponse)(nil), // 16: toshi.workspace.v1.ListWebhookDeliveriesResponse
+	(*ReplayWebhookEventsRequest)(nil),    // 17: toshi.workspace.v1.ReplayWebhookEventsRequest
+	(*ReplayWebhookEventsResponse)(nil),   // 18: toshi.workspace.v1.ReplayWebhookEventsResponse
+	(*timestamppb.Timestamp)(nil),         // 19: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),         // 20: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_webhook_proto_depIdxs = []int32{
-	19, // 0: toshi.workspace.v1.WebhookEndpoint.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
-	19, // 1: toshi.workspace.v1.WebhookEndpoint.created_at:type_name -> google.protobuf.Timestamp
-	19, // 2: toshi.workspace.v1.WebhookEndpoint.updated_at:type_name -> google.protobuf.Timestamp
-	19, // 3: toshi.workspace.v1.WebhookEndpoint.retention_boundary:type_name -> google.protobuf.Timestamp
+	19, // 0: toshi.workspace.v1.Webhook.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
+	19, // 1: toshi.workspace.v1.Webhook.created_at:type_name -> google.protobuf.Timestamp
+	19, // 2: toshi.workspace.v1.Webhook.updated_at:type_name -> google.protobuf.Timestamp
+	19, // 3: toshi.workspace.v1.Webhook.retention_boundary:type_name -> google.protobuf.Timestamp
 	0,  // 4: toshi.workspace.v1.WebhookDelivery.state:type_name -> toshi.workspace.v1.WebhookDeliveryState
 	19, // 5: toshi.workspace.v1.WebhookDelivery.next_try_at:type_name -> google.protobuf.Timestamp
 	19, // 6: toshi.workspace.v1.WebhookDelivery.due_at:type_name -> google.protobuf.Timestamp
 	19, // 7: toshi.workspace.v1.WebhookDelivery.done_at:type_name -> google.protobuf.Timestamp
-	1,  // 8: toshi.workspace.v1.CreateWebhookEndpointResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
-	1,  // 9: toshi.workspace.v1.GetWebhookEndpointResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
-	1,  // 10: toshi.workspace.v1.ListWebhookEndpointsResponse.endpoints:type_name -> toshi.workspace.v1.WebhookEndpoint
-	1,  // 11: toshi.workspace.v1.UpdateWebhookEndpointRequest.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
-	20, // 12: toshi.workspace.v1.UpdateWebhookEndpointRequest.update_mask:type_name -> google.protobuf.FieldMask
-	1,  // 13: toshi.workspace.v1.UpdateWebhookEndpointResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
-	1,  // 14: toshi.workspace.v1.RotateWebhookEndpointSecretResponse.endpoint:type_name -> toshi.workspace.v1.WebhookEndpoint
+	1,  // 8: toshi.workspace.v1.CreateWebhookResponse.webhook:type_name -> toshi.workspace.v1.Webhook
+	1,  // 9: toshi.workspace.v1.GetWebhookResponse.webhook:type_name -> toshi.workspace.v1.Webhook
+	1,  // 10: toshi.workspace.v1.ListWebhooksResponse.webhooks:type_name -> toshi.workspace.v1.Webhook
+	1,  // 11: toshi.workspace.v1.UpdateWebhookRequest.webhook:type_name -> toshi.workspace.v1.Webhook
+	20, // 12: toshi.workspace.v1.UpdateWebhookRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 13: toshi.workspace.v1.UpdateWebhookResponse.webhook:type_name -> toshi.workspace.v1.Webhook
+	1,  // 14: toshi.workspace.v1.RotateWebhookSecretResponse.webhook:type_name -> toshi.workspace.v1.Webhook
 	2,  // 15: toshi.workspace.v1.ListWebhookDeliveriesResponse.deliveries:type_name -> toshi.workspace.v1.WebhookDelivery
-	3,  // 16: toshi.workspace.v1.WebhookService.CreateWebhookEndpoint:input_type -> toshi.workspace.v1.CreateWebhookEndpointRequest
-	5,  // 17: toshi.workspace.v1.WebhookService.GetWebhookEndpoint:input_type -> toshi.workspace.v1.GetWebhookEndpointRequest
-	7,  // 18: toshi.workspace.v1.WebhookService.ListWebhookEndpoints:input_type -> toshi.workspace.v1.ListWebhookEndpointsRequest
-	9,  // 19: toshi.workspace.v1.WebhookService.UpdateWebhookEndpoint:input_type -> toshi.workspace.v1.UpdateWebhookEndpointRequest
-	11, // 20: toshi.workspace.v1.WebhookService.DeleteWebhookEndpoint:input_type -> toshi.workspace.v1.DeleteWebhookEndpointRequest
-	13, // 21: toshi.workspace.v1.WebhookService.RotateWebhookEndpointSecret:input_type -> toshi.workspace.v1.RotateWebhookEndpointSecretRequest
+	3,  // 16: toshi.workspace.v1.WebhookService.CreateWebhook:input_type -> toshi.workspace.v1.CreateWebhookRequest
+	5,  // 17: toshi.workspace.v1.WebhookService.GetWebhook:input_type -> toshi.workspace.v1.GetWebhookRequest
+	7,  // 18: toshi.workspace.v1.WebhookService.ListWebhooks:input_type -> toshi.workspace.v1.ListWebhooksRequest
+	9,  // 19: toshi.workspace.v1.WebhookService.UpdateWebhook:input_type -> toshi.workspace.v1.UpdateWebhookRequest
+	11, // 20: toshi.workspace.v1.WebhookService.DeleteWebhook:input_type -> toshi.workspace.v1.DeleteWebhookRequest
+	13, // 21: toshi.workspace.v1.WebhookService.RotateWebhookSecret:input_type -> toshi.workspace.v1.RotateWebhookSecretRequest
 	15, // 22: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:input_type -> toshi.workspace.v1.ListWebhookDeliveriesRequest
 	17, // 23: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:input_type -> toshi.workspace.v1.ReplayWebhookEventsRequest
-	4,  // 24: toshi.workspace.v1.WebhookService.CreateWebhookEndpoint:output_type -> toshi.workspace.v1.CreateWebhookEndpointResponse
-	6,  // 25: toshi.workspace.v1.WebhookService.GetWebhookEndpoint:output_type -> toshi.workspace.v1.GetWebhookEndpointResponse
-	8,  // 26: toshi.workspace.v1.WebhookService.ListWebhookEndpoints:output_type -> toshi.workspace.v1.ListWebhookEndpointsResponse
-	10, // 27: toshi.workspace.v1.WebhookService.UpdateWebhookEndpoint:output_type -> toshi.workspace.v1.UpdateWebhookEndpointResponse
-	12, // 28: toshi.workspace.v1.WebhookService.DeleteWebhookEndpoint:output_type -> toshi.workspace.v1.DeleteWebhookEndpointResponse
-	14, // 29: toshi.workspace.v1.WebhookService.RotateWebhookEndpointSecret:output_type -> toshi.workspace.v1.RotateWebhookEndpointSecretResponse
+	4,  // 24: toshi.workspace.v1.WebhookService.CreateWebhook:output_type -> toshi.workspace.v1.CreateWebhookResponse
+	6,  // 25: toshi.workspace.v1.WebhookService.GetWebhook:output_type -> toshi.workspace.v1.GetWebhookResponse
+	8,  // 26: toshi.workspace.v1.WebhookService.ListWebhooks:output_type -> toshi.workspace.v1.ListWebhooksResponse
+	10, // 27: toshi.workspace.v1.WebhookService.UpdateWebhook:output_type -> toshi.workspace.v1.UpdateWebhookResponse
+	12, // 28: toshi.workspace.v1.WebhookService.DeleteWebhook:output_type -> toshi.workspace.v1.DeleteWebhookResponse
+	14, // 29: toshi.workspace.v1.WebhookService.RotateWebhookSecret:output_type -> toshi.workspace.v1.RotateWebhookSecretResponse
 	16, // 30: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:output_type -> toshi.workspace.v1.ListWebhookDeliveriesResponse
 	18, // 31: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:output_type -> toshi.workspace.v1.ReplayWebhookEventsResponse
 	24, // [24:32] is the sub-list for method output_type

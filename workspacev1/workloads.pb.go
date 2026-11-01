@@ -3933,7 +3933,7 @@ func (x *WatchServicesResponse) GetKeepalive() *Keepalive {
 }
 
 // ServiceAlarm is one of a service's alarms: a schedule, the event it
-// publishes on one of the service's event channels, and the instant it
+// publishes on one of the service's event endpoints, and the instant it
 // next publishes.
 type ServiceAlarm struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -3951,8 +3951,8 @@ type ServiceAlarm struct {
 	Schedule isServiceAlarm_Schedule `protobuf_oneof:"schedule"`
 	// The IANA zone of the schedule's wall clock; empty for UTC.
 	Timezone string `protobuf:"bytes,5,opt,name=timezone,proto3" json:"timezone,omitempty"`
-	// The name of the service's event channel it publishes on.
-	Channel string `protobuf:"bytes,6,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The name of the service's event endpoint it publishes on.
+	Endpoint string `protobuf:"bytes,6,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The event name it publishes.
 	Event string `protobuf:"bytes,7,opt,name=event,proto3" json:"event,omitempty"`
 	// The message's JSON, empty for null.
@@ -4049,9 +4049,9 @@ func (x *ServiceAlarm) GetTimezone() string {
 	return ""
 }
 
-func (x *ServiceAlarm) GetChannel() string {
+func (x *ServiceAlarm) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -4261,8 +4261,8 @@ type SetServiceAlarmRequest struct {
 	Schedule isSetServiceAlarmRequest_Schedule `protobuf_oneof:"schedule"`
 	// The IANA zone of the schedule's wall clock; empty for UTC.
 	Timezone string `protobuf:"bytes,7,opt,name=timezone,proto3" json:"timezone,omitempty"`
-	// The name of the service's event channel to publish on.
-	Channel string `protobuf:"bytes,8,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The name of the service's event endpoint to publish on.
+	Endpoint string `protobuf:"bytes,8,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The event name to publish.
 	Event string `protobuf:"bytes,9,opt,name=event,proto3" json:"event,omitempty"`
 	// The message's JSON, empty for null.
@@ -4366,9 +4366,9 @@ func (x *SetServiceAlarmRequest) GetTimezone() string {
 	return ""
 }
 
-func (x *SetServiceAlarmRequest) GetChannel() string {
+func (x *SetServiceAlarmRequest) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -5494,7 +5494,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x04type\x18\x01 \x01(\x0e2\x1d.toshi.workspace.v1.EventTypeR\x04type\x125\n" +
 	"\aservice\x18\x02 \x01(\v2\x1b.toshi.workspace.v1.ServiceR\aservice\x12\x16\n" +
 	"\x06cursor\x18\x03 \x01(\tR\x06cursor\x12;\n" +
-	"\tkeepalive\x18\x04 \x01(\v2\x1d.toshi.workspace.v1.KeepaliveR\tkeepalive\"\xc0\x04\n" +
+	"\tkeepalive\x18\x04 \x01(\v2\x1d.toshi.workspace.v1.KeepaliveR\tkeepalive\"\xc2\x04\n" +
 	"\fServiceAlarm\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1e\n" +
 	"\n" +
@@ -5502,8 +5502,8 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"generation\x12\x14\n" +
 	"\x04cron\x18\x03 \x01(\tH\x00R\x04cron\x12,\n" +
 	"\x02at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x02at\x12\x1a\n" +
-	"\btimezone\x18\x05 \x01(\tR\btimezone\x12\x18\n" +
-	"\achannel\x18\x06 \x01(\tR\achannel\x12\x14\n" +
+	"\btimezone\x18\x05 \x01(\tR\btimezone\x12\x1a\n" +
+	"\bendpoint\x18\x06 \x01(\tR\bendpoint\x12\x14\n" +
 	"\x05event\x18\a \x01(\tR\x05event\x12\x12\n" +
 	"\x04data\x18\b \x01(\fR\x04data\x12A\n" +
 	"\amisfire\x18\t \x01(\x0e2'.toshi.workspace.v1.ServiceAlarmMisfireR\amisfire\x12F\n" +
@@ -5529,7 +5529,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\fpublished_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\vpublishedAt\x12\x1d\n" +
 	"\n" +
 	"message_id\x18\a \x01(\tR\tmessageId\x12\x14\n" +
-	"\x05error\x18\b \x01(\tR\x05error\"\xc2\x03\n" +
+	"\x05error\x18\b \x01(\tR\x05error\"\xc4\x03\n" +
 	"\x16SetServiceAlarmRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
@@ -5538,8 +5538,8 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
 	"\x04cron\x18\x05 \x01(\tH\x00R\x04cron\x12,\n" +
 	"\x02at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\x02at\x12\x1a\n" +
-	"\btimezone\x18\a \x01(\tR\btimezone\x12\x18\n" +
-	"\achannel\x18\b \x01(\tR\achannel\x12\x14\n" +
+	"\btimezone\x18\a \x01(\tR\btimezone\x12\x1a\n" +
+	"\bendpoint\x18\b \x01(\tR\bendpoint\x12\x14\n" +
 	"\x05event\x18\t \x01(\tR\x05event\x12\x12\n" +
 	"\x04data\x18\n" +
 	" \x01(\fR\x04data\x12A\n" +

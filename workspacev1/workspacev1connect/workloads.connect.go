@@ -427,15 +427,15 @@ type WorkloadServiceClient interface {
 	// FAILED_PRECONDITION. A job or service fails with INVALID_ARGUMENT.
 	WatchGuestLog(context.Context, *connect.Request[workspacev1.WatchGuestLogRequest]) (*connect.ServerStreamForClient[workspacev1.WatchGuestLogResponse], error)
 	// CreatePreviewShareLink mints a share link for one of a running
-	// sandbox's previews: the channel `preview`, served at the sandbox's own
-	// hostname, unless the request names another of its http channels. The
+	// sandbox's previews: the endpoint `preview`, served at the sandbox's own
+	// hostname, unless the request names another of its http endpoints. The
 	// link is a signed link that admits one device, the first to open it,
 	// until it expires, carries its byte cap or is revoked, and only at that
-	// channel's hostname. The link is in this answer only. The sandbox must
+	// endpoint's hostname. The link is in this answer only. The sandbox must
 	// be running with that preview open, or the call fails with
 	// FAILED_PRECONDITION, as it does when the workspace's plan turns share
-	// links off. A channel or port the sandbox has no http channel for fails
-	// with NOT_FOUND; a channel that is not http, a port outside 1 to 65535,
+	// links off. An endpoint or port the sandbox has no http endpoint for fails
+	// with NOT_FOUND; an endpoint that is not http, a port outside 1 to 65535,
 	// or an expiry or a byte cap above the plan's, with INVALID_ARGUMENT.
 	CreatePreviewShareLink(context.Context, *connect.Request[workspacev1.CreatePreviewShareLinkRequest]) (*connect.Response[workspacev1.CreatePreviewShareLinkResponse], error)
 	// ListPreviewShareLinks returns a sandbox's share links, for all of its
@@ -448,18 +448,18 @@ type WorkloadServiceClient interface {
 	// that was revoked or has ended returns it as it is.
 	RevokePreviewShareLink(context.Context, *connect.Request[workspacev1.RevokePreviewShareLinkRequest]) (*connect.Response[workspacev1.RevokePreviewShareLinkResponse], error)
 	// CreateServiceShareLink mints a share link for one of a service's
-	// provided names: its front channel's, unless the request names another
-	// of its http channels. The link admits one device, the first to open
+	// provided names: its front endpoint's, unless the request names another
+	// of its http endpoints. The link admits one device, the first to open
 	// it, until it expires, carries its byte cap or is revoked, on whichever
 	// run of the service is running, across restarts and redeploys. The link
 	// is in this answer only. The call fails with FAILED_PRECONDITION when
 	// this server serves no provided names, when the service has none, or
-	// when the workspace's plan turns share links off; with NOT_FOUND for a
-	// channel that is not an http channel of the service's current revision;
+	// when the workspace's plan turns share links off; with NOT_FOUND for an
+	// endpoint that is not an http endpoint of the service's current revision;
 	// and with INVALID_ARGUMENT for an expiry or a byte cap above the plan's.
 	CreateServiceShareLink(context.Context, *connect.Request[workspacev1.CreateServiceShareLinkRequest]) (*connect.Response[workspacev1.CreateServiceShareLinkResponse], error)
 	// ListServiceShareLinks returns a service's share links, for all of its
-	// channels, the oldest first, never with the link itself.
+	// endpoints, the oldest first, never with the link itself.
 	//
 	// A page holds 100 share links when page_size is zero, and 1000 at most.
 	ListServiceShareLinks(context.Context, *connect.Request[workspacev1.ListServiceShareLinksRequest]) (*connect.Response[workspacev1.ListServiceShareLinksResponse], error)
@@ -515,7 +515,7 @@ type WorkloadServiceClient interface {
 	// a host, placed by the service's size; the run's start moves the
 	// workload to RUNNING. While the service is started, a run that ends is
 	// followed by another. An on-demand service is started asleep: it runs
-	// only once WakeService, a hold or a connect on one of its channels
+	// only once WakeService, a hold or a connect on one of its endpoints
 	// wakes it, and sleeps again when it has been idle for its recipe's
 	// idle period. Starting a started service returns it as it is. A size
 	// that is not a Linux one and a start past the plan's shared services
@@ -560,11 +560,11 @@ type WorkloadServiceClient interface {
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
 	// SetServiceAlarm creates or replaces the service's alarm with this name
 	// and returns it. At each instant of its schedule an alarm publishes its
-	// event, with its data, on one of the service's event channels. Replacing
+	// event, with its data, on one of the service's event endpoints. Replacing
 	// an alarm raises its generation and schedules it again from now. A
-	// schedule, zone, channel, event or data that is not valid fails with
+	// schedule, zone, endpoint, event or data that is not valid fails with
 	// INVALID_ARGUMENT, as does an event name under a prefix Toshi keeps for
-	// its own events; a channel the service does not declare fails with
+	// its own events; an endpoint the service does not declare fails with
 	// NOT_FOUND; a service holding 100 alarms refuses another with
 	// RESOURCE_EXHAUSTED.
 	SetServiceAlarm(context.Context, *connect.Request[workspacev1.SetServiceAlarmRequest]) (*connect.Response[workspacev1.SetServiceAlarmResponse], error)
@@ -574,7 +574,7 @@ type WorkloadServiceClient interface {
 	// ListServiceAlarms returns the service's alarms by name.
 	ListServiceAlarms(context.Context, *connect.Request[workspacev1.ListServiceAlarmsRequest]) (*connect.Response[workspacev1.ListServiceAlarmsResponse], error)
 	// DeleteServiceAlarm removes an alarm and its occurrences. Messages it
-	// already published stay on the channel.
+	// already published stay on the endpoint.
 	DeleteServiceAlarm(context.Context, *connect.Request[workspacev1.DeleteServiceAlarmRequest]) (*connect.Response[workspacev1.DeleteServiceAlarmResponse], error)
 	// PauseServiceAlarm stops an alarm publishing until it is resumed.
 	// Pausing a paused alarm changes nothing.
@@ -1729,15 +1729,15 @@ type WorkloadServiceHandler interface {
 	// FAILED_PRECONDITION. A job or service fails with INVALID_ARGUMENT.
 	WatchGuestLog(context.Context, *connect.Request[workspacev1.WatchGuestLogRequest], *connect.ServerStream[workspacev1.WatchGuestLogResponse]) error
 	// CreatePreviewShareLink mints a share link for one of a running
-	// sandbox's previews: the channel `preview`, served at the sandbox's own
-	// hostname, unless the request names another of its http channels. The
+	// sandbox's previews: the endpoint `preview`, served at the sandbox's own
+	// hostname, unless the request names another of its http endpoints. The
 	// link is a signed link that admits one device, the first to open it,
 	// until it expires, carries its byte cap or is revoked, and only at that
-	// channel's hostname. The link is in this answer only. The sandbox must
+	// endpoint's hostname. The link is in this answer only. The sandbox must
 	// be running with that preview open, or the call fails with
 	// FAILED_PRECONDITION, as it does when the workspace's plan turns share
-	// links off. A channel or port the sandbox has no http channel for fails
-	// with NOT_FOUND; a channel that is not http, a port outside 1 to 65535,
+	// links off. An endpoint or port the sandbox has no http endpoint for fails
+	// with NOT_FOUND; an endpoint that is not http, a port outside 1 to 65535,
 	// or an expiry or a byte cap above the plan's, with INVALID_ARGUMENT.
 	CreatePreviewShareLink(context.Context, *connect.Request[workspacev1.CreatePreviewShareLinkRequest]) (*connect.Response[workspacev1.CreatePreviewShareLinkResponse], error)
 	// ListPreviewShareLinks returns a sandbox's share links, for all of its
@@ -1750,18 +1750,18 @@ type WorkloadServiceHandler interface {
 	// that was revoked or has ended returns it as it is.
 	RevokePreviewShareLink(context.Context, *connect.Request[workspacev1.RevokePreviewShareLinkRequest]) (*connect.Response[workspacev1.RevokePreviewShareLinkResponse], error)
 	// CreateServiceShareLink mints a share link for one of a service's
-	// provided names: its front channel's, unless the request names another
-	// of its http channels. The link admits one device, the first to open
+	// provided names: its front endpoint's, unless the request names another
+	// of its http endpoints. The link admits one device, the first to open
 	// it, until it expires, carries its byte cap or is revoked, on whichever
 	// run of the service is running, across restarts and redeploys. The link
 	// is in this answer only. The call fails with FAILED_PRECONDITION when
 	// this server serves no provided names, when the service has none, or
-	// when the workspace's plan turns share links off; with NOT_FOUND for a
-	// channel that is not an http channel of the service's current revision;
+	// when the workspace's plan turns share links off; with NOT_FOUND for an
+	// endpoint that is not an http endpoint of the service's current revision;
 	// and with INVALID_ARGUMENT for an expiry or a byte cap above the plan's.
 	CreateServiceShareLink(context.Context, *connect.Request[workspacev1.CreateServiceShareLinkRequest]) (*connect.Response[workspacev1.CreateServiceShareLinkResponse], error)
 	// ListServiceShareLinks returns a service's share links, for all of its
-	// channels, the oldest first, never with the link itself.
+	// endpoints, the oldest first, never with the link itself.
 	//
 	// A page holds 100 share links when page_size is zero, and 1000 at most.
 	ListServiceShareLinks(context.Context, *connect.Request[workspacev1.ListServiceShareLinksRequest]) (*connect.Response[workspacev1.ListServiceShareLinksResponse], error)
@@ -1817,7 +1817,7 @@ type WorkloadServiceHandler interface {
 	// a host, placed by the service's size; the run's start moves the
 	// workload to RUNNING. While the service is started, a run that ends is
 	// followed by another. An on-demand service is started asleep: it runs
-	// only once WakeService, a hold or a connect on one of its channels
+	// only once WakeService, a hold or a connect on one of its endpoints
 	// wakes it, and sleeps again when it has been idle for its recipe's
 	// idle period. Starting a started service returns it as it is. A size
 	// that is not a Linux one and a start past the plan's shared services
@@ -1862,11 +1862,11 @@ type WorkloadServiceHandler interface {
 	ReleaseService(context.Context, *connect.Request[workspacev1.ReleaseServiceRequest]) (*connect.Response[workspacev1.ReleaseServiceResponse], error)
 	// SetServiceAlarm creates or replaces the service's alarm with this name
 	// and returns it. At each instant of its schedule an alarm publishes its
-	// event, with its data, on one of the service's event channels. Replacing
+	// event, with its data, on one of the service's event endpoints. Replacing
 	// an alarm raises its generation and schedules it again from now. A
-	// schedule, zone, channel, event or data that is not valid fails with
+	// schedule, zone, endpoint, event or data that is not valid fails with
 	// INVALID_ARGUMENT, as does an event name under a prefix Toshi keeps for
-	// its own events; a channel the service does not declare fails with
+	// its own events; an endpoint the service does not declare fails with
 	// NOT_FOUND; a service holding 100 alarms refuses another with
 	// RESOURCE_EXHAUSTED.
 	SetServiceAlarm(context.Context, *connect.Request[workspacev1.SetServiceAlarmRequest]) (*connect.Response[workspacev1.SetServiceAlarmResponse], error)
@@ -1876,7 +1876,7 @@ type WorkloadServiceHandler interface {
 	// ListServiceAlarms returns the service's alarms by name.
 	ListServiceAlarms(context.Context, *connect.Request[workspacev1.ListServiceAlarmsRequest]) (*connect.Response[workspacev1.ListServiceAlarmsResponse], error)
 	// DeleteServiceAlarm removes an alarm and its occurrences. Messages it
-	// already published stay on the channel.
+	// already published stay on the endpoint.
 	DeleteServiceAlarm(context.Context, *connect.Request[workspacev1.DeleteServiceAlarmRequest]) (*connect.Response[workspacev1.DeleteServiceAlarmResponse], error)
 	// PauseServiceAlarm stops an alarm publishing until it is resumed.
 	// Pausing a paused alarm changes nothing.

@@ -36,7 +36,7 @@ const (
 	ConnectionKind_CONNECTION_KIND_WEBHOOK ConnectionKind = 2
 	// An inbound mail address. The deployment's mail provider receives the
 	// messages; each is stored as a receipt before it goes to a service's
-	// event channel.
+	// event endpoint.
 	ConnectionKind_CONNECTION_KIND_MAIL ConnectionKind = 3
 )
 
@@ -444,10 +444,10 @@ type MailConnection struct {
 	// name at its custom domain, or at the workspace's name under the
 	// deployment's inbound mail domain when no custom domain is set.
 	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	// The service, by its ID, whose event channel the mail goes to.
+	// The service, by its ID, whose event endpoint the mail goes to.
 	Service string `protobuf:"bytes,2,opt,name=service,proto3" json:"service,omitempty"`
-	// The name of that service's event channel.
-	Channel string `protobuf:"bytes,3,opt,name=channel,proto3" json:"channel,omitempty"`
+	// The name of that service's event endpoint.
+	Endpoint string `protobuf:"bytes,3,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// Output only. The mail provider that receives for the address, such as
 	// "ses".
 	Provider string `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
@@ -505,9 +505,9 @@ func (x *MailConnection) GetService() string {
 	return ""
 }
 
-func (x *MailConnection) GetChannel() string {
+func (x *MailConnection) GetEndpoint() string {
 	if x != nil {
-		return x.Channel
+		return x.Endpoint
 	}
 	return ""
 }
@@ -914,7 +914,7 @@ type CreateConnectionRequest struct {
 	Environment string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
 	RequestKey  string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// The mail address and where its mail goes, for a MAIL connection; unset
-	// for WEBHOOK. service and channel are required; address and provider are
+	// for WEBHOOK. service and endpoint are required; address and provider are
 	// output only, and ignored on input.
 	Mail          *MailConnection `protobuf:"bytes,6,opt,name=mail,proto3" json:"mail,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1980,11 +1980,11 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x0emanaged_fields\x18\x0e \x03(\tR\rmanagedFields\x12'\n" +
 	"\x0fmanifest_origin\x18\x0f \x01(\tR\x0emanifestOrigin\x126\n" +
 	"\x04mail\x18\x10 \x01(\v2\".toshi.workspace.v1.MailConnectionR\x04mailJ\x04\b\t\x10\n" +
-	"R\x11transform_version\"\xdd\x01\n" +
+	"R\x11transform_version\"\xdf\x01\n" +
 	"\x0eMailConnection\x12\x18\n" +
 	"\aaddress\x18\x01 \x01(\tR\aaddress\x12\x18\n" +
-	"\aservice\x18\x02 \x01(\tR\aservice\x12\x18\n" +
-	"\achannel\x18\x03 \x01(\tR\achannel\x12\x1a\n" +
+	"\aservice\x18\x02 \x01(\tR\aservice\x12\x1a\n" +
+	"\bendpoint\x18\x03 \x01(\tR\bendpoint\x12\x1a\n" +
 	"\bprovider\x18\x04 \x01(\tR\bprovider\x12\x16\n" +
 	"\x06domain\x18\x05 \x01(\tR\x06domain\x12I\n" +
 	"\rdomain_status\x18\x06 \x01(\v2$.toshi.workspace.v1.MailDomainStatusR\fdomainStatus\"\x95\x03\n" +

@@ -4345,7 +4345,7 @@ func (x *Tenant) GetVolumeSnapshotIntervalSecondsEffective() int32 {
 
 // HostingCertificate is a workspace's wildcard certificate for its
 // services' provided names. Toshi orders it when the workspace first
-// hosts a service with an http channel and renews it before it expires.
+// hosts a service with an http endpoint and renews it before it expires.
 type HostingCertificate struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The wildcard name, *.<workspace id>.svc.<domain>.

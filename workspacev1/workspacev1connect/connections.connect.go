@@ -75,7 +75,7 @@ type ConnectionServiceClient interface {
 	// connection's events belong to a project's environment, and the call
 	// returns it with its signing secret. A MAIL connection receives mail at
 	// an address the deployment's inbound mail provider serves and sends each
-	// message to a service's event channel; it has no secret. A kind other
+	// message to a service's event endpoint; it has no secret. A kind other
 	// than WEBHOOK or MAIL fails with INVALID_ARGUMENT, as does a missing
 	// required field, a name a live connection of the workspace has with
 	// ALREADY_EXISTS, and an environment the project does not have with
@@ -274,7 +274,7 @@ type ConnectionServiceHandler interface {
 	// connection's events belong to a project's environment, and the call
 	// returns it with its signing secret. A MAIL connection receives mail at
 	// an address the deployment's inbound mail provider serves and sends each
-	// message to a service's event channel; it has no secret. A kind other
+	// message to a service's event endpoint; it has no secret. A kind other
 	// than WEBHOOK or MAIL fails with INVALID_ARGUMENT, as does a missing
 	// required field, a name a live connection of the workspace has with
 	// ALREADY_EXISTS, and an environment the project does not have with

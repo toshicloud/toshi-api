@@ -218,7 +218,7 @@ message Sandbox {
   // container_registry_secret and its commands' env.
   SharedAccess shared = 11;
   // The job of the sandbox's current run: the one created with it, then
-  // the one each StartSandbox creates. The channel and display calls take
+  // the one each StartSandbox creates. The endpoint and display calls take
   // it as job_id, and through a grant as well. Set by Toshi.
   string job_id = 12;
   // Where recording came from. Set by Toshi.
@@ -248,10 +248,10 @@ message SandboxStatus {
   // Why it was stopped, set while a kept sandbox is stopped, and once it
   // has ended when a stop was asked.
   StopReason stop_reason = 9;
-  // While it runs, its previews: one for each of its http channels served
-  // at a hostname of its own, the channel `preview` among them. Empty
-  // while the control plane serves no previews. Making or deleting such a
-  // channel changes the sandbox, so WatchSandboxes sends it again.
+  // While it runs, its previews: one for each of its http endpoints served
+  // at a hostname of its own, the endpoint `preview` among them. Empty
+  // while the control plane serves no previews. Making or deleting such an
+  // endpoint changes the sandbox, so WatchSandboxes sends it again.
   repeated SandboxPreview previews = 10;
   // When its spec's process started. Unset while it runs with a process
   // not started yet: its setup still runs. Never set for a sandbox without
@@ -384,15 +384,15 @@ message ServiceStatus {
   // run of the selected revision is opened, and whether it is ready.
   // Unset while no run is live.
   ServiceRun live_run = 9;
-  // The names visitors reach the service's http channels at, one per
-  // channel of its current revision's recipe that has one: the front
-  // channel first, at "<service>.<workspace>.svc.<domain>", then every
+  // The names visitors reach the service's http endpoints at, one per
+  // endpoint of its current revision's recipe that has one: the front
+  // endpoint first, at "<service>.<workspace>.svc.<domain>", then every
   // other in recipe order at "<port>-<service>.<workspace>.svc.<domain>".
   // Empty while the
   // deployment hosts no names. Set by Toshi on GetService; ignored in a
   // request.
   repeated ProvidedName provided_names = 10;
-  // Why a service with an http channel has no provided names, such as a
+  // Why a service with an http endpoint has no provided names, such as a
   // name that does not start with a letter; empty otherwise. Set by Toshi
   // on GetService.
   string provided_names_reason = 11;
@@ -433,10 +433,10 @@ message ServiceBackup {
   google.protobuf.Timestamp last_save_failure_time = 5;
 }
 
-// ProvidedName is the name one http channel of a service is reached at.
+// ProvidedName is the name one http endpoint of a service is reached at.
 message ProvidedName {
-  // The channel's name in the service's recipe.
-  string channel = 1;
+  // The endpoint's name in the service's recipe.
+  string endpoint = 1;
   // The full name, without a scheme or a port.
   string host = 2;
 }
@@ -557,8 +557,8 @@ message Binding {
   string name = 1;
   // What the binding is to. Set exactly one.
   oneof target {
-    // A channel of a service of the workload's project and environment.
-    ServiceChannel service = 2;
+    // An endpoint of a service of the workload's project and environment.
+    ServiceEndpoint service = 2;
     // The secret set of the workload's environment.
     EnvironmentSecrets secrets = 3;
     // The deployment's mail listener, which sends the workload's messages
@@ -567,12 +567,12 @@ message Binding {
   }
 }
 
-// ServiceChannel is a channel of a service, by the service's name and the
-// channel's name in its recipe, as a recipe's uses names it:
-// "<service>.<channel>".
-message ServiceChannel {
+// ServiceEndpoint is an endpoint of a service, by the service's name and the
+// endpoint's name in its recipe, as a recipe's uses names it:
+// "<service>.<endpoint>".
+message ServiceEndpoint {
   string service = 1;
-  string channel = 2;
+  string endpoint = 2;
 }
 
 // EnvironmentSecrets binds the secret set of the workload's environment,
@@ -597,18 +597,18 @@ message BoundBinding {
   google.protobuf.Timestamp taken_at = 4;
 }
 
-// BoundService is a service channel as it was when the workload started.
+// BoundService is a service endpoint as it was when the workload started.
 message BoundService {
   string service = 1;
   // The service's workload ID.
   string service_id = 2;
   // The service's revision that was current.
   int64 revision = 3;
-  string channel = 4;
-  // The channel's shape and, for an http channel, its guest port.
+  string endpoint = 4;
+  // The endpoint's shape and, for an http endpoint, its guest port.
   string shape = 5;
   int32 port = 6;
-  // What the channel accepts from the caller: "workload_identity", a
+  // What the endpoint accepts from the caller: "workload_identity", a
   // connect credential signed by the workload identity issuer
   // naming audience and this binding. Minted when the job's command
   // starts, and passed only to that command.
@@ -664,11 +664,11 @@ message SandboxSpec {
   // sandbox runs (UpdateSandbox).
   google.protobuf.Duration max_duration = 2;
   // What in its workspace the sandbox uses: the secret set of its
-  // environment and the channels of its project's and environment's
+  // environment and the endpoints of its project's and environment's
   // services. Checked at create and fixed when the sandbox starts; each
   // Execute gets the secret set's fixed values in its command's
-  // environment, and reaches a bound http channel by the service's name,
-  // <service>.toshi, at the channel's port.
+  // environment, and reaches a bound http endpoint by the service's name,
+  // <service>.toshi, at the endpoint's port.
   repeated Binding bindings = 3;
   // Create only: the id of a state volume of the sandbox's project to
   // attach to it, which it mounts when it starts. A volume of another
@@ -789,7 +789,7 @@ message ServiceSpec {
   // others none. Answers leave it unset.
   StateVolumeSpec state_volume = 7;
   // Create only: the service's bindings, a secret set or its project's
-  // and environment's services' channels. Answers leave them empty.
+  // and environment's services' endpoints. Answers leave them empty.
   repeated Binding bindings = 8;
   // Whether a started on-demand service is asleep: no run is live, and
   // nothing keeps it awake. Set by the server; ignored in a request.
@@ -861,7 +861,7 @@ enum ServiceMode {
   // Runs while it is started, and runs again after each run ends.
   SERVICE_MODE_ALWAYS_ON = 1;
   // Runs while it is awake: woken by WakeService, a hold or a connect on
-  // one of its channels, and asleep again after its recipe's idle period
+  // one of its endpoints, and asleep again after its recipe's idle period
   // with no hold.
   SERVICE_MODE_ON_DEMAND = 2;
 }
@@ -877,12 +877,12 @@ message Command {
   string cwd = 3;
 }
 
-// SandboxPreview is where a browser opens one http channel of a sandbox.
+// SandboxPreview is where a browser opens one http endpoint of a sandbox.
 message SandboxPreview {
-  // The channel's name; `preview` for the port the sandbox's image
+  // The endpoint's name; `preview` for the port the sandbox's image
   // declares.
-  string channel = 1;
-  // The guest port the channel reaches.
+  string endpoint = 1;
+  // The guest port the endpoint reaches.
   int32 port = 2;
   // The preview's origin, a scheme and a hostname without a path.
   string url = 3;
@@ -1219,7 +1219,7 @@ enum EventType {
   // while the starter holds no role in the workspace. Name:
   // "<kind>.secret_withheld".
   EVENT_TYPE_SECRET_WITHHELD = 10;
-  // A workload a trigger made is ready, with the link of its channel. Name:
+  // A workload a trigger made is ready, with the link of its endpoint. Name:
   // "trigger.ready".
   EVENT_TYPE_TRIGGER_READY = 11;
   // A workload a trigger made failed, with why. Name: "trigger.failed".
@@ -1243,12 +1243,12 @@ enum EventType {
   // A kept VM was discarded before a run because its image changed. Name:
   // "<kind>.kept_vm_discarded". Payload: KeptVMDiscardedEvent.
   EVENT_TYPE_KEPT_VM_DISCARDED = 18;
-  // An ACP channel's agent asked the client's permission to use a tool.
-  // Name: "channel.acp.permission_requested". Payload: ChannelACPEvent.
-  EVENT_TYPE_CHANNEL_ACP_PERMISSION_REQUESTED = 19;
-  // An ACP channel's agent finished a prompt. Name:
-  // "channel.acp.turn_ended". Payload: ChannelACPEvent.
-  EVENT_TYPE_CHANNEL_ACP_TURN_ENDED = 20;
+  // An ACP endpoint's agent asked the client's permission to use a tool.
+  // Name: "endpoint.acp.permission_requested". Payload: EndpointACPEvent.
+  EVENT_TYPE_ENDPOINT_ACP_PERMISSION_REQUESTED = 19;
+  // An ACP endpoint's agent finished a prompt. Name:
+  // "endpoint.acp.turn_ended". Payload: EndpointACPEvent.
+  EVENT_TYPE_ENDPOINT_ACP_TURN_ENDED = 20;
   // A service's run was restored from the snapshot its VM left when the
   // run before it went to sleep, with when the snapshot was taken and how
   // much time passed since. Name: "service.restored". Payload:
@@ -1320,8 +1320,8 @@ message Event {
     MailSentEvent mail_sent = 23;
     // For KEPT_VM_DISCARDED.
     KeptVMDiscardedEvent kept_vm_discarded = 24;
-    // For CHANNEL_ACP_PERMISSION_REQUESTED and CHANNEL_ACP_TURN_ENDED.
-    ChannelACPEvent channel_acp = 25;
+    // For ENDPOINT_ACP_PERMISSION_REQUESTED and ENDPOINT_ACP_TURN_ENDED.
+    EndpointACPEvent endpoint_acp = 25;
     // For SERVICE_RESTORED.
     ServiceRestoredEvent service_restored = 26;
     // For SERVICE_SNAPSHOT_FAILED.
@@ -1467,7 +1467,7 @@ message EgressDenial {
 
 // TriggerResult is the payload of a trigger's events: the trigger, the key
 // its event named, the workload it made for the key, the event that caused
-// it, the link of the workload's channel once it is ready, why it failed or
+// it, the link of the workload's endpoint once it is ready, why it failed or
 // was removed, and the commit it was made from.
 message TriggerResult {
   string trigger_id = 1;
@@ -1478,7 +1478,7 @@ message TriggerResult {
   string workload_id = 4;
   // The event that caused it; empty when none did.
   string event_id = 5;
-  // The link of the workload's channel, once it is ready.
+  // The link of the workload's endpoint, once it is ready.
   string link = 6;
   // Why it failed or was removed.
   string reason = 7;
@@ -1531,12 +1531,12 @@ message MailSentEvent {
   string provider_message_id = 4;
 }
 
-// ChannelACPEvent is an event of an ACP channel: the channel, its ACP
+// EndpointACPEvent is an event of an ACP endpoint: the endpoint, its ACP
 // session, and the tool call's kind a permission request named or the reason
 // a turn ended. It carries no title, content or path.
-message ChannelACPEvent {
-  // The channel's name on its job.
-  string channel = 1;
+message EndpointACPEvent {
+  // The endpoint's name on its job.
+  string endpoint = 1;
   // The ACP session the event belongs to.
   string session_id = 2;
   // The tool call's kind, on a permission request.
@@ -1663,7 +1663,7 @@ enum PreviewShareLinkState {
   // A device opened it; it admits that device only.
   PREVIEW_SHARE_LINK_STATE_IN_USE = 2;
   PREVIEW_SHARE_LINK_STATE_REVOKED = 3;
-  // Its connections carried its byte cap, or its channel was deleted.
+  // Its connections carried its byte cap, or its endpoint was deleted.
   PREVIEW_SHARE_LINK_STATE_ENDED = 4;
   PREVIEW_SHARE_LINK_STATE_EXPIRED = 5;
 }
@@ -1688,10 +1688,10 @@ message PreviewShareLink {
   google.protobuf.Timestamp revoked_at = 9;
   // Unset unless it ended.
   google.protobuf.Timestamp ended_at = 10;
-  // The channel whose preview the link opens: `preview` for the sandbox's
-  // own hostname, or another of its http channels.
-  string channel = 11;
-  // The guest port that channel reaches.
+  // The endpoint whose preview the link opens: `preview` for the sandbox's
+  // own hostname, or another of its http endpoints.
+  string endpoint = 11;
+  // The guest port that endpoint reaches.
   int32 port = 12;
 }
 
@@ -1706,10 +1706,10 @@ message CreatePreviewShareLinkRequest {
   // The most bytes, both ways, its connections may carry, at most the
   // plan's; 0 is the plan's.
   int64 max_bytes = 5;
-  // The preview the link opens: one of the sandbox's http channels, by
-  // its name or by its guest port. Neither set is the channel `preview`.
-  oneof channel_ref {
-    string channel = 6;
+  // The preview the link opens: one of the sandbox's http endpoints, by
+  // its name or by its guest port. Neither set is the endpoint `preview`.
+  oneof endpoint_ref {
+    string endpoint = 6;
     int32 port = 7;
   }
 }
@@ -1756,9 +1756,9 @@ message ServiceShareLink {
   string id = 1;
   // The service whose provided name the link opens.
   string service_id = 2;
-  // The http channel of the service's recipe whose provided name the link
+  // The http endpoint of the service's recipe whose provided name the link
   // opens.
-  string channel = 3;
+  string endpoint = 3;
   PreviewShareLinkState state = 4;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp expires_at = 6;
@@ -1779,9 +1779,9 @@ message CreateServiceShareLinkRequest {
   string environment = 2;
   // The service's workload id.
   string service_id = 3;
-  // The http channel whose provided name the link opens; empty is the
-  // service's front channel, the one at the service's own name.
-  string channel = 4;
+  // The http endpoint whose provided name the link opens; empty is the
+  // service's front endpoint, the one at the service's own name.
+  string endpoint = 4;
   // How long the link stays valid, at most the plan's maximum; unset is
   // 24 hours, or the plan's maximum when that is shorter.
   google.protobuf.Duration expires_in = 5;
