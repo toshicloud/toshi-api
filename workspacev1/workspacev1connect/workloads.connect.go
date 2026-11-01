@@ -605,11 +605,13 @@ type WorkloadServiceClient interface {
 	// not running fails with FAILED_PRECONDITION.
 	StartServiceSignIn(context.Context, *connect.Request[workspacev1.StartServiceSignInRequest]) (*connect.ServerStreamForClient[workspacev1.StartServiceSignInResponse], error)
 	// AnswerServiceSignIn writes one line to a running sign-in's standard
-	// input, from any control plane process: the sign-in's program reads it.
-	// The answer is one line of at most 4 KiB, with no newline in it, and is
-	// never stored. An answer to a sign-in that is not under way fails with
-	// NOT_FOUND; a text that is not one line, or is longer, with
-	// INVALID_ARGUMENT.
+	// input or sends a browser's loopback redirect to its open port. Set
+	// exactly one of text and redirect_url. A text answer is at most 4 KiB
+	// and has no newline; a redirect is at most 8 KiB, uses http and a
+	// loopback host, and names the port the sign-in opened. Only the starter
+	// may send a redirect. The answer is never stored. An unknown sign-in is
+	// NOT_FOUND; an invalid answer is INVALID_ARGUMENT; a redirect before the
+	// program listens is FAILED_PRECONDITION.
 	AnswerServiceSignIn(context.Context, *connect.Request[workspacev1.AnswerServiceSignInRequest]) (*connect.Response[workspacev1.AnswerServiceSignInResponse], error)
 	// CancelServiceSignIn ends a running sign-in: its program is cancelled
 	// and its stream ends CANCELLED. It returns once the cancel is asked
@@ -1907,11 +1909,13 @@ type WorkloadServiceHandler interface {
 	// not running fails with FAILED_PRECONDITION.
 	StartServiceSignIn(context.Context, *connect.Request[workspacev1.StartServiceSignInRequest], *connect.ServerStream[workspacev1.StartServiceSignInResponse]) error
 	// AnswerServiceSignIn writes one line to a running sign-in's standard
-	// input, from any control plane process: the sign-in's program reads it.
-	// The answer is one line of at most 4 KiB, with no newline in it, and is
-	// never stored. An answer to a sign-in that is not under way fails with
-	// NOT_FOUND; a text that is not one line, or is longer, with
-	// INVALID_ARGUMENT.
+	// input or sends a browser's loopback redirect to its open port. Set
+	// exactly one of text and redirect_url. A text answer is at most 4 KiB
+	// and has no newline; a redirect is at most 8 KiB, uses http and a
+	// loopback host, and names the port the sign-in opened. Only the starter
+	// may send a redirect. The answer is never stored. An unknown sign-in is
+	// NOT_FOUND; an invalid answer is INVALID_ARGUMENT; a redirect before the
+	// program listens is FAILED_PRECONDITION.
 	AnswerServiceSignIn(context.Context, *connect.Request[workspacev1.AnswerServiceSignInRequest]) (*connect.Response[workspacev1.AnswerServiceSignInResponse], error)
 	// CancelServiceSignIn ends a running sign-in: its program is cancelled
 	// and its stream ends CANCELLED. It returns once the cancel is asked

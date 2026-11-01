@@ -11775,8 +11775,13 @@ type AnswerServiceSignInRequest struct {
 	ServiceId   string                 `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// From StartServiceSignInResponse.started.
 	SignInId string `protobuf:"bytes,4,opt,name=sign_in_id,json=signInId,proto3" json:"sign_in_id,omitempty"`
-	// One line, at most 4 KiB, with no newline in it.
-	Text          string `protobuf:"bytes,5,opt,name=text,proto3" json:"text,omitempty"`
+	// One line, at most 4 KiB, with no newline in it. Set exactly one of
+	// text and redirect_url.
+	Text string `protobuf:"bytes,5,opt,name=text,proto3" json:"text,omitempty"`
+	// The address the browser was redirected to on localhost. The sign-in's
+	// starter may paste an http loopback URL using the program's open port;
+	// Toshi sends one GET to the program and does not store the address.
+	RedirectUrl   string `protobuf:"bytes,6,opt,name=redirect_url,json=redirectUrl,proto3" json:"redirect_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11846,10 +11851,19 @@ func (x *AnswerServiceSignInRequest) GetText() string {
 	return ""
 }
 
+func (x *AnswerServiceSignInRequest) GetRedirectUrl() string {
+	if x != nil {
+		return x.RedirectUrl
+	}
+	return ""
+}
+
 type AnswerServiceSignInResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The program's HTTP status for a redirect, or zero for a text answer.
+	RedirectStatus int32 `protobuf:"varint,1,opt,name=redirect_status,json=redirectStatus,proto3" json:"redirect_status,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *AnswerServiceSignInResponse) Reset() {
@@ -11880,6 +11894,13 @@ func (x *AnswerServiceSignInResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AnswerServiceSignInResponse.ProtoReflect.Descriptor instead.
 func (*AnswerServiceSignInResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{125}
+}
+
+func (x *AnswerServiceSignInResponse) GetRedirectStatus() int32 {
+	if x != nil {
+		return x.RedirectStatus
+	}
+	return 0
 }
 
 type CancelServiceSignInRequest struct {
@@ -14401,7 +14422,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\aoutcome\x18\x01 \x01(\x0e2(.toshi.workspace.v1.ServiceSignInOutcomeR\aoutcome\x12 \n" +
 	"\texit_code\x18\x02 \x01(\x05H\x00R\bexitCode\x88\x01\x01B\f\n" +
 	"\n" +
-	"_exit_code\"\xa9\x01\n" +
+	"_exit_code\"\xcc\x01\n" +
 	"\x1aAnswerServiceSignInRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
@@ -14409,8 +14430,10 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x1c\n" +
 	"\n" +
 	"sign_in_id\x18\x04 \x01(\tR\bsignInId\x12\x12\n" +
-	"\x04text\x18\x05 \x01(\tR\x04text\"\x1d\n" +
-	"\x1bAnswerServiceSignInResponse\"\x95\x01\n" +
+	"\x04text\x18\x05 \x01(\tR\x04text\x12!\n" +
+	"\fredirect_url\x18\x06 \x01(\tR\vredirectUrl\"F\n" +
+	"\x1bAnswerServiceSignInResponse\x12'\n" +
+	"\x0fredirect_status\x18\x01 \x01(\x05R\x0eredirectStatus\"\x95\x01\n" +
 	"\x1aCancelServiceSignInRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +

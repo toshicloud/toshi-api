@@ -2112,11 +2112,19 @@ message AnswerServiceSignInRequest {
   string service_id = 3;
   // From StartServiceSignInResponse.started.
   string sign_in_id = 4;
-  // One line, at most 4 KiB, with no newline in it.
+  // One line, at most 4 KiB, with no newline in it. Set exactly one of
+  // text and redirect_url.
   string text = 5;
+  // The address the browser was redirected to on localhost. The sign-in's
+  // starter may paste an http loopback URL using the program's open port;
+  // Toshi sends one GET to the program and does not store the address.
+  string redirect_url = 6;
 }
 
-message AnswerServiceSignInResponse {}
+message AnswerServiceSignInResponse {
+  // The program's HTTP status for a redirect, or zero for a text answer.
+  int32 redirect_status = 1;
+}
 
 message CancelServiceSignInRequest {
   string project = 1;
