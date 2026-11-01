@@ -69,6 +69,9 @@ const (
 	// WorkspaceServiceGetQueueTimesProcedure is the fully-qualified name of the WorkspaceService's
 	// GetQueueTimes RPC.
 	WorkspaceServiceGetQueueTimesProcedure = "/toshi.workspace.v1.WorkspaceService/GetQueueTimes"
+	// WorkspaceServiceGetStartWindowsProcedure is the fully-qualified name of the WorkspaceService's
+	// GetStartWindows RPC.
+	WorkspaceServiceGetStartWindowsProcedure = "/toshi.workspace.v1.WorkspaceService/GetStartWindows"
 	// WorkspaceServiceGetWorkflowUsageProcedure is the fully-qualified name of the WorkspaceService's
 	// GetWorkflowUsage RPC.
 	WorkspaceServiceGetWorkflowUsageProcedure = "/toshi.workspace.v1.WorkspaceService/GetWorkflowUsage"
@@ -178,6 +181,15 @@ type WorkspaceServiceClient interface {
 	// defaults to the last 7 days. A window whose from is not before its to
 	// fails with INVALID_ARGUMENT.
 	GetQueueTimes(context.Context, *connect.Request[workspacev1.GetQueueTimesRequest]) (*connect.Response[workspacev1.GetQueueTimesResponse], error)
+	// GetStartWindows returns the workspace's start windows as admission counts
+	// them: for the minute, hour and day windows, the starts its plan includes,
+	// the starts used in the window now, how many of those are paid, the
+	// ceiling past which a start is refused, and when the window resets. A
+	// start is a job assigned to a shared host; jobs on the workspace's own
+	// hosts are not counted. The counts are the ones CreateSandbox is refused
+	// on, so a window at its ceiling here is a window that refuses a create now.
+	// The read is a snapshot and counts nothing itself.
+	GetStartWindows(context.Context, *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error)
 	// GetWorkflowUsage returns, per repository and workflow name, the jobs
 	// GetUsage counts: their billable minutes, failed jobs and run-time
 	// percentiles. A job is in the window by its queued_at. The window
@@ -309,6 +321,12 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("GetQueueTimes")),
 			connect.WithClientOptions(opts...),
 		),
+		getStartWindows: connect.NewClient[workspacev1.GetStartWindowsRequest, workspacev1.GetStartWindowsResponse](
+			httpClient,
+			baseURL+WorkspaceServiceGetStartWindowsProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("GetStartWindows")),
+			connect.WithClientOptions(opts...),
+		),
 		getWorkflowUsage: connect.NewClient[workspacev1.GetWorkflowUsageRequest, workspacev1.GetWorkflowUsageResponse](
 			httpClient,
 			baseURL+WorkspaceServiceGetWorkflowUsageProcedure,
@@ -368,6 +386,7 @@ type workspaceServiceClient struct {
 	listEgressIPs               *connect.Client[workspacev1.ListEgressIPsRequest, workspacev1.ListEgressIPsResponse]
 	getUsage                    *connect.Client[workspacev1.GetUsageRequest, workspacev1.GetUsageResponse]
 	getQueueTimes               *connect.Client[workspacev1.GetQueueTimesRequest, workspacev1.GetQueueTimesResponse]
+	getStartWindows             *connect.Client[workspacev1.GetStartWindowsRequest, workspacev1.GetStartWindowsResponse]
 	getWorkflowUsage            *connect.Client[workspacev1.GetWorkflowUsageRequest, workspacev1.GetWorkflowUsageResponse]
 	listPlans                   *connect.Client[workspacev1.ListPlansRequest, workspacev1.ListPlansResponse]
 	createCheckoutSession       *connect.Client[workspacev1.CreateCheckoutSessionRequest, workspacev1.CreateCheckoutSessionResponse]
@@ -436,6 +455,11 @@ func (c *workspaceServiceClient) GetUsage(ctx context.Context, req *connect.Requ
 // GetQueueTimes calls toshi.workspace.v1.WorkspaceService.GetQueueTimes.
 func (c *workspaceServiceClient) GetQueueTimes(ctx context.Context, req *connect.Request[workspacev1.GetQueueTimesRequest]) (*connect.Response[workspacev1.GetQueueTimesResponse], error) {
 	return c.getQueueTimes.CallUnary(ctx, req)
+}
+
+// GetStartWindows calls toshi.workspace.v1.WorkspaceService.GetStartWindows.
+func (c *workspaceServiceClient) GetStartWindows(ctx context.Context, req *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error) {
+	return c.getStartWindows.CallUnary(ctx, req)
 }
 
 // GetWorkflowUsage calls toshi.workspace.v1.WorkspaceService.GetWorkflowUsage.
@@ -559,6 +583,15 @@ type WorkspaceServiceHandler interface {
 	// defaults to the last 7 days. A window whose from is not before its to
 	// fails with INVALID_ARGUMENT.
 	GetQueueTimes(context.Context, *connect.Request[workspacev1.GetQueueTimesRequest]) (*connect.Response[workspacev1.GetQueueTimesResponse], error)
+	// GetStartWindows returns the workspace's start windows as admission counts
+	// them: for the minute, hour and day windows, the starts its plan includes,
+	// the starts used in the window now, how many of those are paid, the
+	// ceiling past which a start is refused, and when the window resets. A
+	// start is a job assigned to a shared host; jobs on the workspace's own
+	// hosts are not counted. The counts are the ones CreateSandbox is refused
+	// on, so a window at its ceiling here is a window that refuses a create now.
+	// The read is a snapshot and counts nothing itself.
+	GetStartWindows(context.Context, *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error)
 	// GetWorkflowUsage returns, per repository and workflow name, the jobs
 	// GetUsage counts: their billable minutes, failed jobs and run-time
 	// percentiles. A job is in the window by its queued_at. The window
@@ -686,6 +719,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("GetQueueTimes")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceGetStartWindowsHandler := connect.NewUnaryHandler(
+		WorkspaceServiceGetStartWindowsProcedure,
+		svc.GetStartWindows,
+		connect.WithSchema(workspaceServiceMethods.ByName("GetStartWindows")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceGetWorkflowUsageHandler := connect.NewUnaryHandler(
 		WorkspaceServiceGetWorkflowUsageProcedure,
 		svc.GetWorkflowUsage,
@@ -754,6 +793,8 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceGetUsageHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetQueueTimesProcedure:
 			workspaceServiceGetQueueTimesHandler.ServeHTTP(w, r)
+		case WorkspaceServiceGetStartWindowsProcedure:
+			workspaceServiceGetStartWindowsHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetWorkflowUsageProcedure:
 			workspaceServiceGetWorkflowUsageHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListPlansProcedure:
@@ -823,6 +864,10 @@ func (UnimplementedWorkspaceServiceHandler) GetUsage(context.Context, *connect.R
 
 func (UnimplementedWorkspaceServiceHandler) GetQueueTimes(context.Context, *connect.Request[workspacev1.GetQueueTimesRequest]) (*connect.Response[workspacev1.GetQueueTimesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetQueueTimes is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) GetStartWindows(context.Context, *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetStartWindows is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) GetWorkflowUsage(context.Context, *connect.Request[workspacev1.GetWorkflowUsageRequest]) (*connect.Response[workspacev1.GetWorkflowUsageResponse], error) {

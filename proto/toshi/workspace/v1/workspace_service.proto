@@ -134,6 +134,17 @@ service WorkspaceService {
   rpc GetQueueTimes(GetQueueTimesRequest) returns (GetQueueTimesResponse) {
     option (toshi.permission) = "workspace.read";
   }
+  // GetStartWindows returns the workspace's start windows as admission counts
+  // them: for the minute, hour and day windows, the starts its plan includes,
+  // the starts used in the window now, how many of those are paid, the
+  // ceiling past which a start is refused, and when the window resets. A
+  // start is a job assigned to a shared host; jobs on the workspace's own
+  // hosts are not counted. The counts are the ones CreateSandbox is refused
+  // on, so a window at its ceiling here is a window that refuses a create now.
+  // The read is a snapshot and counts nothing itself.
+  rpc GetStartWindows(GetStartWindowsRequest) returns (GetStartWindowsResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
   // GetWorkflowUsage returns, per repository and workflow name, the jobs
   // GetUsage counts: their billable minutes, failed jobs and run-time
   // percentiles. A job is in the window by its queued_at. The window
@@ -452,6 +463,57 @@ message GetQueueTimesResponse {
   // the latest reason it held each one. A job never held is in none of them.
   // A reason with only jobs held now has jobs 0.
   repeated HoldTimes held = 8;
+}
+
+// GetStartWindowsRequest has no fields: the call reads the caller's own
+// workspace.
+message GetStartWindowsRequest {}
+
+message GetStartWindowsResponse {
+  // False when no start is counted for the workspace: its plan sets no start
+  // window, or it uses its own hosts only. Every window is then not counted.
+  bool applies = 1;
+  // The minute, hour and day windows, in that order, always all three.
+  repeated StartWindow windows = 2;
+  // The earliest time every window at its ceiling has room again, which is
+  // the next_start_at a refused CreateSandbox names; unset when no window is
+  // at its ceiling.
+  google.protobuf.Timestamp next_start_at = 3;
+}
+
+// StartWindow is one start window of the workspace's plan. Each window is
+// rolling: it counts the starts of the last minute, hour or day, so there is
+// no fixed reset; resets_at is when the oldest counted start leaves it.
+message StartWindow {
+  // The plan key the window comes from: starts_per_minute, starts_per_hour or
+  // starts_per_day.
+  string key = 1;
+  // False when the plan leaves the window at 0, or no start is counted for
+  // the workspace: the window counts nothing and the fields below are 0 or
+  // unset.
+  bool counted = 2;
+  // The starts the plan includes in the window.
+  int64 included = 3;
+  // The most starts the window allows: a start past included, up to the
+  // ceiling, is paid, and one at the ceiling is refused. The workspace's own
+  // max_jobs_per_hour lowers the hour window's ceiling.
+  int64 ceiling = 4;
+  // The starts counted in the window: those assigned to a shared host in it
+  // plus the sandboxes queued for a host and not placed yet, which is what
+  // CreateSandbox is refused on. The scheduler counts only the assigned
+  // starts, so a job it holds can pass a window that already refuses a
+  // sandbox create.
+  int64 used = 5;
+  // The part of used that is queued sandboxes not placed yet.
+  int64 queued = 6;
+  // The part of used past included: the starts that are paid.
+  int64 paid = 7;
+  // When the oldest counted start leaves the window and used first drops;
+  // unset while no start placed on a host is counted.
+  google.protobuf.Timestamp resets_at = 8;
+  // When the window has room for one more start; unset while used is below
+  // ceiling.
+  google.protobuf.Timestamp next_start_at = 9;
 }
 
 // GetWorkflowUsageRequest selects the jobs to count. A job is in the window
