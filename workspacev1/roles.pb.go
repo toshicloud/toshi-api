@@ -97,6 +97,9 @@ const (
 	// workspace's GitHub App installations, when the workspace lets such
 	// members join.
 	MemberVia_MEMBER_VIA_GITHUB_MEMBER MemberVia = 4
+	// Approving an agent's sign-up, which made the workspace that holds the
+	// agents the person claims.
+	MemberVia_MEMBER_VIA_AGENT_CLAIM MemberVia = 5
 )
 
 // Enum value maps for MemberVia.
@@ -107,6 +110,7 @@ var (
 		2: "MEMBER_VIA_INVITATION",
 		3: "MEMBER_VIA_MIGRATION",
 		4: "MEMBER_VIA_GITHUB_MEMBER",
+		5: "MEMBER_VIA_AGENT_CLAIM",
 	}
 	MemberVia_value = map[string]int32{
 		"MEMBER_VIA_UNSPECIFIED":   0,
@@ -114,6 +118,7 @@ var (
 		"MEMBER_VIA_INVITATION":    2,
 		"MEMBER_VIA_MIGRATION":     3,
 		"MEMBER_VIA_GITHUB_MEMBER": 4,
+		"MEMBER_VIA_AGENT_CLAIM":   5,
 	}
 )
 
@@ -2437,13 +2442,14 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\x18SUBJECT_KIND_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13SUBJECT_KIND_PERSON\x10\x01\x12\x16\n" +
 	"\x12SUBJECT_KIND_TOKEN\x10\x02\x12\x17\n" +
-	"\x13SUBJECT_KIND_SYSTEM\x10\x03*\x97\x01\n" +
+	"\x13SUBJECT_KIND_SYSTEM\x10\x03*\xb3\x01\n" +
 	"\tMemberVia\x12\x1a\n" +
 	"\x16MEMBER_VIA_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17MEMBER_VIA_GITHUB_ADMIN\x10\x01\x12\x19\n" +
 	"\x15MEMBER_VIA_INVITATION\x10\x02\x12\x18\n" +
 	"\x14MEMBER_VIA_MIGRATION\x10\x03\x12\x1c\n" +
-	"\x18MEMBER_VIA_GITHUB_MEMBER\x10\x04*^\n" +
+	"\x18MEMBER_VIA_GITHUB_MEMBER\x10\x04\x12\x1a\n" +
+	"\x16MEMBER_VIA_AGENT_CLAIM\x10\x05*^\n" +
 	"\vMemberState\x12\x1c\n" +
 	"\x18MEMBER_STATE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13MEMBER_STATE_ACTIVE\x10\x01\x12\x18\n" +

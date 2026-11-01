@@ -2345,6 +2345,10 @@ message Token {
   google.protobuf.Timestamp creator_left_at = 17;
   // Why expires_at is what it is.
   TokenExpiryReason expiry_reason = 18;
+  // The name of the agent registration whose claim made the token, when an
+  // agent's sign-up was approved; empty for a token a person or the control
+  // plane made.
+  string claimed_from = 19;
 }
 
 // TokenExpiryReason says why a token expires when it does; its numbers are

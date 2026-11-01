@@ -9942,7 +9942,11 @@ type Token struct {
 	// once an Owner re-owns the token.
 	CreatorLeftAt *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=creator_left_at,json=creatorLeftAt,proto3" json:"creator_left_at,omitempty"`
 	// Why expires_at is what it is.
-	ExpiryReason  TokenExpiryReason `protobuf:"varint,18,opt,name=expiry_reason,json=expiryReason,proto3,enum=toshi.operator.v1.TokenExpiryReason" json:"expiry_reason,omitempty"`
+	ExpiryReason TokenExpiryReason `protobuf:"varint,18,opt,name=expiry_reason,json=expiryReason,proto3,enum=toshi.operator.v1.TokenExpiryReason" json:"expiry_reason,omitempty"`
+	// The name of the agent registration whose claim made the token, when an
+	// agent's sign-up was approved; empty for a token a person or the control
+	// plane made.
+	ClaimedFrom   string `protobuf:"bytes,19,opt,name=claimed_from,json=claimedFrom,proto3" json:"claimed_from,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10101,6 +10105,13 @@ func (x *Token) GetExpiryReason() TokenExpiryReason {
 		return x.ExpiryReason
 	}
 	return TokenExpiryReason_TOKEN_EXPIRY_REASON_UNSPECIFIED
+}
+
+func (x *Token) GetClaimedFrom() string {
+	if x != nil {
+		return x.ClaimedFrom
+	}
+	return ""
 }
 
 // Subject is who made something.
@@ -15683,7 +15694,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\tfailed_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bfailedAt\x12\x1a\n" +
 	"\battempts\x18\a \x01(\x05R\battempts\x12\x1d\n" +
 	"\n" +
-	"last_error\x18\b \x01(\tR\tlastError\"\xb0\x06\n" +
+	"last_error\x18\b \x01(\tR\tlastError\"\xd3\x06\n" +
 	"\x05Token\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x120\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x1c.toshi.operator.v1.TokenKindR\x04kind\x12\x16\n" +
@@ -15708,7 +15719,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"created_by\x18\x0f \x01(\v2\x1a.toshi.operator.v1.SubjectR\tcreatedBy\x127\n" +
 	"\tlast_used\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\blastUsed\x12B\n" +
 	"\x0fcreator_left_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\rcreatorLeftAt\x12I\n" +
-	"\rexpiry_reason\x18\x12 \x01(\x0e2$.toshi.operator.v1.TokenExpiryReasonR\fexpiryReason\"M\n" +
+	"\rexpiry_reason\x18\x12 \x01(\x0e2$.toshi.operator.v1.TokenExpiryReasonR\fexpiryReason\x12!\n" +
+	"\fclaimed_from\x18\x13 \x01(\tR\vclaimedFrom\"M\n" +
 	"\aSubject\x122\n" +
 	"\x04kind\x18\x01 \x01(\x0e2\x1e.toshi.operator.v1.SubjectKindR\x04kind\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"5\n" +
