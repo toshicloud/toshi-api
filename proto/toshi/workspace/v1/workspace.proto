@@ -2046,7 +2046,7 @@ message StartServiceSignInRequest {
 
 // StartServiceSignInResponse is one sign-in's stream: the started message,
 // the endpoint the sign-in opens for its program, the output as it comes,
-// and the ended message last.
+// any prompt the program's output holds, and the ended message last.
 message StartServiceSignInResponse {
   oneof message {
     // First and only once.
@@ -2059,7 +2059,24 @@ message StartServiceSignInResponse {
     // The endpoint the sign-in opened for its program, once it is open; the
     // sign-in removes it when it ends.
     ServiceSignInEndpoint endpoint = 4;
+    // The URL and code to enter, when the recipe declares a pattern: sent
+    // once a declared pattern first matches in a complete line of the
+    // output, and again whenever the URL or the code changes. Only for a
+    // program whose recipe declares a pattern.
+    ServiceSignInPrompt prompt = 5;
   }
+}
+
+// ServiceSignInPrompt is what a sign-in asks the person to open and enter,
+// read from the program's output by the recipe's url_pattern and
+// code_pattern.
+message ServiceSignInPrompt {
+  // The page to open in a browser. Empty when the recipe declares no
+  // url_pattern and the output holds no https URL.
+  string url = 1;
+  // The code to enter on that page. Empty when the recipe declares no
+  // code_pattern.
+  string code = 2;
 }
 
 // ServiceSignInEndpoint is the one-shot endpoint a service sign-in opens for

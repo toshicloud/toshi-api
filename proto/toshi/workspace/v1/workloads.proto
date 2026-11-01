@@ -664,9 +664,10 @@ service WorkloadService {
   // StartServiceSignIn runs one of the service's recipe's sign_in programs
   // and streams what it writes until it ends: the started message names
   // the sign-in and when it is stopped, the output messages carry its
-  // stdout and stderr, and the ended message says how it ended. A sign-in
-  // may run for 15 minutes; past that the command is cancelled and the
-  // sign-in ends TIMED_OUT. Only one sign-in of a program runs at a time:
+  // stdout and stderr, a prompt message carries the URL and code its
+  // recipe's patterns read from them, and the ended message says how it
+  // ended. A sign-in may run for 15 minutes; past that the command is
+  // cancelled and the sign-in ends TIMED_OUT. Only one sign-in of a program runs at a time:
   // a second fails with FAILED_PRECONDITION while the first is under way.
   // The output is streamed only and never stored.
   //
