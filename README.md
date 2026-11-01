@@ -7,6 +7,7 @@ TypeScript code generated from them.
 | --- | --- |
 | `toshi.workspace.v1` | The Workspace API: workloads, executions, events, operations, projects, secrets, webhooks, artifacts and display sessions. This is the public contract for programs that drive Toshi. |
 | `toshi.operator.v1` | The operator API, used by the dashboard and the `toshi` command line to run an installation: workspaces, hosts, runner jobs, tokens, usage, billing, alerts and storage providers. |
+| `toshi.github.v1` | The GitHub product's own API: mapping a GitHub App installation to a workspace, the open-source plan's repository approvals, what GitHub says about a failed job, and secret delivery checks. |
 | `toshi.githubcore.v1` | The GitHub product's core API, for the product's adapter when it runs outside the control plane: the reads and writes it makes for a call the control plane passed to it, under that call's grant. |
 | `toshi.backend.v1` | The handshake every backend program serves: a program beside Toshi, on a local Unix socket, that says which type of backend it is, which versions of that type's protocol it speaks and what it can do. |
 
@@ -24,9 +25,10 @@ requests.
 
 | Path | Contents |
 | --- | --- |
-| `proto/toshi/workspace/v1/`, `proto/toshi/operator/v1/`, `proto/toshi/githubcore/v1/`, `proto/toshi/backend/` | The `.proto` files. |
+| `proto/toshi/workspace/v1/`, `proto/toshi/operator/v1/`, `proto/toshi/github/v1/`, `proto/toshi/githubcore/v1/`, `proto/toshi/backend/` | The `.proto` files. |
 | `workspacev1/`, `workspacev1/workspacev1connect/` | Go messages and Connect client and handler for `toshi.workspace.v1`. |
 | `operatorv1/`, `operatorv1/operatorv1connect/` | The same for `toshi.operator.v1`. |
+| `githubv1/`, `githubv1/githubv1connect/` | The same for `toshi.github.v1`. |
 | `githubcorev1/`, `githubcorev1/githubcorev1connect/` | The same for `toshi.githubcore.v1`. |
 | `backendv1/`, `backendv1/backendv1connect/` | The same for `toshi.backend.v1`. |
 | `providerv1/`, `providerv1/providerv1connect/` | The same for `toshi.backend.provider.v1`. |

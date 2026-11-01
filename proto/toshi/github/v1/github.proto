@@ -1,0 +1,210 @@
+syntax = "proto3";
+
+// Package toshi.github.v1 is the GitHub product's own API: the calls about
+// GitHub App installations, the open-source plan's gate and what GitHub
+// says about a job. The core's APIs do not carry them.
+package toshi.github.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "go.toshicloud.io/api/githubv1";
+
+// GitHubService is served by the GitHub product's adapter. A call carries
+// the operator token, a workspace token or a dashboard session, as an
+// operator API call does.
+service GitHubService {
+  // MapInstallation maps a GitHub App installation to a workspace, replacing
+  // any earlier mapping. An installation ID of 0 or less, or an empty workspace
+  // ID, fails with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND,
+  // and a deleted one with FAILED_PRECONDITION. The operator token only.
+  rpc MapInstallation(MapInstallationRequest) returns (MapInstallationResponse);
+
+  // ListOpenSourceRepos lists the open-source gate's repositories, one row
+  // per workspace, ordered by repository, then workspace, also those not read
+  // yet. The operator token gets every row and the kept approvals; a
+  // dashboard session or a workspace token gets only its workspaces' rows, also
+  // while a workspace is suspended or being deleted, and no kept approval. A
+  // workspace the caller may not read fails with PERMISSION_DENIED.
+  rpc ListOpenSourceRepos(ListOpenSourceReposRequest) returns (ListOpenSourceReposResponse);
+
+  // SetOpenSourceApproval approves or revokes a repository for the
+  // open-source plan on every workspace's row of it, at once and without a
+  // restart, and returns those rows as stored. An approval of a repository no
+  // open-source workspace has a row of is kept until a row of it takes it
+  // (normally the first) or a row with a decision removes it; a revocation of
+  // such a repository removes its kept approval. The operator token only. A
+  // repo that is not owner/name fails with INVALID_ARGUMENT; a revocation of
+  // a repository with neither a row nor a kept approval fails with NOT_FOUND.
+  rpc SetOpenSourceApproval(SetOpenSourceApprovalRequest) returns (SetOpenSourceApprovalResponse);
+
+  // GetJobFailure reads what GitHub says about a job that ended without
+  // succeeding: its failing step and its check run's annotations, or why
+  // GitHub could not be read. A job without its stored GitHub identifiers
+  // (repository, installation and workflow job), a job that has not ended,
+  // a job that succeeded, a job the plan refused, and any job when no
+  // GitHub App is configured get an empty answer; a job GitHub refuses or
+  // does not find gets the note. When the job has no failing step stored,
+  // the step GitHub names is stored, whole, for its re-run history: a value
+  // from GitHub's answer, never from the caller. A workspace
+  // caller sees only its own jobs. An empty ID fails with
+  // INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
+  rpc GetJobFailure(GetJobFailureRequest) returns (GetJobFailureResponse);
+
+  // CheckSecretDelivery lists the installations of the GitHub App that
+  // lack Contents read, which delivery of secrets to CI jobs needs to tell
+  // a production job's environment; empty when none does, or
+  // when no GitHub App is configured. A suspended installation runs no jobs
+  // and is not listed. A failed read of the installations fails with
+  // UNAVAILABLE. Each call is a check whose answer is stored, with
+  // installation ids only, for OperatorService.SetSecretDelivery to turn
+  // delivery on, unless a newer check started first; a failed
+  // read is stored as such. The operator token only.
+  rpc CheckSecretDelivery(CheckSecretDeliveryRequest) returns (CheckSecretDeliveryResponse);
+}
+
+message MapInstallationRequest {
+  int64 installation_id = 1;
+  string tenant_id = 2;
+}
+
+message MapInstallationResponse {}
+
+message ListOpenSourceReposRequest {
+  // Only this workspace's rows; empty for every row the caller may read.
+  string tenant = 1;
+}
+
+message ListOpenSourceReposResponse {
+  repeated OpenSourceRepo repos = 1;
+  // The approvals kept for repositories no open-source workspace has a row
+  // of yet, by repository; the operator token only, and none when a
+  // workspace is named.
+  repeated OpenSourceKeptApproval kept = 2;
+}
+
+message SetOpenSourceApprovalRequest {
+  // The repository as owner/name, compared without regard to case.
+  string repo = 1;
+  // true approves the repository, false revokes it.
+  bool approved = 2;
+}
+
+message SetOpenSourceApprovalResponse {
+  // Every workspace's row of the repository after the change.
+  repeated OpenSourceRepo repos = 1;
+  // The kept approval of a repository no open-source workspace had a row of,
+  // when the call approved one and it is still kept after the call; unset
+  // otherwise. An approval the call moved onto a row of the repository
+  // made meanwhile is on that row in repos.
+  OpenSourceKeptApproval kept = 2;
+}
+
+message OpenSourceRepo {
+  string tenant = 1;
+  // The repository as owner/name.
+  string repo = 2;
+  // Whether GitHub returned the repository at the last read.
+  bool found = 3;
+  bool private = 4;
+  // GitHub's licence id; empty when GitHub finds none.
+  string spdx_id = 5;
+  // When GitHub created the repository; unset when never read.
+  google.protobuf.Timestamp repo_created_at = 6;
+  // When the repository was last read; unset when never.
+  google.protobuf.Timestamp checked_at = 7;
+  // The last read's error; empty when it succeeded.
+  string error = 8;
+  // The operator's decision through the API: "approved", "revoked", or
+  // empty while the configuration's open_source.approved list decides.
+  string approval = 9;
+  // When approval last changed; unset when never.
+  google.protobuf.Timestamp approval_changed_at = 10;
+  // Whether open_source.approved lists the repository.
+  bool config_approved = 11;
+  // Whether the repository passes the gate's approval check now, from
+  // approval, config_approved and open_source.approval.
+  bool approved = 12;
+  // The repository's setting for workflows of pull requests from forks,
+  // GitHub's approval_policy as last read (such as
+  // "all_external_contributors"); empty when never read.
+  string fork_pr_approval = 13;
+  // The first gate check the repository fails now, as the gate runs it at
+  // a job's arrival: "unread" (never read, or GitHub did not return it),
+  // "private", "no_licence", "licence" (not OSI-approved), "age" (younger
+  // than min_repo_age) or "approval"; empty when it passes.
+  string gate_check = 14;
+  // The configuration's open_source.min_repo_age, which the "age" check
+  // uses.
+  google.protobuf.Duration min_repo_age = 15;
+  // Whether the gate refuses a job from a pull request from a fork of the
+  // repository: true unless fork_pr_approval is
+  // "all_external_contributors". The repository's other jobs are not
+  // refused for it.
+  bool fork_prs_refused = 16;
+  // The refusal reason a job gets for gate_check, as the contract's
+  // Refusals table words it; empty when it passes.
+  string gate_reason = 17;
+  // What the repository's maintainers can do so its jobs run: a sentence
+  // for gate_check, then one for the fork pull request setting when
+  // fork_prs_refused (not while the repository is unread). Empty when
+  // there is nothing to do.
+  repeated string next_steps = 18;
+}
+
+message OpenSourceKeptApproval {
+  // The repository as owner/name, as the operator gave it.
+  string repo = 1;
+  // When the operator approved it.
+  google.protobuf.Timestamp approved_at = 2;
+}
+
+message GetJobFailureRequest {
+  string job_id = 1;
+}
+
+// A text cut at its bound ends with "…".
+message GetJobFailureResponse {
+  // The first step GitHub concluded "failure", else the first "timed_out",
+  // else the first "cancelled". Unset when there is none or GitHub could
+  // not be read.
+  JobFailureStep failing_step = 1;
+  // The annotations on the job's check run, failures first, then warnings,
+  // then notices, at most three. None when the job's conclusion on GitHub
+  // is "success".
+  repeated JobFailureAnnotation annotations = 2;
+  // Why GitHub could not be read, such as a missing permission, at most
+  // 160 bytes. Empty otherwise.
+  string note = 3;
+}
+
+message JobFailureStep {
+  // The step's name, at most 100 bytes.
+  string name = 1;
+  int64 number = 2;
+  string conclusion = 3;
+  google.protobuf.Timestamp started_at = 4;
+  google.protobuf.Timestamp completed_at = 5;
+}
+
+message JobFailureAnnotation {
+  // "failure", "warning" or "notice".
+  string level = 1;
+  // The message, at most 160 bytes, and the path, at most 120.
+  string message = 2;
+  string path = 3;
+  int64 line = 4;
+}
+
+message CheckSecretDeliveryRequest {}
+
+message CheckSecretDeliveryResponse {
+  // The installations that lack Contents read, by ID.
+  repeated Installation lacking = 1;
+}
+
+message Installation {
+  int64 id = 1;
+  // The account the App is installed on.
+  string account = 2;
+}
