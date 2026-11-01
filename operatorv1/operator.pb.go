@@ -8972,7 +8972,7 @@ func (x *Storage) GetEstimatedCents() int64 {
 }
 
 // StoredKind is one kind of stored data in a month: images, volume_versions,
-// artifacts, recordings or held_disks.
+// artifacts, recordings, held_disks or service_snapshots.
 type StoredKind struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Kind  string                 `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`

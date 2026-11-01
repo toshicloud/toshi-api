@@ -2100,7 +2100,7 @@ message Storage {
 }
 
 // StoredKind is one kind of stored data in a month: images, volume_versions,
-// artifacts, recordings or held_disks.
+// artifacts, recordings, held_disks or service_snapshots.
 message StoredKind {
   string kind = 1;
   // The bytes the last sampled hour held.
