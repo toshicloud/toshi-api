@@ -2393,6 +2393,8 @@ enum ServiceActivationKind {
   SERVICE_ACTIVATION_KIND_DEPLOY = 2;
   // A RollbackService.
   SERVICE_ACTIVATION_KIND_ROLLBACK = 3;
+  // A secret value selected a new revision.
+  SERVICE_ACTIVATION_KIND_SECRET = 4;
 }
 
 // ServiceActivationOutcome is what came of an activation. READY and FAILED

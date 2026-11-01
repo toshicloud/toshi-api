@@ -1267,6 +1267,8 @@ const (
 	ServiceActivationKind_SERVICE_ACTIVATION_KIND_DEPLOY ServiceActivationKind = 2
 	// A RollbackService.
 	ServiceActivationKind_SERVICE_ACTIVATION_KIND_ROLLBACK ServiceActivationKind = 3
+	// A secret value selected a new revision.
+	ServiceActivationKind_SERVICE_ACTIVATION_KIND_SECRET ServiceActivationKind = 4
 )
 
 // Enum value maps for ServiceActivationKind.
@@ -1276,12 +1278,14 @@ var (
 		1: "SERVICE_ACTIVATION_KIND_CREATE",
 		2: "SERVICE_ACTIVATION_KIND_DEPLOY",
 		3: "SERVICE_ACTIVATION_KIND_ROLLBACK",
+		4: "SERVICE_ACTIVATION_KIND_SECRET",
 	}
 	ServiceActivationKind_value = map[string]int32{
 		"SERVICE_ACTIVATION_KIND_UNSPECIFIED": 0,
 		"SERVICE_ACTIVATION_KIND_CREATE":      1,
 		"SERVICE_ACTIVATION_KIND_DEPLOY":      2,
 		"SERVICE_ACTIVATION_KIND_ROLLBACK":    3,
+		"SERVICE_ACTIVATION_KIND_SECRET":      4,
 	}
 )
 
@@ -14582,12 +14586,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x15ServiceRevisionReason\x12'\n" +
 	"#SERVICE_REVISION_REASON_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eSERVICE_REVISION_REASON_DEPLOY\x10\x01\x12\"\n" +
-	"\x1eSERVICE_REVISION_REASON_SECRET\x10\x02*\xae\x01\n" +
+	"\x1eSERVICE_REVISION_REASON_SECRET\x10\x02*\xd2\x01\n" +
 	"\x15ServiceActivationKind\x12'\n" +
 	"#SERVICE_ACTIVATION_KIND_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eSERVICE_ACTIVATION_KIND_CREATE\x10\x01\x12\"\n" +
 	"\x1eSERVICE_ACTIVATION_KIND_DEPLOY\x10\x02\x12$\n" +
-	" SERVICE_ACTIVATION_KIND_ROLLBACK\x10\x03*\xe1\x01\n" +
+	" SERVICE_ACTIVATION_KIND_ROLLBACK\x10\x03\x12\"\n" +
+	"\x1eSERVICE_ACTIVATION_KIND_SECRET\x10\x04*\xe1\x01\n" +
 	"\x18ServiceActivationOutcome\x12*\n" +
 	"&SERVICE_ACTIVATION_OUTCOME_UNSPECIFIED\x10\x00\x12'\n" +
 	"#SERVICE_ACTIVATION_OUTCOME_SELECTED\x10\x01\x12$\n" +
