@@ -1272,6 +1272,9 @@ enum EventType {
   // A recipient of a message the workload sent reported it to their mail
   // provider as unwanted. Name: "mail.complained". Payload: MailNoticeEvent.
   EVENT_TYPE_MAIL_COMPLAINED = 26;
+  // A service's roll changed state. Name: "service.rolled".
+  // Payload: ServiceRolledEvent.
+  EVENT_TYPE_SERVICE_ROLLED = 27;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -1330,6 +1333,8 @@ message Event {
     ServiceSignInEvent service_sign_in = 28;
     // For MAIL_BOUNCED and MAIL_COMPLAINED.
     MailNoticeEvent mail_notice = 29;
+    // For SERVICE_ROLLED.
+    ServiceRolledEvent service_rolled = 30;
   }
   // The project the workload or the connection's event belongs to; set on
   // every event.
@@ -1353,6 +1358,17 @@ message MailNoticeEvent {
   // The provider's own kind of bounce or complaint, as it reported it,
   // such as "Permanent/General"; empty when it gave none.
   string detail = 4;
+}
+
+// ServiceRolledEvent records a transition of a service's roll.
+message ServiceRolledEvent {
+  int64 from_revision = 1;
+  int64 to_revision = 2;
+  string from_run = 3;
+  string to_run = 4;
+  // STARTED, SWITCHED, DRAINED, FAILED or FELL_BACK.
+  string outcome = 5;
+  string reason = 6;
 }
 
 // KeptVMDiscardedEvent records a kept VM discarded before a fresh run.
