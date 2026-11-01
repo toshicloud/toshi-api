@@ -313,6 +313,10 @@ message Endpoint {
   // An ACP endpoint's state, as its owner last recorded it; unset on any
   // other endpoint.
   EndpointACPState acp_state = 27;
+  // The service sign-in whose one-shot endpoint this is: the sign-in opens
+  // it and removes it when the sign-in ends, and ListEndpoints never lists
+  // it. Output only.
+  string sign_in_id = 28;
 }
 
 // EndpointACPState is what an ACP endpoint's process is doing, as the

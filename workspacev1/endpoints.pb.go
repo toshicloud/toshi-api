@@ -431,7 +431,11 @@ type Endpoint struct {
 	Framing string `protobuf:"bytes,26,opt,name=framing,proto3" json:"framing,omitempty"`
 	// An ACP endpoint's state, as its owner last recorded it; unset on any
 	// other endpoint.
-	AcpState      *EndpointACPState `protobuf:"bytes,27,opt,name=acp_state,json=acpState,proto3" json:"acp_state,omitempty"`
+	AcpState *EndpointACPState `protobuf:"bytes,27,opt,name=acp_state,json=acpState,proto3" json:"acp_state,omitempty"`
+	// The service sign-in whose one-shot endpoint this is: the sign-in opens
+	// it and removes it when the sign-in ends, and ListEndpoints never lists
+	// it. Output only.
+	SignInId      string `protobuf:"bytes,28,opt,name=sign_in_id,json=signInId,proto3" json:"sign_in_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -653,6 +657,13 @@ func (x *Endpoint) GetAcpState() *EndpointACPState {
 		return x.AcpState
 	}
 	return nil
+}
+
+func (x *Endpoint) GetSignInId() string {
+	if x != nil {
+		return x.SignInId
+	}
+	return ""
 }
 
 // EndpointACPState is what an ACP endpoint's process is doing, as the
@@ -4241,7 +4252,7 @@ var File_toshi_workspace_v1_endpoints_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/endpoints.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xab\b\n" +
+	"\"toshi/workspace/v1/endpoints.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xc9\b\n" +
 	"\bEndpoint\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06job_id\x18\x02 \x01(\tR\x05jobId\x12\x12\n" +
@@ -4274,7 +4285,9 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\bgrant_id\x18\x18 \x01(\tR\agrantId\x124\n" +
 	"\x16applied_policy_version\x18\x19 \x01(\x03R\x14appliedPolicyVersion\x12\x18\n" +
 	"\aframing\x18\x1a \x01(\tR\aframing\x12A\n" +
-	"\tacp_state\x18\x1b \x01(\v2$.toshi.workspace.v1.EndpointACPStateR\bacpStateB\f\n" +
+	"\tacp_state\x18\x1b \x01(\v2$.toshi.workspace.v1.EndpointACPStateR\bacpState\x12\x1c\n" +
+	"\n" +
+	"sign_in_id\x18\x1c \x01(\tR\bsignInIdB\f\n" +
 	"\n" +
 	"_exit_code\"\x82\x02\n" +
 	"\x10EndpointACPState\x12\x14\n" +

@@ -1975,7 +1975,8 @@ message StartServiceSignInRequest {
 }
 
 // StartServiceSignInResponse is one sign-in's stream: the started message,
-// the output as it comes, and the ended message last.
+// the endpoint the sign-in opens for its program, the output as it comes,
+// and the ended message last.
 message StartServiceSignInResponse {
   oneof message {
     // First and only once.
@@ -1985,7 +1986,25 @@ message StartServiceSignInResponse {
     bytes output = 2;
     // Last.
     ServiceSignInEnded ended = 3;
+    // The endpoint the sign-in opened for its program, once it is open; the
+    // sign-in removes it when it ends.
+    ServiceSignInEndpoint endpoint = 4;
   }
+}
+
+// ServiceSignInEndpoint is the one-shot endpoint a service sign-in opens for
+// its program: a port in the run's guest that a browser reaches through a
+// local listener.
+message ServiceSignInEndpoint {
+  // The run's job ID.
+  string run_id = 1;
+  // The endpoint's name, on that job.
+  string endpoint = 2;
+  // The port the program listens on in the guest.
+  int32 port = 3;
+  // The local address to give `toshi connect --listen`, so the browser's
+  // redirect to localhost:<port> reaches the guest: 127.0.0.1:<port>.
+  string listen_address = 4;
 }
 
 message ServiceSignInStarted {
@@ -2063,6 +2082,8 @@ message ServiceSignInStatus {
   // What the status command wrote: its standard output, then its standard
   // error, at most 4 KiB, ending "[cut]" when it was cut.
   string output = 4;
+  // The endpoint a sign-in of this program has open, unset while none is.
+  ServiceSignInEndpoint endpoint = 5;
 }
 
 message ListServiceRunsRequest {
