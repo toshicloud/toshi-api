@@ -414,6 +414,29 @@ message ServiceStatus {
   // the operator set one; empty otherwise. Set by Toshi; ignored in a
   // request.
   string hold_contact = 17;
+  // The VM snapshot a sleeping service holds: its newest sleep left it on a
+  // host, and its next wake restores it there. Unset while the service has
+  // a live run, and when it holds none (it never slept, the sleep took no
+  // snapshot, or a new revision, a stop or a failed restore dropped it).
+  // Set by Toshi on GetService; ignored in a request.
+  ServiceHeldSnapshot held_snapshot = 18;
+}
+
+// ServiceHeldSnapshot is the VM snapshot, memory and disks, a sleeping
+// service holds. It is kept on one host, not in the object store, and
+// replaced at the next sleep; the service's state volume saves its versions
+// separately, shown by ServiceBackup.
+message ServiceHeldSnapshot {
+  // When the host took the snapshot.
+  google.protobuf.Timestamp taken_at = 1;
+  // The room the snapshot's files take on the host, in bytes.
+  int64 bytes = 2;
+  // The revision of the service the snapshotted run ran.
+  int64 revision = 3;
+  // The host that holds the snapshot, as listed under hosts. Set only when
+  // the host is the workspace's own; empty when it is a shared host, which
+  // a workspace cannot name or act on.
+  string host_id = 4;
 }
 
 // ServiceBackup is the state of the backups of a service's state volume,
