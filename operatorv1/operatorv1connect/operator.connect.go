@@ -89,6 +89,9 @@ const (
 	// OperatorServiceGetVersionProcedure is the fully-qualified name of the OperatorService's
 	// GetVersion RPC.
 	OperatorServiceGetVersionProcedure = "/toshi.operator.v1.OperatorService/GetVersion"
+	// OperatorServiceRunChecksProcedure is the fully-qualified name of the OperatorService's RunChecks
+	// RPC.
+	OperatorServiceRunChecksProcedure = "/toshi.operator.v1.OperatorService/RunChecks"
 	// OperatorServiceSetTenantPlanProcedure is the fully-qualified name of the OperatorService's
 	// SetTenantPlan RPC.
 	OperatorServiceSetTenantPlanProcedure = "/toshi.operator.v1.OperatorService/SetTenantPlan"
@@ -312,6 +315,14 @@ type OperatorServiceClient interface {
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
 	GetVersion(context.Context, *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error)
+	// RunChecks runs one group of the control plane's checks and returns one
+	// row per check, in the order the checks ran, and the group's state, which
+	// is its worst row's. A check only reads: it repairs nothing and changes
+	// nothing, so the call records no audit event. A group that is unspecified
+	// or that this control plane does not know fails with INVALID_ARGUMENT; a
+	// group whose subject this control plane is not configured for (the GitHub
+	// group without a GitHub App) fails with FAILED_PRECONDITION.
+	RunChecks(context.Context, *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error)
 	// SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
 	// plan, or a plan the configuration does not define, fails with
 	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
@@ -683,6 +694,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("GetVersion")),
 			connect.WithClientOptions(opts...),
 		),
+		runChecks: connect.NewClient[operatorv1.RunChecksRequest, operatorv1.RunChecksResponse](
+			httpClient,
+			baseURL+OperatorServiceRunChecksProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("RunChecks")),
+			connect.WithClientOptions(opts...),
+		),
 		setTenantPlan: connect.NewClient[operatorv1.SetTenantPlanRequest, operatorv1.SetTenantPlanResponse](
 			httpClient,
 			baseURL+OperatorServiceSetTenantPlanProcedure,
@@ -928,6 +945,7 @@ type operatorServiceClient struct {
 	listSeats                 *connect.Client[operatorv1.ListSeatsRequest, operatorv1.ListSeatsResponse]
 	listPlans                 *connect.Client[operatorv1.ListPlansRequest, operatorv1.ListPlansResponse]
 	getVersion                *connect.Client[operatorv1.GetVersionRequest, operatorv1.GetVersionResponse]
+	runChecks                 *connect.Client[operatorv1.RunChecksRequest, operatorv1.RunChecksResponse]
 	setTenantPlan             *connect.Client[operatorv1.SetTenantPlanRequest, operatorv1.SetTenantPlanResponse]
 	setWorkspaceEntitlement   *connect.Client[operatorv1.SetWorkspaceEntitlementRequest, operatorv1.SetWorkspaceEntitlementResponse]
 	clearWorkspaceEntitlement *connect.Client[operatorv1.ClearWorkspaceEntitlementRequest, operatorv1.ClearWorkspaceEntitlementResponse]
@@ -1055,6 +1073,11 @@ func (c *operatorServiceClient) ListPlans(ctx context.Context, req *connect.Requ
 // GetVersion calls toshi.operator.v1.OperatorService.GetVersion.
 func (c *operatorServiceClient) GetVersion(ctx context.Context, req *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error) {
 	return c.getVersion.CallUnary(ctx, req)
+}
+
+// RunChecks calls toshi.operator.v1.OperatorService.RunChecks.
+func (c *operatorServiceClient) RunChecks(ctx context.Context, req *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error) {
+	return c.runChecks.CallUnary(ctx, req)
 }
 
 // SetTenantPlan calls toshi.operator.v1.OperatorService.SetTenantPlan.
@@ -1352,6 +1375,14 @@ type OperatorServiceHandler interface {
 	ListPlans(context.Context, *connect.Request[operatorv1.ListPlansRequest]) (*connect.Response[operatorv1.ListPlansResponse], error)
 	// GetVersion returns the control plane's version, commit and commit date.
 	GetVersion(context.Context, *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error)
+	// RunChecks runs one group of the control plane's checks and returns one
+	// row per check, in the order the checks ran, and the group's state, which
+	// is its worst row's. A check only reads: it repairs nothing and changes
+	// nothing, so the call records no audit event. A group that is unspecified
+	// or that this control plane does not know fails with INVALID_ARGUMENT; a
+	// group whose subject this control plane is not configured for (the GitHub
+	// group without a GitHub App) fails with FAILED_PRECONDITION.
+	RunChecks(context.Context, *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error)
 	// SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
 	// plan, or a plan the configuration does not define, fails with
 	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
@@ -1719,6 +1750,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("GetVersion")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceRunChecksHandler := connect.NewUnaryHandler(
+		OperatorServiceRunChecksProcedure,
+		svc.RunChecks,
+		connect.WithSchema(operatorServiceMethods.ByName("RunChecks")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceSetTenantPlanHandler := connect.NewUnaryHandler(
 		OperatorServiceSetTenantPlanProcedure,
 		svc.SetTenantPlan,
@@ -1979,6 +2016,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceListPlansHandler.ServeHTTP(w, r)
 		case OperatorServiceGetVersionProcedure:
 			operatorServiceGetVersionHandler.ServeHTTP(w, r)
+		case OperatorServiceRunChecksProcedure:
+			operatorServiceRunChecksHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantPlanProcedure:
 			operatorServiceSetTenantPlanHandler.ServeHTTP(w, r)
 		case OperatorServiceSetWorkspaceEntitlementProcedure:
@@ -2132,6 +2171,10 @@ func (UnimplementedOperatorServiceHandler) ListPlans(context.Context, *connect.R
 
 func (UnimplementedOperatorServiceHandler) GetVersion(context.Context, *connect.Request[operatorv1.GetVersionRequest]) (*connect.Response[operatorv1.GetVersionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetVersion is not implemented"))
+}
+
+func (UnimplementedOperatorServiceHandler) RunChecks(context.Context, *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RunChecks is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error) {

@@ -156,6 +156,17 @@ service OperatorService {
   // GetVersion returns the control plane's version, commit and commit date.
   rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
 
+  // RunChecks runs one group of the control plane's checks and returns one
+  // row per check, in the order the checks ran, and the group's state, which
+  // is its worst row's. A check only reads: it repairs nothing and changes
+  // nothing, so the call records no audit event. A group that is unspecified
+  // or that this control plane does not know fails with INVALID_ARGUMENT; a
+  // group whose subject this control plane is not configured for (the GitHub
+  // group without a GitHub App) fails with FAILED_PRECONDITION.
+  rpc RunChecks(RunChecksRequest) returns (RunChecksResponse) {
+    option (toshi.audit) = {action: "none"};
+  }
+
   // SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
   // plan, or a plan the configuration does not define, fails with
   // INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
@@ -1674,6 +1685,56 @@ message GetVersionResponse {
   // (agent_auth.minimum_agent_version); empty when unset, which
   // admits every agent. Each process reads its own configuration.
   string minimum_agent_version = 4;
+}
+
+// CheckGroup names a group of the control plane's checks.
+enum CheckGroup {
+  CHECK_GROUP_UNSPECIFIED = 0;
+  // The newest backup, the last backup attempt, the backup copy, the restore
+  // drill, the store's password files, and the history purge and export.
+  CHECK_GROUP_BACKUP = 1;
+  // The GitHub App's settings, permissions, events, webhook and
+  // installations, and how its events reach the control plane.
+  CHECK_GROUP_GITHUB = 2;
+  // The live tokens of the hosted products.
+  CHECK_GROUP_HOSTED_TOKENS = 3;
+  // Each configured cloud pool: its setup and its warm instances.
+  CHECK_GROUP_CLOUD_POOLS = 4;
+  // Each product that is switched off, and how far its work has wound down.
+  CHECK_GROUP_PRODUCTS = 5;
+}
+
+// CheckState is the outcome of a check, or of a group: a group's state is
+// its worst row's, FAILURE above WARNING above SUCCESS.
+enum CheckState {
+  CHECK_STATE_UNSPECIFIED = 0;
+  // The check passed, or checks a setting that is off and not needed.
+  CHECK_STATE_SUCCESS = 1;
+  // Something to look at that does not stop the control plane: a pass that
+  // is late, a step an account must take, a fact the check cannot read.
+  CHECK_STATE_WARNING = 2;
+  // Something the operator must fix.
+  CHECK_STATE_FAILURE = 3;
+}
+
+// Check is one row of a group: what was checked, its state, what was found
+// in words, and how long the check took.
+message Check {
+  string name = 1;
+  CheckState state = 2;
+  string detail = 3;
+  google.protobuf.Duration duration = 4;
+}
+
+message RunChecksRequest {
+  CheckGroup group = 1;
+}
+
+message RunChecksResponse {
+  CheckGroup group = 1;
+  // The worst state among checks; SUCCESS when the group has no rows.
+  CheckState state = 2;
+  repeated Check checks = 3;
 }
 
 message SetTenantPlanRequest {
