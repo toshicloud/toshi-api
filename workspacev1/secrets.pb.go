@@ -223,7 +223,10 @@ type Secret struct {
 	Mine bool `protobuf:"varint,6,opt,name=mine,proto3" json:"mine,omitempty"`
 	// The key's owner holds no role in the workspace any more: no workload
 	// receives it, and it stays until it is deleted.
-	OwnerLeft     bool `protobuf:"varint,7,opt,name=owner_left,json=ownerLeft,proto3" json:"owner_left,omitempty"`
+	OwnerLeft bool `protobuf:"varint,7,opt,name=owner_left,json=ownerLeft,proto3" json:"owner_left,omitempty"`
+	// The model provider, when the key serves a model credential. Such a key
+	// never enters a guest: ModelCredentialService says how it is used.
+	Provider      string `protobuf:"bytes,8,opt,name=provider,proto3" json:"provider,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -305,6 +308,13 @@ func (x *Secret) GetOwnerLeft() bool {
 		return x.OwnerLeft
 	}
 	return false
+}
+
+func (x *Secret) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
 }
 
 // SecretVersion is one stored version of a key, without its value.
@@ -1776,7 +1786,7 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x0fmanifest_digest\x18\x06 \x01(\tR\x0emanifestDigest\x12%\n" +
 	"\x0emanaged_fields\x18\a \x03(\tR\rmanagedFields\x12'\n" +
 	"\x0fmanifest_origin\x18\b \x01(\tR\x0emanifestOrigin\x12\x12\n" +
-	"\x04keys\x18\t \x03(\tR\x04keys\"\xce\x01\n" +
+	"\x04keys\x18\t \x03(\tR\x04keys\"\xea\x01\n" +
 	"\x06Secret\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\x03R\aversion\x12\x12\n" +
@@ -1786,7 +1796,8 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x05owner\x18\x05 \x01(\tR\x05owner\x12\x12\n" +
 	"\x04mine\x18\x06 \x01(\bR\x04mine\x12\x1d\n" +
 	"\n" +
-	"owner_left\x18\a \x01(\bR\townerLeft\"x\n" +
+	"owner_left\x18\a \x01(\bR\townerLeft\x12\x1a\n" +
+	"\bprovider\x18\b \x01(\tR\bprovider\"x\n" +
 	"\rSecretVersion\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\x03R\aversion\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\x03R\x04size\x129\n" +

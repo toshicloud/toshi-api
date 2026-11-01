@@ -93,7 +93,8 @@ type SecretServiceClient interface {
 	// key without it. A name is either shared or set per environment: a
 	// shared name set in an environment's set, or an environment's name set
 	// in the shared set, fails with FAILED_PRECONDITION. Two environments'
-	// sets may hold the same name.
+	// sets may hold the same name. A key that serves a model credential takes
+	// a new version as any key does, and stays out of every guest.
 	//
 	// With own the key is the caller's own, set apart from the environment's
 	// set, which need not exist; a call that acts for no person fails with
@@ -102,7 +103,9 @@ type SecretServiceClient interface {
 	// fails with FAILED_PRECONDITION. Two people may own the same name.
 	PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error)
 	// DeleteSecret removes the key and every version of it: with own the
-	// caller's own key, with owner that person's.
+	// caller's own key, with owner that person's. A key that serves a model
+	// credential fails with FAILED_PRECONDITION: DeleteModelCredential
+	// removes the credential with its key.
 	DeleteSecret(context.Context, *connect.Request[workspacev1.DeleteSecretRequest]) (*connect.Response[workspacev1.DeleteSecretResponse], error)
 	// ListSecrets returns the set's keys by name, each with its newest
 	// version, and every person's own keys of the same place beside them,
@@ -303,7 +306,8 @@ type SecretServiceHandler interface {
 	// key without it. A name is either shared or set per environment: a
 	// shared name set in an environment's set, or an environment's name set
 	// in the shared set, fails with FAILED_PRECONDITION. Two environments'
-	// sets may hold the same name.
+	// sets may hold the same name. A key that serves a model credential takes
+	// a new version as any key does, and stays out of every guest.
 	//
 	// With own the key is the caller's own, set apart from the environment's
 	// set, which need not exist; a call that acts for no person fails with
@@ -312,7 +316,9 @@ type SecretServiceHandler interface {
 	// fails with FAILED_PRECONDITION. Two people may own the same name.
 	PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error)
 	// DeleteSecret removes the key and every version of it: with own the
-	// caller's own key, with owner that person's.
+	// caller's own key, with owner that person's. A key that serves a model
+	// credential fails with FAILED_PRECONDITION: DeleteModelCredential
+	// removes the credential with its key.
 	DeleteSecret(context.Context, *connect.Request[workspacev1.DeleteSecretRequest]) (*connect.Response[workspacev1.DeleteSecretResponse], error)
 	// ListSecrets returns the set's keys by name, each with its newest
 	// version, and every person's own keys of the same place beside them,

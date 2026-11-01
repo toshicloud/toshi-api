@@ -219,6 +219,14 @@ var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 		Filename:      "toshi/permission.proto",
 	},
 	{
+		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
+		ExtensionType: (*bool)(nil),
+		Field:         51006,
+		Name:          "toshi.own",
+		Tag:           "varint,51006,opt,name=own",
+		Filename:      "toshi/permission.proto",
+	},
+	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         51003,
@@ -285,6 +293,16 @@ var (
 	//
 	// optional toshi.MCP mcp = 51005;
 	E_Mcp = &file_toshi_permission_proto_extTypes[4]
+	// own marks a call a member may make for what is their own with
+	// membership alone. A caller who holds a role in the workspace but not the
+	// method's permission is admitted for their own resources only: the
+	// handler refuses any other resource, as the permission check would, with
+	// PERMISSION_MISSING, and a list holds only the caller's own. A caller
+	// with the permission is admitted as usual. A call that acts for no
+	// person needs the permission.
+	//
+	// optional bool own = 51006;
+	E_Own = &file_toshi_permission_proto_extTypes[5]
 )
 
 // Extension fields to descriptorpb.FieldOptions.
@@ -296,7 +314,7 @@ var (
 	// shape, and the permissions page lists the field groups.
 	//
 	// optional string field_permission = 51003;
-	E_FieldPermission = &file_toshi_permission_proto_extTypes[5]
+	E_FieldPermission = &file_toshi_permission_proto_extTypes[6]
 )
 
 var File_toshi_permission_proto protoreflect.FileDescriptor
@@ -328,7 +346,8 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\x05audit\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\f.toshi.AuditR\x05audit:;\n" +
 	"\bby_field\x12\x1e.google.protobuf.MethodOptions\x18\xbc\x8e\x03 \x01(\bR\abyField:>\n" +
 	"\x03mcp\x12\x1e.google.protobuf.MethodOptions\x18\xbd\x8e\x03 \x01(\v2\n" +
-	".toshi.MCPR\x03mcp:J\n" +
+	".toshi.MCPR\x03mcp:2\n" +
+	"\x03own\x12\x1e.google.protobuf.MethodOptions\x18\xbe\x8e\x03 \x01(\bR\x03own:J\n" +
 	"\x10field_permission\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\tR\x0ffieldPermissionB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
 
 var (
@@ -356,13 +375,14 @@ var file_toshi_permission_proto_depIdxs = []int32{
 	2, // 2: toshi.audit:extendee -> google.protobuf.MethodOptions
 	2, // 3: toshi.by_field:extendee -> google.protobuf.MethodOptions
 	2, // 4: toshi.mcp:extendee -> google.protobuf.MethodOptions
-	3, // 5: toshi.field_permission:extendee -> google.protobuf.FieldOptions
-	0, // 6: toshi.audit:type_name -> toshi.Audit
-	1, // 7: toshi.mcp:type_name -> toshi.MCP
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	6, // [6:8] is the sub-list for extension type_name
-	0, // [0:6] is the sub-list for extension extendee
+	2, // 5: toshi.own:extendee -> google.protobuf.MethodOptions
+	3, // 6: toshi.field_permission:extendee -> google.protobuf.FieldOptions
+	0, // 7: toshi.audit:type_name -> toshi.Audit
+	1, // 8: toshi.mcp:type_name -> toshi.MCP
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	7, // [7:9] is the sub-list for extension type_name
+	0, // [0:7] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
 }
 
@@ -379,7 +399,7 @@ func file_toshi_permission_proto_init() {
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_permission_proto_rawDesc), len(file_toshi_permission_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   2,
-			NumExtensions: 6,
+			NumExtensions: 7,
 			NumServices:   0,
 		},
 		GoTypes:           file_toshi_permission_proto_goTypes,

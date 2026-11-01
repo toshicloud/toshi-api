@@ -56,6 +56,15 @@ extend google.protobuf.MethodOptions {
   // whose name begins with Delete, Cancel, Revoke, Remove, Stop or Rollback
   // is destructive, and no call reaches outside the workspace.
   MCP mcp = 51005;
+
+  // own marks a call a member may make for what is their own with
+  // membership alone. A caller who holds a role in the workspace but not the
+  // method's permission is admitted for their own resources only: the
+  // handler refuses any other resource, as the permission check would, with
+  // PERMISSION_MISSING, and a list holds only the caller's own. A caller
+  // with the permission is admitted as usual. A call that acts for no
+  // person needs the permission.
+  bool own = 51006;
 }
 
 extend google.protobuf.FieldOptions {
