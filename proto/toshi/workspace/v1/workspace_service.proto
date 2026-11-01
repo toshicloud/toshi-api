@@ -604,6 +604,12 @@ message Workspace {
   // Who last changed settings.recording_human_spans, and when; unset while it
   // was never changed. Set by Toshi.
   WorkspaceSettingChange recording_human_spans_changed = 42;
+  // When the workspace closed; unset while status is active.
+  google.protobuf.Timestamp closed_at = 43;
+  // When a closed workspace's read-only period ends: closed_at plus 30 days.
+  // Set while that period lasts, for a caller the closed workspace stays
+  // open to; unset otherwise.
+  google.protobuf.Timestamp read_only_until = 44;
 
   reserved 8, 9, 10, 14, 15, 21, 23, 32;
   reserved "own_hosts_only", "spend_cap_cents", "max_jobs_per_hour", "allow_overflow", "allow_cache_warm", "history_days", "cancel_run_on_vm_death", "member_join";
