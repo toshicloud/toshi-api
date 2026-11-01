@@ -2085,10 +2085,9 @@ type CreateCheckoutSessionRequest struct {
 	Plan  string                 `protobuf:"bytes,1,opt,name=plan,proto3" json:"plan,omitempty"`
 	// Where the browser goes back to when checkout finishes or is cancelled.
 	// The workspace id rides on it as the tenant query parameter, and billing
-	// as checkout-done or checkout-cancelled; its own query is kept. Its
-	// origin must be the control plane's public URL or a redirect URI origin
-	// of a client declared in [[oauth.clients]]. Empty returns to the
-	// control plane's dashboard.
+	// as checkout-done or checkout-cancelled; its own query is kept. return_url
+	// is required and must be on the origin of a redirect URI of a
+	// registered client, whether declared in the configuration or registered.
 	ReturnUrl     string `protobuf:"bytes,2,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2186,9 +2185,9 @@ func (x *CreateCheckoutSessionResponse) GetUrl() string {
 type CreateBillingPortalSessionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Where the browser goes back to from the portal, with the workspace id as
-	// the tenant query parameter; its own query is kept. The same origins as
-	// CreateCheckoutSessionRequest.return_url are allowed. Empty returns to the
-	// control plane's dashboard.
+	// the tenant query parameter; its own query is kept. return_url is required
+	// and must be on the origin of a redirect URI of a registered client,
+	// whether declared in the configuration or registered.
 	ReturnUrl     string `protobuf:"bytes,1,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2842,7 +2841,7 @@ type WorkspaceSettings struct {
 	MemberJoin string `protobuf:"bytes,1,opt,name=member_join,json=memberJoin,proto3" json:"member_join,omitempty"`
 	// The sign-in provider the workspace requires of its people; unset when it
 	// requires none. Setting it names an OpenID Connect provider entry the
-	// control plane has (GET /auth/providers lists them) and needs a person
+	// control plane has and needs a person
 	// whose own session or token was signed in through it, so it is known to
 	// work before it is enforced; otherwise FAILED_PRECONDITION with the
 	// reason SIGNIN_UNTESTED. A name the control plane does not have fails
@@ -3073,11 +3072,10 @@ func (x *WorkspaceSettingChange) GetChangedAt() *timestamppb.Timestamp {
 // WorkspaceSignIn is the sign-in provider a workspace requires.
 type WorkspaceSignIn struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The provider entry's name, as GET /auth/providers lists it.
+	// The configured provider entry's name.
 	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
 	// The provider's issuer: the identities it signs in are keyed by it, as
-	// their Identity.provider, and GET /auth/providers lists it as the
-	// entry's identity_provider. Set by Toshi.
+	// their Identity.provider. Set by Toshi.
 	Issuer string `protobuf:"bytes,2,opt,name=issuer,proto3" json:"issuer,omitempty"`
 	// The user who set it, and when. Set by Toshi.
 	SetBy         string                 `protobuf:"bytes,3,opt,name=set_by,json=setBy,proto3" json:"set_by,omitempty"`
