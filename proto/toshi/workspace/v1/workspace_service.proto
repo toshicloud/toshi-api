@@ -812,6 +812,13 @@ message WorkspaceSettings {
   // default's value, then Toshi's built defaults. Changing a default changes
   // no existing endpoint. Setting it needs endpoints.write.
   repeated EndpointDefault endpoint_defaults = 17 [(toshi.field_permission) = "endpoints.write"];
+  // The workspace's own stopped-sandbox keep in days, at least 1 and no
+  // more than its entitlement (from the plan or an operator's override).
+  // Unset when the workspace has no setting, so the entitlement applies.
+  // Naming it in the update mask with no value clears it; setting it to 0
+  // fails with INVALID_ARGUMENT. An unlimited entitlement does not allow a
+  // workspace setting.
+  optional int64 sandbox_stopped_keep_days = 18;
 }
 
 // InboundMailPastCap chooses whether to accept mail beyond the daily cap.

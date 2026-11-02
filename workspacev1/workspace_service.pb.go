@@ -3230,8 +3230,15 @@ type WorkspaceSettings struct {
 	// default's value, then Toshi's built defaults. Changing a default changes
 	// no existing endpoint. Setting it needs endpoints.write.
 	EndpointDefaults []*EndpointDefault `protobuf:"bytes,17,rep,name=endpoint_defaults,json=endpointDefaults,proto3" json:"endpoint_defaults,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// The workspace's own stopped-sandbox keep in days, at least 1 and no
+	// more than its entitlement (from the plan or an operator's override).
+	// Unset when the workspace has no setting, so the entitlement applies.
+	// Naming it in the update mask with no value clears it; setting it to 0
+	// fails with INVALID_ARGUMENT. An unlimited entitlement does not allow a
+	// workspace setting.
+	SandboxStoppedKeepDays *int64 `protobuf:"varint,18,opt,name=sandbox_stopped_keep_days,json=sandboxStoppedKeepDays,proto3,oneof" json:"sandbox_stopped_keep_days,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *WorkspaceSettings) Reset() {
@@ -3381,6 +3388,13 @@ func (x *WorkspaceSettings) GetEndpointDefaults() []*EndpointDefault {
 		return x.EndpointDefaults
 	}
 	return nil
+}
+
+func (x *WorkspaceSettings) GetSandboxStoppedKeepDays() int64 {
+	if x != nil && x.SandboxStoppedKeepDays != nil {
+		return *x.SandboxStoppedKeepDays
+	}
+	return 0
 }
 
 // WorkspaceSettingChange is who last changed one of a workspace's settings,
@@ -6230,7 +6244,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\tnot_after\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bnotAfter\x125\n" +
 	"\brenew_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\arenewAt\x125\n" +
 	"\bretry_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aretryAt\x12\x14\n" +
-	"\x05error\x18\x06 \x01(\tR\x05error\"\xde\b\n" +
+	"\x05error\x18\x06 \x01(\tR\x05error\"\xbc\t\n" +
 	"\x11WorkspaceSettings\x12\x1f\n" +
 	"\vmember_join\x18\x01 \x01(\tR\n" +
 	"memberJoin\x12R\n" +
@@ -6251,12 +6265,14 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"paidStarts\x88\x01\x01\x12I\n" +
 	"\x18volume_size_cap_total_gb\x18\x0f \x01(\x03B\x11\xda\xf3\x18\rbilling.writeR\x14volumeSizeCapTotalGb\x12Y\n" +
 	"\x15inbound_mail_past_cap\x18\x10 \x01(\x0e2&.toshi.workspace.v1.InboundMailPastCapR\x12inboundMailPastCap\x12e\n" +
-	"\x11endpoint_defaults\x18\x11 \x03(\v2#.toshi.workspace.v1.EndpointDefaultB\x13\xda\xf3\x18\x0fendpoints.writeR\x10endpointDefaultsB\x0f\n" +
+	"\x11endpoint_defaults\x18\x11 \x03(\v2#.toshi.workspace.v1.EndpointDefaultB\x13\xda\xf3\x18\x0fendpoints.writeR\x10endpointDefaults\x12>\n" +
+	"\x19sandbox_stopped_keep_days\x18\x12 \x01(\x03H\x04R\x16sandboxStoppedKeepDays\x88\x01\x01B\x0f\n" +
 	"\r_history_daysB\f\n" +
 	"\n" +
 	"_recordingB\x18\n" +
 	"\x16_recording_human_spansB\x0e\n" +
-	"\f_paid_starts\"\x8f\x01\n" +
+	"\f_paid_startsB\x1c\n" +
+	"\x1a_sandbox_stopped_keep_days\"\x8f\x01\n" +
 	"\x16WorkspaceSettingChange\x12:\n" +
 	"\n" +
 	"changed_by\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tchangedBy\x129\n" +
