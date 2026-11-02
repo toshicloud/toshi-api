@@ -3157,6 +3157,9 @@ message CheckStorageProviderResponse {
 
 message DeleteStorageProviderRequest {
   string id = 1;
+  // Retire a provider even if artifacts remain, marking them lost. Only an
+  // operator may force retirement.
+  bool force = 2;
 }
 
 message DeleteStorageProviderResponse {}
