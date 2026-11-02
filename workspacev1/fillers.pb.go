@@ -11,6 +11,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -774,28 +775,29 @@ func (*DeleteFillerResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{9}
 }
 
-type SetFillerEnabledRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Enabled       bool                   `protobuf:"varint,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
+type UpdateFillerRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The filler to change; its name names it. Only enabled is read from it.
+	Filler        *Filler                `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetFillerEnabledRequest) Reset() {
-	*x = SetFillerEnabledRequest{}
+func (x *UpdateFillerRequest) Reset() {
+	*x = UpdateFillerRequest{}
 	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetFillerEnabledRequest) String() string {
+func (x *UpdateFillerRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetFillerEnabledRequest) ProtoMessage() {}
+func (*UpdateFillerRequest) ProtoMessage() {}
 
-func (x *SetFillerEnabledRequest) ProtoReflect() protoreflect.Message {
+func (x *UpdateFillerRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -807,46 +809,46 @@ func (x *SetFillerEnabledRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetFillerEnabledRequest.ProtoReflect.Descriptor instead.
-func (*SetFillerEnabledRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateFillerRequest.ProtoReflect.Descriptor instead.
+func (*UpdateFillerRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *SetFillerEnabledRequest) GetName() string {
+func (x *UpdateFillerRequest) GetFiller() *Filler {
 	if x != nil {
-		return x.Name
+		return x.Filler
 	}
-	return ""
+	return nil
 }
 
-func (x *SetFillerEnabledRequest) GetEnabled() bool {
+func (x *UpdateFillerRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	if x != nil {
-		return x.Enabled
+		return x.UpdateMask
 	}
-	return false
+	return nil
 }
 
-type SetFillerEnabledResponse struct {
+type UpdateFillerResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Filler        *Filler                `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetFillerEnabledResponse) Reset() {
-	*x = SetFillerEnabledResponse{}
+func (x *UpdateFillerResponse) Reset() {
+	*x = UpdateFillerResponse{}
 	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetFillerEnabledResponse) String() string {
+func (x *UpdateFillerResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetFillerEnabledResponse) ProtoMessage() {}
+func (*UpdateFillerResponse) ProtoMessage() {}
 
-func (x *SetFillerEnabledResponse) ProtoReflect() protoreflect.Message {
+func (x *UpdateFillerResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_fillers_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -858,12 +860,12 @@ func (x *SetFillerEnabledResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetFillerEnabledResponse.ProtoReflect.Descriptor instead.
-func (*SetFillerEnabledResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateFillerResponse.ProtoReflect.Descriptor instead.
+func (*UpdateFillerResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *SetFillerEnabledResponse) GetFiller() *Filler {
+func (x *UpdateFillerResponse) GetFiller() *Filler {
 	if x != nil {
 		return x.Filler
 	}
@@ -1000,7 +1002,7 @@ var File_toshi_workspace_v1_fillers_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/fillers.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa0\x05\n" +
+	" toshi/workspace/v1/fillers.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa0\x05\n" +
 	"\x06Filler\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\tR\x04size\x12\x1d\n" +
@@ -1062,11 +1064,12 @@ const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"\x06filler\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.FillerR\x06filler\")\n" +
 	"\x13DeleteFillerRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\"\x16\n" +
-	"\x14DeleteFillerResponse\"G\n" +
-	"\x17SetFillerEnabledRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
-	"\aenabled\x18\x02 \x01(\bR\aenabled\"N\n" +
-	"\x18SetFillerEnabledResponse\x122\n" +
+	"\x14DeleteFillerResponse\"\x86\x01\n" +
+	"\x13UpdateFillerRequest\x122\n" +
+	"\x06filler\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.FillerR\x06filler\x12;\n" +
+	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\"J\n" +
+	"\x14UpdateFillerResponse\x122\n" +
 	"\x06filler\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.FillerR\x06filler\"k\n" +
 	"\x15ListFillerRunsRequest\x12\x16\n" +
 	"\x06filler\x18\x01 \x01(\tR\x06filler\x12\x1b\n" +
@@ -1076,14 +1079,14 @@ const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"\x16ListFillerRunsResponse\x121\n" +
 	"\x04runs\x18\x01 \x03(\v2\x1d.toshi.workspace.v1.FillerRunR\x04runs\x127\n" +
 	"\x06pauses\x18\x02 \x03(\v2\x1f.toshi.workspace.v1.FillerPauseR\x06pauses\x12&\n" +
-	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken2\xc2\x05\n" +
+	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken2\xbd\x05\n" +
 	"\rFillerService\x12p\n" +
 	"\vListFillers\x12&.toshi.workspace.v1.ListFillersRequest\x1a'.toshi.workspace.v1.ListFillersResponse\"\x10\xc2\xf3\x18\ffillers.read\x12\x83\x01\n" +
 	"\tPutFiller\x12$.toshi.workspace.v1.PutFillerRequest\x1a%.toshi.workspace.v1.PutFillerResponse\")\xc2\xf3\x18\rfillers.write\xd2\xf3\x18\x14\x12\x12filler:filler.name\x12\x95\x01\n" +
 	"\fDeleteFiller\x12'.toshi.workspace.v1.DeleteFillerRequest\x1a(.toshi.workspace.v1.DeleteFillerResponse\"2\xc2\xf3\x18\rfillers.write\xd2\xf3\x18\x1d\n" +
-	"\x0efiller.removed\x12\vfiller:name\x12\xa5\x01\n" +
-	"\x10SetFillerEnabled\x12+.toshi.workspace.v1.SetFillerEnabledRequest\x1a,.toshi.workspace.v1.SetFillerEnabledResponse\"6\xc2\xf3\x18\rfillers.write\xd2\xf3\x18!\n" +
-	"\x12filler.enabled_set\x12\vfiller:name\x12y\n" +
+	"\x0efiller.removed\x12\vfiller:name\x12\xa0\x01\n" +
+	"\fUpdateFiller\x12'.toshi.workspace.v1.UpdateFillerRequest\x1a(.toshi.workspace.v1.UpdateFillerResponse\"=\xc2\xf3\x18\rfillers.write\xd2\xf3\x18(\n" +
+	"\x12filler.enabled_set\x12\x12filler:filler.name\x12y\n" +
 	"\x0eListFillerRuns\x12).toshi.workspace.v1.ListFillerRunsRequest\x1a*.toshi.workspace.v1.ListFillerRunsResponse\"\x10\xc2\xf3\x18\ffillers.readB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
@@ -1100,22 +1103,23 @@ func file_toshi_workspace_v1_fillers_proto_rawDescGZIP() []byte {
 
 var file_toshi_workspace_v1_fillers_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_toshi_workspace_v1_fillers_proto_goTypes = []any{
-	(*Filler)(nil),                   // 0: toshi.workspace.v1.Filler
-	(*FillerRun)(nil),                // 1: toshi.workspace.v1.FillerRun
-	(*FillerHostMinutes)(nil),        // 2: toshi.workspace.v1.FillerHostMinutes
-	(*FillerPause)(nil),              // 3: toshi.workspace.v1.FillerPause
-	(*ListFillersRequest)(nil),       // 4: toshi.workspace.v1.ListFillersRequest
-	(*ListFillersResponse)(nil),      // 5: toshi.workspace.v1.ListFillersResponse
-	(*PutFillerRequest)(nil),         // 6: toshi.workspace.v1.PutFillerRequest
-	(*PutFillerResponse)(nil),        // 7: toshi.workspace.v1.PutFillerResponse
-	(*DeleteFillerRequest)(nil),      // 8: toshi.workspace.v1.DeleteFillerRequest
-	(*DeleteFillerResponse)(nil),     // 9: toshi.workspace.v1.DeleteFillerResponse
-	(*SetFillerEnabledRequest)(nil),  // 10: toshi.workspace.v1.SetFillerEnabledRequest
-	(*SetFillerEnabledResponse)(nil), // 11: toshi.workspace.v1.SetFillerEnabledResponse
-	(*ListFillerRunsRequest)(nil),    // 12: toshi.workspace.v1.ListFillerRunsRequest
-	(*ListFillerRunsResponse)(nil),   // 13: toshi.workspace.v1.ListFillerRunsResponse
-	(*durationpb.Duration)(nil),      // 14: google.protobuf.Duration
-	(*timestamppb.Timestamp)(nil),    // 15: google.protobuf.Timestamp
+	(*Filler)(nil),                 // 0: toshi.workspace.v1.Filler
+	(*FillerRun)(nil),              // 1: toshi.workspace.v1.FillerRun
+	(*FillerHostMinutes)(nil),      // 2: toshi.workspace.v1.FillerHostMinutes
+	(*FillerPause)(nil),            // 3: toshi.workspace.v1.FillerPause
+	(*ListFillersRequest)(nil),     // 4: toshi.workspace.v1.ListFillersRequest
+	(*ListFillersResponse)(nil),    // 5: toshi.workspace.v1.ListFillersResponse
+	(*PutFillerRequest)(nil),       // 6: toshi.workspace.v1.PutFillerRequest
+	(*PutFillerResponse)(nil),      // 7: toshi.workspace.v1.PutFillerResponse
+	(*DeleteFillerRequest)(nil),    // 8: toshi.workspace.v1.DeleteFillerRequest
+	(*DeleteFillerResponse)(nil),   // 9: toshi.workspace.v1.DeleteFillerResponse
+	(*UpdateFillerRequest)(nil),    // 10: toshi.workspace.v1.UpdateFillerRequest
+	(*UpdateFillerResponse)(nil),   // 11: toshi.workspace.v1.UpdateFillerResponse
+	(*ListFillerRunsRequest)(nil),  // 12: toshi.workspace.v1.ListFillerRunsRequest
+	(*ListFillerRunsResponse)(nil), // 13: toshi.workspace.v1.ListFillerRunsResponse
+	(*durationpb.Duration)(nil),    // 14: google.protobuf.Duration
+	(*timestamppb.Timestamp)(nil),  // 15: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),  // 16: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_fillers_proto_depIdxs = []int32{
 	14, // 0: toshi.workspace.v1.Filler.every:type_name -> google.protobuf.Duration
@@ -1134,24 +1138,26 @@ var file_toshi_workspace_v1_fillers_proto_depIdxs = []int32{
 	2,  // 13: toshi.workspace.v1.ListFillersResponse.host_minutes:type_name -> toshi.workspace.v1.FillerHostMinutes
 	0,  // 14: toshi.workspace.v1.PutFillerRequest.filler:type_name -> toshi.workspace.v1.Filler
 	0,  // 15: toshi.workspace.v1.PutFillerResponse.filler:type_name -> toshi.workspace.v1.Filler
-	0,  // 16: toshi.workspace.v1.SetFillerEnabledResponse.filler:type_name -> toshi.workspace.v1.Filler
-	1,  // 17: toshi.workspace.v1.ListFillerRunsResponse.runs:type_name -> toshi.workspace.v1.FillerRun
-	3,  // 18: toshi.workspace.v1.ListFillerRunsResponse.pauses:type_name -> toshi.workspace.v1.FillerPause
-	4,  // 19: toshi.workspace.v1.FillerService.ListFillers:input_type -> toshi.workspace.v1.ListFillersRequest
-	6,  // 20: toshi.workspace.v1.FillerService.PutFiller:input_type -> toshi.workspace.v1.PutFillerRequest
-	8,  // 21: toshi.workspace.v1.FillerService.DeleteFiller:input_type -> toshi.workspace.v1.DeleteFillerRequest
-	10, // 22: toshi.workspace.v1.FillerService.SetFillerEnabled:input_type -> toshi.workspace.v1.SetFillerEnabledRequest
-	12, // 23: toshi.workspace.v1.FillerService.ListFillerRuns:input_type -> toshi.workspace.v1.ListFillerRunsRequest
-	5,  // 24: toshi.workspace.v1.FillerService.ListFillers:output_type -> toshi.workspace.v1.ListFillersResponse
-	7,  // 25: toshi.workspace.v1.FillerService.PutFiller:output_type -> toshi.workspace.v1.PutFillerResponse
-	9,  // 26: toshi.workspace.v1.FillerService.DeleteFiller:output_type -> toshi.workspace.v1.DeleteFillerResponse
-	11, // 27: toshi.workspace.v1.FillerService.SetFillerEnabled:output_type -> toshi.workspace.v1.SetFillerEnabledResponse
-	13, // 28: toshi.workspace.v1.FillerService.ListFillerRuns:output_type -> toshi.workspace.v1.ListFillerRunsResponse
-	24, // [24:29] is the sub-list for method output_type
-	19, // [19:24] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	0,  // 16: toshi.workspace.v1.UpdateFillerRequest.filler:type_name -> toshi.workspace.v1.Filler
+	16, // 17: toshi.workspace.v1.UpdateFillerRequest.update_mask:type_name -> google.protobuf.FieldMask
+	0,  // 18: toshi.workspace.v1.UpdateFillerResponse.filler:type_name -> toshi.workspace.v1.Filler
+	1,  // 19: toshi.workspace.v1.ListFillerRunsResponse.runs:type_name -> toshi.workspace.v1.FillerRun
+	3,  // 20: toshi.workspace.v1.ListFillerRunsResponse.pauses:type_name -> toshi.workspace.v1.FillerPause
+	4,  // 21: toshi.workspace.v1.FillerService.ListFillers:input_type -> toshi.workspace.v1.ListFillersRequest
+	6,  // 22: toshi.workspace.v1.FillerService.PutFiller:input_type -> toshi.workspace.v1.PutFillerRequest
+	8,  // 23: toshi.workspace.v1.FillerService.DeleteFiller:input_type -> toshi.workspace.v1.DeleteFillerRequest
+	10, // 24: toshi.workspace.v1.FillerService.UpdateFiller:input_type -> toshi.workspace.v1.UpdateFillerRequest
+	12, // 25: toshi.workspace.v1.FillerService.ListFillerRuns:input_type -> toshi.workspace.v1.ListFillerRunsRequest
+	5,  // 26: toshi.workspace.v1.FillerService.ListFillers:output_type -> toshi.workspace.v1.ListFillersResponse
+	7,  // 27: toshi.workspace.v1.FillerService.PutFiller:output_type -> toshi.workspace.v1.PutFillerResponse
+	9,  // 28: toshi.workspace.v1.FillerService.DeleteFiller:output_type -> toshi.workspace.v1.DeleteFillerResponse
+	11, // 29: toshi.workspace.v1.FillerService.UpdateFiller:output_type -> toshi.workspace.v1.UpdateFillerResponse
+	13, // 30: toshi.workspace.v1.FillerService.ListFillerRuns:output_type -> toshi.workspace.v1.ListFillerRunsResponse
+	26, // [26:31] is the sub-list for method output_type
+	21, // [21:26] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_fillers_proto_init() }

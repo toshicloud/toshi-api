@@ -57,12 +57,17 @@ service OperatorService {
     option (toshi.audit) = {action: "host.state_set"};
   }
 
-  // SetHostOverflow sets whether a host is an overflow host and returns it as
-  // stored: an overflow host takes a job only when no other host the job may
-  // use has room and the job has queued for its plan's overflow_after.
-  // Operators only. An unknown ID fails with NOT_FOUND.
-  rpc SetHostOverflow(SetHostOverflowRequest) returns (SetHostOverflowResponse) {
-    option (toshi.audit) = {action: "host.overflow_set"};
+  // UpdateHost changes whether a host is an overflow host, named by the
+  // update_mask path overflow, and returns the host as stored: an overflow
+  // host takes a job only when no other host the job may use has room and
+  // the job has queued for its plan's overflow_after. Operators only. A
+  // missing host id, an empty mask or another path fails with
+  // INVALID_ARGUMENT; an unknown host fails with NOT_FOUND.
+  rpc UpdateHost(UpdateHostRequest) returns (UpdateHostResponse) {
+    option (toshi.audit) = {
+      action: "host.overflow_set"
+      target: "host:host.id"
+    };
   }
 
   // RetireHost removes a host that holds no assigned, starting or running
@@ -379,12 +384,14 @@ service OperatorService {
     };
   }
 
-  // SetFillerEnabled turns a filler on or off and returns it. Turning it off
-  // stops its running run. An unknown name fails with NOT_FOUND.
-  rpc SetFillerEnabled(SetFillerEnabledRequest) returns (SetFillerEnabledResponse) {
+  // UpdateFiller changes whether a filler is enabled, named by the
+  // update_mask path enabled, and returns the filler. Turning it off stops
+  // its running run. A missing name, an empty mask or another path fails
+  // with INVALID_ARGUMENT; an unknown name fails with NOT_FOUND.
+  rpc UpdateFiller(UpdateFillerRequest) returns (UpdateFillerResponse) {
     option (toshi.audit) = {
       action: "filler.enabled_set"
-      target: "filler:name"
+      target: "filler:filler.name"
     };
   }
 
@@ -399,14 +406,18 @@ service OperatorService {
   // operator token only.
   rpc GetSecretDelivery(GetSecretDeliveryRequest) returns (GetSecretDeliveryResponse);
 
-  // SetSecretDelivery turns delivery of secrets to CI jobs on or off and
-  // records the change with an audit event in the same transaction. On is
-  // refused with FAILED_PRECONDITION, naming the hosts, while a host that
-  // is not revoked is not ready for it; off does not depend on the hosts.
-  // Setting the value the switch has changes and records nothing. The
-  // operator token only.
-  rpc SetSecretDelivery(SetSecretDeliveryRequest) returns (SetSecretDeliveryResponse) {
-    option (toshi.audit) = {target: "none"};
+  // UpdateSecretDelivery changes whether secrets are delivered to CI jobs,
+  // named by the update_mask path enabled, and records the change with an
+  // audit event in the same transaction. An empty mask or another path
+  // fails with INVALID_ARGUMENT. On is refused with FAILED_PRECONDITION,
+  // naming the hosts, while a host that is not revoked is not ready for it;
+  // off does not depend on the hosts. Setting the value the switch has
+  // changes and records nothing. The operator token only.
+  rpc UpdateSecretDelivery(UpdateSecretDeliveryRequest) returns (UpdateSecretDeliveryResponse) {
+    option (toshi.audit) = {
+      action: "secret_delivery.set"
+      target: "none"
+    };
   }
 
   // ListUtilisation returns the shared hosts' utilisation roll-ups in a
@@ -1214,12 +1225,13 @@ message SetHostStateResponse {
   Host host = 1;
 }
 
-message SetHostOverflowRequest {
-  string host_id = 1;
-  bool overflow = 2;
+message UpdateHostRequest {
+  // The host to change; host.id names it. Only overflow is read from it.
+  Host host = 1;
+  google.protobuf.FieldMask update_mask = 2;
 }
 
-message SetHostOverflowResponse {
+message UpdateHostResponse {
   // The host as stored after the change.
   Host host = 1;
 }
@@ -2706,14 +2718,14 @@ message DeleteFillerRequest {
 
 message DeleteFillerResponse {}
 
-message SetFillerEnabledRequest {
-  string name = 1;
-  bool enabled = 2;
-  // The workspace of a dispatch filler. Empty: a command filler.
-  string workspace = 3;
+message UpdateFillerRequest {
+  // The filler to change; its name, and its workspace for a dispatch
+  // filler, name it. Only enabled is read from it.
+  Filler filler = 1;
+  google.protobuf.FieldMask update_mask = 2;
 }
 
-message SetFillerEnabledResponse {
+message UpdateFillerResponse {
   Filler filler = 1;
 }
 
@@ -2758,11 +2770,13 @@ message GetSecretDeliveryResponse {
   SecretDelivery delivery = 1;
 }
 
-message SetSecretDeliveryRequest {
-  bool enabled = 1;
+message UpdateSecretDeliveryRequest {
+  // The switch to change; only enabled is read from it.
+  SecretDelivery secret_delivery = 1;
+  google.protobuf.FieldMask update_mask = 2;
 }
 
-message SetSecretDeliveryResponse {
+message UpdateSecretDeliveryResponse {
   SecretDelivery delivery = 1;
   // False when the switch already had the value asked for.
   bool changed = 2;

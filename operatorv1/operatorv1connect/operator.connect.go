@@ -53,9 +53,9 @@ const (
 	// OperatorServiceSetHostStateProcedure is the fully-qualified name of the OperatorService's
 	// SetHostState RPC.
 	OperatorServiceSetHostStateProcedure = "/toshi.operator.v1.OperatorService/SetHostState"
-	// OperatorServiceSetHostOverflowProcedure is the fully-qualified name of the OperatorService's
-	// SetHostOverflow RPC.
-	OperatorServiceSetHostOverflowProcedure = "/toshi.operator.v1.OperatorService/SetHostOverflow"
+	// OperatorServiceUpdateHostProcedure is the fully-qualified name of the OperatorService's
+	// UpdateHost RPC.
+	OperatorServiceUpdateHostProcedure = "/toshi.operator.v1.OperatorService/UpdateHost"
 	// OperatorServiceRetireHostProcedure is the fully-qualified name of the OperatorService's
 	// RetireHost RPC.
 	OperatorServiceRetireHostProcedure = "/toshi.operator.v1.OperatorService/RetireHost"
@@ -161,18 +161,18 @@ const (
 	// OperatorServiceDeleteFillerProcedure is the fully-qualified name of the OperatorService's
 	// DeleteFiller RPC.
 	OperatorServiceDeleteFillerProcedure = "/toshi.operator.v1.OperatorService/DeleteFiller"
-	// OperatorServiceSetFillerEnabledProcedure is the fully-qualified name of the OperatorService's
-	// SetFillerEnabled RPC.
-	OperatorServiceSetFillerEnabledProcedure = "/toshi.operator.v1.OperatorService/SetFillerEnabled"
+	// OperatorServiceUpdateFillerProcedure is the fully-qualified name of the OperatorService's
+	// UpdateFiller RPC.
+	OperatorServiceUpdateFillerProcedure = "/toshi.operator.v1.OperatorService/UpdateFiller"
 	// OperatorServiceListFillerRunsProcedure is the fully-qualified name of the OperatorService's
 	// ListFillerRuns RPC.
 	OperatorServiceListFillerRunsProcedure = "/toshi.operator.v1.OperatorService/ListFillerRuns"
 	// OperatorServiceGetSecretDeliveryProcedure is the fully-qualified name of the OperatorService's
 	// GetSecretDelivery RPC.
 	OperatorServiceGetSecretDeliveryProcedure = "/toshi.operator.v1.OperatorService/GetSecretDelivery"
-	// OperatorServiceSetSecretDeliveryProcedure is the fully-qualified name of the OperatorService's
-	// SetSecretDelivery RPC.
-	OperatorServiceSetSecretDeliveryProcedure = "/toshi.operator.v1.OperatorService/SetSecretDelivery"
+	// OperatorServiceUpdateSecretDeliveryProcedure is the fully-qualified name of the OperatorService's
+	// UpdateSecretDelivery RPC.
+	OperatorServiceUpdateSecretDeliveryProcedure = "/toshi.operator.v1.OperatorService/UpdateSecretDelivery"
 	// OperatorServiceListUtilisationProcedure is the fully-qualified name of the OperatorService's
 	// ListUtilisation RPC.
 	OperatorServiceListUtilisationProcedure = "/toshi.operator.v1.OperatorService/ListUtilisation"
@@ -226,11 +226,13 @@ type OperatorServiceClient interface {
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
 	// fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
 	SetHostState(context.Context, *connect.Request[operatorv1.SetHostStateRequest]) (*connect.Response[operatorv1.SetHostStateResponse], error)
-	// SetHostOverflow sets whether a host is an overflow host and returns it as
-	// stored: an overflow host takes a job only when no other host the job may
-	// use has room and the job has queued for its plan's overflow_after.
-	// Operators only. An unknown ID fails with NOT_FOUND.
-	SetHostOverflow(context.Context, *connect.Request[operatorv1.SetHostOverflowRequest]) (*connect.Response[operatorv1.SetHostOverflowResponse], error)
+	// UpdateHost changes whether a host is an overflow host, named by the
+	// update_mask path overflow, and returns the host as stored: an overflow
+	// host takes a job only when no other host the job may use has room and
+	// the job has queued for its plan's overflow_after. Operators only. A
+	// missing host id, an empty mask or another path fails with
+	// INVALID_ARGUMENT; an unknown host fails with NOT_FOUND.
+	UpdateHost(context.Context, *connect.Request[operatorv1.UpdateHostRequest]) (*connect.Response[operatorv1.UpdateHostResponse], error)
 	// RetireHost removes a host that holds no assigned, starting or running
 	// job; otherwise it fails with FailedPrecondition (drain it first). Its
 	// agent, if still running, registers again with its enrollment token.
@@ -479,9 +481,11 @@ type OperatorServiceClient interface {
 	// filler cannot be removed (FailedPrecondition); an unknown name fails
 	// with NOT_FOUND. A workspace caller may remove only its own.
 	DeleteFiller(context.Context, *connect.Request[operatorv1.DeleteFillerRequest]) (*connect.Response[operatorv1.DeleteFillerResponse], error)
-	// SetFillerEnabled turns a filler on or off and returns it. Turning it off
-	// stops its running run. An unknown name fails with NOT_FOUND.
-	SetFillerEnabled(context.Context, *connect.Request[operatorv1.SetFillerEnabledRequest]) (*connect.Response[operatorv1.SetFillerEnabledResponse], error)
+	// UpdateFiller changes whether a filler is enabled, named by the
+	// update_mask path enabled, and returns the filler. Turning it off stops
+	// its running run. A missing name, an empty mask or another path fails
+	// with INVALID_ARGUMENT; an unknown name fails with NOT_FOUND.
+	UpdateFiller(context.Context, *connect.Request[operatorv1.UpdateFillerRequest]) (*connect.Response[operatorv1.UpdateFillerResponse], error)
 	// ListFillerRuns returns filler runs, newest first. A workspace caller sees
 	// only its own dispatch fillers' runs.
 	//
@@ -491,13 +495,14 @@ type OperatorServiceClient interface {
 	// and the hosts that keep it from turning on. The
 	// operator token only.
 	GetSecretDelivery(context.Context, *connect.Request[operatorv1.GetSecretDeliveryRequest]) (*connect.Response[operatorv1.GetSecretDeliveryResponse], error)
-	// SetSecretDelivery turns delivery of secrets to CI jobs on or off and
-	// records the change with an audit event in the same transaction. On is
-	// refused with FAILED_PRECONDITION, naming the hosts, while a host that
-	// is not revoked is not ready for it; off does not depend on the hosts.
-	// Setting the value the switch has changes and records nothing. The
-	// operator token only.
-	SetSecretDelivery(context.Context, *connect.Request[operatorv1.SetSecretDeliveryRequest]) (*connect.Response[operatorv1.SetSecretDeliveryResponse], error)
+	// UpdateSecretDelivery changes whether secrets are delivered to CI jobs,
+	// named by the update_mask path enabled, and records the change with an
+	// audit event in the same transaction. An empty mask or another path
+	// fails with INVALID_ARGUMENT. On is refused with FAILED_PRECONDITION,
+	// naming the hosts, while a host that is not revoked is not ready for it;
+	// off does not depend on the hosts. Setting the value the switch has
+	// changes and records nothing. The operator token only.
+	UpdateSecretDelivery(context.Context, *connect.Request[operatorv1.UpdateSecretDeliveryRequest]) (*connect.Response[operatorv1.UpdateSecretDeliveryResponse], error)
 	// ListUtilisation returns the shared hosts' utilisation roll-ups in a
 	// range, summed by OS pool or by host and by hour, day or week, with the
 	// rows of the hour in progress read from memory. Operator
@@ -615,10 +620,10 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("SetHostState")),
 			connect.WithClientOptions(opts...),
 		),
-		setHostOverflow: connect.NewClient[operatorv1.SetHostOverflowRequest, operatorv1.SetHostOverflowResponse](
+		updateHost: connect.NewClient[operatorv1.UpdateHostRequest, operatorv1.UpdateHostResponse](
 			httpClient,
-			baseURL+OperatorServiceSetHostOverflowProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetHostOverflow")),
+			baseURL+OperatorServiceUpdateHostProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("UpdateHost")),
 			connect.WithClientOptions(opts...),
 		),
 		retireHost: connect.NewClient[operatorv1.RetireHostRequest, operatorv1.RetireHostResponse](
@@ -831,10 +836,10 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("DeleteFiller")),
 			connect.WithClientOptions(opts...),
 		),
-		setFillerEnabled: connect.NewClient[operatorv1.SetFillerEnabledRequest, operatorv1.SetFillerEnabledResponse](
+		updateFiller: connect.NewClient[operatorv1.UpdateFillerRequest, operatorv1.UpdateFillerResponse](
 			httpClient,
-			baseURL+OperatorServiceSetFillerEnabledProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetFillerEnabled")),
+			baseURL+OperatorServiceUpdateFillerProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("UpdateFiller")),
 			connect.WithClientOptions(opts...),
 		),
 		listFillerRuns: connect.NewClient[operatorv1.ListFillerRunsRequest, operatorv1.ListFillerRunsResponse](
@@ -849,10 +854,10 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("GetSecretDelivery")),
 			connect.WithClientOptions(opts...),
 		),
-		setSecretDelivery: connect.NewClient[operatorv1.SetSecretDeliveryRequest, operatorv1.SetSecretDeliveryResponse](
+		updateSecretDelivery: connect.NewClient[operatorv1.UpdateSecretDeliveryRequest, operatorv1.UpdateSecretDeliveryResponse](
 			httpClient,
-			baseURL+OperatorServiceSetSecretDeliveryProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetSecretDelivery")),
+			baseURL+OperatorServiceUpdateSecretDeliveryProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("UpdateSecretDelivery")),
 			connect.WithClientOptions(opts...),
 		),
 		listUtilisation: connect.NewClient[operatorv1.ListUtilisationRequest, operatorv1.ListUtilisationResponse](
@@ -902,7 +907,7 @@ type operatorServiceClient struct {
 	listHosts             *connect.Client[operatorv1.ListHostsRequest, operatorv1.ListHostsResponse]
 	listHostStorage       *connect.Client[operatorv1.ListHostStorageRequest, operatorv1.ListHostStorageResponse]
 	setHostState          *connect.Client[operatorv1.SetHostStateRequest, operatorv1.SetHostStateResponse]
-	setHostOverflow       *connect.Client[operatorv1.SetHostOverflowRequest, operatorv1.SetHostOverflowResponse]
+	updateHost            *connect.Client[operatorv1.UpdateHostRequest, operatorv1.UpdateHostResponse]
 	retireHost            *connect.Client[operatorv1.RetireHostRequest, operatorv1.RetireHostResponse]
 	revokeHost            *connect.Client[operatorv1.RevokeHostRequest, operatorv1.RevokeHostResponse]
 	retireHosts           *connect.Client[operatorv1.RetireHostsRequest, operatorv1.RetireHostsResponse]
@@ -938,10 +943,10 @@ type operatorServiceClient struct {
 	listFillers           *connect.Client[operatorv1.ListFillersRequest, operatorv1.ListFillersResponse]
 	putFiller             *connect.Client[operatorv1.PutFillerRequest, operatorv1.PutFillerResponse]
 	deleteFiller          *connect.Client[operatorv1.DeleteFillerRequest, operatorv1.DeleteFillerResponse]
-	setFillerEnabled      *connect.Client[operatorv1.SetFillerEnabledRequest, operatorv1.SetFillerEnabledResponse]
+	updateFiller          *connect.Client[operatorv1.UpdateFillerRequest, operatorv1.UpdateFillerResponse]
 	listFillerRuns        *connect.Client[operatorv1.ListFillerRunsRequest, operatorv1.ListFillerRunsResponse]
 	getSecretDelivery     *connect.Client[operatorv1.GetSecretDeliveryRequest, operatorv1.GetSecretDeliveryResponse]
-	setSecretDelivery     *connect.Client[operatorv1.SetSecretDeliveryRequest, operatorv1.SetSecretDeliveryResponse]
+	updateSecretDelivery  *connect.Client[operatorv1.UpdateSecretDeliveryRequest, operatorv1.UpdateSecretDeliveryResponse]
 	listUtilisation       *connect.Client[operatorv1.ListUtilisationRequest, operatorv1.ListUtilisationResponse]
 	suggestPools          *connect.Client[operatorv1.SuggestPoolsRequest, operatorv1.SuggestPoolsResponse]
 	createStorageProvider *connect.Client[operatorv1.CreateStorageProviderRequest, operatorv1.CreateStorageProviderResponse]
@@ -980,9 +985,9 @@ func (c *operatorServiceClient) SetHostState(ctx context.Context, req *connect.R
 	return c.setHostState.CallUnary(ctx, req)
 }
 
-// SetHostOverflow calls toshi.operator.v1.OperatorService.SetHostOverflow.
-func (c *operatorServiceClient) SetHostOverflow(ctx context.Context, req *connect.Request[operatorv1.SetHostOverflowRequest]) (*connect.Response[operatorv1.SetHostOverflowResponse], error) {
-	return c.setHostOverflow.CallUnary(ctx, req)
+// UpdateHost calls toshi.operator.v1.OperatorService.UpdateHost.
+func (c *operatorServiceClient) UpdateHost(ctx context.Context, req *connect.Request[operatorv1.UpdateHostRequest]) (*connect.Response[operatorv1.UpdateHostResponse], error) {
+	return c.updateHost.CallUnary(ctx, req)
 }
 
 // RetireHost calls toshi.operator.v1.OperatorService.RetireHost.
@@ -1160,9 +1165,9 @@ func (c *operatorServiceClient) DeleteFiller(ctx context.Context, req *connect.R
 	return c.deleteFiller.CallUnary(ctx, req)
 }
 
-// SetFillerEnabled calls toshi.operator.v1.OperatorService.SetFillerEnabled.
-func (c *operatorServiceClient) SetFillerEnabled(ctx context.Context, req *connect.Request[operatorv1.SetFillerEnabledRequest]) (*connect.Response[operatorv1.SetFillerEnabledResponse], error) {
-	return c.setFillerEnabled.CallUnary(ctx, req)
+// UpdateFiller calls toshi.operator.v1.OperatorService.UpdateFiller.
+func (c *operatorServiceClient) UpdateFiller(ctx context.Context, req *connect.Request[operatorv1.UpdateFillerRequest]) (*connect.Response[operatorv1.UpdateFillerResponse], error) {
+	return c.updateFiller.CallUnary(ctx, req)
 }
 
 // ListFillerRuns calls toshi.operator.v1.OperatorService.ListFillerRuns.
@@ -1175,9 +1180,9 @@ func (c *operatorServiceClient) GetSecretDelivery(ctx context.Context, req *conn
 	return c.getSecretDelivery.CallUnary(ctx, req)
 }
 
-// SetSecretDelivery calls toshi.operator.v1.OperatorService.SetSecretDelivery.
-func (c *operatorServiceClient) SetSecretDelivery(ctx context.Context, req *connect.Request[operatorv1.SetSecretDeliveryRequest]) (*connect.Response[operatorv1.SetSecretDeliveryResponse], error) {
-	return c.setSecretDelivery.CallUnary(ctx, req)
+// UpdateSecretDelivery calls toshi.operator.v1.OperatorService.UpdateSecretDelivery.
+func (c *operatorServiceClient) UpdateSecretDelivery(ctx context.Context, req *connect.Request[operatorv1.UpdateSecretDeliveryRequest]) (*connect.Response[operatorv1.UpdateSecretDeliveryResponse], error) {
+	return c.updateSecretDelivery.CallUnary(ctx, req)
 }
 
 // ListUtilisation calls toshi.operator.v1.OperatorService.ListUtilisation.
@@ -1243,11 +1248,13 @@ type OperatorServiceHandler interface {
 	// HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
 	// fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
 	SetHostState(context.Context, *connect.Request[operatorv1.SetHostStateRequest]) (*connect.Response[operatorv1.SetHostStateResponse], error)
-	// SetHostOverflow sets whether a host is an overflow host and returns it as
-	// stored: an overflow host takes a job only when no other host the job may
-	// use has room and the job has queued for its plan's overflow_after.
-	// Operators only. An unknown ID fails with NOT_FOUND.
-	SetHostOverflow(context.Context, *connect.Request[operatorv1.SetHostOverflowRequest]) (*connect.Response[operatorv1.SetHostOverflowResponse], error)
+	// UpdateHost changes whether a host is an overflow host, named by the
+	// update_mask path overflow, and returns the host as stored: an overflow
+	// host takes a job only when no other host the job may use has room and
+	// the job has queued for its plan's overflow_after. Operators only. A
+	// missing host id, an empty mask or another path fails with
+	// INVALID_ARGUMENT; an unknown host fails with NOT_FOUND.
+	UpdateHost(context.Context, *connect.Request[operatorv1.UpdateHostRequest]) (*connect.Response[operatorv1.UpdateHostResponse], error)
 	// RetireHost removes a host that holds no assigned, starting or running
 	// job; otherwise it fails with FailedPrecondition (drain it first). Its
 	// agent, if still running, registers again with its enrollment token.
@@ -1496,9 +1503,11 @@ type OperatorServiceHandler interface {
 	// filler cannot be removed (FailedPrecondition); an unknown name fails
 	// with NOT_FOUND. A workspace caller may remove only its own.
 	DeleteFiller(context.Context, *connect.Request[operatorv1.DeleteFillerRequest]) (*connect.Response[operatorv1.DeleteFillerResponse], error)
-	// SetFillerEnabled turns a filler on or off and returns it. Turning it off
-	// stops its running run. An unknown name fails with NOT_FOUND.
-	SetFillerEnabled(context.Context, *connect.Request[operatorv1.SetFillerEnabledRequest]) (*connect.Response[operatorv1.SetFillerEnabledResponse], error)
+	// UpdateFiller changes whether a filler is enabled, named by the
+	// update_mask path enabled, and returns the filler. Turning it off stops
+	// its running run. A missing name, an empty mask or another path fails
+	// with INVALID_ARGUMENT; an unknown name fails with NOT_FOUND.
+	UpdateFiller(context.Context, *connect.Request[operatorv1.UpdateFillerRequest]) (*connect.Response[operatorv1.UpdateFillerResponse], error)
 	// ListFillerRuns returns filler runs, newest first. A workspace caller sees
 	// only its own dispatch fillers' runs.
 	//
@@ -1508,13 +1517,14 @@ type OperatorServiceHandler interface {
 	// and the hosts that keep it from turning on. The
 	// operator token only.
 	GetSecretDelivery(context.Context, *connect.Request[operatorv1.GetSecretDeliveryRequest]) (*connect.Response[operatorv1.GetSecretDeliveryResponse], error)
-	// SetSecretDelivery turns delivery of secrets to CI jobs on or off and
-	// records the change with an audit event in the same transaction. On is
-	// refused with FAILED_PRECONDITION, naming the hosts, while a host that
-	// is not revoked is not ready for it; off does not depend on the hosts.
-	// Setting the value the switch has changes and records nothing. The
-	// operator token only.
-	SetSecretDelivery(context.Context, *connect.Request[operatorv1.SetSecretDeliveryRequest]) (*connect.Response[operatorv1.SetSecretDeliveryResponse], error)
+	// UpdateSecretDelivery changes whether secrets are delivered to CI jobs,
+	// named by the update_mask path enabled, and records the change with an
+	// audit event in the same transaction. An empty mask or another path
+	// fails with INVALID_ARGUMENT. On is refused with FAILED_PRECONDITION,
+	// naming the hosts, while a host that is not revoked is not ready for it;
+	// off does not depend on the hosts. Setting the value the switch has
+	// changes and records nothing. The operator token only.
+	UpdateSecretDelivery(context.Context, *connect.Request[operatorv1.UpdateSecretDeliveryRequest]) (*connect.Response[operatorv1.UpdateSecretDeliveryResponse], error)
 	// ListUtilisation returns the shared hosts' utilisation roll-ups in a
 	// range, summed by OS pool or by host and by hour, day or week, with the
 	// rows of the hour in progress read from memory. Operator
@@ -1628,10 +1638,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("SetHostState")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceSetHostOverflowHandler := connect.NewUnaryHandler(
-		OperatorServiceSetHostOverflowProcedure,
-		svc.SetHostOverflow,
-		connect.WithSchema(operatorServiceMethods.ByName("SetHostOverflow")),
+	operatorServiceUpdateHostHandler := connect.NewUnaryHandler(
+		OperatorServiceUpdateHostProcedure,
+		svc.UpdateHost,
+		connect.WithSchema(operatorServiceMethods.ByName("UpdateHost")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceRetireHostHandler := connect.NewUnaryHandler(
@@ -1844,10 +1854,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("DeleteFiller")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceSetFillerEnabledHandler := connect.NewUnaryHandler(
-		OperatorServiceSetFillerEnabledProcedure,
-		svc.SetFillerEnabled,
-		connect.WithSchema(operatorServiceMethods.ByName("SetFillerEnabled")),
+	operatorServiceUpdateFillerHandler := connect.NewUnaryHandler(
+		OperatorServiceUpdateFillerProcedure,
+		svc.UpdateFiller,
+		connect.WithSchema(operatorServiceMethods.ByName("UpdateFiller")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceListFillerRunsHandler := connect.NewUnaryHandler(
@@ -1862,10 +1872,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("GetSecretDelivery")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceSetSecretDeliveryHandler := connect.NewUnaryHandler(
-		OperatorServiceSetSecretDeliveryProcedure,
-		svc.SetSecretDelivery,
-		connect.WithSchema(operatorServiceMethods.ByName("SetSecretDelivery")),
+	operatorServiceUpdateSecretDeliveryHandler := connect.NewUnaryHandler(
+		OperatorServiceUpdateSecretDeliveryProcedure,
+		svc.UpdateSecretDelivery,
+		connect.WithSchema(operatorServiceMethods.ByName("UpdateSecretDelivery")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceListUtilisationHandler := connect.NewUnaryHandler(
@@ -1918,8 +1928,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceListHostStorageHandler.ServeHTTP(w, r)
 		case OperatorServiceSetHostStateProcedure:
 			operatorServiceSetHostStateHandler.ServeHTTP(w, r)
-		case OperatorServiceSetHostOverflowProcedure:
-			operatorServiceSetHostOverflowHandler.ServeHTTP(w, r)
+		case OperatorServiceUpdateHostProcedure:
+			operatorServiceUpdateHostHandler.ServeHTTP(w, r)
 		case OperatorServiceRetireHostProcedure:
 			operatorServiceRetireHostHandler.ServeHTTP(w, r)
 		case OperatorServiceRevokeHostProcedure:
@@ -1990,14 +2000,14 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServicePutFillerHandler.ServeHTTP(w, r)
 		case OperatorServiceDeleteFillerProcedure:
 			operatorServiceDeleteFillerHandler.ServeHTTP(w, r)
-		case OperatorServiceSetFillerEnabledProcedure:
-			operatorServiceSetFillerEnabledHandler.ServeHTTP(w, r)
+		case OperatorServiceUpdateFillerProcedure:
+			operatorServiceUpdateFillerHandler.ServeHTTP(w, r)
 		case OperatorServiceListFillerRunsProcedure:
 			operatorServiceListFillerRunsHandler.ServeHTTP(w, r)
 		case OperatorServiceGetSecretDeliveryProcedure:
 			operatorServiceGetSecretDeliveryHandler.ServeHTTP(w, r)
-		case OperatorServiceSetSecretDeliveryProcedure:
-			operatorServiceSetSecretDeliveryHandler.ServeHTTP(w, r)
+		case OperatorServiceUpdateSecretDeliveryProcedure:
+			operatorServiceUpdateSecretDeliveryHandler.ServeHTTP(w, r)
 		case OperatorServiceListUtilisationProcedure:
 			operatorServiceListUtilisationHandler.ServeHTTP(w, r)
 		case OperatorServiceSuggestPoolsProcedure:
@@ -2043,8 +2053,8 @@ func (UnimplementedOperatorServiceHandler) SetHostState(context.Context, *connec
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetHostState is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) SetHostOverflow(context.Context, *connect.Request[operatorv1.SetHostOverflowRequest]) (*connect.Response[operatorv1.SetHostOverflowResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetHostOverflow is not implemented"))
+func (UnimplementedOperatorServiceHandler) UpdateHost(context.Context, *connect.Request[operatorv1.UpdateHostRequest]) (*connect.Response[operatorv1.UpdateHostResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.UpdateHost is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) RetireHost(context.Context, *connect.Request[operatorv1.RetireHostRequest]) (*connect.Response[operatorv1.RetireHostResponse], error) {
@@ -2187,8 +2197,8 @@ func (UnimplementedOperatorServiceHandler) DeleteFiller(context.Context, *connec
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.DeleteFiller is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) SetFillerEnabled(context.Context, *connect.Request[operatorv1.SetFillerEnabledRequest]) (*connect.Response[operatorv1.SetFillerEnabledResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetFillerEnabled is not implemented"))
+func (UnimplementedOperatorServiceHandler) UpdateFiller(context.Context, *connect.Request[operatorv1.UpdateFillerRequest]) (*connect.Response[operatorv1.UpdateFillerResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.UpdateFiller is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListFillerRuns(context.Context, *connect.Request[operatorv1.ListFillerRunsRequest]) (*connect.Response[operatorv1.ListFillerRunsResponse], error) {
@@ -2199,8 +2209,8 @@ func (UnimplementedOperatorServiceHandler) GetSecretDelivery(context.Context, *c
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetSecretDelivery is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) SetSecretDelivery(context.Context, *connect.Request[operatorv1.SetSecretDeliveryRequest]) (*connect.Response[operatorv1.SetSecretDeliveryResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetSecretDelivery is not implemented"))
+func (UnimplementedOperatorServiceHandler) UpdateSecretDelivery(context.Context, *connect.Request[operatorv1.UpdateSecretDeliveryRequest]) (*connect.Response[operatorv1.UpdateSecretDeliveryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.UpdateSecretDelivery is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListUtilisation(context.Context, *connect.Request[operatorv1.ListUtilisationRequest]) (*connect.Response[operatorv1.ListUtilisationResponse], error) {

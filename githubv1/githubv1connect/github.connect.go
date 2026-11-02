@@ -94,7 +94,7 @@ type GitHubServiceClient interface {
 	// when no GitHub App is configured. A suspended installation runs no jobs
 	// and is not listed. A failed read of the installations fails with
 	// UNAVAILABLE. Each call is a check whose answer is stored, with
-	// installation ids only, for OperatorService.SetSecretDelivery to turn
+	// installation ids only, for OperatorService.UpdateSecretDelivery to turn
 	// delivery on, unless a newer check started first; a failed
 	// read is stored as such. The operator token only.
 	CheckSecretDelivery(context.Context, *connect.Request[githubv1.CheckSecretDeliveryRequest]) (*connect.Response[githubv1.CheckSecretDeliveryResponse], error)
@@ -219,7 +219,7 @@ type GitHubServiceHandler interface {
 	// when no GitHub App is configured. A suspended installation runs no jobs
 	// and is not listed. A failed read of the installations fails with
 	// UNAVAILABLE. Each call is a check whose answer is stored, with
-	// installation ids only, for OperatorService.SetSecretDelivery to turn
+	// installation ids only, for OperatorService.UpdateSecretDelivery to turn
 	// delivery on, unless a newer check started first; a failed
 	// read is stored as such. The operator token only.
 	CheckSecretDelivery(context.Context, *connect.Request[githubv1.CheckSecretDeliveryRequest]) (*connect.Response[githubv1.CheckSecretDeliveryResponse], error)

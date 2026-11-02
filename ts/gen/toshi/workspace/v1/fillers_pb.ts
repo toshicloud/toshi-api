@@ -4,8 +4,8 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Duration, DurationJson, Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
-import { file_google_protobuf_duration, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
+import type { Duration, DurationJson, FieldMask, FieldMaskJson, Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_duration, file_google_protobuf_field_mask, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import { file_toshi_permission } from "../../permission_pb";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/fillers.proto.
  */
 export const file_toshi_workspace_v1_fillers: GenFile = /*@__PURE__*/
-  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvZmlsbGVycy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIv8DCgZGaWxsZXISDAoEbmFtZRgBIAEoCRIMCgRzaXplGAIgASgJEhIKCm5lc3RlZF9rdm0YAyABKAgSEgoKcmVwb3NpdG9yeRgEIAEoCRIQCgh3b3JrZmxvdxgFIAEoCRILCgNyZWYYBiABKAkSKAoFZXZlcnkYByABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SLwoMbWF4X2R1cmF0aW9uGAggASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEg8KB2VuYWJsZWQYCSABKAgSDgoGc291cmNlGAogASgJEi4KCmNyZWF0ZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KCGxhc3RfcnVuGA0gASgLMh0udG9zaGkud29ya3NwYWNlLnYxLkZpbGxlclJ1bhIUCgxwYXVzZV9yZWFzb24YDiABKAkSMAoMcGF1c2VkX3NpbmNlGA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgtwYXVzZV9hc19vZhgQIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDAoEa2luZBgRIAEoCSKHAgoJRmlsbGVyUnVuEgoKAmlkGAEgASgJEg4KBmZpbGxlchgCIAEoCRIPCgdob3N0X2lkGAMgASgJEg0KBXN0YXRlGAQgASgJEg4KBmpvYl9pZBgFIAEoCRIOCgZydW5faWQYBiABKAMSDQoFZXJyb3IYByABKAkSLgoKY3JlYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKc3RhcnRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLZmluaXNoZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjUKEUZpbGxlckhvc3RNaW51dGVzEg8KB2hvc3RfaWQYASABKAkSDwoHbWludXRlcxgCIAEoASKDAQoLRmlsbGVyUGF1c2USDgoGZmlsbGVyGAEgASgJEg4KBnJlYXNvbhgCIAEoCRIpCgVzaW5jZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKQoFYXNfb2YYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjsKEkxpc3RGaWxsZXJzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSKYAQoTTGlzdEZpbGxlcnNSZXNwb25zZRIrCgdmaWxsZXJzGAEgAygLMhoudG9zaGkud29ya3NwYWNlLnYxLkZpbGxlchIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkSOwoMaG9zdF9taW51dGVzGAMgAygLMiUudG9zaGkud29ya3NwYWNlLnYxLkZpbGxlckhvc3RNaW51dGVzIj4KEFB1dEZpbGxlclJlcXVlc3QSKgoGZmlsbGVyGAEgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLkZpbGxlciI/ChFQdXRGaWxsZXJSZXNwb25zZRIqCgZmaWxsZXIYASABKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuRmlsbGVyIiMKE0RlbGV0ZUZpbGxlclJlcXVlc3QSDAoEbmFtZRgBIAEoCSIWChREZWxldGVGaWxsZXJSZXNwb25zZSI4ChdTZXRGaWxsZXJFbmFibGVkUmVxdWVzdBIMCgRuYW1lGAEgASgJEg8KB2VuYWJsZWQYAiABKAgiRgoYU2V0RmlsbGVyRW5hYmxlZFJlc3BvbnNlEioKBmZpbGxlchgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5GaWxsZXIiTgoVTGlzdEZpbGxlclJ1bnNSZXF1ZXN0Eg4KBmZpbGxlchgBIAEoCRIRCglwYWdlX3NpemUYAiABKAUSEgoKcGFnZV90b2tlbhgDIAEoCSKPAQoWTGlzdEZpbGxlclJ1bnNSZXNwb25zZRIrCgRydW5zGAEgAygLMh0udG9zaGkud29ya3NwYWNlLnYxLkZpbGxlclJ1bhIvCgZwYXVzZXMYAiADKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuRmlsbGVyUGF1c2USFwoPbmV4dF9wYWdlX3Rva2VuGAMgASgJMsIFCg1GaWxsZXJTZXJ2aWNlEnAKC0xpc3RGaWxsZXJzEiYudG9zaGkud29ya3NwYWNlLnYxLkxpc3RGaWxsZXJzUmVxdWVzdBonLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0RmlsbGVyc1Jlc3BvbnNlIhDC8xgMZmlsbGVycy5yZWFkEoMBCglQdXRGaWxsZXISJC50b3NoaS53b3Jrc3BhY2UudjEuUHV0RmlsbGVyUmVxdWVzdBolLnRvc2hpLndvcmtzcGFjZS52MS5QdXRGaWxsZXJSZXNwb25zZSIpwvMYDWZpbGxlcnMud3JpdGXS8xgUEhJmaWxsZXI6ZmlsbGVyLm5hbWUSlQEKDERlbGV0ZUZpbGxlchInLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVGaWxsZXJSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUZpbGxlclJlc3BvbnNlIjLC8xgNZmlsbGVycy53cml0ZdLzGB0KDmZpbGxlci5yZW1vdmVkEgtmaWxsZXI6bmFtZRKlAQoQU2V0RmlsbGVyRW5hYmxlZBIrLnRvc2hpLndvcmtzcGFjZS52MS5TZXRGaWxsZXJFbmFibGVkUmVxdWVzdBosLnRvc2hpLndvcmtzcGFjZS52MS5TZXRGaWxsZXJFbmFibGVkUmVzcG9uc2UiNsLzGA1maWxsZXJzLndyaXRl0vMYIQoSZmlsbGVyLmVuYWJsZWRfc2V0EgtmaWxsZXI6bmFtZRJ5Cg5MaXN0RmlsbGVyUnVucxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0RmlsbGVyUnVuc1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEZpbGxlclJ1bnNSZXNwb25zZSIQwvMYDGZpbGxlcnMucmVhZEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvZmlsbGVycy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIv8DCgZGaWxsZXISDAoEbmFtZRgBIAEoCRIMCgRzaXplGAIgASgJEhIKCm5lc3RlZF9rdm0YAyABKAgSEgoKcmVwb3NpdG9yeRgEIAEoCRIQCgh3b3JrZmxvdxgFIAEoCRILCgNyZWYYBiABKAkSKAoFZXZlcnkYByABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SLwoMbWF4X2R1cmF0aW9uGAggASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEg8KB2VuYWJsZWQYCSABKAgSDgoGc291cmNlGAogASgJEi4KCmNyZWF0ZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KCGxhc3RfcnVuGA0gASgLMh0udG9zaGkud29ya3NwYWNlLnYxLkZpbGxlclJ1bhIUCgxwYXVzZV9yZWFzb24YDiABKAkSMAoMcGF1c2VkX3NpbmNlGA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgtwYXVzZV9hc19vZhgQIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDAoEa2luZBgRIAEoCSKHAgoJRmlsbGVyUnVuEgoKAmlkGAEgASgJEg4KBmZpbGxlchgCIAEoCRIPCgdob3N0X2lkGAMgASgJEg0KBXN0YXRlGAQgASgJEg4KBmpvYl9pZBgFIAEoCRIOCgZydW5faWQYBiABKAMSDQoFZXJyb3IYByABKAkSLgoKY3JlYXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKc3RhcnRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLZmluaXNoZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjUKEUZpbGxlckhvc3RNaW51dGVzEg8KB2hvc3RfaWQYASABKAkSDwoHbWludXRlcxgCIAEoASKDAQoLRmlsbGVyUGF1c2USDgoGZmlsbGVyGAEgASgJEg4KBnJlYXNvbhgCIAEoCRIpCgVzaW5jZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKQoFYXNfb2YYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjsKEkxpc3RGaWxsZXJzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSKYAQoTTGlzdEZpbGxlcnNSZXNwb25zZRIrCgdmaWxsZXJzGAEgAygLMhoudG9zaGkud29ya3NwYWNlLnYxLkZpbGxlchIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkSOwoMaG9zdF9taW51dGVzGAMgAygLMiUudG9zaGkud29ya3NwYWNlLnYxLkZpbGxlckhvc3RNaW51dGVzIj4KEFB1dEZpbGxlclJlcXVlc3QSKgoGZmlsbGVyGAEgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLkZpbGxlciI/ChFQdXRGaWxsZXJSZXNwb25zZRIqCgZmaWxsZXIYASABKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuRmlsbGVyIiMKE0RlbGV0ZUZpbGxlclJlcXVlc3QSDAoEbmFtZRgBIAEoCSIWChREZWxldGVGaWxsZXJSZXNwb25zZSJyChNVcGRhdGVGaWxsZXJSZXF1ZXN0EioKBmZpbGxlchgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5GaWxsZXISLwoLdXBkYXRlX21hc2sYAiABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrIkIKFFVwZGF0ZUZpbGxlclJlc3BvbnNlEioKBmZpbGxlchgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5GaWxsZXIiTgoVTGlzdEZpbGxlclJ1bnNSZXF1ZXN0Eg4KBmZpbGxlchgBIAEoCRIRCglwYWdlX3NpemUYAiABKAUSEgoKcGFnZV90b2tlbhgDIAEoCSKPAQoWTGlzdEZpbGxlclJ1bnNSZXNwb25zZRIrCgRydW5zGAEgAygLMh0udG9zaGkud29ya3NwYWNlLnYxLkZpbGxlclJ1bhIvCgZwYXVzZXMYAiADKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuRmlsbGVyUGF1c2USFwoPbmV4dF9wYWdlX3Rva2VuGAMgASgJMr0FCg1GaWxsZXJTZXJ2aWNlEnAKC0xpc3RGaWxsZXJzEiYudG9zaGkud29ya3NwYWNlLnYxLkxpc3RGaWxsZXJzUmVxdWVzdBonLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0RmlsbGVyc1Jlc3BvbnNlIhDC8xgMZmlsbGVycy5yZWFkEoMBCglQdXRGaWxsZXISJC50b3NoaS53b3Jrc3BhY2UudjEuUHV0RmlsbGVyUmVxdWVzdBolLnRvc2hpLndvcmtzcGFjZS52MS5QdXRGaWxsZXJSZXNwb25zZSIpwvMYDWZpbGxlcnMud3JpdGXS8xgUEhJmaWxsZXI6ZmlsbGVyLm5hbWUSlQEKDERlbGV0ZUZpbGxlchInLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVGaWxsZXJSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUZpbGxlclJlc3BvbnNlIjLC8xgNZmlsbGVycy53cml0ZdLzGB0KDmZpbGxlci5yZW1vdmVkEgtmaWxsZXI6bmFtZRKgAQoMVXBkYXRlRmlsbGVyEicudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZUZpbGxlclJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlRmlsbGVyUmVzcG9uc2UiPcLzGA1maWxsZXJzLndyaXRl0vMYKAoSZmlsbGVyLmVuYWJsZWRfc2V0EhJmaWxsZXI6ZmlsbGVyLm5hbWUSeQoOTGlzdEZpbGxlclJ1bnMSKS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEZpbGxlclJ1bnNSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLkxpc3RGaWxsZXJSdW5zUmVzcG9uc2UiEMLzGAxmaWxsZXJzLnJlYWRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_duration, file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Filler is a workflow of the workspace that Toshi dispatches with
@@ -782,46 +782,50 @@ export const DeleteFillerResponseSchema: GenMessage<DeleteFillerResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_fillers, 9);
 
 /**
- * @generated from message toshi.workspace.v1.SetFillerEnabledRequest
+ * @generated from message toshi.workspace.v1.UpdateFillerRequest
  */
-export type SetFillerEnabledRequest = Message<"toshi.workspace.v1.SetFillerEnabledRequest"> & {
+export type UpdateFillerRequest = Message<"toshi.workspace.v1.UpdateFillerRequest"> & {
   /**
-   * @generated from field: string name = 1;
+   * The filler to change; its name names it. Only enabled is read from it.
+   *
+   * @generated from field: toshi.workspace.v1.Filler filler = 1;
    */
-  name: string;
+  filler?: Filler | undefined;
 
   /**
-   * @generated from field: bool enabled = 2;
+   * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
-  enabled: boolean;
+  updateMask?: FieldMask | undefined;
 };
 
 /**
- * @generated from message toshi.workspace.v1.SetFillerEnabledRequest
+ * @generated from message toshi.workspace.v1.UpdateFillerRequest
  */
-export type SetFillerEnabledRequestJson = {
+export type UpdateFillerRequestJson = {
   /**
-   * @generated from field: string name = 1;
+   * The filler to change; its name names it. Only enabled is read from it.
+   *
+   * @generated from field: toshi.workspace.v1.Filler filler = 1;
    */
-  name?: string;
+  filler?: FillerJson;
 
   /**
-   * @generated from field: bool enabled = 2;
+   * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
-  enabled?: boolean;
+  updateMask?: FieldMaskJson;
 };
 
 /**
- * Describes the message toshi.workspace.v1.SetFillerEnabledRequest.
- * Use `create(SetFillerEnabledRequestSchema)` to create a new message.
+ * Describes the message toshi.workspace.v1.UpdateFillerRequest.
+ * Use `create(UpdateFillerRequestSchema)` to create a new message.
  */
-export const SetFillerEnabledRequestSchema: GenMessage<SetFillerEnabledRequest, {jsonType: SetFillerEnabledRequestJson}> = /*@__PURE__*/
+export const UpdateFillerRequestSchema: GenMessage<UpdateFillerRequest, {jsonType: UpdateFillerRequestJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_fillers, 10);
 
 /**
- * @generated from message toshi.workspace.v1.SetFillerEnabledResponse
+ * @generated from message toshi.workspace.v1.UpdateFillerResponse
  */
-export type SetFillerEnabledResponse = Message<"toshi.workspace.v1.SetFillerEnabledResponse"> & {
+export type UpdateFillerResponse = Message<"toshi.workspace.v1.UpdateFillerResponse"> & {
   /**
    * @generated from field: toshi.workspace.v1.Filler filler = 1;
    */
@@ -829,9 +833,9 @@ export type SetFillerEnabledResponse = Message<"toshi.workspace.v1.SetFillerEnab
 };
 
 /**
- * @generated from message toshi.workspace.v1.SetFillerEnabledResponse
+ * @generated from message toshi.workspace.v1.UpdateFillerResponse
  */
-export type SetFillerEnabledResponseJson = {
+export type UpdateFillerResponseJson = {
   /**
    * @generated from field: toshi.workspace.v1.Filler filler = 1;
    */
@@ -839,10 +843,10 @@ export type SetFillerEnabledResponseJson = {
 };
 
 /**
- * Describes the message toshi.workspace.v1.SetFillerEnabledResponse.
- * Use `create(SetFillerEnabledResponseSchema)` to create a new message.
+ * Describes the message toshi.workspace.v1.UpdateFillerResponse.
+ * Use `create(UpdateFillerResponseSchema)` to create a new message.
  */
-export const SetFillerEnabledResponseSchema: GenMessage<SetFillerEnabledResponse, {jsonType: SetFillerEnabledResponseJson}> = /*@__PURE__*/
+export const UpdateFillerResponseSchema: GenMessage<UpdateFillerResponse, {jsonType: UpdateFillerResponseJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_fillers, 11);
 
 /**
@@ -1016,15 +1020,17 @@ export const FillerService: GenService<{
     output: typeof DeleteFillerResponseSchema;
   },
   /**
-   * SetFillerEnabled turns a filler on or off and returns it. Turning it off
-   * stops its running run. An unknown name fails with NOT_FOUND.
+   * UpdateFiller changes whether a filler is enabled, named by the
+   * update_mask path enabled, and returns the filler. Turning it off stops
+   * its running run. A missing name, an empty mask or another path fails
+   * with INVALID_ARGUMENT; an unknown name fails with NOT_FOUND.
    *
-   * @generated from rpc toshi.workspace.v1.FillerService.SetFillerEnabled
+   * @generated from rpc toshi.workspace.v1.FillerService.UpdateFiller
    */
-  setFillerEnabled: {
+  updateFiller: {
     methodKind: "unary";
-    input: typeof SetFillerEnabledRequestSchema;
-    output: typeof SetFillerEnabledResponseSchema;
+    input: typeof UpdateFillerRequestSchema;
+    output: typeof UpdateFillerResponseSchema;
   },
   /**
    * ListFillerRuns returns the runs of the workspace's fillers, newest

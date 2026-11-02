@@ -41,9 +41,9 @@ const (
 	// FillerServiceDeleteFillerProcedure is the fully-qualified name of the FillerService's
 	// DeleteFiller RPC.
 	FillerServiceDeleteFillerProcedure = "/toshi.workspace.v1.FillerService/DeleteFiller"
-	// FillerServiceSetFillerEnabledProcedure is the fully-qualified name of the FillerService's
-	// SetFillerEnabled RPC.
-	FillerServiceSetFillerEnabledProcedure = "/toshi.workspace.v1.FillerService/SetFillerEnabled"
+	// FillerServiceUpdateFillerProcedure is the fully-qualified name of the FillerService's
+	// UpdateFiller RPC.
+	FillerServiceUpdateFillerProcedure = "/toshi.workspace.v1.FillerService/UpdateFiller"
 	// FillerServiceListFillerRunsProcedure is the fully-qualified name of the FillerService's
 	// ListFillerRuns RPC.
 	FillerServiceListFillerRunsProcedure = "/toshi.workspace.v1.FillerService/ListFillerRuns"
@@ -66,9 +66,11 @@ type FillerServiceClient interface {
 	// filler cannot be removed (FAILED_PRECONDITION); an unknown name fails
 	// with NOT_FOUND.
 	DeleteFiller(context.Context, *connect.Request[workspacev1.DeleteFillerRequest]) (*connect.Response[workspacev1.DeleteFillerResponse], error)
-	// SetFillerEnabled turns a filler on or off and returns it. Turning it off
-	// stops its running run. An unknown name fails with NOT_FOUND.
-	SetFillerEnabled(context.Context, *connect.Request[workspacev1.SetFillerEnabledRequest]) (*connect.Response[workspacev1.SetFillerEnabledResponse], error)
+	// UpdateFiller changes whether a filler is enabled, named by the
+	// update_mask path enabled, and returns the filler. Turning it off stops
+	// its running run. A missing name, an empty mask or another path fails
+	// with INVALID_ARGUMENT; an unknown name fails with NOT_FOUND.
+	UpdateFiller(context.Context, *connect.Request[workspacev1.UpdateFillerRequest]) (*connect.Response[workspacev1.UpdateFillerResponse], error)
 	// ListFillerRuns returns the runs of the workspace's fillers, newest
 	// first.
 	//
@@ -105,10 +107,10 @@ func NewFillerServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(fillerServiceMethods.ByName("DeleteFiller")),
 			connect.WithClientOptions(opts...),
 		),
-		setFillerEnabled: connect.NewClient[workspacev1.SetFillerEnabledRequest, workspacev1.SetFillerEnabledResponse](
+		updateFiller: connect.NewClient[workspacev1.UpdateFillerRequest, workspacev1.UpdateFillerResponse](
 			httpClient,
-			baseURL+FillerServiceSetFillerEnabledProcedure,
-			connect.WithSchema(fillerServiceMethods.ByName("SetFillerEnabled")),
+			baseURL+FillerServiceUpdateFillerProcedure,
+			connect.WithSchema(fillerServiceMethods.ByName("UpdateFiller")),
 			connect.WithClientOptions(opts...),
 		),
 		listFillerRuns: connect.NewClient[workspacev1.ListFillerRunsRequest, workspacev1.ListFillerRunsResponse](
@@ -122,11 +124,11 @@ func NewFillerServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 
 // fillerServiceClient implements FillerServiceClient.
 type fillerServiceClient struct {
-	listFillers      *connect.Client[workspacev1.ListFillersRequest, workspacev1.ListFillersResponse]
-	putFiller        *connect.Client[workspacev1.PutFillerRequest, workspacev1.PutFillerResponse]
-	deleteFiller     *connect.Client[workspacev1.DeleteFillerRequest, workspacev1.DeleteFillerResponse]
-	setFillerEnabled *connect.Client[workspacev1.SetFillerEnabledRequest, workspacev1.SetFillerEnabledResponse]
-	listFillerRuns   *connect.Client[workspacev1.ListFillerRunsRequest, workspacev1.ListFillerRunsResponse]
+	listFillers    *connect.Client[workspacev1.ListFillersRequest, workspacev1.ListFillersResponse]
+	putFiller      *connect.Client[workspacev1.PutFillerRequest, workspacev1.PutFillerResponse]
+	deleteFiller   *connect.Client[workspacev1.DeleteFillerRequest, workspacev1.DeleteFillerResponse]
+	updateFiller   *connect.Client[workspacev1.UpdateFillerRequest, workspacev1.UpdateFillerResponse]
+	listFillerRuns *connect.Client[workspacev1.ListFillerRunsRequest, workspacev1.ListFillerRunsResponse]
 }
 
 // ListFillers calls toshi.workspace.v1.FillerService.ListFillers.
@@ -144,9 +146,9 @@ func (c *fillerServiceClient) DeleteFiller(ctx context.Context, req *connect.Req
 	return c.deleteFiller.CallUnary(ctx, req)
 }
 
-// SetFillerEnabled calls toshi.workspace.v1.FillerService.SetFillerEnabled.
-func (c *fillerServiceClient) SetFillerEnabled(ctx context.Context, req *connect.Request[workspacev1.SetFillerEnabledRequest]) (*connect.Response[workspacev1.SetFillerEnabledResponse], error) {
-	return c.setFillerEnabled.CallUnary(ctx, req)
+// UpdateFiller calls toshi.workspace.v1.FillerService.UpdateFiller.
+func (c *fillerServiceClient) UpdateFiller(ctx context.Context, req *connect.Request[workspacev1.UpdateFillerRequest]) (*connect.Response[workspacev1.UpdateFillerResponse], error) {
+	return c.updateFiller.CallUnary(ctx, req)
 }
 
 // ListFillerRuns calls toshi.workspace.v1.FillerService.ListFillerRuns.
@@ -171,9 +173,11 @@ type FillerServiceHandler interface {
 	// filler cannot be removed (FAILED_PRECONDITION); an unknown name fails
 	// with NOT_FOUND.
 	DeleteFiller(context.Context, *connect.Request[workspacev1.DeleteFillerRequest]) (*connect.Response[workspacev1.DeleteFillerResponse], error)
-	// SetFillerEnabled turns a filler on or off and returns it. Turning it off
-	// stops its running run. An unknown name fails with NOT_FOUND.
-	SetFillerEnabled(context.Context, *connect.Request[workspacev1.SetFillerEnabledRequest]) (*connect.Response[workspacev1.SetFillerEnabledResponse], error)
+	// UpdateFiller changes whether a filler is enabled, named by the
+	// update_mask path enabled, and returns the filler. Turning it off stops
+	// its running run. A missing name, an empty mask or another path fails
+	// with INVALID_ARGUMENT; an unknown name fails with NOT_FOUND.
+	UpdateFiller(context.Context, *connect.Request[workspacev1.UpdateFillerRequest]) (*connect.Response[workspacev1.UpdateFillerResponse], error)
 	// ListFillerRuns returns the runs of the workspace's fillers, newest
 	// first.
 	//
@@ -206,10 +210,10 @@ func NewFillerServiceHandler(svc FillerServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(fillerServiceMethods.ByName("DeleteFiller")),
 		connect.WithHandlerOptions(opts...),
 	)
-	fillerServiceSetFillerEnabledHandler := connect.NewUnaryHandler(
-		FillerServiceSetFillerEnabledProcedure,
-		svc.SetFillerEnabled,
-		connect.WithSchema(fillerServiceMethods.ByName("SetFillerEnabled")),
+	fillerServiceUpdateFillerHandler := connect.NewUnaryHandler(
+		FillerServiceUpdateFillerProcedure,
+		svc.UpdateFiller,
+		connect.WithSchema(fillerServiceMethods.ByName("UpdateFiller")),
 		connect.WithHandlerOptions(opts...),
 	)
 	fillerServiceListFillerRunsHandler := connect.NewUnaryHandler(
@@ -226,8 +230,8 @@ func NewFillerServiceHandler(svc FillerServiceHandler, opts ...connect.HandlerOp
 			fillerServicePutFillerHandler.ServeHTTP(w, r)
 		case FillerServiceDeleteFillerProcedure:
 			fillerServiceDeleteFillerHandler.ServeHTTP(w, r)
-		case FillerServiceSetFillerEnabledProcedure:
-			fillerServiceSetFillerEnabledHandler.ServeHTTP(w, r)
+		case FillerServiceUpdateFillerProcedure:
+			fillerServiceUpdateFillerHandler.ServeHTTP(w, r)
 		case FillerServiceListFillerRunsProcedure:
 			fillerServiceListFillerRunsHandler.ServeHTTP(w, r)
 		default:
@@ -251,8 +255,8 @@ func (UnimplementedFillerServiceHandler) DeleteFiller(context.Context, *connect.
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.FillerService.DeleteFiller is not implemented"))
 }
 
-func (UnimplementedFillerServiceHandler) SetFillerEnabled(context.Context, *connect.Request[workspacev1.SetFillerEnabledRequest]) (*connect.Response[workspacev1.SetFillerEnabledResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.FillerService.SetFillerEnabled is not implemented"))
+func (UnimplementedFillerServiceHandler) UpdateFiller(context.Context, *connect.Request[workspacev1.UpdateFillerRequest]) (*connect.Response[workspacev1.UpdateFillerResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.FillerService.UpdateFiller is not implemented"))
 }
 
 func (UnimplementedFillerServiceHandler) ListFillerRuns(context.Context, *connect.Request[workspacev1.ListFillerRunsRequest]) (*connect.Response[workspacev1.ListFillerRunsResponse], error) {

@@ -3,6 +3,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -45,13 +46,15 @@ service FillerService {
       target: "filler:name"
     };
   }
-  // SetFillerEnabled turns a filler on or off and returns it. Turning it off
-  // stops its running run. An unknown name fails with NOT_FOUND.
-  rpc SetFillerEnabled(SetFillerEnabledRequest) returns (SetFillerEnabledResponse) {
+  // UpdateFiller changes whether a filler is enabled, named by the
+  // update_mask path enabled, and returns the filler. Turning it off stops
+  // its running run. A missing name, an empty mask or another path fails
+  // with INVALID_ARGUMENT; an unknown name fails with NOT_FOUND.
+  rpc UpdateFiller(UpdateFillerRequest) returns (UpdateFillerResponse) {
     option (toshi.permission) = "fillers.write";
     option (toshi.audit) = {
       action: "filler.enabled_set"
-      target: "filler:name"
+      target: "filler:filler.name"
     };
   }
   // ListFillerRuns returns the runs of the workspace's fillers, newest
@@ -195,12 +198,13 @@ message DeleteFillerRequest {
 
 message DeleteFillerResponse {}
 
-message SetFillerEnabledRequest {
-  string name = 1;
-  bool enabled = 2;
+message UpdateFillerRequest {
+  // The filler to change; its name names it. Only enabled is read from it.
+  Filler filler = 1;
+  google.protobuf.FieldMask update_mask = 2;
 }
 
-message SetFillerEnabledResponse {
+message UpdateFillerResponse {
   Filler filler = 1;
 }
 
