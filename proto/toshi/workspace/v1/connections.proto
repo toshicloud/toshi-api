@@ -53,6 +53,7 @@ service ConnectionService {
   // ALREADY_EXISTS, and an environment the project does not have with
   // NOT_FOUND.
   rpc CreateConnection(CreateConnectionRequest) returns (CreateConnectionResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
   }
@@ -64,6 +65,7 @@ service ConnectionService {
   // naming them as project/name, and one the workspace does not have with
   // NOT_FOUND.
   rpc DeleteConnection(DeleteConnectionRequest) returns (DeleteConnectionResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
   }
@@ -77,6 +79,7 @@ service ConnectionService {
   // with INVALID_ARGUMENT, a GITHUB connection with FAILED_PRECONDITION,
   // and one the workspace does not have with NOT_FOUND.
   rpc RotateConnectionSecret(RotateConnectionSecretRequest) returns (RotateConnectionSecretResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {
@@ -96,6 +99,7 @@ service ConnectionService {
   // GITHUB connection is FAILED_PRECONDITION, and one the workspace does
   // not have NOT_FOUND.
   rpc UpdateConnection(UpdateConnectionRequest) returns (UpdateConnectionResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {target: "connection:connection.id"};
@@ -132,6 +136,7 @@ service ConnectionService {
   // request_key is required: a retry with the same key and the same
   // request returns what the first call returned and replays nothing.
   rpc ReplayConnectionDelivery(ReplayConnectionDeliveryRequest) returns (ReplayConnectionDeliveryResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {

@@ -31,6 +31,7 @@ service WebhookService {
   // control plane must hold a keyring to seal the secret; without one the
   // call fails with FAILED_PRECONDITION.
   rpc CreateWebhook(CreateWebhookRequest) returns (CreateWebhookResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "webhooks.write";
     option (toshi.scope) = "workspace";
   }
@@ -56,11 +57,13 @@ service WebhookService {
   // owes none written while it was disabled, and a try already under way
   // finishes within its claim, which holds a delivery for one minute.
   rpc UpdateWebhook(UpdateWebhookRequest) returns (UpdateWebhookResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "webhooks.write";
   }
 
   // DeleteWebhook deletes a webhook and its deliveries.
   rpc DeleteWebhook(DeleteWebhookRequest) returns (DeleteWebhookResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "webhooks.write";
   }
 
@@ -72,6 +75,7 @@ service WebhookService {
   // the replaced secret alone. A rotation while the
   // previous secret's window is still open fails with FAILED_PRECONDITION.
   rpc RotateWebhookSecret(RotateWebhookSecretRequest) returns (RotateWebhookSecretResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "webhooks.write";
     option (toshi.audit) = {action: "webhook.secret_rotated"};
   }
@@ -96,6 +100,7 @@ service WebhookService {
   // then goes before it; it does not wait for the newer ones to be
   // delivered. A disabled webhook fails with FAILED_PRECONDITION.
   rpc ReplayWebhookEvents(ReplayWebhookEventsRequest) returns (ReplayWebhookEventsResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "webhooks.write";
     option (toshi.audit) = {action: "webhook.events_replayed"};
   }

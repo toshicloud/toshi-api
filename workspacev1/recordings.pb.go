@@ -1015,7 +1015,11 @@ type CreateRecordingShareLinkRequest struct {
 	// workspace's plan's maximum when that is lower. More than the plan's
 	// maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT, and less than
 	// the recording's object is INVALID_ARGUMENT.
-	MaxBytes      int64 `protobuf:"varint,3,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
+	MaxBytes int64 `protobuf:"varint,3,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1069,6 +1073,13 @@ func (x *CreateRecordingShareLinkRequest) GetMaxBytes() int64 {
 		return x.MaxBytes
 	}
 	return 0
+}
+
+func (x *CreateRecordingShareLinkRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type CreateRecordingShareLinkResponse struct {
@@ -1421,12 +1432,14 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12\x1d\n" +
 	"\n" +
 	"created_by\x18\n" +
-	" \x01(\tR\tcreatedBy\"\x9b\x01\n" +
+	" \x01(\tR\tcreatedBy\"\xbc\x01\n" +
 	"\x1fCreateRecordingShareLinkRequest\x12!\n" +
 	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x128\n" +
 	"\n" +
 	"expires_in\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12\x1b\n" +
-	"\tmax_bytes\x18\x03 \x01(\x03R\bmaxBytes\"\x9a\x01\n" +
+	"\tmax_bytes\x18\x03 \x01(\x03R\bmaxBytes\x12\x1f\n" +
+	"\vrequest_key\x18\x04 \x01(\tR\n" +
+	"requestKey\"\x9a\x01\n" +
 	" CreateRecordingShareLinkResponse\x12E\n" +
 	"\n" +
 	"share_link\x18\x01 \x01(\v2&.toshi.workspace.v1.RecordingShareLinkR\tshareLink\x12\x10\n" +
@@ -1468,16 +1481,16 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"!RECORDING_SHARE_LINK_STATE_ACTIVE\x10\x01\x12&\n" +
 	"\"RECORDING_SHARE_LINK_STATE_REVOKED\x10\x02\x12&\n" +
 	"\"RECORDING_SHARE_LINK_STATE_EXPIRED\x10\x03\x12$\n" +
-	" RECORDING_SHARE_LINK_STATE_ENDED\x10\x042\xfd\a\n" +
+	" RECORDING_SHARE_LINK_STATE_ENDED\x10\x042\x85\b\n" +
 	"\x10RecordingService\x12\x8b\x01\n" +
 	"\x0eListRecordings\x12).toshi.workspace.v1.ListRecordingsRequest\x1a*.toshi.workspace.v1.ListRecordingsResponse\"\"\xc2\xf3\x18\x0frecordings.read\xca\xf3\x18\venvironment\x12\xc3\x01\n" +
 	"\fGetRecording\x12'.toshi.workspace.v1.GetRecordingRequest\x1a(.toshi.workspace.v1.GetRecordingResponse\"`\xc2\xf3\x18\x0frecordings.read\xca\xf3\x18\venvironment\xd2\xf3\x18:\n" +
-	"\x0fartifact.viewed\x12'artifact:response.recording.artifact_id\x12\xf8\x01\n" +
-	"\x18CreateRecordingShareLink\x123.toshi.workspace.v1.CreateRecordingShareLinkRequest\x1a4.toshi.workspace.v1.CreateRecordingShareLinkResponse\"q\xc2\xf3\x18\x10recordings.write\xca\xf3\x18\venvironment\xd2\xf3\x18J\n" +
-	"\x1brecording.share_link_issued\x12+recording_share_link:response.share_link.id\x12\xa6\x01\n" +
-	"\x17ListRecordingShareLinks\x122.toshi.workspace.v1.ListRecordingShareLinksRequest\x1a3.toshi.workspace.v1.ListRecordingShareLinksResponse\"\"\xc2\xf3\x18\x0frecordings.read\xca\xf3\x18\venvironment\x12\xf0\x01\n" +
-	"\x18RevokeRecordingShareLink\x123.toshi.workspace.v1.RevokeRecordingShareLinkRequest\x1a4.toshi.workspace.v1.RevokeRecordingShareLinkResponse\"i\xc2\xf3\x18\x10recordings.write\xca\xf3\x18\venvironment\xd2\xf3\x18B\n" +
-	"\x1crecording.share_link_revoked\x12\"recording_share_link:share_link_idB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x0fartifact.viewed\x12'artifact:response.recording.artifact_id\x12\xfc\x01\n" +
+	"\x18CreateRecordingShareLink\x123.toshi.workspace.v1.CreateRecordingShareLinkRequest\x1a4.toshi.workspace.v1.CreateRecordingShareLinkResponse\"u\xc2\xf3\x18\x10recordings.write\xca\xf3\x18\venvironment\xd2\xf3\x18J\n" +
+	"\x1brecording.share_link_issued\x12+recording_share_link:response.share_link.id\x90\xf4\x18\x01\x12\xa6\x01\n" +
+	"\x17ListRecordingShareLinks\x122.toshi.workspace.v1.ListRecordingShareLinksRequest\x1a3.toshi.workspace.v1.ListRecordingShareLinksResponse\"\"\xc2\xf3\x18\x0frecordings.read\xca\xf3\x18\venvironment\x12\xf4\x01\n" +
+	"\x18RevokeRecordingShareLink\x123.toshi.workspace.v1.RevokeRecordingShareLinkRequest\x1a4.toshi.workspace.v1.RevokeRecordingShareLinkResponse\"m\xc2\xf3\x18\x10recordings.write\xca\xf3\x18\venvironment\xd2\xf3\x18B\n" +
+	"\x1crecording.share_link_revoked\x12\"recording_share_link:share_link_id\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_recordings_proto_rawDescOnce sync.Once

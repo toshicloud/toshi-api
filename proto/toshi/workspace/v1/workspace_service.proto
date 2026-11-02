@@ -48,6 +48,7 @@ service WorkspaceService {
   // descriptions say. A workspace.etag that differs from the workspace's
   // fails with ABORTED and changes nothing; without one the last write wins.
   rpc UpdateWorkspace(UpdateWorkspaceRequest) returns (UpdateWorkspaceResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "workspace.write";
     option (toshi.by_field) = true;
   }
@@ -99,6 +100,7 @@ service WorkspaceService {
   // it, so assigning a seat to another person in its place is a second
   // seat.
   rpc AssignSeat(AssignSeatRequest) returns (AssignSeatResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "seats.write";
     option (toshi.audit) = {action: "seat.assigned", target: "seat:response.seat.id"};
   }
@@ -108,6 +110,7 @@ service WorkspaceService {
   // already removed, fails with NOT_FOUND. A member's removal from the
   // workspace removes their seat too.
   rpc RemoveSeat(RemoveSeatRequest) returns (RemoveSeatResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "seats.write";
     option (toshi.audit) = {action: "seat.removed"};
   }
@@ -180,6 +183,7 @@ service WorkspaceService {
   // that already has a subscription fails with FAILED_PRECONDITION; a
   // billing provider failure fails with UNAVAILABLE.
   rpc CreateCheckoutSession(CreateCheckoutSessionRequest) returns (CreateCheckoutSessionResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "billing.write";
     option (toshi.audit) = {
       action: "billing.checkout_opened"
@@ -192,6 +196,7 @@ service WorkspaceService {
   // billing not configured, or a workspace with no billing customer, fails with
   // FAILED_PRECONDITION; a billing provider failure fails with UNAVAILABLE.
   rpc CreateBillingPortalSession(CreateBillingPortalSessionRequest) returns (CreateBillingPortalSessionResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "billing.write";
     option (toshi.audit) = {
       action: "billing.portal_opened"
@@ -213,6 +218,7 @@ service WorkspaceService {
   // google.rpc.ErrorInfo reason. The answer carries the workspace with
   // purge_after and deletion_by "owner".
   rpc DeleteWorkspace(DeleteWorkspaceRequest) returns (DeleteWorkspaceResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "workspace.delete";
     option (toshi.audit) = {action: "workspace.deletion_scheduled"};
   }
@@ -224,6 +230,7 @@ service WorkspaceService {
   // purge_after has passed fails with FAILED_PRECONDITION, with the reason
   // in a google.rpc.ErrorInfo.
   rpc CancelWorkspaceDeletion(CancelWorkspaceDeletionRequest) returns (CancelWorkspaceDeletionResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "workspace.delete";
     option (toshi.audit) = {action: "workspace.resumed"};
   }
@@ -606,6 +613,10 @@ message CreateCheckoutSessionRequest {
   // is required and must be on the origin of a redirect URI of a
   // registered client, whether declared in the configuration or registered.
   string return_url = 2;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 3;
 }
 
 message CreateCheckoutSessionResponse {
@@ -619,6 +630,10 @@ message CreateBillingPortalSessionRequest {
   // and must be on the origin of a redirect URI of a registered client,
   // whether declared in the configuration or registered.
   string return_url = 1;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 2;
 }
 
 message CreateBillingPortalSessionResponse {

@@ -3292,7 +3292,11 @@ type CreateEndpointConnectTokenRequest struct {
 	Mode EndpointAttachMode `protobuf:"varint,4,opt,name=mode,proto3,enum=toshi.workspace.v1.EndpointAttachMode" json:"mode,omitempty"`
 	// A grant the caller's workspace received, to act on the owner's
 	// sandbox's job through it (docs/grants.md).
-	Grant         string `protobuf:"bytes,5,opt,name=grant,proto3" json:"grant,omitempty"`
+	Grant string `protobuf:"bytes,5,opt,name=grant,proto3" json:"grant,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3358,6 +3362,13 @@ func (x *CreateEndpointConnectTokenRequest) GetMode() EndpointAttachMode {
 func (x *CreateEndpointConnectTokenRequest) GetGrant() string {
 	if x != nil {
 		return x.Grant
+	}
+	return ""
+}
+
+func (x *CreateEndpointConnectTokenRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -4111,9 +4122,13 @@ func (x *TailEndpointMessagesResponse) GetNextCursor() string {
 type ReplayEndpointMessageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The event endpoint's service, by its ID, and the endpoint's name.
-	Service       string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
-	Endpoint      string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	MessageId     string `protobuf:"bytes,3,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	Service   string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	Endpoint  string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	MessageId string `protobuf:"bytes,3,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4165,6 +4180,13 @@ func (x *ReplayEndpointMessageRequest) GetEndpoint() string {
 func (x *ReplayEndpointMessageRequest) GetMessageId() string {
 	if x != nil {
 		return x.MessageId
+	}
+	return ""
+}
+
+func (x *ReplayEndpointMessageRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -4484,13 +4506,15 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12!\n" +
 	"\fcontent_type\x18\x03 \x01(\tR\vcontentType\x12\x12\n" +
 	"\x04from\x18\x04 \x01(\x03R\x04from\x12\x12\n" +
-	"\x04next\x18\x05 \x01(\x03R\x04next\"\xb8\x01\n" +
+	"\x04next\x18\x05 \x01(\x03R\x04next\"\xd9\x01\n" +
 	"!CreateEndpointConnectTokenRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
 	"\x06device\x18\x03 \x01(\tR\x06device\x12:\n" +
 	"\x04mode\x18\x04 \x01(\x0e2&.toshi.workspace.v1.EndpointAttachModeR\x04mode\x12\x14\n" +
-	"\x05grant\x18\x05 \x01(\tR\x05grant\"\xf1\x01\n" +
+	"\x05grant\x18\x05 \x01(\tR\x05grant\x12\x1f\n" +
+	"\vrequest_key\x18\x06 \x01(\tR\n" +
+	"requestKey\"\xf1\x01\n" +
 	"\"CreateEndpointConnectTokenResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05token\x18\x02 \x01(\tR\x05token\x12\x10\n" +
@@ -4540,12 +4564,14 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x1cTailEndpointMessagesResponse\x12=\n" +
 	"\amessage\x18\x01 \x01(\v2#.toshi.workspace.v1.EndpointMessageR\amessage\x12\x1f\n" +
 	"\vnext_cursor\x18\x02 \x01(\tR\n" +
-	"nextCursor\"s\n" +
+	"nextCursor\"\x94\x01\n" +
 	"\x1cReplayEndpointMessageRequest\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12\x1a\n" +
 	"\bendpoint\x18\x02 \x01(\tR\bendpoint\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x03 \x01(\tR\tmessageId\"^\n" +
+	"message_id\x18\x03 \x01(\tR\tmessageId\x12\x1f\n" +
+	"\vrequest_key\x18\x04 \x01(\tR\n" +
+	"requestKey\"^\n" +
 	"\x1dReplayEndpointMessageResponse\x12=\n" +
 	"\amessage\x18\x01 \x01(\v2#.toshi.workspace.v1.EndpointMessageR\amessage*}\n" +
 	"\rEndpointShape\x12\x1e\n" +
@@ -4578,32 +4604,32 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	" ENDPOINT_MESSAGE_STATE_IN_FLIGHT\x10\x02\x12$\n" +
 	" ENDPOINT_MESSAGE_STATE_DELIVERED\x10\x03\x12\x1f\n" +
 	"\x1bENDPOINT_MESSAGE_STATE_DEAD\x10\x04\x12\"\n" +
-	"\x1eENDPOINT_MESSAGE_STATE_EXPIRED\x10\x052\xac\x14\n" +
-	"\x0fEndpointService\x12\xac\x01\n" +
-	"\x0eCreateEndpoint\x12).toshi.workspace.v1.CreateEndpointRequest\x1a*.toshi.workspace.v1.CreateEndpointResponse\"C\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
-	"\x19host_job.endpoint_exposed\x12\x0fhost_job:job_id\x12x\n" +
+	"\x1eENDPOINT_MESSAGE_STATE_EXPIRED\x10\x052\xc8\x14\n" +
+	"\x0fEndpointService\x12\xb0\x01\n" +
+	"\x0eCreateEndpoint\x12).toshi.workspace.v1.CreateEndpointRequest\x1a*.toshi.workspace.v1.CreateEndpointResponse\"G\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
+	"\x19host_job.endpoint_exposed\x12\x0fhost_job:job_id\x90\xf4\x18\x01\x12x\n" +
 	"\rListEndpoints\x12(.toshi.workspace.v1.ListEndpointsRequest\x1a).toshi.workspace.v1.ListEndpointsResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12r\n" +
 	"\vGetEndpoint\x12&.toshi.workspace.v1.GetEndpointRequest\x1a'.toshi.workspace.v1.GetEndpointResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\x84\x01\n" +
-	"\x11GetEndpointPolicy\x12,.toshi.workspace.v1.GetEndpointPolicyRequest\x1a-.toshi.workspace.v1.GetEndpointPolicyResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xb8\x01\n" +
-	"\x0eUpdateEndpoint\x12).toshi.workspace.v1.UpdateEndpointRequest\x1a*.toshi.workspace.v1.UpdateEndpointResponse\"O\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x188\n" +
-	"\x1chost_job.endpoint_policy_set\x12\x18host_job:endpoint.job_id\x12\x8d\x01\n" +
+	"\x11GetEndpointPolicy\x12,.toshi.workspace.v1.GetEndpointPolicyRequest\x1a-.toshi.workspace.v1.GetEndpointPolicyResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xbc\x01\n" +
+	"\x0eUpdateEndpoint\x12).toshi.workspace.v1.UpdateEndpointRequest\x1a*.toshi.workspace.v1.UpdateEndpointResponse\"S\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x188\n" +
+	"\x1chost_job.endpoint_policy_set\x12\x18host_job:endpoint.job_id\x90\xf4\x18\x02\x12\x8d\x01\n" +
 	"\x14ListEndpointRequests\x12/.toshi.workspace.v1.ListEndpointRequestsRequest\x1a0.toshi.workspace.v1.ListEndpointRequestsResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\x87\x01\n" +
 	"\x12GetEndpointRequest\x12-.toshi.workspace.v1.GetEndpointRequestRequest\x1a..toshi.workspace.v1.GetEndpointRequestResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xb2\x01\n" +
 	"\x11ExportEndpointLog\x12,.toshi.workspace.v1.ExportEndpointLogRequest\x1a-.toshi.workspace.v1.ExportEndpointLogResponse\">\xc2\xf3\x18\x0eendpoints.read\xd2\xf3\x18(\n" +
-	"\x15endpoint_log.exported\x12\x0fhost_job:job_id0\x01\x12\xdd\x01\n" +
-	"\x1aCreateEndpointConnectToken\x125.toshi.workspace.v1.CreateEndpointConnectTokenRequest\x1a6.toshi.workspace.v1.CreateEndpointConnectTokenResponse\"P\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x189\n" +
-	"&host_job.endpoint_connect_token_issued\x12\x0fhost_job:job_id\x12\xde\x01\n" +
-	"\x1aRevokeEndpointConnectToken\x125.toshi.workspace.v1.RevokeEndpointConnectTokenRequest\x1a6.toshi.workspace.v1.RevokeEndpointConnectTokenResponse\"Q\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18:\n" +
-	"'host_job.endpoint_connect_token_revoked\x12\x0fhost_job:job_id\x12\xac\x01\n" +
-	"\x0eDeleteEndpoint\x12).toshi.workspace.v1.DeleteEndpointRequest\x1a*.toshi.workspace.v1.DeleteEndpointResponse\"C\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
-	"\x19host_job.endpoint_deleted\x12\x0fhost_job:job_id\x12u\n" +
+	"\x15endpoint_log.exported\x12\x0fhost_job:job_id0\x01\x12\xe1\x01\n" +
+	"\x1aCreateEndpointConnectToken\x125.toshi.workspace.v1.CreateEndpointConnectTokenRequest\x1a6.toshi.workspace.v1.CreateEndpointConnectTokenResponse\"T\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x189\n" +
+	"&host_job.endpoint_connect_token_issued\x12\x0fhost_job:job_id\x90\xf4\x18\x01\x12\xe2\x01\n" +
+	"\x1aRevokeEndpointConnectToken\x125.toshi.workspace.v1.RevokeEndpointConnectTokenRequest\x1a6.toshi.workspace.v1.RevokeEndpointConnectTokenResponse\"U\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18:\n" +
+	"'host_job.endpoint_connect_token_revoked\x12\x0fhost_job:job_id\x90\xf4\x18\x02\x12\xb0\x01\n" +
+	"\x0eDeleteEndpoint\x12).toshi.workspace.v1.DeleteEndpointRequest\x1a*.toshi.workspace.v1.DeleteEndpointResponse\"G\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
+	"\x19host_job.endpoint_deleted\x12\x0fhost_job:job_id\x90\xf4\x18\x02\x12u\n" +
 	"\fListForwards\x12'.toshi.workspace.v1.ListForwardsRequest\x1a(.toshi.workspace.v1.ListForwardsResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12l\n" +
-	"\tGetTunnel\x12$.toshi.workspace.v1.GetTunnelRequest\x1a%.toshi.workspace.v1.GetTunnelResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xb7\x01\n" +
-	"\x13SendEndpointMessage\x12..toshi.workspace.v1.SendEndpointMessageRequest\x1a/.toshi.workspace.v1.SendEndpointMessageResponse\"?\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18(\n" +
-	"\x15endpoint.message_sent\x12\x0fservice:service\x12\x8f\x01\n" +
-	"\x14TailEndpointMessages\x12/.toshi.workspace.v1.TailEndpointMessagesRequest\x1a0.toshi.workspace.v1.TailEndpointMessagesResponse\"\x12\xc2\xf3\x18\x0eendpoints.read0\x01\x12\xc9\x01\n" +
-	"\x15ReplayEndpointMessage\x120.toshi.workspace.v1.ReplayEndpointMessageRequest\x1a1.toshi.workspace.v1.ReplayEndpointMessageResponse\"K\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x184\n" +
-	"!service.endpoint_message_replayed\x12\x0fservice:serviceB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\tGetTunnel\x12$.toshi.workspace.v1.GetTunnelRequest\x1a%.toshi.workspace.v1.GetTunnelResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xbb\x01\n" +
+	"\x13SendEndpointMessage\x12..toshi.workspace.v1.SendEndpointMessageRequest\x1a/.toshi.workspace.v1.SendEndpointMessageResponse\"C\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18(\n" +
+	"\x15endpoint.message_sent\x12\x0fservice:service\x90\xf4\x18\x01\x12\x8f\x01\n" +
+	"\x14TailEndpointMessages\x12/.toshi.workspace.v1.TailEndpointMessagesRequest\x1a0.toshi.workspace.v1.TailEndpointMessagesResponse\"\x12\xc2\xf3\x18\x0eendpoints.read0\x01\x12\xcd\x01\n" +
+	"\x15ReplayEndpointMessage\x120.toshi.workspace.v1.ReplayEndpointMessageRequest\x1a1.toshi.workspace.v1.ReplayEndpointMessageResponse\"O\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x184\n" +
+	"!service.endpoint_message_replayed\x12\x0fservice:service\x90\xf4\x18\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_endpoints_proto_rawDescOnce sync.Once

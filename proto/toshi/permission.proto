@@ -53,10 +53,10 @@ extend google.protobuf.MethodOptions {
   bool by_field = 51004;
 
   // mcp sets how the call appears as a tool of the MCP server, where the
-  // rules its generator applies give the wrong answer. Without it a call
-  // whose permission's level is "read" is read-only and idempotent, a call
-  // whose name begins with Delete, Cancel, Revoke, Remove, Stop or Rollback
-  // is destructive, and no call reaches outside the workspace.
+  // rules its generator applies give the wrong answer. Without it a read is
+  // read-only and idempotent, a naturally idempotent change is idempotent,
+  // a call whose name begins with Delete, Cancel, Revoke, Remove, Stop or
+  // Rollback is destructive, and no call reaches outside the workspace.
   MCP mcp = 51005;
 
   // own marks a call a member may make for what is their own with
@@ -67,6 +67,17 @@ extend google.protobuf.MethodOptions {
   // with the permission is admitted as usual. A call that acts for no
   // person needs the permission.
   bool own = 51006;
+
+  // key_mode marks how a changing Workspace or Operator API call is retried.
+  // KEY uses a request key; NATURAL needs no key. Reads carry no mark.
+  KeyMode key_mode = 51010;
+}
+
+// KeyMode describes the retry mode of a changing call.
+enum KeyMode {
+  KEY_MODE_UNSPECIFIED = 0;
+  KEY = 1;
+  NATURAL = 2;
 }
 
 extend google.protobuf.FieldOptions {

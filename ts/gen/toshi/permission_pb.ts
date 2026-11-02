@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/permission.proto.
  */
 export const file_toshi_permission: GenFile = /*@__PURE__*/
-  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSI3CgVBdWRpdBIOCgZhY3Rpb24YASABKAkSDgoGdGFyZ2V0GAIgASgJEg4KBnJlYXNvbhgDIAEoCSK2AQoDTUNQEhYKCXJlYWRfb25seRgBIAEoCEgAiAEBEhgKC2Rlc3RydWN0aXZlGAIgASgISAGIAQESFwoKaWRlbXBvdGVudBgDIAEoCEgCiAEBEhcKCm9wZW5fd29ybGQYBCABKAhIA4gBARIPCgdleGNsdWRlGAUgASgIQgwKCl9yZWFkX29ubHlCDgoMX2Rlc3RydWN0aXZlQg0KC19pZGVtcG90ZW50Qg0KC19vcGVuX3dvcmxkIpYCCgVCb3VuZBIMCgRuYW1lGAEgASgJEh8KBHVuaXQYAiABKA4yES50b3NoaS5Cb3VuZC5Vbml0EhQKB2RlZmF1bHQYAyABKANIAIgBARIQCgNtaW4YBCABKANIAYgBARIQCgNtYXgYBSABKANIAogBARIWCgl0aHJlc2hvbGQYBiABKANIA4gBARISCgpodHRwX2hvc3RzGAcgAygJIk4KBFVuaXQSFAoQVU5JVF9VTlNQRUNJRklFRBAAEhAKDFVOSVRfU0VDT05EUxABEg4KClVOSVRfQllURVMQAhIOCgpVTklUX0NPVU5UEANCCgoIX2RlZmF1bHRCBgoEX21pbkIGCgRfbWF4QgwKCl90aHJlc2hvbGQ6QAoKcGVybWlzc2lvbhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLiOAyABKAlSCnBlcm1pc3Npb246NgoFc2NvcGUSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi5jgMgASgJUgVzY29wZTpECgVhdWRpdBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLqOAyABKAsyDC50b3NoaS5BdWRpdFIFYXVkaXQ6OwoIYnlfZmllbGQSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi8jgMgASgIUgdieUZpZWxkOj4KA21jcBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGL2OAyABKAsyCi50b3NoaS5NQ1BSA21jcDoyCgNvd24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi+jgMgASgIUgNvd246SgoQZmllbGRfcGVybWlzc2lvbhIdLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE9wdGlvbnMYu44DIAEoCVIPZmllbGRQZXJtaXNzaW9uOkMKBWJvdW5kEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0aW9ucxjBjgMgASgLMgwudG9zaGkuQm91bmRSBWJvdW5kQh5aHGdvLnRvc2hpY2xvdWQuaW8vYXBpL3Rvc2hpcGJiBnByb3RvMw", [file_google_protobuf_descriptor]);
+  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSI3CgVBdWRpdBIOCgZhY3Rpb24YASABKAkSDgoGdGFyZ2V0GAIgASgJEg4KBnJlYXNvbhgDIAEoCSK2AQoDTUNQEhYKCXJlYWRfb25seRgBIAEoCEgAiAEBEhgKC2Rlc3RydWN0aXZlGAIgASgISAGIAQESFwoKaWRlbXBvdGVudBgDIAEoCEgCiAEBEhcKCm9wZW5fd29ybGQYBCABKAhIA4gBARIPCgdleGNsdWRlGAUgASgIQgwKCl9yZWFkX29ubHlCDgoMX2Rlc3RydWN0aXZlQg0KC19pZGVtcG90ZW50Qg0KC19vcGVuX3dvcmxkIpYCCgVCb3VuZBIMCgRuYW1lGAEgASgJEh8KBHVuaXQYAiABKA4yES50b3NoaS5Cb3VuZC5Vbml0EhQKB2RlZmF1bHQYAyABKANIAIgBARIQCgNtaW4YBCABKANIAYgBARIQCgNtYXgYBSABKANIAogBARIWCgl0aHJlc2hvbGQYBiABKANIA4gBARISCgpodHRwX2hvc3RzGAcgAygJIk4KBFVuaXQSFAoQVU5JVF9VTlNQRUNJRklFRBAAEhAKDFVOSVRfU0VDT05EUxABEg4KClVOSVRfQllURVMQAhIOCgpVTklUX0NPVU5UEANCCgoIX2RlZmF1bHRCBgoEX21pbkIGCgRfbWF4QgwKCl90aHJlc2hvbGQqOQoHS2V5TW9kZRIYChRLRVlfTU9ERV9VTlNQRUNJRklFRBAAEgcKA0tFWRABEgsKB05BVFVSQUwQAjpACgpwZXJtaXNzaW9uEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuI4DIAEoCVIKcGVybWlzc2lvbjo2CgVzY29wZRIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLmOAyABKAlSBXNjb3BlOkQKBWF1ZGl0Eh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuo4DIAEoCzIMLnRvc2hpLkF1ZGl0UgVhdWRpdDo7CghieV9maWVsZBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLyOAyABKAhSB2J5RmllbGQ6PgoDbWNwEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvY4DIAEoCzIKLnRvc2hpLk1DUFIDbWNwOjIKA293bhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGL6OAyABKAhSA293bjpLCghrZXlfbW9kZRIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGMKOAyABKA4yDi50b3NoaS5LZXlNb2RlUgdrZXlNb2RlOkoKEGZpZWxkX3Blcm1pc3Npb24SHS5nb29nbGUucHJvdG9idWYuRmllbGRPcHRpb25zGLuOAyABKAlSD2ZpZWxkUGVybWlzc2lvbjpDCgVib3VuZBIdLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE9wdGlvbnMYwY4DIAEoCzIMLnRvc2hpLkJvdW5kUgVib3VuZEIeWhxnby50b3NoaWNsb3VkLmlvL2FwaS90b3NoaXBiYgZwcm90bzM", [file_google_protobuf_descriptor]);
 
 /**
  * Audit is the audit event a call records.
@@ -366,6 +366,41 @@ export const Bound_UnitSchema: GenEnum<Bound_Unit, Bound_UnitJson> = /*@__PURE__
   enumDesc(file_toshi_permission, 2, 0);
 
 /**
+ * KeyMode describes the retry mode of a changing call.
+ *
+ * @generated from enum toshi.KeyMode
+ */
+export enum KeyMode {
+  /**
+   * @generated from enum value: KEY_MODE_UNSPECIFIED = 0;
+   */
+  KEY_MODE_UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: KEY = 1;
+   */
+  KEY = 1,
+
+  /**
+   * @generated from enum value: NATURAL = 2;
+   */
+  NATURAL = 2,
+}
+
+/**
+ * KeyMode describes the retry mode of a changing call.
+ *
+ * @generated from enum toshi.KeyMode
+ */
+export type KeyModeJson = "KEY_MODE_UNSPECIFIED" | "KEY" | "NATURAL";
+
+/**
+ * Describes the enum toshi.KeyMode.
+ */
+export const KeyModeSchema: GenEnum<KeyMode, KeyModeJson> = /*@__PURE__*/
+  enumDesc(file_toshi_permission, 0);
+
+/**
  * permission names what a caller needs to make the call: an area and a
  * level. "<area>.read" sees what the area holds and "<area>.write" changes
  * it, where the area is a product, such as "sandboxes", or a part of the
@@ -432,10 +467,10 @@ export const by_field: GenExtension<MethodOptions, boolean> = /*@__PURE__*/
 
 /**
  * mcp sets how the call appears as a tool of the MCP server, where the
- * rules its generator applies give the wrong answer. Without it a call
- * whose permission's level is "read" is read-only and idempotent, a call
- * whose name begins with Delete, Cancel, Revoke, Remove, Stop or Rollback
- * is destructive, and no call reaches outside the workspace.
+ * rules its generator applies give the wrong answer. Without it a read is
+ * read-only and idempotent, a naturally idempotent change is idempotent,
+ * a call whose name begins with Delete, Cancel, Revoke, Remove, Stop or
+ * Rollback is destructive, and no call reaches outside the workspace.
  *
  * @generated from extension: toshi.MCP mcp = 51005;
  */
@@ -457,6 +492,15 @@ export const own: GenExtension<MethodOptions, boolean> = /*@__PURE__*/
   extDesc(file_toshi_permission, 5);
 
 /**
+ * key_mode marks how a changing Workspace or Operator API call is retried.
+ * KEY uses a request key; NATURAL needs no key. Reads carry no mark.
+ *
+ * @generated from extension: toshi.KeyMode key_mode = 51010;
+ */
+export const key_mode: GenExtension<MethodOptions, KeyMode> = /*@__PURE__*/
+  extDesc(file_toshi_permission, 6);
+
+/**
  * field_permission names what a caller needs to change the field through
  * the mask of an update call marked by_field: a field group of its own,
  * such as "billing.write" for a workspace's spending limits. A field
@@ -466,7 +510,7 @@ export const own: GenExtension<MethodOptions, boolean> = /*@__PURE__*/
  * @generated from extension: string field_permission = 51003;
  */
 export const field_permission: GenExtension<FieldOptions, string> = /*@__PURE__*/
-  extDesc(file_toshi_permission, 6);
+  extDesc(file_toshi_permission, 7);
 
 /**
  * bound states a fixed number the server applies to the field: the same
@@ -477,5 +521,5 @@ export const field_permission: GenExtension<FieldOptions, string> = /*@__PURE__*
  * @generated from extension: toshi.Bound bound = 51009;
  */
 export const bound: GenExtension<FieldOptions, Bound> = /*@__PURE__*/
-  extDesc(file_toshi_permission, 7);
+  extDesc(file_toshi_permission, 8);
 

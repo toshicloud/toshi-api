@@ -1035,17 +1035,17 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"lastSeenAt\"#\n" +
 	"\x11EndSessionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x14\n" +
-	"\x12EndSessionResponse2\xe2\x05\n" +
+	"\x12EndSessionResponse2\xea\x05\n" +
 	"\x0eAccountService\x12z\n" +
 	"\n" +
 	"GetAccount\x12%.toshi.workspace.v1.GetAccountRequest\x1a&.toshi.workspace.v1.GetAccountResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x86\x01\n" +
-	"\x0eListIdentities\x12).toshi.workspace.v1.ListIdentitiesRequest\x1a*.toshi.workspace.v1.ListIdentitiesResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xaa\x01\n" +
-	"\x0eUnlinkIdentity\x12).toshi.workspace.v1.UnlinkIdentityRequest\x1a*.toshi.workspace.v1.UnlinkIdentityResponse\"A\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x19\n" +
-	"\x11identity.unlinked\x12\x04none\xea\xf3\x18\x02\x10\x01\x12\x80\x01\n" +
-	"\fListSessions\x12'.toshi.workspace.v1.ListSessionsRequest\x1a(.toshi.workspace.v1.ListSessionsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x9a\x01\n" +
+	"\x0eListIdentities\x12).toshi.workspace.v1.ListIdentitiesRequest\x1a*.toshi.workspace.v1.ListIdentitiesResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xae\x01\n" +
+	"\x0eUnlinkIdentity\x12).toshi.workspace.v1.UnlinkIdentityRequest\x1a*.toshi.workspace.v1.UnlinkIdentityResponse\"E\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x19\n" +
+	"\x11identity.unlinked\x12\x04none\xea\xf3\x18\x02\x10\x01\x90\xf4\x18\x02\x12\x80\x01\n" +
+	"\fListSessions\x12'.toshi.workspace.v1.ListSessionsRequest\x1a(.toshi.workspace.v1.ListSessionsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x9e\x01\n" +
 	"\n" +
-	"EndSession\x12%.toshi.workspace.v1.EndSessionRequest\x1a&.toshi.workspace.v1.EndSessionResponse\"=\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x15\n" +
-	"\rsession.ended\x12\x04none\xea\xf3\x18\x02\x10\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"EndSession\x12%.toshi.workspace.v1.EndSessionRequest\x1a&.toshi.workspace.v1.EndSessionResponse\"A\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x15\n" +
+	"\rsession.ended\x12\x04none\xea\xf3\x18\x02\x10\x01\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_account_proto_rawDescOnce sync.Once

@@ -550,10 +550,10 @@ const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\n" +
 	"changed_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\x129\n" +
 	"\x06source\x18\b \x01(\x0e2!.toshi.workspace.v1.FeatureSourceR\x06source\x12\x19\n" +
-	"\bplan_key\x18\t \x01(\tR\aplanKey2\x80\x02\n" +
+	"\bplan_key\x18\t \x01(\tR\aplanKey2\x84\x02\n" +
 	"\x0eProductService\x12t\n" +
-	"\fListProducts\x12'.toshi.workspace.v1.ListProductsRequest\x1a(.toshi.workspace.v1.ListProductsResponse\"\x11\xc2\xf3\x18\rsettings.read\x12x\n" +
-	"\rUpdateProduct\x12(.toshi.workspace.v1.UpdateProductRequest\x1a).toshi.workspace.v1.UpdateProductResponse\"\x12\xc2\xf3\x18\x0esettings.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\fListProducts\x12'.toshi.workspace.v1.ListProductsRequest\x1a(.toshi.workspace.v1.ListProductsResponse\"\x11\xc2\xf3\x18\rsettings.read\x12|\n" +
+	"\rUpdateProduct\x12(.toshi.workspace.v1.UpdateProductRequest\x1a).toshi.workspace.v1.UpdateProductResponse\"\x16\xc2\xf3\x18\x0esettings.write\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_products_proto_rawDescOnce sync.Once

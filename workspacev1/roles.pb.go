@@ -1762,7 +1762,11 @@ type CreateInvitationRequest struct {
 	// Free text, such as whom the invitation is for; 200 characters at most.
 	Note string `protobuf:"bytes,1,opt,name=note,proto3" json:"note,omitempty"`
 	// How long the code is valid: seven days when unset, 30 days at most.
-	Ttl           *durationpb.Duration `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
+	Ttl *durationpb.Duration `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1809,6 +1813,13 @@ func (x *CreateInvitationRequest) GetTtl() *durationpb.Duration {
 		return x.Ttl
 	}
 	return nil
+}
+
+func (x *CreateInvitationRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 // CreateInvitationResponse carries the invitation and its code, shown
@@ -2388,10 +2399,12 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"\x17\n" +
 	"\x15DeclineMemberResponse\"=\n" +
 	"\x14RemoveMemberResponse\x12%\n" +
-	"\x0egrants_removed\x18\x01 \x01(\x05R\rgrantsRemoved\"Z\n" +
+	"\x0egrants_removed\x18\x01 \x01(\x05R\rgrantsRemoved\"{\n" +
 	"\x17CreateInvitationRequest\x12\x12\n" +
 	"\x04note\x18\x01 \x01(\tR\x04note\x12+\n" +
-	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x03ttl\"n\n" +
+	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x03ttl\x12\x1f\n" +
+	"\vrequest_key\x18\x03 \x01(\tR\n" +
+	"requestKey\"n\n" +
 	"\x18CreateInvitationResponse\x12>\n" +
 	"\n" +
 	"invitation\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.InvitationR\n" +
@@ -2459,31 +2472,31 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\x15INVITATION_STATE_OPEN\x10\x01\x12\x1d\n" +
 	"\x19INVITATION_STATE_ACCEPTED\x10\x02\x12\x1c\n" +
 	"\x18INVITATION_STATE_REVOKED\x10\x03\x12\x1c\n" +
-	"\x18INVITATION_STATE_EXPIRED\x10\x042\xe2\x10\n" +
+	"\x18INVITATION_STATE_EXPIRED\x10\x042\x8e\x11\n" +
 	"\vRoleService\x12j\n" +
-	"\tListRoles\x12$.toshi.workspace.v1.ListRolesRequest\x1a%.toshi.workspace.v1.ListRolesResponse\"\x10\xc2\xf3\x18\fmembers.read\x12n\n" +
+	"\tListRoles\x12$.toshi.workspace.v1.ListRolesRequest\x1a%.toshi.workspace.v1.ListRolesResponse\"\x10\xc2\xf3\x18\fmembers.read\x12r\n" +
 	"\n" +
-	"CreateRole\x12%.toshi.workspace.v1.CreateRoleRequest\x1a&.toshi.workspace.v1.CreateRoleResponse\"\x11\xc2\xf3\x18\rmembers.write\x12n\n" +
+	"CreateRole\x12%.toshi.workspace.v1.CreateRoleRequest\x1a&.toshi.workspace.v1.CreateRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x01\x12r\n" +
 	"\n" +
-	"UpdateRole\x12%.toshi.workspace.v1.UpdateRoleRequest\x1a&.toshi.workspace.v1.UpdateRoleResponse\"\x11\xc2\xf3\x18\rmembers.write\x12n\n" +
+	"UpdateRole\x12%.toshi.workspace.v1.UpdateRoleRequest\x1a&.toshi.workspace.v1.UpdateRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x02\x12r\n" +
 	"\n" +
-	"DeleteRole\x12%.toshi.workspace.v1.DeleteRoleRequest\x1a&.toshi.workspace.v1.DeleteRoleResponse\"\x11\xc2\xf3\x18\rmembers.write\x12\x86\x01\n" +
-	"\x0eListRoleGrants\x12).toshi.workspace.v1.ListRoleGrantsRequest\x1a*.toshi.workspace.v1.ListRoleGrantsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x87\x01\n" +
-	"\tGrantRole\x12$.toshi.workspace.v1.GrantRoleRequest\x1a%.toshi.workspace.v1.GrantRoleResponse\"-\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\v\x12\trole:role\x12\x8c\x01\n" +
+	"DeleteRole\x12%.toshi.workspace.v1.DeleteRoleRequest\x1a&.toshi.workspace.v1.DeleteRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x02\x12\x86\x01\n" +
+	"\x0eListRoleGrants\x12).toshi.workspace.v1.ListRoleGrantsRequest\x1a*.toshi.workspace.v1.ListRoleGrantsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x8b\x01\n" +
+	"\tGrantRole\x12$.toshi.workspace.v1.GrantRoleRequest\x1a%.toshi.workspace.v1.GrantRoleResponse\"1\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\v\x12\trole:role\x90\xf4\x18\x02\x12\x90\x01\n" +
 	"\n" +
-	"RevokeRole\x12%.toshi.workspace.v1.RevokeRoleRequest\x1a&.toshi.workspace.v1.RevokeRoleResponse\"/\xc2\xf3\x18\rmembers.write\xd2\xf3\x18\x1a\x12\x18role:response.grant.role\x12}\n" +
-	"\vListMembers\x12&.toshi.workspace.v1.ListMembersRequest\x1a'.toshi.workspace.v1.ListMembersResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xa5\x01\n" +
-	"\fRemoveMember\x12'.toshi.workspace.v1.RemoveMemberRequest\x1a(.toshi.workspace.v1.RemoveMemberResponse\"B\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18 \n" +
-	"\x0emember.removed\x12\x0emember:user_id\x12\xa9\x01\n" +
-	"\rApproveMember\x12(.toshi.workspace.v1.ApproveMemberRequest\x1a).toshi.workspace.v1.ApproveMemberResponse\"C\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18!\n" +
-	"\x0fmember.approved\x12\x0emember:user_id\x12\xa9\x01\n" +
-	"\rDeclineMember\x12(.toshi.workspace.v1.DeclineMemberRequest\x1a).toshi.workspace.v1.DeclineMemberResponse\"C\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18!\n" +
-	"\x0fmember.declined\x12\x0emember:user_id\x12\x8d\x01\n" +
-	"\x10CreateInvitation\x12+.toshi.workspace.v1.CreateInvitationRequest\x1a,.toshi.workspace.v1.CreateInvitationResponse\"\x1e\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x12\x89\x01\n" +
-	"\x0fListInvitations\x12*.toshi.workspace.v1.ListInvitationsRequest\x1a+.toshi.workspace.v1.ListInvitationsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x8d\x01\n" +
-	"\x10RevokeInvitation\x12+.toshi.workspace.v1.RevokeInvitationRequest\x1a,.toshi.workspace.v1.RevokeInvitationResponse\"\x1e\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x12\xc9\x01\n" +
-	"\x10AcceptInvitation\x12+.toshi.workspace.v1.AcceptInvitationRequest\x1a,.toshi.workspace.v1.AcceptInvitationResponse\"Z\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x188\n" +
-	"\x13invitation.accepted\x12!invitation:response.invitation.idB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"RevokeRole\x12%.toshi.workspace.v1.RevokeRoleRequest\x1a&.toshi.workspace.v1.RevokeRoleResponse\"3\xc2\xf3\x18\rmembers.write\xd2\xf3\x18\x1a\x12\x18role:response.grant.role\x90\xf4\x18\x02\x12}\n" +
+	"\vListMembers\x12&.toshi.workspace.v1.ListMembersRequest\x1a'.toshi.workspace.v1.ListMembersResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xa9\x01\n" +
+	"\fRemoveMember\x12'.toshi.workspace.v1.RemoveMemberRequest\x1a(.toshi.workspace.v1.RemoveMemberResponse\"F\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18 \n" +
+	"\x0emember.removed\x12\x0emember:user_id\x90\xf4\x18\x02\x12\xad\x01\n" +
+	"\rApproveMember\x12(.toshi.workspace.v1.ApproveMemberRequest\x1a).toshi.workspace.v1.ApproveMemberResponse\"G\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18!\n" +
+	"\x0fmember.approved\x12\x0emember:user_id\x90\xf4\x18\x02\x12\xad\x01\n" +
+	"\rDeclineMember\x12(.toshi.workspace.v1.DeclineMemberRequest\x1a).toshi.workspace.v1.DeclineMemberResponse\"G\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18!\n" +
+	"\x0fmember.declined\x12\x0emember:user_id\x90\xf4\x18\x02\x12\x91\x01\n" +
+	"\x10CreateInvitation\x12+.toshi.workspace.v1.CreateInvitationRequest\x1a,.toshi.workspace.v1.CreateInvitationResponse\"\"\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x90\xf4\x18\x01\x12\x89\x01\n" +
+	"\x0fListInvitations\x12*.toshi.workspace.v1.ListInvitationsRequest\x1a+.toshi.workspace.v1.ListInvitationsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x91\x01\n" +
+	"\x10RevokeInvitation\x12+.toshi.workspace.v1.RevokeInvitationRequest\x1a,.toshi.workspace.v1.RevokeInvitationResponse\"\"\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x90\xf4\x18\x02\x12\xcd\x01\n" +
+	"\x10AcceptInvitation\x12+.toshi.workspace.v1.AcceptInvitationRequest\x1a,.toshi.workspace.v1.AcceptInvitationResponse\"^\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x188\n" +
+	"\x13invitation.accepted\x12!invitation:response.invitation.id\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_roles_proto_rawDescOnce sync.Once

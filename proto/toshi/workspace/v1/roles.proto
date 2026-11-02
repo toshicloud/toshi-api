@@ -50,6 +50,7 @@ service RoleService {
   // name, with
   // INVALID_ARGUMENT.
   rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "members.write";
   }
   // UpdateRole sets the name and the permissions of one of the
@@ -57,12 +58,14 @@ service RoleService {
   // it, and give the new permissions from then on. A built-in role fails
   // with INVALID_ARGUMENT; an unknown ID with NOT_FOUND.
   rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
   }
   // DeleteRole deletes one of the workspace's roles and every grant of
   // it. A built-in role fails with INVALID_ARGUMENT; an unknown ID with
   // NOT_FOUND.
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
   }
   // ListRoleGrants returns the workspace's grants, ordered by subject,
@@ -84,6 +87,7 @@ service RoleService {
   // and a google.rpc.ErrorInfo detail with the reason PERSON_NOT_MEMBER,
   // naming the person under the key "person": roles are given to members.
   rpc GrantRole(GrantRoleRequest) returns (GrantRoleResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {target: "role:role"};
@@ -93,6 +97,7 @@ service RoleService {
   // google.rpc.ErrorInfo detail with the reason LAST_OWNER names that
   // person under the key "person". An unknown ID fails with NOT_FOUND.
   rpc RevokeRole(RevokeRoleRequest) returns (RevokeRoleResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     option (toshi.audit) = {target: "role:response.grant.role"};
   }
@@ -115,6 +120,7 @@ service RoleService {
   // workspace with the reason LAST_OWNER; each names the person under the
   // key "person". A person who is not a member fails with NOT_FOUND.
   rpc RemoveMember(RemoveMemberRequest) returns (RemoveMemberResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "member.removed", target: "member:user_id"};
@@ -124,6 +130,7 @@ service RoleService {
   // only when the workspace has no person who owns the whole of it. A
   // person who is not waiting fails with NOT_FOUND.
   rpc ApproveMember(ApproveMemberRequest) returns (ApproveMemberResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "member.approved", target: "member:user_id"};
@@ -132,6 +139,7 @@ service RoleService {
   // again by signing in a day after the decline at the earliest. A person
   // who is not waiting fails with NOT_FOUND.
   rpc DeclineMember(DeclineMemberRequest) returns (DeclineMemberResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "member.declined", target: "member:user_id"};
@@ -141,6 +149,7 @@ service RoleService {
   // ttl, seven days when unset, and 30 days at most. The note is free text,
   // such as whom it is for, and is never matched against anyone.
   rpc CreateInvitation(CreateInvitationRequest) returns (CreateInvitationResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "members.write";
     option (toshi.scope) = "workspace";
   }
@@ -156,6 +165,7 @@ service RoleService {
   // An unknown id fails with NOT_FOUND, and one that is accepted, revoked
   // or expired with FAILED_PRECONDITION.
   rpc RevokeInvitation(RevokeInvitationRequest) returns (RevokeInvitationResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     option (toshi.scope) = "workspace";
   }
@@ -174,6 +184,7 @@ service RoleService {
   // workspace with FAILED_PRECONDITION: it takes no new member until it is
   // reopened.
   rpc AcceptInvitation(AcceptInvitationRequest) returns (AcceptInvitationResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     // members.write only files a person's own call; it is not checked.
     option (toshi.scope) = "workspace";
@@ -432,6 +443,10 @@ message CreateInvitationRequest {
   string note = 1;
   // How long the code is valid: seven days when unset, 30 days at most.
   google.protobuf.Duration ttl = 2;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 3;
 }
 
 // CreateInvitationResponse carries the invitation and its code, shown

@@ -1704,23 +1704,23 @@ const file_toshi_workspace_v1_grants_proto_rawDesc = "" +
 	"\tGrantSide\x12\x1a\n" +
 	"\x16GRANT_SIDE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10GRANT_SIDE_GIVEN\x10\x01\x12\x17\n" +
-	"\x13GRANT_SIDE_RECEIVED\x10\x022\xf7\b\n" +
-	"\fGrantService\x12\x90\x01\n" +
-	"\vCreateGrant\x12&.toshi.workspace.v1.CreateGrantRequest\x1a'.toshi.workspace.v1.CreateGrantResponse\"0\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
-	"\rgrant.offered\x12s\n" +
+	"\x13GRANT_SIDE_RECEIVED\x10\x022\x90\t\n" +
+	"\fGrantService\x12\x94\x01\n" +
+	"\vCreateGrant\x12&.toshi.workspace.v1.CreateGrantRequest\x1a'.toshi.workspace.v1.CreateGrantResponse\"4\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
+	"\rgrant.offered\x90\xf4\x18\x01\x12s\n" +
 	"\bGetGrant\x12#.toshi.workspace.v1.GetGrantRequest\x1a$.toshi.workspace.v1.GetGrantResponse\"\x1c\xc2\xf3\x18\vgrants.read\xca\xf3\x18\tworkspace\x12y\n" +
 	"\n" +
-	"ListGrants\x12%.toshi.workspace.v1.ListGrantsRequest\x1a&.toshi.workspace.v1.ListGrantsResponse\"\x1c\xc2\xf3\x18\vgrants.read\xca\xf3\x18\tworkspace\x12\x91\x01\n" +
-	"\vAcceptGrant\x12&.toshi.workspace.v1.AcceptGrantRequest\x1a'.toshi.workspace.v1.AcceptGrantResponse\"1\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x10\n" +
-	"\x0egrant.accepted\x12\x94\x01\n" +
-	"\fDeclineGrant\x12'.toshi.workspace.v1.DeclineGrantRequest\x1a(.toshi.workspace.v1.DeclineGrantResponse\"1\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x10\n" +
-	"\x0egrant.declined\x12\xa7\x01\n" +
-	"\vUpdateGrant\x12&.toshi.workspace.v1.UpdateGrantRequest\x1a'.toshi.workspace.v1.UpdateGrantResponse\"G\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18&\n" +
-	"\x14grant.expiry_changed\x12\x0egrant:grant.id\x12\x7f\n" +
-	"\vRevokeGrant\x12&.toshi.workspace.v1.RevokeGrantRequest\x1a'.toshi.workspace.v1.RevokeGrantResponse\"\x1f\xc2\xf3\x18\fgrants.write\xca\xf3\x18\venvironment\x12\x8d\x01\n" +
+	"ListGrants\x12%.toshi.workspace.v1.ListGrantsRequest\x1a&.toshi.workspace.v1.ListGrantsResponse\"\x1c\xc2\xf3\x18\vgrants.read\xca\xf3\x18\tworkspace\x12\x95\x01\n" +
+	"\vAcceptGrant\x12&.toshi.workspace.v1.AcceptGrantRequest\x1a'.toshi.workspace.v1.AcceptGrantResponse\"5\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x10\n" +
+	"\x0egrant.accepted\x90\xf4\x18\x02\x12\x98\x01\n" +
+	"\fDeclineGrant\x12'.toshi.workspace.v1.DeclineGrantRequest\x1a(.toshi.workspace.v1.DeclineGrantResponse\"5\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x10\n" +
+	"\x0egrant.declined\x90\xf4\x18\x02\x12\xab\x01\n" +
+	"\vUpdateGrant\x12&.toshi.workspace.v1.UpdateGrantRequest\x1a'.toshi.workspace.v1.UpdateGrantResponse\"K\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18&\n" +
+	"\x14grant.expiry_changed\x12\x0egrant:grant.id\x90\xf4\x18\x02\x12\x83\x01\n" +
+	"\vRevokeGrant\x12&.toshi.workspace.v1.RevokeGrantRequest\x1a'.toshi.workspace.v1.RevokeGrantResponse\"#\xc2\xf3\x18\fgrants.write\xca\xf3\x18\venvironment\x90\xf4\x18\x02\x12\x91\x01\n" +
 	"\n" +
-	"LeaveGrant\x12%.toshi.workspace.v1.LeaveGrantRequest\x1a&.toshi.workspace.v1.LeaveGrantResponse\"0\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
-	"\rgrant.revokedB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"LeaveGrant\x12%.toshi.workspace.v1.LeaveGrantRequest\x1a&.toshi.workspace.v1.LeaveGrantResponse\"4\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
+	"\rgrant.revoked\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_grants_proto_rawDescOnce sync.Once

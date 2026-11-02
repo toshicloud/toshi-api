@@ -1229,7 +1229,11 @@ type CreateEnrollmentTokenRequest struct {
 	// Hosts that enroll with the token register as overflow hosts.
 	Overflow bool `protobuf:"varint,1,opt,name=overflow,proto3" json:"overflow,omitempty"`
 	// Allow the token to enroll one new host.
-	SingleUse     bool `protobuf:"varint,2,opt,name=single_use,json=singleUse,proto3" json:"single_use,omitempty"`
+	SingleUse bool `protobuf:"varint,2,opt,name=single_use,json=singleUse,proto3" json:"single_use,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1276,6 +1280,13 @@ func (x *CreateEnrollmentTokenRequest) GetSingleUse() bool {
 		return x.SingleUse
 	}
 	return false
+}
+
+func (x *CreateEnrollmentTokenRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 // CreateEnrollmentTokenResponse carries the new token and its value.
@@ -2465,11 +2476,13 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x15CheckCloudHostRequest\x12\x17\n" +
 	"\ahost_id\x18\x01 \x01(\tR\x06hostId\"T\n" +
 	"\x16CheckCloudHostResponse\x12:\n" +
-	"\x06checks\x18\x01 \x03(\v2\".toshi.workspace.v1.CloudHostCheckR\x06checks\"Y\n" +
+	"\x06checks\x18\x01 \x03(\v2\".toshi.workspace.v1.CloudHostCheckR\x06checks\"z\n" +
 	"\x1cCreateEnrollmentTokenRequest\x12\x1a\n" +
 	"\boverflow\x18\x01 \x01(\bR\boverflow\x12\x1d\n" +
 	"\n" +
-	"single_use\x18\x02 \x01(\bR\tsingleUse\"f\n" +
+	"single_use\x18\x02 \x01(\bR\tsingleUse\x12\x1f\n" +
+	"\vrequest_key\x18\x03 \x01(\tR\n" +
+	"requestKey\"f\n" +
 	"\x1dCreateEnrollmentTokenResponse\x12/\n" +
 	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\"\xe4\n" +
@@ -2614,23 +2627,23 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xcb\b\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xdf\b\n" +
 	"\vHostService\x12h\n" +
 	"\tListHosts\x12$.toshi.workspace.v1.ListHostsRequest\x1a%.toshi.workspace.v1.ListHostsResponse\"\x0e\xc2\xf3\x18\n" +
 	"hosts.read\x12z\n" +
 	"\x0fListHostStorage\x12*.toshi.workspace.v1.ListHostStorageRequest\x1a+.toshi.workspace.v1.ListHostStorageResponse\"\x0e\xc2\xf3\x18\n" +
 	"hosts.read\x12w\n" +
 	"\x0eListHostAlerts\x12).toshi.workspace.v1.ListHostAlertsRequest\x1a*.toshi.workspace.v1.ListHostAlertsResponse\"\x0e\xc2\xf3\x18\n" +
-	"hosts.read\x12\x86\x01\n" +
-	"\fSetHostState\x12'.toshi.workspace.v1.SetHostStateRequest\x1a(.toshi.workspace.v1.SetHostStateResponse\"#\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x10\n" +
-	"\x0ehost.state_set\x12l\n" +
+	"hosts.read\x12\x8a\x01\n" +
+	"\fSetHostState\x12'.toshi.workspace.v1.SetHostStateRequest\x1a(.toshi.workspace.v1.SetHostStateResponse\"'\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x10\n" +
+	"\x0ehost.state_set\x90\xf4\x18\x02\x12p\n" +
 	"\n" +
-	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"\x0f\xc2\xf3\x18\vhosts.write\x12\xb5\x01\n" +
-	"\x0fCreateCloudHost\x12*.toshi.workspace.v1.CreateCloudHostRequest\x1a+.toshi.workspace.v1.CreateCloudHostResponse\"I\xc2\xf3\x18\vhosts.write\xca\xf3\x18\tworkspace\xd2\xf3\x18)\n" +
-	"\x10cloud_host.added\x12\x15host:response.host.id\x12\x8a\x01\n" +
-	"\x0eCheckCloudHost\x12).toshi.workspace.v1.CheckCloudHostRequest\x1a*.toshi.workspace.v1.CheckCloudHostResponse\"!\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x0e\x12\fhost:host_id\x12\xa0\x01\n" +
-	"\x15CreateEnrollmentToken\x120.toshi.workspace.v1.CreateEnrollmentTokenRequest\x1a1.toshi.workspace.v1.CreateEnrollmentTokenResponse\"\"\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x0f\n" +
-	"\rtoken.createdB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"\x13\xc2\xf3\x18\vhosts.write\x90\xf4\x18\x02\x12\xb9\x01\n" +
+	"\x0fCreateCloudHost\x12*.toshi.workspace.v1.CreateCloudHostRequest\x1a+.toshi.workspace.v1.CreateCloudHostResponse\"M\xc2\xf3\x18\vhosts.write\xca\xf3\x18\tworkspace\xd2\xf3\x18)\n" +
+	"\x10cloud_host.added\x12\x15host:response.host.id\x90\xf4\x18\x01\x12\x8e\x01\n" +
+	"\x0eCheckCloudHost\x12).toshi.workspace.v1.CheckCloudHostRequest\x1a*.toshi.workspace.v1.CheckCloudHostResponse\"%\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x0e\x12\fhost:host_id\x90\xf4\x18\x02\x12\xa4\x01\n" +
+	"\x15CreateEnrollmentToken\x120.toshi.workspace.v1.CreateEnrollmentTokenRequest\x1a1.toshi.workspace.v1.CreateEnrollmentTokenResponse\"&\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x0f\n" +
+	"\rtoken.created\x90\xf4\x18\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_hosts_proto_rawDescOnce sync.Once

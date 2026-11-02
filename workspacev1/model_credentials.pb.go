@@ -416,7 +416,11 @@ type CreateModelCredentialRequest struct {
 	Value []byte `protobuf:"bytes,7,opt,name=value,proto3" json:"value,omitempty"`
 	// The credential is the caller's own; a call that acts for no person
 	// fails with FAILED_PRECONDITION.
-	Own           bool `protobuf:"varint,8,opt,name=own,proto3" json:"own,omitempty"`
+	Own bool `protobuf:"varint,8,opt,name=own,proto3" json:"own,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,9,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -505,6 +509,13 @@ func (x *CreateModelCredentialRequest) GetOwn() bool {
 		return x.Own
 	}
 	return false
+}
+
+func (x *CreateModelCredentialRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type CreateModelCredentialResponse struct {
@@ -1673,7 +1684,7 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\aaccount\x18\x13 \x01(\tR\aaccount\"_\n" +
 	"\x16ModelCredentialDefault\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12)\n" +
-	"\x10model_credential\x18\x02 \x01(\tR\x0fmodelCredential\"\xe2\x01\n" +
+	"\x10model_credential\x18\x02 \x01(\tR\x0fmodelCredential\"\x83\x02\n" +
 	"\x1cCreateModelCredentialRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
 	"\bprovider\x18\x02 \x01(\tR\bprovider\x12\x18\n" +
@@ -1682,7 +1693,9 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\x06shared\x18\x05 \x01(\bR\x06shared\x12\x16\n" +
 	"\x06secret\x18\x06 \x01(\tR\x06secret\x12\x14\n" +
 	"\x05value\x18\a \x01(\fR\x05value\x12\x10\n" +
-	"\x03own\x18\b \x01(\bR\x03own\"o\n" +
+	"\x03own\x18\b \x01(\bR\x03own\x12\x1f\n" +
+	"\vrequest_key\x18\t \x01(\tR\n" +
+	"requestKey\"o\n" +
 	"\x1dCreateModelCredentialResponse\x12N\n" +
 	"\x10model_credential\x18\x01 \x01(\v2#.toshi.workspace.v1.ModelCredentialR\x0fmodelCredential\"+\n" +
 	"\x19GetModelCredentialRequest\x12\x0e\n" +
@@ -1757,20 +1770,20 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\x14ModelCredentialState\x12&\n" +
 	"\"MODEL_CREDENTIAL_STATE_UNSPECIFIED\x10\x00\x12$\n" +
 	" MODEL_CREDENTIAL_STATE_SIGNED_IN\x10\x01\x12(\n" +
-	"$MODEL_CREDENTIAL_STATE_NEEDS_SIGN_IN\x10\x022\xa3\r\n" +
-	"\x16ModelCredentialService\x12\xb2\x01\n" +
-	"\x15CreateModelCredential\x120.toshi.workspace.v1.CreateModelCredentialRequest\x1a1.toshi.workspace.v1.CreateModelCredentialResponse\"4\xc2\xf3\x18\x17model_credentials.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01\x12\x93\x01\n" +
+	"$MODEL_CREDENTIAL_STATE_NEEDS_SIGN_IN\x10\x022\xbd\r\n" +
+	"\x16ModelCredentialService\x12\xb6\x01\n" +
+	"\x15CreateModelCredential\x120.toshi.workspace.v1.CreateModelCredentialRequest\x1a1.toshi.workspace.v1.CreateModelCredentialResponse\"8\xc2\xf3\x18\x17model_credentials.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01\x90\xf4\x18\x01\x12\x93\x01\n" +
 	"\x12GetModelCredential\x12-.toshi.workspace.v1.GetModelCredentialRequest\x1a..toshi.workspace.v1.GetModelCredentialResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\x99\x01\n" +
-	"\x14ListModelCredentials\x12/.toshi.workspace.v1.ListModelCredentialsRequest\x1a0.toshi.workspace.v1.ListModelCredentialsResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\xc7\x01\n" +
-	"\x15UpdateModelCredential\x120.toshi.workspace.v1.UpdateModelCredentialRequest\x1a1.toshi.workspace.v1.UpdateModelCredentialResponse\"I\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18&\x12$model_credential:model_credential.id\xf0\xf3\x18\x01\x12\x9d\x01\n" +
-	"\x15DeleteModelCredential\x120.toshi.workspace.v1.DeleteModelCredentialRequest\x1a1.toshi.workspace.v1.DeleteModelCredentialResponse\"\x1f\xc2\xf3\x18\x17model_credentials.write\xf0\xf3\x18\x01\x12\xa5\x01\n" +
-	"\x18ListModelSignInProviders\x123.toshi.workspace.v1.ListModelSignInProvidersRequest\x1a4.toshi.workspace.v1.ListModelSignInProvidersResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\xd1\x01\n" +
-	"\x10StartModelSignIn\x12+.toshi.workspace.v1.StartModelSignInRequest\x1a,.toshi.workspace.v1.StartModelSignInResponse\"`\xc2\xf3\x18\x17model_credentials.write\xca\xf3\x18\venvironment\xd2\xf3\x18(\n" +
-	" model_credential.sign_in_started\x12\x04none\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x010\x01\x12\xdf\x01\n" +
-	"\x13CompleteModelSignIn\x12..toshi.workspace.v1.CompleteModelSignInRequest\x1a/.toshi.workspace.v1.CompleteModelSignInResponse\"g\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18>\n" +
-	"\"model_credential.sign_in_completed\x12\x18model_sign_in:sign_in_id\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01\x12\xd9\x01\n" +
-	"\x11CancelModelSignIn\x12,.toshi.workspace.v1.CancelModelSignInRequest\x1a-.toshi.workspace.v1.CancelModelSignInResponse\"g\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18>\n" +
-	"\"model_credential.sign_in_cancelled\x12\x18model_sign_in:sign_in_id\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x14ListModelCredentials\x12/.toshi.workspace.v1.ListModelCredentialsRequest\x1a0.toshi.workspace.v1.ListModelCredentialsResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\xcb\x01\n" +
+	"\x15UpdateModelCredential\x120.toshi.workspace.v1.UpdateModelCredentialRequest\x1a1.toshi.workspace.v1.UpdateModelCredentialResponse\"M\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18&\x12$model_credential:model_credential.id\xf0\xf3\x18\x01\x90\xf4\x18\x02\x12\xa1\x01\n" +
+	"\x15DeleteModelCredential\x120.toshi.workspace.v1.DeleteModelCredentialRequest\x1a1.toshi.workspace.v1.DeleteModelCredentialResponse\"#\xc2\xf3\x18\x17model_credentials.write\xf0\xf3\x18\x01\x90\xf4\x18\x02\x12\xa5\x01\n" +
+	"\x18ListModelSignInProviders\x123.toshi.workspace.v1.ListModelSignInProvidersRequest\x1a4.toshi.workspace.v1.ListModelSignInProvidersResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\xd7\x01\n" +
+	"\x10StartModelSignIn\x12+.toshi.workspace.v1.StartModelSignInRequest\x1a,.toshi.workspace.v1.StartModelSignInResponse\"f\xc2\xf3\x18\x17model_credentials.write\xca\xf3\x18\venvironment\xd2\xf3\x18(\n" +
+	" model_credential.sign_in_started\x12\x04none\xea\xf3\x18\x04\x18\x00(\x01\xf0\xf3\x18\x01\x90\xf4\x18\x020\x01\x12\xe3\x01\n" +
+	"\x13CompleteModelSignIn\x12..toshi.workspace.v1.CompleteModelSignInRequest\x1a/.toshi.workspace.v1.CompleteModelSignInResponse\"k\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18>\n" +
+	"\"model_credential.sign_in_completed\x12\x18model_sign_in:sign_in_id\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01\x90\xf4\x18\x02\x12\xdd\x01\n" +
+	"\x11CancelModelSignIn\x12,.toshi.workspace.v1.CancelModelSignInRequest\x1a-.toshi.workspace.v1.CancelModelSignInResponse\"k\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18>\n" +
+	"\"model_credential.sign_in_cancelled\x12\x18model_sign_in:sign_in_id\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_model_credentials_proto_rawDescOnce sync.Once

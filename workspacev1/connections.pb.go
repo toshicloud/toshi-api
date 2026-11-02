@@ -2172,19 +2172,19 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\"CONNECTION_DELIVERY_STATE_RECEIVED\x10\x01\x12'\n" +
 	"#CONNECTION_DELIVERY_STATE_PROCESSED\x10\x02\x12%\n" +
 	"!CONNECTION_DELIVERY_STATE_DROPPED\x10\x03\x12\"\n" +
-	"\x1eCONNECTION_DELIVERY_STATE_DEAD\x10\x042\x9b\f\n" +
+	"\x1eCONNECTION_DELIVERY_STATE_DEAD\x10\x042\xaf\f\n" +
 	"\x11ConnectionService\x12\x8d\x01\n" +
 	"\x0fListConnections\x12*.toshi.workspace.v1.ListConnectionsRequest\x1a+.toshi.workspace.v1.ListConnectionsResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x87\x01\n" +
-	"\rGetConnection\x12(.toshi.workspace.v1.GetConnectionRequest\x1a).toshi.workspace.v1.GetConnectionResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x91\x01\n" +
-	"\x10CreateConnection\x12+.toshi.workspace.v1.CreateConnectionRequest\x1a,.toshi.workspace.v1.CreateConnectionResponse\"\"\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\x12\x91\x01\n" +
-	"\x10DeleteConnection\x12+.toshi.workspace.v1.DeleteConnectionRequest\x1a,.toshi.workspace.v1.DeleteConnectionResponse\"\"\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\x12\xc2\x01\n" +
-	"\x16RotateConnectionSecret\x121.toshi.workspace.v1.RotateConnectionSecretRequest\x1a2.toshi.workspace.v1.RotateConnectionSecretResponse\"A\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1b\n" +
-	"\x19connection.secret_rotated\x12\xaf\x01\n" +
-	"\x10UpdateConnection\x12+.toshi.workspace.v1.UpdateConnectionRequest\x1a,.toshi.workspace.v1.UpdateConnectionResponse\"@\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1a\x12\x18connection:connection.id\x12\xa8\x01\n" +
+	"\rGetConnection\x12(.toshi.workspace.v1.GetConnectionRequest\x1a).toshi.workspace.v1.GetConnectionResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x95\x01\n" +
+	"\x10CreateConnection\x12+.toshi.workspace.v1.CreateConnectionRequest\x1a,.toshi.workspace.v1.CreateConnectionResponse\"&\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\x90\xf4\x18\x01\x12\x95\x01\n" +
+	"\x10DeleteConnection\x12+.toshi.workspace.v1.DeleteConnectionRequest\x1a,.toshi.workspace.v1.DeleteConnectionResponse\"&\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\x90\xf4\x18\x01\x12\xc6\x01\n" +
+	"\x16RotateConnectionSecret\x121.toshi.workspace.v1.RotateConnectionSecretRequest\x1a2.toshi.workspace.v1.RotateConnectionSecretResponse\"E\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1b\n" +
+	"\x19connection.secret_rotated\x90\xf4\x18\x01\x12\xb3\x01\n" +
+	"\x10UpdateConnection\x12+.toshi.workspace.v1.UpdateConnectionRequest\x1a,.toshi.workspace.v1.UpdateConnectionResponse\"D\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1a\x12\x18connection:connection.id\x90\xf4\x18\x02\x12\xa8\x01\n" +
 	"\x18ListConnectionDeliveries\x123.toshi.workspace.v1.ListConnectionDeliveriesRequest\x1a4.toshi.workspace.v1.ListConnectionDeliveriesResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x9f\x01\n" +
-	"\x15GetConnectionDelivery\x120.toshi.workspace.v1.GetConnectionDeliveryRequest\x1a1.toshi.workspace.v1.GetConnectionDeliveryResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\xff\x01\n" +
-	"\x18ReplayConnectionDelivery\x123.toshi.workspace.v1.ReplayConnectionDeliveryRequest\x1a4.toshi.workspace.v1.ReplayConnectionDeliveryResponse\"x\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18R\n" +
-	"$connection.delivery_replay_requested\x12*connection:response.delivery.connection_idB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x15GetConnectionDelivery\x120.toshi.workspace.v1.GetConnectionDeliveryRequest\x1a1.toshi.workspace.v1.GetConnectionDeliveryResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x83\x02\n" +
+	"\x18ReplayConnectionDelivery\x123.toshi.workspace.v1.ReplayConnectionDeliveryRequest\x1a4.toshi.workspace.v1.ReplayConnectionDeliveryResponse\"|\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18R\n" +
+	"$connection.delivery_replay_requested\x12*connection:response.delivery.connection_id\x90\xf4\x18\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_connections_proto_rawDescOnce sync.Once

@@ -25,6 +25,7 @@ service DomainService {
   // A name the workspace already has is ALREADY_EXISTS; past the plan's
   // domains.max, RESOURCE_EXHAUSTED.
   rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
   }
@@ -47,6 +48,7 @@ service DomainService {
   // check, and returns the domain as the check left it. A retry with the
   // same request_key returns the first call's answer.
   rpc VerifyDomain(VerifyDomainRequest) returns (VerifyDomainResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {action: "domain.checked"};
@@ -58,6 +60,7 @@ service DomainService {
   // one being ordered, is returned as it is. A retry with the same
   // request_key returns the first call's answer.
   rpc IssueDomain(IssueDomainRequest) returns (IssueDomainResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {action: "domain.issue_requested"};
@@ -66,6 +69,7 @@ service DomainService {
   // DeleteDomain removes a domain: it stops serving at once, and its
   // certificate is not renewed.
   rpc DeleteDomain(DeleteDomainRequest) returns (DeleteDomainResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
   }

@@ -33,6 +33,7 @@ service FillerService {
   // replaced (FAILED_PRECONDITION). A bad field fails with
   // INVALID_ARGUMENT.
   rpc PutFiller(PutFillerRequest) returns (PutFillerResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "fillers.write";
     option (toshi.audit) = {target: "filler:filler.name"};
   }
@@ -40,6 +41,7 @@ service FillerService {
   // filler cannot be removed (FAILED_PRECONDITION); an unknown name fails
   // with NOT_FOUND.
   rpc DeleteFiller(DeleteFillerRequest) returns (DeleteFillerResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "fillers.write";
     option (toshi.audit) = {
       action: "filler.removed"
@@ -51,6 +53,7 @@ service FillerService {
   // its running run. A missing name, an empty mask or another path fails
   // with INVALID_ARGUMENT; an unknown name fails with NOT_FOUND.
   rpc UpdateFiller(UpdateFillerRequest) returns (UpdateFillerResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "fillers.write";
     option (toshi.audit) = {
       action: "filler.enabled_set"

@@ -5,6 +5,9 @@ lint:
   use:
     - STANDARD
   ignore_only:
+    # KeyMode uses the short values written on method options.
+    ENUM_VALUE_PREFIX:
+      - proto/toshi/permission.proto
     PACKAGE_VERSION_SUFFIX:
       - proto/toshi/permission.proto
 breaking:

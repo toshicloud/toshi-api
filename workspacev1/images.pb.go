@@ -1227,6 +1227,10 @@ type BuildImageRequest struct {
 	// newest ready version was built with; true builds with the one Toshi's
 	// build image holds. Unset for a disk image.
 	UpdateBuilder bool `protobuf:"varint,4,opt,name=update_builder,json=updateBuilder,proto3" json:"update_builder,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1287,6 +1291,13 @@ func (x *BuildImageRequest) GetUpdateBuilder() bool {
 		return x.UpdateBuilder
 	}
 	return false
+}
+
+func (x *BuildImageRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type BuildImageResponse struct {
@@ -1623,12 +1634,14 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"o\n" +
 	"\x12ListImagesResponse\x121\n" +
 	"\x06images\x18\x01 \x03(\v2\x19.toshi.workspace.v1.ImageR\x06images\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x80\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xa1\x01\n" +
 	"\x11BuildImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
 	"\x06recipe\x18\x03 \x01(\tR\x06recipe\x12%\n" +
-	"\x0eupdate_builder\x18\x04 \x01(\bR\rupdateBuilder\"P\n" +
+	"\x0eupdate_builder\x18\x04 \x01(\bR\rupdateBuilder\x12\x1f\n" +
+	"\vrequest_key\x18\x05 \x01(\tR\n" +
+	"requestKey\"P\n" +
 	"\x12BuildImageResponse\x12:\n" +
 	"\aversion\x18\x01 \x01(\v2 .toshi.workspace.v1.ImageVersionR\aversion\"\x9c\x01\n" +
 	"\x12UpdateImageRequest\x12\x18\n" +
@@ -1661,19 +1674,19 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x1aIMAGE_VERSION_STATE_FAILED\x10\x02\x12\x1d\n" +
 	"\x19IMAGE_VERSION_STATE_READY\x10\x03\x12(\n" +
 	"$IMAGE_VERSION_STATE_PENDING_DELETION\x10\x04\x12\x1f\n" +
-	"\x1bIMAGE_VERSION_STATE_DELETED\x10\x052\xca\x06\n" +
-	"\fImageService\x12\x7f\n" +
-	"\vCreateImage\x12&.toshi.workspace.v1.CreateImageRequest\x1a'.toshi.workspace.v1.CreateImageResponse\"\x1f\xc2\xf3\x18\fimages.write\xca\xf3\x18\venvironment\x12\xa3\x01\n" +
+	"\x1bIMAGE_VERSION_STATE_DELETED\x10\x052\xdb\x06\n" +
+	"\fImageService\x12\x83\x01\n" +
+	"\vCreateImage\x12&.toshi.workspace.v1.CreateImageRequest\x1a'.toshi.workspace.v1.CreateImageResponse\"#\xc2\xf3\x18\fimages.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\xa7\x01\n" +
 	"\n" +
-	"BuildImage\x12%.toshi.workspace.v1.BuildImageRequest\x1a&.toshi.workspace.v1.BuildImageResponse\"F\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18!\n" +
+	"BuildImage\x12%.toshi.workspace.v1.BuildImageRequest\x1a&.toshi.workspace.v1.BuildImageResponse\"J\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18!\n" +
 	"\x13image.build_started\x12\n" +
-	"image:name\xea\xf3\x18\x02 \x01\x12\x98\x01\n" +
-	"\vUpdateImage\x12&.toshi.workspace.v1.UpdateImageRequest\x1a'.toshi.workspace.v1.UpdateImageResponse\"8\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18\x19\x12\x17image:response.image.id\x12q\n" +
+	"image:name\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\x9c\x01\n" +
+	"\vUpdateImage\x12&.toshi.workspace.v1.UpdateImageRequest\x1a'.toshi.workspace.v1.UpdateImageResponse\"<\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18\x19\x12\x17image:response.image.id\x90\xf4\x18\x02\x12q\n" +
 	"\bGetImage\x12#.toshi.workspace.v1.GetImageRequest\x1a$.toshi.workspace.v1.GetImageResponse\"\x1a\xc2\xf3\x18\vimages.read\xca\xf3\x18\aproject\x12w\n" +
 	"\n" +
-	"ListImages\x12%.toshi.workspace.v1.ListImagesRequest\x1a&.toshi.workspace.v1.ListImagesResponse\"\x1a\xc2\xf3\x18\vimages.read\xca\xf3\x18\aproject\x12\x8b\x01\n" +
-	"\vDeleteImage\x12&.toshi.workspace.v1.DeleteImageRequest\x1a'.toshi.workspace.v1.DeleteImageResponse\"+\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18\f\x12\n" +
-	"image:nameB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"ListImages\x12%.toshi.workspace.v1.ListImagesRequest\x1a&.toshi.workspace.v1.ListImagesResponse\"\x1a\xc2\xf3\x18\vimages.read\xca\xf3\x18\aproject\x12\x8f\x01\n" +
+	"\vDeleteImage\x12&.toshi.workspace.v1.DeleteImageRequest\x1a'.toshi.workspace.v1.DeleteImageResponse\"/\xc2\xf3\x18\fimages.write\xca\xf3\x18\aproject\xd2\xf3\x18\f\x12\n" +
+	"image:name\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_images_proto_rawDescOnce sync.Once

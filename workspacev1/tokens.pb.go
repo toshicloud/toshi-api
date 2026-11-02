@@ -535,7 +535,11 @@ type CreateWorkspaceTokenRequest struct {
 	// own, which the caller must hold everything of where the token acts.
 	// Empty gives Admin to a whole-workspace token and Member to a limited
 	// one.
-	Role          string `protobuf:"bytes,7,opt,name=role,proto3" json:"role,omitempty"`
+	Role string `protobuf:"bytes,7,opt,name=role,proto3" json:"role,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,8,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -615,6 +619,13 @@ func (x *CreateWorkspaceTokenRequest) GetClientRanges() *ClientRanges {
 func (x *CreateWorkspaceTokenRequest) GetRole() string {
 	if x != nil {
 		return x.Role
+	}
+	return ""
+}
+
+func (x *CreateWorkspaceTokenRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -774,8 +785,12 @@ func (x *RevokeTokenResponse) GetHostsSignedOut() int32 {
 
 // RollWorkspaceTokenRequest names the token to roll.
 type RollWorkspaceTokenRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -813,6 +828,13 @@ func (*RollWorkspaceTokenRequest) Descriptor() ([]byte, []int) {
 func (x *RollWorkspaceTokenRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *RollWorkspaceTokenRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -1021,7 +1043,7 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"o\n" +
 	"\x12ListTokensResponse\x121\n" +
 	"\x06tokens\x18\x01 \x03(\v2\x19.toshi.workspace.v1.TokenR\x06tokens\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xea\x02\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x8b\x03\n" +
 	"\x1bCreateWorkspaceTokenRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12e\n" +
 	"\n" +
@@ -1032,7 +1054,9 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\n" +
 	"not_before\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tnotBefore\x12E\n" +
 	"\rclient_ranges\x18\x06 \x01(\v2 .toshi.workspace.v1.ClientRangesR\fclientRanges\x12\x12\n" +
-	"\x04role\x18\a \x01(\tR\x04role\"e\n" +
+	"\x04role\x18\a \x01(\tR\x04role\x12\x1f\n" +
+	"\vrequest_key\x18\b \x01(\tR\n" +
+	"requestKey\"e\n" +
 	"\x1cCreateWorkspaceTokenResponse\x12/\n" +
 	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\"$\n" +
@@ -1040,9 +1064,11 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"p\n" +
 	"\x13RevokeTokenResponse\x12/\n" +
 	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12(\n" +
-	"\x10hosts_signed_out\x18\x02 \x01(\x05R\x0ehostsSignedOut\"+\n" +
+	"\x10hosts_signed_out\x18\x02 \x01(\x05R\x0ehostsSignedOut\"L\n" +
 	"\x19RollWorkspaceTokenRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"c\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vrequest_key\x18\x02 \x01(\tR\n" +
+	"requestKey\"c\n" +
 	"\x1aRollWorkspaceTokenResponse\x12/\n" +
 	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\"\x92\x01\n" +
@@ -1060,16 +1086,16 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\x11TokenExpiryReason\x12#\n" +
 	"\x1fTOKEN_EXPIRY_REASON_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17TOKEN_EXPIRY_REASON_SET\x10\x01\x12$\n" +
-	" TOKEN_EXPIRY_REASON_CREATOR_LEFT\x10\x022\xa9\x05\n" +
+	" TOKEN_EXPIRY_REASON_CREATOR_LEFT\x10\x022\xb9\x05\n" +
 	"\fTokenService\x12l\n" +
 	"\n" +
-	"ListTokens\x12%.toshi.workspace.v1.ListTokensRequest\x1a&.toshi.workspace.v1.ListTokensResponse\"\x0f\xc2\xf3\x18\vtokens.read\x12\xab\x01\n" +
-	"\x14CreateWorkspaceToken\x12/.toshi.workspace.v1.CreateWorkspaceTokenRequest\x1a0.toshi.workspace.v1.CreateWorkspaceTokenResponse\"0\xc2\xf3\x18\ftokens.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
-	"\rtoken.created\x12p\n" +
-	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x10\xc2\xf3\x18\ftokens.write\x12\x98\x01\n" +
-	"\x12RollWorkspaceToken\x12-.toshi.workspace.v1.RollWorkspaceTokenRequest\x1a..toshi.workspace.v1.RollWorkspaceTokenResponse\"#\xc2\xf3\x18\ftokens.write\xd2\xf3\x18\x0f\n" +
-	"\rtoken.rotated\x12p\n" +
-	"\vUpdateToken\x12&.toshi.workspace.v1.UpdateTokenRequest\x1a'.toshi.workspace.v1.UpdateTokenResponse\"\x10\xc2\xf3\x18\ftokens.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"ListTokens\x12%.toshi.workspace.v1.ListTokensRequest\x1a&.toshi.workspace.v1.ListTokensResponse\"\x0f\xc2\xf3\x18\vtokens.read\x12\xaf\x01\n" +
+	"\x14CreateWorkspaceToken\x12/.toshi.workspace.v1.CreateWorkspaceTokenRequest\x1a0.toshi.workspace.v1.CreateWorkspaceTokenResponse\"4\xc2\xf3\x18\ftokens.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
+	"\rtoken.created\x90\xf4\x18\x01\x12t\n" +
+	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x14\xc2\xf3\x18\ftokens.write\x90\xf4\x18\x02\x12\x9c\x01\n" +
+	"\x12RollWorkspaceToken\x12-.toshi.workspace.v1.RollWorkspaceTokenRequest\x1a..toshi.workspace.v1.RollWorkspaceTokenResponse\"'\xc2\xf3\x18\ftokens.write\xd2\xf3\x18\x0f\n" +
+	"\rtoken.rotated\x90\xf4\x18\x01\x12t\n" +
+	"\vUpdateToken\x12&.toshi.workspace.v1.UpdateTokenRequest\x1a'.toshi.workspace.v1.UpdateTokenResponse\"\x14\xc2\xf3\x18\ftokens.write\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_tokens_proto_rawDescOnce sync.Once

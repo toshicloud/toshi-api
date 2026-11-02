@@ -34,6 +34,7 @@ service StorageProviderService {
   // with the lifecycle capability on the same endpoint and bucket. A bad
   // field fails with INVALID_ARGUMENT.
   rpc CreateStorageProvider(CreateStorageProviderRequest) returns (CreateStorageProviderResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "storage.write";
   }
   // CheckStorageProvider checks a provider's bucket: it heads the bucket,
@@ -50,6 +51,7 @@ service StorageProviderService {
   // audits nothing, and a request CreateStorageProvider would refuse fails
   // the same way before any connection.
   rpc CheckStorageProvider(CheckStorageProviderRequest) returns (CheckStorageProviderResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "storage.write";
   }
   // DeleteStorageProvider removes a provider the workspace saved. An
@@ -57,6 +59,7 @@ service StorageProviderService {
   // operator set for the workspace, and the default provider, with
   // PERMISSION_DENIED.
   rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "storage.write";
   }
 }

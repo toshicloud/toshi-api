@@ -62,6 +62,7 @@ service ImageService {
   // does not include images fails with FAILED_PRECONDITION and the reason
   // PLAN_EXCLUDES_IMAGES.
   rpc CreateImage(CreateImageRequest) returns (CreateImageResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "images.write";
     option (toshi.scope) = "environment";
   }
@@ -75,6 +76,7 @@ service ImageService {
   // the reason IMAGE_BUILD_IN_PROGRESS, and a container image that is
   // pushed rather than built, with FAILED_PRECONDITION.
   rpc BuildImage(BuildImageRequest) returns (BuildImageResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "images.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "project";
@@ -90,6 +92,7 @@ service ImageService {
   // a source its project claims, and a call that reaches the environment
   // the branch rules choose for the source's default branch.
   rpc UpdateImage(UpdateImageRequest) returns (UpdateImageResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "images.write";
     option (toshi.scope) = "project";
     option (toshi.audit) = {target: "image:response.image.id"};
@@ -112,6 +115,7 @@ service ImageService {
   // deleted soon after. An image with a version in use fails with
   // FAILED_PRECONDITION and the reason IMAGE_IN_USE, naming what uses it.
   rpc DeleteImage(DeleteImageRequest) returns (DeleteImageResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "images.write";
     option (toshi.scope) = "project";
     option (toshi.audit) = {target: "image:name"};
@@ -353,6 +357,10 @@ message BuildImageRequest {
   // newest ready version was built with; true builds with the one Toshi's
   // build image holds. Unset for a disk image.
   bool update_builder = 4;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 5;
 }
 
 message BuildImageResponse {

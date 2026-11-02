@@ -23,15 +23,12 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 // workspace does not have is NOT_FOUND. A job, sandbox, service, execution,
 // operation or event of another project or environment is NOT_FOUND.
 //
-// Every mutating call but CancelJob, AnswerPrompt, EmitWorkloadEvent and the
-// service alarm calls other than RunServiceAlarmNow takes a request_key. A
-// key is bound to the workspace, the call and the request's payload: a retry
+// Calls marked KEY take a request_key. A key is bound to the workspace,
+// the call and the request's payload: a retry
 // with the same key and the same payload returns what the first call returned
 // and starts nothing new; the same key with a different payload fails with
-// FAILED_PRECONDITION. A create requires a key: a create without one fails
-// with INVALID_ARGUMENT. For the other calls an empty key means no retry
-// protection. CancelJob takes none: a repeat of it changes nothing. The other
-// service alarm calls take none.
+// FAILED_PRECONDITION. Some calls require a key; for the others an empty key
+// means no retry protection. Calls marked NATURAL take no request_key.
 //
 // A caller over its rate limit gets RESOURCE_EXHAUSTED with a
 // google.rpc.RetryInfo detail: the delay before a retry, on every protocol.
@@ -45,6 +42,7 @@ service WorkloadService {
   // a second read; otherwise it carries the job as it is and no output, and
   // no later call returns it.
   rpc CreateJob(CreateJobRequest) returns (CreateJobResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "jobs.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
@@ -99,6 +97,7 @@ service WorkloadService {
   // UpdateJob changes the fields the mask names and returns the job. Only
   // "labels" can be changed; another path fails with INVALID_ARGUMENT.
   rpc UpdateJob(UpdateJobRequest) returns (UpdateJobResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "jobs.write";
     option (toshi.scope) = "environment";
   }
@@ -108,6 +107,7 @@ service WorkloadService {
   // the job is removed; GetJob then fails with NOT_FOUND, and the event log
   // keeps its events.
   rpc DeleteJob(DeleteJobRequest) returns (DeleteJobResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "jobs.write";
     option (toshi.scope) = "environment";
   }
@@ -120,6 +120,7 @@ service WorkloadService {
   // cancelled. A call for a job that has ended changes nothing and returns
   // the job as it is. An unknown ID fails with NOT_FOUND.
   rpc CancelJob(CancelJobRequest) returns (CancelJobResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "jobs.write";
     option (toshi.scope) = "environment";
   }
@@ -162,6 +163,7 @@ service WorkloadService {
   // CreateSandbox creates a sandbox and returns it, queued: it runs once a
   // host takes it, and until it is deleted or its time limit passes.
   rpc CreateSandbox(CreateSandboxRequest) returns (CreateSandboxResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
@@ -200,6 +202,7 @@ service WorkloadService {
   // fails with FAILED_PRECONDITION. Another path fails with
   // INVALID_ARGUMENT.
   rpc UpdateSandbox(UpdateSandboxRequest) returns (UpdateSandboxResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.scope) = "environment";
   }
@@ -209,6 +212,7 @@ service WorkloadService {
   // done once the sandbox is removed; GetSandbox then fails with NOT_FOUND,
   // and the event log keeps its events.
   rpc DeleteSandbox(DeleteSandboxRequest) returns (DeleteSandboxResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.scope) = "environment";
   }
@@ -219,6 +223,7 @@ service WorkloadService {
   // stopped sandbox returns it as it is. One that has ended fails with
   // FAILED_PRECONDITION. DeleteSandbox ends a sandbox.
   rpc StopSandbox(StopSandboxRequest) returns (StopSandboxResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.scope) = "environment";
   }
@@ -229,6 +234,7 @@ service WorkloadService {
   // ended fails with FAILED_PRECONDITION, as does a start whose state volume
   // or image is gone or out of reach, with the reason in its ErrorInfo.
   rpc StartSandbox(StartSandboxRequest) returns (StartSandboxResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
@@ -256,6 +262,7 @@ service WorkloadService {
   // that is not running fails with FAILED_PRECONDITION. A server may cancel
   // an execution whose client stops reading its output.
   rpc Execute(stream ExecuteRequest) returns (stream ExecuteResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
@@ -270,6 +277,7 @@ service WorkloadService {
   // changes nothing. It returns once the execution has ended, whether or not
   // the Execute stream's client still reads it.
   rpc CancelExecution(CancelExecutionRequest) returns (CancelExecutionResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.scope) = "environment";
   }
@@ -281,6 +289,7 @@ service WorkloadService {
   // CancelExecution stops it, and a request_key retry of either call
   // replays it.
   rpc ExecuteCommand(ExecuteCommandRequest) returns (stream ExecuteCommandResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {action: "sandbox.executed"};
@@ -299,6 +308,7 @@ service WorkloadService {
   // and one without options any text of 1 to 4096 bytes; another answer
   // fails with INVALID_ARGUMENT.
   rpc AnswerPrompt(AnswerPromptRequest) returns (AnswerPromptResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "workloads.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -317,6 +327,7 @@ service WorkloadService {
   // at most 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown
   // workload with NOT_FOUND.
   rpc EmitWorkloadEvent(EmitWorkloadEventRequest) returns (EmitWorkloadEventResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "workloads.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -364,6 +375,7 @@ service WorkloadService {
   // with NOT_FOUND; an endpoint that is not http, a port outside 1 to 65535,
   // or an expiry or a byte cap above the plan's, with INVALID_ARGUMENT.
   rpc CreatePreviewShareLink(CreatePreviewShareLinkRequest) returns (CreatePreviewShareLinkResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "previews.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -385,6 +397,7 @@ service WorkloadService {
   // again, and its open connections end within seconds. Revoking a link
   // that was revoked or has ended returns it as it is.
   rpc RevokePreviewShareLink(RevokePreviewShareLinkRequest) returns (RevokePreviewShareLinkResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "previews.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -404,6 +417,7 @@ service WorkloadService {
   // endpoint that is not an http endpoint of the service's current revision;
   // and with INVALID_ARGUMENT for an expiry or a byte cap above the plan's.
   rpc CreateServiceShareLink(CreateServiceShareLinkRequest) returns (CreateServiceShareLinkResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -425,6 +439,7 @@ service WorkloadService {
   // device again, and its open connections end within seconds. Revoking a
   // link that was revoked or has ended returns it as it is.
   rpc RevokeServiceShareLink(RevokeServiceShareLinkRequest) returns (RevokeServiceShareLinkResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -436,6 +451,7 @@ service WorkloadService {
   // CreateService creates a service with its recipe as revision 1 and
   // returns it, created and not started: StartService starts it.
   rpc CreateService(CreateServiceRequest) returns (CreateServiceResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
   }
@@ -476,6 +492,7 @@ service WorkloadService {
   // list takes any kind, and a repeated or unspecified kind fails with
   // INVALID_ARGUMENT.
   rpc UpdateService(UpdateServiceRequest) returns (UpdateServiceResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
   }
@@ -485,6 +502,7 @@ service WorkloadService {
   // GetService then fails with NOT_FOUND, and the event log keeps its
   // events.
   rpc DeleteService(DeleteServiceRequest) returns (DeleteServiceResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
   }
@@ -515,6 +533,7 @@ service WorkloadService {
   // that is not a Linux one and a start past the plan's shared services
   // fail with FAILED_PRECONDITION.
   rpc StartService(StartServiceRequest) returns (StartServiceResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
@@ -524,6 +543,7 @@ service WorkloadService {
   // its live run is stopped. Stopping a service that is not started
   // returns it as it is.
   rpc StopService(StopServiceRequest) returns (StopServiceResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
   }
@@ -532,6 +552,7 @@ service WorkloadService {
   // started: set to ON_DEMAND, it sleeps once it is idle; set to
   // ALWAYS_ON while asleep, its next run is queued.
   rpc SetServiceMode(SetServiceModeRequest) returns (SetServiceModeResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {action: "service.mode_set"};
@@ -545,6 +566,7 @@ service WorkloadService {
   // started always-on service returns it as it is; a service that is not
   // started fails with FAILED_PRECONDITION.
   rpc WakeService(WakeServiceRequest) returns (WakeServiceResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
@@ -556,6 +578,7 @@ service WorkloadService {
   // with reason POLICY and cause OPERATOR; a stopped one only gets the hold.
   // A job cannot be held; cancel it instead.
   rpc HoldWorkload(HoldWorkloadRequest) returns (HoldWorkloadResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
   }
@@ -564,6 +587,7 @@ service WorkloadService {
   // operator may call it; another caller is refused with PERMISSION_DENIED.
   // The operator's reason header is required.
   rpc ReleaseWorkload(ReleaseWorkloadRequest) returns (ReleaseWorkloadResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
   }
@@ -576,6 +600,7 @@ service WorkloadService {
   // started fails with FAILED_PRECONDITION, and a time to live above an
   // hour with INVALID_ARGUMENT.
   rpc HoldService(HoldServiceRequest) returns (HoldServiceResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
@@ -584,6 +609,7 @@ service WorkloadService {
   // ReleaseService drops the caller's hold on a service. Releasing a hold
   // the caller does not have returns the service as it is.
   rpc ReleaseService(ReleaseServiceRequest) returns (ReleaseServiceResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
   }
@@ -598,6 +624,7 @@ service WorkloadService {
   // NOT_FOUND; a service holding 100 alarms refuses another with
   // RESOURCE_EXHAUSTED.
   rpc SetServiceAlarm(SetServiceAlarmRequest) returns (SetServiceAlarmResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -621,6 +648,7 @@ service WorkloadService {
   // DeleteServiceAlarm removes an alarm and its occurrences. Messages it
   // already published stay on the endpoint.
   rpc DeleteServiceAlarm(DeleteServiceAlarmRequest) returns (DeleteServiceAlarmResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -631,6 +659,7 @@ service WorkloadService {
   // PauseServiceAlarm stops an alarm publishing until it is resumed.
   // Pausing a paused alarm changes nothing.
   rpc PauseServiceAlarm(PauseServiceAlarmRequest) returns (PauseServiceAlarmResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -645,6 +674,7 @@ service WorkloadService {
   // without a next instant. Resuming an alarm that is not paused changes
   // nothing.
   rpc ResumeServiceAlarm(ResumeServiceAlarmRequest) returns (ResumeServiceAlarmResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -656,6 +686,7 @@ service WorkloadService {
   // not, and returns the occurrence. It does not move the alarm's next
   // instant.
   rpc RunServiceAlarmNow(RunServiceAlarmNowRequest) returns (RunServiceAlarmNowResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -680,10 +711,11 @@ service WorkloadService {
   // its recipe does not declare fails with NOT_FOUND; a service that is
   // not running fails with FAILED_PRECONDITION.
   rpc StartServiceSignIn(StartServiceSignInRequest) returns (stream StartServiceSignInResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.audit) = {action: "service.sign_in_started"};
     option (toshi.scope) = "environment";
-    option (toshi.mcp) = {exclude: true};
+    option (toshi.mcp) = {idempotent: false, exclude: true};
   }
 
   // AnswerServiceSignIn writes one line to a running sign-in's standard
@@ -695,6 +727,7 @@ service WorkloadService {
   // NOT_FOUND; an invalid answer is INVALID_ARGUMENT; a redirect before the
   // program listens is FAILED_PRECONDITION.
   rpc AnswerServiceSignIn(AnswerServiceSignInRequest) returns (AnswerServiceSignInResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.audit) = {action: "service.sign_in_answered"};
     option (toshi.scope) = "environment";
@@ -707,6 +740,7 @@ service WorkloadService {
   // process. Cancelling a sign-in that is not under way fails with
   // NOT_FOUND; one that has ended changes nothing.
   rpc CancelServiceSignIn(CancelServiceSignInRequest) returns (CancelServiceSignInResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.audit) = {action: "service.sign_in_cancelled"};
     option (toshi.scope) = "environment";
@@ -740,6 +774,7 @@ service WorkloadService {
   // declares no sign_out command, or a sign-in of the program under way
   // fails with FAILED_PRECONDITION.
   rpc SignOutService(SignOutServiceRequest) returns (SignOutServiceResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.audit) = {action: "service.sign_out"};
     option (toshi.scope) = "environment";
@@ -781,6 +816,7 @@ service WorkloadService {
   // The answer carries the activation, whose outcome follows the
   // revision's next run (ListServiceActivations).
   rpc RollbackService(RollbackServiceRequest) returns (RollbackServiceResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
@@ -885,6 +921,10 @@ message EmitWorkloadEventRequest {
   string name = 4;
   // JSON, at most 64 KiB; empty for none.
   bytes data = 5;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 6;
 }
 
 message EmitWorkloadEventResponse {

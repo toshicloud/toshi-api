@@ -54,6 +54,7 @@ service OperatorService {
   // HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
   // fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
   rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {action: "host.state_set"};
   }
 
@@ -64,6 +65,7 @@ service OperatorService {
   // missing host id, an empty mask or another path fails with
   // INVALID_ARGUMENT; an unknown host fails with NOT_FOUND.
   rpc UpdateHost(UpdateHostRequest) returns (UpdateHostResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {
       action: "host.overflow_set"
       target: "host:host.id"
@@ -73,7 +75,9 @@ service OperatorService {
   // RetireHost removes a host that holds no assigned, starting or running
   // job; otherwise it fails with FailedPrecondition (drain it first). Its
   // agent, if still running, registers again with its enrollment token.
-  rpc RetireHost(RetireHostRequest) returns (RetireHostResponse);
+  rpc RetireHost(RetireHostRequest) returns (RetireHostResponse) {
+    option (toshi.key_mode) = NATURAL;
+  }
 
   // RevokeHost revokes a host at once: its
   // host token and any Register under its ID fail with Unauthenticated
@@ -82,7 +86,9 @@ service OperatorService {
   // The host keeps its row, shown with revoked_at. Revoking a revoked host
   // changes nothing and returns revoked false. Operators only. An unknown
   // ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
-  rpc RevokeHost(RevokeHostRequest) returns (RevokeHostResponse);
+  rpc RevokeHost(RevokeHostRequest) returns (RevokeHostResponse) {
+    option (toshi.key_mode) = NATURAL;
+  }
 
   // RetireHosts lists the hosts whose state is offline and whose last
   // heartbeat is older than offline_longer_than, oldest first, and with apply
@@ -92,6 +98,7 @@ service OperatorService {
   // and a revoked host is never listed. Each removal records one
   // host.retired audit event. Operators only.
   rpc RetireHosts(RetireHostsRequest) returns (RetireHostsResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {
       action: "host.offline_retired"
       target: "none"
@@ -104,7 +111,9 @@ service OperatorService {
   // with that plan's starter credit. An empty name, or a plan the
   // configuration does not define, fails with INVALID_ARGUMENT. Names are not
   // unique: two workspaces may share one. Only the operator may call it.
-  rpc CreateWorkspace(CreateWorkspaceRequest) returns (CreateWorkspaceResponse);
+  rpc CreateWorkspace(CreateWorkspaceRequest) returns (CreateWorkspaceResponse) {
+    option (toshi.key_mode) = KEY;
+  }
 
   // ListWorkspaces returns every workspace, ordered by ID.
   //
@@ -116,6 +125,7 @@ service OperatorService {
   // applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
   // unknown ID fails with NOT_FOUND.
   rpc SetTenantCap(SetTenantCapRequest) returns (SetTenantCapResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {action: "workspace.cap_set"};
   }
 
@@ -129,6 +139,7 @@ service OperatorService {
   // volume_snapshot_interval_seconds other than 0 and below 60; an unknown
   // workspace fails with NOT_FOUND. A workspace's own token cannot call it.
   rpc SetTenantLimits(SetTenantLimitsRequest) returns (SetTenantLimitsResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {action: "workspace.limits_set"};
   }
 
@@ -159,6 +170,7 @@ service OperatorService {
   // an event only when changed; reservation and entitlement sets record one
   // for each entry, and entitlement clears only when an override existed.
   rpc UpdateWorkspace(UpdateWorkspaceRequest) returns (UpdateWorkspaceResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {target: "none"};
   }
   // ReassignSeat moves a workspace's live desktop seat to another member
@@ -173,6 +185,7 @@ service OperatorService {
   // ALREADY_EXISTS; a workspace that is not active with FAILED_PRECONDITION.
   // The seat's own person fails with INVALID_ARGUMENT.
   rpc ReassignSeat(ReassignSeatRequest) returns (ReassignSeatResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {action: "seat.reassigned"};
   }
   // ListSeats returns the desktop seats every workspace, or one, held in a
@@ -200,6 +213,7 @@ service OperatorService {
   // group whose subject this control plane is not configured for (the GitHub
   // group without a GitHub App) fails with FAILED_PRECONDITION.
   rpc RunChecks(RunChecksRequest) returns (RunChecksResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {action: "none", reason: "It runs checks and changes no state of the workspace."};
   }
 
@@ -209,13 +223,16 @@ service OperatorService {
   // empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
   // NOT_FOUND, and a workspace that is deleting or deleted with
   // FAILED_PRECONDITION. Operator only.
-  rpc SuspendWorkspace(SuspendWorkspaceRequest) returns (SuspendWorkspaceResponse);
+  rpc SuspendWorkspace(SuspendWorkspaceRequest) returns (SuspendWorkspaceResponse) {
+    option (toshi.key_mode) = NATURAL;
+  }
   // UnsuspendWorkspace returns a suspended workspace to active and cancels a
   // scheduled deletion; held jobs run at the next scheduler pass. An active
   // workspace is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
   // an unknown ID with NOT_FOUND, and a workspace that is deleting or deleted
   // with FAILED_PRECONDITION. Operator only.
   rpc UnsuspendWorkspace(UnsuspendWorkspaceRequest) returns (UnsuspendWorkspaceResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {action: "workspace.resumed"};
   }
   // DeleteWorkspace suspends a workspace until purge_after, after which its data
@@ -225,6 +242,7 @@ service OperatorService {
   // with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
   // deleting or deleted with FAILED_PRECONDITION. Operator only.
   rpc DeleteWorkspace(DeleteWorkspaceRequest) returns (DeleteWorkspaceResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {action: "workspace.deletion_scheduled"};
   }
 
@@ -275,6 +293,7 @@ service OperatorService {
   // and returns it; it is not stored and cannot be shown again. The kind's
   // other active tokens keep working until the grace period ends.
   rpc RotateToken(RotateTokenRequest) returns (RotateTokenResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.audit) = {target: "token:response.token.id"};
   }
 
@@ -284,7 +303,9 @@ service OperatorService {
   // enrollment token it now holds and keeps its jobs. Revoking a workspace's
   // enrollment token signs out only the hosts that registered with it.
   // Revoking the only active operator token fails with FailedPrecondition.
-  rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse);
+  rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse) {
+    option (toshi.key_mode) = NATURAL;
+  }
 
   // RollToken gives a token a new value and returns it; it is not stored
   // and cannot be shown again. The old value stops working at once. The
@@ -293,6 +314,7 @@ service OperatorService {
   // expired token with FailedPrecondition. A token file that still holds
   // the old value is refused at the next start, as a revoked token's is.
   rpc RollToken(RollTokenRequest) returns (RollTokenResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.audit) = {action: "token.rotated"};
   }
 
@@ -301,6 +323,7 @@ service OperatorService {
   // has at most two tokens that work at once, so that one can replace the
   // other.
   rpc CreateProductToken(CreateProductTokenRequest) returns (CreateProductTokenResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.audit) = {action: "token.created"};
   }
 
@@ -314,6 +337,7 @@ service OperatorService {
   // address), fails with INVALID_ARGUMENT. While oauth.issuer is unset, the
   // authorization endpoints are off and it fails with FAILED_PRECONDITION.
   rpc RegisterClient(RegisterClientRequest) returns (RegisterClientResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.audit) = {action: "client.registered"};
   }
 
@@ -326,7 +350,9 @@ service OperatorService {
   // DeleteClient deletes a registered client and revokes every token
   // issued to it. A client the config file declares fails with
   // FAILED_PRECONDITION; an unknown or deleted one with NOT_FOUND.
-  rpc DeleteClient(DeleteClientRequest) returns (DeleteClientResponse);
+  rpc DeleteClient(DeleteClientRequest) returns (DeleteClientResponse) {
+    option (toshi.key_mode) = NATURAL;
+  }
 
   // ListOperatorAlerts returns the operator alerts raised and not yet
   // cleared, one per kind, ordered by kind. They are kept in the store, so a
@@ -355,6 +381,7 @@ service OperatorService {
   // cloud host fails with NOT_FOUND; cloud hosts not configured on the
   // control plane fails with FAILED_PRECONDITION.
   rpc CheckCloudHost(CheckCloudHostRequest) returns (CheckCloudHostResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {target: "host:host_id"};
   }
   // ListFillers returns the fillers, ordered by name, then workspace, each
@@ -371,6 +398,7 @@ service OperatorService {
   // may put only dispatch fillers for its own workspace and repositories.
   // A bad field fails with INVALID_ARGUMENT.
   rpc PutFiller(PutFillerRequest) returns (PutFillerResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {target: "filler:filler.name"};
   }
 
@@ -378,6 +406,7 @@ service OperatorService {
   // filler cannot be removed (FailedPrecondition); an unknown name fails
   // with NOT_FOUND. A workspace caller may remove only its own.
   rpc DeleteFiller(DeleteFillerRequest) returns (DeleteFillerResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {
       action: "filler.removed"
       target: "filler:name"
@@ -389,6 +418,7 @@ service OperatorService {
   // its running run. A missing name, an empty mask or another path fails
   // with INVALID_ARGUMENT; an unknown name fails with NOT_FOUND.
   rpc UpdateFiller(UpdateFillerRequest) returns (UpdateFillerResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {
       action: "filler.enabled_set"
       target: "filler:filler.name"
@@ -414,6 +444,7 @@ service OperatorService {
   // off does not depend on the hosts. Setting the value the switch has
   // changes and records nothing. The operator token only.
   rpc UpdateSecretDelivery(UpdateSecretDeliveryRequest) returns (UpdateSecretDeliveryResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.audit) = {
       action: "secret_delivery.set"
       target: "none"
@@ -458,7 +489,9 @@ service OperatorService {
   // own workspace's, with a credential and no file, role or replication
   // fields, with the Workspace API's
   // StorageProviderService.CreateStorageProvider.
-  rpc CreateStorageProvider(CreateStorageProviderRequest) returns (CreateStorageProviderResponse);
+  rpc CreateStorageProvider(CreateStorageProviderRequest) returns (CreateStorageProviderResponse) {
+    option (toshi.key_mode) = KEY;
+  }
 
   // ListStorageProviders returns the operator's providers when workspace
   // is empty and that workspace's otherwise, ordered by name. With
@@ -486,13 +519,17 @@ service OperatorService {
   // wrapped credential and no role), and gets last_check_error, or one not
   // saved for its own workspace, with the Workspace API's
   // StorageProviderService.CheckStorageProvider.
-  rpc CheckStorageProvider(CheckStorageProviderRequest) returns (CheckStorageProviderResponse);
+  rpc CheckStorageProvider(CheckStorageProviderRequest) returns (CheckStorageProviderResponse) {
+    option (toshi.key_mode) = NATURAL;
+  }
 
   // DeleteStorageProvider removes a provider. An unknown ID fails with
   // NOT_FOUND. A member deletes a row its workspace saved with the
   // Workspace API's StorageProviderService.DeleteStorageProvider; a row the
   // operator set for the workspace is PERMISSION_DENIED to it there.
-  rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse);
+  rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse) {
+    option (toshi.key_mode) = NATURAL;
+  }
 }
 
 // JobState is where a job is in its life cycle.
@@ -1432,6 +1469,11 @@ message CreateWorkspaceRequest {
   string name = 1;
   // The plan; empty for the control plane's default_plan.
   string plan = 2;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  // The key belongs to the calling operator token.
+  string request_key = 3;
 }
 
 message CreateWorkspaceResponse {
@@ -2467,6 +2509,11 @@ message RotateTokenRequest {
   // Seconds the kind's other active tokens keep working, at most 30 days.
   // Unset means 24 hours; 0 ends them at once.
   optional int64 grace_seconds = 2;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  // The key belongs to the calling operator token.
+  string request_key = 3;
 }
 
 // RotateTokenResponse carries the new token and its value.
@@ -2491,6 +2538,11 @@ message RevokeTokenResponse {
 // RollTokenRequest names the token to roll.
 message RollTokenRequest {
   string id = 1;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  // The key belongs to the calling operator token.
+  string request_key = 2;
 }
 
 // RollTokenResponse carries the token and its new value.
@@ -2504,6 +2556,11 @@ message CreateProductTokenRequest {
   string product = 1;
   // Unset means 90 days from now.
   google.protobuf.Timestamp expires_at = 2;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  // The key belongs to the calling operator token.
+  string request_key = 3;
 }
 
 message CreateProductTokenResponse {
@@ -2536,6 +2593,11 @@ message RegisterClientRequest {
   string name = 2;
   repeated string redirect_uris = 3;
   bool confidential = 4;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  // The key belongs to the calling operator token.
+  string request_key = 5;
 }
 
 message RegisterClientResponse {
@@ -3075,6 +3137,11 @@ message CreateStorageProviderRequest {
   // endpoint, and no credentials_file, credentials_profile, role_arn,
   // external_id, global replication or egress price.
   StorageCredential credential = 17;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  // The key belongs to the calling operator token.
+  string request_key = 18;
 }
 
 // StorageCredential is an S3 access key. It is write-only: no response

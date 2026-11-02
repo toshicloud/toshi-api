@@ -1844,6 +1844,10 @@ message CreatePreviewShareLinkRequest {
     string endpoint = 6;
     int32 port = 7;
   }
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 8;
 }
 
 message CreatePreviewShareLinkResponse {
@@ -1920,6 +1924,10 @@ message CreateServiceShareLinkRequest {
   // The most bytes, both ways, its connections may carry, at most the
   // plan's; 0 is the plan's.
   int64 max_bytes = 6;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 7;
 }
 
 message CreateServiceShareLinkResponse {

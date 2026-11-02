@@ -37,6 +37,7 @@ service EndpointService {
   // job already has with ALREADY_EXISTS, and a sandbox's port beyond its
   // plan's preview ports with RESOURCE_EXHAUSTED.
   rpc CreateEndpoint(CreateEndpointRequest) returns (CreateEndpointResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
       action: "host_job.endpoint_exposed"
@@ -77,6 +78,7 @@ service EndpointService {
   // changes the endpoint's policy; its set is recorded as
   // service.endpoint_policy_set on the service.
   rpc UpdateEndpoint(UpdateEndpointRequest) returns (UpdateEndpointResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
       action: "host_job.endpoint_policy_set"
@@ -118,6 +120,7 @@ service EndpointService {
   // endpoint, or opens a preview in a browser, once, before it expires. An
   // endpoint the connect path would not serve fails as that path does.
   rpc CreateEndpointConnectToken(CreateEndpointConnectTokenRequest) returns (CreateEndpointConnectTokenResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
       action: "host_job.endpoint_connect_token_issued"
@@ -130,6 +133,7 @@ service EndpointService {
   // it opened. A token not minted for this endpoint is NOT_FOUND. A token
   // that has expired is refused already, and its revoke writes nothing.
   rpc RevokeEndpointConnectToken(RevokeEndpointConnectTokenRequest) returns (RevokeEndpointConnectTokenResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
       action: "host_job.endpoint_connect_token_revoked"
@@ -141,6 +145,7 @@ service EndpointService {
   // endpoint stays, closing, until the guest has closed its process or the
   // job has ended; any other endpoint goes at once.
   rpc DeleteEndpoint(DeleteEndpointRequest) returns (DeleteEndpointResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
       action: "host_job.endpoint_deleted"
@@ -175,6 +180,7 @@ service EndpointService {
   // again with the same webhook-id, the message ID, so a handler drops
   // repeats by it.
   rpc SendEndpointMessage(SendEndpointMessageRequest) returns (SendEndpointMessageResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {action: "endpoint.message_sent", target: "service:service"};
   }
@@ -193,6 +199,7 @@ service EndpointService {
   // replay. A message pending or in flight fails with
   // FAILED_PRECONDITION.
   rpc ReplayEndpointMessage(ReplayEndpointMessageRequest) returns (ReplayEndpointMessageResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
       action: "service.endpoint_message_replayed"
@@ -799,6 +806,10 @@ message CreateEndpointConnectTokenRequest {
   // A grant the caller's workspace received, to act on the owner's
   // sandbox's job through it (docs/grants.md).
   string grant = 5;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 6;
 }
 
 message CreateEndpointConnectTokenResponse {
@@ -897,6 +908,10 @@ message ReplayEndpointMessageRequest {
   string service = 1;
   string endpoint = 2;
   string message_id = 3;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 4;
 }
 
 message ReplayEndpointMessageResponse {

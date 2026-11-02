@@ -9591,7 +9591,11 @@ type CreatePreviewShareLinkRequest struct {
 	//
 	//	*CreatePreviewShareLinkRequest_Endpoint
 	//	*CreatePreviewShareLinkRequest_Port
-	EndpointRef   isCreatePreviewShareLinkRequest_EndpointRef `protobuf_oneof:"endpoint_ref"`
+	EndpointRef isCreatePreviewShareLinkRequest_EndpointRef `protobuf_oneof:"endpoint_ref"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,8,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -9684,6 +9688,13 @@ func (x *CreatePreviewShareLinkRequest) GetPort() int32 {
 		}
 	}
 	return 0
+}
+
+func (x *CreatePreviewShareLinkRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type isCreatePreviewShareLinkRequest_EndpointRef interface {
@@ -10149,7 +10160,11 @@ type CreateServiceShareLinkRequest struct {
 	ExpiresIn *durationpb.Duration `protobuf:"bytes,5,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
 	// The most bytes, both ways, its connections may carry, at most the
 	// plan's; 0 is the plan's.
-	MaxBytes      int64 `protobuf:"varint,6,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
+	MaxBytes int64 `protobuf:"varint,6,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,7,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10224,6 +10239,13 @@ func (x *CreateServiceShareLinkRequest) GetMaxBytes() int64 {
 		return x.MaxBytes
 	}
 	return 0
+}
+
+func (x *CreateServiceShareLinkRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type CreateServiceShareLinkResponse struct {
@@ -14790,7 +14812,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bended_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x12\x1a\n" +
 	"\bendpoint\x18\v \x01(\tR\bendpoint\x12\x12\n" +
-	"\x04port\x18\f \x01(\x05R\x04port\"\x95\x02\n" +
+	"\x04port\x18\f \x01(\x05R\x04port\"\xb6\x02\n" +
 	"\x1dCreatePreviewShareLinkRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
@@ -14800,7 +14822,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"expires_in\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12\x1b\n" +
 	"\tmax_bytes\x18\x05 \x01(\x03R\bmaxBytes\x12\x1c\n" +
 	"\bendpoint\x18\x06 \x01(\tH\x00R\bendpoint\x12\x14\n" +
-	"\x04port\x18\a \x01(\x05H\x00R\x04portB\x0e\n" +
+	"\x04port\x18\a \x01(\x05H\x00R\x04port\x12\x1f\n" +
+	"\vrequest_key\x18\b \x01(\tR\n" +
+	"requestKeyB\x0e\n" +
 	"\fendpoint_ref\"w\n" +
 	"\x1eCreatePreviewShareLinkResponse\x12C\n" +
 	"\n" +
@@ -14844,7 +14868,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"revoked_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x125\n" +
-	"\bended_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\"\xed\x01\n" +
+	"\bended_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\"\x8e\x02\n" +
 	"\x1dCreateServiceShareLinkRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
@@ -14853,7 +14877,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bendpoint\x18\x04 \x01(\tR\bendpoint\x128\n" +
 	"\n" +
 	"expires_in\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12\x1b\n" +
-	"\tmax_bytes\x18\x06 \x01(\x03R\bmaxBytes\"w\n" +
+	"\tmax_bytes\x18\x06 \x01(\x03R\bmaxBytes\x12\x1f\n" +
+	"\vrequest_key\x18\a \x01(\tR\n" +
+	"requestKey\"w\n" +
 	"\x1eCreateServiceShareLinkResponse\x12C\n" +
 	"\n" +
 	"share_link\x18\x01 \x01(\v2$.toshi.workspace.v1.ServiceShareLinkR\tshareLink\x12\x10\n" +

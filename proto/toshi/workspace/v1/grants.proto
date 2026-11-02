@@ -37,6 +37,7 @@ service GrantService {
   // with no grants, or past the plan's grants at once or offers a day,
   // RESOURCE_EXHAUSTED.
   rpc CreateGrant(CreateGrantRequest) returns (CreateGrantResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "grants.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "grant.offered"};
@@ -61,6 +62,7 @@ service GrantService {
   // AcceptGrant accepts an offer the workspace received: the grant becomes
   // ACTIVE. An offer no longer OFFERED is FAILED_PRECONDITION.
   rpc AcceptGrant(AcceptGrantRequest) returns (AcceptGrantResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "grants.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "grant.accepted"};
@@ -69,6 +71,7 @@ service GrantService {
   // DeclineGrant declines an offer the workspace received: the grant
   // becomes DECLINED. An offer no longer OFFERED is FAILED_PRECONDITION.
   rpc DeclineGrant(DeclineGrantRequest) returns (DeclineGrantResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "grants.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "grant.declined"};
@@ -81,6 +84,7 @@ service GrantService {
   // empty one, an unset one with no expires_at, "*" and a path of another
   // field are INVALID_ARGUMENT. A grant that has ended is FAILED_PRECONDITION.
   rpc UpdateGrant(UpdateGrantRequest) returns (UpdateGrantResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "grants.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {
@@ -95,6 +99,7 @@ service GrantService {
   // target lies inside its limit. A grant that has ended is returned as it
   // is.
   rpc RevokeGrant(RevokeGrantRequest) returns (RevokeGrantResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "grants.write";
     option (toshi.scope) = "environment";
   }
@@ -104,6 +109,7 @@ service GrantService {
   // ended is returned as it is; an offer is declined, not left
   // (FAILED_PRECONDITION).
   rpc LeaveGrant(LeaveGrantRequest) returns (LeaveGrantResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "grants.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "grant.revoked"};

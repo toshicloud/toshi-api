@@ -36,6 +36,7 @@ service ProductService {
   //
   // The product's calls follow the change from the next call on.
   rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "settings.write";
   }
 }

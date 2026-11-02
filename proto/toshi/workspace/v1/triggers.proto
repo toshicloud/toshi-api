@@ -37,6 +37,7 @@ service TriggerService {
   // INVALID_ARGUMENT, and a name another
   // trigger of the project has with ALREADY_EXISTS.
   rpc CreateTrigger(CreateTriggerRequest) returns (CreateTriggerResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "triggers.write";
     option (toshi.scope) = "environment";
   }
@@ -63,6 +64,7 @@ service TriggerService {
   // INVALID_ARGUMENT, and the new values are checked as CreateTrigger's are.
   // The change applies to the events written after it.
   rpc UpdateTrigger(UpdateTriggerRequest) returns (UpdateTriggerResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "triggers.write";
     option (toshi.scope) = "environment";
   }
@@ -70,6 +72,7 @@ service TriggerService {
   // DeleteTrigger deletes a trigger: it acts on no further event, and the
   // evaluator's next pass removes the workloads it made.
   rpc DeleteTrigger(DeleteTriggerRequest) returns (DeleteTriggerResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "triggers.write";
     option (toshi.scope) = "environment";
   }

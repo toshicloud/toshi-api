@@ -43,6 +43,7 @@ service AccountService {
   // google.rpc.ErrorInfo detail. A session or token opened through the
   // identity, the calling one included, stops working at its next call.
   rpc UnlinkIdentity(UnlinkIdentityRequest) returns (UnlinkIdentityResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     // members.write only files a person's own call; it is not checked.
     option (toshi.mcp) = {destructive: true};
@@ -67,6 +68,7 @@ service AccountService {
   // fails with NOT_FOUND. The session ended stops working at its next
   // call, the calling one included.
   rpc EndSession(EndSessionRequest) returns (EndSessionResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     // members.write only files a person's own call; it is not checked.
     option (toshi.mcp) = {destructive: true};

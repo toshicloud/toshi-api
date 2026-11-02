@@ -2588,7 +2588,11 @@ type CreateCheckoutSessionRequest struct {
 	// as checkout-done or checkout-cancelled; its own query is kept. return_url
 	// is required and must be on the origin of a redirect URI of a
 	// registered client, whether declared in the configuration or registered.
-	ReturnUrl     string `protobuf:"bytes,2,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
+	ReturnUrl string `protobuf:"bytes,2,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2633,6 +2637,13 @@ func (x *CreateCheckoutSessionRequest) GetPlan() string {
 func (x *CreateCheckoutSessionRequest) GetReturnUrl() string {
 	if x != nil {
 		return x.ReturnUrl
+	}
+	return ""
+}
+
+func (x *CreateCheckoutSessionRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -2688,7 +2699,11 @@ type CreateBillingPortalSessionRequest struct {
 	// the workspace query parameter; its own query is kept. return_url is required
 	// and must be on the origin of a redirect URI of a registered client,
 	// whether declared in the configuration or registered.
-	ReturnUrl     string `protobuf:"bytes,1,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
+	ReturnUrl string `protobuf:"bytes,1,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2726,6 +2741,13 @@ func (*CreateBillingPortalSessionRequest) Descriptor() ([]byte, []int) {
 func (x *CreateBillingPortalSessionRequest) GetReturnUrl() string {
 	if x != nil {
 		return x.ReturnUrl
+	}
+	return ""
+}
+
+func (x *CreateBillingPortalSessionRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -6406,16 +6428,20 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"k\n" +
 	"\x11ListPlansResponse\x12.\n" +
 	"\x05plans\x18\x01 \x03(\v2\x18.toshi.workspace.v1.PlanR\x05plans\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"Q\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"r\n" +
 	"\x1cCreateCheckoutSessionRequest\x12\x12\n" +
 	"\x04plan\x18\x01 \x01(\tR\x04plan\x12\x1d\n" +
 	"\n" +
-	"return_url\x18\x02 \x01(\tR\treturnUrl\"1\n" +
+	"return_url\x18\x02 \x01(\tR\treturnUrl\x12\x1f\n" +
+	"\vrequest_key\x18\x03 \x01(\tR\n" +
+	"requestKey\"1\n" +
 	"\x1dCreateCheckoutSessionResponse\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url\"B\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\"c\n" +
 	"!CreateBillingPortalSessionRequest\x12\x1d\n" +
 	"\n" +
-	"return_url\x18\x01 \x01(\tR\treturnUrl\"6\n" +
+	"return_url\x18\x01 \x01(\tR\treturnUrl\x12\x1f\n" +
+	"\vrequest_key\x18\x02 \x01(\tR\n" +
+	"requestKey\"6\n" +
 	"\"CreateBillingPortalSessionResponse\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\"\x13\n" +
 	"\x11GetVersionRequest\"\x8e\x01\n" +
@@ -6768,39 +6794,39 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x12InboundMailPastCap\x12%\n" +
 	"!INBOUND_MAIL_PAST_CAP_UNSPECIFIED\x10\x00\x12+\n" +
 	"'INBOUND_MAIL_PAST_CAP_ACCEPT_AND_CHARGE\x10\x01\x12 \n" +
-	"\x1cINBOUND_MAIL_PAST_CAP_REFUSE\x10\x022\xf4\x16\n" +
+	"\x1cINBOUND_MAIL_PAST_CAP_REFUSE\x10\x022\x91\x17\n" +
 	"\x10WorkspaceService\x12u\n" +
-	"\fGetWorkspace\x12'.toshi.workspace.v1.GetWorkspaceRequest\x1a(.toshi.workspace.v1.GetWorkspaceResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\x83\x01\n" +
-	"\x0fUpdateWorkspace\x12*.toshi.workspace.v1.UpdateWorkspaceRequest\x1a+.toshi.workspace.v1.UpdateWorkspaceResponse\"\x17\xc2\xf3\x18\x0fworkspace.write\xe0\xf3\x18\x01\x12{\n" +
+	"\fGetWorkspace\x12'.toshi.workspace.v1.GetWorkspaceRequest\x1a(.toshi.workspace.v1.GetWorkspaceResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\x87\x01\n" +
+	"\x0fUpdateWorkspace\x12*.toshi.workspace.v1.UpdateWorkspaceRequest\x1a+.toshi.workspace.v1.UpdateWorkspaceResponse\"\x1b\xc2\xf3\x18\x0fworkspace.write\xe0\xf3\x18\x01\x90\xf4\x18\x02\x12{\n" +
 	"\x0eListWorkspaces\x12).toshi.workspace.v1.ListWorkspacesRequest\x1a*.toshi.workspace.v1.ListWorkspacesResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\x88\x01\n" +
 	"\x13GetWorkspaceBilling\x12..toshi.workspace.v1.GetWorkspaceBillingRequest\x1a/.toshi.workspace.v1.GetWorkspaceBillingResponse\"\x10\xc2\xf3\x18\fbilling.read\x12\x8e\x01\n" +
 	"\x15GetWorkspaceStatement\x120.toshi.workspace.v1.GetWorkspaceStatementRequest\x1a1.toshi.workspace.v1.GetWorkspaceStatementResponse\"\x10\xc2\xf3\x18\fbilling.read\x12\xa0\x01\n" +
 	"\x1bGetWorkspaceUpcomingInvoice\x126.toshi.workspace.v1.GetWorkspaceUpcomingInvoiceRequest\x1a7.toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse\"\x10\xc2\xf3\x18\fbilling.read\x12h\n" +
 	"\tListSeats\x12$.toshi.workspace.v1.ListSeatsRequest\x1a%.toshi.workspace.v1.ListSeatsResponse\"\x0e\xc2\xf3\x18\n" +
-	"seats.read\x12\x96\x01\n" +
+	"seats.read\x12\x9a\x01\n" +
 	"\n" +
-	"AssignSeat\x12%.toshi.workspace.v1.AssignSeatRequest\x1a&.toshi.workspace.v1.AssignSeatResponse\"9\xc2\xf3\x18\vseats.write\xd2\xf3\x18&\n" +
-	"\rseat.assigned\x12\x15seat:response.seat.id\x12~\n" +
+	"AssignSeat\x12%.toshi.workspace.v1.AssignSeatRequest\x1a&.toshi.workspace.v1.AssignSeatResponse\"=\xc2\xf3\x18\vseats.write\xd2\xf3\x18&\n" +
+	"\rseat.assigned\x12\x15seat:response.seat.id\x90\xf4\x18\x02\x12\x82\x01\n" +
 	"\n" +
-	"RemoveSeat\x12%.toshi.workspace.v1.RemoveSeatRequest\x1a&.toshi.workspace.v1.RemoveSeatResponse\"!\xc2\xf3\x18\vseats.write\xd2\xf3\x18\x0e\n" +
-	"\fseat.removed\x12x\n" +
+	"RemoveSeat\x12%.toshi.workspace.v1.RemoveSeatRequest\x1a&.toshi.workspace.v1.RemoveSeatResponse\"%\xc2\xf3\x18\vseats.write\xd2\xf3\x18\x0e\n" +
+	"\fseat.removed\x90\xf4\x18\x02\x12x\n" +
 	"\rListEgressIPs\x12(.toshi.workspace.v1.ListEgressIPsRequest\x1a).toshi.workspace.v1.ListEgressIPsResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12i\n" +
 	"\bGetUsage\x12#.toshi.workspace.v1.GetUsageRequest\x1a$.toshi.workspace.v1.GetUsageResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12x\n" +
 	"\rGetQueueTimes\x12(.toshi.workspace.v1.GetQueueTimesRequest\x1a).toshi.workspace.v1.GetQueueTimesResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12~\n" +
 	"\x0fGetStartWindows\x12*.toshi.workspace.v1.GetStartWindowsRequest\x1a+.toshi.workspace.v1.GetStartWindowsResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12x\n" +
 	"\rGetVolumeCaps\x12(.toshi.workspace.v1.GetVolumeCapsRequest\x1a).toshi.workspace.v1.GetVolumeCapsResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\x81\x01\n" +
 	"\x10GetWorkflowUsage\x12+.toshi.workspace.v1.GetWorkflowUsageRequest\x1a,.toshi.workspace.v1.GetWorkflowUsageResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12j\n" +
-	"\tListPlans\x12$.toshi.workspace.v1.ListPlansRequest\x1a%.toshi.workspace.v1.ListPlansResponse\"\x10\xc2\xf3\x18\fbilling.read\x12\xc1\x01\n" +
-	"\x15CreateCheckoutSession\x120.toshi.workspace.v1.CreateCheckoutSessionRequest\x1a1.toshi.workspace.v1.CreateCheckoutSessionResponse\"C\xc2\xf3\x18\rbilling.write\xd2\xf3\x18.\n" +
-	"\x17billing.checkout_opened\x12\x13workspace:workspace\x12\xce\x01\n" +
-	"\x1aCreateBillingPortalSession\x125.toshi.workspace.v1.CreateBillingPortalSessionRequest\x1a6.toshi.workspace.v1.CreateBillingPortalSessionResponse\"A\xc2\xf3\x18\rbilling.write\xd2\xf3\x18,\n" +
-	"\x15billing.portal_opened\x12\x13workspace:workspace\x12o\n" +
+	"\tListPlans\x12$.toshi.workspace.v1.ListPlansRequest\x1a%.toshi.workspace.v1.ListPlansResponse\"\x10\xc2\xf3\x18\fbilling.read\x12\xc5\x01\n" +
+	"\x15CreateCheckoutSession\x120.toshi.workspace.v1.CreateCheckoutSessionRequest\x1a1.toshi.workspace.v1.CreateCheckoutSessionResponse\"G\xc2\xf3\x18\rbilling.write\xd2\xf3\x18.\n" +
+	"\x17billing.checkout_opened\x12\x13workspace:workspace\x90\xf4\x18\x01\x12\xd2\x01\n" +
+	"\x1aCreateBillingPortalSession\x125.toshi.workspace.v1.CreateBillingPortalSessionRequest\x1a6.toshi.workspace.v1.CreateBillingPortalSessionResponse\"E\xc2\xf3\x18\rbilling.write\xd2\xf3\x18,\n" +
+	"\x15billing.portal_opened\x12\x13workspace:workspace\x90\xf4\x18\x01\x12o\n" +
 	"\n" +
-	"GetVersion\x12%.toshi.workspace.v1.GetVersionRequest\x1a&.toshi.workspace.v1.GetVersionResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\xa2\x01\n" +
-	"\x0fDeleteWorkspace\x12*.toshi.workspace.v1.DeleteWorkspaceRequest\x1a+.toshi.workspace.v1.DeleteWorkspaceResponse\"6\xc2\xf3\x18\x10workspace.delete\xd2\xf3\x18\x1e\n" +
-	"\x1cworkspace.deletion_scheduled\x12\xaf\x01\n" +
-	"\x17CancelWorkspaceDeletion\x122.toshi.workspace.v1.CancelWorkspaceDeletionRequest\x1a3.toshi.workspace.v1.CancelWorkspaceDeletionResponse\"+\xc2\xf3\x18\x10workspace.delete\xd2\xf3\x18\x13\n" +
-	"\x11workspace.resumedB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"GetVersion\x12%.toshi.workspace.v1.GetVersionRequest\x1a&.toshi.workspace.v1.GetVersionResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\xa6\x01\n" +
+	"\x0fDeleteWorkspace\x12*.toshi.workspace.v1.DeleteWorkspaceRequest\x1a+.toshi.workspace.v1.DeleteWorkspaceResponse\":\xc2\xf3\x18\x10workspace.delete\xd2\xf3\x18\x1e\n" +
+	"\x1cworkspace.deletion_scheduled\x90\xf4\x18\x02\x12\xb3\x01\n" +
+	"\x17CancelWorkspaceDeletion\x122.toshi.workspace.v1.CancelWorkspaceDeletionRequest\x1a3.toshi.workspace.v1.CancelWorkspaceDeletionResponse\"/\xc2\xf3\x18\x10workspace.delete\xd2\xf3\x18\x13\n" +
+	"\x11workspace.resumed\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_workspace_service_proto_rawDescOnce sync.Once

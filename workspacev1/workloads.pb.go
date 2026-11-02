@@ -215,7 +215,11 @@ type EmitWorkloadEventRequest struct {
 	WorkloadId string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	Name       string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	// JSON, at most 64 KiB; empty for none.
-	Data          []byte `protobuf:"bytes,5,opt,name=data,proto3" json:"data,omitempty"`
+	Data []byte `protobuf:"bytes,5,opt,name=data,proto3" json:"data,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -283,6 +287,13 @@ func (x *EmitWorkloadEventRequest) GetData() []byte {
 		return x.Data
 	}
 	return nil
+}
+
+func (x *EmitWorkloadEventRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type EmitWorkloadEventResponse struct {
@@ -5225,14 +5236,16 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\tprompt_id\x18\x04 \x01(\tR\bpromptId\x12\x16\n" +
 	"\x06answer\x18\x05 \x01(\tR\x06answer\"G\n" +
 	"\x14AnswerPromptResponse\x12/\n" +
-	"\x05event\x18\x01 \x01(\v2\x19.toshi.workspace.v1.EventR\x05event\"\x9f\x01\n" +
+	"\x05event\x18\x01 \x01(\v2\x19.toshi.workspace.v1.EventR\x05event\"\xc0\x01\n" +
 	"\x18EmitWorkloadEventRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
 	"\vworkload_id\x18\x03 \x01(\tR\n" +
 	"workloadId\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x12\n" +
-	"\x04data\x18\x05 \x01(\fR\x04data\"L\n" +
+	"\x04data\x18\x05 \x01(\fR\x04data\x12\x1f\n" +
+	"\vrequest_key\x18\x06 \x01(\tR\n" +
+	"requestKey\"L\n" +
 	"\x19EmitWorkloadEventResponse\x12/\n" +
 	"\x05event\x18\x01 \x01(\v2\x19.toshi.workspace.v1.EventR\x05event\"\xee\x01\n" +
 	"\x13ExportEventsRequest\x12\x18\n" +
@@ -5643,93 +5656,93 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"!SERVICE_ALARM_MISFIRE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eSERVICE_ALARM_MISFIRE_COALESCE\x10\x01\x12\x1d\n" +
 	"\x19SERVICE_ALARM_MISFIRE_ALL\x10\x02\x12\x1e\n" +
-	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\x96S\n" +
-	"\x0fWorkloadService\x12}\n" +
-	"\tCreateJob\x12$.toshi.workspace.v1.CreateJobRequest\x1a%.toshi.workspace.v1.CreateJobResponse\"#\xc2\xf3\x18\n" +
-	"jobs.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12m\n" +
+	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xb5T\n" +
+	"\x0fWorkloadService\x12\x81\x01\n" +
+	"\tCreateJob\x12$.toshi.workspace.v1.CreateJobRequest\x1a%.toshi.workspace.v1.CreateJobResponse\"'\xc2\xf3\x18\n" +
+	"jobs.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12m\n" +
 	"\x06GetJob\x12!.toshi.workspace.v1.GetJobRequest\x1a\".toshi.workspace.v1.GetJobResponse\"\x1c\xc2\xf3\x18\tjobs.read\xca\xf3\x18\venvironment\x12s\n" +
 	"\bListJobs\x12#.toshi.workspace.v1.ListJobsRequest\x1a$.toshi.workspace.v1.ListJobsResponse\"\x1c\xc2\xf3\x18\tjobs.read\xca\xf3\x18\venvironment\x12\x90\x01\n" +
 	"\x10GetWorkloadUsage\x12+.toshi.workspace.v1.GetWorkloadUsageRequest\x1a,.toshi.workspace.v1.GetWorkloadUsageResponse\"!\xc2\xf3\x18\x0eworkloads.read\xca\xf3\x18\venvironment\x12\x96\x01\n" +
-	"\x12ListWorkloadUsages\x12-.toshi.workspace.v1.ListWorkloadUsagesRequest\x1a..toshi.workspace.v1.ListWorkloadUsagesResponse\"!\xc2\xf3\x18\x0eworkloads.read\xca\xf3\x18\venvironment\x12w\n" +
-	"\tUpdateJob\x12$.toshi.workspace.v1.UpdateJobRequest\x1a%.toshi.workspace.v1.UpdateJobResponse\"\x1d\xc2\xf3\x18\n" +
-	"jobs.write\xca\xf3\x18\venvironment\x12w\n" +
-	"\tDeleteJob\x12$.toshi.workspace.v1.DeleteJobRequest\x1a%.toshi.workspace.v1.DeleteJobResponse\"\x1d\xc2\xf3\x18\n" +
-	"jobs.write\xca\xf3\x18\venvironment\x12w\n" +
-	"\tCancelJob\x12$.toshi.workspace.v1.CancelJobRequest\x1a%.toshi.workspace.v1.CancelJobResponse\"\x1d\xc2\xf3\x18\n" +
-	"jobs.write\xca\xf3\x18\venvironment\x12p\n" +
+	"\x12ListWorkloadUsages\x12-.toshi.workspace.v1.ListWorkloadUsagesRequest\x1a..toshi.workspace.v1.ListWorkloadUsagesResponse\"!\xc2\xf3\x18\x0eworkloads.read\xca\xf3\x18\venvironment\x12{\n" +
+	"\tUpdateJob\x12$.toshi.workspace.v1.UpdateJobRequest\x1a%.toshi.workspace.v1.UpdateJobResponse\"!\xc2\xf3\x18\n" +
+	"jobs.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12{\n" +
+	"\tDeleteJob\x12$.toshi.workspace.v1.DeleteJobRequest\x1a%.toshi.workspace.v1.DeleteJobResponse\"!\xc2\xf3\x18\n" +
+	"jobs.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12{\n" +
+	"\tCancelJob\x12$.toshi.workspace.v1.CancelJobRequest\x1a%.toshi.workspace.v1.CancelJobResponse\"!\xc2\xf3\x18\n" +
+	"jobs.write\xca\xf3\x18\venvironment\x90\xf4\x18\x02\x12p\n" +
 	"\aWaitJob\x12\".toshi.workspace.v1.WaitJobRequest\x1a#.toshi.workspace.v1.WaitJobResponse\"\x1c\xc2\xf3\x18\tjobs.read\xca\xf3\x18\venvironment\x12x\n" +
 	"\tWatchJobs\x12$.toshi.workspace.v1.WatchJobsRequest\x1a%.toshi.workspace.v1.WatchJobsResponse\"\x1c\xc2\xf3\x18\tjobs.read\xca\xf3\x18\venvironment0\x01\x12~\n" +
-	"\vWatchOutput\x12&.toshi.workspace.v1.WatchOutputRequest\x1a'.toshi.workspace.v1.WatchOutputResponse\"\x1c\xc2\xf3\x18\tjobs.read\xca\xf3\x18\venvironment0\x01\x12\x8e\x01\n" +
-	"\rCreateSandbox\x12(.toshi.workspace.v1.CreateSandboxRequest\x1a).toshi.workspace.v1.CreateSandboxResponse\"(\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12~\n" +
+	"\vWatchOutput\x12&.toshi.workspace.v1.WatchOutputRequest\x1a'.toshi.workspace.v1.WatchOutputResponse\"\x1c\xc2\xf3\x18\tjobs.read\xca\xf3\x18\venvironment0\x01\x12\x92\x01\n" +
+	"\rCreateSandbox\x12(.toshi.workspace.v1.CreateSandboxRequest\x1a).toshi.workspace.v1.CreateSandboxResponse\",\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12~\n" +
 	"\n" +
 	"GetSandbox\x12%.toshi.workspace.v1.GetSandboxRequest\x1a&.toshi.workspace.v1.GetSandboxResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment\x12\x87\x01\n" +
-	"\rListSandboxes\x12(.toshi.workspace.v1.ListSandboxesRequest\x1a).toshi.workspace.v1.ListSandboxesResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment\x12\x88\x01\n" +
-	"\rUpdateSandbox\x12(.toshi.workspace.v1.UpdateSandboxRequest\x1a).toshi.workspace.v1.UpdateSandboxResponse\"\"\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x12\x88\x01\n" +
-	"\rDeleteSandbox\x12(.toshi.workspace.v1.DeleteSandboxRequest\x1a).toshi.workspace.v1.DeleteSandboxResponse\"\"\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x12\x82\x01\n" +
-	"\vStopSandbox\x12&.toshi.workspace.v1.StopSandboxRequest\x1a'.toshi.workspace.v1.StopSandboxResponse\"\"\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x12\x8b\x01\n" +
-	"\fStartSandbox\x12'.toshi.workspace.v1.StartSandboxRequest\x1a(.toshi.workspace.v1.StartSandboxResponse\"(\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12\x81\x01\n" +
+	"\rListSandboxes\x12(.toshi.workspace.v1.ListSandboxesRequest\x1a).toshi.workspace.v1.ListSandboxesResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment\x12\x8c\x01\n" +
+	"\rUpdateSandbox\x12(.toshi.workspace.v1.UpdateSandboxRequest\x1a).toshi.workspace.v1.UpdateSandboxResponse\"&\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\x8c\x01\n" +
+	"\rDeleteSandbox\x12(.toshi.workspace.v1.DeleteSandboxRequest\x1a).toshi.workspace.v1.DeleteSandboxResponse\"&\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\x86\x01\n" +
+	"\vStopSandbox\x12&.toshi.workspace.v1.StopSandboxRequest\x1a'.toshi.workspace.v1.StopSandboxResponse\"&\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\x8f\x01\n" +
+	"\fStartSandbox\x12'.toshi.workspace.v1.StartSandboxRequest\x1a(.toshi.workspace.v1.StartSandboxResponse\",\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\x81\x01\n" +
 	"\vWaitSandbox\x12&.toshi.workspace.v1.WaitSandboxRequest\x1a'.toshi.workspace.v1.WaitSandboxResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment\x12\x8c\x01\n" +
-	"\x0eWatchSandboxes\x12).toshi.workspace.v1.WatchSandboxesRequest\x1a*.toshi.workspace.v1.WatchSandboxesResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment0\x01\x12\xb0\x01\n" +
-	"\aExecute\x12\".toshi.workspace.v1.ExecuteRequest\x1a#.toshi.workspace.v1.ExecuteResponse\"X\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xd2\xf3\x18,\n" +
-	"\x10sandbox.executed\x12\x18sandbox:start.sandbox_id\xea\xf3\x18\x02 \x01(\x010\x01\x12\x8e\x01\n" +
-	"\x0fCancelExecution\x12*.toshi.workspace.v1.CancelExecutionRequest\x1a+.toshi.workspace.v1.CancelExecutionResponse\"\"\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x12\xa9\x01\n" +
-	"\x0eExecuteCommand\x12).toshi.workspace.v1.ExecuteCommandRequest\x1a*.toshi.workspace.v1.ExecuteCommandResponse\">\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
-	"\x10sandbox.executed\xea\xf3\x18\x02(\x010\x01\x12\xb0\x01\n" +
-	"\fAnswerPrompt\x12'.toshi.workspace.v1.AnswerPromptRequest\x1a(.toshi.workspace.v1.AnswerPromptResponse\"M\xc2\xf3\x18\x0fworkloads.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
-	"\x0fprompt.answered\x12\x14workload:workload_id\x12\xb0\x01\n" +
-	"\x11EmitWorkloadEvent\x12,.toshi.workspace.v1.EmitWorkloadEventRequest\x1a-.toshi.workspace.v1.EmitWorkloadEventResponse\">\xc2\xf3\x18\x0fworkloads.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x18\n" +
-	"\x16workload.event_emitted\x12\x8c\x01\n" +
+	"\x0eWatchSandboxes\x12).toshi.workspace.v1.WatchSandboxesRequest\x1a*.toshi.workspace.v1.WatchSandboxesResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment0\x01\x12\xb4\x01\n" +
+	"\aExecute\x12\".toshi.workspace.v1.ExecuteRequest\x1a#.toshi.workspace.v1.ExecuteResponse\"\\\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xd2\xf3\x18,\n" +
+	"\x10sandbox.executed\x12\x18sandbox:start.sandbox_id\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01(\x010\x01\x12\x92\x01\n" +
+	"\x0fCancelExecution\x12*.toshi.workspace.v1.CancelExecutionRequest\x1a+.toshi.workspace.v1.CancelExecutionResponse\"&\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\xad\x01\n" +
+	"\x0eExecuteCommand\x12).toshi.workspace.v1.ExecuteCommandRequest\x1a*.toshi.workspace.v1.ExecuteCommandResponse\"B\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
+	"\x10sandbox.executed\xea\xf3\x18\x02(\x01\x90\xf4\x18\x010\x01\x12\xb4\x01\n" +
+	"\fAnswerPrompt\x12'.toshi.workspace.v1.AnswerPromptRequest\x1a(.toshi.workspace.v1.AnswerPromptResponse\"Q\xc2\xf3\x18\x0fworkloads.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
+	"\x0fprompt.answered\x12\x14workload:workload_id\x90\xf4\x18\x02\x12\xb4\x01\n" +
+	"\x11EmitWorkloadEvent\x12,.toshi.workspace.v1.EmitWorkloadEventRequest\x1a-.toshi.workspace.v1.EmitWorkloadEventResponse\"B\xc2\xf3\x18\x0fworkloads.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x18\n" +
+	"\x16workload.event_emitted\x90\xf4\x18\x01\x12\x8c\x01\n" +
 	"\x0eWatchTelemetry\x12).toshi.workspace.v1.WatchTelemetryRequest\x1a*.toshi.workspace.v1.WatchTelemetryResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment0\x01\x12\x89\x01\n" +
-	"\rWatchGuestLog\x12(.toshi.workspace.v1.WatchGuestLogRequest\x1a).toshi.workspace.v1.WatchGuestLogResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment0\x01\x12\xd0\x01\n" +
-	"\x16CreatePreviewShareLink\x121.toshi.workspace.v1.CreatePreviewShareLinkRequest\x1a2.toshi.workspace.v1.CreatePreviewShareLinkResponse\"O\xc2\xf3\x18\x0epreviews.write\xca\xf3\x18\venvironment\xd2\xf3\x18*\n" +
-	"\"host_job.preview_share_link_issued\x12\x04none\x12\x9e\x01\n" +
-	"\x15ListPreviewShareLinks\x120.toshi.workspace.v1.ListPreviewShareLinksRequest\x1a1.toshi.workspace.v1.ListPreviewShareLinksResponse\" \xc2\xf3\x18\rpreviews.read\xca\xf3\x18\venvironment\x12\xd1\x01\n" +
-	"\x16RevokePreviewShareLink\x121.toshi.workspace.v1.RevokePreviewShareLinkRequest\x1a2.toshi.workspace.v1.RevokePreviewShareLinkResponse\"P\xc2\xf3\x18\x0epreviews.write\xca\xf3\x18\venvironment\xd2\xf3\x18+\n" +
-	"#host_job.preview_share_link_revoked\x12\x04none\x12\xc7\x01\n" +
-	"\x16CreateServiceShareLink\x121.toshi.workspace.v1.CreateServiceShareLinkRequest\x1a2.toshi.workspace.v1.CreateServiceShareLinkResponse\"F\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18!\n" +
-	"\x19service.share_link_issued\x12\x04none\x12\x9e\x01\n" +
-	"\x15ListServiceShareLinks\x120.toshi.workspace.v1.ListServiceShareLinksRequest\x1a1.toshi.workspace.v1.ListServiceShareLinksResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xc8\x01\n" +
-	"\x16RevokeServiceShareLink\x121.toshi.workspace.v1.RevokeServiceShareLinkRequest\x1a2.toshi.workspace.v1.RevokeServiceShareLinkResponse\"G\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\"\n" +
-	"\x1aservice.share_link_revoked\x12\x04none\x12\x87\x01\n" +
-	"\rCreateService\x12(.toshi.workspace.v1.CreateServiceRequest\x1a).toshi.workspace.v1.CreateServiceResponse\"!\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x12}\n" +
+	"\rWatchGuestLog\x12(.toshi.workspace.v1.WatchGuestLogRequest\x1a).toshi.workspace.v1.WatchGuestLogResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment0\x01\x12\xd4\x01\n" +
+	"\x16CreatePreviewShareLink\x121.toshi.workspace.v1.CreatePreviewShareLinkRequest\x1a2.toshi.workspace.v1.CreatePreviewShareLinkResponse\"S\xc2\xf3\x18\x0epreviews.write\xca\xf3\x18\venvironment\xd2\xf3\x18*\n" +
+	"\"host_job.preview_share_link_issued\x12\x04none\x90\xf4\x18\x01\x12\x9e\x01\n" +
+	"\x15ListPreviewShareLinks\x120.toshi.workspace.v1.ListPreviewShareLinksRequest\x1a1.toshi.workspace.v1.ListPreviewShareLinksResponse\" \xc2\xf3\x18\rpreviews.read\xca\xf3\x18\venvironment\x12\xd5\x01\n" +
+	"\x16RevokePreviewShareLink\x121.toshi.workspace.v1.RevokePreviewShareLinkRequest\x1a2.toshi.workspace.v1.RevokePreviewShareLinkResponse\"T\xc2\xf3\x18\x0epreviews.write\xca\xf3\x18\venvironment\xd2\xf3\x18+\n" +
+	"#host_job.preview_share_link_revoked\x12\x04none\x90\xf4\x18\x02\x12\xcb\x01\n" +
+	"\x16CreateServiceShareLink\x121.toshi.workspace.v1.CreateServiceShareLinkRequest\x1a2.toshi.workspace.v1.CreateServiceShareLinkResponse\"J\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18!\n" +
+	"\x19service.share_link_issued\x12\x04none\x90\xf4\x18\x01\x12\x9e\x01\n" +
+	"\x15ListServiceShareLinks\x120.toshi.workspace.v1.ListServiceShareLinksRequest\x1a1.toshi.workspace.v1.ListServiceShareLinksResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xcc\x01\n" +
+	"\x16RevokeServiceShareLink\x121.toshi.workspace.v1.RevokeServiceShareLinkRequest\x1a2.toshi.workspace.v1.RevokeServiceShareLinkResponse\"K\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\"\n" +
+	"\x1aservice.share_link_revoked\x12\x04none\x90\xf4\x18\x02\x12\x8b\x01\n" +
+	"\rCreateService\x12(.toshi.workspace.v1.CreateServiceRequest\x1a).toshi.workspace.v1.CreateServiceResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12}\n" +
 	"\n" +
 	"GetService\x12%.toshi.workspace.v1.GetServiceRequest\x1a&.toshi.workspace.v1.GetServiceResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x83\x01\n" +
-	"\fListServices\x12'.toshi.workspace.v1.ListServicesRequest\x1a(.toshi.workspace.v1.ListServicesResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x87\x01\n" +
-	"\rUpdateService\x12(.toshi.workspace.v1.UpdateServiceRequest\x1a).toshi.workspace.v1.UpdateServiceResponse\"!\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x12\x87\x01\n" +
-	"\rDeleteService\x12(.toshi.workspace.v1.DeleteServiceRequest\x1a).toshi.workspace.v1.DeleteServiceResponse\"!\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x12\x80\x01\n" +
+	"\fListServices\x12'.toshi.workspace.v1.ListServicesRequest\x1a(.toshi.workspace.v1.ListServicesResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x8b\x01\n" +
+	"\rUpdateService\x12(.toshi.workspace.v1.UpdateServiceRequest\x1a).toshi.workspace.v1.UpdateServiceResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\x8b\x01\n" +
+	"\rDeleteService\x12(.toshi.workspace.v1.DeleteServiceRequest\x1a).toshi.workspace.v1.DeleteServiceResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\x80\x01\n" +
 	"\vWaitService\x12&.toshi.workspace.v1.WaitServiceRequest\x1a'.toshi.workspace.v1.WaitServiceResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x88\x01\n" +
-	"\rWatchServices\x12(.toshi.workspace.v1.WatchServicesRequest\x1a).toshi.workspace.v1.WatchServicesResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment0\x01\x12\x8a\x01\n" +
-	"\fStartService\x12'.toshi.workspace.v1.StartServiceRequest\x1a(.toshi.workspace.v1.StartServiceResponse\"'\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12\x81\x01\n" +
-	"\vStopService\x12&.toshi.workspace.v1.StopServiceRequest\x1a'.toshi.workspace.v1.StopServiceResponse\"!\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x12\xa0\x01\n" +
-	"\x0eSetServiceMode\x12).toshi.workspace.v1.SetServiceModeRequest\x1a*.toshi.workspace.v1.SetServiceModeResponse\"7\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
-	"\x10service.mode_set\x12\x87\x01\n" +
-	"\vWakeService\x12&.toshi.workspace.v1.WakeServiceRequest\x1a'.toshi.workspace.v1.WakeServiceResponse\"'\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12\x84\x01\n" +
-	"\fHoldWorkload\x12'.toshi.workspace.v1.HoldWorkloadRequest\x1a(.toshi.workspace.v1.HoldWorkloadResponse\"!\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x12\x8d\x01\n" +
-	"\x0fReleaseWorkload\x12*.toshi.workspace.v1.ReleaseWorkloadRequest\x1a+.toshi.workspace.v1.ReleaseWorkloadResponse\"!\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x12\x87\x01\n" +
-	"\vHoldService\x12&.toshi.workspace.v1.HoldServiceRequest\x1a'.toshi.workspace.v1.HoldServiceResponse\"'\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12\x8a\x01\n" +
-	"\x0eReleaseService\x12).toshi.workspace.v1.ReleaseServiceRequest\x1a*.toshi.workspace.v1.ReleaseServiceResponse\"!\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x12\xa5\x01\n" +
-	"\x0fSetServiceAlarm\x12*.toshi.workspace.v1.SetServiceAlarmRequest\x1a+.toshi.workspace.v1.SetServiceAlarmResponse\"9\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x12\x8c\x01\n" +
+	"\rWatchServices\x12(.toshi.workspace.v1.WatchServicesRequest\x1a).toshi.workspace.v1.WatchServicesResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment0\x01\x12\x8e\x01\n" +
+	"\fStartService\x12'.toshi.workspace.v1.StartServiceRequest\x1a(.toshi.workspace.v1.StartServiceResponse\"+\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\x85\x01\n" +
+	"\vStopService\x12&.toshi.workspace.v1.StopServiceRequest\x1a'.toshi.workspace.v1.StopServiceResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\xa4\x01\n" +
+	"\x0eSetServiceMode\x12).toshi.workspace.v1.SetServiceModeRequest\x1a*.toshi.workspace.v1.SetServiceModeResponse\";\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
+	"\x10service.mode_set\x90\xf4\x18\x01\x12\x8b\x01\n" +
+	"\vWakeService\x12&.toshi.workspace.v1.WakeServiceRequest\x1a'.toshi.workspace.v1.WakeServiceResponse\"+\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\x88\x01\n" +
+	"\fHoldWorkload\x12'.toshi.workspace.v1.HoldWorkloadRequest\x1a(.toshi.workspace.v1.HoldWorkloadResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x02\x12\x91\x01\n" +
+	"\x0fReleaseWorkload\x12*.toshi.workspace.v1.ReleaseWorkloadRequest\x1a+.toshi.workspace.v1.ReleaseWorkloadResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x02\x12\x8b\x01\n" +
+	"\vHoldService\x12&.toshi.workspace.v1.HoldServiceRequest\x1a'.toshi.workspace.v1.HoldServiceResponse\"+\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\x8e\x01\n" +
+	"\x0eReleaseService\x12).toshi.workspace.v1.ReleaseServiceRequest\x1a*.toshi.workspace.v1.ReleaseServiceResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\xa9\x01\n" +
+	"\x0fSetServiceAlarm\x12*.toshi.workspace.v1.SetServiceAlarmRequest\x1a+.toshi.workspace.v1.SetServiceAlarmResponse\"=\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x90\xf4\x18\x02\x12\x8c\x01\n" +
 	"\x0fGetServiceAlarm\x12*.toshi.workspace.v1.GetServiceAlarmRequest\x1a+.toshi.workspace.v1.GetServiceAlarmResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x92\x01\n" +
-	"\x11ListServiceAlarms\x12,.toshi.workspace.v1.ListServiceAlarmsRequest\x1a-.toshi.workspace.v1.ListServiceAlarmsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xae\x01\n" +
-	"\x12DeleteServiceAlarm\x12-.toshi.workspace.v1.DeleteServiceAlarmRequest\x1a..toshi.workspace.v1.DeleteServiceAlarmResponse\"9\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x12\xc1\x01\n" +
-	"\x11PauseServiceAlarm\x12,.toshi.workspace.v1.PauseServiceAlarmRequest\x1a-.toshi.workspace.v1.PauseServiceAlarmResponse\"O\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18*\n" +
-	"\x14service_alarm.paused\x12\x12service:service_id\x12\xae\x01\n" +
-	"\x12ResumeServiceAlarm\x12-.toshi.workspace.v1.ResumeServiceAlarmRequest\x1a..toshi.workspace.v1.ResumeServiceAlarmResponse\"9\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x12\xc1\x01\n" +
-	"\x12RunServiceAlarmNow\x12-.toshi.workspace.v1.RunServiceAlarmNowRequest\x1a..toshi.workspace.v1.RunServiceAlarmNowResponse\"L\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
-	"\x11service_alarm.ran\x12\x12service:service_id\x12\xbb\x01\n" +
-	"\x12StartServiceSignIn\x12-.toshi.workspace.v1.StartServiceSignInRequest\x1a..toshi.workspace.v1.StartServiceSignInResponse\"D\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x19\n" +
-	"\x17service.sign_in_started\xea\xf3\x18\x02(\x010\x01\x12\xbd\x01\n" +
-	"\x13AnswerServiceSignIn\x12..toshi.workspace.v1.AnswerServiceSignInRequest\x1a/.toshi.workspace.v1.AnswerServiceSignInResponse\"E\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x1a\n" +
-	"\x18service.sign_in_answered\xea\xf3\x18\x02(\x01\x12\xbe\x01\n" +
-	"\x13CancelServiceSignIn\x12..toshi.workspace.v1.CancelServiceSignInRequest\x1a/.toshi.workspace.v1.CancelServiceSignInResponse\"F\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x1b\n" +
-	"\x19service.sign_in_cancelled\xea\xf3\x18\x02(\x01\x12\xa7\x01\n" +
-	"\x16GetServiceSignInStatus\x121.toshi.workspace.v1.GetServiceSignInStatusRequest\x1a2.toshi.workspace.v1.GetServiceSignInStatusResponse\"&\xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\xea\xf3\x18\x02(\x01\x12\xa6\x01\n" +
-	"\x0eSignOutService\x12).toshi.workspace.v1.SignOutServiceRequest\x1a*.toshi.workspace.v1.SignOutServiceResponse\"=\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
-	"\x10service.sign_out\xea\xf3\x18\x02(\x01\x12\x9b\x01\n" +
+	"\x11ListServiceAlarms\x12,.toshi.workspace.v1.ListServiceAlarmsRequest\x1a-.toshi.workspace.v1.ListServiceAlarmsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xb2\x01\n" +
+	"\x12DeleteServiceAlarm\x12-.toshi.workspace.v1.DeleteServiceAlarmRequest\x1a..toshi.workspace.v1.DeleteServiceAlarmResponse\"=\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x90\xf4\x18\x02\x12\xc5\x01\n" +
+	"\x11PauseServiceAlarm\x12,.toshi.workspace.v1.PauseServiceAlarmRequest\x1a-.toshi.workspace.v1.PauseServiceAlarmResponse\"S\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18*\n" +
+	"\x14service_alarm.paused\x12\x12service:service_id\x90\xf4\x18\x02\x12\xb2\x01\n" +
+	"\x12ResumeServiceAlarm\x12-.toshi.workspace.v1.ResumeServiceAlarmRequest\x1a..toshi.workspace.v1.ResumeServiceAlarmResponse\"=\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x90\xf4\x18\x02\x12\xc5\x01\n" +
+	"\x12RunServiceAlarmNow\x12-.toshi.workspace.v1.RunServiceAlarmNowRequest\x1a..toshi.workspace.v1.RunServiceAlarmNowResponse\"P\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
+	"\x11service_alarm.ran\x12\x12service:service_id\x90\xf4\x18\x01\x12\xc1\x01\n" +
+	"\x12StartServiceSignIn\x12-.toshi.workspace.v1.StartServiceSignInRequest\x1a..toshi.workspace.v1.StartServiceSignInResponse\"J\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x19\n" +
+	"\x17service.sign_in_started\xea\xf3\x18\x04\x18\x00(\x01\x90\xf4\x18\x020\x01\x12\xc1\x01\n" +
+	"\x13AnswerServiceSignIn\x12..toshi.workspace.v1.AnswerServiceSignInRequest\x1a/.toshi.workspace.v1.AnswerServiceSignInResponse\"I\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x1a\n" +
+	"\x18service.sign_in_answered\xea\xf3\x18\x02(\x01\x90\xf4\x18\x02\x12\xc2\x01\n" +
+	"\x13CancelServiceSignIn\x12..toshi.workspace.v1.CancelServiceSignInRequest\x1a/.toshi.workspace.v1.CancelServiceSignInResponse\"J\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x1b\n" +
+	"\x19service.sign_in_cancelled\xea\xf3\x18\x02(\x01\x90\xf4\x18\x02\x12\xa7\x01\n" +
+	"\x16GetServiceSignInStatus\x121.toshi.workspace.v1.GetServiceSignInStatusRequest\x1a2.toshi.workspace.v1.GetServiceSignInStatusResponse\"&\xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\xea\xf3\x18\x02(\x01\x12\xaa\x01\n" +
+	"\x0eSignOutService\x12).toshi.workspace.v1.SignOutServiceRequest\x1a*.toshi.workspace.v1.SignOutServiceResponse\"A\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
+	"\x10service.sign_out\xea\xf3\x18\x02(\x01\x90\xf4\x18\x02\x12\x9b\x01\n" +
 	"\x14ListServiceRevisions\x12/.toshi.workspace.v1.ListServiceRevisionsRequest\x1a0.toshi.workspace.v1.ListServiceRevisionsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x95\x01\n" +
-	"\x12GetServiceRevision\x12-.toshi.workspace.v1.GetServiceRevisionRequest\x1a..toshi.workspace.v1.GetServiceRevisionResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xb5\x01\n" +
-	"\x0fRollbackService\x12*.toshi.workspace.v1.RollbackServiceRequest\x1a+.toshi.workspace.v1.RollbackServiceResponse\"I\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x1e\n" +
-	"\x1cservice.activation_requested\xea\xf3\x18\x02 \x01\x12\xa1\x01\n" +
+	"\x12GetServiceRevision\x12-.toshi.workspace.v1.GetServiceRevisionRequest\x1a..toshi.workspace.v1.GetServiceRevisionResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xb9\x01\n" +
+	"\x0fRollbackService\x12*.toshi.workspace.v1.RollbackServiceRequest\x1a+.toshi.workspace.v1.RollbackServiceResponse\"M\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x1e\n" +
+	"\x1cservice.activation_requested\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\xa1\x01\n" +
 	"\x16ListServiceActivations\x121.toshi.workspace.v1.ListServiceActivationsRequest\x1a2.toshi.workspace.v1.ListServiceActivationsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x8c\x01\n" +
 	"\x0fListServiceRuns\x12*.toshi.workspace.v1.ListServiceRunsRequest\x1a+.toshi.workspace.v1.ListServiceRunsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12~\n" +
 	"\n" +

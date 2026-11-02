@@ -4701,7 +4701,12 @@ type CreateWorkspaceRequest struct {
 	// dropped.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The plan; empty for the control plane's default_plan.
-	Plan          string `protobuf:"bytes,2,opt,name=plan,proto3" json:"plan,omitempty"`
+	Plan string `protobuf:"bytes,2,opt,name=plan,proto3" json:"plan,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	// The key belongs to the calling operator token.
+	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4746,6 +4751,13 @@ func (x *CreateWorkspaceRequest) GetName() string {
 func (x *CreateWorkspaceRequest) GetPlan() string {
 	if x != nil {
 		return x.Plan
+	}
+	return ""
+}
+
+func (x *CreateWorkspaceRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -10311,7 +10323,12 @@ type RotateTokenRequest struct {
 	Kind  TokenKind              `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.operator.v1.TokenKind" json:"kind,omitempty"`
 	// Seconds the kind's other active tokens keep working, at most 30 days.
 	// Unset means 24 hours; 0 ends them at once.
-	GraceSeconds  *int64 `protobuf:"varint,2,opt,name=grace_seconds,json=graceSeconds,proto3,oneof" json:"grace_seconds,omitempty"`
+	GraceSeconds *int64 `protobuf:"varint,2,opt,name=grace_seconds,json=graceSeconds,proto3,oneof" json:"grace_seconds,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	// The key belongs to the calling operator token.
+	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10358,6 +10375,13 @@ func (x *RotateTokenRequest) GetGraceSeconds() int64 {
 		return *x.GraceSeconds
 	}
 	return 0
+}
+
+func (x *RotateTokenRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 // RotateTokenResponse carries the new token and its value.
@@ -10515,8 +10539,13 @@ func (x *RevokeTokenResponse) GetHostsSignedOut() int32 {
 
 // RollTokenRequest names the token to roll.
 type RollTokenRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	// The key belongs to the calling operator token.
+	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10554,6 +10583,13 @@ func (*RollTokenRequest) Descriptor() ([]byte, []int) {
 func (x *RollTokenRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *RollTokenRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -10616,7 +10652,12 @@ type CreateProductTokenRequest struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Product string                 `protobuf:"bytes,1,opt,name=product,proto3" json:"product,omitempty"`
 	// Unset means 90 days from now.
-	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	// The key belongs to the calling operator token.
+	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10663,6 +10704,13 @@ func (x *CreateProductTokenRequest) GetExpiresAt() *timestamppb.Timestamp {
 		return x.ExpiresAt
 	}
 	return nil
+}
+
+func (x *CreateProductTokenRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type CreateProductTokenResponse struct {
@@ -10814,10 +10862,15 @@ type RegisterClientRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// id is the client_id the client will present: letters, digits, '-',
 	// '_' and '.', at most 64.
-	Id            string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	RedirectUris  []string `protobuf:"bytes,3,rep,name=redirect_uris,json=redirectUris,proto3" json:"redirect_uris,omitempty"`
-	Confidential  bool     `protobuf:"varint,4,opt,name=confidential,proto3" json:"confidential,omitempty"`
+	Id           string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name         string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	RedirectUris []string `protobuf:"bytes,3,rep,name=redirect_uris,json=redirectUris,proto3" json:"redirect_uris,omitempty"`
+	Confidential bool     `protobuf:"varint,4,opt,name=confidential,proto3" json:"confidential,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	// The key belongs to the calling operator token.
+	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10878,6 +10931,13 @@ func (x *RegisterClientRequest) GetConfidential() bool {
 		return x.Confidential
 	}
 	return false
+}
+
+func (x *RegisterClientRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type RegisterClientResponse struct {
@@ -14110,7 +14170,12 @@ type CreateStorageProviderRequest struct {
 	// workspace, mode "workspace_bucket", an access key id and secret, an https
 	// endpoint, and no credentials_file, credentials_profile, role_arn,
 	// external_id, global replication or egress price.
-	Credential    *StorageCredential `protobuf:"bytes,17,opt,name=credential,proto3" json:"credential,omitempty"`
+	Credential *StorageCredential `protobuf:"bytes,17,opt,name=credential,proto3" json:"credential,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	// The key belongs to the calling operator token.
+	RequestKey    string `protobuf:"bytes,18,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -14262,6 +14327,13 @@ func (x *CreateStorageProviderRequest) GetCredential() *StorageCredential {
 		return x.Credential
 	}
 	return nil
+}
+
+func (x *CreateStorageProviderRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 // StorageCredential is an S3 access key. It is write-only: no response
@@ -15217,10 +15289,12 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x14\n" +
 	"\x05slots\x18\x02 \x01(\x05R\x05slots\x12\x12\n" +
 	"\x04warm\x18\x03 \x01(\x05R\x04warm\x12\x16\n" +
-	"\x06source\x18\x04 \x01(\tR\x06source\"@\n" +
+	"\x06source\x18\x04 \x01(\tR\x06source\"a\n" +
 	"\x16CreateWorkspaceRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
-	"\x04plan\x18\x02 \x01(\tR\x04plan\"U\n" +
+	"\x04plan\x18\x02 \x01(\tR\x04plan\x12\x1f\n" +
+	"\vrequest_key\x18\x03 \x01(\tR\n" +
+	"requestKey\"U\n" +
 	"\x17CreateWorkspaceResponse\x12:\n" +
 	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"S\n" +
 	"\x15ListWorkspacesRequest\x12\x1b\n" +
@@ -15694,10 +15768,12 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"page_token\x18\x04 \x01(\tR\tpageToken\"n\n" +
 	"\x12ListTokensResponse\x120\n" +
 	"\x06tokens\x18\x01 \x03(\v2\x18.toshi.operator.v1.TokenR\x06tokens\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x82\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xa3\x01\n" +
 	"\x12RotateTokenRequest\x120\n" +
 	"\x04kind\x18\x01 \x01(\x0e2\x1c.toshi.operator.v1.TokenKindR\x04kind\x12(\n" +
-	"\rgrace_seconds\x18\x02 \x01(\x03H\x00R\fgraceSeconds\x88\x01\x01B\x10\n" +
+	"\rgrace_seconds\x18\x02 \x01(\x03H\x00R\fgraceSeconds\x88\x01\x01\x12\x1f\n" +
+	"\vrequest_key\x18\x03 \x01(\tR\n" +
+	"requestKeyB\x10\n" +
 	"\x0e_grace_seconds\"[\n" +
 	"\x13RotateTokenResponse\x12.\n" +
 	"\x05token\x18\x01 \x01(\v2\x18.toshi.operator.v1.TokenR\x05token\x12\x14\n" +
@@ -15706,16 +15782,20 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"o\n" +
 	"\x13RevokeTokenResponse\x12.\n" +
 	"\x05token\x18\x01 \x01(\v2\x18.toshi.operator.v1.TokenR\x05token\x12(\n" +
-	"\x10hosts_signed_out\x18\x02 \x01(\x05R\x0ehostsSignedOut\"\"\n" +
+	"\x10hosts_signed_out\x18\x02 \x01(\x05R\x0ehostsSignedOut\"C\n" +
 	"\x10RollTokenRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"Y\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vrequest_key\x18\x02 \x01(\tR\n" +
+	"requestKey\"Y\n" +
 	"\x11RollTokenResponse\x12.\n" +
 	"\x05token\x18\x01 \x01(\v2\x18.toshi.operator.v1.TokenR\x05token\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\"p\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"\x91\x01\n" +
 	"\x19CreateProductTokenRequest\x12\x18\n" +
 	"\aproduct\x18\x01 \x01(\tR\aproduct\x129\n" +
 	"\n" +
-	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"b\n" +
+	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1f\n" +
+	"\vrequest_key\x18\x03 \x01(\tR\n" +
+	"requestKey\"b\n" +
 	"\x1aCreateProductTokenResponse\x12.\n" +
 	"\x05token\x18\x01 \x01(\v2\x18.toshi.operator.v1.TokenR\x05token\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\"\xcc\x01\n" +
@@ -15726,12 +15806,14 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\fconfidential\x18\x04 \x01(\bR\fconfidential\x12\x1a\n" +
 	"\bdeclared\x18\x05 \x01(\bR\bdeclared\x129\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x84\x01\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xa5\x01\n" +
 	"\x15RegisterClientRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12#\n" +
 	"\rredirect_uris\x18\x03 \x03(\tR\fredirectUris\x12\"\n" +
-	"\fconfidential\x18\x04 \x01(\bR\fconfidential\"c\n" +
+	"\fconfidential\x18\x04 \x01(\bR\fconfidential\x12\x1f\n" +
+	"\vrequest_key\x18\x05 \x01(\tR\n" +
+	"requestKey\"c\n" +
 	"\x16RegisterClientResponse\x121\n" +
 	"\x06client\x18\x01 \x01(\v2\x19.toshi.operator.v1.ClientR\x06client\x12\x16\n" +
 	"\x06secret\x18\x02 \x01(\tR\x06secret\"P\n" +
@@ -15996,7 +16078,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x91\x05\n" +
+	"updated_at\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xb2\x05\n" +
 	"\x1cCreateStorageProviderRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -16020,7 +16102,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"externalId\x12D\n" +
 	"\n" +
 	"credential\x18\x11 \x01(\v2$.toshi.operator.v1.StorageCredentialR\n" +
-	"credential\"\x88\x01\n" +
+	"credential\x12\x1f\n" +
+	"\vrequest_key\x18\x12 \x01(\tR\n" +
+	"requestKey\"\x88\x01\n" +
 	"\x11StorageCredential\x12\"\n" +
 	"\raccess_key_id\x18\x01 \x01(\tR\vaccessKeyId\x12*\n" +
 	"\x11secret_access_key\x18\x02 \x01(\tR\x0fsecretAccessKey\x12#\n" +
@@ -16131,81 +16215,80 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xfa-\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\x80/\n" +
 	"\x0fOperatorService\x12S\n" +
 	"\bListJobs\x12\".toshi.operator.v1.ListJobsRequest\x1a#.toshi.operator.v1.ListJobsResponse\x12h\n" +
 	"\x0fListAuditEvents\x12).toshi.operator.v1.ListAuditEventsRequest\x1a*.toshi.operator.v1.ListAuditEventsResponse\x12z\n" +
 	"\x15SummariseJobTelemetry\x12/.toshi.operator.v1.SummariseJobTelemetryRequest\x1a0.toshi.operator.v1.SummariseJobTelemetryResponse\x12V\n" +
 	"\tListHosts\x12#.toshi.operator.v1.ListHostsRequest\x1a$.toshi.operator.v1.ListHostsResponse\x12h\n" +
-	"\x0fListHostStorage\x12).toshi.operator.v1.ListHostStorageRequest\x1a*.toshi.operator.v1.ListHostStorageResponse\x12u\n" +
-	"\fSetHostState\x12&.toshi.operator.v1.SetHostStateRequest\x1a'.toshi.operator.v1.SetHostStateResponse\"\x14\xd2\xf3\x18\x10\n" +
-	"\x0ehost.state_set\x12\x80\x01\n" +
+	"\x0fListHostStorage\x12).toshi.operator.v1.ListHostStorageRequest\x1a*.toshi.operator.v1.ListHostStorageResponse\x12y\n" +
+	"\fSetHostState\x12&.toshi.operator.v1.SetHostStateRequest\x1a'.toshi.operator.v1.SetHostStateResponse\"\x18\xd2\xf3\x18\x10\n" +
+	"\x0ehost.state_set\x90\xf4\x18\x02\x12\x84\x01\n" +
 	"\n" +
-	"UpdateHost\x12$.toshi.operator.v1.UpdateHostRequest\x1a%.toshi.operator.v1.UpdateHostResponse\"%\xd2\xf3\x18!\n" +
-	"\x11host.overflow_set\x12\fhost:host.id\x12Y\n" +
+	"UpdateHost\x12$.toshi.operator.v1.UpdateHostRequest\x1a%.toshi.operator.v1.UpdateHostResponse\")\xd2\xf3\x18!\n" +
+	"\x11host.overflow_set\x12\fhost:host.id\x90\xf4\x18\x02\x12_\n" +
 	"\n" +
-	"RetireHost\x12$.toshi.operator.v1.RetireHostRequest\x1a%.toshi.operator.v1.RetireHostResponse\x12Y\n" +
+	"RetireHost\x12$.toshi.operator.v1.RetireHostRequest\x1a%.toshi.operator.v1.RetireHostResponse\"\x04\x90\xf4\x18\x02\x12_\n" +
 	"\n" +
-	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\x12~\n" +
-	"\vRetireHosts\x12%.toshi.operator.v1.RetireHostsRequest\x1a&.toshi.operator.v1.RetireHostsResponse\" \xd2\xf3\x18\x1c\n" +
-	"\x14host.offline_retired\x12\x04none\x12h\n" +
-	"\x0fCreateWorkspace\x12).toshi.operator.v1.CreateWorkspaceRequest\x1a*.toshi.operator.v1.CreateWorkspaceResponse\x12e\n" +
-	"\x0eListWorkspaces\x12(.toshi.operator.v1.ListWorkspacesRequest\x1a).toshi.operator.v1.ListWorkspacesResponse\x12x\n" +
-	"\fSetTenantCap\x12&.toshi.operator.v1.SetTenantCapRequest\x1a'.toshi.operator.v1.SetTenantCapResponse\"\x17\xd2\xf3\x18\x13\n" +
-	"\x11workspace.cap_set\x12\x84\x01\n" +
-	"\x0fSetTenantLimits\x12).toshi.operator.v1.SetTenantLimitsRequest\x1a*.toshi.operator.v1.SetTenantLimitsResponse\"\x1a\xd2\xf3\x18\x16\n" +
-	"\x14workspace.limits_set\x12t\n" +
-	"\x0fUpdateWorkspace\x12).toshi.operator.v1.UpdateWorkspaceRequest\x1a*.toshi.operator.v1.UpdateWorkspaceResponse\"\n" +
-	"\xd2\xf3\x18\x06\x12\x04none\x12v\n" +
-	"\fReassignSeat\x12&.toshi.operator.v1.ReassignSeatRequest\x1a'.toshi.operator.v1.ReassignSeatResponse\"\x15\xd2\xf3\x18\x11\n" +
-	"\x0fseat.reassigned\x12V\n" +
+	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\"\x04\x90\xf4\x18\x02\x12\x82\x01\n" +
+	"\vRetireHosts\x12%.toshi.operator.v1.RetireHostsRequest\x1a&.toshi.operator.v1.RetireHostsResponse\"$\xd2\xf3\x18\x1c\n" +
+	"\x14host.offline_retired\x12\x04none\x90\xf4\x18\x02\x12n\n" +
+	"\x0fCreateWorkspace\x12).toshi.operator.v1.CreateWorkspaceRequest\x1a*.toshi.operator.v1.CreateWorkspaceResponse\"\x04\x90\xf4\x18\x01\x12e\n" +
+	"\x0eListWorkspaces\x12(.toshi.operator.v1.ListWorkspacesRequest\x1a).toshi.operator.v1.ListWorkspacesResponse\x12|\n" +
+	"\fSetTenantCap\x12&.toshi.operator.v1.SetTenantCapRequest\x1a'.toshi.operator.v1.SetTenantCapResponse\"\x1b\xd2\xf3\x18\x13\n" +
+	"\x11workspace.cap_set\x90\xf4\x18\x02\x12\x88\x01\n" +
+	"\x0fSetTenantLimits\x12).toshi.operator.v1.SetTenantLimitsRequest\x1a*.toshi.operator.v1.SetTenantLimitsResponse\"\x1e\xd2\xf3\x18\x16\n" +
+	"\x14workspace.limits_set\x90\xf4\x18\x02\x12x\n" +
+	"\x0fUpdateWorkspace\x12).toshi.operator.v1.UpdateWorkspaceRequest\x1a*.toshi.operator.v1.UpdateWorkspaceResponse\"\x0e\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x02\x12z\n" +
+	"\fReassignSeat\x12&.toshi.operator.v1.ReassignSeatRequest\x1a'.toshi.operator.v1.ReassignSeatResponse\"\x19\xd2\xf3\x18\x11\n" +
+	"\x0fseat.reassigned\x90\xf4\x18\x02\x12V\n" +
 	"\tListSeats\x12#.toshi.operator.v1.ListSeatsRequest\x1a$.toshi.operator.v1.ListSeatsResponse\x12V\n" +
 	"\tListPlans\x12#.toshi.operator.v1.ListPlansRequest\x1a$.toshi.operator.v1.ListPlansResponse\x12Y\n" +
 	"\n" +
-	"GetVersion\x12$.toshi.operator.v1.GetVersionRequest\x1a%.toshi.operator.v1.GetVersionResponse\x12\x99\x01\n" +
-	"\tRunChecks\x12#.toshi.operator.v1.RunChecksRequest\x1a$.toshi.operator.v1.RunChecksResponse\"A\xd2\xf3\x18=\n" +
-	"\x04none\x1a5It runs checks and changes no state of the workspace.\x12k\n" +
-	"\x10SuspendWorkspace\x12*.toshi.operator.v1.SuspendWorkspaceRequest\x1a+.toshi.operator.v1.SuspendWorkspaceResponse\x12\x8a\x01\n" +
-	"\x12UnsuspendWorkspace\x12,.toshi.operator.v1.UnsuspendWorkspaceRequest\x1a-.toshi.operator.v1.UnsuspendWorkspaceResponse\"\x17\xd2\xf3\x18\x13\n" +
-	"\x11workspace.resumed\x12\x8c\x01\n" +
-	"\x0fDeleteWorkspace\x12).toshi.operator.v1.DeleteWorkspaceRequest\x1a*.toshi.operator.v1.DeleteWorkspaceResponse\"\"\xd2\xf3\x18\x1e\n" +
-	"\x1cworkspace.deletion_scheduled\x12\\\n" +
+	"GetVersion\x12$.toshi.operator.v1.GetVersionRequest\x1a%.toshi.operator.v1.GetVersionResponse\x12\x9d\x01\n" +
+	"\tRunChecks\x12#.toshi.operator.v1.RunChecksRequest\x1a$.toshi.operator.v1.RunChecksResponse\"E\xd2\xf3\x18=\n" +
+	"\x04none\x1a5It runs checks and changes no state of the workspace.\x90\xf4\x18\x02\x12q\n" +
+	"\x10SuspendWorkspace\x12*.toshi.operator.v1.SuspendWorkspaceRequest\x1a+.toshi.operator.v1.SuspendWorkspaceResponse\"\x04\x90\xf4\x18\x02\x12\x8e\x01\n" +
+	"\x12UnsuspendWorkspace\x12,.toshi.operator.v1.UnsuspendWorkspaceRequest\x1a-.toshi.operator.v1.UnsuspendWorkspaceResponse\"\x1b\xd2\xf3\x18\x13\n" +
+	"\x11workspace.resumed\x90\xf4\x18\x02\x12\x90\x01\n" +
+	"\x0fDeleteWorkspace\x12).toshi.operator.v1.DeleteWorkspaceRequest\x1a*.toshi.operator.v1.DeleteWorkspaceResponse\"&\xd2\xf3\x18\x1e\n" +
+	"\x1cworkspace.deletion_scheduled\x90\xf4\x18\x02\x12\\\n" +
 	"\vGetCapacity\x12%.toshi.operator.v1.GetCapacityRequest\x1a&.toshi.operator.v1.GetCapacityResponse\x12S\n" +
 	"\bGetUsage\x12\".toshi.operator.v1.GetUsageRequest\x1a#.toshi.operator.v1.GetUsageResponse\x12b\n" +
 	"\rGetQueueTimes\x12'.toshi.operator.v1.GetQueueTimesRequest\x1a(.toshi.operator.v1.GetQueueTimesResponse\x12k\n" +
 	"\x10GetWorkflowUsage\x12*.toshi.operator.v1.GetWorkflowUsageRequest\x1a+.toshi.operator.v1.GetWorkflowUsageResponse\x12z\n" +
 	"\x15GetWorkspaceStatement\x12/.toshi.operator.v1.GetWorkspaceStatementRequest\x1a0.toshi.operator.v1.GetWorkspaceStatementResponse\x12Y\n" +
 	"\n" +
-	"ListTokens\x12$.toshi.operator.v1.ListTokensRequest\x1a%.toshi.operator.v1.ListTokensResponse\x12{\n" +
-	"\vRotateToken\x12%.toshi.operator.v1.RotateTokenRequest\x1a&.toshi.operator.v1.RotateTokenResponse\"\x1d\xd2\xf3\x18\x19\x12\x17token:response.token.id\x12\\\n" +
-	"\vRevokeToken\x12%.toshi.operator.v1.RevokeTokenRequest\x1a&.toshi.operator.v1.RevokeTokenResponse\x12k\n" +
-	"\tRollToken\x12#.toshi.operator.v1.RollTokenRequest\x1a$.toshi.operator.v1.RollTokenResponse\"\x13\xd2\xf3\x18\x0f\n" +
-	"\rtoken.rotated\x12\x86\x01\n" +
-	"\x12CreateProductToken\x12,.toshi.operator.v1.CreateProductTokenRequest\x1a-.toshi.operator.v1.CreateProductTokenResponse\"\x13\xd2\xf3\x18\x0f\n" +
-	"\rtoken.created\x12~\n" +
-	"\x0eRegisterClient\x12(.toshi.operator.v1.RegisterClientRequest\x1a).toshi.operator.v1.RegisterClientResponse\"\x17\xd2\xf3\x18\x13\n" +
-	"\x11client.registered\x12\\\n" +
-	"\vListClients\x12%.toshi.operator.v1.ListClientsRequest\x1a&.toshi.operator.v1.ListClientsResponse\x12_\n" +
-	"\fDeleteClient\x12&.toshi.operator.v1.DeleteClientRequest\x1a'.toshi.operator.v1.DeleteClientResponse\x12q\n" +
+	"ListTokens\x12$.toshi.operator.v1.ListTokensRequest\x1a%.toshi.operator.v1.ListTokensResponse\x12\x7f\n" +
+	"\vRotateToken\x12%.toshi.operator.v1.RotateTokenRequest\x1a&.toshi.operator.v1.RotateTokenResponse\"!\xd2\xf3\x18\x19\x12\x17token:response.token.id\x90\xf4\x18\x01\x12b\n" +
+	"\vRevokeToken\x12%.toshi.operator.v1.RevokeTokenRequest\x1a&.toshi.operator.v1.RevokeTokenResponse\"\x04\x90\xf4\x18\x02\x12o\n" +
+	"\tRollToken\x12#.toshi.operator.v1.RollTokenRequest\x1a$.toshi.operator.v1.RollTokenResponse\"\x17\xd2\xf3\x18\x0f\n" +
+	"\rtoken.rotated\x90\xf4\x18\x01\x12\x8a\x01\n" +
+	"\x12CreateProductToken\x12,.toshi.operator.v1.CreateProductTokenRequest\x1a-.toshi.operator.v1.CreateProductTokenResponse\"\x17\xd2\xf3\x18\x0f\n" +
+	"\rtoken.created\x90\xf4\x18\x01\x12\x82\x01\n" +
+	"\x0eRegisterClient\x12(.toshi.operator.v1.RegisterClientRequest\x1a).toshi.operator.v1.RegisterClientResponse\"\x1b\xd2\xf3\x18\x13\n" +
+	"\x11client.registered\x90\xf4\x18\x01\x12\\\n" +
+	"\vListClients\x12%.toshi.operator.v1.ListClientsRequest\x1a&.toshi.operator.v1.ListClientsResponse\x12e\n" +
+	"\fDeleteClient\x12&.toshi.operator.v1.DeleteClientRequest\x1a'.toshi.operator.v1.DeleteClientResponse\"\x04\x90\xf4\x18\x02\x12q\n" +
 	"\x12ListOperatorAlerts\x12,.toshi.operator.v1.ListOperatorAlertsRequest\x1a-.toshi.operator.v1.ListOperatorAlertsResponse\x12e\n" +
-	"\x0eListHostAlerts\x12(.toshi.operator.v1.ListHostAlertsRequest\x1a).toshi.operator.v1.ListHostAlertsResponse\x12y\n" +
-	"\x0eCheckCloudHost\x12(.toshi.operator.v1.CheckCloudHostRequest\x1a).toshi.operator.v1.CheckCloudHostResponse\"\x12\xd2\xf3\x18\x0e\x12\fhost:host_id\x12\\\n" +
-	"\vListFillers\x12%.toshi.operator.v1.ListFillersRequest\x1a&.toshi.operator.v1.ListFillersResponse\x12p\n" +
-	"\tPutFiller\x12#.toshi.operator.v1.PutFillerRequest\x1a$.toshi.operator.v1.PutFillerResponse\"\x18\xd2\xf3\x18\x14\x12\x12filler:filler.name\x12\x82\x01\n" +
-	"\fDeleteFiller\x12&.toshi.operator.v1.DeleteFillerRequest\x1a'.toshi.operator.v1.DeleteFillerResponse\"!\xd2\xf3\x18\x1d\n" +
-	"\x0efiller.removed\x12\vfiller:name\x12\x8d\x01\n" +
-	"\fUpdateFiller\x12&.toshi.operator.v1.UpdateFillerRequest\x1a'.toshi.operator.v1.UpdateFillerResponse\",\xd2\xf3\x18(\n" +
-	"\x12filler.enabled_set\x12\x12filler:filler.name\x12e\n" +
+	"\x0eListHostAlerts\x12(.toshi.operator.v1.ListHostAlertsRequest\x1a).toshi.operator.v1.ListHostAlertsResponse\x12}\n" +
+	"\x0eCheckCloudHost\x12(.toshi.operator.v1.CheckCloudHostRequest\x1a).toshi.operator.v1.CheckCloudHostResponse\"\x16\xd2\xf3\x18\x0e\x12\fhost:host_id\x90\xf4\x18\x02\x12\\\n" +
+	"\vListFillers\x12%.toshi.operator.v1.ListFillersRequest\x1a&.toshi.operator.v1.ListFillersResponse\x12t\n" +
+	"\tPutFiller\x12#.toshi.operator.v1.PutFillerRequest\x1a$.toshi.operator.v1.PutFillerResponse\"\x1c\xd2\xf3\x18\x14\x12\x12filler:filler.name\x90\xf4\x18\x02\x12\x86\x01\n" +
+	"\fDeleteFiller\x12&.toshi.operator.v1.DeleteFillerRequest\x1a'.toshi.operator.v1.DeleteFillerResponse\"%\xd2\xf3\x18\x1d\n" +
+	"\x0efiller.removed\x12\vfiller:name\x90\xf4\x18\x02\x12\x91\x01\n" +
+	"\fUpdateFiller\x12&.toshi.operator.v1.UpdateFillerRequest\x1a'.toshi.operator.v1.UpdateFillerResponse\"0\xd2\xf3\x18(\n" +
+	"\x12filler.enabled_set\x12\x12filler:filler.name\x90\xf4\x18\x02\x12e\n" +
 	"\x0eListFillerRuns\x12(.toshi.operator.v1.ListFillerRunsRequest\x1a).toshi.operator.v1.ListFillerRunsResponse\x12n\n" +
-	"\x11GetSecretDelivery\x12+.toshi.operator.v1.GetSecretDeliveryRequest\x1a,.toshi.operator.v1.GetSecretDeliveryResponse\x12\x98\x01\n" +
-	"\x14UpdateSecretDelivery\x12..toshi.operator.v1.UpdateSecretDeliveryRequest\x1a/.toshi.operator.v1.UpdateSecretDeliveryResponse\"\x1f\xd2\xf3\x18\x1b\n" +
-	"\x13secret_delivery.set\x12\x04none\x12h\n" +
+	"\x11GetSecretDelivery\x12+.toshi.operator.v1.GetSecretDeliveryRequest\x1a,.toshi.operator.v1.GetSecretDeliveryResponse\x12\x9c\x01\n" +
+	"\x14UpdateSecretDelivery\x12..toshi.operator.v1.UpdateSecretDeliveryRequest\x1a/.toshi.operator.v1.UpdateSecretDeliveryResponse\"#\xd2\xf3\x18\x1b\n" +
+	"\x13secret_delivery.set\x12\x04none\x90\xf4\x18\x02\x12h\n" +
 	"\x0fListUtilisation\x12).toshi.operator.v1.ListUtilisationRequest\x1a*.toshi.operator.v1.ListUtilisationResponse\x12_\n" +
-	"\fSuggestPools\x12&.toshi.operator.v1.SuggestPoolsRequest\x1a'.toshi.operator.v1.SuggestPoolsResponse\x12z\n" +
-	"\x15CreateStorageProvider\x12/.toshi.operator.v1.CreateStorageProviderRequest\x1a0.toshi.operator.v1.CreateStorageProviderResponse\x12w\n" +
-	"\x14ListStorageProviders\x12..toshi.operator.v1.ListStorageProvidersRequest\x1a/.toshi.operator.v1.ListStorageProvidersResponse\x12w\n" +
-	"\x14CheckStorageProvider\x12..toshi.operator.v1.CheckStorageProviderRequest\x1a/.toshi.operator.v1.CheckStorageProviderResponse\x12z\n" +
-	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponseB!Z\x1fgo.toshicloud.io/api/operatorv1b\x06proto3"
+	"\fSuggestPools\x12&.toshi.operator.v1.SuggestPoolsRequest\x1a'.toshi.operator.v1.SuggestPoolsResponse\x12\x80\x01\n" +
+	"\x15CreateStorageProvider\x12/.toshi.operator.v1.CreateStorageProviderRequest\x1a0.toshi.operator.v1.CreateStorageProviderResponse\"\x04\x90\xf4\x18\x01\x12w\n" +
+	"\x14ListStorageProviders\x12..toshi.operator.v1.ListStorageProvidersRequest\x1a/.toshi.operator.v1.ListStorageProvidersResponse\x12}\n" +
+	"\x14CheckStorageProvider\x12..toshi.operator.v1.CheckStorageProviderRequest\x1a/.toshi.operator.v1.CheckStorageProviderResponse\"\x04\x90\xf4\x18\x02\x12\x80\x01\n" +
+	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponse\"\x04\x90\xf4\x18\x02B!Z\x1fgo.toshicloud.io/api/operatorv1b\x06proto3"
 
 var (
 	file_toshi_operator_v1_operator_proto_rawDescOnce sync.Once

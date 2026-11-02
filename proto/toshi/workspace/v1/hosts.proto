@@ -49,6 +49,7 @@ service HostService {
   // HOST_STATE_DRAINING and HOST_STATE_ONLINE are accepted. An unknown ID
   // fails with NOT_FOUND, and a revoked host with FAILED_PRECONDITION.
   rpc SetHostState(SetHostStateRequest) returns (SetHostStateResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "hosts.write";
     option (toshi.audit) = {action: "host.state_set"};
   }
@@ -57,6 +58,7 @@ service HostService {
   // Its agent, if still running, registers again with its enrollment
   // token.
   rpc RetireHost(RetireHostRequest) returns (RetireHostResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "hosts.write";
   }
   // CreateCloudHost registers a cloud host the control plane drives in the
@@ -65,6 +67,7 @@ service HostService {
   // FAILED_PRECONDITION, as it does for a workspace that is not active, and
   // a workspace at its plan's own-host limit fails with RESOURCE_EXHAUSTED.
   rpc CreateCloudHost(CreateCloudHostRequest) returns (CreateCloudHostResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "hosts.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {
@@ -79,6 +82,7 @@ service HostService {
   // cloud hosts not configured on the control plane fails with
   // FAILED_PRECONDITION.
   rpc CheckCloudHost(CheckCloudHostRequest) returns (CheckCloudHostResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "hosts.write";
     option (toshi.audit) = {target: "host:host_id"};
   }
@@ -87,6 +91,7 @@ service HostService {
   // the workspace. The installation sets its expiry; other tokens are
   // untouched. A closed workspace fails with FAILED_PRECONDITION.
   rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "hosts.write";
     option (toshi.audit) = {action: "token.created"};
   }
@@ -248,6 +253,10 @@ message CreateEnrollmentTokenRequest {
   bool overflow = 1;
   // Allow the token to enroll one new host.
   bool single_use = 2;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 3;
 }
 
 // CreateEnrollmentTokenResponse carries the new token and its value.

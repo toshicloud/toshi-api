@@ -28,6 +28,7 @@ service ArtifactUploadService {
   // object beside its parts. The kind must be one Toshi stores today:
   // profile is refused with INVALID_ARGUMENT.
   rpc ReserveUpload(ReserveUploadRequest) returns (ReserveUploadResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "artifacts.write";
     option (toshi.mcp) = {exclude: true};
     option (toshi.audit) = {action: "artifact_upload.reserved", target: "artifact:response.artifact_id"};
@@ -37,6 +38,7 @@ service ArtifactUploadService {
   // fails with FAILED_PRECONDITION and the reservation stays; so does a
   // call at or after the upload deadline.
   rpc CompleteUpload(CompleteUploadRequest) returns (CompleteUploadResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "artifacts.write";
     option (toshi.mcp) = {exclude: true};
     option (toshi.audit) = {action: "artifact.uploaded"};
@@ -139,6 +141,10 @@ message ReserveUploadRequest {
   // another caller, or a run that has ended, fails with
   // FAILED_PRECONDITION.
   RecordingKind recording = 6;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 7;
 }
 
 message ReserveUploadResponse {

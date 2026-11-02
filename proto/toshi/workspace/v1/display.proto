@@ -49,6 +49,7 @@ service DisplayService {
   // replayed set and no token, and opens nothing. Open another session for
   // a new token.
   rpc OpenDisplaySession(OpenDisplaySessionRequest) returns (OpenDisplaySessionResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "displays.write";
     option (toshi.audit) = {
       action: "display.session_opened"
@@ -73,6 +74,7 @@ service DisplayService {
   // CloseDisplaySession closes a session and ends its viewer's connection.
   // Closing a closed session changes nothing.
   rpc CloseDisplaySession(CloseDisplaySessionRequest) returns (CloseDisplaySessionResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "displays.write";
     option (toshi.audit) = {
       action: "display.session_closed"
@@ -96,6 +98,8 @@ service DisplayService {
   // session refuses it with FAILED_PRECONDITION, with the reason
   // DISPLAY_INPUT_NOT_ENABLED on a Windows VM that takes no input.
   rpc SendDisplayKeys(SendDisplayKeysRequest) returns (SendDisplayKeysResponse) {
+    option (toshi.key_mode) = NATURAL;
+    option (toshi.mcp) = {idempotent: false};
     option (toshi.permission) = "displays.write";
     option (toshi.audit) = {
       action: "display.keys_sent"
@@ -108,6 +112,8 @@ service DisplayService {
   // the reason DISPLAY_INPUT_NOT_ENABLED on a Windows VM that takes no
   // input.
   rpc SendDisplayPointer(SendDisplayPointerRequest) returns (SendDisplayPointerResponse) {
+    option (toshi.key_mode) = NATURAL;
+    option (toshi.mcp) = {idempotent: false};
     option (toshi.permission) = "displays.write";
     option (toshi.audit) = {
       action: "display.pointer_sent"
@@ -119,6 +125,7 @@ service DisplayService {
   // guest's own clipboard only where the guest image runs a clipboard
   // agent. A view-only session refuses it with FAILED_PRECONDITION.
   rpc SetDisplayClipboard(SetDisplayClipboardRequest) returns (SetDisplayClipboardResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "displays.write";
     option (toshi.audit) = {
       action: "display.clipboard_set"
@@ -133,6 +140,7 @@ service DisplayService {
   // memory for frames, shared by its sessions, with RESOURCE_EXHAUSTED. A
   // view-only session takes them too.
   rpc TakeDisplayScreenshot(TakeDisplayScreenshotRequest) returns (TakeDisplayScreenshotResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "displays.write";
     option (toshi.audit) = {
       action: "display.screenshot_taken"

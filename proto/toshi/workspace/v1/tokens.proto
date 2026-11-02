@@ -39,6 +39,7 @@ service TokenService {
   // project or environment fails with NOT_FOUND; a closed workspace fails
   // with FAILED_PRECONDITION.
   rpc CreateWorkspaceToken(CreateWorkspaceTokenRequest) returns (CreateWorkspaceTokenResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "tokens.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "token.created"};
@@ -48,6 +49,7 @@ service TokenService {
   // with it. A token of another workspace, and an unknown ID, fail with
   // NOT_FOUND.
   rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "tokens.write";
   }
   // RollWorkspaceToken gives one of the workspace's tokens a new value and
@@ -63,6 +65,7 @@ service TokenService {
   // unknown ID, fail with NOT_FOUND; a revoked or expired token with
   // FAILED_PRECONDITION.
   rpc RollWorkspaceToken(RollWorkspaceTokenRequest) returns (RollWorkspaceTokenResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "tokens.write";
     option (toshi.audit) = {action: "token.rotated"};
   }
@@ -83,6 +86,7 @@ service TokenService {
   // token acts, or it fails with PERMISSION_DENIED; an expired token
   // fails with FAILED_PRECONDITION.
   rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "tokens.write";
   }
 }
@@ -212,6 +216,10 @@ message CreateWorkspaceTokenRequest {
   // Empty gives Admin to a whole-workspace token and Member to a limited
   // one.
   string role = 7;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 8;
 }
 
 // CreateWorkspaceTokenResponse carries the new token and its value.
@@ -236,6 +244,10 @@ message RevokeTokenResponse {
 // RollWorkspaceTokenRequest names the token to roll.
 message RollWorkspaceTokenRequest {
   string id = 1;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
+  string request_key = 2;
 }
 
 // RollWorkspaceTokenResponse carries the token and its new value.

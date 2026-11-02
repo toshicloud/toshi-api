@@ -56,6 +56,7 @@ service VolumeService {
   // first one made; the key with a different request fails with
   // FAILED_PRECONDITION.
   rpc CreateVolume(CreateVolumeRequest) returns (CreateVolumeResponse) {
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
   }
@@ -71,6 +72,7 @@ service VolumeService {
   // environment that allows a CI job's state volume by its old name no
   // longer matches it.
   rpc UpdateVolume(UpdateVolumeRequest) returns (UpdateVolumeResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
     option (toshi.audit) = {target: "volume:response.volume.id"};
@@ -87,6 +89,7 @@ service VolumeService {
   // leaves the queue within moments, so name its volume in the sandbox's
   // create (SandboxSpec.state_volume_id).
   rpc AttachVolume(AttachVolumeRequest) returns (AttachVolumeResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "volumes.write";
     option (toshi.scope) = "project";
   }
@@ -98,6 +101,7 @@ service VolumeService {
   // so does deleting a service, which is refused while a run holds the
   // volume; neither deletes the volume.
   rpc DetachVolume(DetachVolumeRequest) returns (DetachVolumeResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "volumes.write";
     option (toshi.scope) = "project";
   }
@@ -110,6 +114,7 @@ service VolumeService {
   // state volume by name keeps that name, and a later volume of the name
   // matches it.
   rpc DeleteVolume(DeleteVolumeRequest) returns (DeleteVolumeResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
   }
@@ -136,6 +141,7 @@ service VolumeService {
   // one the volume does not have is NOT_FOUND. A copy the storage provider
   // cannot make fails with UNAVAILABLE.
   rpc RestoreVolume(RestoreVolumeRequest) returns (RestoreVolumeResponse) {
+    option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "volumes.write";
     option (toshi.scope) = "project";
     option (toshi.audit) = {action: "volume.restored"};

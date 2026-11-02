@@ -311,7 +311,11 @@ type ReserveUploadRequest struct {
 	// credential of a strip's own upload fails with PERMISSION_DENIED;
 	// another caller, or a run that has ended, fails with
 	// FAILED_PRECONDITION.
-	Recording     RecordingKind `protobuf:"varint,6,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingKind" json:"recording,omitempty"`
+	Recording RecordingKind `protobuf:"varint,6,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingKind" json:"recording,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,7,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -386,6 +390,13 @@ func (x *ReserveUploadRequest) GetRecording() RecordingKind {
 		return x.Recording
 	}
 	return RecordingKind_RECORDING_KIND_UNSPECIFIED
+}
+
+func (x *ReserveUploadRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
 }
 
 type ReserveUploadResponse struct {
@@ -969,7 +980,7 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"expires_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x1a:\n" +
 	"\fHeadersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe0\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x81\x02\n" +
 	"\x14ReserveUploadRequest\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12!\n" +
@@ -978,7 +989,9 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"part_sizes\x18\x04 \x03(\x03R\tpartSizes\x12\x1d\n" +
 	"\n" +
 	"index_size\x18\x05 \x01(\x03R\tindexSize\x12?\n" +
-	"\trecording\x18\x06 \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\trecording\"\x91\x02\n" +
+	"\trecording\x18\x06 \x01(\x0e2!.toshi.workspace.v1.RecordingKindR\trecording\x12\x1f\n" +
+	"\vrequest_key\x18\a \x01(\tR\n" +
+	"requestKey\"\x91\x02\n" +
 	"\x15ReserveUploadResponse\x12\x1f\n" +
 	"\vartifact_id\x18\x01 \x01(\tR\n" +
 	"artifactId\x124\n" +
@@ -1026,12 +1039,12 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
 	"encryption\x18\x03 \x01(\tR\n" +
 	"encryption\x12\x19\n" +
-	"\bdata_key\x18\x04 \x01(\fR\adataKey2\xf2\x02\n" +
-	"\x15ArtifactUploadService\x12\xbc\x01\n" +
-	"\rReserveUpload\x12(.toshi.workspace.v1.ReserveUploadRequest\x1a).toshi.workspace.v1.ReserveUploadResponse\"V\xc2\xf3\x18\x0fartifacts.write\xd2\xf3\x189\n" +
-	"\x18artifact_upload.reserved\x12\x1dartifact:response.artifact_id\xea\xf3\x18\x02(\x01\x12\x99\x01\n" +
-	"\x0eCompleteUpload\x12).toshi.workspace.v1.CompleteUploadRequest\x1a*.toshi.workspace.v1.CompleteUploadResponse\"0\xc2\xf3\x18\x0fartifacts.write\xd2\xf3\x18\x13\n" +
-	"\x11artifact.uploaded\xea\xf3\x18\x02(\x012\xd9\x03\n" +
+	"\bdata_key\x18\x04 \x01(\fR\adataKey2\xfa\x02\n" +
+	"\x15ArtifactUploadService\x12\xc0\x01\n" +
+	"\rReserveUpload\x12(.toshi.workspace.v1.ReserveUploadRequest\x1a).toshi.workspace.v1.ReserveUploadResponse\"Z\xc2\xf3\x18\x0fartifacts.write\xd2\xf3\x189\n" +
+	"\x18artifact_upload.reserved\x12\x1dartifact:response.artifact_id\xea\xf3\x18\x02(\x01\x90\xf4\x18\x01\x12\x9d\x01\n" +
+	"\x0eCompleteUpload\x12).toshi.workspace.v1.CompleteUploadRequest\x1a*.toshi.workspace.v1.CompleteUploadResponse\"4\xc2\xf3\x18\x0fartifacts.write\xd2\xf3\x18\x13\n" +
+	"\x11artifact.uploaded\xea\xf3\x18\x02(\x01\x90\xf4\x18\x022\xd9\x03\n" +
 	"\x0fArtifactService\x12\x87\x01\n" +
 	"\rListArtifacts\x12(.toshi.workspace.v1.ListArtifactsRequest\x1a).toshi.workspace.v1.ListArtifactsResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironment\x12\x81\x01\n" +
 	"\vGetArtifact\x12&.toshi.workspace.v1.GetArtifactRequest\x1a'.toshi.workspace.v1.GetArtifactResponse\"!\xc2\xf3\x18\x0eartifacts.read\xca\xf3\x18\venvironment\x12\xb7\x01\n" +

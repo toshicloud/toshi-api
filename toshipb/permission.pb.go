@@ -22,6 +22,56 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// KeyMode describes the retry mode of a changing call.
+type KeyMode int32
+
+const (
+	KeyMode_KEY_MODE_UNSPECIFIED KeyMode = 0
+	KeyMode_KEY                  KeyMode = 1
+	KeyMode_NATURAL              KeyMode = 2
+)
+
+// Enum value maps for KeyMode.
+var (
+	KeyMode_name = map[int32]string{
+		0: "KEY_MODE_UNSPECIFIED",
+		1: "KEY",
+		2: "NATURAL",
+	}
+	KeyMode_value = map[string]int32{
+		"KEY_MODE_UNSPECIFIED": 0,
+		"KEY":                  1,
+		"NATURAL":              2,
+	}
+)
+
+func (x KeyMode) Enum() *KeyMode {
+	p := new(KeyMode)
+	*p = x
+	return p
+}
+
+func (x KeyMode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (KeyMode) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_permission_proto_enumTypes[0].Descriptor()
+}
+
+func (KeyMode) Type() protoreflect.EnumType {
+	return &file_toshi_permission_proto_enumTypes[0]
+}
+
+func (x KeyMode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use KeyMode.Descriptor instead.
+func (KeyMode) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_permission_proto_rawDescGZIP(), []int{0}
+}
+
 // Unit identifies the unit of a bound's values.
 type Bound_Unit int32
 
@@ -59,11 +109,11 @@ func (x Bound_Unit) String() string {
 }
 
 func (Bound_Unit) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_permission_proto_enumTypes[0].Descriptor()
+	return file_toshi_permission_proto_enumTypes[1].Descriptor()
 }
 
 func (Bound_Unit) Type() protoreflect.EnumType {
-	return &file_toshi_permission_proto_enumTypes[0]
+	return &file_toshi_permission_proto_enumTypes[1]
 }
 
 func (x Bound_Unit) Number() protoreflect.EnumNumber {
@@ -391,6 +441,14 @@ var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 		Filename:      "toshi/permission.proto",
 	},
 	{
+		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
+		ExtensionType: (*KeyMode)(nil),
+		Field:         51010,
+		Name:          "toshi.key_mode",
+		Tag:           "varint,51010,opt,name=key_mode,enum=toshi.KeyMode",
+		Filename:      "toshi/permission.proto",
+	},
+	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         51003,
@@ -460,10 +518,10 @@ var (
 	// optional bool by_field = 51004;
 	E_ByField = &file_toshi_permission_proto_extTypes[3]
 	// mcp sets how the call appears as a tool of the MCP server, where the
-	// rules its generator applies give the wrong answer. Without it a call
-	// whose permission's level is "read" is read-only and idempotent, a call
-	// whose name begins with Delete, Cancel, Revoke, Remove, Stop or Rollback
-	// is destructive, and no call reaches outside the workspace.
+	// rules its generator applies give the wrong answer. Without it a read is
+	// read-only and idempotent, a naturally idempotent change is idempotent,
+	// a call whose name begins with Delete, Cancel, Revoke, Remove, Stop or
+	// Rollback is destructive, and no call reaches outside the workspace.
 	//
 	// optional toshi.MCP mcp = 51005;
 	E_Mcp = &file_toshi_permission_proto_extTypes[4]
@@ -477,6 +535,11 @@ var (
 	//
 	// optional bool own = 51006;
 	E_Own = &file_toshi_permission_proto_extTypes[5]
+	// key_mode marks how a changing Workspace or Operator API call is retried.
+	// KEY uses a request key; NATURAL needs no key. Reads carry no mark.
+	//
+	// optional toshi.KeyMode key_mode = 51010;
+	E_KeyMode = &file_toshi_permission_proto_extTypes[6]
 )
 
 // Extension fields to descriptorpb.FieldOptions.
@@ -488,14 +551,14 @@ var (
 	// shape, and the permissions page lists the field groups.
 	//
 	// optional string field_permission = 51003;
-	E_FieldPermission = &file_toshi_permission_proto_extTypes[6]
+	E_FieldPermission = &file_toshi_permission_proto_extTypes[7]
 	// bound states a fixed number the server applies to the field: the same
 	// for every deployment. Clients read it as a generated constant instead of
 	// copying it; the field's comment states it in words too, and the
 	// generator fails when the two differ.
 	//
 	// optional toshi.Bound bound = 51009;
-	E_Bound = &file_toshi_permission_proto_extTypes[7]
+	E_Bound = &file_toshi_permission_proto_extTypes[8]
 )
 
 var File_toshi_permission_proto protoreflect.FileDescriptor
@@ -542,7 +605,11 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\x04_minB\x06\n" +
 	"\x04_maxB\f\n" +
 	"\n" +
-	"_threshold:@\n" +
+	"_threshold*9\n" +
+	"\aKeyMode\x12\x18\n" +
+	"\x14KEY_MODE_UNSPECIFIED\x10\x00\x12\a\n" +
+	"\x03KEY\x10\x01\x12\v\n" +
+	"\aNATURAL\x10\x02:@\n" +
 	"\n" +
 	"permission\x12\x1e.google.protobuf.MethodOptions\x18\xb8\x8e\x03 \x01(\tR\n" +
 	"permission:6\n" +
@@ -551,7 +618,8 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\bby_field\x12\x1e.google.protobuf.MethodOptions\x18\xbc\x8e\x03 \x01(\bR\abyField:>\n" +
 	"\x03mcp\x12\x1e.google.protobuf.MethodOptions\x18\xbd\x8e\x03 \x01(\v2\n" +
 	".toshi.MCPR\x03mcp:2\n" +
-	"\x03own\x12\x1e.google.protobuf.MethodOptions\x18\xbe\x8e\x03 \x01(\bR\x03own:J\n" +
+	"\x03own\x12\x1e.google.protobuf.MethodOptions\x18\xbe\x8e\x03 \x01(\bR\x03own:K\n" +
+	"\bkey_mode\x12\x1e.google.protobuf.MethodOptions\x18\u008e\x03 \x01(\x0e2\x0e.toshi.KeyModeR\akeyMode:J\n" +
 	"\x10field_permission\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\tR\x0ffieldPermission:C\n" +
 	"\x05bound\x12\x1d.google.protobuf.FieldOptions\x18\xc1\x8e\x03 \x01(\v2\f.toshi.BoundR\x05boundB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
 
@@ -567,33 +635,36 @@ func file_toshi_permission_proto_rawDescGZIP() []byte {
 	return file_toshi_permission_proto_rawDescData
 }
 
-var file_toshi_permission_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_toshi_permission_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_toshi_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_toshi_permission_proto_goTypes = []any{
-	(Bound_Unit)(0),                    // 0: toshi.Bound.Unit
-	(*Audit)(nil),                      // 1: toshi.Audit
-	(*MCP)(nil),                        // 2: toshi.MCP
-	(*Bound)(nil),                      // 3: toshi.Bound
-	(*descriptorpb.MethodOptions)(nil), // 4: google.protobuf.MethodOptions
-	(*descriptorpb.FieldOptions)(nil),  // 5: google.protobuf.FieldOptions
+	(KeyMode)(0),                       // 0: toshi.KeyMode
+	(Bound_Unit)(0),                    // 1: toshi.Bound.Unit
+	(*Audit)(nil),                      // 2: toshi.Audit
+	(*MCP)(nil),                        // 3: toshi.MCP
+	(*Bound)(nil),                      // 4: toshi.Bound
+	(*descriptorpb.MethodOptions)(nil), // 5: google.protobuf.MethodOptions
+	(*descriptorpb.FieldOptions)(nil),  // 6: google.protobuf.FieldOptions
 }
 var file_toshi_permission_proto_depIdxs = []int32{
-	0,  // 0: toshi.Bound.unit:type_name -> toshi.Bound.Unit
-	4,  // 1: toshi.permission:extendee -> google.protobuf.MethodOptions
-	4,  // 2: toshi.scope:extendee -> google.protobuf.MethodOptions
-	4,  // 3: toshi.audit:extendee -> google.protobuf.MethodOptions
-	4,  // 4: toshi.by_field:extendee -> google.protobuf.MethodOptions
-	4,  // 5: toshi.mcp:extendee -> google.protobuf.MethodOptions
-	4,  // 6: toshi.own:extendee -> google.protobuf.MethodOptions
-	5,  // 7: toshi.field_permission:extendee -> google.protobuf.FieldOptions
-	5,  // 8: toshi.bound:extendee -> google.protobuf.FieldOptions
-	1,  // 9: toshi.audit:type_name -> toshi.Audit
-	2,  // 10: toshi.mcp:type_name -> toshi.MCP
-	3,  // 11: toshi.bound:type_name -> toshi.Bound
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	9,  // [9:12] is the sub-list for extension type_name
-	1,  // [1:9] is the sub-list for extension extendee
+	1,  // 0: toshi.Bound.unit:type_name -> toshi.Bound.Unit
+	5,  // 1: toshi.permission:extendee -> google.protobuf.MethodOptions
+	5,  // 2: toshi.scope:extendee -> google.protobuf.MethodOptions
+	5,  // 3: toshi.audit:extendee -> google.protobuf.MethodOptions
+	5,  // 4: toshi.by_field:extendee -> google.protobuf.MethodOptions
+	5,  // 5: toshi.mcp:extendee -> google.protobuf.MethodOptions
+	5,  // 6: toshi.own:extendee -> google.protobuf.MethodOptions
+	5,  // 7: toshi.key_mode:extendee -> google.protobuf.MethodOptions
+	6,  // 8: toshi.field_permission:extendee -> google.protobuf.FieldOptions
+	6,  // 9: toshi.bound:extendee -> google.protobuf.FieldOptions
+	2,  // 10: toshi.audit:type_name -> toshi.Audit
+	3,  // 11: toshi.mcp:type_name -> toshi.MCP
+	0,  // 12: toshi.key_mode:type_name -> toshi.KeyMode
+	4,  // 13: toshi.bound:type_name -> toshi.Bound
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	10, // [10:14] is the sub-list for extension type_name
+	1,  // [1:10] is the sub-list for extension extendee
 	0,  // [0:1] is the sub-list for field type_name
 }
 
@@ -609,9 +680,9 @@ func file_toshi_permission_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_permission_proto_rawDesc), len(file_toshi_permission_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   3,
-			NumExtensions: 8,
+			NumExtensions: 9,
 			NumServices:   0,
 		},
 		GoTypes:           file_toshi_permission_proto_goTypes,
