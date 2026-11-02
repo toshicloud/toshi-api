@@ -84,7 +84,7 @@ service HostService {
   }
   // CreateEnrollmentToken makes an enrollment token for the workspace and
   // returns it with its value; a host that registers with it is owned by
-  // the workspace. The token does not expire and the other tokens are
+  // the workspace. The installation sets its expiry; other tokens are
   // untouched. A closed workspace fails with FAILED_PRECONDITION.
   rpc CreateEnrollmentToken(CreateEnrollmentTokenRequest) returns (CreateEnrollmentTokenResponse) {
     option (toshi.permission) = "hosts.write";
@@ -246,6 +246,8 @@ message CheckCloudHostResponse {
 message CreateEnrollmentTokenRequest {
   // Hosts that enroll with the token register as overflow hosts.
   bool overflow = 1;
+  // Allow the token to enroll one new host.
+  bool single_use = 2;
 }
 
 // CreateEnrollmentTokenResponse carries the new token and its value.

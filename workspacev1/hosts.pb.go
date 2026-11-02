@@ -1227,7 +1227,9 @@ func (x *CheckCloudHostResponse) GetChecks() []*CloudHostCheck {
 type CreateEnrollmentTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Hosts that enroll with the token register as overflow hosts.
-	Overflow      bool `protobuf:"varint,1,opt,name=overflow,proto3" json:"overflow,omitempty"`
+	Overflow bool `protobuf:"varint,1,opt,name=overflow,proto3" json:"overflow,omitempty"`
+	// Allow the token to enroll one new host.
+	SingleUse     bool `protobuf:"varint,2,opt,name=single_use,json=singleUse,proto3" json:"single_use,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1265,6 +1267,13 @@ func (*CreateEnrollmentTokenRequest) Descriptor() ([]byte, []int) {
 func (x *CreateEnrollmentTokenRequest) GetOverflow() bool {
 	if x != nil {
 		return x.Overflow
+	}
+	return false
+}
+
+func (x *CreateEnrollmentTokenRequest) GetSingleUse() bool {
+	if x != nil {
+		return x.SingleUse
 	}
 	return false
 }
@@ -2456,9 +2465,11 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x15CheckCloudHostRequest\x12\x17\n" +
 	"\ahost_id\x18\x01 \x01(\tR\x06hostId\"T\n" +
 	"\x16CheckCloudHostResponse\x12:\n" +
-	"\x06checks\x18\x01 \x03(\v2\".toshi.workspace.v1.CloudHostCheckR\x06checks\":\n" +
+	"\x06checks\x18\x01 \x03(\v2\".toshi.workspace.v1.CloudHostCheckR\x06checks\"Y\n" +
 	"\x1cCreateEnrollmentTokenRequest\x12\x1a\n" +
-	"\boverflow\x18\x01 \x01(\bR\boverflow\"f\n" +
+	"\boverflow\x18\x01 \x01(\bR\boverflow\x12\x1d\n" +
+	"\n" +
+	"single_use\x18\x02 \x01(\bR\tsingleUse\"f\n" +
 	"\x1dCreateEnrollmentTokenResponse\x12/\n" +
 	"\x05token\x18\x01 \x01(\v2\x19.toshi.workspace.v1.TokenR\x05token\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\"\xe4\n" +

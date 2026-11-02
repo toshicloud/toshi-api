@@ -102,7 +102,7 @@ type HostServiceClient interface {
 	CheckCloudHost(context.Context, *connect.Request[workspacev1.CheckCloudHostRequest]) (*connect.Response[workspacev1.CheckCloudHostResponse], error)
 	// CreateEnrollmentToken makes an enrollment token for the workspace and
 	// returns it with its value; a host that registers with it is owned by
-	// the workspace. The token does not expire and the other tokens are
+	// the workspace. The installation sets its expiry; other tokens are
 	// untouched. A closed workspace fails with FAILED_PRECONDITION.
 	CreateEnrollmentToken(context.Context, *connect.Request[workspacev1.CreateEnrollmentTokenRequest]) (*connect.Response[workspacev1.CreateEnrollmentTokenResponse], error)
 }
@@ -266,7 +266,7 @@ type HostServiceHandler interface {
 	CheckCloudHost(context.Context, *connect.Request[workspacev1.CheckCloudHostRequest]) (*connect.Response[workspacev1.CheckCloudHostResponse], error)
 	// CreateEnrollmentToken makes an enrollment token for the workspace and
 	// returns it with its value; a host that registers with it is owned by
-	// the workspace. The token does not expire and the other tokens are
+	// the workspace. The installation sets its expiry; other tokens are
 	// untouched. A closed workspace fails with FAILED_PRECONDITION.
 	CreateEnrollmentToken(context.Context, *connect.Request[workspacev1.CreateEnrollmentTokenRequest]) (*connect.Response[workspacev1.CreateEnrollmentTokenResponse], error)
 }
