@@ -1715,6 +1715,8 @@ enum CheckGroup {
   CHECK_GROUP_CLOUD_POOLS = 4;
   // Each product that is switched off, and how far its work has wound down.
   CHECK_GROUP_PRODUCTS = 5;
+  // Each unrevoked enrolment token that never expires.
+  CHECK_GROUP_HOSTS = 6;
 }
 
 // CheckState is the outcome of a check, or of a group: a group's state is

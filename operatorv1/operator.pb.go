@@ -489,6 +489,8 @@ const (
 	CheckGroup_CHECK_GROUP_CLOUD_POOLS CheckGroup = 4
 	// Each product that is switched off, and how far its work has wound down.
 	CheckGroup_CHECK_GROUP_PRODUCTS CheckGroup = 5
+	// Each unrevoked enrolment token that never expires.
+	CheckGroup_CHECK_GROUP_HOSTS CheckGroup = 6
 )
 
 // Enum value maps for CheckGroup.
@@ -500,6 +502,7 @@ var (
 		3: "CHECK_GROUP_HOSTED_TOKENS",
 		4: "CHECK_GROUP_CLOUD_POOLS",
 		5: "CHECK_GROUP_PRODUCTS",
+		6: "CHECK_GROUP_HOSTS",
 	}
 	CheckGroup_value = map[string]int32{
 		"CHECK_GROUP_UNSPECIFIED":   0,
@@ -508,6 +511,7 @@ var (
 		"CHECK_GROUP_HOSTED_TOKENS": 3,
 		"CHECK_GROUP_CLOUD_POOLS":   4,
 		"CHECK_GROUP_PRODUCTS":      5,
+		"CHECK_GROUP_HOSTS":         6,
 	}
 )
 
@@ -16091,7 +16095,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"&HOSTING_CERTIFICATE_STATE_RATE_LIMITED\x10\x02\x12#\n" +
 	"\x1fHOSTING_CERTIFICATE_STATE_VALID\x10\x03\x12-\n" +
 	")HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING\x10\x04\x12)\n" +
-	"%HOSTING_CERTIFICATE_STATE_SELF_SIGNED\x10\x05*\xaf\x01\n" +
+	"%HOSTING_CERTIFICATE_STATE_SELF_SIGNED\x10\x05*\xc6\x01\n" +
 	"\n" +
 	"CheckGroup\x12\x1b\n" +
 	"\x17CHECK_GROUP_UNSPECIFIED\x10\x00\x12\x16\n" +
@@ -16099,7 +16103,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x12CHECK_GROUP_GITHUB\x10\x02\x12\x1d\n" +
 	"\x19CHECK_GROUP_HOSTED_TOKENS\x10\x03\x12\x1b\n" +
 	"\x17CHECK_GROUP_CLOUD_POOLS\x10\x04\x12\x18\n" +
-	"\x14CHECK_GROUP_PRODUCTS\x10\x05*t\n" +
+	"\x14CHECK_GROUP_PRODUCTS\x10\x05\x12\x15\n" +
+	"\x11CHECK_GROUP_HOSTS\x10\x06*t\n" +
 	"\n" +
 	"CheckState\x12\x1b\n" +
 	"\x17CHECK_STATE_UNSPECIFIED\x10\x00\x12\x17\n" +
