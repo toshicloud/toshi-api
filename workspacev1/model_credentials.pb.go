@@ -31,6 +31,8 @@ const (
 	ModelCredentialKind_MODEL_CREDENTIAL_KIND_UNSPECIFIED ModelCredentialKind = 0
 	// A provider's API key, kept as a key of a project's secrets.
 	ModelCredentialKind_MODEL_CREDENTIAL_KIND_KEY ModelCredentialKind = 1
+	// A provider subscription sign-in the control plane holds and renews.
+	ModelCredentialKind_MODEL_CREDENTIAL_KIND_SIGN_IN ModelCredentialKind = 2
 )
 
 // Enum value maps for ModelCredentialKind.
@@ -38,10 +40,12 @@ var (
 	ModelCredentialKind_name = map[int32]string{
 		0: "MODEL_CREDENTIAL_KIND_UNSPECIFIED",
 		1: "MODEL_CREDENTIAL_KIND_KEY",
+		2: "MODEL_CREDENTIAL_KIND_SIGN_IN",
 	}
 	ModelCredentialKind_value = map[string]int32{
 		"MODEL_CREDENTIAL_KIND_UNSPECIFIED": 0,
 		"MODEL_CREDENTIAL_KIND_KEY":         1,
+		"MODEL_CREDENTIAL_KIND_SIGN_IN":     2,
 	}
 )
 
@@ -70,6 +74,59 @@ func (x ModelCredentialKind) Number() protoreflect.EnumNumber {
 // Deprecated: Use ModelCredentialKind.Descriptor instead.
 func (ModelCredentialKind) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{0}
+}
+
+// ModelCredentialState is where a sign-in credential stands. Unset for a key.
+type ModelCredentialState int32
+
+const (
+	ModelCredentialState_MODEL_CREDENTIAL_STATE_UNSPECIFIED ModelCredentialState = 0
+	// The credential holds a grant the control plane can use.
+	ModelCredentialState_MODEL_CREDENTIAL_STATE_SIGNED_IN ModelCredentialState = 1
+	// The provider refused the grant, or it expired: the person signs in
+	// again.
+	ModelCredentialState_MODEL_CREDENTIAL_STATE_NEEDS_SIGN_IN ModelCredentialState = 2
+)
+
+// Enum value maps for ModelCredentialState.
+var (
+	ModelCredentialState_name = map[int32]string{
+		0: "MODEL_CREDENTIAL_STATE_UNSPECIFIED",
+		1: "MODEL_CREDENTIAL_STATE_SIGNED_IN",
+		2: "MODEL_CREDENTIAL_STATE_NEEDS_SIGN_IN",
+	}
+	ModelCredentialState_value = map[string]int32{
+		"MODEL_CREDENTIAL_STATE_UNSPECIFIED":   0,
+		"MODEL_CREDENTIAL_STATE_SIGNED_IN":     1,
+		"MODEL_CREDENTIAL_STATE_NEEDS_SIGN_IN": 2,
+	}
+)
+
+func (x ModelCredentialState) Enum() *ModelCredentialState {
+	p := new(ModelCredentialState)
+	*p = x
+	return p
+}
+
+func (x ModelCredentialState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ModelCredentialState) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_model_credentials_proto_enumTypes[1].Descriptor()
+}
+
+func (ModelCredentialState) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_model_credentials_proto_enumTypes[1]
+}
+
+func (x ModelCredentialState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ModelCredentialState.Descriptor instead.
+func (ModelCredentialState) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{1}
 }
 
 // ModelCredential is a credential as anyone may see it: never its value.
@@ -102,7 +159,23 @@ type ModelCredential struct {
 	Secret    string                 `protobuf:"bytes,11,opt,name=secret,proto3" json:"secret,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// The user id of the person who added it.
-	CreatedBy     string `protobuf:"bytes,13,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	CreatedBy string `protobuf:"bytes,13,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	// A sign-in's state; unset for a key.
+	State ModelCredentialState `protobuf:"varint,14,opt,name=state,proto3,enum=toshi.workspace.v1.ModelCredentialState" json:"state,omitempty"`
+	// Why a sign-in needs a new sign-in, such as "refresh_refused"; empty
+	// otherwise.
+	StateReason string `protobuf:"bytes,15,opt,name=state_reason,json=stateReason,proto3" json:"state_reason,omitempty"`
+	// When the state last changed; unset for a key.
+	StateAt *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=state_at,json=stateAt,proto3" json:"state_at,omitempty"`
+	// When the provider's access token expires; unset when it does not, and
+	// for a key.
+	TokenExpiresAt *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=token_expires_at,json=tokenExpiresAt,proto3" json:"token_expires_at,omitempty"`
+	// When a workload last used the credential; unset when none has, and for
+	// a key.
+	LastUsedAt *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=last_used_at,json=lastUsedAt,proto3" json:"last_used_at,omitempty"`
+	// A display label of the signed-in account, such as its address; empty
+	// for a key.
+	Account       string `protobuf:"bytes,19,opt,name=account,proto3" json:"account,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -224,6 +297,48 @@ func (x *ModelCredential) GetCreatedAt() *timestamppb.Timestamp {
 func (x *ModelCredential) GetCreatedBy() string {
 	if x != nil {
 		return x.CreatedBy
+	}
+	return ""
+}
+
+func (x *ModelCredential) GetState() ModelCredentialState {
+	if x != nil {
+		return x.State
+	}
+	return ModelCredentialState_MODEL_CREDENTIAL_STATE_UNSPECIFIED
+}
+
+func (x *ModelCredential) GetStateReason() string {
+	if x != nil {
+		return x.StateReason
+	}
+	return ""
+}
+
+func (x *ModelCredential) GetStateAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StateAt
+	}
+	return nil
+}
+
+func (x *ModelCredential) GetTokenExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.TokenExpiresAt
+	}
+	return nil
+}
+
+func (x *ModelCredential) GetLastUsedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastUsedAt
+	}
+	return nil
+}
+
+func (x *ModelCredential) GetAccount() string {
+	if x != nil {
+		return x.Account
 	}
 	return ""
 }
@@ -815,11 +930,722 @@ func (*DeleteModelCredentialResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{11}
 }
 
+type ListModelSignInProvidersRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListModelSignInProvidersRequest) Reset() {
+	*x = ListModelSignInProvidersRequest{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListModelSignInProvidersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListModelSignInProvidersRequest) ProtoMessage() {}
+
+func (x *ListModelSignInProvidersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListModelSignInProvidersRequest.ProtoReflect.Descriptor instead.
+func (*ListModelSignInProvidersRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{12}
+}
+
+// ModelSignInProvider is how a deployment offers one provider's sign-in.
+type ModelSignInProvider struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// "anthropic", "openai", "kimi", "mistral", "xai" or "gemini".
+	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	// "held", "volume" or "key".
+	Mechanism string `protobuf:"bytes,2,opt,name=mechanism,proto3" json:"mechanism,omitempty"`
+	// The deployment offers a held sign-in for this provider.
+	Available     bool `protobuf:"varint,3,opt,name=available,proto3" json:"available,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ModelSignInProvider) Reset() {
+	*x = ModelSignInProvider{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ModelSignInProvider) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ModelSignInProvider) ProtoMessage() {}
+
+func (x *ModelSignInProvider) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ModelSignInProvider.ProtoReflect.Descriptor instead.
+func (*ModelSignInProvider) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ModelSignInProvider) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *ModelSignInProvider) GetMechanism() string {
+	if x != nil {
+		return x.Mechanism
+	}
+	return ""
+}
+
+func (x *ModelSignInProvider) GetAvailable() bool {
+	if x != nil {
+		return x.Available
+	}
+	return false
+}
+
+type ListModelSignInProvidersResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Every provider a credential may serve, in a stable order.
+	Providers     []*ModelSignInProvider `protobuf:"bytes,1,rep,name=providers,proto3" json:"providers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListModelSignInProvidersResponse) Reset() {
+	*x = ListModelSignInProvidersResponse{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListModelSignInProvidersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListModelSignInProvidersResponse) ProtoMessage() {}
+
+func (x *ListModelSignInProvidersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListModelSignInProvidersResponse.ProtoReflect.Descriptor instead.
+func (*ListModelSignInProvidersResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ListModelSignInProvidersResponse) GetProviders() []*ModelSignInProvider {
+	if x != nil {
+		return x.Providers
+	}
+	return nil
+}
+
+type StartModelSignInRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The provider to sign in to, one of the six a credential may serve.
+	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	// The credential's name. Signing in again with the name of an existing
+	// credential replaces its grant and keeps its id.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The credential's place: the project and exactly one of environment or
+	// shared, as CreateModelCredential takes them.
+	Project     string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	Environment string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
+	Shared      bool   `protobuf:"varint,5,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The credential is the caller's own; true when unset.
+	Own           *bool `protobuf:"varint,6,opt,name=own,proto3,oneof" json:"own,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StartModelSignInRequest) Reset() {
+	*x = StartModelSignInRequest{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StartModelSignInRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StartModelSignInRequest) ProtoMessage() {}
+
+func (x *StartModelSignInRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StartModelSignInRequest.ProtoReflect.Descriptor instead.
+func (*StartModelSignInRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *StartModelSignInRequest) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *StartModelSignInRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *StartModelSignInRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *StartModelSignInRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *StartModelSignInRequest) GetShared() bool {
+	if x != nil {
+		return x.Shared
+	}
+	return false
+}
+
+func (x *StartModelSignInRequest) GetOwn() bool {
+	if x != nil && x.Own != nil {
+		return *x.Own
+	}
+	return false
+}
+
+// StartModelSignInResponse is one sign-in's stream: the prompt, progress
+// while it waits, and last either the signed-in credential or the failure.
+type StartModelSignInResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Event:
+	//
+	//	*StartModelSignInResponse_Prompt
+	//	*StartModelSignInResponse_Progress
+	//	*StartModelSignInResponse_Done
+	//	*StartModelSignInResponse_Failed
+	Event         isStartModelSignInResponse_Event `protobuf_oneof:"event"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StartModelSignInResponse) Reset() {
+	*x = StartModelSignInResponse{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StartModelSignInResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StartModelSignInResponse) ProtoMessage() {}
+
+func (x *StartModelSignInResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StartModelSignInResponse.ProtoReflect.Descriptor instead.
+func (*StartModelSignInResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *StartModelSignInResponse) GetEvent() isStartModelSignInResponse_Event {
+	if x != nil {
+		return x.Event
+	}
+	return nil
+}
+
+func (x *StartModelSignInResponse) GetPrompt() *Prompt {
+	if x != nil {
+		if x, ok := x.Event.(*StartModelSignInResponse_Prompt); ok {
+			return x.Prompt
+		}
+	}
+	return nil
+}
+
+func (x *StartModelSignInResponse) GetProgress() *Progress {
+	if x != nil {
+		if x, ok := x.Event.(*StartModelSignInResponse_Progress); ok {
+			return x.Progress
+		}
+	}
+	return nil
+}
+
+func (x *StartModelSignInResponse) GetDone() *ModelCredential {
+	if x != nil {
+		if x, ok := x.Event.(*StartModelSignInResponse_Done); ok {
+			return x.Done
+		}
+	}
+	return nil
+}
+
+func (x *StartModelSignInResponse) GetFailed() *Failure {
+	if x != nil {
+		if x, ok := x.Event.(*StartModelSignInResponse_Failed); ok {
+			return x.Failed
+		}
+	}
+	return nil
+}
+
+type isStartModelSignInResponse_Event interface {
+	isStartModelSignInResponse_Event()
+}
+
+type StartModelSignInResponse_Prompt struct {
+	// What to show the person: the page to open and, when the provider
+	// asks for one, the code to enter there.
+	Prompt *Prompt `protobuf:"bytes,1,opt,name=prompt,proto3,oneof"`
+}
+
+type StartModelSignInResponse_Progress struct {
+	// The sign-in is still waiting, or the provider asked it to slow down.
+	Progress *Progress `protobuf:"bytes,2,opt,name=progress,proto3,oneof"`
+}
+
+type StartModelSignInResponse_Done struct {
+	// Last, when the sign-in succeeded: the credential, signed in.
+	Done *ModelCredential `protobuf:"bytes,3,opt,name=done,proto3,oneof"`
+}
+
+type StartModelSignInResponse_Failed struct {
+	// Last, when it failed.
+	Failed *Failure `protobuf:"bytes,4,opt,name=failed,proto3,oneof"`
+}
+
+func (*StartModelSignInResponse_Prompt) isStartModelSignInResponse_Event() {}
+
+func (*StartModelSignInResponse_Progress) isStartModelSignInResponse_Event() {}
+
+func (*StartModelSignInResponse_Done) isStartModelSignInResponse_Event() {}
+
+func (*StartModelSignInResponse_Failed) isStartModelSignInResponse_Event() {}
+
+// Prompt is what a sign-in asks the person to open and enter.
+type Prompt struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The sign-in's id, for CompleteModelSignIn and CancelModelSignIn.
+	SignInId string `protobuf:"bytes,1,opt,name=sign_in_id,json=signInId,proto3" json:"sign_in_id,omitempty"`
+	// The page to open in a browser.
+	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	// The code to enter on that page, for a provider whose sign-in shows one.
+	UserCode string `protobuf:"bytes,3,opt,name=user_code,json=userCode,proto3" json:"user_code,omitempty"`
+	// When the prompt stops working.
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// The provider needs a code from that page, entered with
+	// CompleteModelSignIn.
+	NeedsCode     bool `protobuf:"varint,5,opt,name=needs_code,json=needsCode,proto3" json:"needs_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Prompt) Reset() {
+	*x = Prompt{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Prompt) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Prompt) ProtoMessage() {}
+
+func (x *Prompt) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Prompt.ProtoReflect.Descriptor instead.
+func (*Prompt) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *Prompt) GetSignInId() string {
+	if x != nil {
+		return x.SignInId
+	}
+	return ""
+}
+
+func (x *Prompt) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *Prompt) GetUserCode() string {
+	if x != nil {
+		return x.UserCode
+	}
+	return ""
+}
+
+func (x *Prompt) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
+func (x *Prompt) GetNeedsCode() bool {
+	if x != nil {
+		return x.NeedsCode
+	}
+	return false
+}
+
+// Progress reports a sign-in that is still under way.
+type Progress struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// "waiting" or "slow_down", the provider's answer to the latest poll.
+	Status        string `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Progress) Reset() {
+	*x = Progress{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Progress) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Progress) ProtoMessage() {}
+
+func (x *Progress) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Progress.ProtoReflect.Descriptor instead.
+func (*Progress) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *Progress) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+// Failure is why a sign-in ended without a credential.
+type Failure struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// "denied", "expired", "provider_error" or "not_offered".
+	Reason string `protobuf:"bytes,1,opt,name=reason,proto3" json:"reason,omitempty"`
+	// One line of detail from the provider; never a token.
+	Detail        string `protobuf:"bytes,2,opt,name=detail,proto3" json:"detail,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Failure) Reset() {
+	*x = Failure{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Failure) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Failure) ProtoMessage() {}
+
+func (x *Failure) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Failure.ProtoReflect.Descriptor instead.
+func (*Failure) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *Failure) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *Failure) GetDetail() string {
+	if x != nil {
+		return x.Detail
+	}
+	return ""
+}
+
+type CompleteModelSignInRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// From the sign-in's prompt.
+	SignInId string `protobuf:"bytes,1,opt,name=sign_in_id,json=signInId,proto3" json:"sign_in_id,omitempty"`
+	// The code the provider's page showed.
+	Code          string `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompleteModelSignInRequest) Reset() {
+	*x = CompleteModelSignInRequest{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompleteModelSignInRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompleteModelSignInRequest) ProtoMessage() {}
+
+func (x *CompleteModelSignInRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompleteModelSignInRequest.ProtoReflect.Descriptor instead.
+func (*CompleteModelSignInRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *CompleteModelSignInRequest) GetSignInId() string {
+	if x != nil {
+		return x.SignInId
+	}
+	return ""
+}
+
+func (x *CompleteModelSignInRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+type CompleteModelSignInResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompleteModelSignInResponse) Reset() {
+	*x = CompleteModelSignInResponse{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompleteModelSignInResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompleteModelSignInResponse) ProtoMessage() {}
+
+func (x *CompleteModelSignInResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompleteModelSignInResponse.ProtoReflect.Descriptor instead.
+func (*CompleteModelSignInResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{21}
+}
+
+type CancelModelSignInRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// From the sign-in's prompt.
+	SignInId      string `protobuf:"bytes,1,opt,name=sign_in_id,json=signInId,proto3" json:"sign_in_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelModelSignInRequest) Reset() {
+	*x = CancelModelSignInRequest{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelModelSignInRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelModelSignInRequest) ProtoMessage() {}
+
+func (x *CancelModelSignInRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelModelSignInRequest.ProtoReflect.Descriptor instead.
+func (*CancelModelSignInRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *CancelModelSignInRequest) GetSignInId() string {
+	if x != nil {
+		return x.SignInId
+	}
+	return ""
+}
+
+type CancelModelSignInResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelModelSignInResponse) Reset() {
+	*x = CancelModelSignInResponse{}
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelModelSignInResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelModelSignInResponse) ProtoMessage() {}
+
+func (x *CancelModelSignInResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_model_credentials_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelModelSignInResponse.ProtoReflect.Descriptor instead.
+func (*CancelModelSignInResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{23}
+}
+
 var File_toshi_workspace_v1_model_credentials_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\n" +
-	"*toshi/workspace/v1/model_credentials.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x9d\x03\n" +
+	"*toshi/workspace/v1/model_credentials.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd5\x05\n" +
 	"\x0fModelCredential\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
@@ -837,7 +1663,14 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"created_by\x18\r \x01(\tR\tcreatedBy\"_\n" +
+	"created_by\x18\r \x01(\tR\tcreatedBy\x12>\n" +
+	"\x05state\x18\x0e \x01(\x0e2(.toshi.workspace.v1.ModelCredentialStateR\x05state\x12!\n" +
+	"\fstate_reason\x18\x0f \x01(\tR\vstateReason\x125\n" +
+	"\bstate_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\astateAt\x12D\n" +
+	"\x10token_expires_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\x0etokenExpiresAt\x12<\n" +
+	"\flast_used_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"lastUsedAt\x12\x18\n" +
+	"\aaccount\x18\x13 \x01(\tR\aaccount\"_\n" +
 	"\x16ModelCredentialDefault\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12)\n" +
 	"\x10model_credential\x18\x02 \x01(\tR\x0fmodelCredential\"\xe2\x01\n" +
@@ -872,16 +1705,72 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\x10model_credential\x18\x01 \x01(\v2#.toshi.workspace.v1.ModelCredentialR\x0fmodelCredential\".\n" +
 	"\x1cDeleteModelCredentialRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x1f\n" +
-	"\x1dDeleteModelCredentialResponse*[\n" +
+	"\x1dDeleteModelCredentialResponse\"!\n" +
+	"\x1fListModelSignInProvidersRequest\"m\n" +
+	"\x13ModelSignInProvider\x12\x1a\n" +
+	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x1c\n" +
+	"\tmechanism\x18\x02 \x01(\tR\tmechanism\x12\x1c\n" +
+	"\tavailable\x18\x03 \x01(\bR\tavailable\"i\n" +
+	" ListModelSignInProvidersResponse\x12E\n" +
+	"\tproviders\x18\x01 \x03(\v2'.toshi.workspace.v1.ModelSignInProviderR\tproviders\"\xbc\x01\n" +
+	"\x17StartModelSignInRequest\x12\x1a\n" +
+	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
+	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x04 \x01(\tR\venvironment\x12\x16\n" +
+	"\x06shared\x18\x05 \x01(\bR\x06shared\x12\x15\n" +
+	"\x03own\x18\x06 \x01(\bH\x00R\x03own\x88\x01\x01B\x06\n" +
+	"\x04_own\"\x87\x02\n" +
+	"\x18StartModelSignInResponse\x124\n" +
+	"\x06prompt\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.PromptH\x00R\x06prompt\x12:\n" +
+	"\bprogress\x18\x02 \x01(\v2\x1c.toshi.workspace.v1.ProgressH\x00R\bprogress\x129\n" +
+	"\x04done\x18\x03 \x01(\v2#.toshi.workspace.v1.ModelCredentialH\x00R\x04done\x125\n" +
+	"\x06failed\x18\x04 \x01(\v2\x1b.toshi.workspace.v1.FailureH\x00R\x06failedB\a\n" +
+	"\x05event\"\xaf\x01\n" +
+	"\x06Prompt\x12\x1c\n" +
+	"\n" +
+	"sign_in_id\x18\x01 \x01(\tR\bsignInId\x12\x10\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url\x12\x1b\n" +
+	"\tuser_code\x18\x03 \x01(\tR\buserCode\x129\n" +
+	"\n" +
+	"expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1d\n" +
+	"\n" +
+	"needs_code\x18\x05 \x01(\bR\tneedsCode\"\"\n" +
+	"\bProgress\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\"9\n" +
+	"\aFailure\x12\x16\n" +
+	"\x06reason\x18\x01 \x01(\tR\x06reason\x12\x16\n" +
+	"\x06detail\x18\x02 \x01(\tR\x06detail\"N\n" +
+	"\x1aCompleteModelSignInRequest\x12\x1c\n" +
+	"\n" +
+	"sign_in_id\x18\x01 \x01(\tR\bsignInId\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\"\x1d\n" +
+	"\x1bCompleteModelSignInResponse\"8\n" +
+	"\x18CancelModelSignInRequest\x12\x1c\n" +
+	"\n" +
+	"sign_in_id\x18\x01 \x01(\tR\bsignInId\"\x1b\n" +
+	"\x19CancelModelSignInResponse*~\n" +
 	"\x13ModelCredentialKind\x12%\n" +
 	"!MODEL_CREDENTIAL_KIND_UNSPECIFIED\x10\x00\x12\x1d\n" +
-	"\x19MODEL_CREDENTIAL_KIND_KEY\x10\x012\xe9\x06\n" +
+	"\x19MODEL_CREDENTIAL_KIND_KEY\x10\x01\x12!\n" +
+	"\x1dMODEL_CREDENTIAL_KIND_SIGN_IN\x10\x02*\x8e\x01\n" +
+	"\x14ModelCredentialState\x12&\n" +
+	"\"MODEL_CREDENTIAL_STATE_UNSPECIFIED\x10\x00\x12$\n" +
+	" MODEL_CREDENTIAL_STATE_SIGNED_IN\x10\x01\x12(\n" +
+	"$MODEL_CREDENTIAL_STATE_NEEDS_SIGN_IN\x10\x022\x91\f\n" +
 	"\x16ModelCredentialService\x12\xb2\x01\n" +
 	"\x15CreateModelCredential\x120.toshi.workspace.v1.CreateModelCredentialRequest\x1a1.toshi.workspace.v1.CreateModelCredentialResponse\"4\xc2\xf3\x18\x17model_credentials.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01\x12\x93\x01\n" +
 	"\x12GetModelCredential\x12-.toshi.workspace.v1.GetModelCredentialRequest\x1a..toshi.workspace.v1.GetModelCredentialResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\x99\x01\n" +
 	"\x14ListModelCredentials\x12/.toshi.workspace.v1.ListModelCredentialsRequest\x1a0.toshi.workspace.v1.ListModelCredentialsResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\xc7\x01\n" +
 	"\x15UpdateModelCredential\x120.toshi.workspace.v1.UpdateModelCredentialRequest\x1a1.toshi.workspace.v1.UpdateModelCredentialResponse\"I\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18&\x12$model_credential:model_credential.id\xf0\xf3\x18\x01\x12\x9d\x01\n" +
-	"\x15DeleteModelCredential\x120.toshi.workspace.v1.DeleteModelCredentialRequest\x1a1.toshi.workspace.v1.DeleteModelCredentialResponse\"\x1f\xc2\xf3\x18\x17model_credentials.write\xf0\xf3\x18\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x15DeleteModelCredential\x120.toshi.workspace.v1.DeleteModelCredentialRequest\x1a1.toshi.workspace.v1.DeleteModelCredentialResponse\"\x1f\xc2\xf3\x18\x17model_credentials.write\xf0\xf3\x18\x01\x12\xa5\x01\n" +
+	"\x18ListModelSignInProviders\x123.toshi.workspace.v1.ListModelSignInProvidersRequest\x1a4.toshi.workspace.v1.ListModelSignInProvidersResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\xaf\x01\n" +
+	"\x10StartModelSignIn\x12+.toshi.workspace.v1.StartModelSignInRequest\x1a,.toshi.workspace.v1.StartModelSignInResponse\">\xc2\xf3\x18\x17model_credentials.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\n" +
+	"\x04none\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x010\x01\x12\xa7\x01\n" +
+	"\x13CompleteModelSignIn\x12..toshi.workspace.v1.CompleteModelSignInRequest\x1a/.toshi.workspace.v1.CompleteModelSignInResponse\"/\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18\x06\n" +
+	"\x04none\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01\x12\xa1\x01\n" +
+	"\x11CancelModelSignIn\x12,.toshi.workspace.v1.CancelModelSignInRequest\x1a-.toshi.workspace.v1.CancelModelSignInResponse\"/\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18\x06\n" +
+	"\x04none\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_model_credentials_proto_rawDescOnce sync.Once
@@ -895,49 +1784,80 @@ func file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_model_credentials_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_model_credentials_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_model_credentials_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_toshi_workspace_v1_model_credentials_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_toshi_workspace_v1_model_credentials_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_toshi_workspace_v1_model_credentials_proto_goTypes = []any{
-	(ModelCredentialKind)(0),              // 0: toshi.workspace.v1.ModelCredentialKind
-	(*ModelCredential)(nil),               // 1: toshi.workspace.v1.ModelCredential
-	(*ModelCredentialDefault)(nil),        // 2: toshi.workspace.v1.ModelCredentialDefault
-	(*CreateModelCredentialRequest)(nil),  // 3: toshi.workspace.v1.CreateModelCredentialRequest
-	(*CreateModelCredentialResponse)(nil), // 4: toshi.workspace.v1.CreateModelCredentialResponse
-	(*GetModelCredentialRequest)(nil),     // 5: toshi.workspace.v1.GetModelCredentialRequest
-	(*GetModelCredentialResponse)(nil),    // 6: toshi.workspace.v1.GetModelCredentialResponse
-	(*ListModelCredentialsRequest)(nil),   // 7: toshi.workspace.v1.ListModelCredentialsRequest
-	(*ListModelCredentialsResponse)(nil),  // 8: toshi.workspace.v1.ListModelCredentialsResponse
-	(*UpdateModelCredentialRequest)(nil),  // 9: toshi.workspace.v1.UpdateModelCredentialRequest
-	(*UpdateModelCredentialResponse)(nil), // 10: toshi.workspace.v1.UpdateModelCredentialResponse
-	(*DeleteModelCredentialRequest)(nil),  // 11: toshi.workspace.v1.DeleteModelCredentialRequest
-	(*DeleteModelCredentialResponse)(nil), // 12: toshi.workspace.v1.DeleteModelCredentialResponse
-	(*timestamppb.Timestamp)(nil),         // 13: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),         // 14: google.protobuf.FieldMask
+	(ModelCredentialKind)(0),                 // 0: toshi.workspace.v1.ModelCredentialKind
+	(ModelCredentialState)(0),                // 1: toshi.workspace.v1.ModelCredentialState
+	(*ModelCredential)(nil),                  // 2: toshi.workspace.v1.ModelCredential
+	(*ModelCredentialDefault)(nil),           // 3: toshi.workspace.v1.ModelCredentialDefault
+	(*CreateModelCredentialRequest)(nil),     // 4: toshi.workspace.v1.CreateModelCredentialRequest
+	(*CreateModelCredentialResponse)(nil),    // 5: toshi.workspace.v1.CreateModelCredentialResponse
+	(*GetModelCredentialRequest)(nil),        // 6: toshi.workspace.v1.GetModelCredentialRequest
+	(*GetModelCredentialResponse)(nil),       // 7: toshi.workspace.v1.GetModelCredentialResponse
+	(*ListModelCredentialsRequest)(nil),      // 8: toshi.workspace.v1.ListModelCredentialsRequest
+	(*ListModelCredentialsResponse)(nil),     // 9: toshi.workspace.v1.ListModelCredentialsResponse
+	(*UpdateModelCredentialRequest)(nil),     // 10: toshi.workspace.v1.UpdateModelCredentialRequest
+	(*UpdateModelCredentialResponse)(nil),    // 11: toshi.workspace.v1.UpdateModelCredentialResponse
+	(*DeleteModelCredentialRequest)(nil),     // 12: toshi.workspace.v1.DeleteModelCredentialRequest
+	(*DeleteModelCredentialResponse)(nil),    // 13: toshi.workspace.v1.DeleteModelCredentialResponse
+	(*ListModelSignInProvidersRequest)(nil),  // 14: toshi.workspace.v1.ListModelSignInProvidersRequest
+	(*ModelSignInProvider)(nil),              // 15: toshi.workspace.v1.ModelSignInProvider
+	(*ListModelSignInProvidersResponse)(nil), // 16: toshi.workspace.v1.ListModelSignInProvidersResponse
+	(*StartModelSignInRequest)(nil),          // 17: toshi.workspace.v1.StartModelSignInRequest
+	(*StartModelSignInResponse)(nil),         // 18: toshi.workspace.v1.StartModelSignInResponse
+	(*Prompt)(nil),                           // 19: toshi.workspace.v1.Prompt
+	(*Progress)(nil),                         // 20: toshi.workspace.v1.Progress
+	(*Failure)(nil),                          // 21: toshi.workspace.v1.Failure
+	(*CompleteModelSignInRequest)(nil),       // 22: toshi.workspace.v1.CompleteModelSignInRequest
+	(*CompleteModelSignInResponse)(nil),      // 23: toshi.workspace.v1.CompleteModelSignInResponse
+	(*CancelModelSignInRequest)(nil),         // 24: toshi.workspace.v1.CancelModelSignInRequest
+	(*CancelModelSignInResponse)(nil),        // 25: toshi.workspace.v1.CancelModelSignInResponse
+	(*timestamppb.Timestamp)(nil),            // 26: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),            // 27: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_model_credentials_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.ModelCredential.kind:type_name -> toshi.workspace.v1.ModelCredentialKind
-	13, // 1: toshi.workspace.v1.ModelCredential.created_at:type_name -> google.protobuf.Timestamp
-	1,  // 2: toshi.workspace.v1.CreateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	1,  // 3: toshi.workspace.v1.GetModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	1,  // 4: toshi.workspace.v1.ListModelCredentialsResponse.model_credentials:type_name -> toshi.workspace.v1.ModelCredential
-	1,  // 5: toshi.workspace.v1.UpdateModelCredentialRequest.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	14, // 6: toshi.workspace.v1.UpdateModelCredentialRequest.update_mask:type_name -> google.protobuf.FieldMask
-	1,  // 7: toshi.workspace.v1.UpdateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	3,  // 8: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:input_type -> toshi.workspace.v1.CreateModelCredentialRequest
-	5,  // 9: toshi.workspace.v1.ModelCredentialService.GetModelCredential:input_type -> toshi.workspace.v1.GetModelCredentialRequest
-	7,  // 10: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:input_type -> toshi.workspace.v1.ListModelCredentialsRequest
-	9,  // 11: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:input_type -> toshi.workspace.v1.UpdateModelCredentialRequest
-	11, // 12: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:input_type -> toshi.workspace.v1.DeleteModelCredentialRequest
-	4,  // 13: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:output_type -> toshi.workspace.v1.CreateModelCredentialResponse
-	6,  // 14: toshi.workspace.v1.ModelCredentialService.GetModelCredential:output_type -> toshi.workspace.v1.GetModelCredentialResponse
-	8,  // 15: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:output_type -> toshi.workspace.v1.ListModelCredentialsResponse
-	10, // 16: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:output_type -> toshi.workspace.v1.UpdateModelCredentialResponse
-	12, // 17: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:output_type -> toshi.workspace.v1.DeleteModelCredentialResponse
-	13, // [13:18] is the sub-list for method output_type
-	8,  // [8:13] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	26, // 1: toshi.workspace.v1.ModelCredential.created_at:type_name -> google.protobuf.Timestamp
+	1,  // 2: toshi.workspace.v1.ModelCredential.state:type_name -> toshi.workspace.v1.ModelCredentialState
+	26, // 3: toshi.workspace.v1.ModelCredential.state_at:type_name -> google.protobuf.Timestamp
+	26, // 4: toshi.workspace.v1.ModelCredential.token_expires_at:type_name -> google.protobuf.Timestamp
+	26, // 5: toshi.workspace.v1.ModelCredential.last_used_at:type_name -> google.protobuf.Timestamp
+	2,  // 6: toshi.workspace.v1.CreateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
+	2,  // 7: toshi.workspace.v1.GetModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
+	2,  // 8: toshi.workspace.v1.ListModelCredentialsResponse.model_credentials:type_name -> toshi.workspace.v1.ModelCredential
+	2,  // 9: toshi.workspace.v1.UpdateModelCredentialRequest.model_credential:type_name -> toshi.workspace.v1.ModelCredential
+	27, // 10: toshi.workspace.v1.UpdateModelCredentialRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 11: toshi.workspace.v1.UpdateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
+	15, // 12: toshi.workspace.v1.ListModelSignInProvidersResponse.providers:type_name -> toshi.workspace.v1.ModelSignInProvider
+	19, // 13: toshi.workspace.v1.StartModelSignInResponse.prompt:type_name -> toshi.workspace.v1.Prompt
+	20, // 14: toshi.workspace.v1.StartModelSignInResponse.progress:type_name -> toshi.workspace.v1.Progress
+	2,  // 15: toshi.workspace.v1.StartModelSignInResponse.done:type_name -> toshi.workspace.v1.ModelCredential
+	21, // 16: toshi.workspace.v1.StartModelSignInResponse.failed:type_name -> toshi.workspace.v1.Failure
+	26, // 17: toshi.workspace.v1.Prompt.expires_at:type_name -> google.protobuf.Timestamp
+	4,  // 18: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:input_type -> toshi.workspace.v1.CreateModelCredentialRequest
+	6,  // 19: toshi.workspace.v1.ModelCredentialService.GetModelCredential:input_type -> toshi.workspace.v1.GetModelCredentialRequest
+	8,  // 20: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:input_type -> toshi.workspace.v1.ListModelCredentialsRequest
+	10, // 21: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:input_type -> toshi.workspace.v1.UpdateModelCredentialRequest
+	12, // 22: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:input_type -> toshi.workspace.v1.DeleteModelCredentialRequest
+	14, // 23: toshi.workspace.v1.ModelCredentialService.ListModelSignInProviders:input_type -> toshi.workspace.v1.ListModelSignInProvidersRequest
+	17, // 24: toshi.workspace.v1.ModelCredentialService.StartModelSignIn:input_type -> toshi.workspace.v1.StartModelSignInRequest
+	22, // 25: toshi.workspace.v1.ModelCredentialService.CompleteModelSignIn:input_type -> toshi.workspace.v1.CompleteModelSignInRequest
+	24, // 26: toshi.workspace.v1.ModelCredentialService.CancelModelSignIn:input_type -> toshi.workspace.v1.CancelModelSignInRequest
+	5,  // 27: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:output_type -> toshi.workspace.v1.CreateModelCredentialResponse
+	7,  // 28: toshi.workspace.v1.ModelCredentialService.GetModelCredential:output_type -> toshi.workspace.v1.GetModelCredentialResponse
+	9,  // 29: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:output_type -> toshi.workspace.v1.ListModelCredentialsResponse
+	11, // 30: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:output_type -> toshi.workspace.v1.UpdateModelCredentialResponse
+	13, // 31: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:output_type -> toshi.workspace.v1.DeleteModelCredentialResponse
+	16, // 32: toshi.workspace.v1.ModelCredentialService.ListModelSignInProviders:output_type -> toshi.workspace.v1.ListModelSignInProvidersResponse
+	18, // 33: toshi.workspace.v1.ModelCredentialService.StartModelSignIn:output_type -> toshi.workspace.v1.StartModelSignInResponse
+	23, // 34: toshi.workspace.v1.ModelCredentialService.CompleteModelSignIn:output_type -> toshi.workspace.v1.CompleteModelSignInResponse
+	25, // 35: toshi.workspace.v1.ModelCredentialService.CancelModelSignIn:output_type -> toshi.workspace.v1.CancelModelSignInResponse
+	27, // [27:36] is the sub-list for method output_type
+	18, // [18:27] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_model_credentials_proto_init() }
@@ -945,13 +1865,20 @@ func file_toshi_workspace_v1_model_credentials_proto_init() {
 	if File_toshi_workspace_v1_model_credentials_proto != nil {
 		return
 	}
+	file_toshi_workspace_v1_model_credentials_proto_msgTypes[15].OneofWrappers = []any{}
+	file_toshi_workspace_v1_model_credentials_proto_msgTypes[16].OneofWrappers = []any{
+		(*StartModelSignInResponse_Prompt)(nil),
+		(*StartModelSignInResponse_Progress)(nil),
+		(*StartModelSignInResponse_Done)(nil),
+		(*StartModelSignInResponse_Failed)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_model_credentials_proto_rawDesc), len(file_toshi_workspace_v1_model_credentials_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   12,
+			NumEnums:      2,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

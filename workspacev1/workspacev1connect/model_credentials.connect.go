@@ -48,6 +48,18 @@ const (
 	// ModelCredentialServiceDeleteModelCredentialProcedure is the fully-qualified name of the
 	// ModelCredentialService's DeleteModelCredential RPC.
 	ModelCredentialServiceDeleteModelCredentialProcedure = "/toshi.workspace.v1.ModelCredentialService/DeleteModelCredential"
+	// ModelCredentialServiceListModelSignInProvidersProcedure is the fully-qualified name of the
+	// ModelCredentialService's ListModelSignInProviders RPC.
+	ModelCredentialServiceListModelSignInProvidersProcedure = "/toshi.workspace.v1.ModelCredentialService/ListModelSignInProviders"
+	// ModelCredentialServiceStartModelSignInProcedure is the fully-qualified name of the
+	// ModelCredentialService's StartModelSignIn RPC.
+	ModelCredentialServiceStartModelSignInProcedure = "/toshi.workspace.v1.ModelCredentialService/StartModelSignIn"
+	// ModelCredentialServiceCompleteModelSignInProcedure is the fully-qualified name of the
+	// ModelCredentialService's CompleteModelSignIn RPC.
+	ModelCredentialServiceCompleteModelSignInProcedure = "/toshi.workspace.v1.ModelCredentialService/CompleteModelSignIn"
+	// ModelCredentialServiceCancelModelSignInProcedure is the fully-qualified name of the
+	// ModelCredentialService's CancelModelSignIn RPC.
+	ModelCredentialServiceCancelModelSignInProcedure = "/toshi.workspace.v1.ModelCredentialService/CancelModelSignIn"
 )
 
 // ModelCredentialServiceClient is a client for the toshi.workspace.v1.ModelCredentialService
@@ -78,6 +90,27 @@ type ModelCredentialServiceClient interface {
 	// DeleteModelCredential signs the credential out: it removes the
 	// credential and its key, with every version, in one write.
 	DeleteModelCredential(context.Context, *connect.Request[workspacev1.DeleteModelCredentialRequest]) (*connect.Response[workspacev1.DeleteModelCredentialResponse], error)
+	// ListModelSignInProviders returns every provider a credential may serve,
+	// in a stable order, with how the deployment offers its sign-in:
+	// "held" when the control plane keeps and renews the grant, "volume" when
+	// the person's own login stays on their volume, or "key" when only an API
+	// key is offered. available is true only for a provider whose sign-in the
+	// deployment holds.
+	ListModelSignInProviders(context.Context, *connect.Request[workspacev1.ListModelSignInProvidersRequest]) (*connect.Response[workspacev1.ListModelSignInProvidersResponse], error)
+	// StartModelSignIn signs a person in to a provider's subscription and
+	// streams what the sign-in asks of them: the prompt to show, progress
+	// while it waits, and last either the signed-in credential or the reason
+	// it failed. The request names the credential as CreateModelCredential
+	// does; signing in with the name of an existing credential replaces its
+	// grant and keeps its id. A provider whose sign-in the deployment does
+	// not hold fails with FAILED_PRECONDITION, whatever the reason.
+	StartModelSignIn(context.Context, *connect.Request[workspacev1.StartModelSignInRequest]) (*connect.ServerStreamForClient[workspacev1.StartModelSignInResponse], error)
+	// CompleteModelSignIn answers a sign-in whose prompt asks for a code, as a
+	// paste-code provider does. The id is the one the prompt carried and the
+	// code is the one the provider's page showed.
+	CompleteModelSignIn(context.Context, *connect.Request[workspacev1.CompleteModelSignInRequest]) (*connect.Response[workspacev1.CompleteModelSignInResponse], error)
+	// CancelModelSignIn ends a sign-in whose prompt it has shown.
+	CancelModelSignIn(context.Context, *connect.Request[workspacev1.CancelModelSignInRequest]) (*connect.Response[workspacev1.CancelModelSignInResponse], error)
 }
 
 // NewModelCredentialServiceClient constructs a client for the
@@ -121,16 +154,44 @@ func NewModelCredentialServiceClient(httpClient connect.HTTPClient, baseURL stri
 			connect.WithSchema(modelCredentialServiceMethods.ByName("DeleteModelCredential")),
 			connect.WithClientOptions(opts...),
 		),
+		listModelSignInProviders: connect.NewClient[workspacev1.ListModelSignInProvidersRequest, workspacev1.ListModelSignInProvidersResponse](
+			httpClient,
+			baseURL+ModelCredentialServiceListModelSignInProvidersProcedure,
+			connect.WithSchema(modelCredentialServiceMethods.ByName("ListModelSignInProviders")),
+			connect.WithClientOptions(opts...),
+		),
+		startModelSignIn: connect.NewClient[workspacev1.StartModelSignInRequest, workspacev1.StartModelSignInResponse](
+			httpClient,
+			baseURL+ModelCredentialServiceStartModelSignInProcedure,
+			connect.WithSchema(modelCredentialServiceMethods.ByName("StartModelSignIn")),
+			connect.WithClientOptions(opts...),
+		),
+		completeModelSignIn: connect.NewClient[workspacev1.CompleteModelSignInRequest, workspacev1.CompleteModelSignInResponse](
+			httpClient,
+			baseURL+ModelCredentialServiceCompleteModelSignInProcedure,
+			connect.WithSchema(modelCredentialServiceMethods.ByName("CompleteModelSignIn")),
+			connect.WithClientOptions(opts...),
+		),
+		cancelModelSignIn: connect.NewClient[workspacev1.CancelModelSignInRequest, workspacev1.CancelModelSignInResponse](
+			httpClient,
+			baseURL+ModelCredentialServiceCancelModelSignInProcedure,
+			connect.WithSchema(modelCredentialServiceMethods.ByName("CancelModelSignIn")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // modelCredentialServiceClient implements ModelCredentialServiceClient.
 type modelCredentialServiceClient struct {
-	createModelCredential *connect.Client[workspacev1.CreateModelCredentialRequest, workspacev1.CreateModelCredentialResponse]
-	getModelCredential    *connect.Client[workspacev1.GetModelCredentialRequest, workspacev1.GetModelCredentialResponse]
-	listModelCredentials  *connect.Client[workspacev1.ListModelCredentialsRequest, workspacev1.ListModelCredentialsResponse]
-	updateModelCredential *connect.Client[workspacev1.UpdateModelCredentialRequest, workspacev1.UpdateModelCredentialResponse]
-	deleteModelCredential *connect.Client[workspacev1.DeleteModelCredentialRequest, workspacev1.DeleteModelCredentialResponse]
+	createModelCredential    *connect.Client[workspacev1.CreateModelCredentialRequest, workspacev1.CreateModelCredentialResponse]
+	getModelCredential       *connect.Client[workspacev1.GetModelCredentialRequest, workspacev1.GetModelCredentialResponse]
+	listModelCredentials     *connect.Client[workspacev1.ListModelCredentialsRequest, workspacev1.ListModelCredentialsResponse]
+	updateModelCredential    *connect.Client[workspacev1.UpdateModelCredentialRequest, workspacev1.UpdateModelCredentialResponse]
+	deleteModelCredential    *connect.Client[workspacev1.DeleteModelCredentialRequest, workspacev1.DeleteModelCredentialResponse]
+	listModelSignInProviders *connect.Client[workspacev1.ListModelSignInProvidersRequest, workspacev1.ListModelSignInProvidersResponse]
+	startModelSignIn         *connect.Client[workspacev1.StartModelSignInRequest, workspacev1.StartModelSignInResponse]
+	completeModelSignIn      *connect.Client[workspacev1.CompleteModelSignInRequest, workspacev1.CompleteModelSignInResponse]
+	cancelModelSignIn        *connect.Client[workspacev1.CancelModelSignInRequest, workspacev1.CancelModelSignInResponse]
 }
 
 // CreateModelCredential calls toshi.workspace.v1.ModelCredentialService.CreateModelCredential.
@@ -156,6 +217,27 @@ func (c *modelCredentialServiceClient) UpdateModelCredential(ctx context.Context
 // DeleteModelCredential calls toshi.workspace.v1.ModelCredentialService.DeleteModelCredential.
 func (c *modelCredentialServiceClient) DeleteModelCredential(ctx context.Context, req *connect.Request[workspacev1.DeleteModelCredentialRequest]) (*connect.Response[workspacev1.DeleteModelCredentialResponse], error) {
 	return c.deleteModelCredential.CallUnary(ctx, req)
+}
+
+// ListModelSignInProviders calls
+// toshi.workspace.v1.ModelCredentialService.ListModelSignInProviders.
+func (c *modelCredentialServiceClient) ListModelSignInProviders(ctx context.Context, req *connect.Request[workspacev1.ListModelSignInProvidersRequest]) (*connect.Response[workspacev1.ListModelSignInProvidersResponse], error) {
+	return c.listModelSignInProviders.CallUnary(ctx, req)
+}
+
+// StartModelSignIn calls toshi.workspace.v1.ModelCredentialService.StartModelSignIn.
+func (c *modelCredentialServiceClient) StartModelSignIn(ctx context.Context, req *connect.Request[workspacev1.StartModelSignInRequest]) (*connect.ServerStreamForClient[workspacev1.StartModelSignInResponse], error) {
+	return c.startModelSignIn.CallServerStream(ctx, req)
+}
+
+// CompleteModelSignIn calls toshi.workspace.v1.ModelCredentialService.CompleteModelSignIn.
+func (c *modelCredentialServiceClient) CompleteModelSignIn(ctx context.Context, req *connect.Request[workspacev1.CompleteModelSignInRequest]) (*connect.Response[workspacev1.CompleteModelSignInResponse], error) {
+	return c.completeModelSignIn.CallUnary(ctx, req)
+}
+
+// CancelModelSignIn calls toshi.workspace.v1.ModelCredentialService.CancelModelSignIn.
+func (c *modelCredentialServiceClient) CancelModelSignIn(ctx context.Context, req *connect.Request[workspacev1.CancelModelSignInRequest]) (*connect.Response[workspacev1.CancelModelSignInResponse], error) {
+	return c.cancelModelSignIn.CallUnary(ctx, req)
 }
 
 // ModelCredentialServiceHandler is an implementation of the
@@ -186,6 +268,27 @@ type ModelCredentialServiceHandler interface {
 	// DeleteModelCredential signs the credential out: it removes the
 	// credential and its key, with every version, in one write.
 	DeleteModelCredential(context.Context, *connect.Request[workspacev1.DeleteModelCredentialRequest]) (*connect.Response[workspacev1.DeleteModelCredentialResponse], error)
+	// ListModelSignInProviders returns every provider a credential may serve,
+	// in a stable order, with how the deployment offers its sign-in:
+	// "held" when the control plane keeps and renews the grant, "volume" when
+	// the person's own login stays on their volume, or "key" when only an API
+	// key is offered. available is true only for a provider whose sign-in the
+	// deployment holds.
+	ListModelSignInProviders(context.Context, *connect.Request[workspacev1.ListModelSignInProvidersRequest]) (*connect.Response[workspacev1.ListModelSignInProvidersResponse], error)
+	// StartModelSignIn signs a person in to a provider's subscription and
+	// streams what the sign-in asks of them: the prompt to show, progress
+	// while it waits, and last either the signed-in credential or the reason
+	// it failed. The request names the credential as CreateModelCredential
+	// does; signing in with the name of an existing credential replaces its
+	// grant and keeps its id. A provider whose sign-in the deployment does
+	// not hold fails with FAILED_PRECONDITION, whatever the reason.
+	StartModelSignIn(context.Context, *connect.Request[workspacev1.StartModelSignInRequest], *connect.ServerStream[workspacev1.StartModelSignInResponse]) error
+	// CompleteModelSignIn answers a sign-in whose prompt asks for a code, as a
+	// paste-code provider does. The id is the one the prompt carried and the
+	// code is the one the provider's page showed.
+	CompleteModelSignIn(context.Context, *connect.Request[workspacev1.CompleteModelSignInRequest]) (*connect.Response[workspacev1.CompleteModelSignInResponse], error)
+	// CancelModelSignIn ends a sign-in whose prompt it has shown.
+	CancelModelSignIn(context.Context, *connect.Request[workspacev1.CancelModelSignInRequest]) (*connect.Response[workspacev1.CancelModelSignInResponse], error)
 }
 
 // NewModelCredentialServiceHandler builds an HTTP handler from the service implementation. It
@@ -225,6 +328,30 @@ func NewModelCredentialServiceHandler(svc ModelCredentialServiceHandler, opts ..
 		connect.WithSchema(modelCredentialServiceMethods.ByName("DeleteModelCredential")),
 		connect.WithHandlerOptions(opts...),
 	)
+	modelCredentialServiceListModelSignInProvidersHandler := connect.NewUnaryHandler(
+		ModelCredentialServiceListModelSignInProvidersProcedure,
+		svc.ListModelSignInProviders,
+		connect.WithSchema(modelCredentialServiceMethods.ByName("ListModelSignInProviders")),
+		connect.WithHandlerOptions(opts...),
+	)
+	modelCredentialServiceStartModelSignInHandler := connect.NewServerStreamHandler(
+		ModelCredentialServiceStartModelSignInProcedure,
+		svc.StartModelSignIn,
+		connect.WithSchema(modelCredentialServiceMethods.ByName("StartModelSignIn")),
+		connect.WithHandlerOptions(opts...),
+	)
+	modelCredentialServiceCompleteModelSignInHandler := connect.NewUnaryHandler(
+		ModelCredentialServiceCompleteModelSignInProcedure,
+		svc.CompleteModelSignIn,
+		connect.WithSchema(modelCredentialServiceMethods.ByName("CompleteModelSignIn")),
+		connect.WithHandlerOptions(opts...),
+	)
+	modelCredentialServiceCancelModelSignInHandler := connect.NewUnaryHandler(
+		ModelCredentialServiceCancelModelSignInProcedure,
+		svc.CancelModelSignIn,
+		connect.WithSchema(modelCredentialServiceMethods.ByName("CancelModelSignIn")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.ModelCredentialService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ModelCredentialServiceCreateModelCredentialProcedure:
@@ -237,6 +364,14 @@ func NewModelCredentialServiceHandler(svc ModelCredentialServiceHandler, opts ..
 			modelCredentialServiceUpdateModelCredentialHandler.ServeHTTP(w, r)
 		case ModelCredentialServiceDeleteModelCredentialProcedure:
 			modelCredentialServiceDeleteModelCredentialHandler.ServeHTTP(w, r)
+		case ModelCredentialServiceListModelSignInProvidersProcedure:
+			modelCredentialServiceListModelSignInProvidersHandler.ServeHTTP(w, r)
+		case ModelCredentialServiceStartModelSignInProcedure:
+			modelCredentialServiceStartModelSignInHandler.ServeHTTP(w, r)
+		case ModelCredentialServiceCompleteModelSignInProcedure:
+			modelCredentialServiceCompleteModelSignInHandler.ServeHTTP(w, r)
+		case ModelCredentialServiceCancelModelSignInProcedure:
+			modelCredentialServiceCancelModelSignInHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -264,4 +399,20 @@ func (UnimplementedModelCredentialServiceHandler) UpdateModelCredential(context.
 
 func (UnimplementedModelCredentialServiceHandler) DeleteModelCredential(context.Context, *connect.Request[workspacev1.DeleteModelCredentialRequest]) (*connect.Response[workspacev1.DeleteModelCredentialResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ModelCredentialService.DeleteModelCredential is not implemented"))
+}
+
+func (UnimplementedModelCredentialServiceHandler) ListModelSignInProviders(context.Context, *connect.Request[workspacev1.ListModelSignInProvidersRequest]) (*connect.Response[workspacev1.ListModelSignInProvidersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ModelCredentialService.ListModelSignInProviders is not implemented"))
+}
+
+func (UnimplementedModelCredentialServiceHandler) StartModelSignIn(context.Context, *connect.Request[workspacev1.StartModelSignInRequest], *connect.ServerStream[workspacev1.StartModelSignInResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ModelCredentialService.StartModelSignIn is not implemented"))
+}
+
+func (UnimplementedModelCredentialServiceHandler) CompleteModelSignIn(context.Context, *connect.Request[workspacev1.CompleteModelSignInRequest]) (*connect.Response[workspacev1.CompleteModelSignInResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ModelCredentialService.CompleteModelSignIn is not implemented"))
+}
+
+func (UnimplementedModelCredentialServiceHandler) CancelModelSignIn(context.Context, *connect.Request[workspacev1.CancelModelSignInRequest]) (*connect.Response[workspacev1.CancelModelSignInResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ModelCredentialService.CancelModelSignIn is not implemented"))
 }
