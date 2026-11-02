@@ -239,4 +239,10 @@ message APIVersions {
   string api = 1;
   // control_plane is the control plane's release, as GetVersion returns it.
   string control_plane = 2;
+  // newest_compatibility_date is the newest compatibility date Toshi
+  // serves, a YYYY-MM-DD date, as compat's range gives it.
+  string newest_compatibility_date = 3;
+  // oldest_compatibility_date is the oldest compatibility date Toshi
+  // serves, a YYYY-MM-DD date.
+  string oldest_compatibility_date = 4;
 }

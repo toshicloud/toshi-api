@@ -87,6 +87,12 @@ const (
 	// ProjectServiceUpdateEnvironmentProcedure is the fully-qualified name of the ProjectService's
 	// UpdateEnvironment RPC.
 	ProjectServiceUpdateEnvironmentProcedure = "/toshi.workspace.v1.ProjectService/UpdateEnvironment"
+	// ProjectServiceRaiseCompatibilityDateProcedure is the fully-qualified name of the ProjectService's
+	// RaiseCompatibilityDate RPC.
+	ProjectServiceRaiseCompatibilityDateProcedure = "/toshi.workspace.v1.ProjectService/RaiseCompatibilityDate"
+	// ProjectServiceListCompatibilityChangesProcedure is the fully-qualified name of the
+	// ProjectService's ListCompatibilityChanges RPC.
+	ProjectServiceListCompatibilityChangesProcedure = "/toshi.workspace.v1.ProjectService/ListCompatibilityChanges"
 	// ProjectServiceCreateEmbedTokenProcedure is the fully-qualified name of the ProjectService's
 	// CreateEmbedToken RPC.
 	ProjectServiceCreateEmbedTokenProcedure = "/toshi.workspace.v1.ProjectService/CreateEmbedToken"
@@ -130,15 +136,18 @@ type ProjectServiceClient interface {
 	// recording_defaults.sandbox_recording_policy,
 	// recording_defaults.job_recording_policy, recording_defaults.human_spans,
 	// recording_defaults.recording_segment_minutes and
-	// recording_defaults.recording_max_mib; and volume_rules, the project's
+	// recording_defaults.recording_max_mib; volume_rules, the project's
 	// volume rules, replaced whole by the value the call carries, an empty
-	// one clearing them. An unset update_mask names the fields
-	// project carries. An empty one, an unset one with no admission, no
-	// recording_defaults and no volume_rules, "*" and a path of another field
-	// are INVALID_ARGUMENT. The secret is sealed under the workspace's data
-	// key and never returned; a deployment with no keyring refuses it with
-	// FAILED_PRECONDITION. A token limited to environments is
-	// PERMISSION_DENIED.
+	// one clearing them; and compatibility_flags, the project's compatibility
+	// flags, replaced whole by the value the call carries, an empty one
+	// clearing them, each flag checked against the dated changes Toshi lists
+	// and an unknown one INVALID_ARGUMENT. An unset update_mask names the
+	// fields project carries. An empty one, an unset one with no admission,
+	// no recording_defaults, no volume_rules and no compatibility_flags, "*"
+	// and a path of another field are INVALID_ARGUMENT. The secret is sealed
+	// under the workspace's data key and never returned; a deployment with no
+	// keyring refuses it with FAILED_PRECONDITION. A token limited to
+	// environments is PERMISSION_DENIED.
 	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
 	// ClaimRepository puts a repository in a project: it claims a repository
 	// no project claims, or moves the claim from another project. A CI job
@@ -250,14 +259,46 @@ type ProjectServiceClient interface {
 	// project's volumes its services and sandboxes may attach, as
 	// SetEnvironmentVolumes does, and model_credential_defaults replaces the
 	// environment's default model credentials, which also needs
-	// model_credentials.write. Each is checked as that call checks it,
-	// and all are written together or not at all. An omitted mask means
+	// model_credentials.write, and compatibility_date sets the environment's
+	// override of the project's date, an empty one clearing it. Each is
+	// checked as that call checks it, and the other overrides are written
+	// together or not at all. An omitted mask means
 	// the fields the request sets; clearing the override or the list needs
 	// its path in the mask. "*" and a path of any other field are
 	// INVALID_ARGUMENT. A project or environment the workspace does not have
 	// is NOT_FOUND. A token limited to an environment updates only that
 	// environment.
 	UpdateEnvironment(context.Context, *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error)
+	// RaiseCompatibilityDate moves a project's compatibility date, or one
+	// environment's override of it, to date, a YYYY-MM-DD date. With
+	// environment empty it raises the project's date; with it set it raises
+	// that environment's override. The date must be one Toshi serves: older
+	// than the oldest is FAILED_PRECONDITION with an ErrorInfo, reason
+	// COMPATIBILITY_DATE_TOO_OLD, and newer than the newest is
+	// FAILED_PRECONDITION with reason COMPATIBILITY_DATE_TOO_NEW; each names
+	// the date, the oldest and the newest in its metadata. A date that is not
+	// YYYY-MM-DD is INVALID_ARGUMENT. A member raises the date and never
+	// lowers it: a date earlier than the one the project or environment runs
+	// under is FAILED_PRECONDITION with reason COMPATIBILITY_DATE_LOWER and
+	// the same metadata plus the current date. The operator's call, made
+	// under the operator grant, may lower, never below the oldest date Toshi
+	// serves. Raising to the date already stored succeeds with changed false,
+	// writes nothing and records no event. The answer's changes are the dated
+	// changes the raise took, as ListCompatibilityChanges lists them.
+	//
+	// A project or environment the workspace does not have is NOT_FOUND. A
+	// token limited to an environment raises only that environment and is
+	// PERMISSION_DENIED for the project or another environment.
+	RaiseCompatibilityDate(context.Context, *connect.Request[workspacev1.RaiseCompatibilityDateRequest]) (*connect.Response[workspacev1.RaiseCompatibilityDateResponse], error)
+	// ListCompatibilityChanges returns the dated changes between the date a
+	// project, or one environment of it, runs under and to_date: the changes
+	// it has not taken yet, each with its date, its flag and a summary. With
+	// to_date empty it lists them up to the newest date Toshi serves, and a
+	// to_date Toshi does not serve is refused as RaiseCompatibilityDate
+	// refuses a date. An environment's flags are the project's; its date is
+	// its own override when it has one, else the project's. A project or
+	// environment the workspace does not have is NOT_FOUND.
+	ListCompatibilityChanges(context.Context, *connect.Request[workspacev1.ListCompatibilityChangesRequest]) (*connect.Response[workspacev1.ListCompatibilityChangesResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -394,6 +435,18 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("UpdateEnvironment")),
 			connect.WithClientOptions(opts...),
 		),
+		raiseCompatibilityDate: connect.NewClient[workspacev1.RaiseCompatibilityDateRequest, workspacev1.RaiseCompatibilityDateResponse](
+			httpClient,
+			baseURL+ProjectServiceRaiseCompatibilityDateProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("RaiseCompatibilityDate")),
+			connect.WithClientOptions(opts...),
+		),
+		listCompatibilityChanges: connect.NewClient[workspacev1.ListCompatibilityChangesRequest, workspacev1.ListCompatibilityChangesResponse](
+			httpClient,
+			baseURL+ProjectServiceListCompatibilityChangesProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("ListCompatibilityChanges")),
+			connect.WithClientOptions(opts...),
+		),
 		createEmbedToken: connect.NewClient[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse](
 			httpClient,
 			baseURL+ProjectServiceCreateEmbedTokenProcedure,
@@ -417,27 +470,29 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // projectServiceClient implements ProjectServiceClient.
 type projectServiceClient struct {
-	listProjects            *connect.Client[workspacev1.ListProjectsRequest, workspacev1.ListProjectsResponse]
-	getProject              *connect.Client[workspacev1.GetProjectRequest, workspacev1.GetProjectResponse]
-	listRepositories        *connect.Client[workspacev1.ListRepositoriesRequest, workspacev1.ListRepositoriesResponse]
-	createProject           *connect.Client[workspacev1.CreateProjectRequest, workspacev1.CreateProjectResponse]
-	updateProject           *connect.Client[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse]
-	claimRepository         *connect.Client[workspacev1.ClaimRepositoryRequest, workspacev1.ClaimRepositoryResponse]
-	createEnvironment       *connect.Client[workspacev1.CreateEnvironmentRequest, workspacev1.CreateEnvironmentResponse]
-	deleteEnvironment       *connect.Client[workspacev1.DeleteEnvironmentRequest, workspacev1.DeleteEnvironmentResponse]
-	listBranchRules         *connect.Client[workspacev1.ListBranchRulesRequest, workspacev1.ListBranchRulesResponse]
-	setBranchRules          *connect.Client[workspacev1.SetBranchRulesRequest, workspacev1.SetBranchRulesResponse]
-	getProjectNetwork       *connect.Client[workspacev1.GetProjectNetworkRequest, workspacev1.GetProjectNetworkResponse]
-	setProjectNetwork       *connect.Client[workspacev1.SetProjectNetworkRequest, workspacev1.SetProjectNetworkResponse]
-	getEnvironmentNetwork   *connect.Client[workspacev1.GetEnvironmentNetworkRequest, workspacev1.GetEnvironmentNetworkResponse]
-	setEnvironmentNetwork   *connect.Client[workspacev1.SetEnvironmentNetworkRequest, workspacev1.SetEnvironmentNetworkResponse]
-	getEnvironmentRetention *connect.Client[workspacev1.GetEnvironmentRetentionRequest, workspacev1.GetEnvironmentRetentionResponse]
-	setEnvironmentRetention *connect.Client[workspacev1.SetEnvironmentRetentionRequest, workspacev1.SetEnvironmentRetentionResponse]
-	setEnvironmentVolumes   *connect.Client[workspacev1.SetEnvironmentVolumesRequest, workspacev1.SetEnvironmentVolumesResponse]
-	updateEnvironment       *connect.Client[workspacev1.UpdateEnvironmentRequest, workspacev1.UpdateEnvironmentResponse]
-	createEmbedToken        *connect.Client[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse]
-	listEmbedTokens         *connect.Client[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse]
-	revokeEmbedToken        *connect.Client[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse]
+	listProjects             *connect.Client[workspacev1.ListProjectsRequest, workspacev1.ListProjectsResponse]
+	getProject               *connect.Client[workspacev1.GetProjectRequest, workspacev1.GetProjectResponse]
+	listRepositories         *connect.Client[workspacev1.ListRepositoriesRequest, workspacev1.ListRepositoriesResponse]
+	createProject            *connect.Client[workspacev1.CreateProjectRequest, workspacev1.CreateProjectResponse]
+	updateProject            *connect.Client[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse]
+	claimRepository          *connect.Client[workspacev1.ClaimRepositoryRequest, workspacev1.ClaimRepositoryResponse]
+	createEnvironment        *connect.Client[workspacev1.CreateEnvironmentRequest, workspacev1.CreateEnvironmentResponse]
+	deleteEnvironment        *connect.Client[workspacev1.DeleteEnvironmentRequest, workspacev1.DeleteEnvironmentResponse]
+	listBranchRules          *connect.Client[workspacev1.ListBranchRulesRequest, workspacev1.ListBranchRulesResponse]
+	setBranchRules           *connect.Client[workspacev1.SetBranchRulesRequest, workspacev1.SetBranchRulesResponse]
+	getProjectNetwork        *connect.Client[workspacev1.GetProjectNetworkRequest, workspacev1.GetProjectNetworkResponse]
+	setProjectNetwork        *connect.Client[workspacev1.SetProjectNetworkRequest, workspacev1.SetProjectNetworkResponse]
+	getEnvironmentNetwork    *connect.Client[workspacev1.GetEnvironmentNetworkRequest, workspacev1.GetEnvironmentNetworkResponse]
+	setEnvironmentNetwork    *connect.Client[workspacev1.SetEnvironmentNetworkRequest, workspacev1.SetEnvironmentNetworkResponse]
+	getEnvironmentRetention  *connect.Client[workspacev1.GetEnvironmentRetentionRequest, workspacev1.GetEnvironmentRetentionResponse]
+	setEnvironmentRetention  *connect.Client[workspacev1.SetEnvironmentRetentionRequest, workspacev1.SetEnvironmentRetentionResponse]
+	setEnvironmentVolumes    *connect.Client[workspacev1.SetEnvironmentVolumesRequest, workspacev1.SetEnvironmentVolumesResponse]
+	updateEnvironment        *connect.Client[workspacev1.UpdateEnvironmentRequest, workspacev1.UpdateEnvironmentResponse]
+	raiseCompatibilityDate   *connect.Client[workspacev1.RaiseCompatibilityDateRequest, workspacev1.RaiseCompatibilityDateResponse]
+	listCompatibilityChanges *connect.Client[workspacev1.ListCompatibilityChangesRequest, workspacev1.ListCompatibilityChangesResponse]
+	createEmbedToken         *connect.Client[workspacev1.CreateEmbedTokenRequest, workspacev1.CreateEmbedTokenResponse]
+	listEmbedTokens          *connect.Client[workspacev1.ListEmbedTokensRequest, workspacev1.ListEmbedTokensResponse]
+	revokeEmbedToken         *connect.Client[workspacev1.RevokeEmbedTokenRequest, workspacev1.RevokeEmbedTokenResponse]
 }
 
 // ListProjects calls toshi.workspace.v1.ProjectService.ListProjects.
@@ -530,6 +585,16 @@ func (c *projectServiceClient) UpdateEnvironment(ctx context.Context, req *conne
 	return c.updateEnvironment.CallUnary(ctx, req)
 }
 
+// RaiseCompatibilityDate calls toshi.workspace.v1.ProjectService.RaiseCompatibilityDate.
+func (c *projectServiceClient) RaiseCompatibilityDate(ctx context.Context, req *connect.Request[workspacev1.RaiseCompatibilityDateRequest]) (*connect.Response[workspacev1.RaiseCompatibilityDateResponse], error) {
+	return c.raiseCompatibilityDate.CallUnary(ctx, req)
+}
+
+// ListCompatibilityChanges calls toshi.workspace.v1.ProjectService.ListCompatibilityChanges.
+func (c *projectServiceClient) ListCompatibilityChanges(ctx context.Context, req *connect.Request[workspacev1.ListCompatibilityChangesRequest]) (*connect.Response[workspacev1.ListCompatibilityChangesResponse], error) {
+	return c.listCompatibilityChanges.CallUnary(ctx, req)
+}
+
 // CreateEmbedToken calls toshi.workspace.v1.ProjectService.CreateEmbedToken.
 func (c *projectServiceClient) CreateEmbedToken(ctx context.Context, req *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error) {
 	return c.createEmbedToken.CallUnary(ctx, req)
@@ -577,15 +642,18 @@ type ProjectServiceHandler interface {
 	// recording_defaults.sandbox_recording_policy,
 	// recording_defaults.job_recording_policy, recording_defaults.human_spans,
 	// recording_defaults.recording_segment_minutes and
-	// recording_defaults.recording_max_mib; and volume_rules, the project's
+	// recording_defaults.recording_max_mib; volume_rules, the project's
 	// volume rules, replaced whole by the value the call carries, an empty
-	// one clearing them. An unset update_mask names the fields
-	// project carries. An empty one, an unset one with no admission, no
-	// recording_defaults and no volume_rules, "*" and a path of another field
-	// are INVALID_ARGUMENT. The secret is sealed under the workspace's data
-	// key and never returned; a deployment with no keyring refuses it with
-	// FAILED_PRECONDITION. A token limited to environments is
-	// PERMISSION_DENIED.
+	// one clearing them; and compatibility_flags, the project's compatibility
+	// flags, replaced whole by the value the call carries, an empty one
+	// clearing them, each flag checked against the dated changes Toshi lists
+	// and an unknown one INVALID_ARGUMENT. An unset update_mask names the
+	// fields project carries. An empty one, an unset one with no admission,
+	// no recording_defaults, no volume_rules and no compatibility_flags, "*"
+	// and a path of another field are INVALID_ARGUMENT. The secret is sealed
+	// under the workspace's data key and never returned; a deployment with no
+	// keyring refuses it with FAILED_PRECONDITION. A token limited to
+	// environments is PERMISSION_DENIED.
 	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
 	// ClaimRepository puts a repository in a project: it claims a repository
 	// no project claims, or moves the claim from another project. A CI job
@@ -697,14 +765,46 @@ type ProjectServiceHandler interface {
 	// project's volumes its services and sandboxes may attach, as
 	// SetEnvironmentVolumes does, and model_credential_defaults replaces the
 	// environment's default model credentials, which also needs
-	// model_credentials.write. Each is checked as that call checks it,
-	// and all are written together or not at all. An omitted mask means
+	// model_credentials.write, and compatibility_date sets the environment's
+	// override of the project's date, an empty one clearing it. Each is
+	// checked as that call checks it, and the other overrides are written
+	// together or not at all. An omitted mask means
 	// the fields the request sets; clearing the override or the list needs
 	// its path in the mask. "*" and a path of any other field are
 	// INVALID_ARGUMENT. A project or environment the workspace does not have
 	// is NOT_FOUND. A token limited to an environment updates only that
 	// environment.
 	UpdateEnvironment(context.Context, *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error)
+	// RaiseCompatibilityDate moves a project's compatibility date, or one
+	// environment's override of it, to date, a YYYY-MM-DD date. With
+	// environment empty it raises the project's date; with it set it raises
+	// that environment's override. The date must be one Toshi serves: older
+	// than the oldest is FAILED_PRECONDITION with an ErrorInfo, reason
+	// COMPATIBILITY_DATE_TOO_OLD, and newer than the newest is
+	// FAILED_PRECONDITION with reason COMPATIBILITY_DATE_TOO_NEW; each names
+	// the date, the oldest and the newest in its metadata. A date that is not
+	// YYYY-MM-DD is INVALID_ARGUMENT. A member raises the date and never
+	// lowers it: a date earlier than the one the project or environment runs
+	// under is FAILED_PRECONDITION with reason COMPATIBILITY_DATE_LOWER and
+	// the same metadata plus the current date. The operator's call, made
+	// under the operator grant, may lower, never below the oldest date Toshi
+	// serves. Raising to the date already stored succeeds with changed false,
+	// writes nothing and records no event. The answer's changes are the dated
+	// changes the raise took, as ListCompatibilityChanges lists them.
+	//
+	// A project or environment the workspace does not have is NOT_FOUND. A
+	// token limited to an environment raises only that environment and is
+	// PERMISSION_DENIED for the project or another environment.
+	RaiseCompatibilityDate(context.Context, *connect.Request[workspacev1.RaiseCompatibilityDateRequest]) (*connect.Response[workspacev1.RaiseCompatibilityDateResponse], error)
+	// ListCompatibilityChanges returns the dated changes between the date a
+	// project, or one environment of it, runs under and to_date: the changes
+	// it has not taken yet, each with its date, its flag and a summary. With
+	// to_date empty it lists them up to the newest date Toshi serves, and a
+	// to_date Toshi does not serve is refused as RaiseCompatibilityDate
+	// refuses a date. An environment's flags are the project's; its date is
+	// its own override when it has one, else the project's. A project or
+	// environment the workspace does not have is NOT_FOUND.
+	ListCompatibilityChanges(context.Context, *connect.Request[workspacev1.ListCompatibilityChangesRequest]) (*connect.Response[workspacev1.ListCompatibilityChangesResponse], error)
 	// CreateEmbedToken mints an embed token for a project: a credential for
 	// a web page on one of the token's origins, which spends it once to
 	// fetch one of the project's ready recordings. It expires in minutes. A
@@ -837,6 +937,18 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("UpdateEnvironment")),
 		connect.WithHandlerOptions(opts...),
 	)
+	projectServiceRaiseCompatibilityDateHandler := connect.NewUnaryHandler(
+		ProjectServiceRaiseCompatibilityDateProcedure,
+		svc.RaiseCompatibilityDate,
+		connect.WithSchema(projectServiceMethods.ByName("RaiseCompatibilityDate")),
+		connect.WithHandlerOptions(opts...),
+	)
+	projectServiceListCompatibilityChangesHandler := connect.NewUnaryHandler(
+		ProjectServiceListCompatibilityChangesProcedure,
+		svc.ListCompatibilityChanges,
+		connect.WithSchema(projectServiceMethods.ByName("ListCompatibilityChanges")),
+		connect.WithHandlerOptions(opts...),
+	)
 	projectServiceCreateEmbedTokenHandler := connect.NewUnaryHandler(
 		ProjectServiceCreateEmbedTokenProcedure,
 		svc.CreateEmbedToken,
@@ -893,6 +1005,10 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 			projectServiceSetEnvironmentVolumesHandler.ServeHTTP(w, r)
 		case ProjectServiceUpdateEnvironmentProcedure:
 			projectServiceUpdateEnvironmentHandler.ServeHTTP(w, r)
+		case ProjectServiceRaiseCompatibilityDateProcedure:
+			projectServiceRaiseCompatibilityDateHandler.ServeHTTP(w, r)
+		case ProjectServiceListCompatibilityChangesProcedure:
+			projectServiceListCompatibilityChangesHandler.ServeHTTP(w, r)
 		case ProjectServiceCreateEmbedTokenProcedure:
 			projectServiceCreateEmbedTokenHandler.ServeHTTP(w, r)
 		case ProjectServiceListEmbedTokensProcedure:
@@ -978,6 +1094,14 @@ func (UnimplementedProjectServiceHandler) SetEnvironmentVolumes(context.Context,
 
 func (UnimplementedProjectServiceHandler) UpdateEnvironment(context.Context, *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.UpdateEnvironment is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) RaiseCompatibilityDate(context.Context, *connect.Request[workspacev1.RaiseCompatibilityDateRequest]) (*connect.Response[workspacev1.RaiseCompatibilityDateResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.RaiseCompatibilityDate is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) ListCompatibilityChanges(context.Context, *connect.Request[workspacev1.ListCompatibilityChangesRequest]) (*connect.Response[workspacev1.ListCompatibilityChangesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.ListCompatibilityChanges is not implemented"))
 }
 
 func (UnimplementedProjectServiceHandler) CreateEmbedToken(context.Context, *connect.Request[workspacev1.CreateEmbedTokenRequest]) (*connect.Response[workspacev1.CreateEmbedTokenResponse], error) {

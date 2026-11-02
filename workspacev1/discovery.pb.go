@@ -940,9 +940,15 @@ type APIVersions struct {
 	// toshi-api module the SDKs are built from.
 	Api string `protobuf:"bytes,1,opt,name=api,proto3" json:"api,omitempty"`
 	// control_plane is the control plane's release, as GetVersion returns it.
-	ControlPlane  string `protobuf:"bytes,2,opt,name=control_plane,json=controlPlane,proto3" json:"control_plane,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ControlPlane string `protobuf:"bytes,2,opt,name=control_plane,json=controlPlane,proto3" json:"control_plane,omitempty"`
+	// newest_compatibility_date is the newest compatibility date Toshi
+	// serves, a YYYY-MM-DD date, as compat's range gives it.
+	NewestCompatibilityDate string `protobuf:"bytes,3,opt,name=newest_compatibility_date,json=newestCompatibilityDate,proto3" json:"newest_compatibility_date,omitempty"`
+	// oldest_compatibility_date is the oldest compatibility date Toshi
+	// serves, a YYYY-MM-DD date.
+	OldestCompatibilityDate string `protobuf:"bytes,4,opt,name=oldest_compatibility_date,json=oldestCompatibilityDate,proto3" json:"oldest_compatibility_date,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *APIVersions) Reset() {
@@ -985,6 +991,20 @@ func (x *APIVersions) GetApi() string {
 func (x *APIVersions) GetControlPlane() string {
 	if x != nil {
 		return x.ControlPlane
+	}
+	return ""
+}
+
+func (x *APIVersions) GetNewestCompatibilityDate() string {
+	if x != nil {
+		return x.NewestCompatibilityDate
+	}
+	return ""
+}
+
+func (x *APIVersions) GetOldestCompatibilityDate() string {
+	if x != nil {
+		return x.OldestCompatibilityDate
 	}
 	return ""
 }
@@ -1041,10 +1061,12 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"\x05value\"2\n" +
 	"\fFeatureRange\x12\x10\n" +
 	"\x03min\x18\x01 \x01(\x03R\x03min\x12\x10\n" +
-	"\x03max\x18\x02 \x01(\x03R\x03max\"D\n" +
+	"\x03max\x18\x02 \x01(\x03R\x03max\"\xbc\x01\n" +
 	"\vAPIVersions\x12\x10\n" +
 	"\x03api\x18\x01 \x01(\tR\x03api\x12#\n" +
-	"\rcontrol_plane\x18\x02 \x01(\tR\fcontrolPlane*\x9e\x01\n" +
+	"\rcontrol_plane\x18\x02 \x01(\tR\fcontrolPlane\x12:\n" +
+	"\x19newest_compatibility_date\x18\x03 \x01(\tR\x17newestCompatibilityDate\x12:\n" +
+	"\x19oldest_compatibility_date\x18\x04 \x01(\tR\x17oldestCompatibilityDate*\x9e\x01\n" +
 	"\fProductState\x12\x1d\n" +
 	"\x19PRODUCT_STATE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15PRODUCT_STATE_ENABLED\x10\x01\x12\x1d\n" +
