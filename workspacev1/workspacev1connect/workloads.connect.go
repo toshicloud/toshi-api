@@ -353,13 +353,16 @@ type WorkloadServiceClient interface {
 	// and the event log keeps its events.
 	DeleteSandbox(context.Context, *connect.Request[workspacev1.DeleteSandboxRequest]) (*connect.Response[workspacev1.DeleteSandboxResponse], error)
 	// StopSandbox ends its run and every execution in it and moves it to
-	// CREATED, keeping its VM. Stopping a stopped sandbox returns it as it is.
-	// A sandbox without keep_vm, or one that has ended, fails with
+	// CREATED with stopped_at. Its state volume is saved and its VM ends,
+	// unless the sandbox has keep_vm: then its host keeps the VM. Stopping a
+	// stopped sandbox returns it as it is. One that has ended fails with
 	// FAILED_PRECONDITION. DeleteSandbox ends a sandbox.
 	StopSandbox(context.Context, *connect.Request[workspacev1.StopSandboxRequest]) (*connect.Response[workspacev1.StopSandboxResponse], error)
-	// StartSandbox queues a run on its kept VM. Starting a queued or running
-	// sandbox returns it as it is. A sandbox without keep_vm, or one that has
-	// ended, fails with FAILED_PRECONDITION.
+	// StartSandbox queues a new run of a stopped sandbox: a new VM booted from
+	// its image with its state volume, or its kept VM when it has keep_vm.
+	// Starting a queued or running sandbox returns it as it is. One that has
+	// ended fails with FAILED_PRECONDITION, as does a start whose state volume
+	// or image is gone or out of reach, with the reason in its ErrorInfo.
 	StartSandbox(context.Context, *connect.Request[workspacev1.StartSandboxRequest]) (*connect.Response[workspacev1.StartSandboxResponse], error)
 	// WaitSandbox blocks until the sandbox is in one of the states asked for
 	// or the bound passes, as WaitJob does for a job.
@@ -1681,13 +1684,16 @@ type WorkloadServiceHandler interface {
 	// and the event log keeps its events.
 	DeleteSandbox(context.Context, *connect.Request[workspacev1.DeleteSandboxRequest]) (*connect.Response[workspacev1.DeleteSandboxResponse], error)
 	// StopSandbox ends its run and every execution in it and moves it to
-	// CREATED, keeping its VM. Stopping a stopped sandbox returns it as it is.
-	// A sandbox without keep_vm, or one that has ended, fails with
+	// CREATED with stopped_at. Its state volume is saved and its VM ends,
+	// unless the sandbox has keep_vm: then its host keeps the VM. Stopping a
+	// stopped sandbox returns it as it is. One that has ended fails with
 	// FAILED_PRECONDITION. DeleteSandbox ends a sandbox.
 	StopSandbox(context.Context, *connect.Request[workspacev1.StopSandboxRequest]) (*connect.Response[workspacev1.StopSandboxResponse], error)
-	// StartSandbox queues a run on its kept VM. Starting a queued or running
-	// sandbox returns it as it is. A sandbox without keep_vm, or one that has
-	// ended, fails with FAILED_PRECONDITION.
+	// StartSandbox queues a new run of a stopped sandbox: a new VM booted from
+	// its image with its state volume, or its kept VM when it has keep_vm.
+	// Starting a queued or running sandbox returns it as it is. One that has
+	// ended fails with FAILED_PRECONDITION, as does a start whose state volume
+	// or image is gone or out of reach, with the reason in its ErrorInfo.
 	StartSandbox(context.Context, *connect.Request[workspacev1.StartSandboxRequest]) (*connect.Response[workspacev1.StartSandboxResponse], error)
 	// WaitSandbox blocks until the sandbox is in one of the states asked for
 	// or the bound passes, as WaitJob does for a job.

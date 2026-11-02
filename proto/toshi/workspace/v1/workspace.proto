@@ -260,7 +260,7 @@ message SandboxStatus {
   // The exit code of its spec's process, set with end_reason EXITED: 0 is
   // success, any other code a failure, and -1 a process a signal ended.
   optional int32 exit_code = 12;
-  // Set while a sandbox with keep_vm is stopped in CREATED; unset otherwise.
+  // Set while a sandbox is stopped in CREATED; unset otherwise.
   google.protobuf.Timestamp stopped_at = 13;
   // The cause of a policy stop; unspecified for another stop.
   StopCause stop_cause = 14;
@@ -280,7 +280,7 @@ message SandboxStatus {
 // state: one deleted while queued ends without running.
 enum SandboxState {
   SANDBOX_STATE_UNSPECIFIED = 0;
-  // Recorded, not yet waiting for capacity, or stopped with keep_vm.
+  // Recorded, not yet waiting for capacity, or stopped (stopped_at is set).
   SANDBOX_STATE_CREATED = 1;
   // Waiting for capacity.
   SANDBOX_STATE_QUEUED = 2;

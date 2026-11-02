@@ -355,7 +355,7 @@ type SandboxState int32
 
 const (
 	SandboxState_SANDBOX_STATE_UNSPECIFIED SandboxState = 0
-	// Recorded, not yet waiting for capacity, or stopped with keep_vm.
+	// Recorded, not yet waiting for capacity, or stopped (stopped_at is set).
 	SandboxState_SANDBOX_STATE_CREATED SandboxState = 1
 	// Waiting for capacity.
 	SandboxState_SANDBOX_STATE_QUEUED SandboxState = 2
@@ -2105,7 +2105,7 @@ type SandboxStatus struct {
 	// The exit code of its spec's process, set with end_reason EXITED: 0 is
 	// success, any other code a failure, and -1 a process a signal ended.
 	ExitCode *int32 `protobuf:"varint,12,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`
-	// Set while a sandbox with keep_vm is stopped in CREATED; unset otherwise.
+	// Set while a sandbox is stopped in CREATED; unset otherwise.
 	StoppedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=stopped_at,json=stoppedAt,proto3" json:"stopped_at,omitempty"`
 	// The cause of a policy stop; unspecified for another stop.
 	StopCause StopCause `protobuf:"varint,14,opt,name=stop_cause,json=stopCause,proto3,enum=toshi.workspace.v1.StopCause" json:"stop_cause,omitempty"`

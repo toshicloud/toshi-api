@@ -904,7 +904,7 @@ export type SandboxStatus = Message<"toshi.workspace.v1.SandboxStatus"> & {
   exitCode?: number | undefined;
 
   /**
-   * Set while a sandbox with keep_vm is stopped in CREATED; unset otherwise.
+   * Set while a sandbox is stopped in CREATED; unset otherwise.
    *
    * @generated from field: google.protobuf.Timestamp stopped_at = 13;
    */
@@ -1032,7 +1032,7 @@ export type SandboxStatusJson = {
   exitCode?: number;
 
   /**
-   * Set while a sandbox with keep_vm is stopped in CREATED; unset otherwise.
+   * Set while a sandbox is stopped in CREATED; unset otherwise.
    *
    * @generated from field: google.protobuf.Timestamp stopped_at = 13;
    */
@@ -12738,7 +12738,7 @@ export enum SandboxState {
   UNSPECIFIED = 0,
 
   /**
-   * Recorded, not yet waiting for capacity, or stopped with keep_vm.
+   * Recorded, not yet waiting for capacity, or stopped (stopped_at is set).
    *
    * @generated from enum value: SANDBOX_STATE_CREATED = 1;
    */
