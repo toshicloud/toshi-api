@@ -436,6 +436,7 @@ export const auditActions = {
   artifactPrefixDeleted: "artifact.prefix_deleted",
   auditEventsExported: "audit_events.exported",
   retentionSwept: "retention.swept",
+  retentionFinished: "retention.finished",
 } as const;
 
 export type AuditAction = (typeof auditActions)[keyof typeof auditActions];

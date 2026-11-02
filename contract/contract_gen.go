@@ -859,6 +859,8 @@ const (
 	AuditActionAuditEventsExported = "audit_events.exported"
 	// AuditActionRetentionSwept is the "retention.swept" audit action.
 	AuditActionRetentionSwept = "retention.swept"
+	// AuditActionRetentionFinished is the "retention.finished" audit action.
+	AuditActionRetentionFinished = "retention.finished"
 )
 
 // EventName is one event name Toshi writes.
