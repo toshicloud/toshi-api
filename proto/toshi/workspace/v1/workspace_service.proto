@@ -799,6 +799,17 @@ message WorkspaceSettings {
   // below what its volumes use now. It applies to new volumes and to a raise
   // of a volume's cap only.
   int64 volume_size_cap_total_gb = 15 [(toshi.field_permission) = "billing.write"];
+
+  // What to do when inbound mail reaches the plan's daily cap. Unspecified
+  // accepts mail; a plan can refuse overage regardless of this setting.
+  InboundMailPastCap inbound_mail_past_cap = 16;
+}
+
+// InboundMailPastCap chooses whether to accept mail beyond the daily cap.
+enum InboundMailPastCap {
+  INBOUND_MAIL_PAST_CAP_UNSPECIFIED = 0;
+  INBOUND_MAIL_PAST_CAP_ACCEPT_AND_CHARGE = 1;
+  INBOUND_MAIL_PAST_CAP_REFUSE = 2;
 }
 
 // WorkspaceSettingChange is who last changed one of a workspace's settings,
