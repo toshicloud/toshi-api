@@ -1001,8 +1001,13 @@ export const TokenService: GenService<{
    * CreateWorkspaceToken makes an API token for the workspace and returns
    * it with its value. Only a signed-in session may call it: a token never
    * makes another token, and the call is refused for one with
-   * PERMISSION_DENIED. An unknown project or environment fails with
-   * NOT_FOUND; a closed workspace fails with FAILED_PRECONDITION.
+   * PERMISSION_DENIED. The person's newest sign-in must be at most 2 hours
+   * old and, for an access token, must have granted the tokens:write scope;
+   * otherwise the call fails with PERMISSION_DENIED and the reason
+   * RECENT_SIGNIN_REQUIRED, whose sign_in_url names the sign-in to repeat.
+   * The operator, under the operator grant, needs neither. An unknown
+   * project or environment fails with NOT_FOUND; a closed workspace fails
+   * with FAILED_PRECONDITION.
    *
    * @generated from rpc toshi.workspace.v1.TokenService.CreateWorkspaceToken
    */
@@ -1031,7 +1036,8 @@ export const TokenService: GenService<{
    * creator, so what was granted to it stays granted. An API or enrollment
    * token rolls.
    *
-   * Only a signed-in session may call it, as for CreateWorkspaceToken. A
+   * Only a signed-in session may call it, with the same recent sign-in, as
+   * for CreateWorkspaceToken. A
    * token someone else made needs members.write as well, and is refused
    * without it with PERMISSION_DENIED. A token of another workspace, and an
    * unknown ID, fail with NOT_FOUND; a revoked or expired token with
