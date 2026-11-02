@@ -49,6 +49,8 @@ enum StopReason {
   STOP_REASON_OPERATOR = 6;
   // Toshi stopped it for a policy; stop_cause says which.
   STOP_REASON_POLICY = 7;
+  // A stopped sandbox ended after its plan's keep.
+  STOP_REASON_KEEP_EXPIRED = 8;
 }
 
 // StopCause identifies the policy behind a stop.
