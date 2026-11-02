@@ -3162,9 +3162,16 @@ type WorkspaceSettings struct {
 	// CreateSandbox is refused with RESOURCE_EXHAUSTED, so no paid start is
 	// made and GetStartWindows reports each ceiling as its included starts.
 	// Setting it needs the permission that sets the spending cap.
-	PaidStarts    *bool `protobuf:"varint,14,opt,name=paid_starts,json=paidStarts,proto3,oneof" json:"paid_starts,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	PaidStarts *bool `protobuf:"varint,14,opt,name=paid_starts,json=paidStarts,proto3,oneof" json:"paid_starts,omitempty"`
+	// The ceiling on the sum of the size caps of the workspace's volumes that
+	// are not deleted, in decimal GB; 0 means the plan's default. It may be at
+	// most the plan's maximum, and a higher one fails with INVALID_ARGUMENT,
+	// as does a negative one. Lowering it, and 0, is always allowed, even
+	// below what its volumes use now. It applies to new volumes and to a raise
+	// of a volume's cap only.
+	VolumeSizeCapTotalGb int64 `protobuf:"varint,15,opt,name=volume_size_cap_total_gb,json=volumeSizeCapTotalGb,proto3" json:"volume_size_cap_total_gb,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *WorkspaceSettings) Reset() {
@@ -3293,6 +3300,13 @@ func (x *WorkspaceSettings) GetPaidStarts() bool {
 		return *x.PaidStarts
 	}
 	return false
+}
+
+func (x *WorkspaceSettings) GetVolumeSizeCapTotalGb() int64 {
+	if x != nil {
+		return x.VolumeSizeCapTotalGb
+	}
+	return 0
 }
 
 // WorkspaceSettingChange is who last changed one of a workspace's settings,
@@ -6141,7 +6155,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\tnot_after\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bnotAfter\x125\n" +
 	"\brenew_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\arenewAt\x125\n" +
 	"\bretry_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aretryAt\x12\x14\n" +
-	"\x05error\x18\x06 \x01(\tR\x05error\"\xd1\x06\n" +
+	"\x05error\x18\x06 \x01(\tR\x05error\"\x9c\a\n" +
 	"\x11WorkspaceSettings\x12\x1f\n" +
 	"\vmember_join\x18\x01 \x01(\tR\n" +
 	"memberJoin\x12R\n" +
@@ -6159,7 +6173,8 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x15recording_human_spans\x18\f \x01(\bH\x02R\x13recordingHumanSpans\x88\x01\x01\x12\x83\x01\n" +
 	"\x19model_credential_defaults\x18\r \x03(\v2*.toshi.workspace.v1.ModelCredentialDefaultB\x1b\xda\xf3\x18\x17model_credentials.writeR\x17modelCredentialDefaults\x127\n" +
 	"\vpaid_starts\x18\x0e \x01(\bB\x11\xda\xf3\x18\rbilling.writeH\x03R\n" +
-	"paidStarts\x88\x01\x01B\x0f\n" +
+	"paidStarts\x88\x01\x01\x12I\n" +
+	"\x18volume_size_cap_total_gb\x18\x0f \x01(\x03B\x11\xda\xf3\x18\rbilling.writeR\x14volumeSizeCapTotalGbB\x0f\n" +
 	"\r_history_daysB\f\n" +
 	"\n" +
 	"_recordingB\x18\n" +
