@@ -6,6 +6,7 @@ import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 import "toshi/workspace/v1/discovery.proto";
+import "toshi/workspace/v1/endpoints.proto";
 import "toshi/workspace/v1/hosts.proto";
 import "toshi/workspace/v1/model_credentials.proto";
 import "toshi/workspace/v1/roles.proto";
@@ -35,8 +36,9 @@ service WorkspaceService {
   // path fails with INVALID_ARGUMENT. The call needs no permission of its
   // own: each path needs its field group's, workspace.signin for
   // settings.sign_in, billing.write for the spending limits,
-  // model_credentials.write for settings.model_credential_defaults and
-  // workspace.write for the others, and a mask that names nothing needs any
+  // model_credentials.write for settings.model_credential_defaults,
+  // endpoints.write for settings.endpoint_defaults and workspace.write for
+  // the others, and a mask that names nothing needs any
   // one of them. A caller that lacks one is refused with PERMISSION_DENIED
   // naming it, and nothing is written.
   //
@@ -803,6 +805,13 @@ message WorkspaceSettings {
   // What to do when inbound mail reaches the plan's daily cap. Unspecified
   // accepts mail; a plan can refuse overage regardless of this setting.
   InboundMailPastCap inbound_mail_past_cap = 16;
+  // At most one default per workload kind and endpoint shape; an event
+  // default is for a service only. The settings.endpoint_defaults mask path
+  // replaces the whole list, clearing a pair left out. When a new endpoint
+  // is made, each policy field left unset by its call or recipe takes this
+  // default's value, then Toshi's built defaults. Changing a default changes
+  // no existing endpoint. Setting it needs endpoints.write.
+  repeated EndpointDefault endpoint_defaults = 17 [(toshi.field_permission) = "endpoints.write"];
 }
 
 // InboundMailPastCap chooses whether to accept mail beyond the daily cap.

@@ -1167,6 +1167,71 @@ func (x *EndpointClient) GetAttached() bool {
 	return false
 }
 
+// EndpointDefault is the policy a workspace chooses for one workload kind
+// and endpoint shape. Its policy may leave fields unset.
+type EndpointDefault struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workload whose endpoints take this default.
+	WorkloadKind HostJobKind `protobuf:"varint,1,opt,name=workload_kind,json=workloadKind,proto3,enum=toshi.workspace.v1.HostJobKind" json:"workload_kind,omitempty"`
+	// The shape of the endpoint.
+	Shape EndpointShape `protobuf:"varint,2,opt,name=shape,proto3,enum=toshi.workspace.v1.EndpointShape" json:"shape,omitempty"`
+	// The fields to fill when an endpoint is made; it takes no version or tools.
+	Policy        *EndpointPolicy `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EndpointDefault) Reset() {
+	*x = EndpointDefault{}
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EndpointDefault) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EndpointDefault) ProtoMessage() {}
+
+func (x *EndpointDefault) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EndpointDefault.ProtoReflect.Descriptor instead.
+func (*EndpointDefault) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *EndpointDefault) GetWorkloadKind() HostJobKind {
+	if x != nil {
+		return x.WorkloadKind
+	}
+	return HostJobKind_HOST_JOB_KIND_UNSPECIFIED
+}
+
+func (x *EndpointDefault) GetShape() EndpointShape {
+	if x != nil {
+		return x.Shape
+	}
+	return EndpointShape_ENDPOINT_SHAPE_UNSPECIFIED
+}
+
+func (x *EndpointDefault) GetPolicy() *EndpointPolicy {
+	if x != nil {
+		return x.Policy
+	}
+	return nil
+}
+
 // EndpointPolicy is an endpoint's policy document, with the words a recipe's
 // endpoint policy uses.
 type EndpointPolicy struct {
@@ -1211,7 +1276,7 @@ type EndpointPolicy struct {
 
 func (x *EndpointPolicy) Reset() {
 	*x = EndpointPolicy{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1223,7 +1288,7 @@ func (x *EndpointPolicy) String() string {
 func (*EndpointPolicy) ProtoMessage() {}
 
 func (x *EndpointPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1236,7 +1301,7 @@ func (x *EndpointPolicy) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EndpointPolicy.ProtoReflect.Descriptor instead.
 func (*EndpointPolicy) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *EndpointPolicy) GetVersion() int64 {
@@ -1311,7 +1376,7 @@ type EndpointModuleList struct {
 
 func (x *EndpointModuleList) Reset() {
 	*x = EndpointModuleList{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1323,7 +1388,7 @@ func (x *EndpointModuleList) String() string {
 func (*EndpointModuleList) ProtoMessage() {}
 
 func (x *EndpointModuleList) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1336,7 +1401,7 @@ func (x *EndpointModuleList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EndpointModuleList.ProtoReflect.Descriptor instead.
 func (*EndpointModuleList) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *EndpointModuleList) GetModules() []*EndpointModule {
@@ -1399,7 +1464,7 @@ type EndpointModule struct {
 
 func (x *EndpointModule) Reset() {
 	*x = EndpointModule{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1411,7 +1476,7 @@ func (x *EndpointModule) String() string {
 func (*EndpointModule) ProtoMessage() {}
 
 func (x *EndpointModule) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1424,7 +1489,7 @@ func (x *EndpointModule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EndpointModule.ProtoReflect.Descriptor instead.
 func (*EndpointModule) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *EndpointModule) GetKind() string {
@@ -1550,7 +1615,7 @@ type EndpointMatch struct {
 
 func (x *EndpointMatch) Reset() {
 	*x = EndpointMatch{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1562,7 +1627,7 @@ func (x *EndpointMatch) String() string {
 func (*EndpointMatch) ProtoMessage() {}
 
 func (x *EndpointMatch) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1575,7 +1640,7 @@ func (x *EndpointMatch) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EndpointMatch.ProtoReflect.Descriptor instead.
 func (*EndpointMatch) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *EndpointMatch) GetHosts() []string {
@@ -1642,7 +1707,7 @@ type EndpointRequest struct {
 
 func (x *EndpointRequest) Reset() {
 	*x = EndpointRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1654,7 +1719,7 @@ func (x *EndpointRequest) String() string {
 func (*EndpointRequest) ProtoMessage() {}
 
 func (x *EndpointRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1667,7 +1732,7 @@ func (x *EndpointRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EndpointRequest.ProtoReflect.Descriptor instead.
 func (*EndpointRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *EndpointRequest) GetSeq() int64 {
@@ -1823,7 +1888,7 @@ type EndpointRequestCaller struct {
 
 func (x *EndpointRequestCaller) Reset() {
 	*x = EndpointRequestCaller{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1835,7 +1900,7 @@ func (x *EndpointRequestCaller) String() string {
 func (*EndpointRequestCaller) ProtoMessage() {}
 
 func (x *EndpointRequestCaller) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1848,7 +1913,7 @@ func (x *EndpointRequestCaller) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EndpointRequestCaller.ProtoReflect.Descriptor instead.
 func (*EndpointRequestCaller) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *EndpointRequestCaller) GetUser() string {
@@ -1885,7 +1950,7 @@ type EndpointHeader struct {
 
 func (x *EndpointHeader) Reset() {
 	*x = EndpointHeader{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1897,7 +1962,7 @@ func (x *EndpointHeader) String() string {
 func (*EndpointHeader) ProtoMessage() {}
 
 func (x *EndpointHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1910,7 +1975,7 @@ func (x *EndpointHeader) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EndpointHeader.ProtoReflect.Descriptor instead.
 func (*EndpointHeader) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *EndpointHeader) GetName() string {
@@ -1946,7 +2011,7 @@ type EndpointBody struct {
 
 func (x *EndpointBody) Reset() {
 	*x = EndpointBody{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1958,7 +2023,7 @@ func (x *EndpointBody) String() string {
 func (*EndpointBody) ProtoMessage() {}
 
 func (x *EndpointBody) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1971,7 +2036,7 @@ func (x *EndpointBody) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EndpointBody.ProtoReflect.Descriptor instead.
 func (*EndpointBody) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{13}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *EndpointBody) GetContentType() string {
@@ -2016,7 +2081,7 @@ type Forward struct {
 
 func (x *Forward) Reset() {
 	*x = Forward{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2028,7 +2093,7 @@ func (x *Forward) String() string {
 func (*Forward) ProtoMessage() {}
 
 func (x *Forward) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2041,7 +2106,7 @@ func (x *Forward) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Forward.ProtoReflect.Descriptor instead.
 func (*Forward) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{14}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *Forward) GetTarget() string {
@@ -2111,7 +2176,7 @@ type Tunnel struct {
 
 func (x *Tunnel) Reset() {
 	*x = Tunnel{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2123,7 +2188,7 @@ func (x *Tunnel) String() string {
 func (*Tunnel) ProtoMessage() {}
 
 func (x *Tunnel) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2136,7 +2201,7 @@ func (x *Tunnel) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Tunnel.ProtoReflect.Descriptor instead.
 func (*Tunnel) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{15}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *Tunnel) GetConnected() bool {
@@ -2221,7 +2286,7 @@ type CreateEndpointRequest struct {
 
 func (x *CreateEndpointRequest) Reset() {
 	*x = CreateEndpointRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2233,7 +2298,7 @@ func (x *CreateEndpointRequest) String() string {
 func (*CreateEndpointRequest) ProtoMessage() {}
 
 func (x *CreateEndpointRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2246,7 +2311,7 @@ func (x *CreateEndpointRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEndpointRequest.ProtoReflect.Descriptor instead.
 func (*CreateEndpointRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{16}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *CreateEndpointRequest) GetJobId() string {
@@ -2307,7 +2372,7 @@ type CreateEndpointResponse struct {
 
 func (x *CreateEndpointResponse) Reset() {
 	*x = CreateEndpointResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2319,7 +2384,7 @@ func (x *CreateEndpointResponse) String() string {
 func (*CreateEndpointResponse) ProtoMessage() {}
 
 func (x *CreateEndpointResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2332,7 +2397,7 @@ func (x *CreateEndpointResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEndpointResponse.ProtoReflect.Descriptor instead.
 func (*CreateEndpointResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CreateEndpointResponse) GetEndpoint() *Endpoint {
@@ -2362,7 +2427,7 @@ type ListEndpointsRequest struct {
 
 func (x *ListEndpointsRequest) Reset() {
 	*x = ListEndpointsRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2374,7 +2439,7 @@ func (x *ListEndpointsRequest) String() string {
 func (*ListEndpointsRequest) ProtoMessage() {}
 
 func (x *ListEndpointsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2387,7 +2452,7 @@ func (x *ListEndpointsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEndpointsRequest.ProtoReflect.Descriptor instead.
 func (*ListEndpointsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ListEndpointsRequest) GetJobId() string {
@@ -2436,7 +2501,7 @@ type ListEndpointsResponse struct {
 
 func (x *ListEndpointsResponse) Reset() {
 	*x = ListEndpointsResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2448,7 +2513,7 @@ func (x *ListEndpointsResponse) String() string {
 func (*ListEndpointsResponse) ProtoMessage() {}
 
 func (x *ListEndpointsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2461,7 +2526,7 @@ func (x *ListEndpointsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEndpointsResponse.ProtoReflect.Descriptor instead.
 func (*ListEndpointsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{19}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListEndpointsResponse) GetEndpoints() []*Endpoint {
@@ -2493,7 +2558,7 @@ type GetEndpointRequest struct {
 
 func (x *GetEndpointRequest) Reset() {
 	*x = GetEndpointRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2505,7 +2570,7 @@ func (x *GetEndpointRequest) String() string {
 func (*GetEndpointRequest) ProtoMessage() {}
 
 func (x *GetEndpointRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2518,7 +2583,7 @@ func (x *GetEndpointRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEndpointRequest.ProtoReflect.Descriptor instead.
 func (*GetEndpointRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{20}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetEndpointRequest) GetJobId() string {
@@ -2558,7 +2623,7 @@ type GetEndpointResponse struct {
 
 func (x *GetEndpointResponse) Reset() {
 	*x = GetEndpointResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2570,7 +2635,7 @@ func (x *GetEndpointResponse) String() string {
 func (*GetEndpointResponse) ProtoMessage() {}
 
 func (x *GetEndpointResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2583,7 +2648,7 @@ func (x *GetEndpointResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEndpointResponse.ProtoReflect.Descriptor instead.
 func (*GetEndpointResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{21}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetEndpointResponse) GetEndpoint() *Endpoint {
@@ -2605,7 +2670,7 @@ type GetEndpointPolicyRequest struct {
 
 func (x *GetEndpointPolicyRequest) Reset() {
 	*x = GetEndpointPolicyRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2617,7 +2682,7 @@ func (x *GetEndpointPolicyRequest) String() string {
 func (*GetEndpointPolicyRequest) ProtoMessage() {}
 
 func (x *GetEndpointPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2630,7 +2695,7 @@ func (x *GetEndpointPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEndpointPolicyRequest.ProtoReflect.Descriptor instead.
 func (*GetEndpointPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{22}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetEndpointPolicyRequest) GetJobId() string {
@@ -2663,7 +2728,7 @@ type GetEndpointPolicyResponse struct {
 
 func (x *GetEndpointPolicyResponse) Reset() {
 	*x = GetEndpointPolicyResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2675,7 +2740,7 @@ func (x *GetEndpointPolicyResponse) String() string {
 func (*GetEndpointPolicyResponse) ProtoMessage() {}
 
 func (x *GetEndpointPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2688,7 +2753,7 @@ func (x *GetEndpointPolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEndpointPolicyResponse.ProtoReflect.Descriptor instead.
 func (*GetEndpointPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{23}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetEndpointPolicyResponse) GetPolicy() *EndpointPolicy {
@@ -2716,7 +2781,7 @@ type SetEndpointPolicyRequest struct {
 
 func (x *SetEndpointPolicyRequest) Reset() {
 	*x = SetEndpointPolicyRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[24]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2728,7 +2793,7 @@ func (x *SetEndpointPolicyRequest) String() string {
 func (*SetEndpointPolicyRequest) ProtoMessage() {}
 
 func (x *SetEndpointPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[24]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2741,7 +2806,7 @@ func (x *SetEndpointPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetEndpointPolicyRequest.ProtoReflect.Descriptor instead.
 func (*SetEndpointPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{24}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *SetEndpointPolicyRequest) GetJobId() string {
@@ -2789,7 +2854,7 @@ type SetEndpointPolicyResponse struct {
 
 func (x *SetEndpointPolicyResponse) Reset() {
 	*x = SetEndpointPolicyResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[25]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2801,7 +2866,7 @@ func (x *SetEndpointPolicyResponse) String() string {
 func (*SetEndpointPolicyResponse) ProtoMessage() {}
 
 func (x *SetEndpointPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[25]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2814,7 +2879,7 @@ func (x *SetEndpointPolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetEndpointPolicyResponse.ProtoReflect.Descriptor instead.
 func (*SetEndpointPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{25}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *SetEndpointPolicyResponse) GetPolicy() *EndpointPolicy {
@@ -2853,7 +2918,7 @@ type ListEndpointRequestsRequest struct {
 
 func (x *ListEndpointRequestsRequest) Reset() {
 	*x = ListEndpointRequestsRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[26]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2865,7 +2930,7 @@ func (x *ListEndpointRequestsRequest) String() string {
 func (*ListEndpointRequestsRequest) ProtoMessage() {}
 
 func (x *ListEndpointRequestsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[26]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2878,7 +2943,7 @@ func (x *ListEndpointRequestsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEndpointRequestsRequest.ProtoReflect.Descriptor instead.
 func (*ListEndpointRequestsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{26}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListEndpointRequestsRequest) GetJobId() string {
@@ -2973,7 +3038,7 @@ type ListEndpointRequestsResponse struct {
 
 func (x *ListEndpointRequestsResponse) Reset() {
 	*x = ListEndpointRequestsResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[27]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2985,7 +3050,7 @@ func (x *ListEndpointRequestsResponse) String() string {
 func (*ListEndpointRequestsResponse) ProtoMessage() {}
 
 func (x *ListEndpointRequestsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[27]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2998,7 +3063,7 @@ func (x *ListEndpointRequestsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEndpointRequestsResponse.ProtoReflect.Descriptor instead.
 func (*ListEndpointRequestsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{27}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListEndpointRequestsResponse) GetRequests() []*EndpointRequest {
@@ -3040,7 +3105,7 @@ type GetEndpointRequestRequest struct {
 
 func (x *GetEndpointRequestRequest) Reset() {
 	*x = GetEndpointRequestRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[28]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3052,7 +3117,7 @@ func (x *GetEndpointRequestRequest) String() string {
 func (*GetEndpointRequestRequest) ProtoMessage() {}
 
 func (x *GetEndpointRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[28]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3065,7 +3130,7 @@ func (x *GetEndpointRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEndpointRequestRequest.ProtoReflect.Descriptor instead.
 func (*GetEndpointRequestRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{28}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *GetEndpointRequestRequest) GetJobId() string {
@@ -3098,7 +3163,7 @@ type GetEndpointRequestResponse struct {
 
 func (x *GetEndpointRequestResponse) Reset() {
 	*x = GetEndpointRequestResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[29]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3110,7 +3175,7 @@ func (x *GetEndpointRequestResponse) String() string {
 func (*GetEndpointRequestResponse) ProtoMessage() {}
 
 func (x *GetEndpointRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[29]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3123,7 +3188,7 @@ func (x *GetEndpointRequestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEndpointRequestResponse.ProtoReflect.Descriptor instead.
 func (*GetEndpointRequestResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{29}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetEndpointRequestResponse) GetRequest() *EndpointRequest {
@@ -3154,7 +3219,7 @@ type ExportEndpointLogRequest struct {
 
 func (x *ExportEndpointLogRequest) Reset() {
 	*x = ExportEndpointLogRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[30]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3166,7 +3231,7 @@ func (x *ExportEndpointLogRequest) String() string {
 func (*ExportEndpointLogRequest) ProtoMessage() {}
 
 func (x *ExportEndpointLogRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[30]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3179,7 +3244,7 @@ func (x *ExportEndpointLogRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportEndpointLogRequest.ProtoReflect.Descriptor instead.
 func (*ExportEndpointLogRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{30}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ExportEndpointLogRequest) GetJobId() string {
@@ -3252,7 +3317,7 @@ type ExportEndpointLogResponse struct {
 
 func (x *ExportEndpointLogResponse) Reset() {
 	*x = ExportEndpointLogResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[31]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3264,7 +3329,7 @@ func (x *ExportEndpointLogResponse) String() string {
 func (*ExportEndpointLogResponse) ProtoMessage() {}
 
 func (x *ExportEndpointLogResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[31]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3277,7 +3342,7 @@ func (x *ExportEndpointLogResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportEndpointLogResponse.ProtoReflect.Descriptor instead.
 func (*ExportEndpointLogResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{31}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ExportEndpointLogResponse) GetData() []byte {
@@ -3333,7 +3398,7 @@ type CreateEndpointConnectTokenRequest struct {
 
 func (x *CreateEndpointConnectTokenRequest) Reset() {
 	*x = CreateEndpointConnectTokenRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[32]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3345,7 +3410,7 @@ func (x *CreateEndpointConnectTokenRequest) String() string {
 func (*CreateEndpointConnectTokenRequest) ProtoMessage() {}
 
 func (x *CreateEndpointConnectTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[32]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3358,7 +3423,7 @@ func (x *CreateEndpointConnectTokenRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use CreateEndpointConnectTokenRequest.ProtoReflect.Descriptor instead.
 func (*CreateEndpointConnectTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{32}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *CreateEndpointConnectTokenRequest) GetJobId() string {
@@ -3414,7 +3479,7 @@ type CreateEndpointConnectTokenResponse struct {
 
 func (x *CreateEndpointConnectTokenResponse) Reset() {
 	*x = CreateEndpointConnectTokenResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[33]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3426,7 +3491,7 @@ func (x *CreateEndpointConnectTokenResponse) String() string {
 func (*CreateEndpointConnectTokenResponse) ProtoMessage() {}
 
 func (x *CreateEndpointConnectTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[33]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3439,7 +3504,7 @@ func (x *CreateEndpointConnectTokenResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use CreateEndpointConnectTokenResponse.ProtoReflect.Descriptor instead.
 func (*CreateEndpointConnectTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{33}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CreateEndpointConnectTokenResponse) GetId() string {
@@ -3496,7 +3561,7 @@ type RevokeEndpointConnectTokenRequest struct {
 
 func (x *RevokeEndpointConnectTokenRequest) Reset() {
 	*x = RevokeEndpointConnectTokenRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[34]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3508,7 +3573,7 @@ func (x *RevokeEndpointConnectTokenRequest) String() string {
 func (*RevokeEndpointConnectTokenRequest) ProtoMessage() {}
 
 func (x *RevokeEndpointConnectTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[34]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3521,7 +3586,7 @@ func (x *RevokeEndpointConnectTokenRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use RevokeEndpointConnectTokenRequest.ProtoReflect.Descriptor instead.
 func (*RevokeEndpointConnectTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{34}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *RevokeEndpointConnectTokenRequest) GetJobId() string {
@@ -3553,7 +3618,7 @@ type RevokeEndpointConnectTokenResponse struct {
 
 func (x *RevokeEndpointConnectTokenResponse) Reset() {
 	*x = RevokeEndpointConnectTokenResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[35]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3565,7 +3630,7 @@ func (x *RevokeEndpointConnectTokenResponse) String() string {
 func (*RevokeEndpointConnectTokenResponse) ProtoMessage() {}
 
 func (x *RevokeEndpointConnectTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[35]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3578,7 +3643,7 @@ func (x *RevokeEndpointConnectTokenResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use RevokeEndpointConnectTokenResponse.ProtoReflect.Descriptor instead.
 func (*RevokeEndpointConnectTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{35}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{36}
 }
 
 type DeleteEndpointRequest struct {
@@ -3594,7 +3659,7 @@ type DeleteEndpointRequest struct {
 
 func (x *DeleteEndpointRequest) Reset() {
 	*x = DeleteEndpointRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[36]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3606,7 +3671,7 @@ func (x *DeleteEndpointRequest) String() string {
 func (*DeleteEndpointRequest) ProtoMessage() {}
 
 func (x *DeleteEndpointRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[36]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3619,7 +3684,7 @@ func (x *DeleteEndpointRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteEndpointRequest.ProtoReflect.Descriptor instead.
 func (*DeleteEndpointRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{36}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *DeleteEndpointRequest) GetJobId() string {
@@ -3651,7 +3716,7 @@ type DeleteEndpointResponse struct {
 
 func (x *DeleteEndpointResponse) Reset() {
 	*x = DeleteEndpointResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[37]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3663,7 +3728,7 @@ func (x *DeleteEndpointResponse) String() string {
 func (*DeleteEndpointResponse) ProtoMessage() {}
 
 func (x *DeleteEndpointResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[37]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3676,7 +3741,7 @@ func (x *DeleteEndpointResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteEndpointResponse.ProtoReflect.Descriptor instead.
 func (*DeleteEndpointResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{37}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{38}
 }
 
 type ListForwardsRequest struct {
@@ -3692,7 +3757,7 @@ type ListForwardsRequest struct {
 
 func (x *ListForwardsRequest) Reset() {
 	*x = ListForwardsRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[38]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3704,7 +3769,7 @@ func (x *ListForwardsRequest) String() string {
 func (*ListForwardsRequest) ProtoMessage() {}
 
 func (x *ListForwardsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[38]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3717,7 +3782,7 @@ func (x *ListForwardsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListForwardsRequest.ProtoReflect.Descriptor instead.
 func (*ListForwardsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{38}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ListForwardsRequest) GetJobId() string {
@@ -3752,7 +3817,7 @@ type ListForwardsResponse struct {
 
 func (x *ListForwardsResponse) Reset() {
 	*x = ListForwardsResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[39]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3764,7 +3829,7 @@ func (x *ListForwardsResponse) String() string {
 func (*ListForwardsResponse) ProtoMessage() {}
 
 func (x *ListForwardsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[39]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3777,7 +3842,7 @@ func (x *ListForwardsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListForwardsResponse.ProtoReflect.Descriptor instead.
 func (*ListForwardsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{39}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListForwardsResponse) GetForwards() []*Forward {
@@ -3803,7 +3868,7 @@ type GetTunnelRequest struct {
 
 func (x *GetTunnelRequest) Reset() {
 	*x = GetTunnelRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[40]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3815,7 +3880,7 @@ func (x *GetTunnelRequest) String() string {
 func (*GetTunnelRequest) ProtoMessage() {}
 
 func (x *GetTunnelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[40]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3828,7 +3893,7 @@ func (x *GetTunnelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTunnelRequest.ProtoReflect.Descriptor instead.
 func (*GetTunnelRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{40}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetTunnelRequest) GetJobId() string {
@@ -3847,7 +3912,7 @@ type GetTunnelResponse struct {
 
 func (x *GetTunnelResponse) Reset() {
 	*x = GetTunnelResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[41]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3859,7 +3924,7 @@ func (x *GetTunnelResponse) String() string {
 func (*GetTunnelResponse) ProtoMessage() {}
 
 func (x *GetTunnelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[41]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3872,7 +3937,7 @@ func (x *GetTunnelResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTunnelResponse.ProtoReflect.Descriptor instead.
 func (*GetTunnelResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{41}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *GetTunnelResponse) GetTunnel() *Tunnel {
@@ -3901,7 +3966,7 @@ type SendEndpointMessageRequest struct {
 
 func (x *SendEndpointMessageRequest) Reset() {
 	*x = SendEndpointMessageRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[42]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3913,7 +3978,7 @@ func (x *SendEndpointMessageRequest) String() string {
 func (*SendEndpointMessageRequest) ProtoMessage() {}
 
 func (x *SendEndpointMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[42]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3926,7 +3991,7 @@ func (x *SendEndpointMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendEndpointMessageRequest.ProtoReflect.Descriptor instead.
 func (*SendEndpointMessageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{42}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *SendEndpointMessageRequest) GetService() string {
@@ -3975,7 +4040,7 @@ type SendEndpointMessageResponse struct {
 
 func (x *SendEndpointMessageResponse) Reset() {
 	*x = SendEndpointMessageResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[43]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3987,7 +4052,7 @@ func (x *SendEndpointMessageResponse) String() string {
 func (*SendEndpointMessageResponse) ProtoMessage() {}
 
 func (x *SendEndpointMessageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[43]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4000,7 +4065,7 @@ func (x *SendEndpointMessageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendEndpointMessageResponse.ProtoReflect.Descriptor instead.
 func (*SendEndpointMessageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{43}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *SendEndpointMessageResponse) GetMessageId() string {
@@ -4033,7 +4098,7 @@ type TailEndpointMessagesRequest struct {
 
 func (x *TailEndpointMessagesRequest) Reset() {
 	*x = TailEndpointMessagesRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[44]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4045,7 +4110,7 @@ func (x *TailEndpointMessagesRequest) String() string {
 func (*TailEndpointMessagesRequest) ProtoMessage() {}
 
 func (x *TailEndpointMessagesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[44]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4058,7 +4123,7 @@ func (x *TailEndpointMessagesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TailEndpointMessagesRequest.ProtoReflect.Descriptor instead.
 func (*TailEndpointMessagesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{44}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *TailEndpointMessagesRequest) GetService() string {
@@ -4100,7 +4165,7 @@ type TailEndpointMessagesResponse struct {
 
 func (x *TailEndpointMessagesResponse) Reset() {
 	*x = TailEndpointMessagesResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[45]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4112,7 +4177,7 @@ func (x *TailEndpointMessagesResponse) String() string {
 func (*TailEndpointMessagesResponse) ProtoMessage() {}
 
 func (x *TailEndpointMessagesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[45]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4125,7 +4190,7 @@ func (x *TailEndpointMessagesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TailEndpointMessagesResponse.ProtoReflect.Descriptor instead.
 func (*TailEndpointMessagesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{45}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *TailEndpointMessagesResponse) GetMessage() *EndpointMessage {
@@ -4154,7 +4219,7 @@ type ReplayEndpointMessageRequest struct {
 
 func (x *ReplayEndpointMessageRequest) Reset() {
 	*x = ReplayEndpointMessageRequest{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[46]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4166,7 +4231,7 @@ func (x *ReplayEndpointMessageRequest) String() string {
 func (*ReplayEndpointMessageRequest) ProtoMessage() {}
 
 func (x *ReplayEndpointMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[46]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4179,7 +4244,7 @@ func (x *ReplayEndpointMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReplayEndpointMessageRequest.ProtoReflect.Descriptor instead.
 func (*ReplayEndpointMessageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{46}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *ReplayEndpointMessageRequest) GetService() string {
@@ -4213,7 +4278,7 @@ type ReplayEndpointMessageResponse struct {
 
 func (x *ReplayEndpointMessageResponse) Reset() {
 	*x = ReplayEndpointMessageResponse{}
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[47]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4225,7 +4290,7 @@ func (x *ReplayEndpointMessageResponse) String() string {
 func (*ReplayEndpointMessageResponse) ProtoMessage() {}
 
 func (x *ReplayEndpointMessageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[47]
+	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4238,7 +4303,7 @@ func (x *ReplayEndpointMessageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReplayEndpointMessageResponse.ProtoReflect.Descriptor instead.
 func (*ReplayEndpointMessageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{47}
+	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ReplayEndpointMessageResponse) GetMessage() *EndpointMessage {
@@ -4252,7 +4317,7 @@ var File_toshi_workspace_v1_endpoints_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/endpoints.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xc9\b\n" +
+	"\"toshi/workspace/v1/endpoints.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a!toshi/workspace/v1/hostjobs.proto\"\xc9\b\n" +
 	"\bEndpoint\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06job_id\x18\x02 \x01(\tR\x05jobId\x12\x12\n" +
@@ -4342,7 +4407,11 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"detachedAt\x12!\n" +
 	"\foutput_acked\x18\t \x01(\x03R\voutputAcked\x12\x1a\n" +
 	"\battached\x18\n" +
-	" \x01(\bR\battached\"\xd4\x02\n" +
+	" \x01(\bR\battached\"\xcc\x01\n" +
+	"\x0fEndpointDefault\x12D\n" +
+	"\rworkload_kind\x18\x01 \x01(\x0e2\x1f.toshi.workspace.v1.HostJobKindR\fworkloadKind\x127\n" +
+	"\x05shape\x18\x02 \x01(\x0e2!.toshi.workspace.v1.EndpointShapeR\x05shape\x12:\n" +
+	"\x06policy\x18\x03 \x01(\v2\".toshi.workspace.v1.EndpointPolicyR\x06policy\"\xd4\x02\n" +
 	"\x0eEndpointPolicy\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\x03R\aversion\x12\x16\n" +
 	"\x06attach\x18\x02 \x01(\tR\x06attach\x12$\n" +
@@ -4656,7 +4725,7 @@ func file_toshi_workspace_v1_endpoints_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_endpoints_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_toshi_workspace_v1_endpoints_proto_msgTypes = make([]protoimpl.MessageInfo, 50)
+var file_toshi_workspace_v1_endpoints_proto_msgTypes = make([]protoimpl.MessageInfo, 51)
 var file_toshi_workspace_v1_endpoints_proto_goTypes = []any{
 	(EndpointShape)(0),                         // 0: toshi.workspace.v1.EndpointShape
 	(EndpointState)(0),                         // 1: toshi.workspace.v1.EndpointState
@@ -4670,149 +4739,154 @@ var file_toshi_workspace_v1_endpoints_proto_goTypes = []any{
 	(*EndpointMessageSource)(nil),              // 9: toshi.workspace.v1.EndpointMessageSource
 	(*EndpointMessage)(nil),                    // 10: toshi.workspace.v1.EndpointMessage
 	(*EndpointClient)(nil),                     // 11: toshi.workspace.v1.EndpointClient
-	(*EndpointPolicy)(nil),                     // 12: toshi.workspace.v1.EndpointPolicy
-	(*EndpointModuleList)(nil),                 // 13: toshi.workspace.v1.EndpointModuleList
-	(*EndpointModule)(nil),                     // 14: toshi.workspace.v1.EndpointModule
-	(*EndpointMatch)(nil),                      // 15: toshi.workspace.v1.EndpointMatch
-	(*EndpointRequest)(nil),                    // 16: toshi.workspace.v1.EndpointRequest
-	(*EndpointRequestCaller)(nil),              // 17: toshi.workspace.v1.EndpointRequestCaller
-	(*EndpointHeader)(nil),                     // 18: toshi.workspace.v1.EndpointHeader
-	(*EndpointBody)(nil),                       // 19: toshi.workspace.v1.EndpointBody
-	(*Forward)(nil),                            // 20: toshi.workspace.v1.Forward
-	(*Tunnel)(nil),                             // 21: toshi.workspace.v1.Tunnel
-	(*CreateEndpointRequest)(nil),              // 22: toshi.workspace.v1.CreateEndpointRequest
-	(*CreateEndpointResponse)(nil),             // 23: toshi.workspace.v1.CreateEndpointResponse
-	(*ListEndpointsRequest)(nil),               // 24: toshi.workspace.v1.ListEndpointsRequest
-	(*ListEndpointsResponse)(nil),              // 25: toshi.workspace.v1.ListEndpointsResponse
-	(*GetEndpointRequest)(nil),                 // 26: toshi.workspace.v1.GetEndpointRequest
-	(*GetEndpointResponse)(nil),                // 27: toshi.workspace.v1.GetEndpointResponse
-	(*GetEndpointPolicyRequest)(nil),           // 28: toshi.workspace.v1.GetEndpointPolicyRequest
-	(*GetEndpointPolicyResponse)(nil),          // 29: toshi.workspace.v1.GetEndpointPolicyResponse
-	(*SetEndpointPolicyRequest)(nil),           // 30: toshi.workspace.v1.SetEndpointPolicyRequest
-	(*SetEndpointPolicyResponse)(nil),          // 31: toshi.workspace.v1.SetEndpointPolicyResponse
-	(*ListEndpointRequestsRequest)(nil),        // 32: toshi.workspace.v1.ListEndpointRequestsRequest
-	(*ListEndpointRequestsResponse)(nil),       // 33: toshi.workspace.v1.ListEndpointRequestsResponse
-	(*GetEndpointRequestRequest)(nil),          // 34: toshi.workspace.v1.GetEndpointRequestRequest
-	(*GetEndpointRequestResponse)(nil),         // 35: toshi.workspace.v1.GetEndpointRequestResponse
-	(*ExportEndpointLogRequest)(nil),           // 36: toshi.workspace.v1.ExportEndpointLogRequest
-	(*ExportEndpointLogResponse)(nil),          // 37: toshi.workspace.v1.ExportEndpointLogResponse
-	(*CreateEndpointConnectTokenRequest)(nil),  // 38: toshi.workspace.v1.CreateEndpointConnectTokenRequest
-	(*CreateEndpointConnectTokenResponse)(nil), // 39: toshi.workspace.v1.CreateEndpointConnectTokenResponse
-	(*RevokeEndpointConnectTokenRequest)(nil),  // 40: toshi.workspace.v1.RevokeEndpointConnectTokenRequest
-	(*RevokeEndpointConnectTokenResponse)(nil), // 41: toshi.workspace.v1.RevokeEndpointConnectTokenResponse
-	(*DeleteEndpointRequest)(nil),              // 42: toshi.workspace.v1.DeleteEndpointRequest
-	(*DeleteEndpointResponse)(nil),             // 43: toshi.workspace.v1.DeleteEndpointResponse
-	(*ListForwardsRequest)(nil),                // 44: toshi.workspace.v1.ListForwardsRequest
-	(*ListForwardsResponse)(nil),               // 45: toshi.workspace.v1.ListForwardsResponse
-	(*GetTunnelRequest)(nil),                   // 46: toshi.workspace.v1.GetTunnelRequest
-	(*GetTunnelResponse)(nil),                  // 47: toshi.workspace.v1.GetTunnelResponse
-	(*SendEndpointMessageRequest)(nil),         // 48: toshi.workspace.v1.SendEndpointMessageRequest
-	(*SendEndpointMessageResponse)(nil),        // 49: toshi.workspace.v1.SendEndpointMessageResponse
-	(*TailEndpointMessagesRequest)(nil),        // 50: toshi.workspace.v1.TailEndpointMessagesRequest
-	(*TailEndpointMessagesResponse)(nil),       // 51: toshi.workspace.v1.TailEndpointMessagesResponse
-	(*ReplayEndpointMessageRequest)(nil),       // 52: toshi.workspace.v1.ReplayEndpointMessageRequest
-	(*ReplayEndpointMessageResponse)(nil),      // 53: toshi.workspace.v1.ReplayEndpointMessageResponse
-	nil,                                        // 54: toshi.workspace.v1.EndpointACPState.DroppedEntry
-	nil,                                        // 55: toshi.workspace.v1.EndpointMatch.HeadersEntry
-	(*timestamppb.Timestamp)(nil),              // 56: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),                // 57: google.protobuf.Duration
+	(*EndpointDefault)(nil),                    // 12: toshi.workspace.v1.EndpointDefault
+	(*EndpointPolicy)(nil),                     // 13: toshi.workspace.v1.EndpointPolicy
+	(*EndpointModuleList)(nil),                 // 14: toshi.workspace.v1.EndpointModuleList
+	(*EndpointModule)(nil),                     // 15: toshi.workspace.v1.EndpointModule
+	(*EndpointMatch)(nil),                      // 16: toshi.workspace.v1.EndpointMatch
+	(*EndpointRequest)(nil),                    // 17: toshi.workspace.v1.EndpointRequest
+	(*EndpointRequestCaller)(nil),              // 18: toshi.workspace.v1.EndpointRequestCaller
+	(*EndpointHeader)(nil),                     // 19: toshi.workspace.v1.EndpointHeader
+	(*EndpointBody)(nil),                       // 20: toshi.workspace.v1.EndpointBody
+	(*Forward)(nil),                            // 21: toshi.workspace.v1.Forward
+	(*Tunnel)(nil),                             // 22: toshi.workspace.v1.Tunnel
+	(*CreateEndpointRequest)(nil),              // 23: toshi.workspace.v1.CreateEndpointRequest
+	(*CreateEndpointResponse)(nil),             // 24: toshi.workspace.v1.CreateEndpointResponse
+	(*ListEndpointsRequest)(nil),               // 25: toshi.workspace.v1.ListEndpointsRequest
+	(*ListEndpointsResponse)(nil),              // 26: toshi.workspace.v1.ListEndpointsResponse
+	(*GetEndpointRequest)(nil),                 // 27: toshi.workspace.v1.GetEndpointRequest
+	(*GetEndpointResponse)(nil),                // 28: toshi.workspace.v1.GetEndpointResponse
+	(*GetEndpointPolicyRequest)(nil),           // 29: toshi.workspace.v1.GetEndpointPolicyRequest
+	(*GetEndpointPolicyResponse)(nil),          // 30: toshi.workspace.v1.GetEndpointPolicyResponse
+	(*SetEndpointPolicyRequest)(nil),           // 31: toshi.workspace.v1.SetEndpointPolicyRequest
+	(*SetEndpointPolicyResponse)(nil),          // 32: toshi.workspace.v1.SetEndpointPolicyResponse
+	(*ListEndpointRequestsRequest)(nil),        // 33: toshi.workspace.v1.ListEndpointRequestsRequest
+	(*ListEndpointRequestsResponse)(nil),       // 34: toshi.workspace.v1.ListEndpointRequestsResponse
+	(*GetEndpointRequestRequest)(nil),          // 35: toshi.workspace.v1.GetEndpointRequestRequest
+	(*GetEndpointRequestResponse)(nil),         // 36: toshi.workspace.v1.GetEndpointRequestResponse
+	(*ExportEndpointLogRequest)(nil),           // 37: toshi.workspace.v1.ExportEndpointLogRequest
+	(*ExportEndpointLogResponse)(nil),          // 38: toshi.workspace.v1.ExportEndpointLogResponse
+	(*CreateEndpointConnectTokenRequest)(nil),  // 39: toshi.workspace.v1.CreateEndpointConnectTokenRequest
+	(*CreateEndpointConnectTokenResponse)(nil), // 40: toshi.workspace.v1.CreateEndpointConnectTokenResponse
+	(*RevokeEndpointConnectTokenRequest)(nil),  // 41: toshi.workspace.v1.RevokeEndpointConnectTokenRequest
+	(*RevokeEndpointConnectTokenResponse)(nil), // 42: toshi.workspace.v1.RevokeEndpointConnectTokenResponse
+	(*DeleteEndpointRequest)(nil),              // 43: toshi.workspace.v1.DeleteEndpointRequest
+	(*DeleteEndpointResponse)(nil),             // 44: toshi.workspace.v1.DeleteEndpointResponse
+	(*ListForwardsRequest)(nil),                // 45: toshi.workspace.v1.ListForwardsRequest
+	(*ListForwardsResponse)(nil),               // 46: toshi.workspace.v1.ListForwardsResponse
+	(*GetTunnelRequest)(nil),                   // 47: toshi.workspace.v1.GetTunnelRequest
+	(*GetTunnelResponse)(nil),                  // 48: toshi.workspace.v1.GetTunnelResponse
+	(*SendEndpointMessageRequest)(nil),         // 49: toshi.workspace.v1.SendEndpointMessageRequest
+	(*SendEndpointMessageResponse)(nil),        // 50: toshi.workspace.v1.SendEndpointMessageResponse
+	(*TailEndpointMessagesRequest)(nil),        // 51: toshi.workspace.v1.TailEndpointMessagesRequest
+	(*TailEndpointMessagesResponse)(nil),       // 52: toshi.workspace.v1.TailEndpointMessagesResponse
+	(*ReplayEndpointMessageRequest)(nil),       // 53: toshi.workspace.v1.ReplayEndpointMessageRequest
+	(*ReplayEndpointMessageResponse)(nil),      // 54: toshi.workspace.v1.ReplayEndpointMessageResponse
+	nil,                                        // 55: toshi.workspace.v1.EndpointACPState.DroppedEntry
+	nil,                                        // 56: toshi.workspace.v1.EndpointMatch.HeadersEntry
+	(*timestamppb.Timestamp)(nil),              // 57: google.protobuf.Timestamp
+	(HostJobKind)(0),                           // 58: toshi.workspace.v1.HostJobKind
+	(*durationpb.Duration)(nil),                // 59: google.protobuf.Duration
 }
 var file_toshi_workspace_v1_endpoints_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Endpoint.shape:type_name -> toshi.workspace.v1.EndpointShape
 	1,  // 1: toshi.workspace.v1.Endpoint.state:type_name -> toshi.workspace.v1.EndpointState
-	56, // 2: toshi.workspace.v1.Endpoint.created_at:type_name -> google.protobuf.Timestamp
-	56, // 3: toshi.workspace.v1.Endpoint.ended_at:type_name -> google.protobuf.Timestamp
-	12, // 4: toshi.workspace.v1.Endpoint.policy:type_name -> toshi.workspace.v1.EndpointPolicy
+	57, // 2: toshi.workspace.v1.Endpoint.created_at:type_name -> google.protobuf.Timestamp
+	57, // 3: toshi.workspace.v1.Endpoint.ended_at:type_name -> google.protobuf.Timestamp
+	13, // 4: toshi.workspace.v1.Endpoint.policy:type_name -> toshi.workspace.v1.EndpointPolicy
 	11, // 5: toshi.workspace.v1.Endpoint.clients:type_name -> toshi.workspace.v1.EndpointClient
 	8,  // 6: toshi.workspace.v1.Endpoint.events:type_name -> toshi.workspace.v1.EndpointEventCounts
 	7,  // 7: toshi.workspace.v1.Endpoint.acp_state:type_name -> toshi.workspace.v1.EndpointACPState
-	56, // 8: toshi.workspace.v1.EndpointACPState.since:type_name -> google.protobuf.Timestamp
-	54, // 9: toshi.workspace.v1.EndpointACPState.dropped:type_name -> toshi.workspace.v1.EndpointACPState.DroppedEntry
-	56, // 10: toshi.workspace.v1.EndpointEventCounts.last_delivery_at:type_name -> google.protobuf.Timestamp
-	56, // 11: toshi.workspace.v1.EndpointMessage.time:type_name -> google.protobuf.Timestamp
+	57, // 8: toshi.workspace.v1.EndpointACPState.since:type_name -> google.protobuf.Timestamp
+	55, // 9: toshi.workspace.v1.EndpointACPState.dropped:type_name -> toshi.workspace.v1.EndpointACPState.DroppedEntry
+	57, // 10: toshi.workspace.v1.EndpointEventCounts.last_delivery_at:type_name -> google.protobuf.Timestamp
+	57, // 11: toshi.workspace.v1.EndpointMessage.time:type_name -> google.protobuf.Timestamp
 	9,  // 12: toshi.workspace.v1.EndpointMessage.source:type_name -> toshi.workspace.v1.EndpointMessageSource
 	5,  // 13: toshi.workspace.v1.EndpointMessage.state:type_name -> toshi.workspace.v1.EndpointMessageState
-	56, // 14: toshi.workspace.v1.EndpointMessage.next_attempt_at:type_name -> google.protobuf.Timestamp
-	56, // 15: toshi.workspace.v1.EndpointMessage.delivered_at:type_name -> google.protobuf.Timestamp
-	56, // 16: toshi.workspace.v1.EndpointMessage.replayed_at:type_name -> google.protobuf.Timestamp
-	56, // 17: toshi.workspace.v1.EndpointMessage.scheduled_for:type_name -> google.protobuf.Timestamp
+	57, // 14: toshi.workspace.v1.EndpointMessage.next_attempt_at:type_name -> google.protobuf.Timestamp
+	57, // 15: toshi.workspace.v1.EndpointMessage.delivered_at:type_name -> google.protobuf.Timestamp
+	57, // 16: toshi.workspace.v1.EndpointMessage.replayed_at:type_name -> google.protobuf.Timestamp
+	57, // 17: toshi.workspace.v1.EndpointMessage.scheduled_for:type_name -> google.protobuf.Timestamp
 	2,  // 18: toshi.workspace.v1.EndpointClient.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
-	56, // 19: toshi.workspace.v1.EndpointClient.attached_since:type_name -> google.protobuf.Timestamp
-	56, // 20: toshi.workspace.v1.EndpointClient.seen_at:type_name -> google.protobuf.Timestamp
-	56, // 21: toshi.workspace.v1.EndpointClient.detached_at:type_name -> google.protobuf.Timestamp
-	13, // 22: toshi.workspace.v1.EndpointPolicy.modules:type_name -> toshi.workspace.v1.EndpointModuleList
-	14, // 23: toshi.workspace.v1.EndpointModuleList.modules:type_name -> toshi.workspace.v1.EndpointModule
-	15, // 24: toshi.workspace.v1.EndpointModule.match:type_name -> toshi.workspace.v1.EndpointMatch
-	55, // 25: toshi.workspace.v1.EndpointMatch.headers:type_name -> toshi.workspace.v1.EndpointMatch.HeadersEntry
-	56, // 26: toshi.workspace.v1.EndpointRequest.arrived_at:type_name -> google.protobuf.Timestamp
-	57, // 27: toshi.workspace.v1.EndpointRequest.duration:type_name -> google.protobuf.Duration
-	17, // 28: toshi.workspace.v1.EndpointRequest.caller:type_name -> toshi.workspace.v1.EndpointRequestCaller
-	18, // 29: toshi.workspace.v1.EndpointRequest.request_headers:type_name -> toshi.workspace.v1.EndpointHeader
-	18, // 30: toshi.workspace.v1.EndpointRequest.response_headers:type_name -> toshi.workspace.v1.EndpointHeader
-	19, // 31: toshi.workspace.v1.EndpointRequest.request_body:type_name -> toshi.workspace.v1.EndpointBody
-	19, // 32: toshi.workspace.v1.EndpointRequest.response_body:type_name -> toshi.workspace.v1.EndpointBody
-	56, // 33: toshi.workspace.v1.Forward.opened_at:type_name -> google.protobuf.Timestamp
-	56, // 34: toshi.workspace.v1.Tunnel.since:type_name -> google.protobuf.Timestamp
-	12, // 35: toshi.workspace.v1.CreateEndpointRequest.policy:type_name -> toshi.workspace.v1.EndpointPolicy
-	6,  // 36: toshi.workspace.v1.CreateEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
-	6,  // 37: toshi.workspace.v1.ListEndpointsResponse.endpoints:type_name -> toshi.workspace.v1.Endpoint
-	6,  // 38: toshi.workspace.v1.GetEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
-	12, // 39: toshi.workspace.v1.GetEndpointPolicyResponse.policy:type_name -> toshi.workspace.v1.EndpointPolicy
-	12, // 40: toshi.workspace.v1.SetEndpointPolicyRequest.policy:type_name -> toshi.workspace.v1.EndpointPolicy
-	3,  // 41: toshi.workspace.v1.SetEndpointPolicyRequest.streams:type_name -> toshi.workspace.v1.EndpointStreams
-	12, // 42: toshi.workspace.v1.SetEndpointPolicyResponse.policy:type_name -> toshi.workspace.v1.EndpointPolicy
-	56, // 43: toshi.workspace.v1.ListEndpointRequestsRequest.since:type_name -> google.protobuf.Timestamp
-	56, // 44: toshi.workspace.v1.ListEndpointRequestsRequest.until:type_name -> google.protobuf.Timestamp
-	16, // 45: toshi.workspace.v1.ListEndpointRequestsResponse.requests:type_name -> toshi.workspace.v1.EndpointRequest
-	16, // 46: toshi.workspace.v1.GetEndpointRequestResponse.request:type_name -> toshi.workspace.v1.EndpointRequest
-	4,  // 47: toshi.workspace.v1.ExportEndpointLogRequest.log:type_name -> toshi.workspace.v1.EndpointLog
-	56, // 48: toshi.workspace.v1.ExportEndpointLogRequest.since:type_name -> google.protobuf.Timestamp
-	56, // 49: toshi.workspace.v1.ExportEndpointLogRequest.until:type_name -> google.protobuf.Timestamp
-	2,  // 50: toshi.workspace.v1.CreateEndpointConnectTokenRequest.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
-	56, // 51: toshi.workspace.v1.CreateEndpointConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 52: toshi.workspace.v1.CreateEndpointConnectTokenResponse.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
-	20, // 53: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
-	21, // 54: toshi.workspace.v1.GetTunnelResponse.tunnel:type_name -> toshi.workspace.v1.Tunnel
-	5,  // 55: toshi.workspace.v1.TailEndpointMessagesRequest.states:type_name -> toshi.workspace.v1.EndpointMessageState
-	10, // 56: toshi.workspace.v1.TailEndpointMessagesResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
-	10, // 57: toshi.workspace.v1.ReplayEndpointMessageResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
-	22, // 58: toshi.workspace.v1.EndpointService.CreateEndpoint:input_type -> toshi.workspace.v1.CreateEndpointRequest
-	24, // 59: toshi.workspace.v1.EndpointService.ListEndpoints:input_type -> toshi.workspace.v1.ListEndpointsRequest
-	26, // 60: toshi.workspace.v1.EndpointService.GetEndpoint:input_type -> toshi.workspace.v1.GetEndpointRequest
-	28, // 61: toshi.workspace.v1.EndpointService.GetEndpointPolicy:input_type -> toshi.workspace.v1.GetEndpointPolicyRequest
-	30, // 62: toshi.workspace.v1.EndpointService.SetEndpointPolicy:input_type -> toshi.workspace.v1.SetEndpointPolicyRequest
-	32, // 63: toshi.workspace.v1.EndpointService.ListEndpointRequests:input_type -> toshi.workspace.v1.ListEndpointRequestsRequest
-	34, // 64: toshi.workspace.v1.EndpointService.GetEndpointRequest:input_type -> toshi.workspace.v1.GetEndpointRequestRequest
-	36, // 65: toshi.workspace.v1.EndpointService.ExportEndpointLog:input_type -> toshi.workspace.v1.ExportEndpointLogRequest
-	38, // 66: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:input_type -> toshi.workspace.v1.CreateEndpointConnectTokenRequest
-	40, // 67: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:input_type -> toshi.workspace.v1.RevokeEndpointConnectTokenRequest
-	42, // 68: toshi.workspace.v1.EndpointService.DeleteEndpoint:input_type -> toshi.workspace.v1.DeleteEndpointRequest
-	44, // 69: toshi.workspace.v1.EndpointService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
-	46, // 70: toshi.workspace.v1.EndpointService.GetTunnel:input_type -> toshi.workspace.v1.GetTunnelRequest
-	48, // 71: toshi.workspace.v1.EndpointService.SendEndpointMessage:input_type -> toshi.workspace.v1.SendEndpointMessageRequest
-	50, // 72: toshi.workspace.v1.EndpointService.TailEndpointMessages:input_type -> toshi.workspace.v1.TailEndpointMessagesRequest
-	52, // 73: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:input_type -> toshi.workspace.v1.ReplayEndpointMessageRequest
-	23, // 74: toshi.workspace.v1.EndpointService.CreateEndpoint:output_type -> toshi.workspace.v1.CreateEndpointResponse
-	25, // 75: toshi.workspace.v1.EndpointService.ListEndpoints:output_type -> toshi.workspace.v1.ListEndpointsResponse
-	27, // 76: toshi.workspace.v1.EndpointService.GetEndpoint:output_type -> toshi.workspace.v1.GetEndpointResponse
-	29, // 77: toshi.workspace.v1.EndpointService.GetEndpointPolicy:output_type -> toshi.workspace.v1.GetEndpointPolicyResponse
-	31, // 78: toshi.workspace.v1.EndpointService.SetEndpointPolicy:output_type -> toshi.workspace.v1.SetEndpointPolicyResponse
-	33, // 79: toshi.workspace.v1.EndpointService.ListEndpointRequests:output_type -> toshi.workspace.v1.ListEndpointRequestsResponse
-	35, // 80: toshi.workspace.v1.EndpointService.GetEndpointRequest:output_type -> toshi.workspace.v1.GetEndpointRequestResponse
-	37, // 81: toshi.workspace.v1.EndpointService.ExportEndpointLog:output_type -> toshi.workspace.v1.ExportEndpointLogResponse
-	39, // 82: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:output_type -> toshi.workspace.v1.CreateEndpointConnectTokenResponse
-	41, // 83: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:output_type -> toshi.workspace.v1.RevokeEndpointConnectTokenResponse
-	43, // 84: toshi.workspace.v1.EndpointService.DeleteEndpoint:output_type -> toshi.workspace.v1.DeleteEndpointResponse
-	45, // 85: toshi.workspace.v1.EndpointService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
-	47, // 86: toshi.workspace.v1.EndpointService.GetTunnel:output_type -> toshi.workspace.v1.GetTunnelResponse
-	49, // 87: toshi.workspace.v1.EndpointService.SendEndpointMessage:output_type -> toshi.workspace.v1.SendEndpointMessageResponse
-	51, // 88: toshi.workspace.v1.EndpointService.TailEndpointMessages:output_type -> toshi.workspace.v1.TailEndpointMessagesResponse
-	53, // 89: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:output_type -> toshi.workspace.v1.ReplayEndpointMessageResponse
-	74, // [74:90] is the sub-list for method output_type
-	58, // [58:74] is the sub-list for method input_type
-	58, // [58:58] is the sub-list for extension type_name
-	58, // [58:58] is the sub-list for extension extendee
-	0,  // [0:58] is the sub-list for field type_name
+	57, // 19: toshi.workspace.v1.EndpointClient.attached_since:type_name -> google.protobuf.Timestamp
+	57, // 20: toshi.workspace.v1.EndpointClient.seen_at:type_name -> google.protobuf.Timestamp
+	57, // 21: toshi.workspace.v1.EndpointClient.detached_at:type_name -> google.protobuf.Timestamp
+	58, // 22: toshi.workspace.v1.EndpointDefault.workload_kind:type_name -> toshi.workspace.v1.HostJobKind
+	0,  // 23: toshi.workspace.v1.EndpointDefault.shape:type_name -> toshi.workspace.v1.EndpointShape
+	13, // 24: toshi.workspace.v1.EndpointDefault.policy:type_name -> toshi.workspace.v1.EndpointPolicy
+	14, // 25: toshi.workspace.v1.EndpointPolicy.modules:type_name -> toshi.workspace.v1.EndpointModuleList
+	15, // 26: toshi.workspace.v1.EndpointModuleList.modules:type_name -> toshi.workspace.v1.EndpointModule
+	16, // 27: toshi.workspace.v1.EndpointModule.match:type_name -> toshi.workspace.v1.EndpointMatch
+	56, // 28: toshi.workspace.v1.EndpointMatch.headers:type_name -> toshi.workspace.v1.EndpointMatch.HeadersEntry
+	57, // 29: toshi.workspace.v1.EndpointRequest.arrived_at:type_name -> google.protobuf.Timestamp
+	59, // 30: toshi.workspace.v1.EndpointRequest.duration:type_name -> google.protobuf.Duration
+	18, // 31: toshi.workspace.v1.EndpointRequest.caller:type_name -> toshi.workspace.v1.EndpointRequestCaller
+	19, // 32: toshi.workspace.v1.EndpointRequest.request_headers:type_name -> toshi.workspace.v1.EndpointHeader
+	19, // 33: toshi.workspace.v1.EndpointRequest.response_headers:type_name -> toshi.workspace.v1.EndpointHeader
+	20, // 34: toshi.workspace.v1.EndpointRequest.request_body:type_name -> toshi.workspace.v1.EndpointBody
+	20, // 35: toshi.workspace.v1.EndpointRequest.response_body:type_name -> toshi.workspace.v1.EndpointBody
+	57, // 36: toshi.workspace.v1.Forward.opened_at:type_name -> google.protobuf.Timestamp
+	57, // 37: toshi.workspace.v1.Tunnel.since:type_name -> google.protobuf.Timestamp
+	13, // 38: toshi.workspace.v1.CreateEndpointRequest.policy:type_name -> toshi.workspace.v1.EndpointPolicy
+	6,  // 39: toshi.workspace.v1.CreateEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
+	6,  // 40: toshi.workspace.v1.ListEndpointsResponse.endpoints:type_name -> toshi.workspace.v1.Endpoint
+	6,  // 41: toshi.workspace.v1.GetEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
+	13, // 42: toshi.workspace.v1.GetEndpointPolicyResponse.policy:type_name -> toshi.workspace.v1.EndpointPolicy
+	13, // 43: toshi.workspace.v1.SetEndpointPolicyRequest.policy:type_name -> toshi.workspace.v1.EndpointPolicy
+	3,  // 44: toshi.workspace.v1.SetEndpointPolicyRequest.streams:type_name -> toshi.workspace.v1.EndpointStreams
+	13, // 45: toshi.workspace.v1.SetEndpointPolicyResponse.policy:type_name -> toshi.workspace.v1.EndpointPolicy
+	57, // 46: toshi.workspace.v1.ListEndpointRequestsRequest.since:type_name -> google.protobuf.Timestamp
+	57, // 47: toshi.workspace.v1.ListEndpointRequestsRequest.until:type_name -> google.protobuf.Timestamp
+	17, // 48: toshi.workspace.v1.ListEndpointRequestsResponse.requests:type_name -> toshi.workspace.v1.EndpointRequest
+	17, // 49: toshi.workspace.v1.GetEndpointRequestResponse.request:type_name -> toshi.workspace.v1.EndpointRequest
+	4,  // 50: toshi.workspace.v1.ExportEndpointLogRequest.log:type_name -> toshi.workspace.v1.EndpointLog
+	57, // 51: toshi.workspace.v1.ExportEndpointLogRequest.since:type_name -> google.protobuf.Timestamp
+	57, // 52: toshi.workspace.v1.ExportEndpointLogRequest.until:type_name -> google.protobuf.Timestamp
+	2,  // 53: toshi.workspace.v1.CreateEndpointConnectTokenRequest.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
+	57, // 54: toshi.workspace.v1.CreateEndpointConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 55: toshi.workspace.v1.CreateEndpointConnectTokenResponse.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
+	21, // 56: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
+	22, // 57: toshi.workspace.v1.GetTunnelResponse.tunnel:type_name -> toshi.workspace.v1.Tunnel
+	5,  // 58: toshi.workspace.v1.TailEndpointMessagesRequest.states:type_name -> toshi.workspace.v1.EndpointMessageState
+	10, // 59: toshi.workspace.v1.TailEndpointMessagesResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
+	10, // 60: toshi.workspace.v1.ReplayEndpointMessageResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
+	23, // 61: toshi.workspace.v1.EndpointService.CreateEndpoint:input_type -> toshi.workspace.v1.CreateEndpointRequest
+	25, // 62: toshi.workspace.v1.EndpointService.ListEndpoints:input_type -> toshi.workspace.v1.ListEndpointsRequest
+	27, // 63: toshi.workspace.v1.EndpointService.GetEndpoint:input_type -> toshi.workspace.v1.GetEndpointRequest
+	29, // 64: toshi.workspace.v1.EndpointService.GetEndpointPolicy:input_type -> toshi.workspace.v1.GetEndpointPolicyRequest
+	31, // 65: toshi.workspace.v1.EndpointService.SetEndpointPolicy:input_type -> toshi.workspace.v1.SetEndpointPolicyRequest
+	33, // 66: toshi.workspace.v1.EndpointService.ListEndpointRequests:input_type -> toshi.workspace.v1.ListEndpointRequestsRequest
+	35, // 67: toshi.workspace.v1.EndpointService.GetEndpointRequest:input_type -> toshi.workspace.v1.GetEndpointRequestRequest
+	37, // 68: toshi.workspace.v1.EndpointService.ExportEndpointLog:input_type -> toshi.workspace.v1.ExportEndpointLogRequest
+	39, // 69: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:input_type -> toshi.workspace.v1.CreateEndpointConnectTokenRequest
+	41, // 70: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:input_type -> toshi.workspace.v1.RevokeEndpointConnectTokenRequest
+	43, // 71: toshi.workspace.v1.EndpointService.DeleteEndpoint:input_type -> toshi.workspace.v1.DeleteEndpointRequest
+	45, // 72: toshi.workspace.v1.EndpointService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
+	47, // 73: toshi.workspace.v1.EndpointService.GetTunnel:input_type -> toshi.workspace.v1.GetTunnelRequest
+	49, // 74: toshi.workspace.v1.EndpointService.SendEndpointMessage:input_type -> toshi.workspace.v1.SendEndpointMessageRequest
+	51, // 75: toshi.workspace.v1.EndpointService.TailEndpointMessages:input_type -> toshi.workspace.v1.TailEndpointMessagesRequest
+	53, // 76: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:input_type -> toshi.workspace.v1.ReplayEndpointMessageRequest
+	24, // 77: toshi.workspace.v1.EndpointService.CreateEndpoint:output_type -> toshi.workspace.v1.CreateEndpointResponse
+	26, // 78: toshi.workspace.v1.EndpointService.ListEndpoints:output_type -> toshi.workspace.v1.ListEndpointsResponse
+	28, // 79: toshi.workspace.v1.EndpointService.GetEndpoint:output_type -> toshi.workspace.v1.GetEndpointResponse
+	30, // 80: toshi.workspace.v1.EndpointService.GetEndpointPolicy:output_type -> toshi.workspace.v1.GetEndpointPolicyResponse
+	32, // 81: toshi.workspace.v1.EndpointService.SetEndpointPolicy:output_type -> toshi.workspace.v1.SetEndpointPolicyResponse
+	34, // 82: toshi.workspace.v1.EndpointService.ListEndpointRequests:output_type -> toshi.workspace.v1.ListEndpointRequestsResponse
+	36, // 83: toshi.workspace.v1.EndpointService.GetEndpointRequest:output_type -> toshi.workspace.v1.GetEndpointRequestResponse
+	38, // 84: toshi.workspace.v1.EndpointService.ExportEndpointLog:output_type -> toshi.workspace.v1.ExportEndpointLogResponse
+	40, // 85: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:output_type -> toshi.workspace.v1.CreateEndpointConnectTokenResponse
+	42, // 86: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:output_type -> toshi.workspace.v1.RevokeEndpointConnectTokenResponse
+	44, // 87: toshi.workspace.v1.EndpointService.DeleteEndpoint:output_type -> toshi.workspace.v1.DeleteEndpointResponse
+	46, // 88: toshi.workspace.v1.EndpointService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
+	48, // 89: toshi.workspace.v1.EndpointService.GetTunnel:output_type -> toshi.workspace.v1.GetTunnelResponse
+	50, // 90: toshi.workspace.v1.EndpointService.SendEndpointMessage:output_type -> toshi.workspace.v1.SendEndpointMessageResponse
+	52, // 91: toshi.workspace.v1.EndpointService.TailEndpointMessages:output_type -> toshi.workspace.v1.TailEndpointMessagesResponse
+	54, // 92: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:output_type -> toshi.workspace.v1.ReplayEndpointMessageResponse
+	77, // [77:93] is the sub-list for method output_type
+	61, // [61:77] is the sub-list for method input_type
+	61, // [61:61] is the sub-list for extension type_name
+	61, // [61:61] is the sub-list for extension extendee
+	0,  // [0:61] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_endpoints_proto_init() }
@@ -4820,16 +4894,17 @@ func file_toshi_workspace_v1_endpoints_proto_init() {
 	if File_toshi_workspace_v1_endpoints_proto != nil {
 		return
 	}
+	file_toshi_workspace_v1_hostjobs_proto_init()
 	file_toshi_workspace_v1_endpoints_proto_msgTypes[0].OneofWrappers = []any{}
-	file_toshi_workspace_v1_endpoints_proto_msgTypes[6].OneofWrappers = []any{}
-	file_toshi_workspace_v1_endpoints_proto_msgTypes[30].OneofWrappers = []any{}
+	file_toshi_workspace_v1_endpoints_proto_msgTypes[7].OneofWrappers = []any{}
+	file_toshi_workspace_v1_endpoints_proto_msgTypes[31].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_endpoints_proto_rawDesc), len(file_toshi_workspace_v1_endpoints_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   50,
+			NumMessages:   51,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

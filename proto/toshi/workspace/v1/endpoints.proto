@@ -5,6 +5,7 @@ package toshi.workspace.v1;
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
+import "toshi/workspace/v1/hostjobs.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
@@ -419,6 +420,17 @@ message EndpointClient {
   google.protobuf.Timestamp detached_at = 8;
   int64 output_acked = 9;
   bool attached = 10;
+}
+
+// EndpointDefault is the policy a workspace chooses for one workload kind
+// and endpoint shape. Its policy may leave fields unset.
+message EndpointDefault {
+  // The workload whose endpoints take this default.
+  HostJobKind workload_kind = 1;
+  // The shape of the endpoint.
+  EndpointShape shape = 2;
+  // The fields to fill when an endpoint is made; it takes no version or tools.
+  EndpointPolicy policy = 3;
 }
 
 // EndpointPolicy is an endpoint's policy document, with the words a recipe's
