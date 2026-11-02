@@ -74,7 +74,10 @@ type VolumeServiceClient interface {
 	// empty, with no version, and attached to nothing. A name another of the
 	// project's volumes has, deleted ones aside, fails with ALREADY_EXISTS. A
 	// name a service could not take, a missing mode and a negative size cap
-	// fail with INVALID_ARGUMENT; a size cap of zero is 10 GiB.
+	// fail with INVALID_ARGUMENT; a size cap of zero takes the project's
+	// default, or 10 GiB when it has none. A mode the project does not allow
+	// fails with FAILED_PRECONDITION; passing its ceiling or the workspace's
+	// fails with RESOURCE_EXHAUSTED.
 	//
 	// The same request sent again with its request_key returns the volume the
 	// first one made; the key with a different request fails with
@@ -85,7 +88,9 @@ type VolumeServiceClient interface {
 	// project's volumes has, deleted ones aside, fails with ALREADY_EXISTS.
 	// A size cap below the newest version's size, a negative one, a mode
 	// path and any other path fail with INVALID_ARGUMENT; a size cap of zero
-	// is 10 GiB. A volume may be renamed while attached or held by a run; an
+	// takes the project's default, or 10 GiB when it has none. A raise also
+	// checks the project's modes and the project and workspace ceilings.
+	// A volume may be renamed while attached or held by a run; an
 	// environment that allows a CI job's state volume by its old name no
 	// longer matches it.
 	UpdateVolume(context.Context, *connect.Request[workspacev1.UpdateVolumeRequest]) (*connect.Response[workspacev1.UpdateVolumeResponse], error)
@@ -274,7 +279,10 @@ type VolumeServiceHandler interface {
 	// empty, with no version, and attached to nothing. A name another of the
 	// project's volumes has, deleted ones aside, fails with ALREADY_EXISTS. A
 	// name a service could not take, a missing mode and a negative size cap
-	// fail with INVALID_ARGUMENT; a size cap of zero is 10 GiB.
+	// fail with INVALID_ARGUMENT; a size cap of zero takes the project's
+	// default, or 10 GiB when it has none. A mode the project does not allow
+	// fails with FAILED_PRECONDITION; passing its ceiling or the workspace's
+	// fails with RESOURCE_EXHAUSTED.
 	//
 	// The same request sent again with its request_key returns the volume the
 	// first one made; the key with a different request fails with
@@ -285,7 +293,9 @@ type VolumeServiceHandler interface {
 	// project's volumes has, deleted ones aside, fails with ALREADY_EXISTS.
 	// A size cap below the newest version's size, a negative one, a mode
 	// path and any other path fail with INVALID_ARGUMENT; a size cap of zero
-	// is 10 GiB. A volume may be renamed while attached or held by a run; an
+	// takes the project's default, or 10 GiB when it has none. A raise also
+	// checks the project's modes and the project and workspace ceilings.
+	// A volume may be renamed while attached or held by a run; an
 	// environment that allows a CI job's state volume by its old name no
 	// longer matches it.
 	UpdateVolume(context.Context, *connect.Request[workspacev1.UpdateVolumeRequest]) (*connect.Response[workspacev1.UpdateVolumeResponse], error)

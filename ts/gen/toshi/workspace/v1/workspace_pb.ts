@@ -3451,8 +3451,9 @@ export type ServiceSpec = Message<"toshi.workspace.v1.ServiceSpec"> & {
 
   /**
    * Create only: a state volume made with the service. Unset takes the
-   * template's: the agent and database templates make one of 10 GiB, the
-   * others none. Answers leave it unset.
+   * template's: the agent and database templates make one using the project's
+   * default cap, or 10 GiB when it has none; the others make none. Answers
+   * leave it unset.
    *
    * @generated from field: toshi.workspace.v1.StateVolumeSpec state_volume = 7;
    */
@@ -3589,8 +3590,9 @@ export type ServiceSpecJson = {
 
   /**
    * Create only: a state volume made with the service. Unset takes the
-   * template's: the agent and database templates make one of 10 GiB, the
-   * others none. Answers leave it unset.
+   * template's: the agent and database templates make one using the project's
+   * default cap, or 10 GiB when it has none; the others make none. Answers
+   * leave it unset.
    *
    * @generated from field: toshi.workspace.v1.StateVolumeSpec state_volume = 7;
    */
@@ -3679,7 +3681,7 @@ export const ServiceSpecSchema: GenMessage<ServiceSpec, {jsonType: ServiceSpecJs
  */
 export type StateVolumeSpec = Message<"toshi.workspace.v1.StateVolumeSpec"> & {
   /**
-   * The volume's size cap, in bytes.
+   * The volume's size cap, in bytes; must be greater than zero.
    *
    * @generated from field: int64 size_cap_bytes = 1;
    */
@@ -3694,7 +3696,7 @@ export type StateVolumeSpec = Message<"toshi.workspace.v1.StateVolumeSpec"> & {
  */
 export type StateVolumeSpecJson = {
   /**
-   * The volume's size cap, in bytes.
+   * The volume's size cap, in bytes; must be greater than zero.
    *
    * @generated from field: int64 size_cap_bytes = 1;
    */

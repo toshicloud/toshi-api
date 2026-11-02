@@ -323,8 +323,10 @@ type Volume struct {
 	// held it while the cap was lowered saved more. No run mounts it until
 	// the cap is raised or a version within the cap is restored.
 	LatestVersionOverCap bool `protobuf:"varint,24,opt,name=latest_version_over_cap,json=latestVersionOverCap,proto3" json:"latest_version_over_cap,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// Where the size cap came from: "request", "project" or "default".
+	SizeCapSource string `protobuf:"bytes,25,opt,name=size_cap_source,json=sizeCapSource,proto3" json:"size_cap_source,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Volume) Reset() {
@@ -523,6 +525,13 @@ func (x *Volume) GetLatestVersionOverCap() bool {
 		return x.LatestVersionOverCap
 	}
 	return false
+}
+
+func (x *Volume) GetSizeCapSource() string {
+	if x != nil {
+		return x.SizeCapSource
+	}
+	return ""
 }
 
 // VolumeVersion is a saved copy of a state volume's data.
@@ -852,7 +861,7 @@ type CreateVolumeRequest struct {
 	// Unique among the project's volumes that are not deleted.
 	Name string     `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Mode VolumeMode `protobuf:"varint,3,opt,name=mode,proto3,enum=toshi.workspace.v1.VolumeMode" json:"mode,omitempty"`
-	// The most it holds, in bytes; zero is 10 GiB.
+	// The most it holds, in bytes; zero takes the project's default, or 10 GiB.
 	SizeCapBytes int64 `protobuf:"varint,4,opt,name=size_cap_bytes,json=sizeCapBytes,proto3" json:"size_cap_bytes,omitempty"`
 	// Required: the same key on every retry of this create.
 	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
@@ -1644,7 +1653,7 @@ var File_toshi_workspace_v1_volumes_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x90\t\n" +
+	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xb8\t\n" +
 	"\x06Volume\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1673,7 +1682,8 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x0fmanifest_digest\x18\x15 \x01(\tR\x0emanifestDigest\x12%\n" +
 	"\x0emanaged_fields\x18\x16 \x03(\tR\rmanagedFields\x12'\n" +
 	"\x0fmanifest_origin\x18\x17 \x01(\tR\x0emanifestOrigin\x125\n" +
-	"\x17latest_version_over_cap\x18\x18 \x01(\bR\x14latestVersionOverCap\"\xc4\x02\n" +
+	"\x17latest_version_over_cap\x18\x18 \x01(\bR\x14latestVersionOverCap\x12&\n" +
+	"\x0fsize_cap_source\x18\x19 \x01(\tR\rsizeCapSource\"\xc4\x02\n" +
 	"\rVolumeVersion\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\x12;\n" +
 	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
