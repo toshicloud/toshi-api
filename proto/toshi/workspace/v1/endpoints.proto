@@ -6,6 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 import "toshi/workspace/v1/hostjobs.proto";
+import "toshi/workspace/v1/workspace.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
@@ -368,27 +369,12 @@ enum EndpointMessageState {
   ENDPOINT_MESSAGE_STATE_EXPIRED = 5;
 }
 
-// EndpointMessageSource is who sent a message; Toshi stamps it.
-message EndpointMessageSource {
-  // principal (a person or token), workload, trigger, mail or alarm.
-  string kind = 1;
-  // A principal as the audit log names an actor, or the workload's or
-  // trigger's ID.
-  string id = 2;
-}
-
 // EndpointMessage is one message of an event endpoint.
 message EndpointMessage {
-  // The webhook-id of each of its posts, the same on every attempt and
-  // after a replay.
-  string id = 1;
+  reserved 1, 3, 4, 5, 6;
+  reserved "id", "name", "time", "source", "data";
   // Its place in the endpoint's queue, from 1.
   int64 seq = 2;
-  string name = 3;
-  google.protobuf.Timestamp time = 4;
-  EndpointMessageSource source = 5;
-  // The message's JSON.
-  bytes data = 6;
   EndpointMessageState state = 7;
   int32 attempts = 8;
   // When a pending message is next posted.
@@ -401,6 +387,8 @@ message EndpointMessage {
   // The instant an alarm published this message for; unset for other
   // sources.
   google.protobuf.Timestamp scheduled_for = 13;
+  // The event posted to the endpoint.
+  EventEnvelope envelope = 14;
 }
 
 // EndpointClient is one client of a stream endpoint: its last attach, who

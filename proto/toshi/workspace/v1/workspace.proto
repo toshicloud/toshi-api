@@ -7,6 +7,7 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/workspace/v1/grants.proto";
 import "toshi/workspace/v1/projects.proto";
@@ -1344,6 +1345,36 @@ enum EventType {
   EVENT_TYPE_ENDPOINT_CREATION_FAILED = 28;
 }
 
+// EventSource identifies who produced an event.
+message EventSource {
+  // The kind of source.
+  string kind = 1;
+  // The source's ID.
+  string id = 2;
+}
+
+// EventEnvelope is an event delivered to a receiver.
+message EventEnvelope {
+  // The event's ID, the same on each delivery.
+  string id = 1;
+  // The event's name.
+  string name = 2;
+  // When the event happened.
+  google.protobuf.Timestamp occurred_at = 3;
+  // Who produced the event.
+  EventSource source = 4;
+  // The project the event belongs to, or empty when it has none.
+  string project = 5;
+  // The environment the event belongs to, or empty when it has none.
+  string environment = 6;
+  // The event's data, a JSON value whose shape depends on the name. Through
+  // the API its numbers read as JSON numbers; a posted body carries the data
+  // exactly as it was written.
+  google.protobuf.Value data = 7;
+  // The original event's ID, set only on a replay.
+  optional string replay_of = 8;
+}
+
 // Event is one entry of the event log. Every state change and every event a
 // workload emits is written to the durable log before it is delivered. Delivery is
 // at least once: a receiver drops a repeat by its id. The events of one
@@ -1356,7 +1387,8 @@ message Event {
   string name = 3;
   // The workload the event is about; empty for CONNECTION.
   string workload_id = 4;
-  google.protobuf.Timestamp time = 5;
+  // When the event happened.
+  google.protobuf.Timestamp occurred_at = 5;
   // Resume after this event.
   string cursor = 6;
   reserved 7;
