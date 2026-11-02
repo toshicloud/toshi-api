@@ -2843,38 +2843,56 @@ func (x *ListJobsResponse) GetNextPageToken() string {
 // AuditEvent is one append-only audit log entry.
 type AuditEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	At    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=at,proto3" json:"at,omitempty"`
-	// operator, session, system or webhook.
+	// Increases with every event; the order of the log.
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// When the control plane recorded it, just after the change.
+	At *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=at,proto3" json:"at,omitempty"`
+	// operator, session, token, workload, product, webhook, module or system.
 	ActorKind string `protobuf:"bytes,3,opt,name=actor_kind,json=actorKind,proto3" json:"actor_kind,omitempty"`
-	// The operator or enrollment token's id (never its value), the session's
-	// user id, or a system or webhook source name.
+	// The id of the actor that made the change, without its kind: an operator
+	// token's id (never its value) or local-admin, a session's user id or the
+	// person an access token acts for, a workspace or product token's id
+	// (never its value), a workload's "<kind>:<id>", a webhook source name, an
+	// admission module's kind, or a system source name or enrollment token's
+	// id.
 	ActorId string `protobuf:"bytes,4,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
-	// Empty when the event is not tied to a workspace.
+	// The workspace the change belongs to; empty for one that belongs to none,
+	// such as an operator token rotated.
 	Workspace string `protobuf:"bytes,5,opt,name=workspace,proto3" json:"workspace,omitempty"`
-	Action    string `protobuf:"bytes,6,opt,name=action,proto3" json:"action,omitempty"`
-	// A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...
-	// or workspace:....
+	// The name of the action the change recorded, such as job.created.
+	Action string `protobuf:"bytes,6,opt,name=action,proto3" json:"action,omitempty"`
+	// What changed, as a "<kind>:<id>" string such as workspace:...,
+	// host_job:..., host:..., token:..., installation:..., alert:..., repo:...,
+	// project:..., secret_set:..., job:..., sandbox:..., service:...,
+	// artifact:..., recording:... or product:...
 	Target string `protobuf:"bytes,7,opt,name=target,proto3" json:"target,omitempty"`
 	// A JSON object whose keys depend on the action.
 	DetailsJson string `protobuf:"bytes,8,opt,name=details_json,json=detailsJson,proto3" json:"details_json,omitempty"`
-	RequestId   string `protobuf:"bytes,9,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-	// The permission the call needed, for an event a Workspace API call
-	// records; empty otherwise.
+	// The request the change came from: its X-Request-Id when that has 1 to 64
+	// letters, digits, "-", "_" or ".", or 16 random hex digits.
+	RequestId string `protobuf:"bytes,9,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// For an event a call records, the permission the call needed, such as
+	// webhooks.write; empty on the operator API.
 	Permission string `protobuf:"bytes,10,opt,name=permission,proto3" json:"permission,omitempty"`
-	// Where the call acted, as "project:<id>" or
-	// "project:<id>/environment:<id>"; empty for the whole workspace and for
-	// an event no call records.
+	// For an event a call records, where the call acted, as "project:<id>" or
+	// "project:<id>/environment:<id>"; empty for a call on the whole workspace
+	// and for an event no call records.
 	Scope string `protobuf:"bytes,11,opt,name=scope,proto3" json:"scope,omitempty"`
-	// "ok", or the reason the call was refused: PERMISSION_MISSING,
-	// OUTSIDE_LIMIT or PRODUCT_UNAVAILABLE.
-	// Empty for an event no call records.
+	// For an event a call records, "ok" or the code of the refusal:
+	// PERMISSION_MISSING, OUTSIDE_LIMIT, PRODUCT_UNAVAILABLE for a product that
+	// is off, or, for a display call on Windows that Toshi licenses,
+	// TOSHI_LICENSED_WINDOWS, DESKTOP_SEAT_REQUIRED or
+	// DESKTOP_SEAT_PERSON_REQUIRED.
 	Outcome string `protobuf:"bytes,12,opt,name=outcome,proto3" json:"outcome,omitempty"`
-	// The id of the token the call was made with (never its value); empty for
-	// a session and for an event no call records.
+	// For an event a call records, the id of the token the call was made with,
+	// an operator or a workspace API token, or a person's access token; never
+	// its value, and empty for a dashboard session and for an event no call
+	// records.
 	TokenId string `protobuf:"bytes,13,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
-	// A session actor's login or name as it was when the event was recorded;
-	// empty for the other actors, and once the workspace is purged.
+	// For a session actor, the login as it was when the event was recorded;
+	// for an admission module, the host of its URL. Empty for the other
+	// actors, for a row stored before the actor id was a user id, and once the
+	// workspace is purged.
 	ActorName     string `protobuf:"bytes,14,opt,name=actor_name,json=actorName,proto3" json:"actor_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

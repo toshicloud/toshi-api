@@ -2650,45 +2650,58 @@ export const ListJobsResponseSchema: GenMessage<ListJobsResponse, {jsonType: Lis
  */
 export type AuditEvent = Message<"toshi.operator.v1.AuditEvent"> & {
   /**
+   * Increases with every event; the order of the log.
+   *
    * @generated from field: int64 id = 1;
    */
   id: bigint;
 
   /**
+   * When the control plane recorded it, just after the change.
+   *
    * @generated from field: google.protobuf.Timestamp at = 2;
    */
   at?: Timestamp | undefined;
 
   /**
-   * operator, session, system or webhook.
+   * operator, session, token, workload, product, webhook, module or system.
    *
    * @generated from field: string actor_kind = 3;
    */
   actorKind: string;
 
   /**
-   * The operator or enrollment token's id (never its value), the session's
-   * user id, or a system or webhook source name.
+   * The id of the actor that made the change, without its kind: an operator
+   * token's id (never its value) or local-admin, a session's user id or the
+   * person an access token acts for, a workspace or product token's id
+   * (never its value), a workload's "<kind>:<id>", a webhook source name, an
+   * admission module's kind, or a system source name or enrollment token's
+   * id.
    *
    * @generated from field: string actor_id = 4;
    */
   actorId: string;
 
   /**
-   * Empty when the event is not tied to a workspace.
+   * The workspace the change belongs to; empty for one that belongs to none,
+   * such as an operator token rotated.
    *
    * @generated from field: string workspace = 5;
    */
   workspace: string;
 
   /**
+   * The name of the action the change recorded, such as job.created.
+   *
    * @generated from field: string action = 6;
    */
   action: string;
 
   /**
-   * A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...
-   * or workspace:....
+   * What changed, as a "<kind>:<id>" string such as workspace:...,
+   * host_job:..., host:..., token:..., installation:..., alert:..., repo:...,
+   * project:..., secret_set:..., job:..., sandbox:..., service:...,
+   * artifact:..., recording:... or product:...
    *
    * @generated from field: string target = 7;
    */
@@ -2702,47 +2715,56 @@ export type AuditEvent = Message<"toshi.operator.v1.AuditEvent"> & {
   detailsJson: string;
 
   /**
+   * The request the change came from: its X-Request-Id when that has 1 to 64
+   * letters, digits, "-", "_" or ".", or 16 random hex digits.
+   *
    * @generated from field: string request_id = 9;
    */
   requestId: string;
 
   /**
-   * The permission the call needed, for an event a Workspace API call
-   * records; empty otherwise.
+   * For an event a call records, the permission the call needed, such as
+   * webhooks.write; empty on the operator API.
    *
    * @generated from field: string permission = 10;
    */
   permission: string;
 
   /**
-   * Where the call acted, as "project:<id>" or
-   * "project:<id>/environment:<id>"; empty for the whole workspace and for
-   * an event no call records.
+   * For an event a call records, where the call acted, as "project:<id>" or
+   * "project:<id>/environment:<id>"; empty for a call on the whole workspace
+   * and for an event no call records.
    *
    * @generated from field: string scope = 11;
    */
   scope: string;
 
   /**
-   * "ok", or the reason the call was refused: PERMISSION_MISSING,
-   * OUTSIDE_LIMIT or PRODUCT_UNAVAILABLE.
-   * Empty for an event no call records.
+   * For an event a call records, "ok" or the code of the refusal:
+   * PERMISSION_MISSING, OUTSIDE_LIMIT, PRODUCT_UNAVAILABLE for a product that
+   * is off, or, for a display call on Windows that Toshi licenses,
+   * TOSHI_LICENSED_WINDOWS, DESKTOP_SEAT_REQUIRED or
+   * DESKTOP_SEAT_PERSON_REQUIRED.
    *
    * @generated from field: string outcome = 12;
    */
   outcome: string;
 
   /**
-   * The id of the token the call was made with (never its value); empty for
-   * a session and for an event no call records.
+   * For an event a call records, the id of the token the call was made with,
+   * an operator or a workspace API token, or a person's access token; never
+   * its value, and empty for a dashboard session and for an event no call
+   * records.
    *
    * @generated from field: string token_id = 13;
    */
   tokenId: string;
 
   /**
-   * A session actor's login or name as it was when the event was recorded;
-   * empty for the other actors, and once the workspace is purged.
+   * For a session actor, the login as it was when the event was recorded;
+   * for an admission module, the host of its URL. Empty for the other
+   * actors, for a row stored before the actor id was a user id, and once the
+   * workspace is purged.
    *
    * @generated from field: string actor_name = 14;
    */
@@ -2756,45 +2778,58 @@ export type AuditEvent = Message<"toshi.operator.v1.AuditEvent"> & {
  */
 export type AuditEventJson = {
   /**
+   * Increases with every event; the order of the log.
+   *
    * @generated from field: int64 id = 1;
    */
   id?: string;
 
   /**
+   * When the control plane recorded it, just after the change.
+   *
    * @generated from field: google.protobuf.Timestamp at = 2;
    */
   at?: TimestampJson;
 
   /**
-   * operator, session, system or webhook.
+   * operator, session, token, workload, product, webhook, module or system.
    *
    * @generated from field: string actor_kind = 3;
    */
   actorKind?: string;
 
   /**
-   * The operator or enrollment token's id (never its value), the session's
-   * user id, or a system or webhook source name.
+   * The id of the actor that made the change, without its kind: an operator
+   * token's id (never its value) or local-admin, a session's user id or the
+   * person an access token acts for, a workspace or product token's id
+   * (never its value), a workload's "<kind>:<id>", a webhook source name, an
+   * admission module's kind, or a system source name or enrollment token's
+   * id.
    *
    * @generated from field: string actor_id = 4;
    */
   actorId?: string;
 
   /**
-   * Empty when the event is not tied to a workspace.
+   * The workspace the change belongs to; empty for one that belongs to none,
+   * such as an operator token rotated.
    *
    * @generated from field: string workspace = 5;
    */
   workspace?: string;
 
   /**
+   * The name of the action the change recorded, such as job.created.
+   *
    * @generated from field: string action = 6;
    */
   action?: string;
 
   /**
-   * A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...
-   * or workspace:....
+   * What changed, as a "<kind>:<id>" string such as workspace:...,
+   * host_job:..., host:..., token:..., installation:..., alert:..., repo:...,
+   * project:..., secret_set:..., job:..., sandbox:..., service:...,
+   * artifact:..., recording:... or product:...
    *
    * @generated from field: string target = 7;
    */
@@ -2808,47 +2843,56 @@ export type AuditEventJson = {
   detailsJson?: string;
 
   /**
+   * The request the change came from: its X-Request-Id when that has 1 to 64
+   * letters, digits, "-", "_" or ".", or 16 random hex digits.
+   *
    * @generated from field: string request_id = 9;
    */
   requestId?: string;
 
   /**
-   * The permission the call needed, for an event a Workspace API call
-   * records; empty otherwise.
+   * For an event a call records, the permission the call needed, such as
+   * webhooks.write; empty on the operator API.
    *
    * @generated from field: string permission = 10;
    */
   permission?: string;
 
   /**
-   * Where the call acted, as "project:<id>" or
-   * "project:<id>/environment:<id>"; empty for the whole workspace and for
-   * an event no call records.
+   * For an event a call records, where the call acted, as "project:<id>" or
+   * "project:<id>/environment:<id>"; empty for a call on the whole workspace
+   * and for an event no call records.
    *
    * @generated from field: string scope = 11;
    */
   scope?: string;
 
   /**
-   * "ok", or the reason the call was refused: PERMISSION_MISSING,
-   * OUTSIDE_LIMIT or PRODUCT_UNAVAILABLE.
-   * Empty for an event no call records.
+   * For an event a call records, "ok" or the code of the refusal:
+   * PERMISSION_MISSING, OUTSIDE_LIMIT, PRODUCT_UNAVAILABLE for a product that
+   * is off, or, for a display call on Windows that Toshi licenses,
+   * TOSHI_LICENSED_WINDOWS, DESKTOP_SEAT_REQUIRED or
+   * DESKTOP_SEAT_PERSON_REQUIRED.
    *
    * @generated from field: string outcome = 12;
    */
   outcome?: string;
 
   /**
-   * The id of the token the call was made with (never its value); empty for
-   * a session and for an event no call records.
+   * For an event a call records, the id of the token the call was made with,
+   * an operator or a workspace API token, or a person's access token; never
+   * its value, and empty for a dashboard session and for an event no call
+   * records.
    *
    * @generated from field: string token_id = 13;
    */
   tokenId?: string;
 
   /**
-   * A session actor's login or name as it was when the event was recorded;
-   * empty for the other actors, and once the workspace is purged.
+   * For a session actor, the login as it was when the event was recorded;
+   * for an admission module, the host of its URL. Empty for the other
+   * actors, for a row stored before the actor id was a user id, and once the
+   * workspace is purged.
    *
    * @generated from field: string actor_name = 14;
    */
