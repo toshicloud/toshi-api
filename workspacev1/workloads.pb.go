@@ -5643,7 +5643,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"!SERVICE_ALARM_MISFIRE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eSERVICE_ALARM_MISFIRE_COALESCE\x10\x01\x12\x1d\n" +
 	"\x19SERVICE_ALARM_MISFIRE_ALL\x10\x02\x12\x1e\n" +
-	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xf3Q\n" +
+	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\x9cS\n" +
 	"\x0fWorkloadService\x12}\n" +
 	"\tCreateJob\x12$.toshi.workspace.v1.CreateJobRequest\x1a%.toshi.workspace.v1.CreateJobResponse\"#\xc2\xf3\x18\n" +
 	"jobs.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x12m\n" +
@@ -5723,7 +5723,9 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x18service.sign_in_answered\xea\xf3\x18\x02(\x01\x12\xbe\x01\n" +
 	"\x13CancelServiceSignIn\x12..toshi.workspace.v1.CancelServiceSignInRequest\x1a/.toshi.workspace.v1.CancelServiceSignInResponse\"F\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x1b\n" +
 	"\x19service.sign_in_cancelled\xea\xf3\x18\x02(\x01\x12\xa7\x01\n" +
-	"\x16GetServiceSignInStatus\x121.toshi.workspace.v1.GetServiceSignInStatusRequest\x1a2.toshi.workspace.v1.GetServiceSignInStatusResponse\"&\xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\xea\xf3\x18\x02(\x01\x12\x9b\x01\n" +
+	"\x16GetServiceSignInStatus\x121.toshi.workspace.v1.GetServiceSignInStatusRequest\x1a2.toshi.workspace.v1.GetServiceSignInStatusResponse\"&\xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\xea\xf3\x18\x02(\x01\x12\xa6\x01\n" +
+	"\x0eSignOutService\x12).toshi.workspace.v1.SignOutServiceRequest\x1a*.toshi.workspace.v1.SignOutServiceResponse\"=\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
+	"\x10service.sign_out\xea\xf3\x18\x02(\x01\x12\x9b\x01\n" +
 	"\x14ListServiceRevisions\x12/.toshi.workspace.v1.ListServiceRevisionsRequest\x1a0.toshi.workspace.v1.ListServiceRevisionsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x95\x01\n" +
 	"\x12GetServiceRevision\x12-.toshi.workspace.v1.GetServiceRevisionRequest\x1a..toshi.workspace.v1.GetServiceRevisionResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xb5\x01\n" +
 	"\x0fRollbackService\x12*.toshi.workspace.v1.RollbackServiceRequest\x1a+.toshi.workspace.v1.RollbackServiceResponse\"I\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x1e\n" +
@@ -5878,50 +5880,52 @@ var file_toshi_workspace_v1_workloads_proto_goTypes = []any{
 	(*AnswerServiceSignInRequest)(nil),     // 122: toshi.workspace.v1.AnswerServiceSignInRequest
 	(*CancelServiceSignInRequest)(nil),     // 123: toshi.workspace.v1.CancelServiceSignInRequest
 	(*GetServiceSignInStatusRequest)(nil),  // 124: toshi.workspace.v1.GetServiceSignInStatusRequest
-	(*ListServiceRevisionsRequest)(nil),    // 125: toshi.workspace.v1.ListServiceRevisionsRequest
-	(*GetServiceRevisionRequest)(nil),      // 126: toshi.workspace.v1.GetServiceRevisionRequest
-	(*RollbackServiceRequest)(nil),         // 127: toshi.workspace.v1.RollbackServiceRequest
-	(*ListServiceActivationsRequest)(nil),  // 128: toshi.workspace.v1.ListServiceActivationsRequest
-	(*ListServiceRunsRequest)(nil),         // 129: toshi.workspace.v1.ListServiceRunsRequest
-	(*ListEventsRequest)(nil),              // 130: toshi.workspace.v1.ListEventsRequest
-	(*WatchEventsRequest)(nil),             // 131: toshi.workspace.v1.WatchEventsRequest
-	(*GetOperationRequest)(nil),            // 132: toshi.workspace.v1.GetOperationRequest
-	(*WaitOperationRequest)(nil),           // 133: toshi.workspace.v1.WaitOperationRequest
-	(*WatchOutputResponse)(nil),            // 134: toshi.workspace.v1.WatchOutputResponse
-	(*StopSandboxResponse)(nil),            // 135: toshi.workspace.v1.StopSandboxResponse
-	(*StartSandboxResponse)(nil),           // 136: toshi.workspace.v1.StartSandboxResponse
-	(*ExecuteResponse)(nil),                // 137: toshi.workspace.v1.ExecuteResponse
-	(*CancelExecutionResponse)(nil),        // 138: toshi.workspace.v1.CancelExecutionResponse
-	(*ExecuteCommandResponse)(nil),         // 139: toshi.workspace.v1.ExecuteCommandResponse
-	(*WatchTelemetryResponse)(nil),         // 140: toshi.workspace.v1.WatchTelemetryResponse
-	(*WatchGuestLogResponse)(nil),          // 141: toshi.workspace.v1.WatchGuestLogResponse
-	(*CreatePreviewShareLinkResponse)(nil), // 142: toshi.workspace.v1.CreatePreviewShareLinkResponse
-	(*ListPreviewShareLinksResponse)(nil),  // 143: toshi.workspace.v1.ListPreviewShareLinksResponse
-	(*RevokePreviewShareLinkResponse)(nil), // 144: toshi.workspace.v1.RevokePreviewShareLinkResponse
-	(*CreateServiceShareLinkResponse)(nil), // 145: toshi.workspace.v1.CreateServiceShareLinkResponse
-	(*ListServiceShareLinksResponse)(nil),  // 146: toshi.workspace.v1.ListServiceShareLinksResponse
-	(*RevokeServiceShareLinkResponse)(nil), // 147: toshi.workspace.v1.RevokeServiceShareLinkResponse
-	(*StartServiceResponse)(nil),           // 148: toshi.workspace.v1.StartServiceResponse
-	(*StopServiceResponse)(nil),            // 149: toshi.workspace.v1.StopServiceResponse
-	(*SetServiceModeResponse)(nil),         // 150: toshi.workspace.v1.SetServiceModeResponse
-	(*WakeServiceResponse)(nil),            // 151: toshi.workspace.v1.WakeServiceResponse
-	(*HoldWorkloadResponse)(nil),           // 152: toshi.workspace.v1.HoldWorkloadResponse
-	(*ReleaseWorkloadResponse)(nil),        // 153: toshi.workspace.v1.ReleaseWorkloadResponse
-	(*HoldServiceResponse)(nil),            // 154: toshi.workspace.v1.HoldServiceResponse
-	(*ReleaseServiceResponse)(nil),         // 155: toshi.workspace.v1.ReleaseServiceResponse
-	(*StartServiceSignInResponse)(nil),     // 156: toshi.workspace.v1.StartServiceSignInResponse
-	(*AnswerServiceSignInResponse)(nil),    // 157: toshi.workspace.v1.AnswerServiceSignInResponse
-	(*CancelServiceSignInResponse)(nil),    // 158: toshi.workspace.v1.CancelServiceSignInResponse
-	(*GetServiceSignInStatusResponse)(nil), // 159: toshi.workspace.v1.GetServiceSignInStatusResponse
-	(*ListServiceRevisionsResponse)(nil),   // 160: toshi.workspace.v1.ListServiceRevisionsResponse
-	(*GetServiceRevisionResponse)(nil),     // 161: toshi.workspace.v1.GetServiceRevisionResponse
-	(*RollbackServiceResponse)(nil),        // 162: toshi.workspace.v1.RollbackServiceResponse
-	(*ListServiceActivationsResponse)(nil), // 163: toshi.workspace.v1.ListServiceActivationsResponse
-	(*ListServiceRunsResponse)(nil),        // 164: toshi.workspace.v1.ListServiceRunsResponse
-	(*ListEventsResponse)(nil),             // 165: toshi.workspace.v1.ListEventsResponse
-	(*WatchEventsResponse)(nil),            // 166: toshi.workspace.v1.WatchEventsResponse
-	(*GetOperationResponse)(nil),           // 167: toshi.workspace.v1.GetOperationResponse
-	(*WaitOperationResponse)(nil),          // 168: toshi.workspace.v1.WaitOperationResponse
+	(*SignOutServiceRequest)(nil),          // 125: toshi.workspace.v1.SignOutServiceRequest
+	(*ListServiceRevisionsRequest)(nil),    // 126: toshi.workspace.v1.ListServiceRevisionsRequest
+	(*GetServiceRevisionRequest)(nil),      // 127: toshi.workspace.v1.GetServiceRevisionRequest
+	(*RollbackServiceRequest)(nil),         // 128: toshi.workspace.v1.RollbackServiceRequest
+	(*ListServiceActivationsRequest)(nil),  // 129: toshi.workspace.v1.ListServiceActivationsRequest
+	(*ListServiceRunsRequest)(nil),         // 130: toshi.workspace.v1.ListServiceRunsRequest
+	(*ListEventsRequest)(nil),              // 131: toshi.workspace.v1.ListEventsRequest
+	(*WatchEventsRequest)(nil),             // 132: toshi.workspace.v1.WatchEventsRequest
+	(*GetOperationRequest)(nil),            // 133: toshi.workspace.v1.GetOperationRequest
+	(*WaitOperationRequest)(nil),           // 134: toshi.workspace.v1.WaitOperationRequest
+	(*WatchOutputResponse)(nil),            // 135: toshi.workspace.v1.WatchOutputResponse
+	(*StopSandboxResponse)(nil),            // 136: toshi.workspace.v1.StopSandboxResponse
+	(*StartSandboxResponse)(nil),           // 137: toshi.workspace.v1.StartSandboxResponse
+	(*ExecuteResponse)(nil),                // 138: toshi.workspace.v1.ExecuteResponse
+	(*CancelExecutionResponse)(nil),        // 139: toshi.workspace.v1.CancelExecutionResponse
+	(*ExecuteCommandResponse)(nil),         // 140: toshi.workspace.v1.ExecuteCommandResponse
+	(*WatchTelemetryResponse)(nil),         // 141: toshi.workspace.v1.WatchTelemetryResponse
+	(*WatchGuestLogResponse)(nil),          // 142: toshi.workspace.v1.WatchGuestLogResponse
+	(*CreatePreviewShareLinkResponse)(nil), // 143: toshi.workspace.v1.CreatePreviewShareLinkResponse
+	(*ListPreviewShareLinksResponse)(nil),  // 144: toshi.workspace.v1.ListPreviewShareLinksResponse
+	(*RevokePreviewShareLinkResponse)(nil), // 145: toshi.workspace.v1.RevokePreviewShareLinkResponse
+	(*CreateServiceShareLinkResponse)(nil), // 146: toshi.workspace.v1.CreateServiceShareLinkResponse
+	(*ListServiceShareLinksResponse)(nil),  // 147: toshi.workspace.v1.ListServiceShareLinksResponse
+	(*RevokeServiceShareLinkResponse)(nil), // 148: toshi.workspace.v1.RevokeServiceShareLinkResponse
+	(*StartServiceResponse)(nil),           // 149: toshi.workspace.v1.StartServiceResponse
+	(*StopServiceResponse)(nil),            // 150: toshi.workspace.v1.StopServiceResponse
+	(*SetServiceModeResponse)(nil),         // 151: toshi.workspace.v1.SetServiceModeResponse
+	(*WakeServiceResponse)(nil),            // 152: toshi.workspace.v1.WakeServiceResponse
+	(*HoldWorkloadResponse)(nil),           // 153: toshi.workspace.v1.HoldWorkloadResponse
+	(*ReleaseWorkloadResponse)(nil),        // 154: toshi.workspace.v1.ReleaseWorkloadResponse
+	(*HoldServiceResponse)(nil),            // 155: toshi.workspace.v1.HoldServiceResponse
+	(*ReleaseServiceResponse)(nil),         // 156: toshi.workspace.v1.ReleaseServiceResponse
+	(*StartServiceSignInResponse)(nil),     // 157: toshi.workspace.v1.StartServiceSignInResponse
+	(*AnswerServiceSignInResponse)(nil),    // 158: toshi.workspace.v1.AnswerServiceSignInResponse
+	(*CancelServiceSignInResponse)(nil),    // 159: toshi.workspace.v1.CancelServiceSignInResponse
+	(*GetServiceSignInStatusResponse)(nil), // 160: toshi.workspace.v1.GetServiceSignInStatusResponse
+	(*SignOutServiceResponse)(nil),         // 161: toshi.workspace.v1.SignOutServiceResponse
+	(*ListServiceRevisionsResponse)(nil),   // 162: toshi.workspace.v1.ListServiceRevisionsResponse
+	(*GetServiceRevisionResponse)(nil),     // 163: toshi.workspace.v1.GetServiceRevisionResponse
+	(*RollbackServiceResponse)(nil),        // 164: toshi.workspace.v1.RollbackServiceResponse
+	(*ListServiceActivationsResponse)(nil), // 165: toshi.workspace.v1.ListServiceActivationsResponse
+	(*ListServiceRunsResponse)(nil),        // 166: toshi.workspace.v1.ListServiceRunsResponse
+	(*ListEventsResponse)(nil),             // 167: toshi.workspace.v1.ListEventsResponse
+	(*WatchEventsResponse)(nil),            // 168: toshi.workspace.v1.WatchEventsResponse
+	(*GetOperationResponse)(nil),           // 169: toshi.workspace.v1.GetOperationResponse
+	(*WaitOperationResponse)(nil),          // 170: toshi.workspace.v1.WaitOperationResponse
 }
 var file_toshi_workspace_v1_workloads_proto_depIdxs = []int32{
 	79,  // 0: toshi.workspace.v1.AnswerPromptResponse.event:type_name -> toshi.workspace.v1.Event
@@ -6073,87 +6077,89 @@ var file_toshi_workspace_v1_workloads_proto_depIdxs = []int32{
 	122, // 146: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:input_type -> toshi.workspace.v1.AnswerServiceSignInRequest
 	123, // 147: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:input_type -> toshi.workspace.v1.CancelServiceSignInRequest
 	124, // 148: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:input_type -> toshi.workspace.v1.GetServiceSignInStatusRequest
-	125, // 149: toshi.workspace.v1.WorkloadService.ListServiceRevisions:input_type -> toshi.workspace.v1.ListServiceRevisionsRequest
-	126, // 150: toshi.workspace.v1.WorkloadService.GetServiceRevision:input_type -> toshi.workspace.v1.GetServiceRevisionRequest
-	127, // 151: toshi.workspace.v1.WorkloadService.RollbackService:input_type -> toshi.workspace.v1.RollbackServiceRequest
-	128, // 152: toshi.workspace.v1.WorkloadService.ListServiceActivations:input_type -> toshi.workspace.v1.ListServiceActivationsRequest
-	129, // 153: toshi.workspace.v1.WorkloadService.ListServiceRuns:input_type -> toshi.workspace.v1.ListServiceRunsRequest
-	130, // 154: toshi.workspace.v1.WorkloadService.ListEvents:input_type -> toshi.workspace.v1.ListEventsRequest
-	5,   // 155: toshi.workspace.v1.WorkloadService.ExportEvents:input_type -> toshi.workspace.v1.ExportEventsRequest
-	131, // 156: toshi.workspace.v1.WorkloadService.WatchEvents:input_type -> toshi.workspace.v1.WatchEventsRequest
-	132, // 157: toshi.workspace.v1.WorkloadService.GetOperation:input_type -> toshi.workspace.v1.GetOperationRequest
-	133, // 158: toshi.workspace.v1.WorkloadService.WaitOperation:input_type -> toshi.workspace.v1.WaitOperationRequest
-	8,   // 159: toshi.workspace.v1.WorkloadService.CreateJob:output_type -> toshi.workspace.v1.CreateJobResponse
-	10,  // 160: toshi.workspace.v1.WorkloadService.GetJob:output_type -> toshi.workspace.v1.GetJobResponse
-	12,  // 161: toshi.workspace.v1.WorkloadService.ListJobs:output_type -> toshi.workspace.v1.ListJobsResponse
-	14,  // 162: toshi.workspace.v1.WorkloadService.GetWorkloadUsage:output_type -> toshi.workspace.v1.GetWorkloadUsageResponse
-	18,  // 163: toshi.workspace.v1.WorkloadService.ListWorkloadUsages:output_type -> toshi.workspace.v1.ListWorkloadUsagesResponse
-	20,  // 164: toshi.workspace.v1.WorkloadService.UpdateJob:output_type -> toshi.workspace.v1.UpdateJobResponse
-	22,  // 165: toshi.workspace.v1.WorkloadService.DeleteJob:output_type -> toshi.workspace.v1.DeleteJobResponse
-	24,  // 166: toshi.workspace.v1.WorkloadService.CancelJob:output_type -> toshi.workspace.v1.CancelJobResponse
-	26,  // 167: toshi.workspace.v1.WorkloadService.WaitJob:output_type -> toshi.workspace.v1.WaitJobResponse
-	28,  // 168: toshi.workspace.v1.WorkloadService.WatchJobs:output_type -> toshi.workspace.v1.WatchJobsResponse
-	134, // 169: toshi.workspace.v1.WorkloadService.WatchOutput:output_type -> toshi.workspace.v1.WatchOutputResponse
-	30,  // 170: toshi.workspace.v1.WorkloadService.CreateSandbox:output_type -> toshi.workspace.v1.CreateSandboxResponse
-	32,  // 171: toshi.workspace.v1.WorkloadService.GetSandbox:output_type -> toshi.workspace.v1.GetSandboxResponse
-	34,  // 172: toshi.workspace.v1.WorkloadService.ListSandboxes:output_type -> toshi.workspace.v1.ListSandboxesResponse
-	36,  // 173: toshi.workspace.v1.WorkloadService.UpdateSandbox:output_type -> toshi.workspace.v1.UpdateSandboxResponse
-	38,  // 174: toshi.workspace.v1.WorkloadService.DeleteSandbox:output_type -> toshi.workspace.v1.DeleteSandboxResponse
-	135, // 175: toshi.workspace.v1.WorkloadService.StopSandbox:output_type -> toshi.workspace.v1.StopSandboxResponse
-	136, // 176: toshi.workspace.v1.WorkloadService.StartSandbox:output_type -> toshi.workspace.v1.StartSandboxResponse
-	40,  // 177: toshi.workspace.v1.WorkloadService.WaitSandbox:output_type -> toshi.workspace.v1.WaitSandboxResponse
-	42,  // 178: toshi.workspace.v1.WorkloadService.WatchSandboxes:output_type -> toshi.workspace.v1.WatchSandboxesResponse
-	137, // 179: toshi.workspace.v1.WorkloadService.Execute:output_type -> toshi.workspace.v1.ExecuteResponse
-	138, // 180: toshi.workspace.v1.WorkloadService.CancelExecution:output_type -> toshi.workspace.v1.CancelExecutionResponse
-	139, // 181: toshi.workspace.v1.WorkloadService.ExecuteCommand:output_type -> toshi.workspace.v1.ExecuteCommandResponse
-	2,   // 182: toshi.workspace.v1.WorkloadService.AnswerPrompt:output_type -> toshi.workspace.v1.AnswerPromptResponse
-	4,   // 183: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:output_type -> toshi.workspace.v1.EmitWorkloadEventResponse
-	140, // 184: toshi.workspace.v1.WorkloadService.WatchTelemetry:output_type -> toshi.workspace.v1.WatchTelemetryResponse
-	141, // 185: toshi.workspace.v1.WorkloadService.WatchGuestLog:output_type -> toshi.workspace.v1.WatchGuestLogResponse
-	142, // 186: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:output_type -> toshi.workspace.v1.CreatePreviewShareLinkResponse
-	143, // 187: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:output_type -> toshi.workspace.v1.ListPreviewShareLinksResponse
-	144, // 188: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:output_type -> toshi.workspace.v1.RevokePreviewShareLinkResponse
-	145, // 189: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:output_type -> toshi.workspace.v1.CreateServiceShareLinkResponse
-	146, // 190: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:output_type -> toshi.workspace.v1.ListServiceShareLinksResponse
-	147, // 191: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:output_type -> toshi.workspace.v1.RevokeServiceShareLinkResponse
-	44,  // 192: toshi.workspace.v1.WorkloadService.CreateService:output_type -> toshi.workspace.v1.CreateServiceResponse
-	46,  // 193: toshi.workspace.v1.WorkloadService.GetService:output_type -> toshi.workspace.v1.GetServiceResponse
-	48,  // 194: toshi.workspace.v1.WorkloadService.ListServices:output_type -> toshi.workspace.v1.ListServicesResponse
-	50,  // 195: toshi.workspace.v1.WorkloadService.UpdateService:output_type -> toshi.workspace.v1.UpdateServiceResponse
-	52,  // 196: toshi.workspace.v1.WorkloadService.DeleteService:output_type -> toshi.workspace.v1.DeleteServiceResponse
-	54,  // 197: toshi.workspace.v1.WorkloadService.WaitService:output_type -> toshi.workspace.v1.WaitServiceResponse
-	56,  // 198: toshi.workspace.v1.WorkloadService.WatchServices:output_type -> toshi.workspace.v1.WatchServicesResponse
-	148, // 199: toshi.workspace.v1.WorkloadService.StartService:output_type -> toshi.workspace.v1.StartServiceResponse
-	149, // 200: toshi.workspace.v1.WorkloadService.StopService:output_type -> toshi.workspace.v1.StopServiceResponse
-	150, // 201: toshi.workspace.v1.WorkloadService.SetServiceMode:output_type -> toshi.workspace.v1.SetServiceModeResponse
-	151, // 202: toshi.workspace.v1.WorkloadService.WakeService:output_type -> toshi.workspace.v1.WakeServiceResponse
-	152, // 203: toshi.workspace.v1.WorkloadService.HoldWorkload:output_type -> toshi.workspace.v1.HoldWorkloadResponse
-	153, // 204: toshi.workspace.v1.WorkloadService.ReleaseWorkload:output_type -> toshi.workspace.v1.ReleaseWorkloadResponse
-	154, // 205: toshi.workspace.v1.WorkloadService.HoldService:output_type -> toshi.workspace.v1.HoldServiceResponse
-	155, // 206: toshi.workspace.v1.WorkloadService.ReleaseService:output_type -> toshi.workspace.v1.ReleaseServiceResponse
-	60,  // 207: toshi.workspace.v1.WorkloadService.SetServiceAlarm:output_type -> toshi.workspace.v1.SetServiceAlarmResponse
-	62,  // 208: toshi.workspace.v1.WorkloadService.GetServiceAlarm:output_type -> toshi.workspace.v1.GetServiceAlarmResponse
-	64,  // 209: toshi.workspace.v1.WorkloadService.ListServiceAlarms:output_type -> toshi.workspace.v1.ListServiceAlarmsResponse
-	66,  // 210: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:output_type -> toshi.workspace.v1.DeleteServiceAlarmResponse
-	68,  // 211: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:output_type -> toshi.workspace.v1.PauseServiceAlarmResponse
-	70,  // 212: toshi.workspace.v1.WorkloadService.ResumeServiceAlarm:output_type -> toshi.workspace.v1.ResumeServiceAlarmResponse
-	72,  // 213: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:output_type -> toshi.workspace.v1.RunServiceAlarmNowResponse
-	156, // 214: toshi.workspace.v1.WorkloadService.StartServiceSignIn:output_type -> toshi.workspace.v1.StartServiceSignInResponse
-	157, // 215: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:output_type -> toshi.workspace.v1.AnswerServiceSignInResponse
-	158, // 216: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:output_type -> toshi.workspace.v1.CancelServiceSignInResponse
-	159, // 217: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:output_type -> toshi.workspace.v1.GetServiceSignInStatusResponse
-	160, // 218: toshi.workspace.v1.WorkloadService.ListServiceRevisions:output_type -> toshi.workspace.v1.ListServiceRevisionsResponse
-	161, // 219: toshi.workspace.v1.WorkloadService.GetServiceRevision:output_type -> toshi.workspace.v1.GetServiceRevisionResponse
-	162, // 220: toshi.workspace.v1.WorkloadService.RollbackService:output_type -> toshi.workspace.v1.RollbackServiceResponse
-	163, // 221: toshi.workspace.v1.WorkloadService.ListServiceActivations:output_type -> toshi.workspace.v1.ListServiceActivationsResponse
-	164, // 222: toshi.workspace.v1.WorkloadService.ListServiceRuns:output_type -> toshi.workspace.v1.ListServiceRunsResponse
-	165, // 223: toshi.workspace.v1.WorkloadService.ListEvents:output_type -> toshi.workspace.v1.ListEventsResponse
-	6,   // 224: toshi.workspace.v1.WorkloadService.ExportEvents:output_type -> toshi.workspace.v1.ExportEventsResponse
-	166, // 225: toshi.workspace.v1.WorkloadService.WatchEvents:output_type -> toshi.workspace.v1.WatchEventsResponse
-	167, // 226: toshi.workspace.v1.WorkloadService.GetOperation:output_type -> toshi.workspace.v1.GetOperationResponse
-	168, // 227: toshi.workspace.v1.WorkloadService.WaitOperation:output_type -> toshi.workspace.v1.WaitOperationResponse
-	159, // [159:228] is the sub-list for method output_type
-	90,  // [90:159] is the sub-list for method input_type
+	125, // 149: toshi.workspace.v1.WorkloadService.SignOutService:input_type -> toshi.workspace.v1.SignOutServiceRequest
+	126, // 150: toshi.workspace.v1.WorkloadService.ListServiceRevisions:input_type -> toshi.workspace.v1.ListServiceRevisionsRequest
+	127, // 151: toshi.workspace.v1.WorkloadService.GetServiceRevision:input_type -> toshi.workspace.v1.GetServiceRevisionRequest
+	128, // 152: toshi.workspace.v1.WorkloadService.RollbackService:input_type -> toshi.workspace.v1.RollbackServiceRequest
+	129, // 153: toshi.workspace.v1.WorkloadService.ListServiceActivations:input_type -> toshi.workspace.v1.ListServiceActivationsRequest
+	130, // 154: toshi.workspace.v1.WorkloadService.ListServiceRuns:input_type -> toshi.workspace.v1.ListServiceRunsRequest
+	131, // 155: toshi.workspace.v1.WorkloadService.ListEvents:input_type -> toshi.workspace.v1.ListEventsRequest
+	5,   // 156: toshi.workspace.v1.WorkloadService.ExportEvents:input_type -> toshi.workspace.v1.ExportEventsRequest
+	132, // 157: toshi.workspace.v1.WorkloadService.WatchEvents:input_type -> toshi.workspace.v1.WatchEventsRequest
+	133, // 158: toshi.workspace.v1.WorkloadService.GetOperation:input_type -> toshi.workspace.v1.GetOperationRequest
+	134, // 159: toshi.workspace.v1.WorkloadService.WaitOperation:input_type -> toshi.workspace.v1.WaitOperationRequest
+	8,   // 160: toshi.workspace.v1.WorkloadService.CreateJob:output_type -> toshi.workspace.v1.CreateJobResponse
+	10,  // 161: toshi.workspace.v1.WorkloadService.GetJob:output_type -> toshi.workspace.v1.GetJobResponse
+	12,  // 162: toshi.workspace.v1.WorkloadService.ListJobs:output_type -> toshi.workspace.v1.ListJobsResponse
+	14,  // 163: toshi.workspace.v1.WorkloadService.GetWorkloadUsage:output_type -> toshi.workspace.v1.GetWorkloadUsageResponse
+	18,  // 164: toshi.workspace.v1.WorkloadService.ListWorkloadUsages:output_type -> toshi.workspace.v1.ListWorkloadUsagesResponse
+	20,  // 165: toshi.workspace.v1.WorkloadService.UpdateJob:output_type -> toshi.workspace.v1.UpdateJobResponse
+	22,  // 166: toshi.workspace.v1.WorkloadService.DeleteJob:output_type -> toshi.workspace.v1.DeleteJobResponse
+	24,  // 167: toshi.workspace.v1.WorkloadService.CancelJob:output_type -> toshi.workspace.v1.CancelJobResponse
+	26,  // 168: toshi.workspace.v1.WorkloadService.WaitJob:output_type -> toshi.workspace.v1.WaitJobResponse
+	28,  // 169: toshi.workspace.v1.WorkloadService.WatchJobs:output_type -> toshi.workspace.v1.WatchJobsResponse
+	135, // 170: toshi.workspace.v1.WorkloadService.WatchOutput:output_type -> toshi.workspace.v1.WatchOutputResponse
+	30,  // 171: toshi.workspace.v1.WorkloadService.CreateSandbox:output_type -> toshi.workspace.v1.CreateSandboxResponse
+	32,  // 172: toshi.workspace.v1.WorkloadService.GetSandbox:output_type -> toshi.workspace.v1.GetSandboxResponse
+	34,  // 173: toshi.workspace.v1.WorkloadService.ListSandboxes:output_type -> toshi.workspace.v1.ListSandboxesResponse
+	36,  // 174: toshi.workspace.v1.WorkloadService.UpdateSandbox:output_type -> toshi.workspace.v1.UpdateSandboxResponse
+	38,  // 175: toshi.workspace.v1.WorkloadService.DeleteSandbox:output_type -> toshi.workspace.v1.DeleteSandboxResponse
+	136, // 176: toshi.workspace.v1.WorkloadService.StopSandbox:output_type -> toshi.workspace.v1.StopSandboxResponse
+	137, // 177: toshi.workspace.v1.WorkloadService.StartSandbox:output_type -> toshi.workspace.v1.StartSandboxResponse
+	40,  // 178: toshi.workspace.v1.WorkloadService.WaitSandbox:output_type -> toshi.workspace.v1.WaitSandboxResponse
+	42,  // 179: toshi.workspace.v1.WorkloadService.WatchSandboxes:output_type -> toshi.workspace.v1.WatchSandboxesResponse
+	138, // 180: toshi.workspace.v1.WorkloadService.Execute:output_type -> toshi.workspace.v1.ExecuteResponse
+	139, // 181: toshi.workspace.v1.WorkloadService.CancelExecution:output_type -> toshi.workspace.v1.CancelExecutionResponse
+	140, // 182: toshi.workspace.v1.WorkloadService.ExecuteCommand:output_type -> toshi.workspace.v1.ExecuteCommandResponse
+	2,   // 183: toshi.workspace.v1.WorkloadService.AnswerPrompt:output_type -> toshi.workspace.v1.AnswerPromptResponse
+	4,   // 184: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:output_type -> toshi.workspace.v1.EmitWorkloadEventResponse
+	141, // 185: toshi.workspace.v1.WorkloadService.WatchTelemetry:output_type -> toshi.workspace.v1.WatchTelemetryResponse
+	142, // 186: toshi.workspace.v1.WorkloadService.WatchGuestLog:output_type -> toshi.workspace.v1.WatchGuestLogResponse
+	143, // 187: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:output_type -> toshi.workspace.v1.CreatePreviewShareLinkResponse
+	144, // 188: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:output_type -> toshi.workspace.v1.ListPreviewShareLinksResponse
+	145, // 189: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:output_type -> toshi.workspace.v1.RevokePreviewShareLinkResponse
+	146, // 190: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:output_type -> toshi.workspace.v1.CreateServiceShareLinkResponse
+	147, // 191: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:output_type -> toshi.workspace.v1.ListServiceShareLinksResponse
+	148, // 192: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:output_type -> toshi.workspace.v1.RevokeServiceShareLinkResponse
+	44,  // 193: toshi.workspace.v1.WorkloadService.CreateService:output_type -> toshi.workspace.v1.CreateServiceResponse
+	46,  // 194: toshi.workspace.v1.WorkloadService.GetService:output_type -> toshi.workspace.v1.GetServiceResponse
+	48,  // 195: toshi.workspace.v1.WorkloadService.ListServices:output_type -> toshi.workspace.v1.ListServicesResponse
+	50,  // 196: toshi.workspace.v1.WorkloadService.UpdateService:output_type -> toshi.workspace.v1.UpdateServiceResponse
+	52,  // 197: toshi.workspace.v1.WorkloadService.DeleteService:output_type -> toshi.workspace.v1.DeleteServiceResponse
+	54,  // 198: toshi.workspace.v1.WorkloadService.WaitService:output_type -> toshi.workspace.v1.WaitServiceResponse
+	56,  // 199: toshi.workspace.v1.WorkloadService.WatchServices:output_type -> toshi.workspace.v1.WatchServicesResponse
+	149, // 200: toshi.workspace.v1.WorkloadService.StartService:output_type -> toshi.workspace.v1.StartServiceResponse
+	150, // 201: toshi.workspace.v1.WorkloadService.StopService:output_type -> toshi.workspace.v1.StopServiceResponse
+	151, // 202: toshi.workspace.v1.WorkloadService.SetServiceMode:output_type -> toshi.workspace.v1.SetServiceModeResponse
+	152, // 203: toshi.workspace.v1.WorkloadService.WakeService:output_type -> toshi.workspace.v1.WakeServiceResponse
+	153, // 204: toshi.workspace.v1.WorkloadService.HoldWorkload:output_type -> toshi.workspace.v1.HoldWorkloadResponse
+	154, // 205: toshi.workspace.v1.WorkloadService.ReleaseWorkload:output_type -> toshi.workspace.v1.ReleaseWorkloadResponse
+	155, // 206: toshi.workspace.v1.WorkloadService.HoldService:output_type -> toshi.workspace.v1.HoldServiceResponse
+	156, // 207: toshi.workspace.v1.WorkloadService.ReleaseService:output_type -> toshi.workspace.v1.ReleaseServiceResponse
+	60,  // 208: toshi.workspace.v1.WorkloadService.SetServiceAlarm:output_type -> toshi.workspace.v1.SetServiceAlarmResponse
+	62,  // 209: toshi.workspace.v1.WorkloadService.GetServiceAlarm:output_type -> toshi.workspace.v1.GetServiceAlarmResponse
+	64,  // 210: toshi.workspace.v1.WorkloadService.ListServiceAlarms:output_type -> toshi.workspace.v1.ListServiceAlarmsResponse
+	66,  // 211: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:output_type -> toshi.workspace.v1.DeleteServiceAlarmResponse
+	68,  // 212: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:output_type -> toshi.workspace.v1.PauseServiceAlarmResponse
+	70,  // 213: toshi.workspace.v1.WorkloadService.ResumeServiceAlarm:output_type -> toshi.workspace.v1.ResumeServiceAlarmResponse
+	72,  // 214: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:output_type -> toshi.workspace.v1.RunServiceAlarmNowResponse
+	157, // 215: toshi.workspace.v1.WorkloadService.StartServiceSignIn:output_type -> toshi.workspace.v1.StartServiceSignInResponse
+	158, // 216: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:output_type -> toshi.workspace.v1.AnswerServiceSignInResponse
+	159, // 217: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:output_type -> toshi.workspace.v1.CancelServiceSignInResponse
+	160, // 218: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:output_type -> toshi.workspace.v1.GetServiceSignInStatusResponse
+	161, // 219: toshi.workspace.v1.WorkloadService.SignOutService:output_type -> toshi.workspace.v1.SignOutServiceResponse
+	162, // 220: toshi.workspace.v1.WorkloadService.ListServiceRevisions:output_type -> toshi.workspace.v1.ListServiceRevisionsResponse
+	163, // 221: toshi.workspace.v1.WorkloadService.GetServiceRevision:output_type -> toshi.workspace.v1.GetServiceRevisionResponse
+	164, // 222: toshi.workspace.v1.WorkloadService.RollbackService:output_type -> toshi.workspace.v1.RollbackServiceResponse
+	165, // 223: toshi.workspace.v1.WorkloadService.ListServiceActivations:output_type -> toshi.workspace.v1.ListServiceActivationsResponse
+	166, // 224: toshi.workspace.v1.WorkloadService.ListServiceRuns:output_type -> toshi.workspace.v1.ListServiceRunsResponse
+	167, // 225: toshi.workspace.v1.WorkloadService.ListEvents:output_type -> toshi.workspace.v1.ListEventsResponse
+	6,   // 226: toshi.workspace.v1.WorkloadService.ExportEvents:output_type -> toshi.workspace.v1.ExportEventsResponse
+	168, // 227: toshi.workspace.v1.WorkloadService.WatchEvents:output_type -> toshi.workspace.v1.WatchEventsResponse
+	169, // 228: toshi.workspace.v1.WorkloadService.GetOperation:output_type -> toshi.workspace.v1.GetOperationResponse
+	170, // 229: toshi.workspace.v1.WorkloadService.WaitOperation:output_type -> toshi.workspace.v1.WaitOperationResponse
+	160, // [160:230] is the sub-list for method output_type
+	90,  // [90:160] is the sub-list for method input_type
 	90,  // [90:90] is the sub-list for extension type_name
 	90,  // [90:90] is the sub-list for extension extendee
 	0,   // [0:90] is the sub-list for field type_name

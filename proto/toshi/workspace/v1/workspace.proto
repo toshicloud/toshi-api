@@ -2182,6 +2182,23 @@ message ServiceSignInStatus {
   ServiceSignInEndpoint endpoint = 5;
 }
 
+message SignOutServiceRequest {
+  string project = 1;
+  string environment = 2;
+  string service_id = 3;
+  // The recipe's sign_in program whose sign-out command runs.
+  string program = 4;
+}
+
+message SignOutServiceResponse {
+  // The sign-out command's exit code; -1 when it did not run, or did not
+  // end within its 30 seconds.
+  int32 exit_code = 1;
+  // What the command wrote: its standard output, then its standard error,
+  // at most 4 KiB, ending "[cut]" when it was cut.
+  string output = 2;
+}
+
 message ListServiceRunsRequest {
   string project = 1;
   string environment = 2;

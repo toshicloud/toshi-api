@@ -207,6 +207,9 @@ const (
 	// WorkloadServiceGetServiceSignInStatusProcedure is the fully-qualified name of the
 	// WorkloadService's GetServiceSignInStatus RPC.
 	WorkloadServiceGetServiceSignInStatusProcedure = "/toshi.workspace.v1.WorkloadService/GetServiceSignInStatus"
+	// WorkloadServiceSignOutServiceProcedure is the fully-qualified name of the WorkloadService's
+	// SignOutService RPC.
+	WorkloadServiceSignOutServiceProcedure = "/toshi.workspace.v1.WorkloadService/SignOutService"
 	// WorkloadServiceListServiceRevisionsProcedure is the fully-qualified name of the WorkloadService's
 	// ListServiceRevisions RPC.
 	WorkloadServiceListServiceRevisionsProcedure = "/toshi.workspace.v1.WorkloadService/ListServiceRevisions"
@@ -631,6 +634,17 @@ type WorkloadServiceClient interface {
 	// NOT_FOUND; a service that is not running fails with
 	// FAILED_PRECONDITION.
 	GetServiceSignInStatus(context.Context, *connect.Request[workspacev1.GetServiceSignInStatusRequest]) (*connect.Response[workspacev1.GetServiceSignInStatusResponse], error)
+	// SignOutService runs the sign-out command of one of the service's
+	// recipe's sign_in programs on the service's run: the program's own
+	// logout, such as `gh auth logout`. Toshi does not read, copy or delete
+	// what the program keeps. The command runs for 30 seconds at most, past
+	// which exit_code is -1; its output is cut at 4 KiB, ending with "[cut]".
+	//
+	// An unknown service or a program its recipe does not declare fails with
+	// NOT_FOUND; a service that is not running, a program whose recipe
+	// declares no sign_out command, or a sign-in of the program under way
+	// fails with FAILED_PRECONDITION.
+	SignOutService(context.Context, *connect.Request[workspacev1.SignOutServiceRequest]) (*connect.Response[workspacev1.SignOutServiceResponse], error)
 	// ListServiceRevisions returns a service's revisions, newest first, a
 	// page at a time. An unknown ID fails with NOT_FOUND.
 	ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error)
@@ -1063,6 +1077,12 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("GetServiceSignInStatus")),
 			connect.WithClientOptions(opts...),
 		),
+		signOutService: connect.NewClient[workspacev1.SignOutServiceRequest, workspacev1.SignOutServiceResponse](
+			httpClient,
+			baseURL+WorkloadServiceSignOutServiceProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("SignOutService")),
+			connect.WithClientOptions(opts...),
+		),
 		listServiceRevisions: connect.NewClient[workspacev1.ListServiceRevisionsRequest, workspacev1.ListServiceRevisionsResponse](
 			httpClient,
 			baseURL+WorkloadServiceListServiceRevisionsProcedure,
@@ -1187,6 +1207,7 @@ type workloadServiceClient struct {
 	answerServiceSignIn    *connect.Client[workspacev1.AnswerServiceSignInRequest, workspacev1.AnswerServiceSignInResponse]
 	cancelServiceSignIn    *connect.Client[workspacev1.CancelServiceSignInRequest, workspacev1.CancelServiceSignInResponse]
 	getServiceSignInStatus *connect.Client[workspacev1.GetServiceSignInStatusRequest, workspacev1.GetServiceSignInStatusResponse]
+	signOutService         *connect.Client[workspacev1.SignOutServiceRequest, workspacev1.SignOutServiceResponse]
 	listServiceRevisions   *connect.Client[workspacev1.ListServiceRevisionsRequest, workspacev1.ListServiceRevisionsResponse]
 	getServiceRevision     *connect.Client[workspacev1.GetServiceRevisionRequest, workspacev1.GetServiceRevisionResponse]
 	rollbackService        *connect.Client[workspacev1.RollbackServiceRequest, workspacev1.RollbackServiceResponse]
@@ -1492,6 +1513,11 @@ func (c *workloadServiceClient) CancelServiceSignIn(ctx context.Context, req *co
 // GetServiceSignInStatus calls toshi.workspace.v1.WorkloadService.GetServiceSignInStatus.
 func (c *workloadServiceClient) GetServiceSignInStatus(ctx context.Context, req *connect.Request[workspacev1.GetServiceSignInStatusRequest]) (*connect.Response[workspacev1.GetServiceSignInStatusResponse], error) {
 	return c.getServiceSignInStatus.CallUnary(ctx, req)
+}
+
+// SignOutService calls toshi.workspace.v1.WorkloadService.SignOutService.
+func (c *workloadServiceClient) SignOutService(ctx context.Context, req *connect.Request[workspacev1.SignOutServiceRequest]) (*connect.Response[workspacev1.SignOutServiceResponse], error) {
+	return c.signOutService.CallUnary(ctx, req)
 }
 
 // ListServiceRevisions calls toshi.workspace.v1.WorkloadService.ListServiceRevisions.
@@ -1936,6 +1962,17 @@ type WorkloadServiceHandler interface {
 	// NOT_FOUND; a service that is not running fails with
 	// FAILED_PRECONDITION.
 	GetServiceSignInStatus(context.Context, *connect.Request[workspacev1.GetServiceSignInStatusRequest]) (*connect.Response[workspacev1.GetServiceSignInStatusResponse], error)
+	// SignOutService runs the sign-out command of one of the service's
+	// recipe's sign_in programs on the service's run: the program's own
+	// logout, such as `gh auth logout`. Toshi does not read, copy or delete
+	// what the program keeps. The command runs for 30 seconds at most, past
+	// which exit_code is -1; its output is cut at 4 KiB, ending with "[cut]".
+	//
+	// An unknown service or a program its recipe does not declare fails with
+	// NOT_FOUND; a service that is not running, a program whose recipe
+	// declares no sign_out command, or a sign-in of the program under way
+	// fails with FAILED_PRECONDITION.
+	SignOutService(context.Context, *connect.Request[workspacev1.SignOutServiceRequest]) (*connect.Response[workspacev1.SignOutServiceResponse], error)
 	// ListServiceRevisions returns a service's revisions, newest first, a
 	// page at a time. An unknown ID fails with NOT_FOUND.
 	ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error)
@@ -2364,6 +2401,12 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("GetServiceSignInStatus")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceSignOutServiceHandler := connect.NewUnaryHandler(
+		WorkloadServiceSignOutServiceProcedure,
+		svc.SignOutService,
+		connect.WithSchema(workloadServiceMethods.ByName("SignOutService")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceListServiceRevisionsHandler := connect.NewUnaryHandler(
 		WorkloadServiceListServiceRevisionsProcedure,
 		svc.ListServiceRevisions,
@@ -2544,6 +2587,8 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceCancelServiceSignInHandler.ServeHTTP(w, r)
 		case WorkloadServiceGetServiceSignInStatusProcedure:
 			workloadServiceGetServiceSignInStatusHandler.ServeHTTP(w, r)
+		case WorkloadServiceSignOutServiceProcedure:
+			workloadServiceSignOutServiceHandler.ServeHTTP(w, r)
 		case WorkloadServiceListServiceRevisionsProcedure:
 			workloadServiceListServiceRevisionsHandler.ServeHTTP(w, r)
 		case WorkloadServiceGetServiceRevisionProcedure:
@@ -2807,6 +2852,10 @@ func (UnimplementedWorkloadServiceHandler) CancelServiceSignIn(context.Context, 
 
 func (UnimplementedWorkloadServiceHandler) GetServiceSignInStatus(context.Context, *connect.Request[workspacev1.GetServiceSignInStatusRequest]) (*connect.Response[workspacev1.GetServiceSignInStatusResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.GetServiceSignInStatus is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) SignOutService(context.Context, *connect.Request[workspacev1.SignOutServiceRequest]) (*connect.Response[workspacev1.SignOutServiceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.SignOutService is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) ListServiceRevisions(context.Context, *connect.Request[workspacev1.ListServiceRevisionsRequest]) (*connect.Response[workspacev1.ListServiceRevisionsResponse], error) {

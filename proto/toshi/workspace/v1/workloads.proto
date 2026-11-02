@@ -726,6 +726,23 @@ service WorkloadService {
     option (toshi.mcp) = {exclude: true};
   }
 
+  // SignOutService runs the sign-out command of one of the service's
+  // recipe's sign_in programs on the service's run: the program's own
+  // logout, such as `gh auth logout`. Toshi does not read, copy or delete
+  // what the program keeps. The command runs for 30 seconds at most, past
+  // which exit_code is -1; its output is cut at 4 KiB, ending with "[cut]".
+  //
+  // An unknown service or a program its recipe does not declare fails with
+  // NOT_FOUND; a service that is not running, a program whose recipe
+  // declares no sign_out command, or a sign-in of the program under way
+  // fails with FAILED_PRECONDITION.
+  rpc SignOutService(SignOutServiceRequest) returns (SignOutServiceResponse) {
+    option (toshi.permission) = "services.write";
+    option (toshi.audit) = {action: "service.sign_out"};
+    option (toshi.scope) = "environment";
+    option (toshi.mcp) = {exclude: true};
+  }
+
   // ListServiceRevisions returns a service's revisions, newest first, a
   // page at a time. An unknown ID fails with NOT_FOUND.
   rpc ListServiceRevisions(ListServiceRevisionsRequest) returns (ListServiceRevisionsResponse) {
