@@ -38,7 +38,8 @@ export type ModelCredential = Message<"toshi.workspace.v1.ModelCredential"> & {
   name: string;
 
   /**
-   * The model provider: "anthropic" or "openai".
+   * The model provider: "anthropic", "openai", "kimi", "mistral", "xai" or
+   * "gemini".
    *
    * @generated from field: string provider = 3;
    */
@@ -134,7 +135,8 @@ export type ModelCredentialJson = {
   name?: string;
 
   /**
-   * The model provider: "anthropic" or "openai".
+   * The model provider: "anthropic", "openai", "kimi", "mistral", "xai" or
+   * "gemini".
    *
    * @generated from field: string provider = 3;
    */
@@ -223,7 +225,8 @@ export const ModelCredentialSchema: GenMessage<ModelCredential, {jsonType: Model
  */
 export type ModelCredentialDefault = Message<"toshi.workspace.v1.ModelCredentialDefault"> & {
   /**
-   * "anthropic" or "openai"; one default per provider.
+   * "anthropic", "openai", "kimi", "mistral", "xai" or "gemini"; one default
+   * per provider.
    *
    * @generated from field: string provider = 1;
    */
@@ -246,7 +249,8 @@ export type ModelCredentialDefault = Message<"toshi.workspace.v1.ModelCredential
  */
 export type ModelCredentialDefaultJson = {
   /**
-   * "anthropic" or "openai"; one default per provider.
+   * "anthropic", "openai", "kimi", "mistral", "xai" or "gemini"; one default
+   * per provider.
    *
    * @generated from field: string provider = 1;
    */

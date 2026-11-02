@@ -81,7 +81,8 @@ type ModelCredential struct {
 	// a letter. Unique among the workspace's credentials, and among each
 	// person's own.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// The model provider: "anthropic" or "openai".
+	// The model provider: "anthropic", "openai", "kimi", "mistral", "xai" or
+	// "gemini".
 	Provider string              `protobuf:"bytes,3,opt,name=provider,proto3" json:"provider,omitempty"`
 	Kind     ModelCredentialKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ModelCredentialKind" json:"kind,omitempty"`
 	// The user id of the person whose own credential it is; empty for the
@@ -232,7 +233,8 @@ func (x *ModelCredential) GetCreatedBy() string {
 // that provider.
 type ModelCredentialDefault struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// "anthropic" or "openai"; one default per provider.
+	// "anthropic", "openai", "kimi", "mistral", "xai" or "gemini"; one default
+	// per provider.
 	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
 	// The credential's ID. Only a workspace credential may be a default.
 	ModelCredential string `protobuf:"bytes,2,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
