@@ -5332,9 +5332,9 @@ export const WorkloadService: GenService<{
    * to 200 bytes of UTF-8 with no space or control character, and its first
    * dot-separated segment is none Toshi keeps for its own events (job,
    * sandbox, run, service, recording, agent, takeover, spend, egress, host,
-   * github, webhook, trigger and mail); data is empty or JSON of at most
-   * 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown workload
-   * with NOT_FOUND.
+   * github, webhook, trigger, mail and endpoint); data is empty or JSON of
+   * at most 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown
+   * workload with NOT_FOUND.
    *
    * @generated from rpc toshi.workspace.v1.WorkloadService.EmitWorkloadEvent
    */

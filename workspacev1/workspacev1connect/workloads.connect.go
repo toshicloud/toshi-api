@@ -408,9 +408,9 @@ type WorkloadServiceClient interface {
 	// to 200 bytes of UTF-8 with no space or control character, and its first
 	// dot-separated segment is none Toshi keeps for its own events (job,
 	// sandbox, run, service, recording, agent, takeover, spend, egress, host,
-	// github, webhook, trigger and mail); data is empty or JSON of at most
-	// 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown workload
-	// with NOT_FOUND.
+	// github, webhook, trigger, mail and endpoint); data is empty or JSON of
+	// at most 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown
+	// workload with NOT_FOUND.
 	EmitWorkloadEvent(context.Context, *connect.Request[workspacev1.EmitWorkloadEventRequest]) (*connect.Response[workspacev1.EmitWorkloadEventResponse], error)
 	// WatchTelemetry streams a sandbox's resource samples as its host reports
 	// them, in cursor order: the samples kept after a cursor, then each one as
@@ -1741,9 +1741,9 @@ type WorkloadServiceHandler interface {
 	// to 200 bytes of UTF-8 with no space or control character, and its first
 	// dot-separated segment is none Toshi keeps for its own events (job,
 	// sandbox, run, service, recording, agent, takeover, spend, egress, host,
-	// github, webhook, trigger and mail); data is empty or JSON of at most
-	// 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown workload
-	// with NOT_FOUND.
+	// github, webhook, trigger, mail and endpoint); data is empty or JSON of
+	// at most 64 KiB. Another fails with INVALID_ARGUMENT, and an unknown
+	// workload with NOT_FOUND.
 	EmitWorkloadEvent(context.Context, *connect.Request[workspacev1.EmitWorkloadEventRequest]) (*connect.Response[workspacev1.EmitWorkloadEventResponse], error)
 	// WatchTelemetry streams a sandbox's resource samples as its host reports
 	// them, in cursor order: the samples kept after a cursor, then each one as

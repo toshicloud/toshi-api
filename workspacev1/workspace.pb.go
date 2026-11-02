@@ -779,8 +779,8 @@ func (ServiceMode) EnumDescriptor() ([]byte, []int) {
 
 // EventType is the closed set of event types. Built-in event names are
 // reserved: job.*, sandbox.*, run.*, service.*, recording.*, agent.*,
-// takeover.*, spend.*, egress.*, host.*, github.*, webhook.*, trigger.* and
-// mail.*.
+// takeover.*, spend.*, egress.*, host.*, github.*, webhook.*, trigger.*,
+// mail.* and endpoint.*.
 type EventType int32
 
 const (
