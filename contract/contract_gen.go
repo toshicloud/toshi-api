@@ -64,3 +64,118 @@ func Units() []Unit {
 		{Suffix: "next_page_token", Whole: true, Kind: "paging", Types: []string{"string"}, Meaning: "A token selecting the next page."},
 	}
 }
+
+const (
+	// RefusalDomain is the google.rpc.ErrorInfo domain of these refusals.
+	RefusalDomain = "toshi.run"
+	// ReasonEtagMismatch: `UpdateWorkspace` with an `etag` where the workspace changed since the `GetWorkspace` that answered it; the metadata carries the current `etag`.
+	ReasonEtagMismatch = "ETAG_MISMATCH"
+	// ReasonImageNameTaken: `CreateImage` with a name a live image of the workspace has.
+	ReasonImageNameTaken = "IMAGE_NAME_TAKEN"
+	// ReasonAdmissionDenied: A sandbox or service `egress` entry that the network policy of the project, the environment or Toshi does not wholly allow; nothing is written; the metadata carries `module`, `layer`, `entry` and `reason`.
+	ReasonAdmissionDenied = "ADMISSION_DENIED"
+	// ReasonCompatibilityDateLower: A member attempts to lower a project or environment compatibility date.
+	ReasonCompatibilityDateLower = "COMPATIBILITY_DATE_LOWER"
+	// ReasonCompatibilityDateTooNew: A compatibility date is newer than the newest supported date.
+	ReasonCompatibilityDateTooNew = "COMPATIBILITY_DATE_TOO_NEW"
+	// ReasonCompatibilityDateTooOld: A compatibility date is older than the oldest supported date.
+	ReasonCompatibilityDateTooOld = "COMPATIBILITY_DATE_TOO_OLD"
+	// ReasonDeletionByOperator: `CancelWorkspaceDeletion` on a deletion the operator made.
+	ReasonDeletionByOperator = "DELETION_BY_OPERATOR"
+	// ReasonDeliveryExpired: `ReplayConnectionDelivery` for a delivery past its retention; the metadata `boundary` is the time it expired.
+	ReasonDeliveryExpired = "DELIVERY_EXPIRED"
+	// ReasonDesktopSeatPersonRequired: A workspace token, product token or workload opening a display on a Toshi-licensed Windows VM.
+	ReasonDesktopSeatPersonRequired = "DESKTOP_SEAT_PERSON_REQUIRED"
+	// ReasonDesktopSeatRequired: A person without a live desktop seat opening a display on a Toshi-licensed Windows VM.
+	ReasonDesktopSeatRequired = "DESKTOP_SEAT_REQUIRED"
+	// ReasonDisplayInputNotEnabled: A display opened with input on a Windows VM whose host pool does not set `display_input`.
+	ReasonDisplayInputNotEnabled = "DISPLAY_INPUT_NOT_ENABLED"
+	// ReasonImageBuildInProgress: `BuildImage` while a build of the image is running.
+	ReasonImageBuildInProgress = "IMAGE_BUILD_IN_PROGRESS"
+	// ReasonImageCheckFailed: `RollbackService` where the registry cannot be reached, refuses the login or fails the manifest check.
+	ReasonImageCheckFailed = "IMAGE_CHECK_FAILED"
+	// ReasonImageGone: `StartSandbox` of a sandbox without `keep_vm` whose image version is no longer ready.
+	ReasonImageGone = "IMAGE_GONE"
+	// ReasonImageInUse: `DeleteImage` where a version of the image is in use; the metadata carries `jobs` and `service_revisions`.
+	ReasonImageInUse = "IMAGE_IN_USE"
+	// ReasonImageNotPinned: `RollbackService` where the revision names a container image but keeps no digest, because it was made before revisions kept one; the metadata key `revision` names it.
+	ReasonImageNotPinned = "IMAGE_NOT_PINNED"
+	// ReasonImageNotReady: A workload names an image with no ready version.
+	ReasonImageNotReady = "IMAGE_NOT_READY"
+	// ReasonImageNotServed: `RollbackService` where the revision's registry no longer serves its digest.
+	ReasonImageNotServed = "IMAGE_NOT_SERVED"
+	// ReasonKeepVMUnavailable: A sandbox created with `keep_vm` where the workspace has not switched it on, is at `keep_vm.max`, or has no own host that keeps VMs.
+	ReasonKeepVMUnavailable = "KEEP_VM_UNAVAILABLE"
+	// ReasonLastIdentity: `UnlinkIdentity` removing the caller's last identity.
+	ReasonLastIdentity = "LAST_IDENTITY"
+	// ReasonLastMember: `RemoveMember` removing the workspace's last member.
+	ReasonLastMember = "LAST_MEMBER"
+	// ReasonLastOwner: `RemoveMember` or a revoke removing the workspace's last owner.
+	ReasonLastOwner = "LAST_OWNER"
+	// ReasonNoDeletionScheduled: `CancelWorkspaceDeletion` where no deletion is scheduled.
+	ReasonNoDeletionScheduled = "NO_DELETION_SCHEDULED"
+	// ReasonNoSignOutCommand: A service sign-out request names a program with no sign-out command.
+	ReasonNoSignOutCommand = "NO_SIGN_OUT_COMMAND"
+	// ReasonPersonNotMember: `GrantRole` to a person who is not a member of the workspace; the metadata `person` names them.
+	ReasonPersonNotMember = "PERSON_NOT_MEMBER"
+	// ReasonPlanExcludesImages: `CreateImage`, or `UpdateImage` turning `rebuild_on_push` on, where the workspace's plan does not include images.
+	ReasonPlanExcludesImages = "PLAN_EXCLUDES_IMAGES"
+	// ReasonProductUnavailable: A call of a product that is off; the metadata `cause` (`build`, `operator`, `plan` or `workspace`) says why, with `state` for `operator` and `plan` when a plan the workspace can move to has the product.
+	ReasonProductUnavailable = "PRODUCT_UNAVAILABLE"
+	// ReasonPurgeDue: `CancelWorkspaceDeletion` after `purge_after` has passed.
+	ReasonPurgeDue = "PURGE_DUE"
+	// ReasonSigninUntested: Setting `settings.sign_in` from a session or token not signed in through that provider.
+	ReasonSigninUntested = "SIGNIN_UNTESTED"
+	// ReasonStateVolumeGone: `StartSandbox` of a sandbox without `keep_vm` whose state volume was deleted or lost; the sandbox stays stopped.
+	ReasonStateVolumeGone = "STATE_VOLUME_GONE"
+	// ReasonStateVolumeUnavailable: `StartSandbox` of a sandbox without `keep_vm` whose state volume is held by a host that is offline, with no saved version as new as that host's copy.
+	ReasonStateVolumeUnavailable = "STATE_VOLUME_UNAVAILABLE"
+	// ReasonStorageFull: `BuildImage` in a workspace that may store no new data.
+	ReasonStorageFull = "STORAGE_FULL"
+	// ReasonToshiLicensedWindows: Any display open on a Windows job on a cloud pool.
+	ReasonToshiLicensedWindows = "TOSHI_LICENSED_WINDOWS"
+	// ReasonWorkloadHeld: A workload operation is refused because the operator placed the workload on hold.
+	ReasonWorkloadHeld = "WORKLOAD_HELD"
+	// ReasonWorkspaceActive: `DeleteWorkspace` races with another workspace state change and the re-read finds the workspace active.
+	ReasonWorkspaceActive = "WORKSPACE_ACTIVE"
+	// ReasonWorkspaceDeleted: `DeleteWorkspace` or `CancelWorkspaceDeletion` on a deleted workspace.
+	ReasonWorkspaceDeleted = "WORKSPACE_DELETED"
+	// ReasonWorkspaceDeleting: `DeleteWorkspace` or `CancelWorkspaceDeletion` on a workspace being deleted.
+	ReasonWorkspaceDeleting = "WORKSPACE_DELETING"
+	// ReasonWorkspaceDeletionScheduled: `DeleteWorkspace` on a workspace whose deletion is already scheduled.
+	ReasonWorkspaceDeletionScheduled = "WORKSPACE_DELETION_SCHEDULED"
+	// ReasonWorkspaceSuspended: `DeleteWorkspace` on a workspace the operator suspended; the metadata `state` carries the state.
+	ReasonWorkspaceSuspended = "WORKSPACE_SUSPENDED"
+	// ReasonImageBaseUnknown: `CreateImage` with a `base` that is not one of Toshi's.
+	ReasonImageBaseUnknown = "IMAGE_BASE_UNKNOWN"
+	// ReasonInvalidSetting: `UpdateWorkspace` setting a stopped-sandbox keep outside the plan's bound; metadata carries `key`, `cause`, `limit` and `requested`.
+	ReasonInvalidSetting = "INVALID_SETTING"
+	// ReasonVolumeCeilingAboveMax: `UpdateWorkspace` setting `settings.volume_size_cap_total_gb` above the plan's maximum; the metadata carries `max_gb` and, when a plan applies, `plan`.
+	ReasonVolumeCeilingAboveMax = "VOLUME_CEILING_ABOVE_MAX"
+	// ReasonInvitationExpired: `AcceptInvitation` with the code of an invitation that expired before it was accepted; the message says it expired.
+	ReasonInvitationExpired = "INVITATION_EXPIRED"
+	// ReasonAuditExportNotEntitled: `ExportAuditEvents` on a plan without audit export.
+	ReasonAuditExportNotEntitled = "AUDIT_EXPORT_NOT_ENTITLED"
+	// ReasonClaimRequired: An unclaimed agent calls the API using its pre-claim credential.
+	ReasonClaimRequired = "CLAIM_REQUIRED"
+	// ReasonEventsExportNotEntitled: `ExportEvents` on a plan without event export.
+	ReasonEventsExportNotEntitled = "EVENTS_EXPORT_NOT_ENTITLED"
+	// ReasonIdentityAudienceRefused: A sandbox or Workspace API job requests an identity token for an audience its workload kind does not allow.
+	ReasonIdentityAudienceRefused = "IDENTITY_AUDIENCE_REFUSED"
+	// ReasonPermissionMissing: The caller's roles do not give the permission the call needs, or the call is outside the project or environment its grants cover; the message starts `permission <name>:` and the metadata key `permission` names it (Where it is served, Admission, Roles).
+	ReasonPermissionMissing = "PERMISSION_MISSING"
+	// ReasonRecentSigninRequired: `CreateWorkspaceToken` or `RollWorkspaceToken` from a person whose newest sign-in is older than 2 hours, or from an access token without the `tokens:write` scope; the metadata carries `workspace` and, when the sign-in is known, `provider` and `sign_in_url`.
+	ReasonRecentSigninRequired = "RECENT_SIGNIN_REQUIRED"
+	// ReasonSigninRequired: A dashboard session or a person's token that is not signed in through the workspace's required provider; the metadata carries `workspace`, `provider` and `sign_in_url`.
+	ReasonSigninRequired = "SIGNIN_REQUIRED"
+	// ReasonPlanLimit: A call that would pass a plan cap, including the workspace volume ceiling; ordinary count-cap metadata carries `key`, `limit` and sometimes `plan`; volume-cap metadata is described under Project rules and the storage ceiling.
+	ReasonPlanLimit = "PLAN_LIMIT"
+	// ReasonProjectLimit: Creating a volume or raising its cap would pass the project's volume ceiling; metadata carries `key`, `cause`, `limit`, `requested`, `raisable`, `in_use_bytes` and `unit`.
+	ReasonProjectLimit = "PROJECT_LIMIT"
+	// ReasonStartRate: `CreateSandbox` past the ceiling of one of the plan's start windows (docs/contracts/plans.md, Held by the start windows); the metadata `next_start_at` (RFC 3339, UTC) is the earliest time every window has room again, and `Retry-After` and the `google.rpc.RetryInfo` detail give the seconds until then, rounded up.
+	ReasonStartRate = "START_RATE"
+	// ReasonTokenOutsideRanges: A workspace token is used from an address outside its permitted client ranges.
+	ReasonTokenOutsideRanges = "TOKEN_OUTSIDE_RANGES"
+	// ReasonTokenOutsideWindow: A workspace token is used before its permitted window starts.
+	ReasonTokenOutsideWindow = "TOKEN_OUTSIDE_WINDOW"
+)
