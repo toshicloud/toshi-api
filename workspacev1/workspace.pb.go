@@ -12904,9 +12904,12 @@ type ServiceRevision struct {
 	ImageCheck *ServiceRevisionImageCheck `protobuf:"bytes,10,opt,name=image_check,json=imageCheck,proto3" json:"image_check,omitempty"`
 	// The watch of the upgrade a deploy to a started service made to this
 	// revision; unset for a revision no such deploy made.
-	Upgrade       *ServiceUpgrade `protobuf:"bytes,11,opt,name=upgrade,proto3" json:"upgrade,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Upgrade *ServiceUpgrade `protobuf:"bytes,11,opt,name=upgrade,proto3" json:"upgrade,omitempty"`
+	// The compatibility date the revision was made under; a rollback to it
+	// runs under this date, whatever the project's date is now.
+	CompatibilityDate string `protobuf:"bytes,12,opt,name=compatibility_date,json=compatibilityDate,proto3" json:"compatibility_date,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *ServiceRevision) Reset() {
@@ -13014,6 +13017,13 @@ func (x *ServiceRevision) GetUpgrade() *ServiceUpgrade {
 		return x.Upgrade
 	}
 	return nil
+}
+
+func (x *ServiceRevision) GetCompatibilityDate() string {
+	if x != nil {
+		return x.CompatibilityDate
+	}
+	return ""
 }
 
 // ServiceUpgrade is the watch of a deploy to a started service. When the
@@ -14781,7 +14791,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x02id\x18\x03 \x01(\tR\x02id\x12\x16\n" +
 	"\x06number\x18\x04 \x01(\x03R\x06number\"]\n" +
 	"\x1aGetServiceRevisionResponse\x12?\n" +
-	"\brevision\x18\x01 \x01(\v2#.toshi.workspace.v1.ServiceRevisionR\brevision\"\x8d\x04\n" +
+	"\brevision\x18\x01 \x01(\v2#.toshi.workspace.v1.ServiceRevisionR\brevision\"\xbc\x04\n" +
 	"\x0fServiceRevision\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\x12A\n" +
 	"\x06reason\x18\x02 \x01(\x0e2).toshi.workspace.v1.ServiceRevisionReasonR\x06reason\x12\x16\n" +
@@ -14796,7 +14806,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\vimage_check\x18\n" +
 	" \x01(\v2-.toshi.workspace.v1.ServiceRevisionImageCheckR\n" +
 	"imageCheck\x12<\n" +
-	"\aupgrade\x18\v \x01(\v2\".toshi.workspace.v1.ServiceUpgradeR\aupgrade\"\xc6\x05\n" +
+	"\aupgrade\x18\v \x01(\v2\".toshi.workspace.v1.ServiceUpgradeR\aupgrade\x12-\n" +
+	"\x12compatibility_date\x18\f \x01(\tR\x11compatibilityDate\"\xc6\x05\n" +
 	"\x0eServiceUpgrade\x12=\n" +
 	"\x05state\x18\x01 \x01(\x0e2'.toshi.workspace.v1.ServiceUpgradeStateR\x05state\x12#\n" +
 	"\rfrom_revision\x18\x02 \x01(\x03R\ffromRevision\x121\n" +

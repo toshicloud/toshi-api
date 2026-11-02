@@ -2296,6 +2296,9 @@ message ServiceRevision {
   // The watch of the upgrade a deploy to a started service made to this
   // revision; unset for a revision no such deploy made.
   ServiceUpgrade upgrade = 11;
+  // The compatibility date the revision was made under; a rollback to it
+  // runs under this date, whatever the project's date is now.
+  string compatibility_date = 12;
 }
 
 // ServiceUpgrade is the watch of a deploy to a started service. When the
