@@ -82,16 +82,18 @@ For a client package, see [toshi-ts](https://github.com/toshicloud/toshi-ts).
 
 Versions follow [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 and are tagged `vMAJOR.MINOR.PATCH`, as Go modules expect. `VERSION`
-holds the version of this tree. A change to `proto/` raises it.
+holds the version of this tree. A change to `proto/` does not raise it.
+One small pull request raises it once before a release is tagged, and the
+publish tags the tree the first time it sees the new value.
 
 While the major version is 0:
 
-- an addition bumps the minor version, once per release however many
+- an addition raises the minor version, once per release however many
   additions the release holds;
-- a fix or a comment change bumps the patch version;
-- a breaking change bumps the minor version, and the title of the pull
-  request that makes it marks it with `!`, as in Conventional Commits
-  (`feat!: ...`).
+- a fix or a comment change raises the patch version;
+- a breaking change raises the minor version at the release. The pull
+  request that makes it keeps `VERSION` as it is and marks its title with
+  `!`, as in Conventional Commits (`feat!: ...`).
 
 From v1.0.0, a breaking change never goes into an existing package. It
 goes into a new one, `toshi.workspace.v2` or `toshi.operator.v2`, and a
