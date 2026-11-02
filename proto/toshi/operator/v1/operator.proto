@@ -5,6 +5,7 @@ syntax = "proto3";
 package toshi.operator.v1;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -125,6 +126,36 @@ service OperatorService {
   rpc SetTenantLimits(SetTenantLimitsRequest) returns (SetTenantLimitsResponse) {
     option (toshi.audit) = {action: "workspace.limits_set"};
   }
+
+  // UpdateWorkspace changes the fields named in update_mask and returns the
+  // workspace as stored. Operator credentials are required. A missing id or
+  // mask, an empty mask, or an unknown path fails with INVALID_ARGUMENT; an
+  // unknown workspace fails with NOT_FOUND.
+  //
+  // plan must name a configured plan; otherwise it fails with INVALID_ARGUMENT
+  // (workspace.plan_set).
+  //
+  // reservations merges the entries by size; each entry sets that size, and
+  // 0 slots removes it. Unlisted sizes keep their reservations. Duplicate or
+  // unknown sizes, negative slots and warm values outside 0..slots fail with
+  // INVALID_ARGUMENT (workspace.reservation_set).
+  // entitlement_overrides merges by key: a nonempty value sets the override,
+  // an empty value clears it, and unlisted keys keep their overrides. An empty
+  // map, an empty key, or an invalid set key or value fails with
+  // INVALID_ARGUMENT; a removed feature's override may still be cleared;
+  // a retention value below the plan or deployment default, a deleted
+  // workspace on set, or an unconfigured entitlement resolver fails with
+  // FAILED_PRECONDITION (workspace.entitlement_set or
+  // workspace.entitlement_cleared).
+  // billing.customer_id links or clears the customer; an id over 255 bytes
+  // or containing anything but printable ASCII without spaces fails with
+  // INVALID_ARGUMENT and one in use with ALREADY_EXISTS
+  // (workspace.billing_customer_set). Plan and billing record
+  // an event only when changed; reservation and entitlement sets record one
+  // for each entry, and entitlement clears only when an override existed.
+  rpc UpdateWorkspace(UpdateWorkspaceRequest) returns (UpdateWorkspaceResponse) {
+    option (toshi.audit) = {target: "none"};
+  }
   // ReassignSeat moves a workspace's live desktop seat to another member
   // within the month, for a reason the workspace's licence allows:
   // "hardware_failure" or "temporary_absence". It removes the seat and
@@ -167,24 +198,6 @@ service OperatorService {
     option (toshi.audit) = {action: "none"};
   }
 
-  // SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
-  // plan, or a plan the configuration does not define, fails with
-  // INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
-  rpc SetTenantPlan(SetTenantPlanRequest) returns (SetTenantPlanResponse) {
-    option (toshi.audit) = {action: "workspace.plan_set"};
-  }
-
-  // SetWorkspaceEntitlement sets an operator override and returns the resolved
-  // value. Retention overrides cannot be below the plan or deployment default.
-  rpc SetWorkspaceEntitlement(SetWorkspaceEntitlementRequest) returns (SetWorkspaceEntitlementResponse) {
-    option (toshi.audit) = {action: "workspace.entitlement_set"};
-  }
-
-  // ClearWorkspaceEntitlement removes an override and reports whether one existed.
-  rpc ClearWorkspaceEntitlement(ClearWorkspaceEntitlementRequest) returns (ClearWorkspaceEntitlementResponse) {
-    option (toshi.audit) = {action: "workspace.entitlement_cleared"};
-  }
-
   // SuspendTenant suspends an active workspace: its new and queued jobs are
   // held with hold reason tenant_suspended, its running jobs finish, and its
   // users keep read-only access. A suspended workspace is returned unchanged. An
@@ -210,16 +223,6 @@ service OperatorService {
   // deleting or deleted with FAILED_PRECONDITION. Operator only.
   rpc DeleteTenant(DeleteTenantRequest) returns (DeleteTenantResponse) {
     option (toshi.audit) = {action: "workspace.deletion_scheduled"};
-  }
-
-  // SetTenantReservation sets or clears a workspace's reservation of N slots of
-  // one runner size for shared hosts, and returns the workspace's effective
-  // reservations. slots of 0 removes the workspace's own reservation
-  // for the size, so its plan's applies again. An empty ID, an unknown size,
-  // a negative slots, or a warm outside 0..slots fails with INVALID_ARGUMENT;
-  // an unknown workspace fails with NOT_FOUND. Operator only.
-  rpc SetTenantReservation(SetTenantReservationRequest) returns (SetTenantReservationResponse) {
-    option (toshi.audit) = {action: "workspace.reservation_set"};
   }
 
   // GetCapacity returns the reserved-capacity view of the last scheduler
@@ -258,15 +261,6 @@ service OperatorService {
   // members and the operator under its grant read
   // WorkspaceService.GetWorkspaceStatement.
   rpc GetTenantStatement(GetTenantStatementRequest) returns (GetTenantStatementResponse);
-
-  // SetTenantBillingCustomer links or clears a workspace's billing customer id and
-  // returns the workspace's billing state. An empty ID, or a customer_id longer
-  // than 255 bytes or holding anything but printable ASCII without spaces,
-  // fails with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; a
-  // customer id held by another workspace fails with ALREADY_EXISTS.
-  rpc SetTenantBillingCustomer(SetTenantBillingCustomerRequest) returns (SetTenantBillingCustomerResponse) {
-    option (toshi.audit) = {action: "workspace.billing_customer_set"};
-  }
 
   // ListTokens returns the tokens the control plane knows, of every kind or
   // of the one kind names, oldest first, without their values.
@@ -1359,6 +1353,10 @@ message Tenant {
   // The interval Toshi uses: the workspace's own value when set, else its
   // plan's.
   int32 volume_snapshot_interval_seconds_effective = 36;
+  // The workspace's billing link.
+  TenantBilling billing = 38;
+  // The operator's entitlement overrides, by feature key.
+  map<string, string> entitlement_overrides = 39;
 }
 
 // HostingCertificate is a workspace's wildcard certificate for its
@@ -1461,6 +1459,17 @@ message SetTenantLimitsResponse {
   Tenant tenant = 1;
 }
 
+message UpdateWorkspaceRequest {
+  // The workspace and the values to set; id identifies the workspace.
+  Tenant workspace = 1;
+  // The fields to change; required and nonempty.
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateWorkspaceResponse {
+  Tenant workspace = 1;
+}
+
 // Seat is one assignment of a desktop seat to a person in a workspace, as
 // the Workspace API's Seat with its workspace.
 message Seat {
@@ -1551,21 +1560,6 @@ message DeleteTenantRequest {
 
 message DeleteTenantResponse {
   Tenant tenant = 1;
-}
-
-message SetTenantReservationRequest {
-  string id = 1;
-  // A runner size, as a runs-on label.
-  string size = 2;
-  // Slots to reserve; 0 removes the workspace's own reservation for the size.
-  int32 slots = 3;
-  // Slots kept on warm VMs; at most slots.
-  int32 warm = 4;
-}
-
-message SetTenantReservationResponse {
-  // The workspace's effective reservations after the change, ordered by size.
-  repeated Reservation reservations = 1;
 }
 
 message Plan {
@@ -1735,34 +1729,6 @@ message RunChecksResponse {
   // The worst state among checks; SUCCESS when the group has no rows.
   CheckState state = 2;
   repeated Check checks = 3;
-}
-
-message SetTenantPlanRequest {
-  string id = 1;
-  string plan = 2;
-}
-
-message SetTenantPlanResponse {
-  Tenant tenant = 1;
-}
-
-message SetWorkspaceEntitlementRequest {
-  string id = 1;
-  string key = 2;
-  string value = 3;
-}
-
-message SetWorkspaceEntitlementResponse {
-  string value = 1;
-}
-
-message ClearWorkspaceEntitlementRequest {
-  string id = 1;
-  string key = 2;
-}
-
-message ClearWorkspaceEntitlementResponse {
-  bool cleared = 1;
 }
 
 // GetUsageRequest selects the jobs to count. A job is in the window when its
@@ -2228,16 +2194,6 @@ message StatementCharge {
   // The billed running seconds of a size billed by the second, its
   // month's seconds summed and rounded up once; 0 on a line of minutes.
   int64 seconds = 4;
-}
-
-message SetTenantBillingCustomerRequest {
-  string id = 1;
-  // Empty clears the customer id and billing start.
-  string customer_id = 2;
-}
-
-message SetTenantBillingCustomerResponse {
-  TenantBilling billing = 1;
 }
 
 // TenantBilling is a workspace's billing link, its subscription's status and the

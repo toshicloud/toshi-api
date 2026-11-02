@@ -77,6 +77,9 @@ const (
 	// OperatorServiceSetTenantLimitsProcedure is the fully-qualified name of the OperatorService's
 	// SetTenantLimits RPC.
 	OperatorServiceSetTenantLimitsProcedure = "/toshi.operator.v1.OperatorService/SetTenantLimits"
+	// OperatorServiceUpdateWorkspaceProcedure is the fully-qualified name of the OperatorService's
+	// UpdateWorkspace RPC.
+	OperatorServiceUpdateWorkspaceProcedure = "/toshi.operator.v1.OperatorService/UpdateWorkspace"
 	// OperatorServiceReassignSeatProcedure is the fully-qualified name of the OperatorService's
 	// ReassignSeat RPC.
 	OperatorServiceReassignSeatProcedure = "/toshi.operator.v1.OperatorService/ReassignSeat"
@@ -92,15 +95,6 @@ const (
 	// OperatorServiceRunChecksProcedure is the fully-qualified name of the OperatorService's RunChecks
 	// RPC.
 	OperatorServiceRunChecksProcedure = "/toshi.operator.v1.OperatorService/RunChecks"
-	// OperatorServiceSetTenantPlanProcedure is the fully-qualified name of the OperatorService's
-	// SetTenantPlan RPC.
-	OperatorServiceSetTenantPlanProcedure = "/toshi.operator.v1.OperatorService/SetTenantPlan"
-	// OperatorServiceSetWorkspaceEntitlementProcedure is the fully-qualified name of the
-	// OperatorService's SetWorkspaceEntitlement RPC.
-	OperatorServiceSetWorkspaceEntitlementProcedure = "/toshi.operator.v1.OperatorService/SetWorkspaceEntitlement"
-	// OperatorServiceClearWorkspaceEntitlementProcedure is the fully-qualified name of the
-	// OperatorService's ClearWorkspaceEntitlement RPC.
-	OperatorServiceClearWorkspaceEntitlementProcedure = "/toshi.operator.v1.OperatorService/ClearWorkspaceEntitlement"
 	// OperatorServiceSuspendTenantProcedure is the fully-qualified name of the OperatorService's
 	// SuspendTenant RPC.
 	OperatorServiceSuspendTenantProcedure = "/toshi.operator.v1.OperatorService/SuspendTenant"
@@ -110,9 +104,6 @@ const (
 	// OperatorServiceDeleteTenantProcedure is the fully-qualified name of the OperatorService's
 	// DeleteTenant RPC.
 	OperatorServiceDeleteTenantProcedure = "/toshi.operator.v1.OperatorService/DeleteTenant"
-	// OperatorServiceSetTenantReservationProcedure is the fully-qualified name of the OperatorService's
-	// SetTenantReservation RPC.
-	OperatorServiceSetTenantReservationProcedure = "/toshi.operator.v1.OperatorService/SetTenantReservation"
 	// OperatorServiceGetCapacityProcedure is the fully-qualified name of the OperatorService's
 	// GetCapacity RPC.
 	OperatorServiceGetCapacityProcedure = "/toshi.operator.v1.OperatorService/GetCapacity"
@@ -128,9 +119,6 @@ const (
 	// OperatorServiceGetTenantStatementProcedure is the fully-qualified name of the OperatorService's
 	// GetTenantStatement RPC.
 	OperatorServiceGetTenantStatementProcedure = "/toshi.operator.v1.OperatorService/GetTenantStatement"
-	// OperatorServiceSetTenantBillingCustomerProcedure is the fully-qualified name of the
-	// OperatorService's SetTenantBillingCustomer RPC.
-	OperatorServiceSetTenantBillingCustomerProcedure = "/toshi.operator.v1.OperatorService/SetTenantBillingCustomer"
 	// OperatorServiceListTokensProcedure is the fully-qualified name of the OperatorService's
 	// ListTokens RPC.
 	OperatorServiceListTokensProcedure = "/toshi.operator.v1.OperatorService/ListTokens"
@@ -289,6 +277,33 @@ type OperatorServiceClient interface {
 	// volume_snapshot_interval_seconds other than 0 and below 60; an unknown
 	// workspace fails with NOT_FOUND. A workspace's own token cannot call it.
 	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
+	// UpdateWorkspace changes the fields named in update_mask and returns the
+	// workspace as stored. Operator credentials are required. A missing id or
+	// mask, an empty mask, or an unknown path fails with INVALID_ARGUMENT; an
+	// unknown workspace fails with NOT_FOUND.
+	//
+	// plan must name a configured plan; otherwise it fails with INVALID_ARGUMENT
+	// (workspace.plan_set).
+	//
+	// reservations merges the entries by size; each entry sets that size, and
+	// 0 slots removes it. Unlisted sizes keep their reservations. Duplicate or
+	// unknown sizes, negative slots and warm values outside 0..slots fail with
+	// INVALID_ARGUMENT (workspace.reservation_set).
+	// entitlement_overrides merges by key: a nonempty value sets the override,
+	// an empty value clears it, and unlisted keys keep their overrides. An empty
+	// map, an empty key, or an invalid set key or value fails with
+	// INVALID_ARGUMENT; a removed feature's override may still be cleared;
+	// a retention value below the plan or deployment default, a deleted
+	// workspace on set, or an unconfigured entitlement resolver fails with
+	// FAILED_PRECONDITION (workspace.entitlement_set or
+	// workspace.entitlement_cleared).
+	// billing.customer_id links or clears the customer; an id over 255 bytes
+	// or containing anything but printable ASCII without spaces fails with
+	// INVALID_ARGUMENT and one in use with ALREADY_EXISTS
+	// (workspace.billing_customer_set). Plan and billing record
+	// an event only when changed; reservation and entitlement sets record one
+	// for each entry, and entitlement clears only when an override existed.
+	UpdateWorkspace(context.Context, *connect.Request[operatorv1.UpdateWorkspaceRequest]) (*connect.Response[operatorv1.UpdateWorkspaceResponse], error)
 	// ReassignSeat moves a workspace's live desktop seat to another member
 	// within the month, for a reason the workspace's licence allows:
 	// "hardware_failure" or "temporary_absence". It removes the seat and
@@ -323,15 +338,6 @@ type OperatorServiceClient interface {
 	// group whose subject this control plane is not configured for (the GitHub
 	// group without a GitHub App) fails with FAILED_PRECONDITION.
 	RunChecks(context.Context, *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error)
-	// SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
-	// plan, or a plan the configuration does not define, fails with
-	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
-	SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error)
-	// SetWorkspaceEntitlement sets an operator override and returns the resolved
-	// value. Retention overrides cannot be below the plan or deployment default.
-	SetWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.SetWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.SetWorkspaceEntitlementResponse], error)
-	// ClearWorkspaceEntitlement removes an override and reports whether one existed.
-	ClearWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.ClearWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.ClearWorkspaceEntitlementResponse], error)
 	// SuspendTenant suspends an active workspace: its new and queued jobs are
 	// held with hold reason tenant_suspended, its running jobs finish, and its
 	// users keep read-only access. A suspended workspace is returned unchanged. An
@@ -352,13 +358,6 @@ type OperatorServiceClient interface {
 	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
 	// deleting or deleted with FAILED_PRECONDITION. Operator only.
 	DeleteTenant(context.Context, *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error)
-	// SetTenantReservation sets or clears a workspace's reservation of N slots of
-	// one runner size for shared hosts, and returns the workspace's effective
-	// reservations. slots of 0 removes the workspace's own reservation
-	// for the size, so its plan's applies again. An empty ID, an unknown size,
-	// a negative slots, or a warm outside 0..slots fails with INVALID_ARGUMENT;
-	// an unknown workspace fails with NOT_FOUND. Operator only.
-	SetTenantReservation(context.Context, *connect.Request[operatorv1.SetTenantReservationRequest]) (*connect.Response[operatorv1.SetTenantReservationResponse], error)
 	// GetCapacity returns the reserved-capacity view of the last scheduler
 	// pass: per runner size the slots free and reserved, and per reservation
 	// the slots in use, earmarked and short. Operator only. It
@@ -391,12 +390,6 @@ type OperatorServiceClient interface {
 	// members and the operator under its grant read
 	// WorkspaceService.GetWorkspaceStatement.
 	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
-	// SetTenantBillingCustomer links or clears a workspace's billing customer id and
-	// returns the workspace's billing state. An empty ID, or a customer_id longer
-	// than 255 bytes or holding anything but printable ASCII without spaces,
-	// fails with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; a
-	// customer id held by another workspace fails with ALREADY_EXISTS.
-	SetTenantBillingCustomer(context.Context, *connect.Request[operatorv1.SetTenantBillingCustomerRequest]) (*connect.Response[operatorv1.SetTenantBillingCustomerResponse], error)
 	// ListTokens returns the tokens the control plane knows, of every kind or
 	// of the one kind names, oldest first, without their values.
 	//
@@ -670,6 +663,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("SetTenantLimits")),
 			connect.WithClientOptions(opts...),
 		),
+		updateWorkspace: connect.NewClient[operatorv1.UpdateWorkspaceRequest, operatorv1.UpdateWorkspaceResponse](
+			httpClient,
+			baseURL+OperatorServiceUpdateWorkspaceProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("UpdateWorkspace")),
+			connect.WithClientOptions(opts...),
+		),
 		reassignSeat: connect.NewClient[operatorv1.ReassignSeatRequest, operatorv1.ReassignSeatResponse](
 			httpClient,
 			baseURL+OperatorServiceReassignSeatProcedure,
@@ -700,24 +699,6 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("RunChecks")),
 			connect.WithClientOptions(opts...),
 		),
-		setTenantPlan: connect.NewClient[operatorv1.SetTenantPlanRequest, operatorv1.SetTenantPlanResponse](
-			httpClient,
-			baseURL+OperatorServiceSetTenantPlanProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetTenantPlan")),
-			connect.WithClientOptions(opts...),
-		),
-		setWorkspaceEntitlement: connect.NewClient[operatorv1.SetWorkspaceEntitlementRequest, operatorv1.SetWorkspaceEntitlementResponse](
-			httpClient,
-			baseURL+OperatorServiceSetWorkspaceEntitlementProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetWorkspaceEntitlement")),
-			connect.WithClientOptions(opts...),
-		),
-		clearWorkspaceEntitlement: connect.NewClient[operatorv1.ClearWorkspaceEntitlementRequest, operatorv1.ClearWorkspaceEntitlementResponse](
-			httpClient,
-			baseURL+OperatorServiceClearWorkspaceEntitlementProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("ClearWorkspaceEntitlement")),
-			connect.WithClientOptions(opts...),
-		),
 		suspendTenant: connect.NewClient[operatorv1.SuspendTenantRequest, operatorv1.SuspendTenantResponse](
 			httpClient,
 			baseURL+OperatorServiceSuspendTenantProcedure,
@@ -734,12 +715,6 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			httpClient,
 			baseURL+OperatorServiceDeleteTenantProcedure,
 			connect.WithSchema(operatorServiceMethods.ByName("DeleteTenant")),
-			connect.WithClientOptions(opts...),
-		),
-		setTenantReservation: connect.NewClient[operatorv1.SetTenantReservationRequest, operatorv1.SetTenantReservationResponse](
-			httpClient,
-			baseURL+OperatorServiceSetTenantReservationProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetTenantReservation")),
 			connect.WithClientOptions(opts...),
 		),
 		getCapacity: connect.NewClient[operatorv1.GetCapacityRequest, operatorv1.GetCapacityResponse](
@@ -770,12 +745,6 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			httpClient,
 			baseURL+OperatorServiceGetTenantStatementProcedure,
 			connect.WithSchema(operatorServiceMethods.ByName("GetTenantStatement")),
-			connect.WithClientOptions(opts...),
-		),
-		setTenantBillingCustomer: connect.NewClient[operatorv1.SetTenantBillingCustomerRequest, operatorv1.SetTenantBillingCustomerResponse](
-			httpClient,
-			baseURL+OperatorServiceSetTenantBillingCustomerProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetTenantBillingCustomer")),
 			connect.WithClientOptions(opts...),
 		),
 		listTokens: connect.NewClient[operatorv1.ListTokensRequest, operatorv1.ListTokensResponse](
@@ -927,62 +896,58 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // operatorServiceClient implements OperatorServiceClient.
 type operatorServiceClient struct {
-	listJobs                  *connect.Client[operatorv1.ListJobsRequest, operatorv1.ListJobsResponse]
-	listAuditEvents           *connect.Client[operatorv1.ListAuditEventsRequest, operatorv1.ListAuditEventsResponse]
-	summariseJobTelemetry     *connect.Client[operatorv1.SummariseJobTelemetryRequest, operatorv1.SummariseJobTelemetryResponse]
-	listHosts                 *connect.Client[operatorv1.ListHostsRequest, operatorv1.ListHostsResponse]
-	listHostStorage           *connect.Client[operatorv1.ListHostStorageRequest, operatorv1.ListHostStorageResponse]
-	setHostState              *connect.Client[operatorv1.SetHostStateRequest, operatorv1.SetHostStateResponse]
-	setHostOverflow           *connect.Client[operatorv1.SetHostOverflowRequest, operatorv1.SetHostOverflowResponse]
-	retireHost                *connect.Client[operatorv1.RetireHostRequest, operatorv1.RetireHostResponse]
-	revokeHost                *connect.Client[operatorv1.RevokeHostRequest, operatorv1.RevokeHostResponse]
-	retireOfflineHosts        *connect.Client[operatorv1.RetireOfflineHostsRequest, operatorv1.RetireOfflineHostsResponse]
-	createWorkspace           *connect.Client[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse]
-	listTenants               *connect.Client[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse]
-	setTenantCap              *connect.Client[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse]
-	setTenantLimits           *connect.Client[operatorv1.SetTenantLimitsRequest, operatorv1.SetTenantLimitsResponse]
-	reassignSeat              *connect.Client[operatorv1.ReassignSeatRequest, operatorv1.ReassignSeatResponse]
-	listSeats                 *connect.Client[operatorv1.ListSeatsRequest, operatorv1.ListSeatsResponse]
-	listPlans                 *connect.Client[operatorv1.ListPlansRequest, operatorv1.ListPlansResponse]
-	getVersion                *connect.Client[operatorv1.GetVersionRequest, operatorv1.GetVersionResponse]
-	runChecks                 *connect.Client[operatorv1.RunChecksRequest, operatorv1.RunChecksResponse]
-	setTenantPlan             *connect.Client[operatorv1.SetTenantPlanRequest, operatorv1.SetTenantPlanResponse]
-	setWorkspaceEntitlement   *connect.Client[operatorv1.SetWorkspaceEntitlementRequest, operatorv1.SetWorkspaceEntitlementResponse]
-	clearWorkspaceEntitlement *connect.Client[operatorv1.ClearWorkspaceEntitlementRequest, operatorv1.ClearWorkspaceEntitlementResponse]
-	suspendTenant             *connect.Client[operatorv1.SuspendTenantRequest, operatorv1.SuspendTenantResponse]
-	resumeTenant              *connect.Client[operatorv1.ResumeTenantRequest, operatorv1.ResumeTenantResponse]
-	deleteTenant              *connect.Client[operatorv1.DeleteTenantRequest, operatorv1.DeleteTenantResponse]
-	setTenantReservation      *connect.Client[operatorv1.SetTenantReservationRequest, operatorv1.SetTenantReservationResponse]
-	getCapacity               *connect.Client[operatorv1.GetCapacityRequest, operatorv1.GetCapacityResponse]
-	getUsage                  *connect.Client[operatorv1.GetUsageRequest, operatorv1.GetUsageResponse]
-	getQueueTimes             *connect.Client[operatorv1.GetQueueTimesRequest, operatorv1.GetQueueTimesResponse]
-	getWorkflowUsage          *connect.Client[operatorv1.GetWorkflowUsageRequest, operatorv1.GetWorkflowUsageResponse]
-	getTenantStatement        *connect.Client[operatorv1.GetTenantStatementRequest, operatorv1.GetTenantStatementResponse]
-	setTenantBillingCustomer  *connect.Client[operatorv1.SetTenantBillingCustomerRequest, operatorv1.SetTenantBillingCustomerResponse]
-	listTokens                *connect.Client[operatorv1.ListTokensRequest, operatorv1.ListTokensResponse]
-	rotateToken               *connect.Client[operatorv1.RotateTokenRequest, operatorv1.RotateTokenResponse]
-	revokeToken               *connect.Client[operatorv1.RevokeTokenRequest, operatorv1.RevokeTokenResponse]
-	rollToken                 *connect.Client[operatorv1.RollTokenRequest, operatorv1.RollTokenResponse]
-	createProductToken        *connect.Client[operatorv1.CreateProductTokenRequest, operatorv1.CreateProductTokenResponse]
-	registerClient            *connect.Client[operatorv1.RegisterClientRequest, operatorv1.RegisterClientResponse]
-	listClients               *connect.Client[operatorv1.ListClientsRequest, operatorv1.ListClientsResponse]
-	deleteClient              *connect.Client[operatorv1.DeleteClientRequest, operatorv1.DeleteClientResponse]
-	listOperatorAlerts        *connect.Client[operatorv1.ListOperatorAlertsRequest, operatorv1.ListOperatorAlertsResponse]
-	listHostAlerts            *connect.Client[operatorv1.ListHostAlertsRequest, operatorv1.ListHostAlertsResponse]
-	checkCloudHost            *connect.Client[operatorv1.CheckCloudHostRequest, operatorv1.CheckCloudHostResponse]
-	listFillers               *connect.Client[operatorv1.ListFillersRequest, operatorv1.ListFillersResponse]
-	putFiller                 *connect.Client[operatorv1.PutFillerRequest, operatorv1.PutFillerResponse]
-	deleteFiller              *connect.Client[operatorv1.DeleteFillerRequest, operatorv1.DeleteFillerResponse]
-	setFillerEnabled          *connect.Client[operatorv1.SetFillerEnabledRequest, operatorv1.SetFillerEnabledResponse]
-	listFillerRuns            *connect.Client[operatorv1.ListFillerRunsRequest, operatorv1.ListFillerRunsResponse]
-	getSecretDelivery         *connect.Client[operatorv1.GetSecretDeliveryRequest, operatorv1.GetSecretDeliveryResponse]
-	setSecretDelivery         *connect.Client[operatorv1.SetSecretDeliveryRequest, operatorv1.SetSecretDeliveryResponse]
-	listUtilisation           *connect.Client[operatorv1.ListUtilisationRequest, operatorv1.ListUtilisationResponse]
-	suggestPools              *connect.Client[operatorv1.SuggestPoolsRequest, operatorv1.SuggestPoolsResponse]
-	createStorageProvider     *connect.Client[operatorv1.CreateStorageProviderRequest, operatorv1.CreateStorageProviderResponse]
-	listStorageProviders      *connect.Client[operatorv1.ListStorageProvidersRequest, operatorv1.ListStorageProvidersResponse]
-	checkStorageProvider      *connect.Client[operatorv1.CheckStorageProviderRequest, operatorv1.CheckStorageProviderResponse]
-	deleteStorageProvider     *connect.Client[operatorv1.DeleteStorageProviderRequest, operatorv1.DeleteStorageProviderResponse]
+	listJobs              *connect.Client[operatorv1.ListJobsRequest, operatorv1.ListJobsResponse]
+	listAuditEvents       *connect.Client[operatorv1.ListAuditEventsRequest, operatorv1.ListAuditEventsResponse]
+	summariseJobTelemetry *connect.Client[operatorv1.SummariseJobTelemetryRequest, operatorv1.SummariseJobTelemetryResponse]
+	listHosts             *connect.Client[operatorv1.ListHostsRequest, operatorv1.ListHostsResponse]
+	listHostStorage       *connect.Client[operatorv1.ListHostStorageRequest, operatorv1.ListHostStorageResponse]
+	setHostState          *connect.Client[operatorv1.SetHostStateRequest, operatorv1.SetHostStateResponse]
+	setHostOverflow       *connect.Client[operatorv1.SetHostOverflowRequest, operatorv1.SetHostOverflowResponse]
+	retireHost            *connect.Client[operatorv1.RetireHostRequest, operatorv1.RetireHostResponse]
+	revokeHost            *connect.Client[operatorv1.RevokeHostRequest, operatorv1.RevokeHostResponse]
+	retireOfflineHosts    *connect.Client[operatorv1.RetireOfflineHostsRequest, operatorv1.RetireOfflineHostsResponse]
+	createWorkspace       *connect.Client[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse]
+	listTenants           *connect.Client[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse]
+	setTenantCap          *connect.Client[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse]
+	setTenantLimits       *connect.Client[operatorv1.SetTenantLimitsRequest, operatorv1.SetTenantLimitsResponse]
+	updateWorkspace       *connect.Client[operatorv1.UpdateWorkspaceRequest, operatorv1.UpdateWorkspaceResponse]
+	reassignSeat          *connect.Client[operatorv1.ReassignSeatRequest, operatorv1.ReassignSeatResponse]
+	listSeats             *connect.Client[operatorv1.ListSeatsRequest, operatorv1.ListSeatsResponse]
+	listPlans             *connect.Client[operatorv1.ListPlansRequest, operatorv1.ListPlansResponse]
+	getVersion            *connect.Client[operatorv1.GetVersionRequest, operatorv1.GetVersionResponse]
+	runChecks             *connect.Client[operatorv1.RunChecksRequest, operatorv1.RunChecksResponse]
+	suspendTenant         *connect.Client[operatorv1.SuspendTenantRequest, operatorv1.SuspendTenantResponse]
+	resumeTenant          *connect.Client[operatorv1.ResumeTenantRequest, operatorv1.ResumeTenantResponse]
+	deleteTenant          *connect.Client[operatorv1.DeleteTenantRequest, operatorv1.DeleteTenantResponse]
+	getCapacity           *connect.Client[operatorv1.GetCapacityRequest, operatorv1.GetCapacityResponse]
+	getUsage              *connect.Client[operatorv1.GetUsageRequest, operatorv1.GetUsageResponse]
+	getQueueTimes         *connect.Client[operatorv1.GetQueueTimesRequest, operatorv1.GetQueueTimesResponse]
+	getWorkflowUsage      *connect.Client[operatorv1.GetWorkflowUsageRequest, operatorv1.GetWorkflowUsageResponse]
+	getTenantStatement    *connect.Client[operatorv1.GetTenantStatementRequest, operatorv1.GetTenantStatementResponse]
+	listTokens            *connect.Client[operatorv1.ListTokensRequest, operatorv1.ListTokensResponse]
+	rotateToken           *connect.Client[operatorv1.RotateTokenRequest, operatorv1.RotateTokenResponse]
+	revokeToken           *connect.Client[operatorv1.RevokeTokenRequest, operatorv1.RevokeTokenResponse]
+	rollToken             *connect.Client[operatorv1.RollTokenRequest, operatorv1.RollTokenResponse]
+	createProductToken    *connect.Client[operatorv1.CreateProductTokenRequest, operatorv1.CreateProductTokenResponse]
+	registerClient        *connect.Client[operatorv1.RegisterClientRequest, operatorv1.RegisterClientResponse]
+	listClients           *connect.Client[operatorv1.ListClientsRequest, operatorv1.ListClientsResponse]
+	deleteClient          *connect.Client[operatorv1.DeleteClientRequest, operatorv1.DeleteClientResponse]
+	listOperatorAlerts    *connect.Client[operatorv1.ListOperatorAlertsRequest, operatorv1.ListOperatorAlertsResponse]
+	listHostAlerts        *connect.Client[operatorv1.ListHostAlertsRequest, operatorv1.ListHostAlertsResponse]
+	checkCloudHost        *connect.Client[operatorv1.CheckCloudHostRequest, operatorv1.CheckCloudHostResponse]
+	listFillers           *connect.Client[operatorv1.ListFillersRequest, operatorv1.ListFillersResponse]
+	putFiller             *connect.Client[operatorv1.PutFillerRequest, operatorv1.PutFillerResponse]
+	deleteFiller          *connect.Client[operatorv1.DeleteFillerRequest, operatorv1.DeleteFillerResponse]
+	setFillerEnabled      *connect.Client[operatorv1.SetFillerEnabledRequest, operatorv1.SetFillerEnabledResponse]
+	listFillerRuns        *connect.Client[operatorv1.ListFillerRunsRequest, operatorv1.ListFillerRunsResponse]
+	getSecretDelivery     *connect.Client[operatorv1.GetSecretDeliveryRequest, operatorv1.GetSecretDeliveryResponse]
+	setSecretDelivery     *connect.Client[operatorv1.SetSecretDeliveryRequest, operatorv1.SetSecretDeliveryResponse]
+	listUtilisation       *connect.Client[operatorv1.ListUtilisationRequest, operatorv1.ListUtilisationResponse]
+	suggestPools          *connect.Client[operatorv1.SuggestPoolsRequest, operatorv1.SuggestPoolsResponse]
+	createStorageProvider *connect.Client[operatorv1.CreateStorageProviderRequest, operatorv1.CreateStorageProviderResponse]
+	listStorageProviders  *connect.Client[operatorv1.ListStorageProvidersRequest, operatorv1.ListStorageProvidersResponse]
+	checkStorageProvider  *connect.Client[operatorv1.CheckStorageProviderRequest, operatorv1.CheckStorageProviderResponse]
+	deleteStorageProvider *connect.Client[operatorv1.DeleteStorageProviderRequest, operatorv1.DeleteStorageProviderResponse]
 }
 
 // ListJobs calls toshi.operator.v1.OperatorService.ListJobs.
@@ -1055,6 +1020,11 @@ func (c *operatorServiceClient) SetTenantLimits(ctx context.Context, req *connec
 	return c.setTenantLimits.CallUnary(ctx, req)
 }
 
+// UpdateWorkspace calls toshi.operator.v1.OperatorService.UpdateWorkspace.
+func (c *operatorServiceClient) UpdateWorkspace(ctx context.Context, req *connect.Request[operatorv1.UpdateWorkspaceRequest]) (*connect.Response[operatorv1.UpdateWorkspaceResponse], error) {
+	return c.updateWorkspace.CallUnary(ctx, req)
+}
+
 // ReassignSeat calls toshi.operator.v1.OperatorService.ReassignSeat.
 func (c *operatorServiceClient) ReassignSeat(ctx context.Context, req *connect.Request[operatorv1.ReassignSeatRequest]) (*connect.Response[operatorv1.ReassignSeatResponse], error) {
 	return c.reassignSeat.CallUnary(ctx, req)
@@ -1080,21 +1050,6 @@ func (c *operatorServiceClient) RunChecks(ctx context.Context, req *connect.Requ
 	return c.runChecks.CallUnary(ctx, req)
 }
 
-// SetTenantPlan calls toshi.operator.v1.OperatorService.SetTenantPlan.
-func (c *operatorServiceClient) SetTenantPlan(ctx context.Context, req *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error) {
-	return c.setTenantPlan.CallUnary(ctx, req)
-}
-
-// SetWorkspaceEntitlement calls toshi.operator.v1.OperatorService.SetWorkspaceEntitlement.
-func (c *operatorServiceClient) SetWorkspaceEntitlement(ctx context.Context, req *connect.Request[operatorv1.SetWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.SetWorkspaceEntitlementResponse], error) {
-	return c.setWorkspaceEntitlement.CallUnary(ctx, req)
-}
-
-// ClearWorkspaceEntitlement calls toshi.operator.v1.OperatorService.ClearWorkspaceEntitlement.
-func (c *operatorServiceClient) ClearWorkspaceEntitlement(ctx context.Context, req *connect.Request[operatorv1.ClearWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.ClearWorkspaceEntitlementResponse], error) {
-	return c.clearWorkspaceEntitlement.CallUnary(ctx, req)
-}
-
 // SuspendTenant calls toshi.operator.v1.OperatorService.SuspendTenant.
 func (c *operatorServiceClient) SuspendTenant(ctx context.Context, req *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error) {
 	return c.suspendTenant.CallUnary(ctx, req)
@@ -1108,11 +1063,6 @@ func (c *operatorServiceClient) ResumeTenant(ctx context.Context, req *connect.R
 // DeleteTenant calls toshi.operator.v1.OperatorService.DeleteTenant.
 func (c *operatorServiceClient) DeleteTenant(ctx context.Context, req *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error) {
 	return c.deleteTenant.CallUnary(ctx, req)
-}
-
-// SetTenantReservation calls toshi.operator.v1.OperatorService.SetTenantReservation.
-func (c *operatorServiceClient) SetTenantReservation(ctx context.Context, req *connect.Request[operatorv1.SetTenantReservationRequest]) (*connect.Response[operatorv1.SetTenantReservationResponse], error) {
-	return c.setTenantReservation.CallUnary(ctx, req)
 }
 
 // GetCapacity calls toshi.operator.v1.OperatorService.GetCapacity.
@@ -1138,11 +1088,6 @@ func (c *operatorServiceClient) GetWorkflowUsage(ctx context.Context, req *conne
 // GetTenantStatement calls toshi.operator.v1.OperatorService.GetTenantStatement.
 func (c *operatorServiceClient) GetTenantStatement(ctx context.Context, req *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error) {
 	return c.getTenantStatement.CallUnary(ctx, req)
-}
-
-// SetTenantBillingCustomer calls toshi.operator.v1.OperatorService.SetTenantBillingCustomer.
-func (c *operatorServiceClient) SetTenantBillingCustomer(ctx context.Context, req *connect.Request[operatorv1.SetTenantBillingCustomerRequest]) (*connect.Response[operatorv1.SetTenantBillingCustomerResponse], error) {
-	return c.setTenantBillingCustomer.CallUnary(ctx, req)
 }
 
 // ListTokens calls toshi.operator.v1.OperatorService.ListTokens.
@@ -1349,6 +1294,33 @@ type OperatorServiceHandler interface {
 	// volume_snapshot_interval_seconds other than 0 and below 60; an unknown
 	// workspace fails with NOT_FOUND. A workspace's own token cannot call it.
 	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
+	// UpdateWorkspace changes the fields named in update_mask and returns the
+	// workspace as stored. Operator credentials are required. A missing id or
+	// mask, an empty mask, or an unknown path fails with INVALID_ARGUMENT; an
+	// unknown workspace fails with NOT_FOUND.
+	//
+	// plan must name a configured plan; otherwise it fails with INVALID_ARGUMENT
+	// (workspace.plan_set).
+	//
+	// reservations merges the entries by size; each entry sets that size, and
+	// 0 slots removes it. Unlisted sizes keep their reservations. Duplicate or
+	// unknown sizes, negative slots and warm values outside 0..slots fail with
+	// INVALID_ARGUMENT (workspace.reservation_set).
+	// entitlement_overrides merges by key: a nonempty value sets the override,
+	// an empty value clears it, and unlisted keys keep their overrides. An empty
+	// map, an empty key, or an invalid set key or value fails with
+	// INVALID_ARGUMENT; a removed feature's override may still be cleared;
+	// a retention value below the plan or deployment default, a deleted
+	// workspace on set, or an unconfigured entitlement resolver fails with
+	// FAILED_PRECONDITION (workspace.entitlement_set or
+	// workspace.entitlement_cleared).
+	// billing.customer_id links or clears the customer; an id over 255 bytes
+	// or containing anything but printable ASCII without spaces fails with
+	// INVALID_ARGUMENT and one in use with ALREADY_EXISTS
+	// (workspace.billing_customer_set). Plan and billing record
+	// an event only when changed; reservation and entitlement sets record one
+	// for each entry, and entitlement clears only when an override existed.
+	UpdateWorkspace(context.Context, *connect.Request[operatorv1.UpdateWorkspaceRequest]) (*connect.Response[operatorv1.UpdateWorkspaceResponse], error)
 	// ReassignSeat moves a workspace's live desktop seat to another member
 	// within the month, for a reason the workspace's licence allows:
 	// "hardware_failure" or "temporary_absence". It removes the seat and
@@ -1383,15 +1355,6 @@ type OperatorServiceHandler interface {
 	// group whose subject this control plane is not configured for (the GitHub
 	// group without a GitHub App) fails with FAILED_PRECONDITION.
 	RunChecks(context.Context, *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error)
-	// SetTenantPlan sets a workspace's plan and returns the workspace. An empty ID or
-	// plan, or a plan the configuration does not define, fails with
-	// INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND.
-	SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error)
-	// SetWorkspaceEntitlement sets an operator override and returns the resolved
-	// value. Retention overrides cannot be below the plan or deployment default.
-	SetWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.SetWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.SetWorkspaceEntitlementResponse], error)
-	// ClearWorkspaceEntitlement removes an override and reports whether one existed.
-	ClearWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.ClearWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.ClearWorkspaceEntitlementResponse], error)
 	// SuspendTenant suspends an active workspace: its new and queued jobs are
 	// held with hold reason tenant_suspended, its running jobs finish, and its
 	// users keep read-only access. A suspended workspace is returned unchanged. An
@@ -1412,13 +1375,6 @@ type OperatorServiceHandler interface {
 	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
 	// deleting or deleted with FAILED_PRECONDITION. Operator only.
 	DeleteTenant(context.Context, *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error)
-	// SetTenantReservation sets or clears a workspace's reservation of N slots of
-	// one runner size for shared hosts, and returns the workspace's effective
-	// reservations. slots of 0 removes the workspace's own reservation
-	// for the size, so its plan's applies again. An empty ID, an unknown size,
-	// a negative slots, or a warm outside 0..slots fails with INVALID_ARGUMENT;
-	// an unknown workspace fails with NOT_FOUND. Operator only.
-	SetTenantReservation(context.Context, *connect.Request[operatorv1.SetTenantReservationRequest]) (*connect.Response[operatorv1.SetTenantReservationResponse], error)
 	// GetCapacity returns the reserved-capacity view of the last scheduler
 	// pass: per runner size the slots free and reserved, and per reservation
 	// the slots in use, earmarked and short. Operator only. It
@@ -1451,12 +1407,6 @@ type OperatorServiceHandler interface {
 	// members and the operator under its grant read
 	// WorkspaceService.GetWorkspaceStatement.
 	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
-	// SetTenantBillingCustomer links or clears a workspace's billing customer id and
-	// returns the workspace's billing state. An empty ID, or a customer_id longer
-	// than 255 bytes or holding anything but printable ASCII without spaces,
-	// fails with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND; a
-	// customer id held by another workspace fails with ALREADY_EXISTS.
-	SetTenantBillingCustomer(context.Context, *connect.Request[operatorv1.SetTenantBillingCustomerRequest]) (*connect.Response[operatorv1.SetTenantBillingCustomerResponse], error)
 	// ListTokens returns the tokens the control plane knows, of every kind or
 	// of the one kind names, oldest first, without their values.
 	//
@@ -1726,6 +1676,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("SetTenantLimits")),
 		connect.WithHandlerOptions(opts...),
 	)
+	operatorServiceUpdateWorkspaceHandler := connect.NewUnaryHandler(
+		OperatorServiceUpdateWorkspaceProcedure,
+		svc.UpdateWorkspace,
+		connect.WithSchema(operatorServiceMethods.ByName("UpdateWorkspace")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceReassignSeatHandler := connect.NewUnaryHandler(
 		OperatorServiceReassignSeatProcedure,
 		svc.ReassignSeat,
@@ -1756,24 +1712,6 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("RunChecks")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceSetTenantPlanHandler := connect.NewUnaryHandler(
-		OperatorServiceSetTenantPlanProcedure,
-		svc.SetTenantPlan,
-		connect.WithSchema(operatorServiceMethods.ByName("SetTenantPlan")),
-		connect.WithHandlerOptions(opts...),
-	)
-	operatorServiceSetWorkspaceEntitlementHandler := connect.NewUnaryHandler(
-		OperatorServiceSetWorkspaceEntitlementProcedure,
-		svc.SetWorkspaceEntitlement,
-		connect.WithSchema(operatorServiceMethods.ByName("SetWorkspaceEntitlement")),
-		connect.WithHandlerOptions(opts...),
-	)
-	operatorServiceClearWorkspaceEntitlementHandler := connect.NewUnaryHandler(
-		OperatorServiceClearWorkspaceEntitlementProcedure,
-		svc.ClearWorkspaceEntitlement,
-		connect.WithSchema(operatorServiceMethods.ByName("ClearWorkspaceEntitlement")),
-		connect.WithHandlerOptions(opts...),
-	)
 	operatorServiceSuspendTenantHandler := connect.NewUnaryHandler(
 		OperatorServiceSuspendTenantProcedure,
 		svc.SuspendTenant,
@@ -1790,12 +1728,6 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		OperatorServiceDeleteTenantProcedure,
 		svc.DeleteTenant,
 		connect.WithSchema(operatorServiceMethods.ByName("DeleteTenant")),
-		connect.WithHandlerOptions(opts...),
-	)
-	operatorServiceSetTenantReservationHandler := connect.NewUnaryHandler(
-		OperatorServiceSetTenantReservationProcedure,
-		svc.SetTenantReservation,
-		connect.WithSchema(operatorServiceMethods.ByName("SetTenantReservation")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceGetCapacityHandler := connect.NewUnaryHandler(
@@ -1826,12 +1758,6 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		OperatorServiceGetTenantStatementProcedure,
 		svc.GetTenantStatement,
 		connect.WithSchema(operatorServiceMethods.ByName("GetTenantStatement")),
-		connect.WithHandlerOptions(opts...),
-	)
-	operatorServiceSetTenantBillingCustomerHandler := connect.NewUnaryHandler(
-		OperatorServiceSetTenantBillingCustomerProcedure,
-		svc.SetTenantBillingCustomer,
-		connect.WithSchema(operatorServiceMethods.ByName("SetTenantBillingCustomer")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceListTokensHandler := connect.NewUnaryHandler(
@@ -2008,6 +1934,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceSetTenantCapHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantLimitsProcedure:
 			operatorServiceSetTenantLimitsHandler.ServeHTTP(w, r)
+		case OperatorServiceUpdateWorkspaceProcedure:
+			operatorServiceUpdateWorkspaceHandler.ServeHTTP(w, r)
 		case OperatorServiceReassignSeatProcedure:
 			operatorServiceReassignSeatHandler.ServeHTTP(w, r)
 		case OperatorServiceListSeatsProcedure:
@@ -2018,20 +1946,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceGetVersionHandler.ServeHTTP(w, r)
 		case OperatorServiceRunChecksProcedure:
 			operatorServiceRunChecksHandler.ServeHTTP(w, r)
-		case OperatorServiceSetTenantPlanProcedure:
-			operatorServiceSetTenantPlanHandler.ServeHTTP(w, r)
-		case OperatorServiceSetWorkspaceEntitlementProcedure:
-			operatorServiceSetWorkspaceEntitlementHandler.ServeHTTP(w, r)
-		case OperatorServiceClearWorkspaceEntitlementProcedure:
-			operatorServiceClearWorkspaceEntitlementHandler.ServeHTTP(w, r)
 		case OperatorServiceSuspendTenantProcedure:
 			operatorServiceSuspendTenantHandler.ServeHTTP(w, r)
 		case OperatorServiceResumeTenantProcedure:
 			operatorServiceResumeTenantHandler.ServeHTTP(w, r)
 		case OperatorServiceDeleteTenantProcedure:
 			operatorServiceDeleteTenantHandler.ServeHTTP(w, r)
-		case OperatorServiceSetTenantReservationProcedure:
-			operatorServiceSetTenantReservationHandler.ServeHTTP(w, r)
 		case OperatorServiceGetCapacityProcedure:
 			operatorServiceGetCapacityHandler.ServeHTTP(w, r)
 		case OperatorServiceGetUsageProcedure:
@@ -2042,8 +1962,6 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceGetWorkflowUsageHandler.ServeHTTP(w, r)
 		case OperatorServiceGetTenantStatementProcedure:
 			operatorServiceGetTenantStatementHandler.ServeHTTP(w, r)
-		case OperatorServiceSetTenantBillingCustomerProcedure:
-			operatorServiceSetTenantBillingCustomerHandler.ServeHTTP(w, r)
 		case OperatorServiceListTokensProcedure:
 			operatorServiceListTokensHandler.ServeHTTP(w, r)
 		case OperatorServiceRotateTokenProcedure:
@@ -2157,6 +2075,10 @@ func (UnimplementedOperatorServiceHandler) SetTenantLimits(context.Context, *con
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantLimits is not implemented"))
 }
 
+func (UnimplementedOperatorServiceHandler) UpdateWorkspace(context.Context, *connect.Request[operatorv1.UpdateWorkspaceRequest]) (*connect.Response[operatorv1.UpdateWorkspaceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.UpdateWorkspace is not implemented"))
+}
+
 func (UnimplementedOperatorServiceHandler) ReassignSeat(context.Context, *connect.Request[operatorv1.ReassignSeatRequest]) (*connect.Response[operatorv1.ReassignSeatResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ReassignSeat is not implemented"))
 }
@@ -2177,18 +2099,6 @@ func (UnimplementedOperatorServiceHandler) RunChecks(context.Context, *connect.R
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RunChecks is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) SetTenantPlan(context.Context, *connect.Request[operatorv1.SetTenantPlanRequest]) (*connect.Response[operatorv1.SetTenantPlanResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantPlan is not implemented"))
-}
-
-func (UnimplementedOperatorServiceHandler) SetWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.SetWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.SetWorkspaceEntitlementResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetWorkspaceEntitlement is not implemented"))
-}
-
-func (UnimplementedOperatorServiceHandler) ClearWorkspaceEntitlement(context.Context, *connect.Request[operatorv1.ClearWorkspaceEntitlementRequest]) (*connect.Response[operatorv1.ClearWorkspaceEntitlementResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ClearWorkspaceEntitlement is not implemented"))
-}
-
 func (UnimplementedOperatorServiceHandler) SuspendTenant(context.Context, *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SuspendTenant is not implemented"))
 }
@@ -2199,10 +2109,6 @@ func (UnimplementedOperatorServiceHandler) ResumeTenant(context.Context, *connec
 
 func (UnimplementedOperatorServiceHandler) DeleteTenant(context.Context, *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.DeleteTenant is not implemented"))
-}
-
-func (UnimplementedOperatorServiceHandler) SetTenantReservation(context.Context, *connect.Request[operatorv1.SetTenantReservationRequest]) (*connect.Response[operatorv1.SetTenantReservationResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantReservation is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) GetCapacity(context.Context, *connect.Request[operatorv1.GetCapacityRequest]) (*connect.Response[operatorv1.GetCapacityResponse], error) {
@@ -2223,10 +2129,6 @@ func (UnimplementedOperatorServiceHandler) GetWorkflowUsage(context.Context, *co
 
 func (UnimplementedOperatorServiceHandler) GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetTenantStatement is not implemented"))
-}
-
-func (UnimplementedOperatorServiceHandler) SetTenantBillingCustomer(context.Context, *connect.Request[operatorv1.SetTenantBillingCustomerRequest]) (*connect.Response[operatorv1.SetTenantBillingCustomerResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantBillingCustomer is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListTokens(context.Context, *connect.Request[operatorv1.ListTokensRequest]) (*connect.Response[operatorv1.ListTokensResponse], error) {

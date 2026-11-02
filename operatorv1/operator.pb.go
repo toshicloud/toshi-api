@@ -14,6 +14,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -4189,8 +4190,12 @@ type Tenant struct {
 	// The interval Toshi uses: the workspace's own value when set, else its
 	// plan's.
 	VolumeSnapshotIntervalSecondsEffective int32 `protobuf:"varint,36,opt,name=volume_snapshot_interval_seconds_effective,json=volumeSnapshotIntervalSecondsEffective,proto3" json:"volume_snapshot_interval_seconds_effective,omitempty"`
-	unknownFields                          protoimpl.UnknownFields
-	sizeCache                              protoimpl.SizeCache
+	// The workspace's billing link.
+	Billing *TenantBilling `protobuf:"bytes,38,opt,name=billing,proto3" json:"billing,omitempty"`
+	// The operator's entitlement overrides, by feature key.
+	EntitlementOverrides map[string]string `protobuf:"bytes,39,rep,name=entitlement_overrides,json=entitlementOverrides,proto3" json:"entitlement_overrides,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Tenant) Reset() {
@@ -4480,6 +4485,20 @@ func (x *Tenant) GetVolumeSnapshotIntervalSecondsEffective() int32 {
 		return x.VolumeSnapshotIntervalSecondsEffective
 	}
 	return 0
+}
+
+func (x *Tenant) GetBilling() *TenantBilling {
+	if x != nil {
+		return x.Billing
+	}
+	return nil
+}
+
+func (x *Tenant) GetEntitlementOverrides() map[string]string {
+	if x != nil {
+		return x.EntitlementOverrides
+	}
+	return nil
 }
 
 // HostingCertificate is a workspace's wildcard certificate for its
@@ -5092,6 +5111,104 @@ func (x *SetTenantLimitsResponse) GetTenant() *Tenant {
 	return nil
 }
 
+type UpdateWorkspaceRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workspace and the values to set; id identifies the workspace.
+	Workspace *Tenant `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	// The fields to change; required and nonempty.
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateWorkspaceRequest) Reset() {
+	*x = UpdateWorkspaceRequest{}
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateWorkspaceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateWorkspaceRequest) ProtoMessage() {}
+
+func (x *UpdateWorkspaceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateWorkspaceRequest.ProtoReflect.Descriptor instead.
+func (*UpdateWorkspaceRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *UpdateWorkspaceRequest) GetWorkspace() *Tenant {
+	if x != nil {
+		return x.Workspace
+	}
+	return nil
+}
+
+func (x *UpdateWorkspaceRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.UpdateMask
+	}
+	return nil
+}
+
+type UpdateWorkspaceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Workspace     *Tenant                `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateWorkspaceResponse) Reset() {
+	*x = UpdateWorkspaceResponse{}
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateWorkspaceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateWorkspaceResponse) ProtoMessage() {}
+
+func (x *UpdateWorkspaceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateWorkspaceResponse.ProtoReflect.Descriptor instead.
+func (*UpdateWorkspaceResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *UpdateWorkspaceResponse) GetWorkspace() *Tenant {
+	if x != nil {
+		return x.Workspace
+	}
+	return nil
+}
+
 // Seat is one assignment of a desktop seat to a person in a workspace, as
 // the Workspace API's Seat with its workspace.
 type Seat struct {
@@ -5114,7 +5231,7 @@ type Seat struct {
 
 func (x *Seat) Reset() {
 	*x = Seat{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[43]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5126,7 +5243,7 @@ func (x *Seat) String() string {
 func (*Seat) ProtoMessage() {}
 
 func (x *Seat) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[43]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5139,7 +5256,7 @@ func (x *Seat) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Seat.ProtoReflect.Descriptor instead.
 func (*Seat) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{43}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *Seat) GetId() string {
@@ -5219,7 +5336,7 @@ type ReassignSeatRequest struct {
 
 func (x *ReassignSeatRequest) Reset() {
 	*x = ReassignSeatRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[44]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5231,7 +5348,7 @@ func (x *ReassignSeatRequest) String() string {
 func (*ReassignSeatRequest) ProtoMessage() {}
 
 func (x *ReassignSeatRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[44]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5244,7 +5361,7 @@ func (x *ReassignSeatRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReassignSeatRequest.ProtoReflect.Descriptor instead.
 func (*ReassignSeatRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{44}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *ReassignSeatRequest) GetSeatId() string {
@@ -5280,7 +5397,7 @@ type ReassignSeatResponse struct {
 
 func (x *ReassignSeatResponse) Reset() {
 	*x = ReassignSeatResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[45]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5292,7 +5409,7 @@ func (x *ReassignSeatResponse) String() string {
 func (*ReassignSeatResponse) ProtoMessage() {}
 
 func (x *ReassignSeatResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[45]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5305,7 +5422,7 @@ func (x *ReassignSeatResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReassignSeatResponse.ProtoReflect.Descriptor instead.
 func (*ReassignSeatResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{45}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *ReassignSeatResponse) GetReplaced() *Seat {
@@ -5336,7 +5453,7 @@ type ListSeatsRequest struct {
 
 func (x *ListSeatsRequest) Reset() {
 	*x = ListSeatsRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[46]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5348,7 +5465,7 @@ func (x *ListSeatsRequest) String() string {
 func (*ListSeatsRequest) ProtoMessage() {}
 
 func (x *ListSeatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[46]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5361,7 +5478,7 @@ func (x *ListSeatsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSeatsRequest.ProtoReflect.Descriptor instead.
 func (*ListSeatsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{46}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ListSeatsRequest) GetMonth() string {
@@ -5400,7 +5517,7 @@ type ListSeatsResponse struct {
 
 func (x *ListSeatsResponse) Reset() {
 	*x = ListSeatsResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[47]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5412,7 +5529,7 @@ func (x *ListSeatsResponse) String() string {
 func (*ListSeatsResponse) ProtoMessage() {}
 
 func (x *ListSeatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[47]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5425,7 +5542,7 @@ func (x *ListSeatsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSeatsResponse.ProtoReflect.Descriptor instead.
 func (*ListSeatsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{47}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *ListSeatsResponse) GetSeats() []*SeatMonth {
@@ -5465,7 +5582,7 @@ type SeatMonth struct {
 
 func (x *SeatMonth) Reset() {
 	*x = SeatMonth{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[48]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5477,7 +5594,7 @@ func (x *SeatMonth) String() string {
 func (*SeatMonth) ProtoMessage() {}
 
 func (x *SeatMonth) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[48]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5490,7 +5607,7 @@ func (x *SeatMonth) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SeatMonth.ProtoReflect.Descriptor instead.
 func (*SeatMonth) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{48}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *SeatMonth) GetSeat() *Seat {
@@ -5524,7 +5641,7 @@ type SuspendTenantRequest struct {
 
 func (x *SuspendTenantRequest) Reset() {
 	*x = SuspendTenantRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[49]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5536,7 +5653,7 @@ func (x *SuspendTenantRequest) String() string {
 func (*SuspendTenantRequest) ProtoMessage() {}
 
 func (x *SuspendTenantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[49]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5549,7 +5666,7 @@ func (x *SuspendTenantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SuspendTenantRequest.ProtoReflect.Descriptor instead.
 func (*SuspendTenantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{49}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *SuspendTenantRequest) GetId() string {
@@ -5575,7 +5692,7 @@ type SuspendTenantResponse struct {
 
 func (x *SuspendTenantResponse) Reset() {
 	*x = SuspendTenantResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[50]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5587,7 +5704,7 @@ func (x *SuspendTenantResponse) String() string {
 func (*SuspendTenantResponse) ProtoMessage() {}
 
 func (x *SuspendTenantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[50]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5600,7 +5717,7 @@ func (x *SuspendTenantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SuspendTenantResponse.ProtoReflect.Descriptor instead.
 func (*SuspendTenantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{50}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *SuspendTenantResponse) GetTenant() *Tenant {
@@ -5620,7 +5737,7 @@ type ResumeTenantRequest struct {
 
 func (x *ResumeTenantRequest) Reset() {
 	*x = ResumeTenantRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[51]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5632,7 +5749,7 @@ func (x *ResumeTenantRequest) String() string {
 func (*ResumeTenantRequest) ProtoMessage() {}
 
 func (x *ResumeTenantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[51]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5645,7 +5762,7 @@ func (x *ResumeTenantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResumeTenantRequest.ProtoReflect.Descriptor instead.
 func (*ResumeTenantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{51}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *ResumeTenantRequest) GetId() string {
@@ -5671,7 +5788,7 @@ type ResumeTenantResponse struct {
 
 func (x *ResumeTenantResponse) Reset() {
 	*x = ResumeTenantResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[52]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5683,7 +5800,7 @@ func (x *ResumeTenantResponse) String() string {
 func (*ResumeTenantResponse) ProtoMessage() {}
 
 func (x *ResumeTenantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[52]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5696,7 +5813,7 @@ func (x *ResumeTenantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResumeTenantResponse.ProtoReflect.Descriptor instead.
 func (*ResumeTenantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{52}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *ResumeTenantResponse) GetTenant() *Tenant {
@@ -5718,7 +5835,7 @@ type DeleteTenantRequest struct {
 
 func (x *DeleteTenantRequest) Reset() {
 	*x = DeleteTenantRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[53]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5730,7 +5847,7 @@ func (x *DeleteTenantRequest) String() string {
 func (*DeleteTenantRequest) ProtoMessage() {}
 
 func (x *DeleteTenantRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[53]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5743,7 +5860,7 @@ func (x *DeleteTenantRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTenantRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTenantRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{53}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *DeleteTenantRequest) GetId() string {
@@ -5783,7 +5900,7 @@ type DeleteTenantResponse struct {
 
 func (x *DeleteTenantResponse) Reset() {
 	*x = DeleteTenantResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[54]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5795,7 +5912,7 @@ func (x *DeleteTenantResponse) String() string {
 func (*DeleteTenantResponse) ProtoMessage() {}
 
 func (x *DeleteTenantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[54]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5808,128 +5925,12 @@ func (x *DeleteTenantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTenantResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTenantResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{54}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *DeleteTenantResponse) GetTenant() *Tenant {
 	if x != nil {
 		return x.Tenant
-	}
-	return nil
-}
-
-type SetTenantReservationRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// A runner size, as a runs-on label.
-	Size string `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
-	// Slots to reserve; 0 removes the workspace's own reservation for the size.
-	Slots int32 `protobuf:"varint,3,opt,name=slots,proto3" json:"slots,omitempty"`
-	// Slots kept on warm VMs; at most slots.
-	Warm          int32 `protobuf:"varint,4,opt,name=warm,proto3" json:"warm,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetTenantReservationRequest) Reset() {
-	*x = SetTenantReservationRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[55]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetTenantReservationRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetTenantReservationRequest) ProtoMessage() {}
-
-func (x *SetTenantReservationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[55]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetTenantReservationRequest.ProtoReflect.Descriptor instead.
-func (*SetTenantReservationRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{55}
-}
-
-func (x *SetTenantReservationRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *SetTenantReservationRequest) GetSize() string {
-	if x != nil {
-		return x.Size
-	}
-	return ""
-}
-
-func (x *SetTenantReservationRequest) GetSlots() int32 {
-	if x != nil {
-		return x.Slots
-	}
-	return 0
-}
-
-func (x *SetTenantReservationRequest) GetWarm() int32 {
-	if x != nil {
-		return x.Warm
-	}
-	return 0
-}
-
-type SetTenantReservationResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The workspace's effective reservations after the change, ordered by size.
-	Reservations  []*Reservation `protobuf:"bytes,1,rep,name=reservations,proto3" json:"reservations,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetTenantReservationResponse) Reset() {
-	*x = SetTenantReservationResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[56]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetTenantReservationResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetTenantReservationResponse) ProtoMessage() {}
-
-func (x *SetTenantReservationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[56]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetTenantReservationResponse.ProtoReflect.Descriptor instead.
-func (*SetTenantReservationResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{56}
-}
-
-func (x *SetTenantReservationResponse) GetReservations() []*Reservation {
-	if x != nil {
-		return x.Reservations
 	}
 	return nil
 }
@@ -6860,302 +6861,6 @@ func (x *RunChecksResponse) GetChecks() []*Check {
 	return nil
 }
 
-type SetTenantPlanRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Plan          string                 `protobuf:"bytes,2,opt,name=plan,proto3" json:"plan,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetTenantPlanRequest) Reset() {
-	*x = SetTenantPlanRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[70]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetTenantPlanRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetTenantPlanRequest) ProtoMessage() {}
-
-func (x *SetTenantPlanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[70]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetTenantPlanRequest.ProtoReflect.Descriptor instead.
-func (*SetTenantPlanRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{70}
-}
-
-func (x *SetTenantPlanRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *SetTenantPlanRequest) GetPlan() string {
-	if x != nil {
-		return x.Plan
-	}
-	return ""
-}
-
-type SetTenantPlanResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tenant        *Tenant                `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetTenantPlanResponse) Reset() {
-	*x = SetTenantPlanResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[71]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetTenantPlanResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetTenantPlanResponse) ProtoMessage() {}
-
-func (x *SetTenantPlanResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[71]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetTenantPlanResponse.ProtoReflect.Descriptor instead.
-func (*SetTenantPlanResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{71}
-}
-
-func (x *SetTenantPlanResponse) GetTenant() *Tenant {
-	if x != nil {
-		return x.Tenant
-	}
-	return nil
-}
-
-type SetWorkspaceEntitlementRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Key           string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	Value         string                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetWorkspaceEntitlementRequest) Reset() {
-	*x = SetWorkspaceEntitlementRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[72]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetWorkspaceEntitlementRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetWorkspaceEntitlementRequest) ProtoMessage() {}
-
-func (x *SetWorkspaceEntitlementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[72]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetWorkspaceEntitlementRequest.ProtoReflect.Descriptor instead.
-func (*SetWorkspaceEntitlementRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{72}
-}
-
-func (x *SetWorkspaceEntitlementRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *SetWorkspaceEntitlementRequest) GetKey() string {
-	if x != nil {
-		return x.Key
-	}
-	return ""
-}
-
-func (x *SetWorkspaceEntitlementRequest) GetValue() string {
-	if x != nil {
-		return x.Value
-	}
-	return ""
-}
-
-type SetWorkspaceEntitlementResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Value         string                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetWorkspaceEntitlementResponse) Reset() {
-	*x = SetWorkspaceEntitlementResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[73]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetWorkspaceEntitlementResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetWorkspaceEntitlementResponse) ProtoMessage() {}
-
-func (x *SetWorkspaceEntitlementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[73]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetWorkspaceEntitlementResponse.ProtoReflect.Descriptor instead.
-func (*SetWorkspaceEntitlementResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{73}
-}
-
-func (x *SetWorkspaceEntitlementResponse) GetValue() string {
-	if x != nil {
-		return x.Value
-	}
-	return ""
-}
-
-type ClearWorkspaceEntitlementRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Key           string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ClearWorkspaceEntitlementRequest) Reset() {
-	*x = ClearWorkspaceEntitlementRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[74]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ClearWorkspaceEntitlementRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ClearWorkspaceEntitlementRequest) ProtoMessage() {}
-
-func (x *ClearWorkspaceEntitlementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[74]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ClearWorkspaceEntitlementRequest.ProtoReflect.Descriptor instead.
-func (*ClearWorkspaceEntitlementRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{74}
-}
-
-func (x *ClearWorkspaceEntitlementRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *ClearWorkspaceEntitlementRequest) GetKey() string {
-	if x != nil {
-		return x.Key
-	}
-	return ""
-}
-
-type ClearWorkspaceEntitlementResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Cleared       bool                   `protobuf:"varint,1,opt,name=cleared,proto3" json:"cleared,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ClearWorkspaceEntitlementResponse) Reset() {
-	*x = ClearWorkspaceEntitlementResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[75]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ClearWorkspaceEntitlementResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ClearWorkspaceEntitlementResponse) ProtoMessage() {}
-
-func (x *ClearWorkspaceEntitlementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[75]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ClearWorkspaceEntitlementResponse.ProtoReflect.Descriptor instead.
-func (*ClearWorkspaceEntitlementResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{75}
-}
-
-func (x *ClearWorkspaceEntitlementResponse) GetCleared() bool {
-	if x != nil {
-		return x.Cleared
-	}
-	return false
-}
-
 // GetUsageRequest selects the jobs to count. A job is in the window when its
 // queued_at is at or after from and before to.
 type GetUsageRequest struct {
@@ -7172,7 +6877,7 @@ type GetUsageRequest struct {
 
 func (x *GetUsageRequest) Reset() {
 	*x = GetUsageRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[76]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7184,7 +6889,7 @@ func (x *GetUsageRequest) String() string {
 func (*GetUsageRequest) ProtoMessage() {}
 
 func (x *GetUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[76]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7197,7 +6902,7 @@ func (x *GetUsageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUsageRequest.ProtoReflect.Descriptor instead.
 func (*GetUsageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{76}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *GetUsageRequest) GetFrom() *timestamppb.Timestamp {
@@ -7241,7 +6946,7 @@ type GetUsageResponse struct {
 
 func (x *GetUsageResponse) Reset() {
 	*x = GetUsageResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[77]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7253,7 +6958,7 @@ func (x *GetUsageResponse) String() string {
 func (*GetUsageResponse) ProtoMessage() {}
 
 func (x *GetUsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[77]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7266,7 +6971,7 @@ func (x *GetUsageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUsageResponse.ProtoReflect.Descriptor instead.
 func (*GetUsageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{77}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *GetUsageResponse) GetRows() []*UsageRow {
@@ -7319,7 +7024,7 @@ type FillerUsage struct {
 
 func (x *FillerUsage) Reset() {
 	*x = FillerUsage{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[78]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7331,7 +7036,7 @@ func (x *FillerUsage) String() string {
 func (*FillerUsage) ProtoMessage() {}
 
 func (x *FillerUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[78]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7344,7 +7049,7 @@ func (x *FillerUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FillerUsage.ProtoReflect.Descriptor instead.
 func (*FillerUsage) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{78}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *FillerUsage) GetTenant() string {
@@ -7419,7 +7124,7 @@ type UsageRow struct {
 
 func (x *UsageRow) Reset() {
 	*x = UsageRow{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[79]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7431,7 +7136,7 @@ func (x *UsageRow) String() string {
 func (*UsageRow) ProtoMessage() {}
 
 func (x *UsageRow) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[79]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7444,7 +7149,7 @@ func (x *UsageRow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsageRow.ProtoReflect.Descriptor instead.
 func (*UsageRow) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{79}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *UsageRow) GetTenant() string {
@@ -7568,7 +7273,7 @@ type GetQueueTimesRequest struct {
 
 func (x *GetQueueTimesRequest) Reset() {
 	*x = GetQueueTimesRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[80]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7580,7 +7285,7 @@ func (x *GetQueueTimesRequest) String() string {
 func (*GetQueueTimesRequest) ProtoMessage() {}
 
 func (x *GetQueueTimesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[80]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7593,7 +7298,7 @@ func (x *GetQueueTimesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQueueTimesRequest.ProtoReflect.Descriptor instead.
 func (*GetQueueTimesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{80}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *GetQueueTimesRequest) GetFrom() *timestamppb.Timestamp {
@@ -7641,7 +7346,7 @@ type GetQueueTimesResponse struct {
 
 func (x *GetQueueTimesResponse) Reset() {
 	*x = GetQueueTimesResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[81]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7653,7 +7358,7 @@ func (x *GetQueueTimesResponse) String() string {
 func (*GetQueueTimesResponse) ProtoMessage() {}
 
 func (x *GetQueueTimesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[81]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7666,7 +7371,7 @@ func (x *GetQueueTimesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQueueTimesResponse.ProtoReflect.Descriptor instead.
 func (*GetQueueTimesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{81}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *GetQueueTimesResponse) GetJobs() int64 {
@@ -7747,7 +7452,7 @@ type HoldTimes struct {
 
 func (x *HoldTimes) Reset() {
 	*x = HoldTimes{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[82]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7759,7 +7464,7 @@ func (x *HoldTimes) String() string {
 func (*HoldTimes) ProtoMessage() {}
 
 func (x *HoldTimes) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[82]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7772,7 +7477,7 @@ func (x *HoldTimes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HoldTimes.ProtoReflect.Descriptor instead.
 func (*HoldTimes) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{82}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *HoldTimes) GetReason() string {
@@ -7840,7 +7545,7 @@ type GetWorkflowUsageRequest struct {
 
 func (x *GetWorkflowUsageRequest) Reset() {
 	*x = GetWorkflowUsageRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[83]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7852,7 +7557,7 @@ func (x *GetWorkflowUsageRequest) String() string {
 func (*GetWorkflowUsageRequest) ProtoMessage() {}
 
 func (x *GetWorkflowUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[83]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7865,7 +7570,7 @@ func (x *GetWorkflowUsageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkflowUsageRequest.ProtoReflect.Descriptor instead.
 func (*GetWorkflowUsageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{83}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *GetWorkflowUsageRequest) GetFrom() *timestamppb.Timestamp {
@@ -7904,7 +7609,7 @@ type GetWorkflowUsageResponse struct {
 
 func (x *GetWorkflowUsageResponse) Reset() {
 	*x = GetWorkflowUsageResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[84]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7916,7 +7621,7 @@ func (x *GetWorkflowUsageResponse) String() string {
 func (*GetWorkflowUsageResponse) ProtoMessage() {}
 
 func (x *GetWorkflowUsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[84]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7929,7 +7634,7 @@ func (x *GetWorkflowUsageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkflowUsageResponse.ProtoReflect.Descriptor instead.
 func (*GetWorkflowUsageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{84}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *GetWorkflowUsageResponse) GetRows() []*WorkflowUsageRow {
@@ -7985,7 +7690,7 @@ type WorkflowUsageRow struct {
 
 func (x *WorkflowUsageRow) Reset() {
 	*x = WorkflowUsageRow{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[85]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7997,7 +7702,7 @@ func (x *WorkflowUsageRow) String() string {
 func (*WorkflowUsageRow) ProtoMessage() {}
 
 func (x *WorkflowUsageRow) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[85]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8010,7 +7715,7 @@ func (x *WorkflowUsageRow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkflowUsageRow.ProtoReflect.Descriptor instead.
 func (*WorkflowUsageRow) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{85}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *WorkflowUsageRow) GetTenant() string {
@@ -8091,7 +7796,7 @@ type GetCapacityRequest struct {
 
 func (x *GetCapacityRequest) Reset() {
 	*x = GetCapacityRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[86]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8103,7 +7808,7 @@ func (x *GetCapacityRequest) String() string {
 func (*GetCapacityRequest) ProtoMessage() {}
 
 func (x *GetCapacityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[86]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8116,7 +7821,7 @@ func (x *GetCapacityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCapacityRequest.ProtoReflect.Descriptor instead.
 func (*GetCapacityRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{86}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{80}
 }
 
 type GetCapacityResponse struct {
@@ -8135,7 +7840,7 @@ type GetCapacityResponse struct {
 
 func (x *GetCapacityResponse) Reset() {
 	*x = GetCapacityResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[87]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8147,7 +7852,7 @@ func (x *GetCapacityResponse) String() string {
 func (*GetCapacityResponse) ProtoMessage() {}
 
 func (x *GetCapacityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[87]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8160,7 +7865,7 @@ func (x *GetCapacityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCapacityResponse.ProtoReflect.Descriptor instead.
 func (*GetCapacityResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{87}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *GetCapacityResponse) GetSizes() []*CapacitySize {
@@ -8206,7 +7911,7 @@ type CapacitySize struct {
 
 func (x *CapacitySize) Reset() {
 	*x = CapacitySize{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[88]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8218,7 +7923,7 @@ func (x *CapacitySize) String() string {
 func (*CapacitySize) ProtoMessage() {}
 
 func (x *CapacitySize) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[88]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8231,7 +7936,7 @@ func (x *CapacitySize) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CapacitySize.ProtoReflect.Descriptor instead.
 func (*CapacitySize) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{88}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *CapacitySize) GetSize() string {
@@ -8304,7 +8009,7 @@ type CapacityReservation struct {
 
 func (x *CapacityReservation) Reset() {
 	*x = CapacityReservation{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[89]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8316,7 +8021,7 @@ func (x *CapacityReservation) String() string {
 func (*CapacityReservation) ProtoMessage() {}
 
 func (x *CapacityReservation) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[89]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8329,7 +8034,7 @@ func (x *CapacityReservation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CapacityReservation.ProtoReflect.Descriptor instead.
 func (*CapacityReservation) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{89}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *CapacityReservation) GetTenant() string {
@@ -8402,7 +8107,7 @@ type GetTenantStatementRequest struct {
 
 func (x *GetTenantStatementRequest) Reset() {
 	*x = GetTenantStatementRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[90]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8414,7 +8119,7 @@ func (x *GetTenantStatementRequest) String() string {
 func (*GetTenantStatementRequest) ProtoMessage() {}
 
 func (x *GetTenantStatementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[90]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8427,7 +8132,7 @@ func (x *GetTenantStatementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantStatementRequest.ProtoReflect.Descriptor instead.
 func (*GetTenantStatementRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{90}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *GetTenantStatementRequest) GetId() string {
@@ -8462,7 +8167,7 @@ type GetTenantStatementResponse struct {
 
 func (x *GetTenantStatementResponse) Reset() {
 	*x = GetTenantStatementResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[91]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8474,7 +8179,7 @@ func (x *GetTenantStatementResponse) String() string {
 func (*GetTenantStatementResponse) ProtoMessage() {}
 
 func (x *GetTenantStatementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[91]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8487,7 +8192,7 @@ func (x *GetTenantStatementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantStatementResponse.ProtoReflect.Descriptor instead.
 func (*GetTenantStatementResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{91}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *GetTenantStatementResponse) GetStatement() *TenantStatement {
@@ -8575,7 +8280,7 @@ type TenantStatement struct {
 
 func (x *TenantStatement) Reset() {
 	*x = TenantStatement{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[92]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8587,7 +8292,7 @@ func (x *TenantStatement) String() string {
 func (*TenantStatement) ProtoMessage() {}
 
 func (x *TenantStatement) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[92]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8600,7 +8305,7 @@ func (x *TenantStatement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantStatement.ProtoReflect.Descriptor instead.
 func (*TenantStatement) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{92}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *TenantStatement) GetTenant() string {
@@ -8793,7 +8498,7 @@ type PaidStarts struct {
 
 func (x *PaidStarts) Reset() {
 	*x = PaidStarts{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[93]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8805,7 +8510,7 @@ func (x *PaidStarts) String() string {
 func (*PaidStarts) ProtoMessage() {}
 
 func (x *PaidStarts) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[93]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8818,7 +8523,7 @@ func (x *PaidStarts) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaidStarts.ProtoReflect.Descriptor instead.
 func (*PaidStarts) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{93}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *PaidStarts) GetCount() int64 {
@@ -8859,7 +8564,7 @@ type DesktopSeats struct {
 
 func (x *DesktopSeats) Reset() {
 	*x = DesktopSeats{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[94]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8871,7 +8576,7 @@ func (x *DesktopSeats) String() string {
 func (*DesktopSeats) ProtoMessage() {}
 
 func (x *DesktopSeats) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[94]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8884,7 +8589,7 @@ func (x *DesktopSeats) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DesktopSeats.ProtoReflect.Descriptor instead.
 func (*DesktopSeats) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{94}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *DesktopSeats) GetBilledSeats() int64 {
@@ -8944,7 +8649,7 @@ type StatementSeat struct {
 
 func (x *StatementSeat) Reset() {
 	*x = StatementSeat{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[95]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8956,7 +8661,7 @@ func (x *StatementSeat) String() string {
 func (*StatementSeat) ProtoMessage() {}
 
 func (x *StatementSeat) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[95]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8969,7 +8674,7 @@ func (x *StatementSeat) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatementSeat.ProtoReflect.Descriptor instead.
 func (*StatementSeat) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{95}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *StatementSeat) GetSeatId() string {
@@ -9041,7 +8746,7 @@ type OwnHostFee struct {
 
 func (x *OwnHostFee) Reset() {
 	*x = OwnHostFee{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[96]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9053,7 +8758,7 @@ func (x *OwnHostFee) String() string {
 func (*OwnHostFee) ProtoMessage() {}
 
 func (x *OwnHostFee) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[96]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9066,7 +8771,7 @@ func (x *OwnHostFee) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OwnHostFee.ProtoReflect.Descriptor instead.
 func (*OwnHostFee) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{96}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *OwnHostFee) GetSeconds() float64 {
@@ -9120,7 +8825,7 @@ type Awake struct {
 
 func (x *Awake) Reset() {
 	*x = Awake{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[97]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9132,7 +8837,7 @@ func (x *Awake) String() string {
 func (*Awake) ProtoMessage() {}
 
 func (x *Awake) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[97]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9145,7 +8850,7 @@ func (x *Awake) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Awake.ProtoReflect.Descriptor instead.
 func (*Awake) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{97}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *Awake) GetSize() string {
@@ -9215,7 +8920,7 @@ type Storage struct {
 
 func (x *Storage) Reset() {
 	*x = Storage{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[98]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9227,7 +8932,7 @@ func (x *Storage) String() string {
 func (*Storage) ProtoMessage() {}
 
 func (x *Storage) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[98]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9240,7 +8945,7 @@ func (x *Storage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Storage.ProtoReflect.Descriptor instead.
 func (*Storage) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{98}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *Storage) GetKinds() []*StoredKind {
@@ -9300,7 +9005,7 @@ type StoredKind struct {
 
 func (x *StoredKind) Reset() {
 	*x = StoredKind{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[99]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9312,7 +9017,7 @@ func (x *StoredKind) String() string {
 func (*StoredKind) ProtoMessage() {}
 
 func (x *StoredKind) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[99]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9325,7 +9030,7 @@ func (x *StoredKind) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StoredKind.ProtoReflect.Descriptor instead.
 func (*StoredKind) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{99}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *StoredKind) GetKind() string {
@@ -9366,7 +9071,7 @@ type StorageUsageRow struct {
 
 func (x *StorageUsageRow) Reset() {
 	*x = StorageUsageRow{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[100]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9378,7 +9083,7 @@ func (x *StorageUsageRow) String() string {
 func (*StorageUsageRow) ProtoMessage() {}
 
 func (x *StorageUsageRow) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[100]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9391,7 +9096,7 @@ func (x *StorageUsageRow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StorageUsageRow.ProtoReflect.Descriptor instead.
 func (*StorageUsageRow) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{100}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *StorageUsageRow) GetTenant() string {
@@ -9459,7 +9164,7 @@ type StatementUsage struct {
 
 func (x *StatementUsage) Reset() {
 	*x = StatementUsage{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[101]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9471,7 +9176,7 @@ func (x *StatementUsage) String() string {
 func (*StatementUsage) ProtoMessage() {}
 
 func (x *StatementUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[101]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9484,7 +9189,7 @@ func (x *StatementUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatementUsage.ProtoReflect.Descriptor instead.
 func (*StatementUsage) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{101}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *StatementUsage) GetSize() string {
@@ -9584,7 +9289,7 @@ type StatementCharge struct {
 
 func (x *StatementCharge) Reset() {
 	*x = StatementCharge{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[102]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9596,7 +9301,7 @@ func (x *StatementCharge) String() string {
 func (*StatementCharge) ProtoMessage() {}
 
 func (x *StatementCharge) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[102]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9609,7 +9314,7 @@ func (x *StatementCharge) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatementCharge.ProtoReflect.Descriptor instead.
 func (*StatementCharge) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{102}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *StatementCharge) GetSize() string {
@@ -9638,103 +9343,6 @@ func (x *StatementCharge) GetSeconds() int64 {
 		return x.Seconds
 	}
 	return 0
-}
-
-type SetTenantBillingCustomerRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Empty clears the customer id and billing start.
-	CustomerId    string `protobuf:"bytes,2,opt,name=customer_id,json=customerId,proto3" json:"customer_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetTenantBillingCustomerRequest) Reset() {
-	*x = SetTenantBillingCustomerRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[103]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetTenantBillingCustomerRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetTenantBillingCustomerRequest) ProtoMessage() {}
-
-func (x *SetTenantBillingCustomerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[103]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetTenantBillingCustomerRequest.ProtoReflect.Descriptor instead.
-func (*SetTenantBillingCustomerRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{103}
-}
-
-func (x *SetTenantBillingCustomerRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *SetTenantBillingCustomerRequest) GetCustomerId() string {
-	if x != nil {
-		return x.CustomerId
-	}
-	return ""
-}
-
-type SetTenantBillingCustomerResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Billing       *TenantBilling         `protobuf:"bytes,1,opt,name=billing,proto3" json:"billing,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetTenantBillingCustomerResponse) Reset() {
-	*x = SetTenantBillingCustomerResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[104]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetTenantBillingCustomerResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetTenantBillingCustomerResponse) ProtoMessage() {}
-
-func (x *SetTenantBillingCustomerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[104]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetTenantBillingCustomerResponse.ProtoReflect.Descriptor instead.
-func (*SetTenantBillingCustomerResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{104}
-}
-
-func (x *SetTenantBillingCustomerResponse) GetBilling() *TenantBilling {
-	if x != nil {
-		return x.Billing
-	}
-	return nil
 }
 
 // TenantBilling is a workspace's billing link, its subscription's status and the
@@ -9809,7 +9417,7 @@ type TenantBilling struct {
 
 func (x *TenantBilling) Reset() {
 	*x = TenantBilling{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[105]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9821,7 +9429,7 @@ func (x *TenantBilling) String() string {
 func (*TenantBilling) ProtoMessage() {}
 
 func (x *TenantBilling) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[105]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9834,7 +9442,7 @@ func (x *TenantBilling) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantBilling.ProtoReflect.Descriptor instead.
 func (*TenantBilling) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{105}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *TenantBilling) GetCustomerId() string {
@@ -10018,7 +9626,7 @@ type BillingTotals struct {
 
 func (x *BillingTotals) Reset() {
 	*x = BillingTotals{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[106]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10030,7 +9638,7 @@ func (x *BillingTotals) String() string {
 func (*BillingTotals) ProtoMessage() {}
 
 func (x *BillingTotals) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[106]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10043,7 +9651,7 @@ func (x *BillingTotals) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BillingTotals.ProtoReflect.Descriptor instead.
 func (*BillingTotals) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{106}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *BillingTotals) GetMonth() string {
@@ -10120,7 +9728,7 @@ type BillingEventFailure struct {
 
 func (x *BillingEventFailure) Reset() {
 	*x = BillingEventFailure{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[107]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10132,7 +9740,7 @@ func (x *BillingEventFailure) String() string {
 func (*BillingEventFailure) ProtoMessage() {}
 
 func (x *BillingEventFailure) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[107]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10145,7 +9753,7 @@ func (x *BillingEventFailure) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BillingEventFailure.ProtoReflect.Descriptor instead.
 func (*BillingEventFailure) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{107}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *BillingEventFailure) GetJobId() string {
@@ -10267,7 +9875,7 @@ type Token struct {
 
 func (x *Token) Reset() {
 	*x = Token{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[108]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10279,7 +9887,7 @@ func (x *Token) String() string {
 func (*Token) ProtoMessage() {}
 
 func (x *Token) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[108]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10292,7 +9900,7 @@ func (x *Token) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Token.ProtoReflect.Descriptor instead.
 func (*Token) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{108}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{100}
 }
 
 func (x *Token) GetId() string {
@@ -10442,7 +10050,7 @@ type Subject struct {
 
 func (x *Subject) Reset() {
 	*x = Subject{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[109]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10454,7 +10062,7 @@ func (x *Subject) String() string {
 func (*Subject) ProtoMessage() {}
 
 func (x *Subject) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[109]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10467,7 +10075,7 @@ func (x *Subject) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Subject.ProtoReflect.Descriptor instead.
 func (*Subject) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{109}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{101}
 }
 
 func (x *Subject) GetKind() SubjectKind {
@@ -10501,7 +10109,7 @@ type ClientRanges struct {
 
 func (x *ClientRanges) Reset() {
 	*x = ClientRanges{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[110]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[102]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10513,7 +10121,7 @@ func (x *ClientRanges) String() string {
 func (*ClientRanges) ProtoMessage() {}
 
 func (x *ClientRanges) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[110]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[102]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10526,7 +10134,7 @@ func (x *ClientRanges) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClientRanges.ProtoReflect.Descriptor instead.
 func (*ClientRanges) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{110}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{102}
 }
 
 func (x *ClientRanges) GetIn() []string {
@@ -10560,7 +10168,7 @@ type ListTokensRequest struct {
 
 func (x *ListTokensRequest) Reset() {
 	*x = ListTokensRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[111]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[103]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10572,7 +10180,7 @@ func (x *ListTokensRequest) String() string {
 func (*ListTokensRequest) ProtoMessage() {}
 
 func (x *ListTokensRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[111]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[103]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10585,7 +10193,7 @@ func (x *ListTokensRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTokensRequest.ProtoReflect.Descriptor instead.
 func (*ListTokensRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{111}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{103}
 }
 
 func (x *ListTokensRequest) GetKind() TokenKind {
@@ -10628,7 +10236,7 @@ type ListTokensResponse struct {
 
 func (x *ListTokensResponse) Reset() {
 	*x = ListTokensResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[112]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[104]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10640,7 +10248,7 @@ func (x *ListTokensResponse) String() string {
 func (*ListTokensResponse) ProtoMessage() {}
 
 func (x *ListTokensResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[112]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[104]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10653,7 +10261,7 @@ func (x *ListTokensResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTokensResponse.ProtoReflect.Descriptor instead.
 func (*ListTokensResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{112}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{104}
 }
 
 func (x *ListTokensResponse) GetTokens() []*Token {
@@ -10684,7 +10292,7 @@ type RotateTokenRequest struct {
 
 func (x *RotateTokenRequest) Reset() {
 	*x = RotateTokenRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[113]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10696,7 +10304,7 @@ func (x *RotateTokenRequest) String() string {
 func (*RotateTokenRequest) ProtoMessage() {}
 
 func (x *RotateTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[113]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10709,7 +10317,7 @@ func (x *RotateTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RotateTokenRequest.ProtoReflect.Descriptor instead.
 func (*RotateTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{113}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{105}
 }
 
 func (x *RotateTokenRequest) GetKind() TokenKind {
@@ -10738,7 +10346,7 @@ type RotateTokenResponse struct {
 
 func (x *RotateTokenResponse) Reset() {
 	*x = RotateTokenResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[114]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[106]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10750,7 +10358,7 @@ func (x *RotateTokenResponse) String() string {
 func (*RotateTokenResponse) ProtoMessage() {}
 
 func (x *RotateTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[114]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[106]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10763,7 +10371,7 @@ func (x *RotateTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RotateTokenResponse.ProtoReflect.Descriptor instead.
 func (*RotateTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{114}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{106}
 }
 
 func (x *RotateTokenResponse) GetToken() *Token {
@@ -10790,7 +10398,7 @@ type RevokeTokenRequest struct {
 
 func (x *RevokeTokenRequest) Reset() {
 	*x = RevokeTokenRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[115]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[107]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10802,7 +10410,7 @@ func (x *RevokeTokenRequest) String() string {
 func (*RevokeTokenRequest) ProtoMessage() {}
 
 func (x *RevokeTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[115]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[107]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10815,7 +10423,7 @@ func (x *RevokeTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeTokenRequest.ProtoReflect.Descriptor instead.
 func (*RevokeTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{115}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{107}
 }
 
 func (x *RevokeTokenRequest) GetId() string {
@@ -10837,7 +10445,7 @@ type RevokeTokenResponse struct {
 
 func (x *RevokeTokenResponse) Reset() {
 	*x = RevokeTokenResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[116]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[108]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10849,7 +10457,7 @@ func (x *RevokeTokenResponse) String() string {
 func (*RevokeTokenResponse) ProtoMessage() {}
 
 func (x *RevokeTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[116]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[108]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10862,7 +10470,7 @@ func (x *RevokeTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeTokenResponse.ProtoReflect.Descriptor instead.
 func (*RevokeTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{116}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{108}
 }
 
 func (x *RevokeTokenResponse) GetToken() *Token {
@@ -10889,7 +10497,7 @@ type RollTokenRequest struct {
 
 func (x *RollTokenRequest) Reset() {
 	*x = RollTokenRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[117]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[109]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10901,7 +10509,7 @@ func (x *RollTokenRequest) String() string {
 func (*RollTokenRequest) ProtoMessage() {}
 
 func (x *RollTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[117]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[109]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10914,7 +10522,7 @@ func (x *RollTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RollTokenRequest.ProtoReflect.Descriptor instead.
 func (*RollTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{117}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{109}
 }
 
 func (x *RollTokenRequest) GetId() string {
@@ -10936,7 +10544,7 @@ type RollTokenResponse struct {
 
 func (x *RollTokenResponse) Reset() {
 	*x = RollTokenResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[118]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[110]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10948,7 +10556,7 @@ func (x *RollTokenResponse) String() string {
 func (*RollTokenResponse) ProtoMessage() {}
 
 func (x *RollTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[118]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[110]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10961,7 +10569,7 @@ func (x *RollTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RollTokenResponse.ProtoReflect.Descriptor instead.
 func (*RollTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{118}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{110}
 }
 
 func (x *RollTokenResponse) GetToken() *Token {
@@ -10989,7 +10597,7 @@ type CreateProductTokenRequest struct {
 
 func (x *CreateProductTokenRequest) Reset() {
 	*x = CreateProductTokenRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[119]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[111]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11001,7 +10609,7 @@ func (x *CreateProductTokenRequest) String() string {
 func (*CreateProductTokenRequest) ProtoMessage() {}
 
 func (x *CreateProductTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[119]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[111]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11014,7 +10622,7 @@ func (x *CreateProductTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProductTokenRequest.ProtoReflect.Descriptor instead.
 func (*CreateProductTokenRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{119}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{111}
 }
 
 func (x *CreateProductTokenRequest) GetProduct() string {
@@ -11041,7 +10649,7 @@ type CreateProductTokenResponse struct {
 
 func (x *CreateProductTokenResponse) Reset() {
 	*x = CreateProductTokenResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[120]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[112]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11053,7 +10661,7 @@ func (x *CreateProductTokenResponse) String() string {
 func (*CreateProductTokenResponse) ProtoMessage() {}
 
 func (x *CreateProductTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[120]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[112]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11066,7 +10674,7 @@ func (x *CreateProductTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProductTokenResponse.ProtoReflect.Descriptor instead.
 func (*CreateProductTokenResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{120}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{112}
 }
 
 func (x *CreateProductTokenResponse) GetToken() *Token {
@@ -11106,7 +10714,7 @@ type Client struct {
 
 func (x *Client) Reset() {
 	*x = Client{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[121]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[113]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11118,7 +10726,7 @@ func (x *Client) String() string {
 func (*Client) ProtoMessage() {}
 
 func (x *Client) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[121]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[113]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11131,7 +10739,7 @@ func (x *Client) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Client.ProtoReflect.Descriptor instead.
 func (*Client) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{121}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{113}
 }
 
 func (x *Client) GetId() string {
@@ -11190,7 +10798,7 @@ type RegisterClientRequest struct {
 
 func (x *RegisterClientRequest) Reset() {
 	*x = RegisterClientRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[122]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[114]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11202,7 +10810,7 @@ func (x *RegisterClientRequest) String() string {
 func (*RegisterClientRequest) ProtoMessage() {}
 
 func (x *RegisterClientRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[122]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[114]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11215,7 +10823,7 @@ func (x *RegisterClientRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterClientRequest.ProtoReflect.Descriptor instead.
 func (*RegisterClientRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{122}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{114}
 }
 
 func (x *RegisterClientRequest) GetId() string {
@@ -11258,7 +10866,7 @@ type RegisterClientResponse struct {
 
 func (x *RegisterClientResponse) Reset() {
 	*x = RegisterClientResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[123]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[115]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11270,7 +10878,7 @@ func (x *RegisterClientResponse) String() string {
 func (*RegisterClientResponse) ProtoMessage() {}
 
 func (x *RegisterClientResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[123]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[115]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11283,7 +10891,7 @@ func (x *RegisterClientResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterClientResponse.ProtoReflect.Descriptor instead.
 func (*RegisterClientResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{123}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{115}
 }
 
 func (x *RegisterClientResponse) GetClient() *Client {
@@ -11312,7 +10920,7 @@ type ListClientsRequest struct {
 
 func (x *ListClientsRequest) Reset() {
 	*x = ListClientsRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[124]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[116]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11324,7 +10932,7 @@ func (x *ListClientsRequest) String() string {
 func (*ListClientsRequest) ProtoMessage() {}
 
 func (x *ListClientsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[124]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[116]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11337,7 +10945,7 @@ func (x *ListClientsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListClientsRequest.ProtoReflect.Descriptor instead.
 func (*ListClientsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{124}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{116}
 }
 
 func (x *ListClientsRequest) GetPageSize() int32 {
@@ -11365,7 +10973,7 @@ type ListClientsResponse struct {
 
 func (x *ListClientsResponse) Reset() {
 	*x = ListClientsResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[125]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[117]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11377,7 +10985,7 @@ func (x *ListClientsResponse) String() string {
 func (*ListClientsResponse) ProtoMessage() {}
 
 func (x *ListClientsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[125]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[117]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11390,7 +10998,7 @@ func (x *ListClientsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListClientsResponse.ProtoReflect.Descriptor instead.
 func (*ListClientsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{125}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{117}
 }
 
 func (x *ListClientsResponse) GetClients() []*Client {
@@ -11416,7 +11024,7 @@ type DeleteClientRequest struct {
 
 func (x *DeleteClientRequest) Reset() {
 	*x = DeleteClientRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[126]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[118]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11428,7 +11036,7 @@ func (x *DeleteClientRequest) String() string {
 func (*DeleteClientRequest) ProtoMessage() {}
 
 func (x *DeleteClientRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[126]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[118]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11441,7 +11049,7 @@ func (x *DeleteClientRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteClientRequest.ProtoReflect.Descriptor instead.
 func (*DeleteClientRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{126}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{118}
 }
 
 func (x *DeleteClientRequest) GetId() string {
@@ -11459,7 +11067,7 @@ type DeleteClientResponse struct {
 
 func (x *DeleteClientResponse) Reset() {
 	*x = DeleteClientResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[127]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[119]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11471,7 +11079,7 @@ func (x *DeleteClientResponse) String() string {
 func (*DeleteClientResponse) ProtoMessage() {}
 
 func (x *DeleteClientResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[127]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[119]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11484,7 +11092,7 @@ func (x *DeleteClientResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteClientResponse.ProtoReflect.Descriptor instead.
 func (*DeleteClientResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{127}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{119}
 }
 
 type CheckCloudHostRequest struct {
@@ -11496,7 +11104,7 @@ type CheckCloudHostRequest struct {
 
 func (x *CheckCloudHostRequest) Reset() {
 	*x = CheckCloudHostRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[128]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[120]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11508,7 +11116,7 @@ func (x *CheckCloudHostRequest) String() string {
 func (*CheckCloudHostRequest) ProtoMessage() {}
 
 func (x *CheckCloudHostRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[128]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[120]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11521,7 +11129,7 @@ func (x *CheckCloudHostRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckCloudHostRequest.ProtoReflect.Descriptor instead.
 func (*CheckCloudHostRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{128}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{120}
 }
 
 func (x *CheckCloudHostRequest) GetHostId() string {
@@ -11541,7 +11149,7 @@ type CheckCloudHostResponse struct {
 
 func (x *CheckCloudHostResponse) Reset() {
 	*x = CheckCloudHostResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[129]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[121]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11553,7 +11161,7 @@ func (x *CheckCloudHostResponse) String() string {
 func (*CheckCloudHostResponse) ProtoMessage() {}
 
 func (x *CheckCloudHostResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[129]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[121]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11566,7 +11174,7 @@ func (x *CheckCloudHostResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckCloudHostResponse.ProtoReflect.Descriptor instead.
 func (*CheckCloudHostResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{129}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{121}
 }
 
 func (x *CheckCloudHostResponse) GetChecks() []*CloudHostCheck {
@@ -11590,7 +11198,7 @@ type CloudHostCheck struct {
 
 func (x *CloudHostCheck) Reset() {
 	*x = CloudHostCheck{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[130]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[122]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11602,7 +11210,7 @@ func (x *CloudHostCheck) String() string {
 func (*CloudHostCheck) ProtoMessage() {}
 
 func (x *CloudHostCheck) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[130]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[122]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11615,7 +11223,7 @@ func (x *CloudHostCheck) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CloudHostCheck.ProtoReflect.Descriptor instead.
 func (*CloudHostCheck) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{130}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{122}
 }
 
 func (x *CloudHostCheck) GetName() string {
@@ -11706,7 +11314,7 @@ type Filler struct {
 
 func (x *Filler) Reset() {
 	*x = Filler{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[131]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[123]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11718,7 +11326,7 @@ func (x *Filler) String() string {
 func (*Filler) ProtoMessage() {}
 
 func (x *Filler) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[131]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[123]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11731,7 +11339,7 @@ func (x *Filler) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Filler.ProtoReflect.Descriptor instead.
 func (*Filler) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{131}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{123}
 }
 
 func (x *Filler) GetName() string {
@@ -11903,7 +11511,7 @@ type FillerRun struct {
 
 func (x *FillerRun) Reset() {
 	*x = FillerRun{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[132]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[124]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11915,7 +11523,7 @@ func (x *FillerRun) String() string {
 func (*FillerRun) ProtoMessage() {}
 
 func (x *FillerRun) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[132]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[124]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11928,7 +11536,7 @@ func (x *FillerRun) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FillerRun.ProtoReflect.Descriptor instead.
 func (*FillerRun) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{132}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{124}
 }
 
 func (x *FillerRun) GetId() string {
@@ -12033,7 +11641,7 @@ type FillerHostMinutes struct {
 
 func (x *FillerHostMinutes) Reset() {
 	*x = FillerHostMinutes{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[133]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[125]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12045,7 +11653,7 @@ func (x *FillerHostMinutes) String() string {
 func (*FillerHostMinutes) ProtoMessage() {}
 
 func (x *FillerHostMinutes) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[133]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[125]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12058,7 +11666,7 @@ func (x *FillerHostMinutes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FillerHostMinutes.ProtoReflect.Descriptor instead.
 func (*FillerHostMinutes) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{133}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{125}
 }
 
 func (x *FillerHostMinutes) GetHostId() string {
@@ -12087,7 +11695,7 @@ type ListFillersRequest struct {
 
 func (x *ListFillersRequest) Reset() {
 	*x = ListFillersRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[134]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[126]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12099,7 +11707,7 @@ func (x *ListFillersRequest) String() string {
 func (*ListFillersRequest) ProtoMessage() {}
 
 func (x *ListFillersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[134]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[126]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12112,7 +11720,7 @@ func (x *ListFillersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFillersRequest.ProtoReflect.Descriptor instead.
 func (*ListFillersRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{134}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{126}
 }
 
 func (x *ListFillersRequest) GetPageSize() int32 {
@@ -12143,7 +11751,7 @@ type ListFillersResponse struct {
 
 func (x *ListFillersResponse) Reset() {
 	*x = ListFillersResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[135]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[127]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12155,7 +11763,7 @@ func (x *ListFillersResponse) String() string {
 func (*ListFillersResponse) ProtoMessage() {}
 
 func (x *ListFillersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[135]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[127]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12168,7 +11776,7 @@ func (x *ListFillersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFillersResponse.ProtoReflect.Descriptor instead.
 func (*ListFillersResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{135}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{127}
 }
 
 func (x *ListFillersResponse) GetFillers() []*Filler {
@@ -12203,7 +11811,7 @@ type PutFillerRequest struct {
 
 func (x *PutFillerRequest) Reset() {
 	*x = PutFillerRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[136]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[128]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12215,7 +11823,7 @@ func (x *PutFillerRequest) String() string {
 func (*PutFillerRequest) ProtoMessage() {}
 
 func (x *PutFillerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[136]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[128]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12228,7 +11836,7 @@ func (x *PutFillerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutFillerRequest.ProtoReflect.Descriptor instead.
 func (*PutFillerRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{136}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{128}
 }
 
 func (x *PutFillerRequest) GetFiller() *Filler {
@@ -12247,7 +11855,7 @@ type PutFillerResponse struct {
 
 func (x *PutFillerResponse) Reset() {
 	*x = PutFillerResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[137]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[129]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12259,7 +11867,7 @@ func (x *PutFillerResponse) String() string {
 func (*PutFillerResponse) ProtoMessage() {}
 
 func (x *PutFillerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[137]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[129]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12272,7 +11880,7 @@ func (x *PutFillerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutFillerResponse.ProtoReflect.Descriptor instead.
 func (*PutFillerResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{137}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{129}
 }
 
 func (x *PutFillerResponse) GetFiller() *Filler {
@@ -12293,7 +11901,7 @@ type DeleteFillerRequest struct {
 
 func (x *DeleteFillerRequest) Reset() {
 	*x = DeleteFillerRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[138]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[130]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12305,7 +11913,7 @@ func (x *DeleteFillerRequest) String() string {
 func (*DeleteFillerRequest) ProtoMessage() {}
 
 func (x *DeleteFillerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[138]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[130]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12318,7 +11926,7 @@ func (x *DeleteFillerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFillerRequest.ProtoReflect.Descriptor instead.
 func (*DeleteFillerRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{138}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{130}
 }
 
 func (x *DeleteFillerRequest) GetName() string {
@@ -12343,7 +11951,7 @@ type DeleteFillerResponse struct {
 
 func (x *DeleteFillerResponse) Reset() {
 	*x = DeleteFillerResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[139]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[131]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12355,7 +11963,7 @@ func (x *DeleteFillerResponse) String() string {
 func (*DeleteFillerResponse) ProtoMessage() {}
 
 func (x *DeleteFillerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[139]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[131]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12368,7 +11976,7 @@ func (x *DeleteFillerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFillerResponse.ProtoReflect.Descriptor instead.
 func (*DeleteFillerResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{139}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{131}
 }
 
 type SetFillerEnabledRequest struct {
@@ -12383,7 +11991,7 @@ type SetFillerEnabledRequest struct {
 
 func (x *SetFillerEnabledRequest) Reset() {
 	*x = SetFillerEnabledRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[140]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[132]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12395,7 +12003,7 @@ func (x *SetFillerEnabledRequest) String() string {
 func (*SetFillerEnabledRequest) ProtoMessage() {}
 
 func (x *SetFillerEnabledRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[140]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[132]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12408,7 +12016,7 @@ func (x *SetFillerEnabledRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetFillerEnabledRequest.ProtoReflect.Descriptor instead.
 func (*SetFillerEnabledRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{140}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{132}
 }
 
 func (x *SetFillerEnabledRequest) GetName() string {
@@ -12441,7 +12049,7 @@ type SetFillerEnabledResponse struct {
 
 func (x *SetFillerEnabledResponse) Reset() {
 	*x = SetFillerEnabledResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[141]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[133]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12453,7 +12061,7 @@ func (x *SetFillerEnabledResponse) String() string {
 func (*SetFillerEnabledResponse) ProtoMessage() {}
 
 func (x *SetFillerEnabledResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[141]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[133]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12466,7 +12074,7 @@ func (x *SetFillerEnabledResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetFillerEnabledResponse.ProtoReflect.Descriptor instead.
 func (*SetFillerEnabledResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{141}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{133}
 }
 
 func (x *SetFillerEnabledResponse) GetFiller() *Filler {
@@ -12492,7 +12100,7 @@ type ListFillerRunsRequest struct {
 
 func (x *ListFillerRunsRequest) Reset() {
 	*x = ListFillerRunsRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[142]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[134]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12504,7 +12112,7 @@ func (x *ListFillerRunsRequest) String() string {
 func (*ListFillerRunsRequest) ProtoMessage() {}
 
 func (x *ListFillerRunsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[142]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[134]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12517,7 +12125,7 @@ func (x *ListFillerRunsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFillerRunsRequest.ProtoReflect.Descriptor instead.
 func (*ListFillerRunsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{142}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{134}
 }
 
 func (x *ListFillerRunsRequest) GetFiller() string {
@@ -12562,7 +12170,7 @@ type ListFillerRunsResponse struct {
 
 func (x *ListFillerRunsResponse) Reset() {
 	*x = ListFillerRunsResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[143]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[135]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12574,7 +12182,7 @@ func (x *ListFillerRunsResponse) String() string {
 func (*ListFillerRunsResponse) ProtoMessage() {}
 
 func (x *ListFillerRunsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[143]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[135]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12587,7 +12195,7 @@ func (x *ListFillerRunsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFillerRunsResponse.ProtoReflect.Descriptor instead.
 func (*ListFillerRunsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{143}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{135}
 }
 
 func (x *ListFillerRunsResponse) GetRuns() []*FillerRun {
@@ -12631,7 +12239,7 @@ type FillerPause struct {
 
 func (x *FillerPause) Reset() {
 	*x = FillerPause{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[144]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[136]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12643,7 +12251,7 @@ func (x *FillerPause) String() string {
 func (*FillerPause) ProtoMessage() {}
 
 func (x *FillerPause) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[144]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[136]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12656,7 +12264,7 @@ func (x *FillerPause) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FillerPause.ProtoReflect.Descriptor instead.
 func (*FillerPause) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{144}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{136}
 }
 
 func (x *FillerPause) GetFiller() string {
@@ -12702,7 +12310,7 @@ type GetSecretDeliveryRequest struct {
 
 func (x *GetSecretDeliveryRequest) Reset() {
 	*x = GetSecretDeliveryRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[145]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[137]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12714,7 +12322,7 @@ func (x *GetSecretDeliveryRequest) String() string {
 func (*GetSecretDeliveryRequest) ProtoMessage() {}
 
 func (x *GetSecretDeliveryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[145]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[137]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12727,7 +12335,7 @@ func (x *GetSecretDeliveryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSecretDeliveryRequest.ProtoReflect.Descriptor instead.
 func (*GetSecretDeliveryRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{145}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{137}
 }
 
 type GetSecretDeliveryResponse struct {
@@ -12739,7 +12347,7 @@ type GetSecretDeliveryResponse struct {
 
 func (x *GetSecretDeliveryResponse) Reset() {
 	*x = GetSecretDeliveryResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[146]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[138]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12751,7 +12359,7 @@ func (x *GetSecretDeliveryResponse) String() string {
 func (*GetSecretDeliveryResponse) ProtoMessage() {}
 
 func (x *GetSecretDeliveryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[146]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[138]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12764,7 +12372,7 @@ func (x *GetSecretDeliveryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSecretDeliveryResponse.ProtoReflect.Descriptor instead.
 func (*GetSecretDeliveryResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{146}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{138}
 }
 
 func (x *GetSecretDeliveryResponse) GetDelivery() *SecretDelivery {
@@ -12783,7 +12391,7 @@ type SetSecretDeliveryRequest struct {
 
 func (x *SetSecretDeliveryRequest) Reset() {
 	*x = SetSecretDeliveryRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[147]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[139]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12795,7 +12403,7 @@ func (x *SetSecretDeliveryRequest) String() string {
 func (*SetSecretDeliveryRequest) ProtoMessage() {}
 
 func (x *SetSecretDeliveryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[147]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[139]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12808,7 +12416,7 @@ func (x *SetSecretDeliveryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetSecretDeliveryRequest.ProtoReflect.Descriptor instead.
 func (*SetSecretDeliveryRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{147}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{139}
 }
 
 func (x *SetSecretDeliveryRequest) GetEnabled() bool {
@@ -12829,7 +12437,7 @@ type SetSecretDeliveryResponse struct {
 
 func (x *SetSecretDeliveryResponse) Reset() {
 	*x = SetSecretDeliveryResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[148]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[140]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12841,7 +12449,7 @@ func (x *SetSecretDeliveryResponse) String() string {
 func (*SetSecretDeliveryResponse) ProtoMessage() {}
 
 func (x *SetSecretDeliveryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[148]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[140]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12854,7 +12462,7 @@ func (x *SetSecretDeliveryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetSecretDeliveryResponse.ProtoReflect.Descriptor instead.
 func (*SetSecretDeliveryResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{148}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{140}
 }
 
 func (x *SetSecretDeliveryResponse) GetDelivery() *SecretDelivery {
@@ -12894,7 +12502,7 @@ type SecretDelivery struct {
 
 func (x *SecretDelivery) Reset() {
 	*x = SecretDelivery{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[149]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[141]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12906,7 +12514,7 @@ func (x *SecretDelivery) String() string {
 func (*SecretDelivery) ProtoMessage() {}
 
 func (x *SecretDelivery) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[149]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[141]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12919,7 +12527,7 @@ func (x *SecretDelivery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SecretDelivery.ProtoReflect.Descriptor instead.
 func (*SecretDelivery) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{149}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{141}
 }
 
 func (x *SecretDelivery) GetEnabled() bool {
@@ -12982,7 +12590,7 @@ type ListUtilisationRequest struct {
 
 func (x *ListUtilisationRequest) Reset() {
 	*x = ListUtilisationRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[150]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[142]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12994,7 +12602,7 @@ func (x *ListUtilisationRequest) String() string {
 func (*ListUtilisationRequest) ProtoMessage() {}
 
 func (x *ListUtilisationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[150]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[142]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13007,7 +12615,7 @@ func (x *ListUtilisationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUtilisationRequest.ProtoReflect.Descriptor instead.
 func (*ListUtilisationRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{150}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{142}
 }
 
 func (x *ListUtilisationRequest) GetFrom() *timestamppb.Timestamp {
@@ -13074,7 +12682,7 @@ type ListUtilisationResponse struct {
 
 func (x *ListUtilisationResponse) Reset() {
 	*x = ListUtilisationResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[151]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[143]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13086,7 +12694,7 @@ func (x *ListUtilisationResponse) String() string {
 func (*ListUtilisationResponse) ProtoMessage() {}
 
 func (x *ListUtilisationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[151]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[143]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13099,7 +12707,7 @@ func (x *ListUtilisationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUtilisationResponse.ProtoReflect.Descriptor instead.
 func (*ListUtilisationResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{151}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{143}
 }
 
 func (x *ListUtilisationResponse) GetRows() []*UtilisationRow {
@@ -13160,7 +12768,7 @@ type WarmMemoryRow struct {
 
 func (x *WarmMemoryRow) Reset() {
 	*x = WarmMemoryRow{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[152]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[144]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13172,7 +12780,7 @@ func (x *WarmMemoryRow) String() string {
 func (*WarmMemoryRow) ProtoMessage() {}
 
 func (x *WarmMemoryRow) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[152]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[144]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13185,7 +12793,7 @@ func (x *WarmMemoryRow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WarmMemoryRow.ProtoReflect.Descriptor instead.
 func (*WarmMemoryRow) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{152}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{144}
 }
 
 func (x *WarmMemoryRow) GetStart() *timestamppb.Timestamp {
@@ -13256,7 +12864,7 @@ type WarmPathSummary struct {
 
 func (x *WarmPathSummary) Reset() {
 	*x = WarmPathSummary{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[153]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[145]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13268,7 +12876,7 @@ func (x *WarmPathSummary) String() string {
 func (*WarmPathSummary) ProtoMessage() {}
 
 func (x *WarmPathSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[153]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[145]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13281,7 +12889,7 @@ func (x *WarmPathSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WarmPathSummary.ProtoReflect.Descriptor instead.
 func (*WarmPathSummary) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{153}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{145}
 }
 
 func (x *WarmPathSummary) GetVmSeconds() int64 {
@@ -13347,7 +12955,7 @@ type UtilisationRow struct {
 
 func (x *UtilisationRow) Reset() {
 	*x = UtilisationRow{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[154]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[146]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13359,7 +12967,7 @@ func (x *UtilisationRow) String() string {
 func (*UtilisationRow) ProtoMessage() {}
 
 func (x *UtilisationRow) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[154]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[146]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13372,7 +12980,7 @@ func (x *UtilisationRow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UtilisationRow.ProtoReflect.Descriptor instead.
 func (*UtilisationRow) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{154}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{146}
 }
 
 func (x *UtilisationRow) GetStart() *timestamppb.Timestamp {
@@ -13477,7 +13085,7 @@ type UtilisationTarget struct {
 
 func (x *UtilisationTarget) Reset() {
 	*x = UtilisationTarget{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[155]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[147]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13489,7 +13097,7 @@ func (x *UtilisationTarget) String() string {
 func (*UtilisationTarget) ProtoMessage() {}
 
 func (x *UtilisationTarget) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[155]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[147]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13502,7 +13110,7 @@ func (x *UtilisationTarget) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UtilisationTarget.ProtoReflect.Descriptor instead.
 func (*UtilisationTarget) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{155}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{147}
 }
 
 func (x *UtilisationTarget) GetLow() float64 {
@@ -13531,7 +13139,7 @@ type SuggestPoolsRequest struct {
 
 func (x *SuggestPoolsRequest) Reset() {
 	*x = SuggestPoolsRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[156]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[148]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13543,7 +13151,7 @@ func (x *SuggestPoolsRequest) String() string {
 func (*SuggestPoolsRequest) ProtoMessage() {}
 
 func (x *SuggestPoolsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[156]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[148]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13556,7 +13164,7 @@ func (x *SuggestPoolsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SuggestPoolsRequest.ProtoReflect.Descriptor instead.
 func (*SuggestPoolsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{156}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{148}
 }
 
 func (x *SuggestPoolsRequest) GetDays() int32 {
@@ -13600,7 +13208,7 @@ type SuggestPoolsResponse struct {
 
 func (x *SuggestPoolsResponse) Reset() {
 	*x = SuggestPoolsResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[157]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[149]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13612,7 +13220,7 @@ func (x *SuggestPoolsResponse) String() string {
 func (*SuggestPoolsResponse) ProtoMessage() {}
 
 func (x *SuggestPoolsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[157]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[149]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13625,7 +13233,7 @@ func (x *SuggestPoolsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SuggestPoolsResponse.ProtoReflect.Descriptor instead.
 func (*SuggestPoolsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{157}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{149}
 }
 
 func (x *SuggestPoolsResponse) GetRunning() bool {
@@ -13734,7 +13342,7 @@ type PoolSuggestion struct {
 
 func (x *PoolSuggestion) Reset() {
 	*x = PoolSuggestion{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[158]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[150]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13746,7 +13354,7 @@ func (x *PoolSuggestion) String() string {
 func (*PoolSuggestion) ProtoMessage() {}
 
 func (x *PoolSuggestion) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[158]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[150]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13759,7 +13367,7 @@ func (x *PoolSuggestion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PoolSuggestion.ProtoReflect.Descriptor instead.
 func (*PoolSuggestion) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{158}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{150}
 }
 
 func (x *PoolSuggestion) GetDays() int32 {
@@ -13917,7 +13525,7 @@ type PoolSuggestionSize struct {
 
 func (x *PoolSuggestionSize) Reset() {
 	*x = PoolSuggestionSize{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[159]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[151]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13929,7 +13537,7 @@ func (x *PoolSuggestionSize) String() string {
 func (*PoolSuggestionSize) ProtoMessage() {}
 
 func (x *PoolSuggestionSize) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[159]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[151]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13942,7 +13550,7 @@ func (x *PoolSuggestionSize) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PoolSuggestionSize.ProtoReflect.Descriptor instead.
 func (*PoolSuggestionSize) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{159}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{151}
 }
 
 func (x *PoolSuggestionSize) GetSize() string {
@@ -14015,7 +13623,7 @@ type PoolSuggestionOutcome struct {
 
 func (x *PoolSuggestionOutcome) Reset() {
 	*x = PoolSuggestionOutcome{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[160]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[152]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14027,7 +13635,7 @@ func (x *PoolSuggestionOutcome) String() string {
 func (*PoolSuggestionOutcome) ProtoMessage() {}
 
 func (x *PoolSuggestionOutcome) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[160]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[152]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14040,7 +13648,7 @@ func (x *PoolSuggestionOutcome) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PoolSuggestionOutcome.ProtoReflect.Descriptor instead.
 func (*PoolSuggestionOutcome) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{160}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{152}
 }
 
 func (x *PoolSuggestionOutcome) GetP50Seconds() float64 {
@@ -14074,7 +13682,7 @@ type PoolSuggestionTarget struct {
 
 func (x *PoolSuggestionTarget) Reset() {
 	*x = PoolSuggestionTarget{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[161]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[153]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14086,7 +13694,7 @@ func (x *PoolSuggestionTarget) String() string {
 func (*PoolSuggestionTarget) ProtoMessage() {}
 
 func (x *PoolSuggestionTarget) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[161]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[153]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14099,7 +13707,7 @@ func (x *PoolSuggestionTarget) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PoolSuggestionTarget.ProtoReflect.Descriptor instead.
 func (*PoolSuggestionTarget) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{161}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{153}
 }
 
 func (x *PoolSuggestionTarget) GetSize() string {
@@ -14126,7 +13734,7 @@ type PoolSuggestionUnmet struct {
 
 func (x *PoolSuggestionUnmet) Reset() {
 	*x = PoolSuggestionUnmet{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[162]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[154]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14138,7 +13746,7 @@ func (x *PoolSuggestionUnmet) String() string {
 func (*PoolSuggestionUnmet) ProtoMessage() {}
 
 func (x *PoolSuggestionUnmet) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[162]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[154]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14151,7 +13759,7 @@ func (x *PoolSuggestionUnmet) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PoolSuggestionUnmet.ProtoReflect.Descriptor instead.
 func (*PoolSuggestionUnmet) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{162}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{154}
 }
 
 func (x *PoolSuggestionUnmet) GetSize() string {
@@ -14180,7 +13788,7 @@ type PoolSuggestionDelay struct {
 
 func (x *PoolSuggestionDelay) Reset() {
 	*x = PoolSuggestionDelay{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[163]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[155]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14192,7 +13800,7 @@ func (x *PoolSuggestionDelay) String() string {
 func (*PoolSuggestionDelay) ProtoMessage() {}
 
 func (x *PoolSuggestionDelay) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[163]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[155]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14205,7 +13813,7 @@ func (x *PoolSuggestionDelay) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PoolSuggestionDelay.ProtoReflect.Descriptor instead.
 func (*PoolSuggestionDelay) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{163}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{155}
 }
 
 func (x *PoolSuggestionDelay) GetOs() string {
@@ -14268,7 +13876,7 @@ type StorageProvider struct {
 
 func (x *StorageProvider) Reset() {
 	*x = StorageProvider{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[164]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[156]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14280,7 +13888,7 @@ func (x *StorageProvider) String() string {
 func (*StorageProvider) ProtoMessage() {}
 
 func (x *StorageProvider) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[164]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[156]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14293,7 +13901,7 @@ func (x *StorageProvider) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StorageProvider.ProtoReflect.Descriptor instead.
 func (*StorageProvider) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{164}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{156}
 }
 
 func (x *StorageProvider) GetId() string {
@@ -14481,7 +14089,7 @@ type CreateStorageProviderRequest struct {
 
 func (x *CreateStorageProviderRequest) Reset() {
 	*x = CreateStorageProviderRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[165]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[157]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14493,7 +14101,7 @@ func (x *CreateStorageProviderRequest) String() string {
 func (*CreateStorageProviderRequest) ProtoMessage() {}
 
 func (x *CreateStorageProviderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[165]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[157]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14506,7 +14114,7 @@ func (x *CreateStorageProviderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateStorageProviderRequest.ProtoReflect.Descriptor instead.
 func (*CreateStorageProviderRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{165}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{157}
 }
 
 func (x *CreateStorageProviderRequest) GetTenantId() string {
@@ -14642,7 +14250,7 @@ type StorageCredential struct {
 
 func (x *StorageCredential) Reset() {
 	*x = StorageCredential{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[166]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[158]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14654,7 +14262,7 @@ func (x *StorageCredential) String() string {
 func (*StorageCredential) ProtoMessage() {}
 
 func (x *StorageCredential) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[166]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[158]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14667,7 +14275,7 @@ func (x *StorageCredential) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StorageCredential.ProtoReflect.Descriptor instead.
 func (*StorageCredential) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{166}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{158}
 }
 
 func (x *StorageCredential) GetAccessKeyId() string {
@@ -14700,7 +14308,7 @@ type CreateStorageProviderResponse struct {
 
 func (x *CreateStorageProviderResponse) Reset() {
 	*x = CreateStorageProviderResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[167]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[159]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14712,7 +14320,7 @@ func (x *CreateStorageProviderResponse) String() string {
 func (*CreateStorageProviderResponse) ProtoMessage() {}
 
 func (x *CreateStorageProviderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[167]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[159]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14725,7 +14333,7 @@ func (x *CreateStorageProviderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateStorageProviderResponse.ProtoReflect.Descriptor instead.
 func (*CreateStorageProviderResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{167}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{159}
 }
 
 func (x *CreateStorageProviderResponse) GetProvider() *StorageProvider {
@@ -14751,7 +14359,7 @@ type ListStorageProvidersRequest struct {
 
 func (x *ListStorageProvidersRequest) Reset() {
 	*x = ListStorageProvidersRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[168]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[160]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14763,7 +14371,7 @@ func (x *ListStorageProvidersRequest) String() string {
 func (*ListStorageProvidersRequest) ProtoMessage() {}
 
 func (x *ListStorageProvidersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[168]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[160]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14776,7 +14384,7 @@ func (x *ListStorageProvidersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStorageProvidersRequest.ProtoReflect.Descriptor instead.
 func (*ListStorageProvidersRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{168}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{160}
 }
 
 func (x *ListStorageProvidersRequest) GetTenantId() string {
@@ -14823,7 +14431,7 @@ type ListStorageProvidersResponse struct {
 
 func (x *ListStorageProvidersResponse) Reset() {
 	*x = ListStorageProvidersResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[169]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[161]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14835,7 +14443,7 @@ func (x *ListStorageProvidersResponse) String() string {
 func (*ListStorageProvidersResponse) ProtoMessage() {}
 
 func (x *ListStorageProvidersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[169]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[161]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14848,7 +14456,7 @@ func (x *ListStorageProvidersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStorageProvidersResponse.ProtoReflect.Descriptor instead.
 func (*ListStorageProvidersResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{169}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{161}
 }
 
 func (x *ListStorageProvidersResponse) GetProviders() []*StorageProvider {
@@ -14887,7 +14495,7 @@ type CheckStorageProviderRequest struct {
 
 func (x *CheckStorageProviderRequest) Reset() {
 	*x = CheckStorageProviderRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[170]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[162]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14899,7 +14507,7 @@ func (x *CheckStorageProviderRequest) String() string {
 func (*CheckStorageProviderRequest) ProtoMessage() {}
 
 func (x *CheckStorageProviderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[170]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[162]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14912,7 +14520,7 @@ func (x *CheckStorageProviderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckStorageProviderRequest.ProtoReflect.Descriptor instead.
 func (*CheckStorageProviderRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{170}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{162}
 }
 
 func (x *CheckStorageProviderRequest) GetTarget() isCheckStorageProviderRequest_Target {
@@ -14975,7 +14583,7 @@ type CheckStorageProviderResponse struct {
 
 func (x *CheckStorageProviderResponse) Reset() {
 	*x = CheckStorageProviderResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[171]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[163]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14987,7 +14595,7 @@ func (x *CheckStorageProviderResponse) String() string {
 func (*CheckStorageProviderResponse) ProtoMessage() {}
 
 func (x *CheckStorageProviderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[171]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[163]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15000,7 +14608,7 @@ func (x *CheckStorageProviderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckStorageProviderResponse.ProtoReflect.Descriptor instead.
 func (*CheckStorageProviderResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{171}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{163}
 }
 
 func (x *CheckStorageProviderResponse) GetProvider() *StorageProvider {
@@ -15043,7 +14651,7 @@ type DeleteStorageProviderRequest struct {
 
 func (x *DeleteStorageProviderRequest) Reset() {
 	*x = DeleteStorageProviderRequest{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[172]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[164]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15055,7 +14663,7 @@ func (x *DeleteStorageProviderRequest) String() string {
 func (*DeleteStorageProviderRequest) ProtoMessage() {}
 
 func (x *DeleteStorageProviderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[172]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[164]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15068,7 +14676,7 @@ func (x *DeleteStorageProviderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteStorageProviderRequest.ProtoReflect.Descriptor instead.
 func (*DeleteStorageProviderRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{172}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{164}
 }
 
 func (x *DeleteStorageProviderRequest) GetId() string {
@@ -15093,7 +14701,7 @@ type DeleteStorageProviderResponse struct {
 
 func (x *DeleteStorageProviderResponse) Reset() {
 	*x = DeleteStorageProviderResponse{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[173]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[165]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15105,7 +14713,7 @@ func (x *DeleteStorageProviderResponse) String() string {
 func (*DeleteStorageProviderResponse) ProtoMessage() {}
 
 func (x *DeleteStorageProviderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[173]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[165]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15118,7 +14726,7 @@ func (x *DeleteStorageProviderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteStorageProviderResponse.ProtoReflect.Descriptor instead.
 func (*DeleteStorageProviderResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{173}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{165}
 }
 
 // HeldJobs counts the jobs held now for one reason.
@@ -15138,7 +14746,7 @@ type TenantBilling_HeldJobs struct {
 
 func (x *TenantBilling_HeldJobs) Reset() {
 	*x = TenantBilling_HeldJobs{}
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[176]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[169]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15150,7 +14758,7 @@ func (x *TenantBilling_HeldJobs) String() string {
 func (*TenantBilling_HeldJobs) ProtoMessage() {}
 
 func (x *TenantBilling_HeldJobs) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_operator_v1_operator_proto_msgTypes[176]
+	mi := &file_toshi_operator_v1_operator_proto_msgTypes[169]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15163,7 +14771,7 @@ func (x *TenantBilling_HeldJobs) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantBilling_HeldJobs.ProtoReflect.Descriptor instead.
 func (*TenantBilling_HeldJobs) Descriptor() ([]byte, []int) {
-	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{105, 0}
+	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{97, 0}
 }
 
 func (x *TenantBilling_HeldJobs) GetReason() string {
@@ -15198,7 +14806,7 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x87\x12\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x87\x12\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
@@ -15510,7 +15118,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x05hosts\x18\x01 \x03(\v2$.toshi.operator.v1.OfflineHostResultR\x05hosts\"\x81\x01\n" +
 	"\x11OfflineHostResult\x12+\n" +
 	"\x04host\x18\x01 \x01(\v2\x17.toshi.operator.v1.HostR\x04host\x12?\n" +
-	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\xac\x0f\n" +
+	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\x9b\x11\n" +
 	"\x06Tenant\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -15554,7 +15162,12 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x13hosting_certificate\x18! \x01(\v2%.toshi.operator.v1.HostingCertificateR\x12hostingCertificate\x12\x17\n" +
 	"\akeep_vm\x18\" \x01(\bR\x06keepVm\x12L\n" +
 	" volume_snapshot_interval_seconds\x18# \x01(\x05H\x06R\x1dvolumeSnapshotIntervalSeconds\x88\x01\x01\x12Z\n" +
-	"*volume_snapshot_interval_seconds_effective\x18$ \x01(\x05R&volumeSnapshotIntervalSecondsEffectiveB\x12\n" +
+	"*volume_snapshot_interval_seconds_effective\x18$ \x01(\x05R&volumeSnapshotIntervalSecondsEffective\x12:\n" +
+	"\abilling\x18& \x01(\v2 .toshi.operator.v1.TenantBillingR\abilling\x12h\n" +
+	"\x15entitlement_overrides\x18' \x03(\v23.toshi.operator.v1.Tenant.EntitlementOverridesEntryR\x14entitlementOverrides\x1aG\n" +
+	"\x19EntitlementOverridesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x12\n" +
 	"\x10_concurrency_capB\x0f\n" +
 	"\r_history_daysB\x12\n" +
 	"\x10_secret_max_setsB\x12\n" +
@@ -15605,7 +15218,13 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x12_preview_max_portsB#\n" +
 	"!_volume_snapshot_interval_seconds\"L\n" +
 	"\x17SetTenantLimitsResponse\x121\n" +
-	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"\x80\x03\n" +
+	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"\x8e\x01\n" +
+	"\x16UpdateWorkspaceRequest\x127\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\tworkspace\x12;\n" +
+	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\"R\n" +
+	"\x17UpdateWorkspaceResponse\x127\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\tworkspace\"\x80\x03\n" +
 	"\x04Seat\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
 	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x17\n" +
@@ -15655,14 +15274,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\rgrace_seconds\x18\x03 \x01(\x03R\fgraceSeconds\x12\x10\n" +
 	"\x03now\x18\x04 \x01(\bR\x03now\"I\n" +
 	"\x14DeleteTenantResponse\x121\n" +
-	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"k\n" +
-	"\x1bSetTenantReservationRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04size\x18\x02 \x01(\tR\x04size\x12\x14\n" +
-	"\x05slots\x18\x03 \x01(\x05R\x05slots\x12\x12\n" +
-	"\x04warm\x18\x04 \x01(\x05R\x04warm\"b\n" +
-	"\x1cSetTenantReservationResponse\x12B\n" +
-	"\freservations\x18\x01 \x03(\v2\x1e.toshi.operator.v1.ReservationR\freservations\"\x82\x05\n" +
+	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"\x82\x05\n" +
 	"\x04Plan\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vconcurrency\x18\x02 \x01(\x05R\vconcurrency\x12&\n" +
@@ -15738,23 +15350,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x11RunChecksResponse\x123\n" +
 	"\x05group\x18\x01 \x01(\x0e2\x1d.toshi.operator.v1.CheckGroupR\x05group\x123\n" +
 	"\x05state\x18\x02 \x01(\x0e2\x1d.toshi.operator.v1.CheckStateR\x05state\x120\n" +
-	"\x06checks\x18\x03 \x03(\v2\x18.toshi.operator.v1.CheckR\x06checks\":\n" +
-	"\x14SetTenantPlanRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04plan\x18\x02 \x01(\tR\x04plan\"J\n" +
-	"\x15SetTenantPlanResponse\x121\n" +
-	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"X\n" +
-	"\x1eSetWorkspaceEntitlementRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
-	"\x03key\x18\x02 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x03 \x01(\tR\x05value\"7\n" +
-	"\x1fSetWorkspaceEntitlementResponse\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\tR\x05value\"D\n" +
-	" ClearWorkspaceEntitlementRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
-	"\x03key\x18\x02 \x01(\tR\x03key\"=\n" +
-	"!ClearWorkspaceEntitlementResponse\x12\x18\n" +
-	"\acleared\x18\x01 \x01(\bR\acleared\"\x85\x01\n" +
+	"\x06checks\x18\x03 \x03(\v2\x18.toshi.operator.v1.CheckR\x06checks\"\x85\x01\n" +
 	"\x0fGetUsageRequest\x12.\n" +
 	"\x04from\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
 	"\x02to\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x16\n" +
@@ -15967,13 +15563,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x18\n" +
 	"\aminutes\x18\x02 \x01(\x03R\aminutes\x12'\n" +
 	"\x0festimated_cents\x18\x03 \x01(\x03R\x0eestimatedCents\x12\x18\n" +
-	"\aseconds\x18\x04 \x01(\x03R\aseconds\"R\n" +
-	"\x1fSetTenantBillingCustomerRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
-	"\vcustomer_id\x18\x02 \x01(\tR\n" +
-	"customerId\"^\n" +
-	" SetTenantBillingCustomerResponse\x12:\n" +
-	"\abilling\x18\x01 \x01(\v2 .toshi.operator.v1.TenantBillingR\abilling\"\x9f\v\n" +
+	"\aseconds\x18\x04 \x01(\x03R\aseconds\"\x9f\v\n" +
 	"\rTenantBilling\x12\x1f\n" +
 	"\vcustomer_id\x18\x01 \x01(\tR\n" +
 	"customerId\x12'\n" +
@@ -16505,7 +16095,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xaf2\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\x8e-\n" +
 	"\x0fOperatorService\x12S\n" +
 	"\bListJobs\x12\".toshi.operator.v1.ListJobsRequest\x1a#.toshi.operator.v1.ListJobsResponse\x12h\n" +
 	"\x0fListAuditEvents\x12).toshi.operator.v1.ListAuditEventsRequest\x1a*.toshi.operator.v1.ListAuditEventsResponse\x12z\n" +
@@ -16527,7 +16117,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\fSetTenantCap\x12&.toshi.operator.v1.SetTenantCapRequest\x1a'.toshi.operator.v1.SetTenantCapResponse\"\x17\xd2\xf3\x18\x13\n" +
 	"\x11workspace.cap_set\x12\x84\x01\n" +
 	"\x0fSetTenantLimits\x12).toshi.operator.v1.SetTenantLimitsRequest\x1a*.toshi.operator.v1.SetTenantLimitsResponse\"\x1a\xd2\xf3\x18\x16\n" +
-	"\x14workspace.limits_set\x12v\n" +
+	"\x14workspace.limits_set\x12t\n" +
+	"\x0fUpdateWorkspace\x12).toshi.operator.v1.UpdateWorkspaceRequest\x1a*.toshi.operator.v1.UpdateWorkspaceResponse\"\n" +
+	"\xd2\xf3\x18\x06\x12\x04none\x12v\n" +
 	"\fReassignSeat\x12&.toshi.operator.v1.ReassignSeatRequest\x1a'.toshi.operator.v1.ReassignSeatResponse\"\x15\xd2\xf3\x18\x11\n" +
 	"\x0fseat.reassigned\x12V\n" +
 	"\tListSeats\x12#.toshi.operator.v1.ListSeatsRequest\x1a$.toshi.operator.v1.ListSeatsResponse\x12V\n" +
@@ -16536,28 +16128,18 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"GetVersion\x12$.toshi.operator.v1.GetVersionRequest\x1a%.toshi.operator.v1.GetVersionResponse\x12b\n" +
 	"\tRunChecks\x12#.toshi.operator.v1.RunChecksRequest\x1a$.toshi.operator.v1.RunChecksResponse\"\n" +
 	"\xd2\xf3\x18\x06\n" +
-	"\x04none\x12|\n" +
-	"\rSetTenantPlan\x12'.toshi.operator.v1.SetTenantPlanRequest\x1a(.toshi.operator.v1.SetTenantPlanResponse\"\x18\xd2\xf3\x18\x14\n" +
-	"\x12workspace.plan_set\x12\xa1\x01\n" +
-	"\x17SetWorkspaceEntitlement\x121.toshi.operator.v1.SetWorkspaceEntitlementRequest\x1a2.toshi.operator.v1.SetWorkspaceEntitlementResponse\"\x1f\xd2\xf3\x18\x1b\n" +
-	"\x19workspace.entitlement_set\x12\xab\x01\n" +
-	"\x19ClearWorkspaceEntitlement\x123.toshi.operator.v1.ClearWorkspaceEntitlementRequest\x1a4.toshi.operator.v1.ClearWorkspaceEntitlementResponse\"#\xd2\xf3\x18\x1f\n" +
-	"\x1dworkspace.entitlement_cleared\x12}\n" +
+	"\x04none\x12}\n" +
 	"\rSuspendTenant\x12'.toshi.operator.v1.SuspendTenantRequest\x1a(.toshi.operator.v1.SuspendTenantResponse\"\x19\xd2\xf3\x18\x15\n" +
 	"\x13workspace.suspended\x12x\n" +
 	"\fResumeTenant\x12&.toshi.operator.v1.ResumeTenantRequest\x1a'.toshi.operator.v1.ResumeTenantResponse\"\x17\xd2\xf3\x18\x13\n" +
 	"\x11workspace.resumed\x12\x83\x01\n" +
 	"\fDeleteTenant\x12&.toshi.operator.v1.DeleteTenantRequest\x1a'.toshi.operator.v1.DeleteTenantResponse\"\"\xd2\xf3\x18\x1e\n" +
-	"\x1cworkspace.deletion_scheduled\x12\x98\x01\n" +
-	"\x14SetTenantReservation\x12..toshi.operator.v1.SetTenantReservationRequest\x1a/.toshi.operator.v1.SetTenantReservationResponse\"\x1f\xd2\xf3\x18\x1b\n" +
-	"\x19workspace.reservation_set\x12\\\n" +
+	"\x1cworkspace.deletion_scheduled\x12\\\n" +
 	"\vGetCapacity\x12%.toshi.operator.v1.GetCapacityRequest\x1a&.toshi.operator.v1.GetCapacityResponse\x12S\n" +
 	"\bGetUsage\x12\".toshi.operator.v1.GetUsageRequest\x1a#.toshi.operator.v1.GetUsageResponse\x12b\n" +
 	"\rGetQueueTimes\x12'.toshi.operator.v1.GetQueueTimesRequest\x1a(.toshi.operator.v1.GetQueueTimesResponse\x12k\n" +
 	"\x10GetWorkflowUsage\x12*.toshi.operator.v1.GetWorkflowUsageRequest\x1a+.toshi.operator.v1.GetWorkflowUsageResponse\x12q\n" +
-	"\x12GetTenantStatement\x12,.toshi.operator.v1.GetTenantStatementRequest\x1a-.toshi.operator.v1.GetTenantStatementResponse\x12\xa9\x01\n" +
-	"\x18SetTenantBillingCustomer\x122.toshi.operator.v1.SetTenantBillingCustomerRequest\x1a3.toshi.operator.v1.SetTenantBillingCustomerResponse\"$\xd2\xf3\x18 \n" +
-	"\x1eworkspace.billing_customer_set\x12Y\n" +
+	"\x12GetTenantStatement\x12,.toshi.operator.v1.GetTenantStatementRequest\x1a-.toshi.operator.v1.GetTenantStatementResponse\x12Y\n" +
 	"\n" +
 	"ListTokens\x12$.toshi.operator.v1.ListTokensRequest\x1a%.toshi.operator.v1.ListTokensResponse\x12{\n" +
 	"\vRotateToken\x12%.toshi.operator.v1.RotateTokenRequest\x1a&.toshi.operator.v1.RotateTokenResponse\"\x1d\xd2\xf3\x18\x19\x12\x17token:response.token.id\x12\\\n" +
@@ -16602,546 +16184,534 @@ func file_toshi_operator_v1_operator_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_operator_v1_operator_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
-var file_toshi_operator_v1_operator_proto_msgTypes = make([]protoimpl.MessageInfo, 177)
+var file_toshi_operator_v1_operator_proto_msgTypes = make([]protoimpl.MessageInfo, 170)
 var file_toshi_operator_v1_operator_proto_goTypes = []any{
-	(JobState)(0),                             // 0: toshi.operator.v1.JobState
-	(JobKind)(0),                              // 1: toshi.operator.v1.JobKind
-	(HostState)(0),                            // 2: toshi.operator.v1.HostState
-	(AgentVersionStatus)(0),                   // 3: toshi.operator.v1.AgentVersionStatus
-	(EgressSource)(0),                         // 4: toshi.operator.v1.EgressSource
-	(OfflineHostOutcome)(0),                   // 5: toshi.operator.v1.OfflineHostOutcome
-	(HostingCertificateState)(0),              // 6: toshi.operator.v1.HostingCertificateState
-	(CheckGroup)(0),                           // 7: toshi.operator.v1.CheckGroup
-	(CheckState)(0),                           // 8: toshi.operator.v1.CheckState
-	(TokenKind)(0),                            // 9: toshi.operator.v1.TokenKind
-	(TokenExpiryReason)(0),                    // 10: toshi.operator.v1.TokenExpiryReason
-	(SubjectKind)(0),                          // 11: toshi.operator.v1.SubjectKind
-	(CloudHostCheckStatus)(0),                 // 12: toshi.operator.v1.CloudHostCheckStatus
-	(*Job)(nil),                               // 13: toshi.operator.v1.Job
-	(*JobCache)(nil),                          // 14: toshi.operator.v1.JobCache
-	(*JobTelemetrySummary)(nil),               // 15: toshi.operator.v1.JobTelemetrySummary
-	(*SummariseJobTelemetryRequest)(nil),      // 16: toshi.operator.v1.SummariseJobTelemetryRequest
-	(*SummariseJobTelemetryResponse)(nil),     // 17: toshi.operator.v1.SummariseJobTelemetryResponse
-	(*JobTelemetrySizeRow)(nil),               // 18: toshi.operator.v1.JobTelemetrySizeRow
-	(*TelemetryPercentiles)(nil),              // 19: toshi.operator.v1.TelemetryPercentiles
-	(*HeldRefill)(nil),                        // 20: toshi.operator.v1.HeldRefill
-	(*Host)(nil),                              // 21: toshi.operator.v1.Host
-	(*KeptVM)(nil),                            // 22: toshi.operator.v1.KeptVM
-	(*HostEgress)(nil),                        // 23: toshi.operator.v1.HostEgress
-	(*ListJobsRequest)(nil),                   // 24: toshi.operator.v1.ListJobsRequest
-	(*ListJobsResponse)(nil),                  // 25: toshi.operator.v1.ListJobsResponse
-	(*AuditEvent)(nil),                        // 26: toshi.operator.v1.AuditEvent
-	(*ListAuditEventsRequest)(nil),            // 27: toshi.operator.v1.ListAuditEventsRequest
-	(*ListAuditEventsResponse)(nil),           // 28: toshi.operator.v1.ListAuditEventsResponse
-	(*ListHostsRequest)(nil),                  // 29: toshi.operator.v1.ListHostsRequest
-	(*ListHostsResponse)(nil),                 // 30: toshi.operator.v1.ListHostsResponse
-	(*ListHostStorageRequest)(nil),            // 31: toshi.operator.v1.ListHostStorageRequest
-	(*ListHostStorageResponse)(nil),           // 32: toshi.operator.v1.ListHostStorageResponse
-	(*HostVolume)(nil),                        // 33: toshi.operator.v1.HostVolume
-	(*SetHostStateRequest)(nil),               // 34: toshi.operator.v1.SetHostStateRequest
-	(*SetHostStateResponse)(nil),              // 35: toshi.operator.v1.SetHostStateResponse
-	(*SetHostOverflowRequest)(nil),            // 36: toshi.operator.v1.SetHostOverflowRequest
-	(*SetHostOverflowResponse)(nil),           // 37: toshi.operator.v1.SetHostOverflowResponse
-	(*RetireHostRequest)(nil),                 // 38: toshi.operator.v1.RetireHostRequest
-	(*RetireHostResponse)(nil),                // 39: toshi.operator.v1.RetireHostResponse
-	(*RevokeHostRequest)(nil),                 // 40: toshi.operator.v1.RevokeHostRequest
-	(*RevokeHostResponse)(nil),                // 41: toshi.operator.v1.RevokeHostResponse
-	(*RetireOfflineHostsRequest)(nil),         // 42: toshi.operator.v1.RetireOfflineHostsRequest
-	(*RetireOfflineHostsResponse)(nil),        // 43: toshi.operator.v1.RetireOfflineHostsResponse
-	(*OfflineHostResult)(nil),                 // 44: toshi.operator.v1.OfflineHostResult
-	(*Tenant)(nil),                            // 45: toshi.operator.v1.Tenant
-	(*HostingCertificate)(nil),                // 46: toshi.operator.v1.HostingCertificate
-	(*Reservation)(nil),                       // 47: toshi.operator.v1.Reservation
-	(*CreateWorkspaceRequest)(nil),            // 48: toshi.operator.v1.CreateWorkspaceRequest
-	(*CreateWorkspaceResponse)(nil),           // 49: toshi.operator.v1.CreateWorkspaceResponse
-	(*ListTenantsRequest)(nil),                // 50: toshi.operator.v1.ListTenantsRequest
-	(*ListTenantsResponse)(nil),               // 51: toshi.operator.v1.ListTenantsResponse
-	(*SetTenantCapRequest)(nil),               // 52: toshi.operator.v1.SetTenantCapRequest
-	(*SetTenantCapResponse)(nil),              // 53: toshi.operator.v1.SetTenantCapResponse
-	(*SetTenantLimitsRequest)(nil),            // 54: toshi.operator.v1.SetTenantLimitsRequest
-	(*SetTenantLimitsResponse)(nil),           // 55: toshi.operator.v1.SetTenantLimitsResponse
-	(*Seat)(nil),                              // 56: toshi.operator.v1.Seat
-	(*ReassignSeatRequest)(nil),               // 57: toshi.operator.v1.ReassignSeatRequest
-	(*ReassignSeatResponse)(nil),              // 58: toshi.operator.v1.ReassignSeatResponse
-	(*ListSeatsRequest)(nil),                  // 59: toshi.operator.v1.ListSeatsRequest
-	(*ListSeatsResponse)(nil),                 // 60: toshi.operator.v1.ListSeatsResponse
-	(*SeatMonth)(nil),                         // 61: toshi.operator.v1.SeatMonth
-	(*SuspendTenantRequest)(nil),              // 62: toshi.operator.v1.SuspendTenantRequest
-	(*SuspendTenantResponse)(nil),             // 63: toshi.operator.v1.SuspendTenantResponse
-	(*ResumeTenantRequest)(nil),               // 64: toshi.operator.v1.ResumeTenantRequest
-	(*ResumeTenantResponse)(nil),              // 65: toshi.operator.v1.ResumeTenantResponse
-	(*DeleteTenantRequest)(nil),               // 66: toshi.operator.v1.DeleteTenantRequest
-	(*DeleteTenantResponse)(nil),              // 67: toshi.operator.v1.DeleteTenantResponse
-	(*SetTenantReservationRequest)(nil),       // 68: toshi.operator.v1.SetTenantReservationRequest
-	(*SetTenantReservationResponse)(nil),      // 69: toshi.operator.v1.SetTenantReservationResponse
-	(*Plan)(nil),                              // 70: toshi.operator.v1.Plan
-	(*ListOperatorAlertsRequest)(nil),         // 71: toshi.operator.v1.ListOperatorAlertsRequest
-	(*ListOperatorAlertsResponse)(nil),        // 72: toshi.operator.v1.ListOperatorAlertsResponse
-	(*ListHostAlertsRequest)(nil),             // 73: toshi.operator.v1.ListHostAlertsRequest
-	(*ListHostAlertsResponse)(nil),            // 74: toshi.operator.v1.ListHostAlertsResponse
-	(*OperatorAlert)(nil),                     // 75: toshi.operator.v1.OperatorAlert
-	(*ListPlansRequest)(nil),                  // 76: toshi.operator.v1.ListPlansRequest
-	(*ListPlansResponse)(nil),                 // 77: toshi.operator.v1.ListPlansResponse
-	(*GetVersionRequest)(nil),                 // 78: toshi.operator.v1.GetVersionRequest
-	(*GetVersionResponse)(nil),                // 79: toshi.operator.v1.GetVersionResponse
-	(*Check)(nil),                             // 80: toshi.operator.v1.Check
-	(*RunChecksRequest)(nil),                  // 81: toshi.operator.v1.RunChecksRequest
-	(*RunChecksResponse)(nil),                 // 82: toshi.operator.v1.RunChecksResponse
-	(*SetTenantPlanRequest)(nil),              // 83: toshi.operator.v1.SetTenantPlanRequest
-	(*SetTenantPlanResponse)(nil),             // 84: toshi.operator.v1.SetTenantPlanResponse
-	(*SetWorkspaceEntitlementRequest)(nil),    // 85: toshi.operator.v1.SetWorkspaceEntitlementRequest
-	(*SetWorkspaceEntitlementResponse)(nil),   // 86: toshi.operator.v1.SetWorkspaceEntitlementResponse
-	(*ClearWorkspaceEntitlementRequest)(nil),  // 87: toshi.operator.v1.ClearWorkspaceEntitlementRequest
-	(*ClearWorkspaceEntitlementResponse)(nil), // 88: toshi.operator.v1.ClearWorkspaceEntitlementResponse
-	(*GetUsageRequest)(nil),                   // 89: toshi.operator.v1.GetUsageRequest
-	(*GetUsageResponse)(nil),                  // 90: toshi.operator.v1.GetUsageResponse
-	(*FillerUsage)(nil),                       // 91: toshi.operator.v1.FillerUsage
-	(*UsageRow)(nil),                          // 92: toshi.operator.v1.UsageRow
-	(*GetQueueTimesRequest)(nil),              // 93: toshi.operator.v1.GetQueueTimesRequest
-	(*GetQueueTimesResponse)(nil),             // 94: toshi.operator.v1.GetQueueTimesResponse
-	(*HoldTimes)(nil),                         // 95: toshi.operator.v1.HoldTimes
-	(*GetWorkflowUsageRequest)(nil),           // 96: toshi.operator.v1.GetWorkflowUsageRequest
-	(*GetWorkflowUsageResponse)(nil),          // 97: toshi.operator.v1.GetWorkflowUsageResponse
-	(*WorkflowUsageRow)(nil),                  // 98: toshi.operator.v1.WorkflowUsageRow
-	(*GetCapacityRequest)(nil),                // 99: toshi.operator.v1.GetCapacityRequest
-	(*GetCapacityResponse)(nil),               // 100: toshi.operator.v1.GetCapacityResponse
-	(*CapacitySize)(nil),                      // 101: toshi.operator.v1.CapacitySize
-	(*CapacityReservation)(nil),               // 102: toshi.operator.v1.CapacityReservation
-	(*GetTenantStatementRequest)(nil),         // 103: toshi.operator.v1.GetTenantStatementRequest
-	(*GetTenantStatementResponse)(nil),        // 104: toshi.operator.v1.GetTenantStatementResponse
-	(*TenantStatement)(nil),                   // 105: toshi.operator.v1.TenantStatement
-	(*PaidStarts)(nil),                        // 106: toshi.operator.v1.PaidStarts
-	(*DesktopSeats)(nil),                      // 107: toshi.operator.v1.DesktopSeats
-	(*StatementSeat)(nil),                     // 108: toshi.operator.v1.StatementSeat
-	(*OwnHostFee)(nil),                        // 109: toshi.operator.v1.OwnHostFee
-	(*Awake)(nil),                             // 110: toshi.operator.v1.Awake
-	(*Storage)(nil),                           // 111: toshi.operator.v1.Storage
-	(*StoredKind)(nil),                        // 112: toshi.operator.v1.StoredKind
-	(*StorageUsageRow)(nil),                   // 113: toshi.operator.v1.StorageUsageRow
-	(*StatementUsage)(nil),                    // 114: toshi.operator.v1.StatementUsage
-	(*StatementCharge)(nil),                   // 115: toshi.operator.v1.StatementCharge
-	(*SetTenantBillingCustomerRequest)(nil),   // 116: toshi.operator.v1.SetTenantBillingCustomerRequest
-	(*SetTenantBillingCustomerResponse)(nil),  // 117: toshi.operator.v1.SetTenantBillingCustomerResponse
-	(*TenantBilling)(nil),                     // 118: toshi.operator.v1.TenantBilling
-	(*BillingTotals)(nil),                     // 119: toshi.operator.v1.BillingTotals
-	(*BillingEventFailure)(nil),               // 120: toshi.operator.v1.BillingEventFailure
-	(*Token)(nil),                             // 121: toshi.operator.v1.Token
-	(*Subject)(nil),                           // 122: toshi.operator.v1.Subject
-	(*ClientRanges)(nil),                      // 123: toshi.operator.v1.ClientRanges
-	(*ListTokensRequest)(nil),                 // 124: toshi.operator.v1.ListTokensRequest
-	(*ListTokensResponse)(nil),                // 125: toshi.operator.v1.ListTokensResponse
-	(*RotateTokenRequest)(nil),                // 126: toshi.operator.v1.RotateTokenRequest
-	(*RotateTokenResponse)(nil),               // 127: toshi.operator.v1.RotateTokenResponse
-	(*RevokeTokenRequest)(nil),                // 128: toshi.operator.v1.RevokeTokenRequest
-	(*RevokeTokenResponse)(nil),               // 129: toshi.operator.v1.RevokeTokenResponse
-	(*RollTokenRequest)(nil),                  // 130: toshi.operator.v1.RollTokenRequest
-	(*RollTokenResponse)(nil),                 // 131: toshi.operator.v1.RollTokenResponse
-	(*CreateProductTokenRequest)(nil),         // 132: toshi.operator.v1.CreateProductTokenRequest
-	(*CreateProductTokenResponse)(nil),        // 133: toshi.operator.v1.CreateProductTokenResponse
-	(*Client)(nil),                            // 134: toshi.operator.v1.Client
-	(*RegisterClientRequest)(nil),             // 135: toshi.operator.v1.RegisterClientRequest
-	(*RegisterClientResponse)(nil),            // 136: toshi.operator.v1.RegisterClientResponse
-	(*ListClientsRequest)(nil),                // 137: toshi.operator.v1.ListClientsRequest
-	(*ListClientsResponse)(nil),               // 138: toshi.operator.v1.ListClientsResponse
-	(*DeleteClientRequest)(nil),               // 139: toshi.operator.v1.DeleteClientRequest
-	(*DeleteClientResponse)(nil),              // 140: toshi.operator.v1.DeleteClientResponse
-	(*CheckCloudHostRequest)(nil),             // 141: toshi.operator.v1.CheckCloudHostRequest
-	(*CheckCloudHostResponse)(nil),            // 142: toshi.operator.v1.CheckCloudHostResponse
-	(*CloudHostCheck)(nil),                    // 143: toshi.operator.v1.CloudHostCheck
-	(*Filler)(nil),                            // 144: toshi.operator.v1.Filler
-	(*FillerRun)(nil),                         // 145: toshi.operator.v1.FillerRun
-	(*FillerHostMinutes)(nil),                 // 146: toshi.operator.v1.FillerHostMinutes
-	(*ListFillersRequest)(nil),                // 147: toshi.operator.v1.ListFillersRequest
-	(*ListFillersResponse)(nil),               // 148: toshi.operator.v1.ListFillersResponse
-	(*PutFillerRequest)(nil),                  // 149: toshi.operator.v1.PutFillerRequest
-	(*PutFillerResponse)(nil),                 // 150: toshi.operator.v1.PutFillerResponse
-	(*DeleteFillerRequest)(nil),               // 151: toshi.operator.v1.DeleteFillerRequest
-	(*DeleteFillerResponse)(nil),              // 152: toshi.operator.v1.DeleteFillerResponse
-	(*SetFillerEnabledRequest)(nil),           // 153: toshi.operator.v1.SetFillerEnabledRequest
-	(*SetFillerEnabledResponse)(nil),          // 154: toshi.operator.v1.SetFillerEnabledResponse
-	(*ListFillerRunsRequest)(nil),             // 155: toshi.operator.v1.ListFillerRunsRequest
-	(*ListFillerRunsResponse)(nil),            // 156: toshi.operator.v1.ListFillerRunsResponse
-	(*FillerPause)(nil),                       // 157: toshi.operator.v1.FillerPause
-	(*GetSecretDeliveryRequest)(nil),          // 158: toshi.operator.v1.GetSecretDeliveryRequest
-	(*GetSecretDeliveryResponse)(nil),         // 159: toshi.operator.v1.GetSecretDeliveryResponse
-	(*SetSecretDeliveryRequest)(nil),          // 160: toshi.operator.v1.SetSecretDeliveryRequest
-	(*SetSecretDeliveryResponse)(nil),         // 161: toshi.operator.v1.SetSecretDeliveryResponse
-	(*SecretDelivery)(nil),                    // 162: toshi.operator.v1.SecretDelivery
-	(*ListUtilisationRequest)(nil),            // 163: toshi.operator.v1.ListUtilisationRequest
-	(*ListUtilisationResponse)(nil),           // 164: toshi.operator.v1.ListUtilisationResponse
-	(*WarmMemoryRow)(nil),                     // 165: toshi.operator.v1.WarmMemoryRow
-	(*WarmPathSummary)(nil),                   // 166: toshi.operator.v1.WarmPathSummary
-	(*UtilisationRow)(nil),                    // 167: toshi.operator.v1.UtilisationRow
-	(*UtilisationTarget)(nil),                 // 168: toshi.operator.v1.UtilisationTarget
-	(*SuggestPoolsRequest)(nil),               // 169: toshi.operator.v1.SuggestPoolsRequest
-	(*SuggestPoolsResponse)(nil),              // 170: toshi.operator.v1.SuggestPoolsResponse
-	(*PoolSuggestion)(nil),                    // 171: toshi.operator.v1.PoolSuggestion
-	(*PoolSuggestionSize)(nil),                // 172: toshi.operator.v1.PoolSuggestionSize
-	(*PoolSuggestionOutcome)(nil),             // 173: toshi.operator.v1.PoolSuggestionOutcome
-	(*PoolSuggestionTarget)(nil),              // 174: toshi.operator.v1.PoolSuggestionTarget
-	(*PoolSuggestionUnmet)(nil),               // 175: toshi.operator.v1.PoolSuggestionUnmet
-	(*PoolSuggestionDelay)(nil),               // 176: toshi.operator.v1.PoolSuggestionDelay
-	(*StorageProvider)(nil),                   // 177: toshi.operator.v1.StorageProvider
-	(*CreateStorageProviderRequest)(nil),      // 178: toshi.operator.v1.CreateStorageProviderRequest
-	(*StorageCredential)(nil),                 // 179: toshi.operator.v1.StorageCredential
-	(*CreateStorageProviderResponse)(nil),     // 180: toshi.operator.v1.CreateStorageProviderResponse
-	(*ListStorageProvidersRequest)(nil),       // 181: toshi.operator.v1.ListStorageProvidersRequest
-	(*ListStorageProvidersResponse)(nil),      // 182: toshi.operator.v1.ListStorageProvidersResponse
-	(*CheckStorageProviderRequest)(nil),       // 183: toshi.operator.v1.CheckStorageProviderRequest
-	(*CheckStorageProviderResponse)(nil),      // 184: toshi.operator.v1.CheckStorageProviderResponse
-	(*DeleteStorageProviderRequest)(nil),      // 185: toshi.operator.v1.DeleteStorageProviderRequest
-	(*DeleteStorageProviderResponse)(nil),     // 186: toshi.operator.v1.DeleteStorageProviderResponse
-	nil,                                       // 187: toshi.operator.v1.Host.LabelsEntry
-	nil,                                       // 188: toshi.operator.v1.OperatorAlert.ReasonsEntry
-	(*TenantBilling_HeldJobs)(nil),            // 189: toshi.operator.v1.TenantBilling.HeldJobs
-	(*timestamppb.Timestamp)(nil),             // 190: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),               // 191: google.protobuf.Duration
+	(JobState)(0),                         // 0: toshi.operator.v1.JobState
+	(JobKind)(0),                          // 1: toshi.operator.v1.JobKind
+	(HostState)(0),                        // 2: toshi.operator.v1.HostState
+	(AgentVersionStatus)(0),               // 3: toshi.operator.v1.AgentVersionStatus
+	(EgressSource)(0),                     // 4: toshi.operator.v1.EgressSource
+	(OfflineHostOutcome)(0),               // 5: toshi.operator.v1.OfflineHostOutcome
+	(HostingCertificateState)(0),          // 6: toshi.operator.v1.HostingCertificateState
+	(CheckGroup)(0),                       // 7: toshi.operator.v1.CheckGroup
+	(CheckState)(0),                       // 8: toshi.operator.v1.CheckState
+	(TokenKind)(0),                        // 9: toshi.operator.v1.TokenKind
+	(TokenExpiryReason)(0),                // 10: toshi.operator.v1.TokenExpiryReason
+	(SubjectKind)(0),                      // 11: toshi.operator.v1.SubjectKind
+	(CloudHostCheckStatus)(0),             // 12: toshi.operator.v1.CloudHostCheckStatus
+	(*Job)(nil),                           // 13: toshi.operator.v1.Job
+	(*JobCache)(nil),                      // 14: toshi.operator.v1.JobCache
+	(*JobTelemetrySummary)(nil),           // 15: toshi.operator.v1.JobTelemetrySummary
+	(*SummariseJobTelemetryRequest)(nil),  // 16: toshi.operator.v1.SummariseJobTelemetryRequest
+	(*SummariseJobTelemetryResponse)(nil), // 17: toshi.operator.v1.SummariseJobTelemetryResponse
+	(*JobTelemetrySizeRow)(nil),           // 18: toshi.operator.v1.JobTelemetrySizeRow
+	(*TelemetryPercentiles)(nil),          // 19: toshi.operator.v1.TelemetryPercentiles
+	(*HeldRefill)(nil),                    // 20: toshi.operator.v1.HeldRefill
+	(*Host)(nil),                          // 21: toshi.operator.v1.Host
+	(*KeptVM)(nil),                        // 22: toshi.operator.v1.KeptVM
+	(*HostEgress)(nil),                    // 23: toshi.operator.v1.HostEgress
+	(*ListJobsRequest)(nil),               // 24: toshi.operator.v1.ListJobsRequest
+	(*ListJobsResponse)(nil),              // 25: toshi.operator.v1.ListJobsResponse
+	(*AuditEvent)(nil),                    // 26: toshi.operator.v1.AuditEvent
+	(*ListAuditEventsRequest)(nil),        // 27: toshi.operator.v1.ListAuditEventsRequest
+	(*ListAuditEventsResponse)(nil),       // 28: toshi.operator.v1.ListAuditEventsResponse
+	(*ListHostsRequest)(nil),              // 29: toshi.operator.v1.ListHostsRequest
+	(*ListHostsResponse)(nil),             // 30: toshi.operator.v1.ListHostsResponse
+	(*ListHostStorageRequest)(nil),        // 31: toshi.operator.v1.ListHostStorageRequest
+	(*ListHostStorageResponse)(nil),       // 32: toshi.operator.v1.ListHostStorageResponse
+	(*HostVolume)(nil),                    // 33: toshi.operator.v1.HostVolume
+	(*SetHostStateRequest)(nil),           // 34: toshi.operator.v1.SetHostStateRequest
+	(*SetHostStateResponse)(nil),          // 35: toshi.operator.v1.SetHostStateResponse
+	(*SetHostOverflowRequest)(nil),        // 36: toshi.operator.v1.SetHostOverflowRequest
+	(*SetHostOverflowResponse)(nil),       // 37: toshi.operator.v1.SetHostOverflowResponse
+	(*RetireHostRequest)(nil),             // 38: toshi.operator.v1.RetireHostRequest
+	(*RetireHostResponse)(nil),            // 39: toshi.operator.v1.RetireHostResponse
+	(*RevokeHostRequest)(nil),             // 40: toshi.operator.v1.RevokeHostRequest
+	(*RevokeHostResponse)(nil),            // 41: toshi.operator.v1.RevokeHostResponse
+	(*RetireOfflineHostsRequest)(nil),     // 42: toshi.operator.v1.RetireOfflineHostsRequest
+	(*RetireOfflineHostsResponse)(nil),    // 43: toshi.operator.v1.RetireOfflineHostsResponse
+	(*OfflineHostResult)(nil),             // 44: toshi.operator.v1.OfflineHostResult
+	(*Tenant)(nil),                        // 45: toshi.operator.v1.Tenant
+	(*HostingCertificate)(nil),            // 46: toshi.operator.v1.HostingCertificate
+	(*Reservation)(nil),                   // 47: toshi.operator.v1.Reservation
+	(*CreateWorkspaceRequest)(nil),        // 48: toshi.operator.v1.CreateWorkspaceRequest
+	(*CreateWorkspaceResponse)(nil),       // 49: toshi.operator.v1.CreateWorkspaceResponse
+	(*ListTenantsRequest)(nil),            // 50: toshi.operator.v1.ListTenantsRequest
+	(*ListTenantsResponse)(nil),           // 51: toshi.operator.v1.ListTenantsResponse
+	(*SetTenantCapRequest)(nil),           // 52: toshi.operator.v1.SetTenantCapRequest
+	(*SetTenantCapResponse)(nil),          // 53: toshi.operator.v1.SetTenantCapResponse
+	(*SetTenantLimitsRequest)(nil),        // 54: toshi.operator.v1.SetTenantLimitsRequest
+	(*SetTenantLimitsResponse)(nil),       // 55: toshi.operator.v1.SetTenantLimitsResponse
+	(*UpdateWorkspaceRequest)(nil),        // 56: toshi.operator.v1.UpdateWorkspaceRequest
+	(*UpdateWorkspaceResponse)(nil),       // 57: toshi.operator.v1.UpdateWorkspaceResponse
+	(*Seat)(nil),                          // 58: toshi.operator.v1.Seat
+	(*ReassignSeatRequest)(nil),           // 59: toshi.operator.v1.ReassignSeatRequest
+	(*ReassignSeatResponse)(nil),          // 60: toshi.operator.v1.ReassignSeatResponse
+	(*ListSeatsRequest)(nil),              // 61: toshi.operator.v1.ListSeatsRequest
+	(*ListSeatsResponse)(nil),             // 62: toshi.operator.v1.ListSeatsResponse
+	(*SeatMonth)(nil),                     // 63: toshi.operator.v1.SeatMonth
+	(*SuspendTenantRequest)(nil),          // 64: toshi.operator.v1.SuspendTenantRequest
+	(*SuspendTenantResponse)(nil),         // 65: toshi.operator.v1.SuspendTenantResponse
+	(*ResumeTenantRequest)(nil),           // 66: toshi.operator.v1.ResumeTenantRequest
+	(*ResumeTenantResponse)(nil),          // 67: toshi.operator.v1.ResumeTenantResponse
+	(*DeleteTenantRequest)(nil),           // 68: toshi.operator.v1.DeleteTenantRequest
+	(*DeleteTenantResponse)(nil),          // 69: toshi.operator.v1.DeleteTenantResponse
+	(*Plan)(nil),                          // 70: toshi.operator.v1.Plan
+	(*ListOperatorAlertsRequest)(nil),     // 71: toshi.operator.v1.ListOperatorAlertsRequest
+	(*ListOperatorAlertsResponse)(nil),    // 72: toshi.operator.v1.ListOperatorAlertsResponse
+	(*ListHostAlertsRequest)(nil),         // 73: toshi.operator.v1.ListHostAlertsRequest
+	(*ListHostAlertsResponse)(nil),        // 74: toshi.operator.v1.ListHostAlertsResponse
+	(*OperatorAlert)(nil),                 // 75: toshi.operator.v1.OperatorAlert
+	(*ListPlansRequest)(nil),              // 76: toshi.operator.v1.ListPlansRequest
+	(*ListPlansResponse)(nil),             // 77: toshi.operator.v1.ListPlansResponse
+	(*GetVersionRequest)(nil),             // 78: toshi.operator.v1.GetVersionRequest
+	(*GetVersionResponse)(nil),            // 79: toshi.operator.v1.GetVersionResponse
+	(*Check)(nil),                         // 80: toshi.operator.v1.Check
+	(*RunChecksRequest)(nil),              // 81: toshi.operator.v1.RunChecksRequest
+	(*RunChecksResponse)(nil),             // 82: toshi.operator.v1.RunChecksResponse
+	(*GetUsageRequest)(nil),               // 83: toshi.operator.v1.GetUsageRequest
+	(*GetUsageResponse)(nil),              // 84: toshi.operator.v1.GetUsageResponse
+	(*FillerUsage)(nil),                   // 85: toshi.operator.v1.FillerUsage
+	(*UsageRow)(nil),                      // 86: toshi.operator.v1.UsageRow
+	(*GetQueueTimesRequest)(nil),          // 87: toshi.operator.v1.GetQueueTimesRequest
+	(*GetQueueTimesResponse)(nil),         // 88: toshi.operator.v1.GetQueueTimesResponse
+	(*HoldTimes)(nil),                     // 89: toshi.operator.v1.HoldTimes
+	(*GetWorkflowUsageRequest)(nil),       // 90: toshi.operator.v1.GetWorkflowUsageRequest
+	(*GetWorkflowUsageResponse)(nil),      // 91: toshi.operator.v1.GetWorkflowUsageResponse
+	(*WorkflowUsageRow)(nil),              // 92: toshi.operator.v1.WorkflowUsageRow
+	(*GetCapacityRequest)(nil),            // 93: toshi.operator.v1.GetCapacityRequest
+	(*GetCapacityResponse)(nil),           // 94: toshi.operator.v1.GetCapacityResponse
+	(*CapacitySize)(nil),                  // 95: toshi.operator.v1.CapacitySize
+	(*CapacityReservation)(nil),           // 96: toshi.operator.v1.CapacityReservation
+	(*GetTenantStatementRequest)(nil),     // 97: toshi.operator.v1.GetTenantStatementRequest
+	(*GetTenantStatementResponse)(nil),    // 98: toshi.operator.v1.GetTenantStatementResponse
+	(*TenantStatement)(nil),               // 99: toshi.operator.v1.TenantStatement
+	(*PaidStarts)(nil),                    // 100: toshi.operator.v1.PaidStarts
+	(*DesktopSeats)(nil),                  // 101: toshi.operator.v1.DesktopSeats
+	(*StatementSeat)(nil),                 // 102: toshi.operator.v1.StatementSeat
+	(*OwnHostFee)(nil),                    // 103: toshi.operator.v1.OwnHostFee
+	(*Awake)(nil),                         // 104: toshi.operator.v1.Awake
+	(*Storage)(nil),                       // 105: toshi.operator.v1.Storage
+	(*StoredKind)(nil),                    // 106: toshi.operator.v1.StoredKind
+	(*StorageUsageRow)(nil),               // 107: toshi.operator.v1.StorageUsageRow
+	(*StatementUsage)(nil),                // 108: toshi.operator.v1.StatementUsage
+	(*StatementCharge)(nil),               // 109: toshi.operator.v1.StatementCharge
+	(*TenantBilling)(nil),                 // 110: toshi.operator.v1.TenantBilling
+	(*BillingTotals)(nil),                 // 111: toshi.operator.v1.BillingTotals
+	(*BillingEventFailure)(nil),           // 112: toshi.operator.v1.BillingEventFailure
+	(*Token)(nil),                         // 113: toshi.operator.v1.Token
+	(*Subject)(nil),                       // 114: toshi.operator.v1.Subject
+	(*ClientRanges)(nil),                  // 115: toshi.operator.v1.ClientRanges
+	(*ListTokensRequest)(nil),             // 116: toshi.operator.v1.ListTokensRequest
+	(*ListTokensResponse)(nil),            // 117: toshi.operator.v1.ListTokensResponse
+	(*RotateTokenRequest)(nil),            // 118: toshi.operator.v1.RotateTokenRequest
+	(*RotateTokenResponse)(nil),           // 119: toshi.operator.v1.RotateTokenResponse
+	(*RevokeTokenRequest)(nil),            // 120: toshi.operator.v1.RevokeTokenRequest
+	(*RevokeTokenResponse)(nil),           // 121: toshi.operator.v1.RevokeTokenResponse
+	(*RollTokenRequest)(nil),              // 122: toshi.operator.v1.RollTokenRequest
+	(*RollTokenResponse)(nil),             // 123: toshi.operator.v1.RollTokenResponse
+	(*CreateProductTokenRequest)(nil),     // 124: toshi.operator.v1.CreateProductTokenRequest
+	(*CreateProductTokenResponse)(nil),    // 125: toshi.operator.v1.CreateProductTokenResponse
+	(*Client)(nil),                        // 126: toshi.operator.v1.Client
+	(*RegisterClientRequest)(nil),         // 127: toshi.operator.v1.RegisterClientRequest
+	(*RegisterClientResponse)(nil),        // 128: toshi.operator.v1.RegisterClientResponse
+	(*ListClientsRequest)(nil),            // 129: toshi.operator.v1.ListClientsRequest
+	(*ListClientsResponse)(nil),           // 130: toshi.operator.v1.ListClientsResponse
+	(*DeleteClientRequest)(nil),           // 131: toshi.operator.v1.DeleteClientRequest
+	(*DeleteClientResponse)(nil),          // 132: toshi.operator.v1.DeleteClientResponse
+	(*CheckCloudHostRequest)(nil),         // 133: toshi.operator.v1.CheckCloudHostRequest
+	(*CheckCloudHostResponse)(nil),        // 134: toshi.operator.v1.CheckCloudHostResponse
+	(*CloudHostCheck)(nil),                // 135: toshi.operator.v1.CloudHostCheck
+	(*Filler)(nil),                        // 136: toshi.operator.v1.Filler
+	(*FillerRun)(nil),                     // 137: toshi.operator.v1.FillerRun
+	(*FillerHostMinutes)(nil),             // 138: toshi.operator.v1.FillerHostMinutes
+	(*ListFillersRequest)(nil),            // 139: toshi.operator.v1.ListFillersRequest
+	(*ListFillersResponse)(nil),           // 140: toshi.operator.v1.ListFillersResponse
+	(*PutFillerRequest)(nil),              // 141: toshi.operator.v1.PutFillerRequest
+	(*PutFillerResponse)(nil),             // 142: toshi.operator.v1.PutFillerResponse
+	(*DeleteFillerRequest)(nil),           // 143: toshi.operator.v1.DeleteFillerRequest
+	(*DeleteFillerResponse)(nil),          // 144: toshi.operator.v1.DeleteFillerResponse
+	(*SetFillerEnabledRequest)(nil),       // 145: toshi.operator.v1.SetFillerEnabledRequest
+	(*SetFillerEnabledResponse)(nil),      // 146: toshi.operator.v1.SetFillerEnabledResponse
+	(*ListFillerRunsRequest)(nil),         // 147: toshi.operator.v1.ListFillerRunsRequest
+	(*ListFillerRunsResponse)(nil),        // 148: toshi.operator.v1.ListFillerRunsResponse
+	(*FillerPause)(nil),                   // 149: toshi.operator.v1.FillerPause
+	(*GetSecretDeliveryRequest)(nil),      // 150: toshi.operator.v1.GetSecretDeliveryRequest
+	(*GetSecretDeliveryResponse)(nil),     // 151: toshi.operator.v1.GetSecretDeliveryResponse
+	(*SetSecretDeliveryRequest)(nil),      // 152: toshi.operator.v1.SetSecretDeliveryRequest
+	(*SetSecretDeliveryResponse)(nil),     // 153: toshi.operator.v1.SetSecretDeliveryResponse
+	(*SecretDelivery)(nil),                // 154: toshi.operator.v1.SecretDelivery
+	(*ListUtilisationRequest)(nil),        // 155: toshi.operator.v1.ListUtilisationRequest
+	(*ListUtilisationResponse)(nil),       // 156: toshi.operator.v1.ListUtilisationResponse
+	(*WarmMemoryRow)(nil),                 // 157: toshi.operator.v1.WarmMemoryRow
+	(*WarmPathSummary)(nil),               // 158: toshi.operator.v1.WarmPathSummary
+	(*UtilisationRow)(nil),                // 159: toshi.operator.v1.UtilisationRow
+	(*UtilisationTarget)(nil),             // 160: toshi.operator.v1.UtilisationTarget
+	(*SuggestPoolsRequest)(nil),           // 161: toshi.operator.v1.SuggestPoolsRequest
+	(*SuggestPoolsResponse)(nil),          // 162: toshi.operator.v1.SuggestPoolsResponse
+	(*PoolSuggestion)(nil),                // 163: toshi.operator.v1.PoolSuggestion
+	(*PoolSuggestionSize)(nil),            // 164: toshi.operator.v1.PoolSuggestionSize
+	(*PoolSuggestionOutcome)(nil),         // 165: toshi.operator.v1.PoolSuggestionOutcome
+	(*PoolSuggestionTarget)(nil),          // 166: toshi.operator.v1.PoolSuggestionTarget
+	(*PoolSuggestionUnmet)(nil),           // 167: toshi.operator.v1.PoolSuggestionUnmet
+	(*PoolSuggestionDelay)(nil),           // 168: toshi.operator.v1.PoolSuggestionDelay
+	(*StorageProvider)(nil),               // 169: toshi.operator.v1.StorageProvider
+	(*CreateStorageProviderRequest)(nil),  // 170: toshi.operator.v1.CreateStorageProviderRequest
+	(*StorageCredential)(nil),             // 171: toshi.operator.v1.StorageCredential
+	(*CreateStorageProviderResponse)(nil), // 172: toshi.operator.v1.CreateStorageProviderResponse
+	(*ListStorageProvidersRequest)(nil),   // 173: toshi.operator.v1.ListStorageProvidersRequest
+	(*ListStorageProvidersResponse)(nil),  // 174: toshi.operator.v1.ListStorageProvidersResponse
+	(*CheckStorageProviderRequest)(nil),   // 175: toshi.operator.v1.CheckStorageProviderRequest
+	(*CheckStorageProviderResponse)(nil),  // 176: toshi.operator.v1.CheckStorageProviderResponse
+	(*DeleteStorageProviderRequest)(nil),  // 177: toshi.operator.v1.DeleteStorageProviderRequest
+	(*DeleteStorageProviderResponse)(nil), // 178: toshi.operator.v1.DeleteStorageProviderResponse
+	nil,                                   // 179: toshi.operator.v1.Host.LabelsEntry
+	nil,                                   // 180: toshi.operator.v1.Tenant.EntitlementOverridesEntry
+	nil,                                   // 181: toshi.operator.v1.OperatorAlert.ReasonsEntry
+	(*TenantBilling_HeldJobs)(nil),        // 182: toshi.operator.v1.TenantBilling.HeldJobs
+	(*timestamppb.Timestamp)(nil),         // 183: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),           // 184: google.protobuf.Duration
+	(*fieldmaskpb.FieldMask)(nil),         // 185: google.protobuf.FieldMask
 }
 var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	0,   // 0: toshi.operator.v1.Job.state:type_name -> toshi.operator.v1.JobState
-	190, // 1: toshi.operator.v1.Job.queued_at:type_name -> google.protobuf.Timestamp
-	190, // 2: toshi.operator.v1.Job.assigned_at:type_name -> google.protobuf.Timestamp
-	190, // 3: toshi.operator.v1.Job.started_at:type_name -> google.protobuf.Timestamp
-	190, // 4: toshi.operator.v1.Job.finished_at:type_name -> google.protobuf.Timestamp
-	190, // 5: toshi.operator.v1.Job.stop_requested_at:type_name -> google.protobuf.Timestamp
-	190, // 6: toshi.operator.v1.Job.next_start_at:type_name -> google.protobuf.Timestamp
-	190, // 7: toshi.operator.v1.Job.debug_started_at:type_name -> google.protobuf.Timestamp
-	190, // 8: toshi.operator.v1.Job.debug_until:type_name -> google.protobuf.Timestamp
+	183, // 1: toshi.operator.v1.Job.queued_at:type_name -> google.protobuf.Timestamp
+	183, // 2: toshi.operator.v1.Job.assigned_at:type_name -> google.protobuf.Timestamp
+	183, // 3: toshi.operator.v1.Job.started_at:type_name -> google.protobuf.Timestamp
+	183, // 4: toshi.operator.v1.Job.finished_at:type_name -> google.protobuf.Timestamp
+	183, // 5: toshi.operator.v1.Job.stop_requested_at:type_name -> google.protobuf.Timestamp
+	183, // 6: toshi.operator.v1.Job.next_start_at:type_name -> google.protobuf.Timestamp
+	183, // 7: toshi.operator.v1.Job.debug_started_at:type_name -> google.protobuf.Timestamp
+	183, // 8: toshi.operator.v1.Job.debug_until:type_name -> google.protobuf.Timestamp
 	15,  // 9: toshi.operator.v1.Job.telemetry:type_name -> toshi.operator.v1.JobTelemetrySummary
-	190, // 10: toshi.operator.v1.Job.runner_request_since:type_name -> google.protobuf.Timestamp
+	183, // 10: toshi.operator.v1.Job.runner_request_since:type_name -> google.protobuf.Timestamp
 	14,  // 11: toshi.operator.v1.Job.cache:type_name -> toshi.operator.v1.JobCache
-	190, // 12: toshi.operator.v1.Job.runner_exited_at:type_name -> google.protobuf.Timestamp
+	183, // 12: toshi.operator.v1.Job.runner_exited_at:type_name -> google.protobuf.Timestamp
 	1,   // 13: toshi.operator.v1.Job.kind:type_name -> toshi.operator.v1.JobKind
-	190, // 14: toshi.operator.v1.SummariseJobTelemetryRequest.from:type_name -> google.protobuf.Timestamp
-	190, // 15: toshi.operator.v1.SummariseJobTelemetryRequest.to:type_name -> google.protobuf.Timestamp
+	183, // 14: toshi.operator.v1.SummariseJobTelemetryRequest.from:type_name -> google.protobuf.Timestamp
+	183, // 15: toshi.operator.v1.SummariseJobTelemetryRequest.to:type_name -> google.protobuf.Timestamp
 	18,  // 16: toshi.operator.v1.SummariseJobTelemetryResponse.rows:type_name -> toshi.operator.v1.JobTelemetrySizeRow
-	190, // 17: toshi.operator.v1.SummariseJobTelemetryResponse.from:type_name -> google.protobuf.Timestamp
-	190, // 18: toshi.operator.v1.SummariseJobTelemetryResponse.to:type_name -> google.protobuf.Timestamp
+	183, // 17: toshi.operator.v1.SummariseJobTelemetryResponse.from:type_name -> google.protobuf.Timestamp
+	183, // 18: toshi.operator.v1.SummariseJobTelemetryResponse.to:type_name -> google.protobuf.Timestamp
 	19,  // 19: toshi.operator.v1.JobTelemetrySizeRow.peak_memory_mib:type_name -> toshi.operator.v1.TelemetryPercentiles
 	19,  // 20: toshi.operator.v1.JobTelemetrySizeRow.peak_host_memory_mib:type_name -> toshi.operator.v1.TelemetryPercentiles
 	19,  // 21: toshi.operator.v1.JobTelemetrySizeRow.peak_memory_pct:type_name -> toshi.operator.v1.TelemetryPercentiles
 	19,  // 22: toshi.operator.v1.JobTelemetrySizeRow.cpu_utilisation_pct:type_name -> toshi.operator.v1.TelemetryPercentiles
-	187, // 23: toshi.operator.v1.Host.labels:type_name -> toshi.operator.v1.Host.LabelsEntry
+	179, // 23: toshi.operator.v1.Host.labels:type_name -> toshi.operator.v1.Host.LabelsEntry
 	2,   // 24: toshi.operator.v1.Host.state:type_name -> toshi.operator.v1.HostState
-	190, // 25: toshi.operator.v1.Host.last_seen_at:type_name -> google.protobuf.Timestamp
+	183, // 25: toshi.operator.v1.Host.last_seen_at:type_name -> google.protobuf.Timestamp
 	20,  // 26: toshi.operator.v1.Host.held_refills:type_name -> toshi.operator.v1.HeldRefill
 	23,  // 27: toshi.operator.v1.Host.egress:type_name -> toshi.operator.v1.HostEgress
 	3,   // 28: toshi.operator.v1.Host.agent_version_status:type_name -> toshi.operator.v1.AgentVersionStatus
-	190, // 29: toshi.operator.v1.Host.heartbeat_refused_at:type_name -> google.protobuf.Timestamp
-	190, // 30: toshi.operator.v1.Host.revoked_at:type_name -> google.protobuf.Timestamp
+	183, // 29: toshi.operator.v1.Host.heartbeat_refused_at:type_name -> google.protobuf.Timestamp
+	183, // 30: toshi.operator.v1.Host.revoked_at:type_name -> google.protobuf.Timestamp
 	22,  // 31: toshi.operator.v1.Host.kept_vms:type_name -> toshi.operator.v1.KeptVM
-	190, // 32: toshi.operator.v1.KeptVM.stopped_at:type_name -> google.protobuf.Timestamp
+	183, // 32: toshi.operator.v1.KeptVM.stopped_at:type_name -> google.protobuf.Timestamp
 	4,   // 33: toshi.operator.v1.HostEgress.source:type_name -> toshi.operator.v1.EgressSource
-	190, // 34: toshi.operator.v1.HostEgress.changed_at:type_name -> google.protobuf.Timestamp
+	183, // 34: toshi.operator.v1.HostEgress.changed_at:type_name -> google.protobuf.Timestamp
 	0,   // 35: toshi.operator.v1.ListJobsRequest.states:type_name -> toshi.operator.v1.JobState
 	13,  // 36: toshi.operator.v1.ListJobsResponse.jobs:type_name -> toshi.operator.v1.Job
-	190, // 37: toshi.operator.v1.AuditEvent.at:type_name -> google.protobuf.Timestamp
-	190, // 38: toshi.operator.v1.ListAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
+	183, // 37: toshi.operator.v1.AuditEvent.at:type_name -> google.protobuf.Timestamp
+	183, // 38: toshi.operator.v1.ListAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
 	26,  // 39: toshi.operator.v1.ListAuditEventsResponse.events:type_name -> toshi.operator.v1.AuditEvent
 	2,   // 40: toshi.operator.v1.ListHostsRequest.states:type_name -> toshi.operator.v1.HostState
 	21,  // 41: toshi.operator.v1.ListHostsResponse.hosts:type_name -> toshi.operator.v1.Host
-	191, // 42: toshi.operator.v1.ListHostsResponse.long_offline_after:type_name -> google.protobuf.Duration
+	184, // 42: toshi.operator.v1.ListHostsResponse.long_offline_after:type_name -> google.protobuf.Duration
 	33,  // 43: toshi.operator.v1.ListHostStorageResponse.volumes:type_name -> toshi.operator.v1.HostVolume
-	190, // 44: toshi.operator.v1.HostVolume.claimed_at:type_name -> google.protobuf.Timestamp
+	183, // 44: toshi.operator.v1.HostVolume.claimed_at:type_name -> google.protobuf.Timestamp
 	2,   // 45: toshi.operator.v1.SetHostStateRequest.state:type_name -> toshi.operator.v1.HostState
 	21,  // 46: toshi.operator.v1.SetHostStateResponse.host:type_name -> toshi.operator.v1.Host
 	21,  // 47: toshi.operator.v1.SetHostOverflowResponse.host:type_name -> toshi.operator.v1.Host
 	21,  // 48: toshi.operator.v1.RevokeHostResponse.host:type_name -> toshi.operator.v1.Host
-	191, // 49: toshi.operator.v1.RetireOfflineHostsRequest.offline_longer_than:type_name -> google.protobuf.Duration
+	184, // 49: toshi.operator.v1.RetireOfflineHostsRequest.offline_longer_than:type_name -> google.protobuf.Duration
 	44,  // 50: toshi.operator.v1.RetireOfflineHostsResponse.hosts:type_name -> toshi.operator.v1.OfflineHostResult
 	21,  // 51: toshi.operator.v1.OfflineHostResult.host:type_name -> toshi.operator.v1.Host
 	5,   // 52: toshi.operator.v1.OfflineHostResult.outcome:type_name -> toshi.operator.v1.OfflineHostOutcome
-	190, // 53: toshi.operator.v1.Tenant.created_at:type_name -> google.protobuf.Timestamp
-	190, // 54: toshi.operator.v1.Tenant.starter_credit_granted_at:type_name -> google.protobuf.Timestamp
+	183, // 53: toshi.operator.v1.Tenant.created_at:type_name -> google.protobuf.Timestamp
+	183, // 54: toshi.operator.v1.Tenant.starter_credit_granted_at:type_name -> google.protobuf.Timestamp
 	47,  // 55: toshi.operator.v1.Tenant.reservations:type_name -> toshi.operator.v1.Reservation
-	190, // 56: toshi.operator.v1.Tenant.state_since:type_name -> google.protobuf.Timestamp
-	190, // 57: toshi.operator.v1.Tenant.purge_after:type_name -> google.protobuf.Timestamp
+	183, // 56: toshi.operator.v1.Tenant.state_since:type_name -> google.protobuf.Timestamp
+	183, // 57: toshi.operator.v1.Tenant.purge_after:type_name -> google.protobuf.Timestamp
 	46,  // 58: toshi.operator.v1.Tenant.hosting_certificate:type_name -> toshi.operator.v1.HostingCertificate
-	6,   // 59: toshi.operator.v1.HostingCertificate.state:type_name -> toshi.operator.v1.HostingCertificateState
-	190, // 60: toshi.operator.v1.HostingCertificate.not_after:type_name -> google.protobuf.Timestamp
-	190, // 61: toshi.operator.v1.HostingCertificate.renew_at:type_name -> google.protobuf.Timestamp
-	190, // 62: toshi.operator.v1.HostingCertificate.retry_at:type_name -> google.protobuf.Timestamp
-	45,  // 63: toshi.operator.v1.CreateWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Tenant
-	45,  // 64: toshi.operator.v1.ListTenantsResponse.tenants:type_name -> toshi.operator.v1.Tenant
-	45,  // 65: toshi.operator.v1.SetTenantCapResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	45,  // 66: toshi.operator.v1.SetTenantLimitsResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	190, // 67: toshi.operator.v1.Seat.assigned_at:type_name -> google.protobuf.Timestamp
-	122, // 68: toshi.operator.v1.Seat.assigned_by:type_name -> toshi.operator.v1.Subject
-	190, // 69: toshi.operator.v1.Seat.removed_at:type_name -> google.protobuf.Timestamp
-	122, // 70: toshi.operator.v1.Seat.removed_by:type_name -> toshi.operator.v1.Subject
-	56,  // 71: toshi.operator.v1.ReassignSeatResponse.replaced:type_name -> toshi.operator.v1.Seat
-	56,  // 72: toshi.operator.v1.ReassignSeatResponse.seat:type_name -> toshi.operator.v1.Seat
-	61,  // 73: toshi.operator.v1.ListSeatsResponse.seats:type_name -> toshi.operator.v1.SeatMonth
-	56,  // 74: toshi.operator.v1.SeatMonth.seat:type_name -> toshi.operator.v1.Seat
-	45,  // 75: toshi.operator.v1.SuspendTenantResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	45,  // 76: toshi.operator.v1.ResumeTenantResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	45,  // 77: toshi.operator.v1.DeleteTenantResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	47,  // 78: toshi.operator.v1.SetTenantReservationResponse.reservations:type_name -> toshi.operator.v1.Reservation
-	75,  // 79: toshi.operator.v1.ListOperatorAlertsResponse.alerts:type_name -> toshi.operator.v1.OperatorAlert
-	75,  // 80: toshi.operator.v1.ListHostAlertsResponse.alerts:type_name -> toshi.operator.v1.OperatorAlert
-	190, // 81: toshi.operator.v1.OperatorAlert.raised_at:type_name -> google.protobuf.Timestamp
-	190, // 82: toshi.operator.v1.OperatorAlert.since:type_name -> google.protobuf.Timestamp
-	188, // 83: toshi.operator.v1.OperatorAlert.reasons:type_name -> toshi.operator.v1.OperatorAlert.ReasonsEntry
-	70,  // 84: toshi.operator.v1.ListPlansResponse.plans:type_name -> toshi.operator.v1.Plan
-	8,   // 85: toshi.operator.v1.Check.state:type_name -> toshi.operator.v1.CheckState
-	191, // 86: toshi.operator.v1.Check.duration:type_name -> google.protobuf.Duration
-	7,   // 87: toshi.operator.v1.RunChecksRequest.group:type_name -> toshi.operator.v1.CheckGroup
-	7,   // 88: toshi.operator.v1.RunChecksResponse.group:type_name -> toshi.operator.v1.CheckGroup
-	8,   // 89: toshi.operator.v1.RunChecksResponse.state:type_name -> toshi.operator.v1.CheckState
-	80,  // 90: toshi.operator.v1.RunChecksResponse.checks:type_name -> toshi.operator.v1.Check
-	45,  // 91: toshi.operator.v1.SetTenantPlanResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	190, // 92: toshi.operator.v1.GetUsageRequest.from:type_name -> google.protobuf.Timestamp
-	190, // 93: toshi.operator.v1.GetUsageRequest.to:type_name -> google.protobuf.Timestamp
-	92,  // 94: toshi.operator.v1.GetUsageResponse.rows:type_name -> toshi.operator.v1.UsageRow
-	190, // 95: toshi.operator.v1.GetUsageResponse.from:type_name -> google.protobuf.Timestamp
-	190, // 96: toshi.operator.v1.GetUsageResponse.to:type_name -> google.protobuf.Timestamp
-	91,  // 97: toshi.operator.v1.GetUsageResponse.filler:type_name -> toshi.operator.v1.FillerUsage
-	113, // 98: toshi.operator.v1.GetUsageResponse.storage:type_name -> toshi.operator.v1.StorageUsageRow
-	190, // 99: toshi.operator.v1.GetQueueTimesRequest.from:type_name -> google.protobuf.Timestamp
-	190, // 100: toshi.operator.v1.GetQueueTimesRequest.to:type_name -> google.protobuf.Timestamp
-	190, // 101: toshi.operator.v1.GetQueueTimesResponse.from:type_name -> google.protobuf.Timestamp
-	190, // 102: toshi.operator.v1.GetQueueTimesResponse.to:type_name -> google.protobuf.Timestamp
-	95,  // 103: toshi.operator.v1.GetQueueTimesResponse.held:type_name -> toshi.operator.v1.HoldTimes
-	190, // 104: toshi.operator.v1.HoldTimes.open_since:type_name -> google.protobuf.Timestamp
-	190, // 105: toshi.operator.v1.GetWorkflowUsageRequest.from:type_name -> google.protobuf.Timestamp
-	190, // 106: toshi.operator.v1.GetWorkflowUsageRequest.to:type_name -> google.protobuf.Timestamp
-	98,  // 107: toshi.operator.v1.GetWorkflowUsageResponse.rows:type_name -> toshi.operator.v1.WorkflowUsageRow
-	190, // 108: toshi.operator.v1.GetWorkflowUsageResponse.from:type_name -> google.protobuf.Timestamp
-	190, // 109: toshi.operator.v1.GetWorkflowUsageResponse.to:type_name -> google.protobuf.Timestamp
-	101, // 110: toshi.operator.v1.GetCapacityResponse.sizes:type_name -> toshi.operator.v1.CapacitySize
-	102, // 111: toshi.operator.v1.GetCapacityResponse.reservations:type_name -> toshi.operator.v1.CapacityReservation
-	190, // 112: toshi.operator.v1.GetCapacityResponse.observed_at:type_name -> google.protobuf.Timestamp
-	105, // 113: toshi.operator.v1.GetTenantStatementResponse.statement:type_name -> toshi.operator.v1.TenantStatement
-	190, // 114: toshi.operator.v1.TenantStatement.from:type_name -> google.protobuf.Timestamp
-	190, // 115: toshi.operator.v1.TenantStatement.to:type_name -> google.protobuf.Timestamp
-	114, // 116: toshi.operator.v1.TenantStatement.usage:type_name -> toshi.operator.v1.StatementUsage
-	114, // 117: toshi.operator.v1.TenantStatement.total:type_name -> toshi.operator.v1.StatementUsage
-	115, // 118: toshi.operator.v1.TenantStatement.charges:type_name -> toshi.operator.v1.StatementCharge
-	190, // 119: toshi.operator.v1.TenantStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	95,  // 120: toshi.operator.v1.TenantStatement.held:type_name -> toshi.operator.v1.HoldTimes
-	91,  // 121: toshi.operator.v1.TenantStatement.filler:type_name -> toshi.operator.v1.FillerUsage
-	190, // 122: toshi.operator.v1.TenantStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
-	109, // 123: toshi.operator.v1.TenantStatement.own_host_fee:type_name -> toshi.operator.v1.OwnHostFee
-	110, // 124: toshi.operator.v1.TenantStatement.awake:type_name -> toshi.operator.v1.Awake
-	111, // 125: toshi.operator.v1.TenantStatement.storage:type_name -> toshi.operator.v1.Storage
-	107, // 126: toshi.operator.v1.TenantStatement.desktop_seats:type_name -> toshi.operator.v1.DesktopSeats
-	106, // 127: toshi.operator.v1.TenantStatement.paid_starts:type_name -> toshi.operator.v1.PaidStarts
-	108, // 128: toshi.operator.v1.DesktopSeats.seats:type_name -> toshi.operator.v1.StatementSeat
-	190, // 129: toshi.operator.v1.StatementSeat.assigned_at:type_name -> google.protobuf.Timestamp
-	190, // 130: toshi.operator.v1.StatementSeat.removed_at:type_name -> google.protobuf.Timestamp
-	112, // 131: toshi.operator.v1.Storage.kinds:type_name -> toshi.operator.v1.StoredKind
-	118, // 132: toshi.operator.v1.SetTenantBillingCustomerResponse.billing:type_name -> toshi.operator.v1.TenantBilling
-	190, // 133: toshi.operator.v1.TenantBilling.billing_started_at:type_name -> google.protobuf.Timestamp
-	190, // 134: toshi.operator.v1.TenantBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
-	119, // 135: toshi.operator.v1.TenantBilling.totals:type_name -> toshi.operator.v1.BillingTotals
-	120, // 136: toshi.operator.v1.TenantBilling.failed_events:type_name -> toshi.operator.v1.BillingEventFailure
-	190, // 137: toshi.operator.v1.TenantBilling.card_verified_at:type_name -> google.protobuf.Timestamp
-	190, // 138: toshi.operator.v1.TenantBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	189, // 139: toshi.operator.v1.TenantBilling.held_now:type_name -> toshi.operator.v1.TenantBilling.HeldJobs
-	190, // 140: toshi.operator.v1.BillingEventFailure.occurred_at:type_name -> google.protobuf.Timestamp
-	190, // 141: toshi.operator.v1.BillingEventFailure.failed_at:type_name -> google.protobuf.Timestamp
-	9,   // 142: toshi.operator.v1.Token.kind:type_name -> toshi.operator.v1.TokenKind
-	190, // 143: toshi.operator.v1.Token.created_at:type_name -> google.protobuf.Timestamp
-	190, // 144: toshi.operator.v1.Token.expires_at:type_name -> google.protobuf.Timestamp
-	190, // 145: toshi.operator.v1.Token.revoked_at:type_name -> google.protobuf.Timestamp
-	190, // 146: toshi.operator.v1.Token.not_before:type_name -> google.protobuf.Timestamp
-	123, // 147: toshi.operator.v1.Token.client_ranges:type_name -> toshi.operator.v1.ClientRanges
-	122, // 148: toshi.operator.v1.Token.created_by:type_name -> toshi.operator.v1.Subject
-	190, // 149: toshi.operator.v1.Token.last_used:type_name -> google.protobuf.Timestamp
-	190, // 150: toshi.operator.v1.Token.creator_left_at:type_name -> google.protobuf.Timestamp
-	10,  // 151: toshi.operator.v1.Token.expiry_reason:type_name -> toshi.operator.v1.TokenExpiryReason
-	11,  // 152: toshi.operator.v1.Subject.kind:type_name -> toshi.operator.v1.SubjectKind
-	9,   // 153: toshi.operator.v1.ListTokensRequest.kind:type_name -> toshi.operator.v1.TokenKind
-	121, // 154: toshi.operator.v1.ListTokensResponse.tokens:type_name -> toshi.operator.v1.Token
-	9,   // 155: toshi.operator.v1.RotateTokenRequest.kind:type_name -> toshi.operator.v1.TokenKind
-	121, // 156: toshi.operator.v1.RotateTokenResponse.token:type_name -> toshi.operator.v1.Token
-	121, // 157: toshi.operator.v1.RevokeTokenResponse.token:type_name -> toshi.operator.v1.Token
-	121, // 158: toshi.operator.v1.RollTokenResponse.token:type_name -> toshi.operator.v1.Token
-	190, // 159: toshi.operator.v1.CreateProductTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
-	121, // 160: toshi.operator.v1.CreateProductTokenResponse.token:type_name -> toshi.operator.v1.Token
-	190, // 161: toshi.operator.v1.Client.created_at:type_name -> google.protobuf.Timestamp
-	134, // 162: toshi.operator.v1.RegisterClientResponse.client:type_name -> toshi.operator.v1.Client
-	134, // 163: toshi.operator.v1.ListClientsResponse.clients:type_name -> toshi.operator.v1.Client
-	143, // 164: toshi.operator.v1.CheckCloudHostResponse.checks:type_name -> toshi.operator.v1.CloudHostCheck
-	12,  // 165: toshi.operator.v1.CloudHostCheck.status:type_name -> toshi.operator.v1.CloudHostCheckStatus
-	191, // 166: toshi.operator.v1.Filler.every:type_name -> google.protobuf.Duration
-	191, // 167: toshi.operator.v1.Filler.max_duration:type_name -> google.protobuf.Duration
-	190, // 168: toshi.operator.v1.Filler.created_at:type_name -> google.protobuf.Timestamp
-	190, // 169: toshi.operator.v1.Filler.updated_at:type_name -> google.protobuf.Timestamp
-	145, // 170: toshi.operator.v1.Filler.last_run:type_name -> toshi.operator.v1.FillerRun
-	190, // 171: toshi.operator.v1.Filler.paused_since:type_name -> google.protobuf.Timestamp
-	190, // 172: toshi.operator.v1.Filler.pause_as_of:type_name -> google.protobuf.Timestamp
-	190, // 173: toshi.operator.v1.FillerRun.created_at:type_name -> google.protobuf.Timestamp
-	190, // 174: toshi.operator.v1.FillerRun.started_at:type_name -> google.protobuf.Timestamp
-	190, // 175: toshi.operator.v1.FillerRun.finished_at:type_name -> google.protobuf.Timestamp
-	144, // 176: toshi.operator.v1.ListFillersResponse.fillers:type_name -> toshi.operator.v1.Filler
-	146, // 177: toshi.operator.v1.ListFillersResponse.host_minutes:type_name -> toshi.operator.v1.FillerHostMinutes
-	144, // 178: toshi.operator.v1.PutFillerRequest.filler:type_name -> toshi.operator.v1.Filler
-	144, // 179: toshi.operator.v1.PutFillerResponse.filler:type_name -> toshi.operator.v1.Filler
-	144, // 180: toshi.operator.v1.SetFillerEnabledResponse.filler:type_name -> toshi.operator.v1.Filler
-	145, // 181: toshi.operator.v1.ListFillerRunsResponse.runs:type_name -> toshi.operator.v1.FillerRun
-	157, // 182: toshi.operator.v1.ListFillerRunsResponse.pauses:type_name -> toshi.operator.v1.FillerPause
-	190, // 183: toshi.operator.v1.FillerPause.since:type_name -> google.protobuf.Timestamp
-	190, // 184: toshi.operator.v1.FillerPause.as_of:type_name -> google.protobuf.Timestamp
-	162, // 185: toshi.operator.v1.GetSecretDeliveryResponse.delivery:type_name -> toshi.operator.v1.SecretDelivery
-	162, // 186: toshi.operator.v1.SetSecretDeliveryResponse.delivery:type_name -> toshi.operator.v1.SecretDelivery
-	190, // 187: toshi.operator.v1.SecretDelivery.changed_at:type_name -> google.protobuf.Timestamp
-	190, // 188: toshi.operator.v1.ListUtilisationRequest.from:type_name -> google.protobuf.Timestamp
-	190, // 189: toshi.operator.v1.ListUtilisationRequest.to:type_name -> google.protobuf.Timestamp
-	167, // 190: toshi.operator.v1.ListUtilisationResponse.rows:type_name -> toshi.operator.v1.UtilisationRow
-	168, // 191: toshi.operator.v1.ListUtilisationResponse.target:type_name -> toshi.operator.v1.UtilisationTarget
-	190, // 192: toshi.operator.v1.ListUtilisationResponse.as_of:type_name -> google.protobuf.Timestamp
-	165, // 193: toshi.operator.v1.ListUtilisationResponse.warm_memory:type_name -> toshi.operator.v1.WarmMemoryRow
-	190, // 194: toshi.operator.v1.WarmMemoryRow.start:type_name -> google.protobuf.Timestamp
-	166, // 195: toshi.operator.v1.WarmMemoryRow.booted:type_name -> toshi.operator.v1.WarmPathSummary
-	166, // 196: toshi.operator.v1.WarmMemoryRow.restored:type_name -> toshi.operator.v1.WarmPathSummary
-	190, // 197: toshi.operator.v1.UtilisationRow.start:type_name -> google.protobuf.Timestamp
-	190, // 198: toshi.operator.v1.SuggestPoolsResponse.running_since:type_name -> google.protobuf.Timestamp
-	171, // 199: toshi.operator.v1.SuggestPoolsResponse.last:type_name -> toshi.operator.v1.PoolSuggestion
-	191, // 200: toshi.operator.v1.SuggestPoolsResponse.timeout:type_name -> google.protobuf.Duration
-	168, // 201: toshi.operator.v1.SuggestPoolsResponse.target:type_name -> toshi.operator.v1.UtilisationTarget
-	171, // 202: toshi.operator.v1.SuggestPoolsResponse.kept:type_name -> toshi.operator.v1.PoolSuggestion
-	190, // 203: toshi.operator.v1.PoolSuggestion.started_at:type_name -> google.protobuf.Timestamp
-	190, // 204: toshi.operator.v1.PoolSuggestion.finished_at:type_name -> google.protobuf.Timestamp
-	190, // 205: toshi.operator.v1.PoolSuggestion.from:type_name -> google.protobuf.Timestamp
-	190, // 206: toshi.operator.v1.PoolSuggestion.to:type_name -> google.protobuf.Timestamp
-	191, // 207: toshi.operator.v1.PoolSuggestion.budget:type_name -> google.protobuf.Duration
-	175, // 208: toshi.operator.v1.PoolSuggestion.unmet:type_name -> toshi.operator.v1.PoolSuggestionUnmet
-	176, // 209: toshi.operator.v1.PoolSuggestion.boot_delays:type_name -> toshi.operator.v1.PoolSuggestionDelay
-	176, // 210: toshi.operator.v1.PoolSuggestion.restore_delays:type_name -> toshi.operator.v1.PoolSuggestionDelay
-	172, // 211: toshi.operator.v1.PoolSuggestion.sizes:type_name -> toshi.operator.v1.PoolSuggestionSize
-	174, // 212: toshi.operator.v1.PoolSuggestion.not_in_trace:type_name -> toshi.operator.v1.PoolSuggestionTarget
-	173, // 213: toshi.operator.v1.PoolSuggestionSize.today:type_name -> toshi.operator.v1.PoolSuggestionOutcome
-	173, // 214: toshi.operator.v1.PoolSuggestionSize.with_suggested:type_name -> toshi.operator.v1.PoolSuggestionOutcome
-	190, // 215: toshi.operator.v1.StorageProvider.last_check_at:type_name -> google.protobuf.Timestamp
-	190, // 216: toshi.operator.v1.StorageProvider.created_at:type_name -> google.protobuf.Timestamp
-	190, // 217: toshi.operator.v1.StorageProvider.updated_at:type_name -> google.protobuf.Timestamp
-	179, // 218: toshi.operator.v1.CreateStorageProviderRequest.credential:type_name -> toshi.operator.v1.StorageCredential
-	177, // 219: toshi.operator.v1.CreateStorageProviderResponse.provider:type_name -> toshi.operator.v1.StorageProvider
-	177, // 220: toshi.operator.v1.ListStorageProvidersResponse.providers:type_name -> toshi.operator.v1.StorageProvider
-	177, // 221: toshi.operator.v1.ListStorageProvidersResponse.default_provider:type_name -> toshi.operator.v1.StorageProvider
-	178, // 222: toshi.operator.v1.CheckStorageProviderRequest.provider:type_name -> toshi.operator.v1.CreateStorageProviderRequest
-	177, // 223: toshi.operator.v1.CheckStorageProviderResponse.provider:type_name -> toshi.operator.v1.StorageProvider
-	190, // 224: toshi.operator.v1.CheckStorageProviderResponse.checked_at:type_name -> google.protobuf.Timestamp
-	190, // 225: toshi.operator.v1.TenantBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
-	190, // 226: toshi.operator.v1.TenantBilling.HeldJobs.next_start_at:type_name -> google.protobuf.Timestamp
-	24,  // 227: toshi.operator.v1.OperatorService.ListJobs:input_type -> toshi.operator.v1.ListJobsRequest
-	27,  // 228: toshi.operator.v1.OperatorService.ListAuditEvents:input_type -> toshi.operator.v1.ListAuditEventsRequest
-	16,  // 229: toshi.operator.v1.OperatorService.SummariseJobTelemetry:input_type -> toshi.operator.v1.SummariseJobTelemetryRequest
-	29,  // 230: toshi.operator.v1.OperatorService.ListHosts:input_type -> toshi.operator.v1.ListHostsRequest
-	31,  // 231: toshi.operator.v1.OperatorService.ListHostStorage:input_type -> toshi.operator.v1.ListHostStorageRequest
-	34,  // 232: toshi.operator.v1.OperatorService.SetHostState:input_type -> toshi.operator.v1.SetHostStateRequest
-	36,  // 233: toshi.operator.v1.OperatorService.SetHostOverflow:input_type -> toshi.operator.v1.SetHostOverflowRequest
-	38,  // 234: toshi.operator.v1.OperatorService.RetireHost:input_type -> toshi.operator.v1.RetireHostRequest
-	40,  // 235: toshi.operator.v1.OperatorService.RevokeHost:input_type -> toshi.operator.v1.RevokeHostRequest
-	42,  // 236: toshi.operator.v1.OperatorService.RetireOfflineHosts:input_type -> toshi.operator.v1.RetireOfflineHostsRequest
-	48,  // 237: toshi.operator.v1.OperatorService.CreateWorkspace:input_type -> toshi.operator.v1.CreateWorkspaceRequest
-	50,  // 238: toshi.operator.v1.OperatorService.ListTenants:input_type -> toshi.operator.v1.ListTenantsRequest
-	52,  // 239: toshi.operator.v1.OperatorService.SetTenantCap:input_type -> toshi.operator.v1.SetTenantCapRequest
-	54,  // 240: toshi.operator.v1.OperatorService.SetTenantLimits:input_type -> toshi.operator.v1.SetTenantLimitsRequest
-	57,  // 241: toshi.operator.v1.OperatorService.ReassignSeat:input_type -> toshi.operator.v1.ReassignSeatRequest
-	59,  // 242: toshi.operator.v1.OperatorService.ListSeats:input_type -> toshi.operator.v1.ListSeatsRequest
-	76,  // 243: toshi.operator.v1.OperatorService.ListPlans:input_type -> toshi.operator.v1.ListPlansRequest
-	78,  // 244: toshi.operator.v1.OperatorService.GetVersion:input_type -> toshi.operator.v1.GetVersionRequest
-	81,  // 245: toshi.operator.v1.OperatorService.RunChecks:input_type -> toshi.operator.v1.RunChecksRequest
-	83,  // 246: toshi.operator.v1.OperatorService.SetTenantPlan:input_type -> toshi.operator.v1.SetTenantPlanRequest
-	85,  // 247: toshi.operator.v1.OperatorService.SetWorkspaceEntitlement:input_type -> toshi.operator.v1.SetWorkspaceEntitlementRequest
-	87,  // 248: toshi.operator.v1.OperatorService.ClearWorkspaceEntitlement:input_type -> toshi.operator.v1.ClearWorkspaceEntitlementRequest
-	62,  // 249: toshi.operator.v1.OperatorService.SuspendTenant:input_type -> toshi.operator.v1.SuspendTenantRequest
-	64,  // 250: toshi.operator.v1.OperatorService.ResumeTenant:input_type -> toshi.operator.v1.ResumeTenantRequest
-	66,  // 251: toshi.operator.v1.OperatorService.DeleteTenant:input_type -> toshi.operator.v1.DeleteTenantRequest
-	68,  // 252: toshi.operator.v1.OperatorService.SetTenantReservation:input_type -> toshi.operator.v1.SetTenantReservationRequest
-	99,  // 253: toshi.operator.v1.OperatorService.GetCapacity:input_type -> toshi.operator.v1.GetCapacityRequest
-	89,  // 254: toshi.operator.v1.OperatorService.GetUsage:input_type -> toshi.operator.v1.GetUsageRequest
-	93,  // 255: toshi.operator.v1.OperatorService.GetQueueTimes:input_type -> toshi.operator.v1.GetQueueTimesRequest
-	96,  // 256: toshi.operator.v1.OperatorService.GetWorkflowUsage:input_type -> toshi.operator.v1.GetWorkflowUsageRequest
-	103, // 257: toshi.operator.v1.OperatorService.GetTenantStatement:input_type -> toshi.operator.v1.GetTenantStatementRequest
-	116, // 258: toshi.operator.v1.OperatorService.SetTenantBillingCustomer:input_type -> toshi.operator.v1.SetTenantBillingCustomerRequest
-	124, // 259: toshi.operator.v1.OperatorService.ListTokens:input_type -> toshi.operator.v1.ListTokensRequest
-	126, // 260: toshi.operator.v1.OperatorService.RotateToken:input_type -> toshi.operator.v1.RotateTokenRequest
-	128, // 261: toshi.operator.v1.OperatorService.RevokeToken:input_type -> toshi.operator.v1.RevokeTokenRequest
-	130, // 262: toshi.operator.v1.OperatorService.RollToken:input_type -> toshi.operator.v1.RollTokenRequest
-	132, // 263: toshi.operator.v1.OperatorService.CreateProductToken:input_type -> toshi.operator.v1.CreateProductTokenRequest
-	135, // 264: toshi.operator.v1.OperatorService.RegisterClient:input_type -> toshi.operator.v1.RegisterClientRequest
-	137, // 265: toshi.operator.v1.OperatorService.ListClients:input_type -> toshi.operator.v1.ListClientsRequest
-	139, // 266: toshi.operator.v1.OperatorService.DeleteClient:input_type -> toshi.operator.v1.DeleteClientRequest
-	71,  // 267: toshi.operator.v1.OperatorService.ListOperatorAlerts:input_type -> toshi.operator.v1.ListOperatorAlertsRequest
-	73,  // 268: toshi.operator.v1.OperatorService.ListHostAlerts:input_type -> toshi.operator.v1.ListHostAlertsRequest
-	141, // 269: toshi.operator.v1.OperatorService.CheckCloudHost:input_type -> toshi.operator.v1.CheckCloudHostRequest
-	147, // 270: toshi.operator.v1.OperatorService.ListFillers:input_type -> toshi.operator.v1.ListFillersRequest
-	149, // 271: toshi.operator.v1.OperatorService.PutFiller:input_type -> toshi.operator.v1.PutFillerRequest
-	151, // 272: toshi.operator.v1.OperatorService.DeleteFiller:input_type -> toshi.operator.v1.DeleteFillerRequest
-	153, // 273: toshi.operator.v1.OperatorService.SetFillerEnabled:input_type -> toshi.operator.v1.SetFillerEnabledRequest
-	155, // 274: toshi.operator.v1.OperatorService.ListFillerRuns:input_type -> toshi.operator.v1.ListFillerRunsRequest
-	158, // 275: toshi.operator.v1.OperatorService.GetSecretDelivery:input_type -> toshi.operator.v1.GetSecretDeliveryRequest
-	160, // 276: toshi.operator.v1.OperatorService.SetSecretDelivery:input_type -> toshi.operator.v1.SetSecretDeliveryRequest
-	163, // 277: toshi.operator.v1.OperatorService.ListUtilisation:input_type -> toshi.operator.v1.ListUtilisationRequest
-	169, // 278: toshi.operator.v1.OperatorService.SuggestPools:input_type -> toshi.operator.v1.SuggestPoolsRequest
-	178, // 279: toshi.operator.v1.OperatorService.CreateStorageProvider:input_type -> toshi.operator.v1.CreateStorageProviderRequest
-	181, // 280: toshi.operator.v1.OperatorService.ListStorageProviders:input_type -> toshi.operator.v1.ListStorageProvidersRequest
-	183, // 281: toshi.operator.v1.OperatorService.CheckStorageProvider:input_type -> toshi.operator.v1.CheckStorageProviderRequest
-	185, // 282: toshi.operator.v1.OperatorService.DeleteStorageProvider:input_type -> toshi.operator.v1.DeleteStorageProviderRequest
-	25,  // 283: toshi.operator.v1.OperatorService.ListJobs:output_type -> toshi.operator.v1.ListJobsResponse
-	28,  // 284: toshi.operator.v1.OperatorService.ListAuditEvents:output_type -> toshi.operator.v1.ListAuditEventsResponse
-	17,  // 285: toshi.operator.v1.OperatorService.SummariseJobTelemetry:output_type -> toshi.operator.v1.SummariseJobTelemetryResponse
-	30,  // 286: toshi.operator.v1.OperatorService.ListHosts:output_type -> toshi.operator.v1.ListHostsResponse
-	32,  // 287: toshi.operator.v1.OperatorService.ListHostStorage:output_type -> toshi.operator.v1.ListHostStorageResponse
-	35,  // 288: toshi.operator.v1.OperatorService.SetHostState:output_type -> toshi.operator.v1.SetHostStateResponse
-	37,  // 289: toshi.operator.v1.OperatorService.SetHostOverflow:output_type -> toshi.operator.v1.SetHostOverflowResponse
-	39,  // 290: toshi.operator.v1.OperatorService.RetireHost:output_type -> toshi.operator.v1.RetireHostResponse
-	41,  // 291: toshi.operator.v1.OperatorService.RevokeHost:output_type -> toshi.operator.v1.RevokeHostResponse
-	43,  // 292: toshi.operator.v1.OperatorService.RetireOfflineHosts:output_type -> toshi.operator.v1.RetireOfflineHostsResponse
-	49,  // 293: toshi.operator.v1.OperatorService.CreateWorkspace:output_type -> toshi.operator.v1.CreateWorkspaceResponse
-	51,  // 294: toshi.operator.v1.OperatorService.ListTenants:output_type -> toshi.operator.v1.ListTenantsResponse
-	53,  // 295: toshi.operator.v1.OperatorService.SetTenantCap:output_type -> toshi.operator.v1.SetTenantCapResponse
-	55,  // 296: toshi.operator.v1.OperatorService.SetTenantLimits:output_type -> toshi.operator.v1.SetTenantLimitsResponse
-	58,  // 297: toshi.operator.v1.OperatorService.ReassignSeat:output_type -> toshi.operator.v1.ReassignSeatResponse
-	60,  // 298: toshi.operator.v1.OperatorService.ListSeats:output_type -> toshi.operator.v1.ListSeatsResponse
-	77,  // 299: toshi.operator.v1.OperatorService.ListPlans:output_type -> toshi.operator.v1.ListPlansResponse
-	79,  // 300: toshi.operator.v1.OperatorService.GetVersion:output_type -> toshi.operator.v1.GetVersionResponse
-	82,  // 301: toshi.operator.v1.OperatorService.RunChecks:output_type -> toshi.operator.v1.RunChecksResponse
-	84,  // 302: toshi.operator.v1.OperatorService.SetTenantPlan:output_type -> toshi.operator.v1.SetTenantPlanResponse
-	86,  // 303: toshi.operator.v1.OperatorService.SetWorkspaceEntitlement:output_type -> toshi.operator.v1.SetWorkspaceEntitlementResponse
-	88,  // 304: toshi.operator.v1.OperatorService.ClearWorkspaceEntitlement:output_type -> toshi.operator.v1.ClearWorkspaceEntitlementResponse
-	63,  // 305: toshi.operator.v1.OperatorService.SuspendTenant:output_type -> toshi.operator.v1.SuspendTenantResponse
-	65,  // 306: toshi.operator.v1.OperatorService.ResumeTenant:output_type -> toshi.operator.v1.ResumeTenantResponse
-	67,  // 307: toshi.operator.v1.OperatorService.DeleteTenant:output_type -> toshi.operator.v1.DeleteTenantResponse
-	69,  // 308: toshi.operator.v1.OperatorService.SetTenantReservation:output_type -> toshi.operator.v1.SetTenantReservationResponse
-	100, // 309: toshi.operator.v1.OperatorService.GetCapacity:output_type -> toshi.operator.v1.GetCapacityResponse
-	90,  // 310: toshi.operator.v1.OperatorService.GetUsage:output_type -> toshi.operator.v1.GetUsageResponse
-	94,  // 311: toshi.operator.v1.OperatorService.GetQueueTimes:output_type -> toshi.operator.v1.GetQueueTimesResponse
-	97,  // 312: toshi.operator.v1.OperatorService.GetWorkflowUsage:output_type -> toshi.operator.v1.GetWorkflowUsageResponse
-	104, // 313: toshi.operator.v1.OperatorService.GetTenantStatement:output_type -> toshi.operator.v1.GetTenantStatementResponse
-	117, // 314: toshi.operator.v1.OperatorService.SetTenantBillingCustomer:output_type -> toshi.operator.v1.SetTenantBillingCustomerResponse
-	125, // 315: toshi.operator.v1.OperatorService.ListTokens:output_type -> toshi.operator.v1.ListTokensResponse
-	127, // 316: toshi.operator.v1.OperatorService.RotateToken:output_type -> toshi.operator.v1.RotateTokenResponse
-	129, // 317: toshi.operator.v1.OperatorService.RevokeToken:output_type -> toshi.operator.v1.RevokeTokenResponse
-	131, // 318: toshi.operator.v1.OperatorService.RollToken:output_type -> toshi.operator.v1.RollTokenResponse
-	133, // 319: toshi.operator.v1.OperatorService.CreateProductToken:output_type -> toshi.operator.v1.CreateProductTokenResponse
-	136, // 320: toshi.operator.v1.OperatorService.RegisterClient:output_type -> toshi.operator.v1.RegisterClientResponse
-	138, // 321: toshi.operator.v1.OperatorService.ListClients:output_type -> toshi.operator.v1.ListClientsResponse
-	140, // 322: toshi.operator.v1.OperatorService.DeleteClient:output_type -> toshi.operator.v1.DeleteClientResponse
-	72,  // 323: toshi.operator.v1.OperatorService.ListOperatorAlerts:output_type -> toshi.operator.v1.ListOperatorAlertsResponse
-	74,  // 324: toshi.operator.v1.OperatorService.ListHostAlerts:output_type -> toshi.operator.v1.ListHostAlertsResponse
-	142, // 325: toshi.operator.v1.OperatorService.CheckCloudHost:output_type -> toshi.operator.v1.CheckCloudHostResponse
-	148, // 326: toshi.operator.v1.OperatorService.ListFillers:output_type -> toshi.operator.v1.ListFillersResponse
-	150, // 327: toshi.operator.v1.OperatorService.PutFiller:output_type -> toshi.operator.v1.PutFillerResponse
-	152, // 328: toshi.operator.v1.OperatorService.DeleteFiller:output_type -> toshi.operator.v1.DeleteFillerResponse
-	154, // 329: toshi.operator.v1.OperatorService.SetFillerEnabled:output_type -> toshi.operator.v1.SetFillerEnabledResponse
-	156, // 330: toshi.operator.v1.OperatorService.ListFillerRuns:output_type -> toshi.operator.v1.ListFillerRunsResponse
-	159, // 331: toshi.operator.v1.OperatorService.GetSecretDelivery:output_type -> toshi.operator.v1.GetSecretDeliveryResponse
-	161, // 332: toshi.operator.v1.OperatorService.SetSecretDelivery:output_type -> toshi.operator.v1.SetSecretDeliveryResponse
-	164, // 333: toshi.operator.v1.OperatorService.ListUtilisation:output_type -> toshi.operator.v1.ListUtilisationResponse
-	170, // 334: toshi.operator.v1.OperatorService.SuggestPools:output_type -> toshi.operator.v1.SuggestPoolsResponse
-	180, // 335: toshi.operator.v1.OperatorService.CreateStorageProvider:output_type -> toshi.operator.v1.CreateStorageProviderResponse
-	182, // 336: toshi.operator.v1.OperatorService.ListStorageProviders:output_type -> toshi.operator.v1.ListStorageProvidersResponse
-	184, // 337: toshi.operator.v1.OperatorService.CheckStorageProvider:output_type -> toshi.operator.v1.CheckStorageProviderResponse
-	186, // 338: toshi.operator.v1.OperatorService.DeleteStorageProvider:output_type -> toshi.operator.v1.DeleteStorageProviderResponse
-	283, // [283:339] is the sub-list for method output_type
-	227, // [227:283] is the sub-list for method input_type
-	227, // [227:227] is the sub-list for extension type_name
-	227, // [227:227] is the sub-list for extension extendee
-	0,   // [0:227] is the sub-list for field type_name
+	110, // 59: toshi.operator.v1.Tenant.billing:type_name -> toshi.operator.v1.TenantBilling
+	180, // 60: toshi.operator.v1.Tenant.entitlement_overrides:type_name -> toshi.operator.v1.Tenant.EntitlementOverridesEntry
+	6,   // 61: toshi.operator.v1.HostingCertificate.state:type_name -> toshi.operator.v1.HostingCertificateState
+	183, // 62: toshi.operator.v1.HostingCertificate.not_after:type_name -> google.protobuf.Timestamp
+	183, // 63: toshi.operator.v1.HostingCertificate.renew_at:type_name -> google.protobuf.Timestamp
+	183, // 64: toshi.operator.v1.HostingCertificate.retry_at:type_name -> google.protobuf.Timestamp
+	45,  // 65: toshi.operator.v1.CreateWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Tenant
+	45,  // 66: toshi.operator.v1.ListTenantsResponse.tenants:type_name -> toshi.operator.v1.Tenant
+	45,  // 67: toshi.operator.v1.SetTenantCapResponse.tenant:type_name -> toshi.operator.v1.Tenant
+	45,  // 68: toshi.operator.v1.SetTenantLimitsResponse.tenant:type_name -> toshi.operator.v1.Tenant
+	45,  // 69: toshi.operator.v1.UpdateWorkspaceRequest.workspace:type_name -> toshi.operator.v1.Tenant
+	185, // 70: toshi.operator.v1.UpdateWorkspaceRequest.update_mask:type_name -> google.protobuf.FieldMask
+	45,  // 71: toshi.operator.v1.UpdateWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Tenant
+	183, // 72: toshi.operator.v1.Seat.assigned_at:type_name -> google.protobuf.Timestamp
+	114, // 73: toshi.operator.v1.Seat.assigned_by:type_name -> toshi.operator.v1.Subject
+	183, // 74: toshi.operator.v1.Seat.removed_at:type_name -> google.protobuf.Timestamp
+	114, // 75: toshi.operator.v1.Seat.removed_by:type_name -> toshi.operator.v1.Subject
+	58,  // 76: toshi.operator.v1.ReassignSeatResponse.replaced:type_name -> toshi.operator.v1.Seat
+	58,  // 77: toshi.operator.v1.ReassignSeatResponse.seat:type_name -> toshi.operator.v1.Seat
+	63,  // 78: toshi.operator.v1.ListSeatsResponse.seats:type_name -> toshi.operator.v1.SeatMonth
+	58,  // 79: toshi.operator.v1.SeatMonth.seat:type_name -> toshi.operator.v1.Seat
+	45,  // 80: toshi.operator.v1.SuspendTenantResponse.tenant:type_name -> toshi.operator.v1.Tenant
+	45,  // 81: toshi.operator.v1.ResumeTenantResponse.tenant:type_name -> toshi.operator.v1.Tenant
+	45,  // 82: toshi.operator.v1.DeleteTenantResponse.tenant:type_name -> toshi.operator.v1.Tenant
+	75,  // 83: toshi.operator.v1.ListOperatorAlertsResponse.alerts:type_name -> toshi.operator.v1.OperatorAlert
+	75,  // 84: toshi.operator.v1.ListHostAlertsResponse.alerts:type_name -> toshi.operator.v1.OperatorAlert
+	183, // 85: toshi.operator.v1.OperatorAlert.raised_at:type_name -> google.protobuf.Timestamp
+	183, // 86: toshi.operator.v1.OperatorAlert.since:type_name -> google.protobuf.Timestamp
+	181, // 87: toshi.operator.v1.OperatorAlert.reasons:type_name -> toshi.operator.v1.OperatorAlert.ReasonsEntry
+	70,  // 88: toshi.operator.v1.ListPlansResponse.plans:type_name -> toshi.operator.v1.Plan
+	8,   // 89: toshi.operator.v1.Check.state:type_name -> toshi.operator.v1.CheckState
+	184, // 90: toshi.operator.v1.Check.duration:type_name -> google.protobuf.Duration
+	7,   // 91: toshi.operator.v1.RunChecksRequest.group:type_name -> toshi.operator.v1.CheckGroup
+	7,   // 92: toshi.operator.v1.RunChecksResponse.group:type_name -> toshi.operator.v1.CheckGroup
+	8,   // 93: toshi.operator.v1.RunChecksResponse.state:type_name -> toshi.operator.v1.CheckState
+	80,  // 94: toshi.operator.v1.RunChecksResponse.checks:type_name -> toshi.operator.v1.Check
+	183, // 95: toshi.operator.v1.GetUsageRequest.from:type_name -> google.protobuf.Timestamp
+	183, // 96: toshi.operator.v1.GetUsageRequest.to:type_name -> google.protobuf.Timestamp
+	86,  // 97: toshi.operator.v1.GetUsageResponse.rows:type_name -> toshi.operator.v1.UsageRow
+	183, // 98: toshi.operator.v1.GetUsageResponse.from:type_name -> google.protobuf.Timestamp
+	183, // 99: toshi.operator.v1.GetUsageResponse.to:type_name -> google.protobuf.Timestamp
+	85,  // 100: toshi.operator.v1.GetUsageResponse.filler:type_name -> toshi.operator.v1.FillerUsage
+	107, // 101: toshi.operator.v1.GetUsageResponse.storage:type_name -> toshi.operator.v1.StorageUsageRow
+	183, // 102: toshi.operator.v1.GetQueueTimesRequest.from:type_name -> google.protobuf.Timestamp
+	183, // 103: toshi.operator.v1.GetQueueTimesRequest.to:type_name -> google.protobuf.Timestamp
+	183, // 104: toshi.operator.v1.GetQueueTimesResponse.from:type_name -> google.protobuf.Timestamp
+	183, // 105: toshi.operator.v1.GetQueueTimesResponse.to:type_name -> google.protobuf.Timestamp
+	89,  // 106: toshi.operator.v1.GetQueueTimesResponse.held:type_name -> toshi.operator.v1.HoldTimes
+	183, // 107: toshi.operator.v1.HoldTimes.open_since:type_name -> google.protobuf.Timestamp
+	183, // 108: toshi.operator.v1.GetWorkflowUsageRequest.from:type_name -> google.protobuf.Timestamp
+	183, // 109: toshi.operator.v1.GetWorkflowUsageRequest.to:type_name -> google.protobuf.Timestamp
+	92,  // 110: toshi.operator.v1.GetWorkflowUsageResponse.rows:type_name -> toshi.operator.v1.WorkflowUsageRow
+	183, // 111: toshi.operator.v1.GetWorkflowUsageResponse.from:type_name -> google.protobuf.Timestamp
+	183, // 112: toshi.operator.v1.GetWorkflowUsageResponse.to:type_name -> google.protobuf.Timestamp
+	95,  // 113: toshi.operator.v1.GetCapacityResponse.sizes:type_name -> toshi.operator.v1.CapacitySize
+	96,  // 114: toshi.operator.v1.GetCapacityResponse.reservations:type_name -> toshi.operator.v1.CapacityReservation
+	183, // 115: toshi.operator.v1.GetCapacityResponse.observed_at:type_name -> google.protobuf.Timestamp
+	99,  // 116: toshi.operator.v1.GetTenantStatementResponse.statement:type_name -> toshi.operator.v1.TenantStatement
+	183, // 117: toshi.operator.v1.TenantStatement.from:type_name -> google.protobuf.Timestamp
+	183, // 118: toshi.operator.v1.TenantStatement.to:type_name -> google.protobuf.Timestamp
+	108, // 119: toshi.operator.v1.TenantStatement.usage:type_name -> toshi.operator.v1.StatementUsage
+	108, // 120: toshi.operator.v1.TenantStatement.total:type_name -> toshi.operator.v1.StatementUsage
+	109, // 121: toshi.operator.v1.TenantStatement.charges:type_name -> toshi.operator.v1.StatementCharge
+	183, // 122: toshi.operator.v1.TenantStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	89,  // 123: toshi.operator.v1.TenantStatement.held:type_name -> toshi.operator.v1.HoldTimes
+	85,  // 124: toshi.operator.v1.TenantStatement.filler:type_name -> toshi.operator.v1.FillerUsage
+	183, // 125: toshi.operator.v1.TenantStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
+	103, // 126: toshi.operator.v1.TenantStatement.own_host_fee:type_name -> toshi.operator.v1.OwnHostFee
+	104, // 127: toshi.operator.v1.TenantStatement.awake:type_name -> toshi.operator.v1.Awake
+	105, // 128: toshi.operator.v1.TenantStatement.storage:type_name -> toshi.operator.v1.Storage
+	101, // 129: toshi.operator.v1.TenantStatement.desktop_seats:type_name -> toshi.operator.v1.DesktopSeats
+	100, // 130: toshi.operator.v1.TenantStatement.paid_starts:type_name -> toshi.operator.v1.PaidStarts
+	102, // 131: toshi.operator.v1.DesktopSeats.seats:type_name -> toshi.operator.v1.StatementSeat
+	183, // 132: toshi.operator.v1.StatementSeat.assigned_at:type_name -> google.protobuf.Timestamp
+	183, // 133: toshi.operator.v1.StatementSeat.removed_at:type_name -> google.protobuf.Timestamp
+	106, // 134: toshi.operator.v1.Storage.kinds:type_name -> toshi.operator.v1.StoredKind
+	183, // 135: toshi.operator.v1.TenantBilling.billing_started_at:type_name -> google.protobuf.Timestamp
+	183, // 136: toshi.operator.v1.TenantBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
+	111, // 137: toshi.operator.v1.TenantBilling.totals:type_name -> toshi.operator.v1.BillingTotals
+	112, // 138: toshi.operator.v1.TenantBilling.failed_events:type_name -> toshi.operator.v1.BillingEventFailure
+	183, // 139: toshi.operator.v1.TenantBilling.card_verified_at:type_name -> google.protobuf.Timestamp
+	183, // 140: toshi.operator.v1.TenantBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	182, // 141: toshi.operator.v1.TenantBilling.held_now:type_name -> toshi.operator.v1.TenantBilling.HeldJobs
+	183, // 142: toshi.operator.v1.BillingEventFailure.occurred_at:type_name -> google.protobuf.Timestamp
+	183, // 143: toshi.operator.v1.BillingEventFailure.failed_at:type_name -> google.protobuf.Timestamp
+	9,   // 144: toshi.operator.v1.Token.kind:type_name -> toshi.operator.v1.TokenKind
+	183, // 145: toshi.operator.v1.Token.created_at:type_name -> google.protobuf.Timestamp
+	183, // 146: toshi.operator.v1.Token.expires_at:type_name -> google.protobuf.Timestamp
+	183, // 147: toshi.operator.v1.Token.revoked_at:type_name -> google.protobuf.Timestamp
+	183, // 148: toshi.operator.v1.Token.not_before:type_name -> google.protobuf.Timestamp
+	115, // 149: toshi.operator.v1.Token.client_ranges:type_name -> toshi.operator.v1.ClientRanges
+	114, // 150: toshi.operator.v1.Token.created_by:type_name -> toshi.operator.v1.Subject
+	183, // 151: toshi.operator.v1.Token.last_used:type_name -> google.protobuf.Timestamp
+	183, // 152: toshi.operator.v1.Token.creator_left_at:type_name -> google.protobuf.Timestamp
+	10,  // 153: toshi.operator.v1.Token.expiry_reason:type_name -> toshi.operator.v1.TokenExpiryReason
+	11,  // 154: toshi.operator.v1.Subject.kind:type_name -> toshi.operator.v1.SubjectKind
+	9,   // 155: toshi.operator.v1.ListTokensRequest.kind:type_name -> toshi.operator.v1.TokenKind
+	113, // 156: toshi.operator.v1.ListTokensResponse.tokens:type_name -> toshi.operator.v1.Token
+	9,   // 157: toshi.operator.v1.RotateTokenRequest.kind:type_name -> toshi.operator.v1.TokenKind
+	113, // 158: toshi.operator.v1.RotateTokenResponse.token:type_name -> toshi.operator.v1.Token
+	113, // 159: toshi.operator.v1.RevokeTokenResponse.token:type_name -> toshi.operator.v1.Token
+	113, // 160: toshi.operator.v1.RollTokenResponse.token:type_name -> toshi.operator.v1.Token
+	183, // 161: toshi.operator.v1.CreateProductTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	113, // 162: toshi.operator.v1.CreateProductTokenResponse.token:type_name -> toshi.operator.v1.Token
+	183, // 163: toshi.operator.v1.Client.created_at:type_name -> google.protobuf.Timestamp
+	126, // 164: toshi.operator.v1.RegisterClientResponse.client:type_name -> toshi.operator.v1.Client
+	126, // 165: toshi.operator.v1.ListClientsResponse.clients:type_name -> toshi.operator.v1.Client
+	135, // 166: toshi.operator.v1.CheckCloudHostResponse.checks:type_name -> toshi.operator.v1.CloudHostCheck
+	12,  // 167: toshi.operator.v1.CloudHostCheck.status:type_name -> toshi.operator.v1.CloudHostCheckStatus
+	184, // 168: toshi.operator.v1.Filler.every:type_name -> google.protobuf.Duration
+	184, // 169: toshi.operator.v1.Filler.max_duration:type_name -> google.protobuf.Duration
+	183, // 170: toshi.operator.v1.Filler.created_at:type_name -> google.protobuf.Timestamp
+	183, // 171: toshi.operator.v1.Filler.updated_at:type_name -> google.protobuf.Timestamp
+	137, // 172: toshi.operator.v1.Filler.last_run:type_name -> toshi.operator.v1.FillerRun
+	183, // 173: toshi.operator.v1.Filler.paused_since:type_name -> google.protobuf.Timestamp
+	183, // 174: toshi.operator.v1.Filler.pause_as_of:type_name -> google.protobuf.Timestamp
+	183, // 175: toshi.operator.v1.FillerRun.created_at:type_name -> google.protobuf.Timestamp
+	183, // 176: toshi.operator.v1.FillerRun.started_at:type_name -> google.protobuf.Timestamp
+	183, // 177: toshi.operator.v1.FillerRun.finished_at:type_name -> google.protobuf.Timestamp
+	136, // 178: toshi.operator.v1.ListFillersResponse.fillers:type_name -> toshi.operator.v1.Filler
+	138, // 179: toshi.operator.v1.ListFillersResponse.host_minutes:type_name -> toshi.operator.v1.FillerHostMinutes
+	136, // 180: toshi.operator.v1.PutFillerRequest.filler:type_name -> toshi.operator.v1.Filler
+	136, // 181: toshi.operator.v1.PutFillerResponse.filler:type_name -> toshi.operator.v1.Filler
+	136, // 182: toshi.operator.v1.SetFillerEnabledResponse.filler:type_name -> toshi.operator.v1.Filler
+	137, // 183: toshi.operator.v1.ListFillerRunsResponse.runs:type_name -> toshi.operator.v1.FillerRun
+	149, // 184: toshi.operator.v1.ListFillerRunsResponse.pauses:type_name -> toshi.operator.v1.FillerPause
+	183, // 185: toshi.operator.v1.FillerPause.since:type_name -> google.protobuf.Timestamp
+	183, // 186: toshi.operator.v1.FillerPause.as_of:type_name -> google.protobuf.Timestamp
+	154, // 187: toshi.operator.v1.GetSecretDeliveryResponse.delivery:type_name -> toshi.operator.v1.SecretDelivery
+	154, // 188: toshi.operator.v1.SetSecretDeliveryResponse.delivery:type_name -> toshi.operator.v1.SecretDelivery
+	183, // 189: toshi.operator.v1.SecretDelivery.changed_at:type_name -> google.protobuf.Timestamp
+	183, // 190: toshi.operator.v1.ListUtilisationRequest.from:type_name -> google.protobuf.Timestamp
+	183, // 191: toshi.operator.v1.ListUtilisationRequest.to:type_name -> google.protobuf.Timestamp
+	159, // 192: toshi.operator.v1.ListUtilisationResponse.rows:type_name -> toshi.operator.v1.UtilisationRow
+	160, // 193: toshi.operator.v1.ListUtilisationResponse.target:type_name -> toshi.operator.v1.UtilisationTarget
+	183, // 194: toshi.operator.v1.ListUtilisationResponse.as_of:type_name -> google.protobuf.Timestamp
+	157, // 195: toshi.operator.v1.ListUtilisationResponse.warm_memory:type_name -> toshi.operator.v1.WarmMemoryRow
+	183, // 196: toshi.operator.v1.WarmMemoryRow.start:type_name -> google.protobuf.Timestamp
+	158, // 197: toshi.operator.v1.WarmMemoryRow.booted:type_name -> toshi.operator.v1.WarmPathSummary
+	158, // 198: toshi.operator.v1.WarmMemoryRow.restored:type_name -> toshi.operator.v1.WarmPathSummary
+	183, // 199: toshi.operator.v1.UtilisationRow.start:type_name -> google.protobuf.Timestamp
+	183, // 200: toshi.operator.v1.SuggestPoolsResponse.running_since:type_name -> google.protobuf.Timestamp
+	163, // 201: toshi.operator.v1.SuggestPoolsResponse.last:type_name -> toshi.operator.v1.PoolSuggestion
+	184, // 202: toshi.operator.v1.SuggestPoolsResponse.timeout:type_name -> google.protobuf.Duration
+	160, // 203: toshi.operator.v1.SuggestPoolsResponse.target:type_name -> toshi.operator.v1.UtilisationTarget
+	163, // 204: toshi.operator.v1.SuggestPoolsResponse.kept:type_name -> toshi.operator.v1.PoolSuggestion
+	183, // 205: toshi.operator.v1.PoolSuggestion.started_at:type_name -> google.protobuf.Timestamp
+	183, // 206: toshi.operator.v1.PoolSuggestion.finished_at:type_name -> google.protobuf.Timestamp
+	183, // 207: toshi.operator.v1.PoolSuggestion.from:type_name -> google.protobuf.Timestamp
+	183, // 208: toshi.operator.v1.PoolSuggestion.to:type_name -> google.protobuf.Timestamp
+	184, // 209: toshi.operator.v1.PoolSuggestion.budget:type_name -> google.protobuf.Duration
+	167, // 210: toshi.operator.v1.PoolSuggestion.unmet:type_name -> toshi.operator.v1.PoolSuggestionUnmet
+	168, // 211: toshi.operator.v1.PoolSuggestion.boot_delays:type_name -> toshi.operator.v1.PoolSuggestionDelay
+	168, // 212: toshi.operator.v1.PoolSuggestion.restore_delays:type_name -> toshi.operator.v1.PoolSuggestionDelay
+	164, // 213: toshi.operator.v1.PoolSuggestion.sizes:type_name -> toshi.operator.v1.PoolSuggestionSize
+	166, // 214: toshi.operator.v1.PoolSuggestion.not_in_trace:type_name -> toshi.operator.v1.PoolSuggestionTarget
+	165, // 215: toshi.operator.v1.PoolSuggestionSize.today:type_name -> toshi.operator.v1.PoolSuggestionOutcome
+	165, // 216: toshi.operator.v1.PoolSuggestionSize.with_suggested:type_name -> toshi.operator.v1.PoolSuggestionOutcome
+	183, // 217: toshi.operator.v1.StorageProvider.last_check_at:type_name -> google.protobuf.Timestamp
+	183, // 218: toshi.operator.v1.StorageProvider.created_at:type_name -> google.protobuf.Timestamp
+	183, // 219: toshi.operator.v1.StorageProvider.updated_at:type_name -> google.protobuf.Timestamp
+	171, // 220: toshi.operator.v1.CreateStorageProviderRequest.credential:type_name -> toshi.operator.v1.StorageCredential
+	169, // 221: toshi.operator.v1.CreateStorageProviderResponse.provider:type_name -> toshi.operator.v1.StorageProvider
+	169, // 222: toshi.operator.v1.ListStorageProvidersResponse.providers:type_name -> toshi.operator.v1.StorageProvider
+	169, // 223: toshi.operator.v1.ListStorageProvidersResponse.default_provider:type_name -> toshi.operator.v1.StorageProvider
+	170, // 224: toshi.operator.v1.CheckStorageProviderRequest.provider:type_name -> toshi.operator.v1.CreateStorageProviderRequest
+	169, // 225: toshi.operator.v1.CheckStorageProviderResponse.provider:type_name -> toshi.operator.v1.StorageProvider
+	183, // 226: toshi.operator.v1.CheckStorageProviderResponse.checked_at:type_name -> google.protobuf.Timestamp
+	183, // 227: toshi.operator.v1.TenantBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
+	183, // 228: toshi.operator.v1.TenantBilling.HeldJobs.next_start_at:type_name -> google.protobuf.Timestamp
+	24,  // 229: toshi.operator.v1.OperatorService.ListJobs:input_type -> toshi.operator.v1.ListJobsRequest
+	27,  // 230: toshi.operator.v1.OperatorService.ListAuditEvents:input_type -> toshi.operator.v1.ListAuditEventsRequest
+	16,  // 231: toshi.operator.v1.OperatorService.SummariseJobTelemetry:input_type -> toshi.operator.v1.SummariseJobTelemetryRequest
+	29,  // 232: toshi.operator.v1.OperatorService.ListHosts:input_type -> toshi.operator.v1.ListHostsRequest
+	31,  // 233: toshi.operator.v1.OperatorService.ListHostStorage:input_type -> toshi.operator.v1.ListHostStorageRequest
+	34,  // 234: toshi.operator.v1.OperatorService.SetHostState:input_type -> toshi.operator.v1.SetHostStateRequest
+	36,  // 235: toshi.operator.v1.OperatorService.SetHostOverflow:input_type -> toshi.operator.v1.SetHostOverflowRequest
+	38,  // 236: toshi.operator.v1.OperatorService.RetireHost:input_type -> toshi.operator.v1.RetireHostRequest
+	40,  // 237: toshi.operator.v1.OperatorService.RevokeHost:input_type -> toshi.operator.v1.RevokeHostRequest
+	42,  // 238: toshi.operator.v1.OperatorService.RetireOfflineHosts:input_type -> toshi.operator.v1.RetireOfflineHostsRequest
+	48,  // 239: toshi.operator.v1.OperatorService.CreateWorkspace:input_type -> toshi.operator.v1.CreateWorkspaceRequest
+	50,  // 240: toshi.operator.v1.OperatorService.ListTenants:input_type -> toshi.operator.v1.ListTenantsRequest
+	52,  // 241: toshi.operator.v1.OperatorService.SetTenantCap:input_type -> toshi.operator.v1.SetTenantCapRequest
+	54,  // 242: toshi.operator.v1.OperatorService.SetTenantLimits:input_type -> toshi.operator.v1.SetTenantLimitsRequest
+	56,  // 243: toshi.operator.v1.OperatorService.UpdateWorkspace:input_type -> toshi.operator.v1.UpdateWorkspaceRequest
+	59,  // 244: toshi.operator.v1.OperatorService.ReassignSeat:input_type -> toshi.operator.v1.ReassignSeatRequest
+	61,  // 245: toshi.operator.v1.OperatorService.ListSeats:input_type -> toshi.operator.v1.ListSeatsRequest
+	76,  // 246: toshi.operator.v1.OperatorService.ListPlans:input_type -> toshi.operator.v1.ListPlansRequest
+	78,  // 247: toshi.operator.v1.OperatorService.GetVersion:input_type -> toshi.operator.v1.GetVersionRequest
+	81,  // 248: toshi.operator.v1.OperatorService.RunChecks:input_type -> toshi.operator.v1.RunChecksRequest
+	64,  // 249: toshi.operator.v1.OperatorService.SuspendTenant:input_type -> toshi.operator.v1.SuspendTenantRequest
+	66,  // 250: toshi.operator.v1.OperatorService.ResumeTenant:input_type -> toshi.operator.v1.ResumeTenantRequest
+	68,  // 251: toshi.operator.v1.OperatorService.DeleteTenant:input_type -> toshi.operator.v1.DeleteTenantRequest
+	93,  // 252: toshi.operator.v1.OperatorService.GetCapacity:input_type -> toshi.operator.v1.GetCapacityRequest
+	83,  // 253: toshi.operator.v1.OperatorService.GetUsage:input_type -> toshi.operator.v1.GetUsageRequest
+	87,  // 254: toshi.operator.v1.OperatorService.GetQueueTimes:input_type -> toshi.operator.v1.GetQueueTimesRequest
+	90,  // 255: toshi.operator.v1.OperatorService.GetWorkflowUsage:input_type -> toshi.operator.v1.GetWorkflowUsageRequest
+	97,  // 256: toshi.operator.v1.OperatorService.GetTenantStatement:input_type -> toshi.operator.v1.GetTenantStatementRequest
+	116, // 257: toshi.operator.v1.OperatorService.ListTokens:input_type -> toshi.operator.v1.ListTokensRequest
+	118, // 258: toshi.operator.v1.OperatorService.RotateToken:input_type -> toshi.operator.v1.RotateTokenRequest
+	120, // 259: toshi.operator.v1.OperatorService.RevokeToken:input_type -> toshi.operator.v1.RevokeTokenRequest
+	122, // 260: toshi.operator.v1.OperatorService.RollToken:input_type -> toshi.operator.v1.RollTokenRequest
+	124, // 261: toshi.operator.v1.OperatorService.CreateProductToken:input_type -> toshi.operator.v1.CreateProductTokenRequest
+	127, // 262: toshi.operator.v1.OperatorService.RegisterClient:input_type -> toshi.operator.v1.RegisterClientRequest
+	129, // 263: toshi.operator.v1.OperatorService.ListClients:input_type -> toshi.operator.v1.ListClientsRequest
+	131, // 264: toshi.operator.v1.OperatorService.DeleteClient:input_type -> toshi.operator.v1.DeleteClientRequest
+	71,  // 265: toshi.operator.v1.OperatorService.ListOperatorAlerts:input_type -> toshi.operator.v1.ListOperatorAlertsRequest
+	73,  // 266: toshi.operator.v1.OperatorService.ListHostAlerts:input_type -> toshi.operator.v1.ListHostAlertsRequest
+	133, // 267: toshi.operator.v1.OperatorService.CheckCloudHost:input_type -> toshi.operator.v1.CheckCloudHostRequest
+	139, // 268: toshi.operator.v1.OperatorService.ListFillers:input_type -> toshi.operator.v1.ListFillersRequest
+	141, // 269: toshi.operator.v1.OperatorService.PutFiller:input_type -> toshi.operator.v1.PutFillerRequest
+	143, // 270: toshi.operator.v1.OperatorService.DeleteFiller:input_type -> toshi.operator.v1.DeleteFillerRequest
+	145, // 271: toshi.operator.v1.OperatorService.SetFillerEnabled:input_type -> toshi.operator.v1.SetFillerEnabledRequest
+	147, // 272: toshi.operator.v1.OperatorService.ListFillerRuns:input_type -> toshi.operator.v1.ListFillerRunsRequest
+	150, // 273: toshi.operator.v1.OperatorService.GetSecretDelivery:input_type -> toshi.operator.v1.GetSecretDeliveryRequest
+	152, // 274: toshi.operator.v1.OperatorService.SetSecretDelivery:input_type -> toshi.operator.v1.SetSecretDeliveryRequest
+	155, // 275: toshi.operator.v1.OperatorService.ListUtilisation:input_type -> toshi.operator.v1.ListUtilisationRequest
+	161, // 276: toshi.operator.v1.OperatorService.SuggestPools:input_type -> toshi.operator.v1.SuggestPoolsRequest
+	170, // 277: toshi.operator.v1.OperatorService.CreateStorageProvider:input_type -> toshi.operator.v1.CreateStorageProviderRequest
+	173, // 278: toshi.operator.v1.OperatorService.ListStorageProviders:input_type -> toshi.operator.v1.ListStorageProvidersRequest
+	175, // 279: toshi.operator.v1.OperatorService.CheckStorageProvider:input_type -> toshi.operator.v1.CheckStorageProviderRequest
+	177, // 280: toshi.operator.v1.OperatorService.DeleteStorageProvider:input_type -> toshi.operator.v1.DeleteStorageProviderRequest
+	25,  // 281: toshi.operator.v1.OperatorService.ListJobs:output_type -> toshi.operator.v1.ListJobsResponse
+	28,  // 282: toshi.operator.v1.OperatorService.ListAuditEvents:output_type -> toshi.operator.v1.ListAuditEventsResponse
+	17,  // 283: toshi.operator.v1.OperatorService.SummariseJobTelemetry:output_type -> toshi.operator.v1.SummariseJobTelemetryResponse
+	30,  // 284: toshi.operator.v1.OperatorService.ListHosts:output_type -> toshi.operator.v1.ListHostsResponse
+	32,  // 285: toshi.operator.v1.OperatorService.ListHostStorage:output_type -> toshi.operator.v1.ListHostStorageResponse
+	35,  // 286: toshi.operator.v1.OperatorService.SetHostState:output_type -> toshi.operator.v1.SetHostStateResponse
+	37,  // 287: toshi.operator.v1.OperatorService.SetHostOverflow:output_type -> toshi.operator.v1.SetHostOverflowResponse
+	39,  // 288: toshi.operator.v1.OperatorService.RetireHost:output_type -> toshi.operator.v1.RetireHostResponse
+	41,  // 289: toshi.operator.v1.OperatorService.RevokeHost:output_type -> toshi.operator.v1.RevokeHostResponse
+	43,  // 290: toshi.operator.v1.OperatorService.RetireOfflineHosts:output_type -> toshi.operator.v1.RetireOfflineHostsResponse
+	49,  // 291: toshi.operator.v1.OperatorService.CreateWorkspace:output_type -> toshi.operator.v1.CreateWorkspaceResponse
+	51,  // 292: toshi.operator.v1.OperatorService.ListTenants:output_type -> toshi.operator.v1.ListTenantsResponse
+	53,  // 293: toshi.operator.v1.OperatorService.SetTenantCap:output_type -> toshi.operator.v1.SetTenantCapResponse
+	55,  // 294: toshi.operator.v1.OperatorService.SetTenantLimits:output_type -> toshi.operator.v1.SetTenantLimitsResponse
+	57,  // 295: toshi.operator.v1.OperatorService.UpdateWorkspace:output_type -> toshi.operator.v1.UpdateWorkspaceResponse
+	60,  // 296: toshi.operator.v1.OperatorService.ReassignSeat:output_type -> toshi.operator.v1.ReassignSeatResponse
+	62,  // 297: toshi.operator.v1.OperatorService.ListSeats:output_type -> toshi.operator.v1.ListSeatsResponse
+	77,  // 298: toshi.operator.v1.OperatorService.ListPlans:output_type -> toshi.operator.v1.ListPlansResponse
+	79,  // 299: toshi.operator.v1.OperatorService.GetVersion:output_type -> toshi.operator.v1.GetVersionResponse
+	82,  // 300: toshi.operator.v1.OperatorService.RunChecks:output_type -> toshi.operator.v1.RunChecksResponse
+	65,  // 301: toshi.operator.v1.OperatorService.SuspendTenant:output_type -> toshi.operator.v1.SuspendTenantResponse
+	67,  // 302: toshi.operator.v1.OperatorService.ResumeTenant:output_type -> toshi.operator.v1.ResumeTenantResponse
+	69,  // 303: toshi.operator.v1.OperatorService.DeleteTenant:output_type -> toshi.operator.v1.DeleteTenantResponse
+	94,  // 304: toshi.operator.v1.OperatorService.GetCapacity:output_type -> toshi.operator.v1.GetCapacityResponse
+	84,  // 305: toshi.operator.v1.OperatorService.GetUsage:output_type -> toshi.operator.v1.GetUsageResponse
+	88,  // 306: toshi.operator.v1.OperatorService.GetQueueTimes:output_type -> toshi.operator.v1.GetQueueTimesResponse
+	91,  // 307: toshi.operator.v1.OperatorService.GetWorkflowUsage:output_type -> toshi.operator.v1.GetWorkflowUsageResponse
+	98,  // 308: toshi.operator.v1.OperatorService.GetTenantStatement:output_type -> toshi.operator.v1.GetTenantStatementResponse
+	117, // 309: toshi.operator.v1.OperatorService.ListTokens:output_type -> toshi.operator.v1.ListTokensResponse
+	119, // 310: toshi.operator.v1.OperatorService.RotateToken:output_type -> toshi.operator.v1.RotateTokenResponse
+	121, // 311: toshi.operator.v1.OperatorService.RevokeToken:output_type -> toshi.operator.v1.RevokeTokenResponse
+	123, // 312: toshi.operator.v1.OperatorService.RollToken:output_type -> toshi.operator.v1.RollTokenResponse
+	125, // 313: toshi.operator.v1.OperatorService.CreateProductToken:output_type -> toshi.operator.v1.CreateProductTokenResponse
+	128, // 314: toshi.operator.v1.OperatorService.RegisterClient:output_type -> toshi.operator.v1.RegisterClientResponse
+	130, // 315: toshi.operator.v1.OperatorService.ListClients:output_type -> toshi.operator.v1.ListClientsResponse
+	132, // 316: toshi.operator.v1.OperatorService.DeleteClient:output_type -> toshi.operator.v1.DeleteClientResponse
+	72,  // 317: toshi.operator.v1.OperatorService.ListOperatorAlerts:output_type -> toshi.operator.v1.ListOperatorAlertsResponse
+	74,  // 318: toshi.operator.v1.OperatorService.ListHostAlerts:output_type -> toshi.operator.v1.ListHostAlertsResponse
+	134, // 319: toshi.operator.v1.OperatorService.CheckCloudHost:output_type -> toshi.operator.v1.CheckCloudHostResponse
+	140, // 320: toshi.operator.v1.OperatorService.ListFillers:output_type -> toshi.operator.v1.ListFillersResponse
+	142, // 321: toshi.operator.v1.OperatorService.PutFiller:output_type -> toshi.operator.v1.PutFillerResponse
+	144, // 322: toshi.operator.v1.OperatorService.DeleteFiller:output_type -> toshi.operator.v1.DeleteFillerResponse
+	146, // 323: toshi.operator.v1.OperatorService.SetFillerEnabled:output_type -> toshi.operator.v1.SetFillerEnabledResponse
+	148, // 324: toshi.operator.v1.OperatorService.ListFillerRuns:output_type -> toshi.operator.v1.ListFillerRunsResponse
+	151, // 325: toshi.operator.v1.OperatorService.GetSecretDelivery:output_type -> toshi.operator.v1.GetSecretDeliveryResponse
+	153, // 326: toshi.operator.v1.OperatorService.SetSecretDelivery:output_type -> toshi.operator.v1.SetSecretDeliveryResponse
+	156, // 327: toshi.operator.v1.OperatorService.ListUtilisation:output_type -> toshi.operator.v1.ListUtilisationResponse
+	162, // 328: toshi.operator.v1.OperatorService.SuggestPools:output_type -> toshi.operator.v1.SuggestPoolsResponse
+	172, // 329: toshi.operator.v1.OperatorService.CreateStorageProvider:output_type -> toshi.operator.v1.CreateStorageProviderResponse
+	174, // 330: toshi.operator.v1.OperatorService.ListStorageProviders:output_type -> toshi.operator.v1.ListStorageProvidersResponse
+	176, // 331: toshi.operator.v1.OperatorService.CheckStorageProvider:output_type -> toshi.operator.v1.CheckStorageProviderResponse
+	178, // 332: toshi.operator.v1.OperatorService.DeleteStorageProvider:output_type -> toshi.operator.v1.DeleteStorageProviderResponse
+	281, // [281:333] is the sub-list for method output_type
+	229, // [229:281] is the sub-list for method input_type
+	229, // [229:229] is the sub-list for extension type_name
+	229, // [229:229] is the sub-list for extension extendee
+	0,   // [0:229] is the sub-list for field type_name
 }
 
 func init() { file_toshi_operator_v1_operator_proto_init() }
@@ -17151,9 +16721,9 @@ func file_toshi_operator_v1_operator_proto_init() {
 	}
 	file_toshi_operator_v1_operator_proto_msgTypes[32].OneofWrappers = []any{}
 	file_toshi_operator_v1_operator_proto_msgTypes[41].OneofWrappers = []any{}
+	file_toshi_operator_v1_operator_proto_msgTypes[97].OneofWrappers = []any{}
 	file_toshi_operator_v1_operator_proto_msgTypes[105].OneofWrappers = []any{}
-	file_toshi_operator_v1_operator_proto_msgTypes[113].OneofWrappers = []any{}
-	file_toshi_operator_v1_operator_proto_msgTypes[170].OneofWrappers = []any{
+	file_toshi_operator_v1_operator_proto_msgTypes[162].OneofWrappers = []any{
 		(*CheckStorageProviderRequest_Id)(nil),
 		(*CheckStorageProviderRequest_Provider)(nil),
 	}
@@ -17163,7 +16733,7 @@ func file_toshi_operator_v1_operator_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_operator_v1_operator_proto_rawDesc), len(file_toshi_operator_v1_operator_proto_rawDesc)),
 			NumEnums:      13,
-			NumMessages:   177,
+			NumMessages:   170,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
