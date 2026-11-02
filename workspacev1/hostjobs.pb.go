@@ -1217,9 +1217,16 @@ type HostJob struct {
 	ScreenUnavailableReason string `protobuf:"bytes,53,opt,name=screen_unavailable_reason,json=screenUnavailableReason,proto3" json:"screen_unavailable_reason,omitempty"`
 	// exec_rate, connection_rate, request_rate, mining, operator or runner_swap; set only
 	// with stop_reason "policy".
-	StopCause     string `protobuf:"bytes,54,opt,name=stop_cause,json=stopCause,proto3" json:"stop_cause,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	StopCause string `protobuf:"bytes,54,opt,name=stop_cause,json=stopCause,proto3" json:"stop_cause,omitempty"`
+	// The image the job ran in, as "name@sha256:<digest>", the reference its
+	// host pulled. Empty for a job that runs in a VM image and for a job
+	// made before the image was kept.
+	ContainerImage string `protobuf:"bytes,58,opt,name=container_image,json=containerImage,proto3" json:"container_image,omitempty"`
+	// The digest of container_image, "sha256:<hex>". Empty when
+	// container_image is.
+	ContainerImageDigest string `protobuf:"bytes,59,opt,name=container_image_digest,json=containerImageDigest,proto3" json:"container_image_digest,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *HostJob) Reset() {
@@ -1647,6 +1654,20 @@ func (x *HostJob) GetScreenUnavailableReason() string {
 func (x *HostJob) GetStopCause() string {
 	if x != nil {
 		return x.StopCause
+	}
+	return ""
+}
+
+func (x *HostJob) GetContainerImage() string {
+	if x != nil {
+		return x.ContainerImage
+	}
+	return ""
+}
+
+func (x *HostJob) GetContainerImageDigest() string {
+	if x != nil {
+		return x.ContainerImageDigest
 	}
 	return ""
 }
@@ -2330,7 +2351,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x17StopHostJobDebugRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
 	"\x18StopHostJobDebugResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\x87\x12\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xe6\x12\n" +
 	"\aHostJob\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1e\n" +
 	"\n" +
@@ -2406,7 +2427,9 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"runAttempt\x12:\n" +
 	"\x19screen_unavailable_reason\x185 \x01(\tR\x17screenUnavailableReason\x12\x1d\n" +
 	"\n" +
-	"stop_cause\x186 \x01(\tR\tstopCause\"\xa5\x03\n" +
+	"stop_cause\x186 \x01(\tR\tstopCause\x12'\n" +
+	"\x0fcontainer_image\x18: \x01(\tR\x0econtainerImage\x124\n" +
+	"\x16container_image_digest\x18; \x01(\tR\x14containerImageDigest\"\xa5\x03\n" +
 	"\x0eHostJobAttempt\x12\x18\n" +
 	"\aattempt\x18\x01 \x01(\x05R\aattempt\x12\x1b\n" +
 	"\trunner_id\x18\x02 \x01(\tR\brunnerId\x12\x1f\n" +

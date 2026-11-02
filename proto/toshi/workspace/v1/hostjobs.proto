@@ -401,6 +401,13 @@ message HostJob {
   // exec_rate, connection_rate, request_rate, mining, operator or runner_swap; set only
   // with stop_reason "policy".
   string stop_cause = 54;
+  // The image the job ran in, as "name@sha256:<digest>", the reference its
+  // host pulled. Empty for a job that runs in a VM image and for a job
+  // made before the image was kept.
+  string container_image = 58;
+  // The digest of container_image, "sha256:<hex>". Empty when
+  // container_image is.
+  string container_image_digest = 59;
 }
 
 // HostJobAttempt is one attempt of a host job: one assignment to a host

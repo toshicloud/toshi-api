@@ -1030,9 +1030,16 @@ type Job struct {
 	ScreenUnavailableReason string `protobuf:"bytes,54,opt,name=screen_unavailable_reason,json=screenUnavailableReason,proto3" json:"screen_unavailable_reason,omitempty"`
 	// exec_rate, connection_rate, request_rate, mining, operator or runner_swap; set only
 	// with stop_reason "policy".
-	StopCause     string `protobuf:"bytes,55,opt,name=stop_cause,json=stopCause,proto3" json:"stop_cause,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	StopCause string `protobuf:"bytes,55,opt,name=stop_cause,json=stopCause,proto3" json:"stop_cause,omitempty"`
+	// The image the job ran in, as "name@sha256:<digest>", the reference its
+	// host pulled. Empty for a job that runs in a VM image and for a job
+	// made before the image was kept.
+	ContainerImage string `protobuf:"bytes,59,opt,name=container_image,json=containerImage,proto3" json:"container_image,omitempty"`
+	// The digest of container_image, "sha256:<hex>". Empty when
+	// container_image is.
+	ContainerImageDigest string `protobuf:"bytes,60,opt,name=container_image_digest,json=containerImageDigest,proto3" json:"container_image_digest,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Job) Reset() {
@@ -1467,6 +1474,20 @@ func (x *Job) GetScreenUnavailableReason() string {
 func (x *Job) GetStopCause() string {
 	if x != nil {
 		return x.StopCause
+	}
+	return ""
+}
+
+func (x *Job) GetContainerImage() string {
+	if x != nil {
+		return x.ContainerImage
+	}
+	return ""
+}
+
+func (x *Job) GetContainerImageDigest() string {
+	if x != nil {
+		return x.ContainerImageDigest
 	}
 	return ""
 }
@@ -14806,7 +14827,7 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x87\x12\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xe6\x12\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
@@ -14883,7 +14904,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"runAttempt\x12:\n" +
 	"\x19screen_unavailable_reason\x186 \x01(\tR\x17screenUnavailableReason\x12\x1d\n" +
 	"\n" +
-	"stop_cause\x187 \x01(\tR\tstopCause\"\xee\x01\n" +
+	"stop_cause\x187 \x01(\tR\tstopCause\x12'\n" +
+	"\x0fcontainer_image\x18; \x01(\tR\x0econtainerImage\x124\n" +
+	"\x16container_image_digest\x18< \x01(\tR\x14containerImageDigest\"\xee\x01\n" +
 	"\bJobCache\x12\x16\n" +
 	"\x06attach\x18\x01 \x01(\tR\x06attach\x12'\n" +
 	"\x0fbase_generation\x18\x02 \x01(\x03R\x0ebaseGeneration\x12\x1d\n" +

@@ -668,7 +668,9 @@ type WorkloadServiceClient interface {
 	// registry that answers it does not is FAILED_PRECONDITION with
 	// ErrorInfo reason IMAGE_NOT_SERVED and the registry's status; one that
 	// cannot be reached, refuses the login or fails is FAILED_PRECONDITION
-	// with reason IMAGE_CHECK_FAILED and its answer. The next run pulls the
+	// with reason IMAGE_CHECK_FAILED and its answer. A revision with a
+	// container image but no stored digest is FAILED_PRECONDITION with
+	// reason IMAGE_NOT_PINNED and the revision in the metadata. The next run pulls the
 	// revision's image by its digest: nothing is resolved again or built.
 	// The answer carries the activation, whose outcome follows the
 	// revision's next run (ListServiceActivations).
@@ -1999,7 +2001,9 @@ type WorkloadServiceHandler interface {
 	// registry that answers it does not is FAILED_PRECONDITION with
 	// ErrorInfo reason IMAGE_NOT_SERVED and the registry's status; one that
 	// cannot be reached, refuses the login or fails is FAILED_PRECONDITION
-	// with reason IMAGE_CHECK_FAILED and its answer. The next run pulls the
+	// with reason IMAGE_CHECK_FAILED and its answer. A revision with a
+	// container image but no stored digest is FAILED_PRECONDITION with
+	// reason IMAGE_NOT_PINNED and the revision in the metadata. The next run pulls the
 	// revision's image by its digest: nothing is resolved again or built.
 	// The answer carries the activation, whose outcome follows the
 	// revision's next run (ListServiceActivations).
