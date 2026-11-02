@@ -76,6 +76,7 @@ export const reasons = {
   IMAGE_BASE_UNKNOWN: { code: "INVALID_ARGUMENT", metadata: ["base", "bases"] },
   INVALID_FIELD: { code: "INVALID_ARGUMENT", metadata: ["key", "limit", "requested", "cause"] },
   INVALID_SETTING: { code: "INVALID_ARGUMENT", metadata: ["key", "cause", "limit", "requested"] },
+  RESERVED_NAME: { code: "INVALID_ARGUMENT", metadata: ["name", "why"] },
   VOLUME_CEILING_ABOVE_MAX: { code: "INVALID_ARGUMENT", metadata: ["max_gb", "plan"] },
   INVITATION_EXPIRED: { code: "NOT_FOUND", metadata: [] },
   AUDIT_EXPORT_NOT_ENTITLED: { code: "PERMISSION_DENIED", metadata: ["feature", "plan"] },
@@ -93,3 +94,14 @@ export const reasons = {
 } as const;
 
 export type Reason = keyof typeof reasons;
+
+export const artifactStates = {
+  reserved: "reserved",
+  completing: "completing",
+  complete: "complete",
+  abandoned: "abandoned",
+  deleted: "deleted",
+  lost: "lost",
+} as const;
+
+export type ArtifactState = (typeof artifactStates)[keyof typeof artifactStates];

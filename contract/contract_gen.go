@@ -152,6 +152,8 @@ const (
 	ReasonInvalidField = "INVALID_FIELD"
 	// ReasonInvalidSetting: `UpdateWorkspace` setting a stopped-sandbox keep outside the plan's bound; metadata carries `key`, `cause`, `limit` and `requested`.
 	ReasonInvalidSetting = "INVALID_SETTING"
+	// ReasonReservedName: A secret key or a recipe's `process.env` or `secrets` entry named after a variable Toshi sets (`why` is `set_by_toshi`, a `TOSHI_` name) or one a shell or the loader reads before the program runs (`why` is `read_before_program`: `BASH_ENV`, `ENV`, `ZDOTDIR`, `IFS`, `PROMPT_COMMAND`, `PS4`, `PATH` and the `LD_` loader variables), in any case; `name` is the name as sent (Secrets, Services).
+	ReasonReservedName = "RESERVED_NAME"
 	// ReasonVolumeCeilingAboveMax: `UpdateWorkspace` setting `settings.volume_size_cap_total_gb` above the plan's maximum; the metadata carries `max_gb` and, when a plan applies, `plan`.
 	ReasonVolumeCeilingAboveMax = "VOLUME_CEILING_ABOVE_MAX"
 	// ReasonInvitationExpired: `AcceptInvitation` with the code of an invitation that expired before it was accepted; the message says it expired.
@@ -180,4 +182,20 @@ const (
 	ReasonTokenOutsideRanges = "TOKEN_OUTSIDE_RANGES"
 	// ReasonTokenOutsideWindow: A workspace token is used before its permitted window starts.
 	ReasonTokenOutsideWindow = "TOKEN_OUTSIDE_WINDOW"
+)
+
+// The values of Artifact.state.
+const (
+	// ArtifactStateReserved: The upload is reserved and its presigned PUTs are issued; nothing is final yet.
+	ArtifactStateReserved = "reserved"
+	// ArtifactStateCompleting: A completion is copying the parts; a second completion is refused.
+	ArtifactStateCompleting = "completing"
+	// ArtifactStateComplete: The parts are at their final keys; only a complete artifact downloads.
+	ArtifactStateComplete = "complete"
+	// ArtifactStateAbandoned: The upload deadline passed before the upload completed.
+	ArtifactStateAbandoned = "abandoned"
+	// ArtifactStateDeleted: The artifact's objects were removed.
+	ArtifactStateDeleted = "deleted"
+	// ArtifactStateLost: The artifact's storage provider was retired; reason says why.
+	ArtifactStateLost = "lost"
 )

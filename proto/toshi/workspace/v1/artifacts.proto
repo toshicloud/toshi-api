@@ -89,9 +89,10 @@ message Artifact {
   repeated int64 part_sizes = 10;
   // The index object's size; 0 when part_count is 1.
   int64 index_size = 11;
-  // reserved, completing, complete, abandoned or deleted. A completion
+  // reserved, completing, complete, abandoned, deleted or lost. A completion
   // moves the row to completing while it copies the parts, so a second
-  // completion is refused before it copies anything.
+  // completion is refused before it copies anything. lost is an artifact
+  // whose storage provider was retired; reason says why.
   string state = 12;
   // none or envelope-v1.
   string encryption = 13;
@@ -102,6 +103,9 @@ message Artifact {
   // job runs no workload, and its token names the kind job with the
   // host job's own id: its artifacts' workload_id is that id.
   string workload_kind = 16;
+  // Why the artifact is lost, as a recording's reason says it; empty in
+  // every other state.
+  string reason = 17;
 }
 
 // Upload is one presigned PUT. Send method to url with every header and

@@ -42,9 +42,10 @@ type Artifact struct {
 	PartSizes []int64 `protobuf:"varint,10,rep,packed,name=part_sizes,json=partSizes,proto3" json:"part_sizes,omitempty"`
 	// The index object's size; 0 when part_count is 1.
 	IndexSize int64 `protobuf:"varint,11,opt,name=index_size,json=indexSize,proto3" json:"index_size,omitempty"`
-	// reserved, completing, complete, abandoned or deleted. A completion
+	// reserved, completing, complete, abandoned, deleted or lost. A completion
 	// moves the row to completing while it copies the parts, so a second
-	// completion is refused before it copies anything.
+	// completion is refused before it copies anything. lost is an artifact
+	// whose storage provider was retired; reason says why.
 	State string `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty"`
 	// none or envelope-v1.
 	Encryption  string                 `protobuf:"bytes,13,opt,name=encryption,proto3" json:"encryption,omitempty"`
@@ -54,7 +55,10 @@ type Artifact struct {
 	// sandbox. workload_id and execution_id are that workload's. A CI
 	// job runs no workload, and its token names the kind job with the
 	// host job's own id: its artifacts' workload_id is that id.
-	WorkloadKind  string `protobuf:"bytes,16,opt,name=workload_kind,json=workloadKind,proto3" json:"workload_kind,omitempty"`
+	WorkloadKind string `protobuf:"bytes,16,opt,name=workload_kind,json=workloadKind,proto3" json:"workload_kind,omitempty"`
+	// Why the artifact is lost, as a recording's reason says it; empty in
+	// every other state.
+	Reason        string `protobuf:"bytes,17,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -197,6 +201,13 @@ func (x *Artifact) GetCompletedAt() *timestamppb.Timestamp {
 func (x *Artifact) GetWorkloadKind() string {
 	if x != nil {
 		return x.WorkloadKind
+	}
+	return ""
+}
+
+func (x *Artifact) GetReason() string {
+	if x != nil {
+		return x.Reason
 	}
 	return ""
 }
@@ -921,7 +932,7 @@ var File_toshi_workspace_v1_artifacts_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/artifacts.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a#toshi/workspace/v1/recordings.proto\"\xa1\x04\n" +
+	"\"toshi/workspace/v1/artifacts.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a#toshi/workspace/v1/recordings.proto\"\xb9\x04\n" +
 	"\bArtifact\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -947,7 +958,8 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12=\n" +
 	"\fcompleted_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\x12#\n" +
-	"\rworkload_kind\x18\x10 \x01(\tR\fworkloadKind\"\x80\x02\n" +
+	"\rworkload_kind\x18\x10 \x01(\tR\fworkloadKind\x12\x16\n" +
+	"\x06reason\x18\x11 \x01(\tR\x06reason\"\x80\x02\n" +
 	"\x06Upload\x12\x12\n" +
 	"\x04part\x18\x01 \x01(\tR\x04part\x12\x16\n" +
 	"\x06method\x18\x02 \x01(\tR\x06method\x12\x10\n" +
