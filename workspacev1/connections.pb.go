@@ -206,7 +206,7 @@ const (
 	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_DROPPED ConnectionDeliveryState = 3
 	// The store failed on every try to write its event, or its connection's
 	// target took it on no try.
-	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_FAILED ConnectionDeliveryState = 4
+	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_DEAD ConnectionDeliveryState = 4
 )
 
 // Enum value maps for ConnectionDeliveryState.
@@ -216,14 +216,14 @@ var (
 		1: "CONNECTION_DELIVERY_STATE_RECEIVED",
 		2: "CONNECTION_DELIVERY_STATE_PROCESSED",
 		3: "CONNECTION_DELIVERY_STATE_DROPPED",
-		4: "CONNECTION_DELIVERY_STATE_FAILED",
+		4: "CONNECTION_DELIVERY_STATE_DEAD",
 	}
 	ConnectionDeliveryState_value = map[string]int32{
 		"CONNECTION_DELIVERY_STATE_UNSPECIFIED": 0,
 		"CONNECTION_DELIVERY_STATE_RECEIVED":    1,
 		"CONNECTION_DELIVERY_STATE_PROCESSED":   2,
 		"CONNECTION_DELIVERY_STATE_DROPPED":     3,
-		"CONNECTION_DELIVERY_STATE_FAILED":      4,
+		"CONNECTION_DELIVERY_STATE_DEAD":        4,
 	}
 )
 
@@ -1397,13 +1397,13 @@ type ConnectionDelivery struct {
 	// The sender's webhook-id header.
 	WebhookId string                  `protobuf:"bytes,3,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
 	State     ConnectionDeliveryState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.ConnectionDeliveryState" json:"state,omitempty"`
-	// Why it was dropped or failed, such as delivery_failed or store_error;
-	// empty otherwise.
+	// Why it was dropped or ended dead, such as delivery_failed or
+	// store_error; empty otherwise.
 	Reason string `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`
 	// The time the sender signed; when the ingress stored it.
 	SentAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=sent_at,json=sentAt,proto3" json:"sent_at,omitempty"`
 	ReceivedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=received_at,json=receivedAt,proto3" json:"received_at,omitempty"`
-	// When it was processed, dropped or failed; unset while received.
+	// When it was processed, dropped or ended dead; unset while received.
 	ProcessedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=processed_at,json=processedAt,proto3" json:"processed_at,omitempty"`
 	// Tries a worker made since it was last received or replayed.
 	Attempts int32 `protobuf:"varint,9,opt,name=attempts,proto3" json:"attempts,omitempty"`
@@ -2163,13 +2163,13 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x0fMailDomainCheck\x12!\n" +
 	"\x1dMAIL_DOMAIN_CHECK_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18MAIL_DOMAIN_CHECK_PASSED\x10\x01\x12\x1c\n" +
-	"\x18MAIL_DOMAIN_CHECK_FAILED\x10\x02*\xe2\x01\n" +
+	"\x18MAIL_DOMAIN_CHECK_FAILED\x10\x02*\xe0\x01\n" +
 	"\x17ConnectionDeliveryState\x12)\n" +
 	"%CONNECTION_DELIVERY_STATE_UNSPECIFIED\x10\x00\x12&\n" +
 	"\"CONNECTION_DELIVERY_STATE_RECEIVED\x10\x01\x12'\n" +
 	"#CONNECTION_DELIVERY_STATE_PROCESSED\x10\x02\x12%\n" +
-	"!CONNECTION_DELIVERY_STATE_DROPPED\x10\x03\x12$\n" +
-	" CONNECTION_DELIVERY_STATE_FAILED\x10\x042\x9b\f\n" +
+	"!CONNECTION_DELIVERY_STATE_DROPPED\x10\x03\x12\"\n" +
+	"\x1eCONNECTION_DELIVERY_STATE_DEAD\x10\x042\x9b\f\n" +
 	"\x11ConnectionService\x12\x8d\x01\n" +
 	"\x0fListConnections\x12*.toshi.workspace.v1.ListConnectionsRequest\x1a+.toshi.workspace.v1.ListConnectionsResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x87\x01\n" +
 	"\rGetConnection\x12(.toshi.workspace.v1.GetConnectionRequest\x1a).toshi.workspace.v1.GetConnectionResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x91\x01\n" +

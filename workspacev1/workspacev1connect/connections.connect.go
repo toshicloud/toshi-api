@@ -119,9 +119,9 @@ type ConnectionServiceClient interface {
 	ListConnectionDeliveries(context.Context, *connect.Request[workspacev1.ListConnectionDeliveriesRequest]) (*connect.Response[workspacev1.ListConnectionDeliveriesResponse], error)
 	// GetConnectionDelivery returns one delivery, without its body, and its
 	// runs: each time a worker made it an event, posted it to its
-	// connection's target, dropped it or failed it, oldest first. A delivery the workspace does not have is NOT_FOUND.
+	// connection's target, dropped it or ended it dead, oldest first. A delivery the workspace does not have is NOT_FOUND.
 	GetConnectionDelivery(context.Context, *connect.Request[workspacev1.GetConnectionDeliveryRequest]) (*connect.Response[workspacev1.GetConnectionDeliveryResponse], error)
-	// ReplayConnectionDelivery sends a processed, dropped or failed delivery
+	// ReplayConnectionDelivery sends a processed, dropped or dead delivery
 	// through its connection again, as a new message under the same webhook
 	// id: it goes to the connection's target then, or to the event log when
 	// it has none, and its run records the caller. A delivery still received, whose receipt or body
@@ -318,9 +318,9 @@ type ConnectionServiceHandler interface {
 	ListConnectionDeliveries(context.Context, *connect.Request[workspacev1.ListConnectionDeliveriesRequest]) (*connect.Response[workspacev1.ListConnectionDeliveriesResponse], error)
 	// GetConnectionDelivery returns one delivery, without its body, and its
 	// runs: each time a worker made it an event, posted it to its
-	// connection's target, dropped it or failed it, oldest first. A delivery the workspace does not have is NOT_FOUND.
+	// connection's target, dropped it or ended it dead, oldest first. A delivery the workspace does not have is NOT_FOUND.
 	GetConnectionDelivery(context.Context, *connect.Request[workspacev1.GetConnectionDeliveryRequest]) (*connect.Response[workspacev1.GetConnectionDeliveryResponse], error)
-	// ReplayConnectionDelivery sends a processed, dropped or failed delivery
+	// ReplayConnectionDelivery sends a processed, dropped or dead delivery
 	// through its connection again, as a new message under the same webhook
 	// id: it goes to the connection's target then, or to the event log when
 	// it has none, and its run records the caller. A delivery still received, whose receipt or body

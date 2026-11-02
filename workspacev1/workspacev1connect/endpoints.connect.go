@@ -155,7 +155,7 @@ type EndpointServiceClient interface {
 	GetTunnel(context.Context, *connect.Request[workspacev1.GetTunnelRequest]) (*connect.Response[workspacev1.GetTunnelResponse], error)
 	// SendEndpointMessage adds a message to the end of an event endpoint's
 	// queue and returns its ID at once; the message waits there until it is
-	// delivered, parked failed, or kept past the endpoint's keep. A sleeping
+	// delivered, dead, or kept past the endpoint's keep. A sleeping
 	// on-demand service is woken. A message sent again with the same
 	// request_key is not stored again: its ID is returned, with duplicate
 	// set. A caller the endpoint's input rule does not admit fails with
@@ -170,7 +170,7 @@ type EndpointServiceClient interface {
 	// added, until the caller ends the call. States narrows the stream to
 	// messages in those states when it is read.
 	TailEndpointMessages(context.Context, *connect.Request[workspacev1.TailEndpointMessagesRequest]) (*connect.ServerStreamForClient[workspacev1.TailEndpointMessagesResponse], error)
-	// ReplayEndpointMessage puts a failed, expired or delivered message of an
+	// ReplayEndpointMessage puts a dead, expired or delivered message of an
 	// event endpoint back in its queue under its own ID, so its webhook-id is
 	// the same: its attempts start again from 0, and its keep runs from the
 	// replay. A message pending or in flight fails with
@@ -460,7 +460,7 @@ type EndpointServiceHandler interface {
 	GetTunnel(context.Context, *connect.Request[workspacev1.GetTunnelRequest]) (*connect.Response[workspacev1.GetTunnelResponse], error)
 	// SendEndpointMessage adds a message to the end of an event endpoint's
 	// queue and returns its ID at once; the message waits there until it is
-	// delivered, parked failed, or kept past the endpoint's keep. A sleeping
+	// delivered, dead, or kept past the endpoint's keep. A sleeping
 	// on-demand service is woken. A message sent again with the same
 	// request_key is not stored again: its ID is returned, with duplicate
 	// set. A caller the endpoint's input rule does not admit fails with
@@ -475,7 +475,7 @@ type EndpointServiceHandler interface {
 	// added, until the caller ends the call. States narrows the stream to
 	// messages in those states when it is read.
 	TailEndpointMessages(context.Context, *connect.Request[workspacev1.TailEndpointMessagesRequest], *connect.ServerStream[workspacev1.TailEndpointMessagesResponse]) error
-	// ReplayEndpointMessage puts a failed, expired or delivered message of an
+	// ReplayEndpointMessage puts a dead, expired or delivered message of an
 	// event endpoint back in its queue under its own ID, so its webhook-id is
 	// the same: its attempts start again from 0, and its keep runs from the
 	// replay. A message pending or in flight fails with

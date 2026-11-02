@@ -315,10 +315,11 @@ const (
 	EndpointMessageState_ENDPOINT_MESSAGE_STATE_IN_FLIGHT EndpointMessageState = 2
 	// Answered 2xx.
 	EndpointMessageState_ENDPOINT_MESSAGE_STATE_DELIVERED EndpointMessageState = 3
-	// Parked after an hour of failed attempts from its send or replay. The
-	// messages after it are still delivered; ReplayEndpointMessage puts it
-	// back.
-	EndpointMessageState_ENDPOINT_MESSAGE_STATE_FAILED EndpointMessageState = 4
+	// It gave up: every attempt of its send or replay failed, or a final
+	// failure ended it at once, such as a refused URL or an answer of 410.
+	// The messages after it are still delivered; ReplayEndpointMessage puts
+	// it back.
+	EndpointMessageState_ENDPOINT_MESSAGE_STATE_DEAD EndpointMessageState = 4
 	// Its endpoint's keep passed before it was delivered.
 	EndpointMessageState_ENDPOINT_MESSAGE_STATE_EXPIRED EndpointMessageState = 5
 )
@@ -330,7 +331,7 @@ var (
 		1: "ENDPOINT_MESSAGE_STATE_PENDING",
 		2: "ENDPOINT_MESSAGE_STATE_IN_FLIGHT",
 		3: "ENDPOINT_MESSAGE_STATE_DELIVERED",
-		4: "ENDPOINT_MESSAGE_STATE_FAILED",
+		4: "ENDPOINT_MESSAGE_STATE_DEAD",
 		5: "ENDPOINT_MESSAGE_STATE_EXPIRED",
 	}
 	EndpointMessageState_value = map[string]int32{
@@ -338,7 +339,7 @@ var (
 		"ENDPOINT_MESSAGE_STATE_PENDING":     1,
 		"ENDPOINT_MESSAGE_STATE_IN_FLIGHT":   2,
 		"ENDPOINT_MESSAGE_STATE_DELIVERED":   3,
-		"ENDPOINT_MESSAGE_STATE_FAILED":      4,
+		"ENDPOINT_MESSAGE_STATE_DEAD":        4,
 		"ENDPOINT_MESSAGE_STATE_EXPIRED":     5,
 	}
 )
@@ -747,8 +748,10 @@ type EndpointEventCounts struct {
 	Pending   int64                  `protobuf:"varint,1,opt,name=pending,proto3" json:"pending,omitempty"`
 	InFlight  int64                  `protobuf:"varint,2,opt,name=in_flight,json=inFlight,proto3" json:"in_flight,omitempty"`
 	Delivered int64                  `protobuf:"varint,3,opt,name=delivered,proto3" json:"delivered,omitempty"`
-	Failed    int64                  `protobuf:"varint,4,opt,name=failed,proto3" json:"failed,omitempty"`
-	Expired   int64                  `protobuf:"varint,5,opt,name=expired,proto3" json:"expired,omitempty"`
+	// Messages that gave up: every attempt failed, or a final failure ended
+	// them.
+	Dead    int64 `protobuf:"varint,4,opt,name=dead,proto3" json:"dead,omitempty"`
+	Expired int64 `protobuf:"varint,5,opt,name=expired,proto3" json:"expired,omitempty"`
 	// The last delivery's time; unset before the first.
 	LastDeliveryAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_delivery_at,json=lastDeliveryAt,proto3" json:"last_delivery_at,omitempty"`
 	// Why the last failed attempt failed; empty when none has.
@@ -808,9 +811,9 @@ func (x *EndpointEventCounts) GetDelivered() int64 {
 	return 0
 }
 
-func (x *EndpointEventCounts) GetFailed() int64 {
+func (x *EndpointEventCounts) GetDead() int64 {
 	if x != nil {
-		return x.Failed
+		return x.Dead
 	}
 	return 0
 }
@@ -1263,7 +1266,7 @@ type EndpointPolicy struct {
 	// How many of an event endpoint's posts may be in flight at once, from 1
 	// to 64: 1 unless set. At 1, messages are posted one at a time in the
 	// order they were sent, and none passes one waiting to be tried again;
-	// above 1, order is not kept. Either way a parked message holds up none
+	// above 1, order is not kept. Either way a dead message holds up none
 	// after it, so order is promised among the messages delivered.
 	Concurrency *int32 `protobuf:"varint,8,opt,name=concurrency,proto3,oneof" json:"concurrency,omitempty"`
 	// Where an ACP endpoint's agent runs file and terminal requests: vm (the
@@ -4363,12 +4366,12 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\adropped\x18\x04 \x03(\v21.toshi.workspace.v1.EndpointACPState.DroppedEntryR\adropped\x1a:\n" +
 	"\fDroppedEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01\"\x85\x02\n" +
+	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01\"\x81\x02\n" +
 	"\x13EndpointEventCounts\x12\x18\n" +
 	"\apending\x18\x01 \x01(\x03R\apending\x12\x1b\n" +
 	"\tin_flight\x18\x02 \x01(\x03R\binFlight\x12\x1c\n" +
-	"\tdelivered\x18\x03 \x01(\x03R\tdelivered\x12\x16\n" +
-	"\x06failed\x18\x04 \x01(\x03R\x06failed\x12\x18\n" +
+	"\tdelivered\x18\x03 \x01(\x03R\tdelivered\x12\x12\n" +
+	"\x04dead\x18\x04 \x01(\x03R\x04dead\x12\x18\n" +
 	"\aexpired\x18\x05 \x01(\x03R\aexpired\x12D\n" +
 	"\x10last_delivery_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x0elastDeliveryAt\x12!\n" +
 	"\flast_failure\x18\a \x01(\tR\vlastFailure\";\n" +
@@ -4678,13 +4681,13 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\vEndpointLog\x12\x1c\n" +
 	"\x18ENDPOINT_LOG_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13ENDPOINT_LOG_OUTPUT\x10\x01\x12\x19\n" +
-	"\x15ENDPOINT_LOG_REQUESTS\x10\x02*\xf5\x01\n" +
+	"\x15ENDPOINT_LOG_REQUESTS\x10\x02*\xf3\x01\n" +
 	"\x14EndpointMessageState\x12&\n" +
 	"\"ENDPOINT_MESSAGE_STATE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eENDPOINT_MESSAGE_STATE_PENDING\x10\x01\x12$\n" +
 	" ENDPOINT_MESSAGE_STATE_IN_FLIGHT\x10\x02\x12$\n" +
-	" ENDPOINT_MESSAGE_STATE_DELIVERED\x10\x03\x12!\n" +
-	"\x1dENDPOINT_MESSAGE_STATE_FAILED\x10\x04\x12\"\n" +
+	" ENDPOINT_MESSAGE_STATE_DELIVERED\x10\x03\x12\x1f\n" +
+	"\x1bENDPOINT_MESSAGE_STATE_DEAD\x10\x04\x12\"\n" +
 	"\x1eENDPOINT_MESSAGE_STATE_EXPIRED\x10\x052\x93\x14\n" +
 	"\x0fEndpointService\x12\xac\x01\n" +
 	"\x0eCreateEndpoint\x12).toshi.workspace.v1.CreateEndpointRequest\x1a*.toshi.workspace.v1.CreateEndpointResponse\"C\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +

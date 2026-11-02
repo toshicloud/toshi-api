@@ -161,7 +161,7 @@ service EndpointService {
 
   // SendEndpointMessage adds a message to the end of an event endpoint's
   // queue and returns its ID at once; the message waits there until it is
-  // delivered, parked failed, or kept past the endpoint's keep. A sleeping
+  // delivered, dead, or kept past the endpoint's keep. A sleeping
   // on-demand service is woken. A message sent again with the same
   // request_key is not stored again: its ID is returned, with duplicate
   // set. A caller the endpoint's input rule does not admit fails with
@@ -183,7 +183,7 @@ service EndpointService {
     option (toshi.permission) = "endpoints.read";
   }
 
-  // ReplayEndpointMessage puts a failed, expired or delivered message of an
+  // ReplayEndpointMessage puts a dead, expired or delivered message of an
   // event endpoint back in its queue under its own ID, so its webhook-id is
   // the same: its attempts start again from 0, and its keep runs from the
   // replay. A message pending or in flight fails with
@@ -339,7 +339,9 @@ message EndpointEventCounts {
   int64 pending = 1;
   int64 in_flight = 2;
   int64 delivered = 3;
-  int64 failed = 4;
+  // Messages that gave up: every attempt failed, or a final failure ended
+  // them.
+  int64 dead = 4;
   int64 expired = 5;
   // The last delivery's time; unset before the first.
   google.protobuf.Timestamp last_delivery_at = 6;
@@ -357,10 +359,11 @@ enum EndpointMessageState {
   ENDPOINT_MESSAGE_STATE_IN_FLIGHT = 2;
   // Answered 2xx.
   ENDPOINT_MESSAGE_STATE_DELIVERED = 3;
-  // Parked after an hour of failed attempts from its send or replay. The
-  // messages after it are still delivered; ReplayEndpointMessage puts it
-  // back.
-  ENDPOINT_MESSAGE_STATE_FAILED = 4;
+  // It gave up: every attempt of its send or replay failed, or a final
+  // failure ended it at once, such as a refused URL or an answer of 410.
+  // The messages after it are still delivered; ReplayEndpointMessage puts
+  // it back.
+  ENDPOINT_MESSAGE_STATE_DEAD = 4;
   // Its endpoint's keep passed before it was delivered.
   ENDPOINT_MESSAGE_STATE_EXPIRED = 5;
 }
@@ -463,7 +466,7 @@ message EndpointPolicy {
   // How many of an event endpoint's posts may be in flight at once, from 1
   // to 64: 1 unless set. At 1, messages are posted one at a time in the
   // order they were sent, and none passes one waiting to be tried again;
-  // above 1, order is not kept. Either way a parked message holds up none
+  // above 1, order is not kept. Either way a dead message holds up none
   // after it, so order is promised among the messages delivered.
   optional int32 concurrency = 8;
   // Where an ACP endpoint's agent runs file and terminal requests: vm (the

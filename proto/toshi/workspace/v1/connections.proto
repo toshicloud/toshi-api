@@ -115,13 +115,13 @@ service ConnectionService {
 
   // GetConnectionDelivery returns one delivery, without its body, and its
   // runs: each time a worker made it an event, posted it to its
-  // connection's target, dropped it or failed it, oldest first. A delivery the workspace does not have is NOT_FOUND.
+  // connection's target, dropped it or ended it dead, oldest first. A delivery the workspace does not have is NOT_FOUND.
   rpc GetConnectionDelivery(GetConnectionDeliveryRequest) returns (GetConnectionDeliveryResponse) {
     option (toshi.permission) = "connections.read";
     option (toshi.scope) = "workspace";
   }
 
-  // ReplayConnectionDelivery sends a processed, dropped or failed delivery
+  // ReplayConnectionDelivery sends a processed, dropped or dead delivery
   // through its connection again, as a new message under the same webhook
   // id: it goes to the connection's target then, or to the event log when
   // it has none, and its run records the caller. A delivery still received, whose receipt or body
@@ -374,7 +374,7 @@ enum ConnectionDeliveryState {
   CONNECTION_DELIVERY_STATE_DROPPED = 3;
   // The store failed on every try to write its event, or its connection's
   // target took it on no try.
-  CONNECTION_DELIVERY_STATE_FAILED = 4;
+  CONNECTION_DELIVERY_STATE_DEAD = 4;
 }
 
 // ConnectionDelivery is one message a WEBHOOK connection's sender sent:
@@ -385,13 +385,13 @@ message ConnectionDelivery {
   // The sender's webhook-id header.
   string webhook_id = 3;
   ConnectionDeliveryState state = 4;
-  // Why it was dropped or failed, such as delivery_failed or store_error;
-  // empty otherwise.
+  // Why it was dropped or ended dead, such as delivery_failed or
+  // store_error; empty otherwise.
   string reason = 5;
   // The time the sender signed; when the ingress stored it.
   google.protobuf.Timestamp sent_at = 6;
   google.protobuf.Timestamp received_at = 7;
-  // When it was processed, dropped or failed; unset while received.
+  // When it was processed, dropped or ended dead; unset while received.
   google.protobuf.Timestamp processed_at = 8;
   // Tries a worker made since it was last received or replayed.
   int32 attempts = 9;
