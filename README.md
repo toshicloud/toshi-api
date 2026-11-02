@@ -70,9 +70,11 @@ code, see [toshi-go](https://github.com/toshicloud/toshi-go).
 ## TypeScript
 
 `ts/gen/` holds the code `protoc-gen-es` v2 generates with
-`target=ts,json_types=true`. It needs `@bufbuild/protobuf` 2, and a
-client needs `@connectrpc/connect` 2 with a transport from
-`@connectrpc/connect-web` or `@connectrpc/connect-node`. It is not
+`target=ts,json_types=true`. It needs `@bufbuild/protobuf`, and a client
+needs `@connectrpc/connect` with a transport from
+`@connectrpc/connect-web` or `@connectrpc/connect-node`, in the versions
+the [toshi-ts quick start](https://github.com/toshicloud/toshi-ts#quick-start)
+gives. It is not
 published as a package; copy it, or generate your own from `proto/`
 with `buf generate`.
 
