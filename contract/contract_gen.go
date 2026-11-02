@@ -132,6 +132,8 @@ const (
 	ReasonStateVolumeUnavailable = "STATE_VOLUME_UNAVAILABLE"
 	// ReasonStorageFull: `BuildImage` in a workspace that may store no new data.
 	ReasonStorageFull = "STORAGE_FULL"
+	// ReasonStoreInUse: Not sent by the API: a control plane, `toshi-control admin migrate --apply` or `admin restore` whose SQLite store another process holds prints it and exits 5; `key` is `store.dsn` and `cause` says the file is held by another process.
+	ReasonStoreInUse = "STORE_IN_USE"
 	// ReasonToshiLicensedWindows: Any display open on a Windows job on a cloud pool.
 	ReasonToshiLicensedWindows = "TOSHI_LICENSED_WINDOWS"
 	// ReasonWorkloadHeld: A workload operation is refused because the operator placed the workload on hold.
@@ -199,3 +201,750 @@ const (
 	// ArtifactStateLost: The artifact's storage provider was retired; reason says why.
 	ArtifactStateLost = "lost"
 )
+
+const (
+	// AuditActionPlanChanged is the "workspace.plan_changed" audit action.
+	AuditActionPlanChanged = "workspace.plan_changed"
+	// AuditActionCapSet is the "workspace.cap_set" audit action.
+	AuditActionCapSet = "workspace.cap_set"
+	// AuditActionLimitsSet is the "workspace.limits_set" audit action.
+	AuditActionLimitsSet = "workspace.limits_set"
+	// AuditActionWorkspaceUpdated is the "workspace.updated" audit action.
+	AuditActionWorkspaceUpdated = "workspace.updated"
+	// AuditActionReservationSet is the "workspace.reservation_set" audit action.
+	AuditActionReservationSet = "workspace.reservation_set"
+	// AuditActionReservationReleased is the "workspace.reservation_released" audit action.
+	AuditActionReservationReleased = "workspace.reservation_released"
+	// AuditActionReservationRestored is the "workspace.reservation_restored" audit action.
+	AuditActionReservationRestored = "workspace.reservation_restored"
+	// AuditActionSpendAlert is the "workspace.spend_alert" audit action.
+	AuditActionSpendAlert = "workspace.spend_alert"
+	// AuditActionVolumeCapAlert is the "workspace.volume_cap_alert" audit action.
+	AuditActionVolumeCapAlert = "workspace.volume_cap_alert"
+	// AuditActionJobsPerHour is the "workspace.jobs_per_hour" audit action.
+	AuditActionJobsPerHour = "workspace.jobs_per_hour"
+	// AuditActionStartRate is the "workspace.start_rate" audit action.
+	AuditActionStartRate = "workspace.start_rate"
+	// AuditActionBurstGuard is the "workspace.burst_guard" audit action.
+	AuditActionBurstGuard = "workspace.burst_guard"
+	// AuditActionHostCap is the "workspace.host_cap" audit action.
+	AuditActionHostCap = "workspace.host_cap"
+	// AuditActionHostRefused is the "workspace.host_refused" audit action.
+	AuditActionHostRefused = "workspace.host_refused"
+	// AuditActionStarterCreditGranted is the "workspace.starter_credit_granted" audit action.
+	AuditActionStarterCreditGranted = "workspace.starter_credit_granted"
+	// AuditActionStarterCreditWithheld is the "workspace.starter_credit_withheld" audit action.
+	AuditActionStarterCreditWithheld = "workspace.starter_credit_withheld"
+	// AuditActionBillingCustomerSet is the "workspace.billing_customer_set" audit action.
+	AuditActionBillingCustomerSet = "workspace.billing_customer_set"
+	// AuditActionCardChanged is the "workspace.card_changed" audit action.
+	AuditActionCardChanged = "workspace.card_changed"
+	// AuditActionWorkspaceCreated is the "workspace.created" audit action.
+	AuditActionWorkspaceCreated = "workspace.created"
+	// AuditActionWorkspaceReopened is the "workspace.reopened" audit action.
+	AuditActionWorkspaceReopened = "workspace.reopened"
+	// AuditActionWorkspaceClosed is the "workspace.closed" audit action.
+	AuditActionWorkspaceClosed = "workspace.closed"
+	// AuditActionWorkspaceSuspended is the "workspace.suspended" audit action.
+	AuditActionWorkspaceSuspended = "workspace.suspended"
+	// AuditActionWorkspaceResumed is the "workspace.resumed" audit action.
+	AuditActionWorkspaceResumed = "workspace.resumed"
+	// AuditActionWorkspaceDeletionScheduled is the "workspace.deletion_scheduled" audit action.
+	AuditActionWorkspaceDeletionScheduled = "workspace.deletion_scheduled"
+	// AuditActionWorkspacePurgeStarted is the "workspace.purge_started" audit action.
+	AuditActionWorkspacePurgeStarted = "workspace.purge_started"
+	// AuditActionWorkspacePurged is the "workspace.purged" audit action.
+	AuditActionWorkspacePurged = "workspace.purged"
+	// AuditActionWorkspaceHostPurged is the "workspace.host_purged" audit action.
+	AuditActionWorkspaceHostPurged = "workspace.host_purged"
+	// AuditActionEntitlementSet is the "workspace.entitlement_set" audit action.
+	AuditActionEntitlementSet = "workspace.entitlement_set"
+	// AuditActionEntitlementCleared is the "workspace.entitlement_cleared" audit action.
+	AuditActionEntitlementCleared = "workspace.entitlement_cleared"
+	// AuditActionSeatAssigned is the "seat.assigned" audit action.
+	AuditActionSeatAssigned = "seat.assigned"
+	// AuditActionSeatReassigned is the "seat.reassigned" audit action.
+	AuditActionSeatReassigned = "seat.reassigned"
+	// AuditActionSeatRemoved is the "seat.removed" audit action.
+	AuditActionSeatRemoved = "seat.removed"
+	// AuditActionInstallationAdded is the "installation.added" audit action.
+	AuditActionInstallationAdded = "installation.added"
+	// AuditActionInstallationRemoved is the "installation.removed" audit action.
+	AuditActionInstallationRemoved = "installation.removed"
+	// AuditActionInstallationSuspended is the "installation.suspended" audit action.
+	AuditActionInstallationSuspended = "installation.suspended"
+	// AuditActionInstallationUnsuspended is the "installation.unsuspended" audit action.
+	AuditActionInstallationUnsuspended = "installation.unsuspended"
+	// AuditActionInstallationMapped is the "installation.mapped" audit action.
+	AuditActionInstallationMapped = "installation.mapped"
+	// AuditActionCheckoutOpened is the "billing.checkout_opened" audit action.
+	AuditActionCheckoutOpened = "billing.checkout_opened"
+	// AuditActionPortalOpened is the "billing.portal_opened" audit action.
+	AuditActionPortalOpened = "billing.portal_opened"
+	// AuditActionStarterCreditApplied is the "billing.starter_credit_applied" audit action.
+	AuditActionStarterCreditApplied = "billing.starter_credit_applied"
+	// AuditActionBillingCustomerClosed is the "billing.customer_closed" audit action.
+	AuditActionBillingCustomerClosed = "billing.customer_closed"
+	// AuditActionSecretSetCreated is the "secret_set.created" audit action.
+	AuditActionSecretSetCreated = "secret_set.created"
+	// AuditActionSecretSetDeleted is the "secret_set.deleted" audit action.
+	AuditActionSecretSetDeleted = "secret_set.deleted"
+	// AuditActionSecretSetUpdated is the "secret_set.updated" audit action.
+	AuditActionSecretSetUpdated = "secret_set.updated"
+	// AuditActionSecretSet is the "secret.set" audit action.
+	AuditActionSecretSet = "secret.set"
+	// AuditActionSecretDeleted is the "secret.deleted" audit action.
+	AuditActionSecretDeleted = "secret.deleted"
+	// AuditActionSecretSetGranted is the "secret_set.granted" audit action.
+	AuditActionSecretSetGranted = "secret_set.granted"
+	// AuditActionSecretSetRevoked is the "secret_set.revoked" audit action.
+	AuditActionSecretSetRevoked = "secret_set.revoked"
+	// AuditActionSecretSetRead is the "secret_set.read" audit action.
+	AuditActionSecretSetRead = "secret_set.read"
+	// AuditActionModelCredentialCreated is the "model_credential.created" audit action.
+	AuditActionModelCredentialCreated = "model_credential.created"
+	// AuditActionModelCredentialUpdated is the "model_credential.updated" audit action.
+	AuditActionModelCredentialUpdated = "model_credential.updated"
+	// AuditActionModelCredentialDeleted is the "model_credential.deleted" audit action.
+	AuditActionModelCredentialDeleted = "model_credential.deleted"
+	// AuditActionModelCredentialSignInStarted is the "model_credential.sign_in_started" audit action.
+	AuditActionModelCredentialSignInStarted = "model_credential.sign_in_started"
+	// AuditActionModelCredentialSignInCompleted is the "model_credential.sign_in_completed" audit action.
+	AuditActionModelCredentialSignInCompleted = "model_credential.sign_in_completed"
+	// AuditActionModelCredentialSignInCancelled is the "model_credential.sign_in_cancelled" audit action.
+	AuditActionModelCredentialSignInCancelled = "model_credential.sign_in_cancelled"
+	// AuditActionModelCredentialSignedIn is the "model_credential.signed_in" audit action.
+	AuditActionModelCredentialSignedIn = "model_credential.signed_in"
+	// AuditActionModelCredentialNeedsSignIn is the "model_credential.needs_sign_in" audit action.
+	AuditActionModelCredentialNeedsSignIn = "model_credential.needs_sign_in"
+	// AuditActionModelCredentialSignedOut is the "model_credential.signed_out" audit action.
+	AuditActionModelCredentialSignedOut = "model_credential.signed_out"
+	// AuditActionKeyProviderWrapped is the "key_provider.wrapped" audit action.
+	AuditActionKeyProviderWrapped = "key_provider.wrapped"
+	// AuditActionKeyProviderUnwrapped is the "key_provider.unwrapped" audit action.
+	AuditActionKeyProviderUnwrapped = "key_provider.unwrapped"
+	// AuditActionProjectCreated is the "project.created" audit action.
+	AuditActionProjectCreated = "project.created"
+	// AuditActionProjectUpdated is the "project.updated" audit action.
+	AuditActionProjectUpdated = "project.updated"
+	// AuditActionProjectCompatibilityRaised is the "project.compatibility_raised" audit action.
+	AuditActionProjectCompatibilityRaised = "project.compatibility_raised"
+	// AuditActionBillingEventConflicted is the "billing.event_conflicted" audit action.
+	AuditActionBillingEventConflicted = "billing.event_conflicted"
+	// AuditActionWebhookDisabledAfterGone is the "webhook.disabled_after_gone" audit action.
+	AuditActionWebhookDisabledAfterGone = "webhook.disabled_after_gone"
+	// AuditActionEnvironmentCreated is the "environment.created" audit action.
+	AuditActionEnvironmentCreated = "environment.created"
+	// AuditActionEnvironmentDeleted is the "environment.deleted" audit action.
+	AuditActionEnvironmentDeleted = "environment.deleted"
+	// AuditActionRoleCreated is the "role.created" audit action.
+	AuditActionRoleCreated = "role.created"
+	// AuditActionRoleUpdated is the "role.updated" audit action.
+	AuditActionRoleUpdated = "role.updated"
+	// AuditActionRoleDeleted is the "role.deleted" audit action.
+	AuditActionRoleDeleted = "role.deleted"
+	// AuditActionRoleGranted is the "role.granted" audit action.
+	AuditActionRoleGranted = "role.granted"
+	// AuditActionRoleRevoked is the "role.revoked" audit action.
+	AuditActionRoleRevoked = "role.revoked"
+	// AuditActionMemberRemoved is the "member.removed" audit action.
+	AuditActionMemberRemoved = "member.removed"
+	// AuditActionMemberJoined is the "member.joined" audit action.
+	AuditActionMemberJoined = "member.joined"
+	// AuditActionMemberJoinRequested is the "member.join_requested" audit action.
+	AuditActionMemberJoinRequested = "member.join_requested"
+	// AuditActionMemberApproved is the "member.approved" audit action.
+	AuditActionMemberApproved = "member.approved"
+	// AuditActionMemberDeclined is the "member.declined" audit action.
+	AuditActionMemberDeclined = "member.declined"
+	// AuditActionInvitationCreated is the "invitation.created" audit action.
+	AuditActionInvitationCreated = "invitation.created"
+	// AuditActionInvitationRevoked is the "invitation.revoked" audit action.
+	AuditActionInvitationRevoked = "invitation.revoked"
+	// AuditActionInvitationAccepted is the "invitation.accepted" audit action.
+	AuditActionInvitationAccepted = "invitation.accepted"
+	// AuditActionInvitationAcceptRefused is the "invitation.accept_refused" audit action.
+	AuditActionInvitationAcceptRefused = "invitation.accept_refused"
+	// AuditActionBranchRulesSet is the "branch_rules.set" audit action.
+	AuditActionBranchRulesSet = "branch_rules.set"
+	// AuditActionProjectNetworkSet is the "project_network.set" audit action.
+	AuditActionProjectNetworkSet = "project_network.set"
+	// AuditActionEnvironmentNetworkSet is the "environment_network.set" audit action.
+	AuditActionEnvironmentNetworkSet = "environment_network.set"
+	// AuditActionEnvironmentRetentionSet is the "environment_retention.set" audit action.
+	AuditActionEnvironmentRetentionSet = "environment_retention.set"
+	// AuditActionEnvironmentVolumesSet is the "environment_volumes.set" audit action.
+	AuditActionEnvironmentVolumesSet = "environment_volumes.set"
+	// AuditActionEnvironmentUpdated is the "environment.updated" audit action.
+	AuditActionEnvironmentUpdated = "environment.updated"
+	// AuditActionRepositoryClaimed is the "repository.claimed" audit action.
+	AuditActionRepositoryClaimed = "repository.claimed"
+	// AuditActionProductUpdated is the "product.updated" audit action.
+	AuditActionProductUpdated = "product.updated"
+	// AuditActionKindBindingsFixed is the "<kind>.bindings_fixed" audit action.
+	AuditActionKindBindingsFixed = "<kind>.bindings_fixed"
+	// AuditActionKindBindingAttached is the "<kind>.binding_attached" audit action.
+	AuditActionKindBindingAttached = "<kind>.binding_attached"
+	// AuditActionKindRunTakenOver is the "<kind>.run_taken_over" audit action.
+	AuditActionKindRunTakenOver = "<kind>.run_taken_over"
+	// AuditActionServiceStarted is the "service.started" audit action.
+	AuditActionServiceStarted = "service.started"
+	// AuditActionServiceStopped is the "service.stopped" audit action.
+	AuditActionServiceStopped = "service.stopped"
+	// AuditActionServiceShareLinkIssued is the "service.share_link_issued" audit action.
+	AuditActionServiceShareLinkIssued = "service.share_link_issued"
+	// AuditActionServiceShareLinkOpened is the "service.share_link_opened" audit action.
+	AuditActionServiceShareLinkOpened = "service.share_link_opened"
+	// AuditActionServiceShareLinkRevoked is the "service.share_link_revoked" audit action.
+	AuditActionServiceShareLinkRevoked = "service.share_link_revoked"
+	// AuditActionServiceShareLinkEnded is the "service.share_link_ended" audit action.
+	AuditActionServiceShareLinkEnded = "service.share_link_ended"
+	// AuditActionServiceEndpointPolicySet is the "service.endpoint_policy_set" audit action.
+	AuditActionServiceEndpointPolicySet = "service.endpoint_policy_set"
+	// AuditActionEndpointMessageSent is the "endpoint.message_sent" audit action.
+	AuditActionEndpointMessageSent = "endpoint.message_sent"
+	// AuditActionServiceModeSet is the "service.mode_set" audit action.
+	AuditActionServiceModeSet = "service.mode_set"
+	// AuditActionServiceSignInStarted is the "service.sign_in_started" audit action.
+	AuditActionServiceSignInStarted = "service.sign_in_started"
+	// AuditActionServiceSignInAnswered is the "service.sign_in_answered" audit action.
+	AuditActionServiceSignInAnswered = "service.sign_in_answered"
+	// AuditActionServiceSignInCancelled is the "service.sign_in_cancelled" audit action.
+	AuditActionServiceSignInCancelled = "service.sign_in_cancelled"
+	// AuditActionServiceSignInEnded is the "service.sign_in_ended" audit action.
+	AuditActionServiceSignInEnded = "service.sign_in_ended"
+	// AuditActionServiceSignInEndpointOpened is the "service.sign_in_endpoint_opened" audit action.
+	AuditActionServiceSignInEndpointOpened = "service.sign_in_endpoint_opened"
+	// AuditActionServiceSignInEndpointEnded is the "service.sign_in_endpoint_ended" audit action.
+	AuditActionServiceSignInEndpointEnded = "service.sign_in_endpoint_ended"
+	// AuditActionServiceSignOut is the "service.sign_out" audit action.
+	AuditActionServiceSignOut = "service.sign_out"
+	// AuditActionServiceUpdated is the "service.updated" audit action.
+	AuditActionServiceUpdated = "service.updated"
+	// AuditActionServiceActivationRequested is the "service.activation_requested" audit action.
+	AuditActionServiceActivationRequested = "service.activation_requested"
+	// AuditActionServiceActivationFinished is the "service.activation_finished" audit action.
+	AuditActionServiceActivationFinished = "service.activation_finished"
+	// AuditActionServiceUpgradeRolledBack is the "service.upgrade_rolled_back" audit action.
+	AuditActionServiceUpgradeRolledBack = "service.upgrade_rolled_back"
+	// AuditActionServiceRunRestarted is the "service.run_restarted" audit action.
+	AuditActionServiceRunRestarted = "service.run_restarted"
+	// AuditActionServiceWoken is the "service.woken" audit action.
+	AuditActionServiceWoken = "service.woken"
+	// AuditActionServiceWakeRefused is the "service.wake_refused" audit action.
+	AuditActionServiceWakeRefused = "service.wake_refused"
+	// AuditActionDomainVerified is the "domain.verified" audit action.
+	AuditActionDomainVerified = "domain.verified"
+	// AuditActionDomainUnverified is the "domain.unverified" audit action.
+	AuditActionDomainUnverified = "domain.unverified"
+	// AuditActionDomainCreated is the "domain.created" audit action.
+	AuditActionDomainCreated = "domain.created"
+	// AuditActionDomainChecked is the "domain.checked" audit action.
+	AuditActionDomainChecked = "domain.checked"
+	// AuditActionDomainIssueRequested is the "domain.issue_requested" audit action.
+	AuditActionDomainIssueRequested = "domain.issue_requested"
+	// AuditActionDomainDeleted is the "domain.deleted" audit action.
+	AuditActionDomainDeleted = "domain.deleted"
+	// AuditActionServiceHeld is the "service.held" audit action.
+	AuditActionServiceHeld = "service.held"
+	// AuditActionServiceReleased is the "service.released" audit action.
+	AuditActionServiceReleased = "service.released"
+	// AuditActionWorkloadHeld is the "workload.held" audit action.
+	AuditActionWorkloadHeld = "workload.held"
+	// AuditActionWorkloadReleased is the "workload.released" audit action.
+	AuditActionWorkloadReleased = "workload.released"
+	// AuditActionServiceHoldExpired is the "service.hold_expired" audit action.
+	AuditActionServiceHoldExpired = "service.hold_expired"
+	// AuditActionServiceSlept is the "service.slept" audit action.
+	AuditActionServiceSlept = "service.slept"
+	// AuditActionServiceSleepAborted is the "service.sleep_aborted" audit action.
+	AuditActionServiceSleepAborted = "service.sleep_aborted"
+	// AuditActionServiceEndpointMessageReplayed is the "service.endpoint_message_replayed" audit action.
+	AuditActionServiceEndpointMessageReplayed = "service.endpoint_message_replayed"
+	// AuditActionServiceCreated is the "service.created" audit action.
+	AuditActionServiceCreated = "service.created"
+	// AuditActionServiceDeleted is the "service.deleted" audit action.
+	AuditActionServiceDeleted = "service.deleted"
+	// AuditActionServiceAlarmSet is the "service_alarm.set" audit action.
+	AuditActionServiceAlarmSet = "service_alarm.set"
+	// AuditActionServiceAlarmDeleted is the "service_alarm.deleted" audit action.
+	AuditActionServiceAlarmDeleted = "service_alarm.deleted"
+	// AuditActionServiceAlarmPaused is the "service_alarm.paused" audit action.
+	AuditActionServiceAlarmPaused = "service_alarm.paused"
+	// AuditActionServiceAlarmResumed is the "service_alarm.resumed" audit action.
+	AuditActionServiceAlarmResumed = "service_alarm.resumed"
+	// AuditActionServiceAlarmRan is the "service_alarm.ran" audit action.
+	AuditActionServiceAlarmRan = "service_alarm.ran"
+	// AuditActionTokenCreated is the "token.created" audit action.
+	AuditActionTokenCreated = "token.created"
+	// AuditActionTokenRotated is the "token.rotated" audit action.
+	AuditActionTokenRotated = "token.rotated"
+	// AuditActionTokenRevoked is the "token.revoked" audit action.
+	AuditActionTokenRevoked = "token.revoked"
+	// AuditActionClientRegistered is the "client.registered" audit action.
+	AuditActionClientRegistered = "client.registered"
+	// AuditActionClientDeleted is the "client.deleted" audit action.
+	AuditActionClientDeleted = "client.deleted"
+	// AuditActionTokenUpdated is the "token.updated" audit action.
+	AuditActionTokenUpdated = "token.updated"
+	// AuditActionTokenExpired is the "token.expired" audit action.
+	AuditActionTokenExpired = "token.expired"
+	// AuditActionSignInRefused is the "signin.refused" audit action.
+	AuditActionSignInRefused = "signin.refused"
+	// AuditActionCredentialRefused is the "credential.refused" audit action.
+	AuditActionCredentialRefused = "credential.refused"
+	// AuditActionIdentityLinked is the "identity.linked" audit action.
+	AuditActionIdentityLinked = "identity.linked"
+	// AuditActionIdentityUnlinked is the "identity.unlinked" audit action.
+	AuditActionIdentityUnlinked = "identity.unlinked"
+	// AuditActionSessionEnded is the "session.ended" audit action.
+	AuditActionSessionEnded = "session.ended"
+	// AuditActionLocalAdminSetUp is the "local_admin.set_up" audit action.
+	AuditActionLocalAdminSetUp = "local_admin.set_up"
+	// AuditActionLocalAdminReset is the "local_admin.reset" audit action.
+	AuditActionLocalAdminReset = "local_admin.reset"
+	// AuditActionTokenRefused is the "token.refused" audit action.
+	AuditActionTokenRefused = "token.refused"
+	// AuditActionHostEnrolled is the "host.enrolled" audit action.
+	AuditActionHostEnrolled = "host.enrolled"
+	// AuditActionHostEnrollmentRefused is the "host.enrollment_refused" audit action.
+	AuditActionHostEnrollmentRefused = "host.enrollment_refused"
+	// AuditActionHostStateSet is the "host.state_set" audit action.
+	AuditActionHostStateSet = "host.state_set"
+	// AuditActionHostOverflowSet is the "host.overflow_set" audit action.
+	AuditActionHostOverflowSet = "host.overflow_set"
+	// AuditActionHostRetired is the "host.retired" audit action.
+	AuditActionHostRetired = "host.retired"
+	// AuditActionHostRevoked is the "host.revoked" audit action.
+	AuditActionHostRevoked = "host.revoked"
+	// AuditActionHostEgressChanged is the "host.egress_changed" audit action.
+	AuditActionHostEgressChanged = "host.egress_changed"
+	// AuditActionHostProviderChanged is the "host.provider_changed" audit action.
+	AuditActionHostProviderChanged = "host.provider_changed"
+	// AuditActionRunnerStoppedOnRestore is the "host.runner_stopped_after_restore" audit action.
+	AuditActionRunnerStoppedOnRestore = "host.runner_stopped_after_restore"
+	// AuditActionHostOfflineRetired is the "host.offline_retired" audit action.
+	AuditActionHostOfflineRetired = "host.offline_retired"
+	// AuditActionCloudHostAdded is the "cloud_host.added" audit action.
+	AuditActionCloudHostAdded = "cloud_host.added"
+	// AuditActionCloudBudgetReached is the "cloud_host.budget_reached" audit action.
+	AuditActionCloudBudgetReached = "cloud_host.budget_reached"
+	// AuditActionCloudHostChecked is the "cloud_host.checked" audit action.
+	AuditActionCloudHostChecked = "cloud_host.checked"
+	// AuditActionCloudPoolAdded is the "cloud_pool.added" audit action.
+	AuditActionCloudPoolAdded = "cloud_pool.added"
+	// AuditActionCloudPoolChanged is the "cloud_pool.changed" audit action.
+	AuditActionCloudPoolChanged = "cloud_pool.changed"
+	// AuditActionCloudPoolRemoved is the "cloud_pool.removed" audit action.
+	AuditActionCloudPoolRemoved = "cloud_pool.removed"
+	// AuditActionCloudPoolImageChanged is the "cloud_pool.image_changed" audit action.
+	AuditActionCloudPoolImageChanged = "cloud_pool.image_changed"
+	// AuditActionCloudPoolRunnerChanged is the "cloud_pool.runner_changed" audit action.
+	AuditActionCloudPoolRunnerChanged = "cloud_pool.runner_changed"
+	// AuditActionCloudPoolOldInstanceUsed is the "cloud_pool.old_instance_used" audit action.
+	AuditActionCloudPoolOldInstanceUsed = "cloud_pool.old_instance_used"
+	// AuditActionCloudPoolHostDrained is the "cloud_pool.host_drained" audit action.
+	AuditActionCloudPoolHostDrained = "cloud_pool.host_drained"
+	// AuditActionCloudPoolHostTerminated is the "cloud_pool.host_terminated" audit action.
+	AuditActionCloudPoolHostTerminated = "cloud_pool.host_terminated"
+	// AuditActionCloudPoolBootOverdue is the "cloud_pool.boot_overdue" audit action.
+	AuditActionCloudPoolBootOverdue = "cloud_pool.boot_overdue"
+	// AuditActionCloudPoolHostLaunched is the "cloud_pool.host_launched" audit action.
+	AuditActionCloudPoolHostLaunched = "cloud_pool.host_launched"
+	// AuditActionDisplaySessionOpened is the "display.session_opened" audit action.
+	AuditActionDisplaySessionOpened = "display.session_opened"
+	// AuditActionDisplaySessionClosed is the "display.session_closed" audit action.
+	AuditActionDisplaySessionClosed = "display.session_closed"
+	// AuditActionDisplayKeysSent is the "display.keys_sent" audit action.
+	AuditActionDisplayKeysSent = "display.keys_sent"
+	// AuditActionDisplayPointerSent is the "display.pointer_sent" audit action.
+	AuditActionDisplayPointerSent = "display.pointer_sent"
+	// AuditActionDisplayClipboardSet is the "display.clipboard_set" audit action.
+	AuditActionDisplayClipboardSet = "display.clipboard_set"
+	// AuditActionDisplayScreenshotTaken is the "display.screenshot_taken" audit action.
+	AuditActionDisplayScreenshotTaken = "display.screenshot_taken"
+	// AuditActionJobCancelled is the "host_job.cancelled" audit action.
+	AuditActionJobCancelled = "host_job.cancelled"
+	// AuditActionJobStopped is the "host_job.stopped" audit action.
+	AuditActionJobStopped = "host_job.stopped"
+	// AuditActionSandboxExtended is the "sandbox.extended" audit action.
+	AuditActionSandboxExtended = "sandbox.extended"
+	// AuditActionSandboxCreated is the "sandbox.created" audit action.
+	AuditActionSandboxCreated = "sandbox.created"
+	// AuditActionSandboxUpdated is the "sandbox.updated" audit action.
+	AuditActionSandboxUpdated = "sandbox.updated"
+	// AuditActionSandboxStarted is the "sandbox.started" audit action.
+	AuditActionSandboxStarted = "sandbox.started"
+	// AuditActionSandboxStopped is the "sandbox.stopped" audit action.
+	AuditActionSandboxStopped = "sandbox.stopped"
+	// AuditActionSandboxEnded is the "sandbox.ended" audit action.
+	AuditActionSandboxEnded = "sandbox.ended"
+	// AuditActionSandboxExecuted is the "sandbox.executed" audit action.
+	AuditActionSandboxExecuted = "sandbox.executed"
+	// AuditActionSandboxDeleted is the "sandbox.deleted" audit action.
+	AuditActionSandboxDeleted = "sandbox.deleted"
+	// AuditActionExecutionCancelled is the "execution.cancelled" audit action.
+	AuditActionExecutionCancelled = "execution.cancelled"
+	// AuditActionJobCreated is the "job.created" audit action.
+	AuditActionJobCreated = "job.created"
+	// AuditActionJobUpdated is the "job.updated" audit action.
+	AuditActionJobUpdated = "job.updated"
+	// AuditActionJobCancelledAudit is the "job.cancelled" audit action.
+	AuditActionJobCancelledAudit = "job.cancelled"
+	// AuditActionJobDeleted is the "job.deleted" audit action.
+	AuditActionJobDeleted = "job.deleted"
+	// AuditActionTriggerCreated is the "trigger.created" audit action.
+	AuditActionTriggerCreated = "trigger.created"
+	// AuditActionTriggerUpdated is the "trigger.updated" audit action.
+	AuditActionTriggerUpdated = "trigger.updated"
+	// AuditActionTriggerDeleted is the "trigger.deleted" audit action.
+	AuditActionTriggerDeleted = "trigger.deleted"
+	// AuditActionPromptAnswered is the "prompt.answered" audit action.
+	AuditActionPromptAnswered = "prompt.answered"
+	// AuditActionAgentRegistrationCreated is the "agent_registration.created" audit action.
+	AuditActionAgentRegistrationCreated = "agent_registration.created"
+	// AuditActionAgentRegistrationClaimStarted is the "agent_registration.claim_started" audit action.
+	AuditActionAgentRegistrationClaimStarted = "agent_registration.claim_started"
+	// AuditActionAgentRegistrationClaimed is the "agent_registration.claimed" audit action.
+	AuditActionAgentRegistrationClaimed = "agent_registration.claimed"
+	// AuditActionAgentRegistrationClaimRefused is the "agent_registration.claim_refused" audit action.
+	AuditActionAgentRegistrationClaimRefused = "agent_registration.claim_refused"
+	// AuditActionWorkloadEventEmitted is the "workload.event_emitted" audit action.
+	AuditActionWorkloadEventEmitted = "workload.event_emitted"
+	// AuditActionWorkloadEventsExported is the "workload_events.exported" audit action.
+	AuditActionWorkloadEventsExported = "workload_events.exported"
+	// AuditActionJobSpotInterrupted is the "host_job.spot_interrupted" audit action.
+	AuditActionJobSpotInterrupted = "host_job.spot_interrupted"
+	// AuditActionJobSpotRerun is the "host_job.spot_rerun" audit action.
+	AuditActionJobSpotRerun = "host_job.spot_rerun"
+	// AuditActionJobRanElsewhere is the "host_job.ran_elsewhere" audit action.
+	AuditActionJobRanElsewhere = "host_job.ran_elsewhere"
+	// AuditActionJobPreviousPoolImage is the "host_job.previous_pool_image" audit action.
+	AuditActionJobPreviousPoolImage = "host_job.previous_pool_image"
+	// AuditActionJobRunCancelled is the "host_job.run_cancelled" audit action.
+	AuditActionJobRunCancelled = "host_job.run_cancelled"
+	// AuditActionJobConcludedAfterHostLoss is the "host_job.concluded_after_host_loss" audit action.
+	AuditActionJobConcludedAfterHostLoss = "host_job.concluded_after_host_loss"
+	// AuditActionJobRecovered is the "host_job.recovered" audit action.
+	AuditActionJobRecovered = "host_job.recovered"
+	// AuditActionJobAdoptedAfterRestore is the "host_job.adopted_after_restore" audit action.
+	AuditActionJobAdoptedAfterRestore = "host_job.adopted_after_restore"
+	// AuditActionJobRebuiltAfterRestore is the "host_job.rebuilt_after_restore" audit action.
+	AuditActionJobRebuiltAfterRestore = "host_job.rebuilt_after_restore"
+	// AuditActionJobOverflowed is the "host_job.overflowed" audit action.
+	AuditActionJobOverflowed = "host_job.overflowed"
+	// AuditActionJobDebugStarted is the "host_job.debug_started" audit action.
+	AuditActionJobDebugStarted = "host_job.debug_started"
+	// AuditActionJobDebugStopped is the "host_job.debug_stopped" audit action.
+	AuditActionJobDebugStopped = "host_job.debug_stopped"
+	// AuditActionJobDebugAccessIssued is the "host_job.debug_access_issued" audit action.
+	AuditActionJobDebugAccessIssued = "host_job.debug_access_issued"
+	// AuditActionJobDebugRelayOpened is the "host_job.debug_relay_opened" audit action.
+	AuditActionJobDebugRelayOpened = "host_job.debug_relay_opened"
+	// AuditActionJobDebugRelayClosed is the "host_job.debug_relay_closed" audit action.
+	AuditActionJobDebugRelayClosed = "host_job.debug_relay_closed"
+	// AuditActionJobForwardOpened is the "host_job.forward_opened" audit action.
+	AuditActionJobForwardOpened = "host_job.forward_opened"
+	// AuditActionJobForwardClosed is the "host_job.forward_closed" audit action.
+	AuditActionJobForwardClosed = "host_job.forward_closed"
+	// AuditActionJobEndpointExposed is the "host_job.endpoint_exposed" audit action.
+	AuditActionJobEndpointExposed = "host_job.endpoint_exposed"
+	// AuditActionJobEndpointDeleted is the "host_job.endpoint_deleted" audit action.
+	AuditActionJobEndpointDeleted = "host_job.endpoint_deleted"
+	// AuditActionJobEndpointPolicySet is the "host_job.endpoint_policy_set" audit action.
+	AuditActionJobEndpointPolicySet = "host_job.endpoint_policy_set"
+	// AuditActionEndpointLogExported is the "endpoint_log.exported" audit action.
+	AuditActionEndpointLogExported = "endpoint_log.exported"
+	// AuditActionJobEndpointConnected is the "host_job.endpoint_connected" audit action.
+	AuditActionJobEndpointConnected = "host_job.endpoint_connected"
+	// AuditActionJobEndpointDisconnected is the "host_job.endpoint_disconnected" audit action.
+	AuditActionJobEndpointDisconnected = "host_job.endpoint_disconnected"
+	// AuditActionJobEndpointConnectTokenIssued is the "host_job.endpoint_connect_token_issued" audit action.
+	AuditActionJobEndpointConnectTokenIssued = "host_job.endpoint_connect_token_issued"
+	// AuditActionJobEndpointConnectTokenRevoked is the "host_job.endpoint_connect_token_revoked" audit action.
+	AuditActionJobEndpointConnectTokenRevoked = "host_job.endpoint_connect_token_revoked"
+	// AuditActionJobPreviewTokenIssued is the "host_job.preview_connect_token_issued" audit action.
+	AuditActionJobPreviewTokenIssued = "host_job.preview_connect_token_issued"
+	// AuditActionJobPreviewSignedIn is the "host_job.preview_signed_in" audit action.
+	AuditActionJobPreviewSignedIn = "host_job.preview_signed_in"
+	// AuditActionJobHostingTokenIssued is the "host_job.hosting_sign_in_token_issued" audit action.
+	AuditActionJobHostingTokenIssued = "host_job.hosting_sign_in_token_issued"
+	// AuditActionJobHostingSignedIn is the "host_job.hosting_signed_in" audit action.
+	AuditActionJobHostingSignedIn = "host_job.hosting_signed_in"
+	// AuditActionJobShareLinkIssued is the "host_job.preview_share_link_issued" audit action.
+	AuditActionJobShareLinkIssued = "host_job.preview_share_link_issued"
+	// AuditActionJobShareLinkOpened is the "host_job.preview_share_link_opened" audit action.
+	AuditActionJobShareLinkOpened = "host_job.preview_share_link_opened"
+	// AuditActionJobShareLinkRevoked is the "host_job.preview_share_link_revoked" audit action.
+	AuditActionJobShareLinkRevoked = "host_job.preview_share_link_revoked"
+	// AuditActionJobShareLinkEnded is the "host_job.preview_share_link_ended" audit action.
+	AuditActionJobShareLinkEnded = "host_job.preview_share_link_ended"
+	// AuditActionRunnerExitsWithoutJob is the "runner.exits_without_job" audit action.
+	AuditActionRunnerExitsWithoutJob = "runner.exits_without_job"
+	// AuditActionOpenSourceApproved is the "open_source.approved" audit action.
+	AuditActionOpenSourceApproved = "open_source.approved"
+	// AuditActionOpenSourceRevoked is the "open_source.revoked" audit action.
+	AuditActionOpenSourceRevoked = "open_source.revoked"
+	// AuditActionJobDeliveryEnabled is the "secret_delivery.enabled" audit action.
+	AuditActionJobDeliveryEnabled = "secret_delivery.enabled"
+	// AuditActionJobDeliveryDisabled is the "secret_delivery.disabled" audit action.
+	AuditActionJobDeliveryDisabled = "secret_delivery.disabled"
+	// AuditActionJobDeliveryCheckPublished is the "secret_delivery.check_published" audit action.
+	AuditActionJobDeliveryCheckPublished = "secret_delivery.check_published"
+	// AuditActionSecretDeliverySet is the "secret_delivery.set" audit action.
+	AuditActionSecretDeliverySet = "secret_delivery.set"
+	// AuditActionProductForwardRefused is the "product.forward_refused" audit action.
+	AuditActionProductForwardRefused = "product.forward_refused"
+	// AuditActionProductCallRefused is the "product.call_refused" audit action.
+	AuditActionProductCallRefused = "product.call_refused"
+	// AuditActionFillerPut is the "filler.put" audit action.
+	AuditActionFillerPut = "filler.put"
+	// AuditActionFillerRemoved is the "filler.removed" audit action.
+	AuditActionFillerRemoved = "filler.removed"
+	// AuditActionFillerEnabledSet is the "filler.enabled_set" audit action.
+	AuditActionFillerEnabledSet = "filler.enabled_set"
+	// AuditActionFillerPreempted is the "filler.preempted" audit action.
+	AuditActionFillerPreempted = "filler.preempted"
+	// AuditActionFillerLost is the "filler.lost" audit action.
+	AuditActionFillerLost = "filler.lost"
+	// AuditActionRunnerExitsWithoutJobCleared is the "runner.exits_without_job_cleared" audit action.
+	AuditActionRunnerExitsWithoutJobCleared = "runner.exits_without_job_cleared"
+	// AuditActionStoreBackedUp is the "store.backed_up" audit action.
+	AuditActionStoreBackedUp = "store.backed_up"
+	// AuditActionStoreBackupFailed is the "store.backup_failed" audit action.
+	AuditActionStoreBackupFailed = "store.backup_failed"
+	// AuditActionStoreBackupCopied is the "store.backup_copied" audit action.
+	AuditActionStoreBackupCopied = "store.backup_copied"
+	// AuditActionStoreBackupCopyFailed is the "store.backup_copy_failed" audit action.
+	AuditActionStoreBackupCopyFailed = "store.backup_copy_failed"
+	// AuditActionStoreRestored is the "store.restored" audit action.
+	AuditActionStoreRestored = "store.restored"
+	// AuditActionStoreRestoreDrilled is the "store.restore_drilled" audit action.
+	AuditActionStoreRestoreDrilled = "store.restore_drilled"
+	// AuditActionAdmissionAllowed is the "admission.allowed" audit action.
+	AuditActionAdmissionAllowed = "admission.allowed"
+	// AuditActionAdmissionDenied is the "admission.denied" audit action.
+	AuditActionAdmissionDenied = "admission.denied"
+	// AuditActionDeliveryFailed is the "delivery.failed" audit action.
+	AuditActionDeliveryFailed = "delivery.failed"
+	// AuditActionDeliveryTargetDisabled is the "delivery.target_disabled" audit action.
+	AuditActionDeliveryTargetDisabled = "delivery.target_disabled"
+	// AuditActionImageCreated is the "image.created" audit action.
+	AuditActionImageCreated = "image.created"
+	// AuditActionImageBuildStarted is the "image.build_started" audit action.
+	AuditActionImageBuildStarted = "image.build_started"
+	// AuditActionImageDeleted is the "image.deleted" audit action.
+	AuditActionImageDeleted = "image.deleted"
+	// AuditActionImageVersionPending is the "image.version.pending" audit action.
+	AuditActionImageVersionPending = "image.version.pending"
+	// AuditActionImageVersionDeleted is the "image.version.deleted" audit action.
+	AuditActionImageVersionDeleted = "image.version.deleted"
+	// AuditActionImageUpdated is the "image.updated" audit action.
+	AuditActionImageUpdated = "image.updated"
+	// AuditActionConnectionCreated is the "connection.created" audit action.
+	AuditActionConnectionCreated = "connection.created"
+	// AuditActionConnectionDeleted is the "connection.deleted" audit action.
+	AuditActionConnectionDeleted = "connection.deleted"
+	// AuditActionConnectionUpdated is the "connection.updated" audit action.
+	AuditActionConnectionUpdated = "connection.updated"
+	// AuditActionConnectionDeliveryConflicted is the "connection.delivery_conflicted" audit action.
+	AuditActionConnectionDeliveryConflicted = "connection.delivery_conflicted"
+	// AuditActionConnectionSecretRotated is the "connection.secret_rotated" audit action.
+	AuditActionConnectionSecretRotated = "connection.secret_rotated"
+	// AuditActionConnectionDeliveryReplayRequested is the "connection.delivery_replay_requested" audit action.
+	AuditActionConnectionDeliveryReplayRequested = "connection.delivery_replay_requested"
+	// AuditActionConnectionDeliveryReplayed is the "connection.delivery_replayed" audit action.
+	AuditActionConnectionDeliveryReplayed = "connection.delivery_replayed"
+	// AuditActionConnectionDeliveryFailed is the "connection.delivery_failed" audit action.
+	AuditActionConnectionDeliveryFailed = "connection.delivery_failed"
+	// AuditActionMailDomainStateChanged is the "connection.mail_domain_state_changed" audit action.
+	AuditActionMailDomainStateChanged = "connection.mail_domain_state_changed"
+	// AuditActionGrantOffered is the "grant.offered" audit action.
+	AuditActionGrantOffered = "grant.offered"
+	// AuditActionGrantAccepted is the "grant.accepted" audit action.
+	AuditActionGrantAccepted = "grant.accepted"
+	// AuditActionGrantDeclined is the "grant.declined" audit action.
+	AuditActionGrantDeclined = "grant.declined"
+	// AuditActionGrantExpiryChanged is the "grant.expiry_changed" audit action.
+	AuditActionGrantExpiryChanged = "grant.expiry_changed"
+	// AuditActionGrantRevoked is the "grant.revoked" audit action.
+	AuditActionGrantRevoked = "grant.revoked"
+	// AuditActionGrantLapsed is the "grant.lapsed" audit action.
+	AuditActionGrantLapsed = "grant.lapsed"
+	// AuditActionGrantExpired is the "grant.expired" audit action.
+	AuditActionGrantExpired = "grant.expired"
+	// AuditActionGrantEnded is the "grant.ended" audit action.
+	AuditActionGrantEnded = "grant.ended"
+	// AuditActionWebhookCreated is the "webhook.created" audit action.
+	AuditActionWebhookCreated = "webhook.created"
+	// AuditActionWebhookUpdated is the "webhook.updated" audit action.
+	AuditActionWebhookUpdated = "webhook.updated"
+	// AuditActionWebhookDeleted is the "webhook.deleted" audit action.
+	AuditActionWebhookDeleted = "webhook.deleted"
+	// AuditActionWebhookSecretRotated is the "webhook.secret_rotated" audit action.
+	AuditActionWebhookSecretRotated = "webhook.secret_rotated"
+	// AuditActionWebhookEventsReplayed is the "webhook.events_replayed" audit action.
+	AuditActionWebhookEventsReplayed = "webhook.events_replayed"
+	// AuditActionStorageProviderCreated is the "storage_provider.created" audit action.
+	AuditActionStorageProviderCreated = "storage_provider.created"
+	// AuditActionStorageProviderDeleted is the "storage_provider.deleted" audit action.
+	AuditActionStorageProviderDeleted = "storage_provider.deleted"
+	// AuditActionStorageProviderChecked is the "storage_provider.checked" audit action.
+	AuditActionStorageProviderChecked = "storage_provider.checked"
+	// AuditActionArtifactUploadReserved is the "artifact_upload.reserved" audit action.
+	AuditActionArtifactUploadReserved = "artifact_upload.reserved"
+	// AuditActionArtifactUploaded is the "artifact.uploaded" audit action.
+	AuditActionArtifactUploaded = "artifact.uploaded"
+	// AuditActionArtifactViewed is the "artifact.viewed" audit action.
+	AuditActionArtifactViewed = "artifact.viewed"
+	// AuditActionArtifactExpired is the "artifact.expired" audit action.
+	AuditActionArtifactExpired = "artifact.expired"
+	// AuditActionVolumeVersionsExpired is the "volume.versions_expired" audit action.
+	AuditActionVolumeVersionsExpired = "volume.versions_expired"
+	// AuditActionVolumeSaveRefused is the "volume.save_refused" audit action.
+	AuditActionVolumeSaveRefused = "volume.save_refused"
+	// AuditActionVolumeClaimTakenOver is the "volume.claim_taken_over" audit action.
+	AuditActionVolumeClaimTakenOver = "volume.claim_taken_over"
+	// AuditActionVolumeMounted is the "volume.mounted" audit action.
+	AuditActionVolumeMounted = "volume.mounted"
+	// AuditActionVolumeUnmounted is the "volume.unmounted" audit action.
+	AuditActionVolumeUnmounted = "volume.unmounted"
+	// AuditActionVolumeMountRefused is the "volume.mount_refused" audit action.
+	AuditActionVolumeMountRefused = "volume.mount_refused"
+	// AuditActionVolumeOrphansDeleted is the "volume.orphans_deleted" audit action.
+	AuditActionVolumeOrphansDeleted = "volume.orphans_deleted"
+	// AuditActionVolumeAttached is the "volume.attached" audit action.
+	AuditActionVolumeAttached = "volume.attached"
+	// AuditActionVolumeCreated is the "volume.created" audit action.
+	AuditActionVolumeCreated = "volume.created"
+	// AuditActionVolumeDeleted is the "volume.deleted" audit action.
+	AuditActionVolumeDeleted = "volume.deleted"
+	// AuditActionVolumePurged is the "volume.purged" audit action.
+	AuditActionVolumePurged = "volume.purged"
+	// AuditActionVolumeDetached is the "volume.detached" audit action.
+	AuditActionVolumeDetached = "volume.detached"
+	// AuditActionVolumeRestored is the "volume.restored" audit action.
+	AuditActionVolumeRestored = "volume.restored"
+	// AuditActionVolumeUpdated is the "volume.updated" audit action.
+	AuditActionVolumeUpdated = "volume.updated"
+	// AuditActionRecordingStarted is the "recording.started" audit action.
+	AuditActionRecordingStarted = "recording.started"
+	// AuditActionRecordingCapped is the "recording.capped" audit action.
+	AuditActionRecordingCapped = "recording.capped"
+	// AuditActionRecordingPaused is the "recording.paused" audit action.
+	AuditActionRecordingPaused = "recording.paused"
+	// AuditActionRecordingSpan is the "recording.span" audit action.
+	AuditActionRecordingSpan = "recording.span"
+	// AuditActionRecordingFallback is the "recording.fallback" audit action.
+	AuditActionRecordingFallback = "recording.fallback"
+	// AuditActionRecordingReportLate is the "recording.report_late" audit action.
+	AuditActionRecordingReportLate = "recording.report_late"
+	// AuditActionRecordingShareLinkIssued is the "recording.share_link_issued" audit action.
+	AuditActionRecordingShareLinkIssued = "recording.share_link_issued"
+	// AuditActionRecordingShareLinkRevoked is the "recording.share_link_revoked" audit action.
+	AuditActionRecordingShareLinkRevoked = "recording.share_link_revoked"
+	// AuditActionRecordingShareLinkRefused is the "recording.share_link_refused" audit action.
+	AuditActionRecordingShareLinkRefused = "recording.share_link_refused"
+	// AuditActionEmbedTokenIssued is the "embed_token.issued" audit action.
+	AuditActionEmbedTokenIssued = "embed_token.issued"
+	// AuditActionEmbedTokenRevoked is the "embed_token.revoked" audit action.
+	AuditActionEmbedTokenRevoked = "embed_token.revoked"
+	// AuditActionEmbedTokenRefused is the "embed_token.refused" audit action.
+	AuditActionEmbedTokenRefused = "embed_token.refused"
+	// AuditActionRegistryTokenIssued is the "registry.token_issued" audit action.
+	AuditActionRegistryTokenIssued = "registry.token_issued"
+	// AuditActionArtifactPrefixDeleted is the "artifact.prefix_deleted" audit action.
+	AuditActionArtifactPrefixDeleted = "artifact.prefix_deleted"
+	// AuditActionAuditEventsExported is the "audit_events.exported" audit action.
+	AuditActionAuditEventsExported = "audit_events.exported"
+	// AuditActionRetentionSwept is the "retention.swept" audit action.
+	AuditActionRetentionSwept = "retention.swept"
+)
+
+// EventName is one event name Toshi writes.
+type EventName struct {
+	Name           string
+	Type           string
+	Source         string
+	Prefix         string
+	ServiceDefined bool
+}
+
+// EventNames returns every event name Toshi writes, in a fixed order. Each
+// call returns a new table.
+func EventNames() []EventName {
+	return []EventName{
+		{Name: "job.created", Type: "WORKLOAD_CREATED", Source: "workload", Prefix: "job", ServiceDefined: false},
+		{Name: "sandbox.created", Type: "WORKLOAD_CREATED", Source: "workload", Prefix: "sandbox", ServiceDefined: false},
+		{Name: "service.created", Type: "WORKLOAD_CREATED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "job.state_changed", Type: "WORKLOAD_STATE_CHANGED", Source: "workload", Prefix: "job", ServiceDefined: false},
+		{Name: "sandbox.state_changed", Type: "WORKLOAD_STATE_CHANGED", Source: "workload", Prefix: "sandbox", ServiceDefined: false},
+		{Name: "service.state_changed", Type: "WORKLOAD_STATE_CHANGED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "job.updated", Type: "WORKLOAD_UPDATED", Source: "workload", Prefix: "job", ServiceDefined: false},
+		{Name: "sandbox.updated", Type: "WORKLOAD_UPDATED", Source: "workload", Prefix: "sandbox", ServiceDefined: false},
+		{Name: "service.updated", Type: "WORKLOAD_UPDATED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "job.deleted", Type: "WORKLOAD_DELETED", Source: "workload", Prefix: "job", ServiceDefined: false},
+		{Name: "sandbox.deleted", Type: "WORKLOAD_DELETED", Source: "workload", Prefix: "sandbox", ServiceDefined: false},
+		{Name: "service.deleted", Type: "WORKLOAD_DELETED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "job.execution_started", Type: "EXECUTION_STARTED", Source: "workload", Prefix: "job", ServiceDefined: false},
+		{Name: "sandbox.execution_started", Type: "EXECUTION_STARTED", Source: "workload", Prefix: "sandbox", ServiceDefined: false},
+		{Name: "service.execution_started", Type: "EXECUTION_STARTED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "job.execution_ended", Type: "EXECUTION_ENDED", Source: "workload", Prefix: "job", ServiceDefined: false},
+		{Name: "sandbox.execution_ended", Type: "EXECUTION_ENDED", Source: "workload", Prefix: "sandbox", ServiceDefined: false},
+		{Name: "service.execution_ended", Type: "EXECUTION_ENDED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "the name the guest gave", Type: "EMITTED", Source: "guest", Prefix: "", ServiceDefined: true},
+		{Name: "recording.ready", Type: "RECORDING_READY", Source: "workload", Prefix: "recording", ServiceDefined: false},
+		{Name: "webhook.received", Type: "CONNECTION", Source: "connection", Prefix: "webhook", ServiceDefined: false},
+		{Name: "github.<event>[.<action>]", Type: "CONNECTION", Source: "connection", Prefix: "github", ServiceDefined: false},
+		{Name: "job.secret_withheld", Type: "SECRET_WITHHELD", Source: "workload", Prefix: "job", ServiceDefined: false},
+		{Name: "sandbox.secret_withheld", Type: "SECRET_WITHHELD", Source: "workload", Prefix: "sandbox", ServiceDefined: false},
+		{Name: "service.secret_withheld", Type: "SECRET_WITHHELD", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "trigger.ready", Type: "TRIGGER_READY", Source: "workload", Prefix: "trigger", ServiceDefined: false},
+		{Name: "trigger.failed", Type: "TRIGGER_FAILED", Source: "workload", Prefix: "trigger", ServiceDefined: false},
+		{Name: "trigger.removed", Type: "TRIGGER_REMOVED", Source: "workload", Prefix: "trigger", ServiceDefined: false},
+		{Name: "service.upgrade_rolled_back", Type: "UPGRADE_ROLLED_BACK", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "agent.answered", Type: "AGENT_ANSWERED", Source: "workload", Prefix: "agent", ServiceDefined: false},
+		{Name: "job.egress_denied", Type: "EGRESS_DENIED", Source: "workload", Prefix: "job", ServiceDefined: false},
+		{Name: "sandbox.egress_denied", Type: "EGRESS_DENIED", Source: "workload", Prefix: "sandbox", ServiceDefined: false},
+		{Name: "service.egress_denied", Type: "EGRESS_DENIED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "mail.sent", Type: "MAIL_SENT", Source: "workload", Prefix: "mail", ServiceDefined: false},
+		{Name: "job.kept_vm_discarded", Type: "KEPT_VM_DISCARDED", Source: "workload", Prefix: "job", ServiceDefined: false},
+		{Name: "sandbox.kept_vm_discarded", Type: "KEPT_VM_DISCARDED", Source: "workload", Prefix: "sandbox", ServiceDefined: false},
+		{Name: "service.kept_vm_discarded", Type: "KEPT_VM_DISCARDED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "endpoint.acp.permission_requested", Type: "ENDPOINT_ACP_PERMISSION_REQUESTED", Source: "workload", Prefix: "endpoint", ServiceDefined: false},
+		{Name: "endpoint.acp.turn_ended", Type: "ENDPOINT_ACP_TURN_ENDED", Source: "workload", Prefix: "endpoint", ServiceDefined: false},
+		{Name: "service.restored", Type: "SERVICE_RESTORED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "service.snapshot_failed", Type: "SERVICE_SNAPSHOT_FAILED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "service.restore_failed", Type: "SERVICE_SNAPSHOT_FAILED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "service.signin", Type: "SERVICE_SIGNIN", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "service.signout", Type: "SERVICE_SIGNOUT", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "mail.bounced", Type: "MAIL_BOUNCED", Source: "workload", Prefix: "mail", ServiceDefined: false},
+		{Name: "mail.complained", Type: "MAIL_COMPLAINED", Source: "workload", Prefix: "mail", ServiceDefined: false},
+		{Name: "service.rolled", Type: "SERVICE_ROLLED", Source: "workload", Prefix: "service", ServiceDefined: false},
+		{Name: "endpoint.creation_failed", Type: "ENDPOINT_CREATION_FAILED", Source: "workload", Prefix: "endpoint", ServiceDefined: false},
+		{Name: "mail.received", Type: "", Source: "connection", Prefix: "mail", ServiceDefined: false},
+	}
+}
+
+// ReservedEventPrefixes returns the first dot-separated segments of the
+// event names Toshi keeps for itself, in a fixed order. Each call returns a
+// new slice.
+func ReservedEventPrefixes() []string {
+	return []string{"job", "sandbox", "run", "service", "recording", "agent", "takeover", "spend", "egress", "host", "github", "webhook", "trigger", "mail", "endpoint"}
+}
+
+// AuditActionAliases returns each former audit action name's current name.
+// Each call returns a new map.
+func AuditActionAliases() map[string]string {
+	return map[string]string{
+		"workspace.plan_set":             "workspace.plan_changed",
+		"token.rolled":                   "token.rotated",
+		"agent.prompt_answered":          "prompt.answered",
+		"agent.registered":               "agent_registration.created",
+		"agent.claim_started":            "agent_registration.claim_started",
+		"agent.claimed":                  "agent_registration.claimed",
+		"agent.claim_refused":            "agent_registration.claim_refused",
+		"host_job.endpoint_log_exported": "endpoint_log.exported",
+		"job.channel_log_exported":       "endpoint_log.exported",
+	}
+}
