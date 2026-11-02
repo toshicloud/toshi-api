@@ -3642,12 +3642,12 @@ type CreateEmbedTokenRequest struct {
 	// The project's name.
 	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// The origins of the pages that may spend it, each a scheme and a host
-	// with an optional port: https, or http for localhost only. At least
-	// one, and more than the server's maximum is INVALID_ARGUMENT.
+	// with an optional port: https, or http for localhost, 127.0.0.1 or ::1.
+	// At least one and at most 10; more is INVALID_ARGUMENT.
 	Origins []string `protobuf:"bytes,2,rep,name=origins,proto3" json:"origins,omitempty"`
-	// How long the token stays valid; unset is the server's default, or the
-	// workspace's plan's maximum when that is shorter, and more than the
-	// plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
+	// How long the token stays valid; unset is the server's default of 10
+	// minutes, or the workspace's plan's maximum when that is shorter, and
+	// more than the plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
 	ExpiresIn     *durationpb.Duration `protobuf:"bytes,3,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4227,12 +4227,15 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\vworkload_id\x18\v \x01(\tR\n" +
 	"workloadId\x12#\n" +
 	"\rworkload_kind\x18\f \x01(\tR\fworkloadKind\x12%\n" +
-	"\x0eenvironment_id\x18\r \x01(\tR\renvironmentId\"\x87\x01\n" +
+	"\x0eenvironment_id\x18\r \x01(\tR\renvironmentId\"\xe4\x01\n" +
 	"\x17CreateEmbedTokenRequest\x12\x18\n" +
-	"\aproject\x18\x01 \x01(\tR\aproject\x12\x18\n" +
-	"\aorigins\x18\x02 \x03(\tR\aorigins\x128\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12R\n" +
+	"\aorigins\x18\x02 \x03(\tB8\x8a\xf4\x184\n" +
+	"\x13embed_token_origins\x10\x03(\n" +
+	":\tlocalhost:\t127.0.0.1:\x03::1R\aorigins\x12[\n" +
 	"\n" +
-	"expires_in\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\"q\n" +
+	"expires_in\x18\x03 \x01(\v2\x19.google.protobuf.DurationB!\x8a\xf4\x18\x1d\n" +
+	"\x16embed_token_expires_in\x10\x01\x18\xd8\x04R\texpiresIn\"q\n" +
 	"\x18CreateEmbedTokenResponse\x12?\n" +
 	"\vembed_token\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.EmbedTokenR\n" +
 	"embedToken\x12\x14\n" +

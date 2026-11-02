@@ -658,10 +658,10 @@ message Workspace {
   // workspace, its plan's keep_vm.max, or the default, 0, when the plan sets
   // none.
   FeatureSource keep_vm_max_source = 41;
-  // The workspace's kept VMs, and how many of them have been stopped for
-  // over 30 days.
+  // The workspace's kept VMs.
   int32 keep_vm_count = 37;
-  int32 keep_vm_stopped_long_count = 38;
+  // How many of the workspace's kept VMs have been stopped for over 30 days.
+  int32 keep_vm_stopped_long_count = 38 [(toshi.bound) = {name: "keep_vm_stopped_long_after", unit: UNIT_SECONDS, threshold: 2592000}];
   // Who last changed settings.recording, and when; unset while it was never
   // changed. Set by Toshi.
   WorkspaceSettingChange recording_changed = 40;

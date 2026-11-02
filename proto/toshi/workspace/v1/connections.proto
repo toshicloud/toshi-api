@@ -205,8 +205,9 @@ message Connection {
 message MailConnection {
   // Output only. The lowercase address mail is received at: the connection's
   // name at its custom domain, or at the workspace's name under the
-  // deployment's inbound mail domain when no custom domain is set.
-  string address = 1;
+  // deployment's inbound mail domain when no custom domain is set. A raw
+  // message over 25 MiB is dropped with the reason too_large.
+  string address = 1 [(toshi.bound) = {name: "inbound_mail_size", unit: UNIT_BYTES, max: 26214400}];
   // The service, by its ID, whose event endpoint the mail goes to.
   string service = 2;
   // The name of that service's event endpoint.
@@ -337,7 +338,7 @@ message RotateConnectionSecretRequest {
   string id = 1;
   // How long the previous secret still verifies; unset is 24 hours, zero
   // stops it at once, and 7 days is the most.
-  google.protobuf.Duration overlap = 2;
+  google.protobuf.Duration overlap = 2 [(toshi.bound) = {name: "connection_secret_overlap", unit: UNIT_SECONDS, default: 86400, min: 0, max: 604800}];
   string request_key = 3;
 }
 

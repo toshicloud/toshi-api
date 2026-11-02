@@ -126,3 +126,38 @@ message MCP {
   // such as one only a workload's own token may make.
   bool exclude = 5;
 }
+
+extend google.protobuf.FieldOptions {
+  // bound states a fixed number the server applies to the field: the same
+  // for every deployment. Clients read it as a generated constant instead of
+  // copying it; the field's comment states it in words too, and the
+  // generator fails when the two differ.
+  Bound bound = 51009;
+}
+
+// Bound names fixed values and their units for a field.
+message Bound {
+  // name is a snake_case name unique across the API.
+  string name = 1;
+  // unit is the unit of each value.
+  Unit unit = 2;
+  // default is the value used when none is set, before a lower plan or
+  // deployment limit applies.
+  optional int64 default = 3;
+  // min and max are fixed input bounds; a tighter limit may also apply.
+  optional int64 min = 4;
+  optional int64 max = 5;
+  // threshold is a fixed span or count applied by the server.
+  optional int64 threshold = 6;
+  // http_hosts lists the hosts allowed over http for an origins field;
+  // https is allowed on any host.
+  repeated string http_hosts = 7;
+
+  // Unit identifies the unit of a bound's values.
+  enum Unit {
+    UNIT_UNSPECIFIED = 0;
+    UNIT_SECONDS = 1;
+    UNIT_BYTES = 2;
+    UNIT_COUNT = 3;
+  }
+}

@@ -135,8 +135,9 @@ message Token {
   google.protobuf.Timestamp last_used = 14;
   // When the person who made the token, or made the token that made it,
   // stopped being a member of the workspace; unset while they are one, and
-  // once an Owner re-owns the token (UpdateToken).
-  google.protobuf.Timestamp creator_left_at = 15;
+  // once an Owner re-owns the token (UpdateToken). The token expires 30 days
+  // after this time if its own expiry is not sooner.
+  google.protobuf.Timestamp creator_left_at = 15 [(toshi.bound) = {name: "token_creator_left_lifetime", unit: UNIT_SECONDS, threshold: 2592000}];
   // Why expires_at is what it is.
   TokenExpiryReason expiry_reason = 16;
   // The name of the agent registration whose claim made the token, when an
@@ -192,8 +193,9 @@ message ListTokensResponse {
 message CreateWorkspaceTokenRequest {
   // A label for the token.
   string name = 1;
-  // Unset means the longest lifetime allowed, 90 days by default.
-  google.protobuf.Timestamp expires_at = 2;
+  // Unset means the longest lifetime allowed: 90 days, unless the deployment
+  // sets less.
+  google.protobuf.Timestamp expires_at = 2 [(toshi.bound) = {name: "workspace_token_lifetime", unit: UNIT_SECONDS, default: 7776000, max: 7776000}];
   // Limits the token to this project of the workspace, by name. Empty
   // makes a token for the whole workspace.
   string project = 3;

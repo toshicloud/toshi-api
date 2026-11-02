@@ -170,7 +170,8 @@ type Token struct {
 	LastUsed *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=last_used,json=lastUsed,proto3" json:"last_used,omitempty"`
 	// When the person who made the token, or made the token that made it,
 	// stopped being a member of the workspace; unset while they are one, and
-	// once an Owner re-owns the token (UpdateToken).
+	// once an Owner re-owns the token (UpdateToken). The token expires 30 days
+	// after this time if its own expiry is not sooner.
 	CreatorLeftAt *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=creator_left_at,json=creatorLeftAt,proto3" json:"creator_left_at,omitempty"`
 	// Why expires_at is what it is.
 	ExpiryReason TokenExpiryReason `protobuf:"varint,16,opt,name=expiry_reason,json=expiryReason,proto3,enum=toshi.workspace.v1.TokenExpiryReason" json:"expiry_reason,omitempty"`
@@ -516,7 +517,8 @@ type CreateWorkspaceTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// A label for the token.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// Unset means the longest lifetime allowed, 90 days by default.
+	// Unset means the longest lifetime allowed: 90 days, unless the deployment
+	// sets less.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// Limits the token to this project of the workspace, by name. Empty
 	// makes a token for the whole workspace.
@@ -983,7 +985,7 @@ var File_toshi_workspace_v1_tokens_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\n" +
-	"\x1ftoshi/workspace/v1/tokens.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1etoshi/workspace/v1/roles.proto\"\xa5\x06\n" +
+	"\x1ftoshi/workspace/v1/tokens.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1etoshi/workspace/v1/roles.proto\"\xcf\x06\n" +
 	"\x05Token\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x121\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x1d.toshi.workspace.v1.TokenKindR\x04kind\x12\x16\n" +
@@ -1004,8 +1006,9 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\rclient_ranges\x18\f \x01(\v2 .toshi.workspace.v1.ClientRangesR\fclientRanges\x12:\n" +
 	"\n" +
 	"created_by\x18\r \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedBy\x127\n" +
-	"\tlast_used\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\blastUsed\x12B\n" +
-	"\x0fcreator_left_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\rcreatorLeftAt\x12J\n" +
+	"\tlast_used\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\blastUsed\x12l\n" +
+	"\x0fcreator_left_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampB(\x8a\xf4\x18$\n" +
+	"\x1btoken_creator_left_lifetime\x10\x010\x80\x9a\x9e\x01R\rcreatorLeftAt\x12J\n" +
 	"\rexpiry_reason\x18\x10 \x01(\x0e2%.toshi.workspace.v1.TokenExpiryReasonR\fexpiryReason\x12!\n" +
 	"\fclaimed_from\x18\x11 \x01(\tR\vclaimedFrom\"5\n" +
 	"\fClientRanges\x12\x0e\n" +
@@ -1018,11 +1021,12 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"o\n" +
 	"\x12ListTokensResponse\x121\n" +
 	"\x06tokens\x18\x01 \x03(\v2\x19.toshi.workspace.v1.TokenR\x06tokens\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xbe\x02\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xea\x02\n" +
 	"\x1bCreateWorkspaceTokenRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12e\n" +
 	"\n" +
-	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x18\n" +
+	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB*\x8a\xf4\x18&\n" +
+	"\x18workspace_token_lifetime\x10\x01\x18\x80\xce\xda\x03(\x80\xce\xda\x03R\texpiresAt\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x04 \x01(\tR\venvironment\x129\n" +
 	"\n" +

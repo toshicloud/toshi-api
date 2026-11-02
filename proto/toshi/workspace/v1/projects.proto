@@ -923,13 +923,13 @@ message CreateEmbedTokenRequest {
   // The project's name.
   string project = 1;
   // The origins of the pages that may spend it, each a scheme and a host
-  // with an optional port: https, or http for localhost only. At least
-  // one, and more than the server's maximum is INVALID_ARGUMENT.
-  repeated string origins = 2;
-  // How long the token stays valid; unset is the server's default, or the
-  // workspace's plan's maximum when that is shorter, and more than the
-  // plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
-  google.protobuf.Duration expires_in = 3;
+  // with an optional port: https, or http for localhost, 127.0.0.1 or ::1.
+  // At least one and at most 10; more is INVALID_ARGUMENT.
+  repeated string origins = 2 [(toshi.bound) = {name: "embed_token_origins", unit: UNIT_COUNT, max: 10, http_hosts: ["localhost", "127.0.0.1", "::1"]}];
+  // How long the token stays valid; unset is the server's default of 10
+  // minutes, or the workspace's plan's maximum when that is shorter, and
+  // more than the plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
+  google.protobuf.Duration expires_in = 3 [(toshi.bound) = {name: "embed_token_expires_in", unit: UNIT_SECONDS, default: 600}];
 }
 
 message CreateEmbedTokenResponse {

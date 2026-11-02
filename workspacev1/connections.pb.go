@@ -442,7 +442,8 @@ type MailConnection struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Output only. The lowercase address mail is received at: the connection's
 	// name at its custom domain, or at the workspace's name under the
-	// deployment's inbound mail domain when no custom domain is set.
+	// deployment's inbound mail domain when no custom domain is set. A raw
+	// message over 25 MiB is dropped with the reason too_large.
 	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 	// The service, by its ID, whose event endpoint the mail goes to.
 	Service string `protobuf:"bytes,2,opt,name=service,proto3" json:"service,omitempty"`
@@ -2014,9 +2015,10 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x0emanaged_fields\x18\x0e \x03(\tR\rmanagedFields\x12'\n" +
 	"\x0fmanifest_origin\x18\x0f \x01(\tR\x0emanifestOrigin\x126\n" +
 	"\x04mail\x18\x10 \x01(\v2\".toshi.workspace.v1.MailConnectionR\x04mailJ\x04\b\t\x10\n" +
-	"R\x11transform_version\"\xdf\x01\n" +
-	"\x0eMailConnection\x12\x18\n" +
-	"\aaddress\x18\x01 \x01(\tR\aaddress\x12\x18\n" +
+	"R\x11transform_version\"\xff\x01\n" +
+	"\x0eMailConnection\x128\n" +
+	"\aaddress\x18\x01 \x01(\tB\x1e\x8a\xf4\x18\x1a\n" +
+	"\x11inbound_mail_size\x10\x02(\x80\x80\xc0\fR\aaddress\x12\x18\n" +
 	"\aservice\x18\x02 \x01(\tR\aservice\x12\x1a\n" +
 	"\bendpoint\x18\x03 \x01(\tR\bendpoint\x12\x1a\n" +
 	"\bprovider\x18\x04 \x01(\tR\bprovider\x12\x16\n" +
@@ -2074,10 +2076,11 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vrequest_key\x18\x02 \x01(\tR\n" +
 	"requestKey\"\x1a\n" +
-	"\x18DeleteConnectionResponse\"\x85\x01\n" +
+	"\x18DeleteConnectionResponse\"\xb2\x01\n" +
 	"\x1dRotateConnectionSecretRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x123\n" +
-	"\aoverlap\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\aoverlap\x12\x1f\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12`\n" +
+	"\aoverlap\x18\x02 \x01(\v2\x19.google.protobuf.DurationB+\x8a\xf4\x18'\n" +
+	"\x19connection_secret_overlap\x10\x01\x18\x80\xa3\x05 \x00(\x80\xf5$R\aoverlap\x12\x1f\n" +
 	"\vrequest_key\x18\x03 \x01(\tR\n" +
 	"requestKey\"x\n" +
 	"\x1eRotateConnectionSecretResponse\x12>\n" +

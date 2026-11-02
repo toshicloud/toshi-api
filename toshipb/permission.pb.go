@@ -22,6 +22,59 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Unit identifies the unit of a bound's values.
+type Bound_Unit int32
+
+const (
+	Bound_UNIT_UNSPECIFIED Bound_Unit = 0
+	Bound_UNIT_SECONDS     Bound_Unit = 1
+	Bound_UNIT_BYTES       Bound_Unit = 2
+	Bound_UNIT_COUNT       Bound_Unit = 3
+)
+
+// Enum value maps for Bound_Unit.
+var (
+	Bound_Unit_name = map[int32]string{
+		0: "UNIT_UNSPECIFIED",
+		1: "UNIT_SECONDS",
+		2: "UNIT_BYTES",
+		3: "UNIT_COUNT",
+	}
+	Bound_Unit_value = map[string]int32{
+		"UNIT_UNSPECIFIED": 0,
+		"UNIT_SECONDS":     1,
+		"UNIT_BYTES":       2,
+		"UNIT_COUNT":       3,
+	}
+)
+
+func (x Bound_Unit) Enum() *Bound_Unit {
+	p := new(Bound_Unit)
+	*p = x
+	return p
+}
+
+func (x Bound_Unit) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Bound_Unit) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_permission_proto_enumTypes[0].Descriptor()
+}
+
+func (Bound_Unit) Type() protoreflect.EnumType {
+	return &file_toshi_permission_proto_enumTypes[0]
+}
+
+func (x Bound_Unit) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Bound_Unit.Descriptor instead.
+func (Bound_Unit) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_permission_proto_rawDescGZIP(), []int{2, 0}
+}
+
 // Audit is the audit event a call records.
 type Audit struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -187,6 +240,107 @@ func (x *MCP) GetExclude() bool {
 	return false
 }
 
+// Bound names fixed values and their units for a field.
+type Bound struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// name is a snake_case name unique across the API.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// unit is the unit of each value.
+	Unit Bound_Unit `protobuf:"varint,2,opt,name=unit,proto3,enum=toshi.Bound_Unit" json:"unit,omitempty"`
+	// default is the value used when none is set, before a lower plan or
+	// deployment limit applies.
+	Default *int64 `protobuf:"varint,3,opt,name=default,proto3,oneof" json:"default,omitempty"`
+	// min and max are fixed input bounds; a tighter limit may also apply.
+	Min *int64 `protobuf:"varint,4,opt,name=min,proto3,oneof" json:"min,omitempty"`
+	Max *int64 `protobuf:"varint,5,opt,name=max,proto3,oneof" json:"max,omitempty"`
+	// threshold is a fixed span or count applied by the server.
+	Threshold *int64 `protobuf:"varint,6,opt,name=threshold,proto3,oneof" json:"threshold,omitempty"`
+	// http_hosts lists the hosts allowed over http for an origins field;
+	// https is allowed on any host.
+	HttpHosts     []string `protobuf:"bytes,7,rep,name=http_hosts,json=httpHosts,proto3" json:"http_hosts,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Bound) Reset() {
+	*x = Bound{}
+	mi := &file_toshi_permission_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Bound) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Bound) ProtoMessage() {}
+
+func (x *Bound) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_permission_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Bound.ProtoReflect.Descriptor instead.
+func (*Bound) Descriptor() ([]byte, []int) {
+	return file_toshi_permission_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Bound) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Bound) GetUnit() Bound_Unit {
+	if x != nil {
+		return x.Unit
+	}
+	return Bound_UNIT_UNSPECIFIED
+}
+
+func (x *Bound) GetDefault() int64 {
+	if x != nil && x.Default != nil {
+		return *x.Default
+	}
+	return 0
+}
+
+func (x *Bound) GetMin() int64 {
+	if x != nil && x.Min != nil {
+		return *x.Min
+	}
+	return 0
+}
+
+func (x *Bound) GetMax() int64 {
+	if x != nil && x.Max != nil {
+		return *x.Max
+	}
+	return 0
+}
+
+func (x *Bound) GetThreshold() int64 {
+	if x != nil && x.Threshold != nil {
+		return *x.Threshold
+	}
+	return 0
+}
+
+func (x *Bound) GetHttpHosts() []string {
+	if x != nil {
+		return x.HttpHosts
+	}
+	return nil
+}
+
 var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
@@ -242,6 +396,14 @@ var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 		Field:         51003,
 		Name:          "toshi.field_permission",
 		Tag:           "bytes,51003,opt,name=field_permission",
+		Filename:      "toshi/permission.proto",
+	},
+	{
+		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
+		ExtensionType: (*Bound)(nil),
+		Field:         51009,
+		Name:          "toshi.bound",
+		Tag:           "bytes,51009,opt,name=bound",
 		Filename:      "toshi/permission.proto",
 	},
 }
@@ -327,6 +489,13 @@ var (
 	//
 	// optional string field_permission = 51003;
 	E_FieldPermission = &file_toshi_permission_proto_extTypes[6]
+	// bound states a fixed number the server applies to the field: the same
+	// for every deployment. Clients read it as a generated constant instead of
+	// copying it; the field's comment states it in words too, and the
+	// generator fails when the two differ.
+	//
+	// optional toshi.Bound bound = 51009;
+	E_Bound = &file_toshi_permission_proto_extTypes[7]
 )
 
 var File_toshi_permission_proto protoreflect.FileDescriptor
@@ -351,7 +520,29 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"_read_onlyB\x0e\n" +
 	"\f_destructiveB\r\n" +
 	"\v_idempotentB\r\n" +
-	"\v_open_world:@\n" +
+	"\v_open_world\"\xcb\x02\n" +
+	"\x05Bound\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12%\n" +
+	"\x04unit\x18\x02 \x01(\x0e2\x11.toshi.Bound.UnitR\x04unit\x12\x1d\n" +
+	"\adefault\x18\x03 \x01(\x03H\x00R\adefault\x88\x01\x01\x12\x15\n" +
+	"\x03min\x18\x04 \x01(\x03H\x01R\x03min\x88\x01\x01\x12\x15\n" +
+	"\x03max\x18\x05 \x01(\x03H\x02R\x03max\x88\x01\x01\x12!\n" +
+	"\tthreshold\x18\x06 \x01(\x03H\x03R\tthreshold\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"http_hosts\x18\a \x03(\tR\thttpHosts\"N\n" +
+	"\x04Unit\x12\x14\n" +
+	"\x10UNIT_UNSPECIFIED\x10\x00\x12\x10\n" +
+	"\fUNIT_SECONDS\x10\x01\x12\x0e\n" +
+	"\n" +
+	"UNIT_BYTES\x10\x02\x12\x0e\n" +
+	"\n" +
+	"UNIT_COUNT\x10\x03B\n" +
+	"\n" +
+	"\b_defaultB\x06\n" +
+	"\x04_minB\x06\n" +
+	"\x04_maxB\f\n" +
+	"\n" +
+	"_threshold:@\n" +
 	"\n" +
 	"permission\x12\x1e.google.protobuf.MethodOptions\x18\xb8\x8e\x03 \x01(\tR\n" +
 	"permission:6\n" +
@@ -361,7 +552,8 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\x03mcp\x12\x1e.google.protobuf.MethodOptions\x18\xbd\x8e\x03 \x01(\v2\n" +
 	".toshi.MCPR\x03mcp:2\n" +
 	"\x03own\x12\x1e.google.protobuf.MethodOptions\x18\xbe\x8e\x03 \x01(\bR\x03own:J\n" +
-	"\x10field_permission\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\tR\x0ffieldPermissionB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
+	"\x10field_permission\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\tR\x0ffieldPermission:C\n" +
+	"\x05bound\x12\x1d.google.protobuf.FieldOptions\x18\xc1\x8e\x03 \x01(\v2\f.toshi.BoundR\x05boundB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
 
 var (
 	file_toshi_permission_proto_rawDescOnce sync.Once
@@ -375,28 +567,34 @@ func file_toshi_permission_proto_rawDescGZIP() []byte {
 	return file_toshi_permission_proto_rawDescData
 }
 
-var file_toshi_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_toshi_permission_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_toshi_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_toshi_permission_proto_goTypes = []any{
-	(*Audit)(nil),                      // 0: toshi.Audit
-	(*MCP)(nil),                        // 1: toshi.MCP
-	(*descriptorpb.MethodOptions)(nil), // 2: google.protobuf.MethodOptions
-	(*descriptorpb.FieldOptions)(nil),  // 3: google.protobuf.FieldOptions
+	(Bound_Unit)(0),                    // 0: toshi.Bound.Unit
+	(*Audit)(nil),                      // 1: toshi.Audit
+	(*MCP)(nil),                        // 2: toshi.MCP
+	(*Bound)(nil),                      // 3: toshi.Bound
+	(*descriptorpb.MethodOptions)(nil), // 4: google.protobuf.MethodOptions
+	(*descriptorpb.FieldOptions)(nil),  // 5: google.protobuf.FieldOptions
 }
 var file_toshi_permission_proto_depIdxs = []int32{
-	2, // 0: toshi.permission:extendee -> google.protobuf.MethodOptions
-	2, // 1: toshi.scope:extendee -> google.protobuf.MethodOptions
-	2, // 2: toshi.audit:extendee -> google.protobuf.MethodOptions
-	2, // 3: toshi.by_field:extendee -> google.protobuf.MethodOptions
-	2, // 4: toshi.mcp:extendee -> google.protobuf.MethodOptions
-	2, // 5: toshi.own:extendee -> google.protobuf.MethodOptions
-	3, // 6: toshi.field_permission:extendee -> google.protobuf.FieldOptions
-	0, // 7: toshi.audit:type_name -> toshi.Audit
-	1, // 8: toshi.mcp:type_name -> toshi.MCP
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	7, // [7:9] is the sub-list for extension type_name
-	0, // [0:7] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: toshi.Bound.unit:type_name -> toshi.Bound.Unit
+	4,  // 1: toshi.permission:extendee -> google.protobuf.MethodOptions
+	4,  // 2: toshi.scope:extendee -> google.protobuf.MethodOptions
+	4,  // 3: toshi.audit:extendee -> google.protobuf.MethodOptions
+	4,  // 4: toshi.by_field:extendee -> google.protobuf.MethodOptions
+	4,  // 5: toshi.mcp:extendee -> google.protobuf.MethodOptions
+	4,  // 6: toshi.own:extendee -> google.protobuf.MethodOptions
+	5,  // 7: toshi.field_permission:extendee -> google.protobuf.FieldOptions
+	5,  // 8: toshi.bound:extendee -> google.protobuf.FieldOptions
+	1,  // 9: toshi.audit:type_name -> toshi.Audit
+	2,  // 10: toshi.mcp:type_name -> toshi.MCP
+	3,  // 11: toshi.bound:type_name -> toshi.Bound
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	9,  // [9:12] is the sub-list for extension type_name
+	1,  // [1:9] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_toshi_permission_proto_init() }
@@ -405,18 +603,20 @@ func file_toshi_permission_proto_init() {
 		return
 	}
 	file_toshi_permission_proto_msgTypes[1].OneofWrappers = []any{}
+	file_toshi_permission_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_permission_proto_rawDesc), len(file_toshi_permission_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   2,
-			NumExtensions: 7,
+			NumEnums:      1,
+			NumMessages:   3,
+			NumExtensions: 8,
 			NumServices:   0,
 		},
 		GoTypes:           file_toshi_permission_proto_goTypes,
 		DependencyIndexes: file_toshi_permission_proto_depIdxs,
+		EnumInfos:         file_toshi_permission_proto_enumTypes,
 		MessageInfos:      file_toshi_permission_proto_msgTypes,
 		ExtensionInfos:    file_toshi_permission_proto_extTypes,
 	}.Build()

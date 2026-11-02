@@ -2736,9 +2736,9 @@ type Workspace struct {
 	// workspace, its plan's keep_vm.max, or the default, 0, when the plan sets
 	// none.
 	KeepVmMaxSource FeatureSource `protobuf:"varint,41,opt,name=keep_vm_max_source,json=keepVmMaxSource,proto3,enum=toshi.workspace.v1.FeatureSource" json:"keep_vm_max_source,omitempty"`
-	// The workspace's kept VMs, and how many of them have been stopped for
-	// over 30 days.
-	KeepVmCount            int32 `protobuf:"varint,37,opt,name=keep_vm_count,json=keepVmCount,proto3" json:"keep_vm_count,omitempty"`
+	// The workspace's kept VMs.
+	KeepVmCount int32 `protobuf:"varint,37,opt,name=keep_vm_count,json=keepVmCount,proto3" json:"keep_vm_count,omitempty"`
+	// How many of the workspace's kept VMs have been stopped for over 30 days.
 	KeepVmStoppedLongCount int32 `protobuf:"varint,38,opt,name=keep_vm_stopped_long_count,json=keepVmStoppedLongCount,proto3" json:"keep_vm_stopped_long_count,omitempty"`
 	// Who last changed settings.recording, and when; unset while it was never
 	// changed. Set by Toshi.
@@ -6174,7 +6174,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x16\n" +
 	"\x06commit\x18\x02 \x01(\tR\x06commit\x12\x12\n" +
 	"\x04date\x18\x03 \x01(\tR\x04date\x122\n" +
-	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xa9\x11\n" +
+	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xd2\x11\n" +
 	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -6210,8 +6210,9 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x13hosting_certificate\x18# \x01(\v2&.toshi.workspace.v1.HostingCertificateR\x12hostingCertificate\x121\n" +
 	"\x15keep_vm_max_effective\x18$ \x01(\x05R\x12keepVmMaxEffective\x12N\n" +
 	"\x12keep_vm_max_source\x18) \x01(\x0e2!.toshi.workspace.v1.FeatureSourceR\x0fkeepVmMaxSource\x12\"\n" +
-	"\rkeep_vm_count\x18% \x01(\x05R\vkeepVmCount\x12:\n" +
-	"\x1akeep_vm_stopped_long_count\x18& \x01(\x05R\x16keepVmStoppedLongCount\x12W\n" +
+	"\rkeep_vm_count\x18% \x01(\x05R\vkeepVmCount\x12c\n" +
+	"\x1akeep_vm_stopped_long_count\x18& \x01(\x05B'\x8a\xf4\x18#\n" +
+	"\x1akeep_vm_stopped_long_after\x10\x010\x80\x9a\x9e\x01R\x16keepVmStoppedLongCount\x12W\n" +
 	"\x11recording_changed\x18( \x01(\v2*.toshi.workspace.v1.WorkspaceSettingChangeR\x10recordingChanged\x12m\n" +
 	"\x1drecording_human_spans_changed\x18* \x01(\v2*.toshi.workspace.v1.WorkspaceSettingChangeR\x1arecordingHumanSpansChanged\x127\n" +
 	"\tclosed_at\x18+ \x01(\v2\x1a.google.protobuf.TimestampR\bclosedAt\x12B\n" +

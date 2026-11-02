@@ -2,8 +2,8 @@
 // @generated from file toshi/permission.proto (package toshi, syntax proto3)
 /* eslint-disable */
 
-import type { GenExtension, GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
-import { extDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenExtension, GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, extDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
 import type { FieldOptions, MethodOptions } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_descriptor } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/permission.proto.
  */
 export const file_toshi_permission: GenFile = /*@__PURE__*/
-  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSI3CgVBdWRpdBIOCgZhY3Rpb24YASABKAkSDgoGdGFyZ2V0GAIgASgJEg4KBnJlYXNvbhgDIAEoCSK2AQoDTUNQEhYKCXJlYWRfb25seRgBIAEoCEgAiAEBEhgKC2Rlc3RydWN0aXZlGAIgASgISAGIAQESFwoKaWRlbXBvdGVudBgDIAEoCEgCiAEBEhcKCm9wZW5fd29ybGQYBCABKAhIA4gBARIPCgdleGNsdWRlGAUgASgIQgwKCl9yZWFkX29ubHlCDgoMX2Rlc3RydWN0aXZlQg0KC19pZGVtcG90ZW50Qg0KC19vcGVuX3dvcmxkOkAKCnBlcm1pc3Npb24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi4jgMgASgJUgpwZXJtaXNzaW9uOjYKBXNjb3BlEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuY4DIAEoCVIFc2NvcGU6RAoFYXVkaXQSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi6jgMgASgLMgwudG9zaGkuQXVkaXRSBWF1ZGl0OjsKCGJ5X2ZpZWxkEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvI4DIAEoCFIHYnlGaWVsZDo+CgNtY3ASHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi9jgMgASgLMgoudG9zaGkuTUNQUgNtY3A6MgoDb3duEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvo4DIAEoCFIDb3duOkoKEGZpZWxkX3Blcm1pc3Npb24SHS5nb29nbGUucHJvdG9idWYuRmllbGRPcHRpb25zGLuOAyABKAlSD2ZpZWxkUGVybWlzc2lvbkIeWhxnby50b3NoaWNsb3VkLmlvL2FwaS90b3NoaXBiYgZwcm90bzM", [file_google_protobuf_descriptor]);
+  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSI3CgVBdWRpdBIOCgZhY3Rpb24YASABKAkSDgoGdGFyZ2V0GAIgASgJEg4KBnJlYXNvbhgDIAEoCSK2AQoDTUNQEhYKCXJlYWRfb25seRgBIAEoCEgAiAEBEhgKC2Rlc3RydWN0aXZlGAIgASgISAGIAQESFwoKaWRlbXBvdGVudBgDIAEoCEgCiAEBEhcKCm9wZW5fd29ybGQYBCABKAhIA4gBARIPCgdleGNsdWRlGAUgASgIQgwKCl9yZWFkX29ubHlCDgoMX2Rlc3RydWN0aXZlQg0KC19pZGVtcG90ZW50Qg0KC19vcGVuX3dvcmxkIpYCCgVCb3VuZBIMCgRuYW1lGAEgASgJEh8KBHVuaXQYAiABKA4yES50b3NoaS5Cb3VuZC5Vbml0EhQKB2RlZmF1bHQYAyABKANIAIgBARIQCgNtaW4YBCABKANIAYgBARIQCgNtYXgYBSABKANIAogBARIWCgl0aHJlc2hvbGQYBiABKANIA4gBARISCgpodHRwX2hvc3RzGAcgAygJIk4KBFVuaXQSFAoQVU5JVF9VTlNQRUNJRklFRBAAEhAKDFVOSVRfU0VDT05EUxABEg4KClVOSVRfQllURVMQAhIOCgpVTklUX0NPVU5UEANCCgoIX2RlZmF1bHRCBgoEX21pbkIGCgRfbWF4QgwKCl90aHJlc2hvbGQ6QAoKcGVybWlzc2lvbhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLiOAyABKAlSCnBlcm1pc3Npb246NgoFc2NvcGUSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi5jgMgASgJUgVzY29wZTpECgVhdWRpdBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLqOAyABKAsyDC50b3NoaS5BdWRpdFIFYXVkaXQ6OwoIYnlfZmllbGQSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi8jgMgASgIUgdieUZpZWxkOj4KA21jcBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGL2OAyABKAsyCi50b3NoaS5NQ1BSA21jcDoyCgNvd24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi+jgMgASgIUgNvd246SgoQZmllbGRfcGVybWlzc2lvbhIdLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE9wdGlvbnMYu44DIAEoCVIPZmllbGRQZXJtaXNzaW9uOkMKBWJvdW5kEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0aW9ucxjBjgMgASgLMgwudG9zaGkuQm91bmRSBWJvdW5kQh5aHGdvLnRvc2hpY2xvdWQuaW8vYXBpL3Rvc2hpcGJiBnByb3RvMw", [file_google_protobuf_descriptor]);
 
 /**
  * Audit is the audit event a call records.
@@ -207,6 +207,165 @@ export const MCPSchema: GenMessage<MCP, {jsonType: MCPJson}> = /*@__PURE__*/
   messageDesc(file_toshi_permission, 1);
 
 /**
+ * Bound names fixed values and their units for a field.
+ *
+ * @generated from message toshi.Bound
+ */
+export type Bound = Message<"toshi.Bound"> & {
+  /**
+   * name is a snake_case name unique across the API.
+   *
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * unit is the unit of each value.
+   *
+   * @generated from field: toshi.Bound.Unit unit = 2;
+   */
+  unit: Bound_Unit;
+
+  /**
+   * default is the value used when none is set, before a lower plan or
+   * deployment limit applies.
+   *
+   * @generated from field: optional int64 default = 3;
+   */
+  default?: bigint | undefined;
+
+  /**
+   * min and max are fixed input bounds; a tighter limit may also apply.
+   *
+   * @generated from field: optional int64 min = 4;
+   */
+  min?: bigint | undefined;
+
+  /**
+   * @generated from field: optional int64 max = 5;
+   */
+  max?: bigint | undefined;
+
+  /**
+   * threshold is a fixed span or count applied by the server.
+   *
+   * @generated from field: optional int64 threshold = 6;
+   */
+  threshold?: bigint | undefined;
+
+  /**
+   * http_hosts lists the hosts allowed over http for an origins field;
+   * https is allowed on any host.
+   *
+   * @generated from field: repeated string http_hosts = 7;
+   */
+  httpHosts: string[];
+};
+
+/**
+ * Bound names fixed values and their units for a field.
+ *
+ * @generated from message toshi.Bound
+ */
+export type BoundJson = {
+  /**
+   * name is a snake_case name unique across the API.
+   *
+   * @generated from field: string name = 1;
+   */
+  name?: string;
+
+  /**
+   * unit is the unit of each value.
+   *
+   * @generated from field: toshi.Bound.Unit unit = 2;
+   */
+  unit?: Bound_UnitJson;
+
+  /**
+   * default is the value used when none is set, before a lower plan or
+   * deployment limit applies.
+   *
+   * @generated from field: optional int64 default = 3;
+   */
+  default?: string;
+
+  /**
+   * min and max are fixed input bounds; a tighter limit may also apply.
+   *
+   * @generated from field: optional int64 min = 4;
+   */
+  min?: string;
+
+  /**
+   * @generated from field: optional int64 max = 5;
+   */
+  max?: string;
+
+  /**
+   * threshold is a fixed span or count applied by the server.
+   *
+   * @generated from field: optional int64 threshold = 6;
+   */
+  threshold?: string;
+
+  /**
+   * http_hosts lists the hosts allowed over http for an origins field;
+   * https is allowed on any host.
+   *
+   * @generated from field: repeated string http_hosts = 7;
+   */
+  httpHosts?: string[];
+};
+
+/**
+ * Describes the message toshi.Bound.
+ * Use `create(BoundSchema)` to create a new message.
+ */
+export const BoundSchema: GenMessage<Bound, {jsonType: BoundJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_permission, 2);
+
+/**
+ * Unit identifies the unit of a bound's values.
+ *
+ * @generated from enum toshi.Bound.Unit
+ */
+export enum Bound_Unit {
+  /**
+   * @generated from enum value: UNIT_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: UNIT_SECONDS = 1;
+   */
+  SECONDS = 1,
+
+  /**
+   * @generated from enum value: UNIT_BYTES = 2;
+   */
+  BYTES = 2,
+
+  /**
+   * @generated from enum value: UNIT_COUNT = 3;
+   */
+  COUNT = 3,
+}
+
+/**
+ * Unit identifies the unit of a bound's values.
+ *
+ * @generated from enum toshi.Bound.Unit
+ */
+export type Bound_UnitJson = "UNIT_UNSPECIFIED" | "UNIT_SECONDS" | "UNIT_BYTES" | "UNIT_COUNT";
+
+/**
+ * Describes the enum toshi.Bound.Unit.
+ */
+export const Bound_UnitSchema: GenEnum<Bound_Unit, Bound_UnitJson> = /*@__PURE__*/
+  enumDesc(file_toshi_permission, 2, 0);
+
+/**
  * permission names what a caller needs to make the call: an area and a
  * level. "<area>.read" sees what the area holds and "<area>.write" changes
  * it, where the area is a product, such as "sandboxes", or a part of the
@@ -308,4 +467,15 @@ export const own: GenExtension<MethodOptions, boolean> = /*@__PURE__*/
  */
 export const field_permission: GenExtension<FieldOptions, string> = /*@__PURE__*/
   extDesc(file_toshi_permission, 6);
+
+/**
+ * bound states a fixed number the server applies to the field: the same
+ * for every deployment. Clients read it as a generated constant instead of
+ * copying it; the field's comment states it in words too, and the
+ * generator fails when the two differ.
+ *
+ * @generated from extension: toshi.Bound bound = 51009;
+ */
+export const bound: GenExtension<FieldOptions, Bound> = /*@__PURE__*/
+  extDesc(file_toshi_permission, 7);
 

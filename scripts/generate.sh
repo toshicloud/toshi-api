@@ -21,6 +21,20 @@ for tool in buf protoc-gen-go protoc-gen-connect-go protoc-gen-es; do
 done
 
 # buf generate --clean would remove the output directory, and the Go output
-# goes to the repository root, so the generated trees are removed here.
-rm -rf workspacev1 operatorv1 githubv1 githubcorev1 backendv1 providerv1 toshipb ts/gen
+# goes to the repository root, so the generated trees are removed here. The
+# contract constants have their own generator and are kept across this step.
+rm -rf workspacev1 operatorv1 githubv1 githubcorev1 backendv1 providerv1 toshipb
+shopt -s nullglob dotglob
+for entry in ts/gen/*; do
+  if [[ $entry != ts/gen/toshi || ! -d $entry ]]; then
+    rm -rf -- "$entry"
+    continue
+  fi
+  for generated in "$entry"/*; do
+    if [[ $generated != ts/gen/toshi/constants.ts ]]; then
+      rm -rf -- "$generated"
+    fi
+  done
+done
+shopt -u nullglob dotglob
 buf generate
