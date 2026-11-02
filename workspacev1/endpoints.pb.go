@@ -11,6 +11,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -383,10 +384,8 @@ type Endpoint struct {
 	// An http or event endpoint's port in the guest.
 	Port int32 `protobuf:"varint,5,opt,name=port,proto3" json:"port,omitempty"`
 	// A stream endpoint's command.
-	Command []string      `protobuf:"bytes,6,rep,name=command,proto3" json:"command,omitempty"`
-	State   EndpointState `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.EndpointState" json:"state,omitempty"`
-	// Who created the endpoint, as the audit log names an actor.
-	CreatedBy string                 `protobuf:"bytes,8,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	Command   []string               `protobuf:"bytes,6,rep,name=command,proto3" json:"command,omitempty"`
+	State     EndpointState          `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.EndpointState" json:"state,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Unset while the endpoint lasts.
 	EndedAt   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
@@ -436,7 +435,12 @@ type Endpoint struct {
 	// The service sign-in whose one-shot endpoint this is: the sign-in opens
 	// it and removes it when the sign-in ends, and ListEndpoints never lists
 	// it. Output only.
-	SignInId      string `protobuf:"bytes,28,opt,name=sign_in_id,json=signInId,proto3" json:"sign_in_id,omitempty"`
+	SignInId string `protobuf:"bytes,28,opt,name=sign_in_id,json=signInId,proto3" json:"sign_in_id,omitempty"`
+	// Who created the endpoint. A creator the audit log recorded as a session
+	// or a person is a PERSON, a workspace API token is a TOKEN, an operator
+	// or the control plane is the SYSTEM, and an endpoint whose creator was
+	// not recorded has none.
+	CreatedBy     *Subject `protobuf:"bytes,29,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -518,13 +522,6 @@ func (x *Endpoint) GetState() EndpointState {
 		return x.State
 	}
 	return EndpointState_ENDPOINT_STATE_UNSPECIFIED
-}
-
-func (x *Endpoint) GetCreatedBy() string {
-	if x != nil {
-		return x.CreatedBy
-	}
-	return ""
 }
 
 func (x *Endpoint) GetCreatedAt() *timestamppb.Timestamp {
@@ -665,6 +662,13 @@ func (x *Endpoint) GetSignInId() string {
 		return x.SignInId
 	}
 	return ""
+}
+
+func (x *Endpoint) GetCreatedBy() *Subject {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return nil
 }
 
 // EndpointACPState is what an ACP endpoint's process is doing, as the
@@ -963,7 +967,7 @@ type EndpointClient struct {
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The mode granted to its last attach.
 	Mode EndpointAttachMode `protobuf:"varint,2,opt,name=mode,proto3,enum=toshi.workspace.v1.EndpointAttachMode" json:"mode,omitempty"`
-	// Who attached it, as created_by names an actor.
+	// Who attached it, as an actor label the audit log records.
 	AttachedBy string `protobuf:"bytes,3,opt,name=attached_by,json=attachedBy,proto3" json:"attached_by,omitempty"`
 	// The device and the credential of the connect token that admitted it,
 	// if one did.
@@ -1149,7 +1153,7 @@ func (x *EndpointDefault) GetPolicy() *EndpointPolicy {
 // endpoint policy uses.
 type EndpointPolicy struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Rises at each change. SetEndpointPolicy names the version it was read
+	// Rises at each change. UpdateEndpoint names the version it was read
 	// at; CreateEndpoint takes none.
 	Version int64 `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
 	// Who may attach a client: workspace (the default) or creator.
@@ -2676,36 +2680,34 @@ func (x *GetEndpointPolicyResponse) GetPolicy() *EndpointPolicy {
 	return nil
 }
 
-type SetEndpointPolicyRequest struct {
+type UpdateEndpointRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// The whole document, with the version it was read at.
-	Policy *EndpointPolicy `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
-	// An event endpoint's service, by its ID, in place of job_id.
-	Service string `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
+	// The endpoint to change; job_id and name, or service and name, name it.
+	// Only policy is read from it.
+	Endpoint   *Endpoint              `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	UpdateMask *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	// What the change does to a stream endpoint's attached clients; unset
 	// keeps them. DRAIN and END on an http or an event endpoint are
 	// INVALID_ARGUMENT.
-	Streams       EndpointStreams `protobuf:"varint,5,opt,name=streams,proto3,enum=toshi.workspace.v1.EndpointStreams" json:"streams,omitempty"`
+	Streams       EndpointStreams `protobuf:"varint,3,opt,name=streams,proto3,enum=toshi.workspace.v1.EndpointStreams" json:"streams,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetEndpointPolicyRequest) Reset() {
-	*x = SetEndpointPolicyRequest{}
+func (x *UpdateEndpointRequest) Reset() {
+	*x = UpdateEndpointRequest{}
 	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetEndpointPolicyRequest) String() string {
+func (x *UpdateEndpointRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetEndpointPolicyRequest) ProtoMessage() {}
+func (*UpdateEndpointRequest) ProtoMessage() {}
 
-func (x *SetEndpointPolicyRequest) ProtoReflect() protoreflect.Message {
+func (x *UpdateEndpointRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2717,68 +2719,54 @@ func (x *SetEndpointPolicyRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetEndpointPolicyRequest.ProtoReflect.Descriptor instead.
-func (*SetEndpointPolicyRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateEndpointRequest.ProtoReflect.Descriptor instead.
+func (*UpdateEndpointRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *SetEndpointPolicyRequest) GetJobId() string {
+func (x *UpdateEndpointRequest) GetEndpoint() *Endpoint {
 	if x != nil {
-		return x.JobId
-	}
-	return ""
-}
-
-func (x *SetEndpointPolicyRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *SetEndpointPolicyRequest) GetPolicy() *EndpointPolicy {
-	if x != nil {
-		return x.Policy
+		return x.Endpoint
 	}
 	return nil
 }
 
-func (x *SetEndpointPolicyRequest) GetService() string {
+func (x *UpdateEndpointRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	if x != nil {
-		return x.Service
+		return x.UpdateMask
 	}
-	return ""
+	return nil
 }
 
-func (x *SetEndpointPolicyRequest) GetStreams() EndpointStreams {
+func (x *UpdateEndpointRequest) GetStreams() EndpointStreams {
 	if x != nil {
 		return x.Streams
 	}
 	return EndpointStreams_ENDPOINT_STREAMS_UNSPECIFIED
 }
 
-type SetEndpointPolicyResponse struct {
+type UpdateEndpointResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The document stored, at its new version.
-	Policy        *EndpointPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
+	// The endpoint as stored, its policy at its new version.
+	Endpoint      *Endpoint `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetEndpointPolicyResponse) Reset() {
-	*x = SetEndpointPolicyResponse{}
+func (x *UpdateEndpointResponse) Reset() {
+	*x = UpdateEndpointResponse{}
 	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetEndpointPolicyResponse) String() string {
+func (x *UpdateEndpointResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetEndpointPolicyResponse) ProtoMessage() {}
+func (*UpdateEndpointResponse) ProtoMessage() {}
 
-func (x *SetEndpointPolicyResponse) ProtoReflect() protoreflect.Message {
+func (x *UpdateEndpointResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_endpoints_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2790,14 +2778,14 @@ func (x *SetEndpointPolicyResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetEndpointPolicyResponse.ProtoReflect.Descriptor instead.
-func (*SetEndpointPolicyResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateEndpointResponse.ProtoReflect.Descriptor instead.
+func (*UpdateEndpointResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *SetEndpointPolicyResponse) GetPolicy() *EndpointPolicy {
+func (x *UpdateEndpointResponse) GetEndpoint() *Endpoint {
 	if x != nil {
-		return x.Policy
+		return x.Endpoint
 	}
 	return nil
 }
@@ -4230,7 +4218,7 @@ var File_toshi_workspace_v1_endpoints_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/endpoints.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a!toshi/workspace/v1/hostjobs.proto\x1a\"toshi/workspace/v1/workspace.proto\"\xc9\b\n" +
+	"\"toshi/workspace/v1/endpoints.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a!toshi/workspace/v1/hostjobs.proto\x1a\x1etoshi/workspace/v1/roles.proto\x1a\"toshi/workspace/v1/workspace.proto\"\xec\b\n" +
 	"\bEndpoint\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x15\n" +
 	"\x06job_id\x18\x02 \x01(\tR\x05jobId\x12\x12\n" +
@@ -4238,9 +4226,7 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x05shape\x18\x04 \x01(\x0e2!.toshi.workspace.v1.EndpointShapeR\x05shape\x12\x12\n" +
 	"\x04port\x18\x05 \x01(\x05R\x04port\x12\x18\n" +
 	"\acommand\x18\x06 \x03(\tR\acommand\x127\n" +
-	"\x05state\x18\a \x01(\x0e2!.toshi.workspace.v1.EndpointStateR\x05state\x12\x1d\n" +
-	"\n" +
-	"created_by\x18\b \x01(\tR\tcreatedBy\x129\n" +
+	"\x05state\x18\a \x01(\x0e2!.toshi.workspace.v1.EndpointStateR\x05state\x129\n" +
 	"\n" +
 	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x125\n" +
 	"\bended_at\x18\n" +
@@ -4265,9 +4251,11 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\aframing\x18\x1a \x01(\tR\aframing\x12A\n" +
 	"\tacp_state\x18\x1b \x01(\v2$.toshi.workspace.v1.EndpointACPStateR\bacpState\x12\x1c\n" +
 	"\n" +
-	"sign_in_id\x18\x1c \x01(\tR\bsignInIdB\f\n" +
+	"sign_in_id\x18\x1c \x01(\tR\bsignInId\x12:\n" +
 	"\n" +
-	"_exit_code\"\x82\x02\n" +
+	"created_by\x18\x1d \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedByB\f\n" +
+	"\n" +
+	"_exit_codeJ\x04\b\b\x10\t\"\x82\x02\n" +
 	"\x10EndpointACPState\x12\x14\n" +
 	"\x05state\x18\x01 \x01(\tR\x05state\x12\x1d\n" +
 	"\n" +
@@ -4445,15 +4433,14 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
 	"\aservice\x18\x03 \x01(\tR\aservice\"W\n" +
 	"\x19GetEndpointPolicyResponse\x12:\n" +
-	"\x06policy\x18\x01 \x01(\v2\".toshi.workspace.v1.EndpointPolicyR\x06policy\"\xda\x01\n" +
-	"\x18SetEndpointPolicyRequest\x12\x15\n" +
-	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12:\n" +
-	"\x06policy\x18\x03 \x01(\v2\".toshi.workspace.v1.EndpointPolicyR\x06policy\x12\x18\n" +
-	"\aservice\x18\x04 \x01(\tR\aservice\x12=\n" +
-	"\astreams\x18\x05 \x01(\x0e2#.toshi.workspace.v1.EndpointStreamsR\astreams\"W\n" +
-	"\x19SetEndpointPolicyResponse\x12:\n" +
-	"\x06policy\x18\x01 \x01(\v2\".toshi.workspace.v1.EndpointPolicyR\x06policy\"\xea\x02\n" +
+	"\x06policy\x18\x01 \x01(\v2\".toshi.workspace.v1.EndpointPolicyR\x06policy\"\xcd\x01\n" +
+	"\x15UpdateEndpointRequest\x128\n" +
+	"\bendpoint\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.EndpointR\bendpoint\x12;\n" +
+	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\x12=\n" +
+	"\astreams\x18\x03 \x01(\x0e2#.toshi.workspace.v1.EndpointStreamsR\astreams\"R\n" +
+	"\x16UpdateEndpointResponse\x128\n" +
+	"\bendpoint\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.EndpointR\bendpoint\"\xea\x02\n" +
 	"\x1bListEndpointRequestsRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
@@ -4598,8 +4585,8 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\rListEndpoints\x12(.toshi.workspace.v1.ListEndpointsRequest\x1a).toshi.workspace.v1.ListEndpointsResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12r\n" +
 	"\vGetEndpoint\x12&.toshi.workspace.v1.GetEndpointRequest\x1a'.toshi.workspace.v1.GetEndpointResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\x84\x01\n" +
 	"\x11GetEndpointPolicy\x12,.toshi.workspace.v1.GetEndpointPolicyRequest\x1a-.toshi.workspace.v1.GetEndpointPolicyResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xb8\x01\n" +
-	"\x11SetEndpointPolicy\x12,.toshi.workspace.v1.SetEndpointPolicyRequest\x1a-.toshi.workspace.v1.SetEndpointPolicyResponse\"F\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18/\n" +
-	"\x1chost_job.endpoint_policy_set\x12\x0fhost_job:job_id\x12\x8d\x01\n" +
+	"\x0eUpdateEndpoint\x12).toshi.workspace.v1.UpdateEndpointRequest\x1a*.toshi.workspace.v1.UpdateEndpointResponse\"O\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x188\n" +
+	"\x1chost_job.endpoint_policy_set\x12\x18host_job:endpoint.job_id\x12\x8d\x01\n" +
 	"\x14ListEndpointRequests\x12/.toshi.workspace.v1.ListEndpointRequestsRequest\x1a0.toshi.workspace.v1.ListEndpointRequestsResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\x87\x01\n" +
 	"\x12GetEndpointRequest\x12-.toshi.workspace.v1.GetEndpointRequestRequest\x1a..toshi.workspace.v1.GetEndpointRequestResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xb2\x01\n" +
 	"\x11ExportEndpointLog\x12,.toshi.workspace.v1.ExportEndpointLogRequest\x1a-.toshi.workspace.v1.ExportEndpointLogResponse\">\xc2\xf3\x18\x0eendpoints.read\xd2\xf3\x18(\n" +
@@ -4663,8 +4650,8 @@ var file_toshi_workspace_v1_endpoints_proto_goTypes = []any{
 	(*GetEndpointResponse)(nil),                // 27: toshi.workspace.v1.GetEndpointResponse
 	(*GetEndpointPolicyRequest)(nil),           // 28: toshi.workspace.v1.GetEndpointPolicyRequest
 	(*GetEndpointPolicyResponse)(nil),          // 29: toshi.workspace.v1.GetEndpointPolicyResponse
-	(*SetEndpointPolicyRequest)(nil),           // 30: toshi.workspace.v1.SetEndpointPolicyRequest
-	(*SetEndpointPolicyResponse)(nil),          // 31: toshi.workspace.v1.SetEndpointPolicyResponse
+	(*UpdateEndpointRequest)(nil),              // 30: toshi.workspace.v1.UpdateEndpointRequest
+	(*UpdateEndpointResponse)(nil),             // 31: toshi.workspace.v1.UpdateEndpointResponse
 	(*ListEndpointRequestsRequest)(nil),        // 32: toshi.workspace.v1.ListEndpointRequestsRequest
 	(*ListEndpointRequestsResponse)(nil),       // 33: toshi.workspace.v1.ListEndpointRequestsResponse
 	(*GetEndpointRequestRequest)(nil),          // 34: toshi.workspace.v1.GetEndpointRequestRequest
@@ -4690,9 +4677,11 @@ var file_toshi_workspace_v1_endpoints_proto_goTypes = []any{
 	nil,                                        // 54: toshi.workspace.v1.EndpointACPState.DroppedEntry
 	nil,                                        // 55: toshi.workspace.v1.EndpointMatch.HeadersEntry
 	(*timestamppb.Timestamp)(nil),              // 56: google.protobuf.Timestamp
-	(*EventEnvelope)(nil),                      // 57: toshi.workspace.v1.EventEnvelope
-	(HostJobKind)(0),                           // 58: toshi.workspace.v1.HostJobKind
-	(*durationpb.Duration)(nil),                // 59: google.protobuf.Duration
+	(*Subject)(nil),                            // 57: toshi.workspace.v1.Subject
+	(*EventEnvelope)(nil),                      // 58: toshi.workspace.v1.EventEnvelope
+	(HostJobKind)(0),                           // 59: toshi.workspace.v1.HostJobKind
+	(*durationpb.Duration)(nil),                // 60: google.protobuf.Duration
+	(*fieldmaskpb.FieldMask)(nil),              // 61: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_endpoints_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Endpoint.shape:type_name -> toshi.workspace.v1.EndpointShape
@@ -4703,95 +4692,97 @@ var file_toshi_workspace_v1_endpoints_proto_depIdxs = []int32{
 	10, // 5: toshi.workspace.v1.Endpoint.clients:type_name -> toshi.workspace.v1.EndpointClient
 	8,  // 6: toshi.workspace.v1.Endpoint.events:type_name -> toshi.workspace.v1.EndpointEventCounts
 	7,  // 7: toshi.workspace.v1.Endpoint.acp_state:type_name -> toshi.workspace.v1.EndpointACPState
-	56, // 8: toshi.workspace.v1.EndpointACPState.since:type_name -> google.protobuf.Timestamp
-	54, // 9: toshi.workspace.v1.EndpointACPState.dropped:type_name -> toshi.workspace.v1.EndpointACPState.DroppedEntry
-	56, // 10: toshi.workspace.v1.EndpointEventCounts.last_delivery_at:type_name -> google.protobuf.Timestamp
-	5,  // 11: toshi.workspace.v1.EndpointMessage.state:type_name -> toshi.workspace.v1.EndpointMessageState
-	56, // 12: toshi.workspace.v1.EndpointMessage.next_attempt_at:type_name -> google.protobuf.Timestamp
-	56, // 13: toshi.workspace.v1.EndpointMessage.delivered_at:type_name -> google.protobuf.Timestamp
-	56, // 14: toshi.workspace.v1.EndpointMessage.replayed_at:type_name -> google.protobuf.Timestamp
-	56, // 15: toshi.workspace.v1.EndpointMessage.scheduled_for:type_name -> google.protobuf.Timestamp
-	57, // 16: toshi.workspace.v1.EndpointMessage.envelope:type_name -> toshi.workspace.v1.EventEnvelope
-	2,  // 17: toshi.workspace.v1.EndpointClient.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
-	56, // 18: toshi.workspace.v1.EndpointClient.attached_since:type_name -> google.protobuf.Timestamp
-	56, // 19: toshi.workspace.v1.EndpointClient.seen_at:type_name -> google.protobuf.Timestamp
-	56, // 20: toshi.workspace.v1.EndpointClient.detached_at:type_name -> google.protobuf.Timestamp
-	58, // 21: toshi.workspace.v1.EndpointDefault.workload_kind:type_name -> toshi.workspace.v1.HostJobKind
-	0,  // 22: toshi.workspace.v1.EndpointDefault.shape:type_name -> toshi.workspace.v1.EndpointShape
-	12, // 23: toshi.workspace.v1.EndpointDefault.policy:type_name -> toshi.workspace.v1.EndpointPolicy
-	13, // 24: toshi.workspace.v1.EndpointPolicy.modules:type_name -> toshi.workspace.v1.EndpointModuleList
-	14, // 25: toshi.workspace.v1.EndpointModuleList.modules:type_name -> toshi.workspace.v1.EndpointModule
-	15, // 26: toshi.workspace.v1.EndpointModule.match:type_name -> toshi.workspace.v1.EndpointMatch
-	55, // 27: toshi.workspace.v1.EndpointMatch.headers:type_name -> toshi.workspace.v1.EndpointMatch.HeadersEntry
-	56, // 28: toshi.workspace.v1.EndpointRequest.arrived_at:type_name -> google.protobuf.Timestamp
-	59, // 29: toshi.workspace.v1.EndpointRequest.duration:type_name -> google.protobuf.Duration
-	17, // 30: toshi.workspace.v1.EndpointRequest.caller:type_name -> toshi.workspace.v1.EndpointRequestCaller
-	18, // 31: toshi.workspace.v1.EndpointRequest.request_headers:type_name -> toshi.workspace.v1.EndpointHeader
-	18, // 32: toshi.workspace.v1.EndpointRequest.response_headers:type_name -> toshi.workspace.v1.EndpointHeader
-	19, // 33: toshi.workspace.v1.EndpointRequest.request_body:type_name -> toshi.workspace.v1.EndpointBody
-	19, // 34: toshi.workspace.v1.EndpointRequest.response_body:type_name -> toshi.workspace.v1.EndpointBody
-	56, // 35: toshi.workspace.v1.Forward.opened_at:type_name -> google.protobuf.Timestamp
-	56, // 36: toshi.workspace.v1.Tunnel.since:type_name -> google.protobuf.Timestamp
-	12, // 37: toshi.workspace.v1.CreateEndpointRequest.policy:type_name -> toshi.workspace.v1.EndpointPolicy
-	6,  // 38: toshi.workspace.v1.CreateEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
-	6,  // 39: toshi.workspace.v1.ListEndpointsResponse.endpoints:type_name -> toshi.workspace.v1.Endpoint
-	6,  // 40: toshi.workspace.v1.GetEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
-	12, // 41: toshi.workspace.v1.GetEndpointPolicyResponse.policy:type_name -> toshi.workspace.v1.EndpointPolicy
-	12, // 42: toshi.workspace.v1.SetEndpointPolicyRequest.policy:type_name -> toshi.workspace.v1.EndpointPolicy
-	3,  // 43: toshi.workspace.v1.SetEndpointPolicyRequest.streams:type_name -> toshi.workspace.v1.EndpointStreams
-	12, // 44: toshi.workspace.v1.SetEndpointPolicyResponse.policy:type_name -> toshi.workspace.v1.EndpointPolicy
-	56, // 45: toshi.workspace.v1.ListEndpointRequestsRequest.since:type_name -> google.protobuf.Timestamp
-	56, // 46: toshi.workspace.v1.ListEndpointRequestsRequest.until:type_name -> google.protobuf.Timestamp
-	16, // 47: toshi.workspace.v1.ListEndpointRequestsResponse.requests:type_name -> toshi.workspace.v1.EndpointRequest
-	16, // 48: toshi.workspace.v1.GetEndpointRequestResponse.request:type_name -> toshi.workspace.v1.EndpointRequest
-	4,  // 49: toshi.workspace.v1.ExportEndpointLogRequest.log:type_name -> toshi.workspace.v1.EndpointLog
-	56, // 50: toshi.workspace.v1.ExportEndpointLogRequest.since:type_name -> google.protobuf.Timestamp
-	56, // 51: toshi.workspace.v1.ExportEndpointLogRequest.until:type_name -> google.protobuf.Timestamp
-	2,  // 52: toshi.workspace.v1.CreateEndpointConnectTokenRequest.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
-	56, // 53: toshi.workspace.v1.CreateEndpointConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 54: toshi.workspace.v1.CreateEndpointConnectTokenResponse.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
-	20, // 55: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
-	21, // 56: toshi.workspace.v1.GetTunnelResponse.tunnel:type_name -> toshi.workspace.v1.Tunnel
-	5,  // 57: toshi.workspace.v1.TailEndpointMessagesRequest.states:type_name -> toshi.workspace.v1.EndpointMessageState
-	9,  // 58: toshi.workspace.v1.TailEndpointMessagesResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
-	9,  // 59: toshi.workspace.v1.ReplayEndpointMessageResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
-	22, // 60: toshi.workspace.v1.EndpointService.CreateEndpoint:input_type -> toshi.workspace.v1.CreateEndpointRequest
-	24, // 61: toshi.workspace.v1.EndpointService.ListEndpoints:input_type -> toshi.workspace.v1.ListEndpointsRequest
-	26, // 62: toshi.workspace.v1.EndpointService.GetEndpoint:input_type -> toshi.workspace.v1.GetEndpointRequest
-	28, // 63: toshi.workspace.v1.EndpointService.GetEndpointPolicy:input_type -> toshi.workspace.v1.GetEndpointPolicyRequest
-	30, // 64: toshi.workspace.v1.EndpointService.SetEndpointPolicy:input_type -> toshi.workspace.v1.SetEndpointPolicyRequest
-	32, // 65: toshi.workspace.v1.EndpointService.ListEndpointRequests:input_type -> toshi.workspace.v1.ListEndpointRequestsRequest
-	34, // 66: toshi.workspace.v1.EndpointService.GetEndpointRequest:input_type -> toshi.workspace.v1.GetEndpointRequestRequest
-	36, // 67: toshi.workspace.v1.EndpointService.ExportEndpointLog:input_type -> toshi.workspace.v1.ExportEndpointLogRequest
-	38, // 68: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:input_type -> toshi.workspace.v1.CreateEndpointConnectTokenRequest
-	40, // 69: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:input_type -> toshi.workspace.v1.RevokeEndpointConnectTokenRequest
-	42, // 70: toshi.workspace.v1.EndpointService.DeleteEndpoint:input_type -> toshi.workspace.v1.DeleteEndpointRequest
-	44, // 71: toshi.workspace.v1.EndpointService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
-	46, // 72: toshi.workspace.v1.EndpointService.GetTunnel:input_type -> toshi.workspace.v1.GetTunnelRequest
-	48, // 73: toshi.workspace.v1.EndpointService.SendEndpointMessage:input_type -> toshi.workspace.v1.SendEndpointMessageRequest
-	50, // 74: toshi.workspace.v1.EndpointService.TailEndpointMessages:input_type -> toshi.workspace.v1.TailEndpointMessagesRequest
-	52, // 75: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:input_type -> toshi.workspace.v1.ReplayEndpointMessageRequest
-	23, // 76: toshi.workspace.v1.EndpointService.CreateEndpoint:output_type -> toshi.workspace.v1.CreateEndpointResponse
-	25, // 77: toshi.workspace.v1.EndpointService.ListEndpoints:output_type -> toshi.workspace.v1.ListEndpointsResponse
-	27, // 78: toshi.workspace.v1.EndpointService.GetEndpoint:output_type -> toshi.workspace.v1.GetEndpointResponse
-	29, // 79: toshi.workspace.v1.EndpointService.GetEndpointPolicy:output_type -> toshi.workspace.v1.GetEndpointPolicyResponse
-	31, // 80: toshi.workspace.v1.EndpointService.SetEndpointPolicy:output_type -> toshi.workspace.v1.SetEndpointPolicyResponse
-	33, // 81: toshi.workspace.v1.EndpointService.ListEndpointRequests:output_type -> toshi.workspace.v1.ListEndpointRequestsResponse
-	35, // 82: toshi.workspace.v1.EndpointService.GetEndpointRequest:output_type -> toshi.workspace.v1.GetEndpointRequestResponse
-	37, // 83: toshi.workspace.v1.EndpointService.ExportEndpointLog:output_type -> toshi.workspace.v1.ExportEndpointLogResponse
-	39, // 84: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:output_type -> toshi.workspace.v1.CreateEndpointConnectTokenResponse
-	41, // 85: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:output_type -> toshi.workspace.v1.RevokeEndpointConnectTokenResponse
-	43, // 86: toshi.workspace.v1.EndpointService.DeleteEndpoint:output_type -> toshi.workspace.v1.DeleteEndpointResponse
-	45, // 87: toshi.workspace.v1.EndpointService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
-	47, // 88: toshi.workspace.v1.EndpointService.GetTunnel:output_type -> toshi.workspace.v1.GetTunnelResponse
-	49, // 89: toshi.workspace.v1.EndpointService.SendEndpointMessage:output_type -> toshi.workspace.v1.SendEndpointMessageResponse
-	51, // 90: toshi.workspace.v1.EndpointService.TailEndpointMessages:output_type -> toshi.workspace.v1.TailEndpointMessagesResponse
-	53, // 91: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:output_type -> toshi.workspace.v1.ReplayEndpointMessageResponse
-	76, // [76:92] is the sub-list for method output_type
-	60, // [60:76] is the sub-list for method input_type
-	60, // [60:60] is the sub-list for extension type_name
-	60, // [60:60] is the sub-list for extension extendee
-	0,  // [0:60] is the sub-list for field type_name
+	57, // 8: toshi.workspace.v1.Endpoint.created_by:type_name -> toshi.workspace.v1.Subject
+	56, // 9: toshi.workspace.v1.EndpointACPState.since:type_name -> google.protobuf.Timestamp
+	54, // 10: toshi.workspace.v1.EndpointACPState.dropped:type_name -> toshi.workspace.v1.EndpointACPState.DroppedEntry
+	56, // 11: toshi.workspace.v1.EndpointEventCounts.last_delivery_at:type_name -> google.protobuf.Timestamp
+	5,  // 12: toshi.workspace.v1.EndpointMessage.state:type_name -> toshi.workspace.v1.EndpointMessageState
+	56, // 13: toshi.workspace.v1.EndpointMessage.next_attempt_at:type_name -> google.protobuf.Timestamp
+	56, // 14: toshi.workspace.v1.EndpointMessage.delivered_at:type_name -> google.protobuf.Timestamp
+	56, // 15: toshi.workspace.v1.EndpointMessage.replayed_at:type_name -> google.protobuf.Timestamp
+	56, // 16: toshi.workspace.v1.EndpointMessage.scheduled_for:type_name -> google.protobuf.Timestamp
+	58, // 17: toshi.workspace.v1.EndpointMessage.envelope:type_name -> toshi.workspace.v1.EventEnvelope
+	2,  // 18: toshi.workspace.v1.EndpointClient.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
+	56, // 19: toshi.workspace.v1.EndpointClient.attached_since:type_name -> google.protobuf.Timestamp
+	56, // 20: toshi.workspace.v1.EndpointClient.seen_at:type_name -> google.protobuf.Timestamp
+	56, // 21: toshi.workspace.v1.EndpointClient.detached_at:type_name -> google.protobuf.Timestamp
+	59, // 22: toshi.workspace.v1.EndpointDefault.workload_kind:type_name -> toshi.workspace.v1.HostJobKind
+	0,  // 23: toshi.workspace.v1.EndpointDefault.shape:type_name -> toshi.workspace.v1.EndpointShape
+	12, // 24: toshi.workspace.v1.EndpointDefault.policy:type_name -> toshi.workspace.v1.EndpointPolicy
+	13, // 25: toshi.workspace.v1.EndpointPolicy.modules:type_name -> toshi.workspace.v1.EndpointModuleList
+	14, // 26: toshi.workspace.v1.EndpointModuleList.modules:type_name -> toshi.workspace.v1.EndpointModule
+	15, // 27: toshi.workspace.v1.EndpointModule.match:type_name -> toshi.workspace.v1.EndpointMatch
+	55, // 28: toshi.workspace.v1.EndpointMatch.headers:type_name -> toshi.workspace.v1.EndpointMatch.HeadersEntry
+	56, // 29: toshi.workspace.v1.EndpointRequest.arrived_at:type_name -> google.protobuf.Timestamp
+	60, // 30: toshi.workspace.v1.EndpointRequest.duration:type_name -> google.protobuf.Duration
+	17, // 31: toshi.workspace.v1.EndpointRequest.caller:type_name -> toshi.workspace.v1.EndpointRequestCaller
+	18, // 32: toshi.workspace.v1.EndpointRequest.request_headers:type_name -> toshi.workspace.v1.EndpointHeader
+	18, // 33: toshi.workspace.v1.EndpointRequest.response_headers:type_name -> toshi.workspace.v1.EndpointHeader
+	19, // 34: toshi.workspace.v1.EndpointRequest.request_body:type_name -> toshi.workspace.v1.EndpointBody
+	19, // 35: toshi.workspace.v1.EndpointRequest.response_body:type_name -> toshi.workspace.v1.EndpointBody
+	56, // 36: toshi.workspace.v1.Forward.opened_at:type_name -> google.protobuf.Timestamp
+	56, // 37: toshi.workspace.v1.Tunnel.since:type_name -> google.protobuf.Timestamp
+	12, // 38: toshi.workspace.v1.CreateEndpointRequest.policy:type_name -> toshi.workspace.v1.EndpointPolicy
+	6,  // 39: toshi.workspace.v1.CreateEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
+	6,  // 40: toshi.workspace.v1.ListEndpointsResponse.endpoints:type_name -> toshi.workspace.v1.Endpoint
+	6,  // 41: toshi.workspace.v1.GetEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
+	12, // 42: toshi.workspace.v1.GetEndpointPolicyResponse.policy:type_name -> toshi.workspace.v1.EndpointPolicy
+	6,  // 43: toshi.workspace.v1.UpdateEndpointRequest.endpoint:type_name -> toshi.workspace.v1.Endpoint
+	61, // 44: toshi.workspace.v1.UpdateEndpointRequest.update_mask:type_name -> google.protobuf.FieldMask
+	3,  // 45: toshi.workspace.v1.UpdateEndpointRequest.streams:type_name -> toshi.workspace.v1.EndpointStreams
+	6,  // 46: toshi.workspace.v1.UpdateEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
+	56, // 47: toshi.workspace.v1.ListEndpointRequestsRequest.since:type_name -> google.protobuf.Timestamp
+	56, // 48: toshi.workspace.v1.ListEndpointRequestsRequest.until:type_name -> google.protobuf.Timestamp
+	16, // 49: toshi.workspace.v1.ListEndpointRequestsResponse.requests:type_name -> toshi.workspace.v1.EndpointRequest
+	16, // 50: toshi.workspace.v1.GetEndpointRequestResponse.request:type_name -> toshi.workspace.v1.EndpointRequest
+	4,  // 51: toshi.workspace.v1.ExportEndpointLogRequest.log:type_name -> toshi.workspace.v1.EndpointLog
+	56, // 52: toshi.workspace.v1.ExportEndpointLogRequest.since:type_name -> google.protobuf.Timestamp
+	56, // 53: toshi.workspace.v1.ExportEndpointLogRequest.until:type_name -> google.protobuf.Timestamp
+	2,  // 54: toshi.workspace.v1.CreateEndpointConnectTokenRequest.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
+	56, // 55: toshi.workspace.v1.CreateEndpointConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 56: toshi.workspace.v1.CreateEndpointConnectTokenResponse.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
+	20, // 57: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
+	21, // 58: toshi.workspace.v1.GetTunnelResponse.tunnel:type_name -> toshi.workspace.v1.Tunnel
+	5,  // 59: toshi.workspace.v1.TailEndpointMessagesRequest.states:type_name -> toshi.workspace.v1.EndpointMessageState
+	9,  // 60: toshi.workspace.v1.TailEndpointMessagesResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
+	9,  // 61: toshi.workspace.v1.ReplayEndpointMessageResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
+	22, // 62: toshi.workspace.v1.EndpointService.CreateEndpoint:input_type -> toshi.workspace.v1.CreateEndpointRequest
+	24, // 63: toshi.workspace.v1.EndpointService.ListEndpoints:input_type -> toshi.workspace.v1.ListEndpointsRequest
+	26, // 64: toshi.workspace.v1.EndpointService.GetEndpoint:input_type -> toshi.workspace.v1.GetEndpointRequest
+	28, // 65: toshi.workspace.v1.EndpointService.GetEndpointPolicy:input_type -> toshi.workspace.v1.GetEndpointPolicyRequest
+	30, // 66: toshi.workspace.v1.EndpointService.UpdateEndpoint:input_type -> toshi.workspace.v1.UpdateEndpointRequest
+	32, // 67: toshi.workspace.v1.EndpointService.ListEndpointRequests:input_type -> toshi.workspace.v1.ListEndpointRequestsRequest
+	34, // 68: toshi.workspace.v1.EndpointService.GetEndpointRequest:input_type -> toshi.workspace.v1.GetEndpointRequestRequest
+	36, // 69: toshi.workspace.v1.EndpointService.ExportEndpointLog:input_type -> toshi.workspace.v1.ExportEndpointLogRequest
+	38, // 70: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:input_type -> toshi.workspace.v1.CreateEndpointConnectTokenRequest
+	40, // 71: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:input_type -> toshi.workspace.v1.RevokeEndpointConnectTokenRequest
+	42, // 72: toshi.workspace.v1.EndpointService.DeleteEndpoint:input_type -> toshi.workspace.v1.DeleteEndpointRequest
+	44, // 73: toshi.workspace.v1.EndpointService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
+	46, // 74: toshi.workspace.v1.EndpointService.GetTunnel:input_type -> toshi.workspace.v1.GetTunnelRequest
+	48, // 75: toshi.workspace.v1.EndpointService.SendEndpointMessage:input_type -> toshi.workspace.v1.SendEndpointMessageRequest
+	50, // 76: toshi.workspace.v1.EndpointService.TailEndpointMessages:input_type -> toshi.workspace.v1.TailEndpointMessagesRequest
+	52, // 77: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:input_type -> toshi.workspace.v1.ReplayEndpointMessageRequest
+	23, // 78: toshi.workspace.v1.EndpointService.CreateEndpoint:output_type -> toshi.workspace.v1.CreateEndpointResponse
+	25, // 79: toshi.workspace.v1.EndpointService.ListEndpoints:output_type -> toshi.workspace.v1.ListEndpointsResponse
+	27, // 80: toshi.workspace.v1.EndpointService.GetEndpoint:output_type -> toshi.workspace.v1.GetEndpointResponse
+	29, // 81: toshi.workspace.v1.EndpointService.GetEndpointPolicy:output_type -> toshi.workspace.v1.GetEndpointPolicyResponse
+	31, // 82: toshi.workspace.v1.EndpointService.UpdateEndpoint:output_type -> toshi.workspace.v1.UpdateEndpointResponse
+	33, // 83: toshi.workspace.v1.EndpointService.ListEndpointRequests:output_type -> toshi.workspace.v1.ListEndpointRequestsResponse
+	35, // 84: toshi.workspace.v1.EndpointService.GetEndpointRequest:output_type -> toshi.workspace.v1.GetEndpointRequestResponse
+	37, // 85: toshi.workspace.v1.EndpointService.ExportEndpointLog:output_type -> toshi.workspace.v1.ExportEndpointLogResponse
+	39, // 86: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:output_type -> toshi.workspace.v1.CreateEndpointConnectTokenResponse
+	41, // 87: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:output_type -> toshi.workspace.v1.RevokeEndpointConnectTokenResponse
+	43, // 88: toshi.workspace.v1.EndpointService.DeleteEndpoint:output_type -> toshi.workspace.v1.DeleteEndpointResponse
+	45, // 89: toshi.workspace.v1.EndpointService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
+	47, // 90: toshi.workspace.v1.EndpointService.GetTunnel:output_type -> toshi.workspace.v1.GetTunnelResponse
+	49, // 91: toshi.workspace.v1.EndpointService.SendEndpointMessage:output_type -> toshi.workspace.v1.SendEndpointMessageResponse
+	51, // 92: toshi.workspace.v1.EndpointService.TailEndpointMessages:output_type -> toshi.workspace.v1.TailEndpointMessagesResponse
+	53, // 93: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:output_type -> toshi.workspace.v1.ReplayEndpointMessageResponse
+	78, // [78:94] is the sub-list for method output_type
+	62, // [62:78] is the sub-list for method input_type
+	62, // [62:62] is the sub-list for extension type_name
+	62, // [62:62] is the sub-list for extension extendee
+	0,  // [0:62] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_endpoints_proto_init() }
@@ -4800,6 +4791,7 @@ func file_toshi_workspace_v1_endpoints_proto_init() {
 		return
 	}
 	file_toshi_workspace_v1_hostjobs_proto_init()
+	file_toshi_workspace_v1_roles_proto_init()
 	file_toshi_workspace_v1_workspace_proto_init()
 	file_toshi_workspace_v1_endpoints_proto_msgTypes[0].OneofWrappers = []any{}
 	file_toshi_workspace_v1_endpoints_proto_msgTypes[6].OneofWrappers = []any{}

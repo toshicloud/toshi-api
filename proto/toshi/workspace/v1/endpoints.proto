@@ -3,9 +3,11 @@ syntax = "proto3";
 package toshi.workspace.v1;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 import "toshi/workspace/v1/hostjobs.proto";
+import "toshi/workspace/v1/roles.proto";
 import "toshi/workspace/v1/workspace.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
@@ -63,21 +65,22 @@ service EndpointService {
     option (toshi.permission) = "endpoints.read";
   }
 
-  // SetEndpointPolicy replaces an endpoint's policy when the version it names
-  // is the one stored, and returns the policy at its new version. A policy
-  // changed since that version fails with ABORTED: read it again. A
-  // malformed policy fails with INVALID_ARGUMENT, and one the endpoint
-  // refuses, such as a list without a module that may not be removed,
-  // with FAILED_PRECONDITION. A service's event endpoint, named by service
-  // in place of job_id, takes what its recipe's policy takes, a keep the
-  // plan allows among it, and keeps the policy set until a deploy whose
-  // recipe changes the endpoint's policy; its set is recorded as
+  // UpdateEndpoint replaces an endpoint's policy, named by the update_mask
+  // path policy, when the version it names is the one stored, and returns
+  // the endpoint with its policy at its new version. A policy changed since
+  // that version fails with ABORTED: read it again. A malformed policy
+  // fails with INVALID_ARGUMENT, and one the endpoint refuses, such as a
+  // list without a module that may not be removed, with
+  // FAILED_PRECONDITION. A service's event endpoint, named by service in
+  // place of job_id, takes what its recipe's policy takes, a keep the plan
+  // allows among it, and keeps the policy set until a deploy whose recipe
+  // changes the endpoint's policy; its set is recorded as
   // service.endpoint_policy_set on the service.
-  rpc SetEndpointPolicy(SetEndpointPolicyRequest) returns (SetEndpointPolicyResponse) {
+  rpc UpdateEndpoint(UpdateEndpointRequest) returns (UpdateEndpointResponse) {
     option (toshi.permission) = "endpoints.write";
     option (toshi.audit) = {
       action: "host_job.endpoint_policy_set"
-      target: "host_job:job_id"
+      target: "host_job:endpoint.job_id"
     };
   }
 
@@ -267,8 +270,6 @@ message Endpoint {
   // A stream endpoint's command.
   repeated string command = 6;
   EndpointState state = 7;
-  // Who created the endpoint, as the audit log names an actor.
-  string created_by = 8;
   google.protobuf.Timestamp created_at = 9;
   // Unset while the endpoint lasts.
   google.protobuf.Timestamp ended_at = 10;
@@ -319,6 +320,12 @@ message Endpoint {
   // it and removes it when the sign-in ends, and ListEndpoints never lists
   // it. Output only.
   string sign_in_id = 28;
+  // Who created the endpoint. A creator the audit log recorded as a session
+  // or a person is a PERSON, a workspace API token is a TOKEN, an operator
+  // or the control plane is the SYSTEM, and an endpoint whose creator was
+  // not recorded has none.
+  Subject created_by = 29;
+  reserved 8;
 }
 
 // EndpointACPState is what an ACP endpoint's process is doing, as the
@@ -398,7 +405,7 @@ message EndpointClient {
   string id = 1;
   // The mode granted to its last attach.
   EndpointAttachMode mode = 2;
-  // Who attached it, as created_by names an actor.
+  // Who attached it, as an actor label the audit log records.
   string attached_by = 3;
   // The device and the credential of the connect token that admitted it,
   // if one did.
@@ -427,7 +434,7 @@ message EndpointDefault {
 // EndpointPolicy is an endpoint's policy document, with the words a recipe's
 // endpoint policy uses.
 message EndpointPolicy {
-  // Rises at each change. SetEndpointPolicy names the version it was read
+  // Rises at each change. UpdateEndpoint names the version it was read
   // at; CreateEndpoint takes none.
   int64 version = 1;
   // Who may attach a client: workspace (the default) or creator.
@@ -689,22 +696,20 @@ message GetEndpointPolicyResponse {
   EndpointPolicy policy = 1;
 }
 
-message SetEndpointPolicyRequest {
-  string job_id = 1;
-  string name = 2;
-  // The whole document, with the version it was read at.
-  EndpointPolicy policy = 3;
-  // An event endpoint's service, by its ID, in place of job_id.
-  string service = 4;
+message UpdateEndpointRequest {
+  // The endpoint to change; job_id and name, or service and name, name it.
+  // Only policy is read from it.
+  Endpoint endpoint = 1;
+  google.protobuf.FieldMask update_mask = 2;
   // What the change does to a stream endpoint's attached clients; unset
   // keeps them. DRAIN and END on an http or an event endpoint are
   // INVALID_ARGUMENT.
-  EndpointStreams streams = 5;
+  EndpointStreams streams = 3;
 }
 
-message SetEndpointPolicyResponse {
-  // The document stored, at its new version.
-  EndpointPolicy policy = 1;
+message UpdateEndpointResponse {
+  // The endpoint as stored, its policy at its new version.
+  Endpoint endpoint = 1;
 }
 
 message ListEndpointRequestsRequest {

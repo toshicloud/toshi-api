@@ -45,9 +45,9 @@ const (
 	// EndpointServiceGetEndpointPolicyProcedure is the fully-qualified name of the EndpointService's
 	// GetEndpointPolicy RPC.
 	EndpointServiceGetEndpointPolicyProcedure = "/toshi.workspace.v1.EndpointService/GetEndpointPolicy"
-	// EndpointServiceSetEndpointPolicyProcedure is the fully-qualified name of the EndpointService's
-	// SetEndpointPolicy RPC.
-	EndpointServiceSetEndpointPolicyProcedure = "/toshi.workspace.v1.EndpointService/SetEndpointPolicy"
+	// EndpointServiceUpdateEndpointProcedure is the fully-qualified name of the EndpointService's
+	// UpdateEndpoint RPC.
+	EndpointServiceUpdateEndpointProcedure = "/toshi.workspace.v1.EndpointService/UpdateEndpoint"
 	// EndpointServiceListEndpointRequestsProcedure is the fully-qualified name of the EndpointService's
 	// ListEndpointRequests RPC.
 	EndpointServiceListEndpointRequestsProcedure = "/toshi.workspace.v1.EndpointService/ListEndpointRequests"
@@ -103,17 +103,18 @@ type EndpointServiceClient interface {
 	// GetEndpointPolicy returns an endpoint's effective policy, with its
 	// version.
 	GetEndpointPolicy(context.Context, *connect.Request[workspacev1.GetEndpointPolicyRequest]) (*connect.Response[workspacev1.GetEndpointPolicyResponse], error)
-	// SetEndpointPolicy replaces an endpoint's policy when the version it names
-	// is the one stored, and returns the policy at its new version. A policy
-	// changed since that version fails with ABORTED: read it again. A
-	// malformed policy fails with INVALID_ARGUMENT, and one the endpoint
-	// refuses, such as a list without a module that may not be removed,
-	// with FAILED_PRECONDITION. A service's event endpoint, named by service
-	// in place of job_id, takes what its recipe's policy takes, a keep the
-	// plan allows among it, and keeps the policy set until a deploy whose
-	// recipe changes the endpoint's policy; its set is recorded as
+	// UpdateEndpoint replaces an endpoint's policy, named by the update_mask
+	// path policy, when the version it names is the one stored, and returns
+	// the endpoint with its policy at its new version. A policy changed since
+	// that version fails with ABORTED: read it again. A malformed policy
+	// fails with INVALID_ARGUMENT, and one the endpoint refuses, such as a
+	// list without a module that may not be removed, with
+	// FAILED_PRECONDITION. A service's event endpoint, named by service in
+	// place of job_id, takes what its recipe's policy takes, a keep the plan
+	// allows among it, and keeps the policy set until a deploy whose recipe
+	// changes the endpoint's policy; its set is recorded as
 	// service.endpoint_policy_set on the service.
-	SetEndpointPolicy(context.Context, *connect.Request[workspacev1.SetEndpointPolicyRequest]) (*connect.Response[workspacev1.SetEndpointPolicyResponse], error)
+	UpdateEndpoint(context.Context, *connect.Request[workspacev1.UpdateEndpointRequest]) (*connect.Response[workspacev1.UpdateEndpointResponse], error)
 	// ListEndpointRequests lists an http endpoint's request records the
 	// filters select, newest first, or oldest first after after_seq,
 	// without their headers and bodies. A stream endpoint fails with
@@ -213,10 +214,10 @@ func NewEndpointServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(endpointServiceMethods.ByName("GetEndpointPolicy")),
 			connect.WithClientOptions(opts...),
 		),
-		setEndpointPolicy: connect.NewClient[workspacev1.SetEndpointPolicyRequest, workspacev1.SetEndpointPolicyResponse](
+		updateEndpoint: connect.NewClient[workspacev1.UpdateEndpointRequest, workspacev1.UpdateEndpointResponse](
 			httpClient,
-			baseURL+EndpointServiceSetEndpointPolicyProcedure,
-			connect.WithSchema(endpointServiceMethods.ByName("SetEndpointPolicy")),
+			baseURL+EndpointServiceUpdateEndpointProcedure,
+			connect.WithSchema(endpointServiceMethods.ByName("UpdateEndpoint")),
 			connect.WithClientOptions(opts...),
 		),
 		listEndpointRequests: connect.NewClient[workspacev1.ListEndpointRequestsRequest, workspacev1.ListEndpointRequestsResponse](
@@ -294,7 +295,7 @@ type endpointServiceClient struct {
 	listEndpoints              *connect.Client[workspacev1.ListEndpointsRequest, workspacev1.ListEndpointsResponse]
 	getEndpoint                *connect.Client[workspacev1.GetEndpointRequest, workspacev1.GetEndpointResponse]
 	getEndpointPolicy          *connect.Client[workspacev1.GetEndpointPolicyRequest, workspacev1.GetEndpointPolicyResponse]
-	setEndpointPolicy          *connect.Client[workspacev1.SetEndpointPolicyRequest, workspacev1.SetEndpointPolicyResponse]
+	updateEndpoint             *connect.Client[workspacev1.UpdateEndpointRequest, workspacev1.UpdateEndpointResponse]
 	listEndpointRequests       *connect.Client[workspacev1.ListEndpointRequestsRequest, workspacev1.ListEndpointRequestsResponse]
 	getEndpointRequest         *connect.Client[workspacev1.GetEndpointRequestRequest, workspacev1.GetEndpointRequestResponse]
 	exportEndpointLog          *connect.Client[workspacev1.ExportEndpointLogRequest, workspacev1.ExportEndpointLogResponse]
@@ -328,9 +329,9 @@ func (c *endpointServiceClient) GetEndpointPolicy(ctx context.Context, req *conn
 	return c.getEndpointPolicy.CallUnary(ctx, req)
 }
 
-// SetEndpointPolicy calls toshi.workspace.v1.EndpointService.SetEndpointPolicy.
-func (c *endpointServiceClient) SetEndpointPolicy(ctx context.Context, req *connect.Request[workspacev1.SetEndpointPolicyRequest]) (*connect.Response[workspacev1.SetEndpointPolicyResponse], error) {
-	return c.setEndpointPolicy.CallUnary(ctx, req)
+// UpdateEndpoint calls toshi.workspace.v1.EndpointService.UpdateEndpoint.
+func (c *endpointServiceClient) UpdateEndpoint(ctx context.Context, req *connect.Request[workspacev1.UpdateEndpointRequest]) (*connect.Response[workspacev1.UpdateEndpointResponse], error) {
+	return c.updateEndpoint.CallUnary(ctx, req)
 }
 
 // ListEndpointRequests calls toshi.workspace.v1.EndpointService.ListEndpointRequests.
@@ -408,17 +409,18 @@ type EndpointServiceHandler interface {
 	// GetEndpointPolicy returns an endpoint's effective policy, with its
 	// version.
 	GetEndpointPolicy(context.Context, *connect.Request[workspacev1.GetEndpointPolicyRequest]) (*connect.Response[workspacev1.GetEndpointPolicyResponse], error)
-	// SetEndpointPolicy replaces an endpoint's policy when the version it names
-	// is the one stored, and returns the policy at its new version. A policy
-	// changed since that version fails with ABORTED: read it again. A
-	// malformed policy fails with INVALID_ARGUMENT, and one the endpoint
-	// refuses, such as a list without a module that may not be removed,
-	// with FAILED_PRECONDITION. A service's event endpoint, named by service
-	// in place of job_id, takes what its recipe's policy takes, a keep the
-	// plan allows among it, and keeps the policy set until a deploy whose
-	// recipe changes the endpoint's policy; its set is recorded as
+	// UpdateEndpoint replaces an endpoint's policy, named by the update_mask
+	// path policy, when the version it names is the one stored, and returns
+	// the endpoint with its policy at its new version. A policy changed since
+	// that version fails with ABORTED: read it again. A malformed policy
+	// fails with INVALID_ARGUMENT, and one the endpoint refuses, such as a
+	// list without a module that may not be removed, with
+	// FAILED_PRECONDITION. A service's event endpoint, named by service in
+	// place of job_id, takes what its recipe's policy takes, a keep the plan
+	// allows among it, and keeps the policy set until a deploy whose recipe
+	// changes the endpoint's policy; its set is recorded as
 	// service.endpoint_policy_set on the service.
-	SetEndpointPolicy(context.Context, *connect.Request[workspacev1.SetEndpointPolicyRequest]) (*connect.Response[workspacev1.SetEndpointPolicyResponse], error)
+	UpdateEndpoint(context.Context, *connect.Request[workspacev1.UpdateEndpointRequest]) (*connect.Response[workspacev1.UpdateEndpointResponse], error)
 	// ListEndpointRequests lists an http endpoint's request records the
 	// filters select, newest first, or oldest first after after_seq,
 	// without their headers and bodies. A stream endpoint fails with
@@ -514,10 +516,10 @@ func NewEndpointServiceHandler(svc EndpointServiceHandler, opts ...connect.Handl
 		connect.WithSchema(endpointServiceMethods.ByName("GetEndpointPolicy")),
 		connect.WithHandlerOptions(opts...),
 	)
-	endpointServiceSetEndpointPolicyHandler := connect.NewUnaryHandler(
-		EndpointServiceSetEndpointPolicyProcedure,
-		svc.SetEndpointPolicy,
-		connect.WithSchema(endpointServiceMethods.ByName("SetEndpointPolicy")),
+	endpointServiceUpdateEndpointHandler := connect.NewUnaryHandler(
+		EndpointServiceUpdateEndpointProcedure,
+		svc.UpdateEndpoint,
+		connect.WithSchema(endpointServiceMethods.ByName("UpdateEndpoint")),
 		connect.WithHandlerOptions(opts...),
 	)
 	endpointServiceListEndpointRequestsHandler := connect.NewUnaryHandler(
@@ -596,8 +598,8 @@ func NewEndpointServiceHandler(svc EndpointServiceHandler, opts ...connect.Handl
 			endpointServiceGetEndpointHandler.ServeHTTP(w, r)
 		case EndpointServiceGetEndpointPolicyProcedure:
 			endpointServiceGetEndpointPolicyHandler.ServeHTTP(w, r)
-		case EndpointServiceSetEndpointPolicyProcedure:
-			endpointServiceSetEndpointPolicyHandler.ServeHTTP(w, r)
+		case EndpointServiceUpdateEndpointProcedure:
+			endpointServiceUpdateEndpointHandler.ServeHTTP(w, r)
 		case EndpointServiceListEndpointRequestsProcedure:
 			endpointServiceListEndpointRequestsHandler.ServeHTTP(w, r)
 		case EndpointServiceGetEndpointRequestProcedure:
@@ -645,8 +647,8 @@ func (UnimplementedEndpointServiceHandler) GetEndpointPolicy(context.Context, *c
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.EndpointService.GetEndpointPolicy is not implemented"))
 }
 
-func (UnimplementedEndpointServiceHandler) SetEndpointPolicy(context.Context, *connect.Request[workspacev1.SetEndpointPolicyRequest]) (*connect.Response[workspacev1.SetEndpointPolicyResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.EndpointService.SetEndpointPolicy is not implemented"))
+func (UnimplementedEndpointServiceHandler) UpdateEndpoint(context.Context, *connect.Request[workspacev1.UpdateEndpointRequest]) (*connect.Response[workspacev1.UpdateEndpointResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.EndpointService.UpdateEndpoint is not implemented"))
 }
 
 func (UnimplementedEndpointServiceHandler) ListEndpointRequests(context.Context, *connect.Request[workspacev1.ListEndpointRequestsRequest]) (*connect.Response[workspacev1.ListEndpointRequestsResponse], error) {
