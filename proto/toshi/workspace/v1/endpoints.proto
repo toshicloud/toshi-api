@@ -105,7 +105,7 @@ service EndpointService {
   rpc ExportEndpointLog(ExportEndpointLogRequest) returns (stream ExportEndpointLogResponse) {
     option (toshi.permission) = "endpoints.read";
     option (toshi.audit) = {
-      action: "host_job.endpoint_log_exported"
+      action: "endpoint_log.exported"
       target: "host_job:job_id"
     };
   }

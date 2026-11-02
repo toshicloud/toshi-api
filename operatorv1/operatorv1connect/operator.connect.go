@@ -283,7 +283,7 @@ type OperatorServiceClient interface {
 	// unknown workspace fails with NOT_FOUND.
 	//
 	// plan must name a configured plan; otherwise it fails with INVALID_ARGUMENT
-	// (workspace.plan_set).
+	// (workspace.plan_changed).
 	//
 	// reservations merges the entries by size; each entry sets that size, and
 	// 0 slots removes it. Unlisted sizes keep their reservations. Duplicate or
@@ -1300,7 +1300,7 @@ type OperatorServiceHandler interface {
 	// unknown workspace fails with NOT_FOUND.
 	//
 	// plan must name a configured plan; otherwise it fails with INVALID_ARGUMENT
-	// (workspace.plan_set).
+	// (workspace.plan_changed).
 	//
 	// reservations merges the entries by size; each entry sets that size, and
 	// 0 slots removes it. Unlisted sizes keep their reservations. Duplicate or

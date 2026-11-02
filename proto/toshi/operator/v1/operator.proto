@@ -133,7 +133,7 @@ service OperatorService {
   // unknown workspace fails with NOT_FOUND.
   //
   // plan must name a configured plan; otherwise it fails with INVALID_ARGUMENT
-  // (workspace.plan_set).
+  // (workspace.plan_changed).
   //
   // reservations merges the entries by size; each entry sets that size, and
   // 0 slots removes it. Unlisted sizes keep their reservations. Duplicate or
@@ -289,7 +289,9 @@ service OperatorService {
   // creator, so what was granted to it stays granted. An unknown id fails with NOT_FOUND; a revoked or
   // expired token with FailedPrecondition. A token file that still holds
   // the old value is refused at the next start, as a revoked token's is.
-  rpc RollToken(RollTokenRequest) returns (RollTokenResponse);
+  rpc RollToken(RollTokenRequest) returns (RollTokenResponse) {
+    option (toshi.audit) = {action: "token.rotated"};
+  }
 
   // CreateProductToken makes a token a product's adapter authenticates to
   // the core with. Operator only. It expires within 90 days, and a product

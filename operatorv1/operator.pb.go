@@ -16118,7 +16118,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xc6-\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xdb-\n" +
 	"\x0fOperatorService\x12S\n" +
 	"\bListJobs\x12\".toshi.operator.v1.ListJobsRequest\x1a#.toshi.operator.v1.ListJobsResponse\x12h\n" +
 	"\x0fListAuditEvents\x12).toshi.operator.v1.ListAuditEventsRequest\x1a*.toshi.operator.v1.ListAuditEventsResponse\x12z\n" +
@@ -16165,8 +16165,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"ListTokens\x12$.toshi.operator.v1.ListTokensRequest\x1a%.toshi.operator.v1.ListTokensResponse\x12{\n" +
 	"\vRotateToken\x12%.toshi.operator.v1.RotateTokenRequest\x1a&.toshi.operator.v1.RotateTokenResponse\"\x1d\xd2\xf3\x18\x19\x12\x17token:response.token.id\x12\\\n" +
-	"\vRevokeToken\x12%.toshi.operator.v1.RevokeTokenRequest\x1a&.toshi.operator.v1.RevokeTokenResponse\x12V\n" +
-	"\tRollToken\x12#.toshi.operator.v1.RollTokenRequest\x1a$.toshi.operator.v1.RollTokenResponse\x12\x86\x01\n" +
+	"\vRevokeToken\x12%.toshi.operator.v1.RevokeTokenRequest\x1a&.toshi.operator.v1.RevokeTokenResponse\x12k\n" +
+	"\tRollToken\x12#.toshi.operator.v1.RollTokenRequest\x1a$.toshi.operator.v1.RollTokenResponse\"\x13\xd2\xf3\x18\x0f\n" +
+	"\rtoken.rotated\x12\x86\x01\n" +
 	"\x12CreateProductToken\x12,.toshi.operator.v1.CreateProductTokenRequest\x1a-.toshi.operator.v1.CreateProductTokenResponse\"\x13\xd2\xf3\x18\x0f\n" +
 	"\rtoken.created\x12~\n" +
 	"\x0eRegisterClient\x12(.toshi.operator.v1.RegisterClientRequest\x1a).toshi.operator.v1.RegisterClientResponse\"\x17\xd2\xf3\x18\x13\n" +

@@ -302,7 +302,7 @@ service WorkloadService {
     option (toshi.permission) = "workloads.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
-      action: "agent.prompt_answered"
+      action: "prompt.answered"
       target: "workload:workload_id"
     };
   }

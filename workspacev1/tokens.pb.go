@@ -1056,15 +1056,15 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\x11TokenExpiryReason\x12#\n" +
 	"\x1fTOKEN_EXPIRY_REASON_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17TOKEN_EXPIRY_REASON_SET\x10\x01\x12$\n" +
-	" TOKEN_EXPIRY_REASON_CREATOR_LEFT\x10\x022\xa8\x05\n" +
+	" TOKEN_EXPIRY_REASON_CREATOR_LEFT\x10\x022\xa9\x05\n" +
 	"\fTokenService\x12l\n" +
 	"\n" +
 	"ListTokens\x12%.toshi.workspace.v1.ListTokensRequest\x1a&.toshi.workspace.v1.ListTokensResponse\"\x0f\xc2\xf3\x18\vtokens.read\x12\xab\x01\n" +
 	"\x14CreateWorkspaceToken\x12/.toshi.workspace.v1.CreateWorkspaceTokenRequest\x1a0.toshi.workspace.v1.CreateWorkspaceTokenResponse\"0\xc2\xf3\x18\ftokens.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
 	"\rtoken.created\x12p\n" +
-	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x10\xc2\xf3\x18\ftokens.write\x12\x97\x01\n" +
-	"\x12RollWorkspaceToken\x12-.toshi.workspace.v1.RollWorkspaceTokenRequest\x1a..toshi.workspace.v1.RollWorkspaceTokenResponse\"\"\xc2\xf3\x18\ftokens.write\xd2\xf3\x18\x0e\n" +
-	"\ftoken.rolled\x12p\n" +
+	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x10\xc2\xf3\x18\ftokens.write\x12\x98\x01\n" +
+	"\x12RollWorkspaceToken\x12-.toshi.workspace.v1.RollWorkspaceTokenRequest\x1a..toshi.workspace.v1.RollWorkspaceTokenResponse\"#\xc2\xf3\x18\ftokens.write\xd2\xf3\x18\x0f\n" +
+	"\rtoken.rotated\x12p\n" +
 	"\vUpdateToken\x12&.toshi.workspace.v1.UpdateTokenRequest\x1a'.toshi.workspace.v1.UpdateTokenResponse\"\x10\xc2\xf3\x18\ftokens.writeB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (

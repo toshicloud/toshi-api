@@ -64,7 +64,7 @@ service TokenService {
   // FAILED_PRECONDITION.
   rpc RollWorkspaceToken(RollWorkspaceTokenRequest) returns (RollWorkspaceTokenResponse) {
     option (toshi.permission) = "tokens.write";
-    option (toshi.audit) = {action: "token.rolled"};
+    option (toshi.audit) = {action: "token.rotated"};
   }
   // UpdateToken changes an API token's name, expiry, start and client
   // address ranges: the fields update_mask names. The expiry stays within

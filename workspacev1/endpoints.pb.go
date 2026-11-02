@@ -4688,7 +4688,7 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	" ENDPOINT_MESSAGE_STATE_IN_FLIGHT\x10\x02\x12$\n" +
 	" ENDPOINT_MESSAGE_STATE_DELIVERED\x10\x03\x12\x1f\n" +
 	"\x1bENDPOINT_MESSAGE_STATE_DEAD\x10\x04\x12\"\n" +
-	"\x1eENDPOINT_MESSAGE_STATE_EXPIRED\x10\x052\xb5\x14\n" +
+	"\x1eENDPOINT_MESSAGE_STATE_EXPIRED\x10\x052\xac\x14\n" +
 	"\x0fEndpointService\x12\xac\x01\n" +
 	"\x0eCreateEndpoint\x12).toshi.workspace.v1.CreateEndpointRequest\x1a*.toshi.workspace.v1.CreateEndpointResponse\"C\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
 	"\x19host_job.endpoint_exposed\x12\x0fhost_job:job_id\x12x\n" +
@@ -4698,9 +4698,9 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x11SetEndpointPolicy\x12,.toshi.workspace.v1.SetEndpointPolicyRequest\x1a-.toshi.workspace.v1.SetEndpointPolicyResponse\"F\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18/\n" +
 	"\x1chost_job.endpoint_policy_set\x12\x0fhost_job:job_id\x12\x8d\x01\n" +
 	"\x14ListEndpointRequests\x12/.toshi.workspace.v1.ListEndpointRequestsRequest\x1a0.toshi.workspace.v1.ListEndpointRequestsResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\x87\x01\n" +
-	"\x12GetEndpointRequest\x12-.toshi.workspace.v1.GetEndpointRequestRequest\x1a..toshi.workspace.v1.GetEndpointRequestResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xbb\x01\n" +
-	"\x11ExportEndpointLog\x12,.toshi.workspace.v1.ExportEndpointLogRequest\x1a-.toshi.workspace.v1.ExportEndpointLogResponse\"G\xc2\xf3\x18\x0eendpoints.read\xd2\xf3\x181\n" +
-	"\x1ehost_job.endpoint_log_exported\x12\x0fhost_job:job_id0\x01\x12\xdd\x01\n" +
+	"\x12GetEndpointRequest\x12-.toshi.workspace.v1.GetEndpointRequestRequest\x1a..toshi.workspace.v1.GetEndpointRequestResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xb2\x01\n" +
+	"\x11ExportEndpointLog\x12,.toshi.workspace.v1.ExportEndpointLogRequest\x1a-.toshi.workspace.v1.ExportEndpointLogResponse\">\xc2\xf3\x18\x0eendpoints.read\xd2\xf3\x18(\n" +
+	"\x15endpoint_log.exported\x12\x0fhost_job:job_id0\x01\x12\xdd\x01\n" +
 	"\x1aCreateEndpointConnectToken\x125.toshi.workspace.v1.CreateEndpointConnectTokenRequest\x1a6.toshi.workspace.v1.CreateEndpointConnectTokenResponse\"P\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x189\n" +
 	"&host_job.endpoint_connect_token_issued\x12\x0fhost_job:job_id\x12\xde\x01\n" +
 	"\x1aRevokeEndpointConnectToken\x125.toshi.workspace.v1.RevokeEndpointConnectTokenRequest\x1a6.toshi.workspace.v1.RevokeEndpointConnectTokenResponse\"Q\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18:\n" +
