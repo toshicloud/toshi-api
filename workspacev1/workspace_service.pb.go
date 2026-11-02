@@ -2369,7 +2369,7 @@ type CreateCheckoutSessionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Plan  string                 `protobuf:"bytes,1,opt,name=plan,proto3" json:"plan,omitempty"`
 	// Where the browser goes back to when checkout finishes or is cancelled.
-	// The workspace id rides on it as the tenant query parameter, and billing
+	// The workspace id rides on it as the workspace query parameter, and billing
 	// as checkout-done or checkout-cancelled; its own query is kept. return_url
 	// is required and must be on the origin of a redirect URI of a
 	// registered client, whether declared in the configuration or registered.
@@ -2470,7 +2470,7 @@ func (x *CreateCheckoutSessionResponse) GetUrl() string {
 type CreateBillingPortalSessionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Where the browser goes back to from the portal, with the workspace id as
-	// the tenant query parameter; its own query is kept. return_url is required
+	// the workspace query parameter; its own query is kept. return_url is required
 	// and must be on the origin of a redirect URI of a registered client,
 	// whether declared in the configuration or registered.
 	ReturnUrl     string `protobuf:"bytes,1,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
@@ -3534,7 +3534,7 @@ type Reservation struct {
 	Slots int32 `protobuf:"varint,2,opt,name=slots,proto3" json:"slots,omitempty"`
 	// How many of the slots are kept on warm VMs; 0 when none.
 	Warm int32 `protobuf:"varint,3,opt,name=warm,proto3" json:"warm,omitempty"`
-	// "tenant" when the workspace's own row set it, "plan" when its plan did.
+	// "workspace" when the workspace's own row set it, "plan" when its plan did.
 	Source        string `protobuf:"bytes,4,opt,name=source,proto3" json:"source,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

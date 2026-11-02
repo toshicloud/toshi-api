@@ -2016,7 +2016,7 @@ export type CreateCheckoutSessionRequest = Message<"toshi.workspace.v1.CreateChe
 
   /**
    * Where the browser goes back to when checkout finishes or is cancelled.
-   * The workspace id rides on it as the tenant query parameter, and billing
+   * The workspace id rides on it as the workspace query parameter, and billing
    * as checkout-done or checkout-cancelled; its own query is kept. return_url
    * is required and must be on the origin of a redirect URI of a
    * registered client, whether declared in the configuration or registered.
@@ -2037,7 +2037,7 @@ export type CreateCheckoutSessionRequestJson = {
 
   /**
    * Where the browser goes back to when checkout finishes or is cancelled.
-   * The workspace id rides on it as the tenant query parameter, and billing
+   * The workspace id rides on it as the workspace query parameter, and billing
    * as checkout-done or checkout-cancelled; its own query is kept. return_url
    * is required and must be on the origin of a redirect URI of a
    * registered client, whether declared in the configuration or registered.
@@ -2091,7 +2091,7 @@ export const CreateCheckoutSessionResponseSchema: GenMessage<CreateCheckoutSessi
 export type CreateBillingPortalSessionRequest = Message<"toshi.workspace.v1.CreateBillingPortalSessionRequest"> & {
   /**
    * Where the browser goes back to from the portal, with the workspace id as
-   * the tenant query parameter; its own query is kept. return_url is required
+   * the workspace query parameter; its own query is kept. return_url is required
    * and must be on the origin of a redirect URI of a registered client,
    * whether declared in the configuration or registered.
    *
@@ -2106,7 +2106,7 @@ export type CreateBillingPortalSessionRequest = Message<"toshi.workspace.v1.Crea
 export type CreateBillingPortalSessionRequestJson = {
   /**
    * Where the browser goes back to from the portal, with the workspace id as
-   * the tenant query parameter; its own query is kept. return_url is required
+   * the workspace query parameter; its own query is kept. return_url is required
    * and must be on the origin of a redirect URI of a registered client,
    * whether declared in the configuration or registered.
    *
@@ -3421,7 +3421,7 @@ export type Reservation = Message<"toshi.workspace.v1.Reservation"> & {
   warm: number;
 
   /**
-   * "tenant" when the workspace's own row set it, "plan" when its plan did.
+   * "workspace" when the workspace's own row set it, "plan" when its plan did.
    *
    * @generated from field: string source = 4;
    */
@@ -3457,7 +3457,7 @@ export type ReservationJson = {
   warm?: number;
 
   /**
-   * "tenant" when the workspace's own row set it, "plan" when its plan did.
+   * "workspace" when the workspace's own row set it, "plan" when its plan did.
    *
    * @generated from field: string source = 4;
    */

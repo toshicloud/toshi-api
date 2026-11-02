@@ -32,7 +32,7 @@ export type StorageProvider = Message<"toshi.workspace.v1.StorageProvider"> & {
   name: string;
 
   /**
-   * "operator", "tenant_bucket" or "local_disk".
+   * "operator", "workspace_bucket" or "local_disk".
    *
    * @generated from field: string mode = 3;
    */
@@ -131,7 +131,7 @@ export type StorageProviderJson = {
   name?: string;
 
   /**
-   * "operator", "tenant_bucket" or "local_disk".
+   * "operator", "workspace_bucket" or "local_disk".
    *
    * @generated from field: string mode = 3;
    */
@@ -277,7 +277,7 @@ export type CreateStorageProviderRequest = Message<"toshi.workspace.v1.CreateSto
   credential?: StorageCredential | undefined;
 
   /**
-   * "tenant_bucket", the only mode a workspace stores; empty means it.
+   * "workspace_bucket", the only mode a workspace stores; empty means it.
    * Another mode fails with INVALID_ARGUMENT.
    *
    * @generated from field: string mode = 10;
@@ -350,7 +350,7 @@ export type CreateStorageProviderRequestJson = {
   credential?: StorageCredentialJson;
 
   /**
-   * "tenant_bucket", the only mode a workspace stores; empty means it.
+   * "workspace_bucket", the only mode a workspace stores; empty means it.
    * Another mode fails with INVALID_ARGUMENT.
    *
    * @generated from field: string mode = 10;
@@ -527,7 +527,7 @@ export type ListStorageProvidersResponse = Message<"toshi.workspace.v1.ListStora
 
   /**
    * With include_default, the operator's provider that serves the
-   * workspace's uploads while it has no tenant_bucket provider; unset when
+   * workspace's uploads while it has no workspace_bucket provider; unset when
    * none is configured. Every page holds it.
    *
    * @generated from field: toshi.workspace.v1.StorageProvider default_provider = 2;
@@ -553,7 +553,7 @@ export type ListStorageProvidersResponseJson = {
 
   /**
    * With include_default, the operator's provider that serves the
-   * workspace's uploads while it has no tenant_bucket provider; unset when
+   * workspace's uploads while it has no workspace_bucket provider; unset when
    * none is configured. Every page holds it.
    *
    * @generated from field: toshi.workspace.v1.StorageProvider default_provider = 2;

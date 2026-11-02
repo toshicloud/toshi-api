@@ -65,7 +65,7 @@ service StorageProviderService {
 message StorageProvider {
   string id = 1;
   string name = 2;
-  // "operator", "tenant_bucket" or "local_disk".
+  // "operator", "workspace_bucket" or "local_disk".
   string mode = 3;
   string endpoint = 4;
   string region = 5;
@@ -100,7 +100,7 @@ message CreateStorageProviderRequest {
   // The bucket's key. The control plane wraps it before the row exists and
   // never returns, logs or audits it. Required.
   StorageCredential credential = 9;
-  // "tenant_bucket", the only mode a workspace stores; empty means it.
+  // "workspace_bucket", the only mode a workspace stores; empty means it.
   // Another mode fails with INVALID_ARGUMENT.
   string mode = 10;
   // A key that makes the call safe to retry: a retry with the same key and
@@ -133,7 +133,7 @@ message ListStorageProvidersRequest {
 message ListStorageProvidersResponse {
   repeated StorageProvider providers = 1;
   // With include_default, the operator's provider that serves the
-  // workspace's uploads while it has no tenant_bucket provider; unset when
+  // workspace's uploads while it has no workspace_bucket provider; unset when
   // none is configured. Every page holds it.
   StorageProvider default_provider = 2;
   // Empty on the last page.

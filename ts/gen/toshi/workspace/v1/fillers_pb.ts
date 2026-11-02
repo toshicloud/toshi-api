@@ -92,7 +92,7 @@ export type Filler = Message<"toshi.workspace.v1.Filler"> & {
   enabled: boolean;
 
   /**
-   * Where the filler comes from: "config", "operator" or "tenant" (the
+   * Where the filler comes from: "config", "operator" or "workspace" (the
    * workspace put it).
    *
    * @generated from field: string source = 10;
@@ -118,8 +118,8 @@ export type Filler = Message<"toshi.workspace.v1.Filler"> & {
 
   /**
    * Why the scheduler dispatches nothing for this filler, as the last
-   * filler pass that read its states found it: tenant_suspended,
-   * tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
+   * filler pass that read its states found it: workspace_suspended,
+   * workspace_deleting, workspace_deleted, workspace_closed, installation_removed,
    * installation_suspended, installation_ambiguous, budget_spent (the
    * workspace's filler minutes for the UTC day are spent) or budget_off
    * (its plan gives none). Empty: no pause found, or a filler the pass does
@@ -234,7 +234,7 @@ export type FillerJson = {
   enabled?: boolean;
 
   /**
-   * Where the filler comes from: "config", "operator" or "tenant" (the
+   * Where the filler comes from: "config", "operator" or "workspace" (the
    * workspace put it).
    *
    * @generated from field: string source = 10;
@@ -260,8 +260,8 @@ export type FillerJson = {
 
   /**
    * Why the scheduler dispatches nothing for this filler, as the last
-   * filler pass that read its states found it: tenant_suspended,
-   * tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
+   * filler pass that read its states found it: workspace_suspended,
+   * workspace_deleting, workspace_deleted, workspace_closed, installation_removed,
    * installation_suspended, installation_ambiguous, budget_spent (the
    * workspace's filler minutes for the UTC day are spent) or budget_off
    * (its plan gives none). Empty: no pause found, or a filler the pass does
@@ -504,7 +504,7 @@ export type FillerPause = Message<"toshi.workspace.v1.FillerPause"> & {
   filler: string;
 
   /**
-   * tenant_suspended, tenant_deleting, tenant_deleted, tenant_closed,
+   * workspace_suspended, workspace_deleting, workspace_deleted, workspace_closed,
    * installation_removed, installation_suspended, installation_ambiguous,
    * budget_spent or budget_off.
    *
@@ -539,7 +539,7 @@ export type FillerPauseJson = {
   filler?: string;
 
   /**
-   * tenant_suspended, tenant_deleting, tenant_deleted, tenant_closed,
+   * workspace_suspended, workspace_deleting, workspace_deleted, workspace_closed,
    * installation_removed, installation_suspended, installation_ambiguous,
    * budget_spent or budget_off.
    *

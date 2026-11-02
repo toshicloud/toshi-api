@@ -553,7 +553,7 @@ message ListPlansResponse {
 message CreateCheckoutSessionRequest {
   string plan = 1;
   // Where the browser goes back to when checkout finishes or is cancelled.
-  // The workspace id rides on it as the tenant query parameter, and billing
+  // The workspace id rides on it as the workspace query parameter, and billing
   // as checkout-done or checkout-cancelled; its own query is kept. return_url
   // is required and must be on the origin of a redirect URI of a
   // registered client, whether declared in the configuration or registered.
@@ -567,7 +567,7 @@ message CreateCheckoutSessionResponse {
 
 message CreateBillingPortalSessionRequest {
   // Where the browser goes back to from the portal, with the workspace id as
-  // the tenant query parameter; its own query is kept. return_url is required
+  // the workspace query parameter; its own query is kept. return_url is required
   // and must be on the origin of a redirect URI of a registered client,
   // whether declared in the configuration or registered.
   string return_url = 1;
@@ -856,7 +856,7 @@ message Reservation {
   int32 slots = 2;
   // How many of the slots are kept on warm VMs; 0 when none.
   int32 warm = 3;
-  // "tenant" when the workspace's own row set it, "plan" when its plan did.
+  // "workspace" when the workspace's own row set it, "plan" when its plan did.
   string source = 4;
 }
 

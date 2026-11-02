@@ -73,7 +73,7 @@ type AdmitGrantResponse struct {
 	ActorKind string `protobuf:"bytes,2,opt,name=actor_kind,json=actorKind,proto3" json:"actor_kind,omitempty"`
 	ActorId   string `protobuf:"bytes,3,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
 	// workspaces are the caller's workspaces; empty for the operator.
-	Tenants []string `protobuf:"bytes,4,rep,name=tenants,proto3" json:"tenants,omitempty"`
+	Workspaces []string `protobuf:"bytes,4,rep,name=workspaces,proto3" json:"workspaces,omitempty"`
 	// generation is the delivery check the grant began; 0 for none.
 	Generation int64                  `protobuf:"varint,10,opt,name=generation,proto3" json:"generation,omitempty"`
 	CreatedAt  *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -137,9 +137,9 @@ func (x *AdmitGrantResponse) GetActorId() string {
 	return ""
 }
 
-func (x *AdmitGrantResponse) GetTenants() []string {
+func (x *AdmitGrantResponse) GetWorkspaces() []string {
 	if x != nil {
-		return x.Tenants
+		return x.Workspaces
 	}
 	return nil
 }
@@ -350,7 +350,7 @@ func (x *GetJobResponse) GetJob() *Job {
 type Job struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Tenant         string                 `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace      string                 `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	Repository     string                 `protobuf:"bytes,3,opt,name=repository,proto3" json:"repository,omitempty"`
 	InstallationId int64                  `protobuf:"varint,4,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
 	WorkflowJobId  int64                  `protobuf:"varint,5,opt,name=workflow_job_id,json=workflowJobId,proto3" json:"workflow_job_id,omitempty"`
@@ -399,9 +399,9 @@ func (x *Job) GetId() string {
 	return ""
 }
 
-func (x *Job) GetTenant() string {
+func (x *Job) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -547,7 +547,7 @@ type ListOpenSourceRepositoriesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// workspace is the workspace whose rows to list; empty for every workspace the
 	// caller may see.
-	Tenant string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The most repositories in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -586,9 +586,9 @@ func (*ListOpenSourceRepositoriesRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *ListOpenSourceRepositoriesRequest) GetTenant() string {
+func (x *ListOpenSourceRepositoriesRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -672,7 +672,7 @@ func (x *ListOpenSourceRepositoriesResponse) GetNextPageToken() string {
 // OpenSourceRepository is one workspace's row of the open-source gate.
 type OpenSourceRepository struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	Tenant            string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace         string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	Repository        string                 `protobuf:"bytes,2,opt,name=repository,proto3" json:"repository,omitempty"`
 	InstallationId    int64                  `protobuf:"varint,3,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
 	Found             bool                   `protobuf:"varint,4,opt,name=found,proto3" json:"found,omitempty"`
@@ -719,9 +719,9 @@ func (*OpenSourceRepository) Descriptor() ([]byte, []int) {
 	return file_toshi_githubcore_v1_githubcore_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *OpenSourceRepository) GetTenant() string {
+func (x *OpenSourceRepository) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -973,7 +973,7 @@ func (x *SetOpenSourceApprovalResponse) GetKept() *OpenSourceKeptApproval {
 type MapInstallationRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	InstallationId int64                  `protobuf:"varint,1,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
-	Tenant         string                 `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace      string                 `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1015,9 +1015,9 @@ func (x *MapInstallationRequest) GetInstallationId() int64 {
 	return 0
 }
 
-func (x *MapInstallationRequest) GetTenant() string {
+func (x *MapInstallationRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -1172,13 +1172,15 @@ var File_toshi_githubcore_v1_githubcore_proto protoreflect.FileDescriptor
 const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\n" +
 	"$toshi/githubcore/v1/githubcore.proto\x12\x13toshi.githubcore.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x13\n" +
-	"\x11AdmitGrantRequest\"\xe3\x02\n" +
+	"\x11AdmitGrantRequest\"\xe9\x02\n" +
 	"\x12AdmitGrantResponse\x12\x12\n" +
 	"\x04call\x18\x01 \x01(\tR\x04call\x12\x1d\n" +
 	"\n" +
 	"actor_kind\x18\x02 \x01(\tR\tactorKind\x12\x19\n" +
-	"\bactor_id\x18\x03 \x01(\tR\aactorId\x12\x18\n" +
-	"\atenants\x18\x04 \x03(\tR\atenants\x12\x1e\n" +
+	"\bactor_id\x18\x03 \x01(\tR\aactorId\x12\x1e\n" +
+	"\n" +
+	"workspaces\x18\x04 \x03(\tR\n" +
+	"workspaces\x12\x1e\n" +
 	"\n" +
 	"generation\x18\n" +
 	" \x01(\x03R\n" +
@@ -1199,10 +1201,10 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\rGetJobRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\"<\n" +
 	"\x0eGetJobResponse\x12*\n" +
-	"\x03job\x18\x01 \x01(\v2\x18.toshi.githubcore.v1.JobR\x03job\"\x8d\x02\n" +
+	"\x03job\x18\x01 \x01(\v2\x18.toshi.githubcore.v1.JobR\x03job\"\x93\x02\n" +
 	"\x03Job\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
-	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x1e\n" +
 	"\n" +
 	"repository\x18\x03 \x01(\tR\n" +
 	"repository\x12'\n" +
@@ -1217,18 +1219,18 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\x19FillJobFailingStepRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04step\x18\x02 \x01(\tR\x04step\"\x1c\n" +
-	"\x1aFillJobFailingStepResponse\"w\n" +
-	"!ListOpenSourceRepositoriesRequest\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x1b\n" +
+	"\x1aFillJobFailingStepResponse\"}\n" +
+	"!ListOpenSourceRepositoriesRequest\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"\xdc\x01\n" +
 	"\"ListOpenSourceRepositoriesResponse\x12M\n" +
 	"\frepositories\x18\x01 \x03(\v2).toshi.githubcore.v1.OpenSourceRepositoryR\frepositories\x12?\n" +
 	"\x04kept\x18\x02 \x03(\v2+.toshi.githubcore.v1.OpenSourceKeptApprovalR\x04kept\x12&\n" +
-	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken\"\xa6\x04\n" +
-	"\x14OpenSourceRepository\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x1e\n" +
+	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken\"\xac\x04\n" +
+	"\x14OpenSourceRepository\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x1e\n" +
 	"\n" +
 	"repository\x18\x02 \x01(\tR\n" +
 	"repository\x12'\n" +
@@ -1258,10 +1260,10 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\bapproved\x18\x02 \x01(\bR\bapproved\"\xaf\x01\n" +
 	"\x1dSetOpenSourceApprovalResponse\x12M\n" +
 	"\frepositories\x18\x01 \x03(\v2).toshi.githubcore.v1.OpenSourceRepositoryR\frepositories\x12?\n" +
-	"\x04kept\x18\x02 \x01(\v2+.toshi.githubcore.v1.OpenSourceKeptApprovalR\x04kept\"Y\n" +
+	"\x04kept\x18\x02 \x01(\v2+.toshi.githubcore.v1.OpenSourceKeptApprovalR\x04kept\"_\n" +
 	"\x16MapInstallationRequest\x12'\n" +
-	"\x0finstallation_id\x18\x01 \x01(\x03R\x0einstallationId\x12\x16\n" +
-	"\x06tenant\x18\x02 \x01(\tR\x06tenant\"\x19\n" +
+	"\x0finstallation_id\x18\x01 \x01(\x03R\x0einstallationId\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\"\x19\n" +
 	"\x17MapInstallationResponse\"r\n" +
 	"\x1ePublishJobDeliveryCheckRequest\x12\x1e\n" +
 	"\n" +

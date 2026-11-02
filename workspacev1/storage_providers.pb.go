@@ -28,7 +28,7 @@ type StorageProvider struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// "operator", "tenant_bucket" or "local_disk".
+	// "operator", "workspace_bucket" or "local_disk".
 	Mode                   string `protobuf:"bytes,3,opt,name=mode,proto3" json:"mode,omitempty"`
 	Endpoint               string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	Region                 string `protobuf:"bytes,5,opt,name=region,proto3" json:"region,omitempty"`
@@ -215,7 +215,7 @@ type CreateStorageProviderRequest struct {
 	// The bucket's key. The control plane wraps it before the row exists and
 	// never returns, logs or audits it. Required.
 	Credential *StorageCredential `protobuf:"bytes,9,opt,name=credential,proto3" json:"credential,omitempty"`
-	// "tenant_bucket", the only mode a workspace stores; empty means it.
+	// "workspace_bucket", the only mode a workspace stores; empty means it.
 	// Another mode fails with INVALID_ARGUMENT.
 	Mode string `protobuf:"bytes,10,opt,name=mode,proto3" json:"mode,omitempty"`
 	// A key that makes the call safe to retry: a retry with the same key and
@@ -506,7 +506,7 @@ type ListStorageProvidersResponse struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	Providers []*StorageProvider     `protobuf:"bytes,1,rep,name=providers,proto3" json:"providers,omitempty"`
 	// With include_default, the operator's provider that serves the
-	// workspace's uploads while it has no tenant_bucket provider; unset when
+	// workspace's uploads while it has no workspace_bucket provider; unset when
 	// none is configured. Every page holds it.
 	DefaultProvider *StorageProvider `protobuf:"bytes,2,opt,name=default_provider,json=defaultProvider,proto3" json:"default_provider,omitempty"`
 	// Empty on the last page.

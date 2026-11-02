@@ -351,7 +351,7 @@ func (EgressSource) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{4}
 }
 
-// OfflineHostOutcome says what RetireOfflineHosts did or would do for one host.
+// OfflineHostOutcome says what RetireHosts did or would do for one host.
 type OfflineHostOutcome int32
 
 const (
@@ -607,7 +607,7 @@ const (
 	TokenKind_TOKEN_KIND_ENROLLMENT TokenKind = 2
 	// A workspace API token: the Workspace API as one workspace. The operator
 	// API refuses it.
-	TokenKind_TOKEN_KIND_TENANT TokenKind = 3
+	TokenKind_TOKEN_KIND_WORKSPACE TokenKind = 3
 	// A product token: a product's adapter calling the core.
 	TokenKind_TOKEN_KIND_PRODUCT TokenKind = 4
 )
@@ -618,14 +618,14 @@ var (
 		0: "TOKEN_KIND_UNSPECIFIED",
 		1: "TOKEN_KIND_OPERATOR",
 		2: "TOKEN_KIND_ENROLLMENT",
-		3: "TOKEN_KIND_TENANT",
+		3: "TOKEN_KIND_WORKSPACE",
 		4: "TOKEN_KIND_PRODUCT",
 	}
 	TokenKind_value = map[string]int32{
 		"TOKEN_KIND_UNSPECIFIED": 0,
 		"TOKEN_KIND_OPERATOR":    1,
 		"TOKEN_KIND_ENROLLMENT":  2,
-		"TOKEN_KIND_TENANT":      3,
+		"TOKEN_KIND_WORKSPACE":   3,
 		"TOKEN_KIND_PRODUCT":     4,
 	}
 )
@@ -830,9 +830,9 @@ func (CloudHostCheckStatus) EnumDescriptor() ([]byte, []int) {
 // Job is one GitHub Actions workflow job that Toshi runs on a VM. A
 // timestamp the job has not reached yet is unset.
 type Job struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Id     string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Tenant string                 `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Workspace string                 `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The repository as "owner/name".
 	Repository    string `protobuf:"bytes,3,opt,name=repository,proto3" json:"repository,omitempty"`
 	WorkflowJobId int64  `protobuf:"varint,4,opt,name=workflow_job_id,json=workflowJobId,proto3" json:"workflow_job_id,omitempty"`
@@ -858,15 +858,15 @@ type Job struct {
 	Error string `protobuf:"bytes,18,opt,name=error,proto3" json:"error,omitempty"`
 	// Why the job was stopped: github_cancelled, max_duration, operator,
 	// github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-	// ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
-	// tenant_deleted or owner, or for a service's run owner_deleted,
+	// ran_elsewhere, for a sandbox spend_cap, workspace_suspended,
+	// workspace_deleted or owner, or for a service's run owner_deleted,
 	// service_restart or sleep, or policy. Empty if it never was.
 	StopReason string `protobuf:"bytes,19,opt,name=stop_reason,json=stopReason,proto3" json:"stop_reason,omitempty"`
 	// When the control plane asked the host to stop the job. Unset if it
 	// never did.
 	StopRequestedAt *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=stop_requested_at,json=stopRequestedAt,proto3" json:"stop_requested_at,omitempty"`
 	// Why the scheduler last held the job while it was queued:
-	// tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
+	// workspace_suspended, limits_unavailable, workspace_cap, workspace_vcpu,
 	// free_allowance, spend_cap, jobs_per_hour, start_rate, burst_guard,
 	// plan_os, installation_suspended, overflow_wait, no_own_capacity,
 	// no_capacity, cloud_budget, reserved_for_other, volume_claimed,
@@ -904,7 +904,7 @@ type Job struct {
 	// flight. Kept in memory: unset after a restart of the control plane.
 	RunnerRequestSince *timestamppb.Timestamp `protobuf:"bytes,31,opt,name=runner_request_since,json=runnerRequestSince,proto3" json:"runner_request_since,omitempty"`
 	// Toshi's own word for a job Toshi ended itself: time_limit,
-	// cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
+	// cancelled_by_workspace, cancelled_by_operator, cancelled_by_uninstall,
 	// cancelled or failed. Empty for every other job. The conclusion stays
 	// GitHub's word.
 	Outcome string `protobuf:"bytes,32,opt,name=outcome,proto3" json:"outcome,omitempty"`
@@ -1079,9 +1079,9 @@ func (x *Job) GetId() string {
 	return ""
 }
 
-func (x *Job) GetTenant() string {
+func (x *Job) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -2149,7 +2149,7 @@ type Host struct {
 	HeldRefills []*HeldRefill `protobuf:"bytes,10,rep,name=held_refills,json=heldRefills,proto3" json:"held_refills,omitempty"`
 	// Workspace that owns the host and is the only one whose jobs it runs; empty
 	// for a shared host.
-	OwnerTenant string `protobuf:"bytes,11,opt,name=owner_tenant,json=ownerTenant,proto3" json:"owner_tenant,omitempty"`
+	OwnerWorkspace string `protobuf:"bytes,11,opt,name=owner_workspace,json=ownerWorkspace,proto3" json:"owner_workspace,omitempty"`
 	// The host's agent is draining before a stop: it takes no new jobs. On an
 	// offline host: the host was draining when it went offline.
 	Stopping bool `protobuf:"varint,12,opt,name=stopping,proto3" json:"stopping,omitempty"`
@@ -2333,9 +2333,9 @@ func (x *Host) GetHeldRefills() []*HeldRefill {
 	return nil
 }
 
-func (x *Host) GetOwnerTenant() string {
+func (x *Host) GetOwnerWorkspace() string {
 	if x != nil {
-		return x.OwnerTenant
+		return x.OwnerWorkspace
 	}
 	return ""
 }
@@ -2685,7 +2685,7 @@ type ListJobsRequest struct {
 	// Jobs in any of these states; empty matches every state.
 	States []JobState `protobuf:"varint,1,rep,packed,name=states,proto3,enum=toshi.operator.v1.JobState" json:"states,omitempty"`
 	// Empty matches every workspace.
-	Tenant string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The repository as "owner/name"; empty matches every repository.
 	Repository string `protobuf:"bytes,3,opt,name=repository,proto3" json:"repository,omitempty"`
 	// The most jobs in one page; zero lets the server choose.
@@ -2741,9 +2741,9 @@ func (x *ListJobsRequest) GetStates() []JobState {
 	return nil
 }
 
-func (x *ListJobsRequest) GetTenant() string {
+func (x *ListJobsRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -2847,8 +2847,8 @@ type AuditEvent struct {
 	// user id, or a system or webhook source name.
 	ActorId string `protobuf:"bytes,4,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
 	// Empty when the event is not tied to a workspace.
-	Tenant string `protobuf:"bytes,5,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	Action string `protobuf:"bytes,6,opt,name=action,proto3" json:"action,omitempty"`
+	Workspace string `protobuf:"bytes,5,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	Action    string `protobuf:"bytes,6,opt,name=action,proto3" json:"action,omitempty"`
 	// A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...
 	// or workspace:....
 	Target string `protobuf:"bytes,7,opt,name=target,proto3" json:"target,omitempty"`
@@ -2934,9 +2934,9 @@ func (x *AuditEvent) GetActorId() string {
 	return ""
 }
 
-func (x *AuditEvent) GetTenant() string {
+func (x *AuditEvent) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -3008,7 +3008,7 @@ func (x *AuditEvent) GetActorName() string {
 type ListAuditEventsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Only this workspace's events; empty matches every workspace.
-	Tenant string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// Only this action; empty matches every action.
 	Action string `protobuf:"bytes,2,opt,name=action,proto3" json:"action,omitempty"`
 	// Only events at or after this time; unset is unbounded.
@@ -3066,9 +3066,9 @@ func (*ListAuditEventsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *ListAuditEventsRequest) GetTenant() string {
+func (x *ListAuditEventsRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -3451,7 +3451,7 @@ type HostVolume struct {
 	// The volume's id.
 	VolumeId string `protobuf:"bytes,1,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
 	// The volume's workspace.
-	Tenant string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The name of the project the volume belongs to.
 	Project string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
 	// The id of the project the volume belongs to.
@@ -3511,9 +3511,9 @@ func (x *HostVolume) GetVolumeId() string {
 	return ""
 }
 
-func (x *HostVolume) GetTenant() string {
+func (x *HostVolume) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -3963,7 +3963,7 @@ func (x *RevokeHostResponse) GetEndedJobIds() []string {
 	return nil
 }
 
-type RetireOfflineHostsRequest struct {
+type RetireHostsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// offline_longer_than is required and must be positive.
 	OfflineLongerThan *durationpb.Duration `protobuf:"bytes,1,opt,name=offline_longer_than,json=offlineLongerThan,proto3" json:"offline_longer_than,omitempty"`
@@ -3973,20 +3973,20 @@ type RetireOfflineHostsRequest struct {
 	sizeCache         protoimpl.SizeCache
 }
 
-func (x *RetireOfflineHostsRequest) Reset() {
-	*x = RetireOfflineHostsRequest{}
+func (x *RetireHostsRequest) Reset() {
+	*x = RetireHostsRequest{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RetireOfflineHostsRequest) String() string {
+func (x *RetireHostsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RetireOfflineHostsRequest) ProtoMessage() {}
+func (*RetireHostsRequest) ProtoMessage() {}
 
-func (x *RetireOfflineHostsRequest) ProtoReflect() protoreflect.Message {
+func (x *RetireHostsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3998,33 +3998,33 @@ func (x *RetireOfflineHostsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RetireOfflineHostsRequest.ProtoReflect.Descriptor instead.
-func (*RetireOfflineHostsRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use RetireHostsRequest.ProtoReflect.Descriptor instead.
+func (*RetireHostsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *RetireOfflineHostsRequest) GetOfflineLongerThan() *durationpb.Duration {
+func (x *RetireHostsRequest) GetOfflineLongerThan() *durationpb.Duration {
 	if x != nil {
 		return x.OfflineLongerThan
 	}
 	return nil
 }
 
-func (x *RetireOfflineHostsRequest) GetIncludeOwned() bool {
+func (x *RetireHostsRequest) GetIncludeOwned() bool {
 	if x != nil {
 		return x.IncludeOwned
 	}
 	return false
 }
 
-func (x *RetireOfflineHostsRequest) GetApply() bool {
+func (x *RetireHostsRequest) GetApply() bool {
 	if x != nil {
 		return x.Apply
 	}
 	return false
 }
 
-type RetireOfflineHostsResponse struct {
+type RetireHostsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The host with the oldest last heartbeat first.
 	Hosts         []*OfflineHostResult `protobuf:"bytes,1,rep,name=hosts,proto3" json:"hosts,omitempty"`
@@ -4032,20 +4032,20 @@ type RetireOfflineHostsResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RetireOfflineHostsResponse) Reset() {
-	*x = RetireOfflineHostsResponse{}
+func (x *RetireHostsResponse) Reset() {
+	*x = RetireHostsResponse{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RetireOfflineHostsResponse) String() string {
+func (x *RetireHostsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RetireOfflineHostsResponse) ProtoMessage() {}
+func (*RetireHostsResponse) ProtoMessage() {}
 
-func (x *RetireOfflineHostsResponse) ProtoReflect() protoreflect.Message {
+func (x *RetireHostsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4057,12 +4057,12 @@ func (x *RetireOfflineHostsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RetireOfflineHostsResponse.ProtoReflect.Descriptor instead.
-func (*RetireOfflineHostsResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use RetireHostsResponse.ProtoReflect.Descriptor instead.
+func (*RetireHostsResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{30}
 }
 
-func (x *RetireOfflineHostsResponse) GetHosts() []*OfflineHostResult {
+func (x *RetireHostsResponse) GetHosts() []*OfflineHostResult {
 	if x != nil {
 		return x.Hosts
 	}
@@ -4123,7 +4123,7 @@ func (x *OfflineHostResult) GetOutcome() OfflineHostOutcome {
 
 // Workspace owns a plan, an optional concurrency override, and one or more GitHub
 // App installations.
-type Tenant struct {
+type Workspace struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -4212,27 +4212,27 @@ type Tenant struct {
 	// plan's.
 	VolumeSnapshotIntervalSecondsEffective int32 `protobuf:"varint,36,opt,name=volume_snapshot_interval_seconds_effective,json=volumeSnapshotIntervalSecondsEffective,proto3" json:"volume_snapshot_interval_seconds_effective,omitempty"`
 	// The workspace's billing link.
-	Billing *TenantBilling `protobuf:"bytes,38,opt,name=billing,proto3" json:"billing,omitempty"`
+	Billing *WorkspaceBilling `protobuf:"bytes,38,opt,name=billing,proto3" json:"billing,omitempty"`
 	// The operator's entitlement overrides, by feature key.
 	EntitlementOverrides map[string]string `protobuf:"bytes,39,rep,name=entitlement_overrides,json=entitlementOverrides,proto3" json:"entitlement_overrides,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
 
-func (x *Tenant) Reset() {
-	*x = Tenant{}
+func (x *Workspace) Reset() {
+	*x = Workspace{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Tenant) String() string {
+func (x *Workspace) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Tenant) ProtoMessage() {}
+func (*Workspace) ProtoMessage() {}
 
-func (x *Tenant) ProtoReflect() protoreflect.Message {
+func (x *Workspace) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4244,278 +4244,278 @@ func (x *Tenant) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Tenant.ProtoReflect.Descriptor instead.
-func (*Tenant) Descriptor() ([]byte, []int) {
+// Deprecated: Use Workspace.ProtoReflect.Descriptor instead.
+func (*Workspace) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *Tenant) GetId() string {
+func (x *Workspace) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *Tenant) GetName() string {
+func (x *Workspace) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *Tenant) GetConcurrencyCap() int32 {
+func (x *Workspace) GetConcurrencyCap() int32 {
 	if x != nil && x.ConcurrencyCap != nil {
 		return *x.ConcurrencyCap
 	}
 	return 0
 }
 
-func (x *Tenant) GetCreatedAt() *timestamppb.Timestamp {
+func (x *Workspace) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *Tenant) GetPlan() string {
+func (x *Workspace) GetPlan() string {
 	if x != nil {
 		return x.Plan
 	}
 	return ""
 }
 
-func (x *Tenant) GetEffectiveConcurrency() int32 {
+func (x *Workspace) GetEffectiveConcurrency() int32 {
 	if x != nil {
 		return x.EffectiveConcurrency
 	}
 	return 0
 }
 
-func (x *Tenant) GetStatus() string {
+func (x *Workspace) GetStatus() string {
 	if x != nil {
 		return x.Status
 	}
 	return ""
 }
 
-func (x *Tenant) GetOwnHostsOnly() bool {
+func (x *Workspace) GetOwnHostsOnly() bool {
 	if x != nil {
 		return x.OwnHostsOnly
 	}
 	return false
 }
 
-func (x *Tenant) GetSpendCapCents() int64 {
+func (x *Workspace) GetSpendCapCents() int64 {
 	if x != nil {
 		return x.SpendCapCents
 	}
 	return 0
 }
 
-func (x *Tenant) GetMaxJobsPerHour() int32 {
+func (x *Workspace) GetMaxJobsPerHour() int32 {
 	if x != nil {
 		return x.MaxJobsPerHour
 	}
 	return 0
 }
 
-func (x *Tenant) GetEffectiveMaxJobsPerHour() int32 {
+func (x *Workspace) GetEffectiveMaxJobsPerHour() int32 {
 	if x != nil {
 		return x.EffectiveMaxJobsPerHour
 	}
 	return 0
 }
 
-func (x *Tenant) GetStarterCreditCents() int64 {
+func (x *Workspace) GetStarterCreditCents() int64 {
 	if x != nil {
 		return x.StarterCreditCents
 	}
 	return 0
 }
 
-func (x *Tenant) GetStarterCreditGrantedAt() *timestamppb.Timestamp {
+func (x *Workspace) GetStarterCreditGrantedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.StarterCreditGrantedAt
 	}
 	return nil
 }
 
-func (x *Tenant) GetAllowOverflow() bool {
+func (x *Workspace) GetAllowOverflow() bool {
 	if x != nil {
 		return x.AllowOverflow
 	}
 	return false
 }
 
-func (x *Tenant) GetAllowCacheWarm() bool {
+func (x *Workspace) GetAllowCacheWarm() bool {
 	if x != nil {
 		return x.AllowCacheWarm
 	}
 	return false
 }
 
-func (x *Tenant) GetReservations() []*Reservation {
+func (x *Workspace) GetReservations() []*Reservation {
 	if x != nil {
 		return x.Reservations
 	}
 	return nil
 }
 
-func (x *Tenant) GetState() string {
+func (x *Workspace) GetState() string {
 	if x != nil {
 		return x.State
 	}
 	return ""
 }
 
-func (x *Tenant) GetStateReason() string {
+func (x *Workspace) GetStateReason() string {
 	if x != nil {
 		return x.StateReason
 	}
 	return ""
 }
 
-func (x *Tenant) GetStateSince() *timestamppb.Timestamp {
+func (x *Workspace) GetStateSince() *timestamppb.Timestamp {
 	if x != nil {
 		return x.StateSince
 	}
 	return nil
 }
 
-func (x *Tenant) GetPurgeAfter() *timestamppb.Timestamp {
+func (x *Workspace) GetPurgeAfter() *timestamppb.Timestamp {
 	if x != nil {
 		return x.PurgeAfter
 	}
 	return nil
 }
 
-func (x *Tenant) GetDeletionBy() string {
+func (x *Workspace) GetDeletionBy() string {
 	if x != nil {
 		return x.DeletionBy
 	}
 	return ""
 }
 
-func (x *Tenant) GetHistoryDays() int32 {
+func (x *Workspace) GetHistoryDays() int32 {
 	if x != nil && x.HistoryDays != nil {
 		return *x.HistoryDays
 	}
 	return 0
 }
 
-func (x *Tenant) GetHistoryDaysEffective() int32 {
+func (x *Workspace) GetHistoryDaysEffective() int32 {
 	if x != nil {
 		return x.HistoryDaysEffective
 	}
 	return 0
 }
 
-func (x *Tenant) GetCancelRunOnVmDeath() bool {
+func (x *Workspace) GetCancelRunOnVmDeath() bool {
 	if x != nil {
 		return x.CancelRunOnVmDeath
 	}
 	return false
 }
 
-func (x *Tenant) GetSecretMaxSets() int32 {
+func (x *Workspace) GetSecretMaxSets() int32 {
 	if x != nil && x.SecretMaxSets != nil {
 		return *x.SecretMaxSets
 	}
 	return 0
 }
 
-func (x *Tenant) GetSecretMaxKeys() int32 {
+func (x *Workspace) GetSecretMaxKeys() int32 {
 	if x != nil && x.SecretMaxKeys != nil {
 		return *x.SecretMaxKeys
 	}
 	return 0
 }
 
-func (x *Tenant) GetSecretMaxKib() int64 {
+func (x *Workspace) GetSecretMaxKib() int64 {
 	if x != nil && x.SecretMaxKib != nil {
 		return *x.SecretMaxKib
 	}
 	return 0
 }
 
-func (x *Tenant) GetPreviewMaxPorts() int32 {
+func (x *Workspace) GetPreviewMaxPorts() int32 {
 	if x != nil && x.PreviewMaxPorts != nil {
 		return *x.PreviewMaxPorts
 	}
 	return 0
 }
 
-func (x *Tenant) GetSecretMaxSetsEffective() int32 {
+func (x *Workspace) GetSecretMaxSetsEffective() int32 {
 	if x != nil {
 		return x.SecretMaxSetsEffective
 	}
 	return 0
 }
 
-func (x *Tenant) GetSecretMaxKeysEffective() int32 {
+func (x *Workspace) GetSecretMaxKeysEffective() int32 {
 	if x != nil {
 		return x.SecretMaxKeysEffective
 	}
 	return 0
 }
 
-func (x *Tenant) GetSecretMaxKibEffective() int64 {
+func (x *Workspace) GetSecretMaxKibEffective() int64 {
 	if x != nil {
 		return x.SecretMaxKibEffective
 	}
 	return 0
 }
 
-func (x *Tenant) GetPreviewMaxPortsEffective() int32 {
+func (x *Workspace) GetPreviewMaxPortsEffective() int32 {
 	if x != nil {
 		return x.PreviewMaxPortsEffective
 	}
 	return 0
 }
 
-func (x *Tenant) GetMemberJoin() string {
+func (x *Workspace) GetMemberJoin() string {
 	if x != nil {
 		return x.MemberJoin
 	}
 	return ""
 }
 
-func (x *Tenant) GetHostingCertificate() *HostingCertificate {
+func (x *Workspace) GetHostingCertificate() *HostingCertificate {
 	if x != nil {
 		return x.HostingCertificate
 	}
 	return nil
 }
 
-func (x *Tenant) GetKeepVm() bool {
+func (x *Workspace) GetKeepVm() bool {
 	if x != nil {
 		return x.KeepVm
 	}
 	return false
 }
 
-func (x *Tenant) GetVolumeSnapshotIntervalSeconds() int32 {
+func (x *Workspace) GetVolumeSnapshotIntervalSeconds() int32 {
 	if x != nil && x.VolumeSnapshotIntervalSeconds != nil {
 		return *x.VolumeSnapshotIntervalSeconds
 	}
 	return 0
 }
 
-func (x *Tenant) GetVolumeSnapshotIntervalSecondsEffective() int32 {
+func (x *Workspace) GetVolumeSnapshotIntervalSecondsEffective() int32 {
 	if x != nil {
 		return x.VolumeSnapshotIntervalSecondsEffective
 	}
 	return 0
 }
 
-func (x *Tenant) GetBilling() *TenantBilling {
+func (x *Workspace) GetBilling() *WorkspaceBilling {
 	if x != nil {
 		return x.Billing
 	}
 	return nil
 }
 
-func (x *Tenant) GetEntitlementOverrides() map[string]string {
+func (x *Workspace) GetEntitlementOverrides() map[string]string {
 	if x != nil {
 		return x.EntitlementOverrides
 	}
@@ -4626,7 +4626,7 @@ type Reservation struct {
 	Slots int32 `protobuf:"varint,2,opt,name=slots,proto3" json:"slots,omitempty"`
 	// How many of the slots are kept on warm VMs; 0 when none.
 	Warm int32 `protobuf:"varint,3,opt,name=warm,proto3" json:"warm,omitempty"`
-	// "tenant" when the workspace's own row set it, "plan" when its plan did.
+	// "workspace" when the workspace's own row set it, "plan" when its plan did.
 	Source        string `protobuf:"bytes,4,opt,name=source,proto3" json:"source,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4692,7 +4692,7 @@ func (x *Reservation) GetSource() string {
 
 type CreateWorkspaceRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The workspace's name, as ListTenants shows it; surrounding spaces are
+	// The workspace's name, as ListWorkspaces shows it; surrounding spaces are
 	// dropped.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The plan; empty for the control plane's default_plan.
@@ -4747,7 +4747,7 @@ func (x *CreateWorkspaceRequest) GetPlan() string {
 
 type CreateWorkspaceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Workspace     *Tenant                `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4782,14 +4782,14 @@ func (*CreateWorkspaceResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{36}
 }
 
-func (x *CreateWorkspaceResponse) GetWorkspace() *Tenant {
+func (x *CreateWorkspaceResponse) GetWorkspace() *Workspace {
 	if x != nil {
 		return x.Workspace
 	}
 	return nil
 }
 
-type ListTenantsRequest struct {
+type ListWorkspacesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most workspaces in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
@@ -4799,20 +4799,20 @@ type ListTenantsRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListTenantsRequest) Reset() {
-	*x = ListTenantsRequest{}
+func (x *ListWorkspacesRequest) Reset() {
+	*x = ListWorkspacesRequest{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListTenantsRequest) String() string {
+func (x *ListWorkspacesRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListTenantsRequest) ProtoMessage() {}
+func (*ListWorkspacesRequest) ProtoMessage() {}
 
-func (x *ListTenantsRequest) ProtoReflect() protoreflect.Message {
+func (x *ListWorkspacesRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4824,48 +4824,48 @@ func (x *ListTenantsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTenantsRequest.ProtoReflect.Descriptor instead.
-func (*ListTenantsRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListWorkspacesRequest.ProtoReflect.Descriptor instead.
+func (*ListWorkspacesRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{37}
 }
 
-func (x *ListTenantsRequest) GetPageSize() int32 {
+func (x *ListWorkspacesRequest) GetPageSize() int32 {
 	if x != nil {
 		return x.PageSize
 	}
 	return 0
 }
 
-func (x *ListTenantsRequest) GetPageToken() string {
+func (x *ListWorkspacesRequest) GetPageToken() string {
 	if x != nil {
 		return x.PageToken
 	}
 	return ""
 }
 
-type ListTenantsResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Tenants []*Tenant              `protobuf:"bytes,1,rep,name=tenants,proto3" json:"tenants,omitempty"`
+type ListWorkspacesResponse struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Workspaces []*Workspace           `protobuf:"bytes,1,rep,name=workspaces,proto3" json:"workspaces,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListTenantsResponse) Reset() {
-	*x = ListTenantsResponse{}
+func (x *ListWorkspacesResponse) Reset() {
+	*x = ListWorkspacesResponse{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListTenantsResponse) String() string {
+func (x *ListWorkspacesResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListTenantsResponse) ProtoMessage() {}
+func (*ListWorkspacesResponse) ProtoMessage() {}
 
-func (x *ListTenantsResponse) ProtoReflect() protoreflect.Message {
+func (x *ListWorkspacesResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4877,19 +4877,19 @@ func (x *ListTenantsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTenantsResponse.ProtoReflect.Descriptor instead.
-func (*ListTenantsResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListWorkspacesResponse.ProtoReflect.Descriptor instead.
+func (*ListWorkspacesResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{38}
 }
 
-func (x *ListTenantsResponse) GetTenants() []*Tenant {
+func (x *ListWorkspacesResponse) GetWorkspaces() []*Workspace {
 	if x != nil {
-		return x.Tenants
+		return x.Workspaces
 	}
 	return nil
 }
 
-func (x *ListTenantsResponse) GetNextPageToken() string {
+func (x *ListWorkspacesResponse) GetNextPageToken() string {
 	if x != nil {
 		return x.NextPageToken
 	}
@@ -4950,7 +4950,7 @@ func (x *SetTenantCapRequest) GetConcurrencyCap() int32 {
 
 type SetTenantCapResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tenant        *Tenant                `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4985,16 +4985,16 @@ func (*SetTenantCapResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{40}
 }
 
-func (x *SetTenantCapResponse) GetTenant() *Tenant {
+func (x *SetTenantCapResponse) GetWorkspace() *Workspace {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return nil
 }
 
 type SetTenantLimitsRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Tenant          string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace       string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	SecretMaxSets   *int32                 `protobuf:"varint,2,opt,name=secret_max_sets,json=secretMaxSets,proto3,oneof" json:"secret_max_sets,omitempty"`
 	SecretMaxKeys   *int32                 `protobuf:"varint,3,opt,name=secret_max_keys,json=secretMaxKeys,proto3,oneof" json:"secret_max_keys,omitempty"`
 	SecretMaxKib    *int64                 `protobuf:"varint,4,opt,name=secret_max_kib,json=secretMaxKib,proto3,oneof" json:"secret_max_kib,omitempty"`
@@ -5039,9 +5039,9 @@ func (*SetTenantLimitsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{41}
 }
 
-func (x *SetTenantLimitsRequest) GetTenant() string {
+func (x *SetTenantLimitsRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -5090,7 +5090,7 @@ func (x *SetTenantLimitsRequest) GetVolumeSnapshotIntervalSeconds() int32 {
 
 type SetTenantLimitsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tenant        *Tenant                `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5125,9 +5125,9 @@ func (*SetTenantLimitsResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{42}
 }
 
-func (x *SetTenantLimitsResponse) GetTenant() *Tenant {
+func (x *SetTenantLimitsResponse) GetWorkspace() *Workspace {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return nil
 }
@@ -5135,7 +5135,7 @@ func (x *SetTenantLimitsResponse) GetTenant() *Tenant {
 type UpdateWorkspaceRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The workspace and the values to set; id identifies the workspace.
-	Workspace *Tenant `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	Workspace *Workspace `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The fields to change; required and nonempty.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -5172,7 +5172,7 @@ func (*UpdateWorkspaceRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{43}
 }
 
-func (x *UpdateWorkspaceRequest) GetWorkspace() *Tenant {
+func (x *UpdateWorkspaceRequest) GetWorkspace() *Workspace {
 	if x != nil {
 		return x.Workspace
 	}
@@ -5188,7 +5188,7 @@ func (x *UpdateWorkspaceRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type UpdateWorkspaceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Workspace     *Tenant                `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5223,7 +5223,7 @@ func (*UpdateWorkspaceResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{44}
 }
 
-func (x *UpdateWorkspaceResponse) GetWorkspace() *Tenant {
+func (x *UpdateWorkspaceResponse) GetWorkspace() *Workspace {
 	if x != nil {
 		return x.Workspace
 	}
@@ -5652,7 +5652,7 @@ func (x *SeatMonth) GetBilled() bool {
 	return false
 }
 
-type SuspendTenantRequest struct {
+type SuspendWorkspaceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
@@ -5660,20 +5660,20 @@ type SuspendTenantRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SuspendTenantRequest) Reset() {
-	*x = SuspendTenantRequest{}
+func (x *SuspendWorkspaceRequest) Reset() {
+	*x = SuspendWorkspaceRequest{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SuspendTenantRequest) String() string {
+func (x *SuspendWorkspaceRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SuspendTenantRequest) ProtoMessage() {}
+func (*SuspendWorkspaceRequest) ProtoMessage() {}
 
-func (x *SuspendTenantRequest) ProtoReflect() protoreflect.Message {
+func (x *SuspendWorkspaceRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5685,46 +5685,46 @@ func (x *SuspendTenantRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SuspendTenantRequest.ProtoReflect.Descriptor instead.
-func (*SuspendTenantRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SuspendWorkspaceRequest.ProtoReflect.Descriptor instead.
+func (*SuspendWorkspaceRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{51}
 }
 
-func (x *SuspendTenantRequest) GetId() string {
+func (x *SuspendWorkspaceRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *SuspendTenantRequest) GetReason() string {
+func (x *SuspendWorkspaceRequest) GetReason() string {
 	if x != nil {
 		return x.Reason
 	}
 	return ""
 }
 
-type SuspendTenantResponse struct {
+type SuspendWorkspaceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tenant        *Tenant                `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SuspendTenantResponse) Reset() {
-	*x = SuspendTenantResponse{}
+func (x *SuspendWorkspaceResponse) Reset() {
+	*x = SuspendWorkspaceResponse{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SuspendTenantResponse) String() string {
+func (x *SuspendWorkspaceResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SuspendTenantResponse) ProtoMessage() {}
+func (*SuspendWorkspaceResponse) ProtoMessage() {}
 
-func (x *SuspendTenantResponse) ProtoReflect() protoreflect.Message {
+func (x *SuspendWorkspaceResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5736,19 +5736,19 @@ func (x *SuspendTenantResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SuspendTenantResponse.ProtoReflect.Descriptor instead.
-func (*SuspendTenantResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use SuspendWorkspaceResponse.ProtoReflect.Descriptor instead.
+func (*SuspendWorkspaceResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{52}
 }
 
-func (x *SuspendTenantResponse) GetTenant() *Tenant {
+func (x *SuspendWorkspaceResponse) GetWorkspace() *Workspace {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return nil
 }
 
-type ResumeTenantRequest struct {
+type UnsuspendWorkspaceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
@@ -5756,20 +5756,20 @@ type ResumeTenantRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ResumeTenantRequest) Reset() {
-	*x = ResumeTenantRequest{}
+func (x *UnsuspendWorkspaceRequest) Reset() {
+	*x = UnsuspendWorkspaceRequest{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ResumeTenantRequest) String() string {
+func (x *UnsuspendWorkspaceRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ResumeTenantRequest) ProtoMessage() {}
+func (*UnsuspendWorkspaceRequest) ProtoMessage() {}
 
-func (x *ResumeTenantRequest) ProtoReflect() protoreflect.Message {
+func (x *UnsuspendWorkspaceRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5781,46 +5781,46 @@ func (x *ResumeTenantRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ResumeTenantRequest.ProtoReflect.Descriptor instead.
-func (*ResumeTenantRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UnsuspendWorkspaceRequest.ProtoReflect.Descriptor instead.
+func (*UnsuspendWorkspaceRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{53}
 }
 
-func (x *ResumeTenantRequest) GetId() string {
+func (x *UnsuspendWorkspaceRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *ResumeTenantRequest) GetReason() string {
+func (x *UnsuspendWorkspaceRequest) GetReason() string {
 	if x != nil {
 		return x.Reason
 	}
 	return ""
 }
 
-type ResumeTenantResponse struct {
+type UnsuspendWorkspaceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tenant        *Tenant                `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ResumeTenantResponse) Reset() {
-	*x = ResumeTenantResponse{}
+func (x *UnsuspendWorkspaceResponse) Reset() {
+	*x = UnsuspendWorkspaceResponse{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ResumeTenantResponse) String() string {
+func (x *UnsuspendWorkspaceResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ResumeTenantResponse) ProtoMessage() {}
+func (*UnsuspendWorkspaceResponse) ProtoMessage() {}
 
-func (x *ResumeTenantResponse) ProtoReflect() protoreflect.Message {
+func (x *UnsuspendWorkspaceResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5832,19 +5832,19 @@ func (x *ResumeTenantResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ResumeTenantResponse.ProtoReflect.Descriptor instead.
-func (*ResumeTenantResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UnsuspendWorkspaceResponse.ProtoReflect.Descriptor instead.
+func (*UnsuspendWorkspaceResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{54}
 }
 
-func (x *ResumeTenantResponse) GetTenant() *Tenant {
+func (x *UnsuspendWorkspaceResponse) GetWorkspace() *Workspace {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return nil
 }
 
-type DeleteTenantRequest struct {
+type DeleteWorkspaceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
@@ -5854,20 +5854,20 @@ type DeleteTenantRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteTenantRequest) Reset() {
-	*x = DeleteTenantRequest{}
+func (x *DeleteWorkspaceRequest) Reset() {
+	*x = DeleteWorkspaceRequest{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteTenantRequest) String() string {
+func (x *DeleteWorkspaceRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteTenantRequest) ProtoMessage() {}
+func (*DeleteWorkspaceRequest) ProtoMessage() {}
 
-func (x *DeleteTenantRequest) ProtoReflect() protoreflect.Message {
+func (x *DeleteWorkspaceRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5879,60 +5879,60 @@ func (x *DeleteTenantRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteTenantRequest.ProtoReflect.Descriptor instead.
-func (*DeleteTenantRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteWorkspaceRequest.ProtoReflect.Descriptor instead.
+func (*DeleteWorkspaceRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{55}
 }
 
-func (x *DeleteTenantRequest) GetId() string {
+func (x *DeleteWorkspaceRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *DeleteTenantRequest) GetReason() string {
+func (x *DeleteWorkspaceRequest) GetReason() string {
 	if x != nil {
 		return x.Reason
 	}
 	return ""
 }
 
-func (x *DeleteTenantRequest) GetGraceSeconds() int64 {
+func (x *DeleteWorkspaceRequest) GetGraceSeconds() int64 {
 	if x != nil {
 		return x.GraceSeconds
 	}
 	return 0
 }
 
-func (x *DeleteTenantRequest) GetNow() bool {
+func (x *DeleteWorkspaceRequest) GetNow() bool {
 	if x != nil {
 		return x.Now
 	}
 	return false
 }
 
-type DeleteTenantResponse struct {
+type DeleteWorkspaceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tenant        *Tenant                `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteTenantResponse) Reset() {
-	*x = DeleteTenantResponse{}
+func (x *DeleteWorkspaceResponse) Reset() {
+	*x = DeleteWorkspaceResponse{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteTenantResponse) String() string {
+func (x *DeleteWorkspaceResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteTenantResponse) ProtoMessage() {}
+func (*DeleteWorkspaceResponse) ProtoMessage() {}
 
-func (x *DeleteTenantResponse) ProtoReflect() protoreflect.Message {
+func (x *DeleteWorkspaceResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5944,14 +5944,14 @@ func (x *DeleteTenantResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteTenantResponse.ProtoReflect.Descriptor instead.
-func (*DeleteTenantResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteWorkspaceResponse.ProtoReflect.Descriptor instead.
+func (*DeleteWorkspaceResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{56}
 }
 
-func (x *DeleteTenantResponse) GetTenant() *Tenant {
+func (x *DeleteWorkspaceResponse) GetWorkspace() *Workspace {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return nil
 }
@@ -6273,7 +6273,7 @@ func (x *ListOperatorAlertsResponse) GetNextPageToken() string {
 type ListHostAlertsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Optional: only this workspace.
-	Tenant string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The most alerts in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -6312,9 +6312,9 @@ func (*ListHostAlertsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{60}
 }
 
-func (x *ListHostAlertsRequest) GetTenant() string {
+func (x *ListHostAlertsRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -6402,7 +6402,7 @@ type OperatorAlert struct {
 	// message says the same in one line.
 	Message string `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
 	// The workspace whose own hosts raised the alert. Empty for an operator alert.
-	Tenant        string `protobuf:"bytes,8,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     string `protobuf:"bytes,8,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6486,9 +6486,9 @@ func (x *OperatorAlert) GetMessage() string {
 	return ""
 }
 
-func (x *OperatorAlert) GetTenant() string {
+func (x *OperatorAlert) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -6891,7 +6891,7 @@ type GetUsageRequest struct {
 	// End of the window, exclusive. Unset: now.
 	To *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
 	// Only this workspace's jobs. Empty matches every workspace.
-	Tenant        string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     string `protobuf:"bytes,3,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6940,9 +6940,9 @@ func (x *GetUsageRequest) GetTo() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *GetUsageRequest) GetTenant() string {
+func (x *GetUsageRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -7034,9 +7034,9 @@ func (x *GetUsageResponse) GetStorage() []*StorageUsageRow {
 // started on shared room. Not billed; a plan's filler_minutes_per_day bounds
 // them per UTC day.
 type FillerUsage struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	Jobs   int64                  `protobuf:"varint,2,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Workspace string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	Jobs      int64                  `protobuf:"varint,2,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	// Each job's duration rounded up to whole minutes, on any host.
 	Minutes       int64 `protobuf:"varint,3,opt,name=minutes,proto3" json:"minutes,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -7073,9 +7073,9 @@ func (*FillerUsage) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{72}
 }
 
-func (x *FillerUsage) GetTenant() string {
+func (x *FillerUsage) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -7097,8 +7097,8 @@ func (x *FillerUsage) GetMinutes() int64 {
 // UsageRow counts the jobs of one workspace, UTC day, conclusion, outcome and
 // kind.
 type UsageRow struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Workspace string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The UTC date of the job's queued_at, as YYYY-MM-DD.
 	Day string `protobuf:"bytes,2,opt,name=day,proto3" json:"day,omitempty"`
 	// The job's conclusion as stored, such as "success". Empty for a job with
@@ -7173,9 +7173,9 @@ func (*UsageRow) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{73}
 }
 
-func (x *UsageRow) GetTenant() string {
+func (x *UsageRow) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -7287,7 +7287,7 @@ type GetQueueTimesRequest struct {
 	// End of the window, exclusive. Unset: now.
 	To *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
 	// Only this workspace's jobs. Empty matches every workspace.
-	Tenant        string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     string `protobuf:"bytes,3,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7336,9 +7336,9 @@ func (x *GetQueueTimesRequest) GetTo() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *GetQueueTimesRequest) GetTenant() string {
+func (x *GetQueueTimesRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -7559,7 +7559,7 @@ type GetWorkflowUsageRequest struct {
 	// End of the window, exclusive. Unset: now.
 	To *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
 	// Only this workspace's jobs. Empty matches every workspace.
-	Tenant        string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     string `protobuf:"bytes,3,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7608,9 +7608,9 @@ func (x *GetWorkflowUsageRequest) GetTo() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *GetWorkflowUsageRequest) GetTenant() string {
+func (x *GetWorkflowUsageRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -7683,8 +7683,8 @@ func (x *GetWorkflowUsageResponse) GetTo() *timestamppb.Timestamp {
 // Its jobs are the ones GetUsage counts, and their minutes are counted as
 // in UsageRow.
 type WorkflowUsageRow struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Workspace string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The repository, as owner/name.
 	Repository string `protobuf:"bytes,2,opt,name=repository,proto3" json:"repository,omitempty"`
 	// The workflow's name from the job's workflow_job webhook. Empty for jobs
@@ -7739,9 +7739,9 @@ func (*WorkflowUsageRow) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{79}
 }
 
-func (x *WorkflowUsageRow) GetTenant() string {
+func (x *WorkflowUsageRow) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -8010,9 +8010,9 @@ func (x *CapacitySize) GetWarm() int32 {
 }
 
 type CapacityReservation struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	Size   string                 `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Workspace string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	Size      string                 `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
 	// The reservation.
 	Slots int32 `protobuf:"varint,3,opt,name=slots,proto3" json:"slots,omitempty"`
 	Warm  int32 `protobuf:"varint,4,opt,name=warm,proto3" json:"warm,omitempty"`
@@ -8058,9 +8058,9 @@ func (*CapacityReservation) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{83}
 }
 
-func (x *CapacityReservation) GetTenant() string {
+func (x *CapacityReservation) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -8114,7 +8114,7 @@ func (x *CapacityReservation) GetShort() int32 {
 	return 0
 }
 
-type GetTenantStatementRequest struct {
+type GetWorkspaceStatementRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The UTC month as YYYY-MM. Empty: the current month.
@@ -8126,20 +8126,20 @@ type GetTenantStatementRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetTenantStatementRequest) Reset() {
-	*x = GetTenantStatementRequest{}
+func (x *GetWorkspaceStatementRequest) Reset() {
+	*x = GetWorkspaceStatementRequest{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetTenantStatementRequest) String() string {
+func (x *GetWorkspaceStatementRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetTenantStatementRequest) ProtoMessage() {}
+func (*GetWorkspaceStatementRequest) ProtoMessage() {}
 
-func (x *GetTenantStatementRequest) ProtoReflect() protoreflect.Message {
+func (x *GetWorkspaceStatementRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -8151,55 +8151,55 @@ func (x *GetTenantStatementRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTenantStatementRequest.ProtoReflect.Descriptor instead.
-func (*GetTenantStatementRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetWorkspaceStatementRequest.ProtoReflect.Descriptor instead.
+func (*GetWorkspaceStatementRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{84}
 }
 
-func (x *GetTenantStatementRequest) GetId() string {
+func (x *GetWorkspaceStatementRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *GetTenantStatementRequest) GetMonth() string {
+func (x *GetWorkspaceStatementRequest) GetMonth() string {
 	if x != nil {
 		return x.Month
 	}
 	return ""
 }
 
-func (x *GetTenantStatementRequest) GetCsv() bool {
+func (x *GetWorkspaceStatementRequest) GetCsv() bool {
 	if x != nil {
 		return x.Csv
 	}
 	return false
 }
 
-type GetTenantStatementResponse struct {
+type GetWorkspaceStatementResponse struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Statement *TenantStatement       `protobuf:"bytes,1,opt,name=statement,proto3" json:"statement,omitempty"`
+	Statement *WorkspaceStatement    `protobuf:"bytes,1,opt,name=statement,proto3" json:"statement,omitempty"`
 	// The statement as CSV with a header row, when the request asked for it.
 	Csv           string `protobuf:"bytes,2,opt,name=csv,proto3" json:"csv,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetTenantStatementResponse) Reset() {
-	*x = GetTenantStatementResponse{}
+func (x *GetWorkspaceStatementResponse) Reset() {
+	*x = GetWorkspaceStatementResponse{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetTenantStatementResponse) String() string {
+func (x *GetWorkspaceStatementResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetTenantStatementResponse) ProtoMessage() {}
+func (*GetWorkspaceStatementResponse) ProtoMessage() {}
 
-func (x *GetTenantStatementResponse) ProtoReflect() protoreflect.Message {
+func (x *GetWorkspaceStatementResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -8211,28 +8211,28 @@ func (x *GetTenantStatementResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTenantStatementResponse.ProtoReflect.Descriptor instead.
-func (*GetTenantStatementResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetWorkspaceStatementResponse.ProtoReflect.Descriptor instead.
+func (*GetWorkspaceStatementResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{85}
 }
 
-func (x *GetTenantStatementResponse) GetStatement() *TenantStatement {
+func (x *GetWorkspaceStatementResponse) GetStatement() *WorkspaceStatement {
 	if x != nil {
 		return x.Statement
 	}
 	return nil
 }
 
-func (x *GetTenantStatementResponse) GetCsv() string {
+func (x *GetWorkspaceStatementResponse) GetCsv() string {
 	if x != nil {
 		return x.Csv
 	}
 	return ""
 }
 
-type TenantStatement struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+type WorkspaceStatement struct {
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Workspace string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The month as YYYY-MM, and its bounds: from inclusive, to exclusive.
 	Month string                 `protobuf:"bytes,2,opt,name=month,proto3" json:"month,omitempty"`
 	From  *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=from,proto3" json:"from,omitempty"`
@@ -8299,20 +8299,20 @@ type TenantStatement struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TenantStatement) Reset() {
-	*x = TenantStatement{}
+func (x *WorkspaceStatement) Reset() {
+	*x = WorkspaceStatement{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TenantStatement) String() string {
+func (x *WorkspaceStatement) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TenantStatement) ProtoMessage() {}
+func (*WorkspaceStatement) ProtoMessage() {}
 
-func (x *TenantStatement) ProtoReflect() protoreflect.Message {
+func (x *WorkspaceStatement) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -8324,180 +8324,180 @@ func (x *TenantStatement) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TenantStatement.ProtoReflect.Descriptor instead.
-func (*TenantStatement) Descriptor() ([]byte, []int) {
+// Deprecated: Use WorkspaceStatement.ProtoReflect.Descriptor instead.
+func (*WorkspaceStatement) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{86}
 }
 
-func (x *TenantStatement) GetTenant() string {
+func (x *WorkspaceStatement) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
 
-func (x *TenantStatement) GetMonth() string {
+func (x *WorkspaceStatement) GetMonth() string {
 	if x != nil {
 		return x.Month
 	}
 	return ""
 }
 
-func (x *TenantStatement) GetFrom() *timestamppb.Timestamp {
+func (x *WorkspaceStatement) GetFrom() *timestamppb.Timestamp {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetTo() *timestamppb.Timestamp {
+func (x *WorkspaceStatement) GetTo() *timestamppb.Timestamp {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetPlan() string {
+func (x *WorkspaceStatement) GetPlan() string {
 	if x != nil {
 		return x.Plan
 	}
 	return ""
 }
 
-func (x *TenantStatement) GetUsage() []*StatementUsage {
+func (x *WorkspaceStatement) GetUsage() []*StatementUsage {
 	if x != nil {
 		return x.Usage
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetTotal() *StatementUsage {
+func (x *WorkspaceStatement) GetTotal() *StatementUsage {
 	if x != nil {
 		return x.Total
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetCharges() []*StatementCharge {
+func (x *WorkspaceStatement) GetCharges() []*StatementCharge {
 	if x != nil {
 		return x.Charges
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetEstimatedCents() int64 {
+func (x *WorkspaceStatement) GetEstimatedCents() int64 {
 	if x != nil {
 		return x.EstimatedCents
 	}
 	return 0
 }
 
-func (x *TenantStatement) GetCurrency() string {
+func (x *WorkspaceStatement) GetCurrency() string {
 	if x != nil {
 		return x.Currency
 	}
 	return ""
 }
 
-func (x *TenantStatement) GetEstimateKnown() bool {
+func (x *WorkspaceStatement) GetEstimateKnown() bool {
 	if x != nil {
 		return x.EstimateKnown
 	}
 	return false
 }
 
-func (x *TenantStatement) GetStarterCreditAppliedCents() int64 {
+func (x *WorkspaceStatement) GetStarterCreditAppliedCents() int64 {
 	if x != nil {
 		return x.StarterCreditAppliedCents
 	}
 	return 0
 }
 
-func (x *TenantStatement) GetStarterCreditAppliedAt() *timestamppb.Timestamp {
+func (x *WorkspaceStatement) GetStarterCreditAppliedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.StarterCreditAppliedAt
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetHeld() []*HoldTimes {
+func (x *WorkspaceStatement) GetHeld() []*HoldTimes {
 	if x != nil {
 		return x.Held
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetCurrentPriceMinutes() int64 {
+func (x *WorkspaceStatement) GetCurrentPriceMinutes() int64 {
 	if x != nil {
 		return x.CurrentPriceMinutes
 	}
 	return 0
 }
 
-func (x *TenantStatement) GetFiller() *FillerUsage {
+func (x *WorkspaceStatement) GetFiller() *FillerUsage {
 	if x != nil {
 		return x.Filler
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetBillingEnabled() bool {
+func (x *WorkspaceStatement) GetBillingEnabled() bool {
 	if x != nil {
 		return x.BillingEnabled
 	}
 	return false
 }
 
-func (x *TenantStatement) GetSpendCapReachedAt() *timestamppb.Timestamp {
+func (x *WorkspaceStatement) GetSpendCapReachedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.SpendCapReachedAt
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetSpendCapReachedCents() int64 {
+func (x *WorkspaceStatement) GetSpendCapReachedCents() int64 {
 	if x != nil {
 		return x.SpendCapReachedCents
 	}
 	return 0
 }
 
-func (x *TenantStatement) GetSpendCapCents() int64 {
+func (x *WorkspaceStatement) GetSpendCapCents() int64 {
 	if x != nil {
 		return x.SpendCapCents
 	}
 	return 0
 }
 
-func (x *TenantStatement) GetOwnHostFee() *OwnHostFee {
+func (x *WorkspaceStatement) GetOwnHostFee() *OwnHostFee {
 	if x != nil {
 		return x.OwnHostFee
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetAwake() []*Awake {
+func (x *WorkspaceStatement) GetAwake() []*Awake {
 	if x != nil {
 		return x.Awake
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetStorage() *Storage {
+func (x *WorkspaceStatement) GetStorage() *Storage {
 	if x != nil {
 		return x.Storage
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetDesktopSeats() *DesktopSeats {
+func (x *WorkspaceStatement) GetDesktopSeats() *DesktopSeats {
 	if x != nil {
 		return x.DesktopSeats
 	}
 	return nil
 }
 
-func (x *TenantStatement) GetPaidStarts() *PaidStarts {
+func (x *WorkspaceStatement) GetPaidStarts() *PaidStarts {
 	if x != nil {
 		return x.PaidStarts
 	}
@@ -9077,8 +9077,8 @@ func (x *StoredKind) GetGbHours() float64 {
 
 // StorageUsageRow is one kind of stored data on one UTC day.
 type StorageUsageRow struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Workspace string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The day's first hour, UTC, as YYYY-MM-DD.
 	Day  string `protobuf:"bytes,2,opt,name=day,proto3" json:"day,omitempty"`
 	Kind string `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty"`
@@ -9120,9 +9120,9 @@ func (*StorageUsageRow) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{94}
 }
 
-func (x *StorageUsageRow) GetTenant() string {
+func (x *StorageUsageRow) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -9366,9 +9366,9 @@ func (x *StatementCharge) GetSeconds() int64 {
 	return 0
 }
 
-// TenantBilling is a workspace's billing link, its subscription's status and the
+// WorkspaceBilling is a workspace's billing link, its subscription's status and the
 // usage reported to the billing provider.
-type TenantBilling struct {
+type WorkspaceBilling struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Empty when the workspace is not linked to a customer.
 	CustomerId string `protobuf:"bytes,1,opt,name=customer_id,json=customerId,proto3" json:"customer_id,omitempty"`
@@ -9421,12 +9421,12 @@ type TenantBilling struct {
 	BillingEnabled bool `protobuf:"varint,21,opt,name=billing_enabled,json=billingEnabled,proto3" json:"billing_enabled,omitempty"`
 	// The workspace's jobs held now, by reason, in the order GetQueueTimes lists
 	// the reasons.
-	HeldNow []*TenantBilling_HeldJobs `protobuf:"bytes,22,rep,name=held_now,json=heldNow,proto3" json:"held_now,omitempty"`
+	HeldNow []*WorkspaceBilling_HeldJobs `protobuf:"bytes,22,rep,name=held_now,json=heldNow,proto3" json:"held_now,omitempty"`
 	// The workspace's jobs that count against its plan concurrency now: assigned,
 	// starting, running or debugging, on Toshi's hosts rather than its own, and
 	// neither a dispatch filler's job nor an open-source job. This is the count
 	// the scheduler checks against the workspace's limit,
-	// Tenant.effective_concurrency.
+	// Workspace.effective_concurrency.
 	ConcurrencyUsed int64 `protobuf:"varint,23,opt,name=concurrency_used,json=concurrencyUsed,proto3" json:"concurrency_used,omitempty"`
 	// The price of one desktop seat a month on the workspace's plan, in the
 	// smallest unit of currency; unset while the billing provider has no price
@@ -9436,20 +9436,20 @@ type TenantBilling struct {
 	sizeCache             protoimpl.SizeCache
 }
 
-func (x *TenantBilling) Reset() {
-	*x = TenantBilling{}
+func (x *WorkspaceBilling) Reset() {
+	*x = WorkspaceBilling{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TenantBilling) String() string {
+func (x *WorkspaceBilling) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TenantBilling) ProtoMessage() {}
+func (*WorkspaceBilling) ProtoMessage() {}
 
-func (x *TenantBilling) ProtoReflect() protoreflect.Message {
+func (x *WorkspaceBilling) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -9461,166 +9461,166 @@ func (x *TenantBilling) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TenantBilling.ProtoReflect.Descriptor instead.
-func (*TenantBilling) Descriptor() ([]byte, []int) {
+// Deprecated: Use WorkspaceBilling.ProtoReflect.Descriptor instead.
+func (*WorkspaceBilling) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{97}
 }
 
-func (x *TenantBilling) GetCustomerId() string {
+func (x *WorkspaceBilling) GetCustomerId() string {
 	if x != nil {
 		return x.CustomerId
 	}
 	return ""
 }
 
-func (x *TenantBilling) GetSubscriptionId() string {
+func (x *WorkspaceBilling) GetSubscriptionId() string {
 	if x != nil {
 		return x.SubscriptionId
 	}
 	return ""
 }
 
-func (x *TenantBilling) GetBillingStartedAt() *timestamppb.Timestamp {
+func (x *WorkspaceBilling) GetBillingStartedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.BillingStartedAt
 	}
 	return nil
 }
 
-func (x *TenantBilling) GetSubscriptionStatus() string {
+func (x *WorkspaceBilling) GetSubscriptionStatus() string {
 	if x != nil {
 		return x.SubscriptionStatus
 	}
 	return ""
 }
 
-func (x *TenantBilling) GetSubscriptionStatusSince() *timestamppb.Timestamp {
+func (x *WorkspaceBilling) GetSubscriptionStatusSince() *timestamppb.Timestamp {
 	if x != nil {
 		return x.SubscriptionStatusSince
 	}
 	return nil
 }
 
-func (x *TenantBilling) GetTotals() []*BillingTotals {
+func (x *WorkspaceBilling) GetTotals() []*BillingTotals {
 	if x != nil {
 		return x.Totals
 	}
 	return nil
 }
 
-func (x *TenantBilling) GetFailedEvents() []*BillingEventFailure {
+func (x *WorkspaceBilling) GetFailedEvents() []*BillingEventFailure {
 	if x != nil {
 		return x.FailedEvents
 	}
 	return nil
 }
 
-func (x *TenantBilling) GetMinutesThisMonth() int64 {
+func (x *WorkspaceBilling) GetMinutesThisMonth() int64 {
 	if x != nil {
 		return x.MinutesThisMonth
 	}
 	return 0
 }
 
-func (x *TenantBilling) GetFreeMinutesPerMonth() int64 {
+func (x *WorkspaceBilling) GetFreeMinutesPerMonth() int64 {
 	if x != nil {
 		return x.FreeMinutesPerMonth
 	}
 	return 0
 }
 
-func (x *TenantBilling) GetCardVerified() bool {
+func (x *WorkspaceBilling) GetCardVerified() bool {
 	if x != nil {
 		return x.CardVerified
 	}
 	return false
 }
 
-func (x *TenantBilling) GetCardVerifiedAt() *timestamppb.Timestamp {
+func (x *WorkspaceBilling) GetCardVerifiedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CardVerifiedAt
 	}
 	return nil
 }
 
-func (x *TenantBilling) GetSpendCapCents() int64 {
+func (x *WorkspaceBilling) GetSpendCapCents() int64 {
 	if x != nil {
 		return x.SpendCapCents
 	}
 	return 0
 }
 
-func (x *TenantBilling) GetSpendCents() int64 {
+func (x *WorkspaceBilling) GetSpendCents() int64 {
 	if x != nil {
 		return x.SpendCents
 	}
 	return 0
 }
 
-func (x *TenantBilling) GetSpendLevel() int32 {
+func (x *WorkspaceBilling) GetSpendLevel() int32 {
 	if x != nil {
 		return x.SpendLevel
 	}
 	return 0
 }
 
-func (x *TenantBilling) GetCurrency() string {
+func (x *WorkspaceBilling) GetCurrency() string {
 	if x != nil {
 		return x.Currency
 	}
 	return ""
 }
 
-func (x *TenantBilling) GetSpendKnown() bool {
+func (x *WorkspaceBilling) GetSpendKnown() bool {
 	if x != nil {
 		return x.SpendKnown
 	}
 	return false
 }
 
-func (x *TenantBilling) GetStarterCreditCents() int64 {
+func (x *WorkspaceBilling) GetStarterCreditCents() int64 {
 	if x != nil {
 		return x.StarterCreditCents
 	}
 	return 0
 }
 
-func (x *TenantBilling) GetStarterCreditLeftCents() int64 {
+func (x *WorkspaceBilling) GetStarterCreditLeftCents() int64 {
 	if x != nil {
 		return x.StarterCreditLeftCents
 	}
 	return 0
 }
 
-func (x *TenantBilling) GetStarterCreditAppliedAt() *timestamppb.Timestamp {
+func (x *WorkspaceBilling) GetStarterCreditAppliedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.StarterCreditAppliedAt
 	}
 	return nil
 }
 
-func (x *TenantBilling) GetBillingEnabled() bool {
+func (x *WorkspaceBilling) GetBillingEnabled() bool {
 	if x != nil {
 		return x.BillingEnabled
 	}
 	return false
 }
 
-func (x *TenantBilling) GetHeldNow() []*TenantBilling_HeldJobs {
+func (x *WorkspaceBilling) GetHeldNow() []*WorkspaceBilling_HeldJobs {
 	if x != nil {
 		return x.HeldNow
 	}
 	return nil
 }
 
-func (x *TenantBilling) GetConcurrencyUsed() int64 {
+func (x *WorkspaceBilling) GetConcurrencyUsed() int64 {
 	if x != nil {
 		return x.ConcurrencyUsed
 	}
 	return 0
 }
 
-func (x *TenantBilling) GetDesktopSeatPriceCents() int64 {
+func (x *WorkspaceBilling) GetDesktopSeatPriceCents() int64 {
 	if x != nil && x.DesktopSeatPriceCents != nil {
 		return *x.DesktopSeatPriceCents
 	}
@@ -9841,7 +9841,7 @@ type Token struct {
 	Id   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Kind TokenKind `protobuf:"varint,2,opt,name=kind,proto3,enum=toshi.operator.v1.TokenKind" json:"kind,omitempty"`
 	// "file" for a token read from the control plane's token file, "rotate"
-	// for one made by RotateToken, "tenant" for one made by the Workspace
+	// for one made by RotateToken, "workspace" for one made by the Workspace
 	// API's CreateEnrollmentToken, "session" for a workspace token minted
 	// from a dashboard session, "product" for a product token the operator
 	// made, "hosted" for a product token the control plane minted for an
@@ -9857,7 +9857,7 @@ type Token struct {
 	// Whether the token is accepted now.
 	Active bool `protobuf:"varint,7,opt,name=active,proto3" json:"active,omitempty"`
 	// Workspace the token is scoped to; also set for workspace tokens.
-	Tenant string `protobuf:"bytes,8,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,8,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The label the workspace chose; empty for other kinds.
 	Name string `protobuf:"bytes,9,opt,name=name,proto3" json:"name,omitempty"`
 	// The project the token is limited to, by name. Empty for a token that
@@ -9973,9 +9973,9 @@ func (x *Token) GetActive() bool {
 	return false
 }
 
-func (x *Token) GetTenant() string {
+func (x *Token) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -10178,7 +10178,7 @@ type ListTokensRequest struct {
 	// TOKEN_KIND_UNSPECIFIED lists every kind.
 	Kind TokenKind `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.operator.v1.TokenKind" json:"kind,omitempty"`
 	// Only this workspace's tokens; empty lists every token.
-	Tenant string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The most tokens in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -10224,9 +10224,9 @@ func (x *ListTokensRequest) GetKind() TokenKind {
 	return TokenKind_TOKEN_KIND_UNSPECIFIED
 }
 
-func (x *ListTokensRequest) GetTenant() string {
+func (x *ListTokensRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -11289,7 +11289,7 @@ type Filler struct {
 	Share string `protobuf:"bytes,6,opt,name=share,proto3" json:"share,omitempty"`
 	// dispatch: the workspace whose installation dispatches the workflow. With
 	// the name it is the filler's key; a command filler has no workspace.
-	Tenant string `protobuf:"bytes,7,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,7,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// dispatch: the repository, as "owner/name".
 	Repository string `protobuf:"bytes,8,opt,name=repository,proto3" json:"repository,omitempty"`
 	// dispatch: the workflow's file name, for example "warm-cache.yml".
@@ -11306,15 +11306,15 @@ type Filler struct {
 	// gets 1 hour when unset and may take at most 1 hour.
 	MaxDuration *durationpb.Duration `protobuf:"bytes,12,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
 	Enabled     bool                 `protobuf:"varint,13,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	// Where the filler comes from: "config", "operator" or "tenant".
+	// Where the filler comes from: "config", "operator" or "workspace".
 	Source    string                 `protobuf:"bytes,14,opt,name=source,proto3" json:"source,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// The filler's newest run. Not set before its first.
 	LastRun *FillerRun `protobuf:"bytes,17,opt,name=last_run,json=lastRun,proto3" json:"last_run,omitempty"`
 	// Why the scheduler dispatches nothing for this dispatch filler, as the
-	// last filler pass that read its states found it: tenant_suspended,
-	// tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
+	// last filler pass that read its states found it: workspace_suspended,
+	// workspace_deleting, workspace_deleted, workspace_closed, installation_removed,
 	// installation_suspended, installation_ambiguous, budget_spent (the
 	// workspace's filler minutes for the UTC day are spent) or budget_off (its
 	// plan gives none). Empty: no pause found,
@@ -11405,9 +11405,9 @@ func (x *Filler) GetShare() string {
 	return ""
 }
 
-func (x *Filler) GetTenant() string {
+func (x *Filler) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -11510,7 +11510,7 @@ type FillerRun struct {
 	Filler string                 `protobuf:"bytes,2,opt,name=filler,proto3" json:"filler,omitempty"`
 	Kind   string                 `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty"`
 	// dispatch: the filler's workspace.
-	Tenant string `protobuf:"bytes,4,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,4,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The host the run went to. Empty while a dispatch run waits for its job.
 	HostId string `protobuf:"bytes,5,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
 	// "dispatched", "assigned", "running", "completed", "failed",
@@ -11581,9 +11581,9 @@ func (x *FillerRun) GetKind() string {
 	return ""
 }
 
-func (x *FillerRun) GetTenant() string {
+func (x *FillerRun) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -11915,7 +11915,7 @@ type DeleteFillerRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The workspace of a dispatch filler. Empty: a command filler.
-	Tenant        string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11957,9 +11957,9 @@ func (x *DeleteFillerRequest) GetName() string {
 	return ""
 }
 
-func (x *DeleteFillerRequest) GetTenant() string {
+func (x *DeleteFillerRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -12005,7 +12005,7 @@ type SetFillerEnabledRequest struct {
 	Name    string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Enabled bool                   `protobuf:"varint,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	// The workspace of a dispatch filler. Empty: a command filler.
-	Tenant        string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     string `protobuf:"bytes,3,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -12054,9 +12054,9 @@ func (x *SetFillerEnabledRequest) GetEnabled() bool {
 	return false
 }
 
-func (x *SetFillerEnabledRequest) GetTenant() string {
+func (x *SetFillerEnabledRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -12112,7 +12112,7 @@ type ListFillerRunsRequest struct {
 	// The most runs in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// With filler: the workspace of a dispatch filler. Empty: a command filler.
-	Tenant string `protobuf:"bytes,3,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace string `protobuf:"bytes,3,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
 	PageToken     string `protobuf:"bytes,4,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -12163,9 +12163,9 @@ func (x *ListFillerRunsRequest) GetPageSize() int32 {
 	return 0
 }
 
-func (x *ListFillerRunsRequest) GetTenant() string {
+func (x *ListFillerRunsRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -12245,8 +12245,8 @@ type FillerPause struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Filler string                 `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
 	// The filler's workspace.
-	Tenant string `protobuf:"bytes,2,opt,name=tenant,proto3" json:"tenant,omitempty"`
-	// tenant_suspended, tenant_deleting, tenant_deleted, tenant_closed,
+	Workspace string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	// workspace_suspended, workspace_deleting, workspace_deleted, workspace_closed,
 	// installation_removed, installation_suspended, installation_ambiguous,
 	// budget_spent or budget_off.
 	Reason string `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
@@ -12295,9 +12295,9 @@ func (x *FillerPause) GetFiller() string {
 	return ""
 }
 
-func (x *FillerPause) GetTenant() string {
+func (x *FillerPause) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -13866,9 +13866,9 @@ type StorageProvider struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Empty for the operator's own provider.
-	TenantId string `protobuf:"bytes,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Name     string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	// "operator", "tenant_bucket" or "local_disk".
+	Workspace string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	Name      string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// "operator", "workspace_bucket" or "local_disk".
 	Mode                   string `protobuf:"bytes,4,opt,name=mode,proto3" json:"mode,omitempty"`
 	Endpoint               string `protobuf:"bytes,5,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	Region                 string `protobuf:"bytes,6,opt,name=region,proto3" json:"region,omitempty"`
@@ -13932,9 +13932,9 @@ func (x *StorageProvider) GetId() string {
 	return ""
 }
 
-func (x *StorageProvider) GetTenantId() string {
+func (x *StorageProvider) GetWorkspace() string {
 	if x != nil {
-		return x.TenantId
+		return x.Workspace
 	}
 	return ""
 }
@@ -14082,7 +14082,7 @@ func (x *StorageProvider) GetUpdatedAt() *timestamppb.Timestamp {
 type CreateStorageProviderRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Empty registers the operator's own provider.
-	TenantId               string `protobuf:"bytes,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Workspace              string `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	Name                   string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Mode                   string `protobuf:"bytes,3,opt,name=mode,proto3" json:"mode,omitempty"`
 	Endpoint               string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
@@ -14100,7 +14100,7 @@ type CreateStorageProviderRequest struct {
 	ExternalId             string `protobuf:"bytes,16,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
 	// The key of a workspace's own bucket. The control plane wraps it before
 	// the row exists and never returns, logs or audits it. Set only with a
-	// tenant_id, mode "tenant_bucket", an access key id and secret, an https
+	// workspace, mode "workspace_bucket", an access key id and secret, an https
 	// endpoint, and no credentials_file, credentials_profile, role_arn,
 	// external_id, global replication or egress price.
 	Credential    *StorageCredential `protobuf:"bytes,17,opt,name=credential,proto3" json:"credential,omitempty"`
@@ -14138,9 +14138,9 @@ func (*CreateStorageProviderRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{157}
 }
 
-func (x *CreateStorageProviderRequest) GetTenantId() string {
+func (x *CreateStorageProviderRequest) GetWorkspace() string {
 	if x != nil {
-		return x.TenantId
+		return x.Workspace
 	}
 	return ""
 }
@@ -14367,8 +14367,8 @@ func (x *CreateStorageProviderResponse) GetProvider() *StorageProvider {
 type ListStorageProvidersRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Empty lists the operator's providers; otherwise this workspace's.
-	TenantId string `protobuf:"bytes,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	// With tenant_id, also answer default_provider.
+	Workspace string `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	// With workspace, also answer default_provider.
 	IncludeDefault bool `protobuf:"varint,2,opt,name=include_default,json=includeDefault,proto3" json:"include_default,omitempty"`
 	// The most providers in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
@@ -14408,9 +14408,9 @@ func (*ListStorageProvidersRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{160}
 }
 
-func (x *ListStorageProvidersRequest) GetTenantId() string {
+func (x *ListStorageProvidersRequest) GetWorkspace() string {
 	if x != nil {
-		return x.TenantId
+		return x.Workspace
 	}
 	return ""
 }
@@ -14440,7 +14440,7 @@ type ListStorageProvidersResponse struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	Providers []*StorageProvider     `protobuf:"bytes,1,rep,name=providers,proto3" json:"providers,omitempty"`
 	// With include_default, the operator's provider that serves the workspace's
-	// uploads while it has no tenant_bucket provider (the control plane's
+	// uploads while it has no workspace_bucket provider (the control plane's
 	// storage.default_provider); unset when none is configured. Every page
 	// holds it.
 	DefaultProvider *StorageProvider `protobuf:"bytes,2,opt,name=default_provider,json=defaultProvider,proto3" json:"default_provider,omitempty"`
@@ -14751,7 +14751,7 @@ func (*DeleteStorageProviderResponse) Descriptor() ([]byte, []int) {
 }
 
 // HeldJobs counts the jobs held now for one reason.
-type TenantBilling_HeldJobs struct {
+type WorkspaceBilling_HeldJobs struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// One of the job hold reasons (see Job.hold_reason).
 	Reason string `protobuf:"bytes,1,opt,name=reason,proto3" json:"reason,omitempty"`
@@ -14765,20 +14765,20 @@ type TenantBilling_HeldJobs struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TenantBilling_HeldJobs) Reset() {
-	*x = TenantBilling_HeldJobs{}
+func (x *WorkspaceBilling_HeldJobs) Reset() {
+	*x = WorkspaceBilling_HeldJobs{}
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[169]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TenantBilling_HeldJobs) String() string {
+func (x *WorkspaceBilling_HeldJobs) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TenantBilling_HeldJobs) ProtoMessage() {}
+func (*WorkspaceBilling_HeldJobs) ProtoMessage() {}
 
-func (x *TenantBilling_HeldJobs) ProtoReflect() protoreflect.Message {
+func (x *WorkspaceBilling_HeldJobs) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_operator_v1_operator_proto_msgTypes[169]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -14790,33 +14790,33 @@ func (x *TenantBilling_HeldJobs) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TenantBilling_HeldJobs.ProtoReflect.Descriptor instead.
-func (*TenantBilling_HeldJobs) Descriptor() ([]byte, []int) {
+// Deprecated: Use WorkspaceBilling_HeldJobs.ProtoReflect.Descriptor instead.
+func (*WorkspaceBilling_HeldJobs) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{97, 0}
 }
 
-func (x *TenantBilling_HeldJobs) GetReason() string {
+func (x *WorkspaceBilling_HeldJobs) GetReason() string {
 	if x != nil {
 		return x.Reason
 	}
 	return ""
 }
 
-func (x *TenantBilling_HeldJobs) GetJobs() int64 {
+func (x *WorkspaceBilling_HeldJobs) GetJobs() int64 {
 	if x != nil {
 		return x.Jobs
 	}
 	return 0
 }
 
-func (x *TenantBilling_HeldJobs) GetSince() *timestamppb.Timestamp {
+func (x *WorkspaceBilling_HeldJobs) GetSince() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Since
 	}
 	return nil
 }
 
-func (x *TenantBilling_HeldJobs) GetNextStartAt() *timestamppb.Timestamp {
+func (x *WorkspaceBilling_HeldJobs) GetNextStartAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.NextStartAt
 	}
@@ -14827,10 +14827,10 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xe6\x12\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xec\x12\n" +
 	"\x03Job\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
-	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x1e\n" +
 	"\n" +
 	"repository\x18\x03 \x01(\tR\n" +
 	"repository\x12&\n" +
@@ -14962,7 +14962,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"HeldRefill\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x16\n" +
-	"\x06reason\x18\x02 \x01(\tR\x06reason\"\xc6\v\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"\xcc\v\n" +
 	"\x04Host\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x0e\n" +
@@ -14976,8 +14976,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"lastSeenAt\x12&\n" +
 	"\x0ffree_memory_mib\x18\t \x01(\x03R\rfreeMemoryMib\x12@\n" +
 	"\fheld_refills\x18\n" +
-	" \x03(\v2\x1d.toshi.operator.v1.HeldRefillR\vheldRefills\x12!\n" +
-	"\fowner_tenant\x18\v \x01(\tR\vownerTenant\x12\x1a\n" +
+	" \x03(\v2\x1d.toshi.operator.v1.HeldRefillR\vheldRefills\x12'\n" +
+	"\x0fowner_workspace\x18\v \x01(\tR\x0eownerWorkspace\x12\x1a\n" +
 	"\bstopping\x18\f \x01(\bR\bstopping\x12\x14\n" +
 	"\x05cloud\x18\r \x01(\tR\x05cloud\x12\x1a\n" +
 	"\boverflow\x18\x0e \x01(\bR\boverflow\x125\n" +
@@ -15026,10 +15026,10 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x03ips\x18\x01 \x03(\tR\x03ips\x127\n" +
 	"\x06source\x18\x02 \x01(\x0e2\x1f.toshi.operator.v1.EgressSourceR\x06source\x129\n" +
 	"\n" +
-	"changed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\"\xeb\x01\n" +
+	"changed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\"\xf1\x01\n" +
 	"\x0fListJobsRequest\x123\n" +
-	"\x06states\x18\x01 \x03(\x0e2\x1b.toshi.operator.v1.JobStateR\x06states\x12\x16\n" +
-	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1e\n" +
+	"\x06states\x18\x01 \x03(\x0e2\x1b.toshi.operator.v1.JobStateR\x06states\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x1e\n" +
 	"\n" +
 	"repository\x18\x03 \x01(\tR\n" +
 	"repository\x12\x1b\n" +
@@ -15041,15 +15041,15 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x02id\x18\a \x01(\tR\x02id\"f\n" +
 	"\x10ListJobsResponse\x12*\n" +
 	"\x04jobs\x18\x01 \x03(\v2\x16.toshi.operator.v1.JobR\x04jobs\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x96\x03\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x9c\x03\n" +
 	"\n" +
 	"AuditEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
 	"\x02at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02at\x12\x1d\n" +
 	"\n" +
 	"actor_kind\x18\x03 \x01(\tR\tactorKind\x12\x19\n" +
-	"\bactor_id\x18\x04 \x01(\tR\aactorId\x12\x16\n" +
-	"\x06tenant\x18\x05 \x01(\tR\x06tenant\x12\x16\n" +
+	"\bactor_id\x18\x04 \x01(\tR\aactorId\x12\x1c\n" +
+	"\tworkspace\x18\x05 \x01(\tR\tworkspace\x12\x16\n" +
 	"\x06action\x18\x06 \x01(\tR\x06action\x12\x16\n" +
 	"\x06target\x18\a \x01(\tR\x06target\x12!\n" +
 	"\fdetails_json\x18\b \x01(\tR\vdetailsJson\x12\x1d\n" +
@@ -15063,9 +15063,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\aoutcome\x18\f \x01(\tR\aoutcome\x12\x19\n" +
 	"\btoken_id\x18\r \x01(\tR\atokenId\x12\x1d\n" +
 	"\n" +
-	"actor_name\x18\x0e \x01(\tR\tactorName\"\xa9\x02\n" +
-	"\x16ListAuditEventsRequest\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x16\n" +
+	"actor_name\x18\x0e \x01(\tR\tactorName\"\xaf\x02\n" +
+	"\x16ListAuditEventsRequest\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x16\n" +
 	"\x06action\x18\x02 \x01(\tR\x06action\x120\n" +
 	"\x05since\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x1b\n" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x14\n" +
@@ -15097,11 +15097,11 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"z\n" +
 	"\x17ListHostStorageResponse\x127\n" +
 	"\avolumes\x18\x01 \x03(\v2\x1d.toshi.operator.v1.HostVolumeR\avolumes\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xd2\x02\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xd8\x02\n" +
 	"\n" +
 	"HostVolume\x12\x1b\n" +
-	"\tvolume_id\x18\x01 \x01(\tR\bvolumeId\x12\x16\n" +
-	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x18\n" +
+	"\tvolume_id\x18\x01 \x01(\tR\bvolumeId\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x04 \x01(\tR\tprojectId\x12\x12\n" +
@@ -15132,17 +15132,17 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x12RevokeHostResponse\x12+\n" +
 	"\x04host\x18\x01 \x01(\v2\x17.toshi.operator.v1.HostR\x04host\x12\x18\n" +
 	"\arevoked\x18\x02 \x01(\bR\arevoked\x12\"\n" +
-	"\rended_job_ids\x18\x03 \x03(\tR\vendedJobIds\"\xa1\x01\n" +
-	"\x19RetireOfflineHostsRequest\x12I\n" +
+	"\rended_job_ids\x18\x03 \x03(\tR\vendedJobIds\"\x9a\x01\n" +
+	"\x12RetireHostsRequest\x12I\n" +
 	"\x13offline_longer_than\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\x11offlineLongerThan\x12#\n" +
 	"\rinclude_owned\x18\x02 \x01(\bR\fincludeOwned\x12\x14\n" +
-	"\x05apply\x18\x03 \x01(\bR\x05apply\"X\n" +
-	"\x1aRetireOfflineHostsResponse\x12:\n" +
+	"\x05apply\x18\x03 \x01(\bR\x05apply\"Q\n" +
+	"\x13RetireHostsResponse\x12:\n" +
 	"\x05hosts\x18\x01 \x03(\v2$.toshi.operator.v1.OfflineHostResultR\x05hosts\"\x81\x01\n" +
 	"\x11OfflineHostResult\x12+\n" +
 	"\x04host\x18\x01 \x01(\v2\x17.toshi.operator.v1.HostR\x04host\x12?\n" +
-	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\x9b\x11\n" +
-	"\x06Tenant\x12\x0e\n" +
+	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\xa4\x11\n" +
+	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
 	"\x0fconcurrency_cap\x18\x03 \x01(\x05H\x00R\x0econcurrencyCap\x88\x01\x01\x129\n" +
@@ -15185,9 +15185,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x13hosting_certificate\x18! \x01(\v2%.toshi.operator.v1.HostingCertificateR\x12hostingCertificate\x12\x17\n" +
 	"\akeep_vm\x18\" \x01(\bR\x06keepVm\x12L\n" +
 	" volume_snapshot_interval_seconds\x18# \x01(\x05H\x06R\x1dvolumeSnapshotIntervalSeconds\x88\x01\x01\x12Z\n" +
-	"*volume_snapshot_interval_seconds_effective\x18$ \x01(\x05R&volumeSnapshotIntervalSecondsEffective\x12:\n" +
-	"\abilling\x18& \x01(\v2 .toshi.operator.v1.TenantBillingR\abilling\x12h\n" +
-	"\x15entitlement_overrides\x18' \x03(\v23.toshi.operator.v1.Tenant.EntitlementOverridesEntryR\x14entitlementOverrides\x1aG\n" +
+	"*volume_snapshot_interval_seconds_effective\x18$ \x01(\x05R&volumeSnapshotIntervalSecondsEffective\x12=\n" +
+	"\abilling\x18& \x01(\v2#.toshi.operator.v1.WorkspaceBillingR\abilling\x12k\n" +
+	"\x15entitlement_overrides\x18' \x03(\v26.toshi.operator.v1.Workspace.EntitlementOverridesEntryR\x14entitlementOverrides\x1aG\n" +
 	"\x19EntitlementOverridesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x12\n" +
@@ -15212,23 +15212,25 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x06source\x18\x04 \x01(\tR\x06source\"@\n" +
 	"\x16CreateWorkspaceRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
-	"\x04plan\x18\x02 \x01(\tR\x04plan\"R\n" +
-	"\x17CreateWorkspaceResponse\x127\n" +
-	"\tworkspace\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\tworkspace\"P\n" +
-	"\x12ListTenantsRequest\x12\x1b\n" +
+	"\x04plan\x18\x02 \x01(\tR\x04plan\"U\n" +
+	"\x17CreateWorkspaceResponse\x12:\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"S\n" +
+	"\x15ListWorkspacesRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\x02 \x01(\tR\tpageToken\"r\n" +
-	"\x13ListTenantsResponse\x123\n" +
-	"\atenants\x18\x01 \x03(\v2\x19.toshi.operator.v1.TenantR\atenants\x12&\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"~\n" +
+	"\x16ListWorkspacesResponse\x12<\n" +
+	"\n" +
+	"workspaces\x18\x01 \x03(\v2\x1c.toshi.operator.v1.WorkspaceR\n" +
+	"workspaces\x12&\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"N\n" +
 	"\x13SetTenantCapRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
-	"\x0fconcurrency_cap\x18\x02 \x01(\x05R\x0econcurrencyCap\"I\n" +
-	"\x14SetTenantCapResponse\x121\n" +
-	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"\xc0\x03\n" +
-	"\x16SetTenantLimitsRequest\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12+\n" +
+	"\x0fconcurrency_cap\x18\x02 \x01(\x05R\x0econcurrencyCap\"R\n" +
+	"\x14SetTenantCapResponse\x12:\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"\xc6\x03\n" +
+	"\x16SetTenantLimitsRequest\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12+\n" +
 	"\x0fsecret_max_sets\x18\x02 \x01(\x05H\x00R\rsecretMaxSets\x88\x01\x01\x12+\n" +
 	"\x0fsecret_max_keys\x18\x03 \x01(\x05H\x01R\rsecretMaxKeys\x88\x01\x01\x12)\n" +
 	"\x0esecret_max_kib\x18\x04 \x01(\x03H\x02R\fsecretMaxKib\x88\x01\x01\x12/\n" +
@@ -15239,15 +15241,15 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x10_secret_max_keysB\x11\n" +
 	"\x0f_secret_max_kibB\x14\n" +
 	"\x12_preview_max_portsB#\n" +
-	"!_volume_snapshot_interval_seconds\"L\n" +
-	"\x17SetTenantLimitsResponse\x121\n" +
-	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"\x8e\x01\n" +
-	"\x16UpdateWorkspaceRequest\x127\n" +
-	"\tworkspace\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\tworkspace\x12;\n" +
+	"!_volume_snapshot_interval_seconds\"U\n" +
+	"\x17SetTenantLimitsResponse\x12:\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"\x91\x01\n" +
+	"\x16UpdateWorkspaceRequest\x12:\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\x12;\n" +
 	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
-	"updateMask\"R\n" +
-	"\x17UpdateWorkspaceResponse\x127\n" +
-	"\tworkspace\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\tworkspace\"\x80\x03\n" +
+	"updateMask\"U\n" +
+	"\x17UpdateWorkspaceResponse\x12:\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"\x80\x03\n" +
 	"\x04Seat\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
 	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x17\n" +
@@ -15280,24 +15282,24 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\tSeatMonth\x12+\n" +
 	"\x04seat\x18\x01 \x01(\v2\x17.toshi.operator.v1.SeatR\x04seat\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
-	"\x06billed\x18\x03 \x01(\bR\x06billed\">\n" +
-	"\x14SuspendTenantRequest\x12\x0e\n" +
+	"\x06billed\x18\x03 \x01(\bR\x06billed\"A\n" +
+	"\x17SuspendWorkspaceRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
-	"\x06reason\x18\x02 \x01(\tR\x06reason\"J\n" +
-	"\x15SuspendTenantResponse\x121\n" +
-	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"=\n" +
-	"\x13ResumeTenantRequest\x12\x0e\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"V\n" +
+	"\x18SuspendWorkspaceResponse\x12:\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"C\n" +
+	"\x19UnsuspendWorkspaceRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
-	"\x06reason\x18\x02 \x01(\tR\x06reason\"I\n" +
-	"\x14ResumeTenantResponse\x121\n" +
-	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"t\n" +
-	"\x13DeleteTenantRequest\x12\x0e\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"X\n" +
+	"\x1aUnsuspendWorkspaceResponse\x12:\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"w\n" +
+	"\x16DeleteWorkspaceRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\x12#\n" +
 	"\rgrace_seconds\x18\x03 \x01(\x03R\fgraceSeconds\x12\x10\n" +
-	"\x03now\x18\x04 \x01(\bR\x03now\"I\n" +
-	"\x14DeleteTenantResponse\x121\n" +
-	"\x06tenant\x18\x01 \x01(\v2\x19.toshi.operator.v1.TenantR\x06tenant\"\x82\x05\n" +
+	"\x03now\x18\x04 \x01(\bR\x03now\"U\n" +
+	"\x17DeleteWorkspaceResponse\x12:\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"\x82\x05\n" +
 	"\x04Plan\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vconcurrency\x18\x02 \x01(\x05R\vconcurrency\x12&\n" +
@@ -15328,15 +15330,15 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"~\n" +
 	"\x1aListOperatorAlertsResponse\x128\n" +
 	"\x06alerts\x18\x01 \x03(\v2 .toshi.operator.v1.OperatorAlertR\x06alerts\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"k\n" +
-	"\x15ListHostAlertsRequest\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x1b\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"q\n" +
+	"\x15ListHostAlertsRequest\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"z\n" +
 	"\x16ListHostAlertsResponse\x128\n" +
 	"\x06alerts\x18\x01 \x03(\v2 .toshi.operator.v1.OperatorAlertR\x06alerts\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xfa\x02\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x80\x03\n" +
 	"\rOperatorAlert\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x127\n" +
 	"\traised_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\braisedAt\x120\n" +
@@ -15345,8 +15347,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\areasons\x18\x05 \x03(\v2-.toshi.operator.v1.OperatorAlert.ReasonsEntryR\areasons\x12\x1d\n" +
 	"\n" +
 	"top_reason\x18\x06 \x01(\tR\ttopReason\x12\x18\n" +
-	"\amessage\x18\a \x01(\tR\amessage\x12\x16\n" +
-	"\x06tenant\x18\b \x01(\tR\x06tenant\x1a:\n" +
+	"\amessage\x18\a \x01(\tR\amessage\x12\x1c\n" +
+	"\tworkspace\x18\b \x01(\tR\tworkspace\x1a:\n" +
 	"\fReasonsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01\"N\n" +
@@ -15373,23 +15375,23 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x11RunChecksResponse\x123\n" +
 	"\x05group\x18\x01 \x01(\x0e2\x1d.toshi.operator.v1.CheckGroupR\x05group\x123\n" +
 	"\x05state\x18\x02 \x01(\x0e2\x1d.toshi.operator.v1.CheckStateR\x05state\x120\n" +
-	"\x06checks\x18\x03 \x03(\v2\x18.toshi.operator.v1.CheckR\x06checks\"\x85\x01\n" +
+	"\x06checks\x18\x03 \x03(\v2\x18.toshi.operator.v1.CheckR\x06checks\"\x8b\x01\n" +
 	"\x0fGetUsageRequest\x12.\n" +
 	"\x04from\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
-	"\x02to\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x16\n" +
-	"\x06tenant\x18\x03 \x01(\tR\x06tenant\"\x95\x02\n" +
+	"\x02to\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x1c\n" +
+	"\tworkspace\x18\x03 \x01(\tR\tworkspace\"\x95\x02\n" +
 	"\x10GetUsageResponse\x12/\n" +
 	"\x04rows\x18\x01 \x03(\v2\x1b.toshi.operator.v1.UsageRowR\x04rows\x12.\n" +
 	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
 	"\x02to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x126\n" +
 	"\x06filler\x18\x04 \x03(\v2\x1e.toshi.operator.v1.FillerUsageR\x06filler\x12<\n" +
-	"\astorage\x18\x05 \x03(\v2\".toshi.operator.v1.StorageUsageRowR\astorage\"S\n" +
-	"\vFillerUsage\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x12\n" +
+	"\astorage\x18\x05 \x03(\v2\".toshi.operator.v1.StorageUsageRowR\astorage\"Y\n" +
+	"\vFillerUsage\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04jobs\x18\x02 \x01(\x03R\x04jobs\x12\x18\n" +
-	"\aminutes\x18\x03 \x01(\x03R\aminutes\"\xe6\x03\n" +
-	"\bUsageRow\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x10\n" +
+	"\aminutes\x18\x03 \x01(\x03R\aminutes\"\xec\x03\n" +
+	"\bUsageRow\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x10\n" +
 	"\x03day\x18\x02 \x01(\tR\x03day\x12\x1e\n" +
 	"\n" +
 	"conclusion\x18\x03 \x01(\tR\n" +
@@ -15406,11 +15408,11 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\aseconds\x18\f \x01(\x01R\aseconds\x12(\n" +
 	"\x10own_host_seconds\x18\r \x01(\x01R\x0eownHostSeconds\x12#\n" +
 	"\rawake_seconds\x18\x0e \x01(\x01R\fawakeSeconds\x12!\n" +
-	"\fidle_seconds\x18\x0f \x01(\x01R\vidleSeconds\"\x8a\x01\n" +
+	"\fidle_seconds\x18\x0f \x01(\x01R\vidleSeconds\"\x90\x01\n" +
 	"\x14GetQueueTimesRequest\x12.\n" +
 	"\x04from\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
-	"\x02to\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x16\n" +
-	"\x06tenant\x18\x03 \x01(\tR\x06tenant\"\x9d\x02\n" +
+	"\x02to\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x1c\n" +
+	"\tworkspace\x18\x03 \x01(\tR\tworkspace\"\x9d\x02\n" +
 	"\x15GetQueueTimesResponse\x12\x12\n" +
 	"\x04jobs\x18\x01 \x01(\x03R\x04jobs\x12\x15\n" +
 	"\x06p50_ms\x18\x02 \x01(\x03R\x05p50Ms\x12\x15\n" +
@@ -15429,17 +15431,17 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x06max_ms\x18\x05 \x01(\x03R\x05maxMs\x12\x1b\n" +
 	"\topen_jobs\x18\x06 \x01(\x03R\bopenJobs\x129\n" +
 	"\n" +
-	"open_since\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\topenSince\"\x8d\x01\n" +
+	"open_since\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\topenSince\"\x93\x01\n" +
 	"\x17GetWorkflowUsageRequest\x12.\n" +
 	"\x04from\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
-	"\x02to\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x16\n" +
-	"\x06tenant\x18\x03 \x01(\tR\x06tenant\"\xaf\x01\n" +
+	"\x02to\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x1c\n" +
+	"\tworkspace\x18\x03 \x01(\tR\tworkspace\"\xaf\x01\n" +
 	"\x18GetWorkflowUsageResponse\x127\n" +
 	"\x04rows\x18\x01 \x03(\v2#.toshi.operator.v1.WorkflowUsageRowR\x04rows\x12.\n" +
 	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
-	"\x02to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\"\xc0\x02\n" +
-	"\x10WorkflowUsageRow\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x1e\n" +
+	"\x02to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\"\xc6\x02\n" +
+	"\x10WorkflowUsageRow\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x1e\n" +
 	"\n" +
 	"repository\x18\x02 \x01(\tR\n" +
 	"repository\x12\x1a\n" +
@@ -15470,26 +15472,26 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x06in_use\x18\x04 \x01(\x05R\x05inUse\x12\x1c\n" +
 	"\tearmarked\x18\x05 \x01(\x05R\tearmarked\x12\x14\n" +
 	"\x05short\x18\x06 \x01(\x05R\x05short\x12\x12\n" +
-	"\x04warm\x18\a \x01(\x05R\x04warm\"\xdd\x01\n" +
-	"\x13CapacityReservation\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x12\n" +
+	"\x04warm\x18\a \x01(\x05R\x04warm\"\xe3\x01\n" +
+	"\x13CapacityReservation\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\tR\x04size\x12\x14\n" +
 	"\x05slots\x18\x03 \x01(\x05R\x05slots\x12\x12\n" +
 	"\x04warm\x18\x04 \x01(\x05R\x04warm\x12\x15\n" +
 	"\x06in_use\x18\x05 \x01(\x05R\x05inUse\x12\x1c\n" +
 	"\tearmarked\x18\x06 \x01(\x05R\tearmarked\x12%\n" +
 	"\x0ewarm_earmarked\x18\a \x01(\x05R\rwarmEarmarked\x12\x14\n" +
-	"\x05short\x18\b \x01(\x05R\x05short\"S\n" +
-	"\x19GetTenantStatementRequest\x12\x0e\n" +
+	"\x05short\x18\b \x01(\x05R\x05short\"V\n" +
+	"\x1cGetWorkspaceStatementRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05month\x18\x02 \x01(\tR\x05month\x12\x10\n" +
-	"\x03csv\x18\x03 \x01(\bR\x03csv\"p\n" +
-	"\x1aGetTenantStatementResponse\x12@\n" +
-	"\tstatement\x18\x01 \x01(\v2\".toshi.operator.v1.TenantStatementR\tstatement\x12\x10\n" +
-	"\x03csv\x18\x02 \x01(\tR\x03csv\"\x83\n" +
+	"\x03csv\x18\x03 \x01(\bR\x03csv\"v\n" +
+	"\x1dGetWorkspaceStatementResponse\x12C\n" +
+	"\tstatement\x18\x01 \x01(\v2%.toshi.operator.v1.WorkspaceStatementR\tstatement\x12\x10\n" +
+	"\x03csv\x18\x02 \x01(\tR\x03csv\"\x8c\n" +
 	"\n" +
-	"\x0fTenantStatement\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x14\n" +
+	"\x12WorkspaceStatement\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x14\n" +
 	"\x05month\x18\x02 \x01(\tR\x05month\x12.\n" +
 	"\x04from\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
 	"\x02to\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x12\n" +
@@ -15562,9 +15564,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"StoredKind\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x12\x14\n" +
 	"\x05bytes\x18\x02 \x01(\x03R\x05bytes\x12\x19\n" +
-	"\bgb_hours\x18\x03 \x01(\x01R\agbHours\"\x80\x01\n" +
-	"\x0fStorageUsageRow\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x10\n" +
+	"\bgb_hours\x18\x03 \x01(\x01R\agbHours\"\x86\x01\n" +
+	"\x0fStorageUsageRow\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x10\n" +
 	"\x03day\x18\x02 \x01(\tR\x03day\x12\x12\n" +
 	"\x04kind\x18\x03 \x01(\tR\x04kind\x12\x19\n" +
 	"\bgb_hours\x18\x04 \x01(\x01R\agbHours\x12\x14\n" +
@@ -15586,8 +15588,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x18\n" +
 	"\aminutes\x18\x02 \x01(\x03R\aminutes\x12'\n" +
 	"\x0festimated_cents\x18\x03 \x01(\x03R\x0eestimatedCents\x12\x18\n" +
-	"\aseconds\x18\x04 \x01(\x03R\aseconds\"\x9f\v\n" +
-	"\rTenantBilling\x12\x1f\n" +
+	"\aseconds\x18\x04 \x01(\x03R\aseconds\"\xa5\v\n" +
+	"\x10WorkspaceBilling\x12\x1f\n" +
 	"\vcustomer_id\x18\x01 \x01(\tR\n" +
 	"customerId\x12'\n" +
 	"\x0fsubscription_id\x18\x02 \x01(\tR\x0esubscriptionId\x12H\n" +
@@ -15612,8 +15614,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x14starter_credit_cents\x18\x12 \x01(\x03R\x12starterCreditCents\x129\n" +
 	"\x19starter_credit_left_cents\x18\x13 \x01(\x03R\x16starterCreditLeftCents\x12U\n" +
 	"\x19starter_credit_applied_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x16starterCreditAppliedAt\x12'\n" +
-	"\x0fbilling_enabled\x18\x15 \x01(\bR\x0ebillingEnabled\x12D\n" +
-	"\bheld_now\x18\x16 \x03(\v2).toshi.operator.v1.TenantBilling.HeldJobsR\aheldNow\x12)\n" +
+	"\x0fbilling_enabled\x18\x15 \x01(\bR\x0ebillingEnabled\x12G\n" +
+	"\bheld_now\x18\x16 \x03(\v2,.toshi.operator.v1.WorkspaceBilling.HeldJobsR\aheldNow\x12)\n" +
 	"\x10concurrency_used\x18\x17 \x01(\x03R\x0fconcurrencyUsed\x12<\n" +
 	"\x18desktop_seat_price_cents\x18\x18 \x01(\x03H\x00R\x15desktopSeatPriceCents\x88\x01\x01\x1a\xa8\x01\n" +
 	"\bHeldJobs\x12\x16\n" +
@@ -15643,7 +15645,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\tfailed_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bfailedAt\x12\x1a\n" +
 	"\battempts\x18\a \x01(\x05R\battempts\x12\x1d\n" +
 	"\n" +
-	"last_error\x18\b \x01(\tR\tlastError\"\xd3\x06\n" +
+	"last_error\x18\b \x01(\tR\tlastError\"\xd9\x06\n" +
 	"\x05Token\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x120\n" +
 	"\x04kind\x18\x02 \x01(\x0e2\x1c.toshi.operator.v1.TokenKindR\x04kind\x12\x16\n" +
@@ -15654,8 +15656,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"expires_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x129\n" +
 	"\n" +
 	"revoked_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12\x16\n" +
-	"\x06active\x18\a \x01(\bR\x06active\x12\x16\n" +
-	"\x06tenant\x18\b \x01(\tR\x06tenant\x12\x12\n" +
+	"\x06active\x18\a \x01(\bR\x06active\x12\x1c\n" +
+	"\tworkspace\x18\b \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04name\x18\t \x01(\tR\x04name\x12\x18\n" +
 	"\aproject\x18\n" +
 	" \x01(\tR\aproject\x12 \n" +
@@ -15675,10 +15677,10 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"5\n" +
 	"\fClientRanges\x12\x0e\n" +
 	"\x02in\x18\x01 \x03(\tR\x02in\x12\x15\n" +
-	"\x06not_in\x18\x02 \x03(\tR\x05notIn\"\x99\x01\n" +
+	"\x06not_in\x18\x02 \x03(\tR\x05notIn\"\x9f\x01\n" +
 	"\x11ListTokensRequest\x120\n" +
-	"\x04kind\x18\x01 \x01(\x0e2\x1c.toshi.operator.v1.TokenKindR\x04kind\x12\x16\n" +
-	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x1b\n" +
+	"\x04kind\x18\x01 \x01(\x0e2\x1c.toshi.operator.v1.TokenKindR\x04kind\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x1b\n" +
 	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x04 \x01(\tR\tpageToken\"n\n" +
@@ -15742,7 +15744,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x0eCloudHostCheck\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12?\n" +
 	"\x06status\x18\x02 \x01(\x0e2'.toshi.operator.v1.CloudHostCheckStatusR\x06status\x12\x16\n" +
-	"\x06detail\x18\x03 \x01(\tR\x06detail\"\xe7\x05\n" +
+	"\x06detail\x18\x03 \x01(\tR\x06detail\"\xed\x05\n" +
 	"\x06Filler\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x12\n" +
@@ -15750,8 +15752,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"nested_kvm\x18\x04 \x01(\bR\tnestedKvm\x12\x18\n" +
 	"\acommand\x18\x05 \x03(\tR\acommand\x12\x14\n" +
-	"\x05share\x18\x06 \x01(\tR\x05share\x12\x16\n" +
-	"\x06tenant\x18\a \x01(\tR\x06tenant\x12\x1e\n" +
+	"\x05share\x18\x06 \x01(\tR\x05share\x12\x1c\n" +
+	"\tworkspace\x18\a \x01(\tR\tworkspace\x12\x1e\n" +
 	"\n" +
 	"repository\x18\b \x01(\tR\n" +
 	"repository\x12\x1a\n" +
@@ -15769,12 +15771,12 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\blast_run\x18\x11 \x01(\v2\x1c.toshi.operator.v1.FillerRunR\alastRun\x12!\n" +
 	"\fpause_reason\x18\x12 \x01(\tR\vpauseReason\x12=\n" +
 	"\fpaused_since\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampR\vpausedSince\x12:\n" +
-	"\vpause_as_of\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\tpauseAsOf\"\xa2\x03\n" +
+	"\vpause_as_of\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\tpauseAsOf\"\xa8\x03\n" +
 	"\tFillerRun\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06filler\x18\x02 \x01(\tR\x06filler\x12\x12\n" +
-	"\x04kind\x18\x03 \x01(\tR\x04kind\x12\x16\n" +
-	"\x06tenant\x18\x04 \x01(\tR\x06tenant\x12\x17\n" +
+	"\x04kind\x18\x03 \x01(\tR\x04kind\x12\x1c\n" +
+	"\tworkspace\x18\x04 \x01(\tR\tworkspace\x12\x17\n" +
 	"\ahost_id\x18\x05 \x01(\tR\x06hostId\x12\x14\n" +
 	"\x05state\x18\x06 \x01(\tR\x05state\x12\x15\n" +
 	"\x06job_id\x18\a \x01(\tR\x05jobId\x12\x15\n" +
@@ -15802,30 +15804,30 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x10PutFillerRequest\x121\n" +
 	"\x06filler\x18\x01 \x01(\v2\x19.toshi.operator.v1.FillerR\x06filler\"F\n" +
 	"\x11PutFillerResponse\x121\n" +
-	"\x06filler\x18\x01 \x01(\v2\x19.toshi.operator.v1.FillerR\x06filler\"A\n" +
+	"\x06filler\x18\x01 \x01(\v2\x19.toshi.operator.v1.FillerR\x06filler\"G\n" +
 	"\x13DeleteFillerRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
-	"\x06tenant\x18\x02 \x01(\tR\x06tenant\"\x16\n" +
-	"\x14DeleteFillerResponse\"_\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\"\x16\n" +
+	"\x14DeleteFillerResponse\"e\n" +
 	"\x17SetFillerEnabledRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
-	"\aenabled\x18\x02 \x01(\bR\aenabled\x12\x16\n" +
-	"\x06tenant\x18\x03 \x01(\tR\x06tenant\"M\n" +
+	"\aenabled\x18\x02 \x01(\bR\aenabled\x12\x1c\n" +
+	"\tworkspace\x18\x03 \x01(\tR\tworkspace\"M\n" +
 	"\x18SetFillerEnabledResponse\x121\n" +
-	"\x06filler\x18\x01 \x01(\v2\x19.toshi.operator.v1.FillerR\x06filler\"\x83\x01\n" +
+	"\x06filler\x18\x01 \x01(\v2\x19.toshi.operator.v1.FillerR\x06filler\"\x89\x01\n" +
 	"\x15ListFillerRunsRequest\x12\x16\n" +
 	"\x06filler\x18\x01 \x01(\tR\x06filler\x12\x1b\n" +
-	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x16\n" +
-	"\x06tenant\x18\x03 \x01(\tR\x06tenant\x12\x1d\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1c\n" +
+	"\tworkspace\x18\x03 \x01(\tR\tworkspace\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x04 \x01(\tR\tpageToken\"\xaa\x01\n" +
 	"\x16ListFillerRunsResponse\x120\n" +
 	"\x04runs\x18\x01 \x03(\v2\x1c.toshi.operator.v1.FillerRunR\x04runs\x126\n" +
 	"\x06pauses\x18\x02 \x03(\v2\x1e.toshi.operator.v1.FillerPauseR\x06pauses\x12&\n" +
-	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken\"\xb8\x01\n" +
+	"\x0fnext_page_token\x18\x03 \x01(\tR\rnextPageToken\"\xbe\x01\n" +
 	"\vFillerPause\x12\x16\n" +
-	"\x06filler\x18\x01 \x01(\tR\x06filler\x12\x16\n" +
-	"\x06tenant\x18\x02 \x01(\tR\x06tenant\x12\x16\n" +
+	"\x06filler\x18\x01 \x01(\tR\x06filler\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x16\n" +
 	"\x06reason\x18\x03 \x01(\tR\x06reason\x120\n" +
 	"\x05since\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12/\n" +
 	"\x05as_of\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x04asOf\"\x1a\n" +
@@ -15955,10 +15957,10 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x13PoolSuggestionDelay\x12\x0e\n" +
 	"\x02os\x18\x01 \x01(\tR\x02os\x12\x18\n" +
 	"\aseconds\x18\x02 \x01(\x01R\aseconds\x12\x16\n" +
-	"\x06source\x18\x03 \x01(\tR\x06source\"\xde\x06\n" +
+	"\x06source\x18\x03 \x01(\tR\x06source\"\xdf\x06\n" +
 	"\x0fStorageProvider\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\tR\btenantId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04mode\x18\x04 \x01(\tR\x04mode\x12\x1a\n" +
 	"\bendpoint\x18\x05 \x01(\tR\bendpoint\x12\x16\n" +
@@ -15984,9 +15986,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x90\x05\n" +
-	"\x1cCreateStorageProviderRequest\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\tR\btenantId\x12\x12\n" +
+	"updated_at\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x91\x05\n" +
+	"\x1cCreateStorageProviderRequest\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04mode\x18\x03 \x01(\tR\x04mode\x12\x1a\n" +
 	"\bendpoint\x18\x04 \x01(\tR\bendpoint\x12\x16\n" +
@@ -16014,9 +16016,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x11secret_access_key\x18\x02 \x01(\tR\x0fsecretAccessKey\x12#\n" +
 	"\rsession_token\x18\x03 \x01(\tR\fsessionToken\"_\n" +
 	"\x1dCreateStorageProviderResponse\x12>\n" +
-	"\bprovider\x18\x01 \x01(\v2\".toshi.operator.v1.StorageProviderR\bprovider\"\x9f\x01\n" +
-	"\x1bListStorageProvidersRequest\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\tR\btenantId\x12'\n" +
+	"\bprovider\x18\x01 \x01(\v2\".toshi.operator.v1.StorageProviderR\bprovider\"\xa0\x01\n" +
+	"\x1bListStorageProvidersRequest\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12'\n" +
 	"\x0finclude_default\x18\x02 \x01(\bR\x0eincludeDefault\x12\x1b\n" +
 	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
@@ -16097,12 +16099,12 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x17CHECK_STATE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13CHECK_STATE_SUCCESS\x10\x01\x12\x17\n" +
 	"\x13CHECK_STATE_WARNING\x10\x02\x12\x17\n" +
-	"\x13CHECK_STATE_FAILURE\x10\x03*\x8a\x01\n" +
+	"\x13CHECK_STATE_FAILURE\x10\x03*\x8d\x01\n" +
 	"\tTokenKind\x12\x1a\n" +
 	"\x16TOKEN_KIND_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13TOKEN_KIND_OPERATOR\x10\x01\x12\x19\n" +
-	"\x15TOKEN_KIND_ENROLLMENT\x10\x02\x12\x15\n" +
-	"\x11TOKEN_KIND_TENANT\x10\x03\x12\x16\n" +
+	"\x15TOKEN_KIND_ENROLLMENT\x10\x02\x12\x18\n" +
+	"\x14TOKEN_KIND_WORKSPACE\x10\x03\x12\x16\n" +
 	"\x12TOKEN_KIND_PRODUCT\x10\x04*{\n" +
 	"\x11TokenExpiryReason\x12#\n" +
 	"\x1fTOKEN_EXPIRY_REASON_UNSPECIFIED\x10\x00\x12\x1b\n" +
@@ -16118,7 +16120,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xdb-\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xe1-\n" +
 	"\x0fOperatorService\x12S\n" +
 	"\bListJobs\x12\".toshi.operator.v1.ListJobsRequest\x1a#.toshi.operator.v1.ListJobsResponse\x12h\n" +
 	"\x0fListAuditEvents\x12).toshi.operator.v1.ListAuditEventsRequest\x1a*.toshi.operator.v1.ListAuditEventsResponse\x12z\n" +
@@ -16132,11 +16134,11 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"RetireHost\x12$.toshi.operator.v1.RetireHostRequest\x1a%.toshi.operator.v1.RetireHostResponse\x12Y\n" +
 	"\n" +
-	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\x12\x93\x01\n" +
-	"\x12RetireOfflineHosts\x12,.toshi.operator.v1.RetireOfflineHostsRequest\x1a-.toshi.operator.v1.RetireOfflineHostsResponse\" \xd2\xf3\x18\x1c\n" +
+	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\x12~\n" +
+	"\vRetireHosts\x12%.toshi.operator.v1.RetireHostsRequest\x1a&.toshi.operator.v1.RetireHostsResponse\" \xd2\xf3\x18\x1c\n" +
 	"\x14host.offline_retired\x12\x04none\x12h\n" +
-	"\x0fCreateWorkspace\x12).toshi.operator.v1.CreateWorkspaceRequest\x1a*.toshi.operator.v1.CreateWorkspaceResponse\x12\\\n" +
-	"\vListTenants\x12%.toshi.operator.v1.ListTenantsRequest\x1a&.toshi.operator.v1.ListTenantsResponse\x12x\n" +
+	"\x0fCreateWorkspace\x12).toshi.operator.v1.CreateWorkspaceRequest\x1a*.toshi.operator.v1.CreateWorkspaceResponse\x12e\n" +
+	"\x0eListWorkspaces\x12(.toshi.operator.v1.ListWorkspacesRequest\x1a).toshi.operator.v1.ListWorkspacesResponse\x12x\n" +
 	"\fSetTenantCap\x12&.toshi.operator.v1.SetTenantCapRequest\x1a'.toshi.operator.v1.SetTenantCapResponse\"\x17\xd2\xf3\x18\x13\n" +
 	"\x11workspace.cap_set\x12\x84\x01\n" +
 	"\x0fSetTenantLimits\x12).toshi.operator.v1.SetTenantLimitsRequest\x1a*.toshi.operator.v1.SetTenantLimitsResponse\"\x1a\xd2\xf3\x18\x16\n" +
@@ -16150,18 +16152,17 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"GetVersion\x12$.toshi.operator.v1.GetVersionRequest\x1a%.toshi.operator.v1.GetVersionResponse\x12\x99\x01\n" +
 	"\tRunChecks\x12#.toshi.operator.v1.RunChecksRequest\x1a$.toshi.operator.v1.RunChecksResponse\"A\xd2\xf3\x18=\n" +
-	"\x04none\x1a5It runs checks and changes no state of the workspace.\x12}\n" +
-	"\rSuspendTenant\x12'.toshi.operator.v1.SuspendTenantRequest\x1a(.toshi.operator.v1.SuspendTenantResponse\"\x19\xd2\xf3\x18\x15\n" +
-	"\x13workspace.suspended\x12x\n" +
-	"\fResumeTenant\x12&.toshi.operator.v1.ResumeTenantRequest\x1a'.toshi.operator.v1.ResumeTenantResponse\"\x17\xd2\xf3\x18\x13\n" +
-	"\x11workspace.resumed\x12\x83\x01\n" +
-	"\fDeleteTenant\x12&.toshi.operator.v1.DeleteTenantRequest\x1a'.toshi.operator.v1.DeleteTenantResponse\"\"\xd2\xf3\x18\x1e\n" +
+	"\x04none\x1a5It runs checks and changes no state of the workspace.\x12k\n" +
+	"\x10SuspendWorkspace\x12*.toshi.operator.v1.SuspendWorkspaceRequest\x1a+.toshi.operator.v1.SuspendWorkspaceResponse\x12\x8a\x01\n" +
+	"\x12UnsuspendWorkspace\x12,.toshi.operator.v1.UnsuspendWorkspaceRequest\x1a-.toshi.operator.v1.UnsuspendWorkspaceResponse\"\x17\xd2\xf3\x18\x13\n" +
+	"\x11workspace.resumed\x12\x8c\x01\n" +
+	"\x0fDeleteWorkspace\x12).toshi.operator.v1.DeleteWorkspaceRequest\x1a*.toshi.operator.v1.DeleteWorkspaceResponse\"\"\xd2\xf3\x18\x1e\n" +
 	"\x1cworkspace.deletion_scheduled\x12\\\n" +
 	"\vGetCapacity\x12%.toshi.operator.v1.GetCapacityRequest\x1a&.toshi.operator.v1.GetCapacityResponse\x12S\n" +
 	"\bGetUsage\x12\".toshi.operator.v1.GetUsageRequest\x1a#.toshi.operator.v1.GetUsageResponse\x12b\n" +
 	"\rGetQueueTimes\x12'.toshi.operator.v1.GetQueueTimesRequest\x1a(.toshi.operator.v1.GetQueueTimesResponse\x12k\n" +
-	"\x10GetWorkflowUsage\x12*.toshi.operator.v1.GetWorkflowUsageRequest\x1a+.toshi.operator.v1.GetWorkflowUsageResponse\x12q\n" +
-	"\x12GetTenantStatement\x12,.toshi.operator.v1.GetTenantStatementRequest\x1a-.toshi.operator.v1.GetTenantStatementResponse\x12Y\n" +
+	"\x10GetWorkflowUsage\x12*.toshi.operator.v1.GetWorkflowUsageRequest\x1a+.toshi.operator.v1.GetWorkflowUsageResponse\x12z\n" +
+	"\x15GetWorkspaceStatement\x12/.toshi.operator.v1.GetWorkspaceStatementRequest\x1a0.toshi.operator.v1.GetWorkspaceStatementResponse\x12Y\n" +
 	"\n" +
 	"ListTokens\x12$.toshi.operator.v1.ListTokensRequest\x1a%.toshi.operator.v1.ListTokensResponse\x12{\n" +
 	"\vRotateToken\x12%.toshi.operator.v1.RotateTokenRequest\x1a&.toshi.operator.v1.RotateTokenResponse\"\x1d\xd2\xf3\x18\x19\x12\x17token:response.token.id\x12\\\n" +
@@ -16251,16 +16252,16 @@ var file_toshi_operator_v1_operator_proto_goTypes = []any{
 	(*RetireHostResponse)(nil),            // 39: toshi.operator.v1.RetireHostResponse
 	(*RevokeHostRequest)(nil),             // 40: toshi.operator.v1.RevokeHostRequest
 	(*RevokeHostResponse)(nil),            // 41: toshi.operator.v1.RevokeHostResponse
-	(*RetireOfflineHostsRequest)(nil),     // 42: toshi.operator.v1.RetireOfflineHostsRequest
-	(*RetireOfflineHostsResponse)(nil),    // 43: toshi.operator.v1.RetireOfflineHostsResponse
+	(*RetireHostsRequest)(nil),            // 42: toshi.operator.v1.RetireHostsRequest
+	(*RetireHostsResponse)(nil),           // 43: toshi.operator.v1.RetireHostsResponse
 	(*OfflineHostResult)(nil),             // 44: toshi.operator.v1.OfflineHostResult
-	(*Tenant)(nil),                        // 45: toshi.operator.v1.Tenant
+	(*Workspace)(nil),                     // 45: toshi.operator.v1.Workspace
 	(*HostingCertificate)(nil),            // 46: toshi.operator.v1.HostingCertificate
 	(*Reservation)(nil),                   // 47: toshi.operator.v1.Reservation
 	(*CreateWorkspaceRequest)(nil),        // 48: toshi.operator.v1.CreateWorkspaceRequest
 	(*CreateWorkspaceResponse)(nil),       // 49: toshi.operator.v1.CreateWorkspaceResponse
-	(*ListTenantsRequest)(nil),            // 50: toshi.operator.v1.ListTenantsRequest
-	(*ListTenantsResponse)(nil),           // 51: toshi.operator.v1.ListTenantsResponse
+	(*ListWorkspacesRequest)(nil),         // 50: toshi.operator.v1.ListWorkspacesRequest
+	(*ListWorkspacesResponse)(nil),        // 51: toshi.operator.v1.ListWorkspacesResponse
 	(*SetTenantCapRequest)(nil),           // 52: toshi.operator.v1.SetTenantCapRequest
 	(*SetTenantCapResponse)(nil),          // 53: toshi.operator.v1.SetTenantCapResponse
 	(*SetTenantLimitsRequest)(nil),        // 54: toshi.operator.v1.SetTenantLimitsRequest
@@ -16273,12 +16274,12 @@ var file_toshi_operator_v1_operator_proto_goTypes = []any{
 	(*ListSeatsRequest)(nil),              // 61: toshi.operator.v1.ListSeatsRequest
 	(*ListSeatsResponse)(nil),             // 62: toshi.operator.v1.ListSeatsResponse
 	(*SeatMonth)(nil),                     // 63: toshi.operator.v1.SeatMonth
-	(*SuspendTenantRequest)(nil),          // 64: toshi.operator.v1.SuspendTenantRequest
-	(*SuspendTenantResponse)(nil),         // 65: toshi.operator.v1.SuspendTenantResponse
-	(*ResumeTenantRequest)(nil),           // 66: toshi.operator.v1.ResumeTenantRequest
-	(*ResumeTenantResponse)(nil),          // 67: toshi.operator.v1.ResumeTenantResponse
-	(*DeleteTenantRequest)(nil),           // 68: toshi.operator.v1.DeleteTenantRequest
-	(*DeleteTenantResponse)(nil),          // 69: toshi.operator.v1.DeleteTenantResponse
+	(*SuspendWorkspaceRequest)(nil),       // 64: toshi.operator.v1.SuspendWorkspaceRequest
+	(*SuspendWorkspaceResponse)(nil),      // 65: toshi.operator.v1.SuspendWorkspaceResponse
+	(*UnsuspendWorkspaceRequest)(nil),     // 66: toshi.operator.v1.UnsuspendWorkspaceRequest
+	(*UnsuspendWorkspaceResponse)(nil),    // 67: toshi.operator.v1.UnsuspendWorkspaceResponse
+	(*DeleteWorkspaceRequest)(nil),        // 68: toshi.operator.v1.DeleteWorkspaceRequest
+	(*DeleteWorkspaceResponse)(nil),       // 69: toshi.operator.v1.DeleteWorkspaceResponse
 	(*Plan)(nil),                          // 70: toshi.operator.v1.Plan
 	(*ListOperatorAlertsRequest)(nil),     // 71: toshi.operator.v1.ListOperatorAlertsRequest
 	(*ListOperatorAlertsResponse)(nil),    // 72: toshi.operator.v1.ListOperatorAlertsResponse
@@ -16306,9 +16307,9 @@ var file_toshi_operator_v1_operator_proto_goTypes = []any{
 	(*GetCapacityResponse)(nil),           // 94: toshi.operator.v1.GetCapacityResponse
 	(*CapacitySize)(nil),                  // 95: toshi.operator.v1.CapacitySize
 	(*CapacityReservation)(nil),           // 96: toshi.operator.v1.CapacityReservation
-	(*GetTenantStatementRequest)(nil),     // 97: toshi.operator.v1.GetTenantStatementRequest
-	(*GetTenantStatementResponse)(nil),    // 98: toshi.operator.v1.GetTenantStatementResponse
-	(*TenantStatement)(nil),               // 99: toshi.operator.v1.TenantStatement
+	(*GetWorkspaceStatementRequest)(nil),  // 97: toshi.operator.v1.GetWorkspaceStatementRequest
+	(*GetWorkspaceStatementResponse)(nil), // 98: toshi.operator.v1.GetWorkspaceStatementResponse
+	(*WorkspaceStatement)(nil),            // 99: toshi.operator.v1.WorkspaceStatement
 	(*PaidStarts)(nil),                    // 100: toshi.operator.v1.PaidStarts
 	(*DesktopSeats)(nil),                  // 101: toshi.operator.v1.DesktopSeats
 	(*StatementSeat)(nil),                 // 102: toshi.operator.v1.StatementSeat
@@ -16319,7 +16320,7 @@ var file_toshi_operator_v1_operator_proto_goTypes = []any{
 	(*StorageUsageRow)(nil),               // 107: toshi.operator.v1.StorageUsageRow
 	(*StatementUsage)(nil),                // 108: toshi.operator.v1.StatementUsage
 	(*StatementCharge)(nil),               // 109: toshi.operator.v1.StatementCharge
-	(*TenantBilling)(nil),                 // 110: toshi.operator.v1.TenantBilling
+	(*WorkspaceBilling)(nil),              // 110: toshi.operator.v1.WorkspaceBilling
 	(*BillingTotals)(nil),                 // 111: toshi.operator.v1.BillingTotals
 	(*BillingEventFailure)(nil),           // 112: toshi.operator.v1.BillingEventFailure
 	(*Token)(nil),                         // 113: toshi.operator.v1.Token
@@ -16389,9 +16390,9 @@ var file_toshi_operator_v1_operator_proto_goTypes = []any{
 	(*DeleteStorageProviderRequest)(nil),  // 177: toshi.operator.v1.DeleteStorageProviderRequest
 	(*DeleteStorageProviderResponse)(nil), // 178: toshi.operator.v1.DeleteStorageProviderResponse
 	nil,                                   // 179: toshi.operator.v1.Host.LabelsEntry
-	nil,                                   // 180: toshi.operator.v1.Tenant.EntitlementOverridesEntry
+	nil,                                   // 180: toshi.operator.v1.Workspace.EntitlementOverridesEntry
 	nil,                                   // 181: toshi.operator.v1.OperatorAlert.ReasonsEntry
-	(*TenantBilling_HeldJobs)(nil),        // 182: toshi.operator.v1.TenantBilling.HeldJobs
+	(*WorkspaceBilling_HeldJobs)(nil),     // 182: toshi.operator.v1.WorkspaceBilling.HeldJobs
 	(*timestamppb.Timestamp)(nil),         // 183: google.protobuf.Timestamp
 	(*durationpb.Duration)(nil),           // 184: google.protobuf.Duration
 	(*fieldmaskpb.FieldMask)(nil),         // 185: google.protobuf.FieldMask
@@ -16446,29 +16447,29 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	21,  // 46: toshi.operator.v1.SetHostStateResponse.host:type_name -> toshi.operator.v1.Host
 	21,  // 47: toshi.operator.v1.SetHostOverflowResponse.host:type_name -> toshi.operator.v1.Host
 	21,  // 48: toshi.operator.v1.RevokeHostResponse.host:type_name -> toshi.operator.v1.Host
-	184, // 49: toshi.operator.v1.RetireOfflineHostsRequest.offline_longer_than:type_name -> google.protobuf.Duration
-	44,  // 50: toshi.operator.v1.RetireOfflineHostsResponse.hosts:type_name -> toshi.operator.v1.OfflineHostResult
+	184, // 49: toshi.operator.v1.RetireHostsRequest.offline_longer_than:type_name -> google.protobuf.Duration
+	44,  // 50: toshi.operator.v1.RetireHostsResponse.hosts:type_name -> toshi.operator.v1.OfflineHostResult
 	21,  // 51: toshi.operator.v1.OfflineHostResult.host:type_name -> toshi.operator.v1.Host
 	5,   // 52: toshi.operator.v1.OfflineHostResult.outcome:type_name -> toshi.operator.v1.OfflineHostOutcome
-	183, // 53: toshi.operator.v1.Tenant.created_at:type_name -> google.protobuf.Timestamp
-	183, // 54: toshi.operator.v1.Tenant.starter_credit_granted_at:type_name -> google.protobuf.Timestamp
-	47,  // 55: toshi.operator.v1.Tenant.reservations:type_name -> toshi.operator.v1.Reservation
-	183, // 56: toshi.operator.v1.Tenant.state_since:type_name -> google.protobuf.Timestamp
-	183, // 57: toshi.operator.v1.Tenant.purge_after:type_name -> google.protobuf.Timestamp
-	46,  // 58: toshi.operator.v1.Tenant.hosting_certificate:type_name -> toshi.operator.v1.HostingCertificate
-	110, // 59: toshi.operator.v1.Tenant.billing:type_name -> toshi.operator.v1.TenantBilling
-	180, // 60: toshi.operator.v1.Tenant.entitlement_overrides:type_name -> toshi.operator.v1.Tenant.EntitlementOverridesEntry
+	183, // 53: toshi.operator.v1.Workspace.created_at:type_name -> google.protobuf.Timestamp
+	183, // 54: toshi.operator.v1.Workspace.starter_credit_granted_at:type_name -> google.protobuf.Timestamp
+	47,  // 55: toshi.operator.v1.Workspace.reservations:type_name -> toshi.operator.v1.Reservation
+	183, // 56: toshi.operator.v1.Workspace.state_since:type_name -> google.protobuf.Timestamp
+	183, // 57: toshi.operator.v1.Workspace.purge_after:type_name -> google.protobuf.Timestamp
+	46,  // 58: toshi.operator.v1.Workspace.hosting_certificate:type_name -> toshi.operator.v1.HostingCertificate
+	110, // 59: toshi.operator.v1.Workspace.billing:type_name -> toshi.operator.v1.WorkspaceBilling
+	180, // 60: toshi.operator.v1.Workspace.entitlement_overrides:type_name -> toshi.operator.v1.Workspace.EntitlementOverridesEntry
 	6,   // 61: toshi.operator.v1.HostingCertificate.state:type_name -> toshi.operator.v1.HostingCertificateState
 	183, // 62: toshi.operator.v1.HostingCertificate.not_after:type_name -> google.protobuf.Timestamp
 	183, // 63: toshi.operator.v1.HostingCertificate.renew_at:type_name -> google.protobuf.Timestamp
 	183, // 64: toshi.operator.v1.HostingCertificate.retry_at:type_name -> google.protobuf.Timestamp
-	45,  // 65: toshi.operator.v1.CreateWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Tenant
-	45,  // 66: toshi.operator.v1.ListTenantsResponse.tenants:type_name -> toshi.operator.v1.Tenant
-	45,  // 67: toshi.operator.v1.SetTenantCapResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	45,  // 68: toshi.operator.v1.SetTenantLimitsResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	45,  // 69: toshi.operator.v1.UpdateWorkspaceRequest.workspace:type_name -> toshi.operator.v1.Tenant
+	45,  // 65: toshi.operator.v1.CreateWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Workspace
+	45,  // 66: toshi.operator.v1.ListWorkspacesResponse.workspaces:type_name -> toshi.operator.v1.Workspace
+	45,  // 67: toshi.operator.v1.SetTenantCapResponse.workspace:type_name -> toshi.operator.v1.Workspace
+	45,  // 68: toshi.operator.v1.SetTenantLimitsResponse.workspace:type_name -> toshi.operator.v1.Workspace
+	45,  // 69: toshi.operator.v1.UpdateWorkspaceRequest.workspace:type_name -> toshi.operator.v1.Workspace
 	185, // 70: toshi.operator.v1.UpdateWorkspaceRequest.update_mask:type_name -> google.protobuf.FieldMask
-	45,  // 71: toshi.operator.v1.UpdateWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Tenant
+	45,  // 71: toshi.operator.v1.UpdateWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Workspace
 	183, // 72: toshi.operator.v1.Seat.assigned_at:type_name -> google.protobuf.Timestamp
 	114, // 73: toshi.operator.v1.Seat.assigned_by:type_name -> toshi.operator.v1.Subject
 	183, // 74: toshi.operator.v1.Seat.removed_at:type_name -> google.protobuf.Timestamp
@@ -16477,9 +16478,9 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	58,  // 77: toshi.operator.v1.ReassignSeatResponse.seat:type_name -> toshi.operator.v1.Seat
 	63,  // 78: toshi.operator.v1.ListSeatsResponse.seats:type_name -> toshi.operator.v1.SeatMonth
 	58,  // 79: toshi.operator.v1.SeatMonth.seat:type_name -> toshi.operator.v1.Seat
-	45,  // 80: toshi.operator.v1.SuspendTenantResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	45,  // 81: toshi.operator.v1.ResumeTenantResponse.tenant:type_name -> toshi.operator.v1.Tenant
-	45,  // 82: toshi.operator.v1.DeleteTenantResponse.tenant:type_name -> toshi.operator.v1.Tenant
+	45,  // 80: toshi.operator.v1.SuspendWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Workspace
+	45,  // 81: toshi.operator.v1.UnsuspendWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Workspace
+	45,  // 82: toshi.operator.v1.DeleteWorkspaceResponse.workspace:type_name -> toshi.operator.v1.Workspace
 	75,  // 83: toshi.operator.v1.ListOperatorAlertsResponse.alerts:type_name -> toshi.operator.v1.OperatorAlert
 	75,  // 84: toshi.operator.v1.ListHostAlertsResponse.alerts:type_name -> toshi.operator.v1.OperatorAlert
 	183, // 85: toshi.operator.v1.OperatorAlert.raised_at:type_name -> google.protobuf.Timestamp
@@ -16513,32 +16514,32 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	95,  // 113: toshi.operator.v1.GetCapacityResponse.sizes:type_name -> toshi.operator.v1.CapacitySize
 	96,  // 114: toshi.operator.v1.GetCapacityResponse.reservations:type_name -> toshi.operator.v1.CapacityReservation
 	183, // 115: toshi.operator.v1.GetCapacityResponse.observed_at:type_name -> google.protobuf.Timestamp
-	99,  // 116: toshi.operator.v1.GetTenantStatementResponse.statement:type_name -> toshi.operator.v1.TenantStatement
-	183, // 117: toshi.operator.v1.TenantStatement.from:type_name -> google.protobuf.Timestamp
-	183, // 118: toshi.operator.v1.TenantStatement.to:type_name -> google.protobuf.Timestamp
-	108, // 119: toshi.operator.v1.TenantStatement.usage:type_name -> toshi.operator.v1.StatementUsage
-	108, // 120: toshi.operator.v1.TenantStatement.total:type_name -> toshi.operator.v1.StatementUsage
-	109, // 121: toshi.operator.v1.TenantStatement.charges:type_name -> toshi.operator.v1.StatementCharge
-	183, // 122: toshi.operator.v1.TenantStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	89,  // 123: toshi.operator.v1.TenantStatement.held:type_name -> toshi.operator.v1.HoldTimes
-	85,  // 124: toshi.operator.v1.TenantStatement.filler:type_name -> toshi.operator.v1.FillerUsage
-	183, // 125: toshi.operator.v1.TenantStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
-	103, // 126: toshi.operator.v1.TenantStatement.own_host_fee:type_name -> toshi.operator.v1.OwnHostFee
-	104, // 127: toshi.operator.v1.TenantStatement.awake:type_name -> toshi.operator.v1.Awake
-	105, // 128: toshi.operator.v1.TenantStatement.storage:type_name -> toshi.operator.v1.Storage
-	101, // 129: toshi.operator.v1.TenantStatement.desktop_seats:type_name -> toshi.operator.v1.DesktopSeats
-	100, // 130: toshi.operator.v1.TenantStatement.paid_starts:type_name -> toshi.operator.v1.PaidStarts
+	99,  // 116: toshi.operator.v1.GetWorkspaceStatementResponse.statement:type_name -> toshi.operator.v1.WorkspaceStatement
+	183, // 117: toshi.operator.v1.WorkspaceStatement.from:type_name -> google.protobuf.Timestamp
+	183, // 118: toshi.operator.v1.WorkspaceStatement.to:type_name -> google.protobuf.Timestamp
+	108, // 119: toshi.operator.v1.WorkspaceStatement.usage:type_name -> toshi.operator.v1.StatementUsage
+	108, // 120: toshi.operator.v1.WorkspaceStatement.total:type_name -> toshi.operator.v1.StatementUsage
+	109, // 121: toshi.operator.v1.WorkspaceStatement.charges:type_name -> toshi.operator.v1.StatementCharge
+	183, // 122: toshi.operator.v1.WorkspaceStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	89,  // 123: toshi.operator.v1.WorkspaceStatement.held:type_name -> toshi.operator.v1.HoldTimes
+	85,  // 124: toshi.operator.v1.WorkspaceStatement.filler:type_name -> toshi.operator.v1.FillerUsage
+	183, // 125: toshi.operator.v1.WorkspaceStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
+	103, // 126: toshi.operator.v1.WorkspaceStatement.own_host_fee:type_name -> toshi.operator.v1.OwnHostFee
+	104, // 127: toshi.operator.v1.WorkspaceStatement.awake:type_name -> toshi.operator.v1.Awake
+	105, // 128: toshi.operator.v1.WorkspaceStatement.storage:type_name -> toshi.operator.v1.Storage
+	101, // 129: toshi.operator.v1.WorkspaceStatement.desktop_seats:type_name -> toshi.operator.v1.DesktopSeats
+	100, // 130: toshi.operator.v1.WorkspaceStatement.paid_starts:type_name -> toshi.operator.v1.PaidStarts
 	102, // 131: toshi.operator.v1.DesktopSeats.seats:type_name -> toshi.operator.v1.StatementSeat
 	183, // 132: toshi.operator.v1.StatementSeat.assigned_at:type_name -> google.protobuf.Timestamp
 	183, // 133: toshi.operator.v1.StatementSeat.removed_at:type_name -> google.protobuf.Timestamp
 	106, // 134: toshi.operator.v1.Storage.kinds:type_name -> toshi.operator.v1.StoredKind
-	183, // 135: toshi.operator.v1.TenantBilling.billing_started_at:type_name -> google.protobuf.Timestamp
-	183, // 136: toshi.operator.v1.TenantBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
-	111, // 137: toshi.operator.v1.TenantBilling.totals:type_name -> toshi.operator.v1.BillingTotals
-	112, // 138: toshi.operator.v1.TenantBilling.failed_events:type_name -> toshi.operator.v1.BillingEventFailure
-	183, // 139: toshi.operator.v1.TenantBilling.card_verified_at:type_name -> google.protobuf.Timestamp
-	183, // 140: toshi.operator.v1.TenantBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	182, // 141: toshi.operator.v1.TenantBilling.held_now:type_name -> toshi.operator.v1.TenantBilling.HeldJobs
+	183, // 135: toshi.operator.v1.WorkspaceBilling.billing_started_at:type_name -> google.protobuf.Timestamp
+	183, // 136: toshi.operator.v1.WorkspaceBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
+	111, // 137: toshi.operator.v1.WorkspaceBilling.totals:type_name -> toshi.operator.v1.BillingTotals
+	112, // 138: toshi.operator.v1.WorkspaceBilling.failed_events:type_name -> toshi.operator.v1.BillingEventFailure
+	183, // 139: toshi.operator.v1.WorkspaceBilling.card_verified_at:type_name -> google.protobuf.Timestamp
+	183, // 140: toshi.operator.v1.WorkspaceBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	182, // 141: toshi.operator.v1.WorkspaceBilling.held_now:type_name -> toshi.operator.v1.WorkspaceBilling.HeldJobs
 	183, // 142: toshi.operator.v1.BillingEventFailure.occurred_at:type_name -> google.protobuf.Timestamp
 	183, // 143: toshi.operator.v1.BillingEventFailure.failed_at:type_name -> google.protobuf.Timestamp
 	9,   // 144: toshi.operator.v1.Token.kind:type_name -> toshi.operator.v1.TokenKind
@@ -16624,8 +16625,8 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	170, // 224: toshi.operator.v1.CheckStorageProviderRequest.provider:type_name -> toshi.operator.v1.CreateStorageProviderRequest
 	169, // 225: toshi.operator.v1.CheckStorageProviderResponse.provider:type_name -> toshi.operator.v1.StorageProvider
 	183, // 226: toshi.operator.v1.CheckStorageProviderResponse.checked_at:type_name -> google.protobuf.Timestamp
-	183, // 227: toshi.operator.v1.TenantBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
-	183, // 228: toshi.operator.v1.TenantBilling.HeldJobs.next_start_at:type_name -> google.protobuf.Timestamp
+	183, // 227: toshi.operator.v1.WorkspaceBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
+	183, // 228: toshi.operator.v1.WorkspaceBilling.HeldJobs.next_start_at:type_name -> google.protobuf.Timestamp
 	24,  // 229: toshi.operator.v1.OperatorService.ListJobs:input_type -> toshi.operator.v1.ListJobsRequest
 	27,  // 230: toshi.operator.v1.OperatorService.ListAuditEvents:input_type -> toshi.operator.v1.ListAuditEventsRequest
 	16,  // 231: toshi.operator.v1.OperatorService.SummariseJobTelemetry:input_type -> toshi.operator.v1.SummariseJobTelemetryRequest
@@ -16635,9 +16636,9 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	36,  // 235: toshi.operator.v1.OperatorService.SetHostOverflow:input_type -> toshi.operator.v1.SetHostOverflowRequest
 	38,  // 236: toshi.operator.v1.OperatorService.RetireHost:input_type -> toshi.operator.v1.RetireHostRequest
 	40,  // 237: toshi.operator.v1.OperatorService.RevokeHost:input_type -> toshi.operator.v1.RevokeHostRequest
-	42,  // 238: toshi.operator.v1.OperatorService.RetireOfflineHosts:input_type -> toshi.operator.v1.RetireOfflineHostsRequest
+	42,  // 238: toshi.operator.v1.OperatorService.RetireHosts:input_type -> toshi.operator.v1.RetireHostsRequest
 	48,  // 239: toshi.operator.v1.OperatorService.CreateWorkspace:input_type -> toshi.operator.v1.CreateWorkspaceRequest
-	50,  // 240: toshi.operator.v1.OperatorService.ListTenants:input_type -> toshi.operator.v1.ListTenantsRequest
+	50,  // 240: toshi.operator.v1.OperatorService.ListWorkspaces:input_type -> toshi.operator.v1.ListWorkspacesRequest
 	52,  // 241: toshi.operator.v1.OperatorService.SetTenantCap:input_type -> toshi.operator.v1.SetTenantCapRequest
 	54,  // 242: toshi.operator.v1.OperatorService.SetTenantLimits:input_type -> toshi.operator.v1.SetTenantLimitsRequest
 	56,  // 243: toshi.operator.v1.OperatorService.UpdateWorkspace:input_type -> toshi.operator.v1.UpdateWorkspaceRequest
@@ -16646,14 +16647,14 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	76,  // 246: toshi.operator.v1.OperatorService.ListPlans:input_type -> toshi.operator.v1.ListPlansRequest
 	78,  // 247: toshi.operator.v1.OperatorService.GetVersion:input_type -> toshi.operator.v1.GetVersionRequest
 	81,  // 248: toshi.operator.v1.OperatorService.RunChecks:input_type -> toshi.operator.v1.RunChecksRequest
-	64,  // 249: toshi.operator.v1.OperatorService.SuspendTenant:input_type -> toshi.operator.v1.SuspendTenantRequest
-	66,  // 250: toshi.operator.v1.OperatorService.ResumeTenant:input_type -> toshi.operator.v1.ResumeTenantRequest
-	68,  // 251: toshi.operator.v1.OperatorService.DeleteTenant:input_type -> toshi.operator.v1.DeleteTenantRequest
+	64,  // 249: toshi.operator.v1.OperatorService.SuspendWorkspace:input_type -> toshi.operator.v1.SuspendWorkspaceRequest
+	66,  // 250: toshi.operator.v1.OperatorService.UnsuspendWorkspace:input_type -> toshi.operator.v1.UnsuspendWorkspaceRequest
+	68,  // 251: toshi.operator.v1.OperatorService.DeleteWorkspace:input_type -> toshi.operator.v1.DeleteWorkspaceRequest
 	93,  // 252: toshi.operator.v1.OperatorService.GetCapacity:input_type -> toshi.operator.v1.GetCapacityRequest
 	83,  // 253: toshi.operator.v1.OperatorService.GetUsage:input_type -> toshi.operator.v1.GetUsageRequest
 	87,  // 254: toshi.operator.v1.OperatorService.GetQueueTimes:input_type -> toshi.operator.v1.GetQueueTimesRequest
 	90,  // 255: toshi.operator.v1.OperatorService.GetWorkflowUsage:input_type -> toshi.operator.v1.GetWorkflowUsageRequest
-	97,  // 256: toshi.operator.v1.OperatorService.GetTenantStatement:input_type -> toshi.operator.v1.GetTenantStatementRequest
+	97,  // 256: toshi.operator.v1.OperatorService.GetWorkspaceStatement:input_type -> toshi.operator.v1.GetWorkspaceStatementRequest
 	116, // 257: toshi.operator.v1.OperatorService.ListTokens:input_type -> toshi.operator.v1.ListTokensRequest
 	118, // 258: toshi.operator.v1.OperatorService.RotateToken:input_type -> toshi.operator.v1.RotateTokenRequest
 	120, // 259: toshi.operator.v1.OperatorService.RevokeToken:input_type -> toshi.operator.v1.RevokeTokenRequest
@@ -16687,9 +16688,9 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	37,  // 287: toshi.operator.v1.OperatorService.SetHostOverflow:output_type -> toshi.operator.v1.SetHostOverflowResponse
 	39,  // 288: toshi.operator.v1.OperatorService.RetireHost:output_type -> toshi.operator.v1.RetireHostResponse
 	41,  // 289: toshi.operator.v1.OperatorService.RevokeHost:output_type -> toshi.operator.v1.RevokeHostResponse
-	43,  // 290: toshi.operator.v1.OperatorService.RetireOfflineHosts:output_type -> toshi.operator.v1.RetireOfflineHostsResponse
+	43,  // 290: toshi.operator.v1.OperatorService.RetireHosts:output_type -> toshi.operator.v1.RetireHostsResponse
 	49,  // 291: toshi.operator.v1.OperatorService.CreateWorkspace:output_type -> toshi.operator.v1.CreateWorkspaceResponse
-	51,  // 292: toshi.operator.v1.OperatorService.ListTenants:output_type -> toshi.operator.v1.ListTenantsResponse
+	51,  // 292: toshi.operator.v1.OperatorService.ListWorkspaces:output_type -> toshi.operator.v1.ListWorkspacesResponse
 	53,  // 293: toshi.operator.v1.OperatorService.SetTenantCap:output_type -> toshi.operator.v1.SetTenantCapResponse
 	55,  // 294: toshi.operator.v1.OperatorService.SetTenantLimits:output_type -> toshi.operator.v1.SetTenantLimitsResponse
 	57,  // 295: toshi.operator.v1.OperatorService.UpdateWorkspace:output_type -> toshi.operator.v1.UpdateWorkspaceResponse
@@ -16698,14 +16699,14 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	77,  // 298: toshi.operator.v1.OperatorService.ListPlans:output_type -> toshi.operator.v1.ListPlansResponse
 	79,  // 299: toshi.operator.v1.OperatorService.GetVersion:output_type -> toshi.operator.v1.GetVersionResponse
 	82,  // 300: toshi.operator.v1.OperatorService.RunChecks:output_type -> toshi.operator.v1.RunChecksResponse
-	65,  // 301: toshi.operator.v1.OperatorService.SuspendTenant:output_type -> toshi.operator.v1.SuspendTenantResponse
-	67,  // 302: toshi.operator.v1.OperatorService.ResumeTenant:output_type -> toshi.operator.v1.ResumeTenantResponse
-	69,  // 303: toshi.operator.v1.OperatorService.DeleteTenant:output_type -> toshi.operator.v1.DeleteTenantResponse
+	65,  // 301: toshi.operator.v1.OperatorService.SuspendWorkspace:output_type -> toshi.operator.v1.SuspendWorkspaceResponse
+	67,  // 302: toshi.operator.v1.OperatorService.UnsuspendWorkspace:output_type -> toshi.operator.v1.UnsuspendWorkspaceResponse
+	69,  // 303: toshi.operator.v1.OperatorService.DeleteWorkspace:output_type -> toshi.operator.v1.DeleteWorkspaceResponse
 	94,  // 304: toshi.operator.v1.OperatorService.GetCapacity:output_type -> toshi.operator.v1.GetCapacityResponse
 	84,  // 305: toshi.operator.v1.OperatorService.GetUsage:output_type -> toshi.operator.v1.GetUsageResponse
 	88,  // 306: toshi.operator.v1.OperatorService.GetQueueTimes:output_type -> toshi.operator.v1.GetQueueTimesResponse
 	91,  // 307: toshi.operator.v1.OperatorService.GetWorkflowUsage:output_type -> toshi.operator.v1.GetWorkflowUsageResponse
-	98,  // 308: toshi.operator.v1.OperatorService.GetTenantStatement:output_type -> toshi.operator.v1.GetTenantStatementResponse
+	98,  // 308: toshi.operator.v1.OperatorService.GetWorkspaceStatement:output_type -> toshi.operator.v1.GetWorkspaceStatementResponse
 	117, // 309: toshi.operator.v1.OperatorService.ListTokens:output_type -> toshi.operator.v1.ListTokensResponse
 	119, // 310: toshi.operator.v1.OperatorService.RotateToken:output_type -> toshi.operator.v1.RotateTokenResponse
 	121, // 311: toshi.operator.v1.OperatorService.RevokeToken:output_type -> toshi.operator.v1.RevokeTokenResponse

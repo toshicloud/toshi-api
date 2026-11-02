@@ -62,15 +62,15 @@ const (
 	// OperatorServiceRevokeHostProcedure is the fully-qualified name of the OperatorService's
 	// RevokeHost RPC.
 	OperatorServiceRevokeHostProcedure = "/toshi.operator.v1.OperatorService/RevokeHost"
-	// OperatorServiceRetireOfflineHostsProcedure is the fully-qualified name of the OperatorService's
-	// RetireOfflineHosts RPC.
-	OperatorServiceRetireOfflineHostsProcedure = "/toshi.operator.v1.OperatorService/RetireOfflineHosts"
+	// OperatorServiceRetireHostsProcedure is the fully-qualified name of the OperatorService's
+	// RetireHosts RPC.
+	OperatorServiceRetireHostsProcedure = "/toshi.operator.v1.OperatorService/RetireHosts"
 	// OperatorServiceCreateWorkspaceProcedure is the fully-qualified name of the OperatorService's
 	// CreateWorkspace RPC.
 	OperatorServiceCreateWorkspaceProcedure = "/toshi.operator.v1.OperatorService/CreateWorkspace"
-	// OperatorServiceListTenantsProcedure is the fully-qualified name of the OperatorService's
-	// ListTenants RPC.
-	OperatorServiceListTenantsProcedure = "/toshi.operator.v1.OperatorService/ListTenants"
+	// OperatorServiceListWorkspacesProcedure is the fully-qualified name of the OperatorService's
+	// ListWorkspaces RPC.
+	OperatorServiceListWorkspacesProcedure = "/toshi.operator.v1.OperatorService/ListWorkspaces"
 	// OperatorServiceSetTenantCapProcedure is the fully-qualified name of the OperatorService's
 	// SetTenantCap RPC.
 	OperatorServiceSetTenantCapProcedure = "/toshi.operator.v1.OperatorService/SetTenantCap"
@@ -95,15 +95,15 @@ const (
 	// OperatorServiceRunChecksProcedure is the fully-qualified name of the OperatorService's RunChecks
 	// RPC.
 	OperatorServiceRunChecksProcedure = "/toshi.operator.v1.OperatorService/RunChecks"
-	// OperatorServiceSuspendTenantProcedure is the fully-qualified name of the OperatorService's
-	// SuspendTenant RPC.
-	OperatorServiceSuspendTenantProcedure = "/toshi.operator.v1.OperatorService/SuspendTenant"
-	// OperatorServiceResumeTenantProcedure is the fully-qualified name of the OperatorService's
-	// ResumeTenant RPC.
-	OperatorServiceResumeTenantProcedure = "/toshi.operator.v1.OperatorService/ResumeTenant"
-	// OperatorServiceDeleteTenantProcedure is the fully-qualified name of the OperatorService's
-	// DeleteTenant RPC.
-	OperatorServiceDeleteTenantProcedure = "/toshi.operator.v1.OperatorService/DeleteTenant"
+	// OperatorServiceSuspendWorkspaceProcedure is the fully-qualified name of the OperatorService's
+	// SuspendWorkspace RPC.
+	OperatorServiceSuspendWorkspaceProcedure = "/toshi.operator.v1.OperatorService/SuspendWorkspace"
+	// OperatorServiceUnsuspendWorkspaceProcedure is the fully-qualified name of the OperatorService's
+	// UnsuspendWorkspace RPC.
+	OperatorServiceUnsuspendWorkspaceProcedure = "/toshi.operator.v1.OperatorService/UnsuspendWorkspace"
+	// OperatorServiceDeleteWorkspaceProcedure is the fully-qualified name of the OperatorService's
+	// DeleteWorkspace RPC.
+	OperatorServiceDeleteWorkspaceProcedure = "/toshi.operator.v1.OperatorService/DeleteWorkspace"
 	// OperatorServiceGetCapacityProcedure is the fully-qualified name of the OperatorService's
 	// GetCapacity RPC.
 	OperatorServiceGetCapacityProcedure = "/toshi.operator.v1.OperatorService/GetCapacity"
@@ -116,9 +116,9 @@ const (
 	// OperatorServiceGetWorkflowUsageProcedure is the fully-qualified name of the OperatorService's
 	// GetWorkflowUsage RPC.
 	OperatorServiceGetWorkflowUsageProcedure = "/toshi.operator.v1.OperatorService/GetWorkflowUsage"
-	// OperatorServiceGetTenantStatementProcedure is the fully-qualified name of the OperatorService's
-	// GetTenantStatement RPC.
-	OperatorServiceGetTenantStatementProcedure = "/toshi.operator.v1.OperatorService/GetTenantStatement"
+	// OperatorServiceGetWorkspaceStatementProcedure is the fully-qualified name of the
+	// OperatorService's GetWorkspaceStatement RPC.
+	OperatorServiceGetWorkspaceStatementProcedure = "/toshi.operator.v1.OperatorService/GetWorkspaceStatement"
 	// OperatorServiceListTokensProcedure is the fully-qualified name of the OperatorService's
 	// ListTokens RPC.
 	OperatorServiceListTokensProcedure = "/toshi.operator.v1.OperatorService/ListTokens"
@@ -243,14 +243,14 @@ type OperatorServiceClient interface {
 	// changes nothing and returns revoked false. Operators only. An unknown
 	// ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
 	RevokeHost(context.Context, *connect.Request[operatorv1.RevokeHostRequest]) (*connect.Response[operatorv1.RevokeHostResponse], error)
-	// RetireOfflineHosts lists the hosts whose state is offline and whose last
+	// RetireHosts lists the hosts whose state is offline and whose last
 	// heartbeat is older than offline_longer_than, oldest first, and with apply
 	// set removes each one that holds no assigned, starting or running job.
 	// Without apply nothing changes: the response says what a call with apply
 	// would do. A host a workspace owns is skipped unless include_owned is set,
 	// and a revoked host is never listed. Each removal records one
 	// host.retired audit event. Operators only.
-	RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error)
+	RetireHosts(context.Context, *connect.Request[operatorv1.RetireHostsRequest]) (*connect.Response[operatorv1.RetireHostsResponse], error)
 	// CreateWorkspace makes a workspace that has no GitHub installation and
 	// returns it with its new id. It is on plan when one is given and on the
 	// control plane's default_plan otherwise, as an installed workspace is,
@@ -258,10 +258,10 @@ type OperatorServiceClient interface {
 	// configuration does not define, fails with INVALID_ARGUMENT. Names are not
 	// unique: two workspaces may share one. Only the operator may call it.
 	CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error)
-	// ListTenants returns every workspace, ordered by ID.
+	// ListWorkspaces returns every workspace, ordered by ID.
 	//
 	// A page holds 100 workspaces when page_size is zero, and 1000 at most.
-	ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error)
+	ListWorkspaces(context.Context, *connect.Request[operatorv1.ListWorkspacesRequest]) (*connect.Response[operatorv1.ListWorkspacesResponse], error)
 	// SetTenantCap sets a workspace's concurrency cap override and returns the
 	// workspace as stored; a cap of 0 clears the override, so the workspace's plan
 	// applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
@@ -338,26 +338,26 @@ type OperatorServiceClient interface {
 	// group whose subject this control plane is not configured for (the GitHub
 	// group without a GitHub App) fails with FAILED_PRECONDITION.
 	RunChecks(context.Context, *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error)
-	// SuspendTenant suspends an active workspace: its new and queued jobs are
-	// held with hold reason tenant_suspended, its running jobs finish, and its
+	// SuspendWorkspace suspends an active workspace: its new and queued jobs are
+	// held with hold reason workspace_suspended, its running jobs finish, and its
 	// users keep read-only access. A suspended workspace is returned unchanged. An
 	// empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
 	// NOT_FOUND, and a workspace that is deleting or deleted with
 	// FAILED_PRECONDITION. Operator only.
-	SuspendTenant(context.Context, *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error)
-	// ResumeTenant returns a suspended workspace to active and cancels a
+	SuspendWorkspace(context.Context, *connect.Request[operatorv1.SuspendWorkspaceRequest]) (*connect.Response[operatorv1.SuspendWorkspaceResponse], error)
+	// UnsuspendWorkspace returns a suspended workspace to active and cancels a
 	// scheduled deletion; held jobs run at the next scheduler pass. An active
 	// workspace is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
 	// an unknown ID with NOT_FOUND, and a workspace that is deleting or deleted
 	// with FAILED_PRECONDITION. Operator only.
-	ResumeTenant(context.Context, *connect.Request[operatorv1.ResumeTenantRequest]) (*connect.Response[operatorv1.ResumeTenantResponse], error)
-	// DeleteTenant suspends a workspace until purge_after, after which its data
+	UnsuspendWorkspace(context.Context, *connect.Request[operatorv1.UnsuspendWorkspaceRequest]) (*connect.Response[operatorv1.UnsuspendWorkspaceResponse], error)
+	// DeleteWorkspace suspends a workspace until purge_after, after which its data
 	// is purged from the control plane and every host. grace_seconds of 0
 	// means the default of 30 days; now purges as soon as the workspace has no
 	// running job. A negative grace_seconds, or now with grace_seconds, fails
 	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
 	// deleting or deleted with FAILED_PRECONDITION. Operator only.
-	DeleteTenant(context.Context, *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error)
+	DeleteWorkspace(context.Context, *connect.Request[operatorv1.DeleteWorkspaceRequest]) (*connect.Response[operatorv1.DeleteWorkspaceResponse], error)
 	// GetCapacity returns the reserved-capacity view of the last scheduler
 	// pass: per runner size the slots free and reserved, and per reservation
 	// the slots in use, earmarked and short. Operator only. It
@@ -379,7 +379,7 @@ type OperatorServiceClient interface {
 	// defaults to the last 7 days. A window whose from is not before its to
 	// fails with INVALID_ARGUMENT.
 	GetWorkflowUsage(context.Context, *connect.Request[operatorv1.GetWorkflowUsageRequest]) (*connect.Response[operatorv1.GetWorkflowUsageResponse], error)
-	// GetTenantStatement returns a workspace's usage statement for one UTC month:
+	// GetWorkspaceStatement returns a workspace's usage statement for one UTC month:
 	// minutes by runner size and OS of the jobs that finished in it, the
 	// minutes metered to the billing provider by size with their estimated
 	// cost at the plan's prices, the starter credit applied in it, and held
@@ -389,7 +389,7 @@ type OperatorServiceClient interface {
 	// a deleted workspace's saved statements too. Inside a live workspace,
 	// members and the operator under its grant read
 	// WorkspaceService.GetWorkspaceStatement.
-	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
+	GetWorkspaceStatement(context.Context, *connect.Request[operatorv1.GetWorkspaceStatementRequest]) (*connect.Response[operatorv1.GetWorkspaceStatementResponse], error)
 	// ListTokens returns the tokens the control plane knows, of every kind or
 	// of the one kind names, oldest first, without their values.
 	//
@@ -520,10 +520,10 @@ type OperatorServiceClient interface {
 	// INVALID_ARGUMENT.
 	SuggestPools(context.Context, *connect.Request[operatorv1.SuggestPoolsRequest]) (*connect.Response[operatorv1.SuggestPoolsResponse], error)
 	// CreateStorageProvider registers a bucket Toshi may keep recordings and
-	// artifacts in. An empty tenant_id registers the operator's
+	// artifacts in. An empty workspace registers the operator's
 	// own provider, shared by every workspace; it takes a credentials file
 	// reference. A request with a credential stores a workspace's own
-	// tenant_bucket provider instead: the control plane wraps the key, checks
+	// workspace_bucket provider instead: the control plane wraps the key, checks
 	// the bucket with it as CheckStorageProvider does and stores the row only
 	// when the check passes, else FAILED_PRECONDITION with the check's error.
 	// A workspace has one such provider; a second fails with ALREADY_EXISTS, and
@@ -535,7 +535,7 @@ type OperatorServiceClient interface {
 	// fields, with the Workspace API's
 	// StorageProviderService.CreateStorageProvider.
 	CreateStorageProvider(context.Context, *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error)
-	// ListStorageProviders returns the operator's providers when tenant_id
+	// ListStorageProviders returns the operator's providers when workspace
 	// is empty and that workspace's otherwise, ordered by name. With
 	// include_default it also returns the operator's provider a workspace
 	// without one of its own uses, whether or not this workspace has one. A
@@ -633,10 +633,10 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("RevokeHost")),
 			connect.WithClientOptions(opts...),
 		),
-		retireOfflineHosts: connect.NewClient[operatorv1.RetireOfflineHostsRequest, operatorv1.RetireOfflineHostsResponse](
+		retireHosts: connect.NewClient[operatorv1.RetireHostsRequest, operatorv1.RetireHostsResponse](
 			httpClient,
-			baseURL+OperatorServiceRetireOfflineHostsProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("RetireOfflineHosts")),
+			baseURL+OperatorServiceRetireHostsProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("RetireHosts")),
 			connect.WithClientOptions(opts...),
 		),
 		createWorkspace: connect.NewClient[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse](
@@ -645,10 +645,10 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("CreateWorkspace")),
 			connect.WithClientOptions(opts...),
 		),
-		listTenants: connect.NewClient[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse](
+		listWorkspaces: connect.NewClient[operatorv1.ListWorkspacesRequest, operatorv1.ListWorkspacesResponse](
 			httpClient,
-			baseURL+OperatorServiceListTenantsProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("ListTenants")),
+			baseURL+OperatorServiceListWorkspacesProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("ListWorkspaces")),
 			connect.WithClientOptions(opts...),
 		),
 		setTenantCap: connect.NewClient[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse](
@@ -699,22 +699,22 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("RunChecks")),
 			connect.WithClientOptions(opts...),
 		),
-		suspendTenant: connect.NewClient[operatorv1.SuspendTenantRequest, operatorv1.SuspendTenantResponse](
+		suspendWorkspace: connect.NewClient[operatorv1.SuspendWorkspaceRequest, operatorv1.SuspendWorkspaceResponse](
 			httpClient,
-			baseURL+OperatorServiceSuspendTenantProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SuspendTenant")),
+			baseURL+OperatorServiceSuspendWorkspaceProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("SuspendWorkspace")),
 			connect.WithClientOptions(opts...),
 		),
-		resumeTenant: connect.NewClient[operatorv1.ResumeTenantRequest, operatorv1.ResumeTenantResponse](
+		unsuspendWorkspace: connect.NewClient[operatorv1.UnsuspendWorkspaceRequest, operatorv1.UnsuspendWorkspaceResponse](
 			httpClient,
-			baseURL+OperatorServiceResumeTenantProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("ResumeTenant")),
+			baseURL+OperatorServiceUnsuspendWorkspaceProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("UnsuspendWorkspace")),
 			connect.WithClientOptions(opts...),
 		),
-		deleteTenant: connect.NewClient[operatorv1.DeleteTenantRequest, operatorv1.DeleteTenantResponse](
+		deleteWorkspace: connect.NewClient[operatorv1.DeleteWorkspaceRequest, operatorv1.DeleteWorkspaceResponse](
 			httpClient,
-			baseURL+OperatorServiceDeleteTenantProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("DeleteTenant")),
+			baseURL+OperatorServiceDeleteWorkspaceProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("DeleteWorkspace")),
 			connect.WithClientOptions(opts...),
 		),
 		getCapacity: connect.NewClient[operatorv1.GetCapacityRequest, operatorv1.GetCapacityResponse](
@@ -741,10 +741,10 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("GetWorkflowUsage")),
 			connect.WithClientOptions(opts...),
 		),
-		getTenantStatement: connect.NewClient[operatorv1.GetTenantStatementRequest, operatorv1.GetTenantStatementResponse](
+		getWorkspaceStatement: connect.NewClient[operatorv1.GetWorkspaceStatementRequest, operatorv1.GetWorkspaceStatementResponse](
 			httpClient,
-			baseURL+OperatorServiceGetTenantStatementProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("GetTenantStatement")),
+			baseURL+OperatorServiceGetWorkspaceStatementProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("GetWorkspaceStatement")),
 			connect.WithClientOptions(opts...),
 		),
 		listTokens: connect.NewClient[operatorv1.ListTokensRequest, operatorv1.ListTokensResponse](
@@ -905,9 +905,9 @@ type operatorServiceClient struct {
 	setHostOverflow       *connect.Client[operatorv1.SetHostOverflowRequest, operatorv1.SetHostOverflowResponse]
 	retireHost            *connect.Client[operatorv1.RetireHostRequest, operatorv1.RetireHostResponse]
 	revokeHost            *connect.Client[operatorv1.RevokeHostRequest, operatorv1.RevokeHostResponse]
-	retireOfflineHosts    *connect.Client[operatorv1.RetireOfflineHostsRequest, operatorv1.RetireOfflineHostsResponse]
+	retireHosts           *connect.Client[operatorv1.RetireHostsRequest, operatorv1.RetireHostsResponse]
 	createWorkspace       *connect.Client[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse]
-	listTenants           *connect.Client[operatorv1.ListTenantsRequest, operatorv1.ListTenantsResponse]
+	listWorkspaces        *connect.Client[operatorv1.ListWorkspacesRequest, operatorv1.ListWorkspacesResponse]
 	setTenantCap          *connect.Client[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse]
 	setTenantLimits       *connect.Client[operatorv1.SetTenantLimitsRequest, operatorv1.SetTenantLimitsResponse]
 	updateWorkspace       *connect.Client[operatorv1.UpdateWorkspaceRequest, operatorv1.UpdateWorkspaceResponse]
@@ -916,14 +916,14 @@ type operatorServiceClient struct {
 	listPlans             *connect.Client[operatorv1.ListPlansRequest, operatorv1.ListPlansResponse]
 	getVersion            *connect.Client[operatorv1.GetVersionRequest, operatorv1.GetVersionResponse]
 	runChecks             *connect.Client[operatorv1.RunChecksRequest, operatorv1.RunChecksResponse]
-	suspendTenant         *connect.Client[operatorv1.SuspendTenantRequest, operatorv1.SuspendTenantResponse]
-	resumeTenant          *connect.Client[operatorv1.ResumeTenantRequest, operatorv1.ResumeTenantResponse]
-	deleteTenant          *connect.Client[operatorv1.DeleteTenantRequest, operatorv1.DeleteTenantResponse]
+	suspendWorkspace      *connect.Client[operatorv1.SuspendWorkspaceRequest, operatorv1.SuspendWorkspaceResponse]
+	unsuspendWorkspace    *connect.Client[operatorv1.UnsuspendWorkspaceRequest, operatorv1.UnsuspendWorkspaceResponse]
+	deleteWorkspace       *connect.Client[operatorv1.DeleteWorkspaceRequest, operatorv1.DeleteWorkspaceResponse]
 	getCapacity           *connect.Client[operatorv1.GetCapacityRequest, operatorv1.GetCapacityResponse]
 	getUsage              *connect.Client[operatorv1.GetUsageRequest, operatorv1.GetUsageResponse]
 	getQueueTimes         *connect.Client[operatorv1.GetQueueTimesRequest, operatorv1.GetQueueTimesResponse]
 	getWorkflowUsage      *connect.Client[operatorv1.GetWorkflowUsageRequest, operatorv1.GetWorkflowUsageResponse]
-	getTenantStatement    *connect.Client[operatorv1.GetTenantStatementRequest, operatorv1.GetTenantStatementResponse]
+	getWorkspaceStatement *connect.Client[operatorv1.GetWorkspaceStatementRequest, operatorv1.GetWorkspaceStatementResponse]
 	listTokens            *connect.Client[operatorv1.ListTokensRequest, operatorv1.ListTokensResponse]
 	rotateToken           *connect.Client[operatorv1.RotateTokenRequest, operatorv1.RotateTokenResponse]
 	revokeToken           *connect.Client[operatorv1.RevokeTokenRequest, operatorv1.RevokeTokenResponse]
@@ -995,9 +995,9 @@ func (c *operatorServiceClient) RevokeHost(ctx context.Context, req *connect.Req
 	return c.revokeHost.CallUnary(ctx, req)
 }
 
-// RetireOfflineHosts calls toshi.operator.v1.OperatorService.RetireOfflineHosts.
-func (c *operatorServiceClient) RetireOfflineHosts(ctx context.Context, req *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error) {
-	return c.retireOfflineHosts.CallUnary(ctx, req)
+// RetireHosts calls toshi.operator.v1.OperatorService.RetireHosts.
+func (c *operatorServiceClient) RetireHosts(ctx context.Context, req *connect.Request[operatorv1.RetireHostsRequest]) (*connect.Response[operatorv1.RetireHostsResponse], error) {
+	return c.retireHosts.CallUnary(ctx, req)
 }
 
 // CreateWorkspace calls toshi.operator.v1.OperatorService.CreateWorkspace.
@@ -1005,9 +1005,9 @@ func (c *operatorServiceClient) CreateWorkspace(ctx context.Context, req *connec
 	return c.createWorkspace.CallUnary(ctx, req)
 }
 
-// ListTenants calls toshi.operator.v1.OperatorService.ListTenants.
-func (c *operatorServiceClient) ListTenants(ctx context.Context, req *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error) {
-	return c.listTenants.CallUnary(ctx, req)
+// ListWorkspaces calls toshi.operator.v1.OperatorService.ListWorkspaces.
+func (c *operatorServiceClient) ListWorkspaces(ctx context.Context, req *connect.Request[operatorv1.ListWorkspacesRequest]) (*connect.Response[operatorv1.ListWorkspacesResponse], error) {
+	return c.listWorkspaces.CallUnary(ctx, req)
 }
 
 // SetTenantCap calls toshi.operator.v1.OperatorService.SetTenantCap.
@@ -1050,19 +1050,19 @@ func (c *operatorServiceClient) RunChecks(ctx context.Context, req *connect.Requ
 	return c.runChecks.CallUnary(ctx, req)
 }
 
-// SuspendTenant calls toshi.operator.v1.OperatorService.SuspendTenant.
-func (c *operatorServiceClient) SuspendTenant(ctx context.Context, req *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error) {
-	return c.suspendTenant.CallUnary(ctx, req)
+// SuspendWorkspace calls toshi.operator.v1.OperatorService.SuspendWorkspace.
+func (c *operatorServiceClient) SuspendWorkspace(ctx context.Context, req *connect.Request[operatorv1.SuspendWorkspaceRequest]) (*connect.Response[operatorv1.SuspendWorkspaceResponse], error) {
+	return c.suspendWorkspace.CallUnary(ctx, req)
 }
 
-// ResumeTenant calls toshi.operator.v1.OperatorService.ResumeTenant.
-func (c *operatorServiceClient) ResumeTenant(ctx context.Context, req *connect.Request[operatorv1.ResumeTenantRequest]) (*connect.Response[operatorv1.ResumeTenantResponse], error) {
-	return c.resumeTenant.CallUnary(ctx, req)
+// UnsuspendWorkspace calls toshi.operator.v1.OperatorService.UnsuspendWorkspace.
+func (c *operatorServiceClient) UnsuspendWorkspace(ctx context.Context, req *connect.Request[operatorv1.UnsuspendWorkspaceRequest]) (*connect.Response[operatorv1.UnsuspendWorkspaceResponse], error) {
+	return c.unsuspendWorkspace.CallUnary(ctx, req)
 }
 
-// DeleteTenant calls toshi.operator.v1.OperatorService.DeleteTenant.
-func (c *operatorServiceClient) DeleteTenant(ctx context.Context, req *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error) {
-	return c.deleteTenant.CallUnary(ctx, req)
+// DeleteWorkspace calls toshi.operator.v1.OperatorService.DeleteWorkspace.
+func (c *operatorServiceClient) DeleteWorkspace(ctx context.Context, req *connect.Request[operatorv1.DeleteWorkspaceRequest]) (*connect.Response[operatorv1.DeleteWorkspaceResponse], error) {
+	return c.deleteWorkspace.CallUnary(ctx, req)
 }
 
 // GetCapacity calls toshi.operator.v1.OperatorService.GetCapacity.
@@ -1085,9 +1085,9 @@ func (c *operatorServiceClient) GetWorkflowUsage(ctx context.Context, req *conne
 	return c.getWorkflowUsage.CallUnary(ctx, req)
 }
 
-// GetTenantStatement calls toshi.operator.v1.OperatorService.GetTenantStatement.
-func (c *operatorServiceClient) GetTenantStatement(ctx context.Context, req *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error) {
-	return c.getTenantStatement.CallUnary(ctx, req)
+// GetWorkspaceStatement calls toshi.operator.v1.OperatorService.GetWorkspaceStatement.
+func (c *operatorServiceClient) GetWorkspaceStatement(ctx context.Context, req *connect.Request[operatorv1.GetWorkspaceStatementRequest]) (*connect.Response[operatorv1.GetWorkspaceStatementResponse], error) {
+	return c.getWorkspaceStatement.CallUnary(ctx, req)
 }
 
 // ListTokens calls toshi.operator.v1.OperatorService.ListTokens.
@@ -1260,14 +1260,14 @@ type OperatorServiceHandler interface {
 	// changes nothing and returns revoked false. Operators only. An unknown
 	// ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
 	RevokeHost(context.Context, *connect.Request[operatorv1.RevokeHostRequest]) (*connect.Response[operatorv1.RevokeHostResponse], error)
-	// RetireOfflineHosts lists the hosts whose state is offline and whose last
+	// RetireHosts lists the hosts whose state is offline and whose last
 	// heartbeat is older than offline_longer_than, oldest first, and with apply
 	// set removes each one that holds no assigned, starting or running job.
 	// Without apply nothing changes: the response says what a call with apply
 	// would do. A host a workspace owns is skipped unless include_owned is set,
 	// and a revoked host is never listed. Each removal records one
 	// host.retired audit event. Operators only.
-	RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error)
+	RetireHosts(context.Context, *connect.Request[operatorv1.RetireHostsRequest]) (*connect.Response[operatorv1.RetireHostsResponse], error)
 	// CreateWorkspace makes a workspace that has no GitHub installation and
 	// returns it with its new id. It is on plan when one is given and on the
 	// control plane's default_plan otherwise, as an installed workspace is,
@@ -1275,10 +1275,10 @@ type OperatorServiceHandler interface {
 	// configuration does not define, fails with INVALID_ARGUMENT. Names are not
 	// unique: two workspaces may share one. Only the operator may call it.
 	CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error)
-	// ListTenants returns every workspace, ordered by ID.
+	// ListWorkspaces returns every workspace, ordered by ID.
 	//
 	// A page holds 100 workspaces when page_size is zero, and 1000 at most.
-	ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error)
+	ListWorkspaces(context.Context, *connect.Request[operatorv1.ListWorkspacesRequest]) (*connect.Response[operatorv1.ListWorkspacesResponse], error)
 	// SetTenantCap sets a workspace's concurrency cap override and returns the
 	// workspace as stored; a cap of 0 clears the override, so the workspace's plan
 	// applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
@@ -1355,26 +1355,26 @@ type OperatorServiceHandler interface {
 	// group whose subject this control plane is not configured for (the GitHub
 	// group without a GitHub App) fails with FAILED_PRECONDITION.
 	RunChecks(context.Context, *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error)
-	// SuspendTenant suspends an active workspace: its new and queued jobs are
-	// held with hold reason tenant_suspended, its running jobs finish, and its
+	// SuspendWorkspace suspends an active workspace: its new and queued jobs are
+	// held with hold reason workspace_suspended, its running jobs finish, and its
 	// users keep read-only access. A suspended workspace is returned unchanged. An
 	// empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
 	// NOT_FOUND, and a workspace that is deleting or deleted with
 	// FAILED_PRECONDITION. Operator only.
-	SuspendTenant(context.Context, *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error)
-	// ResumeTenant returns a suspended workspace to active and cancels a
+	SuspendWorkspace(context.Context, *connect.Request[operatorv1.SuspendWorkspaceRequest]) (*connect.Response[operatorv1.SuspendWorkspaceResponse], error)
+	// UnsuspendWorkspace returns a suspended workspace to active and cancels a
 	// scheduled deletion; held jobs run at the next scheduler pass. An active
 	// workspace is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
 	// an unknown ID with NOT_FOUND, and a workspace that is deleting or deleted
 	// with FAILED_PRECONDITION. Operator only.
-	ResumeTenant(context.Context, *connect.Request[operatorv1.ResumeTenantRequest]) (*connect.Response[operatorv1.ResumeTenantResponse], error)
-	// DeleteTenant suspends a workspace until purge_after, after which its data
+	UnsuspendWorkspace(context.Context, *connect.Request[operatorv1.UnsuspendWorkspaceRequest]) (*connect.Response[operatorv1.UnsuspendWorkspaceResponse], error)
+	// DeleteWorkspace suspends a workspace until purge_after, after which its data
 	// is purged from the control plane and every host. grace_seconds of 0
 	// means the default of 30 days; now purges as soon as the workspace has no
 	// running job. A negative grace_seconds, or now with grace_seconds, fails
 	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
 	// deleting or deleted with FAILED_PRECONDITION. Operator only.
-	DeleteTenant(context.Context, *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error)
+	DeleteWorkspace(context.Context, *connect.Request[operatorv1.DeleteWorkspaceRequest]) (*connect.Response[operatorv1.DeleteWorkspaceResponse], error)
 	// GetCapacity returns the reserved-capacity view of the last scheduler
 	// pass: per runner size the slots free and reserved, and per reservation
 	// the slots in use, earmarked and short. Operator only. It
@@ -1396,7 +1396,7 @@ type OperatorServiceHandler interface {
 	// defaults to the last 7 days. A window whose from is not before its to
 	// fails with INVALID_ARGUMENT.
 	GetWorkflowUsage(context.Context, *connect.Request[operatorv1.GetWorkflowUsageRequest]) (*connect.Response[operatorv1.GetWorkflowUsageResponse], error)
-	// GetTenantStatement returns a workspace's usage statement for one UTC month:
+	// GetWorkspaceStatement returns a workspace's usage statement for one UTC month:
 	// minutes by runner size and OS of the jobs that finished in it, the
 	// minutes metered to the billing provider by size with their estimated
 	// cost at the plan's prices, the starter credit applied in it, and held
@@ -1406,7 +1406,7 @@ type OperatorServiceHandler interface {
 	// a deleted workspace's saved statements too. Inside a live workspace,
 	// members and the operator under its grant read
 	// WorkspaceService.GetWorkspaceStatement.
-	GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error)
+	GetWorkspaceStatement(context.Context, *connect.Request[operatorv1.GetWorkspaceStatementRequest]) (*connect.Response[operatorv1.GetWorkspaceStatementResponse], error)
 	// ListTokens returns the tokens the control plane knows, of every kind or
 	// of the one kind names, oldest first, without their values.
 	//
@@ -1537,10 +1537,10 @@ type OperatorServiceHandler interface {
 	// INVALID_ARGUMENT.
 	SuggestPools(context.Context, *connect.Request[operatorv1.SuggestPoolsRequest]) (*connect.Response[operatorv1.SuggestPoolsResponse], error)
 	// CreateStorageProvider registers a bucket Toshi may keep recordings and
-	// artifacts in. An empty tenant_id registers the operator's
+	// artifacts in. An empty workspace registers the operator's
 	// own provider, shared by every workspace; it takes a credentials file
 	// reference. A request with a credential stores a workspace's own
-	// tenant_bucket provider instead: the control plane wraps the key, checks
+	// workspace_bucket provider instead: the control plane wraps the key, checks
 	// the bucket with it as CheckStorageProvider does and stores the row only
 	// when the check passes, else FAILED_PRECONDITION with the check's error.
 	// A workspace has one such provider; a second fails with ALREADY_EXISTS, and
@@ -1552,7 +1552,7 @@ type OperatorServiceHandler interface {
 	// fields, with the Workspace API's
 	// StorageProviderService.CreateStorageProvider.
 	CreateStorageProvider(context.Context, *connect.Request[operatorv1.CreateStorageProviderRequest]) (*connect.Response[operatorv1.CreateStorageProviderResponse], error)
-	// ListStorageProviders returns the operator's providers when tenant_id
+	// ListStorageProviders returns the operator's providers when workspace
 	// is empty and that workspace's otherwise, ordered by name. With
 	// include_default it also returns the operator's provider a workspace
 	// without one of its own uses, whether or not this workspace has one. A
@@ -1646,10 +1646,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("RevokeHost")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceRetireOfflineHostsHandler := connect.NewUnaryHandler(
-		OperatorServiceRetireOfflineHostsProcedure,
-		svc.RetireOfflineHosts,
-		connect.WithSchema(operatorServiceMethods.ByName("RetireOfflineHosts")),
+	operatorServiceRetireHostsHandler := connect.NewUnaryHandler(
+		OperatorServiceRetireHostsProcedure,
+		svc.RetireHosts,
+		connect.WithSchema(operatorServiceMethods.ByName("RetireHosts")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceCreateWorkspaceHandler := connect.NewUnaryHandler(
@@ -1658,10 +1658,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("CreateWorkspace")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceListTenantsHandler := connect.NewUnaryHandler(
-		OperatorServiceListTenantsProcedure,
-		svc.ListTenants,
-		connect.WithSchema(operatorServiceMethods.ByName("ListTenants")),
+	operatorServiceListWorkspacesHandler := connect.NewUnaryHandler(
+		OperatorServiceListWorkspacesProcedure,
+		svc.ListWorkspaces,
+		connect.WithSchema(operatorServiceMethods.ByName("ListWorkspaces")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceSetTenantCapHandler := connect.NewUnaryHandler(
@@ -1712,22 +1712,22 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("RunChecks")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceSuspendTenantHandler := connect.NewUnaryHandler(
-		OperatorServiceSuspendTenantProcedure,
-		svc.SuspendTenant,
-		connect.WithSchema(operatorServiceMethods.ByName("SuspendTenant")),
+	operatorServiceSuspendWorkspaceHandler := connect.NewUnaryHandler(
+		OperatorServiceSuspendWorkspaceProcedure,
+		svc.SuspendWorkspace,
+		connect.WithSchema(operatorServiceMethods.ByName("SuspendWorkspace")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceResumeTenantHandler := connect.NewUnaryHandler(
-		OperatorServiceResumeTenantProcedure,
-		svc.ResumeTenant,
-		connect.WithSchema(operatorServiceMethods.ByName("ResumeTenant")),
+	operatorServiceUnsuspendWorkspaceHandler := connect.NewUnaryHandler(
+		OperatorServiceUnsuspendWorkspaceProcedure,
+		svc.UnsuspendWorkspace,
+		connect.WithSchema(operatorServiceMethods.ByName("UnsuspendWorkspace")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceDeleteTenantHandler := connect.NewUnaryHandler(
-		OperatorServiceDeleteTenantProcedure,
-		svc.DeleteTenant,
-		connect.WithSchema(operatorServiceMethods.ByName("DeleteTenant")),
+	operatorServiceDeleteWorkspaceHandler := connect.NewUnaryHandler(
+		OperatorServiceDeleteWorkspaceProcedure,
+		svc.DeleteWorkspace,
+		connect.WithSchema(operatorServiceMethods.ByName("DeleteWorkspace")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceGetCapacityHandler := connect.NewUnaryHandler(
@@ -1754,10 +1754,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("GetWorkflowUsage")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceGetTenantStatementHandler := connect.NewUnaryHandler(
-		OperatorServiceGetTenantStatementProcedure,
-		svc.GetTenantStatement,
-		connect.WithSchema(operatorServiceMethods.ByName("GetTenantStatement")),
+	operatorServiceGetWorkspaceStatementHandler := connect.NewUnaryHandler(
+		OperatorServiceGetWorkspaceStatementProcedure,
+		svc.GetWorkspaceStatement,
+		connect.WithSchema(operatorServiceMethods.ByName("GetWorkspaceStatement")),
 		connect.WithHandlerOptions(opts...),
 	)
 	operatorServiceListTokensHandler := connect.NewUnaryHandler(
@@ -1924,12 +1924,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceRetireHostHandler.ServeHTTP(w, r)
 		case OperatorServiceRevokeHostProcedure:
 			operatorServiceRevokeHostHandler.ServeHTTP(w, r)
-		case OperatorServiceRetireOfflineHostsProcedure:
-			operatorServiceRetireOfflineHostsHandler.ServeHTTP(w, r)
+		case OperatorServiceRetireHostsProcedure:
+			operatorServiceRetireHostsHandler.ServeHTTP(w, r)
 		case OperatorServiceCreateWorkspaceProcedure:
 			operatorServiceCreateWorkspaceHandler.ServeHTTP(w, r)
-		case OperatorServiceListTenantsProcedure:
-			operatorServiceListTenantsHandler.ServeHTTP(w, r)
+		case OperatorServiceListWorkspacesProcedure:
+			operatorServiceListWorkspacesHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantCapProcedure:
 			operatorServiceSetTenantCapHandler.ServeHTTP(w, r)
 		case OperatorServiceSetTenantLimitsProcedure:
@@ -1946,12 +1946,12 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceGetVersionHandler.ServeHTTP(w, r)
 		case OperatorServiceRunChecksProcedure:
 			operatorServiceRunChecksHandler.ServeHTTP(w, r)
-		case OperatorServiceSuspendTenantProcedure:
-			operatorServiceSuspendTenantHandler.ServeHTTP(w, r)
-		case OperatorServiceResumeTenantProcedure:
-			operatorServiceResumeTenantHandler.ServeHTTP(w, r)
-		case OperatorServiceDeleteTenantProcedure:
-			operatorServiceDeleteTenantHandler.ServeHTTP(w, r)
+		case OperatorServiceSuspendWorkspaceProcedure:
+			operatorServiceSuspendWorkspaceHandler.ServeHTTP(w, r)
+		case OperatorServiceUnsuspendWorkspaceProcedure:
+			operatorServiceUnsuspendWorkspaceHandler.ServeHTTP(w, r)
+		case OperatorServiceDeleteWorkspaceProcedure:
+			operatorServiceDeleteWorkspaceHandler.ServeHTTP(w, r)
 		case OperatorServiceGetCapacityProcedure:
 			operatorServiceGetCapacityHandler.ServeHTTP(w, r)
 		case OperatorServiceGetUsageProcedure:
@@ -1960,8 +1960,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceGetQueueTimesHandler.ServeHTTP(w, r)
 		case OperatorServiceGetWorkflowUsageProcedure:
 			operatorServiceGetWorkflowUsageHandler.ServeHTTP(w, r)
-		case OperatorServiceGetTenantStatementProcedure:
-			operatorServiceGetTenantStatementHandler.ServeHTTP(w, r)
+		case OperatorServiceGetWorkspaceStatementProcedure:
+			operatorServiceGetWorkspaceStatementHandler.ServeHTTP(w, r)
 		case OperatorServiceListTokensProcedure:
 			operatorServiceListTokensHandler.ServeHTTP(w, r)
 		case OperatorServiceRotateTokenProcedure:
@@ -2055,16 +2055,16 @@ func (UnimplementedOperatorServiceHandler) RevokeHost(context.Context, *connect.
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RevokeHost is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) RetireOfflineHosts(context.Context, *connect.Request[operatorv1.RetireOfflineHostsRequest]) (*connect.Response[operatorv1.RetireOfflineHostsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RetireOfflineHosts is not implemented"))
+func (UnimplementedOperatorServiceHandler) RetireHosts(context.Context, *connect.Request[operatorv1.RetireHostsRequest]) (*connect.Response[operatorv1.RetireHostsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RetireHosts is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) CreateWorkspace(context.Context, *connect.Request[operatorv1.CreateWorkspaceRequest]) (*connect.Response[operatorv1.CreateWorkspaceResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.CreateWorkspace is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) ListTenants(context.Context, *connect.Request[operatorv1.ListTenantsRequest]) (*connect.Response[operatorv1.ListTenantsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ListTenants is not implemented"))
+func (UnimplementedOperatorServiceHandler) ListWorkspaces(context.Context, *connect.Request[operatorv1.ListWorkspacesRequest]) (*connect.Response[operatorv1.ListWorkspacesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ListWorkspaces is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) SetTenantCap(context.Context, *connect.Request[operatorv1.SetTenantCapRequest]) (*connect.Response[operatorv1.SetTenantCapResponse], error) {
@@ -2099,16 +2099,16 @@ func (UnimplementedOperatorServiceHandler) RunChecks(context.Context, *connect.R
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.RunChecks is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) SuspendTenant(context.Context, *connect.Request[operatorv1.SuspendTenantRequest]) (*connect.Response[operatorv1.SuspendTenantResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SuspendTenant is not implemented"))
+func (UnimplementedOperatorServiceHandler) SuspendWorkspace(context.Context, *connect.Request[operatorv1.SuspendWorkspaceRequest]) (*connect.Response[operatorv1.SuspendWorkspaceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SuspendWorkspace is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) ResumeTenant(context.Context, *connect.Request[operatorv1.ResumeTenantRequest]) (*connect.Response[operatorv1.ResumeTenantResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ResumeTenant is not implemented"))
+func (UnimplementedOperatorServiceHandler) UnsuspendWorkspace(context.Context, *connect.Request[operatorv1.UnsuspendWorkspaceRequest]) (*connect.Response[operatorv1.UnsuspendWorkspaceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.UnsuspendWorkspace is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) DeleteTenant(context.Context, *connect.Request[operatorv1.DeleteTenantRequest]) (*connect.Response[operatorv1.DeleteTenantResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.DeleteTenant is not implemented"))
+func (UnimplementedOperatorServiceHandler) DeleteWorkspace(context.Context, *connect.Request[operatorv1.DeleteWorkspaceRequest]) (*connect.Response[operatorv1.DeleteWorkspaceResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.DeleteWorkspace is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) GetCapacity(context.Context, *connect.Request[operatorv1.GetCapacityRequest]) (*connect.Response[operatorv1.GetCapacityResponse], error) {
@@ -2127,8 +2127,8 @@ func (UnimplementedOperatorServiceHandler) GetWorkflowUsage(context.Context, *co
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetWorkflowUsage is not implemented"))
 }
 
-func (UnimplementedOperatorServiceHandler) GetTenantStatement(context.Context, *connect.Request[operatorv1.GetTenantStatementRequest]) (*connect.Response[operatorv1.GetTenantStatementResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetTenantStatement is not implemented"))
+func (UnimplementedOperatorServiceHandler) GetWorkspaceStatement(context.Context, *connect.Request[operatorv1.GetWorkspaceStatementRequest]) (*connect.Response[operatorv1.GetWorkspaceStatementResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.GetWorkspaceStatement is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) ListTokens(context.Context, *connect.Request[operatorv1.ListTokensRequest]) (*connect.Response[operatorv1.ListTokensResponse], error) {

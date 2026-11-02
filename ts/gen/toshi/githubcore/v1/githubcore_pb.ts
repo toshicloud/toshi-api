@@ -17,7 +17,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/githubcore/v1/githubcore.proto.
  */
 export const file_toshi_githubcore_v1_githubcore: GenFile = /*@__PURE__*/
-  fileDesc("CiR0b3NoaS9naXRodWJjb3JlL3YxL2dpdGh1YmNvcmUucHJvdG8SE3Rvc2hpLmdpdGh1YmNvcmUudjEiEwoRQWRtaXRHcmFudFJlcXVlc3QimAIKEkFkbWl0R3JhbnRSZXNwb25zZRIMCgRjYWxsGAEgASgJEhIKCmFjdG9yX2tpbmQYAiABKAkSEAoIYWN0b3JfaWQYAyABKAkSDwoHdGVuYW50cxgEIAMoCRISCgpnZW5lcmF0aW9uGAogASgDEi4KCmNyZWF0ZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmV4cGlyZXNfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEgwKBGFyZ3MYDSABKAxKBAgFEApSBmpvYl9pZFIGdGVuYW50UgpyZXBvc2l0b3J5UghhcHByb3ZlZFIPaW5zdGFsbGF0aW9uX2lkImcKCUdyYW50QXJncxIOCgZqb2JfaWQYASABKAkSEQoJd29ya3NwYWNlGAIgASgJEgwKBHJlcG8YAyABKAkSEAoIYXBwcm92ZWQYBCABKAgSFwoPaW5zdGFsbGF0aW9uX2lkGAUgASgDIh8KDUdldEpvYlJlcXVlc3QSDgoGam9iX2lkGAEgASgJIjcKDkdldEpvYlJlc3BvbnNlEiUKA2pvYhgBIAEoCzIYLnRvc2hpLmdpdGh1YmNvcmUudjEuSm9iIq8BCgNKb2ISCgoCaWQYASABKAkSDgoGdGVuYW50GAIgASgJEhIKCnJlcG9zaXRvcnkYAyABKAkSFwoPaW5zdGFsbGF0aW9uX2lkGAQgASgDEhcKD3dvcmtmbG93X2pvYl9pZBgFIAEoAxINCgVzdGF0ZRgGIAEoCRISCgpjb25jbHVzaW9uGAcgASgJEg0KBWVycm9yGAggASgJEhQKDGZhaWxpbmdfc3RlcBgJIAEoCSI5ChlGaWxsSm9iRmFpbGluZ1N0ZXBSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCRIMCgRzdGVwGAIgASgJIhwKGkZpbGxKb2JGYWlsaW5nU3RlcFJlc3BvbnNlIloKIUxpc3RPcGVuU291cmNlUmVwb3NpdG9yaWVzUmVxdWVzdBIOCgZ0ZW5hbnQYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEhIKCnBhZ2VfdG9rZW4YAyABKAkiuQEKIkxpc3RPcGVuU291cmNlUmVwb3NpdG9yaWVzUmVzcG9uc2USPwoMcmVwb3NpdG9yaWVzGAEgAygLMikudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlUmVwb3NpdG9yeRI5CgRrZXB0GAIgAygLMisudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlS2VwdEFwcHJvdmFsEhcKD25leHRfcGFnZV90b2tlbhgDIAEoCSKPAwoUT3BlblNvdXJjZVJlcG9zaXRvcnkSDgoGdGVuYW50GAEgASgJEhIKCnJlcG9zaXRvcnkYAiABKAkSFwoPaW5zdGFsbGF0aW9uX2lkGAMgASgDEg0KBWZvdW5kGAQgASgIEg8KB3ByaXZhdGUYBSABKAgSDwoHc3BkeF9pZBgGIAEoCRIzCg9yZXBvX2NyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNoZWNrZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKDGF0dGVtcHRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFZXJyb3IYCiABKAkSEAoIYXBwcm92YWwYCyABKAkSNwoTYXBwcm92YWxfY2hhbmdlZF9hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGAoQZm9ya19wcl9hcHByb3ZhbBgNIAEoCSJdChZPcGVuU291cmNlS2VwdEFwcHJvdmFsEhIKCnJlcG9zaXRvcnkYASABKAkSLwoLYXBwcm92ZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkQKHFNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlcXVlc3QSEgoKcmVwb3NpdG9yeRgBIAEoCRIQCghhcHByb3ZlZBgCIAEoCCKbAQodU2V0T3BlblNvdXJjZUFwcHJvdmFsUmVzcG9uc2USPwoMcmVwb3NpdG9yaWVzGAEgAygLMikudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlUmVwb3NpdG9yeRI5CgRrZXB0GAIgASgLMisudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlS2VwdEFwcHJvdmFsIkEKFk1hcEluc3RhbGxhdGlvblJlcXVlc3QSFwoPaW5zdGFsbGF0aW9uX2lkGAEgASgDEg4KBnRlbmFudBgCIAEoCSIZChdNYXBJbnN0YWxsYXRpb25SZXNwb25zZSJVCh5QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1JlcXVlc3QSEgoKZ2VuZXJhdGlvbhgBIAEoAxIOCgZyZXN1bHQYAiABKAkSDwoHbGFja2luZxgDIAMoAyI0Ch9QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1Jlc3BvbnNlEhEKCXB1Ymxpc2hlZBgBIAEoCDLMCAoRR2l0SHViQ29yZVNlcnZpY2USrQEKCkFkbWl0R3JhbnQSJi50b3NoaS5naXRodWJjb3JlLnYxLkFkbWl0R3JhbnRSZXF1ZXN0GicudG9zaGkuZ2l0aHViY29yZS52MS5BZG1pdEdyYW50UmVzcG9uc2UiTtLzGEoKBG5vbmUaQkl0IGFkbWl0cyBhbiBpbnRlcm5hbCBncmFudCBhbmQgY2hhbmdlcyBubyBzdGF0ZSBvZiB0aGUgd29ya3NwYWNlLhJRCgZHZXRKb2ISIi50b3NoaS5naXRodWJjb3JlLnYxLkdldEpvYlJlcXVlc3QaIy50b3NoaS5naXRodWJjb3JlLnYxLkdldEpvYlJlc3BvbnNlEusBChJGaWxsSm9iRmFpbGluZ1N0ZXASLi50b3NoaS5naXRodWJjb3JlLnYxLkZpbGxKb2JGYWlsaW5nU3RlcFJlcXVlc3QaLy50b3NoaS5naXRodWJjb3JlLnYxLkZpbGxKb2JGYWlsaW5nU3RlcFJlc3BvbnNlInTS8xhwCgRub25lGmhJdCBzdG9yZXMgYSB2YWx1ZSBkZXJpdmVkIGZyb20gYSBqb2IgdGhlIGhvc3QgYWxyZWFkeSByZXBvcnRlZDsgdGhlIGhvc3QncyByZXBvcnQgaXMgdGhlIGF1ZGl0ZWQgY2hhbmdlLhKNAQoaTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXMSNi50b3NoaS5naXRodWJjb3JlLnYxLkxpc3RPcGVuU291cmNlUmVwb3NpdG9yaWVzUmVxdWVzdBo3LnRvc2hpLmdpdGh1YmNvcmUudjEuTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXNSZXNwb25zZRJ+ChVTZXRPcGVuU291cmNlQXBwcm92YWwSMS50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlcXVlc3QaMi50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlc3BvbnNlEocBCg9NYXBJbnN0YWxsYXRpb24SKy50b3NoaS5naXRodWJjb3JlLnYxLk1hcEluc3RhbGxhdGlvblJlcXVlc3QaLC50b3NoaS5naXRodWJjb3JlLnYxLk1hcEluc3RhbGxhdGlvblJlc3BvbnNlIhnS8xgVChNpbnN0YWxsYXRpb24ubWFwcGVkEqsBChdQdWJsaXNoSm9iRGVsaXZlcnlDaGVjaxIzLnRvc2hpLmdpdGh1YmNvcmUudjEuUHVibGlzaEpvYkRlbGl2ZXJ5Q2hlY2tSZXF1ZXN0GjQudG9zaGkuZ2l0aHViY29yZS52MS5QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1Jlc3BvbnNlIiXS8xghCh9zZWNyZXRfZGVsaXZlcnkuY2hlY2tfcHVibGlzaGVkQiNaIWdvLnRvc2hpY2xvdWQuaW8vYXBpL2dpdGh1YmNvcmV2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiR0b3NoaS9naXRodWJjb3JlL3YxL2dpdGh1YmNvcmUucHJvdG8SE3Rvc2hpLmdpdGh1YmNvcmUudjEiEwoRQWRtaXRHcmFudFJlcXVlc3QimwIKEkFkbWl0R3JhbnRSZXNwb25zZRIMCgRjYWxsGAEgASgJEhIKCmFjdG9yX2tpbmQYAiABKAkSEAoIYWN0b3JfaWQYAyABKAkSEgoKd29ya3NwYWNlcxgEIAMoCRISCgpnZW5lcmF0aW9uGAogASgDEi4KCmNyZWF0ZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmV4cGlyZXNfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEgwKBGFyZ3MYDSABKAxKBAgFEApSBmpvYl9pZFIGdGVuYW50UgpyZXBvc2l0b3J5UghhcHByb3ZlZFIPaW5zdGFsbGF0aW9uX2lkImcKCUdyYW50QXJncxIOCgZqb2JfaWQYASABKAkSEQoJd29ya3NwYWNlGAIgASgJEgwKBHJlcG8YAyABKAkSEAoIYXBwcm92ZWQYBCABKAgSFwoPaW5zdGFsbGF0aW9uX2lkGAUgASgDIh8KDUdldEpvYlJlcXVlc3QSDgoGam9iX2lkGAEgASgJIjcKDkdldEpvYlJlc3BvbnNlEiUKA2pvYhgBIAEoCzIYLnRvc2hpLmdpdGh1YmNvcmUudjEuSm9iIrIBCgNKb2ISCgoCaWQYASABKAkSEQoJd29ya3NwYWNlGAIgASgJEhIKCnJlcG9zaXRvcnkYAyABKAkSFwoPaW5zdGFsbGF0aW9uX2lkGAQgASgDEhcKD3dvcmtmbG93X2pvYl9pZBgFIAEoAxINCgVzdGF0ZRgGIAEoCRISCgpjb25jbHVzaW9uGAcgASgJEg0KBWVycm9yGAggASgJEhQKDGZhaWxpbmdfc3RlcBgJIAEoCSI5ChlGaWxsSm9iRmFpbGluZ1N0ZXBSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCRIMCgRzdGVwGAIgASgJIhwKGkZpbGxKb2JGYWlsaW5nU3RlcFJlc3BvbnNlIl0KIUxpc3RPcGVuU291cmNlUmVwb3NpdG9yaWVzUmVxdWVzdBIRCgl3b3Jrc3BhY2UYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEhIKCnBhZ2VfdG9rZW4YAyABKAkiuQEKIkxpc3RPcGVuU291cmNlUmVwb3NpdG9yaWVzUmVzcG9uc2USPwoMcmVwb3NpdG9yaWVzGAEgAygLMikudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlUmVwb3NpdG9yeRI5CgRrZXB0GAIgAygLMisudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlS2VwdEFwcHJvdmFsEhcKD25leHRfcGFnZV90b2tlbhgDIAEoCSKSAwoUT3BlblNvdXJjZVJlcG9zaXRvcnkSEQoJd29ya3NwYWNlGAEgASgJEhIKCnJlcG9zaXRvcnkYAiABKAkSFwoPaW5zdGFsbGF0aW9uX2lkGAMgASgDEg0KBWZvdW5kGAQgASgIEg8KB3ByaXZhdGUYBSABKAgSDwoHc3BkeF9pZBgGIAEoCRIzCg9yZXBvX2NyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNoZWNrZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKDGF0dGVtcHRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFZXJyb3IYCiABKAkSEAoIYXBwcm92YWwYCyABKAkSNwoTYXBwcm92YWxfY2hhbmdlZF9hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGAoQZm9ya19wcl9hcHByb3ZhbBgNIAEoCSJdChZPcGVuU291cmNlS2VwdEFwcHJvdmFsEhIKCnJlcG9zaXRvcnkYASABKAkSLwoLYXBwcm92ZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkQKHFNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlcXVlc3QSEgoKcmVwb3NpdG9yeRgBIAEoCRIQCghhcHByb3ZlZBgCIAEoCCKbAQodU2V0T3BlblNvdXJjZUFwcHJvdmFsUmVzcG9uc2USPwoMcmVwb3NpdG9yaWVzGAEgAygLMikudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlUmVwb3NpdG9yeRI5CgRrZXB0GAIgASgLMisudG9zaGkuZ2l0aHViY29yZS52MS5PcGVuU291cmNlS2VwdEFwcHJvdmFsIkQKFk1hcEluc3RhbGxhdGlvblJlcXVlc3QSFwoPaW5zdGFsbGF0aW9uX2lkGAEgASgDEhEKCXdvcmtzcGFjZRgCIAEoCSIZChdNYXBJbnN0YWxsYXRpb25SZXNwb25zZSJVCh5QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1JlcXVlc3QSEgoKZ2VuZXJhdGlvbhgBIAEoAxIOCgZyZXN1bHQYAiABKAkSDwoHbGFja2luZxgDIAMoAyI0Ch9QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1Jlc3BvbnNlEhEKCXB1Ymxpc2hlZBgBIAEoCDLMCAoRR2l0SHViQ29yZVNlcnZpY2USrQEKCkFkbWl0R3JhbnQSJi50b3NoaS5naXRodWJjb3JlLnYxLkFkbWl0R3JhbnRSZXF1ZXN0GicudG9zaGkuZ2l0aHViY29yZS52MS5BZG1pdEdyYW50UmVzcG9uc2UiTtLzGEoKBG5vbmUaQkl0IGFkbWl0cyBhbiBpbnRlcm5hbCBncmFudCBhbmQgY2hhbmdlcyBubyBzdGF0ZSBvZiB0aGUgd29ya3NwYWNlLhJRCgZHZXRKb2ISIi50b3NoaS5naXRodWJjb3JlLnYxLkdldEpvYlJlcXVlc3QaIy50b3NoaS5naXRodWJjb3JlLnYxLkdldEpvYlJlc3BvbnNlEusBChJGaWxsSm9iRmFpbGluZ1N0ZXASLi50b3NoaS5naXRodWJjb3JlLnYxLkZpbGxKb2JGYWlsaW5nU3RlcFJlcXVlc3QaLy50b3NoaS5naXRodWJjb3JlLnYxLkZpbGxKb2JGYWlsaW5nU3RlcFJlc3BvbnNlInTS8xhwCgRub25lGmhJdCBzdG9yZXMgYSB2YWx1ZSBkZXJpdmVkIGZyb20gYSBqb2IgdGhlIGhvc3QgYWxyZWFkeSByZXBvcnRlZDsgdGhlIGhvc3QncyByZXBvcnQgaXMgdGhlIGF1ZGl0ZWQgY2hhbmdlLhKNAQoaTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXMSNi50b3NoaS5naXRodWJjb3JlLnYxLkxpc3RPcGVuU291cmNlUmVwb3NpdG9yaWVzUmVxdWVzdBo3LnRvc2hpLmdpdGh1YmNvcmUudjEuTGlzdE9wZW5Tb3VyY2VSZXBvc2l0b3JpZXNSZXNwb25zZRJ+ChVTZXRPcGVuU291cmNlQXBwcm92YWwSMS50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlcXVlc3QaMi50b3NoaS5naXRodWJjb3JlLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlc3BvbnNlEocBCg9NYXBJbnN0YWxsYXRpb24SKy50b3NoaS5naXRodWJjb3JlLnYxLk1hcEluc3RhbGxhdGlvblJlcXVlc3QaLC50b3NoaS5naXRodWJjb3JlLnYxLk1hcEluc3RhbGxhdGlvblJlc3BvbnNlIhnS8xgVChNpbnN0YWxsYXRpb24ubWFwcGVkEqsBChdQdWJsaXNoSm9iRGVsaXZlcnlDaGVjaxIzLnRvc2hpLmdpdGh1YmNvcmUudjEuUHVibGlzaEpvYkRlbGl2ZXJ5Q2hlY2tSZXF1ZXN0GjQudG9zaGkuZ2l0aHViY29yZS52MS5QdWJsaXNoSm9iRGVsaXZlcnlDaGVja1Jlc3BvbnNlIiXS8xghCh9zZWNyZXRfZGVsaXZlcnkuY2hlY2tfcHVibGlzaGVkQiNaIWdvLnRvc2hpY2xvdWQuaW8vYXBpL2dpdGh1YmNvcmV2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * @generated from message toshi.githubcore.v1.AdmitGrantRequest
@@ -66,9 +66,9 @@ export type AdmitGrantResponse = Message<"toshi.githubcore.v1.AdmitGrantResponse
   /**
    * workspaces are the caller's workspaces; empty for the operator.
    *
-   * @generated from field: repeated string tenants = 4;
+   * @generated from field: repeated string workspaces = 4;
    */
-  tenants: string[];
+  workspaces: string[];
 
   /**
    * generation is the delivery check the grant began; 0 for none.
@@ -125,9 +125,9 @@ export type AdmitGrantResponseJson = {
   /**
    * workspaces are the caller's workspaces; empty for the operator.
    *
-   * @generated from field: repeated string tenants = 4;
+   * @generated from field: repeated string workspaces = 4;
    */
-  tenants?: string[];
+  workspaces?: string[];
 
   /**
    * generation is the delivery check the grant began; 0 for none.
@@ -328,9 +328,9 @@ export type Job = Message<"toshi.githubcore.v1.Job"> & {
   id: string;
 
   /**
-   * @generated from field: string tenant = 2;
+   * @generated from field: string workspace = 2;
    */
-  tenant: string;
+  workspace: string;
 
   /**
    * @generated from field: string repository = 3;
@@ -380,9 +380,9 @@ export type JobJson = {
   id?: string;
 
   /**
-   * @generated from field: string tenant = 2;
+   * @generated from field: string workspace = 2;
    */
-  tenant?: string;
+  workspace?: string;
 
   /**
    * @generated from field: string repository = 3;
@@ -491,9 +491,9 @@ export type ListOpenSourceRepositoriesRequest = Message<"toshi.githubcore.v1.Lis
    * workspace is the workspace whose rows to list; empty for every workspace the
    * caller may see.
    *
-   * @generated from field: string tenant = 1;
+   * @generated from field: string workspace = 1;
    */
-  tenant: string;
+  workspace: string;
 
   /**
    * The most repositories in one page; zero lets the server choose.
@@ -518,9 +518,9 @@ export type ListOpenSourceRepositoriesRequestJson = {
    * workspace is the workspace whose rows to list; empty for every workspace the
    * caller may see.
    *
-   * @generated from field: string tenant = 1;
+   * @generated from field: string workspace = 1;
    */
-  tenant?: string;
+  workspace?: string;
 
   /**
    * The most repositories in one page; zero lets the server choose.
@@ -606,9 +606,9 @@ export const ListOpenSourceRepositoriesResponseSchema: GenMessage<ListOpenSource
  */
 export type OpenSourceRepository = Message<"toshi.githubcore.v1.OpenSourceRepository"> & {
   /**
-   * @generated from field: string tenant = 1;
+   * @generated from field: string workspace = 1;
    */
-  tenant: string;
+  workspace: string;
 
   /**
    * @generated from field: string repository = 2;
@@ -678,9 +678,9 @@ export type OpenSourceRepository = Message<"toshi.githubcore.v1.OpenSourceReposi
  */
 export type OpenSourceRepositoryJson = {
   /**
-   * @generated from field: string tenant = 1;
+   * @generated from field: string workspace = 1;
    */
-  tenant?: string;
+  workspace?: string;
 
   /**
    * @generated from field: string repository = 2;
@@ -883,9 +883,9 @@ export type MapInstallationRequest = Message<"toshi.githubcore.v1.MapInstallatio
   installationId: bigint;
 
   /**
-   * @generated from field: string tenant = 2;
+   * @generated from field: string workspace = 2;
    */
-  tenant: string;
+  workspace: string;
 };
 
 /**
@@ -898,9 +898,9 @@ export type MapInstallationRequestJson = {
   installationId?: string;
 
   /**
-   * @generated from field: string tenant = 2;
+   * @generated from field: string workspace = 2;
    */
-  tenant?: string;
+  workspace?: string;
 };
 
 /**

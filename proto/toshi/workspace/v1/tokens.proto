@@ -101,7 +101,7 @@ message Token {
   // Token id, such as "tok-1a2b3c4d5e6f".
   string id = 1;
   TokenKind kind = 2;
-  // "tenant" for an enrollment token, "session" for an API token.
+  // "workspace" for an enrollment token, "session" for an API token.
   string source = 3;
   google.protobuf.Timestamp created_at = 4;
   // When the token stops working: the expiry it was given, or 30 days

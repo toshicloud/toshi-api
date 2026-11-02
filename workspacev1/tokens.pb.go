@@ -136,7 +136,7 @@ type Token struct {
 	// Token id, such as "tok-1a2b3c4d5e6f".
 	Id   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Kind TokenKind `protobuf:"varint,2,opt,name=kind,proto3,enum=toshi.workspace.v1.TokenKind" json:"kind,omitempty"`
-	// "tenant" for an enrollment token, "session" for an API token.
+	// "workspace" for an enrollment token, "session" for an API token.
 	Source    string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// When the token stops working: the expiry it was given, or 30 days

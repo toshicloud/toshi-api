@@ -533,7 +533,7 @@ type GetHostJobFailureResponse struct {
 	// "vm_died" or "step_failed"; "none" for a host job that succeeded and
 	// "not_ended" for one that has not ended. The full list: "none",
 	// "not_ended", "out_of_memory", "refused", "time_limit", "cancelled",
-	// "cancelled_by_tenant", "cancelled_by_operator", "cancelled_by_uninstall",
+	// "cancelled_by_workspace", "cancelled_by_operator", "cancelled_by_uninstall",
 	// "vm_died", "host_lost", "host_revoked", "stop_unconfirmed",
 	// "runner_not_started", "runner_exited", "failed", "too_small",
 	// "throttled", "step_failed", "timed_out", "cancelled_on_github" and
@@ -1042,15 +1042,15 @@ type HostJob struct {
 	Error string `protobuf:"bytes,17,opt,name=error,proto3" json:"error,omitempty"`
 	// Why the job was stopped: github_cancelled, max_duration, operator,
 	// github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-	// ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
-	// tenant_deleted or owner, or for a service's run owner_deleted,
+	// ran_elsewhere, for a sandbox spend_cap, workspace_suspended,
+	// workspace_deleted or owner, or for a service's run owner_deleted,
 	// service_restart or sleep, or policy. Empty if it never was.
 	StopReason string `protobuf:"bytes,18,opt,name=stop_reason,json=stopReason,proto3" json:"stop_reason,omitempty"`
 	// When the control plane asked the host to stop the job. Unset if it
 	// never did.
 	StopRequestedAt *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=stop_requested_at,json=stopRequestedAt,proto3" json:"stop_requested_at,omitempty"`
 	// Why the scheduler last held the job while it was queued:
-	// tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
+	// workspace_suspended, limits_unavailable, workspace_cap, workspace_vcpu,
 	// free_allowance, spend_cap, jobs_per_hour, start_rate, burst_guard,
 	// plan_os, installation_suspended, overflow_wait, no_own_capacity,
 	// no_capacity, cloud_budget, reserved_for_other, volume_claimed,
@@ -1088,7 +1088,7 @@ type HostJob struct {
 	// flight. Kept in memory: unset after a restart of the control plane.
 	RunnerRequestSince *timestamppb.Timestamp `protobuf:"bytes,30,opt,name=runner_request_since,json=runnerRequestSince,proto3" json:"runner_request_since,omitempty"`
 	// Toshi's own word for a job Toshi ended itself: time_limit,
-	// cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
+	// cancelled_by_workspace, cancelled_by_operator, cancelled_by_uninstall,
 	// cancelled or failed. Empty for every other job. The conclusion stays
 	// GitHub's word.
 	Outcome string `protobuf:"bytes,31,opt,name=outcome,proto3" json:"outcome,omitempty"`

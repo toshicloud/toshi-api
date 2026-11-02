@@ -79,14 +79,14 @@ service OperatorService {
   // ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
   rpc RevokeHost(RevokeHostRequest) returns (RevokeHostResponse);
 
-  // RetireOfflineHosts lists the hosts whose state is offline and whose last
+  // RetireHosts lists the hosts whose state is offline and whose last
   // heartbeat is older than offline_longer_than, oldest first, and with apply
   // set removes each one that holds no assigned, starting or running job.
   // Without apply nothing changes: the response says what a call with apply
   // would do. A host a workspace owns is skipped unless include_owned is set,
   // and a revoked host is never listed. Each removal records one
   // host.retired audit event. Operators only.
-  rpc RetireOfflineHosts(RetireOfflineHostsRequest) returns (RetireOfflineHostsResponse) {
+  rpc RetireHosts(RetireHostsRequest) returns (RetireHostsResponse) {
     option (toshi.audit) = {
       action: "host.offline_retired"
       target: "none"
@@ -101,10 +101,10 @@ service OperatorService {
   // unique: two workspaces may share one. Only the operator may call it.
   rpc CreateWorkspace(CreateWorkspaceRequest) returns (CreateWorkspaceResponse);
 
-  // ListTenants returns every workspace, ordered by ID.
+  // ListWorkspaces returns every workspace, ordered by ID.
   //
   // A page holds 100 workspaces when page_size is zero, and 1000 at most.
-  rpc ListTenants(ListTenantsRequest) returns (ListTenantsResponse);
+  rpc ListWorkspaces(ListWorkspacesRequest) returns (ListWorkspacesResponse);
 
   // SetTenantCap sets a workspace's concurrency cap override and returns the
   // workspace as stored; a cap of 0 clears the override, so the workspace's plan
@@ -198,30 +198,28 @@ service OperatorService {
     option (toshi.audit) = {action: "none", reason: "It runs checks and changes no state of the workspace."};
   }
 
-  // SuspendTenant suspends an active workspace: its new and queued jobs are
-  // held with hold reason tenant_suspended, its running jobs finish, and its
+  // SuspendWorkspace suspends an active workspace: its new and queued jobs are
+  // held with hold reason workspace_suspended, its running jobs finish, and its
   // users keep read-only access. A suspended workspace is returned unchanged. An
   // empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
   // NOT_FOUND, and a workspace that is deleting or deleted with
   // FAILED_PRECONDITION. Operator only.
-  rpc SuspendTenant(SuspendTenantRequest) returns (SuspendTenantResponse) {
-    option (toshi.audit) = {action: "workspace.suspended"};
-  }
-  // ResumeTenant returns a suspended workspace to active and cancels a
+  rpc SuspendWorkspace(SuspendWorkspaceRequest) returns (SuspendWorkspaceResponse);
+  // UnsuspendWorkspace returns a suspended workspace to active and cancels a
   // scheduled deletion; held jobs run at the next scheduler pass. An active
   // workspace is returned unchanged. An empty ID fails with INVALID_ARGUMENT,
   // an unknown ID with NOT_FOUND, and a workspace that is deleting or deleted
   // with FAILED_PRECONDITION. Operator only.
-  rpc ResumeTenant(ResumeTenantRequest) returns (ResumeTenantResponse) {
+  rpc UnsuspendWorkspace(UnsuspendWorkspaceRequest) returns (UnsuspendWorkspaceResponse) {
     option (toshi.audit) = {action: "workspace.resumed"};
   }
-  // DeleteTenant suspends a workspace until purge_after, after which its data
+  // DeleteWorkspace suspends a workspace until purge_after, after which its data
   // is purged from the control plane and every host. grace_seconds of 0
   // means the default of 30 days; now purges as soon as the workspace has no
   // running job. A negative grace_seconds, or now with grace_seconds, fails
   // with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
   // deleting or deleted with FAILED_PRECONDITION. Operator only.
-  rpc DeleteTenant(DeleteTenantRequest) returns (DeleteTenantResponse) {
+  rpc DeleteWorkspace(DeleteWorkspaceRequest) returns (DeleteWorkspaceResponse) {
     option (toshi.audit) = {action: "workspace.deletion_scheduled"};
   }
 
@@ -250,7 +248,7 @@ service OperatorService {
   // fails with INVALID_ARGUMENT.
   rpc GetWorkflowUsage(GetWorkflowUsageRequest) returns (GetWorkflowUsageResponse);
 
-  // GetTenantStatement returns a workspace's usage statement for one UTC month:
+  // GetWorkspaceStatement returns a workspace's usage statement for one UTC month:
   // minutes by runner size and OS of the jobs that finished in it, the
   // minutes metered to the billing provider by size with their estimated
   // cost at the plan's prices, the starter credit applied in it, and held
@@ -260,7 +258,7 @@ service OperatorService {
   // a deleted workspace's saved statements too. Inside a live workspace,
   // members and the operator under its grant read
   // WorkspaceService.GetWorkspaceStatement.
-  rpc GetTenantStatement(GetTenantStatementRequest) returns (GetTenantStatementResponse);
+  rpc GetWorkspaceStatement(GetWorkspaceStatementRequest) returns (GetWorkspaceStatementResponse);
 
   // ListTokens returns the tokens the control plane knows, of every kind or
   // of the one kind names, oldest first, without their values.
@@ -435,10 +433,10 @@ service OperatorService {
   rpc SuggestPools(SuggestPoolsRequest) returns (SuggestPoolsResponse);
 
   // CreateStorageProvider registers a bucket Toshi may keep recordings and
-  // artifacts in. An empty tenant_id registers the operator's
+  // artifacts in. An empty workspace registers the operator's
   // own provider, shared by every workspace; it takes a credentials file
   // reference. A request with a credential stores a workspace's own
-  // tenant_bucket provider instead: the control plane wraps the key, checks
+  // workspace_bucket provider instead: the control plane wraps the key, checks
   // the bucket with it as CheckStorageProvider does and stores the row only
   // when the check passes, else FAILED_PRECONDITION with the check's error.
   // A workspace has one such provider; a second fails with ALREADY_EXISTS, and
@@ -451,7 +449,7 @@ service OperatorService {
   // StorageProviderService.CreateStorageProvider.
   rpc CreateStorageProvider(CreateStorageProviderRequest) returns (CreateStorageProviderResponse);
 
-  // ListStorageProviders returns the operator's providers when tenant_id
+  // ListStorageProviders returns the operator's providers when workspace
   // is empty and that workspace's otherwise, ordered by name. With
   // include_default it also returns the operator's provider a workspace
   // without one of its own uses, whether or not this workspace has one. A
@@ -556,7 +554,7 @@ enum AgentVersionStatus {
 // timestamp the job has not reached yet is unset.
 message Job {
   string id = 1;
-  string tenant = 2;
+  string workspace = 2;
   // The repository as "owner/name".
   string repository = 3;
   int64 workflow_job_id = 4;
@@ -582,15 +580,15 @@ message Job {
   string error = 18;
   // Why the job was stopped: github_cancelled, max_duration, operator,
   // github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-  // ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
-  // tenant_deleted or owner, or for a service's run owner_deleted,
+  // ran_elsewhere, for a sandbox spend_cap, workspace_suspended,
+  // workspace_deleted or owner, or for a service's run owner_deleted,
   // service_restart or sleep, or policy. Empty if it never was.
   string stop_reason = 19;
   // When the control plane asked the host to stop the job. Unset if it
   // never did.
   google.protobuf.Timestamp stop_requested_at = 20;
   // Why the scheduler last held the job while it was queued:
-  // tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
+  // workspace_suspended, limits_unavailable, workspace_cap, workspace_vcpu,
   // free_allowance, spend_cap, jobs_per_hour, start_rate, burst_guard,
   // plan_os, installation_suspended, overflow_wait, no_own_capacity,
   // no_capacity, cloud_budget, reserved_for_other, volume_claimed,
@@ -628,7 +626,7 @@ message Job {
   // flight. Kept in memory: unset after a restart of the control plane.
   google.protobuf.Timestamp runner_request_since = 31;
   // Toshi's own word for a job Toshi ended itself: time_limit,
-  // cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
+  // cancelled_by_workspace, cancelled_by_operator, cancelled_by_uninstall,
   // cancelled or failed. Empty for every other job. The conclusion stays
   // GitHub's word.
   string outcome = 32;
@@ -909,7 +907,7 @@ message Host {
   repeated HeldRefill held_refills = 10;
   // Workspace that owns the host and is the only one whose jobs it runs; empty
   // for a shared host.
-  string owner_tenant = 11;
+  string owner_workspace = 11;
   // The host's agent is draining before a stop: it takes no new jobs. On an
   // offline host: the host was draining when it went offline.
   bool stopping = 12;
@@ -1040,7 +1038,7 @@ message ListJobsRequest {
   // Jobs in any of these states; empty matches every state.
   repeated JobState states = 1;
   // Empty matches every workspace.
-  string tenant = 2;
+  string workspace = 2;
   // The repository as "owner/name"; empty matches every repository.
   string repository = 3;
   // The most jobs in one page; zero lets the server choose.
@@ -1073,7 +1071,7 @@ message AuditEvent {
   // user id, or a system or webhook source name.
   string actor_id = 4;
   // Empty when the event is not tied to a workspace.
-  string tenant = 5;
+  string workspace = 5;
   string action = 6;
   // A "<kind>:<id>" string such as job:..., host:..., token:..., plan:...
   // or workspace:....
@@ -1103,7 +1101,7 @@ message AuditEvent {
 // ListAuditEventsRequest selects the audit events to return.
 message ListAuditEventsRequest {
   // Only this workspace's events; empty matches every workspace.
-  string tenant = 1;
+  string workspace = 1;
   // Only this action; empty matches every action.
   string action = 2;
   // Only events at or after this time; unset is unbounded.
@@ -1184,7 +1182,7 @@ message HostVolume {
   // The volume's id.
   string volume_id = 1;
   // The volume's workspace.
-  string tenant = 2;
+  string workspace = 2;
   // The name of the project the volume belongs to.
   string project = 3;
   // The id of the project the volume belongs to.
@@ -1245,7 +1243,7 @@ message RevokeHostResponse {
   repeated string ended_job_ids = 3;
 }
 
-// OfflineHostOutcome says what RetireOfflineHosts did or would do for one host.
+// OfflineHostOutcome says what RetireHosts did or would do for one host.
 enum OfflineHostOutcome {
   OFFLINE_HOST_OUTCOME_UNSPECIFIED = 0;
   // Removed when apply was set, otherwise would be removed.
@@ -1256,14 +1254,14 @@ enum OfflineHostOutcome {
   OFFLINE_HOST_OUTCOME_SKIPPED_OWNED = 3;
 }
 
-message RetireOfflineHostsRequest {
+message RetireHostsRequest {
   // offline_longer_than is required and must be positive.
   google.protobuf.Duration offline_longer_than = 1;
   bool include_owned = 2;
   bool apply = 3;
 }
 
-message RetireOfflineHostsResponse {
+message RetireHostsResponse {
   // The host with the oldest last heartbeat first.
   repeated OfflineHostResult hosts = 1;
 }
@@ -1275,7 +1273,7 @@ message OfflineHostResult {
 
 // Workspace owns a plan, an optional concurrency override, and one or more GitHub
 // App installations.
-message Tenant {
+message Workspace {
   string id = 1;
   string name = 2;
   // The override; unset when none is set.
@@ -1363,7 +1361,7 @@ message Tenant {
   // plan's.
   int32 volume_snapshot_interval_seconds_effective = 36;
   // The workspace's billing link.
-  TenantBilling billing = 38;
+  WorkspaceBilling billing = 38;
   // The operator's entitlement overrides, by feature key.
   map<string, string> entitlement_overrides = 39;
 }
@@ -1412,12 +1410,12 @@ message Reservation {
   int32 slots = 2;
   // How many of the slots are kept on warm VMs; 0 when none.
   int32 warm = 3;
-  // "tenant" when the workspace's own row set it, "plan" when its plan did.
+  // "workspace" when the workspace's own row set it, "plan" when its plan did.
   string source = 4;
 }
 
 message CreateWorkspaceRequest {
-  // The workspace's name, as ListTenants shows it; surrounding spaces are
+  // The workspace's name, as ListWorkspaces shows it; surrounding spaces are
   // dropped.
   string name = 1;
   // The plan; empty for the control plane's default_plan.
@@ -1425,18 +1423,18 @@ message CreateWorkspaceRequest {
 }
 
 message CreateWorkspaceResponse {
-  Tenant workspace = 1;
+  Workspace workspace = 1;
 }
 
-message ListTenantsRequest {
+message ListWorkspacesRequest {
   // The most workspaces in one page; zero lets the server choose.
   int32 page_size = 1;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 2;
 }
 
-message ListTenantsResponse {
-  repeated Tenant tenants = 1;
+message ListWorkspacesResponse {
+  repeated Workspace workspaces = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
@@ -1447,11 +1445,11 @@ message SetTenantCapRequest {
 }
 
 message SetTenantCapResponse {
-  Tenant tenant = 1;
+  Workspace workspace = 1;
 }
 
 message SetTenantLimitsRequest {
-  string tenant = 1;
+  string workspace = 1;
   optional int32 secret_max_sets = 2;
   optional int32 secret_max_keys = 3;
   optional int64 secret_max_kib = 4;
@@ -1465,18 +1463,18 @@ message SetTenantLimitsRequest {
 }
 
 message SetTenantLimitsResponse {
-  Tenant tenant = 1;
+  Workspace workspace = 1;
 }
 
 message UpdateWorkspaceRequest {
   // The workspace and the values to set; id identifies the workspace.
-  Tenant workspace = 1;
+  Workspace workspace = 1;
   // The fields to change; required and nonempty.
   google.protobuf.FieldMask update_mask = 2;
 }
 
 message UpdateWorkspaceResponse {
-  Tenant workspace = 1;
+  Workspace workspace = 1;
 }
 
 // Seat is one assignment of a desktop seat to a person in a workspace, as
@@ -1542,33 +1540,33 @@ message SeatMonth {
   bool billed = 3;
 }
 
-message SuspendTenantRequest {
+message SuspendWorkspaceRequest {
   string id = 1;
   string reason = 2;
 }
 
-message SuspendTenantResponse {
-  Tenant tenant = 1;
+message SuspendWorkspaceResponse {
+  Workspace workspace = 1;
 }
 
-message ResumeTenantRequest {
+message UnsuspendWorkspaceRequest {
   string id = 1;
   string reason = 2;
 }
 
-message ResumeTenantResponse {
-  Tenant tenant = 1;
+message UnsuspendWorkspaceResponse {
+  Workspace workspace = 1;
 }
 
-message DeleteTenantRequest {
+message DeleteWorkspaceRequest {
   string id = 1;
   string reason = 2;
   int64 grace_seconds = 3;
   bool now = 4;
 }
 
-message DeleteTenantResponse {
-  Tenant tenant = 1;
+message DeleteWorkspaceResponse {
+  Workspace workspace = 1;
 }
 
 message Plan {
@@ -1634,7 +1632,7 @@ message ListOperatorAlertsResponse {
 
 message ListHostAlertsRequest {
   // Optional: only this workspace.
-  string tenant = 1;
+  string workspace = 1;
   // The most alerts in one page; zero lets the server choose.
   int32 page_size = 2;
   // From an earlier response's next_page_token; empty for the first page.
@@ -1662,7 +1660,7 @@ message OperatorAlert {
   // message says the same in one line.
   string message = 7;
   // The workspace whose own hosts raised the alert. Empty for an operator alert.
-  string tenant = 8;
+  string workspace = 8;
 }
 
 message ListPlansRequest {
@@ -1748,7 +1746,7 @@ message GetUsageRequest {
   // End of the window, exclusive. Unset: now.
   google.protobuf.Timestamp to = 2;
   // Only this workspace's jobs. Empty matches every workspace.
-  string tenant = 3;
+  string workspace = 3;
 }
 
 message GetUsageResponse {
@@ -1770,7 +1768,7 @@ message GetUsageResponse {
 // started on shared room. Not billed; a plan's filler_minutes_per_day bounds
 // them per UTC day.
 message FillerUsage {
-  string tenant = 1;
+  string workspace = 1;
   int64 jobs = 2;
   // Each job's duration rounded up to whole minutes, on any host.
   int64 minutes = 3;
@@ -1779,7 +1777,7 @@ message FillerUsage {
 // UsageRow counts the jobs of one workspace, UTC day, conclusion, outcome and
 // kind.
 message UsageRow {
-  string tenant = 1;
+  string workspace = 1;
   // The UTC date of the job's queued_at, as YYYY-MM-DD.
   string day = 2;
   // The job's conclusion as stored, such as "success". Empty for a job with
@@ -1830,7 +1828,7 @@ message GetQueueTimesRequest {
   // End of the window, exclusive. Unset: now.
   google.protobuf.Timestamp to = 2;
   // Only this workspace's jobs. Empty matches every workspace.
-  string tenant = 3;
+  string workspace = 3;
 }
 
 message GetQueueTimesResponse {
@@ -1877,7 +1875,7 @@ message GetWorkflowUsageRequest {
   // End of the window, exclusive. Unset: now.
   google.protobuf.Timestamp to = 2;
   // Only this workspace's jobs. Empty matches every workspace.
-  string tenant = 3;
+  string workspace = 3;
 }
 
 message GetWorkflowUsageResponse {
@@ -1894,7 +1892,7 @@ message GetWorkflowUsageResponse {
 // Its jobs are the ones GetUsage counts, and their minutes are counted as
 // in UsageRow.
 message WorkflowUsageRow {
-  string tenant = 1;
+  string workspace = 1;
   // The repository, as owner/name.
   string repository = 2;
   // The workflow's name from the job's workflow_job webhook. Empty for jobs
@@ -1948,7 +1946,7 @@ message CapacitySize {
 }
 
 message CapacityReservation {
-  string tenant = 1;
+  string workspace = 1;
   string size = 2;
   // The reservation.
   int32 slots = 3;
@@ -1963,7 +1961,7 @@ message CapacityReservation {
   int32 short = 8;
 }
 
-message GetTenantStatementRequest {
+message GetWorkspaceStatementRequest {
   string id = 1;
   // The UTC month as YYYY-MM. Empty: the current month.
   string month = 2;
@@ -1972,14 +1970,14 @@ message GetTenantStatementRequest {
   bool csv = 3;
 }
 
-message GetTenantStatementResponse {
-  TenantStatement statement = 1;
+message GetWorkspaceStatementResponse {
+  WorkspaceStatement statement = 1;
   // The statement as CSV with a header row, when the request asked for it.
   string csv = 2;
 }
 
-message TenantStatement {
-  string tenant = 1;
+message WorkspaceStatement {
+  string workspace = 1;
   // The month as YYYY-MM, and its bounds: from inclusive, to exclusive.
   string month = 2;
   google.protobuf.Timestamp from = 3;
@@ -2155,7 +2153,7 @@ message StoredKind {
 
 // StorageUsageRow is one kind of stored data on one UTC day.
 message StorageUsageRow {
-  string tenant = 1;
+  string workspace = 1;
   // The day's first hour, UTC, as YYYY-MM-DD.
   string day = 2;
   string kind = 3;
@@ -2205,9 +2203,9 @@ message StatementCharge {
   int64 seconds = 4;
 }
 
-// TenantBilling is a workspace's billing link, its subscription's status and the
+// WorkspaceBilling is a workspace's billing link, its subscription's status and the
 // usage reported to the billing provider.
-message TenantBilling {
+message WorkspaceBilling {
   // Empty when the workspace is not linked to a customer.
   string customer_id = 1;
   // Empty when no subscription has set the plan.
@@ -2266,7 +2264,7 @@ message TenantBilling {
   // starting, running or debugging, on Toshi's hosts rather than its own, and
   // neither a dispatch filler's job nor an open-source job. This is the count
   // the scheduler checks against the workspace's limit,
-  // Tenant.effective_concurrency.
+  // Workspace.effective_concurrency.
   int64 concurrency_used = 23;
   // The price of one desktop seat a month on the workspace's plan, in the
   // smallest unit of currency; unset while the billing provider has no price
@@ -2322,7 +2320,7 @@ enum TokenKind {
   TOKEN_KIND_ENROLLMENT = 2;
   // A workspace API token: the Workspace API as one workspace. The operator
   // API refuses it.
-  TOKEN_KIND_TENANT = 3;
+  TOKEN_KIND_WORKSPACE = 3;
   // A product token: a product's adapter calling the core.
   TOKEN_KIND_PRODUCT = 4;
 }
@@ -2334,7 +2332,7 @@ message Token {
   string id = 1;
   TokenKind kind = 2;
   // "file" for a token read from the control plane's token file, "rotate"
-  // for one made by RotateToken, "tenant" for one made by the Workspace
+  // for one made by RotateToken, "workspace" for one made by the Workspace
   // API's CreateEnrollmentToken, "session" for a workspace token minted
   // from a dashboard session, "product" for a product token the operator
   // made, "hosted" for a product token the control plane minted for an
@@ -2350,7 +2348,7 @@ message Token {
   // Whether the token is accepted now.
   bool active = 7;
   // Workspace the token is scoped to; also set for workspace tokens.
-  string tenant = 8;
+  string workspace = 8;
   // The label the workspace chose; empty for other kinds.
   string name = 9;
   // The project the token is limited to, by name. Empty for a token that
@@ -2434,7 +2432,7 @@ message ListTokensRequest {
   // TOKEN_KIND_UNSPECIFIED lists every kind.
   TokenKind kind = 1;
   // Only this workspace's tokens; empty lists every token.
-  string tenant = 2;
+  string workspace = 2;
   // The most tokens in one page; zero lets the server choose.
   int32 page_size = 3;
   // From an earlier response's next_page_token; empty for the first page.
@@ -2602,7 +2600,7 @@ message Filler {
   string share = 6;
   // dispatch: the workspace whose installation dispatches the workflow. With
   // the name it is the filler's key; a command filler has no workspace.
-  string tenant = 7;
+  string workspace = 7;
   // dispatch: the repository, as "owner/name".
   string repository = 8;
   // dispatch: the workflow's file name, for example "warm-cache.yml".
@@ -2619,15 +2617,15 @@ message Filler {
   // gets 1 hour when unset and may take at most 1 hour.
   google.protobuf.Duration max_duration = 12;
   bool enabled = 13;
-  // Where the filler comes from: "config", "operator" or "tenant".
+  // Where the filler comes from: "config", "operator" or "workspace".
   string source = 14;
   google.protobuf.Timestamp created_at = 15;
   google.protobuf.Timestamp updated_at = 16;
   // The filler's newest run. Not set before its first.
   FillerRun last_run = 17;
   // Why the scheduler dispatches nothing for this dispatch filler, as the
-  // last filler pass that read its states found it: tenant_suspended,
-  // tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
+  // last filler pass that read its states found it: workspace_suspended,
+  // workspace_deleting, workspace_deleted, workspace_closed, installation_removed,
   // installation_suspended, installation_ambiguous, budget_spent (the
   // workspace's filler minutes for the UTC day are spent) or budget_off (its
   // plan gives none). Empty: no pause found,
@@ -2650,7 +2648,7 @@ message FillerRun {
   string filler = 2;
   string kind = 3;
   // dispatch: the filler's workspace.
-  string tenant = 4;
+  string workspace = 4;
   // The host the run went to. Empty while a dispatch run waits for its job.
   string host_id = 5;
   // "dispatched", "assigned", "running", "completed", "failed",
@@ -2703,7 +2701,7 @@ message PutFillerResponse {
 message DeleteFillerRequest {
   string name = 1;
   // The workspace of a dispatch filler. Empty: a command filler.
-  string tenant = 2;
+  string workspace = 2;
 }
 
 message DeleteFillerResponse {}
@@ -2712,7 +2710,7 @@ message SetFillerEnabledRequest {
   string name = 1;
   bool enabled = 2;
   // The workspace of a dispatch filler. Empty: a command filler.
-  string tenant = 3;
+  string workspace = 3;
 }
 
 message SetFillerEnabledResponse {
@@ -2725,7 +2723,7 @@ message ListFillerRunsRequest {
   // The most runs in one page; zero lets the server choose.
   int32 page_size = 2;
   // With filler: the workspace of a dispatch filler. Empty: a command filler.
-  string tenant = 3;
+  string workspace = 3;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 4;
 }
@@ -2743,8 +2741,8 @@ message ListFillerRunsResponse {
 message FillerPause {
   string filler = 1;
   // The filler's workspace.
-  string tenant = 2;
-  // tenant_suspended, tenant_deleting, tenant_deleted, tenant_closed,
+  string workspace = 2;
+  // workspace_suspended, workspace_deleting, workspace_deleted, workspace_closed,
   // installation_removed, installation_suspended, installation_ambiguous,
   // budget_spent or budget_off.
   string reason = 3;
@@ -3010,9 +3008,9 @@ message PoolSuggestionDelay {
 message StorageProvider {
   string id = 1;
   // Empty for the operator's own provider.
-  string tenant_id = 2;
+  string workspace = 2;
   string name = 3;
-  // "operator", "tenant_bucket" or "local_disk".
+  // "operator", "workspace_bucket" or "local_disk".
   string mode = 4;
   string endpoint = 5;
   string region = 6;
@@ -3039,7 +3037,7 @@ message StorageProvider {
 
 message CreateStorageProviderRequest {
   // Empty registers the operator's own provider.
-  string tenant_id = 1;
+  string workspace = 1;
   string name = 2;
   string mode = 3;
   string endpoint = 4;
@@ -3057,7 +3055,7 @@ message CreateStorageProviderRequest {
   string external_id = 16;
   // The key of a workspace's own bucket. The control plane wraps it before
   // the row exists and never returns, logs or audits it. Set only with a
-  // tenant_id, mode "tenant_bucket", an access key id and secret, an https
+  // workspace, mode "workspace_bucket", an access key id and secret, an https
   // endpoint, and no credentials_file, credentials_profile, role_arn,
   // external_id, global replication or egress price.
   StorageCredential credential = 17;
@@ -3078,8 +3076,8 @@ message CreateStorageProviderResponse {
 
 message ListStorageProvidersRequest {
   // Empty lists the operator's providers; otherwise this workspace's.
-  string tenant_id = 1;
-  // With tenant_id, also answer default_provider.
+  string workspace = 1;
+  // With workspace, also answer default_provider.
   bool include_default = 2;
   // The most providers in one page; zero lets the server choose.
   int32 page_size = 3;
@@ -3090,7 +3088,7 @@ message ListStorageProvidersRequest {
 message ListStorageProvidersResponse {
   repeated StorageProvider providers = 1;
   // With include_default, the operator's provider that serves the workspace's
-  // uploads while it has no tenant_bucket provider (the control plane's
+  // uploads while it has no workspace_bucket provider (the control plane's
   // storage.default_provider); unset when none is configured. Every page
   // holds it.
   StorageProvider default_provider = 2;

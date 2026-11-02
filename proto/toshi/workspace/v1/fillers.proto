@@ -91,7 +91,7 @@ message Filler {
   // hours.
   google.protobuf.Duration max_duration = 8;
   bool enabled = 9;
-  // Where the filler comes from: "config", "operator" or "tenant" (the
+  // Where the filler comes from: "config", "operator" or "workspace" (the
   // workspace put it).
   string source = 10;
   google.protobuf.Timestamp created_at = 11;
@@ -99,8 +99,8 @@ message Filler {
   // The filler's newest run. Not set before its first.
   FillerRun last_run = 13;
   // Why the scheduler dispatches nothing for this filler, as the last
-  // filler pass that read its states found it: tenant_suspended,
-  // tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
+  // filler pass that read its states found it: workspace_suspended,
+  // workspace_deleting, workspace_deleted, workspace_closed, installation_removed,
   // installation_suspended, installation_ambiguous, budget_spent (the
   // workspace's filler minutes for the UTC day are spent) or budget_off
   // (its plan gives none). Empty: no pause found, or a filler the pass does
@@ -151,7 +151,7 @@ message FillerHostMinutes {
 // FillerPause is one paused filler; see Filler.pause_reason.
 message FillerPause {
   string filler = 1;
-  // tenant_suspended, tenant_deleting, tenant_deleted, tenant_closed,
+  // workspace_suspended, workspace_deleting, workspace_deleted, workspace_closed,
   // installation_removed, installation_suspended, installation_ambiguous,
   // budget_spent or budget_off.
   string reason = 2;

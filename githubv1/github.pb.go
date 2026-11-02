@@ -31,7 +31,7 @@ const (
 type MapInstallationRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	InstallationId int64                  `protobuf:"varint,1,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
-	TenantId       string                 `protobuf:"bytes,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Workspace      string                 `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -73,9 +73,9 @@ func (x *MapInstallationRequest) GetInstallationId() int64 {
 	return 0
 }
 
-func (x *MapInstallationRequest) GetTenantId() string {
+func (x *MapInstallationRequest) GetWorkspace() string {
 	if x != nil {
-		return x.TenantId
+		return x.Workspace
 	}
 	return ""
 }
@@ -119,7 +119,7 @@ func (*MapInstallationResponse) Descriptor() ([]byte, []int) {
 type ListOpenSourceReposRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Only this workspace's rows; empty for every row the caller may read.
-	Tenant        string `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	Workspace     string `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -154,9 +154,9 @@ func (*ListOpenSourceReposRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_github_v1_github_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListOpenSourceReposRequest) GetTenant() string {
+func (x *ListOpenSourceReposRequest) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -328,8 +328,8 @@ func (x *SetOpenSourceApprovalResponse) GetKept() *OpenSourceKeptApproval {
 }
 
 type OpenSourceRepo struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Tenant string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Workspace string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The repository as owner/name.
 	Repo string `protobuf:"bytes,2,opt,name=repo,proto3" json:"repo,omitempty"`
 	// Whether GitHub returned the repository at the last read.
@@ -412,9 +412,9 @@ func (*OpenSourceRepo) Descriptor() ([]byte, []int) {
 	return file_toshi_github_v1_github_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *OpenSourceRepo) GetTenant() string {
+func (x *OpenSourceRepo) GetWorkspace() string {
 	if x != nil {
-		return x.Tenant
+		return x.Workspace
 	}
 	return ""
 }
@@ -990,13 +990,13 @@ var File_toshi_github_v1_github_proto protoreflect.FileDescriptor
 
 const file_toshi_github_v1_github_proto_rawDesc = "" +
 	"\n" +
-	"\x1ctoshi/github/v1/github.proto\x12\x0ftoshi.github.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"^\n" +
+	"\x1ctoshi/github/v1/github.proto\x12\x0ftoshi.github.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"_\n" +
 	"\x16MapInstallationRequest\x12'\n" +
-	"\x0finstallation_id\x18\x01 \x01(\x03R\x0einstallationId\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\tR\btenantId\"\x19\n" +
-	"\x17MapInstallationResponse\"4\n" +
-	"\x1aListOpenSourceReposRequest\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\"\x91\x01\n" +
+	"\x0finstallation_id\x18\x01 \x01(\x03R\x0einstallationId\x12\x1c\n" +
+	"\tworkspace\x18\x02 \x01(\tR\tworkspace\"\x19\n" +
+	"\x17MapInstallationResponse\":\n" +
+	"\x1aListOpenSourceReposRequest\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\"\x91\x01\n" +
 	"\x1bListOpenSourceReposResponse\x125\n" +
 	"\x05repos\x18\x01 \x03(\v2\x1f.toshi.github.v1.OpenSourceRepoR\x05repos\x12;\n" +
 	"\x04kept\x18\x02 \x03(\v2'.toshi.github.v1.OpenSourceKeptApprovalR\x04kept\"N\n" +
@@ -1005,9 +1005,9 @@ const file_toshi_github_v1_github_proto_rawDesc = "" +
 	"\bapproved\x18\x02 \x01(\bR\bapproved\"\x93\x01\n" +
 	"\x1dSetOpenSourceApprovalResponse\x125\n" +
 	"\x05repos\x18\x01 \x03(\v2\x1f.toshi.github.v1.OpenSourceRepoR\x05repos\x12;\n" +
-	"\x04kept\x18\x02 \x01(\v2'.toshi.github.v1.OpenSourceKeptApprovalR\x04kept\"\xb7\x05\n" +
-	"\x0eOpenSourceRepo\x12\x16\n" +
-	"\x06tenant\x18\x01 \x01(\tR\x06tenant\x12\x12\n" +
+	"\x04kept\x18\x02 \x01(\v2'.toshi.github.v1.OpenSourceKeptApprovalR\x04kept\"\xbd\x05\n" +
+	"\x0eOpenSourceRepo\x12\x1c\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04repo\x18\x02 \x01(\tR\x04repo\x12\x14\n" +
 	"\x05found\x18\x03 \x01(\bR\x05found\x12\x18\n" +
 	"\aprivate\x18\x04 \x01(\bR\aprivate\x12\x17\n" +

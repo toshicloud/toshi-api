@@ -305,7 +305,7 @@ export type GetHostJobFailureResponse = Message<"toshi.workspace.v1.GetHostJobFa
    * "vm_died" or "step_failed"; "none" for a host job that succeeded and
    * "not_ended" for one that has not ended. The full list: "none",
    * "not_ended", "out_of_memory", "refused", "time_limit", "cancelled",
-   * "cancelled_by_tenant", "cancelled_by_operator", "cancelled_by_uninstall",
+   * "cancelled_by_workspace", "cancelled_by_operator", "cancelled_by_uninstall",
    * "vm_died", "host_lost", "host_revoked", "stop_unconfirmed",
    * "runner_not_started", "runner_exited", "failed", "too_small",
    * "throttled", "step_failed", "timed_out", "cancelled_on_github" and
@@ -401,7 +401,7 @@ export type GetHostJobFailureResponseJson = {
    * "vm_died" or "step_failed"; "none" for a host job that succeeded and
    * "not_ended" for one that has not ended. The full list: "none",
    * "not_ended", "out_of_memory", "refused", "time_limit", "cancelled",
-   * "cancelled_by_tenant", "cancelled_by_operator", "cancelled_by_uninstall",
+   * "cancelled_by_workspace", "cancelled_by_operator", "cancelled_by_uninstall",
    * "vm_died", "host_lost", "host_revoked", "stop_unconfirmed",
    * "runner_not_started", "runner_exited", "failed", "too_small",
    * "throttled", "step_failed", "timed_out", "cancelled_on_github" and
@@ -877,8 +877,8 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
   /**
    * Why the job was stopped: github_cancelled, max_duration, operator,
    * github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-   * ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
-   * tenant_deleted or owner, or for a service's run owner_deleted,
+   * ran_elsewhere, for a sandbox spend_cap, workspace_suspended,
+   * workspace_deleted or owner, or for a service's run owner_deleted,
    * service_restart or sleep, or policy. Empty if it never was.
    *
    * @generated from field: string stop_reason = 18;
@@ -895,7 +895,7 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
 
   /**
    * Why the scheduler last held the job while it was queued:
-   * tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
+   * workspace_suspended, limits_unavailable, workspace_cap, workspace_vcpu,
    * free_allowance, spend_cap, jobs_per_hour, start_rate, burst_guard,
    * plan_os, installation_suspended, overflow_wait, no_own_capacity,
    * no_capacity, cloud_budget, reserved_for_other, volume_claimed,
@@ -992,7 +992,7 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
 
   /**
    * Toshi's own word for a job Toshi ended itself: time_limit,
-   * cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
+   * cancelled_by_workspace, cancelled_by_operator, cancelled_by_uninstall,
    * cancelled or failed. Empty for every other job. The conclusion stays
    * GitHub's word.
    *
@@ -1380,8 +1380,8 @@ export type HostJobJson = {
   /**
    * Why the job was stopped: github_cancelled, max_duration, operator,
    * github_completed, runner_not_started, runner_unconfirmed, debug_ended,
-   * ran_elsewhere, for a sandbox spend_cap, tenant_suspended,
-   * tenant_deleted or owner, or for a service's run owner_deleted,
+   * ran_elsewhere, for a sandbox spend_cap, workspace_suspended,
+   * workspace_deleted or owner, or for a service's run owner_deleted,
    * service_restart or sleep, or policy. Empty if it never was.
    *
    * @generated from field: string stop_reason = 18;
@@ -1398,7 +1398,7 @@ export type HostJobJson = {
 
   /**
    * Why the scheduler last held the job while it was queued:
-   * tenant_suspended, limits_unavailable, tenant_cap, tenant_vcpu,
+   * workspace_suspended, limits_unavailable, workspace_cap, workspace_vcpu,
    * free_allowance, spend_cap, jobs_per_hour, start_rate, burst_guard,
    * plan_os, installation_suspended, overflow_wait, no_own_capacity,
    * no_capacity, cloud_budget, reserved_for_other, volume_claimed,
@@ -1495,7 +1495,7 @@ export type HostJobJson = {
 
   /**
    * Toshi's own word for a job Toshi ended itself: time_limit,
-   * cancelled_by_tenant, cancelled_by_operator, cancelled_by_uninstall,
+   * cancelled_by_workspace, cancelled_by_operator, cancelled_by_uninstall,
    * cancelled or failed. Empty for every other job. The conclusion stays
    * GitHub's word.
    *

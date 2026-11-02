@@ -42,9 +42,9 @@ enum StopReason {
   // The workspace's spend this month reached its spending cap.
   STOP_REASON_SPEND_CAP = 3;
   // The workspace was suspended.
-  STOP_REASON_TENANT_SUSPENDED = 4;
+  STOP_REASON_WORKSPACE_SUSPENDED = 4;
   // The workspace's deletion was scheduled.
-  STOP_REASON_TENANT_DELETED = 5;
+  STOP_REASON_WORKSPACE_DELETED = 5;
   // An operator cancelled its job.
   STOP_REASON_OPERATOR = 6;
   // Toshi stopped it for a policy; stop_cause says which.

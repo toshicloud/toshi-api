@@ -70,14 +70,14 @@ service GitHubService {
 
 message MapInstallationRequest {
   int64 installation_id = 1;
-  string tenant_id = 2;
+  string workspace = 2;
 }
 
 message MapInstallationResponse {}
 
 message ListOpenSourceReposRequest {
   // Only this workspace's rows; empty for every row the caller may read.
-  string tenant = 1;
+  string workspace = 1;
 }
 
 message ListOpenSourceReposResponse {
@@ -106,7 +106,7 @@ message SetOpenSourceApprovalResponse {
 }
 
 message OpenSourceRepo {
-  string tenant = 1;
+  string workspace = 1;
   // The repository as owner/name.
   string repo = 2;
   // Whether GitHub returned the repository at the last read.

@@ -36,7 +36,7 @@ export type Token = Message<"toshi.workspace.v1.Token"> & {
   kind: TokenKind;
 
   /**
-   * "tenant" for an enrollment token, "session" for an API token.
+   * "workspace" for an enrollment token, "session" for an API token.
    *
    * @generated from field: string source = 3;
    */
@@ -172,7 +172,7 @@ export type TokenJson = {
   kind?: TokenKindJson;
 
   /**
-   * "tenant" for an enrollment token, "session" for an API token.
+   * "workspace" for an enrollment token, "session" for an API token.
    *
    * @generated from field: string source = 3;
    */

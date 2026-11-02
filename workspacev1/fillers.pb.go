@@ -53,7 +53,7 @@ type Filler struct {
 	// hours.
 	MaxDuration *durationpb.Duration `protobuf:"bytes,8,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
 	Enabled     bool                 `protobuf:"varint,9,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	// Where the filler comes from: "config", "operator" or "tenant" (the
+	// Where the filler comes from: "config", "operator" or "workspace" (the
 	// workspace put it).
 	Source    string                 `protobuf:"bytes,10,opt,name=source,proto3" json:"source,omitempty"`
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -61,8 +61,8 @@ type Filler struct {
 	// The filler's newest run. Not set before its first.
 	LastRun *FillerRun `protobuf:"bytes,13,opt,name=last_run,json=lastRun,proto3" json:"last_run,omitempty"`
 	// Why the scheduler dispatches nothing for this filler, as the last
-	// filler pass that read its states found it: tenant_suspended,
-	// tenant_deleting, tenant_deleted, tenant_closed, installation_removed,
+	// filler pass that read its states found it: workspace_suspended,
+	// workspace_deleting, workspace_deleted, workspace_closed, installation_removed,
 	// installation_suspended, installation_ambiguous, budget_spent (the
 	// workspace's filler minutes for the UTC day are spent) or budget_off
 	// (its plan gives none). Empty: no pause found, or a filler the pass does
@@ -415,7 +415,7 @@ func (x *FillerHostMinutes) GetMinutes() float64 {
 type FillerPause struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Filler string                 `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
-	// tenant_suspended, tenant_deleting, tenant_deleted, tenant_closed,
+	// workspace_suspended, workspace_deleting, workspace_deleted, workspace_closed,
 	// installation_removed, installation_suspended, installation_ambiguous,
 	// budget_spent or budget_off.
 	Reason string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`

@@ -110,7 +110,7 @@ message AdmitGrantResponse {
   string actor_kind = 2;
   string actor_id = 3;
   // workspaces are the caller's workspaces; empty for the operator.
-  repeated string tenants = 4;
+  repeated string workspaces = 4;
   reserved 5 to 9;
   reserved "job_id", "tenant", "repository", "approved", "installation_id";
   // generation is the delivery check the grant began; 0 for none.
@@ -152,7 +152,7 @@ message GetJobResponse {
 // Job is what the adapter reads of a job.
 message Job {
   string id = 1;
-  string tenant = 2;
+  string workspace = 2;
   string repository = 3;
   int64 installation_id = 4;
   int64 workflow_job_id = 5;
@@ -172,7 +172,7 @@ message FillJobFailingStepResponse {}
 message ListOpenSourceRepositoriesRequest {
   // workspace is the workspace whose rows to list; empty for every workspace the
   // caller may see.
-  string tenant = 1;
+  string workspace = 1;
   // The most repositories in one page; zero lets the server choose.
   int32 page_size = 2;
   // From an earlier response's next_page_token; empty for the first page.
@@ -189,7 +189,7 @@ message ListOpenSourceRepositoriesResponse {
 
 // OpenSourceRepository is one workspace's row of the open-source gate.
 message OpenSourceRepository {
-  string tenant = 1;
+  string workspace = 1;
   string repository = 2;
   int64 installation_id = 3;
   bool found = 4;
@@ -225,7 +225,7 @@ message SetOpenSourceApprovalResponse {
 
 message MapInstallationRequest {
   int64 installation_id = 1;
-  string tenant = 2;
+  string workspace = 2;
 }
 
 message MapInstallationResponse {}

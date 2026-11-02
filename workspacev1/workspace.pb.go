@@ -107,9 +107,9 @@ const (
 	// The workspace's spend this month reached its spending cap.
 	StopReason_STOP_REASON_SPEND_CAP StopReason = 3
 	// The workspace was suspended.
-	StopReason_STOP_REASON_TENANT_SUSPENDED StopReason = 4
+	StopReason_STOP_REASON_WORKSPACE_SUSPENDED StopReason = 4
 	// The workspace's deletion was scheduled.
-	StopReason_STOP_REASON_TENANT_DELETED StopReason = 5
+	StopReason_STOP_REASON_WORKSPACE_DELETED StopReason = 5
 	// An operator cancelled its job.
 	StopReason_STOP_REASON_OPERATOR StopReason = 6
 	// Toshi stopped it for a policy; stop_cause says which.
@@ -125,22 +125,22 @@ var (
 		1: "STOP_REASON_OWNER",
 		2: "STOP_REASON_MAX_DURATION",
 		3: "STOP_REASON_SPEND_CAP",
-		4: "STOP_REASON_TENANT_SUSPENDED",
-		5: "STOP_REASON_TENANT_DELETED",
+		4: "STOP_REASON_WORKSPACE_SUSPENDED",
+		5: "STOP_REASON_WORKSPACE_DELETED",
 		6: "STOP_REASON_OPERATOR",
 		7: "STOP_REASON_POLICY",
 		8: "STOP_REASON_KEEP_EXPIRED",
 	}
 	StopReason_value = map[string]int32{
-		"STOP_REASON_UNSPECIFIED":      0,
-		"STOP_REASON_OWNER":            1,
-		"STOP_REASON_MAX_DURATION":     2,
-		"STOP_REASON_SPEND_CAP":        3,
-		"STOP_REASON_TENANT_SUSPENDED": 4,
-		"STOP_REASON_TENANT_DELETED":   5,
-		"STOP_REASON_OPERATOR":         6,
-		"STOP_REASON_POLICY":           7,
-		"STOP_REASON_KEEP_EXPIRED":     8,
+		"STOP_REASON_UNSPECIFIED":         0,
+		"STOP_REASON_OWNER":               1,
+		"STOP_REASON_MAX_DURATION":        2,
+		"STOP_REASON_SPEND_CAP":           3,
+		"STOP_REASON_WORKSPACE_SUSPENDED": 4,
+		"STOP_REASON_WORKSPACE_DELETED":   5,
+		"STOP_REASON_OPERATOR":            6,
+		"STOP_REASON_POLICY":              7,
+		"STOP_REASON_KEEP_EXPIRED":        8,
 	}
 )
 
@@ -14898,15 +14898,15 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x12END_REASON_STOPPED\x10\x02\x12\x18\n" +
 	"\x14END_REASON_CANCELLED\x10\x03\x12\x15\n" +
 	"\x11END_REASON_FAILED\x10\x04\x12\x13\n" +
-	"\x0fEND_REASON_LOST\x10\x05*\x8b\x02\n" +
+	"\x0fEND_REASON_LOST\x10\x05*\x91\x02\n" +
 	"\n" +
 	"StopReason\x12\x1b\n" +
 	"\x17STOP_REASON_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11STOP_REASON_OWNER\x10\x01\x12\x1c\n" +
 	"\x18STOP_REASON_MAX_DURATION\x10\x02\x12\x19\n" +
-	"\x15STOP_REASON_SPEND_CAP\x10\x03\x12 \n" +
-	"\x1cSTOP_REASON_TENANT_SUSPENDED\x10\x04\x12\x1e\n" +
-	"\x1aSTOP_REASON_TENANT_DELETED\x10\x05\x12\x18\n" +
+	"\x15STOP_REASON_SPEND_CAP\x10\x03\x12#\n" +
+	"\x1fSTOP_REASON_WORKSPACE_SUSPENDED\x10\x04\x12!\n" +
+	"\x1dSTOP_REASON_WORKSPACE_DELETED\x10\x05\x12\x18\n" +
 	"\x14STOP_REASON_OPERATOR\x10\x06\x12\x16\n" +
 	"\x12STOP_REASON_POLICY\x10\a\x12\x1c\n" +
 	"\x18STOP_REASON_KEEP_EXPIRED\x10\b*\xca\x01\n" +
