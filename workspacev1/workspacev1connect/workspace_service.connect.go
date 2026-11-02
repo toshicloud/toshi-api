@@ -72,6 +72,9 @@ const (
 	// WorkspaceServiceGetStartWindowsProcedure is the fully-qualified name of the WorkspaceService's
 	// GetStartWindows RPC.
 	WorkspaceServiceGetStartWindowsProcedure = "/toshi.workspace.v1.WorkspaceService/GetStartWindows"
+	// WorkspaceServiceGetVolumeCapsProcedure is the fully-qualified name of the WorkspaceService's
+	// GetVolumeCaps RPC.
+	WorkspaceServiceGetVolumeCapsProcedure = "/toshi.workspace.v1.WorkspaceService/GetVolumeCaps"
 	// WorkspaceServiceGetWorkflowUsageProcedure is the fully-qualified name of the WorkspaceService's
 	// GetWorkflowUsage RPC.
 	WorkspaceServiceGetWorkflowUsageProcedure = "/toshi.workspace.v1.WorkspaceService/GetWorkflowUsage"
@@ -191,6 +194,14 @@ type WorkspaceServiceClient interface {
 	// on, so a window at its ceiling here is a window that refuses a create now.
 	// The read is a snapshot and counts nothing itself.
 	GetStartWindows(context.Context, *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error)
+	// GetVolumeCaps returns the workspace's volume size-cap ceiling and what is
+	// counted against it: the sum of the size caps of its volumes that are not
+	// deleted, in bytes, in total and per project, with the ceilings the
+	// refusals of CreateVolume and UpdateVolume use. A ceiling of 0 is no limit.
+	// warn_level is 100 when in_use_bytes has reached a finite ceiling, 80 from
+	// 80 percent of it, and 0 otherwise. The read is a snapshot and changes
+	// nothing.
+	GetVolumeCaps(context.Context, *connect.Request[workspacev1.GetVolumeCapsRequest]) (*connect.Response[workspacev1.GetVolumeCapsResponse], error)
 	// GetWorkflowUsage returns, per repository and workflow name, the jobs
 	// GetUsage counts: their billable minutes, failed jobs and run-time
 	// percentiles. A job is in the window by its queued_at. The window
@@ -328,6 +339,12 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceMethods.ByName("GetStartWindows")),
 			connect.WithClientOptions(opts...),
 		),
+		getVolumeCaps: connect.NewClient[workspacev1.GetVolumeCapsRequest, workspacev1.GetVolumeCapsResponse](
+			httpClient,
+			baseURL+WorkspaceServiceGetVolumeCapsProcedure,
+			connect.WithSchema(workspaceServiceMethods.ByName("GetVolumeCaps")),
+			connect.WithClientOptions(opts...),
+		),
 		getWorkflowUsage: connect.NewClient[workspacev1.GetWorkflowUsageRequest, workspacev1.GetWorkflowUsageResponse](
 			httpClient,
 			baseURL+WorkspaceServiceGetWorkflowUsageProcedure,
@@ -388,6 +405,7 @@ type workspaceServiceClient struct {
 	getUsage                    *connect.Client[workspacev1.GetUsageRequest, workspacev1.GetUsageResponse]
 	getQueueTimes               *connect.Client[workspacev1.GetQueueTimesRequest, workspacev1.GetQueueTimesResponse]
 	getStartWindows             *connect.Client[workspacev1.GetStartWindowsRequest, workspacev1.GetStartWindowsResponse]
+	getVolumeCaps               *connect.Client[workspacev1.GetVolumeCapsRequest, workspacev1.GetVolumeCapsResponse]
 	getWorkflowUsage            *connect.Client[workspacev1.GetWorkflowUsageRequest, workspacev1.GetWorkflowUsageResponse]
 	listPlans                   *connect.Client[workspacev1.ListPlansRequest, workspacev1.ListPlansResponse]
 	createCheckoutSession       *connect.Client[workspacev1.CreateCheckoutSessionRequest, workspacev1.CreateCheckoutSessionResponse]
@@ -461,6 +479,11 @@ func (c *workspaceServiceClient) GetQueueTimes(ctx context.Context, req *connect
 // GetStartWindows calls toshi.workspace.v1.WorkspaceService.GetStartWindows.
 func (c *workspaceServiceClient) GetStartWindows(ctx context.Context, req *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error) {
 	return c.getStartWindows.CallUnary(ctx, req)
+}
+
+// GetVolumeCaps calls toshi.workspace.v1.WorkspaceService.GetVolumeCaps.
+func (c *workspaceServiceClient) GetVolumeCaps(ctx context.Context, req *connect.Request[workspacev1.GetVolumeCapsRequest]) (*connect.Response[workspacev1.GetVolumeCapsResponse], error) {
+	return c.getVolumeCaps.CallUnary(ctx, req)
 }
 
 // GetWorkflowUsage calls toshi.workspace.v1.WorkspaceService.GetWorkflowUsage.
@@ -594,6 +617,14 @@ type WorkspaceServiceHandler interface {
 	// on, so a window at its ceiling here is a window that refuses a create now.
 	// The read is a snapshot and counts nothing itself.
 	GetStartWindows(context.Context, *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error)
+	// GetVolumeCaps returns the workspace's volume size-cap ceiling and what is
+	// counted against it: the sum of the size caps of its volumes that are not
+	// deleted, in bytes, in total and per project, with the ceilings the
+	// refusals of CreateVolume and UpdateVolume use. A ceiling of 0 is no limit.
+	// warn_level is 100 when in_use_bytes has reached a finite ceiling, 80 from
+	// 80 percent of it, and 0 otherwise. The read is a snapshot and changes
+	// nothing.
+	GetVolumeCaps(context.Context, *connect.Request[workspacev1.GetVolumeCapsRequest]) (*connect.Response[workspacev1.GetVolumeCapsResponse], error)
 	// GetWorkflowUsage returns, per repository and workflow name, the jobs
 	// GetUsage counts: their billable minutes, failed jobs and run-time
 	// percentiles. A job is in the window by its queued_at. The window
@@ -727,6 +758,12 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceMethods.ByName("GetStartWindows")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceGetVolumeCapsHandler := connect.NewUnaryHandler(
+		WorkspaceServiceGetVolumeCapsProcedure,
+		svc.GetVolumeCaps,
+		connect.WithSchema(workspaceServiceMethods.ByName("GetVolumeCaps")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceGetWorkflowUsageHandler := connect.NewUnaryHandler(
 		WorkspaceServiceGetWorkflowUsageProcedure,
 		svc.GetWorkflowUsage,
@@ -797,6 +834,8 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceGetQueueTimesHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetStartWindowsProcedure:
 			workspaceServiceGetStartWindowsHandler.ServeHTTP(w, r)
+		case WorkspaceServiceGetVolumeCapsProcedure:
+			workspaceServiceGetVolumeCapsHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetWorkflowUsageProcedure:
 			workspaceServiceGetWorkflowUsageHandler.ServeHTTP(w, r)
 		case WorkspaceServiceListPlansProcedure:
@@ -870,6 +909,10 @@ func (UnimplementedWorkspaceServiceHandler) GetQueueTimes(context.Context, *conn
 
 func (UnimplementedWorkspaceServiceHandler) GetStartWindows(context.Context, *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetStartWindows is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) GetVolumeCaps(context.Context, *connect.Request[workspacev1.GetVolumeCapsRequest]) (*connect.Response[workspacev1.GetVolumeCapsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkspaceService.GetVolumeCaps is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) GetWorkflowUsage(context.Context, *connect.Request[workspacev1.GetWorkflowUsageRequest]) (*connect.Response[workspacev1.GetWorkflowUsageResponse], error) {

@@ -147,6 +147,16 @@ service WorkspaceService {
   rpc GetStartWindows(GetStartWindowsRequest) returns (GetStartWindowsResponse) {
     option (toshi.permission) = "workspace.read";
   }
+  // GetVolumeCaps returns the workspace's volume size-cap ceiling and what is
+  // counted against it: the sum of the size caps of its volumes that are not
+  // deleted, in bytes, in total and per project, with the ceilings the
+  // refusals of CreateVolume and UpdateVolume use. A ceiling of 0 is no limit.
+  // warn_level is 100 when in_use_bytes has reached a finite ceiling, 80 from
+  // 80 percent of it, and 0 otherwise. The read is a snapshot and changes
+  // nothing.
+  rpc GetVolumeCaps(GetVolumeCapsRequest) returns (GetVolumeCapsResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
   // GetWorkflowUsage returns, per repository and workflow name, the jobs
   // GetUsage counts: their billable minutes, failed jobs and run-time
   // percentiles. A job is in the window by its queued_at. The window
@@ -481,6 +491,42 @@ message GetStartWindowsResponse {
   // the next_start_at a refused CreateSandbox names; unset when no window is
   // at its ceiling.
   google.protobuf.Timestamp next_start_at = 3;
+}
+
+message GetVolumeCapsRequest {}
+
+message GetVolumeCapsResponse {
+  // The sum of the size caps, in bytes, of the workspace's volumes that are
+  // not deleted.
+  int64 in_use_bytes = 1;
+  // The ceiling in force, in bytes: the workspace's own setting when it has
+  // one, else the default, never above max_ceiling_bytes. 0 is no limit.
+  int64 ceiling_bytes = 2;
+  // The ceiling the workspace gets with no setting of its own, in bytes; 0 is
+  // no limit.
+  int64 default_ceiling_bytes = 3;
+  // The most the workspace may set its ceiling to, in bytes; 0 is no limit.
+  int64 max_ceiling_bytes = 4;
+  // What set ceiling_bytes: "plan" (the plan's default), "workspace" (the
+  // workspace's own setting) or "override" (an operator override of the
+  // plan's value).
+  string source = 5;
+  // 0, 80 or 100: the share of a finite ceiling in_use_bytes has reached.
+  int32 warn_level = 6;
+  // The projects of the workspace, by name, with their own totals.
+  repeated VolumeCapsProject projects = 7;
+}
+
+// VolumeCapsProject is one project's share of the volume caps.
+message VolumeCapsProject {
+  string project_id = 1;
+  string name = 2;
+  // The sum of the size caps, in bytes, of the project's volumes that are not
+  // deleted.
+  int64 in_use_bytes = 3;
+  // The project's own ceiling in bytes; 0 when its rules set none, so the
+  // workspace's ceiling bounds it.
+  int64 ceiling_bytes = 4;
 }
 
 // StartWindow is one start window of the workspace's plan. Each window is
