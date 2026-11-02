@@ -125,16 +125,18 @@ type ProjectServiceClient interface {
 	// UpdateProject sets the fields of project.name's project that
 	// update_mask names. The fields it sets are admission, the project's
 	// admission webhook: its url and secret, both required, or an empty url
-	// to remove it; and recording_defaults, the project's recording
+	// to remove it; recording_defaults, the project's recording
 	// defaults, either whole or by its sub-paths
 	// recording_defaults.sandbox_recording_policy,
 	// recording_defaults.job_recording_policy, recording_defaults.human_spans,
 	// recording_defaults.recording_segment_minutes and
-	// recording_defaults.recording_max_mib. An unset update_mask names the fields
-	// project carries. An empty one, an unset one with no admission and no
-	// recording_defaults, "*" and a path of another field are
-	// INVALID_ARGUMENT. The secret is sealed under the workspace's data key
-	// and never returned; a deployment with no keyring refuses it with
+	// recording_defaults.recording_max_mib; and volume_rules, the project's
+	// volume rules, replaced whole by the value the call carries, an empty
+	// one clearing them. An unset update_mask names the fields
+	// project carries. An empty one, an unset one with no admission, no
+	// recording_defaults and no volume_rules, "*" and a path of another field
+	// are INVALID_ARGUMENT. The secret is sealed under the workspace's data
+	// key and never returned; a deployment with no keyring refuses it with
 	// FAILED_PRECONDITION. A token limited to environments is
 	// PERMISSION_DENIED.
 	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
@@ -570,16 +572,18 @@ type ProjectServiceHandler interface {
 	// UpdateProject sets the fields of project.name's project that
 	// update_mask names. The fields it sets are admission, the project's
 	// admission webhook: its url and secret, both required, or an empty url
-	// to remove it; and recording_defaults, the project's recording
+	// to remove it; recording_defaults, the project's recording
 	// defaults, either whole or by its sub-paths
 	// recording_defaults.sandbox_recording_policy,
 	// recording_defaults.job_recording_policy, recording_defaults.human_spans,
 	// recording_defaults.recording_segment_minutes and
-	// recording_defaults.recording_max_mib. An unset update_mask names the fields
-	// project carries. An empty one, an unset one with no admission and no
-	// recording_defaults, "*" and a path of another field are
-	// INVALID_ARGUMENT. The secret is sealed under the workspace's data key
-	// and never returned; a deployment with no keyring refuses it with
+	// recording_defaults.recording_max_mib; and volume_rules, the project's
+	// volume rules, replaced whole by the value the call carries, an empty
+	// one clearing them. An unset update_mask names the fields
+	// project carries. An empty one, an unset one with no admission, no
+	// recording_defaults and no volume_rules, "*" and a path of another field
+	// are INVALID_ARGUMENT. The secret is sealed under the workspace's data
+	// key and never returned; a deployment with no keyring refuses it with
 	// FAILED_PRECONDITION. A token limited to environments is
 	// PERMISSION_DENIED.
 	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
