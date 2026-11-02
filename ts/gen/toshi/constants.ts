@@ -74,6 +74,7 @@ export const reasons = {
   WORKSPACE_DELETION_SCHEDULED: { code: "FAILED_PRECONDITION", metadata: ["state"] },
   WORKSPACE_SUSPENDED: { code: "FAILED_PRECONDITION", metadata: ["state"] },
   IMAGE_BASE_UNKNOWN: { code: "INVALID_ARGUMENT", metadata: ["base", "bases"] },
+  INVALID_FIELD: { code: "INVALID_ARGUMENT", metadata: ["key", "limit", "requested", "cause"] },
   INVALID_SETTING: { code: "INVALID_ARGUMENT", metadata: ["key", "cause", "limit", "requested"] },
   VOLUME_CEILING_ABOVE_MAX: { code: "INVALID_ARGUMENT", metadata: ["max_gb", "plan"] },
   INVITATION_EXPIRED: { code: "NOT_FOUND", metadata: [] },

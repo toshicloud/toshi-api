@@ -148,6 +148,8 @@ const (
 	ReasonWorkspaceSuspended = "WORKSPACE_SUSPENDED"
 	// ReasonImageBaseUnknown: `CreateImage` with a `base` that is not one of Toshi's.
 	ReasonImageBaseUnknown = "IMAGE_BASE_UNKNOWN"
+	// ReasonInvalidField: A request key is too long, contains bytes outside printable ASCII, or differs between the field and the header.
+	ReasonInvalidField = "INVALID_FIELD"
 	// ReasonInvalidSetting: `UpdateWorkspace` setting a stopped-sandbox keep outside the plan's bound; metadata carries `key`, `cause`, `limit` and `requested`.
 	ReasonInvalidSetting = "INVALID_SETTING"
 	// ReasonVolumeCeilingAboveMax: `UpdateWorkspace` setting `settings.volume_size_cap_total_gb` above the plan's maximum; the metadata carries `max_gb` and, when a plan applies, `plan`.
