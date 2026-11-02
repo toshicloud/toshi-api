@@ -456,8 +456,16 @@ type DiscoveredProduct struct {
 	// removal_version is the version a deprecated product is removed in;
 	// empty for the other stabilities.
 	RemovalVersion string `protobuf:"bytes,12,opt,name=removal_version,json=removalVersion,proto3" json:"removal_version,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// lowest_plan is the id of the lowest plan of the deployment's plan ladder
+	// that includes the product: a client that finds available false because
+	// of the plan says "available on the lowest_plan plan and above". Empty
+	// when the deployment's config turns the product off, or when no plan of
+	// the ladder includes it. A refusal of a call to a product the plan
+	// leaves out carries the same plan id as the metadata plan of
+	// PRODUCT_UNAVAILABLE.
+	LowestPlan    string `protobuf:"bytes,13,opt,name=lowest_plan,json=lowestPlan,proto3" json:"lowest_plan,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DiscoveredProduct) Reset() {
@@ -556,6 +564,13 @@ func (x *DiscoveredProduct) GetStability() ProductStability {
 func (x *DiscoveredProduct) GetRemovalVersion() string {
 	if x != nil {
 		return x.RemovalVersion
+	}
+	return ""
+}
+
+func (x *DiscoveredProduct) GetLowestPlan() string {
+	if x != nil {
+		return x.LowestPlan
 	}
 	return ""
 }
@@ -1022,7 +1037,7 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12;\n" +
 	"\bversions\x18\x03 \x01(\v2\x1f.toshi.workspace.v1.APIVersionsR\bversions\x12)\n" +
 	"\x10registry_address\x18\x04 \x01(\tR\x0fregistryAddress\x12\x14\n" +
-	"\x05calls\x18\x05 \x03(\tR\x05calls\"\xda\x03\n" +
+	"\x05calls\x18\x05 \x03(\tR\x05calls\"\xfb\x03\n" +
 	"\x11DiscoveredProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\tR\aversion\x12\x12\n" +
@@ -1034,7 +1049,9 @@ const file_toshi_workspace_v1_discovery_proto_rawDesc = "" +
 	"\tavailable\x18\n" +
 	" \x01(\bR\tavailable\x12B\n" +
 	"\tstability\x18\v \x01(\x0e2$.toshi.workspace.v1.ProductStabilityR\tstability\x12'\n" +
-	"\x0fremoval_version\x18\f \x01(\tR\x0eremovalVersionJ\x04\b\a\x10\bJ\x04\b\t\x10\n" +
+	"\x0fremoval_version\x18\f \x01(\tR\x0eremovalVersion\x12\x1f\n" +
+	"\vlowest_plan\x18\r \x01(\tR\n" +
+	"lowestPlanJ\x04\b\a\x10\bJ\x04\b\t\x10\n" +
 	"R\x06switchR\x12installation_state\"M\n" +
 	"\x12DiscoveredSurfaces\x12\x10\n" +
 	"\x03api\x18\x01 \x01(\tR\x03apiJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04J\x04\b\x04\x10\x05R\x03cliR\tdashboardR\x03sdk\"\x85\x04\n" +

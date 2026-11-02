@@ -1669,7 +1669,9 @@ export type GetVolumeCapsResponse = Message<"toshi.workspace.v1.GetVolumeCapsRes
 
   /**
    * The ceiling in force, in bytes: the workspace's own setting when it has
-   * one, else the default, never above max_ceiling_bytes. 0 is no limit.
+   * one, else the plan's default, never above max_ceiling_bytes. 0 is no
+   * limit, the result when the plan sets none; it is not the setting's 0,
+   * which follows the plan (WorkspaceSettings.volume_size_cap_total_gb).
    *
    * @generated from field: int64 ceiling_bytes = 2;
    */
@@ -1728,7 +1730,9 @@ export type GetVolumeCapsResponseJson = {
 
   /**
    * The ceiling in force, in bytes: the workspace's own setting when it has
-   * one, else the default, never above max_ceiling_bytes. 0 is no limit.
+   * one, else the plan's default, never above max_ceiling_bytes. 0 is no
+   * limit, the result when the plan sets none; it is not the setting's 0,
+   * which follows the plan (WorkspaceSettings.volume_size_cap_total_gb).
    *
    * @generated from field: int64 ceiling_bytes = 2;
    */
@@ -3242,8 +3246,10 @@ export type WorkspaceSettings = Message<"toshi.workspace.v1.WorkspaceSettings"> 
 
   /**
    * The ceiling on the sum of the size caps of the workspace's volumes that
-   * are not deleted, in decimal GB; 0 means the plan's default. It may be at
-   * most the plan's maximum, and a higher one fails with INVALID_ARGUMENT,
+   * are not deleted, in decimal GB; 0 means the plan's default: the setting
+   * follows the plan, and the ceiling in force is the plan's, which is no
+   * limit when the plan sets none (GetVolumeCaps reports that as
+   * ceiling_bytes 0). It may be at most the plan's maximum, and a higher one fails with INVALID_ARGUMENT,
    * as does a negative one. Lowering it, and 0, is always allowed, even
    * below what its volumes use now. It applies to new volumes and to a raise
    * of a volume's cap only.
@@ -3441,8 +3447,10 @@ export type WorkspaceSettingsJson = {
 
   /**
    * The ceiling on the sum of the size caps of the workspace's volumes that
-   * are not deleted, in decimal GB; 0 means the plan's default. It may be at
-   * most the plan's maximum, and a higher one fails with INVALID_ARGUMENT,
+   * are not deleted, in decimal GB; 0 means the plan's default: the setting
+   * follows the plan, and the ceiling in force is the plan's, which is no
+   * limit when the plan sets none (GetVolumeCaps reports that as
+   * ceiling_bytes 0). It may be at most the plan's maximum, and a higher one fails with INVALID_ARGUMENT,
    * as does a negative one. Lowering it, and 0, is always allowed, even
    * below what its volumes use now. It applies to new volumes and to a raise
    * of a volume's cap only.

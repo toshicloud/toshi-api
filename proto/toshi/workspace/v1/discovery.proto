@@ -96,6 +96,14 @@ message DiscoveredProduct {
   // removal_version is the version a deprecated product is removed in;
   // empty for the other stabilities.
   string removal_version = 12;
+  // lowest_plan is the id of the lowest plan of the deployment's plan ladder
+  // that includes the product: a client that finds available false because
+  // of the plan says "available on the lowest_plan plan and above". Empty
+  // when the deployment's config turns the product off, or when no plan of
+  // the ladder includes it. A refusal of a call to a product the plan
+  // leaves out carries the same plan id as the metadata plan of
+  // PRODUCT_UNAVAILABLE.
+  string lowest_plan = 13;
 }
 
 // DiscoveredSurfaces are what a product adds to Toshi, empty when it adds

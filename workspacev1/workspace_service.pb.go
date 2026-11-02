@@ -2049,7 +2049,9 @@ type GetVolumeCapsResponse struct {
 	// not deleted.
 	InUseBytes int64 `protobuf:"varint,1,opt,name=in_use_bytes,json=inUseBytes,proto3" json:"in_use_bytes,omitempty"`
 	// The ceiling in force, in bytes: the workspace's own setting when it has
-	// one, else the default, never above max_ceiling_bytes. 0 is no limit.
+	// one, else the plan's default, never above max_ceiling_bytes. 0 is no
+	// limit, the result when the plan sets none; it is not the setting's 0,
+	// which follows the plan (WorkspaceSettings.volume_size_cap_total_gb).
 	CeilingBytes int64 `protobuf:"varint,2,opt,name=ceiling_bytes,json=ceilingBytes,proto3" json:"ceiling_bytes,omitempty"`
 	// The ceiling the workspace gets with no setting of its own, in bytes; 0 is
 	// no limit.
@@ -3427,8 +3429,10 @@ type WorkspaceSettings struct {
 	// Setting it needs the permission that sets the spending cap.
 	PaidStarts *bool `protobuf:"varint,14,opt,name=paid_starts,json=paidStarts,proto3,oneof" json:"paid_starts,omitempty"`
 	// The ceiling on the sum of the size caps of the workspace's volumes that
-	// are not deleted, in decimal GB; 0 means the plan's default. It may be at
-	// most the plan's maximum, and a higher one fails with INVALID_ARGUMENT,
+	// are not deleted, in decimal GB; 0 means the plan's default: the setting
+	// follows the plan, and the ceiling in force is the plan's, which is no
+	// limit when the plan sets none (GetVolumeCaps reports that as
+	// ceiling_bytes 0). It may be at most the plan's maximum, and a higher one fails with INVALID_ARGUMENT,
 	// as does a negative one. Lowering it, and 0, is always allowed, even
 	// below what its volumes use now. It applies to new volumes and to a raise
 	// of a volume's cap only.
