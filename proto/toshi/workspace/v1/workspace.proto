@@ -1330,6 +1330,9 @@ enum EventType {
   // A service's roll changed state. Name: "service.rolled".
   // Payload: ServiceRolledEvent.
   EVENT_TYPE_SERVICE_ROLLED = 27;
+  // Toshi could not make a workload's endpoint. Name: "endpoint.creation_failed".
+  // Payload: EndpointCreationFailedEvent.
+  EVENT_TYPE_ENDPOINT_CREATION_FAILED = 28;
 }
 
 // Event is one entry of the event log. Every state change and every event a
@@ -1360,6 +1363,8 @@ message Event {
     ExecutionEvent execution = 8;
     // For EMITTED.
     EmittedEvent emitted = 9;
+    // For ENDPOINT_CREATION_FAILED.
+    EndpointCreationFailedEvent endpoint_creation_failed = 31;
     // For RECORDING_READY.
     RecordingEvent recording = 10;
     // For CONNECTION.
@@ -1399,6 +1404,12 @@ message Event {
   string environment = 12;
   // The connection that received a CONNECTION event; empty for the others.
   string connection_id = 16;
+}
+
+// EndpointCreationFailedEvent says why Toshi did not make an endpoint.
+message EndpointCreationFailedEvent {
+  string endpoint = 1;
+  string message = 2;
 }
 
 // MailNoticeEvent is what the mail provider reported about one recipient of
