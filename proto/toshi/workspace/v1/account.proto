@@ -190,7 +190,9 @@ message ListSessionsResponse {
   string next_page_token = 2;
 }
 
-// SignInSession is one dashboard sign-in session of the caller.
+// SignInSession is one sign-in session of the caller: a browser session, or
+// one sign-in of an OAuth client, such as the dashboard, for as long as its
+// grant lasts. Refreshing the client's tokens keeps the same session.
 message SignInSession {
   // An opaque id, stable for the session's life, that EndSession takes. It
   // is not the cookie and cannot be used to sign in.
@@ -203,6 +205,14 @@ message SignInSession {
   repeated SignInProof signed_in_with = 5;
   // True for the session making this call.
   bool current = 6;
+  // The name of the OAuth client the session was signed in to, as the
+  // client was registered when the person approved it. Empty for a browser
+  // session.
+  string client_name = 7;
+  // When an OAuth client's session last refreshed its tokens, or signed in
+  // if it has not refreshed them yet. It moves at each refresh, not at each
+  // call. Unset for a browser session.
+  google.protobuf.Timestamp last_seen_at = 8;
 }
 
 message EndSessionRequest {

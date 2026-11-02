@@ -764,7 +764,9 @@ func (x *ListSessionsResponse) GetNextPageToken() string {
 	return ""
 }
 
-// SignInSession is one dashboard sign-in session of the caller.
+// SignInSession is one sign-in session of the caller: a browser session, or
+// one sign-in of an OAuth client, such as the dashboard, for as long as its
+// grant lasts. Refreshing the client's tokens keeps the same session.
 type SignInSession struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// An opaque id, stable for the session's life, that EndSession takes. It
@@ -777,7 +779,15 @@ type SignInSession struct {
 	// The sign-ins the session holds, the one that opened it first.
 	SignedInWith []*SignInProof `protobuf:"bytes,5,rep,name=signed_in_with,json=signedInWith,proto3" json:"signed_in_with,omitempty"`
 	// True for the session making this call.
-	Current       bool `protobuf:"varint,6,opt,name=current,proto3" json:"current,omitempty"`
+	Current bool `protobuf:"varint,6,opt,name=current,proto3" json:"current,omitempty"`
+	// The name of the OAuth client the session was signed in to, as the
+	// client was registered when the person approved it. Empty for a browser
+	// session.
+	ClientName string `protobuf:"bytes,7,opt,name=client_name,json=clientName,proto3" json:"client_name,omitempty"`
+	// When an OAuth client's session last refreshed its tokens, or signed in
+	// if it has not refreshed them yet. It moves at each refresh, not at each
+	// call. Unset for a browser session.
+	LastSeenAt    *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=last_seen_at,json=lastSeenAt,proto3" json:"last_seen_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -852,6 +862,20 @@ func (x *SignInSession) GetCurrent() bool {
 		return x.Current
 	}
 	return false
+}
+
+func (x *SignInSession) GetClientName() string {
+	if x != nil {
+		return x.ClientName
+	}
+	return ""
+}
+
+func (x *SignInSession) GetLastSeenAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastSeenAt
+	}
+	return nil
 }
 
 type EndSessionRequest struct {
@@ -995,7 +1019,7 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"}\n" +
 	"\x14ListSessionsResponse\x12=\n" +
 	"\bsessions\x18\x01 \x03(\v2!.toshi.workspace.v1.SignInSessionR\bsessions\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x92\x02\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xf1\x02\n" +
 	"\rSignInSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
 	"\n" +
@@ -1004,7 +1028,11 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1a\n" +
 	"\bprovider\x18\x04 \x01(\tR\bprovider\x12E\n" +
 	"\x0esigned_in_with\x18\x05 \x03(\v2\x1f.toshi.workspace.v1.SignInProofR\fsignedInWith\x12\x18\n" +
-	"\acurrent\x18\x06 \x01(\bR\acurrent\"#\n" +
+	"\acurrent\x18\x06 \x01(\bR\acurrent\x12\x1f\n" +
+	"\vclient_name\x18\a \x01(\tR\n" +
+	"clientName\x12<\n" +
+	"\flast_seen_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"lastSeenAt\"#\n" +
 	"\x11EndSessionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x14\n" +
 	"\x12EndSessionResponse2\xe2\x05\n" +
@@ -1066,21 +1094,22 @@ var file_toshi_workspace_v1_account_proto_depIdxs = []int32{
 	15, // 12: toshi.workspace.v1.SignInSession.created_at:type_name -> google.protobuf.Timestamp
 	15, // 13: toshi.workspace.v1.SignInSession.expires_at:type_name -> google.protobuf.Timestamp
 	5,  // 14: toshi.workspace.v1.SignInSession.signed_in_with:type_name -> toshi.workspace.v1.SignInProof
-	2,  // 15: toshi.workspace.v1.AccountService.GetAccount:input_type -> toshi.workspace.v1.GetAccountRequest
-	6,  // 16: toshi.workspace.v1.AccountService.ListIdentities:input_type -> toshi.workspace.v1.ListIdentitiesRequest
-	8,  // 17: toshi.workspace.v1.AccountService.UnlinkIdentity:input_type -> toshi.workspace.v1.UnlinkIdentityRequest
-	10, // 18: toshi.workspace.v1.AccountService.ListSessions:input_type -> toshi.workspace.v1.ListSessionsRequest
-	13, // 19: toshi.workspace.v1.AccountService.EndSession:input_type -> toshi.workspace.v1.EndSessionRequest
-	3,  // 20: toshi.workspace.v1.AccountService.GetAccount:output_type -> toshi.workspace.v1.GetAccountResponse
-	7,  // 21: toshi.workspace.v1.AccountService.ListIdentities:output_type -> toshi.workspace.v1.ListIdentitiesResponse
-	9,  // 22: toshi.workspace.v1.AccountService.UnlinkIdentity:output_type -> toshi.workspace.v1.UnlinkIdentityResponse
-	11, // 23: toshi.workspace.v1.AccountService.ListSessions:output_type -> toshi.workspace.v1.ListSessionsResponse
-	14, // 24: toshi.workspace.v1.AccountService.EndSession:output_type -> toshi.workspace.v1.EndSessionResponse
-	20, // [20:25] is the sub-list for method output_type
-	15, // [15:20] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	15, // 15: toshi.workspace.v1.SignInSession.last_seen_at:type_name -> google.protobuf.Timestamp
+	2,  // 16: toshi.workspace.v1.AccountService.GetAccount:input_type -> toshi.workspace.v1.GetAccountRequest
+	6,  // 17: toshi.workspace.v1.AccountService.ListIdentities:input_type -> toshi.workspace.v1.ListIdentitiesRequest
+	8,  // 18: toshi.workspace.v1.AccountService.UnlinkIdentity:input_type -> toshi.workspace.v1.UnlinkIdentityRequest
+	10, // 19: toshi.workspace.v1.AccountService.ListSessions:input_type -> toshi.workspace.v1.ListSessionsRequest
+	13, // 20: toshi.workspace.v1.AccountService.EndSession:input_type -> toshi.workspace.v1.EndSessionRequest
+	3,  // 21: toshi.workspace.v1.AccountService.GetAccount:output_type -> toshi.workspace.v1.GetAccountResponse
+	7,  // 22: toshi.workspace.v1.AccountService.ListIdentities:output_type -> toshi.workspace.v1.ListIdentitiesResponse
+	9,  // 23: toshi.workspace.v1.AccountService.UnlinkIdentity:output_type -> toshi.workspace.v1.UnlinkIdentityResponse
+	11, // 24: toshi.workspace.v1.AccountService.ListSessions:output_type -> toshi.workspace.v1.ListSessionsResponse
+	14, // 25: toshi.workspace.v1.AccountService.EndSession:output_type -> toshi.workspace.v1.EndSessionResponse
+	21, // [21:26] is the sub-list for method output_type
+	16, // [16:21] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_account_proto_init() }
