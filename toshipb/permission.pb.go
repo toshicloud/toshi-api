@@ -28,8 +28,8 @@ type Audit struct {
 	// action is "<noun>.<verb>" with the verb in the past tense. Unset, it is
 	// the method's name: CreateSandbox records "sandbox.created". The build
 	// fails a method whose verb it cannot put in the past tense, or whose name
-	// gives the action this field names. "none" records nothing, for a call
-	// no Workspace API caller makes, such as a workload's upload.
+	// gives the action this field names. "none" records nothing and requires
+	// a reason.
 	Action string `protobuf:"bytes,1,opt,name=action,proto3" json:"action,omitempty"`
 	// target is what the call acts on, as "<kind>:<source>", or "none". Unset,
 	// the kind is the action's noun and the source the response's id for a
@@ -39,7 +39,10 @@ type Audit struct {
 	// "start.sandbox_id", a response field path after "response.", such as
 	// "response.endpoint.id", "workspace" for the call's workspace, or
 	// "project" for the project the call resolved.
-	Target        string `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"`
+	Target string `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"`
+	// reason explains why an action of "none" records nothing. It is only
+	// allowed with that action.
+	Reason        string `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -84,6 +87,13 @@ func (x *Audit) GetAction() string {
 func (x *Audit) GetTarget() string {
 	if x != nil {
 		return x.Target
+	}
+	return ""
+}
+
+func (x *Audit) GetReason() string {
+	if x != nil {
+		return x.Reason
 	}
 	return ""
 }
@@ -272,7 +282,9 @@ var (
 	// records one event: on the Workspace API a call whose permission's level
 	// is not "read", on the operator API a call whose verb is not a read
 	// (Get, List, Watch, Wait, Summarise, Suggest, Export, Discover). A read
-	// whose option names an action records one too.
+	// whose option names an action records one too. The GitHub product and
+	// core APIs use the same verb rule to check options; their events are
+	// recorded elsewhere.
 	//
 	// optional toshi.Audit audit = 51002;
 	E_Audit = &file_toshi_permission_proto_extTypes[2]
@@ -321,10 +333,11 @@ var File_toshi_permission_proto protoreflect.FileDescriptor
 
 const file_toshi_permission_proto_rawDesc = "" +
 	"\n" +
-	"\x16toshi/permission.proto\x12\x05toshi\x1a google/protobuf/descriptor.proto\"7\n" +
+	"\x16toshi/permission.proto\x12\x05toshi\x1a google/protobuf/descriptor.proto\"O\n" +
 	"\x05Audit\x12\x16\n" +
 	"\x06action\x18\x01 \x01(\tR\x06action\x12\x16\n" +
-	"\x06target\x18\x02 \x01(\tR\x06target\"\xed\x01\n" +
+	"\x06target\x18\x02 \x01(\tR\x06target\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\"\xed\x01\n" +
 	"\x03MCP\x12 \n" +
 	"\tread_only\x18\x01 \x01(\bH\x00R\breadOnly\x88\x01\x01\x12%\n" +
 	"\vdestructive\x18\x02 \x01(\bH\x01R\vdestructive\x88\x01\x01\x12#\n" +

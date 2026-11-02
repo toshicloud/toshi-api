@@ -11,6 +11,7 @@
 package githubcorev1
 
 import (
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1170,7 +1171,7 @@ var File_toshi_githubcore_v1_githubcore_proto protoreflect.FileDescriptor
 
 const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\n" +
-	"$toshi/githubcore/v1/githubcore.proto\x12\x13toshi.githubcore.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
+	"$toshi/githubcore/v1/githubcore.proto\x12\x13toshi.githubcore.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\x13\n" +
 	"\x11AdmitGrantRequest\"\xe3\x02\n" +
 	"\x12AdmitGrantResponse\x12\x12\n" +
 	"\x04call\x18\x01 \x01(\tR\x04call\x12\x1d\n" +
@@ -1269,16 +1270,20 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\x06result\x18\x02 \x01(\tR\x06result\x12\x18\n" +
 	"\alacking\x18\x03 \x03(\x03R\alacking\"?\n" +
 	"\x1fPublishJobDeliveryCheckResponse\x12\x1c\n" +
-	"\tpublished\x18\x01 \x01(\bR\tpublished2\xc1\x06\n" +
-	"\x11GitHubCoreService\x12]\n" +
+	"\tpublished\x18\x01 \x01(\bR\tpublished2\xcc\b\n" +
+	"\x11GitHubCoreService\x12\xad\x01\n" +
 	"\n" +
-	"AdmitGrant\x12&.toshi.githubcore.v1.AdmitGrantRequest\x1a'.toshi.githubcore.v1.AdmitGrantResponse\x12Q\n" +
-	"\x06GetJob\x12\".toshi.githubcore.v1.GetJobRequest\x1a#.toshi.githubcore.v1.GetJobResponse\x12u\n" +
-	"\x12FillJobFailingStep\x12..toshi.githubcore.v1.FillJobFailingStepRequest\x1a/.toshi.githubcore.v1.FillJobFailingStepResponse\x12\x8d\x01\n" +
+	"AdmitGrant\x12&.toshi.githubcore.v1.AdmitGrantRequest\x1a'.toshi.githubcore.v1.AdmitGrantResponse\"N\xd2\xf3\x18J\n" +
+	"\x04none\x1aBIt admits an internal grant and changes no state of the workspace.\x12Q\n" +
+	"\x06GetJob\x12\".toshi.githubcore.v1.GetJobRequest\x1a#.toshi.githubcore.v1.GetJobResponse\x12\xeb\x01\n" +
+	"\x12FillJobFailingStep\x12..toshi.githubcore.v1.FillJobFailingStepRequest\x1a/.toshi.githubcore.v1.FillJobFailingStepResponse\"t\xd2\xf3\x18p\n" +
+	"\x04none\x1ahIt stores a value derived from a job the host already reported; the host's report is the audited change.\x12\x8d\x01\n" +
 	"\x1aListOpenSourceRepositories\x126.toshi.githubcore.v1.ListOpenSourceRepositoriesRequest\x1a7.toshi.githubcore.v1.ListOpenSourceRepositoriesResponse\x12~\n" +
-	"\x15SetOpenSourceApproval\x121.toshi.githubcore.v1.SetOpenSourceApprovalRequest\x1a2.toshi.githubcore.v1.SetOpenSourceApprovalResponse\x12l\n" +
-	"\x0fMapInstallation\x12+.toshi.githubcore.v1.MapInstallationRequest\x1a,.toshi.githubcore.v1.MapInstallationResponse\x12\x84\x01\n" +
-	"\x17PublishJobDeliveryCheck\x123.toshi.githubcore.v1.PublishJobDeliveryCheckRequest\x1a4.toshi.githubcore.v1.PublishJobDeliveryCheckResponseB#Z!go.toshicloud.io/api/githubcorev1b\x06proto3"
+	"\x15SetOpenSourceApproval\x121.toshi.githubcore.v1.SetOpenSourceApprovalRequest\x1a2.toshi.githubcore.v1.SetOpenSourceApprovalResponse\x12\x87\x01\n" +
+	"\x0fMapInstallation\x12+.toshi.githubcore.v1.MapInstallationRequest\x1a,.toshi.githubcore.v1.MapInstallationResponse\"\x19\xd2\xf3\x18\x15\n" +
+	"\x13installation.mapped\x12\xab\x01\n" +
+	"\x17PublishJobDeliveryCheck\x123.toshi.githubcore.v1.PublishJobDeliveryCheckRequest\x1a4.toshi.githubcore.v1.PublishJobDeliveryCheckResponse\"%\xd2\xf3\x18!\n" +
+	"\x1fsecret_delivery.check_publishedB#Z!go.toshicloud.io/api/githubcorev1b\x06proto3"
 
 var (
 	file_toshi_githubcore_v1_githubcore_proto_rawDescOnce sync.Once

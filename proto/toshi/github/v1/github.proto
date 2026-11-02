@@ -7,6 +7,7 @@ package toshi.github.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "go.toshicloud.io/api/githubv1";
 
@@ -18,7 +19,9 @@ service GitHubService {
   // any earlier mapping. An installation ID of 0 or less, or an empty workspace
   // ID, fails with INVALID_ARGUMENT; an unknown workspace fails with NOT_FOUND,
   // and a deleted one with FAILED_PRECONDITION. The operator token only.
-  rpc MapInstallation(MapInstallationRequest) returns (MapInstallationResponse);
+  rpc MapInstallation(MapInstallationRequest) returns (MapInstallationResponse) {
+    option (toshi.audit) = {action: "installation.mapped"};
+  }
 
   // ListOpenSourceRepos lists the open-source gate's repositories, one row
   // per workspace, ordered by repository, then workspace, also those not read
@@ -49,7 +52,9 @@ service GitHubService {
   // from GitHub's answer, never from the caller. A workspace
   // caller sees only its own jobs. An empty ID fails with
   // INVALID_ARGUMENT; an unknown ID fails with NOT_FOUND.
-  rpc GetJobFailure(GetJobFailureRequest) returns (GetJobFailureResponse);
+  rpc GetJobFailure(GetJobFailureRequest) returns (GetJobFailureResponse) {
+    option (toshi.audit) = {action: "none", reason: "A read; the failing step it stores belongs to the job the host already reported, so the write is not a change of the workspace."};
+  }
 
   // CheckSecretDelivery lists the installations of the GitHub App that
   // lack Contents read, which delivery of secrets to CI jobs needs to tell

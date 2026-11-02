@@ -172,7 +172,7 @@ service EndpointService {
   // repeats by it.
   rpc SendEndpointMessage(SendEndpointMessageRequest) returns (SendEndpointMessageResponse) {
     option (toshi.permission) = "endpoints.write";
-    option (toshi.audit) = {action: "none"};
+    option (toshi.audit) = {action: "endpoint.message_sent", target: "service:service"};
   }
 
   // TailEndpointMessages streams an event endpoint's messages after the

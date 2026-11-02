@@ -16118,7 +16118,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\x8e-\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xc6-\n" +
 	"\x0fOperatorService\x12S\n" +
 	"\bListJobs\x12\".toshi.operator.v1.ListJobsRequest\x1a#.toshi.operator.v1.ListJobsResponse\x12h\n" +
 	"\x0fListAuditEvents\x12).toshi.operator.v1.ListAuditEventsRequest\x1a*.toshi.operator.v1.ListAuditEventsResponse\x12z\n" +
@@ -16148,10 +16148,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\tListSeats\x12#.toshi.operator.v1.ListSeatsRequest\x1a$.toshi.operator.v1.ListSeatsResponse\x12V\n" +
 	"\tListPlans\x12#.toshi.operator.v1.ListPlansRequest\x1a$.toshi.operator.v1.ListPlansResponse\x12Y\n" +
 	"\n" +
-	"GetVersion\x12$.toshi.operator.v1.GetVersionRequest\x1a%.toshi.operator.v1.GetVersionResponse\x12b\n" +
-	"\tRunChecks\x12#.toshi.operator.v1.RunChecksRequest\x1a$.toshi.operator.v1.RunChecksResponse\"\n" +
-	"\xd2\xf3\x18\x06\n" +
-	"\x04none\x12}\n" +
+	"GetVersion\x12$.toshi.operator.v1.GetVersionRequest\x1a%.toshi.operator.v1.GetVersionResponse\x12\x99\x01\n" +
+	"\tRunChecks\x12#.toshi.operator.v1.RunChecksRequest\x1a$.toshi.operator.v1.RunChecksResponse\"A\xd2\xf3\x18=\n" +
+	"\x04none\x1a5It runs checks and changes no state of the workspace.\x12}\n" +
 	"\rSuspendTenant\x12'.toshi.operator.v1.SuspendTenantRequest\x1a(.toshi.operator.v1.SuspendTenantResponse\"\x19\xd2\xf3\x18\x15\n" +
 	"\x13workspace.suspended\x12x\n" +
 	"\fResumeTenant\x12&.toshi.operator.v1.ResumeTenantRequest\x1a'.toshi.operator.v1.ResumeTenantResponse\"\x17\xd2\xf3\x18\x13\n" +

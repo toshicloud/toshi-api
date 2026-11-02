@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/permission.proto.
  */
 export const file_toshi_permission: GenFile = /*@__PURE__*/
-  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSInCgVBdWRpdBIOCgZhY3Rpb24YASABKAkSDgoGdGFyZ2V0GAIgASgJIrYBCgNNQ1ASFgoJcmVhZF9vbmx5GAEgASgISACIAQESGAoLZGVzdHJ1Y3RpdmUYAiABKAhIAYgBARIXCgppZGVtcG90ZW50GAMgASgISAKIAQESFwoKb3Blbl93b3JsZBgEIAEoCEgDiAEBEg8KB2V4Y2x1ZGUYBSABKAhCDAoKX3JlYWRfb25seUIOCgxfZGVzdHJ1Y3RpdmVCDQoLX2lkZW1wb3RlbnRCDQoLX29wZW5fd29ybGQ6QAoKcGVybWlzc2lvbhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLiOAyABKAlSCnBlcm1pc3Npb246NgoFc2NvcGUSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi5jgMgASgJUgVzY29wZTpECgVhdWRpdBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLqOAyABKAsyDC50b3NoaS5BdWRpdFIFYXVkaXQ6OwoIYnlfZmllbGQSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi8jgMgASgIUgdieUZpZWxkOj4KA21jcBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGL2OAyABKAsyCi50b3NoaS5NQ1BSA21jcDoyCgNvd24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi+jgMgASgIUgNvd246SgoQZmllbGRfcGVybWlzc2lvbhIdLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE9wdGlvbnMYu44DIAEoCVIPZmllbGRQZXJtaXNzaW9uQh5aHGdvLnRvc2hpY2xvdWQuaW8vYXBpL3Rvc2hpcGJiBnByb3RvMw", [file_google_protobuf_descriptor]);
+  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSI3CgVBdWRpdBIOCgZhY3Rpb24YASABKAkSDgoGdGFyZ2V0GAIgASgJEg4KBnJlYXNvbhgDIAEoCSK2AQoDTUNQEhYKCXJlYWRfb25seRgBIAEoCEgAiAEBEhgKC2Rlc3RydWN0aXZlGAIgASgISAGIAQESFwoKaWRlbXBvdGVudBgDIAEoCEgCiAEBEhcKCm9wZW5fd29ybGQYBCABKAhIA4gBARIPCgdleGNsdWRlGAUgASgIQgwKCl9yZWFkX29ubHlCDgoMX2Rlc3RydWN0aXZlQg0KC19pZGVtcG90ZW50Qg0KC19vcGVuX3dvcmxkOkAKCnBlcm1pc3Npb24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi4jgMgASgJUgpwZXJtaXNzaW9uOjYKBXNjb3BlEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuY4DIAEoCVIFc2NvcGU6RAoFYXVkaXQSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi6jgMgASgLMgwudG9zaGkuQXVkaXRSBWF1ZGl0OjsKCGJ5X2ZpZWxkEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvI4DIAEoCFIHYnlGaWVsZDo+CgNtY3ASHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi9jgMgASgLMgoudG9zaGkuTUNQUgNtY3A6MgoDb3duEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvo4DIAEoCFIDb3duOkoKEGZpZWxkX3Blcm1pc3Npb24SHS5nb29nbGUucHJvdG9idWYuRmllbGRPcHRpb25zGLuOAyABKAlSD2ZpZWxkUGVybWlzc2lvbkIeWhxnby50b3NoaWNsb3VkLmlvL2FwaS90b3NoaXBiYgZwcm90bzM", [file_google_protobuf_descriptor]);
 
 /**
  * Audit is the audit event a call records.
@@ -24,8 +24,8 @@ export type Audit = Message<"toshi.Audit"> & {
    * action is "<noun>.<verb>" with the verb in the past tense. Unset, it is
    * the method's name: CreateSandbox records "sandbox.created". The build
    * fails a method whose verb it cannot put in the past tense, or whose name
-   * gives the action this field names. "none" records nothing, for a call
-   * no Workspace API caller makes, such as a workload's upload.
+   * gives the action this field names. "none" records nothing and requires
+   * a reason.
    *
    * @generated from field: string action = 1;
    */
@@ -44,6 +44,14 @@ export type Audit = Message<"toshi.Audit"> & {
    * @generated from field: string target = 2;
    */
   target: string;
+
+  /**
+   * reason explains why an action of "none" records nothing. It is only
+   * allowed with that action.
+   *
+   * @generated from field: string reason = 3;
+   */
+  reason: string;
 };
 
 /**
@@ -56,8 +64,8 @@ export type AuditJson = {
    * action is "<noun>.<verb>" with the verb in the past tense. Unset, it is
    * the method's name: CreateSandbox records "sandbox.created". The build
    * fails a method whose verb it cannot put in the past tense, or whose name
-   * gives the action this field names. "none" records nothing, for a call
-   * no Workspace API caller makes, such as a workload's upload.
+   * gives the action this field names. "none" records nothing and requires
+   * a reason.
    *
    * @generated from field: string action = 1;
    */
@@ -76,6 +84,14 @@ export type AuditJson = {
    * @generated from field: string target = 2;
    */
   target?: string;
+
+  /**
+   * reason explains why an action of "none" records nothing. It is only
+   * allowed with that action.
+   *
+   * @generated from field: string reason = 3;
+   */
+  reason?: string;
 };
 
 /**
@@ -233,7 +249,9 @@ export const scope: GenExtension<MethodOptions, string> = /*@__PURE__*/
  * records one event: on the Workspace API a call whose permission's level
  * is not "read", on the operator API a call whose verb is not a read
  * (Get, List, Watch, Wait, Summarise, Suggest, Export, Discover). A read
- * whose option names an action records one too.
+ * whose option names an action records one too. The GitHub product and
+ * core APIs use the same verb rule to check options; their events are
+ * recorded elsewhere.
  *
  * @generated from extension: toshi.Audit audit = 51002;
  */

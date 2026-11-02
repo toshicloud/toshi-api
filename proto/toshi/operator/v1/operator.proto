@@ -195,7 +195,7 @@ service OperatorService {
   // group whose subject this control plane is not configured for (the GitHub
   // group without a GitHub App) fails with FAILED_PRECONDITION.
   rpc RunChecks(RunChecksRequest) returns (RunChecksResponse) {
-    option (toshi.audit) = {action: "none"};
+    option (toshi.audit) = {action: "none", reason: "It runs checks and changes no state of the workspace."};
   }
 
   // SuspendTenant suspends an active workspace: its new and queued jobs are

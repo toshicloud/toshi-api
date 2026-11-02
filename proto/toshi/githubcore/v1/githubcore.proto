@@ -6,6 +6,7 @@ syntax = "proto3";
 package toshi.githubcore.v1;
 
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 
 option go_package = "go.toshicloud.io/api/githubcorev1";
 
@@ -50,7 +51,9 @@ service GitHubCoreService {
   // AdmitGrant admits the grant to the adapter process whose nonce the
   // call carries, and returns what the grant allows. A grant is admitted
   // once: a second AdmitGrant is refused, whatever its nonce.
-  rpc AdmitGrant(AdmitGrantRequest) returns (AdmitGrantResponse);
+  rpc AdmitGrant(AdmitGrantRequest) returns (AdmitGrantResponse) {
+    option (toshi.audit) = {action: "none", reason: "It admits an internal grant and changes no state of the workspace."};
+  }
 
   // GetJob returns the job the grant names when the grant's caller may
   // see it. A workspace caller sees only its own workspaces' jobs, of workspaces
@@ -61,7 +64,9 @@ service GitHubCoreService {
   // FillJobFailingStep stores the failing step the adapter read from
   // GitHub for the grant's job, a job GetJob shows: only when the job has
   // ended, did not succeed and has no step stored.
-  rpc FillJobFailingStep(FillJobFailingStepRequest) returns (FillJobFailingStepResponse);
+  rpc FillJobFailingStep(FillJobFailingStepRequest) returns (FillJobFailingStepResponse) {
+    option (toshi.audit) = {action: "none", reason: "It stores a value derived from a job the host already reported; the host's report is the audited change."};
+  }
 
   // ListOpenSourceRepositories lists the open-source gate's rows: for a workspace
   // caller, only rows of its workspaces that have at least one GitHub App
@@ -81,13 +86,17 @@ service GitHubCoreService {
   // MapInstallation maps a GitHub App installation to a workspace. An unknown
   // workspace fails with NOT_FOUND and a deleted one with
   // FAILED_PRECONDITION. The operator's only.
-  rpc MapInstallation(MapInstallationRequest) returns (MapInstallationResponse);
+  rpc MapInstallation(MapInstallationRequest) returns (MapInstallationResponse) {
+    option (toshi.audit) = {action: "installation.mapped"};
+  }
 
   // PublishJobDeliveryCheck publishes the result of the delivery check
   // the grant began. The check's start is the grant's creation. A grant
   // that closed is refused, and a failed close of the grant replaces a
   // result published before it. The operator's only.
-  rpc PublishJobDeliveryCheck(PublishJobDeliveryCheckRequest) returns (PublishJobDeliveryCheckResponse);
+  rpc PublishJobDeliveryCheck(PublishJobDeliveryCheckRequest) returns (PublishJobDeliveryCheckResponse) {
+    option (toshi.audit) = {action: "secret_delivery.check_published"};
+  }
 }
 
 message AdmitGrantRequest {}

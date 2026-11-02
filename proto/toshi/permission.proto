@@ -39,7 +39,9 @@ extend google.protobuf.MethodOptions {
   // records one event: on the Workspace API a call whose permission's level
   // is not "read", on the operator API a call whose verb is not a read
   // (Get, List, Watch, Wait, Summarise, Suggest, Export, Discover). A read
-  // whose option names an action records one too.
+  // whose option names an action records one too. The GitHub product and
+  // core APIs use the same verb rule to check options; their events are
+  // recorded elsewhere.
   Audit audit = 51002;
 
   // by_field marks an update call that needs no permission of its own: each
@@ -81,8 +83,8 @@ message Audit {
   // action is "<noun>.<verb>" with the verb in the past tense. Unset, it is
   // the method's name: CreateSandbox records "sandbox.created". The build
   // fails a method whose verb it cannot put in the past tense, or whose name
-  // gives the action this field names. "none" records nothing, for a call
-  // no Workspace API caller makes, such as a workload's upload.
+  // gives the action this field names. "none" records nothing and requires
+  // a reason.
   string action = 1;
 
   // target is what the call acts on, as "<kind>:<source>", or "none". Unset,
@@ -94,6 +96,10 @@ message Audit {
   // "response.endpoint.id", "workspace" for the call's workspace, or
   // "project" for the project the call resolved.
   string target = 2;
+
+  // reason explains why an action of "none" records nothing. It is only
+  // allowed with that action.
+  string reason = 3;
 }
 
 // MCP is how a call appears as a tool of the MCP server: each hint that is

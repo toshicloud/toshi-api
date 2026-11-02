@@ -11,6 +11,7 @@
 package githubv1
 
 import (
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -989,7 +990,7 @@ var File_toshi_github_v1_github_proto protoreflect.FileDescriptor
 
 const file_toshi_github_v1_github_proto_rawDesc = "" +
 	"\n" +
-	"\x1ctoshi/github/v1/github.proto\x12\x0ftoshi.github.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"^\n" +
+	"\x1ctoshi/github/v1/github.proto\x12\x0ftoshi.github.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"^\n" +
 	"\x16MapInstallationRequest\x12'\n" +
 	"\x0finstallation_id\x18\x01 \x01(\x03R\x0einstallationId\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\tR\btenantId\"\x19\n" +
@@ -1059,12 +1060,14 @@ const file_toshi_github_v1_github_proto_rawDesc = "" +
 	"\alacking\x18\x01 \x03(\v2\x1d.toshi.github.v1.InstallationR\alacking\"8\n" +
 	"\fInstallation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
-	"\aaccount\x18\x02 \x01(\tR\aaccount2\xb1\x04\n" +
-	"\rGitHubService\x12d\n" +
-	"\x0fMapInstallation\x12'.toshi.github.v1.MapInstallationRequest\x1a(.toshi.github.v1.MapInstallationResponse\x12p\n" +
+	"\aaccount\x18\x02 \x01(\tR\aaccount2\xdc\x05\n" +
+	"\rGitHubService\x12\x7f\n" +
+	"\x0fMapInstallation\x12'.toshi.github.v1.MapInstallationRequest\x1a(.toshi.github.v1.MapInstallationResponse\"\x19\xd2\xf3\x18\x15\n" +
+	"\x13installation.mapped\x12p\n" +
 	"\x13ListOpenSourceRepos\x12+.toshi.github.v1.ListOpenSourceReposRequest\x1a,.toshi.github.v1.ListOpenSourceReposResponse\x12v\n" +
-	"\x15SetOpenSourceApproval\x12-.toshi.github.v1.SetOpenSourceApprovalRequest\x1a..toshi.github.v1.SetOpenSourceApprovalResponse\x12^\n" +
-	"\rGetJobFailure\x12%.toshi.github.v1.GetJobFailureRequest\x1a&.toshi.github.v1.GetJobFailureResponse\x12p\n" +
+	"\x15SetOpenSourceApproval\x12-.toshi.github.v1.SetOpenSourceApprovalRequest\x1a..toshi.github.v1.SetOpenSourceApprovalResponse\x12\xed\x01\n" +
+	"\rGetJobFailure\x12%.toshi.github.v1.GetJobFailureRequest\x1a&.toshi.github.v1.GetJobFailureResponse\"\x8c\x01\xd2\xf3\x18\x87\x01\n" +
+	"\x04none\x1a\x7fA read; the failing step it stores belongs to the job the host already reported, so the write is not a change of the workspace.\x12p\n" +
 	"\x13CheckSecretDelivery\x12+.toshi.github.v1.CheckSecretDeliveryRequest\x1a,.toshi.github.v1.CheckSecretDeliveryResponseB\x1fZ\x1dgo.toshicloud.io/api/githubv1b\x06proto3"
 
 var (

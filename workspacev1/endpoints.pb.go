@@ -4688,7 +4688,7 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	" ENDPOINT_MESSAGE_STATE_IN_FLIGHT\x10\x02\x12$\n" +
 	" ENDPOINT_MESSAGE_STATE_DELIVERED\x10\x03\x12\x1f\n" +
 	"\x1bENDPOINT_MESSAGE_STATE_DEAD\x10\x04\x12\"\n" +
-	"\x1eENDPOINT_MESSAGE_STATE_EXPIRED\x10\x052\x93\x14\n" +
+	"\x1eENDPOINT_MESSAGE_STATE_EXPIRED\x10\x052\xb5\x14\n" +
 	"\x0fEndpointService\x12\xac\x01\n" +
 	"\x0eCreateEndpoint\x12).toshi.workspace.v1.CreateEndpointRequest\x1a*.toshi.workspace.v1.CreateEndpointResponse\"C\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
 	"\x19host_job.endpoint_exposed\x12\x0fhost_job:job_id\x12x\n" +
@@ -4708,9 +4708,9 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x0eDeleteEndpoint\x12).toshi.workspace.v1.DeleteEndpointRequest\x1a*.toshi.workspace.v1.DeleteEndpointResponse\"C\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
 	"\x19host_job.endpoint_deleted\x12\x0fhost_job:job_id\x12u\n" +
 	"\fListForwards\x12'.toshi.workspace.v1.ListForwardsRequest\x1a(.toshi.workspace.v1.ListForwardsResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12l\n" +
-	"\tGetTunnel\x12$.toshi.workspace.v1.GetTunnelRequest\x1a%.toshi.workspace.v1.GetTunnelResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\x95\x01\n" +
-	"\x13SendEndpointMessage\x12..toshi.workspace.v1.SendEndpointMessageRequest\x1a/.toshi.workspace.v1.SendEndpointMessageResponse\"\x1d\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18\x06\n" +
-	"\x04none\x12\x8f\x01\n" +
+	"\tGetTunnel\x12$.toshi.workspace.v1.GetTunnelRequest\x1a%.toshi.workspace.v1.GetTunnelResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xb7\x01\n" +
+	"\x13SendEndpointMessage\x12..toshi.workspace.v1.SendEndpointMessageRequest\x1a/.toshi.workspace.v1.SendEndpointMessageResponse\"?\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18(\n" +
+	"\x15endpoint.message_sent\x12\x0fservice:service\x12\x8f\x01\n" +
 	"\x14TailEndpointMessages\x12/.toshi.workspace.v1.TailEndpointMessagesRequest\x1a0.toshi.workspace.v1.TailEndpointMessagesResponse\"\x12\xc2\xf3\x18\x0eendpoints.read0\x01\x12\xc9\x01\n" +
 	"\x15ReplayEndpointMessage\x120.toshi.workspace.v1.ReplayEndpointMessageRequest\x1a1.toshi.workspace.v1.ReplayEndpointMessageResponse\"K\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x184\n" +
 	"!service.endpoint_message_replayed\x12\x0fservice:serviceB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
