@@ -101,6 +101,12 @@ type SecretServiceClient interface {
 	// FAILED_PRECONDITION. A person's own names follow the same rule among
 	// themselves, and a name may not be both someone's own and not: either
 	// fails with FAILED_PRECONDITION. Two people may own the same name.
+	//
+	// A keyed put stores a metadata-only pending answer with the version in
+	// one transaction, never its value or a credential. The version's
+	// rotation_completed_at marks the service rotation as finished; a retry
+	// finishes it once, or returns the answer if the version was deleted.
+	// Storing the completed response clears pending_snapshot in the same write.
 	PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error)
 	// DeleteSecret removes the key and every version of it: with own the
 	// caller's own key, with owner that person's. A key that serves a model
@@ -314,6 +320,12 @@ type SecretServiceHandler interface {
 	// FAILED_PRECONDITION. A person's own names follow the same rule among
 	// themselves, and a name may not be both someone's own and not: either
 	// fails with FAILED_PRECONDITION. Two people may own the same name.
+	//
+	// A keyed put stores a metadata-only pending answer with the version in
+	// one transaction, never its value or a credential. The version's
+	// rotation_completed_at marks the service rotation as finished; a retry
+	// finishes it once, or returns the answer if the version was deleted.
+	// Storing the completed response clears pending_snapshot in the same write.
 	PutSecret(context.Context, *connect.Request[workspacev1.PutSecretRequest]) (*connect.Response[workspacev1.PutSecretResponse], error)
 	// DeleteSecret removes the key and every version of it: with own the
 	// caller's own key, with owner that person's. A key that serves a model

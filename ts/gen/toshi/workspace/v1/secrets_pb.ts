@@ -2069,6 +2069,12 @@ export const SecretService: GenService<{
    * themselves, and a name may not be both someone's own and not: either
    * fails with FAILED_PRECONDITION. Two people may own the same name.
    *
+   * A keyed put stores a metadata-only pending answer with the version in
+   * one transaction, never its value or a credential. The version's
+   * rotation_completed_at marks the service rotation as finished; a retry
+   * finishes it once, or returns the answer if the version was deleted.
+   * Storing the completed response clears pending_snapshot in the same write.
+   *
    * @generated from rpc toshi.workspace.v1.SecretService.PutSecret
    */
   putSecret: {

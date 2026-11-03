@@ -1879,6 +1879,12 @@ export const ImageService: GenService<{
    * the reason IMAGE_BUILD_IN_PROGRESS, and a container image that is
    * pushed rather than built, with FAILED_PRECONDITION.
    *
+   * A keyed build stores a metadata-only pending answer with the version in
+   * one transaction, never a secret value or credential. The version's
+   * build_environment records the selected environment for recovery, without
+   * consulting later branch rules. Storing the completed response clears
+   * pending_snapshot in the same write.
+   *
    * @generated from rpc toshi.workspace.v1.ImageService.BuildImage
    */
   buildImage: {

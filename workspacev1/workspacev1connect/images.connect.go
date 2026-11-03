@@ -83,6 +83,12 @@ type ImageServiceClient interface {
 	// An image with a build in progress fails with FAILED_PRECONDITION and
 	// the reason IMAGE_BUILD_IN_PROGRESS, and a container image that is
 	// pushed rather than built, with FAILED_PRECONDITION.
+	//
+	// A keyed build stores a metadata-only pending answer with the version in
+	// one transaction, never a secret value or credential. The version's
+	// build_environment records the selected environment for recovery, without
+	// consulting later branch rules. Storing the completed response clears
+	// pending_snapshot in the same write.
 	BuildImage(context.Context, *connect.Request[workspacev1.BuildImageRequest]) (*connect.Response[workspacev1.BuildImageResponse], error)
 	// UpdateImage sets the fields of the image that update_mask names; the
 	// request's image names it by its name. The one field it sets is
@@ -231,6 +237,12 @@ type ImageServiceHandler interface {
 	// An image with a build in progress fails with FAILED_PRECONDITION and
 	// the reason IMAGE_BUILD_IN_PROGRESS, and a container image that is
 	// pushed rather than built, with FAILED_PRECONDITION.
+	//
+	// A keyed build stores a metadata-only pending answer with the version in
+	// one transaction, never a secret value or credential. The version's
+	// build_environment records the selected environment for recovery, without
+	// consulting later branch rules. Storing the completed response clears
+	// pending_snapshot in the same write.
 	BuildImage(context.Context, *connect.Request[workspacev1.BuildImageRequest]) (*connect.Response[workspacev1.BuildImageResponse], error)
 	// UpdateImage sets the fields of the image that update_mask names; the
 	// request's image names it by its name. The one field it sets is
