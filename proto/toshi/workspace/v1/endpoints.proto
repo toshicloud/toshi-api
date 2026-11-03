@@ -195,11 +195,11 @@ service EndpointService {
     option (toshi.permission) = "endpoints.read";
   }
 
-  // ReplayEndpointMessage puts a dead, expired or delivered message of an
-  // event endpoint back in its queue under its own ID, so its webhook-id is
-  // the same: its attempts start again from 0, and its keep runs from the
-  // replay. A message pending or in flight fails with
-  // FAILED_PRECONDITION.
+  // ReplayEndpointMessage appends a new message for a dead, expired or
+  // delivered message. Its ID and webhook-id are new, replay_of names the
+  // message replayed, its attempts start at 0, and its keep runs from the
+  // replay. A retry keeps the message ID. A message pending or in flight
+  // fails with FAILED_PRECONDITION.
   rpc ReplayEndpointMessage(ReplayEndpointMessageRequest) returns (ReplayEndpointMessageResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "endpoints.write";
@@ -400,8 +400,8 @@ enum EndpointMessageState {
   ENDPOINT_MESSAGE_STATE_DELIVERED = 3;
   // It gave up: every attempt of its send or replay failed, or a final
   // failure ended it at once, such as a refused URL or an answer of 410.
-  // The messages after it are still delivered; ReplayEndpointMessage puts
-  // it back.
+  // The messages after it are still delivered; ReplayEndpointMessage appends
+  // a new message for it.
   ENDPOINT_MESSAGE_STATE_DEAD = 4;
   // Its endpoint's keep passed before it was delivered.
   ENDPOINT_MESSAGE_STATE_EXPIRED = 5;
@@ -1080,6 +1080,6 @@ message ReplayEndpointMessageRequest {
 
 // ReplayEndpointMessageResponse carries the message as replayed.
 message ReplayEndpointMessageResponse {
-  // The message as it now is: pending.
+  // The new message, pending, with replay_of naming the replayed message.
   EndpointMessage message = 1;
 }

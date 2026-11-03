@@ -171,11 +171,11 @@ type EndpointServiceClient interface {
 	// added, until the caller ends the call. States narrows the stream to
 	// messages in those states when it is read.
 	TailEndpointMessages(context.Context, *connect.Request[workspacev1.TailEndpointMessagesRequest]) (*connect.ServerStreamForClient[workspacev1.TailEndpointMessagesResponse], error)
-	// ReplayEndpointMessage puts a dead, expired or delivered message of an
-	// event endpoint back in its queue under its own ID, so its webhook-id is
-	// the same: its attempts start again from 0, and its keep runs from the
-	// replay. A message pending or in flight fails with
-	// FAILED_PRECONDITION.
+	// ReplayEndpointMessage appends a new message for a dead, expired or
+	// delivered message. Its ID and webhook-id are new, replay_of names the
+	// message replayed, its attempts start at 0, and its keep runs from the
+	// replay. A retry keeps the message ID. A message pending or in flight
+	// fails with FAILED_PRECONDITION.
 	ReplayEndpointMessage(context.Context, *connect.Request[workspacev1.ReplayEndpointMessageRequest]) (*connect.Response[workspacev1.ReplayEndpointMessageResponse], error)
 }
 
@@ -477,11 +477,11 @@ type EndpointServiceHandler interface {
 	// added, until the caller ends the call. States narrows the stream to
 	// messages in those states when it is read.
 	TailEndpointMessages(context.Context, *connect.Request[workspacev1.TailEndpointMessagesRequest], *connect.ServerStream[workspacev1.TailEndpointMessagesResponse]) error
-	// ReplayEndpointMessage puts a dead, expired or delivered message of an
-	// event endpoint back in its queue under its own ID, so its webhook-id is
-	// the same: its attempts start again from 0, and its keep runs from the
-	// replay. A message pending or in flight fails with
-	// FAILED_PRECONDITION.
+	// ReplayEndpointMessage appends a new message for a dead, expired or
+	// delivered message. Its ID and webhook-id are new, replay_of names the
+	// message replayed, its attempts start at 0, and its keep runs from the
+	// replay. A retry keeps the message ID. A message pending or in flight
+	// fails with FAILED_PRECONDITION.
 	ReplayEndpointMessage(context.Context, *connect.Request[workspacev1.ReplayEndpointMessageRequest]) (*connect.Response[workspacev1.ReplayEndpointMessageResponse], error)
 }
 

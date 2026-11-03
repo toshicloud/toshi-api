@@ -326,8 +326,8 @@ const (
 	EndpointMessageState_ENDPOINT_MESSAGE_STATE_DELIVERED EndpointMessageState = 3
 	// It gave up: every attempt of its send or replay failed, or a final
 	// failure ended it at once, such as a refused URL or an answer of 410.
-	// The messages after it are still delivered; ReplayEndpointMessage puts
-	// it back.
+	// The messages after it are still delivered; ReplayEndpointMessage appends
+	// a new message for it.
 	EndpointMessageState_ENDPOINT_MESSAGE_STATE_DEAD EndpointMessageState = 4
 	// Its endpoint's keep passed before it was delivered.
 	EndpointMessageState_ENDPOINT_MESSAGE_STATE_EXPIRED EndpointMessageState = 5
@@ -4356,7 +4356,7 @@ func (x *ReplayEndpointMessageRequest) GetRequestKey() string {
 // ReplayEndpointMessageResponse carries the message as replayed.
 type ReplayEndpointMessageResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The message as it now is: pending.
+	// The new message, pending, with replay_of naming the replayed message.
 	Message       *EndpointMessage `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

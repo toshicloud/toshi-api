@@ -4551,7 +4551,7 @@ export const ReplayEndpointMessageRequestSchema: GenMessage<ReplayEndpointMessag
  */
 export type ReplayEndpointMessageResponse = Message<"toshi.workspace.v1.ReplayEndpointMessageResponse"> & {
   /**
-   * The message as it now is: pending.
+   * The new message, pending, with replay_of naming the replayed message.
    *
    * @generated from field: toshi.workspace.v1.EndpointMessage message = 1;
    */
@@ -4565,7 +4565,7 @@ export type ReplayEndpointMessageResponse = Message<"toshi.workspace.v1.ReplayEn
  */
 export type ReplayEndpointMessageResponseJson = {
   /**
-   * The message as it now is: pending.
+   * The new message, pending, with replay_of naming the replayed message.
    *
    * @generated from field: toshi.workspace.v1.EndpointMessage message = 1;
    */
@@ -4856,8 +4856,8 @@ export enum EndpointMessageState {
   /**
    * It gave up: every attempt of its send or replay failed, or a final
    * failure ended it at once, such as a refused URL or an answer of 410.
-   * The messages after it are still delivered; ReplayEndpointMessage puts
-   * it back.
+   * The messages after it are still delivered; ReplayEndpointMessage appends
+   * a new message for it.
    *
    * @generated from enum value: ENDPOINT_MESSAGE_STATE_DEAD = 4;
    */
@@ -5115,11 +5115,11 @@ export const EndpointService: GenService<{
     output: typeof TailEndpointMessagesResponseSchema;
   },
   /**
-   * ReplayEndpointMessage puts a dead, expired or delivered message of an
-   * event endpoint back in its queue under its own ID, so its webhook-id is
-   * the same: its attempts start again from 0, and its keep runs from the
-   * replay. A message pending or in flight fails with
-   * FAILED_PRECONDITION.
+   * ReplayEndpointMessage appends a new message for a dead, expired or
+   * delivered message. Its ID and webhook-id are new, replay_of names the
+   * message replayed, its attempts start at 0, and its keep runs from the
+   * replay. A retry keeps the message ID. A message pending or in flight
+   * fails with FAILED_PRECONDITION.
    *
    * @generated from rpc toshi.workspace.v1.EndpointService.ReplayEndpointMessage
    */
