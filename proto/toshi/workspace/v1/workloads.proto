@@ -303,12 +303,14 @@ service WorkloadService {
   // Only a person answers: a call that acts for no person, such as a
   // workload's own token, fails with PERMISSION_DENIED. A prompt is
   // answered once: a prompt that is not waiting, answered or ended with
-  // the workload's run, fails with FAILED_PRECONDITION. An approval is
+  // the workload's run, fails with FAILED_PRECONDITION. A second answer
+  // names the earlier answer's event and time; an ended prompt names its
+  // reason. An approval is
   // answered "approved" or "denied", a question with options one of them,
   // and one without options any text of 1 to 4096 bytes; another answer
   // fails with INVALID_ARGUMENT.
   rpc AnswerPrompt(AnswerPromptRequest) returns (AnswerPromptResponse) {
-    option (toshi.key_mode) = NATURAL;
+    option (toshi.key_mode) = KEY;
     option (toshi.permission) = "workloads.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
@@ -919,6 +921,10 @@ message AnswerPromptRequest {
   // The answer: "approved" or "denied", one of a question's options, or
   // 1 to 4096 bytes of text.
   string answer = 5;
+  // When set, must match the waiting prompt's decision_id.
+  string decision_id = 6 [json_name = "decision_id"];
+  // A key for retrying this answer without answering twice; empty for none.
+  string request_key = 7 [json_name = "request_key"];
 }
 
 // AnswerPromptResponse is the answer to AnswerPrompt.

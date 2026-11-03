@@ -97,7 +97,11 @@ type AnswerPromptRequest struct {
 	PromptId string `protobuf:"bytes,4,opt,name=prompt_id,json=promptId,proto3" json:"prompt_id,omitempty"`
 	// The answer: "approved" or "denied", one of a question's options, or
 	// 1 to 4096 bytes of text.
-	Answer        string `protobuf:"bytes,5,opt,name=answer,proto3" json:"answer,omitempty"`
+	Answer string `protobuf:"bytes,5,opt,name=answer,proto3" json:"answer,omitempty"`
+	// When set, must match the waiting prompt's decision_id.
+	DecisionId string `protobuf:"bytes,6,opt,name=decision_id,proto3" json:"decision_id,omitempty"`
+	// A key for retrying this answer without answering twice; empty for none.
+	RequestKey    string `protobuf:"bytes,7,opt,name=request_key,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -163,6 +167,20 @@ func (x *AnswerPromptRequest) GetPromptId() string {
 func (x *AnswerPromptRequest) GetAnswer() string {
 	if x != nil {
 		return x.Answer
+	}
+	return ""
+}
+
+func (x *AnswerPromptRequest) GetDecisionId() string {
+	if x != nil {
+		return x.DecisionId
+	}
+	return ""
+}
+
+func (x *AnswerPromptRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
 	}
 	return ""
 }
@@ -5422,14 +5440,16 @@ var File_toshi_workspace_v1_workloads_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/workloads.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/workspace.proto\"\xa7\x01\n" +
+	"\"toshi/workspace/v1/workloads.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/workspace.proto\"\xeb\x01\n" +
 	"\x13AnswerPromptRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
 	"\vworkload_id\x18\x03 \x01(\tR\n" +
 	"workloadId\x12\x1b\n" +
 	"\tprompt_id\x18\x04 \x01(\tR\bpromptId\x12\x16\n" +
-	"\x06answer\x18\x05 \x01(\tR\x06answer\"G\n" +
+	"\x06answer\x18\x05 \x01(\tR\x06answer\x12 \n" +
+	"\vdecision_id\x18\x06 \x01(\tR\vdecision_id\x12 \n" +
+	"\vrequest_key\x18\a \x01(\tR\vrequest_key\"G\n" +
 	"\x14AnswerPromptResponse\x12/\n" +
 	"\x05event\x18\x01 \x01(\v2\x19.toshi.workspace.v1.EventR\x05event\"\xc0\x01\n" +
 	"\x18EmitWorkloadEventRequest\x12\x18\n" +
@@ -5884,7 +5904,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x0eExecuteCommand\x12).toshi.workspace.v1.ExecuteCommandRequest\x1a*.toshi.workspace.v1.ExecuteCommandResponse\"B\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
 	"\x10sandbox.executed\xea\xf3\x18\x02(\x01\x90\xf4\x18\x010\x01\x12\xb4\x01\n" +
 	"\fAnswerPrompt\x12'.toshi.workspace.v1.AnswerPromptRequest\x1a(.toshi.workspace.v1.AnswerPromptResponse\"Q\xc2\xf3\x18\x0fworkloads.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
-	"\x0fprompt.answered\x12\x14workload:workload_id\x90\xf4\x18\x02\x12\xb4\x01\n" +
+	"\x0fprompt.answered\x12\x14workload:workload_id\x90\xf4\x18\x01\x12\xb4\x01\n" +
 	"\x11EmitWorkloadEvent\x12,.toshi.workspace.v1.EmitWorkloadEventRequest\x1a-.toshi.workspace.v1.EmitWorkloadEventResponse\"B\xc2\xf3\x18\x0fworkloads.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x18\n" +
 	"\x16workload.event_emitted\x90\xf4\x18\x01\x12\x8c\x01\n" +
 	"\x0eWatchTelemetry\x12).toshi.workspace.v1.WatchTelemetryRequest\x1a*.toshi.workspace.v1.WatchTelemetryResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment0\x01\x12\x89\x01\n" +

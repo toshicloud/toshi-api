@@ -397,7 +397,9 @@ type WorkloadServiceClient interface {
 	// Only a person answers: a call that acts for no person, such as a
 	// workload's own token, fails with PERMISSION_DENIED. A prompt is
 	// answered once: a prompt that is not waiting, answered or ended with
-	// the workload's run, fails with FAILED_PRECONDITION. An approval is
+	// the workload's run, fails with FAILED_PRECONDITION. A second answer
+	// names the earlier answer's event and time; an ended prompt names its
+	// reason. An approval is
 	// answered "approved" or "denied", a question with options one of them,
 	// and one without options any text of 1 to 4096 bytes; another answer
 	// fails with INVALID_ARGUMENT.
@@ -1730,7 +1732,9 @@ type WorkloadServiceHandler interface {
 	// Only a person answers: a call that acts for no person, such as a
 	// workload's own token, fails with PERMISSION_DENIED. A prompt is
 	// answered once: a prompt that is not waiting, answered or ended with
-	// the workload's run, fails with FAILED_PRECONDITION. An approval is
+	// the workload's run, fails with FAILED_PRECONDITION. A second answer
+	// names the earlier answer's event and time; an ended prompt names its
+	// reason. An approval is
 	// answered "approved" or "denied", a question with options one of them,
 	// and one without options any text of 1 to 4096 bytes; another answer
 	// fails with INVALID_ARGUMENT.
