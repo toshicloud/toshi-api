@@ -83,7 +83,7 @@ export const reasons = {
   WORKSPACE_DELETION_SCHEDULED: { code: "FAILED_PRECONDITION", metadata: ["state"], text: "A deletion is already scheduled for this workspace." },
   WORKSPACE_SUSPENDED: { code: "FAILED_PRECONDITION", metadata: ["state"], text: "The operator suspended this workspace; wait for it to be resumed." },
   IMAGE_BASE_UNKNOWN: { code: "INVALID_ARGUMENT", metadata: ["base", "bases"], text: "That base image is not one Toshi offers; choose a listed base." },
-  INVALID_FIELD: { code: "INVALID_ARGUMENT", metadata: ["key", "limit", "requested", "cause"], text: "That request key is too long, has unprintable bytes, or differs between the field and the header." },
+  INVALID_FIELD: { code: "INVALID_ARGUMENT", metadata: ["field", "key", "limit", "requested", "cause"], text: "A field of this request is invalid; see the field in the metadata." },
   INVALID_SETTING: { code: "INVALID_ARGUMENT", metadata: ["key", "cause", "limit", "requested"], text: "That setting value is outside what your plan allows." },
   RESERVED_NAME: { code: "INVALID_ARGUMENT", metadata: ["name", "why"], text: "That name is reserved; choose another one." },
   VOLUME_CEILING_ABOVE_MAX: { code: "INVALID_ARGUMENT", metadata: ["max_gb", "plan"], text: "That storage ceiling is above your plan's maximum." },

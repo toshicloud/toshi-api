@@ -163,7 +163,7 @@ const (
 	ReasonWorkspaceSuspended = "WORKSPACE_SUSPENDED"
 	// ReasonImageBaseUnknown: `CreateImage` with a `base` that is not one of Toshi's.
 	ReasonImageBaseUnknown = "IMAGE_BASE_UNKNOWN"
-	// ReasonInvalidField: A request key is too long, contains bytes outside printable ASCII, or differs between the field and the header.
+	// ReasonInvalidField: A field of the request is missing, malformed or out of range.
 	ReasonInvalidField = "INVALID_FIELD"
 	// ReasonInvalidSetting: `UpdateWorkspace` setting a stopped-sandbox keep outside the plan's bound; metadata carries `key`, `cause`, `limit` and `requested`.
 	ReasonInvalidSetting = "INVALID_SETTING"
