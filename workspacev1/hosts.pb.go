@@ -28,6 +28,7 @@ const (
 type HostState int32
 
 const (
+	// The value is unset; ListHosts refuses it in states.
 	HostState_HOST_STATE_UNSPECIFIED HostState = 0
 	// The host takes new jobs.
 	HostState_HOST_STATE_ONLINE HostState = 1
@@ -148,6 +149,7 @@ func (EgressSource) EnumDescriptor() ([]byte, []int) {
 type AgentVersionStatus int32
 
 const (
+	// The status was not set.
 	AgentVersionStatus_AGENT_VERSION_STATUS_UNSPECIFIED AgentVersionStatus = 0
 	// Either side is not a release (snapshot, dev, or empty).
 	AgentVersionStatus_AGENT_VERSION_STATUS_UNKNOWN AgentVersionStatus = 1
@@ -212,8 +214,11 @@ func (AgentVersionStatus) EnumDescriptor() ([]byte, []int) {
 type CloudHostCheckStatus int32
 
 const (
+	// No status: the control plane reports it for a check result it does not
+	// know.
 	CloudHostCheckStatus_CLOUD_HOST_CHECK_STATUS_UNSPECIFIED CloudHostCheckStatus = 0
-	CloudHostCheckStatus_CLOUD_HOST_CHECK_STATUS_OK          CloudHostCheckStatus = 1
+	// The check passed.
+	CloudHostCheckStatus_CLOUD_HOST_CHECK_STATUS_OK CloudHostCheckStatus = 1
 	// Works, but something deserves a look.
 	CloudHostCheckStatus_CLOUD_HOST_CHECK_STATUS_WARN CloudHostCheckStatus = 2
 	// Fails: jobs on the host would fail too.
@@ -267,6 +272,7 @@ func (CloudHostCheckStatus) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_hosts_proto_rawDescGZIP(), []int{3}
 }
 
+// ListHostsRequest filters and pages the workspace's hosts.
 type ListHostsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Hosts in any of these states; empty matches every state.
@@ -339,9 +345,11 @@ func (x *ListHostsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListHostsResponse is one page of the workspace's hosts.
 type ListHostsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Hosts []*Host                `protobuf:"bytes,1,rep,name=hosts,proto3" json:"hosts,omitempty"`
+	// The page's hosts, ordered by ID.
+	Hosts []*Host `protobuf:"bytes,1,rep,name=hosts,proto3" json:"hosts,omitempty"`
 	// The control plane's reaper.long_offline_after: a host whose last heartbeat
 	// is older, and that is offline, has long_offline set.
 	LongOfflineAfter *durationpb.Duration `protobuf:"bytes,2,opt,name=long_offline_after,json=longOfflineAfter,proto3" json:"long_offline_after,omitempty"`
@@ -402,6 +410,7 @@ func (x *ListHostsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// ListHostStorageRequest asks for the volumes one host holds.
 type ListHostStorageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The host whose volumes to list.
@@ -465,9 +474,11 @@ func (x *ListHostStorageRequest) GetPageToken() string {
 	return ""
 }
 
+// ListHostStorageResponse is one page of those volumes.
 type ListHostStorageResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Volumes []*HostVolume          `protobuf:"bytes,1,rep,name=volumes,proto3" json:"volumes,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's volumes, ordered by volume ID.
+	Volumes []*HostVolume `protobuf:"bytes,1,rep,name=volumes,proto3" json:"volumes,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -518,6 +529,7 @@ func (x *ListHostStorageResponse) GetNextPageToken() string {
 	return ""
 }
 
+// ListHostAlertsRequest pages the active alerts of the workspace's hosts.
 type ListHostAlertsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most alerts in one page; zero lets the server choose.
@@ -572,9 +584,11 @@ func (x *ListHostAlertsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListHostAlertsResponse is one page of those alerts.
 type ListHostAlertsResponse struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Alerts []*HostAlert           `protobuf:"bytes,1,rep,name=alerts,proto3" json:"alerts,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's alerts, ordered by kind.
+	Alerts []*HostAlert `protobuf:"bytes,1,rep,name=alerts,proto3" json:"alerts,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -625,9 +639,11 @@ func (x *ListHostAlertsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// SetHostStateRequest names a host and the state to put it in.
 type SetHostStateRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The host's id.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// HOST_STATE_DRAINING or HOST_STATE_ONLINE.
 	State         HostState `protobuf:"varint,2,opt,name=state,proto3,enum=toshi.workspace.v1.HostState" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -678,6 +694,7 @@ func (x *SetHostStateRequest) GetState() HostState {
 	return HostState_HOST_STATE_UNSPECIFIED
 }
 
+// SetHostStateResponse carries the host in its new state.
 type SetHostStateResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The host as stored after the change.
@@ -723,9 +740,11 @@ func (x *SetHostStateResponse) GetHost() *Host {
 	return nil
 }
 
+// RetireHostRequest names the host to remove.
 type RetireHostRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -767,6 +786,7 @@ func (x *RetireHostRequest) GetId() string {
 	return ""
 }
 
+// RetireHostResponse is empty: a retired host has no row left to return.
 type RetireHostResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -846,7 +866,9 @@ type CreateCloudHostRequest struct {
 	NoOverflow bool `protobuf:"varint,14,opt,name=no_overflow,json=noOverflow,proto3" json:"no_overflow,omitempty"`
 	// The GCP project and zone the instances run in (GCP).
 	Project string `protobuf:"bytes,15,opt,name=project,proto3" json:"project,omitempty"`
-	Zone    string `protobuf:"bytes,16,opt,name=zone,proto3" json:"zone,omitempty"`
+	// The zone the instances run in (GCP, required, such as us-central1-a) or
+	// the availability zone "1", "2" or "3" (Azure, optional).
+	Zone string `protobuf:"bytes,16,opt,name=zone,proto3" json:"zone,omitempty"`
 	// The workspace's service account the control plane impersonates (GCP).
 	ServiceAccount string `protobuf:"bytes,17,opt,name=service_account,json=serviceAccount,proto3" json:"service_account,omitempty"`
 	// Where the instances reach the internet: "public" (the default: each
@@ -1046,12 +1068,14 @@ func (x *CreateCloudHostRequest) GetResourceGroup() string {
 // principal the role must allow.
 type CreateCloudHostResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Host  *Host                  `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	// The host as stored: offline until its instances run.
+	Host *Host `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
 	// The external ID the role's trust policy requires.
 	ExternalId string `protobuf:"bytes,2,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
 	// The AWS principal the workspace's role must trust (AWS).
-	PrincipalArn string     `protobuf:"bytes,3,opt,name=principal_arn,json=principalArn,proto3" json:"principal_arn,omitempty"`
-	CloudHost    *CloudHost `protobuf:"bytes,4,opt,name=cloud_host,json=cloudHost,proto3" json:"cloud_host,omitempty"`
+	PrincipalArn string `protobuf:"bytes,3,opt,name=principal_arn,json=principalArn,proto3" json:"principal_arn,omitempty"`
+	// The cloud account behind the host.
+	CloudHost *CloudHost `protobuf:"bytes,4,opt,name=cloud_host,json=cloudHost,proto3" json:"cloud_host,omitempty"`
 	// The Google principal the workspace's service account must let create
 	// tokens for it, with roles/iam.serviceAccountTokenCreator (GCP).
 	GcpPrincipal string `protobuf:"bytes,5,opt,name=gcp_principal,json=gcpPrincipal,proto3" json:"gcp_principal,omitempty"`
@@ -1134,9 +1158,11 @@ func (x *CreateCloudHostResponse) GetAzureApplicationId() string {
 	return ""
 }
 
+// CheckCloudHostRequest names the cloud host to check.
 type CheckCloudHostRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	HostId        string                 `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The cloud host's id.
+	HostId        string `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1178,6 +1204,7 @@ func (x *CheckCloudHostRequest) GetHostId() string {
 	return ""
 }
 
+// CheckCloudHostResponse carries the result of each check.
 type CheckCloudHostResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// One row per check, in the order they ran.
@@ -1292,7 +1319,8 @@ func (x *CreateEnrollmentTokenRequest) GetRequestKey() string {
 // CreateEnrollmentTokenResponse carries the new token and its value.
 type CreateEnrollmentTokenResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Token *Token                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	// The stored token; its value is returned only in value.
+	Token *Token `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	// The new token. It is returned only here.
 	Value         string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1346,14 +1374,24 @@ func (x *CreateEnrollmentTokenResponse) GetValue() string {
 // Host is a machine that runs VMs for Toshi.
 type Host struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The host's id, made from its name by the control plane.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The host's name: the host_name its agent registered with, or the name
+	// given to a cloud host.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The guest operating systems the host can run.
-	Os        []string          `protobuf:"bytes,3,rep,name=os,proto3" json:"os,omitempty"`
-	Cpus      int32             `protobuf:"varint,4,opt,name=cpus,proto3" json:"cpus,omitempty"`
-	MemoryMib int32             `protobuf:"varint,5,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
-	Labels    map[string]string `protobuf:"bytes,6,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	State     HostState         `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.HostState" json:"state,omitempty"`
+	Os []string `protobuf:"bytes,3,rep,name=os,proto3" json:"os,omitempty"`
+	// The CPUs the host offers VMs: what its agent reported at its last
+	// registration, or a cloud host's max_vcpus.
+	Cpus int32 `protobuf:"varint,4,opt,name=cpus,proto3" json:"cpus,omitempty"`
+	// The memory the host offers VMs, in MiB: what its agent reported at its
+	// last registration, or 4096 per vCPU of a cloud host's max_vcpus.
+	MemoryMib int32 `protobuf:"varint,5,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
+	// Labels the operator set on the host's agent, such as a region; a cloud
+	// host's cloud, region and zone.
+	Labels map[string]string `protobuf:"bytes,6,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// Whether the host takes new jobs; the control plane sets it.
+	State HostState `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.HostState" json:"state,omitempty"`
 	// When the host's agent last reported in; unset if it never did.
 	LastSeenAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=last_seen_at,json=lastSeenAt,proto3" json:"last_seen_at,omitempty"`
 	// Memory not used by VMs, in MiB, from the host's last heartbeat.
@@ -1425,10 +1463,12 @@ type Host struct {
 	// registration or heartbeat: a workload whose network policy restricts
 	// is placed only on a host that does. network_reason says why it does
 	// not; empty when it does.
-	NetworkEnforced bool   `protobuf:"varint,30,opt,name=network_enforced,json=networkEnforced,proto3" json:"network_enforced,omitempty"`
-	NetworkReason   string `protobuf:"bytes,31,opt,name=network_reason,json=networkReason,proto3" json:"network_reason,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	NetworkEnforced bool `protobuf:"varint,30,opt,name=network_enforced,json=networkEnforced,proto3" json:"network_enforced,omitempty"`
+	// Why the host does not enforce network rules, as its agent said at its
+	// last registration or heartbeat; empty when it does.
+	NetworkReason string `protobuf:"bytes,31,opt,name=network_reason,json=networkReason,proto3" json:"network_reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Host) Reset() {
@@ -1690,6 +1730,7 @@ type KeptVM struct {
 	Form string `protobuf:"bytes,3,opt,name=form,proto3" json:"form,omitempty"`
 	// The VM's memory and disk.
 	MemoryMib int64 `protobuf:"varint,4,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
+	// The disk the VM holds, in bytes.
 	DiskBytes int64 `protobuf:"varint,5,opt,name=disk_bytes,json=diskBytes,proto3" json:"disk_bytes,omitempty"`
 	// When its workload last stopped or slept; unset while it runs.
 	StoppedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=stopped_at,json=stoppedAt,proto3" json:"stopped_at,omitempty"`
@@ -1772,7 +1813,8 @@ func (x *KeptVM) GetStoppedAt() *timestamppb.Timestamp {
 // HeldRefill is one warm pool whose refill a host holds.
 type HeldRefill struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Size  string                 `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
+	// The runner size of the pool.
+	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
 	// "memory", "memory_limit" or "cpus".
 	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1828,7 +1870,8 @@ type HostEgress struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// IPv4 or IPv6 addresses or CIDR prefixes, sorted; empty unless source is
 	// EGRESS_SOURCE_CONFIGURED or EGRESS_SOURCE_DISCOVERED.
-	Ips    []string     `protobuf:"bytes,1,rep,name=ips,proto3" json:"ips,omitempty"`
+	Ips []string `protobuf:"bytes,1,rep,name=ips,proto3" json:"ips,omitempty"`
+	// Where the addresses come from.
 	Source EgressSource `protobuf:"varint,2,opt,name=source,proto3,enum=toshi.workspace.v1.EgressSource" json:"source,omitempty"`
 	// When the addresses last changed; unset when they never did.
 	ChangedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
@@ -2021,12 +2064,16 @@ type HostAlert struct {
 	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
 	// raised_at is when it was raised; since is the first event it counts.
 	RaisedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=raised_at,json=raisedAt,proto3" json:"raised_at,omitempty"`
-	Since    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=since,proto3" json:"since,omitempty"`
+	// The time of the first event the alert counts.
+	Since *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=since,proto3" json:"since,omitempty"`
 	// count is the events counted from since, and reasons the same events by
 	// reason; top_reason has the most.
-	Count     int64            `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
-	Reasons   map[string]int64 `protobuf:"bytes,5,rep,name=reasons,proto3" json:"reasons,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	TopReason string           `protobuf:"bytes,6,opt,name=top_reason,json=topReason,proto3" json:"top_reason,omitempty"`
+	Count int64 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
+	// The counted events by reason: the host, workspace or reason class each
+	// one is counted under.
+	Reasons map[string]int64 `protobuf:"bytes,5,rep,name=reasons,proto3" json:"reasons,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	// The reason with the most counted events.
+	TopReason string `protobuf:"bytes,6,opt,name=top_reason,json=topReason,proto3" json:"top_reason,omitempty"`
 	// message says the same in one line.
 	Message       string `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2140,7 +2187,8 @@ type CloudHost struct {
 	// Maps a runner size to an instance type, overriding the defaults.
 	InstanceTypes map[string]string `protobuf:"bytes,9,rep,name=instance_types,json=instanceTypes,proto3" json:"instance_types,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// The most vCPUs the host runs at once.
-	MaxVcpus  int32                  `protobuf:"varint,10,opt,name=max_vcpus,json=maxVcpus,proto3" json:"max_vcpus,omitempty"`
+	MaxVcpus int32 `protobuf:"varint,10,opt,name=max_vcpus,json=maxVcpus,proto3" json:"max_vcpus,omitempty"`
+	// When the cloud host was added.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Launches spot instances, moving an interrupted job onto on demand once.
 	Spot bool `protobuf:"varint,12,opt,name=spot,proto3" json:"spot,omitempty"`
@@ -2150,7 +2198,9 @@ type CloudHost struct {
 	MaxInstanceMinutesPerDay int32 `protobuf:"varint,14,opt,name=max_instance_minutes_per_day,json=maxInstanceMinutesPerDay,proto3" json:"max_instance_minutes_per_day,omitempty"`
 	// The GCP project and zone the instances run in.
 	Project string `protobuf:"bytes,15,opt,name=project,proto3" json:"project,omitempty"`
-	Zone    string `protobuf:"bytes,16,opt,name=zone,proto3" json:"zone,omitempty"`
+	// The zone the instances run in (GCP) or the availability zone (Azure);
+	// empty on AWS.
+	Zone string `protobuf:"bytes,16,opt,name=zone,proto3" json:"zone,omitempty"`
 	// The workspace's service account the control plane impersonates (GCP).
 	ServiceAccount string `protobuf:"bytes,17,opt,name=service_account,json=serviceAccount,proto3" json:"service_account,omitempty"`
 	// Where the instances reach the internet: "public" (each gets its own
@@ -2338,7 +2388,8 @@ func (x *CloudHost) GetResourceGroup() string {
 type CloudHostCheck struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// What was checked, for example "assume role" or "ec2:RunInstances".
-	Name   string               `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The outcome of the check.
 	Status CloudHostCheckStatus `protobuf:"varint,2,opt,name=status,proto3,enum=toshi.workspace.v1.CloudHostCheckStatus" json:"status,omitempty"`
 	// What was found, or what to fix. It never holds credentials.
 	Detail        string `protobuf:"bytes,3,opt,name=detail,proto3" json:"detail,omitempty"`

@@ -97,6 +97,7 @@ service HostService {
   }
 }
 
+// ListHostsRequest filters and pages the workspace's hosts.
 message ListHostsRequest {
   // Hosts in any of these states; empty matches every state.
   repeated HostState states = 1;
@@ -108,7 +109,9 @@ message ListHostsRequest {
   string page_token = 4;
 }
 
+// ListHostsResponse is one page of the workspace's hosts.
 message ListHostsResponse {
+  // The page's hosts, ordered by ID.
   repeated Host hosts = 1;
   // The control plane's reaper.long_offline_after: a host whose last heartbeat
   // is older, and that is offline, has long_offline set.
@@ -117,6 +120,7 @@ message ListHostsResponse {
   string next_page_token = 3;
 }
 
+// ListHostStorageRequest asks for the volumes one host holds.
 message ListHostStorageRequest {
   // The host whose volumes to list.
   string host_id = 1;
@@ -126,12 +130,15 @@ message ListHostStorageRequest {
   string page_token = 3;
 }
 
+// ListHostStorageResponse is one page of those volumes.
 message ListHostStorageResponse {
+  // The page's volumes, ordered by volume ID.
   repeated HostVolume volumes = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// ListHostAlertsRequest pages the active alerts of the workspace's hosts.
 message ListHostAlertsRequest {
   // The most alerts in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -139,27 +146,35 @@ message ListHostAlertsRequest {
   string page_token = 2;
 }
 
+// ListHostAlertsResponse is one page of those alerts.
 message ListHostAlertsResponse {
+  // The page's alerts, ordered by kind.
   repeated HostAlert alerts = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// SetHostStateRequest names a host and the state to put it in.
 message SetHostStateRequest {
+  // The host's id.
   string id = 1;
   // HOST_STATE_DRAINING or HOST_STATE_ONLINE.
   HostState state = 2;
 }
 
+// SetHostStateResponse carries the host in its new state.
 message SetHostStateResponse {
   // The host as stored after the change.
   Host host = 1;
 }
 
+// RetireHostRequest names the host to remove.
 message RetireHostRequest {
+  // The host's id.
   string id = 1;
 }
 
+// RetireHostResponse is empty: a retired host has no row left to return.
 message RetireHostResponse {}
 
 // CreateCloudHostRequest names the cloud host to register.
@@ -204,6 +219,8 @@ message CreateCloudHostRequest {
   bool no_overflow = 14;
   // The GCP project and zone the instances run in (GCP).
   string project = 15;
+  // The zone the instances run in (GCP, required, such as us-central1-a) or
+  // the availability zone "1", "2" or "3" (Azure, optional).
   string zone = 16;
   // The workspace's service account the control plane impersonates (GCP).
   string service_account = 17;
@@ -224,11 +241,13 @@ message CreateCloudHostRequest {
 // CreateCloudHostResponse carries the host, the trust external id and the
 // principal the role must allow.
 message CreateCloudHostResponse {
+  // The host as stored: offline until its instances run.
   Host host = 1;
   // The external ID the role's trust policy requires.
   string external_id = 2;
   // The AWS principal the workspace's role must trust (AWS).
   string principal_arn = 3;
+  // The cloud account behind the host.
   CloudHost cloud_host = 4;
   // The Google principal the workspace's service account must let create
   // tokens for it, with roles/iam.serviceAccountTokenCreator (GCP).
@@ -238,10 +257,13 @@ message CreateCloudHostResponse {
   string azure_application_id = 6;
 }
 
+// CheckCloudHostRequest names the cloud host to check.
 message CheckCloudHostRequest {
+  // The cloud host's id.
   string host_id = 1;
 }
 
+// CheckCloudHostResponse carries the result of each check.
 message CheckCloudHostResponse {
   // One row per check, in the order they ran.
   repeated CloudHostCheck checks = 1;
@@ -261,6 +283,7 @@ message CreateEnrollmentTokenRequest {
 
 // CreateEnrollmentTokenResponse carries the new token and its value.
 message CreateEnrollmentTokenResponse {
+  // The stored token; its value is returned only in value.
   Token token = 1;
   // The new token. It is returned only here.
   string value = 2;
@@ -268,13 +291,23 @@ message CreateEnrollmentTokenResponse {
 
 // Host is a machine that runs VMs for Toshi.
 message Host {
+  // The host's id, made from its name by the control plane.
   string id = 1;
+  // The host's name: the host_name its agent registered with, or the name
+  // given to a cloud host.
   string name = 2;
   // The guest operating systems the host can run.
   repeated string os = 3;
+  // The CPUs the host offers VMs: what its agent reported at its last
+  // registration, or a cloud host's max_vcpus.
   int32 cpus = 4;
+  // The memory the host offers VMs, in MiB: what its agent reported at its
+  // last registration, or 4096 per vCPU of a cloud host's max_vcpus.
   int32 memory_mib = 5;
+  // Labels the operator set on the host's agent, such as a region; a cloud
+  // host's cloud, region and zone.
   map<string, string> labels = 6;
+  // Whether the host takes new jobs; the control plane sets it.
   HostState state = 7;
   // When the host's agent last reported in; unset if it never did.
   google.protobuf.Timestamp last_seen_at = 8;
@@ -348,6 +381,8 @@ message Host {
   // is placed only on a host that does. network_reason says why it does
   // not; empty when it does.
   bool network_enforced = 30;
+  // Why the host does not enforce network rules, as its agent said at its
+  // last registration or heartbeat; empty when it does.
   string network_reason = 31;
 }
 
@@ -362,6 +397,7 @@ message KeptVM {
   string form = 3;
   // The VM's memory and disk.
   int64 memory_mib = 4;
+  // The disk the VM holds, in bytes.
   int64 disk_bytes = 5;
   // When its workload last stopped or slept; unset while it runs.
   google.protobuf.Timestamp stopped_at = 6;
@@ -369,6 +405,7 @@ message KeptVM {
 
 // HostState says whether a host takes new jobs.
 enum HostState {
+  // The value is unset; ListHosts refuses it in states.
   HOST_STATE_UNSPECIFIED = 0;
   // The host takes new jobs.
   HOST_STATE_ONLINE = 1;
@@ -380,6 +417,7 @@ enum HostState {
 
 // HeldRefill is one warm pool whose refill a host holds.
 message HeldRefill {
+  // The runner size of the pool.
   string size = 1;
   // "memory", "memory_limit" or "cpus".
   string reason = 2;
@@ -390,6 +428,7 @@ message HostEgress {
   // IPv4 or IPv6 addresses or CIDR prefixes, sorted; empty unless source is
   // EGRESS_SOURCE_CONFIGURED or EGRESS_SOURCE_DISCOVERED.
   repeated string ips = 1;
+  // Where the addresses come from.
   EgressSource source = 2;
   // When the addresses last changed; unset when they never did.
   google.protobuf.Timestamp changed_at = 3;
@@ -414,6 +453,7 @@ enum EgressSource {
 // AgentVersionStatus says whether a host's agent matches the control plane's
 // version promise.
 enum AgentVersionStatus {
+  // The status was not set.
   AGENT_VERSION_STATUS_UNSPECIFIED = 0;
   // Either side is not a release (snapshot, dev, or empty).
   AGENT_VERSION_STATUS_UNKNOWN = 1;
@@ -459,11 +499,15 @@ message HostAlert {
   string kind = 1;
   // raised_at is when it was raised; since is the first event it counts.
   google.protobuf.Timestamp raised_at = 2;
+  // The time of the first event the alert counts.
   google.protobuf.Timestamp since = 3;
   // count is the events counted from since, and reasons the same events by
   // reason; top_reason has the most.
   int64 count = 4;
+  // The counted events by reason: the host, workspace or reason class each
+  // one is counted under.
   map<string, int64> reasons = 5;
+  // The reason with the most counted events.
   string top_reason = 6;
   // message says the same in one line.
   string message = 7;
@@ -497,6 +541,7 @@ message CloudHost {
   map<string, string> instance_types = 9;
   // The most vCPUs the host runs at once.
   int32 max_vcpus = 10;
+  // When the cloud host was added.
   google.protobuf.Timestamp created_at = 11;
   // Launches spot instances, moving an interrupted job onto on demand once.
   bool spot = 12;
@@ -506,6 +551,8 @@ message CloudHost {
   int32 max_instance_minutes_per_day = 14;
   // The GCP project and zone the instances run in.
   string project = 15;
+  // The zone the instances run in (GCP) or the availability zone (Azure);
+  // empty on AWS.
   string zone = 16;
   // The workspace's service account the control plane impersonates (GCP).
   string service_account = 17;
@@ -522,6 +569,7 @@ message CloudHost {
 message CloudHostCheck {
   // What was checked, for example "assume role" or "ec2:RunInstances".
   string name = 1;
+  // The outcome of the check.
   CloudHostCheckStatus status = 2;
   // What was found, or what to fix. It never holds credentials.
   string detail = 3;
@@ -529,7 +577,10 @@ message CloudHostCheck {
 
 // CloudHostCheckStatus is how a cloud host check came out.
 enum CloudHostCheckStatus {
+  // No status: the control plane reports it for a check result it does not
+  // know.
   CLOUD_HOST_CHECK_STATUS_UNSPECIFIED = 0;
+  // The check passed.
   CLOUD_HOST_CHECK_STATUS_OK = 1;
   // Works, but something deserves a look.
   CLOUD_HOST_CHECK_STATUS_WARN = 2;

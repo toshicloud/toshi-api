@@ -18,6 +18,8 @@ export const file_toshi_workspace_v1_hosts: GenFile = /*@__PURE__*/
   fileDesc("Ch50b3NoaS93b3Jrc3BhY2UvdjEvaG9zdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSKBAQoQTGlzdEhvc3RzUmVxdWVzdBItCgZzdGF0ZXMYASADKA4yHS50b3NoaS53b3Jrc3BhY2UudjEuSG9zdFN0YXRlEhcKD2V4Y2x1ZGVfcmV2b2tlZBgCIAEoCBIRCglwYWdlX3NpemUYAyABKAUSEgoKcGFnZV90b2tlbhgEIAEoCSKMAQoRTGlzdEhvc3RzUmVzcG9uc2USJwoFaG9zdHMYASADKAsyGC50b3NoaS53b3Jrc3BhY2UudjEuSG9zdBI1ChJsb25nX29mZmxpbmVfYWZ0ZXIYAiABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SFwoPbmV4dF9wYWdlX3Rva2VuGAMgASgJIlAKFkxpc3RIb3N0U3RvcmFnZVJlcXVlc3QSDwoHaG9zdF9pZBgBIAEoCRIRCglwYWdlX3NpemUYAiABKAUSEgoKcGFnZV90b2tlbhgDIAEoCSJjChdMaXN0SG9zdFN0b3JhZ2VSZXNwb25zZRIvCgd2b2x1bWVzGAEgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkhvc3RWb2x1bWUSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIj4KFUxpc3RIb3N0QWxlcnRzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJgChZMaXN0SG9zdEFsZXJ0c1Jlc3BvbnNlEi0KBmFsZXJ0cxgBIAMoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0QWxlcnQSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIk8KE1NldEhvc3RTdGF0ZVJlcXVlc3QSCgoCaWQYASABKAkSLAoFc3RhdGUYAiABKA4yHS50b3NoaS53b3Jrc3BhY2UudjEuSG9zdFN0YXRlIj4KFFNldEhvc3RTdGF0ZVJlc3BvbnNlEiYKBGhvc3QYASABKAsyGC50b3NoaS53b3Jrc3BhY2UudjEuSG9zdCIfChFSZXRpcmVIb3N0UmVxdWVzdBIKCgJpZBgBIAEoCSIUChJSZXRpcmVIb3N0UmVzcG9uc2UitwQKFkNyZWF0ZUNsb3VkSG9zdFJlcXVlc3QSDAoEbmFtZRgBIAEoCRINCgVjbG91ZBgCIAEoCRIOCgZyZWdpb24YAyABKAkSEAoIcm9sZV9hcm4YBCABKAkSDQoFaW1hZ2UYBSABKAkSEQoJc3VibmV0X2lkGAYgASgJEhoKEnNlY3VyaXR5X2dyb3VwX2lkcxgHIAMoCRJVCg5pbnN0YW5jZV90eXBlcxgIIAMoCzI9LnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVDbG91ZEhvc3RSZXF1ZXN0Lkluc3RhbmNlVHlwZXNFbnRyeRIRCgltYXhfdmNwdXMYCSABKAUSDAoEc3BvdBgKIAEoCBIVCg1tYXhfaW5zdGFuY2VzGAsgASgFEiQKHG1heF9pbnN0YW5jZV9taW51dGVzX3Blcl9kYXkYDCABKAUSEgoKZWdyZXNzX2lwcxgNIAMoCRITCgtub19vdmVyZmxvdxgOIAEoCBIPCgdwcm9qZWN0GA8gASgJEgwKBHpvbmUYECABKAkSFwoPc2VydmljZV9hY2NvdW50GBEgASgJEg4KBmVncmVzcxgSIAEoCRITCgtyZXF1ZXN0X2tleRgTIAEoCRIXCg9zdWJzY3JpcHRpb25faWQYFCABKAkSFgoOcmVzb3VyY2VfZ3JvdXAYFSABKAkaNAoSSW5zdGFuY2VUeXBlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEi1QEKF0NyZWF0ZUNsb3VkSG9zdFJlc3BvbnNlEiYKBGhvc3QYASABKAsyGC50b3NoaS53b3Jrc3BhY2UudjEuSG9zdBITCgtleHRlcm5hbF9pZBgCIAEoCRIVCg1wcmluY2lwYWxfYXJuGAMgASgJEjEKCmNsb3VkX2hvc3QYBCABKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuQ2xvdWRIb3N0EhUKDWdjcF9wcmluY2lwYWwYBSABKAkSHAoUYXp1cmVfYXBwbGljYXRpb25faWQYBiABKAkiKAoVQ2hlY2tDbG91ZEhvc3RSZXF1ZXN0Eg8KB2hvc3RfaWQYASABKAkiTAoWQ2hlY2tDbG91ZEhvc3RSZXNwb25zZRIyCgZjaGVja3MYASADKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuQ2xvdWRIb3N0Q2hlY2siWQocQ3JlYXRlRW5yb2xsbWVudFRva2VuUmVxdWVzdBIQCghvdmVyZmxvdxgBIAEoCBISCgpzaW5nbGVfdXNlGAIgASgIEhMKC3JlcXVlc3Rfa2V5GAMgASgJIlgKHUNyZWF0ZUVucm9sbG1lbnRUb2tlblJlc3BvbnNlEigKBXRva2VuGAEgASgLMhkudG9zaGkud29ya3NwYWNlLnYxLlRva2VuEg0KBXZhbHVlGAIgASgJIuAHCgRIb3N0EgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSCgoCb3MYAyADKAkSDAoEY3B1cxgEIAEoBRISCgptZW1vcnlfbWliGAUgASgFEjQKBmxhYmVscxgGIAMoCzIkLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0LkxhYmVsc0VudHJ5EiwKBXN0YXRlGAcgASgOMh0udG9zaGkud29ya3NwYWNlLnYxLkhvc3RTdGF0ZRIwCgxsYXN0X3NlZW5fYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhcKD2ZyZWVfbWVtb3J5X21pYhgJIAEoAxI0CgxoZWxkX3JlZmlsbHMYCiADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuSGVsZFJlZmlsbBIQCghzdG9wcGluZxgLIAEoCBINCgVjbG91ZBgMIAEoCRIQCghvdmVyZmxvdxgNIAEoCBIuCgZlZ3Jlc3MYDiABKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuSG9zdEVncmVzcxIVCg1hZ2VudF92ZXJzaW9uGA8gASgJEkQKFGFnZW50X3ZlcnNpb25fc3RhdHVzGBAgASgOMiYudG9zaGkud29ya3NwYWNlLnYxLkFnZW50VmVyc2lvblN0YXR1cxIaChJhZ2VudF92ZXJzaW9uX3NrZXcYESABKAkSFAoMbG9uZ19vZmZsaW5lGBIgASgIEhkKEWhlYXJ0YmVhdF9yZWZ1c2FsGBMgASgJEjgKFGhlYXJ0YmVhdF9yZWZ1c2VkX2F0GBQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIMCgR0aWVyGBUgASgJEi4KCnJldm9rZWRfYXQYFiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhgKEG1lbW9yeV9saW1pdF9taWIYFyABKAMSGwoTbWVtb3J5X2xpbWl0X3NvdXJjZRgYIAEoCRIdChVhZ2VudF92ZXJzaW9uX21pbmltdW0YGSABKAkSDwoHa2VlcF92bRgaIAEoCBIsCghrZXB0X3ZtcxgbIAMoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5LZXB0Vk0SFwoPa2VwdF9tZW1vcnlfbWliGBwgASgDEhcKD2tlcHRfZGlza19ieXRlcxgdIAEoAxIYChBuZXR3b3JrX2VuZm9yY2VkGB4gASgIEhYKDm5ldHdvcmtfcmVhc29uGB8gASgJGi0KC0xhYmVsc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEikQEKBktlcHRWTRITCgt3b3JrbG9hZF9pZBgBIAEoCRIMCgRraW5kGAIgASgJEgwKBGZvcm0YAyABKAkSEgoKbWVtb3J5X21pYhgEIAEoAxISCgpkaXNrX2J5dGVzGAUgASgDEi4KCnN0b3BwZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIioKCkhlbGRSZWZpbGwSDAoEc2l6ZRgBIAEoCRIOCgZyZWFzb24YAiABKAkiewoKSG9zdEVncmVzcxILCgNpcHMYASADKAkSMAoGc291cmNlGAIgASgOMiAudG9zaGkud29ya3NwYWNlLnYxLkVncmVzc1NvdXJjZRIuCgpjaGFuZ2VkX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLdAQoKSG9zdFZvbHVtZRIRCgl2b2x1bWVfaWQYASABKAkSDwoHcHJvamVjdBgCIAEoCRISCgpwcm9qZWN0X2lkGAMgASgJEgwKBG5hbWUYBCABKAkSDAoEbW9kZRgFIAEoCRIWCg5zaXplX2NhcF9ieXRlcxgGIAEoAxIRCgl3YXJtX2NvcHkYByABKAgSEAoIY2xhaW1faWQYCCABKAkSDgoGam9iX2lkGAkgASgJEi4KCmNsYWltZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIpQCCglIb3N0QWxlcnQSDAoEa2luZBgBIAEoCRItCglyYWlzZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXNpbmNlGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgVjb3VudBgEIAEoAxI7CgdyZWFzb25zGAUgAygLMioudG9zaGkud29ya3NwYWNlLnYxLkhvc3RBbGVydC5SZWFzb25zRW50cnkSEgoKdG9wX3JlYXNvbhgGIAEoCRIPCgdtZXNzYWdlGAcgASgJGi4KDFJlYXNvbnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAM6AjgBIqcECglDbG91ZEhvc3QSDwoHaG9zdF9pZBgBIAEoCRINCgVjbG91ZBgCIAEoCRIOCgZyZWdpb24YAyABKAkSEAoIcm9sZV9hcm4YBCABKAkSEwoLZXh0ZXJuYWxfaWQYBSABKAkSDQoFaW1hZ2UYBiABKAkSEQoJc3VibmV0X2lkGAcgASgJEhoKEnNlY3VyaXR5X2dyb3VwX2lkcxgIIAMoCRJICg5pbnN0YW5jZV90eXBlcxgJIAMoCzIwLnRvc2hpLndvcmtzcGFjZS52MS5DbG91ZEhvc3QuSW5zdGFuY2VUeXBlc0VudHJ5EhEKCW1heF92Y3B1cxgKIAEoBRIuCgpjcmVhdGVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIMCgRzcG90GAwgASgIEhUKDW1heF9pbnN0YW5jZXMYDSABKAUSJAocbWF4X2luc3RhbmNlX21pbnV0ZXNfcGVyX2RheRgOIAEoBRIPCgdwcm9qZWN0GA8gASgJEgwKBHpvbmUYECABKAkSFwoPc2VydmljZV9hY2NvdW50GBEgASgJEg4KBmVncmVzcxgSIAEoCRIXCg9zdWJzY3JpcHRpb25faWQYEyABKAkSFgoOcmVzb3VyY2VfZ3JvdXAYFCABKAkaNAoSSW5zdGFuY2VUeXBlc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEiaAoOQ2xvdWRIb3N0Q2hlY2sSDAoEbmFtZRgBIAEoCRI4CgZzdGF0dXMYAiABKA4yKC50b3NoaS53b3Jrc3BhY2UudjEuQ2xvdWRIb3N0Q2hlY2tTdGF0dXMSDgoGZGV0YWlsGAMgASgJKm8KCUhvc3RTdGF0ZRIaChZIT1NUX1NUQVRFX1VOU1BFQ0lGSUVEEAASFQoRSE9TVF9TVEFURV9PTkxJTkUQARIXChNIT1NUX1NUQVRFX0RSQUlOSU5HEAISFgoSSE9TVF9TVEFURV9PRkZMSU5FEAMqnwEKDEVncmVzc1NvdXJjZRIdChlFR1JFU1NfU09VUkNFX1VOU1BFQ0lGSUVEEAASHAoYRUdSRVNTX1NPVVJDRV9DT05GSUdVUkVEEAESHAoYRUdSRVNTX1NPVVJDRV9ESVNDT1ZFUkVEEAISGQoVRUdSRVNTX1NPVVJDRV9VTktOT1dOEAMSGQoVRUdSRVNTX1NPVVJDRV9QRVJfSk9CEAQqwAEKEkFnZW50VmVyc2lvblN0YXR1cxIkCiBBR0VOVF9WRVJTSU9OX1NUQVRVU19VTlNQRUNJRklFRBAAEiAKHEFHRU5UX1ZFUlNJT05fU1RBVFVTX1VOS05PV04QARIbChdBR0VOVF9WRVJTSU9OX1NUQVRVU19PSxACEh0KGUFHRU5UX1ZFUlNJT05fU1RBVFVTX1NLRVcQAxImCiJBR0VOVF9WRVJTSU9OX1NUQVRVU19CRUxPV19NSU5JTVVNEAQqyAEKFENsb3VkSG9zdENoZWNrU3RhdHVzEicKI0NMT1VEX0hPU1RfQ0hFQ0tfU1RBVFVTX1VOU1BFQ0lGSUVEEAASHgoaQ0xPVURfSE9TVF9DSEVDS19TVEFUVVNfT0sQARIgChxDTE9VRF9IT1NUX0NIRUNLX1NUQVRVU19XQVJOEAISIAocQ0xPVURfSE9TVF9DSEVDS19TVEFUVVNfRkFJTBADEiMKH0NMT1VEX0hPU1RfQ0hFQ0tfU1RBVFVTX1NLSVBQRUQQBDLfCAoLSG9zdFNlcnZpY2USaAoJTGlzdEhvc3RzEiQudG9zaGkud29ya3NwYWNlLnYxLkxpc3RIb3N0c1JlcXVlc3QaJS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEhvc3RzUmVzcG9uc2UiDsLzGApob3N0cy5yZWFkEnoKD0xpc3RIb3N0U3RvcmFnZRIqLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SG9zdFN0b3JhZ2VSZXF1ZXN0GisudG9zaGkud29ya3NwYWNlLnYxLkxpc3RIb3N0U3RvcmFnZVJlc3BvbnNlIg7C8xgKaG9zdHMucmVhZBJ3Cg5MaXN0SG9zdEFsZXJ0cxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SG9zdEFsZXJ0c1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEhvc3RBbGVydHNSZXNwb25zZSIOwvMYCmhvc3RzLnJlYWQSigEKDFNldEhvc3RTdGF0ZRInLnRvc2hpLndvcmtzcGFjZS52MS5TZXRIb3N0U3RhdGVSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLlNldEhvc3RTdGF0ZVJlc3BvbnNlIifC8xgLaG9zdHMud3JpdGXS8xgQCg5ob3N0LnN0YXRlX3NldJD0GAIScAoKUmV0aXJlSG9zdBIlLnRvc2hpLndvcmtzcGFjZS52MS5SZXRpcmVIb3N0UmVxdWVzdBomLnRvc2hpLndvcmtzcGFjZS52MS5SZXRpcmVIb3N0UmVzcG9uc2UiE8LzGAtob3N0cy53cml0ZZD0GAISuQEKD0NyZWF0ZUNsb3VkSG9zdBIqLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVDbG91ZEhvc3RSZXF1ZXN0GisudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNsb3VkSG9zdFJlc3BvbnNlIk3C8xgLaG9zdHMud3JpdGXK8xgJd29ya3NwYWNl0vMYKQoQY2xvdWRfaG9zdC5hZGRlZBIVaG9zdDpyZXNwb25zZS5ob3N0LmlkkPQYARKOAQoOQ2hlY2tDbG91ZEhvc3QSKS50b3NoaS53b3Jrc3BhY2UudjEuQ2hlY2tDbG91ZEhvc3RSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLkNoZWNrQ2xvdWRIb3N0UmVzcG9uc2UiJcLzGAtob3N0cy53cml0ZdLzGA4SDGhvc3Q6aG9zdF9pZJD0GAISpAEKFUNyZWF0ZUVucm9sbG1lbnRUb2tlbhIwLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVFbnJvbGxtZW50VG9rZW5SZXF1ZXN0GjEudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUVucm9sbG1lbnRUb2tlblJlc3BvbnNlIibC8xgLaG9zdHMud3JpdGXS8xgPCg10b2tlbi5jcmVhdGVkkPQYAUIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_tokens]);
 
 /**
+ * ListHostsRequest filters and pages the workspace's hosts.
+ *
  * @generated from message toshi.workspace.v1.ListHostsRequest
  */
 export type ListHostsRequest = Message<"toshi.workspace.v1.ListHostsRequest"> & {
@@ -51,6 +53,8 @@ export type ListHostsRequest = Message<"toshi.workspace.v1.ListHostsRequest"> & 
 };
 
 /**
+ * ListHostsRequest filters and pages the workspace's hosts.
+ *
  * @generated from message toshi.workspace.v1.ListHostsRequest
  */
 export type ListHostsRequestJson = {
@@ -91,10 +95,14 @@ export const ListHostsRequestSchema: GenMessage<ListHostsRequest, {jsonType: Lis
   messageDesc(file_toshi_workspace_v1_hosts, 0);
 
 /**
+ * ListHostsResponse is one page of the workspace's hosts.
+ *
  * @generated from message toshi.workspace.v1.ListHostsResponse
  */
 export type ListHostsResponse = Message<"toshi.workspace.v1.ListHostsResponse"> & {
   /**
+   * The page's hosts, ordered by ID.
+   *
    * @generated from field: repeated toshi.workspace.v1.Host hosts = 1;
    */
   hosts: Host[];
@@ -116,10 +124,14 @@ export type ListHostsResponse = Message<"toshi.workspace.v1.ListHostsResponse"> 
 };
 
 /**
+ * ListHostsResponse is one page of the workspace's hosts.
+ *
  * @generated from message toshi.workspace.v1.ListHostsResponse
  */
 export type ListHostsResponseJson = {
   /**
+   * The page's hosts, ordered by ID.
+   *
    * @generated from field: repeated toshi.workspace.v1.Host hosts = 1;
    */
   hosts?: HostJson[];
@@ -148,6 +160,8 @@ export const ListHostsResponseSchema: GenMessage<ListHostsResponse, {jsonType: L
   messageDesc(file_toshi_workspace_v1_hosts, 1);
 
 /**
+ * ListHostStorageRequest asks for the volumes one host holds.
+ *
  * @generated from message toshi.workspace.v1.ListHostStorageRequest
  */
 export type ListHostStorageRequest = Message<"toshi.workspace.v1.ListHostStorageRequest"> & {
@@ -174,6 +188,8 @@ export type ListHostStorageRequest = Message<"toshi.workspace.v1.ListHostStorage
 };
 
 /**
+ * ListHostStorageRequest asks for the volumes one host holds.
+ *
  * @generated from message toshi.workspace.v1.ListHostStorageRequest
  */
 export type ListHostStorageRequestJson = {
@@ -207,10 +223,14 @@ export const ListHostStorageRequestSchema: GenMessage<ListHostStorageRequest, {j
   messageDesc(file_toshi_workspace_v1_hosts, 2);
 
 /**
+ * ListHostStorageResponse is one page of those volumes.
+ *
  * @generated from message toshi.workspace.v1.ListHostStorageResponse
  */
 export type ListHostStorageResponse = Message<"toshi.workspace.v1.ListHostStorageResponse"> & {
   /**
+   * The page's volumes, ordered by volume ID.
+   *
    * @generated from field: repeated toshi.workspace.v1.HostVolume volumes = 1;
    */
   volumes: HostVolume[];
@@ -224,10 +244,14 @@ export type ListHostStorageResponse = Message<"toshi.workspace.v1.ListHostStorag
 };
 
 /**
+ * ListHostStorageResponse is one page of those volumes.
+ *
  * @generated from message toshi.workspace.v1.ListHostStorageResponse
  */
 export type ListHostStorageResponseJson = {
   /**
+   * The page's volumes, ordered by volume ID.
+   *
    * @generated from field: repeated toshi.workspace.v1.HostVolume volumes = 1;
    */
   volumes?: HostVolumeJson[];
@@ -248,6 +272,8 @@ export const ListHostStorageResponseSchema: GenMessage<ListHostStorageResponse, 
   messageDesc(file_toshi_workspace_v1_hosts, 3);
 
 /**
+ * ListHostAlertsRequest pages the active alerts of the workspace's hosts.
+ *
  * @generated from message toshi.workspace.v1.ListHostAlertsRequest
  */
 export type ListHostAlertsRequest = Message<"toshi.workspace.v1.ListHostAlertsRequest"> & {
@@ -267,6 +293,8 @@ export type ListHostAlertsRequest = Message<"toshi.workspace.v1.ListHostAlertsRe
 };
 
 /**
+ * ListHostAlertsRequest pages the active alerts of the workspace's hosts.
+ *
  * @generated from message toshi.workspace.v1.ListHostAlertsRequest
  */
 export type ListHostAlertsRequestJson = {
@@ -293,10 +321,14 @@ export const ListHostAlertsRequestSchema: GenMessage<ListHostAlertsRequest, {jso
   messageDesc(file_toshi_workspace_v1_hosts, 4);
 
 /**
+ * ListHostAlertsResponse is one page of those alerts.
+ *
  * @generated from message toshi.workspace.v1.ListHostAlertsResponse
  */
 export type ListHostAlertsResponse = Message<"toshi.workspace.v1.ListHostAlertsResponse"> & {
   /**
+   * The page's alerts, ordered by kind.
+   *
    * @generated from field: repeated toshi.workspace.v1.HostAlert alerts = 1;
    */
   alerts: HostAlert[];
@@ -310,10 +342,14 @@ export type ListHostAlertsResponse = Message<"toshi.workspace.v1.ListHostAlertsR
 };
 
 /**
+ * ListHostAlertsResponse is one page of those alerts.
+ *
  * @generated from message toshi.workspace.v1.ListHostAlertsResponse
  */
 export type ListHostAlertsResponseJson = {
   /**
+   * The page's alerts, ordered by kind.
+   *
    * @generated from field: repeated toshi.workspace.v1.HostAlert alerts = 1;
    */
   alerts?: HostAlertJson[];
@@ -334,10 +370,14 @@ export const ListHostAlertsResponseSchema: GenMessage<ListHostAlertsResponse, {j
   messageDesc(file_toshi_workspace_v1_hosts, 5);
 
 /**
+ * SetHostStateRequest names a host and the state to put it in.
+ *
  * @generated from message toshi.workspace.v1.SetHostStateRequest
  */
 export type SetHostStateRequest = Message<"toshi.workspace.v1.SetHostStateRequest"> & {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -351,10 +391,14 @@ export type SetHostStateRequest = Message<"toshi.workspace.v1.SetHostStateReques
 };
 
 /**
+ * SetHostStateRequest names a host and the state to put it in.
+ *
  * @generated from message toshi.workspace.v1.SetHostStateRequest
  */
 export type SetHostStateRequestJson = {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -375,6 +419,8 @@ export const SetHostStateRequestSchema: GenMessage<SetHostStateRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_hosts, 6);
 
 /**
+ * SetHostStateResponse carries the host in its new state.
+ *
  * @generated from message toshi.workspace.v1.SetHostStateResponse
  */
 export type SetHostStateResponse = Message<"toshi.workspace.v1.SetHostStateResponse"> & {
@@ -387,6 +433,8 @@ export type SetHostStateResponse = Message<"toshi.workspace.v1.SetHostStateRespo
 };
 
 /**
+ * SetHostStateResponse carries the host in its new state.
+ *
  * @generated from message toshi.workspace.v1.SetHostStateResponse
  */
 export type SetHostStateResponseJson = {
@@ -406,20 +454,28 @@ export const SetHostStateResponseSchema: GenMessage<SetHostStateResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_hosts, 7);
 
 /**
+ * RetireHostRequest names the host to remove.
+ *
  * @generated from message toshi.workspace.v1.RetireHostRequest
  */
 export type RetireHostRequest = Message<"toshi.workspace.v1.RetireHostRequest"> & {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * RetireHostRequest names the host to remove.
+ *
  * @generated from message toshi.workspace.v1.RetireHostRequest
  */
 export type RetireHostRequestJson = {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -433,12 +489,16 @@ export const RetireHostRequestSchema: GenMessage<RetireHostRequest, {jsonType: R
   messageDesc(file_toshi_workspace_v1_hosts, 8);
 
 /**
+ * RetireHostResponse is empty: a retired host has no row left to return.
+ *
  * @generated from message toshi.workspace.v1.RetireHostResponse
  */
 export type RetireHostResponse = Message<"toshi.workspace.v1.RetireHostResponse"> & {
 };
 
 /**
+ * RetireHostResponse is empty: a retired host has no row left to return.
+ *
  * @generated from message toshi.workspace.v1.RetireHostResponse
  */
 export type RetireHostResponseJson = {
@@ -573,6 +633,9 @@ export type CreateCloudHostRequest = Message<"toshi.workspace.v1.CreateCloudHost
   project: string;
 
   /**
+   * The zone the instances run in (GCP, required, such as us-central1-a) or
+   * the availability zone "1", "2" or "3" (Azure, optional).
+   *
    * @generated from field: string zone = 16;
    */
   zone: string;
@@ -739,6 +802,9 @@ export type CreateCloudHostRequestJson = {
   project?: string;
 
   /**
+   * The zone the instances run in (GCP, required, such as us-central1-a) or
+   * the availability zone "1", "2" or "3" (Azure, optional).
+   *
    * @generated from field: string zone = 16;
    */
   zone?: string;
@@ -798,6 +864,8 @@ export const CreateCloudHostRequestSchema: GenMessage<CreateCloudHostRequest, {j
  */
 export type CreateCloudHostResponse = Message<"toshi.workspace.v1.CreateCloudHostResponse"> & {
   /**
+   * The host as stored: offline until its instances run.
+   *
    * @generated from field: toshi.workspace.v1.Host host = 1;
    */
   host?: Host | undefined;
@@ -817,6 +885,8 @@ export type CreateCloudHostResponse = Message<"toshi.workspace.v1.CreateCloudHos
   principalArn: string;
 
   /**
+   * The cloud account behind the host.
+   *
    * @generated from field: toshi.workspace.v1.CloudHost cloud_host = 4;
    */
   cloudHost?: CloudHost | undefined;
@@ -846,6 +916,8 @@ export type CreateCloudHostResponse = Message<"toshi.workspace.v1.CreateCloudHos
  */
 export type CreateCloudHostResponseJson = {
   /**
+   * The host as stored: offline until its instances run.
+   *
    * @generated from field: toshi.workspace.v1.Host host = 1;
    */
   host?: HostJson;
@@ -865,6 +937,8 @@ export type CreateCloudHostResponseJson = {
   principalArn?: string;
 
   /**
+   * The cloud account behind the host.
+   *
    * @generated from field: toshi.workspace.v1.CloudHost cloud_host = 4;
    */
   cloudHost?: CloudHostJson;
@@ -894,20 +968,28 @@ export const CreateCloudHostResponseSchema: GenMessage<CreateCloudHostResponse, 
   messageDesc(file_toshi_workspace_v1_hosts, 11);
 
 /**
+ * CheckCloudHostRequest names the cloud host to check.
+ *
  * @generated from message toshi.workspace.v1.CheckCloudHostRequest
  */
 export type CheckCloudHostRequest = Message<"toshi.workspace.v1.CheckCloudHostRequest"> & {
   /**
+   * The cloud host's id.
+   *
    * @generated from field: string host_id = 1;
    */
   hostId: string;
 };
 
 /**
+ * CheckCloudHostRequest names the cloud host to check.
+ *
  * @generated from message toshi.workspace.v1.CheckCloudHostRequest
  */
 export type CheckCloudHostRequestJson = {
   /**
+   * The cloud host's id.
+   *
    * @generated from field: string host_id = 1;
    */
   hostId?: string;
@@ -921,6 +1003,8 @@ export const CheckCloudHostRequestSchema: GenMessage<CheckCloudHostRequest, {jso
   messageDesc(file_toshi_workspace_v1_hosts, 12);
 
 /**
+ * CheckCloudHostResponse carries the result of each check.
+ *
  * @generated from message toshi.workspace.v1.CheckCloudHostResponse
  */
 export type CheckCloudHostResponse = Message<"toshi.workspace.v1.CheckCloudHostResponse"> & {
@@ -933,6 +1017,8 @@ export type CheckCloudHostResponse = Message<"toshi.workspace.v1.CheckCloudHostR
 };
 
 /**
+ * CheckCloudHostResponse carries the result of each check.
+ *
  * @generated from message toshi.workspace.v1.CheckCloudHostResponse
  */
 export type CheckCloudHostResponseJson = {
@@ -1025,6 +1111,8 @@ export const CreateEnrollmentTokenRequestSchema: GenMessage<CreateEnrollmentToke
  */
 export type CreateEnrollmentTokenResponse = Message<"toshi.workspace.v1.CreateEnrollmentTokenResponse"> & {
   /**
+   * The stored token; its value is returned only in value.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: Token | undefined;
@@ -1044,6 +1132,8 @@ export type CreateEnrollmentTokenResponse = Message<"toshi.workspace.v1.CreateEn
  */
 export type CreateEnrollmentTokenResponseJson = {
   /**
+   * The stored token; its value is returned only in value.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: TokenJson;
@@ -1070,11 +1160,16 @@ export const CreateEnrollmentTokenResponseSchema: GenMessage<CreateEnrollmentTok
  */
 export type Host = Message<"toshi.workspace.v1.Host"> & {
   /**
+   * The host's id, made from its name by the control plane.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The host's name: the host_name its agent registered with, or the name
+   * given to a cloud host.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -1087,21 +1182,32 @@ export type Host = Message<"toshi.workspace.v1.Host"> & {
   os: string[];
 
   /**
+   * The CPUs the host offers VMs: what its agent reported at its last
+   * registration, or a cloud host's max_vcpus.
+   *
    * @generated from field: int32 cpus = 4;
    */
   cpus: number;
 
   /**
+   * The memory the host offers VMs, in MiB: what its agent reported at its
+   * last registration, or 4096 per vCPU of a cloud host's max_vcpus.
+   *
    * @generated from field: int32 memory_mib = 5;
    */
   memoryMib: number;
 
   /**
+   * Labels the operator set on the host's agent, such as a region; a cloud
+   * host's cloud, region and zone.
+   *
    * @generated from field: map<string, string> labels = 6;
    */
   labels: { [key: string]: string };
 
   /**
+   * Whether the host takes new jobs; the control plane sets it.
+   *
    * @generated from field: toshi.workspace.v1.HostState state = 7;
    */
   state: HostState;
@@ -1294,6 +1400,9 @@ export type Host = Message<"toshi.workspace.v1.Host"> & {
   networkEnforced: boolean;
 
   /**
+   * Why the host does not enforce network rules, as its agent said at its
+   * last registration or heartbeat; empty when it does.
+   *
    * @generated from field: string network_reason = 31;
    */
   networkReason: string;
@@ -1306,11 +1415,16 @@ export type Host = Message<"toshi.workspace.v1.Host"> & {
  */
 export type HostJson = {
   /**
+   * The host's id, made from its name by the control plane.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The host's name: the host_name its agent registered with, or the name
+   * given to a cloud host.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -1323,21 +1437,32 @@ export type HostJson = {
   os?: string[];
 
   /**
+   * The CPUs the host offers VMs: what its agent reported at its last
+   * registration, or a cloud host's max_vcpus.
+   *
    * @generated from field: int32 cpus = 4;
    */
   cpus?: number;
 
   /**
+   * The memory the host offers VMs, in MiB: what its agent reported at its
+   * last registration, or 4096 per vCPU of a cloud host's max_vcpus.
+   *
    * @generated from field: int32 memory_mib = 5;
    */
   memoryMib?: number;
 
   /**
+   * Labels the operator set on the host's agent, such as a region; a cloud
+   * host's cloud, region and zone.
+   *
    * @generated from field: map<string, string> labels = 6;
    */
   labels?: { [key: string]: string };
 
   /**
+   * Whether the host takes new jobs; the control plane sets it.
+   *
    * @generated from field: toshi.workspace.v1.HostState state = 7;
    */
   state?: HostStateJson;
@@ -1530,6 +1655,9 @@ export type HostJson = {
   networkEnforced?: boolean;
 
   /**
+   * Why the host does not enforce network rules, as its agent said at its
+   * last registration or heartbeat; empty when it does.
+   *
    * @generated from field: string network_reason = 31;
    */
   networkReason?: string;
@@ -1578,6 +1706,8 @@ export type KeptVM = Message<"toshi.workspace.v1.KeptVM"> & {
   memoryMib: bigint;
 
   /**
+   * The disk the VM holds, in bytes.
+   *
    * @generated from field: int64 disk_bytes = 5;
    */
   diskBytes: bigint;
@@ -1626,6 +1756,8 @@ export type KeptVMJson = {
   memoryMib?: string;
 
   /**
+   * The disk the VM holds, in bytes.
+   *
    * @generated from field: int64 disk_bytes = 5;
    */
   diskBytes?: string;
@@ -1652,6 +1784,8 @@ export const KeptVMSchema: GenMessage<KeptVM, {jsonType: KeptVMJson}> = /*@__PUR
  */
 export type HeldRefill = Message<"toshi.workspace.v1.HeldRefill"> & {
   /**
+   * The runner size of the pool.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
@@ -1671,6 +1805,8 @@ export type HeldRefill = Message<"toshi.workspace.v1.HeldRefill"> & {
  */
 export type HeldRefillJson = {
   /**
+   * The runner size of the pool.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
@@ -1705,6 +1841,8 @@ export type HostEgress = Message<"toshi.workspace.v1.HostEgress"> & {
   ips: string[];
 
   /**
+   * Where the addresses come from.
+   *
    * @generated from field: toshi.workspace.v1.EgressSource source = 2;
    */
   source: EgressSource;
@@ -1732,6 +1870,8 @@ export type HostEgressJson = {
   ips?: string[];
 
   /**
+   * Where the addresses come from.
+   *
    * @generated from field: toshi.workspace.v1.EgressSource source = 2;
    */
   source?: EgressSourceJson;
@@ -1933,6 +2073,8 @@ export type HostAlert = Message<"toshi.workspace.v1.HostAlert"> & {
   raisedAt?: Timestamp | undefined;
 
   /**
+   * The time of the first event the alert counts.
+   *
    * @generated from field: google.protobuf.Timestamp since = 3;
    */
   since?: Timestamp | undefined;
@@ -1946,11 +2088,16 @@ export type HostAlert = Message<"toshi.workspace.v1.HostAlert"> & {
   count: bigint;
 
   /**
+   * The counted events by reason: the host, workspace or reason class each
+   * one is counted under.
+   *
    * @generated from field: map<string, int64> reasons = 5;
    */
   reasons: { [key: string]: bigint };
 
   /**
+   * The reason with the most counted events.
+   *
    * @generated from field: string top_reason = 6;
    */
   topReason: string;
@@ -1984,6 +2131,8 @@ export type HostAlertJson = {
   raisedAt?: TimestampJson;
 
   /**
+   * The time of the first event the alert counts.
+   *
    * @generated from field: google.protobuf.Timestamp since = 3;
    */
   since?: TimestampJson;
@@ -1997,11 +2146,16 @@ export type HostAlertJson = {
   count?: string;
 
   /**
+   * The counted events by reason: the host, workspace or reason class each
+   * one is counted under.
+   *
    * @generated from field: map<string, int64> reasons = 5;
    */
   reasons?: { [key: string]: string };
 
   /**
+   * The reason with the most counted events.
+   *
    * @generated from field: string top_reason = 6;
    */
   topReason?: string;
@@ -2104,6 +2258,8 @@ export type CloudHost = Message<"toshi.workspace.v1.CloudHost"> & {
   maxVcpus: number;
 
   /**
+   * When the cloud host was added.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 11;
    */
   createdAt?: Timestamp | undefined;
@@ -2137,6 +2293,9 @@ export type CloudHost = Message<"toshi.workspace.v1.CloudHost"> & {
   project: string;
 
   /**
+   * The zone the instances run in (GCP) or the availability zone (Azure);
+   * empty on AWS.
+   *
    * @generated from field: string zone = 16;
    */
   zone: string;
@@ -2254,6 +2413,8 @@ export type CloudHostJson = {
   maxVcpus?: number;
 
   /**
+   * When the cloud host was added.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 11;
    */
   createdAt?: TimestampJson;
@@ -2287,6 +2448,9 @@ export type CloudHostJson = {
   project?: string;
 
   /**
+   * The zone the instances run in (GCP) or the availability zone (Azure);
+   * empty on AWS.
+   *
    * @generated from field: string zone = 16;
    */
   zone?: string;
@@ -2342,6 +2506,8 @@ export type CloudHostCheck = Message<"toshi.workspace.v1.CloudHostCheck"> & {
   name: string;
 
   /**
+   * The outcome of the check.
+   *
    * @generated from field: toshi.workspace.v1.CloudHostCheckStatus status = 2;
    */
   status: CloudHostCheckStatus;
@@ -2368,6 +2534,8 @@ export type CloudHostCheckJson = {
   name?: string;
 
   /**
+   * The outcome of the check.
+   *
    * @generated from field: toshi.workspace.v1.CloudHostCheckStatus status = 2;
    */
   status?: CloudHostCheckStatusJson;
@@ -2394,6 +2562,8 @@ export const CloudHostCheckSchema: GenMessage<CloudHostCheck, {jsonType: CloudHo
  */
 export enum HostState {
   /**
+   * The value is unset; ListHosts refuses it in states.
+   *
    * @generated from enum value: HOST_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -2498,6 +2668,8 @@ export const EgressSourceSchema: GenEnum<EgressSource, EgressSourceJson> = /*@__
  */
 export enum AgentVersionStatus {
   /**
+   * The status was not set.
+   *
    * @generated from enum value: AGENT_VERSION_STATUS_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -2556,11 +2728,16 @@ export const AgentVersionStatusSchema: GenEnum<AgentVersionStatus, AgentVersionS
  */
 export enum CloudHostCheckStatus {
   /**
+   * No status: the control plane reports it for a check result it does not
+   * know.
+   *
    * @generated from enum value: CLOUD_HOST_CHECK_STATUS_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * The check passed.
+   *
    * @generated from enum value: CLOUD_HOST_CHECK_STATUS_OK = 1;
    */
   OK = 1,
