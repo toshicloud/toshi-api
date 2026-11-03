@@ -22,11 +22,15 @@ export const file_toshi_workspace_v1_audit_events: GenFile = /*@__PURE__*/
  */
 export type AuditEvent = Message<"toshi.workspace.v1.AuditEvent"> & {
   /**
+   * Increases with every event and orders the log.
+   *
    * @generated from field: int64 id = 1;
    */
   id: bigint;
 
   /**
+   * When the control plane recorded the event, just after the change.
+   *
    * @generated from field: google.protobuf.Timestamp at = 2;
    */
   at?: Timestamp | undefined;
@@ -48,6 +52,8 @@ export type AuditEvent = Message<"toshi.workspace.v1.AuditEvent"> & {
   actorId: string;
 
   /**
+   * The name of the action the change recorded, such as job.created.
+   *
    * @generated from field: string action = 5;
    */
   action: string;
@@ -68,6 +74,9 @@ export type AuditEvent = Message<"toshi.workspace.v1.AuditEvent"> & {
   detailsJson: string;
 
   /**
+   * The request the change came from: its X-Request-Id when that is 1 to 64
+   * letters, digits, "-", "_" or ".", else 16 random hex digits.
+   *
    * @generated from field: string request_id = 8;
    */
   requestId: string;
@@ -122,11 +131,15 @@ export type AuditEvent = Message<"toshi.workspace.v1.AuditEvent"> & {
  */
 export type AuditEventJson = {
   /**
+   * Increases with every event and orders the log.
+   *
    * @generated from field: int64 id = 1;
    */
   id?: string;
 
   /**
+   * When the control plane recorded the event, just after the change.
+   *
    * @generated from field: google.protobuf.Timestamp at = 2;
    */
   at?: TimestampJson;
@@ -148,6 +161,8 @@ export type AuditEventJson = {
   actorId?: string;
 
   /**
+   * The name of the action the change recorded, such as job.created.
+   *
    * @generated from field: string action = 5;
    */
   action?: string;
@@ -168,6 +183,9 @@ export type AuditEventJson = {
   detailsJson?: string;
 
   /**
+   * The request the change came from: its X-Request-Id when that is 1 to 64
+   * letters, digits, "-", "_" or ".", else 16 random hex digits.
+   *
    * @generated from field: string request_id = 8;
    */
   requestId?: string;
@@ -370,6 +388,9 @@ export const ListAuditEventsRequestSchema: GenMessage<ListAuditEventsRequest, {j
   messageDesc(file_toshi_workspace_v1_audit_events, 1);
 
 /**
+ * ListAuditEventsResponse is one page of the audit events that match the
+ * request.
+ *
  * @generated from message toshi.workspace.v1.ListAuditEventsResponse
  */
 export type ListAuditEventsResponse = Message<"toshi.workspace.v1.ListAuditEventsResponse"> & {
@@ -389,6 +410,9 @@ export type ListAuditEventsResponse = Message<"toshi.workspace.v1.ListAuditEvent
 };
 
 /**
+ * ListAuditEventsResponse is one page of the audit events that match the
+ * request.
+ *
  * @generated from message toshi.workspace.v1.ListAuditEventsResponse
  */
 export type ListAuditEventsResponseJson = {
@@ -415,40 +439,60 @@ export const ListAuditEventsResponseSchema: GenMessage<ListAuditEventsResponse, 
   messageDesc(file_toshi_workspace_v1_audit_events, 2);
 
 /**
+ * ExportAuditEventsRequest selects the range of the audit log to export.
+ *
  * @generated from message toshi.workspace.v1.ExportAuditEventsRequest
  */
 export type ExportAuditEventsRequest = Message<"toshi.workspace.v1.ExportAuditEventsRequest"> & {
   /**
+   * The start of the range, inclusive; required, else INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.Timestamp since = 1;
    */
   since?: Timestamp | undefined;
 
   /**
+   * The end of the range, exclusive; unset is now, and on a resume the
+   * range's original end.
+   *
    * @generated from field: google.protobuf.Timestamp until = 2;
    */
   until?: Timestamp | undefined;
 
   /**
+   * A cursor from a previous response, to resume after its last row; empty
+   * starts at since.
+   *
    * @generated from field: string cursor = 3;
    */
   cursor: string;
 };
 
 /**
+ * ExportAuditEventsRequest selects the range of the audit log to export.
+ *
  * @generated from message toshi.workspace.v1.ExportAuditEventsRequest
  */
 export type ExportAuditEventsRequestJson = {
   /**
+   * The start of the range, inclusive; required, else INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.Timestamp since = 1;
    */
   since?: TimestampJson;
 
   /**
+   * The end of the range, exclusive; unset is now, and on a resume the
+   * range's original end.
+   *
    * @generated from field: google.protobuf.Timestamp until = 2;
    */
   until?: TimestampJson;
 
   /**
+   * A cursor from a previous response, to resume after its last row; empty
+   * starts at since.
+   *
    * @generated from field: string cursor = 3;
    */
   cursor?: string;
@@ -462,30 +506,46 @@ export const ExportAuditEventsRequestSchema: GenMessage<ExportAuditEventsRequest
   messageDesc(file_toshi_workspace_v1_audit_events, 3);
 
 /**
+ * ExportAuditEventsResponse is one chunk of the export stream.
+ *
  * @generated from message toshi.workspace.v1.ExportAuditEventsResponse
  */
 export type ExportAuditEventsResponse = Message<"toshi.workspace.v1.ExportAuditEventsResponse"> & {
   /**
+   * Complete JSON lines: the {"header":...} line, then one AuditEvent per
+   * line. A chunk boundary never splits a line.
+   *
    * @generated from field: bytes data = 1;
    */
   data: Uint8Array;
 
   /**
+   * Resumes after the last row in data; a chunk holding only the header
+   * keeps the cursor the call started with.
+   *
    * @generated from field: string cursor = 2;
    */
   cursor: string;
 };
 
 /**
+ * ExportAuditEventsResponse is one chunk of the export stream.
+ *
  * @generated from message toshi.workspace.v1.ExportAuditEventsResponse
  */
 export type ExportAuditEventsResponseJson = {
   /**
+   * Complete JSON lines: the {"header":...} line, then one AuditEvent per
+   * line. A chunk boundary never splits a line.
+   *
    * @generated from field: bytes data = 1;
    */
   data?: string;
 
   /**
+   * Resumes after the last row in data; a chunk holding only the header
+   * keeps the cursor the call started with.
+   *
    * @generated from field: string cursor = 2;
    */
   cursor?: string;

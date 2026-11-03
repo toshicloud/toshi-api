@@ -954,3 +954,32 @@ func AuditActionAliases() map[string]string {
 		"job.channel_log_exported":       "endpoint_log.exported",
 	}
 }
+
+// DeprecatedCall is one API call with a toshi.deprecation notice.
+type DeprecatedCall struct {
+	Call           string
+	NoticeVersion  string
+	RemovalVersion string
+	ReplacedBy     string
+	Docs           string
+	Sunset         string
+}
+
+// DeprecatedCalls returns every deprecated call, in procedure order. Each
+// call returns a new slice.
+func DeprecatedCalls() []DeprecatedCall {
+	return []DeprecatedCall{}
+}
+
+// RemovedCall is a call the API no longer serves.
+type RemovedCall struct {
+	Call       string
+	RemovedIn  string
+	ReplacedBy string
+}
+
+// RemovedCalls returns every removed call, in procedure order. Each call
+// returns a new slice.
+func RemovedCalls() []RemovedCall {
+	return []RemovedCall{}
+}

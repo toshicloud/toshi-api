@@ -524,3 +524,7 @@ export const reservedEventPrefixes = [
   "mail",
   "endpoint",
 ] as const;
+
+export const deprecatedCalls = [] as const;
+
+export const removedCalls = [] as const;

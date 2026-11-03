@@ -26,21 +26,26 @@ const (
 // AuditEvent is one append-only audit log entry.
 type AuditEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	At    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=at,proto3" json:"at,omitempty"`
+	// Increases with every event and orders the log.
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// When the control plane recorded the event, just after the change.
+	At *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=at,proto3" json:"at,omitempty"`
 	// operator, session, token, workload, product, system or webhook.
 	ActorKind string `protobuf:"bytes,3,opt,name=actor_kind,json=actorKind,proto3" json:"actor_kind,omitempty"`
 	// The session's user id, which stays the same across renames and identity
 	// providers; the API or product token's id (never its value); the workload
 	// as "<kind>:<id>"; or a system or webhook source name.
 	ActorId string `protobuf:"bytes,4,opt,name=actor_id,json=actorId,proto3" json:"actor_id,omitempty"`
-	Action  string `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
+	// The name of the action the change recorded, such as job.created.
+	Action string `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
 	// A "<kind>:<id>" string such as job:..., host:..., token:... or
 	// filler:....
 	Target string `protobuf:"bytes,6,opt,name=target,proto3" json:"target,omitempty"`
 	// A JSON object whose keys depend on the action.
 	DetailsJson string `protobuf:"bytes,7,opt,name=details_json,json=detailsJson,proto3" json:"details_json,omitempty"`
-	RequestId   string `protobuf:"bytes,8,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// The request the change came from: its X-Request-Id when that is 1 to 64
+	// letters, digits, "-", "_" or ".", else 16 random hex digits.
+	RequestId string `protobuf:"bytes,8,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	// The permission the call needed, for an event a Workspace API call
 	// records; empty otherwise.
 	Permission string `protobuf:"bytes,9,opt,name=permission,proto3" json:"permission,omitempty"`
@@ -299,6 +304,8 @@ func (x *ListAuditEventsRequest) GetOutcome() string {
 	return ""
 }
 
+// ListAuditEventsResponse is one page of the audit events that match the
+// request.
 type ListAuditEventsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Newest first.
@@ -353,11 +360,17 @@ func (x *ListAuditEventsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// ExportAuditEventsRequest selects the range of the audit log to export.
 type ExportAuditEventsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Since         *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=since,proto3" json:"since,omitempty"`
-	Until         *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=until,proto3" json:"until,omitempty"`
-	Cursor        string                 `protobuf:"bytes,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The start of the range, inclusive; required, else INVALID_ARGUMENT.
+	Since *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=since,proto3" json:"since,omitempty"`
+	// The end of the range, exclusive; unset is now, and on a resume the
+	// range's original end.
+	Until *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=until,proto3" json:"until,omitempty"`
+	// A cursor from a previous response, to resume after its last row; empty
+	// starts at since.
+	Cursor        string `protobuf:"bytes,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -413,10 +426,15 @@ func (x *ExportAuditEventsRequest) GetCursor() string {
 	return ""
 }
 
+// ExportAuditEventsResponse is one chunk of the export stream.
 type ExportAuditEventsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	Cursor        string                 `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Complete JSON lines: the {"header":...} line, then one AuditEvent per
+	// line. A chunk boundary never splits a line.
+	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	// Resumes after the last row in data; a chunk holding only the header
+	// keeps the cursor the call started with.
+	Cursor        string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

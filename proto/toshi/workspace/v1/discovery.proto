@@ -25,6 +25,9 @@ service DiscoveryService {
   }
 }
 
+// DiscoverRequest is a call to Discover: it names the project and
+// environment whose permissions and calls to report, empty for the whole
+// workspace.
 message DiscoverRequest {
   // project names one of the workspace's projects: the permissions are the
   // caller's in it. Empty is the whole workspace, or for a token limited to
@@ -35,6 +38,8 @@ message DiscoverRequest {
   string environment = 2;
 }
 
+// DiscoverResponse is the answer to Discover: the products and their
+// features, the caller's permissions and calls, and the versions.
 message DiscoverResponse {
   // products are the products the build includes, by id.
   repeated DiscoveredProduct products = 1;
@@ -44,6 +49,8 @@ message DiscoverResponse {
   // toshi.permission option, or a
   // product's own, "<product id>.<level>".
   repeated string permissions = 2;
+  // versions are the API's and the control plane's versions and the
+  // compatibility dates Toshi serves; always set.
   APIVersions versions = 3;
   // registry_address is the deployment's container registry as a client
   // writes it in an image reference and logs in to it, such as
@@ -66,6 +73,7 @@ message DiscoveredProduct {
   // id names the product, such as "runners": its config section and the
   // prefix of its features and permissions.
   string id = 1;
+  // version is the product's version, as its manifest declares it.
   string version = 2;
   // docs is where the product's documentation lives: a path in the Toshi
   // repository, or a URL.
@@ -122,6 +130,7 @@ message DiscoveredSurfaces {
 // stopped as its work ends, and back to enabled when the config turns it on
 // again. None of the states deletes the product's data.
 enum ProductState {
+  // Not set: a listed product is always in one of the four states below.
   PRODUCT_STATE_UNSPECIFIED = 0;
   // The config turns the product on: it takes new work.
   PRODUCT_STATE_ENABLED = 1;
@@ -139,6 +148,7 @@ enum ProductState {
 // products.min_stability turns off a product below it, as the operator's
 // switch does.
 enum ProductStability {
+  // Not set: a listed product always has one of the levels below.
   PRODUCT_STABILITY_UNSPECIFIED = 0;
   // May change or go away in any release.
   PRODUCT_STABILITY_ALPHA = 1;
@@ -155,6 +165,8 @@ enum ProductStability {
 message ProductFeature {
   // key is "<product id>.<name>".
   string key = 1;
+  // type is the feature's type as its product's manifest declares it, which
+  // decides the value of FeatureValue.
   ProductFeatureType type = 2;
   // values are an enum's values; empty for the other types.
   repeated string values = 3;
@@ -198,6 +210,8 @@ message ProductFeature {
 // value its plan gives the feature, the plan key the feature falls back
 // to, and the feature's default.
 enum FeatureSource {
+  // No source: the feature has no entitlement for the workspace, as for a
+  // product the deployment's config turns off.
   FEATURE_SOURCE_UNSPECIFIED = 0;
   // The operator's override for the workspace.
   FEATURE_SOURCE_OVERRIDE = 1;
@@ -226,17 +240,25 @@ message FeatureValue {
 
 // FeatureRange is a range feature's value: from min to max, both included.
 message FeatureRange {
+  // min is the range's lower bound, both ends included.
   int64 min = 1;
+  // max is the range's upper bound, both ends included.
   int64 max = 2;
 }
 
 // ProductFeatureType is the type of a feature's value.
 enum ProductFeatureType {
+  // Not set: a listed feature has one of the types below.
   PRODUCT_FEATURE_TYPE_UNSPECIFIED = 0;
+  // A bool: on or off.
   PRODUCT_FEATURE_TYPE_BOOL = 1;
+  // A count: an upper limit, never negative.
   PRODUCT_FEATURE_TYPE_COUNT = 2;
+  // A range of integers, both ends included.
   PRODUCT_FEATURE_TYPE_RANGE = 3;
+  // One of the values the feature lists.
   PRODUCT_FEATURE_TYPE_ENUM = 4;
+  // A string, which a workspace cannot narrow.
   PRODUCT_FEATURE_TYPE_STRING = 5;
 }
 

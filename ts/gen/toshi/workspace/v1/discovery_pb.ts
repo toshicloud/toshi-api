@@ -14,6 +14,10 @@ export const file_toshi_workspace_v1_discovery: GenFile = /*@__PURE__*/
   fileDesc("CiJ0b3NoaS93b3Jrc3BhY2UvdjEvZGlzY292ZXJ5LnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEiNwoPRGlzY292ZXJSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEwoLZW52aXJvbm1lbnQYAiABKAkivAEKEERpc2NvdmVyUmVzcG9uc2USNwoIcHJvZHVjdHMYASADKAsyJS50b3NoaS53b3Jrc3BhY2UudjEuRGlzY292ZXJlZFByb2R1Y3QSEwoLcGVybWlzc2lvbnMYAiADKAkSMQoIdmVyc2lvbnMYAyABKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuQVBJVmVyc2lvbnMSGAoQcmVnaXN0cnlfYWRkcmVzcxgEIAEoCRINCgVjYWxscxgFIAMoCSKSAwoRRGlzY292ZXJlZFByb2R1Y3QSCgoCaWQYASABKAkSDwoHdmVyc2lvbhgCIAEoCRIMCgRkb2NzGAMgASgJEg8KB2VuYWJsZWQYBCABKAgSNAoIZmVhdHVyZXMYBSADKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdEZlYXR1cmUSLwoFc3RhdGUYBiABKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN0YXRlEjgKCHN1cmZhY2VzGAggASgLMiYudG9zaGkud29ya3NwYWNlLnYxLkRpc2NvdmVyZWRTdXJmYWNlcxIRCglhdmFpbGFibGUYCiABKAgSNwoJc3RhYmlsaXR5GAsgASgOMiQudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTdGFiaWxpdHkSFwoPcmVtb3ZhbF92ZXJzaW9uGAwgASgJEhMKC2xvd2VzdF9wbGFuGA0gASgJSgQIBxAISgQICRAKUgZzd2l0Y2hSEmluc3RhbGxhdGlvbl9zdGF0ZSJIChJEaXNjb3ZlcmVkU3VyZmFjZXMSCwoDYXBpGAEgASgJSgQIAhADSgQIAxAESgQIBBAFUgNjbGlSCWRhc2hib2FyZFIDc2RrIqEDCg5Qcm9kdWN0RmVhdHVyZRILCgNrZXkYASABKAkSNAoEdHlwZRgCIAEoDjImLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0RmVhdHVyZVR5cGUSDgoGdmFsdWVzGAMgAygJEhIKCm5hcnJvd2FibGUYBCABKAgSNQoLZW50aXRsZW1lbnQYBSABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjEKB3NldHRpbmcYBiABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjMKCWVmZmVjdGl2ZRgHIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSNwoNZGVmYXVsdF92YWx1ZRgIIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSCwoDbWF4GAkgASgDEhAKCHBsYW5fa2V5GAogASgJEjEKBnNvdXJjZRgLIAEoDjIhLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU291cmNlInsKDEZlYXR1cmVWYWx1ZRIOCgRib29sGAEgASgISAASDwoFY291bnQYAiABKANIABIxCgVyYW5nZRgDIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlUmFuZ2VIABIOCgR0ZXh0GAQgASgJSABCBwoFdmFsdWUiKAoMRmVhdHVyZVJhbmdlEgsKA21pbhgBIAEoAxILCgNtYXgYAiABKAMidwoLQVBJVmVyc2lvbnMSCwoDYXBpGAEgASgJEhUKDWNvbnRyb2xfcGxhbmUYAiABKAkSIQoZbmV3ZXN0X2NvbXBhdGliaWxpdHlfZGF0ZRgDIAEoCRIhChlvbGRlc3RfY29tcGF0aWJpbGl0eV9kYXRlGAQgASgJKp4BCgxQcm9kdWN0U3RhdGUSHQoZUFJPRFVDVF9TVEFURV9VTlNQRUNJRklFRBAAEhkKFVBST0RVQ1RfU1RBVEVfRU5BQkxFRBABEh0KGVBST0RVQ1RfU1RBVEVfTk9fTkVXX1dPUksQAhIaChZQUk9EVUNUX1NUQVRFX0RSQUlOSU5HEAMSGQoVUFJPRFVDVF9TVEFURV9TVE9QUEVEEAQqrgEKEFByb2R1Y3RTdGFiaWxpdHkSIQodUFJPRFVDVF9TVEFCSUxJVFlfVU5TUEVDSUZJRUQQABIbChdQUk9EVUNUX1NUQUJJTElUWV9BTFBIQRABEhoKFlBST0RVQ1RfU1RBQklMSVRZX0JFVEEQAhIcChhQUk9EVUNUX1NUQUJJTElUWV9TVEFCTEUQAxIgChxQUk9EVUNUX1NUQUJJTElUWV9ERVBSRUNBVEVEEAQqngEKDUZlYXR1cmVTb3VyY2USHgoaRkVBVFVSRV9TT1VSQ0VfVU5TUEVDSUZJRUQQABIbChdGRUFUVVJFX1NPVVJDRV9PVkVSUklERRABEhcKE0ZFQVRVUkVfU09VUkNFX1BMQU4QAhIbChdGRUFUVVJFX1NPVVJDRV9QTEFOX0tFWRADEhoKFkZFQVRVUkVfU09VUkNFX0RFRkFVTFQQBCrZAQoSUHJvZHVjdEZlYXR1cmVUeXBlEiQKIFBST0RVQ1RfRkVBVFVSRV9UWVBFX1VOU1BFQ0lGSUVEEAASHQoZUFJPRFVDVF9GRUFUVVJFX1RZUEVfQk9PTBABEh4KGlBST0RVQ1RfRkVBVFVSRV9UWVBFX0NPVU5UEAISHgoaUFJPRFVDVF9GRUFUVVJFX1RZUEVfUkFOR0UQAxIdChlQUk9EVUNUX0ZFQVRVUkVfVFlQRV9FTlVNEAQSHwobUFJPRFVDVF9GRUFUVVJFX1RZUEVfU1RSSU5HEAUyjAEKEERpc2NvdmVyeVNlcnZpY2USeAoIRGlzY292ZXISIy50b3NoaS53b3Jrc3BhY2UudjEuRGlzY292ZXJSZXF1ZXN0GiQudG9zaGkud29ya3NwYWNlLnYxLkRpc2NvdmVyUmVzcG9uc2UiIcLzGA53b3Jrc3BhY2UucmVhZMrzGAtlbnZpcm9ubWVudEIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_toshi_permission]);
 
 /**
+ * DiscoverRequest is a call to Discover: it names the project and
+ * environment whose permissions and calls to report, empty for the whole
+ * workspace.
+ *
  * @generated from message toshi.workspace.v1.DiscoverRequest
  */
 export type DiscoverRequest = Message<"toshi.workspace.v1.DiscoverRequest"> & {
@@ -36,6 +40,10 @@ export type DiscoverRequest = Message<"toshi.workspace.v1.DiscoverRequest"> & {
 };
 
 /**
+ * DiscoverRequest is a call to Discover: it names the project and
+ * environment whose permissions and calls to report, empty for the whole
+ * workspace.
+ *
  * @generated from message toshi.workspace.v1.DiscoverRequest
  */
 export type DiscoverRequestJson = {
@@ -65,6 +73,9 @@ export const DiscoverRequestSchema: GenMessage<DiscoverRequest, {jsonType: Disco
   messageDesc(file_toshi_workspace_v1_discovery, 0);
 
 /**
+ * DiscoverResponse is the answer to Discover: the products and their
+ * features, the caller's permissions and calls, and the versions.
+ *
  * @generated from message toshi.workspace.v1.DiscoverResponse
  */
 export type DiscoverResponse = Message<"toshi.workspace.v1.DiscoverResponse"> & {
@@ -87,6 +98,9 @@ export type DiscoverResponse = Message<"toshi.workspace.v1.DiscoverResponse"> & 
   permissions: string[];
 
   /**
+   * versions are the API's and the control plane's versions and the
+   * compatibility dates Toshi serves; always set.
+   *
    * @generated from field: toshi.workspace.v1.APIVersions versions = 3;
    */
   versions?: APIVersions | undefined;
@@ -117,6 +131,9 @@ export type DiscoverResponse = Message<"toshi.workspace.v1.DiscoverResponse"> & 
 };
 
 /**
+ * DiscoverResponse is the answer to Discover: the products and their
+ * features, the caller's permissions and calls, and the versions.
+ *
  * @generated from message toshi.workspace.v1.DiscoverResponse
  */
 export type DiscoverResponseJson = {
@@ -139,6 +156,9 @@ export type DiscoverResponseJson = {
   permissions?: string[];
 
   /**
+   * versions are the API's and the control plane's versions and the
+   * compatibility dates Toshi serves; always set.
+   *
    * @generated from field: toshi.workspace.v1.APIVersions versions = 3;
    */
   versions?: APIVersionsJson;
@@ -190,6 +210,8 @@ export type DiscoveredProduct = Message<"toshi.workspace.v1.DiscoveredProduct"> 
   id: string;
 
   /**
+   * version is the product's version, as its manifest declares it.
+   *
    * @generated from field: string version = 2;
    */
   version: string;
@@ -288,6 +310,8 @@ export type DiscoveredProductJson = {
   id?: string;
 
   /**
+   * version is the product's version, as its manifest declares it.
+   *
    * @generated from field: string version = 2;
    */
   version?: string;
@@ -433,6 +457,9 @@ export type ProductFeature = Message<"toshi.workspace.v1.ProductFeature"> & {
   key: string;
 
   /**
+   * type is the feature's type as its product's manifest declares it, which
+   * decides the value of FeatureValue.
+   *
    * @generated from field: toshi.workspace.v1.ProductFeatureType type = 2;
    */
   type: ProductFeatureType;
@@ -532,6 +559,9 @@ export type ProductFeatureJson = {
   key?: string;
 
   /**
+   * type is the feature's type as its product's manifest declares it, which
+   * decides the value of FeatureValue.
+   *
    * @generated from field: toshi.workspace.v1.ProductFeatureType type = 2;
    */
   type?: ProductFeatureTypeJson;
@@ -717,11 +747,15 @@ export const FeatureValueSchema: GenMessage<FeatureValue, {jsonType: FeatureValu
  */
 export type FeatureRange = Message<"toshi.workspace.v1.FeatureRange"> & {
   /**
+   * min is the range's lower bound, both ends included.
+   *
    * @generated from field: int64 min = 1;
    */
   min: bigint;
 
   /**
+   * max is the range's upper bound, both ends included.
+   *
    * @generated from field: int64 max = 2;
    */
   max: bigint;
@@ -734,11 +768,15 @@ export type FeatureRange = Message<"toshi.workspace.v1.FeatureRange"> & {
  */
 export type FeatureRangeJson = {
   /**
+   * min is the range's lower bound, both ends included.
+   *
    * @generated from field: int64 min = 1;
    */
   min?: string;
 
   /**
+   * max is the range's upper bound, both ends included.
+   *
    * @generated from field: int64 max = 2;
    */
   max?: string;
@@ -844,6 +882,8 @@ export const APIVersionsSchema: GenMessage<APIVersions, {jsonType: APIVersionsJs
  */
 export enum ProductState {
   /**
+   * Not set: a listed product is always in one of the four states below.
+   *
    * @generated from enum value: PRODUCT_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -904,6 +944,8 @@ export const ProductStateSchema: GenEnum<ProductState, ProductStateJson> = /*@__
  */
 export enum ProductStability {
   /**
+   * Not set: a listed product always has one of the levels below.
+   *
    * @generated from enum value: PRODUCT_STABILITY_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -963,6 +1005,9 @@ export const ProductStabilitySchema: GenEnum<ProductStability, ProductStabilityJ
  */
 export enum FeatureSource {
   /**
+   * No source: the feature has no entitlement for the workspace, as for a
+   * product the deployment's config turns off.
+   *
    * @generated from enum value: FEATURE_SOURCE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1020,31 +1065,43 @@ export const FeatureSourceSchema: GenEnum<FeatureSource, FeatureSourceJson> = /*
  */
 export enum ProductFeatureType {
   /**
+   * Not set: a listed feature has one of the types below.
+   *
    * @generated from enum value: PRODUCT_FEATURE_TYPE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * A bool: on or off.
+   *
    * @generated from enum value: PRODUCT_FEATURE_TYPE_BOOL = 1;
    */
   BOOL = 1,
 
   /**
+   * A count: an upper limit, never negative.
+   *
    * @generated from enum value: PRODUCT_FEATURE_TYPE_COUNT = 2;
    */
   COUNT = 2,
 
   /**
+   * A range of integers, both ends included.
+   *
    * @generated from enum value: PRODUCT_FEATURE_TYPE_RANGE = 3;
    */
   RANGE = 3,
 
   /**
+   * One of the values the feature lists.
+   *
    * @generated from enum value: PRODUCT_FEATURE_TYPE_ENUM = 4;
    */
   ENUM = 4,
 
   /**
+   * A string, which a workspace cannot narrow.
+   *
    * @generated from enum value: PRODUCT_FEATURE_TYPE_STRING = 5;
    */
   STRING = 5,

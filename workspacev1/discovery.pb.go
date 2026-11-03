@@ -29,6 +29,7 @@ const (
 type ProductState int32
 
 const (
+	// Not set: a listed product is always in one of the four states below.
 	ProductState_PRODUCT_STATE_UNSPECIFIED ProductState = 0
 	// The config turns the product on: it takes new work.
 	ProductState_PRODUCT_STATE_ENABLED ProductState = 1
@@ -93,6 +94,7 @@ func (ProductState) EnumDescriptor() ([]byte, []int) {
 type ProductStability int32
 
 const (
+	// Not set: a listed product always has one of the levels below.
 	ProductStability_PRODUCT_STABILITY_UNSPECIFIED ProductStability = 0
 	// May change or go away in any release.
 	ProductStability_PRODUCT_STABILITY_ALPHA ProductStability = 1
@@ -157,6 +159,8 @@ func (ProductStability) EnumDescriptor() ([]byte, []int) {
 type FeatureSource int32
 
 const (
+	// No source: the feature has no entitlement for the workspace, as for a
+	// product the deployment's config turns off.
 	FeatureSource_FEATURE_SOURCE_UNSPECIFIED FeatureSource = 0
 	// The operator's override for the workspace.
 	FeatureSource_FEATURE_SOURCE_OVERRIDE FeatureSource = 1
@@ -218,12 +222,18 @@ func (FeatureSource) EnumDescriptor() ([]byte, []int) {
 type ProductFeatureType int32
 
 const (
+	// Not set: a listed feature has one of the types below.
 	ProductFeatureType_PRODUCT_FEATURE_TYPE_UNSPECIFIED ProductFeatureType = 0
-	ProductFeatureType_PRODUCT_FEATURE_TYPE_BOOL        ProductFeatureType = 1
-	ProductFeatureType_PRODUCT_FEATURE_TYPE_COUNT       ProductFeatureType = 2
-	ProductFeatureType_PRODUCT_FEATURE_TYPE_RANGE       ProductFeatureType = 3
-	ProductFeatureType_PRODUCT_FEATURE_TYPE_ENUM        ProductFeatureType = 4
-	ProductFeatureType_PRODUCT_FEATURE_TYPE_STRING      ProductFeatureType = 5
+	// A bool: on or off.
+	ProductFeatureType_PRODUCT_FEATURE_TYPE_BOOL ProductFeatureType = 1
+	// A count: an upper limit, never negative.
+	ProductFeatureType_PRODUCT_FEATURE_TYPE_COUNT ProductFeatureType = 2
+	// A range of integers, both ends included.
+	ProductFeatureType_PRODUCT_FEATURE_TYPE_RANGE ProductFeatureType = 3
+	// One of the values the feature lists.
+	ProductFeatureType_PRODUCT_FEATURE_TYPE_ENUM ProductFeatureType = 4
+	// A string, which a workspace cannot narrow.
+	ProductFeatureType_PRODUCT_FEATURE_TYPE_STRING ProductFeatureType = 5
 )
 
 // Enum value maps for ProductFeatureType.
@@ -273,6 +283,9 @@ func (ProductFeatureType) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_discovery_proto_rawDescGZIP(), []int{3}
 }
 
+// DiscoverRequest is a call to Discover: it names the project and
+// environment whose permissions and calls to report, empty for the whole
+// workspace.
 type DiscoverRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// project names one of the workspace's projects: the permissions are the
@@ -330,6 +343,8 @@ func (x *DiscoverRequest) GetEnvironment() string {
 	return ""
 }
 
+// DiscoverResponse is the answer to Discover: the products and their
+// features, the caller's permissions and calls, and the versions.
 type DiscoverResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// products are the products the build includes, by id.
@@ -339,8 +354,10 @@ type DiscoverResponse struct {
 	// "<area>.<level>", as this API's methods name them in their
 	// toshi.permission option, or a
 	// product's own, "<product id>.<level>".
-	Permissions []string     `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Versions    *APIVersions `protobuf:"bytes,3,opt,name=versions,proto3" json:"versions,omitempty"`
+	Permissions []string `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	// versions are the API's and the control plane's versions and the
+	// compatibility dates Toshi serves; always set.
+	Versions *APIVersions `protobuf:"bytes,3,opt,name=versions,proto3" json:"versions,omitempty"`
 	// registry_address is the deployment's container registry as a client
 	// writes it in an image reference and logs in to it, such as
 	// "registry.example.com": a host name, with a port when it is not 443.
@@ -429,7 +446,8 @@ type DiscoveredProduct struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// id names the product, such as "runners": its config section and the
 	// prefix of its features and permissions.
-	Id      string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// version is the product's version, as its manifest declares it.
 	Version string `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
 	// docs is where the product's documentation lives: a path in the Toshi
 	// repository, or a URL.
@@ -628,7 +646,9 @@ func (x *DiscoveredSurfaces) GetApi() string {
 type ProductFeature struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// key is "<product id>.<name>".
-	Key  string             `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// type is the feature's type as its product's manifest declares it, which
+	// decides the value of FeatureValue.
 	Type ProductFeatureType `protobuf:"varint,2,opt,name=type,proto3,enum=toshi.workspace.v1.ProductFeatureType" json:"type,omitempty"`
 	// values are an enum's values; empty for the other types.
 	Values []string `protobuf:"bytes,3,rep,name=values,proto3" json:"values,omitempty"`
@@ -897,9 +917,11 @@ func (*FeatureValue_Text) isFeatureValue_Value() {}
 
 // FeatureRange is a range feature's value: from min to max, both included.
 type FeatureRange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Min           int64                  `protobuf:"varint,1,opt,name=min,proto3" json:"min,omitempty"`
-	Max           int64                  `protobuf:"varint,2,opt,name=max,proto3" json:"max,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// min is the range's lower bound, both ends included.
+	Min int64 `protobuf:"varint,1,opt,name=min,proto3" json:"min,omitempty"`
+	// max is the range's upper bound, both ends included.
+	Max           int64 `protobuf:"varint,2,opt,name=max,proto3" json:"max,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

@@ -47,7 +47,9 @@ service AuditEventService {
 
 // AuditEvent is one append-only audit log entry.
 message AuditEvent {
+  // Increases with every event and orders the log.
   int64 id = 1;
+  // When the control plane recorded the event, just after the change.
   google.protobuf.Timestamp at = 2;
   // operator, session, token, workload, product, system or webhook.
   string actor_kind = 3;
@@ -55,12 +57,15 @@ message AuditEvent {
   // providers; the API or product token's id (never its value); the workload
   // as "<kind>:<id>"; or a system or webhook source name.
   string actor_id = 4;
+  // The name of the action the change recorded, such as job.created.
   string action = 5;
   // A "<kind>:<id>" string such as job:..., host:..., token:... or
   // filler:....
   string target = 6;
   // A JSON object whose keys depend on the action.
   string details_json = 7;
+  // The request the change came from: its X-Request-Id when that is 1 to 64
+  // letters, digits, "-", "_" or ".", else 16 random hex digits.
   string request_id = 8;
   // The permission the call needed, for an event a Workspace API call
   // records; empty otherwise.
@@ -108,6 +113,8 @@ message ListAuditEventsRequest {
   string outcome = 8;
 }
 
+// ListAuditEventsResponse is one page of the audit events that match the
+// request.
 message ListAuditEventsResponse {
   // Newest first.
   repeated AuditEvent events = 1;
@@ -115,13 +122,24 @@ message ListAuditEventsResponse {
   string next_page_token = 2;
 }
 
+// ExportAuditEventsRequest selects the range of the audit log to export.
 message ExportAuditEventsRequest {
+  // The start of the range, inclusive; required, else INVALID_ARGUMENT.
   google.protobuf.Timestamp since = 1;
+  // The end of the range, exclusive; unset is now, and on a resume the
+  // range's original end.
   google.protobuf.Timestamp until = 2;
+  // A cursor from a previous response, to resume after its last row; empty
+  // starts at since.
   string cursor = 3;
 }
 
+// ExportAuditEventsResponse is one chunk of the export stream.
 message ExportAuditEventsResponse {
+  // Complete JSON lines: the {"header":...} line, then one AuditEvent per
+  // line. A chunk boundary never splits a line.
   bytes data = 1;
+  // Resumes after the last row in data; a chunk holding only the header
+  // keeps the cursor the call started with.
   string cursor = 2;
 }
