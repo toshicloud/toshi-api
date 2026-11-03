@@ -830,9 +830,8 @@ export type ModelSignInProvider = Message<"toshi.workspace.v1.ModelSignInProvide
   available: boolean;
 
   /**
-   * The provider's own product name as its sign-in adapter states it, for
-   * example "OpenAI"; set for every listed provider, and the provider id when
-   * no adapter states one.
+   * The provider's own product name as it writes it, for example "OpenAI";
+   * set for every listed provider, whether or not it has a sign-in.
    *
    * @generated from field: string display_name = 4;
    */
@@ -867,9 +866,8 @@ export type ModelSignInProviderJson = {
   available?: boolean;
 
   /**
-   * The provider's own product name as its sign-in adapter states it, for
-   * example "OpenAI"; set for every listed provider, and the provider id when
-   * no adapter states one.
+   * The provider's own product name as it writes it, for example "OpenAI";
+   * set for every listed provider, whether or not it has a sign-in.
    *
    * @generated from field: string display_name = 4;
    */

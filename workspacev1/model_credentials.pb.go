@@ -986,9 +986,8 @@ type ModelSignInProvider struct {
 	Mechanism string `protobuf:"bytes,2,opt,name=mechanism,proto3" json:"mechanism,omitempty"`
 	// The deployment offers a held sign-in for this provider.
 	Available bool `protobuf:"varint,3,opt,name=available,proto3" json:"available,omitempty"`
-	// The provider's own product name as its sign-in adapter states it, for
-	// example "OpenAI"; set for every listed provider, and the provider id when
-	// no adapter states one.
+	// The provider's own product name as it writes it, for example "OpenAI";
+	// set for every listed provider, whether or not it has a sign-in.
 	DisplayName   string `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
