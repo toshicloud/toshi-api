@@ -4,6 +4,9 @@
 // A label of a proto enum is read as labels.<Name>[<Enum>[value]], and one of a
 // string set as labels.<Name>[<wire string>].
 
+// A workload's state is read from its kind's set, JobState, SandboxState or
+// ServiceState: the three have the same values and words.
+
 export const contract = {
   connectionSecretOverlap: { unit: "seconds", default: 86400, min: 0, max: 604800 },
   embedTokenExpiresIn: { unit: "seconds", default: 600 },
@@ -608,6 +611,28 @@ export const labels = {
     RUNNING: "Running",
     ENDED: "Ended",
   },
+  HostJobState: {
+    QUEUED: "Queued",
+    ASSIGNED: "Assigned",
+    STARTING: "Starting",
+    RUNNING: "Running",
+    COMPLETED: "Completed",
+    FAILED: "Failed",
+    CANCELLED: "Cancelled",
+    STOPPING: "Stopping",
+    DEBUGGING: "Debugging",
+  },
+  OperatorJobState: {
+    QUEUED: "Queued",
+    ASSIGNED: "Assigned",
+    STARTING: "Starting",
+    RUNNING: "Running",
+    COMPLETED: "Completed",
+    FAILED: "Failed",
+    CANCELLED: "Cancelled",
+    STOPPING: "Stopping",
+    DEBUGGING: "Debugging",
+  },
   ServiceRunState: {
     QUEUED: "Queued",
     STARTING: "Starting",
@@ -754,7 +779,7 @@ export const labels = {
     BOOL: "On or off",
     COUNT: "Count",
     RANGE: "Range",
-    ENUM: "One of a list",
+    ENUM: "Choice",
     STRING: "Text",
   },
   TriggerAction: {
@@ -781,10 +806,10 @@ export const labels = {
     workspace_cap: "Workspace job cap",
     workspace_vcpu: "Workspace vCPU limit",
     free_allowance: "Free allowance used",
-    spend_cap: "Spend cap reached",
+    spend_cap: "Spending cap reached",
     jobs_per_hour: "Hourly job limit",
     start_rate: "Start windows full",
-    burst_guard: "Burst guard",
+    burst_guard: "Burst guard: too many jobs in one run",
     plan_os: "OS not on the plan",
     installation_suspended: "Installation suspended",
     overflow_wait: "Waiting for overflow capacity",
