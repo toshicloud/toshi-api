@@ -53,11 +53,16 @@ type Filler struct {
 	// when unset and may take at most 1 hour; the operator's default is 2
 	// hours.
 	MaxDuration *durationpb.Duration `protobuf:"bytes,8,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
-	Enabled     bool                 `protobuf:"varint,9,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	// Whether Toshi dispatches runs of the filler. PutFiller stores it as
+	// sent, so a new filler is disabled unless the request sets it.
+	Enabled bool `protobuf:"varint,9,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	// Where the filler comes from: "config", "operator" or "workspace" (the
 	// workspace put it).
-	Source    string                 `protobuf:"bytes,10,opt,name=source,proto3" json:"source,omitempty"`
+	Source string `protobuf:"bytes,10,opt,name=source,proto3" json:"source,omitempty"`
+	// When the filler was first stored. Set by the server, and kept when
+	// PutFiller replaces the filler.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When the filler was last written. Set by the server.
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// The filler's newest run. Not set before its first.
 	LastRun *FillerRun `protobuf:"bytes,13,opt,name=last_run,json=lastRun,proto3" json:"last_run,omitempty"`
@@ -236,9 +241,11 @@ func (x *Filler) GetKind() string {
 
 // FillerRun is one run of a filler.
 type FillerRun struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Id     string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Filler string                 `protobuf:"bytes,2,opt,name=filler,proto3" json:"filler,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Toshi's ID of the run, unique among the workspace's filler runs.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The name of the filler the run belongs to.
+	Filler string `protobuf:"bytes,2,opt,name=filler,proto3" json:"filler,omitempty"`
 	// The host the run went to, when it is one of the workspace's own hosts.
 	// Empty while the run waits for its job, and for a host Toshi runs for
 	// many workspaces.
@@ -249,10 +256,15 @@ type FillerRun struct {
 	// Toshi's job ID of the filler job, once its webhook arrived.
 	JobId string `protobuf:"bytes,5,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	// GitHub's workflow run ID.
-	RunId         int64                  `protobuf:"varint,6,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
-	Error         string                 `protobuf:"bytes,7,opt,name=error,proto3" json:"error,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	StartedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	RunId int64 `protobuf:"varint,6,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	// Why the run ended as it did, as the guest, the job or the scheduler
+	// reported it; empty for a completed run and before the run ends.
+	Error string `protobuf:"bytes,7,opt,name=error,proto3" json:"error,omitempty"`
+	// When Toshi dispatched the run or assigned it to a host.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When the run started; unset before that.
+	StartedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	// When the run ended; unset until a terminal state.
 	FinishedAt    *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -361,9 +373,12 @@ func (x *FillerRun) GetFinishedAt() *timestamppb.Timestamp {
 // FillerHostMinutes is the filler minutes of one of the workspace's own
 // hosts.
 type FillerHostMinutes struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	HostId        string                 `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
-	Minutes       float64                `protobuf:"fixed64,2,opt,name=minutes,proto3" json:"minutes,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host's ID; a host the workspace owns.
+	HostId string `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
+	// Minutes of the workspace's filler runs on the host in the last 24
+	// hours, from each run's start to its finish.
+	Minutes       float64 `protobuf:"fixed64,2,opt,name=minutes,proto3" json:"minutes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -414,8 +429,9 @@ func (x *FillerHostMinutes) GetMinutes() float64 {
 
 // FillerPause is one paused filler; see Filler.pause_reason.
 type FillerPause struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Filler string                 `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the paused filler.
+	Filler string `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
 	// workspace_suspended, workspace_deleting, workspace_deleted, workspace_closed,
 	// installation_removed, installation_suspended, installation_ambiguous,
 	// budget_spent or budget_off.
@@ -486,6 +502,7 @@ func (x *FillerPause) GetAsOf() *timestamppb.Timestamp {
 	return nil
 }
 
+// ListFillersRequest selects one page of the workspace's fillers.
 type ListFillersRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most fillers in one page; zero lets the server choose.
@@ -540,9 +557,12 @@ func (x *ListFillersRequest) GetPageToken() string {
 	return ""
 }
 
+// ListFillersResponse carries one page of the workspace's fillers, each
+// with its latest run, and the filler minutes per host.
 type ListFillersResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Fillers []*Filler              `protobuf:"bytes,1,rep,name=fillers,proto3" json:"fillers,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's fillers, ordered by name.
+	Fillers []*Filler `protobuf:"bytes,1,rep,name=fillers,proto3" json:"fillers,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	// Minutes of the workspace's filler runs that finished in the last 24
@@ -605,6 +625,7 @@ func (x *ListFillersResponse) GetHostMinutes() []*FillerHostMinutes {
 	return nil
 }
 
+// PutFillerRequest carries the filler to add or replace; its name names it.
 type PutFillerRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// source, created_at, updated_at, last_run, pause_reason, paused_since and
@@ -651,9 +672,11 @@ func (x *PutFillerRequest) GetFiller() *Filler {
 	return nil
 }
 
+// PutFillerResponse carries the filler as stored.
 type PutFillerResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Filler        *Filler                `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The filler as stored.
+	Filler        *Filler `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -695,9 +718,12 @@ func (x *PutFillerResponse) GetFiller() *Filler {
 	return nil
 }
 
+// DeleteFillerRequest names the filler to remove.
 type DeleteFillerRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The filler's name. Empty fails with INVALID_ARGUMENT; an unknown name
+	// with NOT_FOUND.
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -739,6 +765,7 @@ func (x *DeleteFillerRequest) GetName() string {
 	return ""
 }
 
+// DeleteFillerResponse is the answer to DeleteFiller.
 type DeleteFillerResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -775,10 +802,14 @@ func (*DeleteFillerResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_fillers_proto_rawDescGZIP(), []int{9}
 }
 
+// UpdateFillerRequest carries the filler to change and the enabled value
+// to set.
 type UpdateFillerRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The filler to change; its name names it. Only enabled is read from it.
-	Filler        *Filler                `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
+	Filler *Filler `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
+	// The fields to set: only enabled is accepted. An empty mask or another
+	// path fails with INVALID_ARGUMENT.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -828,9 +859,11 @@ func (x *UpdateFillerRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateFillerResponse carries the filler as stored after the change.
 type UpdateFillerResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Filler        *Filler                `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The filler as stored after the change.
+	Filler        *Filler `protobuf:"bytes,1,opt,name=filler,proto3" json:"filler,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -872,6 +905,8 @@ func (x *UpdateFillerResponse) GetFiller() *Filler {
 	return nil
 }
 
+// ListFillerRunsRequest selects one filler's runs, or every filler's, one
+// page at a time.
 type ListFillerRunsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Only this filler's runs. Empty: every filler's.
@@ -935,9 +970,12 @@ func (x *ListFillerRunsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListFillerRunsResponse carries one page of filler runs and the pauses of
+// the fillers the request covers.
 type ListFillerRunsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Runs  []*FillerRun           `protobuf:"bytes,1,rep,name=runs,proto3" json:"runs,omitempty"`
+	// The page's runs, newest first.
+	Runs []*FillerRun `protobuf:"bytes,1,rep,name=runs,proto3" json:"runs,omitempty"`
 	// The paused fillers among those the request covers; see
 	// Filler.pause_reason. Every page holds all of them.
 	Pauses []*FillerPause `protobuf:"bytes,2,rep,name=pauses,proto3" json:"pauses,omitempty"`

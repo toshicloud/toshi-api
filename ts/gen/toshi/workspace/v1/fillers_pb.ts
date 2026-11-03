@@ -87,6 +87,9 @@ export type Filler = Message<"toshi.workspace.v1.Filler"> & {
   maxDuration?: Duration | undefined;
 
   /**
+   * Whether Toshi dispatches runs of the filler. PutFiller stores it as
+   * sent, so a new filler is disabled unless the request sets it.
+   *
    * @generated from field: bool enabled = 9;
    */
   enabled: boolean;
@@ -100,11 +103,16 @@ export type Filler = Message<"toshi.workspace.v1.Filler"> & {
   source: string;
 
   /**
+   * When the filler was first stored. Set by the server, and kept when
+   * PutFiller replaces the filler.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 11;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When the filler was last written. Set by the server.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 12;
    */
   updatedAt?: Timestamp | undefined;
@@ -229,6 +237,9 @@ export type FillerJson = {
   maxDuration?: DurationJson;
 
   /**
+   * Whether Toshi dispatches runs of the filler. PutFiller stores it as
+   * sent, so a new filler is disabled unless the request sets it.
+   *
    * @generated from field: bool enabled = 9;
    */
   enabled?: boolean;
@@ -242,11 +253,16 @@ export type FillerJson = {
   source?: string;
 
   /**
+   * When the filler was first stored. Set by the server, and kept when
+   * PutFiller replaces the filler.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 11;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When the filler was last written. Set by the server.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 12;
    */
   updatedAt?: TimestampJson;
@@ -313,11 +329,15 @@ export const FillerSchema: GenMessage<Filler, {jsonType: FillerJson}> = /*@__PUR
  */
 export type FillerRun = Message<"toshi.workspace.v1.FillerRun"> & {
   /**
+   * Toshi's ID of the run, unique among the workspace's filler runs.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The name of the filler the run belongs to.
+   *
    * @generated from field: string filler = 2;
    */
   filler: string;
@@ -354,21 +374,30 @@ export type FillerRun = Message<"toshi.workspace.v1.FillerRun"> & {
   runId: bigint;
 
   /**
+   * Why the run ended as it did, as the guest, the job or the scheduler
+   * reported it; empty for a completed run and before the run ends.
+   *
    * @generated from field: string error = 7;
    */
   error: string;
 
   /**
+   * When Toshi dispatched the run or assigned it to a host.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 8;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When the run started; unset before that.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 9;
    */
   startedAt?: Timestamp | undefined;
 
   /**
+   * When the run ended; unset until a terminal state.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 10;
    */
   finishedAt?: Timestamp | undefined;
@@ -381,11 +410,15 @@ export type FillerRun = Message<"toshi.workspace.v1.FillerRun"> & {
  */
 export type FillerRunJson = {
   /**
+   * Toshi's ID of the run, unique among the workspace's filler runs.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The name of the filler the run belongs to.
+   *
    * @generated from field: string filler = 2;
    */
   filler?: string;
@@ -422,21 +455,30 @@ export type FillerRunJson = {
   runId?: string;
 
   /**
+   * Why the run ended as it did, as the guest, the job or the scheduler
+   * reported it; empty for a completed run and before the run ends.
+   *
    * @generated from field: string error = 7;
    */
   error?: string;
 
   /**
+   * When Toshi dispatched the run or assigned it to a host.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 8;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When the run started; unset before that.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 9;
    */
   startedAt?: TimestampJson;
 
   /**
+   * When the run ended; unset until a terminal state.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 10;
    */
   finishedAt?: TimestampJson;
@@ -457,11 +499,16 @@ export const FillerRunSchema: GenMessage<FillerRun, {jsonType: FillerRunJson}> =
  */
 export type FillerHostMinutes = Message<"toshi.workspace.v1.FillerHostMinutes"> & {
   /**
+   * The host's ID; a host the workspace owns.
+   *
    * @generated from field: string host_id = 1;
    */
   hostId: string;
 
   /**
+   * Minutes of the workspace's filler runs on the host in the last 24
+   * hours, from each run's start to its finish.
+   *
    * @generated from field: double minutes = 2;
    */
   minutes: number;
@@ -475,11 +522,16 @@ export type FillerHostMinutes = Message<"toshi.workspace.v1.FillerHostMinutes"> 
  */
 export type FillerHostMinutesJson = {
   /**
+   * The host's ID; a host the workspace owns.
+   *
    * @generated from field: string host_id = 1;
    */
   hostId?: string;
 
   /**
+   * Minutes of the workspace's filler runs on the host in the last 24
+   * hours, from each run's start to its finish.
+   *
    * @generated from field: double minutes = 2;
    */
   minutes?: number | "NaN" | "Infinity" | "-Infinity";
@@ -499,6 +551,8 @@ export const FillerHostMinutesSchema: GenMessage<FillerHostMinutes, {jsonType: F
  */
 export type FillerPause = Message<"toshi.workspace.v1.FillerPause"> & {
   /**
+   * The name of the paused filler.
+   *
    * @generated from field: string filler = 1;
    */
   filler: string;
@@ -534,6 +588,8 @@ export type FillerPause = Message<"toshi.workspace.v1.FillerPause"> & {
  */
 export type FillerPauseJson = {
   /**
+   * The name of the paused filler.
+   *
    * @generated from field: string filler = 1;
    */
   filler?: string;
@@ -570,6 +626,8 @@ export const FillerPauseSchema: GenMessage<FillerPause, {jsonType: FillerPauseJs
   messageDesc(file_toshi_workspace_v1_fillers, 3);
 
 /**
+ * ListFillersRequest selects one page of the workspace's fillers.
+ *
  * @generated from message toshi.workspace.v1.ListFillersRequest
  */
 export type ListFillersRequest = Message<"toshi.workspace.v1.ListFillersRequest"> & {
@@ -589,6 +647,8 @@ export type ListFillersRequest = Message<"toshi.workspace.v1.ListFillersRequest"
 };
 
 /**
+ * ListFillersRequest selects one page of the workspace's fillers.
+ *
  * @generated from message toshi.workspace.v1.ListFillersRequest
  */
 export type ListFillersRequestJson = {
@@ -615,10 +675,15 @@ export const ListFillersRequestSchema: GenMessage<ListFillersRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_fillers, 4);
 
 /**
+ * ListFillersResponse carries one page of the workspace's fillers, each
+ * with its latest run, and the filler minutes per host.
+ *
  * @generated from message toshi.workspace.v1.ListFillersResponse
  */
 export type ListFillersResponse = Message<"toshi.workspace.v1.ListFillersResponse"> & {
   /**
+   * The page's fillers, ordered by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Filler fillers = 1;
    */
   fillers: Filler[];
@@ -642,10 +707,15 @@ export type ListFillersResponse = Message<"toshi.workspace.v1.ListFillersRespons
 };
 
 /**
+ * ListFillersResponse carries one page of the workspace's fillers, each
+ * with its latest run, and the filler minutes per host.
+ *
  * @generated from message toshi.workspace.v1.ListFillersResponse
  */
 export type ListFillersResponseJson = {
   /**
+   * The page's fillers, ordered by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Filler fillers = 1;
    */
   fillers?: FillerJson[];
@@ -676,6 +746,8 @@ export const ListFillersResponseSchema: GenMessage<ListFillersResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_fillers, 5);
 
 /**
+ * PutFillerRequest carries the filler to add or replace; its name names it.
+ *
  * @generated from message toshi.workspace.v1.PutFillerRequest
  */
 export type PutFillerRequest = Message<"toshi.workspace.v1.PutFillerRequest"> & {
@@ -689,6 +761,8 @@ export type PutFillerRequest = Message<"toshi.workspace.v1.PutFillerRequest"> & 
 };
 
 /**
+ * PutFillerRequest carries the filler to add or replace; its name names it.
+ *
  * @generated from message toshi.workspace.v1.PutFillerRequest
  */
 export type PutFillerRequestJson = {
@@ -709,20 +783,28 @@ export const PutFillerRequestSchema: GenMessage<PutFillerRequest, {jsonType: Put
   messageDesc(file_toshi_workspace_v1_fillers, 6);
 
 /**
+ * PutFillerResponse carries the filler as stored.
+ *
  * @generated from message toshi.workspace.v1.PutFillerResponse
  */
 export type PutFillerResponse = Message<"toshi.workspace.v1.PutFillerResponse"> & {
   /**
+   * The filler as stored.
+   *
    * @generated from field: toshi.workspace.v1.Filler filler = 1;
    */
   filler?: Filler | undefined;
 };
 
 /**
+ * PutFillerResponse carries the filler as stored.
+ *
  * @generated from message toshi.workspace.v1.PutFillerResponse
  */
 export type PutFillerResponseJson = {
   /**
+   * The filler as stored.
+   *
    * @generated from field: toshi.workspace.v1.Filler filler = 1;
    */
   filler?: FillerJson;
@@ -736,20 +818,30 @@ export const PutFillerResponseSchema: GenMessage<PutFillerResponse, {jsonType: P
   messageDesc(file_toshi_workspace_v1_fillers, 7);
 
 /**
+ * DeleteFillerRequest names the filler to remove.
+ *
  * @generated from message toshi.workspace.v1.DeleteFillerRequest
  */
 export type DeleteFillerRequest = Message<"toshi.workspace.v1.DeleteFillerRequest"> & {
   /**
+   * The filler's name. Empty fails with INVALID_ARGUMENT; an unknown name
+   * with NOT_FOUND.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 };
 
 /**
+ * DeleteFillerRequest names the filler to remove.
+ *
  * @generated from message toshi.workspace.v1.DeleteFillerRequest
  */
 export type DeleteFillerRequestJson = {
   /**
+   * The filler's name. Empty fails with INVALID_ARGUMENT; an unknown name
+   * with NOT_FOUND.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
@@ -763,12 +855,16 @@ export const DeleteFillerRequestSchema: GenMessage<DeleteFillerRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_fillers, 8);
 
 /**
+ * DeleteFillerResponse is the answer to DeleteFiller.
+ *
  * @generated from message toshi.workspace.v1.DeleteFillerResponse
  */
 export type DeleteFillerResponse = Message<"toshi.workspace.v1.DeleteFillerResponse"> & {
 };
 
 /**
+ * DeleteFillerResponse is the answer to DeleteFiller.
+ *
  * @generated from message toshi.workspace.v1.DeleteFillerResponse
  */
 export type DeleteFillerResponseJson = {
@@ -782,6 +878,9 @@ export const DeleteFillerResponseSchema: GenMessage<DeleteFillerResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_fillers, 9);
 
 /**
+ * UpdateFillerRequest carries the filler to change and the enabled value
+ * to set.
+ *
  * @generated from message toshi.workspace.v1.UpdateFillerRequest
  */
 export type UpdateFillerRequest = Message<"toshi.workspace.v1.UpdateFillerRequest"> & {
@@ -793,12 +892,18 @@ export type UpdateFillerRequest = Message<"toshi.workspace.v1.UpdateFillerReques
   filler?: Filler | undefined;
 
   /**
+   * The fields to set: only enabled is accepted. An empty mask or another
+   * path fails with INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMask | undefined;
 };
 
 /**
+ * UpdateFillerRequest carries the filler to change and the enabled value
+ * to set.
+ *
  * @generated from message toshi.workspace.v1.UpdateFillerRequest
  */
 export type UpdateFillerRequestJson = {
@@ -810,6 +915,9 @@ export type UpdateFillerRequestJson = {
   filler?: FillerJson;
 
   /**
+   * The fields to set: only enabled is accepted. An empty mask or another
+   * path fails with INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMaskJson;
@@ -823,20 +931,28 @@ export const UpdateFillerRequestSchema: GenMessage<UpdateFillerRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_fillers, 10);
 
 /**
+ * UpdateFillerResponse carries the filler as stored after the change.
+ *
  * @generated from message toshi.workspace.v1.UpdateFillerResponse
  */
 export type UpdateFillerResponse = Message<"toshi.workspace.v1.UpdateFillerResponse"> & {
   /**
+   * The filler as stored after the change.
+   *
    * @generated from field: toshi.workspace.v1.Filler filler = 1;
    */
   filler?: Filler | undefined;
 };
 
 /**
+ * UpdateFillerResponse carries the filler as stored after the change.
+ *
  * @generated from message toshi.workspace.v1.UpdateFillerResponse
  */
 export type UpdateFillerResponseJson = {
   /**
+   * The filler as stored after the change.
+   *
    * @generated from field: toshi.workspace.v1.Filler filler = 1;
    */
   filler?: FillerJson;
@@ -850,6 +966,9 @@ export const UpdateFillerResponseSchema: GenMessage<UpdateFillerResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_fillers, 11);
 
 /**
+ * ListFillerRunsRequest selects one filler's runs, or every filler's, one
+ * page at a time.
+ *
  * @generated from message toshi.workspace.v1.ListFillerRunsRequest
  */
 export type ListFillerRunsRequest = Message<"toshi.workspace.v1.ListFillerRunsRequest"> & {
@@ -876,6 +995,9 @@ export type ListFillerRunsRequest = Message<"toshi.workspace.v1.ListFillerRunsRe
 };
 
 /**
+ * ListFillerRunsRequest selects one filler's runs, or every filler's, one
+ * page at a time.
+ *
  * @generated from message toshi.workspace.v1.ListFillerRunsRequest
  */
 export type ListFillerRunsRequestJson = {
@@ -909,10 +1031,15 @@ export const ListFillerRunsRequestSchema: GenMessage<ListFillerRunsRequest, {jso
   messageDesc(file_toshi_workspace_v1_fillers, 12);
 
 /**
+ * ListFillerRunsResponse carries one page of filler runs and the pauses of
+ * the fillers the request covers.
+ *
  * @generated from message toshi.workspace.v1.ListFillerRunsResponse
  */
 export type ListFillerRunsResponse = Message<"toshi.workspace.v1.ListFillerRunsResponse"> & {
   /**
+   * The page's runs, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.FillerRun runs = 1;
    */
   runs: FillerRun[];
@@ -934,10 +1061,15 @@ export type ListFillerRunsResponse = Message<"toshi.workspace.v1.ListFillerRunsR
 };
 
 /**
+ * ListFillerRunsResponse carries one page of filler runs and the pauses of
+ * the fillers the request covers.
+ *
  * @generated from message toshi.workspace.v1.ListFillerRunsResponse
  */
 export type ListFillerRunsResponseJson = {
   /**
+   * The page's runs, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.FillerRun runs = 1;
    */
   runs?: FillerRunJson[];

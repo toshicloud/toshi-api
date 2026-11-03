@@ -96,11 +96,16 @@ message Filler {
   // when unset and may take at most 1 hour; the operator's default is 2
   // hours.
   google.protobuf.Duration max_duration = 8;
+  // Whether Toshi dispatches runs of the filler. PutFiller stores it as
+  // sent, so a new filler is disabled unless the request sets it.
   bool enabled = 9;
   // Where the filler comes from: "config", "operator" or "workspace" (the
   // workspace put it).
   string source = 10;
+  // When the filler was first stored. Set by the server, and kept when
+  // PutFiller replaces the filler.
   google.protobuf.Timestamp created_at = 11;
+  // When the filler was last written. Set by the server.
   google.protobuf.Timestamp updated_at = 12;
   // The filler's newest run. Not set before its first.
   FillerRun last_run = 13;
@@ -128,7 +133,9 @@ message Filler {
 
 // FillerRun is one run of a filler.
 message FillerRun {
+  // Toshi's ID of the run, unique among the workspace's filler runs.
   string id = 1;
+  // The name of the filler the run belongs to.
   string filler = 2;
   // The host the run went to, when it is one of the workspace's own hosts.
   // Empty while the run waits for its job, and for a host Toshi runs for
@@ -141,21 +148,30 @@ message FillerRun {
   string job_id = 5;
   // GitHub's workflow run ID.
   int64 run_id = 6;
+  // Why the run ended as it did, as the guest, the job or the scheduler
+  // reported it; empty for a completed run and before the run ends.
   string error = 7;
+  // When Toshi dispatched the run or assigned it to a host.
   google.protobuf.Timestamp created_at = 8;
+  // When the run started; unset before that.
   google.protobuf.Timestamp started_at = 9;
+  // When the run ended; unset until a terminal state.
   google.protobuf.Timestamp finished_at = 10;
 }
 
 // FillerHostMinutes is the filler minutes of one of the workspace's own
 // hosts.
 message FillerHostMinutes {
+  // The host's ID; a host the workspace owns.
   string host_id = 1;
+  // Minutes of the workspace's filler runs on the host in the last 24
+  // hours, from each run's start to its finish.
   double minutes = 2;
 }
 
 // FillerPause is one paused filler; see Filler.pause_reason.
 message FillerPause {
+  // The name of the paused filler.
   string filler = 1;
   // workspace_suspended, workspace_deleting, workspace_deleted, workspace_closed,
   // installation_removed, installation_suspended, installation_ambiguous,
@@ -167,6 +183,7 @@ message FillerPause {
   google.protobuf.Timestamp as_of = 4;
 }
 
+// ListFillersRequest selects one page of the workspace's fillers.
 message ListFillersRequest {
   // The most fillers in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -174,7 +191,10 @@ message ListFillersRequest {
   string page_token = 2;
 }
 
+// ListFillersResponse carries one page of the workspace's fillers, each
+// with its latest run, and the filler minutes per host.
 message ListFillersResponse {
+  // The page's fillers, ordered by name.
   repeated Filler fillers = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -185,32 +205,47 @@ message ListFillersResponse {
   repeated FillerHostMinutes host_minutes = 3;
 }
 
+// PutFillerRequest carries the filler to add or replace; its name names it.
 message PutFillerRequest {
   // source, created_at, updated_at, last_run, pause_reason, paused_since and
   // pause_as_of are ignored.
   Filler filler = 1;
 }
 
+// PutFillerResponse carries the filler as stored.
 message PutFillerResponse {
+  // The filler as stored.
   Filler filler = 1;
 }
 
+// DeleteFillerRequest names the filler to remove.
 message DeleteFillerRequest {
+  // The filler's name. Empty fails with INVALID_ARGUMENT; an unknown name
+  // with NOT_FOUND.
   string name = 1;
 }
 
+// DeleteFillerResponse is the answer to DeleteFiller.
 message DeleteFillerResponse {}
 
+// UpdateFillerRequest carries the filler to change and the enabled value
+// to set.
 message UpdateFillerRequest {
   // The filler to change; its name names it. Only enabled is read from it.
   Filler filler = 1;
+  // The fields to set: only enabled is accepted. An empty mask or another
+  // path fails with INVALID_ARGUMENT.
   google.protobuf.FieldMask update_mask = 2;
 }
 
+// UpdateFillerResponse carries the filler as stored after the change.
 message UpdateFillerResponse {
+  // The filler as stored after the change.
   Filler filler = 1;
 }
 
+// ListFillerRunsRequest selects one filler's runs, or every filler's, one
+// page at a time.
 message ListFillerRunsRequest {
   // Only this filler's runs. Empty: every filler's.
   string filler = 1;
@@ -220,7 +255,10 @@ message ListFillerRunsRequest {
   string page_token = 3;
 }
 
+// ListFillerRunsResponse carries one page of filler runs and the pauses of
+// the fillers the request covers.
 message ListFillerRunsResponse {
+  // The page's runs, newest first.
   repeated FillerRun runs = 1;
   // The paused fillers among those the request covers; see
   // Filler.pause_reason. Every page holds all of them.
