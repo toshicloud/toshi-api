@@ -452,7 +452,8 @@ export type ReserveUploadRequest = Message<"toshi.workspace.v1.ReserveUploadRequ
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
+   * key and request return the first answer while the upload is pending.
+   * After the upload ends, a retry is refused. A different request with the
    * same key is refused. Keys are kept for 30 days by default.
    *
    * @generated from field: string request_key = 7;
@@ -519,7 +520,8 @@ export type ReserveUploadRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
+   * key and request return the first answer while the upload is pending.
+   * After the upload ends, a retry is refused. A different request with the
    * same key is refused. Keys are kept for 30 days by default.
    *
    * @generated from field: string request_key = 7;

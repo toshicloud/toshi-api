@@ -333,7 +333,8 @@ type ReserveUploadRequest struct {
 	// FAILED_PRECONDITION.
 	Recording RecordingKind `protobuf:"varint,6,opt,name=recording,proto3,enum=toshi.workspace.v1.RecordingKind" json:"recording,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
+	// key and request return the first answer while the upload is pending.
+	// After the upload ends, a retry is refused. A different request with the
 	// same key is refused. Keys are kept for 30 days by default.
 	RequestKey    string `protobuf:"bytes,7,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
