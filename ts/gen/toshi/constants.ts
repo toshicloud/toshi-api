@@ -575,8 +575,10 @@ export const ruleWords = {
   "volume_ceiling.follows_plan": "An empty or 0 ceiling in the workspace settings follows the plan's default.",
   "volume_ceiling.no_limit": "Where the volume caps report a ceiling of 0, there is no limit: no volume cap is checked against it.",
   "volume_ceiling.lowering": "Lowering the ceiling is always allowed; it bounds new volumes and any volume cap you raise.",
-  "start_windows.paid_and_waiting": "A start past the included count is a paid start; at the ceiling a start waits until the window moves on.",
+  "start_windows.paid_and_waiting": "A start past the included count is a paid start; at the ceiling a CI job waits until the window moves on.",
+  "start_windows.sandbox_refused": "A start past the included count is a paid start; at the ceiling a sandbox start is refused until the window moves on.",
   "plan.not_included": "Not on this workspace's plan.",
+  "plan.available_from": "Available on <plan>: the lowest plan that allows it.",
 } as const;
 
 export const labels = {
