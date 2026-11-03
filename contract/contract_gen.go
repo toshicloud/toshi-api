@@ -135,6 +135,10 @@ const (
 	ReasonProjectNameRetained = "PROJECT_NAME_RETAINED"
 	// ReasonPurgeDue: `CancelWorkspaceDeletion` after `purge_after` has passed.
 	ReasonPurgeDue = "PURGE_DUE"
+	// ReasonRequestKeyMismatch: A call whose `request_key` is already stored with a different request's payload.
+	ReasonRequestKeyMismatch = "REQUEST_KEY_MISMATCH"
+	// ReasonRequestKeyTargetGone: A retry whose request key stored a shown-once secret, share link or upload that was rolled, revoked, spent, deleted, closed or expired since.
+	ReasonRequestKeyTargetGone = "REQUEST_KEY_TARGET_GONE"
 	// ReasonRestorePeriodEnded: `RestoreProject` after the project's purge time has passed; the metadata `purge_at` (RFC 3339, UTC) is that time.
 	ReasonRestorePeriodEnded = "RESTORE_PERIOD_ENDED"
 	// ReasonSigninUntested: Setting `settings.sign_in` from a session or token not signed in through that provider.

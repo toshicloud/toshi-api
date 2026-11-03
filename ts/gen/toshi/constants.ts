@@ -72,6 +72,8 @@ export const reasons = {
   PROJECT_IN_USE: { code: "FAILED_PRECONDITION", metadata: ["jobs", "workloads", "triggers"], text: "Something still runs in this project; finish or delete it first." },
   PROJECT_NAME_RETAINED: { code: "FAILED_PRECONDITION", metadata: ["purge_at"], text: "A deleted project keeps this name until it is purged; restore it or choose another name." },
   PURGE_DUE: { code: "FAILED_PRECONDITION", metadata: ["state"], text: "It is too late to cancel: this workspace's purge is due." },
+  REQUEST_KEY_MISMATCH: { code: "FAILED_PRECONDITION", metadata: [], text: "This request key was already used for a different request. Use a new request key for a new request." },
+  REQUEST_KEY_TARGET_GONE: { code: "FAILED_PRECONDITION", metadata: [], text: "What the first try made was rolled, revoked or closed since, so it cannot be shown again. Use a new request key to make a new one." },
   RESTORE_PERIOD_ENDED: { code: "FAILED_PRECONDITION", metadata: ["purge_at"], text: "It is too late to restore this project: its restore period has ended." },
   SIGNIN_UNTESTED: { code: "FAILED_PRECONDITION", metadata: [], text: "Sign in through this provider before turning on required sign-in." },
   STATE_VOLUME_GONE: { code: "FAILED_PRECONDITION", metadata: [], text: "This sandbox's state volume is gone; create a new sandbox." },
