@@ -83,6 +83,8 @@ const (
 	ReasonCompatibilityDateTooNew = "COMPATIBILITY_DATE_TOO_NEW"
 	// ReasonCompatibilityDateTooOld: A compatibility date is older than the oldest supported date.
 	ReasonCompatibilityDateTooOld = "COMPATIBILITY_DATE_TOO_OLD"
+	// ReasonDefaultProject: `DeleteProject` on the workspace's default project.
+	ReasonDefaultProject = "DEFAULT_PROJECT"
 	// ReasonDeletionByOperator: `CancelWorkspaceDeletion` on a deletion the operator made.
 	ReasonDeletionByOperator = "DELETION_BY_OPERATOR"
 	// ReasonDeliveryExpired: `ReplayConnectionDelivery` for a delivery past its retention; the metadata `boundary` is the time it expired.
@@ -127,8 +129,14 @@ const (
 	ReasonPlanExcludesImages = "PLAN_EXCLUDES_IMAGES"
 	// ReasonProductUnavailable: A call of a product that is off; the metadata `cause` (`build`, `operator`, `plan` or `workspace`) says why, with `state` for `operator` and `plan` when a plan the workspace can move to has the product.
 	ReasonProductUnavailable = "PRODUCT_UNAVAILABLE"
+	// ReasonProjectInUse: `DeleteProject` while the project has unfinished jobs, workloads that are not deleted or triggers that are not deleted; the metadata carries `jobs`, `workloads` and `triggers`.
+	ReasonProjectInUse = "PROJECT_IN_USE"
+	// ReasonProjectNameRetained: `CreateProject` with the name of a deleted project that is still retained; the metadata `purge_at` (RFC 3339, UTC) is when the name is free.
+	ReasonProjectNameRetained = "PROJECT_NAME_RETAINED"
 	// ReasonPurgeDue: `CancelWorkspaceDeletion` after `purge_after` has passed.
 	ReasonPurgeDue = "PURGE_DUE"
+	// ReasonRestorePeriodEnded: `RestoreProject` after the project's purge time has passed; the metadata `purge_at` (RFC 3339, UTC) is that time.
+	ReasonRestorePeriodEnded = "RESTORE_PERIOD_ENDED"
 	// ReasonSigninUntested: Setting `settings.sign_in` from a session or token not signed in through that provider.
 	ReasonSigninUntested = "SIGNIN_UNTESTED"
 	// ReasonStateVolumeGone: `StartSandbox` of a sandbox without `keep_vm` whose state volume was deleted or lost; the sandbox stays stopped.
