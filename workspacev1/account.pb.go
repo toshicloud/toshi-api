@@ -31,8 +31,11 @@ type Account struct {
 	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// The name and email the user's latest sign-in reported; shown, never
 	// matched.
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The email the user's latest sign-in reported; shown, never used to
+	// add an identity.
+	Email string `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	// When the user was created: their first sign-in.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -107,8 +110,10 @@ type Identity struct {
 	// The account's stable id at the provider.
 	Subject string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
 	// The name the provider shows the account by, as of its latest sign-in.
-	Login         string                 `protobuf:"bytes,3,opt,name=login,proto3" json:"login,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Login string `protobuf:"bytes,3,opt,name=login,proto3" json:"login,omitempty"`
+	// When the identity was added: its first sign-in.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When this identity last signed in.
 	LastSignInAt  *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_sign_in_at,json=lastSignInAt,proto3" json:"last_sign_in_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -179,6 +184,7 @@ func (x *Identity) GetLastSignInAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// GetAccountRequest has no fields: the caller's own user is the subject.
 type GetAccountRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -215,10 +221,15 @@ func (*GetAccountRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{2}
 }
 
+// GetAccountResponse is the caller's user, its identities, the workspaces
+// it is a member of, the sign-ins the call holds and its requests to
+// join.
 type GetAccountResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Account    *Account               `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
-	Identities []*Identity            `protobuf:"bytes,2,rep,name=identities,proto3" json:"identities,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The caller's user.
+	Account *Account `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
+	// The user's identities, oldest first.
+	Identities []*Identity `protobuf:"bytes,2,rep,name=identities,proto3" json:"identities,omitempty"`
 	// The workspaces the user is a member of, sorted.
 	Workspaces []string `protobuf:"bytes,3,rep,name=workspaces,proto3" json:"workspaces,omitempty"`
 	// The sign-ins the calling session or access token holds, oldest first:
@@ -322,7 +333,8 @@ type JoinRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The workspace's id and, when it has one, its name; else its id again.
 	Workspace string `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
-	Name      string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The workspace's name, or its id when it has none.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// "pending" while it waits for an admin, "declined" once one declined it.
 	State string `protobuf:"bytes,3,opt,name=state,proto3" json:"state,omitempty"`
 	// When a declined request may be asked again: the person's next sign-in
@@ -395,10 +407,12 @@ type SignInProof struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The identity that signed in, as Identity names it.
 	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
-	Subject  string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
+	// The account's stable id at the provider, as Identity names it.
+	Subject string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
 	// How it signed in: "github", "oidc" for an OpenID Connect issuer, or
 	// "local" for the control plane's local admin.
-	Method          string                 `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
+	Method string `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
+	// When the sign-in happened; a session's first is when it was opened.
 	AuthenticatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=authenticated_at,json=authenticatedAt,proto3" json:"authenticated_at,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -462,6 +476,8 @@ func (x *SignInProof) GetAuthenticatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// ListIdentitiesRequest has no fields: the caller's own identities are the
+// subject.
 type ListIdentitiesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -498,9 +514,11 @@ func (*ListIdentitiesRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{6}
 }
 
+// ListIdentitiesResponse lists the caller's identities, oldest first.
 type ListIdentitiesResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Identities    []*Identity            `protobuf:"bytes,1,rep,name=identities,proto3" json:"identities,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The caller's identities, oldest first.
+	Identities    []*Identity `protobuf:"bytes,1,rep,name=identities,proto3" json:"identities,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -542,10 +560,12 @@ func (x *ListIdentitiesResponse) GetIdentities() []*Identity {
 	return nil
 }
 
+// UnlinkIdentityRequest names the identity to remove.
 type UnlinkIdentityRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The identity, as Identity names it.
-	Provider      string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	// The account's stable id at the provider, as Identity names it.
 	Subject       string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -595,6 +615,8 @@ func (x *UnlinkIdentityRequest) GetSubject() string {
 	return ""
 }
 
+// UnlinkIdentityResponse is the identity as it was when it was removed,
+// and what ended with it.
 type UnlinkIdentityResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The identity as it was when it was removed.
@@ -602,6 +624,7 @@ type UnlinkIdentityResponse struct {
 	// How many dashboard sessions ended, and how many access-token grants
 	// were revoked with it.
 	SessionsEnded int32 `protobuf:"varint,2,opt,name=sessions_ended,json=sessionsEnded,proto3" json:"sessions_ended,omitempty"`
+	// How many access-token grants, with their tokens, were revoked with it.
 	GrantsRevoked int32 `protobuf:"varint,3,opt,name=grants_revoked,json=grantsRevoked,proto3" json:"grants_revoked,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -658,10 +681,12 @@ func (x *UnlinkIdentityResponse) GetGrantsRevoked() int32 {
 	return 0
 }
 
+// ListSessionsRequest asks for one page of the caller's sign-in sessions.
 type ListSessionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Sessions per page; the server picks a default and a maximum.
-	PageSize      int32  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
 	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -711,9 +736,11 @@ func (x *ListSessionsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListSessionsResponse is one page of the caller's sign-in sessions.
 type ListSessionsResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Sessions []*SignInSession       `protobuf:"bytes,1,rep,name=sessions,proto3" json:"sessions,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The sessions on this page, newest first.
+	Sessions []*SignInSession `protobuf:"bytes,1,rep,name=sessions,proto3" json:"sessions,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -771,8 +798,13 @@ type SignInSession struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// An opaque id, stable for the session's life, that EndSession takes. It
 	// is not the cookie and cannot be used to sign in.
-	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// When the session was opened: a browser session's sign-in, or the
+	// grant an OAuth client's session lives by.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When the session ends: a browser session's lifetime from its sign-in,
+	// or the end of the grant an OAuth client's session lives by. A session
+	// past it is not listed and no longer works.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// The identity provider the session was opened through.
 	Provider string `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
@@ -878,6 +910,7 @@ func (x *SignInSession) GetLastSeenAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// EndSessionRequest names the session to end.
 type EndSessionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The session's id, as SignInSession names it.
@@ -923,6 +956,7 @@ func (x *EndSessionRequest) GetId() string {
 	return ""
 }
 
+// EndSessionResponse is empty: the session is ended when the call returns.
 type EndSessionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields

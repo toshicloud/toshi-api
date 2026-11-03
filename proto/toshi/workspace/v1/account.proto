@@ -88,7 +88,10 @@ message Account {
   // The name and email the user's latest sign-in reported; shown, never
   // matched.
   string name = 2;
+  // The email the user's latest sign-in reported; shown, never used to
+  // add an identity.
   string email = 3;
+  // When the user was created: their first sign-in.
   google.protobuf.Timestamp created_at = 4;
 }
 
@@ -103,14 +106,22 @@ message Identity {
   string subject = 2;
   // The name the provider shows the account by, as of its latest sign-in.
   string login = 3;
+  // When the identity was added: its first sign-in.
   google.protobuf.Timestamp created_at = 4;
+  // When this identity last signed in.
   google.protobuf.Timestamp last_sign_in_at = 5;
 }
 
+// GetAccountRequest has no fields: the caller's own user is the subject.
 message GetAccountRequest {}
 
+// GetAccountResponse is the caller's user, its identities, the workspaces
+// it is a member of, the sign-ins the call holds and its requests to
+// join.
 message GetAccountResponse {
+  // The caller's user.
   Account account = 1;
+  // The user's identities, oldest first.
   repeated Identity identities = 2;
   // The workspaces the user is a member of, sorted.
   repeated string workspaces = 3;
@@ -140,6 +151,7 @@ message GetAccountResponse {
 message JoinRequest {
   // The workspace's id and, when it has one, its name; else its id again.
   string workspace = 1;
+  // The workspace's name, or its id when it has none.
   string name = 2;
   // "pending" while it waits for an admin, "declined" once one declined it.
   string state = 3;
@@ -152,41 +164,56 @@ message JoinRequest {
 message SignInProof {
   // The identity that signed in, as Identity names it.
   string provider = 1;
+  // The account's stable id at the provider, as Identity names it.
   string subject = 2;
   // How it signed in: "github", "oidc" for an OpenID Connect issuer, or
   // "local" for the control plane's local admin.
   string method = 3;
+  // When the sign-in happened; a session's first is when it was opened.
   google.protobuf.Timestamp authenticated_at = 4;
 }
 
+// ListIdentitiesRequest has no fields: the caller's own identities are the
+// subject.
 message ListIdentitiesRequest {}
 
+// ListIdentitiesResponse lists the caller's identities, oldest first.
 message ListIdentitiesResponse {
+  // The caller's identities, oldest first.
   repeated Identity identities = 1;
 }
 
+// UnlinkIdentityRequest names the identity to remove.
 message UnlinkIdentityRequest {
   // The identity, as Identity names it.
   string provider = 1;
+  // The account's stable id at the provider, as Identity names it.
   string subject = 2;
 }
 
+// UnlinkIdentityResponse is the identity as it was when it was removed,
+// and what ended with it.
 message UnlinkIdentityResponse {
   // The identity as it was when it was removed.
   Identity identity = 1;
   // How many dashboard sessions ended, and how many access-token grants
   // were revoked with it.
   int32 sessions_ended = 2;
+  // How many access-token grants, with their tokens, were revoked with it.
   int32 grants_revoked = 3;
 }
 
+// ListSessionsRequest asks for one page of the caller's sign-in sessions.
 message ListSessionsRequest {
   // Sessions per page; the server picks a default and a maximum.
   int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
   string page_token = 2;
 }
 
+// ListSessionsResponse is one page of the caller's sign-in sessions.
 message ListSessionsResponse {
+  // The sessions on this page, newest first.
   repeated SignInSession sessions = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -199,7 +226,12 @@ message SignInSession {
   // An opaque id, stable for the session's life, that EndSession takes. It
   // is not the cookie and cannot be used to sign in.
   string id = 1;
+  // When the session was opened: a browser session's sign-in, or the
+  // grant an OAuth client's session lives by.
   google.protobuf.Timestamp created_at = 2;
+  // When the session ends: a browser session's lifetime from its sign-in,
+  // or the end of the grant an OAuth client's session lives by. A session
+  // past it is not listed and no longer works.
   google.protobuf.Timestamp expires_at = 3;
   // The identity provider the session was opened through.
   string provider = 4;
@@ -217,9 +249,11 @@ message SignInSession {
   google.protobuf.Timestamp last_seen_at = 8;
 }
 
+// EndSessionRequest names the session to end.
 message EndSessionRequest {
   // The session's id, as SignInSession names it.
   string id = 1;
 }
 
+// EndSessionResponse is empty: the session is ended when the call returns.
 message EndSessionResponse {}

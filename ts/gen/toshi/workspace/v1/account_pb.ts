@@ -38,11 +38,16 @@ export type Account = Message<"toshi.workspace.v1.Account"> & {
   name: string;
 
   /**
+   * The email the user's latest sign-in reported; shown, never used to
+   * add an identity.
+   *
    * @generated from field: string email = 3;
    */
   email: string;
 
   /**
+   * When the user was created: their first sign-in.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
@@ -71,11 +76,16 @@ export type AccountJson = {
   name?: string;
 
   /**
+   * The email the user's latest sign-in reported; shown, never used to
+   * add an identity.
+   *
    * @generated from field: string email = 3;
    */
   email?: string;
 
   /**
+   * When the user was created: their first sign-in.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
@@ -119,11 +129,15 @@ export type Identity = Message<"toshi.workspace.v1.Identity"> & {
   login: string;
 
   /**
+   * When the identity was added: its first sign-in.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When this identity last signed in.
+   *
    * @generated from field: google.protobuf.Timestamp last_sign_in_at = 5;
    */
   lastSignInAt?: Timestamp | undefined;
@@ -160,11 +174,15 @@ export type IdentityJson = {
   login?: string;
 
   /**
+   * When the identity was added: its first sign-in.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When this identity last signed in.
+   *
    * @generated from field: google.protobuf.Timestamp last_sign_in_at = 5;
    */
   lastSignInAt?: TimestampJson;
@@ -178,12 +196,16 @@ export const IdentitySchema: GenMessage<Identity, {jsonType: IdentityJson}> = /*
   messageDesc(file_toshi_workspace_v1_account, 1);
 
 /**
+ * GetAccountRequest has no fields: the caller's own user is the subject.
+ *
  * @generated from message toshi.workspace.v1.GetAccountRequest
  */
 export type GetAccountRequest = Message<"toshi.workspace.v1.GetAccountRequest"> & {
 };
 
 /**
+ * GetAccountRequest has no fields: the caller's own user is the subject.
+ *
  * @generated from message toshi.workspace.v1.GetAccountRequest
  */
 export type GetAccountRequestJson = {
@@ -197,15 +219,23 @@ export const GetAccountRequestSchema: GenMessage<GetAccountRequest, {jsonType: G
   messageDesc(file_toshi_workspace_v1_account, 2);
 
 /**
+ * GetAccountResponse is the caller's user, its identities, the workspaces
+ * it is a member of, the sign-ins the call holds and its requests to
+ * join.
+ *
  * @generated from message toshi.workspace.v1.GetAccountResponse
  */
 export type GetAccountResponse = Message<"toshi.workspace.v1.GetAccountResponse"> & {
   /**
+   * The caller's user.
+   *
    * @generated from field: toshi.workspace.v1.Account account = 1;
    */
   account?: Account | undefined;
 
   /**
+   * The user's identities, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Identity identities = 2;
    */
   identities: Identity[];
@@ -253,15 +283,23 @@ export type GetAccountResponse = Message<"toshi.workspace.v1.GetAccountResponse"
 };
 
 /**
+ * GetAccountResponse is the caller's user, its identities, the workspaces
+ * it is a member of, the sign-ins the call holds and its requests to
+ * join.
+ *
  * @generated from message toshi.workspace.v1.GetAccountResponse
  */
 export type GetAccountResponseJson = {
   /**
+   * The caller's user.
+   *
    * @generated from field: toshi.workspace.v1.Account account = 1;
    */
   account?: AccountJson;
 
   /**
+   * The user's identities, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Identity identities = 2;
    */
   identities?: IdentityJson[];
@@ -330,6 +368,8 @@ export type JoinRequest = Message<"toshi.workspace.v1.JoinRequest"> & {
   workspace: string;
 
   /**
+   * The workspace's name, or its id when it has none.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -365,6 +405,8 @@ export type JoinRequestJson = {
   workspace?: string;
 
   /**
+   * The workspace's name, or its id when it has none.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -406,6 +448,8 @@ export type SignInProof = Message<"toshi.workspace.v1.SignInProof"> & {
   provider: string;
 
   /**
+   * The account's stable id at the provider, as Identity names it.
+   *
    * @generated from field: string subject = 2;
    */
   subject: string;
@@ -419,6 +463,8 @@ export type SignInProof = Message<"toshi.workspace.v1.SignInProof"> & {
   method: string;
 
   /**
+   * When the sign-in happened; a session's first is when it was opened.
+   *
    * @generated from field: google.protobuf.Timestamp authenticated_at = 4;
    */
   authenticatedAt?: Timestamp | undefined;
@@ -438,6 +484,8 @@ export type SignInProofJson = {
   provider?: string;
 
   /**
+   * The account's stable id at the provider, as Identity names it.
+   *
    * @generated from field: string subject = 2;
    */
   subject?: string;
@@ -451,6 +499,8 @@ export type SignInProofJson = {
   method?: string;
 
   /**
+   * When the sign-in happened; a session's first is when it was opened.
+   *
    * @generated from field: google.protobuf.Timestamp authenticated_at = 4;
    */
   authenticatedAt?: TimestampJson;
@@ -464,12 +514,18 @@ export const SignInProofSchema: GenMessage<SignInProof, {jsonType: SignInProofJs
   messageDesc(file_toshi_workspace_v1_account, 5);
 
 /**
+ * ListIdentitiesRequest has no fields: the caller's own identities are the
+ * subject.
+ *
  * @generated from message toshi.workspace.v1.ListIdentitiesRequest
  */
 export type ListIdentitiesRequest = Message<"toshi.workspace.v1.ListIdentitiesRequest"> & {
 };
 
 /**
+ * ListIdentitiesRequest has no fields: the caller's own identities are the
+ * subject.
+ *
  * @generated from message toshi.workspace.v1.ListIdentitiesRequest
  */
 export type ListIdentitiesRequestJson = {
@@ -483,20 +539,28 @@ export const ListIdentitiesRequestSchema: GenMessage<ListIdentitiesRequest, {jso
   messageDesc(file_toshi_workspace_v1_account, 6);
 
 /**
+ * ListIdentitiesResponse lists the caller's identities, oldest first.
+ *
  * @generated from message toshi.workspace.v1.ListIdentitiesResponse
  */
 export type ListIdentitiesResponse = Message<"toshi.workspace.v1.ListIdentitiesResponse"> & {
   /**
+   * The caller's identities, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Identity identities = 1;
    */
   identities: Identity[];
 };
 
 /**
+ * ListIdentitiesResponse lists the caller's identities, oldest first.
+ *
  * @generated from message toshi.workspace.v1.ListIdentitiesResponse
  */
 export type ListIdentitiesResponseJson = {
   /**
+   * The caller's identities, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Identity identities = 1;
    */
   identities?: IdentityJson[];
@@ -510,6 +574,8 @@ export const ListIdentitiesResponseSchema: GenMessage<ListIdentitiesResponse, {j
   messageDesc(file_toshi_workspace_v1_account, 7);
 
 /**
+ * UnlinkIdentityRequest names the identity to remove.
+ *
  * @generated from message toshi.workspace.v1.UnlinkIdentityRequest
  */
 export type UnlinkIdentityRequest = Message<"toshi.workspace.v1.UnlinkIdentityRequest"> & {
@@ -521,12 +587,16 @@ export type UnlinkIdentityRequest = Message<"toshi.workspace.v1.UnlinkIdentityRe
   provider: string;
 
   /**
+   * The account's stable id at the provider, as Identity names it.
+   *
    * @generated from field: string subject = 2;
    */
   subject: string;
 };
 
 /**
+ * UnlinkIdentityRequest names the identity to remove.
+ *
  * @generated from message toshi.workspace.v1.UnlinkIdentityRequest
  */
 export type UnlinkIdentityRequestJson = {
@@ -538,6 +608,8 @@ export type UnlinkIdentityRequestJson = {
   provider?: string;
 
   /**
+   * The account's stable id at the provider, as Identity names it.
+   *
    * @generated from field: string subject = 2;
    */
   subject?: string;
@@ -551,6 +623,9 @@ export const UnlinkIdentityRequestSchema: GenMessage<UnlinkIdentityRequest, {jso
   messageDesc(file_toshi_workspace_v1_account, 8);
 
 /**
+ * UnlinkIdentityResponse is the identity as it was when it was removed,
+ * and what ended with it.
+ *
  * @generated from message toshi.workspace.v1.UnlinkIdentityResponse
  */
 export type UnlinkIdentityResponse = Message<"toshi.workspace.v1.UnlinkIdentityResponse"> & {
@@ -570,12 +645,17 @@ export type UnlinkIdentityResponse = Message<"toshi.workspace.v1.UnlinkIdentityR
   sessionsEnded: number;
 
   /**
+   * How many access-token grants, with their tokens, were revoked with it.
+   *
    * @generated from field: int32 grants_revoked = 3;
    */
   grantsRevoked: number;
 };
 
 /**
+ * UnlinkIdentityResponse is the identity as it was when it was removed,
+ * and what ended with it.
+ *
  * @generated from message toshi.workspace.v1.UnlinkIdentityResponse
  */
 export type UnlinkIdentityResponseJson = {
@@ -595,6 +675,8 @@ export type UnlinkIdentityResponseJson = {
   sessionsEnded?: number;
 
   /**
+   * How many access-token grants, with their tokens, were revoked with it.
+   *
    * @generated from field: int32 grants_revoked = 3;
    */
   grantsRevoked?: number;
@@ -608,6 +690,8 @@ export const UnlinkIdentityResponseSchema: GenMessage<UnlinkIdentityResponse, {j
   messageDesc(file_toshi_workspace_v1_account, 9);
 
 /**
+ * ListSessionsRequest asks for one page of the caller's sign-in sessions.
+ *
  * @generated from message toshi.workspace.v1.ListSessionsRequest
  */
 export type ListSessionsRequest = Message<"toshi.workspace.v1.ListSessionsRequest"> & {
@@ -619,12 +703,16 @@ export type ListSessionsRequest = Message<"toshi.workspace.v1.ListSessionsReques
   pageSize: number;
 
   /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
    * @generated from field: string page_token = 2;
    */
   pageToken: string;
 };
 
 /**
+ * ListSessionsRequest asks for one page of the caller's sign-in sessions.
+ *
  * @generated from message toshi.workspace.v1.ListSessionsRequest
  */
 export type ListSessionsRequestJson = {
@@ -636,6 +724,8 @@ export type ListSessionsRequestJson = {
   pageSize?: number;
 
   /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
    * @generated from field: string page_token = 2;
    */
   pageToken?: string;
@@ -649,10 +739,14 @@ export const ListSessionsRequestSchema: GenMessage<ListSessionsRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_account, 10);
 
 /**
+ * ListSessionsResponse is one page of the caller's sign-in sessions.
+ *
  * @generated from message toshi.workspace.v1.ListSessionsResponse
  */
 export type ListSessionsResponse = Message<"toshi.workspace.v1.ListSessionsResponse"> & {
   /**
+   * The sessions on this page, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.SignInSession sessions = 1;
    */
   sessions: SignInSession[];
@@ -666,10 +760,14 @@ export type ListSessionsResponse = Message<"toshi.workspace.v1.ListSessionsRespo
 };
 
 /**
+ * ListSessionsResponse is one page of the caller's sign-in sessions.
+ *
  * @generated from message toshi.workspace.v1.ListSessionsResponse
  */
 export type ListSessionsResponseJson = {
   /**
+   * The sessions on this page, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.SignInSession sessions = 1;
    */
   sessions?: SignInSessionJson[];
@@ -706,11 +804,18 @@ export type SignInSession = Message<"toshi.workspace.v1.SignInSession"> & {
   id: string;
 
   /**
+   * When the session was opened: a browser session's sign-in, or the
+   * grant an OAuth client's session lives by.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 2;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When the session ends: a browser session's lifetime from its sign-in,
+   * or the end of the grant an OAuth client's session lives by. A session
+   * past it is not listed and no longer works.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 3;
    */
   expiresAt?: Timestamp | undefined;
@@ -772,11 +877,18 @@ export type SignInSessionJson = {
   id?: string;
 
   /**
+   * When the session was opened: a browser session's sign-in, or the
+   * grant an OAuth client's session lives by.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 2;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When the session ends: a browser session's lifetime from its sign-in,
+   * or the end of the grant an OAuth client's session lives by. A session
+   * past it is not listed and no longer works.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 3;
    */
   expiresAt?: TimestampJson;
@@ -829,6 +941,8 @@ export const SignInSessionSchema: GenMessage<SignInSession, {jsonType: SignInSes
   messageDesc(file_toshi_workspace_v1_account, 12);
 
 /**
+ * EndSessionRequest names the session to end.
+ *
  * @generated from message toshi.workspace.v1.EndSessionRequest
  */
 export type EndSessionRequest = Message<"toshi.workspace.v1.EndSessionRequest"> & {
@@ -841,6 +955,8 @@ export type EndSessionRequest = Message<"toshi.workspace.v1.EndSessionRequest"> 
 };
 
 /**
+ * EndSessionRequest names the session to end.
+ *
  * @generated from message toshi.workspace.v1.EndSessionRequest
  */
 export type EndSessionRequestJson = {
@@ -860,12 +976,16 @@ export const EndSessionRequestSchema: GenMessage<EndSessionRequest, {jsonType: E
   messageDesc(file_toshi_workspace_v1_account, 13);
 
 /**
+ * EndSessionResponse is empty: the session is ended when the call returns.
+ *
  * @generated from message toshi.workspace.v1.EndSessionResponse
  */
 export type EndSessionResponse = Message<"toshi.workspace.v1.EndSessionResponse"> & {
 };
 
 /**
+ * EndSessionResponse is empty: the session is ended when the call returns.
+ *
  * @generated from message toshi.workspace.v1.EndSessionResponse
  */
 export type EndSessionResponseJson = {
