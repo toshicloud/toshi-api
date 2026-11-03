@@ -93,6 +93,7 @@ service TokenService {
 
 // TokenKind says what a token grants.
 enum TokenKind {
+  // No kind: ListTokens lists tokens of every kind.
   TOKEN_KIND_UNSPECIFIED = 0;
   // An enrollment token: registering a host the workspace owns.
   TOKEN_KIND_ENROLLMENT = 2;
@@ -104,9 +105,12 @@ enum TokenKind {
 message Token {
   // Token id, such as "tok-1a2b3c4d5e6f".
   string id = 1;
+  // Whether the token is an API token, which calls the Workspace API, or an
+  // enrollment token. The server sets it.
   TokenKind kind = 2;
   // "workspace" for an enrollment token, "session" for an API token.
   string source = 3;
+  // When the token was made. The server sets it.
   google.protobuf.Timestamp created_at = 4;
   // When the token stops working: the expiry it was given, or 30 days
   // after creator_left_at when that is sooner (expiry_reason). Unset when
@@ -188,6 +192,7 @@ message ListTokensRequest {
 
 // ListTokensResponse carries the tokens, oldest first.
 message ListTokensResponse {
+  // The tokens of this page, oldest first.
   repeated Token tokens = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -224,6 +229,7 @@ message CreateWorkspaceTokenRequest {
 
 // CreateWorkspaceTokenResponse carries the new token and its value.
 message CreateWorkspaceTokenResponse {
+  // The token that was made, without its value.
   Token token = 1;
   // The new token. It is returned only here.
   string value = 2;
@@ -231,11 +237,13 @@ message CreateWorkspaceTokenResponse {
 
 // RevokeTokenRequest names the token to revoke.
 message RevokeTokenRequest {
+  // The token's id, such as "tok-1a2b3c4d5e6f".
   string id = 1;
 }
 
 // RevokeTokenResponse carries the revoked token.
 message RevokeTokenResponse {
+  // The token as it now is, revoked.
   Token token = 1;
   // How many hosts were signed out and must register again.
   int32 hosts_signed_out = 2;
@@ -243,6 +251,7 @@ message RevokeTokenResponse {
 
 // RollWorkspaceTokenRequest names the token to roll.
 message RollWorkspaceTokenRequest {
+  // The token's id, such as "tok-1a2b3c4d5e6f".
   string id = 1;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
   // key and request return the first answer; a different request with the
@@ -252,6 +261,7 @@ message RollWorkspaceTokenRequest {
 
 // RollWorkspaceTokenResponse carries the token and its new value.
 message RollWorkspaceTokenResponse {
+  // The token as it now is, with its value left out.
   Token token = 1;
   // The new value. It is returned only here.
   string value = 2;
@@ -259,6 +269,7 @@ message RollWorkspaceTokenResponse {
 
 // UpdateTokenRequest names an API token and the fields to change.
 message UpdateTokenRequest {
+  // The API token's id, such as "tok-1a2b3c4d5e6f".
   string id = 1;
   // Carries the new values of the fields update_mask names. An unset
   // not_before or client_ranges clears it; expires_at must be set.
@@ -270,5 +281,6 @@ message UpdateTokenRequest {
 
 // UpdateTokenResponse carries the token as it now is.
 message UpdateTokenResponse {
+  // The token as it now is.
   Token token = 1;
 }

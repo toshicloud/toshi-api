@@ -31,6 +31,9 @@ export type Token = Message<"toshi.workspace.v1.Token"> & {
   id: string;
 
   /**
+   * Whether the token is an API token, which calls the Workspace API, or an
+   * enrollment token. The server sets it.
+   *
    * @generated from field: toshi.workspace.v1.TokenKind kind = 2;
    */
   kind: TokenKind;
@@ -43,6 +46,8 @@ export type Token = Message<"toshi.workspace.v1.Token"> & {
   source: string;
 
   /**
+   * When the token was made. The server sets it.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
@@ -167,6 +172,9 @@ export type TokenJson = {
   id?: string;
 
   /**
+   * Whether the token is an API token, which calls the Workspace API, or an
+   * enrollment token. The server sets it.
+   *
    * @generated from field: toshi.workspace.v1.TokenKind kind = 2;
    */
   kind?: TokenKindJson;
@@ -179,6 +187,8 @@ export type TokenJson = {
   source?: string;
 
   /**
+   * When the token was made. The server sets it.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
@@ -429,6 +439,8 @@ export const ListTokensRequestSchema: GenMessage<ListTokensRequest, {jsonType: L
  */
 export type ListTokensResponse = Message<"toshi.workspace.v1.ListTokensResponse"> & {
   /**
+   * The tokens of this page, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Token tokens = 1;
    */
   tokens: Token[];
@@ -448,6 +460,8 @@ export type ListTokensResponse = Message<"toshi.workspace.v1.ListTokensResponse"
  */
 export type ListTokensResponseJson = {
   /**
+   * The tokens of this page, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Token tokens = 1;
    */
   tokens?: TokenJson[];
@@ -625,6 +639,8 @@ export const CreateWorkspaceTokenRequestSchema: GenMessage<CreateWorkspaceTokenR
  */
 export type CreateWorkspaceTokenResponse = Message<"toshi.workspace.v1.CreateWorkspaceTokenResponse"> & {
   /**
+   * The token that was made, without its value.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: Token | undefined;
@@ -644,6 +660,8 @@ export type CreateWorkspaceTokenResponse = Message<"toshi.workspace.v1.CreateWor
  */
 export type CreateWorkspaceTokenResponseJson = {
   /**
+   * The token that was made, without its value.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: TokenJson;
@@ -670,6 +688,8 @@ export const CreateWorkspaceTokenResponseSchema: GenMessage<CreateWorkspaceToken
  */
 export type RevokeTokenRequest = Message<"toshi.workspace.v1.RevokeTokenRequest"> & {
   /**
+   * The token's id, such as "tok-1a2b3c4d5e6f".
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -682,6 +702,8 @@ export type RevokeTokenRequest = Message<"toshi.workspace.v1.RevokeTokenRequest"
  */
 export type RevokeTokenRequestJson = {
   /**
+   * The token's id, such as "tok-1a2b3c4d5e6f".
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -701,6 +723,8 @@ export const RevokeTokenRequestSchema: GenMessage<RevokeTokenRequest, {jsonType:
  */
 export type RevokeTokenResponse = Message<"toshi.workspace.v1.RevokeTokenResponse"> & {
   /**
+   * The token as it now is, revoked.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: Token | undefined;
@@ -720,6 +744,8 @@ export type RevokeTokenResponse = Message<"toshi.workspace.v1.RevokeTokenRespons
  */
 export type RevokeTokenResponseJson = {
   /**
+   * The token as it now is, revoked.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: TokenJson;
@@ -746,6 +772,8 @@ export const RevokeTokenResponseSchema: GenMessage<RevokeTokenResponse, {jsonTyp
  */
 export type RollWorkspaceTokenRequest = Message<"toshi.workspace.v1.RollWorkspaceTokenRequest"> & {
   /**
+   * The token's id, such as "tok-1a2b3c4d5e6f".
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -767,6 +795,8 @@ export type RollWorkspaceTokenRequest = Message<"toshi.workspace.v1.RollWorkspac
  */
 export type RollWorkspaceTokenRequestJson = {
   /**
+   * The token's id, such as "tok-1a2b3c4d5e6f".
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -795,6 +825,8 @@ export const RollWorkspaceTokenRequestSchema: GenMessage<RollWorkspaceTokenReque
  */
 export type RollWorkspaceTokenResponse = Message<"toshi.workspace.v1.RollWorkspaceTokenResponse"> & {
   /**
+   * The token as it now is, with its value left out.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: Token | undefined;
@@ -814,6 +846,8 @@ export type RollWorkspaceTokenResponse = Message<"toshi.workspace.v1.RollWorkspa
  */
 export type RollWorkspaceTokenResponseJson = {
   /**
+   * The token as it now is, with its value left out.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: TokenJson;
@@ -840,6 +874,8 @@ export const RollWorkspaceTokenResponseSchema: GenMessage<RollWorkspaceTokenResp
  */
 export type UpdateTokenRequest = Message<"toshi.workspace.v1.UpdateTokenRequest"> & {
   /**
+   * The API token's id, such as "tok-1a2b3c4d5e6f".
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -868,6 +904,8 @@ export type UpdateTokenRequest = Message<"toshi.workspace.v1.UpdateTokenRequest"
  */
 export type UpdateTokenRequestJson = {
   /**
+   * The API token's id, such as "tok-1a2b3c4d5e6f".
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -903,6 +941,8 @@ export const UpdateTokenRequestSchema: GenMessage<UpdateTokenRequest, {jsonType:
  */
 export type UpdateTokenResponse = Message<"toshi.workspace.v1.UpdateTokenResponse"> & {
   /**
+   * The token as it now is.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: Token | undefined;
@@ -915,6 +955,8 @@ export type UpdateTokenResponse = Message<"toshi.workspace.v1.UpdateTokenRespons
  */
 export type UpdateTokenResponseJson = {
   /**
+   * The token as it now is.
+   *
    * @generated from field: toshi.workspace.v1.Token token = 1;
    */
   token?: TokenJson;
@@ -934,6 +976,8 @@ export const UpdateTokenResponseSchema: GenMessage<UpdateTokenResponse, {jsonTyp
  */
 export enum TokenKind {
   /**
+   * No kind: ListTokens lists tokens of every kind.
+   *
    * @generated from enum value: TOKEN_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

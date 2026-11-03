@@ -18,12 +18,18 @@ export const file_toshi_workspace_v1_products: GenFile = /*@__PURE__*/
   fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyKWAgoUVXBkYXRlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkSFAoHZW5hYmxlZBgCIAEoCEgAiAEBEkgKCHNldHRpbmdzGAMgAygLMjYudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0LlNldHRpbmdzRW50cnkSDQoFY2xlYXIYBCADKAkaUQoNU2V0dGluZ3NFbnRyeRILCgNrZXkYASABKAkSLwoFdmFsdWUYAiABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlOgI4AUIKCghfZW5hYmxlZEoECAUQBkoECAYQB1IPYWNjZXB0ZWRfYWNjZXNzUgd2ZXJzaW9uInYKFVVwZGF0ZVByb2R1Y3RSZXNwb25zZRI0Cgdwcm9kdWN0GAEgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5nc0oECAIQA0oECAMQBFISaW5zdGFsbGF0aW9uX3Rva2VuUgd3YXJuaW5nIr0CCg9Qcm9kdWN0U2V0dGluZ3MSCgoCaWQYASABKAkSNAoIZmVhdHVyZXMYAyADKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNldHRpbmcSLwoFc3RhdGUYBCABKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN0YXRlEjUKCHN1cmZhY2VzGAYgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTdXJmYWNlcxIMCgRuYW1lGAcgASgJEjcKCXN0YWJpbGl0eRgIIAEoDjIkLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhYmlsaXR5EhcKD3JlbW92YWxfdmVyc2lvbhgJIAEoCUoECAIQA0oECAUQBlIGc3dpdGNoUgxpbnN0YWxsYXRpb24iRQoPUHJvZHVjdFN1cmZhY2VzEgsKA2FwaRgBIAEoCUoECAIQA0oECAMQBEoECAQQBVIDY2xpUglkYXNoYm9hcmRSA3NkayLZAgoORmVhdHVyZVNldHRpbmcSCwoDa2V5GAEgASgJEhIKCm5hcnJvd2FibGUYAiABKAgSNQoLZW50aXRsZW1lbnQYAyABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjEKB3NldHRpbmcYBCABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjMKCWVmZmVjdGl2ZRgFIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSEgoKY2hhbmdlZF9ieRgGIAEoCRIuCgpjaGFuZ2VkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCgZzb3VyY2UYCCABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNvdXJjZRIQCghwbGFuX2tleRgJIAEoCTKEAgoOUHJvZHVjdFNlcnZpY2USdAoMTGlzdFByb2R1Y3RzEicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RQcm9kdWN0c1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVzcG9uc2UiEcLzGA1zZXR0aW5ncy5yZWFkEnwKDVVwZGF0ZVByb2R1Y3QSKC50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlUHJvZHVjdFJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlUHJvZHVjdFJlc3BvbnNlIhbC8xgOc2V0dGluZ3Mud3JpdGWQ9BgCQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
 
 /**
+ * ListProductsRequest has no fields: the call's credential names the
+ * workspace.
+ *
  * @generated from message toshi.workspace.v1.ListProductsRequest
  */
 export type ListProductsRequest = Message<"toshi.workspace.v1.ListProductsRequest"> & {
 };
 
 /**
+ * ListProductsRequest has no fields: the call's credential names the
+ * workspace.
+ *
  * @generated from message toshi.workspace.v1.ListProductsRequest
  */
 export type ListProductsRequestJson = {
@@ -37,6 +43,9 @@ export const ListProductsRequestSchema: GenMessage<ListProductsRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_products, 0);
 
 /**
+ * ListProductsResponse is every product the deployment includes, as the
+ * workspace has it.
+ *
  * @generated from message toshi.workspace.v1.ListProductsResponse
  */
 export type ListProductsResponse = Message<"toshi.workspace.v1.ListProductsResponse"> & {
@@ -49,6 +58,9 @@ export type ListProductsResponse = Message<"toshi.workspace.v1.ListProductsRespo
 };
 
 /**
+ * ListProductsResponse is every product the deployment includes, as the
+ * workspace has it.
+ *
  * @generated from message toshi.workspace.v1.ListProductsResponse
  */
 export type ListProductsResponseJson = {
@@ -68,6 +80,9 @@ export const ListProductsResponseSchema: GenMessage<ListProductsResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_products, 1);
 
 /**
+ * UpdateProductRequest is one change of one product's settings: its
+ * switch, the features to set, and the features to clear.
+ *
  * @generated from message toshi.workspace.v1.UpdateProductRequest
  */
 export type UpdateProductRequest = Message<"toshi.workspace.v1.UpdateProductRequest"> & {
@@ -107,6 +122,9 @@ export type UpdateProductRequest = Message<"toshi.workspace.v1.UpdateProductRequ
 };
 
 /**
+ * UpdateProductRequest is one change of one product's settings: its
+ * switch, the features to set, and the features to clear.
+ *
  * @generated from message toshi.workspace.v1.UpdateProductRequest
  */
 export type UpdateProductRequestJson = {
@@ -153,6 +171,9 @@ export const UpdateProductRequestSchema: GenMessage<UpdateProductRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_products, 2);
 
 /**
+ * UpdateProductResponse is the product as the workspace has it after the
+ * change.
+ *
  * @generated from message toshi.workspace.v1.UpdateProductResponse
  */
 export type UpdateProductResponse = Message<"toshi.workspace.v1.UpdateProductResponse"> & {
@@ -165,6 +186,9 @@ export type UpdateProductResponse = Message<"toshi.workspace.v1.UpdateProductRes
 };
 
 /**
+ * UpdateProductResponse is the product as the workspace has it after the
+ * change.
+ *
  * @generated from message toshi.workspace.v1.UpdateProductResponse
  */
 export type UpdateProductResponseJson = {
@@ -412,6 +436,9 @@ export type FeatureSetting = Message<"toshi.workspace.v1.FeatureSetting"> & {
   changedBy: string;
 
   /**
+   * changed_at is when the setting was made; unset when the workspace has
+   * no setting.
+   *
    * @generated from field: google.protobuf.Timestamp changed_at = 7;
    */
   changedAt?: Timestamp | undefined;
@@ -488,6 +515,9 @@ export type FeatureSettingJson = {
   changedBy?: string;
 
   /**
+   * changed_at is when the setting was made; unset when the workspace has
+   * no setting.
+   *
    * @generated from field: google.protobuf.Timestamp changed_at = 7;
    */
   changedAt?: TimestampJson;

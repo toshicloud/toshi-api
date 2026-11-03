@@ -23,6 +23,8 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// ListProductsRequest has no fields: the call's credential names the
+// workspace.
 type ListProductsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -59,6 +61,8 @@ func (*ListProductsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_products_proto_rawDescGZIP(), []int{0}
 }
 
+// ListProductsResponse is every product the deployment includes, as the
+// workspace has it.
 type ListProductsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// products are the products the deployment includes, by id.
@@ -104,6 +108,8 @@ func (x *ListProductsResponse) GetProducts() []*ProductSettings {
 	return nil
 }
 
+// UpdateProductRequest is one change of one product's settings: its
+// switch, the features to set, and the features to clear.
 type UpdateProductRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// id names the product, such as "runners".
@@ -182,6 +188,8 @@ func (x *UpdateProductRequest) GetClear() []string {
 	return nil
 }
 
+// UpdateProductResponse is the product as the workspace has it after the
+// change.
 type UpdateProductResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// product is the product as the workspace has it after the change.
@@ -404,7 +412,9 @@ type FeatureSetting struct {
 	// changed_by names who made the setting, as the audit log names an
 	// actor, and changed_at when; both unset when the workspace has no
 	// setting.
-	ChangedBy string                 `protobuf:"bytes,6,opt,name=changed_by,json=changedBy,proto3" json:"changed_by,omitempty"`
+	ChangedBy string `protobuf:"bytes,6,opt,name=changed_by,json=changedBy,proto3" json:"changed_by,omitempty"`
+	// changed_at is when the setting was made; unset when the workspace has
+	// no setting.
 	ChangedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
 	// source says where the entitlement comes from.
 	Source FeatureSource `protobuf:"varint,8,opt,name=source,proto3,enum=toshi.workspace.v1.FeatureSource" json:"source,omitempty"`

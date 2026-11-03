@@ -41,13 +41,19 @@ service ProductService {
   }
 }
 
+// ListProductsRequest has no fields: the call's credential names the
+// workspace.
 message ListProductsRequest {}
 
+// ListProductsResponse is every product the deployment includes, as the
+// workspace has it.
 message ListProductsResponse {
   // products are the products the deployment includes, by id.
   repeated ProductSettings products = 1;
 }
 
+// UpdateProductRequest is one change of one product's settings: its
+// switch, the features to set, and the features to clear.
 message UpdateProductRequest {
   // id names the product, such as "runners".
   string id = 1;
@@ -67,6 +73,8 @@ message UpdateProductRequest {
   reserved "accepted_access", "version";
 }
 
+// UpdateProductResponse is the product as the workspace has it after the
+// change.
 message UpdateProductResponse {
   // product is the product as the workspace has it after the change.
   ProductSettings product = 1;
@@ -135,6 +143,8 @@ message FeatureSetting {
   // actor, and changed_at when; both unset when the workspace has no
   // setting.
   string changed_by = 6;
+  // changed_at is when the setting was made; unset when the workspace has
+  // no setting.
   google.protobuf.Timestamp changed_at = 7;
   // source says where the entitlement comes from.
   FeatureSource source = 8;

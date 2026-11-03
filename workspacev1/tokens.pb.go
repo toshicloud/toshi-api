@@ -28,6 +28,7 @@ const (
 type TokenKind int32
 
 const (
+	// No kind: ListTokens lists tokens of every kind.
 	TokenKind_TOKEN_KIND_UNSPECIFIED TokenKind = 0
 	// An enrollment token: registering a host the workspace owns.
 	TokenKind_TOKEN_KIND_ENROLLMENT TokenKind = 2
@@ -134,10 +135,13 @@ func (TokenExpiryReason) EnumDescriptor() ([]byte, []int) {
 type Token struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Token id, such as "tok-1a2b3c4d5e6f".
-	Id   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Whether the token is an API token, which calls the Workspace API, or an
+	// enrollment token. The server sets it.
 	Kind TokenKind `protobuf:"varint,2,opt,name=kind,proto3,enum=toshi.workspace.v1.TokenKind" json:"kind,omitempty"`
 	// "workspace" for an enrollment token, "session" for an API token.
-	Source    string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
+	Source string `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
+	// When the token was made. The server sets it.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// When the token stops working: the expiry it was given, or 30 days
 	// after creator_left_at when that is sooner (expiry_reason). Unset when
@@ -460,8 +464,9 @@ func (x *ListTokensRequest) GetPageToken() string {
 
 // ListTokensResponse carries the tokens, oldest first.
 type ListTokensResponse struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Tokens []*Token               `protobuf:"bytes,1,rep,name=tokens,proto3" json:"tokens,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The tokens of this page, oldest first.
+	Tokens []*Token `protobuf:"bytes,1,rep,name=tokens,proto3" json:"tokens,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -633,7 +638,8 @@ func (x *CreateWorkspaceTokenRequest) GetRequestKey() string {
 // CreateWorkspaceTokenResponse carries the new token and its value.
 type CreateWorkspaceTokenResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Token *Token                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	// The token that was made, without its value.
+	Token *Token `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	// The new token. It is returned only here.
 	Value         string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -686,8 +692,9 @@ func (x *CreateWorkspaceTokenResponse) GetValue() string {
 
 // RevokeTokenRequest names the token to revoke.
 type RevokeTokenRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The token's id, such as "tok-1a2b3c4d5e6f".
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -732,7 +739,8 @@ func (x *RevokeTokenRequest) GetId() string {
 // RevokeTokenResponse carries the revoked token.
 type RevokeTokenResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Token *Token                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	// The token as it now is, revoked.
+	Token *Token `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	// How many hosts were signed out and must register again.
 	HostsSignedOut int32 `protobuf:"varint,2,opt,name=hosts_signed_out,json=hostsSignedOut,proto3" json:"hosts_signed_out,omitempty"`
 	unknownFields  protoimpl.UnknownFields
@@ -786,7 +794,8 @@ func (x *RevokeTokenResponse) GetHostsSignedOut() int32 {
 // RollWorkspaceTokenRequest names the token to roll.
 type RollWorkspaceTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The token's id, such as "tok-1a2b3c4d5e6f".
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
 	// key and request return the first answer; a different request with the
 	// same key is refused. Keys are kept for 30 days by default.
@@ -842,7 +851,8 @@ func (x *RollWorkspaceTokenRequest) GetRequestKey() string {
 // RollWorkspaceTokenResponse carries the token and its new value.
 type RollWorkspaceTokenResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Token *Token                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	// The token as it now is, with its value left out.
+	Token *Token `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	// The new value. It is returned only here.
 	Value         string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -896,7 +906,8 @@ func (x *RollWorkspaceTokenResponse) GetValue() string {
 // UpdateTokenRequest names an API token and the fields to change.
 type UpdateTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The API token's id, such as "tok-1a2b3c4d5e6f".
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Carries the new values of the fields update_mask names. An unset
 	// not_before or client_ranges clears it; expires_at must be set.
 	Token *Token `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
@@ -960,8 +971,9 @@ func (x *UpdateTokenRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 // UpdateTokenResponse carries the token as it now is.
 type UpdateTokenResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         *Token                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The token as it now is.
+	Token         *Token `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
