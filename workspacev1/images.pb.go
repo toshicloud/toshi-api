@@ -28,6 +28,7 @@ const (
 type ImageKind int32
 
 const (
+	// Unspecified; a call that sends it fails with INVALID_ARGUMENT.
 	ImageKind_IMAGE_KIND_UNSPECIFIED ImageKind = 0
 	// A disk: an overlay on one of Toshi's bases, which a VM boots from.
 	ImageKind_IMAGE_KIND_DISK ImageKind = 1
@@ -82,6 +83,7 @@ func (ImageKind) EnumDescriptor() ([]byte, []int) {
 type ImageBuilder int32
 
 const (
+	// Unspecified: CreateImage takes it as AUTO; a disk version has it.
 	ImageBuilder_IMAGE_BUILDER_UNSPECIFIED ImageBuilder = 0
 	// The repository's Dockerfile when its root has one, Railpack
 	// otherwise. A version records the one that built it.
@@ -139,6 +141,7 @@ func (ImageBuilder) EnumDescriptor() ([]byte, []int) {
 type ImagePusher int32
 
 const (
+	// Unspecified: a disk version has it.
 	ImagePusher_IMAGE_PUSHER_UNSPECIFIED ImagePusher = 0
 	// A build of the image.
 	ImagePusher_IMAGE_PUSHER_BUILD ImagePusher = 1
@@ -192,6 +195,7 @@ func (ImagePusher) EnumDescriptor() ([]byte, []int) {
 type ImageVersionState int32
 
 const (
+	// Unspecified; no version Toshi records has it.
 	ImageVersionState_IMAGE_VERSION_STATE_UNSPECIFIED ImageVersionState = 0
 	// Its build job runs.
 	ImageVersionState_IMAGE_VERSION_STATE_BUILDING ImageVersionState = 1
@@ -257,11 +261,14 @@ func (ImageVersionState) EnumDescriptor() ([]byte, []int) {
 // Image is a project's own image.
 type Image struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The image's id, set by Toshi.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Its name, unique among the workspace's images that are not deleted.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The name of the project it belongs to.
-	Project string    `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
-	Kind    ImageKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ImageKind" json:"kind,omitempty"`
+	Project string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	// What the image is.
+	Kind ImageKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ImageKind" json:"kind,omitempty"`
 	// The one of Toshi's images it is built on, such as ubuntu-24.04.
 	Base string `protobuf:"bytes,5,opt,name=base,proto3" json:"base,omitempty"`
 	// The size its builds run at; empty for a container image that is
@@ -275,21 +282,27 @@ type Image struct {
 	// The environment whose secret sets its builds receive. For a container
 	// image built from a repository, the one its first build took: each
 	// build takes the one the branch rules choose then.
-	Environment string                 `protobuf:"bytes,9,opt,name=environment,proto3" json:"environment,omitempty"`
-	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Environment string `protobuf:"bytes,9,opt,name=environment,proto3" json:"environment,omitempty"`
+	// When the image was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When the image last changed.
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// Its newest ready version; unset when it has none.
 	Latest *ImageVersion `protobuf:"bytes,12,opt,name=latest,proto3" json:"latest,omitempty"`
 	// The repository a container image is built from, as owner/name, and
 	// the builder its builds use; empty and unspecified for one that is
 	// pushed.
-	Source  string       `protobuf:"bytes,13,opt,name=source,proto3" json:"source,omitempty"`
+	Source string `protobuf:"bytes,13,opt,name=source,proto3" json:"source,omitempty"`
+	// The builder a container image built from a repository uses;
+	// unspecified for any other image.
 	Builder ImageBuilder `protobuf:"varint,14,opt,name=builder,proto3,enum=toshi.workspace.v1.ImageBuilder" json:"builder,omitempty"`
 	// The reference a container image built from a repository pushes to in
 	// the workspace's own registry, and the key of the build secret that
 	// holds that registry's Docker config.json; both empty when its builds
 	// push to the deployment's registry.
-	Registry       string `protobuf:"bytes,15,opt,name=registry,proto3" json:"registry,omitempty"`
+	Registry string `protobuf:"bytes,15,opt,name=registry,proto3" json:"registry,omitempty"`
+	// The key of the build secret that holds the registry's Docker
+	// config.json; empty when registry is.
 	RegistrySecret string `protobuf:"bytes,16,opt,name=registry_secret,json=registrySecret,proto3" json:"registry_secret,omitempty"`
 	// A container image built from a repository is built again on each push
 	// to its source's default branch: at most one build per push, while one
@@ -477,15 +490,18 @@ func (x *Image) GetReference() string {
 // ImageVersion is one build of an image, or one push of a container image.
 type ImageVersion struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The version's id, set by Toshi.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Counts from 1 in the order the image's versions were recorded: a
 	// build's when it started, failed ones included, and a push's when Toshi
 	// found it.
-	Number int64             `protobuf:"varint,2,opt,name=number,proto3" json:"number,omitempty"`
-	State  ImageVersionState `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.ImageVersionState" json:"state,omitempty"`
+	Number int64 `protobuf:"varint,2,opt,name=number,proto3" json:"number,omitempty"`
+	// Where the version is in its life.
+	State ImageVersionState `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.ImageVersionState" json:"state,omitempty"`
 	// The base it was built on, and that base's SHA-256 in hex; the base is
 	// kept while a version uses it.
-	Base       string `protobuf:"bytes,4,opt,name=base,proto3" json:"base,omitempty"`
+	Base string `protobuf:"bytes,4,opt,name=base,proto3" json:"base,omitempty"`
+	// The SHA-256 of base, in hex; empty for a container version.
 	BaseDigest string `protobuf:"bytes,5,opt,name=base_digest,json=baseDigest,proto3" json:"base_digest,omitempty"`
 	// The bytes its overlay holds in the object store; 0 until ready.
 	SizeBytes int64 `protobuf:"varint,6,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
@@ -494,27 +510,40 @@ type ImageVersion struct {
 	// The job that built it.
 	BuildJobId string `protobuf:"bytes,8,opt,name=build_job_id,json=buildJobId,proto3" json:"build_job_id,omitempty"`
 	// Why its build failed; empty unless state is FAILED.
-	Failure   string                 `protobuf:"bytes,9,opt,name=failure,proto3" json:"failure,omitempty"`
+	Failure string `protobuf:"bytes,9,opt,name=failure,proto3" json:"failure,omitempty"`
+	// When its build started, or when Toshi found a push.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	ReadyAt   *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=ready_at,json=readyAt,proto3" json:"ready_at,omitempty"`
+	// When it became ready; unset until then.
+	ReadyAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=ready_at,json=readyAt,proto3" json:"ready_at,omitempty"`
 	// When it became pending deletion, and when its overlay is deleted.
 	PendingSince *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=pending_since,json=pendingSince,proto3" json:"pending_since,omitempty"`
-	DeleteAfter  *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=delete_after,json=deleteAfter,proto3" json:"delete_after,omitempty"`
-	DeletedAt    *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
+	// When its overlay, or a container version's manifest, is deleted; unset
+	// until it is pending deletion.
+	DeleteAfter *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=delete_after,json=deleteAfter,proto3" json:"delete_after,omitempty"`
+	// When it was deleted; unset until then.
+	DeletedAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
 	// On a version pending deletion or deleted: the service revisions made
 	// with it, which a rollback can no longer select.
 	PinnedBy []*ImageVersionPin `protobuf:"bytes,15,rep,name=pinned_by,json=pinnedBy,proto3" json:"pinned_by,omitempty"`
 	// A container version's manifest digest, sha256:<hex>, once ready, and
 	// what pushed it.
-	Digest   string      `protobuf:"bytes,16,opt,name=digest,proto3" json:"digest,omitempty"`
+	Digest string `protobuf:"bytes,16,opt,name=digest,proto3" json:"digest,omitempty"`
+	// What pushed a container version; unspecified for a disk version.
 	PushedBy ImagePusher `protobuf:"varint,17,opt,name=pushed_by,json=pushedBy,proto3,enum=toshi.workspace.v1.ImagePusher" json:"pushed_by,omitempty"`
 	// A container version's build: the commit it built, the builder that
 	// built it (never AUTO), and for Railpack its version and the digest of
 	// its BuildKit frontend.
-	SourceCommit          string       `protobuf:"bytes,18,opt,name=source_commit,json=sourceCommit,proto3" json:"source_commit,omitempty"`
-	Builder               ImageBuilder `protobuf:"varint,19,opt,name=builder,proto3,enum=toshi.workspace.v1.ImageBuilder" json:"builder,omitempty"`
-	BuilderVersion        string       `protobuf:"bytes,20,opt,name=builder_version,json=builderVersion,proto3" json:"builder_version,omitempty"`
-	BuilderFrontendDigest string       `protobuf:"bytes,21,opt,name=builder_frontend_digest,json=builderFrontendDigest,proto3" json:"builder_frontend_digest,omitempty"`
+	SourceCommit string `protobuf:"bytes,18,opt,name=source_commit,json=sourceCommit,proto3" json:"source_commit,omitempty"`
+	// The builder that built a container version, never AUTO; unspecified
+	// for a disk version, a hand push and until a build is ready.
+	Builder ImageBuilder `protobuf:"varint,19,opt,name=builder,proto3,enum=toshi.workspace.v1.ImageBuilder" json:"builder,omitempty"`
+	// The Railpack version a container version was built with; empty for a
+	// Dockerfile build, a hand push and until a Railpack build is ready.
+	BuilderVersion string `protobuf:"bytes,20,opt,name=builder_version,json=builderVersion,proto3" json:"builder_version,omitempty"`
+	// The digest of the Railpack BuildKit frontend a container version was
+	// built with; empty for a Dockerfile build, a hand push and until a
+	// Railpack build is ready.
+	BuilderFrontendDigest string `protobuf:"bytes,21,opt,name=builder_frontend_digest,json=builderFrontendDigest,proto3" json:"builder_frontend_digest,omitempty"`
 	// Whether the build's commit is the source repository's own rather than
 	// a fork's. An untrusted build receives no build secrets.
 	Trusted bool `protobuf:"varint,22,opt,name=trusted,proto3" json:"trusted,omitempty"`
@@ -728,10 +757,13 @@ func (x *ImageVersion) GetAgent() bool {
 
 // ImageVersionPin is a service revision made with an image version.
 type ImageVersionPin struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServiceId     string                 `protobuf:"bytes,1,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
-	ServiceName   string                 `protobuf:"bytes,2,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
-	Revision      int64                  `protobuf:"varint,3,opt,name=revision,proto3" json:"revision,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's id.
+	ServiceId string `protobuf:"bytes,1,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	// The service's name.
+	ServiceName string `protobuf:"bytes,2,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
+	// The revision's number.
+	Revision      int64 `protobuf:"varint,3,opt,name=revision,proto3" json:"revision,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -787,18 +819,26 @@ func (x *ImageVersionPin) GetRevision() int64 {
 	return 0
 }
 
+// CreateImageRequest is a call of CreateImage.
 type CreateImageRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The image's project; empty is the default project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// The environment whose secret sets the image's builds receive; empty is
 	// the project's default environment. Empty for a container image built
 	// from a repository.
-	Environment string    `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Name        string    `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Kind        ImageKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ImageKind" json:"kind,omitempty"`
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// Its name: lower-case letters, digits and hyphens, at most 51
+	// characters, starting and ending with a letter or a digit.
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// What to make: a disk or a container image. Unspecified fails with
+	// INVALID_ARGUMENT.
+	Kind ImageKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ImageKind" json:"kind,omitempty"`
 	// A disk's base, empty for a container image; the size a disk's or a
 	// container image built from a repository's builds run at.
 	Base string `protobuf:"bytes,5,opt,name=base,proto3" json:"base,omitempty"`
+	// The Linux runner size its builds run at; empty for a container image
+	// that is pushed.
 	Size string `protobuf:"bytes,6,opt,name=size,proto3" json:"size,omitempty"`
 	// In the format of a service's recipe, in TOML. An image uses its setup
 	// hook, which is required, and its process's env and cwd for that hook;
@@ -807,17 +847,24 @@ type CreateImageRequest struct {
 	Recipe string `protobuf:"bytes,7,opt,name=recipe,proto3" json:"recipe,omitempty"`
 	// The repository a container image is built from, as owner/name; empty
 	// for one that is pushed. The builder defaults to AUTO.
-	Source  string       `protobuf:"bytes,8,opt,name=source,proto3" json:"source,omitempty"`
+	Source string `protobuf:"bytes,8,opt,name=source,proto3" json:"source,omitempty"`
+	// The builder a container image built from a repository uses;
+	// unspecified is AUTO. Must be unspecified for any other image.
 	Builder ImageBuilder `protobuf:"varint,9,opt,name=builder,proto3,enum=toshi.workspace.v1.ImageBuilder" json:"builder,omitempty"`
 	// A reference in the workspace's own registry for the builds to push to,
 	// such as ghcr.io/acme/web, and the key of a build secret granted to the
 	// image's builds that holds its Docker config.json; both empty to push
 	// to the deployment's registry.
-	Registry       string `protobuf:"bytes,10,opt,name=registry,proto3" json:"registry,omitempty"`
+	Registry string `protobuf:"bytes,10,opt,name=registry,proto3" json:"registry,omitempty"`
+	// The key of the build secret holding the registry's Docker config.json;
+	// empty when registry is.
 	RegistrySecret string `protobuf:"bytes,11,opt,name=registry_secret,json=registrySecret,proto3" json:"registry_secret,omitempty"`
 	// Builds the image again on each push to its source's default branch,
 	// as Image.rebuild_on_push says; only for one built from a repository.
-	RebuildOnPush bool   `protobuf:"varint,12,opt,name=rebuild_on_push,json=rebuildOnPush,proto3" json:"rebuild_on_push,omitempty"`
+	RebuildOnPush bool `protobuf:"varint,12,opt,name=rebuild_on_push,json=rebuildOnPush,proto3" json:"rebuild_on_push,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
 	RequestKey    string `protobuf:"bytes,13,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -944,9 +991,12 @@ func (x *CreateImageRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateImageResponse is the image as created, with the version its first
+// build makes.
 type CreateImageResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Image *Image                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	// The image as stored.
+	Image *Image `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
 	// The version the image's first build makes, building.
 	Version       *ImageVersion `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -997,10 +1047,13 @@ func (x *CreateImageResponse) GetVersion() *ImageVersion {
 	return nil
 }
 
+// GetImageRequest is a call of GetImage.
 type GetImageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The image's project; empty is the default project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// Its name.
+	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1049,9 +1102,11 @@ func (x *GetImageRequest) GetName() string {
 	return ""
 }
 
+// GetImageResponse is the image asked for, with its versions.
 type GetImageResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Image *Image                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	// The image.
+	Image *Image `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
 	// Newest first.
 	Versions      []*ImageVersion `protobuf:"bytes,2,rep,name=versions,proto3" json:"versions,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1102,9 +1157,11 @@ func (x *GetImageResponse) GetVersions() []*ImageVersion {
 	return nil
 }
 
+// ListImagesRequest is a call of ListImages.
 type ListImagesRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name; empty is the default project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// The most images in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -1164,9 +1221,11 @@ func (x *ListImagesRequest) GetPageToken() string {
 	return ""
 }
 
+// ListImagesResponse is a page of images.
 type ListImagesResponse struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Images []*Image               `protobuf:"bytes,1,rep,name=images,proto3" json:"images,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's images, by name.
+	Images []*Image `protobuf:"bytes,1,rep,name=images,proto3" json:"images,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1217,10 +1276,13 @@ func (x *ListImagesResponse) GetNextPageToken() string {
 	return ""
 }
 
+// BuildImageRequest is a call of BuildImage.
 type BuildImageRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Name    string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The image's project; empty is the default project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// Its name.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Empty: the image's recipe. Empty for a container image.
 	Recipe string `protobuf:"bytes,3,opt,name=recipe,proto3" json:"recipe,omitempty"`
 	// A container image's Railpack builds use the Railpack version its
@@ -1300,9 +1362,11 @@ func (x *BuildImageRequest) GetRequestKey() string {
 	return ""
 }
 
+// BuildImageResponse is the build's version.
 type BuildImageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Version       *ImageVersion          `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The version, building.
+	Version       *ImageVersion `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1344,12 +1408,17 @@ func (x *BuildImageResponse) GetVersion() *ImageVersion {
 	return nil
 }
 
+// UpdateImageRequest is a call of UpdateImage.
 type UpdateImageRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The image's project; empty is the default project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// name names the image; the fields update_mask names carry the new
 	// values.
-	Image         *Image                 `protobuf:"bytes,2,opt,name=image,proto3" json:"image,omitempty"`
+	Image *Image `protobuf:"bytes,2,opt,name=image,proto3" json:"image,omitempty"`
+	// The fields to set: those named must be rebuild_on_push alone. Unset
+	// sets it too; an empty mask or any other path fails with
+	// INVALID_ARGUMENT.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1406,9 +1475,11 @@ func (x *UpdateImageRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateImageResponse is the image as updated.
 type UpdateImageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Image         *Image                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The image.
+	Image         *Image `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1450,10 +1521,13 @@ func (x *UpdateImageResponse) GetImage() *Image {
 	return nil
 }
 
+// DeleteImageRequest is a call of DeleteImage.
 type DeleteImageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The image's project; empty is the default project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// Its name.
+	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1502,6 +1576,7 @@ func (x *DeleteImageRequest) GetName() string {
 	return ""
 }
 
+// DeleteImageResponse is empty.
 type DeleteImageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields

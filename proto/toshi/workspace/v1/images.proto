@@ -124,6 +124,7 @@ service ImageService {
 
 // ImageKind is what an image is.
 enum ImageKind {
+  // Unspecified; a call that sends it fails with INVALID_ARGUMENT.
   IMAGE_KIND_UNSPECIFIED = 0;
   // A disk: an overlay on one of Toshi's bases, which a VM boots from.
   IMAGE_KIND_DISK = 1;
@@ -135,6 +136,7 @@ enum ImageKind {
 
 // ImageBuilder is what builds a container image from its source.
 enum ImageBuilder {
+  // Unspecified: CreateImage takes it as AUTO; a disk version has it.
   IMAGE_BUILDER_UNSPECIFIED = 0;
   // The repository's Dockerfile when its root has one, Railpack
   // otherwise. A version records the one that built it.
@@ -147,6 +149,7 @@ enum ImageBuilder {
 
 // ImagePusher is what pushed a container image's version.
 enum ImagePusher {
+  // Unspecified: a disk version has it.
   IMAGE_PUSHER_UNSPECIFIED = 0;
   // A build of the image.
   IMAGE_PUSHER_BUILD = 1;
@@ -157,6 +160,7 @@ enum ImagePusher {
 
 // ImageVersionState is where a version is in its life.
 enum ImageVersionState {
+  // Unspecified; no version Toshi records has it.
   IMAGE_VERSION_STATE_UNSPECIFIED = 0;
   // Its build job runs.
   IMAGE_VERSION_STATE_BUILDING = 1;
@@ -174,10 +178,13 @@ enum ImageVersionState {
 
 // Image is a project's own image.
 message Image {
+  // The image's id, set by Toshi.
   string id = 1;
+  // Its name, unique among the workspace's images that are not deleted.
   string name = 2;
   // The name of the project it belongs to.
   string project = 3;
+  // What the image is.
   ImageKind kind = 4;
   // The one of Toshi's images it is built on, such as ubuntu-24.04.
   string base = 5;
@@ -193,7 +200,9 @@ message Image {
   // image built from a repository, the one its first build took: each
   // build takes the one the branch rules choose then.
   string environment = 9;
+  // When the image was created.
   google.protobuf.Timestamp created_at = 10;
+  // When the image last changed.
   google.protobuf.Timestamp updated_at = 11;
   // Its newest ready version; unset when it has none.
   ImageVersion latest = 12;
@@ -201,12 +210,16 @@ message Image {
   // the builder its builds use; empty and unspecified for one that is
   // pushed.
   string source = 13;
+  // The builder a container image built from a repository uses;
+  // unspecified for any other image.
   ImageBuilder builder = 14;
   // The reference a container image built from a repository pushes to in
   // the workspace's own registry, and the key of the build secret that
   // holds that registry's Docker config.json; both empty when its builds
   // push to the deployment's registry.
   string registry = 15;
+  // The key of the build secret that holds the registry's Docker
+  // config.json; empty when registry is.
   string registry_secret = 16;
   // A container image built from a repository is built again on each push
   // to its source's default branch: at most one build per push, while one
@@ -228,15 +241,18 @@ message Image {
 
 // ImageVersion is one build of an image, or one push of a container image.
 message ImageVersion {
+  // The version's id, set by Toshi.
   string id = 1;
   // Counts from 1 in the order the image's versions were recorded: a
   // build's when it started, failed ones included, and a push's when Toshi
   // found it.
   int64 number = 2;
+  // Where the version is in its life.
   ImageVersionState state = 3;
   // The base it was built on, and that base's SHA-256 in hex; the base is
   // kept while a version uses it.
   string base = 4;
+  // The SHA-256 of base, in hex; empty for a container version.
   string base_digest = 5;
   // The bytes its overlay holds in the object store; 0 until ready.
   int64 size_bytes = 6;
@@ -246,11 +262,16 @@ message ImageVersion {
   string build_job_id = 8;
   // Why its build failed; empty unless state is FAILED.
   string failure = 9;
+  // When its build started, or when Toshi found a push.
   google.protobuf.Timestamp created_at = 10;
+  // When it became ready; unset until then.
   google.protobuf.Timestamp ready_at = 11;
   // When it became pending deletion, and when its overlay is deleted.
   google.protobuf.Timestamp pending_since = 12;
+  // When its overlay, or a container version's manifest, is deleted; unset
+  // until it is pending deletion.
   google.protobuf.Timestamp delete_after = 13;
+  // When it was deleted; unset until then.
   google.protobuf.Timestamp deleted_at = 14;
   // On a version pending deletion or deleted: the service revisions made
   // with it, which a rollback can no longer select.
@@ -258,13 +279,21 @@ message ImageVersion {
   // A container version's manifest digest, sha256:<hex>, once ready, and
   // what pushed it.
   string digest = 16;
+  // What pushed a container version; unspecified for a disk version.
   ImagePusher pushed_by = 17;
   // A container version's build: the commit it built, the builder that
   // built it (never AUTO), and for Railpack its version and the digest of
   // its BuildKit frontend.
   string source_commit = 18;
+  // The builder that built a container version, never AUTO; unspecified
+  // for a disk version, a hand push and until a build is ready.
   ImageBuilder builder = 19;
+  // The Railpack version a container version was built with; empty for a
+  // Dockerfile build, a hand push and until a Railpack build is ready.
   string builder_version = 20;
+  // The digest of the Railpack BuildKit frontend a container version was
+  // built with; empty for a Dockerfile build, a hand push and until a
+  // Railpack build is ready.
   string builder_frontend_digest = 21;
   // Whether the build's commit is the source repository's own rather than
   // a fork's. An untrusted build receives no build secrets.
@@ -279,22 +308,33 @@ message ImageVersion {
 
 // ImageVersionPin is a service revision made with an image version.
 message ImageVersionPin {
+  // The service's id.
   string service_id = 1;
+  // The service's name.
   string service_name = 2;
+  // The revision's number.
   int64 revision = 3;
 }
 
+// CreateImageRequest is a call of CreateImage.
 message CreateImageRequest {
+  // The image's project; empty is the default project.
   string project = 1;
   // The environment whose secret sets the image's builds receive; empty is
   // the project's default environment. Empty for a container image built
   // from a repository.
   string environment = 2;
+  // Its name: lower-case letters, digits and hyphens, at most 51
+  // characters, starting and ending with a letter or a digit.
   string name = 3;
+  // What to make: a disk or a container image. Unspecified fails with
+  // INVALID_ARGUMENT.
   ImageKind kind = 4;
   // A disk's base, empty for a container image; the size a disk's or a
   // container image built from a repository's builds run at.
   string base = 5;
+  // The Linux runner size its builds run at; empty for a container image
+  // that is pushed.
   string size = 6;
   // In the format of a service's recipe, in TOML. An image uses its setup
   // hook, which is required, and its process's env and cwd for that hook;
@@ -304,37 +344,54 @@ message CreateImageRequest {
   // The repository a container image is built from, as owner/name; empty
   // for one that is pushed. The builder defaults to AUTO.
   string source = 8;
+  // The builder a container image built from a repository uses;
+  // unspecified is AUTO. Must be unspecified for any other image.
   ImageBuilder builder = 9;
   // A reference in the workspace's own registry for the builds to push to,
   // such as ghcr.io/acme/web, and the key of a build secret granted to the
   // image's builds that holds its Docker config.json; both empty to push
   // to the deployment's registry.
   string registry = 10;
+  // The key of the build secret holding the registry's Docker config.json;
+  // empty when registry is.
   string registry_secret = 11;
   // Builds the image again on each push to its source's default branch,
   // as Image.rebuild_on_push says; only for one built from a repository.
   bool rebuild_on_push = 12;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 13;
 }
 
+// CreateImageResponse is the image as created, with the version its first
+// build makes.
 message CreateImageResponse {
+  // The image as stored.
   Image image = 1;
   // The version the image's first build makes, building.
   ImageVersion version = 2;
 }
 
+// GetImageRequest is a call of GetImage.
 message GetImageRequest {
+  // The image's project; empty is the default project.
   string project = 1;
+  // Its name.
   string name = 2;
 }
 
+// GetImageResponse is the image asked for, with its versions.
 message GetImageResponse {
+  // The image.
   Image image = 1;
   // Newest first.
   repeated ImageVersion versions = 2;
 }
 
+// ListImagesRequest is a call of ListImages.
 message ListImagesRequest {
+  // The project's name; empty is the default project.
   string project = 1;
   // The most images in one page; zero lets the server choose.
   int32 page_size = 2;
@@ -342,14 +399,19 @@ message ListImagesRequest {
   string page_token = 3;
 }
 
+// ListImagesResponse is a page of images.
 message ListImagesResponse {
+  // The page's images, by name.
   repeated Image images = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// BuildImageRequest is a call of BuildImage.
 message BuildImageRequest {
+  // The image's project; empty is the default project.
   string project = 1;
+  // Its name.
   string name = 2;
   // Empty: the image's recipe. Empty for a container image.
   string recipe = 3;
@@ -363,25 +425,38 @@ message BuildImageRequest {
   string request_key = 5;
 }
 
+// BuildImageResponse is the build's version.
 message BuildImageResponse {
+  // The version, building.
   ImageVersion version = 1;
 }
 
+// UpdateImageRequest is a call of UpdateImage.
 message UpdateImageRequest {
+  // The image's project; empty is the default project.
   string project = 1;
   // name names the image; the fields update_mask names carry the new
   // values.
   Image image = 2;
+  // The fields to set: those named must be rebuild_on_push alone. Unset
+  // sets it too; an empty mask or any other path fails with
+  // INVALID_ARGUMENT.
   google.protobuf.FieldMask update_mask = 3;
 }
 
+// UpdateImageResponse is the image as updated.
 message UpdateImageResponse {
+  // The image.
   Image image = 1;
 }
 
+// DeleteImageRequest is a call of DeleteImage.
 message DeleteImageRequest {
+  // The image's project; empty is the default project.
   string project = 1;
+  // Its name.
   string name = 2;
 }
 
+// DeleteImageResponse is empty.
 message DeleteImageResponse {}

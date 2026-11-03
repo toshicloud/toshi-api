@@ -22,11 +22,15 @@ export const file_toshi_workspace_v1_images: GenFile = /*@__PURE__*/
  */
 export type Image = Message<"toshi.workspace.v1.Image"> & {
   /**
+   * The image's id, set by Toshi.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * Its name, unique among the workspace's images that are not deleted.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -39,6 +43,8 @@ export type Image = Message<"toshi.workspace.v1.Image"> & {
   project: string;
 
   /**
+   * What the image is.
+   *
    * @generated from field: toshi.workspace.v1.ImageKind kind = 4;
    */
   kind: ImageKind;
@@ -83,11 +89,15 @@ export type Image = Message<"toshi.workspace.v1.Image"> & {
   environment: string;
 
   /**
+   * When the image was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 10;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When the image last changed.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 11;
    */
   updatedAt?: Timestamp | undefined;
@@ -109,6 +119,9 @@ export type Image = Message<"toshi.workspace.v1.Image"> & {
   source: string;
 
   /**
+   * The builder a container image built from a repository uses;
+   * unspecified for any other image.
+   *
    * @generated from field: toshi.workspace.v1.ImageBuilder builder = 14;
    */
   builder: ImageBuilder;
@@ -124,6 +137,9 @@ export type Image = Message<"toshi.workspace.v1.Image"> & {
   registry: string;
 
   /**
+   * The key of the build secret that holds the registry's Docker
+   * config.json; empty when registry is.
+   *
    * @generated from field: string registry_secret = 16;
    */
   registrySecret: string;
@@ -167,11 +183,15 @@ export type Image = Message<"toshi.workspace.v1.Image"> & {
  */
 export type ImageJson = {
   /**
+   * The image's id, set by Toshi.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * Its name, unique among the workspace's images that are not deleted.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -184,6 +204,8 @@ export type ImageJson = {
   project?: string;
 
   /**
+   * What the image is.
+   *
    * @generated from field: toshi.workspace.v1.ImageKind kind = 4;
    */
   kind?: ImageKindJson;
@@ -228,11 +250,15 @@ export type ImageJson = {
   environment?: string;
 
   /**
+   * When the image was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 10;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When the image last changed.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 11;
    */
   updatedAt?: TimestampJson;
@@ -254,6 +280,9 @@ export type ImageJson = {
   source?: string;
 
   /**
+   * The builder a container image built from a repository uses;
+   * unspecified for any other image.
+   *
    * @generated from field: toshi.workspace.v1.ImageBuilder builder = 14;
    */
   builder?: ImageBuilderJson;
@@ -269,6 +298,9 @@ export type ImageJson = {
   registry?: string;
 
   /**
+   * The key of the build secret that holds the registry's Docker
+   * config.json; empty when registry is.
+   *
    * @generated from field: string registry_secret = 16;
    */
   registrySecret?: string;
@@ -319,6 +351,8 @@ export const ImageSchema: GenMessage<Image, {jsonType: ImageJson}> = /*@__PURE__
  */
 export type ImageVersion = Message<"toshi.workspace.v1.ImageVersion"> & {
   /**
+   * The version's id, set by Toshi.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -333,6 +367,8 @@ export type ImageVersion = Message<"toshi.workspace.v1.ImageVersion"> & {
   number: bigint;
 
   /**
+   * Where the version is in its life.
+   *
    * @generated from field: toshi.workspace.v1.ImageVersionState state = 3;
    */
   state: ImageVersionState;
@@ -346,6 +382,8 @@ export type ImageVersion = Message<"toshi.workspace.v1.ImageVersion"> & {
   base: string;
 
   /**
+   * The SHA-256 of base, in hex; empty for a container version.
+   *
    * @generated from field: string base_digest = 5;
    */
   baseDigest: string;
@@ -379,11 +417,15 @@ export type ImageVersion = Message<"toshi.workspace.v1.ImageVersion"> & {
   failure: string;
 
   /**
+   * When its build started, or when Toshi found a push.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 10;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When it became ready; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp ready_at = 11;
    */
   readyAt?: Timestamp | undefined;
@@ -396,11 +438,16 @@ export type ImageVersion = Message<"toshi.workspace.v1.ImageVersion"> & {
   pendingSince?: Timestamp | undefined;
 
   /**
+   * When its overlay, or a container version's manifest, is deleted; unset
+   * until it is pending deletion.
+   *
    * @generated from field: google.protobuf.Timestamp delete_after = 13;
    */
   deleteAfter?: Timestamp | undefined;
 
   /**
+   * When it was deleted; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp deleted_at = 14;
    */
   deletedAt?: Timestamp | undefined;
@@ -422,6 +469,8 @@ export type ImageVersion = Message<"toshi.workspace.v1.ImageVersion"> & {
   digest: string;
 
   /**
+   * What pushed a container version; unspecified for a disk version.
+   *
    * @generated from field: toshi.workspace.v1.ImagePusher pushed_by = 17;
    */
   pushedBy: ImagePusher;
@@ -436,16 +485,26 @@ export type ImageVersion = Message<"toshi.workspace.v1.ImageVersion"> & {
   sourceCommit: string;
 
   /**
+   * The builder that built a container version, never AUTO; unspecified
+   * for a disk version, a hand push and until a build is ready.
+   *
    * @generated from field: toshi.workspace.v1.ImageBuilder builder = 19;
    */
   builder: ImageBuilder;
 
   /**
+   * The Railpack version a container version was built with; empty for a
+   * Dockerfile build, a hand push and until a Railpack build is ready.
+   *
    * @generated from field: string builder_version = 20;
    */
   builderVersion: string;
 
   /**
+   * The digest of the Railpack BuildKit frontend a container version was
+   * built with; empty for a Dockerfile build, a hand push and until a
+   * Railpack build is ready.
+   *
    * @generated from field: string builder_frontend_digest = 21;
    */
   builderFrontendDigest: string;
@@ -482,6 +541,8 @@ export type ImageVersion = Message<"toshi.workspace.v1.ImageVersion"> & {
  */
 export type ImageVersionJson = {
   /**
+   * The version's id, set by Toshi.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -496,6 +557,8 @@ export type ImageVersionJson = {
   number?: string;
 
   /**
+   * Where the version is in its life.
+   *
    * @generated from field: toshi.workspace.v1.ImageVersionState state = 3;
    */
   state?: ImageVersionStateJson;
@@ -509,6 +572,8 @@ export type ImageVersionJson = {
   base?: string;
 
   /**
+   * The SHA-256 of base, in hex; empty for a container version.
+   *
    * @generated from field: string base_digest = 5;
    */
   baseDigest?: string;
@@ -542,11 +607,15 @@ export type ImageVersionJson = {
   failure?: string;
 
   /**
+   * When its build started, or when Toshi found a push.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 10;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When it became ready; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp ready_at = 11;
    */
   readyAt?: TimestampJson;
@@ -559,11 +628,16 @@ export type ImageVersionJson = {
   pendingSince?: TimestampJson;
 
   /**
+   * When its overlay, or a container version's manifest, is deleted; unset
+   * until it is pending deletion.
+   *
    * @generated from field: google.protobuf.Timestamp delete_after = 13;
    */
   deleteAfter?: TimestampJson;
 
   /**
+   * When it was deleted; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp deleted_at = 14;
    */
   deletedAt?: TimestampJson;
@@ -585,6 +659,8 @@ export type ImageVersionJson = {
   digest?: string;
 
   /**
+   * What pushed a container version; unspecified for a disk version.
+   *
    * @generated from field: toshi.workspace.v1.ImagePusher pushed_by = 17;
    */
   pushedBy?: ImagePusherJson;
@@ -599,16 +675,26 @@ export type ImageVersionJson = {
   sourceCommit?: string;
 
   /**
+   * The builder that built a container version, never AUTO; unspecified
+   * for a disk version, a hand push and until a build is ready.
+   *
    * @generated from field: toshi.workspace.v1.ImageBuilder builder = 19;
    */
   builder?: ImageBuilderJson;
 
   /**
+   * The Railpack version a container version was built with; empty for a
+   * Dockerfile build, a hand push and until a Railpack build is ready.
+   *
    * @generated from field: string builder_version = 20;
    */
   builderVersion?: string;
 
   /**
+   * The digest of the Railpack BuildKit frontend a container version was
+   * built with; empty for a Dockerfile build, a hand push and until a
+   * Railpack build is ready.
+   *
    * @generated from field: string builder_frontend_digest = 21;
    */
   builderFrontendDigest?: string;
@@ -652,16 +738,22 @@ export const ImageVersionSchema: GenMessage<ImageVersion, {jsonType: ImageVersio
  */
 export type ImageVersionPin = Message<"toshi.workspace.v1.ImageVersionPin"> & {
   /**
+   * The service's id.
+   *
    * @generated from field: string service_id = 1;
    */
   serviceId: string;
 
   /**
+   * The service's name.
+   *
    * @generated from field: string service_name = 2;
    */
   serviceName: string;
 
   /**
+   * The revision's number.
+   *
    * @generated from field: int64 revision = 3;
    */
   revision: bigint;
@@ -674,16 +766,22 @@ export type ImageVersionPin = Message<"toshi.workspace.v1.ImageVersionPin"> & {
  */
 export type ImageVersionPinJson = {
   /**
+   * The service's id.
+   *
    * @generated from field: string service_id = 1;
    */
   serviceId?: string;
 
   /**
+   * The service's name.
+   *
    * @generated from field: string service_name = 2;
    */
   serviceName?: string;
 
   /**
+   * The revision's number.
+   *
    * @generated from field: int64 revision = 3;
    */
   revision?: string;
@@ -697,10 +795,14 @@ export const ImageVersionPinSchema: GenMessage<ImageVersionPin, {jsonType: Image
   messageDesc(file_toshi_workspace_v1_images, 2);
 
 /**
+ * CreateImageRequest is a call of CreateImage.
+ *
  * @generated from message toshi.workspace.v1.CreateImageRequest
  */
 export type CreateImageRequest = Message<"toshi.workspace.v1.CreateImageRequest"> & {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
@@ -715,11 +817,17 @@ export type CreateImageRequest = Message<"toshi.workspace.v1.CreateImageRequest"
   environment: string;
 
   /**
+   * Its name: lower-case letters, digits and hyphens, at most 51
+   * characters, starting and ending with a letter or a digit.
+   *
    * @generated from field: string name = 3;
    */
   name: string;
 
   /**
+   * What to make: a disk or a container image. Unspecified fails with
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: toshi.workspace.v1.ImageKind kind = 4;
    */
   kind: ImageKind;
@@ -733,6 +841,9 @@ export type CreateImageRequest = Message<"toshi.workspace.v1.CreateImageRequest"
   base: string;
 
   /**
+   * The Linux runner size its builds run at; empty for a container image
+   * that is pushed.
+   *
    * @generated from field: string size = 6;
    */
   size: string;
@@ -756,6 +867,9 @@ export type CreateImageRequest = Message<"toshi.workspace.v1.CreateImageRequest"
   source: string;
 
   /**
+   * The builder a container image built from a repository uses;
+   * unspecified is AUTO. Must be unspecified for any other image.
+   *
    * @generated from field: toshi.workspace.v1.ImageBuilder builder = 9;
    */
   builder: ImageBuilder;
@@ -771,6 +885,9 @@ export type CreateImageRequest = Message<"toshi.workspace.v1.CreateImageRequest"
   registry: string;
 
   /**
+   * The key of the build secret holding the registry's Docker config.json;
+   * empty when registry is.
+   *
    * @generated from field: string registry_secret = 11;
    */
   registrySecret: string;
@@ -784,16 +901,24 @@ export type CreateImageRequest = Message<"toshi.workspace.v1.CreateImageRequest"
   rebuildOnPush: boolean;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 13;
    */
   requestKey: string;
 };
 
 /**
+ * CreateImageRequest is a call of CreateImage.
+ *
  * @generated from message toshi.workspace.v1.CreateImageRequest
  */
 export type CreateImageRequestJson = {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
@@ -808,11 +933,17 @@ export type CreateImageRequestJson = {
   environment?: string;
 
   /**
+   * Its name: lower-case letters, digits and hyphens, at most 51
+   * characters, starting and ending with a letter or a digit.
+   *
    * @generated from field: string name = 3;
    */
   name?: string;
 
   /**
+   * What to make: a disk or a container image. Unspecified fails with
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: toshi.workspace.v1.ImageKind kind = 4;
    */
   kind?: ImageKindJson;
@@ -826,6 +957,9 @@ export type CreateImageRequestJson = {
   base?: string;
 
   /**
+   * The Linux runner size its builds run at; empty for a container image
+   * that is pushed.
+   *
    * @generated from field: string size = 6;
    */
   size?: string;
@@ -849,6 +983,9 @@ export type CreateImageRequestJson = {
   source?: string;
 
   /**
+   * The builder a container image built from a repository uses;
+   * unspecified is AUTO. Must be unspecified for any other image.
+   *
    * @generated from field: toshi.workspace.v1.ImageBuilder builder = 9;
    */
   builder?: ImageBuilderJson;
@@ -864,6 +1001,9 @@ export type CreateImageRequestJson = {
   registry?: string;
 
   /**
+   * The key of the build secret holding the registry's Docker config.json;
+   * empty when registry is.
+   *
    * @generated from field: string registry_secret = 11;
    */
   registrySecret?: string;
@@ -877,6 +1017,10 @@ export type CreateImageRequestJson = {
   rebuildOnPush?: boolean;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 13;
    */
   requestKey?: string;
@@ -890,10 +1034,15 @@ export const CreateImageRequestSchema: GenMessage<CreateImageRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_images, 3);
 
 /**
+ * CreateImageResponse is the image as created, with the version its first
+ * build makes.
+ *
  * @generated from message toshi.workspace.v1.CreateImageResponse
  */
 export type CreateImageResponse = Message<"toshi.workspace.v1.CreateImageResponse"> & {
   /**
+   * The image as stored.
+   *
    * @generated from field: toshi.workspace.v1.Image image = 1;
    */
   image?: Image | undefined;
@@ -907,10 +1056,15 @@ export type CreateImageResponse = Message<"toshi.workspace.v1.CreateImageRespons
 };
 
 /**
+ * CreateImageResponse is the image as created, with the version its first
+ * build makes.
+ *
  * @generated from message toshi.workspace.v1.CreateImageResponse
  */
 export type CreateImageResponseJson = {
   /**
+   * The image as stored.
+   *
    * @generated from field: toshi.workspace.v1.Image image = 1;
    */
   image?: ImageJson;
@@ -931,30 +1085,42 @@ export const CreateImageResponseSchema: GenMessage<CreateImageResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_images, 4);
 
 /**
+ * GetImageRequest is a call of GetImage.
+ *
  * @generated from message toshi.workspace.v1.GetImageRequest
  */
 export type GetImageRequest = Message<"toshi.workspace.v1.GetImageRequest"> & {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * Its name.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 };
 
 /**
+ * GetImageRequest is a call of GetImage.
+ *
  * @generated from message toshi.workspace.v1.GetImageRequest
  */
 export type GetImageRequestJson = {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * Its name.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -968,10 +1134,14 @@ export const GetImageRequestSchema: GenMessage<GetImageRequest, {jsonType: GetIm
   messageDesc(file_toshi_workspace_v1_images, 5);
 
 /**
+ * GetImageResponse is the image asked for, with its versions.
+ *
  * @generated from message toshi.workspace.v1.GetImageResponse
  */
 export type GetImageResponse = Message<"toshi.workspace.v1.GetImageResponse"> & {
   /**
+   * The image.
+   *
    * @generated from field: toshi.workspace.v1.Image image = 1;
    */
   image?: Image | undefined;
@@ -985,10 +1155,14 @@ export type GetImageResponse = Message<"toshi.workspace.v1.GetImageResponse"> & 
 };
 
 /**
+ * GetImageResponse is the image asked for, with its versions.
+ *
  * @generated from message toshi.workspace.v1.GetImageResponse
  */
 export type GetImageResponseJson = {
   /**
+   * The image.
+   *
    * @generated from field: toshi.workspace.v1.Image image = 1;
    */
   image?: ImageJson;
@@ -1009,10 +1183,14 @@ export const GetImageResponseSchema: GenMessage<GetImageResponse, {jsonType: Get
   messageDesc(file_toshi_workspace_v1_images, 6);
 
 /**
+ * ListImagesRequest is a call of ListImages.
+ *
  * @generated from message toshi.workspace.v1.ListImagesRequest
  */
 export type ListImagesRequest = Message<"toshi.workspace.v1.ListImagesRequest"> & {
   /**
+   * The project's name; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
@@ -1033,10 +1211,14 @@ export type ListImagesRequest = Message<"toshi.workspace.v1.ListImagesRequest"> 
 };
 
 /**
+ * ListImagesRequest is a call of ListImages.
+ *
  * @generated from message toshi.workspace.v1.ListImagesRequest
  */
 export type ListImagesRequestJson = {
   /**
+   * The project's name; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
@@ -1064,10 +1246,14 @@ export const ListImagesRequestSchema: GenMessage<ListImagesRequest, {jsonType: L
   messageDesc(file_toshi_workspace_v1_images, 7);
 
 /**
+ * ListImagesResponse is a page of images.
+ *
  * @generated from message toshi.workspace.v1.ListImagesResponse
  */
 export type ListImagesResponse = Message<"toshi.workspace.v1.ListImagesResponse"> & {
   /**
+   * The page's images, by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Image images = 1;
    */
   images: Image[];
@@ -1081,10 +1267,14 @@ export type ListImagesResponse = Message<"toshi.workspace.v1.ListImagesResponse"
 };
 
 /**
+ * ListImagesResponse is a page of images.
+ *
  * @generated from message toshi.workspace.v1.ListImagesResponse
  */
 export type ListImagesResponseJson = {
   /**
+   * The page's images, by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Image images = 1;
    */
   images?: ImageJson[];
@@ -1105,15 +1295,21 @@ export const ListImagesResponseSchema: GenMessage<ListImagesResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_images, 8);
 
 /**
+ * BuildImageRequest is a call of BuildImage.
+ *
  * @generated from message toshi.workspace.v1.BuildImageRequest
  */
 export type BuildImageRequest = Message<"toshi.workspace.v1.BuildImageRequest"> & {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * Its name.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -1145,15 +1341,21 @@ export type BuildImageRequest = Message<"toshi.workspace.v1.BuildImageRequest"> 
 };
 
 /**
+ * BuildImageRequest is a call of BuildImage.
+ *
  * @generated from message toshi.workspace.v1.BuildImageRequest
  */
 export type BuildImageRequestJson = {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * Its name.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -1192,20 +1394,28 @@ export const BuildImageRequestSchema: GenMessage<BuildImageRequest, {jsonType: B
   messageDesc(file_toshi_workspace_v1_images, 9);
 
 /**
+ * BuildImageResponse is the build's version.
+ *
  * @generated from message toshi.workspace.v1.BuildImageResponse
  */
 export type BuildImageResponse = Message<"toshi.workspace.v1.BuildImageResponse"> & {
   /**
+   * The version, building.
+   *
    * @generated from field: toshi.workspace.v1.ImageVersion version = 1;
    */
   version?: ImageVersion | undefined;
 };
 
 /**
+ * BuildImageResponse is the build's version.
+ *
  * @generated from message toshi.workspace.v1.BuildImageResponse
  */
 export type BuildImageResponseJson = {
   /**
+   * The version, building.
+   *
    * @generated from field: toshi.workspace.v1.ImageVersion version = 1;
    */
   version?: ImageVersionJson;
@@ -1219,10 +1429,14 @@ export const BuildImageResponseSchema: GenMessage<BuildImageResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_images, 10);
 
 /**
+ * UpdateImageRequest is a call of UpdateImage.
+ *
  * @generated from message toshi.workspace.v1.UpdateImageRequest
  */
 export type UpdateImageRequest = Message<"toshi.workspace.v1.UpdateImageRequest"> & {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
@@ -1236,16 +1450,24 @@ export type UpdateImageRequest = Message<"toshi.workspace.v1.UpdateImageRequest"
   image?: Image | undefined;
 
   /**
+   * The fields to set: those named must be rebuild_on_push alone. Unset
+   * sets it too; an empty mask or any other path fails with
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 3;
    */
   updateMask?: FieldMask | undefined;
 };
 
 /**
+ * UpdateImageRequest is a call of UpdateImage.
+ *
  * @generated from message toshi.workspace.v1.UpdateImageRequest
  */
 export type UpdateImageRequestJson = {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
@@ -1259,6 +1481,10 @@ export type UpdateImageRequestJson = {
   image?: ImageJson;
 
   /**
+   * The fields to set: those named must be rebuild_on_push alone. Unset
+   * sets it too; an empty mask or any other path fails with
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 3;
    */
   updateMask?: FieldMaskJson;
@@ -1272,20 +1498,28 @@ export const UpdateImageRequestSchema: GenMessage<UpdateImageRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_images, 11);
 
 /**
+ * UpdateImageResponse is the image as updated.
+ *
  * @generated from message toshi.workspace.v1.UpdateImageResponse
  */
 export type UpdateImageResponse = Message<"toshi.workspace.v1.UpdateImageResponse"> & {
   /**
+   * The image.
+   *
    * @generated from field: toshi.workspace.v1.Image image = 1;
    */
   image?: Image | undefined;
 };
 
 /**
+ * UpdateImageResponse is the image as updated.
+ *
  * @generated from message toshi.workspace.v1.UpdateImageResponse
  */
 export type UpdateImageResponseJson = {
   /**
+   * The image.
+   *
    * @generated from field: toshi.workspace.v1.Image image = 1;
    */
   image?: ImageJson;
@@ -1299,30 +1533,42 @@ export const UpdateImageResponseSchema: GenMessage<UpdateImageResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_images, 12);
 
 /**
+ * DeleteImageRequest is a call of DeleteImage.
+ *
  * @generated from message toshi.workspace.v1.DeleteImageRequest
  */
 export type DeleteImageRequest = Message<"toshi.workspace.v1.DeleteImageRequest"> & {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * Its name.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 };
 
 /**
+ * DeleteImageRequest is a call of DeleteImage.
+ *
  * @generated from message toshi.workspace.v1.DeleteImageRequest
  */
 export type DeleteImageRequestJson = {
   /**
+   * The image's project; empty is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * Its name.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -1336,12 +1582,16 @@ export const DeleteImageRequestSchema: GenMessage<DeleteImageRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_images, 13);
 
 /**
+ * DeleteImageResponse is empty.
+ *
  * @generated from message toshi.workspace.v1.DeleteImageResponse
  */
 export type DeleteImageResponse = Message<"toshi.workspace.v1.DeleteImageResponse"> & {
 };
 
 /**
+ * DeleteImageResponse is empty.
+ *
  * @generated from message toshi.workspace.v1.DeleteImageResponse
  */
 export type DeleteImageResponseJson = {
@@ -1361,6 +1611,8 @@ export const DeleteImageResponseSchema: GenMessage<DeleteImageResponse, {jsonTyp
  */
 export enum ImageKind {
   /**
+   * Unspecified; a call that sends it fails with INVALID_ARGUMENT.
+   *
    * @generated from enum value: IMAGE_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1402,6 +1654,8 @@ export const ImageKindSchema: GenEnum<ImageKind, ImageKindJson> = /*@__PURE__*/
  */
 export enum ImageBuilder {
   /**
+   * Unspecified: CreateImage takes it as AUTO; a disk version has it.
+   *
    * @generated from enum value: IMAGE_BUILDER_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1449,6 +1703,8 @@ export const ImageBuilderSchema: GenEnum<ImageBuilder, ImageBuilderJson> = /*@__
  */
 export enum ImagePusher {
   /**
+   * Unspecified: a disk version has it.
+   *
    * @generated from enum value: IMAGE_PUSHER_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1489,6 +1745,8 @@ export const ImagePusherSchema: GenEnum<ImagePusher, ImagePusherJson> = /*@__PUR
  */
 export enum ImageVersionState {
   /**
+   * Unspecified; no version Toshi records has it.
+   *
    * @generated from enum value: IMAGE_VERSION_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
