@@ -336,6 +336,8 @@ const (
 	AuditActionProjectDeleted = "project.deleted"
 	// AuditActionProjectRestored is the "project.restored" audit action.
 	AuditActionProjectRestored = "project.restored"
+	// AuditActionProjectPurged is the "project.purged" audit action.
+	AuditActionProjectPurged = "project.purged"
 	// AuditActionProjectUpdated is the "project.updated" audit action.
 	AuditActionProjectUpdated = "project.updated"
 	// AuditActionProjectCompatibilityRaised is the "project.compatibility_raised" audit action.

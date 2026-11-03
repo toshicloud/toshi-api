@@ -176,6 +176,7 @@ export const auditActions = {
   projectCreated: "project.created",
   projectDeleted: "project.deleted",
   projectRestored: "project.restored",
+  projectPurged: "project.purged",
   projectUpdated: "project.updated",
   projectCompatibilityRaised: "project.compatibility_raised",
   billingEventConflicted: "billing.event_conflicted",
