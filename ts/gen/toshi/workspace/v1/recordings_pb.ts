@@ -24,26 +24,36 @@ export const file_toshi_workspace_v1_recordings: GenFile = /*@__PURE__*/
  */
 export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   /**
+   * Its ID, assigned by the server.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The project the recording's workload belongs to.
+   *
    * @generated from field: string project_id = 2;
    */
   projectId: string;
 
   /**
+   * The environment the recording's workload belongs to.
+   *
    * @generated from field: string environment_id = 3;
    */
   environmentId: string;
 
   /**
+   * The workload whose run attempt made it.
+   *
    * @generated from field: string workload_id = 4;
    */
   workloadId: string;
 
   /**
+   * Where it is in its life.
+   *
    * @generated from field: toshi.workspace.v1.RecordingState state = 5;
    */
   state: RecordingState;
@@ -80,6 +90,9 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   frames: number;
 
   /**
+   * The screenshots left out for being over the frame bound; 0 for a
+   * video or trace the test framework wrote.
+   *
    * @generated from field: int32 dropped = 10;
    */
   dropped: number;
@@ -101,6 +114,9 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
   pauses: RecordingPause[];
 
   /**
+   * When it was made: its attempt's assignment, or its upload's
+   * reservation.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 13;
    */
   createdAt?: Timestamp | undefined;
@@ -147,26 +163,36 @@ export type Recording = Message<"toshi.workspace.v1.Recording"> & {
  */
 export type RecordingJson = {
   /**
+   * Its ID, assigned by the server.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The project the recording's workload belongs to.
+   *
    * @generated from field: string project_id = 2;
    */
   projectId?: string;
 
   /**
+   * The environment the recording's workload belongs to.
+   *
    * @generated from field: string environment_id = 3;
    */
   environmentId?: string;
 
   /**
+   * The workload whose run attempt made it.
+   *
    * @generated from field: string workload_id = 4;
    */
   workloadId?: string;
 
   /**
+   * Where it is in its life.
+   *
    * @generated from field: toshi.workspace.v1.RecordingState state = 5;
    */
   state?: RecordingStateJson;
@@ -203,6 +229,9 @@ export type RecordingJson = {
   frames?: number;
 
   /**
+   * The screenshots left out for being over the frame bound; 0 for a
+   * video or trace the test framework wrote.
+   *
    * @generated from field: int32 dropped = 10;
    */
   dropped?: number;
@@ -224,6 +253,9 @@ export type RecordingJson = {
   pauses?: RecordingPauseJson[];
 
   /**
+   * When it was made: its attempt's assignment, or its upload's
+   * reservation.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 13;
    */
   createdAt?: TimestampJson;
@@ -275,6 +307,8 @@ export const RecordingSchema: GenMessage<Recording, {jsonType: RecordingJson}> =
  */
 export type RecordingSpan = Message<"toshi.workspace.v1.RecordingSpan"> & {
   /**
+   * Who held the screen.
+   *
    * @generated from field: toshi.workspace.v1.RecordingSpanKind kind = 1;
    */
   kind: RecordingSpanKind;
@@ -289,21 +323,29 @@ export type RecordingSpan = Message<"toshi.workspace.v1.RecordingSpan"> & {
   sessionId: string;
 
   /**
+   * Who opened the session: person or program. Empty on an agent span.
+   *
    * @generated from field: string actor = 3;
    */
   actor: string;
 
   /**
+   * The path its input came by: websocket or api. Empty on an agent span.
+   *
    * @generated from field: string via = 4;
    */
   via: string;
 
   /**
+   * When its stretch began.
+   *
    * @generated from field: google.protobuf.Timestamp start = 5;
    */
   start?: Timestamp | undefined;
 
   /**
+   * When its stretch ended.
+   *
    * @generated from field: google.protobuf.Timestamp end = 6;
    */
   end?: Timestamp | undefined;
@@ -324,6 +366,8 @@ export type RecordingSpan = Message<"toshi.workspace.v1.RecordingSpan"> & {
  */
 export type RecordingSpanJson = {
   /**
+   * Who held the screen.
+   *
    * @generated from field: toshi.workspace.v1.RecordingSpanKind kind = 1;
    */
   kind?: RecordingSpanKindJson;
@@ -338,21 +382,29 @@ export type RecordingSpanJson = {
   sessionId?: string;
 
   /**
+   * Who opened the session: person or program. Empty on an agent span.
+   *
    * @generated from field: string actor = 3;
    */
   actor?: string;
 
   /**
+   * The path its input came by: websocket or api. Empty on an agent span.
+   *
    * @generated from field: string via = 4;
    */
   via?: string;
 
   /**
+   * When its stretch began.
+   *
    * @generated from field: google.protobuf.Timestamp start = 5;
    */
   start?: TimestampJson;
 
   /**
+   * When its stretch ended.
+   *
    * @generated from field: google.protobuf.Timestamp end = 6;
    */
   end?: TimestampJson;
@@ -381,6 +433,8 @@ export const RecordingSpanSchema: GenMessage<RecordingSpan, {jsonType: Recording
  */
 export type RecordingPause = Message<"toshi.workspace.v1.RecordingPause"> & {
   /**
+   * The display session that held input; 1 to 64 bytes.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId: string;
@@ -400,11 +454,15 @@ export type RecordingPause = Message<"toshi.workspace.v1.RecordingPause"> & {
   via: string;
 
   /**
+   * When the pause began.
+   *
    * @generated from field: google.protobuf.Timestamp start = 4;
    */
   start?: Timestamp | undefined;
 
   /**
+   * When the pause ended.
+   *
    * @generated from field: google.protobuf.Timestamp end = 5;
    */
   end?: Timestamp | undefined;
@@ -418,6 +476,8 @@ export type RecordingPause = Message<"toshi.workspace.v1.RecordingPause"> & {
  */
 export type RecordingPauseJson = {
   /**
+   * The display session that held input; 1 to 64 bytes.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId?: string;
@@ -437,11 +497,15 @@ export type RecordingPauseJson = {
   via?: string;
 
   /**
+   * When the pause began.
+   *
    * @generated from field: google.protobuf.Timestamp start = 4;
    */
   start?: TimestampJson;
 
   /**
+   * When the pause ended.
+   *
    * @generated from field: google.protobuf.Timestamp end = 5;
    */
   end?: TimestampJson;
@@ -455,10 +519,14 @@ export const RecordingPauseSchema: GenMessage<RecordingPause, {jsonType: Recordi
   messageDesc(file_toshi_workspace_v1_recordings, 2);
 
 /**
+ * ListRecordingsRequest is one page of a workload's recordings.
+ *
  * @generated from message toshi.workspace.v1.ListRecordingsRequest
  */
 export type ListRecordingsRequest = Message<"toshi.workspace.v1.ListRecordingsRequest"> & {
   /**
+   * The workload whose recordings to list; required.
+   *
    * @generated from field: string workload_id = 1;
    */
   workloadId: string;
@@ -479,10 +547,14 @@ export type ListRecordingsRequest = Message<"toshi.workspace.v1.ListRecordingsRe
 };
 
 /**
+ * ListRecordingsRequest is one page of a workload's recordings.
+ *
  * @generated from message toshi.workspace.v1.ListRecordingsRequest
  */
 export type ListRecordingsRequestJson = {
   /**
+   * The workload whose recordings to list; required.
+   *
    * @generated from field: string workload_id = 1;
    */
   workloadId?: string;
@@ -510,10 +582,15 @@ export const ListRecordingsRequestSchema: GenMessage<ListRecordingsRequest, {jso
   messageDesc(file_toshi_workspace_v1_recordings, 3);
 
 /**
+ * ListRecordingsResponse is one page of a workload's recordings, oldest
+ * first.
+ *
  * @generated from message toshi.workspace.v1.ListRecordingsResponse
  */
 export type ListRecordingsResponse = Message<"toshi.workspace.v1.ListRecordingsResponse"> & {
   /**
+   * The page's recordings.
+   *
    * @generated from field: repeated toshi.workspace.v1.Recording recordings = 1;
    */
   recordings: Recording[];
@@ -527,10 +604,15 @@ export type ListRecordingsResponse = Message<"toshi.workspace.v1.ListRecordingsR
 };
 
 /**
+ * ListRecordingsResponse is one page of a workload's recordings, oldest
+ * first.
+ *
  * @generated from message toshi.workspace.v1.ListRecordingsResponse
  */
 export type ListRecordingsResponseJson = {
   /**
+   * The page's recordings.
+   *
    * @generated from field: repeated toshi.workspace.v1.Recording recordings = 1;
    */
   recordings?: RecordingJson[];
@@ -551,10 +633,15 @@ export const ListRecordingsResponseSchema: GenMessage<ListRecordingsResponse, {j
   messageDesc(file_toshi_workspace_v1_recordings, 4);
 
 /**
+ * GetRecordingRequest names one recording and, for a ready one, how long
+ * its URL should live.
+ *
  * @generated from message toshi.workspace.v1.GetRecordingRequest
  */
 export type GetRecordingRequest = Message<"toshi.workspace.v1.GetRecordingRequest"> & {
   /**
+   * The recording to return; required.
+   *
    * @generated from field: string recording_id = 1;
    */
   recordingId: string;
@@ -569,10 +656,15 @@ export type GetRecordingRequest = Message<"toshi.workspace.v1.GetRecordingReques
 };
 
 /**
+ * GetRecordingRequest names one recording and, for a ready one, how long
+ * its URL should live.
+ *
  * @generated from message toshi.workspace.v1.GetRecordingRequest
  */
 export type GetRecordingRequestJson = {
   /**
+   * The recording to return; required.
+   *
    * @generated from field: string recording_id = 1;
    */
   recordingId?: string;
@@ -594,10 +686,15 @@ export const GetRecordingRequestSchema: GenMessage<GetRecordingRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_recordings, 5);
 
 /**
+ * GetRecordingResponse is one recording and, when it is ready, a signed URL
+ * for its object.
+ *
  * @generated from message toshi.workspace.v1.GetRecordingResponse
  */
 export type GetRecordingResponse = Message<"toshi.workspace.v1.GetRecordingResponse"> & {
   /**
+   * The recording.
+   *
    * @generated from field: toshi.workspace.v1.Recording recording = 1;
    */
   recording?: Recording | undefined;
@@ -612,6 +709,8 @@ export type GetRecordingResponse = Message<"toshi.workspace.v1.GetRecordingRespo
   url: string;
 
   /**
+   * When url stops working; set with url.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 3;
    */
   expiresAt?: Timestamp | undefined;
@@ -628,10 +727,15 @@ export type GetRecordingResponse = Message<"toshi.workspace.v1.GetRecordingRespo
 };
 
 /**
+ * GetRecordingResponse is one recording and, when it is ready, a signed URL
+ * for its object.
+ *
  * @generated from message toshi.workspace.v1.GetRecordingResponse
  */
 export type GetRecordingResponseJson = {
   /**
+   * The recording.
+   *
    * @generated from field: toshi.workspace.v1.Recording recording = 1;
    */
   recording?: RecordingJson;
@@ -646,6 +750,8 @@ export type GetRecordingResponseJson = {
   url?: string;
 
   /**
+   * When url stops working; set with url.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 3;
    */
   expiresAt?: TimestampJson;
@@ -683,6 +789,8 @@ export type RecordingShareLink = Message<"toshi.workspace.v1.RecordingShareLink"
   id: string;
 
   /**
+   * The recording it fetches.
+   *
    * @generated from field: string recording_id = 2;
    */
   recordingId: string;
@@ -695,16 +803,22 @@ export type RecordingShareLink = Message<"toshi.workspace.v1.RecordingShareLink"
   kind: RecordingKind;
 
   /**
+   * Where it is in its life.
+   *
    * @generated from field: toshi.workspace.v1.RecordingShareLinkState state = 4;
    */
   state: RecordingShareLinkState;
 
   /**
+   * When it was minted.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When its lifetime ends, unless it is revoked first.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 6;
    */
   expiresAt?: Timestamp | undefined;
@@ -754,6 +868,8 @@ export type RecordingShareLinkJson = {
   id?: string;
 
   /**
+   * The recording it fetches.
+   *
    * @generated from field: string recording_id = 2;
    */
   recordingId?: string;
@@ -766,16 +882,22 @@ export type RecordingShareLinkJson = {
   kind?: RecordingKindJson;
 
   /**
+   * Where it is in its life.
+   *
    * @generated from field: toshi.workspace.v1.RecordingShareLinkState state = 4;
    */
   state?: RecordingShareLinkStateJson;
 
   /**
+   * When it was minted.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When its lifetime ends, unless it is revoked first.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 6;
    */
   expiresAt?: TimestampJson;
@@ -818,10 +940,15 @@ export const RecordingShareLinkSchema: GenMessage<RecordingShareLink, {jsonType:
   messageDesc(file_toshi_workspace_v1_recordings, 7);
 
 /**
+ * CreateRecordingShareLinkRequest asks for a share link to one ready
+ * recording.
+ *
  * @generated from message toshi.workspace.v1.CreateRecordingShareLinkRequest
  */
 export type CreateRecordingShareLinkRequest = Message<"toshi.workspace.v1.CreateRecordingShareLinkRequest"> & {
   /**
+   * The recording to link; required.
+   *
    * @generated from field: string recording_id = 1;
    */
   recordingId: string;
@@ -856,10 +983,15 @@ export type CreateRecordingShareLinkRequest = Message<"toshi.workspace.v1.Create
 };
 
 /**
+ * CreateRecordingShareLinkRequest asks for a share link to one ready
+ * recording.
+ *
  * @generated from message toshi.workspace.v1.CreateRecordingShareLinkRequest
  */
 export type CreateRecordingShareLinkRequestJson = {
   /**
+   * The recording to link; required.
+   *
    * @generated from field: string recording_id = 1;
    */
   recordingId?: string;
@@ -901,10 +1033,15 @@ export const CreateRecordingShareLinkRequestSchema: GenMessage<CreateRecordingSh
   messageDesc(file_toshi_workspace_v1_recordings, 8);
 
 /**
+ * CreateRecordingShareLinkResponse is a new share link, with the URLs that
+ * serve it.
+ *
  * @generated from message toshi.workspace.v1.CreateRecordingShareLinkResponse
  */
 export type CreateRecordingShareLinkResponse = Message<"toshi.workspace.v1.CreateRecordingShareLinkResponse"> & {
   /**
+   * The link's record, without the link itself.
+   *
    * @generated from field: toshi.workspace.v1.RecordingShareLink share_link = 1;
    */
   shareLink?: RecordingShareLink | undefined;
@@ -928,10 +1065,15 @@ export type CreateRecordingShareLinkResponse = Message<"toshi.workspace.v1.Creat
 };
 
 /**
+ * CreateRecordingShareLinkResponse is a new share link, with the URLs that
+ * serve it.
+ *
  * @generated from message toshi.workspace.v1.CreateRecordingShareLinkResponse
  */
 export type CreateRecordingShareLinkResponseJson = {
   /**
+   * The link's record, without the link itself.
+   *
    * @generated from field: toshi.workspace.v1.RecordingShareLink share_link = 1;
    */
   shareLink?: RecordingShareLinkJson;
@@ -962,10 +1104,14 @@ export const CreateRecordingShareLinkResponseSchema: GenMessage<CreateRecordingS
   messageDesc(file_toshi_workspace_v1_recordings, 9);
 
 /**
+ * ListRecordingShareLinksRequest is one page of a recording's share links.
+ *
  * @generated from message toshi.workspace.v1.ListRecordingShareLinksRequest
  */
 export type ListRecordingShareLinksRequest = Message<"toshi.workspace.v1.ListRecordingShareLinksRequest"> & {
   /**
+   * The recording whose links to list; required.
+   *
    * @generated from field: string recording_id = 1;
    */
   recordingId: string;
@@ -986,10 +1132,14 @@ export type ListRecordingShareLinksRequest = Message<"toshi.workspace.v1.ListRec
 };
 
 /**
+ * ListRecordingShareLinksRequest is one page of a recording's share links.
+ *
  * @generated from message toshi.workspace.v1.ListRecordingShareLinksRequest
  */
 export type ListRecordingShareLinksRequestJson = {
   /**
+   * The recording whose links to list; required.
+   *
    * @generated from field: string recording_id = 1;
    */
   recordingId?: string;
@@ -1017,10 +1167,15 @@ export const ListRecordingShareLinksRequestSchema: GenMessage<ListRecordingShare
   messageDesc(file_toshi_workspace_v1_recordings, 10);
 
 /**
+ * ListRecordingShareLinksResponse is one page of a recording's share links,
+ * oldest first.
+ *
  * @generated from message toshi.workspace.v1.ListRecordingShareLinksResponse
  */
 export type ListRecordingShareLinksResponse = Message<"toshi.workspace.v1.ListRecordingShareLinksResponse"> & {
   /**
+   * The page's links.
+   *
    * @generated from field: repeated toshi.workspace.v1.RecordingShareLink share_links = 1;
    */
   shareLinks: RecordingShareLink[];
@@ -1034,10 +1189,15 @@ export type ListRecordingShareLinksResponse = Message<"toshi.workspace.v1.ListRe
 };
 
 /**
+ * ListRecordingShareLinksResponse is one page of a recording's share links,
+ * oldest first.
+ *
  * @generated from message toshi.workspace.v1.ListRecordingShareLinksResponse
  */
 export type ListRecordingShareLinksResponseJson = {
   /**
+   * The page's links.
+   *
    * @generated from field: repeated toshi.workspace.v1.RecordingShareLink share_links = 1;
    */
   shareLinks?: RecordingShareLinkJson[];
@@ -1058,20 +1218,28 @@ export const ListRecordingShareLinksResponseSchema: GenMessage<ListRecordingShar
   messageDesc(file_toshi_workspace_v1_recordings, 11);
 
 /**
+ * RevokeRecordingShareLinkRequest names the share link to revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeRecordingShareLinkRequest
  */
 export type RevokeRecordingShareLinkRequest = Message<"toshi.workspace.v1.RevokeRecordingShareLinkRequest"> & {
   /**
+   * The share link to revoke; required.
+   *
    * @generated from field: string share_link_id = 1;
    */
   shareLinkId: string;
 };
 
 /**
+ * RevokeRecordingShareLinkRequest names the share link to revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeRecordingShareLinkRequest
  */
 export type RevokeRecordingShareLinkRequestJson = {
   /**
+   * The share link to revoke; required.
+   *
    * @generated from field: string share_link_id = 1;
    */
   shareLinkId?: string;
@@ -1085,20 +1253,30 @@ export const RevokeRecordingShareLinkRequestSchema: GenMessage<RevokeRecordingSh
   messageDesc(file_toshi_workspace_v1_recordings, 12);
 
 /**
+ * RevokeRecordingShareLinkResponse is the link after the call: revoked, or
+ * as it was when it had been revoked already.
+ *
  * @generated from message toshi.workspace.v1.RevokeRecordingShareLinkResponse
  */
 export type RevokeRecordingShareLinkResponse = Message<"toshi.workspace.v1.RevokeRecordingShareLinkResponse"> & {
   /**
+   * The link.
+   *
    * @generated from field: toshi.workspace.v1.RecordingShareLink share_link = 1;
    */
   shareLink?: RecordingShareLink | undefined;
 };
 
 /**
+ * RevokeRecordingShareLinkResponse is the link after the call: revoked, or
+ * as it was when it had been revoked already.
+ *
  * @generated from message toshi.workspace.v1.RevokeRecordingShareLinkResponse
  */
 export type RevokeRecordingShareLinkResponseJson = {
   /**
+   * The link.
+   *
    * @generated from field: toshi.workspace.v1.RecordingShareLink share_link = 1;
    */
   shareLink?: RecordingShareLinkJson;
@@ -1118,6 +1296,8 @@ export const RevokeRecordingShareLinkResponseSchema: GenMessage<RevokeRecordingS
  */
 export enum RecordingState {
   /**
+   * Never sent: a stored recording is in one of the states below.
+   *
    * @generated from enum value: RECORDING_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1175,6 +1355,8 @@ export const RecordingStateSchema: GenEnum<RecordingState, RecordingStateJson> =
  */
 export enum RecordingKind {
   /**
+   * Never sent: every recording has a kind from below.
+   *
    * @generated from enum value: RECORDING_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1224,6 +1406,8 @@ export const RecordingKindSchema: GenEnum<RecordingKind, RecordingKindJson> = /*
  */
 export enum RecordingSpanKind {
   /**
+   * Never sent: every span names who held the screen.
+   *
    * @generated from enum value: RECORDING_SPAN_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1272,6 +1456,8 @@ export const RecordingSpanKindSchema: GenEnum<RecordingSpanKind, RecordingSpanKi
  */
 export enum RecordingShareLinkState {
   /**
+   * Never sent: a link's state is worked out on each read.
+   *
    * @generated from enum value: RECORDING_SHARE_LINK_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1284,11 +1470,15 @@ export enum RecordingShareLinkState {
   ACTIVE = 1,
 
   /**
+   * It was revoked.
+   *
    * @generated from enum value: RECORDING_SHARE_LINK_STATE_REVOKED = 2;
    */
   REVOKED = 2,
 
   /**
+   * Its lifetime is over.
+   *
    * @generated from enum value: RECORDING_SHARE_LINK_STATE_EXPIRED = 3;
    */
   EXPIRED = 3,

@@ -28,6 +28,7 @@ const (
 type RecordingState int32
 
 const (
+	// Never sent: a stored recording is in one of the states below.
 	RecordingState_RECORDING_STATE_UNSPECIFIED RecordingState = 0
 	// The run attempt may still finish it: its host captures a strip or
 	// uploads what it captured, or the run's upload of a video or trace has
@@ -92,6 +93,7 @@ func (RecordingState) EnumDescriptor() ([]byte, []int) {
 type RecordingKind int32
 
 const (
+	// Never sent: every recording has a kind from below.
 	RecordingKind_RECORDING_KIND_UNSPECIFIED RecordingKind = 0
 	// A screenshot strip of the run's screen, taken by its host.
 	RecordingKind_RECORDING_KIND_STRIP RecordingKind = 1
@@ -151,6 +153,7 @@ func (RecordingKind) EnumDescriptor() ([]byte, []int) {
 type RecordingSpanKind int32
 
 const (
+	// Never sent: every span names who held the screen.
 	RecordingSpanKind_RECORDING_SPAN_KIND_UNSPECIFIED RecordingSpanKind = 0
 	// The run itself: a job's command, or a sandbox's program, its agent's
 	// input through the display API included.
@@ -209,10 +212,13 @@ func (RecordingSpanKind) EnumDescriptor() ([]byte, []int) {
 type RecordingShareLinkState int32
 
 const (
+	// Never sent: a link's state is worked out on each read.
 	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_UNSPECIFIED RecordingShareLinkState = 0
 	// It fetches the recording's object.
-	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_ACTIVE  RecordingShareLinkState = 1
+	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_ACTIVE RecordingShareLinkState = 1
+	// It was revoked.
 	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_REVOKED RecordingShareLinkState = 2
+	// Its lifetime is over.
 	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_EXPIRED RecordingShareLinkState = 3
 	// What is left of its byte cap is less than the object's size.
 	RecordingShareLinkState_RECORDING_SHARE_LINK_STATE_ENDED RecordingShareLinkState = 4
@@ -267,12 +273,17 @@ func (RecordingShareLinkState) EnumDescriptor() ([]byte, []int) {
 // video, or a video or trace its test framework wrote. Its record, never a key or a
 // URL.
 type Recording struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ProjectId     string                 `protobuf:"bytes,2,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	EnvironmentId string                 `protobuf:"bytes,3,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
-	WorkloadId    string                 `protobuf:"bytes,4,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
-	State         RecordingState         `protobuf:"varint,5,opt,name=state,proto3,enum=toshi.workspace.v1.RecordingState" json:"state,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Its ID, assigned by the server.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The project the recording's workload belongs to.
+	ProjectId string `protobuf:"bytes,2,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	// The environment the recording's workload belongs to.
+	EnvironmentId string `protobuf:"bytes,3,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
+	// The workload whose run attempt made it.
+	WorkloadId string `protobuf:"bytes,4,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	// Where it is in its life.
+	State RecordingState `protobuf:"varint,5,opt,name=state,proto3,enum=toshi.workspace.v1.RecordingState" json:"state,omitempty"`
 	// Why it is unavailable or lost, or why a run whose policy asked for a
 	// video has a strip.
 	Reason string `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
@@ -283,14 +294,18 @@ type Recording struct {
 	Interval *durationpb.Duration `protobuf:"bytes,8,opt,name=interval,proto3" json:"interval,omitempty"`
 	// A strip's ticks or the frames of its host's video, and the screenshots
 	// left out; 0 for a video or trace the test framework wrote.
-	Frames  int32 `protobuf:"varint,9,opt,name=frames,proto3" json:"frames,omitempty"`
+	Frames int32 `protobuf:"varint,9,opt,name=frames,proto3" json:"frames,omitempty"`
+	// The screenshots left out for being over the frame bound; 0 for a
+	// video or trace the test framework wrote.
 	Dropped int32 `protobuf:"varint,10,opt,name=dropped,proto3" json:"dropped,omitempty"`
 	// The host's capture of a strip or video stopped at a bound before the
 	// run ended.
 	Truncated bool `protobuf:"varint,11,opt,name=truncated,proto3" json:"truncated,omitempty"`
 	// The stretches a strip or its host's video left out: every human or
 	// paused span below that was not captured.
-	Pauses    []*RecordingPause      `protobuf:"bytes,12,rep,name=pauses,proto3" json:"pauses,omitempty"`
+	Pauses []*RecordingPause `protobuf:"bytes,12,rep,name=pauses,proto3" json:"pauses,omitempty"`
+	// When it was made: its attempt's assignment, or its upload's
+	// reservation.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Set once it is no longer capturing.
 	EndedAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
@@ -460,15 +475,20 @@ func (x *Recording) GetSpans() []*RecordingSpan {
 // RecordingSpan is a stretch of a recording with one holder of its screen.
 type RecordingSpan struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Kind  RecordingSpanKind      `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingSpanKind" json:"kind,omitempty"`
+	// Who held the screen.
+	Kind RecordingSpanKind `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingSpanKind" json:"kind,omitempty"`
 	// A human or paused span: the display session that held input, how it
 	// was opened (person or program) and the path its input came by
 	// (websocket or api). Empty on an agent span.
-	SessionId string                 `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	Actor     string                 `protobuf:"bytes,3,opt,name=actor,proto3" json:"actor,omitempty"`
-	Via       string                 `protobuf:"bytes,4,opt,name=via,proto3" json:"via,omitempty"`
-	Start     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=start,proto3" json:"start,omitempty"`
-	End       *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=end,proto3" json:"end,omitempty"`
+	SessionId string `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	// Who opened the session: person or program. Empty on an agent span.
+	Actor string `protobuf:"bytes,3,opt,name=actor,proto3" json:"actor,omitempty"`
+	// The path its input came by: websocket or api. Empty on an agent span.
+	Via string `protobuf:"bytes,4,opt,name=via,proto3" json:"via,omitempty"`
+	// When its stretch began.
+	Start *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=start,proto3" json:"start,omitempty"`
+	// When its stretch ended.
+	End *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=end,proto3" json:"end,omitempty"`
 	// Whether its screenshots were kept: always for an agent span, never for
 	// a paused one.
 	Captured      bool `protobuf:"varint,7,opt,name=captured,proto3" json:"captured,omitempty"`
@@ -558,13 +578,16 @@ func (x *RecordingSpan) GetCaptured() bool {
 // RecordingPause is a span with no screenshot, while a display session
 // with input was open.
 type RecordingPause struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The display session that held input; 1 to 64 bytes.
+	SessionId string `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	// person or program.
 	Actor string `protobuf:"bytes,2,opt,name=actor,proto3" json:"actor,omitempty"`
 	// websocket or api.
-	Via           string                 `protobuf:"bytes,3,opt,name=via,proto3" json:"via,omitempty"`
-	Start         *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=start,proto3" json:"start,omitempty"`
+	Via string `protobuf:"bytes,3,opt,name=via,proto3" json:"via,omitempty"`
+	// When the pause began.
+	Start *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=start,proto3" json:"start,omitempty"`
+	// When the pause ended.
 	End           *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=end,proto3" json:"end,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -635,9 +658,11 @@ func (x *RecordingPause) GetEnd() *timestamppb.Timestamp {
 	return nil
 }
 
+// ListRecordingsRequest is one page of a workload's recordings.
 type ListRecordingsRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	WorkloadId string                 `protobuf:"bytes,1,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workload whose recordings to list; required.
+	WorkloadId string `protobuf:"bytes,1,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	// The most recordings in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -697,9 +722,12 @@ func (x *ListRecordingsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListRecordingsResponse is one page of a workload's recordings, oldest
+// first.
 type ListRecordingsResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Recordings []*Recording           `protobuf:"bytes,1,rep,name=recordings,proto3" json:"recordings,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's recordings.
+	Recordings []*Recording `protobuf:"bytes,1,rep,name=recordings,proto3" json:"recordings,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -750,9 +778,12 @@ func (x *ListRecordingsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetRecordingRequest names one recording and, for a ready one, how long
+// its URL should live.
 type GetRecordingRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	RecordingId string                 `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The recording to return; required.
+	RecordingId string `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
 	// How long the strip's URL lives: 0 is the default (300 seconds), and
 	// above 3600 fails with INVALID_ARGUMENT.
 	TtlSeconds    int64 `protobuf:"varint,2,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
@@ -804,13 +835,17 @@ func (x *GetRecordingRequest) GetTtlSeconds() int64 {
 	return 0
 }
 
+// GetRecordingResponse is one recording and, when it is ready, a signed URL
+// for its object.
 type GetRecordingResponse struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Recording *Recording             `protobuf:"bytes,1,opt,name=recording,proto3" json:"recording,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The recording.
+	Recording *Recording `protobuf:"bytes,1,opt,name=recording,proto3" json:"recording,omitempty"`
 	// A signed GET for its object, set only when the recording is ready. It
 	// honours a byte Range, so one frame of a strip can be fetched by its
 	// offset in the strip's index.
-	Url       string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	// When url stops working; set with url.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// The page that plays the recording in a browser from url, which its
 	// fragment carries, so the address never reaches a server: set with url,
@@ -884,13 +919,17 @@ func (x *GetRecordingResponse) GetPlayerUrl() string {
 type RecordingShareLink struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Assigned by the server.
-	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The recording it fetches.
 	RecordingId string `protobuf:"bytes,2,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
 	// The recording's kind.
-	Kind      RecordingKind           `protobuf:"varint,3,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingKind" json:"kind,omitempty"`
-	State     RecordingShareLinkState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.RecordingShareLinkState" json:"state,omitempty"`
-	CreatedAt *timestamppb.Timestamp  `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	ExpiresAt *timestamppb.Timestamp  `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	Kind RecordingKind `protobuf:"varint,3,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingKind" json:"kind,omitempty"`
+	// Where it is in its life.
+	State RecordingShareLinkState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.RecordingShareLinkState" json:"state,omitempty"`
+	// When it was minted.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When its lifetime ends, unless it is revoked first.
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// The most bytes its fetches may take.
 	MaxBytes int64 `protobuf:"varint,7,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
 	// The bytes its fetches have taken so far: the object's size once per
@@ -1004,9 +1043,12 @@ func (x *RecordingShareLink) GetCreatedBy() string {
 	return ""
 }
 
+// CreateRecordingShareLinkRequest asks for a share link to one ready
+// recording.
 type CreateRecordingShareLinkRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	RecordingId string                 `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The recording to link; required.
+	RecordingId string `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
 	// How long the link stays valid; unset is the server's default, or the
 	// workspace's plan's maximum when that is shorter, and more than the
 	// plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
@@ -1082,9 +1124,12 @@ func (x *CreateRecordingShareLinkRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateRecordingShareLinkResponse is a new share link, with the URLs that
+// serve it.
 type CreateRecordingShareLinkResponse struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	ShareLink *RecordingShareLink    `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The link's record, without the link itself.
+	ShareLink *RecordingShareLink `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
 	// The URL to give the viewer: a GET of it redirects to a signed URL for
 	// the recording's object. It is in this answer only.
 	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
@@ -1147,9 +1192,11 @@ func (x *CreateRecordingShareLinkResponse) GetPlayerUrl() string {
 	return ""
 }
 
+// ListRecordingShareLinksRequest is one page of a recording's share links.
 type ListRecordingShareLinksRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	RecordingId string                 `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The recording whose links to list; required.
+	RecordingId string `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
 	// The most share links in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -1209,9 +1256,12 @@ func (x *ListRecordingShareLinksRequest) GetPageToken() string {
 	return ""
 }
 
+// ListRecordingShareLinksResponse is one page of a recording's share links,
+// oldest first.
 type ListRecordingShareLinksResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	ShareLinks []*RecordingShareLink  `protobuf:"bytes,1,rep,name=share_links,json=shareLinks,proto3" json:"share_links,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's links.
+	ShareLinks []*RecordingShareLink `protobuf:"bytes,1,rep,name=share_links,json=shareLinks,proto3" json:"share_links,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1262,9 +1312,11 @@ func (x *ListRecordingShareLinksResponse) GetNextPageToken() string {
 	return ""
 }
 
+// RevokeRecordingShareLinkRequest names the share link to revoke.
 type RevokeRecordingShareLinkRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ShareLinkId   string                 `protobuf:"bytes,1,opt,name=share_link_id,json=shareLinkId,proto3" json:"share_link_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The share link to revoke; required.
+	ShareLinkId   string `protobuf:"bytes,1,opt,name=share_link_id,json=shareLinkId,proto3" json:"share_link_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1306,9 +1358,12 @@ func (x *RevokeRecordingShareLinkRequest) GetShareLinkId() string {
 	return ""
 }
 
+// RevokeRecordingShareLinkResponse is the link after the call: revoked, or
+// as it was when it had been revoked already.
 type RevokeRecordingShareLinkResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ShareLink     *RecordingShareLink    `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The link.
+	ShareLink     *RecordingShareLink `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

@@ -73,6 +73,7 @@ service RecordingService {
 
 // RecordingState is where a recording is in its life.
 enum RecordingState {
+  // Never sent: a stored recording is in one of the states below.
   RECORDING_STATE_UNSPECIFIED = 0;
   // The run attempt may still finish it: its host captures a strip or
   // uploads what it captured, or the run's upload of a video or trace has
@@ -90,6 +91,7 @@ enum RecordingState {
 
 // RecordingKind is what a recording holds.
 enum RecordingKind {
+  // Never sent: every recording has a kind from below.
   RECORDING_KIND_UNSPECIFIED = 0;
   // A screenshot strip of the run's screen, taken by its host.
   RECORDING_KIND_STRIP = 1;
@@ -106,10 +108,15 @@ enum RecordingKind {
 // video, or a video or trace its test framework wrote. Its record, never a key or a
 // URL.
 message Recording {
+  // Its ID, assigned by the server.
   string id = 1;
+  // The project the recording's workload belongs to.
   string project_id = 2;
+  // The environment the recording's workload belongs to.
   string environment_id = 3;
+  // The workload whose run attempt made it.
   string workload_id = 4;
+  // Where it is in its life.
   RecordingState state = 5;
   // Why it is unavailable or lost, or why a run whose policy asked for a
   // video has a strip.
@@ -122,6 +129,8 @@ message Recording {
   // A strip's ticks or the frames of its host's video, and the screenshots
   // left out; 0 for a video or trace the test framework wrote.
   int32 frames = 9;
+  // The screenshots left out for being over the frame bound; 0 for a
+  // video or trace the test framework wrote.
   int32 dropped = 10;
   // The host's capture of a strip or video stopped at a bound before the
   // run ended.
@@ -129,6 +138,8 @@ message Recording {
   // The stretches a strip or its host's video left out: every human or
   // paused span below that was not captured.
   repeated RecordingPause pauses = 12;
+  // When it was made: its attempt's assignment, or its upload's
+  // reservation.
   google.protobuf.Timestamp created_at = 13;
   // Set once it is no longer capturing.
   google.protobuf.Timestamp ended_at = 14;
@@ -146,6 +157,7 @@ message Recording {
 
 // RecordingSpanKind is who held a recorded screen.
 enum RecordingSpanKind {
+  // Never sent: every span names who held the screen.
   RECORDING_SPAN_KIND_UNSPECIFIED = 0;
   // The run itself: a job's command, or a sandbox's program, its agent's
   // input through the display API included.
@@ -158,14 +170,19 @@ enum RecordingSpanKind {
 
 // RecordingSpan is a stretch of a recording with one holder of its screen.
 message RecordingSpan {
+  // Who held the screen.
   RecordingSpanKind kind = 1;
   // A human or paused span: the display session that held input, how it
   // was opened (person or program) and the path its input came by
   // (websocket or api). Empty on an agent span.
   string session_id = 2;
+  // Who opened the session: person or program. Empty on an agent span.
   string actor = 3;
+  // The path its input came by: websocket or api. Empty on an agent span.
   string via = 4;
+  // When its stretch began.
   google.protobuf.Timestamp start = 5;
+  // When its stretch ended.
   google.protobuf.Timestamp end = 6;
   // Whether its screenshots were kept: always for an agent span, never for
   // a paused one.
@@ -175,16 +192,21 @@ message RecordingSpan {
 // RecordingPause is a span with no screenshot, while a display session
 // with input was open.
 message RecordingPause {
+  // The display session that held input; 1 to 64 bytes.
   string session_id = 1;
   // person or program.
   string actor = 2;
   // websocket or api.
   string via = 3;
+  // When the pause began.
   google.protobuf.Timestamp start = 4;
+  // When the pause ended.
   google.protobuf.Timestamp end = 5;
 }
 
+// ListRecordingsRequest is one page of a workload's recordings.
 message ListRecordingsRequest {
+  // The workload whose recordings to list; required.
   string workload_id = 1;
   // The most recordings in one page; zero lets the server choose.
   int32 page_size = 2;
@@ -192,25 +214,35 @@ message ListRecordingsRequest {
   string page_token = 3;
 }
 
+// ListRecordingsResponse is one page of a workload's recordings, oldest
+// first.
 message ListRecordingsResponse {
+  // The page's recordings.
   repeated Recording recordings = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// GetRecordingRequest names one recording and, for a ready one, how long
+// its URL should live.
 message GetRecordingRequest {
+  // The recording to return; required.
   string recording_id = 1;
   // How long the strip's URL lives: 0 is the default (300 seconds), and
   // above 3600 fails with INVALID_ARGUMENT.
   int64 ttl_seconds = 2;
 }
 
+// GetRecordingResponse is one recording and, when it is ready, a signed URL
+// for its object.
 message GetRecordingResponse {
+  // The recording.
   Recording recording = 1;
   // A signed GET for its object, set only when the recording is ready. It
   // honours a byte Range, so one frame of a strip can be fetched by its
   // offset in the strip's index.
   string url = 2;
+  // When url stops working; set with url.
   google.protobuf.Timestamp expires_at = 3;
   // The page that plays the recording in a browser from url, which its
   // fragment carries, so the address never reaches a server: set with url,
@@ -222,10 +254,13 @@ message GetRecordingResponse {
 // RecordingShareLinkState is where a recording's share link is in its
 // life.
 enum RecordingShareLinkState {
+  // Never sent: a link's state is worked out on each read.
   RECORDING_SHARE_LINK_STATE_UNSPECIFIED = 0;
   // It fetches the recording's object.
   RECORDING_SHARE_LINK_STATE_ACTIVE = 1;
+  // It was revoked.
   RECORDING_SHARE_LINK_STATE_REVOKED = 2;
+  // Its lifetime is over.
   RECORDING_SHARE_LINK_STATE_EXPIRED = 3;
   // What is left of its byte cap is less than the object's size.
   RECORDING_SHARE_LINK_STATE_ENDED = 4;
@@ -236,11 +271,15 @@ enum RecordingShareLinkState {
 message RecordingShareLink {
   // Assigned by the server.
   string id = 1;
+  // The recording it fetches.
   string recording_id = 2;
   // The recording's kind.
   RecordingKind kind = 3;
+  // Where it is in its life.
   RecordingShareLinkState state = 4;
+  // When it was minted.
   google.protobuf.Timestamp created_at = 5;
+  // When its lifetime ends, unless it is revoked first.
   google.protobuf.Timestamp expires_at = 6;
   // The most bytes its fetches may take.
   int64 max_bytes = 7;
@@ -253,7 +292,10 @@ message RecordingShareLink {
   string created_by = 10;
 }
 
+// CreateRecordingShareLinkRequest asks for a share link to one ready
+// recording.
 message CreateRecordingShareLinkRequest {
+  // The recording to link; required.
   string recording_id = 1;
   // How long the link stays valid; unset is the server's default, or the
   // workspace's plan's maximum when that is shorter, and more than the
@@ -270,7 +312,10 @@ message CreateRecordingShareLinkRequest {
   string request_key = 4;
 }
 
+// CreateRecordingShareLinkResponse is a new share link, with the URLs that
+// serve it.
 message CreateRecordingShareLinkResponse {
+  // The link's record, without the link itself.
   RecordingShareLink share_link = 1;
   // The URL to give the viewer: a GET of it redirects to a signed URL for
   // the recording's object. It is in this answer only.
@@ -281,7 +326,9 @@ message CreateRecordingShareLinkResponse {
   string player_url = 3;
 }
 
+// ListRecordingShareLinksRequest is one page of a recording's share links.
 message ListRecordingShareLinksRequest {
+  // The recording whose links to list; required.
   string recording_id = 1;
   // The most share links in one page; zero lets the server choose.
   int32 page_size = 2;
@@ -289,16 +336,24 @@ message ListRecordingShareLinksRequest {
   string page_token = 3;
 }
 
+// ListRecordingShareLinksResponse is one page of a recording's share links,
+// oldest first.
 message ListRecordingShareLinksResponse {
+  // The page's links.
   repeated RecordingShareLink share_links = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// RevokeRecordingShareLinkRequest names the share link to revoke.
 message RevokeRecordingShareLinkRequest {
+  // The share link to revoke; required.
   string share_link_id = 1;
 }
 
+// RevokeRecordingShareLinkResponse is the link after the call: revoked, or
+// as it was when it had been revoked already.
 message RevokeRecordingShareLinkResponse {
+  // The link.
   RecordingShareLink share_link = 1;
 }
