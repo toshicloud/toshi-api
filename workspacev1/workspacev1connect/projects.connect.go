@@ -45,6 +45,12 @@ const (
 	// ProjectServiceCreateProjectProcedure is the fully-qualified name of the ProjectService's
 	// CreateProject RPC.
 	ProjectServiceCreateProjectProcedure = "/toshi.workspace.v1.ProjectService/CreateProject"
+	// ProjectServiceDeleteProjectProcedure is the fully-qualified name of the ProjectService's
+	// DeleteProject RPC.
+	ProjectServiceDeleteProjectProcedure = "/toshi.workspace.v1.ProjectService/DeleteProject"
+	// ProjectServiceRestoreProjectProcedure is the fully-qualified name of the ProjectService's
+	// RestoreProject RPC.
+	ProjectServiceRestoreProjectProcedure = "/toshi.workspace.v1.ProjectService/RestoreProject"
 	// ProjectServiceUpdateProjectProcedure is the fully-qualified name of the ProjectService's
 	// UpdateProject RPC.
 	ProjectServiceUpdateProjectProcedure = "/toshi.workspace.v1.ProjectService/UpdateProject"
@@ -109,10 +115,24 @@ type ProjectServiceClient interface {
 	// A page holds 100 repositories when page_size is zero, and 1000 at most.
 	ListRepositories(context.Context, *connect.Request[workspacev1.ListRepositoriesRequest]) (*connect.Response[workspacev1.ListRepositoriesResponse], error)
 	// CreateProject makes a project with its three environments,
-	// development, preview and production. A name the workspace's projects
-	// already have is ALREADY_EXISTS. A token limited to a project is
-	// PERMISSION_DENIED: the new project is not its own.
+	// development, preview and production. A name a live project already has
+	// is ALREADY_EXISTS. A deleted project's name is FAILED_PRECONDITION,
+	// with its purge day and the option to restore it. A token limited to a
+	// project is PERMISSION_DENIED: the new project is not its own.
 	CreateProject(context.Context, *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error)
+	// DeleteProject hides a project and keeps its data for restoration until
+	// its purge date. The default project and a project with unfinished jobs,
+	// undeleted workloads or undeleted triggers are FAILED_PRECONDITION.
+	// A project the workspace does not have is NOT_FOUND. A token limited to
+	// a project deletes only that project; one limited to an environment is
+	// PERMISSION_DENIED.
+	DeleteProject(context.Context, *connect.Request[workspacev1.DeleteProjectRequest]) (*connect.Response[workspacev1.DeleteProjectResponse], error)
+	// RestoreProject brings a deleted project back before its purge date.
+	// An unknown project is NOT_FOUND; a live project or one whose restore
+	// period has ended is FAILED_PRECONDITION. A token limited to a project
+	// restores only that project; one limited to an environment is
+	// PERMISSION_DENIED.
+	RestoreProject(context.Context, *connect.Request[workspacev1.RestoreProjectRequest]) (*connect.Response[workspacev1.RestoreProjectResponse], error)
 	// UpdateProject sets the fields of project.name's project that
 	// update_mask names. The fields it sets are admission, the project's
 	// admission webhook: its url and secret, both required, or an empty url
@@ -150,9 +170,11 @@ type ProjectServiceClient interface {
 	// no project claims, or moves the claim from another project. A CI job
 	// whose repository's claim was read before the move keeps its project,
 	// and its credentials are refused; a job whose claim is read after it
-	// lands in the new project. A project the workspace does not have is NOT_FOUND. A token
-	// limited to a project claims only for that project, and only a
-	// repository no other project claims.
+	// lands in the new project. A repository held by a deleted project cannot
+	// be moved until that project is restored or purged; a workspace-wide
+	// caller is refused with FAILED_PRECONDITION. A project the workspace does
+	// not have is NOT_FOUND. A token limited to a project claims only for
+	// that project, and only a repository no other project claims.
 	ClaimRepository(context.Context, *connect.Request[workspacev1.ClaimRepositoryRequest]) (*connect.Response[workspacev1.ClaimRepositoryResponse], error)
 	// CreateEnvironment adds the environment of a kind a project lacks,
 	// named after its kind, such as preview for a project made with
@@ -309,6 +331,18 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("CreateProject")),
 			connect.WithClientOptions(opts...),
 		),
+		deleteProject: connect.NewClient[workspacev1.DeleteProjectRequest, workspacev1.DeleteProjectResponse](
+			httpClient,
+			baseURL+ProjectServiceDeleteProjectProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("DeleteProject")),
+			connect.WithClientOptions(opts...),
+		),
+		restoreProject: connect.NewClient[workspacev1.RestoreProjectRequest, workspacev1.RestoreProjectResponse](
+			httpClient,
+			baseURL+ProjectServiceRestoreProjectProcedure,
+			connect.WithSchema(projectServiceMethods.ByName("RestoreProject")),
+			connect.WithClientOptions(opts...),
+		),
 		updateProject: connect.NewClient[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse](
 			httpClient,
 			baseURL+ProjectServiceUpdateProjectProcedure,
@@ -402,6 +436,8 @@ type projectServiceClient struct {
 	getProject               *connect.Client[workspacev1.GetProjectRequest, workspacev1.GetProjectResponse]
 	listRepositories         *connect.Client[workspacev1.ListRepositoriesRequest, workspacev1.ListRepositoriesResponse]
 	createProject            *connect.Client[workspacev1.CreateProjectRequest, workspacev1.CreateProjectResponse]
+	deleteProject            *connect.Client[workspacev1.DeleteProjectRequest, workspacev1.DeleteProjectResponse]
+	restoreProject           *connect.Client[workspacev1.RestoreProjectRequest, workspacev1.RestoreProjectResponse]
 	updateProject            *connect.Client[workspacev1.UpdateProjectRequest, workspacev1.UpdateProjectResponse]
 	claimRepository          *connect.Client[workspacev1.ClaimRepositoryRequest, workspacev1.ClaimRepositoryResponse]
 	createEnvironment        *connect.Client[workspacev1.CreateEnvironmentRequest, workspacev1.CreateEnvironmentResponse]
@@ -436,6 +472,16 @@ func (c *projectServiceClient) ListRepositories(ctx context.Context, req *connec
 // CreateProject calls toshi.workspace.v1.ProjectService.CreateProject.
 func (c *projectServiceClient) CreateProject(ctx context.Context, req *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error) {
 	return c.createProject.CallUnary(ctx, req)
+}
+
+// DeleteProject calls toshi.workspace.v1.ProjectService.DeleteProject.
+func (c *projectServiceClient) DeleteProject(ctx context.Context, req *connect.Request[workspacev1.DeleteProjectRequest]) (*connect.Response[workspacev1.DeleteProjectResponse], error) {
+	return c.deleteProject.CallUnary(ctx, req)
+}
+
+// RestoreProject calls toshi.workspace.v1.ProjectService.RestoreProject.
+func (c *projectServiceClient) RestoreProject(ctx context.Context, req *connect.Request[workspacev1.RestoreProjectRequest]) (*connect.Response[workspacev1.RestoreProjectResponse], error) {
+	return c.restoreProject.CallUnary(ctx, req)
 }
 
 // UpdateProject calls toshi.workspace.v1.ProjectService.UpdateProject.
@@ -528,10 +574,24 @@ type ProjectServiceHandler interface {
 	// A page holds 100 repositories when page_size is zero, and 1000 at most.
 	ListRepositories(context.Context, *connect.Request[workspacev1.ListRepositoriesRequest]) (*connect.Response[workspacev1.ListRepositoriesResponse], error)
 	// CreateProject makes a project with its three environments,
-	// development, preview and production. A name the workspace's projects
-	// already have is ALREADY_EXISTS. A token limited to a project is
-	// PERMISSION_DENIED: the new project is not its own.
+	// development, preview and production. A name a live project already has
+	// is ALREADY_EXISTS. A deleted project's name is FAILED_PRECONDITION,
+	// with its purge day and the option to restore it. A token limited to a
+	// project is PERMISSION_DENIED: the new project is not its own.
 	CreateProject(context.Context, *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error)
+	// DeleteProject hides a project and keeps its data for restoration until
+	// its purge date. The default project and a project with unfinished jobs,
+	// undeleted workloads or undeleted triggers are FAILED_PRECONDITION.
+	// A project the workspace does not have is NOT_FOUND. A token limited to
+	// a project deletes only that project; one limited to an environment is
+	// PERMISSION_DENIED.
+	DeleteProject(context.Context, *connect.Request[workspacev1.DeleteProjectRequest]) (*connect.Response[workspacev1.DeleteProjectResponse], error)
+	// RestoreProject brings a deleted project back before its purge date.
+	// An unknown project is NOT_FOUND; a live project or one whose restore
+	// period has ended is FAILED_PRECONDITION. A token limited to a project
+	// restores only that project; one limited to an environment is
+	// PERMISSION_DENIED.
+	RestoreProject(context.Context, *connect.Request[workspacev1.RestoreProjectRequest]) (*connect.Response[workspacev1.RestoreProjectResponse], error)
 	// UpdateProject sets the fields of project.name's project that
 	// update_mask names. The fields it sets are admission, the project's
 	// admission webhook: its url and secret, both required, or an empty url
@@ -569,9 +629,11 @@ type ProjectServiceHandler interface {
 	// no project claims, or moves the claim from another project. A CI job
 	// whose repository's claim was read before the move keeps its project,
 	// and its credentials are refused; a job whose claim is read after it
-	// lands in the new project. A project the workspace does not have is NOT_FOUND. A token
-	// limited to a project claims only for that project, and only a
-	// repository no other project claims.
+	// lands in the new project. A repository held by a deleted project cannot
+	// be moved until that project is restored or purged; a workspace-wide
+	// caller is refused with FAILED_PRECONDITION. A project the workspace does
+	// not have is NOT_FOUND. A token limited to a project claims only for
+	// that project, and only a repository no other project claims.
 	ClaimRepository(context.Context, *connect.Request[workspacev1.ClaimRepositoryRequest]) (*connect.Response[workspacev1.ClaimRepositoryResponse], error)
 	// CreateEnvironment adds the environment of a kind a project lacks,
 	// named after its kind, such as preview for a project made with
@@ -724,6 +786,18 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("CreateProject")),
 		connect.WithHandlerOptions(opts...),
 	)
+	projectServiceDeleteProjectHandler := connect.NewUnaryHandler(
+		ProjectServiceDeleteProjectProcedure,
+		svc.DeleteProject,
+		connect.WithSchema(projectServiceMethods.ByName("DeleteProject")),
+		connect.WithHandlerOptions(opts...),
+	)
+	projectServiceRestoreProjectHandler := connect.NewUnaryHandler(
+		ProjectServiceRestoreProjectProcedure,
+		svc.RestoreProject,
+		connect.WithSchema(projectServiceMethods.ByName("RestoreProject")),
+		connect.WithHandlerOptions(opts...),
+	)
 	projectServiceUpdateProjectHandler := connect.NewUnaryHandler(
 		ProjectServiceUpdateProjectProcedure,
 		svc.UpdateProject,
@@ -818,6 +892,10 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 			projectServiceListRepositoriesHandler.ServeHTTP(w, r)
 		case ProjectServiceCreateProjectProcedure:
 			projectServiceCreateProjectHandler.ServeHTTP(w, r)
+		case ProjectServiceDeleteProjectProcedure:
+			projectServiceDeleteProjectHandler.ServeHTTP(w, r)
+		case ProjectServiceRestoreProjectProcedure:
+			projectServiceRestoreProjectHandler.ServeHTTP(w, r)
 		case ProjectServiceUpdateProjectProcedure:
 			projectServiceUpdateProjectHandler.ServeHTTP(w, r)
 		case ProjectServiceClaimRepositoryProcedure:
@@ -869,6 +947,14 @@ func (UnimplementedProjectServiceHandler) ListRepositories(context.Context, *con
 
 func (UnimplementedProjectServiceHandler) CreateProject(context.Context, *connect.Request[workspacev1.CreateProjectRequest]) (*connect.Response[workspacev1.CreateProjectResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.CreateProject is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) DeleteProject(context.Context, *connect.Request[workspacev1.DeleteProjectRequest]) (*connect.Response[workspacev1.DeleteProjectResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.DeleteProject is not implemented"))
+}
+
+func (UnimplementedProjectServiceHandler) RestoreProject(context.Context, *connect.Request[workspacev1.RestoreProjectRequest]) (*connect.Response[workspacev1.RestoreProjectResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.RestoreProject is not implemented"))
 }
 
 func (UnimplementedProjectServiceHandler) UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error) {

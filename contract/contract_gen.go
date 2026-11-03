@@ -332,6 +332,10 @@ const (
 	AuditActionKeyProviderUnwrapped = "key_provider.unwrapped"
 	// AuditActionProjectCreated is the "project.created" audit action.
 	AuditActionProjectCreated = "project.created"
+	// AuditActionProjectDeleted is the "project.deleted" audit action.
+	AuditActionProjectDeleted = "project.deleted"
+	// AuditActionProjectRestored is the "project.restored" audit action.
+	AuditActionProjectRestored = "project.restored"
 	// AuditActionProjectUpdated is the "project.updated" audit action.
 	AuditActionProjectUpdated = "project.updated"
 	// AuditActionProjectCompatibilityRaised is the "project.compatibility_raised" audit action.

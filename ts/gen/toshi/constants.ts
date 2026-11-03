@@ -171,6 +171,8 @@ export const auditActions = {
   keyProviderWrapped: "key_provider.wrapped",
   keyProviderUnwrapped: "key_provider.unwrapped",
   projectCreated: "project.created",
+  projectDeleted: "project.deleted",
+  projectRestored: "project.restored",
   projectUpdated: "project.updated",
   projectCompatibilityRaised: "project.compatibility_raised",
   billingEventConflicted: "billing.event_conflicted",

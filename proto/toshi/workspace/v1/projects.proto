@@ -49,13 +49,38 @@ service ProjectService {
     option (toshi.scope) = "project";
   }
   // CreateProject makes a project with its three environments,
-  // development, preview and production. A name the workspace's projects
-  // already have is ALREADY_EXISTS. A token limited to a project is
-  // PERMISSION_DENIED: the new project is not its own.
+  // development, preview and production. A name a live project already has
+  // is ALREADY_EXISTS. A deleted project's name is FAILED_PRECONDITION,
+  // with its purge day and the option to restore it. A token limited to a
+  // project is PERMISSION_DENIED: the new project is not its own.
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "projects.write";
     option (toshi.audit) = {target: "project:project"};
+  }
+  // DeleteProject hides a project and keeps its data for restoration until
+  // its purge date. The default project and a project with unfinished jobs,
+  // undeleted workloads or undeleted triggers are FAILED_PRECONDITION.
+  // A project the workspace does not have is NOT_FOUND. A token limited to
+  // a project deletes only that project; one limited to an environment is
+  // PERMISSION_DENIED.
+  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {
+    option (toshi.key_mode) = NATURAL;
+    option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.audit) = {target: "project:project"};
+  }
+  // RestoreProject brings a deleted project back before its purge date.
+  // An unknown project is NOT_FOUND; a live project or one whose restore
+  // period has ended is FAILED_PRECONDITION. A token limited to a project
+  // restores only that project; one limited to an environment is
+  // PERMISSION_DENIED.
+  rpc RestoreProject(RestoreProjectRequest) returns (RestoreProjectResponse) {
+    option (toshi.key_mode) = NATURAL;
+    option (toshi.permission) = "projects.write";
+    option (toshi.scope) = "project";
+    option (toshi.audit) = {action: "project.restored", target: "project:project"};
   }
   // UpdateProject sets the fields of project.name's project that
   // update_mask names. The fields it sets are admission, the project's
@@ -99,9 +124,11 @@ service ProjectService {
   // no project claims, or moves the claim from another project. A CI job
   // whose repository's claim was read before the move keeps its project,
   // and its credentials are refused; a job whose claim is read after it
-  // lands in the new project. A project the workspace does not have is NOT_FOUND. A token
-  // limited to a project claims only for that project, and only a
-  // repository no other project claims.
+  // lands in the new project. A repository held by a deleted project cannot
+  // be moved until that project is restored or purged; a workspace-wide
+  // caller is refused with FAILED_PRECONDITION. A project the workspace does
+  // not have is NOT_FOUND. A token limited to a project claims only for
+  // that project, and only a repository no other project claims.
   rpc ClaimRepository(ClaimRepositoryRequest) returns (ClaimRepositoryResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "projects.write";
@@ -323,6 +350,10 @@ message Project {
   // it; ListProjects does not. A token limited to an environment gets it
   // unset, as GetProjectNetwork refuses it. Set with UpdateProject.
   NetworkPolicy network = 12;
+  // Set for a deleted project while its data is retained.
+  google.protobuf.Timestamp deleted_at = 13;
+  // When a deleted project is purged; set with deleted_at.
+  google.protobuf.Timestamp purge_at = 14;
 }
 
 // ProjectVolumeRules bounds the volumes a project's runs create.
@@ -477,6 +508,8 @@ message ListProjectsRequest {
   int32 page_size = 1;
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 2;
+  // Include projects retained for restoration.
+  bool show_deleted = 3;
 }
 
 message ListProjectsResponse {
@@ -522,6 +555,24 @@ message CreateProjectRequest {
 message CreateProjectResponse {
   Project project = 1;
 }
+
+// DeleteProjectRequest names the project to delete.
+message DeleteProjectRequest {
+  // The project's name.
+  string name = 1;
+}
+
+// DeleteProjectResponse is empty: the project is deleted.
+message DeleteProjectResponse {}
+
+// RestoreProjectRequest names the deleted project to restore.
+message RestoreProjectRequest {
+  // The project's name.
+  string name = 1;
+}
+
+// RestoreProjectResponse is empty: the project is live again.
+message RestoreProjectResponse {}
 
 message UpdateProjectRequest {
   // name names the project; the fields update_mask names carry the new
