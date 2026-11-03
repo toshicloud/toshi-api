@@ -246,6 +246,8 @@ const (
 	AuditActionStarterCreditGranted = "workspace.starter_credit_granted"
 	// AuditActionStarterCreditWithheld is the "workspace.starter_credit_withheld" audit action.
 	AuditActionStarterCreditWithheld = "workspace.starter_credit_withheld"
+	// AuditActionStarterCreditExpired is the "workspace.starter_credit_expired" audit action.
+	AuditActionStarterCreditExpired = "workspace.starter_credit_expired"
 	// AuditActionBillingCustomerSet is the "workspace.billing_customer_set" audit action.
 	AuditActionBillingCustomerSet = "workspace.billing_customer_set"
 	// AuditActionCardChanged is the "workspace.card_changed" audit action.

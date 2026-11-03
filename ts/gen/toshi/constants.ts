@@ -131,6 +131,7 @@ export const auditActions = {
   hostRefused: "workspace.host_refused",
   starterCreditGranted: "workspace.starter_credit_granted",
   starterCreditWithheld: "workspace.starter_credit_withheld",
+  starterCreditExpired: "workspace.starter_credit_expired",
   billingCustomerSet: "workspace.billing_customer_set",
   cardChanged: "workspace.card_changed",
   workspaceCreated: "workspace.created",
