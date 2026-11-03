@@ -985,7 +985,11 @@ type ModelSignInProvider struct {
 	// "held", "volume" or "key".
 	Mechanism string `protobuf:"bytes,2,opt,name=mechanism,proto3" json:"mechanism,omitempty"`
 	// The deployment offers a held sign-in for this provider.
-	Available     bool `protobuf:"varint,3,opt,name=available,proto3" json:"available,omitempty"`
+	Available bool `protobuf:"varint,3,opt,name=available,proto3" json:"available,omitempty"`
+	// The provider's own product name as its sign-in adapter states it, for
+	// example "OpenAI"; set for every listed provider, and the provider id when
+	// no adapter states one.
+	DisplayName   string `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1039,6 +1043,13 @@ func (x *ModelSignInProvider) GetAvailable() bool {
 		return x.Available
 	}
 	return false
+}
+
+func (x *ModelSignInProvider) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
 }
 
 type ListModelSignInProvidersResponse struct {
@@ -1719,11 +1730,12 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\x1cDeleteModelCredentialRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x1f\n" +
 	"\x1dDeleteModelCredentialResponse\"!\n" +
-	"\x1fListModelSignInProvidersRequest\"m\n" +
+	"\x1fListModelSignInProvidersRequest\"\x90\x01\n" +
 	"\x13ModelSignInProvider\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x1c\n" +
 	"\tmechanism\x18\x02 \x01(\tR\tmechanism\x12\x1c\n" +
-	"\tavailable\x18\x03 \x01(\bR\tavailable\"i\n" +
+	"\tavailable\x18\x03 \x01(\bR\tavailable\x12!\n" +
+	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\"i\n" +
 	" ListModelSignInProvidersResponse\x12E\n" +
 	"\tproviders\x18\x01 \x03(\v2'.toshi.workspace.v1.ModelSignInProviderR\tproviders\"\xbc\x01\n" +
 	"\x17StartModelSignInRequest\x12\x1a\n" +

@@ -38,30 +38,33 @@ type Unit struct {
 	Kind    string
 	Types   []string
 	Meaning string
+	Base    int
+	Display string
+	Factor  int64
 }
 
 // Units returns the field-name unit table.
 func Units() []Unit {
 	return []Unit{
-		{Suffix: "_bytes", Whole: false, Kind: "size", Types: []string{"int64"}, Meaning: "A size in bytes."},
-		{Suffix: "_mib", Whole: false, Kind: "size", Types: []string{"integer"}, Meaning: "A plan or configuration size in mebibytes."},
-		{Suffix: "_gb", Whole: false, Kind: "size", Types: []string{"integer"}, Meaning: "A plan or configuration size in gigabytes."},
-		{Suffix: "_seconds", Whole: false, Kind: "span", Types: []string{"integer", "number"}, Meaning: "A span in seconds."},
-		{Suffix: "_minutes", Whole: false, Kind: "span", Types: []string{"integer"}, Meaning: "A span in minutes."},
-		{Suffix: "_hours", Whole: false, Kind: "span", Types: []string{"integer"}, Meaning: "A span in hours."},
-		{Suffix: "_days", Whole: false, Kind: "span", Types: []string{"integer"}, Meaning: "A span in days."},
-		{Suffix: "_ms", Whole: false, Kind: "span", Types: []string{"integer", "number"}, Meaning: "A span or latency in milliseconds."},
-		{Suffix: "_at", Whole: false, Kind: "time", Types: []string{"timestamp"}, Meaning: "A point in time, as a Timestamp; never an epoch integer."},
-		{Suffix: "_expires_at", Whole: false, Kind: "time", Types: []string{"timestamp"}, Meaning: "An expiry time, as a Timestamp; never an epoch integer."},
-		{Suffix: "_since", Whole: false, Kind: "time", Types: []string{"timestamp"}, Meaning: "A starting time, as a Timestamp; never an epoch integer."},
-		{Suffix: "_cents", Whole: false, Kind: "money", Types: []string{"int64"}, Meaning: "An amount of money in cents."},
-		{Suffix: "_percent", Whole: false, Kind: "ratio", Types: []string{"integer", "number"}, Meaning: "A ratio as a percentage."},
-		{Suffix: "_count", Whole: false, Kind: "count", Types: []string{"integer"}, Meaning: "A count of things."},
-		{Suffix: "_id", Whole: false, Kind: "identifier", Types: []string{"string", "integer"}, Meaning: "An identifier."},
-		{Suffix: "id", Whole: true, Kind: "identifier", Types: []string{"string", "integer"}, Meaning: "An object's own identifier."},
-		{Suffix: "page_size", Whole: true, Kind: "paging", Types: []string{"integer"}, Meaning: "The maximum number of items in a page."},
-		{Suffix: "page_token", Whole: true, Kind: "paging", Types: []string{"string"}, Meaning: "A token selecting a page."},
-		{Suffix: "next_page_token", Whole: true, Kind: "paging", Types: []string{"string"}, Meaning: "A token selecting the next page."},
+		{Suffix: "_bytes", Whole: false, Kind: "size", Types: []string{"int64"}, Meaning: "A size in bytes.", Base: 1024, Display: "", Factor: 1},
+		{Suffix: "_mib", Whole: false, Kind: "size", Types: []string{"integer"}, Meaning: "A plan or configuration size in mebibytes.", Base: 1024, Display: "MiB", Factor: 1048576},
+		{Suffix: "_gb", Whole: false, Kind: "size", Types: []string{"integer"}, Meaning: "A plan or configuration size in gigabytes.", Base: 1000, Display: "GB", Factor: 1000000000},
+		{Suffix: "_seconds", Whole: false, Kind: "span", Types: []string{"integer", "number"}, Meaning: "A span in seconds.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_minutes", Whole: false, Kind: "span", Types: []string{"integer"}, Meaning: "A span in minutes.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_hours", Whole: false, Kind: "span", Types: []string{"integer"}, Meaning: "A span in hours.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_days", Whole: false, Kind: "span", Types: []string{"integer"}, Meaning: "A span in days.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_ms", Whole: false, Kind: "span", Types: []string{"integer", "number"}, Meaning: "A span or latency in milliseconds.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_at", Whole: false, Kind: "time", Types: []string{"timestamp"}, Meaning: "A point in time, as a Timestamp; never an epoch integer.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_expires_at", Whole: false, Kind: "time", Types: []string{"timestamp"}, Meaning: "An expiry time, as a Timestamp; never an epoch integer.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_since", Whole: false, Kind: "time", Types: []string{"timestamp"}, Meaning: "A starting time, as a Timestamp; never an epoch integer.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_cents", Whole: false, Kind: "money", Types: []string{"int64"}, Meaning: "An amount of money in cents.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_percent", Whole: false, Kind: "ratio", Types: []string{"integer", "number"}, Meaning: "A ratio as a percentage.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_count", Whole: false, Kind: "count", Types: []string{"integer"}, Meaning: "A count of things.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "_id", Whole: false, Kind: "identifier", Types: []string{"string", "integer"}, Meaning: "An identifier.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "id", Whole: true, Kind: "identifier", Types: []string{"string", "integer"}, Meaning: "An object's own identifier.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "page_size", Whole: true, Kind: "paging", Types: []string{"integer"}, Meaning: "The maximum number of items in a page.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "page_token", Whole: true, Kind: "paging", Types: []string{"string"}, Meaning: "A token selecting a page.", Base: 0, Display: "", Factor: 0},
+		{Suffix: "next_page_token", Whole: true, Kind: "paging", Types: []string{"string"}, Meaning: "A token selecting the next page.", Base: 0, Display: "", Factor: 0},
 	}
 }
 
@@ -180,7 +183,7 @@ const (
 	ReasonPlanLimit = "PLAN_LIMIT"
 	// ReasonProjectLimit: Creating a volume or raising its cap would pass the project's volume ceiling; metadata carries `key`, `cause`, `limit`, `requested`, `raisable`, `in_use_bytes` and `unit`.
 	ReasonProjectLimit = "PROJECT_LIMIT"
-	// ReasonStartRate: `CreateSandbox` past the ceiling of one of the plan's start windows (docs/contracts/plans.md, Held by the start windows); the metadata `next_start_at` (RFC 3339, UTC) is the earliest time every window has room again, and `Retry-After` and the `google.rpc.RetryInfo` detail give the seconds until then, rounded up.
+	// ReasonStartRate: `CreateSandbox` past the ceiling of one of the plan's start windows (docs/contracts/plans.md, Held by the start windows); the metadata `next_at` (RFC 3339, UTC) is the earliest time every window has room again, and `next_start_at` carries the same time for older clients, and `Retry-After` and the `google.rpc.RetryInfo` detail give the seconds until then, rounded up.
 	ReasonStartRate = "START_RATE"
 	// ReasonTokenOutsideRanges: A workspace token is used from an address outside its permitted client ranges.
 	ReasonTokenOutsideRanges = "TOKEN_OUTSIDE_RANGES"
@@ -982,4 +985,52 @@ type RemovedCall struct {
 // returns a new slice.
 func RemovedCalls() []RemovedCall {
 	return []RemovedCall{}
+}
+
+// HoldLabels returns the label of each workload operator hold, by the
+// hold's wire value.
+func HoldLabels() map[string]string {
+	return map[string]string{
+		"abuse_suspected": "suspected abuse",
+		"abuse_confirmed": "confirmed abuse",
+	}
+}
+
+// AlertTitles returns the short title of each operator alert, by the
+// alert's kind.
+func AlertTitles() map[string]string {
+	return map[string]string{
+		"runner_exits_without_job": "Runners exiting without a job",
+		"egress_changed":           "Host egress addresses changed",
+		"webhook_recovered":        "Webhook deliveries recovered",
+		"tenant_suspended":         "Workspace suspended",
+		"memory_held":              "Host holding a VM for memory",
+		"tenant_purge_pending":     "Workspace purge pending",
+		"agent_version_skew":       "Agent version outside the promise",
+		"host_offline":             "Host offline",
+		"vm_died":                  "VM died under a job",
+		"spend_cap_reached":        "Workspace at its spending cap",
+		"backup_overdue":           "Backup overdue",
+		"backup_copy_failed":       "Backup copy failed",
+		"restore_drill_overdue":    "Restore drill overdue",
+		"store_size_over":          "Store over its size limit",
+		"utilisation_outside_band": "Pool utilisation outside its band",
+		"pool_target_differs":      "Warm pool target differs",
+		"job_oom_killed":           "Job out of memory",
+		"size_near_memory_limit":   "Job size near its memory limit",
+		"billing_dev_fake":         "Billing uses the dev fake",
+		"token_creator_left":       "Tokens of a person who left",
+		"token_expiring":           "Tokens expiring after a person left",
+	}
+}
+
+// RuleWords returns the words a client shows for each rule, by the
+// rule's key.
+func RuleWords() map[string]string {
+	return map[string]string{
+		"volume_ceiling.follows_plan":    "An empty or 0 ceiling in the workspace settings follows the plan's default.",
+		"volume_ceiling.no_limit":        "Where the volume caps report a ceiling of 0, there is no limit: no volume cap is checked against it.",
+		"volume_ceiling.lowering":        "Lowering the ceiling is always allowed; it bounds new volumes and any volume cap you raise.",
+		"start_windows.paid_and_waiting": "A start past the included count is a paid start; at the ceiling a start waits.",
+	}
 }
