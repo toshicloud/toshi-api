@@ -88,6 +88,7 @@ service ImageService {
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "project";
     option (toshi.audit) = {action: "image.build_started", target: "image:name"};
+    option (toshi.surface) = {asks: ASKS_ONE_CLICK question: "Build this image now? The build starts now and its run time is billed."};
   }
   // UpdateImage sets the fields of the image that update_mask names; the
   // request's image names it by its name. The one field it sets is

@@ -16126,11 +16126,11 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xe82\n" +
-	"\x0fOperatorService\x12|\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xb53\n" +
+	"\x0fOperatorService\x12\xc8\x01\n" +
 	"\n" +
-	"DeleteUser\x12$.toshi.operator.v1.DeleteUserRequest\x1a%.toshi.operator.v1.DeleteUserResponse\"!\xd2\xf3\x18\x13\n" +
-	"\vuser.erased\x12\x04none\xea\xf3\x18\x02\x10\x01\x90\xf4\x18\x02\x12S\n" +
+	"DeleteUser\x12$.toshi.operator.v1.DeleteUserRequest\x1a%.toshi.operator.v1.DeleteUserResponse\"m\xd2\xf3\x18\x13\n" +
+	"\vuser.erased\x12\x04none\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18H\b\x01\x12DErase this user? Their sessions end now and their account is erased.\x90\xf4\x18\x02\x12S\n" +
 	"\bListJobs\x12\".toshi.operator.v1.ListJobsRequest\x1a#.toshi.operator.v1.ListJobsResponse\x12h\n" +
 	"\x0fListAuditEvents\x12).toshi.operator.v1.ListAuditEventsRequest\x1a*.toshi.operator.v1.ListAuditEventsResponse\x12z\n" +
 	"\x15SummariseJobTelemetry\x12/.toshi.operator.v1.SummariseJobTelemetryRequest\x1a0.toshi.operator.v1.SummariseJobTelemetryResponse\x12V\n" +

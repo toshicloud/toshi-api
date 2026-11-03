@@ -981,3 +981,63 @@ export const alertKinds = {
   token_expiring: { raised: "stored", scopes: ["workspace"] },
   project_ending: { raised: "stored", scopes: ["workspace"] },
 } as const;
+
+// Every call that asks before it is made, by the full name of its API method:
+// the question and the word that answers it.
+export const asksAlways = {
+  "toshi.operator.v1.OperatorService.DeleteClient": { question: "Delete this OAuth client? Programs that sign in with it stop working.", answer: "yes" },
+  "toshi.operator.v1.OperatorService.DeleteFiller": { question: "Delete this filler? This cannot be undone.", answer: "yes" },
+  "toshi.operator.v1.OperatorService.DeleteStorageProvider": { question: "Delete this storage provider? This cannot be undone.", answer: "yes" },
+  "toshi.operator.v1.OperatorService.DeleteUser": { question: "Erase this user? Their sessions end now and their account is erased.", answer: "yes" },
+  "toshi.operator.v1.OperatorService.RetireHost": { question: "Retire this host? This cannot be undone.", answer: "yes" },
+  "toshi.operator.v1.OperatorService.RetireHosts": { question: "Retire these hosts? This cannot be undone.", answer: "yes" },
+  "toshi.operator.v1.OperatorService.RevokeHost": { question: "Revoke this host? Its token stops working now, its unfinished jobs end and are not run again, and it never registers again under this id.", answer: "yes" },
+  "toshi.operator.v1.OperatorService.RevokeToken": { question: "Revoke this token? It stops working now.", answer: "yes" },
+  "toshi.operator.v1.OperatorService.RollToken": { question: "Roll this token? The old token stops working now.", answer: "yes" },
+  "toshi.operator.v1.OperatorService.RotateToken": { question: "Rotate this token? The old token stops working now.", answer: "yes" },
+  "toshi.workspace.v1.AccountService.UnlinkIdentity": { question: "Unlink this sign-in? It can no longer be used to sign in.", answer: "yes" },
+  "toshi.workspace.v1.ConnectionService.DeleteConnection": { question: "Delete this connection? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.ConnectionService.RotateConnectionSecret": { question: "Rotate this connection's secret? The old secret stops working now.", answer: "yes" },
+  "toshi.workspace.v1.DomainService.DeleteDomain": { question: "Delete this domain? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.EndpointService.DeleteEndpoint": { question: "Delete this endpoint? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken": { question: "Revoke this connect token? It stops working now.", answer: "yes" },
+  "toshi.workspace.v1.FillerService.DeleteFiller": { question: "Delete this filler? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.GrantService.LeaveGrant": { question: "Leave this grant? You lose the access it gives, and only its owner can give it back.", answer: "yes" },
+  "toshi.workspace.v1.GrantService.RevokeGrant": { question: "Revoke this grant? The access it gives ends now.", answer: "yes" },
+  "toshi.workspace.v1.HostService.RetireHost": { question: "Retire this host? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.ImageService.DeleteImage": { question: "Delete this image? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.ModelCredentialService.DeleteModelCredential": { question: "Delete this model credential? Its key is deleted with every version.", answer: "yes" },
+  "toshi.workspace.v1.ProjectService.DeleteEnvironment": { question: "Delete this environment? Its revoked and expired API tokens go with it, and nothing can use the name until it is created again.", answer: "yes" },
+  "toshi.workspace.v1.ProjectService.RevokeEmbedToken": { question: "Revoke this embed token? It stops working now.", answer: "yes" },
+  "toshi.workspace.v1.RecordingService.RevokeRecordingShareLink": { question: "Revoke this share link? Anyone using it loses access now.", answer: "yes" },
+  "toshi.workspace.v1.RoleService.DeleteRole": { question: "Delete this role? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.RoleService.RemoveMember": { question: "Remove this member? Their access to the workspace ends now.", answer: "yes" },
+  "toshi.workspace.v1.RoleService.RevokeInvitation": { question: "Revoke this invitation? It can no longer be accepted.", answer: "yes" },
+  "toshi.workspace.v1.RoleService.RevokeRole": { question: "Revoke this role? The access it gives ends now.", answer: "yes" },
+  "toshi.workspace.v1.SecretService.DeleteSecret": { question: "Delete this secret? Its value is deleted and cannot be brought back.", answer: "yes" },
+  "toshi.workspace.v1.SecretService.DeleteSecretSet": { question: "Delete this secret set? Its keys and their values are deleted.", answer: "yes" },
+  "toshi.workspace.v1.SecretService.RevokeSecretSet": { question: "Revoke this secret set grant? The access it gives ends now.", answer: "yes" },
+  "toshi.workspace.v1.SecretService.UpdateSecretSet": { question: "Update this secret set? Keys the update leaves out are deleted with their values.", answer: "yes" },
+  "toshi.workspace.v1.TokenService.RevokeToken": { question: "Revoke this token? It stops working now.", answer: "yes" },
+  "toshi.workspace.v1.TokenService.RollWorkspaceToken": { question: "Roll this token? The old token stops working now.", answer: "yes" },
+  "toshi.workspace.v1.TriggerService.DeleteTrigger": { question: "Delete this trigger? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.VolumeService.DeleteVolume": { question: "Delete this volume? Its data is deleted and cannot be brought back.", answer: "yes" },
+  "toshi.workspace.v1.WebhookService.DeleteWebhook": { question: "Delete this webhook? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.WebhookService.RotateWebhookSecret": { question: "Rotate this webhook's secret? The old secret stops working now.", answer: "yes" },
+  "toshi.workspace.v1.WorkloadService.DeleteJob": { question: "Delete this job? Its record is deleted and cannot be brought back.", answer: "yes" },
+  "toshi.workspace.v1.WorkloadService.DeleteSandbox": { question: "Delete this sandbox? Its data is deleted and cannot be brought back.", answer: "yes" },
+  "toshi.workspace.v1.WorkloadService.DeleteService": { question: "Delete this service? Its running revision and its data are deleted.", answer: "yes" },
+  "toshi.workspace.v1.WorkloadService.DeleteServiceAlarm": { question: "Delete this alarm? This cannot be undone.", answer: "yes" },
+  "toshi.workspace.v1.WorkloadService.RevokePreviewShareLink": { question: "Revoke this share link? Anyone using it loses access now.", answer: "yes" },
+  "toshi.workspace.v1.WorkloadService.RevokeServiceShareLink": { question: "Revoke this share link? Anyone using it loses access now.", answer: "yes" },
+  "toshi.workspace.v1.WorkloadService.RollbackService": { question: "Roll back to this recipe? It replaces the running recipe and stops the live run.", answer: "yes" },
+  "toshi.workspace.v1.WorkloadService.UpdateService": { question: "Deploy this recipe? It replaces the running recipe, and the running revision is not kept.", answer: "yes" },
+  "toshi.workspace.v1.WorkspaceService.RemoveSeat": { question: "Remove this seat? The person loses their seat now.", answer: "yes" },
+} as const;
+
+// Every call the dashboard asks about when one control starts it, by the full
+// name of its API method: the question and the word that answers it. The
+// command line does not ask.
+export const asksOneClick = {
+  "toshi.workspace.v1.ImageService.BuildImage": { question: "Build this image now? The build starts now and its run time is billed.", answer: "yes" },
+} as const;

@@ -25,6 +25,7 @@ service OperatorService {
     option (toshi.key_mode) = NATURAL;
     option (toshi.mcp) = {destructive: true};
     option (toshi.audit) = {action: "user.erased" target: "none"};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Erase this user? Their sessions end now and their account is erased."};
   }
 
   // ListJobs returns the jobs that match every filter field that is set,
