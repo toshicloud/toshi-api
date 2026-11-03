@@ -1032,6 +1032,7 @@ func AlertTitles() map[string]string {
 		"billing_dev_fake":         "Billing uses the dev fake",
 		"token_creator_left":       "Tokens of a person who left",
 		"token_expiring":           "Tokens expiring after a person left",
+		"project_ending":           "Deleted project awaiting purge",
 	}
 }
 
