@@ -98,6 +98,7 @@ message Trigger {
   repeated string events = 6;
   // Further limits on a pull request event; unset matches every one.
   TriggerFilter filter = 7;
+  // What it does with the event it matches. Required.
   TriggerAction action = 8;
   // What CREATE makes, or the service DELIVER delivers to; unset for
   // DELETE.
@@ -135,6 +136,8 @@ message TriggerFilter {
 
 // TriggerAction is what a trigger does with an event it matches.
 enum TriggerAction {
+  // Unset; a create or update that names it fails with INVALID_ARGUMENT,
+  // and the server never returns the value.
   TRIGGER_ACTION_UNSPECIFIED = 0;
   // Makes the target workload for the event's key, replacing the one the
   // key had: the new one first, and the older ones are deleted once it runs
@@ -155,8 +158,11 @@ enum TriggerAction {
 // its DELIVER delivers to.
 message TriggerTarget {
   oneof target {
+    // A sandbox the CREATE makes.
     TriggerSandbox sandbox = 1;
+    // A sandbox per pull request the CREATE makes.
     TriggerPreview preview = 2;
+    // The service event endpoint DELIVER posts the event to.
     TriggerServiceEndpoint service = 3;
   }
 }
@@ -219,30 +225,48 @@ enum TriggerForks {
   TRIGGER_FORKS_NEVER = 2;
 }
 
+// CreateTriggerRequest creates a trigger in a project's environment.
 message CreateTriggerRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The trigger; its id, project, environment and times are ignored.
   Trigger trigger = 3;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+  // means no retry protection. A retry with the same key and request
+  // answers as the first call did; another request fails with
+  // FAILED_PRECONDITION.
   string request_key = 4;
 }
 
+// CreateTriggerResponse is the trigger as created, with its defaults.
 message CreateTriggerResponse {
+  // The trigger as stored.
   Trigger trigger = 1;
 }
 
+// GetTriggerRequest names one trigger.
 message GetTriggerRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The trigger's id.
   string id = 3;
 }
 
+// GetTriggerResponse is the trigger asked for.
 message GetTriggerResponse {
+  // The trigger as stored.
   Trigger trigger = 1;
 }
 
+// ListTriggersRequest asks for a page of the environment's triggers.
 message ListTriggersRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The most triggers in one page; zero lets the server choose.
   int32 page_size = 3;
@@ -250,31 +274,55 @@ message ListTriggersRequest {
   string page_token = 4;
 }
 
+// ListTriggersResponse is a page of triggers.
 message ListTriggersResponse {
+  // The page's triggers, in name order.
   repeated Trigger triggers = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// UpdateTriggerRequest changes a trigger's fields.
 message UpdateTriggerRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The trigger's id.
   string id = 3;
   // Carries the new values of the fields update_mask names.
   Trigger trigger = 4;
+  // The fields to set: at least one, and each one of name, events, filter,
+  // action, target, key, idle_timeout and forks. A path naming another
+  // field, source among them, fails with INVALID_ARGUMENT.
   google.protobuf.FieldMask update_mask = 5;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+  // means no retry protection. A retry with the same key and request
+  // answers as the first call did; another request fails with
+  // FAILED_PRECONDITION.
   string request_key = 6;
 }
 
+// UpdateTriggerResponse is the trigger as updated.
 message UpdateTriggerResponse {
+  // The trigger as stored.
   Trigger trigger = 1;
 }
 
+// DeleteTriggerRequest deletes one trigger.
 message DeleteTriggerRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The trigger's id.
   string id = 3;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+  // means no retry protection. A retry with the same key and request
+  // answers as the first call did; another request fails with
+  // FAILED_PRECONDITION.
   string request_key = 4;
 }
 
+// DeleteTriggerResponse is empty.
 message DeleteTriggerResponse {}

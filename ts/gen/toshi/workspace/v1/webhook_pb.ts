@@ -16,6 +16,9 @@ export const file_toshi_workspace_v1_webhook: GenFile = /*@__PURE__*/
   fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvd2ViaG9vay5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxItQCCgdXZWJob29rEgoKAmlkGAEgASgJEgsKA3VybBgCIAEoCRIOCgZldmVudHMYAyADKAkSDwoHZW5hYmxlZBgEIAEoCBIOCgZjdXJzb3IYBSABKAkSPgoacHJldmlvdXNfc2VjcmV0X2V4cGlyZXNfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhYKDmN1cnNvcl9leHBpcmVkGAkgASgIEjYKEnJldGVudGlvbl9ib3VuZGFyeRgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDwoHcHJvamVjdBgLIAEoCSL9AgoPV2ViaG9va0RlbGl2ZXJ5EhAKCGV2ZW50X2lkGAEgASgJEg4KBmN1cnNvchgCIAEoCRITCgt3b3JrbG9hZF9pZBgDIAEoCRI3CgVzdGF0ZRgEIAEoDjIoLnRvc2hpLndvcmtzcGFjZS52MS5XZWJob29rRGVsaXZlcnlTdGF0ZRINCgV0cmllcxgFIAEoBRIvCgtuZXh0X3RyeV9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLbGFzdF9zdGF0dXMYByABKAUSEgoKbGFzdF9lcnJvchgIIAEoCRIqCgZkdWVfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEisKB2RvbmVfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCm1lc3NhZ2VfaWQYCyABKAkSFgoJcmVwbGF5X29mGAwgASgJSACIAQFCDAoKX3JlcGxheV9vZiJrChRDcmVhdGVXZWJob29rUmVxdWVzdBILCgN1cmwYASABKAkSDgoGZXZlbnRzGAIgAygJEhAKCGRpc2FibGVkGAMgASgIEhMKC3JlcXVlc3Rfa2V5GAQgASgJEg8KB3Byb2plY3QYBSABKAkiVQoVQ3JlYXRlV2ViaG9va1Jlc3BvbnNlEiwKB3dlYmhvb2sYASABKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuV2ViaG9vaxIOCgZzZWNyZXQYAiABKAkiHwoRR2V0V2ViaG9va1JlcXVlc3QSCgoCaWQYASABKAkiQgoSR2V0V2ViaG9va1Jlc3BvbnNlEiwKB3dlYmhvb2sYASABKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuV2ViaG9vayI8ChNMaXN0V2ViaG9va3NSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJIl4KFExpc3RXZWJob29rc1Jlc3BvbnNlEi0KCHdlYmhvb2tzGAEgAygLMhsudG9zaGkud29ya3NwYWNlLnYxLldlYmhvb2sSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIpYBChRVcGRhdGVXZWJob29rUmVxdWVzdBIKCgJpZBgBIAEoCRIsCgd3ZWJob29rGAIgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLldlYmhvb2sSLwoLdXBkYXRlX21hc2sYAyABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrEhMKC3JlcXVlc3Rfa2V5GAQgASgJIkUKFVVwZGF0ZVdlYmhvb2tSZXNwb25zZRIsCgd3ZWJob29rGAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLldlYmhvb2siNwoURGVsZXRlV2ViaG9va1JlcXVlc3QSCgoCaWQYASABKAkSEwoLcmVxdWVzdF9rZXkYAiABKAkiFwoVRGVsZXRlV2ViaG9va1Jlc3BvbnNlIj0KGlJvdGF0ZVdlYmhvb2tTZWNyZXRSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC3JlcXVlc3Rfa2V5GAIgASgJIlsKG1JvdGF0ZVdlYmhvb2tTZWNyZXRSZXNwb25zZRIsCgd3ZWJob29rGAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLldlYmhvb2sSDgoGc2VjcmV0GAIgASgJIlkKHExpc3RXZWJob29rRGVsaXZlcmllc1JlcXVlc3QSEgoKd2ViaG9va19pZBgBIAEoCRISCgpwYWdlX3Rva2VuGAIgASgJEhEKCXBhZ2Vfc2l6ZRgDIAEoBSJxCh1MaXN0V2ViaG9va0RlbGl2ZXJpZXNSZXNwb25zZRI3CgpkZWxpdmVyaWVzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLldlYmhvb2tEZWxpdmVyeRIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiVQoaUmVwbGF5V2ViaG9va0V2ZW50c1JlcXVlc3QSEgoKd2ViaG9va19pZBgBIAEoCRIOCgZjdXJzb3IYAiABKAkSEwoLcmVxdWVzdF9rZXkYAyABKAkiTQobUmVwbGF5V2ViaG9va0V2ZW50c1Jlc3BvbnNlEhAKCHJlcGxheWVkGAEgASgFEg4KBmN1cnNvchgCIAEoCRIMCgRtb3JlGAMgASgIKqkBChRXZWJob29rRGVsaXZlcnlTdGF0ZRImCiJXRUJIT09LX0RFTElWRVJZX1NUQVRFX1VOU1BFQ0lGSUVEEAASIgoeV0VCSE9PS19ERUxJVkVSWV9TVEFURV9QRU5ESU5HEAESJAogV0VCSE9PS19ERUxJVkVSWV9TVEFURV9ERUxJVkVSRUQQAhIfChtXRUJIT09LX0RFTElWRVJZX1NUQVRFX0RFQUQQAzLsCQoOV2ViaG9va1NlcnZpY2USiQEKDUNyZWF0ZVdlYmhvb2sSKC50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlV2ViaG9va1JlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlV2ViaG9va1Jlc3BvbnNlIiPC8xgOd2ViaG9va3Mud3JpdGXK8xgJd29ya3NwYWNlkPQYARJuCgpHZXRXZWJob29rEiUudG9zaGkud29ya3NwYWNlLnYxLkdldFdlYmhvb2tSZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLkdldFdlYmhvb2tSZXNwb25zZSIRwvMYDXdlYmhvb2tzLnJlYWQSdAoMTGlzdFdlYmhvb2tzEicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RXZWJob29rc1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFdlYmhvb2tzUmVzcG9uc2UiEcLzGA13ZWJob29rcy5yZWFkEnwKDVVwZGF0ZVdlYmhvb2sSKC50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlV2ViaG9va1JlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlV2ViaG9va1Jlc3BvbnNlIhbC8xgOd2ViaG9va3Mud3JpdGWQ9BgBEq8BCg1EZWxldGVXZWJob29rEigudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZVdlYmhvb2tSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZVdlYmhvb2tSZXNwb25zZSJJwvMYDndlYmhvb2tzLndyaXRl+vMYLwgBEitEZWxldGUgdGhpcyB3ZWJob29rPyBUaGlzIGNhbm5vdCBiZSB1bmRvbmUukPQYARL3AQoTUm90YXRlV2ViaG9va1NlY3JldBIuLnRvc2hpLndvcmtzcGFjZS52MS5Sb3RhdGVXZWJob29rU2VjcmV0UmVxdWVzdBovLnRvc2hpLndvcmtzcGFjZS52MS5Sb3RhdGVXZWJob29rU2VjcmV0UmVzcG9uc2Uif8LzGA53ZWJob29rcy53cml0ZdLzGBgKFndlYmhvb2suc2VjcmV0X3JvdGF0ZWTq8xgCEAH68xhDCAESP1JvdGF0ZSB0aGlzIHdlYmhvb2sncyBzZWNyZXQ/IFRoZSBvbGQgc2VjcmV0IHN0b3BzIHdvcmtpbmcgbm93LpD0GAESjwEKFUxpc3RXZWJob29rRGVsaXZlcmllcxIwLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0V2ViaG9va0RlbGl2ZXJpZXNSZXF1ZXN0GjEudG9zaGkud29ya3NwYWNlLnYxLkxpc3RXZWJob29rRGVsaXZlcmllc1Jlc3BvbnNlIhHC8xgNd2ViaG9va3MucmVhZBKrAQoTUmVwbGF5V2ViaG9va0V2ZW50cxIuLnRvc2hpLndvcmtzcGFjZS52MS5SZXBsYXlXZWJob29rRXZlbnRzUmVxdWVzdBovLnRvc2hpLndvcmtzcGFjZS52MS5SZXBsYXlXZWJob29rRXZlbnRzUmVzcG9uc2UiM8LzGA53ZWJob29rcy53cml0ZdLzGBkKF3dlYmhvb2suZXZlbnRzX3JlcGxheWVkkPQYAUIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
+ * Webhook is one URL a workspace's events are POSTed to, with the events
+ * its filter keeps and the project it is limited to.
+ *
  * @generated from message toshi.workspace.v1.Webhook
  */
 export type Webhook = Message<"toshi.workspace.v1.Webhook"> & {
@@ -44,6 +47,10 @@ export type Webhook = Message<"toshi.workspace.v1.Webhook"> & {
   events: string[];
 
   /**
+   * Whether it is owed new events; a disabled webhook is owed none, and no
+   * try of it starts. A create sets it from its disabled field, an update
+   * through enabled, and the sender turns it off after a 410 answer.
+   *
    * @generated from field: bool enabled = 4;
    */
   enabled: boolean;
@@ -65,11 +72,15 @@ export type Webhook = Message<"toshi.workspace.v1.Webhook"> & {
   previousSecretExpiresAt?: Timestamp | undefined;
 
   /**
+   * When the webhook was made; set by the server.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 7;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When the webhook last changed; set by the server.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 8;
    */
   updatedAt?: Timestamp | undefined;
@@ -100,6 +111,9 @@ export type Webhook = Message<"toshi.workspace.v1.Webhook"> & {
 };
 
 /**
+ * Webhook is one URL a workspace's events are POSTed to, with the events
+ * its filter keeps and the project it is limited to.
+ *
  * @generated from message toshi.workspace.v1.Webhook
  */
 export type WebhookJson = {
@@ -128,6 +142,10 @@ export type WebhookJson = {
   events?: string[];
 
   /**
+   * Whether it is owed new events; a disabled webhook is owed none, and no
+   * try of it starts. A create sets it from its disabled field, an update
+   * through enabled, and the sender turns it off after a 410 answer.
+   *
    * @generated from field: bool enabled = 4;
    */
   enabled?: boolean;
@@ -149,11 +167,15 @@ export type WebhookJson = {
   previousSecretExpiresAt?: TimestampJson;
 
   /**
+   * When the webhook was made; set by the server.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 7;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When the webhook last changed; set by the server.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 8;
    */
   updatedAt?: TimestampJson;
@@ -197,6 +219,8 @@ export const WebhookSchema: GenMessage<Webhook, {jsonType: WebhookJson}> = /*@__
  */
 export type WebhookDelivery = Message<"toshi.workspace.v1.WebhookDelivery"> & {
   /**
+   * The event's ID, the same on every try of every webhook.
+   *
    * @generated from field: string event_id = 1;
    */
   eventId: string;
@@ -209,11 +233,16 @@ export type WebhookDelivery = Message<"toshi.workspace.v1.WebhookDelivery"> & {
   cursor: string;
 
   /**
+   * The ID of the workload whose event it is; empty when a connection
+   * received the event.
+   *
    * @generated from field: string workload_id = 3;
    */
   workloadId: string;
 
   /**
+   * Where the delivery stands.
+   *
    * @generated from field: toshi.workspace.v1.WebhookDeliveryState state = 4;
    */
   state: WebhookDeliveryState;
@@ -247,6 +276,9 @@ export type WebhookDelivery = Message<"toshi.workspace.v1.WebhookDelivery"> & {
   lastError: string;
 
   /**
+   * When it became due: when the event was owed to the webhook, or when a
+   * replay made it due again.
+   *
    * @generated from field: google.protobuf.Timestamp due_at = 9;
    */
   dueAt?: Timestamp | undefined;
@@ -280,6 +312,8 @@ export type WebhookDelivery = Message<"toshi.workspace.v1.WebhookDelivery"> & {
  */
 export type WebhookDeliveryJson = {
   /**
+   * The event's ID, the same on every try of every webhook.
+   *
    * @generated from field: string event_id = 1;
    */
   eventId?: string;
@@ -292,11 +326,16 @@ export type WebhookDeliveryJson = {
   cursor?: string;
 
   /**
+   * The ID of the workload whose event it is; empty when a connection
+   * received the event.
+   *
    * @generated from field: string workload_id = 3;
    */
   workloadId?: string;
 
   /**
+   * Where the delivery stands.
+   *
    * @generated from field: toshi.workspace.v1.WebhookDeliveryState state = 4;
    */
   state?: WebhookDeliveryStateJson;
@@ -330,6 +369,9 @@ export type WebhookDeliveryJson = {
   lastError?: string;
 
   /**
+   * When it became due: when the event was owed to the webhook, or when a
+   * replay made it due again.
+   *
    * @generated from field: google.protobuf.Timestamp due_at = 9;
    */
   dueAt?: TimestampJson;
@@ -364,15 +406,22 @@ export const WebhookDeliverySchema: GenMessage<WebhookDelivery, {jsonType: Webho
   messageDesc(file_toshi_workspace_v1_webhook, 1);
 
 /**
+ * CreateWebhookRequest makes a webhook and its signing secret.
+ *
  * @generated from message toshi.workspace.v1.CreateWebhookRequest
  */
 export type CreateWebhookRequest = Message<"toshi.workspace.v1.CreateWebhookRequest"> & {
   /**
+   * The URL to POST to; checked as Webhook.url. Required.
+   *
    * @generated from field: string url = 1;
    */
   url: string;
 
   /**
+   * The event names or prefixes it is owed, as Webhook.events; empty keeps
+   * every event.
+   *
    * @generated from field: repeated string events = 2;
    */
   events: string[];
@@ -385,6 +434,11 @@ export type CreateWebhookRequest = Message<"toshi.workspace.v1.CreateWebhookRequ
   disabled: boolean;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did, with the
+   * same secret while it is the newest; another request fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
@@ -398,15 +452,22 @@ export type CreateWebhookRequest = Message<"toshi.workspace.v1.CreateWebhookRequ
 };
 
 /**
+ * CreateWebhookRequest makes a webhook and its signing secret.
+ *
  * @generated from message toshi.workspace.v1.CreateWebhookRequest
  */
 export type CreateWebhookRequestJson = {
   /**
+   * The URL to POST to; checked as Webhook.url. Required.
+   *
    * @generated from field: string url = 1;
    */
   url?: string;
 
   /**
+   * The event names or prefixes it is owed, as Webhook.events; empty keeps
+   * every event.
+   *
    * @generated from field: repeated string events = 2;
    */
   events?: string[];
@@ -419,6 +480,11 @@ export type CreateWebhookRequestJson = {
   disabled?: boolean;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did, with the
+   * same secret while it is the newest; another request fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -439,10 +505,14 @@ export const CreateWebhookRequestSchema: GenMessage<CreateWebhookRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_webhook, 2);
 
 /**
+ * CreateWebhookResponse is the webhook made, with its signing secret.
+ *
  * @generated from message toshi.workspace.v1.CreateWebhookResponse
  */
 export type CreateWebhookResponse = Message<"toshi.workspace.v1.CreateWebhookResponse"> & {
   /**
+   * The webhook as stored.
+   *
    * @generated from field: toshi.workspace.v1.Webhook webhook = 1;
    */
   webhook?: Webhook | undefined;
@@ -456,10 +526,14 @@ export type CreateWebhookResponse = Message<"toshi.workspace.v1.CreateWebhookRes
 };
 
 /**
+ * CreateWebhookResponse is the webhook made, with its signing secret.
+ *
  * @generated from message toshi.workspace.v1.CreateWebhookResponse
  */
 export type CreateWebhookResponseJson = {
   /**
+   * The webhook as stored.
+   *
    * @generated from field: toshi.workspace.v1.Webhook webhook = 1;
    */
   webhook?: WebhookJson;
@@ -480,20 +554,28 @@ export const CreateWebhookResponseSchema: GenMessage<CreateWebhookResponse, {jso
   messageDesc(file_toshi_workspace_v1_webhook, 3);
 
 /**
+ * GetWebhookRequest asks for one webhook of the workspace.
+ *
  * @generated from message toshi.workspace.v1.GetWebhookRequest
  */
 export type GetWebhookRequest = Message<"toshi.workspace.v1.GetWebhookRequest"> & {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * GetWebhookRequest asks for one webhook of the workspace.
+ *
  * @generated from message toshi.workspace.v1.GetWebhookRequest
  */
 export type GetWebhookRequestJson = {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -507,20 +589,28 @@ export const GetWebhookRequestSchema: GenMessage<GetWebhookRequest, {jsonType: G
   messageDesc(file_toshi_workspace_v1_webhook, 4);
 
 /**
+ * GetWebhookResponse is the webhook asked for.
+ *
  * @generated from message toshi.workspace.v1.GetWebhookResponse
  */
 export type GetWebhookResponse = Message<"toshi.workspace.v1.GetWebhookResponse"> & {
   /**
+   * The webhook.
+   *
    * @generated from field: toshi.workspace.v1.Webhook webhook = 1;
    */
   webhook?: Webhook | undefined;
 };
 
 /**
+ * GetWebhookResponse is the webhook asked for.
+ *
  * @generated from message toshi.workspace.v1.GetWebhookResponse
  */
 export type GetWebhookResponseJson = {
   /**
+   * The webhook.
+   *
    * @generated from field: toshi.workspace.v1.Webhook webhook = 1;
    */
   webhook?: WebhookJson;
@@ -534,6 +624,9 @@ export const GetWebhookResponseSchema: GenMessage<GetWebhookResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_webhook, 5);
 
 /**
+ * ListWebhooksRequest asks for a page of the workspace's webhooks, in ID
+ * order.
+ *
  * @generated from message toshi.workspace.v1.ListWebhooksRequest
  */
 export type ListWebhooksRequest = Message<"toshi.workspace.v1.ListWebhooksRequest"> & {
@@ -553,6 +646,9 @@ export type ListWebhooksRequest = Message<"toshi.workspace.v1.ListWebhooksReques
 };
 
 /**
+ * ListWebhooksRequest asks for a page of the workspace's webhooks, in ID
+ * order.
+ *
  * @generated from message toshi.workspace.v1.ListWebhooksRequest
  */
 export type ListWebhooksRequestJson = {
@@ -579,10 +675,14 @@ export const ListWebhooksRequestSchema: GenMessage<ListWebhooksRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_webhook, 6);
 
 /**
+ * ListWebhooksResponse is a page of webhooks, in ID order.
+ *
  * @generated from message toshi.workspace.v1.ListWebhooksResponse
  */
 export type ListWebhooksResponse = Message<"toshi.workspace.v1.ListWebhooksResponse"> & {
   /**
+   * The page's webhooks, in ID order.
+   *
    * @generated from field: repeated toshi.workspace.v1.Webhook webhooks = 1;
    */
   webhooks: Webhook[];
@@ -596,10 +696,14 @@ export type ListWebhooksResponse = Message<"toshi.workspace.v1.ListWebhooksRespo
 };
 
 /**
+ * ListWebhooksResponse is a page of webhooks, in ID order.
+ *
  * @generated from message toshi.workspace.v1.ListWebhooksResponse
  */
 export type ListWebhooksResponseJson = {
   /**
+   * The page's webhooks, in ID order.
+   *
    * @generated from field: repeated toshi.workspace.v1.Webhook webhooks = 1;
    */
   webhooks?: WebhookJson[];
@@ -620,10 +724,14 @@ export const ListWebhooksResponseSchema: GenMessage<ListWebhooksResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_webhook, 7);
 
 /**
+ * UpdateWebhookRequest changes the fields update_mask names.
+ *
  * @generated from message toshi.workspace.v1.UpdateWebhookRequest
  */
 export type UpdateWebhookRequest = Message<"toshi.workspace.v1.UpdateWebhookRequest"> & {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -643,16 +751,24 @@ export type UpdateWebhookRequest = Message<"toshi.workspace.v1.UpdateWebhookRequ
   updateMask?: FieldMask | undefined;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did; another
+   * request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * UpdateWebhookRequest changes the fields update_mask names.
+ *
  * @generated from message toshi.workspace.v1.UpdateWebhookRequest
  */
 export type UpdateWebhookRequestJson = {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -672,6 +788,10 @@ export type UpdateWebhookRequestJson = {
   updateMask?: FieldMaskJson;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did; another
+   * request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -685,20 +805,28 @@ export const UpdateWebhookRequestSchema: GenMessage<UpdateWebhookRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_webhook, 8);
 
 /**
+ * UpdateWebhookResponse is the webhook as stored.
+ *
  * @generated from message toshi.workspace.v1.UpdateWebhookResponse
  */
 export type UpdateWebhookResponse = Message<"toshi.workspace.v1.UpdateWebhookResponse"> & {
   /**
+   * The webhook as stored.
+   *
    * @generated from field: toshi.workspace.v1.Webhook webhook = 1;
    */
   webhook?: Webhook | undefined;
 };
 
 /**
+ * UpdateWebhookResponse is the webhook as stored.
+ *
  * @generated from message toshi.workspace.v1.UpdateWebhookResponse
  */
 export type UpdateWebhookResponseJson = {
   /**
+   * The webhook as stored.
+   *
    * @generated from field: toshi.workspace.v1.Webhook webhook = 1;
    */
   webhook?: WebhookJson;
@@ -712,30 +840,46 @@ export const UpdateWebhookResponseSchema: GenMessage<UpdateWebhookResponse, {jso
   messageDesc(file_toshi_workspace_v1_webhook, 9);
 
 /**
+ * DeleteWebhookRequest deletes one webhook and its deliveries.
+ *
  * @generated from message toshi.workspace.v1.DeleteWebhookRequest
  */
 export type DeleteWebhookRequest = Message<"toshi.workspace.v1.DeleteWebhookRequest"> & {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did; another
+   * request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey: string;
 };
 
 /**
+ * DeleteWebhookRequest deletes one webhook and its deliveries.
+ *
  * @generated from message toshi.workspace.v1.DeleteWebhookRequest
  */
 export type DeleteWebhookRequestJson = {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did; another
+   * request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey?: string;
@@ -749,12 +893,16 @@ export const DeleteWebhookRequestSchema: GenMessage<DeleteWebhookRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_webhook, 10);
 
 /**
+ * DeleteWebhookResponse is empty.
+ *
  * @generated from message toshi.workspace.v1.DeleteWebhookResponse
  */
 export type DeleteWebhookResponse = Message<"toshi.workspace.v1.DeleteWebhookResponse"> & {
 };
 
 /**
+ * DeleteWebhookResponse is empty.
+ *
  * @generated from message toshi.workspace.v1.DeleteWebhookResponse
  */
 export type DeleteWebhookResponseJson = {
@@ -768,30 +916,50 @@ export const DeleteWebhookResponseSchema: GenMessage<DeleteWebhookResponse, {jso
   messageDesc(file_toshi_workspace_v1_webhook, 11);
 
 /**
+ * RotateWebhookSecretRequest makes a webhook a new signing secret.
+ *
  * @generated from message toshi.workspace.v1.RotateWebhookSecretRequest
  */
 export type RotateWebhookSecretRequest = Message<"toshi.workspace.v1.RotateWebhookSecretRequest"> & {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did, with the
+   * same secret while it is the newest; another request, or one whose
+   * secret a later rotation or the delete replaced, fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey: string;
 };
 
 /**
+ * RotateWebhookSecretRequest makes a webhook a new signing secret.
+ *
  * @generated from message toshi.workspace.v1.RotateWebhookSecretRequest
  */
 export type RotateWebhookSecretRequestJson = {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did, with the
+   * same secret while it is the newest; another request, or one whose
+   * secret a later rotation or the delete replaced, fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey?: string;
@@ -805,10 +973,15 @@ export const RotateWebhookSecretRequestSchema: GenMessage<RotateWebhookSecretReq
   messageDesc(file_toshi_workspace_v1_webhook, 12);
 
 /**
+ * RotateWebhookSecretResponse is the webhook and its new secret.
+ *
  * @generated from message toshi.workspace.v1.RotateWebhookSecretResponse
  */
 export type RotateWebhookSecretResponse = Message<"toshi.workspace.v1.RotateWebhookSecretResponse"> & {
   /**
+   * The webhook after the rotation; previous_secret_expires_at says when
+   * the replaced secret stops signing.
+   *
    * @generated from field: toshi.workspace.v1.Webhook webhook = 1;
    */
   webhook?: Webhook | undefined;
@@ -822,10 +995,15 @@ export type RotateWebhookSecretResponse = Message<"toshi.workspace.v1.RotateWebh
 };
 
 /**
+ * RotateWebhookSecretResponse is the webhook and its new secret.
+ *
  * @generated from message toshi.workspace.v1.RotateWebhookSecretResponse
  */
 export type RotateWebhookSecretResponseJson = {
   /**
+   * The webhook after the rotation; previous_secret_expires_at says when
+   * the replaced secret stops signing.
+   *
    * @generated from field: toshi.workspace.v1.Webhook webhook = 1;
    */
   webhook?: WebhookJson;
@@ -846,10 +1024,14 @@ export const RotateWebhookSecretResponseSchema: GenMessage<RotateWebhookSecretRe
   messageDesc(file_toshi_workspace_v1_webhook, 13);
 
 /**
+ * ListWebhookDeliveriesRequest asks for a page of a webhook's deliveries.
+ *
  * @generated from message toshi.workspace.v1.ListWebhookDeliveriesRequest
  */
 export type ListWebhookDeliveriesRequest = Message<"toshi.workspace.v1.ListWebhookDeliveriesRequest"> & {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string webhook_id = 1;
    */
   webhookId: string;
@@ -872,10 +1054,14 @@ export type ListWebhookDeliveriesRequest = Message<"toshi.workspace.v1.ListWebho
 };
 
 /**
+ * ListWebhookDeliveriesRequest asks for a page of a webhook's deliveries.
+ *
  * @generated from message toshi.workspace.v1.ListWebhookDeliveriesRequest
  */
 export type ListWebhookDeliveriesRequestJson = {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string webhook_id = 1;
    */
   webhookId?: string;
@@ -905,10 +1091,14 @@ export const ListWebhookDeliveriesRequestSchema: GenMessage<ListWebhookDeliverie
   messageDesc(file_toshi_workspace_v1_webhook, 14);
 
 /**
+ * ListWebhookDeliveriesResponse is a page of deliveries, in event order.
+ *
  * @generated from message toshi.workspace.v1.ListWebhookDeliveriesResponse
  */
 export type ListWebhookDeliveriesResponse = Message<"toshi.workspace.v1.ListWebhookDeliveriesResponse"> & {
   /**
+   * The page's deliveries, in event order.
+   *
    * @generated from field: repeated toshi.workspace.v1.WebhookDelivery deliveries = 1;
    */
   deliveries: WebhookDelivery[];
@@ -922,10 +1112,14 @@ export type ListWebhookDeliveriesResponse = Message<"toshi.workspace.v1.ListWebh
 };
 
 /**
+ * ListWebhookDeliveriesResponse is a page of deliveries, in event order.
+ *
  * @generated from message toshi.workspace.v1.ListWebhookDeliveriesResponse
  */
 export type ListWebhookDeliveriesResponseJson = {
   /**
+   * The page's deliveries, in event order.
+   *
    * @generated from field: repeated toshi.workspace.v1.WebhookDelivery deliveries = 1;
    */
   deliveries?: WebhookDeliveryJson[];
@@ -946,10 +1140,15 @@ export const ListWebhookDeliveriesResponseSchema: GenMessage<ListWebhookDeliveri
   messageDesc(file_toshi_workspace_v1_webhook, 15);
 
 /**
+ * ReplayWebhookEventsRequest makes a webhook owed again the events after a
+ * cursor.
+ *
  * @generated from message toshi.workspace.v1.ReplayWebhookEventsRequest
  */
 export type ReplayWebhookEventsRequest = Message<"toshi.workspace.v1.ReplayWebhookEventsRequest"> & {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string webhook_id = 1;
    */
   webhookId: string;
@@ -963,16 +1162,25 @@ export type ReplayWebhookEventsRequest = Message<"toshi.workspace.v1.ReplayWebho
   cursor: string;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did; another
+   * request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 3;
    */
   requestKey: string;
 };
 
 /**
+ * ReplayWebhookEventsRequest makes a webhook owed again the events after a
+ * cursor.
+ *
  * @generated from message toshi.workspace.v1.ReplayWebhookEventsRequest
  */
 export type ReplayWebhookEventsRequestJson = {
   /**
+   * The webhook's id.
+   *
    * @generated from field: string webhook_id = 1;
    */
   webhookId?: string;
@@ -986,6 +1194,10 @@ export type ReplayWebhookEventsRequestJson = {
   cursor?: string;
 
   /**
+   * A key of the caller's choice; empty means no retry protection. A retry
+   * with the same key and request answers as the first call did; another
+   * request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 3;
    */
   requestKey?: string;
@@ -999,6 +1211,8 @@ export const ReplayWebhookEventsRequestSchema: GenMessage<ReplayWebhookEventsReq
   messageDesc(file_toshi_workspace_v1_webhook, 16);
 
 /**
+ * ReplayWebhookEventsResponse says what a replay made due again.
+ *
  * @generated from message toshi.workspace.v1.ReplayWebhookEventsResponse
  */
 export type ReplayWebhookEventsResponse = Message<"toshi.workspace.v1.ReplayWebhookEventsResponse"> & {
@@ -1026,6 +1240,8 @@ export type ReplayWebhookEventsResponse = Message<"toshi.workspace.v1.ReplayWebh
 };
 
 /**
+ * ReplayWebhookEventsResponse says what a replay made due again.
+ *
  * @generated from message toshi.workspace.v1.ReplayWebhookEventsResponse
  */
 export type ReplayWebhookEventsResponseJson = {
@@ -1064,6 +1280,8 @@ export const ReplayWebhookEventsResponseSchema: GenMessage<ReplayWebhookEventsRe
  */
 export enum WebhookDeliveryState {
   /**
+   * Never set; a delivery is pending, delivered or dead.
+   *
    * @generated from enum value: WEBHOOK_DELIVERY_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

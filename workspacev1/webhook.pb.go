@@ -27,6 +27,7 @@ const (
 type WebhookDeliveryState int32
 
 const (
+	// Never set; a delivery is pending, delivered or dead.
 	WebhookDeliveryState_WEBHOOK_DELIVERY_STATE_UNSPECIFIED WebhookDeliveryState = 0
 	// Owed: waiting for its next try, or being tried.
 	WebhookDeliveryState_WEBHOOK_DELIVERY_STATE_PENDING WebhookDeliveryState = 1
@@ -79,6 +80,8 @@ func (WebhookDeliveryState) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{0}
 }
 
+// Webhook is one URL a workspace's events are POSTed to, with the events
+// its filter keeps and the project it is limited to.
 type Webhook struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Assigned by the server; unique within the workspace.
@@ -89,16 +92,21 @@ type Webhook struct {
 	// or a prefix ending in ".*" (job.*); at most 64. Empty keeps every
 	// event but those a connection received, which only a name or prefix
 	// that matches them keeps.
-	Events  []string `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
-	Enabled bool     `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Events []string `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
+	// Whether it is owed new events; a disabled webhook is owed none, and no
+	// try of it starts. A create sets it from its disabled field, an update
+	// through enabled, and the sender turns it off after a 410 answer.
+	Enabled bool `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	// The position in the workspace's event log the webhook has read up to,
 	// an Event's cursor.
 	Cursor string `protobuf:"bytes,5,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	// When the secret the last rotation replaced stops signing; unset when
 	// no such secret signs.
 	PreviousSecretExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=previous_secret_expires_at,json=previousSecretExpiresAt,proto3" json:"previous_secret_expires_at,omitempty"`
-	CreatedAt               *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt               *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// When the webhook was made; set by the server.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When the webhook last changed; set by the server.
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// Set when events after the webhook's cursor were removed by retention.
 	// The webhook is owed nothing until its cursor is moved.
 	CursorExpired bool `protobuf:"varint,9,opt,name=cursor_expired,json=cursorExpired,proto3" json:"cursor_expired,omitempty"`
@@ -221,12 +229,16 @@ func (x *Webhook) GetProject() string {
 
 // WebhookDelivery is one event owed to one webhook.
 type WebhookDelivery struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	EventId string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The event's ID, the same on every try of every webhook.
+	EventId string `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	// The event's cursor.
-	Cursor     string               `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	WorkloadId string               `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
-	State      WebhookDeliveryState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.WebhookDeliveryState" json:"state,omitempty"`
+	Cursor string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	// The ID of the workload whose event it is; empty when a connection
+	// received the event.
+	WorkloadId string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	// Where the delivery stands.
+	State WebhookDeliveryState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.WebhookDeliveryState" json:"state,omitempty"`
 	// Tries since the delivery was last due.
 	Tries int32 `protobuf:"varint,5,opt,name=tries,proto3" json:"tries,omitempty"`
 	// When it may next be tried; set while it is pending.
@@ -234,8 +246,10 @@ type WebhookDelivery struct {
 	// The last try's HTTP status; 0 when no answer came or none was tried.
 	LastStatus int32 `protobuf:"varint,7,opt,name=last_status,json=lastStatus,proto3" json:"last_status,omitempty"`
 	// The last try's error, which never carries the URL.
-	LastError string                 `protobuf:"bytes,8,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
-	DueAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=due_at,json=dueAt,proto3" json:"due_at,omitempty"`
+	LastError string `protobuf:"bytes,8,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	// When it became due: when the event was owed to the webhook, or when a
+	// replay made it due again.
+	DueAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=due_at,json=dueAt,proto3" json:"due_at,omitempty"`
 	// When it was delivered or given up.
 	DoneAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=done_at,json=doneAt,proto3" json:"done_at,omitempty"`
 	// The ID used in the post and webhook-id header.
@@ -360,12 +374,20 @@ func (x *WebhookDelivery) GetReplayOf() string {
 	return ""
 }
 
+// CreateWebhookRequest makes a webhook and its signing secret.
 type CreateWebhookRequest struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Url    string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
-	Events []string               `protobuf:"bytes,2,rep,name=events,proto3" json:"events,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The URL to POST to; checked as Webhook.url. Required.
+	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	// The event names or prefixes it is owed, as Webhook.events; empty keeps
+	// every event.
+	Events []string `protobuf:"bytes,2,rep,name=events,proto3" json:"events,omitempty"`
 	// Set to make the webhook disabled.
-	Disabled   bool   `protobuf:"varint,3,opt,name=disabled,proto3" json:"disabled,omitempty"`
+	Disabled bool `protobuf:"varint,3,opt,name=disabled,proto3" json:"disabled,omitempty"`
+	// A key of the caller's choice; empty means no retry protection. A retry
+	// with the same key and request answers as the first call did, with the
+	// same secret while it is the newest; another request fails with
+	// FAILED_PRECONDITION.
 	RequestKey string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// The name of a project in the workspace; see Webhook.project.
 	Project       string `protobuf:"bytes,5,opt,name=project,proto3" json:"project,omitempty"`
@@ -438,9 +460,11 @@ func (x *CreateWebhookRequest) GetProject() string {
 	return ""
 }
 
+// CreateWebhookResponse is the webhook made, with its signing secret.
 type CreateWebhookResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Webhook *Webhook               `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The webhook as stored.
+	Webhook *Webhook `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
 	// whsec_ and the base64 of 32 random bytes. No other answer carries it.
 	Secret        string `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -491,9 +515,11 @@ func (x *CreateWebhookResponse) GetSecret() string {
 	return ""
 }
 
+// GetWebhookRequest asks for one webhook of the workspace.
 type GetWebhookRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The webhook's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -535,9 +561,11 @@ func (x *GetWebhookRequest) GetId() string {
 	return ""
 }
 
+// GetWebhookResponse is the webhook asked for.
 type GetWebhookResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Webhook       *Webhook               `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The webhook.
+	Webhook       *Webhook `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -579,6 +607,8 @@ func (x *GetWebhookResponse) GetWebhook() *Webhook {
 	return nil
 }
 
+// ListWebhooksRequest asks for a page of the workspace's webhooks, in ID
+// order.
 type ListWebhooksRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most webhooks in one page; zero lets the server choose.
@@ -633,9 +663,11 @@ func (x *ListWebhooksRequest) GetPageToken() string {
 	return ""
 }
 
+// ListWebhooksResponse is a page of webhooks, in ID order.
 type ListWebhooksResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Webhooks []*Webhook             `protobuf:"bytes,1,rep,name=webhooks,proto3" json:"webhooks,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's webhooks, in ID order.
+	Webhooks []*Webhook `protobuf:"bytes,1,rep,name=webhooks,proto3" json:"webhooks,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -686,14 +718,19 @@ func (x *ListWebhooksResponse) GetNextPageToken() string {
 	return ""
 }
 
+// UpdateWebhookRequest changes the fields update_mask names.
 type UpdateWebhookRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The webhook's id.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Carries the new values of the fields update_mask names.
 	Webhook *Webhook `protobuf:"bytes,2,opt,name=webhook,proto3" json:"webhook,omitempty"`
 	// One or more of url, events, project, enabled and cursor.
-	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	UpdateMask *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	// A key of the caller's choice; empty means no retry protection. A retry
+	// with the same key and request answers as the first call did; another
+	// request fails with FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -756,9 +793,11 @@ func (x *UpdateWebhookRequest) GetRequestKey() string {
 	return ""
 }
 
+// UpdateWebhookResponse is the webhook as stored.
 type UpdateWebhookResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Webhook       *Webhook               `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The webhook as stored.
+	Webhook       *Webhook `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -800,10 +839,15 @@ func (x *UpdateWebhookResponse) GetWebhook() *Webhook {
 	return nil
 }
 
+// DeleteWebhookRequest deletes one webhook and its deliveries.
 type DeleteWebhookRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The webhook's id.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// A key of the caller's choice; empty means no retry protection. A retry
+	// with the same key and request answers as the first call did; another
+	// request fails with FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -852,6 +896,7 @@ func (x *DeleteWebhookRequest) GetRequestKey() string {
 	return ""
 }
 
+// DeleteWebhookResponse is empty.
 type DeleteWebhookResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -888,10 +933,17 @@ func (*DeleteWebhookResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{11}
 }
 
+// RotateWebhookSecretRequest makes a webhook a new signing secret.
 type RotateWebhookSecretRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The webhook's id.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// A key of the caller's choice; empty means no retry protection. A retry
+	// with the same key and request answers as the first call did, with the
+	// same secret while it is the newest; another request, or one whose
+	// secret a later rotation or the delete replaced, fails with
+	// FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -940,9 +992,12 @@ func (x *RotateWebhookSecretRequest) GetRequestKey() string {
 	return ""
 }
 
+// RotateWebhookSecretResponse is the webhook and its new secret.
 type RotateWebhookSecretResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Webhook *Webhook               `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The webhook after the rotation; previous_secret_expires_at says when
+	// the replaced secret stops signing.
+	Webhook *Webhook `protobuf:"bytes,1,opt,name=webhook,proto3" json:"webhook,omitempty"`
 	// The new secret, as CreateWebhookResponse's.
 	Secret        string `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -993,9 +1048,11 @@ func (x *RotateWebhookSecretResponse) GetSecret() string {
 	return ""
 }
 
+// ListWebhookDeliveriesRequest asks for a page of a webhook's deliveries.
 type ListWebhookDeliveriesRequest struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	WebhookId string                 `protobuf:"bytes,1,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The webhook's id.
+	WebhookId string `protobuf:"bytes,1,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
 	// From an earlier response's next_page_token, or a delivery's cursor:
 	// the deliveries of the events after that position. Empty starts at the
 	// oldest.
@@ -1057,9 +1114,11 @@ func (x *ListWebhookDeliveriesRequest) GetPageSize() int32 {
 	return 0
 }
 
+// ListWebhookDeliveriesResponse is a page of deliveries, in event order.
 type ListWebhookDeliveriesResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Deliveries []*WebhookDelivery     `protobuf:"bytes,1,rep,name=deliveries,proto3" json:"deliveries,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's deliveries, in event order.
+	Deliveries []*WebhookDelivery `protobuf:"bytes,1,rep,name=deliveries,proto3" json:"deliveries,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1110,12 +1169,18 @@ func (x *ListWebhookDeliveriesResponse) GetNextPageToken() string {
 	return ""
 }
 
+// ReplayWebhookEventsRequest makes a webhook owed again the events after a
+// cursor.
 type ReplayWebhookEventsRequest struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	WebhookId string                 `protobuf:"bytes,1,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The webhook's id.
+	WebhookId string `protobuf:"bytes,1,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
 	// Events after this cursor; empty starts at the oldest event the log
 	// keeps. A cursor older than that event fails with OUT_OF_RANGE.
-	Cursor        string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	Cursor string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	// A key of the caller's choice; empty means no retry protection. A retry
+	// with the same key and request answers as the first call did; another
+	// request fails with FAILED_PRECONDITION.
 	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1172,6 +1237,7 @@ func (x *ReplayWebhookEventsRequest) GetRequestKey() string {
 	return ""
 }
 
+// ReplayWebhookEventsResponse says what a replay made due again.
 type ReplayWebhookEventsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// How many deliveries were made due again.

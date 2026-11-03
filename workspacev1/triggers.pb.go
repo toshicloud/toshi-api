@@ -29,6 +29,8 @@ const (
 type TriggerAction int32
 
 const (
+	// Unset; a create or update that names it fails with INVALID_ARGUMENT,
+	// and the server never returns the value.
 	TriggerAction_TRIGGER_ACTION_UNSPECIFIED TriggerAction = 0
 	// Makes the target workload for the event's key, replacing the one the
 	// key had: the new one first, and the older ones are deleted once it runs
@@ -163,7 +165,8 @@ type Trigger struct {
 	Events []string `protobuf:"bytes,6,rep,name=events,proto3" json:"events,omitempty"`
 	// Further limits on a pull request event; unset matches every one.
 	Filter *TriggerFilter `protobuf:"bytes,7,opt,name=filter,proto3" json:"filter,omitempty"`
-	Action TriggerAction  `protobuf:"varint,8,opt,name=action,proto3,enum=toshi.workspace.v1.TriggerAction" json:"action,omitempty"`
+	// What it does with the event it matches. Required.
+	Action TriggerAction `protobuf:"varint,8,opt,name=action,proto3,enum=toshi.workspace.v1.TriggerAction" json:"action,omitempty"`
 	// What CREATE makes, or the service DELIVER delivers to; unset for
 	// DELETE.
 	Target *TriggerTarget `protobuf:"bytes,9,opt,name=target,proto3" json:"target,omitempty"`
@@ -458,14 +461,17 @@ type isTriggerTarget_Target interface {
 }
 
 type TriggerTarget_Sandbox struct {
+	// A sandbox the CREATE makes.
 	Sandbox *TriggerSandbox `protobuf:"bytes,1,opt,name=sandbox,proto3,oneof"`
 }
 
 type TriggerTarget_Preview struct {
+	// A sandbox per pull request the CREATE makes.
 	Preview *TriggerPreview `protobuf:"bytes,2,opt,name=preview,proto3,oneof"`
 }
 
 type TriggerTarget_Service struct {
+	// The service event endpoint DELIVER posts the event to.
 	Service *TriggerServiceEndpoint `protobuf:"bytes,3,opt,name=service,proto3,oneof"`
 }
 
@@ -684,13 +690,20 @@ func (x *TriggerSandbox) GetContainerImage() string {
 	return ""
 }
 
+// CreateTriggerRequest creates a trigger in a project's environment.
 type CreateTriggerRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The trigger; its id, project, environment and times are ignored.
-	Trigger       *Trigger `protobuf:"bytes,3,opt,name=trigger,proto3" json:"trigger,omitempty"`
-	RequestKey    string   `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	Trigger *Trigger `protobuf:"bytes,3,opt,name=trigger,proto3" json:"trigger,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+	// means no retry protection. A retry with the same key and request
+	// answers as the first call did; another request fails with
+	// FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -753,9 +766,11 @@ func (x *CreateTriggerRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateTriggerResponse is the trigger as created, with its defaults.
 type CreateTriggerResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Trigger       *Trigger               `protobuf:"bytes,1,opt,name=trigger,proto3" json:"trigger,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The trigger as stored.
+	Trigger       *Trigger `protobuf:"bytes,1,opt,name=trigger,proto3" json:"trigger,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -797,11 +812,15 @@ func (x *CreateTriggerResponse) GetTrigger() *Trigger {
 	return nil
 }
 
+// GetTriggerRequest names one trigger.
 type GetTriggerRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The trigger's id.
+	Id            string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -857,9 +876,11 @@ func (x *GetTriggerRequest) GetId() string {
 	return ""
 }
 
+// GetTriggerResponse is the trigger asked for.
 type GetTriggerResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Trigger       *Trigger               `protobuf:"bytes,1,opt,name=trigger,proto3" json:"trigger,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The trigger as stored.
+	Trigger       *Trigger `protobuf:"bytes,1,opt,name=trigger,proto3" json:"trigger,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -901,10 +922,13 @@ func (x *GetTriggerResponse) GetTrigger() *Trigger {
 	return nil
 }
 
+// ListTriggersRequest asks for a page of the environment's triggers.
 type ListTriggersRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The most triggers in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -971,9 +995,11 @@ func (x *ListTriggersRequest) GetPageToken() string {
 	return ""
 }
 
+// ListTriggersResponse is a page of triggers.
 type ListTriggersResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Triggers []*Trigger             `protobuf:"bytes,1,rep,name=triggers,proto3" json:"triggers,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's triggers, in name order.
+	Triggers []*Trigger `protobuf:"bytes,1,rep,name=triggers,proto3" json:"triggers,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1024,15 +1050,26 @@ func (x *ListTriggersResponse) GetNextPageToken() string {
 	return ""
 }
 
+// UpdateTriggerRequest changes a trigger's fields.
 type UpdateTriggerRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The trigger's id.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// Carries the new values of the fields update_mask names.
-	Trigger       *Trigger               `protobuf:"bytes,4,opt,name=trigger,proto3" json:"trigger,omitempty"`
-	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,5,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	Trigger *Trigger `protobuf:"bytes,4,opt,name=trigger,proto3" json:"trigger,omitempty"`
+	// The fields to set: at least one, and each one of name, events, filter,
+	// action, target, key, idle_timeout and forks. A path naming another
+	// field, source among them, fails with INVALID_ARGUMENT.
+	UpdateMask *fieldmaskpb.FieldMask `protobuf:"bytes,5,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+	// means no retry protection. A retry with the same key and request
+	// answers as the first call did; another request fails with
+	// FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1109,9 +1146,11 @@ func (x *UpdateTriggerRequest) GetRequestKey() string {
 	return ""
 }
 
+// UpdateTriggerResponse is the trigger as updated.
 type UpdateTriggerResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Trigger       *Trigger               `protobuf:"bytes,1,opt,name=trigger,proto3" json:"trigger,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The trigger as stored.
+	Trigger       *Trigger `protobuf:"bytes,1,opt,name=trigger,proto3" json:"trigger,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1153,12 +1192,20 @@ func (x *UpdateTriggerResponse) GetTrigger() *Trigger {
 	return nil
 }
 
+// DeleteTriggerRequest deletes one trigger.
 type DeleteTriggerRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The trigger's id.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+	// means no retry protection. A retry with the same key and request
+	// answers as the first call did; another request fails with
+	// FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1221,6 +1268,7 @@ func (x *DeleteTriggerRequest) GetRequestKey() string {
 	return ""
 }
 
+// DeleteTriggerResponse is empty.
 type DeleteTriggerResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields

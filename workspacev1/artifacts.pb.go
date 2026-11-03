@@ -26,15 +26,25 @@ const (
 // Artifact is an uploaded file's record: what it is, who uploaded it, and
 // where its parts are kept, never a key, a URL or key material.
 type Artifact struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ProjectId     string                 `protobuf:"bytes,2,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	EnvironmentId string                 `protobuf:"bytes,3,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
-	WorkloadId    string                 `protobuf:"bytes,4,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
-	ExecutionId   string                 `protobuf:"bytes,5,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// id is the artifact's id, `art-` and random hex, set at reservation.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// project_id is the project the upload's token named.
+	ProjectId string `protobuf:"bytes,2,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	// environment_id is the environment the upload's token named.
+	EnvironmentId string `protobuf:"bytes,3,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
+	// workload_id is the workload the token named; for a CI job, its host
+	// job's id.
+	WorkloadId string `protobuf:"bytes,4,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	// execution_id is the execution the token named: a job's attempt,
+	// renewed when the job is retried.
+	ExecutionId string `protobuf:"bytes,5,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
 	// recording, recording-signed-in, trace, report or image.
-	Kind        string `protobuf:"bytes,6,opt,name=kind,proto3" json:"kind,omitempty"`
-	Name        string `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
+	Kind string `protobuf:"bytes,6,opt,name=kind,proto3" json:"kind,omitempty"`
+	// name is the file's name; a one-object artifact's object carries it.
+	Name string `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
+	// content_type is the media type of the file, kept as the upload declared
+	// it.
 	ContentType string `protobuf:"bytes,8,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
 	// 1 for an artifact stored as one object; N for N parts plus an index.
 	PartCount int64 `protobuf:"varint,9,opt,name=part_count,json=partCount,proto3" json:"part_count,omitempty"`
@@ -48,8 +58,10 @@ type Artifact struct {
 	// whose storage provider was retired; reason says why.
 	State string `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty"`
 	// none or envelope-v1.
-	Encryption  string                 `protobuf:"bytes,13,opt,name=encryption,proto3" json:"encryption,omitempty"`
-	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Encryption string `protobuf:"bytes,13,opt,name=encryption,proto3" json:"encryption,omitempty"`
+	// created_at is when the reservation was stored.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// completed_at is when the upload completed; unset until then.
 	CompletedAt *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	// The kind of workload that uploaded it, as its token named: job or
 	// sandbox. workload_id and execution_id are that workload's. A CI
@@ -217,10 +229,15 @@ func (x *Artifact) GetReason() string {
 type Upload struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// part-00000 and on for a part; index for the index object.
-	Part          string                 `protobuf:"bytes,1,opt,name=part,proto3" json:"part,omitempty"`
-	Method        string                 `protobuf:"bytes,2,opt,name=method,proto3" json:"method,omitempty"`
-	Url           string                 `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
-	Headers       map[string]string      `protobuf:"bytes,4,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Part string `protobuf:"bytes,1,opt,name=part,proto3" json:"part,omitempty"`
+	// method is the HTTP method of the request, PUT.
+	Method string `protobuf:"bytes,2,opt,name=method,proto3" json:"method,omitempty"`
+	// url is the presigned URL to send the part to; it writes a staging
+	// object only.
+	Url string `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
+	// headers are the request's headers, which it must carry as given.
+	Headers map[string]string `protobuf:"bytes,4,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// expires_at is when the URL stops working, inside the upload's window.
 	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -291,12 +308,15 @@ func (x *Upload) GetExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// ReserveUploadRequest names the file to upload and its parts.
 type ReserveUploadRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// recording, recording-signed-in, trace, report or image.
 	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
 	// 1 to 128 of A-Z, a-z, 0-9, . _ and -, never . or ..
-	Name        string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// content_type is the file's media type, 1 to 255 bytes and required; it
+	// is stored with the artifact.
 	ContentType string `protobuf:"bytes,3,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
 	// 1 to 64 parts, each 1 byte to 5 GiB.
 	PartSizes []int64 `protobuf:"varint,4,rep,packed,name=part_sizes,json=partSizes,proto3" json:"part_sizes,omitempty"`
@@ -399,10 +419,17 @@ func (x *ReserveUploadRequest) GetRequestKey() string {
 	return ""
 }
 
+// ReserveUploadResponse is a reservation: the artifact's id, one presigned
+// PUT per part, and the window to use them in.
 type ReserveUploadResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	ArtifactId     string                 `protobuf:"bytes,1,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
-	Uploads        []*Upload              `protobuf:"bytes,2,rep,name=uploads,proto3" json:"uploads,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// artifact_id is the reserved artifact's id, which CompleteUpload takes.
+	ArtifactId string `protobuf:"bytes,1,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
+	// uploads are one presigned PUT per part, in part order, then the index
+	// object when part_sizes has more than one part.
+	Uploads []*Upload `protobuf:"bytes,2,rep,name=uploads,proto3" json:"uploads,omitempty"`
+	// upload_deadline is when the reservation ends: the URLs expire about
+	// then, and a completion at or after it is FAILED_PRECONDITION.
 	UploadDeadline *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=upload_deadline,json=uploadDeadline,proto3" json:"upload_deadline,omitempty"`
 	// none or envelope-v1.
 	Encryption string `protobuf:"bytes,4,opt,name=encryption,proto3" json:"encryption,omitempty"`
@@ -487,9 +514,11 @@ func (x *ReserveUploadResponse) GetGuestUpload() bool {
 	return false
 }
 
+// CompleteUploadRequest names the reservation to complete.
 type CompleteUploadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ArtifactId    string                 `protobuf:"bytes,1,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// artifact_id is the id ReserveUpload answered with.
+	ArtifactId    string `protobuf:"bytes,1,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -531,9 +560,11 @@ func (x *CompleteUploadRequest) GetArtifactId() string {
 	return ""
 }
 
+// CompleteUploadResponse is the artifact's record once its parts are final.
 type CompleteUploadResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Artifact      *Artifact              `protobuf:"bytes,1,opt,name=artifact,proto3" json:"artifact,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// artifact is the completed record, with state complete.
+	Artifact      *Artifact `protobuf:"bytes,1,opt,name=artifact,proto3" json:"artifact,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -575,15 +606,27 @@ func (x *CompleteUploadResponse) GetArtifact() *Artifact {
 	return nil
 }
 
+// ListArtifactsRequest names the artifacts a page lists; an empty filter
+// matches every value.
 type ListArtifactsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	EnvironmentId string                 `protobuf:"bytes,2,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
-	WorkloadId    string                 `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
-	ExecutionId   string                 `protobuf:"bytes,4,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
-	Kind          string                 `protobuf:"bytes,5,opt,name=kind,proto3" json:"kind,omitempty"`
-	PageSize      int32                  `protobuf:"varint,6,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	PageToken     string                 `protobuf:"bytes,7,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project_id lists only this project's artifacts.
+	ProjectId string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	// environment_id lists only this environment's artifacts.
+	EnvironmentId string `protobuf:"bytes,2,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
+	// workload_id lists only this workload's artifacts.
+	WorkloadId string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	// execution_id lists only this execution's artifacts.
+	ExecutionId string `protobuf:"bytes,4,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
+	// kind lists only artifacts of this kind; empty matches every kind. A
+	// value that is not one of Toshi's kinds is INVALID_ARGUMENT.
+	Kind string `protobuf:"bytes,5,opt,name=kind,proto3" json:"kind,omitempty"`
+	// page_size is how many artifacts a page holds: 0 is 50, and a value
+	// above 200 is clamped to 200. A negative value is INVALID_ARGUMENT.
+	PageSize int32 `protobuf:"varint,6,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// page_token is the next_page_token of an earlier page; empty starts at
+	// the oldest. A token that does not decode is INVALID_ARGUMENT.
+	PageToken     string `protobuf:"bytes,7,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -667,10 +710,13 @@ func (x *ListArtifactsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListArtifactsResponse is one page of a workspace's artifacts.
 type ListArtifactsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Artifacts     []*Artifact            `protobuf:"bytes,1,rep,name=artifacts,proto3" json:"artifacts,omitempty"`
-	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// artifacts are the page's artifacts, oldest first.
+	Artifacts []*Artifact `protobuf:"bytes,1,rep,name=artifacts,proto3" json:"artifacts,omitempty"`
+	// next_page_token is the page after this one; empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -719,9 +765,11 @@ func (x *ListArtifactsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetArtifactRequest names the artifact to read.
 type GetArtifactRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ArtifactId    string                 `protobuf:"bytes,1,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// artifact_id is the artifact's id.
+	ArtifactId    string `protobuf:"bytes,1,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -763,9 +811,11 @@ func (x *GetArtifactRequest) GetArtifactId() string {
 	return ""
 }
 
+// GetArtifactResponse is one artifact's record.
 type GetArtifactResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Artifact      *Artifact              `protobuf:"bytes,1,opt,name=artifact,proto3" json:"artifact,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// artifact is the record, never a key or a URL.
+	Artifact      *Artifact `protobuf:"bytes,1,opt,name=artifact,proto3" json:"artifact,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -807,9 +857,13 @@ func (x *GetArtifactResponse) GetArtifact() *Artifact {
 	return nil
 }
 
+// GetArtifactDownloadURLRequest names the artifact and object to sign a
+// download for.
 type GetArtifactDownloadURLRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	ArtifactId string                 `protobuf:"bytes,1,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// artifact_id is the artifact's id; one that is not complete is
+	// FAILED_PRECONDITION.
+	ArtifactId string `protobuf:"bytes,1,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
 	// Empty for a one-object artifact; part-00000 and on, or index, for a
 	// multi-part one.
 	Part string `protobuf:"bytes,2,opt,name=part,proto3" json:"part,omitempty"`
@@ -870,11 +924,15 @@ func (x *GetArtifactDownloadURLRequest) GetTtlSeconds() int64 {
 	return 0
 }
 
+// GetArtifactDownloadURLResponse is a signed download of one object.
 type GetArtifactDownloadURLResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Url        string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
-	ExpiresAt  *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
-	Encryption string                 `protobuf:"bytes,3,opt,name=encryption,proto3" json:"encryption,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// url is the signed GET of the object, fetched under the artifact's name.
+	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	// expires_at is when the URL stops working.
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// encryption is the artifact's encryption: none or envelope-v1.
+	Encryption string `protobuf:"bytes,3,opt,name=encryption,proto3" json:"encryption,omitempty"`
 	// The artifact's 32-byte AES-256 data key, set only for envelope-v1.
 	DataKey       []byte `protobuf:"bytes,4,opt,name=data_key,json=dataKey,proto3" json:"data_key,omitempty"`
 	unknownFields protoimpl.UnknownFields

@@ -28,6 +28,7 @@ const (
 type ModelCredentialKind int32
 
 const (
+	// The kind is unset.
 	ModelCredentialKind_MODEL_CREDENTIAL_KIND_UNSPECIFIED ModelCredentialKind = 0
 	// A provider's API key, kept as a key of a project's secrets.
 	ModelCredentialKind_MODEL_CREDENTIAL_KIND_KEY ModelCredentialKind = 1
@@ -80,6 +81,7 @@ func (ModelCredentialKind) EnumDescriptor() ([]byte, []int) {
 type ModelCredentialState int32
 
 const (
+	// The state is unset: the credential is a key.
 	ModelCredentialState_MODEL_CREDENTIAL_STATE_UNSPECIFIED ModelCredentialState = 0
 	// The credential holds a grant the control plane can use.
 	ModelCredentialState_MODEL_CREDENTIAL_STATE_SIGNED_IN ModelCredentialState = 1
@@ -140,8 +142,9 @@ type ModelCredential struct {
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The model provider: "anthropic", "openai", "kimi", "mistral", "xai" or
 	// "gemini".
-	Provider string              `protobuf:"bytes,3,opt,name=provider,proto3" json:"provider,omitempty"`
-	Kind     ModelCredentialKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ModelCredentialKind" json:"kind,omitempty"`
+	Provider string `protobuf:"bytes,3,opt,name=provider,proto3" json:"provider,omitempty"`
+	// What the credential holds: KEY or SIGN_IN.
+	Kind ModelCredentialKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.ModelCredentialKind" json:"kind,omitempty"`
 	// The user id of the person whose own credential it is; empty for the
 	// workspace's.
 	Owner string `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
@@ -154,9 +157,11 @@ type ModelCredential struct {
 	Project string `protobuf:"bytes,8,opt,name=project,proto3" json:"project,omitempty"`
 	// Empty for the shared set.
 	Environment string `protobuf:"bytes,9,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool   `protobuf:"varint,10,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The key is in the workspace's shared set, not an environment's.
+	Shared bool `protobuf:"varint,10,opt,name=shared,proto3" json:"shared,omitempty"`
 	// The key's name in that place.
-	Secret    string                 `protobuf:"bytes,11,opt,name=secret,proto3" json:"secret,omitempty"`
+	Secret string `protobuf:"bytes,11,opt,name=secret,proto3" json:"secret,omitempty"`
+	// When the control plane added the credential.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// The user id of the person who added it.
 	CreatedBy string `protobuf:"bytes,13,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
@@ -401,15 +406,23 @@ func (x *ModelCredentialDefault) GetModelCredential() string {
 	return ""
 }
 
+// CreateModelCredentialRequest names the key credential to add: its name,
+// its provider and place, its key, and optionally the key's next value.
 type CreateModelCredentialRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Name     string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Provider string                 `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The credential's name: 1 to 64 lowercase letters, digits and "-",
+	// starting with a letter; unique among its owner's credentials.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// "anthropic", "openai", "kimi", "mistral", "xai" or "gemini"; any
+	// other is INVALID_ARGUMENT.
+	Provider string `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
 	// The key's place: the project and either environment or shared. A
 	// request that names both, or neither, is INVALID_ARGUMENT.
-	Project     string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
 	Environment string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool   `protobuf:"varint,5,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The key is in the workspace's shared set, not an environment's.
+	Shared bool `protobuf:"varint,5,opt,name=shared,proto3" json:"shared,omitempty"`
 	// The key's name, as PutSecret takes it.
 	Secret string `protobuf:"bytes,6,opt,name=secret,proto3" json:"secret,omitempty"`
 	// When set, the key's next version; never returned.
@@ -518,9 +531,11 @@ func (x *CreateModelCredentialRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateModelCredentialResponse carries the new credential.
 type CreateModelCredentialResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	ModelCredential *ModelCredential       `protobuf:"bytes,1,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The new credential, never its value.
+	ModelCredential *ModelCredential `protobuf:"bytes,1,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -562,9 +577,11 @@ func (x *CreateModelCredentialResponse) GetModelCredential() *ModelCredential {
 	return nil
 }
 
+// GetModelCredentialRequest names the credential to return.
 type GetModelCredentialRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The credential's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -606,9 +623,11 @@ func (x *GetModelCredentialRequest) GetId() string {
 	return ""
 }
 
+// GetModelCredentialResponse carries the credential, never its value.
 type GetModelCredentialResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	ModelCredential *ModelCredential       `protobuf:"bytes,1,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The credential.
+	ModelCredential *ModelCredential `protobuf:"bytes,1,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -650,11 +669,16 @@ func (x *GetModelCredentialResponse) GetModelCredential() *ModelCredential {
 	return nil
 }
 
+// ListModelCredentialsRequest narrows the page to one provider.
 type ListModelCredentialsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Only this provider's credentials when set.
-	Provider      string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
-	PageSize      int32  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	// The page's size: 100 when zero, 1000 at most; negative is
+	// INVALID_ARGUMENT.
+	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From the previous response; empty starts at the first page. A token
+	// this server did not issue is INVALID_ARGUMENT.
 	PageToken     string `protobuf:"bytes,3,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -711,12 +735,15 @@ func (x *ListModelCredentialsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListModelCredentialsResponse carries one page of credentials, by name.
 type ListModelCredentialsResponse struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	ModelCredentials []*ModelCredential     `protobuf:"bytes,1,rep,name=model_credentials,json=modelCredentials,proto3" json:"model_credentials,omitempty"`
-	NextPageToken    string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's credentials.
+	ModelCredentials []*ModelCredential `protobuf:"bytes,1,rep,name=model_credentials,json=modelCredentials,proto3" json:"model_credentials,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListModelCredentialsResponse) Reset() {
@@ -763,14 +790,18 @@ func (x *ListModelCredentialsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// UpdateModelCredentialRequest names the credential and the fields to
+// change.
 type UpdateModelCredentialRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// id names the credential; the fields update_mask names carry the new
 	// values.
-	ModelCredential *ModelCredential       `protobuf:"bytes,1,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
-	UpdateMask      *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	ModelCredential *ModelCredential `protobuf:"bytes,1,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
+	// name, owner, or both; empty, "*" or any other path is
+	// INVALID_ARGUMENT.
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateModelCredentialRequest) Reset() {
@@ -817,9 +848,11 @@ func (x *UpdateModelCredentialRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateModelCredentialResponse carries the credential as it now is.
 type UpdateModelCredentialResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	ModelCredential *ModelCredential       `protobuf:"bytes,1,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The credential, after the change.
+	ModelCredential *ModelCredential `protobuf:"bytes,1,opt,name=model_credential,json=modelCredential,proto3" json:"model_credential,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -861,9 +894,11 @@ func (x *UpdateModelCredentialResponse) GetModelCredential() *ModelCredential {
 	return nil
 }
 
+// DeleteModelCredentialRequest names the credential to remove.
 type DeleteModelCredentialRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The credential's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -905,6 +940,8 @@ func (x *DeleteModelCredentialRequest) GetId() string {
 	return ""
 }
 
+// DeleteModelCredentialResponse is empty: the credential and its key with
+// every version are gone.
 type DeleteModelCredentialResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -941,6 +978,8 @@ func (*DeleteModelCredentialResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{11}
 }
 
+// ListModelSignInProvidersRequest asks for every provider a credential
+// may serve.
 type ListModelSignInProvidersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1051,6 +1090,8 @@ func (x *ModelSignInProvider) GetDisplayName() string {
 	return ""
 }
 
+// ListModelSignInProvidersResponse carries each provider a credential may
+// serve.
 type ListModelSignInProvidersResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Every provider a credential may serve, in a stable order.
@@ -1096,6 +1137,8 @@ func (x *ListModelSignInProvidersResponse) GetProviders() []*ModelSignInProvider
 	return nil
 }
 
+// StartModelSignInRequest names the provider to sign in to and the
+// credential to make or replace.
 type StartModelSignInRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The provider to sign in to, one of the six a credential may serve.
@@ -1105,9 +1148,11 @@ type StartModelSignInRequest struct {
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The credential's place: the project and exactly one of environment or
 	// shared, as CreateModelCredential takes them.
-	Project     string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
 	Environment string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool   `protobuf:"varint,5,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The credential is the shared set's, not an environment's.
+	Shared bool `protobuf:"varint,5,opt,name=shared,proto3" json:"shared,omitempty"`
 	// The credential is the caller's own; true when unset.
 	Own           *bool `protobuf:"varint,6,opt,name=own,proto3,oneof" json:"own,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1491,6 +1536,8 @@ func (x *Failure) GetDetail() string {
 	return ""
 }
 
+// CompleteModelSignInRequest names the sign-in whose prompt asks for a
+// code, and the code.
 type CompleteModelSignInRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// From the sign-in's prompt.
@@ -1545,6 +1592,8 @@ func (x *CompleteModelSignInRequest) GetCode() string {
 	return ""
 }
 
+// CompleteModelSignInResponse is empty; the StartModelSignIn stream ends
+// with the credential.
 type CompleteModelSignInResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1581,6 +1630,7 @@ func (*CompleteModelSignInResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{21}
 }
 
+// CancelModelSignInRequest names the sign-in to end.
 type CancelModelSignInRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// From the sign-in's prompt.
@@ -1626,6 +1676,8 @@ func (x *CancelModelSignInRequest) GetSignInId() string {
 	return ""
 }
 
+// CancelModelSignInResponse is empty; the StartModelSignIn stream ends
+// with a "denied" failure.
 type CancelModelSignInResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields

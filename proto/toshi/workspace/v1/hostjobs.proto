@@ -75,6 +75,7 @@ service HostJobService {
   }
 }
 
+// ListHostJobsRequest selects the host jobs to list.
 message ListHostJobsRequest {
   // Host jobs in any of these states; empty for every state.
   repeated HostJobState states = 1;
@@ -88,32 +89,45 @@ message ListHostJobsRequest {
   // From an earlier response's next_page_token; empty for the first page.
   string page_token = 5;
 }
+// ListHostJobsResponse is one page of host jobs.
 message ListHostJobsResponse {
+  // The page's host jobs, oldest queued first.
   repeated HostJob host_jobs = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// GetHostJobRequest names the host job to return.
 message GetHostJobRequest {
+  // The host job's id.
   string id = 1;
 }
+// GetHostJobResponse holds a host job and its attempts.
 message GetHostJobResponse {
+  // The host job.
   HostJob host_job = 1;
   // The job's attempts, oldest first: one for each assignment to a host,
   // the current one last while the job holds it.
   repeated HostJobAttempt attempts = 2;
 }
 
+// CancelHostJobRequest names the host job to cancel.
 message CancelHostJobRequest {
+  // The host job's id.
   string id = 1;
 }
+// CancelHostJobResponse holds the host job after the cancel.
 message CancelHostJobResponse {
+  // The host job, as the cancel left it.
   HostJob host_job = 1;
 }
 
+// GetHostJobFailureRequest names the host job to explain.
 message GetHostJobFailureRequest {
+  // The host job's id.
   string id = 1;
 }
+// GetHostJobFailureResponse says why a host job ended and what to do next.
 message GetHostJobFailureResponse {
   // Toshi's cause in one word, such as "out_of_memory", "time_limit",
   // "vm_died" or "step_failed"; "none" for a host job that succeeded and
@@ -135,6 +149,8 @@ message GetHostJobFailureResponse {
   string conclusion = 3;
   // The same as HostJobTelemetrySummary.verdict and verdict_reason.
   string verdict = 4;
+  // The sentence that explains verdict, as
+  // HostJobTelemetrySummary.verdict_reason; empty when verdict is.
   string verdict_reason = 5;
   // One line on what to do next.
   string what_to_do = 6;
@@ -156,14 +172,20 @@ message GetHostJobFailureResponse {
   string job_id = 12;
 }
 
+// GetHostJobTelemetryRequest names the host job whose samples to return.
 message GetHostJobTelemetryRequest {
+  // The host job's id.
   string id = 1;
 }
+// GetHostJobTelemetryResponse holds a host job's resource samples and what
+// they add up to.
 message GetHostJobTelemetryResponse {
   // The host job's runner size and its VM's vCPUs and memory, to scale the
   // samples by.
   string size = 1;
+  // The vCPUs of that size; 0 when Toshi does not know the size.
   int32 vcpus = 2;
+  // The memory of that size in MiB; 0 when Toshi does not know the size.
   int64 memory_mib = 3;
   // Unset when the host job has no samples.
   HostJobTelemetrySummary summary = 4;
@@ -171,9 +193,14 @@ message GetHostJobTelemetryResponse {
   repeated HostJobTelemetrySample samples = 5;
 }
 
+// GetHostJobDebugAccessRequest names the host job whose debug access to
+// return.
 message GetHostJobDebugAccessRequest {
+  // The host job's id.
   string id = 1;
 }
+// GetHostJobDebugAccessResponse is what opens a debugging host job's guest
+// ssh.
 message GetHostJobDebugAccessResponse {
   // The guest's login user.
   string user = 1;
@@ -189,10 +216,14 @@ message GetHostJobDebugAccessResponse {
   google.protobuf.Timestamp expires_at = 4;
 }
 
+// StopHostJobDebugRequest names the host job whose debug session to stop.
 message StopHostJobDebugRequest {
+  // The host job's id.
   string id = 1;
 }
+// StopHostJobDebugResponse holds the host job after the stop.
 message StopHostJobDebugResponse {
+  // The host job, as the stop left it.
   HostJob host_job = 1;
 }
 
@@ -200,17 +231,25 @@ message StopHostJobDebugResponse {
 // a workload's job, sandbox or service, in a VM or on a container tier
 // host. A timestamp the host job has not reached yet is unset.
 message HostJob {
+  // The host job's id.
   string id = 1;
   // The repository as "owner/name".
   string repository = 2;
+  // GitHub's id of the workflow job, from the workflow_job webhook Toshi
+  // made the job from; 0 when it did not make the job from one.
   int64 workflow_job_id = 3;
+  // GitHub's id of the workflow run that workflow job belongs to; 0 when
+  // Toshi did not make the job from a workflow job.
   int64 run_id = 4;
   // The GitHub App installation that the job came from.
   int64 installation_id = 5;
   // The runs-on labels.
   repeated string labels = 6;
+  // The OS of the job's runner size: "linux", "windows" or "macos".
   string os = 7;
+  // The job's runner size, such as "toshi-linux-4x".
   string size = 8;
+  // The job's state.
   HostJobState state = 9;
   // The host the job is assigned to, when it is one of the workspace's own
   // hosts. Empty while the job is queued, and for a host Toshi runs for
@@ -218,9 +257,14 @@ message HostJob {
   string host_id = 10;
   // The VM the job runs in; empty until the host starts one.
   string instance_id = 11;
+  // When the job was queued.
   google.protobuf.Timestamp queued_at = 12;
+  // When the scheduler assigned the job's current attempt to a host.
   google.protobuf.Timestamp assigned_at = 13;
+  // When the job started: its runner started, or for a Workspace API job
+  // its host admitted the start of its command.
   google.protobuf.Timestamp started_at = 14;
+  // When the job finished.
   google.protobuf.Timestamp finished_at = 15;
   // GitHub's conclusion for a completed job, such as "success".
   string conclusion = 16;
@@ -260,6 +304,7 @@ message HostJob {
   // When the debug session started and when it expires; unset for a job
   // that never had one.
   google.protobuf.Timestamp debug_started_at = 25;
+  // When the debug session ends.
   google.protobuf.Timestamp debug_until = 26;
   // What the job's resource samples add up to; unset when it has none.
   HostJobTelemetrySummary telemetry = 27;
@@ -382,6 +427,7 @@ message HostJob {
   // the attempt started, and for a job that ended before any did; the
   // host it was assigned to is host_id.
   string runner_id = 49;
+  // The runner's name; set with runner_id.
   string runner_name = 50;
   // The current attempt once it started, counting from 1: each assignment
   // of the job is one, and a requeue makes the next. 0 until it started,
@@ -421,10 +467,15 @@ message HostJobAttempt {
   // As HostJob.runner_id and HostJob.runner_name; empty when no runner was
   // named for the assignment.
   string runner_id = 2;
+  // The runner's name; empty when no runner was named for the assignment.
   string runner_name = 3;
+  // The host the attempt was assigned to, as HostJob.host_id.
   string host_id = 4;
+  // The VM the attempt ran in; empty when its host started none.
   string instance_id = 5;
+  // The kind of provider that created instance_id, as HostJob.provider.
   string provider = 6;
+  // When the attempt was assigned to its host.
   google.protobuf.Timestamp assigned_at = 7;
   // Unset when the attempt was assigned and never started.
   google.protobuf.Timestamp started_at = 8;
@@ -441,6 +492,7 @@ message HostJobAttempt {
 
 // HostJobState is where a host job is in its life cycle.
 enum HostJobState {
+  // The state is not set.
   HOST_JOB_STATE_UNSPECIFIED = 0;
   // Waiting for a host.
   HOST_JOB_STATE_QUEUED = 1;
@@ -465,6 +517,7 @@ enum HostJobState {
 
 // HostJobKind is the kind of workload a host job runs.
 enum HostJobKind {
+  // The kind is not set.
   HOST_JOB_KIND_UNSPECIFIED = 0;
   // A job: it ends when its runner exits or at its time limit.
   HOST_JOB_KIND_JOB = 1;
@@ -531,6 +584,8 @@ message HostJobCache {
   // The size of the committed generation in bytes, and how long the
   // write-back took in milliseconds.
   int64 generation_bytes = 5;
+  // How long the write-back took in milliseconds; 0 unless write_back is
+  // "committed".
   int64 write_back_ms = 6;
   // The fields above in one line, as the dashboard's job page and
   // GetHostJobFailure show it, such as "warm
@@ -541,16 +596,32 @@ message HostJobCache {
 // HostJobTelemetrySample is the same as toshi.agent.v1.TelemetrySample: one
 // window of a job VM's resource use.
 message HostJobTelemetrySample {
+  // The end of the window.
   google.protobuf.Timestamp at = 1;
+  // The length of the window in milliseconds.
   int32 window_ms = 2;
+  // The CPU time the VM's processes used in the window, in milliseconds.
   int64 cpu_ms = 3;
+  // The time the VM's threads waited for a host CPU in the window, in
+  // milliseconds.
   int64 cpu_wait_ms = 4;
+  // The most memory in use inside the guest in the window, in MiB. Unset
+  // when the guest does not report it.
   optional int64 guest_memory_mib = 5;
+  // The host resident memory of the VM at its highest in the window, in MiB.
   int64 host_memory_mib = 6;
+  // The bytes the VM read from its disks in the window.
   int64 disk_read_bytes = 7;
+  // The bytes the VM wrote to its disks in the window.
   int64 disk_write_bytes = 8;
+  // The bytes the guest received on its network interfaces in the window.
+  // Unset when the guest does not report them.
   optional int64 net_rx_bytes = 9;
+  // The bytes the guest sent on its network interfaces in the window.
+  // Unset when the guest does not report them.
   optional int64 net_tx_bytes = 10;
+  // The processes the guest kernel's out-of-memory killer killed in the
+  // window. Unset when the guest does not report it.
   optional int32 oom_kills = 11;
 }
 
@@ -560,13 +631,19 @@ message HostJobTelemetrySample {
 // counts as passed; one with a failed re-run and none passed counts as
 // failed again. Toshi re-runs and hides nothing for it.
 message HostJobFailureHistory {
+  // The number of days the counts reach back from now: 30.
   int32 days = 1;
+  // The failures whose re-run passed.
   int32 passed_on_rerun = 2;
+  // The failures with a failed re-run and none that passed.
   int32 failed_again = 3;
   // The job's failing step, and the counts of the failures at a step of
   // the same name. Empty and 0 when Toshi knows no failing step.
   string step = 4;
+  // The count of the failures at that step whose re-run passed.
   int32 step_passed_on_rerun = 5;
+  // The count of the failures at that step with a failed re-run and none
+  // that passed.
   int32 step_failed_again = 6;
   // The counts in a sentence or two; it says the failure is likely a
   // flake only when the job failed on its own and passed on re-run at

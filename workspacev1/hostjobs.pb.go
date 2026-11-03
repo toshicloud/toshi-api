@@ -27,6 +27,7 @@ const (
 type HostJobState int32
 
 const (
+	// The state is not set.
 	HostJobState_HOST_JOB_STATE_UNSPECIFIED HostJobState = 0
 	// Waiting for a host.
 	HostJobState_HOST_JOB_STATE_QUEUED HostJobState = 1
@@ -108,6 +109,7 @@ func (HostJobState) EnumDescriptor() ([]byte, []int) {
 type HostJobKind int32
 
 const (
+	// The kind is not set.
 	HostJobKind_HOST_JOB_KIND_UNSPECIFIED HostJobKind = 0
 	// A job: it ends when its runner exits or at its time limit.
 	HostJobKind_HOST_JOB_KIND_JOB HostJobKind = 1
@@ -162,6 +164,7 @@ func (HostJobKind) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_hostjobs_proto_rawDescGZIP(), []int{1}
 }
 
+// ListHostJobsRequest selects the host jobs to list.
 type ListHostJobsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Host jobs in any of these states; empty for every state.
@@ -244,9 +247,11 @@ func (x *ListHostJobsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListHostJobsResponse is one page of host jobs.
 type ListHostJobsResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	HostJobs []*HostJob             `protobuf:"bytes,1,rep,name=host_jobs,json=hostJobs,proto3" json:"host_jobs,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's host jobs, oldest queued first.
+	HostJobs []*HostJob `protobuf:"bytes,1,rep,name=host_jobs,json=hostJobs,proto3" json:"host_jobs,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -297,9 +302,11 @@ func (x *ListHostJobsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetHostJobRequest names the host job to return.
 type GetHostJobRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host job's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -341,9 +348,11 @@ func (x *GetHostJobRequest) GetId() string {
 	return ""
 }
 
+// GetHostJobResponse holds a host job and its attempts.
 type GetHostJobResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	HostJob *HostJob               `protobuf:"bytes,1,opt,name=host_job,json=hostJob,proto3" json:"host_job,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host job.
+	HostJob *HostJob `protobuf:"bytes,1,opt,name=host_job,json=hostJob,proto3" json:"host_job,omitempty"`
 	// The job's attempts, oldest first: one for each assignment to a host,
 	// the current one last while the job holds it.
 	Attempts      []*HostJobAttempt `protobuf:"bytes,2,rep,name=attempts,proto3" json:"attempts,omitempty"`
@@ -395,9 +404,11 @@ func (x *GetHostJobResponse) GetAttempts() []*HostJobAttempt {
 	return nil
 }
 
+// CancelHostJobRequest names the host job to cancel.
 type CancelHostJobRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host job's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -439,9 +450,11 @@ func (x *CancelHostJobRequest) GetId() string {
 	return ""
 }
 
+// CancelHostJobResponse holds the host job after the cancel.
 type CancelHostJobResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	HostJob       *HostJob               `protobuf:"bytes,1,opt,name=host_job,json=hostJob,proto3" json:"host_job,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host job, as the cancel left it.
+	HostJob       *HostJob `protobuf:"bytes,1,opt,name=host_job,json=hostJob,proto3" json:"host_job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -483,9 +496,11 @@ func (x *CancelHostJobResponse) GetHostJob() *HostJob {
 	return nil
 }
 
+// GetHostJobFailureRequest names the host job to explain.
 type GetHostJobFailureRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host job's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -527,6 +542,7 @@ func (x *GetHostJobFailureRequest) GetId() string {
 	return ""
 }
 
+// GetHostJobFailureResponse says why a host job ended and what to do next.
 type GetHostJobFailureResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Toshi's cause in one word, such as "out_of_memory", "time_limit",
@@ -548,7 +564,9 @@ type GetHostJobFailureResponse struct {
 	// Empty when GitHub has not concluded it.
 	Conclusion string `protobuf:"bytes,3,opt,name=conclusion,proto3" json:"conclusion,omitempty"`
 	// The same as HostJobTelemetrySummary.verdict and verdict_reason.
-	Verdict       string `protobuf:"bytes,4,opt,name=verdict,proto3" json:"verdict,omitempty"`
+	Verdict string `protobuf:"bytes,4,opt,name=verdict,proto3" json:"verdict,omitempty"`
+	// The sentence that explains verdict, as
+	// HostJobTelemetrySummary.verdict_reason; empty when verdict is.
 	VerdictReason string `protobuf:"bytes,5,opt,name=verdict_reason,json=verdictReason,proto3" json:"verdict_reason,omitempty"`
 	// One line on what to do next.
 	WhatToDo string `protobuf:"bytes,6,opt,name=what_to_do,json=whatToDo,proto3" json:"what_to_do,omitempty"`
@@ -677,9 +695,11 @@ func (x *GetHostJobFailureResponse) GetJobId() string {
 	return ""
 }
 
+// GetHostJobTelemetryRequest names the host job whose samples to return.
 type GetHostJobTelemetryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host job's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -721,13 +741,17 @@ func (x *GetHostJobTelemetryRequest) GetId() string {
 	return ""
 }
 
+// GetHostJobTelemetryResponse holds a host job's resource samples and what
+// they add up to.
 type GetHostJobTelemetryResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The host job's runner size and its VM's vCPUs and memory, to scale the
 	// samples by.
-	Size      string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
-	Vcpus     int32  `protobuf:"varint,2,opt,name=vcpus,proto3" json:"vcpus,omitempty"`
-	MemoryMib int64  `protobuf:"varint,3,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
+	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
+	// The vCPUs of that size; 0 when Toshi does not know the size.
+	Vcpus int32 `protobuf:"varint,2,opt,name=vcpus,proto3" json:"vcpus,omitempty"`
+	// The memory of that size in MiB; 0 when Toshi does not know the size.
+	MemoryMib int64 `protobuf:"varint,3,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
 	// Unset when the host job has no samples.
 	Summary *HostJobTelemetrySummary `protobuf:"bytes,4,opt,name=summary,proto3" json:"summary,omitempty"`
 	// Oldest first.
@@ -801,9 +825,12 @@ func (x *GetHostJobTelemetryResponse) GetSamples() []*HostJobTelemetrySample {
 	return nil
 }
 
+// GetHostJobDebugAccessRequest names the host job whose debug access to
+// return.
 type GetHostJobDebugAccessRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host job's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -845,6 +872,8 @@ func (x *GetHostJobDebugAccessRequest) GetId() string {
 	return ""
 }
 
+// GetHostJobDebugAccessResponse is what opens a debugging host job's guest
+// ssh.
 type GetHostJobDebugAccessResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The guest's login user.
@@ -921,9 +950,11 @@ func (x *GetHostJobDebugAccessResponse) GetExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// StopHostJobDebugRequest names the host job whose debug session to stop.
 type StopHostJobDebugRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host job's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -965,9 +996,11 @@ func (x *StopHostJobDebugRequest) GetId() string {
 	return ""
 }
 
+// StopHostJobDebugResponse holds the host job after the stop.
 type StopHostJobDebugResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	HostJob       *HostJob               `protobuf:"bytes,1,opt,name=host_job,json=hostJob,proto3" json:"host_job,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The host job, as the stop left it.
+	HostJob       *HostJob `protobuf:"bytes,1,opt,name=host_job,json=hostJob,proto3" json:"host_job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1014,27 +1047,40 @@ func (x *StopHostJobDebugResponse) GetHostJob() *HostJob {
 // host. A timestamp the host job has not reached yet is unset.
 type HostJob struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The host job's id.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The repository as "owner/name".
-	Repository    string `protobuf:"bytes,2,opt,name=repository,proto3" json:"repository,omitempty"`
-	WorkflowJobId int64  `protobuf:"varint,3,opt,name=workflow_job_id,json=workflowJobId,proto3" json:"workflow_job_id,omitempty"`
-	RunId         int64  `protobuf:"varint,4,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	Repository string `protobuf:"bytes,2,opt,name=repository,proto3" json:"repository,omitempty"`
+	// GitHub's id of the workflow job, from the workflow_job webhook Toshi
+	// made the job from; 0 when it did not make the job from one.
+	WorkflowJobId int64 `protobuf:"varint,3,opt,name=workflow_job_id,json=workflowJobId,proto3" json:"workflow_job_id,omitempty"`
+	// GitHub's id of the workflow run that workflow job belongs to; 0 when
+	// Toshi did not make the job from a workflow job.
+	RunId int64 `protobuf:"varint,4,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
 	// The GitHub App installation that the job came from.
 	InstallationId int64 `protobuf:"varint,5,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
 	// The runs-on labels.
-	Labels []string     `protobuf:"bytes,6,rep,name=labels,proto3" json:"labels,omitempty"`
-	Os     string       `protobuf:"bytes,7,opt,name=os,proto3" json:"os,omitempty"`
-	Size   string       `protobuf:"bytes,8,opt,name=size,proto3" json:"size,omitempty"`
-	State  HostJobState `protobuf:"varint,9,opt,name=state,proto3,enum=toshi.workspace.v1.HostJobState" json:"state,omitempty"`
+	Labels []string `protobuf:"bytes,6,rep,name=labels,proto3" json:"labels,omitempty"`
+	// The OS of the job's runner size: "linux", "windows" or "macos".
+	Os string `protobuf:"bytes,7,opt,name=os,proto3" json:"os,omitempty"`
+	// The job's runner size, such as "toshi-linux-4x".
+	Size string `protobuf:"bytes,8,opt,name=size,proto3" json:"size,omitempty"`
+	// The job's state.
+	State HostJobState `protobuf:"varint,9,opt,name=state,proto3,enum=toshi.workspace.v1.HostJobState" json:"state,omitempty"`
 	// The host the job is assigned to, when it is one of the workspace's own
 	// hosts. Empty while the job is queued, and for a host Toshi runs for
 	// many workspaces.
 	HostId string `protobuf:"bytes,10,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
 	// The VM the job runs in; empty until the host starts one.
-	InstanceId string                 `protobuf:"bytes,11,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
-	QueuedAt   *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
+	InstanceId string `protobuf:"bytes,11,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	// When the job was queued.
+	QueuedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
+	// When the scheduler assigned the job's current attempt to a host.
 	AssignedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
-	StartedAt  *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	// When the job started: its runner started, or for a Workspace API job
+	// its host admitted the start of its command.
+	StartedAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	// When the job finished.
 	FinishedAt *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
 	// GitHub's conclusion for a completed job, such as "success".
 	Conclusion string `protobuf:"bytes,16,opt,name=conclusion,proto3" json:"conclusion,omitempty"`
@@ -1074,7 +1120,8 @@ type HostJob struct {
 	// When the debug session started and when it expires; unset for a job
 	// that never had one.
 	DebugStartedAt *timestamppb.Timestamp `protobuf:"bytes,25,opt,name=debug_started_at,json=debugStartedAt,proto3" json:"debug_started_at,omitempty"`
-	DebugUntil     *timestamppb.Timestamp `protobuf:"bytes,26,opt,name=debug_until,json=debugUntil,proto3" json:"debug_until,omitempty"`
+	// When the debug session ends.
+	DebugUntil *timestamppb.Timestamp `protobuf:"bytes,26,opt,name=debug_until,json=debugUntil,proto3" json:"debug_until,omitempty"`
 	// What the job's resource samples add up to; unset when it has none.
 	Telemetry *HostJobTelemetrySummary `protobuf:"bytes,27,opt,name=telemetry,proto3" json:"telemetry,omitempty"`
 	// Why the latest runner started for the job exited without running it,
@@ -1195,7 +1242,8 @@ type HostJob struct {
 	// with, for a Workspace API job its attempt's name as both. Unset until
 	// the attempt started, and for a job that ended before any did; the
 	// host it was assigned to is host_id.
-	RunnerId   string `protobuf:"bytes,49,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
+	RunnerId string `protobuf:"bytes,49,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
+	// The runner's name; set with runner_id.
 	RunnerName string `protobuf:"bytes,50,opt,name=runner_name,json=runnerName,proto3" json:"runner_name,omitempty"`
 	// The current attempt once it started, counting from 1: each assignment
 	// of the job is one, and a requeue makes the next. 0 until it started,
@@ -1680,11 +1728,16 @@ type HostJobAttempt struct {
 	Attempt int32 `protobuf:"varint,1,opt,name=attempt,proto3" json:"attempt,omitempty"`
 	// As HostJob.runner_id and HostJob.runner_name; empty when no runner was
 	// named for the assignment.
-	RunnerId   string                 `protobuf:"bytes,2,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
-	RunnerName string                 `protobuf:"bytes,3,opt,name=runner_name,json=runnerName,proto3" json:"runner_name,omitempty"`
-	HostId     string                 `protobuf:"bytes,4,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
-	InstanceId string                 `protobuf:"bytes,5,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
-	Provider   string                 `protobuf:"bytes,6,opt,name=provider,proto3" json:"provider,omitempty"`
+	RunnerId string `protobuf:"bytes,2,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
+	// The runner's name; empty when no runner was named for the assignment.
+	RunnerName string `protobuf:"bytes,3,opt,name=runner_name,json=runnerName,proto3" json:"runner_name,omitempty"`
+	// The host the attempt was assigned to, as HostJob.host_id.
+	HostId string `protobuf:"bytes,4,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
+	// The VM the attempt ran in; empty when its host started none.
+	InstanceId string `protobuf:"bytes,5,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	// The kind of provider that created instance_id, as HostJob.provider.
+	Provider string `protobuf:"bytes,6,opt,name=provider,proto3" json:"provider,omitempty"`
+	// When the attempt was assigned to its host.
 	AssignedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
 	// Unset when the attempt was assigned and never started.
 	StartedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
@@ -1967,7 +2020,9 @@ type HostJobCache struct {
 	// The size of the committed generation in bytes, and how long the
 	// write-back took in milliseconds.
 	GenerationBytes int64 `protobuf:"varint,5,opt,name=generation_bytes,json=generationBytes,proto3" json:"generation_bytes,omitempty"`
-	WriteBackMs     int64 `protobuf:"varint,6,opt,name=write_back_ms,json=writeBackMs,proto3" json:"write_back_ms,omitempty"`
+	// How long the write-back took in milliseconds; 0 unless write_back is
+	// "committed".
+	WriteBackMs int64 `protobuf:"varint,6,opt,name=write_back_ms,json=writeBackMs,proto3" json:"write_back_ms,omitempty"`
 	// The fields above in one line, as the dashboard's job page and
 	// GetHostJobFailure show it, such as "warm
 	// from generation 3 on host h1; wrote generation 4 (1.2 GiB in 14 s)".
@@ -2058,20 +2113,36 @@ func (x *HostJobCache) GetLine() string {
 // HostJobTelemetrySample is the same as toshi.agent.v1.TelemetrySample: one
 // window of a job VM's resource use.
 type HostJobTelemetrySample struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	At             *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=at,proto3" json:"at,omitempty"`
-	WindowMs       int32                  `protobuf:"varint,2,opt,name=window_ms,json=windowMs,proto3" json:"window_ms,omitempty"`
-	CpuMs          int64                  `protobuf:"varint,3,opt,name=cpu_ms,json=cpuMs,proto3" json:"cpu_ms,omitempty"`
-	CpuWaitMs      int64                  `protobuf:"varint,4,opt,name=cpu_wait_ms,json=cpuWaitMs,proto3" json:"cpu_wait_ms,omitempty"`
-	GuestMemoryMib *int64                 `protobuf:"varint,5,opt,name=guest_memory_mib,json=guestMemoryMib,proto3,oneof" json:"guest_memory_mib,omitempty"`
-	HostMemoryMib  int64                  `protobuf:"varint,6,opt,name=host_memory_mib,json=hostMemoryMib,proto3" json:"host_memory_mib,omitempty"`
-	DiskReadBytes  int64                  `protobuf:"varint,7,opt,name=disk_read_bytes,json=diskReadBytes,proto3" json:"disk_read_bytes,omitempty"`
-	DiskWriteBytes int64                  `protobuf:"varint,8,opt,name=disk_write_bytes,json=diskWriteBytes,proto3" json:"disk_write_bytes,omitempty"`
-	NetRxBytes     *int64                 `protobuf:"varint,9,opt,name=net_rx_bytes,json=netRxBytes,proto3,oneof" json:"net_rx_bytes,omitempty"`
-	NetTxBytes     *int64                 `protobuf:"varint,10,opt,name=net_tx_bytes,json=netTxBytes,proto3,oneof" json:"net_tx_bytes,omitempty"`
-	OomKills       *int32                 `protobuf:"varint,11,opt,name=oom_kills,json=oomKills,proto3,oneof" json:"oom_kills,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The end of the window.
+	At *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=at,proto3" json:"at,omitempty"`
+	// The length of the window in milliseconds.
+	WindowMs int32 `protobuf:"varint,2,opt,name=window_ms,json=windowMs,proto3" json:"window_ms,omitempty"`
+	// The CPU time the VM's processes used in the window, in milliseconds.
+	CpuMs int64 `protobuf:"varint,3,opt,name=cpu_ms,json=cpuMs,proto3" json:"cpu_ms,omitempty"`
+	// The time the VM's threads waited for a host CPU in the window, in
+	// milliseconds.
+	CpuWaitMs int64 `protobuf:"varint,4,opt,name=cpu_wait_ms,json=cpuWaitMs,proto3" json:"cpu_wait_ms,omitempty"`
+	// The most memory in use inside the guest in the window, in MiB. Unset
+	// when the guest does not report it.
+	GuestMemoryMib *int64 `protobuf:"varint,5,opt,name=guest_memory_mib,json=guestMemoryMib,proto3,oneof" json:"guest_memory_mib,omitempty"`
+	// The host resident memory of the VM at its highest in the window, in MiB.
+	HostMemoryMib int64 `protobuf:"varint,6,opt,name=host_memory_mib,json=hostMemoryMib,proto3" json:"host_memory_mib,omitempty"`
+	// The bytes the VM read from its disks in the window.
+	DiskReadBytes int64 `protobuf:"varint,7,opt,name=disk_read_bytes,json=diskReadBytes,proto3" json:"disk_read_bytes,omitempty"`
+	// The bytes the VM wrote to its disks in the window.
+	DiskWriteBytes int64 `protobuf:"varint,8,opt,name=disk_write_bytes,json=diskWriteBytes,proto3" json:"disk_write_bytes,omitempty"`
+	// The bytes the guest received on its network interfaces in the window.
+	// Unset when the guest does not report them.
+	NetRxBytes *int64 `protobuf:"varint,9,opt,name=net_rx_bytes,json=netRxBytes,proto3,oneof" json:"net_rx_bytes,omitempty"`
+	// The bytes the guest sent on its network interfaces in the window.
+	// Unset when the guest does not report them.
+	NetTxBytes *int64 `protobuf:"varint,10,opt,name=net_tx_bytes,json=netTxBytes,proto3,oneof" json:"net_tx_bytes,omitempty"`
+	// The processes the guest kernel's out-of-memory killer killed in the
+	// window. Unset when the guest does not report it.
+	OomKills      *int32 `protobuf:"varint,11,opt,name=oom_kills,json=oomKills,proto3,oneof" json:"oom_kills,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *HostJobTelemetrySample) Reset() {
@@ -2187,15 +2258,21 @@ func (x *HostJobTelemetrySample) GetOomKills() int32 {
 // counts as passed; one with a failed re-run and none passed counts as
 // failed again. Toshi re-runs and hides nothing for it.
 type HostJobFailureHistory struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Days          int32                  `protobuf:"varint,1,opt,name=days,proto3" json:"days,omitempty"`
-	PassedOnRerun int32                  `protobuf:"varint,2,opt,name=passed_on_rerun,json=passedOnRerun,proto3" json:"passed_on_rerun,omitempty"`
-	FailedAgain   int32                  `protobuf:"varint,3,opt,name=failed_again,json=failedAgain,proto3" json:"failed_again,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The number of days the counts reach back from now: 30.
+	Days int32 `protobuf:"varint,1,opt,name=days,proto3" json:"days,omitempty"`
+	// The failures whose re-run passed.
+	PassedOnRerun int32 `protobuf:"varint,2,opt,name=passed_on_rerun,json=passedOnRerun,proto3" json:"passed_on_rerun,omitempty"`
+	// The failures with a failed re-run and none that passed.
+	FailedAgain int32 `protobuf:"varint,3,opt,name=failed_again,json=failedAgain,proto3" json:"failed_again,omitempty"`
 	// The job's failing step, and the counts of the failures at a step of
 	// the same name. Empty and 0 when Toshi knows no failing step.
-	Step              string `protobuf:"bytes,4,opt,name=step,proto3" json:"step,omitempty"`
-	StepPassedOnRerun int32  `protobuf:"varint,5,opt,name=step_passed_on_rerun,json=stepPassedOnRerun,proto3" json:"step_passed_on_rerun,omitempty"`
-	StepFailedAgain   int32  `protobuf:"varint,6,opt,name=step_failed_again,json=stepFailedAgain,proto3" json:"step_failed_again,omitempty"`
+	Step string `protobuf:"bytes,4,opt,name=step,proto3" json:"step,omitempty"`
+	// The count of the failures at that step whose re-run passed.
+	StepPassedOnRerun int32 `protobuf:"varint,5,opt,name=step_passed_on_rerun,json=stepPassedOnRerun,proto3" json:"step_passed_on_rerun,omitempty"`
+	// The count of the failures at that step with a failed re-run and none
+	// that passed.
+	StepFailedAgain int32 `protobuf:"varint,6,opt,name=step_failed_again,json=stepFailedAgain,proto3" json:"step_failed_again,omitempty"`
 	// The counts in a sentence or two; it says the failure is likely a
 	// flake only when the job failed on its own and passed on re-run at
 	// least twice. Empty when every count is 0.

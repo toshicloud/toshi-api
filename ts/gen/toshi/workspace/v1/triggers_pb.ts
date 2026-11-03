@@ -76,6 +76,8 @@ export type Trigger = Message<"toshi.workspace.v1.Trigger"> & {
   filter?: TriggerFilter | undefined;
 
   /**
+   * What it does with the event it matches. Required.
+   *
    * @generated from field: toshi.workspace.v1.TriggerAction action = 8;
    */
   action: TriggerAction;
@@ -191,6 +193,8 @@ export type TriggerJson = {
   filter?: TriggerFilterJson;
 
   /**
+   * What it does with the event it matches. Required.
+   *
    * @generated from field: toshi.workspace.v1.TriggerAction action = 8;
    */
   action?: TriggerActionJson;
@@ -321,18 +325,24 @@ export type TriggerTarget = Message<"toshi.workspace.v1.TriggerTarget"> & {
    */
   target: {
     /**
+     * A sandbox the CREATE makes.
+     *
      * @generated from field: toshi.workspace.v1.TriggerSandbox sandbox = 1;
      */
     value: TriggerSandbox;
     case: "sandbox";
   } | {
     /**
+     * A sandbox per pull request the CREATE makes.
+     *
      * @generated from field: toshi.workspace.v1.TriggerPreview preview = 2;
      */
     value: TriggerPreview;
     case: "preview";
   } | {
     /**
+     * The service event endpoint DELIVER posts the event to.
+     *
      * @generated from field: toshi.workspace.v1.TriggerServiceEndpoint service = 3;
      */
     value: TriggerServiceEndpoint;
@@ -348,16 +358,22 @@ export type TriggerTarget = Message<"toshi.workspace.v1.TriggerTarget"> & {
  */
 export type TriggerTargetJson = {
   /**
+   * A sandbox the CREATE makes.
+   *
    * @generated from field: toshi.workspace.v1.TriggerSandbox sandbox = 1;
    */
   sandbox?: TriggerSandboxJson;
 
   /**
+   * A sandbox per pull request the CREATE makes.
+   *
    * @generated from field: toshi.workspace.v1.TriggerPreview preview = 2;
    */
   preview?: TriggerPreviewJson;
 
   /**
+   * The service event endpoint DELIVER posts the event to.
+   *
    * @generated from field: toshi.workspace.v1.TriggerServiceEndpoint service = 3;
    */
   service?: TriggerServiceEndpointJson;
@@ -596,15 +612,21 @@ export const TriggerSandboxSchema: GenMessage<TriggerSandbox, {jsonType: Trigger
   messageDesc(file_toshi_workspace_v1_triggers, 5);
 
 /**
+ * CreateTriggerRequest creates a trigger in a project's environment.
+ *
  * @generated from message toshi.workspace.v1.CreateTriggerRequest
  */
 export type CreateTriggerRequest = Message<"toshi.workspace.v1.CreateTriggerRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -617,21 +639,32 @@ export type CreateTriggerRequest = Message<"toshi.workspace.v1.CreateTriggerRequ
   trigger?: Trigger | undefined;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+   * means no retry protection. A retry with the same key and request
+   * answers as the first call did; another request fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * CreateTriggerRequest creates a trigger in a project's environment.
+ *
  * @generated from message toshi.workspace.v1.CreateTriggerRequest
  */
 export type CreateTriggerRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -644,6 +677,11 @@ export type CreateTriggerRequestJson = {
   trigger?: TriggerJson;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+   * means no retry protection. A retry with the same key and request
+   * answers as the first call did; another request fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -657,20 +695,28 @@ export const CreateTriggerRequestSchema: GenMessage<CreateTriggerRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_triggers, 6);
 
 /**
+ * CreateTriggerResponse is the trigger as created, with its defaults.
+ *
  * @generated from message toshi.workspace.v1.CreateTriggerResponse
  */
 export type CreateTriggerResponse = Message<"toshi.workspace.v1.CreateTriggerResponse"> & {
   /**
+   * The trigger as stored.
+   *
    * @generated from field: toshi.workspace.v1.Trigger trigger = 1;
    */
   trigger?: Trigger | undefined;
 };
 
 /**
+ * CreateTriggerResponse is the trigger as created, with its defaults.
+ *
  * @generated from message toshi.workspace.v1.CreateTriggerResponse
  */
 export type CreateTriggerResponseJson = {
   /**
+   * The trigger as stored.
+   *
    * @generated from field: toshi.workspace.v1.Trigger trigger = 1;
    */
   trigger?: TriggerJson;
@@ -684,40 +730,56 @@ export const CreateTriggerResponseSchema: GenMessage<CreateTriggerResponse, {jso
   messageDesc(file_toshi_workspace_v1_triggers, 7);
 
 /**
+ * GetTriggerRequest names one trigger.
+ *
  * @generated from message toshi.workspace.v1.GetTriggerRequest
  */
 export type GetTriggerRequest = Message<"toshi.workspace.v1.GetTriggerRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The trigger's id.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 };
 
 /**
+ * GetTriggerRequest names one trigger.
+ *
  * @generated from message toshi.workspace.v1.GetTriggerRequest
  */
 export type GetTriggerRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The trigger's id.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -731,20 +793,28 @@ export const GetTriggerRequestSchema: GenMessage<GetTriggerRequest, {jsonType: G
   messageDesc(file_toshi_workspace_v1_triggers, 8);
 
 /**
+ * GetTriggerResponse is the trigger asked for.
+ *
  * @generated from message toshi.workspace.v1.GetTriggerResponse
  */
 export type GetTriggerResponse = Message<"toshi.workspace.v1.GetTriggerResponse"> & {
   /**
+   * The trigger as stored.
+   *
    * @generated from field: toshi.workspace.v1.Trigger trigger = 1;
    */
   trigger?: Trigger | undefined;
 };
 
 /**
+ * GetTriggerResponse is the trigger asked for.
+ *
  * @generated from message toshi.workspace.v1.GetTriggerResponse
  */
 export type GetTriggerResponseJson = {
   /**
+   * The trigger as stored.
+   *
    * @generated from field: toshi.workspace.v1.Trigger trigger = 1;
    */
   trigger?: TriggerJson;
@@ -758,15 +828,21 @@ export const GetTriggerResponseSchema: GenMessage<GetTriggerResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_triggers, 9);
 
 /**
+ * ListTriggersRequest asks for a page of the environment's triggers.
+ *
  * @generated from message toshi.workspace.v1.ListTriggersRequest
  */
 export type ListTriggersRequest = Message<"toshi.workspace.v1.ListTriggersRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -787,15 +863,21 @@ export type ListTriggersRequest = Message<"toshi.workspace.v1.ListTriggersReques
 };
 
 /**
+ * ListTriggersRequest asks for a page of the environment's triggers.
+ *
  * @generated from message toshi.workspace.v1.ListTriggersRequest
  */
 export type ListTriggersRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -823,10 +905,14 @@ export const ListTriggersRequestSchema: GenMessage<ListTriggersRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_triggers, 10);
 
 /**
+ * ListTriggersResponse is a page of triggers.
+ *
  * @generated from message toshi.workspace.v1.ListTriggersResponse
  */
 export type ListTriggersResponse = Message<"toshi.workspace.v1.ListTriggersResponse"> & {
   /**
+   * The page's triggers, in name order.
+   *
    * @generated from field: repeated toshi.workspace.v1.Trigger triggers = 1;
    */
   triggers: Trigger[];
@@ -840,10 +926,14 @@ export type ListTriggersResponse = Message<"toshi.workspace.v1.ListTriggersRespo
 };
 
 /**
+ * ListTriggersResponse is a page of triggers.
+ *
  * @generated from message toshi.workspace.v1.ListTriggersResponse
  */
 export type ListTriggersResponseJson = {
   /**
+   * The page's triggers, in name order.
+   *
    * @generated from field: repeated toshi.workspace.v1.Trigger triggers = 1;
    */
   triggers?: TriggerJson[];
@@ -864,20 +954,28 @@ export const ListTriggersResponseSchema: GenMessage<ListTriggersResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_triggers, 11);
 
 /**
+ * UpdateTriggerRequest changes a trigger's fields.
+ *
  * @generated from message toshi.workspace.v1.UpdateTriggerRequest
  */
 export type UpdateTriggerRequest = Message<"toshi.workspace.v1.UpdateTriggerRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The trigger's id.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
@@ -890,31 +988,48 @@ export type UpdateTriggerRequest = Message<"toshi.workspace.v1.UpdateTriggerRequ
   trigger?: Trigger | undefined;
 
   /**
+   * The fields to set: at least one, and each one of name, events, filter,
+   * action, target, key, idle_timeout and forks. A path naming another
+   * field, source among them, fails with INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 5;
    */
   updateMask?: FieldMask | undefined;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+   * means no retry protection. A retry with the same key and request
+   * answers as the first call did; another request fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 6;
    */
   requestKey: string;
 };
 
 /**
+ * UpdateTriggerRequest changes a trigger's fields.
+ *
  * @generated from message toshi.workspace.v1.UpdateTriggerRequest
  */
 export type UpdateTriggerRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The trigger's id.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -927,11 +1042,20 @@ export type UpdateTriggerRequestJson = {
   trigger?: TriggerJson;
 
   /**
+   * The fields to set: at least one, and each one of name, events, filter,
+   * action, target, key, idle_timeout and forks. A path naming another
+   * field, source among them, fails with INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 5;
    */
   updateMask?: FieldMaskJson;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+   * means no retry protection. A retry with the same key and request
+   * answers as the first call did; another request fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 6;
    */
   requestKey?: string;
@@ -945,20 +1069,28 @@ export const UpdateTriggerRequestSchema: GenMessage<UpdateTriggerRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_triggers, 12);
 
 /**
+ * UpdateTriggerResponse is the trigger as updated.
+ *
  * @generated from message toshi.workspace.v1.UpdateTriggerResponse
  */
 export type UpdateTriggerResponse = Message<"toshi.workspace.v1.UpdateTriggerResponse"> & {
   /**
+   * The trigger as stored.
+   *
    * @generated from field: toshi.workspace.v1.Trigger trigger = 1;
    */
   trigger?: Trigger | undefined;
 };
 
 /**
+ * UpdateTriggerResponse is the trigger as updated.
+ *
  * @generated from message toshi.workspace.v1.UpdateTriggerResponse
  */
 export type UpdateTriggerResponseJson = {
   /**
+   * The trigger as stored.
+   *
    * @generated from field: toshi.workspace.v1.Trigger trigger = 1;
    */
   trigger?: TriggerJson;
@@ -972,50 +1104,76 @@ export const UpdateTriggerResponseSchema: GenMessage<UpdateTriggerResponse, {jso
   messageDesc(file_toshi_workspace_v1_triggers, 13);
 
 /**
+ * DeleteTriggerRequest deletes one trigger.
+ *
  * @generated from message toshi.workspace.v1.DeleteTriggerRequest
  */
 export type DeleteTriggerRequest = Message<"toshi.workspace.v1.DeleteTriggerRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The trigger's id.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+   * means no retry protection. A retry with the same key and request
+   * answers as the first call did; another request fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * DeleteTriggerRequest deletes one trigger.
+ *
  * @generated from message toshi.workspace.v1.DeleteTriggerRequest
  */
 export type DeleteTriggerRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The trigger's id.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes; empty
+   * means no retry protection. A retry with the same key and request
+   * answers as the first call did; another request fails with
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -1029,12 +1187,16 @@ export const DeleteTriggerRequestSchema: GenMessage<DeleteTriggerRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_triggers, 14);
 
 /**
+ * DeleteTriggerResponse is empty.
+ *
  * @generated from message toshi.workspace.v1.DeleteTriggerResponse
  */
 export type DeleteTriggerResponse = Message<"toshi.workspace.v1.DeleteTriggerResponse"> & {
 };
 
 /**
+ * DeleteTriggerResponse is empty.
+ *
  * @generated from message toshi.workspace.v1.DeleteTriggerResponse
  */
 export type DeleteTriggerResponseJson = {
@@ -1054,6 +1216,9 @@ export const DeleteTriggerResponseSchema: GenMessage<DeleteTriggerResponse, {jso
  */
 export enum TriggerAction {
   /**
+   * Unset; a create or update that names it fails with INVALID_ARGUMENT,
+   * and the server never returns the value.
+   *
    * @generated from enum value: TRIGGER_ACTION_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

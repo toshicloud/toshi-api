@@ -25,26 +25,38 @@ export const file_toshi_workspace_v1_artifacts: GenFile = /*@__PURE__*/
  */
 export type Artifact = Message<"toshi.workspace.v1.Artifact"> & {
   /**
+   * id is the artifact's id, `art-` and random hex, set at reservation.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * project_id is the project the upload's token named.
+   *
    * @generated from field: string project_id = 2;
    */
   projectId: string;
 
   /**
+   * environment_id is the environment the upload's token named.
+   *
    * @generated from field: string environment_id = 3;
    */
   environmentId: string;
 
   /**
+   * workload_id is the workload the token named; for a CI job, its host
+   * job's id.
+   *
    * @generated from field: string workload_id = 4;
    */
   workloadId: string;
 
   /**
+   * execution_id is the execution the token named: a job's attempt,
+   * renewed when the job is retried.
+   *
    * @generated from field: string execution_id = 5;
    */
   executionId: string;
@@ -57,11 +69,16 @@ export type Artifact = Message<"toshi.workspace.v1.Artifact"> & {
   kind: string;
 
   /**
+   * name is the file's name; a one-object artifact's object carries it.
+   *
    * @generated from field: string name = 7;
    */
   name: string;
 
   /**
+   * content_type is the media type of the file, kept as the upload declared
+   * it.
+   *
    * @generated from field: string content_type = 8;
    */
   contentType: string;
@@ -105,11 +122,15 @@ export type Artifact = Message<"toshi.workspace.v1.Artifact"> & {
   encryption: string;
 
   /**
+   * created_at is when the reservation was stored.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 14;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * completed_at is when the upload completed; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp completed_at = 15;
    */
   completedAt?: Timestamp | undefined;
@@ -141,26 +162,38 @@ export type Artifact = Message<"toshi.workspace.v1.Artifact"> & {
  */
 export type ArtifactJson = {
   /**
+   * id is the artifact's id, `art-` and random hex, set at reservation.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * project_id is the project the upload's token named.
+   *
    * @generated from field: string project_id = 2;
    */
   projectId?: string;
 
   /**
+   * environment_id is the environment the upload's token named.
+   *
    * @generated from field: string environment_id = 3;
    */
   environmentId?: string;
 
   /**
+   * workload_id is the workload the token named; for a CI job, its host
+   * job's id.
+   *
    * @generated from field: string workload_id = 4;
    */
   workloadId?: string;
 
   /**
+   * execution_id is the execution the token named: a job's attempt,
+   * renewed when the job is retried.
+   *
    * @generated from field: string execution_id = 5;
    */
   executionId?: string;
@@ -173,11 +206,16 @@ export type ArtifactJson = {
   kind?: string;
 
   /**
+   * name is the file's name; a one-object artifact's object carries it.
+   *
    * @generated from field: string name = 7;
    */
   name?: string;
 
   /**
+   * content_type is the media type of the file, kept as the upload declared
+   * it.
+   *
    * @generated from field: string content_type = 8;
    */
   contentType?: string;
@@ -221,11 +259,15 @@ export type ArtifactJson = {
   encryption?: string;
 
   /**
+   * created_at is when the reservation was stored.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 14;
    */
   createdAt?: TimestampJson;
 
   /**
+   * completed_at is when the upload completed; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp completed_at = 15;
    */
   completedAt?: TimestampJson;
@@ -271,21 +313,30 @@ export type Upload = Message<"toshi.workspace.v1.Upload"> & {
   part: string;
 
   /**
+   * method is the HTTP method of the request, PUT.
+   *
    * @generated from field: string method = 2;
    */
   method: string;
 
   /**
+   * url is the presigned URL to send the part to; it writes a staging
+   * object only.
+   *
    * @generated from field: string url = 3;
    */
   url: string;
 
   /**
+   * headers are the request's headers, which it must carry as given.
+   *
    * @generated from field: map<string, string> headers = 4;
    */
   headers: { [key: string]: string };
 
   /**
+   * expires_at is when the URL stops working, inside the upload's window.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 5;
    */
   expiresAt?: Timestamp | undefined;
@@ -306,21 +357,30 @@ export type UploadJson = {
   part?: string;
 
   /**
+   * method is the HTTP method of the request, PUT.
+   *
    * @generated from field: string method = 2;
    */
   method?: string;
 
   /**
+   * url is the presigned URL to send the part to; it writes a staging
+   * object only.
+   *
    * @generated from field: string url = 3;
    */
   url?: string;
 
   /**
+   * headers are the request's headers, which it must carry as given.
+   *
    * @generated from field: map<string, string> headers = 4;
    */
   headers?: { [key: string]: string };
 
   /**
+   * expires_at is when the URL stops working, inside the upload's window.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 5;
    */
   expiresAt?: TimestampJson;
@@ -334,6 +394,8 @@ export const UploadSchema: GenMessage<Upload, {jsonType: UploadJson}> = /*@__PUR
   messageDesc(file_toshi_workspace_v1_artifacts, 1);
 
 /**
+ * ReserveUploadRequest names the file to upload and its parts.
+ *
  * @generated from message toshi.workspace.v1.ReserveUploadRequest
  */
 export type ReserveUploadRequest = Message<"toshi.workspace.v1.ReserveUploadRequest"> & {
@@ -352,6 +414,9 @@ export type ReserveUploadRequest = Message<"toshi.workspace.v1.ReserveUploadRequ
   name: string;
 
   /**
+   * content_type is the file's media type, 1 to 255 bytes and required; it
+   * is stored with the artifact.
+   *
    * @generated from field: string content_type = 3;
    */
   contentType: string;
@@ -396,6 +461,8 @@ export type ReserveUploadRequest = Message<"toshi.workspace.v1.ReserveUploadRequ
 };
 
 /**
+ * ReserveUploadRequest names the file to upload and its parts.
+ *
  * @generated from message toshi.workspace.v1.ReserveUploadRequest
  */
 export type ReserveUploadRequestJson = {
@@ -414,6 +481,9 @@ export type ReserveUploadRequestJson = {
   name?: string;
 
   /**
+   * content_type is the file's media type, 1 to 255 bytes and required; it
+   * is stored with the artifact.
+   *
    * @generated from field: string content_type = 3;
    */
   contentType?: string;
@@ -465,20 +535,31 @@ export const ReserveUploadRequestSchema: GenMessage<ReserveUploadRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_artifacts, 2);
 
 /**
+ * ReserveUploadResponse is a reservation: the artifact's id, one presigned
+ * PUT per part, and the window to use them in.
+ *
  * @generated from message toshi.workspace.v1.ReserveUploadResponse
  */
 export type ReserveUploadResponse = Message<"toshi.workspace.v1.ReserveUploadResponse"> & {
   /**
+   * artifact_id is the reserved artifact's id, which CompleteUpload takes.
+   *
    * @generated from field: string artifact_id = 1;
    */
   artifactId: string;
 
   /**
+   * uploads are one presigned PUT per part, in part order, then the index
+   * object when part_sizes has more than one part.
+   *
    * @generated from field: repeated toshi.workspace.v1.Upload uploads = 2;
    */
   uploads: Upload[];
 
   /**
+   * upload_deadline is when the reservation ends: the URLs expire about
+   * then, and a completion at or after it is FAILED_PRECONDITION.
+   *
    * @generated from field: google.protobuf.Timestamp upload_deadline = 3;
    */
   uploadDeadline?: Timestamp | undefined;
@@ -507,20 +588,31 @@ export type ReserveUploadResponse = Message<"toshi.workspace.v1.ReserveUploadRes
 };
 
 /**
+ * ReserveUploadResponse is a reservation: the artifact's id, one presigned
+ * PUT per part, and the window to use them in.
+ *
  * @generated from message toshi.workspace.v1.ReserveUploadResponse
  */
 export type ReserveUploadResponseJson = {
   /**
+   * artifact_id is the reserved artifact's id, which CompleteUpload takes.
+   *
    * @generated from field: string artifact_id = 1;
    */
   artifactId?: string;
 
   /**
+   * uploads are one presigned PUT per part, in part order, then the index
+   * object when part_sizes has more than one part.
+   *
    * @generated from field: repeated toshi.workspace.v1.Upload uploads = 2;
    */
   uploads?: UploadJson[];
 
   /**
+   * upload_deadline is when the reservation ends: the URLs expire about
+   * then, and a completion at or after it is FAILED_PRECONDITION.
+   *
    * @generated from field: google.protobuf.Timestamp upload_deadline = 3;
    */
   uploadDeadline?: TimestampJson;
@@ -556,20 +648,28 @@ export const ReserveUploadResponseSchema: GenMessage<ReserveUploadResponse, {jso
   messageDesc(file_toshi_workspace_v1_artifacts, 3);
 
 /**
+ * CompleteUploadRequest names the reservation to complete.
+ *
  * @generated from message toshi.workspace.v1.CompleteUploadRequest
  */
 export type CompleteUploadRequest = Message<"toshi.workspace.v1.CompleteUploadRequest"> & {
   /**
+   * artifact_id is the id ReserveUpload answered with.
+   *
    * @generated from field: string artifact_id = 1;
    */
   artifactId: string;
 };
 
 /**
+ * CompleteUploadRequest names the reservation to complete.
+ *
  * @generated from message toshi.workspace.v1.CompleteUploadRequest
  */
 export type CompleteUploadRequestJson = {
   /**
+   * artifact_id is the id ReserveUpload answered with.
+   *
    * @generated from field: string artifact_id = 1;
    */
   artifactId?: string;
@@ -583,20 +683,28 @@ export const CompleteUploadRequestSchema: GenMessage<CompleteUploadRequest, {jso
   messageDesc(file_toshi_workspace_v1_artifacts, 4);
 
 /**
+ * CompleteUploadResponse is the artifact's record once its parts are final.
+ *
  * @generated from message toshi.workspace.v1.CompleteUploadResponse
  */
 export type CompleteUploadResponse = Message<"toshi.workspace.v1.CompleteUploadResponse"> & {
   /**
+   * artifact is the completed record, with state complete.
+   *
    * @generated from field: toshi.workspace.v1.Artifact artifact = 1;
    */
   artifact?: Artifact | undefined;
 };
 
 /**
+ * CompleteUploadResponse is the artifact's record once its parts are final.
+ *
  * @generated from message toshi.workspace.v1.CompleteUploadResponse
  */
 export type CompleteUploadResponseJson = {
   /**
+   * artifact is the completed record, with state complete.
+   *
    * @generated from field: toshi.workspace.v1.Artifact artifact = 1;
    */
   artifact?: ArtifactJson;
@@ -610,80 +718,120 @@ export const CompleteUploadResponseSchema: GenMessage<CompleteUploadResponse, {j
   messageDesc(file_toshi_workspace_v1_artifacts, 5);
 
 /**
+ * ListArtifactsRequest names the artifacts a page lists; an empty filter
+ * matches every value.
+ *
  * @generated from message toshi.workspace.v1.ListArtifactsRequest
  */
 export type ListArtifactsRequest = Message<"toshi.workspace.v1.ListArtifactsRequest"> & {
   /**
+   * project_id lists only this project's artifacts.
+   *
    * @generated from field: string project_id = 1;
    */
   projectId: string;
 
   /**
+   * environment_id lists only this environment's artifacts.
+   *
    * @generated from field: string environment_id = 2;
    */
   environmentId: string;
 
   /**
+   * workload_id lists only this workload's artifacts.
+   *
    * @generated from field: string workload_id = 3;
    */
   workloadId: string;
 
   /**
+   * execution_id lists only this execution's artifacts.
+   *
    * @generated from field: string execution_id = 4;
    */
   executionId: string;
 
   /**
+   * kind lists only artifacts of this kind; empty matches every kind. A
+   * value that is not one of Toshi's kinds is INVALID_ARGUMENT.
+   *
    * @generated from field: string kind = 5;
    */
   kind: string;
 
   /**
+   * page_size is how many artifacts a page holds: 0 is 50, and a value
+   * above 200 is clamped to 200. A negative value is INVALID_ARGUMENT.
+   *
    * @generated from field: int32 page_size = 6;
    */
   pageSize: number;
 
   /**
+   * page_token is the next_page_token of an earlier page; empty starts at
+   * the oldest. A token that does not decode is INVALID_ARGUMENT.
+   *
    * @generated from field: string page_token = 7;
    */
   pageToken: string;
 };
 
 /**
+ * ListArtifactsRequest names the artifacts a page lists; an empty filter
+ * matches every value.
+ *
  * @generated from message toshi.workspace.v1.ListArtifactsRequest
  */
 export type ListArtifactsRequestJson = {
   /**
+   * project_id lists only this project's artifacts.
+   *
    * @generated from field: string project_id = 1;
    */
   projectId?: string;
 
   /**
+   * environment_id lists only this environment's artifacts.
+   *
    * @generated from field: string environment_id = 2;
    */
   environmentId?: string;
 
   /**
+   * workload_id lists only this workload's artifacts.
+   *
    * @generated from field: string workload_id = 3;
    */
   workloadId?: string;
 
   /**
+   * execution_id lists only this execution's artifacts.
+   *
    * @generated from field: string execution_id = 4;
    */
   executionId?: string;
 
   /**
+   * kind lists only artifacts of this kind; empty matches every kind. A
+   * value that is not one of Toshi's kinds is INVALID_ARGUMENT.
+   *
    * @generated from field: string kind = 5;
    */
   kind?: string;
 
   /**
+   * page_size is how many artifacts a page holds: 0 is 50, and a value
+   * above 200 is clamped to 200. A negative value is INVALID_ARGUMENT.
+   *
    * @generated from field: int32 page_size = 6;
    */
   pageSize?: number;
 
   /**
+   * page_token is the next_page_token of an earlier page; empty starts at
+   * the oldest. A token that does not decode is INVALID_ARGUMENT.
+   *
    * @generated from field: string page_token = 7;
    */
   pageToken?: string;
@@ -697,30 +845,42 @@ export const ListArtifactsRequestSchema: GenMessage<ListArtifactsRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_artifacts, 6);
 
 /**
+ * ListArtifactsResponse is one page of a workspace's artifacts.
+ *
  * @generated from message toshi.workspace.v1.ListArtifactsResponse
  */
 export type ListArtifactsResponse = Message<"toshi.workspace.v1.ListArtifactsResponse"> & {
   /**
+   * artifacts are the page's artifacts, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Artifact artifacts = 1;
    */
   artifacts: Artifact[];
 
   /**
+   * next_page_token is the page after this one; empty on the last page.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken: string;
 };
 
 /**
+ * ListArtifactsResponse is one page of a workspace's artifacts.
+ *
  * @generated from message toshi.workspace.v1.ListArtifactsResponse
  */
 export type ListArtifactsResponseJson = {
   /**
+   * artifacts are the page's artifacts, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Artifact artifacts = 1;
    */
   artifacts?: ArtifactJson[];
 
   /**
+   * next_page_token is the page after this one; empty on the last page.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken?: string;
@@ -734,20 +894,28 @@ export const ListArtifactsResponseSchema: GenMessage<ListArtifactsResponse, {jso
   messageDesc(file_toshi_workspace_v1_artifacts, 7);
 
 /**
+ * GetArtifactRequest names the artifact to read.
+ *
  * @generated from message toshi.workspace.v1.GetArtifactRequest
  */
 export type GetArtifactRequest = Message<"toshi.workspace.v1.GetArtifactRequest"> & {
   /**
+   * artifact_id is the artifact's id.
+   *
    * @generated from field: string artifact_id = 1;
    */
   artifactId: string;
 };
 
 /**
+ * GetArtifactRequest names the artifact to read.
+ *
  * @generated from message toshi.workspace.v1.GetArtifactRequest
  */
 export type GetArtifactRequestJson = {
   /**
+   * artifact_id is the artifact's id.
+   *
    * @generated from field: string artifact_id = 1;
    */
   artifactId?: string;
@@ -761,20 +929,28 @@ export const GetArtifactRequestSchema: GenMessage<GetArtifactRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_artifacts, 8);
 
 /**
+ * GetArtifactResponse is one artifact's record.
+ *
  * @generated from message toshi.workspace.v1.GetArtifactResponse
  */
 export type GetArtifactResponse = Message<"toshi.workspace.v1.GetArtifactResponse"> & {
   /**
+   * artifact is the record, never a key or a URL.
+   *
    * @generated from field: toshi.workspace.v1.Artifact artifact = 1;
    */
   artifact?: Artifact | undefined;
 };
 
 /**
+ * GetArtifactResponse is one artifact's record.
+ *
  * @generated from message toshi.workspace.v1.GetArtifactResponse
  */
 export type GetArtifactResponseJson = {
   /**
+   * artifact is the record, never a key or a URL.
+   *
    * @generated from field: toshi.workspace.v1.Artifact artifact = 1;
    */
   artifact?: ArtifactJson;
@@ -788,10 +964,16 @@ export const GetArtifactResponseSchema: GenMessage<GetArtifactResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_artifacts, 9);
 
 /**
+ * GetArtifactDownloadURLRequest names the artifact and object to sign a
+ * download for.
+ *
  * @generated from message toshi.workspace.v1.GetArtifactDownloadURLRequest
  */
 export type GetArtifactDownloadURLRequest = Message<"toshi.workspace.v1.GetArtifactDownloadURLRequest"> & {
   /**
+   * artifact_id is the artifact's id; one that is not complete is
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string artifact_id = 1;
    */
   artifactId: string;
@@ -813,10 +995,16 @@ export type GetArtifactDownloadURLRequest = Message<"toshi.workspace.v1.GetArtif
 };
 
 /**
+ * GetArtifactDownloadURLRequest names the artifact and object to sign a
+ * download for.
+ *
  * @generated from message toshi.workspace.v1.GetArtifactDownloadURLRequest
  */
 export type GetArtifactDownloadURLRequestJson = {
   /**
+   * artifact_id is the artifact's id; one that is not complete is
+   * FAILED_PRECONDITION.
+   *
    * @generated from field: string artifact_id = 1;
    */
   artifactId?: string;
@@ -845,20 +1033,28 @@ export const GetArtifactDownloadURLRequestSchema: GenMessage<GetArtifactDownload
   messageDesc(file_toshi_workspace_v1_artifacts, 10);
 
 /**
+ * GetArtifactDownloadURLResponse is a signed download of one object.
+ *
  * @generated from message toshi.workspace.v1.GetArtifactDownloadURLResponse
  */
 export type GetArtifactDownloadURLResponse = Message<"toshi.workspace.v1.GetArtifactDownloadURLResponse"> & {
   /**
+   * url is the signed GET of the object, fetched under the artifact's name.
+   *
    * @generated from field: string url = 1;
    */
   url: string;
 
   /**
+   * expires_at is when the URL stops working.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 2;
    */
   expiresAt?: Timestamp | undefined;
 
   /**
+   * encryption is the artifact's encryption: none or envelope-v1.
+   *
    * @generated from field: string encryption = 3;
    */
   encryption: string;
@@ -872,20 +1068,28 @@ export type GetArtifactDownloadURLResponse = Message<"toshi.workspace.v1.GetArti
 };
 
 /**
+ * GetArtifactDownloadURLResponse is a signed download of one object.
+ *
  * @generated from message toshi.workspace.v1.GetArtifactDownloadURLResponse
  */
 export type GetArtifactDownloadURLResponseJson = {
   /**
+   * url is the signed GET of the object, fetched under the artifact's name.
+   *
    * @generated from field: string url = 1;
    */
   url?: string;
 
   /**
+   * expires_at is when the URL stops working.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 2;
    */
   expiresAt?: TimestampJson;
 
   /**
+   * encryption is the artifact's encryption: none or envelope-v1.
+   *
    * @generated from field: string encryption = 3;
    */
   encryption?: string;

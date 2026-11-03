@@ -76,14 +76,24 @@ service ArtifactService {
 // Artifact is an uploaded file's record: what it is, who uploaded it, and
 // where its parts are kept, never a key, a URL or key material.
 message Artifact {
+  // id is the artifact's id, `art-` and random hex, set at reservation.
   string id = 1;
+  // project_id is the project the upload's token named.
   string project_id = 2;
+  // environment_id is the environment the upload's token named.
   string environment_id = 3;
+  // workload_id is the workload the token named; for a CI job, its host
+  // job's id.
   string workload_id = 4;
+  // execution_id is the execution the token named: a job's attempt,
+  // renewed when the job is retried.
   string execution_id = 5;
   // recording, recording-signed-in, trace, report or image.
   string kind = 6;
+  // name is the file's name; a one-object artifact's object carries it.
   string name = 7;
+  // content_type is the media type of the file, kept as the upload declared
+  // it.
   string content_type = 8;
   // 1 for an artifact stored as one object; N for N parts plus an index.
   int64 part_count = 9;
@@ -98,7 +108,9 @@ message Artifact {
   string state = 12;
   // none or envelope-v1.
   string encryption = 13;
+  // created_at is when the reservation was stored.
   google.protobuf.Timestamp created_at = 14;
+  // completed_at is when the upload completed; unset until then.
   google.protobuf.Timestamp completed_at = 15;
   // The kind of workload that uploaded it, as its token named: job or
   // sandbox. workload_id and execution_id are that workload's. A CI
@@ -115,17 +127,25 @@ message Artifact {
 message Upload {
   // part-00000 and on for a part; index for the index object.
   string part = 1;
+  // method is the HTTP method of the request, PUT.
   string method = 2;
+  // url is the presigned URL to send the part to; it writes a staging
+  // object only.
   string url = 3;
+  // headers are the request's headers, which it must carry as given.
   map<string, string> headers = 4;
+  // expires_at is when the URL stops working, inside the upload's window.
   google.protobuf.Timestamp expires_at = 5;
 }
 
+// ReserveUploadRequest names the file to upload and its parts.
 message ReserveUploadRequest {
   // recording, recording-signed-in, trace, report or image.
   string kind = 1;
   // 1 to 128 of A-Z, a-z, 0-9, . _ and -, never . or ..
   string name = 2;
+  // content_type is the file's media type, 1 to 255 bytes and required; it
+  // is stored with the artifact.
   string content_type = 3;
   // 1 to 64 parts, each 1 byte to 5 GiB.
   repeated int64 part_sizes = 4;
@@ -147,9 +167,16 @@ message ReserveUploadRequest {
   string request_key = 7;
 }
 
+// ReserveUploadResponse is a reservation: the artifact's id, one presigned
+// PUT per part, and the window to use them in.
 message ReserveUploadResponse {
+  // artifact_id is the reserved artifact's id, which CompleteUpload takes.
   string artifact_id = 1;
+  // uploads are one presigned PUT per part, in part order, then the index
+  // object when part_sizes has more than one part.
   repeated Upload uploads = 2;
+  // upload_deadline is when the reservation ends: the URLs expire about
+  // then, and a completion at or after it is FAILED_PRECONDITION.
   google.protobuf.Timestamp upload_deadline = 3;
   // none or envelope-v1.
   string encryption = 4;
@@ -160,38 +187,65 @@ message ReserveUploadResponse {
   bool guest_upload = 6;
 }
 
+// CompleteUploadRequest names the reservation to complete.
 message CompleteUploadRequest {
+  // artifact_id is the id ReserveUpload answered with.
   string artifact_id = 1;
 }
 
+// CompleteUploadResponse is the artifact's record once its parts are final.
 message CompleteUploadResponse {
+  // artifact is the completed record, with state complete.
   Artifact artifact = 1;
 }
 
+// ListArtifactsRequest names the artifacts a page lists; an empty filter
+// matches every value.
 message ListArtifactsRequest {
+  // project_id lists only this project's artifacts.
   string project_id = 1;
+  // environment_id lists only this environment's artifacts.
   string environment_id = 2;
+  // workload_id lists only this workload's artifacts.
   string workload_id = 3;
+  // execution_id lists only this execution's artifacts.
   string execution_id = 4;
+  // kind lists only artifacts of this kind; empty matches every kind. A
+  // value that is not one of Toshi's kinds is INVALID_ARGUMENT.
   string kind = 5;
+  // page_size is how many artifacts a page holds: 0 is 50, and a value
+  // above 200 is clamped to 200. A negative value is INVALID_ARGUMENT.
   int32 page_size = 6;
+  // page_token is the next_page_token of an earlier page; empty starts at
+  // the oldest. A token that does not decode is INVALID_ARGUMENT.
   string page_token = 7;
 }
 
+// ListArtifactsResponse is one page of a workspace's artifacts.
 message ListArtifactsResponse {
+  // artifacts are the page's artifacts, oldest first.
   repeated Artifact artifacts = 1;
+  // next_page_token is the page after this one; empty on the last page.
   string next_page_token = 2;
 }
 
+// GetArtifactRequest names the artifact to read.
 message GetArtifactRequest {
+  // artifact_id is the artifact's id.
   string artifact_id = 1;
 }
 
+// GetArtifactResponse is one artifact's record.
 message GetArtifactResponse {
+  // artifact is the record, never a key or a URL.
   Artifact artifact = 1;
 }
 
+// GetArtifactDownloadURLRequest names the artifact and object to sign a
+// download for.
 message GetArtifactDownloadURLRequest {
+  // artifact_id is the artifact's id; one that is not complete is
+  // FAILED_PRECONDITION.
   string artifact_id = 1;
   // Empty for a one-object artifact; part-00000 and on, or index, for a
   // multi-part one.
@@ -200,9 +254,13 @@ message GetArtifactDownloadURLRequest {
   int64 ttl_seconds = 3;
 }
 
+// GetArtifactDownloadURLResponse is a signed download of one object.
 message GetArtifactDownloadURLResponse {
+  // url is the signed GET of the object, fetched under the artifact's name.
   string url = 1;
+  // expires_at is when the URL stops working.
   google.protobuf.Timestamp expires_at = 2;
+  // encryption is the artifact's encryption: none or envelope-v1.
   string encryption = 3;
   // The artifact's 32-byte AES-256 data key, set only for envelope-v1.
   bytes data_key = 4;

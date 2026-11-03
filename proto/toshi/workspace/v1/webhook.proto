@@ -109,6 +109,8 @@ service WebhookService {
   }
 }
 
+// Webhook is one URL a workspace's events are POSTed to, with the events
+// its filter keeps and the project it is limited to.
 message Webhook {
   // Assigned by the server; unique within the workspace.
   string id = 1;
@@ -119,6 +121,9 @@ message Webhook {
   // event but those a connection received, which only a name or prefix
   // that matches them keeps.
   repeated string events = 3;
+  // Whether it is owed new events; a disabled webhook is owed none, and no
+  // try of it starts. A create sets it from its disabled field, an update
+  // through enabled, and the sender turns it off after a 410 answer.
   bool enabled = 4;
   // The position in the workspace's event log the webhook has read up to,
   // an Event's cursor.
@@ -126,7 +131,9 @@ message Webhook {
   // When the secret the last rotation replaced stops signing; unset when
   // no such secret signs.
   google.protobuf.Timestamp previous_secret_expires_at = 6;
+  // When the webhook was made; set by the server.
   google.protobuf.Timestamp created_at = 7;
+  // When the webhook last changed; set by the server.
   google.protobuf.Timestamp updated_at = 8;
   // Set when events after the webhook's cursor were removed by retention.
   // The webhook is owed nothing until its cursor is moved.
@@ -140,6 +147,7 @@ message Webhook {
 }
 
 enum WebhookDeliveryState {
+  // Never set; a delivery is pending, delivered or dead.
   WEBHOOK_DELIVERY_STATE_UNSPECIFIED = 0;
   // Owed: waiting for its next try, or being tried.
   WEBHOOK_DELIVERY_STATE_PENDING = 1;
@@ -151,10 +159,14 @@ enum WebhookDeliveryState {
 
 // WebhookDelivery is one event owed to one webhook.
 message WebhookDelivery {
+  // The event's ID, the same on every try of every webhook.
   string event_id = 1;
   // The event's cursor.
   string cursor = 2;
+  // The ID of the workload whose event it is; empty when a connection
+  // received the event.
   string workload_id = 3;
+  // Where the delivery stands.
   WebhookDeliveryState state = 4;
   // Tries since the delivery was last due.
   int32 tries = 5;
@@ -164,6 +176,8 @@ message WebhookDelivery {
   int32 last_status = 7;
   // The last try's error, which never carries the URL.
   string last_error = 8;
+  // When it became due: when the event was owed to the webhook, or when a
+  // replay made it due again.
   google.protobuf.Timestamp due_at = 9;
   // When it was delivered or given up.
   google.protobuf.Timestamp done_at = 10;
@@ -173,30 +187,46 @@ message WebhookDelivery {
   optional string replay_of = 12;
 }
 
+// CreateWebhookRequest makes a webhook and its signing secret.
 message CreateWebhookRequest {
+  // The URL to POST to; checked as Webhook.url. Required.
   string url = 1;
+  // The event names or prefixes it is owed, as Webhook.events; empty keeps
+  // every event.
   repeated string events = 2;
   // Set to make the webhook disabled.
   bool disabled = 3;
+  // A key of the caller's choice; empty means no retry protection. A retry
+  // with the same key and request answers as the first call did, with the
+  // same secret while it is the newest; another request fails with
+  // FAILED_PRECONDITION.
   string request_key = 4;
   // The name of a project in the workspace; see Webhook.project.
   string project = 5;
 }
 
+// CreateWebhookResponse is the webhook made, with its signing secret.
 message CreateWebhookResponse {
+  // The webhook as stored.
   Webhook webhook = 1;
   // whsec_ and the base64 of 32 random bytes. No other answer carries it.
   string secret = 2;
 }
 
+// GetWebhookRequest asks for one webhook of the workspace.
 message GetWebhookRequest {
+  // The webhook's id.
   string id = 1;
 }
 
+// GetWebhookResponse is the webhook asked for.
 message GetWebhookResponse {
+  // The webhook.
   Webhook webhook = 1;
 }
 
+// ListWebhooksRequest asks for a page of the workspace's webhooks, in ID
+// order.
 message ListWebhooksRequest {
   // The most webhooks in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -204,44 +234,71 @@ message ListWebhooksRequest {
   string page_token = 2;
 }
 
+// ListWebhooksResponse is a page of webhooks, in ID order.
 message ListWebhooksResponse {
+  // The page's webhooks, in ID order.
   repeated Webhook webhooks = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// UpdateWebhookRequest changes the fields update_mask names.
 message UpdateWebhookRequest {
+  // The webhook's id.
   string id = 1;
   // Carries the new values of the fields update_mask names.
   Webhook webhook = 2;
   // One or more of url, events, project, enabled and cursor.
   google.protobuf.FieldMask update_mask = 3;
+  // A key of the caller's choice; empty means no retry protection. A retry
+  // with the same key and request answers as the first call did; another
+  // request fails with FAILED_PRECONDITION.
   string request_key = 4;
 }
 
+// UpdateWebhookResponse is the webhook as stored.
 message UpdateWebhookResponse {
+  // The webhook as stored.
   Webhook webhook = 1;
 }
 
+// DeleteWebhookRequest deletes one webhook and its deliveries.
 message DeleteWebhookRequest {
+  // The webhook's id.
   string id = 1;
+  // A key of the caller's choice; empty means no retry protection. A retry
+  // with the same key and request answers as the first call did; another
+  // request fails with FAILED_PRECONDITION.
   string request_key = 2;
 }
 
+// DeleteWebhookResponse is empty.
 message DeleteWebhookResponse {}
 
+// RotateWebhookSecretRequest makes a webhook a new signing secret.
 message RotateWebhookSecretRequest {
+  // The webhook's id.
   string id = 1;
+  // A key of the caller's choice; empty means no retry protection. A retry
+  // with the same key and request answers as the first call did, with the
+  // same secret while it is the newest; another request, or one whose
+  // secret a later rotation or the delete replaced, fails with
+  // FAILED_PRECONDITION.
   string request_key = 2;
 }
 
+// RotateWebhookSecretResponse is the webhook and its new secret.
 message RotateWebhookSecretResponse {
+  // The webhook after the rotation; previous_secret_expires_at says when
+  // the replaced secret stops signing.
   Webhook webhook = 1;
   // The new secret, as CreateWebhookResponse's.
   string secret = 2;
 }
 
+// ListWebhookDeliveriesRequest asks for a page of a webhook's deliveries.
 message ListWebhookDeliveriesRequest {
+  // The webhook's id.
   string webhook_id = 1;
   // From an earlier response's next_page_token, or a delivery's cursor:
   // the deliveries of the events after that position. Empty starts at the
@@ -251,20 +308,29 @@ message ListWebhookDeliveriesRequest {
   int32 page_size = 3;
 }
 
+// ListWebhookDeliveriesResponse is a page of deliveries, in event order.
 message ListWebhookDeliveriesResponse {
+  // The page's deliveries, in event order.
   repeated WebhookDelivery deliveries = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// ReplayWebhookEventsRequest makes a webhook owed again the events after a
+// cursor.
 message ReplayWebhookEventsRequest {
+  // The webhook's id.
   string webhook_id = 1;
   // Events after this cursor; empty starts at the oldest event the log
   // keeps. A cursor older than that event fails with OUT_OF_RANGE.
   string cursor = 2;
+  // A key of the caller's choice; empty means no retry protection. A retry
+  // with the same key and request answers as the first call did; another
+  // request fails with FAILED_PRECONDITION.
   string request_key = 3;
 }
 
+// ReplayWebhookEventsResponse says what a replay made due again.
 message ReplayWebhookEventsResponse {
   // How many deliveries were made due again.
   int32 replayed = 1;

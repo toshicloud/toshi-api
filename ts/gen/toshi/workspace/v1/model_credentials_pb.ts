@@ -46,6 +46,8 @@ export type ModelCredential = Message<"toshi.workspace.v1.ModelCredential"> & {
   provider: string;
 
   /**
+   * What the credential holds: KEY or SIGN_IN.
+   *
    * @generated from field: toshi.workspace.v1.ModelCredentialKind kind = 4;
    */
   kind: ModelCredentialKind;
@@ -88,6 +90,8 @@ export type ModelCredential = Message<"toshi.workspace.v1.ModelCredential"> & {
   environment: string;
 
   /**
+   * The key is in the workspace's shared set, not an environment's.
+   *
    * @generated from field: bool shared = 10;
    */
   shared: boolean;
@@ -100,6 +104,8 @@ export type ModelCredential = Message<"toshi.workspace.v1.ModelCredential"> & {
   secret: string;
 
   /**
+   * When the control plane added the credential.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 12;
    */
   createdAt?: Timestamp | undefined;
@@ -189,6 +195,8 @@ export type ModelCredentialJson = {
   provider?: string;
 
   /**
+   * What the credential holds: KEY or SIGN_IN.
+   *
    * @generated from field: toshi.workspace.v1.ModelCredentialKind kind = 4;
    */
   kind?: ModelCredentialKindJson;
@@ -231,6 +239,8 @@ export type ModelCredentialJson = {
   environment?: string;
 
   /**
+   * The key is in the workspace's shared set, not an environment's.
+   *
    * @generated from field: bool shared = 10;
    */
   shared?: boolean;
@@ -243,6 +253,8 @@ export type ModelCredentialJson = {
   secret?: string;
 
   /**
+   * When the control plane added the credential.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 12;
    */
   createdAt?: TimestampJson;
@@ -364,15 +376,24 @@ export const ModelCredentialDefaultSchema: GenMessage<ModelCredentialDefault, {j
   messageDesc(file_toshi_workspace_v1_model_credentials, 1);
 
 /**
+ * CreateModelCredentialRequest names the key credential to add: its name,
+ * its provider and place, its key, and optionally the key's next value.
+ *
  * @generated from message toshi.workspace.v1.CreateModelCredentialRequest
  */
 export type CreateModelCredentialRequest = Message<"toshi.workspace.v1.CreateModelCredentialRequest"> & {
   /**
+   * The credential's name: 1 to 64 lowercase letters, digits and "-",
+   * starting with a letter; unique among its owner's credentials.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * "anthropic", "openai", "kimi", "mistral", "xai" or "gemini"; any
+   * other is INVALID_ARGUMENT.
+   *
    * @generated from field: string provider = 2;
    */
   provider: string;
@@ -386,11 +407,15 @@ export type CreateModelCredentialRequest = Message<"toshi.workspace.v1.CreateMod
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 4;
    */
   environment: string;
 
   /**
+   * The key is in the workspace's shared set, not an environment's.
+   *
    * @generated from field: bool shared = 5;
    */
   shared: boolean;
@@ -428,15 +453,24 @@ export type CreateModelCredentialRequest = Message<"toshi.workspace.v1.CreateMod
 };
 
 /**
+ * CreateModelCredentialRequest names the key credential to add: its name,
+ * its provider and place, its key, and optionally the key's next value.
+ *
  * @generated from message toshi.workspace.v1.CreateModelCredentialRequest
  */
 export type CreateModelCredentialRequestJson = {
   /**
+   * The credential's name: 1 to 64 lowercase letters, digits and "-",
+   * starting with a letter; unique among its owner's credentials.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
 
   /**
+   * "anthropic", "openai", "kimi", "mistral", "xai" or "gemini"; any
+   * other is INVALID_ARGUMENT.
+   *
    * @generated from field: string provider = 2;
    */
   provider?: string;
@@ -450,11 +484,15 @@ export type CreateModelCredentialRequestJson = {
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 4;
    */
   environment?: string;
 
   /**
+   * The key is in the workspace's shared set, not an environment's.
+   *
    * @generated from field: bool shared = 5;
    */
   shared?: boolean;
@@ -499,20 +537,28 @@ export const CreateModelCredentialRequestSchema: GenMessage<CreateModelCredentia
   messageDesc(file_toshi_workspace_v1_model_credentials, 2);
 
 /**
+ * CreateModelCredentialResponse carries the new credential.
+ *
  * @generated from message toshi.workspace.v1.CreateModelCredentialResponse
  */
 export type CreateModelCredentialResponse = Message<"toshi.workspace.v1.CreateModelCredentialResponse"> & {
   /**
+   * The new credential, never its value.
+   *
    * @generated from field: toshi.workspace.v1.ModelCredential model_credential = 1;
    */
   modelCredential?: ModelCredential | undefined;
 };
 
 /**
+ * CreateModelCredentialResponse carries the new credential.
+ *
  * @generated from message toshi.workspace.v1.CreateModelCredentialResponse
  */
 export type CreateModelCredentialResponseJson = {
   /**
+   * The new credential, never its value.
+   *
    * @generated from field: toshi.workspace.v1.ModelCredential model_credential = 1;
    */
   modelCredential?: ModelCredentialJson;
@@ -526,20 +572,28 @@ export const CreateModelCredentialResponseSchema: GenMessage<CreateModelCredenti
   messageDesc(file_toshi_workspace_v1_model_credentials, 3);
 
 /**
+ * GetModelCredentialRequest names the credential to return.
+ *
  * @generated from message toshi.workspace.v1.GetModelCredentialRequest
  */
 export type GetModelCredentialRequest = Message<"toshi.workspace.v1.GetModelCredentialRequest"> & {
   /**
+   * The credential's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * GetModelCredentialRequest names the credential to return.
+ *
  * @generated from message toshi.workspace.v1.GetModelCredentialRequest
  */
 export type GetModelCredentialRequestJson = {
   /**
+   * The credential's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -553,20 +607,28 @@ export const GetModelCredentialRequestSchema: GenMessage<GetModelCredentialReque
   messageDesc(file_toshi_workspace_v1_model_credentials, 4);
 
 /**
+ * GetModelCredentialResponse carries the credential, never its value.
+ *
  * @generated from message toshi.workspace.v1.GetModelCredentialResponse
  */
 export type GetModelCredentialResponse = Message<"toshi.workspace.v1.GetModelCredentialResponse"> & {
   /**
+   * The credential.
+   *
    * @generated from field: toshi.workspace.v1.ModelCredential model_credential = 1;
    */
   modelCredential?: ModelCredential | undefined;
 };
 
 /**
+ * GetModelCredentialResponse carries the credential, never its value.
+ *
  * @generated from message toshi.workspace.v1.GetModelCredentialResponse
  */
 export type GetModelCredentialResponseJson = {
   /**
+   * The credential.
+   *
    * @generated from field: toshi.workspace.v1.ModelCredential model_credential = 1;
    */
   modelCredential?: ModelCredentialJson;
@@ -580,6 +642,8 @@ export const GetModelCredentialResponseSchema: GenMessage<GetModelCredentialResp
   messageDesc(file_toshi_workspace_v1_model_credentials, 5);
 
 /**
+ * ListModelCredentialsRequest narrows the page to one provider.
+ *
  * @generated from message toshi.workspace.v1.ListModelCredentialsRequest
  */
 export type ListModelCredentialsRequest = Message<"toshi.workspace.v1.ListModelCredentialsRequest"> & {
@@ -591,17 +655,25 @@ export type ListModelCredentialsRequest = Message<"toshi.workspace.v1.ListModelC
   provider: string;
 
   /**
+   * The page's size: 100 when zero, 1000 at most; negative is
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: int32 page_size = 2;
    */
   pageSize: number;
 
   /**
+   * From the previous response; empty starts at the first page. A token
+   * this server did not issue is INVALID_ARGUMENT.
+   *
    * @generated from field: string page_token = 3;
    */
   pageToken: string;
 };
 
 /**
+ * ListModelCredentialsRequest narrows the page to one provider.
+ *
  * @generated from message toshi.workspace.v1.ListModelCredentialsRequest
  */
 export type ListModelCredentialsRequestJson = {
@@ -613,11 +685,17 @@ export type ListModelCredentialsRequestJson = {
   provider?: string;
 
   /**
+   * The page's size: 100 when zero, 1000 at most; negative is
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: int32 page_size = 2;
    */
   pageSize?: number;
 
   /**
+   * From the previous response; empty starts at the first page. A token
+   * this server did not issue is INVALID_ARGUMENT.
+   *
    * @generated from field: string page_token = 3;
    */
   pageToken?: string;
@@ -631,30 +709,42 @@ export const ListModelCredentialsRequestSchema: GenMessage<ListModelCredentialsR
   messageDesc(file_toshi_workspace_v1_model_credentials, 6);
 
 /**
+ * ListModelCredentialsResponse carries one page of credentials, by name.
+ *
  * @generated from message toshi.workspace.v1.ListModelCredentialsResponse
  */
 export type ListModelCredentialsResponse = Message<"toshi.workspace.v1.ListModelCredentialsResponse"> & {
   /**
+   * The page's credentials.
+   *
    * @generated from field: repeated toshi.workspace.v1.ModelCredential model_credentials = 1;
    */
   modelCredentials: ModelCredential[];
 
   /**
+   * Empty on the last page.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken: string;
 };
 
 /**
+ * ListModelCredentialsResponse carries one page of credentials, by name.
+ *
  * @generated from message toshi.workspace.v1.ListModelCredentialsResponse
  */
 export type ListModelCredentialsResponseJson = {
   /**
+   * The page's credentials.
+   *
    * @generated from field: repeated toshi.workspace.v1.ModelCredential model_credentials = 1;
    */
   modelCredentials?: ModelCredentialJson[];
 
   /**
+   * Empty on the last page.
+   *
    * @generated from field: string next_page_token = 2;
    */
   nextPageToken?: string;
@@ -668,6 +758,9 @@ export const ListModelCredentialsResponseSchema: GenMessage<ListModelCredentials
   messageDesc(file_toshi_workspace_v1_model_credentials, 7);
 
 /**
+ * UpdateModelCredentialRequest names the credential and the fields to
+ * change.
+ *
  * @generated from message toshi.workspace.v1.UpdateModelCredentialRequest
  */
 export type UpdateModelCredentialRequest = Message<"toshi.workspace.v1.UpdateModelCredentialRequest"> & {
@@ -680,12 +773,18 @@ export type UpdateModelCredentialRequest = Message<"toshi.workspace.v1.UpdateMod
   modelCredential?: ModelCredential | undefined;
 
   /**
+   * name, owner, or both; empty, "*" or any other path is
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMask | undefined;
 };
 
 /**
+ * UpdateModelCredentialRequest names the credential and the fields to
+ * change.
+ *
  * @generated from message toshi.workspace.v1.UpdateModelCredentialRequest
  */
 export type UpdateModelCredentialRequestJson = {
@@ -698,6 +797,9 @@ export type UpdateModelCredentialRequestJson = {
   modelCredential?: ModelCredentialJson;
 
   /**
+   * name, owner, or both; empty, "*" or any other path is
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMaskJson;
@@ -711,20 +813,28 @@ export const UpdateModelCredentialRequestSchema: GenMessage<UpdateModelCredentia
   messageDesc(file_toshi_workspace_v1_model_credentials, 8);
 
 /**
+ * UpdateModelCredentialResponse carries the credential as it now is.
+ *
  * @generated from message toshi.workspace.v1.UpdateModelCredentialResponse
  */
 export type UpdateModelCredentialResponse = Message<"toshi.workspace.v1.UpdateModelCredentialResponse"> & {
   /**
+   * The credential, after the change.
+   *
    * @generated from field: toshi.workspace.v1.ModelCredential model_credential = 1;
    */
   modelCredential?: ModelCredential | undefined;
 };
 
 /**
+ * UpdateModelCredentialResponse carries the credential as it now is.
+ *
  * @generated from message toshi.workspace.v1.UpdateModelCredentialResponse
  */
 export type UpdateModelCredentialResponseJson = {
   /**
+   * The credential, after the change.
+   *
    * @generated from field: toshi.workspace.v1.ModelCredential model_credential = 1;
    */
   modelCredential?: ModelCredentialJson;
@@ -738,20 +848,28 @@ export const UpdateModelCredentialResponseSchema: GenMessage<UpdateModelCredenti
   messageDesc(file_toshi_workspace_v1_model_credentials, 9);
 
 /**
+ * DeleteModelCredentialRequest names the credential to remove.
+ *
  * @generated from message toshi.workspace.v1.DeleteModelCredentialRequest
  */
 export type DeleteModelCredentialRequest = Message<"toshi.workspace.v1.DeleteModelCredentialRequest"> & {
   /**
+   * The credential's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * DeleteModelCredentialRequest names the credential to remove.
+ *
  * @generated from message toshi.workspace.v1.DeleteModelCredentialRequest
  */
 export type DeleteModelCredentialRequestJson = {
   /**
+   * The credential's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -765,12 +883,18 @@ export const DeleteModelCredentialRequestSchema: GenMessage<DeleteModelCredentia
   messageDesc(file_toshi_workspace_v1_model_credentials, 10);
 
 /**
+ * DeleteModelCredentialResponse is empty: the credential and its key with
+ * every version are gone.
+ *
  * @generated from message toshi.workspace.v1.DeleteModelCredentialResponse
  */
 export type DeleteModelCredentialResponse = Message<"toshi.workspace.v1.DeleteModelCredentialResponse"> & {
 };
 
 /**
+ * DeleteModelCredentialResponse is empty: the credential and its key with
+ * every version are gone.
+ *
  * @generated from message toshi.workspace.v1.DeleteModelCredentialResponse
  */
 export type DeleteModelCredentialResponseJson = {
@@ -784,12 +908,18 @@ export const DeleteModelCredentialResponseSchema: GenMessage<DeleteModelCredenti
   messageDesc(file_toshi_workspace_v1_model_credentials, 11);
 
 /**
+ * ListModelSignInProvidersRequest asks for every provider a credential
+ * may serve.
+ *
  * @generated from message toshi.workspace.v1.ListModelSignInProvidersRequest
  */
 export type ListModelSignInProvidersRequest = Message<"toshi.workspace.v1.ListModelSignInProvidersRequest"> & {
 };
 
 /**
+ * ListModelSignInProvidersRequest asks for every provider a credential
+ * may serve.
+ *
  * @generated from message toshi.workspace.v1.ListModelSignInProvidersRequest
  */
 export type ListModelSignInProvidersRequestJson = {
@@ -882,6 +1012,9 @@ export const ModelSignInProviderSchema: GenMessage<ModelSignInProvider, {jsonTyp
   messageDesc(file_toshi_workspace_v1_model_credentials, 13);
 
 /**
+ * ListModelSignInProvidersResponse carries each provider a credential may
+ * serve.
+ *
  * @generated from message toshi.workspace.v1.ListModelSignInProvidersResponse
  */
 export type ListModelSignInProvidersResponse = Message<"toshi.workspace.v1.ListModelSignInProvidersResponse"> & {
@@ -894,6 +1027,9 @@ export type ListModelSignInProvidersResponse = Message<"toshi.workspace.v1.ListM
 };
 
 /**
+ * ListModelSignInProvidersResponse carries each provider a credential may
+ * serve.
+ *
  * @generated from message toshi.workspace.v1.ListModelSignInProvidersResponse
  */
 export type ListModelSignInProvidersResponseJson = {
@@ -913,6 +1049,9 @@ export const ListModelSignInProvidersResponseSchema: GenMessage<ListModelSignInP
   messageDesc(file_toshi_workspace_v1_model_credentials, 14);
 
 /**
+ * StartModelSignInRequest names the provider to sign in to and the
+ * credential to make or replace.
+ *
  * @generated from message toshi.workspace.v1.StartModelSignInRequest
  */
 export type StartModelSignInRequest = Message<"toshi.workspace.v1.StartModelSignInRequest"> & {
@@ -940,11 +1079,15 @@ export type StartModelSignInRequest = Message<"toshi.workspace.v1.StartModelSign
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 4;
    */
   environment: string;
 
   /**
+   * The credential is the shared set's, not an environment's.
+   *
    * @generated from field: bool shared = 5;
    */
   shared: boolean;
@@ -958,6 +1101,9 @@ export type StartModelSignInRequest = Message<"toshi.workspace.v1.StartModelSign
 };
 
 /**
+ * StartModelSignInRequest names the provider to sign in to and the
+ * credential to make or replace.
+ *
  * @generated from message toshi.workspace.v1.StartModelSignInRequest
  */
 export type StartModelSignInRequestJson = {
@@ -985,11 +1131,15 @@ export type StartModelSignInRequestJson = {
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 4;
    */
   environment?: string;
 
   /**
+   * The credential is the shared set's, not an environment's.
+   *
    * @generated from field: bool shared = 5;
    */
   shared?: boolean;
@@ -1277,6 +1427,9 @@ export const FailureSchema: GenMessage<Failure, {jsonType: FailureJson}> = /*@__
   messageDesc(file_toshi_workspace_v1_model_credentials, 19);
 
 /**
+ * CompleteModelSignInRequest names the sign-in whose prompt asks for a
+ * code, and the code.
+ *
  * @generated from message toshi.workspace.v1.CompleteModelSignInRequest
  */
 export type CompleteModelSignInRequest = Message<"toshi.workspace.v1.CompleteModelSignInRequest"> & {
@@ -1296,6 +1449,9 @@ export type CompleteModelSignInRequest = Message<"toshi.workspace.v1.CompleteMod
 };
 
 /**
+ * CompleteModelSignInRequest names the sign-in whose prompt asks for a
+ * code, and the code.
+ *
  * @generated from message toshi.workspace.v1.CompleteModelSignInRequest
  */
 export type CompleteModelSignInRequestJson = {
@@ -1322,12 +1478,18 @@ export const CompleteModelSignInRequestSchema: GenMessage<CompleteModelSignInReq
   messageDesc(file_toshi_workspace_v1_model_credentials, 20);
 
 /**
+ * CompleteModelSignInResponse is empty; the StartModelSignIn stream ends
+ * with the credential.
+ *
  * @generated from message toshi.workspace.v1.CompleteModelSignInResponse
  */
 export type CompleteModelSignInResponse = Message<"toshi.workspace.v1.CompleteModelSignInResponse"> & {
 };
 
 /**
+ * CompleteModelSignInResponse is empty; the StartModelSignIn stream ends
+ * with the credential.
+ *
  * @generated from message toshi.workspace.v1.CompleteModelSignInResponse
  */
 export type CompleteModelSignInResponseJson = {
@@ -1341,6 +1503,8 @@ export const CompleteModelSignInResponseSchema: GenMessage<CompleteModelSignInRe
   messageDesc(file_toshi_workspace_v1_model_credentials, 21);
 
 /**
+ * CancelModelSignInRequest names the sign-in to end.
+ *
  * @generated from message toshi.workspace.v1.CancelModelSignInRequest
  */
 export type CancelModelSignInRequest = Message<"toshi.workspace.v1.CancelModelSignInRequest"> & {
@@ -1353,6 +1517,8 @@ export type CancelModelSignInRequest = Message<"toshi.workspace.v1.CancelModelSi
 };
 
 /**
+ * CancelModelSignInRequest names the sign-in to end.
+ *
  * @generated from message toshi.workspace.v1.CancelModelSignInRequest
  */
 export type CancelModelSignInRequestJson = {
@@ -1372,12 +1538,18 @@ export const CancelModelSignInRequestSchema: GenMessage<CancelModelSignInRequest
   messageDesc(file_toshi_workspace_v1_model_credentials, 22);
 
 /**
+ * CancelModelSignInResponse is empty; the StartModelSignIn stream ends
+ * with a "denied" failure.
+ *
  * @generated from message toshi.workspace.v1.CancelModelSignInResponse
  */
 export type CancelModelSignInResponse = Message<"toshi.workspace.v1.CancelModelSignInResponse"> & {
 };
 
 /**
+ * CancelModelSignInResponse is empty; the StartModelSignIn stream ends
+ * with a "denied" failure.
+ *
  * @generated from message toshi.workspace.v1.CancelModelSignInResponse
  */
 export type CancelModelSignInResponseJson = {
@@ -1397,6 +1569,8 @@ export const CancelModelSignInResponseSchema: GenMessage<CancelModelSignInRespon
  */
 export enum ModelCredentialKind {
   /**
+   * The kind is unset.
+   *
    * @generated from enum value: MODEL_CREDENTIAL_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1436,6 +1610,8 @@ export const ModelCredentialKindSchema: GenEnum<ModelCredentialKind, ModelCreden
  */
 export enum ModelCredentialState {
   /**
+   * The state is unset: the credential is a key.
+   *
    * @generated from enum value: MODEL_CREDENTIAL_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

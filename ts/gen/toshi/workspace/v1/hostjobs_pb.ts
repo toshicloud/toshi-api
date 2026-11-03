@@ -16,6 +16,8 @@ export const file_toshi_workspace_v1_hostjobs: GenFile = /*@__PURE__*/
   fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvaG9zdGpvYnMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSKXAQoTTGlzdEhvc3RKb2JzUmVxdWVzdBIwCgZzdGF0ZXMYASADKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuSG9zdEpvYlN0YXRlEhIKCnJlcG9zaXRvcnkYAiABKAkSEwoLd29ya2xvYWRfaWQYAyABKAkSEQoJcGFnZV9zaXplGAQgASgFEhIKCnBhZ2VfdG9rZW4YBSABKAkiXwoUTGlzdEhvc3RKb2JzUmVzcG9uc2USLgoJaG9zdF9qb2JzGAEgAygLMhsudG9zaGkud29ya3NwYWNlLnYxLkhvc3RKb2ISFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIh8KEUdldEhvc3RKb2JSZXF1ZXN0EgoKAmlkGAEgASgJInkKEkdldEhvc3RKb2JSZXNwb25zZRItCghob3N0X2pvYhgBIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0Sm9iEjQKCGF0dGVtcHRzGAIgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLkhvc3RKb2JBdHRlbXB0IiIKFENhbmNlbEhvc3RKb2JSZXF1ZXN0EgoKAmlkGAEgASgJIkYKFUNhbmNlbEhvc3RKb2JSZXNwb25zZRItCghob3N0X2pvYhgBIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0Sm9iIiYKGEdldEhvc3RKb2JGYWlsdXJlUmVxdWVzdBIKCgJpZBgBIAEoCSKnAgoZR2V0SG9zdEpvYkZhaWx1cmVSZXNwb25zZRINCgVjYXVzZRgBIAEoCRITCgtleHBsYW5hdGlvbhgCIAEoCRISCgpjb25jbHVzaW9uGAMgASgJEg8KB3ZlcmRpY3QYBCABKAkSFgoOdmVyZGljdF9yZWFzb24YBSABKAkSEgoKd2hhdF90b19kbxgGIAEoCRISCgpnaXRodWJfdXJsGAcgASgJEjoKB2hpc3RvcnkYCSABKAsyKS50b3NoaS53b3Jrc3BhY2UudjEuSG9zdEpvYkZhaWx1cmVIaXN0b3J5Eg0KBWNhY2hlGAogASgJEhEKCXRpZXJfbGluZRgLIAEoCRIOCgZqb2JfaWQYDCABKAlKBAgIEAlSDWRhc2hib2FyZF91cmwiKAoaR2V0SG9zdEpvYlRlbGVtZXRyeVJlcXVlc3QSCgoCaWQYASABKAkiyQEKG0dldEhvc3RKb2JUZWxlbWV0cnlSZXNwb25zZRIMCgRzaXplGAEgASgJEg0KBXZjcHVzGAIgASgFEhIKCm1lbW9yeV9taWIYAyABKAMSPAoHc3VtbWFyeRgEIAEoCzIrLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0Sm9iVGVsZW1ldHJ5U3VtbWFyeRI7CgdzYW1wbGVzGAUgAygLMioudG9zaGkud29ya3NwYWNlLnYxLkhvc3RKb2JUZWxlbWV0cnlTYW1wbGUiKgocR2V0SG9zdEpvYkRlYnVnQWNjZXNzUmVxdWVzdBIKCgJpZBgBIAEoCSKGAQodR2V0SG9zdEpvYkRlYnVnQWNjZXNzUmVzcG9uc2USDAoEdXNlchgBIAEoCRITCgtwcml2YXRlX2tleRgCIAEoDBISCgpyZWxheV9wYXRoGAMgASgJEi4KCmV4cGlyZXNfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIiUKF1N0b3BIb3N0Sm9iRGVidWdSZXF1ZXN0EgoKAmlkGAEgASgJIkkKGFN0b3BIb3N0Sm9iRGVidWdSZXNwb25zZRItCghob3N0X2pvYhgBIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0Sm9iIpMNCgdIb3N0Sm9iEgoKAmlkGAEgASgJEhIKCnJlcG9zaXRvcnkYAiABKAkSFwoPd29ya2Zsb3dfam9iX2lkGAMgASgDEg4KBnJ1bl9pZBgEIAEoAxIXCg9pbnN0YWxsYXRpb25faWQYBSABKAMSDgoGbGFiZWxzGAYgAygJEgoKAm9zGAcgASgJEgwKBHNpemUYCCABKAkSLwoFc3RhdGUYCSABKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuSG9zdEpvYlN0YXRlEg8KB2hvc3RfaWQYCiABKAkSEwoLaW5zdGFuY2VfaWQYCyABKAkSLQoJcXVldWVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgthc3NpZ25lZF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKc3RhcnRlZF9hdBgOIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLZmluaXNoZWRfYXQYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmNvbmNsdXNpb24YECABKAkSDQoFZXJyb3IYESABKAkSEwoLc3RvcF9yZWFzb24YEiABKAkSNQoRc3RvcF9yZXF1ZXN0ZWRfYXQYEyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC2hvbGRfcmVhc29uGBQgASgJEjEKDW5leHRfc3RhcnRfYXQYOCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCG93bl9ob3N0GBUgASgIEh8KF2RlYnVnX3JlcXVlc3RlZF9taW51dGVzGBYgASgFEhUKDWRlYnVnX21pbnV0ZXMYFyABKAUSEgoKZGVidWdfbm90ZRgYIAEoCRI0ChBkZWJ1Z19zdGFydGVkX2F0GBkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgtkZWJ1Z191bnRpbBgaIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPgoJdGVsZW1ldHJ5GBsgASgLMisudG9zaGkud29ya3NwYWNlLnYxLkhvc3RKb2JUZWxlbWV0cnlTdW1tYXJ5EhoKEnJ1bm5lcl9leGl0X3JlYXNvbhgcIAEoCRIQCghvdmVyZmxvdxgdIAEoCBI4ChRydW5uZXJfcmVxdWVzdF9zaW5jZRgeIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDwoHb3V0Y29tZRgfIAEoCRIRCglob3N0X2tpbmQYICABKAkSGwoTcHJldmlvdXNfcG9vbF9pbWFnZRghIAEoCRIYChBiaWxsYWJsZV9taW51dGVzGCIgASgDEhgKEGJpbGxhYmxlX3NlY29uZHMYNyABKAESGQoRdXN1YWxfcnVuX3NlY29uZHMYOSABKAESEgoKZ2l0aHViX3VybBgjIAEoCRIVCg13b3JrZmxvd19uYW1lGCQgASgJEi8KBWNhY2hlGCUgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkhvc3RKb2JDYWNoZRI0ChBydW5uZXJfZXhpdGVkX2F0GCYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIZChFydW5uZXJfY29uY2x1c2lvbhgnIAEoCRIMCgR0aWVyGCggASgJEhgKEG1lbW9yeV9saW1pdF9taWIYKSABKAMSEQoJdGllcl9saW5lGCogASgJEi0KBGtpbmQYKyABKA4yHy50b3NoaS53b3Jrc3BhY2UudjEuSG9zdEpvYktpbmQSEwoLd29ya2xvYWRfaWQYLCABKAkSDwoHcHJvamVjdBgtIAEoCRITCgtlbnZpcm9ubWVudBguIAEoCRIQCghwcm92aWRlchgvIAEoCRIOCgZzdGF0dXMYMCABKAkSEQoJcnVubmVyX2lkGDEgASgJEhMKC3J1bm5lcl9uYW1lGDIgASgJEg8KB2F0dGVtcHQYMyABKAUSEwoLcnVuX2F0dGVtcHQYNCABKAUSIQoZc2NyZWVuX3VuYXZhaWxhYmxlX3JlYXNvbhg1IAEoCRISCgpzdG9wX2NhdXNlGDYgASgJEhcKD2NvbnRhaW5lcl9pbWFnZRg6IAEoCRIeChZjb250YWluZXJfaW1hZ2VfZGlnZXN0GDsgASgJIrQCCg5Ib3N0Sm9iQXR0ZW1wdBIPCgdhdHRlbXB0GAEgASgFEhEKCXJ1bm5lcl9pZBgCIAEoCRITCgtydW5uZXJfbmFtZRgDIAEoCRIPCgdob3N0X2lkGAQgASgJEhMKC2luc3RhbmNlX2lkGAUgASgJEhAKCHByb3ZpZGVyGAYgASgJEi8KC2Fzc2lnbmVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpzdGFydGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIvCgtmaW5pc2hlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKY29uY2x1c2lvbhgKIAEoCRILCgNlbmQYCyABKAki9gEKF0hvc3RKb2JUZWxlbWV0cnlTdW1tYXJ5EhIKCm9vbV9raWxsZWQYASABKAgSGQoRY3B1X3Rocm90dGxlZF9wY3QYAiABKAESFwoPcGVha19tZW1vcnlfbWliGAMgASgDEhsKE2NwdV91dGlsaXNhdGlvbl9wY3QYBCABKAESDwoHc2FtcGxlcxgFIAEoBRIYChBtZW1vcnlfbGltaXRfbWliGAYgASgDEg4KBmNwdV9tcxgHIAEoAxISCgpvb21fcmVhc29uGAggASgJEg8KB3ZlcmRpY3QYCSABKAkSFgoOdmVyZGljdF9yZWFzb24YCiABKAkinwEKDEhvc3RKb2JDYWNoZRIOCgZhdHRhY2gYASABKAkSFwoPYmFzZV9nZW5lcmF0aW9uGAIgASgDEhIKCndyaXRlX2JhY2sYAyABKAkSEwoLc2tpcF9yZWFzb24YBCABKAkSGAoQZ2VuZXJhdGlvbl9ieXRlcxgFIAEoAxIVCg13cml0ZV9iYWNrX21zGAYgASgDEgwKBGxpbmUYByABKAki9gIKFkhvc3RKb2JUZWxlbWV0cnlTYW1wbGUSJgoCYXQYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCXdpbmRvd19tcxgCIAEoBRIOCgZjcHVfbXMYAyABKAMSEwoLY3B1X3dhaXRfbXMYBCABKAMSHQoQZ3Vlc3RfbWVtb3J5X21pYhgFIAEoA0gAiAEBEhcKD2hvc3RfbWVtb3J5X21pYhgGIAEoAxIXCg9kaXNrX3JlYWRfYnl0ZXMYByABKAMSGAoQZGlza193cml0ZV9ieXRlcxgIIAEoAxIZCgxuZXRfcnhfYnl0ZXMYCSABKANIAYgBARIZCgxuZXRfdHhfYnl0ZXMYCiABKANIAogBARIWCglvb21fa2lsbHMYCyABKAVIA4gBAUITChFfZ3Vlc3RfbWVtb3J5X21pYkIPCg1fbmV0X3J4X2J5dGVzQg8KDV9uZXRfdHhfYnl0ZXNCDAoKX29vbV9raWxscyKtAQoVSG9zdEpvYkZhaWx1cmVIaXN0b3J5EgwKBGRheXMYASABKAUSFwoPcGFzc2VkX29uX3JlcnVuGAIgASgFEhQKDGZhaWxlZF9hZ2FpbhgDIAEoBRIMCgRzdGVwGAQgASgJEhwKFHN0ZXBfcGFzc2VkX29uX3JlcnVuGAUgASgFEhkKEXN0ZXBfZmFpbGVkX2FnYWluGAYgASgFEhAKCHNlbnRlbmNlGAcgASgJKrECCgxIb3N0Sm9iU3RhdGUSHgoaSE9TVF9KT0JfU1RBVEVfVU5TUEVDSUZJRUQQABIZChVIT1NUX0pPQl9TVEFURV9RVUVVRUQQARIbChdIT1NUX0pPQl9TVEFURV9BU1NJR05FRBACEhsKF0hPU1RfSk9CX1NUQVRFX1NUQVJUSU5HEAMSGgoWSE9TVF9KT0JfU1RBVEVfUlVOTklORxAEEhwKGEhPU1RfSk9CX1NUQVRFX0NPTVBMRVRFRBAFEhkKFUhPU1RfSk9CX1NUQVRFX0ZBSUxFRBAGEhwKGEhPU1RfSk9CX1NUQVRFX0NBTkNFTExFRBAHEhsKF0hPU1RfSk9CX1NUQVRFX1NUT1BQSU5HEAgSHAoYSE9TVF9KT0JfU1RBVEVfREVCVUdHSU5HEAkqeQoLSG9zdEpvYktpbmQSHQoZSE9TVF9KT0JfS0lORF9VTlNQRUNJRklFRBAAEhUKEUhPU1RfSk9CX0tJTkRfSk9CEAESGQoVSE9TVF9KT0JfS0lORF9TQU5EQk9YEAISGQoVSE9TVF9KT0JfS0lORF9TRVJWSUNFEAMy0AcKDkhvc3RKb2JTZXJ2aWNlEnEKDExpc3RIb3N0Sm9icxInLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SG9zdEpvYnNSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkxpc3RIb3N0Sm9ic1Jlc3BvbnNlIg7C8xgKaG9zdHMucmVhZBJrCgpHZXRIb3N0Sm9iEiUudG9zaGkud29ya3NwYWNlLnYxLkdldEhvc3RKb2JSZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLkdldEhvc3RKb2JSZXNwb25zZSIOwvMYCmhvc3RzLnJlYWQSeQoNQ2FuY2VsSG9zdEpvYhIoLnRvc2hpLndvcmtzcGFjZS52MS5DYW5jZWxIb3N0Sm9iUmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5DYW5jZWxIb3N0Sm9iUmVzcG9uc2UiE8LzGAtob3N0cy53cml0ZZD0GAISgAEKEUdldEhvc3RKb2JGYWlsdXJlEiwudG9zaGkud29ya3NwYWNlLnYxLkdldEhvc3RKb2JGYWlsdXJlUmVxdWVzdBotLnRvc2hpLndvcmtzcGFjZS52MS5HZXRIb3N0Sm9iRmFpbHVyZVJlc3BvbnNlIg7C8xgKaG9zdHMucmVhZBKGAQoTR2V0SG9zdEpvYlRlbGVtZXRyeRIuLnRvc2hpLndvcmtzcGFjZS52MS5HZXRIb3N0Sm9iVGVsZW1ldHJ5UmVxdWVzdBovLnRvc2hpLndvcmtzcGFjZS52MS5HZXRIb3N0Sm9iVGVsZW1ldHJ5UmVzcG9uc2UiDsLzGApob3N0cy5yZWFkErUBChVHZXRIb3N0Sm9iRGVidWdBY2Nlc3MSMC50b3NoaS53b3Jrc3BhY2UudjEuR2V0SG9zdEpvYkRlYnVnQWNjZXNzUmVxdWVzdBoxLnRvc2hpLndvcmtzcGFjZS52MS5HZXRIb3N0Sm9iRGVidWdBY2Nlc3NSZXNwb25zZSI3wvMYDWRlYnVnLmNvbm5lY3TS8xgeChxob3N0X2pvYi5kZWJ1Z19hY2Nlc3NfaXNzdWVkkPQYAhKeAQoQU3RvcEhvc3RKb2JEZWJ1ZxIrLnRvc2hpLndvcmtzcGFjZS52MS5TdG9wSG9zdEpvYkRlYnVnUmVxdWVzdBosLnRvc2hpLndvcmtzcGFjZS52MS5TdG9wSG9zdEpvYkRlYnVnUmVzcG9uc2UiL8LzGAtkZWJ1Zy53cml0ZdLzGBgKFmhvc3Rfam9iLmRlYnVnX3N0b3BwZWSQ9BgCQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
+ * ListHostJobsRequest selects the host jobs to list.
+ *
  * @generated from message toshi.workspace.v1.ListHostJobsRequest
  */
 export type ListHostJobsRequest = Message<"toshi.workspace.v1.ListHostJobsRequest"> & {
@@ -57,6 +59,8 @@ export type ListHostJobsRequest = Message<"toshi.workspace.v1.ListHostJobsReques
 };
 
 /**
+ * ListHostJobsRequest selects the host jobs to list.
+ *
  * @generated from message toshi.workspace.v1.ListHostJobsRequest
  */
 export type ListHostJobsRequestJson = {
@@ -105,10 +109,14 @@ export const ListHostJobsRequestSchema: GenMessage<ListHostJobsRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_hostjobs, 0);
 
 /**
+ * ListHostJobsResponse is one page of host jobs.
+ *
  * @generated from message toshi.workspace.v1.ListHostJobsResponse
  */
 export type ListHostJobsResponse = Message<"toshi.workspace.v1.ListHostJobsResponse"> & {
   /**
+   * The page's host jobs, oldest queued first.
+   *
    * @generated from field: repeated toshi.workspace.v1.HostJob host_jobs = 1;
    */
   hostJobs: HostJob[];
@@ -122,10 +130,14 @@ export type ListHostJobsResponse = Message<"toshi.workspace.v1.ListHostJobsRespo
 };
 
 /**
+ * ListHostJobsResponse is one page of host jobs.
+ *
  * @generated from message toshi.workspace.v1.ListHostJobsResponse
  */
 export type ListHostJobsResponseJson = {
   /**
+   * The page's host jobs, oldest queued first.
+   *
    * @generated from field: repeated toshi.workspace.v1.HostJob host_jobs = 1;
    */
   hostJobs?: HostJobJson[];
@@ -146,20 +158,28 @@ export const ListHostJobsResponseSchema: GenMessage<ListHostJobsResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_hostjobs, 1);
 
 /**
+ * GetHostJobRequest names the host job to return.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobRequest
  */
 export type GetHostJobRequest = Message<"toshi.workspace.v1.GetHostJobRequest"> & {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * GetHostJobRequest names the host job to return.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobRequest
  */
 export type GetHostJobRequestJson = {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -173,10 +193,14 @@ export const GetHostJobRequestSchema: GenMessage<GetHostJobRequest, {jsonType: G
   messageDesc(file_toshi_workspace_v1_hostjobs, 2);
 
 /**
+ * GetHostJobResponse holds a host job and its attempts.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobResponse
  */
 export type GetHostJobResponse = Message<"toshi.workspace.v1.GetHostJobResponse"> & {
   /**
+   * The host job.
+   *
    * @generated from field: toshi.workspace.v1.HostJob host_job = 1;
    */
   hostJob?: HostJob | undefined;
@@ -191,10 +215,14 @@ export type GetHostJobResponse = Message<"toshi.workspace.v1.GetHostJobResponse"
 };
 
 /**
+ * GetHostJobResponse holds a host job and its attempts.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobResponse
  */
 export type GetHostJobResponseJson = {
   /**
+   * The host job.
+   *
    * @generated from field: toshi.workspace.v1.HostJob host_job = 1;
    */
   hostJob?: HostJobJson;
@@ -216,20 +244,28 @@ export const GetHostJobResponseSchema: GenMessage<GetHostJobResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_hostjobs, 3);
 
 /**
+ * CancelHostJobRequest names the host job to cancel.
+ *
  * @generated from message toshi.workspace.v1.CancelHostJobRequest
  */
 export type CancelHostJobRequest = Message<"toshi.workspace.v1.CancelHostJobRequest"> & {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * CancelHostJobRequest names the host job to cancel.
+ *
  * @generated from message toshi.workspace.v1.CancelHostJobRequest
  */
 export type CancelHostJobRequestJson = {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -243,20 +279,28 @@ export const CancelHostJobRequestSchema: GenMessage<CancelHostJobRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_hostjobs, 4);
 
 /**
+ * CancelHostJobResponse holds the host job after the cancel.
+ *
  * @generated from message toshi.workspace.v1.CancelHostJobResponse
  */
 export type CancelHostJobResponse = Message<"toshi.workspace.v1.CancelHostJobResponse"> & {
   /**
+   * The host job, as the cancel left it.
+   *
    * @generated from field: toshi.workspace.v1.HostJob host_job = 1;
    */
   hostJob?: HostJob | undefined;
 };
 
 /**
+ * CancelHostJobResponse holds the host job after the cancel.
+ *
  * @generated from message toshi.workspace.v1.CancelHostJobResponse
  */
 export type CancelHostJobResponseJson = {
   /**
+   * The host job, as the cancel left it.
+   *
    * @generated from field: toshi.workspace.v1.HostJob host_job = 1;
    */
   hostJob?: HostJobJson;
@@ -270,20 +314,28 @@ export const CancelHostJobResponseSchema: GenMessage<CancelHostJobResponse, {jso
   messageDesc(file_toshi_workspace_v1_hostjobs, 5);
 
 /**
+ * GetHostJobFailureRequest names the host job to explain.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobFailureRequest
  */
 export type GetHostJobFailureRequest = Message<"toshi.workspace.v1.GetHostJobFailureRequest"> & {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * GetHostJobFailureRequest names the host job to explain.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobFailureRequest
  */
 export type GetHostJobFailureRequestJson = {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -297,6 +349,8 @@ export const GetHostJobFailureRequestSchema: GenMessage<GetHostJobFailureRequest
   messageDesc(file_toshi_workspace_v1_hostjobs, 6);
 
 /**
+ * GetHostJobFailureResponse says why a host job ended and what to do next.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobFailureResponse
  */
 export type GetHostJobFailureResponse = Message<"toshi.workspace.v1.GetHostJobFailureResponse"> & {
@@ -341,6 +395,9 @@ export type GetHostJobFailureResponse = Message<"toshi.workspace.v1.GetHostJobFa
   verdict: string;
 
   /**
+   * The sentence that explains verdict, as
+   * HostJobTelemetrySummary.verdict_reason; empty when verdict is.
+   *
    * @generated from field: string verdict_reason = 5;
    */
   verdictReason: string;
@@ -393,6 +450,8 @@ export type GetHostJobFailureResponse = Message<"toshi.workspace.v1.GetHostJobFa
 };
 
 /**
+ * GetHostJobFailureResponse says why a host job ended and what to do next.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobFailureResponse
  */
 export type GetHostJobFailureResponseJson = {
@@ -437,6 +496,9 @@ export type GetHostJobFailureResponseJson = {
   verdict?: string;
 
   /**
+   * The sentence that explains verdict, as
+   * HostJobTelemetrySummary.verdict_reason; empty when verdict is.
+   *
    * @generated from field: string verdict_reason = 5;
    */
   verdictReason?: string;
@@ -496,20 +558,28 @@ export const GetHostJobFailureResponseSchema: GenMessage<GetHostJobFailureRespon
   messageDesc(file_toshi_workspace_v1_hostjobs, 7);
 
 /**
+ * GetHostJobTelemetryRequest names the host job whose samples to return.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobTelemetryRequest
  */
 export type GetHostJobTelemetryRequest = Message<"toshi.workspace.v1.GetHostJobTelemetryRequest"> & {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * GetHostJobTelemetryRequest names the host job whose samples to return.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobTelemetryRequest
  */
 export type GetHostJobTelemetryRequestJson = {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -523,6 +593,9 @@ export const GetHostJobTelemetryRequestSchema: GenMessage<GetHostJobTelemetryReq
   messageDesc(file_toshi_workspace_v1_hostjobs, 8);
 
 /**
+ * GetHostJobTelemetryResponse holds a host job's resource samples and what
+ * they add up to.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobTelemetryResponse
  */
 export type GetHostJobTelemetryResponse = Message<"toshi.workspace.v1.GetHostJobTelemetryResponse"> & {
@@ -535,11 +608,15 @@ export type GetHostJobTelemetryResponse = Message<"toshi.workspace.v1.GetHostJob
   size: string;
 
   /**
+   * The vCPUs of that size; 0 when Toshi does not know the size.
+   *
    * @generated from field: int32 vcpus = 2;
    */
   vcpus: number;
 
   /**
+   * The memory of that size in MiB; 0 when Toshi does not know the size.
+   *
    * @generated from field: int64 memory_mib = 3;
    */
   memoryMib: bigint;
@@ -560,6 +637,9 @@ export type GetHostJobTelemetryResponse = Message<"toshi.workspace.v1.GetHostJob
 };
 
 /**
+ * GetHostJobTelemetryResponse holds a host job's resource samples and what
+ * they add up to.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobTelemetryResponse
  */
 export type GetHostJobTelemetryResponseJson = {
@@ -572,11 +652,15 @@ export type GetHostJobTelemetryResponseJson = {
   size?: string;
 
   /**
+   * The vCPUs of that size; 0 when Toshi does not know the size.
+   *
    * @generated from field: int32 vcpus = 2;
    */
   vcpus?: number;
 
   /**
+   * The memory of that size in MiB; 0 when Toshi does not know the size.
+   *
    * @generated from field: int64 memory_mib = 3;
    */
   memoryMib?: string;
@@ -604,20 +688,30 @@ export const GetHostJobTelemetryResponseSchema: GenMessage<GetHostJobTelemetryRe
   messageDesc(file_toshi_workspace_v1_hostjobs, 9);
 
 /**
+ * GetHostJobDebugAccessRequest names the host job whose debug access to
+ * return.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobDebugAccessRequest
  */
 export type GetHostJobDebugAccessRequest = Message<"toshi.workspace.v1.GetHostJobDebugAccessRequest"> & {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * GetHostJobDebugAccessRequest names the host job whose debug access to
+ * return.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobDebugAccessRequest
  */
 export type GetHostJobDebugAccessRequestJson = {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -631,6 +725,9 @@ export const GetHostJobDebugAccessRequestSchema: GenMessage<GetHostJobDebugAcces
   messageDesc(file_toshi_workspace_v1_hostjobs, 10);
 
 /**
+ * GetHostJobDebugAccessResponse is what opens a debugging host job's guest
+ * ssh.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobDebugAccessResponse
  */
 export type GetHostJobDebugAccessResponse = Message<"toshi.workspace.v1.GetHostJobDebugAccessResponse"> & {
@@ -668,6 +765,9 @@ export type GetHostJobDebugAccessResponse = Message<"toshi.workspace.v1.GetHostJ
 };
 
 /**
+ * GetHostJobDebugAccessResponse is what opens a debugging host job's guest
+ * ssh.
+ *
  * @generated from message toshi.workspace.v1.GetHostJobDebugAccessResponse
  */
 export type GetHostJobDebugAccessResponseJson = {
@@ -712,20 +812,28 @@ export const GetHostJobDebugAccessResponseSchema: GenMessage<GetHostJobDebugAcce
   messageDesc(file_toshi_workspace_v1_hostjobs, 11);
 
 /**
+ * StopHostJobDebugRequest names the host job whose debug session to stop.
+ *
  * @generated from message toshi.workspace.v1.StopHostJobDebugRequest
  */
 export type StopHostJobDebugRequest = Message<"toshi.workspace.v1.StopHostJobDebugRequest"> & {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * StopHostJobDebugRequest names the host job whose debug session to stop.
+ *
  * @generated from message toshi.workspace.v1.StopHostJobDebugRequest
  */
 export type StopHostJobDebugRequestJson = {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -739,20 +847,28 @@ export const StopHostJobDebugRequestSchema: GenMessage<StopHostJobDebugRequest, 
   messageDesc(file_toshi_workspace_v1_hostjobs, 12);
 
 /**
+ * StopHostJobDebugResponse holds the host job after the stop.
+ *
  * @generated from message toshi.workspace.v1.StopHostJobDebugResponse
  */
 export type StopHostJobDebugResponse = Message<"toshi.workspace.v1.StopHostJobDebugResponse"> & {
   /**
+   * The host job, as the stop left it.
+   *
    * @generated from field: toshi.workspace.v1.HostJob host_job = 1;
    */
   hostJob?: HostJob | undefined;
 };
 
 /**
+ * StopHostJobDebugResponse holds the host job after the stop.
+ *
  * @generated from message toshi.workspace.v1.StopHostJobDebugResponse
  */
 export type StopHostJobDebugResponseJson = {
   /**
+   * The host job, as the stop left it.
+   *
    * @generated from field: toshi.workspace.v1.HostJob host_job = 1;
    */
   hostJob?: HostJobJson;
@@ -774,6 +890,8 @@ export const StopHostJobDebugResponseSchema: GenMessage<StopHostJobDebugResponse
  */
 export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -786,11 +904,17 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
   repository: string;
 
   /**
+   * GitHub's id of the workflow job, from the workflow_job webhook Toshi
+   * made the job from; 0 when it did not make the job from one.
+   *
    * @generated from field: int64 workflow_job_id = 3;
    */
   workflowJobId: bigint;
 
   /**
+   * GitHub's id of the workflow run that workflow job belongs to; 0 when
+   * Toshi did not make the job from a workflow job.
+   *
    * @generated from field: int64 run_id = 4;
    */
   runId: bigint;
@@ -810,16 +934,22 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
   labels: string[];
 
   /**
+   * The OS of the job's runner size: "linux", "windows" or "macos".
+   *
    * @generated from field: string os = 7;
    */
   os: string;
 
   /**
+   * The job's runner size, such as "toshi-linux-4x".
+   *
    * @generated from field: string size = 8;
    */
   size: string;
 
   /**
+   * The job's state.
+   *
    * @generated from field: toshi.workspace.v1.HostJobState state = 9;
    */
   state: HostJobState;
@@ -841,21 +971,30 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
   instanceId: string;
 
   /**
+   * When the job was queued.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 12;
    */
   queuedAt?: Timestamp | undefined;
 
   /**
+   * When the scheduler assigned the job's current attempt to a host.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 13;
    */
   assignedAt?: Timestamp | undefined;
 
   /**
+   * When the job started: its runner started, or for a Workspace API job
+   * its host admitted the start of its command.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 14;
    */
   startedAt?: Timestamp | undefined;
 
   /**
+   * When the job finished.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 15;
    */
   finishedAt?: Timestamp | undefined;
@@ -954,6 +1093,8 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
   debugStartedAt?: Timestamp | undefined;
 
   /**
+   * When the debug session ends.
+   *
    * @generated from field: google.protobuf.Timestamp debug_until = 26;
    */
   debugUntil?: Timestamp | undefined;
@@ -1205,6 +1346,8 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
   runnerId: string;
 
   /**
+   * The runner's name; set with runner_id.
+   *
    * @generated from field: string runner_name = 50;
    */
   runnerName: string;
@@ -1277,6 +1420,8 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
  */
 export type HostJobJson = {
   /**
+   * The host job's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -1289,11 +1434,17 @@ export type HostJobJson = {
   repository?: string;
 
   /**
+   * GitHub's id of the workflow job, from the workflow_job webhook Toshi
+   * made the job from; 0 when it did not make the job from one.
+   *
    * @generated from field: int64 workflow_job_id = 3;
    */
   workflowJobId?: string;
 
   /**
+   * GitHub's id of the workflow run that workflow job belongs to; 0 when
+   * Toshi did not make the job from a workflow job.
+   *
    * @generated from field: int64 run_id = 4;
    */
   runId?: string;
@@ -1313,16 +1464,22 @@ export type HostJobJson = {
   labels?: string[];
 
   /**
+   * The OS of the job's runner size: "linux", "windows" or "macos".
+   *
    * @generated from field: string os = 7;
    */
   os?: string;
 
   /**
+   * The job's runner size, such as "toshi-linux-4x".
+   *
    * @generated from field: string size = 8;
    */
   size?: string;
 
   /**
+   * The job's state.
+   *
    * @generated from field: toshi.workspace.v1.HostJobState state = 9;
    */
   state?: HostJobStateJson;
@@ -1344,21 +1501,30 @@ export type HostJobJson = {
   instanceId?: string;
 
   /**
+   * When the job was queued.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 12;
    */
   queuedAt?: TimestampJson;
 
   /**
+   * When the scheduler assigned the job's current attempt to a host.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 13;
    */
   assignedAt?: TimestampJson;
 
   /**
+   * When the job started: its runner started, or for a Workspace API job
+   * its host admitted the start of its command.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 14;
    */
   startedAt?: TimestampJson;
 
   /**
+   * When the job finished.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 15;
    */
   finishedAt?: TimestampJson;
@@ -1457,6 +1623,8 @@ export type HostJobJson = {
   debugStartedAt?: TimestampJson;
 
   /**
+   * When the debug session ends.
+   *
    * @generated from field: google.protobuf.Timestamp debug_until = 26;
    */
   debugUntil?: TimestampJson;
@@ -1708,6 +1876,8 @@ export type HostJobJson = {
   runnerId?: string;
 
   /**
+   * The runner's name; set with runner_id.
+   *
    * @generated from field: string runner_name = 50;
    */
   runnerName?: string;
@@ -1801,26 +1971,36 @@ export type HostJobAttempt = Message<"toshi.workspace.v1.HostJobAttempt"> & {
   runnerId: string;
 
   /**
+   * The runner's name; empty when no runner was named for the assignment.
+   *
    * @generated from field: string runner_name = 3;
    */
   runnerName: string;
 
   /**
+   * The host the attempt was assigned to, as HostJob.host_id.
+   *
    * @generated from field: string host_id = 4;
    */
   hostId: string;
 
   /**
+   * The VM the attempt ran in; empty when its host started none.
+   *
    * @generated from field: string instance_id = 5;
    */
   instanceId: string;
 
   /**
+   * The kind of provider that created instance_id, as HostJob.provider.
+   *
    * @generated from field: string provider = 6;
    */
   provider: string;
 
   /**
+   * When the attempt was assigned to its host.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 7;
    */
   assignedAt?: Timestamp | undefined;
@@ -1880,26 +2060,36 @@ export type HostJobAttemptJson = {
   runnerId?: string;
 
   /**
+   * The runner's name; empty when no runner was named for the assignment.
+   *
    * @generated from field: string runner_name = 3;
    */
   runnerName?: string;
 
   /**
+   * The host the attempt was assigned to, as HostJob.host_id.
+   *
    * @generated from field: string host_id = 4;
    */
   hostId?: string;
 
   /**
+   * The VM the attempt ran in; empty when its host started none.
+   *
    * @generated from field: string instance_id = 5;
    */
   instanceId?: string;
 
   /**
+   * The kind of provider that created instance_id, as HostJob.provider.
+   *
    * @generated from field: string provider = 6;
    */
   provider?: string;
 
   /**
+   * When the attempt was assigned to its host.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 7;
    */
   assignedAt?: TimestampJson;
@@ -2178,6 +2368,9 @@ export type HostJobCache = Message<"toshi.workspace.v1.HostJobCache"> & {
   generationBytes: bigint;
 
   /**
+   * How long the write-back took in milliseconds; 0 unless write_back is
+   * "committed".
+   *
    * @generated from field: int64 write_back_ms = 6;
    */
   writeBackMs: bigint;
@@ -2240,6 +2433,9 @@ export type HostJobCacheJson = {
   generationBytes?: string;
 
   /**
+   * How long the write-back took in milliseconds; 0 unless write_back is
+   * "committed".
+   *
    * @generated from field: int64 write_back_ms = 6;
    */
   writeBackMs?: string;
@@ -2269,56 +2465,83 @@ export const HostJobCacheSchema: GenMessage<HostJobCache, {jsonType: HostJobCach
  */
 export type HostJobTelemetrySample = Message<"toshi.workspace.v1.HostJobTelemetrySample"> & {
   /**
+   * The end of the window.
+   *
    * @generated from field: google.protobuf.Timestamp at = 1;
    */
   at?: Timestamp | undefined;
 
   /**
+   * The length of the window in milliseconds.
+   *
    * @generated from field: int32 window_ms = 2;
    */
   windowMs: number;
 
   /**
+   * The CPU time the VM's processes used in the window, in milliseconds.
+   *
    * @generated from field: int64 cpu_ms = 3;
    */
   cpuMs: bigint;
 
   /**
+   * The time the VM's threads waited for a host CPU in the window, in
+   * milliseconds.
+   *
    * @generated from field: int64 cpu_wait_ms = 4;
    */
   cpuWaitMs: bigint;
 
   /**
+   * The most memory in use inside the guest in the window, in MiB. Unset
+   * when the guest does not report it.
+   *
    * @generated from field: optional int64 guest_memory_mib = 5;
    */
   guestMemoryMib?: bigint | undefined;
 
   /**
+   * The host resident memory of the VM at its highest in the window, in MiB.
+   *
    * @generated from field: int64 host_memory_mib = 6;
    */
   hostMemoryMib: bigint;
 
   /**
+   * The bytes the VM read from its disks in the window.
+   *
    * @generated from field: int64 disk_read_bytes = 7;
    */
   diskReadBytes: bigint;
 
   /**
+   * The bytes the VM wrote to its disks in the window.
+   *
    * @generated from field: int64 disk_write_bytes = 8;
    */
   diskWriteBytes: bigint;
 
   /**
+   * The bytes the guest received on its network interfaces in the window.
+   * Unset when the guest does not report them.
+   *
    * @generated from field: optional int64 net_rx_bytes = 9;
    */
   netRxBytes?: bigint | undefined;
 
   /**
+   * The bytes the guest sent on its network interfaces in the window.
+   * Unset when the guest does not report them.
+   *
    * @generated from field: optional int64 net_tx_bytes = 10;
    */
   netTxBytes?: bigint | undefined;
 
   /**
+   * The processes the guest kernel's out-of-memory killer killed in the
+   * window. Unset when the guest does not report it.
+   *
    * @generated from field: optional int32 oom_kills = 11;
    */
   oomKills?: number | undefined;
@@ -2332,56 +2555,83 @@ export type HostJobTelemetrySample = Message<"toshi.workspace.v1.HostJobTelemetr
  */
 export type HostJobTelemetrySampleJson = {
   /**
+   * The end of the window.
+   *
    * @generated from field: google.protobuf.Timestamp at = 1;
    */
   at?: TimestampJson;
 
   /**
+   * The length of the window in milliseconds.
+   *
    * @generated from field: int32 window_ms = 2;
    */
   windowMs?: number;
 
   /**
+   * The CPU time the VM's processes used in the window, in milliseconds.
+   *
    * @generated from field: int64 cpu_ms = 3;
    */
   cpuMs?: string;
 
   /**
+   * The time the VM's threads waited for a host CPU in the window, in
+   * milliseconds.
+   *
    * @generated from field: int64 cpu_wait_ms = 4;
    */
   cpuWaitMs?: string;
 
   /**
+   * The most memory in use inside the guest in the window, in MiB. Unset
+   * when the guest does not report it.
+   *
    * @generated from field: optional int64 guest_memory_mib = 5;
    */
   guestMemoryMib?: string;
 
   /**
+   * The host resident memory of the VM at its highest in the window, in MiB.
+   *
    * @generated from field: int64 host_memory_mib = 6;
    */
   hostMemoryMib?: string;
 
   /**
+   * The bytes the VM read from its disks in the window.
+   *
    * @generated from field: int64 disk_read_bytes = 7;
    */
   diskReadBytes?: string;
 
   /**
+   * The bytes the VM wrote to its disks in the window.
+   *
    * @generated from field: int64 disk_write_bytes = 8;
    */
   diskWriteBytes?: string;
 
   /**
+   * The bytes the guest received on its network interfaces in the window.
+   * Unset when the guest does not report them.
+   *
    * @generated from field: optional int64 net_rx_bytes = 9;
    */
   netRxBytes?: string;
 
   /**
+   * The bytes the guest sent on its network interfaces in the window.
+   * Unset when the guest does not report them.
+   *
    * @generated from field: optional int64 net_tx_bytes = 10;
    */
   netTxBytes?: string;
 
   /**
+   * The processes the guest kernel's out-of-memory killer killed in the
+   * window. Unset when the guest does not report it.
+   *
    * @generated from field: optional int32 oom_kills = 11;
    */
   oomKills?: number;
@@ -2405,16 +2655,22 @@ export const HostJobTelemetrySampleSchema: GenMessage<HostJobTelemetrySample, {j
  */
 export type HostJobFailureHistory = Message<"toshi.workspace.v1.HostJobFailureHistory"> & {
   /**
+   * The number of days the counts reach back from now: 30.
+   *
    * @generated from field: int32 days = 1;
    */
   days: number;
 
   /**
+   * The failures whose re-run passed.
+   *
    * @generated from field: int32 passed_on_rerun = 2;
    */
   passedOnRerun: number;
 
   /**
+   * The failures with a failed re-run and none that passed.
+   *
    * @generated from field: int32 failed_again = 3;
    */
   failedAgain: number;
@@ -2428,11 +2684,16 @@ export type HostJobFailureHistory = Message<"toshi.workspace.v1.HostJobFailureHi
   step: string;
 
   /**
+   * The count of the failures at that step whose re-run passed.
+   *
    * @generated from field: int32 step_passed_on_rerun = 5;
    */
   stepPassedOnRerun: number;
 
   /**
+   * The count of the failures at that step with a failed re-run and none
+   * that passed.
+   *
    * @generated from field: int32 step_failed_again = 6;
    */
   stepFailedAgain: number;
@@ -2458,16 +2719,22 @@ export type HostJobFailureHistory = Message<"toshi.workspace.v1.HostJobFailureHi
  */
 export type HostJobFailureHistoryJson = {
   /**
+   * The number of days the counts reach back from now: 30.
+   *
    * @generated from field: int32 days = 1;
    */
   days?: number;
 
   /**
+   * The failures whose re-run passed.
+   *
    * @generated from field: int32 passed_on_rerun = 2;
    */
   passedOnRerun?: number;
 
   /**
+   * The failures with a failed re-run and none that passed.
+   *
    * @generated from field: int32 failed_again = 3;
    */
   failedAgain?: number;
@@ -2481,11 +2748,16 @@ export type HostJobFailureHistoryJson = {
   step?: string;
 
   /**
+   * The count of the failures at that step whose re-run passed.
+   *
    * @generated from field: int32 step_passed_on_rerun = 5;
    */
   stepPassedOnRerun?: number;
 
   /**
+   * The count of the failures at that step with a failed re-run and none
+   * that passed.
+   *
    * @generated from field: int32 step_failed_again = 6;
    */
   stepFailedAgain?: number;
@@ -2514,6 +2786,8 @@ export const HostJobFailureHistorySchema: GenMessage<HostJobFailureHistory, {jso
  */
 export enum HostJobState {
   /**
+   * The state is not set.
+   *
    * @generated from enum value: HOST_JOB_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -2603,6 +2877,8 @@ export const HostJobStateSchema: GenEnum<HostJobState, HostJobStateJson> = /*@__
  */
 export enum HostJobKind {
   /**
+   * The kind is not set.
+   *
    * @generated from enum value: HOST_JOB_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
