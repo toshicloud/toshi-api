@@ -1346,6 +1346,9 @@ enum EventType {
   // Toshi could not make a workload's endpoint. Name: "endpoint.creation_failed".
   // Payload: EndpointCreationFailedEvent.
   EVENT_TYPE_ENDPOINT_CREATION_FAILED = 28;
+  // The connected ACP client answered a permission request. Name:
+  // "endpoint.acp.permission_answered". Payload: EndpointACPEvent.
+  EVENT_TYPE_ENDPOINT_ACP_PERMISSION_ANSWERED = 29;
 }
 
 // EventSource identifies who produced an event.
@@ -1427,7 +1430,8 @@ message Event {
     MailSentEvent mail_sent = 23;
     // For KEPT_VM_DISCARDED.
     KeptVMDiscardedEvent kept_vm_discarded = 24;
-    // For ENDPOINT_ACP_PERMISSION_REQUESTED and ENDPOINT_ACP_TURN_ENDED.
+    // For ENDPOINT_ACP_PERMISSION_REQUESTED, ENDPOINT_ACP_PERMISSION_ANSWERED
+    // and ENDPOINT_ACP_TURN_ENDED.
     EndpointACPEvent endpoint_acp = 25;
     // For SERVICE_RESTORED.
     ServiceRestoredEvent service_restored = 26;
@@ -1690,25 +1694,28 @@ message EndpointACPEvent {
   // The prompt response's stopReason, at a turn's end.
   string stop_reason = 4;
   // The permission request's tool call title, the message a person is
-  // shown; empty on a turn_ended event.
+  // shown; empty on permission_answered and turn_ended events.
   string title = 5;
-  // The choices a permission request offers; empty on a turn_ended event.
+  // The choices a permission request offers; empty on permission_answered
+  // and turn_ended events.
   repeated PermissionOption options = 6;
 }
 
-// AgentPrompt is a question or an approval an agent workload asked.
+// AgentPrompt is a question, approval or ACP permission request an agent asked.
 message AgentPrompt {
-  // The prompt's id, as the agent gave it; unique among the prompts the
-  // workload waits on.
+  // The prompt's id, as the agent gave it or derived from the ACP event;
+  // unique among the prompts the workload waits on.
   string id = 1;
-  // "agent.question" or "agent.approval": the event that asked it.
+  // The event that asked it: "agent.question", "agent.approval" or
+  // "endpoint.acp.permission_requested".
   string name = 2;
   // What an approval asks to be let do: plan, push, pull_request, command
-  // or domain. Empty for a question.
+  // or domain; acp_permission for an ACP permission request. Empty for a
+  // question.
   string kind = 3;
   string text = 4;
-  // The answers a question offers; empty for an approval and for a
-  // question answered in free text.
+  // The answers a question offers; empty for an approval, an ACP permission
+  // request and a question answered in free text.
   repeated string options = 5;
   // The event that asked it.
   string event_id = 6;
@@ -1717,7 +1724,8 @@ message AgentPrompt {
   string decision_id = 8;
   // The prompt's state: waiting, answered or ended.
   string state = 9;
-  // Why an unanswered prompt ended: run_ended or host_lost.
+  // Why an unanswered prompt ended: run_ended, host_lost, or acp_client
+  // when the connected ACP client answered or the turn ended.
   string ended_reason = 10;
   // The answer once given.
   string answer = 11;

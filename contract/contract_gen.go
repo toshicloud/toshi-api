@@ -133,6 +133,8 @@ const (
 	ReasonProjectInUse = "PROJECT_IN_USE"
 	// ReasonProjectNameRetained: `CreateProject` with the name of a deleted project that is still retained; the metadata `purge_at` (RFC 3339, UTC) is when the name is free.
 	ReasonProjectNameRetained = "PROJECT_NAME_RETAINED"
+	// ReasonPromptAnsweredByAcpClient: `AnswerPrompt` on a waiting ACP permission prompt, including an answer for the run.
+	ReasonPromptAnsweredByAcpClient = "PROMPT_ANSWERED_BY_ACP_CLIENT"
 	// ReasonPurgeDue: `CancelWorkspaceDeletion` after `purge_after` has passed.
 	ReasonPurgeDue = "PURGE_DUE"
 	// ReasonRequestKeyMismatch: A call whose `request_key` is already stored with a different request's payload.
@@ -945,6 +947,7 @@ func EventNames() []EventName {
 		{Name: "mail.complained", Type: "MAIL_COMPLAINED", Source: "workload", Prefix: "mail", ServiceDefined: false},
 		{Name: "service.rolled", Type: "SERVICE_ROLLED", Source: "workload", Prefix: "service", ServiceDefined: false},
 		{Name: "endpoint.creation_failed", Type: "ENDPOINT_CREATION_FAILED", Source: "workload", Prefix: "endpoint", ServiceDefined: false},
+		{Name: "endpoint.acp.permission_answered", Type: "ENDPOINT_ACP_PERMISSION_ANSWERED", Source: "workload", Prefix: "endpoint", ServiceDefined: false},
 		{Name: "mail.received", Type: "", Source: "connection", Prefix: "mail", ServiceDefined: false},
 	}
 }

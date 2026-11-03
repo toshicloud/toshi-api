@@ -875,6 +875,9 @@ const (
 	// Toshi could not make a workload's endpoint. Name: "endpoint.creation_failed".
 	// Payload: EndpointCreationFailedEvent.
 	EventType_EVENT_TYPE_ENDPOINT_CREATION_FAILED EventType = 28
+	// The connected ACP client answered a permission request. Name:
+	// "endpoint.acp.permission_answered". Payload: EndpointACPEvent.
+	EventType_EVENT_TYPE_ENDPOINT_ACP_PERMISSION_ANSWERED EventType = 29
 )
 
 // Enum value maps for EventType.
@@ -909,6 +912,7 @@ var (
 		26: "EVENT_TYPE_MAIL_COMPLAINED",
 		27: "EVENT_TYPE_SERVICE_ROLLED",
 		28: "EVENT_TYPE_ENDPOINT_CREATION_FAILED",
+		29: "EVENT_TYPE_ENDPOINT_ACP_PERMISSION_ANSWERED",
 	}
 	EventType_value = map[string]int32{
 		"EVENT_TYPE_UNSPECIFIED":                       0,
@@ -940,6 +944,7 @@ var (
 		"EVENT_TYPE_MAIL_COMPLAINED":                   26,
 		"EVENT_TYPE_SERVICE_ROLLED":                    27,
 		"EVENT_TYPE_ENDPOINT_CREATION_FAILED":          28,
+		"EVENT_TYPE_ENDPOINT_ACP_PERMISSION_ANSWERED":  29,
 	}
 )
 
@@ -7461,7 +7466,8 @@ type Event_KeptVmDiscarded struct {
 }
 
 type Event_EndpointAcp struct {
-	// For ENDPOINT_ACP_PERMISSION_REQUESTED and ENDPOINT_ACP_TURN_ENDED.
+	// For ENDPOINT_ACP_PERMISSION_REQUESTED, ENDPOINT_ACP_PERMISSION_ANSWERED
+	// and ENDPOINT_ACP_TURN_ENDED.
 	EndpointAcp *EndpointACPEvent `protobuf:"bytes,25,opt,name=endpoint_acp,json=endpointAcp,proto3,oneof"`
 }
 
@@ -8839,9 +8845,10 @@ type EndpointACPEvent struct {
 	// The prompt response's stopReason, at a turn's end.
 	StopReason string `protobuf:"bytes,4,opt,name=stop_reason,json=stopReason,proto3" json:"stop_reason,omitempty"`
 	// The permission request's tool call title, the message a person is
-	// shown; empty on a turn_ended event.
+	// shown; empty on permission_answered and turn_ended events.
 	Title string `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
-	// The choices a permission request offers; empty on a turn_ended event.
+	// The choices a permission request offers; empty on permission_answered
+	// and turn_ended events.
 	Options       []*PermissionOption `protobuf:"bytes,6,rep,name=options,proto3" json:"options,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -8919,20 +8926,22 @@ func (x *EndpointACPEvent) GetOptions() []*PermissionOption {
 	return nil
 }
 
-// AgentPrompt is a question or an approval an agent workload asked.
+// AgentPrompt is a question, approval or ACP permission request an agent asked.
 type AgentPrompt struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The prompt's id, as the agent gave it; unique among the prompts the
-	// workload waits on.
+	// The prompt's id, as the agent gave it or derived from the ACP event;
+	// unique among the prompts the workload waits on.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// "agent.question" or "agent.approval": the event that asked it.
+	// The event that asked it: "agent.question", "agent.approval" or
+	// "endpoint.acp.permission_requested".
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// What an approval asks to be let do: plan, push, pull_request, command
-	// or domain. Empty for a question.
+	// or domain; acp_permission for an ACP permission request. Empty for a
+	// question.
 	Kind string `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty"`
 	Text string `protobuf:"bytes,4,opt,name=text,proto3" json:"text,omitempty"`
-	// The answers a question offers; empty for an approval and for a
-	// question answered in free text.
+	// The answers a question offers; empty for an approval, an ACP permission
+	// request and a question answered in free text.
 	Options []string `protobuf:"bytes,5,rep,name=options,proto3" json:"options,omitempty"`
 	// The event that asked it.
 	EventId string                 `protobuf:"bytes,6,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
@@ -8941,7 +8950,8 @@ type AgentPrompt struct {
 	DecisionId string `protobuf:"bytes,8,opt,name=decision_id,json=decisionId,proto3" json:"decision_id,omitempty"`
 	// The prompt's state: waiting, answered or ended.
 	State string `protobuf:"bytes,9,opt,name=state,proto3" json:"state,omitempty"`
-	// Why an unanswered prompt ended: run_ended or host_lost.
+	// Why an unanswered prompt ended: run_ended, host_lost, or acp_client
+	// when the connected ACP client answered or the turn ended.
 	EndedReason string `protobuf:"bytes,10,opt,name=ended_reason,json=endedReason,proto3" json:"ended_reason,omitempty"`
 	// The answer once given.
 	Answer string `protobuf:"bytes,11,opt,name=answer,proto3" json:"answer,omitempty"`
@@ -15424,7 +15434,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\vServiceMode\x12\x1c\n" +
 	"\x18SERVICE_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16SERVICE_MODE_ALWAYS_ON\x10\x01\x12\x1a\n" +
-	"\x16SERVICE_MODE_ON_DEMAND\x10\x02*\xc7\a\n" +
+	"\x16SERVICE_MODE_ON_DEMAND\x10\x02*\xf8\a\n" +
 	"\tEventType\x12\x1a\n" +
 	"\x16EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bEVENT_TYPE_WORKLOAD_CREATED\x10\x01\x12%\n" +
@@ -15455,7 +15465,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x17EVENT_TYPE_MAIL_BOUNCED\x10\x19\x12\x1e\n" +
 	"\x1aEVENT_TYPE_MAIL_COMPLAINED\x10\x1a\x12\x1d\n" +
 	"\x19EVENT_TYPE_SERVICE_ROLLED\x10\x1b\x12'\n" +
-	"#EVENT_TYPE_ENDPOINT_CREATION_FAILED\x10\x1c*\xf9\x01\n" +
+	"#EVENT_TYPE_ENDPOINT_CREATION_FAILED\x10\x1c\x12/\n" +
+	"+EVENT_TYPE_ENDPOINT_ACP_PERMISSION_ANSWERED\x10\x1d*\xf9\x01\n" +
 	"\x15PreviewShareLinkState\x12(\n" +
 	"$PREVIEW_SHARE_LINK_STATE_UNSPECIFIED\x10\x00\x12!\n" +
 	"\x1dPREVIEW_SHARE_LINK_STATE_OPEN\x10\x01\x12#\n" +

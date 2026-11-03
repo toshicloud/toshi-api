@@ -71,6 +71,7 @@ export const reasons = {
   PRODUCT_UNAVAILABLE: { code: "FAILED_PRECONDITION", metadata: ["product", "cause", "state", "plan"], text: "This product is not available in this deployment or workspace.", values: { cause: ["build", "operator", "plan", "workspace"], state: ["enabled", "no_new_work", "draining", "stopped", "uninstalled"] } },
   PROJECT_IN_USE: { code: "FAILED_PRECONDITION", metadata: ["jobs", "workloads", "triggers"], text: "Something still runs in this project; finish or delete it first." },
   PROJECT_NAME_RETAINED: { code: "FAILED_PRECONDITION", metadata: ["purge_at"], text: "A deleted project keeps this name until it is purged; restore it or choose another name." },
+  PROMPT_ANSWERED_BY_ACP_CLIENT: { code: "FAILED_PRECONDITION", metadata: [], text: "This prompt is answered by the connected ACP client." },
   PURGE_DUE: { code: "FAILED_PRECONDITION", metadata: ["state"], text: "It is too late to cancel: this workspace's purge is due." },
   REQUEST_KEY_MISMATCH: { code: "FAILED_PRECONDITION", metadata: [], text: "This request key was already used for a different request. Use a new request key for a new request." },
   REQUEST_KEY_TARGET_GONE: { code: "FAILED_PRECONDITION", metadata: [], text: "What the first try made was rolled, revoked or closed since, so it cannot be shown again. Use a new request key to make a new one." },
@@ -524,6 +525,7 @@ export const eventNames = [
   { name: "mail.complained", type: "MAIL_COMPLAINED", source: "workload", prefix: "mail", serviceDefined: false },
   { name: "service.rolled", type: "SERVICE_ROLLED", source: "workload", prefix: "service", serviceDefined: false },
   { name: "endpoint.creation_failed", type: "ENDPOINT_CREATION_FAILED", source: "workload", prefix: "endpoint", serviceDefined: false },
+  { name: "endpoint.acp.permission_answered", type: "ENDPOINT_ACP_PERMISSION_ANSWERED", source: "workload", prefix: "endpoint", serviceDefined: false },
   { name: "mail.received", type: "", source: "connection", prefix: "mail", serviceDefined: false },
 ] as const;
 
