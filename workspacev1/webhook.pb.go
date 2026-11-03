@@ -237,7 +237,11 @@ type WebhookDelivery struct {
 	LastError string                 `protobuf:"bytes,8,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
 	DueAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=due_at,json=dueAt,proto3" json:"due_at,omitempty"`
 	// When it was delivered or given up.
-	DoneAt        *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=done_at,json=doneAt,proto3" json:"done_at,omitempty"`
+	DoneAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=done_at,json=doneAt,proto3" json:"done_at,omitempty"`
+	// The ID used in the post and webhook-id header.
+	MessageId string `protobuf:"bytes,11,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	// The ID of the post replayed, set only on a replay.
+	ReplayOf      *string `protobuf:"bytes,12,opt,name=replay_of,json=replayOf,proto3,oneof" json:"replay_of,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -340,6 +344,20 @@ func (x *WebhookDelivery) GetDoneAt() *timestamppb.Timestamp {
 		return x.DoneAt
 	}
 	return nil
+}
+
+func (x *WebhookDelivery) GetMessageId() string {
+	if x != nil {
+		return x.MessageId
+	}
+	return ""
+}
+
+func (x *WebhookDelivery) GetReplayOf() string {
+	if x != nil && x.ReplayOf != nil {
+		return *x.ReplayOf
+	}
+	return ""
 }
 
 type CreateWebhookRequest struct {
@@ -1237,7 +1255,7 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\x0ecursor_expired\x18\t \x01(\bR\rcursorExpired\x12I\n" +
 	"\x12retention_boundary\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\x11retentionBoundary\x12\x18\n" +
-	"\aproject\x18\v \x01(\tR\aproject\"\x9f\x03\n" +
+	"\aproject\x18\v \x01(\tR\aproject\"\xee\x03\n" +
 	"\x0fWebhookDelivery\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12\x16\n" +
 	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12\x1f\n" +
@@ -1252,7 +1270,12 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"last_error\x18\b \x01(\tR\tlastError\x121\n" +
 	"\x06due_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x05dueAt\x123\n" +
 	"\adone_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x06doneAt\"\x97\x01\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x06doneAt\x12\x1d\n" +
+	"\n" +
+	"message_id\x18\v \x01(\tR\tmessageId\x12 \n" +
+	"\treplay_of\x18\f \x01(\tH\x00R\breplayOf\x88\x01\x01B\f\n" +
+	"\n" +
+	"_replay_of\"\x97\x01\n" +
 	"\x14CreateWebhookRequest\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x16\n" +
 	"\x06events\x18\x02 \x03(\tR\x06events\x12\x1a\n" +
@@ -1416,6 +1439,7 @@ func file_toshi_workspace_v1_webhook_proto_init() {
 	if File_toshi_workspace_v1_webhook_proto != nil {
 		return
 	}
+	file_toshi_workspace_v1_webhook_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

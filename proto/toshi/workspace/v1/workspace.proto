@@ -1355,7 +1355,7 @@ message EventSource {
 
 // EventEnvelope is an event delivered to a receiver.
 message EventEnvelope {
-  // The event's ID, the same on each delivery.
+  // The post's ID, the same on each scheduled retry.
   string id = 1;
   // The event's name.
   string name = 2;
@@ -1371,7 +1371,7 @@ message EventEnvelope {
   // the API its numbers read as JSON numbers; a posted body carries the data
   // exactly as it was written.
   google.protobuf.Value data = 7;
-  // The original event's ID, set only on a replay.
+  // The ID of the post replayed, set only on a replay.
   optional string replay_of = 8;
 }
 
@@ -1445,6 +1445,10 @@ message Event {
   string environment = 12;
   // The connection that received a CONNECTION event; empty for the others.
   string connection_id = 16;
+  // Who produced the event.
+  EventSource source = 32;
+  // The ID of the event replayed, set only on a replay.
+  optional string replay_of = 33;
 }
 
 // EndpointCreationFailedEvent says why Toshi did not make an endpoint.

@@ -164,6 +164,10 @@ message WebhookDelivery {
   google.protobuf.Timestamp due_at = 9;
   // When it was delivered or given up.
   google.protobuf.Timestamp done_at = 10;
+  // The ID used in the post and webhook-id header.
+  string message_id = 11;
+  // The ID of the post replayed, set only on a replay.
+  optional string replay_of = 12;
 }
 
 message CreateWebhookRequest {
