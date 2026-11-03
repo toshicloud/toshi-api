@@ -2465,8 +2465,11 @@ export type CreateCheckoutSessionRequest = Message<"toshi.workspace.v1.CreateChe
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the same session URL until the session expires,
+   * for at most 24 hours. A changed request is refused. Changed provider
+   * inputs on retry, an ended session or a passed retry window is refused
+   * with REQUEST_KEY_TARGET_GONE. Use a new key; the old key never opens a
+   * second session while kept.
    *
    * @generated from field: string request_key = 3;
    */
@@ -2495,8 +2498,11 @@ export type CreateCheckoutSessionRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the same session URL until the session expires,
+   * for at most 24 hours. A changed request is refused. Changed provider
+   * inputs on retry, an ended session or a passed retry window is refused
+   * with REQUEST_KEY_TARGET_GONE. Use a new key; the old key never opens a
+   * second session while kept.
    *
    * @generated from field: string request_key = 3;
    */
@@ -2557,8 +2563,10 @@ export type CreateBillingPortalSessionRequest = Message<"toshi.workspace.v1.Crea
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the same session URL for five minutes from its
+   * creation. A changed request is refused. Changed provider inputs on retry
+   * or a retry after five minutes is refused with REQUEST_KEY_TARGET_GONE.
+   * Use a new key; the old key never opens a second session while kept.
    *
    * @generated from field: string request_key = 2;
    */
@@ -2581,8 +2589,10 @@ export type CreateBillingPortalSessionRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the same session URL for five minutes from its
+   * creation. A changed request is refused. Changed provider inputs on retry
+   * or a retry after five minutes is refused with REQUEST_KEY_TARGET_GONE.
+   * Use a new key; the old key never opens a second session while kept.
    *
    * @generated from field: string request_key = 2;
    */

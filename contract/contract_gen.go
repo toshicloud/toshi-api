@@ -1528,3 +1528,9 @@ func AskedCalls() []AskedCall {
 		{Method: "toshi.workspace.v1.WorkspaceService.RemoveSeat", Question: "Remove this seat? The person loses their seat now.", Answer: "yes"},
 	}
 }
+
+// ForRunKinds returns the approval kinds that take an answer for the run, in
+// the order they are listed. Each call returns a new slice.
+func ForRunKinds() []string {
+	return []string{"push", "pull_request", "command", "domain"}
+}

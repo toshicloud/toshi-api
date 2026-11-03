@@ -1653,6 +1653,10 @@ message AgentAnswerEvent {
   // Set when Toshi answered the prompt itself from a decision already made
   // for the run: answered_by is then the person who made that decision.
   bool sticky = 4;
+  // The decision_id of the PromptDecision a sticky answer follows, so a
+  // reader can match the answer to the decision that made it; empty when a
+  // person answered the prompt themselves.
+  string decision_id = 5;
 }
 
 // MailSentEvent is a message a workload's mail binding sent: the mail

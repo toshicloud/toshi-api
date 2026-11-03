@@ -1068,3 +1068,7 @@ export const asksAlways = {
 export const asksOneClick = {
   "toshi.workspace.v1.ImageService.BuildImage": { question: "Build this image? The build starts now and its run time is billed.", answer: "yes" },
 } as const;
+
+// The approval kinds that take an answer for the run. A plan approval is
+// always answered on its own.
+export const forRunKinds = ["push", "pull_request", "command", "domain"] as const;
