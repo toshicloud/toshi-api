@@ -69,6 +69,19 @@ import these packages rather than generating a second copy from
 For a client with retries, waits and watches on top of the generated
 code, see [toshi-go](https://github.com/toshicloud/toshi-go).
 
+### First calls
+
+[`Example_firstCalls`](https://github.com/toshicloud/toshi-api/blob/main/example_test.go)
+is a runnable example that makes a Workspace API client, lists a
+project's images and creates one; it runs against a small in-process
+stand-in, so `go test -run Example_firstCalls` needs no network and no
+token. It sends the same CreateImage twice with one request key and gets
+the same image back both times: a request key makes a retry safe. A
+create for a name the workspace already has is refused with
+`already_exists`, and the refusal's `google.rpc.ErrorInfo`, in the domain
+`contract.RefusalDomain`, carries the reason a program branches on
+(`IMAGE_NAME_TAKEN`) and the name in its metadata.
+
 ## TypeScript
 
 `ts/gen/` holds the code `protoc-gen-es` v2 generates with

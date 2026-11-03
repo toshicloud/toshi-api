@@ -1841,11 +1841,12 @@ export const ImageService: GenService<{
   /**
    * CreateImage creates the image. A name another live image of the
    * workspace has fails with ALREADY_EXISTS and the reason
-   * IMAGE_NAME_TAKEN. A base that is not one of Toshi's, a size that is
-   * not a Linux size, or a recipe without a setup hook or with a field an
-   * image does not use, fails with INVALID_ARGUMENT. A container image
-   * that is pushed takes a name and its kind alone; one with a base, size
-   * or recipe fails with INVALID_ARGUMENT.
+   * IMAGE_NAME_TAKEN. An image runs only the setup hook. A base that is
+   * not one of Toshi's, a size that is not a Linux size, or a recipe
+   * without a setup hook or with a field an image does not use, fails
+   * with INVALID_ARGUMENT. A container image that is pushed takes a name
+   * and its kind alone; one with a base, size or recipe fails with
+   * INVALID_ARGUMENT.
    *
    * A container image built from a repository takes its source, a Linux
    * size and, optionally, a builder and a registry to push to; one with a
