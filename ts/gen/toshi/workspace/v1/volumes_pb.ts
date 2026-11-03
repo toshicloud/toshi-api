@@ -22,6 +22,8 @@ export const file_toshi_workspace_v1_volumes: GenFile = /*@__PURE__*/
  */
 export type Volume = Message<"toshi.workspace.v1.Volume"> & {
   /**
+   * id is the volume's id, which every call on one volume names.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -48,6 +50,8 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
   projectId: string;
 
   /**
+   * mode is what the volume holds and how runs use it; fixed at creation.
+   *
    * @generated from field: toshi.workspace.v1.VolumeMode mode = 5;
    */
   mode: VolumeMode;
@@ -60,6 +64,8 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
   sizeCapBytes: bigint;
 
   /**
+   * create_time is when the volume was created.
+   *
    * @generated from field: google.protobuf.Timestamp create_time = 7;
    */
   createTime?: Timestamp | undefined;
@@ -160,6 +166,9 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
   attachedWorkloadKind: string;
 
   /**
+   * attached_environment is that workload's environment, as GetService and
+   * GetSandbox take it; empty when it is attached to none.
+   *
    * @generated from field: string attached_environment = 19;
    */
   attachedEnvironment: string;
@@ -222,6 +231,8 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
  */
 export type VolumeJson = {
   /**
+   * id is the volume's id, which every call on one volume names.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -248,6 +259,8 @@ export type VolumeJson = {
   projectId?: string;
 
   /**
+   * mode is what the volume holds and how runs use it; fixed at creation.
+   *
    * @generated from field: toshi.workspace.v1.VolumeMode mode = 5;
    */
   mode?: VolumeModeJson;
@@ -260,6 +273,8 @@ export type VolumeJson = {
   sizeCapBytes?: string;
 
   /**
+   * create_time is when the volume was created.
+   *
    * @generated from field: google.protobuf.Timestamp create_time = 7;
    */
   createTime?: TimestampJson;
@@ -360,6 +375,9 @@ export type VolumeJson = {
   attachedWorkloadKind?: string;
 
   /**
+   * attached_environment is that workload's environment, as GetService and
+   * GetSandbox take it; empty when it is attached to none.
+   *
    * @generated from field: string attached_environment = 19;
    */
   attachedEnvironment?: string;
@@ -436,6 +454,8 @@ export type VolumeVersion = Message<"toshi.workspace.v1.VolumeVersion"> & {
   number: bigint;
 
   /**
+   * create_time is when the version was saved.
+   *
    * @generated from field: google.protobuf.Timestamp create_time = 2;
    */
   createTime?: Timestamp | undefined;
@@ -492,6 +512,8 @@ export type VolumeVersionJson = {
   number?: string;
 
   /**
+   * create_time is when the version was saved.
+   *
    * @generated from field: google.protobuf.Timestamp create_time = 2;
    */
   createTime?: TimestampJson;
@@ -542,10 +564,16 @@ export const VolumeVersionSchema: GenMessage<VolumeVersion, {jsonType: VolumeVer
   messageDesc(file_toshi_workspace_v1_volumes, 1);
 
 /**
+ * ListVolumesRequest is a call to ListVolumes: the project, the page, and
+ * whether to list only browser profiles.
+ *
  * @generated from message toshi.workspace.v1.ListVolumesRequest
  */
 export type ListVolumesRequest = Message<"toshi.workspace.v1.ListVolumesRequest"> & {
   /**
+   * project names the project whose volumes to list; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
@@ -573,10 +601,16 @@ export type ListVolumesRequest = Message<"toshi.workspace.v1.ListVolumesRequest"
 };
 
 /**
+ * ListVolumesRequest is a call to ListVolumes: the project, the page, and
+ * whether to list only browser profiles.
+ *
  * @generated from message toshi.workspace.v1.ListVolumesRequest
  */
 export type ListVolumesRequestJson = {
   /**
+   * project names the project whose volumes to list; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
@@ -611,10 +645,14 @@ export const ListVolumesRequestSchema: GenMessage<ListVolumesRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_volumes, 2);
 
 /**
+ * ListVolumesResponse is one page of the project's volumes.
+ *
  * @generated from message toshi.workspace.v1.ListVolumesResponse
  */
 export type ListVolumesResponse = Message<"toshi.workspace.v1.ListVolumesResponse"> & {
   /**
+   * volumes are the page's volumes, ordered by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Volume volumes = 1;
    */
   volumes: Volume[];
@@ -628,10 +666,14 @@ export type ListVolumesResponse = Message<"toshi.workspace.v1.ListVolumesRespons
 };
 
 /**
+ * ListVolumesResponse is one page of the project's volumes.
+ *
  * @generated from message toshi.workspace.v1.ListVolumesResponse
  */
 export type ListVolumesResponseJson = {
   /**
+   * volumes are the page's volumes, ordered by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Volume volumes = 1;
    */
   volumes?: VolumeJson[];
@@ -652,30 +694,44 @@ export const ListVolumesResponseSchema: GenMessage<ListVolumesResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_volumes, 3);
 
 /**
+ * GetVolumeRequest is a call to GetVolume: the project and the volume.
+ *
  * @generated from message toshi.workspace.v1.GetVolumeRequest
  */
 export type GetVolumeRequest = Message<"toshi.workspace.v1.GetVolumeRequest"> & {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * volume_id is the id of the volume to return; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId: string;
 };
 
 /**
+ * GetVolumeRequest is a call to GetVolume: the project and the volume.
+ *
  * @generated from message toshi.workspace.v1.GetVolumeRequest
  */
 export type GetVolumeRequestJson = {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * volume_id is the id of the volume to return; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId?: string;
@@ -689,20 +745,32 @@ export const GetVolumeRequestSchema: GenMessage<GetVolumeRequest, {jsonType: Get
   messageDesc(file_toshi_workspace_v1_volumes, 4);
 
 /**
+ * GetVolumeResponse is the response of GetVolume: one volume, with its
+ * newest version's details.
+ *
  * @generated from message toshi.workspace.v1.GetVolumeResponse
  */
 export type GetVolumeResponse = Message<"toshi.workspace.v1.GetVolumeResponse"> & {
   /**
+   * volume is the volume the call names, with its newest version's
+   * details.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: Volume | undefined;
 };
 
 /**
+ * GetVolumeResponse is the response of GetVolume: one volume, with its
+ * newest version's details.
+ *
  * @generated from message toshi.workspace.v1.GetVolumeResponse
  */
 export type GetVolumeResponseJson = {
   /**
+   * volume is the volume the call names, with its newest version's
+   * details.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: VolumeJson;
@@ -716,10 +784,16 @@ export const GetVolumeResponseSchema: GenMessage<GetVolumeResponse, {jsonType: G
   messageDesc(file_toshi_workspace_v1_volumes, 5);
 
 /**
+ * CreateVolumeRequest is a call to CreateVolume: the name, mode, size cap
+ * and management mark of the volume to make.
+ *
  * @generated from message toshi.workspace.v1.CreateVolumeRequest
  */
 export type CreateVolumeRequest = Message<"toshi.workspace.v1.CreateVolumeRequest"> & {
   /**
+   * project names the project to make the volume in; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
@@ -732,6 +806,8 @@ export type CreateVolumeRequest = Message<"toshi.workspace.v1.CreateVolumeReques
   name: string;
 
   /**
+   * mode is what the volume holds and how runs use it; required.
+   *
    * @generated from field: toshi.workspace.v1.VolumeMode mode = 3;
    */
   mode: VolumeMode;
@@ -759,26 +835,41 @@ export type CreateVolumeRequest = Message<"toshi.workspace.v1.CreateVolumeReques
   managedBy: string;
 
   /**
+   * manifest_digest is the manifest file's SHA-256, as 64 lowercase hex
+   * characters. Empty when managed_by is empty.
+   *
    * @generated from field: string manifest_digest = 7;
    */
   manifestDigest: string;
 
   /**
+   * managed_fields are the fields the manifest declares, as update mask
+   * paths. Empty when managed_by is empty.
+   *
    * @generated from field: repeated string managed_fields = 8;
    */
   managedFields: string[];
 
   /**
+   * manifest_origin is "created" or "adopted": how the manifest came to
+   * manage the volume. Empty when managed_by is empty.
+   *
    * @generated from field: string manifest_origin = 9;
    */
   manifestOrigin: string;
 };
 
 /**
+ * CreateVolumeRequest is a call to CreateVolume: the name, mode, size cap
+ * and management mark of the volume to make.
+ *
  * @generated from message toshi.workspace.v1.CreateVolumeRequest
  */
 export type CreateVolumeRequestJson = {
   /**
+   * project names the project to make the volume in; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
@@ -791,6 +882,8 @@ export type CreateVolumeRequestJson = {
   name?: string;
 
   /**
+   * mode is what the volume holds and how runs use it; required.
+   *
    * @generated from field: toshi.workspace.v1.VolumeMode mode = 3;
    */
   mode?: VolumeModeJson;
@@ -818,16 +911,25 @@ export type CreateVolumeRequestJson = {
   managedBy?: string;
 
   /**
+   * manifest_digest is the manifest file's SHA-256, as 64 lowercase hex
+   * characters. Empty when managed_by is empty.
+   *
    * @generated from field: string manifest_digest = 7;
    */
   manifestDigest?: string;
 
   /**
+   * managed_fields are the fields the manifest declares, as update mask
+   * paths. Empty when managed_by is empty.
+   *
    * @generated from field: repeated string managed_fields = 8;
    */
   managedFields?: string[];
 
   /**
+   * manifest_origin is "created" or "adopted": how the manifest came to
+   * manage the volume. Empty when managed_by is empty.
+   *
    * @generated from field: string manifest_origin = 9;
    */
   manifestOrigin?: string;
@@ -841,20 +943,30 @@ export const CreateVolumeRequestSchema: GenMessage<CreateVolumeRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_volumes, 6);
 
 /**
+ * CreateVolumeResponse is the volume the call made, or the one an earlier
+ * call with the same request_key made.
+ *
  * @generated from message toshi.workspace.v1.CreateVolumeResponse
  */
 export type CreateVolumeResponse = Message<"toshi.workspace.v1.CreateVolumeResponse"> & {
   /**
+   * volume is the volume the call made.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: Volume | undefined;
 };
 
 /**
+ * CreateVolumeResponse is the volume the call made, or the one an earlier
+ * call with the same request_key made.
+ *
  * @generated from message toshi.workspace.v1.CreateVolumeResponse
  */
 export type CreateVolumeResponseJson = {
   /**
+   * volume is the volume the call made.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: VolumeJson;
@@ -868,10 +980,16 @@ export const CreateVolumeResponseSchema: GenMessage<CreateVolumeResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_volumes, 7);
 
 /**
+ * UpdateVolumeRequest is a call to UpdateVolume: the volume's id and the
+ * new values its update_mask names.
+ *
  * @generated from message toshi.workspace.v1.UpdateVolumeRequest
  */
 export type UpdateVolumeRequest = Message<"toshi.workspace.v1.UpdateVolumeRequest"> & {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
@@ -897,10 +1015,16 @@ export type UpdateVolumeRequest = Message<"toshi.workspace.v1.UpdateVolumeReques
 };
 
 /**
+ * UpdateVolumeRequest is a call to UpdateVolume: the volume's id and the
+ * new values its update_mask names.
+ *
  * @generated from message toshi.workspace.v1.UpdateVolumeRequest
  */
 export type UpdateVolumeRequestJson = {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
@@ -933,20 +1057,28 @@ export const UpdateVolumeRequestSchema: GenMessage<UpdateVolumeRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_volumes, 8);
 
 /**
+ * UpdateVolumeResponse is the volume as it is after the change.
+ *
  * @generated from message toshi.workspace.v1.UpdateVolumeResponse
  */
 export type UpdateVolumeResponse = Message<"toshi.workspace.v1.UpdateVolumeResponse"> & {
   /**
+   * volume is the volume as it is after the change.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: Volume | undefined;
 };
 
 /**
+ * UpdateVolumeResponse is the volume as it is after the change.
+ *
  * @generated from message toshi.workspace.v1.UpdateVolumeResponse
  */
 export type UpdateVolumeResponseJson = {
   /**
+   * volume is the volume as it is after the change.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: VolumeJson;
@@ -960,30 +1092,46 @@ export const UpdateVolumeResponseSchema: GenMessage<UpdateVolumeResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_volumes, 9);
 
 /**
+ * DeleteVolumeRequest is a call to DeleteVolume: the project and the
+ * volume.
+ *
  * @generated from message toshi.workspace.v1.DeleteVolumeRequest
  */
 export type DeleteVolumeRequest = Message<"toshi.workspace.v1.DeleteVolumeRequest"> & {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * volume_id is the id of the volume to delete; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId: string;
 };
 
 /**
+ * DeleteVolumeRequest is a call to DeleteVolume: the project and the
+ * volume.
+ *
  * @generated from message toshi.workspace.v1.DeleteVolumeRequest
  */
 export type DeleteVolumeRequestJson = {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * volume_id is the id of the volume to delete; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId?: string;
@@ -997,12 +1145,16 @@ export const DeleteVolumeRequestSchema: GenMessage<DeleteVolumeRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_volumes, 10);
 
 /**
+ * DeleteVolumeResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.DeleteVolumeResponse
  */
 export type DeleteVolumeResponse = Message<"toshi.workspace.v1.DeleteVolumeResponse"> & {
 };
 
 /**
+ * DeleteVolumeResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.DeleteVolumeResponse
  */
 export type DeleteVolumeResponseJson = {
@@ -1016,15 +1168,23 @@ export const DeleteVolumeResponseSchema: GenMessage<DeleteVolumeResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_volumes, 11);
 
 /**
+ * AttachVolumeRequest is a call to AttachVolume: the volume and the service
+ * or sandbox to attach it to.
+ *
  * @generated from message toshi.workspace.v1.AttachVolumeRequest
  */
 export type AttachVolumeRequest = Message<"toshi.workspace.v1.AttachVolumeRequest"> & {
   /**
+   * project names the project the volume and the workload belong to; empty
+   * is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * volume_id is the id of the volume to attach; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId: string;
@@ -1038,15 +1198,23 @@ export type AttachVolumeRequest = Message<"toshi.workspace.v1.AttachVolumeReques
 };
 
 /**
+ * AttachVolumeRequest is a call to AttachVolume: the volume and the service
+ * or sandbox to attach it to.
+ *
  * @generated from message toshi.workspace.v1.AttachVolumeRequest
  */
 export type AttachVolumeRequestJson = {
   /**
+   * project names the project the volume and the workload belong to; empty
+   * is the default project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * volume_id is the id of the volume to attach; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId?: string;
@@ -1067,20 +1235,28 @@ export const AttachVolumeRequestSchema: GenMessage<AttachVolumeRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_volumes, 12);
 
 /**
+ * AttachVolumeResponse is the volume after the attachment.
+ *
  * @generated from message toshi.workspace.v1.AttachVolumeResponse
  */
 export type AttachVolumeResponse = Message<"toshi.workspace.v1.AttachVolumeResponse"> & {
   /**
+   * volume is the volume as it is after the attachment.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: Volume | undefined;
 };
 
 /**
+ * AttachVolumeResponse is the volume after the attachment.
+ *
  * @generated from message toshi.workspace.v1.AttachVolumeResponse
  */
 export type AttachVolumeResponseJson = {
   /**
+   * volume is the volume as it is after the attachment.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: VolumeJson;
@@ -1094,30 +1270,46 @@ export const AttachVolumeResponseSchema: GenMessage<AttachVolumeResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_volumes, 13);
 
 /**
+ * DetachVolumeRequest is a call to DetachVolume: the project and the
+ * volume.
+ *
  * @generated from message toshi.workspace.v1.DetachVolumeRequest
  */
 export type DetachVolumeRequest = Message<"toshi.workspace.v1.DetachVolumeRequest"> & {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * volume_id is the id of the volume to detach; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId: string;
 };
 
 /**
+ * DetachVolumeRequest is a call to DetachVolume: the project and the
+ * volume.
+ *
  * @generated from message toshi.workspace.v1.DetachVolumeRequest
  */
 export type DetachVolumeRequestJson = {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * volume_id is the id of the volume to detach; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId?: string;
@@ -1131,20 +1323,28 @@ export const DetachVolumeRequestSchema: GenMessage<DetachVolumeRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_volumes, 14);
 
 /**
+ * DetachVolumeResponse is the volume after the detachment.
+ *
  * @generated from message toshi.workspace.v1.DetachVolumeResponse
  */
 export type DetachVolumeResponse = Message<"toshi.workspace.v1.DetachVolumeResponse"> & {
   /**
+   * volume is the volume as it is after the detachment.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: Volume | undefined;
 };
 
 /**
+ * DetachVolumeResponse is the volume after the detachment.
+ *
  * @generated from message toshi.workspace.v1.DetachVolumeResponse
  */
 export type DetachVolumeResponseJson = {
   /**
+   * volume is the volume as it is after the detachment.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 1;
    */
   volume?: VolumeJson;
@@ -1158,15 +1358,24 @@ export const DetachVolumeResponseSchema: GenMessage<DetachVolumeResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_volumes, 15);
 
 /**
+ * ListVolumeVersionsRequest is a call to ListVolumeVersions: the volume and
+ * the page.
+ *
  * @generated from message toshi.workspace.v1.ListVolumeVersionsRequest
  */
 export type ListVolumeVersionsRequest = Message<"toshi.workspace.v1.ListVolumeVersionsRequest"> & {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * volume_id is the id of the state volume whose versions to list;
+   * required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId: string;
@@ -1187,15 +1396,24 @@ export type ListVolumeVersionsRequest = Message<"toshi.workspace.v1.ListVolumeVe
 };
 
 /**
+ * ListVolumeVersionsRequest is a call to ListVolumeVersions: the volume and
+ * the page.
+ *
  * @generated from message toshi.workspace.v1.ListVolumeVersionsRequest
  */
 export type ListVolumeVersionsRequestJson = {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * volume_id is the id of the state volume whose versions to list;
+   * required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId?: string;
@@ -1223,10 +1441,15 @@ export const ListVolumeVersionsRequestSchema: GenMessage<ListVolumeVersionsReque
   messageDesc(file_toshi_workspace_v1_volumes, 16);
 
 /**
+ * ListVolumeVersionsResponse is one page of a state volume's versions,
+ * newest first.
+ *
  * @generated from message toshi.workspace.v1.ListVolumeVersionsResponse
  */
 export type ListVolumeVersionsResponse = Message<"toshi.workspace.v1.ListVolumeVersionsResponse"> & {
   /**
+   * versions are the page's versions, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.VolumeVersion versions = 1;
    */
   versions: VolumeVersion[];
@@ -1240,10 +1463,15 @@ export type ListVolumeVersionsResponse = Message<"toshi.workspace.v1.ListVolumeV
 };
 
 /**
+ * ListVolumeVersionsResponse is one page of a state volume's versions,
+ * newest first.
+ *
  * @generated from message toshi.workspace.v1.ListVolumeVersionsResponse
  */
 export type ListVolumeVersionsResponseJson = {
   /**
+   * versions are the page's versions, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.VolumeVersion versions = 1;
    */
   versions?: VolumeVersionJson[];
@@ -1264,15 +1492,23 @@ export const ListVolumeVersionsResponseSchema: GenMessage<ListVolumeVersionsResp
   messageDesc(file_toshi_workspace_v1_volumes, 17);
 
 /**
+ * RestoreVolumeRequest is a call to RestoreVolume: the volume and the
+ * version to copy.
+ *
  * @generated from message toshi.workspace.v1.RestoreVolumeRequest
  */
 export type RestoreVolumeRequest = Message<"toshi.workspace.v1.RestoreVolumeRequest"> & {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * volume_id is the id of the state volume to restore; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId: string;
@@ -1286,15 +1522,23 @@ export type RestoreVolumeRequest = Message<"toshi.workspace.v1.RestoreVolumeRequ
 };
 
 /**
+ * RestoreVolumeRequest is a call to RestoreVolume: the volume and the
+ * version to copy.
+ *
  * @generated from message toshi.workspace.v1.RestoreVolumeRequest
  */
 export type RestoreVolumeRequestJson = {
   /**
+   * project names the project the volume belongs to; empty is the default
+   * project.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * volume_id is the id of the state volume to restore; required.
+   *
    * @generated from field: string volume_id = 2;
    */
   volumeId?: string;
@@ -1315,6 +1559,9 @@ export const RestoreVolumeRequestSchema: GenMessage<RestoreVolumeRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_volumes, 18);
 
 /**
+ * RestoreVolumeResponse is the version the restore recorded and the volume
+ * it belongs to.
+ *
  * @generated from message toshi.workspace.v1.RestoreVolumeResponse
  */
 export type RestoreVolumeResponse = Message<"toshi.workspace.v1.RestoreVolumeResponse"> & {
@@ -1326,12 +1573,17 @@ export type RestoreVolumeResponse = Message<"toshi.workspace.v1.RestoreVolumeRes
   version?: VolumeVersion | undefined;
 
   /**
+   * volume is the volume as it is after the restore, with the new version.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 2;
    */
   volume?: Volume | undefined;
 };
 
 /**
+ * RestoreVolumeResponse is the version the restore recorded and the volume
+ * it belongs to.
+ *
  * @generated from message toshi.workspace.v1.RestoreVolumeResponse
  */
 export type RestoreVolumeResponseJson = {
@@ -1343,6 +1595,8 @@ export type RestoreVolumeResponseJson = {
   version?: VolumeVersionJson;
 
   /**
+   * volume is the volume as it is after the restore, with the new version.
+   *
    * @generated from field: toshi.workspace.v1.Volume volume = 2;
    */
   volume?: VolumeJson;
@@ -1362,6 +1616,9 @@ export const RestoreVolumeResponseSchema: GenMessage<RestoreVolumeResponse, {jso
  */
 export enum VolumeMode {
   /**
+   * No mode is set: CreateVolume takes one of the four modes, and every
+   * volume has one.
+   *
    * @generated from enum value: VOLUME_MODE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1418,6 +1675,9 @@ export const VolumeModeSchema: GenEnum<VolumeMode, VolumeModeJson> = /*@__PURE__
  */
 export enum VolumeFormat {
   /**
+   * No format is set: no run has mounted the volume, or it is not a state
+   * volume.
+   *
    * @generated from enum value: VOLUME_FORMAT_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1458,6 +1718,8 @@ export const VolumeFormatSchema: GenEnum<VolumeFormat, VolumeFormatJson> = /*@__
  */
 export enum VolumeVersionKind {
   /**
+   * Never returned: every version is a save or a snapshot.
+   *
    * @generated from enum value: VOLUME_VERSION_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1500,6 +1762,9 @@ export const VolumeVersionKindSchema: GenEnum<VolumeVersionKind, VolumeVersionKi
  */
 export enum VolumeConsistency {
   /**
+   * Unset on a volume with no version; a version's data is crash- or
+   * application-consistent.
+   *
    * @generated from enum value: VOLUME_CONSISTENCY_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

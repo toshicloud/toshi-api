@@ -150,6 +150,8 @@ service VolumeService {
 
 // VolumeMode is what a volume holds and how runs use it.
 enum VolumeMode {
+  // No mode is set: CreateVolume takes one of the four modes, and every
+  // volume has one.
   VOLUME_MODE_UNSPECIFIED = 0;
   // A package or build cache: every run gets an overlay of it, and a
   // trusted success makes the next generation.
@@ -165,6 +167,7 @@ enum VolumeMode {
 
 // Volume is a disk of a project.
 message Volume {
+  // id is the volume's id, which every call on one volume names.
   string id = 1;
   // Its name, unique among the project's volumes that are not deleted.
   string name = 2;
@@ -172,9 +175,11 @@ message Volume {
   string project = 3;
   // The id of the project it belongs to.
   string project_id = 4;
+  // mode is what the volume holds and how runs use it; fixed at creation.
   VolumeMode mode = 5;
   // The most it holds, in bytes.
   int64 size_cap_bytes = 6;
+  // create_time is when the volume was created.
   google.protobuf.Timestamp create_time = 7;
   // The service or sandbox it is attached to; empty when it is attached to
   // none.
@@ -216,6 +221,8 @@ message Volume {
   // that workload's environment, which GetService and GetSandbox take;
   // both empty when it is attached to none.
   string attached_workload_kind = 18;
+  // attached_environment is that workload's environment, as GetService and
+  // GetSandbox take it; empty when it is attached to none.
   string attached_environment = 19;
   // Who manages this object: "manifest" when the project manifest declares
   // it, empty when nothing does. A manifest apply sets managed_by,
@@ -242,6 +249,8 @@ message Volume {
 // VolumeFormat is how hosts keep a state volume, and so what its saved
 // versions hold.
 enum VolumeFormat {
+  // No format is set: no run has mounted the volume, or it is not a state
+  // volume.
   VOLUME_FORMAT_UNSPECIFIED = 0;
   // A disk image a VM attaches. A version holds the image.
   VOLUME_FORMAT_DISK = 1;
@@ -253,6 +262,7 @@ enum VolumeFormat {
 message VolumeVersion {
   // One higher than the volume's previous version; the first is 1.
   int64 number = 1;
+  // create_time is when the version was saved.
   google.protobuf.Timestamp create_time = 2;
   // The length of the saved copy, in bytes: the disk image, or for a
   // volume kept as a directory the compressed tar of it.
@@ -270,6 +280,7 @@ message VolumeVersion {
 
 // VolumeVersionKind is how a run made a volume version.
 enum VolumeVersionKind {
+  // Never returned: every version is a save or a snapshot.
   VOLUME_VERSION_KIND_UNSPECIFIED = 0;
   // Saved when the run that mounted the volume ended, or restored from
   // such a version.
@@ -282,6 +293,8 @@ enum VolumeVersionKind {
 
 // VolumeConsistency is what a volume version's data can be trusted for.
 enum VolumeConsistency {
+  // Unset on a volume with no version; a version's data is crash- or
+  // application-consistent.
   VOLUME_CONSISTENCY_UNSPECIFIED = 0;
   // The data as a power cut would leave it: a file system recovers it, an
   // application may need to repair what it was writing.
@@ -292,7 +305,11 @@ enum VolumeConsistency {
   VOLUME_CONSISTENCY_APPLICATION = 2;
 }
 
+// ListVolumesRequest is a call to ListVolumes: the project, the page, and
+// whether to list only browser profiles.
 message ListVolumesRequest {
+  // project names the project whose volumes to list; empty is the default
+  // project.
   string project = 1;
   // The most volumes in one page; zero lets the server choose.
   int32 page_size = 2;
@@ -302,25 +319,40 @@ message ListVolumesRequest {
   bool profile = 4;
 }
 
+// ListVolumesResponse is one page of the project's volumes.
 message ListVolumesResponse {
+  // volumes are the page's volumes, ordered by name.
   repeated Volume volumes = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// GetVolumeRequest is a call to GetVolume: the project and the volume.
 message GetVolumeRequest {
+  // project names the project the volume belongs to; empty is the default
+  // project.
   string project = 1;
+  // volume_id is the id of the volume to return; required.
   string volume_id = 2;
 }
 
+// GetVolumeResponse is the response of GetVolume: one volume, with its
+// newest version's details.
 message GetVolumeResponse {
+  // volume is the volume the call names, with its newest version's
+  // details.
   Volume volume = 1;
 }
 
+// CreateVolumeRequest is a call to CreateVolume: the name, mode, size cap
+// and management mark of the volume to make.
 message CreateVolumeRequest {
+  // project names the project to make the volume in; empty is the default
+  // project.
   string project = 1;
   // Unique among the project's volumes that are not deleted.
   string name = 2;
+  // mode is what the volume holds and how runs use it; required.
   VolumeMode mode = 3;
   // The most it holds, in bytes; zero takes the project's default, or 10 GiB.
   int64 size_cap_bytes = 4;
@@ -329,16 +361,29 @@ message CreateVolumeRequest {
   // The management mark goes together: all four fields or none; managed_by
   // "manifest" needs the digest, an origin and at least one field path.
   string managed_by = 6;
+  // manifest_digest is the manifest file's SHA-256, as 64 lowercase hex
+  // characters. Empty when managed_by is empty.
   string manifest_digest = 7;
+  // managed_fields are the fields the manifest declares, as update mask
+  // paths. Empty when managed_by is empty.
   repeated string managed_fields = 8;
+  // manifest_origin is "created" or "adopted": how the manifest came to
+  // manage the volume. Empty when managed_by is empty.
   string manifest_origin = 9;
 }
 
+// CreateVolumeResponse is the volume the call made, or the one an earlier
+// call with the same request_key made.
 message CreateVolumeResponse {
+  // volume is the volume the call made.
   Volume volume = 1;
 }
 
+// UpdateVolumeRequest is a call to UpdateVolume: the volume's id and the
+// new values its update_mask names.
 message UpdateVolumeRequest {
+  // project names the project the volume belongs to; empty is the default
+  // project.
   string project = 1;
   // id names the volume; the fields update_mask names carry the new
   // values.
@@ -351,39 +396,67 @@ message UpdateVolumeRequest {
   google.protobuf.FieldMask update_mask = 3;
 }
 
+// UpdateVolumeResponse is the volume as it is after the change.
 message UpdateVolumeResponse {
+  // volume is the volume as it is after the change.
   Volume volume = 1;
 }
 
+// DeleteVolumeRequest is a call to DeleteVolume: the project and the
+// volume.
 message DeleteVolumeRequest {
+  // project names the project the volume belongs to; empty is the default
+  // project.
   string project = 1;
+  // volume_id is the id of the volume to delete; required.
   string volume_id = 2;
 }
 
+// DeleteVolumeResponse has no fields.
 message DeleteVolumeResponse {}
 
+// AttachVolumeRequest is a call to AttachVolume: the volume and the service
+// or sandbox to attach it to.
 message AttachVolumeRequest {
+  // project names the project the volume and the workload belong to; empty
+  // is the default project.
   string project = 1;
+  // volume_id is the id of the volume to attach; required.
   string volume_id = 2;
   // The service's or sandbox's workload id.
   string workload_id = 3;
 }
 
+// AttachVolumeResponse is the volume after the attachment.
 message AttachVolumeResponse {
+  // volume is the volume as it is after the attachment.
   Volume volume = 1;
 }
 
+// DetachVolumeRequest is a call to DetachVolume: the project and the
+// volume.
 message DetachVolumeRequest {
+  // project names the project the volume belongs to; empty is the default
+  // project.
   string project = 1;
+  // volume_id is the id of the volume to detach; required.
   string volume_id = 2;
 }
 
+// DetachVolumeResponse is the volume after the detachment.
 message DetachVolumeResponse {
+  // volume is the volume as it is after the detachment.
   Volume volume = 1;
 }
 
+// ListVolumeVersionsRequest is a call to ListVolumeVersions: the volume and
+// the page.
 message ListVolumeVersionsRequest {
+  // project names the project the volume belongs to; empty is the default
+  // project.
   string project = 1;
+  // volume_id is the id of the state volume whose versions to list;
+  // required.
   string volume_id = 2;
   // The most versions in one page; zero lets the server choose.
   int32 page_size = 3;
@@ -391,21 +464,32 @@ message ListVolumeVersionsRequest {
   string page_token = 4;
 }
 
+// ListVolumeVersionsResponse is one page of a state volume's versions,
+// newest first.
 message ListVolumeVersionsResponse {
+  // versions are the page's versions, newest first.
   repeated VolumeVersion versions = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// RestoreVolumeRequest is a call to RestoreVolume: the volume and the
+// version to copy.
 message RestoreVolumeRequest {
+  // project names the project the volume belongs to; empty is the default
+  // project.
   string project = 1;
+  // volume_id is the id of the state volume to restore; required.
   string volume_id = 2;
   // The number of the version to copy.
   int64 version = 3;
 }
 
+// RestoreVolumeResponse is the version the restore recorded and the volume
+// it belongs to.
 message RestoreVolumeResponse {
   // The version the restore recorded.
   VolumeVersion version = 1;
+  // volume is the volume as it is after the restore, with the new version.
   Volume volume = 2;
 }

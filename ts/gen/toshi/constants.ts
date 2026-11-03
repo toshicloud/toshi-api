@@ -922,3 +922,30 @@ export const labels = {
     DRAINED: "Old revision drained",
   },
 } as const;
+
+// Every operator alert kind: "stored" when a rule writes its rows,
+// "computed" when a read works it out, and the scopes it is raised at.
+export const alertKinds = {
+  runner_exits_without_job: { raised: "stored", scopes: ["operator"] },
+  egress_changed: { raised: "stored", scopes: ["operator", "workspace"] },
+  webhook_recovered: { raised: "stored", scopes: ["operator"] },
+  memory_held: { raised: "stored", scopes: ["operator", "workspace"] },
+  host_offline: { raised: "stored", scopes: ["operator", "workspace"] },
+  vm_died: { raised: "stored", scopes: ["operator", "workspace"] },
+  spend_cap_reached: { raised: "stored", scopes: ["operator", "workspace"] },
+  backup_overdue: { raised: "stored", scopes: ["operator"] },
+  backup_copy_failed: { raised: "stored", scopes: ["operator"] },
+  restore_drill_overdue: { raised: "stored", scopes: ["operator"] },
+  store_size_over: { raised: "stored", scopes: ["operator"] },
+  billing_dev_fake: { raised: "stored", scopes: ["operator"] },
+  utilisation_outside_band: { raised: "stored", scopes: ["operator"] },
+  pool_target_differs: { raised: "stored", scopes: ["operator"] },
+  job_oom_killed: { raised: "stored", scopes: ["operator", "workspace"] },
+  size_near_memory_limit: { raised: "stored", scopes: ["operator"] },
+  agent_version_skew: { raised: "computed", scopes: ["operator", "workspace"] },
+  tenant_suspended: { raised: "computed", scopes: ["operator"] },
+  tenant_purge_pending: { raised: "computed", scopes: ["operator"] },
+  token_creator_left: { raised: "stored", scopes: ["workspace"] },
+  token_expiring: { raised: "stored", scopes: ["workspace"] },
+  project_ending: { raised: "stored", scopes: ["workspace"] },
+} as const;

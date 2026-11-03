@@ -29,6 +29,8 @@ const (
 type VolumeMode int32
 
 const (
+	// No mode is set: CreateVolume takes one of the four modes, and every
+	// volume has one.
 	VolumeMode_VOLUME_MODE_UNSPECIFIED VolumeMode = 0
 	// A package or build cache: every run gets an overlay of it, and a
 	// trusted success makes the next generation.
@@ -92,6 +94,8 @@ func (VolumeMode) EnumDescriptor() ([]byte, []int) {
 type VolumeFormat int32
 
 const (
+	// No format is set: no run has mounted the volume, or it is not a state
+	// volume.
 	VolumeFormat_VOLUME_FORMAT_UNSPECIFIED VolumeFormat = 0
 	// A disk image a VM attaches. A version holds the image.
 	VolumeFormat_VOLUME_FORMAT_DISK VolumeFormat = 1
@@ -144,6 +148,7 @@ func (VolumeFormat) EnumDescriptor() ([]byte, []int) {
 type VolumeVersionKind int32
 
 const (
+	// Never returned: every version is a save or a snapshot.
 	VolumeVersionKind_VOLUME_VERSION_KIND_UNSPECIFIED VolumeVersionKind = 0
 	// Saved when the run that mounted the volume ended, or restored from
 	// such a version.
@@ -199,6 +204,8 @@ func (VolumeVersionKind) EnumDescriptor() ([]byte, []int) {
 type VolumeConsistency int32
 
 const (
+	// Unset on a volume with no version; a version's data is crash- or
+	// application-consistent.
 	VolumeConsistency_VOLUME_CONSISTENCY_UNSPECIFIED VolumeConsistency = 0
 	// The data as a power cut would leave it: a file system recovers it, an
 	// application may need to repair what it was writing.
@@ -253,17 +260,20 @@ func (VolumeConsistency) EnumDescriptor() ([]byte, []int) {
 // Volume is a disk of a project.
 type Volume struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// id is the volume's id, which every call on one volume names.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Its name, unique among the project's volumes that are not deleted.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The name of the project it belongs to.
 	Project string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
 	// The id of the project it belongs to.
-	ProjectId string     `protobuf:"bytes,4,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	Mode      VolumeMode `protobuf:"varint,5,opt,name=mode,proto3,enum=toshi.workspace.v1.VolumeMode" json:"mode,omitempty"`
+	ProjectId string `protobuf:"bytes,4,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	// mode is what the volume holds and how runs use it; fixed at creation.
+	Mode VolumeMode `protobuf:"varint,5,opt,name=mode,proto3,enum=toshi.workspace.v1.VolumeMode" json:"mode,omitempty"`
 	// The most it holds, in bytes.
-	SizeCapBytes int64                  `protobuf:"varint,6,opt,name=size_cap_bytes,json=sizeCapBytes,proto3" json:"size_cap_bytes,omitempty"`
-	CreateTime   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	SizeCapBytes int64 `protobuf:"varint,6,opt,name=size_cap_bytes,json=sizeCapBytes,proto3" json:"size_cap_bytes,omitempty"`
+	// create_time is when the volume was created.
+	CreateTime *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	// The service or sandbox it is attached to; empty when it is attached to
 	// none.
 	AttachedWorkloadId string `protobuf:"bytes,8,opt,name=attached_workload_id,json=attachedWorkloadId,proto3" json:"attached_workload_id,omitempty"`
@@ -304,7 +314,9 @@ type Volume struct {
 	// that workload's environment, which GetService and GetSandbox take;
 	// both empty when it is attached to none.
 	AttachedWorkloadKind string `protobuf:"bytes,18,opt,name=attached_workload_kind,json=attachedWorkloadKind,proto3" json:"attached_workload_kind,omitempty"`
-	AttachedEnvironment  string `protobuf:"bytes,19,opt,name=attached_environment,json=attachedEnvironment,proto3" json:"attached_environment,omitempty"`
+	// attached_environment is that workload's environment, as GetService and
+	// GetSandbox take it; empty when it is attached to none.
+	AttachedEnvironment string `protobuf:"bytes,19,opt,name=attached_environment,json=attachedEnvironment,proto3" json:"attached_environment,omitempty"`
 	// Who manages this object: "manifest" when the project manifest declares
 	// it, empty when nothing does. A manifest apply sets managed_by,
 	// manifest_digest, manifest_origin and managed_fields together.
@@ -538,7 +550,8 @@ func (x *Volume) GetSizeCapSource() string {
 type VolumeVersion struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// One higher than the volume's previous version; the first is 1.
-	Number     int64                  `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	Number int64 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	// create_time is when the version was saved.
 	CreateTime *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	// The length of the saved copy, in bytes: the disk image, or for a
 	// volume kept as a directory the compressed tar of it.
@@ -635,9 +648,13 @@ func (x *VolumeVersion) GetConsistency() VolumeConsistency {
 	return VolumeConsistency_VOLUME_CONSISTENCY_UNSPECIFIED
 }
 
+// ListVolumesRequest is a call to ListVolumes: the project, the page, and
+// whether to list only browser profiles.
 type ListVolumesRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project names the project whose volumes to list; empty is the default
+	// project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// The most volumes in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -706,9 +723,11 @@ func (x *ListVolumesRequest) GetProfile() bool {
 	return false
 }
 
+// ListVolumesResponse is one page of the project's volumes.
 type ListVolumesResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Volumes []*Volume              `protobuf:"bytes,1,rep,name=volumes,proto3" json:"volumes,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// volumes are the page's volumes, ordered by name.
+	Volumes []*Volume `protobuf:"bytes,1,rep,name=volumes,proto3" json:"volumes,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -759,10 +778,14 @@ func (x *ListVolumesResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetVolumeRequest is a call to GetVolume: the project and the volume.
 type GetVolumeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	VolumeId      string                 `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project names the project the volume belongs to; empty is the default
+	// project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// volume_id is the id of the volume to return; required.
+	VolumeId      string `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -811,9 +834,13 @@ func (x *GetVolumeRequest) GetVolumeId() string {
 	return ""
 }
 
+// GetVolumeResponse is the response of GetVolume: one volume, with its
+// newest version's details.
 type GetVolumeResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Volume        *Volume                `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// volume is the volume the call names, with its newest version's
+	// details.
+	Volume        *Volume `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -855,11 +882,16 @@ func (x *GetVolumeResponse) GetVolume() *Volume {
 	return nil
 }
 
+// CreateVolumeRequest is a call to CreateVolume: the name, mode, size cap
+// and management mark of the volume to make.
 type CreateVolumeRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project names the project to make the volume in; empty is the default
+	// project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// Unique among the project's volumes that are not deleted.
-	Name string     `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// mode is what the volume holds and how runs use it; required.
 	Mode VolumeMode `protobuf:"varint,3,opt,name=mode,proto3,enum=toshi.workspace.v1.VolumeMode" json:"mode,omitempty"`
 	// The most it holds, in bytes; zero takes the project's default, or 10 GiB.
 	SizeCapBytes int64 `protobuf:"varint,4,opt,name=size_cap_bytes,json=sizeCapBytes,proto3" json:"size_cap_bytes,omitempty"`
@@ -867,10 +899,16 @@ type CreateVolumeRequest struct {
 	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// The management mark goes together: all four fields or none; managed_by
 	// "manifest" needs the digest, an origin and at least one field path.
-	ManagedBy      string   `protobuf:"bytes,6,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
-	ManifestDigest string   `protobuf:"bytes,7,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
-	ManagedFields  []string `protobuf:"bytes,8,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
-	ManifestOrigin string   `protobuf:"bytes,9,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	ManagedBy string `protobuf:"bytes,6,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	// manifest_digest is the manifest file's SHA-256, as 64 lowercase hex
+	// characters. Empty when managed_by is empty.
+	ManifestDigest string `protobuf:"bytes,7,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	// managed_fields are the fields the manifest declares, as update mask
+	// paths. Empty when managed_by is empty.
+	ManagedFields []string `protobuf:"bytes,8,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	// manifest_origin is "created" or "adopted": how the manifest came to
+	// manage the volume. Empty when managed_by is empty.
+	ManifestOrigin string `protobuf:"bytes,9,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -968,9 +1006,12 @@ func (x *CreateVolumeRequest) GetManifestOrigin() string {
 	return ""
 }
 
+// CreateVolumeResponse is the volume the call made, or the one an earlier
+// call with the same request_key made.
 type CreateVolumeResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Volume        *Volume                `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// volume is the volume the call made.
+	Volume        *Volume `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1012,9 +1053,13 @@ func (x *CreateVolumeResponse) GetVolume() *Volume {
 	return nil
 }
 
+// UpdateVolumeRequest is a call to UpdateVolume: the volume's id and the
+// new values its update_mask names.
 type UpdateVolumeRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project names the project the volume belongs to; empty is the default
+	// project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// id names the volume; the fields update_mask names carry the new
 	// values.
 	Volume *Volume `protobuf:"bytes,2,opt,name=volume,proto3" json:"volume,omitempty"`
@@ -1079,9 +1124,11 @@ func (x *UpdateVolumeRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateVolumeResponse is the volume as it is after the change.
 type UpdateVolumeResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Volume        *Volume                `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// volume is the volume as it is after the change.
+	Volume        *Volume `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1123,10 +1170,15 @@ func (x *UpdateVolumeResponse) GetVolume() *Volume {
 	return nil
 }
 
+// DeleteVolumeRequest is a call to DeleteVolume: the project and the
+// volume.
 type DeleteVolumeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	VolumeId      string                 `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project names the project the volume belongs to; empty is the default
+	// project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// volume_id is the id of the volume to delete; required.
+	VolumeId      string `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1175,6 +1227,7 @@ func (x *DeleteVolumeRequest) GetVolumeId() string {
 	return ""
 }
 
+// DeleteVolumeResponse has no fields.
 type DeleteVolumeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1211,10 +1264,15 @@ func (*DeleteVolumeResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{11}
 }
 
+// AttachVolumeRequest is a call to AttachVolume: the volume and the service
+// or sandbox to attach it to.
 type AttachVolumeRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Project  string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	VolumeId string                 `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project names the project the volume and the workload belong to; empty
+	// is the default project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// volume_id is the id of the volume to attach; required.
+	VolumeId string `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
 	// The service's or sandbox's workload id.
 	WorkloadId    string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1272,9 +1330,11 @@ func (x *AttachVolumeRequest) GetWorkloadId() string {
 	return ""
 }
 
+// AttachVolumeResponse is the volume after the attachment.
 type AttachVolumeResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Volume        *Volume                `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// volume is the volume as it is after the attachment.
+	Volume        *Volume `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1316,10 +1376,15 @@ func (x *AttachVolumeResponse) GetVolume() *Volume {
 	return nil
 }
 
+// DetachVolumeRequest is a call to DetachVolume: the project and the
+// volume.
 type DetachVolumeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	VolumeId      string                 `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project names the project the volume belongs to; empty is the default
+	// project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// volume_id is the id of the volume to detach; required.
+	VolumeId      string `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1368,9 +1433,11 @@ func (x *DetachVolumeRequest) GetVolumeId() string {
 	return ""
 }
 
+// DetachVolumeResponse is the volume after the detachment.
 type DetachVolumeResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Volume        *Volume                `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// volume is the volume as it is after the detachment.
+	Volume        *Volume `protobuf:"bytes,1,opt,name=volume,proto3" json:"volume,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1412,10 +1479,16 @@ func (x *DetachVolumeResponse) GetVolume() *Volume {
 	return nil
 }
 
+// ListVolumeVersionsRequest is a call to ListVolumeVersions: the volume and
+// the page.
 type ListVolumeVersionsRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Project  string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	VolumeId string                 `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project names the project the volume belongs to; empty is the default
+	// project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// volume_id is the id of the state volume whose versions to list;
+	// required.
+	VolumeId string `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
 	// The most versions in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -1482,9 +1555,12 @@ func (x *ListVolumeVersionsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListVolumeVersionsResponse is one page of a state volume's versions,
+// newest first.
 type ListVolumeVersionsResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Versions []*VolumeVersion       `protobuf:"bytes,1,rep,name=versions,proto3" json:"versions,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// versions are the page's versions, newest first.
+	Versions []*VolumeVersion `protobuf:"bytes,1,rep,name=versions,proto3" json:"versions,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1535,10 +1611,15 @@ func (x *ListVolumeVersionsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// RestoreVolumeRequest is a call to RestoreVolume: the volume and the
+// version to copy.
 type RestoreVolumeRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Project  string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	VolumeId string                 `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// project names the project the volume belongs to; empty is the default
+	// project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// volume_id is the id of the state volume to restore; required.
+	VolumeId string `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
 	// The number of the version to copy.
 	Version       int64 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1596,11 +1677,14 @@ func (x *RestoreVolumeRequest) GetVersion() int64 {
 	return 0
 }
 
+// RestoreVolumeResponse is the version the restore recorded and the volume
+// it belongs to.
 type RestoreVolumeResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The version the restore recorded.
-	Version       *VolumeVersion `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	Volume        *Volume        `protobuf:"bytes,2,opt,name=volume,proto3" json:"volume,omitempty"`
+	Version *VolumeVersion `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	// volume is the volume as it is after the restore, with the new version.
+	Volume        *Volume `protobuf:"bytes,2,opt,name=volume,proto3" json:"volume,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

@@ -27,6 +27,7 @@ const (
 type DomainState int32
 
 const (
+	// Never sent.
 	DomainState_DOMAIN_STATE_UNSPECIFIED DomainState = 0
 	// Its records do not check out yet, or no longer do: it does not serve.
 	DomainState_DOMAIN_STATE_WAITING_FOR_RECORDS DomainState = 1
@@ -159,17 +160,21 @@ func (x *DomainRecord) GetValue() string {
 	return ""
 }
 
+// Domain is a customer domain: a name the workspace owns, pointed at an
+// http endpoint of one of its services.
 type Domain struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The domain's id, assigned by the server.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The domain, lowercase, in its ASCII form.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The service's workload id.
 	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The service's http endpoint the domain serves, by its name in the
 	// recipe; the front endpoint's when the create named none.
-	Endpoint string      `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	State    DomainState `protobuf:"varint,5,opt,name=state,proto3,enum=toshi.workspace.v1.DomainState" json:"state,omitempty"`
+	Endpoint string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// Where the domain is, as DomainState names it.
+	State DomainState `protobuf:"varint,5,opt,name=state,proto3,enum=toshi.workspace.v1.DomainState" json:"state,omitempty"`
 	// The CNAME record to the endpoint's provided name, then the TXT record
 	// with the domain's token; only the TXT record while the service's
 	// current revision gives the endpoint no provided name.
@@ -186,7 +191,8 @@ type Domain struct {
 	// When its certificate ends; unset without one.
 	NotAfter *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=not_after,json=notAfter,proto3" json:"not_after,omitempty"`
 	// Why the last check or order failed; empty after a success.
-	LastError     string                 `protobuf:"bytes,12,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	LastError string `protobuf:"bytes,12,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	// When the domain was created.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -313,17 +319,23 @@ func (x *Domain) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// CreateDomainRequest names the domain to add and where it serves.
 type CreateDomainRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
 	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The http endpoint the domain serves; empty is the service's front
 	// endpoint, the one at the service's own name.
 	Endpoint string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The domain, in its Unicode or ASCII form.
-	Name          string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	// A key of the caller's choice, at most 200 printable ASCII bytes, empty
+	// for none: a retry with the same key and request returns the first
+	// answer.
 	RequestKey    string `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -401,9 +413,11 @@ func (x *CreateDomainRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateDomainResponse carries the new domain and its records.
 type CreateDomainResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Domain        *Domain                `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The domain as created, with the records to set at its DNS provider.
+	Domain        *Domain `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -445,11 +459,15 @@ func (x *CreateDomainResponse) GetDomain() *Domain {
 	return nil
 }
 
+// GetDomainRequest names the domain to return.
 type GetDomainRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The domain's id.
+	Id            string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -505,9 +523,11 @@ func (x *GetDomainRequest) GetId() string {
 	return ""
 }
 
+// GetDomainResponse carries the domain.
 type GetDomainResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Domain        *Domain                `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The domain, with its state and records.
+	Domain        *Domain `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -549,10 +569,13 @@ func (x *GetDomainResponse) GetDomain() *Domain {
 	return nil
 }
 
+// ListDomainsRequest selects a service's domains.
 type ListDomainsRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
 	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The most domains in one page; zero lets the server choose.
@@ -628,9 +651,11 @@ func (x *ListDomainsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListDomainsResponse carries one page of a service's domains.
 type ListDomainsResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Domains []*Domain              `protobuf:"bytes,1,rep,name=domains,proto3" json:"domains,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's domains, ordered by name.
+	Domains []*Domain `protobuf:"bytes,1,rep,name=domains,proto3" json:"domains,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -681,12 +706,19 @@ func (x *ListDomainsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// VerifyDomainRequest names the domain to check now.
 type VerifyDomainRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The domain's id.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key of the caller's choice, at most 200 printable ASCII bytes, empty
+	// for none: a retry with the same key and request returns the first
+	// answer.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -749,9 +781,12 @@ func (x *VerifyDomainRequest) GetRequestKey() string {
 	return ""
 }
 
+// VerifyDomainResponse carries the domain as the check left it.
 type VerifyDomainResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Domain        *Domain                `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The domain after the check; last_error says why its records did not
+	// check out.
+	Domain        *Domain `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -793,12 +828,19 @@ func (x *VerifyDomainResponse) GetDomain() *Domain {
 	return nil
 }
 
+// IssueDomainRequest names the domain whose certificate to order now.
 type IssueDomainRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The domain's id.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key of the caller's choice, at most 200 printable ASCII bytes, empty
+	// for none: a retry with the same key and request returns the first
+	// answer.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -861,9 +903,11 @@ func (x *IssueDomainRequest) GetRequestKey() string {
 	return ""
 }
 
+// IssueDomainResponse carries the domain as the call left it.
 type IssueDomainResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Domain        *Domain                `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The domain after the call; a verified one is set issuing.
+	Domain        *Domain `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -905,11 +949,15 @@ func (x *IssueDomainResponse) GetDomain() *Domain {
 	return nil
 }
 
+// DeleteDomainRequest names the domain to delete.
 type DeleteDomainRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The domain's id.
+	Id            string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -965,6 +1013,7 @@ func (x *DeleteDomainRequest) GetId() string {
 	return ""
 }
 
+// DeleteDomainResponse has no fields.
 type DeleteDomainResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields

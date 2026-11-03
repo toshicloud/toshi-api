@@ -77,6 +77,7 @@ service DomainService {
 
 // DomainState is where a domain is.
 enum DomainState {
+  // Never sent.
   DOMAIN_STATE_UNSPECIFIED = 0;
   // Its records do not check out yet, or no longer do: it does not serve.
   DOMAIN_STATE_WAITING_FOR_RECORDS = 1;
@@ -106,7 +107,10 @@ message DomainRecord {
   string value = 3;
 }
 
+// Domain is a customer domain: a name the workspace owns, pointed at an
+// http endpoint of one of its services.
 message Domain {
+  // The domain's id, assigned by the server.
   string id = 1;
   // The domain, lowercase, in its ASCII form.
   string name = 2;
@@ -115,6 +119,7 @@ message Domain {
   // The service's http endpoint the domain serves, by its name in the
   // recipe; the front endpoint's when the create named none.
   string endpoint = 4;
+  // Where the domain is, as DomainState names it.
   DomainState state = 5;
   // The CNAME record to the endpoint's provided name, then the TXT record
   // with the domain's token; only the TXT record while the service's
@@ -133,11 +138,15 @@ message Domain {
   google.protobuf.Timestamp not_after = 11;
   // Why the last check or order failed; empty after a success.
   string last_error = 12;
+  // When the domain was created.
   google.protobuf.Timestamp created_at = 13;
 }
 
+// CreateDomainRequest names the domain to add and where it serves.
 message CreateDomainRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The service's workload id.
   string service_id = 3;
@@ -146,25 +155,39 @@ message CreateDomainRequest {
   string endpoint = 4;
   // The domain, in its Unicode or ASCII form.
   string name = 5;
+  // A key of the caller's choice, at most 200 printable ASCII bytes, empty
+  // for none: a retry with the same key and request returns the first
+  // answer.
   string request_key = 6;
 }
 
+// CreateDomainResponse carries the new domain and its records.
 message CreateDomainResponse {
+  // The domain as created, with the records to set at its DNS provider.
   Domain domain = 1;
 }
 
+// GetDomainRequest names the domain to return.
 message GetDomainRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The domain's id.
   string id = 3;
 }
 
+// GetDomainResponse carries the domain.
 message GetDomainResponse {
+  // The domain, with its state and records.
   Domain domain = 1;
 }
 
+// ListDomainsRequest selects a service's domains.
 message ListDomainsRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The service's workload id.
   string service_id = 3;
@@ -174,38 +197,64 @@ message ListDomainsRequest {
   string page_token = 5;
 }
 
+// ListDomainsResponse carries one page of a service's domains.
 message ListDomainsResponse {
+  // The page's domains, ordered by name.
   repeated Domain domains = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// VerifyDomainRequest names the domain to check now.
 message VerifyDomainRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The domain's id.
   string id = 3;
+  // A key of the caller's choice, at most 200 printable ASCII bytes, empty
+  // for none: a retry with the same key and request returns the first
+  // answer.
   string request_key = 4;
 }
 
+// VerifyDomainResponse carries the domain as the check left it.
 message VerifyDomainResponse {
+  // The domain after the check; last_error says why its records did not
+  // check out.
   Domain domain = 1;
 }
 
+// IssueDomainRequest names the domain whose certificate to order now.
 message IssueDomainRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The domain's id.
   string id = 3;
+  // A key of the caller's choice, at most 200 printable ASCII bytes, empty
+  // for none: a retry with the same key and request returns the first
+  // answer.
   string request_key = 4;
 }
 
+// IssueDomainResponse carries the domain as the call left it.
 message IssueDomainResponse {
+  // The domain after the call; a verified one is set issuing.
   Domain domain = 1;
 }
 
+// DeleteDomainRequest names the domain to delete.
 message DeleteDomainRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The domain's id.
   string id = 3;
 }
 
+// DeleteDomainResponse has no fields.
 message DeleteDomainResponse {}

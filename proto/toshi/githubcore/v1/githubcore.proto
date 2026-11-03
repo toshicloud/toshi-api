@@ -99,8 +99,12 @@ service GitHubCoreService {
   }
 }
 
+// AdmitGrantRequest is empty: the adapter's nonce and its credentials
+// travel in the call's headers.
 message AdmitGrantRequest {}
 
+// AdmitGrantResponse is what the grant allows: the product call it was
+// written for, its caller, and the arguments it binds.
 message AdmitGrantResponse {
   // call is the full procedure name of the product call, for example
   // "/toshi.github.v1.GitHubService/GetJobFailure".
@@ -108,6 +112,7 @@ message AdmitGrantResponse {
   // actor_kind and actor_id are the caller as the control plane
   // authenticated it: "operator", "session" or "token", and its id.
   string actor_kind = 2;
+  // actor_id is that caller's id: the operator's, a session's or a token's.
   string actor_id = 3;
   // workspaces are the caller's workspaces; empty for the operator.
   repeated string workspaces = 4;
@@ -115,7 +120,11 @@ message AdmitGrantResponse {
   reserved "job_id", "tenant", "repository", "approved", "installation_id";
   // generation is the delivery check the grant began; 0 for none.
   int64 generation = 10;
+  // created_at is when the core wrote the grant, as it passed the call to
+  // the adapter.
   google.protobuf.Timestamp created_at = 11;
+  // expires_at is when the grant stops being open, a minute after
+  // created_at.
   google.protobuf.Timestamp expires_at = 12;
   // args are the call's arguments the grant binds, as the product encoded
   // them: for Runners a GrantArgs in its JSON form, with the
@@ -141,34 +150,62 @@ message GrantArgs {
   int64 installation_id = 5;
 }
 
+// GetJobRequest names the job GetJob reads.
 message GetJobRequest {
+  // job_id is the Toshi job's ID.
   string job_id = 1;
 }
 
+// GetJobResponse holds the job GetJob read.
 message GetJobResponse {
+  // job is that job.
   Job job = 1;
 }
 
 // Job is what the adapter reads of a job.
 message Job {
+  // id is the Toshi job's ID.
   string id = 1;
+  // workspace is the job's workspace id.
   string workspace = 2;
+  // repository is the workflow job's repository, owner/name; empty when the
+  // job has none recorded.
   string repository = 3;
+  // installation_id is the GitHub App installation the workflow job belongs
+  // to; 0 when none is recorded.
   int64 installation_id = 4;
+  // workflow_job_id is GitHub's id of the workflow job; 0 when none is
+  // recorded.
   int64 workflow_job_id = 5;
+  // state is the job's state: queued, assigned, starting, running, stopping,
+  // debugging, completed, failed or cancelled.
   string state = 6;
+  // conclusion is GitHub's conclusion of the job, such as "success",
+  // "failure" or "cancelled"; empty until the job ends.
   string conclusion = 7;
+  // error is Toshi's reason on a job it refused or stopped, such as
+  // "plan_refused: ..."; empty otherwise.
   string error = 8;
+  // failing_step is the step that failed: the first GitHub concluded
+  // "failure", else "timed_out", else "cancelled"; empty when none did or
+  // GitHub has not been read.
   string failing_step = 9;
 }
 
+// FillJobFailingStepRequest carries the failing step the adapter read from
+// GitHub.
 message FillJobFailingStepRequest {
+  // job_id is the Toshi job's ID.
   string job_id = 1;
+  // step is the failing step's name, as GitHub gives it.
   string step = 2;
 }
 
+// FillJobFailingStepResponse is empty: a stored step is the whole answer.
 message FillJobFailingStepResponse {}
 
+// ListOpenSourceRepositoriesRequest asks for the open-source gate's rows and
+// the approval decisions kept without a row.
 message ListOpenSourceRepositoriesRequest {
   // workspace is the workspace whose rows to list; empty for every workspace the
   // caller may see.
@@ -179,7 +216,11 @@ message ListOpenSourceRepositoriesRequest {
   string page_token = 3;
 }
 
+// ListOpenSourceRepositoriesResponse holds one page of the open-source gate's
+// rows, with the kept approvals.
 message ListOpenSourceRepositoriesResponse {
+  // repositories are the page's rows, ordered by workspace, then
+  // repository.
   repeated OpenSourceRepository repositories = 1;
   // Every page holds all of them.
   repeated OpenSourceKeptApproval kept = 2;
@@ -189,48 +230,89 @@ message ListOpenSourceRepositoriesResponse {
 
 // OpenSourceRepository is one workspace's row of the open-source gate.
 message OpenSourceRepository {
+  // workspace is the workspace the row belongs to.
   string workspace = 1;
+  // repository is the repository, owner/name.
   string repository = 2;
+  // installation_id is the App installation the last read used; 0 when none
+  // was ever read.
   int64 installation_id = 3;
+  // found reports whether GitHub returned the repository at the last read.
   bool found = 4;
+  // private reports whether GitHub returned the repository as private at the
+  // last read.
   bool private = 5;
+  // spdx_id is GitHub's licence id; empty when GitHub finds none.
   string spdx_id = 6;
+  // repo_created_at is when GitHub created the repository; unset when never
+  // read.
   google.protobuf.Timestamp repo_created_at = 7;
+  // checked_at is when the repository was last read successfully; unset when
+  // never.
   google.protobuf.Timestamp checked_at = 8;
+  // attempted_at is when a read was last tried, successful or not; unset
+  // when never.
   google.protobuf.Timestamp attempted_at = 9;
+  // error is the last read's error; empty when it succeeded or none was
+  // tried.
   string error = 10;
+  // approval is the operator's decision through the API: "approved",
+  // "revoked", or empty while the configuration's approved list decides.
   string approval = 11;
+  // approval_changed_at is when approval last changed; unset when never.
   google.protobuf.Timestamp approval_changed_at = 12;
+  // fork_pr_approval is the repository's setting for workflows of pull
+  // requests from forks, GitHub's approval_policy as last read (such as
+  // "all_external_contributors"); empty when never read.
   string fork_pr_approval = 13;
 }
 
 // OpenSourceKeptApproval is an approval of a repository no workspace has a
 // row of yet.
 message OpenSourceKeptApproval {
+  // repository is the repository, as owner/name, as the operator gave it.
   string repository = 1;
+  // approved_at is when the operator approved it.
   google.protobuf.Timestamp approved_at = 2;
 }
 
+// SetOpenSourceApprovalRequest approves or revokes a repository on every
+// workspace's row of it.
 message SetOpenSourceApprovalRequest {
+  // repository is the repository as owner/name, compared without regard to
+  // case.
   string repository = 1;
+  // approved approves the repository when true and revokes it when false.
   bool approved = 2;
 }
 
+// SetOpenSourceApprovalResponse holds the repository's rows, or its kept
+// approval, after the change.
 message SetOpenSourceApprovalResponse {
   // repositories are the repository's rows after the change; kept is set
   // instead when no workspace has a row and the decision was kept.
   repeated OpenSourceRepository repositories = 1;
+  // kept is the approval kept for a repository no workspace had a row of
+  // when the call approved it; unset otherwise.
   OpenSourceKeptApproval kept = 2;
 }
 
+// MapInstallationRequest maps a GitHub App installation to a workspace.
 message MapInstallationRequest {
+  // installation_id is the GitHub App installation to map.
   int64 installation_id = 1;
+  // workspace is the workspace it is mapped to.
   string workspace = 2;
 }
 
+// MapInstallationResponse is empty: the stored mapping is the whole answer.
 message MapInstallationResponse {}
 
+// PublishJobDeliveryCheckRequest carries the result of the delivery check the
+// grant began.
 message PublishJobDeliveryCheckRequest {
+  // generation is the check generation the grant began; a call naming
+  // another fails with PERMISSION_DENIED.
   int64 generation = 1;
   // result is "ready", "lacking" or "unavailable".
   string result = 2;
@@ -239,6 +321,7 @@ message PublishJobDeliveryCheckRequest {
   repeated int64 lacking = 3;
 }
 
+// PublishJobDeliveryCheckResponse says whether the result was stored.
 message PublishJobDeliveryCheckResponse {
   // published is false when a later check began a newer generation,
   // which this result does not replace.

@@ -30,6 +30,9 @@ export type Role = Message<"toshi.workspace.v1.Role"> & {
   id: string;
 
   /**
+   * The role's name, unique within the workspace. The built-in roles are
+   * named Owner, Admin, Member, Agent and Viewer.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -65,6 +68,9 @@ export type RoleJson = {
   id?: string;
 
   /**
+   * The role's name, unique within the workspace. The built-in roles are
+   * named Owner, Admin, Member, Agent and Viewer.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -99,6 +105,9 @@ export const RoleSchema: GenMessage<Role, {jsonType: RoleJson}> = /*@__PURE__*/
  */
 export type Subject = Message<"toshi.workspace.v1.Subject"> & {
   /**
+   * Who the subject is: a person, one of the workspace's tokens, or the
+   * control plane itself.
+   *
    * @generated from field: toshi.workspace.v1.SubjectKind kind = 1;
    */
   kind: SubjectKind;
@@ -122,6 +131,9 @@ export type Subject = Message<"toshi.workspace.v1.Subject"> & {
  */
 export type SubjectJson = {
   /**
+   * Who the subject is: a person, one of the workspace's tokens, or the
+   * control plane itself.
+   *
    * @generated from field: toshi.workspace.v1.SubjectKind kind = 1;
    */
   kind?: SubjectKindJson;
@@ -159,6 +171,8 @@ export type RoleGrant = Message<"toshi.workspace.v1.RoleGrant"> & {
   id: string;
 
   /**
+   * The person or token the role is given to.
+   *
    * @generated from field: toshi.workspace.v1.Subject subject = 2;
    */
   subject?: Subject | undefined;
@@ -187,11 +201,16 @@ export type RoleGrant = Message<"toshi.workspace.v1.RoleGrant"> & {
   environment: string;
 
   /**
+   * When the grant was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 6;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * Who made the grant: a person or a token, or the system for a grant the
+   * control plane made, such as a workspace's first owner.
+   *
    * @generated from field: toshi.workspace.v1.Subject created_by = 7;
    */
   createdBy?: Subject | undefined;
@@ -211,6 +230,8 @@ export type RoleGrantJson = {
   id?: string;
 
   /**
+   * The person or token the role is given to.
+   *
    * @generated from field: toshi.workspace.v1.Subject subject = 2;
    */
   subject?: SubjectJson;
@@ -239,11 +260,16 @@ export type RoleGrantJson = {
   environment?: string;
 
   /**
+   * When the grant was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 6;
    */
   createdAt?: TimestampJson;
 
   /**
+   * Who made the grant: a person or a token, or the system for a grant the
+   * control plane made, such as a workspace's first owner.
+   *
    * @generated from field: toshi.workspace.v1.Subject created_by = 7;
    */
   createdBy?: SubjectJson;
@@ -257,6 +283,8 @@ export const RoleGrantSchema: GenMessage<RoleGrant, {jsonType: RoleGrantJson}> =
   messageDesc(file_toshi_workspace_v1_roles, 2);
 
 /**
+ * ListRolesRequest is a call of ListRoles.
+ *
  * @generated from message toshi.workspace.v1.ListRolesRequest
  */
 export type ListRolesRequest = Message<"toshi.workspace.v1.ListRolesRequest"> & {
@@ -276,6 +304,8 @@ export type ListRolesRequest = Message<"toshi.workspace.v1.ListRolesRequest"> & 
 };
 
 /**
+ * ListRolesRequest is a call of ListRoles.
+ *
  * @generated from message toshi.workspace.v1.ListRolesRequest
  */
 export type ListRolesRequestJson = {
@@ -302,10 +332,14 @@ export const ListRolesRequestSchema: GenMessage<ListRolesRequest, {jsonType: Lis
   messageDesc(file_toshi_workspace_v1_roles, 3);
 
 /**
+ * ListRolesResponse carries one page of the workspace's roles.
+ *
  * @generated from message toshi.workspace.v1.ListRolesResponse
  */
 export type ListRolesResponse = Message<"toshi.workspace.v1.ListRolesResponse"> & {
   /**
+   * The roles in this page, built-in roles first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Role roles = 1;
    */
   roles: Role[];
@@ -319,10 +353,14 @@ export type ListRolesResponse = Message<"toshi.workspace.v1.ListRolesResponse"> 
 };
 
 /**
+ * ListRolesResponse carries one page of the workspace's roles.
+ *
  * @generated from message toshi.workspace.v1.ListRolesResponse
  */
 export type ListRolesResponseJson = {
   /**
+   * The roles in this page, built-in roles first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Role roles = 1;
    */
   roles?: RoleJson[];
@@ -349,6 +387,8 @@ export const ListRolesResponseSchema: GenMessage<ListRolesResponse, {jsonType: L
  */
 export type CreateRoleRequest = Message<"toshi.workspace.v1.CreateRoleRequest"> & {
   /**
+   * The role's name within the workspace.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
@@ -362,6 +402,10 @@ export type CreateRoleRequest = Message<"toshi.workspace.v1.CreateRoleRequest"> 
   permissions: string[];
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 3;
    */
   requestKey: string;
@@ -374,6 +418,8 @@ export type CreateRoleRequest = Message<"toshi.workspace.v1.CreateRoleRequest"> 
  */
 export type CreateRoleRequestJson = {
   /**
+   * The role's name within the workspace.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
@@ -387,6 +433,10 @@ export type CreateRoleRequestJson = {
   permissions?: string[];
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 3;
    */
   requestKey?: string;
@@ -400,20 +450,28 @@ export const CreateRoleRequestSchema: GenMessage<CreateRoleRequest, {jsonType: C
   messageDesc(file_toshi_workspace_v1_roles, 5);
 
 /**
+ * CreateRoleResponse carries the role the call made.
+ *
  * @generated from message toshi.workspace.v1.CreateRoleResponse
  */
 export type CreateRoleResponse = Message<"toshi.workspace.v1.CreateRoleResponse"> & {
   /**
+   * The role as it was made.
+   *
    * @generated from field: toshi.workspace.v1.Role role = 1;
    */
   role?: Role | undefined;
 };
 
 /**
+ * CreateRoleResponse carries the role the call made.
+ *
  * @generated from message toshi.workspace.v1.CreateRoleResponse
  */
 export type CreateRoleResponseJson = {
   /**
+   * The role as it was made.
+   *
    * @generated from field: toshi.workspace.v1.Role role = 1;
    */
   role?: RoleJson;
@@ -433,11 +491,15 @@ export const CreateRoleResponseSchema: GenMessage<CreateRoleResponse, {jsonType:
  */
 export type UpdateRoleRequest = Message<"toshi.workspace.v1.UpdateRoleRequest"> & {
   /**
+   * The role's id; a built-in role's fails with INVALID_ARGUMENT.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The role's new name within the workspace.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -457,11 +519,15 @@ export type UpdateRoleRequest = Message<"toshi.workspace.v1.UpdateRoleRequest"> 
  */
 export type UpdateRoleRequestJson = {
   /**
+   * The role's id; a built-in role's fails with INVALID_ARGUMENT.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The role's new name within the workspace.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -482,20 +548,28 @@ export const UpdateRoleRequestSchema: GenMessage<UpdateRoleRequest, {jsonType: U
   messageDesc(file_toshi_workspace_v1_roles, 7);
 
 /**
+ * UpdateRoleResponse carries the role as it now is.
+ *
  * @generated from message toshi.workspace.v1.UpdateRoleResponse
  */
 export type UpdateRoleResponse = Message<"toshi.workspace.v1.UpdateRoleResponse"> & {
   /**
+   * The role after the change.
+   *
    * @generated from field: toshi.workspace.v1.Role role = 1;
    */
   role?: Role | undefined;
 };
 
 /**
+ * UpdateRoleResponse carries the role as it now is.
+ *
  * @generated from message toshi.workspace.v1.UpdateRoleResponse
  */
 export type UpdateRoleResponseJson = {
   /**
+   * The role after the change.
+   *
    * @generated from field: toshi.workspace.v1.Role role = 1;
    */
   role?: RoleJson;
@@ -509,20 +583,28 @@ export const UpdateRoleResponseSchema: GenMessage<UpdateRoleResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_roles, 8);
 
 /**
+ * DeleteRoleRequest names the role to delete.
+ *
  * @generated from message toshi.workspace.v1.DeleteRoleRequest
  */
 export type DeleteRoleRequest = Message<"toshi.workspace.v1.DeleteRoleRequest"> & {
   /**
+   * The role's id; a built-in role's fails with INVALID_ARGUMENT.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * DeleteRoleRequest names the role to delete.
+ *
  * @generated from message toshi.workspace.v1.DeleteRoleRequest
  */
 export type DeleteRoleRequestJson = {
   /**
+   * The role's id; a built-in role's fails with INVALID_ARGUMENT.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -542,6 +624,8 @@ export const DeleteRoleRequestSchema: GenMessage<DeleteRoleRequest, {jsonType: D
  */
 export type DeleteRoleResponse = Message<"toshi.workspace.v1.DeleteRoleResponse"> & {
   /**
+   * The role as it was before it was deleted.
+   *
    * @generated from field: toshi.workspace.v1.Role role = 1;
    */
   role?: Role | undefined;
@@ -561,6 +645,8 @@ export type DeleteRoleResponse = Message<"toshi.workspace.v1.DeleteRoleResponse"
  */
 export type DeleteRoleResponseJson = {
   /**
+   * The role as it was before it was deleted.
+   *
    * @generated from field: toshi.workspace.v1.Role role = 1;
    */
   role?: RoleJson;
@@ -676,10 +762,14 @@ export const ListRoleGrantsRequestSchema: GenMessage<ListRoleGrantsRequest, {jso
   messageDesc(file_toshi_workspace_v1_roles, 11);
 
 /**
+ * ListRoleGrantsResponse carries one page of the workspace's grants.
+ *
  * @generated from message toshi.workspace.v1.ListRoleGrantsResponse
  */
 export type ListRoleGrantsResponse = Message<"toshi.workspace.v1.ListRoleGrantsResponse"> & {
   /**
+   * The grants in this page, by subject, then role, then scope.
+   *
    * @generated from field: repeated toshi.workspace.v1.RoleGrant grants = 1;
    */
   grants: RoleGrant[];
@@ -693,10 +783,14 @@ export type ListRoleGrantsResponse = Message<"toshi.workspace.v1.ListRoleGrantsR
 };
 
 /**
+ * ListRoleGrantsResponse carries one page of the workspace's grants.
+ *
  * @generated from message toshi.workspace.v1.ListRoleGrantsResponse
  */
 export type ListRoleGrantsResponseJson = {
   /**
+   * The grants in this page, by subject, then role, then scope.
+   *
    * @generated from field: repeated toshi.workspace.v1.RoleGrant grants = 1;
    */
   grants?: RoleGrantJson[];
@@ -798,20 +892,28 @@ export const GrantRoleRequestSchema: GenMessage<GrantRoleRequest, {jsonType: Gra
   messageDesc(file_toshi_workspace_v1_roles, 13);
 
 /**
+ * GrantRoleResponse carries the grant the call made.
+ *
  * @generated from message toshi.workspace.v1.GrantRoleResponse
  */
 export type GrantRoleResponse = Message<"toshi.workspace.v1.GrantRoleResponse"> & {
   /**
+   * The grant as it was made, with its project and environment by name.
+   *
    * @generated from field: toshi.workspace.v1.RoleGrant grant = 1;
    */
   grant?: RoleGrant | undefined;
 };
 
 /**
+ * GrantRoleResponse carries the grant the call made.
+ *
  * @generated from message toshi.workspace.v1.GrantRoleResponse
  */
 export type GrantRoleResponseJson = {
   /**
+   * The grant as it was made, with its project and environment by name.
+   *
    * @generated from field: toshi.workspace.v1.RoleGrant grant = 1;
    */
   grant?: RoleGrantJson;
@@ -825,6 +927,8 @@ export const GrantRoleResponseSchema: GenMessage<GrantRoleResponse, {jsonType: G
   messageDesc(file_toshi_workspace_v1_roles, 14);
 
 /**
+ * RevokeRoleRequest names the grant to delete.
+ *
  * @generated from message toshi.workspace.v1.RevokeRoleRequest
  */
 export type RevokeRoleRequest = Message<"toshi.workspace.v1.RevokeRoleRequest"> & {
@@ -837,6 +941,8 @@ export type RevokeRoleRequest = Message<"toshi.workspace.v1.RevokeRoleRequest"> 
 };
 
 /**
+ * RevokeRoleRequest names the grant to delete.
+ *
  * @generated from message toshi.workspace.v1.RevokeRoleRequest
  */
 export type RevokeRoleRequestJson = {
@@ -862,6 +968,9 @@ export const RevokeRoleRequestSchema: GenMessage<RevokeRoleRequest, {jsonType: R
  */
 export type RevokeRoleResponse = Message<"toshi.workspace.v1.RevokeRoleResponse"> & {
   /**
+   * The grant as it was before it was deleted, with its project and
+   * environment by name.
+   *
    * @generated from field: toshi.workspace.v1.RoleGrant grant = 1;
    */
   grant?: RoleGrant | undefined;
@@ -874,6 +983,9 @@ export type RevokeRoleResponse = Message<"toshi.workspace.v1.RevokeRoleResponse"
  */
 export type RevokeRoleResponseJson = {
   /**
+   * The grant as it was before it was deleted, with its project and
+   * environment by name.
+   *
    * @generated from field: toshi.workspace.v1.RoleGrant grant = 1;
    */
   grant?: RoleGrantJson;
@@ -887,6 +999,8 @@ export const RevokeRoleResponseSchema: GenMessage<RevokeRoleResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_roles, 16);
 
 /**
+ * ListMembersRequest is a call of ListMembers.
+ *
  * @generated from message toshi.workspace.v1.ListMembersRequest
  */
 export type ListMembersRequest = Message<"toshi.workspace.v1.ListMembersRequest"> & {
@@ -914,6 +1028,8 @@ export type ListMembersRequest = Message<"toshi.workspace.v1.ListMembersRequest"
 };
 
 /**
+ * ListMembersRequest is a call of ListMembers.
+ *
  * @generated from message toshi.workspace.v1.ListMembersRequest
  */
 export type ListMembersRequestJson = {
@@ -948,10 +1064,16 @@ export const ListMembersRequestSchema: GenMessage<ListMembersRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_roles, 17);
 
 /**
+ * ListMembersResponse carries one page of members, or of people waiting for
+ * approval.
+ *
  * @generated from message toshi.workspace.v1.ListMembersResponse
  */
 export type ListMembersResponse = Message<"toshi.workspace.v1.ListMembersResponse"> & {
   /**
+   * The members in this page, oldest first; the people waiting for
+   * approval when state is MEMBER_STATE_PENDING.
+   *
    * @generated from field: repeated toshi.workspace.v1.Member members = 1;
    */
   members: Member[];
@@ -965,10 +1087,16 @@ export type ListMembersResponse = Message<"toshi.workspace.v1.ListMembersRespons
 };
 
 /**
+ * ListMembersResponse carries one page of members, or of people waiting for
+ * approval.
+ *
  * @generated from message toshi.workspace.v1.ListMembersResponse
  */
 export type ListMembersResponseJson = {
   /**
+   * The members in this page, oldest first; the people waiting for
+   * approval when state is MEMBER_STATE_PENDING.
+   *
    * @generated from field: repeated toshi.workspace.v1.Member members = 1;
    */
   members?: MemberJson[];
@@ -1010,16 +1138,24 @@ export type Member = Message<"toshi.workspace.v1.Member"> & {
   name: string;
 
   /**
+   * The email address the person's latest sign-in reported; shown, never
+   * matched.
+   *
    * @generated from field: string email = 3;
    */
   email: string;
 
   /**
+   * How the person became a member; a person waiting for approval reports
+   * MEMBER_VIA_GITHUB_MEMBER.
+   *
    * @generated from field: toshi.workspace.v1.MemberVia via = 4;
    */
   via: MemberVia;
 
   /**
+   * When they became a member; unset for a person waiting for approval.
+   *
    * @generated from field: google.protobuf.Timestamp added_at = 5;
    */
   addedAt?: Timestamp | undefined;
@@ -1033,6 +1169,9 @@ export type Member = Message<"toshi.workspace.v1.Member"> & {
   addedBy?: Subject | undefined;
 
   /**
+   * MEMBER_STATE_ACTIVE for a member, MEMBER_STATE_PENDING for a person
+   * waiting for approval.
+   *
    * @generated from field: toshi.workspace.v1.MemberState state = 7;
    */
   state: MemberState;
@@ -1076,16 +1215,24 @@ export type MemberJson = {
   name?: string;
 
   /**
+   * The email address the person's latest sign-in reported; shown, never
+   * matched.
+   *
    * @generated from field: string email = 3;
    */
   email?: string;
 
   /**
+   * How the person became a member; a person waiting for approval reports
+   * MEMBER_VIA_GITHUB_MEMBER.
+   *
    * @generated from field: toshi.workspace.v1.MemberVia via = 4;
    */
   via?: MemberViaJson;
 
   /**
+   * When they became a member; unset for a person waiting for approval.
+   *
    * @generated from field: google.protobuf.Timestamp added_at = 5;
    */
   addedAt?: TimestampJson;
@@ -1099,6 +1246,9 @@ export type MemberJson = {
   addedBy?: SubjectJson;
 
   /**
+   * MEMBER_STATE_ACTIVE for a member, MEMBER_STATE_PENDING for a person
+   * waiting for approval.
+   *
    * @generated from field: toshi.workspace.v1.MemberState state = 7;
    */
   state?: MemberStateJson;
@@ -1128,6 +1278,8 @@ export const MemberSchema: GenMessage<Member, {jsonType: MemberJson}> = /*@__PUR
   messageDesc(file_toshi_workspace_v1_roles, 19);
 
 /**
+ * RemoveMemberRequest names the person whose membership to end.
+ *
  * @generated from message toshi.workspace.v1.RemoveMemberRequest
  */
 export type RemoveMemberRequest = Message<"toshi.workspace.v1.RemoveMemberRequest"> & {
@@ -1140,6 +1292,8 @@ export type RemoveMemberRequest = Message<"toshi.workspace.v1.RemoveMemberReques
 };
 
 /**
+ * RemoveMemberRequest names the person whose membership to end.
+ *
  * @generated from message toshi.workspace.v1.RemoveMemberRequest
  */
 export type RemoveMemberRequestJson = {
@@ -1159,6 +1313,8 @@ export const RemoveMemberRequestSchema: GenMessage<RemoveMemberRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_roles, 20);
 
 /**
+ * ApproveMemberRequest names the person waiting for approval to approve.
+ *
  * @generated from message toshi.workspace.v1.ApproveMemberRequest
  */
 export type ApproveMemberRequest = Message<"toshi.workspace.v1.ApproveMemberRequest"> & {
@@ -1171,6 +1327,8 @@ export type ApproveMemberRequest = Message<"toshi.workspace.v1.ApproveMemberRequ
 };
 
 /**
+ * ApproveMemberRequest names the person waiting for approval to approve.
+ *
  * @generated from message toshi.workspace.v1.ApproveMemberRequest
  */
 export type ApproveMemberRequestJson = {
@@ -1197,11 +1355,16 @@ export const ApproveMemberRequestSchema: GenMessage<ApproveMemberRequest, {jsonT
  */
 export type ApproveMemberResponse = Message<"toshi.workspace.v1.ApproveMemberResponse"> & {
   /**
+   * The person as a member now.
+   *
    * @generated from field: toshi.workspace.v1.Member member = 1;
    */
   member?: Member | undefined;
 
   /**
+   * Whether the call gave them owner on the whole workspace, which it does
+   * when no person holds that.
+   *
    * @generated from field: bool owner = 2;
    */
   owner: boolean;
@@ -1215,11 +1378,16 @@ export type ApproveMemberResponse = Message<"toshi.workspace.v1.ApproveMemberRes
  */
 export type ApproveMemberResponseJson = {
   /**
+   * The person as a member now.
+   *
    * @generated from field: toshi.workspace.v1.Member member = 1;
    */
   member?: MemberJson;
 
   /**
+   * Whether the call gave them owner on the whole workspace, which it does
+   * when no person holds that.
+   *
    * @generated from field: bool owner = 2;
    */
   owner?: boolean;
@@ -1233,6 +1401,8 @@ export const ApproveMemberResponseSchema: GenMessage<ApproveMemberResponse, {jso
   messageDesc(file_toshi_workspace_v1_roles, 22);
 
 /**
+ * DeclineMemberRequest names the person waiting for approval to decline.
+ *
  * @generated from message toshi.workspace.v1.DeclineMemberRequest
  */
 export type DeclineMemberRequest = Message<"toshi.workspace.v1.DeclineMemberRequest"> & {
@@ -1245,6 +1415,8 @@ export type DeclineMemberRequest = Message<"toshi.workspace.v1.DeclineMemberRequ
 };
 
 /**
+ * DeclineMemberRequest names the person waiting for approval to decline.
+ *
  * @generated from message toshi.workspace.v1.DeclineMemberRequest
  */
 export type DeclineMemberRequestJson = {
@@ -1264,12 +1436,16 @@ export const DeclineMemberRequestSchema: GenMessage<DeclineMemberRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_roles, 23);
 
 /**
+ * DeclineMemberResponse is the answer of a decline, and holds nothing.
+ *
  * @generated from message toshi.workspace.v1.DeclineMemberResponse
  */
 export type DeclineMemberResponse = Message<"toshi.workspace.v1.DeclineMemberResponse"> & {
 };
 
 /**
+ * DeclineMemberResponse is the answer of a decline, and holds nothing.
+ *
  * @generated from message toshi.workspace.v1.DeclineMemberResponse
  */
 export type DeclineMemberResponseJson = {
@@ -1289,6 +1465,9 @@ export const DeclineMemberResponseSchema: GenMessage<DeclineMemberResponse, {jso
  */
 export type RemoveMemberResponse = Message<"toshi.workspace.v1.RemoveMemberResponse"> & {
   /**
+   * How many grants the person held, which the call deleted with the
+   * membership.
+   *
    * @generated from field: int32 grants_removed = 1;
    */
   grantsRemoved: number;
@@ -1301,6 +1480,9 @@ export type RemoveMemberResponse = Message<"toshi.workspace.v1.RemoveMemberRespo
  */
 export type RemoveMemberResponseJson = {
   /**
+   * How many grants the person held, which the call deleted with the
+   * membership.
+   *
    * @generated from field: int32 grants_removed = 1;
    */
   grantsRemoved?: number;
@@ -1314,6 +1496,8 @@ export const RemoveMemberResponseSchema: GenMessage<RemoveMemberResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_roles, 25);
 
 /**
+ * CreateInvitationRequest asks for an invitation to join the workspace.
+ *
  * @generated from message toshi.workspace.v1.CreateInvitationRequest
  */
 export type CreateInvitationRequest = Message<"toshi.workspace.v1.CreateInvitationRequest"> & {
@@ -1342,6 +1526,8 @@ export type CreateInvitationRequest = Message<"toshi.workspace.v1.CreateInvitati
 };
 
 /**
+ * CreateInvitationRequest asks for an invitation to join the workspace.
+ *
  * @generated from message toshi.workspace.v1.CreateInvitationRequest
  */
 export type CreateInvitationRequestJson = {
@@ -1384,6 +1570,8 @@ export const CreateInvitationRequestSchema: GenMessage<CreateInvitationRequest, 
  */
 export type CreateInvitationResponse = Message<"toshi.workspace.v1.CreateInvitationResponse"> & {
   /**
+   * The invitation as it was made.
+   *
    * @generated from field: toshi.workspace.v1.Invitation invitation = 1;
    */
   invitation?: Invitation | undefined;
@@ -1404,6 +1592,8 @@ export type CreateInvitationResponse = Message<"toshi.workspace.v1.CreateInvitat
  */
 export type CreateInvitationResponseJson = {
   /**
+   * The invitation as it was made.
+   *
    * @generated from field: toshi.workspace.v1.Invitation invitation = 1;
    */
   invitation?: InvitationJson;
@@ -1437,26 +1627,37 @@ export type Invitation = Message<"toshi.workspace.v1.Invitation"> & {
   id: string;
 
   /**
+   * Free text, such as whom the invitation is for; shown and never checked,
+   * 200 characters at most.
+   *
    * @generated from field: string note = 2;
    */
   note: string;
 
   /**
+   * Whether its code still works: OPEN, ACCEPTED, REVOKED or EXPIRED.
+   *
    * @generated from field: toshi.workspace.v1.InvitationState state = 3;
    */
   state: InvitationState;
 
   /**
+   * When it was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * Who made it: a person or a token.
+   *
    * @generated from field: toshi.workspace.v1.Subject created_by = 5;
    */
   createdBy?: Subject | undefined;
 
   /**
+   * When its code stops working.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 6;
    */
   expiresAt?: Timestamp | undefined;
@@ -1469,6 +1670,8 @@ export type Invitation = Message<"toshi.workspace.v1.Invitation"> & {
   acceptedBy: string;
 
   /**
+   * When the person accepted it; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp accepted_at = 8;
    */
   acceptedAt?: Timestamp | undefined;
@@ -1481,6 +1684,8 @@ export type Invitation = Message<"toshi.workspace.v1.Invitation"> & {
   revokedAt?: Timestamp | undefined;
 
   /**
+   * Who revoked it; unset unless revoked.
+   *
    * @generated from field: toshi.workspace.v1.Subject revoked_by = 10;
    */
   revokedBy?: Subject | undefined;
@@ -1500,26 +1705,37 @@ export type InvitationJson = {
   id?: string;
 
   /**
+   * Free text, such as whom the invitation is for; shown and never checked,
+   * 200 characters at most.
+   *
    * @generated from field: string note = 2;
    */
   note?: string;
 
   /**
+   * Whether its code still works: OPEN, ACCEPTED, REVOKED or EXPIRED.
+   *
    * @generated from field: toshi.workspace.v1.InvitationState state = 3;
    */
   state?: InvitationStateJson;
 
   /**
+   * When it was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
 
   /**
+   * Who made it: a person or a token.
+   *
    * @generated from field: toshi.workspace.v1.Subject created_by = 5;
    */
   createdBy?: SubjectJson;
 
   /**
+   * When its code stops working.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 6;
    */
   expiresAt?: TimestampJson;
@@ -1532,6 +1748,8 @@ export type InvitationJson = {
   acceptedBy?: string;
 
   /**
+   * When the person accepted it; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp accepted_at = 8;
    */
   acceptedAt?: TimestampJson;
@@ -1544,6 +1762,8 @@ export type InvitationJson = {
   revokedAt?: TimestampJson;
 
   /**
+   * Who revoked it; unset unless revoked.
+   *
    * @generated from field: toshi.workspace.v1.Subject revoked_by = 10;
    */
   revokedBy?: SubjectJson;
@@ -1557,6 +1777,8 @@ export const InvitationSchema: GenMessage<Invitation, {jsonType: InvitationJson}
   messageDesc(file_toshi_workspace_v1_roles, 28);
 
 /**
+ * ListInvitationsRequest is a call of ListInvitations.
+ *
  * @generated from message toshi.workspace.v1.ListInvitationsRequest
  */
 export type ListInvitationsRequest = Message<"toshi.workspace.v1.ListInvitationsRequest"> & {
@@ -1576,6 +1798,8 @@ export type ListInvitationsRequest = Message<"toshi.workspace.v1.ListInvitations
 };
 
 /**
+ * ListInvitationsRequest is a call of ListInvitations.
+ *
  * @generated from message toshi.workspace.v1.ListInvitationsRequest
  */
 export type ListInvitationsRequestJson = {
@@ -1602,10 +1826,15 @@ export const ListInvitationsRequestSchema: GenMessage<ListInvitationsRequest, {j
   messageDesc(file_toshi_workspace_v1_roles, 29);
 
 /**
+ * ListInvitationsResponse carries one page of the workspace's invitations.
+ *
  * @generated from message toshi.workspace.v1.ListInvitationsResponse
  */
 export type ListInvitationsResponse = Message<"toshi.workspace.v1.ListInvitationsResponse"> & {
   /**
+   * The invitations in this page, newest first, accepted, revoked and
+   * expired ones included.
+   *
    * @generated from field: repeated toshi.workspace.v1.Invitation invitations = 1;
    */
   invitations: Invitation[];
@@ -1619,10 +1848,15 @@ export type ListInvitationsResponse = Message<"toshi.workspace.v1.ListInvitation
 };
 
 /**
+ * ListInvitationsResponse carries one page of the workspace's invitations.
+ *
  * @generated from message toshi.workspace.v1.ListInvitationsResponse
  */
 export type ListInvitationsResponseJson = {
   /**
+   * The invitations in this page, newest first, accepted, revoked and
+   * expired ones included.
+   *
    * @generated from field: repeated toshi.workspace.v1.Invitation invitations = 1;
    */
   invitations?: InvitationJson[];
@@ -1643,6 +1877,8 @@ export const ListInvitationsResponseSchema: GenMessage<ListInvitationsResponse, 
   messageDesc(file_toshi_workspace_v1_roles, 30);
 
 /**
+ * RevokeInvitationRequest names the invitation to revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeInvitationRequest
  */
 export type RevokeInvitationRequest = Message<"toshi.workspace.v1.RevokeInvitationRequest"> & {
@@ -1655,6 +1891,8 @@ export type RevokeInvitationRequest = Message<"toshi.workspace.v1.RevokeInvitati
 };
 
 /**
+ * RevokeInvitationRequest names the invitation to revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeInvitationRequest
  */
 export type RevokeInvitationRequestJson = {
@@ -1680,6 +1918,8 @@ export const RevokeInvitationRequestSchema: GenMessage<RevokeInvitationRequest, 
  */
 export type RevokeInvitationResponse = Message<"toshi.workspace.v1.RevokeInvitationResponse"> & {
   /**
+   * The invitation as it now is, with revoked_at and revoked_by set.
+   *
    * @generated from field: toshi.workspace.v1.Invitation invitation = 1;
    */
   invitation?: Invitation | undefined;
@@ -1692,6 +1932,8 @@ export type RevokeInvitationResponse = Message<"toshi.workspace.v1.RevokeInvitat
  */
 export type RevokeInvitationResponseJson = {
   /**
+   * The invitation as it now is, with revoked_at and revoked_by set.
+   *
    * @generated from field: toshi.workspace.v1.Invitation invitation = 1;
    */
   invitation?: InvitationJson;
@@ -1705,6 +1947,8 @@ export const RevokeInvitationResponseSchema: GenMessage<RevokeInvitationResponse
   messageDesc(file_toshi_workspace_v1_roles, 32);
 
 /**
+ * AcceptInvitationRequest is a person's acceptance of an invitation.
+ *
  * @generated from message toshi.workspace.v1.AcceptInvitationRequest
  */
 export type AcceptInvitationRequest = Message<"toshi.workspace.v1.AcceptInvitationRequest"> & {
@@ -1717,6 +1961,8 @@ export type AcceptInvitationRequest = Message<"toshi.workspace.v1.AcceptInvitati
 };
 
 /**
+ * AcceptInvitationRequest is a person's acceptance of an invitation.
+ *
  * @generated from message toshi.workspace.v1.AcceptInvitationRequest
  */
 export type AcceptInvitationRequestJson = {
@@ -1736,10 +1982,15 @@ export const AcceptInvitationRequestSchema: GenMessage<AcceptInvitationRequest, 
   messageDesc(file_toshi_workspace_v1_roles, 33);
 
 /**
+ * AcceptInvitationResponse carries the invitation the caller accepted and
+ * the workspace they joined.
+ *
  * @generated from message toshi.workspace.v1.AcceptInvitationResponse
  */
 export type AcceptInvitationResponse = Message<"toshi.workspace.v1.AcceptInvitationResponse"> & {
   /**
+   * The invitation as it now is, accepted.
+   *
    * @generated from field: toshi.workspace.v1.Invitation invitation = 1;
    */
   invitation?: Invitation | undefined;
@@ -1760,10 +2011,15 @@ export type AcceptInvitationResponse = Message<"toshi.workspace.v1.AcceptInvitat
 };
 
 /**
+ * AcceptInvitationResponse carries the invitation the caller accepted and
+ * the workspace they joined.
+ *
  * @generated from message toshi.workspace.v1.AcceptInvitationResponse
  */
 export type AcceptInvitationResponseJson = {
   /**
+   * The invitation as it now is, accepted.
+   *
    * @generated from field: toshi.workspace.v1.Invitation invitation = 1;
    */
   invitation?: InvitationJson;
@@ -1797,6 +2053,8 @@ export const AcceptInvitationResponseSchema: GenMessage<AcceptInvitationResponse
  */
 export enum SubjectKind {
   /**
+   * Unset; a subject is a person, a token or the system.
+   *
    * @generated from enum value: SUBJECT_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1844,6 +2102,8 @@ export const SubjectKindSchema: GenEnum<SubjectKind, SubjectKindJson> = /*@__PUR
  */
 export enum MemberVia {
   /**
+   * Unset; every member records how they joined.
+   *
    * @generated from enum value: MEMBER_VIA_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1908,11 +2168,15 @@ export const MemberViaSchema: GenEnum<MemberVia, MemberViaJson> = /*@__PURE__*/
  */
 export enum MemberState {
   /**
+   * The same as MEMBER_STATE_ACTIVE.
+   *
    * @generated from enum value: MEMBER_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * The person is a member.
+   *
    * @generated from enum value: MEMBER_STATE_ACTIVE = 1;
    */
   ACTIVE = 1,
@@ -1945,6 +2209,8 @@ export const MemberStateSchema: GenEnum<MemberState, MemberStateJson> = /*@__PUR
  */
 export enum InvitationState {
   /**
+   * Unset; Invitation.state is always OPEN, ACCEPTED, REVOKED or EXPIRED.
+   *
    * @generated from enum value: INVITATION_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1957,16 +2223,22 @@ export enum InvitationState {
   OPEN = 1,
 
   /**
+   * Its code made a person a member.
+   *
    * @generated from enum value: INVITATION_STATE_ACCEPTED = 2;
    */
   ACCEPTED = 2,
 
   /**
+   * RevokeInvitation ended it before anyone accepted it.
+   *
    * @generated from enum value: INVITATION_STATE_REVOKED = 3;
    */
   REVOKED = 3,
 
   /**
+   * Its ttl passed before anyone accepted it.
+   *
    * @generated from enum value: INVITATION_STATE_EXPIRED = 4;
    */
   EXPIRED = 4,

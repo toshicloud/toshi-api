@@ -197,6 +197,8 @@ message Role {
   // Role id: "owner", "admin", "member", "agent" or "viewer" for a built-in role,
   // such as "role-1a2b3c4d5e6f" for one of the workspace's.
   string id = 1;
+  // The role's name, unique within the workspace. The built-in roles are
+  // named Owner, Admin, Member, Agent and Viewer.
   string name = 2;
   // The permissions the role gives, sorted, as this API's methods or a
   // product's calls name them.
@@ -207,6 +209,7 @@ message Role {
 
 // SubjectKind says who a grant is given to, or who made it.
 enum SubjectKind {
+  // Unset; a subject is a person, a token or the system.
   SUBJECT_KIND_UNSPECIFIED = 0;
   // A person, by Toshi user id.
   SUBJECT_KIND_PERSON = 1;
@@ -219,6 +222,8 @@ enum SubjectKind {
 
 // Subject is who a grant is given to, or who made it.
 message Subject {
+  // Who the subject is: a person, one of the workspace's tokens, or the
+  // control plane itself.
   SubjectKind kind = 1;
   // The Toshi user id of a person, such as "usr-0f1e2d3c4b5a69788796a5b4",
   // which a change of login or identity provider keeps; it is opaque, and
@@ -232,6 +237,7 @@ message Subject {
 message RoleGrant {
   // Grant id.
   string id = 1;
+  // The person or token the role is given to.
   Subject subject = 2;
   // The role's id.
   string role = 3;
@@ -241,10 +247,14 @@ message RoleGrant {
   // The environment of project the grant applies to, by name. Empty for a
   // grant on every environment of project.
   string environment = 5;
+  // When the grant was made.
   google.protobuf.Timestamp created_at = 6;
+  // Who made the grant: a person or a token, or the system for a grant the
+  // control plane made, such as a workspace's first owner.
   Subject created_by = 7;
 }
 
+// ListRolesRequest is a call of ListRoles.
 message ListRolesRequest {
   // The most roles in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -252,7 +262,9 @@ message ListRolesRequest {
   string page_token = 2;
 }
 
+// ListRolesResponse carries one page of the workspace's roles.
 message ListRolesResponse {
+  // The roles in this page, built-in roles first.
   repeated Role roles = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -260,35 +272,48 @@ message ListRolesResponse {
 
 // CreateRoleRequest names the role and what it gives.
 message CreateRoleRequest {
+  // The role's name within the workspace.
   string name = 1;
   // At least one permission, as this API's methods or a product's calls
   // name it.
   repeated string permissions = 2;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 3;
 }
 
+// CreateRoleResponse carries the role the call made.
 message CreateRoleResponse {
+  // The role as it was made.
   Role role = 1;
 }
 
 // UpdateRoleRequest names the role and its new name and permissions.
 message UpdateRoleRequest {
+  // The role's id; a built-in role's fails with INVALID_ARGUMENT.
   string id = 1;
+  // The role's new name within the workspace.
   string name = 2;
   // At least one permission; they replace the role's.
   repeated string permissions = 3;
 }
 
+// UpdateRoleResponse carries the role as it now is.
 message UpdateRoleResponse {
+  // The role after the change.
   Role role = 1;
 }
 
+// DeleteRoleRequest names the role to delete.
 message DeleteRoleRequest {
+  // The role's id; a built-in role's fails with INVALID_ARGUMENT.
   string id = 1;
 }
 
 // DeleteRoleResponse carries the deleted role.
 message DeleteRoleResponse {
+  // The role as it was before it was deleted.
   Role role = 1;
   // How many grants of the role were deleted with it.
   int32 grants_deleted = 2;
@@ -310,7 +335,9 @@ message ListRoleGrantsRequest {
   string page_token = 5;
 }
 
+// ListRoleGrantsResponse carries one page of the workspace's grants.
 message ListRoleGrantsResponse {
+  // The grants in this page, by subject, then role, then scope.
   repeated RoleGrant grants = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -330,10 +357,13 @@ message GrantRoleRequest {
   string environment = 4;
 }
 
+// GrantRoleResponse carries the grant the call made.
 message GrantRoleResponse {
+  // The grant as it was made, with its project and environment by name.
   RoleGrant grant = 1;
 }
 
+// RevokeRoleRequest names the grant to delete.
 message RevokeRoleRequest {
   // The grant's id.
   string id = 1;
@@ -341,9 +371,12 @@ message RevokeRoleRequest {
 
 // RevokeRoleResponse carries the deleted grant.
 message RevokeRoleResponse {
+  // The grant as it was before it was deleted, with its project and
+  // environment by name.
   RoleGrant grant = 1;
 }
 
+// ListMembersRequest is a call of ListMembers.
 message ListMembersRequest {
   // The most members in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -354,7 +387,11 @@ message ListMembersRequest {
   MemberState state = 3;
 }
 
+// ListMembersResponse carries one page of members, or of people waiting for
+// approval.
 message ListMembersResponse {
+  // The members in this page, oldest first; the people waiting for
+  // approval when state is MEMBER_STATE_PENDING.
   repeated Member members = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -362,6 +399,7 @@ message ListMembersResponse {
 
 // MemberVia says how a person became a member.
 enum MemberVia {
+  // Unset; every member records how they joined.
   MEMBER_VIA_UNSPECIFIED = 0;
   // Signing in with GitHub as an administrator of one of the workspace's
   // GitHub App installations.
@@ -381,7 +419,9 @@ enum MemberVia {
 
 // MemberState says whether a person is a member or waiting to be one.
 enum MemberState {
+  // The same as MEMBER_STATE_ACTIVE.
   MEMBER_STATE_UNSPECIFIED = 0;
+  // The person is a member.
   MEMBER_STATE_ACTIVE = 1;
   // Waiting for a workspace admin to approve them.
   MEMBER_STATE_PENDING = 2;
@@ -394,12 +434,19 @@ message Member {
   // The name and email address the person's latest sign-in reported;
   // shown, never matched.
   string name = 2;
+  // The email address the person's latest sign-in reported; shown, never
+  // matched.
   string email = 3;
+  // How the person became a member; a person waiting for approval reports
+  // MEMBER_VIA_GITHUB_MEMBER.
   MemberVia via = 4;
+  // When they became a member; unset for a person waiting for approval.
   google.protobuf.Timestamp added_at = 5;
   // Who made the person a member: the inviter for an invitation, the
   // system for a sign-in, the approver for an approved request.
   Subject added_by = 6;
+  // MEMBER_STATE_ACTIVE for a member, MEMBER_STATE_PENDING for a person
+  // waiting for approval.
   MemberState state = 7;
   // When a person waiting for approval asked to join; unset for a member.
   google.protobuf.Timestamp requested_at = 8;
@@ -409,11 +456,13 @@ message Member {
   string login = 9;
 }
 
+// RemoveMemberRequest names the person whose membership to end.
 message RemoveMemberRequest {
   // The person's user id.
   string user_id = 1;
 }
 
+// ApproveMemberRequest names the person waiting for approval to approve.
 message ApproveMemberRequest {
   // The person's user id.
   string user_id = 1;
@@ -422,22 +471,30 @@ message ApproveMemberRequest {
 // ApproveMemberResponse carries the new member and whether they became an
 // owner.
 message ApproveMemberResponse {
+  // The person as a member now.
   Member member = 1;
+  // Whether the call gave them owner on the whole workspace, which it does
+  // when no person holds that.
   bool owner = 2;
 }
 
+// DeclineMemberRequest names the person waiting for approval to decline.
 message DeclineMemberRequest {
   // The person's user id.
   string user_id = 1;
 }
 
+// DeclineMemberResponse is the answer of a decline, and holds nothing.
 message DeclineMemberResponse {}
 
 // RemoveMemberResponse says how many grants went with the membership.
 message RemoveMemberResponse {
+  // How many grants the person held, which the call deleted with the
+  // membership.
   int32 grants_removed = 1;
 }
 
+// CreateInvitationRequest asks for an invitation to join the workspace.
 message CreateInvitationRequest {
   // Free text, such as whom the invitation is for; 200 characters at most.
   string note = 1;
@@ -452,6 +509,7 @@ message CreateInvitationRequest {
 // CreateInvitationResponse carries the invitation and its code, shown
 // once.
 message CreateInvitationResponse {
+  // The invitation as it was made.
   Invitation invitation = 1;
   // The code the invitee accepts; it is not shown again.
   string code = 2;
@@ -459,11 +517,15 @@ message CreateInvitationResponse {
 
 // InvitationState says whether an invitation's code still works.
 enum InvitationState {
+  // Unset; Invitation.state is always OPEN, ACCEPTED, REVOKED or EXPIRED.
   INVITATION_STATE_UNSPECIFIED = 0;
   // Its code works until expires_at.
   INVITATION_STATE_OPEN = 1;
+  // Its code made a person a member.
   INVITATION_STATE_ACCEPTED = 2;
+  // RevokeInvitation ended it before anyone accepted it.
   INVITATION_STATE_REVOKED = 3;
+  // Its ttl passed before anyone accepted it.
   INVITATION_STATE_EXPIRED = 4;
 }
 
@@ -471,19 +533,28 @@ enum InvitationState {
 message Invitation {
   // Invitation id, such as "inv-1a2b3c4d5e6f7a8b9c0d1e2f".
   string id = 1;
+  // Free text, such as whom the invitation is for; shown and never checked,
+  // 200 characters at most.
   string note = 2;
+  // Whether its code still works: OPEN, ACCEPTED, REVOKED or EXPIRED.
   InvitationState state = 3;
+  // When it was made.
   google.protobuf.Timestamp created_at = 4;
+  // Who made it: a person or a token.
   Subject created_by = 5;
+  // When its code stops working.
   google.protobuf.Timestamp expires_at = 6;
   // The user id of the person who accepted it, and when; empty until then.
   string accepted_by = 7;
+  // When the person accepted it; unset until then.
   google.protobuf.Timestamp accepted_at = 8;
   // When it was revoked, and by whom; empty unless revoked.
   google.protobuf.Timestamp revoked_at = 9;
+  // Who revoked it; unset unless revoked.
   Subject revoked_by = 10;
 }
 
+// ListInvitationsRequest is a call of ListInvitations.
 message ListInvitationsRequest {
   // The most invitations in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -491,12 +562,16 @@ message ListInvitationsRequest {
   string page_token = 2;
 }
 
+// ListInvitationsResponse carries one page of the workspace's invitations.
 message ListInvitationsResponse {
+  // The invitations in this page, newest first, accepted, revoked and
+  // expired ones included.
   repeated Invitation invitations = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// RevokeInvitationRequest names the invitation to revoke.
 message RevokeInvitationRequest {
   // The invitation's id.
   string id = 1;
@@ -504,15 +579,20 @@ message RevokeInvitationRequest {
 
 // RevokeInvitationResponse carries the revoked invitation.
 message RevokeInvitationResponse {
+  // The invitation as it now is, with revoked_at and revoked_by set.
   Invitation invitation = 1;
 }
 
+// AcceptInvitationRequest is a person's acceptance of an invitation.
 message AcceptInvitationRequest {
   // The code CreateInvitation returned.
   string code = 1;
 }
 
+// AcceptInvitationResponse carries the invitation the caller accepted and
+// the workspace they joined.
 message AcceptInvitationResponse {
+  // The invitation as it now is, accepted.
   Invitation invitation = 1;
   // The id of the workspace the caller is now a member of.
   string workspace = 2;

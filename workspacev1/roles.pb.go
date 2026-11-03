@@ -28,6 +28,7 @@ const (
 type SubjectKind int32
 
 const (
+	// Unset; a subject is a person, a token or the system.
 	SubjectKind_SUBJECT_KIND_UNSPECIFIED SubjectKind = 0
 	// A person, by Toshi user id.
 	SubjectKind_SUBJECT_KIND_PERSON SubjectKind = 1
@@ -85,6 +86,7 @@ func (SubjectKind) EnumDescriptor() ([]byte, []int) {
 type MemberVia int32
 
 const (
+	// Unset; every member records how they joined.
 	MemberVia_MEMBER_VIA_UNSPECIFIED MemberVia = 0
 	// Signing in with GitHub as an administrator of one of the workspace's
 	// GitHub App installations.
@@ -153,8 +155,10 @@ func (MemberVia) EnumDescriptor() ([]byte, []int) {
 type MemberState int32
 
 const (
+	// The same as MEMBER_STATE_ACTIVE.
 	MemberState_MEMBER_STATE_UNSPECIFIED MemberState = 0
-	MemberState_MEMBER_STATE_ACTIVE      MemberState = 1
+	// The person is a member.
+	MemberState_MEMBER_STATE_ACTIVE MemberState = 1
 	// Waiting for a workspace admin to approve them.
 	MemberState_MEMBER_STATE_PENDING MemberState = 2
 )
@@ -204,12 +208,16 @@ func (MemberState) EnumDescriptor() ([]byte, []int) {
 type InvitationState int32
 
 const (
+	// Unset; Invitation.state is always OPEN, ACCEPTED, REVOKED or EXPIRED.
 	InvitationState_INVITATION_STATE_UNSPECIFIED InvitationState = 0
 	// Its code works until expires_at.
-	InvitationState_INVITATION_STATE_OPEN     InvitationState = 1
+	InvitationState_INVITATION_STATE_OPEN InvitationState = 1
+	// Its code made a person a member.
 	InvitationState_INVITATION_STATE_ACCEPTED InvitationState = 2
-	InvitationState_INVITATION_STATE_REVOKED  InvitationState = 3
-	InvitationState_INVITATION_STATE_EXPIRED  InvitationState = 4
+	// RevokeInvitation ended it before anyone accepted it.
+	InvitationState_INVITATION_STATE_REVOKED InvitationState = 3
+	// Its ttl passed before anyone accepted it.
+	InvitationState_INVITATION_STATE_EXPIRED InvitationState = 4
 )
 
 // Enum value maps for InvitationState.
@@ -262,7 +270,9 @@ type Role struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Role id: "owner", "admin", "member", "agent" or "viewer" for a built-in role,
 	// such as "role-1a2b3c4d5e6f" for one of the workspace's.
-	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The role's name, unique within the workspace. The built-in roles are
+	// named Owner, Admin, Member, Agent and Viewer.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The permissions the role gives, sorted, as this API's methods or a
 	// product's calls name them.
@@ -334,7 +344,9 @@ func (x *Role) GetBuiltIn() bool {
 // Subject is who a grant is given to, or who made it.
 type Subject struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Kind  SubjectKind            `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.SubjectKind" json:"kind,omitempty"`
+	// Who the subject is: a person, one of the workspace's tokens, or the
+	// control plane itself.
+	Kind SubjectKind `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.SubjectKind" json:"kind,omitempty"`
 	// The Toshi user id of a person, such as "usr-0f1e2d3c4b5a69788796a5b4",
 	// which a change of login or identity provider keeps; it is opaque, and
 	// a person who signed in before user accounts came has their GitHub user
@@ -393,7 +405,8 @@ func (x *Subject) GetId() string {
 type RoleGrant struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Grant id.
-	Id      string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The person or token the role is given to.
 	Subject *Subject `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
 	// The role's id.
 	Role string `protobuf:"bytes,3,opt,name=role,proto3" json:"role,omitempty"`
@@ -402,9 +415,12 @@ type RoleGrant struct {
 	Project string `protobuf:"bytes,4,opt,name=project,proto3" json:"project,omitempty"`
 	// The environment of project the grant applies to, by name. Empty for a
 	// grant on every environment of project.
-	Environment   string                 `protobuf:"bytes,5,opt,name=environment,proto3" json:"environment,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	CreatedBy     *Subject               `protobuf:"bytes,7,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	Environment string `protobuf:"bytes,5,opt,name=environment,proto3" json:"environment,omitempty"`
+	// When the grant was made.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Who made the grant: a person or a token, or the system for a grant the
+	// control plane made, such as a workspace's first owner.
+	CreatedBy     *Subject `protobuf:"bytes,7,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -488,6 +504,7 @@ func (x *RoleGrant) GetCreatedBy() *Subject {
 	return nil
 }
 
+// ListRolesRequest is a call of ListRoles.
 type ListRolesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most roles in one page; zero lets the server choose.
@@ -542,9 +559,11 @@ func (x *ListRolesRequest) GetPageToken() string {
 	return ""
 }
 
+// ListRolesResponse carries one page of the workspace's roles.
 type ListRolesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Roles []*Role                `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
+	// The roles in this page, built-in roles first.
+	Roles []*Role `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -598,11 +617,15 @@ func (x *ListRolesResponse) GetNextPageToken() string {
 // CreateRoleRequest names the role and what it gives.
 type CreateRoleRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The role's name within the workspace.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// At least one permission, as this API's methods or a product's calls
 	// name it.
-	Permissions   []string `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	RequestKey    string   `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	Permissions []string `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -658,9 +681,11 @@ func (x *CreateRoleRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateRoleResponse carries the role the call made.
 type CreateRoleResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The role as it was made.
+	Role          *Role `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -705,8 +730,10 @@ func (x *CreateRoleResponse) GetRole() *Role {
 // UpdateRoleRequest names the role and its new name and permissions.
 type UpdateRoleRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The role's id; a built-in role's fails with INVALID_ARGUMENT.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The role's new name within the workspace.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// At least one permission; they replace the role's.
 	Permissions   []string `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -764,9 +791,11 @@ func (x *UpdateRoleRequest) GetPermissions() []string {
 	return nil
 }
 
+// UpdateRoleResponse carries the role as it now is.
 type UpdateRoleResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The role after the change.
+	Role          *Role `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -808,9 +837,11 @@ func (x *UpdateRoleResponse) GetRole() *Role {
 	return nil
 }
 
+// DeleteRoleRequest names the role to delete.
 type DeleteRoleRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The role's id; a built-in role's fails with INVALID_ARGUMENT.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -855,7 +886,8 @@ func (x *DeleteRoleRequest) GetId() string {
 // DeleteRoleResponse carries the deleted role.
 type DeleteRoleResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Role  *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	// The role as it was before it was deleted.
+	Role *Role `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
 	// How many grants of the role were deleted with it.
 	GrantsDeleted int32 `protobuf:"varint,2,opt,name=grants_deleted,json=grantsDeleted,proto3" json:"grants_deleted,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -990,9 +1022,11 @@ func (x *ListRoleGrantsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListRoleGrantsResponse carries one page of the workspace's grants.
 type ListRoleGrantsResponse struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Grants []*RoleGrant           `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grants in this page, by subject, then role, then scope.
+	Grants []*RoleGrant `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1118,9 +1152,11 @@ func (x *GrantRoleRequest) GetEnvironment() string {
 	return ""
 }
 
+// GrantRoleResponse carries the grant the call made.
 type GrantRoleResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *RoleGrant             `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant as it was made, with its project and environment by name.
+	Grant         *RoleGrant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1162,6 +1198,7 @@ func (x *GrantRoleResponse) GetGrant() *RoleGrant {
 	return nil
 }
 
+// RevokeRoleRequest names the grant to delete.
 type RevokeRoleRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The grant's id.
@@ -1209,8 +1246,10 @@ func (x *RevokeRoleRequest) GetId() string {
 
 // RevokeRoleResponse carries the deleted grant.
 type RevokeRoleResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *RoleGrant             `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant as it was before it was deleted, with its project and
+	// environment by name.
+	Grant         *RoleGrant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1252,6 +1291,7 @@ func (x *RevokeRoleResponse) GetGrant() *RoleGrant {
 	return nil
 }
 
+// ListMembersRequest is a call of ListMembers.
 type ListMembersRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most members in one page; zero lets the server choose.
@@ -1316,9 +1356,13 @@ func (x *ListMembersRequest) GetState() MemberState {
 	return MemberState_MEMBER_STATE_UNSPECIFIED
 }
 
+// ListMembersResponse carries one page of members, or of people waiting for
+// approval.
 type ListMembersResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Members []*Member              `protobuf:"bytes,1,rep,name=members,proto3" json:"members,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The members in this page, oldest first; the people waiting for
+	// approval when state is MEMBER_STATE_PENDING.
+	Members []*Member `protobuf:"bytes,1,rep,name=members,proto3" json:"members,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1376,14 +1420,21 @@ type Member struct {
 	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// The name and email address the person's latest sign-in reported;
 	// shown, never matched.
-	Name    string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Email   string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	Via     MemberVia              `protobuf:"varint,4,opt,name=via,proto3,enum=toshi.workspace.v1.MemberVia" json:"via,omitempty"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The email address the person's latest sign-in reported; shown, never
+	// matched.
+	Email string `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	// How the person became a member; a person waiting for approval reports
+	// MEMBER_VIA_GITHUB_MEMBER.
+	Via MemberVia `protobuf:"varint,4,opt,name=via,proto3,enum=toshi.workspace.v1.MemberVia" json:"via,omitempty"`
+	// When they became a member; unset for a person waiting for approval.
 	AddedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=added_at,json=addedAt,proto3" json:"added_at,omitempty"`
 	// Who made the person a member: the inviter for an invitation, the
 	// system for a sign-in, the approver for an approved request.
-	AddedBy *Subject    `protobuf:"bytes,6,opt,name=added_by,json=addedBy,proto3" json:"added_by,omitempty"`
-	State   MemberState `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.MemberState" json:"state,omitempty"`
+	AddedBy *Subject `protobuf:"bytes,6,opt,name=added_by,json=addedBy,proto3" json:"added_by,omitempty"`
+	// MEMBER_STATE_ACTIVE for a member, MEMBER_STATE_PENDING for a person
+	// waiting for approval.
+	State MemberState `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.MemberState" json:"state,omitempty"`
 	// When a person waiting for approval asked to join; unset for a member.
 	RequestedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=requested_at,json=requestedAt,proto3" json:"requested_at,omitempty"`
 	// The login the person signed in with last, as that sign-in recorded it:
@@ -1487,6 +1538,7 @@ func (x *Member) GetLogin() string {
 	return ""
 }
 
+// RemoveMemberRequest names the person whose membership to end.
 type RemoveMemberRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The person's user id.
@@ -1532,6 +1584,7 @@ func (x *RemoveMemberRequest) GetUserId() string {
 	return ""
 }
 
+// ApproveMemberRequest names the person waiting for approval to approve.
 type ApproveMemberRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The person's user id.
@@ -1580,9 +1633,12 @@ func (x *ApproveMemberRequest) GetUserId() string {
 // ApproveMemberResponse carries the new member and whether they became an
 // owner.
 type ApproveMemberResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Member        *Member                `protobuf:"bytes,1,opt,name=member,proto3" json:"member,omitempty"`
-	Owner         bool                   `protobuf:"varint,2,opt,name=owner,proto3" json:"owner,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The person as a member now.
+	Member *Member `protobuf:"bytes,1,opt,name=member,proto3" json:"member,omitempty"`
+	// Whether the call gave them owner on the whole workspace, which it does
+	// when no person holds that.
+	Owner         bool `protobuf:"varint,2,opt,name=owner,proto3" json:"owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1631,6 +1687,7 @@ func (x *ApproveMemberResponse) GetOwner() bool {
 	return false
 }
 
+// DeclineMemberRequest names the person waiting for approval to decline.
 type DeclineMemberRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The person's user id.
@@ -1676,6 +1733,7 @@ func (x *DeclineMemberRequest) GetUserId() string {
 	return ""
 }
 
+// DeclineMemberResponse is the answer of a decline, and holds nothing.
 type DeclineMemberResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1714,8 +1772,10 @@ func (*DeclineMemberResponse) Descriptor() ([]byte, []int) {
 
 // RemoveMemberResponse says how many grants went with the membership.
 type RemoveMemberResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	GrantsRemoved int32                  `protobuf:"varint,1,opt,name=grants_removed,json=grantsRemoved,proto3" json:"grants_removed,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// How many grants the person held, which the call deleted with the
+	// membership.
+	GrantsRemoved int32 `protobuf:"varint,1,opt,name=grants_removed,json=grantsRemoved,proto3" json:"grants_removed,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1757,6 +1817,7 @@ func (x *RemoveMemberResponse) GetGrantsRemoved() int32 {
 	return 0
 }
 
+// CreateInvitationRequest asks for an invitation to join the workspace.
 type CreateInvitationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Free text, such as whom the invitation is for; 200 characters at most.
@@ -1825,8 +1886,9 @@ func (x *CreateInvitationRequest) GetRequestKey() string {
 // CreateInvitationResponse carries the invitation and its code, shown
 // once.
 type CreateInvitationResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Invitation *Invitation            `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The invitation as it was made.
+	Invitation *Invitation `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
 	// The code the invitee accepts; it is not shown again.
 	Code          string `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1881,18 +1943,26 @@ func (x *CreateInvitationResponse) GetCode() string {
 type Invitation struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Invitation id, such as "inv-1a2b3c4d5e6f7a8b9c0d1e2f".
-	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Note      string                 `protobuf:"bytes,2,opt,name=note,proto3" json:"note,omitempty"`
-	State     InvitationState        `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.InvitationState" json:"state,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Free text, such as whom the invitation is for; shown and never checked,
+	// 200 characters at most.
+	Note string `protobuf:"bytes,2,opt,name=note,proto3" json:"note,omitempty"`
+	// Whether its code still works: OPEN, ACCEPTED, REVOKED or EXPIRED.
+	State InvitationState `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.InvitationState" json:"state,omitempty"`
+	// When it was made.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	CreatedBy *Subject               `protobuf:"bytes,5,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	// Who made it: a person or a token.
+	CreatedBy *Subject `protobuf:"bytes,5,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	// When its code stops working.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// The user id of the person who accepted it, and when; empty until then.
-	AcceptedBy string                 `protobuf:"bytes,7,opt,name=accepted_by,json=acceptedBy,proto3" json:"accepted_by,omitempty"`
+	AcceptedBy string `protobuf:"bytes,7,opt,name=accepted_by,json=acceptedBy,proto3" json:"accepted_by,omitempty"`
+	// When the person accepted it; unset until then.
 	AcceptedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=accepted_at,json=acceptedAt,proto3" json:"accepted_at,omitempty"`
 	// When it was revoked, and by whom; empty unless revoked.
-	RevokedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
-	RevokedBy     *Subject               `protobuf:"bytes,10,opt,name=revoked_by,json=revokedBy,proto3" json:"revoked_by,omitempty"`
+	RevokedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
+	// Who revoked it; unset unless revoked.
+	RevokedBy     *Subject `protobuf:"bytes,10,opt,name=revoked_by,json=revokedBy,proto3" json:"revoked_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1997,6 +2067,7 @@ func (x *Invitation) GetRevokedBy() *Subject {
 	return nil
 }
 
+// ListInvitationsRequest is a call of ListInvitations.
 type ListInvitationsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most invitations in one page; zero lets the server choose.
@@ -2051,9 +2122,12 @@ func (x *ListInvitationsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListInvitationsResponse carries one page of the workspace's invitations.
 type ListInvitationsResponse struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Invitations []*Invitation          `protobuf:"bytes,1,rep,name=invitations,proto3" json:"invitations,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The invitations in this page, newest first, accepted, revoked and
+	// expired ones included.
+	Invitations []*Invitation `protobuf:"bytes,1,rep,name=invitations,proto3" json:"invitations,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2104,6 +2178,7 @@ func (x *ListInvitationsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// RevokeInvitationRequest names the invitation to revoke.
 type RevokeInvitationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The invitation's id.
@@ -2151,8 +2226,9 @@ func (x *RevokeInvitationRequest) GetId() string {
 
 // RevokeInvitationResponse carries the revoked invitation.
 type RevokeInvitationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Invitation    *Invitation            `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The invitation as it now is, with revoked_at and revoked_by set.
+	Invitation    *Invitation `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2194,6 +2270,7 @@ func (x *RevokeInvitationResponse) GetInvitation() *Invitation {
 	return nil
 }
 
+// AcceptInvitationRequest is a person's acceptance of an invitation.
 type AcceptInvitationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The code CreateInvitation returned.
@@ -2239,9 +2316,12 @@ func (x *AcceptInvitationRequest) GetCode() string {
 	return ""
 }
 
+// AcceptInvitationResponse carries the invitation the caller accepted and
+// the workspace they joined.
 type AcceptInvitationResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Invitation *Invitation            `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The invitation as it now is, accepted.
+	Invitation *Invitation `protobuf:"bytes,1,opt,name=invitation,proto3" json:"invitation,omitempty"`
 	// The id of the workspace the caller is now a member of.
 	Workspace string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// Whether the caller was made the workspace's owner.

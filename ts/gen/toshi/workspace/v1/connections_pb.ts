@@ -24,11 +24,16 @@ export const file_toshi_workspace_v1_connections: GenFile = /*@__PURE__*/
  */
 export type Connection = Message<"toshi.workspace.v1.Connection"> & {
   /**
+   * The connection's ID: "con-" and 24 hex characters for a WEBHOOK or MAIL
+   * connection, "github-" and the installation id for a GITHUB one.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The kind of source it receives events from.
+   *
    * @generated from field: toshi.workspace.v1.ConnectionKind kind = 2;
    */
   kind: ConnectionKind;
@@ -50,6 +55,8 @@ export type Connection = Message<"toshi.workspace.v1.Connection"> & {
   project: string;
 
   /**
+   * The environment of that project; empty for GITHUB, as project is.
+   *
    * @generated from field: string environment = 5;
    */
   environment: string;
@@ -62,6 +69,8 @@ export type Connection = Message<"toshi.workspace.v1.Connection"> & {
   installationId: bigint;
 
   /**
+   * When it was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 7;
    */
   createdAt?: Timestamp | undefined;
@@ -142,11 +151,16 @@ export type Connection = Message<"toshi.workspace.v1.Connection"> & {
  */
 export type ConnectionJson = {
   /**
+   * The connection's ID: "con-" and 24 hex characters for a WEBHOOK or MAIL
+   * connection, "github-" and the installation id for a GITHUB one.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The kind of source it receives events from.
+   *
    * @generated from field: toshi.workspace.v1.ConnectionKind kind = 2;
    */
   kind?: ConnectionKindJson;
@@ -168,6 +182,8 @@ export type ConnectionJson = {
   project?: string;
 
   /**
+   * The environment of that project; empty for GITHUB, as project is.
+   *
    * @generated from field: string environment = 5;
    */
   environment?: string;
@@ -180,6 +196,8 @@ export type ConnectionJson = {
   installationId?: string;
 
   /**
+   * When it was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 7;
    */
   createdAt?: TimestampJson;
@@ -386,21 +404,29 @@ export const MailConnectionSchema: GenMessage<MailConnection, {jsonType: MailCon
  */
 export type MailDomainStatus = Message<"toshi.workspace.v1.MailDomainStatus"> & {
   /**
+   * Whether the domain receives mail.
+   *
    * @generated from field: toshi.workspace.v1.MailDomainState state = 1;
    */
   state: MailDomainState;
 
   /**
+   * The check that the workspace owns the domain, by its TXT record.
+   *
    * @generated from field: toshi.workspace.v1.MailDomainCheck ownership = 2;
    */
   ownership: MailDomainCheck;
 
   /**
+   * The check that the domain's MX record points at the mail provider.
+   *
    * @generated from field: toshi.workspace.v1.MailDomainCheck mx = 3;
    */
   mx: MailDomainCheck;
 
   /**
+   * The provider's own check of the domain, such as SES's DKIM records.
+   *
    * @generated from field: toshi.workspace.v1.MailDomainCheck provider = 4;
    */
   provider: MailDomainCheck;
@@ -434,21 +460,29 @@ export type MailDomainStatus = Message<"toshi.workspace.v1.MailDomainStatus"> & 
  */
 export type MailDomainStatusJson = {
   /**
+   * Whether the domain receives mail.
+   *
    * @generated from field: toshi.workspace.v1.MailDomainState state = 1;
    */
   state?: MailDomainStateJson;
 
   /**
+   * The check that the workspace owns the domain, by its TXT record.
+   *
    * @generated from field: toshi.workspace.v1.MailDomainCheck ownership = 2;
    */
   ownership?: MailDomainCheckJson;
 
   /**
+   * The check that the domain's MX record points at the mail provider.
+   *
    * @generated from field: toshi.workspace.v1.MailDomainCheck mx = 3;
    */
   mx?: MailDomainCheckJson;
 
   /**
+   * The provider's own check of the domain, such as SES's DKIM records.
+   *
    * @generated from field: toshi.workspace.v1.MailDomainCheck provider = 4;
    */
   provider?: MailDomainCheckJson;
@@ -514,6 +548,8 @@ export type ConnectionTarget = Message<"toshi.workspace.v1.ConnectionTarget"> & 
   updatedBy: string;
 
   /**
+   * When it was last set.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 4;
    */
   updatedAt?: Timestamp | undefined;
@@ -551,6 +587,8 @@ export type ConnectionTargetJson = {
   updatedBy?: string;
 
   /**
+   * When it was last set.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 4;
    */
   updatedAt?: TimestampJson;
@@ -564,6 +602,8 @@ export const ConnectionTargetSchema: GenMessage<ConnectionTarget, {jsonType: Con
   messageDesc(file_toshi_workspace_v1_connections, 3);
 
 /**
+ * ListConnectionsRequest asks for a page of the workspace's connections.
+ *
  * @generated from message toshi.workspace.v1.ListConnectionsRequest
  */
 export type ListConnectionsRequest = Message<"toshi.workspace.v1.ListConnectionsRequest"> & {
@@ -583,6 +623,8 @@ export type ListConnectionsRequest = Message<"toshi.workspace.v1.ListConnections
 };
 
 /**
+ * ListConnectionsRequest asks for a page of the workspace's connections.
+ *
  * @generated from message toshi.workspace.v1.ListConnectionsRequest
  */
 export type ListConnectionsRequestJson = {
@@ -609,10 +651,14 @@ export const ListConnectionsRequestSchema: GenMessage<ListConnectionsRequest, {j
   messageDesc(file_toshi_workspace_v1_connections, 4);
 
 /**
+ * ListConnectionsResponse is a page of the workspace's connections.
+ *
  * @generated from message toshi.workspace.v1.ListConnectionsResponse
  */
 export type ListConnectionsResponse = Message<"toshi.workspace.v1.ListConnectionsResponse"> & {
   /**
+   * The connections, ordered by id.
+   *
    * @generated from field: repeated toshi.workspace.v1.Connection connections = 1;
    */
   connections: Connection[];
@@ -626,10 +672,14 @@ export type ListConnectionsResponse = Message<"toshi.workspace.v1.ListConnection
 };
 
 /**
+ * ListConnectionsResponse is a page of the workspace's connections.
+ *
  * @generated from message toshi.workspace.v1.ListConnectionsResponse
  */
 export type ListConnectionsResponseJson = {
   /**
+   * The connections, ordered by id.
+   *
    * @generated from field: repeated toshi.workspace.v1.Connection connections = 1;
    */
   connections?: ConnectionJson[];
@@ -650,20 +700,28 @@ export const ListConnectionsResponseSchema: GenMessage<ListConnectionsResponse, 
   messageDesc(file_toshi_workspace_v1_connections, 5);
 
 /**
+ * GetConnectionRequest asks for one connection, by id.
+ *
  * @generated from message toshi.workspace.v1.GetConnectionRequest
  */
 export type GetConnectionRequest = Message<"toshi.workspace.v1.GetConnectionRequest"> & {
   /**
+   * The connection's ID.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * GetConnectionRequest asks for one connection, by id.
+ *
  * @generated from message toshi.workspace.v1.GetConnectionRequest
  */
 export type GetConnectionRequestJson = {
   /**
+   * The connection's ID.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -677,20 +735,28 @@ export const GetConnectionRequestSchema: GenMessage<GetConnectionRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_connections, 6);
 
 /**
+ * GetConnectionResponse is the connection GetConnection read.
+ *
  * @generated from message toshi.workspace.v1.GetConnectionResponse
  */
 export type GetConnectionResponse = Message<"toshi.workspace.v1.GetConnectionResponse"> & {
   /**
+   * The connection.
+   *
    * @generated from field: toshi.workspace.v1.Connection connection = 1;
    */
   connection?: Connection | undefined;
 };
 
 /**
+ * GetConnectionResponse is the connection GetConnection read.
+ *
  * @generated from message toshi.workspace.v1.GetConnectionResponse
  */
 export type GetConnectionResponseJson = {
   /**
+   * The connection.
+   *
    * @generated from field: toshi.workspace.v1.Connection connection = 1;
    */
   connection?: ConnectionJson;
@@ -704,6 +770,8 @@ export const GetConnectionResponseSchema: GenMessage<GetConnectionResponse, {jso
   messageDesc(file_toshi_workspace_v1_connections, 7);
 
 /**
+ * CreateConnectionRequest is a new WEBHOOK or MAIL connection.
+ *
  * @generated from message toshi.workspace.v1.CreateConnectionRequest
  */
 export type CreateConnectionRequest = Message<"toshi.workspace.v1.CreateConnectionRequest"> & {
@@ -732,11 +800,18 @@ export type CreateConnectionRequest = Message<"toshi.workspace.v1.CreateConnecti
   project: string;
 
   /**
+   * The environment; required for WEBHOOK with project, and for MAIL it
+   * must be the service's.
+   *
    * @generated from field: string environment = 4;
    */
   environment: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 5;
    */
   requestKey: string;
@@ -759,22 +834,31 @@ export type CreateConnectionRequest = Message<"toshi.workspace.v1.CreateConnecti
   managedBy: string;
 
   /**
+   * The SHA-256 of the manifest file, as 64 lowercase hex characters.
+   *
    * @generated from field: string manifest_digest = 8;
    */
   manifestDigest: string;
 
   /**
+   * The fields of the connection the manifest declares, as update mask
+   * paths.
+   *
    * @generated from field: repeated string managed_fields = 9;
    */
   managedFields: string[];
 
   /**
+   * How the manifest came to manage it: "created" or "adopted".
+   *
    * @generated from field: string manifest_origin = 10;
    */
   manifestOrigin: string;
 };
 
 /**
+ * CreateConnectionRequest is a new WEBHOOK or MAIL connection.
+ *
  * @generated from message toshi.workspace.v1.CreateConnectionRequest
  */
 export type CreateConnectionRequestJson = {
@@ -803,11 +887,18 @@ export type CreateConnectionRequestJson = {
   project?: string;
 
   /**
+   * The environment; required for WEBHOOK with project, and for MAIL it
+   * must be the service's.
+   *
    * @generated from field: string environment = 4;
    */
   environment?: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 5;
    */
   requestKey?: string;
@@ -830,16 +921,23 @@ export type CreateConnectionRequestJson = {
   managedBy?: string;
 
   /**
+   * The SHA-256 of the manifest file, as 64 lowercase hex characters.
+   *
    * @generated from field: string manifest_digest = 8;
    */
   manifestDigest?: string;
 
   /**
+   * The fields of the connection the manifest declares, as update mask
+   * paths.
+   *
    * @generated from field: repeated string managed_fields = 9;
    */
   managedFields?: string[];
 
   /**
+   * How the manifest came to manage it: "created" or "adopted".
+   *
    * @generated from field: string manifest_origin = 10;
    */
   manifestOrigin?: string;
@@ -853,10 +951,15 @@ export const CreateConnectionRequestSchema: GenMessage<CreateConnectionRequest, 
   messageDesc(file_toshi_workspace_v1_connections, 8);
 
 /**
+ * CreateConnectionResponse is the connection CreateConnection made, with its
+ * signing secret.
+ *
  * @generated from message toshi.workspace.v1.CreateConnectionResponse
  */
 export type CreateConnectionResponse = Message<"toshi.workspace.v1.CreateConnectionResponse"> & {
   /**
+   * The connection.
+   *
    * @generated from field: toshi.workspace.v1.Connection connection = 1;
    */
   connection?: Connection | undefined;
@@ -872,10 +975,15 @@ export type CreateConnectionResponse = Message<"toshi.workspace.v1.CreateConnect
 };
 
 /**
+ * CreateConnectionResponse is the connection CreateConnection made, with its
+ * signing secret.
+ *
  * @generated from message toshi.workspace.v1.CreateConnectionResponse
  */
 export type CreateConnectionResponseJson = {
   /**
+   * The connection.
+   *
    * @generated from field: toshi.workspace.v1.Connection connection = 1;
    */
   connection?: ConnectionJson;
@@ -898,30 +1006,46 @@ export const CreateConnectionResponseSchema: GenMessage<CreateConnectionResponse
   messageDesc(file_toshi_workspace_v1_connections, 9);
 
 /**
+ * DeleteConnectionRequest names the connection DeleteConnection removes.
+ *
  * @generated from message toshi.workspace.v1.DeleteConnectionRequest
  */
 export type DeleteConnectionRequest = Message<"toshi.workspace.v1.DeleteConnectionRequest"> & {
   /**
+   * The connection's ID.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey: string;
 };
 
 /**
+ * DeleteConnectionRequest names the connection DeleteConnection removes.
+ *
  * @generated from message toshi.workspace.v1.DeleteConnectionRequest
  */
 export type DeleteConnectionRequestJson = {
   /**
+   * The connection's ID.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey?: string;
@@ -935,12 +1059,18 @@ export const DeleteConnectionRequestSchema: GenMessage<DeleteConnectionRequest, 
   messageDesc(file_toshi_workspace_v1_connections, 10);
 
 /**
+ * DeleteConnectionResponse is the answer of DeleteConnection; it carries
+ * nothing.
+ *
  * @generated from message toshi.workspace.v1.DeleteConnectionResponse
  */
 export type DeleteConnectionResponse = Message<"toshi.workspace.v1.DeleteConnectionResponse"> & {
 };
 
 /**
+ * DeleteConnectionResponse is the answer of DeleteConnection; it carries
+ * nothing.
+ *
  * @generated from message toshi.workspace.v1.DeleteConnectionResponse
  */
 export type DeleteConnectionResponseJson = {
@@ -954,10 +1084,14 @@ export const DeleteConnectionResponseSchema: GenMessage<DeleteConnectionResponse
   messageDesc(file_toshi_workspace_v1_connections, 11);
 
 /**
+ * RotateConnectionSecretRequest asks for a connection's new signing secret.
+ *
  * @generated from message toshi.workspace.v1.RotateConnectionSecretRequest
  */
 export type RotateConnectionSecretRequest = Message<"toshi.workspace.v1.RotateConnectionSecretRequest"> & {
   /**
+   * The connection's ID.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -971,16 +1105,24 @@ export type RotateConnectionSecretRequest = Message<"toshi.workspace.v1.RotateCo
   overlap?: Duration | undefined;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 3;
    */
   requestKey: string;
 };
 
 /**
+ * RotateConnectionSecretRequest asks for a connection's new signing secret.
+ *
  * @generated from message toshi.workspace.v1.RotateConnectionSecretRequest
  */
 export type RotateConnectionSecretRequestJson = {
   /**
+   * The connection's ID.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -994,6 +1136,10 @@ export type RotateConnectionSecretRequestJson = {
   overlap?: DurationJson;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 3;
    */
   requestKey?: string;
@@ -1007,10 +1153,16 @@ export const RotateConnectionSecretRequestSchema: GenMessage<RotateConnectionSec
   messageDesc(file_toshi_workspace_v1_connections, 12);
 
 /**
+ * RotateConnectionSecretResponse is the connection and its new signing
+ * secret.
+ *
  * @generated from message toshi.workspace.v1.RotateConnectionSecretResponse
  */
 export type RotateConnectionSecretResponse = Message<"toshi.workspace.v1.RotateConnectionSecretResponse"> & {
   /**
+   * The connection, with previous_secret_expires_at set while an overlap
+   * keeps the previous secret verifying.
+   *
    * @generated from field: toshi.workspace.v1.Connection connection = 1;
    */
   connection?: Connection | undefined;
@@ -1025,10 +1177,16 @@ export type RotateConnectionSecretResponse = Message<"toshi.workspace.v1.RotateC
 };
 
 /**
+ * RotateConnectionSecretResponse is the connection and its new signing
+ * secret.
+ *
  * @generated from message toshi.workspace.v1.RotateConnectionSecretResponse
  */
 export type RotateConnectionSecretResponseJson = {
   /**
+   * The connection, with previous_secret_expires_at set while an overlap
+   * keeps the previous secret verifying.
+   *
    * @generated from field: toshi.workspace.v1.Connection connection = 1;
    */
   connection?: ConnectionJson;
@@ -1050,6 +1208,9 @@ export const RotateConnectionSecretResponseSchema: GenMessage<RotateConnectionSe
   messageDesc(file_toshi_workspace_v1_connections, 13);
 
 /**
+ * UpdateConnectionRequest is the connection UpdateConnection changes and the
+ * values its mask sets.
+ *
  * @generated from message toshi.workspace.v1.UpdateConnectionRequest
  */
 export type UpdateConnectionRequest = Message<"toshi.workspace.v1.UpdateConnectionRequest"> & {
@@ -1073,6 +1234,9 @@ export type UpdateConnectionRequest = Message<"toshi.workspace.v1.UpdateConnecti
 };
 
 /**
+ * UpdateConnectionRequest is the connection UpdateConnection changes and the
+ * values its mask sets.
+ *
  * @generated from message toshi.workspace.v1.UpdateConnectionRequest
  */
 export type UpdateConnectionRequestJson = {
@@ -1103,20 +1267,28 @@ export const UpdateConnectionRequestSchema: GenMessage<UpdateConnectionRequest, 
   messageDesc(file_toshi_workspace_v1_connections, 14);
 
 /**
+ * UpdateConnectionResponse is the connection UpdateConnection left.
+ *
  * @generated from message toshi.workspace.v1.UpdateConnectionResponse
  */
 export type UpdateConnectionResponse = Message<"toshi.workspace.v1.UpdateConnectionResponse"> & {
   /**
+   * The connection.
+   *
    * @generated from field: toshi.workspace.v1.Connection connection = 1;
    */
   connection?: Connection | undefined;
 };
 
 /**
+ * UpdateConnectionResponse is the connection UpdateConnection left.
+ *
  * @generated from message toshi.workspace.v1.UpdateConnectionResponse
  */
 export type UpdateConnectionResponseJson = {
   /**
+   * The connection.
+   *
    * @generated from field: toshi.workspace.v1.Connection connection = 1;
    */
   connection?: ConnectionJson;
@@ -1137,11 +1309,15 @@ export const UpdateConnectionResponseSchema: GenMessage<UpdateConnectionResponse
  */
 export type ConnectionDelivery = Message<"toshi.workspace.v1.ConnectionDelivery"> & {
   /**
+   * The delivery's ID: "cd_" and 32 hex characters.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The ID of the connection it was received for.
+   *
    * @generated from field: string connection_id = 2;
    */
   connectionId: string;
@@ -1154,6 +1330,8 @@ export type ConnectionDelivery = Message<"toshi.workspace.v1.ConnectionDelivery"
   webhookId: string;
 
   /**
+   * Where it stands.
+   *
    * @generated from field: toshi.workspace.v1.ConnectionDeliveryState state = 4;
    */
   state: ConnectionDeliveryState;
@@ -1174,6 +1352,8 @@ export type ConnectionDelivery = Message<"toshi.workspace.v1.ConnectionDelivery"
   sentAt?: Timestamp | undefined;
 
   /**
+   * When the ingress stored it.
+   *
    * @generated from field: google.protobuf.Timestamp received_at = 7;
    */
   receivedAt?: Timestamp | undefined;
@@ -1246,11 +1426,15 @@ export type ConnectionDelivery = Message<"toshi.workspace.v1.ConnectionDelivery"
  */
 export type ConnectionDeliveryJson = {
   /**
+   * The delivery's ID: "cd_" and 32 hex characters.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The ID of the connection it was received for.
+   *
    * @generated from field: string connection_id = 2;
    */
   connectionId?: string;
@@ -1263,6 +1447,8 @@ export type ConnectionDeliveryJson = {
   webhookId?: string;
 
   /**
+   * Where it stands.
+   *
    * @generated from field: toshi.workspace.v1.ConnectionDeliveryState state = 4;
    */
   state?: ConnectionDeliveryStateJson;
@@ -1283,6 +1469,8 @@ export type ConnectionDeliveryJson = {
   sentAt?: TimestampJson;
 
   /**
+   * When the ingress stored it.
+   *
    * @generated from field: google.protobuf.Timestamp received_at = 7;
    */
   receivedAt?: TimestampJson;
@@ -1391,11 +1579,16 @@ export type ConnectionDeliveryRun = Message<"toshi.workspace.v1.ConnectionDelive
   error: string;
 
   /**
+   * How long the post to the connection's target took; zero for a run that
+   * wrote an event.
+   *
    * @generated from field: google.protobuf.Duration duration = 8;
    */
   duration?: Duration | undefined;
 
   /**
+   * When the worker finished the run.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 9;
    */
   finishedAt?: Timestamp | undefined;
@@ -1453,11 +1646,16 @@ export type ConnectionDeliveryRunJson = {
   error?: string;
 
   /**
+   * How long the post to the connection's target took; zero for a run that
+   * wrote an event.
+   *
    * @generated from field: google.protobuf.Duration duration = 8;
    */
   duration?: DurationJson;
 
   /**
+   * When the worker finished the run.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 9;
    */
   finishedAt?: TimestampJson;
@@ -1486,10 +1684,15 @@ export const ConnectionDeliveryRunSchema: GenMessage<ConnectionDeliveryRun, {jso
   messageDesc(file_toshi_workspace_v1_connections, 17);
 
 /**
+ * ListConnectionDeliveriesRequest asks for a page of a connection's
+ * deliveries.
+ *
  * @generated from message toshi.workspace.v1.ListConnectionDeliveriesRequest
  */
 export type ListConnectionDeliveriesRequest = Message<"toshi.workspace.v1.ListConnectionDeliveriesRequest"> & {
   /**
+   * The connection's ID.
+   *
    * @generated from field: string connection_id = 1;
    */
   connectionId: string;
@@ -1517,10 +1720,15 @@ export type ListConnectionDeliveriesRequest = Message<"toshi.workspace.v1.ListCo
 };
 
 /**
+ * ListConnectionDeliveriesRequest asks for a page of a connection's
+ * deliveries.
+ *
  * @generated from message toshi.workspace.v1.ListConnectionDeliveriesRequest
  */
 export type ListConnectionDeliveriesRequestJson = {
   /**
+   * The connection's ID.
+   *
    * @generated from field: string connection_id = 1;
    */
   connectionId?: string;
@@ -1555,10 +1763,14 @@ export const ListConnectionDeliveriesRequestSchema: GenMessage<ListConnectionDel
   messageDesc(file_toshi_workspace_v1_connections, 18);
 
 /**
+ * ListConnectionDeliveriesResponse is a page of a connection's deliveries.
+ *
  * @generated from message toshi.workspace.v1.ListConnectionDeliveriesResponse
  */
 export type ListConnectionDeliveriesResponse = Message<"toshi.workspace.v1.ListConnectionDeliveriesResponse"> & {
   /**
+   * The deliveries, newest received first, each without its body.
+   *
    * @generated from field: repeated toshi.workspace.v1.ConnectionDelivery deliveries = 1;
    */
   deliveries: ConnectionDelivery[];
@@ -1572,10 +1784,14 @@ export type ListConnectionDeliveriesResponse = Message<"toshi.workspace.v1.ListC
 };
 
 /**
+ * ListConnectionDeliveriesResponse is a page of a connection's deliveries.
+ *
  * @generated from message toshi.workspace.v1.ListConnectionDeliveriesResponse
  */
 export type ListConnectionDeliveriesResponseJson = {
   /**
+   * The deliveries, newest received first, each without its body.
+   *
    * @generated from field: repeated toshi.workspace.v1.ConnectionDelivery deliveries = 1;
    */
   deliveries?: ConnectionDeliveryJson[];
@@ -1596,20 +1812,28 @@ export const ListConnectionDeliveriesResponseSchema: GenMessage<ListConnectionDe
   messageDesc(file_toshi_workspace_v1_connections, 19);
 
 /**
+ * GetConnectionDeliveryRequest asks for one delivery and its runs, by id.
+ *
  * @generated from message toshi.workspace.v1.GetConnectionDeliveryRequest
  */
 export type GetConnectionDeliveryRequest = Message<"toshi.workspace.v1.GetConnectionDeliveryRequest"> & {
   /**
+   * The delivery's ID.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * GetConnectionDeliveryRequest asks for one delivery and its runs, by id.
+ *
  * @generated from message toshi.workspace.v1.GetConnectionDeliveryRequest
  */
 export type GetConnectionDeliveryRequestJson = {
   /**
+   * The delivery's ID.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -1623,30 +1847,42 @@ export const GetConnectionDeliveryRequestSchema: GenMessage<GetConnectionDeliver
   messageDesc(file_toshi_workspace_v1_connections, 20);
 
 /**
+ * GetConnectionDeliveryResponse is a delivery and its runs.
+ *
  * @generated from message toshi.workspace.v1.GetConnectionDeliveryResponse
  */
 export type GetConnectionDeliveryResponse = Message<"toshi.workspace.v1.GetConnectionDeliveryResponse"> & {
   /**
+   * The delivery, without its body.
+   *
    * @generated from field: toshi.workspace.v1.ConnectionDelivery delivery = 1;
    */
   delivery?: ConnectionDelivery | undefined;
 
   /**
+   * Each time a worker finished it, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.ConnectionDeliveryRun runs = 2;
    */
   runs: ConnectionDeliveryRun[];
 };
 
 /**
+ * GetConnectionDeliveryResponse is a delivery and its runs.
+ *
  * @generated from message toshi.workspace.v1.GetConnectionDeliveryResponse
  */
 export type GetConnectionDeliveryResponseJson = {
   /**
+   * The delivery, without its body.
+   *
    * @generated from field: toshi.workspace.v1.ConnectionDelivery delivery = 1;
    */
   delivery?: ConnectionDeliveryJson;
 
   /**
+   * Each time a worker finished it, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.ConnectionDeliveryRun runs = 2;
    */
   runs?: ConnectionDeliveryRunJson[];
@@ -1660,30 +1896,48 @@ export const GetConnectionDeliveryResponseSchema: GenMessage<GetConnectionDelive
   messageDesc(file_toshi_workspace_v1_connections, 21);
 
 /**
+ * ReplayConnectionDeliveryRequest asks for a delivery to be sent through its
+ * connection again.
+ *
  * @generated from message toshi.workspace.v1.ReplayConnectionDeliveryRequest
  */
 export type ReplayConnectionDeliveryRequest = Message<"toshi.workspace.v1.ReplayConnectionDeliveryRequest"> & {
   /**
+   * The delivery's ID.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey: string;
 };
 
 /**
+ * ReplayConnectionDeliveryRequest asks for a delivery to be sent through its
+ * connection again.
+ *
  * @generated from message toshi.workspace.v1.ReplayConnectionDeliveryRequest
  */
 export type ReplayConnectionDeliveryRequestJson = {
   /**
+   * The delivery's ID.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey?: string;
@@ -1697,6 +1951,8 @@ export const ReplayConnectionDeliveryRequestSchema: GenMessage<ReplayConnectionD
   messageDesc(file_toshi_workspace_v1_connections, 22);
 
 /**
+ * ReplayConnectionDeliveryResponse is the delivery as the replay left it.
+ *
  * @generated from message toshi.workspace.v1.ReplayConnectionDeliveryResponse
  */
 export type ReplayConnectionDeliveryResponse = Message<"toshi.workspace.v1.ReplayConnectionDeliveryResponse"> & {
@@ -1709,6 +1965,8 @@ export type ReplayConnectionDeliveryResponse = Message<"toshi.workspace.v1.Repla
 };
 
 /**
+ * ReplayConnectionDeliveryResponse is the delivery as the replay left it.
+ *
  * @generated from message toshi.workspace.v1.ReplayConnectionDeliveryResponse
  */
 export type ReplayConnectionDeliveryResponseJson = {
@@ -1734,6 +1992,8 @@ export const ReplayConnectionDeliveryResponseSchema: GenMessage<ReplayConnection
  */
 export enum ConnectionKind {
   /**
+   * The kind is not set; no connection has it.
+   *
    * @generated from enum value: CONNECTION_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1871,6 +2131,8 @@ export const MailDomainCheckSchema: GenEnum<MailDomainCheck, MailDomainCheckJson
  */
 export enum ConnectionDeliveryState {
   /**
+   * The state is not set; as a filter, it keeps every state.
+   *
    * @generated from enum value: CONNECTION_DELIVERY_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

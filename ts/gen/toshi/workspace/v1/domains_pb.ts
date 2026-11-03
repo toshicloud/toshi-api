@@ -79,10 +79,15 @@ export const DomainRecordSchema: GenMessage<DomainRecord, {jsonType: DomainRecor
   messageDesc(file_toshi_workspace_v1_domains, 0);
 
 /**
+ * Domain is a customer domain: a name the workspace owns, pointed at an
+ * http endpoint of one of its services.
+ *
  * @generated from message toshi.workspace.v1.Domain
  */
 export type Domain = Message<"toshi.workspace.v1.Domain"> & {
   /**
+   * The domain's id, assigned by the server.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -110,6 +115,8 @@ export type Domain = Message<"toshi.workspace.v1.Domain"> & {
   endpoint: string;
 
   /**
+   * Where the domain is, as DomainState names it.
+   *
    * @generated from field: toshi.workspace.v1.DomainState state = 5;
    */
   state: DomainState;
@@ -167,16 +174,23 @@ export type Domain = Message<"toshi.workspace.v1.Domain"> & {
   lastError: string;
 
   /**
+   * When the domain was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 13;
    */
   createdAt?: Timestamp | undefined;
 };
 
 /**
+ * Domain is a customer domain: a name the workspace owns, pointed at an
+ * http endpoint of one of its services.
+ *
  * @generated from message toshi.workspace.v1.Domain
  */
 export type DomainJson = {
   /**
+   * The domain's id, assigned by the server.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -204,6 +218,8 @@ export type DomainJson = {
   endpoint?: string;
 
   /**
+   * Where the domain is, as DomainState names it.
+   *
    * @generated from field: toshi.workspace.v1.DomainState state = 5;
    */
   state?: DomainStateJson;
@@ -261,6 +277,8 @@ export type DomainJson = {
   lastError?: string;
 
   /**
+   * When the domain was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 13;
    */
   createdAt?: TimestampJson;
@@ -274,15 +292,21 @@ export const DomainSchema: GenMessage<Domain, {jsonType: DomainJson}> = /*@__PUR
   messageDesc(file_toshi_workspace_v1_domains, 1);
 
 /**
+ * CreateDomainRequest names the domain to add and where it serves.
+ *
  * @generated from message toshi.workspace.v1.CreateDomainRequest
  */
 export type CreateDomainRequest = Message<"toshi.workspace.v1.CreateDomainRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -310,21 +334,31 @@ export type CreateDomainRequest = Message<"toshi.workspace.v1.CreateDomainReques
   name: string;
 
   /**
+   * A key of the caller's choice, at most 200 printable ASCII bytes, empty
+   * for none: a retry with the same key and request returns the first
+   * answer.
+   *
    * @generated from field: string request_key = 6;
    */
   requestKey: string;
 };
 
 /**
+ * CreateDomainRequest names the domain to add and where it serves.
+ *
  * @generated from message toshi.workspace.v1.CreateDomainRequest
  */
 export type CreateDomainRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -352,6 +386,10 @@ export type CreateDomainRequestJson = {
   name?: string;
 
   /**
+   * A key of the caller's choice, at most 200 printable ASCII bytes, empty
+   * for none: a retry with the same key and request returns the first
+   * answer.
+   *
    * @generated from field: string request_key = 6;
    */
   requestKey?: string;
@@ -365,20 +403,28 @@ export const CreateDomainRequestSchema: GenMessage<CreateDomainRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_domains, 2);
 
 /**
+ * CreateDomainResponse carries the new domain and its records.
+ *
  * @generated from message toshi.workspace.v1.CreateDomainResponse
  */
 export type CreateDomainResponse = Message<"toshi.workspace.v1.CreateDomainResponse"> & {
   /**
+   * The domain as created, with the records to set at its DNS provider.
+   *
    * @generated from field: toshi.workspace.v1.Domain domain = 1;
    */
   domain?: Domain | undefined;
 };
 
 /**
+ * CreateDomainResponse carries the new domain and its records.
+ *
  * @generated from message toshi.workspace.v1.CreateDomainResponse
  */
 export type CreateDomainResponseJson = {
   /**
+   * The domain as created, with the records to set at its DNS provider.
+   *
    * @generated from field: toshi.workspace.v1.Domain domain = 1;
    */
   domain?: DomainJson;
@@ -392,40 +438,56 @@ export const CreateDomainResponseSchema: GenMessage<CreateDomainResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_domains, 3);
 
 /**
+ * GetDomainRequest names the domain to return.
+ *
  * @generated from message toshi.workspace.v1.GetDomainRequest
  */
 export type GetDomainRequest = Message<"toshi.workspace.v1.GetDomainRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The domain's id.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 };
 
 /**
+ * GetDomainRequest names the domain to return.
+ *
  * @generated from message toshi.workspace.v1.GetDomainRequest
  */
 export type GetDomainRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The domain's id.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -439,20 +501,28 @@ export const GetDomainRequestSchema: GenMessage<GetDomainRequest, {jsonType: Get
   messageDesc(file_toshi_workspace_v1_domains, 4);
 
 /**
+ * GetDomainResponse carries the domain.
+ *
  * @generated from message toshi.workspace.v1.GetDomainResponse
  */
 export type GetDomainResponse = Message<"toshi.workspace.v1.GetDomainResponse"> & {
   /**
+   * The domain, with its state and records.
+   *
    * @generated from field: toshi.workspace.v1.Domain domain = 1;
    */
   domain?: Domain | undefined;
 };
 
 /**
+ * GetDomainResponse carries the domain.
+ *
  * @generated from message toshi.workspace.v1.GetDomainResponse
  */
 export type GetDomainResponseJson = {
   /**
+   * The domain, with its state and records.
+   *
    * @generated from field: toshi.workspace.v1.Domain domain = 1;
    */
   domain?: DomainJson;
@@ -466,15 +536,21 @@ export const GetDomainResponseSchema: GenMessage<GetDomainResponse, {jsonType: G
   messageDesc(file_toshi_workspace_v1_domains, 5);
 
 /**
+ * ListDomainsRequest selects a service's domains.
+ *
  * @generated from message toshi.workspace.v1.ListDomainsRequest
  */
 export type ListDomainsRequest = Message<"toshi.workspace.v1.ListDomainsRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -502,15 +578,21 @@ export type ListDomainsRequest = Message<"toshi.workspace.v1.ListDomainsRequest"
 };
 
 /**
+ * ListDomainsRequest selects a service's domains.
+ *
  * @generated from message toshi.workspace.v1.ListDomainsRequest
  */
 export type ListDomainsRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -545,10 +627,14 @@ export const ListDomainsRequestSchema: GenMessage<ListDomainsRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_domains, 6);
 
 /**
+ * ListDomainsResponse carries one page of a service's domains.
+ *
  * @generated from message toshi.workspace.v1.ListDomainsResponse
  */
 export type ListDomainsResponse = Message<"toshi.workspace.v1.ListDomainsResponse"> & {
   /**
+   * The page's domains, ordered by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Domain domains = 1;
    */
   domains: Domain[];
@@ -562,10 +648,14 @@ export type ListDomainsResponse = Message<"toshi.workspace.v1.ListDomainsRespons
 };
 
 /**
+ * ListDomainsResponse carries one page of a service's domains.
+ *
  * @generated from message toshi.workspace.v1.ListDomainsResponse
  */
 export type ListDomainsResponseJson = {
   /**
+   * The page's domains, ordered by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Domain domains = 1;
    */
   domains?: DomainJson[];
@@ -586,50 +676,74 @@ export const ListDomainsResponseSchema: GenMessage<ListDomainsResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_domains, 7);
 
 /**
+ * VerifyDomainRequest names the domain to check now.
+ *
  * @generated from message toshi.workspace.v1.VerifyDomainRequest
  */
 export type VerifyDomainRequest = Message<"toshi.workspace.v1.VerifyDomainRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The domain's id.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 
   /**
+   * A key of the caller's choice, at most 200 printable ASCII bytes, empty
+   * for none: a retry with the same key and request returns the first
+   * answer.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * VerifyDomainRequest names the domain to check now.
+ *
  * @generated from message toshi.workspace.v1.VerifyDomainRequest
  */
 export type VerifyDomainRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The domain's id.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
 
   /**
+   * A key of the caller's choice, at most 200 printable ASCII bytes, empty
+   * for none: a retry with the same key and request returns the first
+   * answer.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -643,20 +757,30 @@ export const VerifyDomainRequestSchema: GenMessage<VerifyDomainRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_domains, 8);
 
 /**
+ * VerifyDomainResponse carries the domain as the check left it.
+ *
  * @generated from message toshi.workspace.v1.VerifyDomainResponse
  */
 export type VerifyDomainResponse = Message<"toshi.workspace.v1.VerifyDomainResponse"> & {
   /**
+   * The domain after the check; last_error says why its records did not
+   * check out.
+   *
    * @generated from field: toshi.workspace.v1.Domain domain = 1;
    */
   domain?: Domain | undefined;
 };
 
 /**
+ * VerifyDomainResponse carries the domain as the check left it.
+ *
  * @generated from message toshi.workspace.v1.VerifyDomainResponse
  */
 export type VerifyDomainResponseJson = {
   /**
+   * The domain after the check; last_error says why its records did not
+   * check out.
+   *
    * @generated from field: toshi.workspace.v1.Domain domain = 1;
    */
   domain?: DomainJson;
@@ -670,50 +794,74 @@ export const VerifyDomainResponseSchema: GenMessage<VerifyDomainResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_domains, 9);
 
 /**
+ * IssueDomainRequest names the domain whose certificate to order now.
+ *
  * @generated from message toshi.workspace.v1.IssueDomainRequest
  */
 export type IssueDomainRequest = Message<"toshi.workspace.v1.IssueDomainRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The domain's id.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 
   /**
+   * A key of the caller's choice, at most 200 printable ASCII bytes, empty
+   * for none: a retry with the same key and request returns the first
+   * answer.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * IssueDomainRequest names the domain whose certificate to order now.
+ *
  * @generated from message toshi.workspace.v1.IssueDomainRequest
  */
 export type IssueDomainRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The domain's id.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
 
   /**
+   * A key of the caller's choice, at most 200 printable ASCII bytes, empty
+   * for none: a retry with the same key and request returns the first
+   * answer.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -727,20 +875,28 @@ export const IssueDomainRequestSchema: GenMessage<IssueDomainRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_domains, 10);
 
 /**
+ * IssueDomainResponse carries the domain as the call left it.
+ *
  * @generated from message toshi.workspace.v1.IssueDomainResponse
  */
 export type IssueDomainResponse = Message<"toshi.workspace.v1.IssueDomainResponse"> & {
   /**
+   * The domain after the call; a verified one is set issuing.
+   *
    * @generated from field: toshi.workspace.v1.Domain domain = 1;
    */
   domain?: Domain | undefined;
 };
 
 /**
+ * IssueDomainResponse carries the domain as the call left it.
+ *
  * @generated from message toshi.workspace.v1.IssueDomainResponse
  */
 export type IssueDomainResponseJson = {
   /**
+   * The domain after the call; a verified one is set issuing.
+   *
    * @generated from field: toshi.workspace.v1.Domain domain = 1;
    */
   domain?: DomainJson;
@@ -754,40 +910,56 @@ export const IssueDomainResponseSchema: GenMessage<IssueDomainResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_domains, 11);
 
 /**
+ * DeleteDomainRequest names the domain to delete.
+ *
  * @generated from message toshi.workspace.v1.DeleteDomainRequest
  */
 export type DeleteDomainRequest = Message<"toshi.workspace.v1.DeleteDomainRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The domain's id.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 };
 
 /**
+ * DeleteDomainRequest names the domain to delete.
+ *
  * @generated from message toshi.workspace.v1.DeleteDomainRequest
  */
 export type DeleteDomainRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The domain's id.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -801,12 +973,16 @@ export const DeleteDomainRequestSchema: GenMessage<DeleteDomainRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_domains, 12);
 
 /**
+ * DeleteDomainResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.DeleteDomainResponse
  */
 export type DeleteDomainResponse = Message<"toshi.workspace.v1.DeleteDomainResponse"> & {
 };
 
 /**
+ * DeleteDomainResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.DeleteDomainResponse
  */
 export type DeleteDomainResponseJson = {
@@ -826,6 +1002,8 @@ export const DeleteDomainResponseSchema: GenMessage<DeleteDomainResponse, {jsonT
  */
 export enum DomainState {
   /**
+   * Never sent.
+   *
    * @generated from enum value: DOMAIN_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

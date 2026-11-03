@@ -29,6 +29,7 @@ const (
 type ConnectionKind int32
 
 const (
+	// The kind is not set; no connection has it.
 	ConnectionKind_CONNECTION_KIND_UNSPECIFIED ConnectionKind = 0
 	// A GitHub App installation.
 	ConnectionKind_CONNECTION_KIND_GITHUB ConnectionKind = 1
@@ -197,6 +198,7 @@ func (MailDomainCheck) EnumDescriptor() ([]byte, []int) {
 type ConnectionDeliveryState int32
 
 const (
+	// The state is not set; as a filter, it keeps every state.
 	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_UNSPECIFIED ConnectionDeliveryState = 0
 	// Stored and waiting for a worker, or being run.
 	ConnectionDeliveryState_CONNECTION_DELIVERY_STATE_RECEIVED ConnectionDeliveryState = 1
@@ -257,18 +259,23 @@ func (ConnectionDeliveryState) EnumDescriptor() ([]byte, []int) {
 // Connection is one source of a workspace's events.
 type Connection struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Kind  ConnectionKind         `protobuf:"varint,2,opt,name=kind,proto3,enum=toshi.workspace.v1.ConnectionKind" json:"kind,omitempty"`
+	// The connection's ID: "con-" and 24 hex characters for a WEBHOOK or MAIL
+	// connection, "github-" and the installation id for a GITHUB one.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The kind of source it receives events from.
+	Kind ConnectionKind `protobuf:"varint,2,opt,name=kind,proto3,enum=toshi.workspace.v1.ConnectionKind" json:"kind,omitempty"`
 	// Unique among the workspace's live connections of its kind, WEBHOOK or
 	// MAIL; for GITHUB, the login of the account the App is installed on.
 	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	// The project and environment a WEBHOOK or MAIL connection's events belong
 	// to; empty for GITHUB, whose events belong to their repository's project.
-	Project     string `protobuf:"bytes,4,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,4,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment of that project; empty for GITHUB, as project is.
 	Environment string `protobuf:"bytes,5,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The GitHub App installation of a GITHUB connection; zero otherwise.
-	InstallationId int64                  `protobuf:"varint,6,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
-	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	InstallationId int64 `protobuf:"varint,6,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
+	// When it was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Until when a rotated WEBHOOK connection's previous secret still
 	// verifies; unset when there is none.
 	PreviousSecretExpiresAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=previous_secret_expires_at,json=previousSecretExpiresAt,proto3" json:"previous_secret_expires_at,omitempty"`
@@ -536,11 +543,15 @@ func (x *MailConnection) GetDomainStatus() *MailDomainStatus {
 
 // MailDomainStatus describes the checks and DNS records of a custom domain.
 type MailDomainStatus struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	State     MailDomainState        `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.MailDomainState" json:"state,omitempty"`
-	Ownership MailDomainCheck        `protobuf:"varint,2,opt,name=ownership,proto3,enum=toshi.workspace.v1.MailDomainCheck" json:"ownership,omitempty"`
-	Mx        MailDomainCheck        `protobuf:"varint,3,opt,name=mx,proto3,enum=toshi.workspace.v1.MailDomainCheck" json:"mx,omitempty"`
-	Provider  MailDomainCheck        `protobuf:"varint,4,opt,name=provider,proto3,enum=toshi.workspace.v1.MailDomainCheck" json:"provider,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Whether the domain receives mail.
+	State MailDomainState `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.MailDomainState" json:"state,omitempty"`
+	// The check that the workspace owns the domain, by its TXT record.
+	Ownership MailDomainCheck `protobuf:"varint,2,opt,name=ownership,proto3,enum=toshi.workspace.v1.MailDomainCheck" json:"ownership,omitempty"`
+	// The check that the domain's MX record points at the mail provider.
+	Mx MailDomainCheck `protobuf:"varint,3,opt,name=mx,proto3,enum=toshi.workspace.v1.MailDomainCheck" json:"mx,omitempty"`
+	// The provider's own check of the domain, such as SES's DKIM records.
+	Provider MailDomainCheck `protobuf:"varint,4,opt,name=provider,proto3,enum=toshi.workspace.v1.MailDomainCheck" json:"provider,omitempty"`
 	// The ownership TXT, inbound MX and provider records, in that order.
 	Records []*DomainRecord `protobuf:"bytes,5,rep,name=records,proto3" json:"records,omitempty"`
 	// Why the domain is not ready, or why the last lookup failed.
@@ -642,7 +653,8 @@ type ConnectionTarget struct {
 	// bytes. Input only: no call returns it.
 	Secret string `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
 	// updated_by is who set it last, as the audit log names them.
-	UpdatedBy     string                 `protobuf:"bytes,3,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	UpdatedBy string `protobuf:"bytes,3,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	// When it was last set.
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -706,6 +718,7 @@ func (x *ConnectionTarget) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// ListConnectionsRequest asks for a page of the workspace's connections.
 type ListConnectionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most connections in one page; zero lets the server choose.
@@ -760,9 +773,11 @@ func (x *ListConnectionsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListConnectionsResponse is a page of the workspace's connections.
 type ListConnectionsResponse struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Connections []*Connection          `protobuf:"bytes,1,rep,name=connections,proto3" json:"connections,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The connections, ordered by id.
+	Connections []*Connection `protobuf:"bytes,1,rep,name=connections,proto3" json:"connections,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -813,9 +828,11 @@ func (x *ListConnectionsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetConnectionRequest asks for one connection, by id.
 type GetConnectionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The connection's ID.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -857,9 +874,11 @@ func (x *GetConnectionRequest) GetId() string {
 	return ""
 }
 
+// GetConnectionResponse is the connection GetConnection read.
 type GetConnectionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Connection    *Connection            `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The connection.
+	Connection    *Connection `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -901,6 +920,7 @@ func (x *GetConnectionResponse) GetConnection() *Connection {
 	return nil
 }
 
+// CreateConnectionRequest is a new WEBHOOK or MAIL connection.
 type CreateConnectionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The kind to create: WEBHOOK or MAIL. Installing the GitHub App creates
@@ -911,19 +931,28 @@ type CreateConnectionRequest struct {
 	// The project and environment the connection's events belong to. Both
 	// are required for WEBHOOK. For MAIL they are optional, and when set must
 	// be the service's.
-	Project     string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment; required for WEBHOOK with project, and for MAIL it
+	// must be the service's.
 	Environment string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
-	RequestKey  string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// The mail address and where its mail goes, for a MAIL connection; unset
 	// for WEBHOOK. service and endpoint are required; address and provider are
 	// output only, and ignored on input.
 	Mail *MailConnection `protobuf:"bytes,6,opt,name=mail,proto3" json:"mail,omitempty"`
 	// The management mark goes together: all four fields or none; managed_by
 	// "manifest" needs the digest, an origin and at least one field path.
-	ManagedBy      string   `protobuf:"bytes,7,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
-	ManifestDigest string   `protobuf:"bytes,8,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
-	ManagedFields  []string `protobuf:"bytes,9,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
-	ManifestOrigin string   `protobuf:"bytes,10,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	ManagedBy string `protobuf:"bytes,7,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	// The SHA-256 of the manifest file, as 64 lowercase hex characters.
+	ManifestDigest string `protobuf:"bytes,8,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	// The fields of the connection the manifest declares, as update mask
+	// paths.
+	ManagedFields []string `protobuf:"bytes,9,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	// How the manifest came to manage it: "created" or "adopted".
+	ManifestOrigin string `protobuf:"bytes,10,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1028,9 +1057,12 @@ func (x *CreateConnectionRequest) GetManifestOrigin() string {
 	return ""
 }
 
+// CreateConnectionResponse is the connection CreateConnection made, with its
+// signing secret.
 type CreateConnectionResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Connection *Connection            `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The connection.
+	Connection *Connection `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
 	// The signing secret in its whsec_ form, for the sender to sign its
 	// requests with; empty for a MAIL connection. Shown only in this answer
 	// and an identical retry's.
@@ -1083,10 +1115,15 @@ func (x *CreateConnectionResponse) GetSecret() string {
 	return ""
 }
 
+// DeleteConnectionRequest names the connection DeleteConnection removes.
 type DeleteConnectionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The connection's ID.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1135,6 +1172,8 @@ func (x *DeleteConnectionRequest) GetRequestKey() string {
 	return ""
 }
 
+// DeleteConnectionResponse is the answer of DeleteConnection; it carries
+// nothing.
 type DeleteConnectionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1171,13 +1210,18 @@ func (*DeleteConnectionResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_connections_proto_rawDescGZIP(), []int{11}
 }
 
+// RotateConnectionSecretRequest asks for a connection's new signing secret.
 type RotateConnectionSecretRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The connection's ID.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// How long the previous secret still verifies; unset is 24 hours, zero
 	// stops it at once, and 7 days is the most.
-	Overlap       *durationpb.Duration `protobuf:"bytes,2,opt,name=overlap,proto3" json:"overlap,omitempty"`
-	RequestKey    string               `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	Overlap *durationpb.Duration `protobuf:"bytes,2,opt,name=overlap,proto3" json:"overlap,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1233,9 +1277,13 @@ func (x *RotateConnectionSecretRequest) GetRequestKey() string {
 	return ""
 }
 
+// RotateConnectionSecretResponse is the connection and its new signing
+// secret.
 type RotateConnectionSecretResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Connection *Connection            `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The connection, with previous_secret_expires_at set while an overlap
+	// keeps the previous secret verifying.
+	Connection *Connection `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
 	// The new signing secret in its whsec_ form. Shown only in this answer
 	// and an identical retry's.
 	Secret        string `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
@@ -1287,6 +1335,8 @@ func (x *RotateConnectionSecretResponse) GetSecret() string {
 	return ""
 }
 
+// UpdateConnectionRequest is the connection UpdateConnection changes and the
+// values its mask sets.
 type UpdateConnectionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// id names the connection; the fields update_mask names carry the new
@@ -1345,9 +1395,11 @@ func (x *UpdateConnectionRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateConnectionResponse is the connection UpdateConnection left.
 type UpdateConnectionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Connection    *Connection            `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The connection.
+	Connection    *Connection `protobuf:"bytes,1,opt,name=connection,proto3" json:"connection,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1392,17 +1444,21 @@ func (x *UpdateConnectionResponse) GetConnection() *Connection {
 // ConnectionDelivery is one message a WEBHOOK connection's sender sent:
 // the tries that carried one webhook id.
 type ConnectionDelivery struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	Id           string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ConnectionId string                 `protobuf:"bytes,2,opt,name=connection_id,json=connectionId,proto3" json:"connection_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The delivery's ID: "cd_" and 32 hex characters.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The ID of the connection it was received for.
+	ConnectionId string `protobuf:"bytes,2,opt,name=connection_id,json=connectionId,proto3" json:"connection_id,omitempty"`
 	// The sender's webhook-id header.
-	WebhookId string                  `protobuf:"bytes,3,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
-	State     ConnectionDeliveryState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.ConnectionDeliveryState" json:"state,omitempty"`
+	WebhookId string `protobuf:"bytes,3,opt,name=webhook_id,json=webhookId,proto3" json:"webhook_id,omitempty"`
+	// Where it stands.
+	State ConnectionDeliveryState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.ConnectionDeliveryState" json:"state,omitempty"`
 	// Why it was dropped or ended dead, such as delivery_failed or
 	// store_error; empty otherwise.
 	Reason string `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`
 	// The time the sender signed; when the ingress stored it.
-	SentAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=sent_at,json=sentAt,proto3" json:"sent_at,omitempty"`
+	SentAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=sent_at,json=sentAt,proto3" json:"sent_at,omitempty"`
+	// When the ingress stored it.
 	ReceivedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=received_at,json=receivedAt,proto3" json:"received_at,omitempty"`
 	// When it was processed, dropped or ended dead; unset while received.
 	ProcessedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=processed_at,json=processedAt,proto3" json:"processed_at,omitempty"`
@@ -1574,8 +1630,11 @@ type ConnectionDeliveryRun struct {
 	EventId string `protobuf:"bytes,5,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	// What failed, for a target that took the delivery on no try or a store
 	// that failed.
-	Error      string                 `protobuf:"bytes,7,opt,name=error,proto3" json:"error,omitempty"`
-	Duration   *durationpb.Duration   `protobuf:"bytes,8,opt,name=duration,proto3" json:"duration,omitempty"`
+	Error string `protobuf:"bytes,7,opt,name=error,proto3" json:"error,omitempty"`
+	// How long the post to the connection's target took; zero for a run that
+	// wrote an event.
+	Duration *durationpb.Duration `protobuf:"bytes,8,opt,name=duration,proto3" json:"duration,omitempty"`
+	// When the worker finished the run.
 	FinishedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
 	// Who asked for the replay the run ran; empty for the sender's message.
 	Actor string `protobuf:"bytes,10,opt,name=actor,proto3" json:"actor,omitempty"`
@@ -1672,9 +1731,12 @@ func (x *ConnectionDeliveryRun) GetTargetDeliveryId() string {
 	return ""
 }
 
+// ListConnectionDeliveriesRequest asks for a page of a connection's
+// deliveries.
 type ListConnectionDeliveriesRequest struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	ConnectionId string                 `protobuf:"bytes,1,opt,name=connection_id,json=connectionId,proto3" json:"connection_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The connection's ID.
+	ConnectionId string `protobuf:"bytes,1,opt,name=connection_id,json=connectionId,proto3" json:"connection_id,omitempty"`
 	// Only the deliveries in this state; unspecified lists every state.
 	State ConnectionDeliveryState `protobuf:"varint,2,opt,name=state,proto3,enum=toshi.workspace.v1.ConnectionDeliveryState" json:"state,omitempty"`
 	// The most deliveries in one page; zero lets the server choose.
@@ -1743,9 +1805,11 @@ func (x *ListConnectionDeliveriesRequest) GetPageToken() string {
 	return ""
 }
 
+// ListConnectionDeliveriesResponse is a page of a connection's deliveries.
 type ListConnectionDeliveriesResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Deliveries []*ConnectionDelivery  `protobuf:"bytes,1,rep,name=deliveries,proto3" json:"deliveries,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The deliveries, newest received first, each without its body.
+	Deliveries []*ConnectionDelivery `protobuf:"bytes,1,rep,name=deliveries,proto3" json:"deliveries,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1796,9 +1860,11 @@ func (x *ListConnectionDeliveriesResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetConnectionDeliveryRequest asks for one delivery and its runs, by id.
 type GetConnectionDeliveryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The delivery's ID.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1840,9 +1906,12 @@ func (x *GetConnectionDeliveryRequest) GetId() string {
 	return ""
 }
 
+// GetConnectionDeliveryResponse is a delivery and its runs.
 type GetConnectionDeliveryResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
-	Delivery      *ConnectionDelivery      `protobuf:"bytes,1,opt,name=delivery,proto3" json:"delivery,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The delivery, without its body.
+	Delivery *ConnectionDelivery `protobuf:"bytes,1,opt,name=delivery,proto3" json:"delivery,omitempty"`
+	// Each time a worker finished it, oldest first.
 	Runs          []*ConnectionDeliveryRun `protobuf:"bytes,2,rep,name=runs,proto3" json:"runs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1892,10 +1961,16 @@ func (x *GetConnectionDeliveryResponse) GetRuns() []*ConnectionDeliveryRun {
 	return nil
 }
 
+// ReplayConnectionDeliveryRequest asks for a delivery to be sent through its
+// connection again.
 type ReplayConnectionDeliveryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The delivery's ID.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1944,6 +2019,7 @@ func (x *ReplayConnectionDeliveryRequest) GetRequestKey() string {
 	return ""
 }
 
+// ReplayConnectionDeliveryResponse is the delivery as the replay left it.
 type ReplayConnectionDeliveryResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The delivery as the replay left it: received, its replays counted.
