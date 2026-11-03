@@ -49,13 +49,14 @@ type ProductServiceClient interface {
 	// setting last and when.
 	ListProducts(context.Context, *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error)
 	// UpdateProduct changes the workspace's settings of one product in one
-	// call: it turns the product on or off, and sets or clears its features.
-	// The caller and the time of the call are recorded with each setting it
-	// sets. A setting only narrows the workspace's entitlement: a value wider
-	// than the entitlement, a key the product does not declare or that the
-	// workspace cannot narrow, or a value of another type than the key's is
-	// INVALID_ARGUMENT naming the key, and nothing is changed. A product the
-	// deployment does not include is NOT_FOUND.
+	// call: it turns the product on or off, and sets or clears its features,
+	// as its update_mask names them. The caller and the time of the call are
+	// recorded with each setting it sets. A setting only narrows the
+	// workspace's entitlement: a value wider than the entitlement, a key the
+	// product does not declare or that the workspace cannot narrow, or a
+	// value of another type than the key's is INVALID_ARGUMENT naming the
+	// key, and nothing is changed. A product the deployment does not include
+	// is NOT_FOUND.
 	//
 	// The product's calls follow the change from the next call on.
 	UpdateProduct(context.Context, *connect.Request[workspacev1.UpdateProductRequest]) (*connect.Response[workspacev1.UpdateProductResponse], error)
@@ -111,13 +112,14 @@ type ProductServiceHandler interface {
 	// setting last and when.
 	ListProducts(context.Context, *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error)
 	// UpdateProduct changes the workspace's settings of one product in one
-	// call: it turns the product on or off, and sets or clears its features.
-	// The caller and the time of the call are recorded with each setting it
-	// sets. A setting only narrows the workspace's entitlement: a value wider
-	// than the entitlement, a key the product does not declare or that the
-	// workspace cannot narrow, or a value of another type than the key's is
-	// INVALID_ARGUMENT naming the key, and nothing is changed. A product the
-	// deployment does not include is NOT_FOUND.
+	// call: it turns the product on or off, and sets or clears its features,
+	// as its update_mask names them. The caller and the time of the call are
+	// recorded with each setting it sets. A setting only narrows the
+	// workspace's entitlement: a value wider than the entitlement, a key the
+	// product does not declare or that the workspace cannot narrow, or a
+	// value of another type than the key's is INVALID_ARGUMENT naming the
+	// key, and nothing is changed. A product the deployment does not include
+	// is NOT_FOUND.
 	//
 	// The product's calls follow the change from the next call on.
 	UpdateProduct(context.Context, *connect.Request[workspacev1.UpdateProductRequest]) (*connect.Response[workspacev1.UpdateProductResponse], error)

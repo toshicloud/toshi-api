@@ -87,10 +87,14 @@ type RoleServiceClient interface {
 	// name, with
 	// INVALID_ARGUMENT.
 	CreateRole(context.Context, *connect.Request[workspacev1.CreateRoleRequest]) (*connect.Response[workspacev1.CreateRoleResponse], error)
-	// UpdateRole sets the name and the permissions of one of the
-	// workspace's roles, checked as CreateRole checks them. Its grants keep
-	// it, and give the new permissions from then on. A built-in role fails
-	// with INVALID_ARGUMENT; an unknown ID with NOT_FOUND.
+	// UpdateRole changes the fields of one of the workspace's roles that its
+	// update_mask names: "name" and "permissions". The permissions replace
+	// the role's whole list and are checked as CreateRole checks them. With
+	// no mask, the fields the request sets change. An empty mask, a mask
+	// naming another field, and a request with no mask that sets no field
+	// are INVALID_ARGUMENT. Its grants keep the role, and give the new
+	// permissions from then on. A built-in role fails with
+	// INVALID_ARGUMENT; an unknown ID with NOT_FOUND.
 	UpdateRole(context.Context, *connect.Request[workspacev1.UpdateRoleRequest]) (*connect.Response[workspacev1.UpdateRoleResponse], error)
 	// DeleteRole deletes one of the workspace's roles and every grant of
 	// it. A built-in role fails with INVALID_ARGUMENT; an unknown ID with
@@ -144,8 +148,8 @@ type RoleServiceClient interface {
 	DeclineMember(context.Context, *connect.Request[workspacev1.DeclineMemberRequest]) (*connect.Response[workspacev1.DeclineMemberResponse], error)
 	// CreateInvitation makes an invitation to join the workspace and returns
 	// its code, once: the control plane keeps only its hash. It is valid for
-	// ttl, seven days when unset, and 30 days at most. The note is free text,
-	// such as whom it is for, and is never matched against anyone.
+	// ttl_seconds, seven days when unset, and 30 days at most. The note is
+	// free text, such as whom it is for, and is never matched against anyone.
 	CreateInvitation(context.Context, *connect.Request[workspacev1.CreateInvitationRequest]) (*connect.Response[workspacev1.CreateInvitationResponse], error)
 	// ListInvitations returns the workspace's invitations, newest first,
 	// accepted, revoked and expired ones included, never their codes.
@@ -384,10 +388,14 @@ type RoleServiceHandler interface {
 	// name, with
 	// INVALID_ARGUMENT.
 	CreateRole(context.Context, *connect.Request[workspacev1.CreateRoleRequest]) (*connect.Response[workspacev1.CreateRoleResponse], error)
-	// UpdateRole sets the name and the permissions of one of the
-	// workspace's roles, checked as CreateRole checks them. Its grants keep
-	// it, and give the new permissions from then on. A built-in role fails
-	// with INVALID_ARGUMENT; an unknown ID with NOT_FOUND.
+	// UpdateRole changes the fields of one of the workspace's roles that its
+	// update_mask names: "name" and "permissions". The permissions replace
+	// the role's whole list and are checked as CreateRole checks them. With
+	// no mask, the fields the request sets change. An empty mask, a mask
+	// naming another field, and a request with no mask that sets no field
+	// are INVALID_ARGUMENT. Its grants keep the role, and give the new
+	// permissions from then on. A built-in role fails with
+	// INVALID_ARGUMENT; an unknown ID with NOT_FOUND.
 	UpdateRole(context.Context, *connect.Request[workspacev1.UpdateRoleRequest]) (*connect.Response[workspacev1.UpdateRoleResponse], error)
 	// DeleteRole deletes one of the workspace's roles and every grant of
 	// it. A built-in role fails with INVALID_ARGUMENT; an unknown ID with
@@ -441,8 +449,8 @@ type RoleServiceHandler interface {
 	DeclineMember(context.Context, *connect.Request[workspacev1.DeclineMemberRequest]) (*connect.Response[workspacev1.DeclineMemberResponse], error)
 	// CreateInvitation makes an invitation to join the workspace and returns
 	// its code, once: the control plane keeps only its hash. It is valid for
-	// ttl, seven days when unset, and 30 days at most. The note is free text,
-	// such as whom it is for, and is never matched against anyone.
+	// ttl_seconds, seven days when unset, and 30 days at most. The note is
+	// free text, such as whom it is for, and is never matched against anyone.
 	CreateInvitation(context.Context, *connect.Request[workspacev1.CreateInvitationRequest]) (*connect.Response[workspacev1.CreateInvitationResponse], error)
 	// ListInvitations returns the workspace's invitations, newest first,
 	// accepted, revoked and expired ones included, never their codes.

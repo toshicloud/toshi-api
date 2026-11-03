@@ -10,7 +10,7 @@ import (
 	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	durationpb "google.golang.org/protobuf/types/known/durationpb"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -727,15 +727,23 @@ func (x *CreateRoleResponse) GetRole() *Role {
 	return nil
 }
 
-// UpdateRoleRequest names the role and its new name and permissions.
+// UpdateRoleRequest names the role and the fields to change.
 type UpdateRoleRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The role's id; a built-in role's fails with INVALID_ARGUMENT.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// The role's new name within the workspace.
+	// The role's new name within the workspace. It changes when update_mask
+	// names "name", or when it is nonempty and there is no mask.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// At least one permission; they replace the role's.
-	Permissions   []string `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	// permissions replaces the role's whole list: at least one permission,
+	// each one CreateRole accepts. It changes when update_mask names
+	// "permissions", or when it is nonempty and there is no mask.
+	Permissions []string `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	// update_mask names the fields to change: "name" and "permissions". A
+	// named field is applied as given, so an empty name or no permissions is
+	// refused as CreateRole refuses it. An empty mask, another field, and no
+	// mask with neither field set are INVALID_ARGUMENT.
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,4,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -787,6 +795,13 @@ func (x *UpdateRoleRequest) GetName() string {
 func (x *UpdateRoleRequest) GetPermissions() []string {
 	if x != nil {
 		return x.Permissions
+	}
+	return nil
+}
+
+func (x *UpdateRoleRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.UpdateMask
 	}
 	return nil
 }
@@ -1822,12 +1837,16 @@ type CreateInvitationRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Free text, such as whom the invitation is for; 200 characters at most.
 	Note string `protobuf:"bytes,1,opt,name=note,proto3" json:"note,omitempty"`
-	// How long the code is valid: seven days when unset, 30 days at most.
-	Ttl *durationpb.Duration `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
 	// key and request return the first answer; a different request with the
 	// same key is refused. Keys are kept for 30 days by default.
-	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	RequestKey string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// ttl_seconds is how long the code is valid, in seconds: 604800 (seven
+	// days) when unset, and 2592000 (30 days) at most; a negative value is
+	// INVALID_ARGUMENT. A duration taken here before kept its fractional
+	// second exactly when the expiry was worked out; whole seconds are the
+	// unit from now on.
+	TtlSeconds    int64 `protobuf:"varint,4,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1869,18 +1888,18 @@ func (x *CreateInvitationRequest) GetNote() string {
 	return ""
 }
 
-func (x *CreateInvitationRequest) GetTtl() *durationpb.Duration {
-	if x != nil {
-		return x.Ttl
-	}
-	return nil
-}
-
 func (x *CreateInvitationRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
 	}
 	return ""
+}
+
+func (x *CreateInvitationRequest) GetTtlSeconds() int64 {
+	if x != nil {
+		return x.TtlSeconds
+	}
+	return 0
 }
 
 // CreateInvitationResponse carries the invitation and its code, shown
@@ -2385,7 +2404,7 @@ var File_toshi_workspace_v1_roles_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\n" +
-	"\x1etoshi/workspace/v1/roles.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"g\n" +
+	"\x1etoshi/workspace/v1/roles.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"g\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -2417,11 +2436,13 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\vrequest_key\x18\x03 \x01(\tR\n" +
 	"requestKey\"B\n" +
 	"\x12CreateRoleResponse\x12,\n" +
-	"\x04role\x18\x01 \x01(\v2\x18.toshi.workspace.v1.RoleR\x04role\"Y\n" +
+	"\x04role\x18\x01 \x01(\v2\x18.toshi.workspace.v1.RoleR\x04role\"\x96\x01\n" +
 	"\x11UpdateRoleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vpermissions\x18\x03 \x03(\tR\vpermissions\"B\n" +
+	"\vpermissions\x18\x03 \x03(\tR\vpermissions\x12;\n" +
+	"\vupdate_mask\x18\x04 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\"B\n" +
 	"\x12UpdateRoleResponse\x12,\n" +
 	"\x04role\x18\x01 \x01(\v2\x18.toshi.workspace.v1.RoleR\x04role\"#\n" +
 	"\x11DeleteRoleRequest\x12\x0e\n" +
@@ -2479,12 +2500,13 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"\x17\n" +
 	"\x15DeclineMemberResponse\"=\n" +
 	"\x14RemoveMemberResponse\x12%\n" +
-	"\x0egrants_removed\x18\x01 \x01(\x05R\rgrantsRemoved\"{\n" +
+	"\x0egrants_removed\x18\x01 \x01(\x05R\rgrantsRemoved\"z\n" +
 	"\x17CreateInvitationRequest\x12\x12\n" +
-	"\x04note\x18\x01 \x01(\tR\x04note\x12+\n" +
-	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x03ttl\x12\x1f\n" +
+	"\x04note\x18\x01 \x01(\tR\x04note\x12\x1f\n" +
 	"\vrequest_key\x18\x03 \x01(\tR\n" +
-	"requestKey\"n\n" +
+	"requestKey\x12\x1f\n" +
+	"\vttl_seconds\x18\x04 \x01(\x03R\n" +
+	"ttlSecondsJ\x04\b\x02\x10\x03R\x03ttl\"n\n" +
 	"\x18CreateInvitationResponse\x12>\n" +
 	"\n" +
 	"invitation\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.InvitationR\n" +
@@ -2633,7 +2655,7 @@ var file_toshi_workspace_v1_roles_proto_goTypes = []any{
 	(*AcceptInvitationRequest)(nil),  // 37: toshi.workspace.v1.AcceptInvitationRequest
 	(*AcceptInvitationResponse)(nil), // 38: toshi.workspace.v1.AcceptInvitationResponse
 	(*timestamppb.Timestamp)(nil),    // 39: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),      // 40: google.protobuf.Duration
+	(*fieldmaskpb.FieldMask)(nil),    // 40: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_roles_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Subject.kind:type_name -> toshi.workspace.v1.SubjectKind
@@ -2642,22 +2664,22 @@ var file_toshi_workspace_v1_roles_proto_depIdxs = []int32{
 	5,  // 3: toshi.workspace.v1.RoleGrant.created_by:type_name -> toshi.workspace.v1.Subject
 	4,  // 4: toshi.workspace.v1.ListRolesResponse.roles:type_name -> toshi.workspace.v1.Role
 	4,  // 5: toshi.workspace.v1.CreateRoleResponse.role:type_name -> toshi.workspace.v1.Role
-	4,  // 6: toshi.workspace.v1.UpdateRoleResponse.role:type_name -> toshi.workspace.v1.Role
-	4,  // 7: toshi.workspace.v1.DeleteRoleResponse.role:type_name -> toshi.workspace.v1.Role
-	5,  // 8: toshi.workspace.v1.ListRoleGrantsRequest.subject:type_name -> toshi.workspace.v1.Subject
-	6,  // 9: toshi.workspace.v1.ListRoleGrantsResponse.grants:type_name -> toshi.workspace.v1.RoleGrant
-	5,  // 10: toshi.workspace.v1.GrantRoleRequest.subject:type_name -> toshi.workspace.v1.Subject
-	6,  // 11: toshi.workspace.v1.GrantRoleResponse.grant:type_name -> toshi.workspace.v1.RoleGrant
-	6,  // 12: toshi.workspace.v1.RevokeRoleResponse.grant:type_name -> toshi.workspace.v1.RoleGrant
-	2,  // 13: toshi.workspace.v1.ListMembersRequest.state:type_name -> toshi.workspace.v1.MemberState
-	23, // 14: toshi.workspace.v1.ListMembersResponse.members:type_name -> toshi.workspace.v1.Member
-	1,  // 15: toshi.workspace.v1.Member.via:type_name -> toshi.workspace.v1.MemberVia
-	39, // 16: toshi.workspace.v1.Member.added_at:type_name -> google.protobuf.Timestamp
-	5,  // 17: toshi.workspace.v1.Member.added_by:type_name -> toshi.workspace.v1.Subject
-	2,  // 18: toshi.workspace.v1.Member.state:type_name -> toshi.workspace.v1.MemberState
-	39, // 19: toshi.workspace.v1.Member.requested_at:type_name -> google.protobuf.Timestamp
-	23, // 20: toshi.workspace.v1.ApproveMemberResponse.member:type_name -> toshi.workspace.v1.Member
-	40, // 21: toshi.workspace.v1.CreateInvitationRequest.ttl:type_name -> google.protobuf.Duration
+	40, // 6: toshi.workspace.v1.UpdateRoleRequest.update_mask:type_name -> google.protobuf.FieldMask
+	4,  // 7: toshi.workspace.v1.UpdateRoleResponse.role:type_name -> toshi.workspace.v1.Role
+	4,  // 8: toshi.workspace.v1.DeleteRoleResponse.role:type_name -> toshi.workspace.v1.Role
+	5,  // 9: toshi.workspace.v1.ListRoleGrantsRequest.subject:type_name -> toshi.workspace.v1.Subject
+	6,  // 10: toshi.workspace.v1.ListRoleGrantsResponse.grants:type_name -> toshi.workspace.v1.RoleGrant
+	5,  // 11: toshi.workspace.v1.GrantRoleRequest.subject:type_name -> toshi.workspace.v1.Subject
+	6,  // 12: toshi.workspace.v1.GrantRoleResponse.grant:type_name -> toshi.workspace.v1.RoleGrant
+	6,  // 13: toshi.workspace.v1.RevokeRoleResponse.grant:type_name -> toshi.workspace.v1.RoleGrant
+	2,  // 14: toshi.workspace.v1.ListMembersRequest.state:type_name -> toshi.workspace.v1.MemberState
+	23, // 15: toshi.workspace.v1.ListMembersResponse.members:type_name -> toshi.workspace.v1.Member
+	1,  // 16: toshi.workspace.v1.Member.via:type_name -> toshi.workspace.v1.MemberVia
+	39, // 17: toshi.workspace.v1.Member.added_at:type_name -> google.protobuf.Timestamp
+	5,  // 18: toshi.workspace.v1.Member.added_by:type_name -> toshi.workspace.v1.Subject
+	2,  // 19: toshi.workspace.v1.Member.state:type_name -> toshi.workspace.v1.MemberState
+	39, // 20: toshi.workspace.v1.Member.requested_at:type_name -> google.protobuf.Timestamp
+	23, // 21: toshi.workspace.v1.ApproveMemberResponse.member:type_name -> toshi.workspace.v1.Member
 	32, // 22: toshi.workspace.v1.CreateInvitationResponse.invitation:type_name -> toshi.workspace.v1.Invitation
 	3,  // 23: toshi.workspace.v1.Invitation.state:type_name -> toshi.workspace.v1.InvitationState
 	39, // 24: toshi.workspace.v1.Invitation.created_at:type_name -> google.protobuf.Timestamp

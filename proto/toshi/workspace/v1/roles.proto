@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package toshi.workspace.v1;
 
-import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 
@@ -53,10 +53,14 @@ service RoleService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "members.write";
   }
-  // UpdateRole sets the name and the permissions of one of the
-  // workspace's roles, checked as CreateRole checks them. Its grants keep
-  // it, and give the new permissions from then on. A built-in role fails
-  // with INVALID_ARGUMENT; an unknown ID with NOT_FOUND.
+  // UpdateRole changes the fields of one of the workspace's roles that its
+  // update_mask names: "name" and "permissions". The permissions replace
+  // the role's whole list and are checked as CreateRole checks them. With
+  // no mask, the fields the request sets change. An empty mask, a mask
+  // naming another field, and a request with no mask that sets no field
+  // are INVALID_ARGUMENT. Its grants keep the role, and give the new
+  // permissions from then on. A built-in role fails with
+  // INVALID_ARGUMENT; an unknown ID with NOT_FOUND.
   rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
@@ -149,8 +153,8 @@ service RoleService {
   }
   // CreateInvitation makes an invitation to join the workspace and returns
   // its code, once: the control plane keeps only its hash. It is valid for
-  // ttl, seven days when unset, and 30 days at most. The note is free text,
-  // such as whom it is for, and is never matched against anyone.
+  // ttl_seconds, seven days when unset, and 30 days at most. The note is
+  // free text, such as whom it is for, and is never matched against anyone.
   rpc CreateInvitation(CreateInvitationRequest) returns (CreateInvitationResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "members.write";
@@ -293,14 +297,22 @@ message CreateRoleResponse {
   Role role = 1;
 }
 
-// UpdateRoleRequest names the role and its new name and permissions.
+// UpdateRoleRequest names the role and the fields to change.
 message UpdateRoleRequest {
   // The role's id; a built-in role's fails with INVALID_ARGUMENT.
   string id = 1;
-  // The role's new name within the workspace.
+  // The role's new name within the workspace. It changes when update_mask
+  // names "name", or when it is nonempty and there is no mask.
   string name = 2;
-  // At least one permission; they replace the role's.
+  // permissions replaces the role's whole list: at least one permission,
+  // each one CreateRole accepts. It changes when update_mask names
+  // "permissions", or when it is nonempty and there is no mask.
   repeated string permissions = 3;
+  // update_mask names the fields to change: "name" and "permissions". A
+  // named field is applied as given, so an empty name or no permissions is
+  // refused as CreateRole refuses it. An empty mask, another field, and no
+  // mask with neither field set are INVALID_ARGUMENT.
+  google.protobuf.FieldMask update_mask = 4;
 }
 
 // UpdateRoleResponse carries the role as it now is.
@@ -502,12 +514,18 @@ message RemoveMemberResponse {
 message CreateInvitationRequest {
   // Free text, such as whom the invitation is for; 200 characters at most.
   string note = 1;
-  // How long the code is valid: seven days when unset, 30 days at most.
-  google.protobuf.Duration ttl = 2;
+  reserved 2;
+  reserved "ttl";
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
   // key and request return the first answer; a different request with the
   // same key is refused. Keys are kept for 30 days by default.
   string request_key = 3;
+  // ttl_seconds is how long the code is valid, in seconds: 604800 (seven
+  // days) when unset, and 2592000 (30 days) at most; a negative value is
+  // INVALID_ARGUMENT. A duration taken here before kept its fractional
+  // second exactly when the expiry was worked out; whole seconds are the
+  // unit from now on.
+  int64 ttl_seconds = 4;
 }
 
 // CreateInvitationResponse carries the invitation and its code, shown

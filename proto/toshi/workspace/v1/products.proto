@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package toshi.workspace.v1;
 
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 import "toshi/workspace/v1/discovery.proto";
@@ -26,13 +27,14 @@ service ProductService {
     option (toshi.permission) = "settings.read";
   }
   // UpdateProduct changes the workspace's settings of one product in one
-  // call: it turns the product on or off, and sets or clears its features.
-  // The caller and the time of the call are recorded with each setting it
-  // sets. A setting only narrows the workspace's entitlement: a value wider
-  // than the entitlement, a key the product does not declare or that the
-  // workspace cannot narrow, or a value of another type than the key's is
-  // INVALID_ARGUMENT naming the key, and nothing is changed. A product the
-  // deployment does not include is NOT_FOUND.
+  // call: it turns the product on or off, and sets or clears its features,
+  // as its update_mask names them. The caller and the time of the call are
+  // recorded with each setting it sets. A setting only narrows the
+  // workspace's entitlement: a value wider than the entitlement, a key the
+  // product does not declare or that the workspace cannot narrow, or a
+  // value of another type than the key's is INVALID_ARGUMENT naming the
+  // key, and nothing is changed. A product the deployment does not include
+  // is NOT_FOUND.
   //
   // The product's calls follow the change from the next call on.
   rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse) {
@@ -53,24 +55,32 @@ message ListProductsResponse {
 }
 
 // UpdateProductRequest is one change of one product's settings: its
-// switch, the features to set, and the features to clear.
+// switch, and the features to set or clear.
 message UpdateProductRequest {
   // id names the product, such as "runners".
   string id = 1;
   // enabled turns the product on or off for the workspace: it sets the
-  // product's own switch, the feature "<id>.enabled". Unset leaves it.
+  // product's own switch, the feature "<id>.enabled". It changes when
+  // update_mask names "enabled", or when it is set and there is no mask.
   // Turning on a product the workspace's entitlements leave off is
   // INVALID_ARGUMENT.
   optional bool enabled = 2;
-  // settings are the features to set, by key ("<id>.<name>"), each to a
-  // value of the feature's type.
+  // settings are the features to change, by key ("<id>.<name>"): an entry
+  // with a value sets the feature to that value of its type, and an entry
+  // whose FeatureValue carries no value clears the setting, so the
+  // entitlement applies again. Keys the map leaves out are unchanged. The
+  // map changes when update_mask names "settings", or when it is nonempty
+  // and there is no mask.
   map<string, FeatureValue> settings = 3;
-  // clear are the keys of the features whose settings to remove: the
-  // entitlement applies again. A key that is also in settings, or that
-  // enabled sets, is INVALID_ARGUMENT.
-  repeated string clear = 4;
+  reserved 4;
+  reserved "clear";
   reserved 5, 6;
   reserved "accepted_access", "version";
+  // update_mask names the fields to change: "enabled" and "settings". Each
+  // named field must be set: the "enabled" path with enabled unset, and the
+  // "settings" path with an empty map, are INVALID_ARGUMENT. An empty mask,
+  // another field, and no mask with neither field set are INVALID_ARGUMENT.
+  google.protobuf.FieldMask update_mask = 7;
 }
 
 // UpdateProductResponse is the product as the workspace has it after the

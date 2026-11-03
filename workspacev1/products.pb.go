@@ -10,6 +10,7 @@ import (
 	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -109,23 +110,29 @@ func (x *ListProductsResponse) GetProducts() []*ProductSettings {
 }
 
 // UpdateProductRequest is one change of one product's settings: its
-// switch, the features to set, and the features to clear.
+// switch, and the features to set or clear.
 type UpdateProductRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// id names the product, such as "runners".
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// enabled turns the product on or off for the workspace: it sets the
-	// product's own switch, the feature "<id>.enabled". Unset leaves it.
+	// product's own switch, the feature "<id>.enabled". It changes when
+	// update_mask names "enabled", or when it is set and there is no mask.
 	// Turning on a product the workspace's entitlements leave off is
 	// INVALID_ARGUMENT.
 	Enabled *bool `protobuf:"varint,2,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`
-	// settings are the features to set, by key ("<id>.<name>"), each to a
-	// value of the feature's type.
+	// settings are the features to change, by key ("<id>.<name>"): an entry
+	// with a value sets the feature to that value of its type, and an entry
+	// whose FeatureValue carries no value clears the setting, so the
+	// entitlement applies again. Keys the map leaves out are unchanged. The
+	// map changes when update_mask names "settings", or when it is nonempty
+	// and there is no mask.
 	Settings map[string]*FeatureValue `protobuf:"bytes,3,rep,name=settings,proto3" json:"settings,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	// clear are the keys of the features whose settings to remove: the
-	// entitlement applies again. A key that is also in settings, or that
-	// enabled sets, is INVALID_ARGUMENT.
-	Clear         []string `protobuf:"bytes,4,rep,name=clear,proto3" json:"clear,omitempty"`
+	// update_mask names the fields to change: "enabled" and "settings". Each
+	// named field must be set: the "enabled" path with enabled unset, and the
+	// "settings" path with an empty map, are INVALID_ARGUMENT. An empty mask,
+	// another field, and no mask with neither field set are INVALID_ARGUMENT.
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,7,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -181,9 +188,9 @@ func (x *UpdateProductRequest) GetSettings() map[string]*FeatureValue {
 	return nil
 }
 
-func (x *UpdateProductRequest) GetClear() []string {
+func (x *UpdateProductRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	if x != nil {
-		return x.Clear
+		return x.UpdateMask
 	}
 	return nil
 }
@@ -521,20 +528,21 @@ var File_toshi_workspace_v1_products_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/products.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/discovery.proto\"\x15\n" +
+	"!toshi/workspace/v1/products.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/discovery.proto\"\x15\n" +
 	"\x13ListProductsRequest\"W\n" +
 	"\x14ListProductsResponse\x12?\n" +
-	"\bproducts\x18\x01 \x03(\v2#.toshi.workspace.v1.ProductSettingsR\bproducts\"\xc0\x02\n" +
+	"\bproducts\x18\x01 \x03(\v2#.toshi.workspace.v1.ProductSettingsR\bproducts\"\xf4\x02\n" +
 	"\x14UpdateProductRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01\x12R\n" +
-	"\bsettings\x18\x03 \x03(\v26.toshi.workspace.v1.UpdateProductRequest.SettingsEntryR\bsettings\x12\x14\n" +
-	"\x05clear\x18\x04 \x03(\tR\x05clear\x1a]\n" +
+	"\bsettings\x18\x03 \x03(\v26.toshi.workspace.v1.UpdateProductRequest.SettingsEntryR\bsettings\x12;\n" +
+	"\vupdate_mask\x18\a \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\x1a]\n" +
 	"\rSettingsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x126\n" +
 	"\x05value\x18\x02 \x01(\v2 .toshi.workspace.v1.FeatureValueR\x05value:\x028\x01B\n" +
 	"\n" +
-	"\b_enabledJ\x04\b\x05\x10\x06J\x04\b\x06\x10\aR\x0faccepted_accessR\aversion\"\x7f\n" +
+	"\b_enabledJ\x04\b\x04\x10\x05J\x04\b\x05\x10\x06J\x04\b\x06\x10\aR\x05clearR\x0faccepted_accessR\aversion\"\x7f\n" +
 	"\x15UpdateProductResponse\x12=\n" +
 	"\aproduct\x18\x01 \x01(\v2#.toshi.workspace.v1.ProductSettingsR\aproductJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x12installation_tokenR\awarning\"\xfd\x02\n" +
 	"\x0fProductSettings\x12\x0e\n" +
@@ -587,35 +595,37 @@ var file_toshi_workspace_v1_products_proto_goTypes = []any{
 	(*ProductSurfaces)(nil),       // 5: toshi.workspace.v1.ProductSurfaces
 	(*FeatureSetting)(nil),        // 6: toshi.workspace.v1.FeatureSetting
 	nil,                           // 7: toshi.workspace.v1.UpdateProductRequest.SettingsEntry
-	(ProductState)(0),             // 8: toshi.workspace.v1.ProductState
-	(ProductStability)(0),         // 9: toshi.workspace.v1.ProductStability
-	(*FeatureValue)(nil),          // 10: toshi.workspace.v1.FeatureValue
-	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
-	(FeatureSource)(0),            // 12: toshi.workspace.v1.FeatureSource
+	(*fieldmaskpb.FieldMask)(nil), // 8: google.protobuf.FieldMask
+	(ProductState)(0),             // 9: toshi.workspace.v1.ProductState
+	(ProductStability)(0),         // 10: toshi.workspace.v1.ProductStability
+	(*FeatureValue)(nil),          // 11: toshi.workspace.v1.FeatureValue
+	(*timestamppb.Timestamp)(nil), // 12: google.protobuf.Timestamp
+	(FeatureSource)(0),            // 13: toshi.workspace.v1.FeatureSource
 }
 var file_toshi_workspace_v1_products_proto_depIdxs = []int32{
 	4,  // 0: toshi.workspace.v1.ListProductsResponse.products:type_name -> toshi.workspace.v1.ProductSettings
 	7,  // 1: toshi.workspace.v1.UpdateProductRequest.settings:type_name -> toshi.workspace.v1.UpdateProductRequest.SettingsEntry
-	4,  // 2: toshi.workspace.v1.UpdateProductResponse.product:type_name -> toshi.workspace.v1.ProductSettings
-	6,  // 3: toshi.workspace.v1.ProductSettings.features:type_name -> toshi.workspace.v1.FeatureSetting
-	8,  // 4: toshi.workspace.v1.ProductSettings.state:type_name -> toshi.workspace.v1.ProductState
-	5,  // 5: toshi.workspace.v1.ProductSettings.surfaces:type_name -> toshi.workspace.v1.ProductSurfaces
-	9,  // 6: toshi.workspace.v1.ProductSettings.stability:type_name -> toshi.workspace.v1.ProductStability
-	10, // 7: toshi.workspace.v1.FeatureSetting.entitlement:type_name -> toshi.workspace.v1.FeatureValue
-	10, // 8: toshi.workspace.v1.FeatureSetting.setting:type_name -> toshi.workspace.v1.FeatureValue
-	10, // 9: toshi.workspace.v1.FeatureSetting.effective:type_name -> toshi.workspace.v1.FeatureValue
-	11, // 10: toshi.workspace.v1.FeatureSetting.changed_at:type_name -> google.protobuf.Timestamp
-	12, // 11: toshi.workspace.v1.FeatureSetting.source:type_name -> toshi.workspace.v1.FeatureSource
-	10, // 12: toshi.workspace.v1.UpdateProductRequest.SettingsEntry.value:type_name -> toshi.workspace.v1.FeatureValue
-	0,  // 13: toshi.workspace.v1.ProductService.ListProducts:input_type -> toshi.workspace.v1.ListProductsRequest
-	2,  // 14: toshi.workspace.v1.ProductService.UpdateProduct:input_type -> toshi.workspace.v1.UpdateProductRequest
-	1,  // 15: toshi.workspace.v1.ProductService.ListProducts:output_type -> toshi.workspace.v1.ListProductsResponse
-	3,  // 16: toshi.workspace.v1.ProductService.UpdateProduct:output_type -> toshi.workspace.v1.UpdateProductResponse
-	15, // [15:17] is the sub-list for method output_type
-	13, // [13:15] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	8,  // 2: toshi.workspace.v1.UpdateProductRequest.update_mask:type_name -> google.protobuf.FieldMask
+	4,  // 3: toshi.workspace.v1.UpdateProductResponse.product:type_name -> toshi.workspace.v1.ProductSettings
+	6,  // 4: toshi.workspace.v1.ProductSettings.features:type_name -> toshi.workspace.v1.FeatureSetting
+	9,  // 5: toshi.workspace.v1.ProductSettings.state:type_name -> toshi.workspace.v1.ProductState
+	5,  // 6: toshi.workspace.v1.ProductSettings.surfaces:type_name -> toshi.workspace.v1.ProductSurfaces
+	10, // 7: toshi.workspace.v1.ProductSettings.stability:type_name -> toshi.workspace.v1.ProductStability
+	11, // 8: toshi.workspace.v1.FeatureSetting.entitlement:type_name -> toshi.workspace.v1.FeatureValue
+	11, // 9: toshi.workspace.v1.FeatureSetting.setting:type_name -> toshi.workspace.v1.FeatureValue
+	11, // 10: toshi.workspace.v1.FeatureSetting.effective:type_name -> toshi.workspace.v1.FeatureValue
+	12, // 11: toshi.workspace.v1.FeatureSetting.changed_at:type_name -> google.protobuf.Timestamp
+	13, // 12: toshi.workspace.v1.FeatureSetting.source:type_name -> toshi.workspace.v1.FeatureSource
+	11, // 13: toshi.workspace.v1.UpdateProductRequest.SettingsEntry.value:type_name -> toshi.workspace.v1.FeatureValue
+	0,  // 14: toshi.workspace.v1.ProductService.ListProducts:input_type -> toshi.workspace.v1.ListProductsRequest
+	2,  // 15: toshi.workspace.v1.ProductService.UpdateProduct:input_type -> toshi.workspace.v1.UpdateProductRequest
+	1,  // 16: toshi.workspace.v1.ProductService.ListProducts:output_type -> toshi.workspace.v1.ListProductsResponse
+	3,  // 17: toshi.workspace.v1.ProductService.UpdateProduct:output_type -> toshi.workspace.v1.UpdateProductResponse
+	16, // [16:18] is the sub-list for method output_type
+	14, // [14:16] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_products_proto_init() }

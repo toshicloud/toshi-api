@@ -4,8 +4,8 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
-import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
+import type { FieldMask, FieldMaskJson, Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
+import { file_google_protobuf_field_mask, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import { file_toshi_permission } from "../../permission_pb";
 import type { FeatureSource, FeatureSourceJson, FeatureValue, FeatureValueJson, ProductStability, ProductStabilityJson, ProductState, ProductStateJson } from "./discovery_pb";
 import { file_toshi_workspace_v1_discovery } from "./discovery_pb";
@@ -15,7 +15,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/products.proto.
  */
 export const file_toshi_workspace_v1_products: GenFile = /*@__PURE__*/
-  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyKWAgoUVXBkYXRlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkSFAoHZW5hYmxlZBgCIAEoCEgAiAEBEkgKCHNldHRpbmdzGAMgAygLMjYudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0LlNldHRpbmdzRW50cnkSDQoFY2xlYXIYBCADKAkaUQoNU2V0dGluZ3NFbnRyeRILCgNrZXkYASABKAkSLwoFdmFsdWUYAiABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlOgI4AUIKCghfZW5hYmxlZEoECAUQBkoECAYQB1IPYWNjZXB0ZWRfYWNjZXNzUgd2ZXJzaW9uInYKFVVwZGF0ZVByb2R1Y3RSZXNwb25zZRI0Cgdwcm9kdWN0GAEgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5nc0oECAIQA0oECAMQBFISaW5zdGFsbGF0aW9uX3Rva2VuUgd3YXJuaW5nIr0CCg9Qcm9kdWN0U2V0dGluZ3MSCgoCaWQYASABKAkSNAoIZmVhdHVyZXMYAyADKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNldHRpbmcSLwoFc3RhdGUYBCABKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN0YXRlEjUKCHN1cmZhY2VzGAYgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTdXJmYWNlcxIMCgRuYW1lGAcgASgJEjcKCXN0YWJpbGl0eRgIIAEoDjIkLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhYmlsaXR5EhcKD3JlbW92YWxfdmVyc2lvbhgJIAEoCUoECAIQA0oECAUQBlIGc3dpdGNoUgxpbnN0YWxsYXRpb24iRQoPUHJvZHVjdFN1cmZhY2VzEgsKA2FwaRgBIAEoCUoECAIQA0oECAMQBEoECAQQBVIDY2xpUglkYXNoYm9hcmRSA3NkayLZAgoORmVhdHVyZVNldHRpbmcSCwoDa2V5GAEgASgJEhIKCm5hcnJvd2FibGUYAiABKAgSNQoLZW50aXRsZW1lbnQYAyABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjEKB3NldHRpbmcYBCABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjMKCWVmZmVjdGl2ZRgFIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSEgoKY2hhbmdlZF9ieRgGIAEoCRIuCgpjaGFuZ2VkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCgZzb3VyY2UYCCABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNvdXJjZRIQCghwbGFuX2tleRgJIAEoCTKEAgoOUHJvZHVjdFNlcnZpY2USdAoMTGlzdFByb2R1Y3RzEicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RQcm9kdWN0c1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVzcG9uc2UiEcLzGA1zZXR0aW5ncy5yZWFkEnwKDVVwZGF0ZVByb2R1Y3QSKC50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlUHJvZHVjdFJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlUHJvZHVjdFJlc3BvbnNlIhbC8xgOc2V0dGluZ3Mud3JpdGWQ9BgCQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
+  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyLFAgoUVXBkYXRlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkSFAoHZW5hYmxlZBgCIAEoCEgAiAEBEkgKCHNldHRpbmdzGAMgAygLMjYudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0LlNldHRpbmdzRW50cnkSLwoLdXBkYXRlX21hc2sYByABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrGlEKDVNldHRpbmdzRW50cnkSCwoDa2V5GAEgASgJEi8KBXZhbHVlGAIgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZToCOAFCCgoIX2VuYWJsZWRKBAgEEAVKBAgFEAZKBAgGEAdSBWNsZWFyUg9hY2NlcHRlZF9hY2Nlc3NSB3ZlcnNpb24idgoVVXBkYXRlUHJvZHVjdFJlc3BvbnNlEjQKB3Byb2R1Y3QYASABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFNldHRpbmdzSgQIAhADSgQIAxAEUhJpbnN0YWxsYXRpb25fdG9rZW5SB3dhcm5pbmcivQIKD1Byb2R1Y3RTZXR0aW5ncxIKCgJpZBgBIAEoCRI0CghmZWF0dXJlcxgDIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU2V0dGluZxIvCgVzdGF0ZRgEIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhdGUSNQoIc3VyZmFjZXMYBiABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN1cmZhY2VzEgwKBG5hbWUYByABKAkSNwoJc3RhYmlsaXR5GAggASgOMiQudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTdGFiaWxpdHkSFwoPcmVtb3ZhbF92ZXJzaW9uGAkgASgJSgQIAhADSgQIBRAGUgZzd2l0Y2hSDGluc3RhbGxhdGlvbiJFCg9Qcm9kdWN0U3VyZmFjZXMSCwoDYXBpGAEgASgJSgQIAhADSgQIAxAESgQIBBAFUgNjbGlSCWRhc2hib2FyZFIDc2RrItkCCg5GZWF0dXJlU2V0dGluZxILCgNrZXkYASABKAkSEgoKbmFycm93YWJsZRgCIAEoCBI1CgtlbnRpdGxlbWVudBgDIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSMQoHc2V0dGluZxgEIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSMwoJZWZmZWN0aXZlGAUgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRISCgpjaGFuZ2VkX2J5GAYgASgJEi4KCmNoYW5nZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjEKBnNvdXJjZRgIIAEoDjIhLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU291cmNlEhAKCHBsYW5fa2V5GAkgASgJMoQCCg5Qcm9kdWN0U2VydmljZRJ0CgxMaXN0UHJvZHVjdHMSJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UHJvZHVjdHNSZXNwb25zZSIRwvMYDXNldHRpbmdzLnJlYWQSfAoNVXBkYXRlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVzcG9uc2UiFsLzGA5zZXR0aW5ncy53cml0ZZD0GAJCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
 
 /**
  * ListProductsRequest has no fields: the call's credential names the
@@ -81,7 +81,7 @@ export const ListProductsResponseSchema: GenMessage<ListProductsResponse, {jsonT
 
 /**
  * UpdateProductRequest is one change of one product's settings: its
- * switch, the features to set, and the features to clear.
+ * switch, and the features to set or clear.
  *
  * @generated from message toshi.workspace.v1.UpdateProductRequest
  */
@@ -95,7 +95,8 @@ export type UpdateProductRequest = Message<"toshi.workspace.v1.UpdateProductRequ
 
   /**
    * enabled turns the product on or off for the workspace: it sets the
-   * product's own switch, the feature "<id>.enabled". Unset leaves it.
+   * product's own switch, the feature "<id>.enabled". It changes when
+   * update_mask names "enabled", or when it is set and there is no mask.
    * Turning on a product the workspace's entitlements leave off is
    * INVALID_ARGUMENT.
    *
@@ -104,26 +105,31 @@ export type UpdateProductRequest = Message<"toshi.workspace.v1.UpdateProductRequ
   enabled?: boolean | undefined;
 
   /**
-   * settings are the features to set, by key ("<id>.<name>"), each to a
-   * value of the feature's type.
+   * settings are the features to change, by key ("<id>.<name>"): an entry
+   * with a value sets the feature to that value of its type, and an entry
+   * whose FeatureValue carries no value clears the setting, so the
+   * entitlement applies again. Keys the map leaves out are unchanged. The
+   * map changes when update_mask names "settings", or when it is nonempty
+   * and there is no mask.
    *
    * @generated from field: map<string, toshi.workspace.v1.FeatureValue> settings = 3;
    */
   settings: { [key: string]: FeatureValue };
 
   /**
-   * clear are the keys of the features whose settings to remove: the
-   * entitlement applies again. A key that is also in settings, or that
-   * enabled sets, is INVALID_ARGUMENT.
+   * update_mask names the fields to change: "enabled" and "settings". Each
+   * named field must be set: the "enabled" path with enabled unset, and the
+   * "settings" path with an empty map, are INVALID_ARGUMENT. An empty mask,
+   * another field, and no mask with neither field set are INVALID_ARGUMENT.
    *
-   * @generated from field: repeated string clear = 4;
+   * @generated from field: google.protobuf.FieldMask update_mask = 7;
    */
-  clear: string[];
+  updateMask?: FieldMask | undefined;
 };
 
 /**
  * UpdateProductRequest is one change of one product's settings: its
- * switch, the features to set, and the features to clear.
+ * switch, and the features to set or clear.
  *
  * @generated from message toshi.workspace.v1.UpdateProductRequest
  */
@@ -137,7 +143,8 @@ export type UpdateProductRequestJson = {
 
   /**
    * enabled turns the product on or off for the workspace: it sets the
-   * product's own switch, the feature "<id>.enabled". Unset leaves it.
+   * product's own switch, the feature "<id>.enabled". It changes when
+   * update_mask names "enabled", or when it is set and there is no mask.
    * Turning on a product the workspace's entitlements leave off is
    * INVALID_ARGUMENT.
    *
@@ -146,21 +153,26 @@ export type UpdateProductRequestJson = {
   enabled?: boolean;
 
   /**
-   * settings are the features to set, by key ("<id>.<name>"), each to a
-   * value of the feature's type.
+   * settings are the features to change, by key ("<id>.<name>"): an entry
+   * with a value sets the feature to that value of its type, and an entry
+   * whose FeatureValue carries no value clears the setting, so the
+   * entitlement applies again. Keys the map leaves out are unchanged. The
+   * map changes when update_mask names "settings", or when it is nonempty
+   * and there is no mask.
    *
    * @generated from field: map<string, toshi.workspace.v1.FeatureValue> settings = 3;
    */
   settings?: { [key: string]: FeatureValueJson };
 
   /**
-   * clear are the keys of the features whose settings to remove: the
-   * entitlement applies again. A key that is also in settings, or that
-   * enabled sets, is INVALID_ARGUMENT.
+   * update_mask names the fields to change: "enabled" and "settings". Each
+   * named field must be set: the "enabled" path with enabled unset, and the
+   * "settings" path with an empty map, are INVALID_ARGUMENT. An empty mask,
+   * another field, and no mask with neither field set are INVALID_ARGUMENT.
    *
-   * @generated from field: repeated string clear = 4;
+   * @generated from field: google.protobuf.FieldMask update_mask = 7;
    */
-  clear?: string[];
+  updateMask?: FieldMaskJson;
 };
 
 /**
@@ -573,13 +585,14 @@ export const ProductService: GenService<{
   },
   /**
    * UpdateProduct changes the workspace's settings of one product in one
-   * call: it turns the product on or off, and sets or clears its features.
-   * The caller and the time of the call are recorded with each setting it
-   * sets. A setting only narrows the workspace's entitlement: a value wider
-   * than the entitlement, a key the product does not declare or that the
-   * workspace cannot narrow, or a value of another type than the key's is
-   * INVALID_ARGUMENT naming the key, and nothing is changed. A product the
-   * deployment does not include is NOT_FOUND.
+   * call: it turns the product on or off, and sets or clears its features,
+   * as its update_mask names them. The caller and the time of the call are
+   * recorded with each setting it sets. A setting only narrows the
+   * workspace's entitlement: a value wider than the entitlement, a key the
+   * product does not declare or that the workspace cannot narrow, or a
+   * value of another type than the key's is INVALID_ARGUMENT naming the
+   * key, and nothing is changed. A product the deployment does not include
+   * is NOT_FOUND.
    *
    * The product's calls follow the change from the next call on.
    *
