@@ -191,11 +191,6 @@ export const auditActions = {
   invitationRevoked: "invitation.revoked",
   invitationAccepted: "invitation.accepted",
   invitationAcceptRefused: "invitation.accept_refused",
-  branchRulesSet: "branch_rules.set",
-  projectNetworkSet: "project_network.set",
-  environmentNetworkSet: "environment_network.set",
-  environmentRetentionSet: "environment_retention.set",
-  environmentVolumesSet: "environment_volumes.set",
   environmentUpdated: "environment.updated",
   repositoryClaimed: "repository.claimed",
   productUpdated: "product.updated",
@@ -446,6 +441,11 @@ export type AuditAction = (typeof auditActions)[keyof typeof auditActions];
 
 export const auditActionAliases = {
   "workspace.plan_set": "workspace.plan_changed",
+  "branch_rules.set": "project.updated",
+  "project_network.set": "project.updated",
+  "environment_network.set": "environment.updated",
+  "environment_retention.set": "environment.updated",
+  "environment_volumes.set": "environment.updated",
   "token.rolled": "token.rotated",
   "agent.prompt_answered": "prompt.answered",
   "agent.registered": "agent_registration.created",

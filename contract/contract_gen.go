@@ -372,16 +372,6 @@ const (
 	AuditActionInvitationAccepted = "invitation.accepted"
 	// AuditActionInvitationAcceptRefused is the "invitation.accept_refused" audit action.
 	AuditActionInvitationAcceptRefused = "invitation.accept_refused"
-	// AuditActionBranchRulesSet is the "branch_rules.set" audit action.
-	AuditActionBranchRulesSet = "branch_rules.set"
-	// AuditActionProjectNetworkSet is the "project_network.set" audit action.
-	AuditActionProjectNetworkSet = "project_network.set"
-	// AuditActionEnvironmentNetworkSet is the "environment_network.set" audit action.
-	AuditActionEnvironmentNetworkSet = "environment_network.set"
-	// AuditActionEnvironmentRetentionSet is the "environment_retention.set" audit action.
-	AuditActionEnvironmentRetentionSet = "environment_retention.set"
-	// AuditActionEnvironmentVolumesSet is the "environment_volumes.set" audit action.
-	AuditActionEnvironmentVolumesSet = "environment_volumes.set"
 	// AuditActionEnvironmentUpdated is the "environment.updated" audit action.
 	AuditActionEnvironmentUpdated = "environment.updated"
 	// AuditActionRepositoryClaimed is the "repository.claimed" audit action.
@@ -949,6 +939,11 @@ func ReservedEventPrefixes() []string {
 func AuditActionAliases() map[string]string {
 	return map[string]string{
 		"workspace.plan_set":             "workspace.plan_changed",
+		"branch_rules.set":               "project.updated",
+		"project_network.set":            "project.updated",
+		"environment_network.set":        "environment.updated",
+		"environment_retention.set":      "environment.updated",
+		"environment_volumes.set":        "environment.updated",
 		"token.rolled":                   "token.rotated",
 		"agent.prompt_answered":          "prompt.answered",
 		"agent.registered":               "agent_registration.created",

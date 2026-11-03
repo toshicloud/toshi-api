@@ -60,30 +60,15 @@ const (
 	// ProjectServiceListBranchRulesProcedure is the fully-qualified name of the ProjectService's
 	// ListBranchRules RPC.
 	ProjectServiceListBranchRulesProcedure = "/toshi.workspace.v1.ProjectService/ListBranchRules"
-	// ProjectServiceSetBranchRulesProcedure is the fully-qualified name of the ProjectService's
-	// SetBranchRules RPC.
-	ProjectServiceSetBranchRulesProcedure = "/toshi.workspace.v1.ProjectService/SetBranchRules"
 	// ProjectServiceGetProjectNetworkProcedure is the fully-qualified name of the ProjectService's
 	// GetProjectNetwork RPC.
 	ProjectServiceGetProjectNetworkProcedure = "/toshi.workspace.v1.ProjectService/GetProjectNetwork"
-	// ProjectServiceSetProjectNetworkProcedure is the fully-qualified name of the ProjectService's
-	// SetProjectNetwork RPC.
-	ProjectServiceSetProjectNetworkProcedure = "/toshi.workspace.v1.ProjectService/SetProjectNetwork"
 	// ProjectServiceGetEnvironmentNetworkProcedure is the fully-qualified name of the ProjectService's
 	// GetEnvironmentNetwork RPC.
 	ProjectServiceGetEnvironmentNetworkProcedure = "/toshi.workspace.v1.ProjectService/GetEnvironmentNetwork"
-	// ProjectServiceSetEnvironmentNetworkProcedure is the fully-qualified name of the ProjectService's
-	// SetEnvironmentNetwork RPC.
-	ProjectServiceSetEnvironmentNetworkProcedure = "/toshi.workspace.v1.ProjectService/SetEnvironmentNetwork"
 	// ProjectServiceGetEnvironmentRetentionProcedure is the fully-qualified name of the
 	// ProjectService's GetEnvironmentRetention RPC.
 	ProjectServiceGetEnvironmentRetentionProcedure = "/toshi.workspace.v1.ProjectService/GetEnvironmentRetention"
-	// ProjectServiceSetEnvironmentRetentionProcedure is the fully-qualified name of the
-	// ProjectService's SetEnvironmentRetention RPC.
-	ProjectServiceSetEnvironmentRetentionProcedure = "/toshi.workspace.v1.ProjectService/SetEnvironmentRetention"
-	// ProjectServiceSetEnvironmentVolumesProcedure is the fully-qualified name of the ProjectService's
-	// SetEnvironmentVolumes RPC.
-	ProjectServiceSetEnvironmentVolumesProcedure = "/toshi.workspace.v1.ProjectService/SetEnvironmentVolumes"
 	// ProjectServiceUpdateEnvironmentProcedure is the fully-qualified name of the ProjectService's
 	// UpdateEnvironment RPC.
 	ProjectServiceUpdateEnvironmentProcedure = "/toshi.workspace.v1.ProjectService/UpdateEnvironment"
@@ -138,16 +123,28 @@ type ProjectServiceClient interface {
 	// recording_defaults.recording_segment_minutes and
 	// recording_defaults.recording_max_mib; volume_rules, the project's
 	// volume rules, replaced whole by the value the call carries, an empty
-	// one clearing them; and compatibility_flags, the project's compatibility
+	// one clearing them; compatibility_flags, the project's compatibility
 	// flags, replaced whole by the value the call carries, an empty one
 	// clearing them, each flag checked against the dated changes Toshi lists
-	// and an unknown one INVALID_ARGUMENT. An unset update_mask names the
-	// fields project carries. An empty one, an unset one with no admission,
-	// no recording_defaults, no volume_rules and no compatibility_flags, "*"
-	// and a path of another field are INVALID_ARGUMENT. The secret is sealed
-	// under the workspace's data key and never returned; a deployment with no
-	// keyring refuses it with FAILED_PRECONDITION. A token limited to
-	// environments is PERMISSION_DENIED.
+	// and an unknown one INVALID_ARGUMENT; branch_rules, the project's branch
+	// rules, replaced whole by the list the call carries, which has at most
+	// 100 rules, a known match on each, a pattern on exactly the pattern
+	// rules, no two rules matching the same way, the fallback rule exactly
+	// once and last, each environment one of the project's or none, and the
+	// fallback rule's environment not a production one, any other list
+	// INVALID_ARGUMENT, and a job already assigned keeps the environment it
+	// got; and network, the project's network policy, replaced whole by the
+	// value the call carries, which has at most 100 rules, each an allow or a
+	// deny of an address, a CIDR prefix or a DNS name, with an optional port
+	// or port range and protocol, any other policy INVALID_ARGUMENT, and a
+	// workload keeps the policy it was admitted with. An unset update_mask
+	// names the fields project carries. An empty one, an unset one with no
+	// admission, no recording_defaults, no volume_rules, no compatibility_flags,
+	// no branch_rules and no network, "*" and a path of another field are
+	// INVALID_ARGUMENT. The secret is sealed under the workspace's data key
+	// and never returned; a deployment with no keyring refuses it with
+	// FAILED_PRECONDITION. A token limited to environments is
+	// PERMISSION_DENIED.
 	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
 	// ClaimRepository puts a repository in a project: it claims a repository
 	// no project claims, or moves the claim from another project. A CI job
@@ -186,34 +183,12 @@ type ProjectServiceClient interface {
 	//
 	// A page holds 100 rules when page_size is zero, and 1000 at most.
 	ListBranchRules(context.Context, *connect.Request[workspacev1.ListBranchRulesRequest]) (*connect.Response[workspacev1.ListBranchRulesResponse], error)
-	// SetBranchRules replaces a project's branch rules with the list given,
-	// whole: it has at most 100 rules, a known match on each, a pattern on
-	// exactly the pattern rules, no two rules matching the same way, the
-	// fallback rule exactly once and last, each environment one of the
-	// project's or none, and the fallback rule's environment not a
-	// production one. Any other list is INVALID_ARGUMENT and changes
-	// nothing. A job already assigned keeps the environment it got; the new
-	// rules choose from its next assignment. A project the workspace does
-	// not have is NOT_FOUND. A token limited to a project sets only that
-	// project's rules, and a token limited to an environment is
-	// PERMISSION_DENIED.
-	SetBranchRules(context.Context, *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error)
 	// GetProjectNetwork returns a project's network policy: where its
 	// workloads may connect outbound. A project that never set one allows
 	// every destination. A project the workspace does not have is NOT_FOUND.
 	// A token limited to a project reads only that project's policy, and a
 	// token limited to an environment is PERMISSION_DENIED.
 	GetProjectNetwork(context.Context, *connect.Request[workspacev1.GetProjectNetworkRequest]) (*connect.Response[workspacev1.GetProjectNetworkResponse], error)
-	// SetProjectNetwork replaces a project's network policy whole: the
-	// default and the ordered rules. It has at most 100 rules, each an allow
-	// or a deny of an address, a CIDR prefix or a DNS name, with an optional
-	// port or port range and protocol. Any other policy is INVALID_ARGUMENT
-	// and changes nothing. A workload keeps the policy it was admitted with;
-	// the new one applies to workloads admitted after it. A project the
-	// workspace does not have is NOT_FOUND. A token limited to a project
-	// sets only that project's policy, and a token limited to an environment
-	// is PERMISSION_DENIED.
-	SetProjectNetwork(context.Context, *connect.Request[workspacev1.SetProjectNetworkRequest]) (*connect.Response[workspacev1.SetProjectNetworkResponse], error)
 	// GetEnvironmentNetwork returns an environment's network policy, which
 	// narrows its project's: a destination is reached only when both allow
 	// it. An environment that never set one allows every destination its
@@ -221,13 +196,6 @@ type ProjectServiceClient interface {
 	// NOT_FOUND. A token limited to an environment reads only that
 	// environment's policy.
 	GetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.GetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.GetEnvironmentNetworkResponse], error)
-	// SetEnvironmentNetwork replaces an environment's network policy whole,
-	// checked as SetProjectNetwork checks a project's. It can only narrow
-	// the project's policy: an allow the project denies stays denied. A
-	// workload keeps the policy it was admitted with. A project or
-	// environment the workspace does not have is NOT_FOUND. A token limited
-	// to an environment sets only that environment's policy.
-	SetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error)
 	// GetEnvironmentRetention returns an environment's retention override,
 	// as stored, and the retention that applies to it: the override where it
 	// shortens the workspace's, else the workspace's. An environment that
@@ -235,39 +203,29 @@ type ProjectServiceClient interface {
 	// workspace does not have is NOT_FOUND. A token limited to an
 	// environment reads only that environment's.
 	GetEnvironmentRetention(context.Context, *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error)
-	// SetEnvironmentRetention replaces an environment's retention override
-	// whole; an empty retention clears it. An override may only shorten the
-	// workspace's: history_days above the workspace's period, or a keep
+	// UpdateEnvironment sets the fields update_mask names on an environment:
+	// retention replaces its retention override whole, which may only shorten
+	// the workspace's: history_days above the workspace's period, or a keep
 	// longer than the workspace's keep of that kind, is INVALID_ARGUMENT
 	// naming the field and the limit, and so is a recording-signed-in keep
-	// longer than the recording keep that applies after it. A project or
-	// environment the workspace does not have is NOT_FOUND. A token limited
-	// to an environment sets only that environment's.
-	SetEnvironmentRetention(context.Context, *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error)
-	// SetEnvironmentVolumes replaces the list of the project's volumes an
-	// environment's services and sandboxes may attach; an empty list lets
-	// them attach any. An attach of a volume the list leaves out, by
-	// AttachVolume or at sandbox create, is FAILED_PRECONDITION naming the
-	// environment and the volume; a volume attached before stays. A name
-	// that is no volume of the project is INVALID_ARGUMENT naming it. A
-	// project or environment the workspace does not have is NOT_FOUND. A
-	// token limited to an environment sets only that environment's.
-	SetEnvironmentVolumes(context.Context, *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error)
-	// UpdateEnvironment sets the fields update_mask names on an environment:
-	// retention replaces its retention override whole, as
-	// SetEnvironmentRetention does, and volumes replaces the list of the
-	// project's volumes its services and sandboxes may attach, as
-	// SetEnvironmentVolumes does, and model_credential_defaults replaces the
-	// environment's default model credentials, which also needs
-	// model_credentials.write, and compatibility_date sets the environment's
-	// override of the project's date, an empty one clearing it. Each is
-	// checked as that call checks it, and the other overrides are written
-	// together or not at all. An omitted mask means
-	// the fields the request sets; clearing the override or the list needs
-	// its path in the mask. "*" and a path of any other field are
-	// INVALID_ARGUMENT. A project or environment the workspace does not have
-	// is NOT_FOUND. A token limited to an environment updates only that
-	// environment.
+	// longer than the recording keep that applies after it; an empty
+	// retention clears it. volumes replaces the list of the project's
+	// volumes its services and sandboxes may attach; an empty list lets them
+	// attach any, and a name that is no volume of the project is
+	// INVALID_ARGUMENT naming it. network replaces the environment's network
+	// policy whole, checked as UpdateProject checks a project's; it can only
+	// narrow the project's policy: an allow the project denies stays denied,
+	// and a workload keeps the policy it was admitted with.
+	// model_credential_defaults replaces the environment's default model
+	// credentials, which also needs model_credentials.write, and
+	// compatibility_date sets the environment's override of the project's
+	// date, an empty one clearing it. Each is checked before anything is
+	// written, and the other overrides are written together or not at all.
+	// An omitted mask means the fields the request sets; clearing the
+	// override or the list needs its path in the mask. "*" and a path of any
+	// other field are INVALID_ARGUMENT. A project or environment the
+	// workspace does not have is NOT_FOUND. A token limited to an environment
+	// updates only that environment.
 	UpdateEnvironment(context.Context, *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error)
 	// RaiseCompatibilityDate moves a project's compatibility date, or one
 	// environment's override of it, to date, a YYYY-MM-DD date. With
@@ -381,22 +339,10 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("ListBranchRules")),
 			connect.WithClientOptions(opts...),
 		),
-		setBranchRules: connect.NewClient[workspacev1.SetBranchRulesRequest, workspacev1.SetBranchRulesResponse](
-			httpClient,
-			baseURL+ProjectServiceSetBranchRulesProcedure,
-			connect.WithSchema(projectServiceMethods.ByName("SetBranchRules")),
-			connect.WithClientOptions(opts...),
-		),
 		getProjectNetwork: connect.NewClient[workspacev1.GetProjectNetworkRequest, workspacev1.GetProjectNetworkResponse](
 			httpClient,
 			baseURL+ProjectServiceGetProjectNetworkProcedure,
 			connect.WithSchema(projectServiceMethods.ByName("GetProjectNetwork")),
-			connect.WithClientOptions(opts...),
-		),
-		setProjectNetwork: connect.NewClient[workspacev1.SetProjectNetworkRequest, workspacev1.SetProjectNetworkResponse](
-			httpClient,
-			baseURL+ProjectServiceSetProjectNetworkProcedure,
-			connect.WithSchema(projectServiceMethods.ByName("SetProjectNetwork")),
 			connect.WithClientOptions(opts...),
 		),
 		getEnvironmentNetwork: connect.NewClient[workspacev1.GetEnvironmentNetworkRequest, workspacev1.GetEnvironmentNetworkResponse](
@@ -405,28 +351,10 @@ func NewProjectServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(projectServiceMethods.ByName("GetEnvironmentNetwork")),
 			connect.WithClientOptions(opts...),
 		),
-		setEnvironmentNetwork: connect.NewClient[workspacev1.SetEnvironmentNetworkRequest, workspacev1.SetEnvironmentNetworkResponse](
-			httpClient,
-			baseURL+ProjectServiceSetEnvironmentNetworkProcedure,
-			connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentNetwork")),
-			connect.WithClientOptions(opts...),
-		),
 		getEnvironmentRetention: connect.NewClient[workspacev1.GetEnvironmentRetentionRequest, workspacev1.GetEnvironmentRetentionResponse](
 			httpClient,
 			baseURL+ProjectServiceGetEnvironmentRetentionProcedure,
 			connect.WithSchema(projectServiceMethods.ByName("GetEnvironmentRetention")),
-			connect.WithClientOptions(opts...),
-		),
-		setEnvironmentRetention: connect.NewClient[workspacev1.SetEnvironmentRetentionRequest, workspacev1.SetEnvironmentRetentionResponse](
-			httpClient,
-			baseURL+ProjectServiceSetEnvironmentRetentionProcedure,
-			connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentRetention")),
-			connect.WithClientOptions(opts...),
-		),
-		setEnvironmentVolumes: connect.NewClient[workspacev1.SetEnvironmentVolumesRequest, workspacev1.SetEnvironmentVolumesResponse](
-			httpClient,
-			baseURL+ProjectServiceSetEnvironmentVolumesProcedure,
-			connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentVolumes")),
 			connect.WithClientOptions(opts...),
 		),
 		updateEnvironment: connect.NewClient[workspacev1.UpdateEnvironmentRequest, workspacev1.UpdateEnvironmentResponse](
@@ -479,14 +407,9 @@ type projectServiceClient struct {
 	createEnvironment        *connect.Client[workspacev1.CreateEnvironmentRequest, workspacev1.CreateEnvironmentResponse]
 	deleteEnvironment        *connect.Client[workspacev1.DeleteEnvironmentRequest, workspacev1.DeleteEnvironmentResponse]
 	listBranchRules          *connect.Client[workspacev1.ListBranchRulesRequest, workspacev1.ListBranchRulesResponse]
-	setBranchRules           *connect.Client[workspacev1.SetBranchRulesRequest, workspacev1.SetBranchRulesResponse]
 	getProjectNetwork        *connect.Client[workspacev1.GetProjectNetworkRequest, workspacev1.GetProjectNetworkResponse]
-	setProjectNetwork        *connect.Client[workspacev1.SetProjectNetworkRequest, workspacev1.SetProjectNetworkResponse]
 	getEnvironmentNetwork    *connect.Client[workspacev1.GetEnvironmentNetworkRequest, workspacev1.GetEnvironmentNetworkResponse]
-	setEnvironmentNetwork    *connect.Client[workspacev1.SetEnvironmentNetworkRequest, workspacev1.SetEnvironmentNetworkResponse]
 	getEnvironmentRetention  *connect.Client[workspacev1.GetEnvironmentRetentionRequest, workspacev1.GetEnvironmentRetentionResponse]
-	setEnvironmentRetention  *connect.Client[workspacev1.SetEnvironmentRetentionRequest, workspacev1.SetEnvironmentRetentionResponse]
-	setEnvironmentVolumes    *connect.Client[workspacev1.SetEnvironmentVolumesRequest, workspacev1.SetEnvironmentVolumesResponse]
 	updateEnvironment        *connect.Client[workspacev1.UpdateEnvironmentRequest, workspacev1.UpdateEnvironmentResponse]
 	raiseCompatibilityDate   *connect.Client[workspacev1.RaiseCompatibilityDateRequest, workspacev1.RaiseCompatibilityDateResponse]
 	listCompatibilityChanges *connect.Client[workspacev1.ListCompatibilityChangesRequest, workspacev1.ListCompatibilityChangesResponse]
@@ -540,19 +463,9 @@ func (c *projectServiceClient) ListBranchRules(ctx context.Context, req *connect
 	return c.listBranchRules.CallUnary(ctx, req)
 }
 
-// SetBranchRules calls toshi.workspace.v1.ProjectService.SetBranchRules.
-func (c *projectServiceClient) SetBranchRules(ctx context.Context, req *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error) {
-	return c.setBranchRules.CallUnary(ctx, req)
-}
-
 // GetProjectNetwork calls toshi.workspace.v1.ProjectService.GetProjectNetwork.
 func (c *projectServiceClient) GetProjectNetwork(ctx context.Context, req *connect.Request[workspacev1.GetProjectNetworkRequest]) (*connect.Response[workspacev1.GetProjectNetworkResponse], error) {
 	return c.getProjectNetwork.CallUnary(ctx, req)
-}
-
-// SetProjectNetwork calls toshi.workspace.v1.ProjectService.SetProjectNetwork.
-func (c *projectServiceClient) SetProjectNetwork(ctx context.Context, req *connect.Request[workspacev1.SetProjectNetworkRequest]) (*connect.Response[workspacev1.SetProjectNetworkResponse], error) {
-	return c.setProjectNetwork.CallUnary(ctx, req)
 }
 
 // GetEnvironmentNetwork calls toshi.workspace.v1.ProjectService.GetEnvironmentNetwork.
@@ -560,24 +473,9 @@ func (c *projectServiceClient) GetEnvironmentNetwork(ctx context.Context, req *c
 	return c.getEnvironmentNetwork.CallUnary(ctx, req)
 }
 
-// SetEnvironmentNetwork calls toshi.workspace.v1.ProjectService.SetEnvironmentNetwork.
-func (c *projectServiceClient) SetEnvironmentNetwork(ctx context.Context, req *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error) {
-	return c.setEnvironmentNetwork.CallUnary(ctx, req)
-}
-
 // GetEnvironmentRetention calls toshi.workspace.v1.ProjectService.GetEnvironmentRetention.
 func (c *projectServiceClient) GetEnvironmentRetention(ctx context.Context, req *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error) {
 	return c.getEnvironmentRetention.CallUnary(ctx, req)
-}
-
-// SetEnvironmentRetention calls toshi.workspace.v1.ProjectService.SetEnvironmentRetention.
-func (c *projectServiceClient) SetEnvironmentRetention(ctx context.Context, req *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error) {
-	return c.setEnvironmentRetention.CallUnary(ctx, req)
-}
-
-// SetEnvironmentVolumes calls toshi.workspace.v1.ProjectService.SetEnvironmentVolumes.
-func (c *projectServiceClient) SetEnvironmentVolumes(ctx context.Context, req *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error) {
-	return c.setEnvironmentVolumes.CallUnary(ctx, req)
 }
 
 // UpdateEnvironment calls toshi.workspace.v1.ProjectService.UpdateEnvironment.
@@ -644,16 +542,28 @@ type ProjectServiceHandler interface {
 	// recording_defaults.recording_segment_minutes and
 	// recording_defaults.recording_max_mib; volume_rules, the project's
 	// volume rules, replaced whole by the value the call carries, an empty
-	// one clearing them; and compatibility_flags, the project's compatibility
+	// one clearing them; compatibility_flags, the project's compatibility
 	// flags, replaced whole by the value the call carries, an empty one
 	// clearing them, each flag checked against the dated changes Toshi lists
-	// and an unknown one INVALID_ARGUMENT. An unset update_mask names the
-	// fields project carries. An empty one, an unset one with no admission,
-	// no recording_defaults, no volume_rules and no compatibility_flags, "*"
-	// and a path of another field are INVALID_ARGUMENT. The secret is sealed
-	// under the workspace's data key and never returned; a deployment with no
-	// keyring refuses it with FAILED_PRECONDITION. A token limited to
-	// environments is PERMISSION_DENIED.
+	// and an unknown one INVALID_ARGUMENT; branch_rules, the project's branch
+	// rules, replaced whole by the list the call carries, which has at most
+	// 100 rules, a known match on each, a pattern on exactly the pattern
+	// rules, no two rules matching the same way, the fallback rule exactly
+	// once and last, each environment one of the project's or none, and the
+	// fallback rule's environment not a production one, any other list
+	// INVALID_ARGUMENT, and a job already assigned keeps the environment it
+	// got; and network, the project's network policy, replaced whole by the
+	// value the call carries, which has at most 100 rules, each an allow or a
+	// deny of an address, a CIDR prefix or a DNS name, with an optional port
+	// or port range and protocol, any other policy INVALID_ARGUMENT, and a
+	// workload keeps the policy it was admitted with. An unset update_mask
+	// names the fields project carries. An empty one, an unset one with no
+	// admission, no recording_defaults, no volume_rules, no compatibility_flags,
+	// no branch_rules and no network, "*" and a path of another field are
+	// INVALID_ARGUMENT. The secret is sealed under the workspace's data key
+	// and never returned; a deployment with no keyring refuses it with
+	// FAILED_PRECONDITION. A token limited to environments is
+	// PERMISSION_DENIED.
 	UpdateProject(context.Context, *connect.Request[workspacev1.UpdateProjectRequest]) (*connect.Response[workspacev1.UpdateProjectResponse], error)
 	// ClaimRepository puts a repository in a project: it claims a repository
 	// no project claims, or moves the claim from another project. A CI job
@@ -692,34 +602,12 @@ type ProjectServiceHandler interface {
 	//
 	// A page holds 100 rules when page_size is zero, and 1000 at most.
 	ListBranchRules(context.Context, *connect.Request[workspacev1.ListBranchRulesRequest]) (*connect.Response[workspacev1.ListBranchRulesResponse], error)
-	// SetBranchRules replaces a project's branch rules with the list given,
-	// whole: it has at most 100 rules, a known match on each, a pattern on
-	// exactly the pattern rules, no two rules matching the same way, the
-	// fallback rule exactly once and last, each environment one of the
-	// project's or none, and the fallback rule's environment not a
-	// production one. Any other list is INVALID_ARGUMENT and changes
-	// nothing. A job already assigned keeps the environment it got; the new
-	// rules choose from its next assignment. A project the workspace does
-	// not have is NOT_FOUND. A token limited to a project sets only that
-	// project's rules, and a token limited to an environment is
-	// PERMISSION_DENIED.
-	SetBranchRules(context.Context, *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error)
 	// GetProjectNetwork returns a project's network policy: where its
 	// workloads may connect outbound. A project that never set one allows
 	// every destination. A project the workspace does not have is NOT_FOUND.
 	// A token limited to a project reads only that project's policy, and a
 	// token limited to an environment is PERMISSION_DENIED.
 	GetProjectNetwork(context.Context, *connect.Request[workspacev1.GetProjectNetworkRequest]) (*connect.Response[workspacev1.GetProjectNetworkResponse], error)
-	// SetProjectNetwork replaces a project's network policy whole: the
-	// default and the ordered rules. It has at most 100 rules, each an allow
-	// or a deny of an address, a CIDR prefix or a DNS name, with an optional
-	// port or port range and protocol. Any other policy is INVALID_ARGUMENT
-	// and changes nothing. A workload keeps the policy it was admitted with;
-	// the new one applies to workloads admitted after it. A project the
-	// workspace does not have is NOT_FOUND. A token limited to a project
-	// sets only that project's policy, and a token limited to an environment
-	// is PERMISSION_DENIED.
-	SetProjectNetwork(context.Context, *connect.Request[workspacev1.SetProjectNetworkRequest]) (*connect.Response[workspacev1.SetProjectNetworkResponse], error)
 	// GetEnvironmentNetwork returns an environment's network policy, which
 	// narrows its project's: a destination is reached only when both allow
 	// it. An environment that never set one allows every destination its
@@ -727,13 +615,6 @@ type ProjectServiceHandler interface {
 	// NOT_FOUND. A token limited to an environment reads only that
 	// environment's policy.
 	GetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.GetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.GetEnvironmentNetworkResponse], error)
-	// SetEnvironmentNetwork replaces an environment's network policy whole,
-	// checked as SetProjectNetwork checks a project's. It can only narrow
-	// the project's policy: an allow the project denies stays denied. A
-	// workload keeps the policy it was admitted with. A project or
-	// environment the workspace does not have is NOT_FOUND. A token limited
-	// to an environment sets only that environment's policy.
-	SetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error)
 	// GetEnvironmentRetention returns an environment's retention override,
 	// as stored, and the retention that applies to it: the override where it
 	// shortens the workspace's, else the workspace's. An environment that
@@ -741,39 +622,29 @@ type ProjectServiceHandler interface {
 	// workspace does not have is NOT_FOUND. A token limited to an
 	// environment reads only that environment's.
 	GetEnvironmentRetention(context.Context, *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error)
-	// SetEnvironmentRetention replaces an environment's retention override
-	// whole; an empty retention clears it. An override may only shorten the
-	// workspace's: history_days above the workspace's period, or a keep
+	// UpdateEnvironment sets the fields update_mask names on an environment:
+	// retention replaces its retention override whole, which may only shorten
+	// the workspace's: history_days above the workspace's period, or a keep
 	// longer than the workspace's keep of that kind, is INVALID_ARGUMENT
 	// naming the field and the limit, and so is a recording-signed-in keep
-	// longer than the recording keep that applies after it. A project or
-	// environment the workspace does not have is NOT_FOUND. A token limited
-	// to an environment sets only that environment's.
-	SetEnvironmentRetention(context.Context, *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error)
-	// SetEnvironmentVolumes replaces the list of the project's volumes an
-	// environment's services and sandboxes may attach; an empty list lets
-	// them attach any. An attach of a volume the list leaves out, by
-	// AttachVolume or at sandbox create, is FAILED_PRECONDITION naming the
-	// environment and the volume; a volume attached before stays. A name
-	// that is no volume of the project is INVALID_ARGUMENT naming it. A
-	// project or environment the workspace does not have is NOT_FOUND. A
-	// token limited to an environment sets only that environment's.
-	SetEnvironmentVolumes(context.Context, *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error)
-	// UpdateEnvironment sets the fields update_mask names on an environment:
-	// retention replaces its retention override whole, as
-	// SetEnvironmentRetention does, and volumes replaces the list of the
-	// project's volumes its services and sandboxes may attach, as
-	// SetEnvironmentVolumes does, and model_credential_defaults replaces the
-	// environment's default model credentials, which also needs
-	// model_credentials.write, and compatibility_date sets the environment's
-	// override of the project's date, an empty one clearing it. Each is
-	// checked as that call checks it, and the other overrides are written
-	// together or not at all. An omitted mask means
-	// the fields the request sets; clearing the override or the list needs
-	// its path in the mask. "*" and a path of any other field are
-	// INVALID_ARGUMENT. A project or environment the workspace does not have
-	// is NOT_FOUND. A token limited to an environment updates only that
-	// environment.
+	// longer than the recording keep that applies after it; an empty
+	// retention clears it. volumes replaces the list of the project's
+	// volumes its services and sandboxes may attach; an empty list lets them
+	// attach any, and a name that is no volume of the project is
+	// INVALID_ARGUMENT naming it. network replaces the environment's network
+	// policy whole, checked as UpdateProject checks a project's; it can only
+	// narrow the project's policy: an allow the project denies stays denied,
+	// and a workload keeps the policy it was admitted with.
+	// model_credential_defaults replaces the environment's default model
+	// credentials, which also needs model_credentials.write, and
+	// compatibility_date sets the environment's override of the project's
+	// date, an empty one clearing it. Each is checked before anything is
+	// written, and the other overrides are written together or not at all.
+	// An omitted mask means the fields the request sets; clearing the
+	// override or the list needs its path in the mask. "*" and a path of any
+	// other field are INVALID_ARGUMENT. A project or environment the
+	// workspace does not have is NOT_FOUND. A token limited to an environment
+	// updates only that environment.
 	UpdateEnvironment(context.Context, *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error)
 	// RaiseCompatibilityDate moves a project's compatibility date, or one
 	// environment's override of it, to date, a YYYY-MM-DD date. With
@@ -883,22 +754,10 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("ListBranchRules")),
 		connect.WithHandlerOptions(opts...),
 	)
-	projectServiceSetBranchRulesHandler := connect.NewUnaryHandler(
-		ProjectServiceSetBranchRulesProcedure,
-		svc.SetBranchRules,
-		connect.WithSchema(projectServiceMethods.ByName("SetBranchRules")),
-		connect.WithHandlerOptions(opts...),
-	)
 	projectServiceGetProjectNetworkHandler := connect.NewUnaryHandler(
 		ProjectServiceGetProjectNetworkProcedure,
 		svc.GetProjectNetwork,
 		connect.WithSchema(projectServiceMethods.ByName("GetProjectNetwork")),
-		connect.WithHandlerOptions(opts...),
-	)
-	projectServiceSetProjectNetworkHandler := connect.NewUnaryHandler(
-		ProjectServiceSetProjectNetworkProcedure,
-		svc.SetProjectNetwork,
-		connect.WithSchema(projectServiceMethods.ByName("SetProjectNetwork")),
 		connect.WithHandlerOptions(opts...),
 	)
 	projectServiceGetEnvironmentNetworkHandler := connect.NewUnaryHandler(
@@ -907,28 +766,10 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 		connect.WithSchema(projectServiceMethods.ByName("GetEnvironmentNetwork")),
 		connect.WithHandlerOptions(opts...),
 	)
-	projectServiceSetEnvironmentNetworkHandler := connect.NewUnaryHandler(
-		ProjectServiceSetEnvironmentNetworkProcedure,
-		svc.SetEnvironmentNetwork,
-		connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentNetwork")),
-		connect.WithHandlerOptions(opts...),
-	)
 	projectServiceGetEnvironmentRetentionHandler := connect.NewUnaryHandler(
 		ProjectServiceGetEnvironmentRetentionProcedure,
 		svc.GetEnvironmentRetention,
 		connect.WithSchema(projectServiceMethods.ByName("GetEnvironmentRetention")),
-		connect.WithHandlerOptions(opts...),
-	)
-	projectServiceSetEnvironmentRetentionHandler := connect.NewUnaryHandler(
-		ProjectServiceSetEnvironmentRetentionProcedure,
-		svc.SetEnvironmentRetention,
-		connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentRetention")),
-		connect.WithHandlerOptions(opts...),
-	)
-	projectServiceSetEnvironmentVolumesHandler := connect.NewUnaryHandler(
-		ProjectServiceSetEnvironmentVolumesProcedure,
-		svc.SetEnvironmentVolumes,
-		connect.WithSchema(projectServiceMethods.ByName("SetEnvironmentVolumes")),
 		connect.WithHandlerOptions(opts...),
 	)
 	projectServiceUpdateEnvironmentHandler := connect.NewUnaryHandler(
@@ -987,22 +828,12 @@ func NewProjectServiceHandler(svc ProjectServiceHandler, opts ...connect.Handler
 			projectServiceDeleteEnvironmentHandler.ServeHTTP(w, r)
 		case ProjectServiceListBranchRulesProcedure:
 			projectServiceListBranchRulesHandler.ServeHTTP(w, r)
-		case ProjectServiceSetBranchRulesProcedure:
-			projectServiceSetBranchRulesHandler.ServeHTTP(w, r)
 		case ProjectServiceGetProjectNetworkProcedure:
 			projectServiceGetProjectNetworkHandler.ServeHTTP(w, r)
-		case ProjectServiceSetProjectNetworkProcedure:
-			projectServiceSetProjectNetworkHandler.ServeHTTP(w, r)
 		case ProjectServiceGetEnvironmentNetworkProcedure:
 			projectServiceGetEnvironmentNetworkHandler.ServeHTTP(w, r)
-		case ProjectServiceSetEnvironmentNetworkProcedure:
-			projectServiceSetEnvironmentNetworkHandler.ServeHTTP(w, r)
 		case ProjectServiceGetEnvironmentRetentionProcedure:
 			projectServiceGetEnvironmentRetentionHandler.ServeHTTP(w, r)
-		case ProjectServiceSetEnvironmentRetentionProcedure:
-			projectServiceSetEnvironmentRetentionHandler.ServeHTTP(w, r)
-		case ProjectServiceSetEnvironmentVolumesProcedure:
-			projectServiceSetEnvironmentVolumesHandler.ServeHTTP(w, r)
 		case ProjectServiceUpdateEnvironmentProcedure:
 			projectServiceUpdateEnvironmentHandler.ServeHTTP(w, r)
 		case ProjectServiceRaiseCompatibilityDateProcedure:
@@ -1060,36 +891,16 @@ func (UnimplementedProjectServiceHandler) ListBranchRules(context.Context, *conn
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.ListBranchRules is not implemented"))
 }
 
-func (UnimplementedProjectServiceHandler) SetBranchRules(context.Context, *connect.Request[workspacev1.SetBranchRulesRequest]) (*connect.Response[workspacev1.SetBranchRulesResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetBranchRules is not implemented"))
-}
-
 func (UnimplementedProjectServiceHandler) GetProjectNetwork(context.Context, *connect.Request[workspacev1.GetProjectNetworkRequest]) (*connect.Response[workspacev1.GetProjectNetworkResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.GetProjectNetwork is not implemented"))
-}
-
-func (UnimplementedProjectServiceHandler) SetProjectNetwork(context.Context, *connect.Request[workspacev1.SetProjectNetworkRequest]) (*connect.Response[workspacev1.SetProjectNetworkResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetProjectNetwork is not implemented"))
 }
 
 func (UnimplementedProjectServiceHandler) GetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.GetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.GetEnvironmentNetworkResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.GetEnvironmentNetwork is not implemented"))
 }
 
-func (UnimplementedProjectServiceHandler) SetEnvironmentNetwork(context.Context, *connect.Request[workspacev1.SetEnvironmentNetworkRequest]) (*connect.Response[workspacev1.SetEnvironmentNetworkResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetEnvironmentNetwork is not implemented"))
-}
-
 func (UnimplementedProjectServiceHandler) GetEnvironmentRetention(context.Context, *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.GetEnvironmentRetention is not implemented"))
-}
-
-func (UnimplementedProjectServiceHandler) SetEnvironmentRetention(context.Context, *connect.Request[workspacev1.SetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.SetEnvironmentRetentionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetEnvironmentRetention is not implemented"))
-}
-
-func (UnimplementedProjectServiceHandler) SetEnvironmentVolumes(context.Context, *connect.Request[workspacev1.SetEnvironmentVolumesRequest]) (*connect.Response[workspacev1.SetEnvironmentVolumesResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ProjectService.SetEnvironmentVolumes is not implemented"))
 }
 
 func (UnimplementedProjectServiceHandler) UpdateEnvironment(context.Context, *connect.Request[workspacev1.UpdateEnvironmentRequest]) (*connect.Response[workspacev1.UpdateEnvironmentResponse], error) {

@@ -67,16 +67,28 @@ service ProjectService {
   // recording_defaults.recording_segment_minutes and
   // recording_defaults.recording_max_mib; volume_rules, the project's
   // volume rules, replaced whole by the value the call carries, an empty
-  // one clearing them; and compatibility_flags, the project's compatibility
+  // one clearing them; compatibility_flags, the project's compatibility
   // flags, replaced whole by the value the call carries, an empty one
   // clearing them, each flag checked against the dated changes Toshi lists
-  // and an unknown one INVALID_ARGUMENT. An unset update_mask names the
-  // fields project carries. An empty one, an unset one with no admission,
-  // no recording_defaults, no volume_rules and no compatibility_flags, "*"
-  // and a path of another field are INVALID_ARGUMENT. The secret is sealed
-  // under the workspace's data key and never returned; a deployment with no
-  // keyring refuses it with FAILED_PRECONDITION. A token limited to
-  // environments is PERMISSION_DENIED.
+  // and an unknown one INVALID_ARGUMENT; branch_rules, the project's branch
+  // rules, replaced whole by the list the call carries, which has at most
+  // 100 rules, a known match on each, a pattern on exactly the pattern
+  // rules, no two rules matching the same way, the fallback rule exactly
+  // once and last, each environment one of the project's or none, and the
+  // fallback rule's environment not a production one, any other list
+  // INVALID_ARGUMENT, and a job already assigned keeps the environment it
+  // got; and network, the project's network policy, replaced whole by the
+  // value the call carries, which has at most 100 rules, each an allow or a
+  // deny of an address, a CIDR prefix or a DNS name, with an optional port
+  // or port range and protocol, any other policy INVALID_ARGUMENT, and a
+  // workload keeps the policy it was admitted with. An unset update_mask
+  // names the fields project carries. An empty one, an unset one with no
+  // admission, no recording_defaults, no volume_rules, no compatibility_flags,
+  // no branch_rules and no network, "*" and a path of another field are
+  // INVALID_ARGUMENT. The secret is sealed under the workspace's data key
+  // and never returned; a deployment with no keyring refuses it with
+  // FAILED_PRECONDITION. A token limited to environments is
+  // PERMISSION_DENIED.
   rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "projects.write";
@@ -138,23 +150,6 @@ service ProjectService {
     option (toshi.permission) = "projects.read";
     option (toshi.scope) = "project";
   }
-  // SetBranchRules replaces a project's branch rules with the list given,
-  // whole: it has at most 100 rules, a known match on each, a pattern on
-  // exactly the pattern rules, no two rules matching the same way, the
-  // fallback rule exactly once and last, each environment one of the
-  // project's or none, and the fallback rule's environment not a
-  // production one. Any other list is INVALID_ARGUMENT and changes
-  // nothing. A job already assigned keeps the environment it got; the new
-  // rules choose from its next assignment. A project the workspace does
-  // not have is NOT_FOUND. A token limited to a project sets only that
-  // project's rules, and a token limited to an environment is
-  // PERMISSION_DENIED.
-  rpc SetBranchRules(SetBranchRulesRequest) returns (SetBranchRulesResponse) {
-    option (toshi.key_mode) = NATURAL;
-    option (toshi.permission) = "projects.write";
-    option (toshi.scope) = "project";
-    option (toshi.audit) = {target: "project:project"};
-  }
   // GetProjectNetwork returns a project's network policy: where its
   // workloads may connect outbound. A project that never set one allows
   // every destination. A project the workspace does not have is NOT_FOUND.
@@ -163,21 +158,6 @@ service ProjectService {
   rpc GetProjectNetwork(GetProjectNetworkRequest) returns (GetProjectNetworkResponse) {
     option (toshi.permission) = "projects.read";
     option (toshi.scope) = "project";
-  }
-  // SetProjectNetwork replaces a project's network policy whole: the
-  // default and the ordered rules. It has at most 100 rules, each an allow
-  // or a deny of an address, a CIDR prefix or a DNS name, with an optional
-  // port or port range and protocol. Any other policy is INVALID_ARGUMENT
-  // and changes nothing. A workload keeps the policy it was admitted with;
-  // the new one applies to workloads admitted after it. A project the
-  // workspace does not have is NOT_FOUND. A token limited to a project
-  // sets only that project's policy, and a token limited to an environment
-  // is PERMISSION_DENIED.
-  rpc SetProjectNetwork(SetProjectNetworkRequest) returns (SetProjectNetworkResponse) {
-    option (toshi.key_mode) = NATURAL;
-    option (toshi.permission) = "projects.write";
-    option (toshi.scope) = "project";
-    option (toshi.audit) = {target: "project:project"};
   }
   // GetEnvironmentNetwork returns an environment's network policy, which
   // narrows its project's: a destination is reached only when both allow
@@ -189,18 +169,6 @@ service ProjectService {
     option (toshi.permission) = "projects.read";
     option (toshi.scope) = "environment";
   }
-  // SetEnvironmentNetwork replaces an environment's network policy whole,
-  // checked as SetProjectNetwork checks a project's. It can only narrow
-  // the project's policy: an allow the project denies stays denied. A
-  // workload keeps the policy it was admitted with. A project or
-  // environment the workspace does not have is NOT_FOUND. A token limited
-  // to an environment sets only that environment's policy.
-  rpc SetEnvironmentNetwork(SetEnvironmentNetworkRequest) returns (SetEnvironmentNetworkResponse) {
-    option (toshi.key_mode) = NATURAL;
-    option (toshi.permission) = "projects.write";
-    option (toshi.scope) = "environment";
-    option (toshi.audit) = {target: "project:project"};
-  }
   // GetEnvironmentRetention returns an environment's retention override,
   // as stored, and the retention that applies to it: the override where it
   // shortens the workspace's, else the workspace's. An environment that
@@ -211,49 +179,29 @@ service ProjectService {
     option (toshi.permission) = "projects.read";
     option (toshi.scope) = "environment";
   }
-  // SetEnvironmentRetention replaces an environment's retention override
-  // whole; an empty retention clears it. An override may only shorten the
-  // workspace's: history_days above the workspace's period, or a keep
+  // UpdateEnvironment sets the fields update_mask names on an environment:
+  // retention replaces its retention override whole, which may only shorten
+  // the workspace's: history_days above the workspace's period, or a keep
   // longer than the workspace's keep of that kind, is INVALID_ARGUMENT
   // naming the field and the limit, and so is a recording-signed-in keep
-  // longer than the recording keep that applies after it. A project or
-  // environment the workspace does not have is NOT_FOUND. A token limited
-  // to an environment sets only that environment's.
-  rpc SetEnvironmentRetention(SetEnvironmentRetentionRequest) returns (SetEnvironmentRetentionResponse) {
-    option (toshi.key_mode) = NATURAL;
-    option (toshi.permission) = "projects.write";
-    option (toshi.scope) = "environment";
-    option (toshi.audit) = {target: "project:project"};
-  }
-  // SetEnvironmentVolumes replaces the list of the project's volumes an
-  // environment's services and sandboxes may attach; an empty list lets
-  // them attach any. An attach of a volume the list leaves out, by
-  // AttachVolume or at sandbox create, is FAILED_PRECONDITION naming the
-  // environment and the volume; a volume attached before stays. A name
-  // that is no volume of the project is INVALID_ARGUMENT naming it. A
-  // project or environment the workspace does not have is NOT_FOUND. A
-  // token limited to an environment sets only that environment's.
-  rpc SetEnvironmentVolumes(SetEnvironmentVolumesRequest) returns (SetEnvironmentVolumesResponse) {
-    option (toshi.key_mode) = NATURAL;
-    option (toshi.permission) = "projects.write";
-    option (toshi.scope) = "environment";
-    option (toshi.audit) = {target: "project:project"};
-  }
-  // UpdateEnvironment sets the fields update_mask names on an environment:
-  // retention replaces its retention override whole, as
-  // SetEnvironmentRetention does, and volumes replaces the list of the
-  // project's volumes its services and sandboxes may attach, as
-  // SetEnvironmentVolumes does, and model_credential_defaults replaces the
-  // environment's default model credentials, which also needs
-  // model_credentials.write, and compatibility_date sets the environment's
-  // override of the project's date, an empty one clearing it. Each is
-  // checked as that call checks it, and the other overrides are written
-  // together or not at all. An omitted mask means
-  // the fields the request sets; clearing the override or the list needs
-  // its path in the mask. "*" and a path of any other field are
-  // INVALID_ARGUMENT. A project or environment the workspace does not have
-  // is NOT_FOUND. A token limited to an environment updates only that
-  // environment.
+  // longer than the recording keep that applies after it; an empty
+  // retention clears it. volumes replaces the list of the project's
+  // volumes its services and sandboxes may attach; an empty list lets them
+  // attach any, and a name that is no volume of the project is
+  // INVALID_ARGUMENT naming it. network replaces the environment's network
+  // policy whole, checked as UpdateProject checks a project's; it can only
+  // narrow the project's policy: an allow the project denies stays denied,
+  // and a workload keeps the policy it was admitted with.
+  // model_credential_defaults replaces the environment's default model
+  // credentials, which also needs model_credentials.write, and
+  // compatibility_date sets the environment's override of the project's
+  // date, an empty one clearing it. Each is checked before anything is
+  // written, and the other overrides are written together or not at all.
+  // An omitted mask means the fields the request sets; clearing the
+  // override or the list needs its path in the mask. "*" and a path of any
+  // other field are INVALID_ARGUMENT. A project or environment the
+  // workspace does not have is NOT_FOUND. A token limited to an environment
+  // updates only that environment.
   rpc UpdateEnvironment(UpdateEnvironmentRequest) returns (UpdateEnvironmentResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "projects.write";
@@ -363,6 +311,18 @@ message Project {
   // initial_compatibility_date is the date the project was created at.
   // Output only.
   string initial_compatibility_date = 10;
+  // branch_rules is the project's branch rules in order, the fallback rule
+  // last, each environment by name: the first that matches a CI job's run
+  // chooses the job's environment. GetProject and UpdateProject return
+  // them; ListProjects does not. A token limited to an environment gets
+  // them unset, as ListBranchRules refuses it. Set with UpdateProject.
+  repeated BranchRule branch_rules = 11;
+  // network is the project's network policy: where its workloads may
+  // connect outbound, as GetProjectNetwork returns it. A project that never
+  // set one allows every destination. GetProject and UpdateProject return
+  // it; ListProjects does not. A token limited to an environment gets it
+  // unset, as GetProjectNetwork refuses it. Set with UpdateProject.
+  NetworkPolicy network = 12;
 }
 
 // ProjectVolumeRules bounds the volumes a project's runs create.
@@ -462,7 +422,7 @@ message ProjectEnvironment {
   string kind = 2;
   // The names of the project's volumes the environment's services and
   // sandboxes may attach, sorted; empty when any of them may. Set with
-  // UpdateEnvironment or SetEnvironmentVolumes.
+  // UpdateEnvironment.
   repeated string volumes = 3;
   // Who manages this object: "manifest" when the project manifest declares
   // it, empty when nothing does. A manifest apply sets managed_by,
@@ -479,8 +439,7 @@ message ProjectEnvironment {
   // already existed. Empty when managed_by is empty.
   string manifest_origin = 7;
   // The environment's retention override as stored; empty when it
-  // follows the workspace. Set with UpdateEnvironment or
-  // SetEnvironmentRetention.
+  // follows the workspace. Set with UpdateEnvironment.
   EnvironmentRetention retention = 8;
   // The environment's default model credential per provider, before the
   // workspace's. Each names a workspace credential whose key serves this
@@ -494,6 +453,13 @@ message ProjectEnvironment {
   // run under: compatibility_date when it is set, else the project's.
   // Output only.
   string effective_compatibility_date = 11;
+  // network is the environment's network policy, which narrows its
+  // project's: a destination is reached only when both allow it, as
+  // GetEnvironmentNetwork returns it. An environment that never set one
+  // allows every destination its project allows. GetProject,
+  // UpdateProject and UpdateEnvironment return it; ListProjects does not.
+  // Set with UpdateEnvironment.
+  NetworkPolicy network = 12;
 }
 
 // Repository is a repository a project claims: a CI job of the repository
@@ -562,8 +528,9 @@ message UpdateProjectRequest {
   // values.
   Project project = 1;
   // update_mask names the fields to set: "admission",
-  // "recording_defaults" or one of its sub-paths, "volume_rules" and
-  // "compatibility_flags". An unset mask names the fields project carries.
+  // "recording_defaults" or one of its sub-paths, "volume_rules",
+  // "compatibility_flags", "branch_rules" and "network". An unset mask
+  // names the fields project carries.
   google.protobuf.FieldMask update_mask = 2;
 }
 
@@ -657,17 +624,6 @@ message ListBranchRulesResponse {
   string next_page_token = 2;
 }
 
-message SetBranchRulesRequest {
-  // The project's name.
-  string project = 1;
-  // The project's new branch rules in order, the fallback rule last.
-  repeated BranchRule rules = 2;
-}
-
-message SetBranchRulesResponse {
-  // The rules as stored.
-  repeated BranchRule rules = 1;
-}
 
 // NetworkPolicy is where a project's or an environment's workloads may
 // connect outbound. The first rule that matches a destination decides;
@@ -710,17 +666,6 @@ message GetProjectNetworkResponse {
   google.protobuf.Timestamp updated_at = 3;
 }
 
-message SetProjectNetworkRequest {
-  // The project's name.
-  string project = 1;
-  NetworkPolicy network = 2;
-}
-
-message SetProjectNetworkResponse {
-  // The policy as stored.
-  NetworkPolicy network = 1;
-}
-
 message GetEnvironmentNetworkRequest {
   // The project's name.
   string project = 1;
@@ -734,19 +679,6 @@ message GetEnvironmentNetworkResponse {
   // never set.
   string updated_by = 2;
   google.protobuf.Timestamp updated_at = 3;
-}
-
-message SetEnvironmentNetworkRequest {
-  // The project's name.
-  string project = 1;
-  // The environment's name.
-  string environment = 2;
-  NetworkPolicy network = 3;
-}
-
-message SetEnvironmentNetworkResponse {
-  // The policy as stored.
-  NetworkPolicy network = 1;
 }
 
 // RetentionKeep is how long one kind of artifact is kept after it
@@ -792,44 +724,14 @@ message GetEnvironmentRetentionResponse {
   google.protobuf.Timestamp updated_at = 4;
 }
 
-message SetEnvironmentRetentionRequest {
-  // The project's name.
-  string project = 1;
-  // The environment's name.
-  string environment = 2;
-  // The whole override; empty clears it.
-  EnvironmentRetention retention = 3;
-}
-
-message SetEnvironmentRetentionResponse {
-  // The override as stored.
-  EnvironmentRetention retention = 1;
-  // What applies after it, as GetEnvironmentRetention reports it.
-  EnvironmentRetention effective = 2;
-}
-
-message SetEnvironmentVolumesRequest {
-  // The project's name.
-  string project = 1;
-  // The environment's name.
-  string environment = 2;
-  // The whole list of volume names; empty lifts the limit.
-  repeated string volumes = 3;
-}
-
-message SetEnvironmentVolumesResponse {
-  // The environment with its list as stored.
-  ProjectEnvironment environment = 1;
-}
-
 message UpdateEnvironmentRequest {
   // The project's name.
   string project = 1;
   // name names the environment; the fields update_mask names carry the
   // new values.
   ProjectEnvironment environment = 2;
-  // retention, volumes, model_credential_defaults, compatibility_date, or
-  // several. The paths managed_by, manifest_digest,
+  // retention, volumes, network, model_credential_defaults,
+  // compatibility_date, or several. The paths managed_by, manifest_digest,
   // manifest_origin and managed_fields set the management mark and go
   // together: all four or none, and on their own; managed_by "manifest"
   // needs the digest, an origin and at least one field path, and an empty
