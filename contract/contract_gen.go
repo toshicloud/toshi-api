@@ -1326,6 +1326,12 @@ func Labels() map[string]map[string]string {
 			"wake_page":                   "Wake page",
 			"client_certificate_required": "Client certificate required",
 		},
+		"PermissionOptionKind": {
+			"allow_once":    "Allow once",
+			"allow_always":  "Allow always",
+			"reject_once":   "Reject once",
+			"reject_always": "Reject always",
+		},
 		"EnvironmentKind": {
 			"development": "Development",
 			"preview":     "Preview",

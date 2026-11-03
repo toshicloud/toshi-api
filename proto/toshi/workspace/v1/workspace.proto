@@ -1664,9 +1664,22 @@ message MailSentEvent {
   string provider_message_id = 4;
 }
 
+// PermissionOption is one choice an ACP permission request offers: the id a
+// client answers with, the name a person reads, and the kind of answer.
+message PermissionOption {
+  // The id the client answers the request with.
+  string option_id = 1;
+  // The name a person reads on the choice.
+  string name = 2;
+  // The kind of answer: allow_once, allow_always, reject_once or
+  // reject_always; empty when the request named none.
+  string kind = 3;
+}
+
 // EndpointACPEvent is an event of an ACP endpoint: the endpoint, its ACP
-// session, and the tool call's kind a permission request named or the reason
-// a turn ended. It carries no title, content or path.
+// session, and, for a permission request, the tool call's kind and title and
+// the choices it offered, or, for a turn, the reason it ended. It carries no
+// tool call content, path or raw input.
 message EndpointACPEvent {
   // The endpoint's name on its job.
   string endpoint = 1;
@@ -1676,6 +1689,11 @@ message EndpointACPEvent {
   string tool_kind = 3;
   // The prompt response's stopReason, at a turn's end.
   string stop_reason = 4;
+  // The permission request's tool call title, the message a person is
+  // shown; empty on a turn_ended event.
+  string title = 5;
+  // The choices a permission request offers; empty on a turn_ended event.
+  repeated PermissionOption options = 6;
 }
 
 // AgentPrompt is a question or an approval an agent workload asked.
@@ -1705,6 +1723,16 @@ message AgentPrompt {
   string answer = 11;
   // The event that recorded the answer, once given.
   string answered_event_id = 12;
+  // Set only when the prompt comes from an ACP permission request: the
+  // request's title, the message a person is shown. Empty for every other
+  // prompt.
+  string permission_message = 13;
+  // Set only when the prompt comes from an ACP permission request: the tool
+  // call's kind. Empty for every other prompt.
+  string permission_name = 14;
+  // Set only when the prompt comes from an ACP permission request: the
+  // choices it offers. Empty for every other prompt.
+  repeated PermissionOption permission_values = 15;
 }
 
 // ConnectionEvent is an event a connection received.
