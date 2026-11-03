@@ -71,7 +71,7 @@ service RoleService {
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this role? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this role? Members who hold it lose its access now."};
   }
   // ListRoleGrants returns the workspace's grants, ordered by subject,
   // then role, then scope, optionally only those of one subject, or only

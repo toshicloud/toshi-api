@@ -88,7 +88,7 @@ service OperatorService {
   rpc RetireHost(RetireHostRequest) returns (RetireHostResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.mcp) = {destructive: true};
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire this host? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire this host? It leaves the deployment's hosts now, and a running agent registers again with its enrollment token."};
   }
 
   // RevokeHost revokes a host at once: its
@@ -117,7 +117,7 @@ service OperatorService {
       target: "none"
     };
     option (toshi.mcp) = {destructive: true};
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire these hosts? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire these hosts? They leave the deployment's hosts now, and a running agent registers again with its enrollment token."};
   }
 
   // CreateWorkspace makes a workspace that has no GitHub installation and
@@ -409,7 +409,7 @@ service OperatorService {
       action: "filler.removed"
       target: "filler:name"
     };
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this filler? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this filler? It is removed now, and its running run is stopped at the host's next heartbeat."};
   }
 
   // UpdateFiller changes whether a filler is enabled, named by the
@@ -528,7 +528,7 @@ service OperatorService {
   // operator set for the workspace is PERMISSION_DENIED to it there.
   rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse) {
     option (toshi.key_mode) = NATURAL;
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this storage provider? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this storage provider? It is refused while artifacts remain on it; forced, they are marked lost and can no longer be read."};
   }
 }
 

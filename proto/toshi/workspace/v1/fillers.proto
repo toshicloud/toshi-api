@@ -47,7 +47,7 @@ service FillerService {
       action: "filler.removed"
       target: "filler:name"
     };
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this filler? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this filler? It is removed now, and its running run is stopped at the host's next heartbeat."};
   }
   // UpdateFiller changes whether a filler is enabled, named by the
   // update_mask path enabled, and returns the filler. Turning it off stops

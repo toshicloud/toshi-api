@@ -2248,14 +2248,14 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\"CONNECTION_DELIVERY_STATE_RECEIVED\x10\x01\x12'\n" +
 	"#CONNECTION_DELIVERY_STATE_PROCESSED\x10\x02\x12%\n" +
 	"!CONNECTION_DELIVERY_STATE_DROPPED\x10\x03\x12\"\n" +
-	"\x1eCONNECTION_DELIVERY_STATE_DEAD\x10\x042\xb6\r\n" +
+	"\x1eCONNECTION_DELIVERY_STATE_DEAD\x10\x042\xc2\x0e\n" +
 	"\x11ConnectionService\x12\x8d\x01\n" +
 	"\x0fListConnections\x12*.toshi.workspace.v1.ListConnectionsRequest\x1a+.toshi.workspace.v1.ListConnectionsResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x87\x01\n" +
 	"\rGetConnection\x12(.toshi.workspace.v1.GetConnectionRequest\x1a).toshi.workspace.v1.GetConnectionResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x95\x01\n" +
-	"\x10CreateConnection\x12+.toshi.workspace.v1.CreateConnectionRequest\x1a,.toshi.workspace.v1.CreateConnectionResponse\"&\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\x90\xf4\x18\x01\x12\xcb\x01\n" +
-	"\x10DeleteConnection\x12+.toshi.workspace.v1.DeleteConnectionRequest\x1a,.toshi.workspace.v1.DeleteConnectionResponse\"\\\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xfa\xf3\x182\b\x01\x12.Delete this connection? This cannot be undone.\x90\xf4\x18\x01\x12\x97\x02\n" +
-	"\x16RotateConnectionSecret\x121.toshi.workspace.v1.RotateConnectionSecretRequest\x1a2.toshi.workspace.v1.RotateConnectionSecretResponse\"\x95\x01\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1b\n" +
-	"\x19connection.secret_rotated\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18F\b\x01\x12BRotate this connection's secret? The old secret stops working now.\x90\xf4\x18\x01\x12\xb3\x01\n" +
+	"\x10CreateConnection\x12+.toshi.workspace.v1.CreateConnectionRequest\x1a,.toshi.workspace.v1.CreateConnectionResponse\"&\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\x90\xf4\x18\x01\x12\x89\x02\n" +
+	"\x10DeleteConnection\x12+.toshi.workspace.v1.DeleteConnectionRequest\x1a,.toshi.workspace.v1.DeleteConnectionResponse\"\x99\x01\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xfa\xf3\x18o\b\x01\x12kDelete this connection? It is removed now and its secret is cleared; it is refused while a trigger uses it.\x90\xf4\x18\x01\x12\xe5\x02\n" +
+	"\x16RotateConnectionSecret\x121.toshi.workspace.v1.RotateConnectionSecretRequest\x1a2.toshi.workspace.v1.RotateConnectionSecretResponse\"\xe3\x01\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1b\n" +
+	"\x19connection.secret_rotated\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18\x93\x01\b\x01\x12\x8e\x01Rotate this connection's secret? The current secret still verifies for the overlap, 24 hours unless set otherwise, then only the new one does.\x90\xf4\x18\x01\x12\xb3\x01\n" +
 	"\x10UpdateConnection\x12+.toshi.workspace.v1.UpdateConnectionRequest\x1a,.toshi.workspace.v1.UpdateConnectionResponse\"D\xc2\xf3\x18\x11connections.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x1a\x12\x18connection:connection.id\x90\xf4\x18\x02\x12\xa8\x01\n" +
 	"\x18ListConnectionDeliveries\x123.toshi.workspace.v1.ListConnectionDeliveriesRequest\x1a4.toshi.workspace.v1.ListConnectionDeliveriesResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x9f\x01\n" +
 	"\x15GetConnectionDelivery\x120.toshi.workspace.v1.GetConnectionDeliveryRequest\x1a1.toshi.workspace.v1.GetConnectionDeliveryResponse\"!\xc2\xf3\x18\x10connections.read\xca\xf3\x18\tworkspace\x12\x83\x02\n" +

@@ -16126,7 +16126,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xb53\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xde5\n" +
 	"\x0fOperatorService\x12\xc8\x01\n" +
 	"\n" +
 	"DeleteUser\x12$.toshi.operator.v1.DeleteUserRequest\x1a%.toshi.operator.v1.DeleteUserResponse\"m\xd2\xf3\x18\x13\n" +
@@ -16140,13 +16140,13 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x0ehost.state_set\x90\xf4\x18\x02\x12\x84\x01\n" +
 	"\n" +
 	"UpdateHost\x12$.toshi.operator.v1.UpdateHostRequest\x1a%.toshi.operator.v1.UpdateHostResponse\")\xd2\xf3\x18!\n" +
-	"\x11host.overflow_set\x12\fhost:host.id\x90\xf4\x18\x02\x12\x95\x01\n" +
+	"\x11host.overflow_set\x12\fhost:host.id\x90\xf4\x18\x02\x12\xe4\x01\n" +
 	"\n" +
-	"RetireHost\x12$.toshi.operator.v1.RetireHostRequest\x1a%.toshi.operator.v1.RetireHostResponse\":\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18,\b\x01\x12(Retire this host? This cannot be undone.\x90\xf4\x18\x02\x12\xf3\x01\n" +
+	"RetireHost\x12$.toshi.operator.v1.RetireHostRequest\x1a%.toshi.operator.v1.RetireHostResponse\"\x88\x01\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18z\b\x01\x12vRetire this host? It leaves the deployment's hosts now, and a running agent registers again with its enrollment token.\x90\xf4\x18\x02\x12\xf3\x01\n" +
 	"\n" +
-	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\"\x97\x01\xfa\xf3\x18\x8e\x01\b\x01\x12\x89\x01Revoke this host? Its token stops working now, its unfinished jobs end and are not run again, and it never registers again under this id.\x90\xf4\x18\x02\x12\xba\x01\n" +
-	"\vRetireHosts\x12%.toshi.operator.v1.RetireHostsRequest\x1a&.toshi.operator.v1.RetireHostsResponse\"\\\xd2\xf3\x18\x1c\n" +
-	"\x14host.offline_retired\x12\x04none\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18.\b\x01\x12*Retire these hosts? This cannot be undone.\x90\xf4\x18\x02\x12n\n" +
+	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\"\x97\x01\xfa\xf3\x18\x8e\x01\b\x01\x12\x89\x01Revoke this host? Its token stops working now, its unfinished jobs end and are not run again, and it never registers again under this id.\x90\xf4\x18\x02\x12\x8a\x02\n" +
+	"\vRetireHosts\x12%.toshi.operator.v1.RetireHostsRequest\x1a&.toshi.operator.v1.RetireHostsResponse\"\xab\x01\xd2\xf3\x18\x1c\n" +
+	"\x14host.offline_retired\x12\x04none\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18}\b\x01\x12yRetire these hosts? They leave the deployment's hosts now, and a running agent registers again with its enrollment token.\x90\xf4\x18\x02\x12n\n" +
 	"\x0fCreateWorkspace\x12).toshi.operator.v1.CreateWorkspaceRequest\x1a*.toshi.operator.v1.CreateWorkspaceResponse\"\x04\x90\xf4\x18\x01\x12e\n" +
 	"\x0eListWorkspaces\x12(.toshi.operator.v1.ListWorkspacesRequest\x1a).toshi.operator.v1.ListWorkspacesResponse\x12x\n" +
 	"\x0fUpdateWorkspace\x12).toshi.operator.v1.UpdateWorkspaceRequest\x1a*.toshi.operator.v1.UpdateWorkspaceResponse\"\x0e\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x02\x12z\n" +
@@ -16184,9 +16184,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x0eListHostAlerts\x12(.toshi.operator.v1.ListHostAlertsRequest\x1a).toshi.operator.v1.ListHostAlertsResponse\x12}\n" +
 	"\x0eCheckCloudHost\x12(.toshi.operator.v1.CheckCloudHostRequest\x1a).toshi.operator.v1.CheckCloudHostResponse\"\x16\xd2\xf3\x18\x0e\x12\fhost:host_id\x90\xf4\x18\x02\x12\\\n" +
 	"\vListFillers\x12%.toshi.operator.v1.ListFillersRequest\x1a&.toshi.operator.v1.ListFillersResponse\x12t\n" +
-	"\tPutFiller\x12#.toshi.operator.v1.PutFillerRequest\x1a$.toshi.operator.v1.PutFillerResponse\"\x1c\xd2\xf3\x18\x14\x12\x12filler:filler.name\x90\xf4\x18\x02\x12\xb8\x01\n" +
-	"\fDeleteFiller\x12&.toshi.operator.v1.DeleteFillerRequest\x1a'.toshi.operator.v1.DeleteFillerResponse\"W\xd2\xf3\x18\x1d\n" +
-	"\x0efiller.removed\x12\vfiller:name\xfa\xf3\x18.\b\x01\x12*Delete this filler? This cannot be undone.\x90\xf4\x18\x02\x12\x91\x01\n" +
+	"\tPutFiller\x12#.toshi.operator.v1.PutFillerRequest\x1a$.toshi.operator.v1.PutFillerResponse\"\x1c\xd2\xf3\x18\x14\x12\x12filler:filler.name\x90\xf4\x18\x02\x12\xf2\x01\n" +
+	"\fDeleteFiller\x12&.toshi.operator.v1.DeleteFillerRequest\x1a'.toshi.operator.v1.DeleteFillerResponse\"\x90\x01\xd2\xf3\x18\x1d\n" +
+	"\x0efiller.removed\x12\vfiller:name\xfa\xf3\x18g\b\x01\x12cDelete this filler? It is removed now, and its running run is stopped at the host's next heartbeat.\x90\xf4\x18\x02\x12\x91\x01\n" +
 	"\fUpdateFiller\x12&.toshi.operator.v1.UpdateFillerRequest\x1a'.toshi.operator.v1.UpdateFillerResponse\"0\xd2\xf3\x18(\n" +
 	"\x12filler.enabled_set\x12\x12filler:filler.name\x90\xf4\x18\x02\x12e\n" +
 	"\x0eListFillerRuns\x12(.toshi.operator.v1.ListFillerRunsRequest\x1a).toshi.operator.v1.ListFillerRunsResponse\x12n\n" +
@@ -16197,8 +16197,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\fSuggestPools\x12&.toshi.operator.v1.SuggestPoolsRequest\x1a'.toshi.operator.v1.SuggestPoolsResponse\x12\x80\x01\n" +
 	"\x15CreateStorageProvider\x12/.toshi.operator.v1.CreateStorageProviderRequest\x1a0.toshi.operator.v1.CreateStorageProviderResponse\"\x04\x90\xf4\x18\x01\x12w\n" +
 	"\x14ListStorageProviders\x12..toshi.operator.v1.ListStorageProvidersRequest\x1a/.toshi.operator.v1.ListStorageProvidersResponse\x12}\n" +
-	"\x14CheckStorageProvider\x12..toshi.operator.v1.CheckStorageProviderRequest\x1a/.toshi.operator.v1.CheckStorageProviderResponse\"\x04\x90\xf4\x18\x02\x12\xbc\x01\n" +
-	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponse\"@\xfa\xf3\x188\b\x01\x124Delete this storage provider? This cannot be undone.\x90\xf4\x18\x02B!Z\x1fgo.toshicloud.io/api/operatorv1b\x06proto3"
+	"\x14CheckStorageProvider\x12..toshi.operator.v1.CheckStorageProviderRequest\x1a/.toshi.operator.v1.CheckStorageProviderResponse\"\x04\x90\xf4\x18\x02\x12\x8c\x02\n" +
+	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponse\"\x8f\x01\xfa\xf3\x18\x86\x01\b\x01\x12\x81\x01Delete this storage provider? It is refused while artifacts remain on it; forced, they are marked lost and can no longer be read.\x90\xf4\x18\x02B!Z\x1fgo.toshicloud.io/api/operatorv1b\x06proto3"
 
 var (
 	file_toshi_operator_v1_operator_proto_rawDescOnce sync.Once

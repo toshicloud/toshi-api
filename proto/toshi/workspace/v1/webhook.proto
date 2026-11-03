@@ -65,7 +65,7 @@ service WebhookService {
   rpc DeleteWebhook(DeleteWebhookRequest) returns (DeleteWebhookResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "webhooks.write";
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this webhook? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this webhook? No more deliveries go to it, and its queued deliveries, their history and its secrets are deleted."};
   }
 
   // RotateWebhookSecret makes the webhook a new signing secret and
@@ -80,7 +80,7 @@ service WebhookService {
     option (toshi.permission) = "webhooks.write";
     option (toshi.audit) = {action: "webhook.secret_rotated"};
     option (toshi.mcp) = {destructive: true};
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Rotate this webhook's secret? The old secret stops working now."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Rotate this webhook's secret? The current secret signs beside the new one for 24 hours, then only the new one does."};
   }
 
   // ListWebhookDeliveries returns a webhook's deliveries in event order,
@@ -106,6 +106,8 @@ service WebhookService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "webhooks.write";
     option (toshi.audit) = {action: "webhook.events_replayed"};
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Replay these webhook events? Each is delivered again now under its own event id with a new message id, and pending ones are left alone."};
   }
 }
 

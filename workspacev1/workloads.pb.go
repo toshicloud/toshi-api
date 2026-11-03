@@ -6415,7 +6415,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"!SERVICE_ALARM_MISFIRE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eSERVICE_ALARM_MISFIRE_COALESCE\x10\x01\x12\x1d\n" +
 	"\x19SERVICE_ALARM_MISFIRE_ALL\x10\x02\x12\x1e\n" +
-	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xda\\\n" +
+	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xd9\\\n" +
 	"\x0fWorkloadService\x12\x81\x01\n" +
 	"\tCreateJob\x12$.toshi.workspace.v1.CreateJobRequest\x1a%.toshi.workspace.v1.CreateJobResponse\"'\xc2\xf3\x18\n" +
 	"jobs.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12m\n" +
@@ -6487,8 +6487,8 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x0fPutServiceAlarm\x12*.toshi.workspace.v1.PutServiceAlarmRequest\x1a+.toshi.workspace.v1.PutServiceAlarmResponse\"P\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
 	"\x11service_alarm.set\x12\x12service:service_id\x90\xf4\x18\x02\x12\x8c\x01\n" +
 	"\x0fGetServiceAlarm\x12*.toshi.workspace.v1.GetServiceAlarmRequest\x1a+.toshi.workspace.v1.GetServiceAlarmResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x92\x01\n" +
-	"\x11ListServiceAlarms\x12,.toshi.workspace.v1.ListServiceAlarmsRequest\x1a-.toshi.workspace.v1.ListServiceAlarmsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xe3\x01\n" +
-	"\x12DeleteServiceAlarm\x12-.toshi.workspace.v1.DeleteServiceAlarmRequest\x1a..toshi.workspace.v1.DeleteServiceAlarmResponse\"n\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\xfa\xf3\x18-\b\x01\x12)Delete this alarm? This cannot be undone.\x90\xf4\x18\x02\x12\xc5\x01\n" +
+	"\x11ListServiceAlarms\x12,.toshi.workspace.v1.ListServiceAlarmsRequest\x1a-.toshi.workspace.v1.ListServiceAlarmsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xe2\x01\n" +
+	"\x12DeleteServiceAlarm\x12-.toshi.workspace.v1.DeleteServiceAlarmRequest\x1a..toshi.workspace.v1.DeleteServiceAlarmResponse\"m\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\xfa\xf3\x18,\b\x01\x12(Delete this alarm? It stops raising now.\x90\xf4\x18\x02\x12\xc5\x01\n" +
 	"\x11PauseServiceAlarm\x12,.toshi.workspace.v1.PauseServiceAlarmRequest\x1a-.toshi.workspace.v1.PauseServiceAlarmResponse\"S\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18*\n" +
 	"\x14service_alarm.paused\x12\x12service:service_id\x90\xf4\x18\x02\x12\xcc\x01\n" +
 	"\x13UnpauseServiceAlarm\x12..toshi.workspace.v1.UnpauseServiceAlarmRequest\x1a/.toshi.workspace.v1.UnpauseServiceAlarmResponse\"T\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18+\n" +

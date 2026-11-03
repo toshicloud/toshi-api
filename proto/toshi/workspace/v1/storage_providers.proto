@@ -61,6 +61,7 @@ service StorageProviderService {
   rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "storage.write";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Remove this bucket? Toshi stops using it now, and what it holds stays with your provider; it is refused while Toshi keeps artifacts in it."};
   }
 }
 

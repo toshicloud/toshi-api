@@ -2574,15 +2574,15 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\x15INVITATION_STATE_OPEN\x10\x01\x12\x1d\n" +
 	"\x19INVITATION_STATE_ACCEPTED\x10\x02\x12\x1c\n" +
 	"\x18INVITATION_STATE_REVOKED\x10\x03\x12\x1c\n" +
-	"\x18INVITATION_STATE_EXPIRED\x10\x042\xf7\x12\n" +
+	"\x18INVITATION_STATE_EXPIRED\x10\x042\x89\x13\n" +
 	"\vRoleService\x12j\n" +
 	"\tListRoles\x12$.toshi.workspace.v1.ListRolesRequest\x1a%.toshi.workspace.v1.ListRolesResponse\"\x10\xc2\xf3\x18\fmembers.read\x12r\n" +
 	"\n" +
 	"CreateRole\x12%.toshi.workspace.v1.CreateRoleRequest\x1a&.toshi.workspace.v1.CreateRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x01\x12r\n" +
 	"\n" +
-	"UpdateRole\x12%.toshi.workspace.v1.UpdateRoleRequest\x1a&.toshi.workspace.v1.UpdateRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x02\x12\xa2\x01\n" +
+	"UpdateRole\x12%.toshi.workspace.v1.UpdateRoleRequest\x1a&.toshi.workspace.v1.UpdateRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x02\x12\xb4\x01\n" +
 	"\n" +
-	"DeleteRole\x12%.toshi.workspace.v1.DeleteRoleRequest\x1a&.toshi.workspace.v1.DeleteRoleResponse\"E\xc2\xf3\x18\rmembers.write\xfa\xf3\x18,\b\x01\x12(Delete this role? This cannot be undone.\x90\xf4\x18\x02\x12\x86\x01\n" +
+	"DeleteRole\x12%.toshi.workspace.v1.DeleteRoleRequest\x1a&.toshi.workspace.v1.DeleteRoleResponse\"W\xc2\xf3\x18\rmembers.write\xfa\xf3\x18>\b\x01\x12:Delete this role? Members who hold it lose its access now.\x90\xf4\x18\x02\x12\x86\x01\n" +
 	"\x0eListRoleGrants\x12).toshi.workspace.v1.ListRoleGrantsRequest\x1a*.toshi.workspace.v1.ListRoleGrantsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x8b\x01\n" +
 	"\tGrantRole\x12$.toshi.workspace.v1.GrantRoleRequest\x1a%.toshi.workspace.v1.GrantRoleResponse\"1\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\v\x12\trole:role\x90\xf4\x18\x02\x12\xc7\x01\n" +
 	"\n" +

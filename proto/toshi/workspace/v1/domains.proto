@@ -72,7 +72,7 @@ service DomainService {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this domain? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this domain? Endpoints on it stop answering now."};
   }
 }
 

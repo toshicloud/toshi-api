@@ -1135,7 +1135,7 @@ const file_toshi_workspace_v1_domains_proto_rawDesc = "" +
 	"\x14DOMAIN_STATE_ISSUING\x10\x03\x12\x16\n" +
 	"\x12DOMAIN_STATE_VALID\x10\x04\x12\x1d\n" +
 	"\x19DOMAIN_STATE_RATE_LIMITED\x10\x05\x12 \n" +
-	"\x1cDOMAIN_STATE_RENEWAL_FAILING\x10\x062\x99\a\n" +
+	"\x1cDOMAIN_STATE_RENEWAL_FAILING\x10\x062\xa6\a\n" +
 	"\rDomainService\x12\x88\x01\n" +
 	"\fCreateDomain\x12'.toshi.workspace.v1.CreateDomainRequest\x1a(.toshi.workspace.v1.CreateDomainResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12z\n" +
 	"\tGetDomain\x12$.toshi.workspace.v1.GetDomainRequest\x1a%.toshi.workspace.v1.GetDomainResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x80\x01\n" +
@@ -1143,8 +1143,8 @@ const file_toshi_workspace_v1_domains_proto_rawDesc = "" +
 	"\fVerifyDomain\x12'.toshi.workspace.v1.VerifyDomainRequest\x1a(.toshi.workspace.v1.VerifyDomainResponse\"9\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x10\n" +
 	"\x0edomain.checked\x90\xf4\x18\x01\x12\xa1\x01\n" +
 	"\vIssueDomain\x12&.toshi.workspace.v1.IssueDomainRequest\x1a'.toshi.workspace.v1.IssueDomainResponse\"A\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x18\n" +
-	"\x16domain.issue_requested\x90\xf4\x18\x01\x12\xba\x01\n" +
-	"\fDeleteDomain\x12'.toshi.workspace.v1.DeleteDomainRequest\x1a(.toshi.workspace.v1.DeleteDomainResponse\"W\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xfa\xf3\x18.\b\x01\x12*Delete this domain? This cannot be undone.\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x16domain.issue_requested\x90\xf4\x18\x01\x12\xc7\x01\n" +
+	"\fDeleteDomain\x12'.toshi.workspace.v1.DeleteDomainRequest\x1a(.toshi.workspace.v1.DeleteDomainResponse\"d\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xfa\xf3\x18;\b\x01\x127Delete this domain? Endpoints on it stop answering now.\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_domains_proto_rawDescOnce sync.Once

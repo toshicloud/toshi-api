@@ -68,7 +68,7 @@ service ConnectionService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this connection? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this connection? It is removed now and its secret is cleared; it is refused while a trigger uses it."};
   }
 
   // RotateConnectionSecret gives a WEBHOOK connection a new signing secret
@@ -87,7 +87,7 @@ service ConnectionService {
       action: "connection.secret_rotated"
     };
     option (toshi.mcp) = {destructive: true};
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Rotate this connection's secret? The old secret stops working now."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Rotate this connection's secret? The current secret still verifies for the overlap, 24 hours unless set otherwise, then only the new one does."};
   }
 
   // UpdateConnection sets the fields of connection.id's connection that

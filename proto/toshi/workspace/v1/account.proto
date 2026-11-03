@@ -78,6 +78,7 @@ service AccountService {
       action: "session.ended"
       target: "none"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "End this session? It signs out now, and signing in again starts a new one."};
   }
 
   // DeleteAccount erases the caller's user and ends its sessions. Confirm

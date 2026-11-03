@@ -707,7 +707,7 @@ service WorkloadService {
     option (toshi.audit) = {
       target: "service:service_id"
     };
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this alarm? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this alarm? It stops raising now."};
   }
 
   // PauseServiceAlarm stops an alarm publishing until it is resumed.

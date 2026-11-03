@@ -61,7 +61,7 @@ service HostService {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "hosts.write";
     option (toshi.mcp) = {destructive: true};
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire this host? This cannot be undone."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire this host? It leaves this workspace's hosts now, and a running agent registers again with its enrollment token."};
   }
   // CreateCloudHost registers a cloud host the control plane drives in the
   // workspace's AWS or Google Cloud account. When cloud hosts are not
