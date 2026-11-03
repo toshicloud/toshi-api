@@ -5927,7 +5927,15 @@ type Plan struct {
 	MaxOwnHosts int32 `protobuf:"varint,17,opt,name=max_own_hosts,json=maxOwnHosts,proto3" json:"max_own_hosts,omitempty"`
 	// Whether the plan is the open-source tier: its workspaces' jobs
 	// pass the open-source gate.
-	OpenSource    bool `protobuf:"varint,18,opt,name=open_source,json=openSource,proto3" json:"open_source,omitempty"`
+	OpenSource bool `protobuf:"varint,18,opt,name=open_source,json=openSource,proto3" json:"open_source,omitempty"`
+	// The name to show for the plan; the plan's name, its id, when the
+	// deployment sets no display name. Never empty.
+	DisplayName string `protobuf:"bytes,19,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	// The plan's place on the ladder a refusal names a plan from, lowest
+	// first; a plan at 0 is not on the ladder, and no refusal names it. Two
+	// plans at one rank are ordered by name. ListPlans sorts by name: a
+	// client that shows the ladder orders by rank.
+	Rank          int32 `protobuf:"varint,20,opt,name=rank,proto3" json:"rank,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6086,6 +6094,20 @@ func (x *Plan) GetOpenSource() bool {
 		return x.OpenSource
 	}
 	return false
+}
+
+func (x *Plan) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *Plan) GetRank() int32 {
+	if x != nil {
+		return x.Rank
+	}
+	return 0
 }
 
 // EgressHost is one host a workspace's jobs can land on.
@@ -6755,7 +6777,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\vp50_seconds\x18\b \x01(\x03R\n" +
 	"p50Seconds\x12\x1f\n" +
 	"\vp95_seconds\x18\t \x01(\x03R\n" +
-	"p95Seconds\"\x82\x05\n" +
+	"p95Seconds\"\xb9\x05\n" +
 	"\x04Plan\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vconcurrency\x18\x02 \x01(\x05R\vconcurrency\x12&\n" +
@@ -6779,7 +6801,9 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\rdebug_minutes\x18\x10 \x01(\x05R\fdebugMinutes\x12\"\n" +
 	"\rmax_own_hosts\x18\x11 \x01(\x05R\vmaxOwnHosts\x12\x1f\n" +
 	"\vopen_source\x18\x12 \x01(\bR\n" +
-	"openSource\"\xff\x01\n" +
+	"openSource\x12!\n" +
+	"\fdisplay_name\x18\x13 \x01(\tR\vdisplayName\x12\x12\n" +
+	"\x04rank\x18\x14 \x01(\x05R\x04rank\"\xff\x01\n" +
 	"\n" +
 	"EgressHost\x12\x17\n" +
 	"\ahost_id\x18\x01 \x01(\tR\x06hostId\x12\x12\n" +

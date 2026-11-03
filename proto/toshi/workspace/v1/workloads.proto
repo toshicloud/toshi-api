@@ -1126,6 +1126,34 @@ message WorkloadUsage {
   // a caller that holds billing.read where the workload is; the invoice
   // stays authoritative.
   WorkloadCost cost = 14;
+  // Model relay requests reported in the selected month.
+  AIRequests ai_requests = 15;
+  // Model relay requests reported over the workload's life.
+  AIRequests ai_requests_total = 16;
+}
+
+// AIRequests counts the model requests a workload's runs made through the
+// host relay.
+message AIRequests {
+  // The requests the relay injected a credential into.
+  int64 injected = 1;
+  // The requests the relay refused.
+  int64 refused = 2;
+  // The same counts by provider and credential source, ordered by provider
+  // and then source.
+  repeated AIProviderRequests by_provider = 3;
+}
+
+// AIProviderRequests counts requests for one provider and credential source.
+message AIProviderRequests {
+  // The model provider's name.
+  string provider = 1;
+  // "key" or "subscription".
+  string source = 2;
+  // The requests the relay injected a credential into.
+  int64 injected = 3;
+  // The requests the relay refused.
+  int64 refused = 4;
 }
 
 // WorkloadCost is an estimate of one workload's share of its invoice. The

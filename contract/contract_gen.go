@@ -306,6 +306,8 @@ const (
 	AuditActionSecretSet = "secret.set"
 	// AuditActionSecretDeleted is the "secret.deleted" audit action.
 	AuditActionSecretDeleted = "secret.deleted"
+	// AuditActionSecretRelayRefused is the "secret.relay_refused" audit action.
+	AuditActionSecretRelayRefused = "secret.relay_refused"
 	// AuditActionSecretSetGranted is the "secret_set.granted" audit action.
 	AuditActionSecretSetGranted = "secret_set.granted"
 	// AuditActionSecretSetRevoked is the "secret_set.revoked" audit action.
@@ -1042,6 +1044,7 @@ func RuleWords() map[string]string {
 		"volume_ceiling.no_limit":        "Where the volume caps report a ceiling of 0, there is no limit: no volume cap is checked against it.",
 		"volume_ceiling.lowering":        "Lowering the ceiling is always allowed; it bounds new volumes and any volume cap you raise.",
 		"start_windows.paid_and_waiting": "A start past the included count is a paid start; at the ceiling a start waits until the window moves on.",
+		"plan.not_included":              "Not on this workspace's plan.",
 	}
 }
 

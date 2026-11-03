@@ -1403,6 +1403,14 @@ message Plan {
   // Whether the plan is the open-source tier: its workspaces' jobs
   // pass the open-source gate.
   bool open_source = 18;
+  // The name to show for the plan; the plan's name, its id, when the
+  // deployment sets no display name. Never empty.
+  string display_name = 19;
+  // The plan's place on the ladder a refusal names a plan from, lowest
+  // first; a plan at 0 is not on the ladder, and no refusal names it. Two
+  // plans at one rank are ordered by name. ListPlans sorts by name: a
+  // client that shows the ladder orders by rank.
+  int32 rank = 20;
 }
 
 // EgressHost is one host a workspace's jobs can land on.
