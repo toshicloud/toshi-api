@@ -2910,7 +2910,7 @@ type Workspace struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	// The override; unset when none is set.
+	// The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
 	ConcurrencyCap *int32                 `protobuf:"varint,3,opt,name=concurrency_cap,json=concurrencyCap,proto3,oneof" json:"concurrency_cap,omitempty"`
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	Plan           string                 `protobuf:"bytes,5,opt,name=plan,proto3" json:"plan,omitempty"`
@@ -2946,16 +2946,23 @@ type Workspace struct {
 	// The period the retention pass uses: the workspace's value when set, else
 	// its plan's.
 	HistoryDaysEffective int32 `protobuf:"varint,22,opt,name=history_days_effective,json=historyDaysEffective,proto3" json:"history_days_effective,omitempty"`
-	// The workspace's own limits; unset when its plan's applies. 0 is no cap.
-	SecretMaxSets   *int32 `protobuf:"varint,24,opt,name=secret_max_sets,json=secretMaxSets,proto3,oneof" json:"secret_max_sets,omitempty"`
-	SecretMaxKeys   *int32 `protobuf:"varint,25,opt,name=secret_max_keys,json=secretMaxKeys,proto3,oneof" json:"secret_max_keys,omitempty"`
-	SecretMaxKib    *int64 `protobuf:"varint,26,opt,name=secret_max_kib,json=secretMaxKib,proto3,oneof" json:"secret_max_kib,omitempty"`
+	// The secrets.sets_max override; unset when none is set. 0 is no cap.
+	SecretMaxSets *int32 `protobuf:"varint,24,opt,name=secret_max_sets,json=secretMaxSets,proto3,oneof" json:"secret_max_sets,omitempty"`
+	// The secrets.keys_max override; unset when none is set. 0 is no cap.
+	SecretMaxKeys *int32 `protobuf:"varint,25,opt,name=secret_max_keys,json=secretMaxKeys,proto3,oneof" json:"secret_max_keys,omitempty"`
+	// The secrets.size_max_bytes override, rounded up to whole KiB and capped at
+	// 2147483647 KiB; unset when none is set. 0 is no cap.
+	SecretMaxKib *int64 `protobuf:"varint,26,opt,name=secret_max_kib,json=secretMaxKib,proto3,oneof" json:"secret_max_kib,omitempty"`
+	// The previews.ports_max override; unset when none is set. 0 is no cap.
 	PreviewMaxPorts *int32 `protobuf:"varint,27,opt,name=preview_max_ports,json=previewMaxPorts,proto3,oneof" json:"preview_max_ports,omitempty"`
-	// The limits Toshi enforces: the workspace's own value when set, else its
-	// plan's. 0 is no cap.
-	SecretMaxSetsEffective   int32 `protobuf:"varint,28,opt,name=secret_max_sets_effective,json=secretMaxSetsEffective,proto3" json:"secret_max_sets_effective,omitempty"`
-	SecretMaxKeysEffective   int32 `protobuf:"varint,29,opt,name=secret_max_keys_effective,json=secretMaxKeysEffective,proto3" json:"secret_max_keys_effective,omitempty"`
-	SecretMaxKibEffective    int64 `protobuf:"varint,30,opt,name=secret_max_kib_effective,json=secretMaxKibEffective,proto3" json:"secret_max_kib_effective,omitempty"`
+	// The resolved secrets.sets_max; 0 is no cap.
+	SecretMaxSetsEffective int32 `protobuf:"varint,28,opt,name=secret_max_sets_effective,json=secretMaxSetsEffective,proto3" json:"secret_max_sets_effective,omitempty"`
+	// The resolved secrets.keys_max; 0 is no cap.
+	SecretMaxKeysEffective int32 `protobuf:"varint,29,opt,name=secret_max_keys_effective,json=secretMaxKeysEffective,proto3" json:"secret_max_keys_effective,omitempty"`
+	// The resolved secrets.size_max_bytes, rounded up to whole KiB and capped at
+	// 2147483647 KiB; 0 is no cap.
+	SecretMaxKibEffective int64 `protobuf:"varint,30,opt,name=secret_max_kib_effective,json=secretMaxKibEffective,proto3" json:"secret_max_kib_effective,omitempty"`
+	// The resolved previews.ports_max; 0 is no cap.
 	PreviewMaxPortsEffective int32 `protobuf:"varint,31,opt,name=preview_max_ports_effective,json=previewMaxPortsEffective,proto3" json:"preview_max_ports_effective,omitempty"`
 	// What the workspace's members choose; UpdateWorkspace changes it.
 	Settings *WorkspaceSettings `protobuf:"bytes,33,opt,name=settings,proto3" json:"settings,omitempty"`

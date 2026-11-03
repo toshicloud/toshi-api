@@ -220,10 +220,6 @@ const (
 const (
 	// AuditActionPlanChanged is the "workspace.plan_changed" audit action.
 	AuditActionPlanChanged = "workspace.plan_changed"
-	// AuditActionCapSet is the "workspace.cap_set" audit action.
-	AuditActionCapSet = "workspace.cap_set"
-	// AuditActionLimitsSet is the "workspace.limits_set" audit action.
-	AuditActionLimitsSet = "workspace.limits_set"
 	// AuditActionWorkspaceUpdated is the "workspace.updated" audit action.
 	AuditActionWorkspaceUpdated = "workspace.updated"
 	// AuditActionReservationSet is the "workspace.reservation_set" audit action.
@@ -953,6 +949,8 @@ func ReservedEventPrefixes() []string {
 func AuditActionAliases() map[string]string {
 	return map[string]string{
 		"workspace.plan_set":             "workspace.plan_changed",
+		"workspace.cap_set":              "workspace.entitlement_set",
+		"workspace.limits_set":           "workspace.entitlement_set",
 		"branch_rules.set":               "project.updated",
 		"project_network.set":            "project.updated",
 		"environment_network.set":        "environment.updated",

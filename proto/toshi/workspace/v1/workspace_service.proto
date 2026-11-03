@@ -658,7 +658,7 @@ message GetVersionResponse {
 message Workspace {
   string id = 1;
   string name = 2;
-  // The override; unset when none is set.
+  // The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
   optional int32 concurrency_cap = 3;
   google.protobuf.Timestamp created_at = 4;
   string plan = 5;
@@ -694,16 +694,23 @@ message Workspace {
   // The period the retention pass uses: the workspace's value when set, else
   // its plan's.
   int32 history_days_effective = 22;
-  // The workspace's own limits; unset when its plan's applies. 0 is no cap.
+  // The secrets.sets_max override; unset when none is set. 0 is no cap.
   optional int32 secret_max_sets = 24;
+  // The secrets.keys_max override; unset when none is set. 0 is no cap.
   optional int32 secret_max_keys = 25;
+  // The secrets.size_max_bytes override, rounded up to whole KiB and capped at
+  // 2147483647 KiB; unset when none is set. 0 is no cap.
   optional int64 secret_max_kib = 26;
+  // The previews.ports_max override; unset when none is set. 0 is no cap.
   optional int32 preview_max_ports = 27;
-  // The limits Toshi enforces: the workspace's own value when set, else its
-  // plan's. 0 is no cap.
+  // The resolved secrets.sets_max; 0 is no cap.
   int32 secret_max_sets_effective = 28;
+  // The resolved secrets.keys_max; 0 is no cap.
   int32 secret_max_keys_effective = 29;
+  // The resolved secrets.size_max_bytes, rounded up to whole KiB and capped at
+  // 2147483647 KiB; 0 is no cap.
   int64 secret_max_kib_effective = 30;
+  // The resolved previews.ports_max; 0 is no cap.
   int32 preview_max_ports_effective = 31;
   // What the workspace's members choose; UpdateWorkspace changes it.
   WorkspaceSettings settings = 33;

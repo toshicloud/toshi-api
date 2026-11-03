@@ -118,8 +118,6 @@ export type ArtifactState = (typeof artifactStates)[keyof typeof artifactStates]
 
 export const auditActions = {
   planChanged: "workspace.plan_changed",
-  capSet: "workspace.cap_set",
-  limitsSet: "workspace.limits_set",
   workspaceUpdated: "workspace.updated",
   reservationSet: "workspace.reservation_set",
   reservationReleased: "workspace.reservation_released",
@@ -451,6 +449,8 @@ export type AuditAction = (typeof auditActions)[keyof typeof auditActions];
 
 export const auditActionAliases = {
   "workspace.plan_set": "workspace.plan_changed",
+  "workspace.cap_set": "workspace.entitlement_set",
+  "workspace.limits_set": "workspace.entitlement_set",
   "branch_rules.set": "project.updated",
   "project_network.set": "project.updated",
   "environment_network.set": "environment.updated",

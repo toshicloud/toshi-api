@@ -129,29 +129,6 @@ service OperatorService {
   // A page holds 100 workspaces when page_size is zero, and 1000 at most.
   rpc ListWorkspaces(ListWorkspacesRequest) returns (ListWorkspacesResponse);
 
-  // SetTenantCap sets a workspace's concurrency cap override and returns the
-  // workspace as stored; a cap of 0 clears the override, so the workspace's plan
-  // applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
-  // unknown ID fails with NOT_FOUND.
-  rpc SetTenantCap(SetTenantCapRequest) returns (SetTenantCapResponse) {
-    option (toshi.key_mode) = NATURAL;
-    option (toshi.audit) = {action: "workspace.cap_set"};
-  }
-
-  // SetTenantLimits sets or clears a workspace's own secret and preview limits,
-  // which replace its plan's values, higher or lower, and returns the workspace
-  // as stored. A limit set in the request becomes the workspace's value, 0 for
-  // no cap; a limit named in clear goes back to the plan's; any other keeps
-  // its current value. A negative limit, secret_max_kib above 1073741824, an
-  // unknown name in clear, a limit both set and cleared, or a request that
-  // sets and clears nothing fails with INVALID_ARGUMENT, as does a
-  // volume_snapshot_interval_seconds other than 0 and below 60; an unknown
-  // workspace fails with NOT_FOUND. A workspace's own token cannot call it.
-  rpc SetTenantLimits(SetTenantLimitsRequest) returns (SetTenantLimitsResponse) {
-    option (toshi.key_mode) = NATURAL;
-    option (toshi.audit) = {action: "workspace.limits_set"};
-  }
-
   // UpdateWorkspace changes the fields named in update_mask and returns the
   // workspace as stored. Operator credentials are required. A missing id or
   // mask, an empty mask, or an unknown path fails with INVALID_ARGUMENT; an
@@ -1363,7 +1340,7 @@ message OfflineHostResult {
 message Workspace {
   string id = 1;
   string name = 2;
-  // The override; unset when none is set.
+  // The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
   optional int32 concurrency_cap = 3;
   google.protobuf.Timestamp created_at = 4;
   string plan = 5;
@@ -1417,16 +1394,23 @@ message Workspace {
   // GitHub shows it within seconds as cancelled; off keeps GitHub's own
   // failure, about 10 minutes later.
   bool cancel_run_on_vm_death = 23;
-  // The workspace's own limits; unset when its plan's applies. 0 is no cap.
+  // The secrets.sets_max override; unset when none is set. 0 is no cap.
   optional int32 secret_max_sets = 24;
+  // The secrets.keys_max override; unset when none is set. 0 is no cap.
   optional int32 secret_max_keys = 25;
+  // The secrets.size_max_bytes override, rounded up to whole KiB and capped at
+  // 2147483647 KiB; unset when none is set. 0 is no cap.
   optional int64 secret_max_kib = 26;
+  // The previews.ports_max override; unset when none is set. 0 is no cap.
   optional int32 preview_max_ports = 27;
-  // The limits Toshi enforces: the workspace's own value when set, else its
-  // plan's. 0 is no cap.
+  // The resolved secrets.sets_max; 0 is no cap.
   int32 secret_max_sets_effective = 28;
+  // The resolved secrets.keys_max; 0 is no cap.
   int32 secret_max_keys_effective = 29;
+  // The resolved secrets.size_max_bytes, rounded up to whole KiB and capped at
+  // 2147483647 KiB; 0 is no cap.
   int64 secret_max_kib_effective = 30;
+  // The resolved previews.ports_max; 0 is no cap.
   int32 preview_max_ports_effective = 31;
   // Who may join the workspace through its GitHub App installation on an
   // organisation without an invitation: "off", nobody (the default);
@@ -1441,11 +1425,10 @@ message Workspace {
   // keeps a workload's VM on one of its own hosts across its stops and
   // sleeps. Off by default.
   bool keep_vm = 34;
-  // How often, in seconds, a running VM's state volumes are snapshotted;
-  // unset when its plan's applies. 0 takes no snapshots.
+  // The volumes.snapshot_interval_seconds override; unset when none is set.
+  // 0 takes no snapshots.
   optional int32 volume_snapshot_interval_seconds = 35;
-  // The interval Toshi uses: the workspace's own value when set, else its
-  // plan's.
+  // The resolved volumes.snapshot_interval_seconds Toshi uses.
   int32 volume_snapshot_interval_seconds_effective = 36;
   // The workspace's billing link.
   WorkspaceBilling billing = 38;
@@ -1529,33 +1512,6 @@ message ListWorkspacesResponse {
   repeated Workspace workspaces = 1;
   // Empty on the last page.
   string next_page_token = 2;
-}
-
-message SetTenantCapRequest {
-  string id = 1;
-  int32 concurrency_cap = 2;
-}
-
-message SetTenantCapResponse {
-  Workspace workspace = 1;
-}
-
-message SetTenantLimitsRequest {
-  string workspace = 1;
-  optional int32 secret_max_sets = 2;
-  optional int32 secret_max_keys = 3;
-  optional int64 secret_max_kib = 4;
-  optional int32 preview_max_ports = 5;
-  // Limits to clear, by name ("secret_max_sets", "secret_max_keys",
-  // "secret_max_kib", "preview_max_ports",
-  // "volume_snapshot_interval_seconds").
-  repeated string clear = 6;
-  // Seconds between snapshots of a running VM's state volumes; 0 takes none.
-  optional int32 volume_snapshot_interval_seconds = 7;
-}
-
-message SetTenantLimitsResponse {
-  Workspace workspace = 1;
 }
 
 message UpdateWorkspaceRequest {

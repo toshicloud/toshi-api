@@ -74,12 +74,6 @@ const (
 	// OperatorServiceListWorkspacesProcedure is the fully-qualified name of the OperatorService's
 	// ListWorkspaces RPC.
 	OperatorServiceListWorkspacesProcedure = "/toshi.operator.v1.OperatorService/ListWorkspaces"
-	// OperatorServiceSetTenantCapProcedure is the fully-qualified name of the OperatorService's
-	// SetTenantCap RPC.
-	OperatorServiceSetTenantCapProcedure = "/toshi.operator.v1.OperatorService/SetTenantCap"
-	// OperatorServiceSetTenantLimitsProcedure is the fully-qualified name of the OperatorService's
-	// SetTenantLimits RPC.
-	OperatorServiceSetTenantLimitsProcedure = "/toshi.operator.v1.OperatorService/SetTenantLimits"
 	// OperatorServiceUpdateWorkspaceProcedure is the fully-qualified name of the OperatorService's
 	// UpdateWorkspace RPC.
 	OperatorServiceUpdateWorkspaceProcedure = "/toshi.operator.v1.OperatorService/UpdateWorkspace"
@@ -271,21 +265,6 @@ type OperatorServiceClient interface {
 	//
 	// A page holds 100 workspaces when page_size is zero, and 1000 at most.
 	ListWorkspaces(context.Context, *connect.Request[operatorv1.ListWorkspacesRequest]) (*connect.Response[operatorv1.ListWorkspacesResponse], error)
-	// SetTenantCap sets a workspace's concurrency cap override and returns the
-	// workspace as stored; a cap of 0 clears the override, so the workspace's plan
-	// applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
-	// unknown ID fails with NOT_FOUND.
-	SetTenantCap(context.Context, *connect.Request[operatorv1.SetTenantCapRequest]) (*connect.Response[operatorv1.SetTenantCapResponse], error)
-	// SetTenantLimits sets or clears a workspace's own secret and preview limits,
-	// which replace its plan's values, higher or lower, and returns the workspace
-	// as stored. A limit set in the request becomes the workspace's value, 0 for
-	// no cap; a limit named in clear goes back to the plan's; any other keeps
-	// its current value. A negative limit, secret_max_kib above 1073741824, an
-	// unknown name in clear, a limit both set and cleared, or a request that
-	// sets and clears nothing fails with INVALID_ARGUMENT, as does a
-	// volume_snapshot_interval_seconds other than 0 and below 60; an unknown
-	// workspace fails with NOT_FOUND. A workspace's own token cannot call it.
-	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
 	// UpdateWorkspace changes the fields named in update_mask and returns the
 	// workspace as stored. Operator credentials are required. A missing id or
 	// mask, an empty mask, or an unknown path fails with INVALID_ARGUMENT; an
@@ -669,18 +648,6 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(operatorServiceMethods.ByName("ListWorkspaces")),
 			connect.WithClientOptions(opts...),
 		),
-		setTenantCap: connect.NewClient[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse](
-			httpClient,
-			baseURL+OperatorServiceSetTenantCapProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetTenantCap")),
-			connect.WithClientOptions(opts...),
-		),
-		setTenantLimits: connect.NewClient[operatorv1.SetTenantLimitsRequest, operatorv1.SetTenantLimitsResponse](
-			httpClient,
-			baseURL+OperatorServiceSetTenantLimitsProcedure,
-			connect.WithSchema(operatorServiceMethods.ByName("SetTenantLimits")),
-			connect.WithClientOptions(opts...),
-		),
 		updateWorkspace: connect.NewClient[operatorv1.UpdateWorkspaceRequest, operatorv1.UpdateWorkspaceResponse](
 			httpClient,
 			baseURL+OperatorServiceUpdateWorkspaceProcedure,
@@ -927,8 +894,6 @@ type operatorServiceClient struct {
 	retireHosts           *connect.Client[operatorv1.RetireHostsRequest, operatorv1.RetireHostsResponse]
 	createWorkspace       *connect.Client[operatorv1.CreateWorkspaceRequest, operatorv1.CreateWorkspaceResponse]
 	listWorkspaces        *connect.Client[operatorv1.ListWorkspacesRequest, operatorv1.ListWorkspacesResponse]
-	setTenantCap          *connect.Client[operatorv1.SetTenantCapRequest, operatorv1.SetTenantCapResponse]
-	setTenantLimits       *connect.Client[operatorv1.SetTenantLimitsRequest, operatorv1.SetTenantLimitsResponse]
 	updateWorkspace       *connect.Client[operatorv1.UpdateWorkspaceRequest, operatorv1.UpdateWorkspaceResponse]
 	reassignSeat          *connect.Client[operatorv1.ReassignSeatRequest, operatorv1.ReassignSeatResponse]
 	listSeats             *connect.Client[operatorv1.ListSeatsRequest, operatorv1.ListSeatsResponse]
@@ -1032,16 +997,6 @@ func (c *operatorServiceClient) CreateWorkspace(ctx context.Context, req *connec
 // ListWorkspaces calls toshi.operator.v1.OperatorService.ListWorkspaces.
 func (c *operatorServiceClient) ListWorkspaces(ctx context.Context, req *connect.Request[operatorv1.ListWorkspacesRequest]) (*connect.Response[operatorv1.ListWorkspacesResponse], error) {
 	return c.listWorkspaces.CallUnary(ctx, req)
-}
-
-// SetTenantCap calls toshi.operator.v1.OperatorService.SetTenantCap.
-func (c *operatorServiceClient) SetTenantCap(ctx context.Context, req *connect.Request[operatorv1.SetTenantCapRequest]) (*connect.Response[operatorv1.SetTenantCapResponse], error) {
-	return c.setTenantCap.CallUnary(ctx, req)
-}
-
-// SetTenantLimits calls toshi.operator.v1.OperatorService.SetTenantLimits.
-func (c *operatorServiceClient) SetTenantLimits(ctx context.Context, req *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error) {
-	return c.setTenantLimits.CallUnary(ctx, req)
 }
 
 // UpdateWorkspace calls toshi.operator.v1.OperatorService.UpdateWorkspace.
@@ -1309,21 +1264,6 @@ type OperatorServiceHandler interface {
 	//
 	// A page holds 100 workspaces when page_size is zero, and 1000 at most.
 	ListWorkspaces(context.Context, *connect.Request[operatorv1.ListWorkspacesRequest]) (*connect.Response[operatorv1.ListWorkspacesResponse], error)
-	// SetTenantCap sets a workspace's concurrency cap override and returns the
-	// workspace as stored; a cap of 0 clears the override, so the workspace's plan
-	// applies. An empty ID or a negative cap fails with INVALID_ARGUMENT; an
-	// unknown ID fails with NOT_FOUND.
-	SetTenantCap(context.Context, *connect.Request[operatorv1.SetTenantCapRequest]) (*connect.Response[operatorv1.SetTenantCapResponse], error)
-	// SetTenantLimits sets or clears a workspace's own secret and preview limits,
-	// which replace its plan's values, higher or lower, and returns the workspace
-	// as stored. A limit set in the request becomes the workspace's value, 0 for
-	// no cap; a limit named in clear goes back to the plan's; any other keeps
-	// its current value. A negative limit, secret_max_kib above 1073741824, an
-	// unknown name in clear, a limit both set and cleared, or a request that
-	// sets and clears nothing fails with INVALID_ARGUMENT, as does a
-	// volume_snapshot_interval_seconds other than 0 and below 60; an unknown
-	// workspace fails with NOT_FOUND. A workspace's own token cannot call it.
-	SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error)
 	// UpdateWorkspace changes the fields named in update_mask and returns the
 	// workspace as stored. Operator credentials are required. A missing id or
 	// mask, an empty mask, or an unknown path fails with INVALID_ARGUMENT; an
@@ -1703,18 +1643,6 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 		connect.WithSchema(operatorServiceMethods.ByName("ListWorkspaces")),
 		connect.WithHandlerOptions(opts...),
 	)
-	operatorServiceSetTenantCapHandler := connect.NewUnaryHandler(
-		OperatorServiceSetTenantCapProcedure,
-		svc.SetTenantCap,
-		connect.WithSchema(operatorServiceMethods.ByName("SetTenantCap")),
-		connect.WithHandlerOptions(opts...),
-	)
-	operatorServiceSetTenantLimitsHandler := connect.NewUnaryHandler(
-		OperatorServiceSetTenantLimitsProcedure,
-		svc.SetTenantLimits,
-		connect.WithSchema(operatorServiceMethods.ByName("SetTenantLimits")),
-		connect.WithHandlerOptions(opts...),
-	)
 	operatorServiceUpdateWorkspaceHandler := connect.NewUnaryHandler(
 		OperatorServiceUpdateWorkspaceProcedure,
 		svc.UpdateWorkspace,
@@ -1971,10 +1899,6 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 			operatorServiceCreateWorkspaceHandler.ServeHTTP(w, r)
 		case OperatorServiceListWorkspacesProcedure:
 			operatorServiceListWorkspacesHandler.ServeHTTP(w, r)
-		case OperatorServiceSetTenantCapProcedure:
-			operatorServiceSetTenantCapHandler.ServeHTTP(w, r)
-		case OperatorServiceSetTenantLimitsProcedure:
-			operatorServiceSetTenantLimitsHandler.ServeHTTP(w, r)
 		case OperatorServiceUpdateWorkspaceProcedure:
 			operatorServiceUpdateWorkspaceHandler.ServeHTTP(w, r)
 		case OperatorServiceReassignSeatProcedure:
@@ -2110,14 +2034,6 @@ func (UnimplementedOperatorServiceHandler) CreateWorkspace(context.Context, *con
 
 func (UnimplementedOperatorServiceHandler) ListWorkspaces(context.Context, *connect.Request[operatorv1.ListWorkspacesRequest]) (*connect.Response[operatorv1.ListWorkspacesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ListWorkspaces is not implemented"))
-}
-
-func (UnimplementedOperatorServiceHandler) SetTenantCap(context.Context, *connect.Request[operatorv1.SetTenantCapRequest]) (*connect.Response[operatorv1.SetTenantCapResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantCap is not implemented"))
-}
-
-func (UnimplementedOperatorServiceHandler) SetTenantLimits(context.Context, *connect.Request[operatorv1.SetTenantLimitsRequest]) (*connect.Response[operatorv1.SetTenantLimitsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.SetTenantLimits is not implemented"))
 }
 
 func (UnimplementedOperatorServiceHandler) UpdateWorkspace(context.Context, *connect.Request[operatorv1.UpdateWorkspaceRequest]) (*connect.Response[operatorv1.UpdateWorkspaceResponse], error) {

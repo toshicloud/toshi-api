@@ -2512,7 +2512,7 @@ export type Workspace = Message<"toshi.workspace.v1.Workspace"> & {
   name: string;
 
   /**
-   * The override; unset when none is set.
+   * The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
    *
    * @generated from field: optional int32 concurrency_cap = 3;
    */
@@ -2620,46 +2620,59 @@ export type Workspace = Message<"toshi.workspace.v1.Workspace"> & {
   historyDaysEffective: number;
 
   /**
-   * The workspace's own limits; unset when its plan's applies. 0 is no cap.
+   * The secrets.sets_max override; unset when none is set. 0 is no cap.
    *
    * @generated from field: optional int32 secret_max_sets = 24;
    */
   secretMaxSets?: number | undefined;
 
   /**
+   * The secrets.keys_max override; unset when none is set. 0 is no cap.
+   *
    * @generated from field: optional int32 secret_max_keys = 25;
    */
   secretMaxKeys?: number | undefined;
 
   /**
+   * The secrets.size_max_bytes override, rounded up to whole KiB and capped at
+   * 2147483647 KiB; unset when none is set. 0 is no cap.
+   *
    * @generated from field: optional int64 secret_max_kib = 26;
    */
   secretMaxKib?: bigint | undefined;
 
   /**
+   * The previews.ports_max override; unset when none is set. 0 is no cap.
+   *
    * @generated from field: optional int32 preview_max_ports = 27;
    */
   previewMaxPorts?: number | undefined;
 
   /**
-   * The limits Toshi enforces: the workspace's own value when set, else its
-   * plan's. 0 is no cap.
+   * The resolved secrets.sets_max; 0 is no cap.
    *
    * @generated from field: int32 secret_max_sets_effective = 28;
    */
   secretMaxSetsEffective: number;
 
   /**
+   * The resolved secrets.keys_max; 0 is no cap.
+   *
    * @generated from field: int32 secret_max_keys_effective = 29;
    */
   secretMaxKeysEffective: number;
 
   /**
+   * The resolved secrets.size_max_bytes, rounded up to whole KiB and capped at
+   * 2147483647 KiB; 0 is no cap.
+   *
    * @generated from field: int64 secret_max_kib_effective = 30;
    */
   secretMaxKibEffective: bigint;
 
   /**
+   * The resolved previews.ports_max; 0 is no cap.
+   *
    * @generated from field: int32 preview_max_ports_effective = 31;
    */
   previewMaxPortsEffective: number;
@@ -2770,7 +2783,7 @@ export type WorkspaceJson = {
   name?: string;
 
   /**
-   * The override; unset when none is set.
+   * The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
    *
    * @generated from field: optional int32 concurrency_cap = 3;
    */
@@ -2878,46 +2891,59 @@ export type WorkspaceJson = {
   historyDaysEffective?: number;
 
   /**
-   * The workspace's own limits; unset when its plan's applies. 0 is no cap.
+   * The secrets.sets_max override; unset when none is set. 0 is no cap.
    *
    * @generated from field: optional int32 secret_max_sets = 24;
    */
   secretMaxSets?: number;
 
   /**
+   * The secrets.keys_max override; unset when none is set. 0 is no cap.
+   *
    * @generated from field: optional int32 secret_max_keys = 25;
    */
   secretMaxKeys?: number;
 
   /**
+   * The secrets.size_max_bytes override, rounded up to whole KiB and capped at
+   * 2147483647 KiB; unset when none is set. 0 is no cap.
+   *
    * @generated from field: optional int64 secret_max_kib = 26;
    */
   secretMaxKib?: string;
 
   /**
+   * The previews.ports_max override; unset when none is set. 0 is no cap.
+   *
    * @generated from field: optional int32 preview_max_ports = 27;
    */
   previewMaxPorts?: number;
 
   /**
-   * The limits Toshi enforces: the workspace's own value when set, else its
-   * plan's. 0 is no cap.
+   * The resolved secrets.sets_max; 0 is no cap.
    *
    * @generated from field: int32 secret_max_sets_effective = 28;
    */
   secretMaxSetsEffective?: number;
 
   /**
+   * The resolved secrets.keys_max; 0 is no cap.
+   *
    * @generated from field: int32 secret_max_keys_effective = 29;
    */
   secretMaxKeysEffective?: number;
 
   /**
+   * The resolved secrets.size_max_bytes, rounded up to whole KiB and capped at
+   * 2147483647 KiB; 0 is no cap.
+   *
    * @generated from field: int64 secret_max_kib_effective = 30;
    */
   secretMaxKibEffective?: string;
 
   /**
+   * The resolved previews.ports_max; 0 is no cap.
+   *
    * @generated from field: int32 preview_max_ports_effective = 31;
    */
   previewMaxPortsEffective?: number;
