@@ -199,6 +199,16 @@ const (
 	ReasonProjectLimit = "PROJECT_LIMIT"
 	// ReasonStartRate: `CreateSandbox` past the ceiling of one of the plan's start windows (docs/contracts/plans.md, Held by the start windows); the metadata `next_at` (RFC 3339, UTC) is the earliest time every window has room again, and `next_start_at` carries the same time for older clients, and `Retry-After` and the `google.rpc.RetryInfo` detail give the seconds until then, rounded up.
 	ReasonStartRate = "START_RATE"
+	// ReasonCodeExpired: A short-lived code, such as an OAuth authorization code, is presented after its life ends; the refusal's credential.refused audit row carries this reason.
+	ReasonCodeExpired = "CODE_EXPIRED"
+	// ReasonCodeUsed: A short-lived code that was already redeemed is presented again; the grant it opened is revoked and the refusal's credential.refused audit row carries this reason.
+	ReasonCodeUsed = "CODE_USED"
+	// ReasonCredentialExpired: A host enrollment token, a workload token or an OAuth refresh token is presented after its life ends; `Register` and the artifact upload send this reason with the refusal, and the refusal's credential.refused audit row carries it.
+	ReasonCredentialExpired = "CREDENTIAL_EXPIRED"
+	// ReasonOutsideWindow: A signed inbound message (a billing event, a connection webhook or a mail notification) carries a timestamp too far before or after the control plane's clock; the refusal's credential.refused audit row carries this reason.
+	ReasonOutsideWindow = "OUTSIDE_WINDOW"
+	// ReasonSignatureInvalid: A signed inbound message whose signature, topic or shape does not verify; the refusal's credential.refused audit row carries this reason.
+	ReasonSignatureInvalid = "SIGNATURE_INVALID"
 	// ReasonTokenOutsideRanges: A workspace token is used from an address outside its permitted client ranges.
 	ReasonTokenOutsideRanges = "TOKEN_OUTSIDE_RANGES"
 	// ReasonTokenOutsideWindow: A workspace token is used before its permitted window starts.
