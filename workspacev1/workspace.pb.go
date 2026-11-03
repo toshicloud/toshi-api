@@ -117,6 +117,9 @@ const (
 	StopReason_STOP_REASON_POLICY StopReason = 7
 	// A stopped sandbox ended after its plan's keep.
 	StopReason_STOP_REASON_KEEP_EXPIRED StopReason = 8
+	// Its host was draining and the drain's drain_timeout passed while it
+	// still ran.
+	StopReason_STOP_REASON_DRAINED StopReason = 9
 )
 
 // Enum value maps for StopReason.
@@ -131,6 +134,7 @@ var (
 		6: "STOP_REASON_OPERATOR",
 		7: "STOP_REASON_POLICY",
 		8: "STOP_REASON_KEEP_EXPIRED",
+		9: "STOP_REASON_DRAINED",
 	}
 	StopReason_value = map[string]int32{
 		"STOP_REASON_UNSPECIFIED":         0,
@@ -142,6 +146,7 @@ var (
 		"STOP_REASON_OPERATOR":            6,
 		"STOP_REASON_POLICY":              7,
 		"STOP_REASON_KEEP_EXPIRED":        8,
+		"STOP_REASON_DRAINED":             9,
 	}
 )
 
@@ -15216,7 +15221,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x12END_REASON_STOPPED\x10\x02\x12\x18\n" +
 	"\x14END_REASON_CANCELLED\x10\x03\x12\x15\n" +
 	"\x11END_REASON_FAILED\x10\x04\x12\x13\n" +
-	"\x0fEND_REASON_LOST\x10\x05*\x91\x02\n" +
+	"\x0fEND_REASON_LOST\x10\x05*\xaa\x02\n" +
 	"\n" +
 	"StopReason\x12\x1b\n" +
 	"\x17STOP_REASON_UNSPECIFIED\x10\x00\x12\x15\n" +
@@ -15227,7 +15232,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x1dSTOP_REASON_WORKSPACE_DELETED\x10\x05\x12\x18\n" +
 	"\x14STOP_REASON_OPERATOR\x10\x06\x12\x16\n" +
 	"\x12STOP_REASON_POLICY\x10\a\x12\x1c\n" +
-	"\x18STOP_REASON_KEEP_EXPIRED\x10\b*\xca\x01\n" +
+	"\x18STOP_REASON_KEEP_EXPIRED\x10\b\x12\x17\n" +
+	"\x13STOP_REASON_DRAINED\x10\t*\xca\x01\n" +
 	"\tStopCause\x12\x1a\n" +
 	"\x16STOP_CAUSE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14STOP_CAUSE_EXEC_RATE\x10\x01\x12\x1e\n" +

@@ -924,7 +924,7 @@ export const labels = {
     POLICY: "Stopped by policy",
     SLEEP: "Service went to sleep",
     SERVICE_RESTART: "New revision started",
-    DRAINED: "Old revision drained",
+    DRAINED: "Drained",
   },
 } as const;
 

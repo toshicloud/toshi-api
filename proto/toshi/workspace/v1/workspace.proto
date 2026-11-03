@@ -52,6 +52,9 @@ enum StopReason {
   STOP_REASON_POLICY = 7;
   // A stopped sandbox ended after its plan's keep.
   STOP_REASON_KEEP_EXPIRED = 8;
+  // Its host was draining and the drain's drain_timeout passed while it
+  // still ran.
+  STOP_REASON_DRAINED = 9;
 }
 
 // StopCause identifies the policy behind a stop.
