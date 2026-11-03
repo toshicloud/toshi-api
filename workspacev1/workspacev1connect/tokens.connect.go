@@ -66,6 +66,9 @@ type TokenServiceClient interface {
 	// The operator, under the operator grant, needs neither. An unknown
 	// project or environment fails with NOT_FOUND; a closed workspace fails
 	// with FAILED_PRECONDITION.
+	// A retry with the same request key returns the same value while the
+	// token remains live. After the token is rolled or revoked, the retry
+	// fails with FAILED_PRECONDITION; it does not make a second token.
 	CreateWorkspaceToken(context.Context, *connect.Request[workspacev1.CreateWorkspaceTokenRequest]) (*connect.Response[workspacev1.CreateWorkspaceTokenResponse], error)
 	// RevokeToken stops one of the workspace's tokens working at once.
 	// Revoking an enrollment token also signs out the hosts that registered
@@ -199,6 +202,9 @@ type TokenServiceHandler interface {
 	// The operator, under the operator grant, needs neither. An unknown
 	// project or environment fails with NOT_FOUND; a closed workspace fails
 	// with FAILED_PRECONDITION.
+	// A retry with the same request key returns the same value while the
+	// token remains live. After the token is rolled or revoked, the retry
+	// fails with FAILED_PRECONDITION; it does not make a second token.
 	CreateWorkspaceToken(context.Context, *connect.Request[workspacev1.CreateWorkspaceTokenRequest]) (*connect.Response[workspacev1.CreateWorkspaceTokenResponse], error)
 	// RevokeToken stops one of the workspace's tokens working at once.
 	// Revoking an enrollment token also signs out the hosts that registered

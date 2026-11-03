@@ -38,6 +38,9 @@ service TokenService {
   // The operator, under the operator grant, needs neither. An unknown
   // project or environment fails with NOT_FOUND; a closed workspace fails
   // with FAILED_PRECONDITION.
+  // A retry with the same request key returns the same value while the
+  // token remains live. After the token is rolled or revoked, the retry
+  // fails with FAILED_PRECONDITION; it does not make a second token.
   rpc CreateWorkspaceToken(CreateWorkspaceTokenRequest) returns (CreateWorkspaceTokenResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "tokens.write";
@@ -225,8 +228,10 @@ message CreateWorkspaceTokenRequest {
   // one.
   string role = 7;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-  // key and request return the first answer; a different request with the
-  // same key is refused. Keys are kept for 30 days by default.
+  // key and request return the first answer while the token remains live;
+  // after it is rolled or revoked the retry is refused and makes no new
+  // token. A different request with the same key is refused. Keys are kept
+  // for 30 days by default after the stored value is cleared.
   string request_key = 8;
 }
 
@@ -257,8 +262,10 @@ message RollWorkspaceTokenRequest {
   // The token's id, such as "tok-1a2b3c4d5e6f".
   string id = 1;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-  // key and request return the first answer; a different request with the
-  // same key is refused. Keys are kept for 30 days by default.
+  // key and request return the first answer while the value remains live;
+  // after another roll or revocation the retry is refused. A different
+  // request with the same key is refused. Keys are kept for 30 days by
+  // default after the stored value is cleared.
   string request_key = 2;
 }
 

@@ -1059,8 +1059,10 @@ type CreateRecordingShareLinkRequest struct {
 	// the recording's object is INVALID_ARGUMENT.
 	MaxBytes int64 `protobuf:"varint,3,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
-	// same key is refused. Keys are kept for 30 days by default.
+	// key and request return the first answer while the link remains live;
+	// a spent, revoked or expired link cannot be replayed. A different request
+	// with the same key is refused. Keys are kept for 30 days by default; a
+	// live link's key stays at least until it expires.
 	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

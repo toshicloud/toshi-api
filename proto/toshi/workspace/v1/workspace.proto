@@ -1849,8 +1849,10 @@ message CreatePreviewShareLinkRequest {
     int32 port = 7;
   }
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-  // key and request return the first answer; a different request with the
-  // same key is refused. Keys are kept for 30 days by default.
+  // key and request return the first answer while the link remains live;
+  // an ended, revoked or expired link cannot be replayed. A different
+  // request with the same key is refused. Keys are kept for 30 days by
+  // default; a live link's key stays at least until it expires.
   string request_key = 8;
 }
 
@@ -1929,8 +1931,10 @@ message CreateServiceShareLinkRequest {
   // plan's; 0 is the plan's.
   int64 max_bytes = 6;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-  // key and request return the first answer; a different request with the
-  // same key is refused. Keys are kept for 30 days by default.
+  // key and request return the first answer while the link remains live;
+  // an ended, revoked or expired link cannot be replayed. A different
+  // request with the same key is refused. Keys are kept for 30 days by
+  // default; a live link's key stays at least until it expires.
   string request_key = 7;
 }
 

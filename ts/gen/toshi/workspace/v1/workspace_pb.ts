@@ -8622,8 +8622,10 @@ export type CreatePreviewShareLinkRequest = Message<"toshi.workspace.v1.CreatePr
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the link remains live;
+   * an ended, revoked or expired link cannot be replayed. A different
+   * request with the same key is refused. Keys are kept for 30 days by
+   * default; a live link's key stays at least until it expires.
    *
    * @generated from field: string request_key = 8;
    */
@@ -8679,8 +8681,10 @@ export type CreatePreviewShareLinkRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the link remains live;
+   * an ended, revoked or expired link cannot be replayed. A different
+   * request with the same key is refused. Keys are kept for 30 days by
+   * default; a live link's key stays at least until it expires.
    *
    * @generated from field: string request_key = 8;
    */
@@ -9153,8 +9157,10 @@ export type CreateServiceShareLinkRequest = Message<"toshi.workspace.v1.CreateSe
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the link remains live;
+   * an ended, revoked or expired link cannot be replayed. A different
+   * request with the same key is refused. Keys are kept for 30 days by
+   * default; a live link's key stays at least until it expires.
    *
    * @generated from field: string request_key = 7;
    */
@@ -9208,8 +9214,10 @@ export type CreateServiceShareLinkRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the link remains live;
+   * an ended, revoked or expired link cannot be replayed. A different
+   * request with the same key is refused. Keys are kept for 30 days by
+   * default; a live link's key stays at least until it expires.
    *
    * @generated from field: string request_key = 7;
    */

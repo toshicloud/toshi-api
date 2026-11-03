@@ -974,8 +974,10 @@ export type CreateRecordingShareLinkRequest = Message<"toshi.workspace.v1.Create
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the link remains live;
+   * a spent, revoked or expired link cannot be replayed. A different request
+   * with the same key is refused. Keys are kept for 30 days by default; a
+   * live link's key stays at least until it expires.
    *
    * @generated from field: string request_key = 4;
    */
@@ -1017,8 +1019,10 @@ export type CreateRecordingShareLinkRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the link remains live;
+   * a spent, revoked or expired link cannot be replayed. A different request
+   * with the same key is refused. Keys are kept for 30 days by default; a
+   * live link's key stays at least until it expires.
    *
    * @generated from field: string request_key = 4;
    */

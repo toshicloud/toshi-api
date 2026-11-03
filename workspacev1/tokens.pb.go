@@ -542,8 +542,10 @@ type CreateWorkspaceTokenRequest struct {
 	// one.
 	Role string `protobuf:"bytes,7,opt,name=role,proto3" json:"role,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
-	// same key is refused. Keys are kept for 30 days by default.
+	// key and request return the first answer while the token remains live;
+	// after it is rolled or revoked the retry is refused and makes no new
+	// token. A different request with the same key is refused. Keys are kept
+	// for 30 days by default after the stored value is cleared.
 	RequestKey    string `protobuf:"bytes,8,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -797,8 +799,10 @@ type RollWorkspaceTokenRequest struct {
 	// The token's id, such as "tok-1a2b3c4d5e6f".
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
-	// same key is refused. Keys are kept for 30 days by default.
+	// key and request return the first answer while the value remains live;
+	// after another roll or revocation the retry is refused. A different
+	// request with the same key is refused. Keys are kept for 30 days by
+	// default after the stored value is cleared.
 	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

@@ -308,8 +308,10 @@ message CreateRecordingShareLinkRequest {
   // the recording's object is INVALID_ARGUMENT.
   int64 max_bytes = 3;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-  // key and request return the first answer; a different request with the
-  // same key is refused. Keys are kept for 30 days by default.
+  // key and request return the first answer while the link remains live;
+  // a spent, revoked or expired link cannot be replayed. A different request
+  // with the same key is refused. Keys are kept for 30 days by default; a
+  // live link's key stays at least until it expires.
   string request_key = 4;
 }
 

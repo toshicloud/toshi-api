@@ -9611,8 +9611,10 @@ type CreatePreviewShareLinkRequest struct {
 	//	*CreatePreviewShareLinkRequest_Port
 	EndpointRef isCreatePreviewShareLinkRequest_EndpointRef `protobuf_oneof:"endpoint_ref"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
-	// same key is refused. Keys are kept for 30 days by default.
+	// key and request return the first answer while the link remains live;
+	// an ended, revoked or expired link cannot be replayed. A different
+	// request with the same key is refused. Keys are kept for 30 days by
+	// default; a live link's key stays at least until it expires.
 	RequestKey    string `protobuf:"bytes,8,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -10180,8 +10182,10 @@ type CreateServiceShareLinkRequest struct {
 	// plan's; 0 is the plan's.
 	MaxBytes int64 `protobuf:"varint,6,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
-	// same key is refused. Keys are kept for 30 days by default.
+	// key and request return the first answer while the link remains live;
+	// an ended, revoked or expired link cannot be replayed. A different
+	// request with the same key is refused. Keys are kept for 30 days by
+	// default; a live link's key stays at least until it expires.
 	RequestKey    string `protobuf:"bytes,7,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

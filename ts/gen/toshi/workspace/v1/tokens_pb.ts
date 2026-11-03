@@ -545,8 +545,10 @@ export type CreateWorkspaceTokenRequest = Message<"toshi.workspace.v1.CreateWork
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the token remains live;
+   * after it is rolled or revoked the retry is refused and makes no new
+   * token. A different request with the same key is refused. Keys are kept
+   * for 30 days by default after the stored value is cleared.
    *
    * @generated from field: string request_key = 8;
    */
@@ -617,8 +619,10 @@ export type CreateWorkspaceTokenRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the token remains live;
+   * after it is rolled or revoked the retry is refused and makes no new
+   * token. A different request with the same key is refused. Keys are kept
+   * for 30 days by default after the stored value is cleared.
    *
    * @generated from field: string request_key = 8;
    */
@@ -780,8 +784,10 @@ export type RollWorkspaceTokenRequest = Message<"toshi.workspace.v1.RollWorkspac
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the value remains live;
+   * after another roll or revocation the retry is refused. A different
+   * request with the same key is refused. Keys are kept for 30 days by
+   * default after the stored value is cleared.
    *
    * @generated from field: string request_key = 2;
    */
@@ -803,8 +809,10 @@ export type RollWorkspaceTokenRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
+   * key and request return the first answer while the value remains live;
+   * after another roll or revocation the retry is refused. A different
+   * request with the same key is refused. Keys are kept for 30 days by
+   * default after the stored value is cleared.
    *
    * @generated from field: string request_key = 2;
    */
@@ -1092,6 +1100,9 @@ export const TokenService: GenService<{
    * The operator, under the operator grant, needs neither. An unknown
    * project or environment fails with NOT_FOUND; a closed workspace fails
    * with FAILED_PRECONDITION.
+   * A retry with the same request key returns the same value while the
+   * token remains live. After the token is rolled or revoked, the retry
+   * fails with FAILED_PRECONDITION; it does not make a second token.
    *
    * @generated from rpc toshi.workspace.v1.TokenService.CreateWorkspaceToken
    */
