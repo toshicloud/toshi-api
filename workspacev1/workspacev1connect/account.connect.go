@@ -48,6 +48,9 @@ const (
 	// AccountServiceEndSessionProcedure is the fully-qualified name of the AccountService's EndSession
 	// RPC.
 	AccountServiceEndSessionProcedure = "/toshi.workspace.v1.AccountService/EndSession"
+	// AccountServiceDeleteAccountProcedure is the fully-qualified name of the AccountService's
+	// DeleteAccount RPC.
+	AccountServiceDeleteAccountProcedure = "/toshi.workspace.v1.AccountService/DeleteAccount"
 )
 
 // AccountServiceClient is a client for the toshi.workspace.v1.AccountService service.
@@ -79,6 +82,11 @@ type AccountServiceClient interface {
 	// fails with NOT_FOUND. The session ended stops working at its next
 	// call, the calling one included.
 	EndSession(context.Context, *connect.Request[workspacev1.EndSessionRequest]) (*connect.Response[workspacev1.EndSessionResponse], error)
+	// DeleteAccount erases the caller's user and ends its sessions. Confirm
+	// must be the caller's user id. A last Owner cannot be erased until
+	// another Owner is granted; the refusal carries reason LAST_OWNER. The
+	// calling session stops working at its next call.
+	DeleteAccount(context.Context, *connect.Request[workspacev1.DeleteAccountRequest]) (*connect.Response[workspacev1.DeleteAccountResponse], error)
 }
 
 // NewAccountServiceClient constructs a client for the toshi.workspace.v1.AccountService service. By
@@ -122,6 +130,12 @@ func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(accountServiceMethods.ByName("EndSession")),
 			connect.WithClientOptions(opts...),
 		),
+		deleteAccount: connect.NewClient[workspacev1.DeleteAccountRequest, workspacev1.DeleteAccountResponse](
+			httpClient,
+			baseURL+AccountServiceDeleteAccountProcedure,
+			connect.WithSchema(accountServiceMethods.ByName("DeleteAccount")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -132,6 +146,7 @@ type accountServiceClient struct {
 	unlinkIdentity *connect.Client[workspacev1.UnlinkIdentityRequest, workspacev1.UnlinkIdentityResponse]
 	listSessions   *connect.Client[workspacev1.ListSessionsRequest, workspacev1.ListSessionsResponse]
 	endSession     *connect.Client[workspacev1.EndSessionRequest, workspacev1.EndSessionResponse]
+	deleteAccount  *connect.Client[workspacev1.DeleteAccountRequest, workspacev1.DeleteAccountResponse]
 }
 
 // GetAccount calls toshi.workspace.v1.AccountService.GetAccount.
@@ -157,6 +172,11 @@ func (c *accountServiceClient) ListSessions(ctx context.Context, req *connect.Re
 // EndSession calls toshi.workspace.v1.AccountService.EndSession.
 func (c *accountServiceClient) EndSession(ctx context.Context, req *connect.Request[workspacev1.EndSessionRequest]) (*connect.Response[workspacev1.EndSessionResponse], error) {
 	return c.endSession.CallUnary(ctx, req)
+}
+
+// DeleteAccount calls toshi.workspace.v1.AccountService.DeleteAccount.
+func (c *accountServiceClient) DeleteAccount(ctx context.Context, req *connect.Request[workspacev1.DeleteAccountRequest]) (*connect.Response[workspacev1.DeleteAccountResponse], error) {
+	return c.deleteAccount.CallUnary(ctx, req)
 }
 
 // AccountServiceHandler is an implementation of the toshi.workspace.v1.AccountService service.
@@ -188,6 +208,11 @@ type AccountServiceHandler interface {
 	// fails with NOT_FOUND. The session ended stops working at its next
 	// call, the calling one included.
 	EndSession(context.Context, *connect.Request[workspacev1.EndSessionRequest]) (*connect.Response[workspacev1.EndSessionResponse], error)
+	// DeleteAccount erases the caller's user and ends its sessions. Confirm
+	// must be the caller's user id. A last Owner cannot be erased until
+	// another Owner is granted; the refusal carries reason LAST_OWNER. The
+	// calling session stops working at its next call.
+	DeleteAccount(context.Context, *connect.Request[workspacev1.DeleteAccountRequest]) (*connect.Response[workspacev1.DeleteAccountResponse], error)
 }
 
 // NewAccountServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -227,6 +252,12 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 		connect.WithSchema(accountServiceMethods.ByName("EndSession")),
 		connect.WithHandlerOptions(opts...),
 	)
+	accountServiceDeleteAccountHandler := connect.NewUnaryHandler(
+		AccountServiceDeleteAccountProcedure,
+		svc.DeleteAccount,
+		connect.WithSchema(accountServiceMethods.ByName("DeleteAccount")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/toshi.workspace.v1.AccountService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AccountServiceGetAccountProcedure:
@@ -239,6 +270,8 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 			accountServiceListSessionsHandler.ServeHTTP(w, r)
 		case AccountServiceEndSessionProcedure:
 			accountServiceEndSessionHandler.ServeHTTP(w, r)
+		case AccountServiceDeleteAccountProcedure:
+			accountServiceDeleteAccountHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -266,4 +299,8 @@ func (UnimplementedAccountServiceHandler) ListSessions(context.Context, *connect
 
 func (UnimplementedAccountServiceHandler) EndSession(context.Context, *connect.Request[workspacev1.EndSessionRequest]) (*connect.Response[workspacev1.EndSessionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.AccountService.EndSession is not implemented"))
+}
+
+func (UnimplementedAccountServiceHandler) DeleteAccount(context.Context, *connect.Request[workspacev1.DeleteAccountRequest]) (*connect.Response[workspacev1.DeleteAccountResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.AccountService.DeleteAccount is not implemented"))
 }

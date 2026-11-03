@@ -993,6 +993,89 @@ func (*EndSessionResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{14}
 }
 
+// DeleteAccountRequest confirms the erasure of the caller's own user.
+type DeleteAccountRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The caller's own user id.
+	Confirm       string `protobuf:"bytes,1,opt,name=confirm,proto3" json:"confirm,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAccountRequest) Reset() {
+	*x = DeleteAccountRequest{}
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAccountRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAccountRequest) ProtoMessage() {}
+
+func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAccountRequest.ProtoReflect.Descriptor instead.
+func (*DeleteAccountRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DeleteAccountRequest) GetConfirm() string {
+	if x != nil {
+		return x.Confirm
+	}
+	return ""
+}
+
+// DeleteAccountResponse is empty: the caller's user is erased.
+type DeleteAccountResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAccountResponse) Reset() {
+	*x = DeleteAccountResponse{}
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAccountResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAccountResponse) ProtoMessage() {}
+
+func (x *DeleteAccountResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_account_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAccountResponse.ProtoReflect.Descriptor instead.
+func (*DeleteAccountResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{16}
+}
+
 var File_toshi_workspace_v1_account_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_account_proto_rawDesc = "" +
@@ -1069,7 +1152,10 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"lastSeenAt\"#\n" +
 	"\x11EndSessionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x14\n" +
-	"\x12EndSessionResponse2\xea\x05\n" +
+	"\x12EndSessionResponse\"0\n" +
+	"\x14DeleteAccountRequest\x12\x18\n" +
+	"\aconfirm\x18\x01 \x01(\tR\aconfirm\"\x17\n" +
+	"\x15DeleteAccountResponse2\x92\a\n" +
 	"\x0eAccountService\x12z\n" +
 	"\n" +
 	"GetAccount\x12%.toshi.workspace.v1.GetAccountRequest\x1a&.toshi.workspace.v1.GetAccountResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x86\x01\n" +
@@ -1079,7 +1165,9 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"\fListSessions\x12'.toshi.workspace.v1.ListSessionsRequest\x1a(.toshi.workspace.v1.ListSessionsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x9e\x01\n" +
 	"\n" +
 	"EndSession\x12%.toshi.workspace.v1.EndSessionRequest\x1a&.toshi.workspace.v1.EndSessionResponse\"A\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x15\n" +
-	"\rsession.ended\x12\x04none\xea\xf3\x18\x02\x10\x01\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\rsession.ended\x12\x04none\xea\xf3\x18\x02\x10\x01\x90\xf4\x18\x02\x12\xa5\x01\n" +
+	"\rDeleteAccount\x12(.toshi.workspace.v1.DeleteAccountRequest\x1a).toshi.workspace.v1.DeleteAccountResponse\"?\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x13\n" +
+	"\vuser.erased\x12\x04none\xea\xf3\x18\x02\x10\x01\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_account_proto_rawDescOnce sync.Once
@@ -1093,7 +1181,7 @@ func file_toshi_workspace_v1_account_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_account_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_account_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_toshi_workspace_v1_account_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_toshi_workspace_v1_account_proto_goTypes = []any{
 	(*Account)(nil),                // 0: toshi.workspace.v1.Account
 	(*Identity)(nil),               // 1: toshi.workspace.v1.Identity
@@ -1110,37 +1198,41 @@ var file_toshi_workspace_v1_account_proto_goTypes = []any{
 	(*SignInSession)(nil),          // 12: toshi.workspace.v1.SignInSession
 	(*EndSessionRequest)(nil),      // 13: toshi.workspace.v1.EndSessionRequest
 	(*EndSessionResponse)(nil),     // 14: toshi.workspace.v1.EndSessionResponse
-	(*timestamppb.Timestamp)(nil),  // 15: google.protobuf.Timestamp
+	(*DeleteAccountRequest)(nil),   // 15: toshi.workspace.v1.DeleteAccountRequest
+	(*DeleteAccountResponse)(nil),  // 16: toshi.workspace.v1.DeleteAccountResponse
+	(*timestamppb.Timestamp)(nil),  // 17: google.protobuf.Timestamp
 }
 var file_toshi_workspace_v1_account_proto_depIdxs = []int32{
-	15, // 0: toshi.workspace.v1.Account.created_at:type_name -> google.protobuf.Timestamp
-	15, // 1: toshi.workspace.v1.Identity.created_at:type_name -> google.protobuf.Timestamp
-	15, // 2: toshi.workspace.v1.Identity.last_sign_in_at:type_name -> google.protobuf.Timestamp
+	17, // 0: toshi.workspace.v1.Account.created_at:type_name -> google.protobuf.Timestamp
+	17, // 1: toshi.workspace.v1.Identity.created_at:type_name -> google.protobuf.Timestamp
+	17, // 2: toshi.workspace.v1.Identity.last_sign_in_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: toshi.workspace.v1.GetAccountResponse.account:type_name -> toshi.workspace.v1.Account
 	1,  // 4: toshi.workspace.v1.GetAccountResponse.identities:type_name -> toshi.workspace.v1.Identity
 	5,  // 5: toshi.workspace.v1.GetAccountResponse.signed_in_with:type_name -> toshi.workspace.v1.SignInProof
 	4,  // 6: toshi.workspace.v1.GetAccountResponse.pending:type_name -> toshi.workspace.v1.JoinRequest
-	15, // 7: toshi.workspace.v1.JoinRequest.retry_after:type_name -> google.protobuf.Timestamp
-	15, // 8: toshi.workspace.v1.SignInProof.authenticated_at:type_name -> google.protobuf.Timestamp
+	17, // 7: toshi.workspace.v1.JoinRequest.retry_after:type_name -> google.protobuf.Timestamp
+	17, // 8: toshi.workspace.v1.SignInProof.authenticated_at:type_name -> google.protobuf.Timestamp
 	1,  // 9: toshi.workspace.v1.ListIdentitiesResponse.identities:type_name -> toshi.workspace.v1.Identity
 	1,  // 10: toshi.workspace.v1.UnlinkIdentityResponse.identity:type_name -> toshi.workspace.v1.Identity
 	12, // 11: toshi.workspace.v1.ListSessionsResponse.sessions:type_name -> toshi.workspace.v1.SignInSession
-	15, // 12: toshi.workspace.v1.SignInSession.created_at:type_name -> google.protobuf.Timestamp
-	15, // 13: toshi.workspace.v1.SignInSession.expires_at:type_name -> google.protobuf.Timestamp
+	17, // 12: toshi.workspace.v1.SignInSession.created_at:type_name -> google.protobuf.Timestamp
+	17, // 13: toshi.workspace.v1.SignInSession.expires_at:type_name -> google.protobuf.Timestamp
 	5,  // 14: toshi.workspace.v1.SignInSession.signed_in_with:type_name -> toshi.workspace.v1.SignInProof
-	15, // 15: toshi.workspace.v1.SignInSession.last_seen_at:type_name -> google.protobuf.Timestamp
+	17, // 15: toshi.workspace.v1.SignInSession.last_seen_at:type_name -> google.protobuf.Timestamp
 	2,  // 16: toshi.workspace.v1.AccountService.GetAccount:input_type -> toshi.workspace.v1.GetAccountRequest
 	6,  // 17: toshi.workspace.v1.AccountService.ListIdentities:input_type -> toshi.workspace.v1.ListIdentitiesRequest
 	8,  // 18: toshi.workspace.v1.AccountService.UnlinkIdentity:input_type -> toshi.workspace.v1.UnlinkIdentityRequest
 	10, // 19: toshi.workspace.v1.AccountService.ListSessions:input_type -> toshi.workspace.v1.ListSessionsRequest
 	13, // 20: toshi.workspace.v1.AccountService.EndSession:input_type -> toshi.workspace.v1.EndSessionRequest
-	3,  // 21: toshi.workspace.v1.AccountService.GetAccount:output_type -> toshi.workspace.v1.GetAccountResponse
-	7,  // 22: toshi.workspace.v1.AccountService.ListIdentities:output_type -> toshi.workspace.v1.ListIdentitiesResponse
-	9,  // 23: toshi.workspace.v1.AccountService.UnlinkIdentity:output_type -> toshi.workspace.v1.UnlinkIdentityResponse
-	11, // 24: toshi.workspace.v1.AccountService.ListSessions:output_type -> toshi.workspace.v1.ListSessionsResponse
-	14, // 25: toshi.workspace.v1.AccountService.EndSession:output_type -> toshi.workspace.v1.EndSessionResponse
-	21, // [21:26] is the sub-list for method output_type
-	16, // [16:21] is the sub-list for method input_type
+	15, // 21: toshi.workspace.v1.AccountService.DeleteAccount:input_type -> toshi.workspace.v1.DeleteAccountRequest
+	3,  // 22: toshi.workspace.v1.AccountService.GetAccount:output_type -> toshi.workspace.v1.GetAccountResponse
+	7,  // 23: toshi.workspace.v1.AccountService.ListIdentities:output_type -> toshi.workspace.v1.ListIdentitiesResponse
+	9,  // 24: toshi.workspace.v1.AccountService.UnlinkIdentity:output_type -> toshi.workspace.v1.UnlinkIdentityResponse
+	11, // 25: toshi.workspace.v1.AccountService.ListSessions:output_type -> toshi.workspace.v1.ListSessionsResponse
+	14, // 26: toshi.workspace.v1.AccountService.EndSession:output_type -> toshi.workspace.v1.EndSessionResponse
+	16, // 27: toshi.workspace.v1.AccountService.DeleteAccount:output_type -> toshi.workspace.v1.DeleteAccountResponse
+	22, // [22:28] is the sub-list for method output_type
+	16, // [16:22] is the sub-list for method input_type
 	16, // [16:16] is the sub-list for extension type_name
 	16, // [16:16] is the sub-list for extension extendee
 	0,  // [0:16] is the sub-list for field type_name
@@ -1157,7 +1249,7 @@ func file_toshi_workspace_v1_account_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_account_proto_rawDesc), len(file_toshi_workspace_v1_account_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

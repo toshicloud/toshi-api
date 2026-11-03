@@ -18,6 +18,15 @@ option go_package = "go.toshicloud.io/api/operatorv1";
 // (toshi.workspace.v1), whose member services run these calls for the
 // member's workspace, and the refusal names the call to make there.
 service OperatorService {
+  // DeleteUser erases a user across workspaces. Confirm must equal user_id.
+  // An unknown user is NOT_FOUND; the last Owner of a workspace is refused
+  // with FAILED_PRECONDITION and reason LAST_OWNER.
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (toshi.key_mode) = NATURAL;
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.audit) = {action: "user.erased" target: "none"};
+  }
+
   // ListJobs returns the jobs that match every filter field that is set,
   // oldest queued first.
   //
@@ -1290,6 +1299,17 @@ message UpdateHostResponse {
   // The host as stored after the change.
   Host host = 1;
 }
+
+// DeleteUserRequest names the user to erase.
+message DeleteUserRequest {
+  // The id of the user to erase.
+  string user_id = 1;
+  // Must equal user_id.
+  string confirm = 2;
+}
+
+// DeleteUserResponse is empty: the user is erased.
+message DeleteUserResponse {}
 
 message RetireHostRequest {
   string id = 1;

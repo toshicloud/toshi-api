@@ -35,6 +35,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
+	// OperatorServiceDeleteUserProcedure is the fully-qualified name of the OperatorService's
+	// DeleteUser RPC.
+	OperatorServiceDeleteUserProcedure = "/toshi.operator.v1.OperatorService/DeleteUser"
 	// OperatorServiceListJobsProcedure is the fully-qualified name of the OperatorService's ListJobs
 	// RPC.
 	OperatorServiceListJobsProcedure = "/toshi.operator.v1.OperatorService/ListJobs"
@@ -195,6 +198,10 @@ const (
 
 // OperatorServiceClient is a client for the toshi.operator.v1.OperatorService service.
 type OperatorServiceClient interface {
+	// DeleteUser erases a user across workspaces. Confirm must equal user_id.
+	// An unknown user is NOT_FOUND; the last Owner of a workspace is refused
+	// with FAILED_PRECONDITION and reason LAST_OWNER.
+	DeleteUser(context.Context, *connect.Request[operatorv1.DeleteUserRequest]) (*connect.Response[operatorv1.DeleteUserResponse], error)
 	// ListJobs returns the jobs that match every filter field that is set,
 	// oldest queued first.
 	//
@@ -584,6 +591,12 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 	baseURL = strings.TrimRight(baseURL, "/")
 	operatorServiceMethods := operatorv1.File_toshi_operator_v1_operator_proto.Services().ByName("OperatorService").Methods()
 	return &operatorServiceClient{
+		deleteUser: connect.NewClient[operatorv1.DeleteUserRequest, operatorv1.DeleteUserResponse](
+			httpClient,
+			baseURL+OperatorServiceDeleteUserProcedure,
+			connect.WithSchema(operatorServiceMethods.ByName("DeleteUser")),
+			connect.WithClientOptions(opts...),
+		),
 		listJobs: connect.NewClient[operatorv1.ListJobsRequest, operatorv1.ListJobsResponse](
 			httpClient,
 			baseURL+OperatorServiceListJobsProcedure,
@@ -901,6 +914,7 @@ func NewOperatorServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // operatorServiceClient implements OperatorServiceClient.
 type operatorServiceClient struct {
+	deleteUser            *connect.Client[operatorv1.DeleteUserRequest, operatorv1.DeleteUserResponse]
 	listJobs              *connect.Client[operatorv1.ListJobsRequest, operatorv1.ListJobsResponse]
 	listAuditEvents       *connect.Client[operatorv1.ListAuditEventsRequest, operatorv1.ListAuditEventsResponse]
 	summariseJobTelemetry *connect.Client[operatorv1.SummariseJobTelemetryRequest, operatorv1.SummariseJobTelemetryResponse]
@@ -953,6 +967,11 @@ type operatorServiceClient struct {
 	listStorageProviders  *connect.Client[operatorv1.ListStorageProvidersRequest, operatorv1.ListStorageProvidersResponse]
 	checkStorageProvider  *connect.Client[operatorv1.CheckStorageProviderRequest, operatorv1.CheckStorageProviderResponse]
 	deleteStorageProvider *connect.Client[operatorv1.DeleteStorageProviderRequest, operatorv1.DeleteStorageProviderResponse]
+}
+
+// DeleteUser calls toshi.operator.v1.OperatorService.DeleteUser.
+func (c *operatorServiceClient) DeleteUser(ctx context.Context, req *connect.Request[operatorv1.DeleteUserRequest]) (*connect.Response[operatorv1.DeleteUserResponse], error) {
+	return c.deleteUser.CallUnary(ctx, req)
 }
 
 // ListJobs calls toshi.operator.v1.OperatorService.ListJobs.
@@ -1217,6 +1236,10 @@ func (c *operatorServiceClient) DeleteStorageProvider(ctx context.Context, req *
 
 // OperatorServiceHandler is an implementation of the toshi.operator.v1.OperatorService service.
 type OperatorServiceHandler interface {
+	// DeleteUser erases a user across workspaces. Confirm must equal user_id.
+	// An unknown user is NOT_FOUND; the last Owner of a workspace is refused
+	// with FAILED_PRECONDITION and reason LAST_OWNER.
+	DeleteUser(context.Context, *connect.Request[operatorv1.DeleteUserRequest]) (*connect.Response[operatorv1.DeleteUserResponse], error)
 	// ListJobs returns the jobs that match every filter field that is set,
 	// oldest queued first.
 	//
@@ -1602,6 +1625,12 @@ type OperatorServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	operatorServiceMethods := operatorv1.File_toshi_operator_v1_operator_proto.Services().ByName("OperatorService").Methods()
+	operatorServiceDeleteUserHandler := connect.NewUnaryHandler(
+		OperatorServiceDeleteUserProcedure,
+		svc.DeleteUser,
+		connect.WithSchema(operatorServiceMethods.ByName("DeleteUser")),
+		connect.WithHandlerOptions(opts...),
+	)
 	operatorServiceListJobsHandler := connect.NewUnaryHandler(
 		OperatorServiceListJobsProcedure,
 		svc.ListJobs,
@@ -1916,6 +1945,8 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 	)
 	return "/toshi.operator.v1.OperatorService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case OperatorServiceDeleteUserProcedure:
+			operatorServiceDeleteUserHandler.ServeHTTP(w, r)
 		case OperatorServiceListJobsProcedure:
 			operatorServiceListJobsHandler.ServeHTTP(w, r)
 		case OperatorServiceListAuditEventsProcedure:
@@ -2028,6 +2059,10 @@ func NewOperatorServiceHandler(svc OperatorServiceHandler, opts ...connect.Handl
 
 // UnimplementedOperatorServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedOperatorServiceHandler struct{}
+
+func (UnimplementedOperatorServiceHandler) DeleteUser(context.Context, *connect.Request[operatorv1.DeleteUserRequest]) (*connect.Response[operatorv1.DeleteUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.DeleteUser is not implemented"))
+}
 
 func (UnimplementedOperatorServiceHandler) ListJobs(context.Context, *connect.Request[operatorv1.ListJobsRequest]) (*connect.Response[operatorv1.ListJobsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.operator.v1.OperatorService.ListJobs is not implemented"))

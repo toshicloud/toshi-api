@@ -78,6 +78,19 @@ service AccountService {
       target: "none"
     };
   }
+
+  // DeleteAccount erases the caller's user and ends its sessions. Confirm
+  // must be the caller's user id. A last Owner cannot be erased until
+  // another Owner is granted; the refusal carries reason LAST_OWNER. The
+  // calling session stops working at its next call.
+  rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse) {
+    option (toshi.key_mode) = NATURAL;
+    option (toshi.permission) = "members.write";
+    // members.write only files a person's own call; it is not checked.
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.scope) = "workspace";
+    option (toshi.audit) = {action: "user.erased" target: "none"};
+  }
 }
 
 // Account is a Toshi user: a person who signs in through one or more
@@ -257,3 +270,12 @@ message EndSessionRequest {
 
 // EndSessionResponse is empty: the session is ended when the call returns.
 message EndSessionResponse {}
+
+// DeleteAccountRequest confirms the erasure of the caller's own user.
+message DeleteAccountRequest {
+  // The caller's own user id.
+  string confirm = 1;
+}
+
+// DeleteAccountResponse is empty: the caller's user is erased.
+message DeleteAccountResponse {}

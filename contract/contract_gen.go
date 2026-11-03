@@ -868,6 +868,8 @@ const (
 	AuditActionRetentionSwept = "retention.swept"
 	// AuditActionRetentionFinished is the "retention.finished" audit action.
 	AuditActionRetentionFinished = "retention.finished"
+	// AuditActionUserErased is the "user.erased" audit action.
+	AuditActionUserErased = "user.erased"
 )
 
 // EventName is one event name Toshi writes.
