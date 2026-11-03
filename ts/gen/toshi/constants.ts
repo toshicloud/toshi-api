@@ -932,6 +932,14 @@ export const labels = {
     starts_per_hour: "Per hour",
     starts_per_day: "Per day",
   },
+  WorkspaceLimit: {
+    "jobs.concurrency_max": "Running at once",
+    max_vcpu: "vCPUs",
+  },
+  WorkspaceLimitCause: {
+    plan: "Plan",
+    workspace: "Workspace",
+  },
   WorkloadKind: {
     job: "Job",
     sandbox: "Sandbox",

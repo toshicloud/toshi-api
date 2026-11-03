@@ -151,6 +151,12 @@ service WorkspaceService {
   rpc GetStartWindows(GetStartWindowsRequest) returns (GetStartWindowsResponse) {
     option (toshi.permission) = "workspace.read";
   }
+  // GetWorkspaceLimits returns the workspace's start windows and its
+  // concurrent job and vCPU limits, with their plan and effective values.
+  // The counts are a snapshot and this read changes nothing.
+  rpc GetWorkspaceLimits(GetWorkspaceLimitsRequest) returns (GetWorkspaceLimitsResponse) {
+    option (toshi.permission) = "workspace.read";
+  }
   // GetVolumeCaps returns the workspace's volume size-cap ceiling and what is
   // counted against it: the sum of the size caps of its volumes that are not
   // deleted, in bytes, in total and per project, with the ceilings the
@@ -499,6 +505,43 @@ message GetStartWindowsResponse {
   // the next_start_at a refused CreateSandbox names; unset when no window is
   // at its ceiling.
   google.protobuf.Timestamp next_start_at = 3;
+}
+
+// GetWorkspaceLimitsRequest reads the caller's own workspace.
+message GetWorkspaceLimitsRequest {}
+
+// GetWorkspaceLimitsResponse describes the workspace's start and capacity limits.
+message GetWorkspaceLimitsResponse {
+  // False when no start is counted, as in GetStartWindows.
+  bool applies = 1;
+  // The same minute, hour and day windows, in order, as GetStartWindows.
+  repeated StartWindow windows = 2;
+  // When every full start window has room; unset when none is full.
+  google.protobuf.Timestamp next_start_at = 3;
+  // The shared-host concurrent job limit.
+  WorkspaceLimitRow running_at_once = 4;
+  // The shared-host vCPU limit.
+  WorkspaceLimitRow vcpu = 5;
+}
+
+// WorkspaceLimitRow is one plan and effective capacity limit.
+message WorkspaceLimitRow {
+  // The entitlement key jobs.concurrency_max, or the plan field max_vcpu,
+  // which has no entitlement key.
+  string key = 1;
+  // The plan's value; 0 means no cap.
+  int64 plan_value = 2;
+  // The value in force after workspace overrides; 0 means no cap. An
+  // operator override may also raise the plan's value.
+  int64 effective_value = 3;
+  // "workspace" when a workspace override makes the effective cap lower
+  // than the plan's, otherwise "plan". A finite cap is lower than no cap.
+  string cause = 4;
+  // The capacity held by assigned, starting, running and debugging jobs on
+  // shared hosts. For jobs.concurrency_max this excludes filler and open-source
+  // jobs; for max_vcpu it sums the vCPUs of jobs whose runner sizes are known,
+  // including filler and open-source jobs. Unset if unavailable.
+  optional int64 in_use = 5;
 }
 
 message GetVolumeCapsRequest {}
