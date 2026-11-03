@@ -29,6 +29,7 @@ const (
 type EndpointShape int32
 
 const (
+	// Not set: an endpoint always has one of the shapes below.
 	EndpointShape_ENDPOINT_SHAPE_UNSPECIFIED EndpointShape = 0
 	// A port in the guest, served as HTTP.
 	EndpointShape_ENDPOINT_SHAPE_HTTP EndpointShape = 1
@@ -86,13 +87,17 @@ func (EndpointShape) EnumDescriptor() ([]byte, []int) {
 type EndpointState int32
 
 const (
+	// Not set: an endpoint always has one of the states below.
 	EndpointState_ENDPOINT_STATE_UNSPECIFIED EndpointState = 0
-	EndpointState_ENDPOINT_STATE_OPEN        EndpointState = 1
+	// Open: its target runs in the guest and it takes connections.
+	EndpointState_ENDPOINT_STATE_OPEN EndpointState = 1
 	// A stream endpoint's process has exited; its output is still kept.
 	EndpointState_ENDPOINT_STATE_EXITED EndpointState = 2
 	// Deleted, waiting for the guest to close its process.
 	EndpointState_ENDPOINT_STATE_CLOSING EndpointState = 3
-	EndpointState_ENDPOINT_STATE_ENDED   EndpointState = 4
+	// Ended: its job left running or its runner exited. It takes no
+	// connection, and only its record is kept.
+	EndpointState_ENDPOINT_STATE_ENDED EndpointState = 4
 )
 
 // Enum value maps for EndpointState.
@@ -144,6 +149,7 @@ func (EndpointState) EnumDescriptor() ([]byte, []int) {
 type EndpointAttachMode int32
 
 const (
+	// Not set: the attach is granted input.
 	EndpointAttachMode_ENDPOINT_ATTACH_MODE_UNSPECIFIED EndpointAttachMode = 0
 	// The client may send input.
 	EndpointAttachMode_ENDPOINT_ATTACH_MODE_INPUT EndpointAttachMode = 1
@@ -256,6 +262,7 @@ func (EndpointStreams) EnumDescriptor() ([]byte, []int) {
 type EndpointLog int32
 
 const (
+	// Not set: ExportEndpointLog refuses it with INVALID_ARGUMENT.
 	EndpointLog_ENDPOINT_LOG_UNSPECIFIED EndpointLog = 0
 	// A stream endpoint's output.
 	EndpointLog_ENDPOINT_LOG_OUTPUT EndpointLog = 1
@@ -309,6 +316,7 @@ func (EndpointLog) EnumDescriptor() ([]byte, []int) {
 type EndpointMessageState int32
 
 const (
+	// Not set: a message is always in one of the states below.
 	EndpointMessageState_ENDPOINT_MESSAGE_STATE_UNSPECIFIED EndpointMessageState = 0
 	// Waiting for its next attempt.
 	EndpointMessageState_ENDPOINT_MESSAGE_STATE_PENDING EndpointMessageState = 1
@@ -372,24 +380,32 @@ func (EndpointMessageState) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{5}
 }
 
+// Endpoint is one endpoint of a job: an http port, a stream command, or a
+// service's queue of messages when it is named by its service.
 type Endpoint struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Assigned by the server.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The job whose guest holds the endpoint; an event endpoint's is its
 	// service's live run, empty while the service has none.
-	JobId string        `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name  string        `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	JobId string `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// Its name on the job, unique among the job's endpoints; an event
+	// endpoint's is unique among its service's.
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// How the endpoint carries its bytes.
 	Shape EndpointShape `protobuf:"varint,4,opt,name=shape,proto3,enum=toshi.workspace.v1.EndpointShape" json:"shape,omitempty"`
 	// An http or event endpoint's port in the guest.
 	Port int32 `protobuf:"varint,5,opt,name=port,proto3" json:"port,omitempty"`
 	// A stream endpoint's command.
-	Command   []string               `protobuf:"bytes,6,rep,name=command,proto3" json:"command,omitempty"`
-	State     EndpointState          `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.EndpointState" json:"state,omitempty"`
+	Command []string `protobuf:"bytes,6,rep,name=command,proto3" json:"command,omitempty"`
+	// Where the endpoint is in its life.
+	State EndpointState `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.EndpointState" json:"state,omitempty"`
+	// When it was created.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Unset while the endpoint lasts.
-	EndedAt   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
-	EndReason string                 `protobuf:"bytes,11,opt,name=end_reason,json=endReason,proto3" json:"end_reason,omitempty"`
+	EndedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
+	// Why it left its last state; empty while open.
+	EndReason string `protobuf:"bytes,11,opt,name=end_reason,json=endReason,proto3" json:"end_reason,omitempty"`
 	// A stream endpoint's process's exit code, once it has exited.
 	ExitCode *int32 `protobuf:"varint,12,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`
 	// The process of the control plane holding the endpoint, while it does.
@@ -397,12 +413,14 @@ type Endpoint struct {
 	// The offsets that bound the output kept; output_next is where the next
 	// byte goes.
 	OutputStart int64 `protobuf:"varint,14,opt,name=output_start,json=outputStart,proto3" json:"output_start,omitempty"`
-	OutputNext  int64 `protobuf:"varint,15,opt,name=output_next,json=outputNext,proto3" json:"output_next,omitempty"`
+	// The offset the next output byte takes: the end of the output kept.
+	OutputNext int64 `protobuf:"varint,15,opt,name=output_next,json=outputNext,proto3" json:"output_next,omitempty"`
 	// Whether the process's input is closed.
 	InputClosed bool `protobuf:"varint,16,opt,name=input_closed,json=inputClosed,proto3" json:"input_closed,omitempty"`
 	// The sequence numbers that bound an http endpoint's request records
 	// kept; both zero when none is.
 	RequestsOldest int64 `protobuf:"varint,17,opt,name=requests_oldest,json=requestsOldest,proto3" json:"requests_oldest,omitempty"`
+	// The newest request record kept; zero when none is.
 	RequestsNewest int64 `protobuf:"varint,18,opt,name=requests_newest,json=requestsNewest,proto3" json:"requests_newest,omitempty"`
 	// The effective policy, with its version.
 	Policy *EndpointPolicy `protobuf:"bytes,19,opt,name=policy,proto3" json:"policy,omitempty"`
@@ -748,13 +766,17 @@ func (x *EndpointACPState) GetDropped() map[string]int64 {
 
 // EndpointEventCounts counts an event endpoint's messages by state.
 type EndpointEventCounts struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Pending   int64                  `protobuf:"varint,1,opt,name=pending,proto3" json:"pending,omitempty"`
-	InFlight  int64                  `protobuf:"varint,2,opt,name=in_flight,json=inFlight,proto3" json:"in_flight,omitempty"`
-	Delivered int64                  `protobuf:"varint,3,opt,name=delivered,proto3" json:"delivered,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Messages waiting for their next attempt.
+	Pending int64 `protobuf:"varint,1,opt,name=pending,proto3" json:"pending,omitempty"`
+	// Messages posted and not yet answered.
+	InFlight int64 `protobuf:"varint,2,opt,name=in_flight,json=inFlight,proto3" json:"in_flight,omitempty"`
+	// Messages answered 2xx.
+	Delivered int64 `protobuf:"varint,3,opt,name=delivered,proto3" json:"delivered,omitempty"`
 	// Messages that gave up: every attempt failed, or a final failure ended
 	// them.
-	Dead    int64 `protobuf:"varint,4,opt,name=dead,proto3" json:"dead,omitempty"`
+	Dead int64 `protobuf:"varint,4,opt,name=dead,proto3" json:"dead,omitempty"`
+	// Messages whose endpoint's keep passed before they were delivered.
 	Expired int64 `protobuf:"varint,5,opt,name=expired,proto3" json:"expired,omitempty"`
 	// The last delivery's time; unset before the first.
 	LastDeliveryAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_delivery_at,json=lastDeliveryAt,proto3" json:"last_delivery_at,omitempty"`
@@ -847,13 +869,17 @@ func (x *EndpointEventCounts) GetLastFailure() string {
 type EndpointMessage struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Its place in the endpoint's queue, from 1.
-	Seq      int64                `protobuf:"varint,2,opt,name=seq,proto3" json:"seq,omitempty"`
-	State    EndpointMessageState `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.EndpointMessageState" json:"state,omitempty"`
-	Attempts int32                `protobuf:"varint,8,opt,name=attempts,proto3" json:"attempts,omitempty"`
+	Seq int64 `protobuf:"varint,2,opt,name=seq,proto3" json:"seq,omitempty"`
+	// Where the message is in its delivery.
+	State EndpointMessageState `protobuf:"varint,7,opt,name=state,proto3,enum=toshi.workspace.v1.EndpointMessageState" json:"state,omitempty"`
+	// How many times it has been posted, failed attempts included; 0 before
+	// the first.
+	Attempts int32 `protobuf:"varint,8,opt,name=attempts,proto3" json:"attempts,omitempty"`
 	// When a pending message is next posted.
 	NextAttemptAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=next_attempt_at,json=nextAttemptAt,proto3" json:"next_attempt_at,omitempty"`
 	// Why its last attempt failed; empty when none has.
-	LastError   string                 `protobuf:"bytes,10,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	LastError string `protobuf:"bytes,10,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	// When it was answered 2xx; unset until then.
 	DeliveredAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=delivered_at,json=deliveredAt,proto3" json:"delivered_at,omitempty"`
 	// When the message was last replayed, unset for never.
 	ReplayedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=replayed_at,json=replayedAt,proto3" json:"replayed_at,omitempty"`
@@ -964,22 +990,29 @@ func (x *EndpointMessage) GetEnvelope() *EventEnvelope {
 // from when it attaches again.
 type EndpointClient struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The client's ID, at most 128 bytes, which it names on each attach.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The mode granted to its last attach.
 	Mode EndpointAttachMode `protobuf:"varint,2,opt,name=mode,proto3,enum=toshi.workspace.v1.EndpointAttachMode" json:"mode,omitempty"`
 	// Who attached it, as an actor label the audit log records.
 	AttachedBy string `protobuf:"bytes,3,opt,name=attached_by,json=attachedBy,proto3" json:"attached_by,omitempty"`
 	// The device and the credential of the connect token that admitted it,
 	// if one did.
-	Device        string                 `protobuf:"bytes,4,opt,name=device,proto3" json:"device,omitempty"`
-	Credential    string                 `protobuf:"bytes,5,opt,name=credential,proto3" json:"credential,omitempty"`
+	Device string `protobuf:"bytes,4,opt,name=device,proto3" json:"device,omitempty"`
+	// connect_token when a connect token admitted its last attach; empty
+	// otherwise.
+	Credential string `protobuf:"bytes,5,opt,name=credential,proto3" json:"credential,omitempty"`
+	// When its last attach began.
 	AttachedSince *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=attached_since,json=attachedSince,proto3" json:"attached_since,omitempty"`
 	// Its last attach or acknowledgement.
 	SeenAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=seen_at,json=seenAt,proto3" json:"seen_at,omitempty"`
 	// When its last connection ended, if recorded; unset while attached.
-	DetachedAt    *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=detached_at,json=detachedAt,proto3" json:"detached_at,omitempty"`
-	OutputAcked   int64                  `protobuf:"varint,9,opt,name=output_acked,json=outputAcked,proto3" json:"output_acked,omitempty"`
-	Attached      bool                   `protobuf:"varint,10,opt,name=attached,proto3" json:"attached,omitempty"`
+	DetachedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=detached_at,json=detachedAt,proto3" json:"detached_at,omitempty"`
+	// The output offset it has acknowledged; it goes on from there when it
+	// attaches again.
+	OutputAcked int64 `protobuf:"varint,9,opt,name=output_acked,json=outputAcked,proto3" json:"output_acked,omitempty"`
+	// Whether its last attach is live under the endpoint's current owner.
+	Attached      bool `protobuf:"varint,10,opt,name=attached,proto3" json:"attached,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1284,9 +1317,12 @@ func (x *EndpointPolicy) GetTools() string {
 	return ""
 }
 
+// EndpointModuleList is a policy's module list, in the order the modules
+// act.
 type EndpointModuleList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Modules       []*EndpointModule      `protobuf:"bytes,1,rep,name=modules,proto3" json:"modules,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The modules, in the order they act.
+	Modules       []*EndpointModule `protobuf:"bytes,1,rep,name=modules,proto3" json:"modules,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1591,32 +1627,48 @@ func (x *EndpointMatch) GetHeaders() map[string]string {
 // EndpointRequest is one request an http endpoint's relay served, as its
 // record keeps it.
 type EndpointRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Seq           int64                  `protobuf:"varint,1,opt,name=seq,proto3" json:"seq,omitempty"`
-	ArrivedAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=arrived_at,json=arrivedAt,proto3" json:"arrived_at,omitempty"`
-	Host          string                 `protobuf:"bytes,3,opt,name=host,proto3" json:"host,omitempty"`
-	Method        string                 `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`
-	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
-	Status        int32                  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"`
-	RequestBytes  int64                  `protobuf:"varint,7,opt,name=request_bytes,json=requestBytes,proto3" json:"request_bytes,omitempty"`
-	ResponseBytes int64                  `protobuf:"varint,8,opt,name=response_bytes,json=responseBytes,proto3" json:"response_bytes,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Its number among the endpoint's records, from 1.
+	Seq int64 `protobuf:"varint,1,opt,name=seq,proto3" json:"seq,omitempty"`
+	// When the request arrived.
+	ArrivedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=arrived_at,json=arrivedAt,proto3" json:"arrived_at,omitempty"`
+	// The host the request was sent to.
+	Host string `protobuf:"bytes,3,opt,name=host,proto3" json:"host,omitempty"`
+	// The HTTP method, in upper case.
+	Method string `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`
+	// The path, without the query.
+	Path string `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
+	// The status of the answer; 101 for a WebSocket.
+	Status int32 `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"`
+	// The request body's size in bytes, whole whether or not it was kept.
+	RequestBytes int64 `protobuf:"varint,7,opt,name=request_bytes,json=requestBytes,proto3" json:"request_bytes,omitempty"`
+	// The response body's size in bytes, whole whether or not it was kept.
+	ResponseBytes int64 `protobuf:"varint,8,opt,name=response_bytes,json=responseBytes,proto3" json:"response_bytes,omitempty"`
 	// To the end of the response, or to a WebSocket's close.
 	Duration *durationpb.Duration `protobuf:"bytes,9,opt,name=duration,proto3" json:"duration,omitempty"`
 	// The caller, once the request path has identified one.
-	Caller  *EndpointRequestCaller `protobuf:"bytes,10,opt,name=caller,proto3" json:"caller,omitempty"`
-	Address string                 `protobuf:"bytes,11,opt,name=address,proto3" json:"address,omitempty"`
+	Caller *EndpointRequestCaller `protobuf:"bytes,10,opt,name=caller,proto3" json:"caller,omitempty"`
+	// The caller's address, as the control plane resolves it; empty when it
+	// resolves none.
+	Address string `protobuf:"bytes,11,opt,name=address,proto3" json:"address,omitempty"`
 	// The module that refused the request, if one did.
 	RefusedBy string `protobuf:"bytes,12,opt,name=refused_by,json=refusedBy,proto3" json:"refused_by,omitempty"`
-	Websocket bool   `protobuf:"varint,13,opt,name=websocket,proto3" json:"websocket,omitempty"`
+	// Whether the request was a WebSocket; its record is written when the
+	// connection closes.
+	Websocket bool `protobuf:"varint,13,opt,name=websocket,proto3" json:"websocket,omitempty"`
 	// The level the record was kept at: metadata, headers or bodies.
 	Level string `protobuf:"bytes,14,opt,name=level,proto3" json:"level,omitempty"`
 	// At headers and bodies.
-	Query           string            `protobuf:"bytes,15,opt,name=query,proto3" json:"query,omitempty"`
-	QueryCut        bool              `protobuf:"varint,16,opt,name=query_cut,json=queryCut,proto3" json:"query_cut,omitempty"`
-	RequestHeaders  []*EndpointHeader `protobuf:"bytes,17,rep,name=request_headers,json=requestHeaders,proto3" json:"request_headers,omitempty"`
+	Query string `protobuf:"bytes,15,opt,name=query,proto3" json:"query,omitempty"`
+	// Whether the query was longer than the 2 KiB kept.
+	QueryCut bool `protobuf:"varint,16,opt,name=query_cut,json=queryCut,proto3" json:"query_cut,omitempty"`
+	// At headers and bodies; one entry per value.
+	RequestHeaders []*EndpointHeader `protobuf:"bytes,17,rep,name=request_headers,json=requestHeaders,proto3" json:"request_headers,omitempty"`
+	// At headers and bodies; one entry per value.
 	ResponseHeaders []*EndpointHeader `protobuf:"bytes,18,rep,name=response_headers,json=responseHeaders,proto3" json:"response_headers,omitempty"`
 	// At bodies.
-	RequestBody   *EndpointBody `protobuf:"bytes,19,opt,name=request_body,json=requestBody,proto3" json:"request_body,omitempty"`
+	RequestBody *EndpointBody `protobuf:"bytes,19,opt,name=request_body,json=requestBody,proto3" json:"request_body,omitempty"`
+	// At bodies.
 	ResponseBody  *EndpointBody `protobuf:"bytes,20,opt,name=response_body,json=responseBody,proto3" json:"response_body,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1792,10 +1844,13 @@ func (x *EndpointRequest) GetResponseBody() *EndpointBody {
 	return nil
 }
 
+// EndpointRequestCaller is the caller a request record names, once the
+// request path identified one.
 type EndpointRequestCaller struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The caller as the audit log names an actor.
-	User   string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	// The device the caller presented; empty when it named none.
 	Device string `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
 	// The share link's ID, for a viewer a share link admitted.
 	ShareLink     string `protobuf:"bytes,3,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
@@ -1857,10 +1912,13 @@ func (x *EndpointRequestCaller) GetShareLink() string {
 // EndpointHeader is one header line; a credential header keeps its name
 // only, with removed set.
 type EndpointHeader struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-	Removed       bool                   `protobuf:"varint,3,opt,name=removed,proto3" json:"removed,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The header's name, as sent.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The value as sent; empty with removed set.
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	// Whether the value was left out: a credential header's.
+	Removed       bool `protobuf:"varint,3,opt,name=removed,proto3" json:"removed,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1916,10 +1974,14 @@ func (x *EndpointHeader) GetRemoved() bool {
 	return false
 }
 
+// EndpointBody is a request or response body as far as the policy's body
+// cap.
 type EndpointBody struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	ContentType string                 `protobuf:"bytes,1,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
-	Data        []byte                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The body's content type; empty when it had none.
+	ContentType string `protobuf:"bytes,1,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	// The body's first bytes, up to the cap.
+	Data []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	// Whether the body was longer than the policy's body cap.
 	Cut           bool `protobuf:"varint,3,opt,name=cut,proto3" json:"cut,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1983,11 +2045,18 @@ func (x *EndpointBody) GetCut() bool {
 // endpoint whose connection carries it, if one does, and the grant it was
 // opened through, if one was.
 type Forward struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Target   string                 `protobuf:"bytes,1,opt,name=target,proto3" json:"target,omitempty"`
-	By       string                 `protobuf:"bytes,2,opt,name=by,proto3" json:"by,omitempty"`
-	Device   string                 `protobuf:"bytes,3,opt,name=device,proto3" json:"device,omitempty"`
-	Endpoint string                 `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// What it reaches in the guest: a port, or a command by its first word
+	// only, as the audit log names it.
+	Target string `protobuf:"bytes,1,opt,name=target,proto3" json:"target,omitempty"`
+	// Who opened it, as an actor label the audit log records.
+	By string `protobuf:"bytes,2,opt,name=by,proto3" json:"by,omitempty"`
+	// The device of the connect token that admitted them; empty when the
+	// caller named none.
+	Device string `protobuf:"bytes,3,opt,name=device,proto3" json:"device,omitempty"`
+	// The http endpoint whose connection carries it; empty when none does.
+	Endpoint string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// When it opened.
 	OpenedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=opened_at,json=openedAt,proto3" json:"opened_at,omitempty"`
 	// The grant through which another workspace's caller opened it, or
 	// empty for one the job's own workspace opened.
@@ -2071,15 +2140,19 @@ func (x *Forward) GetGrantId() string {
 // Tunnel is the state of a runner's Tunnel, the connection its guest holds to
 // the control plane.
 type Tunnel struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Connected bool                   `protobuf:"varint,1,opt,name=connected,proto3" json:"connected,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Whether a process of the control plane holds one of the runner's
+	// Tunnels now.
+	Connected bool `protobuf:"varint,1,opt,name=connected,proto3" json:"connected,omitempty"`
 	// Since when it has been connected; unset while it is not, and while
 	// another process of the control plane holds the tunnel.
 	Since *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=since,proto3" json:"since,omitempty"`
 	// How many times the guest has connected.
 	Connects int32 `protobuf:"varint,3,opt,name=connects,proto3" json:"connects,omitempty"`
 	// The streams open on it now.
-	Streams   int32  `protobuf:"varint,4,opt,name=streams,proto3" json:"streams,omitempty"`
+	Streams int32 `protobuf:"varint,4,opt,name=streams,proto3" json:"streams,omitempty"`
+	// The error a Tunnel of the runner ended with, kept after it went away;
+	// empty when none failed.
 	LastError string `protobuf:"bytes,5,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
 	// The runner's second Tunnel, its replica: connected, or none.
 	Replica string `protobuf:"bytes,6,opt,name=replica,proto3" json:"replica,omitempty"`
@@ -2177,9 +2250,12 @@ func (x *Tunnel) GetJobState() string {
 	return ""
 }
 
+// CreateEndpointRequest carries the job to open an endpoint on and what the
+// endpoint is.
 type CreateEndpointRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The job whose guest holds the endpoint.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	// The endpoint's name: lower-case letters, digits, '-' and '_', starting
 	// with a letter or digit, at most 63. An http endpoint's defaults to its
 	// port; a stream endpoint needs one.
@@ -2280,9 +2356,11 @@ func (x *CreateEndpointRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateEndpointResponse carries the endpoint as opened.
 type CreateEndpointResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint      *Endpoint              `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The endpoint as opened.
+	Endpoint      *Endpoint `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2324,6 +2402,8 @@ func (x *CreateEndpointResponse) GetEndpoint() *Endpoint {
 	return nil
 }
 
+// ListEndpointsRequest selects one page of endpoints: a job's, a service's
+// event endpoints, or every endpoint of the workspace.
 type ListEndpointsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Only this job's endpoints; empty lists every job's, and every
@@ -2407,9 +2487,11 @@ func (x *ListEndpointsRequest) GetGrant() string {
 	return ""
 }
 
+// ListEndpointsResponse carries one page of endpoints.
 type ListEndpointsResponse struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Endpoints []*Endpoint            `protobuf:"bytes,1,rep,name=endpoints,proto3" json:"endpoints,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's endpoints, oldest first.
+	Endpoints []*Endpoint `protobuf:"bytes,1,rep,name=endpoints,proto3" json:"endpoints,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2460,10 +2542,14 @@ func (x *ListEndpointsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetEndpointRequest names one endpoint: by its job and name, or by its
+// service and name.
 type GetEndpointRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The job whose guest holds the endpoint.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The endpoint's name.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// An event endpoint's service, by its ID, in place of job_id.
 	Service string `protobuf:"bytes,3,opt,name=service,proto3" json:"service,omitempty"`
 	// A grant the caller's workspace received, to act on the owner's
@@ -2531,9 +2617,11 @@ func (x *GetEndpointRequest) GetGrant() string {
 	return ""
 }
 
+// GetEndpointResponse carries the endpoint.
 type GetEndpointResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint      *Endpoint              `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The endpoint, with a stream endpoint's clients.
+	Endpoint      *Endpoint `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2575,10 +2663,13 @@ func (x *GetEndpointResponse) GetEndpoint() *Endpoint {
 	return nil
 }
 
+// GetEndpointPolicyRequest names one endpoint whose policy to read.
 type GetEndpointPolicyRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The job whose guest holds the endpoint.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The endpoint's name.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// An event endpoint's service, by its ID, in place of job_id.
 	Service       string `protobuf:"bytes,3,opt,name=service,proto3" json:"service,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2636,9 +2727,11 @@ func (x *GetEndpointPolicyRequest) GetService() string {
 	return ""
 }
 
+// GetEndpointPolicyResponse carries the endpoint's effective policy.
 type GetEndpointPolicyResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Policy        *EndpointPolicy        `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The effective policy, with its version.
+	Policy        *EndpointPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2680,11 +2773,14 @@ func (x *GetEndpointPolicyResponse) GetPolicy() *EndpointPolicy {
 	return nil
 }
 
+// UpdateEndpointRequest carries the endpoint to change and the policy to
+// set.
 type UpdateEndpointRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The endpoint to change; job_id and name, or service and name, name it.
 	// Only policy is read from it.
-	Endpoint   *Endpoint              `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	Endpoint *Endpoint `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// The fields to change: only policy is accepted, and it must name it.
 	UpdateMask *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	// What the change does to a stream endpoint's attached clients; unset
 	// keeps them. DRAIN and END on an http or an event endpoint are
@@ -2745,6 +2841,7 @@ func (x *UpdateEndpointRequest) GetStreams() EndpointStreams {
 	return EndpointStreams_ENDPOINT_STREAMS_UNSPECIFIED
 }
 
+// UpdateEndpointResponse carries the endpoint as stored after the change.
 type UpdateEndpointResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The endpoint as stored, its policy at its new version.
@@ -2790,10 +2887,14 @@ func (x *UpdateEndpointResponse) GetEndpoint() *Endpoint {
 	return nil
 }
 
+// ListEndpointRequestsRequest names an http endpoint and the request
+// records to list.
 type ListEndpointRequestsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The job whose guest holds the endpoint.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The endpoint's name on that job.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The most records in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -2804,6 +2905,7 @@ type ListEndpointRequestsRequest struct {
 	AfterSeq int64 `protobuf:"varint,5,opt,name=after_seq,json=afterSeq,proto3" json:"after_seq,omitempty"`
 	// Only the records that arrived at or after since, and before until.
 	Since *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=since,proto3" json:"since,omitempty"`
+	// The end of the time range, excluded; unset lists to the newest record.
 	Until *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=until,proto3" json:"until,omitempty"`
 	// Only this status, such as 404, or this class, such as 4xx.
 	Status string `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
@@ -2924,14 +3026,18 @@ func (x *ListEndpointRequestsRequest) GetPathPrefix() string {
 	return ""
 }
 
+// ListEndpointRequestsResponse carries one page of request records and the
+// range of records kept.
 type ListEndpointRequestsResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Requests []*EndpointRequest     `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's records, at the level each was kept at.
+	Requests []*EndpointRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	// The sequence numbers that bound the records kept; both zero when none
 	// is.
-	OldestSeq     int64 `protobuf:"varint,3,opt,name=oldest_seq,json=oldestSeq,proto3" json:"oldest_seq,omitempty"`
+	OldestSeq int64 `protobuf:"varint,3,opt,name=oldest_seq,json=oldestSeq,proto3" json:"oldest_seq,omitempty"`
+	// The newest record kept; zero when none is.
 	NewestSeq     int64 `protobuf:"varint,4,opt,name=newest_seq,json=newestSeq,proto3" json:"newest_seq,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2995,11 +3101,15 @@ func (x *ListEndpointRequestsResponse) GetNewestSeq() int64 {
 	return 0
 }
 
+// GetEndpointRequestRequest names one request record.
 type GetEndpointRequestRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	JobId         string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Seq           int64                  `protobuf:"varint,3,opt,name=seq,proto3" json:"seq,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The job whose guest holds the endpoint.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The endpoint's name on that job.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The record's sequence number, a whole number from 1.
+	Seq           int64 `protobuf:"varint,3,opt,name=seq,proto3" json:"seq,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3055,9 +3165,12 @@ func (x *GetEndpointRequestRequest) GetSeq() int64 {
 	return 0
 }
 
+// GetEndpointRequestResponse carries the record whole, headers and bodies
+// included.
 type GetEndpointRequestResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Request       *EndpointRequest       `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The record, as its level kept it.
+	Request       *EndpointRequest `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3099,20 +3212,27 @@ func (x *GetEndpointRequestResponse) GetRequest() *EndpointRequest {
 	return nil
 }
 
+// ExportEndpointLogRequest names an endpoint's log and the range to
+// export.
 type ExportEndpointLogRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The job whose guest holds the endpoint.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The endpoint's name on that job.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The log to export: a stream endpoint's output or an http endpoint's
 	// request records.
 	Log EndpointLog `protobuf:"varint,3,opt,name=log,proto3,enum=toshi.workspace.v1.EndpointLog" json:"log,omitempty"`
 	// The output's offsets [from, to), or the records' sequence numbers
 	// [from, to]; unset runs from the oldest kept, or to the newest.
 	From *int64 `protobuf:"varint,4,opt,name=from,proto3,oneof" json:"from,omitempty"`
-	To   *int64 `protobuf:"varint,5,opt,name=to,proto3,oneof" json:"to,omitempty"`
+	// The end of the range, excluded: an offset, or a record's sequence
+	// number; unset runs to the newest kept.
+	To *int64 `protobuf:"varint,5,opt,name=to,proto3,oneof" json:"to,omitempty"`
 	// For records only, in place of from and to: the records that arrived
 	// at or after since, and before until.
-	Since         *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=since,proto3" json:"since,omitempty"`
+	Since *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=since,proto3" json:"since,omitempty"`
+	// The end of the time range, excluded; unset runs to the newest record.
 	Until         *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=until,proto3" json:"until,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3197,6 +3317,7 @@ func (x *ExportEndpointLogRequest) GetUntil() *timestamppb.Timestamp {
 	return nil
 }
 
+// ExportEndpointLogResponse carries one chunk of the exported file.
 type ExportEndpointLogResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The file's next bytes.
@@ -3281,10 +3402,14 @@ func (x *ExportEndpointLogResponse) GetNext() int64 {
 	return 0
 }
 
+// CreateEndpointConnectTokenRequest names the endpoint a connect token
+// admits one client to.
 type CreateEndpointConnectTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The job whose guest holds the endpoint.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The endpoint's name on that job.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The caller's name for its device, which the token and its audit rows
 	// carry: at most 64 letters, digits, '.', '_' and '-'.
 	Device string `protobuf:"bytes,3,opt,name=device,proto3" json:"device,omitempty"`
@@ -3373,17 +3498,22 @@ func (x *CreateEndpointConnectTokenRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateEndpointConnectTokenResponse carries a new connect token, shown
+// once.
 type CreateEndpointConnectTokenResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The ID RevokeEndpointConnectToken takes.
-	Id    string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The token itself; the server keeps no copy and never logs it.
 	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
 	// Where the token is used.
-	Url       string                 `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
+	Url string `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
+	// When the token stops admitting a client.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// What reaches url: toshi-endpoint, an upgrade of the control plane's
 	// connection, or https or http for a preview's host.
-	Transport     string             `protobuf:"bytes,5,opt,name=transport,proto3" json:"transport,omitempty"`
+	Transport string `protobuf:"bytes,5,opt,name=transport,proto3" json:"transport,omitempty"`
+	// The mode the attach it admits is granted.
 	Mode          EndpointAttachMode `protobuf:"varint,6,opt,name=mode,proto3,enum=toshi.workspace.v1.EndpointAttachMode" json:"mode,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3461,10 +3591,14 @@ func (x *CreateEndpointConnectTokenResponse) GetMode() EndpointAttachMode {
 	return EndpointAttachMode_ENDPOINT_ATTACH_MODE_UNSPECIFIED
 }
 
+// RevokeEndpointConnectTokenRequest names an endpoint and the connect
+// token to revoke.
 type RevokeEndpointConnectTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The job whose guest holds the endpoint.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The endpoint's name on that job.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The ID the token's create returned.
 	Id            string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3522,6 +3656,8 @@ func (x *RevokeEndpointConnectTokenRequest) GetId() string {
 	return ""
 }
 
+// RevokeEndpointConnectTokenResponse is the answer to
+// RevokeEndpointConnectToken.
 type RevokeEndpointConnectTokenResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -3558,10 +3694,13 @@ func (*RevokeEndpointConnectTokenResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{35}
 }
 
+// DeleteEndpointRequest names the endpoint to end.
 type DeleteEndpointRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The job whose guest holds the endpoint.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The endpoint's name on that job.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// A grant the caller's workspace received, to act on the owner's
 	// sandbox's job through it (docs/grants.md).
 	Grant         string `protobuf:"bytes,3,opt,name=grant,proto3" json:"grant,omitempty"`
@@ -3620,6 +3759,7 @@ func (x *DeleteEndpointRequest) GetGrant() string {
 	return ""
 }
 
+// DeleteEndpointResponse is the answer to DeleteEndpoint.
 type DeleteEndpointResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -3656,9 +3796,11 @@ func (*DeleteEndpointResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_endpoints_proto_rawDescGZIP(), []int{37}
 }
 
+// ListForwardsRequest selects one page of a job's open Forwards.
 type ListForwardsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	JobId string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The job whose Forwards to list.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	// The most Forwards in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -3718,9 +3860,11 @@ func (x *ListForwardsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListForwardsResponse carries one page of Forwards.
 type ListForwardsResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Forwards []*Forward             `protobuf:"bytes,1,rep,name=forwards,proto3" json:"forwards,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's open Forwards, oldest first.
+	Forwards []*Forward `protobuf:"bytes,1,rep,name=forwards,proto3" json:"forwards,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3771,9 +3915,11 @@ func (x *ListForwardsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetTunnelRequest names the job whose runner's Tunnel to read.
 type GetTunnelRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	JobId         string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The job whose runner's Tunnel to read.
+	JobId         string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3815,9 +3961,11 @@ func (x *GetTunnelRequest) GetJobId() string {
 	return ""
 }
 
+// GetTunnelResponse carries the state of the runner's Tunnel.
 type GetTunnelResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tunnel        *Tunnel                `protobuf:"bytes,1,opt,name=tunnel,proto3" json:"tunnel,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The Tunnel of the runner the job holds.
+	Tunnel        *Tunnel `protobuf:"bytes,1,opt,name=tunnel,proto3" json:"tunnel,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3859,10 +4007,13 @@ func (x *GetTunnelResponse) GetTunnel() *Tunnel {
 	return nil
 }
 
+// SendEndpointMessageRequest carries a message for an event endpoint's
+// queue.
 type SendEndpointMessageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The event endpoint's service, by its ID, and the endpoint's name.
-	Service  string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	Service string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	// The event endpoint's name, unique among its service's.
 	Endpoint string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The message's name, such as order.paid: up to 200 bytes with no space
 	// or control character.
@@ -3941,9 +4092,12 @@ func (x *SendEndpointMessageRequest) GetRequestKey() string {
 	return ""
 }
 
+// SendEndpointMessageResponse carries the stored message's ID.
 type SendEndpointMessageResponse struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	MessageId string                 `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The ID of the message, new or stored before under the same
+	// request_key.
+	MessageId string `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
 	// Set when request_key named a message sent before.
 	Duplicate     bool `protobuf:"varint,2,opt,name=duplicate,proto3" json:"duplicate,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3994,10 +4148,13 @@ func (x *SendEndpointMessageResponse) GetDuplicate() bool {
 	return false
 }
 
+// TailEndpointMessagesRequest names an event endpoint and where the stream
+// starts.
 type TailEndpointMessagesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The event endpoint's service, by its ID, and the endpoint's name.
-	Service  string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	Service string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	// The event endpoint's name, unique among its service's.
 	Endpoint string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// Only messages in these states; empty is every state.
 	States []EndpointMessageState `protobuf:"varint,3,rep,packed,name=states,proto3,enum=toshi.workspace.v1.EndpointMessageState" json:"states,omitempty"`
@@ -4066,9 +4223,11 @@ func (x *TailEndpointMessagesRequest) GetCursor() string {
 	return ""
 }
 
+// TailEndpointMessagesResponse carries one message and the cursor after it.
 type TailEndpointMessagesResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Message *EndpointMessage       `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The message.
+	Message *EndpointMessage `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	// Where a later call goes on from, after this message.
 	NextCursor    string `protobuf:"bytes,2,opt,name=next_cursor,json=nextCursor,proto3" json:"next_cursor,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -4119,11 +4278,14 @@ func (x *TailEndpointMessagesResponse) GetNextCursor() string {
 	return ""
 }
 
+// ReplayEndpointMessageRequest names the message to put back in its queue.
 type ReplayEndpointMessageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The event endpoint's service, by its ID, and the endpoint's name.
-	Service   string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
-	Endpoint  string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	Service string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	// The event endpoint's name, unique among its service's.
+	Endpoint string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// The ID of the message to replay, as a send or a list returned it.
 	MessageId string `protobuf:"bytes,3,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
 	// key and request return the first answer; a different request with the
@@ -4191,6 +4353,7 @@ func (x *ReplayEndpointMessageRequest) GetRequestKey() string {
 	return ""
 }
 
+// ReplayEndpointMessageResponse carries the message as replayed.
 type ReplayEndpointMessageResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The message as it now is: pending.

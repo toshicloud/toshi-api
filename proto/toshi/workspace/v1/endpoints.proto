@@ -210,6 +210,7 @@ service EndpointService {
 
 // EndpointShape is how an endpoint carries its bytes.
 enum EndpointShape {
+  // Not set: an endpoint always has one of the shapes below.
   ENDPOINT_SHAPE_UNSPECIFIED = 0;
   // A port in the guest, served as HTTP.
   ENDPOINT_SHAPE_HTTP = 1;
@@ -222,17 +223,22 @@ enum EndpointShape {
 
 // EndpointState is where an endpoint is in its life.
 enum EndpointState {
+  // Not set: an endpoint always has one of the states below.
   ENDPOINT_STATE_UNSPECIFIED = 0;
+  // Open: its target runs in the guest and it takes connections.
   ENDPOINT_STATE_OPEN = 1;
   // A stream endpoint's process has exited; its output is still kept.
   ENDPOINT_STATE_EXITED = 2;
   // Deleted, waiting for the guest to close its process.
   ENDPOINT_STATE_CLOSING = 3;
+  // Ended: its job left running or its runner exited. It takes no
+  // connection, and only its record is kept.
   ENDPOINT_STATE_ENDED = 4;
 }
 
 // EndpointAttachMode is what an attached client may do.
 enum EndpointAttachMode {
+  // Not set: the attach is granted input.
   ENDPOINT_ATTACH_MODE_UNSPECIFIED = 0;
   // The client may send input.
   ENDPOINT_ATTACH_MODE_INPUT = 1;
@@ -257,6 +263,7 @@ enum EndpointStreams {
 
 // EndpointLog names the log of an endpoint an export carries.
 enum EndpointLog {
+  // Not set: ExportEndpointLog refuses it with INVALID_ARGUMENT.
   ENDPOINT_LOG_UNSPECIFIED = 0;
   // A stream endpoint's output.
   ENDPOINT_LOG_OUTPUT = 1;
@@ -264,22 +271,30 @@ enum EndpointLog {
   ENDPOINT_LOG_REQUESTS = 2;
 }
 
+// Endpoint is one endpoint of a job: an http port, a stream command, or a
+// service's queue of messages when it is named by its service.
 message Endpoint {
   // Assigned by the server.
   string id = 1;
   // The job whose guest holds the endpoint; an event endpoint's is its
   // service's live run, empty while the service has none.
   string job_id = 2;
+  // Its name on the job, unique among the job's endpoints; an event
+  // endpoint's is unique among its service's.
   string name = 3;
+  // How the endpoint carries its bytes.
   EndpointShape shape = 4;
   // An http or event endpoint's port in the guest.
   int32 port = 5;
   // A stream endpoint's command.
   repeated string command = 6;
+  // Where the endpoint is in its life.
   EndpointState state = 7;
+  // When it was created.
   google.protobuf.Timestamp created_at = 9;
   // Unset while the endpoint lasts.
   google.protobuf.Timestamp ended_at = 10;
+  // Why it left its last state; empty while open.
   string end_reason = 11;
   // A stream endpoint's process's exit code, once it has exited.
   optional int32 exit_code = 12;
@@ -288,12 +303,14 @@ message Endpoint {
   // The offsets that bound the output kept; output_next is where the next
   // byte goes.
   int64 output_start = 14;
+  // The offset the next output byte takes: the end of the output kept.
   int64 output_next = 15;
   // Whether the process's input is closed.
   bool input_closed = 16;
   // The sequence numbers that bound an http endpoint's request records
   // kept; both zero when none is.
   int64 requests_oldest = 17;
+  // The newest request record kept; zero when none is.
   int64 requests_newest = 18;
   // The effective policy, with its version.
   EndpointPolicy policy = 19;
@@ -351,12 +368,16 @@ message EndpointACPState {
 
 // EndpointEventCounts counts an event endpoint's messages by state.
 message EndpointEventCounts {
+  // Messages waiting for their next attempt.
   int64 pending = 1;
+  // Messages posted and not yet answered.
   int64 in_flight = 2;
+  // Messages answered 2xx.
   int64 delivered = 3;
   // Messages that gave up: every attempt failed, or a final failure ended
   // them.
   int64 dead = 4;
+  // Messages whose endpoint's keep passed before they were delivered.
   int64 expired = 5;
   // The last delivery's time; unset before the first.
   google.protobuf.Timestamp last_delivery_at = 6;
@@ -367,6 +388,7 @@ message EndpointEventCounts {
 // EndpointMessageState is where an event endpoint's message is in its
 // delivery.
 enum EndpointMessageState {
+  // Not set: a message is always in one of the states below.
   ENDPOINT_MESSAGE_STATE_UNSPECIFIED = 0;
   // Waiting for its next attempt.
   ENDPOINT_MESSAGE_STATE_PENDING = 1;
@@ -389,12 +411,16 @@ message EndpointMessage {
   reserved "id", "name", "time", "source", "data";
   // Its place in the endpoint's queue, from 1.
   int64 seq = 2;
+  // Where the message is in its delivery.
   EndpointMessageState state = 7;
+  // How many times it has been posted, failed attempts included; 0 before
+  // the first.
   int32 attempts = 8;
   // When a pending message is next posted.
   google.protobuf.Timestamp next_attempt_at = 9;
   // Why its last attempt failed; empty when none has.
   string last_error = 10;
+  // When it was answered 2xx; unset until then.
   google.protobuf.Timestamp delivered_at = 11;
   // When the message was last replayed, unset for never.
   google.protobuf.Timestamp replayed_at = 12;
@@ -409,6 +435,7 @@ message EndpointMessage {
 // made it, and how far it has acknowledged the output, which it goes on
 // from when it attaches again.
 message EndpointClient {
+  // The client's ID, at most 128 bytes, which it names on each attach.
   string id = 1;
   // The mode granted to its last attach.
   EndpointAttachMode mode = 2;
@@ -417,13 +444,19 @@ message EndpointClient {
   // The device and the credential of the connect token that admitted it,
   // if one did.
   string device = 4;
+  // connect_token when a connect token admitted its last attach; empty
+  // otherwise.
   string credential = 5;
+  // When its last attach began.
   google.protobuf.Timestamp attached_since = 6;
   // Its last attach or acknowledgement.
   google.protobuf.Timestamp seen_at = 7;
   // When its last connection ended, if recorded; unset while attached.
   google.protobuf.Timestamp detached_at = 8;
+  // The output offset it has acknowledged; it goes on from there when it
+  // attaches again.
   int64 output_acked = 9;
+  // Whether its last attach is live under the endpoint's current owner.
   bool attached = 10;
 }
 
@@ -477,7 +510,10 @@ message EndpointPolicy {
   string tools = 9;
 }
 
+// EndpointModuleList is a policy's module list, in the order the modules
+// act.
 message EndpointModuleList {
+  // The modules, in the order they act.
   repeated EndpointModule modules = 1;
 }
 
@@ -545,37 +581,56 @@ message EndpointMatch {
 // EndpointRequest is one request an http endpoint's relay served, as its
 // record keeps it.
 message EndpointRequest {
+  // Its number among the endpoint's records, from 1.
   int64 seq = 1;
+  // When the request arrived.
   google.protobuf.Timestamp arrived_at = 2;
+  // The host the request was sent to.
   string host = 3;
+  // The HTTP method, in upper case.
   string method = 4;
+  // The path, without the query.
   string path = 5;
+  // The status of the answer; 101 for a WebSocket.
   int32 status = 6;
+  // The request body's size in bytes, whole whether or not it was kept.
   int64 request_bytes = 7;
+  // The response body's size in bytes, whole whether or not it was kept.
   int64 response_bytes = 8;
   // To the end of the response, or to a WebSocket's close.
   google.protobuf.Duration duration = 9;
   // The caller, once the request path has identified one.
   EndpointRequestCaller caller = 10;
+  // The caller's address, as the control plane resolves it; empty when it
+  // resolves none.
   string address = 11;
   // The module that refused the request, if one did.
   string refused_by = 12;
+  // Whether the request was a WebSocket; its record is written when the
+  // connection closes.
   bool websocket = 13;
   // The level the record was kept at: metadata, headers or bodies.
   string level = 14;
   // At headers and bodies.
   string query = 15;
+  // Whether the query was longer than the 2 KiB kept.
   bool query_cut = 16;
+  // At headers and bodies; one entry per value.
   repeated EndpointHeader request_headers = 17;
+  // At headers and bodies; one entry per value.
   repeated EndpointHeader response_headers = 18;
   // At bodies.
   EndpointBody request_body = 19;
+  // At bodies.
   EndpointBody response_body = 20;
 }
 
+// EndpointRequestCaller is the caller a request record names, once the
+// request path identified one.
 message EndpointRequestCaller {
   // The caller as the audit log names an actor.
   string user = 1;
+  // The device the caller presented; empty when it named none.
   string device = 2;
   // The share link's ID, for a viewer a share link admitted.
   string share_link = 3;
@@ -584,13 +639,20 @@ message EndpointRequestCaller {
 // EndpointHeader is one header line; a credential header keeps its name
 // only, with removed set.
 message EndpointHeader {
+  // The header's name, as sent.
   string name = 1;
+  // The value as sent; empty with removed set.
   string value = 2;
+  // Whether the value was left out: a credential header's.
   bool removed = 3;
 }
 
+// EndpointBody is a request or response body as far as the policy's body
+// cap.
 message EndpointBody {
+  // The body's content type; empty when it had none.
   string content_type = 1;
+  // The body's first bytes, up to the cap.
   bytes data = 2;
   // Whether the body was longer than the policy's body cap.
   bool cut = 3;
@@ -602,10 +664,17 @@ message EndpointBody {
 // endpoint whose connection carries it, if one does, and the grant it was
 // opened through, if one was.
 message Forward {
+  // What it reaches in the guest: a port, or a command by its first word
+  // only, as the audit log names it.
   string target = 1;
+  // Who opened it, as an actor label the audit log records.
   string by = 2;
+  // The device of the connect token that admitted them; empty when the
+  // caller named none.
   string device = 3;
+  // The http endpoint whose connection carries it; empty when none does.
   string endpoint = 4;
+  // When it opened.
   google.protobuf.Timestamp opened_at = 5;
   // The grant through which another workspace's caller opened it, or
   // empty for one the job's own workspace opened.
@@ -615,6 +684,8 @@ message Forward {
 // Tunnel is the state of a runner's Tunnel, the connection its guest holds to
 // the control plane.
 message Tunnel {
+  // Whether a process of the control plane holds one of the runner's
+  // Tunnels now.
   bool connected = 1;
   // Since when it has been connected; unset while it is not, and while
   // another process of the control plane holds the tunnel.
@@ -623,6 +694,8 @@ message Tunnel {
   int32 connects = 3;
   // The streams open on it now.
   int32 streams = 4;
+  // The error a Tunnel of the runner ended with, kept after it went away;
+  // empty when none failed.
   string last_error = 5;
   // The runner's second Tunnel, its replica: connected, or none.
   string replica = 6;
@@ -632,7 +705,10 @@ message Tunnel {
   string job_state = 8;
 }
 
+// CreateEndpointRequest carries the job to open an endpoint on and what the
+// endpoint is.
 message CreateEndpointRequest {
+  // The job whose guest holds the endpoint.
   string job_id = 1;
   // The endpoint's name: lower-case letters, digits, '-' and '_', starting
   // with a letter or digit, at most 63. An http endpoint's defaults to its
@@ -653,10 +729,14 @@ message CreateEndpointRequest {
   string request_key = 7;
 }
 
+// CreateEndpointResponse carries the endpoint as opened.
 message CreateEndpointResponse {
+  // The endpoint as opened.
   Endpoint endpoint = 1;
 }
 
+// ListEndpointsRequest selects one page of endpoints: a job's, a service's
+// event endpoints, or every endpoint of the workspace.
 message ListEndpointsRequest {
   // Only this job's endpoints; empty lists every job's, and every
   // service's event endpoints.
@@ -672,14 +752,20 @@ message ListEndpointsRequest {
   string grant = 5;
 }
 
+// ListEndpointsResponse carries one page of endpoints.
 message ListEndpointsResponse {
+  // The page's endpoints, oldest first.
   repeated Endpoint endpoints = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// GetEndpointRequest names one endpoint: by its job and name, or by its
+// service and name.
 message GetEndpointRequest {
+  // The job whose guest holds the endpoint.
   string job_id = 1;
+  // The endpoint's name.
   string name = 2;
   // An event endpoint's service, by its ID, in place of job_id.
   string service = 3;
@@ -688,25 +774,35 @@ message GetEndpointRequest {
   string grant = 4;
 }
 
+// GetEndpointResponse carries the endpoint.
 message GetEndpointResponse {
+  // The endpoint, with a stream endpoint's clients.
   Endpoint endpoint = 1;
 }
 
+// GetEndpointPolicyRequest names one endpoint whose policy to read.
 message GetEndpointPolicyRequest {
+  // The job whose guest holds the endpoint.
   string job_id = 1;
+  // The endpoint's name.
   string name = 2;
   // An event endpoint's service, by its ID, in place of job_id.
   string service = 3;
 }
 
+// GetEndpointPolicyResponse carries the endpoint's effective policy.
 message GetEndpointPolicyResponse {
+  // The effective policy, with its version.
   EndpointPolicy policy = 1;
 }
 
+// UpdateEndpointRequest carries the endpoint to change and the policy to
+// set.
 message UpdateEndpointRequest {
   // The endpoint to change; job_id and name, or service and name, name it.
   // Only policy is read from it.
   Endpoint endpoint = 1;
+  // The fields to change: only policy is accepted, and it must name it.
   google.protobuf.FieldMask update_mask = 2;
   // What the change does to a stream endpoint's attached clients; unset
   // keeps them. DRAIN and END on an http or an event endpoint are
@@ -714,13 +810,18 @@ message UpdateEndpointRequest {
   EndpointStreams streams = 3;
 }
 
+// UpdateEndpointResponse carries the endpoint as stored after the change.
 message UpdateEndpointResponse {
   // The endpoint as stored, its policy at its new version.
   Endpoint endpoint = 1;
 }
 
+// ListEndpointRequestsRequest names an http endpoint and the request
+// records to list.
 message ListEndpointRequestsRequest {
+  // The job whose guest holds the endpoint.
   string job_id = 1;
+  // The endpoint's name on that job.
   string name = 2;
   // The most records in one page; zero lets the server choose.
   int32 page_size = 3;
@@ -732,6 +833,7 @@ message ListEndpointRequestsRequest {
   int64 after_seq = 5;
   // Only the records that arrived at or after since, and before until.
   google.protobuf.Timestamp since = 6;
+  // The end of the time range, excluded; unset lists to the newest record.
   google.protobuf.Timestamp until = 7;
   // Only this status, such as 404, or this class, such as 4xx.
   string status = 8;
@@ -743,28 +845,43 @@ message ListEndpointRequestsRequest {
   string path_prefix = 11;
 }
 
+// ListEndpointRequestsResponse carries one page of request records and the
+// range of records kept.
 message ListEndpointRequestsResponse {
+  // The page's records, at the level each was kept at.
   repeated EndpointRequest requests = 1;
   // Empty on the last page.
   string next_page_token = 2;
   // The sequence numbers that bound the records kept; both zero when none
   // is.
   int64 oldest_seq = 3;
+  // The newest record kept; zero when none is.
   int64 newest_seq = 4;
 }
 
+// GetEndpointRequestRequest names one request record.
 message GetEndpointRequestRequest {
+  // The job whose guest holds the endpoint.
   string job_id = 1;
+  // The endpoint's name on that job.
   string name = 2;
+  // The record's sequence number, a whole number from 1.
   int64 seq = 3;
 }
 
+// GetEndpointRequestResponse carries the record whole, headers and bodies
+// included.
 message GetEndpointRequestResponse {
+  // The record, as its level kept it.
   EndpointRequest request = 1;
 }
 
+// ExportEndpointLogRequest names an endpoint's log and the range to
+// export.
 message ExportEndpointLogRequest {
+  // The job whose guest holds the endpoint.
   string job_id = 1;
+  // The endpoint's name on that job.
   string name = 2;
   // The log to export: a stream endpoint's output or an http endpoint's
   // request records.
@@ -772,13 +889,17 @@ message ExportEndpointLogRequest {
   // The output's offsets [from, to), or the records' sequence numbers
   // [from, to]; unset runs from the oldest kept, or to the newest.
   optional int64 from = 4;
+  // The end of the range, excluded: an offset, or a record's sequence
+  // number; unset runs to the newest kept.
   optional int64 to = 5;
   // For records only, in place of from and to: the records that arrived
   // at or after since, and before until.
   google.protobuf.Timestamp since = 6;
+  // The end of the time range, excluded; unset runs to the newest record.
   google.protobuf.Timestamp until = 7;
 }
 
+// ExportEndpointLogResponse carries one chunk of the exported file.
 message ExportEndpointLogResponse {
   // The file's next bytes.
   bytes data = 1;
@@ -795,8 +916,12 @@ message ExportEndpointLogResponse {
   int64 next = 5;
 }
 
+// CreateEndpointConnectTokenRequest names the endpoint a connect token
+// admits one client to.
 message CreateEndpointConnectTokenRequest {
+  // The job whose guest holds the endpoint.
   string job_id = 1;
+  // The endpoint's name on that job.
   string name = 2;
   // The caller's name for its device, which the token and its audit rows
   // carry: at most 64 letters, digits, '.', '_' and '-'.
@@ -812,39 +937,56 @@ message CreateEndpointConnectTokenRequest {
   string request_key = 6;
 }
 
+// CreateEndpointConnectTokenResponse carries a new connect token, shown
+// once.
 message CreateEndpointConnectTokenResponse {
   // The ID RevokeEndpointConnectToken takes.
   string id = 1;
+  // The token itself; the server keeps no copy and never logs it.
   string token = 2;
   // Where the token is used.
   string url = 3;
+  // When the token stops admitting a client.
   google.protobuf.Timestamp expires_at = 4;
   // What reaches url: toshi-endpoint, an upgrade of the control plane's
   // connection, or https or http for a preview's host.
   string transport = 5;
+  // The mode the attach it admits is granted.
   EndpointAttachMode mode = 6;
 }
 
+// RevokeEndpointConnectTokenRequest names an endpoint and the connect
+// token to revoke.
 message RevokeEndpointConnectTokenRequest {
+  // The job whose guest holds the endpoint.
   string job_id = 1;
+  // The endpoint's name on that job.
   string name = 2;
   // The ID the token's create returned.
   string id = 3;
 }
 
+// RevokeEndpointConnectTokenResponse is the answer to
+// RevokeEndpointConnectToken.
 message RevokeEndpointConnectTokenResponse {}
 
+// DeleteEndpointRequest names the endpoint to end.
 message DeleteEndpointRequest {
+  // The job whose guest holds the endpoint.
   string job_id = 1;
+  // The endpoint's name on that job.
   string name = 2;
   // A grant the caller's workspace received, to act on the owner's
   // sandbox's job through it (docs/grants.md).
   string grant = 3;
 }
 
+// DeleteEndpointResponse is the answer to DeleteEndpoint.
 message DeleteEndpointResponse {}
 
+// ListForwardsRequest selects one page of a job's open Forwards.
 message ListForwardsRequest {
+  // The job whose Forwards to list.
   string job_id = 1;
   // The most Forwards in one page; zero lets the server choose.
   int32 page_size = 2;
@@ -852,23 +994,32 @@ message ListForwardsRequest {
   string page_token = 3;
 }
 
+// ListForwardsResponse carries one page of Forwards.
 message ListForwardsResponse {
+  // The page's open Forwards, oldest first.
   repeated Forward forwards = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// GetTunnelRequest names the job whose runner's Tunnel to read.
 message GetTunnelRequest {
+  // The job whose runner's Tunnel to read.
   string job_id = 1;
 }
 
+// GetTunnelResponse carries the state of the runner's Tunnel.
 message GetTunnelResponse {
+  // The Tunnel of the runner the job holds.
   Tunnel tunnel = 1;
 }
 
+// SendEndpointMessageRequest carries a message for an event endpoint's
+// queue.
 message SendEndpointMessageRequest {
   // The event endpoint's service, by its ID, and the endpoint's name.
   string service = 1;
+  // The event endpoint's name, unique among its service's.
   string endpoint = 2;
   // The message's name, such as order.paid: up to 200 bytes with no space
   // or control character.
@@ -880,15 +1031,21 @@ message SendEndpointMessageRequest {
   string request_key = 5;
 }
 
+// SendEndpointMessageResponse carries the stored message's ID.
 message SendEndpointMessageResponse {
+  // The ID of the message, new or stored before under the same
+  // request_key.
   string message_id = 1;
   // Set when request_key named a message sent before.
   bool duplicate = 2;
 }
 
+// TailEndpointMessagesRequest names an event endpoint and where the stream
+// starts.
 message TailEndpointMessagesRequest {
   // The event endpoint's service, by its ID, and the endpoint's name.
   string service = 1;
+  // The event endpoint's name, unique among its service's.
   string endpoint = 2;
   // Only messages in these states; empty is every state.
   repeated EndpointMessageState states = 3;
@@ -897,16 +1054,21 @@ message TailEndpointMessagesRequest {
   string cursor = 4;
 }
 
+// TailEndpointMessagesResponse carries one message and the cursor after it.
 message TailEndpointMessagesResponse {
+  // The message.
   EndpointMessage message = 1;
   // Where a later call goes on from, after this message.
   string next_cursor = 2;
 }
 
+// ReplayEndpointMessageRequest names the message to put back in its queue.
 message ReplayEndpointMessageRequest {
   // The event endpoint's service, by its ID, and the endpoint's name.
   string service = 1;
+  // The event endpoint's name, unique among its service's.
   string endpoint = 2;
+  // The ID of the message to replay, as a send or a list returned it.
   string message_id = 3;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
   // key and request return the first answer; a different request with the
@@ -914,6 +1076,7 @@ message ReplayEndpointMessageRequest {
   string request_key = 4;
 }
 
+// ReplayEndpointMessageResponse carries the message as replayed.
 message ReplayEndpointMessageResponse {
   // The message as it now is: pending.
   EndpointMessage message = 1;

@@ -307,8 +307,13 @@ service ProjectService {
 
 // Project is one of a workspace's projects.
 message Project {
+  // The project's name, unique among the workspace's projects. Every
+  // call that names a project gives this name.
   string name = 1;
+  // When the project was created. Output only.
   google.protobuf.Timestamp created_at = 2;
+  // The project's environments, by name, each with its overrides; a
+  // caller limited to an environment gets only that one.
   repeated ProjectEnvironment environments = 3;
   // admission is the project's admission webhook; unset when it has none.
   // GetProject and UpdateProject return it; ListProjects does not.
@@ -385,6 +390,7 @@ message ProjectAdmission {
   string secret = 2;
   // updated_by is who set it last, as the audit log names them.
   string updated_by = 3;
+  // When the webhook was last set.
   google.protobuf.Timestamp updated_at = 4;
 }
 
@@ -410,6 +416,7 @@ message ProjectRecordingDefaults {
   ProjectHumanSpans human_spans = 3;
   // updated_by is who set the defaults last, as the audit log names them.
   string updated_by = 4;
+  // When the defaults were last set; unset when the project set none.
   google.protobuf.Timestamp updated_at = 5;
   // recording_segment_minutes limits a sandbox strip's duration. Zero
   // follows the plan; positive values are capped by the plan and frame limit.
@@ -448,6 +455,8 @@ enum ProjectHumanSpans {
 
 // ProjectEnvironment is one of a project's environments.
 message ProjectEnvironment {
+  // The environment's name, its kind; a project has at most one
+  // environment of a kind.
   string name = 1;
   // development, preview or production.
   string kind = 2;
@@ -500,9 +509,11 @@ message Repository {
   string repository = 1;
   // The claiming project's name.
   string project = 2;
+  // When the repository's claim on project was made, or moved to it.
   google.protobuf.Timestamp claimed_at = 3;
 }
 
+// ListProjectsRequest selects one page of the workspace's projects.
 message ListProjectsRequest {
   // The most projects in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -512,7 +523,9 @@ message ListProjectsRequest {
   bool show_deleted = 3;
 }
 
+// ListProjectsResponse carries one page of the workspace's projects.
 message ListProjectsResponse {
+  // The page's projects, by name, each with its environments by name.
   repeated Project projects = 1;
   // The limit of the token that made the call. A server that has this
   // field always sets it; both its fields are empty for a caller that
@@ -532,6 +545,8 @@ message TokenLimit {
   string environment = 2;
 }
 
+// ListRepositoriesRequest selects one page of the repositories the
+// workspace's projects claim.
 message ListRepositoriesRequest {
   // Only this project's repositories; empty lists every project's.
   string project = 1;
@@ -541,18 +556,29 @@ message ListRepositoriesRequest {
   string page_token = 3;
 }
 
+// ListRepositoriesResponse carries one page of claimed repositories.
 message ListRepositoriesResponse {
+  // The page's repositories, by repository.
   repeated Repository repositories = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// CreateProjectRequest carries the project's name and a request key.
 message CreateProjectRequest {
+  // The project's name, unique among the workspace's projects. Empty is
+  // INVALID_ARGUMENT.
   string name = 1;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 2;
 }
 
+// CreateProjectResponse carries the project made, with its three
+// environments.
 message CreateProjectResponse {
+  // The project as stored, with its three environments.
   Project project = 1;
 }
 
@@ -574,6 +600,7 @@ message RestoreProjectRequest {
 // RestoreProjectResponse is empty: the project is live again.
 message RestoreProjectResponse {}
 
+// UpdateProjectRequest carries the project and the fields to set.
 message UpdateProjectRequest {
   // name names the project; the fields update_mask names carry the new
   // values.
@@ -585,10 +612,14 @@ message UpdateProjectRequest {
   google.protobuf.FieldMask update_mask = 2;
 }
 
+// UpdateProjectResponse is the project as stored after the change.
 message UpdateProjectResponse {
+  // The project as stored after the change.
   Project project = 1;
 }
 
+// ClaimRepositoryRequest names the repository and the project that is
+// to claim it.
 message ClaimRepositoryRequest {
   // "owner/name".
   string repository = 1;
@@ -596,41 +627,62 @@ message ClaimRepositoryRequest {
   string project = 2;
 }
 
+// ClaimRepositoryResponse carries the claim as stored.
 message ClaimRepositoryResponse {
+  // The claim as stored, with its time.
   Repository repository = 1;
   // The name of the project that claimed the repository before the call;
   // empty when no project did.
   string previous_project = 2;
 }
 
+// GetProjectRequest names the project to read.
 message GetProjectRequest {
   // The project's name.
   string name = 1;
 }
 
+// GetProjectResponse carries one project with its environments.
 message GetProjectResponse {
+  // The project, with the environments the caller's limit reaches.
   Project project = 1;
 }
 
+// CreateEnvironmentRequest carries the environment's project, kind and
+// management mark.
 message CreateEnvironmentRequest {
   // The name of the project that is to have the environment.
   string project = 1;
   // development, preview or production; the environment is named after
   // it.
   string kind = 2;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 3;
   // The management mark goes together: all four fields or none; managed_by
   // "manifest" needs the digest, an origin and at least one field path.
   string managed_by = 4;
+  // The SHA-256 of the manifest file that set the object, as 64
+  // lowercase hex characters. Required when managed_by is "manifest".
   string manifest_digest = 5;
+  // The field paths the manifest declares, at least one and at most 64,
+  // each a dotted path of lowercase letters, digits and _. Required
+  // when managed_by is "manifest".
   repeated string managed_fields = 6;
+  // How the manifest came to manage the object: "created" or
+  // "adopted". Required when managed_by is "manifest".
   string manifest_origin = 7;
 }
 
+// CreateEnvironmentResponse carries the environment made.
 message CreateEnvironmentResponse {
+  // The environment as stored.
   ProjectEnvironment environment = 1;
 }
 
+// DeleteEnvironmentRequest names the project and the environment to
+// delete.
 message DeleteEnvironmentRequest {
   // The name of the project that has the environment.
   string project = 1;
@@ -638,6 +690,7 @@ message DeleteEnvironmentRequest {
   string name = 2;
 }
 
+// DeleteEnvironmentResponse is the answer to DeleteEnvironment.
 message DeleteEnvironmentResponse {}
 
 // BranchRule is one of a project's branch rules: it chooses the
@@ -660,6 +713,7 @@ message BranchRule {
   string environment = 3;
 }
 
+// ListBranchRulesRequest selects one page of a project's branch rules.
 message ListBranchRulesRequest {
   // The project's name.
   string project = 1;
@@ -669,7 +723,9 @@ message ListBranchRulesRequest {
   string page_token = 3;
 }
 
+// ListBranchRulesResponse carries one page of a project's rules.
 message ListBranchRulesResponse {
+  // The page's rules, in order.
   repeated BranchRule rules = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -704,19 +760,25 @@ message EgressRule {
   string protocol = 4;
 }
 
+// GetProjectNetworkRequest names the project whose policy to read.
 message GetProjectNetworkRequest {
   // The project's name.
   string project = 1;
 }
 
+// GetProjectNetworkResponse carries a project's network policy and who
+// set it last.
 message GetProjectNetworkResponse {
+  // The policy as stored; allow-all when the project never set one.
   NetworkPolicy network = 1;
   // The audit actor that last set it, "<kind>:<id>"; empty when it was
   // never set.
   string updated_by = 2;
+  // When it was last set; unset when it never was.
   google.protobuf.Timestamp updated_at = 3;
 }
 
+// GetEnvironmentNetworkRequest names the environment to read.
 message GetEnvironmentNetworkRequest {
   // The project's name.
   string project = 1;
@@ -724,11 +786,15 @@ message GetEnvironmentNetworkRequest {
   string environment = 2;
 }
 
+// GetEnvironmentNetworkResponse carries an environment's network
+// policy and who set it last.
 message GetEnvironmentNetworkResponse {
+  // The policy as stored; allow-all when the environment never set one.
   NetworkPolicy network = 1;
   // The audit actor that last set it, "<kind>:<id>"; empty when it was
   // never set.
   string updated_by = 2;
+  // When it was last set; unset when it never was.
   google.protobuf.Timestamp updated_at = 3;
 }
 
@@ -756,6 +822,7 @@ message EnvironmentRetention {
   repeated RetentionKeep keeps = 2;
 }
 
+// GetEnvironmentRetentionRequest names the environment to read.
 message GetEnvironmentRetentionRequest {
   // The project's name.
   string project = 1;
@@ -763,6 +830,8 @@ message GetEnvironmentRetentionRequest {
   string environment = 2;
 }
 
+// GetEnvironmentRetentionResponse carries an environment's retention
+// override, what applies to it and who set it last.
 message GetEnvironmentRetentionResponse {
   // The override as stored; empty when none is set.
   EnvironmentRetention retention = 1;
@@ -772,9 +841,11 @@ message GetEnvironmentRetentionResponse {
   // The audit actor that last set it, "<kind>:<id>"; empty when it was
   // never set.
   string updated_by = 3;
+  // When the override was last set; unset when none is set.
   google.protobuf.Timestamp updated_at = 4;
 }
 
+// UpdateEnvironmentRequest carries the environment and the update mask.
 message UpdateEnvironmentRequest {
   // The project's name.
   string project = 1;
@@ -789,11 +860,14 @@ message UpdateEnvironmentRequest {
   // managed_by clears all four. An unset mask never sets the mark.
   google.protobuf.FieldMask update_mask = 3;
 }
+// UpdateEnvironmentResponse is the environment as stored.
 message UpdateEnvironmentResponse {
   // The environment as stored.
   ProjectEnvironment environment = 1;
 }
 
+// RaiseCompatibilityDateRequest carries the project or environment and
+// the date to move to.
 message RaiseCompatibilityDateRequest {
   // The name of the project whose date to raise.
   string project = 1;
@@ -804,6 +878,8 @@ message RaiseCompatibilityDateRequest {
   string date = 3;
 }
 
+// RaiseCompatibilityDateResponse carries the project after the raise,
+// the changes it took and whether the date changed.
 message RaiseCompatibilityDateResponse {
   // The project with its environments as ListProjects renders them, after
   // the raise, showing the environment's override when one was raised.
@@ -825,6 +901,8 @@ message CompatibilityChange {
   string summary = 3;
 }
 
+// ListCompatibilityChangesRequest names the project or environment and
+// the last date to list.
 message ListCompatibilityChangesRequest {
   // The name of the project whose changes to list.
   string project = 1;
@@ -836,6 +914,8 @@ message ListCompatibilityChangesRequest {
   string to_date = 3;
 }
 
+// ListCompatibilityChangesResponse carries the changes not taken yet and
+// the dates they fall between.
 message ListCompatibilityChangesResponse {
   // The changes not taken by to_date, in date order.
   repeated CompatibilityChange changes = 1;
@@ -847,12 +927,15 @@ message ListCompatibilityChangesResponse {
 
 // EmbedTokenState is where an embed token is in its life.
 enum EmbedTokenState {
+  // Unset; no call returns an embed token without a state.
   EMBED_TOKEN_STATE_UNSPECIFIED = 0;
   // Not yet spent: a page on one of its origins can spend it.
   EMBED_TOKEN_STATE_ACTIVE = 1;
   // A page spent it on a recording.
   EMBED_TOKEN_STATE_USED = 2;
+  // Revoked, whether or not it had been spent.
   EMBED_TOKEN_STATE_REVOKED = 3;
+  // Past expires_at, neither spent nor revoked.
   EMBED_TOKEN_STATE_EXPIRED = 4;
 }
 
@@ -865,8 +948,11 @@ message EmbedToken {
   // The origins of the pages that may spend it, such as
   // https://app.example.com.
   repeated string origins = 3;
+  // Where the token is in its life, as of now. Output only.
   EmbedTokenState state = 4;
+  // When it was minted. Output only.
   google.protobuf.Timestamp created_at = 5;
+  // When it stops being spendable. Output only.
   google.protobuf.Timestamp expires_at = 6;
   // Unset until a page spends it.
   google.protobuf.Timestamp used_at = 7;
@@ -882,10 +968,15 @@ message EmbedToken {
   // "sandbox" or "service") and its environment, as Recording names them.
   // Empty until spent.
   string workload_id = 11;
+  // The kind of that workload: "job", "sandbox" or "service". Empty
+  // until spent.
   string workload_kind = 12;
+  // The ID of that workload's environment. Empty until spent.
   string environment_id = 13;
 }
 
+// CreateEmbedTokenRequest carries the project, the page origins and the
+// token's life.
 message CreateEmbedTokenRequest {
   // The project's name.
   string project = 1;
@@ -903,12 +994,15 @@ message CreateEmbedTokenRequest {
   string request_key = 4;
 }
 
+// CreateEmbedTokenResponse carries the token as stored and its secret.
 message CreateEmbedTokenResponse {
+  // The token as stored, without its secret.
   EmbedToken embed_token = 1;
   // The token to hand to the page. It is in this answer only.
   string token = 2;
 }
 
+// ListEmbedTokensRequest selects one page of a project's embed tokens.
 message ListEmbedTokensRequest {
   // The project's name.
   string project = 1;
@@ -918,18 +1012,25 @@ message ListEmbedTokensRequest {
   string page_token = 3;
 }
 
+// ListEmbedTokensResponse carries one page of a project's embed tokens.
 message ListEmbedTokensResponse {
+  // The page's tokens, oldest first.
   repeated EmbedToken embed_tokens = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// RevokeEmbedTokenRequest names the project and the token to revoke.
 message RevokeEmbedTokenRequest {
   // The project's name.
   string project = 1;
+  // The token's ID. Empty is INVALID_ARGUMENT; a token of another
+  // project or no token is NOT_FOUND.
   string embed_token_id = 2;
 }
 
+// RevokeEmbedTokenResponse carries the token after the revoke.
 message RevokeEmbedTokenResponse {
+  // The token as stored after the revoke.
   EmbedToken embed_token = 1;
 }

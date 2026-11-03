@@ -22,6 +22,9 @@ export const file_toshi_workspace_v1_endpoints: GenFile = /*@__PURE__*/
   fileDesc("CiJ0b3NoaS93b3Jrc3BhY2UvdjEvZW5kcG9pbnRzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEi2QYKCEVuZHBvaW50EgoKAmlkGAEgASgJEg4KBmpvYl9pZBgCIAEoCRIMCgRuYW1lGAMgASgJEjAKBXNoYXBlGAQgASgOMiEudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50U2hhcGUSDAoEcG9ydBgFIAEoBRIPCgdjb21tYW5kGAYgAygJEjAKBXN0YXRlGAcgASgOMiEudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50U3RhdGUSLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLAoIZW5kZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmVuZF9yZWFzb24YCyABKAkSFgoJZXhpdF9jb2RlGAwgASgFSACIAQESDQoFb3duZXIYDSABKAkSFAoMb3V0cHV0X3N0YXJ0GA4gASgDEhMKC291dHB1dF9uZXh0GA8gASgDEhQKDGlucHV0X2Nsb3NlZBgQIAEoCBIXCg9yZXF1ZXN0c19vbGRlc3QYESABKAMSFwoPcmVxdWVzdHNfbmV3ZXN0GBIgASgDEjIKBnBvbGljeRgTIAEoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5FbmRwb2ludFBvbGljeRIzCgdjbGllbnRzGBQgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50Q2xpZW50Eg8KB3NlcnZpY2UYFSABKAkSDAoEcGF0aBgWIAEoCRI3CgZldmVudHMYFyABKAsyJy50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnRFdmVudENvdW50cxIQCghncmFudF9pZBgYIAEoCRIeChZhcHBsaWVkX3BvbGljeV92ZXJzaW9uGBkgASgDEg8KB2ZyYW1pbmcYGiABKAkSNwoJYWNwX3N0YXRlGBsgASgLMiQudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50QUNQU3RhdGUSEgoKc2lnbl9pbl9pZBgcIAEoCRIvCgpjcmVhdGVkX2J5GB0gASgLMhsudG9zaGkud29ya3NwYWNlLnYxLlN1YmplY3RCDAoKX2V4aXRfY29kZUoECAgQCSLUAQoQRW5kcG9pbnRBQ1BTdGF0ZRINCgVzdGF0ZRgBIAEoCRISCgpzZXNzaW9uX2lkGAIgASgJEikKBXNpbmNlGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBJCCgdkcm9wcGVkGAQgAygLMjEudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50QUNQU3RhdGUuRHJvcHBlZEVudHJ5Gi4KDERyb3BwZWRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAM6AjgBIrcBChNFbmRwb2ludEV2ZW50Q291bnRzEg8KB3BlbmRpbmcYASABKAMSEQoJaW5fZmxpZ2h0GAIgASgDEhEKCWRlbGl2ZXJlZBgDIAEoAxIMCgRkZWFkGAQgASgDEg8KB2V4cGlyZWQYBSABKAMSNAoQbGFzdF9kZWxpdmVyeV9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFAoMbGFzdF9mYWlsdXJlGAcgASgJIrkDCg9FbmRwb2ludE1lc3NhZ2USCwoDc2VxGAIgASgDEjcKBXN0YXRlGAcgASgOMigudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50TWVzc2FnZVN0YXRlEhAKCGF0dGVtcHRzGAggASgFEjMKD25leHRfYXR0ZW1wdF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKbGFzdF9lcnJvchgKIAEoCRIwCgxkZWxpdmVyZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KC3JlcGxheWVkX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCg1zY2hlZHVsZWRfZm9yGA0gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIzCghlbnZlbG9wZRgOIAEoCzIhLnRvc2hpLndvcmtzcGFjZS52MS5FdmVudEVudmVsb3BlSgQIARACSgQIAxAESgQIBBAFSgQIBRAGSgQIBhAHUgJpZFIEbmFtZVIEdGltZVIGc291cmNlUgRkYXRhIsUCCg5FbmRwb2ludENsaWVudBIKCgJpZBgBIAEoCRI0CgRtb2RlGAIgASgOMiYudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50QXR0YWNoTW9kZRITCgthdHRhY2hlZF9ieRgDIAEoCRIOCgZkZXZpY2UYBCABKAkSEgoKY3JlZGVudGlhbBgFIAEoCRIyCg5hdHRhY2hlZF9zaW5jZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoHc2Vlbl9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLZGV0YWNoZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDG91dHB1dF9hY2tlZBgJIAEoAxIQCghhdHRhY2hlZBgKIAEoCCKvAQoPRW5kcG9pbnREZWZhdWx0EjYKDXdvcmtsb2FkX2tpbmQYASABKA4yHy50b3NoaS53b3Jrc3BhY2UudjEuSG9zdEpvYktpbmQSMAoFc2hhcGUYAiABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnRTaGFwZRIyCgZwb2xpY3kYAyABKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnRQb2xpY3kigAIKDkVuZHBvaW50UG9saWN5Eg8KB3ZlcnNpb24YASABKAMSDgoGYXR0YWNoGAIgASgJEhgKC21heF9jbGllbnRzGAMgASgFSACIAQESDQoFaW5wdXQYBCABKAkSDAoEa2VlcBgFIAEoCRI3Cgdtb2R1bGVzGAYgASgLMiYudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50TW9kdWxlTGlzdBIUCgxhY2tfZGVhZGxpbmUYByABKAkSGAoLY29uY3VycmVuY3kYCCABKAVIAYgBARINCgV0b29scxgJIAEoCUIOCgxfbWF4X2NsaWVudHNCDgoMX2NvbmN1cnJlbmN5IkkKEkVuZHBvaW50TW9kdWxlTGlzdBIzCgdtb2R1bGVzGAEgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50TW9kdWxlIpoCCg5FbmRwb2ludE1vZHVsZRIMCgRraW5kGAEgASgJEjAKBW1hdGNoGAIgASgLMiEudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50TWF0Y2gSDgoGcmFuZ2VzGAMgAygJEg0KBWxldmVsGAQgASgJEhAKCGJvZHlfY2FwGAUgASgDEg4KBnN0YXR1cxgGIAEoBRIOCgZ0YXJnZXQYByABKAkSDAoEcGF0aBgIIAEoCRIMCgRob3N0GAkgASgJEgsKA2tleRgKIAEoCRINCgVjb3VudBgLIAEoBRIOCgZ3aW5kb3cYDCABKAkSDAoEaHRtbBgNIAEoCRIRCgljYV9idW5kbGUYDiABKAkSDgoGZ3JhbnRzGA8gASgIIq8BCg1FbmRwb2ludE1hdGNoEg0KBWhvc3RzGAEgAygJEg0KBXBhdGhzGAIgAygJEg8KB21ldGhvZHMYAyADKAkSPwoHaGVhZGVycxgEIAMoCzIuLnRvc2hpLndvcmtzcGFjZS52MS5FbmRwb2ludE1hdGNoLkhlYWRlcnNFbnRyeRouCgxIZWFkZXJzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASL2BAoPRW5kcG9pbnRSZXF1ZXN0EgsKA3NlcRgBIAEoAxIuCgphcnJpdmVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIMCgRob3N0GAMgASgJEg4KBm1ldGhvZBgEIAEoCRIMCgRwYXRoGAUgASgJEg4KBnN0YXR1cxgGIAEoBRIVCg1yZXF1ZXN0X2J5dGVzGAcgASgDEhYKDnJlc3BvbnNlX2J5dGVzGAggASgDEisKCGR1cmF0aW9uGAkgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEjkKBmNhbGxlchgKIAEoCzIpLnRvc2hpLndvcmtzcGFjZS52MS5FbmRwb2ludFJlcXVlc3RDYWxsZXISDwoHYWRkcmVzcxgLIAEoCRISCgpyZWZ1c2VkX2J5GAwgASgJEhEKCXdlYnNvY2tldBgNIAEoCBINCgVsZXZlbBgOIAEoCRINCgVxdWVyeRgPIAEoCRIRCglxdWVyeV9jdXQYECABKAgSOwoPcmVxdWVzdF9oZWFkZXJzGBEgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50SGVhZGVyEjwKEHJlc3BvbnNlX2hlYWRlcnMYEiADKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnRIZWFkZXISNgoMcmVxdWVzdF9ib2R5GBMgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50Qm9keRI3Cg1yZXNwb25zZV9ib2R5GBQgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50Qm9keSJJChVFbmRwb2ludFJlcXVlc3RDYWxsZXISDAoEdXNlchgBIAEoCRIOCgZkZXZpY2UYAiABKAkSEgoKc2hhcmVfbGluaxgDIAEoCSI+Cg5FbmRwb2ludEhlYWRlchIMCgRuYW1lGAEgASgJEg0KBXZhbHVlGAIgASgJEg8KB3JlbW92ZWQYAyABKAgiPwoMRW5kcG9pbnRCb2R5EhQKDGNvbnRlbnRfdHlwZRgBIAEoCRIMCgRkYXRhGAIgASgMEgsKA2N1dBgDIAEoCCKIAQoHRm9yd2FyZBIOCgZ0YXJnZXQYASABKAkSCgoCYnkYAiABKAkSDgoGZGV2aWNlGAMgASgJEhAKCGVuZHBvaW50GAQgASgJEi0KCW9wZW5lZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIZ3JhbnRfaWQYBiABKAkiswEKBlR1bm5lbBIRCgljb25uZWN0ZWQYASABKAgSKQoFc2luY2UYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCGNvbm5lY3RzGAMgASgFEg8KB3N0cmVhbXMYBCABKAUSEgoKbGFzdF9lcnJvchgFIAEoCRIPCgdyZXBsaWNhGAYgASgJEhAKCGZvcndhcmRzGAcgASgFEhEKCWpvYl9zdGF0ZRgIIAEoCSKsAQoVQ3JlYXRlRW5kcG9pbnRSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEgwKBHBvcnQYAyABKAUSDwoHY29tbWFuZBgEIAMoCRIyCgZwb2xpY3kYBSABKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnRQb2xpY3kSDQoFZ3JhbnQYBiABKAkSEwoLcmVxdWVzdF9rZXkYByABKAkiSAoWQ3JlYXRlRW5kcG9pbnRSZXNwb25zZRIuCghlbmRwb2ludBgBIAEoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5FbmRwb2ludCJtChRMaXN0RW5kcG9pbnRzUmVxdWVzdBIOCgZqb2JfaWQYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEhIKCnBhZ2VfdG9rZW4YAyABKAkSDwoHc2VydmljZRgEIAEoCRINCgVncmFudBgFIAEoCSJhChVMaXN0RW5kcG9pbnRzUmVzcG9uc2USLwoJZW5kcG9pbnRzGAEgAygLMhwudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50EhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSJSChJHZXRFbmRwb2ludFJlcXVlc3QSDgoGam9iX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHc2VydmljZRgDIAEoCRINCgVncmFudBgEIAEoCSJFChNHZXRFbmRwb2ludFJlc3BvbnNlEi4KCGVuZHBvaW50GAEgASgLMhwudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50IkkKGEdldEVuZHBvaW50UG9saWN5UmVxdWVzdBIOCgZqb2JfaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdzZXJ2aWNlGAMgASgJIk8KGUdldEVuZHBvaW50UG9saWN5UmVzcG9uc2USMgoGcG9saWN5GAEgASgLMiIudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50UG9saWN5Iq4BChVVcGRhdGVFbmRwb2ludFJlcXVlc3QSLgoIZW5kcG9pbnQYASABKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnQSLwoLdXBkYXRlX21hc2sYAiABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrEjQKB3N0cmVhbXMYAyABKA4yIy50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnRTdHJlYW1zIkgKFlVwZGF0ZUVuZHBvaW50UmVzcG9uc2USLgoIZW5kcG9pbnQYASABKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnQijgIKG0xpc3RFbmRwb2ludFJlcXVlc3RzUmVxdWVzdBIOCgZqb2JfaWQYASABKAkSDAoEbmFtZRgCIAEoCRIRCglwYWdlX3NpemUYAyABKAUSEgoKcGFnZV90b2tlbhgEIAEoCRIRCglhZnRlcl9zZXEYBSABKAMSKQoFc2luY2UYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXVudGlsGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIOCgZzdGF0dXMYCCABKAkSDAoEaG9zdBgJIAEoCRIOCgZtZXRob2QYCiABKAkSEwoLcGF0aF9wcmVmaXgYCyABKAkilgEKHExpc3RFbmRwb2ludFJlcXVlc3RzUmVzcG9uc2USNQoIcmVxdWVzdHMYASADKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnRSZXF1ZXN0EhcKD25leHRfcGFnZV90b2tlbhgCIAEoCRISCgpvbGRlc3Rfc2VxGAMgASgDEhIKCm5ld2VzdF9zZXEYBCABKAMiRgoZR2V0RW5kcG9pbnRSZXF1ZXN0UmVxdWVzdBIOCgZqb2JfaWQYASABKAkSDAoEbmFtZRgCIAEoCRILCgNzZXEYAyABKAMiUgoaR2V0RW5kcG9pbnRSZXF1ZXN0UmVzcG9uc2USNAoHcmVxdWVzdBgBIAEoCzIjLnRvc2hpLndvcmtzcGFjZS52MS5FbmRwb2ludFJlcXVlc3Qi8AEKGEV4cG9ydEVuZHBvaW50TG9nUmVxdWVzdBIOCgZqb2JfaWQYASABKAkSDAoEbmFtZRgCIAEoCRIsCgNsb2cYAyABKA4yHy50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnRMb2cSEQoEZnJvbRgEIAEoA0gAiAEBEg8KAnRvGAUgASgDSAGIAQESKQoFc2luY2UYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXVudGlsGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEIHCgVfZnJvbUIFCgNfdG8ibgoZRXhwb3J0RW5kcG9pbnRMb2dSZXNwb25zZRIMCgRkYXRhGAEgASgMEhEKCWZpbGVfbmFtZRgCIAEoCRIUCgxjb250ZW50X3R5cGUYAyABKAkSDAoEZnJvbRgEIAEoAxIMCgRuZXh0GAUgASgDIqsBCiFDcmVhdGVFbmRwb2ludENvbm5lY3RUb2tlblJlcXVlc3QSDgoGam9iX2lkGAEgASgJEgwKBG5hbWUYAiABKAkSDgoGZGV2aWNlGAMgASgJEjQKBG1vZGUYBCABKA4yJi50b3NoaS53b3Jrc3BhY2UudjEuRW5kcG9pbnRBdHRhY2hNb2RlEg0KBWdyYW50GAUgASgJEhMKC3JlcXVlc3Rfa2V5GAYgASgJIsUBCiJDcmVhdGVFbmRwb2ludENvbm5lY3RUb2tlblJlc3BvbnNlEgoKAmlkGAEgASgJEg0KBXRva2VuGAIgASgJEgsKA3VybBgDIAEoCRIuCgpleHBpcmVzX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIRCgl0cmFuc3BvcnQYBSABKAkSNAoEbW9kZRgGIAEoDjImLnRvc2hpLndvcmtzcGFjZS52MS5FbmRwb2ludEF0dGFjaE1vZGUiTQohUmV2b2tlRW5kcG9pbnRDb25uZWN0VG9rZW5SZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEgoKAmlkGAMgASgJIiQKIlJldm9rZUVuZHBvaW50Q29ubmVjdFRva2VuUmVzcG9uc2UiRAoVRGVsZXRlRW5kcG9pbnRSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBWdyYW50GAMgASgJIhgKFkRlbGV0ZUVuZHBvaW50UmVzcG9uc2UiTAoTTGlzdEZvcndhcmRzUmVxdWVzdBIOCgZqb2JfaWQYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEhIKCnBhZ2VfdG9rZW4YAyABKAkiXgoUTGlzdEZvcndhcmRzUmVzcG9uc2USLQoIZm9yd2FyZHMYASADKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuRm9yd2FyZBIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiIgoQR2V0VHVubmVsUmVxdWVzdBIOCgZqb2JfaWQYASABKAkiPwoRR2V0VHVubmVsUmVzcG9uc2USKgoGdHVubmVsGAEgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLlR1bm5lbCJwChpTZW5kRW5kcG9pbnRNZXNzYWdlUmVxdWVzdBIPCgdzZXJ2aWNlGAEgASgJEhAKCGVuZHBvaW50GAIgASgJEgwKBG5hbWUYAyABKAkSDAoEZGF0YRgEIAEoDBITCgtyZXF1ZXN0X2tleRgFIAEoCSJEChtTZW5kRW5kcG9pbnRNZXNzYWdlUmVzcG9uc2USEgoKbWVzc2FnZV9pZBgBIAEoCRIRCglkdXBsaWNhdGUYAiABKAgiigEKG1RhaWxFbmRwb2ludE1lc3NhZ2VzUmVxdWVzdBIPCgdzZXJ2aWNlGAEgASgJEhAKCGVuZHBvaW50GAIgASgJEjgKBnN0YXRlcxgDIAMoDjIoLnRvc2hpLndvcmtzcGFjZS52MS5FbmRwb2ludE1lc3NhZ2VTdGF0ZRIOCgZjdXJzb3IYBCABKAkiaQocVGFpbEVuZHBvaW50TWVzc2FnZXNSZXNwb25zZRI0CgdtZXNzYWdlGAEgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50TWVzc2FnZRITCgtuZXh0X2N1cnNvchgCIAEoCSJqChxSZXBsYXlFbmRwb2ludE1lc3NhZ2VSZXF1ZXN0Eg8KB3NlcnZpY2UYASABKAkSEAoIZW5kcG9pbnQYAiABKAkSEgoKbWVzc2FnZV9pZBgDIAEoCRITCgtyZXF1ZXN0X2tleRgEIAEoCSJVCh1SZXBsYXlFbmRwb2ludE1lc3NhZ2VSZXNwb25zZRI0CgdtZXNzYWdlGAEgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLkVuZHBvaW50TWVzc2FnZSp9Cg1FbmRwb2ludFNoYXBlEh4KGkVORFBPSU5UX1NIQVBFX1VOU1BFQ0lGSUVEEAASFwoTRU5EUE9JTlRfU0hBUEVfSFRUUBABEhkKFUVORFBPSU5UX1NIQVBFX1NUUkVBTRACEhgKFEVORFBPSU5UX1NIQVBFX0VWRU5UEAMqmQEKDUVuZHBvaW50U3RhdGUSHgoaRU5EUE9JTlRfU1RBVEVfVU5TUEVDSUZJRUQQABIXChNFTkRQT0lOVF9TVEFURV9PUEVOEAESGQoVRU5EUE9JTlRfU1RBVEVfRVhJVEVEEAISGgoWRU5EUE9JTlRfU1RBVEVfQ0xPU0lORxADEhgKFEVORFBPSU5UX1NUQVRFX0VOREVEEAQqfgoSRW5kcG9pbnRBdHRhY2hNb2RlEiQKIEVORFBPSU5UX0FUVEFDSF9NT0RFX1VOU1BFQ0lGSUVEEAASHgoaRU5EUE9JTlRfQVRUQUNIX01PREVfSU5QVVQQARIiCh5FTkRQT0lOVF9BVFRBQ0hfTU9ERV9SRUFEX09OTFkQAiqEAQoPRW5kcG9pbnRTdHJlYW1zEiAKHEVORFBPSU5UX1NUUkVBTVNfVU5TUEVDSUZJRUQQABIZChVFTkRQT0lOVF9TVFJFQU1TX0tFRVAQARIaChZFTkRQT0lOVF9TVFJFQU1TX0RSQUlOEAISGAoURU5EUE9JTlRfU1RSRUFNU19FTkQQAypfCgtFbmRwb2ludExvZxIcChhFTkRQT0lOVF9MT0dfVU5TUEVDSUZJRUQQABIXChNFTkRQT0lOVF9MT0dfT1VUUFVUEAESGQoVRU5EUE9JTlRfTE9HX1JFUVVFU1RTEAIq8wEKFEVuZHBvaW50TWVzc2FnZVN0YXRlEiYKIkVORFBPSU5UX01FU1NBR0VfU1RBVEVfVU5TUEVDSUZJRUQQABIiCh5FTkRQT0lOVF9NRVNTQUdFX1NUQVRFX1BFTkRJTkcQARIkCiBFTkRQT0lOVF9NRVNTQUdFX1NUQVRFX0lOX0ZMSUdIVBACEiQKIEVORFBPSU5UX01FU1NBR0VfU1RBVEVfREVMSVZFUkVEEAMSHwobRU5EUE9JTlRfTUVTU0FHRV9TVEFURV9ERUFEEAQSIgoeRU5EUE9JTlRfTUVTU0FHRV9TVEFURV9FWFBJUkVEEAUyyBQKD0VuZHBvaW50U2VydmljZRKwAQoOQ3JlYXRlRW5kcG9pbnQSKS50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlRW5kcG9pbnRSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUVuZHBvaW50UmVzcG9uc2UiR8LzGA9lbmRwb2ludHMud3JpdGXS8xgsChlob3N0X2pvYi5lbmRwb2ludF9leHBvc2VkEg9ob3N0X2pvYjpqb2JfaWSQ9BgBEngKDUxpc3RFbmRwb2ludHMSKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEVuZHBvaW50c1JlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEVuZHBvaW50c1Jlc3BvbnNlIhLC8xgOZW5kcG9pbnRzLnJlYWQScgoLR2V0RW5kcG9pbnQSJi50b3NoaS53b3Jrc3BhY2UudjEuR2V0RW5kcG9pbnRSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLkdldEVuZHBvaW50UmVzcG9uc2UiEsLzGA5lbmRwb2ludHMucmVhZBKEAQoRR2V0RW5kcG9pbnRQb2xpY3kSLC50b3NoaS53b3Jrc3BhY2UudjEuR2V0RW5kcG9pbnRQb2xpY3lSZXF1ZXN0Gi0udG9zaGkud29ya3NwYWNlLnYxLkdldEVuZHBvaW50UG9saWN5UmVzcG9uc2UiEsLzGA5lbmRwb2ludHMucmVhZBK8AQoOVXBkYXRlRW5kcG9pbnQSKS50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlRW5kcG9pbnRSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZUVuZHBvaW50UmVzcG9uc2UiU8LzGA9lbmRwb2ludHMud3JpdGXS8xg4Chxob3N0X2pvYi5lbmRwb2ludF9wb2xpY3lfc2V0Ehhob3N0X2pvYjplbmRwb2ludC5qb2JfaWSQ9BgCEo0BChRMaXN0RW5kcG9pbnRSZXF1ZXN0cxIvLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0RW5kcG9pbnRSZXF1ZXN0c1JlcXVlc3QaMC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEVuZHBvaW50UmVxdWVzdHNSZXNwb25zZSISwvMYDmVuZHBvaW50cy5yZWFkEocBChJHZXRFbmRwb2ludFJlcXVlc3QSLS50b3NoaS53b3Jrc3BhY2UudjEuR2V0RW5kcG9pbnRSZXF1ZXN0UmVxdWVzdBouLnRvc2hpLndvcmtzcGFjZS52MS5HZXRFbmRwb2ludFJlcXVlc3RSZXNwb25zZSISwvMYDmVuZHBvaW50cy5yZWFkErIBChFFeHBvcnRFbmRwb2ludExvZxIsLnRvc2hpLndvcmtzcGFjZS52MS5FeHBvcnRFbmRwb2ludExvZ1JlcXVlc3QaLS50b3NoaS53b3Jrc3BhY2UudjEuRXhwb3J0RW5kcG9pbnRMb2dSZXNwb25zZSI+wvMYDmVuZHBvaW50cy5yZWFk0vMYKAoVZW5kcG9pbnRfbG9nLmV4cG9ydGVkEg9ob3N0X2pvYjpqb2JfaWQwARLhAQoaQ3JlYXRlRW5kcG9pbnRDb25uZWN0VG9rZW4SNS50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlRW5kcG9pbnRDb25uZWN0VG9rZW5SZXF1ZXN0GjYudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUVuZHBvaW50Q29ubmVjdFRva2VuUmVzcG9uc2UiVMLzGA9lbmRwb2ludHMud3JpdGXS8xg5CiZob3N0X2pvYi5lbmRwb2ludF9jb25uZWN0X3Rva2VuX2lzc3VlZBIPaG9zdF9qb2I6am9iX2lkkPQYARLiAQoaUmV2b2tlRW5kcG9pbnRDb25uZWN0VG9rZW4SNS50b3NoaS53b3Jrc3BhY2UudjEuUmV2b2tlRW5kcG9pbnRDb25uZWN0VG9rZW5SZXF1ZXN0GjYudG9zaGkud29ya3NwYWNlLnYxLlJldm9rZUVuZHBvaW50Q29ubmVjdFRva2VuUmVzcG9uc2UiVcLzGA9lbmRwb2ludHMud3JpdGXS8xg6Cidob3N0X2pvYi5lbmRwb2ludF9jb25uZWN0X3Rva2VuX3Jldm9rZWQSD2hvc3Rfam9iOmpvYl9pZJD0GAISsAEKDkRlbGV0ZUVuZHBvaW50EikudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUVuZHBvaW50UmVxdWVzdBoqLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVFbmRwb2ludFJlc3BvbnNlIkfC8xgPZW5kcG9pbnRzLndyaXRl0vMYLAoZaG9zdF9qb2IuZW5kcG9pbnRfZGVsZXRlZBIPaG9zdF9qb2I6am9iX2lkkPQYAhJ1CgxMaXN0Rm9yd2FyZHMSJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEZvcndhcmRzUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Rm9yd2FyZHNSZXNwb25zZSISwvMYDmVuZHBvaW50cy5yZWFkEmwKCUdldFR1bm5lbBIkLnRvc2hpLndvcmtzcGFjZS52MS5HZXRUdW5uZWxSZXF1ZXN0GiUudG9zaGkud29ya3NwYWNlLnYxLkdldFR1bm5lbFJlc3BvbnNlIhLC8xgOZW5kcG9pbnRzLnJlYWQSuwEKE1NlbmRFbmRwb2ludE1lc3NhZ2USLi50b3NoaS53b3Jrc3BhY2UudjEuU2VuZEVuZHBvaW50TWVzc2FnZVJlcXVlc3QaLy50b3NoaS53b3Jrc3BhY2UudjEuU2VuZEVuZHBvaW50TWVzc2FnZVJlc3BvbnNlIkPC8xgPZW5kcG9pbnRzLndyaXRl0vMYKAoVZW5kcG9pbnQubWVzc2FnZV9zZW50Eg9zZXJ2aWNlOnNlcnZpY2WQ9BgBEo8BChRUYWlsRW5kcG9pbnRNZXNzYWdlcxIvLnRvc2hpLndvcmtzcGFjZS52MS5UYWlsRW5kcG9pbnRNZXNzYWdlc1JlcXVlc3QaMC50b3NoaS53b3Jrc3BhY2UudjEuVGFpbEVuZHBvaW50TWVzc2FnZXNSZXNwb25zZSISwvMYDmVuZHBvaW50cy5yZWFkMAESzQEKFVJlcGxheUVuZHBvaW50TWVzc2FnZRIwLnRvc2hpLndvcmtzcGFjZS52MS5SZXBsYXlFbmRwb2ludE1lc3NhZ2VSZXF1ZXN0GjEudG9zaGkud29ya3NwYWNlLnYxLlJlcGxheUVuZHBvaW50TWVzc2FnZVJlc3BvbnNlIk/C8xgPZW5kcG9pbnRzLndyaXRl0vMYNAohc2VydmljZS5lbmRwb2ludF9tZXNzYWdlX3JlcGxheWVkEg9zZXJ2aWNlOnNlcnZpY2WQ9BgBQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_hostjobs, file_toshi_workspace_v1_roles, file_toshi_workspace_v1_workspace]);
 
 /**
+ * Endpoint is one endpoint of a job: an http port, a stream command, or a
+ * service's queue of messages when it is named by its service.
+ *
  * @generated from message toshi.workspace.v1.Endpoint
  */
 export type Endpoint = Message<"toshi.workspace.v1.Endpoint"> & {
@@ -41,11 +44,16 @@ export type Endpoint = Message<"toshi.workspace.v1.Endpoint"> & {
   jobId: string;
 
   /**
+   * Its name on the job, unique among the job's endpoints; an event
+   * endpoint's is unique among its service's.
+   *
    * @generated from field: string name = 3;
    */
   name: string;
 
   /**
+   * How the endpoint carries its bytes.
+   *
    * @generated from field: toshi.workspace.v1.EndpointShape shape = 4;
    */
   shape: EndpointShape;
@@ -65,11 +73,15 @@ export type Endpoint = Message<"toshi.workspace.v1.Endpoint"> & {
   command: string[];
 
   /**
+   * Where the endpoint is in its life.
+   *
    * @generated from field: toshi.workspace.v1.EndpointState state = 7;
    */
   state: EndpointState;
 
   /**
+   * When it was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 9;
    */
   createdAt?: Timestamp | undefined;
@@ -82,6 +94,8 @@ export type Endpoint = Message<"toshi.workspace.v1.Endpoint"> & {
   endedAt?: Timestamp | undefined;
 
   /**
+   * Why it left its last state; empty while open.
+   *
    * @generated from field: string end_reason = 11;
    */
   endReason: string;
@@ -109,6 +123,8 @@ export type Endpoint = Message<"toshi.workspace.v1.Endpoint"> & {
   outputStart: bigint;
 
   /**
+   * The offset the next output byte takes: the end of the output kept.
+   *
    * @generated from field: int64 output_next = 15;
    */
   outputNext: bigint;
@@ -129,6 +145,8 @@ export type Endpoint = Message<"toshi.workspace.v1.Endpoint"> & {
   requestsOldest: bigint;
 
   /**
+   * The newest request record kept; zero when none is.
+   *
    * @generated from field: int64 requests_newest = 18;
    */
   requestsNewest: bigint;
@@ -227,6 +245,9 @@ export type Endpoint = Message<"toshi.workspace.v1.Endpoint"> & {
 };
 
 /**
+ * Endpoint is one endpoint of a job: an http port, a stream command, or a
+ * service's queue of messages when it is named by its service.
+ *
  * @generated from message toshi.workspace.v1.Endpoint
  */
 export type EndpointJson = {
@@ -246,11 +267,16 @@ export type EndpointJson = {
   jobId?: string;
 
   /**
+   * Its name on the job, unique among the job's endpoints; an event
+   * endpoint's is unique among its service's.
+   *
    * @generated from field: string name = 3;
    */
   name?: string;
 
   /**
+   * How the endpoint carries its bytes.
+   *
    * @generated from field: toshi.workspace.v1.EndpointShape shape = 4;
    */
   shape?: EndpointShapeJson;
@@ -270,11 +296,15 @@ export type EndpointJson = {
   command?: string[];
 
   /**
+   * Where the endpoint is in its life.
+   *
    * @generated from field: toshi.workspace.v1.EndpointState state = 7;
    */
   state?: EndpointStateJson;
 
   /**
+   * When it was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 9;
    */
   createdAt?: TimestampJson;
@@ -287,6 +317,8 @@ export type EndpointJson = {
   endedAt?: TimestampJson;
 
   /**
+   * Why it left its last state; empty while open.
+   *
    * @generated from field: string end_reason = 11;
    */
   endReason?: string;
@@ -314,6 +346,8 @@ export type EndpointJson = {
   outputStart?: string;
 
   /**
+   * The offset the next output byte takes: the end of the output kept.
+   *
    * @generated from field: int64 output_next = 15;
    */
   outputNext?: string;
@@ -334,6 +368,8 @@ export type EndpointJson = {
   requestsOldest?: string;
 
   /**
+   * The newest request record kept; zero when none is.
+   *
    * @generated from field: int64 requests_newest = 18;
    */
   requestsNewest?: string;
@@ -526,16 +562,22 @@ export const EndpointACPStateSchema: GenMessage<EndpointACPState, {jsonType: End
  */
 export type EndpointEventCounts = Message<"toshi.workspace.v1.EndpointEventCounts"> & {
   /**
+   * Messages waiting for their next attempt.
+   *
    * @generated from field: int64 pending = 1;
    */
   pending: bigint;
 
   /**
+   * Messages posted and not yet answered.
+   *
    * @generated from field: int64 in_flight = 2;
    */
   inFlight: bigint;
 
   /**
+   * Messages answered 2xx.
+   *
    * @generated from field: int64 delivered = 3;
    */
   delivered: bigint;
@@ -549,6 +591,8 @@ export type EndpointEventCounts = Message<"toshi.workspace.v1.EndpointEventCount
   dead: bigint;
 
   /**
+   * Messages whose endpoint's keep passed before they were delivered.
+   *
    * @generated from field: int64 expired = 5;
    */
   expired: bigint;
@@ -575,16 +619,22 @@ export type EndpointEventCounts = Message<"toshi.workspace.v1.EndpointEventCount
  */
 export type EndpointEventCountsJson = {
   /**
+   * Messages waiting for their next attempt.
+   *
    * @generated from field: int64 pending = 1;
    */
   pending?: string;
 
   /**
+   * Messages posted and not yet answered.
+   *
    * @generated from field: int64 in_flight = 2;
    */
   inFlight?: string;
 
   /**
+   * Messages answered 2xx.
+   *
    * @generated from field: int64 delivered = 3;
    */
   delivered?: string;
@@ -598,6 +648,8 @@ export type EndpointEventCountsJson = {
   dead?: string;
 
   /**
+   * Messages whose endpoint's keep passed before they were delivered.
+   *
    * @generated from field: int64 expired = 5;
    */
   expired?: string;
@@ -638,11 +690,16 @@ export type EndpointMessage = Message<"toshi.workspace.v1.EndpointMessage"> & {
   seq: bigint;
 
   /**
+   * Where the message is in its delivery.
+   *
    * @generated from field: toshi.workspace.v1.EndpointMessageState state = 7;
    */
   state: EndpointMessageState;
 
   /**
+   * How many times it has been posted, failed attempts included; 0 before
+   * the first.
+   *
    * @generated from field: int32 attempts = 8;
    */
   attempts: number;
@@ -662,6 +719,8 @@ export type EndpointMessage = Message<"toshi.workspace.v1.EndpointMessage"> & {
   lastError: string;
 
   /**
+   * When it was answered 2xx; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp delivered_at = 11;
    */
   deliveredAt?: Timestamp | undefined;
@@ -703,11 +762,16 @@ export type EndpointMessageJson = {
   seq?: string;
 
   /**
+   * Where the message is in its delivery.
+   *
    * @generated from field: toshi.workspace.v1.EndpointMessageState state = 7;
    */
   state?: EndpointMessageStateJson;
 
   /**
+   * How many times it has been posted, failed attempts included; 0 before
+   * the first.
+   *
    * @generated from field: int32 attempts = 8;
    */
   attempts?: number;
@@ -727,6 +791,8 @@ export type EndpointMessageJson = {
   lastError?: string;
 
   /**
+   * When it was answered 2xx; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp delivered_at = 11;
    */
   deliveredAt?: TimestampJson;
@@ -770,6 +836,8 @@ export const EndpointMessageSchema: GenMessage<EndpointMessage, {jsonType: Endpo
  */
 export type EndpointClient = Message<"toshi.workspace.v1.EndpointClient"> & {
   /**
+   * The client's ID, at most 128 bytes, which it names on each attach.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -797,11 +865,16 @@ export type EndpointClient = Message<"toshi.workspace.v1.EndpointClient"> & {
   device: string;
 
   /**
+   * connect_token when a connect token admitted its last attach; empty
+   * otherwise.
+   *
    * @generated from field: string credential = 5;
    */
   credential: string;
 
   /**
+   * When its last attach began.
+   *
    * @generated from field: google.protobuf.Timestamp attached_since = 6;
    */
   attachedSince?: Timestamp | undefined;
@@ -821,11 +894,16 @@ export type EndpointClient = Message<"toshi.workspace.v1.EndpointClient"> & {
   detachedAt?: Timestamp | undefined;
 
   /**
+   * The output offset it has acknowledged; it goes on from there when it
+   * attaches again.
+   *
    * @generated from field: int64 output_acked = 9;
    */
   outputAcked: bigint;
 
   /**
+   * Whether its last attach is live under the endpoint's current owner.
+   *
    * @generated from field: bool attached = 10;
    */
   attached: boolean;
@@ -840,6 +918,8 @@ export type EndpointClient = Message<"toshi.workspace.v1.EndpointClient"> & {
  */
 export type EndpointClientJson = {
   /**
+   * The client's ID, at most 128 bytes, which it names on each attach.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -867,11 +947,16 @@ export type EndpointClientJson = {
   device?: string;
 
   /**
+   * connect_token when a connect token admitted its last attach; empty
+   * otherwise.
+   *
    * @generated from field: string credential = 5;
    */
   credential?: string;
 
   /**
+   * When its last attach began.
+   *
    * @generated from field: google.protobuf.Timestamp attached_since = 6;
    */
   attachedSince?: TimestampJson;
@@ -891,11 +976,16 @@ export type EndpointClientJson = {
   detachedAt?: TimestampJson;
 
   /**
+   * The output offset it has acknowledged; it goes on from there when it
+   * attaches again.
+   *
    * @generated from field: int64 output_acked = 9;
    */
   outputAcked?: string;
 
   /**
+   * Whether its last attach is live under the endpoint's current owner.
+   *
    * @generated from field: bool attached = 10;
    */
   attached?: boolean;
@@ -1155,20 +1245,30 @@ export const EndpointPolicySchema: GenMessage<EndpointPolicy, {jsonType: Endpoin
   messageDesc(file_toshi_workspace_v1_endpoints, 6);
 
 /**
+ * EndpointModuleList is a policy's module list, in the order the modules
+ * act.
+ *
  * @generated from message toshi.workspace.v1.EndpointModuleList
  */
 export type EndpointModuleList = Message<"toshi.workspace.v1.EndpointModuleList"> & {
   /**
+   * The modules, in the order they act.
+   *
    * @generated from field: repeated toshi.workspace.v1.EndpointModule modules = 1;
    */
   modules: EndpointModule[];
 };
 
 /**
+ * EndpointModuleList is a policy's module list, in the order the modules
+ * act.
+ *
  * @generated from message toshi.workspace.v1.EndpointModuleList
  */
 export type EndpointModuleListJson = {
   /**
+   * The modules, in the order they act.
+   *
    * @generated from field: repeated toshi.workspace.v1.EndpointModule modules = 1;
    */
   modules?: EndpointModuleJson[];
@@ -1527,41 +1627,57 @@ export const EndpointMatchSchema: GenMessage<EndpointMatch, {jsonType: EndpointM
  */
 export type EndpointRequest = Message<"toshi.workspace.v1.EndpointRequest"> & {
   /**
+   * Its number among the endpoint's records, from 1.
+   *
    * @generated from field: int64 seq = 1;
    */
   seq: bigint;
 
   /**
+   * When the request arrived.
+   *
    * @generated from field: google.protobuf.Timestamp arrived_at = 2;
    */
   arrivedAt?: Timestamp | undefined;
 
   /**
+   * The host the request was sent to.
+   *
    * @generated from field: string host = 3;
    */
   host: string;
 
   /**
+   * The HTTP method, in upper case.
+   *
    * @generated from field: string method = 4;
    */
   method: string;
 
   /**
+   * The path, without the query.
+   *
    * @generated from field: string path = 5;
    */
   path: string;
 
   /**
+   * The status of the answer; 101 for a WebSocket.
+   *
    * @generated from field: int32 status = 6;
    */
   status: number;
 
   /**
+   * The request body's size in bytes, whole whether or not it was kept.
+   *
    * @generated from field: int64 request_bytes = 7;
    */
   requestBytes: bigint;
 
   /**
+   * The response body's size in bytes, whole whether or not it was kept.
+   *
    * @generated from field: int64 response_bytes = 8;
    */
   responseBytes: bigint;
@@ -1581,6 +1697,9 @@ export type EndpointRequest = Message<"toshi.workspace.v1.EndpointRequest"> & {
   caller?: EndpointRequestCaller | undefined;
 
   /**
+   * The caller's address, as the control plane resolves it; empty when it
+   * resolves none.
+   *
    * @generated from field: string address = 11;
    */
   address: string;
@@ -1593,6 +1712,9 @@ export type EndpointRequest = Message<"toshi.workspace.v1.EndpointRequest"> & {
   refusedBy: string;
 
   /**
+   * Whether the request was a WebSocket; its record is written when the
+   * connection closes.
+   *
    * @generated from field: bool websocket = 13;
    */
   websocket: boolean;
@@ -1612,16 +1734,22 @@ export type EndpointRequest = Message<"toshi.workspace.v1.EndpointRequest"> & {
   query: string;
 
   /**
+   * Whether the query was longer than the 2 KiB kept.
+   *
    * @generated from field: bool query_cut = 16;
    */
   queryCut: boolean;
 
   /**
+   * At headers and bodies; one entry per value.
+   *
    * @generated from field: repeated toshi.workspace.v1.EndpointHeader request_headers = 17;
    */
   requestHeaders: EndpointHeader[];
 
   /**
+   * At headers and bodies; one entry per value.
+   *
    * @generated from field: repeated toshi.workspace.v1.EndpointHeader response_headers = 18;
    */
   responseHeaders: EndpointHeader[];
@@ -1634,6 +1762,8 @@ export type EndpointRequest = Message<"toshi.workspace.v1.EndpointRequest"> & {
   requestBody?: EndpointBody | undefined;
 
   /**
+   * At bodies.
+   *
    * @generated from field: toshi.workspace.v1.EndpointBody response_body = 20;
    */
   responseBody?: EndpointBody | undefined;
@@ -1647,41 +1777,57 @@ export type EndpointRequest = Message<"toshi.workspace.v1.EndpointRequest"> & {
  */
 export type EndpointRequestJson = {
   /**
+   * Its number among the endpoint's records, from 1.
+   *
    * @generated from field: int64 seq = 1;
    */
   seq?: string;
 
   /**
+   * When the request arrived.
+   *
    * @generated from field: google.protobuf.Timestamp arrived_at = 2;
    */
   arrivedAt?: TimestampJson;
 
   /**
+   * The host the request was sent to.
+   *
    * @generated from field: string host = 3;
    */
   host?: string;
 
   /**
+   * The HTTP method, in upper case.
+   *
    * @generated from field: string method = 4;
    */
   method?: string;
 
   /**
+   * The path, without the query.
+   *
    * @generated from field: string path = 5;
    */
   path?: string;
 
   /**
+   * The status of the answer; 101 for a WebSocket.
+   *
    * @generated from field: int32 status = 6;
    */
   status?: number;
 
   /**
+   * The request body's size in bytes, whole whether or not it was kept.
+   *
    * @generated from field: int64 request_bytes = 7;
    */
   requestBytes?: string;
 
   /**
+   * The response body's size in bytes, whole whether or not it was kept.
+   *
    * @generated from field: int64 response_bytes = 8;
    */
   responseBytes?: string;
@@ -1701,6 +1847,9 @@ export type EndpointRequestJson = {
   caller?: EndpointRequestCallerJson;
 
   /**
+   * The caller's address, as the control plane resolves it; empty when it
+   * resolves none.
+   *
    * @generated from field: string address = 11;
    */
   address?: string;
@@ -1713,6 +1862,9 @@ export type EndpointRequestJson = {
   refusedBy?: string;
 
   /**
+   * Whether the request was a WebSocket; its record is written when the
+   * connection closes.
+   *
    * @generated from field: bool websocket = 13;
    */
   websocket?: boolean;
@@ -1732,16 +1884,22 @@ export type EndpointRequestJson = {
   query?: string;
 
   /**
+   * Whether the query was longer than the 2 KiB kept.
+   *
    * @generated from field: bool query_cut = 16;
    */
   queryCut?: boolean;
 
   /**
+   * At headers and bodies; one entry per value.
+   *
    * @generated from field: repeated toshi.workspace.v1.EndpointHeader request_headers = 17;
    */
   requestHeaders?: EndpointHeaderJson[];
 
   /**
+   * At headers and bodies; one entry per value.
+   *
    * @generated from field: repeated toshi.workspace.v1.EndpointHeader response_headers = 18;
    */
   responseHeaders?: EndpointHeaderJson[];
@@ -1754,6 +1912,8 @@ export type EndpointRequestJson = {
   requestBody?: EndpointBodyJson;
 
   /**
+   * At bodies.
+   *
    * @generated from field: toshi.workspace.v1.EndpointBody response_body = 20;
    */
   responseBody?: EndpointBodyJson;
@@ -1767,6 +1927,9 @@ export const EndpointRequestSchema: GenMessage<EndpointRequest, {jsonType: Endpo
   messageDesc(file_toshi_workspace_v1_endpoints, 10);
 
 /**
+ * EndpointRequestCaller is the caller a request record names, once the
+ * request path identified one.
+ *
  * @generated from message toshi.workspace.v1.EndpointRequestCaller
  */
 export type EndpointRequestCaller = Message<"toshi.workspace.v1.EndpointRequestCaller"> & {
@@ -1778,6 +1941,8 @@ export type EndpointRequestCaller = Message<"toshi.workspace.v1.EndpointRequestC
   user: string;
 
   /**
+   * The device the caller presented; empty when it named none.
+   *
    * @generated from field: string device = 2;
    */
   device: string;
@@ -1791,6 +1956,9 @@ export type EndpointRequestCaller = Message<"toshi.workspace.v1.EndpointRequestC
 };
 
 /**
+ * EndpointRequestCaller is the caller a request record names, once the
+ * request path identified one.
+ *
  * @generated from message toshi.workspace.v1.EndpointRequestCaller
  */
 export type EndpointRequestCallerJson = {
@@ -1802,6 +1970,8 @@ export type EndpointRequestCallerJson = {
   user?: string;
 
   /**
+   * The device the caller presented; empty when it named none.
+   *
    * @generated from field: string device = 2;
    */
   device?: string;
@@ -1829,16 +1999,22 @@ export const EndpointRequestCallerSchema: GenMessage<EndpointRequestCaller, {jso
  */
 export type EndpointHeader = Message<"toshi.workspace.v1.EndpointHeader"> & {
   /**
+   * The header's name, as sent.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * The value as sent; empty with removed set.
+   *
    * @generated from field: string value = 2;
    */
   value: string;
 
   /**
+   * Whether the value was left out: a credential header's.
+   *
    * @generated from field: bool removed = 3;
    */
   removed: boolean;
@@ -1852,16 +2028,22 @@ export type EndpointHeader = Message<"toshi.workspace.v1.EndpointHeader"> & {
  */
 export type EndpointHeaderJson = {
   /**
+   * The header's name, as sent.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
 
   /**
+   * The value as sent; empty with removed set.
+   *
    * @generated from field: string value = 2;
    */
   value?: string;
 
   /**
+   * Whether the value was left out: a credential header's.
+   *
    * @generated from field: bool removed = 3;
    */
   removed?: boolean;
@@ -1875,15 +2057,22 @@ export const EndpointHeaderSchema: GenMessage<EndpointHeader, {jsonType: Endpoin
   messageDesc(file_toshi_workspace_v1_endpoints, 12);
 
 /**
+ * EndpointBody is a request or response body as far as the policy's body
+ * cap.
+ *
  * @generated from message toshi.workspace.v1.EndpointBody
  */
 export type EndpointBody = Message<"toshi.workspace.v1.EndpointBody"> & {
   /**
+   * The body's content type; empty when it had none.
+   *
    * @generated from field: string content_type = 1;
    */
   contentType: string;
 
   /**
+   * The body's first bytes, up to the cap.
+   *
    * @generated from field: bytes data = 2;
    */
   data: Uint8Array;
@@ -1897,15 +2086,22 @@ export type EndpointBody = Message<"toshi.workspace.v1.EndpointBody"> & {
 };
 
 /**
+ * EndpointBody is a request or response body as far as the policy's body
+ * cap.
+ *
  * @generated from message toshi.workspace.v1.EndpointBody
  */
 export type EndpointBodyJson = {
   /**
+   * The body's content type; empty when it had none.
+   *
    * @generated from field: string content_type = 1;
    */
   contentType?: string;
 
   /**
+   * The body's first bytes, up to the cap.
+   *
    * @generated from field: bytes data = 2;
    */
   data?: string;
@@ -1936,26 +2132,38 @@ export const EndpointBodySchema: GenMessage<EndpointBody, {jsonType: EndpointBod
  */
 export type Forward = Message<"toshi.workspace.v1.Forward"> & {
   /**
+   * What it reaches in the guest: a port, or a command by its first word
+   * only, as the audit log names it.
+   *
    * @generated from field: string target = 1;
    */
   target: string;
 
   /**
+   * Who opened it, as an actor label the audit log records.
+   *
    * @generated from field: string by = 2;
    */
   by: string;
 
   /**
+   * The device of the connect token that admitted them; empty when the
+   * caller named none.
+   *
    * @generated from field: string device = 3;
    */
   device: string;
 
   /**
+   * The http endpoint whose connection carries it; empty when none does.
+   *
    * @generated from field: string endpoint = 4;
    */
   endpoint: string;
 
   /**
+   * When it opened.
+   *
    * @generated from field: google.protobuf.Timestamp opened_at = 5;
    */
   openedAt?: Timestamp | undefined;
@@ -1980,26 +2188,38 @@ export type Forward = Message<"toshi.workspace.v1.Forward"> & {
  */
 export type ForwardJson = {
   /**
+   * What it reaches in the guest: a port, or a command by its first word
+   * only, as the audit log names it.
+   *
    * @generated from field: string target = 1;
    */
   target?: string;
 
   /**
+   * Who opened it, as an actor label the audit log records.
+   *
    * @generated from field: string by = 2;
    */
   by?: string;
 
   /**
+   * The device of the connect token that admitted them; empty when the
+   * caller named none.
+   *
    * @generated from field: string device = 3;
    */
   device?: string;
 
   /**
+   * The http endpoint whose connection carries it; empty when none does.
+   *
    * @generated from field: string endpoint = 4;
    */
   endpoint?: string;
 
   /**
+   * When it opened.
+   *
    * @generated from field: google.protobuf.Timestamp opened_at = 5;
    */
   openedAt?: TimestampJson;
@@ -2028,6 +2248,9 @@ export const ForwardSchema: GenMessage<Forward, {jsonType: ForwardJson}> = /*@__
  */
 export type Tunnel = Message<"toshi.workspace.v1.Tunnel"> & {
   /**
+   * Whether a process of the control plane holds one of the runner's
+   * Tunnels now.
+   *
    * @generated from field: bool connected = 1;
    */
   connected: boolean;
@@ -2055,6 +2278,9 @@ export type Tunnel = Message<"toshi.workspace.v1.Tunnel"> & {
   streams: number;
 
   /**
+   * The error a Tunnel of the runner ended with, kept after it went away;
+   * empty when none failed.
+   *
    * @generated from field: string last_error = 5;
    */
   lastError: string;
@@ -2089,6 +2315,9 @@ export type Tunnel = Message<"toshi.workspace.v1.Tunnel"> & {
  */
 export type TunnelJson = {
   /**
+   * Whether a process of the control plane holds one of the runner's
+   * Tunnels now.
+   *
    * @generated from field: bool connected = 1;
    */
   connected?: boolean;
@@ -2116,6 +2345,9 @@ export type TunnelJson = {
   streams?: number;
 
   /**
+   * The error a Tunnel of the runner ended with, kept after it went away;
+   * empty when none failed.
+   *
    * @generated from field: string last_error = 5;
    */
   lastError?: string;
@@ -2150,10 +2382,15 @@ export const TunnelSchema: GenMessage<Tunnel, {jsonType: TunnelJson}> = /*@__PUR
   messageDesc(file_toshi_workspace_v1_endpoints, 15);
 
 /**
+ * CreateEndpointRequest carries the job to open an endpoint on and what the
+ * endpoint is.
+ *
  * @generated from message toshi.workspace.v1.CreateEndpointRequest
  */
 export type CreateEndpointRequest = Message<"toshi.workspace.v1.CreateEndpointRequest"> & {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
@@ -2207,10 +2444,15 @@ export type CreateEndpointRequest = Message<"toshi.workspace.v1.CreateEndpointRe
 };
 
 /**
+ * CreateEndpointRequest carries the job to open an endpoint on and what the
+ * endpoint is.
+ *
  * @generated from message toshi.workspace.v1.CreateEndpointRequest
  */
 export type CreateEndpointRequestJson = {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
@@ -2271,20 +2513,28 @@ export const CreateEndpointRequestSchema: GenMessage<CreateEndpointRequest, {jso
   messageDesc(file_toshi_workspace_v1_endpoints, 16);
 
 /**
+ * CreateEndpointResponse carries the endpoint as opened.
+ *
  * @generated from message toshi.workspace.v1.CreateEndpointResponse
  */
 export type CreateEndpointResponse = Message<"toshi.workspace.v1.CreateEndpointResponse"> & {
   /**
+   * The endpoint as opened.
+   *
    * @generated from field: toshi.workspace.v1.Endpoint endpoint = 1;
    */
   endpoint?: Endpoint | undefined;
 };
 
 /**
+ * CreateEndpointResponse carries the endpoint as opened.
+ *
  * @generated from message toshi.workspace.v1.CreateEndpointResponse
  */
 export type CreateEndpointResponseJson = {
   /**
+   * The endpoint as opened.
+   *
    * @generated from field: toshi.workspace.v1.Endpoint endpoint = 1;
    */
   endpoint?: EndpointJson;
@@ -2298,6 +2548,9 @@ export const CreateEndpointResponseSchema: GenMessage<CreateEndpointResponse, {j
   messageDesc(file_toshi_workspace_v1_endpoints, 17);
 
 /**
+ * ListEndpointsRequest selects one page of endpoints: a job's, a service's
+ * event endpoints, or every endpoint of the workspace.
+ *
  * @generated from message toshi.workspace.v1.ListEndpointsRequest
  */
 export type ListEndpointsRequest = Message<"toshi.workspace.v1.ListEndpointsRequest"> & {
@@ -2340,6 +2593,9 @@ export type ListEndpointsRequest = Message<"toshi.workspace.v1.ListEndpointsRequ
 };
 
 /**
+ * ListEndpointsRequest selects one page of endpoints: a job's, a service's
+ * event endpoints, or every endpoint of the workspace.
+ *
  * @generated from message toshi.workspace.v1.ListEndpointsRequest
  */
 export type ListEndpointsRequestJson = {
@@ -2389,10 +2645,14 @@ export const ListEndpointsRequestSchema: GenMessage<ListEndpointsRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_endpoints, 18);
 
 /**
+ * ListEndpointsResponse carries one page of endpoints.
+ *
  * @generated from message toshi.workspace.v1.ListEndpointsResponse
  */
 export type ListEndpointsResponse = Message<"toshi.workspace.v1.ListEndpointsResponse"> & {
   /**
+   * The page's endpoints, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Endpoint endpoints = 1;
    */
   endpoints: Endpoint[];
@@ -2406,10 +2666,14 @@ export type ListEndpointsResponse = Message<"toshi.workspace.v1.ListEndpointsRes
 };
 
 /**
+ * ListEndpointsResponse carries one page of endpoints.
+ *
  * @generated from message toshi.workspace.v1.ListEndpointsResponse
  */
 export type ListEndpointsResponseJson = {
   /**
+   * The page's endpoints, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Endpoint endpoints = 1;
    */
   endpoints?: EndpointJson[];
@@ -2430,15 +2694,22 @@ export const ListEndpointsResponseSchema: GenMessage<ListEndpointsResponse, {jso
   messageDesc(file_toshi_workspace_v1_endpoints, 19);
 
 /**
+ * GetEndpointRequest names one endpoint: by its job and name, or by its
+ * service and name.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointRequest
  */
 export type GetEndpointRequest = Message<"toshi.workspace.v1.GetEndpointRequest"> & {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The endpoint's name.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -2460,15 +2731,22 @@ export type GetEndpointRequest = Message<"toshi.workspace.v1.GetEndpointRequest"
 };
 
 /**
+ * GetEndpointRequest names one endpoint: by its job and name, or by its
+ * service and name.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointRequest
  */
 export type GetEndpointRequestJson = {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The endpoint's name.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -2497,20 +2775,28 @@ export const GetEndpointRequestSchema: GenMessage<GetEndpointRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_endpoints, 20);
 
 /**
+ * GetEndpointResponse carries the endpoint.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointResponse
  */
 export type GetEndpointResponse = Message<"toshi.workspace.v1.GetEndpointResponse"> & {
   /**
+   * The endpoint, with a stream endpoint's clients.
+   *
    * @generated from field: toshi.workspace.v1.Endpoint endpoint = 1;
    */
   endpoint?: Endpoint | undefined;
 };
 
 /**
+ * GetEndpointResponse carries the endpoint.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointResponse
  */
 export type GetEndpointResponseJson = {
   /**
+   * The endpoint, with a stream endpoint's clients.
+   *
    * @generated from field: toshi.workspace.v1.Endpoint endpoint = 1;
    */
   endpoint?: EndpointJson;
@@ -2524,15 +2810,21 @@ export const GetEndpointResponseSchema: GenMessage<GetEndpointResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_endpoints, 21);
 
 /**
+ * GetEndpointPolicyRequest names one endpoint whose policy to read.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointPolicyRequest
  */
 export type GetEndpointPolicyRequest = Message<"toshi.workspace.v1.GetEndpointPolicyRequest"> & {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The endpoint's name.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -2546,15 +2838,21 @@ export type GetEndpointPolicyRequest = Message<"toshi.workspace.v1.GetEndpointPo
 };
 
 /**
+ * GetEndpointPolicyRequest names one endpoint whose policy to read.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointPolicyRequest
  */
 export type GetEndpointPolicyRequestJson = {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The endpoint's name.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -2575,20 +2873,28 @@ export const GetEndpointPolicyRequestSchema: GenMessage<GetEndpointPolicyRequest
   messageDesc(file_toshi_workspace_v1_endpoints, 22);
 
 /**
+ * GetEndpointPolicyResponse carries the endpoint's effective policy.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointPolicyResponse
  */
 export type GetEndpointPolicyResponse = Message<"toshi.workspace.v1.GetEndpointPolicyResponse"> & {
   /**
+   * The effective policy, with its version.
+   *
    * @generated from field: toshi.workspace.v1.EndpointPolicy policy = 1;
    */
   policy?: EndpointPolicy | undefined;
 };
 
 /**
+ * GetEndpointPolicyResponse carries the endpoint's effective policy.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointPolicyResponse
  */
 export type GetEndpointPolicyResponseJson = {
   /**
+   * The effective policy, with its version.
+   *
    * @generated from field: toshi.workspace.v1.EndpointPolicy policy = 1;
    */
   policy?: EndpointPolicyJson;
@@ -2602,6 +2908,9 @@ export const GetEndpointPolicyResponseSchema: GenMessage<GetEndpointPolicyRespon
   messageDesc(file_toshi_workspace_v1_endpoints, 23);
 
 /**
+ * UpdateEndpointRequest carries the endpoint to change and the policy to
+ * set.
+ *
  * @generated from message toshi.workspace.v1.UpdateEndpointRequest
  */
 export type UpdateEndpointRequest = Message<"toshi.workspace.v1.UpdateEndpointRequest"> & {
@@ -2614,6 +2923,8 @@ export type UpdateEndpointRequest = Message<"toshi.workspace.v1.UpdateEndpointRe
   endpoint?: Endpoint | undefined;
 
   /**
+   * The fields to change: only policy is accepted, and it must name it.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMask | undefined;
@@ -2629,6 +2940,9 @@ export type UpdateEndpointRequest = Message<"toshi.workspace.v1.UpdateEndpointRe
 };
 
 /**
+ * UpdateEndpointRequest carries the endpoint to change and the policy to
+ * set.
+ *
  * @generated from message toshi.workspace.v1.UpdateEndpointRequest
  */
 export type UpdateEndpointRequestJson = {
@@ -2641,6 +2955,8 @@ export type UpdateEndpointRequestJson = {
   endpoint?: EndpointJson;
 
   /**
+   * The fields to change: only policy is accepted, and it must name it.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMaskJson;
@@ -2663,6 +2979,8 @@ export const UpdateEndpointRequestSchema: GenMessage<UpdateEndpointRequest, {jso
   messageDesc(file_toshi_workspace_v1_endpoints, 24);
 
 /**
+ * UpdateEndpointResponse carries the endpoint as stored after the change.
+ *
  * @generated from message toshi.workspace.v1.UpdateEndpointResponse
  */
 export type UpdateEndpointResponse = Message<"toshi.workspace.v1.UpdateEndpointResponse"> & {
@@ -2675,6 +2993,8 @@ export type UpdateEndpointResponse = Message<"toshi.workspace.v1.UpdateEndpointR
 };
 
 /**
+ * UpdateEndpointResponse carries the endpoint as stored after the change.
+ *
  * @generated from message toshi.workspace.v1.UpdateEndpointResponse
  */
 export type UpdateEndpointResponseJson = {
@@ -2694,15 +3014,22 @@ export const UpdateEndpointResponseSchema: GenMessage<UpdateEndpointResponse, {j
   messageDesc(file_toshi_workspace_v1_endpoints, 25);
 
 /**
+ * ListEndpointRequestsRequest names an http endpoint and the request
+ * records to list.
+ *
  * @generated from message toshi.workspace.v1.ListEndpointRequestsRequest
  */
 export type ListEndpointRequestsRequest = Message<"toshi.workspace.v1.ListEndpointRequestsRequest"> & {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -2738,6 +3065,8 @@ export type ListEndpointRequestsRequest = Message<"toshi.workspace.v1.ListEndpoi
   since?: Timestamp | undefined;
 
   /**
+   * The end of the time range, excluded; unset lists to the newest record.
+   *
    * @generated from field: google.protobuf.Timestamp until = 7;
    */
   until?: Timestamp | undefined;
@@ -2772,15 +3101,22 @@ export type ListEndpointRequestsRequest = Message<"toshi.workspace.v1.ListEndpoi
 };
 
 /**
+ * ListEndpointRequestsRequest names an http endpoint and the request
+ * records to list.
+ *
  * @generated from message toshi.workspace.v1.ListEndpointRequestsRequest
  */
 export type ListEndpointRequestsRequestJson = {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -2816,6 +3152,8 @@ export type ListEndpointRequestsRequestJson = {
   since?: TimestampJson;
 
   /**
+   * The end of the time range, excluded; unset lists to the newest record.
+   *
    * @generated from field: google.protobuf.Timestamp until = 7;
    */
   until?: TimestampJson;
@@ -2857,10 +3195,15 @@ export const ListEndpointRequestsRequestSchema: GenMessage<ListEndpointRequestsR
   messageDesc(file_toshi_workspace_v1_endpoints, 26);
 
 /**
+ * ListEndpointRequestsResponse carries one page of request records and the
+ * range of records kept.
+ *
  * @generated from message toshi.workspace.v1.ListEndpointRequestsResponse
  */
 export type ListEndpointRequestsResponse = Message<"toshi.workspace.v1.ListEndpointRequestsResponse"> & {
   /**
+   * The page's records, at the level each was kept at.
+   *
    * @generated from field: repeated toshi.workspace.v1.EndpointRequest requests = 1;
    */
   requests: EndpointRequest[];
@@ -2881,16 +3224,23 @@ export type ListEndpointRequestsResponse = Message<"toshi.workspace.v1.ListEndpo
   oldestSeq: bigint;
 
   /**
+   * The newest record kept; zero when none is.
+   *
    * @generated from field: int64 newest_seq = 4;
    */
   newestSeq: bigint;
 };
 
 /**
+ * ListEndpointRequestsResponse carries one page of request records and the
+ * range of records kept.
+ *
  * @generated from message toshi.workspace.v1.ListEndpointRequestsResponse
  */
 export type ListEndpointRequestsResponseJson = {
   /**
+   * The page's records, at the level each was kept at.
+   *
    * @generated from field: repeated toshi.workspace.v1.EndpointRequest requests = 1;
    */
   requests?: EndpointRequestJson[];
@@ -2911,6 +3261,8 @@ export type ListEndpointRequestsResponseJson = {
   oldestSeq?: string;
 
   /**
+   * The newest record kept; zero when none is.
+   *
    * @generated from field: int64 newest_seq = 4;
    */
   newestSeq?: string;
@@ -2924,40 +3276,56 @@ export const ListEndpointRequestsResponseSchema: GenMessage<ListEndpointRequests
   messageDesc(file_toshi_workspace_v1_endpoints, 27);
 
 /**
+ * GetEndpointRequestRequest names one request record.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointRequestRequest
  */
 export type GetEndpointRequestRequest = Message<"toshi.workspace.v1.GetEndpointRequestRequest"> & {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 
   /**
+   * The record's sequence number, a whole number from 1.
+   *
    * @generated from field: int64 seq = 3;
    */
   seq: bigint;
 };
 
 /**
+ * GetEndpointRequestRequest names one request record.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointRequestRequest
  */
 export type GetEndpointRequestRequestJson = {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
 
   /**
+   * The record's sequence number, a whole number from 1.
+   *
    * @generated from field: int64 seq = 3;
    */
   seq?: string;
@@ -2971,20 +3339,30 @@ export const GetEndpointRequestRequestSchema: GenMessage<GetEndpointRequestReque
   messageDesc(file_toshi_workspace_v1_endpoints, 28);
 
 /**
+ * GetEndpointRequestResponse carries the record whole, headers and bodies
+ * included.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointRequestResponse
  */
 export type GetEndpointRequestResponse = Message<"toshi.workspace.v1.GetEndpointRequestResponse"> & {
   /**
+   * The record, as its level kept it.
+   *
    * @generated from field: toshi.workspace.v1.EndpointRequest request = 1;
    */
   request?: EndpointRequest | undefined;
 };
 
 /**
+ * GetEndpointRequestResponse carries the record whole, headers and bodies
+ * included.
+ *
  * @generated from message toshi.workspace.v1.GetEndpointRequestResponse
  */
 export type GetEndpointRequestResponseJson = {
   /**
+   * The record, as its level kept it.
+   *
    * @generated from field: toshi.workspace.v1.EndpointRequest request = 1;
    */
   request?: EndpointRequestJson;
@@ -2998,15 +3376,22 @@ export const GetEndpointRequestResponseSchema: GenMessage<GetEndpointRequestResp
   messageDesc(file_toshi_workspace_v1_endpoints, 29);
 
 /**
+ * ExportEndpointLogRequest names an endpoint's log and the range to
+ * export.
+ *
  * @generated from message toshi.workspace.v1.ExportEndpointLogRequest
  */
 export type ExportEndpointLogRequest = Message<"toshi.workspace.v1.ExportEndpointLogRequest"> & {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -3028,6 +3413,9 @@ export type ExportEndpointLogRequest = Message<"toshi.workspace.v1.ExportEndpoin
   from?: bigint | undefined;
 
   /**
+   * The end of the range, excluded: an offset, or a record's sequence
+   * number; unset runs to the newest kept.
+   *
    * @generated from field: optional int64 to = 5;
    */
   to?: bigint | undefined;
@@ -3041,21 +3429,30 @@ export type ExportEndpointLogRequest = Message<"toshi.workspace.v1.ExportEndpoin
   since?: Timestamp | undefined;
 
   /**
+   * The end of the time range, excluded; unset runs to the newest record.
+   *
    * @generated from field: google.protobuf.Timestamp until = 7;
    */
   until?: Timestamp | undefined;
 };
 
 /**
+ * ExportEndpointLogRequest names an endpoint's log and the range to
+ * export.
+ *
  * @generated from message toshi.workspace.v1.ExportEndpointLogRequest
  */
 export type ExportEndpointLogRequestJson = {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -3077,6 +3474,9 @@ export type ExportEndpointLogRequestJson = {
   from?: string;
 
   /**
+   * The end of the range, excluded: an offset, or a record's sequence
+   * number; unset runs to the newest kept.
+   *
    * @generated from field: optional int64 to = 5;
    */
   to?: string;
@@ -3090,6 +3490,8 @@ export type ExportEndpointLogRequestJson = {
   since?: TimestampJson;
 
   /**
+   * The end of the time range, excluded; unset runs to the newest record.
+   *
    * @generated from field: google.protobuf.Timestamp until = 7;
    */
   until?: TimestampJson;
@@ -3103,6 +3505,8 @@ export const ExportEndpointLogRequestSchema: GenMessage<ExportEndpointLogRequest
   messageDesc(file_toshi_workspace_v1_endpoints, 30);
 
 /**
+ * ExportEndpointLogResponse carries one chunk of the exported file.
+ *
  * @generated from message toshi.workspace.v1.ExportEndpointLogResponse
  */
 export type ExportEndpointLogResponse = Message<"toshi.workspace.v1.ExportEndpointLogResponse"> & {
@@ -3146,6 +3550,8 @@ export type ExportEndpointLogResponse = Message<"toshi.workspace.v1.ExportEndpoi
 };
 
 /**
+ * ExportEndpointLogResponse carries one chunk of the exported file.
+ *
  * @generated from message toshi.workspace.v1.ExportEndpointLogResponse
  */
 export type ExportEndpointLogResponseJson = {
@@ -3196,15 +3602,22 @@ export const ExportEndpointLogResponseSchema: GenMessage<ExportEndpointLogRespon
   messageDesc(file_toshi_workspace_v1_endpoints, 31);
 
 /**
+ * CreateEndpointConnectTokenRequest names the endpoint a connect token
+ * admits one client to.
+ *
  * @generated from message toshi.workspace.v1.CreateEndpointConnectTokenRequest
  */
 export type CreateEndpointConnectTokenRequest = Message<"toshi.workspace.v1.CreateEndpointConnectTokenRequest"> & {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -3243,15 +3656,22 @@ export type CreateEndpointConnectTokenRequest = Message<"toshi.workspace.v1.Crea
 };
 
 /**
+ * CreateEndpointConnectTokenRequest names the endpoint a connect token
+ * admits one client to.
+ *
  * @generated from message toshi.workspace.v1.CreateEndpointConnectTokenRequest
  */
 export type CreateEndpointConnectTokenRequestJson = {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -3297,6 +3717,9 @@ export const CreateEndpointConnectTokenRequestSchema: GenMessage<CreateEndpointC
   messageDesc(file_toshi_workspace_v1_endpoints, 32);
 
 /**
+ * CreateEndpointConnectTokenResponse carries a new connect token, shown
+ * once.
+ *
  * @generated from message toshi.workspace.v1.CreateEndpointConnectTokenResponse
  */
 export type CreateEndpointConnectTokenResponse = Message<"toshi.workspace.v1.CreateEndpointConnectTokenResponse"> & {
@@ -3308,6 +3731,8 @@ export type CreateEndpointConnectTokenResponse = Message<"toshi.workspace.v1.Cre
   id: string;
 
   /**
+   * The token itself; the server keeps no copy and never logs it.
+   *
    * @generated from field: string token = 2;
    */
   token: string;
@@ -3320,6 +3745,8 @@ export type CreateEndpointConnectTokenResponse = Message<"toshi.workspace.v1.Cre
   url: string;
 
   /**
+   * When the token stops admitting a client.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 4;
    */
   expiresAt?: Timestamp | undefined;
@@ -3333,12 +3760,17 @@ export type CreateEndpointConnectTokenResponse = Message<"toshi.workspace.v1.Cre
   transport: string;
 
   /**
+   * The mode the attach it admits is granted.
+   *
    * @generated from field: toshi.workspace.v1.EndpointAttachMode mode = 6;
    */
   mode: EndpointAttachMode;
 };
 
 /**
+ * CreateEndpointConnectTokenResponse carries a new connect token, shown
+ * once.
+ *
  * @generated from message toshi.workspace.v1.CreateEndpointConnectTokenResponse
  */
 export type CreateEndpointConnectTokenResponseJson = {
@@ -3350,6 +3782,8 @@ export type CreateEndpointConnectTokenResponseJson = {
   id?: string;
 
   /**
+   * The token itself; the server keeps no copy and never logs it.
+   *
    * @generated from field: string token = 2;
    */
   token?: string;
@@ -3362,6 +3796,8 @@ export type CreateEndpointConnectTokenResponseJson = {
   url?: string;
 
   /**
+   * When the token stops admitting a client.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 4;
    */
   expiresAt?: TimestampJson;
@@ -3375,6 +3811,8 @@ export type CreateEndpointConnectTokenResponseJson = {
   transport?: string;
 
   /**
+   * The mode the attach it admits is granted.
+   *
    * @generated from field: toshi.workspace.v1.EndpointAttachMode mode = 6;
    */
   mode?: EndpointAttachModeJson;
@@ -3388,15 +3826,22 @@ export const CreateEndpointConnectTokenResponseSchema: GenMessage<CreateEndpoint
   messageDesc(file_toshi_workspace_v1_endpoints, 33);
 
 /**
+ * RevokeEndpointConnectTokenRequest names an endpoint and the connect
+ * token to revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeEndpointConnectTokenRequest
  */
 export type RevokeEndpointConnectTokenRequest = Message<"toshi.workspace.v1.RevokeEndpointConnectTokenRequest"> & {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -3410,15 +3855,22 @@ export type RevokeEndpointConnectTokenRequest = Message<"toshi.workspace.v1.Revo
 };
 
 /**
+ * RevokeEndpointConnectTokenRequest names an endpoint and the connect
+ * token to revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeEndpointConnectTokenRequest
  */
 export type RevokeEndpointConnectTokenRequestJson = {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -3439,12 +3891,18 @@ export const RevokeEndpointConnectTokenRequestSchema: GenMessage<RevokeEndpointC
   messageDesc(file_toshi_workspace_v1_endpoints, 34);
 
 /**
+ * RevokeEndpointConnectTokenResponse is the answer to
+ * RevokeEndpointConnectToken.
+ *
  * @generated from message toshi.workspace.v1.RevokeEndpointConnectTokenResponse
  */
 export type RevokeEndpointConnectTokenResponse = Message<"toshi.workspace.v1.RevokeEndpointConnectTokenResponse"> & {
 };
 
 /**
+ * RevokeEndpointConnectTokenResponse is the answer to
+ * RevokeEndpointConnectToken.
+ *
  * @generated from message toshi.workspace.v1.RevokeEndpointConnectTokenResponse
  */
 export type RevokeEndpointConnectTokenResponseJson = {
@@ -3458,15 +3916,21 @@ export const RevokeEndpointConnectTokenResponseSchema: GenMessage<RevokeEndpoint
   messageDesc(file_toshi_workspace_v1_endpoints, 35);
 
 /**
+ * DeleteEndpointRequest names the endpoint to end.
+ *
  * @generated from message toshi.workspace.v1.DeleteEndpointRequest
  */
 export type DeleteEndpointRequest = Message<"toshi.workspace.v1.DeleteEndpointRequest"> & {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -3481,15 +3945,21 @@ export type DeleteEndpointRequest = Message<"toshi.workspace.v1.DeleteEndpointRe
 };
 
 /**
+ * DeleteEndpointRequest names the endpoint to end.
+ *
  * @generated from message toshi.workspace.v1.DeleteEndpointRequest
  */
 export type DeleteEndpointRequestJson = {
   /**
+   * The job whose guest holds the endpoint.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The endpoint's name on that job.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -3511,12 +3981,16 @@ export const DeleteEndpointRequestSchema: GenMessage<DeleteEndpointRequest, {jso
   messageDesc(file_toshi_workspace_v1_endpoints, 36);
 
 /**
+ * DeleteEndpointResponse is the answer to DeleteEndpoint.
+ *
  * @generated from message toshi.workspace.v1.DeleteEndpointResponse
  */
 export type DeleteEndpointResponse = Message<"toshi.workspace.v1.DeleteEndpointResponse"> & {
 };
 
 /**
+ * DeleteEndpointResponse is the answer to DeleteEndpoint.
+ *
  * @generated from message toshi.workspace.v1.DeleteEndpointResponse
  */
 export type DeleteEndpointResponseJson = {
@@ -3530,10 +4004,14 @@ export const DeleteEndpointResponseSchema: GenMessage<DeleteEndpointResponse, {j
   messageDesc(file_toshi_workspace_v1_endpoints, 37);
 
 /**
+ * ListForwardsRequest selects one page of a job's open Forwards.
+ *
  * @generated from message toshi.workspace.v1.ListForwardsRequest
  */
 export type ListForwardsRequest = Message<"toshi.workspace.v1.ListForwardsRequest"> & {
   /**
+   * The job whose Forwards to list.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
@@ -3554,10 +4032,14 @@ export type ListForwardsRequest = Message<"toshi.workspace.v1.ListForwardsReques
 };
 
 /**
+ * ListForwardsRequest selects one page of a job's open Forwards.
+ *
  * @generated from message toshi.workspace.v1.ListForwardsRequest
  */
 export type ListForwardsRequestJson = {
   /**
+   * The job whose Forwards to list.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
@@ -3585,10 +4067,14 @@ export const ListForwardsRequestSchema: GenMessage<ListForwardsRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_endpoints, 38);
 
 /**
+ * ListForwardsResponse carries one page of Forwards.
+ *
  * @generated from message toshi.workspace.v1.ListForwardsResponse
  */
 export type ListForwardsResponse = Message<"toshi.workspace.v1.ListForwardsResponse"> & {
   /**
+   * The page's open Forwards, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Forward forwards = 1;
    */
   forwards: Forward[];
@@ -3602,10 +4088,14 @@ export type ListForwardsResponse = Message<"toshi.workspace.v1.ListForwardsRespo
 };
 
 /**
+ * ListForwardsResponse carries one page of Forwards.
+ *
  * @generated from message toshi.workspace.v1.ListForwardsResponse
  */
 export type ListForwardsResponseJson = {
   /**
+   * The page's open Forwards, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Forward forwards = 1;
    */
   forwards?: ForwardJson[];
@@ -3626,20 +4116,28 @@ export const ListForwardsResponseSchema: GenMessage<ListForwardsResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_endpoints, 39);
 
 /**
+ * GetTunnelRequest names the job whose runner's Tunnel to read.
+ *
  * @generated from message toshi.workspace.v1.GetTunnelRequest
  */
 export type GetTunnelRequest = Message<"toshi.workspace.v1.GetTunnelRequest"> & {
   /**
+   * The job whose runner's Tunnel to read.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 };
 
 /**
+ * GetTunnelRequest names the job whose runner's Tunnel to read.
+ *
  * @generated from message toshi.workspace.v1.GetTunnelRequest
  */
 export type GetTunnelRequestJson = {
   /**
+   * The job whose runner's Tunnel to read.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
@@ -3653,20 +4151,28 @@ export const GetTunnelRequestSchema: GenMessage<GetTunnelRequest, {jsonType: Get
   messageDesc(file_toshi_workspace_v1_endpoints, 40);
 
 /**
+ * GetTunnelResponse carries the state of the runner's Tunnel.
+ *
  * @generated from message toshi.workspace.v1.GetTunnelResponse
  */
 export type GetTunnelResponse = Message<"toshi.workspace.v1.GetTunnelResponse"> & {
   /**
+   * The Tunnel of the runner the job holds.
+   *
    * @generated from field: toshi.workspace.v1.Tunnel tunnel = 1;
    */
   tunnel?: Tunnel | undefined;
 };
 
 /**
+ * GetTunnelResponse carries the state of the runner's Tunnel.
+ *
  * @generated from message toshi.workspace.v1.GetTunnelResponse
  */
 export type GetTunnelResponseJson = {
   /**
+   * The Tunnel of the runner the job holds.
+   *
    * @generated from field: toshi.workspace.v1.Tunnel tunnel = 1;
    */
   tunnel?: TunnelJson;
@@ -3680,6 +4186,9 @@ export const GetTunnelResponseSchema: GenMessage<GetTunnelResponse, {jsonType: G
   messageDesc(file_toshi_workspace_v1_endpoints, 41);
 
 /**
+ * SendEndpointMessageRequest carries a message for an event endpoint's
+ * queue.
+ *
  * @generated from message toshi.workspace.v1.SendEndpointMessageRequest
  */
 export type SendEndpointMessageRequest = Message<"toshi.workspace.v1.SendEndpointMessageRequest"> & {
@@ -3691,6 +4200,8 @@ export type SendEndpointMessageRequest = Message<"toshi.workspace.v1.SendEndpoin
   service: string;
 
   /**
+   * The event endpoint's name, unique among its service's.
+   *
    * @generated from field: string endpoint = 2;
    */
   endpoint: string;
@@ -3720,6 +4231,9 @@ export type SendEndpointMessageRequest = Message<"toshi.workspace.v1.SendEndpoin
 };
 
 /**
+ * SendEndpointMessageRequest carries a message for an event endpoint's
+ * queue.
+ *
  * @generated from message toshi.workspace.v1.SendEndpointMessageRequest
  */
 export type SendEndpointMessageRequestJson = {
@@ -3731,6 +4245,8 @@ export type SendEndpointMessageRequestJson = {
   service?: string;
 
   /**
+   * The event endpoint's name, unique among its service's.
+   *
    * @generated from field: string endpoint = 2;
    */
   endpoint?: string;
@@ -3767,10 +4283,15 @@ export const SendEndpointMessageRequestSchema: GenMessage<SendEndpointMessageReq
   messageDesc(file_toshi_workspace_v1_endpoints, 42);
 
 /**
+ * SendEndpointMessageResponse carries the stored message's ID.
+ *
  * @generated from message toshi.workspace.v1.SendEndpointMessageResponse
  */
 export type SendEndpointMessageResponse = Message<"toshi.workspace.v1.SendEndpointMessageResponse"> & {
   /**
+   * The ID of the message, new or stored before under the same
+   * request_key.
+   *
    * @generated from field: string message_id = 1;
    */
   messageId: string;
@@ -3784,10 +4305,15 @@ export type SendEndpointMessageResponse = Message<"toshi.workspace.v1.SendEndpoi
 };
 
 /**
+ * SendEndpointMessageResponse carries the stored message's ID.
+ *
  * @generated from message toshi.workspace.v1.SendEndpointMessageResponse
  */
 export type SendEndpointMessageResponseJson = {
   /**
+   * The ID of the message, new or stored before under the same
+   * request_key.
+   *
    * @generated from field: string message_id = 1;
    */
   messageId?: string;
@@ -3808,6 +4334,9 @@ export const SendEndpointMessageResponseSchema: GenMessage<SendEndpointMessageRe
   messageDesc(file_toshi_workspace_v1_endpoints, 43);
 
 /**
+ * TailEndpointMessagesRequest names an event endpoint and where the stream
+ * starts.
+ *
  * @generated from message toshi.workspace.v1.TailEndpointMessagesRequest
  */
 export type TailEndpointMessagesRequest = Message<"toshi.workspace.v1.TailEndpointMessagesRequest"> & {
@@ -3819,6 +4348,8 @@ export type TailEndpointMessagesRequest = Message<"toshi.workspace.v1.TailEndpoi
   service: string;
 
   /**
+   * The event endpoint's name, unique among its service's.
+   *
    * @generated from field: string endpoint = 2;
    */
   endpoint: string;
@@ -3840,6 +4371,9 @@ export type TailEndpointMessagesRequest = Message<"toshi.workspace.v1.TailEndpoi
 };
 
 /**
+ * TailEndpointMessagesRequest names an event endpoint and where the stream
+ * starts.
+ *
  * @generated from message toshi.workspace.v1.TailEndpointMessagesRequest
  */
 export type TailEndpointMessagesRequestJson = {
@@ -3851,6 +4385,8 @@ export type TailEndpointMessagesRequestJson = {
   service?: string;
 
   /**
+   * The event endpoint's name, unique among its service's.
+   *
    * @generated from field: string endpoint = 2;
    */
   endpoint?: string;
@@ -3879,10 +4415,14 @@ export const TailEndpointMessagesRequestSchema: GenMessage<TailEndpointMessagesR
   messageDesc(file_toshi_workspace_v1_endpoints, 44);
 
 /**
+ * TailEndpointMessagesResponse carries one message and the cursor after it.
+ *
  * @generated from message toshi.workspace.v1.TailEndpointMessagesResponse
  */
 export type TailEndpointMessagesResponse = Message<"toshi.workspace.v1.TailEndpointMessagesResponse"> & {
   /**
+   * The message.
+   *
    * @generated from field: toshi.workspace.v1.EndpointMessage message = 1;
    */
   message?: EndpointMessage | undefined;
@@ -3896,10 +4436,14 @@ export type TailEndpointMessagesResponse = Message<"toshi.workspace.v1.TailEndpo
 };
 
 /**
+ * TailEndpointMessagesResponse carries one message and the cursor after it.
+ *
  * @generated from message toshi.workspace.v1.TailEndpointMessagesResponse
  */
 export type TailEndpointMessagesResponseJson = {
   /**
+   * The message.
+   *
    * @generated from field: toshi.workspace.v1.EndpointMessage message = 1;
    */
   message?: EndpointMessageJson;
@@ -3920,6 +4464,8 @@ export const TailEndpointMessagesResponseSchema: GenMessage<TailEndpointMessages
   messageDesc(file_toshi_workspace_v1_endpoints, 45);
 
 /**
+ * ReplayEndpointMessageRequest names the message to put back in its queue.
+ *
  * @generated from message toshi.workspace.v1.ReplayEndpointMessageRequest
  */
 export type ReplayEndpointMessageRequest = Message<"toshi.workspace.v1.ReplayEndpointMessageRequest"> & {
@@ -3931,11 +4477,15 @@ export type ReplayEndpointMessageRequest = Message<"toshi.workspace.v1.ReplayEnd
   service: string;
 
   /**
+   * The event endpoint's name, unique among its service's.
+   *
    * @generated from field: string endpoint = 2;
    */
   endpoint: string;
 
   /**
+   * The ID of the message to replay, as a send or a list returned it.
+   *
    * @generated from field: string message_id = 3;
    */
   messageId: string;
@@ -3951,6 +4501,8 @@ export type ReplayEndpointMessageRequest = Message<"toshi.workspace.v1.ReplayEnd
 };
 
 /**
+ * ReplayEndpointMessageRequest names the message to put back in its queue.
+ *
  * @generated from message toshi.workspace.v1.ReplayEndpointMessageRequest
  */
 export type ReplayEndpointMessageRequestJson = {
@@ -3962,11 +4514,15 @@ export type ReplayEndpointMessageRequestJson = {
   service?: string;
 
   /**
+   * The event endpoint's name, unique among its service's.
+   *
    * @generated from field: string endpoint = 2;
    */
   endpoint?: string;
 
   /**
+   * The ID of the message to replay, as a send or a list returned it.
+   *
    * @generated from field: string message_id = 3;
    */
   messageId?: string;
@@ -3989,6 +4545,8 @@ export const ReplayEndpointMessageRequestSchema: GenMessage<ReplayEndpointMessag
   messageDesc(file_toshi_workspace_v1_endpoints, 46);
 
 /**
+ * ReplayEndpointMessageResponse carries the message as replayed.
+ *
  * @generated from message toshi.workspace.v1.ReplayEndpointMessageResponse
  */
 export type ReplayEndpointMessageResponse = Message<"toshi.workspace.v1.ReplayEndpointMessageResponse"> & {
@@ -4001,6 +4559,8 @@ export type ReplayEndpointMessageResponse = Message<"toshi.workspace.v1.ReplayEn
 };
 
 /**
+ * ReplayEndpointMessageResponse carries the message as replayed.
+ *
  * @generated from message toshi.workspace.v1.ReplayEndpointMessageResponse
  */
 export type ReplayEndpointMessageResponseJson = {
@@ -4026,6 +4586,8 @@ export const ReplayEndpointMessageResponseSchema: GenMessage<ReplayEndpointMessa
  */
 export enum EndpointShape {
   /**
+   * Not set: an endpoint always has one of the shapes below.
+   *
    * @generated from enum value: ENDPOINT_SHAPE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -4073,11 +4635,15 @@ export const EndpointShapeSchema: GenEnum<EndpointShape, EndpointShapeJson> = /*
  */
 export enum EndpointState {
   /**
+   * Not set: an endpoint always has one of the states below.
+   *
    * @generated from enum value: ENDPOINT_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * Open: its target runs in the guest and it takes connections.
+   *
    * @generated from enum value: ENDPOINT_STATE_OPEN = 1;
    */
   OPEN = 1,
@@ -4097,6 +4663,9 @@ export enum EndpointState {
   CLOSING = 3,
 
   /**
+   * Ended: its job left running or its runner exited. It takes no
+   * connection, and only its record is kept.
+   *
    * @generated from enum value: ENDPOINT_STATE_ENDED = 4;
    */
   ENDED = 4,
@@ -4122,6 +4691,8 @@ export const EndpointStateSchema: GenEnum<EndpointState, EndpointStateJson> = /*
  */
 export enum EndpointAttachMode {
   /**
+   * Not set: the attach is granted input.
+   *
    * @generated from enum value: ENDPOINT_ATTACH_MODE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -4213,6 +4784,8 @@ export const EndpointStreamsSchema: GenEnum<EndpointStreams, EndpointStreamsJson
  */
 export enum EndpointLog {
   /**
+   * Not set: ExportEndpointLog refuses it with INVALID_ARGUMENT.
+   *
    * @generated from enum value: ENDPOINT_LOG_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -4253,6 +4826,8 @@ export const EndpointLogSchema: GenEnum<EndpointLog, EndpointLogJson> = /*@__PUR
  */
 export enum EndpointMessageState {
   /**
+   * Not set: a message is always in one of the states below.
+   *
    * @generated from enum value: ENDPOINT_MESSAGE_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

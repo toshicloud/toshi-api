@@ -906,26 +906,37 @@ service WorkloadService {
   }
 }
 
+// AnswerPromptRequest is a call of AnswerPrompt.
 message AnswerPromptRequest {
+  // The workload's project.
   string project = 1;
+  // The workload's environment.
   string environment = 2;
   // The job, sandbox or service whose prompt is answered.
   string workload_id = 3;
   // The prompt's id, as its waiting entry gives it.
   string prompt_id = 4;
+  // The answer: "approved" or "denied", one of a question's options, or
+  // 1 to 4096 bytes of text.
   string answer = 5;
 }
 
+// AnswerPromptResponse is the answer to AnswerPrompt.
 message AnswerPromptResponse {
   // The AGENT_ANSWERED event.
   Event event = 1;
 }
 
+// EmitWorkloadEventRequest is a call of EmitWorkloadEvent.
 message EmitWorkloadEventRequest {
+  // The workload's project.
   string project = 1;
+  // The workload's environment.
   string environment = 2;
   // The job, sandbox or service the event is about.
   string workload_id = 3;
+  // The event's name: 1 to 200 bytes of UTF-8, with no space or control
+  // character, and a first segment Toshi does not keep.
   string name = 4;
   // JSON, at most 64 KiB; empty for none.
   bytes data = 5;
@@ -935,29 +946,49 @@ message EmitWorkloadEventRequest {
   string request_key = 6;
 }
 
+// EmitWorkloadEventResponse is the answer to EmitWorkloadEvent.
 message EmitWorkloadEventResponse {
   // The EMITTED event as stored.
   Event event = 1;
 }
 
+// ExportEventsRequest is a call of ExportEvents.
 message ExportEventsRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // Only this workload's events; empty for every workload of the project
+  // and environment.
   string workload_id = 3;
+  // The start of the range; required.
   google.protobuf.Timestamp since = 4;
+  // The end of the range; unset means now.
   google.protobuf.Timestamp until = 5;
+  // Resume after the last row of an earlier response; empty for the first.
   string cursor = 6;
 }
 
+// ExportEventsResponse is one message of ExportEvents' stream.
 message ExportEventsResponse {
+  // Complete JSON lines: the header line first, then Events, up to 256
+  // KiB.
   bytes data = 1;
+  // Resume after this message's last row, or the cursor given when it has
+  // no rows.
   string cursor = 2;
 }
 
+// CreateJobRequest is a call of CreateJob.
 message CreateJobRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The job's spec: its command, bindings, size and image.
   JobSpec spec = 3;
+  // The job's labels; a key starting with "toshi." is refused with
+  // INVALID_ARGUMENT.
   map<string, string> labels = 4;
   // Required: the same key on every retry of this create.
   string request_key = 5;
@@ -968,20 +999,28 @@ message CreateJobRequest {
   google.protobuf.Duration wait_for_end = 7;
 }
 
+// CreateJobResponse is the answer to CreateJob.
 message CreateJobResponse {
+  // The job as it was created.
   Job job = 1;
   // Set when wait_for_end was set and the job had ended when the call
   // answered.
   Output output = 2;
 }
 
+// GetJobRequest is a call of GetJob.
 message GetJobRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The job's ID.
   string id = 3;
 }
 
+// GetJobResponse is the answer to GetJob.
 message GetJobResponse {
+  // The job.
   Job job = 1;
   // The job's bindings as they were fixed when it started, in name order;
   // empty before it started.
@@ -991,8 +1030,11 @@ message GetJobResponse {
   repeated JobAttempt attempts = 3;
 }
 
+// ListJobsRequest is a call of ListJobs.
 message ListJobsRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // Empty matches every state.
   repeated JobState states = 3;
@@ -1006,7 +1048,9 @@ message ListJobsRequest {
   map<string, string> labels = 6;
 }
 
+// ListJobsResponse is the answer to ListJobs.
 message ListJobsResponse {
+  // The page's jobs, oldest first.
   repeated Job jobs = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -1016,12 +1060,17 @@ message ListJobsResponse {
   string cursor = 3;
 }
 
+// GetWorkloadUsageRequest is a call of GetWorkloadUsage.
 message GetWorkloadUsageRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // Exactly one of job_id, sandbox_id and service_id names the workload.
   string job_id = 3;
+  // The sandbox's ID.
   string sandbox_id = 4;
+  // The service's ID.
   string service_id = 5;
   // The UTC month as YYYY-MM; empty is the current UTC month.
   string month = 6;
@@ -1031,7 +1080,9 @@ message GetWorkloadUsageRequest {
   string grant = 7;
 }
 
+// GetWorkloadUsageResponse is the answer to GetWorkloadUsage.
 message GetWorkloadUsageResponse {
+  // The workload's usage for the month.
   WorkloadUsage usage = 1;
 }
 
@@ -1079,13 +1130,17 @@ message WorkloadCost {
   // current_cents with the open run, if any, priced as if it ended at the
   // read time.
   int64 estimated_cents = 2;
+  // The amounts' currency, such as "usd"; empty when unknown.
   string currency = 3;
   // Always true today: a per-workload share is an estimate, not an invoice.
   bool estimate = 4;
 }
 
+// ListWorkloadUsagesRequest is a call of ListWorkloadUsages.
 message ListWorkloadUsagesRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The UTC month as YYYY-MM; empty is the current UTC month.
   string month = 3;
@@ -1095,50 +1150,81 @@ message ListWorkloadUsagesRequest {
   string page_token = 5;
 }
 
+// ListWorkloadUsagesResponse is the answer to ListWorkloadUsages.
 message ListWorkloadUsagesResponse {
+  // The page's workloads.
   repeated WorkloadUsage usages = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// UpdateJobRequest is a call of UpdateJob.
 message UpdateJobRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The job's ID.
   string id = 3;
   // Carries the new values of the fields update_mask names.
   Job job = 4;
+  // The fields to change; only "labels" is accepted.
   google.protobuf.FieldMask update_mask = 5;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 6;
 }
 
+// UpdateJobResponse is the answer to UpdateJob.
 message UpdateJobResponse {
+  // The job as it was updated.
   Job job = 1;
 }
 
+// DeleteJobRequest is a call of DeleteJob.
 message DeleteJobRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The job's ID.
   string id = 3;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 4;
 }
 
+// DeleteJobResponse is the answer to DeleteJob.
 message DeleteJobResponse {
+  // The operation that is done once the job is removed.
   Operation operation = 1;
 }
 
+// CancelJobRequest is a call of CancelJob.
 message CancelJobRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The job's ID.
   string id = 3;
 }
 
+// CancelJobResponse is the answer to CancelJob.
 message CancelJobResponse {
+  // The job after the cancel.
   Job job = 1;
 }
 
+// WaitJobRequest is a call of WaitJob.
 message WaitJobRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The job's ID.
   string id = 3;
   // Return once the job is in any of these states; empty means ENDED.
   repeated JobState states = 4;
@@ -1146,14 +1232,19 @@ message WaitJobRequest {
   google.protobuf.Duration timeout = 5;
 }
 
+// WaitJobResponse is the answer to WaitJob.
 message WaitJobResponse {
+  // The job as it is when the call answers.
   Job job = 1;
   // False when the bound passed first.
   bool reached = 2;
 }
 
+// WatchJobsRequest is a call of WatchJobs.
 message WatchJobsRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // Changes after this position; empty starts at the oldest event the log
   // keeps. A cursor older than that event fails with OUT_OF_RANGE.
@@ -1164,6 +1255,7 @@ message WatchJobsRequest {
   bool keepalive = 4;
 }
 
+// WatchJobsResponse is one message of WatchJobs' stream.
 message WatchJobsResponse {
   // The event that recorded the change.
   EventType type = 1;
@@ -1176,10 +1268,16 @@ message WatchJobsResponse {
   Keepalive keepalive = 4;
 }
 
+// CreateSandboxRequest is a call of CreateSandbox.
 message CreateSandboxRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox's spec: its size, time limit and bindings.
   SandboxSpec spec = 3;
+  // The sandbox's labels; a key starting with "toshi." is refused with
+  // INVALID_ARGUMENT.
   map<string, string> labels = 4;
   // Required: the same key on every retry of this create.
   string request_key = 5;
@@ -1188,13 +1286,19 @@ message CreateSandboxRequest {
   RecordingPolicy recording = 6;
 }
 
+// CreateSandboxResponse is the answer to CreateSandbox.
 message CreateSandboxResponse {
+  // The sandbox as it was created, queued.
   Sandbox sandbox = 1;
 }
 
+// GetSandboxRequest is a call of GetSandbox.
 message GetSandboxRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox's ID.
   string id = 3;
   // A grant the caller's workspace received, to act on the owner's
   // sandbox through it (docs/grants.md); project and environment are then
@@ -1202,15 +1306,20 @@ message GetSandboxRequest {
   string grant = 4;
 }
 
+// GetSandboxResponse is the answer to GetSandbox.
 message GetSandboxResponse {
+  // The sandbox.
   Sandbox sandbox = 1;
   // The sandbox's bindings as they were fixed when it started, in name
   // order; empty before it started.
   repeated BoundBinding bound = 2;
 }
 
+// ListSandboxesRequest is a call of ListSandboxes.
 message ListSandboxesRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // Empty matches every state.
   repeated SandboxState states = 3;
@@ -1227,7 +1336,9 @@ message ListSandboxesRequest {
   string grant = 7;
 }
 
+// ListSandboxesResponse is the answer to ListSandboxes.
 message ListSandboxesResponse {
+  // The page's sandboxes, oldest first.
   repeated Sandbox sandboxes = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -1237,13 +1348,21 @@ message ListSandboxesResponse {
   string cursor = 3;
 }
 
+// UpdateSandboxRequest is a call of UpdateSandbox.
 message UpdateSandboxRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox's ID.
   string id = 3;
   // Carries the new values of the fields update_mask names.
   Sandbox sandbox = 4;
+  // The fields to change: "labels", or "spec.max_duration" alone.
   google.protobuf.FieldMask update_mask = 5;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 6;
   // A grant the caller's workspace received, to act on the owner's
   // sandbox through it (docs/grants.md); project and environment are then
@@ -1251,27 +1370,42 @@ message UpdateSandboxRequest {
   string grant = 7;
 }
 
+// UpdateSandboxResponse is the answer to UpdateSandbox.
 message UpdateSandboxResponse {
+  // The sandbox as it was updated.
   Sandbox sandbox = 1;
   // Set when the mask names "spec.max_duration": completes successfully
   // when the sandbox's host acknowledges the new limit in time.
   Operation operation = 2;
 }
 
+// DeleteSandboxRequest is a call of DeleteSandbox.
 message DeleteSandboxRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox's ID.
   string id = 3;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 4;
 }
 
+// DeleteSandboxResponse is the answer to DeleteSandbox.
 message DeleteSandboxResponse {
+  // The operation that is done once the sandbox is removed.
   Operation operation = 1;
 }
 
+// WaitSandboxRequest is a call of WaitSandbox.
 message WaitSandboxRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox's ID.
   string id = 3;
   // Return once the sandbox is in any of these states; empty means ENDED.
   repeated SandboxState states = 4;
@@ -1283,14 +1417,19 @@ message WaitSandboxRequest {
   string grant = 6;
 }
 
+// WaitSandboxResponse is the answer to WaitSandbox.
 message WaitSandboxResponse {
+  // The sandbox as it is when the call answers.
   Sandbox sandbox = 1;
   // False when the bound passed first.
   bool reached = 2;
 }
 
+// WatchSandboxesRequest is a call of WatchSandboxes.
 message WatchSandboxesRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // Changes after this position; empty starts at the oldest event the log
   // keeps. A cursor older than that event fails with OUT_OF_RANGE.
@@ -1303,6 +1442,7 @@ message WatchSandboxesRequest {
   string grant = 5;
 }
 
+// WatchSandboxesResponse is one message of WatchSandboxes' stream.
 message WatchSandboxesResponse {
   // The event that recorded the change.
   EventType type = 1;
@@ -1315,40 +1455,62 @@ message WatchSandboxesResponse {
   Keepalive keepalive = 4;
 }
 
+// CreateServiceRequest is a call of CreateService.
 message CreateServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's spec: its size, mode, name and recipe.
   ServiceSpec spec = 3;
+  // The service's labels; a key starting with "toshi." is refused with
+  // INVALID_ARGUMENT.
   map<string, string> labels = 4;
   // Required: the same key on every retry of this create.
   string request_key = 5;
   // The management mark goes together: all four fields or none; managed_by
   // "manifest" needs the digest, an origin and at least one field path.
   string managed_by = 6;
+  // The SHA-256 of the manifest that last set the service, as 64 lowercase
+  // hex characters.
   string manifest_digest = 7;
+  // The fields the manifest declares, as update mask paths.
   repeated string managed_fields = 8;
+  // "created" when an apply created the service, "adopted" when it took
+  // one over.
   string manifest_origin = 9;
 }
 
+// CreateServiceResponse is the answer to CreateService.
 message CreateServiceResponse {
+  // The service as it was created, not started.
   Service service = 1;
 }
 
+// GetServiceRequest is a call of GetService.
 message GetServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's ID.
   string id = 3;
 }
 
+// GetServiceResponse is the answer to GetService.
 message GetServiceResponse {
+  // The service.
   Service service = 1;
   // The service's bindings as they were fixed when its current run
   // started, in name order; empty before a run started.
   repeated BoundBinding bound = 2;
 }
 
+// ListServicesRequest is a call of ListServices.
 message ListServicesRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // Empty matches every state.
   repeated ServiceState states = 3;
@@ -1361,7 +1523,9 @@ message ListServicesRequest {
   map<string, string> labels = 6;
 }
 
+// ListServicesResponse is the answer to ListServices.
 message ListServicesResponse {
+  // The page's services, oldest first.
   repeated Service services = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -1371,9 +1535,13 @@ message ListServicesResponse {
   string cursor = 3;
 }
 
+// UpdateServiceRequest is a call of UpdateService.
 message UpdateServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's ID.
   string id = 3;
   // Carries the new values of the fields update_mask names.
   Service service = 4;
@@ -1382,6 +1550,9 @@ message UpdateServiceRequest {
   // own; managed_by "manifest" needs the digest, an origin and at least one
   // field path, and an empty managed_by clears all four.
   google.protobuf.FieldMask update_mask = 5;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 6;
   // Lets a deploy to a started service with a state volume start the new
   // revision without a saved version of the volume when none can be saved:
@@ -1393,24 +1564,39 @@ message UpdateServiceRequest {
   bool allow_unsaved_volume = 7;
 }
 
+// UpdateServiceResponse is the answer to UpdateService.
 message UpdateServiceResponse {
+  // The service as it was updated.
   Service service = 1;
 }
 
+// DeleteServiceRequest is a call of DeleteService.
 message DeleteServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's ID.
   string id = 3;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 4;
 }
 
+// DeleteServiceResponse is the answer to DeleteService.
 message DeleteServiceResponse {
+  // The operation that is done once the service is removed.
   Operation operation = 1;
 }
 
+// WaitServiceRequest is a call of WaitService.
 message WaitServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's ID.
   string id = 3;
   // Return once the service is in any of these states; empty means ENDED.
   repeated ServiceState states = 4;
@@ -1418,14 +1604,19 @@ message WaitServiceRequest {
   google.protobuf.Duration timeout = 5;
 }
 
+// WaitServiceResponse is the answer to WaitService.
 message WaitServiceResponse {
+  // The service as it is when the call answers.
   Service service = 1;
   // False when the bound passed first.
   bool reached = 2;
 }
 
+// WatchServicesRequest is a call of WatchServices.
 message WatchServicesRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // Changes after this position; empty starts at the oldest event the log
   // keeps. A cursor older than that event fails with OUT_OF_RANGE.
@@ -1434,6 +1625,7 @@ message WatchServicesRequest {
   bool keepalive = 4;
 }
 
+// WatchServicesResponse is one message of WatchServices' stream.
 message WatchServicesResponse {
   // The event that recorded the change.
   EventType type = 1;
@@ -1655,6 +1847,9 @@ message RunServiceAlarmNowRequest {
   string service_id = 3;
   // The alarm's name.
   string name = 4;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 5;
 }
 

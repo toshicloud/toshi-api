@@ -141,12 +141,15 @@ func (ProjectHumanSpans) EnumDescriptor() ([]byte, []int) {
 type EmbedTokenState int32
 
 const (
+	// Unset; no call returns an embed token without a state.
 	EmbedTokenState_EMBED_TOKEN_STATE_UNSPECIFIED EmbedTokenState = 0
 	// Not yet spent: a page on one of its origins can spend it.
 	EmbedTokenState_EMBED_TOKEN_STATE_ACTIVE EmbedTokenState = 1
 	// A page spent it on a recording.
-	EmbedTokenState_EMBED_TOKEN_STATE_USED    EmbedTokenState = 2
+	EmbedTokenState_EMBED_TOKEN_STATE_USED EmbedTokenState = 2
+	// Revoked, whether or not it had been spent.
 	EmbedTokenState_EMBED_TOKEN_STATE_REVOKED EmbedTokenState = 3
+	// Past expires_at, neither spent nor revoked.
 	EmbedTokenState_EMBED_TOKEN_STATE_EXPIRED EmbedTokenState = 4
 )
 
@@ -197,10 +200,15 @@ func (EmbedTokenState) EnumDescriptor() ([]byte, []int) {
 
 // Project is one of a workspace's projects.
 type Project struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	Name         string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	CreatedAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Environments []*ProjectEnvironment  `protobuf:"bytes,3,rep,name=environments,proto3" json:"environments,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name, unique among the workspace's projects. Every
+	// call that names a project gives this name.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// When the project was created. Output only.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// The project's environments, by name, each with its overrides; a
+	// caller limited to an environment gets only that one.
+	Environments []*ProjectEnvironment `protobuf:"bytes,3,rep,name=environments,proto3" json:"environments,omitempty"`
 	// admission is the project's admission webhook; unset when it has none.
 	// GetProject and UpdateProject return it; ListProjects does not.
 	Admission *ProjectAdmission `protobuf:"bytes,4,opt,name=admission,proto3" json:"admission,omitempty"`
@@ -460,7 +468,8 @@ type ProjectAdmission struct {
 	// bytes. Input only: no call returns it.
 	Secret string `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
 	// updated_by is who set it last, as the audit log names them.
-	UpdatedBy     string                 `protobuf:"bytes,3,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	UpdatedBy string `protobuf:"bytes,3,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	// When the webhook was last set.
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -546,7 +555,8 @@ type ProjectRecordingDefaults struct {
 	// human_spans is what Toshi captures of the project's human control.
 	HumanSpans ProjectHumanSpans `protobuf:"varint,3,opt,name=human_spans,json=humanSpans,proto3,enum=toshi.workspace.v1.ProjectHumanSpans" json:"human_spans,omitempty"`
 	// updated_by is who set the defaults last, as the audit log names them.
-	UpdatedBy string                 `protobuf:"bytes,4,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	UpdatedBy string `protobuf:"bytes,4,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	// When the defaults were last set; unset when the project set none.
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// recording_segment_minutes limits a sandbox strip's duration. Zero
 	// follows the plan; positive values are capped by the plan and frame limit.
@@ -641,7 +651,9 @@ func (x *ProjectRecordingDefaults) GetRecordingMaxMib() int32 {
 // ProjectEnvironment is one of a project's environments.
 type ProjectEnvironment struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The environment's name, its kind; a project has at most one
+	// environment of a kind.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// development, preview or production.
 	Kind string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
 	// The names of the project's volumes the environment's services and
@@ -809,7 +821,8 @@ type Repository struct {
 	// "owner/name".
 	Repository string `protobuf:"bytes,1,opt,name=repository,proto3" json:"repository,omitempty"`
 	// The claiming project's name.
-	Project       string                 `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	// When the repository's claim on project was made, or moved to it.
 	ClaimedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=claimed_at,json=claimedAt,proto3" json:"claimed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -866,6 +879,7 @@ func (x *Repository) GetClaimedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// ListProjectsRequest selects one page of the workspace's projects.
 type ListProjectsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most projects in one page; zero lets the server choose.
@@ -929,9 +943,11 @@ func (x *ListProjectsRequest) GetShowDeleted() bool {
 	return false
 }
 
+// ListProjectsResponse carries one page of the workspace's projects.
 type ListProjectsResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Projects []*Project             `protobuf:"bytes,1,rep,name=projects,proto3" json:"projects,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's projects, by name, each with its environments by name.
+	Projects []*Project `protobuf:"bytes,1,rep,name=projects,proto3" json:"projects,omitempty"`
 	// The limit of the token that made the call. A server that has this
 	// field always sets it; both its fields are empty for a caller that
 	// covers the whole workspace.
@@ -1050,6 +1066,8 @@ func (x *TokenLimit) GetEnvironment() string {
 	return ""
 }
 
+// ListRepositoriesRequest selects one page of the repositories the
+// workspace's projects claim.
 type ListRepositoriesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Only this project's repositories; empty lists every project's.
@@ -1113,9 +1131,11 @@ func (x *ListRepositoriesRequest) GetPageToken() string {
 	return ""
 }
 
+// ListRepositoriesResponse carries one page of claimed repositories.
 type ListRepositoriesResponse struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	Repositories []*Repository          `protobuf:"bytes,1,rep,name=repositories,proto3" json:"repositories,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's repositories, by repository.
+	Repositories []*Repository `protobuf:"bytes,1,rep,name=repositories,proto3" json:"repositories,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1166,10 +1186,16 @@ func (x *ListRepositoriesResponse) GetNextPageToken() string {
 	return ""
 }
 
+// CreateProjectRequest carries the project's name and a request key.
 type CreateProjectRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name, unique among the workspace's projects. Empty is
+	// INVALID_ARGUMENT.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1218,9 +1244,12 @@ func (x *CreateProjectRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateProjectResponse carries the project made, with its three
+// environments.
 type CreateProjectResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       *Project               `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project as stored, with its three environments.
+	Project       *Project `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1428,6 +1457,7 @@ func (*RestoreProjectResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{16}
 }
 
+// UpdateProjectRequest carries the project and the fields to set.
 type UpdateProjectRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// name names the project; the fields update_mask names carry the new
@@ -1486,9 +1516,11 @@ func (x *UpdateProjectRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateProjectResponse is the project as stored after the change.
 type UpdateProjectResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       *Project               `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project as stored after the change.
+	Project       *Project `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1530,6 +1562,8 @@ func (x *UpdateProjectResponse) GetProject() *Project {
 	return nil
 }
 
+// ClaimRepositoryRequest names the repository and the project that is
+// to claim it.
 type ClaimRepositoryRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// "owner/name".
@@ -1584,9 +1618,11 @@ func (x *ClaimRepositoryRequest) GetProject() string {
 	return ""
 }
 
+// ClaimRepositoryResponse carries the claim as stored.
 type ClaimRepositoryResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Repository *Repository            `protobuf:"bytes,1,opt,name=repository,proto3" json:"repository,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The claim as stored, with its time.
+	Repository *Repository `protobuf:"bytes,1,opt,name=repository,proto3" json:"repository,omitempty"`
 	// The name of the project that claimed the repository before the call;
 	// empty when no project did.
 	PreviousProject string `protobuf:"bytes,2,opt,name=previous_project,json=previousProject,proto3" json:"previous_project,omitempty"`
@@ -1638,6 +1674,7 @@ func (x *ClaimRepositoryResponse) GetPreviousProject() string {
 	return ""
 }
 
+// GetProjectRequest names the project to read.
 type GetProjectRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
@@ -1683,9 +1720,11 @@ func (x *GetProjectRequest) GetName() string {
 	return ""
 }
 
+// GetProjectResponse carries one project with its environments.
 type GetProjectResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       *Project               `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project, with the environments the caller's limit reaches.
+	Project       *Project `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1727,20 +1766,32 @@ func (x *GetProjectResponse) GetProject() *Project {
 	return nil
 }
 
+// CreateEnvironmentRequest carries the environment's project, kind and
+// management mark.
 type CreateEnvironmentRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the project that is to have the environment.
 	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// development, preview or production; the environment is named after
 	// it.
-	Kind       string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	Kind string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
 	RequestKey string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// The management mark goes together: all four fields or none; managed_by
 	// "manifest" needs the digest, an origin and at least one field path.
-	ManagedBy      string   `protobuf:"bytes,4,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
-	ManifestDigest string   `protobuf:"bytes,5,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
-	ManagedFields  []string `protobuf:"bytes,6,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
-	ManifestOrigin string   `protobuf:"bytes,7,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	ManagedBy string `protobuf:"bytes,4,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	// The SHA-256 of the manifest file that set the object, as 64
+	// lowercase hex characters. Required when managed_by is "manifest".
+	ManifestDigest string `protobuf:"bytes,5,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	// The field paths the manifest declares, at least one and at most 64,
+	// each a dotted path of lowercase letters, digits and _. Required
+	// when managed_by is "manifest".
+	ManagedFields []string `protobuf:"bytes,6,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	// How the manifest came to manage the object: "created" or
+	// "adopted". Required when managed_by is "manifest".
+	ManifestOrigin string `protobuf:"bytes,7,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1824,9 +1875,11 @@ func (x *CreateEnvironmentRequest) GetManifestOrigin() string {
 	return ""
 }
 
+// CreateEnvironmentResponse carries the environment made.
 type CreateEnvironmentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Environment   *ProjectEnvironment    `protobuf:"bytes,1,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The environment as stored.
+	Environment   *ProjectEnvironment `protobuf:"bytes,1,opt,name=environment,proto3" json:"environment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1868,6 +1921,8 @@ func (x *CreateEnvironmentResponse) GetEnvironment() *ProjectEnvironment {
 	return nil
 }
 
+// DeleteEnvironmentRequest names the project and the environment to
+// delete.
 type DeleteEnvironmentRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the project that has the environment.
@@ -1922,6 +1977,7 @@ func (x *DeleteEnvironmentRequest) GetName() string {
 	return ""
 }
 
+// DeleteEnvironmentResponse is the answer to DeleteEnvironment.
 type DeleteEnvironmentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -2032,6 +2088,7 @@ func (x *BranchRule) GetEnvironment() string {
 	return ""
 }
 
+// ListBranchRulesRequest selects one page of a project's branch rules.
 type ListBranchRulesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
@@ -2095,9 +2152,11 @@ func (x *ListBranchRulesRequest) GetPageToken() string {
 	return ""
 }
 
+// ListBranchRulesResponse carries one page of a project's rules.
 type ListBranchRulesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Rules []*BranchRule          `protobuf:"bytes,1,rep,name=rules,proto3" json:"rules,omitempty"`
+	// The page's rules, in order.
+	Rules []*BranchRule `protobuf:"bytes,1,rep,name=rules,proto3" json:"rules,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2284,6 +2343,7 @@ func (x *EgressRule) GetProtocol() string {
 	return ""
 }
 
+// GetProjectNetworkRequest names the project whose policy to read.
 type GetProjectNetworkRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
@@ -2329,12 +2389,16 @@ func (x *GetProjectNetworkRequest) GetProject() string {
 	return ""
 }
 
+// GetProjectNetworkResponse carries a project's network policy and who
+// set it last.
 type GetProjectNetworkResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Network *NetworkPolicy         `protobuf:"bytes,1,opt,name=network,proto3" json:"network,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The policy as stored; allow-all when the project never set one.
+	Network *NetworkPolicy `protobuf:"bytes,1,opt,name=network,proto3" json:"network,omitempty"`
 	// The audit actor that last set it, "<kind>:<id>"; empty when it was
 	// never set.
-	UpdatedBy     string                 `protobuf:"bytes,2,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	UpdatedBy string `protobuf:"bytes,2,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	// When it was last set; unset when it never was.
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2391,6 +2455,7 @@ func (x *GetProjectNetworkResponse) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// GetEnvironmentNetworkRequest names the environment to read.
 type GetEnvironmentNetworkRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
@@ -2445,12 +2510,16 @@ func (x *GetEnvironmentNetworkRequest) GetEnvironment() string {
 	return ""
 }
 
+// GetEnvironmentNetworkResponse carries an environment's network
+// policy and who set it last.
 type GetEnvironmentNetworkResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Network *NetworkPolicy         `protobuf:"bytes,1,opt,name=network,proto3" json:"network,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The policy as stored; allow-all when the environment never set one.
+	Network *NetworkPolicy `protobuf:"bytes,1,opt,name=network,proto3" json:"network,omitempty"`
 	// The audit actor that last set it, "<kind>:<id>"; empty when it was
 	// never set.
-	UpdatedBy     string                 `protobuf:"bytes,2,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	UpdatedBy string `protobuf:"bytes,2,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	// When it was last set; unset when it never was.
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2625,6 +2694,7 @@ func (x *EnvironmentRetention) GetKeeps() []*RetentionKeep {
 	return nil
 }
 
+// GetEnvironmentRetentionRequest names the environment to read.
 type GetEnvironmentRetentionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
@@ -2679,6 +2749,8 @@ func (x *GetEnvironmentRetentionRequest) GetEnvironment() string {
 	return ""
 }
 
+// GetEnvironmentRetentionResponse carries an environment's retention
+// override, what applies to it and who set it last.
 type GetEnvironmentRetentionResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The override as stored; empty when none is set.
@@ -2688,7 +2760,8 @@ type GetEnvironmentRetentionResponse struct {
 	Effective *EnvironmentRetention `protobuf:"bytes,2,opt,name=effective,proto3" json:"effective,omitempty"`
 	// The audit actor that last set it, "<kind>:<id>"; empty when it was
 	// never set.
-	UpdatedBy     string                 `protobuf:"bytes,3,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	UpdatedBy string `protobuf:"bytes,3,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	// When the override was last set; unset when none is set.
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2752,6 +2825,7 @@ func (x *GetEnvironmentRetentionResponse) GetUpdatedAt() *timestamppb.Timestamp 
 	return nil
 }
 
+// UpdateEnvironmentRequest carries the environment and the update mask.
 type UpdateEnvironmentRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
@@ -2821,6 +2895,7 @@ func (x *UpdateEnvironmentRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateEnvironmentResponse is the environment as stored.
 type UpdateEnvironmentResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The environment as stored.
@@ -2866,6 +2941,8 @@ func (x *UpdateEnvironmentResponse) GetEnvironment() *ProjectEnvironment {
 	return nil
 }
 
+// RaiseCompatibilityDateRequest carries the project or environment and
+// the date to move to.
 type RaiseCompatibilityDateRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the project whose date to raise.
@@ -2930,6 +3007,8 @@ func (x *RaiseCompatibilityDateRequest) GetDate() string {
 	return ""
 }
 
+// RaiseCompatibilityDateResponse carries the project after the raise,
+// the changes it took and whether the date changed.
 type RaiseCompatibilityDateResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project with its environments as ListProjects renders them, after
@@ -3059,6 +3138,8 @@ func (x *CompatibilityChange) GetSummary() string {
 	return ""
 }
 
+// ListCompatibilityChangesRequest names the project or environment and
+// the last date to list.
 type ListCompatibilityChangesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the project whose changes to list.
@@ -3124,6 +3205,8 @@ func (x *ListCompatibilityChangesRequest) GetToDate() string {
 	return ""
 }
 
+// ListCompatibilityChangesResponse carries the changes not taken yet and
+// the dates they fall between.
 type ListCompatibilityChangesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The changes not taken by to_date, in date order.
@@ -3196,9 +3279,12 @@ type EmbedToken struct {
 	Project string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
 	// The origins of the pages that may spend it, such as
 	// https://app.example.com.
-	Origins   []string               `protobuf:"bytes,3,rep,name=origins,proto3" json:"origins,omitempty"`
-	State     EmbedTokenState        `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.EmbedTokenState" json:"state,omitempty"`
+	Origins []string `protobuf:"bytes,3,rep,name=origins,proto3" json:"origins,omitempty"`
+	// Where the token is in its life, as of now. Output only.
+	State EmbedTokenState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.EmbedTokenState" json:"state,omitempty"`
+	// When it was minted. Output only.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When it stops being spendable. Output only.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// Unset until a page spends it.
 	UsedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=used_at,json=usedAt,proto3" json:"used_at,omitempty"`
@@ -3213,8 +3299,11 @@ type EmbedToken struct {
 	// workload, as ListRecordings takes it, that workload's kind ("job",
 	// "sandbox" or "service") and its environment, as Recording names them.
 	// Empty until spent.
-	WorkloadId    string `protobuf:"bytes,11,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
-	WorkloadKind  string `protobuf:"bytes,12,opt,name=workload_kind,json=workloadKind,proto3" json:"workload_kind,omitempty"`
+	WorkloadId string `protobuf:"bytes,11,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	// The kind of that workload: "job", "sandbox" or "service". Empty
+	// until spent.
+	WorkloadKind string `protobuf:"bytes,12,opt,name=workload_kind,json=workloadKind,proto3" json:"workload_kind,omitempty"`
+	// The ID of that workload's environment. Empty until spent.
 	EnvironmentId string `protobuf:"bytes,13,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3341,6 +3430,8 @@ func (x *EmbedToken) GetEnvironmentId() string {
 	return ""
 }
 
+// CreateEmbedTokenRequest carries the project, the page origins and the
+// token's life.
 type CreateEmbedTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
@@ -3419,9 +3510,11 @@ func (x *CreateEmbedTokenRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateEmbedTokenResponse carries the token as stored and its secret.
 type CreateEmbedTokenResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	EmbedToken *EmbedToken            `protobuf:"bytes,1,opt,name=embed_token,json=embedToken,proto3" json:"embed_token,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The token as stored, without its secret.
+	EmbedToken *EmbedToken `protobuf:"bytes,1,opt,name=embed_token,json=embedToken,proto3" json:"embed_token,omitempty"`
 	// The token to hand to the page. It is in this answer only.
 	Token         string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3472,6 +3565,7 @@ func (x *CreateEmbedTokenResponse) GetToken() string {
 	return ""
 }
 
+// ListEmbedTokensRequest selects one page of a project's embed tokens.
 type ListEmbedTokensRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
@@ -3535,9 +3629,11 @@ func (x *ListEmbedTokensRequest) GetPageToken() string {
 	return ""
 }
 
+// ListEmbedTokensResponse carries one page of a project's embed tokens.
 type ListEmbedTokensResponse struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	EmbedTokens []*EmbedToken          `protobuf:"bytes,1,rep,name=embed_tokens,json=embedTokens,proto3" json:"embed_tokens,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's tokens, oldest first.
+	EmbedTokens []*EmbedToken `protobuf:"bytes,1,rep,name=embed_tokens,json=embedTokens,proto3" json:"embed_tokens,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3588,10 +3684,13 @@ func (x *ListEmbedTokensResponse) GetNextPageToken() string {
 	return ""
 }
 
+// RevokeEmbedTokenRequest names the project and the token to revoke.
 type RevokeEmbedTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The project's name.
-	Project       string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The token's ID. Empty is INVALID_ARGUMENT; a token of another
+	// project or no token is NOT_FOUND.
 	EmbedTokenId  string `protobuf:"bytes,2,opt,name=embed_token_id,json=embedTokenId,proto3" json:"embed_token_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3641,9 +3740,11 @@ func (x *RevokeEmbedTokenRequest) GetEmbedTokenId() string {
 	return ""
 }
 
+// RevokeEmbedTokenResponse carries the token after the revoke.
 type RevokeEmbedTokenResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmbedToken    *EmbedToken            `protobuf:"bytes,1,opt,name=embed_token,json=embedToken,proto3" json:"embed_token,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The token as stored after the revoke.
+	EmbedToken    *EmbedToken `protobuf:"bytes,1,opt,name=embed_token,json=embedToken,proto3" json:"embed_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

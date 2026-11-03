@@ -22,6 +22,8 @@ export const file_toshi_workspace_v1_secrets: GenFile = /*@__PURE__*/
  */
 export type SecretSet = Message<"toshi.workspace.v1.SecretSet"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
@@ -34,11 +36,16 @@ export type SecretSet = Message<"toshi.workspace.v1.SecretSet"> & {
   environment: string;
 
   /**
+   * The set is the project's shared set: the keys that are the same in
+   * every environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
 
   /**
+   * When the set was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
@@ -93,6 +100,8 @@ export type SecretSet = Message<"toshi.workspace.v1.SecretSet"> & {
  */
 export type SecretSetJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
@@ -105,11 +114,16 @@ export type SecretSetJson = {
   environment?: string;
 
   /**
+   * The set is the project's shared set: the keys that are the same in
+   * every environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
 
   /**
+   * When the set was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
@@ -171,6 +185,8 @@ export const SecretSetSchema: GenMessage<SecretSet, {jsonType: SecretSetJson}> =
  */
 export type Secret = Message<"toshi.workspace.v1.Secret"> & {
   /**
+   * The key's name.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
@@ -190,6 +206,8 @@ export type Secret = Message<"toshi.workspace.v1.Secret"> & {
   size: bigint;
 
   /**
+   * When the newest version was set.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 4;
    */
   updatedAt?: Timestamp | undefined;
@@ -233,6 +251,8 @@ export type Secret = Message<"toshi.workspace.v1.Secret"> & {
  */
 export type SecretJson = {
   /**
+   * The key's name.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
@@ -252,6 +272,8 @@ export type SecretJson = {
   size?: string;
 
   /**
+   * When the newest version was set.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 4;
    */
   updatedAt?: TimestampJson;
@@ -302,16 +324,22 @@ export const SecretSchema: GenMessage<Secret, {jsonType: SecretJson}> = /*@__PUR
  */
 export type SecretVersion = Message<"toshi.workspace.v1.SecretVersion"> & {
   /**
+   * The version's number, from 1.
+   *
    * @generated from field: int64 version = 1;
    */
   version: bigint;
 
   /**
+   * The version's size in bytes.
+   *
    * @generated from field: int64 size = 2;
    */
   size: bigint;
 
   /**
+   * When the version was set.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 3;
    */
   createdAt?: Timestamp | undefined;
@@ -324,16 +352,22 @@ export type SecretVersion = Message<"toshi.workspace.v1.SecretVersion"> & {
  */
 export type SecretVersionJson = {
   /**
+   * The version's number, from 1.
+   *
    * @generated from field: int64 version = 1;
    */
   version?: string;
 
   /**
+   * The version's size in bytes.
+   *
    * @generated from field: int64 size = 2;
    */
   size?: string;
 
   /**
+   * When the version was set.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 3;
    */
   createdAt?: TimestampJson;
@@ -347,40 +381,56 @@ export const SecretVersionSchema: GenMessage<SecretVersion, {jsonType: SecretVer
   messageDesc(file_toshi_workspace_v1_secrets, 2);
 
 /**
+ * SecretGrant is one grant of a set: what it lets use the set.
+ *
  * @generated from message toshi.workspace.v1.SecretGrant
  */
 export type SecretGrant = Message<"toshi.workspace.v1.SecretGrant"> & {
   /**
+   * What the set is granted to.
+   *
    * @generated from field: toshi.workspace.v1.SecretGranteeKind kind = 1;
    */
   kind: SecretGranteeKind;
 
   /**
+   * The grantee's name.
+   *
    * @generated from field: string grantee = 2;
    */
   grantee: string;
 
   /**
+   * When the grant was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 3;
    */
   createdAt?: Timestamp | undefined;
 };
 
 /**
+ * SecretGrant is one grant of a set: what it lets use the set.
+ *
  * @generated from message toshi.workspace.v1.SecretGrant
  */
 export type SecretGrantJson = {
   /**
+   * What the set is granted to.
+   *
    * @generated from field: toshi.workspace.v1.SecretGranteeKind kind = 1;
    */
   kind?: SecretGranteeKindJson;
 
   /**
+   * The grantee's name.
+   *
    * @generated from field: string grantee = 2;
    */
   grantee?: string;
 
   /**
+   * When the grant was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 3;
    */
   createdAt?: TimestampJson;
@@ -394,25 +444,38 @@ export const SecretGrantSchema: GenMessage<SecretGrant, {jsonType: SecretGrantJs
   messageDesc(file_toshi_workspace_v1_secrets, 3);
 
 /**
+ * CreateSecretSetRequest makes a set: an environment's, or the project's
+ * shared one.
+ *
  * @generated from message toshi.workspace.v1.CreateSecretSetRequest
  */
 export type CreateSecretSetRequest = Message<"toshi.workspace.v1.CreateSecretSetRequest"> & {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
@@ -426,41 +489,63 @@ export type CreateSecretSetRequest = Message<"toshi.workspace.v1.CreateSecretSet
   managedBy: string;
 
   /**
+   * The SHA-256 of the manifest file that set the set, as 64 lowercase hex
+   * characters; managed_by "manifest" needs it.
+   *
    * @generated from field: string manifest_digest = 6;
    */
   manifestDigest: string;
 
   /**
+   * The fields of the set the manifest declares, as update mask paths, at
+   * most 64; managed_by "manifest" needs at least one.
+   *
    * @generated from field: repeated string managed_fields = 7;
    */
   managedFields: string[];
 
   /**
+   * "created" when the apply created the set, "adopted" when it took over
+   * one that already existed; managed_by "manifest" needs it.
+   *
    * @generated from field: string manifest_origin = 8;
    */
   manifestOrigin: string;
 };
 
 /**
+ * CreateSecretSetRequest makes a set: an environment's, or the project's
+ * shared one.
+ *
  * @generated from message toshi.workspace.v1.CreateSecretSetRequest
  */
 export type CreateSecretSetRequestJson = {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -474,16 +559,25 @@ export type CreateSecretSetRequestJson = {
   managedBy?: string;
 
   /**
+   * The SHA-256 of the manifest file that set the set, as 64 lowercase hex
+   * characters; managed_by "manifest" needs it.
+   *
    * @generated from field: string manifest_digest = 6;
    */
   manifestDigest?: string;
 
   /**
+   * The fields of the set the manifest declares, as update mask paths, at
+   * most 64; managed_by "manifest" needs at least one.
+   *
    * @generated from field: repeated string managed_fields = 7;
    */
   managedFields?: string[];
 
   /**
+   * "created" when the apply created the set, "adopted" when it took over
+   * one that already existed; managed_by "manifest" needs it.
+   *
    * @generated from field: string manifest_origin = 8;
    */
   manifestOrigin?: string;
@@ -497,20 +591,28 @@ export const CreateSecretSetRequestSchema: GenMessage<CreateSecretSetRequest, {j
   messageDesc(file_toshi_workspace_v1_secrets, 4);
 
 /**
+ * CreateSecretSetResponse is the set the call made.
+ *
  * @generated from message toshi.workspace.v1.CreateSecretSetResponse
  */
 export type CreateSecretSetResponse = Message<"toshi.workspace.v1.CreateSecretSetResponse"> & {
   /**
+   * The set as stored.
+   *
    * @generated from field: toshi.workspace.v1.SecretSet set = 1;
    */
   set?: SecretSet | undefined;
 };
 
 /**
+ * CreateSecretSetResponse is the set the call made.
+ *
  * @generated from message toshi.workspace.v1.CreateSecretSetResponse
  */
 export type CreateSecretSetResponseJson = {
   /**
+   * The set as stored.
+   *
    * @generated from field: toshi.workspace.v1.SecretSet set = 1;
    */
   set?: SecretSetJson;
@@ -524,10 +626,14 @@ export const CreateSecretSetResponseSchema: GenMessage<CreateSecretSetResponse, 
   messageDesc(file_toshi_workspace_v1_secrets, 5);
 
 /**
+ * ListSecretSetsRequest asks for a project's sets, without personal sets.
+ *
  * @generated from message toshi.workspace.v1.ListSecretSetsRequest
  */
 export type ListSecretSetsRequest = Message<"toshi.workspace.v1.ListSecretSetsRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
@@ -548,10 +654,14 @@ export type ListSecretSetsRequest = Message<"toshi.workspace.v1.ListSecretSetsRe
 };
 
 /**
+ * ListSecretSetsRequest asks for a project's sets, without personal sets.
+ *
  * @generated from message toshi.workspace.v1.ListSecretSetsRequest
  */
 export type ListSecretSetsRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
@@ -579,10 +689,14 @@ export const ListSecretSetsRequestSchema: GenMessage<ListSecretSetsRequest, {jso
   messageDesc(file_toshi_workspace_v1_secrets, 6);
 
 /**
+ * ListSecretSetsResponse is one page of sets, the shared set first.
+ *
  * @generated from message toshi.workspace.v1.ListSecretSetsResponse
  */
 export type ListSecretSetsResponse = Message<"toshi.workspace.v1.ListSecretSetsResponse"> & {
   /**
+   * The page's sets.
+   *
    * @generated from field: repeated toshi.workspace.v1.SecretSet sets = 1;
    */
   sets: SecretSet[];
@@ -596,10 +710,14 @@ export type ListSecretSetsResponse = Message<"toshi.workspace.v1.ListSecretSetsR
 };
 
 /**
+ * ListSecretSetsResponse is one page of sets, the shared set first.
+ *
  * @generated from message toshi.workspace.v1.ListSecretSetsResponse
  */
 export type ListSecretSetsResponseJson = {
   /**
+   * The page's sets.
+   *
    * @generated from field: repeated toshi.workspace.v1.SecretSet sets = 1;
    */
   sets?: SecretSetJson[];
@@ -620,40 +738,56 @@ export const ListSecretSetsResponseSchema: GenMessage<ListSecretSetsResponse, {j
   messageDesc(file_toshi_workspace_v1_secrets, 7);
 
 /**
+ * DeleteSecretSetRequest removes a set with its keys, versions and grants.
+ *
  * @generated from message toshi.workspace.v1.DeleteSecretSetRequest
  */
 export type DeleteSecretSetRequest = Message<"toshi.workspace.v1.DeleteSecretSetRequest"> & {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
 };
 
 /**
+ * DeleteSecretSetRequest removes a set with its keys, versions and grants.
+ *
  * @generated from message toshi.workspace.v1.DeleteSecretSetRequest
  */
 export type DeleteSecretSetRequestJson = {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
@@ -667,12 +801,16 @@ export const DeleteSecretSetRequestSchema: GenMessage<DeleteSecretSetRequest, {j
   messageDesc(file_toshi_workspace_v1_secrets, 8);
 
 /**
+ * DeleteSecretSetResponse is the answer of a delete, and holds nothing.
+ *
  * @generated from message toshi.workspace.v1.DeleteSecretSetResponse
  */
 export type DeleteSecretSetResponse = Message<"toshi.workspace.v1.DeleteSecretSetResponse"> & {
 };
 
 /**
+ * DeleteSecretSetResponse is the answer of a delete, and holds nothing.
+ *
  * @generated from message toshi.workspace.v1.DeleteSecretSetResponse
  */
 export type DeleteSecretSetResponseJson = {
@@ -686,6 +824,8 @@ export const DeleteSecretSetResponseSchema: GenMessage<DeleteSecretSetResponse, 
   messageDesc(file_toshi_workspace_v1_secrets, 9);
 
 /**
+ * UpdateSecretSetRequest changes the fields update_mask names on a set.
+ *
  * @generated from message toshi.workspace.v1.UpdateSecretSetRequest
  */
 export type UpdateSecretSetRequest = Message<"toshi.workspace.v1.UpdateSecretSetRequest"> & {
@@ -711,6 +851,8 @@ export type UpdateSecretSetRequest = Message<"toshi.workspace.v1.UpdateSecretSet
 };
 
 /**
+ * UpdateSecretSetRequest changes the fields update_mask names on a set.
+ *
  * @generated from message toshi.workspace.v1.UpdateSecretSetRequest
  */
 export type UpdateSecretSetRequestJson = {
@@ -743,6 +885,8 @@ export const UpdateSecretSetRequestSchema: GenMessage<UpdateSecretSetRequest, {j
   messageDesc(file_toshi_workspace_v1_secrets, 10);
 
 /**
+ * UpdateSecretSetResponse is the set, as stored.
+ *
  * @generated from message toshi.workspace.v1.UpdateSecretSetResponse
  */
 export type UpdateSecretSetResponse = Message<"toshi.workspace.v1.UpdateSecretSetResponse"> & {
@@ -755,6 +899,8 @@ export type UpdateSecretSetResponse = Message<"toshi.workspace.v1.UpdateSecretSe
 };
 
 /**
+ * UpdateSecretSetResponse is the set, as stored.
+ *
  * @generated from message toshi.workspace.v1.UpdateSecretSetResponse
  */
 export type UpdateSecretSetResponseJson = {
@@ -774,20 +920,29 @@ export const UpdateSecretSetResponseSchema: GenMessage<UpdateSecretSetResponse, 
   messageDesc(file_toshi_workspace_v1_secrets, 11);
 
 /**
+ * PutSecretRequest sets a key's value: a new key, or the key's next
+ * version.
+ *
  * @generated from message toshi.workspace.v1.PutSecretRequest
  */
 export type PutSecretRequest = Message<"toshi.workspace.v1.PutSecretRequest"> & {
   /**
+   * The key's place: its project and either its environment or shared.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The place is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
@@ -801,6 +956,9 @@ export type PutSecretRequest = Message<"toshi.workspace.v1.PutSecretRequest"> & 
   name: string;
 
   /**
+   * The value; it is never returned. Its size counts toward the plan's cap
+   * on stored bytes.
+   *
    * @generated from field: bytes value = 5;
    */
   value: Uint8Array;
@@ -823,20 +981,29 @@ export type PutSecretRequest = Message<"toshi.workspace.v1.PutSecretRequest"> & 
 };
 
 /**
+ * PutSecretRequest sets a key's value: a new key, or the key's next
+ * version.
+ *
  * @generated from message toshi.workspace.v1.PutSecretRequest
  */
 export type PutSecretRequestJson = {
   /**
+   * The key's place: its project and either its environment or shared.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The place is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
@@ -850,6 +1017,9 @@ export type PutSecretRequestJson = {
   name?: string;
 
   /**
+   * The value; it is never returned. Its size counts toward the plan's cap
+   * on stored bytes.
+   *
    * @generated from field: bytes value = 5;
    */
   value?: string;
@@ -879,20 +1049,28 @@ export const PutSecretRequestSchema: GenMessage<PutSecretRequest, {jsonType: Put
   messageDesc(file_toshi_workspace_v1_secrets, 12);
 
 /**
+ * PutSecretResponse is the key, without its value.
+ *
  * @generated from message toshi.workspace.v1.PutSecretResponse
  */
 export type PutSecretResponse = Message<"toshi.workspace.v1.PutSecretResponse"> & {
   /**
+   * The key with its newest version; never its value.
+   *
    * @generated from field: toshi.workspace.v1.Secret secret = 1;
    */
   secret?: Secret | undefined;
 };
 
 /**
+ * PutSecretResponse is the key, without its value.
+ *
  * @generated from message toshi.workspace.v1.PutSecretResponse
  */
 export type PutSecretResponseJson = {
   /**
+   * The key with its newest version; never its value.
+   *
    * @generated from field: toshi.workspace.v1.Secret secret = 1;
    */
   secret?: SecretJson;
@@ -906,25 +1084,35 @@ export const PutSecretResponseSchema: GenMessage<PutSecretResponse, {jsonType: P
   messageDesc(file_toshi_workspace_v1_secrets, 13);
 
 /**
+ * DeleteSecretRequest removes a key and every version of it.
+ *
  * @generated from message toshi.workspace.v1.DeleteSecretRequest
  */
 export type DeleteSecretRequest = Message<"toshi.workspace.v1.DeleteSecretRequest"> & {
   /**
+   * The key's place: its project and either its environment or shared.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The place is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
 
   /**
+   * The key's name.
+   *
    * @generated from field: string name = 4;
    */
   name: string;
@@ -945,25 +1133,35 @@ export type DeleteSecretRequest = Message<"toshi.workspace.v1.DeleteSecretReques
 };
 
 /**
+ * DeleteSecretRequest removes a key and every version of it.
+ *
  * @generated from message toshi.workspace.v1.DeleteSecretRequest
  */
 export type DeleteSecretRequestJson = {
   /**
+   * The key's place: its project and either its environment or shared.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The place is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
 
   /**
+   * The key's name.
+   *
    * @generated from field: string name = 4;
    */
   name?: string;
@@ -991,12 +1189,16 @@ export const DeleteSecretRequestSchema: GenMessage<DeleteSecretRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_secrets, 14);
 
 /**
+ * DeleteSecretResponse is the answer of a delete, and holds nothing.
+ *
  * @generated from message toshi.workspace.v1.DeleteSecretResponse
  */
 export type DeleteSecretResponse = Message<"toshi.workspace.v1.DeleteSecretResponse"> & {
 };
 
 /**
+ * DeleteSecretResponse is the answer of a delete, and holds nothing.
+ *
  * @generated from message toshi.workspace.v1.DeleteSecretResponse
  */
 export type DeleteSecretResponseJson = {
@@ -1010,20 +1212,29 @@ export const DeleteSecretResponseSchema: GenMessage<DeleteSecretResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_secrets, 15);
 
 /**
+ * ListSecretsRequest asks for the keys of a place: the set's and each
+ * person's own.
+ *
  * @generated from message toshi.workspace.v1.ListSecretsRequest
  */
 export type ListSecretsRequest = Message<"toshi.workspace.v1.ListSecretsRequest"> & {
   /**
+   * The key's place: its project and either its environment or shared.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The place is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
@@ -1044,20 +1255,29 @@ export type ListSecretsRequest = Message<"toshi.workspace.v1.ListSecretsRequest"
 };
 
 /**
+ * ListSecretsRequest asks for the keys of a place: the set's and each
+ * person's own.
+ *
  * @generated from message toshi.workspace.v1.ListSecretsRequest
  */
 export type ListSecretsRequestJson = {
   /**
+   * The key's place: its project and either its environment or shared.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The place is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
@@ -1085,10 +1305,14 @@ export const ListSecretsRequestSchema: GenMessage<ListSecretsRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_secrets, 16);
 
 /**
+ * ListSecretsResponse is one page of keys, by name and then owner.
+ *
  * @generated from message toshi.workspace.v1.ListSecretsResponse
  */
 export type ListSecretsResponse = Message<"toshi.workspace.v1.ListSecretsResponse"> & {
   /**
+   * The page's keys; each person's own follow the set's.
+   *
    * @generated from field: repeated toshi.workspace.v1.Secret secrets = 1;
    */
   secrets: Secret[];
@@ -1102,10 +1326,14 @@ export type ListSecretsResponse = Message<"toshi.workspace.v1.ListSecretsRespons
 };
 
 /**
+ * ListSecretsResponse is one page of keys, by name and then owner.
+ *
  * @generated from message toshi.workspace.v1.ListSecretsResponse
  */
 export type ListSecretsResponseJson = {
   /**
+   * The page's keys; each person's own follow the set's.
+   *
    * @generated from field: repeated toshi.workspace.v1.Secret secrets = 1;
    */
   secrets?: SecretJson[];
@@ -1126,25 +1354,35 @@ export const ListSecretsResponseSchema: GenMessage<ListSecretsResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_secrets, 17);
 
 /**
+ * ListSecretVersionsRequest asks for one key's versions.
+ *
  * @generated from message toshi.workspace.v1.ListSecretVersionsRequest
  */
 export type ListSecretVersionsRequest = Message<"toshi.workspace.v1.ListSecretVersionsRequest"> & {
   /**
+   * The key's place: its project and either its environment or shared.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The place is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
 
   /**
+   * The key's name.
+   *
    * @generated from field: string name = 4;
    */
   name: string;
@@ -1179,25 +1417,35 @@ export type ListSecretVersionsRequest = Message<"toshi.workspace.v1.ListSecretVe
 };
 
 /**
+ * ListSecretVersionsRequest asks for one key's versions.
+ *
  * @generated from message toshi.workspace.v1.ListSecretVersionsRequest
  */
 export type ListSecretVersionsRequestJson = {
   /**
+   * The key's place: its project and either its environment or shared.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The place is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
 
   /**
+   * The key's name.
+   *
    * @generated from field: string name = 4;
    */
   name?: string;
@@ -1239,10 +1487,14 @@ export const ListSecretVersionsRequestSchema: GenMessage<ListSecretVersionsReque
   messageDesc(file_toshi_workspace_v1_secrets, 18);
 
 /**
+ * ListSecretVersionsResponse is one page of versions, oldest first.
+ *
  * @generated from message toshi.workspace.v1.ListSecretVersionsResponse
  */
 export type ListSecretVersionsResponse = Message<"toshi.workspace.v1.ListSecretVersionsResponse"> & {
   /**
+   * The page's versions, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.SecretVersion versions = 1;
    */
   versions: SecretVersion[];
@@ -1256,10 +1508,14 @@ export type ListSecretVersionsResponse = Message<"toshi.workspace.v1.ListSecretV
 };
 
 /**
+ * ListSecretVersionsResponse is one page of versions, oldest first.
+ *
  * @generated from message toshi.workspace.v1.ListSecretVersionsResponse
  */
 export type ListSecretVersionsResponseJson = {
   /**
+   * The page's versions, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.SecretVersion versions = 1;
    */
   versions?: SecretVersionJson[];
@@ -1280,60 +1536,90 @@ export const ListSecretVersionsResponseSchema: GenMessage<ListSecretVersionsResp
   messageDesc(file_toshi_workspace_v1_secrets, 19);
 
 /**
+ * GrantSecretSetRequest grants an environment's set to a kind, an image,
+ * an image's builds or one service.
+ *
  * @generated from message toshi.workspace.v1.GrantSecretSetRequest
  */
 export type GrantSecretSetRequest = Message<"toshi.workspace.v1.GrantSecretSetRequest"> & {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
 
   /**
+   * What the set is granted to; required.
+   *
    * @generated from field: toshi.workspace.v1.SecretGranteeKind kind = 4;
    */
   kind: SecretGranteeKind;
 
   /**
+   * The grantee's name, as the kind names it: job, sandbox or service for
+   * KIND; an image's name for IMAGE or IMAGE_BUILD; a service's name for
+   * SERVICE.
+   *
    * @generated from field: string grantee = 5;
    */
   grantee: string;
 };
 
 /**
+ * GrantSecretSetRequest grants an environment's set to a kind, an image,
+ * an image's builds or one service.
+ *
  * @generated from message toshi.workspace.v1.GrantSecretSetRequest
  */
 export type GrantSecretSetRequestJson = {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
 
   /**
+   * What the set is granted to; required.
+   *
    * @generated from field: toshi.workspace.v1.SecretGranteeKind kind = 4;
    */
   kind?: SecretGranteeKindJson;
 
   /**
+   * The grantee's name, as the kind names it: job, sandbox or service for
+   * KIND; an image's name for IMAGE or IMAGE_BUILD; a service's name for
+   * SERVICE.
+   *
    * @generated from field: string grantee = 5;
    */
   grantee?: string;
@@ -1347,20 +1633,28 @@ export const GrantSecretSetRequestSchema: GenMessage<GrantSecretSetRequest, {jso
   messageDesc(file_toshi_workspace_v1_secrets, 20);
 
 /**
+ * GrantSecretSetResponse is the grant the call made.
+ *
  * @generated from message toshi.workspace.v1.GrantSecretSetResponse
  */
 export type GrantSecretSetResponse = Message<"toshi.workspace.v1.GrantSecretSetResponse"> & {
   /**
+   * The grant as stored.
+   *
    * @generated from field: toshi.workspace.v1.SecretGrant grant = 1;
    */
   grant?: SecretGrant | undefined;
 };
 
 /**
+ * GrantSecretSetResponse is the grant the call made.
+ *
  * @generated from message toshi.workspace.v1.GrantSecretSetResponse
  */
 export type GrantSecretSetResponseJson = {
   /**
+   * The grant as stored.
+   *
    * @generated from field: toshi.workspace.v1.SecretGrant grant = 1;
    */
   grant?: SecretGrantJson;
@@ -1374,60 +1668,84 @@ export const GrantSecretSetResponseSchema: GenMessage<GrantSecretSetResponse, {j
   messageDesc(file_toshi_workspace_v1_secrets, 21);
 
 /**
+ * RevokeSecretSetRequest removes one grant of a set.
+ *
  * @generated from message toshi.workspace.v1.RevokeSecretSetRequest
  */
 export type RevokeSecretSetRequest = Message<"toshi.workspace.v1.RevokeSecretSetRequest"> & {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
 
   /**
+   * The grant's kind.
+   *
    * @generated from field: toshi.workspace.v1.SecretGranteeKind kind = 4;
    */
   kind: SecretGranteeKind;
 
   /**
+   * The grant's grantee, as the kind names it.
+   *
    * @generated from field: string grantee = 5;
    */
   grantee: string;
 };
 
 /**
+ * RevokeSecretSetRequest removes one grant of a set.
+ *
  * @generated from message toshi.workspace.v1.RevokeSecretSetRequest
  */
 export type RevokeSecretSetRequestJson = {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
 
   /**
+   * The grant's kind.
+   *
    * @generated from field: toshi.workspace.v1.SecretGranteeKind kind = 4;
    */
   kind?: SecretGranteeKindJson;
 
   /**
+   * The grant's grantee, as the kind names it.
+   *
    * @generated from field: string grantee = 5;
    */
   grantee?: string;
@@ -1441,12 +1759,16 @@ export const RevokeSecretSetRequestSchema: GenMessage<RevokeSecretSetRequest, {j
   messageDesc(file_toshi_workspace_v1_secrets, 22);
 
 /**
+ * RevokeSecretSetResponse is the answer of a revoke, and holds nothing.
+ *
  * @generated from message toshi.workspace.v1.RevokeSecretSetResponse
  */
 export type RevokeSecretSetResponse = Message<"toshi.workspace.v1.RevokeSecretSetResponse"> & {
 };
 
 /**
+ * RevokeSecretSetResponse is the answer of a revoke, and holds nothing.
+ *
  * @generated from message toshi.workspace.v1.RevokeSecretSetResponse
  */
 export type RevokeSecretSetResponseJson = {
@@ -1460,20 +1782,28 @@ export const RevokeSecretSetResponseSchema: GenMessage<RevokeSecretSetResponse, 
   messageDesc(file_toshi_workspace_v1_secrets, 23);
 
 /**
+ * ListSecretSetGrantsRequest asks for a set's grants.
+ *
  * @generated from message toshi.workspace.v1.ListSecretSetGrantsRequest
  */
 export type ListSecretSetGrantsRequest = Message<"toshi.workspace.v1.ListSecretSetGrantsRequest"> & {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared: boolean;
@@ -1494,20 +1824,28 @@ export type ListSecretSetGrantsRequest = Message<"toshi.workspace.v1.ListSecretS
 };
 
 /**
+ * ListSecretSetGrantsRequest asks for a set's grants.
+ *
  * @generated from message toshi.workspace.v1.ListSecretSetGrantsRequest
  */
 export type ListSecretSetGrantsRequestJson = {
   /**
+   * The set's project, by name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name; empty for the shared set.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The set is the project's shared set; not with environment.
+   *
    * @generated from field: bool shared = 3;
    */
   shared?: boolean;
@@ -1535,10 +1873,14 @@ export const ListSecretSetGrantsRequestSchema: GenMessage<ListSecretSetGrantsReq
   messageDesc(file_toshi_workspace_v1_secrets, 24);
 
 /**
+ * ListSecretSetGrantsResponse is one page of grants, by kind and grantee.
+ *
  * @generated from message toshi.workspace.v1.ListSecretSetGrantsResponse
  */
 export type ListSecretSetGrantsResponse = Message<"toshi.workspace.v1.ListSecretSetGrantsResponse"> & {
   /**
+   * The page's grants.
+   *
    * @generated from field: repeated toshi.workspace.v1.SecretGrant grants = 1;
    */
   grants: SecretGrant[];
@@ -1552,10 +1894,14 @@ export type ListSecretSetGrantsResponse = Message<"toshi.workspace.v1.ListSecret
 };
 
 /**
+ * ListSecretSetGrantsResponse is one page of grants, by kind and grantee.
+ *
  * @generated from message toshi.workspace.v1.ListSecretSetGrantsResponse
  */
 export type ListSecretSetGrantsResponseJson = {
   /**
+   * The page's grants.
+   *
    * @generated from field: repeated toshi.workspace.v1.SecretGrant grants = 1;
    */
   grants?: SecretGrantJson[];
@@ -1582,6 +1928,8 @@ export const ListSecretSetGrantsResponseSchema: GenMessage<ListSecretSetGrantsRe
  */
 export enum SecretGranteeKind {
   /**
+   * The kind is unset; a call that names it is INVALID_ARGUMENT.
+   *
    * @generated from enum value: SECRET_GRANTEE_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

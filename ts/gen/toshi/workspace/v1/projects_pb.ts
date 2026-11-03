@@ -26,16 +26,24 @@ export const file_toshi_workspace_v1_projects: GenFile = /*@__PURE__*/
  */
 export type Project = Message<"toshi.workspace.v1.Project"> & {
   /**
+   * The project's name, unique among the workspace's projects. Every
+   * call that names a project gives this name.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * When the project was created. Output only.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 2;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * The project's environments, by name, each with its overrides; a
+   * caller limited to an environment gets only that one.
+   *
    * @generated from field: repeated toshi.workspace.v1.ProjectEnvironment environments = 3;
    */
   environments: ProjectEnvironment[];
@@ -147,16 +155,24 @@ export type Project = Message<"toshi.workspace.v1.Project"> & {
  */
 export type ProjectJson = {
   /**
+   * The project's name, unique among the workspace's projects. Every
+   * call that names a project gives this name.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
 
   /**
+   * When the project was created. Output only.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 2;
    */
   createdAt?: TimestampJson;
 
   /**
+   * The project's environments, by name, each with its overrides; a
+   * caller limited to an environment gets only that one.
+   *
    * @generated from field: repeated toshi.workspace.v1.ProjectEnvironment environments = 3;
    */
   environments?: ProjectEnvironmentJson[];
@@ -373,6 +389,8 @@ export type ProjectAdmission = Message<"toshi.workspace.v1.ProjectAdmission"> & 
   updatedBy: string;
 
   /**
+   * When the webhook was last set.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 4;
    */
   updatedAt?: Timestamp | undefined;
@@ -414,6 +432,8 @@ export type ProjectAdmissionJson = {
   updatedBy?: string;
 
   /**
+   * When the webhook was last set.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 4;
    */
   updatedAt?: TimestampJson;
@@ -473,6 +493,8 @@ export type ProjectRecordingDefaults = Message<"toshi.workspace.v1.ProjectRecord
   updatedBy: string;
 
   /**
+   * When the defaults were last set; unset when the project set none.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 5;
    */
   updatedAt?: Timestamp | undefined;
@@ -542,6 +564,8 @@ export type ProjectRecordingDefaultsJson = {
   updatedBy?: string;
 
   /**
+   * When the defaults were last set; unset when the project set none.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 5;
    */
   updatedAt?: TimestampJson;
@@ -578,6 +602,9 @@ export const ProjectRecordingDefaultsSchema: GenMessage<ProjectRecordingDefaults
  */
 export type ProjectEnvironment = Message<"toshi.workspace.v1.ProjectEnvironment"> & {
   /**
+   * The environment's name, its kind; a project has at most one
+   * environment of a kind.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
@@ -687,6 +714,9 @@ export type ProjectEnvironment = Message<"toshi.workspace.v1.ProjectEnvironment"
  */
 export type ProjectEnvironmentJson = {
   /**
+   * The environment's name, its kind; a project has at most one
+   * environment of a kind.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
@@ -818,6 +848,8 @@ export type Repository = Message<"toshi.workspace.v1.Repository"> & {
   project: string;
 
   /**
+   * When the repository's claim on project was made, or moved to it.
+   *
    * @generated from field: google.protobuf.Timestamp claimed_at = 3;
    */
   claimedAt?: Timestamp | undefined;
@@ -845,6 +877,8 @@ export type RepositoryJson = {
   project?: string;
 
   /**
+   * When the repository's claim on project was made, or moved to it.
+   *
    * @generated from field: google.protobuf.Timestamp claimed_at = 3;
    */
   claimedAt?: TimestampJson;
@@ -858,6 +892,8 @@ export const RepositorySchema: GenMessage<Repository, {jsonType: RepositoryJson}
   messageDesc(file_toshi_workspace_v1_projects, 5);
 
 /**
+ * ListProjectsRequest selects one page of the workspace's projects.
+ *
  * @generated from message toshi.workspace.v1.ListProjectsRequest
  */
 export type ListProjectsRequest = Message<"toshi.workspace.v1.ListProjectsRequest"> & {
@@ -884,6 +920,8 @@ export type ListProjectsRequest = Message<"toshi.workspace.v1.ListProjectsReques
 };
 
 /**
+ * ListProjectsRequest selects one page of the workspace's projects.
+ *
  * @generated from message toshi.workspace.v1.ListProjectsRequest
  */
 export type ListProjectsRequestJson = {
@@ -917,10 +955,14 @@ export const ListProjectsRequestSchema: GenMessage<ListProjectsRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_projects, 6);
 
 /**
+ * ListProjectsResponse carries one page of the workspace's projects.
+ *
  * @generated from message toshi.workspace.v1.ListProjectsResponse
  */
 export type ListProjectsResponse = Message<"toshi.workspace.v1.ListProjectsResponse"> & {
   /**
+   * The page's projects, by name, each with its environments by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Project projects = 1;
    */
   projects: Project[];
@@ -943,10 +985,14 @@ export type ListProjectsResponse = Message<"toshi.workspace.v1.ListProjectsRespo
 };
 
 /**
+ * ListProjectsResponse carries one page of the workspace's projects.
+ *
  * @generated from message toshi.workspace.v1.ListProjectsResponse
  */
 export type ListProjectsResponseJson = {
   /**
+   * The page's projects, by name, each with its environments by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Project projects = 1;
    */
   projects?: ProjectJson[];
@@ -1029,6 +1075,9 @@ export const TokenLimitSchema: GenMessage<TokenLimit, {jsonType: TokenLimitJson}
   messageDesc(file_toshi_workspace_v1_projects, 8);
 
 /**
+ * ListRepositoriesRequest selects one page of the repositories the
+ * workspace's projects claim.
+ *
  * @generated from message toshi.workspace.v1.ListRepositoriesRequest
  */
 export type ListRepositoriesRequest = Message<"toshi.workspace.v1.ListRepositoriesRequest"> & {
@@ -1055,6 +1104,9 @@ export type ListRepositoriesRequest = Message<"toshi.workspace.v1.ListRepositori
 };
 
 /**
+ * ListRepositoriesRequest selects one page of the repositories the
+ * workspace's projects claim.
+ *
  * @generated from message toshi.workspace.v1.ListRepositoriesRequest
  */
 export type ListRepositoriesRequestJson = {
@@ -1088,10 +1140,14 @@ export const ListRepositoriesRequestSchema: GenMessage<ListRepositoriesRequest, 
   messageDesc(file_toshi_workspace_v1_projects, 9);
 
 /**
+ * ListRepositoriesResponse carries one page of claimed repositories.
+ *
  * @generated from message toshi.workspace.v1.ListRepositoriesResponse
  */
 export type ListRepositoriesResponse = Message<"toshi.workspace.v1.ListRepositoriesResponse"> & {
   /**
+   * The page's repositories, by repository.
+   *
    * @generated from field: repeated toshi.workspace.v1.Repository repositories = 1;
    */
   repositories: Repository[];
@@ -1105,10 +1161,14 @@ export type ListRepositoriesResponse = Message<"toshi.workspace.v1.ListRepositor
 };
 
 /**
+ * ListRepositoriesResponse carries one page of claimed repositories.
+ *
  * @generated from message toshi.workspace.v1.ListRepositoriesResponse
  */
 export type ListRepositoriesResponseJson = {
   /**
+   * The page's repositories, by repository.
+   *
    * @generated from field: repeated toshi.workspace.v1.Repository repositories = 1;
    */
   repositories?: RepositoryJson[];
@@ -1129,30 +1189,48 @@ export const ListRepositoriesResponseSchema: GenMessage<ListRepositoriesResponse
   messageDesc(file_toshi_workspace_v1_projects, 10);
 
 /**
+ * CreateProjectRequest carries the project's name and a request key.
+ *
  * @generated from message toshi.workspace.v1.CreateProjectRequest
  */
 export type CreateProjectRequest = Message<"toshi.workspace.v1.CreateProjectRequest"> & {
   /**
+   * The project's name, unique among the workspace's projects. Empty is
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey: string;
 };
 
 /**
+ * CreateProjectRequest carries the project's name and a request key.
+ *
  * @generated from message toshi.workspace.v1.CreateProjectRequest
  */
 export type CreateProjectRequestJson = {
   /**
+   * The project's name, unique among the workspace's projects. Empty is
+   * INVALID_ARGUMENT.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 2;
    */
   requestKey?: string;
@@ -1166,20 +1244,30 @@ export const CreateProjectRequestSchema: GenMessage<CreateProjectRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_projects, 11);
 
 /**
+ * CreateProjectResponse carries the project made, with its three
+ * environments.
+ *
  * @generated from message toshi.workspace.v1.CreateProjectResponse
  */
 export type CreateProjectResponse = Message<"toshi.workspace.v1.CreateProjectResponse"> & {
   /**
+   * The project as stored, with its three environments.
+   *
    * @generated from field: toshi.workspace.v1.Project project = 1;
    */
   project?: Project | undefined;
 };
 
 /**
+ * CreateProjectResponse carries the project made, with its three
+ * environments.
+ *
  * @generated from message toshi.workspace.v1.CreateProjectResponse
  */
 export type CreateProjectResponseJson = {
   /**
+   * The project as stored, with its three environments.
+   *
    * @generated from field: toshi.workspace.v1.Project project = 1;
    */
   project?: ProjectJson;
@@ -1309,6 +1397,8 @@ export const RestoreProjectResponseSchema: GenMessage<RestoreProjectResponse, {j
   messageDesc(file_toshi_workspace_v1_projects, 16);
 
 /**
+ * UpdateProjectRequest carries the project and the fields to set.
+ *
  * @generated from message toshi.workspace.v1.UpdateProjectRequest
  */
 export type UpdateProjectRequest = Message<"toshi.workspace.v1.UpdateProjectRequest"> & {
@@ -1332,6 +1422,8 @@ export type UpdateProjectRequest = Message<"toshi.workspace.v1.UpdateProjectRequ
 };
 
 /**
+ * UpdateProjectRequest carries the project and the fields to set.
+ *
  * @generated from message toshi.workspace.v1.UpdateProjectRequest
  */
 export type UpdateProjectRequestJson = {
@@ -1362,20 +1454,28 @@ export const UpdateProjectRequestSchema: GenMessage<UpdateProjectRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_projects, 17);
 
 /**
+ * UpdateProjectResponse is the project as stored after the change.
+ *
  * @generated from message toshi.workspace.v1.UpdateProjectResponse
  */
 export type UpdateProjectResponse = Message<"toshi.workspace.v1.UpdateProjectResponse"> & {
   /**
+   * The project as stored after the change.
+   *
    * @generated from field: toshi.workspace.v1.Project project = 1;
    */
   project?: Project | undefined;
 };
 
 /**
+ * UpdateProjectResponse is the project as stored after the change.
+ *
  * @generated from message toshi.workspace.v1.UpdateProjectResponse
  */
 export type UpdateProjectResponseJson = {
   /**
+   * The project as stored after the change.
+   *
    * @generated from field: toshi.workspace.v1.Project project = 1;
    */
   project?: ProjectJson;
@@ -1389,6 +1489,9 @@ export const UpdateProjectResponseSchema: GenMessage<UpdateProjectResponse, {jso
   messageDesc(file_toshi_workspace_v1_projects, 18);
 
 /**
+ * ClaimRepositoryRequest names the repository and the project that is
+ * to claim it.
+ *
  * @generated from message toshi.workspace.v1.ClaimRepositoryRequest
  */
 export type ClaimRepositoryRequest = Message<"toshi.workspace.v1.ClaimRepositoryRequest"> & {
@@ -1408,6 +1511,9 @@ export type ClaimRepositoryRequest = Message<"toshi.workspace.v1.ClaimRepository
 };
 
 /**
+ * ClaimRepositoryRequest names the repository and the project that is
+ * to claim it.
+ *
  * @generated from message toshi.workspace.v1.ClaimRepositoryRequest
  */
 export type ClaimRepositoryRequestJson = {
@@ -1434,10 +1540,14 @@ export const ClaimRepositoryRequestSchema: GenMessage<ClaimRepositoryRequest, {j
   messageDesc(file_toshi_workspace_v1_projects, 19);
 
 /**
+ * ClaimRepositoryResponse carries the claim as stored.
+ *
  * @generated from message toshi.workspace.v1.ClaimRepositoryResponse
  */
 export type ClaimRepositoryResponse = Message<"toshi.workspace.v1.ClaimRepositoryResponse"> & {
   /**
+   * The claim as stored, with its time.
+   *
    * @generated from field: toshi.workspace.v1.Repository repository = 1;
    */
   repository?: Repository | undefined;
@@ -1452,10 +1562,14 @@ export type ClaimRepositoryResponse = Message<"toshi.workspace.v1.ClaimRepositor
 };
 
 /**
+ * ClaimRepositoryResponse carries the claim as stored.
+ *
  * @generated from message toshi.workspace.v1.ClaimRepositoryResponse
  */
 export type ClaimRepositoryResponseJson = {
   /**
+   * The claim as stored, with its time.
+   *
    * @generated from field: toshi.workspace.v1.Repository repository = 1;
    */
   repository?: RepositoryJson;
@@ -1477,6 +1591,8 @@ export const ClaimRepositoryResponseSchema: GenMessage<ClaimRepositoryResponse, 
   messageDesc(file_toshi_workspace_v1_projects, 20);
 
 /**
+ * GetProjectRequest names the project to read.
+ *
  * @generated from message toshi.workspace.v1.GetProjectRequest
  */
 export type GetProjectRequest = Message<"toshi.workspace.v1.GetProjectRequest"> & {
@@ -1489,6 +1605,8 @@ export type GetProjectRequest = Message<"toshi.workspace.v1.GetProjectRequest"> 
 };
 
 /**
+ * GetProjectRequest names the project to read.
+ *
  * @generated from message toshi.workspace.v1.GetProjectRequest
  */
 export type GetProjectRequestJson = {
@@ -1508,20 +1626,28 @@ export const GetProjectRequestSchema: GenMessage<GetProjectRequest, {jsonType: G
   messageDesc(file_toshi_workspace_v1_projects, 21);
 
 /**
+ * GetProjectResponse carries one project with its environments.
+ *
  * @generated from message toshi.workspace.v1.GetProjectResponse
  */
 export type GetProjectResponse = Message<"toshi.workspace.v1.GetProjectResponse"> & {
   /**
+   * The project, with the environments the caller's limit reaches.
+   *
    * @generated from field: toshi.workspace.v1.Project project = 1;
    */
   project?: Project | undefined;
 };
 
 /**
+ * GetProjectResponse carries one project with its environments.
+ *
  * @generated from message toshi.workspace.v1.GetProjectResponse
  */
 export type GetProjectResponseJson = {
   /**
+   * The project, with the environments the caller's limit reaches.
+   *
    * @generated from field: toshi.workspace.v1.Project project = 1;
    */
   project?: ProjectJson;
@@ -1535,6 +1661,9 @@ export const GetProjectResponseSchema: GenMessage<GetProjectResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_projects, 22);
 
 /**
+ * CreateEnvironmentRequest carries the environment's project, kind and
+ * management mark.
+ *
  * @generated from message toshi.workspace.v1.CreateEnvironmentRequest
  */
 export type CreateEnvironmentRequest = Message<"toshi.workspace.v1.CreateEnvironmentRequest"> & {
@@ -1554,6 +1683,10 @@ export type CreateEnvironmentRequest = Message<"toshi.workspace.v1.CreateEnviron
   kind: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 3;
    */
   requestKey: string;
@@ -1567,22 +1700,35 @@ export type CreateEnvironmentRequest = Message<"toshi.workspace.v1.CreateEnviron
   managedBy: string;
 
   /**
+   * The SHA-256 of the manifest file that set the object, as 64
+   * lowercase hex characters. Required when managed_by is "manifest".
+   *
    * @generated from field: string manifest_digest = 5;
    */
   manifestDigest: string;
 
   /**
+   * The field paths the manifest declares, at least one and at most 64,
+   * each a dotted path of lowercase letters, digits and _. Required
+   * when managed_by is "manifest".
+   *
    * @generated from field: repeated string managed_fields = 6;
    */
   managedFields: string[];
 
   /**
+   * How the manifest came to manage the object: "created" or
+   * "adopted". Required when managed_by is "manifest".
+   *
    * @generated from field: string manifest_origin = 7;
    */
   manifestOrigin: string;
 };
 
 /**
+ * CreateEnvironmentRequest carries the environment's project, kind and
+ * management mark.
+ *
  * @generated from message toshi.workspace.v1.CreateEnvironmentRequest
  */
 export type CreateEnvironmentRequestJson = {
@@ -1602,6 +1748,10 @@ export type CreateEnvironmentRequestJson = {
   kind?: string;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+   * key and request return the first answer; a different request with the
+   * same key is refused. Keys are kept for 30 days by default.
+   *
    * @generated from field: string request_key = 3;
    */
   requestKey?: string;
@@ -1615,16 +1765,26 @@ export type CreateEnvironmentRequestJson = {
   managedBy?: string;
 
   /**
+   * The SHA-256 of the manifest file that set the object, as 64
+   * lowercase hex characters. Required when managed_by is "manifest".
+   *
    * @generated from field: string manifest_digest = 5;
    */
   manifestDigest?: string;
 
   /**
+   * The field paths the manifest declares, at least one and at most 64,
+   * each a dotted path of lowercase letters, digits and _. Required
+   * when managed_by is "manifest".
+   *
    * @generated from field: repeated string managed_fields = 6;
    */
   managedFields?: string[];
 
   /**
+   * How the manifest came to manage the object: "created" or
+   * "adopted". Required when managed_by is "manifest".
+   *
    * @generated from field: string manifest_origin = 7;
    */
   manifestOrigin?: string;
@@ -1638,20 +1798,28 @@ export const CreateEnvironmentRequestSchema: GenMessage<CreateEnvironmentRequest
   messageDesc(file_toshi_workspace_v1_projects, 23);
 
 /**
+ * CreateEnvironmentResponse carries the environment made.
+ *
  * @generated from message toshi.workspace.v1.CreateEnvironmentResponse
  */
 export type CreateEnvironmentResponse = Message<"toshi.workspace.v1.CreateEnvironmentResponse"> & {
   /**
+   * The environment as stored.
+   *
    * @generated from field: toshi.workspace.v1.ProjectEnvironment environment = 1;
    */
   environment?: ProjectEnvironment | undefined;
 };
 
 /**
+ * CreateEnvironmentResponse carries the environment made.
+ *
  * @generated from message toshi.workspace.v1.CreateEnvironmentResponse
  */
 export type CreateEnvironmentResponseJson = {
   /**
+   * The environment as stored.
+   *
    * @generated from field: toshi.workspace.v1.ProjectEnvironment environment = 1;
    */
   environment?: ProjectEnvironmentJson;
@@ -1665,6 +1833,9 @@ export const CreateEnvironmentResponseSchema: GenMessage<CreateEnvironmentRespon
   messageDesc(file_toshi_workspace_v1_projects, 24);
 
 /**
+ * DeleteEnvironmentRequest names the project and the environment to
+ * delete.
+ *
  * @generated from message toshi.workspace.v1.DeleteEnvironmentRequest
  */
 export type DeleteEnvironmentRequest = Message<"toshi.workspace.v1.DeleteEnvironmentRequest"> & {
@@ -1684,6 +1855,9 @@ export type DeleteEnvironmentRequest = Message<"toshi.workspace.v1.DeleteEnviron
 };
 
 /**
+ * DeleteEnvironmentRequest names the project and the environment to
+ * delete.
+ *
  * @generated from message toshi.workspace.v1.DeleteEnvironmentRequest
  */
 export type DeleteEnvironmentRequestJson = {
@@ -1710,12 +1884,16 @@ export const DeleteEnvironmentRequestSchema: GenMessage<DeleteEnvironmentRequest
   messageDesc(file_toshi_workspace_v1_projects, 25);
 
 /**
+ * DeleteEnvironmentResponse is the answer to DeleteEnvironment.
+ *
  * @generated from message toshi.workspace.v1.DeleteEnvironmentResponse
  */
 export type DeleteEnvironmentResponse = Message<"toshi.workspace.v1.DeleteEnvironmentResponse"> & {
 };
 
 /**
+ * DeleteEnvironmentResponse is the answer to DeleteEnvironment.
+ *
  * @generated from message toshi.workspace.v1.DeleteEnvironmentResponse
  */
 export type DeleteEnvironmentResponseJson = {
@@ -1812,6 +1990,8 @@ export const BranchRuleSchema: GenMessage<BranchRule, {jsonType: BranchRuleJson}
   messageDesc(file_toshi_workspace_v1_projects, 27);
 
 /**
+ * ListBranchRulesRequest selects one page of a project's branch rules.
+ *
  * @generated from message toshi.workspace.v1.ListBranchRulesRequest
  */
 export type ListBranchRulesRequest = Message<"toshi.workspace.v1.ListBranchRulesRequest"> & {
@@ -1838,6 +2018,8 @@ export type ListBranchRulesRequest = Message<"toshi.workspace.v1.ListBranchRules
 };
 
 /**
+ * ListBranchRulesRequest selects one page of a project's branch rules.
+ *
  * @generated from message toshi.workspace.v1.ListBranchRulesRequest
  */
 export type ListBranchRulesRequestJson = {
@@ -1871,10 +2053,14 @@ export const ListBranchRulesRequestSchema: GenMessage<ListBranchRulesRequest, {j
   messageDesc(file_toshi_workspace_v1_projects, 28);
 
 /**
+ * ListBranchRulesResponse carries one page of a project's rules.
+ *
  * @generated from message toshi.workspace.v1.ListBranchRulesResponse
  */
 export type ListBranchRulesResponse = Message<"toshi.workspace.v1.ListBranchRulesResponse"> & {
   /**
+   * The page's rules, in order.
+   *
    * @generated from field: repeated toshi.workspace.v1.BranchRule rules = 1;
    */
   rules: BranchRule[];
@@ -1888,10 +2074,14 @@ export type ListBranchRulesResponse = Message<"toshi.workspace.v1.ListBranchRule
 };
 
 /**
+ * ListBranchRulesResponse carries one page of a project's rules.
+ *
  * @generated from message toshi.workspace.v1.ListBranchRulesResponse
  */
 export type ListBranchRulesResponseJson = {
   /**
+   * The page's rules, in order.
+   *
    * @generated from field: repeated toshi.workspace.v1.BranchRule rules = 1;
    */
   rules?: BranchRuleJson[];
@@ -2054,6 +2244,8 @@ export const EgressRuleSchema: GenMessage<EgressRule, {jsonType: EgressRuleJson}
   messageDesc(file_toshi_workspace_v1_projects, 31);
 
 /**
+ * GetProjectNetworkRequest names the project whose policy to read.
+ *
  * @generated from message toshi.workspace.v1.GetProjectNetworkRequest
  */
 export type GetProjectNetworkRequest = Message<"toshi.workspace.v1.GetProjectNetworkRequest"> & {
@@ -2066,6 +2258,8 @@ export type GetProjectNetworkRequest = Message<"toshi.workspace.v1.GetProjectNet
 };
 
 /**
+ * GetProjectNetworkRequest names the project whose policy to read.
+ *
  * @generated from message toshi.workspace.v1.GetProjectNetworkRequest
  */
 export type GetProjectNetworkRequestJson = {
@@ -2085,10 +2279,15 @@ export const GetProjectNetworkRequestSchema: GenMessage<GetProjectNetworkRequest
   messageDesc(file_toshi_workspace_v1_projects, 32);
 
 /**
+ * GetProjectNetworkResponse carries a project's network policy and who
+ * set it last.
+ *
  * @generated from message toshi.workspace.v1.GetProjectNetworkResponse
  */
 export type GetProjectNetworkResponse = Message<"toshi.workspace.v1.GetProjectNetworkResponse"> & {
   /**
+   * The policy as stored; allow-all when the project never set one.
+   *
    * @generated from field: toshi.workspace.v1.NetworkPolicy network = 1;
    */
   network?: NetworkPolicy | undefined;
@@ -2102,16 +2301,23 @@ export type GetProjectNetworkResponse = Message<"toshi.workspace.v1.GetProjectNe
   updatedBy: string;
 
   /**
+   * When it was last set; unset when it never was.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 3;
    */
   updatedAt?: Timestamp | undefined;
 };
 
 /**
+ * GetProjectNetworkResponse carries a project's network policy and who
+ * set it last.
+ *
  * @generated from message toshi.workspace.v1.GetProjectNetworkResponse
  */
 export type GetProjectNetworkResponseJson = {
   /**
+   * The policy as stored; allow-all when the project never set one.
+   *
    * @generated from field: toshi.workspace.v1.NetworkPolicy network = 1;
    */
   network?: NetworkPolicyJson;
@@ -2125,6 +2331,8 @@ export type GetProjectNetworkResponseJson = {
   updatedBy?: string;
 
   /**
+   * When it was last set; unset when it never was.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 3;
    */
   updatedAt?: TimestampJson;
@@ -2138,6 +2346,8 @@ export const GetProjectNetworkResponseSchema: GenMessage<GetProjectNetworkRespon
   messageDesc(file_toshi_workspace_v1_projects, 33);
 
 /**
+ * GetEnvironmentNetworkRequest names the environment to read.
+ *
  * @generated from message toshi.workspace.v1.GetEnvironmentNetworkRequest
  */
 export type GetEnvironmentNetworkRequest = Message<"toshi.workspace.v1.GetEnvironmentNetworkRequest"> & {
@@ -2157,6 +2367,8 @@ export type GetEnvironmentNetworkRequest = Message<"toshi.workspace.v1.GetEnviro
 };
 
 /**
+ * GetEnvironmentNetworkRequest names the environment to read.
+ *
  * @generated from message toshi.workspace.v1.GetEnvironmentNetworkRequest
  */
 export type GetEnvironmentNetworkRequestJson = {
@@ -2183,10 +2395,15 @@ export const GetEnvironmentNetworkRequestSchema: GenMessage<GetEnvironmentNetwor
   messageDesc(file_toshi_workspace_v1_projects, 34);
 
 /**
+ * GetEnvironmentNetworkResponse carries an environment's network
+ * policy and who set it last.
+ *
  * @generated from message toshi.workspace.v1.GetEnvironmentNetworkResponse
  */
 export type GetEnvironmentNetworkResponse = Message<"toshi.workspace.v1.GetEnvironmentNetworkResponse"> & {
   /**
+   * The policy as stored; allow-all when the environment never set one.
+   *
    * @generated from field: toshi.workspace.v1.NetworkPolicy network = 1;
    */
   network?: NetworkPolicy | undefined;
@@ -2200,16 +2417,23 @@ export type GetEnvironmentNetworkResponse = Message<"toshi.workspace.v1.GetEnvir
   updatedBy: string;
 
   /**
+   * When it was last set; unset when it never was.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 3;
    */
   updatedAt?: Timestamp | undefined;
 };
 
 /**
+ * GetEnvironmentNetworkResponse carries an environment's network
+ * policy and who set it last.
+ *
  * @generated from message toshi.workspace.v1.GetEnvironmentNetworkResponse
  */
 export type GetEnvironmentNetworkResponseJson = {
   /**
+   * The policy as stored; allow-all when the environment never set one.
+   *
    * @generated from field: toshi.workspace.v1.NetworkPolicy network = 1;
    */
   network?: NetworkPolicyJson;
@@ -2223,6 +2447,8 @@ export type GetEnvironmentNetworkResponseJson = {
   updatedBy?: string;
 
   /**
+   * When it was last set; unset when it never was.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 3;
    */
   updatedAt?: TimestampJson;
@@ -2350,6 +2576,8 @@ export const EnvironmentRetentionSchema: GenMessage<EnvironmentRetention, {jsonT
   messageDesc(file_toshi_workspace_v1_projects, 37);
 
 /**
+ * GetEnvironmentRetentionRequest names the environment to read.
+ *
  * @generated from message toshi.workspace.v1.GetEnvironmentRetentionRequest
  */
 export type GetEnvironmentRetentionRequest = Message<"toshi.workspace.v1.GetEnvironmentRetentionRequest"> & {
@@ -2369,6 +2597,8 @@ export type GetEnvironmentRetentionRequest = Message<"toshi.workspace.v1.GetEnvi
 };
 
 /**
+ * GetEnvironmentRetentionRequest names the environment to read.
+ *
  * @generated from message toshi.workspace.v1.GetEnvironmentRetentionRequest
  */
 export type GetEnvironmentRetentionRequestJson = {
@@ -2395,6 +2625,9 @@ export const GetEnvironmentRetentionRequestSchema: GenMessage<GetEnvironmentRete
   messageDesc(file_toshi_workspace_v1_projects, 38);
 
 /**
+ * GetEnvironmentRetentionResponse carries an environment's retention
+ * override, what applies to it and who set it last.
+ *
  * @generated from message toshi.workspace.v1.GetEnvironmentRetentionResponse
  */
 export type GetEnvironmentRetentionResponse = Message<"toshi.workspace.v1.GetEnvironmentRetentionResponse"> & {
@@ -2422,12 +2655,17 @@ export type GetEnvironmentRetentionResponse = Message<"toshi.workspace.v1.GetEnv
   updatedBy: string;
 
   /**
+   * When the override was last set; unset when none is set.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 4;
    */
   updatedAt?: Timestamp | undefined;
 };
 
 /**
+ * GetEnvironmentRetentionResponse carries an environment's retention
+ * override, what applies to it and who set it last.
+ *
  * @generated from message toshi.workspace.v1.GetEnvironmentRetentionResponse
  */
 export type GetEnvironmentRetentionResponseJson = {
@@ -2455,6 +2693,8 @@ export type GetEnvironmentRetentionResponseJson = {
   updatedBy?: string;
 
   /**
+   * When the override was last set; unset when none is set.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 4;
    */
   updatedAt?: TimestampJson;
@@ -2468,6 +2708,8 @@ export const GetEnvironmentRetentionResponseSchema: GenMessage<GetEnvironmentRet
   messageDesc(file_toshi_workspace_v1_projects, 39);
 
 /**
+ * UpdateEnvironmentRequest carries the environment and the update mask.
+ *
  * @generated from message toshi.workspace.v1.UpdateEnvironmentRequest
  */
 export type UpdateEnvironmentRequest = Message<"toshi.workspace.v1.UpdateEnvironmentRequest"> & {
@@ -2500,6 +2742,8 @@ export type UpdateEnvironmentRequest = Message<"toshi.workspace.v1.UpdateEnviron
 };
 
 /**
+ * UpdateEnvironmentRequest carries the environment and the update mask.
+ *
  * @generated from message toshi.workspace.v1.UpdateEnvironmentRequest
  */
 export type UpdateEnvironmentRequestJson = {
@@ -2539,6 +2783,8 @@ export const UpdateEnvironmentRequestSchema: GenMessage<UpdateEnvironmentRequest
   messageDesc(file_toshi_workspace_v1_projects, 40);
 
 /**
+ * UpdateEnvironmentResponse is the environment as stored.
+ *
  * @generated from message toshi.workspace.v1.UpdateEnvironmentResponse
  */
 export type UpdateEnvironmentResponse = Message<"toshi.workspace.v1.UpdateEnvironmentResponse"> & {
@@ -2551,6 +2797,8 @@ export type UpdateEnvironmentResponse = Message<"toshi.workspace.v1.UpdateEnviro
 };
 
 /**
+ * UpdateEnvironmentResponse is the environment as stored.
+ *
  * @generated from message toshi.workspace.v1.UpdateEnvironmentResponse
  */
 export type UpdateEnvironmentResponseJson = {
@@ -2570,6 +2818,9 @@ export const UpdateEnvironmentResponseSchema: GenMessage<UpdateEnvironmentRespon
   messageDesc(file_toshi_workspace_v1_projects, 41);
 
 /**
+ * RaiseCompatibilityDateRequest carries the project or environment and
+ * the date to move to.
+ *
  * @generated from message toshi.workspace.v1.RaiseCompatibilityDateRequest
  */
 export type RaiseCompatibilityDateRequest = Message<"toshi.workspace.v1.RaiseCompatibilityDateRequest"> & {
@@ -2597,6 +2848,9 @@ export type RaiseCompatibilityDateRequest = Message<"toshi.workspace.v1.RaiseCom
 };
 
 /**
+ * RaiseCompatibilityDateRequest carries the project or environment and
+ * the date to move to.
+ *
  * @generated from message toshi.workspace.v1.RaiseCompatibilityDateRequest
  */
 export type RaiseCompatibilityDateRequestJson = {
@@ -2631,6 +2885,9 @@ export const RaiseCompatibilityDateRequestSchema: GenMessage<RaiseCompatibilityD
   messageDesc(file_toshi_workspace_v1_projects, 42);
 
 /**
+ * RaiseCompatibilityDateResponse carries the project after the raise,
+ * the changes it took and whether the date changed.
+ *
  * @generated from message toshi.workspace.v1.RaiseCompatibilityDateResponse
  */
 export type RaiseCompatibilityDateResponse = Message<"toshi.workspace.v1.RaiseCompatibilityDateResponse"> & {
@@ -2658,6 +2915,9 @@ export type RaiseCompatibilityDateResponse = Message<"toshi.workspace.v1.RaiseCo
 };
 
 /**
+ * RaiseCompatibilityDateResponse carries the project after the raise,
+ * the changes it took and whether the date changed.
+ *
  * @generated from message toshi.workspace.v1.RaiseCompatibilityDateResponse
  */
 export type RaiseCompatibilityDateResponseJson = {
@@ -2757,6 +3017,9 @@ export const CompatibilityChangeSchema: GenMessage<CompatibilityChange, {jsonTyp
   messageDesc(file_toshi_workspace_v1_projects, 44);
 
 /**
+ * ListCompatibilityChangesRequest names the project or environment and
+ * the last date to list.
+ *
  * @generated from message toshi.workspace.v1.ListCompatibilityChangesRequest
  */
 export type ListCompatibilityChangesRequest = Message<"toshi.workspace.v1.ListCompatibilityChangesRequest"> & {
@@ -2785,6 +3048,9 @@ export type ListCompatibilityChangesRequest = Message<"toshi.workspace.v1.ListCo
 };
 
 /**
+ * ListCompatibilityChangesRequest names the project or environment and
+ * the last date to list.
+ *
  * @generated from message toshi.workspace.v1.ListCompatibilityChangesRequest
  */
 export type ListCompatibilityChangesRequestJson = {
@@ -2820,6 +3086,9 @@ export const ListCompatibilityChangesRequestSchema: GenMessage<ListCompatibility
   messageDesc(file_toshi_workspace_v1_projects, 45);
 
 /**
+ * ListCompatibilityChangesResponse carries the changes not taken yet and
+ * the dates they fall between.
+ *
  * @generated from message toshi.workspace.v1.ListCompatibilityChangesResponse
  */
 export type ListCompatibilityChangesResponse = Message<"toshi.workspace.v1.ListCompatibilityChangesResponse"> & {
@@ -2846,6 +3115,9 @@ export type ListCompatibilityChangesResponse = Message<"toshi.workspace.v1.ListC
 };
 
 /**
+ * ListCompatibilityChangesResponse carries the changes not taken yet and
+ * the dates they fall between.
+ *
  * @generated from message toshi.workspace.v1.ListCompatibilityChangesResponse
  */
 export type ListCompatibilityChangesResponseJson = {
@@ -2907,16 +3179,22 @@ export type EmbedToken = Message<"toshi.workspace.v1.EmbedToken"> & {
   origins: string[];
 
   /**
+   * Where the token is in its life, as of now. Output only.
+   *
    * @generated from field: toshi.workspace.v1.EmbedTokenState state = 4;
    */
   state: EmbedTokenState;
 
   /**
+   * When it was minted. Output only.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When it stops being spendable. Output only.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 6;
    */
   expiresAt?: Timestamp | undefined;
@@ -2961,11 +3239,16 @@ export type EmbedToken = Message<"toshi.workspace.v1.EmbedToken"> & {
   workloadId: string;
 
   /**
+   * The kind of that workload: "job", "sandbox" or "service". Empty
+   * until spent.
+   *
    * @generated from field: string workload_kind = 12;
    */
   workloadKind: string;
 
   /**
+   * The ID of that workload's environment. Empty until spent.
+   *
    * @generated from field: string environment_id = 13;
    */
   environmentId: string;
@@ -3000,16 +3283,22 @@ export type EmbedTokenJson = {
   origins?: string[];
 
   /**
+   * Where the token is in its life, as of now. Output only.
+   *
    * @generated from field: toshi.workspace.v1.EmbedTokenState state = 4;
    */
   state?: EmbedTokenStateJson;
 
   /**
+   * When it was minted. Output only.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When it stops being spendable. Output only.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 6;
    */
   expiresAt?: TimestampJson;
@@ -3054,11 +3343,16 @@ export type EmbedTokenJson = {
   workloadId?: string;
 
   /**
+   * The kind of that workload: "job", "sandbox" or "service". Empty
+   * until spent.
+   *
    * @generated from field: string workload_kind = 12;
    */
   workloadKind?: string;
 
   /**
+   * The ID of that workload's environment. Empty until spent.
+   *
    * @generated from field: string environment_id = 13;
    */
   environmentId?: string;
@@ -3072,6 +3366,9 @@ export const EmbedTokenSchema: GenMessage<EmbedToken, {jsonType: EmbedTokenJson}
   messageDesc(file_toshi_workspace_v1_projects, 47);
 
 /**
+ * CreateEmbedTokenRequest carries the project, the page origins and the
+ * token's life.
+ *
  * @generated from message toshi.workspace.v1.CreateEmbedTokenRequest
  */
 export type CreateEmbedTokenRequest = Message<"toshi.workspace.v1.CreateEmbedTokenRequest"> & {
@@ -3111,6 +3408,9 @@ export type CreateEmbedTokenRequest = Message<"toshi.workspace.v1.CreateEmbedTok
 };
 
 /**
+ * CreateEmbedTokenRequest carries the project, the page origins and the
+ * token's life.
+ *
  * @generated from message toshi.workspace.v1.CreateEmbedTokenRequest
  */
 export type CreateEmbedTokenRequestJson = {
@@ -3157,10 +3457,14 @@ export const CreateEmbedTokenRequestSchema: GenMessage<CreateEmbedTokenRequest, 
   messageDesc(file_toshi_workspace_v1_projects, 48);
 
 /**
+ * CreateEmbedTokenResponse carries the token as stored and its secret.
+ *
  * @generated from message toshi.workspace.v1.CreateEmbedTokenResponse
  */
 export type CreateEmbedTokenResponse = Message<"toshi.workspace.v1.CreateEmbedTokenResponse"> & {
   /**
+   * The token as stored, without its secret.
+   *
    * @generated from field: toshi.workspace.v1.EmbedToken embed_token = 1;
    */
   embedToken?: EmbedToken | undefined;
@@ -3174,10 +3478,14 @@ export type CreateEmbedTokenResponse = Message<"toshi.workspace.v1.CreateEmbedTo
 };
 
 /**
+ * CreateEmbedTokenResponse carries the token as stored and its secret.
+ *
  * @generated from message toshi.workspace.v1.CreateEmbedTokenResponse
  */
 export type CreateEmbedTokenResponseJson = {
   /**
+   * The token as stored, without its secret.
+   *
    * @generated from field: toshi.workspace.v1.EmbedToken embed_token = 1;
    */
   embedToken?: EmbedTokenJson;
@@ -3198,6 +3506,8 @@ export const CreateEmbedTokenResponseSchema: GenMessage<CreateEmbedTokenResponse
   messageDesc(file_toshi_workspace_v1_projects, 49);
 
 /**
+ * ListEmbedTokensRequest selects one page of a project's embed tokens.
+ *
  * @generated from message toshi.workspace.v1.ListEmbedTokensRequest
  */
 export type ListEmbedTokensRequest = Message<"toshi.workspace.v1.ListEmbedTokensRequest"> & {
@@ -3224,6 +3534,8 @@ export type ListEmbedTokensRequest = Message<"toshi.workspace.v1.ListEmbedTokens
 };
 
 /**
+ * ListEmbedTokensRequest selects one page of a project's embed tokens.
+ *
  * @generated from message toshi.workspace.v1.ListEmbedTokensRequest
  */
 export type ListEmbedTokensRequestJson = {
@@ -3257,10 +3569,14 @@ export const ListEmbedTokensRequestSchema: GenMessage<ListEmbedTokensRequest, {j
   messageDesc(file_toshi_workspace_v1_projects, 50);
 
 /**
+ * ListEmbedTokensResponse carries one page of a project's embed tokens.
+ *
  * @generated from message toshi.workspace.v1.ListEmbedTokensResponse
  */
 export type ListEmbedTokensResponse = Message<"toshi.workspace.v1.ListEmbedTokensResponse"> & {
   /**
+   * The page's tokens, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.EmbedToken embed_tokens = 1;
    */
   embedTokens: EmbedToken[];
@@ -3274,10 +3590,14 @@ export type ListEmbedTokensResponse = Message<"toshi.workspace.v1.ListEmbedToken
 };
 
 /**
+ * ListEmbedTokensResponse carries one page of a project's embed tokens.
+ *
  * @generated from message toshi.workspace.v1.ListEmbedTokensResponse
  */
 export type ListEmbedTokensResponseJson = {
   /**
+   * The page's tokens, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.EmbedToken embed_tokens = 1;
    */
   embedTokens?: EmbedTokenJson[];
@@ -3298,6 +3618,8 @@ export const ListEmbedTokensResponseSchema: GenMessage<ListEmbedTokensResponse, 
   messageDesc(file_toshi_workspace_v1_projects, 51);
 
 /**
+ * RevokeEmbedTokenRequest names the project and the token to revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeEmbedTokenRequest
  */
 export type RevokeEmbedTokenRequest = Message<"toshi.workspace.v1.RevokeEmbedTokenRequest"> & {
@@ -3309,12 +3631,17 @@ export type RevokeEmbedTokenRequest = Message<"toshi.workspace.v1.RevokeEmbedTok
   project: string;
 
   /**
+   * The token's ID. Empty is INVALID_ARGUMENT; a token of another
+   * project or no token is NOT_FOUND.
+   *
    * @generated from field: string embed_token_id = 2;
    */
   embedTokenId: string;
 };
 
 /**
+ * RevokeEmbedTokenRequest names the project and the token to revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeEmbedTokenRequest
  */
 export type RevokeEmbedTokenRequestJson = {
@@ -3326,6 +3653,9 @@ export type RevokeEmbedTokenRequestJson = {
   project?: string;
 
   /**
+   * The token's ID. Empty is INVALID_ARGUMENT; a token of another
+   * project or no token is NOT_FOUND.
+   *
    * @generated from field: string embed_token_id = 2;
    */
   embedTokenId?: string;
@@ -3339,20 +3669,28 @@ export const RevokeEmbedTokenRequestSchema: GenMessage<RevokeEmbedTokenRequest, 
   messageDesc(file_toshi_workspace_v1_projects, 52);
 
 /**
+ * RevokeEmbedTokenResponse carries the token after the revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeEmbedTokenResponse
  */
 export type RevokeEmbedTokenResponse = Message<"toshi.workspace.v1.RevokeEmbedTokenResponse"> & {
   /**
+   * The token as stored after the revoke.
+   *
    * @generated from field: toshi.workspace.v1.EmbedToken embed_token = 1;
    */
   embedToken?: EmbedToken | undefined;
 };
 
 /**
+ * RevokeEmbedTokenResponse carries the token after the revoke.
+ *
  * @generated from message toshi.workspace.v1.RevokeEmbedTokenResponse
  */
 export type RevokeEmbedTokenResponseJson = {
   /**
+   * The token as stored after the revoke.
+   *
    * @generated from field: toshi.workspace.v1.EmbedToken embed_token = 1;
    */
   embedToken?: EmbedTokenJson;
@@ -3462,6 +3800,8 @@ export const ProjectHumanSpansSchema: GenEnum<ProjectHumanSpans, ProjectHumanSpa
  */
 export enum EmbedTokenState {
   /**
+   * Unset; no call returns an embed token without a state.
+   *
    * @generated from enum value: EMBED_TOKEN_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -3481,11 +3821,15 @@ export enum EmbedTokenState {
   USED = 2,
 
   /**
+   * Revoked, whether or not it had been spent.
+   *
    * @generated from enum value: EMBED_TOKEN_STATE_REVOKED = 3;
    */
   REVOKED = 3,
 
   /**
+   * Past expires_at, neither spent nor revoked.
+   *
    * @generated from enum value: EMBED_TOKEN_STATE_EXPIRED = 4;
    */
   EXPIRED = 4,

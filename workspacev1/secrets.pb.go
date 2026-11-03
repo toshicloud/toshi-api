@@ -28,6 +28,7 @@ const (
 type SecretGranteeKind int32
 
 const (
+	// The kind is unset; a call that names it is INVALID_ARGUMENT.
 	SecretGranteeKind_SECRET_GRANTEE_KIND_UNSPECIFIED SecretGranteeKind = 0
 	// VMs of a workload kind: grantee is job, sandbox or service.
 	SecretGranteeKind_SECRET_GRANTEE_KIND_KIND SecretGranteeKind = 1
@@ -87,12 +88,16 @@ func (SecretGranteeKind) EnumDescriptor() ([]byte, []int) {
 
 // SecretSet is a project's set: an environment's, or the shared one.
 type SecretSet struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// Empty for the shared set.
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
-	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The set is the project's shared set: the keys that are the same in
+	// every environment.
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	// When the set was made.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Who manages this object: "manifest" when the project manifest declares
 	// it, empty when nothing does. A manifest apply sets managed_by,
 	// manifest_digest, manifest_origin and managed_fields together.
@@ -210,11 +215,13 @@ func (x *SecretSet) GetKeys() []string {
 // Secret is a key as anyone may see it: never its value.
 type Secret struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The key's name.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The newest version, from 1.
 	Version int64 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
 	// The newest version's size in bytes.
-	Size      int64                  `protobuf:"varint,3,opt,name=size,proto3" json:"size,omitempty"`
+	Size int64 `protobuf:"varint,3,opt,name=size,proto3" json:"size,omitempty"`
+	// When the newest version was set.
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// The user id of the person whose own key it is; empty for a key of the
 	// set.
@@ -319,9 +326,12 @@ func (x *Secret) GetProvider() string {
 
 // SecretVersion is one stored version of a key, without its value.
 type SecretVersion struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Version       int64                  `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
-	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The version's number, from 1.
+	Version int64 `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
+	// The version's size in bytes.
+	Size int64 `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
+	// When the version was set.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -378,10 +388,14 @@ func (x *SecretVersion) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// SecretGrant is one grant of a set: what it lets use the set.
 type SecretGrant struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Kind          SecretGranteeKind      `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.SecretGranteeKind" json:"kind,omitempty"`
-	Grantee       string                 `protobuf:"bytes,2,opt,name=grantee,proto3" json:"grantee,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// What the set is granted to.
+	Kind SecretGranteeKind `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.SecretGranteeKind" json:"kind,omitempty"`
+	// The grantee's name.
+	Grantee string `protobuf:"bytes,2,opt,name=grantee,proto3" json:"grantee,omitempty"`
+	// When the grant was made.
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -438,18 +452,32 @@ func (x *SecretGrant) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// CreateSecretSetRequest makes a set: an environment's, or the project's
+// shared one.
 type CreateSecretSetRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
-	RequestKey  string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The set's project, by name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The set is the project's shared set; not with environment.
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// The management mark goes together: all four fields or none; managed_by
 	// "manifest" needs the digest, an origin and at least one field path.
-	ManagedBy      string   `protobuf:"bytes,5,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
-	ManifestDigest string   `protobuf:"bytes,6,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
-	ManagedFields  []string `protobuf:"bytes,7,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
-	ManifestOrigin string   `protobuf:"bytes,8,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
+	ManagedBy string `protobuf:"bytes,5,opt,name=managed_by,json=managedBy,proto3" json:"managed_by,omitempty"`
+	// The SHA-256 of the manifest file that set the set, as 64 lowercase hex
+	// characters; managed_by "manifest" needs it.
+	ManifestDigest string `protobuf:"bytes,6,opt,name=manifest_digest,json=manifestDigest,proto3" json:"manifest_digest,omitempty"`
+	// The fields of the set the manifest declares, as update mask paths, at
+	// most 64; managed_by "manifest" needs at least one.
+	ManagedFields []string `protobuf:"bytes,7,rep,name=managed_fields,json=managedFields,proto3" json:"managed_fields,omitempty"`
+	// "created" when the apply created the set, "adopted" when it took over
+	// one that already existed; managed_by "manifest" needs it.
+	ManifestOrigin string `protobuf:"bytes,8,opt,name=manifest_origin,json=manifestOrigin,proto3" json:"manifest_origin,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -540,9 +568,11 @@ func (x *CreateSecretSetRequest) GetManifestOrigin() string {
 	return ""
 }
 
+// CreateSecretSetResponse is the set the call made.
 type CreateSecretSetResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Set           *SecretSet             `protobuf:"bytes,1,opt,name=set,proto3" json:"set,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The set as stored.
+	Set           *SecretSet `protobuf:"bytes,1,opt,name=set,proto3" json:"set,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -584,9 +614,11 @@ func (x *CreateSecretSetResponse) GetSet() *SecretSet {
 	return nil
 }
 
+// ListSecretSetsRequest asks for a project's sets, without personal sets.
 type ListSecretSetsRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Project string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// The most sets in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -646,9 +678,11 @@ func (x *ListSecretSetsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListSecretSetsResponse is one page of sets, the shared set first.
 type ListSecretSetsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Sets  []*SecretSet           `protobuf:"bytes,1,rep,name=sets,proto3" json:"sets,omitempty"`
+	// The page's sets.
+	Sets []*SecretSet `protobuf:"bytes,1,rep,name=sets,proto3" json:"sets,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -699,11 +733,15 @@ func (x *ListSecretSetsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// DeleteSecretSetRequest removes a set with its keys, versions and grants.
 type DeleteSecretSetRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared        bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The set's project, by name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The set is the project's shared set; not with environment.
+	Shared        bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -759,6 +797,7 @@ func (x *DeleteSecretSetRequest) GetShared() bool {
 	return false
 }
 
+// DeleteSecretSetResponse is the answer of a delete, and holds nothing.
 type DeleteSecretSetResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -795,6 +834,7 @@ func (*DeleteSecretSetResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{9}
 }
 
+// UpdateSecretSetRequest changes the fields update_mask names on a set.
 type UpdateSecretSetRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// project, environment and shared name the set, as in
@@ -855,6 +895,7 @@ func (x *UpdateSecretSetRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateSecretSetResponse is the set, as stored.
 type UpdateSecretSetResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The set as stored.
@@ -900,14 +941,21 @@ func (x *UpdateSecretSetResponse) GetSet() *SecretSet {
 	return nil
 }
 
+// PutSecretRequest sets a key's value: a new key, or the key's next
+// version.
 type PutSecretRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The key's place: its project and either its environment or shared.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The place is the project's shared set; not with environment.
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
 	// An environment variable's name: a letter or _, then letters, digits or
 	// _, at most 128 characters.
-	Name  string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// The value; it is never returned. Its size counts toward the plan's cap
+	// on stored bytes.
 	Value []byte `protobuf:"bytes,5,opt,name=value,proto3" json:"value,omitempty"`
 	// The key is the caller's own.
 	Own bool `protobuf:"varint,6,opt,name=own,proto3" json:"own,omitempty"`
@@ -998,9 +1046,11 @@ func (x *PutSecretRequest) GetRequestKey() string {
 	return ""
 }
 
+// PutSecretResponse is the key, without its value.
 type PutSecretResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Secret        *Secret                `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The key with its newest version; never its value.
+	Secret        *Secret `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1042,12 +1092,17 @@ func (x *PutSecretResponse) GetSecret() *Secret {
 	return nil
 }
 
+// DeleteSecretRequest removes a key and every version of it.
 type DeleteSecretRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
-	Name        string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The key's place: its project and either its environment or shared.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The place is the project's shared set; not with environment.
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The key's name.
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	// The caller's own key; not with owner.
 	Own bool `protobuf:"varint,5,opt,name=own,proto3" json:"own,omitempty"`
 	// The own key of the person with this user id; not with own.
@@ -1128,6 +1183,7 @@ func (x *DeleteSecretRequest) GetOwner() string {
 	return ""
 }
 
+// DeleteSecretResponse is the answer of a delete, and holds nothing.
 type DeleteSecretResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1164,11 +1220,16 @@ func (*DeleteSecretResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{15}
 }
 
+// ListSecretsRequest asks for the keys of a place: the set's and each
+// person's own.
 type ListSecretsRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The key's place: its project and either its environment or shared.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The place is the project's shared set; not with environment.
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
 	// The most keys in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -1242,9 +1303,11 @@ func (x *ListSecretsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListSecretsResponse is one page of keys, by name and then owner.
 type ListSecretsResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Secrets []*Secret              `protobuf:"bytes,1,rep,name=secrets,proto3" json:"secrets,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's keys; each person's own follow the set's.
+	Secrets []*Secret `protobuf:"bytes,1,rep,name=secrets,proto3" json:"secrets,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1295,12 +1358,17 @@ func (x *ListSecretsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// ListSecretVersionsRequest asks for one key's versions.
 type ListSecretVersionsRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
-	Name        string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The key's place: its project and either its environment or shared.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The place is the project's shared set; not with environment.
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The key's name.
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	// The most versions in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,5,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -1399,9 +1467,11 @@ func (x *ListSecretVersionsRequest) GetOwner() string {
 	return ""
 }
 
+// ListSecretVersionsResponse is one page of versions, oldest first.
 type ListSecretVersionsResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Versions []*SecretVersion       `protobuf:"bytes,1,rep,name=versions,proto3" json:"versions,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's versions, oldest first.
+	Versions []*SecretVersion `protobuf:"bytes,1,rep,name=versions,proto3" json:"versions,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1452,13 +1522,22 @@ func (x *ListSecretVersionsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GrantSecretSetRequest grants an environment's set to a kind, an image,
+// an image's builds or one service.
 type GrantSecretSetRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared        bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
-	Kind          SecretGranteeKind      `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.SecretGranteeKind" json:"kind,omitempty"`
-	Grantee       string                 `protobuf:"bytes,5,opt,name=grantee,proto3" json:"grantee,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The set's project, by name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The set is the project's shared set; not with environment.
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	// What the set is granted to; required.
+	Kind SecretGranteeKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.SecretGranteeKind" json:"kind,omitempty"`
+	// The grantee's name, as the kind names it: job, sandbox or service for
+	// KIND; an image's name for IMAGE or IMAGE_BUILD; a service's name for
+	// SERVICE.
+	Grantee       string `protobuf:"bytes,5,opt,name=grantee,proto3" json:"grantee,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1528,9 +1607,11 @@ func (x *GrantSecretSetRequest) GetGrantee() string {
 	return ""
 }
 
+// GrantSecretSetResponse is the grant the call made.
 type GrantSecretSetResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *SecretGrant           `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant as stored.
+	Grant         *SecretGrant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1572,13 +1653,19 @@ func (x *GrantSecretSetResponse) GetGrant() *SecretGrant {
 	return nil
 }
 
+// RevokeSecretSetRequest removes one grant of a set.
 type RevokeSecretSetRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared        bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
-	Kind          SecretGranteeKind      `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.SecretGranteeKind" json:"kind,omitempty"`
-	Grantee       string                 `protobuf:"bytes,5,opt,name=grantee,proto3" json:"grantee,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The set's project, by name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The set is the project's shared set; not with environment.
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The grant's kind.
+	Kind SecretGranteeKind `protobuf:"varint,4,opt,name=kind,proto3,enum=toshi.workspace.v1.SecretGranteeKind" json:"kind,omitempty"`
+	// The grant's grantee, as the kind names it.
+	Grantee       string `protobuf:"bytes,5,opt,name=grantee,proto3" json:"grantee,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1648,6 +1735,7 @@ func (x *RevokeSecretSetRequest) GetGrantee() string {
 	return ""
 }
 
+// RevokeSecretSetResponse is the answer of a revoke, and holds nothing.
 type RevokeSecretSetResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1684,11 +1772,15 @@ func (*RevokeSecretSetResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_secrets_proto_rawDescGZIP(), []int{23}
 }
 
+// ListSecretSetGrantsRequest asks for a set's grants.
 type ListSecretSetGrantsRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Shared      bool                   `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The set's project, by name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name; empty for the shared set.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The set is the project's shared set; not with environment.
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
 	// The most grants in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -1762,9 +1854,11 @@ func (x *ListSecretSetGrantsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListSecretSetGrantsResponse is one page of grants, by kind and grantee.
 type ListSecretSetGrantsResponse struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Grants []*SecretGrant         `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's grants.
+	Grants []*SecretGrant `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
