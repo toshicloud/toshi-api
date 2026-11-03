@@ -550,9 +550,9 @@ export const alertTitles = {
   egress_changed: "Host egress addresses changed",
   webhook_recovered: "Webhook deliveries recovered",
   tenant_suspended: "Workspace suspended",
-  memory_held: "Host holding a VM for memory",
+  memory_held: "Host holding VM creates at its memory limit",
   tenant_purge_pending: "Workspace purge pending",
-  agent_version_skew: "Agent version outside the promise",
+  agent_version_skew: "Agent version outside the supported versions",
   host_offline: "Host offline",
   vm_died: "VM died under a job",
   spend_cap_reached: "Workspace at its spending cap",
@@ -573,7 +573,7 @@ export const ruleWords = {
   "volume_ceiling.follows_plan": "An empty or 0 ceiling in the workspace settings follows the plan's default.",
   "volume_ceiling.no_limit": "Where the volume caps report a ceiling of 0, there is no limit: no volume cap is checked against it.",
   "volume_ceiling.lowering": "Lowering the ceiling is always allowed; it bounds new volumes and any volume cap you raise.",
-  "start_windows.paid_and_waiting": "A start past the included count is a paid start; at the ceiling a start waits.",
+  "start_windows.paid_and_waiting": "A start past the included count is a paid start; at the ceiling a start waits until the window moves on.",
 } as const;
 
 export const labels = {
