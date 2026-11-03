@@ -5907,9 +5907,16 @@ type Plan struct {
 	// first; a plan at 0 is not on the ladder, and no refusal names it. Two
 	// plans at one rank are ordered by name. ListPlans sorts by name: a
 	// client that shows the ladder orders by rank.
-	Rank          int32 `protobuf:"varint,20,opt,name=rank,proto3" json:"rank,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Rank int32 `protobuf:"varint,20,opt,name=rank,proto3" json:"rank,omitempty"`
+	// The size in MiB of the disk that keeps each of the workspace's caches
+	// for one guest OS, rounded up to whole GiB when the disk is made; 0
+	// means the plan gives no cache disk.
+	CacheMib int32 `protobuf:"varint,21,opt,name=cache_mib,json=cacheMib,proto3" json:"cache_mib,omitempty"`
+	// The most, in MiB, the workspace keeps in a host's actions/cache store;
+	// 0 leaves the workspace on GitHub's cache.
+	ActionsCacheMib int32 `protobuf:"varint,22,opt,name=actions_cache_mib,json=actionsCacheMib,proto3" json:"actions_cache_mib,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Plan) Reset() {
@@ -6078,6 +6085,20 @@ func (x *Plan) GetDisplayName() string {
 func (x *Plan) GetRank() int32 {
 	if x != nil {
 		return x.Rank
+	}
+	return 0
+}
+
+func (x *Plan) GetCacheMib() int32 {
+	if x != nil {
+		return x.CacheMib
+	}
+	return 0
+}
+
+func (x *Plan) GetActionsCacheMib() int32 {
+	if x != nil {
+		return x.ActionsCacheMib
 	}
 	return 0
 }
@@ -15267,7 +15288,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\rgrace_seconds\x18\x03 \x01(\x03R\fgraceSeconds\x12\x10\n" +
 	"\x03now\x18\x04 \x01(\bR\x03now\"U\n" +
 	"\x17DeleteWorkspaceResponse\x12:\n" +
-	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"\xb9\x05\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"\x82\x06\n" +
 	"\x04Plan\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vconcurrency\x18\x02 \x01(\x05R\vconcurrency\x12&\n" +
@@ -15293,7 +15314,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\vopen_source\x18\x12 \x01(\bR\n" +
 	"openSource\x12!\n" +
 	"\fdisplay_name\x18\x13 \x01(\tR\vdisplayName\x12\x12\n" +
-	"\x04rank\x18\x14 \x01(\x05R\x04rank\"W\n" +
+	"\x04rank\x18\x14 \x01(\x05R\x04rank\x12\x1b\n" +
+	"\tcache_mib\x18\x15 \x01(\x05R\bcacheMib\x12*\n" +
+	"\x11actions_cache_mib\x18\x16 \x01(\x05R\x0factionsCacheMib\"W\n" +
 	"\x19ListOperatorAlertsRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +

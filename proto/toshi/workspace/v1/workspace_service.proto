@@ -1412,6 +1412,13 @@ message Plan {
   // plans at one rank are ordered by name. ListPlans sorts by name: a
   // client that shows the ladder orders by rank.
   int32 rank = 20;
+  // The size in MiB of the disk that keeps each of the workspace's caches
+  // for one guest OS, rounded up to whole GiB when the disk is made; 0
+  // means the plan gives no cache disk.
+  int32 cache_mib = 21;
+  // The most, in MiB, the workspace keeps in a host's actions/cache store;
+  // 0 leaves the workspace on GitHub's cache.
+  int32 actions_cache_mib = 22;
 }
 
 // EgressHost is one host a workspace's jobs can land on.
