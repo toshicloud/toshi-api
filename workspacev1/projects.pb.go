@@ -4069,7 +4069,7 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x18EMBED_TOKEN_STATE_ACTIVE\x10\x01\x12\x1a\n" +
 	"\x16EMBED_TOKEN_STATE_USED\x10\x02\x12\x1d\n" +
 	"\x19EMBED_TOKEN_STATE_REVOKED\x10\x03\x12\x1d\n" +
-	"\x19EMBED_TOKEN_STATE_EXPIRED\x10\x042\xe1\x1b\n" +
+	"\x19EMBED_TOKEN_STATE_EXPIRED\x10\x042\xc5\x1b\n" +
 	"\x0eProjectService\x12\x7f\n" +
 	"\fListProjects\x12'.toshi.workspace.v1.ListProjectsRequest\x1a(.toshi.workspace.v1.ListProjectsResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12y\n" +
 	"\n" +
@@ -4087,9 +4087,9 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x11GetProjectNetwork\x12,.toshi.workspace.v1.GetProjectNetworkRequest\x1a-.toshi.workspace.v1.GetProjectNetworkResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x9e\x01\n" +
 	"\x15GetEnvironmentNetwork\x120.toshi.workspace.v1.GetEnvironmentNetworkRequest\x1a1.toshi.workspace.v1.GetEnvironmentNetworkResponse\" \xc2\xf3\x18\rprojects.read\xca\xf3\x18\venvironment\x12\xa4\x01\n" +
 	"\x17GetEnvironmentRetention\x122.toshi.workspace.v1.GetEnvironmentRetentionRequest\x1a3.toshi.workspace.v1.GetEnvironmentRetentionResponse\" \xc2\xf3\x18\rprojects.read\xca\xf3\x18\venvironment\x12\xac\x01\n" +
-	"\x11UpdateEnvironment\x12,.toshi.workspace.v1.UpdateEnvironmentRequest\x1a-.toshi.workspace.v1.UpdateEnvironmentResponse\":\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x11\x12\x0fproject:project\x90\xf4\x18\x02\x12\xf8\x02\n" +
-	"\x16RaiseCompatibilityDate\x121.toshi.workspace.v1.RaiseCompatibilityDateRequest\x1a2.toshi.workspace.v1.RaiseCompatibilityDateResponse\"\xf6\x01\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\venvironment\xd2\xf3\x18/\n" +
-	"\x1cproject.compatibility_raised\x12\x0fproject:project\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18\x93\x01\b\x01\x12\x8e\x01Raise this compatibility date? New revisions follow the newer rules from now on, and the old date is replaced; existing revisions keep theirs.\x90\xf4\x18\x02\x12\xa7\x01\n" +
+	"\x11UpdateEnvironment\x12,.toshi.workspace.v1.UpdateEnvironmentRequest\x1a-.toshi.workspace.v1.UpdateEnvironmentResponse\":\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x11\x12\x0fproject:project\x90\xf4\x18\x02\x12\xdc\x02\n" +
+	"\x16RaiseCompatibilityDate\x121.toshi.workspace.v1.RaiseCompatibilityDateRequest\x1a2.toshi.workspace.v1.RaiseCompatibilityDateResponse\"\xda\x01\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\venvironment\xd2\xf3\x18/\n" +
+	"\x1cproject.compatibility_raised\x12\x0fproject:project\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18x\b\x01\x12tRaise this compatibility date? New revisions follow the newer rules from now on, and existing revisions keep theirs.\x90\xf4\x18\x02\x12\xa7\x01\n" +
 	"\x18ListCompatibilityChanges\x123.toshi.workspace.v1.ListCompatibilityChangesRequest\x1a4.toshi.workspace.v1.ListCompatibilityChangesResponse\" \xc2\xf3\x18\rprojects.read\xca\xf3\x18\venvironment\x12\xa8\x01\n" +
 	"\x10CreateEmbedToken\x12+.toshi.workspace.v1.CreateEmbedTokenRequest\x1a,.toshi.workspace.v1.CreateEmbedTokenResponse\"9\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x14\n" +
 	"\x12embed_token.issued\x90\xf4\x18\x01\x12\x88\x01\n" +

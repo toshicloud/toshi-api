@@ -88,7 +88,7 @@ service OperatorService {
   rpc RetireHost(RetireHostRequest) returns (RetireHostResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.mcp) = {destructive: true};
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire this host? It leaves the deployment's hosts now, and a running agent registers again with its enrollment token."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire this host? It leaves the deployment's hosts now, its volume claims and snapshots are deleted, and a running agent registers again with its enrollment token."};
   }
 
   // RevokeHost revokes a host at once: its
@@ -117,7 +117,7 @@ service OperatorService {
       target: "none"
     };
     option (toshi.mcp) = {destructive: true};
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire these hosts? They leave the deployment's hosts now, and a running agent registers again with its enrollment token."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire these hosts? They leave the deployment's hosts now, their volume claims and snapshots are deleted, and a running agent registers again with its enrollment token."};
   }
 
   // CreateWorkspace makes a workspace that has no GitHub installation and

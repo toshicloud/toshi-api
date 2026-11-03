@@ -2678,7 +2678,8 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xe5\t\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\x94\n" +
+	"\n" +
 	"\vHostService\x12h\n" +
 	"\tListHosts\x12$.toshi.workspace.v1.ListHostsRequest\x1a%.toshi.workspace.v1.ListHostsResponse\"\x0e\xc2\xf3\x18\n" +
 	"hosts.read\x12z\n" +
@@ -2687,9 +2688,9 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x0eListHostAlerts\x12).toshi.workspace.v1.ListHostAlertsRequest\x1a*.toshi.workspace.v1.ListHostAlertsResponse\"\x0e\xc2\xf3\x18\n" +
 	"hosts.read\x12\x8a\x01\n" +
 	"\fSetHostState\x12'.toshi.workspace.v1.SetHostStateRequest\x1a(.toshi.workspace.v1.SetHostStateResponse\"'\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x10\n" +
-	"\x0ehost.state_set\x90\xf4\x18\x02\x12\xf5\x01\n" +
+	"\x0ehost.state_set\x90\xf4\x18\x02\x12\xa4\x02\n" +
 	"\n" +
-	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"\x97\x01\xc2\xf3\x18\vhosts.write\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18z\b\x01\x12vRetire this host? It leaves this workspace's hosts now, and a running agent registers again with its enrollment token.\x90\xf4\x18\x02\x12\xb9\x01\n" +
+	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"\xc6\x01\xc2\xf3\x18\vhosts.write\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18\xa8\x01\b\x01\x12\xa3\x01Retire this host? It leaves this workspace's hosts now, its volume claims and snapshots are deleted, and a running agent registers again with its enrollment token.\x90\xf4\x18\x02\x12\xb9\x01\n" +
 	"\x0fCreateCloudHost\x12*.toshi.workspace.v1.CreateCloudHostRequest\x1a+.toshi.workspace.v1.CreateCloudHostResponse\"M\xc2\xf3\x18\vhosts.write\xca\xf3\x18\tworkspace\xd2\xf3\x18)\n" +
 	"\x10cloud_host.added\x12\x15host:response.host.id\x90\xf4\x18\x01\x12\x8e\x01\n" +
 	"\x0eCheckCloudHost\x12).toshi.workspace.v1.CheckCloudHostRequest\x1a*.toshi.workspace.v1.CheckCloudHostResponse\"%\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x0e\x12\fhost:host_id\x90\xf4\x18\x02\x12\xa4\x01\n" +

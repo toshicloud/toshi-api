@@ -16126,7 +16126,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xde5\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xbe6\n" +
 	"\x0fOperatorService\x12\xc8\x01\n" +
 	"\n" +
 	"DeleteUser\x12$.toshi.operator.v1.DeleteUserRequest\x1a%.toshi.operator.v1.DeleteUserResponse\"m\xd2\xf3\x18\x13\n" +
@@ -16140,13 +16140,13 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x0ehost.state_set\x90\xf4\x18\x02\x12\x84\x01\n" +
 	"\n" +
 	"UpdateHost\x12$.toshi.operator.v1.UpdateHostRequest\x1a%.toshi.operator.v1.UpdateHostResponse\")\xd2\xf3\x18!\n" +
-	"\x11host.overflow_set\x12\fhost:host.id\x90\xf4\x18\x02\x12\xe4\x01\n" +
+	"\x11host.overflow_set\x12\fhost:host.id\x90\xf4\x18\x02\x12\x93\x02\n" +
 	"\n" +
-	"RetireHost\x12$.toshi.operator.v1.RetireHostRequest\x1a%.toshi.operator.v1.RetireHostResponse\"\x88\x01\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18z\b\x01\x12vRetire this host? It leaves the deployment's hosts now, and a running agent registers again with its enrollment token.\x90\xf4\x18\x02\x12\xf3\x01\n" +
+	"RetireHost\x12$.toshi.operator.v1.RetireHostRequest\x1a%.toshi.operator.v1.RetireHostResponse\"\xb7\x01\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18\xa8\x01\b\x01\x12\xa3\x01Retire this host? It leaves the deployment's hosts now, its volume claims and snapshots are deleted, and a running agent registers again with its enrollment token.\x90\xf4\x18\x02\x12\xf3\x01\n" +
 	"\n" +
-	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\"\x97\x01\xfa\xf3\x18\x8e\x01\b\x01\x12\x89\x01Revoke this host? Its token stops working now, its unfinished jobs end and are not run again, and it never registers again under this id.\x90\xf4\x18\x02\x12\x8a\x02\n" +
-	"\vRetireHosts\x12%.toshi.operator.v1.RetireHostsRequest\x1a&.toshi.operator.v1.RetireHostsResponse\"\xab\x01\xd2\xf3\x18\x1c\n" +
-	"\x14host.offline_retired\x12\x04none\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18}\b\x01\x12yRetire these hosts? They leave the deployment's hosts now, and a running agent registers again with its enrollment token.\x90\xf4\x18\x02\x12n\n" +
+	"RevokeHost\x12$.toshi.operator.v1.RevokeHostRequest\x1a%.toshi.operator.v1.RevokeHostResponse\"\x97\x01\xfa\xf3\x18\x8e\x01\b\x01\x12\x89\x01Revoke this host? Its token stops working now, its unfinished jobs end and are not run again, and it never registers again under this id.\x90\xf4\x18\x02\x12\xbb\x02\n" +
+	"\vRetireHosts\x12%.toshi.operator.v1.RetireHostsRequest\x1a&.toshi.operator.v1.RetireHostsResponse\"\xdc\x01\xd2\xf3\x18\x1c\n" +
+	"\x14host.offline_retired\x12\x04none\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18\xad\x01\b\x01\x12\xa8\x01Retire these hosts? They leave the deployment's hosts now, their volume claims and snapshots are deleted, and a running agent registers again with its enrollment token.\x90\xf4\x18\x02\x12n\n" +
 	"\x0fCreateWorkspace\x12).toshi.operator.v1.CreateWorkspaceRequest\x1a*.toshi.operator.v1.CreateWorkspaceResponse\"\x04\x90\xf4\x18\x01\x12e\n" +
 	"\x0eListWorkspaces\x12(.toshi.operator.v1.ListWorkspacesRequest\x1a).toshi.operator.v1.ListWorkspacesResponse\x12x\n" +
 	"\x0fUpdateWorkspace\x12).toshi.operator.v1.UpdateWorkspaceRequest\x1a*.toshi.operator.v1.UpdateWorkspaceResponse\"\x0e\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x02\x12z\n" +

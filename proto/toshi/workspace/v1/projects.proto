@@ -265,7 +265,7 @@ service ProjectService {
       target: "project:project"
     };
     option (toshi.mcp) = {destructive: true};
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Raise this compatibility date? New revisions follow the newer rules from now on, and the old date is replaced; existing revisions keep theirs."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Raise this compatibility date? New revisions follow the newer rules from now on, and existing revisions keep theirs."};
   }
   // ListCompatibilityChanges returns the dated changes between the date a
   // project, or one environment of it, runs under and to_date: the changes
