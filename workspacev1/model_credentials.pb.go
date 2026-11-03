@@ -1781,13 +1781,13 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\x14ModelCredentialState\x12&\n" +
 	"\"MODEL_CREDENTIAL_STATE_UNSPECIFIED\x10\x00\x12$\n" +
 	" MODEL_CREDENTIAL_STATE_SIGNED_IN\x10\x01\x12(\n" +
-	"$MODEL_CREDENTIAL_STATE_NEEDS_SIGN_IN\x10\x022\xbd\r\n" +
+	"$MODEL_CREDENTIAL_STATE_NEEDS_SIGN_IN\x10\x022\x89\x0e\n" +
 	"\x16ModelCredentialService\x12\xb6\x01\n" +
 	"\x15CreateModelCredential\x120.toshi.workspace.v1.CreateModelCredentialRequest\x1a1.toshi.workspace.v1.CreateModelCredentialResponse\"8\xc2\xf3\x18\x17model_credentials.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02(\x01\xf0\xf3\x18\x01\x90\xf4\x18\x01\x12\x93\x01\n" +
 	"\x12GetModelCredential\x12-.toshi.workspace.v1.GetModelCredentialRequest\x1a..toshi.workspace.v1.GetModelCredentialResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\x99\x01\n" +
 	"\x14ListModelCredentials\x12/.toshi.workspace.v1.ListModelCredentialsRequest\x1a0.toshi.workspace.v1.ListModelCredentialsResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\xcb\x01\n" +
-	"\x15UpdateModelCredential\x120.toshi.workspace.v1.UpdateModelCredentialRequest\x1a1.toshi.workspace.v1.UpdateModelCredentialResponse\"M\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18&\x12$model_credential:model_credential.id\xf0\xf3\x18\x01\x90\xf4\x18\x02\x12\xa1\x01\n" +
-	"\x15DeleteModelCredential\x120.toshi.workspace.v1.DeleteModelCredentialRequest\x1a1.toshi.workspace.v1.DeleteModelCredentialResponse\"#\xc2\xf3\x18\x17model_credentials.write\xf0\xf3\x18\x01\x90\xf4\x18\x02\x12\xa5\x01\n" +
+	"\x15UpdateModelCredential\x120.toshi.workspace.v1.UpdateModelCredentialRequest\x1a1.toshi.workspace.v1.UpdateModelCredentialResponse\"M\xc2\xf3\x18\x17model_credentials.write\xd2\xf3\x18&\x12$model_credential:model_credential.id\xf0\xf3\x18\x01\x90\xf4\x18\x02\x12\xed\x01\n" +
+	"\x15DeleteModelCredential\x120.toshi.workspace.v1.DeleteModelCredentialRequest\x1a1.toshi.workspace.v1.DeleteModelCredentialResponse\"o\xc2\xf3\x18\x17model_credentials.write\xf0\xf3\x18\x01\xfa\xf3\x18H\b\x01\x12DDelete this model credential? Its key is deleted with every version.\x90\xf4\x18\x02\x12\xa5\x01\n" +
 	"\x18ListModelSignInProviders\x123.toshi.workspace.v1.ListModelSignInProvidersRequest\x1a4.toshi.workspace.v1.ListModelSignInProvidersResponse\"\x1e\xc2\xf3\x18\x16model_credentials.read\xf0\xf3\x18\x01\x12\xd7\x01\n" +
 	"\x10StartModelSignIn\x12+.toshi.workspace.v1.StartModelSignInRequest\x1a,.toshi.workspace.v1.StartModelSignInResponse\"f\xc2\xf3\x18\x17model_credentials.write\xca\xf3\x18\venvironment\xd2\xf3\x18(\n" +
 	" model_credential.sign_in_started\x12\x04none\xea\xf3\x18\x04\x18\x00(\x01\xf0\xf3\x18\x01\x90\xf4\x18\x020\x01\x12\xe3\x01\n" +

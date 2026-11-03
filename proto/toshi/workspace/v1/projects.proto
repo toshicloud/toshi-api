@@ -163,6 +163,7 @@ service ProjectService {
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
     option (toshi.audit) = {target: "project:project"};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this environment? Its revoked and expired API tokens go with it, and nothing can use the name until it is created again."};
   }
   // ListBranchRules returns a project's branch rules in order, the
   // fallback rule last: the first that matches a CI job's run chooses the
@@ -302,6 +303,7 @@ service ProjectService {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this embed token? It stops working now."};
   }
 }
 

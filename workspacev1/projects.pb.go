@@ -4069,7 +4069,7 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x18EMBED_TOKEN_STATE_ACTIVE\x10\x01\x12\x1a\n" +
 	"\x16EMBED_TOKEN_STATE_USED\x10\x02\x12\x1d\n" +
 	"\x19EMBED_TOKEN_STATE_REVOKED\x10\x03\x12\x1d\n" +
-	"\x19EMBED_TOKEN_STATE_EXPIRED\x10\x042\x83\x19\n" +
+	"\x19EMBED_TOKEN_STATE_EXPIRED\x10\x042\xc2\x1a\n" +
 	"\x0eProjectService\x12\x7f\n" +
 	"\fListProjects\x12'.toshi.workspace.v1.ListProjectsRequest\x1a(.toshi.workspace.v1.ListProjectsResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12y\n" +
 	"\n" +
@@ -4081,8 +4081,8 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x10project.restored\x12\x0fproject:project\x90\xf4\x18\x02\x12\x9c\x01\n" +
 	"\rUpdateProject\x12(.toshi.workspace.v1.UpdateProjectRequest\x1a).toshi.workspace.v1.UpdateProjectResponse\"6\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x90\xf4\x18\x02\x12\xa2\x01\n" +
 	"\x0fClaimRepository\x12*.toshi.workspace.v1.ClaimRepositoryRequest\x1a+.toshi.workspace.v1.ClaimRepositoryResponse\"6\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x90\xf4\x18\x02\x12\xa8\x01\n" +
-	"\x11CreateEnvironment\x12,.toshi.workspace.v1.CreateEnvironmentRequest\x1a-.toshi.workspace.v1.CreateEnvironmentResponse\"6\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x90\xf4\x18\x01\x12\xa8\x01\n" +
-	"\x11DeleteEnvironment\x12,.toshi.workspace.v1.DeleteEnvironmentRequest\x1a-.toshi.workspace.v1.DeleteEnvironmentResponse\"6\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x90\xf4\x18\x02\x12\x88\x01\n" +
+	"\x11CreateEnvironment\x12,.toshi.workspace.v1.CreateEnvironmentRequest\x1a-.toshi.workspace.v1.CreateEnvironmentResponse\"6\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\x90\xf4\x18\x01\x12\xb1\x02\n" +
+	"\x11DeleteEnvironment\x12,.toshi.workspace.v1.DeleteEnvironmentRequest\x1a-.toshi.workspace.v1.DeleteEnvironmentResponse\"\xbe\x01\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\x12\x0fproject:project\xfa\xf3\x18\x83\x01\b\x01\x12\x7fDelete this environment? Its revoked and expired API tokens go with it, and nothing can use the name until it is created again.\x90\xf4\x18\x02\x12\x88\x01\n" +
 	"\x0fListBranchRules\x12*.toshi.workspace.v1.ListBranchRulesRequest\x1a+.toshi.workspace.v1.ListBranchRulesResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x8e\x01\n" +
 	"\x11GetProjectNetwork\x12,.toshi.workspace.v1.GetProjectNetworkRequest\x1a-.toshi.workspace.v1.GetProjectNetworkResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x9e\x01\n" +
 	"\x15GetEnvironmentNetwork\x120.toshi.workspace.v1.GetEnvironmentNetworkRequest\x1a1.toshi.workspace.v1.GetEnvironmentNetworkResponse\" \xc2\xf3\x18\rprojects.read\xca\xf3\x18\venvironment\x12\xa4\x01\n" +
@@ -4093,8 +4093,8 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\x18ListCompatibilityChanges\x123.toshi.workspace.v1.ListCompatibilityChangesRequest\x1a4.toshi.workspace.v1.ListCompatibilityChangesResponse\" \xc2\xf3\x18\rprojects.read\xca\xf3\x18\venvironment\x12\xa8\x01\n" +
 	"\x10CreateEmbedToken\x12+.toshi.workspace.v1.CreateEmbedTokenRequest\x1a,.toshi.workspace.v1.CreateEmbedTokenResponse\"9\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x14\n" +
 	"\x12embed_token.issued\x90\xf4\x18\x01\x12\x88\x01\n" +
-	"\x0fListEmbedTokens\x12*.toshi.workspace.v1.ListEmbedTokensRequest\x1a+.toshi.workspace.v1.ListEmbedTokensResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\x90\x01\n" +
-	"\x10RevokeEmbedToken\x12+.toshi.workspace.v1.RevokeEmbedTokenRequest\x1a,.toshi.workspace.v1.RevokeEmbedTokenResponse\"!\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x0fListEmbedTokens\x12*.toshi.workspace.v1.ListEmbedTokensRequest\x1a+.toshi.workspace.v1.ListEmbedTokensResponse\"\x1c\xc2\xf3\x18\rprojects.read\xca\xf3\x18\aproject\x12\xc6\x01\n" +
+	"\x10RevokeEmbedToken\x12+.toshi.workspace.v1.RevokeEmbedTokenRequest\x1a,.toshi.workspace.v1.RevokeEmbedTokenResponse\"W\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xfa\xf3\x182\b\x01\x12.Revoke this embed token? It stops working now.\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_projects_proto_rawDescOnce sync.Once

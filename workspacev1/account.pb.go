@@ -1155,13 +1155,13 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"\x12EndSessionResponse\"0\n" +
 	"\x14DeleteAccountRequest\x12\x18\n" +
 	"\aconfirm\x18\x01 \x01(\tR\aconfirm\"\x17\n" +
-	"\x15DeleteAccountResponse2\x92\a\n" +
+	"\x15DeleteAccountResponse2\xd4\a\n" +
 	"\x0eAccountService\x12z\n" +
 	"\n" +
 	"GetAccount\x12%.toshi.workspace.v1.GetAccountRequest\x1a&.toshi.workspace.v1.GetAccountResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x86\x01\n" +
-	"\x0eListIdentities\x12).toshi.workspace.v1.ListIdentitiesRequest\x1a*.toshi.workspace.v1.ListIdentitiesResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xae\x01\n" +
-	"\x0eUnlinkIdentity\x12).toshi.workspace.v1.UnlinkIdentityRequest\x1a*.toshi.workspace.v1.UnlinkIdentityResponse\"E\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x19\n" +
-	"\x11identity.unlinked\x12\x04none\xea\xf3\x18\x02\x10\x01\x90\xf4\x18\x02\x12\x80\x01\n" +
+	"\x0eListIdentities\x12).toshi.workspace.v1.ListIdentitiesRequest\x1a*.toshi.workspace.v1.ListIdentitiesResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xf0\x01\n" +
+	"\x0eUnlinkIdentity\x12).toshi.workspace.v1.UnlinkIdentityRequest\x1a*.toshi.workspace.v1.UnlinkIdentityResponse\"\x86\x01\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x19\n" +
+	"\x11identity.unlinked\x12\x04none\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18=\b\x01\x129Unlink this sign-in? It can no longer be used to sign in.\x90\xf4\x18\x02\x12\x80\x01\n" +
 	"\fListSessions\x12'.toshi.workspace.v1.ListSessionsRequest\x1a(.toshi.workspace.v1.ListSessionsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x9e\x01\n" +
 	"\n" +
 	"EndSession\x12%.toshi.workspace.v1.EndSessionRequest\x1a&.toshi.workspace.v1.EndSessionResponse\"A\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x15\n" +

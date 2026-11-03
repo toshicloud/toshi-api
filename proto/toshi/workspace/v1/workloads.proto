@@ -110,6 +110,7 @@ service WorkloadService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "jobs.write";
     option (toshi.scope) = "environment";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this job? Its record is deleted and cannot be brought back."};
   }
 
   // CancelJob cancels a job that has not ended and returns it. The job is
@@ -215,6 +216,7 @@ service WorkloadService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.scope) = "environment";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this sandbox? Its data is deleted and cannot be brought back."};
   }
 
   // StopSandbox ends its run and every execution in it and moves it to
@@ -406,6 +408,7 @@ service WorkloadService {
       action: "host_job.preview_share_link_revoked"
       target: "none"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this share link? Anyone using it loses access now."};
   }
 
   // CreateServiceShareLink mints a share link for one of a service's
@@ -448,6 +451,7 @@ service WorkloadService {
       action: "service.share_link_revoked"
       target: "none"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this share link? Anyone using it loses access now."};
   }
 
   // CreateService creates a service with its recipe as revision 1 and
@@ -497,6 +501,8 @@ service WorkloadService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Deploy this recipe? It replaces the running recipe, and the running revision is not kept."};
   }
 
   // DeleteService stops a service that has not ended and then removes it.
@@ -507,6 +513,7 @@ service WorkloadService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this service? Its running revision and its data are deleted."};
   }
 
   // WaitService blocks until the service is in one of the states asked for
@@ -663,6 +670,7 @@ service WorkloadService {
     option (toshi.audit) = {
       target: "service:service_id"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this alarm? This cannot be undone."};
   }
 
   // PauseServiceAlarm stops an alarm publishing until it is resumed.
@@ -833,6 +841,7 @@ service WorkloadService {
     option (toshi.audit) = {
       action: "service.activation_requested"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Roll back to this recipe? It replaces the running recipe and stops the live run."};
   }
 
   // ListServiceActivations returns each time a revision of the service was

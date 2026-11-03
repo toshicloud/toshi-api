@@ -2051,20 +2051,20 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x18SECRET_GRANTEE_KIND_KIND\x10\x01\x12\x1d\n" +
 	"\x19SECRET_GRANTEE_KIND_IMAGE\x10\x02\x12\x1f\n" +
 	"\x1bSECRET_GRANTEE_KIND_SERVICE\x10\x03\x12#\n" +
-	"\x1fSECRET_GRANTEE_KIND_IMAGE_BUILD\x10\x042\x81\r\n" +
+	"\x1fSECRET_GRANTEE_KIND_IMAGE_BUILD\x10\x042\xb6\x0f\n" +
 	"\rSecretService\x12\x9a\x01\n" +
 	"\x0fCreateSecretSet\x12*.toshi.workspace.v1.CreateSecretSetRequest\x1a+.toshi.workspace.v1.CreateSecretSetResponse\".\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x01\x12\x84\x01\n" +
-	"\x0eListSecretSets\x12).toshi.workspace.v1.ListSecretSetsRequest\x1a*.toshi.workspace.v1.ListSecretSetsResponse\"\x1b\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\aproject\x12\x9a\x01\n" +
-	"\x0fDeleteSecretSet\x12*.toshi.workspace.v1.DeleteSecretSetRequest\x1a+.toshi.workspace.v1.DeleteSecretSetResponse\".\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x02\x12\x9a\x01\n" +
-	"\x0fUpdateSecretSet\x12*.toshi.workspace.v1.UpdateSecretSetRequest\x1a+.toshi.workspace.v1.UpdateSecretSetResponse\".\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x02\x12\x94\x01\n" +
+	"\x0eListSecretSets\x12).toshi.workspace.v1.ListSecretSetsRequest\x1a*.toshi.workspace.v1.ListSecretSetsResponse\"\x1b\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\aproject\x12\xe0\x01\n" +
+	"\x0fDeleteSecretSet\x12*.toshi.workspace.v1.DeleteSecretSetRequest\x1a+.toshi.workspace.v1.DeleteSecretSetResponse\"t\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\xfa\xf3\x18B\b\x01\x12>Delete this secret set? Its keys and their values are deleted.\x90\xf4\x18\x02\x12\xfa\x01\n" +
+	"\x0fUpdateSecretSet\x12*.toshi.workspace.v1.UpdateSecretSetRequest\x1a+.toshi.workspace.v1.UpdateSecretSetResponse\"\x8d\x01\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18U\b\x01\x12QUpdate this secret set? Keys the update leaves out are deleted with their values.\x90\xf4\x18\x02\x12\x94\x01\n" +
 	"\tPutSecret\x12$.toshi.workspace.v1.PutSecretRequest\x1a%.toshi.workspace.v1.PutSecretResponse\":\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
 	"\n" +
-	"secret.set\x12\x04none\x90\xf4\x18\x01\x12\x91\x01\n" +
-	"\fDeleteSecret\x12'.toshi.workspace.v1.DeleteSecretRequest\x1a(.toshi.workspace.v1.DeleteSecretResponse\".\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x02\x12\x7f\n" +
+	"secret.set\x12\x04none\x90\xf4\x18\x01\x12\xdd\x01\n" +
+	"\fDeleteSecret\x12'.toshi.workspace.v1.DeleteSecretRequest\x1a(.toshi.workspace.v1.DeleteSecretResponse\"z\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\xfa\xf3\x18H\b\x01\x12DDelete this secret? Its value is deleted and cannot be brought back.\x90\xf4\x18\x02\x12\x7f\n" +
 	"\vListSecrets\x12&.toshi.workspace.v1.ListSecretsRequest\x1a'.toshi.workspace.v1.ListSecretsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironment\x12\x94\x01\n" +
 	"\x12ListSecretVersions\x12-.toshi.workspace.v1.ListSecretVersionsRequest\x1a..toshi.workspace.v1.ListSecretVersionsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironment\x12\x97\x01\n" +
-	"\x0eGrantSecretSet\x12).toshi.workspace.v1.GrantSecretSetRequest\x1a*.toshi.workspace.v1.GrantSecretSetResponse\".\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x02\x12\x9a\x01\n" +
-	"\x0fRevokeSecretSet\x12*.toshi.workspace.v1.RevokeSecretSetRequest\x1a+.toshi.workspace.v1.RevokeSecretSetResponse\".\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x02\x12\x97\x01\n" +
+	"\x0eGrantSecretSet\x12).toshi.workspace.v1.GrantSecretSetRequest\x1a*.toshi.workspace.v1.GrantSecretSetResponse\".\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\x90\xf4\x18\x02\x12\xdd\x01\n" +
+	"\x0fRevokeSecretSet\x12*.toshi.workspace.v1.RevokeSecretSetRequest\x1a+.toshi.workspace.v1.RevokeSecretSetResponse\"q\xc2\xf3\x18\rsecrets.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x06\x12\x04none\xfa\xf3\x18?\b\x01\x12;Revoke this secret set grant? The access it gives ends now.\x90\xf4\x18\x02\x12\x97\x01\n" +
 	"\x13ListSecretSetGrants\x12..toshi.workspace.v1.ListSecretSetGrantsRequest\x1a/.toshi.workspace.v1.ListSecretSetGrantsResponse\"\x1f\xc2\xf3\x18\fsecrets.read\xca\xf3\x18\venvironmentB\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (

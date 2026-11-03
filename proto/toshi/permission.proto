@@ -76,6 +76,10 @@ extend google.protobuf.MethodOptions {
   // carries the notice still serves the call, and the release named in
   // removal_version removes it.
   Deprecation deprecation = 51011;
+
+  // surface says who asks before the call is made and what the question is.
+  // A call without it is made without a question.
+  Surface surface = 51007;
 }
 
 // KeyMode describes the retry mode of a changing call.
@@ -83,6 +87,33 @@ enum KeyMode {
   KEY_MODE_UNSPECIFIED = 0;
   KEY = 1;
   NATURAL = 2;
+}
+
+// Surface is how a call is shown to the people who make it.
+message Surface {
+  // asks says who asks before the call: the command line and the dashboard
+  // for ALWAYS, the dashboard alone for ONE_CLICK. Unset, nobody asks.
+  Asks asks = 1;
+
+  // question is the question asked before the call, stating what ends and
+  // what is kept. It is required with ASKS_ALWAYS.
+  string question = 2;
+
+  // answer is the word the person types to go on. Unset, it is "yes".
+  string answer = 3;
+}
+
+// Asks says who asks before a call.
+enum Asks {
+  // Nobody asks: the call ends a run or can be undone.
+  ASKS_UNSPECIFIED = 0;
+  // The command line and the dashboard ask: the call deletes stored data,
+  // deletes or replaces a credential, ends a person's, a token's or a
+  // link's access, or replaces the recipe a service runs, with no undo.
+  ASKS_ALWAYS = 1;
+  // The dashboard alone asks: the call starts billed work from one control
+  // with no form before it. The command line is typed, so it does not ask.
+  ASKS_ONE_CLICK = 2;
 }
 
 // Deprecation is the notice that a call will be removed.

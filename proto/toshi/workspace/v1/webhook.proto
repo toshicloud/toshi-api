@@ -65,6 +65,7 @@ service WebhookService {
   rpc DeleteWebhook(DeleteWebhookRequest) returns (DeleteWebhookResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "webhooks.write";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this webhook? This cannot be undone."};
   }
 
   // RotateWebhookSecret makes the webhook a new signing secret and
@@ -78,6 +79,8 @@ service WebhookService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "webhooks.write";
     option (toshi.audit) = {action: "webhook.secret_rotated"};
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Rotate this webhook's secret? The old secret stops working now."};
   }
 
   // ListWebhookDeliveries returns a webhook's deliveries in event order,

@@ -72,6 +72,62 @@ func (KeyMode) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_permission_proto_rawDescGZIP(), []int{0}
 }
 
+// Asks says who asks before a call.
+type Asks int32
+
+const (
+	// Nobody asks: the call ends a run or can be undone.
+	Asks_ASKS_UNSPECIFIED Asks = 0
+	// The command line and the dashboard ask: the call deletes stored data,
+	// deletes or replaces a credential, ends a person's, a token's or a
+	// link's access, or replaces the recipe a service runs, with no undo.
+	Asks_ASKS_ALWAYS Asks = 1
+	// The dashboard alone asks: the call starts billed work from one control
+	// with no form before it. The command line is typed, so it does not ask.
+	Asks_ASKS_ONE_CLICK Asks = 2
+)
+
+// Enum value maps for Asks.
+var (
+	Asks_name = map[int32]string{
+		0: "ASKS_UNSPECIFIED",
+		1: "ASKS_ALWAYS",
+		2: "ASKS_ONE_CLICK",
+	}
+	Asks_value = map[string]int32{
+		"ASKS_UNSPECIFIED": 0,
+		"ASKS_ALWAYS":      1,
+		"ASKS_ONE_CLICK":   2,
+	}
+)
+
+func (x Asks) Enum() *Asks {
+	p := new(Asks)
+	*p = x
+	return p
+}
+
+func (x Asks) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Asks) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_permission_proto_enumTypes[1].Descriptor()
+}
+
+func (Asks) Type() protoreflect.EnumType {
+	return &file_toshi_permission_proto_enumTypes[1]
+}
+
+func (x Asks) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Asks.Descriptor instead.
+func (Asks) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_permission_proto_rawDescGZIP(), []int{1}
+}
+
 // Unit identifies the unit of a bound's values.
 type Bound_Unit int32
 
@@ -109,11 +165,11 @@ func (x Bound_Unit) String() string {
 }
 
 func (Bound_Unit) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_permission_proto_enumTypes[1].Descriptor()
+	return file_toshi_permission_proto_enumTypes[2].Descriptor()
 }
 
 func (Bound_Unit) Type() protoreflect.EnumType {
-	return &file_toshi_permission_proto_enumTypes[1]
+	return &file_toshi_permission_proto_enumTypes[2]
 }
 
 func (x Bound_Unit) Number() protoreflect.EnumNumber {
@@ -122,7 +178,73 @@ func (x Bound_Unit) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Bound_Unit.Descriptor instead.
 func (Bound_Unit) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_permission_proto_rawDescGZIP(), []int{3, 0}
+	return file_toshi_permission_proto_rawDescGZIP(), []int{4, 0}
+}
+
+// Surface is how a call is shown to the people who make it.
+type Surface struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// asks says who asks before the call: the command line and the dashboard
+	// for ALWAYS, the dashboard alone for ONE_CLICK. Unset, nobody asks.
+	Asks Asks `protobuf:"varint,1,opt,name=asks,proto3,enum=toshi.Asks" json:"asks,omitempty"`
+	// question is the question asked before the call, stating what ends and
+	// what is kept. It is required with ASKS_ALWAYS.
+	Question string `protobuf:"bytes,2,opt,name=question,proto3" json:"question,omitempty"`
+	// answer is the word the person types to go on. Unset, it is "yes".
+	Answer        string `protobuf:"bytes,3,opt,name=answer,proto3" json:"answer,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Surface) Reset() {
+	*x = Surface{}
+	mi := &file_toshi_permission_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Surface) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Surface) ProtoMessage() {}
+
+func (x *Surface) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_permission_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Surface.ProtoReflect.Descriptor instead.
+func (*Surface) Descriptor() ([]byte, []int) {
+	return file_toshi_permission_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Surface) GetAsks() Asks {
+	if x != nil {
+		return x.Asks
+	}
+	return Asks_ASKS_UNSPECIFIED
+}
+
+func (x *Surface) GetQuestion() string {
+	if x != nil {
+		return x.Question
+	}
+	return ""
+}
+
+func (x *Surface) GetAnswer() string {
+	if x != nil {
+		return x.Answer
+	}
+	return ""
 }
 
 // Deprecation is the notice that a call will be removed.
@@ -150,7 +272,7 @@ type Deprecation struct {
 
 func (x *Deprecation) Reset() {
 	*x = Deprecation{}
-	mi := &file_toshi_permission_proto_msgTypes[0]
+	mi := &file_toshi_permission_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -162,7 +284,7 @@ func (x *Deprecation) String() string {
 func (*Deprecation) ProtoMessage() {}
 
 func (x *Deprecation) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_permission_proto_msgTypes[0]
+	mi := &file_toshi_permission_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -175,7 +297,7 @@ func (x *Deprecation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Deprecation.ProtoReflect.Descriptor instead.
 func (*Deprecation) Descriptor() ([]byte, []int) {
-	return file_toshi_permission_proto_rawDescGZIP(), []int{0}
+	return file_toshi_permission_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Deprecation) GetNoticeVersion() string {
@@ -240,7 +362,7 @@ type Audit struct {
 
 func (x *Audit) Reset() {
 	*x = Audit{}
-	mi := &file_toshi_permission_proto_msgTypes[1]
+	mi := &file_toshi_permission_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -252,7 +374,7 @@ func (x *Audit) String() string {
 func (*Audit) ProtoMessage() {}
 
 func (x *Audit) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_permission_proto_msgTypes[1]
+	mi := &file_toshi_permission_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -265,7 +387,7 @@ func (x *Audit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Audit.ProtoReflect.Descriptor instead.
 func (*Audit) Descriptor() ([]byte, []int) {
-	return file_toshi_permission_proto_rawDescGZIP(), []int{1}
+	return file_toshi_permission_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Audit) GetAction() string {
@@ -315,7 +437,7 @@ type MCP struct {
 
 func (x *MCP) Reset() {
 	*x = MCP{}
-	mi := &file_toshi_permission_proto_msgTypes[2]
+	mi := &file_toshi_permission_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -327,7 +449,7 @@ func (x *MCP) String() string {
 func (*MCP) ProtoMessage() {}
 
 func (x *MCP) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_permission_proto_msgTypes[2]
+	mi := &file_toshi_permission_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -340,7 +462,7 @@ func (x *MCP) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MCP.ProtoReflect.Descriptor instead.
 func (*MCP) Descriptor() ([]byte, []int) {
-	return file_toshi_permission_proto_rawDescGZIP(), []int{2}
+	return file_toshi_permission_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *MCP) GetReadOnly() bool {
@@ -402,7 +524,7 @@ type Bound struct {
 
 func (x *Bound) Reset() {
 	*x = Bound{}
-	mi := &file_toshi_permission_proto_msgTypes[3]
+	mi := &file_toshi_permission_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -414,7 +536,7 @@ func (x *Bound) String() string {
 func (*Bound) ProtoMessage() {}
 
 func (x *Bound) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_permission_proto_msgTypes[3]
+	mi := &file_toshi_permission_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -427,7 +549,7 @@ func (x *Bound) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Bound.ProtoReflect.Descriptor instead.
 func (*Bound) Descriptor() ([]byte, []int) {
-	return file_toshi_permission_proto_rawDescGZIP(), []int{3}
+	return file_toshi_permission_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Bound) GetName() string {
@@ -545,6 +667,14 @@ var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
 		Filename:      "toshi/permission.proto",
 	},
 	{
+		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
+		ExtensionType: (*Surface)(nil),
+		Field:         51007,
+		Name:          "toshi.surface",
+		Tag:           "bytes,51007,opt,name=surface",
+		Filename:      "toshi/permission.proto",
+	},
+	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         51003,
@@ -642,6 +772,11 @@ var (
 	//
 	// optional toshi.Deprecation deprecation = 51011;
 	E_Deprecation = &file_toshi_permission_proto_extTypes[7]
+	// surface says who asks before the call is made and what the question is.
+	// A call without it is made without a question.
+	//
+	// optional toshi.Surface surface = 51007;
+	E_Surface = &file_toshi_permission_proto_extTypes[8]
 )
 
 // Extension fields to descriptorpb.FieldOptions.
@@ -653,21 +788,25 @@ var (
 	// shape, and the permissions page lists the field groups.
 	//
 	// optional string field_permission = 51003;
-	E_FieldPermission = &file_toshi_permission_proto_extTypes[8]
+	E_FieldPermission = &file_toshi_permission_proto_extTypes[9]
 	// bound states a fixed number the server applies to the field: the same
 	// for every deployment. Clients read it as a generated constant instead of
 	// copying it; the field's comment states it in words too, and the
 	// generator fails when the two differ.
 	//
 	// optional toshi.Bound bound = 51009;
-	E_Bound = &file_toshi_permission_proto_extTypes[9]
+	E_Bound = &file_toshi_permission_proto_extTypes[10]
 )
 
 var File_toshi_permission_proto protoreflect.FileDescriptor
 
 const file_toshi_permission_proto_rawDesc = "" +
 	"\n" +
-	"\x16toshi/permission.proto\x12\x05toshi\x1a google/protobuf/descriptor.proto\"\xaa\x01\n" +
+	"\x16toshi/permission.proto\x12\x05toshi\x1a google/protobuf/descriptor.proto\"^\n" +
+	"\aSurface\x12\x1f\n" +
+	"\x04asks\x18\x01 \x01(\x0e2\v.toshi.AsksR\x04asks\x12\x1a\n" +
+	"\bquestion\x18\x02 \x01(\tR\bquestion\x12\x16\n" +
+	"\x06answer\x18\x03 \x01(\tR\x06answer\"\xaa\x01\n" +
 	"\vDeprecation\x12%\n" +
 	"\x0enotice_version\x18\x01 \x01(\tR\rnoticeVersion\x12'\n" +
 	"\x0fremoval_version\x18\x02 \x01(\tR\x0eremovalVersion\x12\x1f\n" +
@@ -718,7 +857,11 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\aKeyMode\x12\x18\n" +
 	"\x14KEY_MODE_UNSPECIFIED\x10\x00\x12\a\n" +
 	"\x03KEY\x10\x01\x12\v\n" +
-	"\aNATURAL\x10\x02:@\n" +
+	"\aNATURAL\x10\x02*A\n" +
+	"\x04Asks\x12\x14\n" +
+	"\x10ASKS_UNSPECIFIED\x10\x00\x12\x0f\n" +
+	"\vASKS_ALWAYS\x10\x01\x12\x12\n" +
+	"\x0eASKS_ONE_CLICK\x10\x02:@\n" +
 	"\n" +
 	"permission\x12\x1e.google.protobuf.MethodOptions\x18\xb8\x8e\x03 \x01(\tR\n" +
 	"permission:6\n" +
@@ -730,6 +873,7 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\x03own\x12\x1e.google.protobuf.MethodOptions\x18\xbe\x8e\x03 \x01(\bR\x03own:K\n" +
 	"\bkey_mode\x12\x1e.google.protobuf.MethodOptions\x18\u008e\x03 \x01(\x0e2\x0e.toshi.KeyModeR\akeyMode:V\n" +
 	"\vdeprecation\x12\x1e.google.protobuf.MethodOptions\x18Î\x03 \x01(\v2\x12.toshi.DeprecationR\vdeprecation:J\n" +
+	"\asurface\x12\x1e.google.protobuf.MethodOptions\x18\xbf\x8e\x03 \x01(\v2\x0e.toshi.SurfaceR\asurface:J\n" +
 	"\x10field_permission\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\tR\x0ffieldPermission:C\n" +
 	"\x05bound\x12\x1d.google.protobuf.FieldOptions\x18\xc1\x8e\x03 \x01(\v2\f.toshi.BoundR\x05boundB\x1eZ\x1cgo.toshicloud.io/api/toshipbb\x06proto3"
 
@@ -745,40 +889,45 @@ func file_toshi_permission_proto_rawDescGZIP() []byte {
 	return file_toshi_permission_proto_rawDescData
 }
 
-var file_toshi_permission_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_toshi_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_toshi_permission_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_toshi_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_toshi_permission_proto_goTypes = []any{
 	(KeyMode)(0),                       // 0: toshi.KeyMode
-	(Bound_Unit)(0),                    // 1: toshi.Bound.Unit
-	(*Deprecation)(nil),                // 2: toshi.Deprecation
-	(*Audit)(nil),                      // 3: toshi.Audit
-	(*MCP)(nil),                        // 4: toshi.MCP
-	(*Bound)(nil),                      // 5: toshi.Bound
-	(*descriptorpb.MethodOptions)(nil), // 6: google.protobuf.MethodOptions
-	(*descriptorpb.FieldOptions)(nil),  // 7: google.protobuf.FieldOptions
+	(Asks)(0),                          // 1: toshi.Asks
+	(Bound_Unit)(0),                    // 2: toshi.Bound.Unit
+	(*Surface)(nil),                    // 3: toshi.Surface
+	(*Deprecation)(nil),                // 4: toshi.Deprecation
+	(*Audit)(nil),                      // 5: toshi.Audit
+	(*MCP)(nil),                        // 6: toshi.MCP
+	(*Bound)(nil),                      // 7: toshi.Bound
+	(*descriptorpb.MethodOptions)(nil), // 8: google.protobuf.MethodOptions
+	(*descriptorpb.FieldOptions)(nil),  // 9: google.protobuf.FieldOptions
 }
 var file_toshi_permission_proto_depIdxs = []int32{
-	1,  // 0: toshi.Bound.unit:type_name -> toshi.Bound.Unit
-	6,  // 1: toshi.permission:extendee -> google.protobuf.MethodOptions
-	6,  // 2: toshi.scope:extendee -> google.protobuf.MethodOptions
-	6,  // 3: toshi.audit:extendee -> google.protobuf.MethodOptions
-	6,  // 4: toshi.by_field:extendee -> google.protobuf.MethodOptions
-	6,  // 5: toshi.mcp:extendee -> google.protobuf.MethodOptions
-	6,  // 6: toshi.own:extendee -> google.protobuf.MethodOptions
-	6,  // 7: toshi.key_mode:extendee -> google.protobuf.MethodOptions
-	6,  // 8: toshi.deprecation:extendee -> google.protobuf.MethodOptions
-	7,  // 9: toshi.field_permission:extendee -> google.protobuf.FieldOptions
-	7,  // 10: toshi.bound:extendee -> google.protobuf.FieldOptions
-	3,  // 11: toshi.audit:type_name -> toshi.Audit
-	4,  // 12: toshi.mcp:type_name -> toshi.MCP
-	0,  // 13: toshi.key_mode:type_name -> toshi.KeyMode
-	2,  // 14: toshi.deprecation:type_name -> toshi.Deprecation
-	5,  // 15: toshi.bound:type_name -> toshi.Bound
-	16, // [16:16] is the sub-list for method output_type
-	16, // [16:16] is the sub-list for method input_type
-	11, // [11:16] is the sub-list for extension type_name
-	1,  // [1:11] is the sub-list for extension extendee
-	0,  // [0:1] is the sub-list for field type_name
+	1,  // 0: toshi.Surface.asks:type_name -> toshi.Asks
+	2,  // 1: toshi.Bound.unit:type_name -> toshi.Bound.Unit
+	8,  // 2: toshi.permission:extendee -> google.protobuf.MethodOptions
+	8,  // 3: toshi.scope:extendee -> google.protobuf.MethodOptions
+	8,  // 4: toshi.audit:extendee -> google.protobuf.MethodOptions
+	8,  // 5: toshi.by_field:extendee -> google.protobuf.MethodOptions
+	8,  // 6: toshi.mcp:extendee -> google.protobuf.MethodOptions
+	8,  // 7: toshi.own:extendee -> google.protobuf.MethodOptions
+	8,  // 8: toshi.key_mode:extendee -> google.protobuf.MethodOptions
+	8,  // 9: toshi.deprecation:extendee -> google.protobuf.MethodOptions
+	8,  // 10: toshi.surface:extendee -> google.protobuf.MethodOptions
+	9,  // 11: toshi.field_permission:extendee -> google.protobuf.FieldOptions
+	9,  // 12: toshi.bound:extendee -> google.protobuf.FieldOptions
+	5,  // 13: toshi.audit:type_name -> toshi.Audit
+	6,  // 14: toshi.mcp:type_name -> toshi.MCP
+	0,  // 15: toshi.key_mode:type_name -> toshi.KeyMode
+	4,  // 16: toshi.deprecation:type_name -> toshi.Deprecation
+	3,  // 17: toshi.surface:type_name -> toshi.Surface
+	7,  // 18: toshi.bound:type_name -> toshi.Bound
+	19, // [19:19] is the sub-list for method output_type
+	19, // [19:19] is the sub-list for method input_type
+	13, // [13:19] is the sub-list for extension type_name
+	2,  // [2:13] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_toshi_permission_proto_init() }
@@ -786,16 +935,16 @@ func file_toshi_permission_proto_init() {
 	if File_toshi_permission_proto != nil {
 		return
 	}
-	file_toshi_permission_proto_msgTypes[2].OneofWrappers = []any{}
 	file_toshi_permission_proto_msgTypes[3].OneofWrappers = []any{}
+	file_toshi_permission_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_permission_proto_rawDesc), len(file_toshi_permission_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   4,
-			NumExtensions: 10,
+			NumEnums:      3,
+			NumMessages:   5,
+			NumExtensions: 11,
 			NumServices:   0,
 		},
 		GoTypes:           file_toshi_permission_proto_goTypes,

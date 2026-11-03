@@ -2678,7 +2678,7 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xdf\b\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\x96\t\n" +
 	"\vHostService\x12h\n" +
 	"\tListHosts\x12$.toshi.workspace.v1.ListHostsRequest\x1a%.toshi.workspace.v1.ListHostsResponse\"\x0e\xc2\xf3\x18\n" +
 	"hosts.read\x12z\n" +
@@ -2687,9 +2687,9 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x0eListHostAlerts\x12).toshi.workspace.v1.ListHostAlertsRequest\x1a*.toshi.workspace.v1.ListHostAlertsResponse\"\x0e\xc2\xf3\x18\n" +
 	"hosts.read\x12\x8a\x01\n" +
 	"\fSetHostState\x12'.toshi.workspace.v1.SetHostStateRequest\x1a(.toshi.workspace.v1.SetHostStateResponse\"'\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x10\n" +
-	"\x0ehost.state_set\x90\xf4\x18\x02\x12p\n" +
+	"\x0ehost.state_set\x90\xf4\x18\x02\x12\xa6\x01\n" +
 	"\n" +
-	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"\x13\xc2\xf3\x18\vhosts.write\x90\xf4\x18\x02\x12\xb9\x01\n" +
+	"RetireHost\x12%.toshi.workspace.v1.RetireHostRequest\x1a&.toshi.workspace.v1.RetireHostResponse\"I\xc2\xf3\x18\vhosts.write\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18,\b\x01\x12(Retire this host? This cannot be undone.\x90\xf4\x18\x02\x12\xb9\x01\n" +
 	"\x0fCreateCloudHost\x12*.toshi.workspace.v1.CreateCloudHostRequest\x1a+.toshi.workspace.v1.CreateCloudHostResponse\"M\xc2\xf3\x18\vhosts.write\xca\xf3\x18\tworkspace\xd2\xf3\x18)\n" +
 	"\x10cloud_host.added\x12\x15host:response.host.id\x90\xf4\x18\x01\x12\x8e\x01\n" +
 	"\x0eCheckCloudHost\x12).toshi.workspace.v1.CheckCloudHostRequest\x1a*.toshi.workspace.v1.CheckCloudHostResponse\"%\xc2\xf3\x18\vhosts.write\xd2\xf3\x18\x0e\x12\fhost:host_id\x90\xf4\x18\x02\x12\xa4\x01\n" +

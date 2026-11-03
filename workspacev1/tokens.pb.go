@@ -1098,15 +1098,15 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"\x11TokenExpiryReason\x12#\n" +
 	"\x1fTOKEN_EXPIRY_REASON_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17TOKEN_EXPIRY_REASON_SET\x10\x01\x12$\n" +
-	" TOKEN_EXPIRY_REASON_CREATOR_LEFT\x10\x022\xb9\x05\n" +
+	" TOKEN_EXPIRY_REASON_CREATOR_LEFT\x10\x022\xa9\x06\n" +
 	"\fTokenService\x12l\n" +
 	"\n" +
 	"ListTokens\x12%.toshi.workspace.v1.ListTokensRequest\x1a&.toshi.workspace.v1.ListTokensResponse\"\x0f\xc2\xf3\x18\vtokens.read\x12\xaf\x01\n" +
 	"\x14CreateWorkspaceToken\x12/.toshi.workspace.v1.CreateWorkspaceTokenRequest\x1a0.toshi.workspace.v1.CreateWorkspaceTokenResponse\"4\xc2\xf3\x18\ftokens.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
-	"\rtoken.created\x90\xf4\x18\x01\x12t\n" +
-	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"\x14\xc2\xf3\x18\ftokens.write\x90\xf4\x18\x02\x12\x9c\x01\n" +
-	"\x12RollWorkspaceToken\x12-.toshi.workspace.v1.RollWorkspaceTokenRequest\x1a..toshi.workspace.v1.RollWorkspaceTokenResponse\"'\xc2\xf3\x18\ftokens.write\xd2\xf3\x18\x0f\n" +
-	"\rtoken.rotated\x90\xf4\x18\x01\x12t\n" +
+	"\rtoken.created\x90\xf4\x18\x01\x12\xa4\x01\n" +
+	"\vRevokeToken\x12&.toshi.workspace.v1.RevokeTokenRequest\x1a'.toshi.workspace.v1.RevokeTokenResponse\"D\xc2\xf3\x18\ftokens.write\xfa\xf3\x18,\b\x01\x12(Revoke this token? It stops working now.\x90\xf4\x18\x02\x12\xdb\x01\n" +
+	"\x12RollWorkspaceToken\x12-.toshi.workspace.v1.RollWorkspaceTokenRequest\x1a..toshi.workspace.v1.RollWorkspaceTokenResponse\"f\xc2\xf3\x18\ftokens.write\xd2\xf3\x18\x0f\n" +
+	"\rtoken.rotated\xea\xf3\x18\x02\x10\x01\xfa\xf3\x185\b\x01\x121Roll this token? The old token stops working now.\x90\xf4\x18\x01\x12t\n" +
 	"\vUpdateToken\x12&.toshi.workspace.v1.UpdateTokenRequest\x1a'.toshi.workspace.v1.UpdateTokenResponse\"\x14\xc2\xf3\x18\ftokens.write\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (

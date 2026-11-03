@@ -1349,14 +1349,14 @@ const file_toshi_workspace_v1_triggers_proto_rawDesc = "" +
 	"\fTriggerForks\x12\x1d\n" +
 	"\x19TRIGGER_FORKS_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13TRIGGER_FORKS_LABEL\x10\x01\x12\x17\n" +
-	"\x13TRIGGER_FORKS_NEVER\x10\x022\xbf\x05\n" +
+	"\x13TRIGGER_FORKS_NEVER\x10\x022\xf2\x05\n" +
 	"\x0eTriggerService\x12\x8b\x01\n" +
 	"\rCreateTrigger\x12(.toshi.workspace.v1.CreateTriggerRequest\x1a).toshi.workspace.v1.CreateTriggerResponse\"%\xc2\xf3\x18\x0etriggers.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12}\n" +
 	"\n" +
 	"GetTrigger\x12%.toshi.workspace.v1.GetTriggerRequest\x1a&.toshi.workspace.v1.GetTriggerResponse\" \xc2\xf3\x18\rtriggers.read\xca\xf3\x18\venvironment\x12\x83\x01\n" +
 	"\fListTriggers\x12'.toshi.workspace.v1.ListTriggersRequest\x1a(.toshi.workspace.v1.ListTriggersResponse\" \xc2\xf3\x18\rtriggers.read\xca\xf3\x18\venvironment\x12\x8b\x01\n" +
-	"\rUpdateTrigger\x12(.toshi.workspace.v1.UpdateTriggerRequest\x1a).toshi.workspace.v1.UpdateTriggerResponse\"%\xc2\xf3\x18\x0etriggers.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\x8b\x01\n" +
-	"\rDeleteTrigger\x12(.toshi.workspace.v1.DeleteTriggerRequest\x1a).toshi.workspace.v1.DeleteTriggerResponse\"%\xc2\xf3\x18\x0etriggers.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\rUpdateTrigger\x12(.toshi.workspace.v1.UpdateTriggerRequest\x1a).toshi.workspace.v1.UpdateTriggerResponse\"%\xc2\xf3\x18\x0etriggers.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\xbe\x01\n" +
+	"\rDeleteTrigger\x12(.toshi.workspace.v1.DeleteTriggerRequest\x1a).toshi.workspace.v1.DeleteTriggerResponse\"X\xc2\xf3\x18\x0etriggers.write\xca\xf3\x18\venvironment\xfa\xf3\x18/\b\x01\x12+Delete this trigger? This cannot be undone.\x90\xf4\x18\x01B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_triggers_proto_rawDescOnce sync.Once

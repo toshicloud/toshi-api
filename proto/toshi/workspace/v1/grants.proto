@@ -102,6 +102,7 @@ service GrantService {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "grants.write";
     option (toshi.scope) = "environment";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this grant? The access it gives ends now."};
   }
 
   // LeaveGrant ends a grant the workspace received and accepted: it
@@ -113,6 +114,8 @@ service GrantService {
     option (toshi.permission) = "grants.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "grant.revoked"};
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Leave this grant? You lose the access it gives, and only its owner can give it back."};
   }
 }
 

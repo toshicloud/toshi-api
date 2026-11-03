@@ -67,6 +67,7 @@ service RoleService {
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this role? This cannot be undone."};
   }
   // ListRoleGrants returns the workspace's grants, ordered by subject,
   // then role, then scope, optionally only those of one subject, or only
@@ -100,6 +101,7 @@ service RoleService {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     option (toshi.audit) = {target: "role:response.grant.role"};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this role? The access it gives ends now."};
   }
   // ListMembers returns the workspace's members, oldest first: the people
   // a session opens the workspace for, with how and when each joined. A
@@ -124,6 +126,7 @@ service RoleService {
     option (toshi.permission) = "members.write";
     option (toshi.scope) = "workspace";
     option (toshi.audit) = {action: "member.removed", target: "member:user_id"};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Remove this member? Their access to the workspace ends now."};
   }
   // ApproveMember makes a person waiting for approval a member, as an
   // accepted invitation does: it grants no role, and makes them an owner
@@ -168,6 +171,7 @@ service RoleService {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "members.write";
     option (toshi.scope) = "workspace";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this invitation? It can no longer be accepted."};
   }
 
   // AcceptInvitation makes the caller a member of the workspace whose

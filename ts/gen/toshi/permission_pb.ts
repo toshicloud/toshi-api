@@ -12,7 +12,74 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/permission.proto.
  */
 export const file_toshi_permission: GenFile = /*@__PURE__*/
-  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSJxCgtEZXByZWNhdGlvbhIWCg5ub3RpY2VfdmVyc2lvbhgBIAEoCRIXCg9yZW1vdmFsX3ZlcnNpb24YAiABKAkSEwoLcmVwbGFjZWRfYnkYAyABKAkSDAoEZG9jcxgEIAEoCRIOCgZzdW5zZXQYBSABKAkiNwoFQXVkaXQSDgoGYWN0aW9uGAEgASgJEg4KBnRhcmdldBgCIAEoCRIOCgZyZWFzb24YAyABKAkitgEKA01DUBIWCglyZWFkX29ubHkYASABKAhIAIgBARIYCgtkZXN0cnVjdGl2ZRgCIAEoCEgBiAEBEhcKCmlkZW1wb3RlbnQYAyABKAhIAogBARIXCgpvcGVuX3dvcmxkGAQgASgISAOIAQESDwoHZXhjbHVkZRgFIAEoCEIMCgpfcmVhZF9vbmx5Qg4KDF9kZXN0cnVjdGl2ZUINCgtfaWRlbXBvdGVudEINCgtfb3Blbl93b3JsZCKWAgoFQm91bmQSDAoEbmFtZRgBIAEoCRIfCgR1bml0GAIgASgOMhEudG9zaGkuQm91bmQuVW5pdBIUCgdkZWZhdWx0GAMgASgDSACIAQESEAoDbWluGAQgASgDSAGIAQESEAoDbWF4GAUgASgDSAKIAQESFgoJdGhyZXNob2xkGAYgASgDSAOIAQESEgoKaHR0cF9ob3N0cxgHIAMoCSJOCgRVbml0EhQKEFVOSVRfVU5TUEVDSUZJRUQQABIQCgxVTklUX1NFQ09ORFMQARIOCgpVTklUX0JZVEVTEAISDgoKVU5JVF9DT1VOVBADQgoKCF9kZWZhdWx0QgYKBF9taW5CBgoEX21heEIMCgpfdGhyZXNob2xkKjkKB0tleU1vZGUSGAoUS0VZX01PREVfVU5TUEVDSUZJRUQQABIHCgNLRVkQARILCgdOQVRVUkFMEAI6QAoKcGVybWlzc2lvbhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLiOAyABKAlSCnBlcm1pc3Npb246NgoFc2NvcGUSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi5jgMgASgJUgVzY29wZTpECgVhdWRpdBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLqOAyABKAsyDC50b3NoaS5BdWRpdFIFYXVkaXQ6OwoIYnlfZmllbGQSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi8jgMgASgIUgdieUZpZWxkOj4KA21jcBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGL2OAyABKAsyCi50b3NoaS5NQ1BSA21jcDoyCgNvd24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi+jgMgASgIUgNvd246SwoIa2V5X21vZGUSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxjCjgMgASgOMg4udG9zaGkuS2V5TW9kZVIHa2V5TW9kZTpWCgtkZXByZWNhdGlvbhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGMOOAyABKAsyEi50b3NoaS5EZXByZWNhdGlvblILZGVwcmVjYXRpb246SgoQZmllbGRfcGVybWlzc2lvbhIdLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE9wdGlvbnMYu44DIAEoCVIPZmllbGRQZXJtaXNzaW9uOkMKBWJvdW5kEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0aW9ucxjBjgMgASgLMgwudG9zaGkuQm91bmRSBWJvdW5kQh5aHGdvLnRvc2hpY2xvdWQuaW8vYXBpL3Rvc2hpcGJiBnByb3RvMw", [file_google_protobuf_descriptor]);
+  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSJGCgdTdXJmYWNlEhkKBGFza3MYASABKA4yCy50b3NoaS5Bc2tzEhAKCHF1ZXN0aW9uGAIgASgJEg4KBmFuc3dlchgDIAEoCSJxCgtEZXByZWNhdGlvbhIWCg5ub3RpY2VfdmVyc2lvbhgBIAEoCRIXCg9yZW1vdmFsX3ZlcnNpb24YAiABKAkSEwoLcmVwbGFjZWRfYnkYAyABKAkSDAoEZG9jcxgEIAEoCRIOCgZzdW5zZXQYBSABKAkiNwoFQXVkaXQSDgoGYWN0aW9uGAEgASgJEg4KBnRhcmdldBgCIAEoCRIOCgZyZWFzb24YAyABKAkitgEKA01DUBIWCglyZWFkX29ubHkYASABKAhIAIgBARIYCgtkZXN0cnVjdGl2ZRgCIAEoCEgBiAEBEhcKCmlkZW1wb3RlbnQYAyABKAhIAogBARIXCgpvcGVuX3dvcmxkGAQgASgISAOIAQESDwoHZXhjbHVkZRgFIAEoCEIMCgpfcmVhZF9vbmx5Qg4KDF9kZXN0cnVjdGl2ZUINCgtfaWRlbXBvdGVudEINCgtfb3Blbl93b3JsZCKWAgoFQm91bmQSDAoEbmFtZRgBIAEoCRIfCgR1bml0GAIgASgOMhEudG9zaGkuQm91bmQuVW5pdBIUCgdkZWZhdWx0GAMgASgDSACIAQESEAoDbWluGAQgASgDSAGIAQESEAoDbWF4GAUgASgDSAKIAQESFgoJdGhyZXNob2xkGAYgASgDSAOIAQESEgoKaHR0cF9ob3N0cxgHIAMoCSJOCgRVbml0EhQKEFVOSVRfVU5TUEVDSUZJRUQQABIQCgxVTklUX1NFQ09ORFMQARIOCgpVTklUX0JZVEVTEAISDgoKVU5JVF9DT1VOVBADQgoKCF9kZWZhdWx0QgYKBF9taW5CBgoEX21heEIMCgpfdGhyZXNob2xkKjkKB0tleU1vZGUSGAoUS0VZX01PREVfVU5TUEVDSUZJRUQQABIHCgNLRVkQARILCgdOQVRVUkFMEAIqQQoEQXNrcxIUChBBU0tTX1VOU1BFQ0lGSUVEEAASDwoLQVNLU19BTFdBWVMQARISCg5BU0tTX09ORV9DTElDSxACOkAKCnBlcm1pc3Npb24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi4jgMgASgJUgpwZXJtaXNzaW9uOjYKBXNjb3BlEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuY4DIAEoCVIFc2NvcGU6RAoFYXVkaXQSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi6jgMgASgLMgwudG9zaGkuQXVkaXRSBWF1ZGl0OjsKCGJ5X2ZpZWxkEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvI4DIAEoCFIHYnlGaWVsZDo+CgNtY3ASHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi9jgMgASgLMgoudG9zaGkuTUNQUgNtY3A6MgoDb3duEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvo4DIAEoCFIDb3duOksKCGtleV9tb2RlEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYwo4DIAEoDjIOLnRvc2hpLktleU1vZGVSB2tleU1vZGU6VgoLZGVwcmVjYXRpb24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxjDjgMgASgLMhIudG9zaGkuRGVwcmVjYXRpb25SC2RlcHJlY2F0aW9uOkoKB3N1cmZhY2USHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi/jgMgASgLMg4udG9zaGkuU3VyZmFjZVIHc3VyZmFjZTpKChBmaWVsZF9wZXJtaXNzaW9uEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0aW9ucxi7jgMgASgJUg9maWVsZFBlcm1pc3Npb246QwoFYm91bmQSHS5nb29nbGUucHJvdG9idWYuRmllbGRPcHRpb25zGMGOAyABKAsyDC50b3NoaS5Cb3VuZFIFYm91bmRCHlocZ28udG9zaGljbG91ZC5pby9hcGkvdG9zaGlwYmIGcHJvdG8z", [file_google_protobuf_descriptor]);
+
+/**
+ * Surface is how a call is shown to the people who make it.
+ *
+ * @generated from message toshi.Surface
+ */
+export type Surface = Message<"toshi.Surface"> & {
+  /**
+   * asks says who asks before the call: the command line and the dashboard
+   * for ALWAYS, the dashboard alone for ONE_CLICK. Unset, nobody asks.
+   *
+   * @generated from field: toshi.Asks asks = 1;
+   */
+  asks: Asks;
+
+  /**
+   * question is the question asked before the call, stating what ends and
+   * what is kept. It is required with ASKS_ALWAYS.
+   *
+   * @generated from field: string question = 2;
+   */
+  question: string;
+
+  /**
+   * answer is the word the person types to go on. Unset, it is "yes".
+   *
+   * @generated from field: string answer = 3;
+   */
+  answer: string;
+};
+
+/**
+ * Surface is how a call is shown to the people who make it.
+ *
+ * @generated from message toshi.Surface
+ */
+export type SurfaceJson = {
+  /**
+   * asks says who asks before the call: the command line and the dashboard
+   * for ALWAYS, the dashboard alone for ONE_CLICK. Unset, nobody asks.
+   *
+   * @generated from field: toshi.Asks asks = 1;
+   */
+  asks?: AsksJson;
+
+  /**
+   * question is the question asked before the call, stating what ends and
+   * what is kept. It is required with ASKS_ALWAYS.
+   *
+   * @generated from field: string question = 2;
+   */
+  question?: string;
+
+  /**
+   * answer is the word the person types to go on. Unset, it is "yes".
+   *
+   * @generated from field: string answer = 3;
+   */
+  answer?: string;
+};
+
+/**
+ * Describes the message toshi.Surface.
+ * Use `create(SurfaceSchema)` to create a new message.
+ */
+export const SurfaceSchema: GenMessage<Surface, {jsonType: SurfaceJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_permission, 0);
 
 /**
  * Deprecation is the notice that a call will be removed.
@@ -115,7 +182,7 @@ export type DeprecationJson = {
  * Use `create(DeprecationSchema)` to create a new message.
  */
 export const DeprecationSchema: GenMessage<Deprecation, {jsonType: DeprecationJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_permission, 0);
+  messageDesc(file_toshi_permission, 1);
 
 /**
  * Audit is the audit event a call records.
@@ -202,7 +269,7 @@ export type AuditJson = {
  * Use `create(AuditSchema)` to create a new message.
  */
 export const AuditSchema: GenMessage<Audit, {jsonType: AuditJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_permission, 1);
+  messageDesc(file_toshi_permission, 2);
 
 /**
  * MCP is how a call appears as a tool of the MCP server: each hint that is
@@ -307,7 +374,7 @@ export type MCPJson = {
  * Use `create(MCPSchema)` to create a new message.
  */
 export const MCPSchema: GenMessage<MCP, {jsonType: MCPJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_permission, 2);
+  messageDesc(file_toshi_permission, 3);
 
 /**
  * Bound names fixed values and their units for a field.
@@ -426,7 +493,7 @@ export type BoundJson = {
  * Use `create(BoundSchema)` to create a new message.
  */
 export const BoundSchema: GenMessage<Bound, {jsonType: BoundJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_permission, 3);
+  messageDesc(file_toshi_permission, 4);
 
 /**
  * Unit identifies the unit of a bound's values.
@@ -466,7 +533,7 @@ export type Bound_UnitJson = "UNIT_UNSPECIFIED" | "UNIT_SECONDS" | "UNIT_BYTES" 
  * Describes the enum toshi.Bound.Unit.
  */
 export const Bound_UnitSchema: GenEnum<Bound_Unit, Bound_UnitJson> = /*@__PURE__*/
-  enumDesc(file_toshi_permission, 3, 0);
+  enumDesc(file_toshi_permission, 4, 0);
 
 /**
  * KeyMode describes the retry mode of a changing call.
@@ -502,6 +569,50 @@ export type KeyModeJson = "KEY_MODE_UNSPECIFIED" | "KEY" | "NATURAL";
  */
 export const KeyModeSchema: GenEnum<KeyMode, KeyModeJson> = /*@__PURE__*/
   enumDesc(file_toshi_permission, 0);
+
+/**
+ * Asks says who asks before a call.
+ *
+ * @generated from enum toshi.Asks
+ */
+export enum Asks {
+  /**
+   * Nobody asks: the call ends a run or can be undone.
+   *
+   * @generated from enum value: ASKS_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The command line and the dashboard ask: the call deletes stored data,
+   * deletes or replaces a credential, ends a person's, a token's or a
+   * link's access, or replaces the recipe a service runs, with no undo.
+   *
+   * @generated from enum value: ASKS_ALWAYS = 1;
+   */
+  ALWAYS = 1,
+
+  /**
+   * The dashboard alone asks: the call starts billed work from one control
+   * with no form before it. The command line is typed, so it does not ask.
+   *
+   * @generated from enum value: ASKS_ONE_CLICK = 2;
+   */
+  ONE_CLICK = 2,
+}
+
+/**
+ * Asks says who asks before a call.
+ *
+ * @generated from enum toshi.Asks
+ */
+export type AsksJson = "ASKS_UNSPECIFIED" | "ASKS_ALWAYS" | "ASKS_ONE_CLICK";
+
+/**
+ * Describes the enum toshi.Asks.
+ */
+export const AsksSchema: GenEnum<Asks, AsksJson> = /*@__PURE__*/
+  enumDesc(file_toshi_permission, 1);
 
 /**
  * permission names what a caller needs to make the call: an area and a
@@ -614,6 +725,15 @@ export const deprecation: GenExtension<MethodOptions, Deprecation> = /*@__PURE__
   extDesc(file_toshi_permission, 7);
 
 /**
+ * surface says who asks before the call is made and what the question is.
+ * A call without it is made without a question.
+ *
+ * @generated from extension: toshi.Surface surface = 51007;
+ */
+export const surface: GenExtension<MethodOptions, Surface> = /*@__PURE__*/
+  extDesc(file_toshi_permission, 8);
+
+/**
  * field_permission names what a caller needs to change the field through
  * the mask of an update call marked by_field: a field group of its own,
  * such as "billing.write" for a workspace's spending limits. A field
@@ -623,7 +743,7 @@ export const deprecation: GenExtension<MethodOptions, Deprecation> = /*@__PURE__
  * @generated from extension: string field_permission = 51003;
  */
 export const field_permission: GenExtension<FieldOptions, string> = /*@__PURE__*/
-  extDesc(file_toshi_permission, 8);
+  extDesc(file_toshi_permission, 9);
 
 /**
  * bound states a fixed number the server applies to the field: the same
@@ -634,5 +754,5 @@ export const field_permission: GenExtension<FieldOptions, string> = /*@__PURE__*
  * @generated from extension: toshi.Bound bound = 51009;
  */
 export const bound: GenExtension<FieldOptions, Bound> = /*@__PURE__*/
-  extDesc(file_toshi_permission, 9);
+  extDesc(file_toshi_permission, 10);
 

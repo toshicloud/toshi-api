@@ -68,6 +68,7 @@ service RecordingService {
       action: "recording.share_link_revoked"
       target: "recording_share_link:share_link_id"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this share link? Anyone using it loses access now."};
   }
 }
 

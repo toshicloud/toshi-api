@@ -68,6 +68,7 @@ service ConnectionService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "connections.write";
     option (toshi.scope) = "workspace";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this connection? This cannot be undone."};
   }
 
   // RotateConnectionSecret gives a WEBHOOK connection a new signing secret
@@ -85,6 +86,8 @@ service ConnectionService {
     option (toshi.audit) = {
       action: "connection.secret_rotated"
     };
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Rotate this connection's secret? The old secret stops working now."};
   }
 
   // UpdateConnection sets the fields of connection.id's connection that

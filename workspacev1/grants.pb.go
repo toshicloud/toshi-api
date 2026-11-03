@@ -1756,7 +1756,8 @@ const file_toshi_workspace_v1_grants_proto_rawDesc = "" +
 	"\tGrantSide\x12\x1a\n" +
 	"\x16GRANT_SIDE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10GRANT_SIDE_GIVEN\x10\x01\x12\x17\n" +
-	"\x13GRANT_SIDE_RECEIVED\x10\x022\x90\t\n" +
+	"\x13GRANT_SIDE_RECEIVED\x10\x022\xab\n" +
+	"\n" +
 	"\fGrantService\x12\x94\x01\n" +
 	"\vCreateGrant\x12&.toshi.workspace.v1.CreateGrantRequest\x1a'.toshi.workspace.v1.CreateGrantResponse\"4\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
 	"\rgrant.offered\x90\xf4\x18\x01\x12s\n" +
@@ -1768,11 +1769,11 @@ const file_toshi_workspace_v1_grants_proto_rawDesc = "" +
 	"\fDeclineGrant\x12'.toshi.workspace.v1.DeclineGrantRequest\x1a(.toshi.workspace.v1.DeclineGrantResponse\"5\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x10\n" +
 	"\x0egrant.declined\x90\xf4\x18\x02\x12\xab\x01\n" +
 	"\vUpdateGrant\x12&.toshi.workspace.v1.UpdateGrantRequest\x1a'.toshi.workspace.v1.UpdateGrantResponse\"K\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18&\n" +
-	"\x14grant.expiry_changed\x12\x0egrant:grant.id\x90\xf4\x18\x02\x12\x83\x01\n" +
-	"\vRevokeGrant\x12&.toshi.workspace.v1.RevokeGrantRequest\x1a'.toshi.workspace.v1.RevokeGrantResponse\"#\xc2\xf3\x18\fgrants.write\xca\xf3\x18\venvironment\x90\xf4\x18\x02\x12\x91\x01\n" +
+	"\x14grant.expiry_changed\x12\x0egrant:grant.id\x90\xf4\x18\x02\x12\xbb\x01\n" +
+	"\vRevokeGrant\x12&.toshi.workspace.v1.RevokeGrantRequest\x1a'.toshi.workspace.v1.RevokeGrantResponse\"[\xc2\xf3\x18\fgrants.write\xca\xf3\x18\venvironment\xfa\xf3\x184\b\x01\x120Revoke this grant? The access it gives ends now.\x90\xf4\x18\x02\x12\xf4\x01\n" +
 	"\n" +
-	"LeaveGrant\x12%.toshi.workspace.v1.LeaveGrantRequest\x1a&.toshi.workspace.v1.LeaveGrantResponse\"4\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
-	"\rgrant.revoked\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"LeaveGrant\x12%.toshi.workspace.v1.LeaveGrantRequest\x1a&.toshi.workspace.v1.LeaveGrantResponse\"\x96\x01\xc2\xf3\x18\fgrants.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\x0f\n" +
+	"\rgrant.revoked\xea\xf3\x18\x02\x10\x01\xfa\xf3\x18X\b\x01\x12TLeave this grant? You lose the access it gives, and only its owner can give it back.\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_grants_proto_rawDescOnce sync.Once

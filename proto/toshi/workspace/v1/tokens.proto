@@ -51,6 +51,7 @@ service TokenService {
   rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "tokens.write";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this token? It stops working now."};
   }
   // RollWorkspaceToken gives one of the workspace's tokens a new value and
   // returns it; the old value stops working at once. The token keeps its
@@ -68,6 +69,8 @@ service TokenService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "tokens.write";
     option (toshi.audit) = {action: "token.rotated"};
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Roll this token? The old token stops working now."};
   }
   // UpdateToken changes an API token's name, expiry, start and client
   // address ranges: the fields update_mask names. The expiry stays within

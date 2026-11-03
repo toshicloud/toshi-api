@@ -2552,29 +2552,29 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\x15INVITATION_STATE_OPEN\x10\x01\x12\x1d\n" +
 	"\x19INVITATION_STATE_ACCEPTED\x10\x02\x12\x1c\n" +
 	"\x18INVITATION_STATE_REVOKED\x10\x03\x12\x1c\n" +
-	"\x18INVITATION_STATE_EXPIRED\x10\x042\x8e\x11\n" +
+	"\x18INVITATION_STATE_EXPIRED\x10\x042\xf7\x12\n" +
 	"\vRoleService\x12j\n" +
 	"\tListRoles\x12$.toshi.workspace.v1.ListRolesRequest\x1a%.toshi.workspace.v1.ListRolesResponse\"\x10\xc2\xf3\x18\fmembers.read\x12r\n" +
 	"\n" +
 	"CreateRole\x12%.toshi.workspace.v1.CreateRoleRequest\x1a&.toshi.workspace.v1.CreateRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x01\x12r\n" +
 	"\n" +
-	"UpdateRole\x12%.toshi.workspace.v1.UpdateRoleRequest\x1a&.toshi.workspace.v1.UpdateRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x02\x12r\n" +
+	"UpdateRole\x12%.toshi.workspace.v1.UpdateRoleRequest\x1a&.toshi.workspace.v1.UpdateRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x02\x12\xa2\x01\n" +
 	"\n" +
-	"DeleteRole\x12%.toshi.workspace.v1.DeleteRoleRequest\x1a&.toshi.workspace.v1.DeleteRoleResponse\"\x15\xc2\xf3\x18\rmembers.write\x90\xf4\x18\x02\x12\x86\x01\n" +
+	"DeleteRole\x12%.toshi.workspace.v1.DeleteRoleRequest\x1a&.toshi.workspace.v1.DeleteRoleResponse\"E\xc2\xf3\x18\rmembers.write\xfa\xf3\x18,\b\x01\x12(Delete this role? This cannot be undone.\x90\xf4\x18\x02\x12\x86\x01\n" +
 	"\x0eListRoleGrants\x12).toshi.workspace.v1.ListRoleGrantsRequest\x1a*.toshi.workspace.v1.ListRoleGrantsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x8b\x01\n" +
-	"\tGrantRole\x12$.toshi.workspace.v1.GrantRoleRequest\x1a%.toshi.workspace.v1.GrantRoleResponse\"1\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\v\x12\trole:role\x90\xf4\x18\x02\x12\x90\x01\n" +
+	"\tGrantRole\x12$.toshi.workspace.v1.GrantRoleRequest\x1a%.toshi.workspace.v1.GrantRoleResponse\"1\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18\v\x12\trole:role\x90\xf4\x18\x02\x12\xc7\x01\n" +
 	"\n" +
-	"RevokeRole\x12%.toshi.workspace.v1.RevokeRoleRequest\x1a&.toshi.workspace.v1.RevokeRoleResponse\"3\xc2\xf3\x18\rmembers.write\xd2\xf3\x18\x1a\x12\x18role:response.grant.role\x90\xf4\x18\x02\x12}\n" +
-	"\vListMembers\x12&.toshi.workspace.v1.ListMembersRequest\x1a'.toshi.workspace.v1.ListMembersResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xa9\x01\n" +
-	"\fRemoveMember\x12'.toshi.workspace.v1.RemoveMemberRequest\x1a(.toshi.workspace.v1.RemoveMemberResponse\"F\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18 \n" +
-	"\x0emember.removed\x12\x0emember:user_id\x90\xf4\x18\x02\x12\xad\x01\n" +
+	"RevokeRole\x12%.toshi.workspace.v1.RevokeRoleRequest\x1a&.toshi.workspace.v1.RevokeRoleResponse\"j\xc2\xf3\x18\rmembers.write\xd2\xf3\x18\x1a\x12\x18role:response.grant.role\xfa\xf3\x183\b\x01\x12/Revoke this role? The access it gives ends now.\x90\xf4\x18\x02\x12}\n" +
+	"\vListMembers\x12&.toshi.workspace.v1.ListMembersRequest\x1a'.toshi.workspace.v1.ListMembersResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xed\x01\n" +
+	"\fRemoveMember\x12'.toshi.workspace.v1.RemoveMemberRequest\x1a(.toshi.workspace.v1.RemoveMemberResponse\"\x89\x01\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18 \n" +
+	"\x0emember.removed\x12\x0emember:user_id\xfa\xf3\x18?\b\x01\x12;Remove this member? Their access to the workspace ends now.\x90\xf4\x18\x02\x12\xad\x01\n" +
 	"\rApproveMember\x12(.toshi.workspace.v1.ApproveMemberRequest\x1a).toshi.workspace.v1.ApproveMemberResponse\"G\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18!\n" +
 	"\x0fmember.approved\x12\x0emember:user_id\x90\xf4\x18\x02\x12\xad\x01\n" +
 	"\rDeclineMember\x12(.toshi.workspace.v1.DeclineMemberRequest\x1a).toshi.workspace.v1.DeclineMemberResponse\"G\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x18!\n" +
 	"\x0fmember.declined\x12\x0emember:user_id\x90\xf4\x18\x02\x12\x91\x01\n" +
 	"\x10CreateInvitation\x12+.toshi.workspace.v1.CreateInvitationRequest\x1a,.toshi.workspace.v1.CreateInvitationResponse\"\"\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x90\xf4\x18\x01\x12\x89\x01\n" +
-	"\x0fListInvitations\x12*.toshi.workspace.v1.ListInvitationsRequest\x1a+.toshi.workspace.v1.ListInvitationsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\x91\x01\n" +
-	"\x10RevokeInvitation\x12+.toshi.workspace.v1.RevokeInvitationRequest\x1a,.toshi.workspace.v1.RevokeInvitationResponse\"\"\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\x90\xf4\x18\x02\x12\xcd\x01\n" +
+	"\x0fListInvitations\x12*.toshi.workspace.v1.ListInvitationsRequest\x1a+.toshi.workspace.v1.ListInvitationsResponse\"\x1d\xc2\xf3\x18\fmembers.read\xca\xf3\x18\tworkspace\x12\xce\x01\n" +
+	"\x10RevokeInvitation\x12+.toshi.workspace.v1.RevokeInvitationRequest\x1a,.toshi.workspace.v1.RevokeInvitationResponse\"_\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xfa\xf3\x189\b\x01\x125Revoke this invitation? It can no longer be accepted.\x90\xf4\x18\x02\x12\xcd\x01\n" +
 	"\x10AcceptInvitation\x12+.toshi.workspace.v1.AcceptInvitationRequest\x1a,.toshi.workspace.v1.AcceptInvitationResponse\"^\xc2\xf3\x18\rmembers.write\xca\xf3\x18\tworkspace\xd2\xf3\x188\n" +
 	"\x13invitation.accepted\x12!invitation:response.invitation.id\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 

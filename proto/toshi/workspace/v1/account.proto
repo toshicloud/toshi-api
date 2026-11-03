@@ -52,6 +52,7 @@ service AccountService {
       action: "identity.unlinked"
       target: "none"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Unlink this sign-in? It can no longer be used to sign in."};
   }
 
   // ListSessions returns the caller's own sign-in sessions that have not

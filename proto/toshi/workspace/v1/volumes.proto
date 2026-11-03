@@ -117,6 +117,7 @@ service VolumeService {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "projects.write";
     option (toshi.scope) = "project";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this volume? Its data is deleted and cannot be brought back."};
   }
 
   // ListVolumeVersions returns a state volume's saved versions, newest

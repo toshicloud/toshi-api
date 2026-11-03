@@ -86,6 +86,8 @@ service OperatorService {
   // agent, if still running, registers again with its enrollment token.
   rpc RetireHost(RetireHostRequest) returns (RetireHostResponse) {
     option (toshi.key_mode) = NATURAL;
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire this host? This cannot be undone."};
   }
 
   // RevokeHost revokes a host at once: its
@@ -97,6 +99,7 @@ service OperatorService {
   // ID fails with NOT_FOUND, a cloud host with FailedPrecondition.
   rpc RevokeHost(RevokeHostRequest) returns (RevokeHostResponse) {
     option (toshi.key_mode) = NATURAL;
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this host? Its token stops working now, its unfinished jobs end and are not run again, and it never registers again under this id."};
   }
 
   // RetireHosts lists the hosts whose state is offline and whose last
@@ -112,6 +115,8 @@ service OperatorService {
       action: "host.offline_retired"
       target: "none"
     };
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire these hosts? This cannot be undone."};
   }
 
   // CreateWorkspace makes a workspace that has no GitHub installation and
@@ -281,6 +286,8 @@ service OperatorService {
   rpc RotateToken(RotateTokenRequest) returns (RotateTokenResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.audit) = {target: "token:response.token.id"};
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Rotate this token? The old token stops working now."};
   }
 
   // RevokeToken stops a token working at once. Revoking an enrollment token
@@ -291,6 +298,7 @@ service OperatorService {
   // Revoking the only active operator token fails with FailedPrecondition.
   rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse) {
     option (toshi.key_mode) = NATURAL;
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this token? It stops working now."};
   }
 
   // RollToken gives a token a new value and returns it; it is not stored
@@ -302,6 +310,8 @@ service OperatorService {
   rpc RollToken(RollTokenRequest) returns (RollTokenResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.audit) = {action: "token.rotated"};
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Roll this token? The old token stops working now."};
   }
 
   // CreateProductToken makes a token a product's adapter authenticates to
@@ -338,6 +348,7 @@ service OperatorService {
   // FAILED_PRECONDITION; an unknown or deleted one with NOT_FOUND.
   rpc DeleteClient(DeleteClientRequest) returns (DeleteClientResponse) {
     option (toshi.key_mode) = NATURAL;
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this OAuth client? Programs that sign in with it stop working."};
   }
 
   // ListOperatorAlerts returns the operator alerts raised and not yet
@@ -397,6 +408,7 @@ service OperatorService {
       action: "filler.removed"
       target: "filler:name"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this filler? This cannot be undone."};
   }
 
   // UpdateFiller changes whether a filler is enabled, named by the
@@ -515,6 +527,7 @@ service OperatorService {
   // operator set for the workspace is PERMISSION_DENIED to it there.
   rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse) {
     option (toshi.key_mode) = NATURAL;
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this storage provider? This cannot be undone."};
   }
 }
 

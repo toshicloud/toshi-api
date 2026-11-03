@@ -1863,15 +1863,16 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x11VolumeConsistency\x12\"\n" +
 	"\x1eVOLUME_CONSISTENCY_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18VOLUME_CONSISTENCY_CRASH\x10\x01\x12\"\n" +
-	"\x1eVOLUME_CONSISTENCY_APPLICATION\x10\x022\xf4\t\n" +
+	"\x1eVOLUME_CONSISTENCY_APPLICATION\x10\x022\xbf\n" +
+	"\n" +
 	"\rVolumeService\x12{\n" +
 	"\vListVolumes\x12&.toshi.workspace.v1.ListVolumesRequest\x1a'.toshi.workspace.v1.ListVolumesResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12u\n" +
 	"\tGetVolume\x12$.toshi.workspace.v1.GetVolumeRequest\x1a%.toshi.workspace.v1.GetVolumeResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12\x84\x01\n" +
 	"\fCreateVolume\x12'.toshi.workspace.v1.CreateVolumeRequest\x1a(.toshi.workspace.v1.CreateVolumeResponse\"!\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x90\xf4\x18\x01\x12\xa3\x01\n" +
 	"\fUpdateVolume\x12'.toshi.workspace.v1.UpdateVolumeRequest\x1a(.toshi.workspace.v1.UpdateVolumeResponse\"@\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xd2\xf3\x18\x1b\x12\x19volume:response.volume.id\x90\xf4\x18\x02\x12\x83\x01\n" +
 	"\fAttachVolume\x12'.toshi.workspace.v1.AttachVolumeRequest\x1a(.toshi.workspace.v1.AttachVolumeResponse\" \xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\x90\xf4\x18\x02\x12\x83\x01\n" +
-	"\fDetachVolume\x12'.toshi.workspace.v1.DetachVolumeRequest\x1a(.toshi.workspace.v1.DetachVolumeResponse\" \xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\x90\xf4\x18\x02\x12\x84\x01\n" +
-	"\fDeleteVolume\x12'.toshi.workspace.v1.DeleteVolumeRequest\x1a(.toshi.workspace.v1.DeleteVolumeResponse\"!\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\x90\xf4\x18\x02\x12\x90\x01\n" +
+	"\fDetachVolume\x12'.toshi.workspace.v1.DetachVolumeRequest\x1a(.toshi.workspace.v1.DetachVolumeResponse\" \xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\x90\xf4\x18\x02\x12\xcf\x01\n" +
+	"\fDeleteVolume\x12'.toshi.workspace.v1.DeleteVolumeRequest\x1a(.toshi.workspace.v1.DeleteVolumeResponse\"l\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xfa\xf3\x18G\b\x01\x12CDelete this volume? Its data is deleted and cannot be brought back.\x90\xf4\x18\x02\x12\x90\x01\n" +
 	"\x12ListVolumeVersions\x12-.toshi.workspace.v1.ListVolumeVersionsRequest\x1a..toshi.workspace.v1.ListVolumeVersionsResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12\x9b\x01\n" +
 	"\rRestoreVolume\x12(.toshi.workspace.v1.RestoreVolumeRequest\x1a).toshi.workspace.v1.RestoreVolumeResponse\"5\xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\n" +
 	"\x0fvolume.restored\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"

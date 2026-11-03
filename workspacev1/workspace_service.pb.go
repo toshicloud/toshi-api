@@ -6825,7 +6825,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x12InboundMailPastCap\x12%\n" +
 	"!INBOUND_MAIL_PAST_CAP_UNSPECIFIED\x10\x00\x12+\n" +
 	"'INBOUND_MAIL_PAST_CAP_ACCEPT_AND_CHARGE\x10\x01\x12 \n" +
-	"\x1cINBOUND_MAIL_PAST_CAP_REFUSE\x10\x022\x91\x17\n" +
+	"\x1cINBOUND_MAIL_PAST_CAP_REFUSE\x10\x022\xcb\x17\n" +
 	"\x10WorkspaceService\x12u\n" +
 	"\fGetWorkspace\x12'.toshi.workspace.v1.GetWorkspaceRequest\x1a(.toshi.workspace.v1.GetWorkspaceResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12\x87\x01\n" +
 	"\x0fUpdateWorkspace\x12*.toshi.workspace.v1.UpdateWorkspaceRequest\x1a+.toshi.workspace.v1.UpdateWorkspaceResponse\"\x1b\xc2\xf3\x18\x0fworkspace.write\xe0\xf3\x18\x01\x90\xf4\x18\x02\x12{\n" +
@@ -6837,10 +6837,10 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"seats.read\x12\x9a\x01\n" +
 	"\n" +
 	"AssignSeat\x12%.toshi.workspace.v1.AssignSeatRequest\x1a&.toshi.workspace.v1.AssignSeatResponse\"=\xc2\xf3\x18\vseats.write\xd2\xf3\x18&\n" +
-	"\rseat.assigned\x12\x15seat:response.seat.id\x90\xf4\x18\x02\x12\x82\x01\n" +
+	"\rseat.assigned\x12\x15seat:response.seat.id\x90\xf4\x18\x02\x12\xbc\x01\n" +
 	"\n" +
-	"RemoveSeat\x12%.toshi.workspace.v1.RemoveSeatRequest\x1a&.toshi.workspace.v1.RemoveSeatResponse\"%\xc2\xf3\x18\vseats.write\xd2\xf3\x18\x0e\n" +
-	"\fseat.removed\x90\xf4\x18\x02\x12x\n" +
+	"RemoveSeat\x12%.toshi.workspace.v1.RemoveSeatRequest\x1a&.toshi.workspace.v1.RemoveSeatResponse\"_\xc2\xf3\x18\vseats.write\xd2\xf3\x18\x0e\n" +
+	"\fseat.removed\xfa\xf3\x186\b\x01\x122Remove this seat? The person loses their seat now.\x90\xf4\x18\x02\x12x\n" +
 	"\rListEgressIPs\x12(.toshi.workspace.v1.ListEgressIPsRequest\x1a).toshi.workspace.v1.ListEgressIPsResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12i\n" +
 	"\bGetUsage\x12#.toshi.workspace.v1.GetUsageRequest\x1a$.toshi.workspace.v1.GetUsageResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12x\n" +
 	"\rGetQueueTimes\x12(.toshi.workspace.v1.GetQueueTimesRequest\x1a).toshi.workspace.v1.GetQueueTimesResponse\"\x12\xc2\xf3\x18\x0eworkspace.read\x12~\n" +

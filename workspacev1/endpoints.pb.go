@@ -4767,7 +4767,7 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	" ENDPOINT_MESSAGE_STATE_IN_FLIGHT\x10\x02\x12$\n" +
 	" ENDPOINT_MESSAGE_STATE_DELIVERED\x10\x03\x12\x1f\n" +
 	"\x1bENDPOINT_MESSAGE_STATE_DEAD\x10\x04\x12\"\n" +
-	"\x1eENDPOINT_MESSAGE_STATE_EXPIRED\x10\x052\xc8\x14\n" +
+	"\x1eENDPOINT_MESSAGE_STATE_EXPIRED\x10\x052\xb5\x15\n" +
 	"\x0fEndpointService\x12\xb0\x01\n" +
 	"\x0eCreateEndpoint\x12).toshi.workspace.v1.CreateEndpointRequest\x1a*.toshi.workspace.v1.CreateEndpointResponse\"G\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
 	"\x19host_job.endpoint_exposed\x12\x0fhost_job:job_id\x90\xf4\x18\x01\x12x\n" +
@@ -4781,11 +4781,11 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x11ExportEndpointLog\x12,.toshi.workspace.v1.ExportEndpointLogRequest\x1a-.toshi.workspace.v1.ExportEndpointLogResponse\">\xc2\xf3\x18\x0eendpoints.read\xd2\xf3\x18(\n" +
 	"\x15endpoint_log.exported\x12\x0fhost_job:job_id0\x01\x12\xe1\x01\n" +
 	"\x1aCreateEndpointConnectToken\x125.toshi.workspace.v1.CreateEndpointConnectTokenRequest\x1a6.toshi.workspace.v1.CreateEndpointConnectTokenResponse\"T\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x189\n" +
-	"&host_job.endpoint_connect_token_issued\x12\x0fhost_job:job_id\x90\xf4\x18\x01\x12\xe2\x01\n" +
-	"\x1aRevokeEndpointConnectToken\x125.toshi.workspace.v1.RevokeEndpointConnectTokenRequest\x1a6.toshi.workspace.v1.RevokeEndpointConnectTokenResponse\"U\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18:\n" +
-	"'host_job.endpoint_connect_token_revoked\x12\x0fhost_job:job_id\x90\xf4\x18\x02\x12\xb0\x01\n" +
-	"\x0eDeleteEndpoint\x12).toshi.workspace.v1.DeleteEndpointRequest\x1a*.toshi.workspace.v1.DeleteEndpointResponse\"G\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
-	"\x19host_job.endpoint_deleted\x12\x0fhost_job:job_id\x90\xf4\x18\x02\x12u\n" +
+	"&host_job.endpoint_connect_token_issued\x12\x0fhost_job:job_id\x90\xf4\x18\x01\x12\x9b\x02\n" +
+	"\x1aRevokeEndpointConnectToken\x125.toshi.workspace.v1.RevokeEndpointConnectTokenRequest\x1a6.toshi.workspace.v1.RevokeEndpointConnectTokenResponse\"\x8d\x01\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18:\n" +
+	"'host_job.endpoint_connect_token_revoked\x12\x0fhost_job:job_id\xfa\xf3\x184\b\x01\x120Revoke this connect token? It stops working now.\x90\xf4\x18\x02\x12\xe4\x01\n" +
+	"\x0eDeleteEndpoint\x12).toshi.workspace.v1.DeleteEndpointRequest\x1a*.toshi.workspace.v1.DeleteEndpointResponse\"{\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18,\n" +
+	"\x19host_job.endpoint_deleted\x12\x0fhost_job:job_id\xfa\xf3\x180\b\x01\x12,Delete this endpoint? This cannot be undone.\x90\xf4\x18\x02\x12u\n" +
 	"\fListForwards\x12'.toshi.workspace.v1.ListForwardsRequest\x1a(.toshi.workspace.v1.ListForwardsResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12l\n" +
 	"\tGetTunnel\x12$.toshi.workspace.v1.GetTunnelRequest\x1a%.toshi.workspace.v1.GetTunnelResponse\"\x12\xc2\xf3\x18\x0eendpoints.read\x12\xbb\x01\n" +
 	"\x13SendEndpointMessage\x12..toshi.workspace.v1.SendEndpointMessageRequest\x1a/.toshi.workspace.v1.SendEndpointMessageResponse\"C\xc2\xf3\x18\x0fendpoints.write\xd2\xf3\x18(\n" +

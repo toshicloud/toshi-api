@@ -75,6 +75,7 @@ service TriggerService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "triggers.write";
     option (toshi.scope) = "environment";
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this trigger? This cannot be undone."};
   }
 }
 

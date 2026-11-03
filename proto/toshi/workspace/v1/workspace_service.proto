@@ -113,6 +113,7 @@ service WorkspaceService {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "seats.write";
     option (toshi.audit) = {action: "seat.removed"};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Remove this seat? The person loses their seat now."};
   }
   // ListEgressIPs returns the public addresses the workspace's jobs may
   // reach the internet from: the egress addresses of the hosts its jobs can

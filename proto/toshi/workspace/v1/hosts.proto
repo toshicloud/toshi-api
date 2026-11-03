@@ -60,6 +60,8 @@ service HostService {
   rpc RetireHost(RetireHostRequest) returns (RetireHostResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "hosts.write";
+    option (toshi.mcp) = {destructive: true};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Retire this host? This cannot be undone."};
   }
   // CreateCloudHost registers a cloud host the control plane drives in the
   // workspace's AWS or Google Cloud account. When cloud hosts are not

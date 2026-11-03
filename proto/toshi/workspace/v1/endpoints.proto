@@ -139,6 +139,7 @@ service EndpointService {
       action: "host_job.endpoint_connect_token_revoked"
       target: "host_job:job_id"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Revoke this connect token? It stops working now."};
   }
 
   // DeleteEndpoint ends an endpoint and its connections. An open stream
@@ -151,6 +152,7 @@ service EndpointService {
       action: "host_job.endpoint_deleted"
       target: "host_job:job_id"
     };
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this endpoint? This cannot be undone."};
   }
 
   // ListForwards lists a running job's open Forwards, oldest first; a job

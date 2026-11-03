@@ -126,6 +126,7 @@ service ImageService {
     option (toshi.permission) = "images.write";
     option (toshi.scope) = "project";
     option (toshi.audit) = {target: "image:name"};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this image? This cannot be undone."};
   }
 }
 
