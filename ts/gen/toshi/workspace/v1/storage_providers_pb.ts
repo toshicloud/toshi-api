@@ -22,11 +22,16 @@ export const file_toshi_workspace_v1_storage_providers: GenFile = /*@__PURE__*/
  */
 export type StorageProvider = Message<"toshi.workspace.v1.StorageProvider"> & {
   /**
+   * The provider's id, set by the server.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The provider's name, unique among its owner's: 1 to 63 lower-case
+   * letters, digits and "-".
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -39,46 +44,70 @@ export type StorageProvider = Message<"toshi.workspace.v1.StorageProvider"> & {
   mode: string;
 
   /**
+   * The bucket's endpoint, as stored: a scheme and a host, with no
+   * trailing slash.
+   *
    * @generated from field: string endpoint = 4;
    */
   endpoint: string;
 
   /**
+   * The bucket's region; required.
+   *
    * @generated from field: string region = 5;
    */
   region: string;
 
   /**
+   * The bucket's name; required.
+   *
    * @generated from field: string bucket = 6;
    */
   bucket: string;
 
   /**
+   * A prefix every key Toshi writes starts with; empty for none.
+   *
    * @generated from field: string root_prefix = 7;
    */
   rootPrefix: string;
 
   /**
+   * Whether the bucket is addressed in the path, as /bucket/key, instead
+   * of the host name.
+   *
    * @generated from field: bool path_style = 8;
    */
   pathStyle: boolean;
 
   /**
+   * Whether the bucket takes lifecycle rules.
+   *
    * @generated from field: bool cap_lifecycle = 9;
    */
   capLifecycle: boolean;
 
   /**
+   * Whether a job's VM may send an artifact's bytes to its presigned URL
+   * itself.
+   *
    * @generated from field: bool cap_guest_presign = 10;
    */
   capGuestPresign: boolean;
 
   /**
+   * Whether the bucket is readable in every region the fleet runs in;
+   * always false on a workspace's own provider.
+   *
    * @generated from field: bool cap_global_replication = 11;
    */
   capGlobalReplication: boolean;
 
   /**
+   * What one gibibyte leaving the provider costs, in millionths of the
+   * operator's currency; 0 is unknown or free, and a workspace's own
+   * provider always has 0.
+   *
    * @generated from field: int64 egress_price_micros_per_gb = 12;
    */
   egressPriceMicrosPerGb: bigint;
@@ -91,6 +120,8 @@ export type StorageProvider = Message<"toshi.workspace.v1.StorageProvider"> & {
   credentialsWrapped: boolean;
 
   /**
+   * When the provider was last checked; unset when never checked.
+   *
    * @generated from field: google.protobuf.Timestamp last_check_at = 14;
    */
   lastCheckAt?: Timestamp | undefined;
@@ -104,11 +135,15 @@ export type StorageProvider = Message<"toshi.workspace.v1.StorageProvider"> & {
   lastCheckError: string;
 
   /**
+   * When the provider row was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 16;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When the provider row was last changed.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 17;
    */
   updatedAt?: Timestamp | undefined;
@@ -121,11 +156,16 @@ export type StorageProvider = Message<"toshi.workspace.v1.StorageProvider"> & {
  */
 export type StorageProviderJson = {
   /**
+   * The provider's id, set by the server.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The provider's name, unique among its owner's: 1 to 63 lower-case
+   * letters, digits and "-".
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -138,46 +178,70 @@ export type StorageProviderJson = {
   mode?: string;
 
   /**
+   * The bucket's endpoint, as stored: a scheme and a host, with no
+   * trailing slash.
+   *
    * @generated from field: string endpoint = 4;
    */
   endpoint?: string;
 
   /**
+   * The bucket's region; required.
+   *
    * @generated from field: string region = 5;
    */
   region?: string;
 
   /**
+   * The bucket's name; required.
+   *
    * @generated from field: string bucket = 6;
    */
   bucket?: string;
 
   /**
+   * A prefix every key Toshi writes starts with; empty for none.
+   *
    * @generated from field: string root_prefix = 7;
    */
   rootPrefix?: string;
 
   /**
+   * Whether the bucket is addressed in the path, as /bucket/key, instead
+   * of the host name.
+   *
    * @generated from field: bool path_style = 8;
    */
   pathStyle?: boolean;
 
   /**
+   * Whether the bucket takes lifecycle rules.
+   *
    * @generated from field: bool cap_lifecycle = 9;
    */
   capLifecycle?: boolean;
 
   /**
+   * Whether a job's VM may send an artifact's bytes to its presigned URL
+   * itself.
+   *
    * @generated from field: bool cap_guest_presign = 10;
    */
   capGuestPresign?: boolean;
 
   /**
+   * Whether the bucket is readable in every region the fleet runs in;
+   * always false on a workspace's own provider.
+   *
    * @generated from field: bool cap_global_replication = 11;
    */
   capGlobalReplication?: boolean;
 
   /**
+   * What one gibibyte leaving the provider costs, in millionths of the
+   * operator's currency; 0 is unknown or free, and a workspace's own
+   * provider always has 0.
+   *
    * @generated from field: int64 egress_price_micros_per_gb = 12;
    */
   egressPriceMicrosPerGb?: string;
@@ -190,6 +254,8 @@ export type StorageProviderJson = {
   credentialsWrapped?: boolean;
 
   /**
+   * When the provider was last checked; unset when never checked.
+   *
    * @generated from field: google.protobuf.Timestamp last_check_at = 14;
    */
   lastCheckAt?: TimestampJson;
@@ -203,11 +269,15 @@ export type StorageProviderJson = {
   lastCheckError?: string;
 
   /**
+   * When the provider row was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 16;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When the provider row was last changed.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 17;
    */
   updatedAt?: TimestampJson;
@@ -227,6 +297,8 @@ export const StorageProviderSchema: GenMessage<StorageProvider, {jsonType: Stora
  */
 export type CreateStorageProviderRequest = Message<"toshi.workspace.v1.CreateStorageProviderRequest"> & {
   /**
+   * The provider's name: 1 to 63 lower-case letters, digits and "-".
+   *
    * @generated from field: string name = 1;
    */
   name: string;
@@ -239,31 +311,45 @@ export type CreateStorageProviderRequest = Message<"toshi.workspace.v1.CreateSto
   endpoint: string;
 
   /**
+   * The bucket's region; required.
+   *
    * @generated from field: string region = 3;
    */
   region: string;
 
   /**
+   * The bucket's name; required.
+   *
    * @generated from field: string bucket = 4;
    */
   bucket: string;
 
   /**
+   * A prefix every key Toshi writes starts with; empty for none.
+   *
    * @generated from field: string root_prefix = 5;
    */
   rootPrefix: string;
 
   /**
+   * Address the bucket in the path, as /bucket/key, instead of the host
+   * name.
+   *
    * @generated from field: bool path_style = 6;
    */
   pathStyle: boolean;
 
   /**
+   * Whether the bucket takes lifecycle rules.
+   *
    * @generated from field: bool cap_lifecycle = 7;
    */
   capLifecycle: boolean;
 
   /**
+   * Whether a job's VM may send an artifact's bytes to its presigned URL
+   * itself.
+   *
    * @generated from field: bool cap_guest_presign = 8;
    */
   capGuestPresign: boolean;
@@ -300,6 +386,8 @@ export type CreateStorageProviderRequest = Message<"toshi.workspace.v1.CreateSto
  */
 export type CreateStorageProviderRequestJson = {
   /**
+   * The provider's name: 1 to 63 lower-case letters, digits and "-".
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
@@ -312,31 +400,45 @@ export type CreateStorageProviderRequestJson = {
   endpoint?: string;
 
   /**
+   * The bucket's region; required.
+   *
    * @generated from field: string region = 3;
    */
   region?: string;
 
   /**
+   * The bucket's name; required.
+   *
    * @generated from field: string bucket = 4;
    */
   bucket?: string;
 
   /**
+   * A prefix every key Toshi writes starts with; empty for none.
+   *
    * @generated from field: string root_prefix = 5;
    */
   rootPrefix?: string;
 
   /**
+   * Address the bucket in the path, as /bucket/key, instead of the host
+   * name.
+   *
    * @generated from field: bool path_style = 6;
    */
   pathStyle?: boolean;
 
   /**
+   * Whether the bucket takes lifecycle rules.
+   *
    * @generated from field: bool cap_lifecycle = 7;
    */
   capLifecycle?: boolean;
 
   /**
+   * Whether a job's VM may send an artifact's bytes to its presigned URL
+   * itself.
+   *
    * @generated from field: bool cap_guest_presign = 8;
    */
   capGuestPresign?: boolean;
@@ -381,11 +483,15 @@ export const CreateStorageProviderRequestSchema: GenMessage<CreateStorageProvide
  */
 export type StorageCredential = Message<"toshi.workspace.v1.StorageCredential"> & {
   /**
+   * The S3 access key id.
+   *
    * @generated from field: string access_key_id = 1;
    */
   accessKeyId: string;
 
   /**
+   * The S3 secret access key.
+   *
    * @generated from field: string secret_access_key = 2;
    */
   secretAccessKey: string;
@@ -406,11 +512,15 @@ export type StorageCredential = Message<"toshi.workspace.v1.StorageCredential"> 
  */
 export type StorageCredentialJson = {
   /**
+   * The S3 access key id.
+   *
    * @generated from field: string access_key_id = 1;
    */
   accessKeyId?: string;
 
   /**
+   * The S3 secret access key.
+   *
    * @generated from field: string secret_access_key = 2;
    */
   secretAccessKey?: string;
@@ -431,20 +541,28 @@ export const StorageCredentialSchema: GenMessage<StorageCredential, {jsonType: S
   messageDesc(file_toshi_workspace_v1_storage_providers, 2);
 
 /**
+ * CreateStorageProviderResponse carries the provider the call stored.
+ *
  * @generated from message toshi.workspace.v1.CreateStorageProviderResponse
  */
 export type CreateStorageProviderResponse = Message<"toshi.workspace.v1.CreateStorageProviderResponse"> & {
   /**
+   * The provider as stored.
+   *
    * @generated from field: toshi.workspace.v1.StorageProvider provider = 1;
    */
   provider?: StorageProvider | undefined;
 };
 
 /**
+ * CreateStorageProviderResponse carries the provider the call stored.
+ *
  * @generated from message toshi.workspace.v1.CreateStorageProviderResponse
  */
 export type CreateStorageProviderResponseJson = {
   /**
+   * The provider as stored.
+   *
    * @generated from field: toshi.workspace.v1.StorageProvider provider = 1;
    */
   provider?: StorageProviderJson;
@@ -458,6 +576,9 @@ export const CreateStorageProviderResponseSchema: GenMessage<CreateStorageProvid
   messageDesc(file_toshi_workspace_v1_storage_providers, 3);
 
 /**
+ * ListStorageProvidersRequest asks for one page of the workspace's
+ * providers.
+ *
  * @generated from message toshi.workspace.v1.ListStorageProvidersRequest
  */
 export type ListStorageProvidersRequest = Message<"toshi.workspace.v1.ListStorageProvidersRequest"> & {
@@ -484,6 +605,9 @@ export type ListStorageProvidersRequest = Message<"toshi.workspace.v1.ListStorag
 };
 
 /**
+ * ListStorageProvidersRequest asks for one page of the workspace's
+ * providers.
+ *
  * @generated from message toshi.workspace.v1.ListStorageProvidersRequest
  */
 export type ListStorageProvidersRequestJson = {
@@ -517,10 +641,14 @@ export const ListStorageProvidersRequestSchema: GenMessage<ListStorageProvidersR
   messageDesc(file_toshi_workspace_v1_storage_providers, 4);
 
 /**
+ * ListStorageProvidersResponse is one page of the workspace's providers.
+ *
  * @generated from message toshi.workspace.v1.ListStorageProvidersResponse
  */
 export type ListStorageProvidersResponse = Message<"toshi.workspace.v1.ListStorageProvidersResponse"> & {
   /**
+   * The providers on this page, ordered by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.StorageProvider providers = 1;
    */
   providers: StorageProvider[];
@@ -543,10 +671,14 @@ export type ListStorageProvidersResponse = Message<"toshi.workspace.v1.ListStora
 };
 
 /**
+ * ListStorageProvidersResponse is one page of the workspace's providers.
+ *
  * @generated from message toshi.workspace.v1.ListStorageProvidersResponse
  */
 export type ListStorageProvidersResponseJson = {
   /**
+   * The providers on this page, ordered by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.StorageProvider providers = 1;
    */
   providers?: StorageProviderJson[];
@@ -576,6 +708,9 @@ export const ListStorageProvidersResponseSchema: GenMessage<ListStorageProviders
   messageDesc(file_toshi_workspace_v1_storage_providers, 5);
 
 /**
+ * CheckStorageProviderRequest names the provider to check: a saved one by
+ * id, or one that is not saved, with its key.
+ *
  * @generated from message toshi.workspace.v1.CheckStorageProviderRequest
  */
 export type CheckStorageProviderRequest = Message<"toshi.workspace.v1.CheckStorageProviderRequest"> & {
@@ -605,6 +740,9 @@ export type CheckStorageProviderRequest = Message<"toshi.workspace.v1.CheckStora
 };
 
 /**
+ * CheckStorageProviderRequest names the provider to check: a saved one by
+ * id, or one that is not saved, with its key.
+ *
  * @generated from message toshi.workspace.v1.CheckStorageProviderRequest
  */
 export type CheckStorageProviderRequestJson = {
@@ -632,6 +770,8 @@ export const CheckStorageProviderRequestSchema: GenMessage<CheckStorageProviderR
   messageDesc(file_toshi_workspace_v1_storage_providers, 6);
 
 /**
+ * CheckStorageProviderResponse is the result of a bucket check.
+ *
  * @generated from message toshi.workspace.v1.CheckStorageProviderResponse
  */
 export type CheckStorageProviderResponse = Message<"toshi.workspace.v1.CheckStorageProviderResponse"> & {
@@ -658,12 +798,16 @@ export type CheckStorageProviderResponse = Message<"toshi.workspace.v1.CheckStor
   error: string;
 
   /**
+   * When the check ran; set by the server.
+   *
    * @generated from field: google.protobuf.Timestamp checked_at = 4;
    */
   checkedAt?: Timestamp | undefined;
 };
 
 /**
+ * CheckStorageProviderResponse is the result of a bucket check.
+ *
  * @generated from message toshi.workspace.v1.CheckStorageProviderResponse
  */
 export type CheckStorageProviderResponseJson = {
@@ -690,6 +834,8 @@ export type CheckStorageProviderResponseJson = {
   error?: string;
 
   /**
+   * When the check ran; set by the server.
+   *
    * @generated from field: google.protobuf.Timestamp checked_at = 4;
    */
   checkedAt?: TimestampJson;
@@ -703,20 +849,28 @@ export const CheckStorageProviderResponseSchema: GenMessage<CheckStorageProvider
   messageDesc(file_toshi_workspace_v1_storage_providers, 7);
 
 /**
+ * DeleteStorageProviderRequest names the provider to remove.
+ *
  * @generated from message toshi.workspace.v1.DeleteStorageProviderRequest
  */
 export type DeleteStorageProviderRequest = Message<"toshi.workspace.v1.DeleteStorageProviderRequest"> & {
   /**
+   * The id of a provider the workspace saved.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * DeleteStorageProviderRequest names the provider to remove.
+ *
  * @generated from message toshi.workspace.v1.DeleteStorageProviderRequest
  */
 export type DeleteStorageProviderRequestJson = {
   /**
+   * The id of a provider the workspace saved.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -730,12 +884,16 @@ export const DeleteStorageProviderRequestSchema: GenMessage<DeleteStorageProvide
   messageDesc(file_toshi_workspace_v1_storage_providers, 8);
 
 /**
+ * DeleteStorageProviderResponse is empty.
+ *
  * @generated from message toshi.workspace.v1.DeleteStorageProviderResponse
  */
 export type DeleteStorageProviderResponse = Message<"toshi.workspace.v1.DeleteStorageProviderResponse"> & {
 };
 
 /**
+ * DeleteStorageProviderResponse is empty.
+ *
  * @generated from message toshi.workspace.v1.DeleteStorageProviderResponse
  */
 export type DeleteStorageProviderResponseJson = {

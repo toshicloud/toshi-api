@@ -29,6 +29,7 @@ const (
 type GrantLevel int32
 
 const (
+	// Not a level: a request names VIEW, CONNECT or OPERATE.
 	GrantLevel_GRANT_LEVEL_UNSPECIFIED GrantLevel = 0
 	// List, get and watch the sandboxes the grant covers; sign in to their
 	// previews.
@@ -88,6 +89,7 @@ func (GrantLevel) EnumDescriptor() ([]byte, []int) {
 type GrantState int32
 
 const (
+	// Not a state: a grant is always in one of the others.
 	GrantState_GRANT_STATE_UNSPECIFIED GrantState = 0
 	// Offered and not yet answered.
 	GrantState_GRANT_STATE_OFFERED GrantState = 1
@@ -228,10 +230,13 @@ type Grant struct {
 	//	*Grant_Sandbox
 	//	*Grant_Preview
 	Target isGrant_Target `protobuf_oneof:"target"`
-	Level  GrantLevel     `protobuf:"varint,7,opt,name=level,proto3,enum=toshi.workspace.v1.GrantLevel" json:"level,omitempty"`
-	State  GrantState     `protobuf:"varint,8,opt,name=state,proto3,enum=toshi.workspace.v1.GrantState" json:"state,omitempty"`
+	// The level it is granted at.
+	Level GrantLevel `protobuf:"varint,7,opt,name=level,proto3,enum=toshi.workspace.v1.GrantLevel" json:"level,omitempty"`
+	// Where it is in its life.
+	State GrantState `protobuf:"varint,8,opt,name=state,proto3,enum=toshi.workspace.v1.GrantState" json:"state,omitempty"`
 	// Who offered it, as the audit log names them.
-	OfferedBy string                 `protobuf:"bytes,9,opt,name=offered_by,json=offeredBy,proto3" json:"offered_by,omitempty"`
+	OfferedBy string `protobuf:"bytes,9,opt,name=offered_by,json=offeredBy,proto3" json:"offered_by,omitempty"`
+	// When it was offered.
 	OfferedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=offered_at,json=offeredAt,proto3" json:"offered_at,omitempty"`
 	// When an offer not answered lapses.
 	LapsesAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=lapses_at,json=lapsesAt,proto3" json:"lapses_at,omitempty"`
@@ -507,7 +512,8 @@ func (x *SharedAccess) GetOwner() *GrantWorkspace {
 // GrantWorkspace is one side of a grant.
 type GrantWorkspace struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The workspace's id.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Empty once the workspace is deleted.
 	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -560,9 +566,11 @@ func (x *GrantWorkspace) GetName() string {
 
 // GrantEnvironmentTarget covers every sandbox of one environment.
 type GrantEnvironmentTarget struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment   string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -613,10 +621,12 @@ func (x *GrantEnvironmentTarget) GetEnvironment() string {
 
 // GrantSandboxTarget covers one sandbox.
 type GrantSandboxTarget struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	SandboxId string                 `protobuf:"bytes,1,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The sandbox's id.
+	SandboxId string `protobuf:"bytes,1,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
 	// The sandbox's project and environment, set by the server.
-	Project       string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	// The sandbox's environment, set by the server.
 	Environment   string `protobuf:"bytes,3,opt,name=environment,proto3" json:"environment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -675,13 +685,15 @@ func (x *GrantSandboxTarget) GetEnvironment() string {
 
 // GrantPreviewTarget covers one preview of one sandbox.
 type GrantPreviewTarget struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	SandboxId string                 `protobuf:"bytes,1,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The sandbox's id.
+	SandboxId string `protobuf:"bytes,1,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
 	// The endpoint whose preview it covers: `preview` for the sandbox's own
 	// hostname, or another of its http endpoints.
 	Endpoint string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The sandbox's project and environment, set by the server.
-	Project       string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	Project string `protobuf:"bytes,3,opt,name=project,proto3" json:"project,omitempty"`
+	// The sandbox's environment, set by the server.
 	Environment   string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -745,6 +757,7 @@ func (x *GrantPreviewTarget) GetEnvironment() string {
 	return ""
 }
 
+// CreateGrantRequest offers a grant on the caller's workspace.
 type CreateGrantRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The id of the workspace the grant is offered to.
@@ -760,8 +773,11 @@ type CreateGrantRequest struct {
 	// VIEW for a preview.
 	Level GrantLevel `protobuf:"varint,5,opt,name=level,proto3,enum=toshi.workspace.v1.GrantLevel" json:"level,omitempty"`
 	// Unset for no expiry.
-	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,7,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+	// key and request return the first answer; a different request with the
+	// same key is refused. Keys are kept for 30 days by default.
+	RequestKey    string `protobuf:"bytes,7,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -863,14 +879,17 @@ type isCreateGrantRequest_Target interface {
 }
 
 type CreateGrantRequest_Environment struct {
+	// Every sandbox of one environment.
 	Environment *GrantEnvironmentTarget `protobuf:"bytes,2,opt,name=environment,proto3,oneof"`
 }
 
 type CreateGrantRequest_Sandbox struct {
+	// One sandbox.
 	Sandbox *GrantSandboxTarget `protobuf:"bytes,3,opt,name=sandbox,proto3,oneof"`
 }
 
 type CreateGrantRequest_Preview struct {
+	// One preview of one sandbox, at VIEW only.
 	Preview *GrantPreviewTarget `protobuf:"bytes,4,opt,name=preview,proto3,oneof"`
 }
 
@@ -880,9 +899,11 @@ func (*CreateGrantRequest_Sandbox) isCreateGrantRequest_Target() {}
 
 func (*CreateGrantRequest_Preview) isCreateGrantRequest_Target() {}
 
+// CreateGrantResponse carries the grant CreateGrant offered.
 type CreateGrantResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *Grant                 `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant, in OFFERED.
+	Grant         *Grant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -924,9 +945,11 @@ func (x *CreateGrantResponse) GetGrant() *Grant {
 	return nil
 }
 
+// GetGrantRequest names the grant GetGrant returns.
 type GetGrantRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -968,9 +991,11 @@ func (x *GetGrantRequest) GetId() string {
 	return ""
 }
 
+// GetGrantResponse carries the grant GetGrant returned.
 type GetGrantResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *Grant                 `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant, of either side.
+	Grant         *Grant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1012,9 +1037,11 @@ func (x *GetGrantResponse) GetGrant() *Grant {
 	return nil
 }
 
+// ListGrantsRequest selects the grants ListGrants returns.
 type ListGrantsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Side  GrantSide              `protobuf:"varint,1,opt,name=side,proto3,enum=toshi.workspace.v1.GrantSide" json:"side,omitempty"`
+	// Which grants to list: given, received or both.
+	Side GrantSide `protobuf:"varint,1,opt,name=side,proto3,enum=toshi.workspace.v1.GrantSide" json:"side,omitempty"`
 	// The states to list; empty lists every state.
 	States []GrantState `protobuf:"varint,2,rep,packed,name=states,proto3,enum=toshi.workspace.v1.GrantState" json:"states,omitempty"`
 	// The most grants in one page; zero lets the server choose.
@@ -1083,9 +1110,11 @@ func (x *ListGrantsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListGrantsResponse carries one page of grants, newest offered first.
 type ListGrantsResponse struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Grants []*Grant               `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grants of the page.
+	Grants []*Grant `protobuf:"bytes,1,rep,name=grants,proto3" json:"grants,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1136,9 +1165,11 @@ func (x *ListGrantsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// AcceptGrantRequest names the offer AcceptGrant accepts.
 type AcceptGrantRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1180,9 +1211,11 @@ func (x *AcceptGrantRequest) GetId() string {
 	return ""
 }
 
+// AcceptGrantResponse carries the grant AcceptGrant accepted.
 type AcceptGrantResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *Grant                 `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant, now ACTIVE.
+	Grant         *Grant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1224,9 +1257,11 @@ func (x *AcceptGrantResponse) GetGrant() *Grant {
 	return nil
 }
 
+// DeclineGrantRequest names the offer DeclineGrant declines.
 type DeclineGrantRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1268,9 +1303,11 @@ func (x *DeclineGrantRequest) GetId() string {
 	return ""
 }
 
+// DeclineGrantResponse carries the grant DeclineGrant declined.
 type DeclineGrantResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *Grant                 `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant, now DECLINED.
+	Grant         *Grant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1312,10 +1349,13 @@ func (x *DeclineGrantResponse) GetGrant() *Grant {
 	return nil
 }
 
+// UpdateGrantRequest sets a grant's expiry.
 type UpdateGrantRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// id names the grant; expires_at is the one field set.
-	Grant         *Grant                 `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	Grant *Grant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	// The fields to set: expires_at, and no other. An unset mask sets
+	// expires_at when grant carries it.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1365,9 +1405,11 @@ func (x *UpdateGrantRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateGrantResponse carries the grant UpdateGrant changed.
 type UpdateGrantResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *Grant                 `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant, with its new expiry.
+	Grant         *Grant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1409,9 +1451,11 @@ func (x *UpdateGrantResponse) GetGrant() *Grant {
 	return nil
 }
 
+// RevokeGrantRequest names the grant RevokeGrant ends.
 type RevokeGrantRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1453,9 +1497,12 @@ func (x *RevokeGrantRequest) GetId() string {
 	return ""
 }
 
+// RevokeGrantResponse carries the grant RevokeGrant ended.
 type RevokeGrantResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *Grant                 `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant, now REVOKED and ended by the owner, or as it was if it had
+	// already ended.
+	Grant         *Grant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1497,9 +1544,11 @@ func (x *RevokeGrantResponse) GetGrant() *Grant {
 	return nil
 }
 
+// LeaveGrantRequest names the grant LeaveGrant ends.
 type LeaveGrantRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant's id.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1541,9 +1590,12 @@ func (x *LeaveGrantRequest) GetId() string {
 	return ""
 }
 
+// LeaveGrantResponse carries the grant LeaveGrant ended.
 type LeaveGrantResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Grant         *Grant                 `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The grant, now REVOKED and ended by the grantee, or as it was if it
+	// had already ended.
+	Grant         *Grant `protobuf:"bytes,1,opt,name=grant,proto3" json:"grant,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

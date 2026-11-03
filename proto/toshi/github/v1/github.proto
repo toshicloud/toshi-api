@@ -68,19 +68,28 @@ service GitHubService {
   rpc CheckSecretDelivery(CheckSecretDeliveryRequest) returns (CheckSecretDeliveryResponse);
 }
 
+// MapInstallationRequest maps a GitHub App installation to a workspace,
+// replacing any earlier mapping.
 message MapInstallationRequest {
+  // The installation's ID on GitHub.
   int64 installation_id = 1;
+  // The workspace's ID.
   string workspace = 2;
 }
 
+// MapInstallationResponse is the empty answer of a mapping.
 message MapInstallationResponse {}
 
+// ListOpenSourceReposRequest asks for the open-source gate's rows.
 message ListOpenSourceReposRequest {
   // Only this workspace's rows; empty for every row the caller may read.
   string workspace = 1;
 }
 
+// ListOpenSourceReposResponse holds the open-source gate's rows and the
+// approvals kept for repositories that have no row yet.
 message ListOpenSourceReposResponse {
+  // Every row the caller may read.
   repeated OpenSourceRepo repos = 1;
   // The approvals kept for repositories no open-source workspace has a row
   // of yet, by repository; the operator token only, and none when a
@@ -88,6 +97,8 @@ message ListOpenSourceReposResponse {
   repeated OpenSourceKeptApproval kept = 2;
 }
 
+// SetOpenSourceApprovalRequest approves or revokes a repository for the
+// open-source plan on every workspace's row of it.
 message SetOpenSourceApprovalRequest {
   // The repository as owner/name, compared without regard to case.
   string repo = 1;
@@ -95,6 +106,8 @@ message SetOpenSourceApprovalRequest {
   bool approved = 2;
 }
 
+// SetOpenSourceApprovalResponse holds the repository's rows and its kept
+// approval after the change.
 message SetOpenSourceApprovalResponse {
   // Every workspace's row of the repository after the change.
   repeated OpenSourceRepo repos = 1;
@@ -105,12 +118,17 @@ message SetOpenSourceApprovalResponse {
   OpenSourceKeptApproval kept = 2;
 }
 
+// OpenSourceRepo is one workspace's row of a repository in the open-source
+// gate: what GitHub last said of the repository and whether the gate passes
+// it now.
 message OpenSourceRepo {
+  // The workspace the row belongs to.
   string workspace = 1;
   // The repository as owner/name.
   string repo = 2;
   // Whether GitHub returned the repository at the last read.
   bool found = 3;
+  // Whether GitHub returned the repository as private at the last read.
   bool private = 4;
   // GitHub's licence id; empty when GitHub finds none.
   string spdx_id = 5;
@@ -157,6 +175,8 @@ message OpenSourceRepo {
   repeated string next_steps = 18;
 }
 
+// OpenSourceKeptApproval is the operator's approval of a repository no
+// open-source workspace has a row of yet.
 message OpenSourceKeptApproval {
   // The repository as owner/name, as the operator gave it.
   string repo = 1;
@@ -164,7 +184,10 @@ message OpenSourceKeptApproval {
   google.protobuf.Timestamp approved_at = 2;
 }
 
+// GetJobFailureRequest asks what GitHub says about a job that ended without
+// succeeding.
 message GetJobFailureRequest {
+  // The Toshi job's ID.
   string job_id = 1;
 }
 
@@ -183,32 +206,48 @@ message GetJobFailureResponse {
   string note = 3;
 }
 
+// JobFailureStep is a step of the job's workflow run, as GitHub reports it.
 message JobFailureStep {
   // The step's name, at most 100 bytes.
   string name = 1;
+  // The step's number in its job, from 1.
   int64 number = 2;
+  // GitHub's conclusion for the step, such as "success", "failure",
+  // "timed_out" or "cancelled".
   string conclusion = 3;
+  // When the step started; unset when GitHub gives no time.
   google.protobuf.Timestamp started_at = 4;
+  // When the step completed; unset when GitHub gives no time.
   google.protobuf.Timestamp completed_at = 5;
 }
 
+// JobFailureAnnotation is one annotation on the job's check run, as GitHub
+// gives it.
 message JobFailureAnnotation {
   // "failure", "warning" or "notice".
   string level = 1;
   // The message, at most 160 bytes, and the path, at most 120.
   string message = 2;
+  // The file the annotation names, at most 120 bytes; empty when it names
+  // none.
   string path = 3;
+  // The annotation's first line in that file; 0 when it names none.
   int64 line = 4;
 }
 
+// CheckSecretDeliveryRequest is the empty request of a delivery check.
 message CheckSecretDeliveryRequest {}
 
+// CheckSecretDeliveryResponse lists the installations of the App that lack
+// Contents read.
 message CheckSecretDeliveryResponse {
   // The installations that lack Contents read, by ID.
   repeated Installation lacking = 1;
 }
 
+// Installation is one installation of the GitHub App.
 message Installation {
+  // The installation's ID on GitHub.
   int64 id = 1;
   // The account the App is installed on.
   string account = 2;

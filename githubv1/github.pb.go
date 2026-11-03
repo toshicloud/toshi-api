@@ -28,12 +28,16 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// MapInstallationRequest maps a GitHub App installation to a workspace,
+// replacing any earlier mapping.
 type MapInstallationRequest struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	InstallationId int64                  `protobuf:"varint,1,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
-	Workspace      string                 `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The installation's ID on GitHub.
+	InstallationId int64 `protobuf:"varint,1,opt,name=installation_id,json=installationId,proto3" json:"installation_id,omitempty"`
+	// The workspace's ID.
+	Workspace     string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *MapInstallationRequest) Reset() {
@@ -80,6 +84,7 @@ func (x *MapInstallationRequest) GetWorkspace() string {
 	return ""
 }
 
+// MapInstallationResponse is the empty answer of a mapping.
 type MapInstallationResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -116,6 +121,7 @@ func (*MapInstallationResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_github_v1_github_proto_rawDescGZIP(), []int{1}
 }
 
+// ListOpenSourceReposRequest asks for the open-source gate's rows.
 type ListOpenSourceReposRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Only this workspace's rows; empty for every row the caller may read.
@@ -161,9 +167,12 @@ func (x *ListOpenSourceReposRequest) GetWorkspace() string {
 	return ""
 }
 
+// ListOpenSourceReposResponse holds the open-source gate's rows and the
+// approvals kept for repositories that have no row yet.
 type ListOpenSourceReposResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Repos []*OpenSourceRepo      `protobuf:"bytes,1,rep,name=repos,proto3" json:"repos,omitempty"`
+	// Every row the caller may read.
+	Repos []*OpenSourceRepo `protobuf:"bytes,1,rep,name=repos,proto3" json:"repos,omitempty"`
 	// The approvals kept for repositories no open-source workspace has a row
 	// of yet, by repository; the operator token only, and none when a
 	// workspace is named.
@@ -216,6 +225,8 @@ func (x *ListOpenSourceReposResponse) GetKept() []*OpenSourceKeptApproval {
 	return nil
 }
 
+// SetOpenSourceApprovalRequest approves or revokes a repository for the
+// open-source plan on every workspace's row of it.
 type SetOpenSourceApprovalRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The repository as owner/name, compared without regard to case.
@@ -270,6 +281,8 @@ func (x *SetOpenSourceApprovalRequest) GetApproved() bool {
 	return false
 }
 
+// SetOpenSourceApprovalResponse holds the repository's rows and its kept
+// approval after the change.
 type SetOpenSourceApprovalResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Every workspace's row of the repository after the change.
@@ -327,13 +340,18 @@ func (x *SetOpenSourceApprovalResponse) GetKept() *OpenSourceKeptApproval {
 	return nil
 }
 
+// OpenSourceRepo is one workspace's row of a repository in the open-source
+// gate: what GitHub last said of the repository and whether the gate passes
+// it now.
 type OpenSourceRepo struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Workspace string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workspace the row belongs to.
+	Workspace string `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// The repository as owner/name.
 	Repo string `protobuf:"bytes,2,opt,name=repo,proto3" json:"repo,omitempty"`
 	// Whether GitHub returned the repository at the last read.
-	Found   bool `protobuf:"varint,3,opt,name=found,proto3" json:"found,omitempty"`
+	Found bool `protobuf:"varint,3,opt,name=found,proto3" json:"found,omitempty"`
+	// Whether GitHub returned the repository as private at the last read.
 	Private bool `protobuf:"varint,4,opt,name=private,proto3" json:"private,omitempty"`
 	// GitHub's licence id; empty when GitHub finds none.
 	SpdxId string `protobuf:"bytes,5,opt,name=spdx_id,json=spdxId,proto3" json:"spdx_id,omitempty"`
@@ -538,6 +556,8 @@ func (x *OpenSourceRepo) GetNextSteps() []string {
 	return nil
 }
 
+// OpenSourceKeptApproval is the operator's approval of a repository no
+// open-source workspace has a row of yet.
 type OpenSourceKeptApproval struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The repository as owner/name, as the operator gave it.
@@ -592,9 +612,12 @@ func (x *OpenSourceKeptApproval) GetApprovedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// GetJobFailureRequest asks what GitHub says about a job that ended without
+// succeeding.
 type GetJobFailureRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	JobId         string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The Toshi job's ID.
+	JobId         string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -705,13 +728,19 @@ func (x *GetJobFailureResponse) GetNote() string {
 	return ""
 }
 
+// JobFailureStep is a step of the job's workflow run, as GitHub reports it.
 type JobFailureStep struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The step's name, at most 100 bytes.
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Number        int64                  `protobuf:"varint,2,opt,name=number,proto3" json:"number,omitempty"`
-	Conclusion    string                 `protobuf:"bytes,3,opt,name=conclusion,proto3" json:"conclusion,omitempty"`
-	StartedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The step's number in its job, from 1.
+	Number int64 `protobuf:"varint,2,opt,name=number,proto3" json:"number,omitempty"`
+	// GitHub's conclusion for the step, such as "success", "failure",
+	// "timed_out" or "cancelled".
+	Conclusion string `protobuf:"bytes,3,opt,name=conclusion,proto3" json:"conclusion,omitempty"`
+	// When the step started; unset when GitHub gives no time.
+	StartedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	// When the step completed; unset when GitHub gives no time.
 	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -782,14 +811,19 @@ func (x *JobFailureStep) GetCompletedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// JobFailureAnnotation is one annotation on the job's check run, as GitHub
+// gives it.
 type JobFailureAnnotation struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// "failure", "warning" or "notice".
 	Level string `protobuf:"bytes,1,opt,name=level,proto3" json:"level,omitempty"`
 	// The message, at most 160 bytes, and the path, at most 120.
-	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	Path          string `protobuf:"bytes,3,opt,name=path,proto3" json:"path,omitempty"`
-	Line          int64  `protobuf:"varint,4,opt,name=line,proto3" json:"line,omitempty"`
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	// The file the annotation names, at most 120 bytes; empty when it names
+	// none.
+	Path string `protobuf:"bytes,3,opt,name=path,proto3" json:"path,omitempty"`
+	// The annotation's first line in that file; 0 when it names none.
+	Line          int64 `protobuf:"varint,4,opt,name=line,proto3" json:"line,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -852,6 +886,7 @@ func (x *JobFailureAnnotation) GetLine() int64 {
 	return 0
 }
 
+// CheckSecretDeliveryRequest is the empty request of a delivery check.
 type CheckSecretDeliveryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -888,6 +923,8 @@ func (*CheckSecretDeliveryRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_github_v1_github_proto_rawDescGZIP(), []int{12}
 }
 
+// CheckSecretDeliveryResponse lists the installations of the App that lack
+// Contents read.
 type CheckSecretDeliveryResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The installations that lack Contents read, by ID.
@@ -933,9 +970,11 @@ func (x *CheckSecretDeliveryResponse) GetLacking() []*Installation {
 	return nil
 }
 
+// Installation is one installation of the GitHub App.
 type Installation struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The installation's ID on GitHub.
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The account the App is installed on.
 	Account       string `protobuf:"bytes,2,opt,name=account,proto3" json:"account,omitempty"`
 	unknownFields protoimpl.UnknownFields

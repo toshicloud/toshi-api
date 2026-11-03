@@ -26,29 +26,50 @@ const (
 // StorageProvider is one bucket Toshi keeps the workspace's objects in.
 type StorageProvider struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The provider's id, set by the server.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The provider's name, unique among its owner's: 1 to 63 lower-case
+	// letters, digits and "-".
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// "operator", "workspace_bucket" or "local_disk".
-	Mode                   string `protobuf:"bytes,3,opt,name=mode,proto3" json:"mode,omitempty"`
-	Endpoint               string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	Region                 string `protobuf:"bytes,5,opt,name=region,proto3" json:"region,omitempty"`
-	Bucket                 string `protobuf:"bytes,6,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	RootPrefix             string `protobuf:"bytes,7,opt,name=root_prefix,json=rootPrefix,proto3" json:"root_prefix,omitempty"`
-	PathStyle              bool   `protobuf:"varint,8,opt,name=path_style,json=pathStyle,proto3" json:"path_style,omitempty"`
-	CapLifecycle           bool   `protobuf:"varint,9,opt,name=cap_lifecycle,json=capLifecycle,proto3" json:"cap_lifecycle,omitempty"`
-	CapGuestPresign        bool   `protobuf:"varint,10,opt,name=cap_guest_presign,json=capGuestPresign,proto3" json:"cap_guest_presign,omitempty"`
-	CapGlobalReplication   bool   `protobuf:"varint,11,opt,name=cap_global_replication,json=capGlobalReplication,proto3" json:"cap_global_replication,omitempty"`
-	EgressPriceMicrosPerGb int64  `protobuf:"varint,12,opt,name=egress_price_micros_per_gb,json=egressPriceMicrosPerGb,proto3" json:"egress_price_micros_per_gb,omitempty"`
+	Mode string `protobuf:"bytes,3,opt,name=mode,proto3" json:"mode,omitempty"`
+	// The bucket's endpoint, as stored: a scheme and a host, with no
+	// trailing slash.
+	Endpoint string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// The bucket's region; required.
+	Region string `protobuf:"bytes,5,opt,name=region,proto3" json:"region,omitempty"`
+	// The bucket's name; required.
+	Bucket string `protobuf:"bytes,6,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// A prefix every key Toshi writes starts with; empty for none.
+	RootPrefix string `protobuf:"bytes,7,opt,name=root_prefix,json=rootPrefix,proto3" json:"root_prefix,omitempty"`
+	// Whether the bucket is addressed in the path, as /bucket/key, instead
+	// of the host name.
+	PathStyle bool `protobuf:"varint,8,opt,name=path_style,json=pathStyle,proto3" json:"path_style,omitempty"`
+	// Whether the bucket takes lifecycle rules.
+	CapLifecycle bool `protobuf:"varint,9,opt,name=cap_lifecycle,json=capLifecycle,proto3" json:"cap_lifecycle,omitempty"`
+	// Whether a job's VM may send an artifact's bytes to its presigned URL
+	// itself.
+	CapGuestPresign bool `protobuf:"varint,10,opt,name=cap_guest_presign,json=capGuestPresign,proto3" json:"cap_guest_presign,omitempty"`
+	// Whether the bucket is readable in every region the fleet runs in;
+	// always false on a workspace's own provider.
+	CapGlobalReplication bool `protobuf:"varint,11,opt,name=cap_global_replication,json=capGlobalReplication,proto3" json:"cap_global_replication,omitempty"`
+	// What one gibibyte leaving the provider costs, in millionths of the
+	// operator's currency; 0 is unknown or free, and a workspace's own
+	// provider always has 0.
+	EgressPriceMicrosPerGb int64 `protobuf:"varint,12,opt,name=egress_price_micros_per_gb,json=egressPriceMicrosPerGb,proto3" json:"egress_price_micros_per_gb,omitempty"`
 	// Whether the row holds a wrapped key; its value is never sent.
-	CredentialsWrapped bool                   `protobuf:"varint,13,opt,name=credentials_wrapped,json=credentialsWrapped,proto3" json:"credentials_wrapped,omitempty"`
-	LastCheckAt        *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=last_check_at,json=lastCheckAt,proto3" json:"last_check_at,omitempty"`
+	CredentialsWrapped bool `protobuf:"varint,13,opt,name=credentials_wrapped,json=credentialsWrapped,proto3" json:"credentials_wrapped,omitempty"`
+	// When the provider was last checked; unset when never checked.
+	LastCheckAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=last_check_at,json=lastCheckAt,proto3" json:"last_check_at,omitempty"`
 	// Why the last check failed. For a row the operator set, which may name
 	// the operator's own references, only that it failed.
-	LastCheckError string                 `protobuf:"bytes,15,opt,name=last_check_error,json=lastCheckError,proto3" json:"last_check_error,omitempty"`
-	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	LastCheckError string `protobuf:"bytes,15,opt,name=last_check_error,json=lastCheckError,proto3" json:"last_check_error,omitempty"`
+	// When the provider row was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When the provider row was last changed.
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StorageProvider) Reset() {
@@ -203,15 +224,24 @@ func (x *StorageProvider) GetUpdatedAt() *timestamppb.Timestamp {
 // CreateStorageProviderRequest describes the workspace's own bucket.
 type CreateStorageProviderRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The provider's name: 1 to 63 lower-case letters, digits and "-".
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// An https URL.
-	Endpoint        string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	Region          string `protobuf:"bytes,3,opt,name=region,proto3" json:"region,omitempty"`
-	Bucket          string `protobuf:"bytes,4,opt,name=bucket,proto3" json:"bucket,omitempty"`
-	RootPrefix      string `protobuf:"bytes,5,opt,name=root_prefix,json=rootPrefix,proto3" json:"root_prefix,omitempty"`
-	PathStyle       bool   `protobuf:"varint,6,opt,name=path_style,json=pathStyle,proto3" json:"path_style,omitempty"`
-	CapLifecycle    bool   `protobuf:"varint,7,opt,name=cap_lifecycle,json=capLifecycle,proto3" json:"cap_lifecycle,omitempty"`
-	CapGuestPresign bool   `protobuf:"varint,8,opt,name=cap_guest_presign,json=capGuestPresign,proto3" json:"cap_guest_presign,omitempty"`
+	Endpoint string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// The bucket's region; required.
+	Region string `protobuf:"bytes,3,opt,name=region,proto3" json:"region,omitempty"`
+	// The bucket's name; required.
+	Bucket string `protobuf:"bytes,4,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// A prefix every key Toshi writes starts with; empty for none.
+	RootPrefix string `protobuf:"bytes,5,opt,name=root_prefix,json=rootPrefix,proto3" json:"root_prefix,omitempty"`
+	// Address the bucket in the path, as /bucket/key, instead of the host
+	// name.
+	PathStyle bool `protobuf:"varint,6,opt,name=path_style,json=pathStyle,proto3" json:"path_style,omitempty"`
+	// Whether the bucket takes lifecycle rules.
+	CapLifecycle bool `protobuf:"varint,7,opt,name=cap_lifecycle,json=capLifecycle,proto3" json:"cap_lifecycle,omitempty"`
+	// Whether a job's VM may send an artifact's bytes to its presigned URL
+	// itself.
+	CapGuestPresign bool `protobuf:"varint,8,opt,name=cap_guest_presign,json=capGuestPresign,proto3" json:"cap_guest_presign,omitempty"`
 	// The bucket's key. The control plane wraps it before the row exists and
 	// never returns, logs or audits it. Required.
 	Credential *StorageCredential `protobuf:"bytes,9,opt,name=credential,proto3" json:"credential,omitempty"`
@@ -335,9 +365,11 @@ func (x *CreateStorageProviderRequest) GetRequestKey() string {
 // StorageCredential is an S3 access key. It is write-only: no response
 // carries it.
 type StorageCredential struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	AccessKeyId     string                 `protobuf:"bytes,1,opt,name=access_key_id,json=accessKeyId,proto3" json:"access_key_id,omitempty"`
-	SecretAccessKey string                 `protobuf:"bytes,2,opt,name=secret_access_key,json=secretAccessKey,proto3" json:"secret_access_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The S3 access key id.
+	AccessKeyId string `protobuf:"bytes,1,opt,name=access_key_id,json=accessKeyId,proto3" json:"access_key_id,omitempty"`
+	// The S3 secret access key.
+	SecretAccessKey string `protobuf:"bytes,2,opt,name=secret_access_key,json=secretAccessKey,proto3" json:"secret_access_key,omitempty"`
 	// Set for a temporary key.
 	SessionToken  string `protobuf:"bytes,3,opt,name=session_token,json=sessionToken,proto3" json:"session_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -395,9 +427,11 @@ func (x *StorageCredential) GetSessionToken() string {
 	return ""
 }
 
+// CreateStorageProviderResponse carries the provider the call stored.
 type CreateStorageProviderResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Provider      *StorageProvider       `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The provider as stored.
+	Provider      *StorageProvider `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -439,6 +473,8 @@ func (x *CreateStorageProviderResponse) GetProvider() *StorageProvider {
 	return nil
 }
 
+// ListStorageProvidersRequest asks for one page of the workspace's
+// providers.
 type ListStorageProvidersRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Also answer default_provider.
@@ -502,9 +538,11 @@ func (x *ListStorageProvidersRequest) GetPageToken() string {
 	return ""
 }
 
+// ListStorageProvidersResponse is one page of the workspace's providers.
 type ListStorageProvidersResponse struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Providers []*StorageProvider     `protobuf:"bytes,1,rep,name=providers,proto3" json:"providers,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The providers on this page, ordered by name.
+	Providers []*StorageProvider `protobuf:"bytes,1,rep,name=providers,proto3" json:"providers,omitempty"`
 	// With include_default, the operator's provider that serves the
 	// workspace's uploads while it has no workspace_bucket provider; unset when
 	// none is configured. Every page holds it.
@@ -566,6 +604,8 @@ func (x *ListStorageProvidersResponse) GetNextPageToken() string {
 	return ""
 }
 
+// CheckStorageProviderRequest names the provider to check: a saved one by
+// id, or one that is not saved, with its key.
 type CheckStorageProviderRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The provider to check: one is required.
@@ -653,6 +693,7 @@ func (*CheckStorageProviderRequest_Id) isCheckStorageProviderRequest_Target() {}
 
 func (*CheckStorageProviderRequest_Provider) isCheckStorageProviderRequest_Target() {}
 
+// CheckStorageProviderResponse is the result of a bucket check.
 type CheckStorageProviderResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The saved provider as stored after the check; unset for one that is
@@ -661,7 +702,8 @@ type CheckStorageProviderResponse struct {
 	// Whether every step of the check passed.
 	Ok bool `protobuf:"varint,2,opt,name=ok,proto3" json:"ok,omitempty"`
 	// Why the check failed, naming the step; empty when ok.
-	Error         string                 `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
+	Error string `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
+	// When the check ran; set by the server.
 	CheckedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=checked_at,json=checkedAt,proto3" json:"checked_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -725,9 +767,11 @@ func (x *CheckStorageProviderResponse) GetCheckedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// DeleteStorageProviderRequest names the provider to remove.
 type DeleteStorageProviderRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The id of a provider the workspace saved.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -769,6 +813,7 @@ func (x *DeleteStorageProviderRequest) GetId() string {
 	return ""
 }
 
+// DeleteStorageProviderResponse is empty.
 type DeleteStorageProviderResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields

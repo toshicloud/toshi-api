@@ -20,30 +20,44 @@ export const file_toshi_github_v1_github: GenFile = /*@__PURE__*/
   fileDesc("Chx0b3NoaS9naXRodWIvdjEvZ2l0aHViLnByb3RvEg90b3NoaS5naXRodWIudjEiRAoWTWFwSW5zdGFsbGF0aW9uUmVxdWVzdBIXCg9pbnN0YWxsYXRpb25faWQYASABKAMSEQoJd29ya3NwYWNlGAIgASgJIhkKF01hcEluc3RhbGxhdGlvblJlc3BvbnNlIi8KGkxpc3RPcGVuU291cmNlUmVwb3NSZXF1ZXN0EhEKCXdvcmtzcGFjZRgBIAEoCSKEAQobTGlzdE9wZW5Tb3VyY2VSZXBvc1Jlc3BvbnNlEi4KBXJlcG9zGAEgAygLMh8udG9zaGkuZ2l0aHViLnYxLk9wZW5Tb3VyY2VSZXBvEjUKBGtlcHQYAiADKAsyJy50b3NoaS5naXRodWIudjEuT3BlblNvdXJjZUtlcHRBcHByb3ZhbCI+ChxTZXRPcGVuU291cmNlQXBwcm92YWxSZXF1ZXN0EgwKBHJlcG8YASABKAkSEAoIYXBwcm92ZWQYAiABKAgihgEKHVNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlc3BvbnNlEi4KBXJlcG9zGAEgAygLMh8udG9zaGkuZ2l0aHViLnYxLk9wZW5Tb3VyY2VSZXBvEjUKBGtlcHQYAiABKAsyJy50b3NoaS5naXRodWIudjEuT3BlblNvdXJjZUtlcHRBcHByb3ZhbCLuAwoOT3BlblNvdXJjZVJlcG8SEQoJd29ya3NwYWNlGAEgASgJEgwKBHJlcG8YAiABKAkSDQoFZm91bmQYAyABKAgSDwoHcHJpdmF0ZRgEIAEoCBIPCgdzcGR4X2lkGAUgASgJEjMKD3JlcG9fY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY2hlY2tlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFZXJyb3IYCCABKAkSEAoIYXBwcm92YWwYCSABKAkSNwoTYXBwcm92YWxfY2hhbmdlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFwoPY29uZmlnX2FwcHJvdmVkGAsgASgIEhAKCGFwcHJvdmVkGAwgASgIEhgKEGZvcmtfcHJfYXBwcm92YWwYDSABKAkSEgoKZ2F0ZV9jaGVjaxgOIAEoCRIvCgxtaW5fcmVwb19hZ2UYDyABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24SGAoQZm9ya19wcnNfcmVmdXNlZBgQIAEoCBITCgtnYXRlX3JlYXNvbhgRIAEoCRISCgpuZXh0X3N0ZXBzGBIgAygJIlcKFk9wZW5Tb3VyY2VLZXB0QXBwcm92YWwSDAoEcmVwbxgBIAEoCRIvCgthcHByb3ZlZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiJgoUR2V0Sm9iRmFpbHVyZVJlcXVlc3QSDgoGam9iX2lkGAEgASgJIpgBChVHZXRKb2JGYWlsdXJlUmVzcG9uc2USNQoMZmFpbGluZ19zdGVwGAEgASgLMh8udG9zaGkuZ2l0aHViLnYxLkpvYkZhaWx1cmVTdGVwEjoKC2Fubm90YXRpb25zGAIgAygLMiUudG9zaGkuZ2l0aHViLnYxLkpvYkZhaWx1cmVBbm5vdGF0aW9uEgwKBG5vdGUYAyABKAkipAEKDkpvYkZhaWx1cmVTdGVwEgwKBG5hbWUYASABKAkSDgoGbnVtYmVyGAIgASgDEhIKCmNvbmNsdXNpb24YAyABKAkSLgoKc3RhcnRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMAoMY29tcGxldGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJSChRKb2JGYWlsdXJlQW5ub3RhdGlvbhINCgVsZXZlbBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJEgwKBHBhdGgYAyABKAkSDAoEbGluZRgEIAEoAyIcChpDaGVja1NlY3JldERlbGl2ZXJ5UmVxdWVzdCJNChtDaGVja1NlY3JldERlbGl2ZXJ5UmVzcG9uc2USLgoHbGFja2luZxgBIAMoCzIdLnRvc2hpLmdpdGh1Yi52MS5JbnN0YWxsYXRpb24iKwoMSW5zdGFsbGF0aW9uEgoKAmlkGAEgASgDEg8KB2FjY291bnQYAiABKAky3AUKDUdpdEh1YlNlcnZpY2USfwoPTWFwSW5zdGFsbGF0aW9uEicudG9zaGkuZ2l0aHViLnYxLk1hcEluc3RhbGxhdGlvblJlcXVlc3QaKC50b3NoaS5naXRodWIudjEuTWFwSW5zdGFsbGF0aW9uUmVzcG9uc2UiGdLzGBUKE2luc3RhbGxhdGlvbi5tYXBwZWQScAoTTGlzdE9wZW5Tb3VyY2VSZXBvcxIrLnRvc2hpLmdpdGh1Yi52MS5MaXN0T3BlblNvdXJjZVJlcG9zUmVxdWVzdBosLnRvc2hpLmdpdGh1Yi52MS5MaXN0T3BlblNvdXJjZVJlcG9zUmVzcG9uc2USdgoVU2V0T3BlblNvdXJjZUFwcHJvdmFsEi0udG9zaGkuZ2l0aHViLnYxLlNldE9wZW5Tb3VyY2VBcHByb3ZhbFJlcXVlc3QaLi50b3NoaS5naXRodWIudjEuU2V0T3BlblNvdXJjZUFwcHJvdmFsUmVzcG9uc2US7QEKDUdldEpvYkZhaWx1cmUSJS50b3NoaS5naXRodWIudjEuR2V0Sm9iRmFpbHVyZVJlcXVlc3QaJi50b3NoaS5naXRodWIudjEuR2V0Sm9iRmFpbHVyZVJlc3BvbnNlIowB0vMYhwEKBG5vbmUaf0EgcmVhZDsgdGhlIGZhaWxpbmcgc3RlcCBpdCBzdG9yZXMgYmVsb25ncyB0byB0aGUgam9iIHRoZSBob3N0IGFscmVhZHkgcmVwb3J0ZWQsIHNvIHRoZSB3cml0ZSBpcyBub3QgYSBjaGFuZ2Ugb2YgdGhlIHdvcmtzcGFjZS4ScAoTQ2hlY2tTZWNyZXREZWxpdmVyeRIrLnRvc2hpLmdpdGh1Yi52MS5DaGVja1NlY3JldERlbGl2ZXJ5UmVxdWVzdBosLnRvc2hpLmdpdGh1Yi52MS5DaGVja1NlY3JldERlbGl2ZXJ5UmVzcG9uc2VCH1odZ28udG9zaGljbG91ZC5pby9hcGkvZ2l0aHVidjFiBnByb3RvMw", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
+ * MapInstallationRequest maps a GitHub App installation to a workspace,
+ * replacing any earlier mapping.
+ *
  * @generated from message toshi.github.v1.MapInstallationRequest
  */
 export type MapInstallationRequest = Message<"toshi.github.v1.MapInstallationRequest"> & {
   /**
+   * The installation's ID on GitHub.
+   *
    * @generated from field: int64 installation_id = 1;
    */
   installationId: bigint;
 
   /**
+   * The workspace's ID.
+   *
    * @generated from field: string workspace = 2;
    */
   workspace: string;
 };
 
 /**
+ * MapInstallationRequest maps a GitHub App installation to a workspace,
+ * replacing any earlier mapping.
+ *
  * @generated from message toshi.github.v1.MapInstallationRequest
  */
 export type MapInstallationRequestJson = {
   /**
+   * The installation's ID on GitHub.
+   *
    * @generated from field: int64 installation_id = 1;
    */
   installationId?: string;
 
   /**
+   * The workspace's ID.
+   *
    * @generated from field: string workspace = 2;
    */
   workspace?: string;
@@ -57,12 +71,16 @@ export const MapInstallationRequestSchema: GenMessage<MapInstallationRequest, {j
   messageDesc(file_toshi_github_v1_github, 0);
 
 /**
+ * MapInstallationResponse is the empty answer of a mapping.
+ *
  * @generated from message toshi.github.v1.MapInstallationResponse
  */
 export type MapInstallationResponse = Message<"toshi.github.v1.MapInstallationResponse"> & {
 };
 
 /**
+ * MapInstallationResponse is the empty answer of a mapping.
+ *
  * @generated from message toshi.github.v1.MapInstallationResponse
  */
 export type MapInstallationResponseJson = {
@@ -76,6 +94,8 @@ export const MapInstallationResponseSchema: GenMessage<MapInstallationResponse, 
   messageDesc(file_toshi_github_v1_github, 1);
 
 /**
+ * ListOpenSourceReposRequest asks for the open-source gate's rows.
+ *
  * @generated from message toshi.github.v1.ListOpenSourceReposRequest
  */
 export type ListOpenSourceReposRequest = Message<"toshi.github.v1.ListOpenSourceReposRequest"> & {
@@ -88,6 +108,8 @@ export type ListOpenSourceReposRequest = Message<"toshi.github.v1.ListOpenSource
 };
 
 /**
+ * ListOpenSourceReposRequest asks for the open-source gate's rows.
+ *
  * @generated from message toshi.github.v1.ListOpenSourceReposRequest
  */
 export type ListOpenSourceReposRequestJson = {
@@ -107,10 +129,15 @@ export const ListOpenSourceReposRequestSchema: GenMessage<ListOpenSourceReposReq
   messageDesc(file_toshi_github_v1_github, 2);
 
 /**
+ * ListOpenSourceReposResponse holds the open-source gate's rows and the
+ * approvals kept for repositories that have no row yet.
+ *
  * @generated from message toshi.github.v1.ListOpenSourceReposResponse
  */
 export type ListOpenSourceReposResponse = Message<"toshi.github.v1.ListOpenSourceReposResponse"> & {
   /**
+   * Every row the caller may read.
+   *
    * @generated from field: repeated toshi.github.v1.OpenSourceRepo repos = 1;
    */
   repos: OpenSourceRepo[];
@@ -126,10 +153,15 @@ export type ListOpenSourceReposResponse = Message<"toshi.github.v1.ListOpenSourc
 };
 
 /**
+ * ListOpenSourceReposResponse holds the open-source gate's rows and the
+ * approvals kept for repositories that have no row yet.
+ *
  * @generated from message toshi.github.v1.ListOpenSourceReposResponse
  */
 export type ListOpenSourceReposResponseJson = {
   /**
+   * Every row the caller may read.
+   *
    * @generated from field: repeated toshi.github.v1.OpenSourceRepo repos = 1;
    */
   repos?: OpenSourceRepoJson[];
@@ -152,6 +184,9 @@ export const ListOpenSourceReposResponseSchema: GenMessage<ListOpenSourceReposRe
   messageDesc(file_toshi_github_v1_github, 3);
 
 /**
+ * SetOpenSourceApprovalRequest approves or revokes a repository for the
+ * open-source plan on every workspace's row of it.
+ *
  * @generated from message toshi.github.v1.SetOpenSourceApprovalRequest
  */
 export type SetOpenSourceApprovalRequest = Message<"toshi.github.v1.SetOpenSourceApprovalRequest"> & {
@@ -171,6 +206,9 @@ export type SetOpenSourceApprovalRequest = Message<"toshi.github.v1.SetOpenSourc
 };
 
 /**
+ * SetOpenSourceApprovalRequest approves or revokes a repository for the
+ * open-source plan on every workspace's row of it.
+ *
  * @generated from message toshi.github.v1.SetOpenSourceApprovalRequest
  */
 export type SetOpenSourceApprovalRequestJson = {
@@ -197,6 +235,9 @@ export const SetOpenSourceApprovalRequestSchema: GenMessage<SetOpenSourceApprova
   messageDesc(file_toshi_github_v1_github, 4);
 
 /**
+ * SetOpenSourceApprovalResponse holds the repository's rows and its kept
+ * approval after the change.
+ *
  * @generated from message toshi.github.v1.SetOpenSourceApprovalResponse
  */
 export type SetOpenSourceApprovalResponse = Message<"toshi.github.v1.SetOpenSourceApprovalResponse"> & {
@@ -219,6 +260,9 @@ export type SetOpenSourceApprovalResponse = Message<"toshi.github.v1.SetOpenSour
 };
 
 /**
+ * SetOpenSourceApprovalResponse holds the repository's rows and its kept
+ * approval after the change.
+ *
  * @generated from message toshi.github.v1.SetOpenSourceApprovalResponse
  */
 export type SetOpenSourceApprovalResponseJson = {
@@ -248,10 +292,16 @@ export const SetOpenSourceApprovalResponseSchema: GenMessage<SetOpenSourceApprov
   messageDesc(file_toshi_github_v1_github, 5);
 
 /**
+ * OpenSourceRepo is one workspace's row of a repository in the open-source
+ * gate: what GitHub last said of the repository and whether the gate passes
+ * it now.
+ *
  * @generated from message toshi.github.v1.OpenSourceRepo
  */
 export type OpenSourceRepo = Message<"toshi.github.v1.OpenSourceRepo"> & {
   /**
+   * The workspace the row belongs to.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace: string;
@@ -271,6 +321,8 @@ export type OpenSourceRepo = Message<"toshi.github.v1.OpenSourceRepo"> & {
   found: boolean;
 
   /**
+   * Whether GitHub returned the repository as private at the last read.
+   *
    * @generated from field: bool private = 4;
    */
   private: boolean;
@@ -390,10 +442,16 @@ export type OpenSourceRepo = Message<"toshi.github.v1.OpenSourceRepo"> & {
 };
 
 /**
+ * OpenSourceRepo is one workspace's row of a repository in the open-source
+ * gate: what GitHub last said of the repository and whether the gate passes
+ * it now.
+ *
  * @generated from message toshi.github.v1.OpenSourceRepo
  */
 export type OpenSourceRepoJson = {
   /**
+   * The workspace the row belongs to.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace?: string;
@@ -413,6 +471,8 @@ export type OpenSourceRepoJson = {
   found?: boolean;
 
   /**
+   * Whether GitHub returned the repository as private at the last read.
+   *
    * @generated from field: bool private = 4;
    */
   private?: boolean;
@@ -539,6 +599,9 @@ export const OpenSourceRepoSchema: GenMessage<OpenSourceRepo, {jsonType: OpenSou
   messageDesc(file_toshi_github_v1_github, 6);
 
 /**
+ * OpenSourceKeptApproval is the operator's approval of a repository no
+ * open-source workspace has a row of yet.
+ *
  * @generated from message toshi.github.v1.OpenSourceKeptApproval
  */
 export type OpenSourceKeptApproval = Message<"toshi.github.v1.OpenSourceKeptApproval"> & {
@@ -558,6 +621,9 @@ export type OpenSourceKeptApproval = Message<"toshi.github.v1.OpenSourceKeptAppr
 };
 
 /**
+ * OpenSourceKeptApproval is the operator's approval of a repository no
+ * open-source workspace has a row of yet.
+ *
  * @generated from message toshi.github.v1.OpenSourceKeptApproval
  */
 export type OpenSourceKeptApprovalJson = {
@@ -584,20 +650,30 @@ export const OpenSourceKeptApprovalSchema: GenMessage<OpenSourceKeptApproval, {j
   messageDesc(file_toshi_github_v1_github, 7);
 
 /**
+ * GetJobFailureRequest asks what GitHub says about a job that ended without
+ * succeeding.
+ *
  * @generated from message toshi.github.v1.GetJobFailureRequest
  */
 export type GetJobFailureRequest = Message<"toshi.github.v1.GetJobFailureRequest"> & {
   /**
+   * The Toshi job's ID.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 };
 
 /**
+ * GetJobFailureRequest asks what GitHub says about a job that ended without
+ * succeeding.
+ *
  * @generated from message toshi.github.v1.GetJobFailureRequest
  */
 export type GetJobFailureRequestJson = {
   /**
+   * The Toshi job's ID.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
@@ -684,6 +760,8 @@ export const GetJobFailureResponseSchema: GenMessage<GetJobFailureResponse, {jso
   messageDesc(file_toshi_github_v1_github, 9);
 
 /**
+ * JobFailureStep is a step of the job's workflow run, as GitHub reports it.
+ *
  * @generated from message toshi.github.v1.JobFailureStep
  */
 export type JobFailureStep = Message<"toshi.github.v1.JobFailureStep"> & {
@@ -695,27 +773,38 @@ export type JobFailureStep = Message<"toshi.github.v1.JobFailureStep"> & {
   name: string;
 
   /**
+   * The step's number in its job, from 1.
+   *
    * @generated from field: int64 number = 2;
    */
   number: bigint;
 
   /**
+   * GitHub's conclusion for the step, such as "success", "failure",
+   * "timed_out" or "cancelled".
+   *
    * @generated from field: string conclusion = 3;
    */
   conclusion: string;
 
   /**
+   * When the step started; unset when GitHub gives no time.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 4;
    */
   startedAt?: Timestamp | undefined;
 
   /**
+   * When the step completed; unset when GitHub gives no time.
+   *
    * @generated from field: google.protobuf.Timestamp completed_at = 5;
    */
   completedAt?: Timestamp | undefined;
 };
 
 /**
+ * JobFailureStep is a step of the job's workflow run, as GitHub reports it.
+ *
  * @generated from message toshi.github.v1.JobFailureStep
  */
 export type JobFailureStepJson = {
@@ -727,21 +816,30 @@ export type JobFailureStepJson = {
   name?: string;
 
   /**
+   * The step's number in its job, from 1.
+   *
    * @generated from field: int64 number = 2;
    */
   number?: string;
 
   /**
+   * GitHub's conclusion for the step, such as "success", "failure",
+   * "timed_out" or "cancelled".
+   *
    * @generated from field: string conclusion = 3;
    */
   conclusion?: string;
 
   /**
+   * When the step started; unset when GitHub gives no time.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 4;
    */
   startedAt?: TimestampJson;
 
   /**
+   * When the step completed; unset when GitHub gives no time.
+   *
    * @generated from field: google.protobuf.Timestamp completed_at = 5;
    */
   completedAt?: TimestampJson;
@@ -755,6 +853,9 @@ export const JobFailureStepSchema: GenMessage<JobFailureStep, {jsonType: JobFail
   messageDesc(file_toshi_github_v1_github, 10);
 
 /**
+ * JobFailureAnnotation is one annotation on the job's check run, as GitHub
+ * gives it.
+ *
  * @generated from message toshi.github.v1.JobFailureAnnotation
  */
 export type JobFailureAnnotation = Message<"toshi.github.v1.JobFailureAnnotation"> & {
@@ -773,17 +874,25 @@ export type JobFailureAnnotation = Message<"toshi.github.v1.JobFailureAnnotation
   message: string;
 
   /**
+   * The file the annotation names, at most 120 bytes; empty when it names
+   * none.
+   *
    * @generated from field: string path = 3;
    */
   path: string;
 
   /**
+   * The annotation's first line in that file; 0 when it names none.
+   *
    * @generated from field: int64 line = 4;
    */
   line: bigint;
 };
 
 /**
+ * JobFailureAnnotation is one annotation on the job's check run, as GitHub
+ * gives it.
+ *
  * @generated from message toshi.github.v1.JobFailureAnnotation
  */
 export type JobFailureAnnotationJson = {
@@ -802,11 +911,16 @@ export type JobFailureAnnotationJson = {
   message?: string;
 
   /**
+   * The file the annotation names, at most 120 bytes; empty when it names
+   * none.
+   *
    * @generated from field: string path = 3;
    */
   path?: string;
 
   /**
+   * The annotation's first line in that file; 0 when it names none.
+   *
    * @generated from field: int64 line = 4;
    */
   line?: string;
@@ -820,12 +934,16 @@ export const JobFailureAnnotationSchema: GenMessage<JobFailureAnnotation, {jsonT
   messageDesc(file_toshi_github_v1_github, 11);
 
 /**
+ * CheckSecretDeliveryRequest is the empty request of a delivery check.
+ *
  * @generated from message toshi.github.v1.CheckSecretDeliveryRequest
  */
 export type CheckSecretDeliveryRequest = Message<"toshi.github.v1.CheckSecretDeliveryRequest"> & {
 };
 
 /**
+ * CheckSecretDeliveryRequest is the empty request of a delivery check.
+ *
  * @generated from message toshi.github.v1.CheckSecretDeliveryRequest
  */
 export type CheckSecretDeliveryRequestJson = {
@@ -839,6 +957,9 @@ export const CheckSecretDeliveryRequestSchema: GenMessage<CheckSecretDeliveryReq
   messageDesc(file_toshi_github_v1_github, 12);
 
 /**
+ * CheckSecretDeliveryResponse lists the installations of the App that lack
+ * Contents read.
+ *
  * @generated from message toshi.github.v1.CheckSecretDeliveryResponse
  */
 export type CheckSecretDeliveryResponse = Message<"toshi.github.v1.CheckSecretDeliveryResponse"> & {
@@ -851,6 +972,9 @@ export type CheckSecretDeliveryResponse = Message<"toshi.github.v1.CheckSecretDe
 };
 
 /**
+ * CheckSecretDeliveryResponse lists the installations of the App that lack
+ * Contents read.
+ *
  * @generated from message toshi.github.v1.CheckSecretDeliveryResponse
  */
 export type CheckSecretDeliveryResponseJson = {
@@ -870,10 +994,14 @@ export const CheckSecretDeliveryResponseSchema: GenMessage<CheckSecretDeliveryRe
   messageDesc(file_toshi_github_v1_github, 13);
 
 /**
+ * Installation is one installation of the GitHub App.
+ *
  * @generated from message toshi.github.v1.Installation
  */
 export type Installation = Message<"toshi.github.v1.Installation"> & {
   /**
+   * The installation's ID on GitHub.
+   *
    * @generated from field: int64 id = 1;
    */
   id: bigint;
@@ -887,10 +1015,14 @@ export type Installation = Message<"toshi.github.v1.Installation"> & {
 };
 
 /**
+ * Installation is one installation of the GitHub App.
+ *
  * @generated from message toshi.github.v1.Installation
  */
 export type InstallationJson = {
   /**
+   * The installation's ID on GitHub.
+   *
    * @generated from field: int64 id = 1;
    */
   id?: string;

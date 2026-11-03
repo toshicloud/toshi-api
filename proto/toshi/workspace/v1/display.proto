@@ -161,12 +161,16 @@ enum DisplayMode {
   DISPLAY_MODE_WITH_INPUT = 2;
 }
 
+// DisplaySessionState is where a session is in its life.
 enum DisplaySessionState {
+  // Never sent.
   DISPLAY_SESSION_STATE_UNSPECIFIED = 0;
   // Opened; its viewer has not presented the token yet.
   DISPLAY_SESSION_STATE_WAITING = 1;
   // Its viewer is attached.
   DISPLAY_SESSION_STATE_ATTACHED = 2;
+  // Ended, by a close, its viewer's or the server's; closed_at and
+  // close_reason say when and why.
   DISPLAY_SESSION_STATE_CLOSED = 3;
 }
 
@@ -194,6 +198,7 @@ enum DisplayRecordingState {
 
 // DisplayOpener is how a session was opened.
 enum DisplayOpener {
+  // Never sent.
   DISPLAY_OPENER_UNSPECIFIED = 0;
   // A person, signed in to the dashboard.
   DISPLAY_OPENER_PERSON = 1;
@@ -201,12 +206,14 @@ enum DisplayOpener {
   DISPLAY_OPENER_PROGRAM = 2;
 }
 
+// DisplaySession is one viewer's session on the screen of a job's VM.
 message DisplaySession {
   // Assigned by the server; unique within the workspace.
   string id = 1;
   // The job the session views: its ID as the jobs API and `toshi host-job
   // list` show it.
   string job_id = 2;
+  // What the viewer may do; see DisplayMode.
   DisplayMode mode = 3;
   // For an agent's run: whether a person may take the input from the
   // agent. A person's DISPLAY_MODE_WITH_INPUT open on the job closes this
@@ -216,8 +223,11 @@ message DisplaySession {
   // The session ends once no bytes of the screen's protocol have gone
   // either way for this long.
   google.protobuf.Duration idle_close = 5;
+  // Where the session is: waiting for its viewer, attached, or closed.
   DisplaySessionState state = 6;
+  // Whether a person or a program opened it; see DisplayOpener.
   DisplayOpener opened_by = 7;
+  // When the server opened it.
   google.protobuf.Timestamp opened_at = 8;
   // When the token expires: a session not attached by then closes.
   google.protobuf.Timestamp attach_by = 9;
@@ -255,25 +265,38 @@ message DisplaySession {
   string recording_stopped_reason = 18;
 }
 
+// OpenDisplaySessionRequest asks for a session on a running job's screen.
 message OpenDisplaySessionRequest {
   // What to view. A job runs on a host and has a screen; a workload of
   // WorkloadService has none yet and fails with FAILED_PRECONDITION.
   oneof target {
+    // The job whose screen to view.
     string job_id = 1;
+    // A workload's ID; a workload has no screen yet.
     string workload_id = 2;
   }
+  // What the viewer may do; unset is DISPLAY_MODE_VIEW_ONLY.
   DisplayMode mode = 3;
   // The idle close, at least 1 second and at most the plan's; unset is the
   // plan's.
   google.protobuf.Duration idle_close = 4;
+  // Whether a person may take the input from the session this program
+  // opens with input.
   bool allow_takeover = 5;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. A retry
+  // with the same key and request returns the session opened before,
+  // marked replayed and without a token; another request with the same key
+  // fails with FAILED_PRECONDITION.
   string request_key = 6;
   // A grant the caller's workspace received, to act on the owner's
   // sandbox's job through it (docs/grants.md).
   string grant = 7;
 }
 
+// OpenDisplaySessionResponse carries a session, its WebSocket URL and the
+// token that attaches it.
 message OpenDisplaySessionResponse {
+  // The session as it is now; on a retry, the one opened before.
   DisplaySession session = 1;
   // The session's WebSocket URL path, on the control plane's address:
   // /display/<id>.
@@ -288,17 +311,22 @@ message OpenDisplaySessionResponse {
   bool replayed = 4;
 }
 
+// GetDisplaySessionRequest names one session.
 message GetDisplaySessionRequest {
+  // The session's ID; an unknown one fails with NOT_FOUND.
   string session_id = 1;
   // A grant the caller's workspace received: the call then reaches the
   // sessions opened through that grant (docs/grants.md).
   string grant = 2;
 }
 
+// GetDisplaySessionResponse carries one session.
 message GetDisplaySessionResponse {
+  // The session as it is now.
   DisplaySession session = 1;
 }
 
+// ListDisplaySessionsRequest asks for a page of the workspace's sessions.
 message ListDisplaySessionsRequest {
   // Only this job's sessions; empty lists every job's.
   string job_id = 1;
@@ -313,24 +341,32 @@ message ListDisplaySessionsRequest {
   string grant = 5;
 }
 
+// ListDisplaySessionsResponse is one page of sessions.
 message ListDisplaySessionsResponse {
+  // The page's sessions, the newest first.
   repeated DisplaySession sessions = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// CloseDisplaySessionRequest names the session to close.
 message CloseDisplaySessionRequest {
+  // The session's ID; an unknown one fails with NOT_FOUND.
   string session_id = 1;
   // A grant the caller's workspace received: the call then reaches the
   // sessions opened through that grant (docs/grants.md).
   string grant = 2;
 }
 
+// CloseDisplaySessionResponse carries the session as it is after the call.
 message CloseDisplaySessionResponse {
+  // The session as it is now; one closed already is returned unchanged.
   DisplaySession session = 1;
 }
 
+// SendDisplayKeysRequest types text or presses keys on a session's screen.
 message SendDisplayKeysRequest {
+  // The session to drive; an unknown one fails with NOT_FOUND.
   string session_id = 1;
   oneof input {
     // Text typed one character at a time, at most 4096 characters of
@@ -353,12 +389,17 @@ message SendDisplayKeysRequest {
 
 // DisplayKeys is a list of keys and chords.
 message DisplayKeys {
+  // The keys and chords, pressed in order.
   repeated string keys = 1;
 }
 
+// SendDisplayKeysResponse has no fields.
 message SendDisplayKeysResponse {}
 
+// SendDisplayPointerRequest moves the pointer and presses or releases its
+// buttons.
 message SendDisplayPointerRequest {
+  // The session to drive; an unknown one fails with NOT_FOUND.
   string session_id = 1;
   // Pointer states sent in order, at most 256.
   repeated DisplayPointerEvent events = 2;
@@ -370,6 +411,7 @@ message DisplayPointerEvent {
   // TakeDisplayScreenshot sees it; a point outside fails the call with
   // INVALID_ARGUMENT before any event is sent.
   int32 x = 1;
+  // Pixels from the screen's top edge.
   int32 y = 2;
   // The buttons held down: 1 left, 2 middle, 4 right, 8 wheel up, 16
   // wheel down. A click is an event with the button and one without; a
@@ -377,25 +419,37 @@ message DisplayPointerEvent {
   uint32 buttons = 3;
 }
 
+// SendDisplayPointerResponse has no fields.
 message SendDisplayPointerResponse {}
 
+// SetDisplayClipboardRequest sets the clipboard of the screen a session
+// views.
 message SetDisplayClipboardRequest {
+  // The session to drive; an unknown one fails with NOT_FOUND.
   string session_id = 1;
   // At most 256 KiB, in Latin-1 (the RFB protocol's clipboard); other
   // text fails the call with INVALID_ARGUMENT.
   string text = 2;
 }
 
+// SetDisplayClipboardResponse has no fields.
 message SetDisplayClipboardResponse {}
 
+// TakeDisplayScreenshotRequest asks for the screen a session views as a PNG.
 message TakeDisplayScreenshotRequest {
+  // The session whose screen to read; an unknown one fails with NOT_FOUND.
   string session_id = 1;
 }
 
+// TakeDisplayScreenshotResponse is the screen as a PNG, with its size and
+// when it was read.
 message TakeDisplayScreenshotResponse {
   // The screen as a PNG image.
   bytes png = 1;
+  // The screen's width in pixels.
   int32 width = 2;
+  // The screen's height in pixels.
   int32 height = 3;
+  // When the control plane read the frame.
   google.protobuf.Timestamp taken_at = 4;
 }

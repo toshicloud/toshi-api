@@ -119,6 +119,7 @@ service GrantService {
 // GrantLevel is what a grant lets the grantee do; each level includes the
 // one before.
 enum GrantLevel {
+  // Not a level: a request names VIEW, CONNECT or OPERATE.
   GRANT_LEVEL_UNSPECIFIED = 0;
   // List, get and watch the sandboxes the grant covers; sign in to their
   // previews.
@@ -133,6 +134,7 @@ enum GrantLevel {
 // GrantState is where a grant is in its life. OFFERED and ACTIVE are
 // live; every other state is final.
 enum GrantState {
+  // Not a state: a grant is always in one of the others.
   GRANT_STATE_UNSPECIFIED = 0;
   // Offered and not yet answered.
   GRANT_STATE_OFFERED = 1;
@@ -179,10 +181,13 @@ message Grant {
     // One preview of one sandbox, at VIEW only.
     GrantPreviewTarget preview = 6;
   }
+  // The level it is granted at.
   GrantLevel level = 7;
+  // Where it is in its life.
   GrantState state = 8;
   // Who offered it, as the audit log names them.
   string offered_by = 9;
+  // When it was offered.
   google.protobuf.Timestamp offered_at = 10;
   // When an offer not answered lapses.
   google.protobuf.Timestamp lapses_at = 11;
@@ -214,6 +219,7 @@ message SharedAccess {
 
 // GrantWorkspace is one side of a grant.
 message GrantWorkspace {
+  // The workspace's id.
   string id = 1;
   // Empty once the workspace is deleted.
   string name = 2;
@@ -221,58 +227,79 @@ message GrantWorkspace {
 
 // GrantEnvironmentTarget covers every sandbox of one environment.
 message GrantEnvironmentTarget {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
 }
 
 // GrantSandboxTarget covers one sandbox.
 message GrantSandboxTarget {
+  // The sandbox's id.
   string sandbox_id = 1;
   // The sandbox's project and environment, set by the server.
   string project = 2;
+  // The sandbox's environment, set by the server.
   string environment = 3;
 }
 
 // GrantPreviewTarget covers one preview of one sandbox.
 message GrantPreviewTarget {
+  // The sandbox's id.
   string sandbox_id = 1;
   // The endpoint whose preview it covers: `preview` for the sandbox's own
   // hostname, or another of its http endpoints.
   string endpoint = 2;
   // The sandbox's project and environment, set by the server.
   string project = 3;
+  // The sandbox's environment, set by the server.
   string environment = 4;
 }
 
+// CreateGrantRequest offers a grant on the caller's workspace.
 message CreateGrantRequest {
   // The id of the workspace the grant is offered to.
   string grantee_workspace = 1;
   // What it covers, in the caller's workspace.
   oneof target {
+    // Every sandbox of one environment.
     GrantEnvironmentTarget environment = 2;
+    // One sandbox.
     GrantSandboxTarget sandbox = 3;
+    // One preview of one sandbox, at VIEW only.
     GrantPreviewTarget preview = 4;
   }
   // VIEW for a preview.
   GrantLevel level = 5;
   // Unset for no expiry.
   google.protobuf.Timestamp expires_at = 6;
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
+  // key and request return the first answer; a different request with the
+  // same key is refused. Keys are kept for 30 days by default.
   string request_key = 7;
 }
 
+// CreateGrantResponse carries the grant CreateGrant offered.
 message CreateGrantResponse {
+  // The grant, in OFFERED.
   Grant grant = 1;
 }
 
+// GetGrantRequest names the grant GetGrant returns.
 message GetGrantRequest {
+  // The grant's id.
   string id = 1;
 }
 
+// GetGrantResponse carries the grant GetGrant returned.
 message GetGrantResponse {
+  // The grant, of either side.
   Grant grant = 1;
 }
 
+// ListGrantsRequest selects the grants ListGrants returns.
 message ListGrantsRequest {
+  // Which grants to list: given, received or both.
   GrantSide side = 1;
   // The states to list; empty lists every state.
   repeated GrantState states = 2;
@@ -282,50 +309,75 @@ message ListGrantsRequest {
   string page_token = 4;
 }
 
+// ListGrantsResponse carries one page of grants, newest offered first.
 message ListGrantsResponse {
+  // The grants of the page.
   repeated Grant grants = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// AcceptGrantRequest names the offer AcceptGrant accepts.
 message AcceptGrantRequest {
+  // The grant's id.
   string id = 1;
 }
 
+// AcceptGrantResponse carries the grant AcceptGrant accepted.
 message AcceptGrantResponse {
+  // The grant, now ACTIVE.
   Grant grant = 1;
 }
 
+// DeclineGrantRequest names the offer DeclineGrant declines.
 message DeclineGrantRequest {
+  // The grant's id.
   string id = 1;
 }
 
+// DeclineGrantResponse carries the grant DeclineGrant declined.
 message DeclineGrantResponse {
+  // The grant, now DECLINED.
   Grant grant = 1;
 }
 
+// UpdateGrantRequest sets a grant's expiry.
 message UpdateGrantRequest {
   // id names the grant; expires_at is the one field set.
   Grant grant = 1;
+  // The fields to set: expires_at, and no other. An unset mask sets
+  // expires_at when grant carries it.
   google.protobuf.FieldMask update_mask = 2;
 }
 
+// UpdateGrantResponse carries the grant UpdateGrant changed.
 message UpdateGrantResponse {
+  // The grant, with its new expiry.
   Grant grant = 1;
 }
 
+// RevokeGrantRequest names the grant RevokeGrant ends.
 message RevokeGrantRequest {
+  // The grant's id.
   string id = 1;
 }
 
+// RevokeGrantResponse carries the grant RevokeGrant ended.
 message RevokeGrantResponse {
+  // The grant, now REVOKED and ended by the owner, or as it was if it had
+  // already ended.
   Grant grant = 1;
 }
 
+// LeaveGrantRequest names the grant LeaveGrant ends.
 message LeaveGrantRequest {
+  // The grant's id.
   string id = 1;
 }
 
+// LeaveGrantResponse carries the grant LeaveGrant ended.
 message LeaveGrantResponse {
+  // The grant, now REVOKED and ended by the grantee, or as it was if it
+  // had already ended.
   Grant grant = 1;
 }

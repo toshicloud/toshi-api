@@ -16,6 +16,8 @@ export const file_toshi_workspace_v1_display: GenFile = /*@__PURE__*/
   fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvZGlzcGxheS5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIpgFCg5EaXNwbGF5U2Vzc2lvbhIKCgJpZBgBIAEoCRIOCgZqb2JfaWQYAiABKAkSLQoEbW9kZRgDIAEoDjIfLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5TW9kZRIWCg5hbGxvd190YWtlb3ZlchgEIAEoCBItCgppZGxlX2Nsb3NlGAUgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEjYKBXN0YXRlGAYgASgOMicudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uU3RhdGUSNAoJb3BlbmVkX2J5GAcgASgOMiEudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlPcGVuZXISLQoJb3BlbmVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglhdHRhY2hfYnkYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KC2F0dGFjaGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCgljbG9zZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGNsb3NlX3JlYXNvbhgMIAEoCRIRCglvcGVuZXJfaWQYDSABKAkSDgoGb3JpZ2luGA4gASgJEhcKD2F0dGFjaF90b2tlbl9pZBgPIAEoCRIQCghncmFudF9pZBgQIAEoCRJCCg9yZWNvcmRpbmdfc3RhdGUYESABKA4yKS50b3NoaS53b3Jrc3BhY2UudjEuRGlzcGxheVJlY29yZGluZ1N0YXRlEiAKGHJlY29yZGluZ19zdG9wcGVkX3JlYXNvbhgSIAEoCSLoAQoZT3BlbkRpc3BsYXlTZXNzaW9uUmVxdWVzdBIQCgZqb2JfaWQYASABKAlIABIVCgt3b3JrbG9hZF9pZBgCIAEoCUgAEi0KBG1vZGUYAyABKA4yHy50b3NoaS53b3Jrc3BhY2UudjEuRGlzcGxheU1vZGUSLQoKaWRsZV9jbG9zZRgEIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbhIWCg5hbGxvd190YWtlb3ZlchgFIAEoCBITCgtyZXF1ZXN0X2tleRgGIAEoCRINCgVncmFudBgHIAEoCUIICgZ0YXJnZXQifwoaT3BlbkRpc3BsYXlTZXNzaW9uUmVzcG9uc2USMwoHc2Vzc2lvbhgBIAEoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5U2Vzc2lvbhILCgN1cmwYAiABKAkSDQoFdG9rZW4YAyABKAkSEAoIcmVwbGF5ZWQYBCABKAgiPQoYR2V0RGlzcGxheVNlc3Npb25SZXF1ZXN0EhIKCnNlc3Npb25faWQYASABKAkSDQoFZ3JhbnQYAiABKAkiUAoZR2V0RGlzcGxheVNlc3Npb25SZXNwb25zZRIzCgdzZXNzaW9uGAEgASgLMiIudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uInUKGkxpc3REaXNwbGF5U2Vzc2lvbnNSZXF1ZXN0Eg4KBmpvYl9pZBgBIAEoCRIRCglvcGVuX29ubHkYAiABKAgSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkSDQoFZ3JhbnQYBSABKAkibAobTGlzdERpc3BsYXlTZXNzaW9uc1Jlc3BvbnNlEjQKCHNlc3Npb25zGAEgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSI/ChpDbG9zZURpc3BsYXlTZXNzaW9uUmVxdWVzdBISCgpzZXNzaW9uX2lkGAEgASgJEg0KBWdyYW50GAIgASgJIlIKG0Nsb3NlRGlzcGxheVNlc3Npb25SZXNwb25zZRIzCgdzZXNzaW9uGAEgASgLMiIudG9zaGkud29ya3NwYWNlLnYxLkRpc3BsYXlTZXNzaW9uInYKFlNlbmREaXNwbGF5S2V5c1JlcXVlc3QSEgoKc2Vzc2lvbl9pZBgBIAEoCRIOCgR0ZXh0GAIgASgJSAASLwoEa2V5cxgDIAEoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5S2V5c0gAQgcKBWlucHV0IhsKC0Rpc3BsYXlLZXlzEgwKBGtleXMYASADKAkiGQoXU2VuZERpc3BsYXlLZXlzUmVzcG9uc2UiaAoZU2VuZERpc3BsYXlQb2ludGVyUmVxdWVzdBISCgpzZXNzaW9uX2lkGAEgASgJEjcKBmV2ZW50cxgCIAMoCzInLnRvc2hpLndvcmtzcGFjZS52MS5EaXNwbGF5UG9pbnRlckV2ZW50IjwKE0Rpc3BsYXlQb2ludGVyRXZlbnQSCQoBeBgBIAEoBRIJCgF5GAIgASgFEg8KB2J1dHRvbnMYAyABKA0iHAoaU2VuZERpc3BsYXlQb2ludGVyUmVzcG9uc2UiPgoaU2V0RGlzcGxheUNsaXBib2FyZFJlcXVlc3QSEgoKc2Vzc2lvbl9pZBgBIAEoCRIMCgR0ZXh0GAIgASgJIh0KG1NldERpc3BsYXlDbGlwYm9hcmRSZXNwb25zZSIyChxUYWtlRGlzcGxheVNjcmVlbnNob3RSZXF1ZXN0EhIKCnNlc3Npb25faWQYASABKAkieQodVGFrZURpc3BsYXlTY3JlZW5zaG90UmVzcG9uc2USCwoDcG5nGAEgASgMEg0KBXdpZHRoGAIgASgFEg4KBmhlaWdodBgDIAEoBRIsCgh0YWtlbl9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqZAoLRGlzcGxheU1vZGUSHAoYRElTUExBWV9NT0RFX1VOU1BFQ0lGSUVEEAASGgoWRElTUExBWV9NT0RFX1ZJRVdfT05MWRABEhsKF0RJU1BMQVlfTU9ERV9XSVRIX0lOUFVUEAIqpQEKE0Rpc3BsYXlTZXNzaW9uU3RhdGUSJQohRElTUExBWV9TRVNTSU9OX1NUQVRFX1VOU1BFQ0lGSUVEEAASIQodRElTUExBWV9TRVNTSU9OX1NUQVRFX1dBSVRJTkcQARIiCh5ESVNQTEFZX1NFU1NJT05fU1RBVEVfQVRUQUNIRUQQAhIgChxESVNQTEFZX1NFU1NJT05fU1RBVEVfQ0xPU0VEEAMq2AEKFURpc3BsYXlSZWNvcmRpbmdTdGF0ZRInCiNESVNQTEFZX1JFQ09SRElOR19TVEFURV9VTlNQRUNJRklFRBAAEh8KG0RJU1BMQVlfUkVDT1JESU5HX1NUQVRFX09GRhABEikKJURJU1BMQVlfUkVDT1JESU5HX1NUQVRFX1FVT1RBX1JFQUNIRUQQAhIjCh9ESVNQTEFZX1JFQ09SRElOR19TVEFURV9QUklWQVRFEAMSJQohRElTUExBWV9SRUNPUkRJTkdfU1RBVEVfUkVDT1JESU5HEAQqZgoNRGlzcGxheU9wZW5lchIeChpESVNQTEFZX09QRU5FUl9VTlNQRUNJRklFRBAAEhkKFURJU1BMQVlfT1BFTkVSX1BFUlNPThABEhoKFkRJU1BMQVlfT1BFTkVSX1BST0dSQU0QAjLbCwoORGlzcGxheVNlcnZpY2USzAEKEk9wZW5EaXNwbGF5U2Vzc2lvbhItLnRvc2hpLndvcmtzcGFjZS52MS5PcGVuRGlzcGxheVNlc3Npb25SZXF1ZXN0Gi4udG9zaGkud29ya3NwYWNlLnYxLk9wZW5EaXNwbGF5U2Vzc2lvblJlc3BvbnNlIlfC8xgOZGlzcGxheXMud3JpdGXS8xg9ChZkaXNwbGF5LnNlc3Npb25fb3BlbmVkEiNkaXNwbGF5X3Nlc3Npb246cmVzcG9uc2Uuc2Vzc2lvbi5pZJD0GAESgwEKEUdldERpc3BsYXlTZXNzaW9uEiwudG9zaGkud29ya3NwYWNlLnYxLkdldERpc3BsYXlTZXNzaW9uUmVxdWVzdBotLnRvc2hpLndvcmtzcGFjZS52MS5HZXREaXNwbGF5U2Vzc2lvblJlc3BvbnNlIhHC8xgNZGlzcGxheXMucmVhZBKJAQoTTGlzdERpc3BsYXlTZXNzaW9ucxIuLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0RGlzcGxheVNlc3Npb25zUmVxdWVzdBovLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0RGlzcGxheVNlc3Npb25zUmVzcG9uc2UiEcLzGA1kaXNwbGF5cy5yZWFkEsYBChNDbG9zZURpc3BsYXlTZXNzaW9uEi4udG9zaGkud29ya3NwYWNlLnYxLkNsb3NlRGlzcGxheVNlc3Npb25SZXF1ZXN0Gi8udG9zaGkud29ya3NwYWNlLnYxLkNsb3NlRGlzcGxheVNlc3Npb25SZXNwb25zZSJOwvMYDmRpc3BsYXlzLndyaXRl0vMYNAoWZGlzcGxheS5zZXNzaW9uX2Nsb3NlZBIaZGlzcGxheV9zZXNzaW9uOnNlc3Npb25faWSQ9BgCErsBCg9TZW5kRGlzcGxheUtleXMSKi50b3NoaS53b3Jrc3BhY2UudjEuU2VuZERpc3BsYXlLZXlzUmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5TZW5kRGlzcGxheUtleXNSZXNwb25zZSJPwvMYDmRpc3BsYXlzLndyaXRl0vMYLwoRZGlzcGxheS5rZXlzX3NlbnQSGmRpc3BsYXlfc2Vzc2lvbjpzZXNzaW9uX2lk6vMYAhgAkPQYAhLHAQoSU2VuZERpc3BsYXlQb2ludGVyEi0udG9zaGkud29ya3NwYWNlLnYxLlNlbmREaXNwbGF5UG9pbnRlclJlcXVlc3QaLi50b3NoaS53b3Jrc3BhY2UudjEuU2VuZERpc3BsYXlQb2ludGVyUmVzcG9uc2UiUsLzGA5kaXNwbGF5cy53cml0ZdLzGDIKFGRpc3BsYXkucG9pbnRlcl9zZW50EhpkaXNwbGF5X3Nlc3Npb246c2Vzc2lvbl9pZOrzGAIYAJD0GAISxQEKE1NldERpc3BsYXlDbGlwYm9hcmQSLi50b3NoaS53b3Jrc3BhY2UudjEuU2V0RGlzcGxheUNsaXBib2FyZFJlcXVlc3QaLy50b3NoaS53b3Jrc3BhY2UudjEuU2V0RGlzcGxheUNsaXBib2FyZFJlc3BvbnNlIk3C8xgOZGlzcGxheXMud3JpdGXS8xgzChVkaXNwbGF5LmNsaXBib2FyZF9zZXQSGmRpc3BsYXlfc2Vzc2lvbjpzZXNzaW9uX2lkkPQYAhLOAQoVVGFrZURpc3BsYXlTY3JlZW5zaG90EjAudG9zaGkud29ya3NwYWNlLnYxLlRha2VEaXNwbGF5U2NyZWVuc2hvdFJlcXVlc3QaMS50b3NoaS53b3Jrc3BhY2UudjEuVGFrZURpc3BsYXlTY3JlZW5zaG90UmVzcG9uc2UiUMLzGA5kaXNwbGF5cy53cml0ZdLzGDYKGGRpc3BsYXkuc2NyZWVuc2hvdF90YWtlbhIaZGlzcGxheV9zZXNzaW9uOnNlc3Npb25faWSQ9BgCQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_duration, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
+ * DisplaySession is one viewer's session on the screen of a job's VM.
+ *
  * @generated from message toshi.workspace.v1.DisplaySession
  */
 export type DisplaySession = Message<"toshi.workspace.v1.DisplaySession"> & {
@@ -35,6 +37,8 @@ export type DisplaySession = Message<"toshi.workspace.v1.DisplaySession"> & {
   jobId: string;
 
   /**
+   * What the viewer may do; see DisplayMode.
+   *
    * @generated from field: toshi.workspace.v1.DisplayMode mode = 3;
    */
   mode: DisplayMode;
@@ -58,16 +62,22 @@ export type DisplaySession = Message<"toshi.workspace.v1.DisplaySession"> & {
   idleClose?: Duration | undefined;
 
   /**
+   * Where the session is: waiting for its viewer, attached, or closed.
+   *
    * @generated from field: toshi.workspace.v1.DisplaySessionState state = 6;
    */
   state: DisplaySessionState;
 
   /**
+   * Whether a person or a program opened it; see DisplayOpener.
+   *
    * @generated from field: toshi.workspace.v1.DisplayOpener opened_by = 7;
    */
   openedBy: DisplayOpener;
 
   /**
+   * When the server opened it.
+   *
    * @generated from field: google.protobuf.Timestamp opened_at = 8;
    */
   openedAt?: Timestamp | undefined;
@@ -158,6 +168,8 @@ export type DisplaySession = Message<"toshi.workspace.v1.DisplaySession"> & {
 };
 
 /**
+ * DisplaySession is one viewer's session on the screen of a job's VM.
+ *
  * @generated from message toshi.workspace.v1.DisplaySession
  */
 export type DisplaySessionJson = {
@@ -177,6 +189,8 @@ export type DisplaySessionJson = {
   jobId?: string;
 
   /**
+   * What the viewer may do; see DisplayMode.
+   *
    * @generated from field: toshi.workspace.v1.DisplayMode mode = 3;
    */
   mode?: DisplayModeJson;
@@ -200,16 +214,22 @@ export type DisplaySessionJson = {
   idleClose?: DurationJson;
 
   /**
+   * Where the session is: waiting for its viewer, attached, or closed.
+   *
    * @generated from field: toshi.workspace.v1.DisplaySessionState state = 6;
    */
   state?: DisplaySessionStateJson;
 
   /**
+   * Whether a person or a program opened it; see DisplayOpener.
+   *
    * @generated from field: toshi.workspace.v1.DisplayOpener opened_by = 7;
    */
   openedBy?: DisplayOpenerJson;
 
   /**
+   * When the server opened it.
+   *
    * @generated from field: google.protobuf.Timestamp opened_at = 8;
    */
   openedAt?: TimestampJson;
@@ -307,6 +327,8 @@ export const DisplaySessionSchema: GenMessage<DisplaySession, {jsonType: Display
   messageDesc(file_toshi_workspace_v1_display, 0);
 
 /**
+ * OpenDisplaySessionRequest asks for a session on a running job's screen.
+ *
  * @generated from message toshi.workspace.v1.OpenDisplaySessionRequest
  */
 export type OpenDisplaySessionRequest = Message<"toshi.workspace.v1.OpenDisplaySessionRequest"> & {
@@ -318,12 +340,16 @@ export type OpenDisplaySessionRequest = Message<"toshi.workspace.v1.OpenDisplayS
    */
   target: {
     /**
+     * The job whose screen to view.
+     *
      * @generated from field: string job_id = 1;
      */
     value: string;
     case: "jobId";
   } | {
     /**
+     * A workload's ID; a workload has no screen yet.
+     *
      * @generated from field: string workload_id = 2;
      */
     value: string;
@@ -331,6 +357,8 @@ export type OpenDisplaySessionRequest = Message<"toshi.workspace.v1.OpenDisplayS
   } | { case: undefined; value?: undefined };
 
   /**
+   * What the viewer may do; unset is DISPLAY_MODE_VIEW_ONLY.
+   *
    * @generated from field: toshi.workspace.v1.DisplayMode mode = 3;
    */
   mode: DisplayMode;
@@ -344,11 +372,19 @@ export type OpenDisplaySessionRequest = Message<"toshi.workspace.v1.OpenDisplayS
   idleClose?: Duration | undefined;
 
   /**
+   * Whether a person may take the input from the session this program
+   * opens with input.
+   *
    * @generated from field: bool allow_takeover = 5;
    */
   allowTakeover: boolean;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. A retry
+   * with the same key and request returns the session opened before,
+   * marked replayed and without a token; another request with the same key
+   * fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 6;
    */
   requestKey: string;
@@ -363,20 +399,28 @@ export type OpenDisplaySessionRequest = Message<"toshi.workspace.v1.OpenDisplayS
 };
 
 /**
+ * OpenDisplaySessionRequest asks for a session on a running job's screen.
+ *
  * @generated from message toshi.workspace.v1.OpenDisplaySessionRequest
  */
 export type OpenDisplaySessionRequestJson = {
   /**
+   * The job whose screen to view.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * A workload's ID; a workload has no screen yet.
+   *
    * @generated from field: string workload_id = 2;
    */
   workloadId?: string;
 
   /**
+   * What the viewer may do; unset is DISPLAY_MODE_VIEW_ONLY.
+   *
    * @generated from field: toshi.workspace.v1.DisplayMode mode = 3;
    */
   mode?: DisplayModeJson;
@@ -390,11 +434,19 @@ export type OpenDisplaySessionRequestJson = {
   idleClose?: DurationJson;
 
   /**
+   * Whether a person may take the input from the session this program
+   * opens with input.
+   *
    * @generated from field: bool allow_takeover = 5;
    */
   allowTakeover?: boolean;
 
   /**
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. A retry
+   * with the same key and request returns the session opened before,
+   * marked replayed and without a token; another request with the same key
+   * fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 6;
    */
   requestKey?: string;
@@ -416,10 +468,15 @@ export const OpenDisplaySessionRequestSchema: GenMessage<OpenDisplaySessionReque
   messageDesc(file_toshi_workspace_v1_display, 1);
 
 /**
+ * OpenDisplaySessionResponse carries a session, its WebSocket URL and the
+ * token that attaches it.
+ *
  * @generated from message toshi.workspace.v1.OpenDisplaySessionResponse
  */
 export type OpenDisplaySessionResponse = Message<"toshi.workspace.v1.OpenDisplaySessionResponse"> & {
   /**
+   * The session as it is now; on a retry, the one opened before.
+   *
    * @generated from field: toshi.workspace.v1.DisplaySession session = 1;
    */
   session?: DisplaySession | undefined;
@@ -452,10 +509,15 @@ export type OpenDisplaySessionResponse = Message<"toshi.workspace.v1.OpenDisplay
 };
 
 /**
+ * OpenDisplaySessionResponse carries a session, its WebSocket URL and the
+ * token that attaches it.
+ *
  * @generated from message toshi.workspace.v1.OpenDisplaySessionResponse
  */
 export type OpenDisplaySessionResponseJson = {
   /**
+   * The session as it is now; on a retry, the one opened before.
+   *
    * @generated from field: toshi.workspace.v1.DisplaySession session = 1;
    */
   session?: DisplaySessionJson;
@@ -495,10 +557,14 @@ export const OpenDisplaySessionResponseSchema: GenMessage<OpenDisplaySessionResp
   messageDesc(file_toshi_workspace_v1_display, 2);
 
 /**
+ * GetDisplaySessionRequest names one session.
+ *
  * @generated from message toshi.workspace.v1.GetDisplaySessionRequest
  */
 export type GetDisplaySessionRequest = Message<"toshi.workspace.v1.GetDisplaySessionRequest"> & {
   /**
+   * The session's ID; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId: string;
@@ -513,10 +579,14 @@ export type GetDisplaySessionRequest = Message<"toshi.workspace.v1.GetDisplaySes
 };
 
 /**
+ * GetDisplaySessionRequest names one session.
+ *
  * @generated from message toshi.workspace.v1.GetDisplaySessionRequest
  */
 export type GetDisplaySessionRequestJson = {
   /**
+   * The session's ID; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId?: string;
@@ -538,20 +608,28 @@ export const GetDisplaySessionRequestSchema: GenMessage<GetDisplaySessionRequest
   messageDesc(file_toshi_workspace_v1_display, 3);
 
 /**
+ * GetDisplaySessionResponse carries one session.
+ *
  * @generated from message toshi.workspace.v1.GetDisplaySessionResponse
  */
 export type GetDisplaySessionResponse = Message<"toshi.workspace.v1.GetDisplaySessionResponse"> & {
   /**
+   * The session as it is now.
+   *
    * @generated from field: toshi.workspace.v1.DisplaySession session = 1;
    */
   session?: DisplaySession | undefined;
 };
 
 /**
+ * GetDisplaySessionResponse carries one session.
+ *
  * @generated from message toshi.workspace.v1.GetDisplaySessionResponse
  */
 export type GetDisplaySessionResponseJson = {
   /**
+   * The session as it is now.
+   *
    * @generated from field: toshi.workspace.v1.DisplaySession session = 1;
    */
   session?: DisplaySessionJson;
@@ -565,6 +643,8 @@ export const GetDisplaySessionResponseSchema: GenMessage<GetDisplaySessionRespon
   messageDesc(file_toshi_workspace_v1_display, 4);
 
 /**
+ * ListDisplaySessionsRequest asks for a page of the workspace's sessions.
+ *
  * @generated from message toshi.workspace.v1.ListDisplaySessionsRequest
  */
 export type ListDisplaySessionsRequest = Message<"toshi.workspace.v1.ListDisplaySessionsRequest"> & {
@@ -606,6 +686,8 @@ export type ListDisplaySessionsRequest = Message<"toshi.workspace.v1.ListDisplay
 };
 
 /**
+ * ListDisplaySessionsRequest asks for a page of the workspace's sessions.
+ *
  * @generated from message toshi.workspace.v1.ListDisplaySessionsRequest
  */
 export type ListDisplaySessionsRequestJson = {
@@ -654,10 +736,14 @@ export const ListDisplaySessionsRequestSchema: GenMessage<ListDisplaySessionsReq
   messageDesc(file_toshi_workspace_v1_display, 5);
 
 /**
+ * ListDisplaySessionsResponse is one page of sessions.
+ *
  * @generated from message toshi.workspace.v1.ListDisplaySessionsResponse
  */
 export type ListDisplaySessionsResponse = Message<"toshi.workspace.v1.ListDisplaySessionsResponse"> & {
   /**
+   * The page's sessions, the newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.DisplaySession sessions = 1;
    */
   sessions: DisplaySession[];
@@ -671,10 +757,14 @@ export type ListDisplaySessionsResponse = Message<"toshi.workspace.v1.ListDispla
 };
 
 /**
+ * ListDisplaySessionsResponse is one page of sessions.
+ *
  * @generated from message toshi.workspace.v1.ListDisplaySessionsResponse
  */
 export type ListDisplaySessionsResponseJson = {
   /**
+   * The page's sessions, the newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.DisplaySession sessions = 1;
    */
   sessions?: DisplaySessionJson[];
@@ -695,10 +785,14 @@ export const ListDisplaySessionsResponseSchema: GenMessage<ListDisplaySessionsRe
   messageDesc(file_toshi_workspace_v1_display, 6);
 
 /**
+ * CloseDisplaySessionRequest names the session to close.
+ *
  * @generated from message toshi.workspace.v1.CloseDisplaySessionRequest
  */
 export type CloseDisplaySessionRequest = Message<"toshi.workspace.v1.CloseDisplaySessionRequest"> & {
   /**
+   * The session's ID; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId: string;
@@ -713,10 +807,14 @@ export type CloseDisplaySessionRequest = Message<"toshi.workspace.v1.CloseDispla
 };
 
 /**
+ * CloseDisplaySessionRequest names the session to close.
+ *
  * @generated from message toshi.workspace.v1.CloseDisplaySessionRequest
  */
 export type CloseDisplaySessionRequestJson = {
   /**
+   * The session's ID; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId?: string;
@@ -738,20 +836,28 @@ export const CloseDisplaySessionRequestSchema: GenMessage<CloseDisplaySessionReq
   messageDesc(file_toshi_workspace_v1_display, 7);
 
 /**
+ * CloseDisplaySessionResponse carries the session as it is after the call.
+ *
  * @generated from message toshi.workspace.v1.CloseDisplaySessionResponse
  */
 export type CloseDisplaySessionResponse = Message<"toshi.workspace.v1.CloseDisplaySessionResponse"> & {
   /**
+   * The session as it is now; one closed already is returned unchanged.
+   *
    * @generated from field: toshi.workspace.v1.DisplaySession session = 1;
    */
   session?: DisplaySession | undefined;
 };
 
 /**
+ * CloseDisplaySessionResponse carries the session as it is after the call.
+ *
  * @generated from message toshi.workspace.v1.CloseDisplaySessionResponse
  */
 export type CloseDisplaySessionResponseJson = {
   /**
+   * The session as it is now; one closed already is returned unchanged.
+   *
    * @generated from field: toshi.workspace.v1.DisplaySession session = 1;
    */
   session?: DisplaySessionJson;
@@ -765,10 +871,14 @@ export const CloseDisplaySessionResponseSchema: GenMessage<CloseDisplaySessionRe
   messageDesc(file_toshi_workspace_v1_display, 8);
 
 /**
+ * SendDisplayKeysRequest types text or presses keys on a session's screen.
+ *
  * @generated from message toshi.workspace.v1.SendDisplayKeysRequest
  */
 export type SendDisplayKeysRequest = Message<"toshi.workspace.v1.SendDisplayKeysRequest"> & {
   /**
+   * The session to drive; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId: string;
@@ -807,10 +917,14 @@ export type SendDisplayKeysRequest = Message<"toshi.workspace.v1.SendDisplayKeys
 };
 
 /**
+ * SendDisplayKeysRequest types text or presses keys on a session's screen.
+ *
  * @generated from message toshi.workspace.v1.SendDisplayKeysRequest
  */
 export type SendDisplayKeysRequestJson = {
   /**
+   * The session to drive; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId?: string;
@@ -855,6 +969,8 @@ export const SendDisplayKeysRequestSchema: GenMessage<SendDisplayKeysRequest, {j
  */
 export type DisplayKeys = Message<"toshi.workspace.v1.DisplayKeys"> & {
   /**
+   * The keys and chords, pressed in order.
+   *
    * @generated from field: repeated string keys = 1;
    */
   keys: string[];
@@ -867,6 +983,8 @@ export type DisplayKeys = Message<"toshi.workspace.v1.DisplayKeys"> & {
  */
 export type DisplayKeysJson = {
   /**
+   * The keys and chords, pressed in order.
+   *
    * @generated from field: repeated string keys = 1;
    */
   keys?: string[];
@@ -880,12 +998,16 @@ export const DisplayKeysSchema: GenMessage<DisplayKeys, {jsonType: DisplayKeysJs
   messageDesc(file_toshi_workspace_v1_display, 10);
 
 /**
+ * SendDisplayKeysResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.SendDisplayKeysResponse
  */
 export type SendDisplayKeysResponse = Message<"toshi.workspace.v1.SendDisplayKeysResponse"> & {
 };
 
 /**
+ * SendDisplayKeysResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.SendDisplayKeysResponse
  */
 export type SendDisplayKeysResponseJson = {
@@ -899,10 +1021,15 @@ export const SendDisplayKeysResponseSchema: GenMessage<SendDisplayKeysResponse, 
   messageDesc(file_toshi_workspace_v1_display, 11);
 
 /**
+ * SendDisplayPointerRequest moves the pointer and presses or releases its
+ * buttons.
+ *
  * @generated from message toshi.workspace.v1.SendDisplayPointerRequest
  */
 export type SendDisplayPointerRequest = Message<"toshi.workspace.v1.SendDisplayPointerRequest"> & {
   /**
+   * The session to drive; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId: string;
@@ -916,10 +1043,15 @@ export type SendDisplayPointerRequest = Message<"toshi.workspace.v1.SendDisplayP
 };
 
 /**
+ * SendDisplayPointerRequest moves the pointer and presses or releases its
+ * buttons.
+ *
  * @generated from message toshi.workspace.v1.SendDisplayPointerRequest
  */
 export type SendDisplayPointerRequestJson = {
   /**
+   * The session to drive; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId?: string;
@@ -955,6 +1087,8 @@ export type DisplayPointerEvent = Message<"toshi.workspace.v1.DisplayPointerEven
   x: number;
 
   /**
+   * Pixels from the screen's top edge.
+   *
    * @generated from field: int32 y = 2;
    */
   y: number;
@@ -985,6 +1119,8 @@ export type DisplayPointerEventJson = {
   x?: number;
 
   /**
+   * Pixels from the screen's top edge.
+   *
    * @generated from field: int32 y = 2;
    */
   y?: number;
@@ -1007,12 +1143,16 @@ export const DisplayPointerEventSchema: GenMessage<DisplayPointerEvent, {jsonTyp
   messageDesc(file_toshi_workspace_v1_display, 13);
 
 /**
+ * SendDisplayPointerResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.SendDisplayPointerResponse
  */
 export type SendDisplayPointerResponse = Message<"toshi.workspace.v1.SendDisplayPointerResponse"> & {
 };
 
 /**
+ * SendDisplayPointerResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.SendDisplayPointerResponse
  */
 export type SendDisplayPointerResponseJson = {
@@ -1026,10 +1166,15 @@ export const SendDisplayPointerResponseSchema: GenMessage<SendDisplayPointerResp
   messageDesc(file_toshi_workspace_v1_display, 14);
 
 /**
+ * SetDisplayClipboardRequest sets the clipboard of the screen a session
+ * views.
+ *
  * @generated from message toshi.workspace.v1.SetDisplayClipboardRequest
  */
 export type SetDisplayClipboardRequest = Message<"toshi.workspace.v1.SetDisplayClipboardRequest"> & {
   /**
+   * The session to drive; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId: string;
@@ -1044,10 +1189,15 @@ export type SetDisplayClipboardRequest = Message<"toshi.workspace.v1.SetDisplayC
 };
 
 /**
+ * SetDisplayClipboardRequest sets the clipboard of the screen a session
+ * views.
+ *
  * @generated from message toshi.workspace.v1.SetDisplayClipboardRequest
  */
 export type SetDisplayClipboardRequestJson = {
   /**
+   * The session to drive; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId?: string;
@@ -1069,12 +1219,16 @@ export const SetDisplayClipboardRequestSchema: GenMessage<SetDisplayClipboardReq
   messageDesc(file_toshi_workspace_v1_display, 15);
 
 /**
+ * SetDisplayClipboardResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.SetDisplayClipboardResponse
  */
 export type SetDisplayClipboardResponse = Message<"toshi.workspace.v1.SetDisplayClipboardResponse"> & {
 };
 
 /**
+ * SetDisplayClipboardResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.SetDisplayClipboardResponse
  */
 export type SetDisplayClipboardResponseJson = {
@@ -1088,20 +1242,28 @@ export const SetDisplayClipboardResponseSchema: GenMessage<SetDisplayClipboardRe
   messageDesc(file_toshi_workspace_v1_display, 16);
 
 /**
+ * TakeDisplayScreenshotRequest asks for the screen a session views as a PNG.
+ *
  * @generated from message toshi.workspace.v1.TakeDisplayScreenshotRequest
  */
 export type TakeDisplayScreenshotRequest = Message<"toshi.workspace.v1.TakeDisplayScreenshotRequest"> & {
   /**
+   * The session whose screen to read; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId: string;
 };
 
 /**
+ * TakeDisplayScreenshotRequest asks for the screen a session views as a PNG.
+ *
  * @generated from message toshi.workspace.v1.TakeDisplayScreenshotRequest
  */
 export type TakeDisplayScreenshotRequestJson = {
   /**
+   * The session whose screen to read; an unknown one fails with NOT_FOUND.
+   *
    * @generated from field: string session_id = 1;
    */
   sessionId?: string;
@@ -1115,6 +1277,9 @@ export const TakeDisplayScreenshotRequestSchema: GenMessage<TakeDisplayScreensho
   messageDesc(file_toshi_workspace_v1_display, 17);
 
 /**
+ * TakeDisplayScreenshotResponse is the screen as a PNG, with its size and
+ * when it was read.
+ *
  * @generated from message toshi.workspace.v1.TakeDisplayScreenshotResponse
  */
 export type TakeDisplayScreenshotResponse = Message<"toshi.workspace.v1.TakeDisplayScreenshotResponse"> & {
@@ -1126,22 +1291,31 @@ export type TakeDisplayScreenshotResponse = Message<"toshi.workspace.v1.TakeDisp
   png: Uint8Array;
 
   /**
+   * The screen's width in pixels.
+   *
    * @generated from field: int32 width = 2;
    */
   width: number;
 
   /**
+   * The screen's height in pixels.
+   *
    * @generated from field: int32 height = 3;
    */
   height: number;
 
   /**
+   * When the control plane read the frame.
+   *
    * @generated from field: google.protobuf.Timestamp taken_at = 4;
    */
   takenAt?: Timestamp | undefined;
 };
 
 /**
+ * TakeDisplayScreenshotResponse is the screen as a PNG, with its size and
+ * when it was read.
+ *
  * @generated from message toshi.workspace.v1.TakeDisplayScreenshotResponse
  */
 export type TakeDisplayScreenshotResponseJson = {
@@ -1153,16 +1327,22 @@ export type TakeDisplayScreenshotResponseJson = {
   png?: string;
 
   /**
+   * The screen's width in pixels.
+   *
    * @generated from field: int32 width = 2;
    */
   width?: number;
 
   /**
+   * The screen's height in pixels.
+   *
    * @generated from field: int32 height = 3;
    */
   height?: number;
 
   /**
+   * When the control plane read the frame.
+   *
    * @generated from field: google.protobuf.Timestamp taken_at = 4;
    */
   takenAt?: TimestampJson;
@@ -1219,10 +1399,14 @@ export const DisplayModeSchema: GenEnum<DisplayMode, DisplayModeJson> = /*@__PUR
   enumDesc(file_toshi_workspace_v1_display, 0);
 
 /**
+ * DisplaySessionState is where a session is in its life.
+ *
  * @generated from enum toshi.workspace.v1.DisplaySessionState
  */
 export enum DisplaySessionState {
   /**
+   * Never sent.
+   *
    * @generated from enum value: DISPLAY_SESSION_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1242,12 +1426,17 @@ export enum DisplaySessionState {
   ATTACHED = 2,
 
   /**
+   * Ended, by a close, its viewer's or the server's; closed_at and
+   * close_reason say when and why.
+   *
    * @generated from enum value: DISPLAY_SESSION_STATE_CLOSED = 3;
    */
   CLOSED = 3,
 }
 
 /**
+ * DisplaySessionState is where a session is in its life.
+ *
  * @generated from enum toshi.workspace.v1.DisplaySessionState
  */
 export type DisplaySessionStateJson = "DISPLAY_SESSION_STATE_UNSPECIFIED" | "DISPLAY_SESSION_STATE_WAITING" | "DISPLAY_SESSION_STATE_ATTACHED" | "DISPLAY_SESSION_STATE_CLOSED";
@@ -1331,6 +1520,8 @@ export const DisplayRecordingStateSchema: GenEnum<DisplayRecordingState, Display
  */
 export enum DisplayOpener {
   /**
+   * Never sent.
+   *
    * @generated from enum value: DISPLAY_OPENER_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,

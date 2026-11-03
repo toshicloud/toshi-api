@@ -79,15 +79,19 @@ func (DisplayMode) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_display_proto_rawDescGZIP(), []int{0}
 }
 
+// DisplaySessionState is where a session is in its life.
 type DisplaySessionState int32
 
 const (
+	// Never sent.
 	DisplaySessionState_DISPLAY_SESSION_STATE_UNSPECIFIED DisplaySessionState = 0
 	// Opened; its viewer has not presented the token yet.
 	DisplaySessionState_DISPLAY_SESSION_STATE_WAITING DisplaySessionState = 1
 	// Its viewer is attached.
 	DisplaySessionState_DISPLAY_SESSION_STATE_ATTACHED DisplaySessionState = 2
-	DisplaySessionState_DISPLAY_SESSION_STATE_CLOSED   DisplaySessionState = 3
+	// Ended, by a close, its viewer's or the server's; closed_at and
+	// close_reason say when and why.
+	DisplaySessionState_DISPLAY_SESSION_STATE_CLOSED DisplaySessionState = 3
 )
 
 // Enum value maps for DisplaySessionState.
@@ -206,6 +210,7 @@ func (DisplayRecordingState) EnumDescriptor() ([]byte, []int) {
 type DisplayOpener int32
 
 const (
+	// Never sent.
 	DisplayOpener_DISPLAY_OPENER_UNSPECIFIED DisplayOpener = 0
 	// A person, signed in to the dashboard.
 	DisplayOpener_DISPLAY_OPENER_PERSON DisplayOpener = 1
@@ -254,14 +259,16 @@ func (DisplayOpener) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_display_proto_rawDescGZIP(), []int{3}
 }
 
+// DisplaySession is one viewer's session on the screen of a job's VM.
 type DisplaySession struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Assigned by the server; unique within the workspace.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The job the session views: its ID as the jobs API and `toshi host-job
 	// list` show it.
-	JobId string      `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Mode  DisplayMode `protobuf:"varint,3,opt,name=mode,proto3,enum=toshi.workspace.v1.DisplayMode" json:"mode,omitempty"`
+	JobId string `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// What the viewer may do; see DisplayMode.
+	Mode DisplayMode `protobuf:"varint,3,opt,name=mode,proto3,enum=toshi.workspace.v1.DisplayMode" json:"mode,omitempty"`
 	// For an agent's run: whether a person may take the input from the
 	// agent. A person's DISPLAY_MODE_WITH_INPUT open on the job closes this
 	// session with close_reason taken_over when it is a program's session
@@ -269,10 +276,13 @@ type DisplaySession struct {
 	AllowTakeover bool `protobuf:"varint,4,opt,name=allow_takeover,json=allowTakeover,proto3" json:"allow_takeover,omitempty"`
 	// The session ends once no bytes of the screen's protocol have gone
 	// either way for this long.
-	IdleClose *durationpb.Duration   `protobuf:"bytes,5,opt,name=idle_close,json=idleClose,proto3" json:"idle_close,omitempty"`
-	State     DisplaySessionState    `protobuf:"varint,6,opt,name=state,proto3,enum=toshi.workspace.v1.DisplaySessionState" json:"state,omitempty"`
-	OpenedBy  DisplayOpener          `protobuf:"varint,7,opt,name=opened_by,json=openedBy,proto3,enum=toshi.workspace.v1.DisplayOpener" json:"opened_by,omitempty"`
-	OpenedAt  *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=opened_at,json=openedAt,proto3" json:"opened_at,omitempty"`
+	IdleClose *durationpb.Duration `protobuf:"bytes,5,opt,name=idle_close,json=idleClose,proto3" json:"idle_close,omitempty"`
+	// Where the session is: waiting for its viewer, attached, or closed.
+	State DisplaySessionState `protobuf:"varint,6,opt,name=state,proto3,enum=toshi.workspace.v1.DisplaySessionState" json:"state,omitempty"`
+	// Whether a person or a program opened it; see DisplayOpener.
+	OpenedBy DisplayOpener `protobuf:"varint,7,opt,name=opened_by,json=openedBy,proto3,enum=toshi.workspace.v1.DisplayOpener" json:"opened_by,omitempty"`
+	// When the server opened it.
+	OpenedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=opened_at,json=openedAt,proto3" json:"opened_at,omitempty"`
 	// When the token expires: a session not attached by then closes.
 	AttachBy *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=attach_by,json=attachBy,proto3" json:"attach_by,omitempty"`
 	// Unset until the viewer attaches.
@@ -467,6 +477,7 @@ func (x *DisplaySession) GetRecordingStoppedReason() string {
 	return ""
 }
 
+// OpenDisplaySessionRequest asks for a session on a running job's screen.
 type OpenDisplaySessionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// What to view. A job runs on a host and has a screen; a workload of
@@ -477,12 +488,19 @@ type OpenDisplaySessionRequest struct {
 	//	*OpenDisplaySessionRequest_JobId
 	//	*OpenDisplaySessionRequest_WorkloadId
 	Target isOpenDisplaySessionRequest_Target `protobuf_oneof:"target"`
-	Mode   DisplayMode                        `protobuf:"varint,3,opt,name=mode,proto3,enum=toshi.workspace.v1.DisplayMode" json:"mode,omitempty"`
+	// What the viewer may do; unset is DISPLAY_MODE_VIEW_ONLY.
+	Mode DisplayMode `protobuf:"varint,3,opt,name=mode,proto3,enum=toshi.workspace.v1.DisplayMode" json:"mode,omitempty"`
 	// The idle close, at least 1 second and at most the plan's; unset is the
 	// plan's.
-	IdleClose     *durationpb.Duration `protobuf:"bytes,4,opt,name=idle_close,json=idleClose,proto3" json:"idle_close,omitempty"`
-	AllowTakeover bool                 `protobuf:"varint,5,opt,name=allow_takeover,json=allowTakeover,proto3" json:"allow_takeover,omitempty"`
-	RequestKey    string               `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	IdleClose *durationpb.Duration `protobuf:"bytes,4,opt,name=idle_close,json=idleClose,proto3" json:"idle_close,omitempty"`
+	// Whether a person may take the input from the session this program
+	// opens with input.
+	AllowTakeover bool `protobuf:"varint,5,opt,name=allow_takeover,json=allowTakeover,proto3" json:"allow_takeover,omitempty"`
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. A retry
+	// with the same key and request returns the session opened before,
+	// marked replayed and without a token; another request with the same key
+	// fails with FAILED_PRECONDITION.
+	RequestKey string `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// A grant the caller's workspace received, to act on the owner's
 	// sandbox's job through it (docs/grants.md).
 	Grant         string `protobuf:"bytes,7,opt,name=grant,proto3" json:"grant,omitempty"`
@@ -585,10 +603,12 @@ type isOpenDisplaySessionRequest_Target interface {
 }
 
 type OpenDisplaySessionRequest_JobId struct {
+	// The job whose screen to view.
 	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3,oneof"`
 }
 
 type OpenDisplaySessionRequest_WorkloadId struct {
+	// A workload's ID; a workload has no screen yet.
 	WorkloadId string `protobuf:"bytes,2,opt,name=workload_id,json=workloadId,proto3,oneof"`
 }
 
@@ -596,9 +616,12 @@ func (*OpenDisplaySessionRequest_JobId) isOpenDisplaySessionRequest_Target() {}
 
 func (*OpenDisplaySessionRequest_WorkloadId) isOpenDisplaySessionRequest_Target() {}
 
+// OpenDisplaySessionResponse carries a session, its WebSocket URL and the
+// token that attaches it.
 type OpenDisplaySessionResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Session *DisplaySession        `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session as it is now; on a retry, the one opened before.
+	Session *DisplaySession `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
 	// The session's WebSocket URL path, on the control plane's address:
 	// /display/<id>.
 	Url string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
@@ -672,9 +695,11 @@ func (x *OpenDisplaySessionResponse) GetReplayed() bool {
 	return false
 }
 
+// GetDisplaySessionRequest names one session.
 type GetDisplaySessionRequest struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session's ID; an unknown one fails with NOT_FOUND.
+	SessionId string `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	// A grant the caller's workspace received: the call then reaches the
 	// sessions opened through that grant (docs/grants.md).
 	Grant         string `protobuf:"bytes,2,opt,name=grant,proto3" json:"grant,omitempty"`
@@ -726,9 +751,11 @@ func (x *GetDisplaySessionRequest) GetGrant() string {
 	return ""
 }
 
+// GetDisplaySessionResponse carries one session.
 type GetDisplaySessionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Session       *DisplaySession        `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session as it is now.
+	Session       *DisplaySession `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -770,6 +797,7 @@ func (x *GetDisplaySessionResponse) GetSession() *DisplaySession {
 	return nil
 }
 
+// ListDisplaySessionsRequest asks for a page of the workspace's sessions.
 type ListDisplaySessionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Only this job's sessions; empty lists every job's.
@@ -852,9 +880,11 @@ func (x *ListDisplaySessionsRequest) GetGrant() string {
 	return ""
 }
 
+// ListDisplaySessionsResponse is one page of sessions.
 type ListDisplaySessionsResponse struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Sessions []*DisplaySession      `protobuf:"bytes,1,rep,name=sessions,proto3" json:"sessions,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The page's sessions, the newest first.
+	Sessions []*DisplaySession `protobuf:"bytes,1,rep,name=sessions,proto3" json:"sessions,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -905,9 +935,11 @@ func (x *ListDisplaySessionsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// CloseDisplaySessionRequest names the session to close.
 type CloseDisplaySessionRequest struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session's ID; an unknown one fails with NOT_FOUND.
+	SessionId string `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	// A grant the caller's workspace received: the call then reaches the
 	// sessions opened through that grant (docs/grants.md).
 	Grant         string `protobuf:"bytes,2,opt,name=grant,proto3" json:"grant,omitempty"`
@@ -959,9 +991,11 @@ func (x *CloseDisplaySessionRequest) GetGrant() string {
 	return ""
 }
 
+// CloseDisplaySessionResponse carries the session as it is after the call.
 type CloseDisplaySessionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Session       *DisplaySession        `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session as it is now; one closed already is returned unchanged.
+	Session       *DisplaySession `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1003,9 +1037,11 @@ func (x *CloseDisplaySessionResponse) GetSession() *DisplaySession {
 	return nil
 }
 
+// SendDisplayKeysRequest types text or presses keys on a session's screen.
 type SendDisplayKeysRequest struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session to drive; an unknown one fails with NOT_FOUND.
+	SessionId string `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	// Types that are valid to be assigned to Input:
 	//
 	//	*SendDisplayKeysRequest_Text
@@ -1108,8 +1144,9 @@ func (*SendDisplayKeysRequest_Keys) isSendDisplayKeysRequest_Input() {}
 
 // DisplayKeys is a list of keys and chords.
 type DisplayKeys struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Keys          []string               `protobuf:"bytes,1,rep,name=keys,proto3" json:"keys,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The keys and chords, pressed in order.
+	Keys          []string `protobuf:"bytes,1,rep,name=keys,proto3" json:"keys,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1151,6 +1188,7 @@ func (x *DisplayKeys) GetKeys() []string {
 	return nil
 }
 
+// SendDisplayKeysResponse has no fields.
 type SendDisplayKeysResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1187,9 +1225,12 @@ func (*SendDisplayKeysResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_display_proto_rawDescGZIP(), []int{11}
 }
 
+// SendDisplayPointerRequest moves the pointer and presses or releases its
+// buttons.
 type SendDisplayPointerRequest struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session to drive; an unknown one fails with NOT_FOUND.
+	SessionId string `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	// Pointer states sent in order, at most 256.
 	Events        []*DisplayPointerEvent `protobuf:"bytes,2,rep,name=events,proto3" json:"events,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1247,6 +1288,7 @@ type DisplayPointerEvent struct {
 	// TakeDisplayScreenshot sees it; a point outside fails the call with
 	// INVALID_ARGUMENT before any event is sent.
 	X int32 `protobuf:"varint,1,opt,name=x,proto3" json:"x,omitempty"`
+	// Pixels from the screen's top edge.
 	Y int32 `protobuf:"varint,2,opt,name=y,proto3" json:"y,omitempty"`
 	// The buttons held down: 1 left, 2 middle, 4 right, 8 wheel up, 16
 	// wheel down. A click is an event with the button and one without; a
@@ -1307,6 +1349,7 @@ func (x *DisplayPointerEvent) GetButtons() uint32 {
 	return 0
 }
 
+// SendDisplayPointerResponse has no fields.
 type SendDisplayPointerResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1343,9 +1386,12 @@ func (*SendDisplayPointerResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_display_proto_rawDescGZIP(), []int{14}
 }
 
+// SetDisplayClipboardRequest sets the clipboard of the screen a session
+// views.
 type SetDisplayClipboardRequest struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session to drive; an unknown one fails with NOT_FOUND.
+	SessionId string `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	// At most 256 KiB, in Latin-1 (the RFB protocol's clipboard); other
 	// text fails the call with INVALID_ARGUMENT.
 	Text          string `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
@@ -1397,6 +1443,7 @@ func (x *SetDisplayClipboardRequest) GetText() string {
 	return ""
 }
 
+// SetDisplayClipboardResponse has no fields.
 type SetDisplayClipboardResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1433,9 +1480,11 @@ func (*SetDisplayClipboardResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_display_proto_rawDescGZIP(), []int{16}
 }
 
+// TakeDisplayScreenshotRequest asks for the screen a session views as a PNG.
 type TakeDisplayScreenshotRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The session whose screen to read; an unknown one fails with NOT_FOUND.
+	SessionId     string `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1477,12 +1526,17 @@ func (x *TakeDisplayScreenshotRequest) GetSessionId() string {
 	return ""
 }
 
+// TakeDisplayScreenshotResponse is the screen as a PNG, with its size and
+// when it was read.
 type TakeDisplayScreenshotResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The screen as a PNG image.
-	Png           []byte                 `protobuf:"bytes,1,opt,name=png,proto3" json:"png,omitempty"`
-	Width         int32                  `protobuf:"varint,2,opt,name=width,proto3" json:"width,omitempty"`
-	Height        int32                  `protobuf:"varint,3,opt,name=height,proto3" json:"height,omitempty"`
+	Png []byte `protobuf:"bytes,1,opt,name=png,proto3" json:"png,omitempty"`
+	// The screen's width in pixels.
+	Width int32 `protobuf:"varint,2,opt,name=width,proto3" json:"width,omitempty"`
+	// The screen's height in pixels.
+	Height int32 `protobuf:"varint,3,opt,name=height,proto3" json:"height,omitempty"`
+	// When the control plane read the frame.
 	TakenAt       *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=taken_at,json=takenAt,proto3" json:"taken_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

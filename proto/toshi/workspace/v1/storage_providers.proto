@@ -66,39 +66,69 @@ service StorageProviderService {
 
 // StorageProvider is one bucket Toshi keeps the workspace's objects in.
 message StorageProvider {
+  // The provider's id, set by the server.
   string id = 1;
+  // The provider's name, unique among its owner's: 1 to 63 lower-case
+  // letters, digits and "-".
   string name = 2;
   // "operator", "workspace_bucket" or "local_disk".
   string mode = 3;
+  // The bucket's endpoint, as stored: a scheme and a host, with no
+  // trailing slash.
   string endpoint = 4;
+  // The bucket's region; required.
   string region = 5;
+  // The bucket's name; required.
   string bucket = 6;
+  // A prefix every key Toshi writes starts with; empty for none.
   string root_prefix = 7;
+  // Whether the bucket is addressed in the path, as /bucket/key, instead
+  // of the host name.
   bool path_style = 8;
+  // Whether the bucket takes lifecycle rules.
   bool cap_lifecycle = 9;
+  // Whether a job's VM may send an artifact's bytes to its presigned URL
+  // itself.
   bool cap_guest_presign = 10;
+  // Whether the bucket is readable in every region the fleet runs in;
+  // always false on a workspace's own provider.
   bool cap_global_replication = 11;
+  // What one gibibyte leaving the provider costs, in millionths of the
+  // operator's currency; 0 is unknown or free, and a workspace's own
+  // provider always has 0.
   int64 egress_price_micros_per_gb = 12;
   // Whether the row holds a wrapped key; its value is never sent.
   bool credentials_wrapped = 13;
+  // When the provider was last checked; unset when never checked.
   google.protobuf.Timestamp last_check_at = 14;
   // Why the last check failed. For a row the operator set, which may name
   // the operator's own references, only that it failed.
   string last_check_error = 15;
+  // When the provider row was created.
   google.protobuf.Timestamp created_at = 16;
+  // When the provider row was last changed.
   google.protobuf.Timestamp updated_at = 17;
 }
 
 // CreateStorageProviderRequest describes the workspace's own bucket.
 message CreateStorageProviderRequest {
+  // The provider's name: 1 to 63 lower-case letters, digits and "-".
   string name = 1;
   // An https URL.
   string endpoint = 2;
+  // The bucket's region; required.
   string region = 3;
+  // The bucket's name; required.
   string bucket = 4;
+  // A prefix every key Toshi writes starts with; empty for none.
   string root_prefix = 5;
+  // Address the bucket in the path, as /bucket/key, instead of the host
+  // name.
   bool path_style = 6;
+  // Whether the bucket takes lifecycle rules.
   bool cap_lifecycle = 7;
+  // Whether a job's VM may send an artifact's bytes to its presigned URL
+  // itself.
   bool cap_guest_presign = 8;
   // The bucket's key. The control plane wraps it before the row exists and
   // never returns, logs or audits it. Required.
@@ -114,16 +144,22 @@ message CreateStorageProviderRequest {
 // StorageCredential is an S3 access key. It is write-only: no response
 // carries it.
 message StorageCredential {
+  // The S3 access key id.
   string access_key_id = 1;
+  // The S3 secret access key.
   string secret_access_key = 2;
   // Set for a temporary key.
   string session_token = 3;
 }
 
+// CreateStorageProviderResponse carries the provider the call stored.
 message CreateStorageProviderResponse {
+  // The provider as stored.
   StorageProvider provider = 1;
 }
 
+// ListStorageProvidersRequest asks for one page of the workspace's
+// providers.
 message ListStorageProvidersRequest {
   // Also answer default_provider.
   bool include_default = 1;
@@ -133,7 +169,9 @@ message ListStorageProvidersRequest {
   string page_token = 3;
 }
 
+// ListStorageProvidersResponse is one page of the workspace's providers.
 message ListStorageProvidersResponse {
+  // The providers on this page, ordered by name.
   repeated StorageProvider providers = 1;
   // With include_default, the operator's provider that serves the
   // workspace's uploads while it has no workspace_bucket provider; unset when
@@ -143,6 +181,8 @@ message ListStorageProvidersResponse {
   string next_page_token = 3;
 }
 
+// CheckStorageProviderRequest names the provider to check: a saved one by
+// id, or one that is not saved, with its key.
 message CheckStorageProviderRequest {
   // The provider to check: one is required.
   oneof target {
@@ -154,6 +194,7 @@ message CheckStorageProviderRequest {
   }
 }
 
+// CheckStorageProviderResponse is the result of a bucket check.
 message CheckStorageProviderResponse {
   // The saved provider as stored after the check; unset for one that is
   // not saved.
@@ -162,11 +203,15 @@ message CheckStorageProviderResponse {
   bool ok = 2;
   // Why the check failed, naming the step; empty when ok.
   string error = 3;
+  // When the check ran; set by the server.
   google.protobuf.Timestamp checked_at = 4;
 }
 
+// DeleteStorageProviderRequest names the provider to remove.
 message DeleteStorageProviderRequest {
+  // The id of a provider the workspace saved.
   string id = 1;
 }
 
+// DeleteStorageProviderResponse is empty.
 message DeleteStorageProviderResponse {}
