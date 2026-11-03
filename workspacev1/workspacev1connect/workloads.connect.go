@@ -102,6 +102,12 @@ const (
 	// WorkloadServiceAnswerPromptProcedure is the fully-qualified name of the WorkloadService's
 	// AnswerPrompt RPC.
 	WorkloadServiceAnswerPromptProcedure = "/toshi.workspace.v1.WorkloadService/AnswerPrompt"
+	// WorkloadServiceListPromptDecisionsProcedure is the fully-qualified name of the WorkloadService's
+	// ListPromptDecisions RPC.
+	WorkloadServiceListPromptDecisionsProcedure = "/toshi.workspace.v1.WorkloadService/ListPromptDecisions"
+	// WorkloadServiceRevokePromptDecisionProcedure is the fully-qualified name of the WorkloadService's
+	// RevokePromptDecision RPC.
+	WorkloadServiceRevokePromptDecisionProcedure = "/toshi.workspace.v1.WorkloadService/RevokePromptDecision"
 	// WorkloadServiceEmitWorkloadEventProcedure is the fully-qualified name of the WorkloadService's
 	// EmitWorkloadEvent RPC.
 	WorkloadServiceEmitWorkloadEventProcedure = "/toshi.workspace.v1.WorkloadService/EmitWorkloadEvent"
@@ -403,7 +409,32 @@ type WorkloadServiceClient interface {
 	// answered "approved" or "denied", a question with options one of them,
 	// and one without options any text of 1 to 4096 bytes; another answer
 	// fails with INVALID_ARGUMENT.
+	//
+	// With for_run set, an approval's answer also holds for the rest of the
+	// run: a later approval of the same kind and the same exact act, the
+	// same command, domain, repository and branch, is answered without a
+	// person, and the answer records the person who made this one. A later
+	// answer replaces it, a one-time "denied" removes a decision to approve,
+	// and the end of the run clears them. A question, a plan approval and an
+	// approval whose payload does not name its act are not answered for the
+	// run: the first two fail with INVALID_ARGUMENT, the last with
+	// FAILED_PRECONDITION. ListPromptDecisions lists the decisions, and
+	// RevokePromptDecision removes one.
 	AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error)
+	// ListPromptDecisions returns the approvals a job, sandbox or service
+	// answered for the rest of its run, oldest first: the kind of act, the
+	// exact act, the decision, the person who made it and when, and the
+	// decision ID of the prompt that asked it. A workload that has none, or
+	// none left, returns an empty list. It needs workloads.read.
+	ListPromptDecisions(context.Context, *connect.Request[workspacev1.ListPromptDecisionsRequest]) (*connect.Response[workspacev1.ListPromptDecisionsResponse], error)
+	// RevokePromptDecision removes one of the approvals a job, sandbox or
+	// service answered for the rest of its run, so a later approval of the
+	// same act asks a person again. It asks nothing of the workload and
+	// changes no prompt. An unknown ID fails with NOT_FOUND; a retry with the
+	// same request_key returns the first answer. It needs workloads.write,
+	// and is audited as prompt_decision.revoked with the workload as its
+	// target.
+	RevokePromptDecision(context.Context, *connect.Request[workspacev1.RevokePromptDecisionRequest]) (*connect.Response[workspacev1.RevokePromptDecisionResponse], error)
 	// EmitWorkloadEvent appends an event to a job's, sandbox's or service's
 	// event log, as its guest emits one, and returns it: type EMITTED, the
 	// name given and data. The workload need not be running. The name is 1
@@ -874,6 +905,18 @@ func NewWorkloadServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(workloadServiceMethods.ByName("AnswerPrompt")),
 			connect.WithClientOptions(opts...),
 		),
+		listPromptDecisions: connect.NewClient[workspacev1.ListPromptDecisionsRequest, workspacev1.ListPromptDecisionsResponse](
+			httpClient,
+			baseURL+WorkloadServiceListPromptDecisionsProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("ListPromptDecisions")),
+			connect.WithClientOptions(opts...),
+		),
+		revokePromptDecision: connect.NewClient[workspacev1.RevokePromptDecisionRequest, workspacev1.RevokePromptDecisionResponse](
+			httpClient,
+			baseURL+WorkloadServiceRevokePromptDecisionProcedure,
+			connect.WithSchema(workloadServiceMethods.ByName("RevokePromptDecision")),
+			connect.WithClientOptions(opts...),
+		),
 		emitWorkloadEvent: connect.NewClient[workspacev1.EmitWorkloadEventRequest, workspacev1.EmitWorkloadEventResponse](
 			httpClient,
 			baseURL+WorkloadServiceEmitWorkloadEventProcedure,
@@ -1179,6 +1222,8 @@ type workloadServiceClient struct {
 	cancelExecution        *connect.Client[workspacev1.CancelExecutionRequest, workspacev1.CancelExecutionResponse]
 	executeCommand         *connect.Client[workspacev1.ExecuteCommandRequest, workspacev1.ExecuteCommandResponse]
 	answerPrompt           *connect.Client[workspacev1.AnswerPromptRequest, workspacev1.AnswerPromptResponse]
+	listPromptDecisions    *connect.Client[workspacev1.ListPromptDecisionsRequest, workspacev1.ListPromptDecisionsResponse]
+	revokePromptDecision   *connect.Client[workspacev1.RevokePromptDecisionRequest, workspacev1.RevokePromptDecisionResponse]
 	emitWorkloadEvent      *connect.Client[workspacev1.EmitWorkloadEventRequest, workspacev1.EmitWorkloadEventResponse]
 	watchTelemetry         *connect.Client[workspacev1.WatchTelemetryRequest, workspacev1.WatchTelemetryResponse]
 	watchGuestLog          *connect.Client[workspacev1.WatchGuestLogRequest, workspacev1.WatchGuestLogResponse]
@@ -1345,6 +1390,16 @@ func (c *workloadServiceClient) ExecuteCommand(ctx context.Context, req *connect
 // AnswerPrompt calls toshi.workspace.v1.WorkloadService.AnswerPrompt.
 func (c *workloadServiceClient) AnswerPrompt(ctx context.Context, req *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error) {
 	return c.answerPrompt.CallUnary(ctx, req)
+}
+
+// ListPromptDecisions calls toshi.workspace.v1.WorkloadService.ListPromptDecisions.
+func (c *workloadServiceClient) ListPromptDecisions(ctx context.Context, req *connect.Request[workspacev1.ListPromptDecisionsRequest]) (*connect.Response[workspacev1.ListPromptDecisionsResponse], error) {
+	return c.listPromptDecisions.CallUnary(ctx, req)
+}
+
+// RevokePromptDecision calls toshi.workspace.v1.WorkloadService.RevokePromptDecision.
+func (c *workloadServiceClient) RevokePromptDecision(ctx context.Context, req *connect.Request[workspacev1.RevokePromptDecisionRequest]) (*connect.Response[workspacev1.RevokePromptDecisionResponse], error) {
+	return c.revokePromptDecision.CallUnary(ctx, req)
 }
 
 // EmitWorkloadEvent calls toshi.workspace.v1.WorkloadService.EmitWorkloadEvent.
@@ -1738,7 +1793,32 @@ type WorkloadServiceHandler interface {
 	// answered "approved" or "denied", a question with options one of them,
 	// and one without options any text of 1 to 4096 bytes; another answer
 	// fails with INVALID_ARGUMENT.
+	//
+	// With for_run set, an approval's answer also holds for the rest of the
+	// run: a later approval of the same kind and the same exact act, the
+	// same command, domain, repository and branch, is answered without a
+	// person, and the answer records the person who made this one. A later
+	// answer replaces it, a one-time "denied" removes a decision to approve,
+	// and the end of the run clears them. A question, a plan approval and an
+	// approval whose payload does not name its act are not answered for the
+	// run: the first two fail with INVALID_ARGUMENT, the last with
+	// FAILED_PRECONDITION. ListPromptDecisions lists the decisions, and
+	// RevokePromptDecision removes one.
 	AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error)
+	// ListPromptDecisions returns the approvals a job, sandbox or service
+	// answered for the rest of its run, oldest first: the kind of act, the
+	// exact act, the decision, the person who made it and when, and the
+	// decision ID of the prompt that asked it. A workload that has none, or
+	// none left, returns an empty list. It needs workloads.read.
+	ListPromptDecisions(context.Context, *connect.Request[workspacev1.ListPromptDecisionsRequest]) (*connect.Response[workspacev1.ListPromptDecisionsResponse], error)
+	// RevokePromptDecision removes one of the approvals a job, sandbox or
+	// service answered for the rest of its run, so a later approval of the
+	// same act asks a person again. It asks nothing of the workload and
+	// changes no prompt. An unknown ID fails with NOT_FOUND; a retry with the
+	// same request_key returns the first answer. It needs workloads.write,
+	// and is audited as prompt_decision.revoked with the workload as its
+	// target.
+	RevokePromptDecision(context.Context, *connect.Request[workspacev1.RevokePromptDecisionRequest]) (*connect.Response[workspacev1.RevokePromptDecisionResponse], error)
 	// EmitWorkloadEvent appends an event to a job's, sandbox's or service's
 	// event log, as its guest emits one, and returns it: type EMITTED, the
 	// name given and data. The workload need not be running. The name is 1
@@ -2205,6 +2285,18 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 		connect.WithSchema(workloadServiceMethods.ByName("AnswerPrompt")),
 		connect.WithHandlerOptions(opts...),
 	)
+	workloadServiceListPromptDecisionsHandler := connect.NewUnaryHandler(
+		WorkloadServiceListPromptDecisionsProcedure,
+		svc.ListPromptDecisions,
+		connect.WithSchema(workloadServiceMethods.ByName("ListPromptDecisions")),
+		connect.WithHandlerOptions(opts...),
+	)
+	workloadServiceRevokePromptDecisionHandler := connect.NewUnaryHandler(
+		WorkloadServiceRevokePromptDecisionProcedure,
+		svc.RevokePromptDecision,
+		connect.WithSchema(workloadServiceMethods.ByName("RevokePromptDecision")),
+		connect.WithHandlerOptions(opts...),
+	)
 	workloadServiceEmitWorkloadEventHandler := connect.NewUnaryHandler(
 		WorkloadServiceEmitWorkloadEventProcedure,
 		svc.EmitWorkloadEvent,
@@ -2531,6 +2623,10 @@ func NewWorkloadServiceHandler(svc WorkloadServiceHandler, opts ...connect.Handl
 			workloadServiceExecuteCommandHandler.ServeHTTP(w, r)
 		case WorkloadServiceAnswerPromptProcedure:
 			workloadServiceAnswerPromptHandler.ServeHTTP(w, r)
+		case WorkloadServiceListPromptDecisionsProcedure:
+			workloadServiceListPromptDecisionsHandler.ServeHTTP(w, r)
+		case WorkloadServiceRevokePromptDecisionProcedure:
+			workloadServiceRevokePromptDecisionHandler.ServeHTTP(w, r)
 		case WorkloadServiceEmitWorkloadEventProcedure:
 			workloadServiceEmitWorkloadEventHandler.ServeHTTP(w, r)
 		case WorkloadServiceWatchTelemetryProcedure:
@@ -2726,6 +2822,14 @@ func (UnimplementedWorkloadServiceHandler) ExecuteCommand(context.Context, *conn
 
 func (UnimplementedWorkloadServiceHandler) AnswerPrompt(context.Context, *connect.Request[workspacev1.AnswerPromptRequest]) (*connect.Response[workspacev1.AnswerPromptResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.AnswerPrompt is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) ListPromptDecisions(context.Context, *connect.Request[workspacev1.ListPromptDecisionsRequest]) (*connect.Response[workspacev1.ListPromptDecisionsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.ListPromptDecisions is not implemented"))
+}
+
+func (UnimplementedWorkloadServiceHandler) RevokePromptDecision(context.Context, *connect.Request[workspacev1.RevokePromptDecisionRequest]) (*connect.Response[workspacev1.RevokePromptDecisionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.WorkloadService.RevokePromptDecision is not implemented"))
 }
 
 func (UnimplementedWorkloadServiceHandler) EmitWorkloadEvent(context.Context, *connect.Request[workspacev1.EmitWorkloadEventRequest]) (*connect.Response[workspacev1.EmitWorkloadEventResponse], error) {

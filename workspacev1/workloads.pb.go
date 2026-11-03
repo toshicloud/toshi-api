@@ -101,7 +101,12 @@ type AnswerPromptRequest struct {
 	// When set, must match the waiting prompt's decision_id.
 	DecisionId string `protobuf:"bytes,6,opt,name=decision_id,proto3" json:"decision_id,omitempty"`
 	// A key for retrying this answer without answering twice; empty for none.
-	RequestKey    string `protobuf:"bytes,7,opt,name=request_key,proto3" json:"request_key,omitempty"`
+	RequestKey string `protobuf:"bytes,7,opt,name=request_key,proto3" json:"request_key,omitempty"`
+	// Answer an approval for the rest of the run: a later approval of the
+	// same kind and exact act is answered without a person. Only an approval
+	// may carry it; a question, a plan and an approval whose payload does not
+	// name its act are refused.
+	ForRun        bool `protobuf:"varint,8,opt,name=for_run,json=forRun,proto3" json:"for_run,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -185,6 +190,13 @@ func (x *AnswerPromptRequest) GetRequestKey() string {
 	return ""
 }
 
+func (x *AnswerPromptRequest) GetForRun() bool {
+	if x != nil {
+		return x.ForRun
+	}
+	return false
+}
+
 // AnswerPromptResponse is the answer to AnswerPrompt.
 type AnswerPromptResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -231,6 +243,339 @@ func (x *AnswerPromptResponse) GetEvent() *Event {
 	return nil
 }
 
+// ListPromptDecisionsRequest is a call of ListPromptDecisions.
+type ListPromptDecisionsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workload's project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The workload's environment.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The job, sandbox or service whose decisions for the run are listed.
+	WorkloadId    string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPromptDecisionsRequest) Reset() {
+	*x = ListPromptDecisionsRequest{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPromptDecisionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPromptDecisionsRequest) ProtoMessage() {}
+
+func (x *ListPromptDecisionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPromptDecisionsRequest.ProtoReflect.Descriptor instead.
+func (*ListPromptDecisionsRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ListPromptDecisionsRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *ListPromptDecisionsRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *ListPromptDecisionsRequest) GetWorkloadId() string {
+	if x != nil {
+		return x.WorkloadId
+	}
+	return ""
+}
+
+// ListPromptDecisionsResponse is the answer to ListPromptDecisions.
+type ListPromptDecisionsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The decisions, oldest first.
+	Decisions     []*PromptDecision `protobuf:"bytes,1,rep,name=decisions,proto3" json:"decisions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPromptDecisionsResponse) Reset() {
+	*x = ListPromptDecisionsResponse{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPromptDecisionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPromptDecisionsResponse) ProtoMessage() {}
+
+func (x *ListPromptDecisionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPromptDecisionsResponse.ProtoReflect.Descriptor instead.
+func (*ListPromptDecisionsResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ListPromptDecisionsResponse) GetDecisions() []*PromptDecision {
+	if x != nil {
+		return x.Decisions
+	}
+	return nil
+}
+
+// PromptDecision is an approval a job, sandbox or service answered for the
+// rest of its run.
+type PromptDecision struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The decision's opaque ID, which RevokePromptDecision takes.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// What the approval asked to be let do: push, pull_request, command or
+	// domain.
+	Kind string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	// The exact act it answers: the argv as a JSON array or the command
+	// string, the lower-case host, or the repository and branch.
+	Subject string `protobuf:"bytes,3,opt,name=subject,proto3" json:"subject,omitempty"`
+	// "approved" or "denied".
+	Decision string `protobuf:"bytes,4,opt,name=decision,proto3" json:"decision,omitempty"`
+	// The Toshi user ID of the person who decided.
+	DecidedBy string `protobuf:"bytes,5,opt,name=decided_by,json=decidedBy,proto3" json:"decided_by,omitempty"`
+	// When the person decided.
+	DecidedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=decided_at,json=decidedAt,proto3" json:"decided_at,omitempty"`
+	// The decision ID of the prompt that asked the act.
+	DecisionId    string `protobuf:"bytes,7,opt,name=decision_id,json=decisionId,proto3" json:"decision_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PromptDecision) Reset() {
+	*x = PromptDecision{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PromptDecision) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PromptDecision) ProtoMessage() {}
+
+func (x *PromptDecision) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PromptDecision.ProtoReflect.Descriptor instead.
+func (*PromptDecision) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *PromptDecision) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PromptDecision) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *PromptDecision) GetSubject() string {
+	if x != nil {
+		return x.Subject
+	}
+	return ""
+}
+
+func (x *PromptDecision) GetDecision() string {
+	if x != nil {
+		return x.Decision
+	}
+	return ""
+}
+
+func (x *PromptDecision) GetDecidedBy() string {
+	if x != nil {
+		return x.DecidedBy
+	}
+	return ""
+}
+
+func (x *PromptDecision) GetDecidedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DecidedAt
+	}
+	return nil
+}
+
+func (x *PromptDecision) GetDecisionId() string {
+	if x != nil {
+		return x.DecisionId
+	}
+	return ""
+}
+
+// RevokePromptDecisionRequest is a call of RevokePromptDecision.
+type RevokePromptDecisionRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workload's project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The workload's environment.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The job, sandbox or service whose decision is revoked.
+	WorkloadId string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	// The decision's ID, as ListPromptDecisions gives it.
+	Id string `protobuf:"bytes,4,opt,name=id,proto3" json:"id,omitempty"`
+	// A key for retrying this revoke without revoking twice; empty for none.
+	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokePromptDecisionRequest) Reset() {
+	*x = RevokePromptDecisionRequest{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokePromptDecisionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokePromptDecisionRequest) ProtoMessage() {}
+
+func (x *RevokePromptDecisionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokePromptDecisionRequest.ProtoReflect.Descriptor instead.
+func (*RevokePromptDecisionRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *RevokePromptDecisionRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *RevokePromptDecisionRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *RevokePromptDecisionRequest) GetWorkloadId() string {
+	if x != nil {
+		return x.WorkloadId
+	}
+	return ""
+}
+
+func (x *RevokePromptDecisionRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *RevokePromptDecisionRequest) GetRequestKey() string {
+	if x != nil {
+		return x.RequestKey
+	}
+	return ""
+}
+
+// RevokePromptDecisionResponse is the answer to RevokePromptDecision: it
+// carries nothing.
+type RevokePromptDecisionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokePromptDecisionResponse) Reset() {
+	*x = RevokePromptDecisionResponse{}
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokePromptDecisionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokePromptDecisionResponse) ProtoMessage() {}
+
+func (x *RevokePromptDecisionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokePromptDecisionResponse.ProtoReflect.Descriptor instead.
+func (*RevokePromptDecisionResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{6}
+}
+
 // EmitWorkloadEventRequest is a call of EmitWorkloadEvent.
 type EmitWorkloadEventRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -255,7 +600,7 @@ type EmitWorkloadEventRequest struct {
 
 func (x *EmitWorkloadEventRequest) Reset() {
 	*x = EmitWorkloadEventRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -267,7 +612,7 @@ func (x *EmitWorkloadEventRequest) String() string {
 func (*EmitWorkloadEventRequest) ProtoMessage() {}
 
 func (x *EmitWorkloadEventRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -280,7 +625,7 @@ func (x *EmitWorkloadEventRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmitWorkloadEventRequest.ProtoReflect.Descriptor instead.
 func (*EmitWorkloadEventRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *EmitWorkloadEventRequest) GetProject() string {
@@ -336,7 +681,7 @@ type EmitWorkloadEventResponse struct {
 
 func (x *EmitWorkloadEventResponse) Reset() {
 	*x = EmitWorkloadEventResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -348,7 +693,7 @@ func (x *EmitWorkloadEventResponse) String() string {
 func (*EmitWorkloadEventResponse) ProtoMessage() {}
 
 func (x *EmitWorkloadEventResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -361,7 +706,7 @@ func (x *EmitWorkloadEventResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmitWorkloadEventResponse.ProtoReflect.Descriptor instead.
 func (*EmitWorkloadEventResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *EmitWorkloadEventResponse) GetEvent() *Event {
@@ -393,7 +738,7 @@ type ExportEventsRequest struct {
 
 func (x *ExportEventsRequest) Reset() {
 	*x = ExportEventsRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -405,7 +750,7 @@ func (x *ExportEventsRequest) String() string {
 func (*ExportEventsRequest) ProtoMessage() {}
 
 func (x *ExportEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -418,7 +763,7 @@ func (x *ExportEventsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportEventsRequest.ProtoReflect.Descriptor instead.
 func (*ExportEventsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ExportEventsRequest) GetProject() string {
@@ -478,7 +823,7 @@ type ExportEventsResponse struct {
 
 func (x *ExportEventsResponse) Reset() {
 	*x = ExportEventsResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -490,7 +835,7 @@ func (x *ExportEventsResponse) String() string {
 func (*ExportEventsResponse) ProtoMessage() {}
 
 func (x *ExportEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -503,7 +848,7 @@ func (x *ExportEventsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportEventsResponse.ProtoReflect.Descriptor instead.
 func (*ExportEventsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ExportEventsResponse) GetData() []byte {
@@ -545,7 +890,7 @@ type CreateJobRequest struct {
 
 func (x *CreateJobRequest) Reset() {
 	*x = CreateJobRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -557,7 +902,7 @@ func (x *CreateJobRequest) String() string {
 func (*CreateJobRequest) ProtoMessage() {}
 
 func (x *CreateJobRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -570,7 +915,7 @@ func (x *CreateJobRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateJobRequest.ProtoReflect.Descriptor instead.
 func (*CreateJobRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CreateJobRequest) GetProject() string {
@@ -636,7 +981,7 @@ type CreateJobResponse struct {
 
 func (x *CreateJobResponse) Reset() {
 	*x = CreateJobResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -648,7 +993,7 @@ func (x *CreateJobResponse) String() string {
 func (*CreateJobResponse) ProtoMessage() {}
 
 func (x *CreateJobResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -661,7 +1006,7 @@ func (x *CreateJobResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateJobResponse.ProtoReflect.Descriptor instead.
 func (*CreateJobResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *CreateJobResponse) GetJob() *Job {
@@ -693,7 +1038,7 @@ type GetJobRequest struct {
 
 func (x *GetJobRequest) Reset() {
 	*x = GetJobRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -705,7 +1050,7 @@ func (x *GetJobRequest) String() string {
 func (*GetJobRequest) ProtoMessage() {}
 
 func (x *GetJobRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -718,7 +1063,7 @@ func (x *GetJobRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetJobRequest.ProtoReflect.Descriptor instead.
 func (*GetJobRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetJobRequest) GetProject() string {
@@ -759,7 +1104,7 @@ type GetJobResponse struct {
 
 func (x *GetJobResponse) Reset() {
 	*x = GetJobResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -771,7 +1116,7 @@ func (x *GetJobResponse) String() string {
 func (*GetJobResponse) ProtoMessage() {}
 
 func (x *GetJobResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -784,7 +1129,7 @@ func (x *GetJobResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetJobResponse.ProtoReflect.Descriptor instead.
 func (*GetJobResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetJobResponse) GetJob() *Job {
@@ -831,7 +1176,7 @@ type ListJobsRequest struct {
 
 func (x *ListJobsRequest) Reset() {
 	*x = ListJobsRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -843,7 +1188,7 @@ func (x *ListJobsRequest) String() string {
 func (*ListJobsRequest) ProtoMessage() {}
 
 func (x *ListJobsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -856,7 +1201,7 @@ func (x *ListJobsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListJobsRequest.ProtoReflect.Descriptor instead.
 func (*ListJobsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ListJobsRequest) GetProject() string {
@@ -918,7 +1263,7 @@ type ListJobsResponse struct {
 
 func (x *ListJobsResponse) Reset() {
 	*x = ListJobsResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -930,7 +1275,7 @@ func (x *ListJobsResponse) String() string {
 func (*ListJobsResponse) ProtoMessage() {}
 
 func (x *ListJobsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -943,7 +1288,7 @@ func (x *ListJobsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListJobsResponse.ProtoReflect.Descriptor instead.
 func (*ListJobsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListJobsResponse) GetJobs() []*Job {
@@ -992,7 +1337,7 @@ type GetWorkloadUsageRequest struct {
 
 func (x *GetWorkloadUsageRequest) Reset() {
 	*x = GetWorkloadUsageRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1004,7 +1349,7 @@ func (x *GetWorkloadUsageRequest) String() string {
 func (*GetWorkloadUsageRequest) ProtoMessage() {}
 
 func (x *GetWorkloadUsageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1017,7 +1362,7 @@ func (x *GetWorkloadUsageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkloadUsageRequest.ProtoReflect.Descriptor instead.
 func (*GetWorkloadUsageRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetWorkloadUsageRequest) GetProject() string {
@@ -1080,7 +1425,7 @@ type GetWorkloadUsageResponse struct {
 
 func (x *GetWorkloadUsageResponse) Reset() {
 	*x = GetWorkloadUsageResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1092,7 +1437,7 @@ func (x *GetWorkloadUsageResponse) String() string {
 func (*GetWorkloadUsageResponse) ProtoMessage() {}
 
 func (x *GetWorkloadUsageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1105,7 +1450,7 @@ func (x *GetWorkloadUsageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkloadUsageResponse.ProtoReflect.Descriptor instead.
 func (*GetWorkloadUsageResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{13}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetWorkloadUsageResponse) GetUsage() *WorkloadUsage {
@@ -1160,7 +1505,7 @@ type WorkloadUsage struct {
 
 func (x *WorkloadUsage) Reset() {
 	*x = WorkloadUsage{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1172,7 +1517,7 @@ func (x *WorkloadUsage) String() string {
 func (*WorkloadUsage) ProtoMessage() {}
 
 func (x *WorkloadUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1185,7 +1530,7 @@ func (x *WorkloadUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkloadUsage.ProtoReflect.Descriptor instead.
 func (*WorkloadUsage) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{14}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *WorkloadUsage) GetWorkloadId() string {
@@ -1317,7 +1662,7 @@ type AIRequests struct {
 
 func (x *AIRequests) Reset() {
 	*x = AIRequests{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1329,7 +1674,7 @@ func (x *AIRequests) String() string {
 func (*AIRequests) ProtoMessage() {}
 
 func (x *AIRequests) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1342,7 +1687,7 @@ func (x *AIRequests) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AIRequests.ProtoReflect.Descriptor instead.
 func (*AIRequests) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{15}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *AIRequests) GetInjected() int64 {
@@ -1383,7 +1728,7 @@ type AIProviderRequests struct {
 
 func (x *AIProviderRequests) Reset() {
 	*x = AIProviderRequests{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1395,7 +1740,7 @@ func (x *AIProviderRequests) String() string {
 func (*AIProviderRequests) ProtoMessage() {}
 
 func (x *AIProviderRequests) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1408,7 +1753,7 @@ func (x *AIProviderRequests) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AIProviderRequests.ProtoReflect.Descriptor instead.
 func (*AIProviderRequests) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{16}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *AIProviderRequests) GetProvider() string {
@@ -1458,7 +1803,7 @@ type WorkloadCost struct {
 
 func (x *WorkloadCost) Reset() {
 	*x = WorkloadCost{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1470,7 +1815,7 @@ func (x *WorkloadCost) String() string {
 func (*WorkloadCost) ProtoMessage() {}
 
 func (x *WorkloadCost) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1483,7 +1828,7 @@ func (x *WorkloadCost) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkloadCost.ProtoReflect.Descriptor instead.
 func (*WorkloadCost) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *WorkloadCost) GetCurrentCents() int64 {
@@ -1533,7 +1878,7 @@ type ListWorkloadUsagesRequest struct {
 
 func (x *ListWorkloadUsagesRequest) Reset() {
 	*x = ListWorkloadUsagesRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1545,7 +1890,7 @@ func (x *ListWorkloadUsagesRequest) String() string {
 func (*ListWorkloadUsagesRequest) ProtoMessage() {}
 
 func (x *ListWorkloadUsagesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1558,7 +1903,7 @@ func (x *ListWorkloadUsagesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWorkloadUsagesRequest.ProtoReflect.Descriptor instead.
 func (*ListWorkloadUsagesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ListWorkloadUsagesRequest) GetProject() string {
@@ -1609,7 +1954,7 @@ type ListWorkloadUsagesResponse struct {
 
 func (x *ListWorkloadUsagesResponse) Reset() {
 	*x = ListWorkloadUsagesResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1621,7 +1966,7 @@ func (x *ListWorkloadUsagesResponse) String() string {
 func (*ListWorkloadUsagesResponse) ProtoMessage() {}
 
 func (x *ListWorkloadUsagesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1634,7 +1979,7 @@ func (x *ListWorkloadUsagesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWorkloadUsagesResponse.ProtoReflect.Descriptor instead.
 func (*ListWorkloadUsagesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{19}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ListWorkloadUsagesResponse) GetUsages() []*WorkloadUsage {
@@ -1674,7 +2019,7 @@ type UpdateJobRequest struct {
 
 func (x *UpdateJobRequest) Reset() {
 	*x = UpdateJobRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1686,7 +2031,7 @@ func (x *UpdateJobRequest) String() string {
 func (*UpdateJobRequest) ProtoMessage() {}
 
 func (x *UpdateJobRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[20]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1699,7 +2044,7 @@ func (x *UpdateJobRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateJobRequest.ProtoReflect.Descriptor instead.
 func (*UpdateJobRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{20}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *UpdateJobRequest) GetProject() string {
@@ -1755,7 +2100,7 @@ type UpdateJobResponse struct {
 
 func (x *UpdateJobResponse) Reset() {
 	*x = UpdateJobResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1767,7 +2112,7 @@ func (x *UpdateJobResponse) String() string {
 func (*UpdateJobResponse) ProtoMessage() {}
 
 func (x *UpdateJobResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[21]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1780,7 +2125,7 @@ func (x *UpdateJobResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateJobResponse.ProtoReflect.Descriptor instead.
 func (*UpdateJobResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{21}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *UpdateJobResponse) GetJob() *Job {
@@ -1809,7 +2154,7 @@ type DeleteJobRequest struct {
 
 func (x *DeleteJobRequest) Reset() {
 	*x = DeleteJobRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1821,7 +2166,7 @@ func (x *DeleteJobRequest) String() string {
 func (*DeleteJobRequest) ProtoMessage() {}
 
 func (x *DeleteJobRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[22]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1834,7 +2179,7 @@ func (x *DeleteJobRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteJobRequest.ProtoReflect.Descriptor instead.
 func (*DeleteJobRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{22}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *DeleteJobRequest) GetProject() string {
@@ -1876,7 +2221,7 @@ type DeleteJobResponse struct {
 
 func (x *DeleteJobResponse) Reset() {
 	*x = DeleteJobResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1888,7 +2233,7 @@ func (x *DeleteJobResponse) String() string {
 func (*DeleteJobResponse) ProtoMessage() {}
 
 func (x *DeleteJobResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[23]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1901,7 +2246,7 @@ func (x *DeleteJobResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteJobResponse.ProtoReflect.Descriptor instead.
 func (*DeleteJobResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{23}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *DeleteJobResponse) GetOperation() *Operation {
@@ -1926,7 +2271,7 @@ type CancelJobRequest struct {
 
 func (x *CancelJobRequest) Reset() {
 	*x = CancelJobRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[24]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1938,7 +2283,7 @@ func (x *CancelJobRequest) String() string {
 func (*CancelJobRequest) ProtoMessage() {}
 
 func (x *CancelJobRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[24]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1951,7 +2296,7 @@ func (x *CancelJobRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelJobRequest.ProtoReflect.Descriptor instead.
 func (*CancelJobRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{24}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *CancelJobRequest) GetProject() string {
@@ -1986,7 +2331,7 @@ type CancelJobResponse struct {
 
 func (x *CancelJobResponse) Reset() {
 	*x = CancelJobResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[25]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1998,7 +2343,7 @@ func (x *CancelJobResponse) String() string {
 func (*CancelJobResponse) ProtoMessage() {}
 
 func (x *CancelJobResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[25]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2011,7 +2356,7 @@ func (x *CancelJobResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelJobResponse.ProtoReflect.Descriptor instead.
 func (*CancelJobResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{25}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *CancelJobResponse) GetJob() *Job {
@@ -2040,7 +2385,7 @@ type WaitJobRequest struct {
 
 func (x *WaitJobRequest) Reset() {
 	*x = WaitJobRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[26]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2052,7 +2397,7 @@ func (x *WaitJobRequest) String() string {
 func (*WaitJobRequest) ProtoMessage() {}
 
 func (x *WaitJobRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[26]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2065,7 +2410,7 @@ func (x *WaitJobRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WaitJobRequest.ProtoReflect.Descriptor instead.
 func (*WaitJobRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{26}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *WaitJobRequest) GetProject() string {
@@ -2116,7 +2461,7 @@ type WaitJobResponse struct {
 
 func (x *WaitJobResponse) Reset() {
 	*x = WaitJobResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[27]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2128,7 +2473,7 @@ func (x *WaitJobResponse) String() string {
 func (*WaitJobResponse) ProtoMessage() {}
 
 func (x *WaitJobResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[27]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2141,7 +2486,7 @@ func (x *WaitJobResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WaitJobResponse.ProtoReflect.Descriptor instead.
 func (*WaitJobResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{27}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *WaitJobResponse) GetJob() *Job {
@@ -2178,7 +2523,7 @@ type WatchJobsRequest struct {
 
 func (x *WatchJobsRequest) Reset() {
 	*x = WatchJobsRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[28]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2190,7 +2535,7 @@ func (x *WatchJobsRequest) String() string {
 func (*WatchJobsRequest) ProtoMessage() {}
 
 func (x *WatchJobsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[28]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2203,7 +2548,7 @@ func (x *WatchJobsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchJobsRequest.ProtoReflect.Descriptor instead.
 func (*WatchJobsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{28}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *WatchJobsRequest) GetProject() string {
@@ -2252,7 +2597,7 @@ type WatchJobsResponse struct {
 
 func (x *WatchJobsResponse) Reset() {
 	*x = WatchJobsResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[29]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2264,7 +2609,7 @@ func (x *WatchJobsResponse) String() string {
 func (*WatchJobsResponse) ProtoMessage() {}
 
 func (x *WatchJobsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[29]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2277,7 +2622,7 @@ func (x *WatchJobsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchJobsResponse.ProtoReflect.Descriptor instead.
 func (*WatchJobsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{29}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *WatchJobsResponse) GetType() EventType {
@@ -2331,7 +2676,7 @@ type CreateSandboxRequest struct {
 
 func (x *CreateSandboxRequest) Reset() {
 	*x = CreateSandboxRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[30]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2343,7 +2688,7 @@ func (x *CreateSandboxRequest) String() string {
 func (*CreateSandboxRequest) ProtoMessage() {}
 
 func (x *CreateSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[30]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2356,7 +2701,7 @@ func (x *CreateSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSandboxRequest.ProtoReflect.Descriptor instead.
 func (*CreateSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{30}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *CreateSandboxRequest) GetProject() string {
@@ -2412,7 +2757,7 @@ type CreateSandboxResponse struct {
 
 func (x *CreateSandboxResponse) Reset() {
 	*x = CreateSandboxResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[31]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2424,7 +2769,7 @@ func (x *CreateSandboxResponse) String() string {
 func (*CreateSandboxResponse) ProtoMessage() {}
 
 func (x *CreateSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[31]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2437,7 +2782,7 @@ func (x *CreateSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSandboxResponse.ProtoReflect.Descriptor instead.
 func (*CreateSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{31}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *CreateSandboxResponse) GetSandbox() *Sandbox {
@@ -2466,7 +2811,7 @@ type GetSandboxRequest struct {
 
 func (x *GetSandboxRequest) Reset() {
 	*x = GetSandboxRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[32]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2478,7 +2823,7 @@ func (x *GetSandboxRequest) String() string {
 func (*GetSandboxRequest) ProtoMessage() {}
 
 func (x *GetSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[32]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2491,7 +2836,7 @@ func (x *GetSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxRequest.ProtoReflect.Descriptor instead.
 func (*GetSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{32}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetSandboxRequest) GetProject() string {
@@ -2536,7 +2881,7 @@ type GetSandboxResponse struct {
 
 func (x *GetSandboxResponse) Reset() {
 	*x = GetSandboxResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[33]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2548,7 +2893,7 @@ func (x *GetSandboxResponse) String() string {
 func (*GetSandboxResponse) ProtoMessage() {}
 
 func (x *GetSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[33]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2561,7 +2906,7 @@ func (x *GetSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxResponse.ProtoReflect.Descriptor instead.
 func (*GetSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{33}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *GetSandboxResponse) GetSandbox() *Sandbox {
@@ -2604,7 +2949,7 @@ type ListSandboxesRequest struct {
 
 func (x *ListSandboxesRequest) Reset() {
 	*x = ListSandboxesRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[34]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2616,7 +2961,7 @@ func (x *ListSandboxesRequest) String() string {
 func (*ListSandboxesRequest) ProtoMessage() {}
 
 func (x *ListSandboxesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[34]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2629,7 +2974,7 @@ func (x *ListSandboxesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSandboxesRequest.ProtoReflect.Descriptor instead.
 func (*ListSandboxesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{34}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ListSandboxesRequest) GetProject() string {
@@ -2698,7 +3043,7 @@ type ListSandboxesResponse struct {
 
 func (x *ListSandboxesResponse) Reset() {
 	*x = ListSandboxesResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[35]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2710,7 +3055,7 @@ func (x *ListSandboxesResponse) String() string {
 func (*ListSandboxesResponse) ProtoMessage() {}
 
 func (x *ListSandboxesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[35]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2723,7 +3068,7 @@ func (x *ListSandboxesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSandboxesResponse.ProtoReflect.Descriptor instead.
 func (*ListSandboxesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{35}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListSandboxesResponse) GetSandboxes() []*Sandbox {
@@ -2774,7 +3119,7 @@ type UpdateSandboxRequest struct {
 
 func (x *UpdateSandboxRequest) Reset() {
 	*x = UpdateSandboxRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[36]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2786,7 +3131,7 @@ func (x *UpdateSandboxRequest) String() string {
 func (*UpdateSandboxRequest) ProtoMessage() {}
 
 func (x *UpdateSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[36]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2799,7 +3144,7 @@ func (x *UpdateSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSandboxRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{36}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *UpdateSandboxRequest) GetProject() string {
@@ -2865,7 +3210,7 @@ type UpdateSandboxResponse struct {
 
 func (x *UpdateSandboxResponse) Reset() {
 	*x = UpdateSandboxResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[37]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2877,7 +3222,7 @@ func (x *UpdateSandboxResponse) String() string {
 func (*UpdateSandboxResponse) ProtoMessage() {}
 
 func (x *UpdateSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[37]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2890,7 +3235,7 @@ func (x *UpdateSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSandboxResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{37}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *UpdateSandboxResponse) GetSandbox() *Sandbox {
@@ -2926,7 +3271,7 @@ type DeleteSandboxRequest struct {
 
 func (x *DeleteSandboxRequest) Reset() {
 	*x = DeleteSandboxRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[38]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2938,7 +3283,7 @@ func (x *DeleteSandboxRequest) String() string {
 func (*DeleteSandboxRequest) ProtoMessage() {}
 
 func (x *DeleteSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[38]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2951,7 +3296,7 @@ func (x *DeleteSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSandboxRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{38}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *DeleteSandboxRequest) GetProject() string {
@@ -2993,7 +3338,7 @@ type DeleteSandboxResponse struct {
 
 func (x *DeleteSandboxResponse) Reset() {
 	*x = DeleteSandboxResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[39]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3005,7 +3350,7 @@ func (x *DeleteSandboxResponse) String() string {
 func (*DeleteSandboxResponse) ProtoMessage() {}
 
 func (x *DeleteSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[39]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3018,7 +3363,7 @@ func (x *DeleteSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSandboxResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{39}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *DeleteSandboxResponse) GetOperation() *Operation {
@@ -3051,7 +3396,7 @@ type WaitSandboxRequest struct {
 
 func (x *WaitSandboxRequest) Reset() {
 	*x = WaitSandboxRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[40]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3063,7 +3408,7 @@ func (x *WaitSandboxRequest) String() string {
 func (*WaitSandboxRequest) ProtoMessage() {}
 
 func (x *WaitSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[40]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3076,7 +3421,7 @@ func (x *WaitSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WaitSandboxRequest.ProtoReflect.Descriptor instead.
 func (*WaitSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{40}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *WaitSandboxRequest) GetProject() string {
@@ -3134,7 +3479,7 @@ type WaitSandboxResponse struct {
 
 func (x *WaitSandboxResponse) Reset() {
 	*x = WaitSandboxResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[41]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3146,7 +3491,7 @@ func (x *WaitSandboxResponse) String() string {
 func (*WaitSandboxResponse) ProtoMessage() {}
 
 func (x *WaitSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[41]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3159,7 +3504,7 @@ func (x *WaitSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WaitSandboxResponse.ProtoReflect.Descriptor instead.
 func (*WaitSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{41}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *WaitSandboxResponse) GetSandbox() *Sandbox {
@@ -3198,7 +3543,7 @@ type WatchSandboxesRequest struct {
 
 func (x *WatchSandboxesRequest) Reset() {
 	*x = WatchSandboxesRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[42]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3210,7 +3555,7 @@ func (x *WatchSandboxesRequest) String() string {
 func (*WatchSandboxesRequest) ProtoMessage() {}
 
 func (x *WatchSandboxesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[42]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3223,7 +3568,7 @@ func (x *WatchSandboxesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchSandboxesRequest.ProtoReflect.Descriptor instead.
 func (*WatchSandboxesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{42}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *WatchSandboxesRequest) GetProject() string {
@@ -3279,7 +3624,7 @@ type WatchSandboxesResponse struct {
 
 func (x *WatchSandboxesResponse) Reset() {
 	*x = WatchSandboxesResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[43]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3291,7 +3636,7 @@ func (x *WatchSandboxesResponse) String() string {
 func (*WatchSandboxesResponse) ProtoMessage() {}
 
 func (x *WatchSandboxesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[43]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3304,7 +3649,7 @@ func (x *WatchSandboxesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchSandboxesResponse.ProtoReflect.Descriptor instead.
 func (*WatchSandboxesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{43}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *WatchSandboxesResponse) GetType() EventType {
@@ -3366,7 +3711,7 @@ type CreateServiceRequest struct {
 
 func (x *CreateServiceRequest) Reset() {
 	*x = CreateServiceRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[44]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3378,7 +3723,7 @@ func (x *CreateServiceRequest) String() string {
 func (*CreateServiceRequest) ProtoMessage() {}
 
 func (x *CreateServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[44]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3391,7 +3736,7 @@ func (x *CreateServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateServiceRequest.ProtoReflect.Descriptor instead.
 func (*CreateServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{44}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *CreateServiceRequest) GetProject() string {
@@ -3468,7 +3813,7 @@ type CreateServiceResponse struct {
 
 func (x *CreateServiceResponse) Reset() {
 	*x = CreateServiceResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[45]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3480,7 +3825,7 @@ func (x *CreateServiceResponse) String() string {
 func (*CreateServiceResponse) ProtoMessage() {}
 
 func (x *CreateServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[45]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3493,7 +3838,7 @@ func (x *CreateServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateServiceResponse.ProtoReflect.Descriptor instead.
 func (*CreateServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{45}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *CreateServiceResponse) GetService() *Service {
@@ -3518,7 +3863,7 @@ type GetServiceRequest struct {
 
 func (x *GetServiceRequest) Reset() {
 	*x = GetServiceRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[46]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3530,7 +3875,7 @@ func (x *GetServiceRequest) String() string {
 func (*GetServiceRequest) ProtoMessage() {}
 
 func (x *GetServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[46]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3543,7 +3888,7 @@ func (x *GetServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceRequest.ProtoReflect.Descriptor instead.
 func (*GetServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{46}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *GetServiceRequest) GetProject() string {
@@ -3581,7 +3926,7 @@ type GetServiceResponse struct {
 
 func (x *GetServiceResponse) Reset() {
 	*x = GetServiceResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[47]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3593,7 +3938,7 @@ func (x *GetServiceResponse) String() string {
 func (*GetServiceResponse) ProtoMessage() {}
 
 func (x *GetServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[47]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3606,7 +3951,7 @@ func (x *GetServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceResponse.ProtoReflect.Descriptor instead.
 func (*GetServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{47}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *GetServiceResponse) GetService() *Service {
@@ -3645,7 +3990,7 @@ type ListServicesRequest struct {
 
 func (x *ListServicesRequest) Reset() {
 	*x = ListServicesRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[48]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3657,7 +4002,7 @@ func (x *ListServicesRequest) String() string {
 func (*ListServicesRequest) ProtoMessage() {}
 
 func (x *ListServicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[48]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3670,7 +4015,7 @@ func (x *ListServicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServicesRequest.ProtoReflect.Descriptor instead.
 func (*ListServicesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{48}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *ListServicesRequest) GetProject() string {
@@ -3732,7 +4077,7 @@ type ListServicesResponse struct {
 
 func (x *ListServicesResponse) Reset() {
 	*x = ListServicesResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[49]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3744,7 +4089,7 @@ func (x *ListServicesResponse) String() string {
 func (*ListServicesResponse) ProtoMessage() {}
 
 func (x *ListServicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[49]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3757,7 +4102,7 @@ func (x *ListServicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServicesResponse.ProtoReflect.Descriptor instead.
 func (*ListServicesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{49}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *ListServicesResponse) GetServices() []*Service {
@@ -3815,7 +4160,7 @@ type UpdateServiceRequest struct {
 
 func (x *UpdateServiceRequest) Reset() {
 	*x = UpdateServiceRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[50]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3827,7 +4172,7 @@ func (x *UpdateServiceRequest) String() string {
 func (*UpdateServiceRequest) ProtoMessage() {}
 
 func (x *UpdateServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[50]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3840,7 +4185,7 @@ func (x *UpdateServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateServiceRequest.ProtoReflect.Descriptor instead.
 func (*UpdateServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{50}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *UpdateServiceRequest) GetProject() string {
@@ -3903,7 +4248,7 @@ type UpdateServiceResponse struct {
 
 func (x *UpdateServiceResponse) Reset() {
 	*x = UpdateServiceResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[51]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3915,7 +4260,7 @@ func (x *UpdateServiceResponse) String() string {
 func (*UpdateServiceResponse) ProtoMessage() {}
 
 func (x *UpdateServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[51]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3928,7 +4273,7 @@ func (x *UpdateServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateServiceResponse.ProtoReflect.Descriptor instead.
 func (*UpdateServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{51}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *UpdateServiceResponse) GetService() *Service {
@@ -3957,7 +4302,7 @@ type DeleteServiceRequest struct {
 
 func (x *DeleteServiceRequest) Reset() {
 	*x = DeleteServiceRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[52]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3969,7 +4314,7 @@ func (x *DeleteServiceRequest) String() string {
 func (*DeleteServiceRequest) ProtoMessage() {}
 
 func (x *DeleteServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[52]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3982,7 +4327,7 @@ func (x *DeleteServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteServiceRequest.ProtoReflect.Descriptor instead.
 func (*DeleteServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{52}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *DeleteServiceRequest) GetProject() string {
@@ -4024,7 +4369,7 @@ type DeleteServiceResponse struct {
 
 func (x *DeleteServiceResponse) Reset() {
 	*x = DeleteServiceResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[53]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4036,7 +4381,7 @@ func (x *DeleteServiceResponse) String() string {
 func (*DeleteServiceResponse) ProtoMessage() {}
 
 func (x *DeleteServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[53]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4049,7 +4394,7 @@ func (x *DeleteServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteServiceResponse.ProtoReflect.Descriptor instead.
 func (*DeleteServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{53}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *DeleteServiceResponse) GetOperation() *Operation {
@@ -4078,7 +4423,7 @@ type WaitServiceRequest struct {
 
 func (x *WaitServiceRequest) Reset() {
 	*x = WaitServiceRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[54]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4090,7 +4435,7 @@ func (x *WaitServiceRequest) String() string {
 func (*WaitServiceRequest) ProtoMessage() {}
 
 func (x *WaitServiceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[54]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4103,7 +4448,7 @@ func (x *WaitServiceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WaitServiceRequest.ProtoReflect.Descriptor instead.
 func (*WaitServiceRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{54}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *WaitServiceRequest) GetProject() string {
@@ -4154,7 +4499,7 @@ type WaitServiceResponse struct {
 
 func (x *WaitServiceResponse) Reset() {
 	*x = WaitServiceResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[55]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4166,7 +4511,7 @@ func (x *WaitServiceResponse) String() string {
 func (*WaitServiceResponse) ProtoMessage() {}
 
 func (x *WaitServiceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[55]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4179,7 +4524,7 @@ func (x *WaitServiceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WaitServiceResponse.ProtoReflect.Descriptor instead.
 func (*WaitServiceResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{55}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *WaitServiceResponse) GetService() *Service {
@@ -4214,7 +4559,7 @@ type WatchServicesRequest struct {
 
 func (x *WatchServicesRequest) Reset() {
 	*x = WatchServicesRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[56]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4226,7 +4571,7 @@ func (x *WatchServicesRequest) String() string {
 func (*WatchServicesRequest) ProtoMessage() {}
 
 func (x *WatchServicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[56]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4239,7 +4584,7 @@ func (x *WatchServicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchServicesRequest.ProtoReflect.Descriptor instead.
 func (*WatchServicesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{56}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *WatchServicesRequest) GetProject() string {
@@ -4288,7 +4633,7 @@ type WatchServicesResponse struct {
 
 func (x *WatchServicesResponse) Reset() {
 	*x = WatchServicesResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[57]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4300,7 +4645,7 @@ func (x *WatchServicesResponse) String() string {
 func (*WatchServicesResponse) ProtoMessage() {}
 
 func (x *WatchServicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[57]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4313,7 +4658,7 @@ func (x *WatchServicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchServicesResponse.ProtoReflect.Descriptor instead.
 func (*WatchServicesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{57}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *WatchServicesResponse) GetType() EventType {
@@ -4387,7 +4732,7 @@ type ServiceAlarm struct {
 
 func (x *ServiceAlarm) Reset() {
 	*x = ServiceAlarm{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[58]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4399,7 +4744,7 @@ func (x *ServiceAlarm) String() string {
 func (*ServiceAlarm) ProtoMessage() {}
 
 func (x *ServiceAlarm) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[58]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4412,7 +4757,7 @@ func (x *ServiceAlarm) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceAlarm.ProtoReflect.Descriptor instead.
 func (*ServiceAlarm) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{58}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *ServiceAlarm) GetName() string {
@@ -4569,7 +4914,7 @@ type ServiceAlarmOccurrence struct {
 
 func (x *ServiceAlarmOccurrence) Reset() {
 	*x = ServiceAlarmOccurrence{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[59]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4581,7 +4926,7 @@ func (x *ServiceAlarmOccurrence) String() string {
 func (*ServiceAlarmOccurrence) ProtoMessage() {}
 
 func (x *ServiceAlarmOccurrence) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[59]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4594,7 +4939,7 @@ func (x *ServiceAlarmOccurrence) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceAlarmOccurrence.ProtoReflect.Descriptor instead.
 func (*ServiceAlarmOccurrence) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{59}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *ServiceAlarmOccurrence) GetGeneration() int64 {
@@ -4690,7 +5035,7 @@ type PutServiceAlarmRequest struct {
 
 func (x *PutServiceAlarmRequest) Reset() {
 	*x = PutServiceAlarmRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[60]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4702,7 +5047,7 @@ func (x *PutServiceAlarmRequest) String() string {
 func (*PutServiceAlarmRequest) ProtoMessage() {}
 
 func (x *PutServiceAlarmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[60]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4715,7 +5060,7 @@ func (x *PutServiceAlarmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutServiceAlarmRequest.ProtoReflect.Descriptor instead.
 func (*PutServiceAlarmRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{60}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *PutServiceAlarmRequest) GetProject() string {
@@ -4842,7 +5187,7 @@ type PutServiceAlarmResponse struct {
 
 func (x *PutServiceAlarmResponse) Reset() {
 	*x = PutServiceAlarmResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[61]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4854,7 +5199,7 @@ func (x *PutServiceAlarmResponse) String() string {
 func (*PutServiceAlarmResponse) ProtoMessage() {}
 
 func (x *PutServiceAlarmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[61]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4867,7 +5212,7 @@ func (x *PutServiceAlarmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutServiceAlarmResponse.ProtoReflect.Descriptor instead.
 func (*PutServiceAlarmResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{61}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *PutServiceAlarmResponse) GetAlarm() *ServiceAlarm {
@@ -4894,7 +5239,7 @@ type GetServiceAlarmRequest struct {
 
 func (x *GetServiceAlarmRequest) Reset() {
 	*x = GetServiceAlarmRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[62]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4906,7 +5251,7 @@ func (x *GetServiceAlarmRequest) String() string {
 func (*GetServiceAlarmRequest) ProtoMessage() {}
 
 func (x *GetServiceAlarmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[62]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4919,7 +5264,7 @@ func (x *GetServiceAlarmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceAlarmRequest.ProtoReflect.Descriptor instead.
 func (*GetServiceAlarmRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{62}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *GetServiceAlarmRequest) GetProject() string {
@@ -4963,7 +5308,7 @@ type GetServiceAlarmResponse struct {
 
 func (x *GetServiceAlarmResponse) Reset() {
 	*x = GetServiceAlarmResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[63]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4975,7 +5320,7 @@ func (x *GetServiceAlarmResponse) String() string {
 func (*GetServiceAlarmResponse) ProtoMessage() {}
 
 func (x *GetServiceAlarmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[63]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4988,7 +5333,7 @@ func (x *GetServiceAlarmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceAlarmResponse.ProtoReflect.Descriptor instead.
 func (*GetServiceAlarmResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{63}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *GetServiceAlarmResponse) GetAlarm() *ServiceAlarm {
@@ -5020,7 +5365,7 @@ type ListServiceAlarmsRequest struct {
 
 func (x *ListServiceAlarmsRequest) Reset() {
 	*x = ListServiceAlarmsRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[64]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5032,7 +5377,7 @@ func (x *ListServiceAlarmsRequest) String() string {
 func (*ListServiceAlarmsRequest) ProtoMessage() {}
 
 func (x *ListServiceAlarmsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[64]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5045,7 +5390,7 @@ func (x *ListServiceAlarmsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceAlarmsRequest.ProtoReflect.Descriptor instead.
 func (*ListServiceAlarmsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{64}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *ListServiceAlarmsRequest) GetProject() string {
@@ -5080,7 +5425,7 @@ type ListServiceAlarmsResponse struct {
 
 func (x *ListServiceAlarmsResponse) Reset() {
 	*x = ListServiceAlarmsResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[65]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5092,7 +5437,7 @@ func (x *ListServiceAlarmsResponse) String() string {
 func (*ListServiceAlarmsResponse) ProtoMessage() {}
 
 func (x *ListServiceAlarmsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[65]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5105,7 +5450,7 @@ func (x *ListServiceAlarmsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceAlarmsResponse.ProtoReflect.Descriptor instead.
 func (*ListServiceAlarmsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{65}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *ListServiceAlarmsResponse) GetAlarms() []*ServiceAlarm {
@@ -5132,7 +5477,7 @@ type DeleteServiceAlarmRequest struct {
 
 func (x *DeleteServiceAlarmRequest) Reset() {
 	*x = DeleteServiceAlarmRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[66]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5144,7 +5489,7 @@ func (x *DeleteServiceAlarmRequest) String() string {
 func (*DeleteServiceAlarmRequest) ProtoMessage() {}
 
 func (x *DeleteServiceAlarmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[66]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5157,7 +5502,7 @@ func (x *DeleteServiceAlarmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteServiceAlarmRequest.ProtoReflect.Descriptor instead.
 func (*DeleteServiceAlarmRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{66}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *DeleteServiceAlarmRequest) GetProject() string {
@@ -5197,7 +5542,7 @@ type DeleteServiceAlarmResponse struct {
 
 func (x *DeleteServiceAlarmResponse) Reset() {
 	*x = DeleteServiceAlarmResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[67]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5209,7 +5554,7 @@ func (x *DeleteServiceAlarmResponse) String() string {
 func (*DeleteServiceAlarmResponse) ProtoMessage() {}
 
 func (x *DeleteServiceAlarmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[67]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5222,7 +5567,7 @@ func (x *DeleteServiceAlarmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteServiceAlarmResponse.ProtoReflect.Descriptor instead.
 func (*DeleteServiceAlarmResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{67}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{72}
 }
 
 // PauseServiceAlarmRequest is a call of PauseServiceAlarm.
@@ -5242,7 +5587,7 @@ type PauseServiceAlarmRequest struct {
 
 func (x *PauseServiceAlarmRequest) Reset() {
 	*x = PauseServiceAlarmRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[68]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5254,7 +5599,7 @@ func (x *PauseServiceAlarmRequest) String() string {
 func (*PauseServiceAlarmRequest) ProtoMessage() {}
 
 func (x *PauseServiceAlarmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[68]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5267,7 +5612,7 @@ func (x *PauseServiceAlarmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PauseServiceAlarmRequest.ProtoReflect.Descriptor instead.
 func (*PauseServiceAlarmRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{68}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *PauseServiceAlarmRequest) GetProject() string {
@@ -5309,7 +5654,7 @@ type PauseServiceAlarmResponse struct {
 
 func (x *PauseServiceAlarmResponse) Reset() {
 	*x = PauseServiceAlarmResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[69]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5321,7 +5666,7 @@ func (x *PauseServiceAlarmResponse) String() string {
 func (*PauseServiceAlarmResponse) ProtoMessage() {}
 
 func (x *PauseServiceAlarmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[69]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5334,7 +5679,7 @@ func (x *PauseServiceAlarmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PauseServiceAlarmResponse.ProtoReflect.Descriptor instead.
 func (*PauseServiceAlarmResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{69}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *PauseServiceAlarmResponse) GetAlarm() *ServiceAlarm {
@@ -5361,7 +5706,7 @@ type UnpauseServiceAlarmRequest struct {
 
 func (x *UnpauseServiceAlarmRequest) Reset() {
 	*x = UnpauseServiceAlarmRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[70]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5373,7 +5718,7 @@ func (x *UnpauseServiceAlarmRequest) String() string {
 func (*UnpauseServiceAlarmRequest) ProtoMessage() {}
 
 func (x *UnpauseServiceAlarmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[70]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5386,7 +5731,7 @@ func (x *UnpauseServiceAlarmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnpauseServiceAlarmRequest.ProtoReflect.Descriptor instead.
 func (*UnpauseServiceAlarmRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{70}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *UnpauseServiceAlarmRequest) GetProject() string {
@@ -5428,7 +5773,7 @@ type UnpauseServiceAlarmResponse struct {
 
 func (x *UnpauseServiceAlarmResponse) Reset() {
 	*x = UnpauseServiceAlarmResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[71]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5440,7 +5785,7 @@ func (x *UnpauseServiceAlarmResponse) String() string {
 func (*UnpauseServiceAlarmResponse) ProtoMessage() {}
 
 func (x *UnpauseServiceAlarmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[71]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5453,7 +5798,7 @@ func (x *UnpauseServiceAlarmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnpauseServiceAlarmResponse.ProtoReflect.Descriptor instead.
 func (*UnpauseServiceAlarmResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{71}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *UnpauseServiceAlarmResponse) GetAlarm() *ServiceAlarm {
@@ -5484,7 +5829,7 @@ type RunServiceAlarmNowRequest struct {
 
 func (x *RunServiceAlarmNowRequest) Reset() {
 	*x = RunServiceAlarmNowRequest{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[72]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5496,7 +5841,7 @@ func (x *RunServiceAlarmNowRequest) String() string {
 func (*RunServiceAlarmNowRequest) ProtoMessage() {}
 
 func (x *RunServiceAlarmNowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[72]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5509,7 +5854,7 @@ func (x *RunServiceAlarmNowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunServiceAlarmNowRequest.ProtoReflect.Descriptor instead.
 func (*RunServiceAlarmNowRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{72}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *RunServiceAlarmNowRequest) GetProject() string {
@@ -5558,7 +5903,7 @@ type RunServiceAlarmNowResponse struct {
 
 func (x *RunServiceAlarmNowResponse) Reset() {
 	*x = RunServiceAlarmNowResponse{}
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[73]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5570,7 +5915,7 @@ func (x *RunServiceAlarmNowResponse) String() string {
 func (*RunServiceAlarmNowResponse) ProtoMessage() {}
 
 func (x *RunServiceAlarmNowResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[73]
+	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5583,7 +5928,7 @@ func (x *RunServiceAlarmNowResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunServiceAlarmNowResponse.ProtoReflect.Descriptor instead.
 func (*RunServiceAlarmNowResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{73}
+	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *RunServiceAlarmNowResponse) GetOccurrence() *ServiceAlarmOccurrence {
@@ -5597,7 +5942,7 @@ var File_toshi_workspace_v1_workloads_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/workloads.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/workspace.proto\"\xeb\x01\n" +
+	"\"toshi/workspace/v1/workloads.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/workspace.proto\"\x84\x02\n" +
 	"\x13AnswerPromptRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
@@ -5606,9 +5951,37 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\tprompt_id\x18\x04 \x01(\tR\bpromptId\x12\x16\n" +
 	"\x06answer\x18\x05 \x01(\tR\x06answer\x12 \n" +
 	"\vdecision_id\x18\x06 \x01(\tR\vdecision_id\x12 \n" +
-	"\vrequest_key\x18\a \x01(\tR\vrequest_key\"G\n" +
+	"\vrequest_key\x18\a \x01(\tR\vrequest_key\x12\x17\n" +
+	"\afor_run\x18\b \x01(\bR\x06forRun\"G\n" +
 	"\x14AnswerPromptResponse\x12/\n" +
-	"\x05event\x18\x01 \x01(\v2\x19.toshi.workspace.v1.EventR\x05event\"\xc0\x01\n" +
+	"\x05event\x18\x01 \x01(\v2\x19.toshi.workspace.v1.EventR\x05event\"y\n" +
+	"\x1aListPromptDecisionsRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
+	"\vworkload_id\x18\x03 \x01(\tR\n" +
+	"workloadId\"_\n" +
+	"\x1bListPromptDecisionsResponse\x12@\n" +
+	"\tdecisions\x18\x01 \x03(\v2\".toshi.workspace.v1.PromptDecisionR\tdecisions\"\xe5\x01\n" +
+	"\x0ePromptDecision\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x18\n" +
+	"\asubject\x18\x03 \x01(\tR\asubject\x12\x1a\n" +
+	"\bdecision\x18\x04 \x01(\tR\bdecision\x12\x1d\n" +
+	"\n" +
+	"decided_by\x18\x05 \x01(\tR\tdecidedBy\x129\n" +
+	"\n" +
+	"decided_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tdecidedAt\x12\x1f\n" +
+	"\vdecision_id\x18\a \x01(\tR\n" +
+	"decisionId\"\xab\x01\n" +
+	"\x1bRevokePromptDecisionRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
+	"\vworkload_id\x18\x03 \x01(\tR\n" +
+	"workloadId\x12\x0e\n" +
+	"\x02id\x18\x04 \x01(\tR\x02id\x12\x1f\n" +
+	"\vrequest_key\x18\x05 \x01(\tR\n" +
+	"requestKey\"\x1e\n" +
+	"\x1cRevokePromptDecisionResponse\"\xc0\x01\n" +
 	"\x18EmitWorkloadEventRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
@@ -6042,7 +6415,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"!SERVICE_ALARM_MISFIRE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eSERVICE_ALARM_MISFIRE_COALESCE\x10\x01\x12\x1d\n" +
 	"\x19SERVICE_ALARM_MISFIRE_ALL\x10\x02\x12\x1e\n" +
-	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\x80Z\n" +
+	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xda\\\n" +
 	"\x0fWorkloadService\x12\x81\x01\n" +
 	"\tCreateJob\x12$.toshi.workspace.v1.CreateJobRequest\x1a%.toshi.workspace.v1.CreateJobResponse\"'\xc2\xf3\x18\n" +
 	"jobs.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12m\n" +
@@ -6075,7 +6448,9 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x0eExecuteCommand\x12).toshi.workspace.v1.ExecuteCommandRequest\x1a*.toshi.workspace.v1.ExecuteCommandResponse\"B\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
 	"\x10sandbox.executed\xea\xf3\x18\x02(\x01\x90\xf4\x18\x010\x01\x12\xb4\x01\n" +
 	"\fAnswerPrompt\x12'.toshi.workspace.v1.AnswerPromptRequest\x1a(.toshi.workspace.v1.AnswerPromptResponse\"Q\xc2\xf3\x18\x0fworkloads.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
-	"\x0fprompt.answered\x12\x14workload:workload_id\x90\xf4\x18\x01\x12\xb4\x01\n" +
+	"\x0fprompt.answered\x12\x14workload:workload_id\x90\xf4\x18\x01\x12\x99\x01\n" +
+	"\x13ListPromptDecisions\x12..toshi.workspace.v1.ListPromptDecisionsRequest\x1a/.toshi.workspace.v1.ListPromptDecisionsResponse\"!\xc2\xf3\x18\x0eworkloads.read\xca\xf3\x18\venvironment\x12\xbb\x01\n" +
+	"\x14RevokePromptDecision\x12/.toshi.workspace.v1.RevokePromptDecisionRequest\x1a0.toshi.workspace.v1.RevokePromptDecisionResponse\"@\xc2\xf3\x18\x0fworkloads.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x16\x12\x14workload:workload_id\x90\xf4\x18\x01\x12\xb4\x01\n" +
 	"\x11EmitWorkloadEvent\x12,.toshi.workspace.v1.EmitWorkloadEventRequest\x1a-.toshi.workspace.v1.EmitWorkloadEventResponse\"B\xc2\xf3\x18\x0fworkloads.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x18\n" +
 	"\x16workload.event_emitted\x90\xf4\x18\x01\x12\x8c\x01\n" +
 	"\x0eWatchTelemetry\x12).toshi.workspace.v1.WatchTelemetryRequest\x1a*.toshi.workspace.v1.WatchTelemetryResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment0\x01\x12\x89\x01\n" +
@@ -6156,421 +6531,432 @@ func file_toshi_workspace_v1_workloads_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_workloads_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_toshi_workspace_v1_workloads_proto_msgTypes = make([]protoimpl.MessageInfo, 80)
+var file_toshi_workspace_v1_workloads_proto_msgTypes = make([]protoimpl.MessageInfo, 85)
 var file_toshi_workspace_v1_workloads_proto_goTypes = []any{
 	(ServiceAlarmMisfire)(0),               // 0: toshi.workspace.v1.ServiceAlarmMisfire
 	(*AnswerPromptRequest)(nil),            // 1: toshi.workspace.v1.AnswerPromptRequest
 	(*AnswerPromptResponse)(nil),           // 2: toshi.workspace.v1.AnswerPromptResponse
-	(*EmitWorkloadEventRequest)(nil),       // 3: toshi.workspace.v1.EmitWorkloadEventRequest
-	(*EmitWorkloadEventResponse)(nil),      // 4: toshi.workspace.v1.EmitWorkloadEventResponse
-	(*ExportEventsRequest)(nil),            // 5: toshi.workspace.v1.ExportEventsRequest
-	(*ExportEventsResponse)(nil),           // 6: toshi.workspace.v1.ExportEventsResponse
-	(*CreateJobRequest)(nil),               // 7: toshi.workspace.v1.CreateJobRequest
-	(*CreateJobResponse)(nil),              // 8: toshi.workspace.v1.CreateJobResponse
-	(*GetJobRequest)(nil),                  // 9: toshi.workspace.v1.GetJobRequest
-	(*GetJobResponse)(nil),                 // 10: toshi.workspace.v1.GetJobResponse
-	(*ListJobsRequest)(nil),                // 11: toshi.workspace.v1.ListJobsRequest
-	(*ListJobsResponse)(nil),               // 12: toshi.workspace.v1.ListJobsResponse
-	(*GetWorkloadUsageRequest)(nil),        // 13: toshi.workspace.v1.GetWorkloadUsageRequest
-	(*GetWorkloadUsageResponse)(nil),       // 14: toshi.workspace.v1.GetWorkloadUsageResponse
-	(*WorkloadUsage)(nil),                  // 15: toshi.workspace.v1.WorkloadUsage
-	(*AIRequests)(nil),                     // 16: toshi.workspace.v1.AIRequests
-	(*AIProviderRequests)(nil),             // 17: toshi.workspace.v1.AIProviderRequests
-	(*WorkloadCost)(nil),                   // 18: toshi.workspace.v1.WorkloadCost
-	(*ListWorkloadUsagesRequest)(nil),      // 19: toshi.workspace.v1.ListWorkloadUsagesRequest
-	(*ListWorkloadUsagesResponse)(nil),     // 20: toshi.workspace.v1.ListWorkloadUsagesResponse
-	(*UpdateJobRequest)(nil),               // 21: toshi.workspace.v1.UpdateJobRequest
-	(*UpdateJobResponse)(nil),              // 22: toshi.workspace.v1.UpdateJobResponse
-	(*DeleteJobRequest)(nil),               // 23: toshi.workspace.v1.DeleteJobRequest
-	(*DeleteJobResponse)(nil),              // 24: toshi.workspace.v1.DeleteJobResponse
-	(*CancelJobRequest)(nil),               // 25: toshi.workspace.v1.CancelJobRequest
-	(*CancelJobResponse)(nil),              // 26: toshi.workspace.v1.CancelJobResponse
-	(*WaitJobRequest)(nil),                 // 27: toshi.workspace.v1.WaitJobRequest
-	(*WaitJobResponse)(nil),                // 28: toshi.workspace.v1.WaitJobResponse
-	(*WatchJobsRequest)(nil),               // 29: toshi.workspace.v1.WatchJobsRequest
-	(*WatchJobsResponse)(nil),              // 30: toshi.workspace.v1.WatchJobsResponse
-	(*CreateSandboxRequest)(nil),           // 31: toshi.workspace.v1.CreateSandboxRequest
-	(*CreateSandboxResponse)(nil),          // 32: toshi.workspace.v1.CreateSandboxResponse
-	(*GetSandboxRequest)(nil),              // 33: toshi.workspace.v1.GetSandboxRequest
-	(*GetSandboxResponse)(nil),             // 34: toshi.workspace.v1.GetSandboxResponse
-	(*ListSandboxesRequest)(nil),           // 35: toshi.workspace.v1.ListSandboxesRequest
-	(*ListSandboxesResponse)(nil),          // 36: toshi.workspace.v1.ListSandboxesResponse
-	(*UpdateSandboxRequest)(nil),           // 37: toshi.workspace.v1.UpdateSandboxRequest
-	(*UpdateSandboxResponse)(nil),          // 38: toshi.workspace.v1.UpdateSandboxResponse
-	(*DeleteSandboxRequest)(nil),           // 39: toshi.workspace.v1.DeleteSandboxRequest
-	(*DeleteSandboxResponse)(nil),          // 40: toshi.workspace.v1.DeleteSandboxResponse
-	(*WaitSandboxRequest)(nil),             // 41: toshi.workspace.v1.WaitSandboxRequest
-	(*WaitSandboxResponse)(nil),            // 42: toshi.workspace.v1.WaitSandboxResponse
-	(*WatchSandboxesRequest)(nil),          // 43: toshi.workspace.v1.WatchSandboxesRequest
-	(*WatchSandboxesResponse)(nil),         // 44: toshi.workspace.v1.WatchSandboxesResponse
-	(*CreateServiceRequest)(nil),           // 45: toshi.workspace.v1.CreateServiceRequest
-	(*CreateServiceResponse)(nil),          // 46: toshi.workspace.v1.CreateServiceResponse
-	(*GetServiceRequest)(nil),              // 47: toshi.workspace.v1.GetServiceRequest
-	(*GetServiceResponse)(nil),             // 48: toshi.workspace.v1.GetServiceResponse
-	(*ListServicesRequest)(nil),            // 49: toshi.workspace.v1.ListServicesRequest
-	(*ListServicesResponse)(nil),           // 50: toshi.workspace.v1.ListServicesResponse
-	(*UpdateServiceRequest)(nil),           // 51: toshi.workspace.v1.UpdateServiceRequest
-	(*UpdateServiceResponse)(nil),          // 52: toshi.workspace.v1.UpdateServiceResponse
-	(*DeleteServiceRequest)(nil),           // 53: toshi.workspace.v1.DeleteServiceRequest
-	(*DeleteServiceResponse)(nil),          // 54: toshi.workspace.v1.DeleteServiceResponse
-	(*WaitServiceRequest)(nil),             // 55: toshi.workspace.v1.WaitServiceRequest
-	(*WaitServiceResponse)(nil),            // 56: toshi.workspace.v1.WaitServiceResponse
-	(*WatchServicesRequest)(nil),           // 57: toshi.workspace.v1.WatchServicesRequest
-	(*WatchServicesResponse)(nil),          // 58: toshi.workspace.v1.WatchServicesResponse
-	(*ServiceAlarm)(nil),                   // 59: toshi.workspace.v1.ServiceAlarm
-	(*ServiceAlarmOccurrence)(nil),         // 60: toshi.workspace.v1.ServiceAlarmOccurrence
-	(*PutServiceAlarmRequest)(nil),         // 61: toshi.workspace.v1.PutServiceAlarmRequest
-	(*PutServiceAlarmResponse)(nil),        // 62: toshi.workspace.v1.PutServiceAlarmResponse
-	(*GetServiceAlarmRequest)(nil),         // 63: toshi.workspace.v1.GetServiceAlarmRequest
-	(*GetServiceAlarmResponse)(nil),        // 64: toshi.workspace.v1.GetServiceAlarmResponse
-	(*ListServiceAlarmsRequest)(nil),       // 65: toshi.workspace.v1.ListServiceAlarmsRequest
-	(*ListServiceAlarmsResponse)(nil),      // 66: toshi.workspace.v1.ListServiceAlarmsResponse
-	(*DeleteServiceAlarmRequest)(nil),      // 67: toshi.workspace.v1.DeleteServiceAlarmRequest
-	(*DeleteServiceAlarmResponse)(nil),     // 68: toshi.workspace.v1.DeleteServiceAlarmResponse
-	(*PauseServiceAlarmRequest)(nil),       // 69: toshi.workspace.v1.PauseServiceAlarmRequest
-	(*PauseServiceAlarmResponse)(nil),      // 70: toshi.workspace.v1.PauseServiceAlarmResponse
-	(*UnpauseServiceAlarmRequest)(nil),     // 71: toshi.workspace.v1.UnpauseServiceAlarmRequest
-	(*UnpauseServiceAlarmResponse)(nil),    // 72: toshi.workspace.v1.UnpauseServiceAlarmResponse
-	(*RunServiceAlarmNowRequest)(nil),      // 73: toshi.workspace.v1.RunServiceAlarmNowRequest
-	(*RunServiceAlarmNowResponse)(nil),     // 74: toshi.workspace.v1.RunServiceAlarmNowResponse
-	nil,                                    // 75: toshi.workspace.v1.CreateJobRequest.LabelsEntry
-	nil,                                    // 76: toshi.workspace.v1.ListJobsRequest.LabelsEntry
-	nil,                                    // 77: toshi.workspace.v1.CreateSandboxRequest.LabelsEntry
-	nil,                                    // 78: toshi.workspace.v1.ListSandboxesRequest.LabelsEntry
-	nil,                                    // 79: toshi.workspace.v1.CreateServiceRequest.LabelsEntry
-	nil,                                    // 80: toshi.workspace.v1.ListServicesRequest.LabelsEntry
-	(*Event)(nil),                          // 81: toshi.workspace.v1.Event
-	(*timestamppb.Timestamp)(nil),          // 82: google.protobuf.Timestamp
-	(*JobSpec)(nil),                        // 83: toshi.workspace.v1.JobSpec
-	(RecordingPolicy)(0),                   // 84: toshi.workspace.v1.RecordingPolicy
-	(*durationpb.Duration)(nil),            // 85: google.protobuf.Duration
-	(*Job)(nil),                            // 86: toshi.workspace.v1.Job
-	(*Output)(nil),                         // 87: toshi.workspace.v1.Output
-	(*BoundBinding)(nil),                   // 88: toshi.workspace.v1.BoundBinding
-	(*JobAttempt)(nil),                     // 89: toshi.workspace.v1.JobAttempt
-	(JobState)(0),                          // 90: toshi.workspace.v1.JobState
-	(*fieldmaskpb.FieldMask)(nil),          // 91: google.protobuf.FieldMask
-	(*Operation)(nil),                      // 92: toshi.workspace.v1.Operation
-	(EventType)(0),                         // 93: toshi.workspace.v1.EventType
-	(*Keepalive)(nil),                      // 94: toshi.workspace.v1.Keepalive
-	(*SandboxSpec)(nil),                    // 95: toshi.workspace.v1.SandboxSpec
-	(*Sandbox)(nil),                        // 96: toshi.workspace.v1.Sandbox
-	(SandboxState)(0),                      // 97: toshi.workspace.v1.SandboxState
-	(*ServiceSpec)(nil),                    // 98: toshi.workspace.v1.ServiceSpec
-	(*Service)(nil),                        // 99: toshi.workspace.v1.Service
-	(ServiceState)(0),                      // 100: toshi.workspace.v1.ServiceState
-	(*WatchOutputRequest)(nil),             // 101: toshi.workspace.v1.WatchOutputRequest
-	(*StopSandboxRequest)(nil),             // 102: toshi.workspace.v1.StopSandboxRequest
-	(*StartSandboxRequest)(nil),            // 103: toshi.workspace.v1.StartSandboxRequest
-	(*ExecuteRequest)(nil),                 // 104: toshi.workspace.v1.ExecuteRequest
-	(*CancelExecutionRequest)(nil),         // 105: toshi.workspace.v1.CancelExecutionRequest
-	(*ExecuteCommandRequest)(nil),          // 106: toshi.workspace.v1.ExecuteCommandRequest
-	(*WatchTelemetryRequest)(nil),          // 107: toshi.workspace.v1.WatchTelemetryRequest
-	(*WatchGuestLogRequest)(nil),           // 108: toshi.workspace.v1.WatchGuestLogRequest
-	(*CreatePreviewShareLinkRequest)(nil),  // 109: toshi.workspace.v1.CreatePreviewShareLinkRequest
-	(*ListPreviewShareLinksRequest)(nil),   // 110: toshi.workspace.v1.ListPreviewShareLinksRequest
-	(*RevokePreviewShareLinkRequest)(nil),  // 111: toshi.workspace.v1.RevokePreviewShareLinkRequest
-	(*CreateServiceShareLinkRequest)(nil),  // 112: toshi.workspace.v1.CreateServiceShareLinkRequest
-	(*ListServiceShareLinksRequest)(nil),   // 113: toshi.workspace.v1.ListServiceShareLinksRequest
-	(*RevokeServiceShareLinkRequest)(nil),  // 114: toshi.workspace.v1.RevokeServiceShareLinkRequest
-	(*StartServiceRequest)(nil),            // 115: toshi.workspace.v1.StartServiceRequest
-	(*StopServiceRequest)(nil),             // 116: toshi.workspace.v1.StopServiceRequest
-	(*SetServiceModeRequest)(nil),          // 117: toshi.workspace.v1.SetServiceModeRequest
-	(*WakeServiceRequest)(nil),             // 118: toshi.workspace.v1.WakeServiceRequest
-	(*HoldWorkloadRequest)(nil),            // 119: toshi.workspace.v1.HoldWorkloadRequest
-	(*ReleaseWorkloadRequest)(nil),         // 120: toshi.workspace.v1.ReleaseWorkloadRequest
-	(*KeepServiceAwakeRequest)(nil),        // 121: toshi.workspace.v1.KeepServiceAwakeRequest
-	(*ReleaseServiceAwakeRequest)(nil),     // 122: toshi.workspace.v1.ReleaseServiceAwakeRequest
-	(*StartServiceSignInRequest)(nil),      // 123: toshi.workspace.v1.StartServiceSignInRequest
-	(*AnswerServiceSignInRequest)(nil),     // 124: toshi.workspace.v1.AnswerServiceSignInRequest
-	(*CancelServiceSignInRequest)(nil),     // 125: toshi.workspace.v1.CancelServiceSignInRequest
-	(*GetServiceSignInStatusRequest)(nil),  // 126: toshi.workspace.v1.GetServiceSignInStatusRequest
-	(*SignOutServiceRequest)(nil),          // 127: toshi.workspace.v1.SignOutServiceRequest
-	(*ListServiceRevisionsRequest)(nil),    // 128: toshi.workspace.v1.ListServiceRevisionsRequest
-	(*GetServiceRevisionRequest)(nil),      // 129: toshi.workspace.v1.GetServiceRevisionRequest
-	(*RollbackServiceRequest)(nil),         // 130: toshi.workspace.v1.RollbackServiceRequest
-	(*ListServiceActivationsRequest)(nil),  // 131: toshi.workspace.v1.ListServiceActivationsRequest
-	(*ListServiceRunsRequest)(nil),         // 132: toshi.workspace.v1.ListServiceRunsRequest
-	(*ListEventsRequest)(nil),              // 133: toshi.workspace.v1.ListEventsRequest
-	(*WatchEventsRequest)(nil),             // 134: toshi.workspace.v1.WatchEventsRequest
-	(*GetOperationRequest)(nil),            // 135: toshi.workspace.v1.GetOperationRequest
-	(*WaitOperationRequest)(nil),           // 136: toshi.workspace.v1.WaitOperationRequest
-	(*WatchOutputResponse)(nil),            // 137: toshi.workspace.v1.WatchOutputResponse
-	(*StopSandboxResponse)(nil),            // 138: toshi.workspace.v1.StopSandboxResponse
-	(*StartSandboxResponse)(nil),           // 139: toshi.workspace.v1.StartSandboxResponse
-	(*ExecuteResponse)(nil),                // 140: toshi.workspace.v1.ExecuteResponse
-	(*CancelExecutionResponse)(nil),        // 141: toshi.workspace.v1.CancelExecutionResponse
-	(*ExecuteCommandResponse)(nil),         // 142: toshi.workspace.v1.ExecuteCommandResponse
-	(*WatchTelemetryResponse)(nil),         // 143: toshi.workspace.v1.WatchTelemetryResponse
-	(*WatchGuestLogResponse)(nil),          // 144: toshi.workspace.v1.WatchGuestLogResponse
-	(*CreatePreviewShareLinkResponse)(nil), // 145: toshi.workspace.v1.CreatePreviewShareLinkResponse
-	(*ListPreviewShareLinksResponse)(nil),  // 146: toshi.workspace.v1.ListPreviewShareLinksResponse
-	(*RevokePreviewShareLinkResponse)(nil), // 147: toshi.workspace.v1.RevokePreviewShareLinkResponse
-	(*CreateServiceShareLinkResponse)(nil), // 148: toshi.workspace.v1.CreateServiceShareLinkResponse
-	(*ListServiceShareLinksResponse)(nil),  // 149: toshi.workspace.v1.ListServiceShareLinksResponse
-	(*RevokeServiceShareLinkResponse)(nil), // 150: toshi.workspace.v1.RevokeServiceShareLinkResponse
-	(*StartServiceResponse)(nil),           // 151: toshi.workspace.v1.StartServiceResponse
-	(*StopServiceResponse)(nil),            // 152: toshi.workspace.v1.StopServiceResponse
-	(*SetServiceModeResponse)(nil),         // 153: toshi.workspace.v1.SetServiceModeResponse
-	(*WakeServiceResponse)(nil),            // 154: toshi.workspace.v1.WakeServiceResponse
-	(*HoldWorkloadResponse)(nil),           // 155: toshi.workspace.v1.HoldWorkloadResponse
-	(*ReleaseWorkloadResponse)(nil),        // 156: toshi.workspace.v1.ReleaseWorkloadResponse
-	(*KeepServiceAwakeResponse)(nil),       // 157: toshi.workspace.v1.KeepServiceAwakeResponse
-	(*ReleaseServiceAwakeResponse)(nil),    // 158: toshi.workspace.v1.ReleaseServiceAwakeResponse
-	(*StartServiceSignInResponse)(nil),     // 159: toshi.workspace.v1.StartServiceSignInResponse
-	(*AnswerServiceSignInResponse)(nil),    // 160: toshi.workspace.v1.AnswerServiceSignInResponse
-	(*CancelServiceSignInResponse)(nil),    // 161: toshi.workspace.v1.CancelServiceSignInResponse
-	(*GetServiceSignInStatusResponse)(nil), // 162: toshi.workspace.v1.GetServiceSignInStatusResponse
-	(*SignOutServiceResponse)(nil),         // 163: toshi.workspace.v1.SignOutServiceResponse
-	(*ListServiceRevisionsResponse)(nil),   // 164: toshi.workspace.v1.ListServiceRevisionsResponse
-	(*GetServiceRevisionResponse)(nil),     // 165: toshi.workspace.v1.GetServiceRevisionResponse
-	(*RollbackServiceResponse)(nil),        // 166: toshi.workspace.v1.RollbackServiceResponse
-	(*ListServiceActivationsResponse)(nil), // 167: toshi.workspace.v1.ListServiceActivationsResponse
-	(*ListServiceRunsResponse)(nil),        // 168: toshi.workspace.v1.ListServiceRunsResponse
-	(*ListEventsResponse)(nil),             // 169: toshi.workspace.v1.ListEventsResponse
-	(*WatchEventsResponse)(nil),            // 170: toshi.workspace.v1.WatchEventsResponse
-	(*GetOperationResponse)(nil),           // 171: toshi.workspace.v1.GetOperationResponse
-	(*WaitOperationResponse)(nil),          // 172: toshi.workspace.v1.WaitOperationResponse
+	(*ListPromptDecisionsRequest)(nil),     // 3: toshi.workspace.v1.ListPromptDecisionsRequest
+	(*ListPromptDecisionsResponse)(nil),    // 4: toshi.workspace.v1.ListPromptDecisionsResponse
+	(*PromptDecision)(nil),                 // 5: toshi.workspace.v1.PromptDecision
+	(*RevokePromptDecisionRequest)(nil),    // 6: toshi.workspace.v1.RevokePromptDecisionRequest
+	(*RevokePromptDecisionResponse)(nil),   // 7: toshi.workspace.v1.RevokePromptDecisionResponse
+	(*EmitWorkloadEventRequest)(nil),       // 8: toshi.workspace.v1.EmitWorkloadEventRequest
+	(*EmitWorkloadEventResponse)(nil),      // 9: toshi.workspace.v1.EmitWorkloadEventResponse
+	(*ExportEventsRequest)(nil),            // 10: toshi.workspace.v1.ExportEventsRequest
+	(*ExportEventsResponse)(nil),           // 11: toshi.workspace.v1.ExportEventsResponse
+	(*CreateJobRequest)(nil),               // 12: toshi.workspace.v1.CreateJobRequest
+	(*CreateJobResponse)(nil),              // 13: toshi.workspace.v1.CreateJobResponse
+	(*GetJobRequest)(nil),                  // 14: toshi.workspace.v1.GetJobRequest
+	(*GetJobResponse)(nil),                 // 15: toshi.workspace.v1.GetJobResponse
+	(*ListJobsRequest)(nil),                // 16: toshi.workspace.v1.ListJobsRequest
+	(*ListJobsResponse)(nil),               // 17: toshi.workspace.v1.ListJobsResponse
+	(*GetWorkloadUsageRequest)(nil),        // 18: toshi.workspace.v1.GetWorkloadUsageRequest
+	(*GetWorkloadUsageResponse)(nil),       // 19: toshi.workspace.v1.GetWorkloadUsageResponse
+	(*WorkloadUsage)(nil),                  // 20: toshi.workspace.v1.WorkloadUsage
+	(*AIRequests)(nil),                     // 21: toshi.workspace.v1.AIRequests
+	(*AIProviderRequests)(nil),             // 22: toshi.workspace.v1.AIProviderRequests
+	(*WorkloadCost)(nil),                   // 23: toshi.workspace.v1.WorkloadCost
+	(*ListWorkloadUsagesRequest)(nil),      // 24: toshi.workspace.v1.ListWorkloadUsagesRequest
+	(*ListWorkloadUsagesResponse)(nil),     // 25: toshi.workspace.v1.ListWorkloadUsagesResponse
+	(*UpdateJobRequest)(nil),               // 26: toshi.workspace.v1.UpdateJobRequest
+	(*UpdateJobResponse)(nil),              // 27: toshi.workspace.v1.UpdateJobResponse
+	(*DeleteJobRequest)(nil),               // 28: toshi.workspace.v1.DeleteJobRequest
+	(*DeleteJobResponse)(nil),              // 29: toshi.workspace.v1.DeleteJobResponse
+	(*CancelJobRequest)(nil),               // 30: toshi.workspace.v1.CancelJobRequest
+	(*CancelJobResponse)(nil),              // 31: toshi.workspace.v1.CancelJobResponse
+	(*WaitJobRequest)(nil),                 // 32: toshi.workspace.v1.WaitJobRequest
+	(*WaitJobResponse)(nil),                // 33: toshi.workspace.v1.WaitJobResponse
+	(*WatchJobsRequest)(nil),               // 34: toshi.workspace.v1.WatchJobsRequest
+	(*WatchJobsResponse)(nil),              // 35: toshi.workspace.v1.WatchJobsResponse
+	(*CreateSandboxRequest)(nil),           // 36: toshi.workspace.v1.CreateSandboxRequest
+	(*CreateSandboxResponse)(nil),          // 37: toshi.workspace.v1.CreateSandboxResponse
+	(*GetSandboxRequest)(nil),              // 38: toshi.workspace.v1.GetSandboxRequest
+	(*GetSandboxResponse)(nil),             // 39: toshi.workspace.v1.GetSandboxResponse
+	(*ListSandboxesRequest)(nil),           // 40: toshi.workspace.v1.ListSandboxesRequest
+	(*ListSandboxesResponse)(nil),          // 41: toshi.workspace.v1.ListSandboxesResponse
+	(*UpdateSandboxRequest)(nil),           // 42: toshi.workspace.v1.UpdateSandboxRequest
+	(*UpdateSandboxResponse)(nil),          // 43: toshi.workspace.v1.UpdateSandboxResponse
+	(*DeleteSandboxRequest)(nil),           // 44: toshi.workspace.v1.DeleteSandboxRequest
+	(*DeleteSandboxResponse)(nil),          // 45: toshi.workspace.v1.DeleteSandboxResponse
+	(*WaitSandboxRequest)(nil),             // 46: toshi.workspace.v1.WaitSandboxRequest
+	(*WaitSandboxResponse)(nil),            // 47: toshi.workspace.v1.WaitSandboxResponse
+	(*WatchSandboxesRequest)(nil),          // 48: toshi.workspace.v1.WatchSandboxesRequest
+	(*WatchSandboxesResponse)(nil),         // 49: toshi.workspace.v1.WatchSandboxesResponse
+	(*CreateServiceRequest)(nil),           // 50: toshi.workspace.v1.CreateServiceRequest
+	(*CreateServiceResponse)(nil),          // 51: toshi.workspace.v1.CreateServiceResponse
+	(*GetServiceRequest)(nil),              // 52: toshi.workspace.v1.GetServiceRequest
+	(*GetServiceResponse)(nil),             // 53: toshi.workspace.v1.GetServiceResponse
+	(*ListServicesRequest)(nil),            // 54: toshi.workspace.v1.ListServicesRequest
+	(*ListServicesResponse)(nil),           // 55: toshi.workspace.v1.ListServicesResponse
+	(*UpdateServiceRequest)(nil),           // 56: toshi.workspace.v1.UpdateServiceRequest
+	(*UpdateServiceResponse)(nil),          // 57: toshi.workspace.v1.UpdateServiceResponse
+	(*DeleteServiceRequest)(nil),           // 58: toshi.workspace.v1.DeleteServiceRequest
+	(*DeleteServiceResponse)(nil),          // 59: toshi.workspace.v1.DeleteServiceResponse
+	(*WaitServiceRequest)(nil),             // 60: toshi.workspace.v1.WaitServiceRequest
+	(*WaitServiceResponse)(nil),            // 61: toshi.workspace.v1.WaitServiceResponse
+	(*WatchServicesRequest)(nil),           // 62: toshi.workspace.v1.WatchServicesRequest
+	(*WatchServicesResponse)(nil),          // 63: toshi.workspace.v1.WatchServicesResponse
+	(*ServiceAlarm)(nil),                   // 64: toshi.workspace.v1.ServiceAlarm
+	(*ServiceAlarmOccurrence)(nil),         // 65: toshi.workspace.v1.ServiceAlarmOccurrence
+	(*PutServiceAlarmRequest)(nil),         // 66: toshi.workspace.v1.PutServiceAlarmRequest
+	(*PutServiceAlarmResponse)(nil),        // 67: toshi.workspace.v1.PutServiceAlarmResponse
+	(*GetServiceAlarmRequest)(nil),         // 68: toshi.workspace.v1.GetServiceAlarmRequest
+	(*GetServiceAlarmResponse)(nil),        // 69: toshi.workspace.v1.GetServiceAlarmResponse
+	(*ListServiceAlarmsRequest)(nil),       // 70: toshi.workspace.v1.ListServiceAlarmsRequest
+	(*ListServiceAlarmsResponse)(nil),      // 71: toshi.workspace.v1.ListServiceAlarmsResponse
+	(*DeleteServiceAlarmRequest)(nil),      // 72: toshi.workspace.v1.DeleteServiceAlarmRequest
+	(*DeleteServiceAlarmResponse)(nil),     // 73: toshi.workspace.v1.DeleteServiceAlarmResponse
+	(*PauseServiceAlarmRequest)(nil),       // 74: toshi.workspace.v1.PauseServiceAlarmRequest
+	(*PauseServiceAlarmResponse)(nil),      // 75: toshi.workspace.v1.PauseServiceAlarmResponse
+	(*UnpauseServiceAlarmRequest)(nil),     // 76: toshi.workspace.v1.UnpauseServiceAlarmRequest
+	(*UnpauseServiceAlarmResponse)(nil),    // 77: toshi.workspace.v1.UnpauseServiceAlarmResponse
+	(*RunServiceAlarmNowRequest)(nil),      // 78: toshi.workspace.v1.RunServiceAlarmNowRequest
+	(*RunServiceAlarmNowResponse)(nil),     // 79: toshi.workspace.v1.RunServiceAlarmNowResponse
+	nil,                                    // 80: toshi.workspace.v1.CreateJobRequest.LabelsEntry
+	nil,                                    // 81: toshi.workspace.v1.ListJobsRequest.LabelsEntry
+	nil,                                    // 82: toshi.workspace.v1.CreateSandboxRequest.LabelsEntry
+	nil,                                    // 83: toshi.workspace.v1.ListSandboxesRequest.LabelsEntry
+	nil,                                    // 84: toshi.workspace.v1.CreateServiceRequest.LabelsEntry
+	nil,                                    // 85: toshi.workspace.v1.ListServicesRequest.LabelsEntry
+	(*Event)(nil),                          // 86: toshi.workspace.v1.Event
+	(*timestamppb.Timestamp)(nil),          // 87: google.protobuf.Timestamp
+	(*JobSpec)(nil),                        // 88: toshi.workspace.v1.JobSpec
+	(RecordingPolicy)(0),                   // 89: toshi.workspace.v1.RecordingPolicy
+	(*durationpb.Duration)(nil),            // 90: google.protobuf.Duration
+	(*Job)(nil),                            // 91: toshi.workspace.v1.Job
+	(*Output)(nil),                         // 92: toshi.workspace.v1.Output
+	(*BoundBinding)(nil),                   // 93: toshi.workspace.v1.BoundBinding
+	(*JobAttempt)(nil),                     // 94: toshi.workspace.v1.JobAttempt
+	(JobState)(0),                          // 95: toshi.workspace.v1.JobState
+	(*fieldmaskpb.FieldMask)(nil),          // 96: google.protobuf.FieldMask
+	(*Operation)(nil),                      // 97: toshi.workspace.v1.Operation
+	(EventType)(0),                         // 98: toshi.workspace.v1.EventType
+	(*Keepalive)(nil),                      // 99: toshi.workspace.v1.Keepalive
+	(*SandboxSpec)(nil),                    // 100: toshi.workspace.v1.SandboxSpec
+	(*Sandbox)(nil),                        // 101: toshi.workspace.v1.Sandbox
+	(SandboxState)(0),                      // 102: toshi.workspace.v1.SandboxState
+	(*ServiceSpec)(nil),                    // 103: toshi.workspace.v1.ServiceSpec
+	(*Service)(nil),                        // 104: toshi.workspace.v1.Service
+	(ServiceState)(0),                      // 105: toshi.workspace.v1.ServiceState
+	(*WatchOutputRequest)(nil),             // 106: toshi.workspace.v1.WatchOutputRequest
+	(*StopSandboxRequest)(nil),             // 107: toshi.workspace.v1.StopSandboxRequest
+	(*StartSandboxRequest)(nil),            // 108: toshi.workspace.v1.StartSandboxRequest
+	(*ExecuteRequest)(nil),                 // 109: toshi.workspace.v1.ExecuteRequest
+	(*CancelExecutionRequest)(nil),         // 110: toshi.workspace.v1.CancelExecutionRequest
+	(*ExecuteCommandRequest)(nil),          // 111: toshi.workspace.v1.ExecuteCommandRequest
+	(*WatchTelemetryRequest)(nil),          // 112: toshi.workspace.v1.WatchTelemetryRequest
+	(*WatchGuestLogRequest)(nil),           // 113: toshi.workspace.v1.WatchGuestLogRequest
+	(*CreatePreviewShareLinkRequest)(nil),  // 114: toshi.workspace.v1.CreatePreviewShareLinkRequest
+	(*ListPreviewShareLinksRequest)(nil),   // 115: toshi.workspace.v1.ListPreviewShareLinksRequest
+	(*RevokePreviewShareLinkRequest)(nil),  // 116: toshi.workspace.v1.RevokePreviewShareLinkRequest
+	(*CreateServiceShareLinkRequest)(nil),  // 117: toshi.workspace.v1.CreateServiceShareLinkRequest
+	(*ListServiceShareLinksRequest)(nil),   // 118: toshi.workspace.v1.ListServiceShareLinksRequest
+	(*RevokeServiceShareLinkRequest)(nil),  // 119: toshi.workspace.v1.RevokeServiceShareLinkRequest
+	(*StartServiceRequest)(nil),            // 120: toshi.workspace.v1.StartServiceRequest
+	(*StopServiceRequest)(nil),             // 121: toshi.workspace.v1.StopServiceRequest
+	(*SetServiceModeRequest)(nil),          // 122: toshi.workspace.v1.SetServiceModeRequest
+	(*WakeServiceRequest)(nil),             // 123: toshi.workspace.v1.WakeServiceRequest
+	(*HoldWorkloadRequest)(nil),            // 124: toshi.workspace.v1.HoldWorkloadRequest
+	(*ReleaseWorkloadRequest)(nil),         // 125: toshi.workspace.v1.ReleaseWorkloadRequest
+	(*KeepServiceAwakeRequest)(nil),        // 126: toshi.workspace.v1.KeepServiceAwakeRequest
+	(*ReleaseServiceAwakeRequest)(nil),     // 127: toshi.workspace.v1.ReleaseServiceAwakeRequest
+	(*StartServiceSignInRequest)(nil),      // 128: toshi.workspace.v1.StartServiceSignInRequest
+	(*AnswerServiceSignInRequest)(nil),     // 129: toshi.workspace.v1.AnswerServiceSignInRequest
+	(*CancelServiceSignInRequest)(nil),     // 130: toshi.workspace.v1.CancelServiceSignInRequest
+	(*GetServiceSignInStatusRequest)(nil),  // 131: toshi.workspace.v1.GetServiceSignInStatusRequest
+	(*SignOutServiceRequest)(nil),          // 132: toshi.workspace.v1.SignOutServiceRequest
+	(*ListServiceRevisionsRequest)(nil),    // 133: toshi.workspace.v1.ListServiceRevisionsRequest
+	(*GetServiceRevisionRequest)(nil),      // 134: toshi.workspace.v1.GetServiceRevisionRequest
+	(*RollbackServiceRequest)(nil),         // 135: toshi.workspace.v1.RollbackServiceRequest
+	(*ListServiceActivationsRequest)(nil),  // 136: toshi.workspace.v1.ListServiceActivationsRequest
+	(*ListServiceRunsRequest)(nil),         // 137: toshi.workspace.v1.ListServiceRunsRequest
+	(*ListEventsRequest)(nil),              // 138: toshi.workspace.v1.ListEventsRequest
+	(*WatchEventsRequest)(nil),             // 139: toshi.workspace.v1.WatchEventsRequest
+	(*GetOperationRequest)(nil),            // 140: toshi.workspace.v1.GetOperationRequest
+	(*WaitOperationRequest)(nil),           // 141: toshi.workspace.v1.WaitOperationRequest
+	(*WatchOutputResponse)(nil),            // 142: toshi.workspace.v1.WatchOutputResponse
+	(*StopSandboxResponse)(nil),            // 143: toshi.workspace.v1.StopSandboxResponse
+	(*StartSandboxResponse)(nil),           // 144: toshi.workspace.v1.StartSandboxResponse
+	(*ExecuteResponse)(nil),                // 145: toshi.workspace.v1.ExecuteResponse
+	(*CancelExecutionResponse)(nil),        // 146: toshi.workspace.v1.CancelExecutionResponse
+	(*ExecuteCommandResponse)(nil),         // 147: toshi.workspace.v1.ExecuteCommandResponse
+	(*WatchTelemetryResponse)(nil),         // 148: toshi.workspace.v1.WatchTelemetryResponse
+	(*WatchGuestLogResponse)(nil),          // 149: toshi.workspace.v1.WatchGuestLogResponse
+	(*CreatePreviewShareLinkResponse)(nil), // 150: toshi.workspace.v1.CreatePreviewShareLinkResponse
+	(*ListPreviewShareLinksResponse)(nil),  // 151: toshi.workspace.v1.ListPreviewShareLinksResponse
+	(*RevokePreviewShareLinkResponse)(nil), // 152: toshi.workspace.v1.RevokePreviewShareLinkResponse
+	(*CreateServiceShareLinkResponse)(nil), // 153: toshi.workspace.v1.CreateServiceShareLinkResponse
+	(*ListServiceShareLinksResponse)(nil),  // 154: toshi.workspace.v1.ListServiceShareLinksResponse
+	(*RevokeServiceShareLinkResponse)(nil), // 155: toshi.workspace.v1.RevokeServiceShareLinkResponse
+	(*StartServiceResponse)(nil),           // 156: toshi.workspace.v1.StartServiceResponse
+	(*StopServiceResponse)(nil),            // 157: toshi.workspace.v1.StopServiceResponse
+	(*SetServiceModeResponse)(nil),         // 158: toshi.workspace.v1.SetServiceModeResponse
+	(*WakeServiceResponse)(nil),            // 159: toshi.workspace.v1.WakeServiceResponse
+	(*HoldWorkloadResponse)(nil),           // 160: toshi.workspace.v1.HoldWorkloadResponse
+	(*ReleaseWorkloadResponse)(nil),        // 161: toshi.workspace.v1.ReleaseWorkloadResponse
+	(*KeepServiceAwakeResponse)(nil),       // 162: toshi.workspace.v1.KeepServiceAwakeResponse
+	(*ReleaseServiceAwakeResponse)(nil),    // 163: toshi.workspace.v1.ReleaseServiceAwakeResponse
+	(*StartServiceSignInResponse)(nil),     // 164: toshi.workspace.v1.StartServiceSignInResponse
+	(*AnswerServiceSignInResponse)(nil),    // 165: toshi.workspace.v1.AnswerServiceSignInResponse
+	(*CancelServiceSignInResponse)(nil),    // 166: toshi.workspace.v1.CancelServiceSignInResponse
+	(*GetServiceSignInStatusResponse)(nil), // 167: toshi.workspace.v1.GetServiceSignInStatusResponse
+	(*SignOutServiceResponse)(nil),         // 168: toshi.workspace.v1.SignOutServiceResponse
+	(*ListServiceRevisionsResponse)(nil),   // 169: toshi.workspace.v1.ListServiceRevisionsResponse
+	(*GetServiceRevisionResponse)(nil),     // 170: toshi.workspace.v1.GetServiceRevisionResponse
+	(*RollbackServiceResponse)(nil),        // 171: toshi.workspace.v1.RollbackServiceResponse
+	(*ListServiceActivationsResponse)(nil), // 172: toshi.workspace.v1.ListServiceActivationsResponse
+	(*ListServiceRunsResponse)(nil),        // 173: toshi.workspace.v1.ListServiceRunsResponse
+	(*ListEventsResponse)(nil),             // 174: toshi.workspace.v1.ListEventsResponse
+	(*WatchEventsResponse)(nil),            // 175: toshi.workspace.v1.WatchEventsResponse
+	(*GetOperationResponse)(nil),           // 176: toshi.workspace.v1.GetOperationResponse
+	(*WaitOperationResponse)(nil),          // 177: toshi.workspace.v1.WaitOperationResponse
 }
 var file_toshi_workspace_v1_workloads_proto_depIdxs = []int32{
-	81,  // 0: toshi.workspace.v1.AnswerPromptResponse.event:type_name -> toshi.workspace.v1.Event
-	81,  // 1: toshi.workspace.v1.EmitWorkloadEventResponse.event:type_name -> toshi.workspace.v1.Event
-	82,  // 2: toshi.workspace.v1.ExportEventsRequest.since:type_name -> google.protobuf.Timestamp
-	82,  // 3: toshi.workspace.v1.ExportEventsRequest.until:type_name -> google.protobuf.Timestamp
-	83,  // 4: toshi.workspace.v1.CreateJobRequest.spec:type_name -> toshi.workspace.v1.JobSpec
-	75,  // 5: toshi.workspace.v1.CreateJobRequest.labels:type_name -> toshi.workspace.v1.CreateJobRequest.LabelsEntry
-	84,  // 6: toshi.workspace.v1.CreateJobRequest.recording:type_name -> toshi.workspace.v1.RecordingPolicy
-	85,  // 7: toshi.workspace.v1.CreateJobRequest.wait_for_end:type_name -> google.protobuf.Duration
-	86,  // 8: toshi.workspace.v1.CreateJobResponse.job:type_name -> toshi.workspace.v1.Job
-	87,  // 9: toshi.workspace.v1.CreateJobResponse.output:type_name -> toshi.workspace.v1.Output
-	86,  // 10: toshi.workspace.v1.GetJobResponse.job:type_name -> toshi.workspace.v1.Job
-	88,  // 11: toshi.workspace.v1.GetJobResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
-	89,  // 12: toshi.workspace.v1.GetJobResponse.attempts:type_name -> toshi.workspace.v1.JobAttempt
-	90,  // 13: toshi.workspace.v1.ListJobsRequest.states:type_name -> toshi.workspace.v1.JobState
-	76,  // 14: toshi.workspace.v1.ListJobsRequest.labels:type_name -> toshi.workspace.v1.ListJobsRequest.LabelsEntry
-	86,  // 15: toshi.workspace.v1.ListJobsResponse.jobs:type_name -> toshi.workspace.v1.Job
-	15,  // 16: toshi.workspace.v1.GetWorkloadUsageResponse.usage:type_name -> toshi.workspace.v1.WorkloadUsage
-	82,  // 17: toshi.workspace.v1.WorkloadUsage.running_read_at:type_name -> google.protobuf.Timestamp
-	82,  // 18: toshi.workspace.v1.WorkloadUsage.counters_read_at:type_name -> google.protobuf.Timestamp
-	82,  // 19: toshi.workspace.v1.WorkloadUsage.egress_read_at:type_name -> google.protobuf.Timestamp
-	18,  // 20: toshi.workspace.v1.WorkloadUsage.cost:type_name -> toshi.workspace.v1.WorkloadCost
-	16,  // 21: toshi.workspace.v1.WorkloadUsage.ai_requests:type_name -> toshi.workspace.v1.AIRequests
-	16,  // 22: toshi.workspace.v1.WorkloadUsage.ai_requests_total:type_name -> toshi.workspace.v1.AIRequests
-	17,  // 23: toshi.workspace.v1.AIRequests.by_provider:type_name -> toshi.workspace.v1.AIProviderRequests
-	15,  // 24: toshi.workspace.v1.ListWorkloadUsagesResponse.usages:type_name -> toshi.workspace.v1.WorkloadUsage
-	86,  // 25: toshi.workspace.v1.UpdateJobRequest.job:type_name -> toshi.workspace.v1.Job
-	91,  // 26: toshi.workspace.v1.UpdateJobRequest.update_mask:type_name -> google.protobuf.FieldMask
-	86,  // 27: toshi.workspace.v1.UpdateJobResponse.job:type_name -> toshi.workspace.v1.Job
-	92,  // 28: toshi.workspace.v1.DeleteJobResponse.operation:type_name -> toshi.workspace.v1.Operation
-	86,  // 29: toshi.workspace.v1.CancelJobResponse.job:type_name -> toshi.workspace.v1.Job
-	90,  // 30: toshi.workspace.v1.WaitJobRequest.states:type_name -> toshi.workspace.v1.JobState
-	85,  // 31: toshi.workspace.v1.WaitJobRequest.timeout:type_name -> google.protobuf.Duration
-	86,  // 32: toshi.workspace.v1.WaitJobResponse.job:type_name -> toshi.workspace.v1.Job
-	93,  // 33: toshi.workspace.v1.WatchJobsResponse.type:type_name -> toshi.workspace.v1.EventType
-	86,  // 34: toshi.workspace.v1.WatchJobsResponse.job:type_name -> toshi.workspace.v1.Job
-	94,  // 35: toshi.workspace.v1.WatchJobsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	95,  // 36: toshi.workspace.v1.CreateSandboxRequest.spec:type_name -> toshi.workspace.v1.SandboxSpec
-	77,  // 37: toshi.workspace.v1.CreateSandboxRequest.labels:type_name -> toshi.workspace.v1.CreateSandboxRequest.LabelsEntry
-	84,  // 38: toshi.workspace.v1.CreateSandboxRequest.recording:type_name -> toshi.workspace.v1.RecordingPolicy
-	96,  // 39: toshi.workspace.v1.CreateSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	96,  // 40: toshi.workspace.v1.GetSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	88,  // 41: toshi.workspace.v1.GetSandboxResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
-	97,  // 42: toshi.workspace.v1.ListSandboxesRequest.states:type_name -> toshi.workspace.v1.SandboxState
-	78,  // 43: toshi.workspace.v1.ListSandboxesRequest.labels:type_name -> toshi.workspace.v1.ListSandboxesRequest.LabelsEntry
-	96,  // 44: toshi.workspace.v1.ListSandboxesResponse.sandboxes:type_name -> toshi.workspace.v1.Sandbox
-	96,  // 45: toshi.workspace.v1.UpdateSandboxRequest.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	91,  // 46: toshi.workspace.v1.UpdateSandboxRequest.update_mask:type_name -> google.protobuf.FieldMask
-	96,  // 47: toshi.workspace.v1.UpdateSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	92,  // 48: toshi.workspace.v1.UpdateSandboxResponse.operation:type_name -> toshi.workspace.v1.Operation
-	92,  // 49: toshi.workspace.v1.DeleteSandboxResponse.operation:type_name -> toshi.workspace.v1.Operation
-	97,  // 50: toshi.workspace.v1.WaitSandboxRequest.states:type_name -> toshi.workspace.v1.SandboxState
-	85,  // 51: toshi.workspace.v1.WaitSandboxRequest.timeout:type_name -> google.protobuf.Duration
-	96,  // 52: toshi.workspace.v1.WaitSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	93,  // 53: toshi.workspace.v1.WatchSandboxesResponse.type:type_name -> toshi.workspace.v1.EventType
-	96,  // 54: toshi.workspace.v1.WatchSandboxesResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
-	94,  // 55: toshi.workspace.v1.WatchSandboxesResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	98,  // 56: toshi.workspace.v1.CreateServiceRequest.spec:type_name -> toshi.workspace.v1.ServiceSpec
-	79,  // 57: toshi.workspace.v1.CreateServiceRequest.labels:type_name -> toshi.workspace.v1.CreateServiceRequest.LabelsEntry
-	99,  // 58: toshi.workspace.v1.CreateServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	99,  // 59: toshi.workspace.v1.GetServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	88,  // 60: toshi.workspace.v1.GetServiceResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
-	100, // 61: toshi.workspace.v1.ListServicesRequest.states:type_name -> toshi.workspace.v1.ServiceState
-	80,  // 62: toshi.workspace.v1.ListServicesRequest.labels:type_name -> toshi.workspace.v1.ListServicesRequest.LabelsEntry
-	99,  // 63: toshi.workspace.v1.ListServicesResponse.services:type_name -> toshi.workspace.v1.Service
-	99,  // 64: toshi.workspace.v1.UpdateServiceRequest.service:type_name -> toshi.workspace.v1.Service
-	91,  // 65: toshi.workspace.v1.UpdateServiceRequest.update_mask:type_name -> google.protobuf.FieldMask
-	99,  // 66: toshi.workspace.v1.UpdateServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	92,  // 67: toshi.workspace.v1.DeleteServiceResponse.operation:type_name -> toshi.workspace.v1.Operation
-	100, // 68: toshi.workspace.v1.WaitServiceRequest.states:type_name -> toshi.workspace.v1.ServiceState
-	85,  // 69: toshi.workspace.v1.WaitServiceRequest.timeout:type_name -> google.protobuf.Duration
-	99,  // 70: toshi.workspace.v1.WaitServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	93,  // 71: toshi.workspace.v1.WatchServicesResponse.type:type_name -> toshi.workspace.v1.EventType
-	99,  // 72: toshi.workspace.v1.WatchServicesResponse.service:type_name -> toshi.workspace.v1.Service
-	94,  // 73: toshi.workspace.v1.WatchServicesResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
-	82,  // 74: toshi.workspace.v1.ServiceAlarm.at:type_name -> google.protobuf.Timestamp
-	0,   // 75: toshi.workspace.v1.ServiceAlarm.misfire:type_name -> toshi.workspace.v1.ServiceAlarmMisfire
-	85,  // 76: toshi.workspace.v1.ServiceAlarm.starting_deadline:type_name -> google.protobuf.Duration
-	82,  // 77: toshi.workspace.v1.ServiceAlarm.next_at:type_name -> google.protobuf.Timestamp
-	82,  // 78: toshi.workspace.v1.ServiceAlarm.created_at:type_name -> google.protobuf.Timestamp
-	82,  // 79: toshi.workspace.v1.ServiceAlarm.updated_at:type_name -> google.protobuf.Timestamp
-	82,  // 80: toshi.workspace.v1.ServiceAlarmOccurrence.scheduled_for:type_name -> google.protobuf.Timestamp
-	82,  // 81: toshi.workspace.v1.ServiceAlarmOccurrence.created_at:type_name -> google.protobuf.Timestamp
-	82,  // 82: toshi.workspace.v1.ServiceAlarmOccurrence.published_at:type_name -> google.protobuf.Timestamp
-	82,  // 83: toshi.workspace.v1.PutServiceAlarmRequest.at:type_name -> google.protobuf.Timestamp
-	0,   // 84: toshi.workspace.v1.PutServiceAlarmRequest.misfire:type_name -> toshi.workspace.v1.ServiceAlarmMisfire
-	85,  // 85: toshi.workspace.v1.PutServiceAlarmRequest.starting_deadline:type_name -> google.protobuf.Duration
-	59,  // 86: toshi.workspace.v1.PutServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
-	59,  // 87: toshi.workspace.v1.GetServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
-	60,  // 88: toshi.workspace.v1.GetServiceAlarmResponse.occurrences:type_name -> toshi.workspace.v1.ServiceAlarmOccurrence
-	59,  // 89: toshi.workspace.v1.ListServiceAlarmsResponse.alarms:type_name -> toshi.workspace.v1.ServiceAlarm
-	59,  // 90: toshi.workspace.v1.PauseServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
-	59,  // 91: toshi.workspace.v1.UnpauseServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
-	60,  // 92: toshi.workspace.v1.RunServiceAlarmNowResponse.occurrence:type_name -> toshi.workspace.v1.ServiceAlarmOccurrence
-	7,   // 93: toshi.workspace.v1.WorkloadService.CreateJob:input_type -> toshi.workspace.v1.CreateJobRequest
-	9,   // 94: toshi.workspace.v1.WorkloadService.GetJob:input_type -> toshi.workspace.v1.GetJobRequest
-	11,  // 95: toshi.workspace.v1.WorkloadService.ListJobs:input_type -> toshi.workspace.v1.ListJobsRequest
-	13,  // 96: toshi.workspace.v1.WorkloadService.GetWorkloadUsage:input_type -> toshi.workspace.v1.GetWorkloadUsageRequest
-	19,  // 97: toshi.workspace.v1.WorkloadService.ListWorkloadUsages:input_type -> toshi.workspace.v1.ListWorkloadUsagesRequest
-	21,  // 98: toshi.workspace.v1.WorkloadService.UpdateJob:input_type -> toshi.workspace.v1.UpdateJobRequest
-	23,  // 99: toshi.workspace.v1.WorkloadService.DeleteJob:input_type -> toshi.workspace.v1.DeleteJobRequest
-	25,  // 100: toshi.workspace.v1.WorkloadService.CancelJob:input_type -> toshi.workspace.v1.CancelJobRequest
-	27,  // 101: toshi.workspace.v1.WorkloadService.WaitJob:input_type -> toshi.workspace.v1.WaitJobRequest
-	29,  // 102: toshi.workspace.v1.WorkloadService.WatchJobs:input_type -> toshi.workspace.v1.WatchJobsRequest
-	101, // 103: toshi.workspace.v1.WorkloadService.WatchOutput:input_type -> toshi.workspace.v1.WatchOutputRequest
-	31,  // 104: toshi.workspace.v1.WorkloadService.CreateSandbox:input_type -> toshi.workspace.v1.CreateSandboxRequest
-	33,  // 105: toshi.workspace.v1.WorkloadService.GetSandbox:input_type -> toshi.workspace.v1.GetSandboxRequest
-	35,  // 106: toshi.workspace.v1.WorkloadService.ListSandboxes:input_type -> toshi.workspace.v1.ListSandboxesRequest
-	37,  // 107: toshi.workspace.v1.WorkloadService.UpdateSandbox:input_type -> toshi.workspace.v1.UpdateSandboxRequest
-	39,  // 108: toshi.workspace.v1.WorkloadService.DeleteSandbox:input_type -> toshi.workspace.v1.DeleteSandboxRequest
-	102, // 109: toshi.workspace.v1.WorkloadService.StopSandbox:input_type -> toshi.workspace.v1.StopSandboxRequest
-	103, // 110: toshi.workspace.v1.WorkloadService.StartSandbox:input_type -> toshi.workspace.v1.StartSandboxRequest
-	41,  // 111: toshi.workspace.v1.WorkloadService.WaitSandbox:input_type -> toshi.workspace.v1.WaitSandboxRequest
-	43,  // 112: toshi.workspace.v1.WorkloadService.WatchSandboxes:input_type -> toshi.workspace.v1.WatchSandboxesRequest
-	104, // 113: toshi.workspace.v1.WorkloadService.Execute:input_type -> toshi.workspace.v1.ExecuteRequest
-	105, // 114: toshi.workspace.v1.WorkloadService.CancelExecution:input_type -> toshi.workspace.v1.CancelExecutionRequest
-	106, // 115: toshi.workspace.v1.WorkloadService.ExecuteCommand:input_type -> toshi.workspace.v1.ExecuteCommandRequest
-	1,   // 116: toshi.workspace.v1.WorkloadService.AnswerPrompt:input_type -> toshi.workspace.v1.AnswerPromptRequest
-	3,   // 117: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:input_type -> toshi.workspace.v1.EmitWorkloadEventRequest
-	107, // 118: toshi.workspace.v1.WorkloadService.WatchTelemetry:input_type -> toshi.workspace.v1.WatchTelemetryRequest
-	108, // 119: toshi.workspace.v1.WorkloadService.WatchGuestLog:input_type -> toshi.workspace.v1.WatchGuestLogRequest
-	109, // 120: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:input_type -> toshi.workspace.v1.CreatePreviewShareLinkRequest
-	110, // 121: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:input_type -> toshi.workspace.v1.ListPreviewShareLinksRequest
-	111, // 122: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:input_type -> toshi.workspace.v1.RevokePreviewShareLinkRequest
-	112, // 123: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:input_type -> toshi.workspace.v1.CreateServiceShareLinkRequest
-	113, // 124: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:input_type -> toshi.workspace.v1.ListServiceShareLinksRequest
-	114, // 125: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:input_type -> toshi.workspace.v1.RevokeServiceShareLinkRequest
-	45,  // 126: toshi.workspace.v1.WorkloadService.CreateService:input_type -> toshi.workspace.v1.CreateServiceRequest
-	47,  // 127: toshi.workspace.v1.WorkloadService.GetService:input_type -> toshi.workspace.v1.GetServiceRequest
-	49,  // 128: toshi.workspace.v1.WorkloadService.ListServices:input_type -> toshi.workspace.v1.ListServicesRequest
-	51,  // 129: toshi.workspace.v1.WorkloadService.UpdateService:input_type -> toshi.workspace.v1.UpdateServiceRequest
-	53,  // 130: toshi.workspace.v1.WorkloadService.DeleteService:input_type -> toshi.workspace.v1.DeleteServiceRequest
-	55,  // 131: toshi.workspace.v1.WorkloadService.WaitService:input_type -> toshi.workspace.v1.WaitServiceRequest
-	57,  // 132: toshi.workspace.v1.WorkloadService.WatchServices:input_type -> toshi.workspace.v1.WatchServicesRequest
-	115, // 133: toshi.workspace.v1.WorkloadService.StartService:input_type -> toshi.workspace.v1.StartServiceRequest
-	116, // 134: toshi.workspace.v1.WorkloadService.StopService:input_type -> toshi.workspace.v1.StopServiceRequest
-	117, // 135: toshi.workspace.v1.WorkloadService.SetServiceMode:input_type -> toshi.workspace.v1.SetServiceModeRequest
-	118, // 136: toshi.workspace.v1.WorkloadService.WakeService:input_type -> toshi.workspace.v1.WakeServiceRequest
-	119, // 137: toshi.workspace.v1.WorkloadService.HoldWorkload:input_type -> toshi.workspace.v1.HoldWorkloadRequest
-	120, // 138: toshi.workspace.v1.WorkloadService.ReleaseWorkload:input_type -> toshi.workspace.v1.ReleaseWorkloadRequest
-	121, // 139: toshi.workspace.v1.WorkloadService.KeepServiceAwake:input_type -> toshi.workspace.v1.KeepServiceAwakeRequest
-	122, // 140: toshi.workspace.v1.WorkloadService.ReleaseServiceAwake:input_type -> toshi.workspace.v1.ReleaseServiceAwakeRequest
-	61,  // 141: toshi.workspace.v1.WorkloadService.PutServiceAlarm:input_type -> toshi.workspace.v1.PutServiceAlarmRequest
-	63,  // 142: toshi.workspace.v1.WorkloadService.GetServiceAlarm:input_type -> toshi.workspace.v1.GetServiceAlarmRequest
-	65,  // 143: toshi.workspace.v1.WorkloadService.ListServiceAlarms:input_type -> toshi.workspace.v1.ListServiceAlarmsRequest
-	67,  // 144: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:input_type -> toshi.workspace.v1.DeleteServiceAlarmRequest
-	69,  // 145: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:input_type -> toshi.workspace.v1.PauseServiceAlarmRequest
-	71,  // 146: toshi.workspace.v1.WorkloadService.UnpauseServiceAlarm:input_type -> toshi.workspace.v1.UnpauseServiceAlarmRequest
-	73,  // 147: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:input_type -> toshi.workspace.v1.RunServiceAlarmNowRequest
-	123, // 148: toshi.workspace.v1.WorkloadService.StartServiceSignIn:input_type -> toshi.workspace.v1.StartServiceSignInRequest
-	124, // 149: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:input_type -> toshi.workspace.v1.AnswerServiceSignInRequest
-	125, // 150: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:input_type -> toshi.workspace.v1.CancelServiceSignInRequest
-	126, // 151: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:input_type -> toshi.workspace.v1.GetServiceSignInStatusRequest
-	127, // 152: toshi.workspace.v1.WorkloadService.SignOutService:input_type -> toshi.workspace.v1.SignOutServiceRequest
-	128, // 153: toshi.workspace.v1.WorkloadService.ListServiceRevisions:input_type -> toshi.workspace.v1.ListServiceRevisionsRequest
-	129, // 154: toshi.workspace.v1.WorkloadService.GetServiceRevision:input_type -> toshi.workspace.v1.GetServiceRevisionRequest
-	130, // 155: toshi.workspace.v1.WorkloadService.RollbackService:input_type -> toshi.workspace.v1.RollbackServiceRequest
-	131, // 156: toshi.workspace.v1.WorkloadService.ListServiceActivations:input_type -> toshi.workspace.v1.ListServiceActivationsRequest
-	132, // 157: toshi.workspace.v1.WorkloadService.ListServiceRuns:input_type -> toshi.workspace.v1.ListServiceRunsRequest
-	133, // 158: toshi.workspace.v1.WorkloadService.ListEvents:input_type -> toshi.workspace.v1.ListEventsRequest
-	5,   // 159: toshi.workspace.v1.WorkloadService.ExportEvents:input_type -> toshi.workspace.v1.ExportEventsRequest
-	134, // 160: toshi.workspace.v1.WorkloadService.WatchEvents:input_type -> toshi.workspace.v1.WatchEventsRequest
-	135, // 161: toshi.workspace.v1.WorkloadService.GetOperation:input_type -> toshi.workspace.v1.GetOperationRequest
-	136, // 162: toshi.workspace.v1.WorkloadService.WaitOperation:input_type -> toshi.workspace.v1.WaitOperationRequest
-	8,   // 163: toshi.workspace.v1.WorkloadService.CreateJob:output_type -> toshi.workspace.v1.CreateJobResponse
-	10,  // 164: toshi.workspace.v1.WorkloadService.GetJob:output_type -> toshi.workspace.v1.GetJobResponse
-	12,  // 165: toshi.workspace.v1.WorkloadService.ListJobs:output_type -> toshi.workspace.v1.ListJobsResponse
-	14,  // 166: toshi.workspace.v1.WorkloadService.GetWorkloadUsage:output_type -> toshi.workspace.v1.GetWorkloadUsageResponse
-	20,  // 167: toshi.workspace.v1.WorkloadService.ListWorkloadUsages:output_type -> toshi.workspace.v1.ListWorkloadUsagesResponse
-	22,  // 168: toshi.workspace.v1.WorkloadService.UpdateJob:output_type -> toshi.workspace.v1.UpdateJobResponse
-	24,  // 169: toshi.workspace.v1.WorkloadService.DeleteJob:output_type -> toshi.workspace.v1.DeleteJobResponse
-	26,  // 170: toshi.workspace.v1.WorkloadService.CancelJob:output_type -> toshi.workspace.v1.CancelJobResponse
-	28,  // 171: toshi.workspace.v1.WorkloadService.WaitJob:output_type -> toshi.workspace.v1.WaitJobResponse
-	30,  // 172: toshi.workspace.v1.WorkloadService.WatchJobs:output_type -> toshi.workspace.v1.WatchJobsResponse
-	137, // 173: toshi.workspace.v1.WorkloadService.WatchOutput:output_type -> toshi.workspace.v1.WatchOutputResponse
-	32,  // 174: toshi.workspace.v1.WorkloadService.CreateSandbox:output_type -> toshi.workspace.v1.CreateSandboxResponse
-	34,  // 175: toshi.workspace.v1.WorkloadService.GetSandbox:output_type -> toshi.workspace.v1.GetSandboxResponse
-	36,  // 176: toshi.workspace.v1.WorkloadService.ListSandboxes:output_type -> toshi.workspace.v1.ListSandboxesResponse
-	38,  // 177: toshi.workspace.v1.WorkloadService.UpdateSandbox:output_type -> toshi.workspace.v1.UpdateSandboxResponse
-	40,  // 178: toshi.workspace.v1.WorkloadService.DeleteSandbox:output_type -> toshi.workspace.v1.DeleteSandboxResponse
-	138, // 179: toshi.workspace.v1.WorkloadService.StopSandbox:output_type -> toshi.workspace.v1.StopSandboxResponse
-	139, // 180: toshi.workspace.v1.WorkloadService.StartSandbox:output_type -> toshi.workspace.v1.StartSandboxResponse
-	42,  // 181: toshi.workspace.v1.WorkloadService.WaitSandbox:output_type -> toshi.workspace.v1.WaitSandboxResponse
-	44,  // 182: toshi.workspace.v1.WorkloadService.WatchSandboxes:output_type -> toshi.workspace.v1.WatchSandboxesResponse
-	140, // 183: toshi.workspace.v1.WorkloadService.Execute:output_type -> toshi.workspace.v1.ExecuteResponse
-	141, // 184: toshi.workspace.v1.WorkloadService.CancelExecution:output_type -> toshi.workspace.v1.CancelExecutionResponse
-	142, // 185: toshi.workspace.v1.WorkloadService.ExecuteCommand:output_type -> toshi.workspace.v1.ExecuteCommandResponse
-	2,   // 186: toshi.workspace.v1.WorkloadService.AnswerPrompt:output_type -> toshi.workspace.v1.AnswerPromptResponse
-	4,   // 187: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:output_type -> toshi.workspace.v1.EmitWorkloadEventResponse
-	143, // 188: toshi.workspace.v1.WorkloadService.WatchTelemetry:output_type -> toshi.workspace.v1.WatchTelemetryResponse
-	144, // 189: toshi.workspace.v1.WorkloadService.WatchGuestLog:output_type -> toshi.workspace.v1.WatchGuestLogResponse
-	145, // 190: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:output_type -> toshi.workspace.v1.CreatePreviewShareLinkResponse
-	146, // 191: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:output_type -> toshi.workspace.v1.ListPreviewShareLinksResponse
-	147, // 192: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:output_type -> toshi.workspace.v1.RevokePreviewShareLinkResponse
-	148, // 193: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:output_type -> toshi.workspace.v1.CreateServiceShareLinkResponse
-	149, // 194: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:output_type -> toshi.workspace.v1.ListServiceShareLinksResponse
-	150, // 195: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:output_type -> toshi.workspace.v1.RevokeServiceShareLinkResponse
-	46,  // 196: toshi.workspace.v1.WorkloadService.CreateService:output_type -> toshi.workspace.v1.CreateServiceResponse
-	48,  // 197: toshi.workspace.v1.WorkloadService.GetService:output_type -> toshi.workspace.v1.GetServiceResponse
-	50,  // 198: toshi.workspace.v1.WorkloadService.ListServices:output_type -> toshi.workspace.v1.ListServicesResponse
-	52,  // 199: toshi.workspace.v1.WorkloadService.UpdateService:output_type -> toshi.workspace.v1.UpdateServiceResponse
-	54,  // 200: toshi.workspace.v1.WorkloadService.DeleteService:output_type -> toshi.workspace.v1.DeleteServiceResponse
-	56,  // 201: toshi.workspace.v1.WorkloadService.WaitService:output_type -> toshi.workspace.v1.WaitServiceResponse
-	58,  // 202: toshi.workspace.v1.WorkloadService.WatchServices:output_type -> toshi.workspace.v1.WatchServicesResponse
-	151, // 203: toshi.workspace.v1.WorkloadService.StartService:output_type -> toshi.workspace.v1.StartServiceResponse
-	152, // 204: toshi.workspace.v1.WorkloadService.StopService:output_type -> toshi.workspace.v1.StopServiceResponse
-	153, // 205: toshi.workspace.v1.WorkloadService.SetServiceMode:output_type -> toshi.workspace.v1.SetServiceModeResponse
-	154, // 206: toshi.workspace.v1.WorkloadService.WakeService:output_type -> toshi.workspace.v1.WakeServiceResponse
-	155, // 207: toshi.workspace.v1.WorkloadService.HoldWorkload:output_type -> toshi.workspace.v1.HoldWorkloadResponse
-	156, // 208: toshi.workspace.v1.WorkloadService.ReleaseWorkload:output_type -> toshi.workspace.v1.ReleaseWorkloadResponse
-	157, // 209: toshi.workspace.v1.WorkloadService.KeepServiceAwake:output_type -> toshi.workspace.v1.KeepServiceAwakeResponse
-	158, // 210: toshi.workspace.v1.WorkloadService.ReleaseServiceAwake:output_type -> toshi.workspace.v1.ReleaseServiceAwakeResponse
-	62,  // 211: toshi.workspace.v1.WorkloadService.PutServiceAlarm:output_type -> toshi.workspace.v1.PutServiceAlarmResponse
-	64,  // 212: toshi.workspace.v1.WorkloadService.GetServiceAlarm:output_type -> toshi.workspace.v1.GetServiceAlarmResponse
-	66,  // 213: toshi.workspace.v1.WorkloadService.ListServiceAlarms:output_type -> toshi.workspace.v1.ListServiceAlarmsResponse
-	68,  // 214: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:output_type -> toshi.workspace.v1.DeleteServiceAlarmResponse
-	70,  // 215: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:output_type -> toshi.workspace.v1.PauseServiceAlarmResponse
-	72,  // 216: toshi.workspace.v1.WorkloadService.UnpauseServiceAlarm:output_type -> toshi.workspace.v1.UnpauseServiceAlarmResponse
-	74,  // 217: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:output_type -> toshi.workspace.v1.RunServiceAlarmNowResponse
-	159, // 218: toshi.workspace.v1.WorkloadService.StartServiceSignIn:output_type -> toshi.workspace.v1.StartServiceSignInResponse
-	160, // 219: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:output_type -> toshi.workspace.v1.AnswerServiceSignInResponse
-	161, // 220: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:output_type -> toshi.workspace.v1.CancelServiceSignInResponse
-	162, // 221: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:output_type -> toshi.workspace.v1.GetServiceSignInStatusResponse
-	163, // 222: toshi.workspace.v1.WorkloadService.SignOutService:output_type -> toshi.workspace.v1.SignOutServiceResponse
-	164, // 223: toshi.workspace.v1.WorkloadService.ListServiceRevisions:output_type -> toshi.workspace.v1.ListServiceRevisionsResponse
-	165, // 224: toshi.workspace.v1.WorkloadService.GetServiceRevision:output_type -> toshi.workspace.v1.GetServiceRevisionResponse
-	166, // 225: toshi.workspace.v1.WorkloadService.RollbackService:output_type -> toshi.workspace.v1.RollbackServiceResponse
-	167, // 226: toshi.workspace.v1.WorkloadService.ListServiceActivations:output_type -> toshi.workspace.v1.ListServiceActivationsResponse
-	168, // 227: toshi.workspace.v1.WorkloadService.ListServiceRuns:output_type -> toshi.workspace.v1.ListServiceRunsResponse
-	169, // 228: toshi.workspace.v1.WorkloadService.ListEvents:output_type -> toshi.workspace.v1.ListEventsResponse
-	6,   // 229: toshi.workspace.v1.WorkloadService.ExportEvents:output_type -> toshi.workspace.v1.ExportEventsResponse
-	170, // 230: toshi.workspace.v1.WorkloadService.WatchEvents:output_type -> toshi.workspace.v1.WatchEventsResponse
-	171, // 231: toshi.workspace.v1.WorkloadService.GetOperation:output_type -> toshi.workspace.v1.GetOperationResponse
-	172, // 232: toshi.workspace.v1.WorkloadService.WaitOperation:output_type -> toshi.workspace.v1.WaitOperationResponse
-	163, // [163:233] is the sub-list for method output_type
-	93,  // [93:163] is the sub-list for method input_type
-	93,  // [93:93] is the sub-list for extension type_name
-	93,  // [93:93] is the sub-list for extension extendee
-	0,   // [0:93] is the sub-list for field type_name
+	86,  // 0: toshi.workspace.v1.AnswerPromptResponse.event:type_name -> toshi.workspace.v1.Event
+	5,   // 1: toshi.workspace.v1.ListPromptDecisionsResponse.decisions:type_name -> toshi.workspace.v1.PromptDecision
+	87,  // 2: toshi.workspace.v1.PromptDecision.decided_at:type_name -> google.protobuf.Timestamp
+	86,  // 3: toshi.workspace.v1.EmitWorkloadEventResponse.event:type_name -> toshi.workspace.v1.Event
+	87,  // 4: toshi.workspace.v1.ExportEventsRequest.since:type_name -> google.protobuf.Timestamp
+	87,  // 5: toshi.workspace.v1.ExportEventsRequest.until:type_name -> google.protobuf.Timestamp
+	88,  // 6: toshi.workspace.v1.CreateJobRequest.spec:type_name -> toshi.workspace.v1.JobSpec
+	80,  // 7: toshi.workspace.v1.CreateJobRequest.labels:type_name -> toshi.workspace.v1.CreateJobRequest.LabelsEntry
+	89,  // 8: toshi.workspace.v1.CreateJobRequest.recording:type_name -> toshi.workspace.v1.RecordingPolicy
+	90,  // 9: toshi.workspace.v1.CreateJobRequest.wait_for_end:type_name -> google.protobuf.Duration
+	91,  // 10: toshi.workspace.v1.CreateJobResponse.job:type_name -> toshi.workspace.v1.Job
+	92,  // 11: toshi.workspace.v1.CreateJobResponse.output:type_name -> toshi.workspace.v1.Output
+	91,  // 12: toshi.workspace.v1.GetJobResponse.job:type_name -> toshi.workspace.v1.Job
+	93,  // 13: toshi.workspace.v1.GetJobResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
+	94,  // 14: toshi.workspace.v1.GetJobResponse.attempts:type_name -> toshi.workspace.v1.JobAttempt
+	95,  // 15: toshi.workspace.v1.ListJobsRequest.states:type_name -> toshi.workspace.v1.JobState
+	81,  // 16: toshi.workspace.v1.ListJobsRequest.labels:type_name -> toshi.workspace.v1.ListJobsRequest.LabelsEntry
+	91,  // 17: toshi.workspace.v1.ListJobsResponse.jobs:type_name -> toshi.workspace.v1.Job
+	20,  // 18: toshi.workspace.v1.GetWorkloadUsageResponse.usage:type_name -> toshi.workspace.v1.WorkloadUsage
+	87,  // 19: toshi.workspace.v1.WorkloadUsage.running_read_at:type_name -> google.protobuf.Timestamp
+	87,  // 20: toshi.workspace.v1.WorkloadUsage.counters_read_at:type_name -> google.protobuf.Timestamp
+	87,  // 21: toshi.workspace.v1.WorkloadUsage.egress_read_at:type_name -> google.protobuf.Timestamp
+	23,  // 22: toshi.workspace.v1.WorkloadUsage.cost:type_name -> toshi.workspace.v1.WorkloadCost
+	21,  // 23: toshi.workspace.v1.WorkloadUsage.ai_requests:type_name -> toshi.workspace.v1.AIRequests
+	21,  // 24: toshi.workspace.v1.WorkloadUsage.ai_requests_total:type_name -> toshi.workspace.v1.AIRequests
+	22,  // 25: toshi.workspace.v1.AIRequests.by_provider:type_name -> toshi.workspace.v1.AIProviderRequests
+	20,  // 26: toshi.workspace.v1.ListWorkloadUsagesResponse.usages:type_name -> toshi.workspace.v1.WorkloadUsage
+	91,  // 27: toshi.workspace.v1.UpdateJobRequest.job:type_name -> toshi.workspace.v1.Job
+	96,  // 28: toshi.workspace.v1.UpdateJobRequest.update_mask:type_name -> google.protobuf.FieldMask
+	91,  // 29: toshi.workspace.v1.UpdateJobResponse.job:type_name -> toshi.workspace.v1.Job
+	97,  // 30: toshi.workspace.v1.DeleteJobResponse.operation:type_name -> toshi.workspace.v1.Operation
+	91,  // 31: toshi.workspace.v1.CancelJobResponse.job:type_name -> toshi.workspace.v1.Job
+	95,  // 32: toshi.workspace.v1.WaitJobRequest.states:type_name -> toshi.workspace.v1.JobState
+	90,  // 33: toshi.workspace.v1.WaitJobRequest.timeout:type_name -> google.protobuf.Duration
+	91,  // 34: toshi.workspace.v1.WaitJobResponse.job:type_name -> toshi.workspace.v1.Job
+	98,  // 35: toshi.workspace.v1.WatchJobsResponse.type:type_name -> toshi.workspace.v1.EventType
+	91,  // 36: toshi.workspace.v1.WatchJobsResponse.job:type_name -> toshi.workspace.v1.Job
+	99,  // 37: toshi.workspace.v1.WatchJobsResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	100, // 38: toshi.workspace.v1.CreateSandboxRequest.spec:type_name -> toshi.workspace.v1.SandboxSpec
+	82,  // 39: toshi.workspace.v1.CreateSandboxRequest.labels:type_name -> toshi.workspace.v1.CreateSandboxRequest.LabelsEntry
+	89,  // 40: toshi.workspace.v1.CreateSandboxRequest.recording:type_name -> toshi.workspace.v1.RecordingPolicy
+	101, // 41: toshi.workspace.v1.CreateSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	101, // 42: toshi.workspace.v1.GetSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	93,  // 43: toshi.workspace.v1.GetSandboxResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
+	102, // 44: toshi.workspace.v1.ListSandboxesRequest.states:type_name -> toshi.workspace.v1.SandboxState
+	83,  // 45: toshi.workspace.v1.ListSandboxesRequest.labels:type_name -> toshi.workspace.v1.ListSandboxesRequest.LabelsEntry
+	101, // 46: toshi.workspace.v1.ListSandboxesResponse.sandboxes:type_name -> toshi.workspace.v1.Sandbox
+	101, // 47: toshi.workspace.v1.UpdateSandboxRequest.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	96,  // 48: toshi.workspace.v1.UpdateSandboxRequest.update_mask:type_name -> google.protobuf.FieldMask
+	101, // 49: toshi.workspace.v1.UpdateSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	97,  // 50: toshi.workspace.v1.UpdateSandboxResponse.operation:type_name -> toshi.workspace.v1.Operation
+	97,  // 51: toshi.workspace.v1.DeleteSandboxResponse.operation:type_name -> toshi.workspace.v1.Operation
+	102, // 52: toshi.workspace.v1.WaitSandboxRequest.states:type_name -> toshi.workspace.v1.SandboxState
+	90,  // 53: toshi.workspace.v1.WaitSandboxRequest.timeout:type_name -> google.protobuf.Duration
+	101, // 54: toshi.workspace.v1.WaitSandboxResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	98,  // 55: toshi.workspace.v1.WatchSandboxesResponse.type:type_name -> toshi.workspace.v1.EventType
+	101, // 56: toshi.workspace.v1.WatchSandboxesResponse.sandbox:type_name -> toshi.workspace.v1.Sandbox
+	99,  // 57: toshi.workspace.v1.WatchSandboxesResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	103, // 58: toshi.workspace.v1.CreateServiceRequest.spec:type_name -> toshi.workspace.v1.ServiceSpec
+	84,  // 59: toshi.workspace.v1.CreateServiceRequest.labels:type_name -> toshi.workspace.v1.CreateServiceRequest.LabelsEntry
+	104, // 60: toshi.workspace.v1.CreateServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	104, // 61: toshi.workspace.v1.GetServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	93,  // 62: toshi.workspace.v1.GetServiceResponse.bound:type_name -> toshi.workspace.v1.BoundBinding
+	105, // 63: toshi.workspace.v1.ListServicesRequest.states:type_name -> toshi.workspace.v1.ServiceState
+	85,  // 64: toshi.workspace.v1.ListServicesRequest.labels:type_name -> toshi.workspace.v1.ListServicesRequest.LabelsEntry
+	104, // 65: toshi.workspace.v1.ListServicesResponse.services:type_name -> toshi.workspace.v1.Service
+	104, // 66: toshi.workspace.v1.UpdateServiceRequest.service:type_name -> toshi.workspace.v1.Service
+	96,  // 67: toshi.workspace.v1.UpdateServiceRequest.update_mask:type_name -> google.protobuf.FieldMask
+	104, // 68: toshi.workspace.v1.UpdateServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	97,  // 69: toshi.workspace.v1.DeleteServiceResponse.operation:type_name -> toshi.workspace.v1.Operation
+	105, // 70: toshi.workspace.v1.WaitServiceRequest.states:type_name -> toshi.workspace.v1.ServiceState
+	90,  // 71: toshi.workspace.v1.WaitServiceRequest.timeout:type_name -> google.protobuf.Duration
+	104, // 72: toshi.workspace.v1.WaitServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	98,  // 73: toshi.workspace.v1.WatchServicesResponse.type:type_name -> toshi.workspace.v1.EventType
+	104, // 74: toshi.workspace.v1.WatchServicesResponse.service:type_name -> toshi.workspace.v1.Service
+	99,  // 75: toshi.workspace.v1.WatchServicesResponse.keepalive:type_name -> toshi.workspace.v1.Keepalive
+	87,  // 76: toshi.workspace.v1.ServiceAlarm.at:type_name -> google.protobuf.Timestamp
+	0,   // 77: toshi.workspace.v1.ServiceAlarm.misfire:type_name -> toshi.workspace.v1.ServiceAlarmMisfire
+	90,  // 78: toshi.workspace.v1.ServiceAlarm.starting_deadline:type_name -> google.protobuf.Duration
+	87,  // 79: toshi.workspace.v1.ServiceAlarm.next_at:type_name -> google.protobuf.Timestamp
+	87,  // 80: toshi.workspace.v1.ServiceAlarm.created_at:type_name -> google.protobuf.Timestamp
+	87,  // 81: toshi.workspace.v1.ServiceAlarm.updated_at:type_name -> google.protobuf.Timestamp
+	87,  // 82: toshi.workspace.v1.ServiceAlarmOccurrence.scheduled_for:type_name -> google.protobuf.Timestamp
+	87,  // 83: toshi.workspace.v1.ServiceAlarmOccurrence.created_at:type_name -> google.protobuf.Timestamp
+	87,  // 84: toshi.workspace.v1.ServiceAlarmOccurrence.published_at:type_name -> google.protobuf.Timestamp
+	87,  // 85: toshi.workspace.v1.PutServiceAlarmRequest.at:type_name -> google.protobuf.Timestamp
+	0,   // 86: toshi.workspace.v1.PutServiceAlarmRequest.misfire:type_name -> toshi.workspace.v1.ServiceAlarmMisfire
+	90,  // 87: toshi.workspace.v1.PutServiceAlarmRequest.starting_deadline:type_name -> google.protobuf.Duration
+	64,  // 88: toshi.workspace.v1.PutServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	64,  // 89: toshi.workspace.v1.GetServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	65,  // 90: toshi.workspace.v1.GetServiceAlarmResponse.occurrences:type_name -> toshi.workspace.v1.ServiceAlarmOccurrence
+	64,  // 91: toshi.workspace.v1.ListServiceAlarmsResponse.alarms:type_name -> toshi.workspace.v1.ServiceAlarm
+	64,  // 92: toshi.workspace.v1.PauseServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	64,  // 93: toshi.workspace.v1.UnpauseServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	65,  // 94: toshi.workspace.v1.RunServiceAlarmNowResponse.occurrence:type_name -> toshi.workspace.v1.ServiceAlarmOccurrence
+	12,  // 95: toshi.workspace.v1.WorkloadService.CreateJob:input_type -> toshi.workspace.v1.CreateJobRequest
+	14,  // 96: toshi.workspace.v1.WorkloadService.GetJob:input_type -> toshi.workspace.v1.GetJobRequest
+	16,  // 97: toshi.workspace.v1.WorkloadService.ListJobs:input_type -> toshi.workspace.v1.ListJobsRequest
+	18,  // 98: toshi.workspace.v1.WorkloadService.GetWorkloadUsage:input_type -> toshi.workspace.v1.GetWorkloadUsageRequest
+	24,  // 99: toshi.workspace.v1.WorkloadService.ListWorkloadUsages:input_type -> toshi.workspace.v1.ListWorkloadUsagesRequest
+	26,  // 100: toshi.workspace.v1.WorkloadService.UpdateJob:input_type -> toshi.workspace.v1.UpdateJobRequest
+	28,  // 101: toshi.workspace.v1.WorkloadService.DeleteJob:input_type -> toshi.workspace.v1.DeleteJobRequest
+	30,  // 102: toshi.workspace.v1.WorkloadService.CancelJob:input_type -> toshi.workspace.v1.CancelJobRequest
+	32,  // 103: toshi.workspace.v1.WorkloadService.WaitJob:input_type -> toshi.workspace.v1.WaitJobRequest
+	34,  // 104: toshi.workspace.v1.WorkloadService.WatchJobs:input_type -> toshi.workspace.v1.WatchJobsRequest
+	106, // 105: toshi.workspace.v1.WorkloadService.WatchOutput:input_type -> toshi.workspace.v1.WatchOutputRequest
+	36,  // 106: toshi.workspace.v1.WorkloadService.CreateSandbox:input_type -> toshi.workspace.v1.CreateSandboxRequest
+	38,  // 107: toshi.workspace.v1.WorkloadService.GetSandbox:input_type -> toshi.workspace.v1.GetSandboxRequest
+	40,  // 108: toshi.workspace.v1.WorkloadService.ListSandboxes:input_type -> toshi.workspace.v1.ListSandboxesRequest
+	42,  // 109: toshi.workspace.v1.WorkloadService.UpdateSandbox:input_type -> toshi.workspace.v1.UpdateSandboxRequest
+	44,  // 110: toshi.workspace.v1.WorkloadService.DeleteSandbox:input_type -> toshi.workspace.v1.DeleteSandboxRequest
+	107, // 111: toshi.workspace.v1.WorkloadService.StopSandbox:input_type -> toshi.workspace.v1.StopSandboxRequest
+	108, // 112: toshi.workspace.v1.WorkloadService.StartSandbox:input_type -> toshi.workspace.v1.StartSandboxRequest
+	46,  // 113: toshi.workspace.v1.WorkloadService.WaitSandbox:input_type -> toshi.workspace.v1.WaitSandboxRequest
+	48,  // 114: toshi.workspace.v1.WorkloadService.WatchSandboxes:input_type -> toshi.workspace.v1.WatchSandboxesRequest
+	109, // 115: toshi.workspace.v1.WorkloadService.Execute:input_type -> toshi.workspace.v1.ExecuteRequest
+	110, // 116: toshi.workspace.v1.WorkloadService.CancelExecution:input_type -> toshi.workspace.v1.CancelExecutionRequest
+	111, // 117: toshi.workspace.v1.WorkloadService.ExecuteCommand:input_type -> toshi.workspace.v1.ExecuteCommandRequest
+	1,   // 118: toshi.workspace.v1.WorkloadService.AnswerPrompt:input_type -> toshi.workspace.v1.AnswerPromptRequest
+	3,   // 119: toshi.workspace.v1.WorkloadService.ListPromptDecisions:input_type -> toshi.workspace.v1.ListPromptDecisionsRequest
+	6,   // 120: toshi.workspace.v1.WorkloadService.RevokePromptDecision:input_type -> toshi.workspace.v1.RevokePromptDecisionRequest
+	8,   // 121: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:input_type -> toshi.workspace.v1.EmitWorkloadEventRequest
+	112, // 122: toshi.workspace.v1.WorkloadService.WatchTelemetry:input_type -> toshi.workspace.v1.WatchTelemetryRequest
+	113, // 123: toshi.workspace.v1.WorkloadService.WatchGuestLog:input_type -> toshi.workspace.v1.WatchGuestLogRequest
+	114, // 124: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:input_type -> toshi.workspace.v1.CreatePreviewShareLinkRequest
+	115, // 125: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:input_type -> toshi.workspace.v1.ListPreviewShareLinksRequest
+	116, // 126: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:input_type -> toshi.workspace.v1.RevokePreviewShareLinkRequest
+	117, // 127: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:input_type -> toshi.workspace.v1.CreateServiceShareLinkRequest
+	118, // 128: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:input_type -> toshi.workspace.v1.ListServiceShareLinksRequest
+	119, // 129: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:input_type -> toshi.workspace.v1.RevokeServiceShareLinkRequest
+	50,  // 130: toshi.workspace.v1.WorkloadService.CreateService:input_type -> toshi.workspace.v1.CreateServiceRequest
+	52,  // 131: toshi.workspace.v1.WorkloadService.GetService:input_type -> toshi.workspace.v1.GetServiceRequest
+	54,  // 132: toshi.workspace.v1.WorkloadService.ListServices:input_type -> toshi.workspace.v1.ListServicesRequest
+	56,  // 133: toshi.workspace.v1.WorkloadService.UpdateService:input_type -> toshi.workspace.v1.UpdateServiceRequest
+	58,  // 134: toshi.workspace.v1.WorkloadService.DeleteService:input_type -> toshi.workspace.v1.DeleteServiceRequest
+	60,  // 135: toshi.workspace.v1.WorkloadService.WaitService:input_type -> toshi.workspace.v1.WaitServiceRequest
+	62,  // 136: toshi.workspace.v1.WorkloadService.WatchServices:input_type -> toshi.workspace.v1.WatchServicesRequest
+	120, // 137: toshi.workspace.v1.WorkloadService.StartService:input_type -> toshi.workspace.v1.StartServiceRequest
+	121, // 138: toshi.workspace.v1.WorkloadService.StopService:input_type -> toshi.workspace.v1.StopServiceRequest
+	122, // 139: toshi.workspace.v1.WorkloadService.SetServiceMode:input_type -> toshi.workspace.v1.SetServiceModeRequest
+	123, // 140: toshi.workspace.v1.WorkloadService.WakeService:input_type -> toshi.workspace.v1.WakeServiceRequest
+	124, // 141: toshi.workspace.v1.WorkloadService.HoldWorkload:input_type -> toshi.workspace.v1.HoldWorkloadRequest
+	125, // 142: toshi.workspace.v1.WorkloadService.ReleaseWorkload:input_type -> toshi.workspace.v1.ReleaseWorkloadRequest
+	126, // 143: toshi.workspace.v1.WorkloadService.KeepServiceAwake:input_type -> toshi.workspace.v1.KeepServiceAwakeRequest
+	127, // 144: toshi.workspace.v1.WorkloadService.ReleaseServiceAwake:input_type -> toshi.workspace.v1.ReleaseServiceAwakeRequest
+	66,  // 145: toshi.workspace.v1.WorkloadService.PutServiceAlarm:input_type -> toshi.workspace.v1.PutServiceAlarmRequest
+	68,  // 146: toshi.workspace.v1.WorkloadService.GetServiceAlarm:input_type -> toshi.workspace.v1.GetServiceAlarmRequest
+	70,  // 147: toshi.workspace.v1.WorkloadService.ListServiceAlarms:input_type -> toshi.workspace.v1.ListServiceAlarmsRequest
+	72,  // 148: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:input_type -> toshi.workspace.v1.DeleteServiceAlarmRequest
+	74,  // 149: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:input_type -> toshi.workspace.v1.PauseServiceAlarmRequest
+	76,  // 150: toshi.workspace.v1.WorkloadService.UnpauseServiceAlarm:input_type -> toshi.workspace.v1.UnpauseServiceAlarmRequest
+	78,  // 151: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:input_type -> toshi.workspace.v1.RunServiceAlarmNowRequest
+	128, // 152: toshi.workspace.v1.WorkloadService.StartServiceSignIn:input_type -> toshi.workspace.v1.StartServiceSignInRequest
+	129, // 153: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:input_type -> toshi.workspace.v1.AnswerServiceSignInRequest
+	130, // 154: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:input_type -> toshi.workspace.v1.CancelServiceSignInRequest
+	131, // 155: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:input_type -> toshi.workspace.v1.GetServiceSignInStatusRequest
+	132, // 156: toshi.workspace.v1.WorkloadService.SignOutService:input_type -> toshi.workspace.v1.SignOutServiceRequest
+	133, // 157: toshi.workspace.v1.WorkloadService.ListServiceRevisions:input_type -> toshi.workspace.v1.ListServiceRevisionsRequest
+	134, // 158: toshi.workspace.v1.WorkloadService.GetServiceRevision:input_type -> toshi.workspace.v1.GetServiceRevisionRequest
+	135, // 159: toshi.workspace.v1.WorkloadService.RollbackService:input_type -> toshi.workspace.v1.RollbackServiceRequest
+	136, // 160: toshi.workspace.v1.WorkloadService.ListServiceActivations:input_type -> toshi.workspace.v1.ListServiceActivationsRequest
+	137, // 161: toshi.workspace.v1.WorkloadService.ListServiceRuns:input_type -> toshi.workspace.v1.ListServiceRunsRequest
+	138, // 162: toshi.workspace.v1.WorkloadService.ListEvents:input_type -> toshi.workspace.v1.ListEventsRequest
+	10,  // 163: toshi.workspace.v1.WorkloadService.ExportEvents:input_type -> toshi.workspace.v1.ExportEventsRequest
+	139, // 164: toshi.workspace.v1.WorkloadService.WatchEvents:input_type -> toshi.workspace.v1.WatchEventsRequest
+	140, // 165: toshi.workspace.v1.WorkloadService.GetOperation:input_type -> toshi.workspace.v1.GetOperationRequest
+	141, // 166: toshi.workspace.v1.WorkloadService.WaitOperation:input_type -> toshi.workspace.v1.WaitOperationRequest
+	13,  // 167: toshi.workspace.v1.WorkloadService.CreateJob:output_type -> toshi.workspace.v1.CreateJobResponse
+	15,  // 168: toshi.workspace.v1.WorkloadService.GetJob:output_type -> toshi.workspace.v1.GetJobResponse
+	17,  // 169: toshi.workspace.v1.WorkloadService.ListJobs:output_type -> toshi.workspace.v1.ListJobsResponse
+	19,  // 170: toshi.workspace.v1.WorkloadService.GetWorkloadUsage:output_type -> toshi.workspace.v1.GetWorkloadUsageResponse
+	25,  // 171: toshi.workspace.v1.WorkloadService.ListWorkloadUsages:output_type -> toshi.workspace.v1.ListWorkloadUsagesResponse
+	27,  // 172: toshi.workspace.v1.WorkloadService.UpdateJob:output_type -> toshi.workspace.v1.UpdateJobResponse
+	29,  // 173: toshi.workspace.v1.WorkloadService.DeleteJob:output_type -> toshi.workspace.v1.DeleteJobResponse
+	31,  // 174: toshi.workspace.v1.WorkloadService.CancelJob:output_type -> toshi.workspace.v1.CancelJobResponse
+	33,  // 175: toshi.workspace.v1.WorkloadService.WaitJob:output_type -> toshi.workspace.v1.WaitJobResponse
+	35,  // 176: toshi.workspace.v1.WorkloadService.WatchJobs:output_type -> toshi.workspace.v1.WatchJobsResponse
+	142, // 177: toshi.workspace.v1.WorkloadService.WatchOutput:output_type -> toshi.workspace.v1.WatchOutputResponse
+	37,  // 178: toshi.workspace.v1.WorkloadService.CreateSandbox:output_type -> toshi.workspace.v1.CreateSandboxResponse
+	39,  // 179: toshi.workspace.v1.WorkloadService.GetSandbox:output_type -> toshi.workspace.v1.GetSandboxResponse
+	41,  // 180: toshi.workspace.v1.WorkloadService.ListSandboxes:output_type -> toshi.workspace.v1.ListSandboxesResponse
+	43,  // 181: toshi.workspace.v1.WorkloadService.UpdateSandbox:output_type -> toshi.workspace.v1.UpdateSandboxResponse
+	45,  // 182: toshi.workspace.v1.WorkloadService.DeleteSandbox:output_type -> toshi.workspace.v1.DeleteSandboxResponse
+	143, // 183: toshi.workspace.v1.WorkloadService.StopSandbox:output_type -> toshi.workspace.v1.StopSandboxResponse
+	144, // 184: toshi.workspace.v1.WorkloadService.StartSandbox:output_type -> toshi.workspace.v1.StartSandboxResponse
+	47,  // 185: toshi.workspace.v1.WorkloadService.WaitSandbox:output_type -> toshi.workspace.v1.WaitSandboxResponse
+	49,  // 186: toshi.workspace.v1.WorkloadService.WatchSandboxes:output_type -> toshi.workspace.v1.WatchSandboxesResponse
+	145, // 187: toshi.workspace.v1.WorkloadService.Execute:output_type -> toshi.workspace.v1.ExecuteResponse
+	146, // 188: toshi.workspace.v1.WorkloadService.CancelExecution:output_type -> toshi.workspace.v1.CancelExecutionResponse
+	147, // 189: toshi.workspace.v1.WorkloadService.ExecuteCommand:output_type -> toshi.workspace.v1.ExecuteCommandResponse
+	2,   // 190: toshi.workspace.v1.WorkloadService.AnswerPrompt:output_type -> toshi.workspace.v1.AnswerPromptResponse
+	4,   // 191: toshi.workspace.v1.WorkloadService.ListPromptDecisions:output_type -> toshi.workspace.v1.ListPromptDecisionsResponse
+	7,   // 192: toshi.workspace.v1.WorkloadService.RevokePromptDecision:output_type -> toshi.workspace.v1.RevokePromptDecisionResponse
+	9,   // 193: toshi.workspace.v1.WorkloadService.EmitWorkloadEvent:output_type -> toshi.workspace.v1.EmitWorkloadEventResponse
+	148, // 194: toshi.workspace.v1.WorkloadService.WatchTelemetry:output_type -> toshi.workspace.v1.WatchTelemetryResponse
+	149, // 195: toshi.workspace.v1.WorkloadService.WatchGuestLog:output_type -> toshi.workspace.v1.WatchGuestLogResponse
+	150, // 196: toshi.workspace.v1.WorkloadService.CreatePreviewShareLink:output_type -> toshi.workspace.v1.CreatePreviewShareLinkResponse
+	151, // 197: toshi.workspace.v1.WorkloadService.ListPreviewShareLinks:output_type -> toshi.workspace.v1.ListPreviewShareLinksResponse
+	152, // 198: toshi.workspace.v1.WorkloadService.RevokePreviewShareLink:output_type -> toshi.workspace.v1.RevokePreviewShareLinkResponse
+	153, // 199: toshi.workspace.v1.WorkloadService.CreateServiceShareLink:output_type -> toshi.workspace.v1.CreateServiceShareLinkResponse
+	154, // 200: toshi.workspace.v1.WorkloadService.ListServiceShareLinks:output_type -> toshi.workspace.v1.ListServiceShareLinksResponse
+	155, // 201: toshi.workspace.v1.WorkloadService.RevokeServiceShareLink:output_type -> toshi.workspace.v1.RevokeServiceShareLinkResponse
+	51,  // 202: toshi.workspace.v1.WorkloadService.CreateService:output_type -> toshi.workspace.v1.CreateServiceResponse
+	53,  // 203: toshi.workspace.v1.WorkloadService.GetService:output_type -> toshi.workspace.v1.GetServiceResponse
+	55,  // 204: toshi.workspace.v1.WorkloadService.ListServices:output_type -> toshi.workspace.v1.ListServicesResponse
+	57,  // 205: toshi.workspace.v1.WorkloadService.UpdateService:output_type -> toshi.workspace.v1.UpdateServiceResponse
+	59,  // 206: toshi.workspace.v1.WorkloadService.DeleteService:output_type -> toshi.workspace.v1.DeleteServiceResponse
+	61,  // 207: toshi.workspace.v1.WorkloadService.WaitService:output_type -> toshi.workspace.v1.WaitServiceResponse
+	63,  // 208: toshi.workspace.v1.WorkloadService.WatchServices:output_type -> toshi.workspace.v1.WatchServicesResponse
+	156, // 209: toshi.workspace.v1.WorkloadService.StartService:output_type -> toshi.workspace.v1.StartServiceResponse
+	157, // 210: toshi.workspace.v1.WorkloadService.StopService:output_type -> toshi.workspace.v1.StopServiceResponse
+	158, // 211: toshi.workspace.v1.WorkloadService.SetServiceMode:output_type -> toshi.workspace.v1.SetServiceModeResponse
+	159, // 212: toshi.workspace.v1.WorkloadService.WakeService:output_type -> toshi.workspace.v1.WakeServiceResponse
+	160, // 213: toshi.workspace.v1.WorkloadService.HoldWorkload:output_type -> toshi.workspace.v1.HoldWorkloadResponse
+	161, // 214: toshi.workspace.v1.WorkloadService.ReleaseWorkload:output_type -> toshi.workspace.v1.ReleaseWorkloadResponse
+	162, // 215: toshi.workspace.v1.WorkloadService.KeepServiceAwake:output_type -> toshi.workspace.v1.KeepServiceAwakeResponse
+	163, // 216: toshi.workspace.v1.WorkloadService.ReleaseServiceAwake:output_type -> toshi.workspace.v1.ReleaseServiceAwakeResponse
+	67,  // 217: toshi.workspace.v1.WorkloadService.PutServiceAlarm:output_type -> toshi.workspace.v1.PutServiceAlarmResponse
+	69,  // 218: toshi.workspace.v1.WorkloadService.GetServiceAlarm:output_type -> toshi.workspace.v1.GetServiceAlarmResponse
+	71,  // 219: toshi.workspace.v1.WorkloadService.ListServiceAlarms:output_type -> toshi.workspace.v1.ListServiceAlarmsResponse
+	73,  // 220: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:output_type -> toshi.workspace.v1.DeleteServiceAlarmResponse
+	75,  // 221: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:output_type -> toshi.workspace.v1.PauseServiceAlarmResponse
+	77,  // 222: toshi.workspace.v1.WorkloadService.UnpauseServiceAlarm:output_type -> toshi.workspace.v1.UnpauseServiceAlarmResponse
+	79,  // 223: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:output_type -> toshi.workspace.v1.RunServiceAlarmNowResponse
+	164, // 224: toshi.workspace.v1.WorkloadService.StartServiceSignIn:output_type -> toshi.workspace.v1.StartServiceSignInResponse
+	165, // 225: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:output_type -> toshi.workspace.v1.AnswerServiceSignInResponse
+	166, // 226: toshi.workspace.v1.WorkloadService.CancelServiceSignIn:output_type -> toshi.workspace.v1.CancelServiceSignInResponse
+	167, // 227: toshi.workspace.v1.WorkloadService.GetServiceSignInStatus:output_type -> toshi.workspace.v1.GetServiceSignInStatusResponse
+	168, // 228: toshi.workspace.v1.WorkloadService.SignOutService:output_type -> toshi.workspace.v1.SignOutServiceResponse
+	169, // 229: toshi.workspace.v1.WorkloadService.ListServiceRevisions:output_type -> toshi.workspace.v1.ListServiceRevisionsResponse
+	170, // 230: toshi.workspace.v1.WorkloadService.GetServiceRevision:output_type -> toshi.workspace.v1.GetServiceRevisionResponse
+	171, // 231: toshi.workspace.v1.WorkloadService.RollbackService:output_type -> toshi.workspace.v1.RollbackServiceResponse
+	172, // 232: toshi.workspace.v1.WorkloadService.ListServiceActivations:output_type -> toshi.workspace.v1.ListServiceActivationsResponse
+	173, // 233: toshi.workspace.v1.WorkloadService.ListServiceRuns:output_type -> toshi.workspace.v1.ListServiceRunsResponse
+	174, // 234: toshi.workspace.v1.WorkloadService.ListEvents:output_type -> toshi.workspace.v1.ListEventsResponse
+	11,  // 235: toshi.workspace.v1.WorkloadService.ExportEvents:output_type -> toshi.workspace.v1.ExportEventsResponse
+	175, // 236: toshi.workspace.v1.WorkloadService.WatchEvents:output_type -> toshi.workspace.v1.WatchEventsResponse
+	176, // 237: toshi.workspace.v1.WorkloadService.GetOperation:output_type -> toshi.workspace.v1.GetOperationResponse
+	177, // 238: toshi.workspace.v1.WorkloadService.WaitOperation:output_type -> toshi.workspace.v1.WaitOperationResponse
+	167, // [167:239] is the sub-list for method output_type
+	95,  // [95:167] is the sub-list for method input_type
+	95,  // [95:95] is the sub-list for extension type_name
+	95,  // [95:95] is the sub-list for extension extendee
+	0,   // [0:95] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_workloads_proto_init() }
@@ -6579,11 +6965,11 @@ func file_toshi_workspace_v1_workloads_proto_init() {
 		return
 	}
 	file_toshi_workspace_v1_workspace_proto_init()
-	file_toshi_workspace_v1_workloads_proto_msgTypes[58].OneofWrappers = []any{
+	file_toshi_workspace_v1_workloads_proto_msgTypes[63].OneofWrappers = []any{
 		(*ServiceAlarm_Cron)(nil),
 		(*ServiceAlarm_At)(nil),
 	}
-	file_toshi_workspace_v1_workloads_proto_msgTypes[60].OneofWrappers = []any{
+	file_toshi_workspace_v1_workloads_proto_msgTypes[65].OneofWrappers = []any{
 		(*PutServiceAlarmRequest_Cron)(nil),
 		(*PutServiceAlarmRequest_At)(nil),
 	}
@@ -6593,7 +6979,7 @@ func file_toshi_workspace_v1_workloads_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_workloads_proto_rawDesc), len(file_toshi_workspace_v1_workloads_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   80,
+			NumMessages:   85,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

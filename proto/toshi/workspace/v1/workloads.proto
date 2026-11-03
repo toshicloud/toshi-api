@@ -311,12 +311,49 @@ service WorkloadService {
   // answered "approved" or "denied", a question with options one of them,
   // and one without options any text of 1 to 4096 bytes; another answer
   // fails with INVALID_ARGUMENT.
+  //
+  // With for_run set, an approval's answer also holds for the rest of the
+  // run: a later approval of the same kind and the same exact act, the
+  // same command, domain, repository and branch, is answered without a
+  // person, and the answer records the person who made this one. A later
+  // answer replaces it, a one-time "denied" removes a decision to approve,
+  // and the end of the run clears them. A question, a plan approval and an
+  // approval whose payload does not name its act are not answered for the
+  // run: the first two fail with INVALID_ARGUMENT, the last with
+  // FAILED_PRECONDITION. ListPromptDecisions lists the decisions, and
+  // RevokePromptDecision removes one.
   rpc AnswerPrompt(AnswerPromptRequest) returns (AnswerPromptResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "workloads.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
       action: "prompt.answered"
+      target: "workload:workload_id"
+    };
+  }
+
+  // ListPromptDecisions returns the approvals a job, sandbox or service
+  // answered for the rest of its run, oldest first: the kind of act, the
+  // exact act, the decision, the person who made it and when, and the
+  // decision ID of the prompt that asked it. A workload that has none, or
+  // none left, returns an empty list. It needs workloads.read.
+  rpc ListPromptDecisions(ListPromptDecisionsRequest) returns (ListPromptDecisionsResponse) {
+    option (toshi.permission) = "workloads.read";
+    option (toshi.scope) = "environment";
+  }
+
+  // RevokePromptDecision removes one of the approvals a job, sandbox or
+  // service answered for the rest of its run, so a later approval of the
+  // same act asks a person again. It asks nothing of the workload and
+  // changes no prompt. An unknown ID fails with NOT_FOUND; a retry with the
+  // same request_key returns the first answer. It needs workloads.write,
+  // and is audited as prompt_decision.revoked with the workload as its
+  // target.
+  rpc RevokePromptDecision(RevokePromptDecisionRequest) returns (RevokePromptDecisionResponse) {
+    option (toshi.key_mode) = KEY;
+    option (toshi.permission) = "workloads.write";
+    option (toshi.scope) = "environment";
+    option (toshi.audit) = {
       target: "workload:workload_id"
     };
   }
@@ -934,6 +971,11 @@ message AnswerPromptRequest {
   string decision_id = 6 [json_name = "decision_id"];
   // A key for retrying this answer without answering twice; empty for none.
   string request_key = 7 [json_name = "request_key"];
+  // Answer an approval for the rest of the run: a later approval of the
+  // same kind and exact act is answered without a person. Only an approval
+  // may carry it; a question, a plan and an approval whose payload does not
+  // name its act are refused.
+  bool for_run = 8;
 }
 
 // AnswerPromptResponse is the answer to AnswerPrompt.
@@ -941,6 +983,61 @@ message AnswerPromptResponse {
   // The AGENT_ANSWERED event.
   Event event = 1;
 }
+
+// ListPromptDecisionsRequest is a call of ListPromptDecisions.
+message ListPromptDecisionsRequest {
+  // The workload's project.
+  string project = 1;
+  // The workload's environment.
+  string environment = 2;
+  // The job, sandbox or service whose decisions for the run are listed.
+  string workload_id = 3;
+}
+
+// ListPromptDecisionsResponse is the answer to ListPromptDecisions.
+message ListPromptDecisionsResponse {
+  // The decisions, oldest first.
+  repeated PromptDecision decisions = 1;
+}
+
+// PromptDecision is an approval a job, sandbox or service answered for the
+// rest of its run.
+message PromptDecision {
+  // The decision's opaque ID, which RevokePromptDecision takes.
+  string id = 1;
+  // What the approval asked to be let do: push, pull_request, command or
+  // domain.
+  string kind = 2;
+  // The exact act it answers: the argv as a JSON array or the command
+  // string, the lower-case host, or the repository and branch.
+  string subject = 3;
+  // "approved" or "denied".
+  string decision = 4;
+  // The Toshi user ID of the person who decided.
+  string decided_by = 5;
+  // When the person decided.
+  google.protobuf.Timestamp decided_at = 6;
+  // The decision ID of the prompt that asked the act.
+  string decision_id = 7;
+}
+
+// RevokePromptDecisionRequest is a call of RevokePromptDecision.
+message RevokePromptDecisionRequest {
+  // The workload's project.
+  string project = 1;
+  // The workload's environment.
+  string environment = 2;
+  // The job, sandbox or service whose decision is revoked.
+  string workload_id = 3;
+  // The decision's ID, as ListPromptDecisions gives it.
+  string id = 4;
+  // A key for retrying this revoke without revoking twice; empty for none.
+  string request_key = 5;
+}
+
+// RevokePromptDecisionResponse is the answer to RevokePromptDecision: it
+// carries nothing.
+message RevokePromptDecisionResponse {}
 
 // EmitWorkloadEventRequest is a call of EmitWorkloadEvent.
 message EmitWorkloadEventRequest {

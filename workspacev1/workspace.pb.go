@@ -8618,7 +8618,10 @@ type AgentAnswerEvent struct {
 	// "approved" or "denied" for an approval.
 	Answer string `protobuf:"bytes,2,opt,name=answer,proto3" json:"answer,omitempty"`
 	// The Toshi user id of the person who answered.
-	AnsweredBy    string `protobuf:"bytes,3,opt,name=answered_by,json=answeredBy,proto3" json:"answered_by,omitempty"`
+	AnsweredBy string `protobuf:"bytes,3,opt,name=answered_by,json=answeredBy,proto3" json:"answered_by,omitempty"`
+	// Set when Toshi answered the prompt itself from a decision already made
+	// for the run: answered_by is then the person who made that decision.
+	Sticky        bool `protobuf:"varint,4,opt,name=sticky,proto3" json:"sticky,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -8672,6 +8675,13 @@ func (x *AgentAnswerEvent) GetAnsweredBy() string {
 		return x.AnsweredBy
 	}
 	return ""
+}
+
+func (x *AgentAnswerEvent) GetSticky() bool {
+	if x != nil {
+		return x.Sticky
+	}
+	return false
 }
 
 // MailSentEvent is a message a workload's mail binding sent: the mail
@@ -14754,12 +14764,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x04argv\x18\x02 \x03(\tR\x04argv\x125\n" +
 	"\x04exit\x18\x03 \x01(\v2!.toshi.workspace.v1.ExecutionExitR\x04exit\"\"\n" +
 	"\fEmittedEvent\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"h\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\"\x80\x01\n" +
 	"\x10AgentAnswerEvent\x12\x1b\n" +
 	"\tprompt_id\x18\x01 \x01(\tR\bpromptId\x12\x16\n" +
 	"\x06answer\x18\x02 \x01(\tR\x06answer\x12\x1f\n" +
 	"\vanswered_by\x18\x03 \x01(\tR\n" +
-	"answeredBy\"\x98\x01\n" +
+	"answeredBy\x12\x16\n" +
+	"\x06sticky\x18\x04 \x01(\bR\x06sticky\"\x98\x01\n" +
 	"\rMailSentEvent\x12\x18\n" +
 	"\abinding\x18\x01 \x01(\tR\abinding\x12\x1d\n" +
 	"\n" +

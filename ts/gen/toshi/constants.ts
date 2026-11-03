@@ -317,6 +317,8 @@ export const auditActions = {
   triggerUpdated: "trigger.updated",
   triggerDeleted: "trigger.deleted",
   promptAnswered: "prompt.answered",
+  promptDecisionCreated: "prompt_decision.created",
+  promptDecisionRevoked: "prompt_decision.revoked",
   agentRegistrationCreated: "agent_registration.created",
   agentRegistrationClaimStarted: "agent_registration.claim_started",
   agentRegistrationClaimed: "agent_registration.claimed",

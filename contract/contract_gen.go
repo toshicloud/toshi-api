@@ -612,6 +612,10 @@ const (
 	AuditActionTriggerDeleted = "trigger.deleted"
 	// AuditActionPromptAnswered is the "prompt.answered" audit action.
 	AuditActionPromptAnswered = "prompt.answered"
+	// AuditActionPromptDecisionCreated is the "prompt_decision.created" audit action.
+	AuditActionPromptDecisionCreated = "prompt_decision.created"
+	// AuditActionPromptDecisionRevoked is the "prompt_decision.revoked" audit action.
+	AuditActionPromptDecisionRevoked = "prompt_decision.revoked"
 	// AuditActionAgentRegistrationCreated is the "agent_registration.created" audit action.
 	AuditActionAgentRegistrationCreated = "agent_registration.created"
 	// AuditActionAgentRegistrationClaimStarted is the "agent_registration.claim_started" audit action.

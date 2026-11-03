@@ -1646,6 +1646,9 @@ message AgentAnswerEvent {
   string answer = 2;
   // The Toshi user id of the person who answered.
   string answered_by = 3;
+  // Set when Toshi answered the prompt itself from a decision already made
+  // for the run: answered_by is then the person who made that decision.
+  bool sticky = 4;
 }
 
 // MailSentEvent is a message a workload's mail binding sent: the mail
