@@ -92,6 +92,7 @@ export const reasons = {
   START_RATE: { code: "RESOURCE_EXHAUSTED", metadata: ["next_start_at"] },
   TOKEN_OUTSIDE_RANGES: { code: "UNAUTHENTICATED", metadata: [] },
   TOKEN_OUTSIDE_WINDOW: { code: "UNAUTHENTICATED", metadata: [] },
+  CALL_REMOVED: { code: "UNIMPLEMENTED", metadata: ["call", "cause"] },
 } as const;
 
 export type Reason = keyof typeof reasons;

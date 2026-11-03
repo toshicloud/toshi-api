@@ -184,6 +184,8 @@ const (
 	ReasonTokenOutsideRanges = "TOKEN_OUTSIDE_RANGES"
 	// ReasonTokenOutsideWindow: A workspace token is used before its permitted window starts.
 	ReasonTokenOutsideWindow = "TOKEN_OUTSIDE_WINDOW"
+	// ReasonCallRemoved: A call to a procedure the API removed; the metadata `call` names the removed procedure and `cause` the release that removed it.
+	ReasonCallRemoved = "CALL_REMOVED"
 )
 
 // The values of Artifact.state.

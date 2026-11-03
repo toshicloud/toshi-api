@@ -12,7 +12,110 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/permission.proto.
  */
 export const file_toshi_permission: GenFile = /*@__PURE__*/
-  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSI3CgVBdWRpdBIOCgZhY3Rpb24YASABKAkSDgoGdGFyZ2V0GAIgASgJEg4KBnJlYXNvbhgDIAEoCSK2AQoDTUNQEhYKCXJlYWRfb25seRgBIAEoCEgAiAEBEhgKC2Rlc3RydWN0aXZlGAIgASgISAGIAQESFwoKaWRlbXBvdGVudBgDIAEoCEgCiAEBEhcKCm9wZW5fd29ybGQYBCABKAhIA4gBARIPCgdleGNsdWRlGAUgASgIQgwKCl9yZWFkX29ubHlCDgoMX2Rlc3RydWN0aXZlQg0KC19pZGVtcG90ZW50Qg0KC19vcGVuX3dvcmxkIpYCCgVCb3VuZBIMCgRuYW1lGAEgASgJEh8KBHVuaXQYAiABKA4yES50b3NoaS5Cb3VuZC5Vbml0EhQKB2RlZmF1bHQYAyABKANIAIgBARIQCgNtaW4YBCABKANIAYgBARIQCgNtYXgYBSABKANIAogBARIWCgl0aHJlc2hvbGQYBiABKANIA4gBARISCgpodHRwX2hvc3RzGAcgAygJIk4KBFVuaXQSFAoQVU5JVF9VTlNQRUNJRklFRBAAEhAKDFVOSVRfU0VDT05EUxABEg4KClVOSVRfQllURVMQAhIOCgpVTklUX0NPVU5UEANCCgoIX2RlZmF1bHRCBgoEX21pbkIGCgRfbWF4QgwKCl90aHJlc2hvbGQqOQoHS2V5TW9kZRIYChRLRVlfTU9ERV9VTlNQRUNJRklFRBAAEgcKA0tFWRABEgsKB05BVFVSQUwQAjpACgpwZXJtaXNzaW9uEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuI4DIAEoCVIKcGVybWlzc2lvbjo2CgVzY29wZRIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLmOAyABKAlSBXNjb3BlOkQKBWF1ZGl0Eh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuo4DIAEoCzIMLnRvc2hpLkF1ZGl0UgVhdWRpdDo7CghieV9maWVsZBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLyOAyABKAhSB2J5RmllbGQ6PgoDbWNwEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvY4DIAEoCzIKLnRvc2hpLk1DUFIDbWNwOjIKA293bhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGL6OAyABKAhSA293bjpLCghrZXlfbW9kZRIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGMKOAyABKA4yDi50b3NoaS5LZXlNb2RlUgdrZXlNb2RlOkoKEGZpZWxkX3Blcm1pc3Npb24SHS5nb29nbGUucHJvdG9idWYuRmllbGRPcHRpb25zGLuOAyABKAlSD2ZpZWxkUGVybWlzc2lvbjpDCgVib3VuZBIdLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE9wdGlvbnMYwY4DIAEoCzIMLnRvc2hpLkJvdW5kUgVib3VuZEIeWhxnby50b3NoaWNsb3VkLmlvL2FwaS90b3NoaXBiYgZwcm90bzM", [file_google_protobuf_descriptor]);
+  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSJxCgtEZXByZWNhdGlvbhIWCg5ub3RpY2VfdmVyc2lvbhgBIAEoCRIXCg9yZW1vdmFsX3ZlcnNpb24YAiABKAkSEwoLcmVwbGFjZWRfYnkYAyABKAkSDAoEZG9jcxgEIAEoCRIOCgZzdW5zZXQYBSABKAkiNwoFQXVkaXQSDgoGYWN0aW9uGAEgASgJEg4KBnRhcmdldBgCIAEoCRIOCgZyZWFzb24YAyABKAkitgEKA01DUBIWCglyZWFkX29ubHkYASABKAhIAIgBARIYCgtkZXN0cnVjdGl2ZRgCIAEoCEgBiAEBEhcKCmlkZW1wb3RlbnQYAyABKAhIAogBARIXCgpvcGVuX3dvcmxkGAQgASgISAOIAQESDwoHZXhjbHVkZRgFIAEoCEIMCgpfcmVhZF9vbmx5Qg4KDF9kZXN0cnVjdGl2ZUINCgtfaWRlbXBvdGVudEINCgtfb3Blbl93b3JsZCKWAgoFQm91bmQSDAoEbmFtZRgBIAEoCRIfCgR1bml0GAIgASgOMhEudG9zaGkuQm91bmQuVW5pdBIUCgdkZWZhdWx0GAMgASgDSACIAQESEAoDbWluGAQgASgDSAGIAQESEAoDbWF4GAUgASgDSAKIAQESFgoJdGhyZXNob2xkGAYgASgDSAOIAQESEgoKaHR0cF9ob3N0cxgHIAMoCSJOCgRVbml0EhQKEFVOSVRfVU5TUEVDSUZJRUQQABIQCgxVTklUX1NFQ09ORFMQARIOCgpVTklUX0JZVEVTEAISDgoKVU5JVF9DT1VOVBADQgoKCF9kZWZhdWx0QgYKBF9taW5CBgoEX21heEIMCgpfdGhyZXNob2xkKjkKB0tleU1vZGUSGAoUS0VZX01PREVfVU5TUEVDSUZJRUQQABIHCgNLRVkQARILCgdOQVRVUkFMEAI6QAoKcGVybWlzc2lvbhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLiOAyABKAlSCnBlcm1pc3Npb246NgoFc2NvcGUSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi5jgMgASgJUgVzY29wZTpECgVhdWRpdBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLqOAyABKAsyDC50b3NoaS5BdWRpdFIFYXVkaXQ6OwoIYnlfZmllbGQSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi8jgMgASgIUgdieUZpZWxkOj4KA21jcBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGL2OAyABKAsyCi50b3NoaS5NQ1BSA21jcDoyCgNvd24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi+jgMgASgIUgNvd246SwoIa2V5X21vZGUSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxjCjgMgASgOMg4udG9zaGkuS2V5TW9kZVIHa2V5TW9kZTpWCgtkZXByZWNhdGlvbhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGMOOAyABKAsyEi50b3NoaS5EZXByZWNhdGlvblILZGVwcmVjYXRpb246SgoQZmllbGRfcGVybWlzc2lvbhIdLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE9wdGlvbnMYu44DIAEoCVIPZmllbGRQZXJtaXNzaW9uOkMKBWJvdW5kEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0aW9ucxjBjgMgASgLMgwudG9zaGkuQm91bmRSBWJvdW5kQh5aHGdvLnRvc2hpY2xvdWQuaW8vYXBpL3Rvc2hpcGJiBnByb3RvMw", [file_google_protobuf_descriptor]);
+
+/**
+ * Deprecation is the notice that a call will be removed.
+ *
+ * @generated from message toshi.Deprecation
+ */
+export type Deprecation = Message<"toshi.Deprecation"> & {
+  /**
+   * notice_version is the release that first carries the notice, as
+   * MAJOR.MINOR.PATCH, such as "0.9.0".
+   *
+   * @generated from field: string notice_version = 1;
+   */
+  noticeVersion: string;
+
+  /**
+   * removal_version is the release that removes the call, as
+   * MAJOR.MINOR.PATCH. It is at least one release after notice_version.
+   *
+   * @generated from field: string removal_version = 2;
+   */
+  removalVersion: string;
+
+  /**
+   * replaced_by is the full procedure name of the call that replaces this
+   * one, such as "/toshi.workspace.v1.XService/Y", or empty when nothing
+   * replaces it.
+   *
+   * @generated from field: string replaced_by = 3;
+   */
+  replacedBy: string;
+
+  /**
+   * docs is the path of the documentation page that describes the removal,
+   * such as "docs/api/foo.md#section".
+   *
+   * @generated from field: string docs = 4;
+   */
+  docs: string;
+
+  /**
+   * sunset is the date the removal release is scheduled for, as
+   * YYYY-MM-DD. It is empty until the removal release is scheduled.
+   *
+   * @generated from field: string sunset = 5;
+   */
+  sunset: string;
+};
+
+/**
+ * Deprecation is the notice that a call will be removed.
+ *
+ * @generated from message toshi.Deprecation
+ */
+export type DeprecationJson = {
+  /**
+   * notice_version is the release that first carries the notice, as
+   * MAJOR.MINOR.PATCH, such as "0.9.0".
+   *
+   * @generated from field: string notice_version = 1;
+   */
+  noticeVersion?: string;
+
+  /**
+   * removal_version is the release that removes the call, as
+   * MAJOR.MINOR.PATCH. It is at least one release after notice_version.
+   *
+   * @generated from field: string removal_version = 2;
+   */
+  removalVersion?: string;
+
+  /**
+   * replaced_by is the full procedure name of the call that replaces this
+   * one, such as "/toshi.workspace.v1.XService/Y", or empty when nothing
+   * replaces it.
+   *
+   * @generated from field: string replaced_by = 3;
+   */
+  replacedBy?: string;
+
+  /**
+   * docs is the path of the documentation page that describes the removal,
+   * such as "docs/api/foo.md#section".
+   *
+   * @generated from field: string docs = 4;
+   */
+  docs?: string;
+
+  /**
+   * sunset is the date the removal release is scheduled for, as
+   * YYYY-MM-DD. It is empty until the removal release is scheduled.
+   *
+   * @generated from field: string sunset = 5;
+   */
+  sunset?: string;
+};
+
+/**
+ * Describes the message toshi.Deprecation.
+ * Use `create(DeprecationSchema)` to create a new message.
+ */
+export const DeprecationSchema: GenMessage<Deprecation, {jsonType: DeprecationJson}> = /*@__PURE__*/
+  messageDesc(file_toshi_permission, 0);
 
 /**
  * Audit is the audit event a call records.
@@ -99,7 +202,7 @@ export type AuditJson = {
  * Use `create(AuditSchema)` to create a new message.
  */
 export const AuditSchema: GenMessage<Audit, {jsonType: AuditJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_permission, 0);
+  messageDesc(file_toshi_permission, 1);
 
 /**
  * MCP is how a call appears as a tool of the MCP server: each hint that is
@@ -204,7 +307,7 @@ export type MCPJson = {
  * Use `create(MCPSchema)` to create a new message.
  */
 export const MCPSchema: GenMessage<MCP, {jsonType: MCPJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_permission, 1);
+  messageDesc(file_toshi_permission, 2);
 
 /**
  * Bound names fixed values and their units for a field.
@@ -323,7 +426,7 @@ export type BoundJson = {
  * Use `create(BoundSchema)` to create a new message.
  */
 export const BoundSchema: GenMessage<Bound, {jsonType: BoundJson}> = /*@__PURE__*/
-  messageDesc(file_toshi_permission, 2);
+  messageDesc(file_toshi_permission, 3);
 
 /**
  * Unit identifies the unit of a bound's values.
@@ -363,7 +466,7 @@ export type Bound_UnitJson = "UNIT_UNSPECIFIED" | "UNIT_SECONDS" | "UNIT_BYTES" 
  * Describes the enum toshi.Bound.Unit.
  */
 export const Bound_UnitSchema: GenEnum<Bound_Unit, Bound_UnitJson> = /*@__PURE__*/
-  enumDesc(file_toshi_permission, 2, 0);
+  enumDesc(file_toshi_permission, 3, 0);
 
 /**
  * KeyMode describes the retry mode of a changing call.
@@ -501,6 +604,16 @@ export const key_mode: GenExtension<MethodOptions, KeyMode> = /*@__PURE__*/
   extDesc(file_toshi_permission, 6);
 
 /**
+ * deprecation announces that a call will be removed. The release that
+ * carries the notice still serves the call, and the release named in
+ * removal_version removes it.
+ *
+ * @generated from extension: toshi.Deprecation deprecation = 51011;
+ */
+export const deprecation: GenExtension<MethodOptions, Deprecation> = /*@__PURE__*/
+  extDesc(file_toshi_permission, 7);
+
+/**
  * field_permission names what a caller needs to change the field through
  * the mask of an update call marked by_field: a field group of its own,
  * such as "billing.write" for a workspace's spending limits. A field
@@ -510,7 +623,7 @@ export const key_mode: GenExtension<MethodOptions, KeyMode> = /*@__PURE__*/
  * @generated from extension: string field_permission = 51003;
  */
 export const field_permission: GenExtension<FieldOptions, string> = /*@__PURE__*/
-  extDesc(file_toshi_permission, 7);
+  extDesc(file_toshi_permission, 8);
 
 /**
  * bound states a fixed number the server applies to the field: the same
@@ -521,5 +634,5 @@ export const field_permission: GenExtension<FieldOptions, string> = /*@__PURE__*
  * @generated from extension: toshi.Bound bound = 51009;
  */
 export const bound: GenExtension<FieldOptions, Bound> = /*@__PURE__*/
-  extDesc(file_toshi_permission, 8);
+  extDesc(file_toshi_permission, 9);
 
