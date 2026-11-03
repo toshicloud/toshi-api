@@ -112,6 +112,8 @@ const (
 	ReasonLastMember = "LAST_MEMBER"
 	// ReasonLastOwner: `RemoveMember` or a revoke removing the workspace's last owner.
 	ReasonLastOwner = "LAST_OWNER"
+	// ReasonMacosGuestHelperNotBuilt: A workload on a macOS host that needs the guest helper: no macOS image carries one, so the host refuses instead of connecting to a socket nothing answers.
+	ReasonMacosGuestHelperNotBuilt = "MACOS_GUEST_HELPER_NOT_BUILT"
 	// ReasonNoDeletionScheduled: `CancelWorkspaceDeletion` where no deletion is scheduled.
 	ReasonNoDeletionScheduled = "NO_DELETION_SCHEDULED"
 	// ReasonNoSignOutCommand: A service sign-out request names a program with no sign-out command.

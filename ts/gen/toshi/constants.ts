@@ -56,6 +56,7 @@ export const reasons = {
   LAST_IDENTITY: { code: "FAILED_PRECONDITION", metadata: [] },
   LAST_MEMBER: { code: "FAILED_PRECONDITION", metadata: ["person"] },
   LAST_OWNER: { code: "FAILED_PRECONDITION", metadata: ["person"] },
+  MACOS_GUEST_HELPER_NOT_BUILT: { code: "FAILED_PRECONDITION", metadata: [] },
   NO_DELETION_SCHEDULED: { code: "FAILED_PRECONDITION", metadata: ["state"] },
   NO_SIGN_OUT_COMMAND: { code: "FAILED_PRECONDITION", metadata: ["program"] },
   PERSON_NOT_MEMBER: { code: "FAILED_PRECONDITION", metadata: ["person"] },
