@@ -323,7 +323,7 @@ message Service {
   // a service recorded before workloads kept one has no layers.
   WorkloadNetwork network = 9;
   // The live holds on it, soonest expiry first: each keeps it awake until
-  // its expires_at unless renewed (HoldService). Empty when none.
+  // its expires_at unless renewed (KeepServiceAwake). Empty when none.
   repeated ServiceHold holds = 10;
   // Who manages this object: "manifest" when the project manifest declares
   // it, empty when nothing does. A manifest apply sets managed_by,
@@ -862,7 +862,7 @@ message ServiceSpec {
   // Until when a started on-demand service stays awake with no hold;
   // unset for an always-on service. Set by the server; ignored in a
   // request.
-  google.protobuf.Timestamp awake_until = 10;
+  google.protobuf.Timestamp awake_expires_at = 10;
   // The digest the current revision's container_image named when the
   // revision was made, "sha256:<hex>", and empty for a recipe without one:
   // every run of the revision pulls it, a retry, a wake and a new VM
@@ -2070,16 +2070,19 @@ message ReleaseWorkloadRequest {
 
 message ReleaseWorkloadResponse {}
 
-message HoldServiceRequest {
+message KeepServiceAwakeRequest {
   string project = 1;
   string environment = 2;
   string id = 3;
-  // How long the hold stays live, at most an hour; unset is 10 minutes.
-  google.protobuf.Duration ttl = 4;
+  reserved 4;
+  reserved "ttl";
   string request_key = 5;
+  // How long the hold stays live, in seconds: at most 3600; 0 or unset is
+  // 600.
+  int64 ttl_seconds = 6;
 }
 
-message HoldServiceResponse {
+message KeepServiceAwakeResponse {
   reserved 1;
   reserved "workload";
   ServiceHold hold = 2;
@@ -2095,14 +2098,14 @@ message ServiceHold {
   google.protobuf.Timestamp expires_at = 2;
 }
 
-message ReleaseServiceRequest {
+message ReleaseServiceAwakeRequest {
   string project = 1;
   string environment = 2;
   string id = 3;
   string request_key = 4;
 }
 
-message ReleaseServiceResponse {
+message ReleaseServiceAwakeResponse {
   reserved 1;
   reserved "workload";
   // The service after the release.

@@ -2321,7 +2321,7 @@ type Service struct {
 	// a service recorded before workloads kept one has no layers.
 	Network *WorkloadNetwork `protobuf:"bytes,9,opt,name=network,proto3" json:"network,omitempty"`
 	// The live holds on it, soonest expiry first: each keeps it awake until
-	// its expires_at unless renewed (HoldService). Empty when none.
+	// its expires_at unless renewed (KeepServiceAwake). Empty when none.
 	Holds []*ServiceHold `protobuf:"bytes,10,rep,name=holds,proto3" json:"holds,omitempty"`
 	// Who manages this object: "manifest" when the project manifest declares
 	// it, empty when nothing does. A manifest apply sets managed_by,
@@ -4428,7 +4428,7 @@ type ServiceSpec struct {
 	// Until when a started on-demand service stays awake with no hold;
 	// unset for an always-on service. Set by the server; ignored in a
 	// request.
-	AwakeUntil *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=awake_until,json=awakeUntil,proto3" json:"awake_until,omitempty"`
+	AwakeExpiresAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=awake_expires_at,json=awakeExpiresAt,proto3" json:"awake_expires_at,omitempty"`
 	// The digest the current revision's container_image named when the
 	// revision was made, "sha256:<hex>", and empty for a recipe without one:
 	// every run of the revision pulls it, a retry, a wake and a new VM
@@ -4548,9 +4548,9 @@ func (x *ServiceSpec) GetSleeping() bool {
 	return false
 }
 
-func (x *ServiceSpec) GetAwakeUntil() *timestamppb.Timestamp {
+func (x *ServiceSpec) GetAwakeExpiresAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.AwakeUntil
+		return x.AwakeExpiresAt
 	}
 	return nil
 }
@@ -11453,32 +11453,33 @@ func (*ReleaseWorkloadResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{116}
 }
 
-type HoldServiceRequest struct {
+type KeepServiceAwakeRequest struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	// How long the hold stays live, at most an hour; unset is 10 minutes.
-	Ttl           *durationpb.Duration `protobuf:"bytes,4,opt,name=ttl,proto3" json:"ttl,omitempty"`
-	RequestKey    string               `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	RequestKey  string                 `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	// How long the hold stays live, in seconds: at most 3600; 0 or unset is
+	// 600.
+	TtlSeconds    int64 `protobuf:"varint,6,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *HoldServiceRequest) Reset() {
-	*x = HoldServiceRequest{}
+func (x *KeepServiceAwakeRequest) Reset() {
+	*x = KeepServiceAwakeRequest{}
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[117]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *HoldServiceRequest) String() string {
+func (x *KeepServiceAwakeRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*HoldServiceRequest) ProtoMessage() {}
+func (*KeepServiceAwakeRequest) ProtoMessage() {}
 
-func (x *HoldServiceRequest) ProtoReflect() protoreflect.Message {
+func (x *KeepServiceAwakeRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[117]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -11490,47 +11491,47 @@ func (x *HoldServiceRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use HoldServiceRequest.ProtoReflect.Descriptor instead.
-func (*HoldServiceRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use KeepServiceAwakeRequest.ProtoReflect.Descriptor instead.
+func (*KeepServiceAwakeRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{117}
 }
 
-func (x *HoldServiceRequest) GetProject() string {
+func (x *KeepServiceAwakeRequest) GetProject() string {
 	if x != nil {
 		return x.Project
 	}
 	return ""
 }
 
-func (x *HoldServiceRequest) GetEnvironment() string {
+func (x *KeepServiceAwakeRequest) GetEnvironment() string {
 	if x != nil {
 		return x.Environment
 	}
 	return ""
 }
 
-func (x *HoldServiceRequest) GetId() string {
+func (x *KeepServiceAwakeRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *HoldServiceRequest) GetTtl() *durationpb.Duration {
-	if x != nil {
-		return x.Ttl
-	}
-	return nil
-}
-
-func (x *HoldServiceRequest) GetRequestKey() string {
+func (x *KeepServiceAwakeRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
 	}
 	return ""
 }
 
-type HoldServiceResponse struct {
+func (x *KeepServiceAwakeRequest) GetTtlSeconds() int64 {
+	if x != nil {
+		return x.TtlSeconds
+	}
+	return 0
+}
+
+type KeepServiceAwakeResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Hold  *ServiceHold           `protobuf:"bytes,2,opt,name=hold,proto3" json:"hold,omitempty"`
 	// The service after the hold.
@@ -11539,20 +11540,20 @@ type HoldServiceResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *HoldServiceResponse) Reset() {
-	*x = HoldServiceResponse{}
+func (x *KeepServiceAwakeResponse) Reset() {
+	*x = KeepServiceAwakeResponse{}
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[118]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *HoldServiceResponse) String() string {
+func (x *KeepServiceAwakeResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*HoldServiceResponse) ProtoMessage() {}
+func (*KeepServiceAwakeResponse) ProtoMessage() {}
 
-func (x *HoldServiceResponse) ProtoReflect() protoreflect.Message {
+func (x *KeepServiceAwakeResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[118]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -11564,19 +11565,19 @@ func (x *HoldServiceResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use HoldServiceResponse.ProtoReflect.Descriptor instead.
-func (*HoldServiceResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use KeepServiceAwakeResponse.ProtoReflect.Descriptor instead.
+func (*KeepServiceAwakeResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{118}
 }
 
-func (x *HoldServiceResponse) GetHold() *ServiceHold {
+func (x *KeepServiceAwakeResponse) GetHold() *ServiceHold {
 	if x != nil {
 		return x.Hold
 	}
 	return nil
 }
 
-func (x *HoldServiceResponse) GetService() *Service {
+func (x *KeepServiceAwakeResponse) GetService() *Service {
 	if x != nil {
 		return x.Service
 	}
@@ -11638,7 +11639,7 @@ func (x *ServiceHold) GetExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type ReleaseServiceRequest struct {
+type ReleaseServiceAwakeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
@@ -11648,20 +11649,20 @@ type ReleaseServiceRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ReleaseServiceRequest) Reset() {
-	*x = ReleaseServiceRequest{}
+func (x *ReleaseServiceAwakeRequest) Reset() {
+	*x = ReleaseServiceAwakeRequest{}
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[120]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ReleaseServiceRequest) String() string {
+func (x *ReleaseServiceAwakeRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ReleaseServiceRequest) ProtoMessage() {}
+func (*ReleaseServiceAwakeRequest) ProtoMessage() {}
 
-func (x *ReleaseServiceRequest) ProtoReflect() protoreflect.Message {
+func (x *ReleaseServiceAwakeRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[120]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -11673,40 +11674,40 @@ func (x *ReleaseServiceRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReleaseServiceRequest.ProtoReflect.Descriptor instead.
-func (*ReleaseServiceRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ReleaseServiceAwakeRequest.ProtoReflect.Descriptor instead.
+func (*ReleaseServiceAwakeRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{120}
 }
 
-func (x *ReleaseServiceRequest) GetProject() string {
+func (x *ReleaseServiceAwakeRequest) GetProject() string {
 	if x != nil {
 		return x.Project
 	}
 	return ""
 }
 
-func (x *ReleaseServiceRequest) GetEnvironment() string {
+func (x *ReleaseServiceAwakeRequest) GetEnvironment() string {
 	if x != nil {
 		return x.Environment
 	}
 	return ""
 }
 
-func (x *ReleaseServiceRequest) GetId() string {
+func (x *ReleaseServiceAwakeRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *ReleaseServiceRequest) GetRequestKey() string {
+func (x *ReleaseServiceAwakeRequest) GetRequestKey() string {
 	if x != nil {
 		return x.RequestKey
 	}
 	return ""
 }
 
-type ReleaseServiceResponse struct {
+type ReleaseServiceAwakeResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service after the release.
 	Service       *Service `protobuf:"bytes,2,opt,name=service,proto3" json:"service,omitempty"`
@@ -11714,20 +11715,20 @@ type ReleaseServiceResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ReleaseServiceResponse) Reset() {
-	*x = ReleaseServiceResponse{}
+func (x *ReleaseServiceAwakeResponse) Reset() {
+	*x = ReleaseServiceAwakeResponse{}
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[121]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ReleaseServiceResponse) String() string {
+func (x *ReleaseServiceAwakeResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ReleaseServiceResponse) ProtoMessage() {}
+func (*ReleaseServiceAwakeResponse) ProtoMessage() {}
 
-func (x *ReleaseServiceResponse) ProtoReflect() protoreflect.Message {
+func (x *ReleaseServiceAwakeResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workspace_proto_msgTypes[121]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -11739,12 +11740,12 @@ func (x *ReleaseServiceResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReleaseServiceResponse.ProtoReflect.Descriptor instead.
-func (*ReleaseServiceResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ReleaseServiceAwakeResponse.ProtoReflect.Descriptor instead.
+func (*ReleaseServiceAwakeResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{121}
 }
 
-func (x *ReleaseServiceResponse) GetService() *Service {
+func (x *ReleaseServiceAwakeResponse) GetService() *Service {
 	if x != nil {
 		return x.Service
 	}
@@ -14426,7 +14427,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"repository\x18\x02 \x01(\tR\n" +
 	"repository\x12\x10\n" +
 	"\x03ref\x18\x03 \x01(\tR\x03ref\x12\x16\n" +
-	"\x06commit\x18\x04 \x01(\tR\x06commit\"\xe1\x04\n" +
+	"\x06commit\x18\x04 \x01(\tR\x06commit\"\xea\x04\n" +
 	"\vServiceSpec\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x123\n" +
 	"\x04mode\x18\x02 \x01(\x0e2\x1f.toshi.workspace.v1.ServiceModeR\x04mode\x12\x1a\n" +
@@ -14436,10 +14437,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x06recipe\x18\x06 \x01(\tR\x06recipe\x12F\n" +
 	"\fstate_volume\x18\a \x01(\v2#.toshi.workspace.v1.StateVolumeSpecR\vstateVolume\x127\n" +
 	"\bbindings\x18\b \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x12\x1a\n" +
-	"\bsleeping\x18\t \x01(\bR\bsleeping\x12;\n" +
-	"\vawake_until\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"awakeUntil\x124\n" +
+	"\bsleeping\x18\t \x01(\bR\bsleeping\x12D\n" +
+	"\x10awake_expires_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x0eawakeExpiresAt\x124\n" +
 	"\x16container_image_digest\x18\v \x01(\tR\x14containerImageDigest\x12?\n" +
 	"\bvisitors\x18\f \x01(\x0e2#.toshi.workspace.v1.ServiceVisitorsR\bvisitors\x12\x17\n" +
 	"\akeep_vm\x18\r \x01(\bR\x06keepVm\x12;\n" +
@@ -14988,28 +14988,29 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
 	"\vworkload_id\x18\x03 \x01(\tR\n" +
 	"workloadId\"\x19\n" +
-	"\x17ReleaseWorkloadResponse\"\xae\x01\n" +
-	"\x12HoldServiceRequest\x12\x18\n" +
+	"\x17ReleaseWorkloadResponse\"\xb2\x01\n" +
+	"\x17KeepServiceAwakeRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
-	"\x02id\x18\x03 \x01(\tR\x02id\x12+\n" +
-	"\x03ttl\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\x03ttl\x12\x1f\n" +
+	"\x02id\x18\x03 \x01(\tR\x02id\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +
-	"requestKey\"\x91\x01\n" +
-	"\x13HoldServiceResponse\x123\n" +
+	"requestKey\x12\x1f\n" +
+	"\vttl_seconds\x18\x06 \x01(\x03R\n" +
+	"ttlSecondsJ\x04\b\x04\x10\x05R\x03ttl\"\x96\x01\n" +
+	"\x18KeepServiceAwakeResponse\x123\n" +
 	"\x04hold\x18\x02 \x01(\v2\x1f.toshi.workspace.v1.ServiceHoldR\x04hold\x125\n" +
 	"\aservice\x18\x03 \x01(\v2\x1b.toshi.workspace.v1.ServiceR\aserviceJ\x04\b\x01\x10\x02R\bworkload\"`\n" +
 	"\vServiceHold\x12\x16\n" +
 	"\x06holder\x18\x01 \x01(\tR\x06holder\x129\n" +
 	"\n" +
-	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\x84\x01\n" +
-	"\x15ReleaseServiceRequest\x12\x18\n" +
+	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\x89\x01\n" +
+	"\x1aReleaseServiceAwakeRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x0e\n" +
 	"\x02id\x18\x03 \x01(\tR\x02id\x12\x1f\n" +
 	"\vrequest_key\x18\x04 \x01(\tR\n" +
-	"requestKey\"_\n" +
-	"\x16ReleaseServiceResponse\x125\n" +
+	"requestKey\"d\n" +
+	"\x1bReleaseServiceAwakeResponse\x125\n" +
 	"\aservice\x18\x02 \x01(\v2\x1b.toshi.workspace.v1.ServiceR\aserviceJ\x04\b\x01\x10\x02R\bworkload\"\x90\x01\n" +
 	"\x19StartServiceSignInRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
@@ -15514,11 +15515,11 @@ var file_toshi_workspace_v1_workspace_proto_goTypes = []any{
 	(*HoldWorkloadResponse)(nil),           // 135: toshi.workspace.v1.HoldWorkloadResponse
 	(*ReleaseWorkloadRequest)(nil),         // 136: toshi.workspace.v1.ReleaseWorkloadRequest
 	(*ReleaseWorkloadResponse)(nil),        // 137: toshi.workspace.v1.ReleaseWorkloadResponse
-	(*HoldServiceRequest)(nil),             // 138: toshi.workspace.v1.HoldServiceRequest
-	(*HoldServiceResponse)(nil),            // 139: toshi.workspace.v1.HoldServiceResponse
+	(*KeepServiceAwakeRequest)(nil),        // 138: toshi.workspace.v1.KeepServiceAwakeRequest
+	(*KeepServiceAwakeResponse)(nil),       // 139: toshi.workspace.v1.KeepServiceAwakeResponse
 	(*ServiceHold)(nil),                    // 140: toshi.workspace.v1.ServiceHold
-	(*ReleaseServiceRequest)(nil),          // 141: toshi.workspace.v1.ReleaseServiceRequest
-	(*ReleaseServiceResponse)(nil),         // 142: toshi.workspace.v1.ReleaseServiceResponse
+	(*ReleaseServiceAwakeRequest)(nil),     // 141: toshi.workspace.v1.ReleaseServiceAwakeRequest
+	(*ReleaseServiceAwakeResponse)(nil),    // 142: toshi.workspace.v1.ReleaseServiceAwakeResponse
 	(*StartServiceSignInRequest)(nil),      // 143: toshi.workspace.v1.StartServiceSignInRequest
 	(*StartServiceSignInResponse)(nil),     // 144: toshi.workspace.v1.StartServiceSignInResponse
 	(*ServiceSignInPrompt)(nil),            // 145: toshi.workspace.v1.ServiceSignInPrompt
@@ -15658,7 +15659,7 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	11,  // 93: toshi.workspace.v1.ServiceSpec.mode:type_name -> toshi.workspace.v1.ServiceMode
 	49,  // 94: toshi.workspace.v1.ServiceSpec.state_volume:type_name -> toshi.workspace.v1.StateVolumeSpec
 	34,  // 95: toshi.workspace.v1.ServiceSpec.bindings:type_name -> toshi.workspace.v1.Binding
-	178, // 96: toshi.workspace.v1.ServiceSpec.awake_until:type_name -> google.protobuf.Timestamp
+	178, // 96: toshi.workspace.v1.ServiceSpec.awake_expires_at:type_name -> google.protobuf.Timestamp
 	10,  // 97: toshi.workspace.v1.ServiceSpec.visitors:type_name -> toshi.workspace.v1.ServiceVisitors
 	9,   // 98: toshi.workspace.v1.ServiceSpec.host_kinds:type_name -> toshi.workspace.v1.HostKind
 	177, // 99: toshi.workspace.v1.Command.env:type_name -> toshi.workspace.v1.Command.EnvEntry
@@ -15751,52 +15752,51 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	26,  // 186: toshi.workspace.v1.SetServiceModeResponse.service:type_name -> toshi.workspace.v1.Service
 	26,  // 187: toshi.workspace.v1.WakeServiceResponse.service:type_name -> toshi.workspace.v1.Service
 	3,   // 188: toshi.workspace.v1.HoldWorkloadRequest.hold:type_name -> toshi.workspace.v1.OperatorHold
-	181, // 189: toshi.workspace.v1.HoldServiceRequest.ttl:type_name -> google.protobuf.Duration
-	140, // 190: toshi.workspace.v1.HoldServiceResponse.hold:type_name -> toshi.workspace.v1.ServiceHold
-	26,  // 191: toshi.workspace.v1.HoldServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	178, // 192: toshi.workspace.v1.ServiceHold.expires_at:type_name -> google.protobuf.Timestamp
-	26,  // 193: toshi.workspace.v1.ReleaseServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	147, // 194: toshi.workspace.v1.StartServiceSignInResponse.started:type_name -> toshi.workspace.v1.ServiceSignInStarted
-	148, // 195: toshi.workspace.v1.StartServiceSignInResponse.ended:type_name -> toshi.workspace.v1.ServiceSignInEnded
-	146, // 196: toshi.workspace.v1.StartServiceSignInResponse.endpoint:type_name -> toshi.workspace.v1.ServiceSignInEndpoint
-	145, // 197: toshi.workspace.v1.StartServiceSignInResponse.prompt:type_name -> toshi.workspace.v1.ServiceSignInPrompt
-	178, // 198: toshi.workspace.v1.ServiceSignInStarted.ends_at:type_name -> google.protobuf.Timestamp
-	14,  // 199: toshi.workspace.v1.ServiceSignInEnded.outcome:type_name -> toshi.workspace.v1.ServiceSignInOutcome
-	155, // 200: toshi.workspace.v1.GetServiceSignInStatusResponse.statuses:type_name -> toshi.workspace.v1.ServiceSignInStatus
-	146, // 201: toshi.workspace.v1.ServiceSignInStatus.endpoint:type_name -> toshi.workspace.v1.ServiceSignInEndpoint
-	173, // 202: toshi.workspace.v1.ListServiceRunsResponse.runs:type_name -> toshi.workspace.v1.ServiceRun
-	164, // 203: toshi.workspace.v1.ListServiceRevisionsResponse.revisions:type_name -> toshi.workspace.v1.ServiceRevision
-	164, // 204: toshi.workspace.v1.GetServiceRevisionResponse.revision:type_name -> toshi.workspace.v1.ServiceRevision
-	17,  // 205: toshi.workspace.v1.ServiceRevision.reason:type_name -> toshi.workspace.v1.ServiceRevisionReason
-	178, // 206: toshi.workspace.v1.ServiceRevision.created_at:type_name -> google.protobuf.Timestamp
-	166, // 207: toshi.workspace.v1.ServiceRevision.image_check:type_name -> toshi.workspace.v1.ServiceRevisionImageCheck
-	165, // 208: toshi.workspace.v1.ServiceRevision.upgrade:type_name -> toshi.workspace.v1.ServiceUpgrade
-	15,  // 209: toshi.workspace.v1.ServiceUpgrade.state:type_name -> toshi.workspace.v1.ServiceUpgradeState
-	181, // 210: toshi.workspace.v1.ServiceUpgrade.window:type_name -> google.protobuf.Duration
-	178, // 211: toshi.workspace.v1.ServiceUpgrade.window_start_time:type_name -> google.protobuf.Timestamp
-	178, // 212: toshi.workspace.v1.ServiceUpgrade.window_end_time:type_name -> google.protobuf.Timestamp
-	178, // 213: toshi.workspace.v1.ServiceUpgrade.finish_time:type_name -> google.protobuf.Timestamp
-	178, // 214: toshi.workspace.v1.ServiceUpgrade.volume_save_start_time:type_name -> google.protobuf.Timestamp
-	178, // 215: toshi.workspace.v1.ServiceUpgrade.volume_save_finish_time:type_name -> google.protobuf.Timestamp
-	16,  // 216: toshi.workspace.v1.ServiceRevisionImageCheck.outcome:type_name -> toshi.workspace.v1.ServiceRevisionImageOutcome
-	178, // 217: toshi.workspace.v1.ServiceRevisionImageCheck.checked_at:type_name -> google.protobuf.Timestamp
-	26,  // 218: toshi.workspace.v1.RollbackServiceResponse.service:type_name -> toshi.workspace.v1.Service
-	171, // 219: toshi.workspace.v1.RollbackServiceResponse.activation:type_name -> toshi.workspace.v1.ServiceActivation
-	171, // 220: toshi.workspace.v1.ListServiceActivationsResponse.activations:type_name -> toshi.workspace.v1.ServiceActivation
-	18,  // 221: toshi.workspace.v1.ServiceActivation.kind:type_name -> toshi.workspace.v1.ServiceActivationKind
-	178, // 222: toshi.workspace.v1.ServiceActivation.requested_at:type_name -> google.protobuf.Timestamp
-	19,  // 223: toshi.workspace.v1.ServiceActivation.outcome:type_name -> toshi.workspace.v1.ServiceActivationOutcome
-	172, // 224: toshi.workspace.v1.ServiceActivation.secret_versions:type_name -> toshi.workspace.v1.ServiceSecretVersion
-	20,  // 225: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
-	178, // 226: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
-	178, // 227: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
-	178, // 228: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
-	178, // 229: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
-	230, // [230:230] is the sub-list for method output_type
-	230, // [230:230] is the sub-list for method input_type
-	230, // [230:230] is the sub-list for extension type_name
-	230, // [230:230] is the sub-list for extension extendee
-	0,   // [0:230] is the sub-list for field type_name
+	140, // 189: toshi.workspace.v1.KeepServiceAwakeResponse.hold:type_name -> toshi.workspace.v1.ServiceHold
+	26,  // 190: toshi.workspace.v1.KeepServiceAwakeResponse.service:type_name -> toshi.workspace.v1.Service
+	178, // 191: toshi.workspace.v1.ServiceHold.expires_at:type_name -> google.protobuf.Timestamp
+	26,  // 192: toshi.workspace.v1.ReleaseServiceAwakeResponse.service:type_name -> toshi.workspace.v1.Service
+	147, // 193: toshi.workspace.v1.StartServiceSignInResponse.started:type_name -> toshi.workspace.v1.ServiceSignInStarted
+	148, // 194: toshi.workspace.v1.StartServiceSignInResponse.ended:type_name -> toshi.workspace.v1.ServiceSignInEnded
+	146, // 195: toshi.workspace.v1.StartServiceSignInResponse.endpoint:type_name -> toshi.workspace.v1.ServiceSignInEndpoint
+	145, // 196: toshi.workspace.v1.StartServiceSignInResponse.prompt:type_name -> toshi.workspace.v1.ServiceSignInPrompt
+	178, // 197: toshi.workspace.v1.ServiceSignInStarted.ends_at:type_name -> google.protobuf.Timestamp
+	14,  // 198: toshi.workspace.v1.ServiceSignInEnded.outcome:type_name -> toshi.workspace.v1.ServiceSignInOutcome
+	155, // 199: toshi.workspace.v1.GetServiceSignInStatusResponse.statuses:type_name -> toshi.workspace.v1.ServiceSignInStatus
+	146, // 200: toshi.workspace.v1.ServiceSignInStatus.endpoint:type_name -> toshi.workspace.v1.ServiceSignInEndpoint
+	173, // 201: toshi.workspace.v1.ListServiceRunsResponse.runs:type_name -> toshi.workspace.v1.ServiceRun
+	164, // 202: toshi.workspace.v1.ListServiceRevisionsResponse.revisions:type_name -> toshi.workspace.v1.ServiceRevision
+	164, // 203: toshi.workspace.v1.GetServiceRevisionResponse.revision:type_name -> toshi.workspace.v1.ServiceRevision
+	17,  // 204: toshi.workspace.v1.ServiceRevision.reason:type_name -> toshi.workspace.v1.ServiceRevisionReason
+	178, // 205: toshi.workspace.v1.ServiceRevision.created_at:type_name -> google.protobuf.Timestamp
+	166, // 206: toshi.workspace.v1.ServiceRevision.image_check:type_name -> toshi.workspace.v1.ServiceRevisionImageCheck
+	165, // 207: toshi.workspace.v1.ServiceRevision.upgrade:type_name -> toshi.workspace.v1.ServiceUpgrade
+	15,  // 208: toshi.workspace.v1.ServiceUpgrade.state:type_name -> toshi.workspace.v1.ServiceUpgradeState
+	181, // 209: toshi.workspace.v1.ServiceUpgrade.window:type_name -> google.protobuf.Duration
+	178, // 210: toshi.workspace.v1.ServiceUpgrade.window_start_time:type_name -> google.protobuf.Timestamp
+	178, // 211: toshi.workspace.v1.ServiceUpgrade.window_end_time:type_name -> google.protobuf.Timestamp
+	178, // 212: toshi.workspace.v1.ServiceUpgrade.finish_time:type_name -> google.protobuf.Timestamp
+	178, // 213: toshi.workspace.v1.ServiceUpgrade.volume_save_start_time:type_name -> google.protobuf.Timestamp
+	178, // 214: toshi.workspace.v1.ServiceUpgrade.volume_save_finish_time:type_name -> google.protobuf.Timestamp
+	16,  // 215: toshi.workspace.v1.ServiceRevisionImageCheck.outcome:type_name -> toshi.workspace.v1.ServiceRevisionImageOutcome
+	178, // 216: toshi.workspace.v1.ServiceRevisionImageCheck.checked_at:type_name -> google.protobuf.Timestamp
+	26,  // 217: toshi.workspace.v1.RollbackServiceResponse.service:type_name -> toshi.workspace.v1.Service
+	171, // 218: toshi.workspace.v1.RollbackServiceResponse.activation:type_name -> toshi.workspace.v1.ServiceActivation
+	171, // 219: toshi.workspace.v1.ListServiceActivationsResponse.activations:type_name -> toshi.workspace.v1.ServiceActivation
+	18,  // 220: toshi.workspace.v1.ServiceActivation.kind:type_name -> toshi.workspace.v1.ServiceActivationKind
+	178, // 221: toshi.workspace.v1.ServiceActivation.requested_at:type_name -> google.protobuf.Timestamp
+	19,  // 222: toshi.workspace.v1.ServiceActivation.outcome:type_name -> toshi.workspace.v1.ServiceActivationOutcome
+	172, // 223: toshi.workspace.v1.ServiceActivation.secret_versions:type_name -> toshi.workspace.v1.ServiceSecretVersion
+	20,  // 224: toshi.workspace.v1.ServiceRun.state:type_name -> toshi.workspace.v1.ServiceRunState
+	178, // 225: toshi.workspace.v1.ServiceRun.queued_at:type_name -> google.protobuf.Timestamp
+	178, // 226: toshi.workspace.v1.ServiceRun.started_at:type_name -> google.protobuf.Timestamp
+	178, // 227: toshi.workspace.v1.ServiceRun.ready_at:type_name -> google.protobuf.Timestamp
+	178, // 228: toshi.workspace.v1.ServiceRun.ended_at:type_name -> google.protobuf.Timestamp
+	229, // [229:229] is the sub-list for method output_type
+	229, // [229:229] is the sub-list for method input_type
+	229, // [229:229] is the sub-list for extension type_name
+	229, // [229:229] is the sub-list for extension extendee
+	0,   // [0:229] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_workspace_proto_init() }

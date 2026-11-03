@@ -592,29 +592,35 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
-  // HoldService takes or renews the caller's hold on a started service:
-  // while any hold is live, an on-demand service does not sleep, and a
-  // hold on one that is asleep wakes it. Each caller has one hold per
-  // service, live until its time to live runs out or ReleaseService drops
-  // it. A hold gives no access to the service. A service that is not
+  // KeepServiceAwake takes or renews the caller's hold on a started
+  // service: while any hold is live, an on-demand service does not sleep,
+  // and a hold on one that is asleep wakes it. Each caller has one hold per
+  // service, live until its time to live runs out or ReleaseServiceAwake
+  // drops it. A hold gives no access to the service. A service that is not
   // started fails with FAILED_PRECONDITION, and a time to live above an
   // hour with INVALID_ARGUMENT.
-  rpc HoldService(HoldServiceRequest) returns (HoldServiceResponse) {
+  rpc KeepServiceAwake(KeepServiceAwakeRequest) returns (KeepServiceAwakeResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.mcp) = {open_world: true};
     option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "service.held"
+    };
   }
 
-  // ReleaseService drops the caller's hold on a service. Releasing a hold
-  // the caller does not have returns the service as it is.
-  rpc ReleaseService(ReleaseServiceRequest) returns (ReleaseServiceResponse) {
+  // ReleaseServiceAwake drops the caller's hold on a service. Releasing a
+  // hold the caller does not have returns the service as it is.
+  rpc ReleaseServiceAwake(ReleaseServiceAwakeRequest) returns (ReleaseServiceAwakeResponse) {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
+    option (toshi.audit) = {
+      action: "service.released"
+    };
   }
 
-  // SetServiceAlarm creates or replaces the service's alarm with this name
+  // PutServiceAlarm creates or replaces the service's alarm with this name
   // and returns it. At each instant of its schedule an alarm publishes its
   // event, with its data, on one of the service's event endpoints. Replacing
   // an alarm raises its generation and schedules it again from now. A
@@ -623,11 +629,12 @@ service WorkloadService {
   // its own events; an endpoint the service does not declare fails with
   // NOT_FOUND; a service holding 100 alarms refuses another with
   // RESOURCE_EXHAUSTED.
-  rpc SetServiceAlarm(SetServiceAlarmRequest) returns (SetServiceAlarmResponse) {
+  rpc PutServiceAlarm(PutServiceAlarmRequest) returns (PutServiceAlarmResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
+      action: "service_alarm.set"
       target: "service:service_id"
     };
   }
@@ -668,16 +675,17 @@ service WorkloadService {
     };
   }
 
-  // ResumeServiceAlarm starts a paused alarm again from the next instant
+  // UnpauseServiceAlarm starts a paused alarm again from the next instant
   // of its schedule; instants that passed while it was paused are not
   // published. An alarm with a single instant that has passed stays
-  // without a next instant. Resuming an alarm that is not paused changes
+  // without a next instant. Unpausing an alarm that is not paused changes
   // nothing.
-  rpc ResumeServiceAlarm(ResumeServiceAlarmRequest) returns (ResumeServiceAlarmResponse) {
+  rpc UnpauseServiceAlarm(UnpauseServiceAlarmRequest) returns (UnpauseServiceAlarmResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "services.write";
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
+      action: "service_alarm.resumed"
       target: "service:service_id"
     };
   }
@@ -1512,8 +1520,8 @@ message ServiceAlarmOccurrence {
   string error = 8;
 }
 
-// SetServiceAlarmRequest is a call of SetServiceAlarm.
-message SetServiceAlarmRequest {
+// PutServiceAlarmRequest is a call of PutServiceAlarm.
+message PutServiceAlarmRequest {
   // The service's project.
   string project = 1;
   // The service's environment.
@@ -1544,8 +1552,8 @@ message SetServiceAlarmRequest {
   google.protobuf.Duration starting_deadline = 12;
 }
 
-// SetServiceAlarmResponse is the answer to SetServiceAlarm.
-message SetServiceAlarmResponse {
+// PutServiceAlarmResponse is the answer to PutServiceAlarm.
+message PutServiceAlarmResponse {
   // The alarm as it was set.
   ServiceAlarm alarm = 1;
 }
@@ -1619,8 +1627,8 @@ message PauseServiceAlarmResponse {
   ServiceAlarm alarm = 1;
 }
 
-// ResumeServiceAlarmRequest is a call of ResumeServiceAlarm.
-message ResumeServiceAlarmRequest {
+// UnpauseServiceAlarmRequest is a call of UnpauseServiceAlarm.
+message UnpauseServiceAlarmRequest {
   // The service's project.
   string project = 1;
   // The service's environment.
@@ -1631,8 +1639,8 @@ message ResumeServiceAlarmRequest {
   string name = 4;
 }
 
-// ResumeServiceAlarmResponse is the answer to ResumeServiceAlarm.
-message ResumeServiceAlarmResponse {
+// UnpauseServiceAlarmResponse is the answer to UnpauseServiceAlarm.
+message UnpauseServiceAlarmResponse {
   // The alarm as it is.
   ServiceAlarm alarm = 1;
 }

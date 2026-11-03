@@ -4286,8 +4286,8 @@ func (x *ServiceAlarmOccurrence) GetError() string {
 	return ""
 }
 
-// SetServiceAlarmRequest is a call of SetServiceAlarm.
-type SetServiceAlarmRequest struct {
+// PutServiceAlarmRequest is a call of PutServiceAlarm.
+type PutServiceAlarmRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service's project.
 	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
@@ -4301,9 +4301,9 @@ type SetServiceAlarmRequest struct {
 	//
 	// Types that are valid to be assigned to Schedule:
 	//
-	//	*SetServiceAlarmRequest_Cron
-	//	*SetServiceAlarmRequest_At
-	Schedule isSetServiceAlarmRequest_Schedule `protobuf_oneof:"schedule"`
+	//	*PutServiceAlarmRequest_Cron
+	//	*PutServiceAlarmRequest_At
+	Schedule isPutServiceAlarmRequest_Schedule `protobuf_oneof:"schedule"`
 	// The IANA zone of the schedule's wall clock; empty for UTC.
 	Timezone string `protobuf:"bytes,7,opt,name=timezone,proto3" json:"timezone,omitempty"`
 	// The name of the service's event endpoint to publish on.
@@ -4321,20 +4321,20 @@ type SetServiceAlarmRequest struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *SetServiceAlarmRequest) Reset() {
-	*x = SetServiceAlarmRequest{}
+func (x *PutServiceAlarmRequest) Reset() {
+	*x = PutServiceAlarmRequest{}
 	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetServiceAlarmRequest) String() string {
+func (x *PutServiceAlarmRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetServiceAlarmRequest) ProtoMessage() {}
+func (*PutServiceAlarmRequest) ProtoMessage() {}
 
-func (x *SetServiceAlarmRequest) ProtoReflect() protoreflect.Message {
+func (x *PutServiceAlarmRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4346,126 +4346,126 @@ func (x *SetServiceAlarmRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetServiceAlarmRequest.ProtoReflect.Descriptor instead.
-func (*SetServiceAlarmRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use PutServiceAlarmRequest.ProtoReflect.Descriptor instead.
+func (*PutServiceAlarmRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{58}
 }
 
-func (x *SetServiceAlarmRequest) GetProject() string {
+func (x *PutServiceAlarmRequest) GetProject() string {
 	if x != nil {
 		return x.Project
 	}
 	return ""
 }
 
-func (x *SetServiceAlarmRequest) GetEnvironment() string {
+func (x *PutServiceAlarmRequest) GetEnvironment() string {
 	if x != nil {
 		return x.Environment
 	}
 	return ""
 }
 
-func (x *SetServiceAlarmRequest) GetServiceId() string {
+func (x *PutServiceAlarmRequest) GetServiceId() string {
 	if x != nil {
 		return x.ServiceId
 	}
 	return ""
 }
 
-func (x *SetServiceAlarmRequest) GetName() string {
+func (x *PutServiceAlarmRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *SetServiceAlarmRequest) GetSchedule() isSetServiceAlarmRequest_Schedule {
+func (x *PutServiceAlarmRequest) GetSchedule() isPutServiceAlarmRequest_Schedule {
 	if x != nil {
 		return x.Schedule
 	}
 	return nil
 }
 
-func (x *SetServiceAlarmRequest) GetCron() string {
+func (x *PutServiceAlarmRequest) GetCron() string {
 	if x != nil {
-		if x, ok := x.Schedule.(*SetServiceAlarmRequest_Cron); ok {
+		if x, ok := x.Schedule.(*PutServiceAlarmRequest_Cron); ok {
 			return x.Cron
 		}
 	}
 	return ""
 }
 
-func (x *SetServiceAlarmRequest) GetAt() *timestamppb.Timestamp {
+func (x *PutServiceAlarmRequest) GetAt() *timestamppb.Timestamp {
 	if x != nil {
-		if x, ok := x.Schedule.(*SetServiceAlarmRequest_At); ok {
+		if x, ok := x.Schedule.(*PutServiceAlarmRequest_At); ok {
 			return x.At
 		}
 	}
 	return nil
 }
 
-func (x *SetServiceAlarmRequest) GetTimezone() string {
+func (x *PutServiceAlarmRequest) GetTimezone() string {
 	if x != nil {
 		return x.Timezone
 	}
 	return ""
 }
 
-func (x *SetServiceAlarmRequest) GetEndpoint() string {
+func (x *PutServiceAlarmRequest) GetEndpoint() string {
 	if x != nil {
 		return x.Endpoint
 	}
 	return ""
 }
 
-func (x *SetServiceAlarmRequest) GetEvent() string {
+func (x *PutServiceAlarmRequest) GetEvent() string {
 	if x != nil {
 		return x.Event
 	}
 	return ""
 }
 
-func (x *SetServiceAlarmRequest) GetData() []byte {
+func (x *PutServiceAlarmRequest) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-func (x *SetServiceAlarmRequest) GetMisfire() ServiceAlarmMisfire {
+func (x *PutServiceAlarmRequest) GetMisfire() ServiceAlarmMisfire {
 	if x != nil {
 		return x.Misfire
 	}
 	return ServiceAlarmMisfire_SERVICE_ALARM_MISFIRE_UNSPECIFIED
 }
 
-func (x *SetServiceAlarmRequest) GetStartingDeadline() *durationpb.Duration {
+func (x *PutServiceAlarmRequest) GetStartingDeadline() *durationpb.Duration {
 	if x != nil {
 		return x.StartingDeadline
 	}
 	return nil
 }
 
-type isSetServiceAlarmRequest_Schedule interface {
-	isSetServiceAlarmRequest_Schedule()
+type isPutServiceAlarmRequest_Schedule interface {
+	isPutServiceAlarmRequest_Schedule()
 }
 
-type SetServiceAlarmRequest_Cron struct {
+type PutServiceAlarmRequest_Cron struct {
 	// A five-field cron expression, in timezone's wall clock.
 	Cron string `protobuf:"bytes,5,opt,name=cron,proto3,oneof"`
 }
 
-type SetServiceAlarmRequest_At struct {
+type PutServiceAlarmRequest_At struct {
 	// A single instant, which must be in the future.
 	At *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=at,proto3,oneof"`
 }
 
-func (*SetServiceAlarmRequest_Cron) isSetServiceAlarmRequest_Schedule() {}
+func (*PutServiceAlarmRequest_Cron) isPutServiceAlarmRequest_Schedule() {}
 
-func (*SetServiceAlarmRequest_At) isSetServiceAlarmRequest_Schedule() {}
+func (*PutServiceAlarmRequest_At) isPutServiceAlarmRequest_Schedule() {}
 
-// SetServiceAlarmResponse is the answer to SetServiceAlarm.
-type SetServiceAlarmResponse struct {
+// PutServiceAlarmResponse is the answer to PutServiceAlarm.
+type PutServiceAlarmResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The alarm as it was set.
 	Alarm         *ServiceAlarm `protobuf:"bytes,1,opt,name=alarm,proto3" json:"alarm,omitempty"`
@@ -4473,20 +4473,20 @@ type SetServiceAlarmResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetServiceAlarmResponse) Reset() {
-	*x = SetServiceAlarmResponse{}
+func (x *PutServiceAlarmResponse) Reset() {
+	*x = PutServiceAlarmResponse{}
 	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetServiceAlarmResponse) String() string {
+func (x *PutServiceAlarmResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetServiceAlarmResponse) ProtoMessage() {}
+func (*PutServiceAlarmResponse) ProtoMessage() {}
 
-func (x *SetServiceAlarmResponse) ProtoReflect() protoreflect.Message {
+func (x *PutServiceAlarmResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4498,12 +4498,12 @@ func (x *SetServiceAlarmResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetServiceAlarmResponse.ProtoReflect.Descriptor instead.
-func (*SetServiceAlarmResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use PutServiceAlarmResponse.ProtoReflect.Descriptor instead.
+func (*PutServiceAlarmResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{59}
 }
 
-func (x *SetServiceAlarmResponse) GetAlarm() *ServiceAlarm {
+func (x *PutServiceAlarmResponse) GetAlarm() *ServiceAlarm {
 	if x != nil {
 		return x.Alarm
 	}
@@ -4977,8 +4977,8 @@ func (x *PauseServiceAlarmResponse) GetAlarm() *ServiceAlarm {
 	return nil
 }
 
-// ResumeServiceAlarmRequest is a call of ResumeServiceAlarm.
-type ResumeServiceAlarmRequest struct {
+// UnpauseServiceAlarmRequest is a call of UnpauseServiceAlarm.
+type UnpauseServiceAlarmRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service's project.
 	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
@@ -4992,20 +4992,20 @@ type ResumeServiceAlarmRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ResumeServiceAlarmRequest) Reset() {
-	*x = ResumeServiceAlarmRequest{}
+func (x *UnpauseServiceAlarmRequest) Reset() {
+	*x = UnpauseServiceAlarmRequest{}
 	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ResumeServiceAlarmRequest) String() string {
+func (x *UnpauseServiceAlarmRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ResumeServiceAlarmRequest) ProtoMessage() {}
+func (*UnpauseServiceAlarmRequest) ProtoMessage() {}
 
-func (x *ResumeServiceAlarmRequest) ProtoReflect() protoreflect.Message {
+func (x *UnpauseServiceAlarmRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5017,41 +5017,41 @@ func (x *ResumeServiceAlarmRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ResumeServiceAlarmRequest.ProtoReflect.Descriptor instead.
-func (*ResumeServiceAlarmRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UnpauseServiceAlarmRequest.ProtoReflect.Descriptor instead.
+func (*UnpauseServiceAlarmRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{68}
 }
 
-func (x *ResumeServiceAlarmRequest) GetProject() string {
+func (x *UnpauseServiceAlarmRequest) GetProject() string {
 	if x != nil {
 		return x.Project
 	}
 	return ""
 }
 
-func (x *ResumeServiceAlarmRequest) GetEnvironment() string {
+func (x *UnpauseServiceAlarmRequest) GetEnvironment() string {
 	if x != nil {
 		return x.Environment
 	}
 	return ""
 }
 
-func (x *ResumeServiceAlarmRequest) GetServiceId() string {
+func (x *UnpauseServiceAlarmRequest) GetServiceId() string {
 	if x != nil {
 		return x.ServiceId
 	}
 	return ""
 }
 
-func (x *ResumeServiceAlarmRequest) GetName() string {
+func (x *UnpauseServiceAlarmRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-// ResumeServiceAlarmResponse is the answer to ResumeServiceAlarm.
-type ResumeServiceAlarmResponse struct {
+// UnpauseServiceAlarmResponse is the answer to UnpauseServiceAlarm.
+type UnpauseServiceAlarmResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The alarm as it is.
 	Alarm         *ServiceAlarm `protobuf:"bytes,1,opt,name=alarm,proto3" json:"alarm,omitempty"`
@@ -5059,20 +5059,20 @@ type ResumeServiceAlarmResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ResumeServiceAlarmResponse) Reset() {
-	*x = ResumeServiceAlarmResponse{}
+func (x *UnpauseServiceAlarmResponse) Reset() {
+	*x = UnpauseServiceAlarmResponse{}
 	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ResumeServiceAlarmResponse) String() string {
+func (x *UnpauseServiceAlarmResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ResumeServiceAlarmResponse) ProtoMessage() {}
+func (*UnpauseServiceAlarmResponse) ProtoMessage() {}
 
-func (x *ResumeServiceAlarmResponse) ProtoReflect() protoreflect.Message {
+func (x *UnpauseServiceAlarmResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_toshi_workspace_v1_workloads_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5084,12 +5084,12 @@ func (x *ResumeServiceAlarmResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ResumeServiceAlarmResponse.ProtoReflect.Descriptor instead.
-func (*ResumeServiceAlarmResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UnpauseServiceAlarmResponse.ProtoReflect.Descriptor instead.
+func (*UnpauseServiceAlarmResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workloads_proto_rawDescGZIP(), []int{69}
 }
 
-func (x *ResumeServiceAlarmResponse) GetAlarm() *ServiceAlarm {
+func (x *UnpauseServiceAlarmResponse) GetAlarm() *ServiceAlarm {
 	if x != nil {
 		return x.Alarm
 	}
@@ -5582,7 +5582,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\n" +
 	"message_id\x18\a \x01(\tR\tmessageId\x12\x14\n" +
 	"\x05error\x18\b \x01(\tR\x05error\"\xc4\x03\n" +
-	"\x16SetServiceAlarmRequest\x12\x18\n" +
+	"\x16PutServiceAlarmRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
 	"\n" +
@@ -5599,7 +5599,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x11starting_deadline\x18\f \x01(\v2\x19.google.protobuf.DurationR\x10startingDeadlineB\n" +
 	"\n" +
 	"\bschedule\"Q\n" +
-	"\x17SetServiceAlarmResponse\x126\n" +
+	"\x17PutServiceAlarmResponse\x126\n" +
 	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\"\x87\x01\n" +
 	"\x16GetServiceAlarmRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
@@ -5631,14 +5631,14 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\"S\n" +
 	"\x19PauseServiceAlarmResponse\x126\n" +
-	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\"\x8a\x01\n" +
-	"\x19ResumeServiceAlarmRequest\x12\x18\n" +
+	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\"\x8b\x01\n" +
+	"\x1aUnpauseServiceAlarmRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\"T\n" +
-	"\x1aResumeServiceAlarmResponse\x126\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\"U\n" +
+	"\x1bUnpauseServiceAlarmResponse\x126\n" +
 	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\"\xab\x01\n" +
 	"\x19RunServiceAlarmNowRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
@@ -5656,7 +5656,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"!SERVICE_ALARM_MISFIRE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eSERVICE_ALARM_MISFIRE_COALESCE\x10\x01\x12\x1d\n" +
 	"\x19SERVICE_ALARM_MISFIRE_ALL\x10\x02\x12\x1e\n" +
-	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xb5T\n" +
+	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xa8U\n" +
 	"\x0fWorkloadService\x12\x81\x01\n" +
 	"\tCreateJob\x12$.toshi.workspace.v1.CreateJobRequest\x1a%.toshi.workspace.v1.CreateJobResponse\"'\xc2\xf3\x18\n" +
 	"jobs.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12m\n" +
@@ -5718,16 +5718,20 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x10service.mode_set\x90\xf4\x18\x01\x12\x8b\x01\n" +
 	"\vWakeService\x12&.toshi.workspace.v1.WakeServiceRequest\x1a'.toshi.workspace.v1.WakeServiceResponse\"+\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\x88\x01\n" +
 	"\fHoldWorkload\x12'.toshi.workspace.v1.HoldWorkloadRequest\x1a(.toshi.workspace.v1.HoldWorkloadResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x02\x12\x91\x01\n" +
-	"\x0fReleaseWorkload\x12*.toshi.workspace.v1.ReleaseWorkloadRequest\x1a+.toshi.workspace.v1.ReleaseWorkloadResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x02\x12\x8b\x01\n" +
-	"\vHoldService\x12&.toshi.workspace.v1.HoldServiceRequest\x1a'.toshi.workspace.v1.HoldServiceResponse\"+\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\x8e\x01\n" +
-	"\x0eReleaseService\x12).toshi.workspace.v1.ReleaseServiceRequest\x1a*.toshi.workspace.v1.ReleaseServiceResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\xa9\x01\n" +
-	"\x0fSetServiceAlarm\x12*.toshi.workspace.v1.SetServiceAlarmRequest\x1a+.toshi.workspace.v1.SetServiceAlarmResponse\"=\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x90\xf4\x18\x02\x12\x8c\x01\n" +
+	"\x0fReleaseWorkload\x12*.toshi.workspace.v1.ReleaseWorkloadRequest\x1a+.toshi.workspace.v1.ReleaseWorkloadResponse\"%\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\x90\xf4\x18\x02\x12\xac\x01\n" +
+	"\x10KeepServiceAwake\x12+.toshi.workspace.v1.KeepServiceAwakeRequest\x1a,.toshi.workspace.v1.KeepServiceAwakeResponse\"=\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x0e\n" +
+	"\fservice.held\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\xb3\x01\n" +
+	"\x13ReleaseServiceAwake\x12..toshi.workspace.v1.ReleaseServiceAwakeRequest\x1a/.toshi.workspace.v1.ReleaseServiceAwakeResponse\";\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
+	"\x10service.released\x90\xf4\x18\x01\x12\xbc\x01\n" +
+	"\x0fPutServiceAlarm\x12*.toshi.workspace.v1.PutServiceAlarmRequest\x1a+.toshi.workspace.v1.PutServiceAlarmResponse\"P\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
+	"\x11service_alarm.set\x12\x12service:service_id\x90\xf4\x18\x02\x12\x8c\x01\n" +
 	"\x0fGetServiceAlarm\x12*.toshi.workspace.v1.GetServiceAlarmRequest\x1a+.toshi.workspace.v1.GetServiceAlarmResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\x92\x01\n" +
 	"\x11ListServiceAlarms\x12,.toshi.workspace.v1.ListServiceAlarmsRequest\x1a-.toshi.workspace.v1.ListServiceAlarmsResponse\" \xc2\xf3\x18\rservices.read\xca\xf3\x18\venvironment\x12\xb2\x01\n" +
 	"\x12DeleteServiceAlarm\x12-.toshi.workspace.v1.DeleteServiceAlarmRequest\x1a..toshi.workspace.v1.DeleteServiceAlarmResponse\"=\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x90\xf4\x18\x02\x12\xc5\x01\n" +
 	"\x11PauseServiceAlarm\x12,.toshi.workspace.v1.PauseServiceAlarmRequest\x1a-.toshi.workspace.v1.PauseServiceAlarmResponse\"S\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18*\n" +
-	"\x14service_alarm.paused\x12\x12service:service_id\x90\xf4\x18\x02\x12\xb2\x01\n" +
-	"\x12ResumeServiceAlarm\x12-.toshi.workspace.v1.ResumeServiceAlarmRequest\x1a..toshi.workspace.v1.ResumeServiceAlarmResponse\"=\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x14\x12\x12service:service_id\x90\xf4\x18\x02\x12\xc5\x01\n" +
+	"\x14service_alarm.paused\x12\x12service:service_id\x90\xf4\x18\x02\x12\xcc\x01\n" +
+	"\x13UnpauseServiceAlarm\x12..toshi.workspace.v1.UnpauseServiceAlarmRequest\x1a/.toshi.workspace.v1.UnpauseServiceAlarmResponse\"T\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18+\n" +
+	"\x15service_alarm.resumed\x12\x12service:service_id\x90\xf4\x18\x02\x12\xc5\x01\n" +
 	"\x12RunServiceAlarmNow\x12-.toshi.workspace.v1.RunServiceAlarmNowRequest\x1a..toshi.workspace.v1.RunServiceAlarmNowResponse\"P\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18'\n" +
 	"\x11service_alarm.ran\x12\x12service:service_id\x90\xf4\x18\x01\x12\xc1\x01\n" +
 	"\x12StartServiceSignIn\x12-.toshi.workspace.v1.StartServiceSignInRequest\x1a..toshi.workspace.v1.StartServiceSignInResponse\"J\xc2\xf3\x18\x0eservices.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x19\n" +
@@ -5827,8 +5831,8 @@ var file_toshi_workspace_v1_workloads_proto_goTypes = []any{
 	(*WatchServicesResponse)(nil),          // 56: toshi.workspace.v1.WatchServicesResponse
 	(*ServiceAlarm)(nil),                   // 57: toshi.workspace.v1.ServiceAlarm
 	(*ServiceAlarmOccurrence)(nil),         // 58: toshi.workspace.v1.ServiceAlarmOccurrence
-	(*SetServiceAlarmRequest)(nil),         // 59: toshi.workspace.v1.SetServiceAlarmRequest
-	(*SetServiceAlarmResponse)(nil),        // 60: toshi.workspace.v1.SetServiceAlarmResponse
+	(*PutServiceAlarmRequest)(nil),         // 59: toshi.workspace.v1.PutServiceAlarmRequest
+	(*PutServiceAlarmResponse)(nil),        // 60: toshi.workspace.v1.PutServiceAlarmResponse
 	(*GetServiceAlarmRequest)(nil),         // 61: toshi.workspace.v1.GetServiceAlarmRequest
 	(*GetServiceAlarmResponse)(nil),        // 62: toshi.workspace.v1.GetServiceAlarmResponse
 	(*ListServiceAlarmsRequest)(nil),       // 63: toshi.workspace.v1.ListServiceAlarmsRequest
@@ -5837,8 +5841,8 @@ var file_toshi_workspace_v1_workloads_proto_goTypes = []any{
 	(*DeleteServiceAlarmResponse)(nil),     // 66: toshi.workspace.v1.DeleteServiceAlarmResponse
 	(*PauseServiceAlarmRequest)(nil),       // 67: toshi.workspace.v1.PauseServiceAlarmRequest
 	(*PauseServiceAlarmResponse)(nil),      // 68: toshi.workspace.v1.PauseServiceAlarmResponse
-	(*ResumeServiceAlarmRequest)(nil),      // 69: toshi.workspace.v1.ResumeServiceAlarmRequest
-	(*ResumeServiceAlarmResponse)(nil),     // 70: toshi.workspace.v1.ResumeServiceAlarmResponse
+	(*UnpauseServiceAlarmRequest)(nil),     // 69: toshi.workspace.v1.UnpauseServiceAlarmRequest
+	(*UnpauseServiceAlarmResponse)(nil),    // 70: toshi.workspace.v1.UnpauseServiceAlarmResponse
 	(*RunServiceAlarmNowRequest)(nil),      // 71: toshi.workspace.v1.RunServiceAlarmNowRequest
 	(*RunServiceAlarmNowResponse)(nil),     // 72: toshi.workspace.v1.RunServiceAlarmNowResponse
 	nil,                                    // 73: toshi.workspace.v1.CreateJobRequest.LabelsEntry
@@ -5887,8 +5891,8 @@ var file_toshi_workspace_v1_workloads_proto_goTypes = []any{
 	(*WakeServiceRequest)(nil),             // 116: toshi.workspace.v1.WakeServiceRequest
 	(*HoldWorkloadRequest)(nil),            // 117: toshi.workspace.v1.HoldWorkloadRequest
 	(*ReleaseWorkloadRequest)(nil),         // 118: toshi.workspace.v1.ReleaseWorkloadRequest
-	(*HoldServiceRequest)(nil),             // 119: toshi.workspace.v1.HoldServiceRequest
-	(*ReleaseServiceRequest)(nil),          // 120: toshi.workspace.v1.ReleaseServiceRequest
+	(*KeepServiceAwakeRequest)(nil),        // 119: toshi.workspace.v1.KeepServiceAwakeRequest
+	(*ReleaseServiceAwakeRequest)(nil),     // 120: toshi.workspace.v1.ReleaseServiceAwakeRequest
 	(*StartServiceSignInRequest)(nil),      // 121: toshi.workspace.v1.StartServiceSignInRequest
 	(*AnswerServiceSignInRequest)(nil),     // 122: toshi.workspace.v1.AnswerServiceSignInRequest
 	(*CancelServiceSignInRequest)(nil),     // 123: toshi.workspace.v1.CancelServiceSignInRequest
@@ -5923,8 +5927,8 @@ var file_toshi_workspace_v1_workloads_proto_goTypes = []any{
 	(*WakeServiceResponse)(nil),            // 152: toshi.workspace.v1.WakeServiceResponse
 	(*HoldWorkloadResponse)(nil),           // 153: toshi.workspace.v1.HoldWorkloadResponse
 	(*ReleaseWorkloadResponse)(nil),        // 154: toshi.workspace.v1.ReleaseWorkloadResponse
-	(*HoldServiceResponse)(nil),            // 155: toshi.workspace.v1.HoldServiceResponse
-	(*ReleaseServiceResponse)(nil),         // 156: toshi.workspace.v1.ReleaseServiceResponse
+	(*KeepServiceAwakeResponse)(nil),       // 155: toshi.workspace.v1.KeepServiceAwakeResponse
+	(*ReleaseServiceAwakeResponse)(nil),    // 156: toshi.workspace.v1.ReleaseServiceAwakeResponse
 	(*StartServiceSignInResponse)(nil),     // 157: toshi.workspace.v1.StartServiceSignInResponse
 	(*AnswerServiceSignInResponse)(nil),    // 158: toshi.workspace.v1.AnswerServiceSignInResponse
 	(*CancelServiceSignInResponse)(nil),    // 159: toshi.workspace.v1.CancelServiceSignInResponse
@@ -6021,15 +6025,15 @@ var file_toshi_workspace_v1_workloads_proto_depIdxs = []int32{
 	80,  // 77: toshi.workspace.v1.ServiceAlarmOccurrence.scheduled_for:type_name -> google.protobuf.Timestamp
 	80,  // 78: toshi.workspace.v1.ServiceAlarmOccurrence.created_at:type_name -> google.protobuf.Timestamp
 	80,  // 79: toshi.workspace.v1.ServiceAlarmOccurrence.published_at:type_name -> google.protobuf.Timestamp
-	80,  // 80: toshi.workspace.v1.SetServiceAlarmRequest.at:type_name -> google.protobuf.Timestamp
-	0,   // 81: toshi.workspace.v1.SetServiceAlarmRequest.misfire:type_name -> toshi.workspace.v1.ServiceAlarmMisfire
-	83,  // 82: toshi.workspace.v1.SetServiceAlarmRequest.starting_deadline:type_name -> google.protobuf.Duration
-	57,  // 83: toshi.workspace.v1.SetServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	80,  // 80: toshi.workspace.v1.PutServiceAlarmRequest.at:type_name -> google.protobuf.Timestamp
+	0,   // 81: toshi.workspace.v1.PutServiceAlarmRequest.misfire:type_name -> toshi.workspace.v1.ServiceAlarmMisfire
+	83,  // 82: toshi.workspace.v1.PutServiceAlarmRequest.starting_deadline:type_name -> google.protobuf.Duration
+	57,  // 83: toshi.workspace.v1.PutServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
 	57,  // 84: toshi.workspace.v1.GetServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
 	58,  // 85: toshi.workspace.v1.GetServiceAlarmResponse.occurrences:type_name -> toshi.workspace.v1.ServiceAlarmOccurrence
 	57,  // 86: toshi.workspace.v1.ListServiceAlarmsResponse.alarms:type_name -> toshi.workspace.v1.ServiceAlarm
 	57,  // 87: toshi.workspace.v1.PauseServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
-	57,  // 88: toshi.workspace.v1.ResumeServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
+	57,  // 88: toshi.workspace.v1.UnpauseServiceAlarmResponse.alarm:type_name -> toshi.workspace.v1.ServiceAlarm
 	58,  // 89: toshi.workspace.v1.RunServiceAlarmNowResponse.occurrence:type_name -> toshi.workspace.v1.ServiceAlarmOccurrence
 	7,   // 90: toshi.workspace.v1.WorkloadService.CreateJob:input_type -> toshi.workspace.v1.CreateJobRequest
 	9,   // 91: toshi.workspace.v1.WorkloadService.GetJob:input_type -> toshi.workspace.v1.GetJobRequest
@@ -6077,14 +6081,14 @@ var file_toshi_workspace_v1_workloads_proto_depIdxs = []int32{
 	116, // 133: toshi.workspace.v1.WorkloadService.WakeService:input_type -> toshi.workspace.v1.WakeServiceRequest
 	117, // 134: toshi.workspace.v1.WorkloadService.HoldWorkload:input_type -> toshi.workspace.v1.HoldWorkloadRequest
 	118, // 135: toshi.workspace.v1.WorkloadService.ReleaseWorkload:input_type -> toshi.workspace.v1.ReleaseWorkloadRequest
-	119, // 136: toshi.workspace.v1.WorkloadService.HoldService:input_type -> toshi.workspace.v1.HoldServiceRequest
-	120, // 137: toshi.workspace.v1.WorkloadService.ReleaseService:input_type -> toshi.workspace.v1.ReleaseServiceRequest
-	59,  // 138: toshi.workspace.v1.WorkloadService.SetServiceAlarm:input_type -> toshi.workspace.v1.SetServiceAlarmRequest
+	119, // 136: toshi.workspace.v1.WorkloadService.KeepServiceAwake:input_type -> toshi.workspace.v1.KeepServiceAwakeRequest
+	120, // 137: toshi.workspace.v1.WorkloadService.ReleaseServiceAwake:input_type -> toshi.workspace.v1.ReleaseServiceAwakeRequest
+	59,  // 138: toshi.workspace.v1.WorkloadService.PutServiceAlarm:input_type -> toshi.workspace.v1.PutServiceAlarmRequest
 	61,  // 139: toshi.workspace.v1.WorkloadService.GetServiceAlarm:input_type -> toshi.workspace.v1.GetServiceAlarmRequest
 	63,  // 140: toshi.workspace.v1.WorkloadService.ListServiceAlarms:input_type -> toshi.workspace.v1.ListServiceAlarmsRequest
 	65,  // 141: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:input_type -> toshi.workspace.v1.DeleteServiceAlarmRequest
 	67,  // 142: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:input_type -> toshi.workspace.v1.PauseServiceAlarmRequest
-	69,  // 143: toshi.workspace.v1.WorkloadService.ResumeServiceAlarm:input_type -> toshi.workspace.v1.ResumeServiceAlarmRequest
+	69,  // 143: toshi.workspace.v1.WorkloadService.UnpauseServiceAlarm:input_type -> toshi.workspace.v1.UnpauseServiceAlarmRequest
 	71,  // 144: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:input_type -> toshi.workspace.v1.RunServiceAlarmNowRequest
 	121, // 145: toshi.workspace.v1.WorkloadService.StartServiceSignIn:input_type -> toshi.workspace.v1.StartServiceSignInRequest
 	122, // 146: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:input_type -> toshi.workspace.v1.AnswerServiceSignInRequest
@@ -6147,14 +6151,14 @@ var file_toshi_workspace_v1_workloads_proto_depIdxs = []int32{
 	152, // 203: toshi.workspace.v1.WorkloadService.WakeService:output_type -> toshi.workspace.v1.WakeServiceResponse
 	153, // 204: toshi.workspace.v1.WorkloadService.HoldWorkload:output_type -> toshi.workspace.v1.HoldWorkloadResponse
 	154, // 205: toshi.workspace.v1.WorkloadService.ReleaseWorkload:output_type -> toshi.workspace.v1.ReleaseWorkloadResponse
-	155, // 206: toshi.workspace.v1.WorkloadService.HoldService:output_type -> toshi.workspace.v1.HoldServiceResponse
-	156, // 207: toshi.workspace.v1.WorkloadService.ReleaseService:output_type -> toshi.workspace.v1.ReleaseServiceResponse
-	60,  // 208: toshi.workspace.v1.WorkloadService.SetServiceAlarm:output_type -> toshi.workspace.v1.SetServiceAlarmResponse
+	155, // 206: toshi.workspace.v1.WorkloadService.KeepServiceAwake:output_type -> toshi.workspace.v1.KeepServiceAwakeResponse
+	156, // 207: toshi.workspace.v1.WorkloadService.ReleaseServiceAwake:output_type -> toshi.workspace.v1.ReleaseServiceAwakeResponse
+	60,  // 208: toshi.workspace.v1.WorkloadService.PutServiceAlarm:output_type -> toshi.workspace.v1.PutServiceAlarmResponse
 	62,  // 209: toshi.workspace.v1.WorkloadService.GetServiceAlarm:output_type -> toshi.workspace.v1.GetServiceAlarmResponse
 	64,  // 210: toshi.workspace.v1.WorkloadService.ListServiceAlarms:output_type -> toshi.workspace.v1.ListServiceAlarmsResponse
 	66,  // 211: toshi.workspace.v1.WorkloadService.DeleteServiceAlarm:output_type -> toshi.workspace.v1.DeleteServiceAlarmResponse
 	68,  // 212: toshi.workspace.v1.WorkloadService.PauseServiceAlarm:output_type -> toshi.workspace.v1.PauseServiceAlarmResponse
-	70,  // 213: toshi.workspace.v1.WorkloadService.ResumeServiceAlarm:output_type -> toshi.workspace.v1.ResumeServiceAlarmResponse
+	70,  // 213: toshi.workspace.v1.WorkloadService.UnpauseServiceAlarm:output_type -> toshi.workspace.v1.UnpauseServiceAlarmResponse
 	72,  // 214: toshi.workspace.v1.WorkloadService.RunServiceAlarmNow:output_type -> toshi.workspace.v1.RunServiceAlarmNowResponse
 	157, // 215: toshi.workspace.v1.WorkloadService.StartServiceSignIn:output_type -> toshi.workspace.v1.StartServiceSignInResponse
 	158, // 216: toshi.workspace.v1.WorkloadService.AnswerServiceSignIn:output_type -> toshi.workspace.v1.AnswerServiceSignInResponse
@@ -6189,8 +6193,8 @@ func file_toshi_workspace_v1_workloads_proto_init() {
 		(*ServiceAlarm_At)(nil),
 	}
 	file_toshi_workspace_v1_workloads_proto_msgTypes[58].OneofWrappers = []any{
-		(*SetServiceAlarmRequest_Cron)(nil),
-		(*SetServiceAlarmRequest_At)(nil),
+		(*PutServiceAlarmRequest_Cron)(nil),
+		(*PutServiceAlarmRequest_At)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
