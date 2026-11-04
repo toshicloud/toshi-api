@@ -1028,8 +1028,8 @@ message SendEndpointMessageRequest {
   string name = 3;
   // The message's JSON, at most 256 KiB.
   bytes data = 4;
-  // Makes the send safe to repeat: a key the endpoint holds returns that
-  // message.
+  // Makes the send safe to repeat: the same request under a key the endpoint
+  // holds returns that message; a different request is refused.
   string request_key = 5;
 }
 
@@ -1038,8 +1038,9 @@ message SendEndpointMessageResponse {
   // The ID of the message, new or stored before under the same
   // request_key.
   string message_id = 1;
-  // Set when request_key named a message sent before.
-  bool duplicate = 2;
+  // Set when the answer is stored from an earlier call with the same
+  // request key and request.
+  bool replayed = 2;
 }
 
 // TailEndpointMessagesRequest names an event endpoint and where the stream

@@ -4020,8 +4020,8 @@ type SendEndpointMessageRequest struct {
 	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	// The message's JSON, at most 256 KiB.
 	Data []byte `protobuf:"bytes,4,opt,name=data,proto3" json:"data,omitempty"`
-	// Makes the send safe to repeat: a key the endpoint holds returns that
-	// message.
+	// Makes the send safe to repeat: the same request under a key the endpoint
+	// holds returns that message; a different request is refused.
 	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4098,8 +4098,9 @@ type SendEndpointMessageResponse struct {
 	// The ID of the message, new or stored before under the same
 	// request_key.
 	MessageId string `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
-	// Set when request_key named a message sent before.
-	Duplicate     bool `protobuf:"varint,2,opt,name=duplicate,proto3" json:"duplicate,omitempty"`
+	// Set when the answer is stored from an earlier call with the same
+	// request key and request.
+	Replayed      bool `protobuf:"varint,2,opt,name=replayed,proto3" json:"replayed,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4141,9 +4142,9 @@ func (x *SendEndpointMessageResponse) GetMessageId() string {
 	return ""
 }
 
-func (x *SendEndpointMessageResponse) GetDuplicate() bool {
+func (x *SendEndpointMessageResponse) GetReplayed() bool {
 	if x != nil {
-		return x.Duplicate
+		return x.Replayed
 	}
 	return false
 }
@@ -4714,11 +4715,11 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04data\x18\x04 \x01(\fR\x04data\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +
-	"requestKey\"Z\n" +
+	"requestKey\"X\n" +
 	"\x1bSendEndpointMessageResponse\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x1c\n" +
-	"\tduplicate\x18\x02 \x01(\bR\tduplicate\"\xad\x01\n" +
+	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x1a\n" +
+	"\breplayed\x18\x02 \x01(\bR\breplayed\"\xad\x01\n" +
 	"\x1bTailEndpointMessagesRequest\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12\x1a\n" +
 	"\bendpoint\x18\x02 \x01(\tR\bendpoint\x12@\n" +
