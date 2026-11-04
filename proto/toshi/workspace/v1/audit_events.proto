@@ -132,9 +132,19 @@ message ExportAuditEventsRequest {
   // A cursor from a previous response, to resume after its last row; empty
   // starts at since.
   string cursor = 3;
+  // When true, the export is written to the workspace's storage and the
+  // stream carries one response with a signed URL that downloads the whole
+  // file, in place of the data chunks. The URL stops working at its
+  // expires_at.
+  bool download_url = 4;
+  // How long a download_url export's URL stays valid: 0 is 300 seconds, the
+  // default; above 3600 seconds is INVALID_ARGUMENT. Set without
+  // download_url, it is INVALID_ARGUMENT.
+  int64 ttl_seconds = 5 [(toshi.bound) = {name: "export_audit_events_download_url_ttl", unit: UNIT_SECONDS, default: 300, max: 3600}];
 }
 
-// ExportAuditEventsResponse is one chunk of the export stream.
+// ExportAuditEventsResponse is one chunk of the export stream, or the one
+// response of a download_url export.
 message ExportAuditEventsResponse {
   // Complete JSON lines: the {"header":...} line, then one AuditEvent per
   // line. A chunk boundary never splits a line.
@@ -142,4 +152,10 @@ message ExportAuditEventsResponse {
   // Resumes after the last row in data; a chunk holding only the header
   // keeps the cursor the call started with.
   string cursor = 2;
+  // The signed URL that downloads the whole export; set only on a
+  // download_url export's one response. Anyone holding it can read the
+  // file until expires_at.
+  string url = 3;
+  // When url stops working; set with url.
+  google.protobuf.Timestamp expires_at = 4;
 }

@@ -370,7 +370,16 @@ type ExportAuditEventsRequest struct {
 	Until *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=until,proto3" json:"until,omitempty"`
 	// A cursor from a previous response, to resume after its last row; empty
 	// starts at since.
-	Cursor        string `protobuf:"bytes,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	Cursor string `protobuf:"bytes,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	// When true, the export is written to the workspace's storage and the
+	// stream carries one response with a signed URL that downloads the whole
+	// file, in place of the data chunks. The URL stops working at its
+	// expires_at.
+	DownloadUrl bool `protobuf:"varint,4,opt,name=download_url,json=downloadUrl,proto3" json:"download_url,omitempty"`
+	// How long a download_url export's URL stays valid: 0 is 300 seconds, the
+	// default; above 3600 seconds is INVALID_ARGUMENT. Set without
+	// download_url, it is INVALID_ARGUMENT.
+	TtlSeconds    int64 `protobuf:"varint,5,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -426,7 +435,22 @@ func (x *ExportAuditEventsRequest) GetCursor() string {
 	return ""
 }
 
-// ExportAuditEventsResponse is one chunk of the export stream.
+func (x *ExportAuditEventsRequest) GetDownloadUrl() bool {
+	if x != nil {
+		return x.DownloadUrl
+	}
+	return false
+}
+
+func (x *ExportAuditEventsRequest) GetTtlSeconds() int64 {
+	if x != nil {
+		return x.TtlSeconds
+	}
+	return 0
+}
+
+// ExportAuditEventsResponse is one chunk of the export stream, or the one
+// response of a download_url export.
 type ExportAuditEventsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Complete JSON lines: the {"header":...} line, then one AuditEvent per
@@ -434,7 +458,13 @@ type ExportAuditEventsResponse struct {
 	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	// Resumes after the last row in data; a chunk holding only the header
 	// keeps the cursor the call started with.
-	Cursor        string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	Cursor string `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	// The signed URL that downloads the whole export; set only on a
+	// download_url export's one response. Anyone holding it can read the
+	// file until expires_at.
+	Url string `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
+	// When url stops working; set with url.
+	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -483,6 +513,20 @@ func (x *ExportAuditEventsResponse) GetCursor() string {
 	return ""
 }
 
+func (x *ExportAuditEventsResponse) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *ExportAuditEventsResponse) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
 var File_toshi_workspace_v1_audit_events_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
@@ -521,14 +565,21 @@ const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\aoutcome\x18\b \x01(\tR\aoutcome\"y\n" +
 	"\x17ListAuditEventsResponse\x126\n" +
 	"\x06events\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.AuditEventR\x06events\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x96\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x8e\x02\n" +
 	"\x18ExportAuditEventsRequest\x120\n" +
 	"\x05since\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x120\n" +
 	"\x05until\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05until\x12\x16\n" +
-	"\x06cursor\x18\x03 \x01(\tR\x06cursor\"G\n" +
+	"\x06cursor\x18\x03 \x01(\tR\x06cursor\x12!\n" +
+	"\fdownload_url\x18\x04 \x01(\bR\vdownloadUrl\x12S\n" +
+	"\vttl_seconds\x18\x05 \x01(\x03B2\x8a\xf4\x18.\n" +
+	"$export_audit_events_download_url_ttl\x10\x01\x18\xac\x02(\x90\x1cR\n" +
+	"ttlSeconds\"\x94\x01\n" +
 	"\x19ExportAuditEventsResponse\x12\x12\n" +
 	"\x04data\x18\x01 \x01(\fR\x04data\x12\x16\n" +
-	"\x06cursor\x18\x02 \x01(\tR\x06cursor2\xc4\x02\n" +
+	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12\x10\n" +
+	"\x03url\x18\x03 \x01(\tR\x03url\x129\n" +
+	"\n" +
+	"expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt2\xc4\x02\n" +
 	"\x11AuditEventService\x12z\n" +
 	"\x0fListAuditEvents\x12*.toshi.workspace.v1.ListAuditEventsRequest\x1a+.toshi.workspace.v1.ListAuditEventsResponse\"\x0e\xc2\xf3\x18\n" +
 	"audit.read\x12\xb2\x01\n" +
@@ -563,15 +614,16 @@ var file_toshi_workspace_v1_audit_events_proto_depIdxs = []int32{
 	0, // 2: toshi.workspace.v1.ListAuditEventsResponse.events:type_name -> toshi.workspace.v1.AuditEvent
 	5, // 3: toshi.workspace.v1.ExportAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
 	5, // 4: toshi.workspace.v1.ExportAuditEventsRequest.until:type_name -> google.protobuf.Timestamp
-	1, // 5: toshi.workspace.v1.AuditEventService.ListAuditEvents:input_type -> toshi.workspace.v1.ListAuditEventsRequest
-	3, // 6: toshi.workspace.v1.AuditEventService.ExportAuditEvents:input_type -> toshi.workspace.v1.ExportAuditEventsRequest
-	2, // 7: toshi.workspace.v1.AuditEventService.ListAuditEvents:output_type -> toshi.workspace.v1.ListAuditEventsResponse
-	4, // 8: toshi.workspace.v1.AuditEventService.ExportAuditEvents:output_type -> toshi.workspace.v1.ExportAuditEventsResponse
-	7, // [7:9] is the sub-list for method output_type
-	5, // [5:7] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	5, // 5: toshi.workspace.v1.ExportAuditEventsResponse.expires_at:type_name -> google.protobuf.Timestamp
+	1, // 6: toshi.workspace.v1.AuditEventService.ListAuditEvents:input_type -> toshi.workspace.v1.ListAuditEventsRequest
+	3, // 7: toshi.workspace.v1.AuditEventService.ExportAuditEvents:input_type -> toshi.workspace.v1.ExportAuditEventsRequest
+	2, // 8: toshi.workspace.v1.AuditEventService.ListAuditEvents:output_type -> toshi.workspace.v1.ListAuditEventsResponse
+	4, // 9: toshi.workspace.v1.AuditEventService.ExportAuditEvents:output_type -> toshi.workspace.v1.ExportAuditEventsResponse
+	8, // [8:10] is the sub-list for method output_type
+	6, // [6:8] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_audit_events_proto_init() }

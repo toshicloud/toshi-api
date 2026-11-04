@@ -899,9 +899,19 @@ message ExportEndpointLogRequest {
   google.protobuf.Timestamp since = 6;
   // The end of the time range, excluded; unset runs to the newest record.
   google.protobuf.Timestamp until = 7;
+  // When true, the export is written to the workspace's storage and the
+  // stream carries one response with a signed URL that downloads the whole
+  // file, in place of the data chunks. The URL stops working at its
+  // expires_at.
+  bool download_url = 8;
+  // How long a download_url export's URL stays valid: 0 is 300 seconds, the
+  // default; above 3600 seconds is INVALID_ARGUMENT. Set without
+  // download_url, it is INVALID_ARGUMENT.
+  int64 ttl_seconds = 9 [(toshi.bound) = {name: "export_endpoint_log_download_url_ttl", unit: UNIT_SECONDS, default: 300, max: 3600}];
 }
 
-// ExportEndpointLogResponse carries one chunk of the exported file.
+// ExportEndpointLogResponse carries one chunk of the exported file, or the
+// one response of a download_url export.
 message ExportEndpointLogResponse {
   // The file's next bytes.
   bytes data = 1;
@@ -916,6 +926,12 @@ message ExportEndpointLogResponse {
   // Where the next export starts, when this one stopped at the export
   // limit; zero when the file holds the whole range.
   int64 next = 5;
+  // The signed URL that downloads the whole export; set only on a
+  // download_url export's one response. Anyone holding it can read the
+  // file until expires_at.
+  string url = 6;
+  // When url stops working; set with url.
+  google.protobuf.Timestamp expires_at = 7;
 }
 
 // CreateEndpointConnectTokenRequest names the endpoint a connect token

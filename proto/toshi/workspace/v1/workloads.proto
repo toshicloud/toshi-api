@@ -1081,9 +1081,19 @@ message ExportEventsRequest {
   google.protobuf.Timestamp until = 5;
   // Resume after the last row of an earlier response; empty for the first.
   string cursor = 6;
+  // When true, the export is written to the workspace's storage and the
+  // stream carries one response with a signed URL that downloads the whole
+  // file, in place of the data chunks. The URL stops working at its
+  // expires_at.
+  bool download_url = 7;
+  // How long a download_url export's URL stays valid: 0 is 300 seconds, the
+  // default; above 3600 seconds is INVALID_ARGUMENT. Set without
+  // download_url, it is INVALID_ARGUMENT.
+  int64 ttl_seconds = 8 [(toshi.bound) = {name: "export_events_download_url_ttl", unit: UNIT_SECONDS, default: 300, max: 3600}];
 }
 
-// ExportEventsResponse is one message of ExportEvents' stream.
+// ExportEventsResponse is one message of ExportEvents' stream, or the one
+// message of a download_url export.
 message ExportEventsResponse {
   // Complete JSON lines: the header line first, then Events, up to 256
   // KiB.
@@ -1091,6 +1101,12 @@ message ExportEventsResponse {
   // Resume after this message's last row, or the cursor given when it has
   // no rows.
   string cursor = 2;
+  // The signed URL that downloads the whole export; set only on a
+  // download_url export's one response. Anyone holding it can read the
+  // file until expires_at.
+  string url = 3;
+  // When url stops working; set with url.
+  google.protobuf.Timestamp expires_at = 4;
 }
 
 // CreateJobRequest is a call of CreateJob.

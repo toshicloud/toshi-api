@@ -44,6 +44,18 @@ const (
 	EndpointMessageNameMax = 200
 	// EnvironmentHistoryDaysMin is the min of environment_history_days.
 	EnvironmentHistoryDaysMin = 1
+	// ExportAuditEventsDownloadURLTtlDefault is the default of export_audit_events_download_url_ttl.
+	ExportAuditEventsDownloadURLTtlDefault time.Duration = 5 * time.Minute
+	// ExportAuditEventsDownloadURLTtlMax is the max of export_audit_events_download_url_ttl.
+	ExportAuditEventsDownloadURLTtlMax time.Duration = 1 * time.Hour
+	// ExportEndpointLogDownloadURLTtlDefault is the default of export_endpoint_log_download_url_ttl.
+	ExportEndpointLogDownloadURLTtlDefault time.Duration = 5 * time.Minute
+	// ExportEndpointLogDownloadURLTtlMax is the max of export_endpoint_log_download_url_ttl.
+	ExportEndpointLogDownloadURLTtlMax time.Duration = 1 * time.Hour
+	// ExportEventsDownloadURLTtlDefault is the default of export_events_download_url_ttl.
+	ExportEventsDownloadURLTtlDefault time.Duration = 5 * time.Minute
+	// ExportEventsDownloadURLTtlMax is the max of export_events_download_url_ttl.
+	ExportEventsDownloadURLTtlMax time.Duration = 1 * time.Hour
 	// FillerEveryDefault is the default of filler_every.
 	FillerEveryDefault time.Duration = 24 * time.Hour
 	// FillerEveryMin is the min of filler_every.

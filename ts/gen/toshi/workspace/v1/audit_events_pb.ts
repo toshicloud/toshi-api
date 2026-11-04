@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/audit_events.proto.
  */
 export const file_toshi_workspace_v1_audit_events: GenFile = /*@__PURE__*/
-  fileDesc("CiV0b3NoaS93b3Jrc3BhY2UvdjEvYXVkaXRfZXZlbnRzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEiigIKCkF1ZGl0RXZlbnQSCgoCaWQYASABKAMSJgoCYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmFjdG9yX2tpbmQYAyABKAkSEAoIYWN0b3JfaWQYBCABKAkSDgoGYWN0aW9uGAUgASgJEg4KBnRhcmdldBgGIAEoCRIUCgxkZXRhaWxzX2pzb24YByABKAkSEgoKcmVxdWVzdF9pZBgIIAEoCRISCgpwZXJtaXNzaW9uGAkgASgJEg0KBXNjb3BlGAogASgJEg8KB291dGNvbWUYCyABKAkSEAoIdG9rZW5faWQYDCABKAkSEgoKYWN0b3JfbmFtZRgNIAEoCSK7AQoWTGlzdEF1ZGl0RXZlbnRzUmVxdWVzdBIOCgZhY3Rpb24YASABKAkSKQoFc2luY2UYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCXBhZ2Vfc2l6ZRgDIAEoBRINCgVhY3RvchgEIAEoCRIPCgdhY3Rpb25zGAUgAygJEg4KBnRhcmdldBgGIAEoCRISCgpwYWdlX3Rva2VuGAcgASgJEg8KB291dGNvbWUYCCABKAkiYgoXTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2USLgoGZXZlbnRzGAEgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkF1ZGl0RXZlbnQSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIoABChhFeHBvcnRBdWRpdEV2ZW50c1JlcXVlc3QSKQoFc2luY2UYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXVudGlsGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIOCgZjdXJzb3IYAyABKAkiOQoZRXhwb3J0QXVkaXRFdmVudHNSZXNwb25zZRIMCgRkYXRhGAEgASgMEg4KBmN1cnNvchgCIAEoCTLEAgoRQXVkaXRFdmVudFNlcnZpY2USegoPTGlzdEF1ZGl0RXZlbnRzEioudG9zaGkud29ya3NwYWNlLnYxLkxpc3RBdWRpdEV2ZW50c1JlcXVlc3QaKy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2UiDsLzGAphdWRpdC5yZWFkErIBChFFeHBvcnRBdWRpdEV2ZW50cxIsLnRvc2hpLndvcmtzcGFjZS52MS5FeHBvcnRBdWRpdEV2ZW50c1JlcXVlc3QaLS50b3NoaS53b3Jrc3BhY2UudjEuRXhwb3J0QXVkaXRFdmVudHNSZXNwb25zZSI+wvMYCmF1ZGl0LnJlYWTS8xgsChVhdWRpdF9ldmVudHMuZXhwb3J0ZWQSE3dvcmtzcGFjZTp3b3Jrc3BhY2UwAUIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiV0b3NoaS93b3Jrc3BhY2UvdjEvYXVkaXRfZXZlbnRzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEiigIKCkF1ZGl0RXZlbnQSCgoCaWQYASABKAMSJgoCYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmFjdG9yX2tpbmQYAyABKAkSEAoIYWN0b3JfaWQYBCABKAkSDgoGYWN0aW9uGAUgASgJEg4KBnRhcmdldBgGIAEoCRIUCgxkZXRhaWxzX2pzb24YByABKAkSEgoKcmVxdWVzdF9pZBgIIAEoCRISCgpwZXJtaXNzaW9uGAkgASgJEg0KBXNjb3BlGAogASgJEg8KB291dGNvbWUYCyABKAkSEAoIdG9rZW5faWQYDCABKAkSEgoKYWN0b3JfbmFtZRgNIAEoCSK7AQoWTGlzdEF1ZGl0RXZlbnRzUmVxdWVzdBIOCgZhY3Rpb24YASABKAkSKQoFc2luY2UYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCXBhZ2Vfc2l6ZRgDIAEoBRINCgVhY3RvchgEIAEoCRIPCgdhY3Rpb25zGAUgAygJEg4KBnRhcmdldBgGIAEoCRISCgpwYWdlX3Rva2VuGAcgASgJEg8KB291dGNvbWUYCCABKAkiYgoXTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2USLgoGZXZlbnRzGAEgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkF1ZGl0RXZlbnQSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIt8BChhFeHBvcnRBdWRpdEV2ZW50c1JlcXVlc3QSKQoFc2luY2UYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXVudGlsGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIOCgZjdXJzb3IYAyABKAkSFAoMZG93bmxvYWRfdXJsGAQgASgIEkcKC3R0bF9zZWNvbmRzGAUgASgDQjKK9BguCiRleHBvcnRfYXVkaXRfZXZlbnRzX2Rvd25sb2FkX3VybF90dGwQARisAiiQHCJ2ChlFeHBvcnRBdWRpdEV2ZW50c1Jlc3BvbnNlEgwKBGRhdGEYASABKAwSDgoGY3Vyc29yGAIgASgJEgsKA3VybBgDIAEoCRIuCgpleHBpcmVzX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcDLEAgoRQXVkaXRFdmVudFNlcnZpY2USegoPTGlzdEF1ZGl0RXZlbnRzEioudG9zaGkud29ya3NwYWNlLnYxLkxpc3RBdWRpdEV2ZW50c1JlcXVlc3QaKy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2UiDsLzGAphdWRpdC5yZWFkErIBChFFeHBvcnRBdWRpdEV2ZW50cxIsLnRvc2hpLndvcmtzcGFjZS52MS5FeHBvcnRBdWRpdEV2ZW50c1JlcXVlc3QaLS50b3NoaS53b3Jrc3BhY2UudjEuRXhwb3J0QXVkaXRFdmVudHNSZXNwb25zZSI+wvMYCmF1ZGl0LnJlYWTS8xgsChVhdWRpdF9ldmVudHMuZXhwb3J0ZWQSE3dvcmtzcGFjZTp3b3Jrc3BhY2UwAUIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * AuditEvent is one append-only audit log entry.
@@ -466,6 +466,25 @@ export type ExportAuditEventsRequest = Message<"toshi.workspace.v1.ExportAuditEv
    * @generated from field: string cursor = 3;
    */
   cursor: string;
+
+  /**
+   * When true, the export is written to the workspace's storage and the
+   * stream carries one response with a signed URL that downloads the whole
+   * file, in place of the data chunks. The URL stops working at its
+   * expires_at.
+   *
+   * @generated from field: bool download_url = 4;
+   */
+  downloadUrl: boolean;
+
+  /**
+   * How long a download_url export's URL stays valid: 0 is 300 seconds, the
+   * default; above 3600 seconds is INVALID_ARGUMENT. Set without
+   * download_url, it is INVALID_ARGUMENT.
+   *
+   * @generated from field: int64 ttl_seconds = 5;
+   */
+  ttlSeconds: bigint;
 };
 
 /**
@@ -496,6 +515,25 @@ export type ExportAuditEventsRequestJson = {
    * @generated from field: string cursor = 3;
    */
   cursor?: string;
+
+  /**
+   * When true, the export is written to the workspace's storage and the
+   * stream carries one response with a signed URL that downloads the whole
+   * file, in place of the data chunks. The URL stops working at its
+   * expires_at.
+   *
+   * @generated from field: bool download_url = 4;
+   */
+  downloadUrl?: boolean;
+
+  /**
+   * How long a download_url export's URL stays valid: 0 is 300 seconds, the
+   * default; above 3600 seconds is INVALID_ARGUMENT. Set without
+   * download_url, it is INVALID_ARGUMENT.
+   *
+   * @generated from field: int64 ttl_seconds = 5;
+   */
+  ttlSeconds?: string;
 };
 
 /**
@@ -506,7 +544,8 @@ export const ExportAuditEventsRequestSchema: GenMessage<ExportAuditEventsRequest
   messageDesc(file_toshi_workspace_v1_audit_events, 3);
 
 /**
- * ExportAuditEventsResponse is one chunk of the export stream.
+ * ExportAuditEventsResponse is one chunk of the export stream, or the one
+ * response of a download_url export.
  *
  * @generated from message toshi.workspace.v1.ExportAuditEventsResponse
  */
@@ -526,10 +565,27 @@ export type ExportAuditEventsResponse = Message<"toshi.workspace.v1.ExportAuditE
    * @generated from field: string cursor = 2;
    */
   cursor: string;
+
+  /**
+   * The signed URL that downloads the whole export; set only on a
+   * download_url export's one response. Anyone holding it can read the
+   * file until expires_at.
+   *
+   * @generated from field: string url = 3;
+   */
+  url: string;
+
+  /**
+   * When url stops working; set with url.
+   *
+   * @generated from field: google.protobuf.Timestamp expires_at = 4;
+   */
+  expiresAt?: Timestamp | undefined;
 };
 
 /**
- * ExportAuditEventsResponse is one chunk of the export stream.
+ * ExportAuditEventsResponse is one chunk of the export stream, or the one
+ * response of a download_url export.
  *
  * @generated from message toshi.workspace.v1.ExportAuditEventsResponse
  */
@@ -549,6 +605,22 @@ export type ExportAuditEventsResponseJson = {
    * @generated from field: string cursor = 2;
    */
   cursor?: string;
+
+  /**
+   * The signed URL that downloads the whole export; set only on a
+   * download_url export's one response. Anyone holding it can read the
+   * file until expires_at.
+   *
+   * @generated from field: string url = 3;
+   */
+  url?: string;
+
+  /**
+   * When url stops working; set with url.
+   *
+   * @generated from field: google.protobuf.Timestamp expires_at = 4;
+   */
+  expiresAt?: TimestampJson;
 };
 
 /**

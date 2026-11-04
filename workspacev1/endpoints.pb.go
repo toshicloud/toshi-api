@@ -3233,7 +3233,16 @@ type ExportEndpointLogRequest struct {
 	// at or after since, and before until.
 	Since *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=since,proto3" json:"since,omitempty"`
 	// The end of the time range, excluded; unset runs to the newest record.
-	Until         *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=until,proto3" json:"until,omitempty"`
+	Until *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=until,proto3" json:"until,omitempty"`
+	// When true, the export is written to the workspace's storage and the
+	// stream carries one response with a signed URL that downloads the whole
+	// file, in place of the data chunks. The URL stops working at its
+	// expires_at.
+	DownloadUrl bool `protobuf:"varint,8,opt,name=download_url,json=downloadUrl,proto3" json:"download_url,omitempty"`
+	// How long a download_url export's URL stays valid: 0 is 300 seconds, the
+	// default; above 3600 seconds is INVALID_ARGUMENT. Set without
+	// download_url, it is INVALID_ARGUMENT.
+	TtlSeconds    int64 `protobuf:"varint,9,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3317,7 +3326,22 @@ func (x *ExportEndpointLogRequest) GetUntil() *timestamppb.Timestamp {
 	return nil
 }
 
-// ExportEndpointLogResponse carries one chunk of the exported file.
+func (x *ExportEndpointLogRequest) GetDownloadUrl() bool {
+	if x != nil {
+		return x.DownloadUrl
+	}
+	return false
+}
+
+func (x *ExportEndpointLogRequest) GetTtlSeconds() int64 {
+	if x != nil {
+		return x.TtlSeconds
+	}
+	return 0
+}
+
+// ExportEndpointLogResponse carries one chunk of the exported file, or the
+// one response of a download_url export.
 type ExportEndpointLogResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The file's next bytes.
@@ -3332,7 +3356,13 @@ type ExportEndpointLogResponse struct {
 	From int64 `protobuf:"varint,4,opt,name=from,proto3" json:"from,omitempty"`
 	// Where the next export starts, when this one stopped at the export
 	// limit; zero when the file holds the whole range.
-	Next          int64 `protobuf:"varint,5,opt,name=next,proto3" json:"next,omitempty"`
+	Next int64 `protobuf:"varint,5,opt,name=next,proto3" json:"next,omitempty"`
+	// The signed URL that downloads the whole export; set only on a
+	// download_url export's one response. Anyone holding it can read the
+	// file until expires_at.
+	Url string `protobuf:"bytes,6,opt,name=url,proto3" json:"url,omitempty"`
+	// When url stops working; set with url.
+	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3400,6 +3430,20 @@ func (x *ExportEndpointLogResponse) GetNext() int64 {
 		return x.Next
 	}
 	return 0
+}
+
+func (x *ExportEndpointLogResponse) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *ExportEndpointLogResponse) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
 }
 
 // CreateEndpointConnectTokenRequest names the endpoint a connect token
@@ -4655,7 +4699,7 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
 	"\x03seq\x18\x03 \x01(\x03R\x03seq\"[\n" +
 	"\x1aGetEndpointRequestResponse\x12=\n" +
-	"\arequest\x18\x01 \x01(\v2#.toshi.workspace.v1.EndpointRequestR\arequest\"\x9a\x02\n" +
+	"\arequest\x18\x01 \x01(\v2#.toshi.workspace.v1.EndpointRequestR\arequest\"\x92\x03\n" +
 	"\x18ExportEndpointLogRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x121\n" +
@@ -4663,15 +4707,22 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x04from\x18\x04 \x01(\x03H\x00R\x04from\x88\x01\x01\x12\x13\n" +
 	"\x02to\x18\x05 \x01(\x03H\x01R\x02to\x88\x01\x01\x120\n" +
 	"\x05since\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x120\n" +
-	"\x05until\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x05untilB\a\n" +
+	"\x05until\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x05until\x12!\n" +
+	"\fdownload_url\x18\b \x01(\bR\vdownloadUrl\x12S\n" +
+	"\vttl_seconds\x18\t \x01(\x03B2\x8a\xf4\x18.\n" +
+	"$export_endpoint_log_download_url_ttl\x10\x01\x18\xac\x02(\x90\x1cR\n" +
+	"ttlSecondsB\a\n" +
 	"\x05_fromB\x05\n" +
-	"\x03_to\"\x97\x01\n" +
+	"\x03_to\"\xe4\x01\n" +
 	"\x19ExportEndpointLogResponse\x12\x12\n" +
 	"\x04data\x18\x01 \x01(\fR\x04data\x12\x1b\n" +
 	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12!\n" +
 	"\fcontent_type\x18\x03 \x01(\tR\vcontentType\x12\x12\n" +
 	"\x04from\x18\x04 \x01(\x03R\x04from\x12\x12\n" +
-	"\x04next\x18\x05 \x01(\x03R\x04next\"\xd9\x01\n" +
+	"\x04next\x18\x05 \x01(\x03R\x04next\x12\x10\n" +
+	"\x03url\x18\x06 \x01(\tR\x03url\x129\n" +
+	"\n" +
+	"expires_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xd9\x01\n" +
 	"!CreateEndpointConnectTokenRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
@@ -4930,51 +4981,52 @@ var file_toshi_workspace_v1_endpoints_proto_depIdxs = []int32{
 	4,  // 51: toshi.workspace.v1.ExportEndpointLogRequest.log:type_name -> toshi.workspace.v1.EndpointLog
 	56, // 52: toshi.workspace.v1.ExportEndpointLogRequest.since:type_name -> google.protobuf.Timestamp
 	56, // 53: toshi.workspace.v1.ExportEndpointLogRequest.until:type_name -> google.protobuf.Timestamp
-	2,  // 54: toshi.workspace.v1.CreateEndpointConnectTokenRequest.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
-	56, // 55: toshi.workspace.v1.CreateEndpointConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 56: toshi.workspace.v1.CreateEndpointConnectTokenResponse.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
-	20, // 57: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
-	21, // 58: toshi.workspace.v1.GetTunnelResponse.tunnel:type_name -> toshi.workspace.v1.Tunnel
-	5,  // 59: toshi.workspace.v1.TailEndpointMessagesRequest.states:type_name -> toshi.workspace.v1.EndpointMessageState
-	9,  // 60: toshi.workspace.v1.TailEndpointMessagesResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
-	9,  // 61: toshi.workspace.v1.ReplayEndpointMessageResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
-	22, // 62: toshi.workspace.v1.EndpointService.CreateEndpoint:input_type -> toshi.workspace.v1.CreateEndpointRequest
-	24, // 63: toshi.workspace.v1.EndpointService.ListEndpoints:input_type -> toshi.workspace.v1.ListEndpointsRequest
-	26, // 64: toshi.workspace.v1.EndpointService.GetEndpoint:input_type -> toshi.workspace.v1.GetEndpointRequest
-	28, // 65: toshi.workspace.v1.EndpointService.GetEndpointPolicy:input_type -> toshi.workspace.v1.GetEndpointPolicyRequest
-	30, // 66: toshi.workspace.v1.EndpointService.UpdateEndpoint:input_type -> toshi.workspace.v1.UpdateEndpointRequest
-	32, // 67: toshi.workspace.v1.EndpointService.ListEndpointRequests:input_type -> toshi.workspace.v1.ListEndpointRequestsRequest
-	34, // 68: toshi.workspace.v1.EndpointService.GetEndpointRequest:input_type -> toshi.workspace.v1.GetEndpointRequestRequest
-	36, // 69: toshi.workspace.v1.EndpointService.ExportEndpointLog:input_type -> toshi.workspace.v1.ExportEndpointLogRequest
-	38, // 70: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:input_type -> toshi.workspace.v1.CreateEndpointConnectTokenRequest
-	40, // 71: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:input_type -> toshi.workspace.v1.RevokeEndpointConnectTokenRequest
-	42, // 72: toshi.workspace.v1.EndpointService.DeleteEndpoint:input_type -> toshi.workspace.v1.DeleteEndpointRequest
-	44, // 73: toshi.workspace.v1.EndpointService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
-	46, // 74: toshi.workspace.v1.EndpointService.GetTunnel:input_type -> toshi.workspace.v1.GetTunnelRequest
-	48, // 75: toshi.workspace.v1.EndpointService.SendEndpointMessage:input_type -> toshi.workspace.v1.SendEndpointMessageRequest
-	50, // 76: toshi.workspace.v1.EndpointService.TailEndpointMessages:input_type -> toshi.workspace.v1.TailEndpointMessagesRequest
-	52, // 77: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:input_type -> toshi.workspace.v1.ReplayEndpointMessageRequest
-	23, // 78: toshi.workspace.v1.EndpointService.CreateEndpoint:output_type -> toshi.workspace.v1.CreateEndpointResponse
-	25, // 79: toshi.workspace.v1.EndpointService.ListEndpoints:output_type -> toshi.workspace.v1.ListEndpointsResponse
-	27, // 80: toshi.workspace.v1.EndpointService.GetEndpoint:output_type -> toshi.workspace.v1.GetEndpointResponse
-	29, // 81: toshi.workspace.v1.EndpointService.GetEndpointPolicy:output_type -> toshi.workspace.v1.GetEndpointPolicyResponse
-	31, // 82: toshi.workspace.v1.EndpointService.UpdateEndpoint:output_type -> toshi.workspace.v1.UpdateEndpointResponse
-	33, // 83: toshi.workspace.v1.EndpointService.ListEndpointRequests:output_type -> toshi.workspace.v1.ListEndpointRequestsResponse
-	35, // 84: toshi.workspace.v1.EndpointService.GetEndpointRequest:output_type -> toshi.workspace.v1.GetEndpointRequestResponse
-	37, // 85: toshi.workspace.v1.EndpointService.ExportEndpointLog:output_type -> toshi.workspace.v1.ExportEndpointLogResponse
-	39, // 86: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:output_type -> toshi.workspace.v1.CreateEndpointConnectTokenResponse
-	41, // 87: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:output_type -> toshi.workspace.v1.RevokeEndpointConnectTokenResponse
-	43, // 88: toshi.workspace.v1.EndpointService.DeleteEndpoint:output_type -> toshi.workspace.v1.DeleteEndpointResponse
-	45, // 89: toshi.workspace.v1.EndpointService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
-	47, // 90: toshi.workspace.v1.EndpointService.GetTunnel:output_type -> toshi.workspace.v1.GetTunnelResponse
-	49, // 91: toshi.workspace.v1.EndpointService.SendEndpointMessage:output_type -> toshi.workspace.v1.SendEndpointMessageResponse
-	51, // 92: toshi.workspace.v1.EndpointService.TailEndpointMessages:output_type -> toshi.workspace.v1.TailEndpointMessagesResponse
-	53, // 93: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:output_type -> toshi.workspace.v1.ReplayEndpointMessageResponse
-	78, // [78:94] is the sub-list for method output_type
-	62, // [62:78] is the sub-list for method input_type
-	62, // [62:62] is the sub-list for extension type_name
-	62, // [62:62] is the sub-list for extension extendee
-	0,  // [0:62] is the sub-list for field type_name
+	56, // 54: toshi.workspace.v1.ExportEndpointLogResponse.expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 55: toshi.workspace.v1.CreateEndpointConnectTokenRequest.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
+	56, // 56: toshi.workspace.v1.CreateEndpointConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 57: toshi.workspace.v1.CreateEndpointConnectTokenResponse.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
+	20, // 58: toshi.workspace.v1.ListForwardsResponse.forwards:type_name -> toshi.workspace.v1.Forward
+	21, // 59: toshi.workspace.v1.GetTunnelResponse.tunnel:type_name -> toshi.workspace.v1.Tunnel
+	5,  // 60: toshi.workspace.v1.TailEndpointMessagesRequest.states:type_name -> toshi.workspace.v1.EndpointMessageState
+	9,  // 61: toshi.workspace.v1.TailEndpointMessagesResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
+	9,  // 62: toshi.workspace.v1.ReplayEndpointMessageResponse.message:type_name -> toshi.workspace.v1.EndpointMessage
+	22, // 63: toshi.workspace.v1.EndpointService.CreateEndpoint:input_type -> toshi.workspace.v1.CreateEndpointRequest
+	24, // 64: toshi.workspace.v1.EndpointService.ListEndpoints:input_type -> toshi.workspace.v1.ListEndpointsRequest
+	26, // 65: toshi.workspace.v1.EndpointService.GetEndpoint:input_type -> toshi.workspace.v1.GetEndpointRequest
+	28, // 66: toshi.workspace.v1.EndpointService.GetEndpointPolicy:input_type -> toshi.workspace.v1.GetEndpointPolicyRequest
+	30, // 67: toshi.workspace.v1.EndpointService.UpdateEndpoint:input_type -> toshi.workspace.v1.UpdateEndpointRequest
+	32, // 68: toshi.workspace.v1.EndpointService.ListEndpointRequests:input_type -> toshi.workspace.v1.ListEndpointRequestsRequest
+	34, // 69: toshi.workspace.v1.EndpointService.GetEndpointRequest:input_type -> toshi.workspace.v1.GetEndpointRequestRequest
+	36, // 70: toshi.workspace.v1.EndpointService.ExportEndpointLog:input_type -> toshi.workspace.v1.ExportEndpointLogRequest
+	38, // 71: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:input_type -> toshi.workspace.v1.CreateEndpointConnectTokenRequest
+	40, // 72: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:input_type -> toshi.workspace.v1.RevokeEndpointConnectTokenRequest
+	42, // 73: toshi.workspace.v1.EndpointService.DeleteEndpoint:input_type -> toshi.workspace.v1.DeleteEndpointRequest
+	44, // 74: toshi.workspace.v1.EndpointService.ListForwards:input_type -> toshi.workspace.v1.ListForwardsRequest
+	46, // 75: toshi.workspace.v1.EndpointService.GetTunnel:input_type -> toshi.workspace.v1.GetTunnelRequest
+	48, // 76: toshi.workspace.v1.EndpointService.SendEndpointMessage:input_type -> toshi.workspace.v1.SendEndpointMessageRequest
+	50, // 77: toshi.workspace.v1.EndpointService.TailEndpointMessages:input_type -> toshi.workspace.v1.TailEndpointMessagesRequest
+	52, // 78: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:input_type -> toshi.workspace.v1.ReplayEndpointMessageRequest
+	23, // 79: toshi.workspace.v1.EndpointService.CreateEndpoint:output_type -> toshi.workspace.v1.CreateEndpointResponse
+	25, // 80: toshi.workspace.v1.EndpointService.ListEndpoints:output_type -> toshi.workspace.v1.ListEndpointsResponse
+	27, // 81: toshi.workspace.v1.EndpointService.GetEndpoint:output_type -> toshi.workspace.v1.GetEndpointResponse
+	29, // 82: toshi.workspace.v1.EndpointService.GetEndpointPolicy:output_type -> toshi.workspace.v1.GetEndpointPolicyResponse
+	31, // 83: toshi.workspace.v1.EndpointService.UpdateEndpoint:output_type -> toshi.workspace.v1.UpdateEndpointResponse
+	33, // 84: toshi.workspace.v1.EndpointService.ListEndpointRequests:output_type -> toshi.workspace.v1.ListEndpointRequestsResponse
+	35, // 85: toshi.workspace.v1.EndpointService.GetEndpointRequest:output_type -> toshi.workspace.v1.GetEndpointRequestResponse
+	37, // 86: toshi.workspace.v1.EndpointService.ExportEndpointLog:output_type -> toshi.workspace.v1.ExportEndpointLogResponse
+	39, // 87: toshi.workspace.v1.EndpointService.CreateEndpointConnectToken:output_type -> toshi.workspace.v1.CreateEndpointConnectTokenResponse
+	41, // 88: toshi.workspace.v1.EndpointService.RevokeEndpointConnectToken:output_type -> toshi.workspace.v1.RevokeEndpointConnectTokenResponse
+	43, // 89: toshi.workspace.v1.EndpointService.DeleteEndpoint:output_type -> toshi.workspace.v1.DeleteEndpointResponse
+	45, // 90: toshi.workspace.v1.EndpointService.ListForwards:output_type -> toshi.workspace.v1.ListForwardsResponse
+	47, // 91: toshi.workspace.v1.EndpointService.GetTunnel:output_type -> toshi.workspace.v1.GetTunnelResponse
+	49, // 92: toshi.workspace.v1.EndpointService.SendEndpointMessage:output_type -> toshi.workspace.v1.SendEndpointMessageResponse
+	51, // 93: toshi.workspace.v1.EndpointService.TailEndpointMessages:output_type -> toshi.workspace.v1.TailEndpointMessagesResponse
+	53, // 94: toshi.workspace.v1.EndpointService.ReplayEndpointMessage:output_type -> toshi.workspace.v1.ReplayEndpointMessageResponse
+	79, // [79:95] is the sub-list for method output_type
+	63, // [63:79] is the sub-list for method input_type
+	63, // [63:63] is the sub-list for extension type_name
+	63, // [63:63] is the sub-list for extension extendee
+	0,  // [0:63] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_endpoints_proto_init() }
