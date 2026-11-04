@@ -988,6 +988,7 @@ export const labels = {
     foreign_run: "From another run",
     revoked: "Secret revoked",
     unknown: "Unknown secret",
+    missing_key: "No key sent",
   },
   WorkloadKind: {
     job: "Job",
