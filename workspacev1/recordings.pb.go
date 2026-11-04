@@ -937,8 +937,10 @@ type RecordingShareLink struct {
 	UsedBytes int64 `protobuf:"varint,8,opt,name=used_bytes,json=usedBytes,proto3" json:"used_bytes,omitempty"`
 	// Unset unless it was revoked.
 	RevokedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
-	// Who minted it: a person's sign-in or an API token, as in the audit.
-	CreatedBy     string `protobuf:"bytes,10,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	// Who minted it. A person's sign-in is a PERSON, an API token is a TOKEN, an
+	// operator or the control plane is the SYSTEM, and a link whose creator was
+	// not recorded has none.
+	CreatedBy     *Subject `protobuf:"bytes,11,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1036,11 +1038,11 @@ func (x *RecordingShareLink) GetRevokedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *RecordingShareLink) GetCreatedBy() string {
+func (x *RecordingShareLink) GetCreatedBy() *Subject {
 	if x != nil {
 		return x.CreatedBy
 	}
-	return ""
+	return nil
 }
 
 // CreateRecordingShareLinkRequest asks for a share link to one ready
@@ -1411,7 +1413,7 @@ var File_toshi_workspace_v1_recordings_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\n" +
-	"#toshi/workspace/v1/recordings.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xb6\x05\n" +
+	"#toshi/workspace/v1/recordings.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1etoshi/workspace/v1/roles.proto\"\xb6\x05\n" +
 	"\tRecording\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -1473,7 +1475,7 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\n" +
 	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x1d\n" +
 	"\n" +
-	"player_url\x18\x04 \x01(\tR\tplayerUrl\"\xcd\x03\n" +
+	"player_url\x18\x04 \x01(\tR\tplayerUrl\"\xf0\x03\n" +
 	"\x12RecordingShareLink\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\frecording_id\x18\x02 \x01(\tR\vrecordingId\x125\n" +
@@ -1487,10 +1489,10 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\n" +
 	"used_bytes\x18\b \x01(\x03R\tusedBytes\x129\n" +
 	"\n" +
-	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12\x1d\n" +
+	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12:\n" +
 	"\n" +
-	"created_by\x18\n" +
-	" \x01(\tR\tcreatedBy\"\xeb\x01\n" +
+	"created_by\x18\v \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedByJ\x04\b\n" +
+	"\x10\v\"\xeb\x01\n" +
 	"\x1fCreateRecordingShareLinkRequest\x12!\n" +
 	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x128\n" +
 	"\n" +
@@ -1586,6 +1588,7 @@ var file_toshi_workspace_v1_recordings_proto_goTypes = []any{
 	(*RevokeRecordingShareLinkResponse)(nil), // 17: toshi.workspace.v1.RevokeRecordingShareLinkResponse
 	(*durationpb.Duration)(nil),              // 18: google.protobuf.Duration
 	(*timestamppb.Timestamp)(nil),            // 19: google.protobuf.Timestamp
+	(*Subject)(nil),                          // 20: toshi.workspace.v1.Subject
 }
 var file_toshi_workspace_v1_recordings_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Recording.state:type_name -> toshi.workspace.v1.RecordingState
@@ -1608,25 +1611,26 @@ var file_toshi_workspace_v1_recordings_proto_depIdxs = []int32{
 	19, // 17: toshi.workspace.v1.RecordingShareLink.created_at:type_name -> google.protobuf.Timestamp
 	19, // 18: toshi.workspace.v1.RecordingShareLink.expires_at:type_name -> google.protobuf.Timestamp
 	19, // 19: toshi.workspace.v1.RecordingShareLink.revoked_at:type_name -> google.protobuf.Timestamp
-	18, // 20: toshi.workspace.v1.CreateRecordingShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
-	11, // 21: toshi.workspace.v1.CreateRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
-	11, // 22: toshi.workspace.v1.ListRecordingShareLinksResponse.share_links:type_name -> toshi.workspace.v1.RecordingShareLink
-	11, // 23: toshi.workspace.v1.RevokeRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
-	7,  // 24: toshi.workspace.v1.RecordingService.ListRecordings:input_type -> toshi.workspace.v1.ListRecordingsRequest
-	9,  // 25: toshi.workspace.v1.RecordingService.GetRecording:input_type -> toshi.workspace.v1.GetRecordingRequest
-	12, // 26: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:input_type -> toshi.workspace.v1.CreateRecordingShareLinkRequest
-	14, // 27: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:input_type -> toshi.workspace.v1.ListRecordingShareLinksRequest
-	16, // 28: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:input_type -> toshi.workspace.v1.RevokeRecordingShareLinkRequest
-	8,  // 29: toshi.workspace.v1.RecordingService.ListRecordings:output_type -> toshi.workspace.v1.ListRecordingsResponse
-	10, // 30: toshi.workspace.v1.RecordingService.GetRecording:output_type -> toshi.workspace.v1.GetRecordingResponse
-	13, // 31: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:output_type -> toshi.workspace.v1.CreateRecordingShareLinkResponse
-	15, // 32: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:output_type -> toshi.workspace.v1.ListRecordingShareLinksResponse
-	17, // 33: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:output_type -> toshi.workspace.v1.RevokeRecordingShareLinkResponse
-	29, // [29:34] is the sub-list for method output_type
-	24, // [24:29] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	20, // 20: toshi.workspace.v1.RecordingShareLink.created_by:type_name -> toshi.workspace.v1.Subject
+	18, // 21: toshi.workspace.v1.CreateRecordingShareLinkRequest.expires_in:type_name -> google.protobuf.Duration
+	11, // 22: toshi.workspace.v1.CreateRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
+	11, // 23: toshi.workspace.v1.ListRecordingShareLinksResponse.share_links:type_name -> toshi.workspace.v1.RecordingShareLink
+	11, // 24: toshi.workspace.v1.RevokeRecordingShareLinkResponse.share_link:type_name -> toshi.workspace.v1.RecordingShareLink
+	7,  // 25: toshi.workspace.v1.RecordingService.ListRecordings:input_type -> toshi.workspace.v1.ListRecordingsRequest
+	9,  // 26: toshi.workspace.v1.RecordingService.GetRecording:input_type -> toshi.workspace.v1.GetRecordingRequest
+	12, // 27: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:input_type -> toshi.workspace.v1.CreateRecordingShareLinkRequest
+	14, // 28: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:input_type -> toshi.workspace.v1.ListRecordingShareLinksRequest
+	16, // 29: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:input_type -> toshi.workspace.v1.RevokeRecordingShareLinkRequest
+	8,  // 30: toshi.workspace.v1.RecordingService.ListRecordings:output_type -> toshi.workspace.v1.ListRecordingsResponse
+	10, // 31: toshi.workspace.v1.RecordingService.GetRecording:output_type -> toshi.workspace.v1.GetRecordingResponse
+	13, // 32: toshi.workspace.v1.RecordingService.CreateRecordingShareLink:output_type -> toshi.workspace.v1.CreateRecordingShareLinkResponse
+	15, // 33: toshi.workspace.v1.RecordingService.ListRecordingShareLinks:output_type -> toshi.workspace.v1.ListRecordingShareLinksResponse
+	17, // 34: toshi.workspace.v1.RecordingService.RevokeRecordingShareLink:output_type -> toshi.workspace.v1.RevokeRecordingShareLinkResponse
+	30, // [30:35] is the sub-list for method output_type
+	25, // [25:30] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_recordings_proto_init() }
@@ -1634,6 +1638,7 @@ func file_toshi_workspace_v1_recordings_proto_init() {
 	if File_toshi_workspace_v1_recordings_proto != nil {
 		return
 	}
+	file_toshi_workspace_v1_roles_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

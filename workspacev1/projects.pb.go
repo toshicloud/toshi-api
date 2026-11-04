@@ -3292,8 +3292,6 @@ type EmbedToken struct {
 	RecordingId string `protobuf:"bytes,8,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
 	// Unset unless it was revoked.
 	RevokedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=revoked_at,json=revokedAt,proto3" json:"revoked_at,omitempty"`
-	// Who minted it: a person's sign-in or an API token, as in the audit.
-	CreatedBy string `protobuf:"bytes,10,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	// Where the recording it was spent on lives, copied from the recording
 	// when it was spent, so they stay after the recording is deleted: its
 	// workload, as ListRecordings takes it, that workload's kind ("job",
@@ -3305,6 +3303,10 @@ type EmbedToken struct {
 	WorkloadKind string `protobuf:"bytes,12,opt,name=workload_kind,json=workloadKind,proto3" json:"workload_kind,omitempty"`
 	// The ID of that workload's environment. Empty until spent.
 	EnvironmentId string `protobuf:"bytes,13,opt,name=environment_id,json=environmentId,proto3" json:"environment_id,omitempty"`
+	// Who minted it. A person's sign-in is a PERSON, an API token is a TOKEN, an
+	// operator or the control plane is the SYSTEM, and a token whose creator was
+	// not recorded has none.
+	CreatedBy     *Subject `protobuf:"bytes,14,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3402,13 +3404,6 @@ func (x *EmbedToken) GetRevokedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *EmbedToken) GetCreatedBy() string {
-	if x != nil {
-		return x.CreatedBy
-	}
-	return ""
-}
-
 func (x *EmbedToken) GetWorkloadId() string {
 	if x != nil {
 		return x.WorkloadId
@@ -3428,6 +3423,13 @@ func (x *EmbedToken) GetEnvironmentId() string {
 		return x.EnvironmentId
 	}
 	return ""
+}
+
+func (x *EmbedToken) GetCreatedBy() *Subject {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return nil
 }
 
 // CreateEmbedTokenRequest carries the project, the page origins and the
@@ -3790,7 +3792,7 @@ var File_toshi_workspace_v1_projects_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/projects.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a*toshi/workspace/v1/model_credentials.proto\x1a toshi/workspace/v1/volumes.proto\"\xd8\x06\n" +
+	"!toshi/workspace/v1/projects.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a*toshi/workspace/v1/model_credentials.proto\x1a\x1etoshi/workspace/v1/roles.proto\x1a toshi/workspace/v1/volumes.proto\"\xd8\x06\n" +
 	"\aProject\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\n" +
@@ -4008,7 +4010,7 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	" ListCompatibilityChangesResponse\x12A\n" +
 	"\achanges\x18\x01 \x03(\v2'.toshi.workspace.v1.CompatibilityChangeR\achanges\x12\x1b\n" +
 	"\tfrom_date\x18\x02 \x01(\tR\bfromDate\x12\x17\n" +
-	"\ato_date\x18\x03 \x01(\tR\x06toDate\"\xa0\x04\n" +
+	"\ato_date\x18\x03 \x01(\tR\x06toDate\"\xc3\x04\n" +
 	"\n" +
 	"EmbedToken\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
@@ -4022,14 +4024,14 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\aused_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x06usedAt\x12!\n" +
 	"\frecording_id\x18\b \x01(\tR\vrecordingId\x129\n" +
 	"\n" +
-	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12\x1d\n" +
-	"\n" +
-	"created_by\x18\n" +
-	" \x01(\tR\tcreatedBy\x12\x1f\n" +
+	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12\x1f\n" +
 	"\vworkload_id\x18\v \x01(\tR\n" +
 	"workloadId\x12#\n" +
 	"\rworkload_kind\x18\f \x01(\tR\fworkloadKind\x12%\n" +
-	"\x0eenvironment_id\x18\r \x01(\tR\renvironmentId\"\x85\x02\n" +
+	"\x0eenvironment_id\x18\r \x01(\tR\renvironmentId\x12:\n" +
+	"\n" +
+	"created_by\x18\x0e \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedByJ\x04\b\n" +
+	"\x10\v\"\x85\x02\n" +
 	"\x17CreateEmbedTokenRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12R\n" +
 	"\aorigins\x18\x02 \x03(\tB8\x8a\xf4\x184\n" +
@@ -4175,6 +4177,7 @@ var file_toshi_workspace_v1_projects_proto_goTypes = []any{
 	(*ModelCredentialDefault)(nil),           // 59: toshi.workspace.v1.ModelCredentialDefault
 	(*fieldmaskpb.FieldMask)(nil),            // 60: google.protobuf.FieldMask
 	(*durationpb.Duration)(nil),              // 61: google.protobuf.Duration
+	(*Subject)(nil),                          // 62: toshi.workspace.v1.Subject
 }
 var file_toshi_workspace_v1_projects_proto_depIdxs = []int32{
 	57, // 0: toshi.workspace.v1.Project.created_at:type_name -> google.protobuf.Timestamp
@@ -4228,55 +4231,56 @@ var file_toshi_workspace_v1_projects_proto_depIdxs = []int32{
 	57, // 48: toshi.workspace.v1.EmbedToken.expires_at:type_name -> google.protobuf.Timestamp
 	57, // 49: toshi.workspace.v1.EmbedToken.used_at:type_name -> google.protobuf.Timestamp
 	57, // 50: toshi.workspace.v1.EmbedToken.revoked_at:type_name -> google.protobuf.Timestamp
-	61, // 51: toshi.workspace.v1.CreateEmbedTokenRequest.expires_in:type_name -> google.protobuf.Duration
-	50, // 52: toshi.workspace.v1.CreateEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
-	50, // 53: toshi.workspace.v1.ListEmbedTokensResponse.embed_tokens:type_name -> toshi.workspace.v1.EmbedToken
-	50, // 54: toshi.workspace.v1.RevokeEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
-	9,  // 55: toshi.workspace.v1.ProjectService.ListProjects:input_type -> toshi.workspace.v1.ListProjectsRequest
-	24, // 56: toshi.workspace.v1.ProjectService.GetProject:input_type -> toshi.workspace.v1.GetProjectRequest
-	12, // 57: toshi.workspace.v1.ProjectService.ListRepositories:input_type -> toshi.workspace.v1.ListRepositoriesRequest
-	14, // 58: toshi.workspace.v1.ProjectService.CreateProject:input_type -> toshi.workspace.v1.CreateProjectRequest
-	16, // 59: toshi.workspace.v1.ProjectService.DeleteProject:input_type -> toshi.workspace.v1.DeleteProjectRequest
-	18, // 60: toshi.workspace.v1.ProjectService.RestoreProject:input_type -> toshi.workspace.v1.RestoreProjectRequest
-	20, // 61: toshi.workspace.v1.ProjectService.UpdateProject:input_type -> toshi.workspace.v1.UpdateProjectRequest
-	22, // 62: toshi.workspace.v1.ProjectService.ClaimRepository:input_type -> toshi.workspace.v1.ClaimRepositoryRequest
-	26, // 63: toshi.workspace.v1.ProjectService.CreateEnvironment:input_type -> toshi.workspace.v1.CreateEnvironmentRequest
-	28, // 64: toshi.workspace.v1.ProjectService.DeleteEnvironment:input_type -> toshi.workspace.v1.DeleteEnvironmentRequest
-	31, // 65: toshi.workspace.v1.ProjectService.ListBranchRules:input_type -> toshi.workspace.v1.ListBranchRulesRequest
-	35, // 66: toshi.workspace.v1.ProjectService.GetProjectNetwork:input_type -> toshi.workspace.v1.GetProjectNetworkRequest
-	37, // 67: toshi.workspace.v1.ProjectService.GetEnvironmentNetwork:input_type -> toshi.workspace.v1.GetEnvironmentNetworkRequest
-	41, // 68: toshi.workspace.v1.ProjectService.GetEnvironmentRetention:input_type -> toshi.workspace.v1.GetEnvironmentRetentionRequest
-	43, // 69: toshi.workspace.v1.ProjectService.UpdateEnvironment:input_type -> toshi.workspace.v1.UpdateEnvironmentRequest
-	45, // 70: toshi.workspace.v1.ProjectService.RaiseCompatibilityDate:input_type -> toshi.workspace.v1.RaiseCompatibilityDateRequest
-	48, // 71: toshi.workspace.v1.ProjectService.ListCompatibilityChanges:input_type -> toshi.workspace.v1.ListCompatibilityChangesRequest
-	51, // 72: toshi.workspace.v1.ProjectService.CreateEmbedToken:input_type -> toshi.workspace.v1.CreateEmbedTokenRequest
-	53, // 73: toshi.workspace.v1.ProjectService.ListEmbedTokens:input_type -> toshi.workspace.v1.ListEmbedTokensRequest
-	55, // 74: toshi.workspace.v1.ProjectService.RevokeEmbedToken:input_type -> toshi.workspace.v1.RevokeEmbedTokenRequest
-	10, // 75: toshi.workspace.v1.ProjectService.ListProjects:output_type -> toshi.workspace.v1.ListProjectsResponse
-	25, // 76: toshi.workspace.v1.ProjectService.GetProject:output_type -> toshi.workspace.v1.GetProjectResponse
-	13, // 77: toshi.workspace.v1.ProjectService.ListRepositories:output_type -> toshi.workspace.v1.ListRepositoriesResponse
-	15, // 78: toshi.workspace.v1.ProjectService.CreateProject:output_type -> toshi.workspace.v1.CreateProjectResponse
-	17, // 79: toshi.workspace.v1.ProjectService.DeleteProject:output_type -> toshi.workspace.v1.DeleteProjectResponse
-	19, // 80: toshi.workspace.v1.ProjectService.RestoreProject:output_type -> toshi.workspace.v1.RestoreProjectResponse
-	21, // 81: toshi.workspace.v1.ProjectService.UpdateProject:output_type -> toshi.workspace.v1.UpdateProjectResponse
-	23, // 82: toshi.workspace.v1.ProjectService.ClaimRepository:output_type -> toshi.workspace.v1.ClaimRepositoryResponse
-	27, // 83: toshi.workspace.v1.ProjectService.CreateEnvironment:output_type -> toshi.workspace.v1.CreateEnvironmentResponse
-	29, // 84: toshi.workspace.v1.ProjectService.DeleteEnvironment:output_type -> toshi.workspace.v1.DeleteEnvironmentResponse
-	32, // 85: toshi.workspace.v1.ProjectService.ListBranchRules:output_type -> toshi.workspace.v1.ListBranchRulesResponse
-	36, // 86: toshi.workspace.v1.ProjectService.GetProjectNetwork:output_type -> toshi.workspace.v1.GetProjectNetworkResponse
-	38, // 87: toshi.workspace.v1.ProjectService.GetEnvironmentNetwork:output_type -> toshi.workspace.v1.GetEnvironmentNetworkResponse
-	42, // 88: toshi.workspace.v1.ProjectService.GetEnvironmentRetention:output_type -> toshi.workspace.v1.GetEnvironmentRetentionResponse
-	44, // 89: toshi.workspace.v1.ProjectService.UpdateEnvironment:output_type -> toshi.workspace.v1.UpdateEnvironmentResponse
-	46, // 90: toshi.workspace.v1.ProjectService.RaiseCompatibilityDate:output_type -> toshi.workspace.v1.RaiseCompatibilityDateResponse
-	49, // 91: toshi.workspace.v1.ProjectService.ListCompatibilityChanges:output_type -> toshi.workspace.v1.ListCompatibilityChangesResponse
-	52, // 92: toshi.workspace.v1.ProjectService.CreateEmbedToken:output_type -> toshi.workspace.v1.CreateEmbedTokenResponse
-	54, // 93: toshi.workspace.v1.ProjectService.ListEmbedTokens:output_type -> toshi.workspace.v1.ListEmbedTokensResponse
-	56, // 94: toshi.workspace.v1.ProjectService.RevokeEmbedToken:output_type -> toshi.workspace.v1.RevokeEmbedTokenResponse
-	75, // [75:95] is the sub-list for method output_type
-	55, // [55:75] is the sub-list for method input_type
-	55, // [55:55] is the sub-list for extension type_name
-	55, // [55:55] is the sub-list for extension extendee
-	0,  // [0:55] is the sub-list for field type_name
+	62, // 51: toshi.workspace.v1.EmbedToken.created_by:type_name -> toshi.workspace.v1.Subject
+	61, // 52: toshi.workspace.v1.CreateEmbedTokenRequest.expires_in:type_name -> google.protobuf.Duration
+	50, // 53: toshi.workspace.v1.CreateEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
+	50, // 54: toshi.workspace.v1.ListEmbedTokensResponse.embed_tokens:type_name -> toshi.workspace.v1.EmbedToken
+	50, // 55: toshi.workspace.v1.RevokeEmbedTokenResponse.embed_token:type_name -> toshi.workspace.v1.EmbedToken
+	9,  // 56: toshi.workspace.v1.ProjectService.ListProjects:input_type -> toshi.workspace.v1.ListProjectsRequest
+	24, // 57: toshi.workspace.v1.ProjectService.GetProject:input_type -> toshi.workspace.v1.GetProjectRequest
+	12, // 58: toshi.workspace.v1.ProjectService.ListRepositories:input_type -> toshi.workspace.v1.ListRepositoriesRequest
+	14, // 59: toshi.workspace.v1.ProjectService.CreateProject:input_type -> toshi.workspace.v1.CreateProjectRequest
+	16, // 60: toshi.workspace.v1.ProjectService.DeleteProject:input_type -> toshi.workspace.v1.DeleteProjectRequest
+	18, // 61: toshi.workspace.v1.ProjectService.RestoreProject:input_type -> toshi.workspace.v1.RestoreProjectRequest
+	20, // 62: toshi.workspace.v1.ProjectService.UpdateProject:input_type -> toshi.workspace.v1.UpdateProjectRequest
+	22, // 63: toshi.workspace.v1.ProjectService.ClaimRepository:input_type -> toshi.workspace.v1.ClaimRepositoryRequest
+	26, // 64: toshi.workspace.v1.ProjectService.CreateEnvironment:input_type -> toshi.workspace.v1.CreateEnvironmentRequest
+	28, // 65: toshi.workspace.v1.ProjectService.DeleteEnvironment:input_type -> toshi.workspace.v1.DeleteEnvironmentRequest
+	31, // 66: toshi.workspace.v1.ProjectService.ListBranchRules:input_type -> toshi.workspace.v1.ListBranchRulesRequest
+	35, // 67: toshi.workspace.v1.ProjectService.GetProjectNetwork:input_type -> toshi.workspace.v1.GetProjectNetworkRequest
+	37, // 68: toshi.workspace.v1.ProjectService.GetEnvironmentNetwork:input_type -> toshi.workspace.v1.GetEnvironmentNetworkRequest
+	41, // 69: toshi.workspace.v1.ProjectService.GetEnvironmentRetention:input_type -> toshi.workspace.v1.GetEnvironmentRetentionRequest
+	43, // 70: toshi.workspace.v1.ProjectService.UpdateEnvironment:input_type -> toshi.workspace.v1.UpdateEnvironmentRequest
+	45, // 71: toshi.workspace.v1.ProjectService.RaiseCompatibilityDate:input_type -> toshi.workspace.v1.RaiseCompatibilityDateRequest
+	48, // 72: toshi.workspace.v1.ProjectService.ListCompatibilityChanges:input_type -> toshi.workspace.v1.ListCompatibilityChangesRequest
+	51, // 73: toshi.workspace.v1.ProjectService.CreateEmbedToken:input_type -> toshi.workspace.v1.CreateEmbedTokenRequest
+	53, // 74: toshi.workspace.v1.ProjectService.ListEmbedTokens:input_type -> toshi.workspace.v1.ListEmbedTokensRequest
+	55, // 75: toshi.workspace.v1.ProjectService.RevokeEmbedToken:input_type -> toshi.workspace.v1.RevokeEmbedTokenRequest
+	10, // 76: toshi.workspace.v1.ProjectService.ListProjects:output_type -> toshi.workspace.v1.ListProjectsResponse
+	25, // 77: toshi.workspace.v1.ProjectService.GetProject:output_type -> toshi.workspace.v1.GetProjectResponse
+	13, // 78: toshi.workspace.v1.ProjectService.ListRepositories:output_type -> toshi.workspace.v1.ListRepositoriesResponse
+	15, // 79: toshi.workspace.v1.ProjectService.CreateProject:output_type -> toshi.workspace.v1.CreateProjectResponse
+	17, // 80: toshi.workspace.v1.ProjectService.DeleteProject:output_type -> toshi.workspace.v1.DeleteProjectResponse
+	19, // 81: toshi.workspace.v1.ProjectService.RestoreProject:output_type -> toshi.workspace.v1.RestoreProjectResponse
+	21, // 82: toshi.workspace.v1.ProjectService.UpdateProject:output_type -> toshi.workspace.v1.UpdateProjectResponse
+	23, // 83: toshi.workspace.v1.ProjectService.ClaimRepository:output_type -> toshi.workspace.v1.ClaimRepositoryResponse
+	27, // 84: toshi.workspace.v1.ProjectService.CreateEnvironment:output_type -> toshi.workspace.v1.CreateEnvironmentResponse
+	29, // 85: toshi.workspace.v1.ProjectService.DeleteEnvironment:output_type -> toshi.workspace.v1.DeleteEnvironmentResponse
+	32, // 86: toshi.workspace.v1.ProjectService.ListBranchRules:output_type -> toshi.workspace.v1.ListBranchRulesResponse
+	36, // 87: toshi.workspace.v1.ProjectService.GetProjectNetwork:output_type -> toshi.workspace.v1.GetProjectNetworkResponse
+	38, // 88: toshi.workspace.v1.ProjectService.GetEnvironmentNetwork:output_type -> toshi.workspace.v1.GetEnvironmentNetworkResponse
+	42, // 89: toshi.workspace.v1.ProjectService.GetEnvironmentRetention:output_type -> toshi.workspace.v1.GetEnvironmentRetentionResponse
+	44, // 90: toshi.workspace.v1.ProjectService.UpdateEnvironment:output_type -> toshi.workspace.v1.UpdateEnvironmentResponse
+	46, // 91: toshi.workspace.v1.ProjectService.RaiseCompatibilityDate:output_type -> toshi.workspace.v1.RaiseCompatibilityDateResponse
+	49, // 92: toshi.workspace.v1.ProjectService.ListCompatibilityChanges:output_type -> toshi.workspace.v1.ListCompatibilityChangesResponse
+	52, // 93: toshi.workspace.v1.ProjectService.CreateEmbedToken:output_type -> toshi.workspace.v1.CreateEmbedTokenResponse
+	54, // 94: toshi.workspace.v1.ProjectService.ListEmbedTokens:output_type -> toshi.workspace.v1.ListEmbedTokensResponse
+	56, // 95: toshi.workspace.v1.ProjectService.RevokeEmbedToken:output_type -> toshi.workspace.v1.RevokeEmbedTokenResponse
+	76, // [76:96] is the sub-list for method output_type
+	56, // [56:76] is the sub-list for method input_type
+	56, // [56:56] is the sub-list for extension type_name
+	56, // [56:56] is the sub-list for extension extendee
+	0,  // [0:56] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_projects_proto_init() }
@@ -4285,6 +4289,7 @@ func file_toshi_workspace_v1_projects_proto_init() {
 		return
 	}
 	file_toshi_workspace_v1_model_credentials_proto_init()
+	file_toshi_workspace_v1_roles_proto_init()
 	file_toshi_workspace_v1_volumes_proto_init()
 	file_toshi_workspace_v1_projects_proto_msgTypes[37].OneofWrappers = []any{}
 	type x struct{}

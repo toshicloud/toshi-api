@@ -163,8 +163,6 @@ type ModelCredential struct {
 	Secret string `protobuf:"bytes,11,opt,name=secret,proto3" json:"secret,omitempty"`
 	// When the control plane added the credential.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	// The user id of the person who added it.
-	CreatedBy string `protobuf:"bytes,13,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	// A sign-in's state; unset for a key.
 	State ModelCredentialState `protobuf:"varint,14,opt,name=state,proto3,enum=toshi.workspace.v1.ModelCredentialState" json:"state,omitempty"`
 	// Why a sign-in needs a new sign-in, such as "refresh_refused"; empty
@@ -180,7 +178,10 @@ type ModelCredential struct {
 	LastUsedAt *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=last_used_at,json=lastUsedAt,proto3" json:"last_used_at,omitempty"`
 	// A display label of the signed-in account, such as its address; empty
 	// for a key.
-	Account       string `protobuf:"bytes,19,opt,name=account,proto3" json:"account,omitempty"`
+	Account string `protobuf:"bytes,19,opt,name=account,proto3" json:"account,omitempty"`
+	// The person who added it, a PERSON, or none for a credential whose creator
+	// was not recorded.
+	CreatedBy     *Subject `protobuf:"bytes,20,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -299,13 +300,6 @@ func (x *ModelCredential) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *ModelCredential) GetCreatedBy() string {
-	if x != nil {
-		return x.CreatedBy
-	}
-	return ""
-}
-
 func (x *ModelCredential) GetState() ModelCredentialState {
 	if x != nil {
 		return x.State
@@ -346,6 +340,13 @@ func (x *ModelCredential) GetAccount() string {
 		return x.Account
 	}
 	return ""
+}
+
+func (x *ModelCredential) GetCreatedBy() *Subject {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return nil
 }
 
 // ModelCredentialDefault names the workspace credential a workload gets for
@@ -1718,7 +1719,7 @@ var File_toshi_workspace_v1_model_credentials_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\n" +
-	"*toshi/workspace/v1/model_credentials.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd5\x05\n" +
+	"*toshi/workspace/v1/model_credentials.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1etoshi/workspace/v1/roles.proto\"\xf8\x05\n" +
 	"\x0fModelCredential\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
@@ -1734,16 +1735,16 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	" \x01(\bR\x06shared\x12\x16\n" +
 	"\x06secret\x18\v \x01(\tR\x06secret\x129\n" +
 	"\n" +
-	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1d\n" +
-	"\n" +
-	"created_by\x18\r \x01(\tR\tcreatedBy\x12>\n" +
+	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12>\n" +
 	"\x05state\x18\x0e \x01(\x0e2(.toshi.workspace.v1.ModelCredentialStateR\x05state\x12!\n" +
 	"\fstate_reason\x18\x0f \x01(\tR\vstateReason\x125\n" +
 	"\bstate_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\astateAt\x12D\n" +
 	"\x10token_expires_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\x0etokenExpiresAt\x12<\n" +
 	"\flast_used_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"lastUsedAt\x12\x18\n" +
-	"\aaccount\x18\x13 \x01(\tR\aaccount\"_\n" +
+	"\aaccount\x18\x13 \x01(\tR\aaccount\x12:\n" +
+	"\n" +
+	"created_by\x18\x14 \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedByJ\x04\b\r\x10\x0e\"_\n" +
 	"\x16ModelCredentialDefault\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12)\n" +
 	"\x10model_credential\x18\x02 \x01(\tR\x0fmodelCredential\"\x83\x02\n" +
@@ -1890,7 +1891,8 @@ var file_toshi_workspace_v1_model_credentials_proto_goTypes = []any{
 	(*CancelModelSignInRequest)(nil),         // 24: toshi.workspace.v1.CancelModelSignInRequest
 	(*CancelModelSignInResponse)(nil),        // 25: toshi.workspace.v1.CancelModelSignInResponse
 	(*timestamppb.Timestamp)(nil),            // 26: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),            // 27: google.protobuf.FieldMask
+	(*Subject)(nil),                          // 27: toshi.workspace.v1.Subject
+	(*fieldmaskpb.FieldMask)(nil),            // 28: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_model_credentials_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.ModelCredential.kind:type_name -> toshi.workspace.v1.ModelCredentialKind
@@ -1899,41 +1901,42 @@ var file_toshi_workspace_v1_model_credentials_proto_depIdxs = []int32{
 	26, // 3: toshi.workspace.v1.ModelCredential.state_at:type_name -> google.protobuf.Timestamp
 	26, // 4: toshi.workspace.v1.ModelCredential.token_expires_at:type_name -> google.protobuf.Timestamp
 	26, // 5: toshi.workspace.v1.ModelCredential.last_used_at:type_name -> google.protobuf.Timestamp
-	2,  // 6: toshi.workspace.v1.CreateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	2,  // 7: toshi.workspace.v1.GetModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	2,  // 8: toshi.workspace.v1.ListModelCredentialsResponse.model_credentials:type_name -> toshi.workspace.v1.ModelCredential
-	2,  // 9: toshi.workspace.v1.UpdateModelCredentialRequest.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	27, // 10: toshi.workspace.v1.UpdateModelCredentialRequest.update_mask:type_name -> google.protobuf.FieldMask
-	2,  // 11: toshi.workspace.v1.UpdateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
-	15, // 12: toshi.workspace.v1.ListModelSignInProvidersResponse.providers:type_name -> toshi.workspace.v1.ModelSignInProvider
-	19, // 13: toshi.workspace.v1.StartModelSignInResponse.prompt:type_name -> toshi.workspace.v1.Prompt
-	20, // 14: toshi.workspace.v1.StartModelSignInResponse.progress:type_name -> toshi.workspace.v1.Progress
-	2,  // 15: toshi.workspace.v1.StartModelSignInResponse.done:type_name -> toshi.workspace.v1.ModelCredential
-	21, // 16: toshi.workspace.v1.StartModelSignInResponse.failed:type_name -> toshi.workspace.v1.Failure
-	26, // 17: toshi.workspace.v1.Prompt.expires_at:type_name -> google.protobuf.Timestamp
-	4,  // 18: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:input_type -> toshi.workspace.v1.CreateModelCredentialRequest
-	6,  // 19: toshi.workspace.v1.ModelCredentialService.GetModelCredential:input_type -> toshi.workspace.v1.GetModelCredentialRequest
-	8,  // 20: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:input_type -> toshi.workspace.v1.ListModelCredentialsRequest
-	10, // 21: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:input_type -> toshi.workspace.v1.UpdateModelCredentialRequest
-	12, // 22: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:input_type -> toshi.workspace.v1.DeleteModelCredentialRequest
-	14, // 23: toshi.workspace.v1.ModelCredentialService.ListModelSignInProviders:input_type -> toshi.workspace.v1.ListModelSignInProvidersRequest
-	17, // 24: toshi.workspace.v1.ModelCredentialService.StartModelSignIn:input_type -> toshi.workspace.v1.StartModelSignInRequest
-	22, // 25: toshi.workspace.v1.ModelCredentialService.CompleteModelSignIn:input_type -> toshi.workspace.v1.CompleteModelSignInRequest
-	24, // 26: toshi.workspace.v1.ModelCredentialService.CancelModelSignIn:input_type -> toshi.workspace.v1.CancelModelSignInRequest
-	5,  // 27: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:output_type -> toshi.workspace.v1.CreateModelCredentialResponse
-	7,  // 28: toshi.workspace.v1.ModelCredentialService.GetModelCredential:output_type -> toshi.workspace.v1.GetModelCredentialResponse
-	9,  // 29: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:output_type -> toshi.workspace.v1.ListModelCredentialsResponse
-	11, // 30: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:output_type -> toshi.workspace.v1.UpdateModelCredentialResponse
-	13, // 31: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:output_type -> toshi.workspace.v1.DeleteModelCredentialResponse
-	16, // 32: toshi.workspace.v1.ModelCredentialService.ListModelSignInProviders:output_type -> toshi.workspace.v1.ListModelSignInProvidersResponse
-	18, // 33: toshi.workspace.v1.ModelCredentialService.StartModelSignIn:output_type -> toshi.workspace.v1.StartModelSignInResponse
-	23, // 34: toshi.workspace.v1.ModelCredentialService.CompleteModelSignIn:output_type -> toshi.workspace.v1.CompleteModelSignInResponse
-	25, // 35: toshi.workspace.v1.ModelCredentialService.CancelModelSignIn:output_type -> toshi.workspace.v1.CancelModelSignInResponse
-	27, // [27:36] is the sub-list for method output_type
-	18, // [18:27] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	27, // 6: toshi.workspace.v1.ModelCredential.created_by:type_name -> toshi.workspace.v1.Subject
+	2,  // 7: toshi.workspace.v1.CreateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
+	2,  // 8: toshi.workspace.v1.GetModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
+	2,  // 9: toshi.workspace.v1.ListModelCredentialsResponse.model_credentials:type_name -> toshi.workspace.v1.ModelCredential
+	2,  // 10: toshi.workspace.v1.UpdateModelCredentialRequest.model_credential:type_name -> toshi.workspace.v1.ModelCredential
+	28, // 11: toshi.workspace.v1.UpdateModelCredentialRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 12: toshi.workspace.v1.UpdateModelCredentialResponse.model_credential:type_name -> toshi.workspace.v1.ModelCredential
+	15, // 13: toshi.workspace.v1.ListModelSignInProvidersResponse.providers:type_name -> toshi.workspace.v1.ModelSignInProvider
+	19, // 14: toshi.workspace.v1.StartModelSignInResponse.prompt:type_name -> toshi.workspace.v1.Prompt
+	20, // 15: toshi.workspace.v1.StartModelSignInResponse.progress:type_name -> toshi.workspace.v1.Progress
+	2,  // 16: toshi.workspace.v1.StartModelSignInResponse.done:type_name -> toshi.workspace.v1.ModelCredential
+	21, // 17: toshi.workspace.v1.StartModelSignInResponse.failed:type_name -> toshi.workspace.v1.Failure
+	26, // 18: toshi.workspace.v1.Prompt.expires_at:type_name -> google.protobuf.Timestamp
+	4,  // 19: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:input_type -> toshi.workspace.v1.CreateModelCredentialRequest
+	6,  // 20: toshi.workspace.v1.ModelCredentialService.GetModelCredential:input_type -> toshi.workspace.v1.GetModelCredentialRequest
+	8,  // 21: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:input_type -> toshi.workspace.v1.ListModelCredentialsRequest
+	10, // 22: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:input_type -> toshi.workspace.v1.UpdateModelCredentialRequest
+	12, // 23: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:input_type -> toshi.workspace.v1.DeleteModelCredentialRequest
+	14, // 24: toshi.workspace.v1.ModelCredentialService.ListModelSignInProviders:input_type -> toshi.workspace.v1.ListModelSignInProvidersRequest
+	17, // 25: toshi.workspace.v1.ModelCredentialService.StartModelSignIn:input_type -> toshi.workspace.v1.StartModelSignInRequest
+	22, // 26: toshi.workspace.v1.ModelCredentialService.CompleteModelSignIn:input_type -> toshi.workspace.v1.CompleteModelSignInRequest
+	24, // 27: toshi.workspace.v1.ModelCredentialService.CancelModelSignIn:input_type -> toshi.workspace.v1.CancelModelSignInRequest
+	5,  // 28: toshi.workspace.v1.ModelCredentialService.CreateModelCredential:output_type -> toshi.workspace.v1.CreateModelCredentialResponse
+	7,  // 29: toshi.workspace.v1.ModelCredentialService.GetModelCredential:output_type -> toshi.workspace.v1.GetModelCredentialResponse
+	9,  // 30: toshi.workspace.v1.ModelCredentialService.ListModelCredentials:output_type -> toshi.workspace.v1.ListModelCredentialsResponse
+	11, // 31: toshi.workspace.v1.ModelCredentialService.UpdateModelCredential:output_type -> toshi.workspace.v1.UpdateModelCredentialResponse
+	13, // 32: toshi.workspace.v1.ModelCredentialService.DeleteModelCredential:output_type -> toshi.workspace.v1.DeleteModelCredentialResponse
+	16, // 33: toshi.workspace.v1.ModelCredentialService.ListModelSignInProviders:output_type -> toshi.workspace.v1.ListModelSignInProvidersResponse
+	18, // 34: toshi.workspace.v1.ModelCredentialService.StartModelSignIn:output_type -> toshi.workspace.v1.StartModelSignInResponse
+	23, // 35: toshi.workspace.v1.ModelCredentialService.CompleteModelSignIn:output_type -> toshi.workspace.v1.CompleteModelSignInResponse
+	25, // 36: toshi.workspace.v1.ModelCredentialService.CancelModelSignIn:output_type -> toshi.workspace.v1.CancelModelSignInResponse
+	28, // [28:37] is the sub-list for method output_type
+	19, // [19:28] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_model_credentials_proto_init() }
@@ -1941,6 +1944,7 @@ func file_toshi_workspace_v1_model_credentials_proto_init() {
 	if File_toshi_workspace_v1_model_credentials_proto != nil {
 		return
 	}
+	file_toshi_workspace_v1_roles_proto_init()
 	file_toshi_workspace_v1_model_credentials_proto_msgTypes[15].OneofWrappers = []any{}
 	file_toshi_workspace_v1_model_credentials_proto_msgTypes[16].OneofWrappers = []any{
 		(*StartModelSignInResponse_Prompt)(nil),

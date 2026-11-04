@@ -5,6 +5,7 @@ package toshi.workspace.v1;
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
+import "toshi/workspace/v1/roles.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
@@ -289,8 +290,11 @@ message RecordingShareLink {
   int64 used_bytes = 8;
   // Unset unless it was revoked.
   google.protobuf.Timestamp revoked_at = 9;
-  // Who minted it: a person's sign-in or an API token, as in the audit.
-  string created_by = 10;
+  // Who minted it. A person's sign-in is a PERSON, an API token is a TOKEN, an
+  // operator or the control plane is the SYSTEM, and a link whose creator was
+  // not recorded has none.
+  Subject created_by = 11;
+  reserved 10;
 }
 
 // CreateRecordingShareLinkRequest asks for a share link to one ready

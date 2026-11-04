@@ -7,6 +7,7 @@ import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
 import "toshi/workspace/v1/model_credentials.proto";
+import "toshi/workspace/v1/roles.proto";
 import "toshi/workspace/v1/volumes.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
@@ -964,8 +965,6 @@ message EmbedToken {
   string recording_id = 8;
   // Unset unless it was revoked.
   google.protobuf.Timestamp revoked_at = 9;
-  // Who minted it: a person's sign-in or an API token, as in the audit.
-  string created_by = 10;
   // Where the recording it was spent on lives, copied from the recording
   // when it was spent, so they stay after the recording is deleted: its
   // workload, as ListRecordings takes it, that workload's kind ("job",
@@ -977,6 +976,11 @@ message EmbedToken {
   string workload_kind = 12;
   // The ID of that workload's environment. Empty until spent.
   string environment_id = 13;
+  // Who minted it. A person's sign-in is a PERSON, an API token is a TOKEN, an
+  // operator or the control plane is the SYSTEM, and a token whose creator was
+  // not recorded has none.
+  Subject created_by = 14;
+  reserved 10;
 }
 
 // CreateEmbedTokenRequest carries the project, the page origins and the
