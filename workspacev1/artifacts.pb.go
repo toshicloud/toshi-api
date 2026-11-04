@@ -868,7 +868,7 @@ type GetArtifactDownloadURLRequest struct {
 	// Empty for a one-object artifact; part-00000 and on, or index, for a
 	// multi-part one.
 	Part string `protobuf:"bytes,2,opt,name=part,proto3" json:"part,omitempty"`
-	// 0 is 300 seconds; at most 3600.
+	// 0 is 300 seconds; at most 3600 seconds.
 	TtlSeconds    int64 `protobuf:"varint,3,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1084,12 +1084,13 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\vartifact_id\x18\x01 \x01(\tR\n" +
 	"artifactId\"O\n" +
 	"\x13GetArtifactResponse\x128\n" +
-	"\bartifact\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.ArtifactR\bartifact\"u\n" +
+	"\bartifact\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.ArtifactR\bartifact\"\x9e\x01\n" +
 	"\x1dGetArtifactDownloadURLRequest\x12\x1f\n" +
 	"\vartifact_id\x18\x01 \x01(\tR\n" +
 	"artifactId\x12\x12\n" +
-	"\x04part\x18\x02 \x01(\tR\x04part\x12\x1f\n" +
-	"\vttl_seconds\x18\x03 \x01(\x03R\n" +
+	"\x04part\x18\x02 \x01(\tR\x04part\x12H\n" +
+	"\vttl_seconds\x18\x03 \x01(\x03B'\x8a\xf4\x18#\n" +
+	"\x19artifact_download_url_ttl\x10\x01\x18\xac\x02(\x90\x1cR\n" +
 	"ttlSeconds\"\xa8\x01\n" +
 	"\x1eGetArtifactDownloadURLResponse\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x129\n" +

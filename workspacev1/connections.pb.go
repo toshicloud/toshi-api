@@ -926,7 +926,7 @@ type CreateConnectionRequest struct {
 	// The kind to create: WEBHOOK or MAIL. Installing the GitHub App creates
 	// a GITHUB connection.
 	Kind ConnectionKind `protobuf:"varint,1,opt,name=kind,proto3,enum=toshi.workspace.v1.ConnectionKind" json:"kind,omitempty"`
-	// A lowercase DNS label of at most 63 characters.
+	// A lowercase DNS label of at most 63 bytes.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The project and environment the connection's events belong to. Both
 	// are required for WEBHOOK. For MAIL they are optional, and when set must
@@ -2128,10 +2128,11 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x15GetConnectionResponse\x12>\n" +
 	"\n" +
 	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +
-	"connection\"\x92\x03\n" +
+	"connection\"\xad\x03\n" +
 	"\x17CreateConnectionRequest\x126\n" +
-	"\x04kind\x18\x01 \x01(\x0e2\".toshi.workspace.v1.ConnectionKindR\x04kind\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
+	"\x04kind\x18\x01 \x01(\x0e2\".toshi.workspace.v1.ConnectionKindR\x04kind\x12-\n" +
+	"\x04name\x18\x02 \x01(\tB\x19\x8a\xf4\x18\x15\n" +
+	"\x0fconnection_name\x10\x02(?R\x04name\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x04 \x01(\tR\venvironment\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +

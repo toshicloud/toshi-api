@@ -75,8 +75,8 @@ service FillerService {
 // targets.
 message Filler {
   // Unique among the workspace's fillers; lowercase letters, digits and
-  // dashes, at most 40 characters, starting with a letter or digit.
-  string name = 1;
+  // dashes, at most 40 bytes, starting with a letter or digit.
+  string name = 1 [(toshi.bound) = {name: "filler_name", unit: UNIT_BYTES, max: 40}];
   // The runner size of the VM.
   string size = 2;
   // Run only on hosts whose pool for the size has nested KVM.
@@ -88,15 +88,15 @@ message Filler {
   // The branch or tag to run it on. Empty: the repository's default
   // branch.
   string ref = 6;
-  // How long after a run completes or fails the next may start. Default
-  // 24 hours. After a run that was preempted, rejected or lost the next
-  // may start after the control plane's fillers.retry_after, 2 minutes
-  // unless set.
-  google.protobuf.Duration every = 7;
+  // How long after a run completes or fails the next may start, at least
+  // 10 minutes. Default 24 hours. After a run that was preempted, rejected
+  // or lost the next may start after the control plane's fillers.retry_after,
+  // 2 minutes unless set.
+  google.protobuf.Duration every = 7 [(toshi.bound) = {name: "filler_every", unit: UNIT_SECONDS, min: 600, default: 86400}];
   // The longest one run may take. A filler PutFiller stores gets 1 hour
   // when unset and may take at most 1 hour; the operator's default is 2
   // hours.
-  google.protobuf.Duration max_duration = 8;
+  google.protobuf.Duration max_duration = 8 [(toshi.bound) = {name: "filler_max_duration", unit: UNIT_SECONDS, default: 3600, max: 3600}];
   // Whether Toshi dispatches runs of the filler. PutFiller stores it as
   // sent, so a new filler is disabled unless the request sets it.
   bool enabled = 9;

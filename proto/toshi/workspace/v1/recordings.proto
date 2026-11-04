@@ -229,9 +229,9 @@ message ListRecordingsResponse {
 message GetRecordingRequest {
   // The recording to return; required.
   string recording_id = 1;
-  // How long the strip's URL lives: 0 is the default (300 seconds), and
-  // above 3600 fails with INVALID_ARGUMENT.
-  int64 ttl_seconds = 2;
+  // How long the strip's URL lives: 0 is 300 seconds, and at most 3600
+  // seconds; above that fails with INVALID_ARGUMENT.
+  int64 ttl_seconds = 2 [(toshi.bound) = {name: "recording_url_ttl", unit: UNIT_SECONDS, default: 300, max: 3600}];
 }
 
 // GetRecordingResponse is one recording and, when it is ready, a signed URL
@@ -302,11 +302,11 @@ message CreateRecordingShareLinkRequest {
   // workspace's plan's maximum when that is shorter, and more than the
   // plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
   google.protobuf.Duration expires_in = 2;
-  // The most bytes its fetches may take; 0 is the server's default, or the
-  // workspace's plan's maximum when that is lower. More than the plan's
-  // maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT, and less than
-  // the recording's object is INVALID_ARGUMENT.
-  int64 max_bytes = 3;
+  // The most bytes its fetches may take: 2 GiB when unset, and at most
+  // 2 GiB, unless the workspace's plan is lower, so the plan may lower it.
+  // More than the plan's maximum is RESOURCE_EXHAUSTED with the reason
+  // PLAN_LIMIT, and less than the recording's object is INVALID_ARGUMENT.
+  int64 max_bytes = 3 [(toshi.bound) = {name: "recording_share_link_size", unit: UNIT_BYTES, default: 2147483648, max: 2147483648}];
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
   // key and request return the first answer while the link remains live;
   // a spent, revoked or expired link cannot be replayed. A different request

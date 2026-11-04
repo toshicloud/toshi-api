@@ -223,6 +223,9 @@ message Bound {
   // http_hosts lists the hosts allowed over http for an origins field;
   // https is allowed on any host.
   repeated string http_hosts = 7;
+  // pattern is a regular expression, in RE2 and JavaScript syntax, the whole
+  // value must match. The server's own check may be stricter.
+  optional string pattern = 8;
 
   // Unit identifies the unit of a bound's values.
   enum Unit {

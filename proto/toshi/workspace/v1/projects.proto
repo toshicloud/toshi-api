@@ -807,8 +807,8 @@ message GetEnvironmentNetworkResponse {
 message RetentionKeep {
   // The artifact kind: recording, recording-signed-in, trace or report.
   string kind = 1;
-  // At least one hour.
-  google.protobuf.Duration keep = 2;
+  // At least 1 hour.
+  google.protobuf.Duration keep = 2 [(toshi.bound) = {name: "retention_keep", unit: UNIT_SECONDS, min: 3600}];
 }
 
 // EnvironmentRetention is how long an environment keeps its finished jobs
@@ -818,8 +818,8 @@ message EnvironmentRetention {
   // Days the environment keeps its finished jobs. In an override, unset
   // follows the workspace and the value is at least 1 and at most the
   // workspace's period: an override cannot keep forever. In the retention
-  // that applies, 0 keeps forever.
-  optional int32 history_days = 1;
+  // that applies, 0 keeps forever. The maximum is the workspace's period.
+  optional int32 history_days = 1 [(toshi.bound) = {name: "environment_history_days", unit: UNIT_COUNT, min: 1}];
   // Each kind's keep, by kind. In an override, a kind left out follows the
   // workspace. In the retention that applies, a kind left out is kept
   // forever.

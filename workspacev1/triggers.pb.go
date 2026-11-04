@@ -161,7 +161,7 @@ type Trigger struct {
 	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	// The id of the connection whose events it matches.
 	Source string `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"`
-	// The event names it matches, exactly; at least one.
+	// The event names it matches, exactly; at least one and at most 32.
 	Events []string `protobuf:"bytes,6,rep,name=events,proto3" json:"events,omitempty"`
 	// Further limits on a pull request event; unset matches every one.
 	Filter *TriggerFilter `protobuf:"bytes,7,opt,name=filter,proto3" json:"filter,omitempty"`
@@ -590,8 +590,8 @@ type TriggerSandbox struct {
 	// "toshi-linux-2x". Required.
 	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
 	// How long it may run, in whole minutes; unset is 24 hours, or the plan's
-	// sandbox cap when shorter. It cannot be longer than the cap: a create or
-	// update past it is refused.
+	// sandbox cap when shorter, so the plan may lower it. It cannot be longer
+	// than the cap: a create or update past it is refused.
 	MaxDuration *durationpb.Duration `protobuf:"bytes,2,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
 	// What in its workspace it uses, as SandboxSpec's bindings.
 	Bindings []*Binding `protobuf:"bytes,3,rep,name=bindings,proto3" json:"bindings,omitempty"`
@@ -1309,20 +1309,22 @@ var File_toshi_workspace_v1_triggers_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_triggers_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/triggers.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/workspace.proto\"\xc8\x04\n" +
+	"!toshi/workspace/v1/triggers.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/workspace.proto\"\x83\x05\n" +
 	"\aTrigger\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x03 \x01(\tR\venvironment\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x16\n" +
-	"\x06source\x18\x05 \x01(\tR\x06source\x12\x16\n" +
-	"\x06events\x18\x06 \x03(\tR\x06events\x129\n" +
+	"\x06source\x18\x05 \x01(\tR\x06source\x120\n" +
+	"\x06events\x18\x06 \x03(\tB\x18\x8a\xf4\x18\x14\n" +
+	"\x0etrigger_events\x10\x03( R\x06events\x129\n" +
 	"\x06filter\x18\a \x01(\v2!.toshi.workspace.v1.TriggerFilterR\x06filter\x129\n" +
 	"\x06action\x18\b \x01(\x0e2!.toshi.workspace.v1.TriggerActionR\x06action\x129\n" +
 	"\x06target\x18\t \x01(\v2!.toshi.workspace.v1.TriggerTargetR\x06target\x12\x10\n" +
 	"\x03key\x18\n" +
-	" \x01(\tR\x03key\x12<\n" +
-	"\fidle_timeout\x18\v \x01(\v2\x19.google.protobuf.DurationR\vidleTimeout\x126\n" +
+	" \x01(\tR\x03key\x12]\n" +
+	"\fidle_timeout\x18\v \x01(\v2\x19.google.protobuf.DurationB\x1f\x8a\xf4\x18\x1b\n" +
+	"\x14trigger_idle_timeout\x10\x01\x18\xa08R\vidleTimeout\x126\n" +
 	"\x05forks\x18\f \x01(\x0e2 .toshi.workspace.v1.TriggerForksR\x05forks\x129\n" +
 	"\n" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
@@ -1339,10 +1341,11 @@ const file_toshi_workspace_v1_triggers_proto_rawDesc = "" +
 	"\x16TriggerServiceEndpoint\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12\x1a\n" +
 	"\bendpoint\x18\x02 \x01(\tR\bendpoint\"\x10\n" +
-	"\x0eTriggerPreview\"\xca\x02\n" +
+	"\x0eTriggerPreview\"\xf4\x02\n" +
 	"\x0eTriggerSandbox\x12\x12\n" +
-	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
-	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
+	"\x04size\x18\x01 \x01(\tR\x04size\x12f\n" +
+	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationB(\x8a\xf4\x18$\n" +
+	"\x1ctrigger_sandbox_max_duration\x10\x01\x18\x80\xa3\x05R\vmaxDuration\x127\n" +
 	"\bbindings\x18\x03 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x121\n" +
 	"\x05setup\x18\x04 \x01(\v2\x1b.toshi.workspace.v1.CommandR\x05setup\x125\n" +
 	"\aprocess\x18\x05 \x01(\v2\x1b.toshi.workspace.v1.CommandR\aprocess\x12\x1a\n" +

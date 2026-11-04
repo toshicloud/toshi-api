@@ -784,8 +784,8 @@ type GetRecordingRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The recording to return; required.
 	RecordingId string `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
-	// How long the strip's URL lives: 0 is the default (300 seconds), and
-	// above 3600 fails with INVALID_ARGUMENT.
+	// How long the strip's URL lives: 0 is 300 seconds, and at most 3600
+	// seconds; above that fails with INVALID_ARGUMENT.
 	TtlSeconds    int64 `protobuf:"varint,2,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1053,10 +1053,10 @@ type CreateRecordingShareLinkRequest struct {
 	// workspace's plan's maximum when that is shorter, and more than the
 	// plan's maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT.
 	ExpiresIn *durationpb.Duration `protobuf:"bytes,2,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
-	// The most bytes its fetches may take; 0 is the server's default, or the
-	// workspace's plan's maximum when that is lower. More than the plan's
-	// maximum is RESOURCE_EXHAUSTED with the reason PLAN_LIMIT, and less than
-	// the recording's object is INVALID_ARGUMENT.
+	// The most bytes its fetches may take: 2 GiB when unset, and at most
+	// 2 GiB, unless the workspace's plan is lower, so the plan may lower it.
+	// More than the plan's maximum is RESOURCE_EXHAUSTED with the reason
+	// PLAN_LIMIT, and less than the recording's object is INVALID_ARGUMENT.
 	MaxBytes int64 `protobuf:"varint,3,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
 	// key and request return the first answer while the link remains live;
@@ -1461,10 +1461,11 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"\n" +
 	"recordings\x18\x01 \x03(\v2\x1d.toshi.workspace.v1.RecordingR\n" +
 	"recordings\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"Y\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"z\n" +
 	"\x13GetRecordingRequest\x12!\n" +
-	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x12\x1f\n" +
-	"\vttl_seconds\x18\x02 \x01(\x03R\n" +
+	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x12@\n" +
+	"\vttl_seconds\x18\x02 \x01(\x03B\x1f\x8a\xf4\x18\x1b\n" +
+	"\x11recording_url_ttl\x10\x01\x18\xac\x02(\x90\x1cR\n" +
 	"ttlSeconds\"\xbf\x01\n" +
 	"\x14GetRecordingResponse\x12;\n" +
 	"\trecording\x18\x01 \x01(\v2\x1d.toshi.workspace.v1.RecordingR\trecording\x12\x10\n" +
@@ -1489,12 +1490,13 @@ const file_toshi_workspace_v1_recordings_proto_rawDesc = "" +
 	"revoked_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x12\x1d\n" +
 	"\n" +
 	"created_by\x18\n" +
-	" \x01(\tR\tcreatedBy\"\xbc\x01\n" +
+	" \x01(\tR\tcreatedBy\"\xeb\x01\n" +
 	"\x1fCreateRecordingShareLinkRequest\x12!\n" +
 	"\frecording_id\x18\x01 \x01(\tR\vrecordingId\x128\n" +
 	"\n" +
-	"expires_in\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12\x1b\n" +
-	"\tmax_bytes\x18\x03 \x01(\x03R\bmaxBytes\x12\x1f\n" +
+	"expires_in\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12J\n" +
+	"\tmax_bytes\x18\x03 \x01(\x03B-\x8a\xf4\x18)\n" +
+	"\x19recording_share_link_size\x10\x02\x18\x80\x80\x80\x80\b(\x80\x80\x80\x80\bR\bmaxBytes\x12\x1f\n" +
 	"\vrequest_key\x18\x04 \x01(\tR\n" +
 	"requestKey\"\x9a\x01\n" +
 	" CreateRecordingShareLinkResponse\x12E\n" +

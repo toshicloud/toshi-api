@@ -251,8 +251,8 @@ message GetArtifactDownloadURLRequest {
   // Empty for a one-object artifact; part-00000 and on, or index, for a
   // multi-part one.
   string part = 2;
-  // 0 is 300 seconds; at most 3600.
-  int64 ttl_seconds = 3;
+  // 0 is 300 seconds; at most 3600 seconds.
+  int64 ttl_seconds = 3 [(toshi.bound) = {name: "artifact_download_url_ttl", unit: UNIT_SECONDS, default: 300, max: 3600}];
 }
 
 // GetArtifactDownloadURLResponse is a signed download of one object.

@@ -1306,11 +1306,12 @@ var File_toshi_workspace_v1_webhook_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xd0\x03\n" +
+	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf2\x03\n" +
 	"\aWebhook\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
-	"\x03url\x18\x02 \x01(\tR\x03url\x12\x16\n" +
-	"\x06events\x18\x03 \x03(\tR\x06events\x12\x18\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url\x128\n" +
+	"\x06events\x18\x03 \x03(\tB \x8a\xf4\x18\x1c\n" +
+	"\x16webhook_filter_entries\x10\x03(@R\x06events\x12\x18\n" +
 	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x16\n" +
 	"\x06cursor\x18\x05 \x01(\tR\x06cursor\x12W\n" +
 	"\x1aprevious_secret_expires_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x17previousSecretExpiresAt\x129\n" +

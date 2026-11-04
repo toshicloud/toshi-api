@@ -1676,7 +1676,7 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\n" +
 	"service_id\x18\x01 \x01(\tR\tserviceId\x12!\n" +
 	"\fservice_name\x18\x02 \x01(\tR\vserviceName\x12\x1a\n" +
-	"\brevision\x18\x03 \x01(\x03R\brevision\"\xb9\x03\n" +
+	"\brevision\x18\x03 \x01(\x03R\brevision\"\xe0\x03\n" +
 	"\x12CreateImageRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x12\n" +
@@ -1684,8 +1684,9 @@ const file_toshi_workspace_v1_images_proto_rawDesc = "" +
 	"\x04kind\x18\x04 \x01(\x0e2\x1d.toshi.workspace.v1.ImageKindR\x04kind\x12\x12\n" +
 	"\x04base\x18\x05 \x01(\tR\x04base\x12\x12\n" +
 	"\x04size\x18\x06 \x01(\tR\x04size\x12\x16\n" +
-	"\x06recipe\x18\a \x01(\tR\x06recipe\x12\x16\n" +
-	"\x06source\x18\b \x01(\tR\x06source\x12:\n" +
+	"\x06recipe\x18\a \x01(\tR\x06recipe\x12=\n" +
+	"\x06source\x18\b \x01(\tB%\x8a\xf4\x18!\n" +
+	"\fimage_sourceB\x11^[^/\\s]+/[^/\\s]+$R\x06source\x12:\n" +
 	"\abuilder\x18\t \x01(\x0e2 .toshi.workspace.v1.ImageBuilderR\abuilder\x12\x1a\n" +
 	"\bregistry\x18\n" +
 	" \x01(\tR\bregistry\x12'\n" +

@@ -517,7 +517,10 @@ type Bound struct {
 	Threshold *int64 `protobuf:"varint,6,opt,name=threshold,proto3,oneof" json:"threshold,omitempty"`
 	// http_hosts lists the hosts allowed over http for an origins field;
 	// https is allowed on any host.
-	HttpHosts     []string `protobuf:"bytes,7,rep,name=http_hosts,json=httpHosts,proto3" json:"http_hosts,omitempty"`
+	HttpHosts []string `protobuf:"bytes,7,rep,name=http_hosts,json=httpHosts,proto3" json:"http_hosts,omitempty"`
+	// pattern is a regular expression, in RE2 and JavaScript syntax, the whole
+	// value must match. The server's own check may be stricter.
+	Pattern       *string `protobuf:"bytes,8,opt,name=pattern,proto3,oneof" json:"pattern,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -599,6 +602,13 @@ func (x *Bound) GetHttpHosts() []string {
 		return x.HttpHosts
 	}
 	return nil
+}
+
+func (x *Bound) GetPattern() string {
+	if x != nil && x.Pattern != nil {
+		return *x.Pattern
+	}
+	return ""
 }
 
 var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
@@ -831,7 +841,7 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"_read_onlyB\x0e\n" +
 	"\f_destructiveB\r\n" +
 	"\v_idempotentB\r\n" +
-	"\v_open_world\"\xcb\x02\n" +
+	"\v_open_world\"\xf6\x02\n" +
 	"\x05Bound\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12%\n" +
 	"\x04unit\x18\x02 \x01(\x0e2\x11.toshi.Bound.UnitR\x04unit\x12\x1d\n" +
@@ -840,7 +850,8 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\x03max\x18\x05 \x01(\x03H\x02R\x03max\x88\x01\x01\x12!\n" +
 	"\tthreshold\x18\x06 \x01(\x03H\x03R\tthreshold\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"http_hosts\x18\a \x03(\tR\thttpHosts\"N\n" +
+	"http_hosts\x18\a \x03(\tR\thttpHosts\x12\x1d\n" +
+	"\apattern\x18\b \x01(\tH\x04R\apattern\x88\x01\x01\"N\n" +
 	"\x04Unit\x12\x14\n" +
 	"\x10UNIT_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fUNIT_SECONDS\x10\x01\x12\x0e\n" +
@@ -853,7 +864,9 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\x04_minB\x06\n" +
 	"\x04_maxB\f\n" +
 	"\n" +
-	"_threshold*9\n" +
+	"_thresholdB\n" +
+	"\n" +
+	"\b_pattern*9\n" +
 	"\aKeyMode\x12\x18\n" +
 	"\x14KEY_MODE_UNSPECIFIED\x10\x00\x12\a\n" +
 	"\x03KEY\x10\x01\x12\v\n" +

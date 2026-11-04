@@ -520,12 +520,12 @@ message CreateInvitationRequest {
   // key and request return the first answer; a different request with the
   // same key is refused. Keys are kept for 30 days by default.
   string request_key = 3;
-  // ttl_seconds is how long the code is valid, in seconds: 604800 (seven
-  // days) when unset, and 2592000 (30 days) at most; a negative value is
+  // ttl_seconds is how long the code is valid, in seconds: 604800 (7 days)
+  // when unset, and 2592000 (30 days) at most; a negative value is
   // INVALID_ARGUMENT. A duration taken here before kept its fractional
   // second exactly when the expiry was worked out; whole seconds are the
   // unit from now on.
-  int64 ttl_seconds = 4;
+  int64 ttl_seconds = 4 [(toshi.bound) = {name: "invitation_ttl", unit: UNIT_SECONDS, default: 604800, max: 2592000}];
 }
 
 // CreateInvitationResponse carries the invitation and its code, shown

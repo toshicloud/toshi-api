@@ -3615,7 +3615,7 @@ type WorkspaceSettings struct {
 	// applies, and 0 keeps forever. A member may set it from 1 up to the
 	// plan's period, and 0 only on a plan that keeps forever; a longer one
 	// fails with INVALID_ARGUMENT. Naming it in the update mask with no value
-	// clears it, so the plan's applies again.
+	// clears it, so the plan's applies again. The maximum is the plan's.
 	HistoryDays *int32 `protobuf:"varint,3,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
 	// The workspace's jobs wait for its own hosts and never run on shared ones.
 	OwnHostsOnly bool `protobuf:"varint,4,opt,name=own_hosts_only,json=ownHostsOnly,proto3" json:"own_hosts_only,omitempty"`
@@ -6782,12 +6782,13 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\tnot_after\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bnotAfter\x125\n" +
 	"\brenew_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\arenewAt\x125\n" +
 	"\bretry_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aretryAt\x12\x14\n" +
-	"\x05error\x18\x06 \x01(\tR\x05error\"\xbc\t\n" +
+	"\x05error\x18\x06 \x01(\tR\x05error\"\xde\t\n" +
 	"\x11WorkspaceSettings\x12\x1f\n" +
 	"\vmember_join\x18\x01 \x01(\tR\n" +
 	"memberJoin\x12R\n" +
-	"\asign_in\x18\x02 \x01(\v2#.toshi.workspace.v1.WorkspaceSignInB\x14\xda\xf3\x18\x10workspace.signinR\x06signIn\x12&\n" +
-	"\fhistory_days\x18\x03 \x01(\x05H\x00R\vhistoryDays\x88\x01\x01\x12$\n" +
+	"\asign_in\x18\x02 \x01(\v2#.toshi.workspace.v1.WorkspaceSignInB\x14\xda\xf3\x18\x10workspace.signinR\x06signIn\x12H\n" +
+	"\fhistory_days\x18\x03 \x01(\x05B \x8a\xf4\x18\x1c\n" +
+	"\x16workspace_history_days\x10\x03 \x01H\x00R\vhistoryDays\x88\x01\x01\x12$\n" +
 	"\x0eown_hosts_only\x18\x04 \x01(\bR\fownHostsOnly\x12%\n" +
 	"\x0eallow_overflow\x18\x05 \x01(\bR\rallowOverflow\x12(\n" +
 	"\x10allow_cache_warm\x18\x06 \x01(\bR\x0eallowCacheWarm\x122\n" +

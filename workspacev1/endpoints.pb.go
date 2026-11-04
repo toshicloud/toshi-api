@@ -4491,7 +4491,7 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x0fEndpointDefault\x12D\n" +
 	"\rworkload_kind\x18\x01 \x01(\x0e2\x1f.toshi.workspace.v1.HostJobKindR\fworkloadKind\x127\n" +
 	"\x05shape\x18\x02 \x01(\x0e2!.toshi.workspace.v1.EndpointShapeR\x05shape\x12:\n" +
-	"\x06policy\x18\x03 \x01(\v2\".toshi.workspace.v1.EndpointPolicyR\x06policy\"\xd4\x02\n" +
+	"\x06policy\x18\x03 \x01(\v2\".toshi.workspace.v1.EndpointPolicyR\x06policy\"\xf8\x02\n" +
 	"\x0eEndpointPolicy\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\x03R\aversion\x12\x16\n" +
 	"\x06attach\x18\x02 \x01(\tR\x06attach\x12$\n" +
@@ -4500,8 +4500,9 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x05input\x18\x04 \x01(\tR\x05input\x12\x12\n" +
 	"\x04keep\x18\x05 \x01(\tR\x04keep\x12@\n" +
 	"\amodules\x18\x06 \x01(\v2&.toshi.workspace.v1.EndpointModuleListR\amodules\x12!\n" +
-	"\fack_deadline\x18\a \x01(\tR\vackDeadline\x12%\n" +
-	"\vconcurrency\x18\b \x01(\x05H\x01R\vconcurrency\x88\x01\x01\x12\x14\n" +
+	"\fack_deadline\x18\a \x01(\tR\vackDeadline\x12I\n" +
+	"\vconcurrency\x18\b \x01(\x05B\"\x8a\xf4\x18\x1e\n" +
+	"\x14endpoint_concurrency\x10\x03\x18\x01 \x01(@H\x01R\vconcurrency\x88\x01\x01\x12\x14\n" +
 	"\x05tools\x18\t \x01(\tR\x05toolsB\x0e\n" +
 	"\f_max_clientsB\x0e\n" +
 	"\f_concurrency\"R\n" +
@@ -4708,11 +4709,12 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x10GetTunnelRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\"G\n" +
 	"\x11GetTunnelResponse\x122\n" +
-	"\x06tunnel\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.TunnelR\x06tunnel\"\x9b\x01\n" +
+	"\x06tunnel\x18\x01 \x01(\v2\x1a.toshi.workspace.v1.TunnelR\x06tunnel\"\xbd\x01\n" +
 	"\x1aSendEndpointMessageRequest\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12\x1a\n" +
-	"\bendpoint\x18\x02 \x01(\tR\bendpoint\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
+	"\bendpoint\x18\x02 \x01(\tR\bendpoint\x124\n" +
+	"\x04name\x18\x03 \x01(\tB \x8a\xf4\x18\x1c\n" +
+	"\x15endpoint_message_name\x10\x02(\xc8\x01R\x04name\x12\x12\n" +
 	"\x04data\x18\x04 \x01(\fR\x04data\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +
 	"requestKey\"X\n" +

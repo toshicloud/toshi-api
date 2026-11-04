@@ -326,8 +326,8 @@ message CreateConnectionRequest {
   // The kind to create: WEBHOOK or MAIL. Installing the GitHub App creates
   // a GITHUB connection.
   ConnectionKind kind = 1;
-  // A lowercase DNS label of at most 63 characters.
-  string name = 2;
+  // A lowercase DNS label of at most 63 bytes.
+  string name = 2 [(toshi.bound) = {name: "connection_name", unit: UNIT_BYTES, max: 63}];
   // The project and environment the connection's events belong to. Both
   // are required for WEBHOOK. For MAIL they are optional, and when set must
   // be the service's.

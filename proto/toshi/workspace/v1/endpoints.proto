@@ -505,7 +505,7 @@ message EndpointPolicy {
   // order they were sent, and none passes one waiting to be tried again;
   // above 1, order is not kept. Either way a dead message holds up none
   // after it, so order is promised among the messages delivered.
-  optional int32 concurrency = 8;
+  optional int32 concurrency = 8 [(toshi.bound) = {name: "endpoint_concurrency", unit: UNIT_COUNT, min: 1, max: 64, default: 1}];
   // Where an ACP endpoint's agent runs file and terminal requests: vm (the
   // default) or device. Only a stream endpoint declared framing acp takes
   // it.
@@ -1025,7 +1025,7 @@ message SendEndpointMessageRequest {
   string endpoint = 2;
   // The message's name, such as order.paid: up to 200 bytes with no space
   // or control character.
-  string name = 3;
+  string name = 3 [(toshi.bound) = {name: "endpoint_message_name", unit: UNIT_BYTES, max: 200}];
   // The message's JSON, at most 256 KiB.
   bytes data = 4;
   // Makes the send safe to repeat: the same request under a key the endpoint

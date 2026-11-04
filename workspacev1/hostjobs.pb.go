@@ -555,10 +555,10 @@ type GetHostJobFailureResponse struct {
 	// "throttled", "step_failed", "timed_out", "cancelled_on_github" and
 	// "unknown".
 	Cause string `protobuf:"bytes,1,opt,name=cause,proto3" json:"cause,omitempty"`
-	// The cause in one sentence. Where the dashboard's Jobs table shows why
-	// the host job ended, this is the same text. A host job that ran out of
-	// time with a cold cache or without its cache disk gets a second sentence
-	// saying so.
+	// The cause in one sentence, at most 300 bytes. Where the dashboard's Jobs
+	// table shows why the host job ended, this is the same text. A host job
+	// that ran out of time with a cold cache or without its cache disk gets a
+	// second sentence saying so.
 	Explanation string `protobuf:"bytes,2,opt,name=explanation,proto3" json:"explanation,omitempty"`
 	// GitHub's conclusion for the host job, such as "success" or "failure".
 	// Empty when GitHub has not concluded it.
@@ -2388,10 +2388,11 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x15CancelHostJobResponse\x126\n" +
 	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"*\n" +
 	"\x18GetHostJobFailureRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x95\x03\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xb9\x03\n" +
 	"\x19GetHostJobFailureResponse\x12\x14\n" +
-	"\x05cause\x18\x01 \x01(\tR\x05cause\x12 \n" +
-	"\vexplanation\x18\x02 \x01(\tR\vexplanation\x12\x1e\n" +
+	"\x05cause\x18\x01 \x01(\tR\x05cause\x12D\n" +
+	"\vexplanation\x18\x02 \x01(\tB\"\x8a\xf4\x18\x1e\n" +
+	"\x17job_failure_explanation\x10\x02(\xac\x02R\vexplanation\x12\x1e\n" +
 	"\n" +
 	"conclusion\x18\x03 \x01(\tR\n" +
 	"conclusion\x12\x18\n" +

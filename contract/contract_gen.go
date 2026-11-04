@@ -6,22 +6,120 @@ package contract
 import "time"
 
 const (
+	// AdmissionWebhookTimeoutThreshold is the threshold of admission_webhook_timeout.
+	AdmissionWebhookTimeoutThreshold time.Duration = 2 * time.Second
+	// ArtifactDownloadURLTtlDefault is the default of artifact_download_url_ttl.
+	ArtifactDownloadURLTtlDefault time.Duration = 5 * time.Minute
+	// ArtifactDownloadURLTtlMax is the max of artifact_download_url_ttl.
+	ArtifactDownloadURLTtlMax time.Duration = 1 * time.Hour
+	// BranchRulesMax is the max of branch_rules.
+	BranchRulesMax = 100
+	// ChannelBufferKeepThreshold is the threshold of channel_buffer_keep.
+	ChannelBufferKeepThreshold = 8 << 20
+	// ConnectionNameMax is the max of connection_name.
+	ConnectionNameMax = 63
 	// ConnectionSecretOverlapDefault is the default of connection_secret_overlap.
 	ConnectionSecretOverlapDefault time.Duration = 24 * time.Hour
 	// ConnectionSecretOverlapMin is the min of connection_secret_overlap.
 	ConnectionSecretOverlapMin time.Duration = 0
 	// ConnectionSecretOverlapMax is the max of connection_secret_overlap.
 	ConnectionSecretOverlapMax time.Duration = 7 * 24 * time.Hour
+	// EgressRulesMax is the max of egress_rules.
+	EgressRulesMax = 100
 	// EmbedTokenExpiresInDefault is the default of embed_token_expires_in.
 	EmbedTokenExpiresInDefault time.Duration = 10 * time.Minute
 	// EmbedTokenOriginsMax is the max of embed_token_origins.
 	EmbedTokenOriginsMax = 10
+	// EndpointConcurrencyDefault is the default of endpoint_concurrency.
+	EndpointConcurrencyDefault = 1
+	// EndpointConcurrencyMin is the min of endpoint_concurrency.
+	EndpointConcurrencyMin = 1
+	// EndpointConcurrencyMax is the max of endpoint_concurrency.
+	EndpointConcurrencyMax = 64
+	// EndpointLogExportDefault is the default of endpoint_log_export.
+	EndpointLogExportDefault = 64 << 20
+	// EndpointMessageDataMax is the max of endpoint_message_data.
+	EndpointMessageDataMax = 262144
+	// EndpointMessageNameMax is the max of endpoint_message_name.
+	EndpointMessageNameMax = 200
+	// EnvironmentHistoryDaysMin is the min of environment_history_days.
+	EnvironmentHistoryDaysMin = 1
+	// FillerEveryDefault is the default of filler_every.
+	FillerEveryDefault time.Duration = 24 * time.Hour
+	// FillerEveryMin is the min of filler_every.
+	FillerEveryMin time.Duration = 10 * time.Minute
+	// FillerMaxDurationDefault is the default of filler_max_duration.
+	FillerMaxDurationDefault time.Duration = 1 * time.Hour
+	// FillerMaxDurationMax is the max of filler_max_duration.
+	FillerMaxDurationMax time.Duration = 1 * time.Hour
+	// FillerNameMax is the max of filler_name.
+	FillerNameMax = 40
+	// ImageSourcePattern is the pattern of image_source.
+	ImageSourcePattern = "^[^/\\s]+/[^/\\s]+$"
 	// InboundMailSizeMax is the max of inbound_mail_size.
 	InboundMailSizeMax = 25 << 20
+	// InvitationTtlDefault is the default of invitation_ttl.
+	InvitationTtlDefault time.Duration = 7 * 24 * time.Hour
+	// InvitationTtlMax is the max of invitation_ttl.
+	InvitationTtlMax time.Duration = 30 * 24 * time.Hour
+	// IPAllowlistRangesMax is the max of ip_allowlist_ranges.
+	IPAllowlistRangesMax = 32
+	// JobFailureExplanationMax is the max of job_failure_explanation.
+	JobFailureExplanationMax = 300
 	// KeepVMStoppedLongAfterThreshold is the threshold of keep_vm_stopped_long_after.
 	KeepVMStoppedLongAfterThreshold time.Duration = 30 * 24 * time.Hour
+	// NetworkDenialsThreshold is the threshold of network_denials.
+	NetworkDenialsThreshold = 20
+	// NewVolumeSizeCapDefault is the default of new_volume_size_cap.
+	NewVolumeSizeCapDefault = 10240 << 20
+	// PoolSuggestionDaysDefault is the default of pool_suggestion_days.
+	PoolSuggestionDaysDefault = 28
+	// PoolSuggestionDaysMax is the max of pool_suggestion_days.
+	PoolSuggestionDaysMax = 90
+	// PreviewShareLinkExpiryDefault is the default of preview_share_link_expiry.
+	PreviewShareLinkExpiryDefault time.Duration = 24 * time.Hour
+	// RecentSignInThreshold is the threshold of recent_sign_in.
+	RecentSignInThreshold time.Duration = 2 * time.Hour
+	// RecordingShareLinkSizeDefault is the default of recording_share_link_size.
+	RecordingShareLinkSizeDefault = 2048 << 20
+	// RecordingShareLinkSizeMax is the max of recording_share_link_size.
+	RecordingShareLinkSizeMax = 2048 << 20
+	// RecordingURLTtlDefault is the default of recording_url_ttl.
+	RecordingURLTtlDefault time.Duration = 5 * time.Minute
+	// RecordingURLTtlMax is the max of recording_url_ttl.
+	RecordingURLTtlMax time.Duration = 1 * time.Hour
+	// RetentionKeepMin is the min of retention_keep.
+	RetentionKeepMin time.Duration = 1 * time.Hour
+	// SandboxMaxDurationMin is the min of sandbox_max_duration.
+	SandboxMaxDurationMin time.Duration = 1 * time.Minute
+	// SecretNameMax is the max of secret_name.
+	SecretNameMax = 128
+	// ServiceShareLinkExpiryDefault is the default of service_share_link_expiry.
+	ServiceShareLinkExpiryDefault time.Duration = 24 * time.Hour
+	// StreamDrainDefault is the default of stream_drain.
+	StreamDrainDefault time.Duration = 30 * time.Second
 	// TokenCreatorLeftLifetimeThreshold is the threshold of token_creator_left_lifetime.
 	TokenCreatorLeftLifetimeThreshold time.Duration = 30 * 24 * time.Hour
+	// TokenNameMax is the max of token_name.
+	TokenNameMax = 64
+	// TriggerEventsMax is the max of trigger_events.
+	TriggerEventsMax = 32
+	// TriggerIdleTimeoutDefault is the default of trigger_idle_timeout.
+	TriggerIdleTimeoutDefault time.Duration = 2 * time.Hour
+	// TriggerSandboxMaxDurationDefault is the default of trigger_sandbox_max_duration.
+	TriggerSandboxMaxDurationDefault time.Duration = 24 * time.Hour
+	// UtilisationHourRangeMax is the max of utilisation_hour_range.
+	UtilisationHourRangeMax time.Duration = 31 * 24 * time.Hour
+	// WebhookFilterEntriesMax is the max of webhook_filter_entries.
+	WebhookFilterEntriesMax = 64
+	// WebhookSigningSecretDefault is the default of webhook_signing_secret.
+	WebhookSigningSecretDefault = 32
+	// WebhookSigningSecretMin is the min of webhook_signing_secret.
+	WebhookSigningSecretMin = 24
+	// WebhookSigningSecretMax is the max of webhook_signing_secret.
+	WebhookSigningSecretMax = 64
+	// WorkspaceHistoryDaysMin is the min of workspace_history_days.
+	WorkspaceHistoryDaysMin = 1
 	// WorkspaceTokenLifetimeDefault is the default of workspace_token_lifetime.
 	WorkspaceTokenLifetimeDefault time.Duration = 90 * 24 * time.Hour
 	// WorkspaceTokenLifetimeMax is the max of workspace_token_lifetime.
@@ -1463,6 +1561,109 @@ func Labels() map[string]map[string]string {
 			"SERVICE_RESTART":     "New revision started",
 			"DRAINED":             "Ended by a drain",
 		},
+	}
+}
+
+const (
+	// ListPageDefault is the page size of list when the request names none.
+	ListPageDefault = 50
+	// ListPageMax is the largest page of list.
+	ListPageMax = 500
+	// LongListPageDefault is the page size of long_list when the request names none.
+	LongListPageDefault = 100
+	// LongListPageMax is the largest page of long_list.
+	LongListPageMax = 1000
+	// ShortListPageDefault is the page size of short_list when the request names none.
+	ShortListPageDefault = 50
+	// ShortListPageMax is the largest page of short_list.
+	ShortListPageMax = 200
+	// ServiceHistoryPageDefault is the page size of service_history when the request names none.
+	ServiceHistoryPageDefault = 20
+	// ServiceHistoryPageMax is the largest page of service_history.
+	ServiceHistoryPageMax = 100
+	// UtilisationPageDefault is the page size of utilisation when the request names none.
+	UtilisationPageDefault = 1000
+	// UtilisationPageMax is the largest page of utilisation.
+	UtilisationPageMax = 5000
+)
+
+// PageSize is a list call's page sizes: the default when the request names
+// none, and the largest it may ask for.
+type PageSize struct {
+	Default int
+	Max     int
+}
+
+// PageSizes returns the page sizes of every list call, by procedure.
+func PageSizes() map[string]PageSize {
+	return map[string]PageSize{
+		"/toshi.workspace.v1.WorkloadService/ListJobs":                    {Default: 50, Max: 500},
+		"/toshi.workspace.v1.WorkloadService/ListSandboxes":               {Default: 50, Max: 500},
+		"/toshi.workspace.v1.WorkloadService/ListServices":                {Default: 50, Max: 500},
+		"/toshi.workspace.v1.WorkloadService/ListEvents":                  {Default: 50, Max: 500},
+		"/toshi.workspace.v1.WorkloadService/ListWorkloadUsages":          {Default: 50, Max: 500},
+		"/toshi.workspace.v1.WebhookService/ListWebhookDeliveries":        {Default: 50, Max: 500},
+		"/toshi.workspace.v1.EndpointService/ListEndpointRequests":        {Default: 50, Max: 500},
+		"/toshi.workspace.v1.FillerService/ListFillerRuns":                {Default: 50, Max: 500},
+		"/toshi.operator.v1.OperatorService/ListFillerRuns":               {Default: 50, Max: 500},
+		"/toshi.workspace.v1.WorkspaceService/ListWorkspaces":             {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.AuditEventService/ListAuditEvents":           {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.ConnectionService/ListConnections":           {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.ConnectionService/ListConnectionDeliveries":  {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.DomainService/ListDomains":                   {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.EndpointService/ListEndpoints":               {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.EndpointService/ListForwards":                {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.FillerService/ListFillers":                   {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.GrantService/ListGrants":                     {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.HostJobService/ListHostJobs":                 {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.HostService/ListHostAlerts":                  {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.HostService/ListHostStorage":                 {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.HostService/ListHosts":                       {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.ImageService/ListImages":                     {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.ModelCredentialService/ListModelCredentials": {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.ProjectService/ListBranchRules":              {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.ProjectService/ListEmbedTokens":              {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.ProjectService/ListProjects":                 {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.ProjectService/ListRepositories":             {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.RecordingService/ListRecordingShareLinks":    {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.RecordingService/ListRecordings":             {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.RoleService/ListInvitations":                 {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.RoleService/ListMembers":                     {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.RoleService/ListRoleGrants":                  {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.RoleService/ListRoles":                       {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.SecretService/ListSecretSetGrants":           {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.SecretService/ListSecretSets":                {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.SecretService/ListSecretVersions":            {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.SecretService/ListSecrets":                   {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.StorageProviderService/ListStorageProviders": {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.TokenService/ListTokens":                     {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.TriggerService/ListTriggers":                 {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.VolumeService/ListVolumeVersions":            {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.VolumeService/ListVolumes":                   {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.WebhookService/ListWebhooks":                 {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.WorkloadService/ListPreviewShareLinks":       {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.WorkloadService/ListServiceShareLinks":       {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.WorkspaceService/ListEgressIPs":              {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.WorkspaceService/ListPlans":                  {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListAuditEvents":              {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListClients":                  {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListFillers":                  {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListHostAlerts":               {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListHostStorage":              {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListHosts":                    {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListJobs":                     {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListOperatorAlerts":           {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListPlans":                    {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListStorageProviders":         {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListTokens":                   {Default: 100, Max: 1000},
+		"/toshi.operator.v1.OperatorService/ListWorkspaces":               {Default: 100, Max: 1000},
+		"/toshi.workspace.v1.AccountService/ListSessions":                 {Default: 50, Max: 200},
+		"/toshi.workspace.v1.ArtifactService/ListArtifacts":               {Default: 50, Max: 200},
+		"/toshi.workspace.v1.DisplayService/ListDisplaySessions":          {Default: 50, Max: 200},
+		"/toshi.workspace.v1.WorkloadService/ListServiceRuns":             {Default: 20, Max: 100},
+		"/toshi.workspace.v1.WorkloadService/ListServiceRevisions":        {Default: 20, Max: 100},
+		"/toshi.workspace.v1.WorkloadService/ListServiceActivations":      {Default: 20, Max: 100},
+		"/toshi.operator.v1.OperatorService/ListUtilisation":              {Default: 1000, Max: 5000},
 	}
 }
 

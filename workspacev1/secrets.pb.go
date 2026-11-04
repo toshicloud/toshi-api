@@ -215,7 +215,8 @@ func (x *SecretSet) GetKeys() []string {
 // Secret is a key as anyone may see it: never its value.
 type Secret struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The key's name.
+	// The key name: a letter or _, then letters, digits or _, at most 128
+	// bytes.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The newest version, from 1.
 	Version int64 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
@@ -1925,9 +1926,10 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x0fmanifest_digest\x18\x06 \x01(\tR\x0emanifestDigest\x12%\n" +
 	"\x0emanaged_fields\x18\a \x03(\tR\rmanagedFields\x12'\n" +
 	"\x0fmanifest_origin\x18\b \x01(\tR\x0emanifestOrigin\x12\x12\n" +
-	"\x04keys\x18\t \x03(\tR\x04keys\"\xea\x01\n" +
-	"\x06Secret\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
+	"\x04keys\x18\t \x03(\tR\x04keys\"\x82\x02\n" +
+	"\x06Secret\x12*\n" +
+	"\x04name\x18\x01 \x01(\tB\x16\x8a\xf4\x18\x12\n" +
+	"\vsecret_name\x10\x02(\x80\x01R\x04name\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\x03R\aversion\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\x03R\x04size\x129\n" +
 	"\n" +

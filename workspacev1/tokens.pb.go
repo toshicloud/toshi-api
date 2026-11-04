@@ -520,7 +520,7 @@ func (x *ListTokensResponse) GetNextPageToken() string {
 // CreateWorkspaceTokenRequest names the token and what it may reach.
 type CreateWorkspaceTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// A label for the token.
+	// A label for the token, at most 64 bytes.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Unset means the longest lifetime allowed: 90 days, unless the deployment
 	// sets less.
@@ -1059,9 +1059,11 @@ const file_toshi_workspace_v1_tokens_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"o\n" +
 	"\x12ListTokensResponse\x121\n" +
 	"\x06tokens\x18\x01 \x03(\v2\x19.toshi.workspace.v1.TokenR\x06tokens\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x8b\x03\n" +
-	"\x1bCreateWorkspaceTokenRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12e\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xa1\x03\n" +
+	"\x1bCreateWorkspaceTokenRequest\x12(\n" +
+	"\x04name\x18\x01 \x01(\tB\x14\x8a\xf4\x18\x10\n" +
+	"\n" +
+	"token_name\x10\x02(@R\x04name\x12e\n" +
 	"\n" +
 	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB*\x8a\xf4\x18&\n" +
 	"\x18workspace_token_lifetime\x10\x01\x18\x80\xce\xda\x03(\x80\xce\xda\x03R\texpiresAt\x12\x18\n" +

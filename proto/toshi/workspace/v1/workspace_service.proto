@@ -859,8 +859,8 @@ message WorkspaceSettings {
   // applies, and 0 keeps forever. A member may set it from 1 up to the
   // plan's period, and 0 only on a plan that keeps forever; a longer one
   // fails with INVALID_ARGUMENT. Naming it in the update mask with no value
-  // clears it, so the plan's applies again.
-  optional int32 history_days = 3;
+  // clears it, so the plan's applies again. The maximum is the plan's.
+  optional int32 history_days = 3 [(toshi.bound) = {name: "workspace_history_days", unit: UNIT_COUNT, min: 1}];
   // The workspace's jobs wait for its own hosts and never run on shared ones.
   bool own_hosts_only = 4;
   // Shared overflow hosts may take the workspace's jobs; its own overflow

@@ -1841,8 +1841,8 @@ type CreateInvitationRequest struct {
 	// key and request return the first answer; a different request with the
 	// same key is refused. Keys are kept for 30 days by default.
 	RequestKey string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
-	// ttl_seconds is how long the code is valid, in seconds: 604800 (seven
-	// days) when unset, and 2592000 (30 days) at most; a negative value is
+	// ttl_seconds is how long the code is valid, in seconds: 604800 (7 days)
+	// when unset, and 2592000 (30 days) at most; a negative value is
 	// INVALID_ARGUMENT. A duration taken here before kept its fractional
 	// second exactly when the expiry was worked out; whole seconds are the
 	// unit from now on.
@@ -2500,12 +2500,13 @@ const file_toshi_workspace_v1_roles_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"\x17\n" +
 	"\x15DeclineMemberResponse\"=\n" +
 	"\x14RemoveMemberResponse\x12%\n" +
-	"\x0egrants_removed\x18\x01 \x01(\x05R\rgrantsRemoved\"z\n" +
+	"\x0egrants_removed\x18\x01 \x01(\x05R\rgrantsRemoved\"\x9b\x01\n" +
 	"\x17CreateInvitationRequest\x12\x12\n" +
 	"\x04note\x18\x01 \x01(\tR\x04note\x12\x1f\n" +
 	"\vrequest_key\x18\x03 \x01(\tR\n" +
-	"requestKey\x12\x1f\n" +
-	"\vttl_seconds\x18\x04 \x01(\x03R\n" +
+	"requestKey\x12@\n" +
+	"\vttl_seconds\x18\x04 \x01(\x03B\x1f\x8a\xf4\x18\x1b\n" +
+	"\x0einvitation_ttl\x10\x01\x18\x80\xf5$(\x80\x9a\x9e\x01R\n" +
 	"ttlSecondsJ\x04\b\x02\x10\x03R\x03ttl\"n\n" +
 	"\x18CreateInvitationResponse\x12>\n" +
 	"\n" +

@@ -2582,7 +2582,7 @@ type RetentionKeep struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The artifact kind: recording, recording-signed-in, trace or report.
 	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
-	// At least one hour.
+	// At least 1 hour.
 	Keep          *durationpb.Duration `protobuf:"bytes,2,opt,name=keep,proto3" json:"keep,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2640,7 +2640,7 @@ type EnvironmentRetention struct {
 	// Days the environment keeps its finished jobs. In an override, unset
 	// follows the workspace and the value is at least 1 and at most the
 	// workspace's period: an override cannot keep forever. In the retention
-	// that applies, 0 keeps forever.
+	// that applies, 0 keeps forever. The maximum is the workspace's period.
 	HistoryDays *int32 `protobuf:"varint,1,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
 	// Each kind's keep, by kind. In an override, a kind left out follows the
 	// workspace. In the retention that applies, a kind left out is kept
@@ -3962,12 +3962,14 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\n" +
 	"updated_by\x18\x02 \x01(\tR\tupdatedBy\x129\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"R\n" +
+	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"m\n" +
 	"\rRetentionKeep\x12\x12\n" +
-	"\x04kind\x18\x01 \x01(\tR\x04kind\x12-\n" +
-	"\x04keep\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x04keep\"\x88\x01\n" +
-	"\x14EnvironmentRetention\x12&\n" +
-	"\fhistory_days\x18\x01 \x01(\x05H\x00R\vhistoryDays\x88\x01\x01\x127\n" +
+	"\x04kind\x18\x01 \x01(\tR\x04kind\x12H\n" +
+	"\x04keep\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x19\x8a\xf4\x18\x15\n" +
+	"\x0eretention_keep\x10\x01 \x90\x1cR\x04keep\"\xac\x01\n" +
+	"\x14EnvironmentRetention\x12J\n" +
+	"\fhistory_days\x18\x01 \x01(\x05B\"\x8a\xf4\x18\x1e\n" +
+	"\x18environment_history_days\x10\x03 \x01H\x00R\vhistoryDays\x88\x01\x01\x127\n" +
 	"\x05keeps\x18\x02 \x03(\v2!.toshi.workspace.v1.RetentionKeepR\x05keepsB\x0f\n" +
 	"\r_history_days\"\\\n" +
 	"\x1eGetEnvironmentRetentionRequest\x12\x18\n" +

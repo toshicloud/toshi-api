@@ -31,7 +31,7 @@ const (
 type Filler struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique among the workspace's fillers; lowercase letters, digits and
-	// dashes, at most 40 characters, starting with a letter or digit.
+	// dashes, at most 40 bytes, starting with a letter or digit.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The runner size of the VM.
 	Size string `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
@@ -44,10 +44,10 @@ type Filler struct {
 	// The branch or tag to run it on. Empty: the repository's default
 	// branch.
 	Ref string `protobuf:"bytes,6,opt,name=ref,proto3" json:"ref,omitempty"`
-	// How long after a run completes or fails the next may start. Default
-	// 24 hours. After a run that was preempted, rejected or lost the next
-	// may start after the control plane's fillers.retry_after, 2 minutes
-	// unless set.
+	// How long after a run completes or fails the next may start, at least
+	// 10 minutes. Default 24 hours. After a run that was preempted, rejected
+	// or lost the next may start after the control plane's fillers.retry_after,
+	// 2 minutes unless set.
 	Every *durationpb.Duration `protobuf:"bytes,7,opt,name=every,proto3" json:"every,omitempty"`
 	// The longest one run may take. A filler PutFiller stores gets 1 hour
 	// when unset and may take at most 1 hour; the operator's default is 2
@@ -1040,9 +1040,10 @@ var File_toshi_workspace_v1_fillers_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/fillers.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa0\x05\n" +
-	"\x06Filler\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	" toshi/workspace/v1/fillers.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf7\x05\n" +
+	"\x06Filler\x12)\n" +
+	"\x04name\x18\x01 \x01(\tB\x15\x8a\xf4\x18\x11\n" +
+	"\vfiller_name\x10\x02((R\x04name\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\tR\x04size\x12\x1d\n" +
 	"\n" +
 	"nested_kvm\x18\x03 \x01(\bR\tnestedKvm\x12\x1e\n" +
@@ -1050,9 +1051,11 @@ const file_toshi_workspace_v1_fillers_proto_rawDesc = "" +
 	"repository\x18\x04 \x01(\tR\n" +
 	"repository\x12\x1a\n" +
 	"\bworkflow\x18\x05 \x01(\tR\bworkflow\x12\x10\n" +
-	"\x03ref\x18\x06 \x01(\tR\x03ref\x12/\n" +
-	"\x05every\x18\a \x01(\v2\x19.google.protobuf.DurationR\x05every\x12<\n" +
-	"\fmax_duration\x18\b \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x12\x18\n" +
+	"\x03ref\x18\x06 \x01(\tR\x03ref\x12L\n" +
+	"\x05every\x18\a \x01(\v2\x19.google.protobuf.DurationB\x1b\x8a\xf4\x18\x17\n" +
+	"\ffiller_every\x10\x01\x18\x80\xa3\x05 \xd8\x04R\x05every\x12_\n" +
+	"\fmax_duration\x18\b \x01(\v2\x19.google.protobuf.DurationB!\x8a\xf4\x18\x1d\n" +
+	"\x13filler_max_duration\x10\x01\x18\x90\x1c(\x90\x1cR\vmaxDuration\x12\x18\n" +
 	"\aenabled\x18\t \x01(\bR\aenabled\x12\x16\n" +
 	"\x06source\x18\n" +
 	" \x01(\tR\x06source\x129\n" +

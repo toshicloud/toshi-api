@@ -122,7 +122,7 @@ message Webhook {
   // or a prefix ending in ".*" (job.*); at most 64. Empty keeps every
   // event but those a connection received, which only a name or prefix
   // that matches them keeps.
-  repeated string events = 3;
+  repeated string events = 3 [(toshi.bound) = {name: "webhook_filter_entries", unit: UNIT_COUNT, max: 64}];
   // Whether it is owed new events; a disabled webhook is owed none, and no
   // try of it starts. A create sets it from its disabled field, an update
   // through enabled, and the sender turns it off after a 410 answer.

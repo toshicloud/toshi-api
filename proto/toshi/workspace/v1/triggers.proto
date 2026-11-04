@@ -94,8 +94,8 @@ message Trigger {
   string name = 4;
   // The id of the connection whose events it matches.
   string source = 5;
-  // The event names it matches, exactly; at least one.
-  repeated string events = 6;
+  // The event names it matches, exactly; at least one and at most 32.
+  repeated string events = 6 [(toshi.bound) = {name: "trigger_events", unit: UNIT_COUNT, max: 32}];
   // Further limits on a pull request event; unset matches every one.
   TriggerFilter filter = 7;
   // What it does with the event it matches. Required.
@@ -113,7 +113,7 @@ message Trigger {
   string key = 10;
   // How long a workload it made may go without a request before it is
   // removed; unset is 2 hours. DELIVER takes none.
-  google.protobuf.Duration idle_timeout = 11;
+  google.protobuf.Duration idle_timeout = 11 [(toshi.bound) = {name: "trigger_idle_timeout", unit: UNIT_SECONDS, default: 7200}];
   // What it does with a pull request whose head repository is not its base
   // repository. DELIVER takes none.
   TriggerForks forks = 12;
@@ -194,9 +194,9 @@ message TriggerSandbox {
   // "toshi-linux-2x". Required.
   string size = 1;
   // How long it may run, in whole minutes; unset is 24 hours, or the plan's
-  // sandbox cap when shorter. It cannot be longer than the cap: a create or
-  // update past it is refused.
-  google.protobuf.Duration max_duration = 2;
+  // sandbox cap when shorter, so the plan may lower it. It cannot be longer
+  // than the cap: a create or update past it is refused.
+  google.protobuf.Duration max_duration = 2 [(toshi.bound) = {name: "trigger_sandbox_max_duration", unit: UNIT_SECONDS, default: 86400}];
   // What in its workspace it uses, as SandboxSpec's bindings.
   repeated Binding bindings = 3;
   // Runs first, to exit 0.

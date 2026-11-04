@@ -206,8 +206,8 @@ message ListTokensResponse {
 
 // CreateWorkspaceTokenRequest names the token and what it may reach.
 message CreateWorkspaceTokenRequest {
-  // A label for the token.
-  string name = 1;
+  // A label for the token, at most 64 bytes.
+  string name = 1 [(toshi.bound) = {name: "token_name", unit: UNIT_BYTES, max: 64}];
   // Unset means the longest lifetime allowed: 90 days, unless the deployment
   // sets less.
   google.protobuf.Timestamp expires_at = 2 [(toshi.bound) = {name: "workspace_token_lifetime", unit: UNIT_SECONDS, default: 7776000, max: 7776000}];

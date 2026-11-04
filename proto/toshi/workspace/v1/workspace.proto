@@ -9,6 +9,7 @@ package toshi.workspace.v1;
 import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
+import "toshi/permission.proto";
 import "toshi/workspace/v1/grants.proto";
 import "toshi/workspace/v1/projects.proto";
 import "toshi/workspace/v1/recordings.proto";
@@ -362,7 +363,7 @@ message WorkloadNetwork {
   string not_enforced_reason = 3;
   // The most recent denials kept on the workload, newest first, at most 20;
   // absent from a workload stored before the field.
-  repeated EgressDenial last_denials = 4;
+  repeated EgressDenial last_denials = 4 [(toshi.bound) = {name: "network_denials", unit: UNIT_COUNT, threshold: 20}];
   // Bytes the workload's VMs sent off their hosts, over all its runs, as
   // counted at each heartbeat; retransmissions count, denied connections and
   // packets over the egress cap do not.
@@ -725,11 +726,11 @@ message SandboxSpec {
   // The runner size of its VM, as a job's runs-on label names one, for
   // example "toshi-linux-2x". Required.
   string size = 1;
-  // How long it may run, in whole minutes. Unset, it runs until the plan's
-  // sandbox cap passes, or until it is stopped when the plan sets none. It
-  // cannot be longer than the plan's cap. Its owner can raise it while the
-  // sandbox runs (UpdateSandbox).
-  google.protobuf.Duration max_duration = 2;
+  // How long it may run, in whole minutes, at least 1 minute. Unset, it runs
+  // until the plan's sandbox cap passes, or until it is stopped when the plan
+  // sets none. It cannot be longer than the plan's cap. Its owner can raise
+  // it while the sandbox runs (UpdateSandbox).
+  google.protobuf.Duration max_duration = 2 [(toshi.bound) = {name: "sandbox_max_duration", unit: UNIT_SECONDS, min: 60}];
   // What in its workspace the sandbox uses: the secret set of its
   // environment and the endpoints of its project's and environment's
   // services. Checked at create and fixed when the sandbox starts; each
@@ -1884,7 +1885,7 @@ message CreatePreviewShareLinkRequest {
   string sandbox_id = 3;
   // How long the link stays valid, at most the plan's maximum; unset is
   // 24 hours, or the plan's maximum when that is shorter.
-  google.protobuf.Duration expires_in = 4;
+  google.protobuf.Duration expires_in = 4 [(toshi.bound) = {name: "preview_share_link_expiry", unit: UNIT_SECONDS, default: 86400}];
   // The most bytes, both ways, its connections may carry, at most the
   // plan's; 0 is the plan's.
   int64 max_bytes = 5;
@@ -1972,7 +1973,7 @@ message CreateServiceShareLinkRequest {
   string endpoint = 4;
   // How long the link stays valid, at most the plan's maximum; unset is
   // 24 hours, or the plan's maximum when that is shorter.
-  google.protobuf.Duration expires_in = 5;
+  google.protobuf.Duration expires_in = 5 [(toshi.bound) = {name: "service_share_link_expiry", unit: UNIT_SECONDS, default: 86400}];
   // The most bytes, both ways, its connections may carry, at most the
   // plan's; 0 is the plan's.
   int64 max_bytes = 6;

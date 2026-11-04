@@ -12,6 +12,7 @@
 package workspacev1
 
 import (
+	_ "go.toshicloud.io/api/toshipb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -4099,10 +4100,10 @@ type SandboxSpec struct {
 	// The runner size of its VM, as a job's runs-on label names one, for
 	// example "toshi-linux-2x". Required.
 	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
-	// How long it may run, in whole minutes. Unset, it runs until the plan's
-	// sandbox cap passes, or until it is stopped when the plan sets none. It
-	// cannot be longer than the plan's cap. Its owner can raise it while the
-	// sandbox runs (UpdateSandbox).
+	// How long it may run, in whole minutes, at least 1 minute. Unset, it runs
+	// until the plan's sandbox cap passes, or until it is stopped when the plan
+	// sets none. It cannot be longer than the plan's cap. Its owner can raise
+	// it while the sandbox runs (UpdateSandbox).
 	MaxDuration *durationpb.Duration `protobuf:"bytes,2,opt,name=max_duration,json=maxDuration,proto3" json:"max_duration,omitempty"`
 	// What in its workspace the sandbox uses: the secret set of its
 	// environment and the endpoints of its project's and environment's
@@ -14312,7 +14313,7 @@ var File_toshi_workspace_v1_workspace_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/workspace.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1ftoshi/workspace/v1/grants.proto\x1a!toshi/workspace/v1/projects.proto\x1a#toshi/workspace/v1/recordings.proto\"\x8f\x05\n" +
+	"\"toshi/workspace/v1/workspace.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1ftoshi/workspace/v1/grants.proto\x1a!toshi/workspace/v1/projects.proto\x1a#toshi/workspace/v1/recordings.proto\"\x8f\x05\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\x12 \n" +
@@ -14443,12 +14444,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\aprompts\x18\x0f \x03(\v2\x1f.toshi.workspace.v1.AgentPromptR\aprompts\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xaf\x02\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xca\x02\n" +
 	"\x0fWorkloadNetwork\x128\n" +
 	"\x06layers\x18\x01 \x03(\v2 .toshi.workspace.v1.NetworkLayerR\x06layers\x12\x1a\n" +
 	"\benforced\x18\x02 \x01(\bR\benforced\x12.\n" +
-	"\x13not_enforced_reason\x18\x03 \x01(\tR\x11notEnforcedReason\x12C\n" +
-	"\flast_denials\x18\x04 \x03(\v2 .toshi.workspace.v1.EgressDenialR\vlastDenials\x12!\n" +
+	"\x13not_enforced_reason\x18\x03 \x01(\tR\x11notEnforcedReason\x12^\n" +
+	"\flast_denials\x18\x04 \x03(\v2 .toshi.workspace.v1.EgressDenialB\x19\x8a\xf4\x18\x15\n" +
+	"\x0fnetwork_denials\x10\x030\x14R\vlastDenials\x12!\n" +
 	"\fegress_bytes\x18\x05 \x01(\x04R\vegressBytes\x12.\n" +
 	"\x13egress_exempt_bytes\x18\x06 \x01(\x04R\x11egressExemptBytes\"]\n" +
 	"\fNetworkLayer\x12\x12\n" +
@@ -14558,10 +14560,11 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
 	"\aversion\x18\x03 \x01(\x03R\aversion\"(\n" +
 	"\x0eRequestNetwork\x12\x16\n" +
-	"\x06egress\x18\x01 \x03(\tR\x06egress\"\xcf\x05\n" +
+	"\x06egress\x18\x01 \x03(\tR\x06egress\"\xef\x05\n" +
 	"\vSandboxSpec\x12\x12\n" +
-	"\x04size\x18\x01 \x01(\tR\x04size\x12<\n" +
-	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxDuration\x127\n" +
+	"\x04size\x18\x01 \x01(\tR\x04size\x12\\\n" +
+	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x1e\x8a\xf4\x18\x1a\n" +
+	"\x14sandbox_max_duration\x10\x01 <R\vmaxDuration\x127\n" +
 	"\bbindings\x18\x03 \x03(\v2\x1b.toshi.workspace.v1.BindingR\bbindings\x12&\n" +
 	"\x0fstate_volume_id\x18\x04 \x01(\tR\rstateVolumeId\x12'\n" +
 	"\x0fcontainer_image\x18\x05 \x01(\tR\x0econtainerImage\x124\n" +
@@ -15003,14 +15006,15 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\bended_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x12\x1a\n" +
 	"\bendpoint\x18\v \x01(\tR\bendpoint\x12\x12\n" +
-	"\x04port\x18\f \x01(\x05R\x04port\"\xb6\x02\n" +
+	"\x04port\x18\f \x01(\x05R\x04port\"\xdd\x02\n" +
 	"\x1dCreatePreviewShareLinkRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
 	"\n" +
-	"sandbox_id\x18\x03 \x01(\tR\tsandboxId\x128\n" +
+	"sandbox_id\x18\x03 \x01(\tR\tsandboxId\x12_\n" +
 	"\n" +
-	"expires_in\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12\x1b\n" +
+	"expires_in\x18\x04 \x01(\v2\x19.google.protobuf.DurationB%\x8a\xf4\x18!\n" +
+	"\x19preview_share_link_expiry\x10\x01\x18\x80\xa3\x05R\texpiresIn\x12\x1b\n" +
 	"\tmax_bytes\x18\x05 \x01(\x03R\bmaxBytes\x12\x1c\n" +
 	"\bendpoint\x18\x06 \x01(\tH\x00R\bendpoint\x12\x14\n" +
 	"\x04port\x18\a \x01(\x05H\x00R\x04port\x12\x1f\n" +
@@ -15059,15 +15063,16 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\n" +
 	"revoked_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\trevokedAt\x125\n" +
-	"\bended_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\"\x8e\x02\n" +
+	"\bended_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\"\xb5\x02\n" +
 	"\x1dCreateServiceShareLinkRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x1a\n" +
-	"\bendpoint\x18\x04 \x01(\tR\bendpoint\x128\n" +
+	"\bendpoint\x18\x04 \x01(\tR\bendpoint\x12_\n" +
 	"\n" +
-	"expires_in\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\texpiresIn\x12\x1b\n" +
+	"expires_in\x18\x05 \x01(\v2\x19.google.protobuf.DurationB%\x8a\xf4\x18!\n" +
+	"\x19service_share_link_expiry\x10\x01\x18\x80\xa3\x05R\texpiresIn\x12\x1b\n" +
 	"\tmax_bytes\x18\x06 \x01(\x03R\bmaxBytes\x12\x1f\n" +
 	"\vrequest_key\x18\a \x01(\tR\n" +
 	"requestKey\"w\n" +
