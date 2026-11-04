@@ -945,6 +945,12 @@ export const labels = {
     plan: "Plan",
     workspace: "Workspace",
   },
+  RelayRefusalCause: {
+    foreign_vm: "From another VM",
+    foreign_run: "From another run",
+    revoked: "Secret revoked",
+    unknown: "Unknown secret",
+  },
   WorkloadKind: {
     job: "Job",
     sandbox: "Sandbox",
@@ -974,7 +980,7 @@ export const labels = {
     POLICY: "Stopped by policy",
     SLEEP: "Service went to sleep",
     SERVICE_RESTART: "New revision started",
-    DRAINED: "Drained",
+    DRAINED: "Ended by a drain",
   },
 } as const;
 
