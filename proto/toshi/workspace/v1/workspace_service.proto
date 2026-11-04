@@ -151,9 +151,10 @@ service WorkspaceService {
   rpc GetStartWindows(GetStartWindowsRequest) returns (GetStartWindowsResponse) {
     option (toshi.permission) = "workspace.read";
   }
-  // GetWorkspaceLimits returns the workspace's start windows and its
-  // concurrent job and vCPU limits, with their plan and effective values.
-  // The counts are a snapshot and this read changes nothing.
+  // GetWorkspaceLimits returns the workspace's start windows, capacity and
+  // storage limits, paid-start setting, and sampled storage usage. Spending
+  // and the monthly cost estimate are returned only with billing.read. The
+  // counts are a snapshot and this read changes nothing.
   rpc GetWorkspaceLimits(GetWorkspaceLimitsRequest) returns (GetWorkspaceLimitsResponse) {
     option (toshi.permission) = "workspace.read";
   }
@@ -510,7 +511,7 @@ message GetStartWindowsResponse {
 // GetWorkspaceLimitsRequest reads the caller's own workspace.
 message GetWorkspaceLimitsRequest {}
 
-// GetWorkspaceLimitsResponse describes the workspace's start and capacity limits.
+// GetWorkspaceLimitsResponse describes the workspace's limits and usage.
 message GetWorkspaceLimitsResponse {
   // False when no start is counted, as in GetStartWindows.
   bool applies = 1;
@@ -522,12 +523,20 @@ message GetWorkspaceLimitsResponse {
   WorkspaceLimitRow running_at_once = 4;
   // The shared-host vCPU limit.
   WorkspaceLimitRow vcpu = 5;
+  // Spending against the monthly cap; unset without billing.read.
+  WorkspaceSpendLimit spend = 6;
+  // The paid-start setting and the plan's ceiling.
+  WorkspacePaidStarts paid_starts = 7;
+  // Storage limits and sampled usage.
+  WorkspaceStorageLimits storage = 8;
+  // The current month's projected cost; unset without billing.read or when
+  // billing is not configured.
+  WorkspaceMonthEstimate month_estimate = 9;
 }
 
 // WorkspaceLimitRow is one plan and effective capacity limit.
 message WorkspaceLimitRow {
-  // The entitlement key jobs.concurrency_max, or the plan field max_vcpu,
-  // which has no entitlement key.
+  // The entitlement key, or the plan field max_vcpu, which has no key.
   string key = 1;
   // The plan's value; 0 means no cap.
   int64 plan_value = 2;
@@ -540,8 +549,76 @@ message WorkspaceLimitRow {
   // The capacity held by assigned, starting, running and debugging jobs on
   // shared hosts. For jobs.concurrency_max this excludes filler and open-source
   // jobs; for max_vcpu it sums the vCPUs of jobs whose runner sizes are known,
-  // including filler and open-source jobs. Unset if unavailable.
+  // including filler and open-source jobs. Unset for other limits or when
+  // unavailable.
   optional int64 in_use = 5;
+}
+
+// WorkspaceSpendLimit is the estimated metered spend against a monthly cap.
+message WorkspaceSpendLimit {
+  // The cap in the currency's minor unit; 0 means no cap.
+  int64 spend_cap_cents = 1;
+  // Estimated metered spend this UTC month in the currency's minor unit;
+  // meaningful only when spend_known is true.
+  int64 spend_cents = 2;
+  // The share of the cap reached: 0, 80 or 100 percent.
+  int32 spend_level = 3;
+  // Whether the prices needed to estimate spend are known.
+  bool spend_known = 4;
+  // The plan prices' lower-case ISO currency code; empty when unknown.
+  string currency = 5;
+  // The warning threshold as a percentage of the cap.
+  int32 warn_percent = 6;
+  // The cap threshold as a percentage of the cap.
+  int32 cap_percent = 7;
+}
+
+// WorkspacePaidStarts describes the workspace's paid-start setting.
+message WorkspacePaidStarts {
+  // Whether the workspace permits paid starts.
+  bool enabled = 1;
+  // The plan's ceiling as a percentage of each window's included starts.
+  int32 ceiling_percent = 2;
+}
+
+// WorkspaceStorageLimits describes the plan's storage and volume limits.
+message WorkspaceStorageLimits {
+  // The default ceiling entitlement for the sum of volume size caps, in
+  // decimal GB, before the workspace setting and the maximum are applied.
+  WorkspaceLimitRow volume_size_cap_total_gb = 1;
+  // The maximum ceiling entitlement for the sum of volume size caps, in
+  // decimal GB.
+  WorkspaceLimitRow volume_size_cap_total_max_gb = 2;
+  // The ceiling in force in bytes, as in GetVolumeCaps; 0 means no limit.
+  // Unset when the deployment has no entitlement resolver.
+  optional int64 volume_ceiling_bytes = 3;
+  // What set volume_ceiling_bytes: plan, workspace or override; empty
+  // when the ceiling is unset.
+  string volume_ceiling_source = 4;
+  // The plan's hard cap on new stored data in decimal GB; 0 when the hard
+  // cap is off. When the hard cap is on, 0 GB means no new stored data.
+  int64 storage_hard_cap_gb = 5;
+  // Whether the plan sets a hard cap on new stored data. Volume saves
+  // still pass the hard cap.
+  bool storage_hard_cap = 6;
+  // The same last seven days of sampled storage as GetUsage: each row's
+  // bytes are from that day's last sampled hour for its kind, not live bytes.
+  repeated StorageUsageRow usage = 7;
+  // The plan's configured per-host actions/cache size in MiB. When a host
+  // cache is assigned, this value is rounded up to whole GiB. 0 leaves
+  // actions/cache on GitHub's service. The cache is not in the usage rows.
+  int64 actions_cache_mib = 8;
+}
+
+// WorkspaceMonthEstimate is the projected cost of the current UTC month.
+message WorkspaceMonthEstimate {
+  // The month's cost projected to its end in the currency's minor unit, as
+  // in GetWorkspaceUpcomingInvoice; meaningful only when known is true.
+  int64 estimated_month_cents = 1;
+  // Whether the prices needed for the estimate are known.
+  bool known = 2;
+  // The lower-case ISO currency code; empty when unknown.
+  string currency = 3;
 }
 
 message GetVolumeCapsRequest {}

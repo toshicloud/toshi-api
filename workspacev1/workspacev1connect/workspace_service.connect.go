@@ -197,9 +197,10 @@ type WorkspaceServiceClient interface {
 	// on, so a window at its ceiling here is a window that refuses a create now.
 	// The read is a snapshot and counts nothing itself.
 	GetStartWindows(context.Context, *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error)
-	// GetWorkspaceLimits returns the workspace's start windows and its
-	// concurrent job and vCPU limits, with their plan and effective values.
-	// The counts are a snapshot and this read changes nothing.
+	// GetWorkspaceLimits returns the workspace's start windows, capacity and
+	// storage limits, paid-start setting, and sampled storage usage. Spending
+	// and the monthly cost estimate are returned only with billing.read. The
+	// counts are a snapshot and this read changes nothing.
 	GetWorkspaceLimits(context.Context, *connect.Request[workspacev1.GetWorkspaceLimitsRequest]) (*connect.Response[workspacev1.GetWorkspaceLimitsResponse], error)
 	// GetVolumeCaps returns the workspace's volume size-cap ceiling and what is
 	// counted against it: the sum of the size caps of its volumes that are not
@@ -636,9 +637,10 @@ type WorkspaceServiceHandler interface {
 	// on, so a window at its ceiling here is a window that refuses a create now.
 	// The read is a snapshot and counts nothing itself.
 	GetStartWindows(context.Context, *connect.Request[workspacev1.GetStartWindowsRequest]) (*connect.Response[workspacev1.GetStartWindowsResponse], error)
-	// GetWorkspaceLimits returns the workspace's start windows and its
-	// concurrent job and vCPU limits, with their plan and effective values.
-	// The counts are a snapshot and this read changes nothing.
+	// GetWorkspaceLimits returns the workspace's start windows, capacity and
+	// storage limits, paid-start setting, and sampled storage usage. Spending
+	// and the monthly cost estimate are returned only with billing.read. The
+	// counts are a snapshot and this read changes nothing.
 	GetWorkspaceLimits(context.Context, *connect.Request[workspacev1.GetWorkspaceLimitsRequest]) (*connect.Response[workspacev1.GetWorkspaceLimitsResponse], error)
 	// GetVolumeCaps returns the workspace's volume size-cap ceiling and what is
 	// counted against it: the sum of the size caps of its volumes that are not
