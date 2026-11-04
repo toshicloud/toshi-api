@@ -109,7 +109,7 @@ export const reasons = {
   NO_SIGN_OUT_COMMAND: { code: "FAILED_PRECONDITION", metadata: ["program"], text: "This program has no sign-out command; set one first." },
   PERSON_NOT_MEMBER: { code: "FAILED_PRECONDITION", metadata: ["person"], text: "That person is not a member of this workspace; add them first." },
   PLAN_EXCLUDES_IMAGES: { code: "FAILED_PRECONDITION", metadata: ["plan"], text: "Your plan does not include images." },
-  PRODUCT_UNAVAILABLE: { code: "FAILED_PRECONDITION", metadata: ["product", "cause", "state", "plan"], text: "This product is not available in this deployment or workspace.", values: { cause: ["build", "operator", "plan", "workspace"], state: ["enabled", "no_new_work", "draining", "stopped", "uninstalled"] } },
+  PRODUCT_UNAVAILABLE: { code: "FAILED_PRECONDITION", metadata: ["product", "key", "cause", "state", "plan", "limit", "requested"], text: "This product or setting is not available in this deployment or workspace.", values: { cause: ["build", "operator", "plan", "workspace"], key: ["sandbox.keep_switch"], state: ["enabled", "no_new_work", "draining", "stopped", "uninstalled"] } },
   PROJECT_IN_USE: { code: "FAILED_PRECONDITION", metadata: ["jobs", "workloads", "triggers"], text: "Something still runs in this project; finish or delete it first." },
   PROJECT_NAME_RETAINED: { code: "FAILED_PRECONDITION", metadata: ["purge_at"], text: "A deleted project keeps this name until it is purged; restore it or choose another name." },
   PROMPT_ANSWERED_BY_ACP_CLIENT: { code: "FAILED_PRECONDITION", metadata: [], text: "This prompt is answered by the connected ACP client." },

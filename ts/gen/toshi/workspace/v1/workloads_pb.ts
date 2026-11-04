@@ -6608,7 +6608,8 @@ export const WorkloadService: GenService<{
    * it until it takes the old limit back or the sandbox stops. A sandbox
    * that is not running, has a stop asked for, has no limit of its own or
    * has a raise pending, or whose host's agent cannot take a new limit,
-   * fails with FAILED_PRECONDITION. Another path fails with
+   * fails with FAILED_PRECONDITION. "spec.keep_stopped" changes the keep
+   * switch and must also be the only path. Another path fails with
    * INVALID_ARGUMENT.
    *
    * @generated from rpc toshi.workspace.v1.WorkloadService.UpdateSandbox

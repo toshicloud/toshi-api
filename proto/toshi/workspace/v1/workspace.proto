@@ -313,6 +313,25 @@ message SandboxStatus {
   // the operator set one; empty otherwise. Set by Toshi; ignored in a
   // request.
   string hold_contact = 17;
+  // When this stopped sandbox is scheduled to end, if it has an end.
+  google.protobuf.Timestamp ends_at = 18;
+  // Why its stopped end was set, once the end policy has been recorded.
+  SandboxEndsReason ends_reason = 19;
+}
+
+// SandboxEndsReason identifies the source of a stopped sandbox's end policy.
+enum SandboxEndsReason {
+  // No end recorded yet: the sandbox runs, or stopped less than about a
+  // minute ago.
+  SANDBOX_ENDS_REASON_UNSPECIFIED = 0;
+  // ends_at is the stop time plus the plan's stopped-sandbox keep.
+  SANDBOX_ENDS_REASON_PLAN = 1;
+  // ends_at is the stop time plus the workspace's shorter keep setting.
+  SANDBOX_ENDS_REASON_WORKSPACE = 2;
+  // The keep is unlimited: the sandbox does not end and ends_at is unset.
+  SANDBOX_ENDS_REASON_NEVER = 3;
+  // keep_stopped exempts the sandbox: it does not end and ends_at is unset.
+  SANDBOX_ENDS_REASON_KEEP_SWITCH = 4;
 }
 
 // SandboxState is where a sandbox is in its life. A sandbox can skip a
@@ -876,6 +895,9 @@ message SandboxSpec {
   // sandbox is placed only on a host that runs workload hooks. Unset:
   // none.
   Command pre_stop = 15;
+  // Exempt this sandbox from its stopped end while the plan permits it.
+  // Set at create or with an UpdateSandbox of spec.keep_stopped.
+  bool keep_stopped = 16;
 }
 
 // SandboxSource is a commit of a repository that one of the workspace's

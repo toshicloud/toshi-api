@@ -237,7 +237,7 @@ const (
 	ReasonPersonNotMember = "PERSON_NOT_MEMBER"
 	// ReasonPlanExcludesImages: `CreateImage`, or `UpdateImage` turning `rebuild_on_push` on, where the workspace's plan does not include images.
 	ReasonPlanExcludesImages = "PLAN_EXCLUDES_IMAGES"
-	// ReasonProductUnavailable: A call of a product that is off; the metadata `cause` (`build`, `operator`, `plan` or `workspace`) says why, with `state` for `operator` and `plan` when a plan the workspace can move to has the product.
+	// ReasonProductUnavailable: A call of a product that is off, or a setting its plan does not offer; the metadata `cause` (`build`, `operator`, `plan` or `workspace`) says why, with `state` for `operator` and `plan` when a plan the workspace can move to has the product.
 	ReasonProductUnavailable = "PRODUCT_UNAVAILABLE"
 	// ReasonProjectInUse: `DeleteProject` while the project has unfinished jobs, workloads that are not deleted or triggers that are not deleted; the metadata carries `jobs`, `workloads` and `triggers`.
 	ReasonProjectInUse = "PROJECT_IN_USE"

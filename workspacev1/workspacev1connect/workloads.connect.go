@@ -350,7 +350,8 @@ type WorkloadServiceClient interface {
 	// it until it takes the old limit back or the sandbox stops. A sandbox
 	// that is not running, has a stop asked for, has no limit of its own or
 	// has a raise pending, or whose host's agent cannot take a new limit,
-	// fails with FAILED_PRECONDITION. Another path fails with
+	// fails with FAILED_PRECONDITION. "spec.keep_stopped" changes the keep
+	// switch and must also be the only path. Another path fails with
 	// INVALID_ARGUMENT.
 	UpdateSandbox(context.Context, *connect.Request[workspacev1.UpdateSandboxRequest]) (*connect.Response[workspacev1.UpdateSandboxResponse], error)
 	// DeleteSandbox stops a sandbox that has not ended and then removes it;
@@ -1736,7 +1737,8 @@ type WorkloadServiceHandler interface {
 	// it until it takes the old limit back or the sandbox stops. A sandbox
 	// that is not running, has a stop asked for, has no limit of its own or
 	// has a raise pending, or whose host's agent cannot take a new limit,
-	// fails with FAILED_PRECONDITION. Another path fails with
+	// fails with FAILED_PRECONDITION. "spec.keep_stopped" changes the keep
+	// switch and must also be the only path. Another path fails with
 	// INVALID_ARGUMENT.
 	UpdateSandbox(context.Context, *connect.Request[workspacev1.UpdateSandboxRequest]) (*connect.Response[workspacev1.UpdateSandboxResponse], error)
 	// DeleteSandbox stops a sandbox that has not ended and then removes it;
