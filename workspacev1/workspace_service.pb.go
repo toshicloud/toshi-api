@@ -27,6 +27,7 @@ const (
 type HostingCertificateState int32
 
 const (
+	// No certificate state is recorded.
 	HostingCertificateState_HOSTING_CERTIFICATE_STATE_UNSPECIFIED HostingCertificateState = 0
 	// The first certificate is being ordered; until it is, provided names
 	// refuse connections.
@@ -34,7 +35,9 @@ const (
 	// The authority refused an order for its rate limits; Toshi tries again
 	// at retry_at.
 	HostingCertificateState_HOSTING_CERTIFICATE_STATE_RATE_LIMITED HostingCertificateState = 2
-	HostingCertificateState_HOSTING_CERTIFICATE_STATE_VALID        HostingCertificateState = 3
+	// The certificate is issued and serves until not_after; Toshi renews it
+	// at renew_at.
+	HostingCertificateState_HOSTING_CERTIFICATE_STATE_VALID HostingCertificateState = 3
 	// A renewal failed; the current certificate serves until not_after.
 	HostingCertificateState_HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING HostingCertificateState = 4
 	// The control plane signed the certificate itself, as [hosting] dev = true
@@ -93,9 +96,12 @@ func (HostingCertificateState) EnumDescriptor() ([]byte, []int) {
 type InboundMailPastCap int32
 
 const (
-	InboundMailPastCap_INBOUND_MAIL_PAST_CAP_UNSPECIFIED       InboundMailPastCap = 0
+	// Unset; mail past the daily cap is accepted.
+	InboundMailPastCap_INBOUND_MAIL_PAST_CAP_UNSPECIFIED InboundMailPastCap = 0
+	// Accept mail past the daily cap and charge for it.
 	InboundMailPastCap_INBOUND_MAIL_PAST_CAP_ACCEPT_AND_CHARGE InboundMailPastCap = 1
-	InboundMailPastCap_INBOUND_MAIL_PAST_CAP_REFUSE            InboundMailPastCap = 2
+	// Refuse mail past the daily cap.
+	InboundMailPastCap_INBOUND_MAIL_PAST_CAP_REFUSE InboundMailPastCap = 2
 )
 
 // Enum value maps for InboundMailPastCap.
@@ -139,6 +145,7 @@ func (InboundMailPastCap) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{1}
 }
 
+// GetWorkspaceRequest has no fields: the call reads the caller's workspace.
 type GetWorkspaceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -175,9 +182,11 @@ func (*GetWorkspaceRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{0}
 }
 
+// GetWorkspaceResponse carries the caller's workspace.
 type GetWorkspaceResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workspace.
+	Workspace     *Workspace `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -219,6 +228,8 @@ func (x *GetWorkspaceResponse) GetWorkspace() *Workspace {
 	return nil
 }
 
+// DeleteWorkspaceRequest confirms and gives the reason for a workspace's
+// scheduled deletion.
 type DeleteWorkspaceRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The workspace's name, as GetWorkspace returns it.
@@ -273,9 +284,12 @@ func (x *DeleteWorkspaceRequest) GetReason() string {
 	return ""
 }
 
+// DeleteWorkspaceResponse carries the workspace with its deletion
+// scheduled.
 type DeleteWorkspaceResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workspace with purge_after and deletion_by set.
+	Workspace     *Workspace `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -317,6 +331,8 @@ func (x *DeleteWorkspaceResponse) GetWorkspace() *Workspace {
 	return nil
 }
 
+// CancelWorkspaceDeletionRequest has no fields: the call acts on the
+// caller's workspace.
 type CancelWorkspaceDeletionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -353,9 +369,11 @@ func (*CancelWorkspaceDeletionRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{4}
 }
 
+// CancelWorkspaceDeletionResponse carries the workspace, active again.
 type CancelWorkspaceDeletionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workspace returned to active.
+	Workspace     *Workspace `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -397,12 +415,16 @@ func (x *CancelWorkspaceDeletionResponse) GetWorkspace() *Workspace {
 	return nil
 }
 
+// UpdateWorkspaceRequest carries the workspace values to set and the fields
+// to change.
 type UpdateWorkspaceRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Carries the new values of the fields update_mask names, and the etag
 	// the caller read, when it wants the change refused if another landed
 	// since.
-	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	Workspace *Workspace `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	// The paths to change: "name" and "settings.<field>"; omitted means the
+	// fields the request populates.
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -452,9 +474,11 @@ func (x *UpdateWorkspaceRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
+// UpdateWorkspaceResponse carries the workspace as stored.
 type UpdateWorkspaceResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Workspace     *Workspace             `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workspace as stored.
+	Workspace     *Workspace `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -496,6 +520,7 @@ func (x *UpdateWorkspaceResponse) GetWorkspace() *Workspace {
 	return nil
 }
 
+// ListWorkspacesRequest selects a page of the caller's workspaces.
 type ListWorkspacesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most workspaces in one page; zero lets the server choose.
@@ -550,9 +575,11 @@ func (x *ListWorkspacesRequest) GetPageToken() string {
 	return ""
 }
 
+// ListWorkspacesResponse is one page of the caller's workspaces.
 type ListWorkspacesResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Workspaces []*Workspace           `protobuf:"bytes,1,rep,name=workspaces,proto3" json:"workspaces,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workspaces, ordered by ID.
+	Workspaces []*Workspace `protobuf:"bytes,1,rep,name=workspaces,proto3" json:"workspaces,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -603,6 +630,8 @@ func (x *ListWorkspacesResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetWorkspaceBillingRequest selects how many months of billing usage to
+// return.
 type GetWorkspaceBillingRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// How many UTC months of usage to return, the current one included.
@@ -649,9 +678,11 @@ func (x *GetWorkspaceBillingRequest) GetMonths() int32 {
 	return 0
 }
 
+// GetWorkspaceBillingResponse carries the workspace's billing.
 type GetWorkspaceBillingResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Billing       *WorkspaceBilling      `protobuf:"bytes,1,opt,name=billing,proto3" json:"billing,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The workspace's billing.
+	Billing       *WorkspaceBilling `protobuf:"bytes,1,opt,name=billing,proto3" json:"billing,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -693,6 +724,7 @@ func (x *GetWorkspaceBillingResponse) GetBilling() *WorkspaceBilling {
 	return nil
 }
 
+// GetWorkspaceStatementRequest selects the UTC month of the statement.
 type GetWorkspaceStatementRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The UTC month as YYYY-MM. Empty: the current month.
@@ -747,9 +779,12 @@ func (x *GetWorkspaceStatementRequest) GetCsv() bool {
 	return false
 }
 
+// GetWorkspaceStatementResponse carries the statement, and its CSV when the
+// request asked for it.
 type GetWorkspaceStatementResponse struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Statement *WorkspaceStatement    `protobuf:"bytes,1,opt,name=statement,proto3" json:"statement,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The month's statement.
+	Statement *WorkspaceStatement `protobuf:"bytes,1,opt,name=statement,proto3" json:"statement,omitempty"`
 	// The statement as CSV with a header row, when the request asked for it.
 	Csv           string `protobuf:"bytes,2,opt,name=csv,proto3" json:"csv,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -800,6 +835,8 @@ func (x *GetWorkspaceStatementResponse) GetCsv() string {
 	return ""
 }
 
+// GetWorkspaceUpcomingInvoiceRequest has no fields: the call reads the
+// caller's own workspace.
 type GetWorkspaceUpcomingInvoiceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -836,6 +873,8 @@ func (*GetWorkspaceUpcomingInvoiceRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{14}
 }
 
+// GetWorkspaceUpcomingInvoiceResponse carries the provider's preview of the
+// next invoice and the current month's cost per project.
 type GetWorkspaceUpcomingInvoiceResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The billing provider's preview of the next invoice.
@@ -845,7 +884,9 @@ type GetWorkspaceUpcomingInvoiceResponse struct {
 	Projects []*ProjectCost `protobuf:"bytes,2,rep,name=projects,proto3" json:"projects,omitempty"`
 	// The sums of the projects' month_so_far_cents and estimated_month_cents.
 	// month_so_far_cents equals the current month's statement estimated_cents.
-	MonthSoFarCents     int64 `protobuf:"varint,3,opt,name=month_so_far_cents,json=monthSoFarCents,proto3" json:"month_so_far_cents,omitempty"`
+	MonthSoFarCents int64 `protobuf:"varint,3,opt,name=month_so_far_cents,json=monthSoFarCents,proto3" json:"month_so_far_cents,omitempty"`
+	// The sum of the projects' estimated_month_cents: the month's cost so far
+	// carried in a straight line to its end.
 	EstimatedMonthCents int64 `protobuf:"varint,4,opt,name=estimated_month_cents,json=estimatedMonthCents,proto3" json:"estimated_month_cents,omitempty"`
 	// The currency of the project costs, as the statement gives it; empty
 	// while no price is known.
@@ -930,7 +971,8 @@ type UpcomingInvoice struct {
 	Currency string `protobuf:"bytes,2,opt,name=currency,proto3" json:"currency,omitempty"`
 	// The period the invoice covers.
 	PeriodStart *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=period_start,json=periodStart,proto3" json:"period_start,omitempty"`
-	PeriodEnd   *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=period_end,json=periodEnd,proto3" json:"period_end,omitempty"`
+	// When the period the invoice covers ends.
+	PeriodEnd *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=period_end,json=periodEnd,proto3" json:"period_end,omitempty"`
 	// When the usage behind this answer was read. Meter events reach the
 	// provider asynchronously, so the preview may not yet include usage
 	// read at this time.
@@ -1021,7 +1063,8 @@ type ProjectCost struct {
 	// accounts for: the own-host fee, storage, desktop seats, and minutes of
 	// jobs with no project, a deleted project, or that history retention
 	// already removed.
-	ProjectId   string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	ProjectId string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	// The project's name; empty when project_id is.
 	ProjectName string `protobuf:"bytes,2,opt,name=project_name,json=projectName,proto3" json:"project_name,omitempty"`
 	// The cost of the month so far, in the currency's minor unit.
 	MonthSoFarCents int64 `protobuf:"varint,3,opt,name=month_so_far_cents,json=monthSoFarCents,proto3" json:"month_so_far_cents,omitempty"`
@@ -1097,7 +1140,8 @@ type Seat struct {
 	// The seat's id, such as "seat-0f1e2d3c4b5a69788796a5b4".
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The Toshi user id of the person it is assigned to.
-	UserId     string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// When the seat was assigned.
 	AssignedAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
 	// Who assigned it: a person, or the system for an operator's
 	// reassignment.
@@ -1110,7 +1154,9 @@ type Seat struct {
 	// person within a month, and why: "hardware_failure" or
 	// "temporary_absence". Both are empty for an assigned seat, and the two
 	// seats are billed as one for that month.
-	Replaces      string `protobuf:"bytes,7,opt,name=replaces,proto3" json:"replaces,omitempty"`
+	Replaces string `protobuf:"bytes,7,opt,name=replaces,proto3" json:"replaces,omitempty"`
+	// Why an operator moved the seat: "hardware_failure" or
+	// "temporary_absence"; empty unless replaces is set.
 	ReplaceReason string `protobuf:"bytes,8,opt,name=replace_reason,json=replaceReason,proto3" json:"replace_reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1202,6 +1248,7 @@ func (x *Seat) GetReplaceReason() string {
 	return ""
 }
 
+// ListSeatsRequest selects the UTC month whose seats to list.
 type ListSeatsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The UTC month as YYYY-MM. Empty: the current month.
@@ -1265,6 +1312,7 @@ func (x *ListSeatsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListSeatsResponse is the seats the workspace held in the month.
 type ListSeatsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The seats on this page, oldest assigned first.
@@ -1319,6 +1367,7 @@ func (x *ListSeatsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// AssignSeatRequest names the member to assign a desktop seat to.
 type AssignSeatRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The Toshi user id of the member to assign a seat to.
@@ -1364,9 +1413,11 @@ func (x *AssignSeatRequest) GetUserId() string {
 	return ""
 }
 
+// AssignSeatResponse carries the seat that was assigned.
 type AssignSeatResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Seat          *Seat                  `protobuf:"bytes,1,opt,name=seat,proto3" json:"seat,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The seat as assigned.
+	Seat          *Seat `protobuf:"bytes,1,opt,name=seat,proto3" json:"seat,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1408,9 +1459,11 @@ func (x *AssignSeatResponse) GetSeat() *Seat {
 	return nil
 }
 
+// RemoveSeatRequest names the seat to remove.
 type RemoveSeatRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SeatId        string                 `protobuf:"bytes,1,opt,name=seat_id,json=seatId,proto3" json:"seat_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The id of the seat to remove.
+	SeatId        string `protobuf:"bytes,1,opt,name=seat_id,json=seatId,proto3" json:"seat_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1452,6 +1505,7 @@ func (x *RemoveSeatRequest) GetSeatId() string {
 	return ""
 }
 
+// RemoveSeatResponse carries the seat as removed.
 type RemoveSeatResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The seat as removed.
@@ -1497,6 +1551,8 @@ func (x *RemoveSeatResponse) GetSeat() *Seat {
 	return nil
 }
 
+// ListEgressIPsRequest selects a page of the hosts to list the egress
+// addresses of.
 type ListEgressIPsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most hosts in one page; zero lets the server choose.
@@ -1684,6 +1740,8 @@ func (x *GetUsageRequest) GetTo() *timestamppb.Timestamp {
 	return nil
 }
 
+// GetUsageResponse is the job counts and minutes of the window, with the
+// filler and storage figures beside them.
 type GetUsageResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Ordered by day, then conclusion, then outcome, then kind. A
@@ -1691,7 +1749,8 @@ type GetUsageResponse struct {
 	Rows []*UsageRow `protobuf:"bytes,1,rep,name=rows,proto3" json:"rows,omitempty"`
 	// The window used, with the defaults filled in.
 	From *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
-	To   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=to,proto3" json:"to,omitempty"`
+	// The end of the window used, exclusive.
+	To *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=to,proto3" json:"to,omitempty"`
 	// The filler jobs that finished in the window. They are not billed and
 	// not in rows. Unset when there were none.
 	Filler *FillerUsage `protobuf:"bytes,4,opt,name=filler,proto3" json:"filler,omitempty"`
@@ -1823,6 +1882,8 @@ func (x *GetQueueTimesRequest) GetTo() *timestamppb.Timestamp {
 	return nil
 }
 
+// GetQueueTimesResponse is the queue times of the jobs that reached running
+// in the window.
 type GetQueueTimesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Jobs in the window that reached running (have a started_at).
@@ -1830,13 +1891,17 @@ type GetQueueTimesResponse struct {
 	// Nearest-rank percentiles and maximum of started_at - queued_at, in whole
 	// milliseconds. All 0 when jobs is 0.
 	P50Ms int64 `protobuf:"varint,2,opt,name=p50_ms,json=p50Ms,proto3" json:"p50_ms,omitempty"`
+	// The nearest-rank 90th percentile of the start delays, in whole
+	// milliseconds; 0 when jobs is 0.
 	P90Ms int64 `protobuf:"varint,3,opt,name=p90_ms,json=p90Ms,proto3" json:"p90_ms,omitempty"`
+	// The longest start delay, in whole milliseconds; 0 when jobs is 0.
 	MaxMs int64 `protobuf:"varint,4,opt,name=max_ms,json=maxMs,proto3" json:"max_ms,omitempty"`
 	// Share of those jobs assigned to a warm instance, from 0 to 1.
 	WarmShare float64 `protobuf:"fixed64,5,opt,name=warm_share,json=warmShare,proto3" json:"warm_share,omitempty"`
 	// The window used, with the defaults filled in.
 	From *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=from,proto3" json:"from,omitempty"`
-	To   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=to,proto3" json:"to,omitempty"`
+	// The end of the window used, exclusive.
+	To *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=to,proto3" json:"to,omitempty"`
 	// Time held, from first held to assigned, of the jobs the scheduler held, by
 	// the latest reason it held each one. A job never held is in none of them.
 	// A reason with only jobs held now has jobs 0.
@@ -1969,6 +2034,8 @@ func (*GetStartWindowsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{31}
 }
 
+// GetStartWindowsResponse is the workspace's start windows as admission
+// counts them.
 type GetStartWindowsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// False when no start is counted for the workspace: its plan sets no start
@@ -2618,6 +2685,8 @@ func (x *WorkspaceMonthEstimate) GetCurrency() string {
 	return ""
 }
 
+// GetVolumeCapsRequest has no fields: the call reads the caller's own
+// workspace.
 type GetVolumeCapsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -2654,6 +2723,8 @@ func (*GetVolumeCapsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{40}
 }
 
+// GetVolumeCapsResponse is the workspace's volume size-cap ceiling and what
+// is counted against it.
 type GetVolumeCapsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The sum of the size caps, in bytes, of the workspace's volumes that are
@@ -2762,9 +2833,11 @@ func (x *GetVolumeCapsResponse) GetProjects() []*VolumeCapsProject {
 
 // VolumeCapsProject is one project's share of the volume caps.
 type VolumeCapsProject struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	Name      string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's id.
+	ProjectId string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	// The project's name.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The sum of the size caps, in bytes, of the project's volumes that are not
 	// deleted.
 	InUseBytes int64 `protobuf:"varint,3,opt,name=in_use_bytes,json=inUseBytes,proto3" json:"in_use_bytes,omitempty"`
@@ -3020,6 +3093,8 @@ func (x *GetWorkflowUsageRequest) GetTo() *timestamppb.Timestamp {
 	return nil
 }
 
+// GetWorkflowUsageResponse is the jobs of the window per repository and
+// workflow.
 type GetWorkflowUsageResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Ordered by minutes, then own_host_minutes, then jobs, each descending,
@@ -3027,7 +3102,8 @@ type GetWorkflowUsageResponse struct {
 	// jobs has no rows.
 	Rows []*WorkflowUsageRow `protobuf:"bytes,1,rep,name=rows,proto3" json:"rows,omitempty"`
 	// The window used, with the defaults filled in.
-	From          *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
+	From *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
+	// The end of the window used, exclusive.
 	To            *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=to,proto3" json:"to,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3084,6 +3160,7 @@ func (x *GetWorkflowUsageResponse) GetTo() *timestamppb.Timestamp {
 	return nil
 }
 
+// ListPlansRequest selects a page of plans.
 type ListPlansRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The most plans in one page; zero lets the server choose.
@@ -3138,9 +3215,11 @@ func (x *ListPlansRequest) GetPageToken() string {
 	return ""
 }
 
+// ListPlansResponse is one page of plans.
 type ListPlansResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Plans []*Plan                `protobuf:"bytes,1,rep,name=plans,proto3" json:"plans,omitempty"`
+	// The plans, sorted by name.
+	Plans []*Plan `protobuf:"bytes,1,rep,name=plans,proto3" json:"plans,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3191,9 +3270,13 @@ func (x *ListPlansResponse) GetNextPageToken() string {
 	return ""
 }
 
+// CreateCheckoutSessionRequest selects the plan to buy and where the
+// browser returns to.
 type CreateCheckoutSessionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Plan  string                 `protobuf:"bytes,1,opt,name=plan,proto3" json:"plan,omitempty"`
+	// The plan to subscribe to; empty, or one the configuration does not
+	// define, fails with INVALID_ARGUMENT.
+	Plan string `protobuf:"bytes,1,opt,name=plan,proto3" json:"plan,omitempty"`
 	// Where the browser goes back to when checkout finishes or is cancelled.
 	// The workspace id rides on it as the workspace query parameter, and billing
 	// as checkout-done or checkout-cancelled; its own query is kept. return_url
@@ -3262,6 +3345,7 @@ func (x *CreateCheckoutSessionRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateCheckoutSessionResponse carries the Checkout URL.
 type CreateCheckoutSessionResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The provider's hosted Checkout URL to send the browser to.
@@ -3307,6 +3391,8 @@ func (x *CreateCheckoutSessionResponse) GetUrl() string {
 	return ""
 }
 
+// CreateBillingPortalSessionRequest says where the browser returns to from
+// the portal.
 type CreateBillingPortalSessionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Where the browser goes back to from the portal, with the workspace id as
@@ -3368,6 +3454,7 @@ func (x *CreateBillingPortalSessionRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateBillingPortalSessionResponse carries the Customer Portal URL.
 type CreateBillingPortalSessionResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The provider's hosted Customer Portal URL to send the browser to.
@@ -3413,6 +3500,7 @@ func (x *CreateBillingPortalSessionResponse) GetUrl() string {
 	return ""
 }
 
+// GetVersionRequest has no fields.
 type GetVersionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -3449,11 +3537,16 @@ func (*GetVersionRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{52}
 }
 
+// GetVersionResponse is the control plane's build and the oldest agent
+// release it admits.
 type GetVersionResponse struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Version string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	Commit  string                 `protobuf:"bytes,2,opt,name=commit,proto3" json:"commit,omitempty"`
-	Date    string                 `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The build's version; "dev" for a build without one.
+	Version string `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	// The build's VCS revision, or "unknown".
+	Commit string `protobuf:"bytes,2,opt,name=commit,proto3" json:"commit,omitempty"`
+	// The build's VCS commit time, or "unknown".
+	Date string `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty"`
 	// The oldest agent release this control plane process admits when the
 	// workspace's own hosts register; empty when unset, which admits every
 	// agent. Each process reads its own configuration.
@@ -3524,12 +3617,17 @@ func (x *GetVersionResponse) GetMinimumAgentVersion() string {
 // App installations.
 type Workspace struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The workspace's id: "ws-" and 24 hex digits.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The workspace's name; not unique among workspaces.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
-	ConcurrencyCap *int32                 `protobuf:"varint,3,opt,name=concurrency_cap,json=concurrencyCap,proto3,oneof" json:"concurrency_cap,omitempty"`
-	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Plan           string                 `protobuf:"bytes,5,opt,name=plan,proto3" json:"plan,omitempty"`
+	ConcurrencyCap *int32 `protobuf:"varint,3,opt,name=concurrency_cap,json=concurrencyCap,proto3,oneof" json:"concurrency_cap,omitempty"`
+	// When the workspace was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// The name of the plan the workspace follows; empty when it has none, so
+	// the default plan applies.
+	Plan string `protobuf:"bytes,5,opt,name=plan,proto3" json:"plan,omitempty"`
 	// The cap the scheduler enforces; 0 means unlimited.
 	EffectiveConcurrency int32 `protobuf:"varint,6,opt,name=effective_concurrency,json=effectiveConcurrency,proto3" json:"effective_concurrency,omitempty"`
 	// active or closed.
@@ -3538,7 +3636,8 @@ type Workspace struct {
 	// plan's; 0 means none.
 	EffectiveMaxJobsPerHour int32 `protobuf:"varint,11,opt,name=effective_max_jobs_per_hour,json=effectiveMaxJobsPerHour,proto3" json:"effective_max_jobs_per_hour,omitempty"`
 	// The starter credit granted when the workspace was created; 0 when none.
-	StarterCreditCents     int64                  `protobuf:"varint,12,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
+	StarterCreditCents int64 `protobuf:"varint,12,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
+	// When the starter credit was granted; unset when none was.
 	StarterCreditGrantedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=starter_credit_granted_at,json=starterCreditGrantedAt,proto3" json:"starter_credit_granted_at,omitempty"`
 	// The workspace's effective reservations on shared hosts, ordered
 	// by size: its own rows, and its plan's entries where it has none.
@@ -3904,7 +4003,8 @@ func (x *Workspace) GetReadOnlyUntil() *timestamppb.Timestamp {
 type HostingCertificate struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The wildcard name, *.<workspace id>.svc.<domain>.
-	Name  string                  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Where the certificate is in its issue and renewal.
 	State HostingCertificateState `protobuf:"varint,2,opt,name=state,proto3,enum=toshi.workspace.v1.HostingCertificateState" json:"state,omitempty"`
 	// When the certificate in use expires; unset before the first one.
 	NotAfter *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=not_after,json=notAfter,proto3" json:"not_after,omitempty"`
@@ -4262,8 +4362,10 @@ func (x *WorkspaceSettings) GetSandboxStoppedKeepDays() int64 {
 // WorkspaceSettingChange is who last changed one of a workspace's settings,
 // and when.
 type WorkspaceSettingChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ChangedBy     *Subject               `protobuf:"bytes,1,opt,name=changed_by,json=changedBy,proto3" json:"changed_by,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Who changed the setting: a person, or the system.
+	ChangedBy *Subject `protobuf:"bytes,1,opt,name=changed_by,json=changedBy,proto3" json:"changed_by,omitempty"`
+	// When it changed.
 	ChangedAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4322,7 +4424,8 @@ type WorkspaceSignIn struct {
 	// their Identity.provider. Set by Toshi.
 	Issuer string `protobuf:"bytes,2,opt,name=issuer,proto3" json:"issuer,omitempty"`
 	// The user who set it, and when. Set by Toshi.
-	SetBy         string                 `protobuf:"bytes,3,opt,name=set_by,json=setBy,proto3" json:"set_by,omitempty"`
+	SetBy string `protobuf:"bytes,3,opt,name=set_by,json=setBy,proto3" json:"set_by,omitempty"`
+	// When it was set.
 	SetAt         *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=set_at,json=setAt,proto3" json:"set_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4506,7 +4609,9 @@ type WorkspaceBilling struct {
 	SpendKnown bool `protobuf:"varint,16,opt,name=spend_known,json=spendKnown,proto3" json:"spend_known,omitempty"`
 	// Starter credit granted, and an estimate of what is left: the credit
 	// less the metered spend since billing started.
-	StarterCreditCents     int64 `protobuf:"varint,17,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
+	StarterCreditCents int64 `protobuf:"varint,17,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
+	// The estimate of the credit left: the credit less the metered spend
+	// since billing started.
 	StarterCreditLeftCents int64 `protobuf:"varint,18,opt,name=starter_credit_left_cents,json=starterCreditLeftCents,proto3" json:"starter_credit_left_cents,omitempty"`
 	// When the credit reached the billing customer; unset before.
 	StarterCreditAppliedAt *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=starter_credit_applied_at,json=starterCreditAppliedAt,proto3" json:"starter_credit_applied_at,omitempty"`
@@ -4727,15 +4832,21 @@ type BillingTotals struct {
 	// The UTC month the jobs finished in, as YYYY-MM.
 	Month string `protobuf:"bytes,1,opt,name=month,proto3" json:"month,omitempty"`
 	// The runner size; empty for events recorded before sizes were.
-	Size           string `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
-	SentEvents     int64  `protobuf:"varint,3,opt,name=sent_events,json=sentEvents,proto3" json:"sent_events,omitempty"`
-	SentMinutes    int64  `protobuf:"varint,4,opt,name=sent_minutes,json=sentMinutes,proto3" json:"sent_minutes,omitempty"`
-	PendingEvents  int64  `protobuf:"varint,5,opt,name=pending_events,json=pendingEvents,proto3" json:"pending_events,omitempty"`
-	PendingMinutes int64  `protobuf:"varint,6,opt,name=pending_minutes,json=pendingMinutes,proto3" json:"pending_minutes,omitempty"`
-	FailedEvents   int64  `protobuf:"varint,7,opt,name=failed_events,json=failedEvents,proto3" json:"failed_events,omitempty"`
-	FailedMinutes  int64  `protobuf:"varint,8,opt,name=failed_minutes,json=failedMinutes,proto3" json:"failed_minutes,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	Size string `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
+	// Events the provider accepted.
+	SentEvents int64 `protobuf:"varint,3,opt,name=sent_events,json=sentEvents,proto3" json:"sent_events,omitempty"`
+	// The minutes of sent_events.
+	SentMinutes int64 `protobuf:"varint,4,opt,name=sent_minutes,json=sentMinutes,proto3" json:"sent_minutes,omitempty"`
+	// Events not sent to the provider yet.
+	PendingEvents int64 `protobuf:"varint,5,opt,name=pending_events,json=pendingEvents,proto3" json:"pending_events,omitempty"`
+	// The minutes of pending_events.
+	PendingMinutes int64 `protobuf:"varint,6,opt,name=pending_minutes,json=pendingMinutes,proto3" json:"pending_minutes,omitempty"`
+	// Events the provider refused, which Toshi no longer sends.
+	FailedEvents int64 `protobuf:"varint,7,opt,name=failed_events,json=failedEvents,proto3" json:"failed_events,omitempty"`
+	// The minutes of failed_events.
+	FailedMinutes int64 `protobuf:"varint,8,opt,name=failed_minutes,json=failedMinutes,proto3" json:"failed_minutes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BillingTotals) Reset() {
@@ -4826,16 +4937,23 @@ func (x *BillingTotals) GetFailedMinutes() int64 {
 
 // BillingEventFailure is a meter event the provider will not be sent again.
 type BillingEventFailure struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	JobId     string                 `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	Size      string                 `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
-	EventName string                 `protobuf:"bytes,3,opt,name=event_name,json=eventName,proto3" json:"event_name,omitempty"`
-	Minutes   int64                  `protobuf:"varint,4,opt,name=minutes,proto3" json:"minutes,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The id of the job the event metered.
+	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	// The runner size; empty for events recorded before sizes were.
+	Size string `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
+	// The meter event's name.
+	EventName string `protobuf:"bytes,3,opt,name=event_name,json=eventName,proto3" json:"event_name,omitempty"`
+	// The job's metered minutes.
+	Minutes int64 `protobuf:"varint,4,opt,name=minutes,proto3" json:"minutes,omitempty"`
 	// When the job finished.
-	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	FailedAt      *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=failed_at,json=failedAt,proto3" json:"failed_at,omitempty"`
-	Attempts      int32                  `protobuf:"varint,7,opt,name=attempts,proto3" json:"attempts,omitempty"`
-	LastError     string                 `protobuf:"bytes,8,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	OccurredAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
+	// When the provider last refused the event.
+	FailedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=failed_at,json=failedAt,proto3" json:"failed_at,omitempty"`
+	// The number of times Toshi sent the event.
+	Attempts int32 `protobuf:"varint,7,opt,name=attempts,proto3" json:"attempts,omitempty"`
+	// The provider's error for the last attempt.
+	LastError     string `protobuf:"bytes,8,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4926,12 +5044,16 @@ func (x *BillingEventFailure) GetLastError() string {
 	return ""
 }
 
+// WorkspaceStatement is one UTC month's usage and charges with their
+// estimated cost.
 type WorkspaceStatement struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The month as YYYY-MM, and its bounds: from inclusive, to exclusive.
-	Month string                 `protobuf:"bytes,1,opt,name=month,proto3" json:"month,omitempty"`
-	From  *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
-	To    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=to,proto3" json:"to,omitempty"`
+	Month string `protobuf:"bytes,1,opt,name=month,proto3" json:"month,omitempty"`
+	// Start of the month, inclusive.
+	From *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
+	// End of the month, exclusive.
+	To *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=to,proto3" json:"to,omitempty"`
 	// The plans the month's metered minutes were recorded at, comma-separated;
 	// the workspace's plan today when no minute has a recorded price.
 	Plan string `protobuf:"bytes,4,opt,name=plan,proto3" json:"plan,omitempty"`
@@ -4955,8 +5077,9 @@ type WorkspaceStatement struct {
 	EstimateKnown bool `protobuf:"varint,10,opt,name=estimate_known,json=estimateKnown,proto3" json:"estimate_known,omitempty"`
 	// The starter credit put on the customer's balance in the month; 0 and
 	// unset when it was not applied in it.
-	StarterCreditAppliedCents int64                  `protobuf:"varint,11,opt,name=starter_credit_applied_cents,json=starterCreditAppliedCents,proto3" json:"starter_credit_applied_cents,omitempty"`
-	StarterCreditAppliedAt    *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=starter_credit_applied_at,json=starterCreditAppliedAt,proto3" json:"starter_credit_applied_at,omitempty"`
+	StarterCreditAppliedCents int64 `protobuf:"varint,11,opt,name=starter_credit_applied_cents,json=starterCreditAppliedCents,proto3" json:"starter_credit_applied_cents,omitempty"`
+	// When the credit was applied; unset when it was not.
+	StarterCreditAppliedAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=starter_credit_applied_at,json=starterCreditAppliedAt,proto3" json:"starter_credit_applied_at,omitempty"`
 	// Held time, from first held to assigned, of the jobs queued in the month
 	// that reached running, by the latest reason each was held.
 	Held []*HoldTimes `protobuf:"bytes,13,rep,name=held,proto3" json:"held,omitempty"`
@@ -5338,11 +5461,14 @@ func (x *PaidStarts) GetEstimatedCents() int64 {
 
 // StatementSeat is one desktop seat on a statement.
 type StatementSeat struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	SeatId string                 `protobuf:"bytes,1,opt,name=seat_id,json=seatId,proto3" json:"seat_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The seat's id.
+	SeatId string `protobuf:"bytes,1,opt,name=seat_id,json=seatId,proto3" json:"seat_id,omitempty"`
 	// The Toshi user id of the person it was assigned to, and their name.
-	UserId     string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Name       string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// The person's name.
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// When the seat was assigned.
 	AssignedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
 	// Unset while the seat is live.
 	RemovedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=removed_at,json=removedAt,proto3" json:"removed_at,omitempty"`
@@ -5516,8 +5642,10 @@ func (x *OwnHostFee) GetEstimatedCents() int64 {
 // up once to whole seconds.
 type Awake struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Size  string                 `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
-	Runs  int64                  `protobuf:"varint,2,opt,name=runs,proto3" json:"runs,omitempty"`
+	// A runner size, as a runs-on label.
+	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
+	// The number of service runs of the size in the month.
+	Runs int64 `protobuf:"varint,2,opt,name=runs,proto3" json:"runs,omitempty"`
 	// The exact awake time, in seconds, from the workspace's billing start.
 	Seconds float64 `protobuf:"fixed64,3,opt,name=seconds,proto3" json:"seconds,omitempty"`
 	// The part of seconds after the last demand before the run was put to
@@ -5703,7 +5831,9 @@ func (x *Storage) GetEstimatedCents() int64 {
 // artifacts, recordings, held_disks or service_snapshots.
 type StoredKind struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Kind  string                 `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
+	// The kind: images, volume_versions, artifacts, recordings, held_disks or
+	// service_snapshots.
+	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
 	// The bytes the last sampled hour held.
 	Bytes int64 `protobuf:"varint,2,opt,name=bytes,proto3" json:"bytes,omitempty"`
 	// The kind's GB summed over the sampled hours.
@@ -5767,7 +5897,9 @@ func (x *StoredKind) GetGbHours() float64 {
 type StorageUsageRow struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The day's first hour, UTC, as YYYY-MM-DD.
-	Day  string `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
+	Day string `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
+	// The kind: images, volume_versions, artifacts, recordings, held_disks or
+	// service_snapshots.
 	Kind string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
 	// The kind's GB summed over the day's sampled hours.
 	GbHours float64 `protobuf:"fixed64,3,opt,name=gb_hours,json=gbHours,proto3" json:"gb_hours,omitempty"`
@@ -5835,11 +5967,17 @@ func (x *StorageUsageRow) GetBytes() int64 {
 	return 0
 }
 
+// StatementUsage is one runner size and OS on a statement, with its jobs
+// and minutes.
 type StatementUsage struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Size  string                 `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
-	Os    string                 `protobuf:"bytes,2,opt,name=os,proto3" json:"os,omitempty"`
-	Jobs  int64                  `protobuf:"varint,3,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	// A runner size, as a runs-on label; empty for the total row.
+	Size string `protobuf:"bytes,1,opt,name=size,proto3" json:"size,omitempty"`
+	// The operating system, such as "linux" or "windows"; empty for the total
+	// row.
+	Os string `protobuf:"bytes,2,opt,name=os,proto3" json:"os,omitempty"`
+	// The number of jobs in this entry.
+	Jobs int64 `protobuf:"varint,3,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	// Billable minutes on shared hosts, rounded up per job.
 	Minutes int64 `protobuf:"varint,4,opt,name=minutes,proto3" json:"minutes,omitempty"`
 	// Minutes on the workspace's own hosts, which are not billed by the
@@ -5857,7 +5995,8 @@ type StatementUsage struct {
 	// itself (the values of Job.outcome); empty for every other entry.
 	Outcome string `protobuf:"bytes,9,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	// The exact run time behind minutes and own_host_minutes, in seconds.
-	Seconds        float64 `protobuf:"fixed64,10,opt,name=seconds,proto3" json:"seconds,omitempty"`
+	Seconds float64 `protobuf:"fixed64,10,opt,name=seconds,proto3" json:"seconds,omitempty"`
+	// The exact run time behind own_host_minutes, in seconds.
 	OwnHostSeconds float64 `protobuf:"fixed64,11,opt,name=own_host_seconds,json=ownHostSeconds,proto3" json:"own_host_seconds,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -5970,6 +6109,8 @@ func (x *StatementUsage) GetOwnHostSeconds() float64 {
 	return 0
 }
 
+// StatementCharge is one line of a statement's charges: the metered minutes
+// or seconds of one runner size and their estimated cost.
 type StatementCharge struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Empty for usage recorded without a size, priced at the plan's highest
@@ -6046,15 +6187,21 @@ func (x *StatementCharge) GetSeconds() int64 {
 	return 0
 }
 
+// HoldTimes is the held time of the jobs held for one reason in a window.
 type HoldTimes struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// One of the job hold reasons (see Job.hold_reason), as the
 	// toshi_jobs_held metric labels them.
 	Reason string `protobuf:"bytes,1,opt,name=reason,proto3" json:"reason,omitempty"`
 	// The jobs held for this reason whose hold ended (they were assigned and started), and their held time in milliseconds (nearest-rank).
-	Jobs  int64 `protobuf:"varint,2,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	Jobs int64 `protobuf:"varint,2,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	// The nearest-rank 50th percentile of the held times, in whole
+	// milliseconds; 0 when jobs is 0.
 	P50Ms int64 `protobuf:"varint,3,opt,name=p50_ms,json=p50Ms,proto3" json:"p50_ms,omitempty"`
+	// The nearest-rank 90th percentile of the held times, in whole
+	// milliseconds; 0 when jobs is 0.
 	P90Ms int64 `protobuf:"varint,4,opt,name=p90_ms,json=p90Ms,proto3" json:"p90_ms,omitempty"`
+	// The longest held time, in whole milliseconds; 0 when jobs is 0.
 	MaxMs int64 `protobuf:"varint,5,opt,name=max_ms,json=maxMs,proto3" json:"max_ms,omitempty"`
 	// The jobs held for this reason now, whenever they were queued. 0 when
 	// the window ends before now.
@@ -6150,7 +6297,8 @@ func (x *HoldTimes) GetOpenSince() *timestamppb.Timestamp {
 // them per UTC day.
 type FillerUsage struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Jobs  int64                  `protobuf:"varint,1,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	// The number of filler jobs that finished in the window.
+	Jobs int64 `protobuf:"varint,1,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	// Each job's duration rounded up to whole minutes, on any host.
 	Minutes       int64 `protobuf:"varint,2,opt,name=minutes,proto3" json:"minutes,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -6237,11 +6385,14 @@ type UsageRow struct {
 	Kind string `protobuf:"bytes,10,opt,name=kind,proto3" json:"kind,omitempty"`
 	// The exact run time behind minutes and own_host_minutes, in seconds, not
 	// rounded.
-	Seconds        float64 `protobuf:"fixed64,11,opt,name=seconds,proto3" json:"seconds,omitempty"`
+	Seconds float64 `protobuf:"fixed64,11,opt,name=seconds,proto3" json:"seconds,omitempty"`
+	// The exact run time behind own_host_minutes, in seconds, not rounded.
 	OwnHostSeconds float64 `protobuf:"fixed64,12,opt,name=own_host_seconds,json=ownHostSeconds,proto3" json:"own_host_seconds,omitempty"`
 	// The exact time service runs were awake, from first ready to release,
 	// and the idle part of it before they were put to sleep, in seconds.
-	AwakeSeconds  float64 `protobuf:"fixed64,13,opt,name=awake_seconds,json=awakeSeconds,proto3" json:"awake_seconds,omitempty"`
+	AwakeSeconds float64 `protobuf:"fixed64,13,opt,name=awake_seconds,json=awakeSeconds,proto3" json:"awake_seconds,omitempty"`
+	// The idle part of awake_seconds: the time after the last demand before
+	// the run was put to sleep.
 	IdleSeconds   float64 `protobuf:"fixed64,14,opt,name=idle_seconds,json=idleSeconds,proto3" json:"idle_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -6398,7 +6549,9 @@ type WorkflowUsageRow struct {
 	// Nearest-rank percentiles of those jobs' run times, from started_at to
 	// the stop request, or to finished_at when there was none, each rounded
 	// up to a whole second. Both 0 when timed_jobs is 0.
-	P50Seconds    int64 `protobuf:"varint,8,opt,name=p50_seconds,json=p50Seconds,proto3" json:"p50_seconds,omitempty"`
+	P50Seconds int64 `protobuf:"varint,8,opt,name=p50_seconds,json=p50Seconds,proto3" json:"p50_seconds,omitempty"`
+	// The nearest-rank 95th percentile of the run times, in whole seconds; 0
+	// when timed_jobs is 0.
 	P95Seconds    int64 `protobuf:"varint,9,opt,name=p95_seconds,json=p95Seconds,proto3" json:"p95_seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -6497,12 +6650,18 @@ func (x *WorkflowUsageRow) GetP95Seconds() int64 {
 	return 0
 }
 
+// Plan is one configured plan and the limits a workspace on it follows.
 type Plan struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Concurrency   int32                  `protobuf:"varint,2,opt,name=concurrency,proto3" json:"concurrency,omitempty"`
-	MaxJobMinutes int32                  `protobuf:"varint,3,opt,name=max_job_minutes,json=maxJobMinutes,proto3" json:"max_job_minutes,omitempty"`
-	IsDefault     bool                   `protobuf:"varint,4,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The plan's name; unique among the configured plans.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The jobs a workspace on the plan may run at once; 0 means unlimited.
+	Concurrency int32 `protobuf:"varint,2,opt,name=concurrency,proto3" json:"concurrency,omitempty"`
+	// The longest a job may run, in minutes; 0 means unlimited.
+	MaxJobMinutes int32 `protobuf:"varint,3,opt,name=max_job_minutes,json=maxJobMinutes,proto3" json:"max_job_minutes,omitempty"`
+	// True for the deployment's default plan, which a workspace follows when
+	// its own is empty or unknown.
+	IsDefault bool `protobuf:"varint,4,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	// Whether a workspace can buy this plan through Checkout: self-serve billing
 	// is on and exactly one lookup key in billing.plan_map maps to the plan.
 	SelfServe bool `protobuf:"varint,5,opt,name=self_serve,json=selfServe,proto3" json:"self_serve,omitempty"`
@@ -6752,9 +6911,11 @@ type EgressHost struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The host's id and name; empty for a shared host.
 	HostId string `protobuf:"bytes,1,opt,name=host_id,json=hostId,proto3" json:"host_id,omitempty"`
-	Name   string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The host's name; empty for a shared host.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The host is shared between workspaces rather than the workspace's own.
-	Shared bool        `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	Shared bool `protobuf:"varint,3,opt,name=shared,proto3" json:"shared,omitempty"`
+	// The host's egress addresses.
 	Egress *HostEgress `protobuf:"bytes,4,opt,name=egress,proto3" json:"egress,omitempty"`
 	// For an EGRESS_SOURCE_PER_JOB host: the addresses its jobs ran from in
 	// the last 7 days, sorted.
@@ -6862,7 +7023,8 @@ type WorkspaceBilling_HeldJobs struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// One of the job hold reasons (see Job.hold_reason).
 	Reason string `protobuf:"bytes,23,opt,name=reason,proto3" json:"reason,omitempty"`
-	Jobs   int64  `protobuf:"varint,24,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	// The jobs held for the reason now.
+	Jobs int64 `protobuf:"varint,24,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	// Since when the longest-held of them has been held.
 	Since *timestamppb.Timestamp `protobuf:"bytes,25,opt,name=since,proto3" json:"since,omitempty"`
 	// For reason start_rate: the earliest time every start window of the

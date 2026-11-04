@@ -34,6 +34,7 @@ const (
 type EndReason int32
 
 const (
+	// Not set: a workload that has not ended has none.
 	EndReason_END_REASON_UNSPECIFIED EndReason = 0
 	// A job's command, or a sandbox's process, exited; the status's
 	// exit_code says with what, 0 being success.
@@ -101,6 +102,7 @@ func (EndReason) EnumDescriptor() ([]byte, []int) {
 type StopReason int32
 
 const (
+	// Not set: a workload that was not stopped has none.
 	StopReason_STOP_REASON_UNSPECIFIED StopReason = 0
 	// Its owner stopped it: deleted it, or cancelled its job.
 	StopReason_STOP_REASON_OWNER StopReason = 1
@@ -187,6 +189,7 @@ func (StopReason) EnumDescriptor() ([]byte, []int) {
 type StopCause int32
 
 const (
+	// Not set: the stop was not a policy stop.
 	StopCause_STOP_CAUSE_UNSPECIFIED StopCause = 0
 	// Executions exceeded their rate.
 	StopCause_STOP_CAUSE_EXEC_RATE StopCause = 1
@@ -255,6 +258,7 @@ func (StopCause) EnumDescriptor() ([]byte, []int) {
 type OperatorHold int32
 
 const (
+	// Not set: no operator holds the workload.
 	OperatorHold_OPERATOR_HOLD_UNSPECIFIED OperatorHold = 0
 	// Abuse is suspected.
 	OperatorHold_OPERATOR_HOLD_ABUSE_SUSPECTED OperatorHold = 1
@@ -308,6 +312,7 @@ func (OperatorHold) EnumDescriptor() ([]byte, []int) {
 type JobState int32
 
 const (
+	// Not set: a job is always in one of the states below.
 	JobState_JOB_STATE_UNSPECIFIED JobState = 0
 	// Recorded, not yet waiting for capacity.
 	JobState_JOB_STATE_CREATED JobState = 1
@@ -370,6 +375,7 @@ func (JobState) EnumDescriptor() ([]byte, []int) {
 type SandboxState int32
 
 const (
+	// Not set: a sandbox is always in one of the states below.
 	SandboxState_SANDBOX_STATE_UNSPECIFIED SandboxState = 0
 	// Recorded, not yet waiting for capacity, or stopped (stopped_at is set).
 	SandboxState_SANDBOX_STATE_CREATED SandboxState = 1
@@ -433,6 +439,7 @@ func (SandboxState) EnumDescriptor() ([]byte, []int) {
 type ServiceState int32
 
 const (
+	// Not set: a service is always in one of the states below.
 	ServiceState_SERVICE_STATE_UNSPECIFIED ServiceState = 0
 	// Recorded, and not started or asleep.
 	ServiceState_SERVICE_STATE_CREATED ServiceState = 1
@@ -624,6 +631,7 @@ func (RecordingSource) EnumDescriptor() ([]byte, []int) {
 type HostKind int32
 
 const (
+	// Not set: host_kinds never holds it; a create or an update rejects it.
 	HostKind_HOST_KIND_UNSPECIFIED HostKind = 0
 	// The deployment's own hosts, shared by its workspaces, the operator's
 	// cloud pools included; within the plan's shared services.
@@ -683,6 +691,7 @@ func (HostKind) EnumDescriptor() ([]byte, []int) {
 type ServiceVisitors int32
 
 const (
+	// Not set: the service gates visitors, as GATED does.
 	ServiceVisitors_SERVICE_VISITORS_UNSPECIFIED ServiceVisitors = 0
 	// A visitor signs in, or holds a share link, as on a provided name.
 	// The default.
@@ -738,6 +747,7 @@ func (ServiceVisitors) EnumDescriptor() ([]byte, []int) {
 type ServiceMode int32
 
 const (
+	// Not set: a create makes an always-on service.
 	ServiceMode_SERVICE_MODE_UNSPECIFIED ServiceMode = 0
 	// Runs while it is started, and runs again after each run ends.
 	ServiceMode_SERVICE_MODE_ALWAYS_ON ServiceMode = 1
@@ -795,6 +805,7 @@ func (ServiceMode) EnumDescriptor() ([]byte, []int) {
 type EventType int32
 
 const (
+	// Not set: an event always has a type.
 	EventType_EVENT_TYPE_UNSPECIFIED EventType = 0
 	// A workload was created. Name: "<kind>.created".
 	EventType_EVENT_TYPE_WORKLOAD_CREATED EventType = 1
@@ -985,14 +996,17 @@ func (EventType) EnumDescriptor() ([]byte, []int) {
 type PreviewShareLinkState int32
 
 const (
+	// Not set: a link is always in one of the states below.
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_UNSPECIFIED PreviewShareLinkState = 0
 	// Minted; no device has opened it yet.
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_OPEN PreviewShareLinkState = 1
 	// A device opened it; it admits that device only.
-	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_IN_USE  PreviewShareLinkState = 2
+	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_IN_USE PreviewShareLinkState = 2
+	// Its owner revoked it.
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_REVOKED PreviewShareLinkState = 3
 	// Its connections carried its byte cap, or its endpoint was deleted.
-	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_ENDED   PreviewShareLinkState = 4
+	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_ENDED PreviewShareLinkState = 4
+	// It reached its expires_at.
 	PreviewShareLinkState_PREVIEW_SHARE_LINK_STATE_EXPIRED PreviewShareLinkState = 5
 )
 
@@ -1047,6 +1061,7 @@ func (PreviewShareLinkState) EnumDescriptor() ([]byte, []int) {
 type ServiceSignInOutcome int32
 
 const (
+	// Not set: a finished sign-in has one of the outcomes below.
 	ServiceSignInOutcome_SERVICE_SIGN_IN_OUTCOME_UNSPECIFIED ServiceSignInOutcome = 0
 	// The program exited 0: it is signed in.
 	ServiceSignInOutcome_SERVICE_SIGN_IN_OUTCOME_SIGNED_IN ServiceSignInOutcome = 1
@@ -1107,6 +1122,7 @@ func (ServiceSignInOutcome) EnumDescriptor() ([]byte, []int) {
 type ServiceUpgradeState int32
 
 const (
+	// Not set: an upgrade always has one of the states below.
 	ServiceUpgradeState_SERVICE_UPGRADE_STATE_UNSPECIFIED ServiceUpgradeState = 0
 	// Its window has not started or not ended yet.
 	ServiceUpgradeState_SERVICE_UPGRADE_STATE_WATCHING ServiceUpgradeState = 1
@@ -1178,6 +1194,7 @@ func (ServiceUpgradeState) EnumDescriptor() ([]byte, []int) {
 type ServiceRevisionImageOutcome int32
 
 const (
+	// Not set: a check always has one of the outcomes below.
 	ServiceRevisionImageOutcome_SERVICE_REVISION_IMAGE_OUTCOME_UNSPECIFIED ServiceRevisionImageOutcome = 0
 	// The registry serves the revision's digest.
 	ServiceRevisionImageOutcome_SERVICE_REVISION_IMAGE_OUTCOME_SERVED ServiceRevisionImageOutcome = 1
@@ -1237,6 +1254,7 @@ func (ServiceRevisionImageOutcome) EnumDescriptor() ([]byte, []int) {
 type ServiceRevisionReason int32
 
 const (
+	// Not set: a revision always has a reason.
 	ServiceRevisionReason_SERVICE_REVISION_REASON_UNSPECIFIED ServiceRevisionReason = 0
 	// A deploy of a recipe: the service's create, or an UpdateService of
 	// spec.recipe.
@@ -1290,8 +1308,10 @@ func (ServiceRevisionReason) EnumDescriptor() ([]byte, []int) {
 type ServiceActivationKind int32
 
 const (
+	// Not set: an activation always has a kind.
 	ServiceActivationKind_SERVICE_ACTIVATION_KIND_UNSPECIFIED ServiceActivationKind = 0
-	ServiceActivationKind_SERVICE_ACTIVATION_KIND_CREATE      ServiceActivationKind = 1
+	// The service's create.
+	ServiceActivationKind_SERVICE_ACTIVATION_KIND_CREATE ServiceActivationKind = 1
 	// An UpdateService of spec.recipe.
 	ServiceActivationKind_SERVICE_ACTIVATION_KIND_DEPLOY ServiceActivationKind = 2
 	// A RollbackService.
@@ -1350,6 +1370,7 @@ func (ServiceActivationKind) EnumDescriptor() ([]byte, []int) {
 type ServiceActivationOutcome int32
 
 const (
+	// Not set: an activation always has one of the outcomes below.
 	ServiceActivationOutcome_SERVICE_ACTIVATION_OUTCOME_UNSPECIFIED ServiceActivationOutcome = 0
 	// Selected; its run has not been ready yet, or the service is not
 	// running.
@@ -1411,12 +1432,14 @@ func (ServiceActivationOutcome) EnumDescriptor() ([]byte, []int) {
 type ServiceRunState int32
 
 const (
+	// Not set: a run always has a state.
 	ServiceRunState_SERVICE_RUN_STATE_UNSPECIFIED ServiceRunState = 0
 	// Waiting for a host.
 	ServiceRunState_SERVICE_RUN_STATE_QUEUED ServiceRunState = 1
 	// Placed on a host, its VM booting.
 	ServiceRunState_SERVICE_RUN_STATE_STARTING ServiceRunState = 2
-	ServiceRunState_SERVICE_RUN_STATE_RUNNING  ServiceRunState = 3
+	// Its VM is up and the service runs.
+	ServiceRunState_SERVICE_RUN_STATE_RUNNING ServiceRunState = 3
 	// Asked to stop; its VM is being stopped.
 	ServiceRunState_SERVICE_RUN_STATE_STOPPING ServiceRunState = 4
 	// Its process exited 0.
@@ -1487,13 +1510,16 @@ type Job struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Assigned by the server; unique within the workspace, among its jobs,
 	// sandboxes and services.
-	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Project     string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The job's project, by name.
+	Project string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	// The job's environment, by name.
 	Environment string `protobuf:"bytes,3,opt,name=environment,proto3" json:"environment,omitempty"`
 	// Free-form labels, set at create and changed by UpdateJob.
 	Labels map[string]string `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// The job as created.
-	Spec   *JobSpec   `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
+	Spec *JobSpec `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
+	// The job's state and when it got there.
 	Status *JobStatus `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
 	// What it records of its runs, fixed at create: never UNSPECIFIED,
 	// except in an event's snapshot stored before workloads had one.
@@ -1634,15 +1660,20 @@ func (x *Job) GetPrompts() []*AgentPrompt {
 // JobStatus is a job's state and when it got there.
 type JobStatus struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	State JobState               `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.JobState" json:"state,omitempty"`
+	// Where the job is in its life.
+	State JobState `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.JobState" json:"state,omitempty"`
 	// Set once the state is ENDED: EXITED, CANCELLED or FAILED.
 	EndReason EndReason `protobuf:"varint,2,opt,name=end_reason,json=endReason,proto3,enum=toshi.workspace.v1.EndReason" json:"end_reason,omitempty"`
 	// The most recent error Toshi met running the job.
-	LastError *Error                 `protobuf:"bytes,3,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	LastError *Error `protobuf:"bytes,3,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	// When it was recorded.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	QueuedAt  *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
+	// When it started waiting for capacity.
+	QueuedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
+	// When its VM came up and its command started.
 	StartedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
-	EndedAt   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
+	// When it ended; unset until it does.
+	EndedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
 	// When anything in the job last changed.
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// The command's exit status, set when end_reason is EXITED.
@@ -1667,7 +1698,8 @@ type JobStatus struct {
 	// The runner that runs, or ran, the current attempt: its id and its
 	// name, which for a job are the same. Unset until the attempt started:
 	// a runner that was only assigned is in GetJobResponse.attempts.
-	RunnerId   string `protobuf:"bytes,14,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
+	RunnerId string `protobuf:"bytes,14,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
+	// The runner's name, which for a job is its id.
 	RunnerName string `protobuf:"bytes,15,opt,name=runner_name,json=runnerName,proto3" json:"runner_name,omitempty"`
 	// The attempt that last started, counting from 1: each assignment to a
 	// runner is one. 0 until an attempt started, and for a job that ended
@@ -1824,9 +1856,12 @@ func (x *JobStatus) GetAttempt() int32 {
 type JobAttempt struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Counting from 1.
-	Attempt    int32                  `protobuf:"varint,1,opt,name=attempt,proto3" json:"attempt,omitempty"`
-	RunnerId   string                 `protobuf:"bytes,2,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
-	RunnerName string                 `protobuf:"bytes,3,opt,name=runner_name,json=runnerName,proto3" json:"runner_name,omitempty"`
+	Attempt int32 `protobuf:"varint,1,opt,name=attempt,proto3" json:"attempt,omitempty"`
+	// The runner the attempt was assigned to.
+	RunnerId string `protobuf:"bytes,2,opt,name=runner_id,json=runnerId,proto3" json:"runner_id,omitempty"`
+	// The runner's name, which for a job is its id.
+	RunnerName string `protobuf:"bytes,3,opt,name=runner_name,json=runnerName,proto3" json:"runner_name,omitempty"`
+	// When the attempt was assigned its runner.
 	AssignedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
 	// Unset when the attempt was assigned and never started.
 	StartedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
@@ -1934,14 +1969,17 @@ type Sandbox struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Assigned by the server; unique within the workspace, among its jobs,
 	// sandboxes and services.
-	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Project     string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The sandbox's project, by name.
+	Project string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	// The sandbox's environment, by name.
 	Environment string `protobuf:"bytes,3,opt,name=environment,proto3" json:"environment,omitempty"`
 	// Free-form labels, set at create and changed by UpdateSandbox.
 	Labels map[string]string `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// The sandbox as created, with max_duration as UpdateSandbox last raised
 	// it.
-	Spec   *SandboxSpec   `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
+	Spec *SandboxSpec `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
+	// The sandbox's state and when it got there.
 	Status *SandboxStatus `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
 	// What it records of its runs, fixed at create: never UNSPECIFIED,
 	// except in an event's snapshot stored before workloads had one.
@@ -2117,16 +2155,21 @@ func (x *Sandbox) GetPrompts() []*AgentPrompt {
 // SandboxStatus is a sandbox's state and when it got there.
 type SandboxStatus struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	State SandboxState           `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.SandboxState" json:"state,omitempty"`
+	// Where the sandbox is in its life.
+	State SandboxState `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.SandboxState" json:"state,omitempty"`
 	// Set once the state is ENDED: STOPPED, FAILED or LOST, or EXITED when
 	// its spec's process exited.
 	EndReason EndReason `protobuf:"varint,2,opt,name=end_reason,json=endReason,proto3,enum=toshi.workspace.v1.EndReason" json:"end_reason,omitempty"`
 	// The most recent error Toshi met running the sandbox.
-	LastError *Error                 `protobuf:"bytes,3,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	LastError *Error `protobuf:"bytes,3,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	// When it was recorded.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	QueuedAt  *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
+	// When it started waiting for capacity.
+	QueuedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
+	// When its VM came up.
 	StartedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
-	EndedAt   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
+	// When it ended; unset until it does.
+	EndedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
 	// When anything in the sandbox last changed.
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// Why it was stopped, set while a kept sandbox is stopped, and once it
@@ -2316,13 +2359,16 @@ type Service struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Assigned by the server; unique within the workspace, among its jobs,
 	// sandboxes and services.
-	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Project     string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The service's project, by name.
+	Project string `protobuf:"bytes,2,opt,name=project,proto3" json:"project,omitempty"`
+	// The service's environment, by name.
 	Environment string `protobuf:"bytes,3,opt,name=environment,proto3" json:"environment,omitempty"`
 	// Free-form labels, set at create and changed by UpdateService.
 	Labels map[string]string `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// The service as ServiceSpec describes its answers.
-	Spec   *ServiceSpec   `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
+	Spec *ServiceSpec `protobuf:"bytes,5,opt,name=spec,proto3" json:"spec,omitempty"`
+	// The service's state and when it got there.
 	Status *ServiceStatus `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
 	// Whether the service is an agent: the image version of its current
 	// revision declares an [agent] table in its recipe. A deploy or a rollback
@@ -2599,7 +2645,8 @@ func (x *WorkloadNetwork) GetEgressExemptBytes() uint64 {
 type NetworkLayer struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Its name: "operator", "workspace", "environment" or "request".
-	Name          string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The layer's policy.
 	Policy        *NetworkPolicy `protobuf:"bytes,2,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2652,15 +2699,20 @@ func (x *NetworkLayer) GetPolicy() *NetworkPolicy {
 // ServiceStatus is a service's state and when it got there.
 type ServiceStatus struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	State ServiceState           `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.ServiceState" json:"state,omitempty"`
+	// Where the service is in its life.
+	State ServiceState `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.ServiceState" json:"state,omitempty"`
 	// Set once the state is ENDED: STOPPED or FAILED.
 	EndReason EndReason `protobuf:"varint,2,opt,name=end_reason,json=endReason,proto3,enum=toshi.workspace.v1.EndReason" json:"end_reason,omitempty"`
 	// The most recent error Toshi met running the service.
-	LastError *Error                 `protobuf:"bytes,3,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	LastError *Error `protobuf:"bytes,3,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	// When it was recorded.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	QueuedAt  *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
+	// When its run started waiting for capacity.
+	QueuedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
+	// When its run's VM came up.
 	StartedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
-	EndedAt   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
+	// When it ended; unset until it does.
+	EndedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
 	// When anything in the service last changed.
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// The service's live run: its revision, which is spec.revision once a
@@ -3083,8 +3135,9 @@ func (x *ProvidedName) GetHost() string {
 
 // JobSpec is a job: one command, run once.
 type JobSpec struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Command *Command               `protobuf:"bytes,1,opt,name=command,proto3" json:"command,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The command the job runs.
+	Command *Command `protobuf:"bytes,1,opt,name=command,proto3" json:"command,omitempty"`
 	// What in its workspace the job uses. Checked at create
 	// against the job's project and environment, and fixed when the job
 	// starts; GetJobResponse.bound shows what each was fixed to.
@@ -3362,9 +3415,11 @@ func (*Binding_ModelCredential) isBinding_Target() {}
 // endpoint's name in its recipe, as a recipe's uses names it:
 // "<service>.<endpoint>".
 type ServiceEndpoint struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Service       string                 `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
-	Endpoint      string                 `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's name.
+	Service string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	// The endpoint's name in the service's recipe.
+	Endpoint      string `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3463,8 +3518,9 @@ func (*EnvironmentSecrets) Descriptor() ([]byte, []int) {
 // them. A starter who has several when the workload starts, and bound
 // none, gives it no credential for that provider.
 type ModelCredentialBinding struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The credential's name.
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3550,14 +3606,16 @@ func (*Mail) Descriptor() ([]byte, []int) {
 // A later change or delete of the target leaves it as it is.
 type BoundBinding struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The binding's name in the workload.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Types that are valid to be assigned to Target:
 	//
 	//	*BoundBinding_Service
 	//	*BoundBinding_Secrets
 	//	*BoundBinding_Mail
 	//	*BoundBinding_ModelCredential
-	Target        isBoundBinding_Target  `protobuf_oneof:"target"`
+	Target isBoundBinding_Target `protobuf_oneof:"target"`
+	// When the workload started and the binding was fixed.
 	TakenAt       *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=taken_at,json=takenAt,proto3" json:"taken_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3655,18 +3713,22 @@ type isBoundBinding_Target interface {
 }
 
 type BoundBinding_Service struct {
+	// The service endpoint it was fixed to.
 	Service *BoundService `protobuf:"bytes,2,opt,name=service,proto3,oneof"`
 }
 
 type BoundBinding_Secrets struct {
+	// The secret set it was fixed to.
 	Secrets *BoundSecrets `protobuf:"bytes,3,opt,name=secrets,proto3,oneof"`
 }
 
 type BoundBinding_Mail struct {
+	// The mail listener it was fixed to.
 	Mail *BoundMail `protobuf:"bytes,5,opt,name=mail,proto3,oneof"`
 }
 
 type BoundBinding_ModelCredential struct {
+	// The model credential it was fixed to.
 	ModelCredential *BoundModelCredential `protobuf:"bytes,6,opt,name=model_credential,json=modelCredential,proto3,oneof"`
 }
 
@@ -3680,22 +3742,26 @@ func (*BoundBinding_ModelCredential) isBoundBinding_Target() {}
 
 // BoundService is a service endpoint as it was when the workload started.
 type BoundService struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Service string                 `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The service's name.
+	Service string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
 	// The service's workload ID.
 	ServiceId string `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The service's revision that was current.
-	Revision int64  `protobuf:"varint,3,opt,name=revision,proto3" json:"revision,omitempty"`
+	Revision int64 `protobuf:"varint,3,opt,name=revision,proto3" json:"revision,omitempty"`
+	// The endpoint's name in the service's recipe.
 	Endpoint string `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	// The endpoint's shape and, for an http endpoint, its guest port.
 	Shape string `protobuf:"bytes,5,opt,name=shape,proto3" json:"shape,omitempty"`
-	Port  int32  `protobuf:"varint,6,opt,name=port,proto3" json:"port,omitempty"`
+	// The port the endpoint reaches in the guest.
+	Port int32 `protobuf:"varint,6,opt,name=port,proto3" json:"port,omitempty"`
 	// What the endpoint accepts from the caller: "workload_identity", a
 	// connect credential signed by the workload identity issuer
 	// naming audience and this binding. Minted when the job's command
 	// starts, and passed only to that command.
 	Credential string `protobuf:"bytes,7,opt,name=credential,proto3" json:"credential,omitempty"`
-	Audience   string `protobuf:"bytes,8,opt,name=audience,proto3" json:"audience,omitempty"`
+	// The audience the credential names.
+	Audience string `protobuf:"bytes,8,opt,name=audience,proto3" json:"audience,omitempty"`
 	// The id (jti) of the connect credential minted for this binding. Never
 	// the credential.
 	CredentialId  string `protobuf:"bytes,9,opt,name=credential_id,json=credentialId,proto3" json:"credential_id,omitempty"`
@@ -3800,10 +3866,13 @@ func (x *BoundService) GetCredentialId() string {
 // the credential the mail listener accepts, "workload_identity", the
 // audience it names and its id (jti). Never the credential.
 type BoundMail struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Credential    string                 `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
-	Audience      string                 `protobuf:"bytes,2,opt,name=audience,proto3" json:"audience,omitempty"`
-	CredentialId  string                 `protobuf:"bytes,3,opt,name=credential_id,json=credentialId,proto3" json:"credential_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The credential's kind: "workload_identity".
+	Credential string `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
+	// The audience the credential names.
+	Audience string `protobuf:"bytes,2,opt,name=audience,proto3" json:"audience,omitempty"`
+	// The id (jti) of the credential. Never the credential.
+	CredentialId  string `protobuf:"bytes,3,opt,name=credential_id,json=credentialId,proto3" json:"credential_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3864,10 +3933,15 @@ func (x *BoundMail) GetCredentialId() string {
 // without binding it is named "~model:<provider>", a name no binding can
 // take.
 type BoundModelCredential struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	ModelCredentialId string                 `protobuf:"bytes,1,opt,name=model_credential_id,json=modelCredentialId,proto3" json:"model_credential_id,omitempty"`
-	Name              string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Provider          string                 `protobuf:"bytes,3,opt,name=provider,proto3" json:"provider,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The credential's id.
+	ModelCredentialId string `protobuf:"bytes,1,opt,name=model_credential_id,json=modelCredentialId,proto3" json:"model_credential_id,omitempty"`
+	// The credential's name, or "~model:<provider>" for one taken without
+	// a binding.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The provider it serves: "anthropic", "openai", "kimi", "mistral", "xai"
+	// or "gemini".
+	Provider string `protobuf:"bytes,3,opt,name=provider,proto3" json:"provider,omitempty"`
 	// How the workload took it: "binding", "own", "environment" or
 	// "workspace".
 	Source        string `protobuf:"bytes,4,opt,name=source,proto3" json:"source,omitempty"`
@@ -3937,9 +4011,11 @@ func (x *BoundModelCredential) GetSource() string {
 // workload started: which keys, from which set, at which version. Never
 // a value.
 type BoundSecrets struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SetId         string                 `protobuf:"bytes,1,opt,name=set_id,json=setId,proto3" json:"set_id,omitempty"`
-	Keys          []*BoundKey            `protobuf:"bytes,2,rep,name=keys,proto3" json:"keys,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The set's id.
+	SetId string `protobuf:"bytes,1,opt,name=set_id,json=setId,proto3" json:"set_id,omitempty"`
+	// The keys it fixed, by name.
+	Keys          []*BoundKey `protobuf:"bytes,2,rep,name=keys,proto3" json:"keys,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3988,13 +4064,16 @@ func (x *BoundSecrets) GetKeys() []*BoundKey {
 	return nil
 }
 
+// BoundKey is one key of a bound secret set, at the version it was fixed to.
 type BoundKey struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The set the key is in: the environment's set or the project's shared
 	// set.
-	SetId         string `protobuf:"bytes,1,opt,name=set_id,json=setId,proto3" json:"set_id,omitempty"`
-	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Version       int64  `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
+	SetId string `protobuf:"bytes,1,opt,name=set_id,json=setId,proto3" json:"set_id,omitempty"`
+	// The key's name.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The key's version when the workload started.
+	Version       int64 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4781,7 +4860,8 @@ type Error struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// A Connect error code name, such as "unavailable". A sandbox ended by
 	// its own commands has "setup_failed" or "process_exited" instead.
-	Code          string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	// Why it failed, in prose.
 	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4834,9 +4914,11 @@ func (x *Error) GetMessage() string {
 // Output is what a job's command wrote, returned with the call that waited
 // for it.
 type Output struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Stdout []byte                 `protobuf:"bytes,1,opt,name=stdout,proto3" json:"stdout,omitempty"`
-	Stderr []byte                 `protobuf:"bytes,2,opt,name=stderr,proto3" json:"stderr,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// What the command wrote to standard output.
+	Stdout []byte `protobuf:"bytes,1,opt,name=stdout,proto3" json:"stdout,omitempty"`
+	// What the command wrote to standard error.
+	Stderr []byte `protobuf:"bytes,2,opt,name=stderr,proto3" json:"stderr,omitempty"`
 	// True when the server kept only the start of a stream.
 	Truncated     bool `protobuf:"varint,3,opt,name=truncated,proto3" json:"truncated,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -4894,10 +4976,14 @@ func (x *Output) GetTruncated() bool {
 	return false
 }
 
+// WatchOutputRequest names the job whose output to follow and where each
+// stream starts.
 type WatchOutputRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The job's ID.
 	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// Where each stream starts: a byte position in what the server holds of
@@ -4906,7 +4992,9 @@ type WatchOutputRequest struct {
 	// the server holds when the call starts fails with OUT_OF_RANGE; both are
 	// checked before anything is sent. A client that reconnects passes how
 	// many bytes of each stream it has received.
-	StdoutOffset  int64 `protobuf:"varint,4,opt,name=stdout_offset,json=stdoutOffset,proto3" json:"stdout_offset,omitempty"`
+	StdoutOffset int64 `protobuf:"varint,4,opt,name=stdout_offset,json=stdoutOffset,proto3" json:"stdout_offset,omitempty"`
+	// Where standard error starts, counted as stdout_offset counts standard
+	// output.
 	StderrOffset  int64 `protobuf:"varint,5,opt,name=stderr_offset,json=stderrOffset,proto3" json:"stderr_offset,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5060,10 +5148,12 @@ type isWatchOutputResponse_Message interface {
 }
 
 type WatchOutputResponse_Stdout struct {
+	// A run of standard output bytes, in order.
 	Stdout []byte `protobuf:"bytes,1,opt,name=stdout,proto3,oneof"`
 }
 
 type WatchOutputResponse_Stderr struct {
+	// A run of standard error bytes, in order.
 	Stderr []byte `protobuf:"bytes,2,opt,name=stderr,proto3,oneof"`
 }
 
@@ -5083,8 +5173,9 @@ type OutputEnd struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unset when the job was cancelled, or failed before its command ran
 	// because a binding's target was gone (its status's last_error says so).
-	ExitCode  *int32 `protobuf:"varint,1,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`
-	Cancelled bool   `protobuf:"varint,2,opt,name=cancelled,proto3" json:"cancelled,omitempty"`
+	ExitCode *int32 `protobuf:"varint,1,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`
+	// True when the job was cancelled.
+	Cancelled bool `protobuf:"varint,2,opt,name=cancelled,proto3" json:"cancelled,omitempty"`
 	// True when the server kept only the start of a stream.
 	Truncated     bool `protobuf:"varint,3,opt,name=truncated,proto3" json:"truncated,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -5142,10 +5233,13 @@ func (x *OutputEnd) GetTruncated() bool {
 	return false
 }
 
+// WatchTelemetryRequest names the sandbox whose resource samples to follow.
 type WatchTelemetryRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The sandbox's ID.
 	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// Samples stored after this position: a cursor from an earlier
@@ -5307,6 +5401,7 @@ type isWatchTelemetryResponse_Message interface {
 }
 
 type WatchTelemetryResponse_Sample struct {
+	// One window of the sandbox's resource use.
 	Sample *TelemetrySample `protobuf:"bytes,1,opt,name=sample,proto3,oneof"`
 }
 
@@ -5349,11 +5444,13 @@ type TelemetrySample struct {
 	// Host memory the VM held (resident) at its highest in the window, in MiB.
 	HostMemoryMib int64 `protobuf:"varint,7,opt,name=host_memory_mib,json=hostMemoryMib,proto3" json:"host_memory_mib,omitempty"`
 	// Bytes the VM read from and wrote to its disks.
-	DiskReadBytes  int64 `protobuf:"varint,8,opt,name=disk_read_bytes,json=diskReadBytes,proto3" json:"disk_read_bytes,omitempty"`
+	DiskReadBytes int64 `protobuf:"varint,8,opt,name=disk_read_bytes,json=diskReadBytes,proto3" json:"disk_read_bytes,omitempty"`
+	// Bytes the VM wrote to its disks.
 	DiskWriteBytes int64 `protobuf:"varint,9,opt,name=disk_write_bytes,json=diskWriteBytes,proto3" json:"disk_write_bytes,omitempty"`
 	// Bytes the guest received and sent on its network interfaces. Unset when
 	// the guest does not report them.
 	NetRxBytes *int64 `protobuf:"varint,10,opt,name=net_rx_bytes,json=netRxBytes,proto3,oneof" json:"net_rx_bytes,omitempty"`
+	// Bytes the guest sent on its network interfaces.
 	NetTxBytes *int64 `protobuf:"varint,11,opt,name=net_tx_bytes,json=netTxBytes,proto3,oneof" json:"net_tx_bytes,omitempty"`
 	// Processes the guest kernel's out-of-memory killer killed. Unset when the
 	// guest does not report it.
@@ -5513,10 +5610,13 @@ func (*TelemetryEnd) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{39}
 }
 
+// WatchGuestLogRequest names the sandbox whose console output to follow.
 type WatchGuestLogRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The sandbox's ID.
 	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// Where to start: a cursor from an earlier WatchGuestLog message for the
@@ -5697,6 +5797,7 @@ type isWatchGuestLogResponse_Message interface {
 }
 
 type WatchGuestLogResponse_Chunk struct {
+	// A run of console bytes, in order.
 	Chunk *GuestLogChunk `protobuf:"bytes,1,opt,name=chunk,proto3,oneof"`
 }
 
@@ -5724,8 +5825,9 @@ type GuestLogChunk struct {
 	// The position of the first byte: the number of bytes the VM wrote to
 	// its console before it, in this start. An offset past the end of the
 	// previous chunk means the bytes between are no longer kept.
-	Offset int64  `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
-	Data   []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Offset int64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
+	// The bytes the VM wrote.
+	Data []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	// Names the VM start the offset counts in. A new start counts from zero
 	// again and has a different start.
 	Start string `protobuf:"bytes,3,opt,name=start,proto3" json:"start,omitempty"`
@@ -5830,6 +5932,8 @@ func (*GuestLogEnd) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{43}
 }
 
+// ExecuteRequest is one message of an Execute stream: the start, then
+// standard input bytes and its closing.
 type ExecuteRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Message:
@@ -5933,12 +6037,15 @@ func (*ExecuteRequest_CloseStdin) isExecuteRequest_Message() {}
 
 // ExecuteStart starts an execution.
 type ExecuteStart struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The sandbox the command runs in.
-	SandboxId string   `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
-	Command   *Command `protobuf:"bytes,4,opt,name=command,proto3" json:"command,omitempty"`
+	SandboxId string `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
+	// The command to run.
+	Command *Command `protobuf:"bytes,4,opt,name=command,proto3" json:"command,omitempty"`
 	// A retry with the same key does not start a second command: its stream
 	// carries the first execution's started message and, once it has ended,
 	// its exit. Output already sent is not sent again.
@@ -6023,6 +6130,8 @@ func (x *ExecuteStart) GetGrant() string {
 	return ""
 }
 
+// ExecuteResponse is one message of an Execute stream: the start, the
+// output bytes, then the exit.
 type ExecuteResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Message:
@@ -6119,10 +6228,12 @@ type ExecuteResponse_Started struct {
 }
 
 type ExecuteResponse_Stdout struct {
+	// A run of the command's standard output, in order.
 	Stdout []byte `protobuf:"bytes,2,opt,name=stdout,proto3,oneof"`
 }
 
 type ExecuteResponse_Stderr struct {
+	// A run of the command's standard error, in order.
 	Stderr []byte `protobuf:"bytes,3,opt,name=stderr,proto3,oneof"`
 }
 
@@ -6141,12 +6252,15 @@ func (*ExecuteResponse_Exit) isExecuteResponse_Message() {}
 
 // ExecuteCommandRequest starts an execution whose standard input is closed.
 type ExecuteCommandRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The sandbox the command runs in.
-	SandboxId string   `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
-	Command   *Command `protobuf:"bytes,4,opt,name=command,proto3" json:"command,omitempty"`
+	SandboxId string `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
+	// The command to run.
+	Command *Command `protobuf:"bytes,4,opt,name=command,proto3" json:"command,omitempty"`
 	// A retry with the same key does not start a second command: its stream
 	// carries the first execution's started message and, once it has ended,
 	// its exit. Output already sent is not sent again.
@@ -6231,6 +6345,8 @@ func (x *ExecuteCommandRequest) GetGrant() string {
 	return ""
 }
 
+// ExecuteCommandResponse is one message of an ExecuteCommand stream: the
+// start, the output bytes, then the exit.
 type ExecuteCommandResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Message:
@@ -6327,10 +6443,12 @@ type ExecuteCommandResponse_Started struct {
 }
 
 type ExecuteCommandResponse_Stdout struct {
+	// A run of the command's standard output, in order.
 	Stdout []byte `protobuf:"bytes,2,opt,name=stdout,proto3,oneof"`
 }
 
 type ExecuteCommandResponse_Stderr struct {
+	// A run of the command's standard error, in order.
 	Stderr []byte `protobuf:"bytes,3,opt,name=stderr,proto3,oneof"`
 }
 
@@ -6349,8 +6467,9 @@ func (*ExecuteCommandResponse_Exit) isExecuteCommandResponse_Message() {}
 
 // ExecutionStarted names an execution.
 type ExecutionStarted struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ExecutionId   string                 `protobuf:"bytes,1,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The execution's ID.
+	ExecutionId   string `protobuf:"bytes,1,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6396,8 +6515,9 @@ func (x *ExecutionStarted) GetExecutionId() string {
 type ExecutionExit struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unset when the execution was cancelled.
-	ExitCode      *int32 `protobuf:"varint,1,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`
-	Cancelled     bool   `protobuf:"varint,2,opt,name=cancelled,proto3" json:"cancelled,omitempty"`
+	ExitCode *int32 `protobuf:"varint,1,opt,name=exit_code,json=exitCode,proto3,oneof" json:"exit_code,omitempty"`
+	// True when the execution was cancelled.
+	Cancelled     bool `protobuf:"varint,2,opt,name=cancelled,proto3" json:"cancelled,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6446,12 +6566,18 @@ func (x *ExecutionExit) GetCancelled() bool {
 	return false
 }
 
+// CancelExecutionRequest cancels one execution of a sandbox.
 type CancelExecutionRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	ExecutionId string                 `protobuf:"bytes,3,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
-	RequestKey  string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The execution's ID.
+	ExecutionId string `protobuf:"bytes,3,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
+	RequestKey string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// A grant the caller's workspace received, to act on the owner's
 	// sandbox through it (docs/grants.md); project and environment are then
 	// left empty.
@@ -6525,6 +6651,8 @@ func (x *CancelExecutionRequest) GetGrant() string {
 	return ""
 }
 
+// CancelExecutionResponse has no fields; the cancellation is recorded
+// on the execution.
 type CancelExecutionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -6565,13 +6693,17 @@ func (*CancelExecutionResponse) Descriptor() ([]byte, []int) {
 // bounded time and asks again while it is not done.
 type Operation struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The operation's ID.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The workload it acts on.
 	WorkloadId string `protobuf:"bytes,2,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
-	Done       bool   `protobuf:"varint,3,opt,name=done,proto3" json:"done,omitempty"`
+	// Whether the action finished; false while it runs.
+	Done bool `protobuf:"varint,3,opt,name=done,proto3" json:"done,omitempty"`
 	// Set when the operation is done and failed.
-	Error         *Error                 `protobuf:"bytes,4,opt,name=error,proto3" json:"error,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Error *Error `protobuf:"bytes,4,opt,name=error,proto3" json:"error,omitempty"`
+	// When it was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When it finished; unset until done.
 	DoneAt        *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=done_at,json=doneAt,proto3" json:"done_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -6649,11 +6781,15 @@ func (x *Operation) GetDoneAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// GetOperationRequest names an operation to read.
 type GetOperationRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The operation's ID.
+	Id            string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6709,9 +6845,11 @@ func (x *GetOperationRequest) GetId() string {
 	return ""
 }
 
+// GetOperationResponse is the operation as it is now.
 type GetOperationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Operation     *Operation             `protobuf:"bytes,1,opt,name=operation,proto3" json:"operation,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The operation.
+	Operation     *Operation `protobuf:"bytes,1,opt,name=operation,proto3" json:"operation,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6753,11 +6891,15 @@ func (x *GetOperationResponse) GetOperation() *Operation {
 	return nil
 }
 
+// WaitOperationRequest names an operation to wait on.
 type WaitOperationRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The operation's ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// The longest to block.
 	Timeout       *durationpb.Duration `protobuf:"bytes,4,opt,name=timeout,proto3" json:"timeout,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -6822,9 +6964,11 @@ func (x *WaitOperationRequest) GetTimeout() *durationpb.Duration {
 	return nil
 }
 
+// WaitOperationResponse is the operation as it is when the call returns.
 type WaitOperationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Operation     *Operation             `protobuf:"bytes,1,opt,name=operation,proto3" json:"operation,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The operation.
+	Operation     *Operation `protobuf:"bytes,1,opt,name=operation,proto3" json:"operation,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7039,7 +7183,8 @@ func (x *EventEnvelope) GetReplayOf() string {
 type Event struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique; the same on every delivery of this event.
-	Id   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The event's type.
 	Type EventType `protobuf:"varint,2,opt,name=type,proto3,enum=toshi.workspace.v1.EventType" json:"type,omitempty"`
 	// A built-in name such as "job.state_changed", or the name a guest gave.
 	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
@@ -7546,9 +7691,11 @@ func (*Event_ServiceRolled) isEvent_Payload() {}
 
 // EndpointCreationFailedEvent says why Toshi did not make an endpoint.
 type EndpointCreationFailedEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint      string                 `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The endpoint's name on its workload.
+	Endpoint string `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// Why Toshi did not make it.
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7674,13 +7821,18 @@ func (x *MailNoticeEvent) GetDetail() string {
 
 // ServiceRolledEvent records a transition of a service's roll.
 type ServiceRolledEvent struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	FromRevision int64                  `protobuf:"varint,1,opt,name=from_revision,json=fromRevision,proto3" json:"from_revision,omitempty"`
-	ToRevision   int64                  `protobuf:"varint,2,opt,name=to_revision,json=toRevision,proto3" json:"to_revision,omitempty"`
-	FromRun      string                 `protobuf:"bytes,3,opt,name=from_run,json=fromRun,proto3" json:"from_run,omitempty"`
-	ToRun        string                 `protobuf:"bytes,4,opt,name=to_run,json=toRun,proto3" json:"to_run,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The revision the roll moved from.
+	FromRevision int64 `protobuf:"varint,1,opt,name=from_revision,json=fromRevision,proto3" json:"from_revision,omitempty"`
+	// The revision it moved to.
+	ToRevision int64 `protobuf:"varint,2,opt,name=to_revision,json=toRevision,proto3" json:"to_revision,omitempty"`
+	// The job ID of the run that ran from_revision.
+	FromRun string `protobuf:"bytes,3,opt,name=from_run,json=fromRun,proto3" json:"from_run,omitempty"`
+	// The job ID of the run that runs to_revision.
+	ToRun string `protobuf:"bytes,4,opt,name=to_run,json=toRun,proto3" json:"to_run,omitempty"`
 	// STARTED, SWITCHED, DRAINED, FAILED or FELL_BACK.
-	Outcome       string `protobuf:"bytes,5,opt,name=outcome,proto3" json:"outcome,omitempty"`
+	Outcome string `protobuf:"bytes,5,opt,name=outcome,proto3" json:"outcome,omitempty"`
+	// Why, when the outcome is FAILED or FELL_BACK.
 	Reason        string `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -8102,7 +8254,8 @@ type SecretWithheldEvent struct {
 	// a later answer released; empty for a job's or a sandbox's start.
 	RunId string `protobuf:"bytes,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
 	// The execution the release was for, for a sandbox's execution.
-	ExecutionId   string            `protobuf:"bytes,2,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
+	ExecutionId string `protobuf:"bytes,2,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
+	// The keys withheld.
 	Keys          []*WithheldSecret `protobuf:"bytes,3,rep,name=keys,proto3" json:"keys,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -8229,7 +8382,8 @@ func (x *WithheldSecret) GetReason() string {
 type EgressDeniedEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The run the denials were for; empty when the host did not say.
-	RunId         string          `protobuf:"bytes,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	RunId string `protobuf:"bytes,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	// The denials, newest first.
 	Denials       []*EgressDenial `protobuf:"bytes,2,rep,name=denials,proto3" json:"denials,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -8387,9 +8541,11 @@ func (x *EgressDenial) GetTime() *timestamppb.Timestamp {
 // it, the link of the workload's endpoint once it is ready, why it failed or
 // was removed, and the commit it was made from.
 type TriggerResult struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	TriggerId   string                 `protobuf:"bytes,1,opt,name=trigger_id,json=triggerId,proto3" json:"trigger_id,omitempty"`
-	TriggerName string                 `protobuf:"bytes,2,opt,name=trigger_name,json=triggerName,proto3" json:"trigger_name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The trigger's ID.
+	TriggerId string `protobuf:"bytes,1,opt,name=trigger_id,json=triggerId,proto3" json:"trigger_id,omitempty"`
+	// The trigger's name.
+	TriggerName string `protobuf:"bytes,2,opt,name=trigger_name,json=triggerName,proto3" json:"trigger_name,omitempty"`
 	// The key the trigger's event named.
 	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	// The workload it made for the key; empty when it made none.
@@ -8516,9 +8672,11 @@ func (x *TriggerResult) GetMessage() string {
 
 // ExecutionEvent is an execution starting or ending.
 type ExecutionEvent struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	ExecutionId string                 `protobuf:"bytes,1,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
-	Argv        []string               `protobuf:"bytes,2,rep,name=argv,proto3" json:"argv,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The execution's ID.
+	ExecutionId string `protobuf:"bytes,1,opt,name=execution_id,json=executionId,proto3" json:"execution_id,omitempty"`
+	// The command's program and arguments.
+	Argv []string `protobuf:"bytes,2,rep,name=argv,proto3" json:"argv,omitempty"`
 	// Set when the execution ended.
 	Exit          *ExecutionExit `protobuf:"bytes,3,opt,name=exit,proto3" json:"exit,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -8578,8 +8736,9 @@ func (x *ExecutionEvent) GetExit() *ExecutionExit {
 
 // EmittedEvent is an event a guest emitted.
 type EmittedEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The bytes the guest emitted.
+	Data          []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -8956,12 +9115,14 @@ type AgentPrompt struct {
 	// or domain; acp_permission for an ACP permission request. Empty for a
 	// question.
 	Kind string `protobuf:"bytes,3,opt,name=kind,proto3" json:"kind,omitempty"`
+	// What the prompt asks, in the agent's words.
 	Text string `protobuf:"bytes,4,opt,name=text,proto3" json:"text,omitempty"`
 	// The answers a question offers; empty for an approval, an ACP permission
 	// request and a question answered in free text.
 	Options []string `protobuf:"bytes,5,rep,name=options,proto3" json:"options,omitempty"`
 	// The event that asked it.
-	EventId string                 `protobuf:"bytes,6,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	EventId string `protobuf:"bytes,6,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	// When the agent asked it.
 	AskedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=asked_at,json=askedAt,proto3" json:"asked_at,omitempty"`
 	// An opaque identifier for this ask.
 	DecisionId string `protobuf:"bytes,8,opt,name=decision_id,json=decisionId,proto3" json:"decision_id,omitempty"`
@@ -9175,9 +9336,11 @@ func (x *ConnectionEvent) GetData() []byte {
 // RecordingEvent names a recording, its kind and its artifact, never a
 // URL: RecordingService.GetRecording signs one.
 type RecordingEvent struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	RecordingId string                 `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
-	ArtifactId  string                 `protobuf:"bytes,2,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The recording's ID.
+	RecordingId string `protobuf:"bytes,1,opt,name=recording_id,json=recordingId,proto3" json:"recording_id,omitempty"`
+	// The artifact the recording is kept in.
+	ArtifactId string `protobuf:"bytes,2,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
 	// UNSPECIFIED in an event stored before recordings had a kind: that
 	// recording is a strip.
 	Kind          RecordingKind `protobuf:"varint,3,opt,name=kind,proto3,enum=toshi.workspace.v1.RecordingKind" json:"kind,omitempty"`
@@ -9236,10 +9399,13 @@ func (x *RecordingEvent) GetKind() RecordingKind {
 	return RecordingKind_RECORDING_KIND_UNSPECIFIED
 }
 
+// ListEventsRequest selects events of the workload event log.
 type ListEventsRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// Empty matches every workload.
 	WorkloadId string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	// From an earlier response's next_page_token or cursor, or an event's
@@ -9333,9 +9499,11 @@ func (x *ListEventsRequest) GetGrant() string {
 	return ""
 }
 
+// ListEventsResponse is one page of events.
 type ListEventsResponse struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Events []*Event               `protobuf:"bytes,1,rep,name=events,proto3" json:"events,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The events, oldest first.
+	Events []*Event `protobuf:"bytes,1,rep,name=events,proto3" json:"events,omitempty"`
 	// The position after the last event returned, or the page_token asked
 	// for when there were none. WatchEvents from this cursor shows every
 	// event after this page.
@@ -9409,10 +9577,13 @@ func (x *ListEventsResponse) GetTotalBytes() int64 {
 	return 0
 }
 
+// WatchEventsRequest names the events to follow.
 type WatchEventsRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// Empty matches every workload.
 	WorkloadId string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	// Events after this position; empty starts at the oldest event the log
@@ -9491,9 +9662,12 @@ func (x *WatchEventsRequest) GetKeepalive() bool {
 	return false
 }
 
+// WatchEventsResponse is one message of a WatchEvents stream: an event or
+// a keepalive.
 type WatchEventsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Event *Event                 `protobuf:"bytes,1,opt,name=event,proto3" json:"event,omitempty"`
+	// The event; unset on a keepalive.
+	Event *Event `protobuf:"bytes,1,opt,name=event,proto3" json:"event,omitempty"`
 	// Set on a keepalive, with every other field empty. Only a request
 	// with keepalive set gets one.
 	Keepalive     *Keepalive `protobuf:"bytes,2,opt,name=keepalive,proto3" json:"keepalive,omitempty"`
@@ -9612,9 +9786,12 @@ type PreviewShareLink struct {
 	// Assigned by the server.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The sandbox whose preview the link opens.
-	SandboxId string                 `protobuf:"bytes,2,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
-	State     PreviewShareLinkState  `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.PreviewShareLinkState" json:"state,omitempty"`
+	SandboxId string `protobuf:"bytes,2,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
+	// Where the link is in its life.
+	State PreviewShareLinkState `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.PreviewShareLinkState" json:"state,omitempty"`
+	// When it was made.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When it stops admitting its device.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// The most bytes, both ways, its connections may carry.
 	MaxBytes int64 `protobuf:"varint,6,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
@@ -9749,10 +9926,14 @@ func (x *PreviewShareLink) GetPort() int32 {
 	return 0
 }
 
+// CreatePreviewShareLinkRequest mints a share link for one of a
+// sandbox's previews.
 type CreatePreviewShareLinkRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The sandbox whose preview the link opens.
 	SandboxId string `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
 	// How long the link stays valid, at most the plan's maximum; unset is
@@ -9881,10 +10062,12 @@ type isCreatePreviewShareLinkRequest_EndpointRef interface {
 }
 
 type CreatePreviewShareLinkRequest_Endpoint struct {
+	// The endpoint to open, by its name.
 	Endpoint string `protobuf:"bytes,6,opt,name=endpoint,proto3,oneof"`
 }
 
 type CreatePreviewShareLinkRequest_Port struct {
+	// The endpoint to open, by its guest port.
 	Port int32 `protobuf:"varint,7,opt,name=port,proto3,oneof"`
 }
 
@@ -9892,9 +10075,12 @@ func (*CreatePreviewShareLinkRequest_Endpoint) isCreatePreviewShareLinkRequest_E
 
 func (*CreatePreviewShareLinkRequest_Port) isCreatePreviewShareLinkRequest_EndpointRef() {}
 
+// CreatePreviewShareLinkResponse is the new link and the URL that carries
+// it.
 type CreatePreviewShareLinkResponse struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	ShareLink *PreviewShareLink      `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The new link.
+	ShareLink *PreviewShareLink `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
 	// The URL to give the viewer: it opens the link's preview and carries
 	// the link. It is in this answer only.
 	Url           string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
@@ -9946,11 +10132,15 @@ func (x *CreatePreviewShareLinkResponse) GetUrl() string {
 	return ""
 }
 
+// ListPreviewShareLinksRequest lists a sandbox's share links.
 type ListPreviewShareLinksRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	SandboxId   string                 `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The sandbox's ID.
+	SandboxId string `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
 	// The most share links in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -10024,9 +10214,11 @@ func (x *ListPreviewShareLinksRequest) GetPageToken() string {
 	return ""
 }
 
+// ListPreviewShareLinksResponse is one page of a sandbox's share links.
 type ListPreviewShareLinksResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	ShareLinks []*PreviewShareLink    `protobuf:"bytes,1,rep,name=share_links,json=shareLinks,proto3" json:"share_links,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The links, oldest first.
+	ShareLinks []*PreviewShareLink `protobuf:"bytes,1,rep,name=share_links,json=shareLinks,proto3" json:"share_links,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -10077,12 +10269,17 @@ func (x *ListPreviewShareLinksResponse) GetNextPageToken() string {
 	return ""
 }
 
+// RevokePreviewShareLinkRequest revokes one share link of a sandbox.
 type RevokePreviewShareLinkRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	SandboxId     string                 `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
-	ShareLinkId   string                 `protobuf:"bytes,4,opt,name=share_link_id,json=shareLinkId,proto3" json:"share_link_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The sandbox's ID.
+	SandboxId string `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
+	// The link's ID.
+	ShareLinkId   string `protobuf:"bytes,4,opt,name=share_link_id,json=shareLinkId,proto3" json:"share_link_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10145,9 +10342,11 @@ func (x *RevokePreviewShareLinkRequest) GetShareLinkId() string {
 	return ""
 }
 
+// RevokePreviewShareLinkResponse is the link after the revocation.
 type RevokePreviewShareLinkResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ShareLink     *PreviewShareLink      `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The link after the revocation.
+	ShareLink     *PreviewShareLink `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10200,9 +10399,12 @@ type ServiceShareLink struct {
 	ServiceId string `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The http endpoint of the service's recipe whose provided name the link
 	// opens.
-	Endpoint  string                 `protobuf:"bytes,3,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	State     PreviewShareLinkState  `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.PreviewShareLinkState" json:"state,omitempty"`
+	Endpoint string `protobuf:"bytes,3,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	// Where the link is in its life.
+	State PreviewShareLinkState `protobuf:"varint,4,opt,name=state,proto3,enum=toshi.workspace.v1.PreviewShareLinkState" json:"state,omitempty"`
+	// When it was made.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// When it stops admitting its device.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// The most bytes, both ways, its connections may carry.
 	MaxBytes int64 `protobuf:"varint,7,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
@@ -10325,10 +10527,14 @@ func (x *ServiceShareLink) GetEndedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// CreateServiceShareLinkRequest mints a share link for one of a
+// service's provided names.
 type CreateServiceShareLinkRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
 	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The http endpoint whose provided name the link opens; empty is the
@@ -10429,9 +10635,12 @@ func (x *CreateServiceShareLinkRequest) GetRequestKey() string {
 	return ""
 }
 
+// CreateServiceShareLinkResponse is the new link and the URL that carries
+// it.
 type CreateServiceShareLinkResponse struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	ShareLink *ServiceShareLink      `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The new link.
+	ShareLink *ServiceShareLink `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
 	// The URL to give the viewer: it opens the provided name and carries the
 	// link. It is in this answer only.
 	Url           string `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
@@ -10483,10 +10692,13 @@ func (x *CreateServiceShareLinkResponse) GetUrl() string {
 	return ""
 }
 
+// ListServiceShareLinksRequest lists a service's share links.
 type ListServiceShareLinksRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
 	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The most share links in one page; zero lets the server choose.
@@ -10562,9 +10774,11 @@ func (x *ListServiceShareLinksRequest) GetPageToken() string {
 	return ""
 }
 
+// ListServiceShareLinksResponse is one page of a service's share links.
 type ListServiceShareLinksResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	ShareLinks []*ServiceShareLink    `protobuf:"bytes,1,rep,name=share_links,json=shareLinks,proto3" json:"share_links,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The links, oldest first.
+	ShareLinks []*ServiceShareLink `protobuf:"bytes,1,rep,name=share_links,json=shareLinks,proto3" json:"share_links,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -10615,12 +10829,16 @@ func (x *ListServiceShareLinksResponse) GetNextPageToken() string {
 	return ""
 }
 
+// RevokeServiceShareLinkRequest revokes one share link of a service.
 type RevokeServiceShareLinkRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
-	ServiceId     string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	// The link's ID.
 	ShareLinkId   string `protobuf:"bytes,4,opt,name=share_link_id,json=shareLinkId,proto3" json:"share_link_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -10684,9 +10902,11 @@ func (x *RevokeServiceShareLinkRequest) GetShareLinkId() string {
 	return ""
 }
 
+// RevokeServiceShareLinkResponse is the link after the revocation.
 type RevokeServiceShareLinkResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ShareLink     *ServiceShareLink      `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The link after the revocation.
+	ShareLink     *ServiceShareLink `protobuf:"bytes,1,opt,name=share_link,json=shareLink,proto3" json:"share_link,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10728,12 +10948,18 @@ func (x *RevokeServiceShareLinkResponse) GetShareLink() *ServiceShareLink {
 	return nil
 }
 
+// StartSandboxRequest starts a stopped sandbox.
 type StartSandboxRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The sandbox's ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10796,9 +11022,11 @@ func (x *StartSandboxRequest) GetRequestKey() string {
 	return ""
 }
 
+// StartSandboxResponse is the sandbox after the start.
 type StartSandboxResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Sandbox       *Sandbox               `protobuf:"bytes,1,opt,name=sandbox,proto3" json:"sandbox,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The sandbox after the start.
+	Sandbox       *Sandbox `protobuf:"bytes,1,opt,name=sandbox,proto3" json:"sandbox,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10840,12 +11068,18 @@ func (x *StartSandboxResponse) GetSandbox() *Sandbox {
 	return nil
 }
 
+// StopSandboxRequest stops a sandbox's run.
 type StopSandboxRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The sandbox's ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10908,9 +11142,11 @@ func (x *StopSandboxRequest) GetRequestKey() string {
 	return ""
 }
 
+// StopSandboxResponse is the sandbox after the stop.
 type StopSandboxResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Sandbox       *Sandbox               `protobuf:"bytes,1,opt,name=sandbox,proto3" json:"sandbox,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The sandbox after the stop.
+	Sandbox       *Sandbox `protobuf:"bytes,1,opt,name=sandbox,proto3" json:"sandbox,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10952,12 +11188,17 @@ func (x *StopSandboxResponse) GetSandbox() *Sandbox {
 	return nil
 }
 
+// StartServiceRequest starts a service.
 type StartServiceRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
-	Id            string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
 	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -11021,6 +11262,7 @@ func (x *StartServiceRequest) GetRequestKey() string {
 	return ""
 }
 
+// StartServiceResponse is the service after the start.
 type StartServiceResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service after the start.
@@ -11066,12 +11308,18 @@ func (x *StartServiceResponse) GetService() *Service {
 	return nil
 }
 
+// StopServiceRequest stops a service's run.
 type StopServiceRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11134,6 +11382,7 @@ func (x *StopServiceRequest) GetRequestKey() string {
 	return ""
 }
 
+// StopServiceResponse is the service after the stop.
 type StopServiceResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service after the stop.
@@ -11179,14 +11428,20 @@ func (x *StopServiceResponse) GetService() *Service {
 	return nil
 }
 
+// SetServiceModeRequest sets a service's mode.
 type SetServiceModeRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// Required.
-	Mode          ServiceMode `protobuf:"varint,4,opt,name=mode,proto3,enum=toshi.workspace.v1.ServiceMode" json:"mode,omitempty"`
-	RequestKey    string      `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	Mode ServiceMode `protobuf:"varint,4,opt,name=mode,proto3,enum=toshi.workspace.v1.ServiceMode" json:"mode,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11256,6 +11511,7 @@ func (x *SetServiceModeRequest) GetRequestKey() string {
 	return ""
 }
 
+// SetServiceModeResponse is the service after the change.
 type SetServiceModeResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service after the change.
@@ -11301,12 +11557,18 @@ func (x *SetServiceModeResponse) GetService() *Service {
 	return nil
 }
 
+// WakeServiceRequest wakes a started on-demand service that is asleep.
 type WakeServiceRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11369,6 +11631,7 @@ func (x *WakeServiceRequest) GetRequestKey() string {
 	return ""
 }
 
+// WakeServiceResponse is the service after the wake.
 type WakeServiceResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service after the wake.
@@ -11416,11 +11679,15 @@ func (x *WakeServiceResponse) GetService() *Service {
 
 // HoldWorkloadRequest names the sandbox or service and its operator hold.
 type HoldWorkloadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	WorkloadId    string                 `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
-	Hold          OperatorHold           `protobuf:"varint,4,opt,name=hold,proto3,enum=toshi.workspace.v1.OperatorHold" json:"hold,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The sandbox or service to hold.
+	WorkloadId string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	// The hold to place.
+	Hold          OperatorHold `protobuf:"varint,4,opt,name=hold,proto3,enum=toshi.workspace.v1.OperatorHold" json:"hold,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11483,6 +11750,7 @@ func (x *HoldWorkloadRequest) GetHold() OperatorHold {
 	return OperatorHold_OPERATOR_HOLD_UNSPECIFIED
 }
 
+// HoldWorkloadResponse has no fields.
 type HoldWorkloadResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -11521,10 +11789,13 @@ func (*HoldWorkloadResponse) Descriptor() ([]byte, []int) {
 
 // ReleaseWorkloadRequest names the sandbox or service to release.
 type ReleaseWorkloadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	WorkloadId    string                 `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The sandbox or service to release.
+	WorkloadId    string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11580,6 +11851,7 @@ func (x *ReleaseWorkloadRequest) GetWorkloadId() string {
 	return ""
 }
 
+// ReleaseWorkloadResponse has no fields.
 type ReleaseWorkloadResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -11616,12 +11888,18 @@ func (*ReleaseWorkloadResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{117}
 }
 
+// KeepServiceAwakeRequest takes or renews the caller's hold on a started service.
 type KeepServiceAwakeRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey  string                 `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
+	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	// How long the hold stays live, in seconds: at most 3600; 0 or unset is
 	// 600.
 	TtlSeconds    int64 `protobuf:"varint,6,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
@@ -11694,9 +11972,11 @@ func (x *KeepServiceAwakeRequest) GetTtlSeconds() int64 {
 	return 0
 }
 
+// KeepServiceAwakeResponse is the caller's hold and the service.
 type KeepServiceAwakeResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Hold  *ServiceHold           `protobuf:"bytes,2,opt,name=hold,proto3" json:"hold,omitempty"`
+	// The caller's hold.
+	Hold *ServiceHold `protobuf:"bytes,2,opt,name=hold,proto3" json:"hold,omitempty"`
 	// The service after the hold.
 	Service       *Service `protobuf:"bytes,3,opt,name=service,proto3" json:"service,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -11802,12 +12082,18 @@ func (x *ServiceHold) GetExpiresAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// ReleaseServiceAwakeRequest drops the caller's hold on a service.
 type ReleaseServiceAwakeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment   string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id            string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
-	RequestKey    string                 `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,4,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11870,6 +12156,7 @@ func (x *ReleaseServiceAwakeRequest) GetRequestKey() string {
 	return ""
 }
 
+// ReleaseServiceAwakeResponse is the service after the release.
 type ReleaseServiceAwakeResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service after the release.
@@ -11915,10 +12202,13 @@ func (x *ReleaseServiceAwakeResponse) GetService() *Service {
 	return nil
 }
 
+// StartServiceSignInRequest names the service and sign-in program to run.
 type StartServiceSignInRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
 	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The program the recipe declares in [[sign_in]].
@@ -12263,6 +12553,7 @@ func (x *ServiceSignInEndpoint) GetListenAddress() string {
 	return ""
 }
 
+// ServiceSignInStarted is the first message of a sign-in stream.
 type ServiceSignInStarted struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The sign-in, for AnswerServiceSignIn and CancelServiceSignIn.
@@ -12318,6 +12609,7 @@ func (x *ServiceSignInStarted) GetEndsAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// ServiceSignInEnded is the last message of a sign-in stream.
 type ServiceSignInEnded struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// How the sign-in ended.
@@ -12373,11 +12665,16 @@ func (x *ServiceSignInEnded) GetExitCode() int32 {
 	return 0
 }
 
+// AnswerServiceSignInRequest answers a running sign-in with one text line
+// or a browser's loopback redirect.
 type AnswerServiceSignInRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	ServiceId   string                 `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// From StartServiceSignInResponse.started.
 	SignInId string `protobuf:"bytes,4,opt,name=sign_in_id,json=signInId,proto3" json:"sign_in_id,omitempty"`
 	// One line, at most 4 KiB, with no newline in it. Set exactly one of
@@ -12463,6 +12760,7 @@ func (x *AnswerServiceSignInRequest) GetRedirectUrl() string {
 	return ""
 }
 
+// AnswerServiceSignInResponse is the program's answer to a redirect.
 type AnswerServiceSignInResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The program's HTTP status for a redirect, or zero for a text answer.
@@ -12508,11 +12806,15 @@ func (x *AnswerServiceSignInResponse) GetRedirectStatus() int32 {
 	return 0
 }
 
+// CancelServiceSignInRequest ends a running sign-in.
 type CancelServiceSignInRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	ServiceId   string                 `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// From StartServiceSignInResponse.started.
 	SignInId      string `protobuf:"bytes,4,opt,name=sign_in_id,json=signInId,proto3" json:"sign_in_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -12577,6 +12879,7 @@ func (x *CancelServiceSignInRequest) GetSignInId() string {
 	return ""
 }
 
+// CancelServiceSignInResponse has no fields.
 type CancelServiceSignInResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -12613,11 +12916,16 @@ func (*CancelServiceSignInResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_workspace_proto_rawDescGZIP(), []int{132}
 }
 
+// GetServiceSignInStatusRequest names the service and program whose
+// sign-in status to read.
 type GetServiceSignInStatusRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	ServiceId   string                 `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The program to ask about; empty asks for every program the recipe
 	// declares.
 	Program       string `protobuf:"bytes,4,opt,name=program,proto3" json:"program,omitempty"`
@@ -12683,8 +12991,10 @@ func (x *GetServiceSignInStatusRequest) GetProgram() string {
 	return ""
 }
 
+// GetServiceSignInStatusResponse is one status per program asked for.
 type GetServiceSignInStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The statuses, in recipe order.
 	Statuses      []*ServiceSignInStatus `protobuf:"bytes,1,rep,name=statuses,proto3" json:"statuses,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -12729,8 +13039,9 @@ func (x *GetServiceSignInStatusResponse) GetStatuses() []*ServiceSignInStatus {
 
 // ServiceSignInStatus is one sign_in program's state.
 type ServiceSignInStatus struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Program string                 `protobuf:"bytes,1,opt,name=program,proto3" json:"program,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The sign_in program's name, as the recipe declares it.
+	Program string `protobuf:"bytes,1,opt,name=program,proto3" json:"program,omitempty"`
 	// Its status command exited 0.
 	SignedIn bool `protobuf:"varint,2,opt,name=signed_in,json=signedIn,proto3" json:"signed_in,omitempty"`
 	// The status command's exit code; -1 when it did not run, or did not end
@@ -12810,11 +13121,15 @@ func (x *ServiceSignInStatus) GetEndpoint() *ServiceSignInEndpoint {
 	return nil
 }
 
+// SignOutServiceRequest runs a sign-in program's sign-out command.
 type SignOutServiceRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	ServiceId   string                 `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	// The recipe's sign_in program whose sign-out command runs.
 	Program       string `protobuf:"bytes,4,opt,name=program,proto3" json:"program,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -12879,6 +13194,7 @@ func (x *SignOutServiceRequest) GetProgram() string {
 	return ""
 }
 
+// SignOutServiceResponse is the sign-out command's exit code and output.
 type SignOutServiceResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The sign-out command's exit code; -1 when it did not run, or did not
@@ -12935,11 +13251,15 @@ func (x *SignOutServiceResponse) GetOutput() string {
 	return ""
 }
 
+// ListServiceRunsRequest lists a service's runs.
 type ListServiceRunsRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// The most runs in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -13013,9 +13333,11 @@ func (x *ListServiceRunsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListServiceRunsResponse is one page of a service's runs.
 type ListServiceRunsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Runs  []*ServiceRun          `protobuf:"bytes,1,rep,name=runs,proto3" json:"runs,omitempty"`
+	// The runs, newest first.
+	Runs []*ServiceRun `protobuf:"bytes,1,rep,name=runs,proto3" json:"runs,omitempty"`
 	// Empty on the last page.
 	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -13066,11 +13388,15 @@ func (x *ListServiceRunsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// ListServiceRevisionsRequest lists a service's revisions.
 type ListServiceRevisionsRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// The most revisions in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -13144,6 +13470,7 @@ func (x *ListServiceRevisionsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListServiceRevisionsResponse is one page of a service's revisions.
 type ListServiceRevisionsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service's revisions, newest first.
@@ -13198,11 +13525,15 @@ func (x *ListServiceRevisionsResponse) GetNextPageToken() string {
 	return ""
 }
 
+// GetServiceRevisionRequest names one revision of a service.
 type GetServiceRevisionRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// The revision's number.
 	Number        int64 `protobuf:"varint,4,opt,name=number,proto3" json:"number,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -13267,9 +13598,11 @@ func (x *GetServiceRevisionRequest) GetNumber() int64 {
 	return 0
 }
 
+// GetServiceRevisionResponse is the revision.
 type GetServiceRevisionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Revision      *ServiceRevision       `protobuf:"bytes,1,opt,name=revision,proto3" json:"revision,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The revision.
+	Revision      *ServiceRevision `protobuf:"bytes,1,opt,name=revision,proto3" json:"revision,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -13317,12 +13650,14 @@ func (x *GetServiceRevisionResponse) GetRevision() *ServiceRevision {
 type ServiceRevision struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Counts from 1 in the order the service's revisions were made.
-	Number int64                 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	Number int64 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	// Why the revision was made.
 	Reason ServiceRevisionReason `protobuf:"varint,2,opt,name=reason,proto3,enum=toshi.workspace.v1.ServiceRevisionReason" json:"reason,omitempty"`
 	// The revision's recipe, resolved, in TOML.
 	Recipe string `protobuf:"bytes,3,opt,name=recipe,proto3" json:"recipe,omitempty"`
 	// The secret a SECRET revision was made for; never its value.
-	Secret    string                 `protobuf:"bytes,4,opt,name=secret,proto3" json:"secret,omitempty"`
+	Secret string `protobuf:"bytes,4,opt,name=secret,proto3" json:"secret,omitempty"`
+	// When it was made.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// The recipe's container image as submitted, a registry reference;
 	// empty for a service that runs in a VM.
@@ -13488,10 +13823,12 @@ func (x *ServiceRevision) GetCompatibilityDate() string {
 // from_revision again and starts it.
 type ServiceUpgrade struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	State ServiceUpgradeState    `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.ServiceUpgradeState" json:"state,omitempty"`
+	// Where the watch is.
+	State ServiceUpgradeState `protobuf:"varint,1,opt,name=state,proto3,enum=toshi.workspace.v1.ServiceUpgradeState" json:"state,omitempty"`
 	// The revision the deploy replaced.
-	FromRevision int64                `protobuf:"varint,2,opt,name=from_revision,json=fromRevision,proto3" json:"from_revision,omitempty"`
-	Window       *durationpb.Duration `protobuf:"bytes,3,opt,name=window,proto3" json:"window,omitempty"`
+	FromRevision int64 `protobuf:"varint,2,opt,name=from_revision,json=fromRevision,proto3" json:"from_revision,omitempty"`
+	// The window's length: the recipe's upgrade_window, 5 minutes unless set.
+	Window *durationpb.Duration `protobuf:"bytes,3,opt,name=window,proto3" json:"window,omitempty"`
 	// When the window started; unset until the revision's first run starts.
 	WindowStartTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=window_start_time,json=windowStartTime,proto3" json:"window_start_time,omitempty"`
 	// When the window ends; unset until it starts.
@@ -13641,13 +13978,15 @@ func (x *ServiceUpgrade) GetAllowUnsavedVolume() bool {
 // check a rollback makes before it selects the revision: a request for the
 // manifest by digest, with the recipe's registry login, reading no image.
 type ServiceRevisionImageCheck struct {
-	state   protoimpl.MessageState      `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// What the check found.
 	Outcome ServiceRevisionImageOutcome `protobuf:"varint,1,opt,name=outcome,proto3,enum=toshi.workspace.v1.ServiceRevisionImageOutcome" json:"outcome,omitempty"`
 	// The registry's HTTP status, such as "404 Not Found"; empty when no
 	// answer came.
 	Status string `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
 	// The registry's answer, or why it could not be asked.
-	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	Message string `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	// When the registry answered, or the check failed.
 	CheckedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=checked_at,json=checkedAt,proto3" json:"checked_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -13711,19 +14050,24 @@ func (x *ServiceRevisionImageCheck) GetCheckedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// RollbackServiceRequest selects a revision of a service again.
 type RollbackServiceRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's workload id.
 	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// The revision to select.
 	Revision int64 `protobuf:"varint,4,opt,name=revision,proto3" json:"revision,omitempty"`
 	// The revision the caller saw selected; 0 checks nothing.
-	ExpectedRevision int64  `protobuf:"varint,5,opt,name=expected_revision,json=expectedRevision,proto3" json:"expected_revision,omitempty"`
-	RequestKey       string `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	ExpectedRevision int64 `protobuf:"varint,5,opt,name=expected_revision,json=expectedRevision,proto3" json:"expected_revision,omitempty"`
+	// A key that makes a retry return the first answer; the same key with
+	// another request fails with FAILED_PRECONDITION.
+	RequestKey    string `protobuf:"bytes,6,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RollbackServiceRequest) Reset() {
@@ -13798,6 +14142,8 @@ func (x *RollbackServiceRequest) GetRequestKey() string {
 	return ""
 }
 
+// RollbackServiceResponse is the service after the rollback and the
+// activation.
 type RollbackServiceResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service after the rollback.
@@ -13852,11 +14198,16 @@ func (x *RollbackServiceResponse) GetActivation() *ServiceActivation {
 	return nil
 }
 
+// ListServiceActivationsRequest lists the times a service's revision was
+// selected.
 type ListServiceActivationsRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Project     string                 `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
-	Environment string                 `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	Id          string                 `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project's name.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The environment's name.
+	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
+	// The service's workload ID.
+	Id string `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	// The most activations in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// From an earlier response's next_page_token; empty for the first page.
@@ -13930,6 +14281,7 @@ func (x *ListServiceActivationsRequest) GetPageToken() string {
 	return ""
 }
 
+// ListServiceActivationsResponse is one page of a service's activations.
 type ListServiceActivationsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The service's activations, newest first.
@@ -13989,8 +14341,9 @@ func (x *ListServiceActivationsResponse) GetNextPageToken() string {
 type ServiceActivation struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Counts from 1 in the order the service's activations were made.
-	Sequence int64                 `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
-	Kind     ServiceActivationKind `protobuf:"varint,2,opt,name=kind,proto3,enum=toshi.workspace.v1.ServiceActivationKind" json:"kind,omitempty"`
+	Sequence int64 `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	// What selected the revision.
+	Kind ServiceActivationKind `protobuf:"varint,2,opt,name=kind,proto3,enum=toshi.workspace.v1.ServiceActivationKind" json:"kind,omitempty"`
 	// Who asked for it.
 	Actor string `protobuf:"bytes,3,opt,name=actor,proto3" json:"actor,omitempty"`
 	// The request key of the call that asked for it, if it had one.
@@ -13998,11 +14351,13 @@ type ServiceActivation struct {
 	// The revision selected before; 0 for the create.
 	FromRevision int64 `protobuf:"varint,5,opt,name=from_revision,json=fromRevision,proto3" json:"from_revision,omitempty"`
 	// The revision selected.
-	ToRevision  int64                  `protobuf:"varint,6,opt,name=to_revision,json=toRevision,proto3" json:"to_revision,omitempty"`
+	ToRevision int64 `protobuf:"varint,6,opt,name=to_revision,json=toRevision,proto3" json:"to_revision,omitempty"`
+	// When it was selected.
 	RequestedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=requested_at,json=requestedAt,proto3" json:"requested_at,omitempty"`
 	// The run the outcome follows; empty until the revision's run is
 	// queued.
-	RunId   string                   `protobuf:"bytes,8,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	RunId string `protobuf:"bytes,8,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	// What came of it.
 	Outcome ServiceActivationOutcome `protobuf:"varint,9,opt,name=outcome,proto3,enum=toshi.workspace.v1.ServiceActivationOutcome" json:"outcome,omitempty"`
 	// A FAILED outcome's error: the run's.
 	Error string `protobuf:"bytes,10,opt,name=error,proto3" json:"error,omitempty"`
@@ -14121,9 +14476,11 @@ func (x *ServiceActivation) GetSecretVersions() []*ServiceSecretVersion {
 
 // ServiceSecretVersion is a secret's name and the version a run used.
 type ServiceSecretVersion struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Version       int64                  `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The secret's name.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The version the run's start fixed.
+	Version       int64 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -14178,15 +14535,17 @@ type ServiceRun struct {
 	// The run's job id.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The service revision it runs.
-	Revision int64           `protobuf:"varint,2,opt,name=revision,proto3" json:"revision,omitempty"`
-	State    ServiceRunState `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.ServiceRunState" json:"state,omitempty"`
+	Revision int64 `protobuf:"varint,2,opt,name=revision,proto3" json:"revision,omitempty"`
+	// Where the run is in its life.
+	State ServiceRunState `protobuf:"varint,3,opt,name=state,proto3,enum=toshi.workspace.v1.ServiceRunState" json:"state,omitempty"`
 	// Why a queued run waits, for example "service_quota" past the plan's
 	// shared services, "no_own_capacity" while the workspace's own host is
 	// full, "limits_unavailable" while its workspace's limits could not be
 	// read, "volume_claimed" while the run before it still holds the
 	// service's state volume, or "host_kinds" while no host of the kinds the
 	// service lists can take it; empty when it does not wait.
-	Held     string                 `protobuf:"bytes,4,opt,name=held,proto3" json:"held,omitempty"`
+	Held string `protobuf:"bytes,4,opt,name=held,proto3" json:"held,omitempty"`
+	// When it was queued.
 	QueuedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=queued_at,json=queuedAt,proto3" json:"queued_at,omitempty"`
 	// When its process started; unset before.
 	StartedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`

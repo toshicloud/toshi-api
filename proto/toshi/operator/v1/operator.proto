@@ -536,6 +536,7 @@ service OperatorService {
 
 // JobState is where a job is in its life cycle.
 enum JobState {
+  // The state is not set.
   JOB_STATE_UNSPECIFIED = 0;
   // Waiting for a host.
   JOB_STATE_QUEUED = 1;
@@ -560,6 +561,7 @@ enum JobState {
 
 // JobKind is a job's workload kind.
 enum JobKind {
+  // The kind is not set.
   JOB_KIND_UNSPECIFIED = 0;
   // A job: it ends when its runner exits or at its time limit.
   JOB_KIND_JOB = 1;
@@ -573,6 +575,7 @@ enum JobKind {
 
 // HostState says whether a host takes new jobs.
 enum HostState {
+  // The state is not set.
   HOST_STATE_UNSPECIFIED = 0;
   // The host takes new jobs.
   HOST_STATE_ONLINE = 1;
@@ -585,6 +588,7 @@ enum HostState {
 // AgentVersionStatus says whether a host's agent matches the control plane's
 // version promise.
 enum AgentVersionStatus {
+  // No comparison was made.
   AGENT_VERSION_STATUS_UNSPECIFIED = 0;
   // Either side is not a release (snapshot, dev, or empty).
   AGENT_VERSION_STATUS_UNKNOWN = 1;
@@ -603,26 +607,38 @@ enum AgentVersionStatus {
 // Job is one GitHub Actions workflow job that Toshi runs on a VM. A
 // timestamp the job has not reached yet is unset.
 message Job {
+  // The job's id.
   string id = 1;
+  // The workspace that owns the job.
   string workspace = 2;
   // The repository as "owner/name".
   string repository = 3;
+  // GitHub's id of the workflow job; 0 when there is none.
   int64 workflow_job_id = 4;
+  // GitHub's id of the workflow run; 0 when there is none.
   int64 run_id = 5;
   // The GitHub App installation that the job came from.
   int64 installation_id = 6;
   // The runs-on labels.
   repeated string labels = 7;
+  // The job's OS: linux, windows or macos.
   string os = 8;
+  // The runner size, as the runs-on label it names.
   string size = 9;
+  // Where the job is in its life cycle.
   JobState state = 10;
   // The host the job is assigned to; empty while it is queued.
   string host_id = 11;
   // The VM the job runs in; empty until the host starts one.
   string instance_id = 12;
+  // When the job was queued.
   google.protobuf.Timestamp queued_at = 13;
+  // When the scheduler assigned it to a host; unset while queued.
   google.protobuf.Timestamp assigned_at = 14;
+  // When its runner started, or for a Workspace API job when its
+  // command did.
   google.protobuf.Timestamp started_at = 15;
+  // When it ended; unset until then.
   google.protobuf.Timestamp finished_at = 16;
   // GitHub's conclusion for a completed job, such as "success".
   string conclusion = 17;
@@ -662,6 +678,7 @@ message Job {
   // When the debug session started and when it expires; unset for a job
   // that never had one.
   google.protobuf.Timestamp debug_started_at = 26;
+  // When the debug session ends; unset for a job that never had one.
   google.protobuf.Timestamp debug_until = 27;
   // What the job's resource samples add up to; unset when it has none.
   JobTelemetrySummary telemetry = 28;
@@ -781,6 +798,7 @@ message Job {
   // the attempt started, and for a job that ended before any did; the
   // host it was assigned to is host_id.
   string runner_id = 50;
+  // The name that runner registered with; unset with runner_id.
   string runner_name = 51;
   // The current attempt once it started, counting from 1: each assignment
   // of the job is one, and a requeue makes the next. 0 until it started,
@@ -830,6 +848,7 @@ message JobCache {
   // The size of the committed generation in bytes, and how long the
   // write-back took in milliseconds.
   int64 generation_bytes = 5;
+  // How long the write-back took, in milliseconds; 0 when there was none.
   int64 write_back_ms = 6;
   // The fields above in one line, as the dashboard's job page,
   // `toshi host-job explain` and `toshi workspace host-job explain` show it,
@@ -875,29 +894,36 @@ message JobTelemetrySummary {
   string verdict_reason = 10;
 }
 
+// SummariseJobTelemetryRequest selects the jobs to sum up.
 message SummariseJobTelemetryRequest {
   // The jobs queued at or after from and before to. To is the control
   // plane's now when unset. The range may span at most 31 days.
   google.protobuf.Timestamp from = 1;
+  // End of the range, exclusive; unset means the control plane's now.
   google.protobuf.Timestamp to = 2;
 }
 
+// SummariseJobTelemetryResponse is the telemetry summed by OS and size.
 message SummariseJobTelemetryResponse {
   // One row per OS and runner size with a job in the range, ordered by OS
   // and then size.
   repeated JobTelemetrySizeRow rows = 1;
   // The range summed.
   google.protobuf.Timestamp from = 2;
+  // The range's end used, with the default filled in.
   google.protobuf.Timestamp to = 3;
 }
 
 // JobTelemetrySizeRow sums up the telemetry of one OS and runner size's
 // jobs. Every figure but jobs_unsampled is over the jobs with samples.
 message JobTelemetrySizeRow {
+  // The OS pool: linux, windows or macos.
   string os = 1;
+  // The runner size.
   string size = 2;
   // The size's vCPUs and memory; 0 when the size is unknown.
   int32 vcpus = 3;
+  // The size's memory in MiB; 0 when the size is unknown.
   int64 memory_mib = 4;
   // The jobs with samples.
   int32 jobs = 5;
@@ -927,13 +953,17 @@ message JobTelemetrySizeRow {
 // TelemetryPercentiles is the median, 95th percentile and highest of a set
 // of values, each percentile the nearest rank; all 0 for an empty set.
 message TelemetryPercentiles {
+  // The median; 0 for an empty set.
   double p50 = 1;
+  // The 95th percentile; 0 for an empty set.
   double p95 = 2;
+  // The highest value; 0 for an empty set.
   double max = 3;
 }
 
 // HeldRefill is one warm pool whose refill a host holds.
 message HeldRefill {
+  // The runner size of the pool.
   string size = 1;
   // "memory", "memory_limit" or "cpus".
   string reason = 2;
@@ -941,13 +971,20 @@ message HeldRefill {
 
 // Host is a machine that runs VMs for Toshi.
 message Host {
+  // The host's id.
   string id = 1;
+  // The host's name, as its agent registered it.
   string name = 2;
   // The guest operating systems the host can run.
   repeated string os = 3;
+  // The host's CPUs, as its agent reported them.
   int32 cpus = 4;
+  // The host's memory in MiB, as its agent reported it.
   int32 memory_mib = 5;
+  // The labels the host's agent reported at its last registration; a
+  // cloud pool's host has cloud and region.
   map<string, string> labels = 6;
+  // Whether the host takes new jobs.
   HostState state = 7;
   // When the host's agent last reported in; unset if it never did.
   google.protobuf.Timestamp last_seen_at = 8;
@@ -1021,7 +1058,9 @@ message Host {
   // workspace and workload, and the memory and disk they hold. A kept VM's
   // memory is held only while it runs or is paused.
   repeated KeptVM kept_vms = 29;
+  // The memory, in MiB, the kept VMs hold together.
   int64 kept_memory_mib = 30;
+  // The disk, in bytes, the kept VMs hold together.
   int64 kept_disk_bytes = 31;
   // Who licenses the Windows the host runs: "customer" for the workspace's
   // own licence (no pool licence in the agent's configuration, or a cloud
@@ -1036,18 +1075,24 @@ message Host {
   // is placed only on a host that does. network_reason says why it does
   // not; empty when it does.
   bool network_enforced = 33;
+  // Why the host does not enforce network rules, as its agent said;
+  // empty when it does.
   string network_reason = 34;
 }
 
 // KeptVM is a VM a host keeps for a workload with keep_vm.
 message KeptVM {
+  // The workspace whose workload it is kept for.
   string workspace = 1;
+  // The workload's id.
   string workload_id = 2;
   // "service" or "sandbox".
   string kind = 3;
   // "running", "paused" or "powered_down".
   string form = 4;
+  // The memory it holds in MiB while it runs or is paused; 0 otherwise.
   int64 memory_mib = 5;
+  // The disk its image holds, in bytes.
   int64 disk_bytes = 6;
   // When its workload last stopped or slept; unset while it runs.
   google.protobuf.Timestamp stopped_at = 7;
@@ -1063,6 +1108,7 @@ message HostEgress {
   // IPv4 or IPv6 addresses or CIDR prefixes, sorted; empty unless source is
   // EGRESS_SOURCE_CONFIGURED or EGRESS_SOURCE_DISCOVERED.
   repeated string ips = 1;
+  // Where the addresses come from.
   EgressSource source = 2;
   // When the addresses last changed; unset when they never did.
   google.protobuf.Timestamp changed_at = 3;
@@ -1084,6 +1130,7 @@ enum EgressSource {
   EGRESS_SOURCE_PER_JOB = 4;
 }
 
+// ListJobsRequest selects the jobs to list.
 message ListJobsRequest {
   // Jobs in any of these states; empty matches every state.
   repeated JobState states = 1;
@@ -1105,7 +1152,9 @@ message ListJobsRequest {
   string id = 7;
 }
 
+// ListJobsResponse is one page of jobs.
 message ListJobsResponse {
+  // The page's jobs, oldest queued first.
   repeated Job jobs = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -1197,6 +1246,7 @@ message ListAuditEventsRequest {
   string outcome = 10;
 }
 
+// ListAuditEventsResponse is one page of audit events.
 message ListAuditEventsResponse {
   // Newest first.
   repeated AuditEvent events = 1;
@@ -1206,6 +1256,7 @@ message ListAuditEventsResponse {
   string next_page_token = 3;
 }
 
+// ListHostsRequest selects the hosts to list.
 message ListHostsRequest {
   // Hosts in any of these states; empty matches every state.
   repeated HostState states = 1;
@@ -1217,7 +1268,9 @@ message ListHostsRequest {
   string page_token = 4;
 }
 
+// ListHostsResponse is one page of hosts.
 message ListHostsResponse {
+  // The page's hosts, ordered by id.
   repeated Host hosts = 1;
   // The control plane's reaper.long_offline_after: a host whose last heartbeat
   // is older, and that is offline, has long_offline set.
@@ -1230,6 +1283,7 @@ message ListHostsResponse {
   string next_page_token = 4;
 }
 
+// ListHostStorageRequest names the host whose volumes to list.
 message ListHostStorageRequest {
   // The host whose volumes to list.
   string host_id = 1;
@@ -1239,7 +1293,9 @@ message ListHostStorageRequest {
   string page_token = 3;
 }
 
+// ListHostStorageResponse is one page of volumes.
 message ListHostStorageResponse {
+  // The page's volumes, ordered by volume id.
   repeated HostVolume volumes = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -1271,23 +1327,30 @@ message HostVolume {
   google.protobuf.Timestamp claimed_at = 11;
 }
 
+// SetHostStateRequest names a host and the state to put it in.
 message SetHostStateRequest {
+  // The host's id.
   string id = 1;
   // HOST_STATE_DRAINING or HOST_STATE_ONLINE.
   HostState state = 2;
 }
 
+// SetHostStateResponse carries the host as stored.
 message SetHostStateResponse {
   // The host as stored after the change.
   Host host = 1;
 }
 
+// UpdateHostRequest carries the host and the fields to change.
 message UpdateHostRequest {
   // The host to change; host.id names it. Only overflow is read from it.
   Host host = 1;
+  // The fields to change; required, and overflow is the only accepted
+  // path.
   google.protobuf.FieldMask update_mask = 2;
 }
 
+// UpdateHostResponse carries the host as stored.
 message UpdateHostResponse {
   // The host as stored after the change.
   Host host = 1;
@@ -1304,16 +1367,22 @@ message DeleteUserRequest {
 // DeleteUserResponse is empty: the user is erased.
 message DeleteUserResponse {}
 
+// RetireHostRequest names the host to remove.
 message RetireHostRequest {
+  // The host's id.
   string id = 1;
 }
 
+// RetireHostResponse is empty: the host is gone.
 message RetireHostResponse {}
 
+// RevokeHostRequest names the host to revoke.
 message RevokeHostRequest {
+  // The host's id.
   string id = 1;
 }
 
+// RevokeHostResponse carries the host and what the revocation ended.
 message RevokeHostResponse {
   // The host as stored after the call.
   Host host = 1;
@@ -1325,6 +1394,7 @@ message RevokeHostResponse {
 
 // OfflineHostOutcome says what RetireHosts did or would do for one host.
 enum OfflineHostOutcome {
+  // The outcome is not set.
   OFFLINE_HOST_OUTCOME_UNSPECIFIED = 0;
   // Removed when apply was set, otherwise would be removed.
   OFFLINE_HOST_OUTCOME_RETIRE = 1;
@@ -1334,31 +1404,43 @@ enum OfflineHostOutcome {
   OFFLINE_HOST_OUTCOME_SKIPPED_OWNED = 3;
 }
 
+// RetireHostsRequest selects the offline hosts to retire.
 message RetireHostsRequest {
   // offline_longer_than is required and must be positive.
   google.protobuf.Duration offline_longer_than = 1;
+  // Also retire hosts a workspace owns.
   bool include_owned = 2;
+  // Retire them; without it the call changes nothing.
   bool apply = 3;
 }
 
+// RetireHostsResponse lists the hosts the call looked at, oldest
+// offline first.
 message RetireHostsResponse {
   // The host with the oldest last heartbeat first.
   repeated OfflineHostResult hosts = 1;
 }
 
+// OfflineHostResult is one host RetireHosts looked at.
 message OfflineHostResult {
+  // The host.
   Host host = 1;
+  // What the call did or would do for it.
   OfflineHostOutcome outcome = 2;
 }
 
 // Workspace owns a plan, an optional concurrency override, and one or more GitHub
 // App installations.
 message Workspace {
+  // The workspace's id.
   string id = 1;
+  // The workspace's name; not unique.
   string name = 2;
   // The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
   optional int32 concurrency_cap = 3;
+  // When the workspace was made.
   google.protobuf.Timestamp created_at = 4;
+  // The name of the workspace's plan.
   string plan = 5;
   // The cap the scheduler enforces; 0 means unlimited.
   int32 effective_concurrency = 6;
@@ -1376,6 +1458,7 @@ message Workspace {
   int32 effective_max_jobs_per_hour = 11;
   // The starter credit granted when the workspace was created; 0 when none.
   int64 starter_credit_cents = 12;
+  // When it was granted; unset when none was.
   google.protobuf.Timestamp starter_credit_granted_at = 13;
   // Shared overflow hosts may take the workspace's jobs; its own overflow hosts
   // always may.
@@ -1458,6 +1541,7 @@ message Workspace {
 message HostingCertificate {
   // The wildcard name, *.<workspace id>.svc.<domain>.
   string name = 1;
+  // The certificate's state.
   HostingCertificateState state = 2;
   // When the certificate in use expires; unset before the first one.
   google.protobuf.Timestamp not_after = 3;
@@ -1472,6 +1556,7 @@ message HostingCertificate {
 }
 
 enum HostingCertificateState {
+  // No certificate was ordered.
   HOSTING_CERTIFICATE_STATE_UNSPECIFIED = 0;
   // The first certificate is being ordered; until it is, provided names
   // refuse connections.
@@ -1479,6 +1564,7 @@ enum HostingCertificateState {
   // The authority refused an order for its rate limits; Toshi tries again
   // at retry_at.
   HOSTING_CERTIFICATE_STATE_RATE_LIMITED = 2;
+  // A certificate serves the names and is renewed before it expires.
   HOSTING_CERTIFICATE_STATE_VALID = 3;
   // A renewal failed; the current certificate serves until not_after.
   HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING = 4;
@@ -1500,6 +1586,7 @@ message Reservation {
   string source = 4;
 }
 
+// CreateWorkspaceRequest names the workspace to make.
 message CreateWorkspaceRequest {
   // The workspace's name, as ListWorkspaces shows it; surrounding spaces are
   // dropped.
@@ -1509,14 +1596,18 @@ message CreateWorkspaceRequest {
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
   // key and request return the first answer; a different request with the
   // same key is refused. Keys are kept for 30 days by default.
-  // The key belongs to the calling operator token.
+  // The key belongs to the calling operator token; local-admin sessions share
+  // one scope.
   string request_key = 3;
 }
 
+// CreateWorkspaceResponse carries the workspace made.
 message CreateWorkspaceResponse {
+  // The workspace as stored.
   Workspace workspace = 1;
 }
 
+// ListWorkspacesRequest pages through the workspaces.
 message ListWorkspacesRequest {
   // The most workspaces in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -1524,12 +1615,16 @@ message ListWorkspacesRequest {
   string page_token = 2;
 }
 
+// ListWorkspacesResponse is one page of workspaces.
 message ListWorkspacesResponse {
+  // The page's workspaces, ordered by id.
   repeated Workspace workspaces = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// UpdateWorkspaceRequest carries the workspace and the fields to
+// change.
 message UpdateWorkspaceRequest {
   // The workspace and the values to set; id identifies the workspace.
   Workspace workspace = 1;
@@ -1537,27 +1632,36 @@ message UpdateWorkspaceRequest {
   google.protobuf.FieldMask update_mask = 2;
 }
 
+// UpdateWorkspaceResponse carries the workspace as stored.
 message UpdateWorkspaceResponse {
+  // The workspace as stored.
   Workspace workspace = 1;
 }
 
 // Seat is one assignment of a desktop seat to a person in a workspace, as
 // the Workspace API's Seat with its workspace.
 message Seat {
+  // The seat's id.
   string id = 1;
+  // The workspace the seat is in.
   string workspace = 2;
   // The Toshi user id of the person it is assigned to.
   string user_id = 3;
+  // When it was assigned.
   google.protobuf.Timestamp assigned_at = 4;
+  // Who assigned it.
   Subject assigned_by = 5;
   // Unset while the seat is live.
   google.protobuf.Timestamp removed_at = 6;
+  // Who removed it; unset while the seat is live.
   Subject removed_by = 7;
   // The seat this one replaces after a ReassignSeat, and its reason.
   string replaces = 8;
+  // Why it replaced the seat; empty when it replaces none.
   string replace_reason = 9;
 }
 
+// ReassignSeatRequest names the seat and the person who takes it.
 message ReassignSeatRequest {
   // The live seat to move.
   string seat_id = 1;
@@ -1567,6 +1671,7 @@ message ReassignSeatRequest {
   string reason = 3;
 }
 
+// ReassignSeatResponse carries the removed seat and the new one.
 message ReassignSeatResponse {
   // The removed seat.
   Seat replaced = 1;
@@ -1574,6 +1679,7 @@ message ReassignSeatResponse {
   Seat seat = 2;
 }
 
+// ListSeatsRequest selects the month's seats.
 message ListSeatsRequest {
   // The UTC month as YYYY-MM. Empty: the current month.
   string month = 1;
@@ -1587,6 +1693,7 @@ message ListSeatsRequest {
   string page_token = 5;
 }
 
+// ListSeatsResponse is the month's seats.
 message ListSeatsResponse {
   // The seats on this page, by workspace and then oldest assigned first.
   repeated SeatMonth seats = 1;
@@ -1603,6 +1710,7 @@ message ListSeatsResponse {
 
 // SeatMonth is one seat in a month's report.
 message SeatMonth {
+  // The seat.
   Seat seat = 1;
   // The name of the person it is assigned to.
   string name = 2;
@@ -1612,39 +1720,62 @@ message SeatMonth {
   bool billed = 3;
 }
 
+// SuspendWorkspaceRequest names the workspace to suspend.
 message SuspendWorkspaceRequest {
+  // The workspace's id.
   string id = 1;
+  // Why it is suspended; recorded in the audit event.
   string reason = 2;
 }
 
+// SuspendWorkspaceResponse carries the workspace as stored.
 message SuspendWorkspaceResponse {
+  // The workspace as stored.
   Workspace workspace = 1;
 }
 
+// UnsuspendWorkspaceRequest names the workspace to resume.
 message UnsuspendWorkspaceRequest {
+  // The workspace's id.
   string id = 1;
+  // Why it is resumed; recorded in the audit event.
   string reason = 2;
 }
 
+// UnsuspendWorkspaceResponse carries the workspace as stored.
 message UnsuspendWorkspaceResponse {
+  // The workspace as stored.
   Workspace workspace = 1;
 }
 
+// DeleteWorkspaceRequest names the workspace to delete.
 message DeleteWorkspaceRequest {
+  // The workspace's id.
   string id = 1;
+  // Why it is deleted; recorded in the audit event.
   string reason = 2;
+  // Seconds until the purge; 0 means 30 days.
   int64 grace_seconds = 3;
+  // Purge as soon as the workspace has no running job.
   bool now = 4;
 }
 
+// DeleteWorkspaceResponse carries the workspace as stored.
 message DeleteWorkspaceResponse {
+  // The workspace as stored.
   Workspace workspace = 1;
 }
 
+// Plan is one configured plan.
 message Plan {
+  // The plan's name.
   string name = 1;
+  // Jobs of one workspace that may be in flight at once; 0 means no
+  // limit.
   int32 concurrency = 2;
+  // How long one job may run before Toshi stops it, in minutes.
   int32 max_job_minutes = 3;
+  // Whether the configuration's default_plan names it.
   bool is_default = 4;
   // Whether a workspace can buy this plan through Checkout: self-serve billing
   // is on and exactly one lookup key in billing.plan_map maps to the plan.
@@ -1704,6 +1835,7 @@ message Plan {
   int32 actions_cache_mib = 22;
 }
 
+// ListOperatorAlertsRequest pages through the operator alerts.
 message ListOperatorAlertsRequest {
   // The most alerts in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -1711,12 +1843,15 @@ message ListOperatorAlertsRequest {
   string page_token = 2;
 }
 
+// ListOperatorAlertsResponse is one page of alerts.
 message ListOperatorAlertsResponse {
+  // The page's alerts, one per kind, ordered by kind.
   repeated OperatorAlert alerts = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// ListHostAlertsRequest selects the workspaces' alerts to list.
 message ListHostAlertsRequest {
   // Optional: only this workspace.
   string workspace = 1;
@@ -1726,7 +1861,9 @@ message ListHostAlertsRequest {
   string page_token = 3;
 }
 
+// ListHostAlertsResponse is one page of alerts.
 message ListHostAlertsResponse {
+  // The page's alerts, ordered by workspace, then kind.
   repeated OperatorAlert alerts = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -1738,11 +1875,14 @@ message OperatorAlert {
   string kind = 1;
   // raised_at is when it was raised; since is the first event it counts.
   google.protobuf.Timestamp raised_at = 2;
+  // The first event it counts.
   google.protobuf.Timestamp since = 3;
   // count is the events counted from since, and reasons the same events by
   // reason; top_reason has the most.
   int64 count = 4;
+  // The events counted, by reason.
   map<string, int64> reasons = 5;
+  // The reason the most events have.
   string top_reason = 6;
   // message says the same in one line.
   string message = 7;
@@ -1750,6 +1890,7 @@ message OperatorAlert {
   string workspace = 8;
 }
 
+// ListPlansRequest pages through the plans.
 message ListPlansRequest {
   // The most plans in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -1757,17 +1898,24 @@ message ListPlansRequest {
   string page_token = 2;
 }
 
+// ListPlansResponse is one page of plans.
 message ListPlansResponse {
+  // The page's plans, sorted by name.
   repeated Plan plans = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// GetVersionRequest is empty.
 message GetVersionRequest {}
 
+// GetVersionResponse is the build the control plane runs.
 message GetVersionResponse {
+  // The release version, such as v1.2.3, or "dev" without one.
   string version = 1;
+  // The commit's hash, or "unknown" when the build recorded none.
   string commit = 2;
+  // When the commit was made, or "unknown" when the build recorded none.
   string date = 3;
   // The oldest agent release this control plane process admits at Register
   // (agent_auth.minimum_agent_version); empty when unset, which
@@ -1777,6 +1925,7 @@ message GetVersionResponse {
 
 // CheckGroup names a group of the control plane's checks.
 enum CheckGroup {
+  // No group is set.
   CHECK_GROUP_UNSPECIFIED = 0;
   // The newest backup, the last backup attempt, the backup copy, the restore
   // drill, the store's password files, and the history purge and export.
@@ -1797,6 +1946,7 @@ enum CheckGroup {
 // CheckState is the outcome of a check, or of a group: a group's state is
 // its worst row's, FAILURE above WARNING above SUCCESS.
 enum CheckState {
+  // No state is set.
   CHECK_STATE_UNSPECIFIED = 0;
   // The check passed, or checks a setting that is off and not needed.
   CHECK_STATE_SUCCESS = 1;
@@ -1810,20 +1960,29 @@ enum CheckState {
 // Check is one row of a group: what was checked, its state, what was found
 // in words, and how long the check took.
 message Check {
+  // What was checked.
   string name = 1;
+  // How it came out.
   CheckState state = 2;
+  // What was found, in words.
   string detail = 3;
+  // How long it took.
   google.protobuf.Duration duration = 4;
 }
 
+// RunChecksRequest names the group to run.
 message RunChecksRequest {
+  // The group to run; required.
   CheckGroup group = 1;
 }
 
+// RunChecksResponse carries the group's rows and its state.
 message RunChecksResponse {
+  // The group that ran.
   CheckGroup group = 1;
   // The worst state among checks; SUCCESS when the group has no rows.
   CheckState state = 2;
+  // One row per check, in the order they ran.
   repeated Check checks = 3;
 }
 
@@ -1838,12 +1997,14 @@ message GetUsageRequest {
   string workspace = 3;
 }
 
+// GetUsageResponse is the usage counted.
 message GetUsageResponse {
   // Ordered by workspace, then day, then conclusion, then outcome, then kind. A
   // window with neither matching jobs nor reserved hours has no rows.
   repeated UsageRow rows = 1;
   // The window used, with the defaults filled in.
   google.protobuf.Timestamp from = 2;
+  // The window's end used, exclusive.
   google.protobuf.Timestamp to = 3;
   // Filler jobs that finished in the window, by workspace. They are
   // not billed and not in rows.
@@ -1857,7 +2018,9 @@ message GetUsageResponse {
 // started on shared room. Not billed; a plan's filler_minutes_per_day bounds
 // them per UTC day.
 message FillerUsage {
+  // The workspace.
   string workspace = 1;
+  // How many filler jobs finished.
   int64 jobs = 2;
   // Each job's duration rounded up to whole minutes, on any host.
   int64 minutes = 3;
@@ -1866,6 +2029,7 @@ message FillerUsage {
 // UsageRow counts the jobs of one workspace, UTC day, conclusion, outcome and
 // kind.
 message UsageRow {
+  // The workspace.
   string workspace = 1;
   // The UTC date of the job's queued_at, as YYYY-MM-DD.
   string day = 2;
@@ -1901,11 +2065,13 @@ message UsageRow {
   // The exact run time behind minutes and own_host_minutes, in seconds, not
   // rounded.
   double seconds = 12;
+  // The exact own-host run time behind own_host_minutes, in seconds.
   double own_host_seconds = 13;
   // The exact time service runs on shared hosts were awake, from first
   // ready to release, and the idle part of it before they were put to
   // sleep, in seconds. Open-source runs are left out.
   double awake_seconds = 14;
+  // The idle part of awake_seconds, in seconds.
   double idle_seconds = 15;
 }
 
@@ -1920,18 +2086,22 @@ message GetQueueTimesRequest {
   string workspace = 3;
 }
 
+// GetQueueTimesResponse summarises the jobs' queue times.
 message GetQueueTimesResponse {
   // Jobs in the window that reached running (have a started_at).
   int64 jobs = 1;
   // Nearest-rank percentiles and maximum of started_at - queued_at, in whole
   // milliseconds. All 0 when jobs is 0.
   int64 p50_ms = 2;
+  // The 90th percentile wait, in whole milliseconds.
   int64 p90_ms = 3;
+  // The longest wait, in whole milliseconds.
   int64 max_ms = 4;
   // Share of those jobs assigned to a warm instance, from 0 to 1.
   double warm_share = 5;
   // The window used, with the defaults filled in.
   google.protobuf.Timestamp from = 6;
+  // The window's end used, exclusive.
   google.protobuf.Timestamp to = 7;
   // Time held, from first held to assigned, of the jobs the scheduler held, by
   // the latest reason it held each one. A job never held is in none of them.
@@ -1939,14 +2109,18 @@ message GetQueueTimesResponse {
   repeated HoldTimes held = 8;
 }
 
+// HoldTimes is the held time of the jobs held for one reason.
 message HoldTimes {
   // One of the job hold reasons (see Job.hold_reason), as the
   // toshi_jobs_held metric labels them.
   string reason = 1;
   // The jobs held for this reason whose hold ended (they were assigned and started), and their held time in milliseconds (nearest-rank).
   int64 jobs = 2;
+  // The median held time, in milliseconds.
   int64 p50_ms = 3;
+  // The 90th percentile held time, in milliseconds.
   int64 p90_ms = 4;
+  // The longest held time, in milliseconds.
   int64 max_ms = 5;
   // The jobs held for this reason now, whenever they were queued. 0 when
   // the window ends before now.
@@ -1967,6 +2141,7 @@ message GetWorkflowUsageRequest {
   string workspace = 3;
 }
 
+// GetWorkflowUsageResponse is the usage by workflow.
 message GetWorkflowUsageResponse {
   // Ordered by minutes, then own_host_minutes, then jobs, each descending,
   // then by workspace, repository and workflow, byte by byte. A window with no
@@ -1974,6 +2149,7 @@ message GetWorkflowUsageResponse {
   repeated WorkflowUsageRow rows = 1;
   // The window used, with the defaults filled in.
   google.protobuf.Timestamp from = 2;
+  // The window's end used, exclusive.
   google.protobuf.Timestamp to = 3;
 }
 
@@ -1981,6 +2157,7 @@ message GetWorkflowUsageResponse {
 // Its jobs are the ones GetUsage counts, and their minutes are counted as
 // in UsageRow.
 message WorkflowUsageRow {
+  // The workspace.
   string workspace = 1;
   // The repository, as owner/name.
   string repository = 2;
@@ -2001,11 +2178,15 @@ message WorkflowUsageRow {
   // the stop request, or to finished_at when there was none, each rounded
   // up to a whole second. Both 0 when timed_jobs is 0.
   int64 p50_seconds = 9;
+  // The 95th percentile, in whole seconds.
   int64 p95_seconds = 10;
 }
 
+// GetCapacityRequest is empty.
 message GetCapacityRequest {}
 
+// GetCapacityResponse is the reserved-capacity view of the last
+// scheduler pass.
 message GetCapacityResponse {
   // One row per runner size that has a pool, free slots or a reservation,
   // ordered by size. Slots free count shared regular hosts, reserved capacity
@@ -2017,7 +2198,10 @@ message GetCapacityResponse {
   google.protobuf.Timestamp observed_at = 3;
 }
 
+// CapacitySize is one runner size's slots across the shared regular
+// hosts.
 message CapacitySize {
+  // The runner size.
   string size = 1;
   // Slots shared regular hosts could still start jobs of this size.
   int32 free_slots = 2;
@@ -2034,23 +2218,31 @@ message CapacitySize {
   int32 warm = 7;
 }
 
+// CapacityReservation is one workspace's reservation of one runner
+// size.
 message CapacityReservation {
+  // The workspace.
   string workspace = 1;
+  // The runner size.
   string size = 2;
   // The reservation.
   int32 slots = 3;
+  // Warm of the reservation's slots.
   int32 warm = 4;
   // The workspace's jobs of the size on shared regular hosts.
   int32 in_use = 5;
   // Slots kept free at the end of the pass, warm_earmarked of them on warm
   // VMs.
   int32 earmarked = 6;
+  // The earmarked slots kept on warm VMs.
   int32 warm_earmarked = 7;
   // Slots the fleet had no room for.
   int32 short = 8;
 }
 
+// GetWorkspaceStatementRequest names the workspace and month.
 message GetWorkspaceStatementRequest {
+  // The workspace's id.
   string id = 1;
   // The UTC month as YYYY-MM. Empty: the current month.
   string month = 2;
@@ -2059,17 +2251,24 @@ message GetWorkspaceStatementRequest {
   bool csv = 3;
 }
 
+// GetWorkspaceStatementResponse carries the month's statement.
 message GetWorkspaceStatementResponse {
+  // The statement.
   WorkspaceStatement statement = 1;
   // The statement as CSV with a header row, when the request asked for it.
   string csv = 2;
 }
 
+// WorkspaceStatement is one workspace's month: its usage, charges and
+// fees.
 message WorkspaceStatement {
+  // The workspace's id.
   string workspace = 1;
   // The month as YYYY-MM, and its bounds: from inclusive, to exclusive.
   string month = 2;
+  // The month's first instant, inclusive.
   google.protobuf.Timestamp from = 3;
+  // The next month's first instant, exclusive.
   google.protobuf.Timestamp to = 4;
   // The plans the month's metered minutes were recorded at, comma-separated;
   // the workspace's plan today when no minute has a recorded price.
@@ -2095,6 +2294,7 @@ message WorkspaceStatement {
   // The starter credit put on the customer's balance in the month; 0 and
   // unset when it was not applied in it.
   int64 starter_credit_applied_cents = 12;
+  // When the credit was applied; unset when it was not.
   google.protobuf.Timestamp starter_credit_applied_at = 13;
   // Held time, from first held to assigned, of the jobs queued in the month
   // that reached running, by the latest reason each was held.
@@ -2162,10 +2362,13 @@ message DesktopSeats {
 
 // StatementSeat is one desktop seat on a statement.
 message StatementSeat {
+  // The seat's id.
   string seat_id = 1;
   // The Toshi user id of the person it was assigned to, and their name.
   string user_id = 2;
+  // The person's name.
   string name = 3;
+  // When it was assigned.
   google.protobuf.Timestamp assigned_at = 4;
   // Unset while the seat is live.
   google.protobuf.Timestamp removed_at = 5;
@@ -2196,7 +2399,9 @@ message OwnHostFee {
 // VM-second: each run's time from first ready to release, summed and rounded
 // up once to whole seconds.
 message Awake {
+  // The runner size.
   string size = 1;
+  // How many runs the month had.
   int64 runs = 2;
   // The exact awake time, in seconds, from the workspace's billing start.
   double seconds = 3;
@@ -2233,6 +2438,7 @@ message Storage {
 // StoredKind is one kind of stored data in a month: images, volume_versions,
 // artifacts, recordings, held_disks or service_snapshots.
 message StoredKind {
+  // The kind of stored data.
   string kind = 1;
   // The bytes the last sampled hour held.
   int64 bytes = 2;
@@ -2242,9 +2448,11 @@ message StoredKind {
 
 // StorageUsageRow is one kind of stored data on one UTC day.
 message StorageUsageRow {
+  // The workspace.
   string workspace = 1;
   // The day's first hour, UTC, as YYYY-MM-DD.
   string day = 2;
+  // The kind of stored data; see StoredKind.
   string kind = 3;
   // The kind's GB summed over the day's sampled hours.
   double gb_hours = 4;
@@ -2252,9 +2460,13 @@ message StorageUsageRow {
   int64 bytes = 5;
 }
 
+// StatementUsage is a statement's jobs of one runner size and OS.
 message StatementUsage {
+  // The runner size.
   string size = 1;
+  // The OS pool: linux, windows or macos.
   string os = 2;
+  // How many jobs finished.
   int64 jobs = 3;
   // Billable minutes on shared hosts, rounded up per job.
   int64 minutes = 4;
@@ -2274,9 +2486,12 @@ message StatementUsage {
   string outcome = 9;
   // The exact run time behind minutes and own_host_minutes, in seconds.
   double seconds = 10;
+  // The exact own-host run time behind own_host_minutes, in seconds.
   double own_host_seconds = 11;
 }
 
+// StatementCharge is one size's metered minutes, or seconds, and their
+// estimated cost.
 message StatementCharge {
   // Empty for usage recorded without a size, priced at the plan's highest
   // per-minute price.
@@ -2341,6 +2556,8 @@ message WorkspaceBilling {
   // Starter credit granted, and an estimate of what is left: the credit
   // less the metered spend since billing started.
   int64 starter_credit_cents = 18;
+  // An estimate of the credit left: the credit less the metered spend
+  // since billing started.
   int64 starter_credit_left_cents = 19;
   // When the credit reached the billing customer; unset before.
   google.protobuf.Timestamp starter_credit_applied_at = 20;
@@ -2363,6 +2580,7 @@ message WorkspaceBilling {
   message HeldJobs {
     // One of the job hold reasons (see Job.hold_reason).
     string reason = 1;
+  // How many jobs are held for the reason.
     int64 jobs = 2;
     // Since when the longest-held of them has been held.
     google.protobuf.Timestamp since = 3;
@@ -2379,29 +2597,43 @@ message BillingTotals {
   string month = 1;
   // The runner size; empty for events recorded before sizes were.
   string size = 2;
+  // Events the provider accepted.
   int64 sent_events = 3;
+  // Minutes those events count.
   int64 sent_minutes = 4;
+  // Events not sent yet.
   int64 pending_events = 5;
+  // Minutes those events will count.
   int64 pending_minutes = 6;
+  // Events the provider will not be sent again.
   int64 failed_events = 7;
+  // Minutes those events count.
   int64 failed_minutes = 8;
 }
 
 // BillingEventFailure is a meter event the provider will not be sent again.
 message BillingEventFailure {
+  // The job the event counts.
   string job_id = 1;
+  // The runner size; empty when the event has none.
   string size = 2;
+  // The meter event's name.
   string event_name = 3;
+  // The minutes it counts.
   int64 minutes = 4;
   // When the job finished.
   google.protobuf.Timestamp occurred_at = 5;
+  // When it last failed.
   google.protobuf.Timestamp failed_at = 6;
+  // How many times it was sent.
   int32 attempts = 7;
+  // Why it failed.
   string last_error = 8;
 }
 
 // TokenKind says what a token grants.
 enum TokenKind {
+  // No kind is set.
   TOKEN_KIND_UNSPECIFIED = 0;
   // The operator token: the operator API and /metrics.
   TOKEN_KIND_OPERATOR = 1;
@@ -2419,6 +2651,7 @@ enum TokenKind {
 message Token {
   // Token id, such as "tok-1a2b3c4d5e6f".
   string id = 1;
+  // What the token grants.
   TokenKind kind = 2;
   // "file" for a token read from the control plane's token file, "rotate"
   // for one made by RotateToken, "workspace" for one made by the Workspace
@@ -2427,6 +2660,7 @@ message Token {
   // made, "hosted" for a product token the control plane minted for an
   // adapter it runs.
   string source = 3;
+  // When the token was made.
   google.protobuf.Timestamp created_at = 4;
   // When the token stops working: the expiry it was given, or 30 days
   // after creator_left_at when that is sooner (expiry_reason). Unset when
@@ -2486,6 +2720,7 @@ enum TokenExpiryReason {
 
 // SubjectKind is what a Subject is; its numbers are the Workspace API's.
 enum SubjectKind {
+  // No kind is set.
   SUBJECT_KIND_UNSPECIFIED = 0;
   // A person, by Toshi user id.
   SUBJECT_KIND_PERSON = 1;
@@ -2497,6 +2732,7 @@ enum SubjectKind {
 
 // Subject is who made something.
 message Subject {
+  // What made it.
   SubjectKind kind = 1;
   // The Toshi user id of a person, such as "usr-0f1e2d3c4b5a69788796a5b4",
   // opaque; the token id of a token, such as "tok-1a2b3c4d5e6f"; empty for
@@ -2530,6 +2766,7 @@ message ListTokensRequest {
 
 // ListTokensResponse carries the tokens, oldest first.
 message ListTokensResponse {
+  // The page's tokens, oldest first.
   repeated Token tokens = 1;
   // Empty on the last page.
   string next_page_token = 2;
@@ -2538,6 +2775,7 @@ message ListTokensResponse {
 // RotateTokenRequest names the kind to rotate and how long the old tokens
 // keep working.
 message RotateTokenRequest {
+  // The kind to rotate.
   TokenKind kind = 1;
   // Seconds the kind's other active tokens keep working, at most 30 days.
   // Unset means 24 hours; 0 ends them at once.
@@ -2551,6 +2789,7 @@ message RotateTokenRequest {
 
 // RotateTokenResponse carries the new token and its value.
 message RotateTokenResponse {
+  // The token as stored.
   Token token = 1;
   // The new token. It is returned only here.
   string value = 2;
@@ -2558,11 +2797,13 @@ message RotateTokenResponse {
 
 // RevokeTokenRequest names the token to revoke.
 message RevokeTokenRequest {
+  // The token's id.
   string id = 1;
 }
 
 // RevokeTokenResponse carries the revoked token.
 message RevokeTokenResponse {
+  // The token as stored after the revocation.
   Token token = 1;
   // How many hosts were signed out and must register again.
   int32 hosts_signed_out = 2;
@@ -2570,6 +2811,7 @@ message RevokeTokenResponse {
 
 // RollTokenRequest names the token to roll.
 message RollTokenRequest {
+  // The token's id.
   string id = 1;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
   // key and request return the first answer; a different request with the
@@ -2580,12 +2822,16 @@ message RollTokenRequest {
 
 // RollTokenResponse carries the token and its new value.
 message RollTokenResponse {
+  // The token as stored.
   Token token = 1;
   // The new value. It is returned only here.
   string value = 2;
 }
 
+// CreateProductTokenRequest names the product and when its token
+// expires.
 message CreateProductTokenRequest {
+  // The product the token is for.
   string product = 1;
   // Unset means 90 days from now.
   google.protobuf.Timestamp expires_at = 2;
@@ -2596,8 +2842,11 @@ message CreateProductTokenRequest {
   string request_key = 3;
 }
 
+// CreateProductTokenResponse carries the token and its value.
 message CreateProductTokenResponse {
+  // The token as stored.
   Token token = 1; // The new token. It is returned only here.
+  // The new token's value; returned only here.
   string value = 2;
 }
 
@@ -2605,6 +2854,7 @@ message CreateProductTokenResponse {
 message Client {
   // id is the client_id it presents.
   string id = 1;
+  // The client's name.
   string name = 2;
   // redirect_uris are where the authorization endpoint may send the
   // browser back; a request names one exactly.
@@ -2619,12 +2869,17 @@ message Client {
   google.protobuf.Timestamp created_at = 6;
 }
 
+// RegisterClientRequest is a client to register.
 message RegisterClientRequest {
   // id is the client_id the client will present: letters, digits, '-',
   // '_' and '.', at most 64.
   string id = 1;
+  // The client's name.
   string name = 2;
+  // Where the authorization endpoint may send the browser back; at
+  // least one, each https or a loopback address.
   repeated string redirect_uris = 3;
+  // Whether it authenticates with a secret at the token endpoint.
   bool confidential = 4;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
   // key and request return the first answer; a different request with the
@@ -2633,13 +2888,17 @@ message RegisterClientRequest {
   string request_key = 5;
 }
 
+// RegisterClientResponse carries the client and, for a confidential
+// one, its secret.
 message RegisterClientResponse {
+  // The client as stored.
   Client client = 1;
   // A confidential client's secret, returned only here; empty for a
   // public client.
   string secret = 2;
 }
 
+// ListClientsRequest pages through the clients.
 message ListClientsRequest {
   // The most clients in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -2647,22 +2906,31 @@ message ListClientsRequest {
   string page_token = 2;
 }
 
+// ListClientsResponse is one page of clients.
 message ListClientsResponse {
+  // The page's clients: the config file's, then the registered ones by
+  // id.
   repeated Client clients = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// DeleteClientRequest names the client to delete.
 message DeleteClientRequest {
+  // The client's id.
   string id = 1;
 }
 
+// DeleteClientResponse is empty: the client is gone.
 message DeleteClientResponse {}
 
+// CheckCloudHostRequest names the cloud host to check.
 message CheckCloudHostRequest {
+  // The host's id.
   string host_id = 1;
 }
 
+// CheckCloudHostResponse carries one row per check.
 message CheckCloudHostResponse {
   // One row per check, in the order they ran.
   repeated CloudHostCheck checks = 1;
@@ -2672,6 +2940,7 @@ message CheckCloudHostResponse {
 message CloudHostCheck {
   // What was checked, for example "assume role" or "ec2:RunInstances".
   string name = 1;
+  // How the check came out.
   CloudHostCheckStatus status = 2;
   // What was found, or what to fix. It never holds credentials.
   string detail = 3;
@@ -2679,7 +2948,9 @@ message CloudHostCheck {
 
 // CloudHostCheckStatus is how a cloud host check came out.
 enum CloudHostCheckStatus {
+  // The check did not report a status.
   CLOUD_HOST_CHECK_STATUS_UNSPECIFIED = 0;
+  // The check passed.
   CLOUD_HOST_CHECK_STATUS_OK = 1;
   // Works, but something deserves a look.
   CLOUD_HOST_CHECK_STATUS_WARN = 2;
@@ -2725,10 +2996,13 @@ message Filler {
   // The longest one run may take. Default 2 hours; a workspace's own filler
   // gets 1 hour when unset and may take at most 1 hour.
   google.protobuf.Duration max_duration = 12;
+  // Whether the filler runs.
   bool enabled = 13;
   // Where the filler comes from: "config", "operator" or "workspace".
   string source = 14;
+  // When it was added.
   google.protobuf.Timestamp created_at = 15;
+  // When it was last changed.
   google.protobuf.Timestamp updated_at = 16;
   // The filler's newest run. Not set before its first.
   FillerRun last_run = 17;
@@ -2753,8 +3027,11 @@ message Filler {
 
 // FillerRun is one run of a filler.
 message FillerRun {
+  // The run's id.
   string id = 1;
+  // The filler's name.
   string filler = 2;
+  // The filler's kind: command or dispatch.
   string kind = 3;
   // dispatch: the filler's workspace.
   string workspace = 4;
@@ -2769,18 +3046,25 @@ message FillerRun {
   int64 run_id = 8;
   // command: the command's exit code, once completed.
   int32 exit_code = 9;
+  // Why the run failed; empty otherwise.
   string error = 10;
+  // When the run was made.
   google.protobuf.Timestamp created_at = 11;
+  // When it started; unset before.
   google.protobuf.Timestamp started_at = 12;
+  // When it ended; unset before.
   google.protobuf.Timestamp finished_at = 13;
 }
 
 // FillerHostMinutes is one host's filler minutes.
 message FillerHostMinutes {
+  // The host's id.
   string host_id = 1;
+  // Filler minutes it ran in the last 24 hours.
   double minutes = 2;
 }
 
+// ListFillersRequest pages through the fillers.
 message ListFillersRequest {
   // The most fillers in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -2788,7 +3072,9 @@ message ListFillersRequest {
   string page_token = 2;
 }
 
+// ListFillersResponse is one page of fillers.
 message ListFillersResponse {
+  // The page's fillers, ordered by name, then workspace.
   repeated Filler fillers = 1;
   // Minutes of filler runs per host that finished in the last 24 hours.
   // Every page holds all of them.
@@ -2797,35 +3083,47 @@ message ListFillersResponse {
   string next_page_token = 3;
 }
 
+// PutFillerRequest carries the filler to add or replace.
 message PutFillerRequest {
   // source, created_at, updated_at, last_run, pause_reason, paused_since and
   // pause_as_of are ignored.
   Filler filler = 1;
 }
 
+// PutFillerResponse carries the filler as stored.
 message PutFillerResponse {
+  // The filler as stored.
   Filler filler = 1;
 }
 
+// DeleteFillerRequest names the filler to remove.
 message DeleteFillerRequest {
+  // The filler's name.
   string name = 1;
   // The workspace of a dispatch filler. Empty: a command filler.
   string workspace = 2;
 }
 
+// DeleteFillerResponse is empty: the filler is gone.
 message DeleteFillerResponse {}
 
+// UpdateFillerRequest carries the filler and the fields to change.
 message UpdateFillerRequest {
   // The filler to change; its name, and its workspace for a dispatch
   // filler, name it. Only enabled is read from it.
   Filler filler = 1;
+  // The fields to change; required, and enabled is the only accepted
+  // path.
   google.protobuf.FieldMask update_mask = 2;
 }
 
+// UpdateFillerResponse carries the filler as stored.
 message UpdateFillerResponse {
+  // The filler as stored.
   Filler filler = 1;
 }
 
+// ListFillerRunsRequest selects the runs to list.
 message ListFillerRunsRequest {
   // Only this filler's runs. Empty: every filler's.
   string filler = 1;
@@ -2837,7 +3135,9 @@ message ListFillerRunsRequest {
   string page_token = 4;
 }
 
+// ListFillerRunsResponse is one page of runs.
 message ListFillerRunsResponse {
+  // The page's runs, newest first.
   repeated FillerRun runs = 1;
   // The paused dispatch fillers among those the request covers; see
   // Filler.pause_reason. Every page holds all of them.
@@ -2848,6 +3148,7 @@ message ListFillerRunsResponse {
 
 // FillerPause is one paused dispatch filler; see Filler.pause_reason.
 message FillerPause {
+  // The filler's name.
   string filler = 1;
   // The filler's workspace.
   string workspace = 2;
@@ -2861,19 +3162,28 @@ message FillerPause {
   google.protobuf.Timestamp as_of = 5;
 }
 
+// GetSecretDeliveryRequest is empty.
 message GetSecretDeliveryRequest {}
 
+// GetSecretDeliveryResponse carries the switch.
 message GetSecretDeliveryResponse {
+  // The switch.
   SecretDelivery delivery = 1;
 }
 
+// UpdateSecretDeliveryRequest carries the switch and the fields to
+// change.
 message UpdateSecretDeliveryRequest {
   // The switch to change; only enabled is read from it.
   SecretDelivery secret_delivery = 1;
+  // The fields to change; required, and enabled is the only accepted
+  // path.
   google.protobuf.FieldMask update_mask = 2;
 }
 
+// UpdateSecretDeliveryResponse carries the switch as stored.
 message UpdateSecretDeliveryResponse {
+  // The switch as stored.
   SecretDelivery delivery = 1;
   // False when the switch already had the value asked for.
   bool changed = 2;
@@ -2884,11 +3194,14 @@ message UpdateSecretDeliveryResponse {
 // a ready host, whose agent asks for the job's secrets before its runner
 // starts. Grants to workloads work either way.
 message SecretDelivery {
+  // Whether secrets are delivered to CI jobs.
   bool enabled = 1;
   // Who last changed the switch, as an audit actor kind and id, and when;
   // empty and unset when it was never changed.
   string changed_by_kind = 2;
+  // The id of the actor that changed it, without its kind.
   string changed_by_id = 3;
+  // When it was last changed.
   google.protobuf.Timestamp changed_at = 4;
   // The hosts not revoked whose agent's last registration is not ready for
   // delivery, by id and sorted: the agent did not send the job_start_hook
@@ -2897,6 +3210,7 @@ message SecretDelivery {
   repeated string hosts_not_ready = 5;
 }
 
+// ListUtilisationRequest selects the utilisation roll-ups.
 message ListUtilisationRequest {
   // The range's start, moved back to the start of its bucket; required.
   google.protobuf.Timestamp from = 1;
@@ -2917,6 +3231,7 @@ message ListUtilisationRequest {
   string page_token = 6;
 }
 
+// ListUtilisationResponse is one page of utilisation roll-ups.
 message ListUtilisationResponse {
   // One row per series and bucket that has a stored or counted hour,
   // ordered by bucket start, then OS, then host id.
@@ -2949,6 +3264,7 @@ message WarmMemoryRow {
   bool partial = 5;
   // The VMs booted to warm, and those restored from a snapshot.
   WarmPathSummary booted = 6;
+  // The VMs restored from a snapshot.
   WarmPathSummary restored = 7;
 }
 
@@ -2966,6 +3282,7 @@ message WarmPathSummary {
   int64 max_mib = 4;
 }
 
+// UtilisationRow is one series and bucket of utilisation.
 message UtilisationRow {
   // The bucket's start.
   google.protobuf.Timestamp start = 1;
@@ -2981,8 +3298,11 @@ message UtilisationRow {
   // VM-seconds in the bucket: running a job, warm or warming, neither,
   // and the most VMs the hosts could run.
   int64 busy_vm_seconds = 6;
+  // VM-seconds warm or warming for a job.
   int64 ready_vm_seconds = 7;
+  // VM-seconds neither running a job nor warm.
   int64 idle_vm_seconds = 8;
+  // VM-seconds the hosts could run.
   int64 capacity_vm_seconds = 9;
   // busy_vm_seconds over capacity_vm_seconds; 0 when there is no
   // capacity.
@@ -2990,18 +3310,22 @@ message UtilisationRow {
   // Jobs that started running, dispatch fillers left out, and those of
   // them assigned as overflow jobs.
   int64 jobs_started = 11;
+  // The jobs of them assigned as overflow jobs.
   int64 overflow_jobs = 12;
   // Whether the bucket holds the hour in progress, so its figures will
   // still grow.
   bool partial = 13;
 }
 
+// UtilisationTarget is the operator's target utilisation band.
 message UtilisationTarget {
   // The band's ends, as fractions of capacity.
   double low = 1;
+  // The band's upper end, as a fraction of capacity.
   double high = 2;
 }
 
+// SuggestPoolsRequest selects the window to replay.
 message SuggestPoolsRequest {
   // The trace window in days up to now; 0 for 28.
   int32 days = 1;
@@ -3009,17 +3333,23 @@ message SuggestPoolsRequest {
   bool force = 2;
 }
 
+// SuggestPoolsResponse carries the run in progress and the last
+// result.
 message SuggestPoolsResponse {
   // Whether a run is in progress, for which window and since when. A call
   // made during a run starts none.
   bool running = 1;
+  // The window of the run in progress, in days.
   int32 running_days = 2;
+  // When the run in progress started.
   google.protobuf.Timestamp running_since = 3;
   // The last run for the window asked; unset when there is none.
   PoolSuggestion last = 4;
   // The bounds every run keeps.
   int32 max_jobs = 5;
+  // The longest a run may take.
   google.protobuf.Duration timeout = 6;
+  // The largest window a run may replay.
   int32 max_days = 7;
   // The operator's utilisation target band from [utilisation] in the
   // control plane's configuration; unset when not configured.
@@ -3033,8 +3363,11 @@ message SuggestPoolsResponse {
 
 // PoolSuggestion is one run's result.
 message PoolSuggestion {
+  // The window's length in days.
   int32 days = 1;
+  // When the run started.
   google.protobuf.Timestamp started_at = 2;
+  // When it finished, or stopped.
   google.protobuf.Timestamp finished_at = 3;
   // Why the run gave no suggestion: it timed out, the window has no
   // finished job, or no host is registered. Empty when it gave one.
@@ -3043,25 +3376,33 @@ message PoolSuggestion {
   // window held more than max_jobs jobs, so from is the oldest kept job's
   // queue time.
   google.protobuf.Timestamp from = 5;
+  // The trace's end, exclusive.
   google.protobuf.Timestamp to = 6;
+  // How many jobs the trace holds.
   int32 jobs = 7;
+  // Whether the window held more jobs than max_jobs.
   bool cut = 8;
   // The registered hosts replayed, and those whose agent reports no warm
   // target; the replay reads their pools as 0 warm VMs.
   int32 hosts = 9;
+  // How many of them report no warm target.
   int32 unreported_hosts = 10;
   // False when no host reports a target: today is then replayed with
   // baseline warm VMs on every pool.
   bool baseline_from_hosts = 11;
+  // The warm VMs every pool is replayed with when no host reports a
+  // target.
   int32 baseline = 12;
   // The search's budget: the p99 start delay every size should meet.
   google.protobuf.Duration budget = 13;
   // Whether every size meets the budget with the suggestion; unmet says
   // why not for each size that does not.
   bool met = 14;
+  // The sizes that miss the budget, and why.
   repeated PoolSuggestionUnmet unmet = 15;
   // The boot and restore delays replayed, per OS.
   repeated PoolSuggestionDelay boot_delays = 16;
+  // The restore delays replayed, per OS.
   repeated PoolSuggestionDelay restore_delays = 17;
   // One row per size with a job in the trace.
   repeated PoolSuggestionSize sizes = 18;
@@ -3069,44 +3410,61 @@ message PoolSuggestion {
   repeated PoolSuggestionTarget not_in_trace = 19;
 }
 
+// PoolSuggestionSize is one runner size's replay.
 message PoolSuggestionSize {
+  // The runner size.
   string size = 1;
+  // How many of the size's jobs the trace holds.
   int32 jobs = 2;
   // The warm target the hosts that can run the size report, summed: each
   // agent's configured target, not its pool's state. current_reported is
   // false when none of them reports one; unreported_hosts counts those that
   // do not.
   int32 current = 3;
+  // Whether a host that can run the size reports a target.
   bool current_reported = 4;
+  // How many of those hosts report none.
   int32 unreported_hosts = 5;
   // The suggested target, summed over the hosts.
   int32 suggested = 6;
   // The replay's prediction with today's targets and with the suggested.
   PoolSuggestionOutcome today = 7;
+  // The replay's prediction with the suggested target.
   PoolSuggestionOutcome with_suggested = 8;
 }
 
+// PoolSuggestionOutcome is one replay's prediction for a size.
 message PoolSuggestionOutcome {
   // The jobs' start delay, queued to running.
   double p50_seconds = 1;
+  // The 95th percentile, in seconds.
   double p95_seconds = 2;
   // The size's VM time that ran jobs: run time over run time plus idle
   // warm time, as a fraction. Boot and restore time are in neither.
   double utilisation = 3;
 }
 
+// PoolSuggestionTarget is a size's reported target.
 message PoolSuggestionTarget {
+  // The runner size.
   string size = 1;
+  // The target the hosts report, summed.
   int32 current = 2;
 }
 
+// PoolSuggestionUnmet says why a size misses the budget.
 message PoolSuggestionUnmet {
+  // The runner size.
   string size = 1;
+  // Why it misses.
   string reason = 2;
 }
 
+// PoolSuggestionDelay is one OS's boot or restore delay.
 message PoolSuggestionDelay {
+  // The OS pool: linux, windows or macos.
   string os = 1;
+  // The delay in seconds.
   double seconds = 2;
   // "measured from N jobs" or "default".
   string source = 3;
@@ -3117,52 +3475,91 @@ message PoolSuggestionDelay {
 // a workspace row may hold a secret the control plane wrapped, which the API
 // reports only as its presence.
 message StorageProvider {
+  // The provider's id.
   string id = 1;
   // Empty for the operator's own provider.
   string workspace = 2;
+  // Its name, unique among its owner's providers.
   string name = 3;
   // "operator", "workspace_bucket" or "local_disk".
   string mode = 4;
+  // The scheme and host of the bucket's endpoint, lower case, without a
+  // trailing slash.
   string endpoint = 5;
+  // The bucket's region.
   string region = 6;
+  // The bucket's name.
   string bucket = 7;
+  // The prefix every key Toshi writes starts with; empty for none.
   string root_prefix = 8;
+  // Whether the bucket is addressed in the path rather than the host
+  // name.
   bool path_style = 9;
+  // Whether the store applies lifecycle rules.
   bool cap_lifecycle = 10;
+  // Whether a guest may get presigned URLs from it.
   bool cap_guest_presign = 11;
+  // Whether the bucket replicates to other regions.
   bool cap_global_replication = 12;
+  // The egress price per GB in millionths of the currency unit; 0 when
+  // not priced.
   int64 egress_price_micros_per_gb = 13;
   // The shared credentials file and its profile, when that is the
   // reference.
   string credentials_file = 14;
+  // The profile in credentials_file that holds the credentials.
   string credentials_profile = 15;
   // Whether the row holds a wrapped credential; its value is never sent.
   bool credentials_wrapped = 16;
+  // The IAM role assumed with the credentials; empty for none.
   string role_arn = 17;
+  // The external id of the role's trust policy; empty for none.
   string external_id = 18;
+  // When the provider was last checked.
   google.protobuf.Timestamp last_check_at = 19;
+  // Why that check failed, naming the step; empty when it passed.
   string last_check_error = 20;
+  // When the row was made.
   google.protobuf.Timestamp created_at = 21;
+  // When the row was last changed.
   google.protobuf.Timestamp updated_at = 22;
 }
 
+// CreateStorageProviderRequest is a provider to store.
 message CreateStorageProviderRequest {
   // Empty registers the operator's own provider.
   string workspace = 1;
+  // Its name, unique among its owner's providers.
   string name = 2;
+  // operator, workspace_bucket or local_disk.
   string mode = 3;
+  // The scheme and host of the bucket's endpoint.
   string endpoint = 4;
+  // The bucket's region.
   string region = 5;
+  // The bucket's name.
   string bucket = 6;
+  // The prefix every key Toshi writes starts with; empty for none.
   string root_prefix = 7;
+  // Whether the bucket is addressed in the path rather than the host
+  // name.
   bool path_style = 8;
+  // Whether the store applies lifecycle rules.
   bool cap_lifecycle = 9;
+  // Whether a guest may get presigned URLs from it.
   bool cap_guest_presign = 10;
+  // Whether the bucket replicates to other regions.
   bool cap_global_replication = 11;
+  // The egress price per GB in millionths of the currency unit; 0 when
+  // not priced.
   int64 egress_price_micros_per_gb = 12;
+  // The shared credentials file to read.
   string credentials_file = 13;
+  // The profile in it that holds the credentials.
   string credentials_profile = 14;
+  // The IAM role to assume with them; empty for none.
   string role_arn = 15;
+  // The external id of the role's trust policy; empty for none.
   string external_id = 16;
   // The key of a workspace's own bucket. The control plane wraps it before
   // the row exists and never returns, logs or audits it. Set only with a
@@ -3173,23 +3570,29 @@ message CreateStorageProviderRequest {
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
   // key and request return the first answer; a different request with the
   // same key is refused. Keys are kept for 30 days by default.
-  // The key belongs to the calling operator token.
+  // The key belongs to the calling operator token; local-admin sessions share
+  // one scope.
   string request_key = 18;
 }
 
 // StorageCredential is an S3 access key. It is write-only: no response
 // carries it.
 message StorageCredential {
+  // The access key id.
   string access_key_id = 1;
+  // The secret of the key.
   string secret_access_key = 2;
   // Set for a temporary key.
   string session_token = 3;
 }
 
+// CreateStorageProviderResponse carries the provider as stored.
 message CreateStorageProviderResponse {
+  // The provider as stored.
   StorageProvider provider = 1;
 }
 
+// ListStorageProvidersRequest pages through the providers.
 message ListStorageProvidersRequest {
   // Empty lists the operator's providers; otherwise this workspace's.
   string workspace = 1;
@@ -3201,7 +3604,9 @@ message ListStorageProvidersRequest {
   string page_token = 4;
 }
 
+// ListStorageProvidersResponse is one page of providers.
 message ListStorageProvidersResponse {
+  // The page's providers, ordered by name.
   repeated StorageProvider providers = 1;
   // With include_default, the operator's provider that serves the workspace's
   // uploads while it has no workspace_bucket provider (the control plane's
@@ -3212,6 +3617,8 @@ message ListStorageProvidersResponse {
   string next_page_token = 3;
 }
 
+// CheckStorageProviderRequest names the provider to check: a saved one,
+// or one not saved with its credential.
 message CheckStorageProviderRequest {
   // The provider to check: one is required.
   oneof target {
@@ -3223,6 +3630,7 @@ message CheckStorageProviderRequest {
   }
 }
 
+// CheckStorageProviderResponse is what the provider's check found.
 message CheckStorageProviderResponse {
   // The saved provider as stored after the check; unset for one that is
   // not saved.
@@ -3231,14 +3639,18 @@ message CheckStorageProviderResponse {
   bool ok = 2;
   // Why the check failed, naming the step; empty when ok.
   string error = 3;
+  // When the check ran.
   google.protobuf.Timestamp checked_at = 4;
 }
 
+// DeleteStorageProviderRequest names the provider to remove.
 message DeleteStorageProviderRequest {
+  // The provider's id.
   string id = 1;
   // Retire a provider even if artifacts remain, marking them lost. Only an
   // operator may force retirement.
   bool force = 2;
 }
 
+// DeleteStorageProviderResponse is empty: the provider is gone.
 message DeleteStorageProviderResponse {}

@@ -18,6 +18,7 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 
 // EndReason says how a workload ended.
 enum EndReason {
+  // Not set: a workload that has not ended has none.
   END_REASON_UNSPECIFIED = 0;
   // A job's command, or a sandbox's process, exited; the status's
   // exit_code says with what, 0 being success.
@@ -36,6 +37,7 @@ enum EndReason {
 
 // StopReason is why a sandbox or service was stopped.
 enum StopReason {
+  // Not set: a workload that was not stopped has none.
   STOP_REASON_UNSPECIFIED = 0;
   // Its owner stopped it: deleted it, or cancelled its job.
   STOP_REASON_OWNER = 1;
@@ -63,6 +65,7 @@ enum StopReason {
 
 // StopCause identifies the policy behind a stop.
 enum StopCause {
+  // Not set: the stop was not a policy stop.
   STOP_CAUSE_UNSPECIFIED = 0;
   // Executions exceeded their rate.
   STOP_CAUSE_EXEC_RATE = 1;
@@ -80,6 +83,7 @@ enum StopCause {
 
 // OperatorHold is an operator's hold on a workload.
 enum OperatorHold {
+  // Not set: no operator holds the workload.
   OPERATOR_HOLD_UNSPECIFIED = 0;
   // Abuse is suspected.
   OPERATOR_HOLD_ABUSE_SUSPECTED = 1;
@@ -92,12 +96,15 @@ message Job {
   // Assigned by the server; unique within the workspace, among its jobs,
   // sandboxes and services.
   string id = 1;
+  // The job's project, by name.
   string project = 2;
+  // The job's environment, by name.
   string environment = 3;
   // Free-form labels, set at create and changed by UpdateJob.
   map<string, string> labels = 4;
   // The job as created.
   JobSpec spec = 5;
+  // The job's state and when it got there.
   JobStatus status = 6;
   // What it records of its runs, fixed at create: never UNSPECIFIED,
   // except in an event's snapshot stored before workloads had one.
@@ -121,14 +128,19 @@ message Job {
 
 // JobStatus is a job's state and when it got there.
 message JobStatus {
+  // Where the job is in its life.
   JobState state = 1;
   // Set once the state is ENDED: EXITED, CANCELLED or FAILED.
   EndReason end_reason = 2;
   // The most recent error Toshi met running the job.
   Error last_error = 3;
+  // When it was recorded.
   google.protobuf.Timestamp created_at = 4;
+  // When it started waiting for capacity.
   google.protobuf.Timestamp queued_at = 5;
+  // When its VM came up and its command started.
   google.protobuf.Timestamp started_at = 6;
+  // When it ended; unset until it does.
   google.protobuf.Timestamp ended_at = 7;
   // When anything in the job last changed.
   google.protobuf.Timestamp updated_at = 8;
@@ -155,6 +167,7 @@ message JobStatus {
   // name, which for a job are the same. Unset until the attempt started:
   // a runner that was only assigned is in GetJobResponse.attempts.
   string runner_id = 14;
+  // The runner's name, which for a job is its id.
   string runner_name = 15;
   // The attempt that last started, counting from 1: each assignment to a
   // runner is one. 0 until an attempt started, and for a job that ended
@@ -167,8 +180,11 @@ message JobStatus {
 message JobAttempt {
   // Counting from 1.
   int32 attempt = 1;
+  // The runner the attempt was assigned to.
   string runner_id = 2;
+  // The runner's name, which for a job is its id.
   string runner_name = 3;
+  // When the attempt was assigned its runner.
   google.protobuf.Timestamp assigned_at = 4;
   // Unset when the attempt was assigned and never started.
   google.protobuf.Timestamp started_at = 5;
@@ -186,6 +202,7 @@ message JobAttempt {
 // JobState is where a job is in its life. A job can skip a state: one
 // cancelled while queued ends without running.
 enum JobState {
+  // Not set: a job is always in one of the states below.
   JOB_STATE_UNSPECIFIED = 0;
   // Recorded, not yet waiting for capacity.
   JOB_STATE_CREATED = 1;
@@ -203,13 +220,16 @@ message Sandbox {
   // Assigned by the server; unique within the workspace, among its jobs,
   // sandboxes and services.
   string id = 1;
+  // The sandbox's project, by name.
   string project = 2;
+  // The sandbox's environment, by name.
   string environment = 3;
   // Free-form labels, set at create and changed by UpdateSandbox.
   map<string, string> labels = 4;
   // The sandbox as created, with max_duration as UpdateSandbox last raised
   // it.
   SandboxSpec spec = 5;
+  // The sandbox's state and when it got there.
   SandboxStatus status = 6;
   // What it records of its runs, fixed at create: never UNSPECIFIED,
   // except in an event's snapshot stored before workloads had one.
@@ -247,15 +267,20 @@ message Sandbox {
 
 // SandboxStatus is a sandbox's state and when it got there.
 message SandboxStatus {
+  // Where the sandbox is in its life.
   SandboxState state = 1;
   // Set once the state is ENDED: STOPPED, FAILED or LOST, or EXITED when
   // its spec's process exited.
   EndReason end_reason = 2;
   // The most recent error Toshi met running the sandbox.
   Error last_error = 3;
+  // When it was recorded.
   google.protobuf.Timestamp created_at = 4;
+  // When it started waiting for capacity.
   google.protobuf.Timestamp queued_at = 5;
+  // When its VM came up.
   google.protobuf.Timestamp started_at = 6;
+  // When it ended; unset until it does.
   google.protobuf.Timestamp ended_at = 7;
   // When anything in the sandbox last changed.
   google.protobuf.Timestamp updated_at = 8;
@@ -293,6 +318,7 @@ message SandboxStatus {
 // SandboxState is where a sandbox is in its life. A sandbox can skip a
 // state: one deleted while queued ends without running.
 enum SandboxState {
+  // Not set: a sandbox is always in one of the states below.
   SANDBOX_STATE_UNSPECIFIED = 0;
   // Recorded, not yet waiting for capacity, or stopped (stopped_at is set).
   SANDBOX_STATE_CREATED = 1;
@@ -310,12 +336,15 @@ message Service {
   // Assigned by the server; unique within the workspace, among its jobs,
   // sandboxes and services.
   string id = 1;
+  // The service's project, by name.
   string project = 2;
+  // The service's environment, by name.
   string environment = 3;
   // Free-form labels, set at create and changed by UpdateService.
   map<string, string> labels = 4;
   // The service as ServiceSpec describes its answers.
   ServiceSpec spec = 5;
+  // The service's state and when it got there.
   ServiceStatus status = 6;
   // Whether the service is an agent: the image version of its current
   // revision declares an [agent] table in its recipe. A deploy or a rollback
@@ -380,19 +409,25 @@ message WorkloadNetwork {
 message NetworkLayer {
   // Its name: "operator", "workspace", "environment" or "request".
   string name = 1;
+  // The layer's policy.
   NetworkPolicy policy = 2;
 }
 
 // ServiceStatus is a service's state and when it got there.
 message ServiceStatus {
+  // Where the service is in its life.
   ServiceState state = 1;
   // Set once the state is ENDED: STOPPED or FAILED.
   EndReason end_reason = 2;
   // The most recent error Toshi met running the service.
   Error last_error = 3;
+  // When it was recorded.
   google.protobuf.Timestamp created_at = 4;
+  // When its run started waiting for capacity.
   google.protobuf.Timestamp queued_at = 5;
+  // When its run's VM came up.
   google.protobuf.Timestamp started_at = 6;
+  // When it ended; unset until it does.
   google.protobuf.Timestamp ended_at = 7;
   // When anything in the service last changed.
   google.protobuf.Timestamp updated_at = 8;
@@ -484,6 +519,7 @@ message ProvidedName {
 // sandbox, a service moves back: StopService returns it to CREATED, and an
 // on-demand service that sleeps returns to CREATED until it is woken.
 enum ServiceState {
+  // Not set: a service is always in one of the states below.
   SERVICE_STATE_UNSPECIFIED = 0;
   // Recorded, and not started or asleep.
   SERVICE_STATE_CREATED = 1;
@@ -536,6 +572,7 @@ enum RecordingSource {
 
 // JobSpec is a job: one command, run once.
 message JobSpec {
+  // The command the job runs.
   Command command = 1;
   // What in its workspace the job uses. Checked at create
   // against the job's project and environment, and fixed when the job
@@ -613,7 +650,9 @@ message Binding {
 // endpoint's name in its recipe, as a recipe's uses names it:
 // "<service>.<endpoint>".
 message ServiceEndpoint {
+  // The service's name.
   string service = 1;
+  // The endpoint's name in the service's recipe.
   string endpoint = 2;
 }
 
@@ -633,6 +672,7 @@ message EnvironmentSecrets {}
 // them. A starter who has several when the workload starts, and bound
 // none, gives it no credential for that provider.
 message ModelCredentialBinding {
+  // The credential's name.
   string name = 1;
 }
 
@@ -645,32 +685,42 @@ message Mail {}
 // BoundBinding is a binding as it was fixed when its workload started.
 // A later change or delete of the target leaves it as it is.
 message BoundBinding {
+  // The binding's name in the workload.
   string name = 1;
   oneof target {
+    // The service endpoint it was fixed to.
     BoundService service = 2;
+    // The secret set it was fixed to.
     BoundSecrets secrets = 3;
+    // The mail listener it was fixed to.
     BoundMail mail = 5;
+    // The model credential it was fixed to.
     BoundModelCredential model_credential = 6;
   }
+  // When the workload started and the binding was fixed.
   google.protobuf.Timestamp taken_at = 4;
 }
 
 // BoundService is a service endpoint as it was when the workload started.
 message BoundService {
+  // The service's name.
   string service = 1;
   // The service's workload ID.
   string service_id = 2;
   // The service's revision that was current.
   int64 revision = 3;
+  // The endpoint's name in the service's recipe.
   string endpoint = 4;
   // The endpoint's shape and, for an http endpoint, its guest port.
   string shape = 5;
+  // The port the endpoint reaches in the guest.
   int32 port = 6;
   // What the endpoint accepts from the caller: "workload_identity", a
   // connect credential signed by the workload identity issuer
   // naming audience and this binding. Minted when the job's command
   // starts, and passed only to that command.
   string credential = 7;
+  // The audience the credential names.
   string audience = 8;
   // The id (jti) of the connect credential minted for this binding. Never
   // the credential.
@@ -681,8 +731,11 @@ message BoundService {
 // the credential the mail listener accepts, "workload_identity", the
 // audience it names and its id (jti). Never the credential.
 message BoundMail {
+  // The credential's kind: "workload_identity".
   string credential = 1;
+  // The audience the credential names.
   string audience = 2;
+  // The id (jti) of the credential. Never the credential.
   string credential_id = 3;
 }
 
@@ -691,8 +744,13 @@ message BoundMail {
 // without binding it is named "~model:<provider>", a name no binding can
 // take.
 message BoundModelCredential {
+  // The credential's id.
   string model_credential_id = 1;
+  // The credential's name, or "~model:<provider>" for one taken without
+  // a binding.
   string name = 2;
+  // The provider it serves: "anthropic", "openai", "kimi", "mistral", "xai"
+  // or "gemini".
   string provider = 3;
   // How the workload took it: "binding", "own", "environment" or
   // "workspace".
@@ -703,15 +761,20 @@ message BoundModelCredential {
 // workload started: which keys, from which set, at which version. Never
 // a value.
 message BoundSecrets {
+  // The set's id.
   string set_id = 1;
+  // The keys it fixed, by name.
   repeated BoundKey keys = 2;
 }
 
+// BoundKey is one key of a bound secret set, at the version it was fixed to.
 message BoundKey {
   // The set the key is in: the environment's set or the project's shared
   // set.
   string set_id = 1;
+  // The key's name.
   string name = 2;
+  // The key's version when the workload started.
   int64 version = 3;
 }
 
@@ -896,6 +959,7 @@ message ServiceSpec {
 
 // HostKind is a kind of host a service's runs may use.
 enum HostKind {
+  // Not set: host_kinds never holds it; a create or an update rejects it.
   HOST_KIND_UNSPECIFIED = 0;
   // The deployment's own hosts, shared by its workspaces, the operator's
   // cloud pools included; within the plan's shared services.
@@ -917,6 +981,7 @@ message StateVolumeSpec {
 
 // ServiceVisitors is who a service's verified customer domains admit.
 enum ServiceVisitors {
+  // Not set: the service gates visitors, as GATED does.
   SERVICE_VISITORS_UNSPECIFIED = 0;
   // A visitor signs in, or holds a share link, as on a provided name.
   // The default.
@@ -929,6 +994,7 @@ enum ServiceVisitors {
 
 // ServiceMode is how a service runs.
 enum ServiceMode {
+  // Not set: a create makes an always-on service.
   SERVICE_MODE_UNSPECIFIED = 0;
   // Runs while it is started, and runs again after each run ends.
   SERVICE_MODE_ALWAYS_ON = 1;
@@ -965,20 +1031,27 @@ message Error {
   // A Connect error code name, such as "unavailable". A sandbox ended by
   // its own commands has "setup_failed" or "process_exited" instead.
   string code = 1;
+  // Why it failed, in prose.
   string message = 2;
 }
 
 // Output is what a job's command wrote, returned with the call that waited
 // for it.
 message Output {
+  // What the command wrote to standard output.
   bytes stdout = 1;
+  // What the command wrote to standard error.
   bytes stderr = 2;
   // True when the server kept only the start of a stream.
   bool truncated = 3;
 }
 
+// WatchOutputRequest names the job whose output to follow and where each
+// stream starts.
 message WatchOutputRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The job's ID.
   string id = 3;
@@ -989,6 +1062,8 @@ message WatchOutputRequest {
   // checked before anything is sent. A client that reconnects passes how
   // many bytes of each stream it has received.
   int64 stdout_offset = 4;
+  // Where standard error starts, counted as stdout_offset counts standard
+  // output.
   int64 stderr_offset = 5;
 }
 
@@ -996,7 +1071,9 @@ message WatchOutputRequest {
 // each stream arrive in order; the order between the two is not kept.
 message WatchOutputResponse {
   oneof message {
+    // A run of standard output bytes, in order.
     bytes stdout = 1;
+    // A run of standard error bytes, in order.
     bytes stderr = 2;
     // The last message, sent once every byte held has been sent.
     OutputEnd end = 3;
@@ -1008,13 +1085,17 @@ message OutputEnd {
   // Unset when the job was cancelled, or failed before its command ran
   // because a binding's target was gone (its status's last_error says so).
   optional int32 exit_code = 1;
+  // True when the job was cancelled.
   bool cancelled = 2;
   // True when the server kept only the start of a stream.
   bool truncated = 3;
 }
 
+// WatchTelemetryRequest names the sandbox whose resource samples to follow.
 message WatchTelemetryRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The sandbox's ID.
   string id = 3;
@@ -1031,6 +1112,7 @@ message WatchTelemetryRequest {
 // WatchTelemetryResponse is one message of a WatchTelemetry stream.
 message WatchTelemetryResponse {
   oneof message {
+    // One window of the sandbox's resource use.
     TelemetrySample sample = 1;
     // Its cursor is that of the last sample sent; before the first, the
     // request's cursor (empty when the request had none).
@@ -1062,10 +1144,12 @@ message TelemetrySample {
   int64 host_memory_mib = 7;
   // Bytes the VM read from and wrote to its disks.
   int64 disk_read_bytes = 8;
+  // Bytes the VM wrote to its disks.
   int64 disk_write_bytes = 9;
   // Bytes the guest received and sent on its network interfaces. Unset when
   // the guest does not report them.
   optional int64 net_rx_bytes = 10;
+  // Bytes the guest sent on its network interfaces.
   optional int64 net_tx_bytes = 11;
   // Processes the guest kernel's out-of-memory killer killed. Unset when the
   // guest does not report it.
@@ -1075,8 +1159,11 @@ message TelemetrySample {
 // TelemetryEnd ends a WatchTelemetry stream: the sandbox has ended.
 message TelemetryEnd {}
 
+// WatchGuestLogRequest names the sandbox whose console output to follow.
 message WatchGuestLogRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The sandbox's ID.
   string id = 3;
@@ -1105,6 +1192,7 @@ message WatchGuestLogRequest {
 // WatchGuestLogResponse is one message of a WatchGuestLog stream.
 message WatchGuestLogResponse {
   oneof message {
+    // A run of console bytes, in order.
     GuestLogChunk chunk = 1;
     // Its cursor is where the stream would resume: after the last byte
     // sent, or before the first chunk the position it started from, in the
@@ -1121,6 +1209,7 @@ message GuestLogChunk {
   // its console before it, in this start. An offset past the end of the
   // previous chunk means the bytes between are no longer kept.
   int64 offset = 1;
+  // The bytes the VM wrote.
   bytes data = 2;
   // Names the VM start the offset counts in. A new start counts from zero
   // again and has a different start.
@@ -1132,6 +1221,8 @@ message GuestLogChunk {
 // GuestLogEnd ends a WatchGuestLog stream: the sandbox has ended.
 message GuestLogEnd {}
 
+// ExecuteRequest is one message of an Execute stream: the start, then
+// standard input bytes and its closing.
 message ExecuteRequest {
   oneof message {
     // First and only once.
@@ -1145,10 +1236,13 @@ message ExecuteRequest {
 
 // ExecuteStart starts an execution.
 message ExecuteStart {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The sandbox the command runs in.
   string sandbox_id = 3;
+  // The command to run.
   Command command = 4;
   // A retry with the same key does not start a second command: its stream
   // carries the first execution's started message and, once it has ended,
@@ -1160,11 +1254,15 @@ message ExecuteStart {
   string grant = 6;
 }
 
+// ExecuteResponse is one message of an Execute stream: the start, the
+// output bytes, then the exit.
 message ExecuteResponse {
   oneof message {
     // First and only once.
     ExecutionStarted started = 1;
+    // A run of the command's standard output, in order.
     bytes stdout = 2;
+    // A run of the command's standard error, in order.
     bytes stderr = 3;
     // Last.
     ExecutionExit exit = 4;
@@ -1173,10 +1271,13 @@ message ExecuteResponse {
 
 // ExecuteCommandRequest starts an execution whose standard input is closed.
 message ExecuteCommandRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The sandbox the command runs in.
   string sandbox_id = 3;
+  // The command to run.
   Command command = 4;
   // A retry with the same key does not start a second command: its stream
   // carries the first execution's started message and, once it has ended,
@@ -1188,11 +1289,15 @@ message ExecuteCommandRequest {
   string grant = 6;
 }
 
+// ExecuteCommandResponse is one message of an ExecuteCommand stream: the
+// start, the output bytes, then the exit.
 message ExecuteCommandResponse {
   oneof message {
     // First and only once.
     ExecutionStarted started = 1;
+    // A run of the command's standard output, in order.
     bytes stdout = 2;
+    // A run of the command's standard error, in order.
     bytes stderr = 3;
     // Last.
     ExecutionExit exit = 4;
@@ -1201,6 +1306,7 @@ message ExecuteCommandResponse {
 
 // ExecutionStarted names an execution.
 message ExecutionStarted {
+  // The execution's ID.
   string execution_id = 1;
 }
 
@@ -1208,13 +1314,20 @@ message ExecutionStarted {
 message ExecutionExit {
   // Unset when the execution was cancelled.
   optional int32 exit_code = 1;
+  // True when the execution was cancelled.
   bool cancelled = 2;
 }
 
+// CancelExecutionRequest cancels one execution of a sandbox.
 message CancelExecutionRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The execution's ID.
   string execution_id = 3;
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 4;
   // A grant the caller's workspace received, to act on the owner's
   // sandbox through it (docs/grants.md); project and environment are then
@@ -1222,40 +1335,58 @@ message CancelExecutionRequest {
   string grant = 5;
 }
 
+// CancelExecutionResponse has no fields; the cancellation is recorded
+// on the execution.
 message CancelExecutionResponse {}
 
 // Operation is an action that takes long. Its caller waits on it for a
 // bounded time and asks again while it is not done.
 message Operation {
+  // The operation's ID.
   string id = 1;
   // The workload it acts on.
   string workload_id = 2;
+  // Whether the action finished; false while it runs.
   bool done = 3;
   // Set when the operation is done and failed.
   Error error = 4;
+  // When it was created.
   google.protobuf.Timestamp created_at = 5;
+  // When it finished; unset until done.
   google.protobuf.Timestamp done_at = 6;
 }
 
+// GetOperationRequest names an operation to read.
 message GetOperationRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The operation's ID.
   string id = 3;
 }
 
+// GetOperationResponse is the operation as it is now.
 message GetOperationResponse {
+  // The operation.
   Operation operation = 1;
 }
 
+// WaitOperationRequest names an operation to wait on.
 message WaitOperationRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The operation's ID.
   string id = 3;
   // The longest to block.
   google.protobuf.Duration timeout = 4;
 }
 
+// WaitOperationResponse is the operation as it is when the call returns.
 message WaitOperationResponse {
+  // The operation.
   Operation operation = 1;
 }
 
@@ -1264,6 +1395,7 @@ message WaitOperationResponse {
 // takeover.*, spend.*, egress.*, host.*, github.*, webhook.*, trigger.*,
 // mail.* and endpoint.*.
 enum EventType {
+  // Not set: an event always has a type.
   EVENT_TYPE_UNSPECIFIED = 0;
   // A workload was created. Name: "<kind>.created".
   EVENT_TYPE_WORKLOAD_CREATED = 1;
@@ -1392,6 +1524,7 @@ message EventEnvelope {
 message Event {
   // Unique; the same on every delivery of this event.
   string id = 1;
+  // The event's type.
   EventType type = 2;
   // A built-in name such as "job.state_changed", or the name a guest gave.
   string name = 3;
@@ -1464,7 +1597,9 @@ message Event {
 
 // EndpointCreationFailedEvent says why Toshi did not make an endpoint.
 message EndpointCreationFailedEvent {
+  // The endpoint's name on its workload.
   string endpoint = 1;
+  // Why Toshi did not make it.
   string message = 2;
 }
 
@@ -1484,12 +1619,17 @@ message MailNoticeEvent {
 
 // ServiceRolledEvent records a transition of a service's roll.
 message ServiceRolledEvent {
+  // The revision the roll moved from.
   int64 from_revision = 1;
+  // The revision it moved to.
   int64 to_revision = 2;
+  // The job ID of the run that ran from_revision.
   string from_run = 3;
+  // The job ID of the run that runs to_revision.
   string to_run = 4;
   // STARTED, SWITCHED, DRAINED, FAILED or FELL_BACK.
   string outcome = 5;
+  // Why, when the outcome is FAILED or FELL_BACK.
   string reason = 6;
 }
 
@@ -1560,6 +1700,7 @@ message SecretWithheldEvent {
   string run_id = 1;
   // The execution the release was for, for a sandbox's execution.
   string execution_id = 2;
+  // The keys withheld.
   repeated WithheldSecret keys = 3;
 }
 
@@ -1579,6 +1720,7 @@ message WithheldSecret {
 message EgressDeniedEvent {
   // The run the denials were for; empty when the host did not say.
   string run_id = 1;
+  // The denials, newest first.
   repeated EgressDenial denials = 2;
 }
 
@@ -1608,7 +1750,9 @@ message EgressDenial {
 // it, the link of the workload's endpoint once it is ready, why it failed or
 // was removed, and the commit it was made from.
 message TriggerResult {
+  // The trigger's ID.
   string trigger_id = 1;
+  // The trigger's name.
   string trigger_name = 2;
   // The key the trigger's event named.
   string key = 3;
@@ -1634,7 +1778,9 @@ message TriggerResult {
 
 // ExecutionEvent is an execution starting or ending.
 message ExecutionEvent {
+  // The execution's ID.
   string execution_id = 1;
+  // The command's program and arguments.
   repeated string argv = 2;
   // Set when the execution ended.
   ExecutionExit exit = 3;
@@ -1642,6 +1788,7 @@ message ExecutionEvent {
 
 // EmittedEvent is an event a guest emitted.
 message EmittedEvent {
+  // The bytes the guest emitted.
   bytes data = 1;
 }
 
@@ -1721,12 +1868,14 @@ message AgentPrompt {
   // or domain; acp_permission for an ACP permission request. Empty for a
   // question.
   string kind = 3;
+  // What the prompt asks, in the agent's words.
   string text = 4;
   // The answers a question offers; empty for an approval, an ACP permission
   // request and a question answered in free text.
   repeated string options = 5;
   // The event that asked it.
   string event_id = 6;
+  // When the agent asked it.
   google.protobuf.Timestamp asked_at = 7;
   // An opaque identifier for this ask.
   string decision_id = 8;
@@ -1763,15 +1912,20 @@ message ConnectionEvent {
 // RecordingEvent names a recording, its kind and its artifact, never a
 // URL: RecordingService.GetRecording signs one.
 message RecordingEvent {
+  // The recording's ID.
   string recording_id = 1;
+  // The artifact the recording is kept in.
   string artifact_id = 2;
   // UNSPECIFIED in an event stored before recordings had a kind: that
   // recording is a strip.
   RecordingKind kind = 3;
 }
 
+// ListEventsRequest selects events of the workload event log.
 message ListEventsRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // Empty matches every workload.
   string workload_id = 3;
@@ -1792,7 +1946,9 @@ message ListEventsRequest {
   string grant = 6;
 }
 
+// ListEventsResponse is one page of events.
 message ListEventsResponse {
+  // The events, oldest first.
   repeated Event events = 1;
   // The position after the last event returned, or the page_token asked
   // for when there were none. WatchEvents from this cursor shows every
@@ -1807,8 +1963,11 @@ message ListEventsResponse {
   int64 total_bytes = 4;
 }
 
+// WatchEventsRequest names the events to follow.
 message WatchEventsRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // Empty matches every workload.
   string workload_id = 3;
@@ -1821,7 +1980,10 @@ message WatchEventsRequest {
   bool keepalive = 5;
 }
 
+// WatchEventsResponse is one message of a WatchEvents stream: an event or
+// a keepalive.
 message WatchEventsResponse {
+  // The event; unset on a keepalive.
   Event event = 1;
   // Set on a keepalive, with every other field empty. Only a request
   // with keepalive set gets one.
@@ -1843,14 +2005,17 @@ message Keepalive {
 
 // PreviewShareLinkState is where a share link is in its life.
 enum PreviewShareLinkState {
+  // Not set: a link is always in one of the states below.
   PREVIEW_SHARE_LINK_STATE_UNSPECIFIED = 0;
   // Minted; no device has opened it yet.
   PREVIEW_SHARE_LINK_STATE_OPEN = 1;
   // A device opened it; it admits that device only.
   PREVIEW_SHARE_LINK_STATE_IN_USE = 2;
+  // Its owner revoked it.
   PREVIEW_SHARE_LINK_STATE_REVOKED = 3;
   // Its connections carried its byte cap, or its endpoint was deleted.
   PREVIEW_SHARE_LINK_STATE_ENDED = 4;
+  // It reached its expires_at.
   PREVIEW_SHARE_LINK_STATE_EXPIRED = 5;
 }
 
@@ -1861,8 +2026,11 @@ message PreviewShareLink {
   string id = 1;
   // The sandbox whose preview the link opens.
   string sandbox_id = 2;
+  // Where the link is in its life.
   PreviewShareLinkState state = 3;
+  // When it was made.
   google.protobuf.Timestamp created_at = 4;
+  // When it stops admitting its device.
   google.protobuf.Timestamp expires_at = 5;
   // The most bytes, both ways, its connections may carry.
   int64 max_bytes = 6;
@@ -1881,8 +2049,12 @@ message PreviewShareLink {
   int32 port = 12;
 }
 
+// CreatePreviewShareLinkRequest mints a share link for one of a
+// sandbox's previews.
 message CreatePreviewShareLinkRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The sandbox whose preview the link opens.
   string sandbox_id = 3;
@@ -1895,7 +2067,9 @@ message CreatePreviewShareLinkRequest {
   // The preview the link opens: one of the sandbox's http endpoints, by
   // its name or by its guest port. Neither set is the endpoint `preview`.
   oneof endpoint_ref {
+    // The endpoint to open, by its name.
     string endpoint = 6;
+    // The endpoint to open, by its guest port.
     int32 port = 7;
   }
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
@@ -1906,16 +2080,23 @@ message CreatePreviewShareLinkRequest {
   string request_key = 8;
 }
 
+// CreatePreviewShareLinkResponse is the new link and the URL that carries
+// it.
 message CreatePreviewShareLinkResponse {
+  // The new link.
   PreviewShareLink share_link = 1;
   // The URL to give the viewer: it opens the link's preview and carries
   // the link. It is in this answer only.
   string url = 2;
 }
 
+// ListPreviewShareLinksRequest lists a sandbox's share links.
 message ListPreviewShareLinksRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox's ID.
   string sandbox_id = 3;
   // The most share links in one page; zero lets the server choose.
   int32 page_size = 4;
@@ -1923,20 +2104,29 @@ message ListPreviewShareLinksRequest {
   string page_token = 5;
 }
 
+// ListPreviewShareLinksResponse is one page of a sandbox's share links.
 message ListPreviewShareLinksResponse {
+  // The links, oldest first.
   repeated PreviewShareLink share_links = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// RevokePreviewShareLinkRequest revokes one share link of a sandbox.
 message RevokePreviewShareLinkRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox's ID.
   string sandbox_id = 3;
+  // The link's ID.
   string share_link_id = 4;
 }
 
+// RevokePreviewShareLinkResponse is the link after the revocation.
 message RevokePreviewShareLinkResponse {
+  // The link after the revocation.
   PreviewShareLink share_link = 1;
 }
 
@@ -1951,8 +2141,11 @@ message ServiceShareLink {
   // The http endpoint of the service's recipe whose provided name the link
   // opens.
   string endpoint = 3;
+  // Where the link is in its life.
   PreviewShareLinkState state = 4;
+  // When it was made.
   google.protobuf.Timestamp created_at = 5;
+  // When it stops admitting its device.
   google.protobuf.Timestamp expires_at = 6;
   // The most bytes, both ways, its connections may carry.
   int64 max_bytes = 7;
@@ -1966,8 +2159,12 @@ message ServiceShareLink {
   google.protobuf.Timestamp ended_at = 11;
 }
 
+// CreateServiceShareLinkRequest mints a share link for one of a
+// service's provided names.
 message CreateServiceShareLinkRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The service's workload id.
   string service_id = 3;
@@ -1988,15 +2185,21 @@ message CreateServiceShareLinkRequest {
   string request_key = 7;
 }
 
+// CreateServiceShareLinkResponse is the new link and the URL that carries
+// it.
 message CreateServiceShareLinkResponse {
+  // The new link.
   ServiceShareLink share_link = 1;
   // The URL to give the viewer: it opens the provided name and carries the
   // link. It is in this answer only.
   string url = 2;
 }
 
+// ListServiceShareLinksRequest lists a service's share links.
 message ListServiceShareLinksRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The service's workload id.
   string service_id = 3;
@@ -2006,54 +2209,84 @@ message ListServiceShareLinksRequest {
   string page_token = 5;
 }
 
+// ListServiceShareLinksResponse is one page of a service's share links.
 message ListServiceShareLinksResponse {
+  // The links, oldest first.
   repeated ServiceShareLink share_links = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// RevokeServiceShareLinkRequest revokes one share link of a service.
 message RevokeServiceShareLinkRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The service's workload id.
   string service_id = 3;
+  // The link's ID.
   string share_link_id = 4;
 }
 
+// RevokeServiceShareLinkResponse is the link after the revocation.
 message RevokeServiceShareLinkResponse {
+  // The link after the revocation.
   ServiceShareLink share_link = 1;
 }
 
+// StartSandboxRequest starts a stopped sandbox.
 message StartSandboxRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox's ID.
   string id = 3;
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 4;
 }
 
+// StartSandboxResponse is the sandbox after the start.
 message StartSandboxResponse {
+  // The sandbox after the start.
   Sandbox sandbox = 1;
 }
 
+// StopSandboxRequest stops a sandbox's run.
 message StopSandboxRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox's ID.
   string id = 3;
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 4;
 }
 
+// StopSandboxResponse is the sandbox after the stop.
 message StopSandboxResponse {
+  // The sandbox after the stop.
   Sandbox sandbox = 1;
 }
 
+// StartServiceRequest starts a service.
 message StartServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The service's workload id.
   string id = 3;
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 4;
 }
 
+// StartServiceResponse is the service after the start.
 message StartServiceResponse {
   reserved 1;
   reserved "workload";
@@ -2061,13 +2294,20 @@ message StartServiceResponse {
   Service service = 2;
 }
 
+// StopServiceRequest stops a service's run.
 message StopServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string id = 3;
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 4;
 }
 
+// StopServiceResponse is the service after the stop.
 message StopServiceResponse {
   reserved 1;
   reserved "workload";
@@ -2075,15 +2315,22 @@ message StopServiceResponse {
   Service service = 2;
 }
 
+// SetServiceModeRequest sets a service's mode.
 message SetServiceModeRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string id = 3;
   // Required.
   ServiceMode mode = 4;
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 5;
 }
 
+// SetServiceModeResponse is the service after the change.
 message SetServiceModeResponse {
   reserved 1;
   reserved "workload";
@@ -2091,13 +2338,20 @@ message SetServiceModeResponse {
   Service service = 2;
 }
 
+// WakeServiceRequest wakes a started on-demand service that is asleep.
 message WakeServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string id = 3;
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 4;
 }
 
+// WakeServiceResponse is the service after the wake.
 message WakeServiceResponse {
   reserved 1;
   reserved "workload";
@@ -2107,38 +2361,55 @@ message WakeServiceResponse {
 
 // HoldWorkloadRequest names the sandbox or service and its operator hold.
 message HoldWorkloadRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox or service to hold.
   string workload_id = 3;
+  // The hold to place.
   OperatorHold hold = 4;
 }
 
+// HoldWorkloadResponse has no fields.
 message HoldWorkloadResponse {}
 
 // ReleaseWorkloadRequest names the sandbox or service to release.
 message ReleaseWorkloadRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The sandbox or service to release.
   string workload_id = 3;
 }
 
+// ReleaseWorkloadResponse has no fields.
 message ReleaseWorkloadResponse {}
 
+// KeepServiceAwakeRequest takes or renews the caller's hold on a started service.
 message KeepServiceAwakeRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string id = 3;
   reserved 4;
   reserved "ttl";
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 5;
   // How long the hold stays live, in seconds: at most 3600; 0 or unset is
   // 600.
   int64 ttl_seconds = 6;
 }
 
+// KeepServiceAwakeResponse is the caller's hold and the service.
 message KeepServiceAwakeResponse {
   reserved 1;
   reserved "workload";
+  // The caller's hold.
   ServiceHold hold = 2;
   // The service after the hold.
   Service service = 3;
@@ -2152,13 +2423,20 @@ message ServiceHold {
   google.protobuf.Timestamp expires_at = 2;
 }
 
+// ReleaseServiceAwakeRequest drops the caller's hold on a service.
 message ReleaseServiceAwakeRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string id = 3;
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 4;
 }
 
+// ReleaseServiceAwakeResponse is the service after the release.
 message ReleaseServiceAwakeResponse {
   reserved 1;
   reserved "workload";
@@ -2166,8 +2444,11 @@ message ReleaseServiceAwakeResponse {
   Service service = 2;
 }
 
+// StartServiceSignInRequest names the service and sign-in program to run.
 message StartServiceSignInRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The service's workload id.
   string service_id = 3;
@@ -2225,6 +2506,7 @@ message ServiceSignInEndpoint {
   string listen_address = 4;
 }
 
+// ServiceSignInStarted is the first message of a sign-in stream.
 message ServiceSignInStarted {
   // The sign-in, for AnswerServiceSignIn and CancelServiceSignIn.
   string sign_in_id = 1;
@@ -2233,6 +2515,7 @@ message ServiceSignInStarted {
   google.protobuf.Timestamp ends_at = 2;
 }
 
+// ServiceSignInEnded is the last message of a sign-in stream.
 message ServiceSignInEnded {
   // How the sign-in ended.
   ServiceSignInOutcome outcome = 1;
@@ -2243,6 +2526,7 @@ message ServiceSignInEnded {
 
 // ServiceSignInOutcome is how a sign-in ended.
 enum ServiceSignInOutcome {
+  // Not set: a finished sign-in has one of the outcomes below.
   SERVICE_SIGN_IN_OUTCOME_UNSPECIFIED = 0;
   // The program exited 0: it is signed in.
   SERVICE_SIGN_IN_OUTCOME_SIGNED_IN = 1;
@@ -2254,9 +2538,14 @@ enum ServiceSignInOutcome {
   SERVICE_SIGN_IN_OUTCOME_TIMED_OUT = 4;
 }
 
+// AnswerServiceSignInRequest answers a running sign-in with one text line
+// or a browser's loopback redirect.
 message AnswerServiceSignInRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string service_id = 3;
   // From StartServiceSignInResponse.started.
   string sign_in_id = 4;
@@ -2269,36 +2558,50 @@ message AnswerServiceSignInRequest {
   string redirect_url = 6;
 }
 
+// AnswerServiceSignInResponse is the program's answer to a redirect.
 message AnswerServiceSignInResponse {
   // The program's HTTP status for a redirect, or zero for a text answer.
   int32 redirect_status = 1;
 }
 
+// CancelServiceSignInRequest ends a running sign-in.
 message CancelServiceSignInRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string service_id = 3;
   // From StartServiceSignInResponse.started.
   string sign_in_id = 4;
 }
 
+// CancelServiceSignInResponse has no fields.
 message CancelServiceSignInResponse {}
 
+// GetServiceSignInStatusRequest names the service and program whose
+// sign-in status to read.
 message GetServiceSignInStatusRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string service_id = 3;
   // The program to ask about; empty asks for every program the recipe
   // declares.
   string program = 4;
 }
 
+// GetServiceSignInStatusResponse is one status per program asked for.
 message GetServiceSignInStatusResponse {
+  // The statuses, in recipe order.
   repeated ServiceSignInStatus statuses = 1;
 }
 
 // ServiceSignInStatus is one sign_in program's state.
 message ServiceSignInStatus {
+  // The sign_in program's name, as the recipe declares it.
   string program = 1;
   // Its status command exited 0.
   bool signed_in = 2;
@@ -2312,14 +2615,19 @@ message ServiceSignInStatus {
   ServiceSignInEndpoint endpoint = 5;
 }
 
+// SignOutServiceRequest runs a sign-in program's sign-out command.
 message SignOutServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string service_id = 3;
   // The recipe's sign_in program whose sign-out command runs.
   string program = 4;
 }
 
+// SignOutServiceResponse is the sign-out command's exit code and output.
 message SignOutServiceResponse {
   // The sign-out command's exit code; -1 when it did not run, or did not
   // end within its 30 seconds.
@@ -2329,9 +2637,13 @@ message SignOutServiceResponse {
   string output = 2;
 }
 
+// ListServiceRunsRequest lists a service's runs.
 message ListServiceRunsRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string id = 3;
   // The most runs in one page; zero lets the server choose.
   int32 page_size = 4;
@@ -2339,15 +2651,21 @@ message ListServiceRunsRequest {
   string page_token = 5;
 }
 
+// ListServiceRunsResponse is one page of a service's runs.
 message ListServiceRunsResponse {
+  // The runs, newest first.
   repeated ServiceRun runs = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// ListServiceRevisionsRequest lists a service's revisions.
 message ListServiceRevisionsRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string id = 3;
   // The most revisions in one page; zero lets the server choose.
   int32 page_size = 4;
@@ -2355,6 +2673,7 @@ message ListServiceRevisionsRequest {
   string page_token = 5;
 }
 
+// ListServiceRevisionsResponse is one page of a service's revisions.
 message ListServiceRevisionsResponse {
   // The service's revisions, newest first.
   repeated ServiceRevision revisions = 1;
@@ -2362,15 +2681,21 @@ message ListServiceRevisionsResponse {
   string next_page_token = 2;
 }
 
+// GetServiceRevisionRequest names one revision of a service.
 message GetServiceRevisionRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string id = 3;
   // The revision's number.
   int64 number = 4;
 }
 
+// GetServiceRevisionResponse is the revision.
 message GetServiceRevisionResponse {
+  // The revision.
   ServiceRevision revision = 1;
 }
 
@@ -2380,11 +2705,13 @@ message GetServiceRevisionResponse {
 message ServiceRevision {
   // Counts from 1 in the order the service's revisions were made.
   int64 number = 1;
+  // Why the revision was made.
   ServiceRevisionReason reason = 2;
   // The revision's recipe, resolved, in TOML.
   string recipe = 3;
   // The secret a SECRET revision was made for; never its value.
   string secret = 4;
+  // When it was made.
   google.protobuf.Timestamp created_at = 5;
   // The recipe's container image as submitted, a registry reference;
   // empty for a service that runs in a VM.
@@ -2433,9 +2760,11 @@ message ServiceRevision {
 // the run, restores the state volume's version the save pinned, selects
 // from_revision again and starts it.
 message ServiceUpgrade {
+  // Where the watch is.
   ServiceUpgradeState state = 1;
   // The revision the deploy replaced.
   int64 from_revision = 2;
+  // The window's length: the recipe's upgrade_window, 5 minutes unless set.
   google.protobuf.Duration window = 3;
   // When the window started; unset until the revision's first run starts.
   google.protobuf.Timestamp window_start_time = 4;
@@ -2468,6 +2797,7 @@ message ServiceUpgrade {
 
 // ServiceUpgradeState is where an upgrade's watch is.
 enum ServiceUpgradeState {
+  // Not set: an upgrade always has one of the states below.
   SERVICE_UPGRADE_STATE_UNSPECIFIED = 0;
   // Its window has not started or not ended yet.
   SERVICE_UPGRADE_STATE_WATCHING = 1;
@@ -2489,18 +2819,21 @@ enum ServiceUpgradeState {
 // check a rollback makes before it selects the revision: a request for the
 // manifest by digest, with the recipe's registry login, reading no image.
 message ServiceRevisionImageCheck {
+  // What the check found.
   ServiceRevisionImageOutcome outcome = 1;
   // The registry's HTTP status, such as "404 Not Found"; empty when no
   // answer came.
   string status = 2;
   // The registry's answer, or why it could not be asked.
   string message = 3;
+  // When the registry answered, or the check failed.
   google.protobuf.Timestamp checked_at = 4;
 }
 
 // ServiceRevisionImageOutcome is what a rollback's check of a revision's
 // image found.
 enum ServiceRevisionImageOutcome {
+  // Not set: a check always has one of the outcomes below.
   SERVICE_REVISION_IMAGE_OUTCOME_UNSPECIFIED = 0;
   // The registry serves the revision's digest.
   SERVICE_REVISION_IMAGE_OUTCOME_SERVED = 1;
@@ -2515,6 +2848,7 @@ enum ServiceRevisionImageOutcome {
 
 // ServiceRevisionReason is why a revision was made.
 enum ServiceRevisionReason {
+  // Not set: a revision always has a reason.
   SERVICE_REVISION_REASON_UNSPECIFIED = 0;
   // A deploy of a recipe: the service's create, or an UpdateService of
   // spec.recipe.
@@ -2523,8 +2857,11 @@ enum ServiceRevisionReason {
   SERVICE_REVISION_REASON_SECRET = 2;
 }
 
+// RollbackServiceRequest selects a revision of a service again.
 message RollbackServiceRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
   // The service's workload id.
   string id = 3;
@@ -2532,9 +2869,13 @@ message RollbackServiceRequest {
   int64 revision = 4;
   // The revision the caller saw selected; 0 checks nothing.
   int64 expected_revision = 5;
+  // A key that makes a retry return the first answer; the same key with
+  // another request fails with FAILED_PRECONDITION.
   string request_key = 6;
 }
 
+// RollbackServiceResponse is the service after the rollback and the
+// activation.
 message RollbackServiceResponse {
   // The service after the rollback.
   Service service = 1;
@@ -2542,9 +2883,14 @@ message RollbackServiceResponse {
   ServiceActivation activation = 2;
 }
 
+// ListServiceActivationsRequest lists the times a service's revision was
+// selected.
 message ListServiceActivationsRequest {
+  // The project's name.
   string project = 1;
+  // The environment's name.
   string environment = 2;
+  // The service's workload ID.
   string id = 3;
   // The most activations in one page; zero lets the server choose.
   int32 page_size = 4;
@@ -2552,6 +2898,7 @@ message ListServiceActivationsRequest {
   string page_token = 5;
 }
 
+// ListServiceActivationsResponse is one page of a service's activations.
 message ListServiceActivationsResponse {
   // The service's activations, newest first.
   repeated ServiceActivation activations = 1;
@@ -2564,6 +2911,7 @@ message ListServiceActivationsResponse {
 message ServiceActivation {
   // Counts from 1 in the order the service's activations were made.
   int64 sequence = 1;
+  // What selected the revision.
   ServiceActivationKind kind = 2;
   // Who asked for it.
   string actor = 3;
@@ -2573,10 +2921,12 @@ message ServiceActivation {
   int64 from_revision = 5;
   // The revision selected.
   int64 to_revision = 6;
+  // When it was selected.
   google.protobuf.Timestamp requested_at = 7;
   // The run the outcome follows; empty until the revision's run is
   // queued.
   string run_id = 8;
+  // What came of it.
   ServiceActivationOutcome outcome = 9;
   // A FAILED outcome's error: the run's.
   string error = 10;
@@ -2586,7 +2936,9 @@ message ServiceActivation {
 
 // ServiceActivationKind is what selected a revision.
 enum ServiceActivationKind {
+  // Not set: an activation always has a kind.
   SERVICE_ACTIVATION_KIND_UNSPECIFIED = 0;
+  // The service's create.
   SERVICE_ACTIVATION_KIND_CREATE = 1;
   // An UpdateService of spec.recipe.
   SERVICE_ACTIVATION_KIND_DEPLOY = 2;
@@ -2599,6 +2951,7 @@ enum ServiceActivationKind {
 // ServiceActivationOutcome is what came of an activation. READY and FAILED
 // are final.
 enum ServiceActivationOutcome {
+  // Not set: an activation always has one of the outcomes below.
   SERVICE_ACTIVATION_OUTCOME_UNSPECIFIED = 0;
   // Selected; its run has not been ready yet, or the service is not
   // running.
@@ -2613,7 +2966,9 @@ enum ServiceActivationOutcome {
 
 // ServiceSecretVersion is a secret's name and the version a run used.
 message ServiceSecretVersion {
+  // The secret's name.
   string name = 1;
+  // The version the run's start fixed.
   int64 version = 2;
 }
 
@@ -2623,6 +2978,7 @@ message ServiceRun {
   string id = 1;
   // The service revision it runs.
   int64 revision = 2;
+  // Where the run is in its life.
   ServiceRunState state = 3;
   // Why a queued run waits, for example "service_quota" past the plan's
   // shared services, "no_own_capacity" while the workspace's own host is
@@ -2631,6 +2987,7 @@ message ServiceRun {
   // service's state volume, or "host_kinds" while no host of the kinds the
   // service lists can take it; empty when it does not wait.
   string held = 4;
+  // When it was queued.
   google.protobuf.Timestamp queued_at = 5;
   // When its process started; unset before.
   google.protobuf.Timestamp started_at = 6;
@@ -2651,11 +3008,13 @@ message ServiceRun {
 
 // ServiceRunState is where a service's run is.
 enum ServiceRunState {
+  // Not set: a run always has a state.
   SERVICE_RUN_STATE_UNSPECIFIED = 0;
   // Waiting for a host.
   SERVICE_RUN_STATE_QUEUED = 1;
   // Placed on a host, its VM booting.
   SERVICE_RUN_STATE_STARTING = 2;
+  // Its VM is up and the service runs.
   SERVICE_RUN_STATE_RUNNING = 3;
   // Asked to stop; its VM is being stopped.
   SERVICE_RUN_STATE_STOPPING = 4;

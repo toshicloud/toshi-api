@@ -246,12 +246,17 @@ service WorkspaceService {
   }
 }
 
+// GetWorkspaceRequest has no fields: the call reads the caller's workspace.
 message GetWorkspaceRequest {}
 
+// GetWorkspaceResponse carries the caller's workspace.
 message GetWorkspaceResponse {
+  // The workspace.
   Workspace workspace = 1;
 }
 
+// DeleteWorkspaceRequest confirms and gives the reason for a workspace's
+// scheduled deletion.
 message DeleteWorkspaceRequest {
   // The workspace's name, as GetWorkspace returns it.
   string confirm = 1;
@@ -259,28 +264,42 @@ message DeleteWorkspaceRequest {
   string reason = 2;
 }
 
+// DeleteWorkspaceResponse carries the workspace with its deletion
+// scheduled.
 message DeleteWorkspaceResponse {
+  // The workspace with purge_after and deletion_by set.
   Workspace workspace = 1;
 }
 
+// CancelWorkspaceDeletionRequest has no fields: the call acts on the
+// caller's workspace.
 message CancelWorkspaceDeletionRequest {}
 
+// CancelWorkspaceDeletionResponse carries the workspace, active again.
 message CancelWorkspaceDeletionResponse {
+  // The workspace returned to active.
   Workspace workspace = 1;
 }
 
+// UpdateWorkspaceRequest carries the workspace values to set and the fields
+// to change.
 message UpdateWorkspaceRequest {
   // Carries the new values of the fields update_mask names, and the etag
   // the caller read, when it wants the change refused if another landed
   // since.
   Workspace workspace = 1;
+  // The paths to change: "name" and "settings.<field>"; omitted means the
+  // fields the request populates.
   google.protobuf.FieldMask update_mask = 2;
 }
 
+// UpdateWorkspaceResponse carries the workspace as stored.
 message UpdateWorkspaceResponse {
+  // The workspace as stored.
   Workspace workspace = 1;
 }
 
+// ListWorkspacesRequest selects a page of the caller's workspaces.
 message ListWorkspacesRequest {
   // The most workspaces in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -288,22 +307,29 @@ message ListWorkspacesRequest {
   string page_token = 2;
 }
 
+// ListWorkspacesResponse is one page of the caller's workspaces.
 message ListWorkspacesResponse {
+  // The workspaces, ordered by ID.
   repeated Workspace workspaces = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// GetWorkspaceBillingRequest selects how many months of billing usage to
+// return.
 message GetWorkspaceBillingRequest {
   // How many UTC months of usage to return, the current one included.
   // 0 means 2; at most 12.
   int32 months = 1;
 }
 
+// GetWorkspaceBillingResponse carries the workspace's billing.
 message GetWorkspaceBillingResponse {
+  // The workspace's billing.
   WorkspaceBilling billing = 1;
 }
 
+// GetWorkspaceStatementRequest selects the UTC month of the statement.
 message GetWorkspaceStatementRequest {
   // The UTC month as YYYY-MM. Empty: the current month.
   string month = 1;
@@ -311,14 +337,21 @@ message GetWorkspaceStatementRequest {
   bool csv = 2;
 }
 
+// GetWorkspaceStatementResponse carries the statement, and its CSV when the
+// request asked for it.
 message GetWorkspaceStatementResponse {
+  // The month's statement.
   WorkspaceStatement statement = 1;
   // The statement as CSV with a header row, when the request asked for it.
   string csv = 2;
 }
 
+// GetWorkspaceUpcomingInvoiceRequest has no fields: the call reads the
+// caller's own workspace.
 message GetWorkspaceUpcomingInvoiceRequest {}
 
+// GetWorkspaceUpcomingInvoiceResponse carries the provider's preview of the
+// next invoice and the current month's cost per project.
 message GetWorkspaceUpcomingInvoiceResponse {
   // The billing provider's preview of the next invoice.
   UpcomingInvoice invoice = 1;
@@ -328,6 +361,8 @@ message GetWorkspaceUpcomingInvoiceResponse {
   // The sums of the projects' month_so_far_cents and estimated_month_cents.
   // month_so_far_cents equals the current month's statement estimated_cents.
   int64 month_so_far_cents = 3;
+  // The sum of the projects' estimated_month_cents: the month's cost so far
+  // carried in a straight line to its end.
   int64 estimated_month_cents = 4;
   // The currency of the project costs, as the statement gives it; empty
   // while no price is known.
@@ -344,6 +379,7 @@ message UpcomingInvoice {
   string currency = 2;
   // The period the invoice covers.
   google.protobuf.Timestamp period_start = 3;
+  // When the period the invoice covers ends.
   google.protobuf.Timestamp period_end = 4;
   // When the usage behind this answer was read. Meter events reach the
   // provider asynchronously, so the preview may not yet include usage
@@ -361,6 +397,7 @@ message ProjectCost {
   // jobs with no project, a deleted project, or that history retention
   // already removed.
   string project_id = 1;
+  // The project's name; empty when project_id is.
   string project_name = 2;
   // The cost of the month so far, in the currency's minor unit.
   int64 month_so_far_cents = 3;
@@ -376,6 +413,7 @@ message Seat {
   string id = 1;
   // The Toshi user id of the person it is assigned to.
   string user_id = 2;
+  // When the seat was assigned.
   google.protobuf.Timestamp assigned_at = 3;
   // Who assigned it: a person, or the system for an operator's
   // reassignment.
@@ -389,9 +427,12 @@ message Seat {
   // "temporary_absence". Both are empty for an assigned seat, and the two
   // seats are billed as one for that month.
   string replaces = 7;
+  // Why an operator moved the seat: "hardware_failure" or
+  // "temporary_absence"; empty unless replaces is set.
   string replace_reason = 8;
 }
 
+// ListSeatsRequest selects the UTC month whose seats to list.
 message ListSeatsRequest {
   // The UTC month as YYYY-MM. Empty: the current month.
   string month = 1;
@@ -401,6 +442,7 @@ message ListSeatsRequest {
   string page_token = 3;
 }
 
+// ListSeatsResponse is the seats the workspace held in the month.
 message ListSeatsResponse {
   // The seats on this page, oldest assigned first.
   repeated Seat seats = 1;
@@ -408,24 +450,32 @@ message ListSeatsResponse {
   string next_page_token = 2;
 }
 
+// AssignSeatRequest names the member to assign a desktop seat to.
 message AssignSeatRequest {
   // The Toshi user id of the member to assign a seat to.
   string user_id = 1;
 }
 
+// AssignSeatResponse carries the seat that was assigned.
 message AssignSeatResponse {
+  // The seat as assigned.
   Seat seat = 1;
 }
 
+// RemoveSeatRequest names the seat to remove.
 message RemoveSeatRequest {
+  // The id of the seat to remove.
   string seat_id = 1;
 }
 
+// RemoveSeatResponse carries the seat as removed.
 message RemoveSeatResponse {
   // The seat as removed.
   Seat seat = 1;
 }
 
+// ListEgressIPsRequest selects a page of the hosts to list the egress
+// addresses of.
 message ListEgressIPsRequest {
   // The most hosts in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -458,12 +508,15 @@ message GetUsageRequest {
   google.protobuf.Timestamp to = 2;
 }
 
+// GetUsageResponse is the job counts and minutes of the window, with the
+// filler and storage figures beside them.
 message GetUsageResponse {
   // Ordered by day, then conclusion, then outcome, then kind. A
   // window with neither matching jobs nor reserved hours has no rows.
   repeated UsageRow rows = 1;
   // The window used, with the defaults filled in.
   google.protobuf.Timestamp from = 2;
+  // The end of the window used, exclusive.
   google.protobuf.Timestamp to = 3;
   // The filler jobs that finished in the window. They are not billed and
   // not in rows. Unset when there were none.
@@ -482,18 +535,24 @@ message GetQueueTimesRequest {
   google.protobuf.Timestamp to = 2;
 }
 
+// GetQueueTimesResponse is the queue times of the jobs that reached running
+// in the window.
 message GetQueueTimesResponse {
   // Jobs in the window that reached running (have a started_at).
   int64 jobs = 1;
   // Nearest-rank percentiles and maximum of started_at - queued_at, in whole
   // milliseconds. All 0 when jobs is 0.
   int64 p50_ms = 2;
+  // The nearest-rank 90th percentile of the start delays, in whole
+  // milliseconds; 0 when jobs is 0.
   int64 p90_ms = 3;
+  // The longest start delay, in whole milliseconds; 0 when jobs is 0.
   int64 max_ms = 4;
   // Share of those jobs assigned to a warm instance, from 0 to 1.
   double warm_share = 5;
   // The window used, with the defaults filled in.
   google.protobuf.Timestamp from = 6;
+  // The end of the window used, exclusive.
   google.protobuf.Timestamp to = 7;
   // Time held, from first held to assigned, of the jobs the scheduler held, by
   // the latest reason it held each one. A job never held is in none of them.
@@ -505,6 +564,8 @@ message GetQueueTimesResponse {
 // workspace.
 message GetStartWindowsRequest {}
 
+// GetStartWindowsResponse is the workspace's start windows as admission
+// counts them.
 message GetStartWindowsResponse {
   // False when no start is counted for the workspace: its plan sets no start
   // window, or it uses its own hosts only. Every window is then not counted.
@@ -630,8 +691,12 @@ message WorkspaceMonthEstimate {
   string currency = 3;
 }
 
+// GetVolumeCapsRequest has no fields: the call reads the caller's own
+// workspace.
 message GetVolumeCapsRequest {}
 
+// GetVolumeCapsResponse is the workspace's volume size-cap ceiling and what
+// is counted against it.
 message GetVolumeCapsResponse {
   // The sum of the size caps, in bytes, of the workspace's volumes that are
   // not deleted.
@@ -658,7 +723,9 @@ message GetVolumeCapsResponse {
 
 // VolumeCapsProject is one project's share of the volume caps.
 message VolumeCapsProject {
+  // The project's id.
   string project_id = 1;
+  // The project's name.
   string name = 2;
   // The sum of the size caps, in bytes, of the project's volumes that are not
   // deleted.
@@ -712,6 +779,8 @@ message GetWorkflowUsageRequest {
   google.protobuf.Timestamp to = 2;
 }
 
+// GetWorkflowUsageResponse is the jobs of the window per repository and
+// workflow.
 message GetWorkflowUsageResponse {
   // Ordered by minutes, then own_host_minutes, then jobs, each descending,
   // then by repository and workflow, byte by byte. A window with no
@@ -719,9 +788,11 @@ message GetWorkflowUsageResponse {
   repeated WorkflowUsageRow rows = 1;
   // The window used, with the defaults filled in.
   google.protobuf.Timestamp from = 2;
+  // The end of the window used, exclusive.
   google.protobuf.Timestamp to = 3;
 }
 
+// ListPlansRequest selects a page of plans.
 message ListPlansRequest {
   // The most plans in one page; zero lets the server choose.
   int32 page_size = 1;
@@ -729,13 +800,19 @@ message ListPlansRequest {
   string page_token = 2;
 }
 
+// ListPlansResponse is one page of plans.
 message ListPlansResponse {
+  // The plans, sorted by name.
   repeated Plan plans = 1;
   // Empty on the last page.
   string next_page_token = 2;
 }
 
+// CreateCheckoutSessionRequest selects the plan to buy and where the
+// browser returns to.
 message CreateCheckoutSessionRequest {
+  // The plan to subscribe to; empty, or one the configuration does not
+  // define, fails with INVALID_ARGUMENT.
   string plan = 1;
   // Where the browser goes back to when checkout finishes or is cancelled.
   // The workspace id rides on it as the workspace query parameter, and billing
@@ -752,11 +829,14 @@ message CreateCheckoutSessionRequest {
   string request_key = 3;
 }
 
+// CreateCheckoutSessionResponse carries the Checkout URL.
 message CreateCheckoutSessionResponse {
   // The provider's hosted Checkout URL to send the browser to.
   string url = 1;
 }
 
+// CreateBillingPortalSessionRequest says where the browser returns to from
+// the portal.
 message CreateBillingPortalSessionRequest {
   // Where the browser goes back to from the portal, with the workspace id as
   // the workspace query parameter; its own query is kept. return_url is required
@@ -771,16 +851,23 @@ message CreateBillingPortalSessionRequest {
   string request_key = 2;
 }
 
+// CreateBillingPortalSessionResponse carries the Customer Portal URL.
 message CreateBillingPortalSessionResponse {
   // The provider's hosted Customer Portal URL to send the browser to.
   string url = 1;
 }
 
+// GetVersionRequest has no fields.
 message GetVersionRequest {}
 
+// GetVersionResponse is the control plane's build and the oldest agent
+// release it admits.
 message GetVersionResponse {
+  // The build's version; "dev" for a build without one.
   string version = 1;
+  // The build's VCS revision, or "unknown".
   string commit = 2;
+  // The build's VCS commit time, or "unknown".
   string date = 3;
   // The oldest agent release this control plane process admits when the
   // workspace's own hosts register; empty when unset, which admits every
@@ -791,11 +878,16 @@ message GetVersionResponse {
 // Workspace owns a plan, an optional concurrency override, and its GitHub
 // App installations.
 message Workspace {
+  // The workspace's id: "ws-" and 24 hex digits.
   string id = 1;
+  // The workspace's name; not unique among workspaces.
   string name = 2;
   // The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
   optional int32 concurrency_cap = 3;
+  // When the workspace was created.
   google.protobuf.Timestamp created_at = 4;
+  // The name of the plan the workspace follows; empty when it has none, so
+  // the default plan applies.
   string plan = 5;
   // The cap the scheduler enforces; 0 means unlimited.
   int32 effective_concurrency = 6;
@@ -806,6 +898,7 @@ message Workspace {
   int32 effective_max_jobs_per_hour = 11;
   // The starter credit granted when the workspace was created; 0 when none.
   int64 starter_credit_cents = 12;
+  // When the starter credit was granted; unset when none was.
   google.protobuf.Timestamp starter_credit_granted_at = 13;
   // The workspace's effective reservations on shared hosts, ordered
   // by size: its own rows, and its plan's entries where it has none.
@@ -890,6 +983,7 @@ message Workspace {
 message HostingCertificate {
   // The wildcard name, *.<workspace id>.svc.<domain>.
   string name = 1;
+  // Where the certificate is in its issue and renewal.
   HostingCertificateState state = 2;
   // When the certificate in use expires; unset before the first one.
   google.protobuf.Timestamp not_after = 3;
@@ -904,6 +998,7 @@ message HostingCertificate {
 }
 
 enum HostingCertificateState {
+  // No certificate state is recorded.
   HOSTING_CERTIFICATE_STATE_UNSPECIFIED = 0;
   // The first certificate is being ordered; until it is, provided names
   // refuse connections.
@@ -911,6 +1006,8 @@ enum HostingCertificateState {
   // The authority refused an order for its rate limits; Toshi tries again
   // at retry_at.
   HOSTING_CERTIFICATE_STATE_RATE_LIMITED = 2;
+  // The certificate is issued and serves until not_after; Toshi renews it
+  // at renew_at.
   HOSTING_CERTIFICATE_STATE_VALID = 3;
   // A renewal failed; the current certificate serves until not_after.
   HOSTING_CERTIFICATE_STATE_RENEWAL_FAILING = 4;
@@ -1030,15 +1127,20 @@ message WorkspaceSettings {
 
 // InboundMailPastCap chooses whether to accept mail beyond the daily cap.
 enum InboundMailPastCap {
+  // Unset; mail past the daily cap is accepted.
   INBOUND_MAIL_PAST_CAP_UNSPECIFIED = 0;
+  // Accept mail past the daily cap and charge for it.
   INBOUND_MAIL_PAST_CAP_ACCEPT_AND_CHARGE = 1;
+  // Refuse mail past the daily cap.
   INBOUND_MAIL_PAST_CAP_REFUSE = 2;
 }
 
 // WorkspaceSettingChange is who last changed one of a workspace's settings,
 // and when.
 message WorkspaceSettingChange {
+  // Who changed the setting: a person, or the system.
   Subject changed_by = 1;
+  // When it changed.
   google.protobuf.Timestamp changed_at = 2;
 }
 
@@ -1051,6 +1153,7 @@ message WorkspaceSignIn {
   string issuer = 2;
   // The user who set it, and when. Set by Toshi.
   string set_by = 3;
+  // When it was set.
   google.protobuf.Timestamp set_at = 4;
 }
 
@@ -1113,6 +1216,8 @@ message WorkspaceBilling {
   // Starter credit granted, and an estimate of what is left: the credit
   // less the metered spend since billing started.
   int64 starter_credit_cents = 17;
+  // The estimate of the credit left: the credit less the metered spend
+  // since billing started.
   int64 starter_credit_left_cents = 18;
   // When the credit reached the billing customer; unset before.
   google.protobuf.Timestamp starter_credit_applied_at = 19;
@@ -1135,6 +1240,7 @@ message WorkspaceBilling {
   message HeldJobs {
     // One of the job hold reasons (see Job.hold_reason).
     string reason = 23;
+    // The jobs held for the reason now.
     int64 jobs = 24;
     // Since when the longest-held of them has been held.
     google.protobuf.Timestamp since = 25;
@@ -1151,31 +1257,48 @@ message BillingTotals {
   string month = 1;
   // The runner size; empty for events recorded before sizes were.
   string size = 2;
+  // Events the provider accepted.
   int64 sent_events = 3;
+  // The minutes of sent_events.
   int64 sent_minutes = 4;
+  // Events not sent to the provider yet.
   int64 pending_events = 5;
+  // The minutes of pending_events.
   int64 pending_minutes = 6;
+  // Events the provider refused, which Toshi no longer sends.
   int64 failed_events = 7;
+  // The minutes of failed_events.
   int64 failed_minutes = 8;
 }
 
 // BillingEventFailure is a meter event the provider will not be sent again.
 message BillingEventFailure {
+  // The id of the job the event metered.
   string job_id = 1;
+  // The runner size; empty for events recorded before sizes were.
   string size = 2;
+  // The meter event's name.
   string event_name = 3;
+  // The job's metered minutes.
   int64 minutes = 4;
   // When the job finished.
   google.protobuf.Timestamp occurred_at = 5;
+  // When the provider last refused the event.
   google.protobuf.Timestamp failed_at = 6;
+  // The number of times Toshi sent the event.
   int32 attempts = 7;
+  // The provider's error for the last attempt.
   string last_error = 8;
 }
 
+// WorkspaceStatement is one UTC month's usage and charges with their
+// estimated cost.
 message WorkspaceStatement {
   // The month as YYYY-MM, and its bounds: from inclusive, to exclusive.
   string month = 1;
+  // Start of the month, inclusive.
   google.protobuf.Timestamp from = 2;
+  // End of the month, exclusive.
   google.protobuf.Timestamp to = 3;
   // The plans the month's metered minutes were recorded at, comma-separated;
   // the workspace's plan today when no minute has a recorded price.
@@ -1201,6 +1324,7 @@ message WorkspaceStatement {
   // The starter credit put on the customer's balance in the month; 0 and
   // unset when it was not applied in it.
   int64 starter_credit_applied_cents = 11;
+  // When the credit was applied; unset when it was not.
   google.protobuf.Timestamp starter_credit_applied_at = 12;
   // Held time, from first held to assigned, of the jobs queued in the month
   // that reached running, by the latest reason each was held.
@@ -1268,10 +1392,13 @@ message PaidStarts {
 
 // StatementSeat is one desktop seat on a statement.
 message StatementSeat {
+  // The seat's id.
   string seat_id = 1;
   // The Toshi user id of the person it was assigned to, and their name.
   string user_id = 2;
+  // The person's name.
   string name = 3;
+  // When the seat was assigned.
   google.protobuf.Timestamp assigned_at = 4;
   // Unset while the seat is live.
   google.protobuf.Timestamp removed_at = 5;
@@ -1302,7 +1429,9 @@ message OwnHostFee {
 // VM-second: each run's time from first ready to release, summed and rounded
 // up once to whole seconds.
 message Awake {
+  // A runner size, as a runs-on label.
   string size = 1;
+  // The number of service runs of the size in the month.
   int64 runs = 2;
   // The exact awake time, in seconds, from the workspace's billing start.
   double seconds = 3;
@@ -1339,6 +1468,8 @@ message Storage {
 // StoredKind is one kind of stored data in a month: images, volume_versions,
 // artifacts, recordings, held_disks or service_snapshots.
 message StoredKind {
+  // The kind: images, volume_versions, artifacts, recordings, held_disks or
+  // service_snapshots.
   string kind = 1;
   // The bytes the last sampled hour held.
   int64 bytes = 2;
@@ -1350,6 +1481,8 @@ message StoredKind {
 message StorageUsageRow {
   // The day's first hour, UTC, as YYYY-MM-DD.
   string day = 1;
+  // The kind: images, volume_versions, artifacts, recordings, held_disks or
+  // service_snapshots.
   string kind = 2;
   // The kind's GB summed over the day's sampled hours.
   double gb_hours = 3;
@@ -1357,9 +1490,15 @@ message StorageUsageRow {
   int64 bytes = 4;
 }
 
+// StatementUsage is one runner size and OS on a statement, with its jobs
+// and minutes.
 message StatementUsage {
+  // A runner size, as a runs-on label; empty for the total row.
   string size = 1;
+  // The operating system, such as "linux" or "windows"; empty for the total
+  // row.
   string os = 2;
+  // The number of jobs in this entry.
   int64 jobs = 3;
   // Billable minutes on shared hosts, rounded up per job.
   int64 minutes = 4;
@@ -1379,9 +1518,12 @@ message StatementUsage {
   string outcome = 9;
   // The exact run time behind minutes and own_host_minutes, in seconds.
   double seconds = 10;
+  // The exact run time behind own_host_minutes, in seconds.
   double own_host_seconds = 11;
 }
 
+// StatementCharge is one line of a statement's charges: the metered minutes
+// or seconds of one runner size and their estimated cost.
 message StatementCharge {
   // Empty for usage recorded without a size, priced at the plan's highest
   // per-minute price.
@@ -1397,14 +1539,20 @@ message StatementCharge {
   int64 seconds = 4;
 }
 
+// HoldTimes is the held time of the jobs held for one reason in a window.
 message HoldTimes {
   // One of the job hold reasons (see Job.hold_reason), as the
   // toshi_jobs_held metric labels them.
   string reason = 1;
   // The jobs held for this reason whose hold ended (they were assigned and started), and their held time in milliseconds (nearest-rank).
   int64 jobs = 2;
+  // The nearest-rank 50th percentile of the held times, in whole
+  // milliseconds; 0 when jobs is 0.
   int64 p50_ms = 3;
+  // The nearest-rank 90th percentile of the held times, in whole
+  // milliseconds; 0 when jobs is 0.
   int64 p90_ms = 4;
+  // The longest held time, in whole milliseconds; 0 when jobs is 0.
   int64 max_ms = 5;
   // The jobs held for this reason now, whenever they were queued. 0 when
   // the window ends before now.
@@ -1418,6 +1566,7 @@ message HoldTimes {
 // started on shared room. Not billed; a plan's filler_minutes_per_day bounds
 // them per UTC day.
 message FillerUsage {
+  // The number of filler jobs that finished in the window.
   int64 jobs = 1;
   // Each job's duration rounded up to whole minutes, on any host.
   int64 minutes = 2;
@@ -1459,10 +1608,13 @@ message UsageRow {
   // The exact run time behind minutes and own_host_minutes, in seconds, not
   // rounded.
   double seconds = 11;
+  // The exact run time behind own_host_minutes, in seconds, not rounded.
   double own_host_seconds = 12;
   // The exact time service runs were awake, from first ready to release,
   // and the idle part of it before they were put to sleep, in seconds.
   double awake_seconds = 13;
+  // The idle part of awake_seconds: the time after the last demand before
+  // the run was put to sleep.
   double idle_seconds = 14;
 }
 
@@ -1489,13 +1641,21 @@ message WorkflowUsageRow {
   // the stop request, or to finished_at when there was none, each rounded
   // up to a whole second. Both 0 when timed_jobs is 0.
   int64 p50_seconds = 8;
+  // The nearest-rank 95th percentile of the run times, in whole seconds; 0
+  // when timed_jobs is 0.
   int64 p95_seconds = 9;
 }
 
+// Plan is one configured plan and the limits a workspace on it follows.
 message Plan {
+  // The plan's name; unique among the configured plans.
   string name = 1;
+  // The jobs a workspace on the plan may run at once; 0 means unlimited.
   int32 concurrency = 2;
+  // The longest a job may run, in minutes; 0 means unlimited.
   int32 max_job_minutes = 3;
+  // True for the deployment's default plan, which a workspace follows when
+  // its own is empty or unknown.
   bool is_default = 4;
   // Whether a workspace can buy this plan through Checkout: self-serve billing
   // is on and exactly one lookup key in billing.plan_map maps to the plan.
@@ -1559,9 +1719,11 @@ message Plan {
 message EgressHost {
   // The host's id and name; empty for a shared host.
   string host_id = 1;
+  // The host's name; empty for a shared host.
   string name = 2;
   // The host is shared between workspaces rather than the workspace's own.
   bool shared = 3;
+  // The host's egress addresses.
   HostEgress egress = 4;
   // For an EGRESS_SOURCE_PER_JOB host: the addresses its jobs ran from in
   // the last 7 days, sorted.

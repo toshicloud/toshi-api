@@ -26,11 +26,15 @@ export const file_toshi_operator_v1_operator: GenFile = /*@__PURE__*/
  */
 export type Job = Message<"toshi.operator.v1.Job"> & {
   /**
+   * The job's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The workspace that owns the job.
+   *
    * @generated from field: string workspace = 2;
    */
   workspace: string;
@@ -43,11 +47,15 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   repository: string;
 
   /**
+   * GitHub's id of the workflow job; 0 when there is none.
+   *
    * @generated from field: int64 workflow_job_id = 4;
    */
   workflowJobId: bigint;
 
   /**
+   * GitHub's id of the workflow run; 0 when there is none.
+   *
    * @generated from field: int64 run_id = 5;
    */
   runId: bigint;
@@ -67,16 +75,22 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   labels: string[];
 
   /**
+   * The job's OS: linux, windows or macos.
+   *
    * @generated from field: string os = 8;
    */
   os: string;
 
   /**
+   * The runner size, as the runs-on label it names.
+   *
    * @generated from field: string size = 9;
    */
   size: string;
 
   /**
+   * Where the job is in its life cycle.
+   *
    * @generated from field: toshi.operator.v1.JobState state = 10;
    */
   state: JobState;
@@ -96,21 +110,30 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   instanceId: string;
 
   /**
+   * When the job was queued.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 13;
    */
   queuedAt?: Timestamp | undefined;
 
   /**
+   * When the scheduler assigned it to a host; unset while queued.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 14;
    */
   assignedAt?: Timestamp | undefined;
 
   /**
+   * When its runner started, or for a Workspace API job when its
+   * command did.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 15;
    */
   startedAt?: Timestamp | undefined;
 
   /**
+   * When it ended; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 16;
    */
   finishedAt?: Timestamp | undefined;
@@ -209,6 +232,8 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   debugStartedAt?: Timestamp | undefined;
 
   /**
+   * When the debug session ends; unset for a job that never had one.
+   *
    * @generated from field: google.protobuf.Timestamp debug_until = 27;
    */
   debugUntil?: Timestamp | undefined;
@@ -457,6 +482,8 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
   runnerId: string;
 
   /**
+   * The name that runner registered with; unset with runner_id.
+   *
    * @generated from field: string runner_name = 51;
    */
   runnerName: string;
@@ -528,11 +555,15 @@ export type Job = Message<"toshi.operator.v1.Job"> & {
  */
 export type JobJson = {
   /**
+   * The job's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The workspace that owns the job.
+   *
    * @generated from field: string workspace = 2;
    */
   workspace?: string;
@@ -545,11 +576,15 @@ export type JobJson = {
   repository?: string;
 
   /**
+   * GitHub's id of the workflow job; 0 when there is none.
+   *
    * @generated from field: int64 workflow_job_id = 4;
    */
   workflowJobId?: string;
 
   /**
+   * GitHub's id of the workflow run; 0 when there is none.
+   *
    * @generated from field: int64 run_id = 5;
    */
   runId?: string;
@@ -569,16 +604,22 @@ export type JobJson = {
   labels?: string[];
 
   /**
+   * The job's OS: linux, windows or macos.
+   *
    * @generated from field: string os = 8;
    */
   os?: string;
 
   /**
+   * The runner size, as the runs-on label it names.
+   *
    * @generated from field: string size = 9;
    */
   size?: string;
 
   /**
+   * Where the job is in its life cycle.
+   *
    * @generated from field: toshi.operator.v1.JobState state = 10;
    */
   state?: JobStateJson;
@@ -598,21 +639,30 @@ export type JobJson = {
   instanceId?: string;
 
   /**
+   * When the job was queued.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 13;
    */
   queuedAt?: TimestampJson;
 
   /**
+   * When the scheduler assigned it to a host; unset while queued.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 14;
    */
   assignedAt?: TimestampJson;
 
   /**
+   * When its runner started, or for a Workspace API job when its
+   * command did.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 15;
    */
   startedAt?: TimestampJson;
 
   /**
+   * When it ended; unset until then.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 16;
    */
   finishedAt?: TimestampJson;
@@ -711,6 +761,8 @@ export type JobJson = {
   debugStartedAt?: TimestampJson;
 
   /**
+   * When the debug session ends; unset for a job that never had one.
+   *
    * @generated from field: google.protobuf.Timestamp debug_until = 27;
    */
   debugUntil?: TimestampJson;
@@ -959,6 +1011,8 @@ export type JobJson = {
   runnerId?: string;
 
   /**
+   * The name that runner registered with; unset with runner_id.
+   *
    * @generated from field: string runner_name = 51;
    */
   runnerName?: string;
@@ -1077,6 +1131,8 @@ export type JobCache = Message<"toshi.operator.v1.JobCache"> & {
   generationBytes: bigint;
 
   /**
+   * How long the write-back took, in milliseconds; 0 when there was none.
+   *
    * @generated from field: int64 write_back_ms = 6;
    */
   writeBackMs: bigint;
@@ -1140,6 +1196,8 @@ export type JobCacheJson = {
   generationBytes?: string;
 
   /**
+   * How long the write-back took, in milliseconds; 0 when there was none.
+   *
    * @generated from field: int64 write_back_ms = 6;
    */
   writeBackMs?: string;
@@ -1350,6 +1408,8 @@ export const JobTelemetrySummarySchema: GenMessage<JobTelemetrySummary, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 2);
 
 /**
+ * SummariseJobTelemetryRequest selects the jobs to sum up.
+ *
  * @generated from message toshi.operator.v1.SummariseJobTelemetryRequest
  */
 export type SummariseJobTelemetryRequest = Message<"toshi.operator.v1.SummariseJobTelemetryRequest"> & {
@@ -1362,12 +1422,16 @@ export type SummariseJobTelemetryRequest = Message<"toshi.operator.v1.SummariseJ
   from?: Timestamp | undefined;
 
   /**
+   * End of the range, exclusive; unset means the control plane's now.
+   *
    * @generated from field: google.protobuf.Timestamp to = 2;
    */
   to?: Timestamp | undefined;
 };
 
 /**
+ * SummariseJobTelemetryRequest selects the jobs to sum up.
+ *
  * @generated from message toshi.operator.v1.SummariseJobTelemetryRequest
  */
 export type SummariseJobTelemetryRequestJson = {
@@ -1380,6 +1444,8 @@ export type SummariseJobTelemetryRequestJson = {
   from?: TimestampJson;
 
   /**
+   * End of the range, exclusive; unset means the control plane's now.
+   *
    * @generated from field: google.protobuf.Timestamp to = 2;
    */
   to?: TimestampJson;
@@ -1393,6 +1459,8 @@ export const SummariseJobTelemetryRequestSchema: GenMessage<SummariseJobTelemetr
   messageDesc(file_toshi_operator_v1_operator, 3);
 
 /**
+ * SummariseJobTelemetryResponse is the telemetry summed by OS and size.
+ *
  * @generated from message toshi.operator.v1.SummariseJobTelemetryResponse
  */
 export type SummariseJobTelemetryResponse = Message<"toshi.operator.v1.SummariseJobTelemetryResponse"> & {
@@ -1412,12 +1480,16 @@ export type SummariseJobTelemetryResponse = Message<"toshi.operator.v1.Summarise
   from?: Timestamp | undefined;
 
   /**
+   * The range's end used, with the default filled in.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: Timestamp | undefined;
 };
 
 /**
+ * SummariseJobTelemetryResponse is the telemetry summed by OS and size.
+ *
  * @generated from message toshi.operator.v1.SummariseJobTelemetryResponse
  */
 export type SummariseJobTelemetryResponseJson = {
@@ -1437,6 +1509,8 @@ export type SummariseJobTelemetryResponseJson = {
   from?: TimestampJson;
 
   /**
+   * The range's end used, with the default filled in.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: TimestampJson;
@@ -1457,11 +1531,15 @@ export const SummariseJobTelemetryResponseSchema: GenMessage<SummariseJobTelemet
  */
 export type JobTelemetrySizeRow = Message<"toshi.operator.v1.JobTelemetrySizeRow"> & {
   /**
+   * The OS pool: linux, windows or macos.
+   *
    * @generated from field: string os = 1;
    */
   os: string;
 
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 2;
    */
   size: string;
@@ -1474,6 +1552,8 @@ export type JobTelemetrySizeRow = Message<"toshi.operator.v1.JobTelemetrySizeRow
   vcpus: number;
 
   /**
+   * The size's memory in MiB; 0 when the size is unknown.
+   *
    * @generated from field: int64 memory_mib = 4;
    */
   memoryMib: bigint;
@@ -1555,11 +1635,15 @@ export type JobTelemetrySizeRow = Message<"toshi.operator.v1.JobTelemetrySizeRow
  */
 export type JobTelemetrySizeRowJson = {
   /**
+   * The OS pool: linux, windows or macos.
+   *
    * @generated from field: string os = 1;
    */
   os?: string;
 
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 2;
    */
   size?: string;
@@ -1572,6 +1656,8 @@ export type JobTelemetrySizeRowJson = {
   vcpus?: number;
 
   /**
+   * The size's memory in MiB; 0 when the size is unknown.
+   *
    * @generated from field: int64 memory_mib = 4;
    */
   memoryMib?: string;
@@ -1660,16 +1746,22 @@ export const JobTelemetrySizeRowSchema: GenMessage<JobTelemetrySizeRow, {jsonTyp
  */
 export type TelemetryPercentiles = Message<"toshi.operator.v1.TelemetryPercentiles"> & {
   /**
+   * The median; 0 for an empty set.
+   *
    * @generated from field: double p50 = 1;
    */
   p50: number;
 
   /**
+   * The 95th percentile; 0 for an empty set.
+   *
    * @generated from field: double p95 = 2;
    */
   p95: number;
 
   /**
+   * The highest value; 0 for an empty set.
+   *
    * @generated from field: double max = 3;
    */
   max: number;
@@ -1683,16 +1775,22 @@ export type TelemetryPercentiles = Message<"toshi.operator.v1.TelemetryPercentil
  */
 export type TelemetryPercentilesJson = {
   /**
+   * The median; 0 for an empty set.
+   *
    * @generated from field: double p50 = 1;
    */
   p50?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The 95th percentile; 0 for an empty set.
+   *
    * @generated from field: double p95 = 2;
    */
   p95?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The highest value; 0 for an empty set.
+   *
    * @generated from field: double max = 3;
    */
   max?: number | "NaN" | "Infinity" | "-Infinity";
@@ -1712,6 +1810,8 @@ export const TelemetryPercentilesSchema: GenMessage<TelemetryPercentiles, {jsonT
  */
 export type HeldRefill = Message<"toshi.operator.v1.HeldRefill"> & {
   /**
+   * The runner size of the pool.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
@@ -1731,6 +1831,8 @@ export type HeldRefill = Message<"toshi.operator.v1.HeldRefill"> & {
  */
 export type HeldRefillJson = {
   /**
+   * The runner size of the pool.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
@@ -1757,11 +1859,15 @@ export const HeldRefillSchema: GenMessage<HeldRefill, {jsonType: HeldRefillJson}
  */
 export type Host = Message<"toshi.operator.v1.Host"> & {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The host's name, as its agent registered it.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -1774,21 +1880,30 @@ export type Host = Message<"toshi.operator.v1.Host"> & {
   os: string[];
 
   /**
+   * The host's CPUs, as its agent reported them.
+   *
    * @generated from field: int32 cpus = 4;
    */
   cpus: number;
 
   /**
+   * The host's memory in MiB, as its agent reported it.
+   *
    * @generated from field: int32 memory_mib = 5;
    */
   memoryMib: number;
 
   /**
+   * The labels the host's agent reported at its last registration; a
+   * cloud pool's host has cloud and region.
+   *
    * @generated from field: map<string, string> labels = 6;
    */
   labels: { [key: string]: string };
 
   /**
+   * Whether the host takes new jobs.
+   *
    * @generated from field: toshi.operator.v1.HostState state = 7;
    */
   state: HostState;
@@ -1976,11 +2091,15 @@ export type Host = Message<"toshi.operator.v1.Host"> & {
   keptVms: KeptVM[];
 
   /**
+   * The memory, in MiB, the kept VMs hold together.
+   *
    * @generated from field: int64 kept_memory_mib = 30;
    */
   keptMemoryMib: bigint;
 
   /**
+   * The disk, in bytes, the kept VMs hold together.
+   *
    * @generated from field: int64 kept_disk_bytes = 31;
    */
   keptDiskBytes: bigint;
@@ -2009,6 +2128,9 @@ export type Host = Message<"toshi.operator.v1.Host"> & {
   networkEnforced: boolean;
 
   /**
+   * Why the host does not enforce network rules, as its agent said;
+   * empty when it does.
+   *
    * @generated from field: string network_reason = 34;
    */
   networkReason: string;
@@ -2021,11 +2143,15 @@ export type Host = Message<"toshi.operator.v1.Host"> & {
  */
 export type HostJson = {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The host's name, as its agent registered it.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -2038,21 +2164,30 @@ export type HostJson = {
   os?: string[];
 
   /**
+   * The host's CPUs, as its agent reported them.
+   *
    * @generated from field: int32 cpus = 4;
    */
   cpus?: number;
 
   /**
+   * The host's memory in MiB, as its agent reported it.
+   *
    * @generated from field: int32 memory_mib = 5;
    */
   memoryMib?: number;
 
   /**
+   * The labels the host's agent reported at its last registration; a
+   * cloud pool's host has cloud and region.
+   *
    * @generated from field: map<string, string> labels = 6;
    */
   labels?: { [key: string]: string };
 
   /**
+   * Whether the host takes new jobs.
+   *
    * @generated from field: toshi.operator.v1.HostState state = 7;
    */
   state?: HostStateJson;
@@ -2240,11 +2375,15 @@ export type HostJson = {
   keptVms?: KeptVMJson[];
 
   /**
+   * The memory, in MiB, the kept VMs hold together.
+   *
    * @generated from field: int64 kept_memory_mib = 30;
    */
   keptMemoryMib?: string;
 
   /**
+   * The disk, in bytes, the kept VMs hold together.
+   *
    * @generated from field: int64 kept_disk_bytes = 31;
    */
   keptDiskBytes?: string;
@@ -2273,6 +2412,9 @@ export type HostJson = {
   networkEnforced?: boolean;
 
   /**
+   * Why the host does not enforce network rules, as its agent said;
+   * empty when it does.
+   *
    * @generated from field: string network_reason = 34;
    */
   networkReason?: string;
@@ -2292,11 +2434,15 @@ export const HostSchema: GenMessage<Host, {jsonType: HostJson}> = /*@__PURE__*/
  */
 export type KeptVM = Message<"toshi.operator.v1.KeptVM"> & {
   /**
+   * The workspace whose workload it is kept for.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace: string;
 
   /**
+   * The workload's id.
+   *
    * @generated from field: string workload_id = 2;
    */
   workloadId: string;
@@ -2316,11 +2462,15 @@ export type KeptVM = Message<"toshi.operator.v1.KeptVM"> & {
   form: string;
 
   /**
+   * The memory it holds in MiB while it runs or is paused; 0 otherwise.
+   *
    * @generated from field: int64 memory_mib = 5;
    */
   memoryMib: bigint;
 
   /**
+   * The disk its image holds, in bytes.
+   *
    * @generated from field: int64 disk_bytes = 6;
    */
   diskBytes: bigint;
@@ -2355,11 +2505,15 @@ export type KeptVM = Message<"toshi.operator.v1.KeptVM"> & {
  */
 export type KeptVMJson = {
   /**
+   * The workspace whose workload it is kept for.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace?: string;
 
   /**
+   * The workload's id.
+   *
    * @generated from field: string workload_id = 2;
    */
   workloadId?: string;
@@ -2379,11 +2533,15 @@ export type KeptVMJson = {
   form?: string;
 
   /**
+   * The memory it holds in MiB while it runs or is paused; 0 otherwise.
+   *
    * @generated from field: int64 memory_mib = 5;
    */
   memoryMib?: string;
 
   /**
+   * The disk its image holds, in bytes.
+   *
    * @generated from field: int64 disk_bytes = 6;
    */
   diskBytes?: string;
@@ -2433,6 +2591,8 @@ export type HostEgress = Message<"toshi.operator.v1.HostEgress"> & {
   ips: string[];
 
   /**
+   * Where the addresses come from.
+   *
    * @generated from field: toshi.operator.v1.EgressSource source = 2;
    */
   source: EgressSource;
@@ -2460,6 +2620,8 @@ export type HostEgressJson = {
   ips?: string[];
 
   /**
+   * Where the addresses come from.
+   *
    * @generated from field: toshi.operator.v1.EgressSource source = 2;
    */
   source?: EgressSourceJson;
@@ -2480,6 +2642,8 @@ export const HostEgressSchema: GenMessage<HostEgress, {jsonType: HostEgressJson}
   messageDesc(file_toshi_operator_v1_operator, 10);
 
 /**
+ * ListJobsRequest selects the jobs to list.
+ *
  * @generated from message toshi.operator.v1.ListJobsRequest
  */
 export type ListJobsRequest = Message<"toshi.operator.v1.ListJobsRequest"> & {
@@ -2538,6 +2702,8 @@ export type ListJobsRequest = Message<"toshi.operator.v1.ListJobsRequest"> & {
 };
 
 /**
+ * ListJobsRequest selects the jobs to list.
+ *
  * @generated from message toshi.operator.v1.ListJobsRequest
  */
 export type ListJobsRequestJson = {
@@ -2603,10 +2769,14 @@ export const ListJobsRequestSchema: GenMessage<ListJobsRequest, {jsonType: ListJ
   messageDesc(file_toshi_operator_v1_operator, 11);
 
 /**
+ * ListJobsResponse is one page of jobs.
+ *
  * @generated from message toshi.operator.v1.ListJobsResponse
  */
 export type ListJobsResponse = Message<"toshi.operator.v1.ListJobsResponse"> & {
   /**
+   * The page's jobs, oldest queued first.
+   *
    * @generated from field: repeated toshi.operator.v1.Job jobs = 1;
    */
   jobs: Job[];
@@ -2620,10 +2790,14 @@ export type ListJobsResponse = Message<"toshi.operator.v1.ListJobsResponse"> & {
 };
 
 /**
+ * ListJobsResponse is one page of jobs.
+ *
  * @generated from message toshi.operator.v1.ListJobsResponse
  */
 export type ListJobsResponseJson = {
   /**
+   * The page's jobs, oldest queued first.
+   *
    * @generated from field: repeated toshi.operator.v1.Job jobs = 1;
    */
   jobs?: JobJson[];
@@ -3068,6 +3242,8 @@ export const ListAuditEventsRequestSchema: GenMessage<ListAuditEventsRequest, {j
   messageDesc(file_toshi_operator_v1_operator, 14);
 
 /**
+ * ListAuditEventsResponse is one page of audit events.
+ *
  * @generated from message toshi.operator.v1.ListAuditEventsResponse
  */
 export type ListAuditEventsResponse = Message<"toshi.operator.v1.ListAuditEventsResponse"> & {
@@ -3087,6 +3263,8 @@ export type ListAuditEventsResponse = Message<"toshi.operator.v1.ListAuditEvents
 };
 
 /**
+ * ListAuditEventsResponse is one page of audit events.
+ *
  * @generated from message toshi.operator.v1.ListAuditEventsResponse
  */
 export type ListAuditEventsResponseJson = {
@@ -3113,6 +3291,8 @@ export const ListAuditEventsResponseSchema: GenMessage<ListAuditEventsResponse, 
   messageDesc(file_toshi_operator_v1_operator, 15);
 
 /**
+ * ListHostsRequest selects the hosts to list.
+ *
  * @generated from message toshi.operator.v1.ListHostsRequest
  */
 export type ListHostsRequest = Message<"toshi.operator.v1.ListHostsRequest"> & {
@@ -3146,6 +3326,8 @@ export type ListHostsRequest = Message<"toshi.operator.v1.ListHostsRequest"> & {
 };
 
 /**
+ * ListHostsRequest selects the hosts to list.
+ *
  * @generated from message toshi.operator.v1.ListHostsRequest
  */
 export type ListHostsRequestJson = {
@@ -3186,10 +3368,14 @@ export const ListHostsRequestSchema: GenMessage<ListHostsRequest, {jsonType: Lis
   messageDesc(file_toshi_operator_v1_operator, 16);
 
 /**
+ * ListHostsResponse is one page of hosts.
+ *
  * @generated from message toshi.operator.v1.ListHostsResponse
  */
 export type ListHostsResponse = Message<"toshi.operator.v1.ListHostsResponse"> & {
   /**
+   * The page's hosts, ordered by id.
+   *
    * @generated from field: repeated toshi.operator.v1.Host hosts = 1;
    */
   hosts: Host[];
@@ -3220,10 +3406,14 @@ export type ListHostsResponse = Message<"toshi.operator.v1.ListHostsResponse"> &
 };
 
 /**
+ * ListHostsResponse is one page of hosts.
+ *
  * @generated from message toshi.operator.v1.ListHostsResponse
  */
 export type ListHostsResponseJson = {
   /**
+   * The page's hosts, ordered by id.
+   *
    * @generated from field: repeated toshi.operator.v1.Host hosts = 1;
    */
   hosts?: HostJson[];
@@ -3261,6 +3451,8 @@ export const ListHostsResponseSchema: GenMessage<ListHostsResponse, {jsonType: L
   messageDesc(file_toshi_operator_v1_operator, 17);
 
 /**
+ * ListHostStorageRequest names the host whose volumes to list.
+ *
  * @generated from message toshi.operator.v1.ListHostStorageRequest
  */
 export type ListHostStorageRequest = Message<"toshi.operator.v1.ListHostStorageRequest"> & {
@@ -3287,6 +3479,8 @@ export type ListHostStorageRequest = Message<"toshi.operator.v1.ListHostStorageR
 };
 
 /**
+ * ListHostStorageRequest names the host whose volumes to list.
+ *
  * @generated from message toshi.operator.v1.ListHostStorageRequest
  */
 export type ListHostStorageRequestJson = {
@@ -3320,10 +3514,14 @@ export const ListHostStorageRequestSchema: GenMessage<ListHostStorageRequest, {j
   messageDesc(file_toshi_operator_v1_operator, 18);
 
 /**
+ * ListHostStorageResponse is one page of volumes.
+ *
  * @generated from message toshi.operator.v1.ListHostStorageResponse
  */
 export type ListHostStorageResponse = Message<"toshi.operator.v1.ListHostStorageResponse"> & {
   /**
+   * The page's volumes, ordered by volume id.
+   *
    * @generated from field: repeated toshi.operator.v1.HostVolume volumes = 1;
    */
   volumes: HostVolume[];
@@ -3337,10 +3535,14 @@ export type ListHostStorageResponse = Message<"toshi.operator.v1.ListHostStorage
 };
 
 /**
+ * ListHostStorageResponse is one page of volumes.
+ *
  * @generated from message toshi.operator.v1.ListHostStorageResponse
  */
 export type ListHostStorageResponseJson = {
   /**
+   * The page's volumes, ordered by volume id.
+   *
    * @generated from field: repeated toshi.operator.v1.HostVolume volumes = 1;
    */
   volumes?: HostVolumeJson[];
@@ -3536,10 +3738,14 @@ export const HostVolumeSchema: GenMessage<HostVolume, {jsonType: HostVolumeJson}
   messageDesc(file_toshi_operator_v1_operator, 20);
 
 /**
+ * SetHostStateRequest names a host and the state to put it in.
+ *
  * @generated from message toshi.operator.v1.SetHostStateRequest
  */
 export type SetHostStateRequest = Message<"toshi.operator.v1.SetHostStateRequest"> & {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -3553,10 +3759,14 @@ export type SetHostStateRequest = Message<"toshi.operator.v1.SetHostStateRequest
 };
 
 /**
+ * SetHostStateRequest names a host and the state to put it in.
+ *
  * @generated from message toshi.operator.v1.SetHostStateRequest
  */
 export type SetHostStateRequestJson = {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -3577,6 +3787,8 @@ export const SetHostStateRequestSchema: GenMessage<SetHostStateRequest, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 21);
 
 /**
+ * SetHostStateResponse carries the host as stored.
+ *
  * @generated from message toshi.operator.v1.SetHostStateResponse
  */
 export type SetHostStateResponse = Message<"toshi.operator.v1.SetHostStateResponse"> & {
@@ -3589,6 +3801,8 @@ export type SetHostStateResponse = Message<"toshi.operator.v1.SetHostStateRespon
 };
 
 /**
+ * SetHostStateResponse carries the host as stored.
+ *
  * @generated from message toshi.operator.v1.SetHostStateResponse
  */
 export type SetHostStateResponseJson = {
@@ -3608,6 +3822,8 @@ export const SetHostStateResponseSchema: GenMessage<SetHostStateResponse, {jsonT
   messageDesc(file_toshi_operator_v1_operator, 22);
 
 /**
+ * UpdateHostRequest carries the host and the fields to change.
+ *
  * @generated from message toshi.operator.v1.UpdateHostRequest
  */
 export type UpdateHostRequest = Message<"toshi.operator.v1.UpdateHostRequest"> & {
@@ -3619,12 +3835,17 @@ export type UpdateHostRequest = Message<"toshi.operator.v1.UpdateHostRequest"> &
   host?: Host | undefined;
 
   /**
+   * The fields to change; required, and overflow is the only accepted
+   * path.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMask | undefined;
 };
 
 /**
+ * UpdateHostRequest carries the host and the fields to change.
+ *
  * @generated from message toshi.operator.v1.UpdateHostRequest
  */
 export type UpdateHostRequestJson = {
@@ -3636,6 +3857,9 @@ export type UpdateHostRequestJson = {
   host?: HostJson;
 
   /**
+   * The fields to change; required, and overflow is the only accepted
+   * path.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMaskJson;
@@ -3649,6 +3873,8 @@ export const UpdateHostRequestSchema: GenMessage<UpdateHostRequest, {jsonType: U
   messageDesc(file_toshi_operator_v1_operator, 23);
 
 /**
+ * UpdateHostResponse carries the host as stored.
+ *
  * @generated from message toshi.operator.v1.UpdateHostResponse
  */
 export type UpdateHostResponse = Message<"toshi.operator.v1.UpdateHostResponse"> & {
@@ -3661,6 +3887,8 @@ export type UpdateHostResponse = Message<"toshi.operator.v1.UpdateHostResponse">
 };
 
 /**
+ * UpdateHostResponse carries the host as stored.
+ *
  * @generated from message toshi.operator.v1.UpdateHostResponse
  */
 export type UpdateHostResponseJson = {
@@ -3752,20 +3980,28 @@ export const DeleteUserResponseSchema: GenMessage<DeleteUserResponse, {jsonType:
   messageDesc(file_toshi_operator_v1_operator, 26);
 
 /**
+ * RetireHostRequest names the host to remove.
+ *
  * @generated from message toshi.operator.v1.RetireHostRequest
  */
 export type RetireHostRequest = Message<"toshi.operator.v1.RetireHostRequest"> & {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * RetireHostRequest names the host to remove.
+ *
  * @generated from message toshi.operator.v1.RetireHostRequest
  */
 export type RetireHostRequestJson = {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -3779,12 +4015,16 @@ export const RetireHostRequestSchema: GenMessage<RetireHostRequest, {jsonType: R
   messageDesc(file_toshi_operator_v1_operator, 27);
 
 /**
+ * RetireHostResponse is empty: the host is gone.
+ *
  * @generated from message toshi.operator.v1.RetireHostResponse
  */
 export type RetireHostResponse = Message<"toshi.operator.v1.RetireHostResponse"> & {
 };
 
 /**
+ * RetireHostResponse is empty: the host is gone.
+ *
  * @generated from message toshi.operator.v1.RetireHostResponse
  */
 export type RetireHostResponseJson = {
@@ -3798,20 +4038,28 @@ export const RetireHostResponseSchema: GenMessage<RetireHostResponse, {jsonType:
   messageDesc(file_toshi_operator_v1_operator, 28);
 
 /**
+ * RevokeHostRequest names the host to revoke.
+ *
  * @generated from message toshi.operator.v1.RevokeHostRequest
  */
 export type RevokeHostRequest = Message<"toshi.operator.v1.RevokeHostRequest"> & {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * RevokeHostRequest names the host to revoke.
+ *
  * @generated from message toshi.operator.v1.RevokeHostRequest
  */
 export type RevokeHostRequestJson = {
   /**
+   * The host's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -3825,6 +4073,8 @@ export const RevokeHostRequestSchema: GenMessage<RevokeHostRequest, {jsonType: R
   messageDesc(file_toshi_operator_v1_operator, 29);
 
 /**
+ * RevokeHostResponse carries the host and what the revocation ended.
+ *
  * @generated from message toshi.operator.v1.RevokeHostResponse
  */
 export type RevokeHostResponse = Message<"toshi.operator.v1.RevokeHostResponse"> & {
@@ -3851,6 +4101,8 @@ export type RevokeHostResponse = Message<"toshi.operator.v1.RevokeHostResponse">
 };
 
 /**
+ * RevokeHostResponse carries the host and what the revocation ended.
+ *
  * @generated from message toshi.operator.v1.RevokeHostResponse
  */
 export type RevokeHostResponseJson = {
@@ -3884,6 +4136,8 @@ export const RevokeHostResponseSchema: GenMessage<RevokeHostResponse, {jsonType:
   messageDesc(file_toshi_operator_v1_operator, 30);
 
 /**
+ * RetireHostsRequest selects the offline hosts to retire.
+ *
  * @generated from message toshi.operator.v1.RetireHostsRequest
  */
 export type RetireHostsRequest = Message<"toshi.operator.v1.RetireHostsRequest"> & {
@@ -3895,17 +4149,23 @@ export type RetireHostsRequest = Message<"toshi.operator.v1.RetireHostsRequest">
   offlineLongerThan?: Duration | undefined;
 
   /**
+   * Also retire hosts a workspace owns.
+   *
    * @generated from field: bool include_owned = 2;
    */
   includeOwned: boolean;
 
   /**
+   * Retire them; without it the call changes nothing.
+   *
    * @generated from field: bool apply = 3;
    */
   apply: boolean;
 };
 
 /**
+ * RetireHostsRequest selects the offline hosts to retire.
+ *
  * @generated from message toshi.operator.v1.RetireHostsRequest
  */
 export type RetireHostsRequestJson = {
@@ -3917,11 +4177,15 @@ export type RetireHostsRequestJson = {
   offlineLongerThan?: DurationJson;
 
   /**
+   * Also retire hosts a workspace owns.
+   *
    * @generated from field: bool include_owned = 2;
    */
   includeOwned?: boolean;
 
   /**
+   * Retire them; without it the call changes nothing.
+   *
    * @generated from field: bool apply = 3;
    */
   apply?: boolean;
@@ -3935,6 +4199,9 @@ export const RetireHostsRequestSchema: GenMessage<RetireHostsRequest, {jsonType:
   messageDesc(file_toshi_operator_v1_operator, 31);
 
 /**
+ * RetireHostsResponse lists the hosts the call looked at, oldest
+ * offline first.
+ *
  * @generated from message toshi.operator.v1.RetireHostsResponse
  */
 export type RetireHostsResponse = Message<"toshi.operator.v1.RetireHostsResponse"> & {
@@ -3947,6 +4214,9 @@ export type RetireHostsResponse = Message<"toshi.operator.v1.RetireHostsResponse
 };
 
 /**
+ * RetireHostsResponse lists the hosts the call looked at, oldest
+ * offline first.
+ *
  * @generated from message toshi.operator.v1.RetireHostsResponse
  */
 export type RetireHostsResponseJson = {
@@ -3966,30 +4236,42 @@ export const RetireHostsResponseSchema: GenMessage<RetireHostsResponse, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 32);
 
 /**
+ * OfflineHostResult is one host RetireHosts looked at.
+ *
  * @generated from message toshi.operator.v1.OfflineHostResult
  */
 export type OfflineHostResult = Message<"toshi.operator.v1.OfflineHostResult"> & {
   /**
+   * The host.
+   *
    * @generated from field: toshi.operator.v1.Host host = 1;
    */
   host?: Host | undefined;
 
   /**
+   * What the call did or would do for it.
+   *
    * @generated from field: toshi.operator.v1.OfflineHostOutcome outcome = 2;
    */
   outcome: OfflineHostOutcome;
 };
 
 /**
+ * OfflineHostResult is one host RetireHosts looked at.
+ *
  * @generated from message toshi.operator.v1.OfflineHostResult
  */
 export type OfflineHostResultJson = {
   /**
+   * The host.
+   *
    * @generated from field: toshi.operator.v1.Host host = 1;
    */
   host?: HostJson;
 
   /**
+   * What the call did or would do for it.
+   *
    * @generated from field: toshi.operator.v1.OfflineHostOutcome outcome = 2;
    */
   outcome?: OfflineHostOutcomeJson;
@@ -4010,11 +4292,15 @@ export const OfflineHostResultSchema: GenMessage<OfflineHostResult, {jsonType: O
  */
 export type Workspace = Message<"toshi.operator.v1.Workspace"> & {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The workspace's name; not unique.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -4027,11 +4313,15 @@ export type Workspace = Message<"toshi.operator.v1.Workspace"> & {
   concurrencyCap?: number | undefined;
 
   /**
+   * When the workspace was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * The name of the workspace's plan.
+   *
    * @generated from field: string plan = 5;
    */
   plan: string;
@@ -4088,6 +4378,8 @@ export type Workspace = Message<"toshi.operator.v1.Workspace"> & {
   starterCreditCents: bigint;
 
   /**
+   * When it was granted; unset when none was.
+   *
    * @generated from field: google.protobuf.Timestamp starter_credit_granted_at = 13;
    */
   starterCreditGrantedAt?: Timestamp | undefined;
@@ -4304,11 +4596,15 @@ export type Workspace = Message<"toshi.operator.v1.Workspace"> & {
  */
 export type WorkspaceJson = {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The workspace's name; not unique.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -4321,11 +4617,15 @@ export type WorkspaceJson = {
   concurrencyCap?: number;
 
   /**
+   * When the workspace was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
 
   /**
+   * The name of the workspace's plan.
+   *
    * @generated from field: string plan = 5;
    */
   plan?: string;
@@ -4382,6 +4682,8 @@ export type WorkspaceJson = {
   starterCreditCents?: string;
 
   /**
+   * When it was granted; unset when none was.
+   *
    * @generated from field: google.protobuf.Timestamp starter_credit_granted_at = 13;
    */
   starterCreditGrantedAt?: TimestampJson;
@@ -4613,6 +4915,8 @@ export type HostingCertificate = Message<"toshi.operator.v1.HostingCertificate">
   name: string;
 
   /**
+   * The certificate's state.
+   *
    * @generated from field: toshi.operator.v1.HostingCertificateState state = 2;
    */
   state: HostingCertificateState;
@@ -4664,6 +4968,8 @@ export type HostingCertificateJson = {
   name?: string;
 
   /**
+   * The certificate's state.
+   *
    * @generated from field: toshi.operator.v1.HostingCertificateState state = 2;
    */
   state?: HostingCertificateStateJson;
@@ -4786,6 +5092,8 @@ export const ReservationSchema: GenMessage<Reservation, {jsonType: ReservationJs
   messageDesc(file_toshi_operator_v1_operator, 36);
 
 /**
+ * CreateWorkspaceRequest names the workspace to make.
+ *
  * @generated from message toshi.operator.v1.CreateWorkspaceRequest
  */
 export type CreateWorkspaceRequest = Message<"toshi.operator.v1.CreateWorkspaceRequest"> & {
@@ -4808,7 +5116,8 @@ export type CreateWorkspaceRequest = Message<"toshi.operator.v1.CreateWorkspaceR
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
    * key and request return the first answer; a different request with the
    * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * The key belongs to the calling operator token; local-admin sessions share
+   * one scope.
    *
    * @generated from field: string request_key = 3;
    */
@@ -4816,6 +5125,8 @@ export type CreateWorkspaceRequest = Message<"toshi.operator.v1.CreateWorkspaceR
 };
 
 /**
+ * CreateWorkspaceRequest names the workspace to make.
+ *
  * @generated from message toshi.operator.v1.CreateWorkspaceRequest
  */
 export type CreateWorkspaceRequestJson = {
@@ -4838,7 +5149,8 @@ export type CreateWorkspaceRequestJson = {
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
    * key and request return the first answer; a different request with the
    * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * The key belongs to the calling operator token; local-admin sessions share
+   * one scope.
    *
    * @generated from field: string request_key = 3;
    */
@@ -4853,20 +5165,28 @@ export const CreateWorkspaceRequestSchema: GenMessage<CreateWorkspaceRequest, {j
   messageDesc(file_toshi_operator_v1_operator, 37);
 
 /**
+ * CreateWorkspaceResponse carries the workspace made.
+ *
  * @generated from message toshi.operator.v1.CreateWorkspaceResponse
  */
 export type CreateWorkspaceResponse = Message<"toshi.operator.v1.CreateWorkspaceResponse"> & {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: Workspace | undefined;
 };
 
 /**
+ * CreateWorkspaceResponse carries the workspace made.
+ *
  * @generated from message toshi.operator.v1.CreateWorkspaceResponse
  */
 export type CreateWorkspaceResponseJson = {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: WorkspaceJson;
@@ -4880,6 +5200,8 @@ export const CreateWorkspaceResponseSchema: GenMessage<CreateWorkspaceResponse, 
   messageDesc(file_toshi_operator_v1_operator, 38);
 
 /**
+ * ListWorkspacesRequest pages through the workspaces.
+ *
  * @generated from message toshi.operator.v1.ListWorkspacesRequest
  */
 export type ListWorkspacesRequest = Message<"toshi.operator.v1.ListWorkspacesRequest"> & {
@@ -4899,6 +5221,8 @@ export type ListWorkspacesRequest = Message<"toshi.operator.v1.ListWorkspacesReq
 };
 
 /**
+ * ListWorkspacesRequest pages through the workspaces.
+ *
  * @generated from message toshi.operator.v1.ListWorkspacesRequest
  */
 export type ListWorkspacesRequestJson = {
@@ -4925,10 +5249,14 @@ export const ListWorkspacesRequestSchema: GenMessage<ListWorkspacesRequest, {jso
   messageDesc(file_toshi_operator_v1_operator, 39);
 
 /**
+ * ListWorkspacesResponse is one page of workspaces.
+ *
  * @generated from message toshi.operator.v1.ListWorkspacesResponse
  */
 export type ListWorkspacesResponse = Message<"toshi.operator.v1.ListWorkspacesResponse"> & {
   /**
+   * The page's workspaces, ordered by id.
+   *
    * @generated from field: repeated toshi.operator.v1.Workspace workspaces = 1;
    */
   workspaces: Workspace[];
@@ -4942,10 +5270,14 @@ export type ListWorkspacesResponse = Message<"toshi.operator.v1.ListWorkspacesRe
 };
 
 /**
+ * ListWorkspacesResponse is one page of workspaces.
+ *
  * @generated from message toshi.operator.v1.ListWorkspacesResponse
  */
 export type ListWorkspacesResponseJson = {
   /**
+   * The page's workspaces, ordered by id.
+   *
    * @generated from field: repeated toshi.operator.v1.Workspace workspaces = 1;
    */
   workspaces?: WorkspaceJson[];
@@ -4966,6 +5298,9 @@ export const ListWorkspacesResponseSchema: GenMessage<ListWorkspacesResponse, {j
   messageDesc(file_toshi_operator_v1_operator, 40);
 
 /**
+ * UpdateWorkspaceRequest carries the workspace and the fields to
+ * change.
+ *
  * @generated from message toshi.operator.v1.UpdateWorkspaceRequest
  */
 export type UpdateWorkspaceRequest = Message<"toshi.operator.v1.UpdateWorkspaceRequest"> & {
@@ -4985,6 +5320,9 @@ export type UpdateWorkspaceRequest = Message<"toshi.operator.v1.UpdateWorkspaceR
 };
 
 /**
+ * UpdateWorkspaceRequest carries the workspace and the fields to
+ * change.
+ *
  * @generated from message toshi.operator.v1.UpdateWorkspaceRequest
  */
 export type UpdateWorkspaceRequestJson = {
@@ -5011,20 +5349,28 @@ export const UpdateWorkspaceRequestSchema: GenMessage<UpdateWorkspaceRequest, {j
   messageDesc(file_toshi_operator_v1_operator, 41);
 
 /**
+ * UpdateWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.operator.v1.UpdateWorkspaceResponse
  */
 export type UpdateWorkspaceResponse = Message<"toshi.operator.v1.UpdateWorkspaceResponse"> & {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: Workspace | undefined;
 };
 
 /**
+ * UpdateWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.operator.v1.UpdateWorkspaceResponse
  */
 export type UpdateWorkspaceResponseJson = {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: WorkspaceJson;
@@ -5045,11 +5391,15 @@ export const UpdateWorkspaceResponseSchema: GenMessage<UpdateWorkspaceResponse, 
  */
 export type Seat = Message<"toshi.operator.v1.Seat"> & {
   /**
+   * The seat's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The workspace the seat is in.
+   *
    * @generated from field: string workspace = 2;
    */
   workspace: string;
@@ -5062,11 +5412,15 @@ export type Seat = Message<"toshi.operator.v1.Seat"> & {
   userId: string;
 
   /**
+   * When it was assigned.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 4;
    */
   assignedAt?: Timestamp | undefined;
 
   /**
+   * Who assigned it.
+   *
    * @generated from field: toshi.operator.v1.Subject assigned_by = 5;
    */
   assignedBy?: Subject | undefined;
@@ -5079,6 +5433,8 @@ export type Seat = Message<"toshi.operator.v1.Seat"> & {
   removedAt?: Timestamp | undefined;
 
   /**
+   * Who removed it; unset while the seat is live.
+   *
    * @generated from field: toshi.operator.v1.Subject removed_by = 7;
    */
   removedBy?: Subject | undefined;
@@ -5091,6 +5447,8 @@ export type Seat = Message<"toshi.operator.v1.Seat"> & {
   replaces: string;
 
   /**
+   * Why it replaced the seat; empty when it replaces none.
+   *
    * @generated from field: string replace_reason = 9;
    */
   replaceReason: string;
@@ -5104,11 +5462,15 @@ export type Seat = Message<"toshi.operator.v1.Seat"> & {
  */
 export type SeatJson = {
   /**
+   * The seat's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The workspace the seat is in.
+   *
    * @generated from field: string workspace = 2;
    */
   workspace?: string;
@@ -5121,11 +5483,15 @@ export type SeatJson = {
   userId?: string;
 
   /**
+   * When it was assigned.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 4;
    */
   assignedAt?: TimestampJson;
 
   /**
+   * Who assigned it.
+   *
    * @generated from field: toshi.operator.v1.Subject assigned_by = 5;
    */
   assignedBy?: SubjectJson;
@@ -5138,6 +5504,8 @@ export type SeatJson = {
   removedAt?: TimestampJson;
 
   /**
+   * Who removed it; unset while the seat is live.
+   *
    * @generated from field: toshi.operator.v1.Subject removed_by = 7;
    */
   removedBy?: SubjectJson;
@@ -5150,6 +5518,8 @@ export type SeatJson = {
   replaces?: string;
 
   /**
+   * Why it replaced the seat; empty when it replaces none.
+   *
    * @generated from field: string replace_reason = 9;
    */
   replaceReason?: string;
@@ -5163,6 +5533,8 @@ export const SeatSchema: GenMessage<Seat, {jsonType: SeatJson}> = /*@__PURE__*/
   messageDesc(file_toshi_operator_v1_operator, 43);
 
 /**
+ * ReassignSeatRequest names the seat and the person who takes it.
+ *
  * @generated from message toshi.operator.v1.ReassignSeatRequest
  */
 export type ReassignSeatRequest = Message<"toshi.operator.v1.ReassignSeatRequest"> & {
@@ -5189,6 +5561,8 @@ export type ReassignSeatRequest = Message<"toshi.operator.v1.ReassignSeatRequest
 };
 
 /**
+ * ReassignSeatRequest names the seat and the person who takes it.
+ *
  * @generated from message toshi.operator.v1.ReassignSeatRequest
  */
 export type ReassignSeatRequestJson = {
@@ -5222,6 +5596,8 @@ export const ReassignSeatRequestSchema: GenMessage<ReassignSeatRequest, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 44);
 
 /**
+ * ReassignSeatResponse carries the removed seat and the new one.
+ *
  * @generated from message toshi.operator.v1.ReassignSeatResponse
  */
 export type ReassignSeatResponse = Message<"toshi.operator.v1.ReassignSeatResponse"> & {
@@ -5241,6 +5617,8 @@ export type ReassignSeatResponse = Message<"toshi.operator.v1.ReassignSeatRespon
 };
 
 /**
+ * ReassignSeatResponse carries the removed seat and the new one.
+ *
  * @generated from message toshi.operator.v1.ReassignSeatResponse
  */
 export type ReassignSeatResponseJson = {
@@ -5267,6 +5645,8 @@ export const ReassignSeatResponseSchema: GenMessage<ReassignSeatResponse, {jsonT
   messageDesc(file_toshi_operator_v1_operator, 45);
 
 /**
+ * ListSeatsRequest selects the month's seats.
+ *
  * @generated from message toshi.operator.v1.ListSeatsRequest
  */
 export type ListSeatsRequest = Message<"toshi.operator.v1.ListSeatsRequest"> & {
@@ -5307,6 +5687,8 @@ export type ListSeatsRequest = Message<"toshi.operator.v1.ListSeatsRequest"> & {
 };
 
 /**
+ * ListSeatsRequest selects the month's seats.
+ *
  * @generated from message toshi.operator.v1.ListSeatsRequest
  */
 export type ListSeatsRequestJson = {
@@ -5354,6 +5736,8 @@ export const ListSeatsRequestSchema: GenMessage<ListSeatsRequest, {jsonType: Lis
   messageDesc(file_toshi_operator_v1_operator, 46);
 
 /**
+ * ListSeatsResponse is the month's seats.
+ *
  * @generated from message toshi.operator.v1.ListSeatsResponse
  */
 export type ListSeatsResponse = Message<"toshi.operator.v1.ListSeatsResponse"> & {
@@ -5390,6 +5774,8 @@ export type ListSeatsResponse = Message<"toshi.operator.v1.ListSeatsResponse"> &
 };
 
 /**
+ * ListSeatsResponse is the month's seats.
+ *
  * @generated from message toshi.operator.v1.ListSeatsResponse
  */
 export type ListSeatsResponseJson = {
@@ -5439,6 +5825,8 @@ export const ListSeatsResponseSchema: GenMessage<ListSeatsResponse, {jsonType: L
  */
 export type SeatMonth = Message<"toshi.operator.v1.SeatMonth"> & {
   /**
+   * The seat.
+   *
    * @generated from field: toshi.operator.v1.Seat seat = 1;
    */
   seat?: Seat | undefined;
@@ -5467,6 +5855,8 @@ export type SeatMonth = Message<"toshi.operator.v1.SeatMonth"> & {
  */
 export type SeatMonthJson = {
   /**
+   * The seat.
+   *
    * @generated from field: toshi.operator.v1.Seat seat = 1;
    */
   seat?: SeatJson;
@@ -5496,30 +5886,42 @@ export const SeatMonthSchema: GenMessage<SeatMonth, {jsonType: SeatMonthJson}> =
   messageDesc(file_toshi_operator_v1_operator, 48);
 
 /**
+ * SuspendWorkspaceRequest names the workspace to suspend.
+ *
  * @generated from message toshi.operator.v1.SuspendWorkspaceRequest
  */
 export type SuspendWorkspaceRequest = Message<"toshi.operator.v1.SuspendWorkspaceRequest"> & {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * Why it is suspended; recorded in the audit event.
+   *
    * @generated from field: string reason = 2;
    */
   reason: string;
 };
 
 /**
+ * SuspendWorkspaceRequest names the workspace to suspend.
+ *
  * @generated from message toshi.operator.v1.SuspendWorkspaceRequest
  */
 export type SuspendWorkspaceRequestJson = {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * Why it is suspended; recorded in the audit event.
+   *
    * @generated from field: string reason = 2;
    */
   reason?: string;
@@ -5533,20 +5935,28 @@ export const SuspendWorkspaceRequestSchema: GenMessage<SuspendWorkspaceRequest, 
   messageDesc(file_toshi_operator_v1_operator, 49);
 
 /**
+ * SuspendWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.operator.v1.SuspendWorkspaceResponse
  */
 export type SuspendWorkspaceResponse = Message<"toshi.operator.v1.SuspendWorkspaceResponse"> & {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: Workspace | undefined;
 };
 
 /**
+ * SuspendWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.operator.v1.SuspendWorkspaceResponse
  */
 export type SuspendWorkspaceResponseJson = {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: WorkspaceJson;
@@ -5560,30 +5970,42 @@ export const SuspendWorkspaceResponseSchema: GenMessage<SuspendWorkspaceResponse
   messageDesc(file_toshi_operator_v1_operator, 50);
 
 /**
+ * UnsuspendWorkspaceRequest names the workspace to resume.
+ *
  * @generated from message toshi.operator.v1.UnsuspendWorkspaceRequest
  */
 export type UnsuspendWorkspaceRequest = Message<"toshi.operator.v1.UnsuspendWorkspaceRequest"> & {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * Why it is resumed; recorded in the audit event.
+   *
    * @generated from field: string reason = 2;
    */
   reason: string;
 };
 
 /**
+ * UnsuspendWorkspaceRequest names the workspace to resume.
+ *
  * @generated from message toshi.operator.v1.UnsuspendWorkspaceRequest
  */
 export type UnsuspendWorkspaceRequestJson = {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * Why it is resumed; recorded in the audit event.
+   *
    * @generated from field: string reason = 2;
    */
   reason?: string;
@@ -5597,20 +6019,28 @@ export const UnsuspendWorkspaceRequestSchema: GenMessage<UnsuspendWorkspaceReque
   messageDesc(file_toshi_operator_v1_operator, 51);
 
 /**
+ * UnsuspendWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.operator.v1.UnsuspendWorkspaceResponse
  */
 export type UnsuspendWorkspaceResponse = Message<"toshi.operator.v1.UnsuspendWorkspaceResponse"> & {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: Workspace | undefined;
 };
 
 /**
+ * UnsuspendWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.operator.v1.UnsuspendWorkspaceResponse
  */
 export type UnsuspendWorkspaceResponseJson = {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: WorkspaceJson;
@@ -5624,50 +6054,70 @@ export const UnsuspendWorkspaceResponseSchema: GenMessage<UnsuspendWorkspaceResp
   messageDesc(file_toshi_operator_v1_operator, 52);
 
 /**
+ * DeleteWorkspaceRequest names the workspace to delete.
+ *
  * @generated from message toshi.operator.v1.DeleteWorkspaceRequest
  */
 export type DeleteWorkspaceRequest = Message<"toshi.operator.v1.DeleteWorkspaceRequest"> & {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * Why it is deleted; recorded in the audit event.
+   *
    * @generated from field: string reason = 2;
    */
   reason: string;
 
   /**
+   * Seconds until the purge; 0 means 30 days.
+   *
    * @generated from field: int64 grace_seconds = 3;
    */
   graceSeconds: bigint;
 
   /**
+   * Purge as soon as the workspace has no running job.
+   *
    * @generated from field: bool now = 4;
    */
   now: boolean;
 };
 
 /**
+ * DeleteWorkspaceRequest names the workspace to delete.
+ *
  * @generated from message toshi.operator.v1.DeleteWorkspaceRequest
  */
 export type DeleteWorkspaceRequestJson = {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * Why it is deleted; recorded in the audit event.
+   *
    * @generated from field: string reason = 2;
    */
   reason?: string;
 
   /**
+   * Seconds until the purge; 0 means 30 days.
+   *
    * @generated from field: int64 grace_seconds = 3;
    */
   graceSeconds?: string;
 
   /**
+   * Purge as soon as the workspace has no running job.
+   *
    * @generated from field: bool now = 4;
    */
   now?: boolean;
@@ -5681,20 +6131,28 @@ export const DeleteWorkspaceRequestSchema: GenMessage<DeleteWorkspaceRequest, {j
   messageDesc(file_toshi_operator_v1_operator, 53);
 
 /**
+ * DeleteWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.operator.v1.DeleteWorkspaceResponse
  */
 export type DeleteWorkspaceResponse = Message<"toshi.operator.v1.DeleteWorkspaceResponse"> & {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: Workspace | undefined;
 };
 
 /**
+ * DeleteWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.operator.v1.DeleteWorkspaceResponse
  */
 export type DeleteWorkspaceResponseJson = {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.operator.v1.Workspace workspace = 1;
    */
   workspace?: WorkspaceJson;
@@ -5708,25 +6166,36 @@ export const DeleteWorkspaceResponseSchema: GenMessage<DeleteWorkspaceResponse, 
   messageDesc(file_toshi_operator_v1_operator, 54);
 
 /**
+ * Plan is one configured plan.
+ *
  * @generated from message toshi.operator.v1.Plan
  */
 export type Plan = Message<"toshi.operator.v1.Plan"> & {
   /**
+   * The plan's name.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * Jobs of one workspace that may be in flight at once; 0 means no
+   * limit.
+   *
    * @generated from field: int32 concurrency = 2;
    */
   concurrency: number;
 
   /**
+   * How long one job may run before Toshi stops it, in minutes.
+   *
    * @generated from field: int32 max_job_minutes = 3;
    */
   maxJobMinutes: number;
 
   /**
+   * Whether the configuration's default_plan names it.
+   *
    * @generated from field: bool is_default = 4;
    */
   isDefault: boolean;
@@ -5879,25 +6348,36 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
 };
 
 /**
+ * Plan is one configured plan.
+ *
  * @generated from message toshi.operator.v1.Plan
  */
 export type PlanJson = {
   /**
+   * The plan's name.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
 
   /**
+   * Jobs of one workspace that may be in flight at once; 0 means no
+   * limit.
+   *
    * @generated from field: int32 concurrency = 2;
    */
   concurrency?: number;
 
   /**
+   * How long one job may run before Toshi stops it, in minutes.
+   *
    * @generated from field: int32 max_job_minutes = 3;
    */
   maxJobMinutes?: number;
 
   /**
+   * Whether the configuration's default_plan names it.
+   *
    * @generated from field: bool is_default = 4;
    */
   isDefault?: boolean;
@@ -6057,6 +6537,8 @@ export const PlanSchema: GenMessage<Plan, {jsonType: PlanJson}> = /*@__PURE__*/
   messageDesc(file_toshi_operator_v1_operator, 55);
 
 /**
+ * ListOperatorAlertsRequest pages through the operator alerts.
+ *
  * @generated from message toshi.operator.v1.ListOperatorAlertsRequest
  */
 export type ListOperatorAlertsRequest = Message<"toshi.operator.v1.ListOperatorAlertsRequest"> & {
@@ -6076,6 +6558,8 @@ export type ListOperatorAlertsRequest = Message<"toshi.operator.v1.ListOperatorA
 };
 
 /**
+ * ListOperatorAlertsRequest pages through the operator alerts.
+ *
  * @generated from message toshi.operator.v1.ListOperatorAlertsRequest
  */
 export type ListOperatorAlertsRequestJson = {
@@ -6102,10 +6586,14 @@ export const ListOperatorAlertsRequestSchema: GenMessage<ListOperatorAlertsReque
   messageDesc(file_toshi_operator_v1_operator, 56);
 
 /**
+ * ListOperatorAlertsResponse is one page of alerts.
+ *
  * @generated from message toshi.operator.v1.ListOperatorAlertsResponse
  */
 export type ListOperatorAlertsResponse = Message<"toshi.operator.v1.ListOperatorAlertsResponse"> & {
   /**
+   * The page's alerts, one per kind, ordered by kind.
+   *
    * @generated from field: repeated toshi.operator.v1.OperatorAlert alerts = 1;
    */
   alerts: OperatorAlert[];
@@ -6119,10 +6607,14 @@ export type ListOperatorAlertsResponse = Message<"toshi.operator.v1.ListOperator
 };
 
 /**
+ * ListOperatorAlertsResponse is one page of alerts.
+ *
  * @generated from message toshi.operator.v1.ListOperatorAlertsResponse
  */
 export type ListOperatorAlertsResponseJson = {
   /**
+   * The page's alerts, one per kind, ordered by kind.
+   *
    * @generated from field: repeated toshi.operator.v1.OperatorAlert alerts = 1;
    */
   alerts?: OperatorAlertJson[];
@@ -6143,6 +6635,8 @@ export const ListOperatorAlertsResponseSchema: GenMessage<ListOperatorAlertsResp
   messageDesc(file_toshi_operator_v1_operator, 57);
 
 /**
+ * ListHostAlertsRequest selects the workspaces' alerts to list.
+ *
  * @generated from message toshi.operator.v1.ListHostAlertsRequest
  */
 export type ListHostAlertsRequest = Message<"toshi.operator.v1.ListHostAlertsRequest"> & {
@@ -6169,6 +6663,8 @@ export type ListHostAlertsRequest = Message<"toshi.operator.v1.ListHostAlertsReq
 };
 
 /**
+ * ListHostAlertsRequest selects the workspaces' alerts to list.
+ *
  * @generated from message toshi.operator.v1.ListHostAlertsRequest
  */
 export type ListHostAlertsRequestJson = {
@@ -6202,10 +6698,14 @@ export const ListHostAlertsRequestSchema: GenMessage<ListHostAlertsRequest, {jso
   messageDesc(file_toshi_operator_v1_operator, 58);
 
 /**
+ * ListHostAlertsResponse is one page of alerts.
+ *
  * @generated from message toshi.operator.v1.ListHostAlertsResponse
  */
 export type ListHostAlertsResponse = Message<"toshi.operator.v1.ListHostAlertsResponse"> & {
   /**
+   * The page's alerts, ordered by workspace, then kind.
+   *
    * @generated from field: repeated toshi.operator.v1.OperatorAlert alerts = 1;
    */
   alerts: OperatorAlert[];
@@ -6219,10 +6719,14 @@ export type ListHostAlertsResponse = Message<"toshi.operator.v1.ListHostAlertsRe
 };
 
 /**
+ * ListHostAlertsResponse is one page of alerts.
+ *
  * @generated from message toshi.operator.v1.ListHostAlertsResponse
  */
 export type ListHostAlertsResponseJson = {
   /**
+   * The page's alerts, ordered by workspace, then kind.
+   *
    * @generated from field: repeated toshi.operator.v1.OperatorAlert alerts = 1;
    */
   alerts?: OperatorAlertJson[];
@@ -6263,6 +6767,8 @@ export type OperatorAlert = Message<"toshi.operator.v1.OperatorAlert"> & {
   raisedAt?: Timestamp | undefined;
 
   /**
+   * The first event it counts.
+   *
    * @generated from field: google.protobuf.Timestamp since = 3;
    */
   since?: Timestamp | undefined;
@@ -6276,11 +6782,15 @@ export type OperatorAlert = Message<"toshi.operator.v1.OperatorAlert"> & {
   count: bigint;
 
   /**
+   * The events counted, by reason.
+   *
    * @generated from field: map<string, int64> reasons = 5;
    */
   reasons: { [key: string]: bigint };
 
   /**
+   * The reason the most events have.
+   *
    * @generated from field: string top_reason = 6;
    */
   topReason: string;
@@ -6321,6 +6831,8 @@ export type OperatorAlertJson = {
   raisedAt?: TimestampJson;
 
   /**
+   * The first event it counts.
+   *
    * @generated from field: google.protobuf.Timestamp since = 3;
    */
   since?: TimestampJson;
@@ -6334,11 +6846,15 @@ export type OperatorAlertJson = {
   count?: string;
 
   /**
+   * The events counted, by reason.
+   *
    * @generated from field: map<string, int64> reasons = 5;
    */
   reasons?: { [key: string]: string };
 
   /**
+   * The reason the most events have.
+   *
    * @generated from field: string top_reason = 6;
    */
   topReason?: string;
@@ -6366,6 +6882,8 @@ export const OperatorAlertSchema: GenMessage<OperatorAlert, {jsonType: OperatorA
   messageDesc(file_toshi_operator_v1_operator, 60);
 
 /**
+ * ListPlansRequest pages through the plans.
+ *
  * @generated from message toshi.operator.v1.ListPlansRequest
  */
 export type ListPlansRequest = Message<"toshi.operator.v1.ListPlansRequest"> & {
@@ -6385,6 +6903,8 @@ export type ListPlansRequest = Message<"toshi.operator.v1.ListPlansRequest"> & {
 };
 
 /**
+ * ListPlansRequest pages through the plans.
+ *
  * @generated from message toshi.operator.v1.ListPlansRequest
  */
 export type ListPlansRequestJson = {
@@ -6411,10 +6931,14 @@ export const ListPlansRequestSchema: GenMessage<ListPlansRequest, {jsonType: Lis
   messageDesc(file_toshi_operator_v1_operator, 61);
 
 /**
+ * ListPlansResponse is one page of plans.
+ *
  * @generated from message toshi.operator.v1.ListPlansResponse
  */
 export type ListPlansResponse = Message<"toshi.operator.v1.ListPlansResponse"> & {
   /**
+   * The page's plans, sorted by name.
+   *
    * @generated from field: repeated toshi.operator.v1.Plan plans = 1;
    */
   plans: Plan[];
@@ -6428,10 +6952,14 @@ export type ListPlansResponse = Message<"toshi.operator.v1.ListPlansResponse"> &
 };
 
 /**
+ * ListPlansResponse is one page of plans.
+ *
  * @generated from message toshi.operator.v1.ListPlansResponse
  */
 export type ListPlansResponseJson = {
   /**
+   * The page's plans, sorted by name.
+   *
    * @generated from field: repeated toshi.operator.v1.Plan plans = 1;
    */
   plans?: PlanJson[];
@@ -6452,12 +6980,16 @@ export const ListPlansResponseSchema: GenMessage<ListPlansResponse, {jsonType: L
   messageDesc(file_toshi_operator_v1_operator, 62);
 
 /**
+ * GetVersionRequest is empty.
+ *
  * @generated from message toshi.operator.v1.GetVersionRequest
  */
 export type GetVersionRequest = Message<"toshi.operator.v1.GetVersionRequest"> & {
 };
 
 /**
+ * GetVersionRequest is empty.
+ *
  * @generated from message toshi.operator.v1.GetVersionRequest
  */
 export type GetVersionRequestJson = {
@@ -6471,20 +7003,28 @@ export const GetVersionRequestSchema: GenMessage<GetVersionRequest, {jsonType: G
   messageDesc(file_toshi_operator_v1_operator, 63);
 
 /**
+ * GetVersionResponse is the build the control plane runs.
+ *
  * @generated from message toshi.operator.v1.GetVersionResponse
  */
 export type GetVersionResponse = Message<"toshi.operator.v1.GetVersionResponse"> & {
   /**
+   * The release version, such as v1.2.3, or "dev" without one.
+   *
    * @generated from field: string version = 1;
    */
   version: string;
 
   /**
+   * The commit's hash, or "unknown" when the build recorded none.
+   *
    * @generated from field: string commit = 2;
    */
   commit: string;
 
   /**
+   * When the commit was made, or "unknown" when the build recorded none.
+   *
    * @generated from field: string date = 3;
    */
   date: string;
@@ -6500,20 +7040,28 @@ export type GetVersionResponse = Message<"toshi.operator.v1.GetVersionResponse">
 };
 
 /**
+ * GetVersionResponse is the build the control plane runs.
+ *
  * @generated from message toshi.operator.v1.GetVersionResponse
  */
 export type GetVersionResponseJson = {
   /**
+   * The release version, such as v1.2.3, or "dev" without one.
+   *
    * @generated from field: string version = 1;
    */
   version?: string;
 
   /**
+   * The commit's hash, or "unknown" when the build recorded none.
+   *
    * @generated from field: string commit = 2;
    */
   commit?: string;
 
   /**
+   * When the commit was made, or "unknown" when the build recorded none.
+   *
    * @generated from field: string date = 3;
    */
   date?: string;
@@ -6543,21 +7091,29 @@ export const GetVersionResponseSchema: GenMessage<GetVersionResponse, {jsonType:
  */
 export type Check = Message<"toshi.operator.v1.Check"> & {
   /**
+   * What was checked.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * How it came out.
+   *
    * @generated from field: toshi.operator.v1.CheckState state = 2;
    */
   state: CheckState;
 
   /**
+   * What was found, in words.
+   *
    * @generated from field: string detail = 3;
    */
   detail: string;
 
   /**
+   * How long it took.
+   *
    * @generated from field: google.protobuf.Duration duration = 4;
    */
   duration?: Duration | undefined;
@@ -6571,21 +7127,29 @@ export type Check = Message<"toshi.operator.v1.Check"> & {
  */
 export type CheckJson = {
   /**
+   * What was checked.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
 
   /**
+   * How it came out.
+   *
    * @generated from field: toshi.operator.v1.CheckState state = 2;
    */
   state?: CheckStateJson;
 
   /**
+   * What was found, in words.
+   *
    * @generated from field: string detail = 3;
    */
   detail?: string;
 
   /**
+   * How long it took.
+   *
    * @generated from field: google.protobuf.Duration duration = 4;
    */
   duration?: DurationJson;
@@ -6599,20 +7163,28 @@ export const CheckSchema: GenMessage<Check, {jsonType: CheckJson}> = /*@__PURE__
   messageDesc(file_toshi_operator_v1_operator, 65);
 
 /**
+ * RunChecksRequest names the group to run.
+ *
  * @generated from message toshi.operator.v1.RunChecksRequest
  */
 export type RunChecksRequest = Message<"toshi.operator.v1.RunChecksRequest"> & {
   /**
+   * The group to run; required.
+   *
    * @generated from field: toshi.operator.v1.CheckGroup group = 1;
    */
   group: CheckGroup;
 };
 
 /**
+ * RunChecksRequest names the group to run.
+ *
  * @generated from message toshi.operator.v1.RunChecksRequest
  */
 export type RunChecksRequestJson = {
   /**
+   * The group to run; required.
+   *
    * @generated from field: toshi.operator.v1.CheckGroup group = 1;
    */
   group?: CheckGroupJson;
@@ -6626,10 +7198,14 @@ export const RunChecksRequestSchema: GenMessage<RunChecksRequest, {jsonType: Run
   messageDesc(file_toshi_operator_v1_operator, 66);
 
 /**
+ * RunChecksResponse carries the group's rows and its state.
+ *
  * @generated from message toshi.operator.v1.RunChecksResponse
  */
 export type RunChecksResponse = Message<"toshi.operator.v1.RunChecksResponse"> & {
   /**
+   * The group that ran.
+   *
    * @generated from field: toshi.operator.v1.CheckGroup group = 1;
    */
   group: CheckGroup;
@@ -6642,16 +7218,22 @@ export type RunChecksResponse = Message<"toshi.operator.v1.RunChecksResponse"> &
   state: CheckState;
 
   /**
+   * One row per check, in the order they ran.
+   *
    * @generated from field: repeated toshi.operator.v1.Check checks = 3;
    */
   checks: Check[];
 };
 
 /**
+ * RunChecksResponse carries the group's rows and its state.
+ *
  * @generated from message toshi.operator.v1.RunChecksResponse
  */
 export type RunChecksResponseJson = {
   /**
+   * The group that ran.
+   *
    * @generated from field: toshi.operator.v1.CheckGroup group = 1;
    */
   group?: CheckGroupJson;
@@ -6664,6 +7246,8 @@ export type RunChecksResponseJson = {
   state?: CheckStateJson;
 
   /**
+   * One row per check, in the order they ran.
+   *
    * @generated from field: repeated toshi.operator.v1.Check checks = 3;
    */
   checks?: CheckJson[];
@@ -6742,6 +7326,8 @@ export const GetUsageRequestSchema: GenMessage<GetUsageRequest, {jsonType: GetUs
   messageDesc(file_toshi_operator_v1_operator, 68);
 
 /**
+ * GetUsageResponse is the usage counted.
+ *
  * @generated from message toshi.operator.v1.GetUsageResponse
  */
 export type GetUsageResponse = Message<"toshi.operator.v1.GetUsageResponse"> & {
@@ -6761,6 +7347,8 @@ export type GetUsageResponse = Message<"toshi.operator.v1.GetUsageResponse"> & {
   from?: Timestamp | undefined;
 
   /**
+   * The window's end used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: Timestamp | undefined;
@@ -6783,6 +7371,8 @@ export type GetUsageResponse = Message<"toshi.operator.v1.GetUsageResponse"> & {
 };
 
 /**
+ * GetUsageResponse is the usage counted.
+ *
  * @generated from message toshi.operator.v1.GetUsageResponse
  */
 export type GetUsageResponseJson = {
@@ -6802,6 +7392,8 @@ export type GetUsageResponseJson = {
   from?: TimestampJson;
 
   /**
+   * The window's end used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: TimestampJson;
@@ -6839,11 +7431,15 @@ export const GetUsageResponseSchema: GenMessage<GetUsageResponse, {jsonType: Get
  */
 export type FillerUsage = Message<"toshi.operator.v1.FillerUsage"> & {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace: string;
 
   /**
+   * How many filler jobs finished.
+   *
    * @generated from field: int64 jobs = 2;
    */
   jobs: bigint;
@@ -6865,11 +7461,15 @@ export type FillerUsage = Message<"toshi.operator.v1.FillerUsage"> & {
  */
 export type FillerUsageJson = {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace?: string;
 
   /**
+   * How many filler jobs finished.
+   *
    * @generated from field: int64 jobs = 2;
    */
   jobs?: string;
@@ -6897,6 +7497,8 @@ export const FillerUsageSchema: GenMessage<FillerUsage, {jsonType: FillerUsageJs
  */
 export type UsageRow = Message<"toshi.operator.v1.UsageRow"> & {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace: string;
@@ -6991,6 +7593,8 @@ export type UsageRow = Message<"toshi.operator.v1.UsageRow"> & {
   seconds: number;
 
   /**
+   * The exact own-host run time behind own_host_minutes, in seconds.
+   *
    * @generated from field: double own_host_seconds = 13;
    */
   ownHostSeconds: number;
@@ -7005,6 +7609,8 @@ export type UsageRow = Message<"toshi.operator.v1.UsageRow"> & {
   awakeSeconds: number;
 
   /**
+   * The idle part of awake_seconds, in seconds.
+   *
    * @generated from field: double idle_seconds = 15;
    */
   idleSeconds: number;
@@ -7018,6 +7624,8 @@ export type UsageRow = Message<"toshi.operator.v1.UsageRow"> & {
  */
 export type UsageRowJson = {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace?: string;
@@ -7112,6 +7720,8 @@ export type UsageRowJson = {
   seconds?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The exact own-host run time behind own_host_minutes, in seconds.
+   *
    * @generated from field: double own_host_seconds = 13;
    */
   ownHostSeconds?: number | "NaN" | "Infinity" | "-Infinity";
@@ -7126,6 +7736,8 @@ export type UsageRowJson = {
   awakeSeconds?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The idle part of awake_seconds, in seconds.
+   *
    * @generated from field: double idle_seconds = 15;
    */
   idleSeconds?: number | "NaN" | "Infinity" | "-Infinity";
@@ -7204,6 +7816,8 @@ export const GetQueueTimesRequestSchema: GenMessage<GetQueueTimesRequest, {jsonT
   messageDesc(file_toshi_operator_v1_operator, 72);
 
 /**
+ * GetQueueTimesResponse summarises the jobs' queue times.
+ *
  * @generated from message toshi.operator.v1.GetQueueTimesResponse
  */
 export type GetQueueTimesResponse = Message<"toshi.operator.v1.GetQueueTimesResponse"> & {
@@ -7223,11 +7837,15 @@ export type GetQueueTimesResponse = Message<"toshi.operator.v1.GetQueueTimesResp
   p50Ms: bigint;
 
   /**
+   * The 90th percentile wait, in whole milliseconds.
+   *
    * @generated from field: int64 p90_ms = 3;
    */
   p90Ms: bigint;
 
   /**
+   * The longest wait, in whole milliseconds.
+   *
    * @generated from field: int64 max_ms = 4;
    */
   maxMs: bigint;
@@ -7247,6 +7865,8 @@ export type GetQueueTimesResponse = Message<"toshi.operator.v1.GetQueueTimesResp
   from?: Timestamp | undefined;
 
   /**
+   * The window's end used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 7;
    */
   to?: Timestamp | undefined;
@@ -7262,6 +7882,8 @@ export type GetQueueTimesResponse = Message<"toshi.operator.v1.GetQueueTimesResp
 };
 
 /**
+ * GetQueueTimesResponse summarises the jobs' queue times.
+ *
  * @generated from message toshi.operator.v1.GetQueueTimesResponse
  */
 export type GetQueueTimesResponseJson = {
@@ -7281,11 +7903,15 @@ export type GetQueueTimesResponseJson = {
   p50Ms?: string;
 
   /**
+   * The 90th percentile wait, in whole milliseconds.
+   *
    * @generated from field: int64 p90_ms = 3;
    */
   p90Ms?: string;
 
   /**
+   * The longest wait, in whole milliseconds.
+   *
    * @generated from field: int64 max_ms = 4;
    */
   maxMs?: string;
@@ -7305,6 +7931,8 @@ export type GetQueueTimesResponseJson = {
   from?: TimestampJson;
 
   /**
+   * The window's end used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 7;
    */
   to?: TimestampJson;
@@ -7327,6 +7955,8 @@ export const GetQueueTimesResponseSchema: GenMessage<GetQueueTimesResponse, {jso
   messageDesc(file_toshi_operator_v1_operator, 73);
 
 /**
+ * HoldTimes is the held time of the jobs held for one reason.
+ *
  * @generated from message toshi.operator.v1.HoldTimes
  */
 export type HoldTimes = Message<"toshi.operator.v1.HoldTimes"> & {
@@ -7346,16 +7976,22 @@ export type HoldTimes = Message<"toshi.operator.v1.HoldTimes"> & {
   jobs: bigint;
 
   /**
+   * The median held time, in milliseconds.
+   *
    * @generated from field: int64 p50_ms = 3;
    */
   p50Ms: bigint;
 
   /**
+   * The 90th percentile held time, in milliseconds.
+   *
    * @generated from field: int64 p90_ms = 4;
    */
   p90Ms: bigint;
 
   /**
+   * The longest held time, in milliseconds.
+   *
    * @generated from field: int64 max_ms = 5;
    */
   maxMs: bigint;
@@ -7378,6 +8014,8 @@ export type HoldTimes = Message<"toshi.operator.v1.HoldTimes"> & {
 };
 
 /**
+ * HoldTimes is the held time of the jobs held for one reason.
+ *
  * @generated from message toshi.operator.v1.HoldTimes
  */
 export type HoldTimesJson = {
@@ -7397,16 +8035,22 @@ export type HoldTimesJson = {
   jobs?: string;
 
   /**
+   * The median held time, in milliseconds.
+   *
    * @generated from field: int64 p50_ms = 3;
    */
   p50Ms?: string;
 
   /**
+   * The 90th percentile held time, in milliseconds.
+   *
    * @generated from field: int64 p90_ms = 4;
    */
   p90Ms?: string;
 
   /**
+   * The longest held time, in milliseconds.
+   *
    * @generated from field: int64 max_ms = 5;
    */
   maxMs?: string;
@@ -7501,6 +8145,8 @@ export const GetWorkflowUsageRequestSchema: GenMessage<GetWorkflowUsageRequest, 
   messageDesc(file_toshi_operator_v1_operator, 75);
 
 /**
+ * GetWorkflowUsageResponse is the usage by workflow.
+ *
  * @generated from message toshi.operator.v1.GetWorkflowUsageResponse
  */
 export type GetWorkflowUsageResponse = Message<"toshi.operator.v1.GetWorkflowUsageResponse"> & {
@@ -7521,12 +8167,16 @@ export type GetWorkflowUsageResponse = Message<"toshi.operator.v1.GetWorkflowUsa
   from?: Timestamp | undefined;
 
   /**
+   * The window's end used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: Timestamp | undefined;
 };
 
 /**
+ * GetWorkflowUsageResponse is the usage by workflow.
+ *
  * @generated from message toshi.operator.v1.GetWorkflowUsageResponse
  */
 export type GetWorkflowUsageResponseJson = {
@@ -7547,6 +8197,8 @@ export type GetWorkflowUsageResponseJson = {
   from?: TimestampJson;
 
   /**
+   * The window's end used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: TimestampJson;
@@ -7568,6 +8220,8 @@ export const GetWorkflowUsageResponseSchema: GenMessage<GetWorkflowUsageResponse
  */
 export type WorkflowUsageRow = Message<"toshi.operator.v1.WorkflowUsageRow"> & {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace: string;
@@ -7632,6 +8286,8 @@ export type WorkflowUsageRow = Message<"toshi.operator.v1.WorkflowUsageRow"> & {
   p50Seconds: bigint;
 
   /**
+   * The 95th percentile, in whole seconds.
+   *
    * @generated from field: int64 p95_seconds = 10;
    */
   p95Seconds: bigint;
@@ -7646,6 +8302,8 @@ export type WorkflowUsageRow = Message<"toshi.operator.v1.WorkflowUsageRow"> & {
  */
 export type WorkflowUsageRowJson = {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace?: string;
@@ -7710,6 +8368,8 @@ export type WorkflowUsageRowJson = {
   p50Seconds?: string;
 
   /**
+   * The 95th percentile, in whole seconds.
+   *
    * @generated from field: int64 p95_seconds = 10;
    */
   p95Seconds?: string;
@@ -7723,12 +8383,16 @@ export const WorkflowUsageRowSchema: GenMessage<WorkflowUsageRow, {jsonType: Wor
   messageDesc(file_toshi_operator_v1_operator, 77);
 
 /**
+ * GetCapacityRequest is empty.
+ *
  * @generated from message toshi.operator.v1.GetCapacityRequest
  */
 export type GetCapacityRequest = Message<"toshi.operator.v1.GetCapacityRequest"> & {
 };
 
 /**
+ * GetCapacityRequest is empty.
+ *
  * @generated from message toshi.operator.v1.GetCapacityRequest
  */
 export type GetCapacityRequestJson = {
@@ -7742,6 +8406,9 @@ export const GetCapacityRequestSchema: GenMessage<GetCapacityRequest, {jsonType:
   messageDesc(file_toshi_operator_v1_operator, 78);
 
 /**
+ * GetCapacityResponse is the reserved-capacity view of the last
+ * scheduler pass.
+ *
  * @generated from message toshi.operator.v1.GetCapacityResponse
  */
 export type GetCapacityResponse = Message<"toshi.operator.v1.GetCapacityResponse"> & {
@@ -7770,6 +8437,9 @@ export type GetCapacityResponse = Message<"toshi.operator.v1.GetCapacityResponse
 };
 
 /**
+ * GetCapacityResponse is the reserved-capacity view of the last
+ * scheduler pass.
+ *
  * @generated from message toshi.operator.v1.GetCapacityResponse
  */
 export type GetCapacityResponseJson = {
@@ -7805,10 +8475,15 @@ export const GetCapacityResponseSchema: GenMessage<GetCapacityResponse, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 79);
 
 /**
+ * CapacitySize is one runner size's slots across the shared regular
+ * hosts.
+ *
  * @generated from message toshi.operator.v1.CapacitySize
  */
 export type CapacitySize = Message<"toshi.operator.v1.CapacitySize"> & {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
@@ -7858,10 +8533,15 @@ export type CapacitySize = Message<"toshi.operator.v1.CapacitySize"> & {
 };
 
 /**
+ * CapacitySize is one runner size's slots across the shared regular
+ * hosts.
+ *
  * @generated from message toshi.operator.v1.CapacitySize
  */
 export type CapacitySizeJson = {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
@@ -7918,15 +8598,22 @@ export const CapacitySizeSchema: GenMessage<CapacitySize, {jsonType: CapacitySiz
   messageDesc(file_toshi_operator_v1_operator, 80);
 
 /**
+ * CapacityReservation is one workspace's reservation of one runner
+ * size.
+ *
  * @generated from message toshi.operator.v1.CapacityReservation
  */
 export type CapacityReservation = Message<"toshi.operator.v1.CapacityReservation"> & {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace: string;
 
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 2;
    */
   size: string;
@@ -7939,6 +8626,8 @@ export type CapacityReservation = Message<"toshi.operator.v1.CapacityReservation
   slots: number;
 
   /**
+   * Warm of the reservation's slots.
+   *
    * @generated from field: int32 warm = 4;
    */
   warm: number;
@@ -7959,6 +8648,8 @@ export type CapacityReservation = Message<"toshi.operator.v1.CapacityReservation
   earmarked: number;
 
   /**
+   * The earmarked slots kept on warm VMs.
+   *
    * @generated from field: int32 warm_earmarked = 7;
    */
   warmEarmarked: number;
@@ -7972,15 +8663,22 @@ export type CapacityReservation = Message<"toshi.operator.v1.CapacityReservation
 };
 
 /**
+ * CapacityReservation is one workspace's reservation of one runner
+ * size.
+ *
  * @generated from message toshi.operator.v1.CapacityReservation
  */
 export type CapacityReservationJson = {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace?: string;
 
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 2;
    */
   size?: string;
@@ -7993,6 +8691,8 @@ export type CapacityReservationJson = {
   slots?: number;
 
   /**
+   * Warm of the reservation's slots.
+   *
    * @generated from field: int32 warm = 4;
    */
   warm?: number;
@@ -8013,6 +8713,8 @@ export type CapacityReservationJson = {
   earmarked?: number;
 
   /**
+   * The earmarked slots kept on warm VMs.
+   *
    * @generated from field: int32 warm_earmarked = 7;
    */
   warmEarmarked?: number;
@@ -8033,10 +8735,14 @@ export const CapacityReservationSchema: GenMessage<CapacityReservation, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 81);
 
 /**
+ * GetWorkspaceStatementRequest names the workspace and month.
+ *
  * @generated from message toshi.operator.v1.GetWorkspaceStatementRequest
  */
 export type GetWorkspaceStatementRequest = Message<"toshi.operator.v1.GetWorkspaceStatementRequest"> & {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -8058,10 +8764,14 @@ export type GetWorkspaceStatementRequest = Message<"toshi.operator.v1.GetWorkspa
 };
 
 /**
+ * GetWorkspaceStatementRequest names the workspace and month.
+ *
  * @generated from message toshi.operator.v1.GetWorkspaceStatementRequest
  */
 export type GetWorkspaceStatementRequestJson = {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -8090,10 +8800,14 @@ export const GetWorkspaceStatementRequestSchema: GenMessage<GetWorkspaceStatemen
   messageDesc(file_toshi_operator_v1_operator, 82);
 
 /**
+ * GetWorkspaceStatementResponse carries the month's statement.
+ *
  * @generated from message toshi.operator.v1.GetWorkspaceStatementResponse
  */
 export type GetWorkspaceStatementResponse = Message<"toshi.operator.v1.GetWorkspaceStatementResponse"> & {
   /**
+   * The statement.
+   *
    * @generated from field: toshi.operator.v1.WorkspaceStatement statement = 1;
    */
   statement?: WorkspaceStatement | undefined;
@@ -8107,10 +8821,14 @@ export type GetWorkspaceStatementResponse = Message<"toshi.operator.v1.GetWorksp
 };
 
 /**
+ * GetWorkspaceStatementResponse carries the month's statement.
+ *
  * @generated from message toshi.operator.v1.GetWorkspaceStatementResponse
  */
 export type GetWorkspaceStatementResponseJson = {
   /**
+   * The statement.
+   *
    * @generated from field: toshi.operator.v1.WorkspaceStatement statement = 1;
    */
   statement?: WorkspaceStatementJson;
@@ -8131,10 +8849,15 @@ export const GetWorkspaceStatementResponseSchema: GenMessage<GetWorkspaceStateme
   messageDesc(file_toshi_operator_v1_operator, 83);
 
 /**
+ * WorkspaceStatement is one workspace's month: its usage, charges and
+ * fees.
+ *
  * @generated from message toshi.operator.v1.WorkspaceStatement
  */
 export type WorkspaceStatement = Message<"toshi.operator.v1.WorkspaceStatement"> & {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace: string;
@@ -8147,11 +8870,15 @@ export type WorkspaceStatement = Message<"toshi.operator.v1.WorkspaceStatement">
   month: string;
 
   /**
+   * The month's first instant, inclusive.
+   *
    * @generated from field: google.protobuf.Timestamp from = 3;
    */
   from?: Timestamp | undefined;
 
   /**
+   * The next month's first instant, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 4;
    */
   to?: Timestamp | undefined;
@@ -8221,6 +8948,8 @@ export type WorkspaceStatement = Message<"toshi.operator.v1.WorkspaceStatement">
   starterCreditAppliedCents: bigint;
 
   /**
+   * When the credit was applied; unset when it was not.
+   *
    * @generated from field: google.protobuf.Timestamp starter_credit_applied_at = 13;
    */
   starterCreditAppliedAt?: Timestamp | undefined;
@@ -8320,10 +9049,15 @@ export type WorkspaceStatement = Message<"toshi.operator.v1.WorkspaceStatement">
 };
 
 /**
+ * WorkspaceStatement is one workspace's month: its usage, charges and
+ * fees.
+ *
  * @generated from message toshi.operator.v1.WorkspaceStatement
  */
 export type WorkspaceStatementJson = {
   /**
+   * The workspace's id.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace?: string;
@@ -8336,11 +9070,15 @@ export type WorkspaceStatementJson = {
   month?: string;
 
   /**
+   * The month's first instant, inclusive.
+   *
    * @generated from field: google.protobuf.Timestamp from = 3;
    */
   from?: TimestampJson;
 
   /**
+   * The next month's first instant, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 4;
    */
   to?: TimestampJson;
@@ -8410,6 +9148,8 @@ export type WorkspaceStatementJson = {
   starterCreditAppliedCents?: string;
 
   /**
+   * When the credit was applied; unset when it was not.
+   *
    * @generated from field: google.protobuf.Timestamp starter_credit_applied_at = 13;
    */
   starterCreditAppliedAt?: TimestampJson;
@@ -8676,6 +9416,8 @@ export const DesktopSeatsSchema: GenMessage<DesktopSeats, {jsonType: DesktopSeat
  */
 export type StatementSeat = Message<"toshi.operator.v1.StatementSeat"> & {
   /**
+   * The seat's id.
+   *
    * @generated from field: string seat_id = 1;
    */
   seatId: string;
@@ -8688,11 +9430,15 @@ export type StatementSeat = Message<"toshi.operator.v1.StatementSeat"> & {
   userId: string;
 
   /**
+   * The person's name.
+   *
    * @generated from field: string name = 3;
    */
   name: string;
 
   /**
+   * When it was assigned.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 4;
    */
   assignedAt?: Timestamp | undefined;
@@ -8728,6 +9474,8 @@ export type StatementSeat = Message<"toshi.operator.v1.StatementSeat"> & {
  */
 export type StatementSeatJson = {
   /**
+   * The seat's id.
+   *
    * @generated from field: string seat_id = 1;
    */
   seatId?: string;
@@ -8740,11 +9488,15 @@ export type StatementSeatJson = {
   userId?: string;
 
   /**
+   * The person's name.
+   *
    * @generated from field: string name = 3;
    */
   name?: string;
 
   /**
+   * When it was assigned.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 4;
    */
   assignedAt?: TimestampJson;
@@ -8872,11 +9624,15 @@ export const OwnHostFeeSchema: GenMessage<OwnHostFee, {jsonType: OwnHostFeeJson}
  */
 export type Awake = Message<"toshi.operator.v1.Awake"> & {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
 
   /**
+   * How many runs the month had.
+   *
    * @generated from field: int64 runs = 2;
    */
   runs: bigint;
@@ -8921,11 +9677,15 @@ export type Awake = Message<"toshi.operator.v1.Awake"> & {
  */
 export type AwakeJson = {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
 
   /**
+   * How many runs the month had.
+   *
    * @generated from field: int64 runs = 2;
    */
   runs?: string;
@@ -9089,6 +9849,8 @@ export const StorageSchema: GenMessage<Storage, {jsonType: StorageJson}> = /*@__
  */
 export type StoredKind = Message<"toshi.operator.v1.StoredKind"> & {
   /**
+   * The kind of stored data.
+   *
    * @generated from field: string kind = 1;
    */
   kind: string;
@@ -9116,6 +9878,8 @@ export type StoredKind = Message<"toshi.operator.v1.StoredKind"> & {
  */
 export type StoredKindJson = {
   /**
+   * The kind of stored data.
+   *
    * @generated from field: string kind = 1;
    */
   kind?: string;
@@ -9149,6 +9913,8 @@ export const StoredKindSchema: GenMessage<StoredKind, {jsonType: StoredKindJson}
  */
 export type StorageUsageRow = Message<"toshi.operator.v1.StorageUsageRow"> & {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace: string;
@@ -9161,6 +9927,8 @@ export type StorageUsageRow = Message<"toshi.operator.v1.StorageUsageRow"> & {
   day: string;
 
   /**
+   * The kind of stored data; see StoredKind.
+   *
    * @generated from field: string kind = 3;
    */
   kind: string;
@@ -9187,6 +9955,8 @@ export type StorageUsageRow = Message<"toshi.operator.v1.StorageUsageRow"> & {
  */
 export type StorageUsageRowJson = {
   /**
+   * The workspace.
+   *
    * @generated from field: string workspace = 1;
    */
   workspace?: string;
@@ -9199,6 +9969,8 @@ export type StorageUsageRowJson = {
   day?: string;
 
   /**
+   * The kind of stored data; see StoredKind.
+   *
    * @generated from field: string kind = 3;
    */
   kind?: string;
@@ -9226,20 +9998,28 @@ export const StorageUsageRowSchema: GenMessage<StorageUsageRow, {jsonType: Stora
   messageDesc(file_toshi_operator_v1_operator, 92);
 
 /**
+ * StatementUsage is a statement's jobs of one runner size and OS.
+ *
  * @generated from message toshi.operator.v1.StatementUsage
  */
 export type StatementUsage = Message<"toshi.operator.v1.StatementUsage"> & {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
 
   /**
+   * The OS pool: linux, windows or macos.
+   *
    * @generated from field: string os = 2;
    */
   os: string;
 
   /**
+   * How many jobs finished.
+   *
    * @generated from field: int64 jobs = 3;
    */
   jobs: bigint;
@@ -9298,26 +10078,36 @@ export type StatementUsage = Message<"toshi.operator.v1.StatementUsage"> & {
   seconds: number;
 
   /**
+   * The exact own-host run time behind own_host_minutes, in seconds.
+   *
    * @generated from field: double own_host_seconds = 11;
    */
   ownHostSeconds: number;
 };
 
 /**
+ * StatementUsage is a statement's jobs of one runner size and OS.
+ *
  * @generated from message toshi.operator.v1.StatementUsage
  */
 export type StatementUsageJson = {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
 
   /**
+   * The OS pool: linux, windows or macos.
+   *
    * @generated from field: string os = 2;
    */
   os?: string;
 
   /**
+   * How many jobs finished.
+   *
    * @generated from field: int64 jobs = 3;
    */
   jobs?: string;
@@ -9376,6 +10166,8 @@ export type StatementUsageJson = {
   seconds?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The exact own-host run time behind own_host_minutes, in seconds.
+   *
    * @generated from field: double own_host_seconds = 11;
    */
   ownHostSeconds?: number | "NaN" | "Infinity" | "-Infinity";
@@ -9389,6 +10181,9 @@ export const StatementUsageSchema: GenMessage<StatementUsage, {jsonType: Stateme
   messageDesc(file_toshi_operator_v1_operator, 93);
 
 /**
+ * StatementCharge is one size's metered minutes, or seconds, and their
+ * estimated cost.
+ *
  * @generated from message toshi.operator.v1.StatementCharge
  */
 export type StatementCharge = Message<"toshi.operator.v1.StatementCharge"> & {
@@ -9426,6 +10221,9 @@ export type StatementCharge = Message<"toshi.operator.v1.StatementCharge"> & {
 };
 
 /**
+ * StatementCharge is one size's metered minutes, or seconds, and their
+ * estimated cost.
+ *
  * @generated from message toshi.operator.v1.StatementCharge
  */
 export type StatementChargeJson = {
@@ -9606,6 +10404,9 @@ export type WorkspaceBilling = Message<"toshi.operator.v1.WorkspaceBilling"> & {
   starterCreditCents: bigint;
 
   /**
+   * An estimate of the credit left: the credit less the metered spend
+   * since billing started.
+   *
    * @generated from field: int64 starter_credit_left_cents = 19;
    */
   starterCreditLeftCents: bigint;
@@ -9790,6 +10591,9 @@ export type WorkspaceBillingJson = {
   starterCreditCents?: string;
 
   /**
+   * An estimate of the credit left: the credit less the metered spend
+   * since billing started.
+   *
    * @generated from field: int64 starter_credit_left_cents = 19;
    */
   starterCreditLeftCents?: string;
@@ -9858,6 +10662,8 @@ export type WorkspaceBilling_HeldJobs = Message<"toshi.operator.v1.WorkspaceBill
   reason: string;
 
   /**
+   * How many jobs are held for the reason.
+   *
    * @generated from field: int64 jobs = 2;
    */
   jobs: bigint;
@@ -9892,6 +10698,8 @@ export type WorkspaceBilling_HeldJobsJson = {
   reason?: string;
 
   /**
+   * How many jobs are held for the reason.
+   *
    * @generated from field: int64 jobs = 2;
    */
   jobs?: string;
@@ -9941,31 +10749,43 @@ export type BillingTotals = Message<"toshi.operator.v1.BillingTotals"> & {
   size: string;
 
   /**
+   * Events the provider accepted.
+   *
    * @generated from field: int64 sent_events = 3;
    */
   sentEvents: bigint;
 
   /**
+   * Minutes those events count.
+   *
    * @generated from field: int64 sent_minutes = 4;
    */
   sentMinutes: bigint;
 
   /**
+   * Events not sent yet.
+   *
    * @generated from field: int64 pending_events = 5;
    */
   pendingEvents: bigint;
 
   /**
+   * Minutes those events will count.
+   *
    * @generated from field: int64 pending_minutes = 6;
    */
   pendingMinutes: bigint;
 
   /**
+   * Events the provider will not be sent again.
+   *
    * @generated from field: int64 failed_events = 7;
    */
   failedEvents: bigint;
 
   /**
+   * Minutes those events count.
+   *
    * @generated from field: int64 failed_minutes = 8;
    */
   failedMinutes: bigint;
@@ -9993,31 +10813,43 @@ export type BillingTotalsJson = {
   size?: string;
 
   /**
+   * Events the provider accepted.
+   *
    * @generated from field: int64 sent_events = 3;
    */
   sentEvents?: string;
 
   /**
+   * Minutes those events count.
+   *
    * @generated from field: int64 sent_minutes = 4;
    */
   sentMinutes?: string;
 
   /**
+   * Events not sent yet.
+   *
    * @generated from field: int64 pending_events = 5;
    */
   pendingEvents?: string;
 
   /**
+   * Minutes those events will count.
+   *
    * @generated from field: int64 pending_minutes = 6;
    */
   pendingMinutes?: string;
 
   /**
+   * Events the provider will not be sent again.
+   *
    * @generated from field: int64 failed_events = 7;
    */
   failedEvents?: string;
 
   /**
+   * Minutes those events count.
+   *
    * @generated from field: int64 failed_minutes = 8;
    */
   failedMinutes?: string;
@@ -10037,21 +10869,29 @@ export const BillingTotalsSchema: GenMessage<BillingTotals, {jsonType: BillingTo
  */
 export type BillingEventFailure = Message<"toshi.operator.v1.BillingEventFailure"> & {
   /**
+   * The job the event counts.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The runner size; empty when the event has none.
+   *
    * @generated from field: string size = 2;
    */
   size: string;
 
   /**
+   * The meter event's name.
+   *
    * @generated from field: string event_name = 3;
    */
   eventName: string;
 
   /**
+   * The minutes it counts.
+   *
    * @generated from field: int64 minutes = 4;
    */
   minutes: bigint;
@@ -10064,16 +10904,22 @@ export type BillingEventFailure = Message<"toshi.operator.v1.BillingEventFailure
   occurredAt?: Timestamp | undefined;
 
   /**
+   * When it last failed.
+   *
    * @generated from field: google.protobuf.Timestamp failed_at = 6;
    */
   failedAt?: Timestamp | undefined;
 
   /**
+   * How many times it was sent.
+   *
    * @generated from field: int32 attempts = 7;
    */
   attempts: number;
 
   /**
+   * Why it failed.
+   *
    * @generated from field: string last_error = 8;
    */
   lastError: string;
@@ -10086,21 +10932,29 @@ export type BillingEventFailure = Message<"toshi.operator.v1.BillingEventFailure
  */
 export type BillingEventFailureJson = {
   /**
+   * The job the event counts.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The runner size; empty when the event has none.
+   *
    * @generated from field: string size = 2;
    */
   size?: string;
 
   /**
+   * The meter event's name.
+   *
    * @generated from field: string event_name = 3;
    */
   eventName?: string;
 
   /**
+   * The minutes it counts.
+   *
    * @generated from field: int64 minutes = 4;
    */
   minutes?: string;
@@ -10113,16 +10967,22 @@ export type BillingEventFailureJson = {
   occurredAt?: TimestampJson;
 
   /**
+   * When it last failed.
+   *
    * @generated from field: google.protobuf.Timestamp failed_at = 6;
    */
   failedAt?: TimestampJson;
 
   /**
+   * How many times it was sent.
+   *
    * @generated from field: int32 attempts = 7;
    */
   attempts?: number;
 
   /**
+   * Why it failed.
+   *
    * @generated from field: string last_error = 8;
    */
   lastError?: string;
@@ -10150,6 +11010,8 @@ export type Token = Message<"toshi.operator.v1.Token"> & {
   id: string;
 
   /**
+   * What the token grants.
+   *
    * @generated from field: toshi.operator.v1.TokenKind kind = 2;
    */
   kind: TokenKind;
@@ -10167,6 +11029,8 @@ export type Token = Message<"toshi.operator.v1.Token"> & {
   source: string;
 
   /**
+   * When the token was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
@@ -10304,6 +11168,8 @@ export type TokenJson = {
   id?: string;
 
   /**
+   * What the token grants.
+   *
    * @generated from field: toshi.operator.v1.TokenKind kind = 2;
    */
   kind?: TokenKindJson;
@@ -10321,6 +11187,8 @@ export type TokenJson = {
   source?: string;
 
   /**
+   * When the token was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
@@ -10457,6 +11325,8 @@ export const TokenSchema: GenMessage<Token, {jsonType: TokenJson}> = /*@__PURE__
  */
 export type Subject = Message<"toshi.operator.v1.Subject"> & {
   /**
+   * What made it.
+   *
    * @generated from field: toshi.operator.v1.SubjectKind kind = 1;
    */
   kind: SubjectKind;
@@ -10478,6 +11348,8 @@ export type Subject = Message<"toshi.operator.v1.Subject"> & {
  */
 export type SubjectJson = {
   /**
+   * What made it.
+   *
    * @generated from field: toshi.operator.v1.SubjectKind kind = 1;
    */
   kind?: SubjectKindJson;
@@ -10640,6 +11512,8 @@ export const ListTokensRequestSchema: GenMessage<ListTokensRequest, {jsonType: L
  */
 export type ListTokensResponse = Message<"toshi.operator.v1.ListTokensResponse"> & {
   /**
+   * The page's tokens, oldest first.
+   *
    * @generated from field: repeated toshi.operator.v1.Token tokens = 1;
    */
   tokens: Token[];
@@ -10659,6 +11533,8 @@ export type ListTokensResponse = Message<"toshi.operator.v1.ListTokensResponse">
  */
 export type ListTokensResponseJson = {
   /**
+   * The page's tokens, oldest first.
+   *
    * @generated from field: repeated toshi.operator.v1.Token tokens = 1;
    */
   tokens?: TokenJson[];
@@ -10686,6 +11562,8 @@ export const ListTokensResponseSchema: GenMessage<ListTokensResponse, {jsonType:
  */
 export type RotateTokenRequest = Message<"toshi.operator.v1.RotateTokenRequest"> & {
   /**
+   * The kind to rotate.
+   *
    * @generated from field: toshi.operator.v1.TokenKind kind = 1;
    */
   kind: TokenKind;
@@ -10717,6 +11595,8 @@ export type RotateTokenRequest = Message<"toshi.operator.v1.RotateTokenRequest">
  */
 export type RotateTokenRequestJson = {
   /**
+   * The kind to rotate.
+   *
    * @generated from field: toshi.operator.v1.TokenKind kind = 1;
    */
   kind?: TokenKindJson;
@@ -10754,6 +11634,8 @@ export const RotateTokenRequestSchema: GenMessage<RotateTokenRequest, {jsonType:
  */
 export type RotateTokenResponse = Message<"toshi.operator.v1.RotateTokenResponse"> & {
   /**
+   * The token as stored.
+   *
    * @generated from field: toshi.operator.v1.Token token = 1;
    */
   token?: Token | undefined;
@@ -10773,6 +11655,8 @@ export type RotateTokenResponse = Message<"toshi.operator.v1.RotateTokenResponse
  */
 export type RotateTokenResponseJson = {
   /**
+   * The token as stored.
+   *
    * @generated from field: toshi.operator.v1.Token token = 1;
    */
   token?: TokenJson;
@@ -10799,6 +11683,8 @@ export const RotateTokenResponseSchema: GenMessage<RotateTokenResponse, {jsonTyp
  */
 export type RevokeTokenRequest = Message<"toshi.operator.v1.RevokeTokenRequest"> & {
   /**
+   * The token's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -10811,6 +11697,8 @@ export type RevokeTokenRequest = Message<"toshi.operator.v1.RevokeTokenRequest">
  */
 export type RevokeTokenRequestJson = {
   /**
+   * The token's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -10830,6 +11718,8 @@ export const RevokeTokenRequestSchema: GenMessage<RevokeTokenRequest, {jsonType:
  */
 export type RevokeTokenResponse = Message<"toshi.operator.v1.RevokeTokenResponse"> & {
   /**
+   * The token as stored after the revocation.
+   *
    * @generated from field: toshi.operator.v1.Token token = 1;
    */
   token?: Token | undefined;
@@ -10849,6 +11739,8 @@ export type RevokeTokenResponse = Message<"toshi.operator.v1.RevokeTokenResponse
  */
 export type RevokeTokenResponseJson = {
   /**
+   * The token as stored after the revocation.
+   *
    * @generated from field: toshi.operator.v1.Token token = 1;
    */
   token?: TokenJson;
@@ -10875,6 +11767,8 @@ export const RevokeTokenResponseSchema: GenMessage<RevokeTokenResponse, {jsonTyp
  */
 export type RollTokenRequest = Message<"toshi.operator.v1.RollTokenRequest"> & {
   /**
+   * The token's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -10897,6 +11791,8 @@ export type RollTokenRequest = Message<"toshi.operator.v1.RollTokenRequest"> & {
  */
 export type RollTokenRequestJson = {
   /**
+   * The token's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -10926,6 +11822,8 @@ export const RollTokenRequestSchema: GenMessage<RollTokenRequest, {jsonType: Rol
  */
 export type RollTokenResponse = Message<"toshi.operator.v1.RollTokenResponse"> & {
   /**
+   * The token as stored.
+   *
    * @generated from field: toshi.operator.v1.Token token = 1;
    */
   token?: Token | undefined;
@@ -10945,6 +11843,8 @@ export type RollTokenResponse = Message<"toshi.operator.v1.RollTokenResponse"> &
  */
 export type RollTokenResponseJson = {
   /**
+   * The token as stored.
+   *
    * @generated from field: toshi.operator.v1.Token token = 1;
    */
   token?: TokenJson;
@@ -10965,10 +11865,15 @@ export const RollTokenResponseSchema: GenMessage<RollTokenResponse, {jsonType: R
   messageDesc(file_toshi_operator_v1_operator, 108);
 
 /**
+ * CreateProductTokenRequest names the product and when its token
+ * expires.
+ *
  * @generated from message toshi.operator.v1.CreateProductTokenRequest
  */
 export type CreateProductTokenRequest = Message<"toshi.operator.v1.CreateProductTokenRequest"> & {
   /**
+   * The product the token is for.
+   *
    * @generated from field: string product = 1;
    */
   product: string;
@@ -10992,10 +11897,15 @@ export type CreateProductTokenRequest = Message<"toshi.operator.v1.CreateProduct
 };
 
 /**
+ * CreateProductTokenRequest names the product and when its token
+ * expires.
+ *
  * @generated from message toshi.operator.v1.CreateProductTokenRequest
  */
 export type CreateProductTokenRequestJson = {
   /**
+   * The product the token is for.
+   *
    * @generated from field: string product = 1;
    */
   product?: string;
@@ -11026,10 +11936,14 @@ export const CreateProductTokenRequestSchema: GenMessage<CreateProductTokenReque
   messageDesc(file_toshi_operator_v1_operator, 109);
 
 /**
+ * CreateProductTokenResponse carries the token and its value.
+ *
  * @generated from message toshi.operator.v1.CreateProductTokenResponse
  */
 export type CreateProductTokenResponse = Message<"toshi.operator.v1.CreateProductTokenResponse"> & {
   /**
+   * The token as stored.
+   *
    * The new token. It is returned only here.
    *
    * @generated from field: toshi.operator.v1.Token token = 1;
@@ -11037,16 +11951,22 @@ export type CreateProductTokenResponse = Message<"toshi.operator.v1.CreateProduc
   token?: Token | undefined;
 
   /**
+   * The new token's value; returned only here.
+   *
    * @generated from field: string value = 2;
    */
   value: string;
 };
 
 /**
+ * CreateProductTokenResponse carries the token and its value.
+ *
  * @generated from message toshi.operator.v1.CreateProductTokenResponse
  */
 export type CreateProductTokenResponseJson = {
   /**
+   * The token as stored.
+   *
    * The new token. It is returned only here.
    *
    * @generated from field: toshi.operator.v1.Token token = 1;
@@ -11054,6 +11974,8 @@ export type CreateProductTokenResponseJson = {
   token?: TokenJson;
 
   /**
+   * The new token's value; returned only here.
+   *
    * @generated from field: string value = 2;
    */
   value?: string;
@@ -11080,6 +12002,8 @@ export type Client = Message<"toshi.operator.v1.Client"> & {
   id: string;
 
   /**
+   * The client's name.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -11130,6 +12054,8 @@ export type ClientJson = {
   id?: string;
 
   /**
+   * The client's name.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -11174,6 +12100,8 @@ export const ClientSchema: GenMessage<Client, {jsonType: ClientJson}> = /*@__PUR
   messageDesc(file_toshi_operator_v1_operator, 111);
 
 /**
+ * RegisterClientRequest is a client to register.
+ *
  * @generated from message toshi.operator.v1.RegisterClientRequest
  */
 export type RegisterClientRequest = Message<"toshi.operator.v1.RegisterClientRequest"> & {
@@ -11186,16 +12114,23 @@ export type RegisterClientRequest = Message<"toshi.operator.v1.RegisterClientReq
   id: string;
 
   /**
+   * The client's name.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 
   /**
+   * Where the authorization endpoint may send the browser back; at
+   * least one, each https or a loopback address.
+   *
    * @generated from field: repeated string redirect_uris = 3;
    */
   redirectUris: string[];
 
   /**
+   * Whether it authenticates with a secret at the token endpoint.
+   *
    * @generated from field: bool confidential = 4;
    */
   confidential: boolean;
@@ -11212,6 +12147,8 @@ export type RegisterClientRequest = Message<"toshi.operator.v1.RegisterClientReq
 };
 
 /**
+ * RegisterClientRequest is a client to register.
+ *
  * @generated from message toshi.operator.v1.RegisterClientRequest
  */
 export type RegisterClientRequestJson = {
@@ -11224,16 +12161,23 @@ export type RegisterClientRequestJson = {
   id?: string;
 
   /**
+   * The client's name.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
 
   /**
+   * Where the authorization endpoint may send the browser back; at
+   * least one, each https or a loopback address.
+   *
    * @generated from field: repeated string redirect_uris = 3;
    */
   redirectUris?: string[];
 
   /**
+   * Whether it authenticates with a secret at the token endpoint.
+   *
    * @generated from field: bool confidential = 4;
    */
   confidential?: boolean;
@@ -11257,10 +12201,15 @@ export const RegisterClientRequestSchema: GenMessage<RegisterClientRequest, {jso
   messageDesc(file_toshi_operator_v1_operator, 112);
 
 /**
+ * RegisterClientResponse carries the client and, for a confidential
+ * one, its secret.
+ *
  * @generated from message toshi.operator.v1.RegisterClientResponse
  */
 export type RegisterClientResponse = Message<"toshi.operator.v1.RegisterClientResponse"> & {
   /**
+   * The client as stored.
+   *
    * @generated from field: toshi.operator.v1.Client client = 1;
    */
   client?: Client | undefined;
@@ -11275,10 +12224,15 @@ export type RegisterClientResponse = Message<"toshi.operator.v1.RegisterClientRe
 };
 
 /**
+ * RegisterClientResponse carries the client and, for a confidential
+ * one, its secret.
+ *
  * @generated from message toshi.operator.v1.RegisterClientResponse
  */
 export type RegisterClientResponseJson = {
   /**
+   * The client as stored.
+   *
    * @generated from field: toshi.operator.v1.Client client = 1;
    */
   client?: ClientJson;
@@ -11300,6 +12254,8 @@ export const RegisterClientResponseSchema: GenMessage<RegisterClientResponse, {j
   messageDesc(file_toshi_operator_v1_operator, 113);
 
 /**
+ * ListClientsRequest pages through the clients.
+ *
  * @generated from message toshi.operator.v1.ListClientsRequest
  */
 export type ListClientsRequest = Message<"toshi.operator.v1.ListClientsRequest"> & {
@@ -11319,6 +12275,8 @@ export type ListClientsRequest = Message<"toshi.operator.v1.ListClientsRequest">
 };
 
 /**
+ * ListClientsRequest pages through the clients.
+ *
  * @generated from message toshi.operator.v1.ListClientsRequest
  */
 export type ListClientsRequestJson = {
@@ -11345,10 +12303,15 @@ export const ListClientsRequestSchema: GenMessage<ListClientsRequest, {jsonType:
   messageDesc(file_toshi_operator_v1_operator, 114);
 
 /**
+ * ListClientsResponse is one page of clients.
+ *
  * @generated from message toshi.operator.v1.ListClientsResponse
  */
 export type ListClientsResponse = Message<"toshi.operator.v1.ListClientsResponse"> & {
   /**
+   * The page's clients: the config file's, then the registered ones by
+   * id.
+   *
    * @generated from field: repeated toshi.operator.v1.Client clients = 1;
    */
   clients: Client[];
@@ -11362,10 +12325,15 @@ export type ListClientsResponse = Message<"toshi.operator.v1.ListClientsResponse
 };
 
 /**
+ * ListClientsResponse is one page of clients.
+ *
  * @generated from message toshi.operator.v1.ListClientsResponse
  */
 export type ListClientsResponseJson = {
   /**
+   * The page's clients: the config file's, then the registered ones by
+   * id.
+   *
    * @generated from field: repeated toshi.operator.v1.Client clients = 1;
    */
   clients?: ClientJson[];
@@ -11386,20 +12354,28 @@ export const ListClientsResponseSchema: GenMessage<ListClientsResponse, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 115);
 
 /**
+ * DeleteClientRequest names the client to delete.
+ *
  * @generated from message toshi.operator.v1.DeleteClientRequest
  */
 export type DeleteClientRequest = Message<"toshi.operator.v1.DeleteClientRequest"> & {
   /**
+   * The client's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 };
 
 /**
+ * DeleteClientRequest names the client to delete.
+ *
  * @generated from message toshi.operator.v1.DeleteClientRequest
  */
 export type DeleteClientRequestJson = {
   /**
+   * The client's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -11413,12 +12389,16 @@ export const DeleteClientRequestSchema: GenMessage<DeleteClientRequest, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 116);
 
 /**
+ * DeleteClientResponse is empty: the client is gone.
+ *
  * @generated from message toshi.operator.v1.DeleteClientResponse
  */
 export type DeleteClientResponse = Message<"toshi.operator.v1.DeleteClientResponse"> & {
 };
 
 /**
+ * DeleteClientResponse is empty: the client is gone.
+ *
  * @generated from message toshi.operator.v1.DeleteClientResponse
  */
 export type DeleteClientResponseJson = {
@@ -11432,20 +12412,28 @@ export const DeleteClientResponseSchema: GenMessage<DeleteClientResponse, {jsonT
   messageDesc(file_toshi_operator_v1_operator, 117);
 
 /**
+ * CheckCloudHostRequest names the cloud host to check.
+ *
  * @generated from message toshi.operator.v1.CheckCloudHostRequest
  */
 export type CheckCloudHostRequest = Message<"toshi.operator.v1.CheckCloudHostRequest"> & {
   /**
+   * The host's id.
+   *
    * @generated from field: string host_id = 1;
    */
   hostId: string;
 };
 
 /**
+ * CheckCloudHostRequest names the cloud host to check.
+ *
  * @generated from message toshi.operator.v1.CheckCloudHostRequest
  */
 export type CheckCloudHostRequestJson = {
   /**
+   * The host's id.
+   *
    * @generated from field: string host_id = 1;
    */
   hostId?: string;
@@ -11459,6 +12447,8 @@ export const CheckCloudHostRequestSchema: GenMessage<CheckCloudHostRequest, {jso
   messageDesc(file_toshi_operator_v1_operator, 118);
 
 /**
+ * CheckCloudHostResponse carries one row per check.
+ *
  * @generated from message toshi.operator.v1.CheckCloudHostResponse
  */
 export type CheckCloudHostResponse = Message<"toshi.operator.v1.CheckCloudHostResponse"> & {
@@ -11471,6 +12461,8 @@ export type CheckCloudHostResponse = Message<"toshi.operator.v1.CheckCloudHostRe
 };
 
 /**
+ * CheckCloudHostResponse carries one row per check.
+ *
  * @generated from message toshi.operator.v1.CheckCloudHostResponse
  */
 export type CheckCloudHostResponseJson = {
@@ -11503,6 +12495,8 @@ export type CloudHostCheck = Message<"toshi.operator.v1.CloudHostCheck"> & {
   name: string;
 
   /**
+   * How the check came out.
+   *
    * @generated from field: toshi.operator.v1.CloudHostCheckStatus status = 2;
    */
   status: CloudHostCheckStatus;
@@ -11529,6 +12523,8 @@ export type CloudHostCheckJson = {
   name?: string;
 
   /**
+   * How the check came out.
+   *
    * @generated from field: toshi.operator.v1.CloudHostCheckStatus status = 2;
    */
   status?: CloudHostCheckStatusJson;
@@ -11649,6 +12645,8 @@ export type Filler = Message<"toshi.operator.v1.Filler"> & {
   maxDuration?: Duration | undefined;
 
   /**
+   * Whether the filler runs.
+   *
    * @generated from field: bool enabled = 13;
    */
   enabled: boolean;
@@ -11661,11 +12659,15 @@ export type Filler = Message<"toshi.operator.v1.Filler"> & {
   source: string;
 
   /**
+   * When it was added.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 15;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When it was last changed.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 16;
    */
   updatedAt?: Timestamp | undefined;
@@ -11811,6 +12813,8 @@ export type FillerJson = {
   maxDuration?: DurationJson;
 
   /**
+   * Whether the filler runs.
+   *
    * @generated from field: bool enabled = 13;
    */
   enabled?: boolean;
@@ -11823,11 +12827,15 @@ export type FillerJson = {
   source?: string;
 
   /**
+   * When it was added.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 15;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When it was last changed.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 16;
    */
   updatedAt?: TimestampJson;
@@ -11886,16 +12894,22 @@ export const FillerSchema: GenMessage<Filler, {jsonType: FillerJson}> = /*@__PUR
  */
 export type FillerRun = Message<"toshi.operator.v1.FillerRun"> & {
   /**
+   * The run's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The filler's name.
+   *
    * @generated from field: string filler = 2;
    */
   filler: string;
 
   /**
+   * The filler's kind: command or dispatch.
+   *
    * @generated from field: string kind = 3;
    */
   kind: string;
@@ -11944,21 +12958,29 @@ export type FillerRun = Message<"toshi.operator.v1.FillerRun"> & {
   exitCode: number;
 
   /**
+   * Why the run failed; empty otherwise.
+   *
    * @generated from field: string error = 10;
    */
   error: string;
 
   /**
+   * When the run was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 11;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When it started; unset before.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 12;
    */
   startedAt?: Timestamp | undefined;
 
   /**
+   * When it ended; unset before.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 13;
    */
   finishedAt?: Timestamp | undefined;
@@ -11971,16 +12993,22 @@ export type FillerRun = Message<"toshi.operator.v1.FillerRun"> & {
  */
 export type FillerRunJson = {
   /**
+   * The run's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The filler's name.
+   *
    * @generated from field: string filler = 2;
    */
   filler?: string;
 
   /**
+   * The filler's kind: command or dispatch.
+   *
    * @generated from field: string kind = 3;
    */
   kind?: string;
@@ -12029,21 +13057,29 @@ export type FillerRunJson = {
   exitCode?: number;
 
   /**
+   * Why the run failed; empty otherwise.
+   *
    * @generated from field: string error = 10;
    */
   error?: string;
 
   /**
+   * When the run was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 11;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When it started; unset before.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 12;
    */
   startedAt?: TimestampJson;
 
   /**
+   * When it ended; unset before.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 13;
    */
   finishedAt?: TimestampJson;
@@ -12063,11 +13099,15 @@ export const FillerRunSchema: GenMessage<FillerRun, {jsonType: FillerRunJson}> =
  */
 export type FillerHostMinutes = Message<"toshi.operator.v1.FillerHostMinutes"> & {
   /**
+   * The host's id.
+   *
    * @generated from field: string host_id = 1;
    */
   hostId: string;
 
   /**
+   * Filler minutes it ran in the last 24 hours.
+   *
    * @generated from field: double minutes = 2;
    */
   minutes: number;
@@ -12080,11 +13120,15 @@ export type FillerHostMinutes = Message<"toshi.operator.v1.FillerHostMinutes"> &
  */
 export type FillerHostMinutesJson = {
   /**
+   * The host's id.
+   *
    * @generated from field: string host_id = 1;
    */
   hostId?: string;
 
   /**
+   * Filler minutes it ran in the last 24 hours.
+   *
    * @generated from field: double minutes = 2;
    */
   minutes?: number | "NaN" | "Infinity" | "-Infinity";
@@ -12098,6 +13142,8 @@ export const FillerHostMinutesSchema: GenMessage<FillerHostMinutes, {jsonType: F
   messageDesc(file_toshi_operator_v1_operator, 123);
 
 /**
+ * ListFillersRequest pages through the fillers.
+ *
  * @generated from message toshi.operator.v1.ListFillersRequest
  */
 export type ListFillersRequest = Message<"toshi.operator.v1.ListFillersRequest"> & {
@@ -12117,6 +13163,8 @@ export type ListFillersRequest = Message<"toshi.operator.v1.ListFillersRequest">
 };
 
 /**
+ * ListFillersRequest pages through the fillers.
+ *
  * @generated from message toshi.operator.v1.ListFillersRequest
  */
 export type ListFillersRequestJson = {
@@ -12143,10 +13191,14 @@ export const ListFillersRequestSchema: GenMessage<ListFillersRequest, {jsonType:
   messageDesc(file_toshi_operator_v1_operator, 124);
 
 /**
+ * ListFillersResponse is one page of fillers.
+ *
  * @generated from message toshi.operator.v1.ListFillersResponse
  */
 export type ListFillersResponse = Message<"toshi.operator.v1.ListFillersResponse"> & {
   /**
+   * The page's fillers, ordered by name, then workspace.
+   *
    * @generated from field: repeated toshi.operator.v1.Filler fillers = 1;
    */
   fillers: Filler[];
@@ -12168,10 +13220,14 @@ export type ListFillersResponse = Message<"toshi.operator.v1.ListFillersResponse
 };
 
 /**
+ * ListFillersResponse is one page of fillers.
+ *
  * @generated from message toshi.operator.v1.ListFillersResponse
  */
 export type ListFillersResponseJson = {
   /**
+   * The page's fillers, ordered by name, then workspace.
+   *
    * @generated from field: repeated toshi.operator.v1.Filler fillers = 1;
    */
   fillers?: FillerJson[];
@@ -12200,6 +13256,8 @@ export const ListFillersResponseSchema: GenMessage<ListFillersResponse, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 125);
 
 /**
+ * PutFillerRequest carries the filler to add or replace.
+ *
  * @generated from message toshi.operator.v1.PutFillerRequest
  */
 export type PutFillerRequest = Message<"toshi.operator.v1.PutFillerRequest"> & {
@@ -12213,6 +13271,8 @@ export type PutFillerRequest = Message<"toshi.operator.v1.PutFillerRequest"> & {
 };
 
 /**
+ * PutFillerRequest carries the filler to add or replace.
+ *
  * @generated from message toshi.operator.v1.PutFillerRequest
  */
 export type PutFillerRequestJson = {
@@ -12233,20 +13293,28 @@ export const PutFillerRequestSchema: GenMessage<PutFillerRequest, {jsonType: Put
   messageDesc(file_toshi_operator_v1_operator, 126);
 
 /**
+ * PutFillerResponse carries the filler as stored.
+ *
  * @generated from message toshi.operator.v1.PutFillerResponse
  */
 export type PutFillerResponse = Message<"toshi.operator.v1.PutFillerResponse"> & {
   /**
+   * The filler as stored.
+   *
    * @generated from field: toshi.operator.v1.Filler filler = 1;
    */
   filler?: Filler | undefined;
 };
 
 /**
+ * PutFillerResponse carries the filler as stored.
+ *
  * @generated from message toshi.operator.v1.PutFillerResponse
  */
 export type PutFillerResponseJson = {
   /**
+   * The filler as stored.
+   *
    * @generated from field: toshi.operator.v1.Filler filler = 1;
    */
   filler?: FillerJson;
@@ -12260,10 +13328,14 @@ export const PutFillerResponseSchema: GenMessage<PutFillerResponse, {jsonType: P
   messageDesc(file_toshi_operator_v1_operator, 127);
 
 /**
+ * DeleteFillerRequest names the filler to remove.
+ *
  * @generated from message toshi.operator.v1.DeleteFillerRequest
  */
 export type DeleteFillerRequest = Message<"toshi.operator.v1.DeleteFillerRequest"> & {
   /**
+   * The filler's name.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
@@ -12277,10 +13349,14 @@ export type DeleteFillerRequest = Message<"toshi.operator.v1.DeleteFillerRequest
 };
 
 /**
+ * DeleteFillerRequest names the filler to remove.
+ *
  * @generated from message toshi.operator.v1.DeleteFillerRequest
  */
 export type DeleteFillerRequestJson = {
   /**
+   * The filler's name.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
@@ -12301,12 +13377,16 @@ export const DeleteFillerRequestSchema: GenMessage<DeleteFillerRequest, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 128);
 
 /**
+ * DeleteFillerResponse is empty: the filler is gone.
+ *
  * @generated from message toshi.operator.v1.DeleteFillerResponse
  */
 export type DeleteFillerResponse = Message<"toshi.operator.v1.DeleteFillerResponse"> & {
 };
 
 /**
+ * DeleteFillerResponse is empty: the filler is gone.
+ *
  * @generated from message toshi.operator.v1.DeleteFillerResponse
  */
 export type DeleteFillerResponseJson = {
@@ -12320,6 +13400,8 @@ export const DeleteFillerResponseSchema: GenMessage<DeleteFillerResponse, {jsonT
   messageDesc(file_toshi_operator_v1_operator, 129);
 
 /**
+ * UpdateFillerRequest carries the filler and the fields to change.
+ *
  * @generated from message toshi.operator.v1.UpdateFillerRequest
  */
 export type UpdateFillerRequest = Message<"toshi.operator.v1.UpdateFillerRequest"> & {
@@ -12332,12 +13414,17 @@ export type UpdateFillerRequest = Message<"toshi.operator.v1.UpdateFillerRequest
   filler?: Filler | undefined;
 
   /**
+   * The fields to change; required, and enabled is the only accepted
+   * path.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMask | undefined;
 };
 
 /**
+ * UpdateFillerRequest carries the filler and the fields to change.
+ *
  * @generated from message toshi.operator.v1.UpdateFillerRequest
  */
 export type UpdateFillerRequestJson = {
@@ -12350,6 +13437,9 @@ export type UpdateFillerRequestJson = {
   filler?: FillerJson;
 
   /**
+   * The fields to change; required, and enabled is the only accepted
+   * path.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMaskJson;
@@ -12363,20 +13453,28 @@ export const UpdateFillerRequestSchema: GenMessage<UpdateFillerRequest, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 130);
 
 /**
+ * UpdateFillerResponse carries the filler as stored.
+ *
  * @generated from message toshi.operator.v1.UpdateFillerResponse
  */
 export type UpdateFillerResponse = Message<"toshi.operator.v1.UpdateFillerResponse"> & {
   /**
+   * The filler as stored.
+   *
    * @generated from field: toshi.operator.v1.Filler filler = 1;
    */
   filler?: Filler | undefined;
 };
 
 /**
+ * UpdateFillerResponse carries the filler as stored.
+ *
  * @generated from message toshi.operator.v1.UpdateFillerResponse
  */
 export type UpdateFillerResponseJson = {
   /**
+   * The filler as stored.
+   *
    * @generated from field: toshi.operator.v1.Filler filler = 1;
    */
   filler?: FillerJson;
@@ -12390,6 +13488,8 @@ export const UpdateFillerResponseSchema: GenMessage<UpdateFillerResponse, {jsonT
   messageDesc(file_toshi_operator_v1_operator, 131);
 
 /**
+ * ListFillerRunsRequest selects the runs to list.
+ *
  * @generated from message toshi.operator.v1.ListFillerRunsRequest
  */
 export type ListFillerRunsRequest = Message<"toshi.operator.v1.ListFillerRunsRequest"> & {
@@ -12423,6 +13523,8 @@ export type ListFillerRunsRequest = Message<"toshi.operator.v1.ListFillerRunsReq
 };
 
 /**
+ * ListFillerRunsRequest selects the runs to list.
+ *
  * @generated from message toshi.operator.v1.ListFillerRunsRequest
  */
 export type ListFillerRunsRequestJson = {
@@ -12463,10 +13565,14 @@ export const ListFillerRunsRequestSchema: GenMessage<ListFillerRunsRequest, {jso
   messageDesc(file_toshi_operator_v1_operator, 132);
 
 /**
+ * ListFillerRunsResponse is one page of runs.
+ *
  * @generated from message toshi.operator.v1.ListFillerRunsResponse
  */
 export type ListFillerRunsResponse = Message<"toshi.operator.v1.ListFillerRunsResponse"> & {
   /**
+   * The page's runs, newest first.
+   *
    * @generated from field: repeated toshi.operator.v1.FillerRun runs = 1;
    */
   runs: FillerRun[];
@@ -12488,10 +13594,14 @@ export type ListFillerRunsResponse = Message<"toshi.operator.v1.ListFillerRunsRe
 };
 
 /**
+ * ListFillerRunsResponse is one page of runs.
+ *
  * @generated from message toshi.operator.v1.ListFillerRunsResponse
  */
 export type ListFillerRunsResponseJson = {
   /**
+   * The page's runs, newest first.
+   *
    * @generated from field: repeated toshi.operator.v1.FillerRun runs = 1;
    */
   runs?: FillerRunJson[];
@@ -12526,6 +13636,8 @@ export const ListFillerRunsResponseSchema: GenMessage<ListFillerRunsResponse, {j
  */
 export type FillerPause = Message<"toshi.operator.v1.FillerPause"> & {
   /**
+   * The filler's name.
+   *
    * @generated from field: string filler = 1;
    */
   filler: string;
@@ -12568,6 +13680,8 @@ export type FillerPause = Message<"toshi.operator.v1.FillerPause"> & {
  */
 export type FillerPauseJson = {
   /**
+   * The filler's name.
+   *
    * @generated from field: string filler = 1;
    */
   filler?: string;
@@ -12611,12 +13725,16 @@ export const FillerPauseSchema: GenMessage<FillerPause, {jsonType: FillerPauseJs
   messageDesc(file_toshi_operator_v1_operator, 134);
 
 /**
+ * GetSecretDeliveryRequest is empty.
+ *
  * @generated from message toshi.operator.v1.GetSecretDeliveryRequest
  */
 export type GetSecretDeliveryRequest = Message<"toshi.operator.v1.GetSecretDeliveryRequest"> & {
 };
 
 /**
+ * GetSecretDeliveryRequest is empty.
+ *
  * @generated from message toshi.operator.v1.GetSecretDeliveryRequest
  */
 export type GetSecretDeliveryRequestJson = {
@@ -12630,20 +13748,28 @@ export const GetSecretDeliveryRequestSchema: GenMessage<GetSecretDeliveryRequest
   messageDesc(file_toshi_operator_v1_operator, 135);
 
 /**
+ * GetSecretDeliveryResponse carries the switch.
+ *
  * @generated from message toshi.operator.v1.GetSecretDeliveryResponse
  */
 export type GetSecretDeliveryResponse = Message<"toshi.operator.v1.GetSecretDeliveryResponse"> & {
   /**
+   * The switch.
+   *
    * @generated from field: toshi.operator.v1.SecretDelivery delivery = 1;
    */
   delivery?: SecretDelivery | undefined;
 };
 
 /**
+ * GetSecretDeliveryResponse carries the switch.
+ *
  * @generated from message toshi.operator.v1.GetSecretDeliveryResponse
  */
 export type GetSecretDeliveryResponseJson = {
   /**
+   * The switch.
+   *
    * @generated from field: toshi.operator.v1.SecretDelivery delivery = 1;
    */
   delivery?: SecretDeliveryJson;
@@ -12657,6 +13783,9 @@ export const GetSecretDeliveryResponseSchema: GenMessage<GetSecretDeliveryRespon
   messageDesc(file_toshi_operator_v1_operator, 136);
 
 /**
+ * UpdateSecretDeliveryRequest carries the switch and the fields to
+ * change.
+ *
  * @generated from message toshi.operator.v1.UpdateSecretDeliveryRequest
  */
 export type UpdateSecretDeliveryRequest = Message<"toshi.operator.v1.UpdateSecretDeliveryRequest"> & {
@@ -12668,12 +13797,18 @@ export type UpdateSecretDeliveryRequest = Message<"toshi.operator.v1.UpdateSecre
   secretDelivery?: SecretDelivery | undefined;
 
   /**
+   * The fields to change; required, and enabled is the only accepted
+   * path.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMask | undefined;
 };
 
 /**
+ * UpdateSecretDeliveryRequest carries the switch and the fields to
+ * change.
+ *
  * @generated from message toshi.operator.v1.UpdateSecretDeliveryRequest
  */
 export type UpdateSecretDeliveryRequestJson = {
@@ -12685,6 +13820,9 @@ export type UpdateSecretDeliveryRequestJson = {
   secretDelivery?: SecretDeliveryJson;
 
   /**
+   * The fields to change; required, and enabled is the only accepted
+   * path.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMaskJson;
@@ -12698,10 +13836,14 @@ export const UpdateSecretDeliveryRequestSchema: GenMessage<UpdateSecretDeliveryR
   messageDesc(file_toshi_operator_v1_operator, 137);
 
 /**
+ * UpdateSecretDeliveryResponse carries the switch as stored.
+ *
  * @generated from message toshi.operator.v1.UpdateSecretDeliveryResponse
  */
 export type UpdateSecretDeliveryResponse = Message<"toshi.operator.v1.UpdateSecretDeliveryResponse"> & {
   /**
+   * The switch as stored.
+   *
    * @generated from field: toshi.operator.v1.SecretDelivery delivery = 1;
    */
   delivery?: SecretDelivery | undefined;
@@ -12715,10 +13857,14 @@ export type UpdateSecretDeliveryResponse = Message<"toshi.operator.v1.UpdateSecr
 };
 
 /**
+ * UpdateSecretDeliveryResponse carries the switch as stored.
+ *
  * @generated from message toshi.operator.v1.UpdateSecretDeliveryResponse
  */
 export type UpdateSecretDeliveryResponseJson = {
   /**
+   * The switch as stored.
+   *
    * @generated from field: toshi.operator.v1.SecretDelivery delivery = 1;
    */
   delivery?: SecretDeliveryJson;
@@ -12748,6 +13894,8 @@ export const UpdateSecretDeliveryResponseSchema: GenMessage<UpdateSecretDelivery
  */
 export type SecretDelivery = Message<"toshi.operator.v1.SecretDelivery"> & {
   /**
+   * Whether secrets are delivered to CI jobs.
+   *
    * @generated from field: bool enabled = 1;
    */
   enabled: boolean;
@@ -12761,11 +13909,15 @@ export type SecretDelivery = Message<"toshi.operator.v1.SecretDelivery"> & {
   changedByKind: string;
 
   /**
+   * The id of the actor that changed it, without its kind.
+   *
    * @generated from field: string changed_by_id = 3;
    */
   changedById: string;
 
   /**
+   * When it was last changed.
+   *
    * @generated from field: google.protobuf.Timestamp changed_at = 4;
    */
   changedAt?: Timestamp | undefined;
@@ -12791,6 +13943,8 @@ export type SecretDelivery = Message<"toshi.operator.v1.SecretDelivery"> & {
  */
 export type SecretDeliveryJson = {
   /**
+   * Whether secrets are delivered to CI jobs.
+   *
    * @generated from field: bool enabled = 1;
    */
   enabled?: boolean;
@@ -12804,11 +13958,15 @@ export type SecretDeliveryJson = {
   changedByKind?: string;
 
   /**
+   * The id of the actor that changed it, without its kind.
+   *
    * @generated from field: string changed_by_id = 3;
    */
   changedById?: string;
 
   /**
+   * When it was last changed.
+   *
    * @generated from field: google.protobuf.Timestamp changed_at = 4;
    */
   changedAt?: TimestampJson;
@@ -12832,6 +13990,8 @@ export const SecretDeliverySchema: GenMessage<SecretDelivery, {jsonType: SecretD
   messageDesc(file_toshi_operator_v1_operator, 139);
 
 /**
+ * ListUtilisationRequest selects the utilisation roll-ups.
+ *
  * @generated from message toshi.operator.v1.ListUtilisationRequest
  */
 export type ListUtilisationRequest = Message<"toshi.operator.v1.ListUtilisationRequest"> & {
@@ -12884,6 +14044,8 @@ export type ListUtilisationRequest = Message<"toshi.operator.v1.ListUtilisationR
 };
 
 /**
+ * ListUtilisationRequest selects the utilisation roll-ups.
+ *
  * @generated from message toshi.operator.v1.ListUtilisationRequest
  */
 export type ListUtilisationRequestJson = {
@@ -12943,6 +14105,8 @@ export const ListUtilisationRequestSchema: GenMessage<ListUtilisationRequest, {j
   messageDesc(file_toshi_operator_v1_operator, 140);
 
 /**
+ * ListUtilisationResponse is one page of utilisation roll-ups.
+ *
  * @generated from message toshi.operator.v1.ListUtilisationResponse
  */
 export type ListUtilisationResponse = Message<"toshi.operator.v1.ListUtilisationResponse"> & {
@@ -12987,6 +14151,8 @@ export type ListUtilisationResponse = Message<"toshi.operator.v1.ListUtilisation
 };
 
 /**
+ * ListUtilisationResponse is one page of utilisation roll-ups.
+ *
  * @generated from message toshi.operator.v1.ListUtilisationResponse
  */
 export type ListUtilisationResponseJson = {
@@ -13087,6 +14253,8 @@ export type WarmMemoryRow = Message<"toshi.operator.v1.WarmMemoryRow"> & {
   booted?: WarmPathSummary | undefined;
 
   /**
+   * The VMs restored from a snapshot.
+   *
    * @generated from field: toshi.operator.v1.WarmPathSummary restored = 7;
    */
   restored?: WarmPathSummary | undefined;
@@ -13142,6 +14310,8 @@ export type WarmMemoryRowJson = {
   booted?: WarmPathSummaryJson;
 
   /**
+   * The VMs restored from a snapshot.
+   *
    * @generated from field: toshi.operator.v1.WarmPathSummary restored = 7;
    */
   restored?: WarmPathSummaryJson;
@@ -13236,6 +14406,8 @@ export const WarmPathSummarySchema: GenMessage<WarmPathSummary, {jsonType: WarmP
   messageDesc(file_toshi_operator_v1_operator, 143);
 
 /**
+ * UtilisationRow is one series and bucket of utilisation.
+ *
  * @generated from message toshi.operator.v1.UtilisationRow
  */
 export type UtilisationRow = Message<"toshi.operator.v1.UtilisationRow"> & {
@@ -13284,16 +14456,22 @@ export type UtilisationRow = Message<"toshi.operator.v1.UtilisationRow"> & {
   busyVmSeconds: bigint;
 
   /**
+   * VM-seconds warm or warming for a job.
+   *
    * @generated from field: int64 ready_vm_seconds = 7;
    */
   readyVmSeconds: bigint;
 
   /**
+   * VM-seconds neither running a job nor warm.
+   *
    * @generated from field: int64 idle_vm_seconds = 8;
    */
   idleVmSeconds: bigint;
 
   /**
+   * VM-seconds the hosts could run.
+   *
    * @generated from field: int64 capacity_vm_seconds = 9;
    */
   capacityVmSeconds: bigint;
@@ -13315,6 +14493,8 @@ export type UtilisationRow = Message<"toshi.operator.v1.UtilisationRow"> & {
   jobsStarted: bigint;
 
   /**
+   * The jobs of them assigned as overflow jobs.
+   *
    * @generated from field: int64 overflow_jobs = 12;
    */
   overflowJobs: bigint;
@@ -13329,6 +14509,8 @@ export type UtilisationRow = Message<"toshi.operator.v1.UtilisationRow"> & {
 };
 
 /**
+ * UtilisationRow is one series and bucket of utilisation.
+ *
  * @generated from message toshi.operator.v1.UtilisationRow
  */
 export type UtilisationRowJson = {
@@ -13377,16 +14559,22 @@ export type UtilisationRowJson = {
   busyVmSeconds?: string;
 
   /**
+   * VM-seconds warm or warming for a job.
+   *
    * @generated from field: int64 ready_vm_seconds = 7;
    */
   readyVmSeconds?: string;
 
   /**
+   * VM-seconds neither running a job nor warm.
+   *
    * @generated from field: int64 idle_vm_seconds = 8;
    */
   idleVmSeconds?: string;
 
   /**
+   * VM-seconds the hosts could run.
+   *
    * @generated from field: int64 capacity_vm_seconds = 9;
    */
   capacityVmSeconds?: string;
@@ -13408,6 +14596,8 @@ export type UtilisationRowJson = {
   jobsStarted?: string;
 
   /**
+   * The jobs of them assigned as overflow jobs.
+   *
    * @generated from field: int64 overflow_jobs = 12;
    */
   overflowJobs?: string;
@@ -13429,6 +14619,8 @@ export const UtilisationRowSchema: GenMessage<UtilisationRow, {jsonType: Utilisa
   messageDesc(file_toshi_operator_v1_operator, 144);
 
 /**
+ * UtilisationTarget is the operator's target utilisation band.
+ *
  * @generated from message toshi.operator.v1.UtilisationTarget
  */
 export type UtilisationTarget = Message<"toshi.operator.v1.UtilisationTarget"> & {
@@ -13440,12 +14632,16 @@ export type UtilisationTarget = Message<"toshi.operator.v1.UtilisationTarget"> &
   low: number;
 
   /**
+   * The band's upper end, as a fraction of capacity.
+   *
    * @generated from field: double high = 2;
    */
   high: number;
 };
 
 /**
+ * UtilisationTarget is the operator's target utilisation band.
+ *
  * @generated from message toshi.operator.v1.UtilisationTarget
  */
 export type UtilisationTargetJson = {
@@ -13457,6 +14653,8 @@ export type UtilisationTargetJson = {
   low?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The band's upper end, as a fraction of capacity.
+   *
    * @generated from field: double high = 2;
    */
   high?: number | "NaN" | "Infinity" | "-Infinity";
@@ -13470,6 +14668,8 @@ export const UtilisationTargetSchema: GenMessage<UtilisationTarget, {jsonType: U
   messageDesc(file_toshi_operator_v1_operator, 145);
 
 /**
+ * SuggestPoolsRequest selects the window to replay.
+ *
  * @generated from message toshi.operator.v1.SuggestPoolsRequest
  */
 export type SuggestPoolsRequest = Message<"toshi.operator.v1.SuggestPoolsRequest"> & {
@@ -13489,6 +14689,8 @@ export type SuggestPoolsRequest = Message<"toshi.operator.v1.SuggestPoolsRequest
 };
 
 /**
+ * SuggestPoolsRequest selects the window to replay.
+ *
  * @generated from message toshi.operator.v1.SuggestPoolsRequest
  */
 export type SuggestPoolsRequestJson = {
@@ -13515,6 +14717,9 @@ export const SuggestPoolsRequestSchema: GenMessage<SuggestPoolsRequest, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 146);
 
 /**
+ * SuggestPoolsResponse carries the run in progress and the last
+ * result.
+ *
  * @generated from message toshi.operator.v1.SuggestPoolsResponse
  */
 export type SuggestPoolsResponse = Message<"toshi.operator.v1.SuggestPoolsResponse"> & {
@@ -13527,11 +14732,15 @@ export type SuggestPoolsResponse = Message<"toshi.operator.v1.SuggestPoolsRespon
   running: boolean;
 
   /**
+   * The window of the run in progress, in days.
+   *
    * @generated from field: int32 running_days = 2;
    */
   runningDays: number;
 
   /**
+   * When the run in progress started.
+   *
    * @generated from field: google.protobuf.Timestamp running_since = 3;
    */
   runningSince?: Timestamp | undefined;
@@ -13551,11 +14760,15 @@ export type SuggestPoolsResponse = Message<"toshi.operator.v1.SuggestPoolsRespon
   maxJobs: number;
 
   /**
+   * The longest a run may take.
+   *
    * @generated from field: google.protobuf.Duration timeout = 6;
    */
   timeout?: Duration | undefined;
 
   /**
+   * The largest window a run may replay.
+   *
    * @generated from field: int32 max_days = 7;
    */
   maxDays: number;
@@ -13580,6 +14793,9 @@ export type SuggestPoolsResponse = Message<"toshi.operator.v1.SuggestPoolsRespon
 };
 
 /**
+ * SuggestPoolsResponse carries the run in progress and the last
+ * result.
+ *
  * @generated from message toshi.operator.v1.SuggestPoolsResponse
  */
 export type SuggestPoolsResponseJson = {
@@ -13592,11 +14808,15 @@ export type SuggestPoolsResponseJson = {
   running?: boolean;
 
   /**
+   * The window of the run in progress, in days.
+   *
    * @generated from field: int32 running_days = 2;
    */
   runningDays?: number;
 
   /**
+   * When the run in progress started.
+   *
    * @generated from field: google.protobuf.Timestamp running_since = 3;
    */
   runningSince?: TimestampJson;
@@ -13616,11 +14836,15 @@ export type SuggestPoolsResponseJson = {
   maxJobs?: number;
 
   /**
+   * The longest a run may take.
+   *
    * @generated from field: google.protobuf.Duration timeout = 6;
    */
   timeout?: DurationJson;
 
   /**
+   * The largest window a run may replay.
+   *
    * @generated from field: int32 max_days = 7;
    */
   maxDays?: number;
@@ -13658,16 +14882,22 @@ export const SuggestPoolsResponseSchema: GenMessage<SuggestPoolsResponse, {jsonT
  */
 export type PoolSuggestion = Message<"toshi.operator.v1.PoolSuggestion"> & {
   /**
+   * The window's length in days.
+   *
    * @generated from field: int32 days = 1;
    */
   days: number;
 
   /**
+   * When the run started.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 2;
    */
   startedAt?: Timestamp | undefined;
 
   /**
+   * When it finished, or stopped.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 3;
    */
   finishedAt?: Timestamp | undefined;
@@ -13690,16 +14920,22 @@ export type PoolSuggestion = Message<"toshi.operator.v1.PoolSuggestion"> & {
   from?: Timestamp | undefined;
 
   /**
+   * The trace's end, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 6;
    */
   to?: Timestamp | undefined;
 
   /**
+   * How many jobs the trace holds.
+   *
    * @generated from field: int32 jobs = 7;
    */
   jobs: number;
 
   /**
+   * Whether the window held more jobs than max_jobs.
+   *
    * @generated from field: bool cut = 8;
    */
   cut: boolean;
@@ -13713,6 +14949,8 @@ export type PoolSuggestion = Message<"toshi.operator.v1.PoolSuggestion"> & {
   hosts: number;
 
   /**
+   * How many of them report no warm target.
+   *
    * @generated from field: int32 unreported_hosts = 10;
    */
   unreportedHosts: number;
@@ -13726,6 +14964,9 @@ export type PoolSuggestion = Message<"toshi.operator.v1.PoolSuggestion"> & {
   baselineFromHosts: boolean;
 
   /**
+   * The warm VMs every pool is replayed with when no host reports a
+   * target.
+   *
    * @generated from field: int32 baseline = 12;
    */
   baseline: number;
@@ -13746,6 +14987,8 @@ export type PoolSuggestion = Message<"toshi.operator.v1.PoolSuggestion"> & {
   met: boolean;
 
   /**
+   * The sizes that miss the budget, and why.
+   *
    * @generated from field: repeated toshi.operator.v1.PoolSuggestionUnmet unmet = 15;
    */
   unmet: PoolSuggestionUnmet[];
@@ -13758,6 +15001,8 @@ export type PoolSuggestion = Message<"toshi.operator.v1.PoolSuggestion"> & {
   bootDelays: PoolSuggestionDelay[];
 
   /**
+   * The restore delays replayed, per OS.
+   *
    * @generated from field: repeated toshi.operator.v1.PoolSuggestionDelay restore_delays = 17;
    */
   restoreDelays: PoolSuggestionDelay[];
@@ -13784,16 +15029,22 @@ export type PoolSuggestion = Message<"toshi.operator.v1.PoolSuggestion"> & {
  */
 export type PoolSuggestionJson = {
   /**
+   * The window's length in days.
+   *
    * @generated from field: int32 days = 1;
    */
   days?: number;
 
   /**
+   * When the run started.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 2;
    */
   startedAt?: TimestampJson;
 
   /**
+   * When it finished, or stopped.
+   *
    * @generated from field: google.protobuf.Timestamp finished_at = 3;
    */
   finishedAt?: TimestampJson;
@@ -13816,16 +15067,22 @@ export type PoolSuggestionJson = {
   from?: TimestampJson;
 
   /**
+   * The trace's end, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 6;
    */
   to?: TimestampJson;
 
   /**
+   * How many jobs the trace holds.
+   *
    * @generated from field: int32 jobs = 7;
    */
   jobs?: number;
 
   /**
+   * Whether the window held more jobs than max_jobs.
+   *
    * @generated from field: bool cut = 8;
    */
   cut?: boolean;
@@ -13839,6 +15096,8 @@ export type PoolSuggestionJson = {
   hosts?: number;
 
   /**
+   * How many of them report no warm target.
+   *
    * @generated from field: int32 unreported_hosts = 10;
    */
   unreportedHosts?: number;
@@ -13852,6 +15111,9 @@ export type PoolSuggestionJson = {
   baselineFromHosts?: boolean;
 
   /**
+   * The warm VMs every pool is replayed with when no host reports a
+   * target.
+   *
    * @generated from field: int32 baseline = 12;
    */
   baseline?: number;
@@ -13872,6 +15134,8 @@ export type PoolSuggestionJson = {
   met?: boolean;
 
   /**
+   * The sizes that miss the budget, and why.
+   *
    * @generated from field: repeated toshi.operator.v1.PoolSuggestionUnmet unmet = 15;
    */
   unmet?: PoolSuggestionUnmetJson[];
@@ -13884,6 +15148,8 @@ export type PoolSuggestionJson = {
   bootDelays?: PoolSuggestionDelayJson[];
 
   /**
+   * The restore delays replayed, per OS.
+   *
    * @generated from field: repeated toshi.operator.v1.PoolSuggestionDelay restore_delays = 17;
    */
   restoreDelays?: PoolSuggestionDelayJson[];
@@ -13911,15 +15177,21 @@ export const PoolSuggestionSchema: GenMessage<PoolSuggestion, {jsonType: PoolSug
   messageDesc(file_toshi_operator_v1_operator, 148);
 
 /**
+ * PoolSuggestionSize is one runner size's replay.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionSize
  */
 export type PoolSuggestionSize = Message<"toshi.operator.v1.PoolSuggestionSize"> & {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
 
   /**
+   * How many of the size's jobs the trace holds.
+   *
    * @generated from field: int32 jobs = 2;
    */
   jobs: number;
@@ -13935,11 +15207,15 @@ export type PoolSuggestionSize = Message<"toshi.operator.v1.PoolSuggestionSize">
   current: number;
 
   /**
+   * Whether a host that can run the size reports a target.
+   *
    * @generated from field: bool current_reported = 4;
    */
   currentReported: boolean;
 
   /**
+   * How many of those hosts report none.
+   *
    * @generated from field: int32 unreported_hosts = 5;
    */
   unreportedHosts: number;
@@ -13959,21 +15235,29 @@ export type PoolSuggestionSize = Message<"toshi.operator.v1.PoolSuggestionSize">
   today?: PoolSuggestionOutcome | undefined;
 
   /**
+   * The replay's prediction with the suggested target.
+   *
    * @generated from field: toshi.operator.v1.PoolSuggestionOutcome with_suggested = 8;
    */
   withSuggested?: PoolSuggestionOutcome | undefined;
 };
 
 /**
+ * PoolSuggestionSize is one runner size's replay.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionSize
  */
 export type PoolSuggestionSizeJson = {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
 
   /**
+   * How many of the size's jobs the trace holds.
+   *
    * @generated from field: int32 jobs = 2;
    */
   jobs?: number;
@@ -13989,11 +15273,15 @@ export type PoolSuggestionSizeJson = {
   current?: number;
 
   /**
+   * Whether a host that can run the size reports a target.
+   *
    * @generated from field: bool current_reported = 4;
    */
   currentReported?: boolean;
 
   /**
+   * How many of those hosts report none.
+   *
    * @generated from field: int32 unreported_hosts = 5;
    */
   unreportedHosts?: number;
@@ -14013,6 +15301,8 @@ export type PoolSuggestionSizeJson = {
   today?: PoolSuggestionOutcomeJson;
 
   /**
+   * The replay's prediction with the suggested target.
+   *
    * @generated from field: toshi.operator.v1.PoolSuggestionOutcome with_suggested = 8;
    */
   withSuggested?: PoolSuggestionOutcomeJson;
@@ -14026,6 +15316,8 @@ export const PoolSuggestionSizeSchema: GenMessage<PoolSuggestionSize, {jsonType:
   messageDesc(file_toshi_operator_v1_operator, 149);
 
 /**
+ * PoolSuggestionOutcome is one replay's prediction for a size.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionOutcome
  */
 export type PoolSuggestionOutcome = Message<"toshi.operator.v1.PoolSuggestionOutcome"> & {
@@ -14037,6 +15329,8 @@ export type PoolSuggestionOutcome = Message<"toshi.operator.v1.PoolSuggestionOut
   p50Seconds: number;
 
   /**
+   * The 95th percentile, in seconds.
+   *
    * @generated from field: double p95_seconds = 2;
    */
   p95Seconds: number;
@@ -14051,6 +15345,8 @@ export type PoolSuggestionOutcome = Message<"toshi.operator.v1.PoolSuggestionOut
 };
 
 /**
+ * PoolSuggestionOutcome is one replay's prediction for a size.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionOutcome
  */
 export type PoolSuggestionOutcomeJson = {
@@ -14062,6 +15358,8 @@ export type PoolSuggestionOutcomeJson = {
   p50Seconds?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The 95th percentile, in seconds.
+   *
    * @generated from field: double p95_seconds = 2;
    */
   p95Seconds?: number | "NaN" | "Infinity" | "-Infinity";
@@ -14083,30 +15381,42 @@ export const PoolSuggestionOutcomeSchema: GenMessage<PoolSuggestionOutcome, {jso
   messageDesc(file_toshi_operator_v1_operator, 150);
 
 /**
+ * PoolSuggestionTarget is a size's reported target.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionTarget
  */
 export type PoolSuggestionTarget = Message<"toshi.operator.v1.PoolSuggestionTarget"> & {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
 
   /**
+   * The target the hosts report, summed.
+   *
    * @generated from field: int32 current = 2;
    */
   current: number;
 };
 
 /**
+ * PoolSuggestionTarget is a size's reported target.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionTarget
  */
 export type PoolSuggestionTargetJson = {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
 
   /**
+   * The target the hosts report, summed.
+   *
    * @generated from field: int32 current = 2;
    */
   current?: number;
@@ -14120,30 +15430,42 @@ export const PoolSuggestionTargetSchema: GenMessage<PoolSuggestionTarget, {jsonT
   messageDesc(file_toshi_operator_v1_operator, 151);
 
 /**
+ * PoolSuggestionUnmet says why a size misses the budget.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionUnmet
  */
 export type PoolSuggestionUnmet = Message<"toshi.operator.v1.PoolSuggestionUnmet"> & {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
 
   /**
+   * Why it misses.
+   *
    * @generated from field: string reason = 2;
    */
   reason: string;
 };
 
 /**
+ * PoolSuggestionUnmet says why a size misses the budget.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionUnmet
  */
 export type PoolSuggestionUnmetJson = {
   /**
+   * The runner size.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
 
   /**
+   * Why it misses.
+   *
    * @generated from field: string reason = 2;
    */
   reason?: string;
@@ -14157,15 +15479,21 @@ export const PoolSuggestionUnmetSchema: GenMessage<PoolSuggestionUnmet, {jsonTyp
   messageDesc(file_toshi_operator_v1_operator, 152);
 
 /**
+ * PoolSuggestionDelay is one OS's boot or restore delay.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionDelay
  */
 export type PoolSuggestionDelay = Message<"toshi.operator.v1.PoolSuggestionDelay"> & {
   /**
+   * The OS pool: linux, windows or macos.
+   *
    * @generated from field: string os = 1;
    */
   os: string;
 
   /**
+   * The delay in seconds.
+   *
    * @generated from field: double seconds = 2;
    */
   seconds: number;
@@ -14179,15 +15507,21 @@ export type PoolSuggestionDelay = Message<"toshi.operator.v1.PoolSuggestionDelay
 };
 
 /**
+ * PoolSuggestionDelay is one OS's boot or restore delay.
+ *
  * @generated from message toshi.operator.v1.PoolSuggestionDelay
  */
 export type PoolSuggestionDelayJson = {
   /**
+   * The OS pool: linux, windows or macos.
+   *
    * @generated from field: string os = 1;
    */
   os?: string;
 
   /**
+   * The delay in seconds.
+   *
    * @generated from field: double seconds = 2;
    */
   seconds?: number | "NaN" | "Infinity" | "-Infinity";
@@ -14217,6 +15551,8 @@ export const PoolSuggestionDelaySchema: GenMessage<PoolSuggestionDelay, {jsonTyp
  */
 export type StorageProvider = Message<"toshi.operator.v1.StorageProvider"> & {
   /**
+   * The provider's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -14229,6 +15565,8 @@ export type StorageProvider = Message<"toshi.operator.v1.StorageProvider"> & {
   workspace: string;
 
   /**
+   * Its name, unique among its owner's providers.
+   *
    * @generated from field: string name = 3;
    */
   name: string;
@@ -14241,46 +15579,67 @@ export type StorageProvider = Message<"toshi.operator.v1.StorageProvider"> & {
   mode: string;
 
   /**
+   * The scheme and host of the bucket's endpoint, lower case, without a
+   * trailing slash.
+   *
    * @generated from field: string endpoint = 5;
    */
   endpoint: string;
 
   /**
+   * The bucket's region.
+   *
    * @generated from field: string region = 6;
    */
   region: string;
 
   /**
+   * The bucket's name.
+   *
    * @generated from field: string bucket = 7;
    */
   bucket: string;
 
   /**
+   * The prefix every key Toshi writes starts with; empty for none.
+   *
    * @generated from field: string root_prefix = 8;
    */
   rootPrefix: string;
 
   /**
+   * Whether the bucket is addressed in the path rather than the host
+   * name.
+   *
    * @generated from field: bool path_style = 9;
    */
   pathStyle: boolean;
 
   /**
+   * Whether the store applies lifecycle rules.
+   *
    * @generated from field: bool cap_lifecycle = 10;
    */
   capLifecycle: boolean;
 
   /**
+   * Whether a guest may get presigned URLs from it.
+   *
    * @generated from field: bool cap_guest_presign = 11;
    */
   capGuestPresign: boolean;
 
   /**
+   * Whether the bucket replicates to other regions.
+   *
    * @generated from field: bool cap_global_replication = 12;
    */
   capGlobalReplication: boolean;
 
   /**
+   * The egress price per GB in millionths of the currency unit; 0 when
+   * not priced.
+   *
    * @generated from field: int64 egress_price_micros_per_gb = 13;
    */
   egressPriceMicrosPerGb: bigint;
@@ -14294,6 +15653,8 @@ export type StorageProvider = Message<"toshi.operator.v1.StorageProvider"> & {
   credentialsFile: string;
 
   /**
+   * The profile in credentials_file that holds the credentials.
+   *
    * @generated from field: string credentials_profile = 15;
    */
   credentialsProfile: string;
@@ -14306,31 +15667,43 @@ export type StorageProvider = Message<"toshi.operator.v1.StorageProvider"> & {
   credentialsWrapped: boolean;
 
   /**
+   * The IAM role assumed with the credentials; empty for none.
+   *
    * @generated from field: string role_arn = 17;
    */
   roleArn: string;
 
   /**
+   * The external id of the role's trust policy; empty for none.
+   *
    * @generated from field: string external_id = 18;
    */
   externalId: string;
 
   /**
+   * When the provider was last checked.
+   *
    * @generated from field: google.protobuf.Timestamp last_check_at = 19;
    */
   lastCheckAt?: Timestamp | undefined;
 
   /**
+   * Why that check failed, naming the step; empty when it passed.
+   *
    * @generated from field: string last_check_error = 20;
    */
   lastCheckError: string;
 
   /**
+   * When the row was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 21;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When the row was last changed.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 22;
    */
   updatedAt?: Timestamp | undefined;
@@ -14346,6 +15719,8 @@ export type StorageProvider = Message<"toshi.operator.v1.StorageProvider"> & {
  */
 export type StorageProviderJson = {
   /**
+   * The provider's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -14358,6 +15733,8 @@ export type StorageProviderJson = {
   workspace?: string;
 
   /**
+   * Its name, unique among its owner's providers.
+   *
    * @generated from field: string name = 3;
    */
   name?: string;
@@ -14370,46 +15747,67 @@ export type StorageProviderJson = {
   mode?: string;
 
   /**
+   * The scheme and host of the bucket's endpoint, lower case, without a
+   * trailing slash.
+   *
    * @generated from field: string endpoint = 5;
    */
   endpoint?: string;
 
   /**
+   * The bucket's region.
+   *
    * @generated from field: string region = 6;
    */
   region?: string;
 
   /**
+   * The bucket's name.
+   *
    * @generated from field: string bucket = 7;
    */
   bucket?: string;
 
   /**
+   * The prefix every key Toshi writes starts with; empty for none.
+   *
    * @generated from field: string root_prefix = 8;
    */
   rootPrefix?: string;
 
   /**
+   * Whether the bucket is addressed in the path rather than the host
+   * name.
+   *
    * @generated from field: bool path_style = 9;
    */
   pathStyle?: boolean;
 
   /**
+   * Whether the store applies lifecycle rules.
+   *
    * @generated from field: bool cap_lifecycle = 10;
    */
   capLifecycle?: boolean;
 
   /**
+   * Whether a guest may get presigned URLs from it.
+   *
    * @generated from field: bool cap_guest_presign = 11;
    */
   capGuestPresign?: boolean;
 
   /**
+   * Whether the bucket replicates to other regions.
+   *
    * @generated from field: bool cap_global_replication = 12;
    */
   capGlobalReplication?: boolean;
 
   /**
+   * The egress price per GB in millionths of the currency unit; 0 when
+   * not priced.
+   *
    * @generated from field: int64 egress_price_micros_per_gb = 13;
    */
   egressPriceMicrosPerGb?: string;
@@ -14423,6 +15821,8 @@ export type StorageProviderJson = {
   credentialsFile?: string;
 
   /**
+   * The profile in credentials_file that holds the credentials.
+   *
    * @generated from field: string credentials_profile = 15;
    */
   credentialsProfile?: string;
@@ -14435,31 +15835,43 @@ export type StorageProviderJson = {
   credentialsWrapped?: boolean;
 
   /**
+   * The IAM role assumed with the credentials; empty for none.
+   *
    * @generated from field: string role_arn = 17;
    */
   roleArn?: string;
 
   /**
+   * The external id of the role's trust policy; empty for none.
+   *
    * @generated from field: string external_id = 18;
    */
   externalId?: string;
 
   /**
+   * When the provider was last checked.
+   *
    * @generated from field: google.protobuf.Timestamp last_check_at = 19;
    */
   lastCheckAt?: TimestampJson;
 
   /**
+   * Why that check failed, naming the step; empty when it passed.
+   *
    * @generated from field: string last_check_error = 20;
    */
   lastCheckError?: string;
 
   /**
+   * When the row was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 21;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When the row was last changed.
+   *
    * @generated from field: google.protobuf.Timestamp updated_at = 22;
    */
   updatedAt?: TimestampJson;
@@ -14473,6 +15885,8 @@ export const StorageProviderSchema: GenMessage<StorageProvider, {jsonType: Stora
   messageDesc(file_toshi_operator_v1_operator, 154);
 
 /**
+ * CreateStorageProviderRequest is a provider to store.
+ *
  * @generated from message toshi.operator.v1.CreateStorageProviderRequest
  */
 export type CreateStorageProviderRequest = Message<"toshi.operator.v1.CreateStorageProviderRequest"> & {
@@ -14484,76 +15898,108 @@ export type CreateStorageProviderRequest = Message<"toshi.operator.v1.CreateStor
   workspace: string;
 
   /**
+   * Its name, unique among its owner's providers.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 
   /**
+   * operator, workspace_bucket or local_disk.
+   *
    * @generated from field: string mode = 3;
    */
   mode: string;
 
   /**
+   * The scheme and host of the bucket's endpoint.
+   *
    * @generated from field: string endpoint = 4;
    */
   endpoint: string;
 
   /**
+   * The bucket's region.
+   *
    * @generated from field: string region = 5;
    */
   region: string;
 
   /**
+   * The bucket's name.
+   *
    * @generated from field: string bucket = 6;
    */
   bucket: string;
 
   /**
+   * The prefix every key Toshi writes starts with; empty for none.
+   *
    * @generated from field: string root_prefix = 7;
    */
   rootPrefix: string;
 
   /**
+   * Whether the bucket is addressed in the path rather than the host
+   * name.
+   *
    * @generated from field: bool path_style = 8;
    */
   pathStyle: boolean;
 
   /**
+   * Whether the store applies lifecycle rules.
+   *
    * @generated from field: bool cap_lifecycle = 9;
    */
   capLifecycle: boolean;
 
   /**
+   * Whether a guest may get presigned URLs from it.
+   *
    * @generated from field: bool cap_guest_presign = 10;
    */
   capGuestPresign: boolean;
 
   /**
+   * Whether the bucket replicates to other regions.
+   *
    * @generated from field: bool cap_global_replication = 11;
    */
   capGlobalReplication: boolean;
 
   /**
+   * The egress price per GB in millionths of the currency unit; 0 when
+   * not priced.
+   *
    * @generated from field: int64 egress_price_micros_per_gb = 12;
    */
   egressPriceMicrosPerGb: bigint;
 
   /**
+   * The shared credentials file to read.
+   *
    * @generated from field: string credentials_file = 13;
    */
   credentialsFile: string;
 
   /**
+   * The profile in it that holds the credentials.
+   *
    * @generated from field: string credentials_profile = 14;
    */
   credentialsProfile: string;
 
   /**
+   * The IAM role to assume with them; empty for none.
+   *
    * @generated from field: string role_arn = 15;
    */
   roleArn: string;
 
   /**
+   * The external id of the role's trust policy; empty for none.
+   *
    * @generated from field: string external_id = 16;
    */
   externalId: string;
@@ -14573,7 +16019,8 @@ export type CreateStorageProviderRequest = Message<"toshi.operator.v1.CreateStor
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
    * key and request return the first answer; a different request with the
    * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * The key belongs to the calling operator token; local-admin sessions share
+   * one scope.
    *
    * @generated from field: string request_key = 18;
    */
@@ -14581,6 +16028,8 @@ export type CreateStorageProviderRequest = Message<"toshi.operator.v1.CreateStor
 };
 
 /**
+ * CreateStorageProviderRequest is a provider to store.
+ *
  * @generated from message toshi.operator.v1.CreateStorageProviderRequest
  */
 export type CreateStorageProviderRequestJson = {
@@ -14592,76 +16041,108 @@ export type CreateStorageProviderRequestJson = {
   workspace?: string;
 
   /**
+   * Its name, unique among its owner's providers.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
 
   /**
+   * operator, workspace_bucket or local_disk.
+   *
    * @generated from field: string mode = 3;
    */
   mode?: string;
 
   /**
+   * The scheme and host of the bucket's endpoint.
+   *
    * @generated from field: string endpoint = 4;
    */
   endpoint?: string;
 
   /**
+   * The bucket's region.
+   *
    * @generated from field: string region = 5;
    */
   region?: string;
 
   /**
+   * The bucket's name.
+   *
    * @generated from field: string bucket = 6;
    */
   bucket?: string;
 
   /**
+   * The prefix every key Toshi writes starts with; empty for none.
+   *
    * @generated from field: string root_prefix = 7;
    */
   rootPrefix?: string;
 
   /**
+   * Whether the bucket is addressed in the path rather than the host
+   * name.
+   *
    * @generated from field: bool path_style = 8;
    */
   pathStyle?: boolean;
 
   /**
+   * Whether the store applies lifecycle rules.
+   *
    * @generated from field: bool cap_lifecycle = 9;
    */
   capLifecycle?: boolean;
 
   /**
+   * Whether a guest may get presigned URLs from it.
+   *
    * @generated from field: bool cap_guest_presign = 10;
    */
   capGuestPresign?: boolean;
 
   /**
+   * Whether the bucket replicates to other regions.
+   *
    * @generated from field: bool cap_global_replication = 11;
    */
   capGlobalReplication?: boolean;
 
   /**
+   * The egress price per GB in millionths of the currency unit; 0 when
+   * not priced.
+   *
    * @generated from field: int64 egress_price_micros_per_gb = 12;
    */
   egressPriceMicrosPerGb?: string;
 
   /**
+   * The shared credentials file to read.
+   *
    * @generated from field: string credentials_file = 13;
    */
   credentialsFile?: string;
 
   /**
+   * The profile in it that holds the credentials.
+   *
    * @generated from field: string credentials_profile = 14;
    */
   credentialsProfile?: string;
 
   /**
+   * The IAM role to assume with them; empty for none.
+   *
    * @generated from field: string role_arn = 15;
    */
   roleArn?: string;
 
   /**
+   * The external id of the role's trust policy; empty for none.
+   *
    * @generated from field: string external_id = 16;
    */
   externalId?: string;
@@ -14681,7 +16162,8 @@ export type CreateStorageProviderRequestJson = {
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
    * key and request return the first answer; a different request with the
    * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * The key belongs to the calling operator token; local-admin sessions share
+   * one scope.
    *
    * @generated from field: string request_key = 18;
    */
@@ -14703,11 +16185,15 @@ export const CreateStorageProviderRequestSchema: GenMessage<CreateStorageProvide
  */
 export type StorageCredential = Message<"toshi.operator.v1.StorageCredential"> & {
   /**
+   * The access key id.
+   *
    * @generated from field: string access_key_id = 1;
    */
   accessKeyId: string;
 
   /**
+   * The secret of the key.
+   *
    * @generated from field: string secret_access_key = 2;
    */
   secretAccessKey: string;
@@ -14728,11 +16214,15 @@ export type StorageCredential = Message<"toshi.operator.v1.StorageCredential"> &
  */
 export type StorageCredentialJson = {
   /**
+   * The access key id.
+   *
    * @generated from field: string access_key_id = 1;
    */
   accessKeyId?: string;
 
   /**
+   * The secret of the key.
+   *
    * @generated from field: string secret_access_key = 2;
    */
   secretAccessKey?: string;
@@ -14753,20 +16243,28 @@ export const StorageCredentialSchema: GenMessage<StorageCredential, {jsonType: S
   messageDesc(file_toshi_operator_v1_operator, 156);
 
 /**
+ * CreateStorageProviderResponse carries the provider as stored.
+ *
  * @generated from message toshi.operator.v1.CreateStorageProviderResponse
  */
 export type CreateStorageProviderResponse = Message<"toshi.operator.v1.CreateStorageProviderResponse"> & {
   /**
+   * The provider as stored.
+   *
    * @generated from field: toshi.operator.v1.StorageProvider provider = 1;
    */
   provider?: StorageProvider | undefined;
 };
 
 /**
+ * CreateStorageProviderResponse carries the provider as stored.
+ *
  * @generated from message toshi.operator.v1.CreateStorageProviderResponse
  */
 export type CreateStorageProviderResponseJson = {
   /**
+   * The provider as stored.
+   *
    * @generated from field: toshi.operator.v1.StorageProvider provider = 1;
    */
   provider?: StorageProviderJson;
@@ -14780,6 +16278,8 @@ export const CreateStorageProviderResponseSchema: GenMessage<CreateStorageProvid
   messageDesc(file_toshi_operator_v1_operator, 157);
 
 /**
+ * ListStorageProvidersRequest pages through the providers.
+ *
  * @generated from message toshi.operator.v1.ListStorageProvidersRequest
  */
 export type ListStorageProvidersRequest = Message<"toshi.operator.v1.ListStorageProvidersRequest"> & {
@@ -14813,6 +16313,8 @@ export type ListStorageProvidersRequest = Message<"toshi.operator.v1.ListStorage
 };
 
 /**
+ * ListStorageProvidersRequest pages through the providers.
+ *
  * @generated from message toshi.operator.v1.ListStorageProvidersRequest
  */
 export type ListStorageProvidersRequestJson = {
@@ -14853,10 +16355,14 @@ export const ListStorageProvidersRequestSchema: GenMessage<ListStorageProvidersR
   messageDesc(file_toshi_operator_v1_operator, 158);
 
 /**
+ * ListStorageProvidersResponse is one page of providers.
+ *
  * @generated from message toshi.operator.v1.ListStorageProvidersResponse
  */
 export type ListStorageProvidersResponse = Message<"toshi.operator.v1.ListStorageProvidersResponse"> & {
   /**
+   * The page's providers, ordered by name.
+   *
    * @generated from field: repeated toshi.operator.v1.StorageProvider providers = 1;
    */
   providers: StorageProvider[];
@@ -14880,10 +16386,14 @@ export type ListStorageProvidersResponse = Message<"toshi.operator.v1.ListStorag
 };
 
 /**
+ * ListStorageProvidersResponse is one page of providers.
+ *
  * @generated from message toshi.operator.v1.ListStorageProvidersResponse
  */
 export type ListStorageProvidersResponseJson = {
   /**
+   * The page's providers, ordered by name.
+   *
    * @generated from field: repeated toshi.operator.v1.StorageProvider providers = 1;
    */
   providers?: StorageProviderJson[];
@@ -14914,6 +16424,9 @@ export const ListStorageProvidersResponseSchema: GenMessage<ListStorageProviders
   messageDesc(file_toshi_operator_v1_operator, 159);
 
 /**
+ * CheckStorageProviderRequest names the provider to check: a saved one,
+ * or one not saved with its credential.
+ *
  * @generated from message toshi.operator.v1.CheckStorageProviderRequest
  */
 export type CheckStorageProviderRequest = Message<"toshi.operator.v1.CheckStorageProviderRequest"> & {
@@ -14943,6 +16456,9 @@ export type CheckStorageProviderRequest = Message<"toshi.operator.v1.CheckStorag
 };
 
 /**
+ * CheckStorageProviderRequest names the provider to check: a saved one,
+ * or one not saved with its credential.
+ *
  * @generated from message toshi.operator.v1.CheckStorageProviderRequest
  */
 export type CheckStorageProviderRequestJson = {
@@ -14970,6 +16486,8 @@ export const CheckStorageProviderRequestSchema: GenMessage<CheckStorageProviderR
   messageDesc(file_toshi_operator_v1_operator, 160);
 
 /**
+ * CheckStorageProviderResponse is what the provider's check found.
+ *
  * @generated from message toshi.operator.v1.CheckStorageProviderResponse
  */
 export type CheckStorageProviderResponse = Message<"toshi.operator.v1.CheckStorageProviderResponse"> & {
@@ -14996,12 +16514,16 @@ export type CheckStorageProviderResponse = Message<"toshi.operator.v1.CheckStora
   error: string;
 
   /**
+   * When the check ran.
+   *
    * @generated from field: google.protobuf.Timestamp checked_at = 4;
    */
   checkedAt?: Timestamp | undefined;
 };
 
 /**
+ * CheckStorageProviderResponse is what the provider's check found.
+ *
  * @generated from message toshi.operator.v1.CheckStorageProviderResponse
  */
 export type CheckStorageProviderResponseJson = {
@@ -15028,6 +16550,8 @@ export type CheckStorageProviderResponseJson = {
   error?: string;
 
   /**
+   * When the check ran.
+   *
    * @generated from field: google.protobuf.Timestamp checked_at = 4;
    */
   checkedAt?: TimestampJson;
@@ -15041,10 +16565,14 @@ export const CheckStorageProviderResponseSchema: GenMessage<CheckStorageProvider
   messageDesc(file_toshi_operator_v1_operator, 161);
 
 /**
+ * DeleteStorageProviderRequest names the provider to remove.
+ *
  * @generated from message toshi.operator.v1.DeleteStorageProviderRequest
  */
 export type DeleteStorageProviderRequest = Message<"toshi.operator.v1.DeleteStorageProviderRequest"> & {
   /**
+   * The provider's id.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -15059,10 +16587,14 @@ export type DeleteStorageProviderRequest = Message<"toshi.operator.v1.DeleteStor
 };
 
 /**
+ * DeleteStorageProviderRequest names the provider to remove.
+ *
  * @generated from message toshi.operator.v1.DeleteStorageProviderRequest
  */
 export type DeleteStorageProviderRequestJson = {
   /**
+   * The provider's id.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -15084,12 +16616,16 @@ export const DeleteStorageProviderRequestSchema: GenMessage<DeleteStorageProvide
   messageDesc(file_toshi_operator_v1_operator, 162);
 
 /**
+ * DeleteStorageProviderResponse is empty: the provider is gone.
+ *
  * @generated from message toshi.operator.v1.DeleteStorageProviderResponse
  */
 export type DeleteStorageProviderResponse = Message<"toshi.operator.v1.DeleteStorageProviderResponse"> & {
 };
 
 /**
+ * DeleteStorageProviderResponse is empty: the provider is gone.
+ *
  * @generated from message toshi.operator.v1.DeleteStorageProviderResponse
  */
 export type DeleteStorageProviderResponseJson = {
@@ -15109,6 +16645,8 @@ export const DeleteStorageProviderResponseSchema: GenMessage<DeleteStorageProvid
  */
 export enum JobState {
   /**
+   * The state is not set.
+   *
    * @generated from enum value: JOB_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15198,6 +16736,8 @@ export const JobStateSchema: GenEnum<JobState, JobStateJson> = /*@__PURE__*/
  */
 export enum JobKind {
   /**
+   * The kind is not set.
+   *
    * @generated from enum value: JOB_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15246,6 +16786,8 @@ export const JobKindSchema: GenEnum<JobKind, JobKindJson> = /*@__PURE__*/
  */
 export enum HostState {
   /**
+   * The state is not set.
+   *
    * @generated from enum value: HOST_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15293,6 +16835,8 @@ export const HostStateSchema: GenEnum<HostState, HostStateJson> = /*@__PURE__*/
  */
 export enum AgentVersionStatus {
   /**
+   * No comparison was made.
+   *
    * @generated from enum value: AGENT_VERSION_STATUS_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15408,6 +16952,8 @@ export const EgressSourceSchema: GenEnum<EgressSource, EgressSourceJson> = /*@__
  */
 export enum OfflineHostOutcome {
   /**
+   * The outcome is not set.
+   *
    * @generated from enum value: OFFLINE_HOST_OUTCOME_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15452,6 +16998,8 @@ export const OfflineHostOutcomeSchema: GenEnum<OfflineHostOutcome, OfflineHostOu
  */
 export enum HostingCertificateState {
   /**
+   * No certificate was ordered.
+   *
    * @generated from enum value: HOSTING_CERTIFICATE_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15473,6 +17021,8 @@ export enum HostingCertificateState {
   RATE_LIMITED = 2,
 
   /**
+   * A certificate serves the names and is renewed before it expires.
+   *
    * @generated from enum value: HOSTING_CERTIFICATE_STATE_VALID = 3;
    */
   VALID = 3,
@@ -15511,6 +17061,8 @@ export const HostingCertificateStateSchema: GenEnum<HostingCertificateState, Hos
  */
 export enum CheckGroup {
   /**
+   * No group is set.
+   *
    * @generated from enum value: CHECK_GROUP_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15581,6 +17133,8 @@ export const CheckGroupSchema: GenEnum<CheckGroup, CheckGroupJson> = /*@__PURE__
  */
 export enum CheckState {
   /**
+   * No state is set.
+   *
    * @generated from enum value: CHECK_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15629,6 +17183,8 @@ export const CheckStateSchema: GenEnum<CheckState, CheckStateJson> = /*@__PURE__
  */
 export enum TokenKind {
   /**
+   * No kind is set.
+   *
    * @generated from enum value: TOKEN_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15727,6 +17283,8 @@ export const TokenExpiryReasonSchema: GenEnum<TokenExpiryReason, TokenExpiryReas
  */
 export enum SubjectKind {
   /**
+   * No kind is set.
+   *
    * @generated from enum value: SUBJECT_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -15773,11 +17331,15 @@ export const SubjectKindSchema: GenEnum<SubjectKind, SubjectKindJson> = /*@__PUR
  */
 export enum CloudHostCheckStatus {
   /**
+   * The check did not report a status.
+   *
    * @generated from enum value: CLOUD_HOST_CHECK_STATUS_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * The check passed.
+   *
    * @generated from enum value: CLOUD_HOST_CHECK_STATUS_OK = 1;
    */
   OK = 1,

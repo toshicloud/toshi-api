@@ -26,12 +26,16 @@ export const file_toshi_workspace_v1_workspace_service: GenFile = /*@__PURE__*/
   fileDesc("Cip0b3NoaS93b3Jrc3BhY2UvdjEvd29ya3NwYWNlX3NlcnZpY2UucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNHZXRXb3Jrc3BhY2VSZXF1ZXN0IkgKFEdldFdvcmtzcGFjZVJlc3BvbnNlEjAKCXdvcmtzcGFjZRgBIAEoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Xb3Jrc3BhY2UiOQoWRGVsZXRlV29ya3NwYWNlUmVxdWVzdBIPCgdjb25maXJtGAEgASgJEg4KBnJlYXNvbhgCIAEoCSJLChdEZWxldGVXb3Jrc3BhY2VSZXNwb25zZRIwCgl3b3Jrc3BhY2UYASABKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlIiAKHkNhbmNlbFdvcmtzcGFjZURlbGV0aW9uUmVxdWVzdCJTCh9DYW5jZWxXb3Jrc3BhY2VEZWxldGlvblJlc3BvbnNlEjAKCXdvcmtzcGFjZRgBIAEoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Xb3Jrc3BhY2UiewoWVXBkYXRlV29ya3NwYWNlUmVxdWVzdBIwCgl3b3Jrc3BhY2UYASABKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlEi8KC3VwZGF0ZV9tYXNrGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLkZpZWxkTWFzayJLChdVcGRhdGVXb3Jrc3BhY2VSZXNwb25zZRIwCgl3b3Jrc3BhY2UYASABKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlIj4KFUxpc3RXb3Jrc3BhY2VzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJkChZMaXN0V29ya3NwYWNlc1Jlc3BvbnNlEjEKCndvcmtzcGFjZXMYASADKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSIsChpHZXRXb3Jrc3BhY2VCaWxsaW5nUmVxdWVzdBIOCgZtb250aHMYASABKAUiVAobR2V0V29ya3NwYWNlQmlsbGluZ1Jlc3BvbnNlEjUKB2JpbGxpbmcYASABKAsyJC50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlQmlsbGluZyI6ChxHZXRXb3Jrc3BhY2VTdGF0ZW1lbnRSZXF1ZXN0Eg0KBW1vbnRoGAEgASgJEgsKA2NzdhgCIAEoCCJnCh1HZXRXb3Jrc3BhY2VTdGF0ZW1lbnRSZXNwb25zZRI5CglzdGF0ZW1lbnQYASABKAsyJi50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlU3RhdGVtZW50EgsKA2NzdhgCIAEoCSIkCiJHZXRXb3Jrc3BhY2VVcGNvbWluZ0ludm9pY2VSZXF1ZXN0ItsBCiNHZXRXb3Jrc3BhY2VVcGNvbWluZ0ludm9pY2VSZXNwb25zZRI0CgdpbnZvaWNlGAEgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlVwY29taW5nSW52b2ljZRIxCghwcm9qZWN0cxgCIAMoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9qZWN0Q29zdBIaChJtb250aF9zb19mYXJfY2VudHMYAyABKAMSHQoVZXN0aW1hdGVkX21vbnRoX2NlbnRzGAQgASgDEhAKCGN1cnJlbmN5GAUgASgJIuIBCg9VcGNvbWluZ0ludm9pY2USFAoMYW1vdW50X2NlbnRzGAEgASgDEhAKCGN1cnJlbmN5GAIgASgJEjAKDHBlcmlvZF9zdGFydBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKcGVyaW9kX2VuZBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMgoObWV0ZXJzX3JlYWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCWF2YWlsYWJsZRgGIAEoCCJyCgtQcm9qZWN0Q29zdBISCgpwcm9qZWN0X2lkGAEgASgJEhQKDHByb2plY3RfbmFtZRgCIAEoCRIaChJtb250aF9zb19mYXJfY2VudHMYAyABKAMSHQoVZXN0aW1hdGVkX21vbnRoX2NlbnRzGAQgASgDIpECCgRTZWF0EgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSLwoLYXNzaWduZWRfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKC2Fzc2lnbmVkX2J5GAQgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLlN1YmplY3QSLgoKcmVtb3ZlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoKcmVtb3ZlZF9ieRgGIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5TdWJqZWN0EhAKCHJlcGxhY2VzGAcgASgJEhYKDnJlcGxhY2VfcmVhc29uGAggASgJIkgKEExpc3RTZWF0c1JlcXVlc3QSDQoFbW9udGgYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEhIKCnBhZ2VfdG9rZW4YAyABKAkiVQoRTGlzdFNlYXRzUmVzcG9uc2USJwoFc2VhdHMYASADKAsyGC50b3NoaS53b3Jrc3BhY2UudjEuU2VhdBIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiJAoRQXNzaWduU2VhdFJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCSI8ChJBc3NpZ25TZWF0UmVzcG9uc2USJgoEc2VhdBgBIAEoCzIYLnRvc2hpLndvcmtzcGFjZS52MS5TZWF0IiQKEVJlbW92ZVNlYXRSZXF1ZXN0Eg8KB3NlYXRfaWQYASABKAkiPAoSUmVtb3ZlU2VhdFJlc3BvbnNlEiYKBHNlYXQYASABKAsyGC50b3NoaS53b3Jrc3BhY2UudjEuU2VhdCI9ChRMaXN0RWdyZXNzSVBzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJ+ChVMaXN0RWdyZXNzSVBzUmVzcG9uc2USCwoDaXBzGAEgAygJEi0KBWhvc3RzGAIgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkVncmVzc0hvc3QSEAoIY29tcGxldGUYAyABKAgSFwoPbmV4dF9wYWdlX3Rva2VuGAQgASgJImMKD0dldFVzYWdlUmVxdWVzdBIoCgRmcm9tGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi9wEKEEdldFVzYWdlUmVzcG9uc2USKgoEcm93cxgBIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5Vc2FnZVJvdxIoCgRmcm9tGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoGZmlsbGVyGAQgASgLMh8udG9zaGkud29ya3NwYWNlLnYxLkZpbGxlclVzYWdlEjQKB3N0b3JhZ2UYBSADKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuU3RvcmFnZVVzYWdlUm93ImgKFEdldFF1ZXVlVGltZXNSZXF1ZXN0EigKBGZyb20YASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKAnRvGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLoAQoVR2V0UXVldWVUaW1lc1Jlc3BvbnNlEgwKBGpvYnMYASABKAMSDgoGcDUwX21zGAIgASgDEg4KBnA5MF9tcxgDIAEoAxIOCgZtYXhfbXMYBCABKAMSEgoKd2FybV9zaGFyZRgFIAEoARIoCgRmcm9tGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASKwoEaGVsZBgIIAMoCzIdLnRvc2hpLndvcmtzcGFjZS52MS5Ib2xkVGltZXMiGAoWR2V0U3RhcnRXaW5kb3dzUmVxdWVzdCKPAQoXR2V0U3RhcnRXaW5kb3dzUmVzcG9uc2USDwoHYXBwbGllcxgBIAEoCBIwCgd3aW5kb3dzGAIgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlN0YXJ0V2luZG93EjEKDW5leHRfc3RhcnRfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIhsKGUdldFdvcmtzcGFjZUxpbWl0c1JlcXVlc3Qi/gMKGkdldFdvcmtzcGFjZUxpbWl0c1Jlc3BvbnNlEg8KB2FwcGxpZXMYASABKAgSMAoHd2luZG93cxgCIAMoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5TdGFydFdpbmRvdxIxCg1uZXh0X3N0YXJ0X2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI+Cg9ydW5uaW5nX2F0X29uY2UYBCABKAsyJS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlTGltaXRSb3cSMwoEdmNwdRgFIAEoCzIlLnRvc2hpLndvcmtzcGFjZS52MS5Xb3Jrc3BhY2VMaW1pdFJvdxI2CgVzcGVuZBgGIAEoCzInLnRvc2hpLndvcmtzcGFjZS52MS5Xb3Jrc3BhY2VTcGVuZExpbWl0EjwKC3BhaWRfc3RhcnRzGAcgASgLMicudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZVBhaWRTdGFydHMSOwoHc3RvcmFnZRgIIAEoCzIqLnRvc2hpLndvcmtzcGFjZS52MS5Xb3Jrc3BhY2VTdG9yYWdlTGltaXRzEkIKDm1vbnRoX2VzdGltYXRlGAkgASgLMioudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZU1vbnRoRXN0aW1hdGUifAoRV29ya3NwYWNlTGltaXRSb3cSCwoDa2V5GAEgASgJEhIKCnBsYW5fdmFsdWUYAiABKAMSFwoPZWZmZWN0aXZlX3ZhbHVlGAMgASgDEg0KBWNhdXNlGAQgASgJEhMKBmluX3VzZRgFIAEoA0gAiAEBQgkKB19pbl91c2UiqgEKE1dvcmtzcGFjZVNwZW5kTGltaXQSFwoPc3BlbmRfY2FwX2NlbnRzGAEgASgDEhMKC3NwZW5kX2NlbnRzGAIgASgDEhMKC3NwZW5kX2xldmVsGAMgASgFEhMKC3NwZW5kX2tub3duGAQgASgIEhAKCGN1cnJlbmN5GAUgASgJEhQKDHdhcm5fcGVyY2VudBgGIAEoBRITCgtjYXBfcGVyY2VudBgHIAEoBSI/ChNXb3Jrc3BhY2VQYWlkU3RhcnRzEg8KB2VuYWJsZWQYASABKAgSFwoPY2VpbGluZ19wZXJjZW50GAIgASgFIo8DChZXb3Jrc3BhY2VTdG9yYWdlTGltaXRzEkcKGHZvbHVtZV9zaXplX2NhcF90b3RhbF9nYhgBIAEoCzIlLnRvc2hpLndvcmtzcGFjZS52MS5Xb3Jrc3BhY2VMaW1pdFJvdxJLChx2b2x1bWVfc2l6ZV9jYXBfdG90YWxfbWF4X2diGAIgASgLMiUudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZUxpbWl0Um93EiEKFHZvbHVtZV9jZWlsaW5nX2J5dGVzGAMgASgDSACIAQESHQoVdm9sdW1lX2NlaWxpbmdfc291cmNlGAQgASgJEhsKE3N0b3JhZ2VfaGFyZF9jYXBfZ2IYBSABKAMSGAoQc3RvcmFnZV9oYXJkX2NhcBgGIAEoCBIyCgV1c2FnZRgHIAMoCzIjLnRvc2hpLndvcmtzcGFjZS52MS5TdG9yYWdlVXNhZ2VSb3cSGQoRYWN0aW9uc19jYWNoZV9taWIYCCABKANCFwoVX3ZvbHVtZV9jZWlsaW5nX2J5dGVzIlgKFldvcmtzcGFjZU1vbnRoRXN0aW1hdGUSHQoVZXN0aW1hdGVkX21vbnRoX2NlbnRzGAEgASgDEg0KBWtub3duGAIgASgIEhAKCGN1cnJlbmN5GAMgASgJIhYKFEdldFZvbHVtZUNhcHNSZXF1ZXN0ItsBChVHZXRWb2x1bWVDYXBzUmVzcG9uc2USFAoMaW5fdXNlX2J5dGVzGAEgASgDEhUKDWNlaWxpbmdfYnl0ZXMYAiABKAMSHQoVZGVmYXVsdF9jZWlsaW5nX2J5dGVzGAMgASgDEhkKEW1heF9jZWlsaW5nX2J5dGVzGAQgASgDEg4KBnNvdXJjZRgFIAEoCRISCgp3YXJuX2xldmVsGAYgASgFEjcKCHByb2plY3RzGAcgAygLMiUudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZUNhcHNQcm9qZWN0ImIKEVZvbHVtZUNhcHNQcm9qZWN0EhIKCnByb2plY3RfaWQYASABKAkSDAoEbmFtZRgCIAEoCRIUCgxpbl91c2VfYnl0ZXMYAyABKAMSFQoNY2VpbGluZ19ieXRlcxgEIAEoAyLcAQoLU3RhcnRXaW5kb3cSCwoDa2V5GAEgASgJEg8KB2NvdW50ZWQYAiABKAgSEAoIaW5jbHVkZWQYAyABKAMSDwoHY2VpbGluZxgEIAEoAxIMCgR1c2VkGAUgASgDEg4KBnF1ZXVlZBgGIAEoAxIMCgRwYWlkGAcgASgDEi0KCXJlc2V0c19hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMQoNbmV4dF9zdGFydF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiawoXR2V0V29ya2Zsb3dVc2FnZVJlcXVlc3QSKAoEZnJvbRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJgoCdG8YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqABChhHZXRXb3JrZmxvd1VzYWdlUmVzcG9uc2USMgoEcm93cxgBIAMoCzIkLnRvc2hpLndvcmtzcGFjZS52MS5Xb3JrZmxvd1VzYWdlUm93EigKBGZyb20YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKAnRvGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI5ChBMaXN0UGxhbnNSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJIlUKEUxpc3RQbGFuc1Jlc3BvbnNlEicKBXBsYW5zGAEgAygLMhgudG9zaGkud29ya3NwYWNlLnYxLlBsYW4SFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIlUKHENyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlcXVlc3QSDAoEcGxhbhgBIAEoCRISCgpyZXR1cm5fdXJsGAIgASgJEhMKC3JlcXVlc3Rfa2V5GAMgASgJIiwKHUNyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlc3BvbnNlEgsKA3VybBgBIAEoCSJMCiFDcmVhdGVCaWxsaW5nUG9ydGFsU2Vzc2lvblJlcXVlc3QSEgoKcmV0dXJuX3VybBgBIAEoCRITCgtyZXF1ZXN0X2tleRgCIAEoCSIxCiJDcmVhdGVCaWxsaW5nUG9ydGFsU2Vzc2lvblJlc3BvbnNlEgsKA3VybBgBIAEoCSITChFHZXRWZXJzaW9uUmVxdWVzdCJiChJHZXRWZXJzaW9uUmVzcG9uc2USDwoHdmVyc2lvbhgBIAEoCRIOCgZjb21taXQYAiABKAkSDAoEZGF0ZRgDIAEoCRIdChVtaW5pbXVtX2FnZW50X3ZlcnNpb24YBCABKAkilQ0KCVdvcmtzcGFjZRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhwKD2NvbmN1cnJlbmN5X2NhcBgDIAEoBUgAiAEBEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEgwKBHBsYW4YBSABKAkSHQoVZWZmZWN0aXZlX2NvbmN1cnJlbmN5GAYgASgFEg4KBnN0YXR1cxgHIAEoCRIjChtlZmZlY3RpdmVfbWF4X2pvYnNfcGVyX2hvdXIYCyABKAUSHAoUc3RhcnRlcl9jcmVkaXRfY2VudHMYDCABKAMSPQoZc3RhcnRlcl9jcmVkaXRfZ3JhbnRlZF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASNQoMcmVzZXJ2YXRpb25zGBAgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlJlc2VydmF0aW9uEg0KBXN0YXRlGBEgASgJEhQKDHN0YXRlX3JlYXNvbhgSIAEoCRIvCgtzdGF0ZV9zaW5jZRgTIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLcHVyZ2VfYWZ0ZXIYFCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC2RlbGV0aW9uX2J5GCcgASgJEh4KFmhpc3RvcnlfZGF5c19lZmZlY3RpdmUYFiABKAUSHAoPc2VjcmV0X21heF9zZXRzGBggASgFSAGIAQESHAoPc2VjcmV0X21heF9rZXlzGBkgASgFSAKIAQESGwoOc2VjcmV0X21heF9raWIYGiABKANIA4gBARIeChFwcmV2aWV3X21heF9wb3J0cxgbIAEoBUgEiAEBEiEKGXNlY3JldF9tYXhfc2V0c19lZmZlY3RpdmUYHCABKAUSIQoZc2VjcmV0X21heF9rZXlzX2VmZmVjdGl2ZRgdIAEoBRIgChhzZWNyZXRfbWF4X2tpYl9lZmZlY3RpdmUYHiABKAMSIwobcHJldmlld19tYXhfcG9ydHNfZWZmZWN0aXZlGB8gASgFEjcKCHNldHRpbmdzGCEgASgLMiUudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZVNldHRpbmdzEgwKBGV0YWcYIiABKAkSQwoTaG9zdGluZ19jZXJ0aWZpY2F0ZRgjIAEoCzImLnRvc2hpLndvcmtzcGFjZS52MS5Ib3N0aW5nQ2VydGlmaWNhdGUSHQoVa2VlcF92bV9tYXhfZWZmZWN0aXZlGCQgASgFEj0KEmtlZXBfdm1fbWF4X3NvdXJjZRgpIAEoDjIhLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU291cmNlEhUKDWtlZXBfdm1fY291bnQYJSABKAUSSwoaa2VlcF92bV9zdG9wcGVkX2xvbmdfY291bnQYJiABKAVCJ4r0GCMKGmtlZXBfdm1fc3RvcHBlZF9sb25nX2FmdGVyEAEwgJqeARJFChFyZWNvcmRpbmdfY2hhbmdlZBgoIAEoCzIqLnRvc2hpLndvcmtzcGFjZS52MS5Xb3Jrc3BhY2VTZXR0aW5nQ2hhbmdlElEKHXJlY29yZGluZ19odW1hbl9zcGFuc19jaGFuZ2VkGCogASgLMioudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZVNldHRpbmdDaGFuZ2USLQoJY2xvc2VkX2F0GCsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIzCg9yZWFkX29ubHlfdW50aWwYLCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wQhIKEF9jb25jdXJyZW5jeV9jYXBCEgoQX3NlY3JldF9tYXhfc2V0c0ISChBfc2VjcmV0X21heF9rZXlzQhEKD19zZWNyZXRfbWF4X2tpYkIUChJfcHJldmlld19tYXhfcG9ydHNKBAgIEAlKBAgJEApKBAgKEAtKBAgOEA9KBAgPEBBKBAgVEBZKBAgXEBhKBAggECFSDm93bl9ob3N0c19vbmx5Ug9zcGVuZF9jYXBfY2VudHNSEW1heF9qb2JzX3Blcl9ob3VyUg5hbGxvd19vdmVyZmxvd1IQYWxsb3dfY2FjaGVfd2FybVIMaGlzdG9yeV9kYXlzUhZjYW5jZWxfcnVuX29uX3ZtX2RlYXRoUgttZW1iZXJfam9pbiL4AQoSSG9zdGluZ0NlcnRpZmljYXRlEgwKBG5hbWUYASABKAkSOgoFc3RhdGUYAiABKA4yKy50b3NoaS53b3Jrc3BhY2UudjEuSG9zdGluZ0NlcnRpZmljYXRlU3RhdGUSLQoJbm90X2FmdGVyGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIsCghyZW5ld19hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLAoIcmV0cnlfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEg0KBWVycm9yGAYgASgJIrsHChFXb3Jrc3BhY2VTZXR0aW5ncxITCgttZW1iZXJfam9pbhgBIAEoCRJKCgdzaWduX2luGAIgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLldvcmtzcGFjZVNpZ25JbkIU2vMYEHdvcmtzcGFjZS5zaWduaW4SOwoMaGlzdG9yeV9kYXlzGAMgASgFQiCK9BgcChZ3b3Jrc3BhY2VfaGlzdG9yeV9kYXlzEAMgAUgAiAEBEhYKDm93bl9ob3N0c19vbmx5GAQgASgIEhYKDmFsbG93X292ZXJmbG93GAUgASgIEhgKEGFsbG93X2NhY2hlX3dhcm0YBiABKAgSHgoWY2FuY2VsX3J1bl9vbl92bV9kZWF0aBgHIAEoCBIqCg9zcGVuZF9jYXBfY2VudHMYCCABKANCEdrzGA1iaWxsaW5nLndyaXRlEiwKEW1heF9qb2JzX3Blcl9ob3VyGAkgASgFQhHa8xgNYmlsbGluZy53cml0ZRIPCgdrZWVwX3ZtGAogASgIEhYKCXJlY29yZGluZxgLIAEoCEgBiAEBEiIKFXJlY29yZGluZ19odW1hbl9zcGFucxgMIAEoCEgCiAEBEmoKGW1vZGVsX2NyZWRlbnRpYWxfZGVmYXVsdHMYDSADKAsyKi50b3NoaS53b3Jrc3BhY2UudjEuTW9kZWxDcmVkZW50aWFsRGVmYXVsdEIb2vMYF21vZGVsX2NyZWRlbnRpYWxzLndyaXRlEisKC3BhaWRfc3RhcnRzGA4gASgIQhHa8xgNYmlsbGluZy53cml0ZUgDiAEBEjMKGHZvbHVtZV9zaXplX2NhcF90b3RhbF9nYhgPIAEoA0IR2vMYDWJpbGxpbmcud3JpdGUSRQoVaW5ib3VuZF9tYWlsX3Bhc3RfY2FwGBAgASgOMiYudG9zaGkud29ya3NwYWNlLnYxLkluYm91bmRNYWlsUGFzdENhcBJTChFlbmRwb2ludF9kZWZhdWx0cxgRIAMoCzIjLnRvc2hpLndvcmtzcGFjZS52MS5FbmRwb2ludERlZmF1bHRCE9rzGA9lbmRwb2ludHMud3JpdGUSJgoZc2FuZGJveF9zdG9wcGVkX2tlZXBfZGF5cxgSIAEoA0gEiAEBQg8KDV9oaXN0b3J5X2RheXNCDAoKX3JlY29yZGluZ0IYChZfcmVjb3JkaW5nX2h1bWFuX3NwYW5zQg4KDF9wYWlkX3N0YXJ0c0IcChpfc2FuZGJveF9zdG9wcGVkX2tlZXBfZGF5cyJ5ChZXb3Jrc3BhY2VTZXR0aW5nQ2hhbmdlEi8KCmNoYW5nZWRfYnkYASABKAsyGy50b3NoaS53b3Jrc3BhY2UudjEuU3ViamVjdBIuCgpjaGFuZ2VkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJvCg9Xb3Jrc3BhY2VTaWduSW4SEAoIcHJvdmlkZXIYASABKAkSDgoGaXNzdWVyGAIgASgJEg4KBnNldF9ieRgDIAEoCRIqCgZzZXRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkgKC1Jlc2VydmF0aW9uEgwKBHNpemUYASABKAkSDQoFc2xvdHMYAiABKAUSDAoEd2FybRgDIAEoBRIOCgZzb3VyY2UYBCABKAki+wcKEFdvcmtzcGFjZUJpbGxpbmcSEwoLY3VzdG9tZXJfaWQYASABKAkSFwoPc3Vic2NyaXB0aW9uX2lkGAIgASgJEjYKEmJpbGxpbmdfc3RhcnRlZF9hdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGwoTc3Vic2NyaXB0aW9uX3N0YXR1cxgEIAEoCRI9ChlzdWJzY3JpcHRpb25fc3RhdHVzX3NpbmNlGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCgZ0b3RhbHMYBiADKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuQmlsbGluZ1RvdGFscxI+Cg1mYWlsZWRfZXZlbnRzGAcgAygLMicudG9zaGkud29ya3NwYWNlLnYxLkJpbGxpbmdFdmVudEZhaWx1cmUSGgoSbWludXRlc190aGlzX21vbnRoGAggASgDEh4KFmZyZWVfbWludXRlc19wZXJfbW9udGgYCSABKAMSFQoNY2FyZF92ZXJpZmllZBgKIAEoCBI0ChBjYXJkX3ZlcmlmaWVkX2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCg9zcGVuZF9jYXBfY2VudHMYDCABKAMSEwoLc3BlbmRfY2VudHMYDSABKAMSEwoLc3BlbmRfbGV2ZWwYDiABKAUSEAoIY3VycmVuY3kYDyABKAkSEwoLc3BlbmRfa25vd24YECABKAgSHAoUc3RhcnRlcl9jcmVkaXRfY2VudHMYESABKAMSIQoZc3RhcnRlcl9jcmVkaXRfbGVmdF9jZW50cxgSIAEoAxI9ChlzdGFydGVyX2NyZWRpdF9hcHBsaWVkX2F0GBMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCg9iaWxsaW5nX2VuYWJsZWQYFCABKAgSPwoIaGVsZF9ub3cYFSADKAsyLS50b3NoaS53b3Jrc3BhY2UudjEuV29ya3NwYWNlQmlsbGluZy5IZWxkSm9icxIYChBjb25jdXJyZW5jeV91c2VkGBYgASgDEiUKGGRlc2t0b3Bfc2VhdF9wcmljZV9jZW50cxgaIAEoA0gAiAEBGoYBCghIZWxkSm9icxIOCgZyZWFzb24YFyABKAkSDAoEam9icxgYIAEoAxIpCgVzaW5jZRgZIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMQoNbmV4dF9zdGFydF9hdBgaIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCGwoZX2Rlc2t0b3Bfc2VhdF9wcmljZV9jZW50cyK3AQoNQmlsbGluZ1RvdGFscxINCgVtb250aBgBIAEoCRIMCgRzaXplGAIgASgJEhMKC3NlbnRfZXZlbnRzGAMgASgDEhQKDHNlbnRfbWludXRlcxgEIAEoAxIWCg5wZW5kaW5nX2V2ZW50cxgFIAEoAxIXCg9wZW5kaW5nX21pbnV0ZXMYBiABKAMSFQoNZmFpbGVkX2V2ZW50cxgHIAEoAxIWCg5mYWlsZWRfbWludXRlcxgIIAEoAyLeAQoTQmlsbGluZ0V2ZW50RmFpbHVyZRIOCgZqb2JfaWQYASABKAkSDAoEc2l6ZRgCIAEoCRISCgpldmVudF9uYW1lGAMgASgJEg8KB21pbnV0ZXMYBCABKAMSLwoLb2NjdXJyZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi0KCWZhaWxlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIYXR0ZW1wdHMYByABKAUSEgoKbGFzdF9lcnJvchgIIAEoCSLNBwoSV29ya3NwYWNlU3RhdGVtZW50Eg0KBW1vbnRoGAEgASgJEigKBGZyb20YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKAnRvGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIMCgRwbGFuGAQgASgJEjEKBXVzYWdlGAUgAygLMiIudG9zaGkud29ya3NwYWNlLnYxLlN0YXRlbWVudFVzYWdlEjEKBXRvdGFsGAYgASgLMiIudG9zaGkud29ya3NwYWNlLnYxLlN0YXRlbWVudFVzYWdlEjQKB2NoYXJnZXMYByADKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuU3RhdGVtZW50Q2hhcmdlEhcKD2VzdGltYXRlZF9jZW50cxgIIAEoAxIQCghjdXJyZW5jeRgJIAEoCRIWCg5lc3RpbWF0ZV9rbm93bhgKIAEoCBIkChxzdGFydGVyX2NyZWRpdF9hcHBsaWVkX2NlbnRzGAsgASgDEj0KGXN0YXJ0ZXJfY3JlZGl0X2FwcGxpZWRfYXQYDCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEisKBGhlbGQYDSADKAsyHS50b3NoaS53b3Jrc3BhY2UudjEuSG9sZFRpbWVzEh0KFWN1cnJlbnRfcHJpY2VfbWludXRlcxgOIAEoAxIvCgZmaWxsZXIYDyABKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuRmlsbGVyVXNhZ2USFwoPYmlsbGluZ19lbmFibGVkGBAgASgIEjgKFHNwZW5kX2NhcF9yZWFjaGVkX2F0GBEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIfChdzcGVuZF9jYXBfcmVhY2hlZF9jZW50cxgSIAEoAxIXCg9zcGVuZF9jYXBfY2VudHMYEyABKAMSNAoMb3duX2hvc3RfZmVlGBQgASgLMh4udG9zaGkud29ya3NwYWNlLnYxLk93bkhvc3RGZWUSKAoFYXdha2UYFSADKAsyGS50b3NoaS53b3Jrc3BhY2UudjEuQXdha2USLAoHc3RvcmFnZRgWIAEoCzIbLnRvc2hpLndvcmtzcGFjZS52MS5TdG9yYWdlEjcKDWRlc2t0b3Bfc2VhdHMYFyABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRGVza3RvcFNlYXRzEjMKC3BhaWRfc3RhcnRzGBggASgLMh4udG9zaGkud29ya3NwYWNlLnYxLlBhaWRTdGFydHMimwEKDERlc2t0b3BTZWF0cxIUCgxiaWxsZWRfc2VhdHMYASABKAMSGAoQc2VhdF9wcmljZV9jZW50cxgCIAEoAxIQCgh1bnByaWNlZBgDIAEoCBIXCg9lc3RpbWF0ZWRfY2VudHMYBCABKAMSMAoFc2VhdHMYBSADKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuU3RhdGVtZW50U2VhdCI0CgpQYWlkU3RhcnRzEg0KBWNvdW50GAEgASgDEhcKD2VzdGltYXRlZF9jZW50cxgCIAEoAyLCAQoNU3RhdGVtZW50U2VhdBIPCgdzZWF0X2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSDAoEbmFtZRgDIAEoCRIvCgthc3NpZ25lZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKcmVtb3ZlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEAoIcmVwbGFjZXMYBiABKAkSDgoGYmlsbGVkGAcgASgIImQKCk93bkhvc3RGZWUSDwoHc2Vjb25kcxgBIAEoARIUCgxmcmVlX3NlY29uZHMYAiABKAMSFgoOYmlsbGVkX3NlY29uZHMYAyABKAMSFwoPZXN0aW1hdGVkX2NlbnRzGAQgASgDInsKBUF3YWtlEgwKBHNpemUYASABKAkSDAoEcnVucxgCIAEoAxIPCgdzZWNvbmRzGAMgASgBEhQKDGlkbGVfc2Vjb25kcxgEIAEoARIWCg5iaWxsZWRfc2Vjb25kcxgFIAEoAxIXCg9lc3RpbWF0ZWRfY2VudHMYBiABKAMiqwEKB1N0b3JhZ2USLQoFa2luZHMYASADKAsyHi50b3NoaS53b3Jrc3BhY2UudjEuU3RvcmVkS2luZBITCgtpbmNsdWRlZF9nYhgCIAEoAxIQCghnYl9ob3VycxgDIAEoARIXCg9leGNlc3NfZ2JfaG91cnMYBCABKAESGAoQYmlsbGVkX2diX21vbnRocxgFIAEoARIXCg9lc3RpbWF0ZWRfY2VudHMYBiABKAMiOwoKU3RvcmVkS2luZBIMCgRraW5kGAEgASgJEg0KBWJ5dGVzGAIgASgDEhAKCGdiX2hvdXJzGAMgASgBIk0KD1N0b3JhZ2VVc2FnZVJvdxILCgNkYXkYASABKAkSDAoEa2luZBgCIAEoCRIQCghnYl9ob3VycxgDIAEoARINCgVieXRlcxgEIAEoAyLtAQoOU3RhdGVtZW50VXNhZ2USDAoEc2l6ZRgBIAEoCRIKCgJvcxgCIAEoCRIMCgRqb2JzGAMgASgDEg8KB21pbnV0ZXMYBCABKAMSGAoQb3duX2hvc3RfbWludXRlcxgFIAEoAxIVCg1kZWJ1Z19taW51dGVzGAYgASgDEhgKEG92ZXJmbG93X21pbnV0ZXMYByABKAMSGwoTcmVzZXJ2ZWRfc2xvdF9ob3VycxgIIAEoAxIPCgdvdXRjb21lGAkgASgJEg8KB3NlY29uZHMYCiABKAESGAoQb3duX2hvc3Rfc2Vjb25kcxgLIAEoASJaCg9TdGF0ZW1lbnRDaGFyZ2USDAoEc2l6ZRgBIAEoCRIPCgdtaW51dGVzGAIgASgDEhcKD2VzdGltYXRlZF9jZW50cxgDIAEoAxIPCgdzZWNvbmRzGAQgASgDIpwBCglIb2xkVGltZXMSDgoGcmVhc29uGAEgASgJEgwKBGpvYnMYAiABKAMSDgoGcDUwX21zGAMgASgDEg4KBnA5MF9tcxgEIAEoAxIOCgZtYXhfbXMYBSABKAMSEQoJb3Blbl9qb2JzGAYgASgDEi4KCm9wZW5fc2luY2UYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIiwKC0ZpbGxlclVzYWdlEgwKBGpvYnMYASABKAMSDwoHbWludXRlcxgCIAEoAyKpAgoIVXNhZ2VSb3cSCwoDZGF5GAEgASgJEhIKCmNvbmNsdXNpb24YAiABKAkSDAoEam9icxgDIAEoAxIPCgdtaW51dGVzGAQgASgDEhgKEG93bl9ob3N0X21pbnV0ZXMYBSABKAMSFQoNZGVidWdfbWludXRlcxgGIAEoAxIYChBvdmVyZmxvd19taW51dGVzGAcgASgDEhsKE3Jlc2VydmVkX3Nsb3RfaG91cnMYCCABKAMSDwoHb3V0Y29tZRgJIAEoCRIMCgRraW5kGAogASgJEg8KB3NlY29uZHMYCyABKAESGAoQb3duX2hvc3Rfc2Vjb25kcxgMIAEoARIVCg1hd2FrZV9zZWNvbmRzGA0gASgBEhQKDGlkbGVfc2Vjb25kcxgOIAEoASLEAQoQV29ya2Zsb3dVc2FnZVJvdxISCgpyZXBvc2l0b3J5GAEgASgJEhAKCHdvcmtmbG93GAIgASgJEgwKBGpvYnMYAyABKAMSDwoHbWludXRlcxgEIAEoAxIYChBvd25faG9zdF9taW51dGVzGAUgASgDEhMKC2ZhaWxlZF9qb2JzGAYgASgDEhIKCnRpbWVkX2pvYnMYByABKAMSEwoLcDUwX3NlY29uZHMYCCABKAMSEwoLcDk1X3NlY29uZHMYCSABKAMi6gMKBFBsYW4SDAoEbmFtZRgBIAEoCRITCgtjb25jdXJyZW5jeRgCIAEoBRIXCg9tYXhfam9iX21pbnV0ZXMYAyABKAUSEgoKaXNfZGVmYXVsdBgEIAEoCBISCgpzZWxmX3NlcnZlGAUgASgIEhIKCmFsbG93ZWRfb3MYBiADKAkSEAoIbWF4X3NpemUYByABKAkSEAoIbWF4X3ZjcHUYCCABKAUSHgoWZnJlZV9taW51dGVzX3Blcl9tb250aBgJIAEoBRINCgVzaXplcxgKIAMoCRIZChFjYXJkX3JlcXVpcmVkX2ZvchgLIAMoCRIZChFtYXhfam9ic19wZXJfaG91chgMIAEoBRIYChBidXJzdF9ndWFyZF9qb2JzGA0gASgFEhwKFHN0YXJ0ZXJfY3JlZGl0X2NlbnRzGA4gASgDEhQKDGhpc3RvcnlfZGF5cxgPIAEoBRIVCg1kZWJ1Z19taW51dGVzGBAgASgFEhUKDW1heF9vd25faG9zdHMYESABKAUSEwoLb3Blbl9zb3VyY2UYEiABKAgSFAoMZGlzcGxheV9uYW1lGBMgASgJEgwKBHJhbmsYFCABKAUSEQoJY2FjaGVfbWliGBUgASgFEhkKEWFjdGlvbnNfY2FjaGVfbWliGBYgASgFIrcBCgpFZ3Jlc3NIb3N0Eg8KB2hvc3RfaWQYASABKAkSDAoEbmFtZRgCIAEoCRIOCgZzaGFyZWQYAyABKAgSLgoGZWdyZXNzGAQgASgLMh4udG9zaGkud29ya3NwYWNlLnYxLkhvc3RFZ3Jlc3MSEgoKcmVjZW50X2lwcxgFIAMoCRINCgVjbG91ZBgGIAEoCRIUCgxjbG91ZF9lZ3Jlc3MYByABKAkSEQoJY29uZmlybWVkGAggASgIKpYCChdIb3N0aW5nQ2VydGlmaWNhdGVTdGF0ZRIpCiVIT1NUSU5HX0NFUlRJRklDQVRFX1NUQVRFX1VOU1BFQ0lGSUVEEAASJQohSE9TVElOR19DRVJUSUZJQ0FURV9TVEFURV9JU1NVSU5HEAESKgomSE9TVElOR19DRVJUSUZJQ0FURV9TVEFURV9SQVRFX0xJTUlURUQQAhIjCh9IT1NUSU5HX0NFUlRJRklDQVRFX1NUQVRFX1ZBTElEEAMSLQopSE9TVElOR19DRVJUSUZJQ0FURV9TVEFURV9SRU5FV0FMX0ZBSUxJTkcQBBIpCiVIT1NUSU5HX0NFUlRJRklDQVRFX1NUQVRFX1NFTEZfU0lHTkVEEAUqigEKEkluYm91bmRNYWlsUGFzdENhcBIlCiFJTkJPVU5EX01BSUxfUEFTVF9DQVBfVU5TUEVDSUZJRUQQABIrCidJTkJPVU5EX01BSUxfUEFTVF9DQVBfQUNDRVBUX0FORF9DSEFSR0UQARIgChxJTkJPVU5EX01BSUxfUEFTVF9DQVBfUkVGVVNFEAIy1RgKEFdvcmtzcGFjZVNlcnZpY2USdQoMR2V0V29ya3NwYWNlEicudG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtzcGFjZVJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuR2V0V29ya3NwYWNlUmVzcG9uc2UiEsLzGA53b3Jrc3BhY2UucmVhZBKHAQoPVXBkYXRlV29ya3NwYWNlEioudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVdvcmtzcGFjZVJlcXVlc3QaKy50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlV29ya3NwYWNlUmVzcG9uc2UiG8LzGA93b3Jrc3BhY2Uud3JpdGXg8xgBkPQYAhJ7Cg5MaXN0V29ya3NwYWNlcxIpLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0V29ya3NwYWNlc1JlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFdvcmtzcGFjZXNSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEogBChNHZXRXb3Jrc3BhY2VCaWxsaW5nEi4udG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtzcGFjZUJpbGxpbmdSZXF1ZXN0Gi8udG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtzcGFjZUJpbGxpbmdSZXNwb25zZSIQwvMYDGJpbGxpbmcucmVhZBKOAQoVR2V0V29ya3NwYWNlU3RhdGVtZW50EjAudG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtzcGFjZVN0YXRlbWVudFJlcXVlc3QaMS50b3NoaS53b3Jrc3BhY2UudjEuR2V0V29ya3NwYWNlU3RhdGVtZW50UmVzcG9uc2UiEMLzGAxiaWxsaW5nLnJlYWQSoAEKG0dldFdvcmtzcGFjZVVwY29taW5nSW52b2ljZRI2LnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VVcGNvbWluZ0ludm9pY2VSZXF1ZXN0GjcudG9zaGkud29ya3NwYWNlLnYxLkdldFdvcmtzcGFjZVVwY29taW5nSW52b2ljZVJlc3BvbnNlIhDC8xgMYmlsbGluZy5yZWFkEmgKCUxpc3RTZWF0cxIkLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0U2VhdHNSZXF1ZXN0GiUudG9zaGkud29ya3NwYWNlLnYxLkxpc3RTZWF0c1Jlc3BvbnNlIg7C8xgKc2VhdHMucmVhZBKaAQoKQXNzaWduU2VhdBIlLnRvc2hpLndvcmtzcGFjZS52MS5Bc3NpZ25TZWF0UmVxdWVzdBomLnRvc2hpLndvcmtzcGFjZS52MS5Bc3NpZ25TZWF0UmVzcG9uc2UiPcLzGAtzZWF0cy53cml0ZdLzGCYKDXNlYXQuYXNzaWduZWQSFXNlYXQ6cmVzcG9uc2Uuc2VhdC5pZJD0GAISvAEKClJlbW92ZVNlYXQSJS50b3NoaS53b3Jrc3BhY2UudjEuUmVtb3ZlU2VhdFJlcXVlc3QaJi50b3NoaS53b3Jrc3BhY2UudjEuUmVtb3ZlU2VhdFJlc3BvbnNlIl/C8xgLc2VhdHMud3JpdGXS8xgOCgxzZWF0LnJlbW92ZWT68xg2CAESMlJlbW92ZSB0aGlzIHNlYXQ/IFRoZSBwZXJzb24gbG9zZXMgdGhlaXIgc2VhdCBub3cukPQYAhJ4Cg1MaXN0RWdyZXNzSVBzEigudG9zaGkud29ya3NwYWNlLnYxLkxpc3RFZ3Jlc3NJUHNSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkxpc3RFZ3Jlc3NJUHNSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEmkKCEdldFVzYWdlEiMudG9zaGkud29ya3NwYWNlLnYxLkdldFVzYWdlUmVxdWVzdBokLnRvc2hpLndvcmtzcGFjZS52MS5HZXRVc2FnZVJlc3BvbnNlIhLC8xgOd29ya3NwYWNlLnJlYWQSeAoNR2V0UXVldWVUaW1lcxIoLnRvc2hpLndvcmtzcGFjZS52MS5HZXRRdWV1ZVRpbWVzUmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5HZXRRdWV1ZVRpbWVzUmVzcG9uc2UiEsLzGA53b3Jrc3BhY2UucmVhZBJ+Cg9HZXRTdGFydFdpbmRvd3MSKi50b3NoaS53b3Jrc3BhY2UudjEuR2V0U3RhcnRXaW5kb3dzUmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5HZXRTdGFydFdpbmRvd3NSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEocBChJHZXRXb3Jrc3BhY2VMaW1pdHMSLS50b3NoaS53b3Jrc3BhY2UudjEuR2V0V29ya3NwYWNlTGltaXRzUmVxdWVzdBouLnRvc2hpLndvcmtzcGFjZS52MS5HZXRXb3Jrc3BhY2VMaW1pdHNSZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEngKDUdldFZvbHVtZUNhcHMSKC50b3NoaS53b3Jrc3BhY2UudjEuR2V0Vm9sdW1lQ2Fwc1JlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuR2V0Vm9sdW1lQ2Fwc1Jlc3BvbnNlIhLC8xgOd29ya3NwYWNlLnJlYWQSgQEKEEdldFdvcmtmbG93VXNhZ2USKy50b3NoaS53b3Jrc3BhY2UudjEuR2V0V29ya2Zsb3dVc2FnZVJlcXVlc3QaLC50b3NoaS53b3Jrc3BhY2UudjEuR2V0V29ya2Zsb3dVc2FnZVJlc3BvbnNlIhLC8xgOd29ya3NwYWNlLnJlYWQSagoJTGlzdFBsYW5zEiQudG9zaGkud29ya3NwYWNlLnYxLkxpc3RQbGFuc1JlcXVlc3QaJS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFBsYW5zUmVzcG9uc2UiEMLzGAxiaWxsaW5nLnJlYWQSxQEKFUNyZWF0ZUNoZWNrb3V0U2Vzc2lvbhIwLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVDaGVja291dFNlc3Npb25SZXF1ZXN0GjEudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUNoZWNrb3V0U2Vzc2lvblJlc3BvbnNlIkfC8xgNYmlsbGluZy53cml0ZdLzGC4KF2JpbGxpbmcuY2hlY2tvdXRfb3BlbmVkEhN3b3Jrc3BhY2U6d29ya3NwYWNlkPQYARLSAQoaQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb24SNS50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlQmlsbGluZ1BvcnRhbFNlc3Npb25SZXF1ZXN0GjYudG9zaGkud29ya3NwYWNlLnYxLkNyZWF0ZUJpbGxpbmdQb3J0YWxTZXNzaW9uUmVzcG9uc2UiRcLzGA1iaWxsaW5nLndyaXRl0vMYLAoVYmlsbGluZy5wb3J0YWxfb3BlbmVkEhN3b3Jrc3BhY2U6d29ya3NwYWNlkPQYARJvCgpHZXRWZXJzaW9uEiUudG9zaGkud29ya3NwYWNlLnYxLkdldFZlcnNpb25SZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLkdldFZlcnNpb25SZXNwb25zZSISwvMYDndvcmtzcGFjZS5yZWFkEqYBCg9EZWxldGVXb3Jrc3BhY2USKi50b3NoaS53b3Jrc3BhY2UudjEuRGVsZXRlV29ya3NwYWNlUmVxdWVzdBorLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVXb3Jrc3BhY2VSZXNwb25zZSI6wvMYEHdvcmtzcGFjZS5kZWxldGXS8xgeChx3b3Jrc3BhY2UuZGVsZXRpb25fc2NoZWR1bGVkkPQYAhKzAQoXQ2FuY2VsV29ya3NwYWNlRGVsZXRpb24SMi50b3NoaS53b3Jrc3BhY2UudjEuQ2FuY2VsV29ya3NwYWNlRGVsZXRpb25SZXF1ZXN0GjMudG9zaGkud29ya3NwYWNlLnYxLkNhbmNlbFdvcmtzcGFjZURlbGV0aW9uUmVzcG9uc2UiL8LzGBB3b3Jrc3BhY2UuZGVsZXRl0vMYEwoRd29ya3NwYWNlLnJlc3VtZWSQ9BgCQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery, file_toshi_workspace_v1_endpoints, file_toshi_workspace_v1_hosts, file_toshi_workspace_v1_model_credentials, file_toshi_workspace_v1_roles]);
 
 /**
+ * GetWorkspaceRequest has no fields: the call reads the caller's workspace.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceRequest
  */
 export type GetWorkspaceRequest = Message<"toshi.workspace.v1.GetWorkspaceRequest"> & {
 };
 
 /**
+ * GetWorkspaceRequest has no fields: the call reads the caller's workspace.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceRequest
  */
 export type GetWorkspaceRequestJson = {
@@ -45,20 +49,28 @@ export const GetWorkspaceRequestSchema: GenMessage<GetWorkspaceRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_workspace_service, 0);
 
 /**
+ * GetWorkspaceResponse carries the caller's workspace.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceResponse
  */
 export type GetWorkspaceResponse = Message<"toshi.workspace.v1.GetWorkspaceResponse"> & {
   /**
+   * The workspace.
+   *
    * @generated from field: toshi.workspace.v1.Workspace workspace = 1;
    */
   workspace?: Workspace | undefined;
 };
 
 /**
+ * GetWorkspaceResponse carries the caller's workspace.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceResponse
  */
 export type GetWorkspaceResponseJson = {
   /**
+   * The workspace.
+   *
    * @generated from field: toshi.workspace.v1.Workspace workspace = 1;
    */
   workspace?: WorkspaceJson;
@@ -72,6 +84,9 @@ export const GetWorkspaceResponseSchema: GenMessage<GetWorkspaceResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_workspace_service, 1);
 
 /**
+ * DeleteWorkspaceRequest confirms and gives the reason for a workspace's
+ * scheduled deletion.
+ *
  * @generated from message toshi.workspace.v1.DeleteWorkspaceRequest
  */
 export type DeleteWorkspaceRequest = Message<"toshi.workspace.v1.DeleteWorkspaceRequest"> & {
@@ -91,6 +106,9 @@ export type DeleteWorkspaceRequest = Message<"toshi.workspace.v1.DeleteWorkspace
 };
 
 /**
+ * DeleteWorkspaceRequest confirms and gives the reason for a workspace's
+ * scheduled deletion.
+ *
  * @generated from message toshi.workspace.v1.DeleteWorkspaceRequest
  */
 export type DeleteWorkspaceRequestJson = {
@@ -117,20 +135,30 @@ export const DeleteWorkspaceRequestSchema: GenMessage<DeleteWorkspaceRequest, {j
   messageDesc(file_toshi_workspace_v1_workspace_service, 2);
 
 /**
+ * DeleteWorkspaceResponse carries the workspace with its deletion
+ * scheduled.
+ *
  * @generated from message toshi.workspace.v1.DeleteWorkspaceResponse
  */
 export type DeleteWorkspaceResponse = Message<"toshi.workspace.v1.DeleteWorkspaceResponse"> & {
   /**
+   * The workspace with purge_after and deletion_by set.
+   *
    * @generated from field: toshi.workspace.v1.Workspace workspace = 1;
    */
   workspace?: Workspace | undefined;
 };
 
 /**
+ * DeleteWorkspaceResponse carries the workspace with its deletion
+ * scheduled.
+ *
  * @generated from message toshi.workspace.v1.DeleteWorkspaceResponse
  */
 export type DeleteWorkspaceResponseJson = {
   /**
+   * The workspace with purge_after and deletion_by set.
+   *
    * @generated from field: toshi.workspace.v1.Workspace workspace = 1;
    */
   workspace?: WorkspaceJson;
@@ -144,12 +172,18 @@ export const DeleteWorkspaceResponseSchema: GenMessage<DeleteWorkspaceResponse, 
   messageDesc(file_toshi_workspace_v1_workspace_service, 3);
 
 /**
+ * CancelWorkspaceDeletionRequest has no fields: the call acts on the
+ * caller's workspace.
+ *
  * @generated from message toshi.workspace.v1.CancelWorkspaceDeletionRequest
  */
 export type CancelWorkspaceDeletionRequest = Message<"toshi.workspace.v1.CancelWorkspaceDeletionRequest"> & {
 };
 
 /**
+ * CancelWorkspaceDeletionRequest has no fields: the call acts on the
+ * caller's workspace.
+ *
  * @generated from message toshi.workspace.v1.CancelWorkspaceDeletionRequest
  */
 export type CancelWorkspaceDeletionRequestJson = {
@@ -163,20 +197,28 @@ export const CancelWorkspaceDeletionRequestSchema: GenMessage<CancelWorkspaceDel
   messageDesc(file_toshi_workspace_v1_workspace_service, 4);
 
 /**
+ * CancelWorkspaceDeletionResponse carries the workspace, active again.
+ *
  * @generated from message toshi.workspace.v1.CancelWorkspaceDeletionResponse
  */
 export type CancelWorkspaceDeletionResponse = Message<"toshi.workspace.v1.CancelWorkspaceDeletionResponse"> & {
   /**
+   * The workspace returned to active.
+   *
    * @generated from field: toshi.workspace.v1.Workspace workspace = 1;
    */
   workspace?: Workspace | undefined;
 };
 
 /**
+ * CancelWorkspaceDeletionResponse carries the workspace, active again.
+ *
  * @generated from message toshi.workspace.v1.CancelWorkspaceDeletionResponse
  */
 export type CancelWorkspaceDeletionResponseJson = {
   /**
+   * The workspace returned to active.
+   *
    * @generated from field: toshi.workspace.v1.Workspace workspace = 1;
    */
   workspace?: WorkspaceJson;
@@ -190,6 +232,9 @@ export const CancelWorkspaceDeletionResponseSchema: GenMessage<CancelWorkspaceDe
   messageDesc(file_toshi_workspace_v1_workspace_service, 5);
 
 /**
+ * UpdateWorkspaceRequest carries the workspace values to set and the fields
+ * to change.
+ *
  * @generated from message toshi.workspace.v1.UpdateWorkspaceRequest
  */
 export type UpdateWorkspaceRequest = Message<"toshi.workspace.v1.UpdateWorkspaceRequest"> & {
@@ -203,12 +248,18 @@ export type UpdateWorkspaceRequest = Message<"toshi.workspace.v1.UpdateWorkspace
   workspace?: Workspace | undefined;
 
   /**
+   * The paths to change: "name" and "settings.<field>"; omitted means the
+   * fields the request populates.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMask | undefined;
 };
 
 /**
+ * UpdateWorkspaceRequest carries the workspace values to set and the fields
+ * to change.
+ *
  * @generated from message toshi.workspace.v1.UpdateWorkspaceRequest
  */
 export type UpdateWorkspaceRequestJson = {
@@ -222,6 +273,9 @@ export type UpdateWorkspaceRequestJson = {
   workspace?: WorkspaceJson;
 
   /**
+   * The paths to change: "name" and "settings.<field>"; omitted means the
+   * fields the request populates.
+   *
    * @generated from field: google.protobuf.FieldMask update_mask = 2;
    */
   updateMask?: FieldMaskJson;
@@ -235,20 +289,28 @@ export const UpdateWorkspaceRequestSchema: GenMessage<UpdateWorkspaceRequest, {j
   messageDesc(file_toshi_workspace_v1_workspace_service, 6);
 
 /**
+ * UpdateWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.workspace.v1.UpdateWorkspaceResponse
  */
 export type UpdateWorkspaceResponse = Message<"toshi.workspace.v1.UpdateWorkspaceResponse"> & {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.workspace.v1.Workspace workspace = 1;
    */
   workspace?: Workspace | undefined;
 };
 
 /**
+ * UpdateWorkspaceResponse carries the workspace as stored.
+ *
  * @generated from message toshi.workspace.v1.UpdateWorkspaceResponse
  */
 export type UpdateWorkspaceResponseJson = {
   /**
+   * The workspace as stored.
+   *
    * @generated from field: toshi.workspace.v1.Workspace workspace = 1;
    */
   workspace?: WorkspaceJson;
@@ -262,6 +324,8 @@ export const UpdateWorkspaceResponseSchema: GenMessage<UpdateWorkspaceResponse, 
   messageDesc(file_toshi_workspace_v1_workspace_service, 7);
 
 /**
+ * ListWorkspacesRequest selects a page of the caller's workspaces.
+ *
  * @generated from message toshi.workspace.v1.ListWorkspacesRequest
  */
 export type ListWorkspacesRequest = Message<"toshi.workspace.v1.ListWorkspacesRequest"> & {
@@ -281,6 +345,8 @@ export type ListWorkspacesRequest = Message<"toshi.workspace.v1.ListWorkspacesRe
 };
 
 /**
+ * ListWorkspacesRequest selects a page of the caller's workspaces.
+ *
  * @generated from message toshi.workspace.v1.ListWorkspacesRequest
  */
 export type ListWorkspacesRequestJson = {
@@ -307,10 +373,14 @@ export const ListWorkspacesRequestSchema: GenMessage<ListWorkspacesRequest, {jso
   messageDesc(file_toshi_workspace_v1_workspace_service, 8);
 
 /**
+ * ListWorkspacesResponse is one page of the caller's workspaces.
+ *
  * @generated from message toshi.workspace.v1.ListWorkspacesResponse
  */
 export type ListWorkspacesResponse = Message<"toshi.workspace.v1.ListWorkspacesResponse"> & {
   /**
+   * The workspaces, ordered by ID.
+   *
    * @generated from field: repeated toshi.workspace.v1.Workspace workspaces = 1;
    */
   workspaces: Workspace[];
@@ -324,10 +394,14 @@ export type ListWorkspacesResponse = Message<"toshi.workspace.v1.ListWorkspacesR
 };
 
 /**
+ * ListWorkspacesResponse is one page of the caller's workspaces.
+ *
  * @generated from message toshi.workspace.v1.ListWorkspacesResponse
  */
 export type ListWorkspacesResponseJson = {
   /**
+   * The workspaces, ordered by ID.
+   *
    * @generated from field: repeated toshi.workspace.v1.Workspace workspaces = 1;
    */
   workspaces?: WorkspaceJson[];
@@ -348,6 +422,9 @@ export const ListWorkspacesResponseSchema: GenMessage<ListWorkspacesResponse, {j
   messageDesc(file_toshi_workspace_v1_workspace_service, 9);
 
 /**
+ * GetWorkspaceBillingRequest selects how many months of billing usage to
+ * return.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceBillingRequest
  */
 export type GetWorkspaceBillingRequest = Message<"toshi.workspace.v1.GetWorkspaceBillingRequest"> & {
@@ -361,6 +438,9 @@ export type GetWorkspaceBillingRequest = Message<"toshi.workspace.v1.GetWorkspac
 };
 
 /**
+ * GetWorkspaceBillingRequest selects how many months of billing usage to
+ * return.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceBillingRequest
  */
 export type GetWorkspaceBillingRequestJson = {
@@ -381,20 +461,28 @@ export const GetWorkspaceBillingRequestSchema: GenMessage<GetWorkspaceBillingReq
   messageDesc(file_toshi_workspace_v1_workspace_service, 10);
 
 /**
+ * GetWorkspaceBillingResponse carries the workspace's billing.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceBillingResponse
  */
 export type GetWorkspaceBillingResponse = Message<"toshi.workspace.v1.GetWorkspaceBillingResponse"> & {
   /**
+   * The workspace's billing.
+   *
    * @generated from field: toshi.workspace.v1.WorkspaceBilling billing = 1;
    */
   billing?: WorkspaceBilling | undefined;
 };
 
 /**
+ * GetWorkspaceBillingResponse carries the workspace's billing.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceBillingResponse
  */
 export type GetWorkspaceBillingResponseJson = {
   /**
+   * The workspace's billing.
+   *
    * @generated from field: toshi.workspace.v1.WorkspaceBilling billing = 1;
    */
   billing?: WorkspaceBillingJson;
@@ -408,6 +496,8 @@ export const GetWorkspaceBillingResponseSchema: GenMessage<GetWorkspaceBillingRe
   messageDesc(file_toshi_workspace_v1_workspace_service, 11);
 
 /**
+ * GetWorkspaceStatementRequest selects the UTC month of the statement.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceStatementRequest
  */
 export type GetWorkspaceStatementRequest = Message<"toshi.workspace.v1.GetWorkspaceStatementRequest"> & {
@@ -427,6 +517,8 @@ export type GetWorkspaceStatementRequest = Message<"toshi.workspace.v1.GetWorksp
 };
 
 /**
+ * GetWorkspaceStatementRequest selects the UTC month of the statement.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceStatementRequest
  */
 export type GetWorkspaceStatementRequestJson = {
@@ -453,10 +545,15 @@ export const GetWorkspaceStatementRequestSchema: GenMessage<GetWorkspaceStatemen
   messageDesc(file_toshi_workspace_v1_workspace_service, 12);
 
 /**
+ * GetWorkspaceStatementResponse carries the statement, and its CSV when the
+ * request asked for it.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceStatementResponse
  */
 export type GetWorkspaceStatementResponse = Message<"toshi.workspace.v1.GetWorkspaceStatementResponse"> & {
   /**
+   * The month's statement.
+   *
    * @generated from field: toshi.workspace.v1.WorkspaceStatement statement = 1;
    */
   statement?: WorkspaceStatement | undefined;
@@ -470,10 +567,15 @@ export type GetWorkspaceStatementResponse = Message<"toshi.workspace.v1.GetWorks
 };
 
 /**
+ * GetWorkspaceStatementResponse carries the statement, and its CSV when the
+ * request asked for it.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceStatementResponse
  */
 export type GetWorkspaceStatementResponseJson = {
   /**
+   * The month's statement.
+   *
    * @generated from field: toshi.workspace.v1.WorkspaceStatement statement = 1;
    */
   statement?: WorkspaceStatementJson;
@@ -494,12 +596,18 @@ export const GetWorkspaceStatementResponseSchema: GenMessage<GetWorkspaceStateme
   messageDesc(file_toshi_workspace_v1_workspace_service, 13);
 
 /**
+ * GetWorkspaceUpcomingInvoiceRequest has no fields: the call reads the
+ * caller's own workspace.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceUpcomingInvoiceRequest
  */
 export type GetWorkspaceUpcomingInvoiceRequest = Message<"toshi.workspace.v1.GetWorkspaceUpcomingInvoiceRequest"> & {
 };
 
 /**
+ * GetWorkspaceUpcomingInvoiceRequest has no fields: the call reads the
+ * caller's own workspace.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceUpcomingInvoiceRequest
  */
 export type GetWorkspaceUpcomingInvoiceRequestJson = {
@@ -513,6 +621,9 @@ export const GetWorkspaceUpcomingInvoiceRequestSchema: GenMessage<GetWorkspaceUp
   messageDesc(file_toshi_workspace_v1_workspace_service, 14);
 
 /**
+ * GetWorkspaceUpcomingInvoiceResponse carries the provider's preview of the
+ * next invoice and the current month's cost per project.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse
  */
 export type GetWorkspaceUpcomingInvoiceResponse = Message<"toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse"> & {
@@ -540,6 +651,9 @@ export type GetWorkspaceUpcomingInvoiceResponse = Message<"toshi.workspace.v1.Ge
   monthSoFarCents: bigint;
 
   /**
+   * The sum of the projects' estimated_month_cents: the month's cost so far
+   * carried in a straight line to its end.
+   *
    * @generated from field: int64 estimated_month_cents = 4;
    */
   estimatedMonthCents: bigint;
@@ -554,6 +668,9 @@ export type GetWorkspaceUpcomingInvoiceResponse = Message<"toshi.workspace.v1.Ge
 };
 
 /**
+ * GetWorkspaceUpcomingInvoiceResponse carries the provider's preview of the
+ * next invoice and the current month's cost per project.
+ *
  * @generated from message toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse
  */
 export type GetWorkspaceUpcomingInvoiceResponseJson = {
@@ -581,6 +698,9 @@ export type GetWorkspaceUpcomingInvoiceResponseJson = {
   monthSoFarCents?: string;
 
   /**
+   * The sum of the projects' estimated_month_cents: the month's cost so far
+   * carried in a straight line to its end.
+   *
    * @generated from field: int64 estimated_month_cents = 4;
    */
   estimatedMonthCents?: string;
@@ -631,6 +751,8 @@ export type UpcomingInvoice = Message<"toshi.workspace.v1.UpcomingInvoice"> & {
   periodStart?: Timestamp | undefined;
 
   /**
+   * When the period the invoice covers ends.
+   *
    * @generated from field: google.protobuf.Timestamp period_end = 4;
    */
   periodEnd?: Timestamp | undefined;
@@ -683,6 +805,8 @@ export type UpcomingInvoiceJson = {
   periodStart?: TimestampJson;
 
   /**
+   * When the period the invoice covers ends.
+   *
    * @generated from field: google.protobuf.Timestamp period_end = 4;
    */
   periodEnd?: TimestampJson;
@@ -729,6 +853,8 @@ export type ProjectCost = Message<"toshi.workspace.v1.ProjectCost"> & {
   projectId: string;
 
   /**
+   * The project's name; empty when project_id is.
+   *
    * @generated from field: string project_name = 2;
    */
   projectName: string;
@@ -767,6 +893,8 @@ export type ProjectCostJson = {
   projectId?: string;
 
   /**
+   * The project's name; empty when project_id is.
+   *
    * @generated from field: string project_name = 2;
    */
   projectName?: string;
@@ -816,6 +944,8 @@ export type Seat = Message<"toshi.workspace.v1.Seat"> & {
   userId: string;
 
   /**
+   * When the seat was assigned.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 3;
    */
   assignedAt?: Timestamp | undefined;
@@ -853,6 +983,9 @@ export type Seat = Message<"toshi.workspace.v1.Seat"> & {
   replaces: string;
 
   /**
+   * Why an operator moved the seat: "hardware_failure" or
+   * "temporary_absence"; empty unless replaces is set.
+   *
    * @generated from field: string replace_reason = 8;
    */
   replaceReason: string;
@@ -879,6 +1012,8 @@ export type SeatJson = {
   userId?: string;
 
   /**
+   * When the seat was assigned.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 3;
    */
   assignedAt?: TimestampJson;
@@ -916,6 +1051,9 @@ export type SeatJson = {
   replaces?: string;
 
   /**
+   * Why an operator moved the seat: "hardware_failure" or
+   * "temporary_absence"; empty unless replaces is set.
+   *
    * @generated from field: string replace_reason = 8;
    */
   replaceReason?: string;
@@ -929,6 +1067,8 @@ export const SeatSchema: GenMessage<Seat, {jsonType: SeatJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_workspace_service, 18);
 
 /**
+ * ListSeatsRequest selects the UTC month whose seats to list.
+ *
  * @generated from message toshi.workspace.v1.ListSeatsRequest
  */
 export type ListSeatsRequest = Message<"toshi.workspace.v1.ListSeatsRequest"> & {
@@ -955,6 +1095,8 @@ export type ListSeatsRequest = Message<"toshi.workspace.v1.ListSeatsRequest"> & 
 };
 
 /**
+ * ListSeatsRequest selects the UTC month whose seats to list.
+ *
  * @generated from message toshi.workspace.v1.ListSeatsRequest
  */
 export type ListSeatsRequestJson = {
@@ -988,6 +1130,8 @@ export const ListSeatsRequestSchema: GenMessage<ListSeatsRequest, {jsonType: Lis
   messageDesc(file_toshi_workspace_v1_workspace_service, 19);
 
 /**
+ * ListSeatsResponse is the seats the workspace held in the month.
+ *
  * @generated from message toshi.workspace.v1.ListSeatsResponse
  */
 export type ListSeatsResponse = Message<"toshi.workspace.v1.ListSeatsResponse"> & {
@@ -1007,6 +1151,8 @@ export type ListSeatsResponse = Message<"toshi.workspace.v1.ListSeatsResponse"> 
 };
 
 /**
+ * ListSeatsResponse is the seats the workspace held in the month.
+ *
  * @generated from message toshi.workspace.v1.ListSeatsResponse
  */
 export type ListSeatsResponseJson = {
@@ -1033,6 +1179,8 @@ export const ListSeatsResponseSchema: GenMessage<ListSeatsResponse, {jsonType: L
   messageDesc(file_toshi_workspace_v1_workspace_service, 20);
 
 /**
+ * AssignSeatRequest names the member to assign a desktop seat to.
+ *
  * @generated from message toshi.workspace.v1.AssignSeatRequest
  */
 export type AssignSeatRequest = Message<"toshi.workspace.v1.AssignSeatRequest"> & {
@@ -1045,6 +1193,8 @@ export type AssignSeatRequest = Message<"toshi.workspace.v1.AssignSeatRequest"> 
 };
 
 /**
+ * AssignSeatRequest names the member to assign a desktop seat to.
+ *
  * @generated from message toshi.workspace.v1.AssignSeatRequest
  */
 export type AssignSeatRequestJson = {
@@ -1064,20 +1214,28 @@ export const AssignSeatRequestSchema: GenMessage<AssignSeatRequest, {jsonType: A
   messageDesc(file_toshi_workspace_v1_workspace_service, 21);
 
 /**
+ * AssignSeatResponse carries the seat that was assigned.
+ *
  * @generated from message toshi.workspace.v1.AssignSeatResponse
  */
 export type AssignSeatResponse = Message<"toshi.workspace.v1.AssignSeatResponse"> & {
   /**
+   * The seat as assigned.
+   *
    * @generated from field: toshi.workspace.v1.Seat seat = 1;
    */
   seat?: Seat | undefined;
 };
 
 /**
+ * AssignSeatResponse carries the seat that was assigned.
+ *
  * @generated from message toshi.workspace.v1.AssignSeatResponse
  */
 export type AssignSeatResponseJson = {
   /**
+   * The seat as assigned.
+   *
    * @generated from field: toshi.workspace.v1.Seat seat = 1;
    */
   seat?: SeatJson;
@@ -1091,20 +1249,28 @@ export const AssignSeatResponseSchema: GenMessage<AssignSeatResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_workspace_service, 22);
 
 /**
+ * RemoveSeatRequest names the seat to remove.
+ *
  * @generated from message toshi.workspace.v1.RemoveSeatRequest
  */
 export type RemoveSeatRequest = Message<"toshi.workspace.v1.RemoveSeatRequest"> & {
   /**
+   * The id of the seat to remove.
+   *
    * @generated from field: string seat_id = 1;
    */
   seatId: string;
 };
 
 /**
+ * RemoveSeatRequest names the seat to remove.
+ *
  * @generated from message toshi.workspace.v1.RemoveSeatRequest
  */
 export type RemoveSeatRequestJson = {
   /**
+   * The id of the seat to remove.
+   *
    * @generated from field: string seat_id = 1;
    */
   seatId?: string;
@@ -1118,6 +1284,8 @@ export const RemoveSeatRequestSchema: GenMessage<RemoveSeatRequest, {jsonType: R
   messageDesc(file_toshi_workspace_v1_workspace_service, 23);
 
 /**
+ * RemoveSeatResponse carries the seat as removed.
+ *
  * @generated from message toshi.workspace.v1.RemoveSeatResponse
  */
 export type RemoveSeatResponse = Message<"toshi.workspace.v1.RemoveSeatResponse"> & {
@@ -1130,6 +1298,8 @@ export type RemoveSeatResponse = Message<"toshi.workspace.v1.RemoveSeatResponse"
 };
 
 /**
+ * RemoveSeatResponse carries the seat as removed.
+ *
  * @generated from message toshi.workspace.v1.RemoveSeatResponse
  */
 export type RemoveSeatResponseJson = {
@@ -1149,6 +1319,9 @@ export const RemoveSeatResponseSchema: GenMessage<RemoveSeatResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_workspace_service, 24);
 
 /**
+ * ListEgressIPsRequest selects a page of the hosts to list the egress
+ * addresses of.
+ *
  * @generated from message toshi.workspace.v1.ListEgressIPsRequest
  */
 export type ListEgressIPsRequest = Message<"toshi.workspace.v1.ListEgressIPsRequest"> & {
@@ -1168,6 +1341,9 @@ export type ListEgressIPsRequest = Message<"toshi.workspace.v1.ListEgressIPsRequ
 };
 
 /**
+ * ListEgressIPsRequest selects a page of the hosts to list the egress
+ * addresses of.
+ *
  * @generated from message toshi.workspace.v1.ListEgressIPsRequest
  */
 export type ListEgressIPsRequestJson = {
@@ -1330,6 +1506,9 @@ export const GetUsageRequestSchema: GenMessage<GetUsageRequest, {jsonType: GetUs
   messageDesc(file_toshi_workspace_v1_workspace_service, 27);
 
 /**
+ * GetUsageResponse is the job counts and minutes of the window, with the
+ * filler and storage figures beside them.
+ *
  * @generated from message toshi.workspace.v1.GetUsageResponse
  */
 export type GetUsageResponse = Message<"toshi.workspace.v1.GetUsageResponse"> & {
@@ -1349,6 +1528,8 @@ export type GetUsageResponse = Message<"toshi.workspace.v1.GetUsageResponse"> & 
   from?: Timestamp | undefined;
 
   /**
+   * The end of the window used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: Timestamp | undefined;
@@ -1371,6 +1552,9 @@ export type GetUsageResponse = Message<"toshi.workspace.v1.GetUsageResponse"> & 
 };
 
 /**
+ * GetUsageResponse is the job counts and minutes of the window, with the
+ * filler and storage figures beside them.
+ *
  * @generated from message toshi.workspace.v1.GetUsageResponse
  */
 export type GetUsageResponseJson = {
@@ -1390,6 +1574,8 @@ export type GetUsageResponseJson = {
   from?: TimestampJson;
 
   /**
+   * The end of the window used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: TimestampJson;
@@ -1470,6 +1656,9 @@ export const GetQueueTimesRequestSchema: GenMessage<GetQueueTimesRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_workspace_service, 29);
 
 /**
+ * GetQueueTimesResponse is the queue times of the jobs that reached running
+ * in the window.
+ *
  * @generated from message toshi.workspace.v1.GetQueueTimesResponse
  */
 export type GetQueueTimesResponse = Message<"toshi.workspace.v1.GetQueueTimesResponse"> & {
@@ -1489,11 +1678,16 @@ export type GetQueueTimesResponse = Message<"toshi.workspace.v1.GetQueueTimesRes
   p50Ms: bigint;
 
   /**
+   * The nearest-rank 90th percentile of the start delays, in whole
+   * milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 p90_ms = 3;
    */
   p90Ms: bigint;
 
   /**
+   * The longest start delay, in whole milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 max_ms = 4;
    */
   maxMs: bigint;
@@ -1513,6 +1707,8 @@ export type GetQueueTimesResponse = Message<"toshi.workspace.v1.GetQueueTimesRes
   from?: Timestamp | undefined;
 
   /**
+   * The end of the window used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 7;
    */
   to?: Timestamp | undefined;
@@ -1528,6 +1724,9 @@ export type GetQueueTimesResponse = Message<"toshi.workspace.v1.GetQueueTimesRes
 };
 
 /**
+ * GetQueueTimesResponse is the queue times of the jobs that reached running
+ * in the window.
+ *
  * @generated from message toshi.workspace.v1.GetQueueTimesResponse
  */
 export type GetQueueTimesResponseJson = {
@@ -1547,11 +1746,16 @@ export type GetQueueTimesResponseJson = {
   p50Ms?: string;
 
   /**
+   * The nearest-rank 90th percentile of the start delays, in whole
+   * milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 p90_ms = 3;
    */
   p90Ms?: string;
 
   /**
+   * The longest start delay, in whole milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 max_ms = 4;
    */
   maxMs?: string;
@@ -1571,6 +1775,8 @@ export type GetQueueTimesResponseJson = {
   from?: TimestampJson;
 
   /**
+   * The end of the window used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 7;
    */
   to?: TimestampJson;
@@ -1618,6 +1824,9 @@ export const GetStartWindowsRequestSchema: GenMessage<GetStartWindowsRequest, {j
   messageDesc(file_toshi_workspace_v1_workspace_service, 31);
 
 /**
+ * GetStartWindowsResponse is the workspace's start windows as admission
+ * counts them.
+ *
  * @generated from message toshi.workspace.v1.GetStartWindowsResponse
  */
 export type GetStartWindowsResponse = Message<"toshi.workspace.v1.GetStartWindowsResponse"> & {
@@ -1647,6 +1856,9 @@ export type GetStartWindowsResponse = Message<"toshi.workspace.v1.GetStartWindow
 };
 
 /**
+ * GetStartWindowsResponse is the workspace's start windows as admission
+ * counts them.
+ *
  * @generated from message toshi.workspace.v1.GetStartWindowsResponse
  */
 export type GetStartWindowsResponseJson = {
@@ -2344,12 +2556,18 @@ export const WorkspaceMonthEstimateSchema: GenMessage<WorkspaceMonthEstimate, {j
   messageDesc(file_toshi_workspace_v1_workspace_service, 39);
 
 /**
+ * GetVolumeCapsRequest has no fields: the call reads the caller's own
+ * workspace.
+ *
  * @generated from message toshi.workspace.v1.GetVolumeCapsRequest
  */
 export type GetVolumeCapsRequest = Message<"toshi.workspace.v1.GetVolumeCapsRequest"> & {
 };
 
 /**
+ * GetVolumeCapsRequest has no fields: the call reads the caller's own
+ * workspace.
+ *
  * @generated from message toshi.workspace.v1.GetVolumeCapsRequest
  */
 export type GetVolumeCapsRequestJson = {
@@ -2363,6 +2581,9 @@ export const GetVolumeCapsRequestSchema: GenMessage<GetVolumeCapsRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_workspace_service, 40);
 
 /**
+ * GetVolumeCapsResponse is the workspace's volume size-cap ceiling and what
+ * is counted against it.
+ *
  * @generated from message toshi.workspace.v1.GetVolumeCapsResponse
  */
 export type GetVolumeCapsResponse = Message<"toshi.workspace.v1.GetVolumeCapsResponse"> & {
@@ -2424,6 +2645,9 @@ export type GetVolumeCapsResponse = Message<"toshi.workspace.v1.GetVolumeCapsRes
 };
 
 /**
+ * GetVolumeCapsResponse is the workspace's volume size-cap ceiling and what
+ * is counted against it.
+ *
  * @generated from message toshi.workspace.v1.GetVolumeCapsResponse
  */
 export type GetVolumeCapsResponseJson = {
@@ -2498,11 +2722,15 @@ export const GetVolumeCapsResponseSchema: GenMessage<GetVolumeCapsResponse, {jso
  */
 export type VolumeCapsProject = Message<"toshi.workspace.v1.VolumeCapsProject"> & {
   /**
+   * The project's id.
+   *
    * @generated from field: string project_id = 1;
    */
   projectId: string;
 
   /**
+   * The project's name.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -2531,11 +2759,15 @@ export type VolumeCapsProject = Message<"toshi.workspace.v1.VolumeCapsProject"> 
  */
 export type VolumeCapsProjectJson = {
   /**
+   * The project's id.
+   *
    * @generated from field: string project_id = 1;
    */
   projectId?: string;
 
   /**
+   * The project's name.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -2789,6 +3021,9 @@ export const GetWorkflowUsageRequestSchema: GenMessage<GetWorkflowUsageRequest, 
   messageDesc(file_toshi_workspace_v1_workspace_service, 44);
 
 /**
+ * GetWorkflowUsageResponse is the jobs of the window per repository and
+ * workflow.
+ *
  * @generated from message toshi.workspace.v1.GetWorkflowUsageResponse
  */
 export type GetWorkflowUsageResponse = Message<"toshi.workspace.v1.GetWorkflowUsageResponse"> & {
@@ -2809,12 +3044,17 @@ export type GetWorkflowUsageResponse = Message<"toshi.workspace.v1.GetWorkflowUs
   from?: Timestamp | undefined;
 
   /**
+   * The end of the window used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: Timestamp | undefined;
 };
 
 /**
+ * GetWorkflowUsageResponse is the jobs of the window per repository and
+ * workflow.
+ *
  * @generated from message toshi.workspace.v1.GetWorkflowUsageResponse
  */
 export type GetWorkflowUsageResponseJson = {
@@ -2835,6 +3075,8 @@ export type GetWorkflowUsageResponseJson = {
   from?: TimestampJson;
 
   /**
+   * The end of the window used, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: TimestampJson;
@@ -2848,6 +3090,8 @@ export const GetWorkflowUsageResponseSchema: GenMessage<GetWorkflowUsageResponse
   messageDesc(file_toshi_workspace_v1_workspace_service, 45);
 
 /**
+ * ListPlansRequest selects a page of plans.
+ *
  * @generated from message toshi.workspace.v1.ListPlansRequest
  */
 export type ListPlansRequest = Message<"toshi.workspace.v1.ListPlansRequest"> & {
@@ -2867,6 +3111,8 @@ export type ListPlansRequest = Message<"toshi.workspace.v1.ListPlansRequest"> & 
 };
 
 /**
+ * ListPlansRequest selects a page of plans.
+ *
  * @generated from message toshi.workspace.v1.ListPlansRequest
  */
 export type ListPlansRequestJson = {
@@ -2893,10 +3139,14 @@ export const ListPlansRequestSchema: GenMessage<ListPlansRequest, {jsonType: Lis
   messageDesc(file_toshi_workspace_v1_workspace_service, 46);
 
 /**
+ * ListPlansResponse is one page of plans.
+ *
  * @generated from message toshi.workspace.v1.ListPlansResponse
  */
 export type ListPlansResponse = Message<"toshi.workspace.v1.ListPlansResponse"> & {
   /**
+   * The plans, sorted by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Plan plans = 1;
    */
   plans: Plan[];
@@ -2910,10 +3160,14 @@ export type ListPlansResponse = Message<"toshi.workspace.v1.ListPlansResponse"> 
 };
 
 /**
+ * ListPlansResponse is one page of plans.
+ *
  * @generated from message toshi.workspace.v1.ListPlansResponse
  */
 export type ListPlansResponseJson = {
   /**
+   * The plans, sorted by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.Plan plans = 1;
    */
   plans?: PlanJson[];
@@ -2934,10 +3188,16 @@ export const ListPlansResponseSchema: GenMessage<ListPlansResponse, {jsonType: L
   messageDesc(file_toshi_workspace_v1_workspace_service, 47);
 
 /**
+ * CreateCheckoutSessionRequest selects the plan to buy and where the
+ * browser returns to.
+ *
  * @generated from message toshi.workspace.v1.CreateCheckoutSessionRequest
  */
 export type CreateCheckoutSessionRequest = Message<"toshi.workspace.v1.CreateCheckoutSessionRequest"> & {
   /**
+   * The plan to subscribe to; empty, or one the configuration does not
+   * define, fails with INVALID_ARGUMENT.
+   *
    * @generated from field: string plan = 1;
    */
   plan: string;
@@ -2967,10 +3227,16 @@ export type CreateCheckoutSessionRequest = Message<"toshi.workspace.v1.CreateChe
 };
 
 /**
+ * CreateCheckoutSessionRequest selects the plan to buy and where the
+ * browser returns to.
+ *
  * @generated from message toshi.workspace.v1.CreateCheckoutSessionRequest
  */
 export type CreateCheckoutSessionRequestJson = {
   /**
+   * The plan to subscribe to; empty, or one the configuration does not
+   * define, fails with INVALID_ARGUMENT.
+   *
    * @generated from field: string plan = 1;
    */
   plan?: string;
@@ -3007,6 +3273,8 @@ export const CreateCheckoutSessionRequestSchema: GenMessage<CreateCheckoutSessio
   messageDesc(file_toshi_workspace_v1_workspace_service, 48);
 
 /**
+ * CreateCheckoutSessionResponse carries the Checkout URL.
+ *
  * @generated from message toshi.workspace.v1.CreateCheckoutSessionResponse
  */
 export type CreateCheckoutSessionResponse = Message<"toshi.workspace.v1.CreateCheckoutSessionResponse"> & {
@@ -3019,6 +3287,8 @@ export type CreateCheckoutSessionResponse = Message<"toshi.workspace.v1.CreateCh
 };
 
 /**
+ * CreateCheckoutSessionResponse carries the Checkout URL.
+ *
  * @generated from message toshi.workspace.v1.CreateCheckoutSessionResponse
  */
 export type CreateCheckoutSessionResponseJson = {
@@ -3038,6 +3308,9 @@ export const CreateCheckoutSessionResponseSchema: GenMessage<CreateCheckoutSessi
   messageDesc(file_toshi_workspace_v1_workspace_service, 49);
 
 /**
+ * CreateBillingPortalSessionRequest says where the browser returns to from
+ * the portal.
+ *
  * @generated from message toshi.workspace.v1.CreateBillingPortalSessionRequest
  */
 export type CreateBillingPortalSessionRequest = Message<"toshi.workspace.v1.CreateBillingPortalSessionRequest"> & {
@@ -3064,6 +3337,9 @@ export type CreateBillingPortalSessionRequest = Message<"toshi.workspace.v1.Crea
 };
 
 /**
+ * CreateBillingPortalSessionRequest says where the browser returns to from
+ * the portal.
+ *
  * @generated from message toshi.workspace.v1.CreateBillingPortalSessionRequest
  */
 export type CreateBillingPortalSessionRequestJson = {
@@ -3097,6 +3373,8 @@ export const CreateBillingPortalSessionRequestSchema: GenMessage<CreateBillingPo
   messageDesc(file_toshi_workspace_v1_workspace_service, 50);
 
 /**
+ * CreateBillingPortalSessionResponse carries the Customer Portal URL.
+ *
  * @generated from message toshi.workspace.v1.CreateBillingPortalSessionResponse
  */
 export type CreateBillingPortalSessionResponse = Message<"toshi.workspace.v1.CreateBillingPortalSessionResponse"> & {
@@ -3109,6 +3387,8 @@ export type CreateBillingPortalSessionResponse = Message<"toshi.workspace.v1.Cre
 };
 
 /**
+ * CreateBillingPortalSessionResponse carries the Customer Portal URL.
+ *
  * @generated from message toshi.workspace.v1.CreateBillingPortalSessionResponse
  */
 export type CreateBillingPortalSessionResponseJson = {
@@ -3128,12 +3408,16 @@ export const CreateBillingPortalSessionResponseSchema: GenMessage<CreateBillingP
   messageDesc(file_toshi_workspace_v1_workspace_service, 51);
 
 /**
+ * GetVersionRequest has no fields.
+ *
  * @generated from message toshi.workspace.v1.GetVersionRequest
  */
 export type GetVersionRequest = Message<"toshi.workspace.v1.GetVersionRequest"> & {
 };
 
 /**
+ * GetVersionRequest has no fields.
+ *
  * @generated from message toshi.workspace.v1.GetVersionRequest
  */
 export type GetVersionRequestJson = {
@@ -3147,20 +3431,29 @@ export const GetVersionRequestSchema: GenMessage<GetVersionRequest, {jsonType: G
   messageDesc(file_toshi_workspace_v1_workspace_service, 52);
 
 /**
+ * GetVersionResponse is the control plane's build and the oldest agent
+ * release it admits.
+ *
  * @generated from message toshi.workspace.v1.GetVersionResponse
  */
 export type GetVersionResponse = Message<"toshi.workspace.v1.GetVersionResponse"> & {
   /**
+   * The build's version; "dev" for a build without one.
+   *
    * @generated from field: string version = 1;
    */
   version: string;
 
   /**
+   * The build's VCS revision, or "unknown".
+   *
    * @generated from field: string commit = 2;
    */
   commit: string;
 
   /**
+   * The build's VCS commit time, or "unknown".
+   *
    * @generated from field: string date = 3;
    */
   date: string;
@@ -3176,20 +3469,29 @@ export type GetVersionResponse = Message<"toshi.workspace.v1.GetVersionResponse"
 };
 
 /**
+ * GetVersionResponse is the control plane's build and the oldest agent
+ * release it admits.
+ *
  * @generated from message toshi.workspace.v1.GetVersionResponse
  */
 export type GetVersionResponseJson = {
   /**
+   * The build's version; "dev" for a build without one.
+   *
    * @generated from field: string version = 1;
    */
   version?: string;
 
   /**
+   * The build's VCS revision, or "unknown".
+   *
    * @generated from field: string commit = 2;
    */
   commit?: string;
 
   /**
+   * The build's VCS commit time, or "unknown".
+   *
    * @generated from field: string date = 3;
    */
   date?: string;
@@ -3219,11 +3521,15 @@ export const GetVersionResponseSchema: GenMessage<GetVersionResponse, {jsonType:
  */
 export type Workspace = Message<"toshi.workspace.v1.Workspace"> & {
   /**
+   * The workspace's id: "ws-" and 24 hex digits.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
 
   /**
+   * The workspace's name; not unique among workspaces.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -3236,11 +3542,16 @@ export type Workspace = Message<"toshi.workspace.v1.Workspace"> & {
   concurrencyCap?: number | undefined;
 
   /**
+   * When the workspace was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * The name of the plan the workspace follows; empty when it has none, so
+   * the default plan applies.
+   *
    * @generated from field: string plan = 5;
    */
   plan: string;
@@ -3275,6 +3586,8 @@ export type Workspace = Message<"toshi.workspace.v1.Workspace"> & {
   starterCreditCents: bigint;
 
   /**
+   * When the starter credit was granted; unset when none was.
+   *
    * @generated from field: google.protobuf.Timestamp starter_credit_granted_at = 13;
    */
   starterCreditGrantedAt?: Timestamp | undefined;
@@ -3490,11 +3803,15 @@ export type Workspace = Message<"toshi.workspace.v1.Workspace"> & {
  */
 export type WorkspaceJson = {
   /**
+   * The workspace's id: "ws-" and 24 hex digits.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
 
   /**
+   * The workspace's name; not unique among workspaces.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -3507,11 +3824,16 @@ export type WorkspaceJson = {
   concurrencyCap?: number;
 
   /**
+   * When the workspace was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
 
   /**
+   * The name of the plan the workspace follows; empty when it has none, so
+   * the default plan applies.
+   *
    * @generated from field: string plan = 5;
    */
   plan?: string;
@@ -3546,6 +3868,8 @@ export type WorkspaceJson = {
   starterCreditCents?: string;
 
   /**
+   * When the starter credit was granted; unset when none was.
+   *
    * @generated from field: google.protobuf.Timestamp starter_credit_granted_at = 13;
    */
   starterCreditGrantedAt?: TimestampJson;
@@ -3776,6 +4100,8 @@ export type HostingCertificate = Message<"toshi.workspace.v1.HostingCertificate"
   name: string;
 
   /**
+   * Where the certificate is in its issue and renewal.
+   *
    * @generated from field: toshi.workspace.v1.HostingCertificateState state = 2;
    */
   state: HostingCertificateState;
@@ -3827,6 +4153,8 @@ export type HostingCertificateJson = {
   name?: string;
 
   /**
+   * Where the certificate is in its issue and renewal.
+   *
    * @generated from field: toshi.workspace.v1.HostingCertificateState state = 2;
    */
   state?: HostingCertificateStateJson;
@@ -4286,11 +4614,15 @@ export const WorkspaceSettingsSchema: GenMessage<WorkspaceSettings, {jsonType: W
  */
 export type WorkspaceSettingChange = Message<"toshi.workspace.v1.WorkspaceSettingChange"> & {
   /**
+   * Who changed the setting: a person, or the system.
+   *
    * @generated from field: toshi.workspace.v1.Subject changed_by = 1;
    */
   changedBy?: Subject | undefined;
 
   /**
+   * When it changed.
+   *
    * @generated from field: google.protobuf.Timestamp changed_at = 2;
    */
   changedAt?: Timestamp | undefined;
@@ -4304,11 +4636,15 @@ export type WorkspaceSettingChange = Message<"toshi.workspace.v1.WorkspaceSettin
  */
 export type WorkspaceSettingChangeJson = {
   /**
+   * Who changed the setting: a person, or the system.
+   *
    * @generated from field: toshi.workspace.v1.Subject changed_by = 1;
    */
   changedBy?: SubjectJson;
 
   /**
+   * When it changed.
+   *
    * @generated from field: google.protobuf.Timestamp changed_at = 2;
    */
   changedAt?: TimestampJson;
@@ -4350,6 +4686,8 @@ export type WorkspaceSignIn = Message<"toshi.workspace.v1.WorkspaceSignIn"> & {
   setBy: string;
 
   /**
+   * When it was set.
+   *
    * @generated from field: google.protobuf.Timestamp set_at = 4;
    */
   setAt?: Timestamp | undefined;
@@ -4384,6 +4722,8 @@ export type WorkspaceSignInJson = {
   setBy?: string;
 
   /**
+   * When it was set.
+   *
    * @generated from field: google.protobuf.Timestamp set_at = 4;
    */
   setAt?: TimestampJson;
@@ -4611,6 +4951,9 @@ export type WorkspaceBilling = Message<"toshi.workspace.v1.WorkspaceBilling"> & 
   starterCreditCents: bigint;
 
   /**
+   * The estimate of the credit left: the credit less the metered spend
+   * since billing started.
+   *
    * @generated from field: int64 starter_credit_left_cents = 18;
    */
   starterCreditLeftCents: bigint;
@@ -4794,6 +5137,9 @@ export type WorkspaceBillingJson = {
   starterCreditCents?: string;
 
   /**
+   * The estimate of the credit left: the credit less the metered spend
+   * since billing started.
+   *
    * @generated from field: int64 starter_credit_left_cents = 18;
    */
   starterCreditLeftCents?: string;
@@ -4862,6 +5208,8 @@ export type WorkspaceBilling_HeldJobs = Message<"toshi.workspace.v1.WorkspaceBil
   reason: string;
 
   /**
+   * The jobs held for the reason now.
+   *
    * @generated from field: int64 jobs = 24;
    */
   jobs: bigint;
@@ -4896,6 +5244,8 @@ export type WorkspaceBilling_HeldJobsJson = {
   reason?: string;
 
   /**
+   * The jobs held for the reason now.
+   *
    * @generated from field: int64 jobs = 24;
    */
   jobs?: string;
@@ -4945,31 +5295,43 @@ export type BillingTotals = Message<"toshi.workspace.v1.BillingTotals"> & {
   size: string;
 
   /**
+   * Events the provider accepted.
+   *
    * @generated from field: int64 sent_events = 3;
    */
   sentEvents: bigint;
 
   /**
+   * The minutes of sent_events.
+   *
    * @generated from field: int64 sent_minutes = 4;
    */
   sentMinutes: bigint;
 
   /**
+   * Events not sent to the provider yet.
+   *
    * @generated from field: int64 pending_events = 5;
    */
   pendingEvents: bigint;
 
   /**
+   * The minutes of pending_events.
+   *
    * @generated from field: int64 pending_minutes = 6;
    */
   pendingMinutes: bigint;
 
   /**
+   * Events the provider refused, which Toshi no longer sends.
+   *
    * @generated from field: int64 failed_events = 7;
    */
   failedEvents: bigint;
 
   /**
+   * The minutes of failed_events.
+   *
    * @generated from field: int64 failed_minutes = 8;
    */
   failedMinutes: bigint;
@@ -4997,31 +5359,43 @@ export type BillingTotalsJson = {
   size?: string;
 
   /**
+   * Events the provider accepted.
+   *
    * @generated from field: int64 sent_events = 3;
    */
   sentEvents?: string;
 
   /**
+   * The minutes of sent_events.
+   *
    * @generated from field: int64 sent_minutes = 4;
    */
   sentMinutes?: string;
 
   /**
+   * Events not sent to the provider yet.
+   *
    * @generated from field: int64 pending_events = 5;
    */
   pendingEvents?: string;
 
   /**
+   * The minutes of pending_events.
+   *
    * @generated from field: int64 pending_minutes = 6;
    */
   pendingMinutes?: string;
 
   /**
+   * Events the provider refused, which Toshi no longer sends.
+   *
    * @generated from field: int64 failed_events = 7;
    */
   failedEvents?: string;
 
   /**
+   * The minutes of failed_events.
+   *
    * @generated from field: int64 failed_minutes = 8;
    */
   failedMinutes?: string;
@@ -5041,21 +5415,29 @@ export const BillingTotalsSchema: GenMessage<BillingTotals, {jsonType: BillingTo
  */
 export type BillingEventFailure = Message<"toshi.workspace.v1.BillingEventFailure"> & {
   /**
+   * The id of the job the event metered.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId: string;
 
   /**
+   * The runner size; empty for events recorded before sizes were.
+   *
    * @generated from field: string size = 2;
    */
   size: string;
 
   /**
+   * The meter event's name.
+   *
    * @generated from field: string event_name = 3;
    */
   eventName: string;
 
   /**
+   * The job's metered minutes.
+   *
    * @generated from field: int64 minutes = 4;
    */
   minutes: bigint;
@@ -5068,16 +5450,22 @@ export type BillingEventFailure = Message<"toshi.workspace.v1.BillingEventFailur
   occurredAt?: Timestamp | undefined;
 
   /**
+   * When the provider last refused the event.
+   *
    * @generated from field: google.protobuf.Timestamp failed_at = 6;
    */
   failedAt?: Timestamp | undefined;
 
   /**
+   * The number of times Toshi sent the event.
+   *
    * @generated from field: int32 attempts = 7;
    */
   attempts: number;
 
   /**
+   * The provider's error for the last attempt.
+   *
    * @generated from field: string last_error = 8;
    */
   lastError: string;
@@ -5090,21 +5478,29 @@ export type BillingEventFailure = Message<"toshi.workspace.v1.BillingEventFailur
  */
 export type BillingEventFailureJson = {
   /**
+   * The id of the job the event metered.
+   *
    * @generated from field: string job_id = 1;
    */
   jobId?: string;
 
   /**
+   * The runner size; empty for events recorded before sizes were.
+   *
    * @generated from field: string size = 2;
    */
   size?: string;
 
   /**
+   * The meter event's name.
+   *
    * @generated from field: string event_name = 3;
    */
   eventName?: string;
 
   /**
+   * The job's metered minutes.
+   *
    * @generated from field: int64 minutes = 4;
    */
   minutes?: string;
@@ -5117,16 +5513,22 @@ export type BillingEventFailureJson = {
   occurredAt?: TimestampJson;
 
   /**
+   * When the provider last refused the event.
+   *
    * @generated from field: google.protobuf.Timestamp failed_at = 6;
    */
   failedAt?: TimestampJson;
 
   /**
+   * The number of times Toshi sent the event.
+   *
    * @generated from field: int32 attempts = 7;
    */
   attempts?: number;
 
   /**
+   * The provider's error for the last attempt.
+   *
    * @generated from field: string last_error = 8;
    */
   lastError?: string;
@@ -5140,6 +5542,9 @@ export const BillingEventFailureSchema: GenMessage<BillingEventFailure, {jsonTyp
   messageDesc(file_toshi_workspace_v1_workspace_service, 62);
 
 /**
+ * WorkspaceStatement is one UTC month's usage and charges with their
+ * estimated cost.
+ *
  * @generated from message toshi.workspace.v1.WorkspaceStatement
  */
 export type WorkspaceStatement = Message<"toshi.workspace.v1.WorkspaceStatement"> & {
@@ -5151,11 +5556,15 @@ export type WorkspaceStatement = Message<"toshi.workspace.v1.WorkspaceStatement"
   month: string;
 
   /**
+   * Start of the month, inclusive.
+   *
    * @generated from field: google.protobuf.Timestamp from = 2;
    */
   from?: Timestamp | undefined;
 
   /**
+   * End of the month, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: Timestamp | undefined;
@@ -5225,6 +5634,8 @@ export type WorkspaceStatement = Message<"toshi.workspace.v1.WorkspaceStatement"
   starterCreditAppliedCents: bigint;
 
   /**
+   * When the credit was applied; unset when it was not.
+   *
    * @generated from field: google.protobuf.Timestamp starter_credit_applied_at = 12;
    */
   starterCreditAppliedAt?: Timestamp | undefined;
@@ -5324,6 +5735,9 @@ export type WorkspaceStatement = Message<"toshi.workspace.v1.WorkspaceStatement"
 };
 
 /**
+ * WorkspaceStatement is one UTC month's usage and charges with their
+ * estimated cost.
+ *
  * @generated from message toshi.workspace.v1.WorkspaceStatement
  */
 export type WorkspaceStatementJson = {
@@ -5335,11 +5749,15 @@ export type WorkspaceStatementJson = {
   month?: string;
 
   /**
+   * Start of the month, inclusive.
+   *
    * @generated from field: google.protobuf.Timestamp from = 2;
    */
   from?: TimestampJson;
 
   /**
+   * End of the month, exclusive.
+   *
    * @generated from field: google.protobuf.Timestamp to = 3;
    */
   to?: TimestampJson;
@@ -5409,6 +5827,8 @@ export type WorkspaceStatementJson = {
   starterCreditAppliedCents?: string;
 
   /**
+   * When the credit was applied; unset when it was not.
+   *
    * @generated from field: google.protobuf.Timestamp starter_credit_applied_at = 12;
    */
   starterCreditAppliedAt?: TimestampJson;
@@ -5675,6 +6095,8 @@ export const PaidStartsSchema: GenMessage<PaidStarts, {jsonType: PaidStartsJson}
  */
 export type StatementSeat = Message<"toshi.workspace.v1.StatementSeat"> & {
   /**
+   * The seat's id.
+   *
    * @generated from field: string seat_id = 1;
    */
   seatId: string;
@@ -5687,11 +6109,15 @@ export type StatementSeat = Message<"toshi.workspace.v1.StatementSeat"> & {
   userId: string;
 
   /**
+   * The person's name.
+   *
    * @generated from field: string name = 3;
    */
   name: string;
 
   /**
+   * When the seat was assigned.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 4;
    */
   assignedAt?: Timestamp | undefined;
@@ -5727,6 +6153,8 @@ export type StatementSeat = Message<"toshi.workspace.v1.StatementSeat"> & {
  */
 export type StatementSeatJson = {
   /**
+   * The seat's id.
+   *
    * @generated from field: string seat_id = 1;
    */
   seatId?: string;
@@ -5739,11 +6167,15 @@ export type StatementSeatJson = {
   userId?: string;
 
   /**
+   * The person's name.
+   *
    * @generated from field: string name = 3;
    */
   name?: string;
 
   /**
+   * When the seat was assigned.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 4;
    */
   assignedAt?: TimestampJson;
@@ -5871,11 +6303,15 @@ export const OwnHostFeeSchema: GenMessage<OwnHostFee, {jsonType: OwnHostFeeJson}
  */
 export type Awake = Message<"toshi.workspace.v1.Awake"> & {
   /**
+   * A runner size, as a runs-on label.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
 
   /**
+   * The number of service runs of the size in the month.
+   *
    * @generated from field: int64 runs = 2;
    */
   runs: bigint;
@@ -5920,11 +6356,15 @@ export type Awake = Message<"toshi.workspace.v1.Awake"> & {
  */
 export type AwakeJson = {
   /**
+   * A runner size, as a runs-on label.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
 
   /**
+   * The number of service runs of the size in the month.
+   *
    * @generated from field: int64 runs = 2;
    */
   runs?: string;
@@ -6088,6 +6528,9 @@ export const StorageSchema: GenMessage<Storage, {jsonType: StorageJson}> = /*@__
  */
 export type StoredKind = Message<"toshi.workspace.v1.StoredKind"> & {
   /**
+   * The kind: images, volume_versions, artifacts, recordings, held_disks or
+   * service_snapshots.
+   *
    * @generated from field: string kind = 1;
    */
   kind: string;
@@ -6115,6 +6558,9 @@ export type StoredKind = Message<"toshi.workspace.v1.StoredKind"> & {
  */
 export type StoredKindJson = {
   /**
+   * The kind: images, volume_versions, artifacts, recordings, held_disks or
+   * service_snapshots.
+   *
    * @generated from field: string kind = 1;
    */
   kind?: string;
@@ -6155,6 +6601,9 @@ export type StorageUsageRow = Message<"toshi.workspace.v1.StorageUsageRow"> & {
   day: string;
 
   /**
+   * The kind: images, volume_versions, artifacts, recordings, held_disks or
+   * service_snapshots.
+   *
    * @generated from field: string kind = 2;
    */
   kind: string;
@@ -6188,6 +6637,9 @@ export type StorageUsageRowJson = {
   day?: string;
 
   /**
+   * The kind: images, volume_versions, artifacts, recordings, held_disks or
+   * service_snapshots.
+   *
    * @generated from field: string kind = 2;
    */
   kind?: string;
@@ -6215,20 +6667,30 @@ export const StorageUsageRowSchema: GenMessage<StorageUsageRow, {jsonType: Stora
   messageDesc(file_toshi_workspace_v1_workspace_service, 71);
 
 /**
+ * StatementUsage is one runner size and OS on a statement, with its jobs
+ * and minutes.
+ *
  * @generated from message toshi.workspace.v1.StatementUsage
  */
 export type StatementUsage = Message<"toshi.workspace.v1.StatementUsage"> & {
   /**
+   * A runner size, as a runs-on label; empty for the total row.
+   *
    * @generated from field: string size = 1;
    */
   size: string;
 
   /**
+   * The operating system, such as "linux" or "windows"; empty for the total
+   * row.
+   *
    * @generated from field: string os = 2;
    */
   os: string;
 
   /**
+   * The number of jobs in this entry.
+   *
    * @generated from field: int64 jobs = 3;
    */
   jobs: bigint;
@@ -6287,26 +6749,38 @@ export type StatementUsage = Message<"toshi.workspace.v1.StatementUsage"> & {
   seconds: number;
 
   /**
+   * The exact run time behind own_host_minutes, in seconds.
+   *
    * @generated from field: double own_host_seconds = 11;
    */
   ownHostSeconds: number;
 };
 
 /**
+ * StatementUsage is one runner size and OS on a statement, with its jobs
+ * and minutes.
+ *
  * @generated from message toshi.workspace.v1.StatementUsage
  */
 export type StatementUsageJson = {
   /**
+   * A runner size, as a runs-on label; empty for the total row.
+   *
    * @generated from field: string size = 1;
    */
   size?: string;
 
   /**
+   * The operating system, such as "linux" or "windows"; empty for the total
+   * row.
+   *
    * @generated from field: string os = 2;
    */
   os?: string;
 
   /**
+   * The number of jobs in this entry.
+   *
    * @generated from field: int64 jobs = 3;
    */
   jobs?: string;
@@ -6365,6 +6839,8 @@ export type StatementUsageJson = {
   seconds?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The exact run time behind own_host_minutes, in seconds.
+   *
    * @generated from field: double own_host_seconds = 11;
    */
   ownHostSeconds?: number | "NaN" | "Infinity" | "-Infinity";
@@ -6378,6 +6854,9 @@ export const StatementUsageSchema: GenMessage<StatementUsage, {jsonType: Stateme
   messageDesc(file_toshi_workspace_v1_workspace_service, 72);
 
 /**
+ * StatementCharge is one line of a statement's charges: the metered minutes
+ * or seconds of one runner size and their estimated cost.
+ *
  * @generated from message toshi.workspace.v1.StatementCharge
  */
 export type StatementCharge = Message<"toshi.workspace.v1.StatementCharge"> & {
@@ -6415,6 +6894,9 @@ export type StatementCharge = Message<"toshi.workspace.v1.StatementCharge"> & {
 };
 
 /**
+ * StatementCharge is one line of a statement's charges: the metered minutes
+ * or seconds of one runner size and their estimated cost.
+ *
  * @generated from message toshi.workspace.v1.StatementCharge
  */
 export type StatementChargeJson = {
@@ -6459,6 +6941,8 @@ export const StatementChargeSchema: GenMessage<StatementCharge, {jsonType: State
   messageDesc(file_toshi_workspace_v1_workspace_service, 73);
 
 /**
+ * HoldTimes is the held time of the jobs held for one reason in a window.
+ *
  * @generated from message toshi.workspace.v1.HoldTimes
  */
 export type HoldTimes = Message<"toshi.workspace.v1.HoldTimes"> & {
@@ -6478,16 +6962,24 @@ export type HoldTimes = Message<"toshi.workspace.v1.HoldTimes"> & {
   jobs: bigint;
 
   /**
+   * The nearest-rank 50th percentile of the held times, in whole
+   * milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 p50_ms = 3;
    */
   p50Ms: bigint;
 
   /**
+   * The nearest-rank 90th percentile of the held times, in whole
+   * milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 p90_ms = 4;
    */
   p90Ms: bigint;
 
   /**
+   * The longest held time, in whole milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 max_ms = 5;
    */
   maxMs: bigint;
@@ -6510,6 +7002,8 @@ export type HoldTimes = Message<"toshi.workspace.v1.HoldTimes"> & {
 };
 
 /**
+ * HoldTimes is the held time of the jobs held for one reason in a window.
+ *
  * @generated from message toshi.workspace.v1.HoldTimes
  */
 export type HoldTimesJson = {
@@ -6529,16 +7023,24 @@ export type HoldTimesJson = {
   jobs?: string;
 
   /**
+   * The nearest-rank 50th percentile of the held times, in whole
+   * milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 p50_ms = 3;
    */
   p50Ms?: string;
 
   /**
+   * The nearest-rank 90th percentile of the held times, in whole
+   * milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 p90_ms = 4;
    */
   p90Ms?: string;
 
   /**
+   * The longest held time, in whole milliseconds; 0 when jobs is 0.
+   *
    * @generated from field: int64 max_ms = 5;
    */
   maxMs?: string;
@@ -6576,6 +7078,8 @@ export const HoldTimesSchema: GenMessage<HoldTimes, {jsonType: HoldTimesJson}> =
  */
 export type FillerUsage = Message<"toshi.workspace.v1.FillerUsage"> & {
   /**
+   * The number of filler jobs that finished in the window.
+   *
    * @generated from field: int64 jobs = 1;
    */
   jobs: bigint;
@@ -6597,6 +7101,8 @@ export type FillerUsage = Message<"toshi.workspace.v1.FillerUsage"> & {
  */
 export type FillerUsageJson = {
   /**
+   * The number of filler jobs that finished in the window.
+   *
    * @generated from field: int64 jobs = 1;
    */
   jobs?: string;
@@ -6712,6 +7218,8 @@ export type UsageRow = Message<"toshi.workspace.v1.UsageRow"> & {
   seconds: number;
 
   /**
+   * The exact run time behind own_host_minutes, in seconds, not rounded.
+   *
    * @generated from field: double own_host_seconds = 12;
    */
   ownHostSeconds: number;
@@ -6725,6 +7233,9 @@ export type UsageRow = Message<"toshi.workspace.v1.UsageRow"> & {
   awakeSeconds: number;
 
   /**
+   * The idle part of awake_seconds: the time after the last demand before
+   * the run was put to sleep.
+   *
    * @generated from field: double idle_seconds = 14;
    */
   idleSeconds: number;
@@ -6826,6 +7337,8 @@ export type UsageRowJson = {
   seconds?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The exact run time behind own_host_minutes, in seconds, not rounded.
+   *
    * @generated from field: double own_host_seconds = 12;
    */
   ownHostSeconds?: number | "NaN" | "Infinity" | "-Infinity";
@@ -6839,6 +7352,9 @@ export type UsageRowJson = {
   awakeSeconds?: number | "NaN" | "Infinity" | "-Infinity";
 
   /**
+   * The idle part of awake_seconds: the time after the last demand before
+   * the run was put to sleep.
+   *
    * @generated from field: double idle_seconds = 14;
    */
   idleSeconds?: number | "NaN" | "Infinity" | "-Infinity";
@@ -6919,6 +7435,9 @@ export type WorkflowUsageRow = Message<"toshi.workspace.v1.WorkflowUsageRow"> & 
   p50Seconds: bigint;
 
   /**
+   * The nearest-rank 95th percentile of the run times, in whole seconds; 0
+   * when timed_jobs is 0.
+   *
    * @generated from field: int64 p95_seconds = 9;
    */
   p95Seconds: bigint;
@@ -6992,6 +7511,9 @@ export type WorkflowUsageRowJson = {
   p50Seconds?: string;
 
   /**
+   * The nearest-rank 95th percentile of the run times, in whole seconds; 0
+   * when timed_jobs is 0.
+   *
    * @generated from field: int64 p95_seconds = 9;
    */
   p95Seconds?: string;
@@ -7005,25 +7527,36 @@ export const WorkflowUsageRowSchema: GenMessage<WorkflowUsageRow, {jsonType: Wor
   messageDesc(file_toshi_workspace_v1_workspace_service, 77);
 
 /**
+ * Plan is one configured plan and the limits a workspace on it follows.
+ *
  * @generated from message toshi.workspace.v1.Plan
  */
 export type Plan = Message<"toshi.workspace.v1.Plan"> & {
   /**
+   * The plan's name; unique among the configured plans.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * The jobs a workspace on the plan may run at once; 0 means unlimited.
+   *
    * @generated from field: int32 concurrency = 2;
    */
   concurrency: number;
 
   /**
+   * The longest a job may run, in minutes; 0 means unlimited.
+   *
    * @generated from field: int32 max_job_minutes = 3;
    */
   maxJobMinutes: number;
 
   /**
+   * True for the deployment's default plan, which a workspace follows when
+   * its own is empty or unknown.
+   *
    * @generated from field: bool is_default = 4;
    */
   isDefault: boolean;
@@ -7176,25 +7709,36 @@ export type Plan = Message<"toshi.workspace.v1.Plan"> & {
 };
 
 /**
+ * Plan is one configured plan and the limits a workspace on it follows.
+ *
  * @generated from message toshi.workspace.v1.Plan
  */
 export type PlanJson = {
   /**
+   * The plan's name; unique among the configured plans.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
 
   /**
+   * The jobs a workspace on the plan may run at once; 0 means unlimited.
+   *
    * @generated from field: int32 concurrency = 2;
    */
   concurrency?: number;
 
   /**
+   * The longest a job may run, in minutes; 0 means unlimited.
+   *
    * @generated from field: int32 max_job_minutes = 3;
    */
   maxJobMinutes?: number;
 
   /**
+   * True for the deployment's default plan, which a workspace follows when
+   * its own is empty or unknown.
+   *
    * @generated from field: bool is_default = 4;
    */
   isDefault?: boolean;
@@ -7367,6 +7911,8 @@ export type EgressHost = Message<"toshi.workspace.v1.EgressHost"> & {
   hostId: string;
 
   /**
+   * The host's name; empty for a shared host.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -7379,6 +7925,8 @@ export type EgressHost = Message<"toshi.workspace.v1.EgressHost"> & {
   shared: boolean;
 
   /**
+   * The host's egress addresses.
+   *
    * @generated from field: toshi.workspace.v1.HostEgress egress = 4;
    */
   egress?: HostEgress | undefined;
@@ -7429,6 +7977,8 @@ export type EgressHostJson = {
   hostId?: string;
 
   /**
+   * The host's name; empty for a shared host.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
@@ -7441,6 +7991,8 @@ export type EgressHostJson = {
   shared?: boolean;
 
   /**
+   * The host's egress addresses.
+   *
    * @generated from field: toshi.workspace.v1.HostEgress egress = 4;
    */
   egress?: HostEgressJson;
@@ -7489,6 +8041,8 @@ export const EgressHostSchema: GenMessage<EgressHost, {jsonType: EgressHostJson}
  */
 export enum HostingCertificateState {
   /**
+   * No certificate state is recorded.
+   *
    * @generated from enum value: HOSTING_CERTIFICATE_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -7510,6 +8064,9 @@ export enum HostingCertificateState {
   RATE_LIMITED = 2,
 
   /**
+   * The certificate is issued and serves until not_after; Toshi renews it
+   * at renew_at.
+   *
    * @generated from enum value: HOSTING_CERTIFICATE_STATE_VALID = 3;
    */
   VALID = 3,
@@ -7548,16 +8105,22 @@ export const HostingCertificateStateSchema: GenEnum<HostingCertificateState, Hos
  */
 export enum InboundMailPastCap {
   /**
+   * Unset; mail past the daily cap is accepted.
+   *
    * @generated from enum value: INBOUND_MAIL_PAST_CAP_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * Accept mail past the daily cap and charge for it.
+   *
    * @generated from enum value: INBOUND_MAIL_PAST_CAP_ACCEPT_AND_CHARGE = 1;
    */
   ACCEPT_AND_CHARGE = 1,
 
   /**
+   * Refuse mail past the daily cap.
+   *
    * @generated from enum value: INBOUND_MAIL_PAST_CAP_REFUSE = 2;
    */
   REFUSE = 2,

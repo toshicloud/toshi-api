@@ -41,11 +41,15 @@ export type Job = Message<"toshi.workspace.v1.Job"> & {
   id: string;
 
   /**
+   * The job's project, by name.
+   *
    * @generated from field: string project = 2;
    */
   project: string;
 
   /**
+   * The job's environment, by name.
+   *
    * @generated from field: string environment = 3;
    */
   environment: string;
@@ -65,6 +69,8 @@ export type Job = Message<"toshi.workspace.v1.Job"> & {
   spec?: JobSpec | undefined;
 
   /**
+   * The job's state and when it got there.
+   *
    * @generated from field: toshi.workspace.v1.JobStatus status = 6;
    */
   status?: JobStatus | undefined;
@@ -133,11 +139,15 @@ export type JobJson = {
   id?: string;
 
   /**
+   * The job's project, by name.
+   *
    * @generated from field: string project = 2;
    */
   project?: string;
 
   /**
+   * The job's environment, by name.
+   *
    * @generated from field: string environment = 3;
    */
   environment?: string;
@@ -157,6 +167,8 @@ export type JobJson = {
   spec?: JobSpecJson;
 
   /**
+   * The job's state and when it got there.
+   *
    * @generated from field: toshi.workspace.v1.JobStatus status = 6;
    */
   status?: JobStatusJson;
@@ -224,6 +236,8 @@ export const JobSchema: GenMessage<Job, {jsonType: JobJson}> = /*@__PURE__*/
  */
 export type JobStatus = Message<"toshi.workspace.v1.JobStatus"> & {
   /**
+   * Where the job is in its life.
+   *
    * @generated from field: toshi.workspace.v1.JobState state = 1;
    */
   state: JobState;
@@ -243,21 +257,29 @@ export type JobStatus = Message<"toshi.workspace.v1.JobStatus"> & {
   lastError?: Error | undefined;
 
   /**
+   * When it was recorded.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When it started waiting for capacity.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 5;
    */
   queuedAt?: Timestamp | undefined;
 
   /**
+   * When its VM came up and its command started.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 6;
    */
   startedAt?: Timestamp | undefined;
 
   /**
+   * When it ended; unset until it does.
+   *
    * @generated from field: google.protobuf.Timestamp ended_at = 7;
    */
   endedAt?: Timestamp | undefined;
@@ -323,6 +345,8 @@ export type JobStatus = Message<"toshi.workspace.v1.JobStatus"> & {
   runnerId: string;
 
   /**
+   * The runner's name, which for a job is its id.
+   *
    * @generated from field: string runner_name = 15;
    */
   runnerName: string;
@@ -344,6 +368,8 @@ export type JobStatus = Message<"toshi.workspace.v1.JobStatus"> & {
  */
 export type JobStatusJson = {
   /**
+   * Where the job is in its life.
+   *
    * @generated from field: toshi.workspace.v1.JobState state = 1;
    */
   state?: JobStateJson;
@@ -363,21 +389,29 @@ export type JobStatusJson = {
   lastError?: ErrorJson;
 
   /**
+   * When it was recorded.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When it started waiting for capacity.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 5;
    */
   queuedAt?: TimestampJson;
 
   /**
+   * When its VM came up and its command started.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 6;
    */
   startedAt?: TimestampJson;
 
   /**
+   * When it ended; unset until it does.
+   *
    * @generated from field: google.protobuf.Timestamp ended_at = 7;
    */
   endedAt?: TimestampJson;
@@ -443,6 +477,8 @@ export type JobStatusJson = {
   runnerId?: string;
 
   /**
+   * The runner's name, which for a job is its id.
+   *
    * @generated from field: string runner_name = 15;
    */
   runnerName?: string;
@@ -479,16 +515,22 @@ export type JobAttempt = Message<"toshi.workspace.v1.JobAttempt"> & {
   attempt: number;
 
   /**
+   * The runner the attempt was assigned to.
+   *
    * @generated from field: string runner_id = 2;
    */
   runnerId: string;
 
   /**
+   * The runner's name, which for a job is its id.
+   *
    * @generated from field: string runner_name = 3;
    */
   runnerName: string;
 
   /**
+   * When the attempt was assigned its runner.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 4;
    */
   assignedAt?: Timestamp | undefined;
@@ -540,16 +582,22 @@ export type JobAttemptJson = {
   attempt?: number;
 
   /**
+   * The runner the attempt was assigned to.
+   *
    * @generated from field: string runner_id = 2;
    */
   runnerId?: string;
 
   /**
+   * The runner's name, which for a job is its id.
+   *
    * @generated from field: string runner_name = 3;
    */
   runnerName?: string;
 
   /**
+   * When the attempt was assigned its runner.
+   *
    * @generated from field: google.protobuf.Timestamp assigned_at = 4;
    */
   assignedAt?: TimestampJson;
@@ -608,11 +656,15 @@ export type Sandbox = Message<"toshi.workspace.v1.Sandbox"> & {
   id: string;
 
   /**
+   * The sandbox's project, by name.
+   *
    * @generated from field: string project = 2;
    */
   project: string;
 
   /**
+   * The sandbox's environment, by name.
+   *
    * @generated from field: string environment = 3;
    */
   environment: string;
@@ -633,6 +685,8 @@ export type Sandbox = Message<"toshi.workspace.v1.Sandbox"> & {
   spec?: SandboxSpec | undefined;
 
   /**
+   * The sandbox's state and when it got there.
+   *
    * @generated from field: toshi.workspace.v1.SandboxStatus status = 6;
    */
   status?: SandboxStatus | undefined;
@@ -730,11 +784,15 @@ export type SandboxJson = {
   id?: string;
 
   /**
+   * The sandbox's project, by name.
+   *
    * @generated from field: string project = 2;
    */
   project?: string;
 
   /**
+   * The sandbox's environment, by name.
+   *
    * @generated from field: string environment = 3;
    */
   environment?: string;
@@ -755,6 +813,8 @@ export type SandboxJson = {
   spec?: SandboxSpecJson;
 
   /**
+   * The sandbox's state and when it got there.
+   *
    * @generated from field: toshi.workspace.v1.SandboxStatus status = 6;
    */
   status?: SandboxStatusJson;
@@ -851,6 +911,8 @@ export const SandboxSchema: GenMessage<Sandbox, {jsonType: SandboxJson}> = /*@__
  */
 export type SandboxStatus = Message<"toshi.workspace.v1.SandboxStatus"> & {
   /**
+   * Where the sandbox is in its life.
+   *
    * @generated from field: toshi.workspace.v1.SandboxState state = 1;
    */
   state: SandboxState;
@@ -871,21 +933,29 @@ export type SandboxStatus = Message<"toshi.workspace.v1.SandboxStatus"> & {
   lastError?: Error | undefined;
 
   /**
+   * When it was recorded.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When it started waiting for capacity.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 5;
    */
   queuedAt?: Timestamp | undefined;
 
   /**
+   * When its VM came up.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 6;
    */
   startedAt?: Timestamp | undefined;
 
   /**
+   * When it ended; unset until it does.
+   *
    * @generated from field: google.protobuf.Timestamp ended_at = 7;
    */
   endedAt?: Timestamp | undefined;
@@ -979,6 +1049,8 @@ export type SandboxStatus = Message<"toshi.workspace.v1.SandboxStatus"> & {
  */
 export type SandboxStatusJson = {
   /**
+   * Where the sandbox is in its life.
+   *
    * @generated from field: toshi.workspace.v1.SandboxState state = 1;
    */
   state?: SandboxStateJson;
@@ -999,21 +1071,29 @@ export type SandboxStatusJson = {
   lastError?: ErrorJson;
 
   /**
+   * When it was recorded.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When it started waiting for capacity.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 5;
    */
   queuedAt?: TimestampJson;
 
   /**
+   * When its VM came up.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 6;
    */
   startedAt?: TimestampJson;
 
   /**
+   * When it ended; unset until it does.
+   *
    * @generated from field: google.protobuf.Timestamp ended_at = 7;
    */
   endedAt?: TimestampJson;
@@ -1122,11 +1202,15 @@ export type Service = Message<"toshi.workspace.v1.Service"> & {
   id: string;
 
   /**
+   * The service's project, by name.
+   *
    * @generated from field: string project = 2;
    */
   project: string;
 
   /**
+   * The service's environment, by name.
+   *
    * @generated from field: string environment = 3;
    */
   environment: string;
@@ -1146,6 +1230,8 @@ export type Service = Message<"toshi.workspace.v1.Service"> & {
   spec?: ServiceSpec | undefined;
 
   /**
+   * The service's state and when it got there.
+   *
    * @generated from field: toshi.workspace.v1.ServiceStatus status = 6;
    */
   status?: ServiceStatus | undefined;
@@ -1242,11 +1328,15 @@ export type ServiceJson = {
   id?: string;
 
   /**
+   * The service's project, by name.
+   *
    * @generated from field: string project = 2;
    */
   project?: string;
 
   /**
+   * The service's environment, by name.
+   *
    * @generated from field: string environment = 3;
    */
   environment?: string;
@@ -1266,6 +1356,8 @@ export type ServiceJson = {
   spec?: ServiceSpecJson;
 
   /**
+   * The service's state and when it got there.
+   *
    * @generated from field: toshi.workspace.v1.ServiceStatus status = 6;
    */
   status?: ServiceStatusJson;
@@ -1493,6 +1585,8 @@ export type NetworkLayer = Message<"toshi.workspace.v1.NetworkLayer"> & {
   name: string;
 
   /**
+   * The layer's policy.
+   *
    * @generated from field: toshi.workspace.v1.NetworkPolicy policy = 2;
    */
   policy?: NetworkPolicy | undefined;
@@ -1512,6 +1606,8 @@ export type NetworkLayerJson = {
   name?: string;
 
   /**
+   * The layer's policy.
+   *
    * @generated from field: toshi.workspace.v1.NetworkPolicy policy = 2;
    */
   policy?: NetworkPolicyJson;
@@ -1531,6 +1627,8 @@ export const NetworkLayerSchema: GenMessage<NetworkLayer, {jsonType: NetworkLaye
  */
 export type ServiceStatus = Message<"toshi.workspace.v1.ServiceStatus"> & {
   /**
+   * Where the service is in its life.
+   *
    * @generated from field: toshi.workspace.v1.ServiceState state = 1;
    */
   state: ServiceState;
@@ -1550,21 +1648,29 @@ export type ServiceStatus = Message<"toshi.workspace.v1.ServiceStatus"> & {
   lastError?: Error | undefined;
 
   /**
+   * When it was recorded.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When its run started waiting for capacity.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 5;
    */
   queuedAt?: Timestamp | undefined;
 
   /**
+   * When its run's VM came up.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 6;
    */
   startedAt?: Timestamp | undefined;
 
   /**
+   * When it ended; unset until it does.
+   *
    * @generated from field: google.protobuf.Timestamp ended_at = 7;
    */
   endedAt?: Timestamp | undefined;
@@ -1674,6 +1780,8 @@ export type ServiceStatus = Message<"toshi.workspace.v1.ServiceStatus"> & {
  */
 export type ServiceStatusJson = {
   /**
+   * Where the service is in its life.
+   *
    * @generated from field: toshi.workspace.v1.ServiceState state = 1;
    */
   state?: ServiceStateJson;
@@ -1693,21 +1801,29 @@ export type ServiceStatusJson = {
   lastError?: ErrorJson;
 
   /**
+   * When it was recorded.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When its run started waiting for capacity.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 5;
    */
   queuedAt?: TimestampJson;
 
   /**
+   * When its run's VM came up.
+   *
    * @generated from field: google.protobuf.Timestamp started_at = 6;
    */
   startedAt?: TimestampJson;
 
   /**
+   * When it ended; unset until it does.
+   *
    * @generated from field: google.protobuf.Timestamp ended_at = 7;
    */
   endedAt?: TimestampJson;
@@ -2057,6 +2173,8 @@ export const ProvidedNameSchema: GenMessage<ProvidedName, {jsonType: ProvidedNam
  */
 export type JobSpec = Message<"toshi.workspace.v1.JobSpec"> & {
   /**
+   * The command the job runs.
+   *
    * @generated from field: toshi.workspace.v1.Command command = 1;
    */
   command?: Command | undefined;
@@ -2155,6 +2273,8 @@ export type JobSpec = Message<"toshi.workspace.v1.JobSpec"> & {
  */
 export type JobSpecJson = {
   /**
+   * The command the job runs.
+   *
    * @generated from field: toshi.workspace.v1.Command command = 1;
    */
   command?: CommandJson;
@@ -2368,11 +2488,15 @@ export const BindingSchema: GenMessage<Binding, {jsonType: BindingJson}> = /*@__
  */
 export type ServiceEndpoint = Message<"toshi.workspace.v1.ServiceEndpoint"> & {
   /**
+   * The service's name.
+   *
    * @generated from field: string service = 1;
    */
   service: string;
 
   /**
+   * The endpoint's name in the service's recipe.
+   *
    * @generated from field: string endpoint = 2;
    */
   endpoint: string;
@@ -2387,11 +2511,15 @@ export type ServiceEndpoint = Message<"toshi.workspace.v1.ServiceEndpoint"> & {
  */
 export type ServiceEndpointJson = {
   /**
+   * The service's name.
+   *
    * @generated from field: string service = 1;
    */
   service?: string;
 
   /**
+   * The endpoint's name in the service's recipe.
+   *
    * @generated from field: string endpoint = 2;
    */
   endpoint?: string;
@@ -2446,6 +2574,8 @@ export const EnvironmentSecretsSchema: GenMessage<EnvironmentSecrets, {jsonType:
  */
 export type ModelCredentialBinding = Message<"toshi.workspace.v1.ModelCredentialBinding"> & {
   /**
+   * The credential's name.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
@@ -2468,6 +2598,8 @@ export type ModelCredentialBinding = Message<"toshi.workspace.v1.ModelCredential
  */
 export type ModelCredentialBindingJson = {
   /**
+   * The credential's name.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
@@ -2517,6 +2649,8 @@ export const MailSchema: GenMessage<Mail, {jsonType: MailJson}> = /*@__PURE__*/
  */
 export type BoundBinding = Message<"toshi.workspace.v1.BoundBinding"> & {
   /**
+   * The binding's name in the workload.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
@@ -2526,24 +2660,32 @@ export type BoundBinding = Message<"toshi.workspace.v1.BoundBinding"> & {
    */
   target: {
     /**
+     * The service endpoint it was fixed to.
+     *
      * @generated from field: toshi.workspace.v1.BoundService service = 2;
      */
     value: BoundService;
     case: "service";
   } | {
     /**
+     * The secret set it was fixed to.
+     *
      * @generated from field: toshi.workspace.v1.BoundSecrets secrets = 3;
      */
     value: BoundSecrets;
     case: "secrets";
   } | {
     /**
+     * The mail listener it was fixed to.
+     *
      * @generated from field: toshi.workspace.v1.BoundMail mail = 5;
      */
     value: BoundMail;
     case: "mail";
   } | {
     /**
+     * The model credential it was fixed to.
+     *
      * @generated from field: toshi.workspace.v1.BoundModelCredential model_credential = 6;
      */
     value: BoundModelCredential;
@@ -2551,6 +2693,8 @@ export type BoundBinding = Message<"toshi.workspace.v1.BoundBinding"> & {
   } | { case: undefined; value?: undefined };
 
   /**
+   * When the workload started and the binding was fixed.
+   *
    * @generated from field: google.protobuf.Timestamp taken_at = 4;
    */
   takenAt?: Timestamp | undefined;
@@ -2564,31 +2708,43 @@ export type BoundBinding = Message<"toshi.workspace.v1.BoundBinding"> & {
  */
 export type BoundBindingJson = {
   /**
+   * The binding's name in the workload.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
 
   /**
+   * The service endpoint it was fixed to.
+   *
    * @generated from field: toshi.workspace.v1.BoundService service = 2;
    */
   service?: BoundServiceJson;
 
   /**
+   * The secret set it was fixed to.
+   *
    * @generated from field: toshi.workspace.v1.BoundSecrets secrets = 3;
    */
   secrets?: BoundSecretsJson;
 
   /**
+   * The mail listener it was fixed to.
+   *
    * @generated from field: toshi.workspace.v1.BoundMail mail = 5;
    */
   mail?: BoundMailJson;
 
   /**
+   * The model credential it was fixed to.
+   *
    * @generated from field: toshi.workspace.v1.BoundModelCredential model_credential = 6;
    */
   modelCredential?: BoundModelCredentialJson;
 
   /**
+   * When the workload started and the binding was fixed.
+   *
    * @generated from field: google.protobuf.Timestamp taken_at = 4;
    */
   takenAt?: TimestampJson;
@@ -2608,6 +2764,8 @@ export const BoundBindingSchema: GenMessage<BoundBinding, {jsonType: BoundBindin
  */
 export type BoundService = Message<"toshi.workspace.v1.BoundService"> & {
   /**
+   * The service's name.
+   *
    * @generated from field: string service = 1;
    */
   service: string;
@@ -2627,6 +2785,8 @@ export type BoundService = Message<"toshi.workspace.v1.BoundService"> & {
   revision: bigint;
 
   /**
+   * The endpoint's name in the service's recipe.
+   *
    * @generated from field: string endpoint = 4;
    */
   endpoint: string;
@@ -2639,6 +2799,8 @@ export type BoundService = Message<"toshi.workspace.v1.BoundService"> & {
   shape: string;
 
   /**
+   * The port the endpoint reaches in the guest.
+   *
    * @generated from field: int32 port = 6;
    */
   port: number;
@@ -2654,6 +2816,8 @@ export type BoundService = Message<"toshi.workspace.v1.BoundService"> & {
   credential: string;
 
   /**
+   * The audience the credential names.
+   *
    * @generated from field: string audience = 8;
    */
   audience: string;
@@ -2674,6 +2838,8 @@ export type BoundService = Message<"toshi.workspace.v1.BoundService"> & {
  */
 export type BoundServiceJson = {
   /**
+   * The service's name.
+   *
    * @generated from field: string service = 1;
    */
   service?: string;
@@ -2693,6 +2859,8 @@ export type BoundServiceJson = {
   revision?: string;
 
   /**
+   * The endpoint's name in the service's recipe.
+   *
    * @generated from field: string endpoint = 4;
    */
   endpoint?: string;
@@ -2705,6 +2873,8 @@ export type BoundServiceJson = {
   shape?: string;
 
   /**
+   * The port the endpoint reaches in the guest.
+   *
    * @generated from field: int32 port = 6;
    */
   port?: number;
@@ -2720,6 +2890,8 @@ export type BoundServiceJson = {
   credential?: string;
 
   /**
+   * The audience the credential names.
+   *
    * @generated from field: string audience = 8;
    */
   audience?: string;
@@ -2749,16 +2921,22 @@ export const BoundServiceSchema: GenMessage<BoundService, {jsonType: BoundServic
  */
 export type BoundMail = Message<"toshi.workspace.v1.BoundMail"> & {
   /**
+   * The credential's kind: "workload_identity".
+   *
    * @generated from field: string credential = 1;
    */
   credential: string;
 
   /**
+   * The audience the credential names.
+   *
    * @generated from field: string audience = 2;
    */
   audience: string;
 
   /**
+   * The id (jti) of the credential. Never the credential.
+   *
    * @generated from field: string credential_id = 3;
    */
   credentialId: string;
@@ -2773,16 +2951,22 @@ export type BoundMail = Message<"toshi.workspace.v1.BoundMail"> & {
  */
 export type BoundMailJson = {
   /**
+   * The credential's kind: "workload_identity".
+   *
    * @generated from field: string credential = 1;
    */
   credential?: string;
 
   /**
+   * The audience the credential names.
+   *
    * @generated from field: string audience = 2;
    */
   audience?: string;
 
   /**
+   * The id (jti) of the credential. Never the credential.
+   *
    * @generated from field: string credential_id = 3;
    */
   credentialId?: string;
@@ -2805,16 +2989,24 @@ export const BoundMailSchema: GenMessage<BoundMail, {jsonType: BoundMailJson}> =
  */
 export type BoundModelCredential = Message<"toshi.workspace.v1.BoundModelCredential"> & {
   /**
+   * The credential's id.
+   *
    * @generated from field: string model_credential_id = 1;
    */
   modelCredentialId: string;
 
   /**
+   * The credential's name, or "~model:<provider>" for one taken without
+   * a binding.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 
   /**
+   * The provider it serves: "anthropic", "openai", "kimi", "mistral", "xai"
+   * or "gemini".
+   *
    * @generated from field: string provider = 3;
    */
   provider: string;
@@ -2838,16 +3030,24 @@ export type BoundModelCredential = Message<"toshi.workspace.v1.BoundModelCredent
  */
 export type BoundModelCredentialJson = {
   /**
+   * The credential's id.
+   *
    * @generated from field: string model_credential_id = 1;
    */
   modelCredentialId?: string;
 
   /**
+   * The credential's name, or "~model:<provider>" for one taken without
+   * a binding.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
 
   /**
+   * The provider it serves: "anthropic", "openai", "kimi", "mistral", "xai"
+   * or "gemini".
+   *
    * @generated from field: string provider = 3;
    */
   provider?: string;
@@ -2877,11 +3077,15 @@ export const BoundModelCredentialSchema: GenMessage<BoundModelCredential, {jsonT
  */
 export type BoundSecrets = Message<"toshi.workspace.v1.BoundSecrets"> & {
   /**
+   * The set's id.
+   *
    * @generated from field: string set_id = 1;
    */
   setId: string;
 
   /**
+   * The keys it fixed, by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.BoundKey keys = 2;
    */
   keys: BoundKey[];
@@ -2896,11 +3100,15 @@ export type BoundSecrets = Message<"toshi.workspace.v1.BoundSecrets"> & {
  */
 export type BoundSecretsJson = {
   /**
+   * The set's id.
+   *
    * @generated from field: string set_id = 1;
    */
   setId?: string;
 
   /**
+   * The keys it fixed, by name.
+   *
    * @generated from field: repeated toshi.workspace.v1.BoundKey keys = 2;
    */
   keys?: BoundKeyJson[];
@@ -2914,6 +3122,8 @@ export const BoundSecretsSchema: GenMessage<BoundSecrets, {jsonType: BoundSecret
   messageDesc(file_toshi_workspace_v1_workspace, 22);
 
 /**
+ * BoundKey is one key of a bound secret set, at the version it was fixed to.
+ *
  * @generated from message toshi.workspace.v1.BoundKey
  */
 export type BoundKey = Message<"toshi.workspace.v1.BoundKey"> & {
@@ -2926,17 +3136,23 @@ export type BoundKey = Message<"toshi.workspace.v1.BoundKey"> & {
   setId: string;
 
   /**
+   * The key's name.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 
   /**
+   * The key's version when the workload started.
+   *
    * @generated from field: int64 version = 3;
    */
   version: bigint;
 };
 
 /**
+ * BoundKey is one key of a bound secret set, at the version it was fixed to.
+ *
  * @generated from message toshi.workspace.v1.BoundKey
  */
 export type BoundKeyJson = {
@@ -2949,11 +3165,15 @@ export type BoundKeyJson = {
   setId?: string;
 
   /**
+   * The key's name.
+   *
    * @generated from field: string name = 2;
    */
   name?: string;
 
   /**
+   * The key's version when the workload started.
+   *
    * @generated from field: int64 version = 3;
    */
   version?: string;
@@ -3898,6 +4118,8 @@ export type Error = Message<"toshi.workspace.v1.Error"> & {
   code: string;
 
   /**
+   * Why it failed, in prose.
+   *
    * @generated from field: string message = 2;
    */
   message: string;
@@ -3918,6 +4140,8 @@ export type ErrorJson = {
   code?: string;
 
   /**
+   * Why it failed, in prose.
+   *
    * @generated from field: string message = 2;
    */
   message?: string;
@@ -3938,11 +4162,15 @@ export const ErrorSchema: GenMessage<Error, {jsonType: ErrorJson}> = /*@__PURE__
  */
 export type Output = Message<"toshi.workspace.v1.Output"> & {
   /**
+   * What the command wrote to standard output.
+   *
    * @generated from field: bytes stdout = 1;
    */
   stdout: Uint8Array;
 
   /**
+   * What the command wrote to standard error.
+   *
    * @generated from field: bytes stderr = 2;
    */
   stderr: Uint8Array;
@@ -3963,11 +4191,15 @@ export type Output = Message<"toshi.workspace.v1.Output"> & {
  */
 export type OutputJson = {
   /**
+   * What the command wrote to standard output.
+   *
    * @generated from field: bytes stdout = 1;
    */
   stdout?: string;
 
   /**
+   * What the command wrote to standard error.
+   *
    * @generated from field: bytes stderr = 2;
    */
   stderr?: string;
@@ -3988,15 +4220,22 @@ export const OutputSchema: GenMessage<Output, {jsonType: OutputJson}> = /*@__PUR
   messageDesc(file_toshi_workspace_v1_workspace, 32);
 
 /**
+ * WatchOutputRequest names the job whose output to follow and where each
+ * stream starts.
+ *
  * @generated from message toshi.workspace.v1.WatchOutputRequest
  */
 export type WatchOutputRequest = Message<"toshi.workspace.v1.WatchOutputRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -4021,21 +4260,31 @@ export type WatchOutputRequest = Message<"toshi.workspace.v1.WatchOutputRequest"
   stdoutOffset: bigint;
 
   /**
+   * Where standard error starts, counted as stdout_offset counts standard
+   * output.
+   *
    * @generated from field: int64 stderr_offset = 5;
    */
   stderrOffset: bigint;
 };
 
 /**
+ * WatchOutputRequest names the job whose output to follow and where each
+ * stream starts.
+ *
  * @generated from message toshi.workspace.v1.WatchOutputRequest
  */
 export type WatchOutputRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -4060,6 +4309,9 @@ export type WatchOutputRequestJson = {
   stdoutOffset?: string;
 
   /**
+   * Where standard error starts, counted as stdout_offset counts standard
+   * output.
+   *
    * @generated from field: int64 stderr_offset = 5;
    */
   stderrOffset?: string;
@@ -4084,12 +4336,16 @@ export type WatchOutputResponse = Message<"toshi.workspace.v1.WatchOutputRespons
    */
   message: {
     /**
+     * A run of standard output bytes, in order.
+     *
      * @generated from field: bytes stdout = 1;
      */
     value: Uint8Array;
     case: "stdout";
   } | {
     /**
+     * A run of standard error bytes, in order.
+     *
      * @generated from field: bytes stderr = 2;
      */
     value: Uint8Array;
@@ -4113,11 +4369,15 @@ export type WatchOutputResponse = Message<"toshi.workspace.v1.WatchOutputRespons
  */
 export type WatchOutputResponseJson = {
   /**
+   * A run of standard output bytes, in order.
+   *
    * @generated from field: bytes stdout = 1;
    */
   stdout?: string;
 
   /**
+   * A run of standard error bytes, in order.
+   *
    * @generated from field: bytes stderr = 2;
    */
   stderr?: string;
@@ -4152,6 +4412,8 @@ export type OutputEnd = Message<"toshi.workspace.v1.OutputEnd"> & {
   exitCode?: number | undefined;
 
   /**
+   * True when the job was cancelled.
+   *
    * @generated from field: bool cancelled = 2;
    */
   cancelled: boolean;
@@ -4179,6 +4441,8 @@ export type OutputEndJson = {
   exitCode?: number;
 
   /**
+   * True when the job was cancelled.
+   *
    * @generated from field: bool cancelled = 2;
    */
   cancelled?: boolean;
@@ -4199,15 +4463,21 @@ export const OutputEndSchema: GenMessage<OutputEnd, {jsonType: OutputEndJson}> =
   messageDesc(file_toshi_workspace_v1_workspace, 35);
 
 /**
+ * WatchTelemetryRequest names the sandbox whose resource samples to follow.
+ *
  * @generated from message toshi.workspace.v1.WatchTelemetryRequest
  */
 export type WatchTelemetryRequest = Message<"toshi.workspace.v1.WatchTelemetryRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -4239,15 +4509,21 @@ export type WatchTelemetryRequest = Message<"toshi.workspace.v1.WatchTelemetryRe
 };
 
 /**
+ * WatchTelemetryRequest names the sandbox whose resource samples to follow.
+ *
  * @generated from message toshi.workspace.v1.WatchTelemetryRequest
  */
 export type WatchTelemetryRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -4296,6 +4572,8 @@ export type WatchTelemetryResponse = Message<"toshi.workspace.v1.WatchTelemetryR
    */
   message: {
     /**
+     * One window of the sandbox's resource use.
+     *
      * @generated from field: toshi.workspace.v1.TelemetrySample sample = 1;
      */
     value: TelemetrySample;
@@ -4327,6 +4605,8 @@ export type WatchTelemetryResponse = Message<"toshi.workspace.v1.WatchTelemetryR
  */
 export type WatchTelemetryResponseJson = {
   /**
+   * One window of the sandbox's resource use.
+   *
    * @generated from field: toshi.workspace.v1.TelemetrySample sample = 1;
    */
   sample?: TelemetrySampleJson;
@@ -4421,6 +4701,8 @@ export type TelemetrySample = Message<"toshi.workspace.v1.TelemetrySample"> & {
   diskReadBytes: bigint;
 
   /**
+   * Bytes the VM wrote to its disks.
+   *
    * @generated from field: int64 disk_write_bytes = 9;
    */
   diskWriteBytes: bigint;
@@ -4434,6 +4716,8 @@ export type TelemetrySample = Message<"toshi.workspace.v1.TelemetrySample"> & {
   netRxBytes?: bigint | undefined;
 
   /**
+   * Bytes the guest sent on its network interfaces.
+   *
    * @generated from field: optional int64 net_tx_bytes = 11;
    */
   netTxBytes?: bigint | undefined;
@@ -4514,6 +4798,8 @@ export type TelemetrySampleJson = {
   diskReadBytes?: string;
 
   /**
+   * Bytes the VM wrote to its disks.
+   *
    * @generated from field: int64 disk_write_bytes = 9;
    */
   diskWriteBytes?: string;
@@ -4527,6 +4813,8 @@ export type TelemetrySampleJson = {
   netRxBytes?: string;
 
   /**
+   * Bytes the guest sent on its network interfaces.
+   *
    * @generated from field: optional int64 net_tx_bytes = 11;
    */
   netTxBytes?: string;
@@ -4571,15 +4859,21 @@ export const TelemetryEndSchema: GenMessage<TelemetryEnd, {jsonType: TelemetryEn
   messageDesc(file_toshi_workspace_v1_workspace, 39);
 
 /**
+ * WatchGuestLogRequest names the sandbox whose console output to follow.
+ *
  * @generated from message toshi.workspace.v1.WatchGuestLogRequest
  */
 export type WatchGuestLogRequest = Message<"toshi.workspace.v1.WatchGuestLogRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -4628,15 +4922,21 @@ export type WatchGuestLogRequest = Message<"toshi.workspace.v1.WatchGuestLogRequ
 };
 
 /**
+ * WatchGuestLogRequest names the sandbox whose console output to follow.
+ *
  * @generated from message toshi.workspace.v1.WatchGuestLogRequest
  */
 export type WatchGuestLogRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -4702,6 +5002,8 @@ export type WatchGuestLogResponse = Message<"toshi.workspace.v1.WatchGuestLogRes
    */
   message: {
     /**
+     * A run of console bytes, in order.
+     *
      * @generated from field: toshi.workspace.v1.GuestLogChunk chunk = 1;
      */
     value: GuestLogChunk;
@@ -4734,6 +5036,8 @@ export type WatchGuestLogResponse = Message<"toshi.workspace.v1.WatchGuestLogRes
  */
 export type WatchGuestLogResponseJson = {
   /**
+   * A run of console bytes, in order.
+   *
    * @generated from field: toshi.workspace.v1.GuestLogChunk chunk = 1;
    */
   chunk?: GuestLogChunkJson;
@@ -4778,6 +5082,8 @@ export type GuestLogChunk = Message<"toshi.workspace.v1.GuestLogChunk"> & {
   offset: bigint;
 
   /**
+   * The bytes the VM wrote.
+   *
    * @generated from field: bytes data = 2;
    */
   data: Uint8Array;
@@ -4814,6 +5120,8 @@ export type GuestLogChunkJson = {
   offset?: string;
 
   /**
+   * The bytes the VM wrote.
+   *
    * @generated from field: bytes data = 2;
    */
   data?: string;
@@ -4865,6 +5173,9 @@ export const GuestLogEndSchema: GenMessage<GuestLogEnd, {jsonType: GuestLogEndJs
   messageDesc(file_toshi_workspace_v1_workspace, 43);
 
 /**
+ * ExecuteRequest is one message of an Execute stream: the start, then
+ * standard input bytes and its closing.
+ *
  * @generated from message toshi.workspace.v1.ExecuteRequest
  */
 export type ExecuteRequest = Message<"toshi.workspace.v1.ExecuteRequest"> & {
@@ -4899,6 +5210,9 @@ export type ExecuteRequest = Message<"toshi.workspace.v1.ExecuteRequest"> & {
 };
 
 /**
+ * ExecuteRequest is one message of an Execute stream: the start, then
+ * standard input bytes and its closing.
+ *
  * @generated from message toshi.workspace.v1.ExecuteRequest
  */
 export type ExecuteRequestJson = {
@@ -4938,11 +5252,15 @@ export const ExecuteRequestSchema: GenMessage<ExecuteRequest, {jsonType: Execute
  */
 export type ExecuteStart = Message<"toshi.workspace.v1.ExecuteStart"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -4955,6 +5273,8 @@ export type ExecuteStart = Message<"toshi.workspace.v1.ExecuteStart"> & {
   sandboxId: string;
 
   /**
+   * The command to run.
+   *
    * @generated from field: toshi.workspace.v1.Command command = 4;
    */
   command?: Command | undefined;
@@ -4985,11 +5305,15 @@ export type ExecuteStart = Message<"toshi.workspace.v1.ExecuteStart"> & {
  */
 export type ExecuteStartJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -5002,6 +5326,8 @@ export type ExecuteStartJson = {
   sandboxId?: string;
 
   /**
+   * The command to run.
+   *
    * @generated from field: toshi.workspace.v1.Command command = 4;
    */
   command?: CommandJson;
@@ -5033,6 +5359,9 @@ export const ExecuteStartSchema: GenMessage<ExecuteStart, {jsonType: ExecuteStar
   messageDesc(file_toshi_workspace_v1_workspace, 45);
 
 /**
+ * ExecuteResponse is one message of an Execute stream: the start, the
+ * output bytes, then the exit.
+ *
  * @generated from message toshi.workspace.v1.ExecuteResponse
  */
 export type ExecuteResponse = Message<"toshi.workspace.v1.ExecuteResponse"> & {
@@ -5049,12 +5378,16 @@ export type ExecuteResponse = Message<"toshi.workspace.v1.ExecuteResponse"> & {
     case: "started";
   } | {
     /**
+     * A run of the command's standard output, in order.
+     *
      * @generated from field: bytes stdout = 2;
      */
     value: Uint8Array;
     case: "stdout";
   } | {
     /**
+     * A run of the command's standard error, in order.
+     *
      * @generated from field: bytes stderr = 3;
      */
     value: Uint8Array;
@@ -5071,6 +5404,9 @@ export type ExecuteResponse = Message<"toshi.workspace.v1.ExecuteResponse"> & {
 };
 
 /**
+ * ExecuteResponse is one message of an Execute stream: the start, the
+ * output bytes, then the exit.
+ *
  * @generated from message toshi.workspace.v1.ExecuteResponse
  */
 export type ExecuteResponseJson = {
@@ -5082,11 +5418,15 @@ export type ExecuteResponseJson = {
   started?: ExecutionStartedJson;
 
   /**
+   * A run of the command's standard output, in order.
+   *
    * @generated from field: bytes stdout = 2;
    */
   stdout?: string;
 
   /**
+   * A run of the command's standard error, in order.
+   *
    * @generated from field: bytes stderr = 3;
    */
   stderr?: string;
@@ -5113,11 +5453,15 @@ export const ExecuteResponseSchema: GenMessage<ExecuteResponse, {jsonType: Execu
  */
 export type ExecuteCommandRequest = Message<"toshi.workspace.v1.ExecuteCommandRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -5130,6 +5474,8 @@ export type ExecuteCommandRequest = Message<"toshi.workspace.v1.ExecuteCommandRe
   sandboxId: string;
 
   /**
+   * The command to run.
+   *
    * @generated from field: toshi.workspace.v1.Command command = 4;
    */
   command?: Command | undefined;
@@ -5160,11 +5506,15 @@ export type ExecuteCommandRequest = Message<"toshi.workspace.v1.ExecuteCommandRe
  */
 export type ExecuteCommandRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -5177,6 +5527,8 @@ export type ExecuteCommandRequestJson = {
   sandboxId?: string;
 
   /**
+   * The command to run.
+   *
    * @generated from field: toshi.workspace.v1.Command command = 4;
    */
   command?: CommandJson;
@@ -5208,6 +5560,9 @@ export const ExecuteCommandRequestSchema: GenMessage<ExecuteCommandRequest, {jso
   messageDesc(file_toshi_workspace_v1_workspace, 47);
 
 /**
+ * ExecuteCommandResponse is one message of an ExecuteCommand stream: the
+ * start, the output bytes, then the exit.
+ *
  * @generated from message toshi.workspace.v1.ExecuteCommandResponse
  */
 export type ExecuteCommandResponse = Message<"toshi.workspace.v1.ExecuteCommandResponse"> & {
@@ -5224,12 +5579,16 @@ export type ExecuteCommandResponse = Message<"toshi.workspace.v1.ExecuteCommandR
     case: "started";
   } | {
     /**
+     * A run of the command's standard output, in order.
+     *
      * @generated from field: bytes stdout = 2;
      */
     value: Uint8Array;
     case: "stdout";
   } | {
     /**
+     * A run of the command's standard error, in order.
+     *
      * @generated from field: bytes stderr = 3;
      */
     value: Uint8Array;
@@ -5246,6 +5605,9 @@ export type ExecuteCommandResponse = Message<"toshi.workspace.v1.ExecuteCommandR
 };
 
 /**
+ * ExecuteCommandResponse is one message of an ExecuteCommand stream: the
+ * start, the output bytes, then the exit.
+ *
  * @generated from message toshi.workspace.v1.ExecuteCommandResponse
  */
 export type ExecuteCommandResponseJson = {
@@ -5257,11 +5619,15 @@ export type ExecuteCommandResponseJson = {
   started?: ExecutionStartedJson;
 
   /**
+   * A run of the command's standard output, in order.
+   *
    * @generated from field: bytes stdout = 2;
    */
   stdout?: string;
 
   /**
+   * A run of the command's standard error, in order.
+   *
    * @generated from field: bytes stderr = 3;
    */
   stderr?: string;
@@ -5288,6 +5654,8 @@ export const ExecuteCommandResponseSchema: GenMessage<ExecuteCommandResponse, {j
  */
 export type ExecutionStarted = Message<"toshi.workspace.v1.ExecutionStarted"> & {
   /**
+   * The execution's ID.
+   *
    * @generated from field: string execution_id = 1;
    */
   executionId: string;
@@ -5300,6 +5668,8 @@ export type ExecutionStarted = Message<"toshi.workspace.v1.ExecutionStarted"> & 
  */
 export type ExecutionStartedJson = {
   /**
+   * The execution's ID.
+   *
    * @generated from field: string execution_id = 1;
    */
   executionId?: string;
@@ -5326,6 +5696,8 @@ export type ExecutionExit = Message<"toshi.workspace.v1.ExecutionExit"> & {
   exitCode?: number | undefined;
 
   /**
+   * True when the execution was cancelled.
+   *
    * @generated from field: bool cancelled = 2;
    */
   cancelled: boolean;
@@ -5345,6 +5717,8 @@ export type ExecutionExitJson = {
   exitCode?: number;
 
   /**
+   * True when the execution was cancelled.
+   *
    * @generated from field: bool cancelled = 2;
    */
   cancelled?: boolean;
@@ -5358,25 +5732,36 @@ export const ExecutionExitSchema: GenMessage<ExecutionExit, {jsonType: Execution
   messageDesc(file_toshi_workspace_v1_workspace, 50);
 
 /**
+ * CancelExecutionRequest cancels one execution of a sandbox.
+ *
  * @generated from message toshi.workspace.v1.CancelExecutionRequest
  */
 export type CancelExecutionRequest = Message<"toshi.workspace.v1.CancelExecutionRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The execution's ID.
+   *
    * @generated from field: string execution_id = 3;
    */
   executionId: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
@@ -5392,25 +5777,36 @@ export type CancelExecutionRequest = Message<"toshi.workspace.v1.CancelExecution
 };
 
 /**
+ * CancelExecutionRequest cancels one execution of a sandbox.
+ *
  * @generated from message toshi.workspace.v1.CancelExecutionRequest
  */
 export type CancelExecutionRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The execution's ID.
+   *
    * @generated from field: string execution_id = 3;
    */
   executionId?: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -5433,12 +5829,18 @@ export const CancelExecutionRequestSchema: GenMessage<CancelExecutionRequest, {j
   messageDesc(file_toshi_workspace_v1_workspace, 51);
 
 /**
+ * CancelExecutionResponse has no fields; the cancellation is recorded
+ * on the execution.
+ *
  * @generated from message toshi.workspace.v1.CancelExecutionResponse
  */
 export type CancelExecutionResponse = Message<"toshi.workspace.v1.CancelExecutionResponse"> & {
 };
 
 /**
+ * CancelExecutionResponse has no fields; the cancellation is recorded
+ * on the execution.
+ *
  * @generated from message toshi.workspace.v1.CancelExecutionResponse
  */
 export type CancelExecutionResponseJson = {
@@ -5459,6 +5861,8 @@ export const CancelExecutionResponseSchema: GenMessage<CancelExecutionResponse, 
  */
 export type Operation = Message<"toshi.workspace.v1.Operation"> & {
   /**
+   * The operation's ID.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -5471,6 +5875,8 @@ export type Operation = Message<"toshi.workspace.v1.Operation"> & {
   workloadId: string;
 
   /**
+   * Whether the action finished; false while it runs.
+   *
    * @generated from field: bool done = 3;
    */
   done: boolean;
@@ -5483,11 +5889,15 @@ export type Operation = Message<"toshi.workspace.v1.Operation"> & {
   error?: Error | undefined;
 
   /**
+   * When it was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When it finished; unset until done.
+   *
    * @generated from field: google.protobuf.Timestamp done_at = 6;
    */
   doneAt?: Timestamp | undefined;
@@ -5501,6 +5911,8 @@ export type Operation = Message<"toshi.workspace.v1.Operation"> & {
  */
 export type OperationJson = {
   /**
+   * The operation's ID.
+   *
    * @generated from field: string id = 1;
    */
   id?: string;
@@ -5513,6 +5925,8 @@ export type OperationJson = {
   workloadId?: string;
 
   /**
+   * Whether the action finished; false while it runs.
+   *
    * @generated from field: bool done = 3;
    */
   done?: boolean;
@@ -5525,11 +5939,15 @@ export type OperationJson = {
   error?: ErrorJson;
 
   /**
+   * When it was created.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When it finished; unset until done.
+   *
    * @generated from field: google.protobuf.Timestamp done_at = 6;
    */
   doneAt?: TimestampJson;
@@ -5543,40 +5961,56 @@ export const OperationSchema: GenMessage<Operation, {jsonType: OperationJson}> =
   messageDesc(file_toshi_workspace_v1_workspace, 53);
 
 /**
+ * GetOperationRequest names an operation to read.
+ *
  * @generated from message toshi.workspace.v1.GetOperationRequest
  */
 export type GetOperationRequest = Message<"toshi.workspace.v1.GetOperationRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The operation's ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 };
 
 /**
+ * GetOperationRequest names an operation to read.
+ *
  * @generated from message toshi.workspace.v1.GetOperationRequest
  */
 export type GetOperationRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The operation's ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -5590,20 +6024,28 @@ export const GetOperationRequestSchema: GenMessage<GetOperationRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_workspace, 54);
 
 /**
+ * GetOperationResponse is the operation as it is now.
+ *
  * @generated from message toshi.workspace.v1.GetOperationResponse
  */
 export type GetOperationResponse = Message<"toshi.workspace.v1.GetOperationResponse"> & {
   /**
+   * The operation.
+   *
    * @generated from field: toshi.workspace.v1.Operation operation = 1;
    */
   operation?: Operation | undefined;
 };
 
 /**
+ * GetOperationResponse is the operation as it is now.
+ *
  * @generated from message toshi.workspace.v1.GetOperationResponse
  */
 export type GetOperationResponseJson = {
   /**
+   * The operation.
+   *
    * @generated from field: toshi.workspace.v1.Operation operation = 1;
    */
   operation?: OperationJson;
@@ -5617,20 +6059,28 @@ export const GetOperationResponseSchema: GenMessage<GetOperationResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_workspace, 55);
 
 /**
+ * WaitOperationRequest names an operation to wait on.
+ *
  * @generated from message toshi.workspace.v1.WaitOperationRequest
  */
 export type WaitOperationRequest = Message<"toshi.workspace.v1.WaitOperationRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The operation's ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
@@ -5644,20 +6094,28 @@ export type WaitOperationRequest = Message<"toshi.workspace.v1.WaitOperationRequ
 };
 
 /**
+ * WaitOperationRequest names an operation to wait on.
+ *
  * @generated from message toshi.workspace.v1.WaitOperationRequest
  */
 export type WaitOperationRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The operation's ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -5678,20 +6136,28 @@ export const WaitOperationRequestSchema: GenMessage<WaitOperationRequest, {jsonT
   messageDesc(file_toshi_workspace_v1_workspace, 56);
 
 /**
+ * WaitOperationResponse is the operation as it is when the call returns.
+ *
  * @generated from message toshi.workspace.v1.WaitOperationResponse
  */
 export type WaitOperationResponse = Message<"toshi.workspace.v1.WaitOperationResponse"> & {
   /**
+   * The operation.
+   *
    * @generated from field: toshi.workspace.v1.Operation operation = 1;
    */
   operation?: Operation | undefined;
 };
 
 /**
+ * WaitOperationResponse is the operation as it is when the call returns.
+ *
  * @generated from message toshi.workspace.v1.WaitOperationResponse
  */
 export type WaitOperationResponseJson = {
   /**
+   * The operation.
+   *
    * @generated from field: toshi.workspace.v1.Operation operation = 1;
    */
   operation?: OperationJson;
@@ -5907,6 +6373,8 @@ export type Event = Message<"toshi.workspace.v1.Event"> & {
   id: string;
 
   /**
+   * The event's type.
+   *
    * @generated from field: toshi.workspace.v1.EventType type = 2;
    */
   type: EventType;
@@ -6168,6 +6636,8 @@ export type EventJson = {
   id?: string;
 
   /**
+   * The event's type.
+   *
    * @generated from field: toshi.workspace.v1.EventType type = 2;
    */
   type?: EventTypeJson;
@@ -6400,11 +6870,15 @@ export const EventSchema: GenMessage<Event, {jsonType: EventJson}> = /*@__PURE__
  */
 export type EndpointCreationFailedEvent = Message<"toshi.workspace.v1.EndpointCreationFailedEvent"> & {
   /**
+   * The endpoint's name on its workload.
+   *
    * @generated from field: string endpoint = 1;
    */
   endpoint: string;
 
   /**
+   * Why Toshi did not make it.
+   *
    * @generated from field: string message = 2;
    */
   message: string;
@@ -6417,11 +6891,15 @@ export type EndpointCreationFailedEvent = Message<"toshi.workspace.v1.EndpointCr
  */
 export type EndpointCreationFailedEventJson = {
   /**
+   * The endpoint's name on its workload.
+   *
    * @generated from field: string endpoint = 1;
    */
   endpoint?: string;
 
   /**
+   * Why Toshi did not make it.
+   *
    * @generated from field: string message = 2;
    */
   message?: string;
@@ -6522,21 +7000,29 @@ export const MailNoticeEventSchema: GenMessage<MailNoticeEvent, {jsonType: MailN
  */
 export type ServiceRolledEvent = Message<"toshi.workspace.v1.ServiceRolledEvent"> & {
   /**
+   * The revision the roll moved from.
+   *
    * @generated from field: int64 from_revision = 1;
    */
   fromRevision: bigint;
 
   /**
+   * The revision it moved to.
+   *
    * @generated from field: int64 to_revision = 2;
    */
   toRevision: bigint;
 
   /**
+   * The job ID of the run that ran from_revision.
+   *
    * @generated from field: string from_run = 3;
    */
   fromRun: string;
 
   /**
+   * The job ID of the run that runs to_revision.
+   *
    * @generated from field: string to_run = 4;
    */
   toRun: string;
@@ -6549,6 +7035,8 @@ export type ServiceRolledEvent = Message<"toshi.workspace.v1.ServiceRolledEvent"
   outcome: string;
 
   /**
+   * Why, when the outcome is FAILED or FELL_BACK.
+   *
    * @generated from field: string reason = 6;
    */
   reason: string;
@@ -6561,21 +7049,29 @@ export type ServiceRolledEvent = Message<"toshi.workspace.v1.ServiceRolledEvent"
  */
 export type ServiceRolledEventJson = {
   /**
+   * The revision the roll moved from.
+   *
    * @generated from field: int64 from_revision = 1;
    */
   fromRevision?: string;
 
   /**
+   * The revision it moved to.
+   *
    * @generated from field: int64 to_revision = 2;
    */
   toRevision?: string;
 
   /**
+   * The job ID of the run that ran from_revision.
+   *
    * @generated from field: string from_run = 3;
    */
   fromRun?: string;
 
   /**
+   * The job ID of the run that runs to_revision.
+   *
    * @generated from field: string to_run = 4;
    */
   toRun?: string;
@@ -6588,6 +7084,8 @@ export type ServiceRolledEventJson = {
   outcome?: string;
 
   /**
+   * Why, when the outcome is FAILED or FELL_BACK.
+   *
    * @generated from field: string reason = 6;
    */
   reason?: string;
@@ -6965,6 +7463,8 @@ export type SecretWithheldEvent = Message<"toshi.workspace.v1.SecretWithheldEven
   executionId: string;
 
   /**
+   * The keys withheld.
+   *
    * @generated from field: repeated toshi.workspace.v1.WithheldSecret keys = 3;
    */
   keys: WithheldSecret[];
@@ -6994,6 +7494,8 @@ export type SecretWithheldEventJson = {
   executionId?: string;
 
   /**
+   * The keys withheld.
+   *
    * @generated from field: repeated toshi.workspace.v1.WithheldSecret keys = 3;
    */
   keys?: WithheldSecretJson[];
@@ -7086,6 +7588,8 @@ export type EgressDeniedEvent = Message<"toshi.workspace.v1.EgressDeniedEvent"> 
   runId: string;
 
   /**
+   * The denials, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.EgressDenial denials = 2;
    */
   denials: EgressDenial[];
@@ -7106,6 +7610,8 @@ export type EgressDeniedEventJson = {
   runId?: string;
 
   /**
+   * The denials, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.EgressDenial denials = 2;
    */
   denials?: EgressDenialJson[];
@@ -7253,11 +7759,15 @@ export const EgressDenialSchema: GenMessage<EgressDenial, {jsonType: EgressDenia
  */
 export type TriggerResult = Message<"toshi.workspace.v1.TriggerResult"> & {
   /**
+   * The trigger's ID.
+   *
    * @generated from field: string trigger_id = 1;
    */
   triggerId: string;
 
   /**
+   * The trigger's name.
+   *
    * @generated from field: string trigger_name = 2;
    */
   triggerName: string;
@@ -7333,11 +7843,15 @@ export type TriggerResult = Message<"toshi.workspace.v1.TriggerResult"> & {
  */
 export type TriggerResultJson = {
   /**
+   * The trigger's ID.
+   *
    * @generated from field: string trigger_id = 1;
    */
   triggerId?: string;
 
   /**
+   * The trigger's name.
+   *
    * @generated from field: string trigger_name = 2;
    */
   triggerName?: string;
@@ -7417,11 +7931,15 @@ export const TriggerResultSchema: GenMessage<TriggerResult, {jsonType: TriggerRe
  */
 export type ExecutionEvent = Message<"toshi.workspace.v1.ExecutionEvent"> & {
   /**
+   * The execution's ID.
+   *
    * @generated from field: string execution_id = 1;
    */
   executionId: string;
 
   /**
+   * The command's program and arguments.
+   *
    * @generated from field: repeated string argv = 2;
    */
   argv: string[];
@@ -7441,11 +7959,15 @@ export type ExecutionEvent = Message<"toshi.workspace.v1.ExecutionEvent"> & {
  */
 export type ExecutionEventJson = {
   /**
+   * The execution's ID.
+   *
    * @generated from field: string execution_id = 1;
    */
   executionId?: string;
 
   /**
+   * The command's program and arguments.
+   *
    * @generated from field: repeated string argv = 2;
    */
   argv?: string[];
@@ -7472,6 +7994,8 @@ export const ExecutionEventSchema: GenMessage<ExecutionEvent, {jsonType: Executi
  */
 export type EmittedEvent = Message<"toshi.workspace.v1.EmittedEvent"> & {
   /**
+   * The bytes the guest emitted.
+   *
    * @generated from field: bytes data = 1;
    */
   data: Uint8Array;
@@ -7484,6 +8008,8 @@ export type EmittedEvent = Message<"toshi.workspace.v1.EmittedEvent"> & {
  */
 export type EmittedEventJson = {
   /**
+   * The bytes the guest emitted.
+   *
    * @generated from field: bytes data = 1;
    */
   data?: string;
@@ -7888,6 +8414,8 @@ export type AgentPrompt = Message<"toshi.workspace.v1.AgentPrompt"> & {
   kind: string;
 
   /**
+   * What the prompt asks, in the agent's words.
+   *
    * @generated from field: string text = 4;
    */
   text: string;
@@ -7908,6 +8436,8 @@ export type AgentPrompt = Message<"toshi.workspace.v1.AgentPrompt"> & {
   eventId: string;
 
   /**
+   * When the agent asked it.
+   *
    * @generated from field: google.protobuf.Timestamp asked_at = 7;
    */
   askedAt?: Timestamp | undefined;
@@ -8006,6 +8536,8 @@ export type AgentPromptJson = {
   kind?: string;
 
   /**
+   * What the prompt asks, in the agent's words.
+   *
    * @generated from field: string text = 4;
    */
   text?: string;
@@ -8026,6 +8558,8 @@ export type AgentPromptJson = {
   eventId?: string;
 
   /**
+   * When the agent asked it.
+   *
    * @generated from field: google.protobuf.Timestamp asked_at = 7;
    */
   askedAt?: TimestampJson;
@@ -8148,11 +8682,15 @@ export const ConnectionEventSchema: GenMessage<ConnectionEvent, {jsonType: Conne
  */
 export type RecordingEvent = Message<"toshi.workspace.v1.RecordingEvent"> & {
   /**
+   * The recording's ID.
+   *
    * @generated from field: string recording_id = 1;
    */
   recordingId: string;
 
   /**
+   * The artifact the recording is kept in.
+   *
    * @generated from field: string artifact_id = 2;
    */
   artifactId: string;
@@ -8174,11 +8712,15 @@ export type RecordingEvent = Message<"toshi.workspace.v1.RecordingEvent"> & {
  */
 export type RecordingEventJson = {
   /**
+   * The recording's ID.
+   *
    * @generated from field: string recording_id = 1;
    */
   recordingId?: string;
 
   /**
+   * The artifact the recording is kept in.
+   *
    * @generated from field: string artifact_id = 2;
    */
   artifactId?: string;
@@ -8200,15 +8742,21 @@ export const RecordingEventSchema: GenMessage<RecordingEvent, {jsonType: Recordi
   messageDesc(file_toshi_workspace_v1_workspace, 82);
 
 /**
+ * ListEventsRequest selects events of the workload event log.
+ *
  * @generated from message toshi.workspace.v1.ListEventsRequest
  */
 export type ListEventsRequest = Message<"toshi.workspace.v1.ListEventsRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -8252,15 +8800,21 @@ export type ListEventsRequest = Message<"toshi.workspace.v1.ListEventsRequest"> 
 };
 
 /**
+ * ListEventsRequest selects events of the workload event log.
+ *
  * @generated from message toshi.workspace.v1.ListEventsRequest
  */
 export type ListEventsRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -8311,10 +8865,14 @@ export const ListEventsRequestSchema: GenMessage<ListEventsRequest, {jsonType: L
   messageDesc(file_toshi_workspace_v1_workspace, 83);
 
 /**
+ * ListEventsResponse is one page of events.
+ *
  * @generated from message toshi.workspace.v1.ListEventsResponse
  */
 export type ListEventsResponse = Message<"toshi.workspace.v1.ListEventsResponse"> & {
   /**
+   * The events, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Event events = 1;
    */
   events: Event[];
@@ -8347,10 +8905,14 @@ export type ListEventsResponse = Message<"toshi.workspace.v1.ListEventsResponse"
 };
 
 /**
+ * ListEventsResponse is one page of events.
+ *
  * @generated from message toshi.workspace.v1.ListEventsResponse
  */
 export type ListEventsResponseJson = {
   /**
+   * The events, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.Event events = 1;
    */
   events?: EventJson[];
@@ -8390,15 +8952,21 @@ export const ListEventsResponseSchema: GenMessage<ListEventsResponse, {jsonType:
   messageDesc(file_toshi_workspace_v1_workspace, 84);
 
 /**
+ * WatchEventsRequest names the events to follow.
+ *
  * @generated from message toshi.workspace.v1.WatchEventsRequest
  */
 export type WatchEventsRequest = Message<"toshi.workspace.v1.WatchEventsRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -8429,15 +8997,21 @@ export type WatchEventsRequest = Message<"toshi.workspace.v1.WatchEventsRequest"
 };
 
 /**
+ * WatchEventsRequest names the events to follow.
+ *
  * @generated from message toshi.workspace.v1.WatchEventsRequest
  */
 export type WatchEventsRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -8475,10 +9049,15 @@ export const WatchEventsRequestSchema: GenMessage<WatchEventsRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_workspace, 85);
 
 /**
+ * WatchEventsResponse is one message of a WatchEvents stream: an event or
+ * a keepalive.
+ *
  * @generated from message toshi.workspace.v1.WatchEventsResponse
  */
 export type WatchEventsResponse = Message<"toshi.workspace.v1.WatchEventsResponse"> & {
   /**
+   * The event; unset on a keepalive.
+   *
    * @generated from field: toshi.workspace.v1.Event event = 1;
    */
   event?: Event | undefined;
@@ -8493,10 +9072,15 @@ export type WatchEventsResponse = Message<"toshi.workspace.v1.WatchEventsRespons
 };
 
 /**
+ * WatchEventsResponse is one message of a WatchEvents stream: an event or
+ * a keepalive.
+ *
  * @generated from message toshi.workspace.v1.WatchEventsResponse
  */
 export type WatchEventsResponseJson = {
   /**
+   * The event; unset on a keepalive.
+   *
    * @generated from field: toshi.workspace.v1.Event event = 1;
    */
   event?: EventJson;
@@ -8598,16 +9182,22 @@ export type PreviewShareLink = Message<"toshi.workspace.v1.PreviewShareLink"> & 
   sandboxId: string;
 
   /**
+   * Where the link is in its life.
+   *
    * @generated from field: toshi.workspace.v1.PreviewShareLinkState state = 3;
    */
   state: PreviewShareLinkState;
 
   /**
+   * When it was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When it stops admitting its device.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 5;
    */
   expiresAt?: Timestamp | undefined;
@@ -8685,16 +9275,22 @@ export type PreviewShareLinkJson = {
   sandboxId?: string;
 
   /**
+   * Where the link is in its life.
+   *
    * @generated from field: toshi.workspace.v1.PreviewShareLinkState state = 3;
    */
   state?: PreviewShareLinkStateJson;
 
   /**
+   * When it was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 4;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When it stops admitting its device.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 5;
    */
   expiresAt?: TimestampJson;
@@ -8758,15 +9354,22 @@ export const PreviewShareLinkSchema: GenMessage<PreviewShareLink, {jsonType: Pre
   messageDesc(file_toshi_workspace_v1_workspace, 88);
 
 /**
+ * CreatePreviewShareLinkRequest mints a share link for one of a
+ * sandbox's previews.
+ *
  * @generated from message toshi.workspace.v1.CreatePreviewShareLinkRequest
  */
 export type CreatePreviewShareLinkRequest = Message<"toshi.workspace.v1.CreatePreviewShareLinkRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -8802,12 +9405,16 @@ export type CreatePreviewShareLinkRequest = Message<"toshi.workspace.v1.CreatePr
    */
   endpointRef: {
     /**
+     * The endpoint to open, by its name.
+     *
      * @generated from field: string endpoint = 6;
      */
     value: string;
     case: "endpoint";
   } | {
     /**
+     * The endpoint to open, by its guest port.
+     *
      * @generated from field: int32 port = 7;
      */
     value: number;
@@ -8827,15 +9434,22 @@ export type CreatePreviewShareLinkRequest = Message<"toshi.workspace.v1.CreatePr
 };
 
 /**
+ * CreatePreviewShareLinkRequest mints a share link for one of a
+ * sandbox's previews.
+ *
  * @generated from message toshi.workspace.v1.CreatePreviewShareLinkRequest
  */
 export type CreatePreviewShareLinkRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -8864,11 +9478,15 @@ export type CreatePreviewShareLinkRequestJson = {
   maxBytes?: string;
 
   /**
+   * The endpoint to open, by its name.
+   *
    * @generated from field: string endpoint = 6;
    */
   endpoint?: string;
 
   /**
+   * The endpoint to open, by its guest port.
+   *
    * @generated from field: int32 port = 7;
    */
   port?: number;
@@ -8893,10 +9511,15 @@ export const CreatePreviewShareLinkRequestSchema: GenMessage<CreatePreviewShareL
   messageDesc(file_toshi_workspace_v1_workspace, 89);
 
 /**
+ * CreatePreviewShareLinkResponse is the new link and the URL that carries
+ * it.
+ *
  * @generated from message toshi.workspace.v1.CreatePreviewShareLinkResponse
  */
 export type CreatePreviewShareLinkResponse = Message<"toshi.workspace.v1.CreatePreviewShareLinkResponse"> & {
   /**
+   * The new link.
+   *
    * @generated from field: toshi.workspace.v1.PreviewShareLink share_link = 1;
    */
   shareLink?: PreviewShareLink | undefined;
@@ -8911,10 +9534,15 @@ export type CreatePreviewShareLinkResponse = Message<"toshi.workspace.v1.CreateP
 };
 
 /**
+ * CreatePreviewShareLinkResponse is the new link and the URL that carries
+ * it.
+ *
  * @generated from message toshi.workspace.v1.CreatePreviewShareLinkResponse
  */
 export type CreatePreviewShareLinkResponseJson = {
   /**
+   * The new link.
+   *
    * @generated from field: toshi.workspace.v1.PreviewShareLink share_link = 1;
    */
   shareLink?: PreviewShareLinkJson;
@@ -8936,20 +9564,28 @@ export const CreatePreviewShareLinkResponseSchema: GenMessage<CreatePreviewShare
   messageDesc(file_toshi_workspace_v1_workspace, 90);
 
 /**
+ * ListPreviewShareLinksRequest lists a sandbox's share links.
+ *
  * @generated from message toshi.workspace.v1.ListPreviewShareLinksRequest
  */
 export type ListPreviewShareLinksRequest = Message<"toshi.workspace.v1.ListPreviewShareLinksRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The sandbox's ID.
+   *
    * @generated from field: string sandbox_id = 3;
    */
   sandboxId: string;
@@ -8970,20 +9606,28 @@ export type ListPreviewShareLinksRequest = Message<"toshi.workspace.v1.ListPrevi
 };
 
 /**
+ * ListPreviewShareLinksRequest lists a sandbox's share links.
+ *
  * @generated from message toshi.workspace.v1.ListPreviewShareLinksRequest
  */
 export type ListPreviewShareLinksRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The sandbox's ID.
+   *
    * @generated from field: string sandbox_id = 3;
    */
   sandboxId?: string;
@@ -9011,10 +9655,14 @@ export const ListPreviewShareLinksRequestSchema: GenMessage<ListPreviewShareLink
   messageDesc(file_toshi_workspace_v1_workspace, 91);
 
 /**
+ * ListPreviewShareLinksResponse is one page of a sandbox's share links.
+ *
  * @generated from message toshi.workspace.v1.ListPreviewShareLinksResponse
  */
 export type ListPreviewShareLinksResponse = Message<"toshi.workspace.v1.ListPreviewShareLinksResponse"> & {
   /**
+   * The links, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.PreviewShareLink share_links = 1;
    */
   shareLinks: PreviewShareLink[];
@@ -9028,10 +9676,14 @@ export type ListPreviewShareLinksResponse = Message<"toshi.workspace.v1.ListPrev
 };
 
 /**
+ * ListPreviewShareLinksResponse is one page of a sandbox's share links.
+ *
  * @generated from message toshi.workspace.v1.ListPreviewShareLinksResponse
  */
 export type ListPreviewShareLinksResponseJson = {
   /**
+   * The links, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.PreviewShareLink share_links = 1;
    */
   shareLinks?: PreviewShareLinkJson[];
@@ -9052,50 +9704,70 @@ export const ListPreviewShareLinksResponseSchema: GenMessage<ListPreviewShareLin
   messageDesc(file_toshi_workspace_v1_workspace, 92);
 
 /**
+ * RevokePreviewShareLinkRequest revokes one share link of a sandbox.
+ *
  * @generated from message toshi.workspace.v1.RevokePreviewShareLinkRequest
  */
 export type RevokePreviewShareLinkRequest = Message<"toshi.workspace.v1.RevokePreviewShareLinkRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The sandbox's ID.
+   *
    * @generated from field: string sandbox_id = 3;
    */
   sandboxId: string;
 
   /**
+   * The link's ID.
+   *
    * @generated from field: string share_link_id = 4;
    */
   shareLinkId: string;
 };
 
 /**
+ * RevokePreviewShareLinkRequest revokes one share link of a sandbox.
+ *
  * @generated from message toshi.workspace.v1.RevokePreviewShareLinkRequest
  */
 export type RevokePreviewShareLinkRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The sandbox's ID.
+   *
    * @generated from field: string sandbox_id = 3;
    */
   sandboxId?: string;
 
   /**
+   * The link's ID.
+   *
    * @generated from field: string share_link_id = 4;
    */
   shareLinkId?: string;
@@ -9109,20 +9781,28 @@ export const RevokePreviewShareLinkRequestSchema: GenMessage<RevokePreviewShareL
   messageDesc(file_toshi_workspace_v1_workspace, 93);
 
 /**
+ * RevokePreviewShareLinkResponse is the link after the revocation.
+ *
  * @generated from message toshi.workspace.v1.RevokePreviewShareLinkResponse
  */
 export type RevokePreviewShareLinkResponse = Message<"toshi.workspace.v1.RevokePreviewShareLinkResponse"> & {
   /**
+   * The link after the revocation.
+   *
    * @generated from field: toshi.workspace.v1.PreviewShareLink share_link = 1;
    */
   shareLink?: PreviewShareLink | undefined;
 };
 
 /**
+ * RevokePreviewShareLinkResponse is the link after the revocation.
+ *
  * @generated from message toshi.workspace.v1.RevokePreviewShareLinkResponse
  */
 export type RevokePreviewShareLinkResponseJson = {
   /**
+   * The link after the revocation.
+   *
    * @generated from field: toshi.workspace.v1.PreviewShareLink share_link = 1;
    */
   shareLink?: PreviewShareLinkJson;
@@ -9166,16 +9846,22 @@ export type ServiceShareLink = Message<"toshi.workspace.v1.ServiceShareLink"> & 
   endpoint: string;
 
   /**
+   * Where the link is in its life.
+   *
    * @generated from field: toshi.workspace.v1.PreviewShareLinkState state = 4;
    */
   state: PreviewShareLinkState;
 
   /**
+   * When it was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: Timestamp | undefined;
 
   /**
+   * When it stops admitting its device.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 6;
    */
   expiresAt?: Timestamp | undefined;
@@ -9247,16 +9933,22 @@ export type ServiceShareLinkJson = {
   endpoint?: string;
 
   /**
+   * Where the link is in its life.
+   *
    * @generated from field: toshi.workspace.v1.PreviewShareLinkState state = 4;
    */
   state?: PreviewShareLinkStateJson;
 
   /**
+   * When it was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: TimestampJson;
 
   /**
+   * When it stops admitting its device.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 6;
    */
   expiresAt?: TimestampJson;
@@ -9305,15 +9997,22 @@ export const ServiceShareLinkSchema: GenMessage<ServiceShareLink, {jsonType: Ser
   messageDesc(file_toshi_workspace_v1_workspace, 95);
 
 /**
+ * CreateServiceShareLinkRequest mints a share link for one of a
+ * service's provided names.
+ *
  * @generated from message toshi.workspace.v1.CreateServiceShareLinkRequest
  */
 export type CreateServiceShareLinkRequest = Message<"toshi.workspace.v1.CreateServiceShareLinkRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -9362,15 +10061,22 @@ export type CreateServiceShareLinkRequest = Message<"toshi.workspace.v1.CreateSe
 };
 
 /**
+ * CreateServiceShareLinkRequest mints a share link for one of a
+ * service's provided names.
+ *
  * @generated from message toshi.workspace.v1.CreateServiceShareLinkRequest
  */
 export type CreateServiceShareLinkRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -9426,10 +10132,15 @@ export const CreateServiceShareLinkRequestSchema: GenMessage<CreateServiceShareL
   messageDesc(file_toshi_workspace_v1_workspace, 96);
 
 /**
+ * CreateServiceShareLinkResponse is the new link and the URL that carries
+ * it.
+ *
  * @generated from message toshi.workspace.v1.CreateServiceShareLinkResponse
  */
 export type CreateServiceShareLinkResponse = Message<"toshi.workspace.v1.CreateServiceShareLinkResponse"> & {
   /**
+   * The new link.
+   *
    * @generated from field: toshi.workspace.v1.ServiceShareLink share_link = 1;
    */
   shareLink?: ServiceShareLink | undefined;
@@ -9444,10 +10155,15 @@ export type CreateServiceShareLinkResponse = Message<"toshi.workspace.v1.CreateS
 };
 
 /**
+ * CreateServiceShareLinkResponse is the new link and the URL that carries
+ * it.
+ *
  * @generated from message toshi.workspace.v1.CreateServiceShareLinkResponse
  */
 export type CreateServiceShareLinkResponseJson = {
   /**
+   * The new link.
+   *
    * @generated from field: toshi.workspace.v1.ServiceShareLink share_link = 1;
    */
   shareLink?: ServiceShareLinkJson;
@@ -9469,15 +10185,21 @@ export const CreateServiceShareLinkResponseSchema: GenMessage<CreateServiceShare
   messageDesc(file_toshi_workspace_v1_workspace, 97);
 
 /**
+ * ListServiceShareLinksRequest lists a service's share links.
+ *
  * @generated from message toshi.workspace.v1.ListServiceShareLinksRequest
  */
 export type ListServiceShareLinksRequest = Message<"toshi.workspace.v1.ListServiceShareLinksRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -9505,15 +10227,21 @@ export type ListServiceShareLinksRequest = Message<"toshi.workspace.v1.ListServi
 };
 
 /**
+ * ListServiceShareLinksRequest lists a service's share links.
+ *
  * @generated from message toshi.workspace.v1.ListServiceShareLinksRequest
  */
 export type ListServiceShareLinksRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -9548,10 +10276,14 @@ export const ListServiceShareLinksRequestSchema: GenMessage<ListServiceShareLink
   messageDesc(file_toshi_workspace_v1_workspace, 98);
 
 /**
+ * ListServiceShareLinksResponse is one page of a service's share links.
+ *
  * @generated from message toshi.workspace.v1.ListServiceShareLinksResponse
  */
 export type ListServiceShareLinksResponse = Message<"toshi.workspace.v1.ListServiceShareLinksResponse"> & {
   /**
+   * The links, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.ServiceShareLink share_links = 1;
    */
   shareLinks: ServiceShareLink[];
@@ -9565,10 +10297,14 @@ export type ListServiceShareLinksResponse = Message<"toshi.workspace.v1.ListServ
 };
 
 /**
+ * ListServiceShareLinksResponse is one page of a service's share links.
+ *
  * @generated from message toshi.workspace.v1.ListServiceShareLinksResponse
  */
 export type ListServiceShareLinksResponseJson = {
   /**
+   * The links, oldest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.ServiceShareLink share_links = 1;
    */
   shareLinks?: ServiceShareLinkJson[];
@@ -9589,15 +10325,21 @@ export const ListServiceShareLinksResponseSchema: GenMessage<ListServiceShareLin
   messageDesc(file_toshi_workspace_v1_workspace, 99);
 
 /**
+ * RevokeServiceShareLinkRequest revokes one share link of a service.
+ *
  * @generated from message toshi.workspace.v1.RevokeServiceShareLinkRequest
  */
 export type RevokeServiceShareLinkRequest = Message<"toshi.workspace.v1.RevokeServiceShareLinkRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -9610,21 +10352,29 @@ export type RevokeServiceShareLinkRequest = Message<"toshi.workspace.v1.RevokeSe
   serviceId: string;
 
   /**
+   * The link's ID.
+   *
    * @generated from field: string share_link_id = 4;
    */
   shareLinkId: string;
 };
 
 /**
+ * RevokeServiceShareLinkRequest revokes one share link of a service.
+ *
  * @generated from message toshi.workspace.v1.RevokeServiceShareLinkRequest
  */
 export type RevokeServiceShareLinkRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -9637,6 +10387,8 @@ export type RevokeServiceShareLinkRequestJson = {
   serviceId?: string;
 
   /**
+   * The link's ID.
+   *
    * @generated from field: string share_link_id = 4;
    */
   shareLinkId?: string;
@@ -9650,20 +10402,28 @@ export const RevokeServiceShareLinkRequestSchema: GenMessage<RevokeServiceShareL
   messageDesc(file_toshi_workspace_v1_workspace, 100);
 
 /**
+ * RevokeServiceShareLinkResponse is the link after the revocation.
+ *
  * @generated from message toshi.workspace.v1.RevokeServiceShareLinkResponse
  */
 export type RevokeServiceShareLinkResponse = Message<"toshi.workspace.v1.RevokeServiceShareLinkResponse"> & {
   /**
+   * The link after the revocation.
+   *
    * @generated from field: toshi.workspace.v1.ServiceShareLink share_link = 1;
    */
   shareLink?: ServiceShareLink | undefined;
 };
 
 /**
+ * RevokeServiceShareLinkResponse is the link after the revocation.
+ *
  * @generated from message toshi.workspace.v1.RevokeServiceShareLinkResponse
  */
 export type RevokeServiceShareLinkResponseJson = {
   /**
+   * The link after the revocation.
+   *
    * @generated from field: toshi.workspace.v1.ServiceShareLink share_link = 1;
    */
   shareLink?: ServiceShareLinkJson;
@@ -9677,50 +10437,72 @@ export const RevokeServiceShareLinkResponseSchema: GenMessage<RevokeServiceShare
   messageDesc(file_toshi_workspace_v1_workspace, 101);
 
 /**
+ * StartSandboxRequest starts a stopped sandbox.
+ *
  * @generated from message toshi.workspace.v1.StartSandboxRequest
  */
 export type StartSandboxRequest = Message<"toshi.workspace.v1.StartSandboxRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The sandbox's ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * StartSandboxRequest starts a stopped sandbox.
+ *
  * @generated from message toshi.workspace.v1.StartSandboxRequest
  */
 export type StartSandboxRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The sandbox's ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -9734,20 +10516,28 @@ export const StartSandboxRequestSchema: GenMessage<StartSandboxRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_workspace, 102);
 
 /**
+ * StartSandboxResponse is the sandbox after the start.
+ *
  * @generated from message toshi.workspace.v1.StartSandboxResponse
  */
 export type StartSandboxResponse = Message<"toshi.workspace.v1.StartSandboxResponse"> & {
   /**
+   * The sandbox after the start.
+   *
    * @generated from field: toshi.workspace.v1.Sandbox sandbox = 1;
    */
   sandbox?: Sandbox | undefined;
 };
 
 /**
+ * StartSandboxResponse is the sandbox after the start.
+ *
  * @generated from message toshi.workspace.v1.StartSandboxResponse
  */
 export type StartSandboxResponseJson = {
   /**
+   * The sandbox after the start.
+   *
    * @generated from field: toshi.workspace.v1.Sandbox sandbox = 1;
    */
   sandbox?: SandboxJson;
@@ -9761,50 +10551,72 @@ export const StartSandboxResponseSchema: GenMessage<StartSandboxResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_workspace, 103);
 
 /**
+ * StopSandboxRequest stops a sandbox's run.
+ *
  * @generated from message toshi.workspace.v1.StopSandboxRequest
  */
 export type StopSandboxRequest = Message<"toshi.workspace.v1.StopSandboxRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The sandbox's ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * StopSandboxRequest stops a sandbox's run.
+ *
  * @generated from message toshi.workspace.v1.StopSandboxRequest
  */
 export type StopSandboxRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The sandbox's ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -9818,20 +10630,28 @@ export const StopSandboxRequestSchema: GenMessage<StopSandboxRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_workspace, 104);
 
 /**
+ * StopSandboxResponse is the sandbox after the stop.
+ *
  * @generated from message toshi.workspace.v1.StopSandboxResponse
  */
 export type StopSandboxResponse = Message<"toshi.workspace.v1.StopSandboxResponse"> & {
   /**
+   * The sandbox after the stop.
+   *
    * @generated from field: toshi.workspace.v1.Sandbox sandbox = 1;
    */
   sandbox?: Sandbox | undefined;
 };
 
 /**
+ * StopSandboxResponse is the sandbox after the stop.
+ *
  * @generated from message toshi.workspace.v1.StopSandboxResponse
  */
 export type StopSandboxResponseJson = {
   /**
+   * The sandbox after the stop.
+   *
    * @generated from field: toshi.workspace.v1.Sandbox sandbox = 1;
    */
   sandbox?: SandboxJson;
@@ -9845,15 +10665,21 @@ export const StopSandboxResponseSchema: GenMessage<StopSandboxResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_workspace, 105);
 
 /**
+ * StartServiceRequest starts a service.
+ *
  * @generated from message toshi.workspace.v1.StartServiceRequest
  */
 export type StartServiceRequest = Message<"toshi.workspace.v1.StartServiceRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -9866,21 +10692,30 @@ export type StartServiceRequest = Message<"toshi.workspace.v1.StartServiceReques
   id: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * StartServiceRequest starts a service.
+ *
  * @generated from message toshi.workspace.v1.StartServiceRequest
  */
 export type StartServiceRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -9893,6 +10728,9 @@ export type StartServiceRequestJson = {
   id?: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -9906,6 +10744,8 @@ export const StartServiceRequestSchema: GenMessage<StartServiceRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_workspace, 106);
 
 /**
+ * StartServiceResponse is the service after the start.
+ *
  * @generated from message toshi.workspace.v1.StartServiceResponse
  */
 export type StartServiceResponse = Message<"toshi.workspace.v1.StartServiceResponse"> & {
@@ -9918,6 +10758,8 @@ export type StartServiceResponse = Message<"toshi.workspace.v1.StartServiceRespo
 };
 
 /**
+ * StartServiceResponse is the service after the start.
+ *
  * @generated from message toshi.workspace.v1.StartServiceResponse
  */
 export type StartServiceResponseJson = {
@@ -9937,50 +10779,72 @@ export const StartServiceResponseSchema: GenMessage<StartServiceResponse, {jsonT
   messageDesc(file_toshi_workspace_v1_workspace, 107);
 
 /**
+ * StopServiceRequest stops a service's run.
+ *
  * @generated from message toshi.workspace.v1.StopServiceRequest
  */
 export type StopServiceRequest = Message<"toshi.workspace.v1.StopServiceRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * StopServiceRequest stops a service's run.
+ *
  * @generated from message toshi.workspace.v1.StopServiceRequest
  */
 export type StopServiceRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -9994,6 +10858,8 @@ export const StopServiceRequestSchema: GenMessage<StopServiceRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_workspace, 108);
 
 /**
+ * StopServiceResponse is the service after the stop.
+ *
  * @generated from message toshi.workspace.v1.StopServiceResponse
  */
 export type StopServiceResponse = Message<"toshi.workspace.v1.StopServiceResponse"> & {
@@ -10006,6 +10872,8 @@ export type StopServiceResponse = Message<"toshi.workspace.v1.StopServiceRespons
 };
 
 /**
+ * StopServiceResponse is the service after the stop.
+ *
  * @generated from message toshi.workspace.v1.StopServiceResponse
  */
 export type StopServiceResponseJson = {
@@ -10025,20 +10893,28 @@ export const StopServiceResponseSchema: GenMessage<StopServiceResponse, {jsonTyp
   messageDesc(file_toshi_workspace_v1_workspace, 109);
 
 /**
+ * SetServiceModeRequest sets a service's mode.
+ *
  * @generated from message toshi.workspace.v1.SetServiceModeRequest
  */
 export type SetServiceModeRequest = Message<"toshi.workspace.v1.SetServiceModeRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
@@ -10051,26 +10927,37 @@ export type SetServiceModeRequest = Message<"toshi.workspace.v1.SetServiceModeRe
   mode: ServiceMode;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 5;
    */
   requestKey: string;
 };
 
 /**
+ * SetServiceModeRequest sets a service's mode.
+ *
  * @generated from message toshi.workspace.v1.SetServiceModeRequest
  */
 export type SetServiceModeRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -10083,6 +10970,9 @@ export type SetServiceModeRequestJson = {
   mode?: ServiceModeJson;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 5;
    */
   requestKey?: string;
@@ -10096,6 +10986,8 @@ export const SetServiceModeRequestSchema: GenMessage<SetServiceModeRequest, {jso
   messageDesc(file_toshi_workspace_v1_workspace, 110);
 
 /**
+ * SetServiceModeResponse is the service after the change.
+ *
  * @generated from message toshi.workspace.v1.SetServiceModeResponse
  */
 export type SetServiceModeResponse = Message<"toshi.workspace.v1.SetServiceModeResponse"> & {
@@ -10108,6 +11000,8 @@ export type SetServiceModeResponse = Message<"toshi.workspace.v1.SetServiceModeR
 };
 
 /**
+ * SetServiceModeResponse is the service after the change.
+ *
  * @generated from message toshi.workspace.v1.SetServiceModeResponse
  */
 export type SetServiceModeResponseJson = {
@@ -10127,50 +11021,72 @@ export const SetServiceModeResponseSchema: GenMessage<SetServiceModeResponse, {j
   messageDesc(file_toshi_workspace_v1_workspace, 111);
 
 /**
+ * WakeServiceRequest wakes a started on-demand service that is asleep.
+ *
  * @generated from message toshi.workspace.v1.WakeServiceRequest
  */
 export type WakeServiceRequest = Message<"toshi.workspace.v1.WakeServiceRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * WakeServiceRequest wakes a started on-demand service that is asleep.
+ *
  * @generated from message toshi.workspace.v1.WakeServiceRequest
  */
 export type WakeServiceRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -10184,6 +11100,8 @@ export const WakeServiceRequestSchema: GenMessage<WakeServiceRequest, {jsonType:
   messageDesc(file_toshi_workspace_v1_workspace, 112);
 
 /**
+ * WakeServiceResponse is the service after the wake.
+ *
  * @generated from message toshi.workspace.v1.WakeServiceResponse
  */
 export type WakeServiceResponse = Message<"toshi.workspace.v1.WakeServiceResponse"> & {
@@ -10196,6 +11114,8 @@ export type WakeServiceResponse = Message<"toshi.workspace.v1.WakeServiceRespons
 };
 
 /**
+ * WakeServiceResponse is the service after the wake.
+ *
  * @generated from message toshi.workspace.v1.WakeServiceResponse
  */
 export type WakeServiceResponseJson = {
@@ -10221,21 +11141,29 @@ export const WakeServiceResponseSchema: GenMessage<WakeServiceResponse, {jsonTyp
  */
 export type HoldWorkloadRequest = Message<"toshi.workspace.v1.HoldWorkloadRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The sandbox or service to hold.
+   *
    * @generated from field: string workload_id = 3;
    */
   workloadId: string;
 
   /**
+   * The hold to place.
+   *
    * @generated from field: toshi.workspace.v1.OperatorHold hold = 4;
    */
   hold: OperatorHold;
@@ -10248,21 +11176,29 @@ export type HoldWorkloadRequest = Message<"toshi.workspace.v1.HoldWorkloadReques
  */
 export type HoldWorkloadRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The sandbox or service to hold.
+   *
    * @generated from field: string workload_id = 3;
    */
   workloadId?: string;
 
   /**
+   * The hold to place.
+   *
    * @generated from field: toshi.workspace.v1.OperatorHold hold = 4;
    */
   hold?: OperatorHoldJson;
@@ -10276,12 +11212,16 @@ export const HoldWorkloadRequestSchema: GenMessage<HoldWorkloadRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_workspace, 114);
 
 /**
+ * HoldWorkloadResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.HoldWorkloadResponse
  */
 export type HoldWorkloadResponse = Message<"toshi.workspace.v1.HoldWorkloadResponse"> & {
 };
 
 /**
+ * HoldWorkloadResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.HoldWorkloadResponse
  */
 export type HoldWorkloadResponseJson = {
@@ -10301,16 +11241,22 @@ export const HoldWorkloadResponseSchema: GenMessage<HoldWorkloadResponse, {jsonT
  */
 export type ReleaseWorkloadRequest = Message<"toshi.workspace.v1.ReleaseWorkloadRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The sandbox or service to release.
+   *
    * @generated from field: string workload_id = 3;
    */
   workloadId: string;
@@ -10323,16 +11269,22 @@ export type ReleaseWorkloadRequest = Message<"toshi.workspace.v1.ReleaseWorkload
  */
 export type ReleaseWorkloadRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The sandbox or service to release.
+   *
    * @generated from field: string workload_id = 3;
    */
   workloadId?: string;
@@ -10346,12 +11298,16 @@ export const ReleaseWorkloadRequestSchema: GenMessage<ReleaseWorkloadRequest, {j
   messageDesc(file_toshi_workspace_v1_workspace, 116);
 
 /**
+ * ReleaseWorkloadResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.ReleaseWorkloadResponse
  */
 export type ReleaseWorkloadResponse = Message<"toshi.workspace.v1.ReleaseWorkloadResponse"> & {
 };
 
 /**
+ * ReleaseWorkloadResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.ReleaseWorkloadResponse
  */
 export type ReleaseWorkloadResponseJson = {
@@ -10365,25 +11321,36 @@ export const ReleaseWorkloadResponseSchema: GenMessage<ReleaseWorkloadResponse, 
   messageDesc(file_toshi_workspace_v1_workspace, 117);
 
 /**
+ * KeepServiceAwakeRequest takes or renews the caller's hold on a started service.
+ *
  * @generated from message toshi.workspace.v1.KeepServiceAwakeRequest
  */
 export type KeepServiceAwakeRequest = Message<"toshi.workspace.v1.KeepServiceAwakeRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 5;
    */
   requestKey: string;
@@ -10398,25 +11365,36 @@ export type KeepServiceAwakeRequest = Message<"toshi.workspace.v1.KeepServiceAwa
 };
 
 /**
+ * KeepServiceAwakeRequest takes or renews the caller's hold on a started service.
+ *
  * @generated from message toshi.workspace.v1.KeepServiceAwakeRequest
  */
 export type KeepServiceAwakeRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 5;
    */
   requestKey?: string;
@@ -10438,10 +11416,14 @@ export const KeepServiceAwakeRequestSchema: GenMessage<KeepServiceAwakeRequest, 
   messageDesc(file_toshi_workspace_v1_workspace, 118);
 
 /**
+ * KeepServiceAwakeResponse is the caller's hold and the service.
+ *
  * @generated from message toshi.workspace.v1.KeepServiceAwakeResponse
  */
 export type KeepServiceAwakeResponse = Message<"toshi.workspace.v1.KeepServiceAwakeResponse"> & {
   /**
+   * The caller's hold.
+   *
    * @generated from field: toshi.workspace.v1.ServiceHold hold = 2;
    */
   hold?: ServiceHold | undefined;
@@ -10455,10 +11437,14 @@ export type KeepServiceAwakeResponse = Message<"toshi.workspace.v1.KeepServiceAw
 };
 
 /**
+ * KeepServiceAwakeResponse is the caller's hold and the service.
+ *
  * @generated from message toshi.workspace.v1.KeepServiceAwakeResponse
  */
 export type KeepServiceAwakeResponseJson = {
   /**
+   * The caller's hold.
+   *
    * @generated from field: toshi.workspace.v1.ServiceHold hold = 2;
    */
   hold?: ServiceHoldJson;
@@ -10528,50 +11514,72 @@ export const ServiceHoldSchema: GenMessage<ServiceHold, {jsonType: ServiceHoldJs
   messageDesc(file_toshi_workspace_v1_workspace, 120);
 
 /**
+ * ReleaseServiceAwakeRequest drops the caller's hold on a service.
+ *
  * @generated from message toshi.workspace.v1.ReleaseServiceAwakeRequest
  */
 export type ReleaseServiceAwakeRequest = Message<"toshi.workspace.v1.ReleaseServiceAwakeRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey: string;
 };
 
 /**
+ * ReleaseServiceAwakeRequest drops the caller's hold on a service.
+ *
  * @generated from message toshi.workspace.v1.ReleaseServiceAwakeRequest
  */
 export type ReleaseServiceAwakeRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 4;
    */
   requestKey?: string;
@@ -10585,6 +11593,8 @@ export const ReleaseServiceAwakeRequestSchema: GenMessage<ReleaseServiceAwakeReq
   messageDesc(file_toshi_workspace_v1_workspace, 121);
 
 /**
+ * ReleaseServiceAwakeResponse is the service after the release.
+ *
  * @generated from message toshi.workspace.v1.ReleaseServiceAwakeResponse
  */
 export type ReleaseServiceAwakeResponse = Message<"toshi.workspace.v1.ReleaseServiceAwakeResponse"> & {
@@ -10597,6 +11607,8 @@ export type ReleaseServiceAwakeResponse = Message<"toshi.workspace.v1.ReleaseSer
 };
 
 /**
+ * ReleaseServiceAwakeResponse is the service after the release.
+ *
  * @generated from message toshi.workspace.v1.ReleaseServiceAwakeResponse
  */
 export type ReleaseServiceAwakeResponseJson = {
@@ -10616,15 +11628,21 @@ export const ReleaseServiceAwakeResponseSchema: GenMessage<ReleaseServiceAwakeRe
   messageDesc(file_toshi_workspace_v1_workspace, 122);
 
 /**
+ * StartServiceSignInRequest names the service and sign-in program to run.
+ *
  * @generated from message toshi.workspace.v1.StartServiceSignInRequest
  */
 export type StartServiceSignInRequest = Message<"toshi.workspace.v1.StartServiceSignInRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -10645,15 +11663,21 @@ export type StartServiceSignInRequest = Message<"toshi.workspace.v1.StartService
 };
 
 /**
+ * StartServiceSignInRequest names the service and sign-in program to run.
+ *
  * @generated from message toshi.workspace.v1.StartServiceSignInRequest
  */
 export type StartServiceSignInRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -10936,6 +11960,8 @@ export const ServiceSignInEndpointSchema: GenMessage<ServiceSignInEndpoint, {jso
   messageDesc(file_toshi_workspace_v1_workspace, 126);
 
 /**
+ * ServiceSignInStarted is the first message of a sign-in stream.
+ *
  * @generated from message toshi.workspace.v1.ServiceSignInStarted
  */
 export type ServiceSignInStarted = Message<"toshi.workspace.v1.ServiceSignInStarted"> & {
@@ -10956,6 +11982,8 @@ export type ServiceSignInStarted = Message<"toshi.workspace.v1.ServiceSignInStar
 };
 
 /**
+ * ServiceSignInStarted is the first message of a sign-in stream.
+ *
  * @generated from message toshi.workspace.v1.ServiceSignInStarted
  */
 export type ServiceSignInStartedJson = {
@@ -10983,6 +12011,8 @@ export const ServiceSignInStartedSchema: GenMessage<ServiceSignInStarted, {jsonT
   messageDesc(file_toshi_workspace_v1_workspace, 127);
 
 /**
+ * ServiceSignInEnded is the last message of a sign-in stream.
+ *
  * @generated from message toshi.workspace.v1.ServiceSignInEnded
  */
 export type ServiceSignInEnded = Message<"toshi.workspace.v1.ServiceSignInEnded"> & {
@@ -11003,6 +12033,8 @@ export type ServiceSignInEnded = Message<"toshi.workspace.v1.ServiceSignInEnded"
 };
 
 /**
+ * ServiceSignInEnded is the last message of a sign-in stream.
+ *
  * @generated from message toshi.workspace.v1.ServiceSignInEnded
  */
 export type ServiceSignInEndedJson = {
@@ -11030,20 +12062,29 @@ export const ServiceSignInEndedSchema: GenMessage<ServiceSignInEnded, {jsonType:
   messageDesc(file_toshi_workspace_v1_workspace, 128);
 
 /**
+ * AnswerServiceSignInRequest answers a running sign-in with one text line
+ * or a browser's loopback redirect.
+ *
  * @generated from message toshi.workspace.v1.AnswerServiceSignInRequest
  */
 export type AnswerServiceSignInRequest = Message<"toshi.workspace.v1.AnswerServiceSignInRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string service_id = 3;
    */
   serviceId: string;
@@ -11074,20 +12115,29 @@ export type AnswerServiceSignInRequest = Message<"toshi.workspace.v1.AnswerServi
 };
 
 /**
+ * AnswerServiceSignInRequest answers a running sign-in with one text line
+ * or a browser's loopback redirect.
+ *
  * @generated from message toshi.workspace.v1.AnswerServiceSignInRequest
  */
 export type AnswerServiceSignInRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string service_id = 3;
    */
   serviceId?: string;
@@ -11125,6 +12175,8 @@ export const AnswerServiceSignInRequestSchema: GenMessage<AnswerServiceSignInReq
   messageDesc(file_toshi_workspace_v1_workspace, 129);
 
 /**
+ * AnswerServiceSignInResponse is the program's answer to a redirect.
+ *
  * @generated from message toshi.workspace.v1.AnswerServiceSignInResponse
  */
 export type AnswerServiceSignInResponse = Message<"toshi.workspace.v1.AnswerServiceSignInResponse"> & {
@@ -11137,6 +12189,8 @@ export type AnswerServiceSignInResponse = Message<"toshi.workspace.v1.AnswerServ
 };
 
 /**
+ * AnswerServiceSignInResponse is the program's answer to a redirect.
+ *
  * @generated from message toshi.workspace.v1.AnswerServiceSignInResponse
  */
 export type AnswerServiceSignInResponseJson = {
@@ -11156,20 +12210,28 @@ export const AnswerServiceSignInResponseSchema: GenMessage<AnswerServiceSignInRe
   messageDesc(file_toshi_workspace_v1_workspace, 130);
 
 /**
+ * CancelServiceSignInRequest ends a running sign-in.
+ *
  * @generated from message toshi.workspace.v1.CancelServiceSignInRequest
  */
 export type CancelServiceSignInRequest = Message<"toshi.workspace.v1.CancelServiceSignInRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string service_id = 3;
    */
   serviceId: string;
@@ -11183,20 +12245,28 @@ export type CancelServiceSignInRequest = Message<"toshi.workspace.v1.CancelServi
 };
 
 /**
+ * CancelServiceSignInRequest ends a running sign-in.
+ *
  * @generated from message toshi.workspace.v1.CancelServiceSignInRequest
  */
 export type CancelServiceSignInRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string service_id = 3;
    */
   serviceId?: string;
@@ -11217,12 +12287,16 @@ export const CancelServiceSignInRequestSchema: GenMessage<CancelServiceSignInReq
   messageDesc(file_toshi_workspace_v1_workspace, 131);
 
 /**
+ * CancelServiceSignInResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.CancelServiceSignInResponse
  */
 export type CancelServiceSignInResponse = Message<"toshi.workspace.v1.CancelServiceSignInResponse"> & {
 };
 
 /**
+ * CancelServiceSignInResponse has no fields.
+ *
  * @generated from message toshi.workspace.v1.CancelServiceSignInResponse
  */
 export type CancelServiceSignInResponseJson = {
@@ -11236,20 +12310,29 @@ export const CancelServiceSignInResponseSchema: GenMessage<CancelServiceSignInRe
   messageDesc(file_toshi_workspace_v1_workspace, 132);
 
 /**
+ * GetServiceSignInStatusRequest names the service and program whose
+ * sign-in status to read.
+ *
  * @generated from message toshi.workspace.v1.GetServiceSignInStatusRequest
  */
 export type GetServiceSignInStatusRequest = Message<"toshi.workspace.v1.GetServiceSignInStatusRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string service_id = 3;
    */
   serviceId: string;
@@ -11264,20 +12347,29 @@ export type GetServiceSignInStatusRequest = Message<"toshi.workspace.v1.GetServi
 };
 
 /**
+ * GetServiceSignInStatusRequest names the service and program whose
+ * sign-in status to read.
+ *
  * @generated from message toshi.workspace.v1.GetServiceSignInStatusRequest
  */
 export type GetServiceSignInStatusRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string service_id = 3;
    */
   serviceId?: string;
@@ -11299,20 +12391,28 @@ export const GetServiceSignInStatusRequestSchema: GenMessage<GetServiceSignInSta
   messageDesc(file_toshi_workspace_v1_workspace, 133);
 
 /**
+ * GetServiceSignInStatusResponse is one status per program asked for.
+ *
  * @generated from message toshi.workspace.v1.GetServiceSignInStatusResponse
  */
 export type GetServiceSignInStatusResponse = Message<"toshi.workspace.v1.GetServiceSignInStatusResponse"> & {
   /**
+   * The statuses, in recipe order.
+   *
    * @generated from field: repeated toshi.workspace.v1.ServiceSignInStatus statuses = 1;
    */
   statuses: ServiceSignInStatus[];
 };
 
 /**
+ * GetServiceSignInStatusResponse is one status per program asked for.
+ *
  * @generated from message toshi.workspace.v1.GetServiceSignInStatusResponse
  */
 export type GetServiceSignInStatusResponseJson = {
   /**
+   * The statuses, in recipe order.
+   *
    * @generated from field: repeated toshi.workspace.v1.ServiceSignInStatus statuses = 1;
    */
   statuses?: ServiceSignInStatusJson[];
@@ -11332,6 +12432,8 @@ export const GetServiceSignInStatusResponseSchema: GenMessage<GetServiceSignInSt
  */
 export type ServiceSignInStatus = Message<"toshi.workspace.v1.ServiceSignInStatus"> & {
   /**
+   * The sign_in program's name, as the recipe declares it.
+   *
    * @generated from field: string program = 1;
    */
   program: string;
@@ -11374,6 +12476,8 @@ export type ServiceSignInStatus = Message<"toshi.workspace.v1.ServiceSignInStatu
  */
 export type ServiceSignInStatusJson = {
   /**
+   * The sign_in program's name, as the recipe declares it.
+   *
    * @generated from field: string program = 1;
    */
   program?: string;
@@ -11417,20 +12521,28 @@ export const ServiceSignInStatusSchema: GenMessage<ServiceSignInStatus, {jsonTyp
   messageDesc(file_toshi_workspace_v1_workspace, 135);
 
 /**
+ * SignOutServiceRequest runs a sign-in program's sign-out command.
+ *
  * @generated from message toshi.workspace.v1.SignOutServiceRequest
  */
 export type SignOutServiceRequest = Message<"toshi.workspace.v1.SignOutServiceRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string service_id = 3;
    */
   serviceId: string;
@@ -11444,20 +12556,28 @@ export type SignOutServiceRequest = Message<"toshi.workspace.v1.SignOutServiceRe
 };
 
 /**
+ * SignOutServiceRequest runs a sign-in program's sign-out command.
+ *
  * @generated from message toshi.workspace.v1.SignOutServiceRequest
  */
 export type SignOutServiceRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string service_id = 3;
    */
   serviceId?: string;
@@ -11478,6 +12598,8 @@ export const SignOutServiceRequestSchema: GenMessage<SignOutServiceRequest, {jso
   messageDesc(file_toshi_workspace_v1_workspace, 136);
 
 /**
+ * SignOutServiceResponse is the sign-out command's exit code and output.
+ *
  * @generated from message toshi.workspace.v1.SignOutServiceResponse
  */
 export type SignOutServiceResponse = Message<"toshi.workspace.v1.SignOutServiceResponse"> & {
@@ -11499,6 +12621,8 @@ export type SignOutServiceResponse = Message<"toshi.workspace.v1.SignOutServiceR
 };
 
 /**
+ * SignOutServiceResponse is the sign-out command's exit code and output.
+ *
  * @generated from message toshi.workspace.v1.SignOutServiceResponse
  */
 export type SignOutServiceResponseJson = {
@@ -11527,20 +12651,28 @@ export const SignOutServiceResponseSchema: GenMessage<SignOutServiceResponse, {j
   messageDesc(file_toshi_workspace_v1_workspace, 137);
 
 /**
+ * ListServiceRunsRequest lists a service's runs.
+ *
  * @generated from message toshi.workspace.v1.ListServiceRunsRequest
  */
 export type ListServiceRunsRequest = Message<"toshi.workspace.v1.ListServiceRunsRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
@@ -11561,20 +12693,28 @@ export type ListServiceRunsRequest = Message<"toshi.workspace.v1.ListServiceRuns
 };
 
 /**
+ * ListServiceRunsRequest lists a service's runs.
+ *
  * @generated from message toshi.workspace.v1.ListServiceRunsRequest
  */
 export type ListServiceRunsRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -11602,10 +12742,14 @@ export const ListServiceRunsRequestSchema: GenMessage<ListServiceRunsRequest, {j
   messageDesc(file_toshi_workspace_v1_workspace, 138);
 
 /**
+ * ListServiceRunsResponse is one page of a service's runs.
+ *
  * @generated from message toshi.workspace.v1.ListServiceRunsResponse
  */
 export type ListServiceRunsResponse = Message<"toshi.workspace.v1.ListServiceRunsResponse"> & {
   /**
+   * The runs, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.ServiceRun runs = 1;
    */
   runs: ServiceRun[];
@@ -11619,10 +12763,14 @@ export type ListServiceRunsResponse = Message<"toshi.workspace.v1.ListServiceRun
 };
 
 /**
+ * ListServiceRunsResponse is one page of a service's runs.
+ *
  * @generated from message toshi.workspace.v1.ListServiceRunsResponse
  */
 export type ListServiceRunsResponseJson = {
   /**
+   * The runs, newest first.
+   *
    * @generated from field: repeated toshi.workspace.v1.ServiceRun runs = 1;
    */
   runs?: ServiceRunJson[];
@@ -11643,20 +12791,28 @@ export const ListServiceRunsResponseSchema: GenMessage<ListServiceRunsResponse, 
   messageDesc(file_toshi_workspace_v1_workspace, 139);
 
 /**
+ * ListServiceRevisionsRequest lists a service's revisions.
+ *
  * @generated from message toshi.workspace.v1.ListServiceRevisionsRequest
  */
 export type ListServiceRevisionsRequest = Message<"toshi.workspace.v1.ListServiceRevisionsRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
@@ -11677,20 +12833,28 @@ export type ListServiceRevisionsRequest = Message<"toshi.workspace.v1.ListServic
 };
 
 /**
+ * ListServiceRevisionsRequest lists a service's revisions.
+ *
  * @generated from message toshi.workspace.v1.ListServiceRevisionsRequest
  */
 export type ListServiceRevisionsRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -11718,6 +12882,8 @@ export const ListServiceRevisionsRequestSchema: GenMessage<ListServiceRevisionsR
   messageDesc(file_toshi_workspace_v1_workspace, 140);
 
 /**
+ * ListServiceRevisionsResponse is one page of a service's revisions.
+ *
  * @generated from message toshi.workspace.v1.ListServiceRevisionsResponse
  */
 export type ListServiceRevisionsResponse = Message<"toshi.workspace.v1.ListServiceRevisionsResponse"> & {
@@ -11737,6 +12903,8 @@ export type ListServiceRevisionsResponse = Message<"toshi.workspace.v1.ListServi
 };
 
 /**
+ * ListServiceRevisionsResponse is one page of a service's revisions.
+ *
  * @generated from message toshi.workspace.v1.ListServiceRevisionsResponse
  */
 export type ListServiceRevisionsResponseJson = {
@@ -11763,20 +12931,28 @@ export const ListServiceRevisionsResponseSchema: GenMessage<ListServiceRevisions
   messageDesc(file_toshi_workspace_v1_workspace, 141);
 
 /**
+ * GetServiceRevisionRequest names one revision of a service.
+ *
  * @generated from message toshi.workspace.v1.GetServiceRevisionRequest
  */
 export type GetServiceRevisionRequest = Message<"toshi.workspace.v1.GetServiceRevisionRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
@@ -11790,20 +12966,28 @@ export type GetServiceRevisionRequest = Message<"toshi.workspace.v1.GetServiceRe
 };
 
 /**
+ * GetServiceRevisionRequest names one revision of a service.
+ *
  * @generated from message toshi.workspace.v1.GetServiceRevisionRequest
  */
 export type GetServiceRevisionRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -11824,20 +13008,28 @@ export const GetServiceRevisionRequestSchema: GenMessage<GetServiceRevisionReque
   messageDesc(file_toshi_workspace_v1_workspace, 142);
 
 /**
+ * GetServiceRevisionResponse is the revision.
+ *
  * @generated from message toshi.workspace.v1.GetServiceRevisionResponse
  */
 export type GetServiceRevisionResponse = Message<"toshi.workspace.v1.GetServiceRevisionResponse"> & {
   /**
+   * The revision.
+   *
    * @generated from field: toshi.workspace.v1.ServiceRevision revision = 1;
    */
   revision?: ServiceRevision | undefined;
 };
 
 /**
+ * GetServiceRevisionResponse is the revision.
+ *
  * @generated from message toshi.workspace.v1.GetServiceRevisionResponse
  */
 export type GetServiceRevisionResponseJson = {
   /**
+   * The revision.
+   *
    * @generated from field: toshi.workspace.v1.ServiceRevision revision = 1;
    */
   revision?: ServiceRevisionJson;
@@ -11866,6 +13058,8 @@ export type ServiceRevision = Message<"toshi.workspace.v1.ServiceRevision"> & {
   number: bigint;
 
   /**
+   * Why the revision was made.
+   *
    * @generated from field: toshi.workspace.v1.ServiceRevisionReason reason = 2;
    */
   reason: ServiceRevisionReason;
@@ -11885,6 +13079,8 @@ export type ServiceRevision = Message<"toshi.workspace.v1.ServiceRevision"> & {
   secret: string;
 
   /**
+   * When it was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: Timestamp | undefined;
@@ -11973,6 +13169,8 @@ export type ServiceRevisionJson = {
   number?: string;
 
   /**
+   * Why the revision was made.
+   *
    * @generated from field: toshi.workspace.v1.ServiceRevisionReason reason = 2;
    */
   reason?: ServiceRevisionReasonJson;
@@ -11992,6 +13190,8 @@ export type ServiceRevisionJson = {
   secret?: string;
 
   /**
+   * When it was made.
+   *
    * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: TimestampJson;
@@ -12089,6 +13289,8 @@ export const ServiceRevisionSchema: GenMessage<ServiceRevision, {jsonType: Servi
  */
 export type ServiceUpgrade = Message<"toshi.workspace.v1.ServiceUpgrade"> & {
   /**
+   * Where the watch is.
+   *
    * @generated from field: toshi.workspace.v1.ServiceUpgradeState state = 1;
    */
   state: ServiceUpgradeState;
@@ -12101,6 +13303,8 @@ export type ServiceUpgrade = Message<"toshi.workspace.v1.ServiceUpgrade"> & {
   fromRevision: bigint;
 
   /**
+   * The window's length: the recipe's upgrade_window, 5 minutes unless set.
+   *
    * @generated from field: google.protobuf.Duration window = 3;
    */
   window?: Duration | undefined;
@@ -12196,6 +13400,8 @@ export type ServiceUpgrade = Message<"toshi.workspace.v1.ServiceUpgrade"> & {
  */
 export type ServiceUpgradeJson = {
   /**
+   * Where the watch is.
+   *
    * @generated from field: toshi.workspace.v1.ServiceUpgradeState state = 1;
    */
   state?: ServiceUpgradeStateJson;
@@ -12208,6 +13414,8 @@ export type ServiceUpgradeJson = {
   fromRevision?: string;
 
   /**
+   * The window's length: the recipe's upgrade_window, 5 minutes unless set.
+   *
    * @generated from field: google.protobuf.Duration window = 3;
    */
   window?: DurationJson;
@@ -12301,6 +13509,8 @@ export const ServiceUpgradeSchema: GenMessage<ServiceUpgrade, {jsonType: Service
  */
 export type ServiceRevisionImageCheck = Message<"toshi.workspace.v1.ServiceRevisionImageCheck"> & {
   /**
+   * What the check found.
+   *
    * @generated from field: toshi.workspace.v1.ServiceRevisionImageOutcome outcome = 1;
    */
   outcome: ServiceRevisionImageOutcome;
@@ -12321,6 +13531,8 @@ export type ServiceRevisionImageCheck = Message<"toshi.workspace.v1.ServiceRevis
   message: string;
 
   /**
+   * When the registry answered, or the check failed.
+   *
    * @generated from field: google.protobuf.Timestamp checked_at = 4;
    */
   checkedAt?: Timestamp | undefined;
@@ -12335,6 +13547,8 @@ export type ServiceRevisionImageCheck = Message<"toshi.workspace.v1.ServiceRevis
  */
 export type ServiceRevisionImageCheckJson = {
   /**
+   * What the check found.
+   *
    * @generated from field: toshi.workspace.v1.ServiceRevisionImageOutcome outcome = 1;
    */
   outcome?: ServiceRevisionImageOutcomeJson;
@@ -12355,6 +13569,8 @@ export type ServiceRevisionImageCheckJson = {
   message?: string;
 
   /**
+   * When the registry answered, or the check failed.
+   *
    * @generated from field: google.protobuf.Timestamp checked_at = 4;
    */
   checkedAt?: TimestampJson;
@@ -12368,15 +13584,21 @@ export const ServiceRevisionImageCheckSchema: GenMessage<ServiceRevisionImageChe
   messageDesc(file_toshi_workspace_v1_workspace, 146);
 
 /**
+ * RollbackServiceRequest selects a revision of a service again.
+ *
  * @generated from message toshi.workspace.v1.RollbackServiceRequest
  */
 export type RollbackServiceRequest = Message<"toshi.workspace.v1.RollbackServiceRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
@@ -12403,21 +13625,30 @@ export type RollbackServiceRequest = Message<"toshi.workspace.v1.RollbackService
   expectedRevision: bigint;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 6;
    */
   requestKey: string;
 };
 
 /**
+ * RollbackServiceRequest selects a revision of a service again.
+ *
  * @generated from message toshi.workspace.v1.RollbackServiceRequest
  */
 export type RollbackServiceRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
@@ -12444,6 +13675,9 @@ export type RollbackServiceRequestJson = {
   expectedRevision?: string;
 
   /**
+   * A key that makes a retry return the first answer; the same key with
+   * another request fails with FAILED_PRECONDITION.
+   *
    * @generated from field: string request_key = 6;
    */
   requestKey?: string;
@@ -12457,6 +13691,9 @@ export const RollbackServiceRequestSchema: GenMessage<RollbackServiceRequest, {j
   messageDesc(file_toshi_workspace_v1_workspace, 147);
 
 /**
+ * RollbackServiceResponse is the service after the rollback and the
+ * activation.
+ *
  * @generated from message toshi.workspace.v1.RollbackServiceResponse
  */
 export type RollbackServiceResponse = Message<"toshi.workspace.v1.RollbackServiceResponse"> & {
@@ -12476,6 +13713,9 @@ export type RollbackServiceResponse = Message<"toshi.workspace.v1.RollbackServic
 };
 
 /**
+ * RollbackServiceResponse is the service after the rollback and the
+ * activation.
+ *
  * @generated from message toshi.workspace.v1.RollbackServiceResponse
  */
 export type RollbackServiceResponseJson = {
@@ -12502,20 +13742,29 @@ export const RollbackServiceResponseSchema: GenMessage<RollbackServiceResponse, 
   messageDesc(file_toshi_workspace_v1_workspace, 148);
 
 /**
+ * ListServiceActivationsRequest lists the times a service's revision was
+ * selected.
+ *
  * @generated from message toshi.workspace.v1.ListServiceActivationsRequest
  */
 export type ListServiceActivationsRequest = Message<"toshi.workspace.v1.ListServiceActivationsRequest"> & {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id: string;
@@ -12536,20 +13785,29 @@ export type ListServiceActivationsRequest = Message<"toshi.workspace.v1.ListServ
 };
 
 /**
+ * ListServiceActivationsRequest lists the times a service's revision was
+ * selected.
+ *
  * @generated from message toshi.workspace.v1.ListServiceActivationsRequest
  */
 export type ListServiceActivationsRequestJson = {
   /**
+   * The project's name.
+   *
    * @generated from field: string project = 1;
    */
   project?: string;
 
   /**
+   * The environment's name.
+   *
    * @generated from field: string environment = 2;
    */
   environment?: string;
 
   /**
+   * The service's workload ID.
+   *
    * @generated from field: string id = 3;
    */
   id?: string;
@@ -12577,6 +13835,8 @@ export const ListServiceActivationsRequestSchema: GenMessage<ListServiceActivati
   messageDesc(file_toshi_workspace_v1_workspace, 149);
 
 /**
+ * ListServiceActivationsResponse is one page of a service's activations.
+ *
  * @generated from message toshi.workspace.v1.ListServiceActivationsResponse
  */
 export type ListServiceActivationsResponse = Message<"toshi.workspace.v1.ListServiceActivationsResponse"> & {
@@ -12596,6 +13856,8 @@ export type ListServiceActivationsResponse = Message<"toshi.workspace.v1.ListSer
 };
 
 /**
+ * ListServiceActivationsResponse is one page of a service's activations.
+ *
  * @generated from message toshi.workspace.v1.ListServiceActivationsResponse
  */
 export type ListServiceActivationsResponseJson = {
@@ -12636,6 +13898,8 @@ export type ServiceActivation = Message<"toshi.workspace.v1.ServiceActivation"> 
   sequence: bigint;
 
   /**
+   * What selected the revision.
+   *
    * @generated from field: toshi.workspace.v1.ServiceActivationKind kind = 2;
    */
   kind: ServiceActivationKind;
@@ -12669,6 +13933,8 @@ export type ServiceActivation = Message<"toshi.workspace.v1.ServiceActivation"> 
   toRevision: bigint;
 
   /**
+   * When it was selected.
+   *
    * @generated from field: google.protobuf.Timestamp requested_at = 7;
    */
   requestedAt?: Timestamp | undefined;
@@ -12682,6 +13948,8 @@ export type ServiceActivation = Message<"toshi.workspace.v1.ServiceActivation"> 
   runId: string;
 
   /**
+   * What came of it.
+   *
    * @generated from field: toshi.workspace.v1.ServiceActivationOutcome outcome = 9;
    */
   outcome: ServiceActivationOutcome;
@@ -12716,6 +13984,8 @@ export type ServiceActivationJson = {
   sequence?: string;
 
   /**
+   * What selected the revision.
+   *
    * @generated from field: toshi.workspace.v1.ServiceActivationKind kind = 2;
    */
   kind?: ServiceActivationKindJson;
@@ -12749,6 +14019,8 @@ export type ServiceActivationJson = {
   toRevision?: string;
 
   /**
+   * When it was selected.
+   *
    * @generated from field: google.protobuf.Timestamp requested_at = 7;
    */
   requestedAt?: TimestampJson;
@@ -12762,6 +14034,8 @@ export type ServiceActivationJson = {
   runId?: string;
 
   /**
+   * What came of it.
+   *
    * @generated from field: toshi.workspace.v1.ServiceActivationOutcome outcome = 9;
    */
   outcome?: ServiceActivationOutcomeJson;
@@ -12795,11 +14069,15 @@ export const ServiceActivationSchema: GenMessage<ServiceActivation, {jsonType: S
  */
 export type ServiceSecretVersion = Message<"toshi.workspace.v1.ServiceSecretVersion"> & {
   /**
+   * The secret's name.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * The version the run's start fixed.
+   *
    * @generated from field: int64 version = 2;
    */
   version: bigint;
@@ -12812,11 +14090,15 @@ export type ServiceSecretVersion = Message<"toshi.workspace.v1.ServiceSecretVers
  */
 export type ServiceSecretVersionJson = {
   /**
+   * The secret's name.
+   *
    * @generated from field: string name = 1;
    */
   name?: string;
 
   /**
+   * The version the run's start fixed.
+   *
    * @generated from field: int64 version = 2;
    */
   version?: string;
@@ -12850,6 +14132,8 @@ export type ServiceRun = Message<"toshi.workspace.v1.ServiceRun"> & {
   revision: bigint;
 
   /**
+   * Where the run is in its life.
+   *
    * @generated from field: toshi.workspace.v1.ServiceRunState state = 3;
    */
   state: ServiceRunState;
@@ -12867,6 +14151,8 @@ export type ServiceRun = Message<"toshi.workspace.v1.ServiceRun"> & {
   held: string;
 
   /**
+   * When it was queued.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 5;
    */
   queuedAt?: Timestamp | undefined;
@@ -12938,6 +14224,8 @@ export type ServiceRunJson = {
   revision?: string;
 
   /**
+   * Where the run is in its life.
+   *
    * @generated from field: toshi.workspace.v1.ServiceRunState state = 3;
    */
   state?: ServiceRunStateJson;
@@ -12955,6 +14243,8 @@ export type ServiceRunJson = {
   held?: string;
 
   /**
+   * When it was queued.
+   *
    * @generated from field: google.protobuf.Timestamp queued_at = 5;
    */
   queuedAt?: TimestampJson;
@@ -13019,6 +14309,8 @@ export const ServiceRunSchema: GenMessage<ServiceRun, {jsonType: ServiceRunJson}
  */
 export enum EndReason {
   /**
+   * Not set: a workload that has not ended has none.
+   *
    * @generated from enum value: END_REASON_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13082,6 +14374,8 @@ export const EndReasonSchema: GenEnum<EndReason, EndReasonJson> = /*@__PURE__*/
  */
 export enum StopReason {
   /**
+   * Not set: a workload that was not stopped has none.
+   *
    * @generated from enum value: STOP_REASON_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13179,6 +14473,8 @@ export const StopReasonSchema: GenEnum<StopReason, StopReasonJson> = /*@__PURE__
  */
 export enum StopCause {
   /**
+   * Not set: the stop was not a policy stop.
+   *
    * @generated from enum value: STOP_CAUSE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13246,6 +14542,8 @@ export const StopCauseSchema: GenEnum<StopCause, StopCauseJson> = /*@__PURE__*/
  */
 export enum OperatorHold {
   /**
+   * Not set: no operator holds the workload.
+   *
    * @generated from enum value: OPERATOR_HOLD_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13286,6 +14584,8 @@ export const OperatorHoldSchema: GenEnum<OperatorHold, OperatorHoldJson> = /*@__
  */
 export enum JobState {
   /**
+   * Not set: a job is always in one of the states below.
+   *
    * @generated from enum value: JOB_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13342,6 +14642,8 @@ export const JobStateSchema: GenEnum<JobState, JobStateJson> = /*@__PURE__*/
  */
 export enum SandboxState {
   /**
+   * Not set: a sandbox is always in one of the states below.
+   *
    * @generated from enum value: SANDBOX_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13399,6 +14701,8 @@ export const SandboxStateSchema: GenEnum<SandboxState, SandboxStateJson> = /*@__
  */
 export enum ServiceState {
   /**
+   * Not set: a service is always in one of the states below.
+   *
    * @generated from enum value: SERVICE_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13571,6 +14875,8 @@ export const RecordingSourceSchema: GenEnum<RecordingSource, RecordingSourceJson
  */
 export enum HostKind {
   /**
+   * Not set: host_kinds never holds it; a create or an update rejects it.
+   *
    * @generated from enum value: HOST_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13620,6 +14926,8 @@ export const HostKindSchema: GenEnum<HostKind, HostKindJson> = /*@__PURE__*/
  */
 export enum ServiceVisitors {
   /**
+   * Not set: the service gates visitors, as GATED does.
+   *
    * @generated from enum value: SERVICE_VISITORS_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13662,6 +14970,8 @@ export const ServiceVisitorsSchema: GenEnum<ServiceVisitors, ServiceVisitorsJson
  */
 export enum ServiceMode {
   /**
+   * Not set: a create makes an always-on service.
+   *
    * @generated from enum value: SERVICE_MODE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13706,6 +15016,8 @@ export const ServiceModeSchema: GenEnum<ServiceMode, ServiceModeJson> = /*@__PUR
  */
 export enum EventType {
   /**
+   * Not set: an event always has a type.
+   *
    * @generated from enum value: EVENT_TYPE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13967,6 +15279,8 @@ export const EventTypeSchema: GenEnum<EventType, EventTypeJson> = /*@__PURE__*/
  */
 export enum PreviewShareLinkState {
   /**
+   * Not set: a link is always in one of the states below.
+   *
    * @generated from enum value: PREVIEW_SHARE_LINK_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -13986,6 +15300,8 @@ export enum PreviewShareLinkState {
   IN_USE = 2,
 
   /**
+   * Its owner revoked it.
+   *
    * @generated from enum value: PREVIEW_SHARE_LINK_STATE_REVOKED = 3;
    */
   REVOKED = 3,
@@ -13998,6 +15314,8 @@ export enum PreviewShareLinkState {
   ENDED = 4,
 
   /**
+   * It reached its expires_at.
+   *
    * @generated from enum value: PREVIEW_SHARE_LINK_STATE_EXPIRED = 5;
    */
   EXPIRED = 5,
@@ -14023,6 +15341,8 @@ export const PreviewShareLinkStateSchema: GenEnum<PreviewShareLinkState, Preview
  */
 export enum ServiceSignInOutcome {
   /**
+   * Not set: a finished sign-in has one of the outcomes below.
+   *
    * @generated from enum value: SERVICE_SIGN_IN_OUTCOME_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -14076,6 +15396,8 @@ export const ServiceSignInOutcomeSchema: GenEnum<ServiceSignInOutcome, ServiceSi
  */
 export enum ServiceUpgradeState {
   /**
+   * Not set: an upgrade always has one of the states below.
+   *
    * @generated from enum value: SERVICE_UPGRADE_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -14146,6 +15468,8 @@ export const ServiceUpgradeStateSchema: GenEnum<ServiceUpgradeState, ServiceUpgr
  */
 export enum ServiceRevisionImageOutcome {
   /**
+   * Not set: a check always has one of the outcomes below.
+   *
    * @generated from enum value: SERVICE_REVISION_IMAGE_OUTCOME_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -14196,6 +15520,8 @@ export const ServiceRevisionImageOutcomeSchema: GenEnum<ServiceRevisionImageOutc
  */
 export enum ServiceRevisionReason {
   /**
+   * Not set: a revision always has a reason.
+   *
    * @generated from enum value: SERVICE_REVISION_REASON_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -14236,11 +15562,15 @@ export const ServiceRevisionReasonSchema: GenEnum<ServiceRevisionReason, Service
  */
 export enum ServiceActivationKind {
   /**
+   * Not set: an activation always has a kind.
+   *
    * @generated from enum value: SERVICE_ACTIVATION_KIND_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * The service's create.
+   *
    * @generated from enum value: SERVICE_ACTIVATION_KIND_CREATE = 1;
    */
   CREATE = 1,
@@ -14288,6 +15618,8 @@ export const ServiceActivationKindSchema: GenEnum<ServiceActivationKind, Service
  */
 export enum ServiceActivationOutcome {
   /**
+   * Not set: an activation always has one of the outcomes below.
+   *
    * @generated from enum value: SERVICE_ACTIVATION_OUTCOME_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -14343,6 +15675,8 @@ export const ServiceActivationOutcomeSchema: GenEnum<ServiceActivationOutcome, S
  */
 export enum ServiceRunState {
   /**
+   * Not set: a run always has a state.
+   *
    * @generated from enum value: SERVICE_RUN_STATE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -14362,6 +15696,8 @@ export enum ServiceRunState {
   STARTING = 2,
 
   /**
+   * Its VM is up and the service runs.
+   *
    * @generated from enum value: SERVICE_RUN_STATE_RUNNING = 3;
    */
   RUNNING = 3,

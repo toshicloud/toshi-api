@@ -193,6 +193,9 @@ service ProviderService {
   // call from one that does not.
   rpc CaptureDisk(CaptureDiskRequest) returns (CaptureDiskResponse);
 
+  // SaveDisk copies a running instance's root overlay without its memory.
+  rpc SaveDisk(SaveDiskRequest) returns (SaveDiskResponse);
+
   // Checks: asked of a provider that has not started. Each carries the
   // config Open would get, and none starts the provider or acts on the host.
 
@@ -773,6 +776,20 @@ message CaptureDiskResponse {
   string base = 1;
   // The base file's SHA-256 in hex.
   string base_digest = 2;
+}
+
+// SaveDiskRequest names an instance and an optional shared destination directory.
+message SaveDiskRequest {
+  string id = 1;
+  string dst_dir = 2;
+}
+
+// SaveDiskResponse describes the copy in the shared filesystem.
+message SaveDiskResponse {
+  string path = 1;
+  int64 size_bytes = 2;
+  string sha256 = 3;
+  string backing_identity = 4;
 }
 
 message DescribeRequest {
