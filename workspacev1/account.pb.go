@@ -476,10 +476,14 @@ func (x *SignInProof) GetAuthenticatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-// ListIdentitiesRequest has no fields: the caller's own identities are the
-// subject.
+// ListIdentitiesRequest asks for one page of the caller's identities: the
+// caller's own are the subject.
 type ListIdentitiesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The most identities in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -514,11 +518,27 @@ func (*ListIdentitiesRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_account_proto_rawDescGZIP(), []int{6}
 }
 
-// ListIdentitiesResponse lists the caller's identities, oldest first.
+func (x *ListIdentitiesRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListIdentitiesRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+// ListIdentitiesResponse is one page of the caller's identities.
 type ListIdentitiesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The caller's identities, oldest first.
-	Identities    []*Identity `protobuf:"bytes,1,rep,name=identities,proto3" json:"identities,omitempty"`
+	// The caller's identities on this page, oldest first.
+	Identities []*Identity `protobuf:"bytes,1,rep,name=identities,proto3" json:"identities,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -558,6 +578,13 @@ func (x *ListIdentitiesResponse) GetIdentities() []*Identity {
 		return x.Identities
 	}
 	return nil
+}
+
+func (x *ListIdentitiesResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 // UnlinkIdentityRequest names the identity to remove.
@@ -1117,12 +1144,16 @@ const file_toshi_workspace_v1_account_proto_rawDesc = "" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x18\n" +
 	"\asubject\x18\x02 \x01(\tR\asubject\x12\x16\n" +
 	"\x06method\x18\x03 \x01(\tR\x06method\x12E\n" +
-	"\x10authenticated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0fauthenticatedAt\"\x17\n" +
-	"\x15ListIdentitiesRequest\"V\n" +
+	"\x10authenticated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0fauthenticatedAt\"S\n" +
+	"\x15ListIdentitiesRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"~\n" +
 	"\x16ListIdentitiesResponse\x12<\n" +
 	"\n" +
 	"identities\x18\x01 \x03(\v2\x1c.toshi.workspace.v1.IdentityR\n" +
-	"identities\"M\n" +
+	"identities\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"M\n" +
 	"\x15UnlinkIdentityRequest\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x18\n" +
 	"\asubject\x18\x02 \x01(\tR\asubject\"\xa0\x01\n" +

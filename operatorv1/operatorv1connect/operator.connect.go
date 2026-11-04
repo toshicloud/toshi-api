@@ -305,12 +305,14 @@ type OperatorServiceClient interface {
 	// The seat's own person fails with INVALID_ARGUMENT.
 	ReassignSeat(context.Context, *connect.Request[operatorv1.ReassignSeatRequest]) (*connect.Response[operatorv1.ReassignSeatResponse], error)
 	// ListSeats returns the desktop seats every workspace, or one, held in a
-	// UTC month, by workspace and then oldest assigned first: the seats live
-	// at some time in it, removed ones included, with which of them are
-	// billed. A person's seats in one month are billed as one seat, and so are
-	// a seat and the one ReassignSeat moved it to. csv adds the same rows as
-	// CSV. A month not in YYYY-MM form fails with INVALID_ARGUMENT, and an
-	// unknown workspace with NOT_FOUND.
+	// UTC month, by workspace and then oldest assigned first, in pages: the
+	// seats live at some time in it, removed ones included, with which of
+	// them are billed. A person's seats in one month are billed as one seat,
+	// and so are a seat and the one ReassignSeat moved it to. csv adds the
+	// same rows as CSV. A month not in YYYY-MM form fails with
+	// INVALID_ARGUMENT, and an unknown workspace with NOT_FOUND.
+	//
+	// A page holds 100 seats when page_size is zero, and 1000 at most.
 	ListSeats(context.Context, *connect.Request[operatorv1.ListSeatsRequest]) (*connect.Response[operatorv1.ListSeatsResponse], error)
 	// ListPlans returns configured plans sorted by name.
 	//
@@ -1304,12 +1306,14 @@ type OperatorServiceHandler interface {
 	// The seat's own person fails with INVALID_ARGUMENT.
 	ReassignSeat(context.Context, *connect.Request[operatorv1.ReassignSeatRequest]) (*connect.Response[operatorv1.ReassignSeatResponse], error)
 	// ListSeats returns the desktop seats every workspace, or one, held in a
-	// UTC month, by workspace and then oldest assigned first: the seats live
-	// at some time in it, removed ones included, with which of them are
-	// billed. A person's seats in one month are billed as one seat, and so are
-	// a seat and the one ReassignSeat moved it to. csv adds the same rows as
-	// CSV. A month not in YYYY-MM form fails with INVALID_ARGUMENT, and an
-	// unknown workspace with NOT_FOUND.
+	// UTC month, by workspace and then oldest assigned first, in pages: the
+	// seats live at some time in it, removed ones included, with which of
+	// them are billed. A person's seats in one month are billed as one seat,
+	// and so are a seat and the one ReassignSeat moved it to. csv adds the
+	// same rows as CSV. A month not in YYYY-MM form fails with
+	// INVALID_ARGUMENT, and an unknown workspace with NOT_FOUND.
+	//
+	// A page holds 100 seats when page_size is zero, and 1000 at most.
 	ListSeats(context.Context, *connect.Request[operatorv1.ListSeatsRequest]) (*connect.Response[operatorv1.ListSeatsResponse], error)
 	// ListPlans returns configured plans sorted by name.
 	//

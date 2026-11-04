@@ -610,7 +610,9 @@ type WorkloadServiceClient interface {
 	// GetServiceAlarm returns one alarm and its most recent occurrences,
 	// newest first. An unknown name fails with NOT_FOUND.
 	GetServiceAlarm(context.Context, *connect.Request[workspacev1.GetServiceAlarmRequest]) (*connect.Response[workspacev1.GetServiceAlarmResponse], error)
-	// ListServiceAlarms returns the service's alarms by name.
+	// ListServiceAlarms returns the service's alarms by name, in pages.
+	//
+	// A page holds 100 alarms when page_size is zero, and 1000 at most.
 	ListServiceAlarms(context.Context, *connect.Request[workspacev1.ListServiceAlarmsRequest]) (*connect.Response[workspacev1.ListServiceAlarmsResponse], error)
 	// DeleteServiceAlarm removes an alarm and its occurrences. Messages it
 	// already published stay on the endpoint.
@@ -1994,7 +1996,9 @@ type WorkloadServiceHandler interface {
 	// GetServiceAlarm returns one alarm and its most recent occurrences,
 	// newest first. An unknown name fails with NOT_FOUND.
 	GetServiceAlarm(context.Context, *connect.Request[workspacev1.GetServiceAlarmRequest]) (*connect.Response[workspacev1.GetServiceAlarmResponse], error)
-	// ListServiceAlarms returns the service's alarms by name.
+	// ListServiceAlarms returns the service's alarms by name, in pages.
+	//
+	// A page holds 100 alarms when page_size is zero, and 1000 at most.
 	ListServiceAlarms(context.Context, *connect.Request[workspacev1.ListServiceAlarmsRequest]) (*connect.Response[workspacev1.ListServiceAlarmsResponse], error)
 	// DeleteServiceAlarm removes an alarm and its occurrences. Messages it
 	// already published stay on the endpoint.

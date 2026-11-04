@@ -5364,7 +5364,11 @@ type ListSeatsRequest struct {
 	// One workspace's seats; empty: every workspace's.
 	Workspace string `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
 	// Also return the rows as CSV.
-	Csv           bool `protobuf:"varint,3,opt,name=csv,proto3" json:"csv,omitempty"`
+	Csv bool `protobuf:"varint,3,opt,name=csv,proto3" json:"csv,omitempty"`
+	// The most seats in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5420,15 +5424,33 @@ func (x *ListSeatsRequest) GetCsv() bool {
 	return false
 }
 
+func (x *ListSeatsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListSeatsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 type ListSeatsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Seats []*SeatMonth           `protobuf:"bytes,1,rep,name=seats,proto3" json:"seats,omitempty"`
-	// The month's billed seats over every workspace listed.
+	// The seats on this page, by workspace and then oldest assigned first.
+	Seats []*SeatMonth `protobuf:"bytes,1,rep,name=seats,proto3" json:"seats,omitempty"`
+	// The month's billed seats over every workspace the request lists,
+	// whatever the page.
 	BilledSeats int64 `protobuf:"varint,2,opt,name=billed_seats,json=billedSeats,proto3" json:"billed_seats,omitempty"`
-	// With csv: one header row, then one row per seat: month, workspace,
-	// seat_id, user_id, name, assigned_at, removed_at, replaces,
-	// replace_reason and billed.
-	Csv           string `protobuf:"bytes,3,opt,name=csv,proto3" json:"csv,omitempty"`
+	// With csv: one header row, then one row per seat the request lists,
+	// whatever the page: month, workspace, seat_id, user_id, name,
+	// assigned_at, removed_at, replaces, replace_reason and billed.
+	Csv string `protobuf:"bytes,3,opt,name=csv,proto3" json:"csv,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,4,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5480,6 +5502,13 @@ func (x *ListSeatsResponse) GetBilledSeats() int64 {
 func (x *ListSeatsResponse) GetCsv() string {
 	if x != nil {
 		return x.Csv
+	}
+	return ""
+}
+
+func (x *ListSeatsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
 	}
 	return ""
 }
@@ -15259,15 +15288,19 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x06reason\x18\x03 \x01(\tR\x06reason\"x\n" +
 	"\x14ReassignSeatResponse\x123\n" +
 	"\breplaced\x18\x01 \x01(\v2\x17.toshi.operator.v1.SeatR\breplaced\x12+\n" +
-	"\x04seat\x18\x02 \x01(\v2\x17.toshi.operator.v1.SeatR\x04seat\"X\n" +
+	"\x04seat\x18\x02 \x01(\v2\x17.toshi.operator.v1.SeatR\x04seat\"\x94\x01\n" +
 	"\x10ListSeatsRequest\x12\x14\n" +
 	"\x05month\x18\x01 \x01(\tR\x05month\x12\x1c\n" +
 	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x10\n" +
-	"\x03csv\x18\x03 \x01(\bR\x03csv\"|\n" +
+	"\x03csv\x18\x03 \x01(\bR\x03csv\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x05 \x01(\tR\tpageToken\"\xa4\x01\n" +
 	"\x11ListSeatsResponse\x122\n" +
 	"\x05seats\x18\x01 \x03(\v2\x1c.toshi.operator.v1.SeatMonthR\x05seats\x12!\n" +
 	"\fbilled_seats\x18\x02 \x01(\x03R\vbilledSeats\x12\x10\n" +
-	"\x03csv\x18\x03 \x01(\tR\x03csv\"d\n" +
+	"\x03csv\x18\x03 \x01(\tR\x03csv\x12&\n" +
+	"\x0fnext_page_token\x18\x04 \x01(\tR\rnextPageToken\"d\n" +
 	"\tSeatMonth\x12+\n" +
 	"\x04seat\x18\x01 \x01(\v2\x17.toshi.operator.v1.SeatR\x04seat\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +

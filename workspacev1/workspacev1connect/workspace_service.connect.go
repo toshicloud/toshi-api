@@ -152,10 +152,12 @@ type WorkspaceServiceClient interface {
 	// with no billing customer gets a preview with available false.
 	GetWorkspaceUpcomingInvoice(context.Context, *connect.Request[workspacev1.GetWorkspaceUpcomingInvoiceRequest]) (*connect.Response[workspacev1.GetWorkspaceUpcomingInvoiceResponse], error)
 	// ListSeats returns the desktop seats the workspace held in one UTC
-	// month, oldest assigned first: the seats live at some time in it,
-	// removed ones included. A person assigned a seat may open a display on
-	// Windows that Toshi licenses; each seat is billed for every month it
+	// month, oldest assigned first, in pages: the seats live at some time in
+	// it, removed ones included. A person assigned a seat may open a display
+	// on Windows that Toshi licenses; each seat is billed for every month it
 	// touches. A month not in YYYY-MM form fails with INVALID_ARGUMENT.
+	//
+	// A page holds 100 seats when page_size is zero, and 1000 at most.
 	ListSeats(context.Context, *connect.Request[workspacev1.ListSeatsRequest]) (*connect.Response[workspacev1.ListSeatsResponse], error)
 	// AssignSeat assigns a desktop seat to a member of the workspace. A
 	// person who holds a live seat fails with ALREADY_EXISTS, and one who is
@@ -592,10 +594,12 @@ type WorkspaceServiceHandler interface {
 	// with no billing customer gets a preview with available false.
 	GetWorkspaceUpcomingInvoice(context.Context, *connect.Request[workspacev1.GetWorkspaceUpcomingInvoiceRequest]) (*connect.Response[workspacev1.GetWorkspaceUpcomingInvoiceResponse], error)
 	// ListSeats returns the desktop seats the workspace held in one UTC
-	// month, oldest assigned first: the seats live at some time in it,
-	// removed ones included. A person assigned a seat may open a display on
-	// Windows that Toshi licenses; each seat is billed for every month it
+	// month, oldest assigned first, in pages: the seats live at some time in
+	// it, removed ones included. A person assigned a seat may open a display
+	// on Windows that Toshi licenses; each seat is billed for every month it
 	// touches. A month not in YYYY-MM form fails with INVALID_ARGUMENT.
+	//
+	// A page holds 100 seats when page_size is zero, and 1000 at most.
 	ListSeats(context.Context, *connect.Request[workspacev1.ListSeatsRequest]) (*connect.Response[workspacev1.ListSeatsResponse], error)
 	// AssignSeat assigns a desktop seat to a member of the workspace. A
 	// person who holds a live seat fails with ALREADY_EXISTS, and one who is

@@ -24,10 +24,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// ListProductsRequest has no fields: the call's credential names the
-// workspace.
+// ListProductsRequest asks for one page of the deployment's products.
 type ListProductsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The most products in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -62,12 +65,28 @@ func (*ListProductsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_products_proto_rawDescGZIP(), []int{0}
 }
 
-// ListProductsResponse is every product the deployment includes, as the
-// workspace has it.
+func (x *ListProductsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListProductsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+// ListProductsResponse is one page of the deployment's products, as the
+// workspace has them.
 type ListProductsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// products are the products the deployment includes, by id.
-	Products      []*ProductSettings `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
+	// products are the products on this page, by id.
+	Products []*ProductSettings `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -107,6 +126,13 @@ func (x *ListProductsResponse) GetProducts() []*ProductSettings {
 		return x.Products
 	}
 	return nil
+}
+
+func (x *ListProductsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 // UpdateProductRequest is one change of one product's settings: its
@@ -528,10 +554,14 @@ var File_toshi_workspace_v1_products_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_products_proto_rawDesc = "" +
 	"\n" +
-	"!toshi/workspace/v1/products.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/discovery.proto\"\x15\n" +
-	"\x13ListProductsRequest\"W\n" +
+	"!toshi/workspace/v1/products.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\"toshi/workspace/v1/discovery.proto\"Q\n" +
+	"\x13ListProductsRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"\x7f\n" +
 	"\x14ListProductsResponse\x12?\n" +
-	"\bproducts\x18\x01 \x03(\v2#.toshi.workspace.v1.ProductSettingsR\bproducts\"\xf4\x02\n" +
+	"\bproducts\x18\x01 \x03(\v2#.toshi.workspace.v1.ProductSettingsR\bproducts\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xf4\x02\n" +
 	"\x14UpdateProductRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01\x12R\n" +

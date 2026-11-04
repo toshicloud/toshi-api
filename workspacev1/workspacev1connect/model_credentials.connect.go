@@ -90,12 +90,14 @@ type ModelCredentialServiceClient interface {
 	// DeleteModelCredential signs the credential out: it removes the
 	// credential and its key, with every version, in one write.
 	DeleteModelCredential(context.Context, *connect.Request[workspacev1.DeleteModelCredentialRequest]) (*connect.Response[workspacev1.DeleteModelCredentialResponse], error)
-	// ListModelSignInProviders returns every provider a credential may serve,
-	// in a stable order, with how the deployment offers its sign-in:
-	// "held" when the control plane keeps and renews the grant, "volume" when
-	// the person's own login stays on their volume, or "key" when only an API
-	// key is offered. available is true only for a provider whose sign-in the
-	// deployment holds.
+	// ListModelSignInProviders returns the providers a credential may serve,
+	// a page at a time, in the order the deployment declares them, with how
+	// the deployment offers its sign-in: "held" when the control plane keeps
+	// and renews the grant, "volume" when the person's own login stays on
+	// their volume, or "key" when only an API key is offered. available is
+	// true only for a provider whose sign-in the deployment holds.
+	//
+	// A page holds 100 providers when page_size is zero, and 1000 at most.
 	ListModelSignInProviders(context.Context, *connect.Request[workspacev1.ListModelSignInProvidersRequest]) (*connect.Response[workspacev1.ListModelSignInProvidersResponse], error)
 	// StartModelSignIn signs a person in to a provider's subscription and
 	// streams what the sign-in asks of them: the prompt to show, progress
@@ -268,12 +270,14 @@ type ModelCredentialServiceHandler interface {
 	// DeleteModelCredential signs the credential out: it removes the
 	// credential and its key, with every version, in one write.
 	DeleteModelCredential(context.Context, *connect.Request[workspacev1.DeleteModelCredentialRequest]) (*connect.Response[workspacev1.DeleteModelCredentialResponse], error)
-	// ListModelSignInProviders returns every provider a credential may serve,
-	// in a stable order, with how the deployment offers its sign-in:
-	// "held" when the control plane keeps and renews the grant, "volume" when
-	// the person's own login stays on their volume, or "key" when only an API
-	// key is offered. available is true only for a provider whose sign-in the
-	// deployment holds.
+	// ListModelSignInProviders returns the providers a credential may serve,
+	// a page at a time, in the order the deployment declares them, with how
+	// the deployment offers its sign-in: "held" when the control plane keeps
+	// and renews the grant, "volume" when the person's own login stays on
+	// their volume, or "key" when only an API key is offered. available is
+	// true only for a provider whose sign-in the deployment holds.
+	//
+	// A page holds 100 providers when page_size is zero, and 1000 at most.
 	ListModelSignInProviders(context.Context, *connect.Request[workspacev1.ListModelSignInProvidersRequest]) (*connect.Response[workspacev1.ListModelSignInProvidersResponse], error)
 	// StartModelSignIn signs a person in to a provider's subscription and
 	// streams what the sign-in asks of them: the prompt to show, progress

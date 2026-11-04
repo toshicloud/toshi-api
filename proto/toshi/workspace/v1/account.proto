@@ -27,7 +27,10 @@ service AccountService {
     option (toshi.scope) = "workspace";
   }
 
-  // ListIdentities returns the caller's identities, oldest first.
+  // ListIdentities returns the caller's identities, oldest first, in
+  // pages.
+  //
+  // A page holds 100 identities when page_size is zero, and 1000 at most.
   rpc ListIdentities(ListIdentitiesRequest) returns (ListIdentitiesResponse) {
     option (toshi.permission) = "members.read";
     option (toshi.scope) = "workspace";
@@ -188,14 +191,21 @@ message SignInProof {
   google.protobuf.Timestamp authenticated_at = 4;
 }
 
-// ListIdentitiesRequest has no fields: the caller's own identities are the
-// subject.
-message ListIdentitiesRequest {}
+// ListIdentitiesRequest asks for one page of the caller's identities: the
+// caller's own are the subject.
+message ListIdentitiesRequest {
+  // The most identities in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
 
-// ListIdentitiesResponse lists the caller's identities, oldest first.
+// ListIdentitiesResponse is one page of the caller's identities.
 message ListIdentitiesResponse {
-  // The caller's identities, oldest first.
+  // The caller's identities on this page, oldest first.
   repeated Identity identities = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 // UnlinkIdentityRequest names the identity to remove.

@@ -5358,7 +5358,11 @@ type ListServiceAlarmsRequest struct {
 	// The service's environment.
 	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's ID.
-	ServiceId     string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	ServiceId string `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	// The most alarms in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5414,11 +5418,27 @@ func (x *ListServiceAlarmsRequest) GetServiceId() string {
 	return ""
 }
 
+func (x *ListServiceAlarmsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListServiceAlarmsRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
 // ListServiceAlarmsResponse is the answer to ListServiceAlarms.
 type ListServiceAlarmsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The service's alarms, by name.
-	Alarms        []*ServiceAlarm `protobuf:"bytes,1,rep,name=alarms,proto3" json:"alarms,omitempty"`
+	// The service's alarms on this page, by name.
+	Alarms []*ServiceAlarm `protobuf:"bytes,1,rep,name=alarms,proto3" json:"alarms,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5458,6 +5478,13 @@ func (x *ListServiceAlarmsResponse) GetAlarms() []*ServiceAlarm {
 		return x.Alarms
 	}
 	return nil
+}
+
+func (x *ListServiceAlarmsResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 // DeleteServiceAlarmRequest is a call of DeleteServiceAlarm.
@@ -6368,14 +6395,18 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x04name\x18\x04 \x01(\tR\x04name\"\x9f\x01\n" +
 	"\x17GetServiceAlarmResponse\x126\n" +
 	"\x05alarm\x18\x01 \x01(\v2 .toshi.workspace.v1.ServiceAlarmR\x05alarm\x12L\n" +
-	"\voccurrences\x18\x02 \x03(\v2*.toshi.workspace.v1.ServiceAlarmOccurrenceR\voccurrences\"u\n" +
+	"\voccurrences\x18\x02 \x03(\v2*.toshi.workspace.v1.ServiceAlarmOccurrenceR\voccurrences\"\xb1\x01\n" +
 	"\x18ListServiceAlarmsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
 	"\n" +
-	"service_id\x18\x03 \x01(\tR\tserviceId\"U\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x05 \x01(\tR\tpageToken\"}\n" +
 	"\x19ListServiceAlarmsResponse\x128\n" +
-	"\x06alarms\x18\x01 \x03(\v2 .toshi.workspace.v1.ServiceAlarmR\x06alarms\"\x8a\x01\n" +
+	"\x06alarms\x18\x01 \x03(\v2 .toshi.workspace.v1.ServiceAlarmR\x06alarms\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x8a\x01\n" +
 	"\x19DeleteServiceAlarmRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +

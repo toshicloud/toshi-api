@@ -15,24 +15,48 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/products.proto.
  */
 export const file_toshi_workspace_v1_products: GenFile = /*@__PURE__*/
-  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSIVChNMaXN0UHJvZHVjdHNSZXF1ZXN0Ik0KFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncyLFAgoUVXBkYXRlUHJvZHVjdFJlcXVlc3QSCgoCaWQYASABKAkSFAoHZW5hYmxlZBgCIAEoCEgAiAEBEkgKCHNldHRpbmdzGAMgAygLMjYudG9zaGkud29ya3NwYWNlLnYxLlVwZGF0ZVByb2R1Y3RSZXF1ZXN0LlNldHRpbmdzRW50cnkSLwoLdXBkYXRlX21hc2sYByABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrGlEKDVNldHRpbmdzRW50cnkSCwoDa2V5GAEgASgJEi8KBXZhbHVlGAIgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZToCOAFCCgoIX2VuYWJsZWRKBAgEEAVKBAgFEAZKBAgGEAdSBWNsZWFyUg9hY2NlcHRlZF9hY2Nlc3NSB3ZlcnNpb24idgoVVXBkYXRlUHJvZHVjdFJlc3BvbnNlEjQKB3Byb2R1Y3QYASABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFNldHRpbmdzSgQIAhADSgQIAxAEUhJpbnN0YWxsYXRpb25fdG9rZW5SB3dhcm5pbmcivQIKD1Byb2R1Y3RTZXR0aW5ncxIKCgJpZBgBIAEoCRI0CghmZWF0dXJlcxgDIAMoCzIiLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU2V0dGluZxIvCgVzdGF0ZRgEIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhdGUSNQoIc3VyZmFjZXMYBiABKAsyIy50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN1cmZhY2VzEgwKBG5hbWUYByABKAkSNwoJc3RhYmlsaXR5GAggASgOMiQudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTdGFiaWxpdHkSFwoPcmVtb3ZhbF92ZXJzaW9uGAkgASgJSgQIAhADSgQIBRAGUgZzd2l0Y2hSDGluc3RhbGxhdGlvbiJFCg9Qcm9kdWN0U3VyZmFjZXMSCwoDYXBpGAEgASgJSgQIAhADSgQIAxAESgQIBBAFUgNjbGlSCWRhc2hib2FyZFIDc2RrItkCCg5GZWF0dXJlU2V0dGluZxILCgNrZXkYASABKAkSEgoKbmFycm93YWJsZRgCIAEoCBI1CgtlbnRpdGxlbWVudBgDIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSMQoHc2V0dGluZxgEIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSMwoJZWZmZWN0aXZlGAUgASgLMiAudG9zaGkud29ya3NwYWNlLnYxLkZlYXR1cmVWYWx1ZRISCgpjaGFuZ2VkX2J5GAYgASgJEi4KCmNoYW5nZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjEKBnNvdXJjZRgIIAEoDjIhLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlU291cmNlEhAKCHBsYW5fa2V5GAkgASgJMoQCCg5Qcm9kdWN0U2VydmljZRJ0CgxMaXN0UHJvZHVjdHMSJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0UHJvZHVjdHNSZXNwb25zZSIRwvMYDXNldHRpbmdzLnJlYWQSfAoNVXBkYXRlUHJvZHVjdBIoLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVzcG9uc2UiFsLzGA5zZXR0aW5ncy53cml0ZZD0GAJCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
+  fileDesc("CiF0b3NoaS93b3Jrc3BhY2UvdjEvcHJvZHVjdHMucHJvdG8SEnRvc2hpLndvcmtzcGFjZS52MSI8ChNMaXN0UHJvZHVjdHNSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJImYKFExpc3RQcm9kdWN0c1Jlc3BvbnNlEjUKCHByb2R1Y3RzGAEgAygLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5ncxIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkixQIKFFVwZGF0ZVByb2R1Y3RSZXF1ZXN0EgoKAmlkGAEgASgJEhQKB2VuYWJsZWQYAiABKAhIAIgBARJICghzZXR0aW5ncxgDIAMoCzI2LnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVQcm9kdWN0UmVxdWVzdC5TZXR0aW5nc0VudHJ5Ei8KC3VwZGF0ZV9tYXNrGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLkZpZWxkTWFzaxpRCg1TZXR0aW5nc0VudHJ5EgsKA2tleRgBIAEoCRIvCgV2YWx1ZRgCIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWU6AjgBQgoKCF9lbmFibGVkSgQIBBAFSgQIBRAGSgQIBhAHUgVjbGVhclIPYWNjZXB0ZWRfYWNjZXNzUgd2ZXJzaW9uInYKFVVwZGF0ZVByb2R1Y3RSZXNwb25zZRI0Cgdwcm9kdWN0GAEgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTZXR0aW5nc0oECAIQA0oECAMQBFISaW5zdGFsbGF0aW9uX3Rva2VuUgd3YXJuaW5nIr0CCg9Qcm9kdWN0U2V0dGluZ3MSCgoCaWQYASABKAkSNAoIZmVhdHVyZXMYAyADKAsyIi50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNldHRpbmcSLwoFc3RhdGUYBCABKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuUHJvZHVjdFN0YXRlEjUKCHN1cmZhY2VzGAYgASgLMiMudG9zaGkud29ya3NwYWNlLnYxLlByb2R1Y3RTdXJmYWNlcxIMCgRuYW1lGAcgASgJEjcKCXN0YWJpbGl0eRgIIAEoDjIkLnRvc2hpLndvcmtzcGFjZS52MS5Qcm9kdWN0U3RhYmlsaXR5EhcKD3JlbW92YWxfdmVyc2lvbhgJIAEoCUoECAIQA0oECAUQBlIGc3dpdGNoUgxpbnN0YWxsYXRpb24iRQoPUHJvZHVjdFN1cmZhY2VzEgsKA2FwaRgBIAEoCUoECAIQA0oECAMQBEoECAQQBVIDY2xpUglkYXNoYm9hcmRSA3NkayLZAgoORmVhdHVyZVNldHRpbmcSCwoDa2V5GAEgASgJEhIKCm5hcnJvd2FibGUYAiABKAgSNQoLZW50aXRsZW1lbnQYAyABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjEKB3NldHRpbmcYBCABKAsyIC50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVZhbHVlEjMKCWVmZmVjdGl2ZRgFIAEoCzIgLnRvc2hpLndvcmtzcGFjZS52MS5GZWF0dXJlVmFsdWUSEgoKY2hhbmdlZF9ieRgGIAEoCRIuCgpjaGFuZ2VkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCgZzb3VyY2UYCCABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuRmVhdHVyZVNvdXJjZRIQCghwbGFuX2tleRgJIAEoCTKEAgoOUHJvZHVjdFNlcnZpY2USdAoMTGlzdFByb2R1Y3RzEicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RQcm9kdWN0c1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFByb2R1Y3RzUmVzcG9uc2UiEcLzGA1zZXR0aW5ncy5yZWFkEnwKDVVwZGF0ZVByb2R1Y3QSKC50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlUHJvZHVjdFJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlUHJvZHVjdFJlc3BvbnNlIhbC8xgOc2V0dGluZ3Mud3JpdGWQ9BgCQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_discovery]);
 
 /**
- * ListProductsRequest has no fields: the call's credential names the
- * workspace.
+ * ListProductsRequest asks for one page of the deployment's products.
  *
  * @generated from message toshi.workspace.v1.ListProductsRequest
  */
 export type ListProductsRequest = Message<"toshi.workspace.v1.ListProductsRequest"> & {
+  /**
+   * The most products in one page; zero lets the server choose.
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize: number;
+
+  /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
+   * @generated from field: string page_token = 2;
+   */
+  pageToken: string;
 };
 
 /**
- * ListProductsRequest has no fields: the call's credential names the
- * workspace.
+ * ListProductsRequest asks for one page of the deployment's products.
  *
  * @generated from message toshi.workspace.v1.ListProductsRequest
  */
 export type ListProductsRequestJson = {
+  /**
+   * The most products in one page; zero lets the server choose.
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize?: number;
+
+  /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
+   * @generated from field: string page_token = 2;
+   */
+  pageToken?: string;
 };
 
 /**
@@ -43,33 +67,47 @@ export const ListProductsRequestSchema: GenMessage<ListProductsRequest, {jsonTyp
   messageDesc(file_toshi_workspace_v1_products, 0);
 
 /**
- * ListProductsResponse is every product the deployment includes, as the
- * workspace has it.
+ * ListProductsResponse is one page of the deployment's products, as the
+ * workspace has them.
  *
  * @generated from message toshi.workspace.v1.ListProductsResponse
  */
 export type ListProductsResponse = Message<"toshi.workspace.v1.ListProductsResponse"> & {
   /**
-   * products are the products the deployment includes, by id.
+   * products are the products on this page, by id.
    *
    * @generated from field: repeated toshi.workspace.v1.ProductSettings products = 1;
    */
   products: ProductSettings[];
+
+  /**
+   * Empty on the last page.
+   *
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken: string;
 };
 
 /**
- * ListProductsResponse is every product the deployment includes, as the
- * workspace has it.
+ * ListProductsResponse is one page of the deployment's products, as the
+ * workspace has them.
  *
  * @generated from message toshi.workspace.v1.ListProductsResponse
  */
 export type ListProductsResponseJson = {
   /**
-   * products are the products the deployment includes, by id.
+   * products are the products on this page, by id.
    *
    * @generated from field: repeated toshi.workspace.v1.ProductSettings products = 1;
    */
   products?: ProductSettingsJson[];
+
+  /**
+   * Empty on the last page.
+   *
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken?: string;
 };
 
 /**
@@ -571,10 +609,12 @@ export const FeatureSettingSchema: GenMessage<FeatureSetting, {jsonType: Feature
  */
 export const ProductService: GenService<{
   /**
-   * ListProducts returns the products the deployment includes, by id, each
-   * with its features: the entitlement, the workspace's
+   * ListProducts returns the products the deployment includes, by id, in
+   * pages, each with its features: the entitlement, the workspace's
    * setting if it has one, the effective value, and who changed the
    * setting last and when.
+   *
+   * A page holds 100 products when page_size is zero, and 1000 at most.
    *
    * @generated from rpc toshi.workspace.v1.ProductService.ListProducts
    */

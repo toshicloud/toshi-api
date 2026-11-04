@@ -60,7 +60,10 @@ type AccountServiceClient interface {
 	// session or access token holds, and where a person installs the app
 	// that makes a workspace.
 	GetAccount(context.Context, *connect.Request[workspacev1.GetAccountRequest]) (*connect.Response[workspacev1.GetAccountResponse], error)
-	// ListIdentities returns the caller's identities, oldest first.
+	// ListIdentities returns the caller's identities, oldest first, in
+	// pages.
+	//
+	// A page holds 100 identities when page_size is zero, and 1000 at most.
 	ListIdentities(context.Context, *connect.Request[workspacev1.ListIdentitiesRequest]) (*connect.Response[workspacev1.ListIdentitiesResponse], error)
 	// UnlinkIdentity removes one of the caller's identities, so it no longer
 	// signs in as the caller, and ends what was opened through it: its
@@ -186,7 +189,10 @@ type AccountServiceHandler interface {
 	// session or access token holds, and where a person installs the app
 	// that makes a workspace.
 	GetAccount(context.Context, *connect.Request[workspacev1.GetAccountRequest]) (*connect.Response[workspacev1.GetAccountResponse], error)
-	// ListIdentities returns the caller's identities, oldest first.
+	// ListIdentities returns the caller's identities, oldest first, in
+	// pages.
+	//
+	// A page holds 100 identities when page_size is zero, and 1000 at most.
 	ListIdentities(context.Context, *connect.Request[workspacev1.ListIdentitiesRequest]) (*connect.Response[workspacev1.ListIdentitiesResponse], error)
 	// UnlinkIdentity removes one of the caller's identities, so it no longer
 	// signs in as the caller, and ends what was opened through it: its

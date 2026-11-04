@@ -43,10 +43,12 @@ const (
 
 // ProductServiceClient is a client for the toshi.workspace.v1.ProductService service.
 type ProductServiceClient interface {
-	// ListProducts returns the products the deployment includes, by id, each
-	// with its features: the entitlement, the workspace's
+	// ListProducts returns the products the deployment includes, by id, in
+	// pages, each with its features: the entitlement, the workspace's
 	// setting if it has one, the effective value, and who changed the
 	// setting last and when.
+	//
+	// A page holds 100 products when page_size is zero, and 1000 at most.
 	ListProducts(context.Context, *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error)
 	// UpdateProduct changes the workspace's settings of one product in one
 	// call: it turns the product on or off, and sets or clears its features,
@@ -106,10 +108,12 @@ func (c *productServiceClient) UpdateProduct(ctx context.Context, req *connect.R
 
 // ProductServiceHandler is an implementation of the toshi.workspace.v1.ProductService service.
 type ProductServiceHandler interface {
-	// ListProducts returns the products the deployment includes, by id, each
-	// with its features: the entitlement, the workspace's
+	// ListProducts returns the products the deployment includes, by id, in
+	// pages, each with its features: the entitlement, the workspace's
 	// setting if it has one, the effective value, and who changed the
 	// setting last and when.
+	//
+	// A page holds 100 products when page_size is zero, and 1000 at most.
 	ListProducts(context.Context, *connect.Request[workspacev1.ListProductsRequest]) (*connect.Response[workspacev1.ListProductsResponse], error)
 	// UpdateProduct changes the workspace's settings of one product in one
 	// call: it turns the product on or off, and sets or clears its features,

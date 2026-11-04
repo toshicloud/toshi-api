@@ -181,12 +181,14 @@ service OperatorService {
     option (toshi.audit) = {action: "seat.reassigned"};
   }
   // ListSeats returns the desktop seats every workspace, or one, held in a
-  // UTC month, by workspace and then oldest assigned first: the seats live
-  // at some time in it, removed ones included, with which of them are
-  // billed. A person's seats in one month are billed as one seat, and so are
-  // a seat and the one ReassignSeat moved it to. csv adds the same rows as
-  // CSV. A month not in YYYY-MM form fails with INVALID_ARGUMENT, and an
-  // unknown workspace with NOT_FOUND.
+  // UTC month, by workspace and then oldest assigned first, in pages: the
+  // seats live at some time in it, removed ones included, with which of
+  // them are billed. A person's seats in one month are billed as one seat,
+  // and so are a seat and the one ReassignSeat moved it to. csv adds the
+  // same rows as CSV. A month not in YYYY-MM form fails with
+  // INVALID_ARGUMENT, and an unknown workspace with NOT_FOUND.
+  //
+  // A page holds 100 seats when page_size is zero, and 1000 at most.
   rpc ListSeats(ListSeatsRequest) returns (ListSeatsResponse);
 
   // ListPlans returns configured plans sorted by name.
@@ -1579,16 +1581,24 @@ message ListSeatsRequest {
   string workspace = 2;
   // Also return the rows as CSV.
   bool csv = 3;
+  // The most seats in one page; zero lets the server choose.
+  int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
 }
 
 message ListSeatsResponse {
+  // The seats on this page, by workspace and then oldest assigned first.
   repeated SeatMonth seats = 1;
-  // The month's billed seats over every workspace listed.
+  // The month's billed seats over every workspace the request lists,
+  // whatever the page.
   int64 billed_seats = 2;
-  // With csv: one header row, then one row per seat: month, workspace,
-  // seat_id, user_id, name, assigned_at, removed_at, replaces,
-  // replace_reason and billed.
+  // With csv: one header row, then one row per seat the request lists,
+  // whatever the page: month, workspace, seat_id, user_id, name,
+  // assigned_at, removed_at, replaces, replace_reason and billed.
   string csv = 3;
+  // Empty on the last page.
+  string next_page_token = 4;
 }
 
 // SeatMonth is one seat in a month's report.

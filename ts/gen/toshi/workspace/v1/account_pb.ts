@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/account.proto.
  */
 export const file_toshi_workspace_v1_account: GenFile = /*@__PURE__*/
-  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvYWNjb3VudC5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxImcKB0FjY291bnQSDwoHdXNlcl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBWVtYWlsGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqEBCghJZGVudGl0eRIQCghwcm92aWRlchgBIAEoCRIPCgdzdWJqZWN0GAIgASgJEg0KBWxvZ2luGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKD2xhc3Rfc2lnbl9pbl9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiEwoRR2V0QWNjb3VudFJlcXVlc3QiiAIKEkdldEFjY291bnRSZXNwb25zZRIsCgdhY2NvdW50GAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLkFjY291bnQSMAoKaWRlbnRpdGllcxgCIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRISCgp3b3Jrc3BhY2VzGAMgAygJEjcKDnNpZ25lZF9pbl93aXRoGAQgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlNpZ25JblByb29mEhMKC2luc3RhbGxfdXJsGAUgASgJEjAKB3BlbmRpbmcYBiADKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuSm9pblJlcXVlc3QibgoLSm9pblJlcXVlc3QSEQoJd29ya3NwYWNlGAEgASgJEgwKBG5hbWUYAiABKAkSDQoFc3RhdGUYAyABKAkSLwoLcmV0cnlfYWZ0ZXIYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wInYKC1NpZ25JblByb29mEhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkSDgoGbWV0aG9kGAMgASgJEjQKEGF1dGhlbnRpY2F0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIhcKFUxpc3RJZGVudGl0aWVzUmVxdWVzdCJKChZMaXN0SWRlbnRpdGllc1Jlc3BvbnNlEjAKCmlkZW50aXRpZXMYASADKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuSWRlbnRpdHkiOgoVVW5saW5rSWRlbnRpdHlSZXF1ZXN0EhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkieAoWVW5saW5rSWRlbnRpdHlSZXNwb25zZRIuCghpZGVudGl0eRgBIAEoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRIWCg5zZXNzaW9uc19lbmRlZBgCIAEoBRIWCg5ncmFudHNfcmV2b2tlZBgDIAEoBSI8ChNMaXN0U2Vzc2lvbnNSZXF1ZXN0EhEKCXBhZ2Vfc2l6ZRgBIAEoBRISCgpwYWdlX3Rva2VuGAIgASgJImQKFExpc3RTZXNzaW9uc1Jlc3BvbnNlEjMKCHNlc3Npb25zGAEgAygLMiEudG9zaGkud29ya3NwYWNlLnYxLlNpZ25JblNlc3Npb24SFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIp4CCg1TaWduSW5TZXNzaW9uEgoKAmlkGAEgASgJEi4KCmNyZWF0ZWRfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmV4cGlyZXNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCHByb3ZpZGVyGAQgASgJEjcKDnNpZ25lZF9pbl93aXRoGAUgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlNpZ25JblByb29mEg8KB2N1cnJlbnQYBiABKAgSEwoLY2xpZW50X25hbWUYByABKAkSMAoMbGFzdF9zZWVuX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCIfChFFbmRTZXNzaW9uUmVxdWVzdBIKCgJpZBgBIAEoCSIUChJFbmRTZXNzaW9uUmVzcG9uc2UiJwoURGVsZXRlQWNjb3VudFJlcXVlc3QSDwoHY29uZmlybRgBIAEoCSIXChVEZWxldGVBY2NvdW50UmVzcG9uc2UypwgKDkFjY291bnRTZXJ2aWNlEnoKCkdldEFjY291bnQSJS50b3NoaS53b3Jrc3BhY2UudjEuR2V0QWNjb3VudFJlcXVlc3QaJi50b3NoaS53b3Jrc3BhY2UudjEuR2V0QWNjb3VudFJlc3BvbnNlIh3C8xgMbWVtYmVycy5yZWFkyvMYCXdvcmtzcGFjZRKGAQoOTGlzdElkZW50aXRpZXMSKS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdElkZW50aXRpZXNSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLkxpc3RJZGVudGl0aWVzUmVzcG9uc2UiHcLzGAxtZW1iZXJzLnJlYWTK8xgJd29ya3NwYWNlEvABCg5VbmxpbmtJZGVudGl0eRIpLnRvc2hpLndvcmtzcGFjZS52MS5VbmxpbmtJZGVudGl0eVJlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuVW5saW5rSWRlbnRpdHlSZXNwb25zZSKGAcLzGA1tZW1iZXJzLndyaXRlyvMYCXdvcmtzcGFjZdLzGBkKEWlkZW50aXR5LnVubGlua2VkEgRub25l6vMYAhAB+vMYPQgBEjlVbmxpbmsgdGhpcyBzaWduLWluPyBJdCBjYW4gbm8gbG9uZ2VyIGJlIHVzZWQgdG8gc2lnbiBpbi6Q9BgCEoABCgxMaXN0U2Vzc2lvbnMSJy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFNlc3Npb25zUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0U2Vzc2lvbnNSZXNwb25zZSIdwvMYDG1lbWJlcnMucmVhZMrzGAl3b3Jrc3BhY2US8QEKCkVuZFNlc3Npb24SJS50b3NoaS53b3Jrc3BhY2UudjEuRW5kU2Vzc2lvblJlcXVlc3QaJi50b3NoaS53b3Jrc3BhY2UudjEuRW5kU2Vzc2lvblJlc3BvbnNlIpMBwvMYDW1lbWJlcnMud3JpdGXK8xgJd29ya3NwYWNl0vMYFQoNc2Vzc2lvbi5lbmRlZBIEbm9uZerzGAIQAfrzGE4IARJKRW5kIHRoaXMgc2Vzc2lvbj8gSXQgc2lnbnMgb3V0IG5vdywgYW5kIHNpZ25pbmcgaW4gYWdhaW4gc3RhcnRzIGEgbmV3IG9uZS6Q9BgCEqUBCg1EZWxldGVBY2NvdW50EigudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUFjY291bnRSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZUFjY291bnRSZXNwb25zZSI/wvMYDW1lbWJlcnMud3JpdGXK8xgJd29ya3NwYWNl0vMYEwoLdXNlci5lcmFzZWQSBG5vbmXq8xgCEAGQ9BgCQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvYWNjb3VudC5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxImcKB0FjY291bnQSDwoHdXNlcl9pZBgBIAEoCRIMCgRuYW1lGAIgASgJEg0KBWVtYWlsGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqEBCghJZGVudGl0eRIQCghwcm92aWRlchgBIAEoCRIPCgdzdWJqZWN0GAIgASgJEg0KBWxvZ2luGAMgASgJEi4KCmNyZWF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKD2xhc3Rfc2lnbl9pbl9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiEwoRR2V0QWNjb3VudFJlcXVlc3QiiAIKEkdldEFjY291bnRSZXNwb25zZRIsCgdhY2NvdW50GAEgASgLMhsudG9zaGkud29ya3NwYWNlLnYxLkFjY291bnQSMAoKaWRlbnRpdGllcxgCIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5JZGVudGl0eRISCgp3b3Jrc3BhY2VzGAMgAygJEjcKDnNpZ25lZF9pbl93aXRoGAQgAygLMh8udG9zaGkud29ya3NwYWNlLnYxLlNpZ25JblByb29mEhMKC2luc3RhbGxfdXJsGAUgASgJEjAKB3BlbmRpbmcYBiADKAsyHy50b3NoaS53b3Jrc3BhY2UudjEuSm9pblJlcXVlc3QibgoLSm9pblJlcXVlc3QSEQoJd29ya3NwYWNlGAEgASgJEgwKBG5hbWUYAiABKAkSDQoFc3RhdGUYAyABKAkSLwoLcmV0cnlfYWZ0ZXIYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wInYKC1NpZ25JblByb29mEhAKCHByb3ZpZGVyGAEgASgJEg8KB3N1YmplY3QYAiABKAkSDgoGbWV0aG9kGAMgASgJEjQKEGF1dGhlbnRpY2F0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIj4KFUxpc3RJZGVudGl0aWVzUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJjChZMaXN0SWRlbnRpdGllc1Jlc3BvbnNlEjAKCmlkZW50aXRpZXMYASADKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuSWRlbnRpdHkSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIjoKFVVubGlua0lkZW50aXR5UmVxdWVzdBIQCghwcm92aWRlchgBIAEoCRIPCgdzdWJqZWN0GAIgASgJIngKFlVubGlua0lkZW50aXR5UmVzcG9uc2USLgoIaWRlbnRpdHkYASABKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuSWRlbnRpdHkSFgoOc2Vzc2lvbnNfZW5kZWQYAiABKAUSFgoOZ3JhbnRzX3Jldm9rZWQYAyABKAUiPAoTTGlzdFNlc3Npb25zUmVxdWVzdBIRCglwYWdlX3NpemUYASABKAUSEgoKcGFnZV90b2tlbhgCIAEoCSJkChRMaXN0U2Vzc2lvbnNSZXNwb25zZRIzCghzZXNzaW9ucxgBIAMoCzIhLnRvc2hpLndvcmtzcGFjZS52MS5TaWduSW5TZXNzaW9uEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSKeAgoNU2lnbkluU2Vzc2lvbhIKCgJpZBgBIAEoCRIuCgpjcmVhdGVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpleHBpcmVzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIQCghwcm92aWRlchgEIAEoCRI3Cg5zaWduZWRfaW5fd2l0aBgFIAMoCzIfLnRvc2hpLndvcmtzcGFjZS52MS5TaWduSW5Qcm9vZhIPCgdjdXJyZW50GAYgASgIEhMKC2NsaWVudF9uYW1lGAcgASgJEjAKDGxhc3Rfc2Vlbl9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiHwoRRW5kU2Vzc2lvblJlcXVlc3QSCgoCaWQYASABKAkiFAoSRW5kU2Vzc2lvblJlc3BvbnNlIicKFERlbGV0ZUFjY291bnRSZXF1ZXN0Eg8KB2NvbmZpcm0YASABKAkiFwoVRGVsZXRlQWNjb3VudFJlc3BvbnNlMqcICg5BY2NvdW50U2VydmljZRJ6CgpHZXRBY2NvdW50EiUudG9zaGkud29ya3NwYWNlLnYxLkdldEFjY291bnRSZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLkdldEFjY291bnRSZXNwb25zZSIdwvMYDG1lbWJlcnMucmVhZMrzGAl3b3Jrc3BhY2UShgEKDkxpc3RJZGVudGl0aWVzEikudG9zaGkud29ya3NwYWNlLnYxLkxpc3RJZGVudGl0aWVzUmVxdWVzdBoqLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0SWRlbnRpdGllc1Jlc3BvbnNlIh3C8xgMbWVtYmVycy5yZWFkyvMYCXdvcmtzcGFjZRLwAQoOVW5saW5rSWRlbnRpdHkSKS50b3NoaS53b3Jrc3BhY2UudjEuVW5saW5rSWRlbnRpdHlSZXF1ZXN0GioudG9zaGkud29ya3NwYWNlLnYxLlVubGlua0lkZW50aXR5UmVzcG9uc2UihgHC8xgNbWVtYmVycy53cml0ZcrzGAl3b3Jrc3BhY2XS8xgZChFpZGVudGl0eS51bmxpbmtlZBIEbm9uZerzGAIQAfrzGD0IARI5VW5saW5rIHRoaXMgc2lnbi1pbj8gSXQgY2FuIG5vIGxvbmdlciBiZSB1c2VkIHRvIHNpZ24gaW4ukPQYAhKAAQoMTGlzdFNlc3Npb25zEicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RTZXNzaW9uc1JlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFNlc3Npb25zUmVzcG9uc2UiHcLzGAxtZW1iZXJzLnJlYWTK8xgJd29ya3NwYWNlEvEBCgpFbmRTZXNzaW9uEiUudG9zaGkud29ya3NwYWNlLnYxLkVuZFNlc3Npb25SZXF1ZXN0GiYudG9zaGkud29ya3NwYWNlLnYxLkVuZFNlc3Npb25SZXNwb25zZSKTAcLzGA1tZW1iZXJzLndyaXRlyvMYCXdvcmtzcGFjZdLzGBUKDXNlc3Npb24uZW5kZWQSBG5vbmXq8xgCEAH68xhOCAESSkVuZCB0aGlzIHNlc3Npb24/IEl0IHNpZ25zIG91dCBub3csIGFuZCBzaWduaW5nIGluIGFnYWluIHN0YXJ0cyBhIG5ldyBvbmUukPQYAhKlAQoNRGVsZXRlQWNjb3VudBIoLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVBY2NvdW50UmVxdWVzdBopLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVBY2NvdW50UmVzcG9uc2UiP8LzGA1tZW1iZXJzLndyaXRlyvMYCXdvcmtzcGFjZdLzGBMKC3VzZXIuZXJhc2VkEgRub25l6vMYAhABkPQYAkIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Account is a Toshi user: a person who signs in through one or more
@@ -514,21 +514,47 @@ export const SignInProofSchema: GenMessage<SignInProof, {jsonType: SignInProofJs
   messageDesc(file_toshi_workspace_v1_account, 5);
 
 /**
- * ListIdentitiesRequest has no fields: the caller's own identities are the
- * subject.
+ * ListIdentitiesRequest asks for one page of the caller's identities: the
+ * caller's own are the subject.
  *
  * @generated from message toshi.workspace.v1.ListIdentitiesRequest
  */
 export type ListIdentitiesRequest = Message<"toshi.workspace.v1.ListIdentitiesRequest"> & {
+  /**
+   * The most identities in one page; zero lets the server choose.
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize: number;
+
+  /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
+   * @generated from field: string page_token = 2;
+   */
+  pageToken: string;
 };
 
 /**
- * ListIdentitiesRequest has no fields: the caller's own identities are the
- * subject.
+ * ListIdentitiesRequest asks for one page of the caller's identities: the
+ * caller's own are the subject.
  *
  * @generated from message toshi.workspace.v1.ListIdentitiesRequest
  */
 export type ListIdentitiesRequestJson = {
+  /**
+   * The most identities in one page; zero lets the server choose.
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize?: number;
+
+  /**
+   * From an earlier response's next_page_token; empty for the first page.
+   *
+   * @generated from field: string page_token = 2;
+   */
+  pageToken?: string;
 };
 
 /**
@@ -539,31 +565,45 @@ export const ListIdentitiesRequestSchema: GenMessage<ListIdentitiesRequest, {jso
   messageDesc(file_toshi_workspace_v1_account, 6);
 
 /**
- * ListIdentitiesResponse lists the caller's identities, oldest first.
+ * ListIdentitiesResponse is one page of the caller's identities.
  *
  * @generated from message toshi.workspace.v1.ListIdentitiesResponse
  */
 export type ListIdentitiesResponse = Message<"toshi.workspace.v1.ListIdentitiesResponse"> & {
   /**
-   * The caller's identities, oldest first.
+   * The caller's identities on this page, oldest first.
    *
    * @generated from field: repeated toshi.workspace.v1.Identity identities = 1;
    */
   identities: Identity[];
+
+  /**
+   * Empty on the last page.
+   *
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken: string;
 };
 
 /**
- * ListIdentitiesResponse lists the caller's identities, oldest first.
+ * ListIdentitiesResponse is one page of the caller's identities.
  *
  * @generated from message toshi.workspace.v1.ListIdentitiesResponse
  */
 export type ListIdentitiesResponseJson = {
   /**
-   * The caller's identities, oldest first.
+   * The caller's identities on this page, oldest first.
    *
    * @generated from field: repeated toshi.workspace.v1.Identity identities = 1;
    */
   identities?: IdentityJson[];
+
+  /**
+   * Empty on the last page.
+   *
+   * @generated from field: string next_page_token = 2;
+   */
+  nextPageToken?: string;
 };
 
 /**
@@ -1085,7 +1125,10 @@ export const AccountService: GenService<{
     output: typeof GetAccountResponseSchema;
   },
   /**
-   * ListIdentities returns the caller's identities, oldest first.
+   * ListIdentities returns the caller's identities, oldest first, in
+   * pages.
+   *
+   * A page holds 100 identities when page_size is zero, and 1000 at most.
    *
    * @generated from rpc toshi.workspace.v1.AccountService.ListIdentities
    */

@@ -19,10 +19,12 @@ option go_package = "go.toshicloud.io/api/workspacev1";
 //
 // The caller's credential names the workspace, as for WorkloadService.
 service ProductService {
-  // ListProducts returns the products the deployment includes, by id, each
-  // with its features: the entitlement, the workspace's
+  // ListProducts returns the products the deployment includes, by id, in
+  // pages, each with its features: the entitlement, the workspace's
   // setting if it has one, the effective value, and who changed the
   // setting last and when.
+  //
+  // A page holds 100 products when page_size is zero, and 1000 at most.
   rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {
     option (toshi.permission) = "settings.read";
   }
@@ -43,15 +45,21 @@ service ProductService {
   }
 }
 
-// ListProductsRequest has no fields: the call's credential names the
-// workspace.
-message ListProductsRequest {}
+// ListProductsRequest asks for one page of the deployment's products.
+message ListProductsRequest {
+  // The most products in one page; zero lets the server choose.
+  int32 page_size = 1;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 2;
+}
 
-// ListProductsResponse is every product the deployment includes, as the
-// workspace has it.
+// ListProductsResponse is one page of the deployment's products, as the
+// workspace has them.
 message ListProductsResponse {
-  // products are the products the deployment includes, by id.
+  // products are the products on this page, by id.
   repeated ProductSettings products = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 // UpdateProductRequest is one change of one product's settings: its

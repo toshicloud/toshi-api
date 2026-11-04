@@ -692,7 +692,9 @@ service WorkloadService {
     option (toshi.scope) = "environment";
   }
 
-  // ListServiceAlarms returns the service's alarms by name.
+  // ListServiceAlarms returns the service's alarms by name, in pages.
+  //
+  // A page holds 100 alarms when page_size is zero, and 1000 at most.
   rpc ListServiceAlarms(ListServiceAlarmsRequest) returns (ListServiceAlarmsResponse) {
     option (toshi.permission) = "services.read";
     option (toshi.scope) = "environment";
@@ -1918,12 +1920,18 @@ message ListServiceAlarmsRequest {
   string environment = 2;
   // The service's ID.
   string service_id = 3;
+  // The most alarms in one page; zero lets the server choose.
+  int32 page_size = 4;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 5;
 }
 
 // ListServiceAlarmsResponse is the answer to ListServiceAlarms.
 message ListServiceAlarmsResponse {
-  // The service's alarms, by name.
+  // The service's alarms on this page, by name.
   repeated ServiceAlarm alarms = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 // DeleteServiceAlarmRequest is a call of DeleteServiceAlarm.

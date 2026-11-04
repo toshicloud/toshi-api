@@ -979,10 +979,14 @@ func (*DeleteModelCredentialResponse) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{11}
 }
 
-// ListModelSignInProvidersRequest asks for every provider a credential
-// may serve.
+// ListModelSignInProvidersRequest asks for one page of the providers a
+// credential may serve.
 type ListModelSignInProvidersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The most providers in one page; zero lets the server choose.
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// From an earlier response's next_page_token; empty for the first page.
+	PageToken     string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1015,6 +1019,20 @@ func (x *ListModelSignInProvidersRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListModelSignInProvidersRequest.ProtoReflect.Descriptor instead.
 func (*ListModelSignInProvidersRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_model_credentials_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ListModelSignInProvidersRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListModelSignInProvidersRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
 }
 
 // ModelSignInProvider is how a deployment offers one provider's sign-in.
@@ -1091,12 +1109,14 @@ func (x *ModelSignInProvider) GetDisplayName() string {
 	return ""
 }
 
-// ListModelSignInProvidersResponse carries each provider a credential may
-// serve.
+// ListModelSignInProvidersResponse is one page of the providers a
+// credential may serve.
 type ListModelSignInProvidersResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Every provider a credential may serve, in a stable order.
-	Providers     []*ModelSignInProvider `protobuf:"bytes,1,rep,name=providers,proto3" json:"providers,omitempty"`
+	// The providers on this page, in the order the deployment declares them.
+	Providers []*ModelSignInProvider `protobuf:"bytes,1,rep,name=providers,proto3" json:"providers,omitempty"`
+	// Empty on the last page.
+	NextPageToken string `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1136,6 +1156,13 @@ func (x *ListModelSignInProvidersResponse) GetProviders() []*ModelSignInProvider
 		return x.Providers
 	}
 	return nil
+}
+
+func (x *ListModelSignInProvidersResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
 }
 
 // StartModelSignInRequest names the provider to sign in to and the
@@ -1781,15 +1808,19 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\x10model_credential\x18\x01 \x01(\v2#.toshi.workspace.v1.ModelCredentialR\x0fmodelCredential\".\n" +
 	"\x1cDeleteModelCredentialRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x1f\n" +
-	"\x1dDeleteModelCredentialResponse\"!\n" +
-	"\x1fListModelSignInProvidersRequest\"\x90\x01\n" +
+	"\x1dDeleteModelCredentialResponse\"]\n" +
+	"\x1fListModelSignInProvidersRequest\x12\x1b\n" +
+	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"\x90\x01\n" +
 	"\x13ModelSignInProvider\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x1c\n" +
 	"\tmechanism\x18\x02 \x01(\tR\tmechanism\x12\x1c\n" +
 	"\tavailable\x18\x03 \x01(\bR\tavailable\x12!\n" +
-	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\"i\n" +
+	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\"\x91\x01\n" +
 	" ListModelSignInProvidersResponse\x12E\n" +
-	"\tproviders\x18\x01 \x03(\v2'.toshi.workspace.v1.ModelSignInProviderR\tproviders\"\xbc\x01\n" +
+	"\tproviders\x18\x01 \x03(\v2'.toshi.workspace.v1.ModelSignInProviderR\tproviders\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xbc\x01\n" +
 	"\x17StartModelSignInRequest\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +

@@ -87,10 +87,12 @@ service WorkspaceService {
     option (toshi.permission) = "billing.read";
   }
   // ListSeats returns the desktop seats the workspace held in one UTC
-  // month, oldest assigned first: the seats live at some time in it,
-  // removed ones included. A person assigned a seat may open a display on
-  // Windows that Toshi licenses; each seat is billed for every month it
+  // month, oldest assigned first, in pages: the seats live at some time in
+  // it, removed ones included. A person assigned a seat may open a display
+  // on Windows that Toshi licenses; each seat is billed for every month it
   // touches. A month not in YYYY-MM form fails with INVALID_ARGUMENT.
+  //
+  // A page holds 100 seats when page_size is zero, and 1000 at most.
   rpc ListSeats(ListSeatsRequest) returns (ListSeatsResponse) {
     option (toshi.permission) = "seats.read";
   }
@@ -393,10 +395,17 @@ message Seat {
 message ListSeatsRequest {
   // The UTC month as YYYY-MM. Empty: the current month.
   string month = 1;
+  // The most seats in one page; zero lets the server choose.
+  int32 page_size = 2;
+  // From an earlier response's next_page_token; empty for the first page.
+  string page_token = 3;
 }
 
 message ListSeatsResponse {
+  // The seats on this page, oldest assigned first.
   repeated Seat seats = 1;
+  // Empty on the last page.
+  string next_page_token = 2;
 }
 
 message AssignSeatRequest {
