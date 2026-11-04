@@ -1018,7 +1018,8 @@ export const labels = {
     POLICY: "Stopped by policy",
     SLEEP: "Service went to sleep",
     SERVICE_RESTART: "New revision started",
-    DRAINED: "Ended by a drain",
+    DRAINED: "Host drained",
+    REVISION_REPLACED: "Replaced by a newer revision",
   },
 } as const;
 export const paging = {

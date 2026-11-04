@@ -1017,8 +1017,9 @@ export type HostJob = Message<"toshi.workspace.v1.HostJob"> & {
    * Why the job was stopped: github_cancelled, max_duration, operator,
    * github_completed, runner_not_started, runner_unconfirmed, debug_ended,
    * ran_elsewhere, for a sandbox spend_cap, workspace_suspended,
-   * workspace_deleted or owner, or for a service's run owner_deleted,
-   * service_restart or sleep, or policy. Empty if it never was.
+   * workspace_deleted, owner or drained, or for a service's run
+   * owner_deleted, service_restart, revision_replaced or sleep, or policy.
+   * Empty if it never was.
    *
    * @generated from field: string stop_reason = 18;
    */
@@ -1547,8 +1548,9 @@ export type HostJobJson = {
    * Why the job was stopped: github_cancelled, max_duration, operator,
    * github_completed, runner_not_started, runner_unconfirmed, debug_ended,
    * ran_elsewhere, for a sandbox spend_cap, workspace_suspended,
-   * workspace_deleted or owner, or for a service's run owner_deleted,
-   * service_restart or sleep, or policy. Empty if it never was.
+   * workspace_deleted, owner or drained, or for a service's run
+   * owner_deleted, service_restart, revision_replaced or sleep, or policy.
+   * Empty if it never was.
    *
    * @generated from field: string stop_reason = 18;
    */

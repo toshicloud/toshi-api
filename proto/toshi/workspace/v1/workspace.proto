@@ -56,6 +56,9 @@ enum StopReason {
   // Its host was draining and the drain's drain_timeout passed while it
   // still ran.
   STOP_REASON_DRAINED = 9;
+  // A newer revision of its service took over, and this run ended once its
+  // running work had finished.
+  STOP_REASON_REVISION_REPLACED = 10;
 }
 
 // StopCause identifies the policy behind a stop.

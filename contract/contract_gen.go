@@ -1559,7 +1559,8 @@ func Labels() map[string]map[string]string {
 			"POLICY":              "Stopped by policy",
 			"SLEEP":               "Service went to sleep",
 			"SERVICE_RESTART":     "New revision started",
-			"DRAINED":             "Ended by a drain",
+			"DRAINED":             "Host drained",
+			"REVISION_REPLACED":   "Replaced by a newer revision",
 		},
 	}
 }

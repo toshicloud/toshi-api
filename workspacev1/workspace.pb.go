@@ -121,21 +121,25 @@ const (
 	// Its host was draining and the drain's drain_timeout passed while it
 	// still ran.
 	StopReason_STOP_REASON_DRAINED StopReason = 9
+	// A newer revision of its service took over, and this run ended once its
+	// running work had finished.
+	StopReason_STOP_REASON_REVISION_REPLACED StopReason = 10
 )
 
 // Enum value maps for StopReason.
 var (
 	StopReason_name = map[int32]string{
-		0: "STOP_REASON_UNSPECIFIED",
-		1: "STOP_REASON_OWNER",
-		2: "STOP_REASON_MAX_DURATION",
-		3: "STOP_REASON_SPEND_CAP",
-		4: "STOP_REASON_WORKSPACE_SUSPENDED",
-		5: "STOP_REASON_WORKSPACE_DELETED",
-		6: "STOP_REASON_OPERATOR",
-		7: "STOP_REASON_POLICY",
-		8: "STOP_REASON_KEEP_EXPIRED",
-		9: "STOP_REASON_DRAINED",
+		0:  "STOP_REASON_UNSPECIFIED",
+		1:  "STOP_REASON_OWNER",
+		2:  "STOP_REASON_MAX_DURATION",
+		3:  "STOP_REASON_SPEND_CAP",
+		4:  "STOP_REASON_WORKSPACE_SUSPENDED",
+		5:  "STOP_REASON_WORKSPACE_DELETED",
+		6:  "STOP_REASON_OPERATOR",
+		7:  "STOP_REASON_POLICY",
+		8:  "STOP_REASON_KEEP_EXPIRED",
+		9:  "STOP_REASON_DRAINED",
+		10: "STOP_REASON_REVISION_REPLACED",
 	}
 	StopReason_value = map[string]int32{
 		"STOP_REASON_UNSPECIFIED":         0,
@@ -148,6 +152,7 @@ var (
 		"STOP_REASON_POLICY":              7,
 		"STOP_REASON_KEEP_EXPIRED":        8,
 		"STOP_REASON_DRAINED":             9,
+		"STOP_REASON_REVISION_REPLACED":   10,
 	}
 )
 
@@ -15386,7 +15391,7 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x12END_REASON_STOPPED\x10\x02\x12\x18\n" +
 	"\x14END_REASON_CANCELLED\x10\x03\x12\x15\n" +
 	"\x11END_REASON_FAILED\x10\x04\x12\x13\n" +
-	"\x0fEND_REASON_LOST\x10\x05*\xaa\x02\n" +
+	"\x0fEND_REASON_LOST\x10\x05*\xcd\x02\n" +
 	"\n" +
 	"StopReason\x12\x1b\n" +
 	"\x17STOP_REASON_UNSPECIFIED\x10\x00\x12\x15\n" +
@@ -15398,7 +15403,9 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x14STOP_REASON_OPERATOR\x10\x06\x12\x16\n" +
 	"\x12STOP_REASON_POLICY\x10\a\x12\x1c\n" +
 	"\x18STOP_REASON_KEEP_EXPIRED\x10\b\x12\x17\n" +
-	"\x13STOP_REASON_DRAINED\x10\t*\xca\x01\n" +
+	"\x13STOP_REASON_DRAINED\x10\t\x12!\n" +
+	"\x1dSTOP_REASON_REVISION_REPLACED\x10\n" +
+	"*\xca\x01\n" +
 	"\tStopCause\x12\x1a\n" +
 	"\x16STOP_CAUSE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14STOP_CAUSE_EXEC_RATE\x10\x01\x12\x1e\n" +
