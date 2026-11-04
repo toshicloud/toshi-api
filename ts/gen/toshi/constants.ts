@@ -1024,6 +1024,10 @@ export const labels = {
     DRAINED: "Host drained",
     REVISION_REPLACED: "Replaced by a newer revision",
   },
+  DisabledReason: {
+    AFTER_GONE: "Turned off after a 410 Gone answer",
+    BY_USER: "Turned off by a member",
+  },
 } as const;
 export const paging = {
   list: { default: 50, max: 500 },

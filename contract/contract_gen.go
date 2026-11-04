@@ -1565,6 +1565,10 @@ func Labels() map[string]map[string]string {
 			"DRAINED":             "Host drained",
 			"REVISION_REPLACED":   "Replaced by a newer revision",
 		},
+		"DisabledReason": {
+			"AFTER_GONE": "Turned off after a 410 Gone answer",
+			"BY_USER":    "Turned off by a member",
+		},
 	}
 }
 

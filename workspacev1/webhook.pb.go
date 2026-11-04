@@ -24,6 +24,60 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// DisabledReason is why a webhook is turned off.
+type DisabledReason int32
+
+const (
+	// Never set on a disabled webhook that has a reason; the webhook is enabled
+	// or was turned off before reasons were kept.
+	DisabledReason_DISABLED_REASON_UNSPECIFIED DisabledReason = 0
+	// The receiver answered 410 Gone, and the sender turned the webhook off.
+	DisabledReason_DISABLED_REASON_AFTER_GONE DisabledReason = 1
+	// A member turned the webhook off.
+	DisabledReason_DISABLED_REASON_BY_USER DisabledReason = 2
+)
+
+// Enum value maps for DisabledReason.
+var (
+	DisabledReason_name = map[int32]string{
+		0: "DISABLED_REASON_UNSPECIFIED",
+		1: "DISABLED_REASON_AFTER_GONE",
+		2: "DISABLED_REASON_BY_USER",
+	}
+	DisabledReason_value = map[string]int32{
+		"DISABLED_REASON_UNSPECIFIED": 0,
+		"DISABLED_REASON_AFTER_GONE":  1,
+		"DISABLED_REASON_BY_USER":     2,
+	}
+)
+
+func (x DisabledReason) Enum() *DisabledReason {
+	p := new(DisabledReason)
+	*p = x
+	return p
+}
+
+func (x DisabledReason) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DisabledReason) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_webhook_proto_enumTypes[0].Descriptor()
+}
+
+func (DisabledReason) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_webhook_proto_enumTypes[0]
+}
+
+func (x DisabledReason) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DisabledReason.Descriptor instead.
+func (DisabledReason) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{0}
+}
+
 type WebhookDeliveryState int32
 
 const (
@@ -64,11 +118,11 @@ func (x WebhookDeliveryState) String() string {
 }
 
 func (WebhookDeliveryState) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_webhook_proto_enumTypes[0].Descriptor()
+	return file_toshi_workspace_v1_webhook_proto_enumTypes[1].Descriptor()
 }
 
 func (WebhookDeliveryState) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_webhook_proto_enumTypes[0]
+	return &file_toshi_workspace_v1_webhook_proto_enumTypes[1]
 }
 
 func (x WebhookDeliveryState) Number() protoreflect.EnumNumber {
@@ -77,7 +131,7 @@ func (x WebhookDeliveryState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use WebhookDeliveryState.Descriptor instead.
 func (WebhookDeliveryState) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{0}
+	return file_toshi_workspace_v1_webhook_proto_rawDescGZIP(), []int{1}
 }
 
 // Webhook is one URL a workspace's events are POSTed to, with the events
@@ -115,9 +169,13 @@ type Webhook struct {
 	// The name of a project in the workspace: the webhook is owed only that
 	// project's events, those of its workloads and those its connections
 	// received. Empty keeps the events of every project.
-	Project       string `protobuf:"bytes,11,opt,name=project,proto3" json:"project,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Project string `protobuf:"bytes,11,opt,name=project,proto3" json:"project,omitempty"`
+	// Why the webhook is turned off, with the sentence that says it in the
+	// label set DisabledReason; unspecified while it is enabled and for a
+	// webhook turned off before reasons were kept.
+	DisabledReason DisabledReason `protobuf:"varint,12,opt,name=disabled_reason,json=disabledReason,proto3,enum=toshi.workspace.v1.DisabledReason" json:"disabled_reason,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Webhook) Reset() {
@@ -225,6 +283,13 @@ func (x *Webhook) GetProject() string {
 		return x.Project
 	}
 	return ""
+}
+
+func (x *Webhook) GetDisabledReason() DisabledReason {
+	if x != nil {
+		return x.DisabledReason
+	}
+	return DisabledReason_DISABLED_REASON_UNSPECIFIED
 }
 
 // WebhookDelivery is one event owed to one webhook.
@@ -1306,7 +1371,7 @@ var File_toshi_workspace_v1_webhook_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xf2\x03\n" +
+	" toshi/workspace/v1/webhook.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xbf\x04\n" +
 	"\aWebhook\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x128\n" +
@@ -1322,7 +1387,8 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\x0ecursor_expired\x18\t \x01(\bR\rcursorExpired\x12I\n" +
 	"\x12retention_boundary\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\x11retentionBoundary\x12\x18\n" +
-	"\aproject\x18\v \x01(\tR\aproject\"\xee\x03\n" +
+	"\aproject\x18\v \x01(\tR\aproject\x12K\n" +
+	"\x0fdisabled_reason\x18\f \x01(\x0e2\".toshi.workspace.v1.DisabledReasonR\x0edisabledReason\"\xee\x03\n" +
 	"\x0fWebhookDelivery\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12\x16\n" +
 	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12\x1f\n" +
@@ -1405,7 +1471,11 @@ const file_toshi_workspace_v1_webhook_proto_rawDesc = "" +
 	"\x1bReplayWebhookEventsResponse\x12\x1a\n" +
 	"\breplayed\x18\x01 \x01(\x05R\breplayed\x12\x16\n" +
 	"\x06cursor\x18\x02 \x01(\tR\x06cursor\x12\x12\n" +
-	"\x04more\x18\x03 \x01(\bR\x04more*\xa9\x01\n" +
+	"\x04more\x18\x03 \x01(\bR\x04more*n\n" +
+	"\x0eDisabledReason\x12\x1f\n" +
+	"\x1bDISABLED_REASON_UNSPECIFIED\x10\x00\x12\x1e\n" +
+	"\x1aDISABLED_REASON_AFTER_GONE\x10\x01\x12\x1b\n" +
+	"\x17DISABLED_REASON_BY_USER\x10\x02*\xa9\x01\n" +
 	"\x14WebhookDeliveryState\x12&\n" +
 	"\"WEBHOOK_DELIVERY_STATE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eWEBHOOK_DELIVERY_STATE_PENDING\x10\x01\x12$\n" +
@@ -1436,69 +1506,71 @@ func file_toshi_workspace_v1_webhook_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_webhook_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_webhook_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_toshi_workspace_v1_webhook_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_toshi_workspace_v1_webhook_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_toshi_workspace_v1_webhook_proto_goTypes = []any{
-	(WebhookDeliveryState)(0),             // 0: toshi.workspace.v1.WebhookDeliveryState
-	(*Webhook)(nil),                       // 1: toshi.workspace.v1.Webhook
-	(*WebhookDelivery)(nil),               // 2: toshi.workspace.v1.WebhookDelivery
-	(*CreateWebhookRequest)(nil),          // 3: toshi.workspace.v1.CreateWebhookRequest
-	(*CreateWebhookResponse)(nil),         // 4: toshi.workspace.v1.CreateWebhookResponse
-	(*GetWebhookRequest)(nil),             // 5: toshi.workspace.v1.GetWebhookRequest
-	(*GetWebhookResponse)(nil),            // 6: toshi.workspace.v1.GetWebhookResponse
-	(*ListWebhooksRequest)(nil),           // 7: toshi.workspace.v1.ListWebhooksRequest
-	(*ListWebhooksResponse)(nil),          // 8: toshi.workspace.v1.ListWebhooksResponse
-	(*UpdateWebhookRequest)(nil),          // 9: toshi.workspace.v1.UpdateWebhookRequest
-	(*UpdateWebhookResponse)(nil),         // 10: toshi.workspace.v1.UpdateWebhookResponse
-	(*DeleteWebhookRequest)(nil),          // 11: toshi.workspace.v1.DeleteWebhookRequest
-	(*DeleteWebhookResponse)(nil),         // 12: toshi.workspace.v1.DeleteWebhookResponse
-	(*RotateWebhookSecretRequest)(nil),    // 13: toshi.workspace.v1.RotateWebhookSecretRequest
-	(*RotateWebhookSecretResponse)(nil),   // 14: toshi.workspace.v1.RotateWebhookSecretResponse
-	(*ListWebhookDeliveriesRequest)(nil),  // 15: toshi.workspace.v1.ListWebhookDeliveriesRequest
-	(*ListWebhookDeliveriesResponse)(nil), // 16: toshi.workspace.v1.ListWebhookDeliveriesResponse
-	(*ReplayWebhookEventsRequest)(nil),    // 17: toshi.workspace.v1.ReplayWebhookEventsRequest
-	(*ReplayWebhookEventsResponse)(nil),   // 18: toshi.workspace.v1.ReplayWebhookEventsResponse
-	(*timestamppb.Timestamp)(nil),         // 19: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),         // 20: google.protobuf.FieldMask
+	(DisabledReason)(0),                   // 0: toshi.workspace.v1.DisabledReason
+	(WebhookDeliveryState)(0),             // 1: toshi.workspace.v1.WebhookDeliveryState
+	(*Webhook)(nil),                       // 2: toshi.workspace.v1.Webhook
+	(*WebhookDelivery)(nil),               // 3: toshi.workspace.v1.WebhookDelivery
+	(*CreateWebhookRequest)(nil),          // 4: toshi.workspace.v1.CreateWebhookRequest
+	(*CreateWebhookResponse)(nil),         // 5: toshi.workspace.v1.CreateWebhookResponse
+	(*GetWebhookRequest)(nil),             // 6: toshi.workspace.v1.GetWebhookRequest
+	(*GetWebhookResponse)(nil),            // 7: toshi.workspace.v1.GetWebhookResponse
+	(*ListWebhooksRequest)(nil),           // 8: toshi.workspace.v1.ListWebhooksRequest
+	(*ListWebhooksResponse)(nil),          // 9: toshi.workspace.v1.ListWebhooksResponse
+	(*UpdateWebhookRequest)(nil),          // 10: toshi.workspace.v1.UpdateWebhookRequest
+	(*UpdateWebhookResponse)(nil),         // 11: toshi.workspace.v1.UpdateWebhookResponse
+	(*DeleteWebhookRequest)(nil),          // 12: toshi.workspace.v1.DeleteWebhookRequest
+	(*DeleteWebhookResponse)(nil),         // 13: toshi.workspace.v1.DeleteWebhookResponse
+	(*RotateWebhookSecretRequest)(nil),    // 14: toshi.workspace.v1.RotateWebhookSecretRequest
+	(*RotateWebhookSecretResponse)(nil),   // 15: toshi.workspace.v1.RotateWebhookSecretResponse
+	(*ListWebhookDeliveriesRequest)(nil),  // 16: toshi.workspace.v1.ListWebhookDeliveriesRequest
+	(*ListWebhookDeliveriesResponse)(nil), // 17: toshi.workspace.v1.ListWebhookDeliveriesResponse
+	(*ReplayWebhookEventsRequest)(nil),    // 18: toshi.workspace.v1.ReplayWebhookEventsRequest
+	(*ReplayWebhookEventsResponse)(nil),   // 19: toshi.workspace.v1.ReplayWebhookEventsResponse
+	(*timestamppb.Timestamp)(nil),         // 20: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),         // 21: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_webhook_proto_depIdxs = []int32{
-	19, // 0: toshi.workspace.v1.Webhook.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
-	19, // 1: toshi.workspace.v1.Webhook.created_at:type_name -> google.protobuf.Timestamp
-	19, // 2: toshi.workspace.v1.Webhook.updated_at:type_name -> google.protobuf.Timestamp
-	19, // 3: toshi.workspace.v1.Webhook.retention_boundary:type_name -> google.protobuf.Timestamp
-	0,  // 4: toshi.workspace.v1.WebhookDelivery.state:type_name -> toshi.workspace.v1.WebhookDeliveryState
-	19, // 5: toshi.workspace.v1.WebhookDelivery.next_try_at:type_name -> google.protobuf.Timestamp
-	19, // 6: toshi.workspace.v1.WebhookDelivery.due_at:type_name -> google.protobuf.Timestamp
-	19, // 7: toshi.workspace.v1.WebhookDelivery.done_at:type_name -> google.protobuf.Timestamp
-	1,  // 8: toshi.workspace.v1.CreateWebhookResponse.webhook:type_name -> toshi.workspace.v1.Webhook
-	1,  // 9: toshi.workspace.v1.GetWebhookResponse.webhook:type_name -> toshi.workspace.v1.Webhook
-	1,  // 10: toshi.workspace.v1.ListWebhooksResponse.webhooks:type_name -> toshi.workspace.v1.Webhook
-	1,  // 11: toshi.workspace.v1.UpdateWebhookRequest.webhook:type_name -> toshi.workspace.v1.Webhook
-	20, // 12: toshi.workspace.v1.UpdateWebhookRequest.update_mask:type_name -> google.protobuf.FieldMask
-	1,  // 13: toshi.workspace.v1.UpdateWebhookResponse.webhook:type_name -> toshi.workspace.v1.Webhook
-	1,  // 14: toshi.workspace.v1.RotateWebhookSecretResponse.webhook:type_name -> toshi.workspace.v1.Webhook
-	2,  // 15: toshi.workspace.v1.ListWebhookDeliveriesResponse.deliveries:type_name -> toshi.workspace.v1.WebhookDelivery
-	3,  // 16: toshi.workspace.v1.WebhookService.CreateWebhook:input_type -> toshi.workspace.v1.CreateWebhookRequest
-	5,  // 17: toshi.workspace.v1.WebhookService.GetWebhook:input_type -> toshi.workspace.v1.GetWebhookRequest
-	7,  // 18: toshi.workspace.v1.WebhookService.ListWebhooks:input_type -> toshi.workspace.v1.ListWebhooksRequest
-	9,  // 19: toshi.workspace.v1.WebhookService.UpdateWebhook:input_type -> toshi.workspace.v1.UpdateWebhookRequest
-	11, // 20: toshi.workspace.v1.WebhookService.DeleteWebhook:input_type -> toshi.workspace.v1.DeleteWebhookRequest
-	13, // 21: toshi.workspace.v1.WebhookService.RotateWebhookSecret:input_type -> toshi.workspace.v1.RotateWebhookSecretRequest
-	15, // 22: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:input_type -> toshi.workspace.v1.ListWebhookDeliveriesRequest
-	17, // 23: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:input_type -> toshi.workspace.v1.ReplayWebhookEventsRequest
-	4,  // 24: toshi.workspace.v1.WebhookService.CreateWebhook:output_type -> toshi.workspace.v1.CreateWebhookResponse
-	6,  // 25: toshi.workspace.v1.WebhookService.GetWebhook:output_type -> toshi.workspace.v1.GetWebhookResponse
-	8,  // 26: toshi.workspace.v1.WebhookService.ListWebhooks:output_type -> toshi.workspace.v1.ListWebhooksResponse
-	10, // 27: toshi.workspace.v1.WebhookService.UpdateWebhook:output_type -> toshi.workspace.v1.UpdateWebhookResponse
-	12, // 28: toshi.workspace.v1.WebhookService.DeleteWebhook:output_type -> toshi.workspace.v1.DeleteWebhookResponse
-	14, // 29: toshi.workspace.v1.WebhookService.RotateWebhookSecret:output_type -> toshi.workspace.v1.RotateWebhookSecretResponse
-	16, // 30: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:output_type -> toshi.workspace.v1.ListWebhookDeliveriesResponse
-	18, // 31: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:output_type -> toshi.workspace.v1.ReplayWebhookEventsResponse
-	24, // [24:32] is the sub-list for method output_type
-	16, // [16:24] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	20, // 0: toshi.workspace.v1.Webhook.previous_secret_expires_at:type_name -> google.protobuf.Timestamp
+	20, // 1: toshi.workspace.v1.Webhook.created_at:type_name -> google.protobuf.Timestamp
+	20, // 2: toshi.workspace.v1.Webhook.updated_at:type_name -> google.protobuf.Timestamp
+	20, // 3: toshi.workspace.v1.Webhook.retention_boundary:type_name -> google.protobuf.Timestamp
+	0,  // 4: toshi.workspace.v1.Webhook.disabled_reason:type_name -> toshi.workspace.v1.DisabledReason
+	1,  // 5: toshi.workspace.v1.WebhookDelivery.state:type_name -> toshi.workspace.v1.WebhookDeliveryState
+	20, // 6: toshi.workspace.v1.WebhookDelivery.next_try_at:type_name -> google.protobuf.Timestamp
+	20, // 7: toshi.workspace.v1.WebhookDelivery.due_at:type_name -> google.protobuf.Timestamp
+	20, // 8: toshi.workspace.v1.WebhookDelivery.done_at:type_name -> google.protobuf.Timestamp
+	2,  // 9: toshi.workspace.v1.CreateWebhookResponse.webhook:type_name -> toshi.workspace.v1.Webhook
+	2,  // 10: toshi.workspace.v1.GetWebhookResponse.webhook:type_name -> toshi.workspace.v1.Webhook
+	2,  // 11: toshi.workspace.v1.ListWebhooksResponse.webhooks:type_name -> toshi.workspace.v1.Webhook
+	2,  // 12: toshi.workspace.v1.UpdateWebhookRequest.webhook:type_name -> toshi.workspace.v1.Webhook
+	21, // 13: toshi.workspace.v1.UpdateWebhookRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 14: toshi.workspace.v1.UpdateWebhookResponse.webhook:type_name -> toshi.workspace.v1.Webhook
+	2,  // 15: toshi.workspace.v1.RotateWebhookSecretResponse.webhook:type_name -> toshi.workspace.v1.Webhook
+	3,  // 16: toshi.workspace.v1.ListWebhookDeliveriesResponse.deliveries:type_name -> toshi.workspace.v1.WebhookDelivery
+	4,  // 17: toshi.workspace.v1.WebhookService.CreateWebhook:input_type -> toshi.workspace.v1.CreateWebhookRequest
+	6,  // 18: toshi.workspace.v1.WebhookService.GetWebhook:input_type -> toshi.workspace.v1.GetWebhookRequest
+	8,  // 19: toshi.workspace.v1.WebhookService.ListWebhooks:input_type -> toshi.workspace.v1.ListWebhooksRequest
+	10, // 20: toshi.workspace.v1.WebhookService.UpdateWebhook:input_type -> toshi.workspace.v1.UpdateWebhookRequest
+	12, // 21: toshi.workspace.v1.WebhookService.DeleteWebhook:input_type -> toshi.workspace.v1.DeleteWebhookRequest
+	14, // 22: toshi.workspace.v1.WebhookService.RotateWebhookSecret:input_type -> toshi.workspace.v1.RotateWebhookSecretRequest
+	16, // 23: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:input_type -> toshi.workspace.v1.ListWebhookDeliveriesRequest
+	18, // 24: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:input_type -> toshi.workspace.v1.ReplayWebhookEventsRequest
+	5,  // 25: toshi.workspace.v1.WebhookService.CreateWebhook:output_type -> toshi.workspace.v1.CreateWebhookResponse
+	7,  // 26: toshi.workspace.v1.WebhookService.GetWebhook:output_type -> toshi.workspace.v1.GetWebhookResponse
+	9,  // 27: toshi.workspace.v1.WebhookService.ListWebhooks:output_type -> toshi.workspace.v1.ListWebhooksResponse
+	11, // 28: toshi.workspace.v1.WebhookService.UpdateWebhook:output_type -> toshi.workspace.v1.UpdateWebhookResponse
+	13, // 29: toshi.workspace.v1.WebhookService.DeleteWebhook:output_type -> toshi.workspace.v1.DeleteWebhookResponse
+	15, // 30: toshi.workspace.v1.WebhookService.RotateWebhookSecret:output_type -> toshi.workspace.v1.RotateWebhookSecretResponse
+	17, // 31: toshi.workspace.v1.WebhookService.ListWebhookDeliveries:output_type -> toshi.workspace.v1.ListWebhookDeliveriesResponse
+	19, // 32: toshi.workspace.v1.WebhookService.ReplayWebhookEvents:output_type -> toshi.workspace.v1.ReplayWebhookEventsResponse
+	25, // [25:33] is the sub-list for method output_type
+	17, // [17:25] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_webhook_proto_init() }
@@ -1512,7 +1584,7 @@ func file_toshi_workspace_v1_webhook_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_webhook_proto_rawDesc), len(file_toshi_workspace_v1_webhook_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,

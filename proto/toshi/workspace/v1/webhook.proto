@@ -146,6 +146,21 @@ message Webhook {
   // project's events, those of its workloads and those its connections
   // received. Empty keeps the events of every project.
   string project = 11;
+  // Why the webhook is turned off, with the sentence that says it in the
+  // label set DisabledReason; unspecified while it is enabled and for a
+  // webhook turned off before reasons were kept.
+  DisabledReason disabled_reason = 12;
+}
+
+// DisabledReason is why a webhook is turned off.
+enum DisabledReason {
+  // Never set on a disabled webhook that has a reason; the webhook is enabled
+  // or was turned off before reasons were kept.
+  DISABLED_REASON_UNSPECIFIED = 0;
+  // The receiver answered 410 Gone, and the sender turned the webhook off.
+  DISABLED_REASON_AFTER_GONE = 1;
+  // A member turned the webhook off.
+  DISABLED_REASON_BY_USER = 2;
 }
 
 enum WebhookDeliveryState {
