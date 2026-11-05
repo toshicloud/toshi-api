@@ -98,7 +98,8 @@ type AnswerPromptRequest struct {
 	// The answer: "approved" or "denied", one of a question's options, or
 	// 1 to 4096 bytes of text.
 	Answer string `protobuf:"bytes,5,opt,name=answer,proto3" json:"answer,omitempty"`
-	// When set, must match the waiting prompt's decision_id.
+	// When set, must match the waiting prompt's decision_id. Becomes required
+	// in 0.11.0; until then an empty value answers by prompt_id alone.
 	DecisionId string `protobuf:"bytes,6,opt,name=decision_id,proto3" json:"decision_id,omitempty"`
 	// A key for retrying this answer without answering twice; empty for none.
 	RequestKey string `protobuf:"bytes,7,opt,name=request_key,proto3" json:"request_key,omitempty"`

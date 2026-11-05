@@ -60,7 +60,8 @@ export type AnswerPromptRequest = Message<"toshi.workspace.v1.AnswerPromptReques
   answer: string;
 
   /**
-   * When set, must match the waiting prompt's decision_id.
+   * When set, must match the waiting prompt's decision_id. Becomes required
+   * in 0.11.0; until then an empty value answers by prompt_id alone.
    *
    * @generated from field: string decision_id = 6 [json_name = "decision_id"];
    */
@@ -127,7 +128,8 @@ export type AnswerPromptRequestJson = {
   answer?: string;
 
   /**
-   * When set, must match the waiting prompt's decision_id.
+   * When set, must match the waiting prompt's decision_id. Becomes required
+   * in 0.11.0; until then an empty value answers by prompt_id alone.
    *
    * @generated from field: string decision_id = 6 [json_name = "decision_id"];
    */

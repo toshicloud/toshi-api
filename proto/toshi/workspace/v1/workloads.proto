@@ -976,7 +976,8 @@ message AnswerPromptRequest {
   // The answer: "approved" or "denied", one of a question's options, or
   // 1 to 4096 bytes of text.
   string answer = 5;
-  // When set, must match the waiting prompt's decision_id.
+  // When set, must match the waiting prompt's decision_id. Becomes required
+  // in 0.11.0; until then an empty value answers by prompt_id alone.
   string decision_id = 6 [json_name = "decision_id"];
   // A key for retrying this answer without answering twice; empty for none.
   string request_key = 7 [json_name = "request_key"];
